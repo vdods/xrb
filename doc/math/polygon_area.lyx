@@ -1,0 +1,200 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+by Victor Dods
+\layout Standard
+
+Let a polygon be made up of coplanar verticles 
+\begin_inset Formula $v_{1},v_{2},v_{3},...,v_{n}$
+\end_inset 
+
+ which are in ordered such that they proceed counter-clockwise around the
+ normal of the polygon.
+ The area, 
+\begin_inset Formula $A$
+\end_inset 
+
+, is given by 
+\layout Standard
+
+
+\begin_inset Formula \[
+A=\frac{1}{2}\left\Vert \left({\displaystyle \sum_{i=1}^{n-1}v_{i}\times v_{i+1}}\right)+\left(v_{n}\times v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+Proof.
+ The sum of the areas of the component triangles of the polygon is (more
+ work necessary to show it works for non-convex polygons)
+\layout Standard
+
+
+\begin_inset Formula \[
+A=\left\Vert \frac{1}{2}\left(v_{2}-v_{1}\right)\times\left(v_{3}-v_{1}\right)+\frac{1}{2}\left(v_{3}-v_{1}\right)\times\left(v_{4}-v_{1}\right)+...+\frac{1}{2}\left(v_{n-1}-v_{1}\right)\times\left(v_{n}-v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+A=\frac{1}{2}\left\Vert \left(v_{2}-v_{1}\right)\times\left(v_{3}-v_{1}\right)+\left(v_{3}-v_{1}\right)\times\left(v_{4}-v_{1}\right)+...+\left(v_{n-1}-v_{1}\right)\times\left(v_{n}-v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \left(v_{2}-v_{1}\right)\times\left(v_{3}-v_{1}\right)+\left(v_{3}-v_{1}\right)\times\left(v_{4}-v_{1}\right)+...+\left(v_{n-1}-v_{1}\right)\times\left(v_{n}-v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert {\displaystyle \sum_{i=1}^{n-2}\left(v_{i+1}-v_{1}\right)\times\left(v_{i+2}-v_{1}\right)}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert {\displaystyle \sum_{i=1}^{n-2}\left(v_{i+1}\times v_{i+2}\right)-\left(v_{i+1}\times v_{1}\right)-\left(v_{1}\times v_{i+2}\right)+\left(v_{1}\times v_{1}\right)}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert {\displaystyle \sum_{i=1}^{n-2}\left(v_{i+1}\times v_{i+2}\right)-\left(v_{i+1}\times v_{1}\right)-\left(v_{1}\times v_{i+2}\right)}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \begin{array}{c}
+\left(v_{1+1}\times v_{1+2}\right)-\left(v_{1+1}\times v_{1}\right)-\left(v_{1}\times v_{1+2}\right)\\
++\left(v_{2+1}\times v_{2+2}\right)-\left(v_{2+1}\times v_{1}\right)-\left(v_{1}\times v_{2+2}\right)\\
++...\\
++\left(v_{n-3+1}\times v_{n-3+2}\right)-\left(v_{n-3+1}\times v_{1}\right)-\left(v_{1}\times v_{n-3+2}\right)\\
++\left(v_{n-2+1}\times v_{n-2+2}\right)-\left(v_{n-2+1}\times v_{1}\right)-\left(v_{1}\times v_{n-2+2}\right)\end{array}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \begin{array}{c}
+\left(v_{2}\times v_{3}\right)-\left(v_{2}\times v_{1}\right)-\left(v_{1}\times v_{3}\right)\\
++\left(v_{3}\times v_{4}\right)-\left(v_{3}\times v_{1}\right)-\left(v_{1}\times v_{4}\right)\\
++...\\
++\left(v_{n-2}\times v_{n-1}\right)-\left(v_{n-2}\times v_{1}\right)-\left(v_{1}\times v_{n-1}\right)\\
++\left(v_{n-1}\times v_{n}\right)-\left(v_{n-1}\times v_{1}\right)-\left(v_{1}\times v_{n}\right)\end{array}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+Commute the cross product in every 3rd term, and switch their signs.
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \begin{array}{c}
+\left(v_{2}\times v_{3}\right)-\left(v_{2}\times v_{1}\right)+\left(v_{3}\times v_{1}\right)\\
++\left(v_{3}\times v_{4}\right)-\left(v_{3}\times v_{1}\right)+\left(v_{4}\times v_{1}\right)\\
++...\\
++\left(v_{n-2}\times v_{n-1}\right)-\left(v_{n-2}\times v_{1}\right)+\left(v_{n-1}\times v_{1}\right)\\
++\left(v_{n-1}\times v_{n}\right)-\left(v_{n-1}\times v_{1}\right)+\left(v_{1}\times v_{n}\right)\end{array}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+The 3rd term from each row cancel the 2nd term from the next, causing the
+ sum to telescope to 
+\begin_inset Formula $n$
+\end_inset 
+
+ terms.
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \begin{array}{c}
+\left(v_{2}\times v_{3}\right)-\left(v_{2}\times v_{1}\right)\\
++\left(v_{3}\times v_{4}\right)\\
++...\\
++\left(v_{n-2}\times v_{n-1}\right)\\
++\left(v_{n-1}\times v_{n}\right)+\left(v_{1}\times v_{n}\right)\end{array}\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+The expression is the sum of the cross product of each adjacent pair of
+ vertices.
+\layout Standard
+
+
+\begin_inset Formula \[
+2A=\left\Vert \left[{\displaystyle \sum_{i=1}^{n-1}\left(v_{i}\times v_{i+1}\right)}\right]+\left(v_{n}\times v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+A=\frac{1}{2}\left\Vert \left({\displaystyle \sum_{i=1}^{n-1}v_{i}\times v_{i+1}}\right)+\left(v_{n}\times v_{1}\right)\right\Vert \]
+
+\end_inset 
+
+
+\the_end

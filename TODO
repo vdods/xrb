@@ -1,0 +1,315 @@
+Goal: to develop a solid library of classes and functions in which to
+implement a robust, enjoyable, and graphically-modern 2d video game,
+including network support.
+
+MAJOR TASKS:
+X openGL conversion
+- circle/polygon collision/entity areas
+X specific UI widgets
+/ physics engine
+- console command stuff
+- console logger/debugging logger
+- embedded scripting
+- split world into client and server and add networking
+- music and sound effects
+/ map editor + sprite/entity prefab editor
+/ comment/document the code with doxygen
+- text logging system
+- memory tracker/manager/leak detector
+- profiling tools (gcov, gprof)
+X private/public correctness
+- exceptions for user errors
+X platform-independent byte order for network/file serialization
+- x/y independent scaling (the physics portion of that is tough)
+/ bracket indenting style and 80-column conformance.  change
+  long function parameter lists to be vertical.
+/ document the behavior of Widget, Layout, the Rendering stack,
+  and all the other complicated systems.
+- UI demonstration - every UI feature demonstrated in a series
+  of tabbed widgets.
+
+OPENGL CONVERSION TASKS:
+- look into applying HSV color to opengl renderings (i.e. making
+  stuff's color converge towards a particular color -- turning
+  up/down the saturation).
+
+DISASTEROIDS:
+- finish writing AIs
+- progressing AI spawning
+- finish weapon code (add UT-style charge-up melee weapon)
+- hook up score and extra lives
+- create start screen
+- create high scores screen
+- create master UI flow
+  
+CURRENT:
+- fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer
+- fix LineTrace screwing up on large entities sometimes at certain angles
+- in Dis::PhysicsHandler, the collision pairs may need to use
+  GameObjectReferences, otherwise stuff might be deleted which will
+  leave the collision pair pointers dangling.
+- make Devourment grow as it eats stuff
+- maybe move the game control logic out of World (because World is engine2)
+- ships should not be able to rotate to any angle instantly
+- referring to the accumulated force on an entity is uncertain.  there
+  should be some sort of previous-frame accumulated force accessor,
+  for functions that use it (e.g. intercept course stuff)
+- some sort of device that attaches shit to the front of the ship
+  so you can push it around (e.g. asteroids).  this would probably
+  work pretty well as the secondary fire for the tractor beam.
+- the framehandler time for WorldView must be synchronized with the
+  framehandler time for World.
+- fix the crash when the ship dies while a mine is surveying.
+- split the physics and visibility computation up so their frame
+  processing isn't dependent.
+- have the debris spawning in Mortal.  it should be done in Damage,
+  and the subclasses of Mortal should specify the debris type (rocks,
+  metal, minerals, blood, guts, etc).
+- the trace_radius trace screws up because it traces a circle along the
+  line, instead of a perpendicular line.
+- look into compile-time asserts
+- SpriteEntity should have a configurable collision radius that can be
+  bigger or smaller than the visible radius, so that the collision circle
+  can be fit to the sprite better.
+- add asserts to wrapped collision stuff to ensure things aren't above
+  1/2 of the object side length
+
+TODO:
+- the map editor view should not create/destroy its own world -- it
+  becomes confusing
+- check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
+- entity attachment -- figure out where to put that (physics handler,
+  entity, etc)
+- again, rename identifiers like X_NUM_BLAH and num_blahblah to
+  X_BLAH_COUNT and blahblah_count.
+- make accessor functions for the begin/end iterators in QuadTree, so
+  subclasses don't have direct access to m_object_set.
+- check if adding entities while in the middle of the Think() loop will
+  screw up the entities that have Think called on them
+- make Engine2::Entity::GetEntityGuts into a templatized function that takes
+  the EntityGuts subclass type and does asserts on dynamic_cast and such.
+  then rename the untemplatized one into GetRawEntityGuts.
+- rename Type to something more specific, and rename all enums to have prefixes
+- Entity might need to be a "scaling velocity" or "grow to X size by time Y"
+- move Label into /lib/gui/widgets (maybe?)
+- drawing functions should all just push the modelview matrix, not load
+  the identity (except for top-level ones like Screen and such).
+- maybe change Entity::Get/SetForce/Torque into Get/SetAccumulatedForce/Torque
+  or something including the word "frame" like GetFrameTorque
+- see if quadtree should change its storage container from set to list
+  (_Rb_tree_base_iterator::_M_increment uses up 20-30% of the frame time
+  in entity-heavy worlds.  this might make sense because the only reason
+  the container is a set is because adding/removing an object to/from a
+  quadnode needs to be fast, but now since objects only are removed/added
+  when they actually change quadnodes (which is infrequent), it might be
+  better to do the dumb method.
+- make a function which ensures the objects' radius and transformations are
+  calculated, so that certain sections of code (like in the physics handler)
+  can just get the values directly, instead of checking if they need to be
+  computed each time.
+- add GetIsEntity method to Object, which just checks the object subtype,
+  (and does an assert on dynamic_cast'ing to an entity), then replace as
+  much of the dynamic_cast'ing as possible.
+- look into wether or not the entity vector is really necessary in Engine2::World
+  once that is done, decide if the entities should be deleted from the vector,
+  or from the visibility quadtree.
+- compound editing operations: delete vertices, delete polygons, flip polygons,
+  flip objects, unweld polygon vertices, clone polygons, splitting polygons
+- Label isn't working -- fix it
+- for static Create type functions for subclassable classes, see if the
+  function can be templatized so that each subclass doesn't have to make
+  a function that is identical except for the "new Blah" part.
+- change all occurrences of "retval" into the proper word?
+- change BinarySerializer and BitCache to use IODirection enum instead of
+  retarded stdio file mode string in Open.
+- cursor position in map editor status bar
+- when the Action system is written, go into MapEditor2::WorldView and
+  convert everything to that, and get rid of locally tracking
+  m_selected_entity_count and friends.
+- possibly make a Math::Radians namespace to contain properly typed
+  versions of the trig functions which take angles.
+- for overridable Widget methods, make it so that subclasses don't
+  have to call anything to maintain widget functionality.
+- add DeleteSelf to Widget baseclass as a means for scheduling itself
+  for deletion.
+- add HandleEnabled and HandleDisabled to Widget ?
+- add HandleHidden and HandleShown to Widget ?
+- verify that when a mouse-grabbed widget is deleted, it un-mouse-grabs
+- verify that focusing a widget contained in a widget with m_accepts_focus
+  set to false will not change the focus line.
+- deprecate Widget::SetScreenRect() ?
+- change the names of the vertex/compound selection functions in
+  MapEditor2::ObjectLayer to indicate they only operate within the
+  scope of the object selection set.
+- math-related operator overloads that are in the namespace
+  Xrb should be moved out to the global namespace, so that applications
+  that don't do "using namespace Xrb" can use them as well.
+- move Object::SelectionOperation and Object::TransformationMode
+  into a mapeditor2 enum header.
+- think about MapEditor2::MainWidget and if the Widget's main widget
+  functionality should be renamed.
+- take the memcpy/memcmp calls out of Vector and friends (in favor of
+  the compiler vectorizing the loops).
+- it looks like Object::CalculateTransform might be unneseccary.
+  check into that.
+- move Sprite::m_color_mask and Compound::m_color_mask into Object.
+- make the map editor use only meta-keyed shortcuts so that handling
+  key events is much simpler.
+- if the screen widget gets resized to larger than the video resolution,
+  then it doesn't go back once the contents smallify.  fix that.
+- add modal widget frame/content margins (maybe just make it so that
+  setting a main widget puts stuff inside the content margins)
+- for widgets who take the default property a single time at the beginning,
+  make it so they keep updating their property with the WidgetSkin,
+  but if you manually set the property to something else, then it will stay
+  different and not update with the WidgetSkin.
+- make the content margins based at the edge of the widget, instead
+  of the frame margins.
+- add type-specific range checking for WidgetSkin properties.
+- remember the C++ typeid/type_info stuff.
+- think up a way to draw entity metrics which show if an entity
+  applies and reacts to gravity.
+- density might apply to selection sets (i.e. scaling the relative density)
+- density is a little wacky -- fix it.
+- do real entity area computation for density and other calculations.
+- make the view grid display set units, rather than fractions of
+  the size of the object layers.
+- improve the text-editing control of LineEdit (e.g. ctrl+backspace,
+  point-and-click cursor positioning, text selection, etc).
+- in map editor, make the scale/angle resetting code when changing
+  transformation modes be optional.
+- make pre-cached, interpolating math functions which will be faster.
+- delay taking entities out of the quadtree unless they don't
+  belong in that node once they've moved.
+- the resource instance should store the function that was created
+  to create the resource data so that full correctness can be
+  achieved.
+- GL singleton should have checks to see if it's been initialized
+  so when gl calls fail mysteriously, it's obvious what happened.
+- replace drawing the sprite quad with a display list
+- do some sort of partial template specialization so that Resources of
+  specific types can be implicitly constructed via filenames.
+- hide the defer-parent-update SetSizeProperty* versions and make public
+  versions of each without that parameter.
+- all resource-related crap that has a Create function should be
+  data-file-driven and be loaded as resources from those files.
+- add WorldCoord/WorldCoordVector2/etc similar to ScreenCoord/etc.
+- make sure all the GetShiftedAscii codes are correct
+- add ms_one to SimpleTransform2 for inversion -- or change all that ms_one
+  and ms_zero scalar crap into static_casts.
+- add "activated" to Button, which is configurable to be either when
+  the button is pressed or pressed then released.
+- maybe change all {Serializer read functions which don't return a primitive
+  assignable type} to take a pointer to an object which should be populated
+  with the requested data (to avoid having to return large structures
+  by value)
+- (text) token reading in Serializer
+- change the IOE_IS_AT_END into IOE_INSUFFICIENT_AVAILABLE_DATA or
+  IOE_INSUFFICIENT_STORAGE so that the error value is the same and can
+  be used when iterating through serialization.
+- unit test for the size of certain data types (e.g. floats are 4 bytes,
+  doubles are 8, etc).
+- think of a better way to do UI event pre/processing
+- support for bit depths besides 32
+- WidgetSkin properties for checkbox/radiobutton/toolbar button sizes
+- maybe WidgetBackground should provide the FrameMargins and ContentMargins
+- make WidgetSkin properties data-driven and/or use events for the
+  multiplexed functions.
+- consolidate min/max size checking code to use SizeProperties code
+- change all functions which accept a bool or int as a type of something
+  or a behavior to use enums instead, to make code more self-documenting.
+- add center of gravity to EntityPropertiesPanel
+- add area to EntityPropertiesPanel
+- perhaps add linear and angular momentum to EntityPropertiesPanel
+- make some Util functions for verifying that a string is a valid
+  signed int, unsigned int, float, double, etc.
+- change dynamic_casts into static_casts where not absolutely necessary
+  and put the dynamic_casts into asserts before the static_casts
+- make some sort of macroized cast that asserts on a dynamic cast,
+  but then actually returns a static cast.
+- special Vector2 ValueEdit
+- add SetText override to ValueEdit and ValueLabel
+- add value transformations to sender->receiver connections (i.e.
+  boolean negation, multiply by two, conversion from radians
+  to degrees, etc) and so that values can be converted (i.e. number
+  of objects in selection set (integer) -> is selection set empty (boolean)
+- once the game loop object is written, there should be an accessor to
+  the game time, so that events that are enqueued can use that time,
+  then move FrameHandler::GetMostRecentFrameTime back to being protected.
+- add menu/popup system and menu items
+- move keyboard shortcuts into 'actions' similar to QT, which menu items
+  and normal functions can use.
+- tabbed widget layout
+- use idea of 'render' or 'focus' object layer instead of 'main'
+  object layer in world so that the nomenclature of the stuff in
+  MapEditorWorld is a little more clear
+- for accessors that return a member pointer, think about which ones
+  should be made into "Type const *"
+- make a handy Util function which does quantizing
+- add a 'time type' which allows changing of what data type actually
+  stores times (i.e. ints or floats, etc)
+- do tab/shift-tab control of child widget focus
+- look into normal mapping to give lighting effects
+- add Z depth for sprites so that overlapping sprites can be correctly
+  drawn in a specific ordering.  e.g. if there is a series of background
+  sprites which are layered, drawing order is important.
+- use quadtrees for first-pass collision detection -- maybe use a
+  single quadtree for entities from all object layers.
+- adding-objects-into-quadtree optimization: attempt to add the moved
+  object back into the node it was at before moving.  if that fails,
+  attempt to add into the parent node, etc.
+- make all drawing functions const (if possible)
+- examine STL usage in Label, for if the cached string and the line format
+  vector clear actually deletes and news stuff, or if it keeps the old array
+  size after clearing
+- add smart usage of newline indexed data in Label, so that it could
+  be used for very large texts
+- add some visualization tools like "stamping" a view radius,
+  which will create a circle in the world which is at the center
+  of the stamped view, with the same radius, so you can move around
+  and see how big the view was.  couple this with a quadtree
+  snapshot tool which freezes the visibility of a quadtree at
+  a particular time so you can move the view around and examine
+  what quads were in the view
+- change the 'distance culling' for sprite drawing in quadtrees
+  to use a configurable setting, so that the size at which to cull
+  sprites can be changed for performance
+- do some sort of video refresh synchronizing so the display
+  looks smoother
+- implement a sort of allocation/deletion logger to check
+  that everything is being deleted properly
+- implement a sort of memory usage logger to record how much
+  memory is being used for what type of thing
+- change World class into a WorldClient and WorldServer pair
+
+GAME IDEAS:
+- different types of ships should have different limitations on propulsion,
+  e.g. a rocket should only be able turn and go forward, while a flying saucer
+  should be able to move in any direction.
+- tractor beams
+- have a bunch of navigational and calculation tools, like things to calculate
+  the speed to enter orbit, the distance to an entity, etc
+- have a bunch of displays such as coordinates relative to an entity,
+  distance from an entity, relative speed, a circle around a planet which
+  shows the orbit for a particular speed, etc
+- calculations so that ships could enter orbit of a planet at different
+  heights, also geosynchronous
+- make a level which is a galaxy-shaped series of nebula and star sprites,
+  and is characatured with large planets in the spiral arms of the galaxy
+- deflector shield which applies force on offending particles using a vector
+  field.  the forces which it applies will drain units' energy
+- energy recharging on units, upgrades make it go faster
+- make some charge-up weapons (like the gun in R-type)
+- stabilization technology (so that if a unit gets a force applied, it will
+  attempt either to hold its position or its initial trajectory
+- wrapping space (left-right, up-down)
+- automatic proximity lasers to shoot down missles (as a defense mechanism)
+- wormholes
+- planetary shields
+- planetary movement engines (so you can change the orbits/trajectories of
+  moons, planets and asteroids)
+- inertia-less upgrade, so that units can instantly accelerate to a constant
+  speed, or hover effortlessly without gravity affecting them
+- special black hole sprite that warps the background image in the same
+  manner as a real blackhole (have to rewrite my thesis program for this)
+

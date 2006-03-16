@@ -1,0 +1,59 @@
+//////////////////////////////////////////////////////////////////////////////
+// XuqRijBuh 2D Game Engine - by Victor Dods
+//////////////////////////////////////////////////////////////////////////////
+
+XuqRijBuh is an OpenGL 2d game engine suite, written in C++, geared toward
+real-time, sprite/polygon-object-based gameplay. Includes the game engine
+library, as well as example game implementations. The goal is to provide an
+intuitive platform for implementing gameplay.
+
+    http://sourceforge.net/projects/xuqrijbuh/
+
+XuqRijBuh is released under the GNU General Public License (GPL) version 2.0.
+See file LICENSE for details.
+    
+//////////////////////////////////////////////////////////////////////////////
+// Requirements
+//////////////////////////////////////////////////////////////////////////////
+
+Currently, XuqRijBuh is in a development phase, so no binary releases are
+available yet.  Thus, only developers will be interested in downloading,
+compiling, and using it.  Builds have been successfully done on
+
+    - Linux using GCC 4.0 (3.3 probably also works)
+    - Windows using Microsoft Visual Studio 2005 (a free edition of which,
+      called "MSVC 2005 Express" can be obtained -- possibly for a limited
+      time -- at http://msdn.microsoft.com/vstudio/express/visualc/download/ )
+    - In theory, Mac OS X -- XuqRijBuh should compile and run on any
+      POSIX-compilant operating system, provided the necessary libraries
+      are available.
+
+In order to compile and run it, you must have several 3rd party libraries:
+
+    - SDL 1.2 -- http://www.libsdl.org/
+    - SDL_image 1.2 -- http://www.libsdl.org/projects/SDL_image/
+    - OpenGL 1.x -- which generally comes with your OS or development tools
+    - FreeType 2 -- http://www.freetype.org/
+
+NOTE: Compiling with MSVC 2005 Express requires installation of additional
+SDKs which are available from Microsoft (really only for a few very small
+files which are somehow not included with Visual Studio itself).
+
+    - Microsoft .NET Framework 1.1
+    - Microsoft Platform SDK (PSDK)
+
+//////////////////////////////////////////////////////////////////////////////
+// Thanks to
+//////////////////////////////////////////////////////////////////////////////
+
+Marius Andra for his excellent SDL tutorials, which can be found at
+http://cone3d.gamedev.net/cgi-bin/index.pl?page=tutorials/gfxsdl/index
+
+Daniel Greenhouse, for helping me understand certain parts of Newtonian
+Physics, and for lending me a wonderful textbook on particle physics.
+
+The authors of the SDL library -- http://www.libsdl.org/credits.php
+
+Sam Lantinga and Mattias Engdegård -- the authors of SDL_image.
+
+David Turner, Robert Wilhelm, and Werner Lemberg -- the authors of FreeType.

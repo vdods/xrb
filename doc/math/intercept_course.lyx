@@ -1,0 +1,775 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+by Victor Dods
+\layout Standard
+
+subscript 1 is for the interceptor, 0 is for the target
+\layout Standard
+
+
+\begin_inset Formula $t$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{n}_{0}$
+\end_inset 
+
+ are the unknowns
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}=\hat{p}_{1}+\hat{v}_{1}t+\frac{1}{2}a_{1}\hat{n}_{1}t^{2}\qquad\hat{n}_{0}\cdot\hat{n}_{0}=1\qquad\hat{n}_{1}\cdot\hat{n}_{1}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}=\frac{1}{2}a_{1}\hat{n}_{1}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2\hat{p}+2\hat{v}t+a_{0}\hat{n}_{0}t^{2}=a_{1}\hat{n}_{1}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}_{1}=\frac{2\hat{p}+2\hat{v}t+a_{0}\hat{n}_{0}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1x}=\frac{2p_{x}+2v_{x}t+a_{0}n_{0x}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1y}=\frac{2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}_{1}\cdot\hat{n}_{1}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1y}=\sqrt{1-n_{1x}^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-n_{1x}^{2}}=\frac{2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}t^{2}\sqrt{1-n_{1x}^{2}}=2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}\left(1-n_{1x}^{2}\right)=\left(2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}\left[1-\left(\frac{2p_{x}+2v_{x}t+a_{0}n_{0x}t^{2}}{a_{1}t^{2}}\right)^{2}\right]=\left(2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-a_{1}^{2}t^{4}\frac{\left(2p_{x}+2v_{x}t+a_{0}n_{0x}t^{2}\right)^{2}}{a_{1}^{2}t^{4}}=\left(2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+now 
+\begin_inset Formula $n_{1x}$
+\end_inset 
+
+ and 
+\begin_inset Formula $n_{1y}$
+\end_inset 
+
+ have been eliminated, we can solve for 
+\begin_inset Formula $t$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-\left(2p_{x}+2v_{x}t+a_{0}n_{0x}t^{2}\right)^{2}=\left(2p_{y}+2v_{y}t+a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-\left(4p_{x}^{2}+4p_{x}v_{x}t+2a_{0}n_{0x}p_{x}t^{2}+4p_{x}v_{x}t+4v_{x}^{2}t^{2}+2a_{0}n_{0x}v_{x}t^{3}+2a_{0}n_{0x}p_{x}t^{2}+2a_{0}n_{0x}v_{x}t^{3}+a_{0}^{2}n_{0x}^{2}t^{4}\right)=\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
++4p_{y}^{2}+4p_{y}v_{y}t+2a_{0}n_{0y}p_{y}t^{2}+4p_{y}v_{y}t+4v_{y}^{2}t^{2}+2a_{0}n_{0y}v_{y}t^{3}+2a_{0}n_{0y}p_{y}t^{2}+2a_{0}n_{0y}v_{y}t^{3}+a_{0}^{2}n_{0y}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=-a_{1}^{2}t^{4}+4p_{x}^{2}+4p_{x}v_{x}t+2a_{0}n_{0x}p_{x}t^{2}+4p_{x}v_{x}t+4v_{x}^{2}t^{2}+2a_{0}n_{0x}v_{x}t^{3}+2a_{0}n_{0x}p_{x}t^{2}+2a_{0}n_{0x}v_{x}t^{3}+a_{0}^{2}n_{0x}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
++4p_{y}^{2}+4p_{y}v_{y}t+2a_{0}n_{0y}p_{y}t^{2}+4p_{y}v_{y}t+4v_{y}^{2}t^{2}+2a_{0}n_{0y}v_{y}t^{3}+2a_{0}n_{0y}p_{y}t^{2}+2a_{0}n_{0y}v_{y}t^{3}+a_{0}^{2}n_{0y}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(a_{0}^{2}n_{0x}^{2}+a_{0}^{2}n_{0y}^{2}-a_{1}^{2}\right)t^{4}+\left(4a_{0}n_{0x}v_{x}+4a_{0}n_{0y}v_{y}\right)t^{3}+\left(4a_{0}n_{0x}p_{x}+4a_{0}n_{0y}p_{y}+4v_{x}^{2}+4v_{y}^{2}\right)t^{2}+\left(8p_{x}v_{x}+8p_{y}v_{y}\right)t+\left(4p_{x}^{2}+4p_{y}^{2}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(a_{0}^{2}-a_{1}^{2}\right)t^{4}+4\left(a_{0}\hat{n}_{0}\cdot\hat{v}\right)t^{3}+4\left(a_{0}\hat{n}_{0}\cdot\hat{p}+\hat{v}\cdot\hat{v}\right)t^{2}+8\left(\hat{p}\cdot\hat{v}\right)t+4\left(\hat{p}\cdot\hat{p}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+assume 
+\begin_inset Formula $T$
+\end_inset 
+
+ is the favored solution for 
+\begin_inset Formula $t$
+\end_inset 
+
+.
+ solve for 
+\begin_inset Formula $\hat{n}_{1}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}T+\frac{1}{2}a_{0}\hat{n}_{0}T^{2}=\frac{1}{2}a_{1}\hat{n}_{1}T^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2\hat{p}+2\hat{v}T+a_{0}\hat{n}_{0}T^{2}=a_{1}\hat{n}_{1}T^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}\hat{n}_{1}=\frac{2\hat{p}+2\hat{v}T+a_{0}\hat{n}_{0}T^{2}}{T^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+------------------------------
+\layout Standard
+
+solving for when the force is applied to both bodies (e.g.
+ a tractor beam)
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}-\frac{1}{2}a_{1}\hat{n}_{1}t^{2}=\hat{p}_{1}+\hat{v}_{1}t+\frac{1}{2}a_{1}\hat{n}_{1}t^{2}\qquad\hat{n}_{0}\cdot\hat{n}_{0}=1\qquad\hat{n}_{1}\cdot\hat{n}_{1}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}=\hat{p}_{1}+\hat{v}_{1}t+a_{1}\hat{n}_{1}t^{2}\qquad\hat{n}_{0}\cdot\hat{n}_{0}=1\qquad\hat{n}_{1}\cdot\hat{n}_{1}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}=a_{1}\hat{n}_{1}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}=a_{1}\hat{n}_{1}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}_{1}=\frac{\hat{p}+\hat{v}t+\frac{1}{2}a_{0}\hat{n}_{0}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1x}=\frac{p_{x}+v_{x}t+\frac{1}{2}a_{0}n_{0x}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1y}=\frac{p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}_{1}\cdot\hat{n}_{1}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{1y}=\sqrt{1-n_{1x}^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-n_{1x}^{2}}=\frac{p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}}{a_{1}t^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}t^{2}\sqrt{1-n_{1x}^{2}}=p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}\left(1-n_{1x}^{2}\right)=\left(p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}\left[1-\left(\frac{p_{x}+v_{x}t+\frac{1}{2}a_{0}n_{0x}t^{2}}{a_{1}t^{2}}\right)^{2}\right]=\left(p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-a_{1}^{2}t^{4}\frac{\left(p_{x}+v_{x}t+\frac{1}{2}a_{0}n_{0x}t^{2}\right)^{2}}{a_{1}^{2}t^{4}}=\left(p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+now 
+\begin_inset Formula $n_{1x}$
+\end_inset 
+
+ and 
+\begin_inset Formula $n_{1y}$
+\end_inset 
+
+ have been eliminated, we can solve for 
+\begin_inset Formula $t$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-\left(p_{x}+v_{x}t+\frac{1}{2}a_{0}n_{0x}t^{2}\right)^{2}=\left(p_{y}+v_{y}t+\frac{1}{2}a_{0}n_{0y}t^{2}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}^{2}t^{4}-\left(p_{x}^{2}+p_{x}v_{x}t+\frac{1}{2}a_{0}n_{0x}p_{x}t^{2}+p_{x}v_{x}t+v_{x}^{2}t^{2}+\frac{1}{2}a_{0}n_{0x}v_{x}t^{3}+\frac{1}{2}a_{0}n_{0x}p_{x}t^{2}+\frac{1}{2}a_{0}n_{0x}v_{x}t^{3}+\frac{1}{4}a_{0}^{2}n_{0x}^{2}t^{4}\right)=\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
++p_{y}^{2}+p_{y}v_{y}t+\frac{1}{2}a_{0}n_{0y}p_{y}t^{2}+p_{y}v_{y}t+v_{y}^{2}t^{2}+\frac{1}{2}a_{0}n_{0y}v_{y}t^{3}+\frac{1}{2}a_{0}n_{0y}p_{y}t^{2}+\frac{1}{2}a_{0}n_{0y}v_{y}t^{3}+\frac{1}{4}a_{0}^{2}n_{0y}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=-a_{1}^{2}t^{4}+p_{x}^{2}+p_{x}v_{x}t+\frac{1}{2}a_{0}n_{0x}p_{x}t^{2}+p_{x}v_{x}t+v_{x}^{2}t^{2}+\frac{1}{2}a_{0}n_{0x}v_{x}t^{3}+a_{0}n_{0x}p_{x}t^{2}+a_{0}n_{0x}v_{x}t^{3}+\frac{1}{4}a_{0}^{2}n_{0x}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
++p_{y}^{2}+p_{y}v_{y}t+\frac{1}{2}a_{0}n_{0y}p_{y}t^{2}+p_{y}v_{y}t+v_{y}^{2}t^{2}+\frac{1}{2}a_{0}n_{0y}v_{y}t^{3}+\frac{1}{2}a_{0}n_{0y}p_{y}t^{2}+\frac{1}{2}a_{0}n_{0y}v_{y}t^{3}+\frac{1}{4}a_{0}^{2}n_{0y}^{2}t^{4}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\frac{1}{4}a_{0}^{2}n_{0x}^{2}+\frac{1}{4}a_{0}^{2}n_{0y}^{2}-a_{1}^{2}\right)t^{4}+\left(a_{0}n_{0x}v_{x}+a_{0}n_{0y}v_{y}\right)t^{3}+\left(a_{0}n_{0x}p_{x}+a_{0}n_{0y}p_{y}+v_{x}^{2}+v_{y}^{2}\right)t^{2}+\left(2p_{x}v_{x}+2p_{y}v_{y}\right)t+\left(p_{x}^{2}+p_{y}^{2}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\frac{1}{4}a_{0}^{2}-a_{1}^{2}\right)t^{4}+\left(a_{0}\hat{n}_{0}\cdot\hat{v}\right)t^{3}+\left(a_{0}\hat{n}_{0}\cdot\hat{p}+\hat{v}\cdot\hat{v}\right)t^{2}+2\left(\hat{p}\cdot\hat{v}\right)t+\left(\hat{p}\cdot\hat{p}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+assume 
+\begin_inset Formula $T$
+\end_inset 
+
+ is the favored solution for 
+\begin_inset Formula $t$
+\end_inset 
+
+.
+ solve for 
+\begin_inset Formula $\hat{n}_{1}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}T+\frac{1}{2}a_{0}\hat{n}_{0}T^{2}=a_{1}\hat{n}_{1}T^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a_{1}\hat{n}_{1}=\frac{\hat{p}+\hat{v}T+\frac{1}{2}a_{0}\hat{n}_{0}T^{2}}{T^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+-----------------------------
+\layout Standard
+
+case for when the interceptor is dumb and doesn't account for its target's
+ acceleration
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}\cdot\hat{n}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+not taking target acceleration into account:
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t=\hat{p}_{1}+\hat{v}_{1}t+\frac{1}{2}a\hat{n}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t=\frac{1}{2}a\hat{n}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}t=\frac{1}{2}a\hat{n}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+p_{x}+v_{x}t=\frac{1}{2}an_{x}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2p_{x}+2v_{x}t=an_{x}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{x}=\frac{2p_{x}+2v_{x}t}{at^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{x}=\frac{2p_{x}+2v_{x}t}{at^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+by symmetry
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{y}=\frac{2p_{y}+2v_{y}t}{at^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+since 
+\begin_inset Formula $\hat{n}\cdot\hat{n}=1$
+\end_inset 
+
+, 
+\begin_inset Formula $n_{y}=\sqrt{1-n_{x}^{2}}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-n_{x}^{2}}=\frac{2p_{y}+2v_{y}t}{at^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-\left(\frac{2p_{x}+2v_{x}t}{at^{2}}\right)^{2}}=\frac{2p_{y}+2v_{y}t}{at^{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+1-\left(\frac{2p_{x}+2v_{x}t}{at^{2}}\right)^{2}=\left(\frac{2p_{y}+2v_{y}t}{at^{2}}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a^{2}t^{4}-\left(2p_{x}+2v_{x}t\right)^{2}=\left(2p_{y}+2v_{y}t\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a^{2}t^{4}-4p_{x}^{2}-8p_{x}v_{x}t-4v_{x}^{2}t^{2}=4p_{y}^{2}+8p_{y}v_{y}t+4v_{y}^{2}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a^{2}t^{4}-4p_{x}^{2}-8p_{x}v_{x}t-4v_{x}^{2}t^{2}-4p_{y}^{2}-8p_{y}v_{y}t-4v_{y}^{2}t^{2}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a^{2}t^{4}-4p_{x}^{2}-4p_{y}^{2}-8p_{x}v_{x}t-8p_{y}v_{y}t-4v_{x}^{2}t^{2}-4v_{y}^{2}t^{2}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(a^{2}\right)t^{4}-4\left(v_{x}^{2}+v_{y}^{2}\right)t^{2}-8\left(p_{x}v_{x}+p_{y}v_{y}\right)t-4\left(p_{x}^{2}+p_{y}^{2}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(a^{2}\right)t^{4}-4\left(\hat{v}\cdot\hat{v}\right)t^{2}-8\left(\hat{p}\cdot\hat{v}\right)t-4\left(\hat{p}\cdot\hat{p}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+solve for 
+\begin_inset Formula $t$
+\end_inset 
+
+ using whatever means.
+ assume 
+\begin_inset Formula $T$
+\end_inset 
+
+ is the preferred solution.
+ solve for 
+\begin_inset Formula $\hat{n}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}+\hat{v}T=\frac{1}{2}a\hat{n}T^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+2\hat{p}+2\hat{v}T=a\hat{n}T^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a\hat{n}=\frac{2\hat{p}+2\hat{v}T}{T^{2}}\]
+
+\end_inset 
+
+
+\the_end

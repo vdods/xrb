@@ -1,0 +1,178 @@
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_event.cpp by Victor Dods, created 2004/09/11
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#include "xrb_event.h"
+
+#include "xrb_gui_events.h"
+#include "xrb_input_events.h"
+#include "xrb_keybinds.h"
+
+namespace Xrb
+{
+
+Event::~Event () { }
+
+Event *Event::CreateEventFromSDLEvent (
+    SDL_Event const *const e,
+    Screen const *const screen,
+    Float const time)
+{
+    ASSERT1(e != NULL)
+    ASSERT1(screen != NULL)
+    ASSERT1(time >= 0.0)
+
+    Event *retval = NULL;
+
+    switch (e->type)
+    {
+        case SDL_ACTIVEEVENT:
+            retval = new EventActive(
+                reinterpret_cast<SDL_ActiveEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_KEYDOWN:
+            retval = new EventKeyDown(
+                reinterpret_cast<SDL_KeyboardEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_KEYUP:
+            retval = new EventKeyUp(
+                reinterpret_cast<SDL_KeyboardEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_MOUSEBUTTONDOWN:
+        {
+            SDL_MouseButtonEvent const *mouse_button_event =
+                reinterpret_cast<SDL_MouseButtonEvent const *const>(e);
+            if (mouse_button_event->button == Key::MOUSEWHEELUP ||
+                mouse_button_event->button == Key::MOUSEWHEELDOWN)
+            {
+                retval = new EventMouseWheel(
+                    mouse_button_event,
+                    Singletons::KeyBinds()->GetModifiers(),
+                    screen,
+                    time);
+            }
+            else
+            {
+                retval = new EventMouseButtonDown(
+                    mouse_button_event,
+                    Singletons::KeyBinds()->GetModifiers(),
+                    screen,
+                    time);
+            }
+            break;
+        }
+
+        case SDL_MOUSEBUTTONUP:
+        {
+            SDL_MouseButtonEvent const *mouse_button_event =
+                reinterpret_cast<SDL_MouseButtonEvent const *const>(e);
+            if (mouse_button_event->button == Key::MOUSEWHEELUP ||
+                mouse_button_event->button == Key::MOUSEWHEELDOWN)
+            {
+                // yes, virginia, there IS a reason this
+                // function returns null sometimes.
+                retval = NULL;
+            }
+            else
+            {
+                retval = new EventMouseButtonUp(
+                    mouse_button_event,
+                    Singletons::KeyBinds()->GetModifiers(),
+                    screen,
+                    time);
+            }
+            break;
+        }
+
+        case SDL_MOUSEMOTION:
+            retval = new EventMouseMotion(
+                reinterpret_cast<SDL_MouseMotionEvent const *const>(e),
+                Singletons::KeyBinds()->GetModifiers(),
+                screen,
+                time);
+            break;
+
+        case SDL_JOYAXISMOTION:
+            retval = new EventJoyAxis(
+                reinterpret_cast<SDL_JoyAxisEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_JOYBALLMOTION:
+            retval = new EventJoyBall(
+                reinterpret_cast<SDL_JoyBallEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_JOYBUTTONDOWN:
+            retval = new EventJoyButtonDown(
+                reinterpret_cast<SDL_JoyButtonEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_JOYBUTTONUP:
+            retval = new EventJoyButtonUp(
+                reinterpret_cast<SDL_JoyButtonEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_JOYHATMOTION:
+            retval = new EventJoyHat(
+                reinterpret_cast<SDL_JoyHatEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_QUIT:
+            retval = new EventQuit(
+                reinterpret_cast<SDL_QuitEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_SYSWMEVENT:
+            retval = new EventSysWM(
+                reinterpret_cast<SDL_SysWMEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_VIDEORESIZE:
+            retval = new EventResize(
+                reinterpret_cast<SDL_ResizeEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_VIDEOEXPOSE:
+            retval = new EventExpose(
+                reinterpret_cast<SDL_ExposeEvent const *const>(e),
+                time);
+            break;
+
+        case SDL_USEREVENT:
+            ASSERT1(false &&
+                    "Bad! BAD human! you shouldn't be making "
+                    "SDL_USEREVENTs.  Create a subclass "
+                    "of EventCustom instead.")
+            break;
+
+        default:
+            ASSERT1(false && "Unknown event type")
+            break;
+    }
+
+    return retval;
+}
+
+EventCustom::~EventCustom () { }
+
+} // end of namespace Xrb

@@ -1,0 +1,340 @@
+// ///////////////////////////////////////////////////////////////////////////
+// dis_effect.cpp by Victor Dods, created 2005/12/06
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#include "dis_effect.h"
+
+#include "dis_mortal.h"
+#include "dis_physicshandler.h"
+#include "dis_ship.h"
+#include "xrb_engine2_spriteentity.h"
+
+using namespace Xrb;
+
+namespace Dis
+{
+
+void Effect::Think (Float const time, Float const frame_dt)
+{
+    ASSERT1(dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity()) != NULL)
+    dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity())->
+        SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - GetLifetimeRatio(time)));
+
+    if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
+        ScheduleForDeletion(0.0f);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void Explosion::Think (Float const time, Float const frame_dt)
+{
+    SetScaleFactor(m_final_size * Math::Sqrt(GetLifetimeRatio(time)) + 0.1f);
+
+    Effect::Think(time, frame_dt);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void DamageExplosion::ExplosionKnockback (
+    FloatVector2 const &explosion_area_center,
+    Float const explosion_area_radius,
+    Float const power,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(explosion_area_radius > 0.0f)
+    ASSERT1(power > 0.0f)
+
+    AreaTraceList area_trace_list;
+    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+        GetObjectLayer(),
+        explosion_area_center,
+        explosion_area_radius,
+        false,
+        &area_trace_list);
+
+    // iterate through the trace set and apply forces
+    for (AreaTraceListIterator it = area_trace_list.begin(),
+                               it_end = area_trace_list.end();
+         it != it_end;
+         ++it)
+    {
+        GameObject *game_object = *it;
+
+        if (game_object == NULL)
+            continue;
+            
+        if (game_object->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+            continue;
+    
+        // center_to_center points towards the collider
+        FloatVector2 center_to_center = game_object->GetTranslation() - explosion_area_center;
+        Float distance = center_to_center.GetLength() - game_object->GetScaleFactor();
+        if (distance < 0.0f)
+            distance = 0.0f;
+        Float distance_factor;
+        if (distance < 1.0f)
+            distance_factor = 1.0f;
+        else
+            distance_factor = 1.0f / distance;
+    
+        // knockback forces
+        if (!center_to_center.GetIsZero())
+        {
+            static Float const s_knockback_factor = 2.0f;
+            Float knockback_momentum = s_knockback_factor * power * distance_factor;
+            game_object->AccumulateMomentum(
+                knockback_momentum *
+                center_to_center.GetNormalization() *
+                Math::Sqrt(game_object->GetScaleFactor()));
+        }
+    }
+}
+
+void DamageExplosion::Think (Float time, Float frame_dt)
+{
+    if (!m_has_done_knockback)
+    {
+        m_has_done_knockback = true;
+        ExplosionKnockback(
+            GetTranslation(),
+            GetFinalSize(),
+            m_initial_power,
+            time,
+            frame_dt);
+    }
+
+    Explosion::Think(time, frame_dt);    
+}
+
+void DamageExplosion::Collide (
+    GameObject *const collider,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal,
+    Float const collision_force,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(collider != NULL)
+
+    // can't damage nonsolid objects
+    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+        return;
+
+    // return if nothing would actually be done
+    Float reverse_lifetime_ratio = 1.0f - GetLifetimeRatio(time);
+    if (reverse_lifetime_ratio < 0.0f)
+        return;
+        
+    // center_to_center points towards the collider
+    FloatVector2 center_to_center = collider->GetTranslation() - GetTranslation();
+    Float distance = center_to_center.GetLength() - collider->GetScaleFactor();
+    if (distance < 0.0f)
+        distance = 0.0f;
+    Float distance_factor;
+    if (distance < 1.0f)
+        distance_factor = 1.0f;
+    else
+        distance_factor = 1.0f / Math::Sqrt(distance);
+    
+    // if it's a Mortal, damage it
+    if (collider->GetIsMortal())
+        DStaticCast<Mortal *>(collider)->Damage(
+            *m_owner,
+            this,
+            m_initial_power * reverse_lifetime_ratio * frame_dt * distance_factor,
+            NULL,
+            collision_location,
+            collision_normal,
+            collision_force,
+            Mortal::D_EXPLOSION,
+            time,
+            frame_dt);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void EMPExplosion::Collide (
+    GameObject *const collider,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal,
+    Float const collision_force,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(collider != NULL)
+    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+        return;
+
+    if (collider->GetIsShip())
+        DStaticCast<Ship *>(collider)->AccumulateDisableTime(
+            m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void Fireball::Think (Float const time, Float const frame_dt)
+{
+    // the power decays as time goes on
+    m_current_damage -= m_initial_damage * frame_dt / GetTimeToLive();
+
+    Explosion::Think(time, frame_dt);
+
+    // update the sprite's alpha value to reflect the damage left
+    Float alpha_value = Max(0.0f, m_current_damage / m_initial_damage);
+    ASSERT1(alpha_value <= 1.0f)
+    ASSERT1(dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity()) != NULL)
+    dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity())->
+        SetColorMask(Color(1.0f, 1.0f, 1.0f, m_current_damage / m_initial_damage));
+}
+
+void Fireball::Collide (
+    GameObject *const collider,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal,
+    Float const collision_force,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(collider != NULL)
+
+    // if there is no power left, return (this can happen when a fireball
+    // gets used up on one object before all its collisions are computed)
+    if (m_current_damage <= 0.0f)
+        return;
+    
+    // TODO: when napalm is done, check if it hit napalm
+    
+    // we only care about hitting solid things
+    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+        return;
+
+    static Float const s_damage_dissipation_rate = 2.0f;
+        
+    if (collider->GetIsMortal())
+    {
+        Mortal *mortal = DStaticCast<Mortal *>(collider);
+        Float damage_to_inflict =
+            Min(m_current_damage,
+                s_damage_dissipation_rate * m_initial_damage * frame_dt);
+        m_current_damage -= damage_to_inflict;
+        mortal->Damage(
+            *m_owner,
+            this,
+            damage_to_inflict,
+            NULL,
+            collision_location,
+            collision_normal,
+            collision_force,
+            Mortal::D_FIRE,
+            time,
+            frame_dt);
+    }
+
+    // if the power has reached zero, delete it
+    if (m_current_damage <= 0.0f)
+        ScheduleForDeletion(0.0f);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void LaserBeam::SetIntensity (Float const intensity)
+{
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+    ASSERT1(GetIsInWorld())
+    Engine2::SpriteEntity *sprite_entity =
+        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
+    ASSERT1(sprite_entity != NULL)
+    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+}
+
+void LaserBeam::SnapToShip (
+    FloatVector2 const &muzzle_location,
+    FloatVector2 const &hit_location,
+    Float const beam_width)
+{
+    ASSERT1(GetIsInWorld())
+    FloatVector2 beam_vector(hit_location - muzzle_location);
+    SetTranslation(0.5f * (muzzle_location + hit_location));
+    SetScaleFactors(0.5f * beam_vector.GetLength(), 0.5f * beam_width);
+    SetAngle(Math::Atan(beam_vector));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void TractorBeam::SetPullingInputAndIntensity (
+    bool const pull_everything,
+    Float const pulling_input,
+    Float const intensity)
+{
+    ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f)
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+    ASSERT1(GetIsInWorld())
+    Engine2::SpriteEntity *sprite_entity =
+        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
+    ASSERT1(sprite_entity != NULL)
+    if (pull_everything)
+        sprite_entity->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
+    else
+        sprite_entity->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void ShieldEffect::SetIntensity (Float const intensity)
+{
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+    Engine2::SpriteEntity *sprite_entity =
+        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
+    ASSERT1(sprite_entity != NULL)
+    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+}
+
+void ShieldEffect::SnapToShip (
+    FloatVector2 const &ship_translation,
+    Float const ship_scale_factor)
+{
+    static Float const s_shield_size_ratio = 1.666f;
+
+    RemoveFromWorld();
+    SetTranslation(ship_translation);
+    SetScaleFactor(s_shield_size_ratio * ship_scale_factor);
+    AddBackIntoWorld();
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void ReticleEffect::SnapToLocationAndSetScaleFactor (
+    FloatVector2 const &location,
+    Float const scale_factor)
+{
+    RemoveFromWorld();
+    SetTranslation(location);
+    SetScaleFactor(scale_factor);
+    AddBackIntoWorld();
+}
+
+} // end of namespace Dis
+

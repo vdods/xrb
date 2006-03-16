@@ -1,0 +1,460 @@
+%{
+
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_datafileparser.ypp by Victor Dods, created 2005/07/17
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#include "xrb.h"
+
+#include "xrb_datafilevalue.h"
+
+using namespace Xrb;
+
+%}
+
+%union {
+    Xrb::DataFileString *m_identifier;
+    Xrb::DataFileValue *m_value;
+    Xrb::DataFileBoolean *m_boolean;
+    Xrb::DataFileInteger *m_integer;
+    Xrb::DataFileFloat *m_float;
+    Xrb::DataFileCharacter *m_character;
+    Xrb::DataFileString *m_string;
+    Xrb::DataFileKeyValuePair *m_key_value_pair;
+    Xrb::DataFileStructure *m_structure;
+    Xrb::DataFileList *m_list;
+}
+
+%{
+
+int DataFile_lex (YYSTYPE *yylval, void *data_file_scanner);
+int DataFile_error (char const *error_string);
+DataFileValue::AllocationTracker *DataFile_get_allocation_tracker (void *data_file_scanner);
+
+#define YYPARSE_PARAM \
+    data_file_scanner, \
+    DataFileStructure const **parsed_structure
+#define YYLEX_PARAM data_file_scanner
+
+%}
+
+%pure_parser
+
+%token <m_identifier> IDENTIFIER
+%token <m_boolean>    BOOLEAN
+%token <m_integer>    INTEGER
+%token <m_float>      FLOAT
+%token <m_character>  CHARACTER
+%token <m_string>     STRING_FRAGMENT
+%token END_OF_FILE
+%token ERROR
+%token ';' ',' '{' '}' '[' ']'
+
+%type <m_structure>      ROOT
+%type <m_structure>      STATEMENT_LIST
+%type <m_key_value_pair> STATEMENT
+%type <m_key_value_pair> EXPRESSION
+%type <m_value>          VALUE
+%type <m_string>         STRING
+%type <m_structure>      STRUCTURE
+%type <m_list>           LIST
+%type <m_list>           BOOLEAN_LIST
+%type <m_list>           INTEGER_LIST
+%type <m_list>           FLOAT_LIST
+%type <m_list>           CHARACTER_LIST
+%type <m_list>           STRING_LIST
+%type <m_list>           EXPRESSION_LIST
+%type <m_list>           LIST_LIST
+
+%start ROOT
+
+%%
+
+ROOT
+:
+    STATEMENT_LIST END_OF_FILE
+    {
+        ASSERT1(dynamic_cast<DataFileStructure *>($1) != NULL)
+        $$ = $1;
+        *parsed_structure = $$;
+        YYACCEPT;
+    }
+;
+
+STATEMENT_LIST
+:
+    STATEMENT_LIST STATEMENT
+    {
+        ASSERT1(dynamic_cast<DataFileStructure *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileKeyValuePair *>($2) != NULL)
+        try
+        {
+            $1->AddKeyValuePair($2);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    STATEMENT
+    {
+        ASSERT1(dynamic_cast<DataFileKeyValuePair *>($1) != NULL)
+        $$ = new DataFileStructure(DataFile_get_allocation_tracker(data_file_scanner));
+        try
+        {
+            $$->AddKeyValuePair($1);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+    }
+|
+    {
+        // empty structure
+        $$ = new DataFileStructure(DataFile_get_allocation_tracker(data_file_scanner));
+    }
+;
+
+STATEMENT
+:
+    EXPRESSION ';'
+    {
+        ASSERT1(dynamic_cast<DataFileKeyValuePair *>($1) != NULL)
+        $$ = $1;
+    }
+;
+
+EXPRESSION
+:
+    IDENTIFIER VALUE
+    {
+        ASSERT1(dynamic_cast<DataFileString *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileValue *>($2) != NULL)
+        $$ = new DataFileKeyValuePair($1->GetValue(), $2, DataFile_get_allocation_tracker(data_file_scanner));
+        Delete($1);
+    }
+;
+
+VALUE
+:
+    BOOLEAN
+    {
+        ASSERT1(dynamic_cast<DataFileBoolean *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    INTEGER
+    {
+        ASSERT1(dynamic_cast<DataFileInteger *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    FLOAT
+    {
+        ASSERT1(dynamic_cast<DataFileFloat *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    CHARACTER
+    {
+        ASSERT1(dynamic_cast<DataFileCharacter *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    STRING
+    {
+        ASSERT1(dynamic_cast<DataFileString *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    STRUCTURE
+    {
+        ASSERT1(dynamic_cast<DataFileStructure *>($1) != NULL)
+        $$ = $1;
+    }
+|
+    LIST
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        $$ = $1;
+    }
+;
+
+STRING
+:
+    STRING STRING_FRAGMENT
+    {
+        ASSERT1(dynamic_cast<DataFileString *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileString *>($2) != NULL)
+        $1->AppendString($2->GetValue());
+        Delete($2);
+        $$ = $1;
+    }
+|
+    STRING_FRAGMENT
+    {
+        ASSERT1(dynamic_cast<DataFileString *>($1) != NULL)
+        $$ = $1;
+    }
+;
+
+STRUCTURE
+:
+    '{' STATEMENT_LIST '}'
+    {
+        ASSERT1(dynamic_cast<DataFileStructure *>($2) != NULL)
+        $$ = $2;
+    }
+;
+
+LIST
+:
+    '[' BOOLEAN_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' INTEGER_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' FLOAT_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' CHARACTER_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' STRING_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' EXPRESSION_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' LIST_LIST ']'
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($2) != NULL)
+        $$ = $2;
+    }
+|
+    '[' ']'
+    {
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+    }
+;
+
+BOOLEAN_LIST
+:
+    BOOLEAN_LIST ',' BOOLEAN
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileBoolean *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    BOOLEAN
+    {
+        ASSERT1(dynamic_cast<DataFileBoolean *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+INTEGER_LIST
+:
+    INTEGER_LIST ',' INTEGER
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileInteger *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    INTEGER
+    {
+        ASSERT1(dynamic_cast<DataFileInteger *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+FLOAT_LIST
+:
+    FLOAT_LIST ',' FLOAT
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileFloat *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    FLOAT
+    {
+        ASSERT1(dynamic_cast<DataFileFloat *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+CHARACTER_LIST
+:
+    CHARACTER_LIST ',' CHARACTER
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileCharacter *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    CHARACTER
+    {
+        ASSERT1(dynamic_cast<DataFileCharacter *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+STRING_LIST
+:
+    STRING_LIST ',' STRING
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileString *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    STRING
+    {
+        ASSERT1(dynamic_cast<DataFileString *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+EXPRESSION_LIST
+:
+    EXPRESSION_LIST ',' EXPRESSION
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileKeyValuePair *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    EXPRESSION
+    {
+        ASSERT1(dynamic_cast<DataFileKeyValuePair *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+LIST_LIST
+:
+    LIST_LIST ',' LIST
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        ASSERT1(dynamic_cast<DataFileList *>($3) != NULL)
+        try
+        {
+            $1->AppendValue($3);
+        }
+        catch (char const *exception)
+        {
+            yyerror(exception);
+            YYERROR;
+        }
+        $$ = $1;
+    }
+|
+    LIST
+    {
+        ASSERT1(dynamic_cast<DataFileList *>($1) != NULL)
+        $$ = new DataFileList(DataFile_get_allocation_tracker(data_file_scanner));
+        $$->AppendValue($1);
+    }
+;
+
+%%
+
+int DataFile_error (char const *error_string)
+{
+    fprintf(stderr, "DataFile_error(); parse error \"%s\"\n", error_string);
+    return 0;
+}
+

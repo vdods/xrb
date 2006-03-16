@@ -1,0 +1,167 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+by Victor Dods
+\layout Standard
+
+circle of radius 
+\begin_inset Formula $R$
+\end_inset 
+
+, with center 
+\begin_inset Formula $\hat{c}$
+\end_inset 
+
+.
+ line with starting point 
+\begin_inset Formula $\hat{p}$
+\end_inset 
+
+ and direction 
+\begin_inset Formula $\hat{v}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{c}-\left(\hat{v}t+\hat{p}\right)\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{c}-\left(\hat{v}t+\hat{p}\right)\right\Vert ^{2}=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left[\hat{c}-\left(\hat{v}t+\hat{p}\right)\right]\cdot\left[\hat{c}-\left(\hat{v}t+\hat{p}\right)\right]=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{c}\cdot\hat{c}-\left(\hat{v}t+\hat{p}\right)\cdot\hat{c}+-\hat{c}\cdot\left(\hat{v}t+\hat{p}\right)+\left(\hat{v}t+\hat{p}\right)\cdot\left(\hat{v}t+\hat{p}\right)=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{c}\cdot\hat{c}-2\left(\hat{v}t+\hat{p}\right)\cdot\hat{c}+\left(\hat{v}t+\hat{p}\right)\cdot\left(\hat{v}t+\hat{p}\right)=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{c}\cdot\hat{c}-2\hat{v}\cdot\hat{c}t-2\hat{p}\cdot\hat{c}+\hat{v}t\cdot\hat{v}t+\hat{p}\cdot\hat{v}t+\hat{v}t\cdot\hat{p}+\hat{p}\cdot\hat{p}=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{c}\cdot\hat{c}-2\hat{v}\cdot\hat{c}t-2\hat{p}\cdot\hat{c}+\hat{v}\cdot\hat{v}t^{2}+2\hat{p}\cdot\hat{v}t+\hat{p}\cdot\hat{p}=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{v}\cdot\hat{v}t^{2}+2\hat{p}\cdot\hat{v}t-2\hat{v}\cdot\hat{c}t+\hat{p}\cdot\hat{p}-2\hat{p}\cdot\hat{c}+\hat{c}\cdot\hat{c}=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{v}\cdot\hat{v}t^{2}+2\left(\hat{p}-\hat{c}\right)\cdot\hat{v}t+\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a=\hat{v}\cdot\hat{v}\qquad b=2\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\qquad c=\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)-R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+t=\frac{-2\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]\pm\sqrt{4\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]^{2}-4\left(\hat{v}\cdot\hat{v}\right)\left[\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)-R^{2}\right]}}{2\left(\hat{v}\cdot\hat{v}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+t=\frac{-2\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]\pm2\sqrt{\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]^{2}-\left(\hat{v}\cdot\hat{v}\right)\left[\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)-R^{2}\right]}}{2\left(\hat{v}\cdot\hat{v}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+t=\frac{-\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]\pm\sqrt{\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]^{2}-\left(\hat{v}\cdot\hat{v}\right)\left[\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)-R^{2}\right]}}{\left(\hat{v}\cdot\hat{v}\right)}\]
+
+\end_inset 
+
+
+\the_end

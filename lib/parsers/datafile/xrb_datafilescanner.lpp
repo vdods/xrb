@@ -1,0 +1,231 @@
+%{
+
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_datafilescanner.lpp by Victor Dods, created 2005/07/17
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#include "xrb.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "xrb_util.h"
+#include "xrb_datafilevalue.h"
+#include "libdatafileparser_la-xrb_datafileparser.h"
+
+using namespace Xrb;
+
+#define YY_EXTRA_TYPE DataFileValue::AllocationTracker *
+
+%}
+
+%option bison-bridge
+%option noyywrap
+%option reentrant
+%option yylineno
+
+TRUE                            [tT][rR][uU][eE]
+FALSE                           [fF][aA][lL][sS][eE]
+YES                             [yY][eE][sS]
+NO                              [nN][oO]
+ON                              [oO][nN]
+OFF                             [oO][fF][fF]
+BOOLEAN_TRUE                    {TRUE}|{YES}|{ON}
+BOOLEAN_FALSE                   {FALSE}|{NO}|{OFF}
+BINARY                          0[bB][01]+
+SIGNED_OCTAL                    [+-]{UNSIGNED_OCTAL}
+UNSIGNED_OCTAL                  0[0-7]+
+SIGNED_DECIMAL                  [+-]{UNSIGNED_DECIMAL}
+UNSIGNED_DECIMAL                [1-9][0-9]*|0
+SIGNED_HEXADECIMAL              [+-]{UNSIGNED_HEXADECIMAL}
+UNSIGNED_HEXADECIMAL            0[xX][0-9A-Fa-f]+
+FRACTIONAL                      [0-9]+"."[0-9]*|[0-9]*"."[0-9]+
+EXPONENT                        [eE][+-]?[0-9]+
+FLOAT                           [+-]?({FRACTIONAL}{EXPONENT}?|[0-9]+{EXPONENT})
+CHARACTER                       [^\a\b\t\n\v\f\r\\\"]
+IDENTIFIER                      [A-Za-z_][A-Za-z0-9_]*
+CHARACTER_LITERAL               '({ESCAPE_CODE}|{CHARACTER}|\")'
+ESCAPABLE_CHARACTER             [0abtnvfr\\"]
+ESCAPE_CODE                     {BACKSLASH}{ESCAPABLE_CHARACTER}
+LINE_COMMENT                    "//".*
+BACKSLASH                       \\
+DOUBLE_QUOTE                    \"
+OPERATOR                        [,;{}]|"["|"]"
+WHITESPACE                      [ \t\n]
+NEWLINE                         \n
+
+%x BLOCK_COMMENT
+%x STRING_SECTION
+
+%%
+
+<INITIAL>{
+{BOOLEAN_TRUE}          {   // boolean takes precedence over identifier (thus causing
+                            // identifiers that match as a boolean to be reserved).
+                            yylval->m_boolean = new DataFileBoolean(true, yyextra);
+                            return BOOLEAN;
+                        }
+{BOOLEAN_FALSE}         {   // boolean takes precedence over identifier (thus causing
+                            // identifiers that match as a boolean to be reserved).
+                            yylval->m_boolean = new DataFileBoolean(false, yyextra);
+                            return BOOLEAN;
+                        }
+{IDENTIFIER}            {
+                            yylval->m_identifier = new DataFileString(yytext, yyextra);
+                            return IDENTIFIER;
+                        }
+{BINARY}                {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Uint32>(strtoul(yytext+2, NULL, 2)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{SIGNED_OCTAL}          {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Sint32>(strtol(yytext, NULL, 8)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{UNSIGNED_OCTAL}        {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Uint32>(strtoul(yytext, NULL, 8)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{SIGNED_DECIMAL}        {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Sint32>(strtol(yytext, NULL, 10)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{UNSIGNED_DECIMAL}      {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Uint32>(strtoul(yytext, NULL, 10)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{SIGNED_HEXADECIMAL}    {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Sint32>(strtol(yytext, NULL, 16)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{UNSIGNED_HEXADECIMAL}  {
+                            yylval->m_integer =
+                                new DataFileInteger(
+                                    static_cast<Uint32>(strtoul(yytext, NULL, 16)),
+                                    yyextra);
+                            return INTEGER;
+                        }
+{FLOAT}                 {
+                            yylval->m_float =
+                                new DataFileFloat(strtod(yytext, NULL), yyextra);
+                            return FLOAT;
+                        }
+{DOUBLE_QUOTE}          {
+                            yylval->m_string = new DataFileString(yyextra);
+                            BEGIN(STRING_SECTION);
+                        }
+{CHARACTER_LITERAL}     {
+                            if (yytext[1] != '\\')
+                                yylval->m_character =
+                                    new DataFileCharacter(yytext[1], yyextra);
+                            else
+                                yylval->m_character =
+                                    new DataFileCharacter(Util::GetEscapedCharacter(yytext[2]), yyextra);
+                            return CHARACTER;
+                        }
+{OPERATOR}              {
+                            return yytext[0];
+                        }
+<<EOF>>                 {
+                            return END_OF_FILE;
+                        }
+{WHITESPACE}+           /* ignore whitespace */
+"/*"                    {
+                            BEGIN(BLOCK_COMMENT);
+                        }
+{LINE_COMMENT}          /* ignore comments */
+.                       {
+                            return yytext[0];
+                        }
+}
+
+
+
+<BLOCK_COMMENT>{
+"*/"                    {
+                            BEGIN(INITIAL);
+                        }
+.|{NEWLINE}             /* ignore all text that isn't the comment ending */
+<<EOF>>                 {
+                            fprintf(
+                                stderr,
+                                "line %d: unterminated comment\n",
+                                DataFile_get_lineno(yyscanner));
+                            return ERROR;
+                        }
+}
+
+
+
+<STRING_SECTION>{
+{NEWLINE}               {
+                            ASSERT1(dynamic_cast<DataFileString *>(yylval->m_string) != NULL)
+                            yylval->m_string->AppendCharacter('\n');
+                        }
+{BACKSLASH}{NEWLINE}    /* ignore escaped newlines */
+{ESCAPE_CODE}           {
+                            ASSERT1(dynamic_cast<DataFileString *>(yylval->m_string) != NULL)
+                            yylval->m_string->AppendCharacter(
+                                Util::GetEscapedCharacter(yytext[1]));
+                        }
+{DOUBLE_QUOTE}          {
+                            BEGIN(INITIAL);
+                            return STRING_FRAGMENT;
+                        }
+{CHARACTER}             {
+                            ASSERT1(dynamic_cast<DataFileString *>(yylval->m_string) != NULL)
+                            yylval->m_string->AppendCharacter(yytext[0]);
+                        }
+<<EOF>>                 {
+                            ASSERT1(dynamic_cast<DataFileString *>(yylval->m_string) != NULL)
+                            fprintf(
+                                stderr,
+                                "line %d: unterminated string\n",
+                                DataFile_get_lineno(yyscanner));
+                            return ERROR;
+                        }
+}
+
+%%
+
+DataFileValue::AllocationTracker *DataFile_get_allocation_tracker (
+    void *const data_file_scanner)
+{
+    yyguts_t *guts = static_cast<yyguts_t *>(data_file_scanner);
+    return guts->yyextra_r;
+}
+
+void DataFile_set_allocation_tracker (
+    DataFileValue::AllocationTracker *const allocation_tracker,
+    yyscan_t data_file_scanner)
+{
+    ASSERT1(allocation_tracker != NULL)
+    ASSERT1(data_file_scanner != NULL)
+    yyguts_t *scanner_guts = static_cast<yyguts_t *>(data_file_scanner);
+    scanner_guts->yyextra_r = allocation_tracker;
+}
+

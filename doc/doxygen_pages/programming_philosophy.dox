@@ -1,0 +1,583 @@
+/** @page programming_philosophy Programming Philosophy
+
+Here is some pontification on good coding practices.
+
+@section section_conceptual_hierarchy Conceptual Hierarchy
+Human beings can only fully comprehend a limited set of concepts at any given
+time.  For instance, you might understand how the many systems in an
+automobile work as separate entities (e.g. internal combustion, alternator,
+coolant system, power steering, braking system, rear differential, etc),
+each of them having their own parts and intricacies.  However, it is unlikely
+that you are able to comprehend all of the parts in a car working together
+at the same time.  Even if you are able to, the point is that if you keep
+adding systems (e.g. air conditioning, anti-lock brakes, engine status
+sensors, lighting circuitry, on-board computers, etc), there will be a point
+at which you no longer can imagine all the individual parts at the same time.
+
+With this critical concept in mind, you should gear your programs towards
+having only a limited number of relevant concepts being simultaneously
+mentally-juggled in any particular system of the program.  This implies a
+hierarchical structure for system usage.
+
+*** picture of example system hierarchy (ideally of the XuqRijBuh system) ***
+
+By limiting the number of parts in the system, the programmer is more likely
+to have a full comprehension of the program at any given level in the
+hierarchy.  This will also help in writing modular code that has distinct
+boundaries, lending itself to easier code-refactoring or even module-plugging.
+
+@section section_self_documenting_code Self Documenting Code
+When someone is attempting to teach or convey a programming concept, or
+even a specific code implementation, they will often write it out in
+pseudocode -- high-level informal code written out in a natural language
+with the goal of maximum readability and understandability.  Ideally,
+real source code would look like natural language sentences -- easy to read.
+
+There is a very easy step one can take to get very close to this ideal.
+Simply using descriptive function and variable names can cause a bit of
+code to transform from a dense formation of illegible notation into
+virtually complete sentences.
+
+The following code, while syntactically straightforward, doesn't provide
+much description as to what it's doing in the big picture, especially
+if it doesn't have any comments (which most code doesn't).
+
+@code
+Vector2 Outer (unsigned int const l, Vector2 const *array, int q)
+{
+    assert(l);
+    assert(array);
+    assert(q >= 1 && q <= 4);
+
+    Vector2 v(0, 0);
+    float longest = 0;
+
+    for (unsigned int i = 0; i < l; ++i)
+    {
+        if (q == 1 && (array[i].x <  0 || array[i].y <  0))
+            continue;
+        if (q == 2 && (array[i].x >= 0 || array[i].y <  0))
+            continue;
+        if (q == 3 && (array[i].x >= 0 || array[i].y >= 0))
+            continue;
+        if (q == 4 && (array[i].x <  0 || array[i].y >= 0))
+            continue;
+            
+        float d = sqrtf(array[i].x * array[i].x + array[i].y * array[i].y);
+        if (d > longest)
+        {
+            v = array[i];
+            d = longest;
+        }
+    }
+
+    return v;
+}
+@endcode
+
+This function returns the point in the specified 2-dimensional space
+quadrant that is furthest from the origin.
+
+It's entirely possible to read the code to figure out exactly what its
+return value is, and what the function arguments mean, but that takes time.
+There are two levels of identifier naming present here.  The most obvious
+one is the function name.  If it were named something like
+@c GetFurthestQuadrantPointFromOrigin , a programmer who is writing code
+elsewhere and may want to use this function would instantly knew what the
+function did, and would not need to carefully read the code to find out.  The
+second level is for a programmer that has to read the code for purposes of
+modifying it.  Then the internal variables (which are of no concern to the
+programmer in the first case) are of great importance.  Almost all the
+variable names are abbreviated or given terse, ambiguous names.  The
+programmer then has to carefully read the code over the entire scope of each
+variable to determine what each variable actually means.  Using verbose,
+descriptive names, a programmer's job of reading code can be sped up, as
+certain words will give meaningful clues as to what they are used for.
+
+Additionally, other contextual hints can be given in the usage of the
+programming syntax, similar to how natural languages give contextual hints
+to sentences by modifying certain words (e.g. verb conjugation and noun
+plurality).  For example, "he is an asshole" or "they are assholes".
+
+The above function in a self-documenting form follows.
+
+@code
+Vector2 GetFurthestQuadrantPointFromOrigin (
+    unsigned int const vector_array_length,
+    Vector2 const *vector_array,
+    int quadrant_index)
+{
+    assert(vector_array_length > 0);
+    assert(vector_array != NULL);
+    assert(quadrant_index >= 1 && quadrant_index <= 4);
+
+    Vector2 furthest_point_from_origin(0.0f, 0.0f);
+    float furthest_point_distance = 0.0f;
+
+    for (unsigned int i = 0; i < vector_array_length; ++i)
+    {
+        if (quadrant_index == 1 && (vector_array[i].x <  0.0f || vector_array[i].y <  0.0f))
+            continue;
+        if (quadrant_index == 2 && (vector_array[i].x >= 0.0f || vector_array[i].y <  0.0f))
+            continue;
+        if (quadrant_index == 3 && (vector_array[i].x >= 0.0f || vector_array[i].y >= 0.0f))
+            continue;
+        if (quadrant_index == 4 && (vector_array[i].x <  0.0f || vector_array[i].y >= 0.0f))
+            continue;
+        
+        float current_vector_distance =
+            sqrtf(vector_array[i].x * vector_array[i].x +
+                  vector_array[i].y * vector_array[i].y);
+        if (current_vector_distance > furthest_point_distance)
+        {
+            furthest_point_from_origin = vector_array[i];
+            current_vector_distance = furthest_point_distance;
+        }
+    }
+
+    return furthest_point_from_origin;
+}
+@endcode
+
+The syntatical changes to the code were as follows:
+
+@code
+    assert(l);
+    assert(array);
+@endcode
+
+changed to provide type information for the variables.  Below, it is clear
+that @c vector_array_length is an integer value, while @c vector_array
+is a pointer value.
+
+@code
+    assert(vector_array_length > 0);
+    assert(vector_array != NULL);
+@endcode
+
+The other syntactic changes were changing all zeros that are used in a
+floating-point context into floating-point literals (i.e. @c 0 into @c 0.0f ).
+Otherwise, there were no syntactic changes.  Only identifier names were
+changed to be more verbose.
+
+Furthermore, code can become even more readable if complex calculations
+are put inside descriptively-named functions and commonly used constants
+are stored in named variables.  Using temporary variables for complex
+expressions also helps, as the compiler will either optimize them out,
+or have their values in registers anyway.
+
+@code
+Vector2 GetFurthestQuadrantPointFromOrigin (
+    unsigned int const vector_array_length,
+    Vector2 const *vector_array,
+    int quadrant_index)
+{
+    assert(vector_array_length > 0);
+    assert(vector_array != NULL);
+    assert(quadrant_index >= 1 && quadrant_index <= 4);
+
+    Vector2 furthest_point_from_origin(0.0f, 0.0f);
+    float furthest_point_distance = 0.0f;
+
+    for (unsigned int i = 0; i < vector_array_length; ++i)
+    {
+        Vector2 const &current_vector = vector_array[i];
+    
+        if (current_vector.GetQuadrantIndex() != quadrant_index)
+            continue;
+        
+        float current_vector_distance = current_vector.GetLength();
+        if (current_vector_distance > furthest_point_distance)
+        {
+            furthest_point_from_origin = current_vector;
+            current_vector_distance = furthest_point_distance;
+        }
+    }
+
+    return furthest_point_from_origin;
+}
+@endcode
+
+@section section_asserts_and_exceptions Asserts And Exceptions
+Asserts and exceptions are techniques used to ensure proper operation of
+a program at runtime.  The former is a programmer's tool for use during
+development, meant to catch flaws in the state of a running program (e.g.
+ensuring the output of an algorithmically calculated value is within the
+expected range).  The latter is a method of facilitating robust error
+handling for "acceptable" program errors (e.g. the user provides an invalid
+filename).
+
+@subsection subsection_assert Asserts
+The assert is a debugging technique which is used to ensure assumptions made
+about the state of the executing program are valid.  Functionally, an assert
+is simply an expression which, if evaluates to false, will immediately abort
+the program.  The programmer can then examine the state of the program in a
+post-mortem fashion.  The assert is generally declared as some sort of
+preprocessor macro, so that it can be completely compiled out for non-debug
+builds.  One advantage of this is that the developer can generously sprinkle
+the code with asserts, without worrying about bogging down "the final product".
+
+Asserts are used to expose programmer errors during run-time.  Because the
+programmer must make assumptions as to the state of the executing program
+(e.g. a function's parameter is always positive, or a particular pointer is
+@c NULL ), the ability to actually check these assumptions is indispensable.
+
+Asserts are the means to catch flaws in the program at an early stage,
+before they become serious bugs.  If these program flaws remain unknown,
+then the programmer will continue writing code that may even become dependent
+upon the existing flaws.
+
+See @ref subsection_asserts_for_safety "Asserts For Safety" for more.
+
+@subsection subsection_exceptions Exceptions
+Exceptions are used to expose user errors (or other acceptable errors) during
+run-time.  For any program that accepts input from the user (which is
+practically every program), some measure of error handling must be done.
+
+uhhh.. words... words.
+
+@section section_making_the_compiler_force_correctness Making The Compiler Force Correctness
+In the realm of programming, the sheer number of possible mistakes is
+uncountable.  Therefore, reasonable measures one can take to protect
+against programmer errors are worth taking.  Additionally, steps can be
+taken to enforce programming consistency across the board -- something
+which humans really suck at.
+
+When subsystems of a program are written, they are intended to be used in
+a very specific way, often defined by an API.  Unfortunately, sometimes the
+API can be poorly documented, or worse still, another programmer attempting
+to use the subsystem will not even bother reading the documentation.
+
+With this in mind, the goal is to force correct usage of the subsystem by
+way of producing compile errors (preferably, though run-time errors will also
+suffice) when it is used incorrectly.  The following subsections will
+detail some methods of doing this.
+
+Remember, the compiler is your friend.  It (in theory) is the pillar of
+consistency you require to get the job done.
+
+@subsection subsection_const_correctness_for_safety Const Correctness For Safety
+Const correctness is one of the most common things that is missing from
+the majority of source code I have seen, yet it is such a valuable tool --
+providing assurance that qualified variables will not be changed by
+functions, which is a gigantic (and invaluable) assumption that can
+be used while writing and debugging code.
+
+There are many manifestations const correctness (and there are probably some
+esoteric ones I don't know about) -- note that I avoid the inconsistent
+English-language-like convention of declaring things like
+
+@code const float value @endcode
+
+and always put the const qualifier on the right side of the keyword/operator
+being qualified.
+
+@code float const value @endcode
+
+is identical in meaning to
+
+@code const float value @endcode
+
+    <ul>
+    <li><strong>Normal variable constness</strong>
+
+        E.g. @code float const tuning_coefficient @endcode
+        This is the most basic type of constness.  It renders
+        tuning_coefficient unchangeable, without using some scandalous C cast
+        or C++ const_cast business.
+        
+    <li><strong>Const mixed with pointers</strong>
+
+        Since, in pointer declarations, there is
+        more than one keyword/operator that can be qualified as const, there
+        is a larger realm of possibilities.
+
+        For example
+        @code char const *string @endcode
+        declares a pointer to a
+        string, where the characters of the string are constant.  On the other hand,
+        @code char *const string @endcode
+        declares a string, where the pointer itself is constant (remember, the
+        const qualifier modifies the keyword/operator on its left).
+
+        The const qualifier can be applied to any of the nested pointers in a
+        declaration.  For example,
+        @code char const *const *const array_of_strings @endcode
+        declares a constant pointer to an array of constant pointers to
+        strings, whose characters are constant.  Another example is
+        @code char const **const array_of_strings @endcode
+        This declaration provides a constant pointer to an array of
+        <i>non</i>-constant pointers to strings, whose characters are constant.
+        
+    <li><strong>Class method constness</strong> (e.g. "Vector::GetLength () const;")</li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    </ul>
+
+For example, examine a vector addition function, which takes two arrays of
+floating point values, and 
+
+@code
+class Tokenizer
+{
+public:
+
+    Tokenizer (char *string_to_tokenize);
+    ~Tokenizer ();
+
+    char *GetToken ();
+
+private:
+
+    ...
+};
+@endcode
+
+
+
+@subsection subsection_asserts_for_safety Asserts For Safety
+Generously lining code with assertions of expressions that may seem like
+they could be taken for granted is a very useful practice.  It may seem
+unnecessary to assert really simple or seemingly obvious expressions, but
+the set of asserts in the program act as a sort of scaffolding for the
+program, which can be thought of as a sculpture.  An assert is triggered if
+the sculpture touches the scaffolding.  Changes made to the sculpture in one
+place may cause another part of it to collapse.  However, the scaffolding
+will immediately detect the error condition.  By supplying a sufficiently
+comprehensive level of assertions, you can make your scaffolding close enough
+to the sculpture that most deviations will be detected and dealt with, before
+further changes to the sculpture depend on previous deformities that would
+have otherwise gone unnoticed.
+
+@section section_programming_language_as_syntactic_sugarcoating Programming Language As Syntactic Sugarcoating
+As programming languages get more and more abstracted, the amount of overhead
+required tends to increase (e.g. C++'s virtual function tables).  A naive
+C++ programmer might not know about implicit constructors, and would never
+realize there is an entire constructor function call happening each time.
+The earlier example of virtual function tables is also fitting.  In order to
+make a virtual function call in C++, two extra pointer dereferences must be
+done -- one to dereference the object's v-table, and the second to call the
+function which is pointed to by the appropriate v-table entry.  One can get
+the sense of how much code is actually produced by examining the intermediate
+assembler code typically generated during compilation.
+
+Ideally, a programmer would like to use all the fancy features of high level
+languages, but without the overhead involved.  Most of the time, this isn't
+possible -- because C++ polymorphic objects may depend on the runtime state of
+the program, the compiler can't skip the v-table dereferencing.
+
+However, there are some features which, with a little care, can be used
+without any undue overhead.  Function inlining is a prime example of this.
+
+@code
+struct Complex
+{
+    float m_real;
+    float m_imag;
+
+    Complex () { }
+    Complex (float real, float imag)
+    {
+        m_real = real;
+        m_imag = imag;
+    }
+    ~Complex () { }
+
+    void operator += (Complex const &operand)
+    {
+        m_real += operand.m_real;
+        m_imag += operand.m_imag;
+    }
+};
+
+void SomeFunction ()
+{
+    Complex w;
+    Complex z(1.0f, 2.0f);
+
+    scanf(" %f %f", &w.m_real, &w.m_imag);
+
+    w += z;
+}
+@endcode
+
+Note that no functions were declared as virtual.
+
+In the above example, a "dumb" compiler (that doesn't do any automatic
+inlining or optimization) would make three unnecessary function calls --
+    <ul>
+    <li>Calling the default constructor for Complex for w</li>
+    <li>Calling the destructor for z</li>
+    <li>Calling the destructor for w</li>
+    </ul>
+
+The reason these are unnecessary is because both the default constructor and
+the destructor for Complex do nothing.  The compiler would produce
+instructions to push the stack pointer, push the return address, push the
+"this" pointer of the object, call the useless function, do nothing useful
+inside the function, pop the "this" pointer, pop the return address, jump back
+to it, and then pop the previous value of the stack pointer.
+
+Additionally, there are two other function calls which don't need to be
+performed so formally.  The construction of z, if done by the "dumb" compiler,
+would involve pushing the stack pointer, pushing the return address, pushing
+the "this" pointer of the object, pushing the two parameters 1.0f and 2.0f
+(or possibly sticking one or both in a register), calling the two-parameter
+constructor for Complex, sticking the respective parameters in the appropriate
+memory locations, popping the "this" pointer, popping the return address,
+jumping back to it, and then popping the previous value of the stack pointer.
+The second function call is the in-place addition of z to w, the description
+of which will be skipped to avoid sounding redundant.
+
+This is "dumb" because many instructions are executed, when all that needs to
+be done is sticking the values 1.0f and 2.0f into the appropriate places in
+the stack (the places occupied by z.m_real and z.m_imag).  In this example
+(and in many other analogous cases), the compiler knows, at compile time, what
+the stack-relative address of all the variables will be.  Thus, the compiler
+can generate the minimal code necessary to accomplish the task -- two
+instructions -- stick 1.0f into z.m_real's place in the stack, and then stick
+2.0f into z.m_imag's place in the stack.
+
+This is accomplished by inline functions (but also by smart compilers which
+will automatically inline functions when appropriate).
+
+Complex now becomes
+
+@code
+struct Complex
+{
+    float m_real;
+    float m_imag;
+
+    inline Complex () { }
+    inline Complex (float real, float imag)
+    {
+        m_real = real;
+        m_imag = imag;
+    }
+    inline ~Complex () { }
+
+    inline void operator += (Complex const &operand)
+    {
+        m_real += operand.m_real;
+        m_imag += operand.m_imag;
+    }
+};
+@endcode
+
+Furthermore, @c SomeFunction now nicely boils down to a bit of pseudo-assember:
+
+@code
+void SomeFunction ()
+{
+    // make room for w and z on the stack
+    stack_pointer -= 16; // 4 * sizeof(float)
+    // *(stack_pointer +  0) is z.m_imag
+    // *(stack_pointer +  4) is z.m_real
+    // *(stack_pointer +  8) is w.m_imag
+    // *(stack_pointer + 12) is w.m_real
+    *(stack_pointer + 12) = 1.0f;
+    *(stack_pointer +  8) = 2.0f;
+
+    // the assembler for this function call will not change
+    scanf(" %f %f", &w.m_real, &w.m_imag);
+
+    *(stack_pointer + 12) += *(stack_pointer + 4); // w.m_real += z.m_real;
+    *(stack_pointer +  8) += *(stack_pointer + 0); // w.m_imag += z.m_imag;
+
+    // pop everything off the stack
+    stack_pointer += 16; // 4 * sizeof(float)
+
+    jump back to the caller of SomeFunction
+}
+@endcode
+
+The point of all this is to demonstrate that certain language features can be
+used in such a way so that all of the overhead one would normally assume
+accompanies the high-levelness of the feature just boils away, leaving only
+the bare minimum -- as if it were handwritten assembler.
+
+@subsection subsection_templates_as_syntactic_sugarcoating Templates As Syntactic Sugarcoating
+blah -- compare C language, weak-typed void* generalized code with
+strong-typed template code, pointing out that template code is instanced.
+
+
+@section section_code_reuse_and_abstraction Code Reuse And Abstraction
+It is useful for many reasons to make generalized and reuseable code.
+
+The most obvious reason is that writing generalized code once will save time
+over later rewriting limited code to accomodate.  Similarly, using abstraction
+(i.e. class inheritance) can save time by combining sections of systems
+that share functionality.  Furthermore, extending a generalized baseclass
+can be much easier than rewriting a specialized class.
+
+Another reason, which you may or may not care about, is code footprint size.
+It should be noted that templates, although a very good way to generalize
+code, will cause multiple instances of each function to be created, one for
+each uniquely-typed instantiation of the template.
+
+A third reason, which may arguably be the most important, is code quality.
+Code can be tested to various degrees.  Testing a section of generalized
+code which is used everywhere in your program (e.g. a vector or a linked
+list) is more efficient than testing many sections of specialized code.
+The relatively small section of generalized code is also preferable because
+humans can only comprehend a limited amount of conceptual information at
+any given time.  Limiting the expanse of parallel concepts will simplify
+understanding of the program's systems.  In other words, simple is better.
+
+@section section_contextual_hints Contextual Hints
+In order for maximum code-readability (which is especially important while
+code-diving), certain hints can provide the reader with a small extra bit
+of information about the contents of the code, without having to explicitly
+investigate further.  Contextual hints are a good way to achieve this.  By
+using very simple conventions regarding variable/function nomenclature, as
+well as inside expressions, the reader will be able to glean certain facts
+such as the type of a variable.
+
+Take this block of code, as if it had come out of the middle of some large,
+complex function.
+
+@code
+    x = 0;
+    if (!y)
+        return;
+    while (*y)
+    {
+        ++y;
+        x += 5;
+    }
+@endcode
+
+The variables are intentionally named badly, to illustrate how adding
+contextual hints can improve readability significantly.
+
+@code
+    x = 0.0f;
+    if (y == NULL)
+        return;
+    while (*y != '\0')
+    {
+        ++y;
+        x += 5.0f;
+    }
+@endcode
+
+From the added hints, we can see that @c x is likely a @c float ,
+while @c y is likely a @c char @c * .  This section of code is
+conceivably to calculate the total width of the characters in the
+ASCII string pointed to by @c y .
+
+The declarations for @c x and @c y may be in a piece of code that
+is inconvenient to check.  Being able to forgo looking up the
+declaration of variables while code-diving saves a huge amount of time,
+since the majority of time spent during code augmentation and
+maintenence is spent reading and understanding it.
+
+@section section_reentrancy_and_singletons Reentrancy And Singletons
+
+@section section_code_maturity Code Maturity
+
+*/
+

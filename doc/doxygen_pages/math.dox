@@ -1,0 +1,243 @@
+/** @page math Math
+
+Math-related code is stored in the @ref section_lib_math "/lib/math/"
+directory.
+
+Contents
+    <ul>
+    <li>@ref section_math_namespace "Math Namespace"</li>
+    <li>@ref section_vector "Vector"</li>
+    <li>@ref section_matrix2 "Matrix2"</li>
+    <li>@ref section_simpletransform2 "SimpleTransform2"</li>
+    <li>@ref section_transform2 "Transform2"</li>
+    </ul>
+
+@section section_math_namespace Math Namespace
+@ref Xrb::Math contains mathematical structures and functions for the
+many systems which require the use of complex formulae.
+
+Note: XuqRijBuh uses degrees instead of radians througout.  Although
+mathematically, radians are more natural, degrees have been chosen
+so that users may better interact with them.  Because radians are based
+on the irrational value of pi, they are not user friendly when it comes to
+printing and reading angles in decimal notation.  Thus, all trigonometric
+functions which accept angles use degrees unless otherwise noted.
+
+Mathematical functions residing in @ref Xrb::Math
+    <ul>
+    <li>@ref Xrb::Math::Radians </li>
+    <li>@ref Xrb::Math::Degrees </li>
+    <li>@ref Xrb::Math::GetCanonicalAngle </li>
+    <li>@ref Xrb::Math::Sin </li>
+    <li>@ref Xrb::Math::Asin </li>
+    <li>@ref Xrb::Math::Cos </li>
+    <li>@ref Xrb::Math::Acos </li>
+    <li>@ref Xrb::Math::Tan </li>
+    <li>@ref Xrb::Math::Atan </li>
+    <li>@ref Xrb::Math::Atan2 </li>
+    <li>@ref Xrb::Math::Sqrt </li>
+    <li>@ref Xrb::Math::Pow </li>
+    <li>@ref Xrb::Math::ExpBaseE </li>
+    <li>@ref Xrb::Math::ExpBase10 </li>
+    <li>@ref Xrb::Math::LogBaseE </li>
+    <li>@ref Xrb::Math::LogBase10 </li>
+    <li>@ref Xrb::Math::Nan </li>
+    <li>@ref Xrb::Math::FastSin </li>
+    <li>@ref Xrb::Math::FastAsin </li>
+    <li>@ref Xrb::Math::FastCos </li>
+    <li>@ref Xrb::Math::FastAcos </li>
+    <li>@ref Xrb::Math::FastTan </li>
+    <li>@ref Xrb::Math::FastAtan </li>
+    <li>@ref Xrb::Math::FastAtan2 </li>
+    <li>@ref Xrb::Math::FastSqrt </li>
+    <li>@ref Xrb::Math::FastPow </li>
+    <li>@ref Xrb::Math::Floor </li>
+    <li>@ref Xrb::Math::Ceiling </li>
+    <li>@ref Xrb::Math::Round </li>
+    </ul>
+
+@section section_vector Vector
+@ref Xrb::Vector is a templatized vector construct (with dimension and
+component type being the template arguments), geared towards function
+inlining and speed.  The intent is that all the syntactical suger-coating
+will melt away when compiled, leaving instructions that look like hand-written
+assembly operating on arrays.
+
+@subsection subsection_vector_identity Static Zero Vector
+Because it is so commonly used, @c Vector contains a static member variable
+to contain the zero vector.  This static variable must be instantiated
+for each template instance of @c Vector .
+
+@subsection subsection_floatvector2 FloatVector2
+Since @c Vector is templatized so that the dimension and component type can
+be specified on an as-needed basis, XuqRijBuh provides an instance of
+@c Vector<Float,2> ( see @ref Xrb::FloatVector2 ) which is used for all the
+@ref Xrb::Engine2 computation as well as for OpenGL rendering.
+
+@section section_matrix2 Matrix2
+@ref Xrb::Matrix2 is a templatized matrix class which performs
+pseudo-3-dimensional transformations.  What this means is that the
+matrix is of form:
+
+@code
+    [ A B X ]
+    [ C D Y ]
+    [ 0 0 1 ]
+@endcode
+
+Only @c A , @c B , @c X , @c C , @c D , and @c Y are stored.  This form
+of matrix is closed under multiplication -- any two matrices of this form,
+when multiplied together, will result in another matrix of this form.  The
+identity matrix is also included in the set of possible matrices.
+
+@c Matrix2 provides operator overloads for interaction with @c Vector
+types of dimension 2.
+
+The reason the matrix is designed like this, as opposed to a natural 2 by 2
+matrix, is so translations can be performed on vectors by matrix
+multiplication.  In order for this form of matrix to actually perform 
+translation on a vector (and for the vector's dimension to even match up with
+the matrix's), the vector must have the value 1 in its 3rd component.
+
+@code
+    [ A B X ]   [ P ]   [ A*P + B*Q + X ]
+    [ C D Y ] * [ Q ] = [ C*P + D*Q + Y ]
+    [ 0 0 1 ]   [ 1 ]   [       1       ]
+@endcode
+
+There are three operations that can be done to a matrix: scaling, rotation,
+and translation.
+
+@subsection subsection_matrix2_scaling Matrix2 Scaling
+Scaling is done by multiplying on the left using a matrix of this form:
+
+@code
+    [ R 0 0 ]
+    [ 0 S 0 ]
+    [ 0 0 1 ]
+@endcode
+
+@c R gives the scaling factor in the X dimension, while @c S gives the scaling
+factor in the Y dimension.  If @c R and @c S are both 1, the matrix is the
+identity.
+
+@subsection subsection_matrix2_rotation Matrix2 Rotation
+Rotation (counterclockwise) is done by multiplying on the left using a matrix
+of this form:
+
+@code
+    [ cos W  -sin W   0 ]
+    [ sin W   cos W   0 ]
+    [   0       0     1 ]
+@endcode
+
+@c W gives the angle, in degrees, to rotate in a counterclockwise direction.
+If @c W is 0, then the rotation matrix becomes the identity.
+
+@subsection subsection_matrix2_translation Matrix2 Translation
+Translation is done by multiplying on the left using a matrix of this form:
+
+@code
+    [ 1 0 X ]
+    [ 0 1 Y ]
+    [ 0 0 1 ]
+@endcode
+
+@c X and @c Y give the amount to be translated.  If @c X and @c Y are both
+set to 0, the translation matrix becomes the identity.
+
+@subsection subsection_matrix2_identity Static Identity Matrix
+Because it is so commonly used, @c Matrix2 contains a static member variable
+to contain the identity matrix.  This static variable must be instantiated
+for each template instance of @c Matrix2 .
+
+@subsection subsection_matrix2_float FloatMatrix2
+Since @c Matrix2 is templatized, so that the component type can be specified
+on an as-needed basis, XuqRijBuh provides an instance of @c Matrix2<Float>
+( see @ref Xrb::Float ) which is used for all the @ref Xrb::Engine2
+computation as well as for OpenGL rendering.
+
+@section section_transform2 Transform2
+The difference between @ref Xrb::Matrix2 and @ref Xrb::Transform2 is that
+@c Matrix2 stores the composition of potentially limitless transformations
+in its native matrix form, while @c Transform2 stores separately the
+components of transformation (scaling, rotation, and translation) and only
+produces a native-form matrix when necessary.  This is done so that specific
+components of transformations can be changed without having to do expensive
+matrix inversions.  The space of possible transformations using this form
+is more limited than that of @c Matrix2 , but are sufficient for the systems
+that use them.
+
+A @c Transform2 is manipulated using its component transformations, and then
+at the latest necessary time, a @c Matrix2 is composited using those values
+and then cached for likely repeated use.  There are actually two cached
+values, one being a composition of scaling and rotation, the other being a
+composition of the first cache @c Matrix2 and translation.
+
+A @c Transform2 is composited in one of the two following manners.
+
+@code
+    [ a b x ]   [ 1 0 X ]   [ cos W  -sin W   0 ]   [ R 0 0 ]
+    [ c d y ] = [ 0 1 Y ] * [ sin W   cos W   0 ] * [ 0 S 0 ]
+    [ 0 0 1 ]   [ 0 0 1 ]   [   0       0     1 ]   [ 0 0 1 ]
+
+    [ a b x ]   [ cos W  -sin W   0 ]   [ R 0 0 ]   [ 1 0 X ]   
+    [ c d y ] = [ sin W   cos W   0 ] * [ 0 S 0 ] * [ 0 1 Y ]
+    [ 0 0 1 ]   [   0       0     1 ]   [ 0 0 1 ]   [ 0 0 1 ]
+@endcode
+
+In the first mode, scaling is applied first, then rotation, then
+translation (remember, matrices are multiplied on the left).  This sort
+of component-wise transformation is adapted for physical objects moving and
+rotating in space (and potentially scaling as well).  The scaling and
+rotation happens about the object's center, whereas the translation is
+relative to world coordinates.
+
+The second mode translates coordinates first, then scales, and finally
+rotates.  This is used for transforming world coordinates into view
+coordinates ( see @ref Xrb::Engine2::WorldView ).
+
+The @ref Xrb::Transform2::m_post_translate property is what controls
+wether or not the translation is done before or after.  A value of true
+indicates that the translation will be done after scaling and rotation
+(as in the first mode), while a value of false indicates the translation
+will be done first (as in the second mode).  @ref Xrb::Engine2::Object uses
+a @c Transform2 with a @c m_post_translation value of true ( see
+@ref Xrb::Engine2::Object::m_transform ), while @ref Xrb::Engine2::WorldView
+uses a @c Transform2 with a @c m_post_translation value of false ( see
+@ref Xrb::Engine2::WorldView::m_transform ).
+
+The method that is used to calculate and return the composite @c Matrix2
+is @ref Xrb::Transform2::GetTransformation .
+
+@section section_simpletransform2 SimpleTransform2
+@ref Xrb::SimpleTransform2 performs a function similar to @ref Xrb::Transform2
+except that there is no rotation involved.  A @c SimpleTransform2 is a
+matrix of the form
+
+@code
+    [ R 0 X ]
+    [ 0 S Y ]
+    [ 0 0 1 ]
+@endcode
+
+@c R and @c S provide scaling factors like those mentioned in
+@ref section_matrix2 "Matrix2", while @c X and @c Y provide translation
+vector components.
+
+A subtle difference is that there is no @c m_post_translate property.
+@c SimpleTransform2 provides operator overloads for @c SimpleTransform2 /
+@c Vector multiplication, with the effective transformation component order
+being scaling then translation.
+
+Matrices of the form that @c SimpleTransform2 takes are closed under
+multiplication, thus matrix/matrix multiplication operators are provided
+(unlike in @c Transform2 ).  Multiplication between @c Matrix2 and
+@c SimpleTransform2 is also valid, resulting in a @c Matrix2 type matrix.
+Thus, operators are provided to accomplish this type of multiplication.
+
+@c SimpleTransform2 is mainly used in the GUI system, as its scaling and
+translating abilities are very well suited for transforming screen
+coordinates.
+
+*/

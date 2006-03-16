@@ -1,0 +1,57 @@
+// ///////////////////////////////////////////////////////////////////////////
+// dis_ballistic.h by Victor Dods, created 2005/12/06
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#if !defined(_DIS_BALLISTIC_H_)
+#define _DIS_BALLISTIC_H_
+
+#include "dis_gameobject.h"
+
+using namespace Xrb;
+
+namespace Dis
+{
+
+class Ballistic : public GameObject
+{
+public:
+
+    Ballistic (
+        Float impact_damage,
+        Float time_to_live,
+        GameObjectReference<GameObject> const &owner)
+        :
+        GameObject(T_BALLISTIC),
+        m_owner(owner)
+    {
+        ASSERT1(time_to_live > 0.0f);        
+        m_impact_damage = impact_damage;
+        m_time_to_live = time_to_live;
+    }
+
+    virtual void Think (Float time, Float frame_dt);
+    virtual void Collide (
+        GameObject *collider,
+        FloatVector2 const &collision_location,
+        FloatVector2 const &collision_normal,
+        Float collision_force,
+        Float time,
+        Float frame_dt);
+
+protected:
+
+    Float m_impact_damage;
+    Float m_time_to_live;
+    GameObjectReference<GameObject> m_owner;
+}; // end of class Ballistic
+
+} // end of namespace Dis
+
+#endif // !defined(_DIS_BALLISTIC_H_)
+

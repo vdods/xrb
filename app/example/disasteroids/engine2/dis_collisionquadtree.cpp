@@ -1,0 +1,807 @@
+// ///////////////////////////////////////////////////////////////////////////
+// dis_collisionquadtree.cpp by Victor Dods, created 2005/11/15
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+#include "dis_collisionquadtree.h"
+
+#include "dis_gameobject.h"
+
+using namespace Xrb;
+
+namespace Dis
+{
+
+CollisionQuadTree::CollisionQuadTree (
+    FloatVector2 const &center,
+    Float const half_side_length,
+    Uint8 const depth)
+    :
+    Engine2::QuadTree(NULL)
+{
+    Initialize<CollisionQuadTree>(center, half_side_length, depth);
+    SetType(Engine2::QTT_PHYSICS_HANDLER);
+}
+
+CollisionQuadTree *CollisionQuadTree::Create (
+    Float const half_side_length,
+    Uint8 const depth)
+{
+    return new CollisionQuadTree(FloatVector2::ms_zero, half_side_length, depth);
+}
+
+bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
+    FloatVector2 const &area_center,
+    Float const area_radius,
+    bool const check_nonsolid_collision_entities) const
+{
+    // if there are no objects here or below, just return false
+    if (GetSubordinateObjectCount() == 0)
+        return false;
+
+    // return false if the area doesn't intersect this node
+    if (!GetDoesAreaOverlapQuadBounds(area_center, area_radius))
+        return false;
+
+    // check if the area overlaps any object in this node's list.
+    for (ObjectSetConstIterator it = m_object_set.begin(),
+                                it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object const *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        if ((object->GetTranslation() - area_center).GetLength()
+            <
+            (object->GetRadius() + area_radius))
+        {
+            Engine2::Entity const *entity = dynamic_cast<Engine2::Entity const *>(object);
+            ASSERT1(entity != NULL)
+            if (entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+                return true;
+            else if (check_nonsolid_collision_entities &&
+                     entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+                return true;
+        }
+    }
+
+    // if there are child nodes, call this method on each until one returns true
+    if (GetHasChildren())
+        return
+            GetChild<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntity(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities)
+            ||
+            GetChild<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntity(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities)
+            ||
+            GetChild<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntity(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities)
+            ||
+            GetChild<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntity(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities);
+    else
+        return false;
+}
+
+bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
+    FloatVector2 const &area_center,
+    Float const area_radius,
+    bool const check_nonsolid_collision_entities,
+    Float const object_layer_side_length,
+    Float const half_object_layer_side_length) const
+{
+    // if there are no objects here or below, just return false
+    if (GetSubordinateObjectCount() == 0)
+        return false;
+
+    // return false if the area doesn't intersect this node
+    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+            area_center,
+            area_radius,
+            object_layer_side_length,
+            half_object_layer_side_length))
+        return false;
+
+    // check if the area overlaps any object in this node's list.
+    for (ObjectSetConstIterator it = m_object_set.begin(),
+                                it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object const *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        FloatVector2 object_translation(object->GetTranslation());
+        FloatVector2 adjusted_area_center(area_center);
+
+        if (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
+            adjusted_area_center[Dim::X] += object_layer_side_length;
+        else if (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
+            adjusted_area_center[Dim::X] -= object_layer_side_length;
+
+        if (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
+            adjusted_area_center[Dim::Y] += object_layer_side_length;
+        else if (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
+            adjusted_area_center[Dim::Y] -= object_layer_side_length;
+
+        if ((object_translation - adjusted_area_center).GetLength()
+            <
+            (object->GetRadius() + area_radius))
+        {
+            Engine2::Entity const *entity = dynamic_cast<Engine2::Entity const *>(object);
+            ASSERT1(entity != NULL)
+            if (entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+                return true;
+            else if (check_nonsolid_collision_entities &&
+                     entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+                return true;
+        }
+    }
+
+    // if there are child nodes, call this method on each until one returns true
+    if (GetHasChildren())
+        return
+            GetChild<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntityWrapped(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities,
+                object_layer_side_length,
+                half_object_layer_side_length)
+            ||
+            GetChild<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntityWrapped(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities,
+                object_layer_side_length,
+                half_object_layer_side_length)
+            ||
+            GetChild<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntityWrapped(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities,
+                object_layer_side_length,
+                half_object_layer_side_length)
+            ||
+            GetChild<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntityWrapped(
+                area_center,
+                area_radius,
+                check_nonsolid_collision_entities,
+                object_layer_side_length,
+                half_object_layer_side_length);
+    else
+        return false;
+}
+
+void CollisionQuadTree::LineTrace (
+    FloatVector2 const &trace_start,
+    FloatVector2 const &trace_vector,
+    Float const trace_radius,
+    bool const check_nonsolid_collision_entities,
+    LineTraceBindingSet *const line_trace_binding_set)
+{
+    ASSERT1(!trace_vector.GetIsZero())
+    ASSERT1(trace_radius >= 0.0f)
+    ASSERT1(line_trace_binding_set != NULL)
+
+    // if this quad node has no subordinates, return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // if this quad node doesn't intersect the line, return
+    Float a = trace_vector | trace_vector;
+    {
+        FloatVector2 p_minus_c = trace_start - GetCenter();
+        Float R = GetRadius() + trace_radius;
+        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float c = (p_minus_c | p_minus_c) - R * R;
+        Float determinant = b * b - 4.0f * a * c;
+        if (determinant < 0.0f)
+            return;
+    }
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->LineTrace(
+                trace_start,
+                trace_vector,
+                trace_radius,
+                check_nonsolid_collision_entities,
+                line_trace_binding_set);
+
+    // check the line against the objects in this node
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(entity != NULL)
+
+        // don't check nonsolid collision entities if
+        // check_nonsolid_collision_entities isn't set.
+        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+            !check_nonsolid_collision_entities)
+            continue;
+
+        // check the trace line against the object
+        FloatVector2 p_minus_c = trace_start - entity->GetTranslation();
+        Float R = entity->GetRadius() + trace_radius;
+        // a is calculated above
+        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float c = (p_minus_c | p_minus_c) - R * R;
+        Float determinant = b * b - 4.0f * a * c;
+        if (determinant < 0.0f)
+            continue;
+
+        Float radical_part = Math::Sqrt(determinant);
+        Float t0 = (-b - radical_part) / (2.0f * a);
+        Float t1 = (-b + radical_part) / (2.0f * a);
+
+        if (t1 < 0.0f)
+            continue;
+
+        if (t0 > 1.0f)
+            continue;
+
+        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
+        line_trace_binding_set->insert(
+            LineTraceBinding(
+                Max(0.0f, t0),
+                static_cast<GameObject *>(entity->GetEntityGuts())));
+    }
+}
+
+void CollisionQuadTree::LineTraceWrapped (
+    FloatVector2 const &trace_start,
+    FloatVector2 const &trace_vector,
+    Float const trace_radius,
+    bool const check_nonsolid_collision_entities,
+    LineTraceBindingSet *const line_trace_binding_set,
+    Float const object_layer_side_length,
+    Float const half_object_layer_side_length)
+{
+    ASSERT1(!trace_vector.GetIsZero())
+    ASSERT1(trace_radius >= 0.0f)
+    ASSERT1(line_trace_binding_set != NULL)
+
+    // if this quad node has no subordinates, return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // if this quad node doesn't intersect the line, return
+    Float a = trace_vector | trace_vector;
+    FloatVector2 trace_center(trace_start + 0.5f * trace_vector);
+    {
+        FloatVector2 adjusted_center(GetCenter());
+
+        // TODO: think of a way to adjust the quadnode center for this
+        // maybe the length of the trace will have to be limited to 1/2
+        // the object layer side length.
+        if (adjusted_center[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
+            adjusted_center[Dim::X] -= object_layer_side_length;
+        else if (adjusted_center[Dim::X] - trace_center[Dim::X] < -half_object_layer_side_length)
+            adjusted_center[Dim::X] += object_layer_side_length;
+
+        if (adjusted_center[Dim::Y] - trace_center[Dim::Y] > half_object_layer_side_length)
+            adjusted_center[Dim::Y] -= object_layer_side_length;
+        else if (adjusted_center[Dim::Y] - trace_center[Dim::Y] < -half_object_layer_side_length)
+            adjusted_center[Dim::Y] += object_layer_side_length;
+
+        FloatVector2 p_minus_c = trace_start - adjusted_center;
+        Float R = GetRadius() + trace_radius;
+        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float c = (p_minus_c | p_minus_c) - R * R;
+        Float determinant = b * b - 4.0f * a * c;
+        if (determinant < 0.0f)
+            return;
+    }
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->LineTraceWrapped(
+                trace_start,
+                trace_vector,
+                trace_radius,
+                check_nonsolid_collision_entities,
+                line_trace_binding_set,
+                object_layer_side_length,
+                half_object_layer_side_length);
+
+    // check the line against the objects in this node
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(entity != NULL)
+
+        // don't check nonsolid collision entities if
+        // check_nonsolid_collision_entities isn't set.
+        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+            !check_nonsolid_collision_entities)
+            continue;
+
+        FloatVector2 adjusted_entity_translation(entity->GetTranslation());
+
+        if (adjusted_entity_translation[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
+            adjusted_entity_translation[Dim::X] -= object_layer_side_length;
+        else if (adjusted_entity_translation[Dim::X] - trace_center[Dim::X] < -half_object_layer_side_length)
+            adjusted_entity_translation[Dim::X] += object_layer_side_length;
+
+        if (adjusted_entity_translation[Dim::Y] - trace_center[Dim::Y] > half_object_layer_side_length)
+            adjusted_entity_translation[Dim::Y] -= object_layer_side_length;
+        else if (adjusted_entity_translation[Dim::Y] - trace_center[Dim::Y] < -half_object_layer_side_length)
+            adjusted_entity_translation[Dim::Y] += object_layer_side_length;
+
+        // check the trace line against the object
+        FloatVector2 p_minus_c = trace_start - adjusted_entity_translation;
+        Float R = entity->GetRadius() + trace_radius;
+        // a is calculated above
+        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float c = (p_minus_c | p_minus_c) - R * R;
+        Float determinant = b * b - 4.0f * a * c;
+        if (determinant < 0.0f)
+            continue;
+
+        Float radical_part = Math::Sqrt(determinant);
+        Float t0 = (-b - radical_part) / (2.0f * a);
+        Float t1 = (-b + radical_part) / (2.0f * a);
+
+        if (t1 < 0.0f)
+            continue;
+
+        if (t0 > 1.0f)
+            continue;
+
+        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
+        line_trace_binding_set->insert(
+            LineTraceBinding(
+                Max(0.0f, t0),
+                static_cast<GameObject *>(entity->GetEntityGuts())));
+    }
+}
+
+void CollisionQuadTree::AreaTrace (
+    FloatVector2 const &trace_area_center,
+    Float const trace_area_radius,
+    bool const check_nonsolid_collision_entities,
+    AreaTraceList *const area_trace_list)
+{
+    ASSERT1(trace_area_radius > 0.0f)
+    ASSERT1(area_trace_list != NULL)
+
+    // if this quad node has no subordinates, return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // if this quad node doesn't intersect the line, return
+    if (!GetDoesAreaOverlapQuadBounds(trace_area_center, trace_area_radius))
+        return;
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->AreaTrace(
+                trace_area_center,
+                trace_area_radius,
+                check_nonsolid_collision_entities,
+                area_trace_list);
+
+    // check the line against the objects in this node
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(entity != NULL)
+
+        // don't check nonsolid collision entities if
+        // check_nonsolid_collision_entities isn't set.
+        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+            !check_nonsolid_collision_entities)
+            continue;
+
+        // don't add it if the entity isn't touching the trace area
+        FloatVector2 center_to_center(entity->GetTranslation() - trace_area_center);
+        if (center_to_center.GetLength() >= entity->GetRadius() + trace_area_radius)
+            continue;
+
+        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
+        area_trace_list->push_back(static_cast<GameObject *>(entity->GetEntityGuts()));
+    }
+}
+
+void CollisionQuadTree::AreaTraceWrapped (
+    FloatVector2 const &trace_area_center,
+    Float const trace_area_radius,
+    bool const check_nonsolid_collision_entities,
+    AreaTraceList *const area_trace_list,
+    Float const object_layer_side_length,
+    Float const half_object_layer_side_length)
+{
+    ASSERT1(trace_area_radius > 0.0f)
+    ASSERT1(area_trace_list != NULL)
+
+    // if this quad node has no subordinates, return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // if this quad node doesn't intersect the line, return
+    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+            trace_area_center,
+            trace_area_radius,
+            object_layer_side_length,
+            half_object_layer_side_length))
+        return;
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->AreaTraceWrapped(
+                trace_area_center,
+                trace_area_radius,
+                check_nonsolid_collision_entities,
+                area_trace_list,
+                object_layer_side_length,
+                half_object_layer_side_length);
+
+    // check the line against the objects in this node
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(entity != NULL)
+
+        // don't check nonsolid collision entities if
+        // check_nonsolid_collision_entities isn't set.
+        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+            !check_nonsolid_collision_entities)
+            continue;
+
+        FloatVector2 adjusted_entity_translation(entity->GetTranslation());
+
+        if (adjusted_entity_translation[Dim::X] - trace_area_center[Dim::X] > half_object_layer_side_length)
+            adjusted_entity_translation[Dim::X] -= object_layer_side_length;
+        else if (adjusted_entity_translation[Dim::X] - trace_area_center[Dim::X] < -half_object_layer_side_length)
+            adjusted_entity_translation[Dim::X] += object_layer_side_length;
+
+        if (adjusted_entity_translation[Dim::Y] - trace_area_center[Dim::Y] > half_object_layer_side_length)
+            adjusted_entity_translation[Dim::Y] -= object_layer_side_length;
+        else if (adjusted_entity_translation[Dim::Y] - trace_area_center[Dim::Y] < -half_object_layer_side_length)
+            adjusted_entity_translation[Dim::Y] += object_layer_side_length;
+
+        // don't add it if the entity isn't touching the trace area
+        FloatVector2 center_to_center(adjusted_entity_translation - trace_area_center);
+        if (center_to_center.GetLength() >= entity->GetRadius() + trace_area_radius)
+            continue;
+
+        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
+        area_trace_list->push_back(static_cast<GameObject *>(entity->GetEntityGuts()));
+    }
+}
+
+void CollisionQuadTree::CollideEntity (
+    Engine2::Entity *const entity,
+    Float const frame_dt,
+    CollisionPairList *const collision_pair_list)
+{
+    ASSERT1(entity != NULL)
+    ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+    ASSERT1(collision_pair_list != NULL)
+
+    Float const adjusted_dt = frame_dt;//1.0f/40.0f;
+    Float const dt_squared = adjusted_dt * adjusted_dt;
+
+    // if there are no objects here or below, just return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // return if the area doesn't intersect this node
+    if (!GetDoesAreaOverlapQuadBounds(entity->GetTranslation(), entity->GetRadius()))
+        return;
+
+    // if there are child nodes, call CollideEntity on each
+    if (GetHasChildren())
+    {
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->CollideEntity(
+                entity,
+                frame_dt,
+                collision_pair_list);
+
+        // if the minimum object size for this node is larger than the
+        // collision entity, return (because it will skip all objects
+        // below in the loop anyway)
+        if (!GetIsAllowableObjectRadius(entity))
+            return;
+    }
+
+    // check if the entity overlaps any object in this node's list.
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        // don't collide the entity with itself
+        if (object == static_cast<Engine2::Object *>(entity))
+            continue;
+
+        // this is a quick and easy way to avoid calculating
+        // the same collision pair twice
+        if (object->GetRadius() > entity->GetRadius())
+            continue;
+        else if (object->GetRadius() == entity->GetRadius() &&
+                 object > static_cast<Engine2::Object *>(entity))
+            continue;
+
+        Float r = entity->GetRadius() + object->GetRadius();
+        FloatVector2 P = entity->GetTranslation() - object->GetTranslation();
+
+        if (P.GetLength() >= r)
+            continue;
+
+        Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(other_entity != NULL)
+
+        // calculate the collision
+
+        FloatVector2 V = entity->GetVelocity() - other_entity->GetVelocity();
+        FloatVector2 collision_location(
+            (other_entity->GetScaleFactor() * entity->GetTranslation() + entity->GetScaleFactor() * other_entity->GetTranslation())
+            /
+            (entity->GetScaleFactor() + other_entity->GetScaleFactor()));
+        FloatVector2 collision_normal;
+        if (P.GetIsZero())
+            collision_normal = FloatVector2(1.0f, 0.0f);
+        else
+            collision_normal = P.GetNormalization();
+        Float collision_force = 0.0f;
+
+        if ((V | P) < 0.0f && // and if they're moving toward each other
+            entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
+            other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
+            GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
+                DStaticCast<GameObject const *>(entity->GetEntityGuts()),
+                DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
+        {
+            Float M = 1.0f / entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
+            FloatVector2 Q(P + adjusted_dt*V);
+            FloatVector2 A(dt_squared*M*collision_normal);
+
+            Float a = A | A;
+            Float b = 2.0f * (Q | A);
+            Float c = (Q | Q) - r*r;
+            Float discriminant = b*b - 4.0f*a*c;
+            if (discriminant >= 0.0f)
+            {
+                Float temp0 = sqrt(discriminant);
+                Float temp1 = 2.0f * a;
+
+                Float force0 = 0.8f * (-b - temp0) / temp1;
+                Float force1 = 0.8f * (-b + temp0) / temp1;
+
+                Float min_force = Min(force0, force1);
+                Float max_force = Max(force0, force1);
+                if (min_force > 0.0f)
+                    collision_force = min_force;
+                else if (max_force > 0.0f)
+                    collision_force = max_force;
+                else
+                    collision_force = 0.0f;
+
+                collision_force *= (1.0f + entity->GetElasticity() * other_entity->GetElasticity());
+
+                entity->AccumulateForce(collision_force*collision_normal);
+                other_entity->AccumulateForce(-collision_force*collision_normal);
+            }
+        }
+
+        // record the collision in the collision pair list.
+        collision_pair_list->push_back(
+            CollisionPair(
+                entity,
+                other_entity,
+                collision_location,
+                collision_normal,
+                collision_force));
+    }
+}
+
+void CollisionQuadTree::CollideEntityWrapped (
+    Engine2::Entity *const entity,
+    Float const frame_dt,
+    CollisionPairList *const collision_pair_list,
+    Float const object_layer_side_length,
+    Float const half_object_layer_side_length)
+{
+    ASSERT1(entity != NULL)
+    ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+    ASSERT1(collision_pair_list != NULL)
+
+    Float const adjusted_dt = frame_dt;//1.0f/40.0f;
+    Float const dt_squared = adjusted_dt * adjusted_dt;
+
+    // if there are no objects here or below, just return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    // return if the area doesn't intersect this node
+    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+            entity->GetTranslation(),
+            entity->GetRadius(),
+            object_layer_side_length,
+            half_object_layer_side_length))
+        return;
+
+    // if there are child nodes, call CollideEntity on each
+    if (GetHasChildren())
+    {
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->CollideEntityWrapped(
+                entity,
+                frame_dt,
+                collision_pair_list,
+                object_layer_side_length,
+                half_object_layer_side_length);
+
+        // if the minimum object size for this node is larger than the
+        // collision entity, return (because it will skip all objects
+        // below in the loop anyway)
+        if (!GetIsAllowableObjectRadius(entity))
+            return;
+    }
+
+    // check if the entity overlaps any object in this node's list.
+    for (ObjectSetIterator it = m_object_set.begin(),
+                           it_end = m_object_set.end();
+         it != it_end;
+         ++it)
+    {
+        Engine2::Object *object = *it;
+        ASSERT1(object != NULL)
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+
+        // don't collide the entity with itself
+        if (object == static_cast<Engine2::Object *>(entity))
+            continue;
+
+        // this is a quick and easy way to avoid calculating
+        // the same collision pair twice
+        if (object->GetRadius() > entity->GetRadius())
+            continue;
+        else if (object->GetRadius() == entity->GetRadius() &&
+                 object > static_cast<Engine2::Object *>(entity))
+            continue;
+
+        FloatVector2 ce0_translation(entity->GetTranslation());
+        FloatVector2 ce1_translation(object->GetTranslation());
+
+        if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > half_object_layer_side_length)
+            ce1_translation[Dim::X] -= object_layer_side_length;
+        else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -half_object_layer_side_length)
+            ce1_translation[Dim::X] += object_layer_side_length;
+
+        if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > half_object_layer_side_length)
+            ce1_translation[Dim::Y] -= object_layer_side_length;
+        else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -half_object_layer_side_length)
+            ce1_translation[Dim::Y] += object_layer_side_length;
+
+        Float r = entity->GetRadius() + object->GetRadius();
+        FloatVector2 P = ce0_translation - ce1_translation;
+
+        if (P.GetLength() >= r)
+            continue;
+
+        Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
+        ASSERT1(other_entity != NULL)
+
+        // calculate the collision
+
+        FloatVector2 V = entity->GetVelocity() - other_entity->GetVelocity();
+        FloatVector2 collision_location(
+            (other_entity->GetScaleFactor() * ce0_translation + entity->GetScaleFactor() * ce1_translation)
+            /
+            (entity->GetScaleFactor() + other_entity->GetScaleFactor()));
+        FloatVector2 collision_normal;
+        if (P.GetIsZero())
+            collision_normal = FloatVector2(1.0f, 0.0f);
+        else
+            collision_normal = P.GetNormalization();
+        Float collision_force = 0.0f;
+
+        if ((V | P) < 0.0f && // and if they're moving toward each other
+            entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
+            other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
+            GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
+                DStaticCast<GameObject const *>(entity->GetEntityGuts()),
+                DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
+        {
+            Float M = 1.0f / entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
+            FloatVector2 Q(P + adjusted_dt*V);
+            FloatVector2 A(dt_squared*M*collision_normal);
+
+            Float a = A | A;
+            Float b = 2.0f * (Q | A);
+            Float c = (Q | Q) - r*r;
+            Float discriminant = b*b - 4.0f*a*c;
+            if (discriminant >= 0.0f)
+            {
+                Float temp0 = sqrt(discriminant);
+                Float temp1 = 2.0f * a;
+
+                Float force0 = 0.8f * (-b - temp0) / temp1;
+                Float force1 = 0.8f * (-b + temp0) / temp1;
+
+                Float min_force = Min(force0, force1);
+                Float max_force = Max(force0, force1);
+                if (min_force > 0.0f)
+                    collision_force = min_force;
+                else if (max_force > 0.0f)
+                    collision_force = max_force;
+                else
+                    collision_force = 0.0f;
+
+                collision_force *= (1.0f + entity->GetElasticity() * other_entity->GetElasticity());
+
+                entity->AccumulateForce(collision_force*collision_normal);
+                other_entity->AccumulateForce(-collision_force*collision_normal);
+            }
+        }
+
+        // record the collision in the collision pair list.
+        collision_pair_list->push_back(
+            CollisionPair(
+                entity,
+                other_entity,
+                collision_location,
+                collision_normal,
+                collision_force));
+    }
+}
+
+} // end of namespace Dis

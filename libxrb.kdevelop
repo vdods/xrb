@@ -1,0 +1,228 @@
+<?xml version = '1.0'?>
+<kdevelop>
+  <general>
+    <author>Victor Dods</author>
+    <email>victor@thedods.com</email>
+    <version>$VERSION$</version>
+    <projectmanagement>KDevCustomProject</projectmanagement>
+    <primarylanguage>C++</primarylanguage>
+    <ignoreparts>
+      <part>kdevopenwith</part>
+      <part>kdevbookmarks</part>
+      <part>kdevsnippet</part>
+      <part>kdevdebugger</part>
+      <part>kdevdocumentation</part>
+      <part>kdevdoxygen</part>
+      <part>kdevkonsoleview</part>
+      <part>kdevfileselector</part>
+      <part>kdevdistpart</part>
+      <part>kdevpartexplorer</part>
+      <part>kdevregexptest</part>
+      <part>kdevrbdebugger</part>
+      <part>kdevastyle</part>
+      <part>kdevtexttools</part>
+      <part>kdevtools</part>
+    </ignoreparts>
+    <projectdirectory>.</projectdirectory>
+    <absoluteprojectpath>false</absoluteprojectpath>
+    <description/>
+    <versioncontrol/>
+  </general>
+  <kdevcustomproject>
+    <run>
+      <mainprogram>libxrb</mainprogram>
+      <directoryradio>executable</directoryradio>
+      <customdirectory>/</customdirectory>
+      <programargs/>
+      <terminal>false</terminal>
+      <autocompile>true</autocompile>
+      <envvars/>
+    </run>
+    <build>
+      <buildtool>make</buildtool>
+      <builddir/>
+    </build>
+    <make>
+      <abortonerror>false</abortonerror>
+      <numberofjobs>1</numberofjobs>
+      <prio>0</prio>
+      <dontact>false</dontact>
+      <makebin/>
+      <defaulttarget/>
+      <makeoptions/>
+      <selectedenvironment>default</selectedenvironment>
+      <environments>
+        <default/>
+      </environments>
+    </make>
+  </kdevcustomproject>
+  <kdevdebugger>
+    <general>
+      <dbgshell/>
+      <programargs/>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
+      <breakonloadinglibs>true</breakonloadinglibs>
+      <separatetty>false</separatetty>
+      <floatingtoolbar>false</floatingtoolbar>
+    </general>
+    <display>
+      <staticmembers>false</staticmembers>
+      <demanglenames>true</demanglenames>
+      <outputradix>10</outputradix>
+    </display>
+  </kdevdebugger>
+  <kdevdoctreeview>
+    <ignoretocs>
+      <toc>ada</toc>
+      <toc>ada_bugs_gcc</toc>
+      <toc>bash</toc>
+      <toc>bash_bugs</toc>
+      <toc>clanlib</toc>
+      <toc>fortran_bugs_gcc</toc>
+      <toc>gnome1</toc>
+      <toc>gnustep</toc>
+      <toc>gtk</toc>
+      <toc>gtk_bugs</toc>
+      <toc>haskell</toc>
+      <toc>haskell_bugs_ghc</toc>
+      <toc>java_bugs_gcc</toc>
+      <toc>java_bugs_sun</toc>
+      <toc>kde2book</toc>
+      <toc>opengl</toc>
+      <toc>pascal_bugs_fp</toc>
+      <toc>php</toc>
+      <toc>php_bugs</toc>
+      <toc>perl</toc>
+      <toc>perl_bugs</toc>
+      <toc>python</toc>
+      <toc>python_bugs</toc>
+      <toc>qt-kdev3</toc>
+      <toc>ruby</toc>
+      <toc>ruby_bugs</toc>
+      <toc>sdl</toc>
+      <toc>sw</toc>
+      <toc>w3c-dom-level2-html</toc>
+      <toc>w3c-svg</toc>
+      <toc>w3c-uaag10</toc>
+      <toc>wxwidgets_bugs</toc>
+    </ignoretocs>
+    <ignoreqt_xml>
+      <toc>Guide to the Qt Translation Tools</toc>
+      <toc>Qt Assistant Manual</toc>
+      <toc>Qt Designer Manual</toc>
+      <toc>Qt Reference Documentation</toc>
+      <toc>qmake User Guide</toc>
+    </ignoreqt_xml>
+    <ignoredoxygen>
+      <toc>KDE Libraries (Doxygen)</toc>
+    </ignoredoxygen>
+  </kdevdoctreeview>
+  <kdevfilecreate>
+    <filetypes/>
+    <useglobaltypes>
+      <type ext="ui" />
+      <type ext="cpp" />
+      <type ext="h" />
+    </useglobaltypes>
+  </kdevfilecreate>
+  <kdevfileview>
+    <groups>
+      <group pattern="lib/core/serializers/*" name="/lib/core/serializers" />
+      <group pattern="lib/core/*" name="/lib/core" />
+      <group pattern="lib/engine2/physicshandlers/*" name="/lib/engine2/physicshandlers" />
+      <group pattern="lib/engine2/*" name="/lib/engine2" />
+      <group pattern="lib/gui/widgets/*" name="/lib/gui/widgets" />
+      <group pattern="lib/gui/*" name="/lib/gui" />
+      <group pattern="lib/input/*" name="/lib/input" />
+      <group pattern="lib/mapeditor2/*" name="/lib/mapeditor2" />
+      <group pattern="lib/math/*" name="/lib/math" />
+      <group pattern="lib/parsers/datafile/*" name="/lib/parsers/datafile" />
+      <group pattern="lib/parsers/linecalculator/*" name="/lib/parsers/linecalculator" />
+      <group pattern="lib/parsers/*" name="/lib/parsers" />
+      <group pattern="lib/primitive/*" name="/lib/primitive" />
+      <group pattern="lib/render/engine2_worldviews/*" name="/lib/render/engine2_worldviews" />
+      <group pattern="lib/render/*" name="/lib/render" />
+      <group pattern="lib/sound/*" name="/lib/sound" />
+      <group pattern="lib/util/*" name="/lib/util" />
+      <group pattern="lib/*" name="/lib" />
+      <group pattern="app/example/disasteroids/engine2/*" name="/app/example/disasteroids/engine2" />
+      <group pattern="app/example/disasteroids/game/gameobjects/ships/*" name="/app/example/disasteroids/game/gameobjects/ships" />
+      <group pattern="app/example/disasteroids/game/gameobjects/*" name="/app/example/disasteroids/game/gameobjects" />
+      <group pattern="app/example/disasteroids/game/items/*" name="/app/example/disasteroids/game/items" />
+      <group pattern="app/example/disasteroids/game/*" name="/app/example/disasteroids/game" />
+      <group pattern="app/example/disasteroids/ui/*" name="/app/example/disasteroids/ui" />
+      <group pattern="app/example/disasteroids/*" name="/app/example/disasteroids" />
+      <group pattern="app/example/*" name="/app/example" />
+      <group pattern="app/mapeditor2/*" name="/app/mapeditor2" />
+      <group pattern="app/unittest/tests/*" name="/app/unittest/tests" />
+      <group pattern="app/unittest/*" name="/app/unittest" />
+      <group pattern="app/*" name="/app" />
+      <group pattern="doc/doxygen_pages/*" name="/doc/doxygen_pages" />
+      <group pattern="doc/notes/*" name="/doc/notes" />
+      <group pattern="doc/*" name="/doc" />
+      <group pattern="resources/*" name="/resources" />
+      <group pattern="resources_source/*" name="/resources_source" />
+      <group pattern="*" name="/" />
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>true</hidenonlocation>
+    </groups>
+    <tree>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+    </tree>
+  </kdevfileview>
+  <kdevcppsupport>
+    <references>
+      <pcs>libxrb</pcs>
+    </references>
+    <codecompletion>
+      <includeGlobalFunctions>true</includeGlobalFunctions>
+      <includeTypes>true</includeTypes>
+      <includeEnums>true</includeEnums>
+      <includeTypedefs>true</includeTypedefs>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
+      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <automaticHeaderCompletion>true</automaticHeaderCompletion>
+      <codeCompletionDelay>300</codeCompletionDelay>
+      <argumentsHintDelay>1000</argumentsHintDelay>
+      <headerCompletionDelay>250</headerCompletionDelay>
+    </codecompletion>
+    <creategettersetter>
+      <prefixGet/>
+      <prefixSet>set</prefixSet>
+      <prefixVariable>m_,_</prefixVariable>
+      <parameterName>theValue</parameterName>
+      <inlineGet>true</inlineGet>
+      <inlineSet>true</inlineSet>
+    </creategettersetter>
+  </kdevcppsupport>
+  <cppsupportpart>
+    <filetemplates>
+      <interfacesuffix>.h</interfacesuffix>
+      <implementationsuffix>.cpp</implementationsuffix>
+    </filetemplates>
+  </cppsupportpart>
+  <kdevvisualadvance>
+    <emulator>VisualBoyAdvance</emulator>
+    <binary/>
+    <addOptions/>
+    <terminal>false</terminal>
+    <fullscreen>false</fullscreen>
+    <graphicFilter>-f0</graphicFilter>
+    <scaling>-1</scaling>
+  </kdevvisualadvance>
+  <kdevdocumentation>
+    <projectdoc>
+      <docsystem/>
+      <docurl/>
+      <usermanualurl/>
+    </projectdoc>
+  </kdevdocumentation>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath/>
+  </ctagspart>
+</kdevelop>

@@ -1,0 +1,173 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+by Victor Dods
+\layout Standard
+
+from position 
+\begin_inset Formula $(0,0)$
+\end_inset 
+
+, fire a projectile with speed 
+\begin_inset Formula $s$
+\end_inset 
+
+, at an angle 
+\begin_inset Formula $a$
+\end_inset 
+
+ up from the horizontal (ground) plane.
+ the goal is to hit a point 
+\begin_inset Formula $(p,q)$
+\end_inset 
+
+.
+ the equations for each component of the trajectory are
+\layout Standard
+
+
+\begin_inset Formula \[
+x=st\cos\left(a\right)\qquad y=-\frac{1}{2}gt^{2}+st\sin\left(a\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+solve the easier one for 
+\begin_inset Formula $t$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+x=st\cos\left(a\right)\qquad t=\frac{x}{s\cos\left(a\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+plug this into the equation for 
+\begin_inset Formula $y$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+y=-\frac{1}{2}g\left(\frac{x}{s\cos\left(a\right)}\right)^{2}+s\left(\frac{x}{s\cos\left(a\right)}\right)\sin\left(a\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+y=-\frac{gx^{2}}{2s^{2}\cos^{2}\left(a\right)}+\frac{x\sin\left(a\right)}{\cos\left(a\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+y\cos^{2}\left(a\right)=-\frac{gx^{2}}{2s^{2}}+x\sin\left(a\right)\cos\left(a\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{y\left[1+\cos\left(2a\right)\right]}{2}=-\frac{gx^{2}}{2s^{2}}+\frac{x\sin\left(2a\right)}{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{gx^{2}}{s^{2}}=x\sin\left(2a\right)-y\left[1+\cos\left(2a\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{gx^{2}+s^{2}y}{s^{2}}=x\sin\left(2a\right)-y\cos\left(2a\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{gx^{2}+s^{2}y}{s^{2}}=\sqrt{x^{2}+y^{2}}\sin\left[2a+\tan^{-1}\left(\frac{y}{x}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{gx^{2}+s^{2}y}{s^{2}\sqrt{x^{2}+y^{2}}}=\sin\left[2a+\tan^{-1}\left(\frac{y}{x}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sin^{-1}\left(\frac{gx^{2}+s^{2}y}{s^{2}\sqrt{x^{2}+y^{2}}}\right)-\tan^{-1}\left(\frac{y}{x}\right)=2a\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{1}{2}\left[\sin^{-1}\left(\frac{gx^{2}+s^{2}y}{s^{2}\sqrt{x^{2}+y^{2}}}\right)-\tan^{-1}\left(\frac{y}{x}\right)\right]=a\]
+
+\end_inset 
+
+
+\the_end

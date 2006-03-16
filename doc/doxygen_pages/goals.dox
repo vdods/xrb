@@ -1,0 +1,70 @@
+/** @page goals Goals Of XuqRijBuh
+
+@section section_motivation Motivation
+In software development, especially when working with many others, and ESPECIALLY
+when inheriting a huge (and sometimes crappy) codebase to work with, a programmer
+often laments about how things could be if only they were done right from the
+beginning.  Some of the things I despise most about commercial software development are:
+    <ul>
+    <li>Unreasonable deadlines, usually set by non-engineer-type people, cause
+        code to be written in a hurry, without time to reflect and improve upon
+        it.</li>
+    <li>The same deadline pressure will often not allow time for adequate QA work.</li>
+    <li>Programmers that are paid to write code will probably write crappier
+        code than programmers that write code of their own volition, because
+        the paid programmers probably just don't care as much (which is one of the
+        reasons why I believe that amateur-written software has a much higher
+        potential of quality than commercial software; just compare GNU/Linux to
+        Windows).</li>
+    <li>The release deadlines are usually arbitrary, rather than based on when
+        "this set of features is *really* complete" (which is one of the reasons
+        I believe that the quality of non-commercial code is better).
+    <li>Documentation is always lacking, making it hard for newcomers to learn
+        the codebase.</li>
+    <li>Since the development model is predicated on making money, the goal isn't
+        necessarily to make the best product.  It is usually to do whatever is
+        adequate to meet the customer's (often retarded) requests.</li>
+    <li>"Intellectual property", non-disclosure agreements, software patents,
+        and the like make me feel all yucky.</li>
+    <li>The purpose of the software is dictated by the customer, instead of the
+        programmer; A programmer will write much better code on a project that
+        s/he is genuinely interested in.</li>
+    </ul>
+In light of all this, one of the reasons I started XuqRijBuh was to "right all
+the wrongs" of the commercial code I had seen.  I particularly noted that
+programming "the wrong thing" can be absolutely tedious and unbearable, while
+a few hours later at home, programming "the right thing" can be enjoyable and
+immensely more rewarding.
+
+Another reason I began this is because being god is fun.
+
+Also, I don't like having to cope with other people's crappy, crappy code.
+Sometimes people can write such horrible code that it makes me think they
+have no morals whatsoever.  Just who the hell abbreviates "index" to
+"idx" anyway?  Die.
+
+The final reasons I'll list here are related, but arguably less important.
+One being that I wanted to have a robust and easily-usable game engine that
+is portable.  You could point out that there are plenty of game engines out
+there that already do the job.  Well, you're right, but please refer to the
+previous paragraph.  The other reason justifies a new game engine -- I've
+always wanted to write, by myself, a full game engine completely from scratch.
+
+@section section_goals Goals
+Anyway, goals.  The goal of this project is to create a cross-platform
+2D game engine which is very programmer/modder friendly (think
+Q3A), of reasonably excellent visual and audio quality.  The engine will
+implement realistic physics, very flexible rendering of the game world,
+a very powerful GUI implementation, and realtime networking capabilities,
+among other things.
+
+The reasoning behind making a 2D game engine, as opposed to a 3D one, is
+that writing everything for 2D is much simpler -- much easier for one guy
+to do by himself.  The future possibility of writing a 3D subsystem has
+not been ruled out.  As for the gameplay implications of a 2D game engine,
+I submit that 2D is in no way "less fun" than 3D, and both can be used
+appropriately.  In a game design context, using one or the other will
+establish a certain feel to the game.
+
+*/
+

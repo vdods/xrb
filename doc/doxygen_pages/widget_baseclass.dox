@@ -1,0 +1,784 @@
+/** @page widget_baseclass Widget Baseclass
+
+The @ref Xrb::Widget "Widget" class is the backbone of the XuqRijBuh user
+interface system.  It handles all drawing, UI events, hiding/showing of
+widgets, widget focus, mouseover status, etc.  The Widget baseclass can be
+specialized in subclasses, using its many overridable functions as hooks for
+handling various events and other occurrences.
+
+<li>Concepts In Widget</li>
+    <ul>
+    <li>@ref section_widget_introduction "Introduction"</li>
+    <li>@ref section_widget_hierarchy "Hierarchy"</li>
+    <li>@ref section_widget_resolution_independence "Resolution Independence"</li>
+    <li>@ref section_creation_and_deletion "Creation And Deletion"</li>
+    <li>@ref section_widget_frame_handling "Frame Handling"</li>
+    <li>@ref section_widget_event_handling "Event Handling"</li>
+        <ul>
+        <li>@ref subsection_widget_event_keyboard "Keyboard Events"</li>
+        <li>@ref subsection_widget_event_mouse_button "Mouse Button Events"</li>
+        <li>@ref subsection_widget_mouse_wheel_event "Mouse Wheel Events"</li>
+        <li>@ref subsection_widget_mouse_motion_event "Mouse Motion Events"</li>
+        <li>@ref subsection_widget_joystick_events "Joystick Events"</li>
+        <li>@ref subsection_widget_custom_events "Custom Events"</li>
+        </ul>
+    <li>@ref section_widget_child_order "Child Widget Order"</li>
+    <li>@ref section_widget_child_stack_priority "Child Widget Stack Priority"</li>
+    <li>@ref section_widget_rendering "Rendering"</li>
+    <li>@ref section_widget_focus "Widget Focus"</li>
+    <li>@ref section_widget_mouseover "Mouseover And Mouseover Focus"</li>
+    <li>@ref section_widget_mouse_grab "Mouse Grab"</li>
+    <li>@ref section_widget_enabled_state "Enabled State"</li>
+    <li>@ref section_widget_hidden_state "Hidden State"</li>
+    <li>@ref section_widget_min_max_size "Minimum And Maximum Size Properties"</li>
+    <li>@ref section_widget_automatic_placement "Automatic Widget Placement"</li>
+    <li>@ref section_widget_main_widgets "Main Widgets"</li>
+    <li>@ref section_widget_modal "Modal Widgets"</li>
+    <li>@ref section_widget_frame_margins "Frame Margins"</li>
+    <li>@ref section_widget_backgrounds "Backgrounds"</li>
+    <li>@ref section_widget_skinning "Widget Skinning"</li>
+    </ul>
+
+@section section_widget_introduction Introduction
+The GUI system in XuqRijBuh is based upon the widget paradigm found in
+well-known GUI toolkits such as <a href="http://www.trolltech.com">QT</a>,
+FLTK, MFC, etc.  The basis of these systems is the Widget class, which
+embodies a single on-screen element such as a text label or a button, or
+even a container for other widgets.  In XuqRijBuh, the Widget is the
+baseclass of all specialized GUI elements, using Widget's hooks to provide
+the specific functionality required of each.
+
+@section section_widget_hierarchy Hierarchy
+Widgets interact with each other by being connected together to form a
+strict hierarchy (directed, acyclic graph, where each non-root node has
+exactly one parent), with the direct parent/child relation especially
+emphasized.  The hierarchical structure is designed to reflect the
+way the widgets process user interface events, physical relationships between
+parent and children, and the way widgets are rendered to screen.
+
+*** picture of widget hierarchy ***
+
+The top-most widget must be a @ref Xrb::Screen "Screen" .  Because initial
+calls for rendering and event handling and the like are made to the top of
+the widget hierarchy by the game loop, there must be special code to handle
+proper setup (e.g. clearing the screen, GL initialization, clipping planes,
+etc).
+
+@section section_widget_resolution_independence Resolution Independence
+In light of past troubles regarding resolution-dependent
+behavior in games, great care was taken to design the GUI system so that
+on-screen entities may be specified in a resolution-independent manner,
+especially for font rendering.
+
+@ref Xrb::Screen "Screen" is the Widget subclass which provides the basis
+for this resolution independence.  It is necessarily the top-most widget in
+the hierarchy and therefore defines the screen area that the widget hierarchy
+may use while rendering itself.
+
+The way this independence is achieved is through basing sizes of on-screen
+entities as ratios of a particular measurement of the pixel-based screen
+size.  This measurement is referred to as the screen's size-ratio-basis
+(see @ref Xrb::Screen::GetSizeRatioBasis "Screen::GetSizeRatioBasis" ).
+Fractions are given to specify sizes (derived by multiplying the given
+fraction by the size-ratio-basis to attain pixel size), rather than hard
+pixel values, so that the relative size of on-screen entities stays the
+same, regardless of what screen resolution is used.
+
+*** picture of the screen and the screen size-ratio-basis square ***
+
+The physical screen can even be set to resolutions of different aspect ratios
+(different width-to-height ratios).  This is handled by the definition
+of the screen size-ratio-basis as the smaller of the horizontal and vertical
+screen resolution sizes.  This allows a main viewing area of a square to
+act as the basis for sizes of on-screen entities.  Using this metric, a
+800x600 screen could be resized to 1000x600 for a wide-screen effect, while
+the fonts stay the same size, because they are based upon fractions of 600
+pixels.
+
+*** two pictures, each of the same content, but one square while the other
+is widescreen, to demonstrate how the font remains the same size ***
+
+The preferred means of specifying on-screen entity sizes is through fractions
+of the screen's size-ratio-basis, but the ability to set sizes via hard pixel
+values is present.  This allows resolution-dependent rendering to take place,
+which is desireable in situations where having a larger screen resolution is
+necessary to provide more detail.
+
+@section section_creation_and_deletion Creation And Deletion
+Creating and deleting widgets is designed to be very easy.  The @c Widget
+baseclass only has two parameters in its constructor -- the parent widget
+(required) and the name of the widget (optional, and it's really only used
+for debugging as of now).  When a widget is constructed, it is automatically
+added to the @ref Xrb::Widget::m_child_vector "m_child_vector" of its parent
+(if the parent is not @c NULL ), and gets a default 
+@ref Xrb::StackPriority "StackPriority" of @ref Xrb::SP_NEUTRAL "SP_NEUTRAL" .
+The widget placed into @c m_child_vector at the end of the @c SP_NEUTRAL
+block of widgets.
+
+@code
+some code that shows a bunch of widgets being new'ed
+@endcode
+
+Widgets should always be constructed by using the @c new operator.  This is
+because the parent widget automatically deletes its children upon its own
+deletion.  Not having to worry about deleting widgets is a very nice feature.
+
+Deletion of widgets can be done during the life of its parent simply by
+using the @c delete operator.  The child widget being deleted will
+automatically remove itself from its parent's @c m_child_vector .  This also
+applies to deleting modal widgets (but not from inside itself).  See
+@ref section_widget_modal "Modal Widgets" for more information.
+
+@section section_widget_frame_handling Frame Handling
+XuqRijBuh is driven by a game loop, in which events are generated, rendering
+is performed, and the important task of supplementary computation is done.
+Widgets have the ability to do once-per-frame computation, achieved by
+overriding the
+@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" method.
+This function is guaranteed to be called for every single widget, exactly once
+per game loop iteration.  If a subclass of Widget overrides this function, it
+must explicitly call its superclass' ProcessFrameOverride for proper traversal
+of the widget hierarchy.
+
+@section section_widget_event_handling Event Handling
+User interface events are generated by the game loop and then handed to the
+top-level widget ( @ref Xrb::Screen "Screen" ), and then from there,
+delegated appropriately.  Depending on the event type, different events are
+propagated down the widget hierarchy in different ways.
+
+Events can actually be created anywhere, and in addition to immediately processing
+them with @ref Xrb::EventHandler::ProcessEvent "EventHandler::ProcessEvent" ,
+events can be queued up for later processing using
+@ref Xrb::Widget::EnqueueEvent "Widget::EnqueueEvent" (see
+@ref Xrb::EventHandler "EventHandler" and @ref Xrb::EventQueue "EventQueue" ).
+
+Widget provides a number of specialized overridable event-handling methods:
+@ref Xrb::Widget::ProcessKeyEvent "Widget::ProcessKeyEvent" ,
+@ref Xrb::Widget::ProcessMouseButtonEvent "Widget::ProcessMouseButtonEvent" ,
+@ref Xrb::Widget::ProcessMouseWheelEvent "Widget::ProcessMouseWheelEvent" ,
+@ref Xrb::Widget::ProcessMouseMotionEvent "Widget::ProcessMouseMotionEvent" ,
+@ref Xrb::Widget::ProcessJoyEvent "Widget::ProcessJoyEvent" , and
+@ref Xrb::Widget::ProcessCustomEvent "Widget::ProcessCustomEvent" .  The
+method @ref Xrb::Widget::ProcessEventOverride "Widget::ProcessEventOverride"
+should not be overridden by widget subclasses, as critical event wrangling
+goes on in this method.
+
+Event handling methods return a boolean value indicating if the event was
+handled.  Returning false generally means that the widget doesn't want to
+use the event and other (appropriate) widgets may have a chance at it.
+Returning true generally means that the widget has actually processed the
+event and that no other widgets should process it.  When an event is
+"processed", nothing actually happens to the event (it is qualified as
+const).  Deletion of the event object almost always happens at the same
+scope as it was generated (e.g. the game loop, or inside
+@ref Xrb::Widget::PreprocessMouseEvent "Widget::PreprocessMouseEvent" in the
+case of focus events).  An exception to this rule is in
+@ref Xrb::Widget::ProcessDeleteChildWidgetEvent "Widget::ProcessDeleteChildWidgetEvent" ,
+which is an asynchronous event (meaning the event is queued up for later
+processing, rather than immediately handled).
+
+The @ref Xrb::Event "Event" baseclass stores the game loop time, so that the
+time that each event was created is known.
+
+Widgets that are @ref section_widget_enabled_state "disabled" may not
+receive/process events.
+
+Mouse events will not propagate to @ref section_widget_hidden_state "hidden"
+widgets.
+
+@subsection subsection_widget_event_keyboard Keyboard Events
+Keyboard events contain simply what key has changed, wether it was pressed or
+released, and various keyboard modifiers that were activated during the
+keystroke (e.g. shift, alt, caps lock, etc).
+
+Keyboard events are very simple to handle.  They simply propagate down the
+widget hierarchy, choosing whichever child widget is currently
+@ref section_widget_focus "Focused" .
+
+The overridable method for subclasses to handle keyboard events is
+@ref Xrb::Widget::ProcessKeyEvent "Widget::ProcessKeyEvent" .
+
+For more information about keyboard events, see @ref Xrb::Event "Event" ,
+@ref Xrb::EventKey "EventKey" , @ref Xrb::EventKeyDown "EventKeyDown" ,
+@ref Xrb::EventKeyUp "EventKeyUp" , and
+@ref Xrb::EventKeyRepeat "EventKeyRepeat" .
+
+@subsection subsection_widget_event_mouse_button Mouse Button Events
+Mouse button events communicate occurrences of mouse buttons being clicked.
+They contain what button has changed, wether it was pressed or released,
+and the position of the mouse cursor at the time of this event.
+
+Mouse button events have the property of screen position, which denotes
+the location that the mouse cursor was when the event was generated.
+In addition to being propagated down the widget hierarchy, mouse button events
+cause the widget focus to be changed.  If a particular widget has
+@ref section_widget_mouse_grab "mouse grab" on, mouse button events
+(actually all mouse events) will be sent to it, and then possibly further
+to its children.  In the case where no widget has mouse grab on, the
+mouse button event is sent down the hierarchy to whatever widget whose
+screen rectangle it falls upon.  If the event falls on a particular
+widget that doesn't have @ref section_widget_focus "focus" , a new
+focus event ( see @ref Xrb::EventFocus "EventFocus" ) will be generated to
+focus the widget line laying beneath the location of the mouse button event.
+
+The overridable method for subclasses to handle mouse button events is
+@ref Xrb::Widget::ProcessMouseButtonEvent "Widget::ProcessMouseButtonEvent" .
+
+For more information about mouse button events, see @ref Xrb::Event "Event" ,
+@ref Xrb::EventMouse "EventMouse" ,
+@ref Xrb::EventMouseButton "EventMouseButton" ,
+@ref Xrb::EventMouseButtonDown "EventMouseButtonDown" , and
+@ref Xrb::EventMouseButtonUp "EventMouseButtonUp" .
+
+@subsection subsection_widget_mouse_wheel_event Mouse Wheel Events
+Mouse wheel events are just mouse button events, but only occur when the
+mouse wheel is scrolled up or down.  The event indicates which direction
+the mouse wheel was scrolled (up or down), as well as the position of
+the mouse cursor when the event occurred.
+
+Mouse wheel events behave exactly as mouse button events except that
+they do not cause focus events.  This means that mouse wheel events can
+be sent to widgets that are not in focus.  For example, if a mouse wheel
+event performs vertical scrolling on a list-type widget, but a
+text-entry widget currently has focus, you can type into the text-entry
+widget while simultaneously scrolling the list-type widget (the mouse cursor
+must be over the list-type widget).  The text-entry widget will not lose
+focus.
+
+The overridable method for subclasses to handle mouse wheel events is
+@ref Xrb::Widget::ProcessMouseWheelEvent "Widget::ProcessMouseWheelEvent" .
+
+For more information about mouse wheel events, see @ref Xrb::Event "Event" ,
+@ref Xrb::EventMouse "EventMouse" ,
+@ref Xrb::EventMouseButton "EventMouseButton" , and
+@ref Xrb::EventMouseWheel "EventMouseWheel" .
+
+@subsection subsection_widget_mouse_motion_event Mouse Motion Events
+Mouse motion events are events which communicate that the mouse cursor
+has moved, as well as its current position and the position delta from
+the previous mouse motion event (globally previous, not the last position
+observed by the widget).
+
+Mouse motion events behave exactly as mouse button events, again with
+the exception that they do not cause focus events.  Once a mouse motion
+event is processed, the widget stores the event's screen position
+in  @ref Xrb::Widget::m_last_position "Widget::m_last_position" so that
+calculations may be done easily which require knowledge of the mouse's
+previous location.  Additionally, mouse motion events cause
+@ref section_widget_mouseover "mouseover" events, which keep track of
+which widgets are currently under the mouse cursor.
+
+The overridable method for subclasses to handle mouse motion events is
+@ref Xrb::Widget::ProcessMouseMotionEvent "Widget::ProcessMouseMotionEvent" .
+
+For more information about mouse motion events, see @ref Xrb::Event "Event" ,
+@ref Xrb::EventMouse "EventMouse" , and
+@ref Xrb::EventMouseMotion "EventMouseMotion" .
+
+@subsection subsection_widget_joystick_events Joystick Events
+Joystick events are handled exactly like keyboard events.  They are
+propagated down the focused widget line.  Disabled and hidden widgets
+do not accept the events.
+
+The overridable method for subclasses to handle mouse button events is
+@ref Xrb::Widget::ProcessJoyEvent "Widget::ProcessJoyEvent" .
+
+For more information about joystick events, see
+@ref Xrb::Event "Event" ,
+@ref Xrb::EventJoy "EventJoy" ,
+@ref Xrb::EventJoyAxis "EventJoyAxis" ,
+@ref Xrb::EventJoyBall "EventJoyBall" ,
+@ref Xrb::EventJoyButton "EventJoyButton" ,
+@ref Xrb::EventJoyButtonDown "EventJoyButtonDown" ,
+@ref Xrb::EventJoyButtonUp "EventJoyButtonUp" , and
+@ref Xrb::EventJoyHat "EventJoyHat" .
+
+@subsection subsection_widget_custom_events Custom Events
+Custom events fall outside the above categorization.  To define custom
+events, @ref Xrb::EventCustom "EventCustom" should be subclassed, providing
+whatever mechanisms are necessary.
+
+Custom events are handled in a completely unrestricted manner (excepting
+by disabled widgets), allowing the subclassed widgets to handle/delegate
+them as necessary.
+
+The overridable method for subclasses to handle mouse button events is
+@ref Xrb::Widget::ProcessMouseButtonEvent "Widget::ProcessMouseButtonEvent" .
+
+For more information about custom events, see @ref Xrb::Event "Event" , and
+@ref Xrb::EventCustom "EventCustom" .
+
+@section section_widget_child_order Child Widget Order
+The structure of a widget hierarchy implies an order the set of children
+at each node.  This is indicated by the ordering of the child widgets inside
+@ref Xrb::Widget::m_child_vector "Widget::m_child_vector" .  The vector is
+ordered in terms of rendering order from back-most to front-most (think of
+the screen as a table, and the widgets as books, setting them down in the
+order specified by @c m_child_vector ).  This order
+is used in a few other manners, such as relative position inside a
+@ref Xrb::Layout "Layout" .  During rendering, the back-most widget will be
+rendered first, and the front-most widget will be rendered last, so a layering
+effect can be achieved.
+
+*** show 2 pictures of child widgets being rendered in different orders ***
+
+@section section_widget_child_stack_priority Child Widget Stack Priority
+Relative ordering of child widgets can be maintained through a property
+called the @ref Xrb::StackPriority "StackPriority" .  There are three
+priorities: @ref Xrb::SP_STAY_ON_BOTTOM "SP_STAY_ON_BOTTOM" ,
+@ref Xrb::SP_NEUTRAL "SP_NEUTRAL" , and
+@ref Xrb::SP_STAY_ON_TOP "SP_STAY_ON_TOP" .  These values enforce that the
+relative ordering of all child widgets stays in the order
+@c SP_STAY_ON_BOTTOM, @c SP_NEUTRAL, @c SP_STAY_ON_TOP.  All widgets of
+identical stack priority remain in a contiguous block inside
+@ref Xrb::Widget::m_child_vector "Widget::m_child_vector" .  This means that,
+for example, you may not reorder a @c SP_NEUTRAL widget to be after a
+@c SP_STAY_ON_TOP widget.  Using this, you can guarantee that particular
+widgets will stay on the top or bottom of the widget rendering order.
+For example, in a game view widget you might want a text label which displays
+the framerate to be above all other HUD elements.  This stack priority is used
+by @ref Xrb::Dialog "Dialog" in combination with the way
+@ref Xrb::Layout "Layout" uses the child widget order to position widgets, to
+cause the OK/Cancel controls to always remain at the bottom of the dialog's
+layout.
+
+*** picture of contiguous blocks of stack priority widgets in m_child_vector ***
+
+@section section_widget_rendering Rendering
+Rendering the contents of the widget hierarchy to screen is driven in a
+manner similar to that of frame handling in that rendering calls are
+propagated through the hierarchy in a depth-first traversal.  The only
+difference is that a widget isn't guaranteed to be rendered.  Branch
+pruning takes place when a widget's viewable area is 0.  If a widget
+is not rendered, neither are any of its children (and neither are any
+of its children's children, etc).
+
+Rendering is done by overriding the @ref Xrb::Widget::Draw "Widget::Draw"
+method.  The method traverses the widget hierarchy, drawing each child
+widget in the proper back-to-front order, and in the proper location.
+The parent widget is always drawn before all of its children, because
+the notion is that the child widgets are "on top" of the parent widget,
+(think of the screen as a table, and the widgets as books).
+Any subclass that overrides Draw must take care to call its superclass'
+Draw function (usually before anything else) so that the background and
+other visual elements can be rendered.
+
+*** step-by-step pictures of rendering each widget in a simple
+control panel, showing the screen after each call to Draw ***
+
+The single parameter to @c Draw is a @ref Xrb::RenderContext "RenderContext"
+which provides the clipping rectangle (renderable area) and color mask
+(for tinting widgets with certain colors).  Most (if not all) rendering
+functions will take a @c RenderContext as a parameter, and in most cases, there
+is no need to modify/extend the @c RenderContext given in @c Draw.  In the
+course of traversing and drawing the hierarchy, @c Draw will properly
+set up the clipping rectangle and color mask for each child widget it
+draws.  The clipping rectangle will be the intersection of {the clipping
+rectangle of the @c RenderContext parameter in @c Draw} with {the rectangle
+representing the child widget's viewable area}.  If this area is zero,
+rendering will be skipped.  The color mask is calculated by multiplying
+{the color mask of the @c RenderContext parameter in @c Draw} with {the child
+widget's color mask}.  This multiplication is done component-by-component.
+The color mask is applied in a similar fashion when actually used in
+rendering functions -- the pixel color is multiplied by the color mask.
+
+@section section_widget_focus Widget Focus
+Widget focus can be thought of as a line down the widget hierarchy through
+which keyboard and joystick events will be propagated.
+
+*** picture of widget hierarchy with focus line ***
+
+Other properties use the focused widgets in certain ways.  A widget which has
+@ref section_widget_mouse_grab "mouse grab" on also necessarily has
+focus from its parent widget.  Mouse button events cause focus events
+which may cause the focused widget line to change.
+
+*** picture of widget focus line changing ***
+
+When the focus line is changed, first the appropriate widgets are unfocused,
+starting at the bottom.  The unfocusing stops at the first widget which is
+a common ancestor of both the widgets being unfocused and the new focus
+widgets.  Then, widgets, starting just below the common ancestor, going down,
+are focused.  This ordering ensures that the focus line is contiguous (if
+incomplete) from the top of the hierarchy, going down.  The act of focusing a
+widget entails setting @ref Xrb::Widget::m_focus "Widget::m_focus" in its
+parent.  If there is no parent (if it is a top-level widget), then the widget
+has focus by default (since the game loop sends all events through it to
+begin with).
+
+There are two overridable methods which allow subclasses to specify behavior
+for when a widget is being focused
+( @ref Xrb::Widget::HandleFocus "Widget::HandleFocus" ) and when it is being
+unfocused ( @ref Xrb::Widget::HandleUnfocus "Widget::HandleUnfocus" ).
+These are called exactly in the order specified in the previous paragraph.
+
+Widgets can manually focus and unfocus themselves via methods
+@ref Xrb::Widget::Focus "Widget::Focus" and
+@ref Xrb::Widget::Unfocus "Widget::Unfocus" .
+
+One important property to note when writing a Widget subclass is that of
+@ref Xrb::Widget::m_accepts_focus "Widget::m_accepts_focus" .  When true,
+this value indicates that a widget can be focused.  A value of false will
+cause @ref Xrb::Widget::Focus "Widget::Focus" to return early, without having
+done anything to the state of the hierarchy's focused widget line.  This
+implies that if the widget contains any children, they will not be able to
+attain focus.  Most widgets which the user will interact with will want to
+set this value to true.  An example of a widget which has a value of false
+are @ref Xrb::Label "Label" (which does not accept user input and does not
+contain any children).
+
+Relevant methods include
+@ref Xrb::Widget::GetFocus "Widget::GetFocus" ,
+@ref Xrb::Widget::GetIsFocused "Widget::GetIsFocused" , and
+@ref Xrb::Widget::GetAcceptsFocus "Widget::GetAcceptsFocus" .
+
+@section section_widget_mouseover Mouseover And Mouseover Focus
+When mouse motion events are handled by
+@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" ,
+mouseover events are generated so that widgets know if the mouse cursor
+is currently over them, and they know when the mouse cursor moves onto
+or off of them.  This processing is done before any other event processing,
+so that when actually handling mouse motion events, the mouseover state
+already reflects the current position of the mouse cursor.
+
+*** picture of control panel with mouse over a particular widget,
+and accompanying widget hierarchy diagram with the mouseover'ed
+widgets highlighted ***
+
+*** another picture of the same control panel and diagram but with a
+different mouseover line ***
+
+@ref Xrb::Widget "Widget" provides overridable methods for subclasses to
+customize behavior when receiving or losing mouseover status.  These are
+@ref Xrb::Widget::HandleMouseoverOn "Widget::HandleMouseoverOn" and
+@ref Xrb::Widget::HandleMouseoverOff "Widget::HandleMouseoverOff" respectively.
+
+Relevant methods include
+@ref Xrb::Widget::GetMouseoverFocus "Widget::GetMouseoverFocus" and
+@ref Xrb::Widget::GetIsMouseover "Widget::GetIsMouseover" .
+
+@section section_widget_mouse_grab Mouse Grab
+Mouse grab is a state that the focus line can be in which directs all
+mouse events along the focused widget line.  When it is turned on, the
+widgets in the focus line will receive all mouse events, even those that
+are generated when the mouse cursor is not above them.  Turning mouse grab
+off will not change the focus line, but mouse events will once again be
+handled as described in @ref section_widget_event_handling "Event Handling" .
+
+Turn mouse grab on and off using the methods
+@ref Xrb::Widget::GrabMouse "Widget::GrabMouse" and
+@ref Xrb::Widget::UnGrabMouse "Widget::UnGrabMouse" respectively.
+
+@ref Xrb::Widget "Widget" provides overridable methods for subclasses to
+customize behavior when mouse grab is turned on or off.  These are
+@ref Xrb::Widget::HandleMouseGrabOn "Widget::HandleMouseGrabOn" and
+@ref Xrb::Widget::HandleMouseGrabOff "Widget::HandleMouseGrabOff" .
+
+Other relevant methods include
+@ref Xrb::Widget::GetIsMouseGrabbed "Widget::GetIsMouseGrabbed" and
+@ref Xrb::Widget::GetFocusHasMouseGrab "Widget::GetFocusHasMouseGrab" .
+
+@section section_widget_enabled_state Enabled State
+Widgets have an "enabled" property which simply indicates that they currently
+accept events.  A disabled widget will block all events sent to it ( see
+@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" ).
+There is a default change in appearance for disabled widgets: they are
+drawn with a higher transparency in the color mask.  This provides a uniform
+look for disabled widgets and their children.  Due to the hierarchical
+traversal of @ref Xrb::Widget::Draw , the color mask will propagate down
+through the disabled widget's children, so they will also appear disabled.
+
+*** picture of a control panel, then another picture of same control panel
+with some widgets disabled ***
+
+Widgets can be enabled and disabled using the following methods:
+@ref Xrb::Widget::SetIsEnabled "Widget::SetIsEnabled" ,
+@ref Xrb::Widget::Enable "Widget::Enable" , and
+@ref Xrb::Widget::Disable "Widget::Disable" .
+
+Other relevant methods include
+@ref Xrb::Widget::GetIsEnabled "Widget::GetIsEnabled" .
+
+@section section_widget_hidden_state Hidden State
+Widgets can be hidden from view.  This is controlled by the
+@ref Xrb::Widget::m_is_hidden "Widget::m_is_hidden" property.  A value
+of true will cause @ref Xrb::Widget::Draw "Widget::Draw" to not render
+the widget.
+
+An important interaction between hidden widgets and @ref Xrb::Layout (see
+@ref section_widget_automatic_placement "Automatic Widget Placement") is
+that a widget that belongs to a @c Layout , if hidden, will "disappear"
+from the @c Layout , as though it never existed.  This can be useful when
+cramming lots of controls into a single @c Layout , and then only un-hiding
+a few at a time.
+
+*** picture demonstrating a layout, then another picture with same layout
+with one of the widgets hidden ***
+
+Widgets are hidden and shown using the following methods:
+@ref Xrb::Widget::ToggleIsHidden "Widget::ToggleIsHidden" ,
+@ref Xrb::Widget::SetIsHidden "Widget::SetIsHidden" ,
+@ref Xrb::Widget::Hide "Widget::Hide" , and
+@ref Xrb::Widget::Show "Widget::Show" .
+
+Relevant methods include @ref Xrb::Widget::GetIsHidden "Widget::GetIsHidden" .
+
+@section section_widget_min_max_size Minimum And Maximum Size Properties
+Constraints on the minimum and maximum size of a widget may be made, each
+for both X and Y components separately.  The min/max size properties of a
+widget constrain the values passed to it in resize requests.  These
+properties, coupled with @ref Xrb::Layout "Layout" provide very robust and
+effective automatic widget placement and screen-space allocation.
+
+*** picture of widget with the min/max sizes superimposed ***
+
+When a widget is @ref Xrb::Widget::Resize "resized" , if the requested size
+does not satisfy the constraints given by the min/max size properties, a new
+size will be calculated which most closely matches that of the requested size.
+The widget will then be resized using this value, so that it will satisfy the
+min/max size properties.
+
+*** picture of widget resized to something outside of its valid size, with
+min/max sizes superimposed ***
+
+Setting the minimum and maximum size properties of widgets can be done
+using a variety of methods:
+@ref Xrb::Widget::SetSizePropertyEnabled "Widget::SetSizePropertyEnabled" ,
+@ref Xrb::Widget::SetSizeProperty "Widget::SetSizeProperty" ,
+@ref Xrb::Widget::SetSizePropertyRatio "Widget::SetSizePropertyRatio" ,
+@ref Xrb::Widget::SetSizePropertyRatios "Widget::SetSizePropertyRatios" ,
+@ref Xrb::Widget::FixSize "Widget::FixSize" ,
+@ref Xrb::Widget::FixSizeRatios "Widget::FixSizeRatios" ,
+@ref Xrb::Widget::UnfixSize "Widget::UnfixSize" ,
+@ref Xrb::Widget::FixWidth "Widget::FixWidth" ,
+@ref Xrb::Widget::FixWidthRatio "Widget::FixWidthRatio" ,
+@ref Xrb::Widget::UnfixWidth "Widget::UnfixWidth" ,
+@ref Xrb::Widget::FixHeight "Widget::FixHeight" ,
+@ref Xrb::Widget::FixHeightRatio "Widget::FixHeightRatio" , and
+@ref Xrb::Widget::UnfixHeight "Widget::UnfixHeight" .
+
+Other relevant methods include
+@ref Xrb::Widget::GetMinSizeEnabled "Widget::GetMinSizeEnabled" , 
+@ref Xrb::Widget::GetMinSize "Widget::GetMinSize" ,
+@ref Xrb::Widget::GetMaxSizeEnabled "Widget::GetMaxSizeEnabled" ,
+@ref Xrb::Widget::GetMaxSize "Widget::GetMaxSize" , and
+@ref Xrb::Widget::GetAdjustedSize "Widget::GetAdjustedSize" .
+
+See @ref Xrb::Layout "Layout" for extensive examples of controlling and
+interacting with resizing size-constrained widgets.  See also 
+@ref section_widget_automatic_placement "Automatic Widget Placement" .
+
+@section section_widget_automatic_placement Automatic Widget Placement
+The @c Widget subclass @ref Xrb::Layout "Layout" implements an effective
+mechanism for automatically positioning and sizing widgets.  Layouts
+can be thought of simply as grids which child widgets (children of the
+@c Layout ) will be placed into.  Grids may be any size, including 1 row
+by N columns ( @ref "Xrb::HORIZONTAL" "HORIZONTAL" ) and N rows by
+1 column ( @ref "Xrb::VERTICAL" "VERTICAL" ).  Grid size is specified
+upon construction of the @c Layout widget.  One dimension of the layout
+is always left open, meaning that as more child widgets are added to
+the layout, it grows in the open dimension to accomodate the new children.
+
+*** picture of a grid layout growing to accept more children ***
+
+The critical feature of @c Layout is that it guarantees that its children's
+min/max size properties are respected.  It also attempts to respect its own
+min/max size properties, though the children's min/max size properties will
+always take precedence.  Through careful planning of min/max size properties
+for widgets in a layout, user interfaces which behave in a robust manner when
+being resized can be made.  This is another example of the attempt to be
+screen-resolution agnostic.
+
+*** picture demonstrating a shrinking layout preserving the min/max sizes
+of its children ***
+
+One important thing to note is that @ref Xrb::Layout "Layout" uses the order
+of child widgets in @ref Xrb::Widget::m_child_vector "Widget::m_child_vector"
+to specify the relative ordering of widgets in grid positions.  Another thing
+to note is that if a widget inside a layout is ever hidden, it will behave
+as if it were not in the layout, and the positions of the proceeding widgets
+will shift up to take its place.
+
+*** picture of a widget being hidden and the other widgets shifting up ***
+
+The way @c Layout respects the child widgets' min/max size properties is that
+it decides min/max widths/heights for the columns and rows respectively.
+All of the widgets in a particular column are allocated the width decided
+to be optimal for that column.  All of the widgets in a particular row are
+allocated the height decided to be optimal for that row.
+
+When there is a conflict between two widgets in a particular row or column
+(for example, one widget's maximum height is 200 pixels, whereas the other
+widget's minimum height is 300 pixels), the minimum property takes
+precedence so that there is enough space to satisfy the maximum property as
+well.  The widget with the maximum property will end up having extra
+space above and below it, so the @c Layout will center that widget vertically
+in the grid slot.
+
+There is a notion of margins in a @c Layout , which define space between the
+rows/columns as well as around the edge of the widget.  The space between
+the rows/columns is derived from the "layout spacing margins" in the
+@ref section_widget_skinning "widget skin" associated with the @c Layout .
+Similarly, the spacing around the border of the widget is derived from the
+"layout frame margins" in the widget skin.
+
+*** picture demonstrating different spacing margins ***
+
+@section section_widget_main_widgets Main Widgets
+@c Widget has a feature which allows a child widget to be kept stretched to
+fill the entire (parent) widget.  Changes in min/max size properties will
+affect the child widget, and resizing the parent widget will take into
+consideration the min/max size properties of the child widget.  The child
+widget will also be repositioned to exactly fill the parent widget.  This
+feature is primarily used when a single widget needs to be placed inside a
+container-type widget (such as a control panel in
+@ref Xrb::ModalWidget "ModalWidget" or a layout widget in
+@ref Xrb::Screen "Screen" ).
+
+@section section_widget_modal Modal Widgets
+Modal widgets can be thought of as pop-up widgets.  When a modal widget has
+been popped-up, it is effectively "above" all other widgets (unless another
+modal widget is popped-up above it).  Only the modal widget and its
+descendants can be focused or receive events.  The relevant baseclass is
+unsurprisingly named @ref Xrb::ModalWidget "ModalWidget" .  It is not
+recommended to manually manipulate widget modality with
+@ref Xrb::Widget::SetIsModal "Widget::SetIsModal" unless you know what you're
+doing.
+
+*** picture of dialog box popped up over other stuff ***
+
+When a modal widget is created, it is effectively a child of the top-level
+widget, will receive events from the top-level widget, and be drawn by the
+top-level widget.  This is necessary to implement the "on top of everything"
+nature of modal widgets.  To this end, you will see the relevant code for
+handling events when modal widgets exist in
+@ref Xrb::Widget::Draw "Widget::Draw" and
+@ref Xrb::Widget::ProcessEventOverride "Widget::ProcessEventOverride" .
+
+Because modal widgets have exclusive control when they are active, and
+it is unwise to delete an object from within its own code, there is a special
+way to delete modal widgets from inside themselves (for example, when in
+a @ref Xrb::Dialog "Dialog" , one hits the OK or Cancel button).  A call to
+@ref Xrb::ModalWidget::Shutdown "ModalWidget::Shutdown" must be made.  This
+will enqueue a child widget deletion event
+( @ref Xrb::EventDeleteChildWidget "EventDeleteChildWidget" ) to the modal
+widget's actual parent, make the modal widget not modal, and hide it.
+The child widget deletion event will be processed in the next iteration of
+the game loop, at which point the modal widget will be deleted.
+
+There are a few notable caveats when using modal widgets:
+    <ul>
+    <li>Modal widgets may not be hidden, because that would then preclude all
+        widgets from receiving events.</li>
+    <li>Modal widgets may not be disabled, again, because then no widgets
+        would receive events.</li>
+    <li>Modal widgets may not be made into main widgets, because they must
+        effectively be children of the top-level widget.</li>
+    <li>The top-level widget ( @c Screen ) may not be made modal, since
+        modal widgets are effectively made children of the top-level widget.</li>
+    <li>Modal widgets are not considered when calculating @c Layout sizes
+        and positions.  Effectively the modal widget is not even in the layout.</li>
+    </ul>
+
+@section section_widget_frame_margins Frame Margins
+Frame margins are an aspect of widget sizing and placement which different
+widgets can use in different ways.  Generally, a frame margin indicates the
+size of the area around the inside of the widget's rectangle which is a
+"margin" for the contents.
+
+*** picture showing what the hell the frame margins are ***
+
+For example, @ref Xrb::Layout uses the frame margins in the manner described
+above to contain all its child widgets as they are layed out.
+
+*** picture showing layout ***
+
+@ref Xrb::Label uses the frame margins to indicate where the valid region for
+textual content is
+
+*** picture showing label ***
+
+Frame margins are also used when drawing the widget's background ( see
+@ref Xrb::WidgetBackground ).  Some background types use the frame margins
+to indicate the size of various sections of the background.
+
+*** picture of StylizedBackground ***
+
+Relevant methods include
+@ref Xrb::Widget::GetFrameMargins ,
+@ref Xrb::Widget::SetFrameMargins ,
+@ref Xrb::Widget::SetFrameMarginRatios , and
+@ref Xrb::Widget::HandleChangedFrameMargins .
+
+See also @ref section_widget_skinning "Widget Skinning" for more details.
+
+@section section_widget_backgrounds Backgrounds
+@ref Xrb::WidgetBackground is an abstract interface for objects that will
+draw the background for a widget.  Any sort of background can be made by
+subclassing @c WidgetBackground , and any background can be used in any
+widget (though it should be noted that some widgets intentionally do not
+use their backgrounds).  
+
+*** pictures of different backgrounds ***
+
+@c Widget provides @ref Xrb::Widget::SetRenderBackground which allows you to
+specify which @c WidgetBackground object should be used to when rendering.
+Additionally, the overridable method @ref Xrb::Widget::UpdateRenderBackground
+allows a subclass to specify how the background should be set.  Refer to
+@ref Xrb::Button::UpdateRenderBackground and
+@ref Xrb::Button::HandleChangedWidgetSkinWidgetBackground for example usage.
+
+Other relevant methods include
+@ref Xrb::Widget::GetBackground ,
+@ref Xrb::Widget::SetBackground , and
+@ref Xrb::Widget::GetRenderBackground .
+
+See also @ref section_widget_skinning "Widget Skinning" for more details.
+
+@section section_widget_skinning Widget Skinning
+Widget skinning provides a centralized way of specifying standard sizes,
+colors, textures, fonts, etc. for various widget types.  A
+@ref Xrb::WidgetSkin is an object which is assigned to an entire hierarchy
+of widgets to provide a consistent look.  The widgets will access the
+properties of the @c WidgetSkin to use in various functions ( for example, 
+@ref Xrb::Button::UpdateRenderBackground ).  @c WidgetSkin objects are
+handled through @ref Xrb::WidgetSkinHandler , which @ref Xrb::Widget derives
+from.  The bulk of the accessors and modifiers for dealing with @c WidgetSkin
+are in @c WidgetSkinHandler .
+
+*** pictures of same widget hierarchy using different widget skins ***
+
+Widgets can also change the properties of their widget skins.  When this is
+done, the entire widget hierarchy is traversed, calling the appropriate
+property-changed handler function ( see
+@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinWidgetBackground ,
+@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinFont ,
+@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinTexture , and 
+@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinMargins ).  Each
+of these handler functions indicates which specific property has changed
+(e.g. button background, button-pressed background, etc).  The
+property-changed handler functions are meant to be overridden by @c Widget
+subclasses in order to provide custom behavior when @c WidgetSkin properties
+change.
+
+@c WidgetSkin is divided up into several types of widget properties:
+widget background, font, texture, and margins.  Each of these types
+contain specific properties.  For example, the widget background type includes
+specific backgrounds such as button background, button-pressed
+background, and button-mouseover background.  See @ref Xrb::WidgetSkin
+for more details on property types and specific properties.
+
+One thing to note which may be confusing at first is that some widgets,
+@c Widget included, provide property-changed handlers for
+<strong>specific</strong> properties ( for example,
+@ref Xrb::Widget::HandleChangedFrameMargins ).  These handlers generally
+shadow a member variable which is stored in the particular @c Widget subclass,
+such as @ref Xrb::Widget::m_frame_margins or @ref Xrb::Label::m_font .
+
+It should be noted that it is not necessary to add properties to @c WidgetSkin
+just to use them in a particular widget.  @c WidgetSkin is merely meant to
+provide a convenient and easy mechanism for common widget properties to be
+used and changed in an efficient and consistent manner.
+
+*/
+

@@ -1,0 +1,182 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t+j\hat{n}t=\hat{p}_{1}+\hat{v}_{1}t+\frac{1}{2}\hat{a}t^{2}\qquad\hat{n}\cdot\hat{n}=1\]
+
+\end_inset 
+
+
+\layout Standard
+
+subscript 0 is for the shooter, subscript 1 is for the target.
+ 
+\begin_inset Formula $j$
+\end_inset 
+
+ is the known speed of the projectile.
+ 
+\begin_inset Formula $\hat{n}$
+\end_inset 
+
+ is the unknown direction vector of the projectile.
+ 
+\begin_inset Formula $t$
+\end_inset 
+
+ is also unknown.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p}_{0}+\hat{v}_{0}t+j\hat{n}t=\hat{p}_{1}+\hat{v}_{1}t+\frac{1}{2}\hat{a}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+j\hat{n}t=\left(\hat{p}_{1}-\hat{p}_{0}\right)+\left(\hat{v}_{1}-\hat{v}_{0}\right)t+\frac{1}{2}\hat{a}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+j\hat{n}t=\hat{p}+\hat{v}t+\frac{1}{2}\hat{a}t^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}=\frac{\hat{p}+\hat{v}t+\frac{1}{2}\hat{a}t^{2}}{jt}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+n_{x}=\frac{p_{x}+v_{x}t+\frac{1}{2}a_{x}t^{2}}{jt}\qquad n_{y}=\frac{p_{y}+v_{y}t+\frac{1}{2}a_{y}t^{2}}{jt}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-n_{x}^{2}}=\frac{p_{y}+v_{y}t+\frac{1}{2}a_{y}t^{2}}{jt}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\sqrt{1-\left(\frac{p_{x}+v_{x}t+\frac{1}{2}a_{x}t^{2}}{jt}\right)^{2}}=\frac{p_{y}+v_{y}t+\frac{1}{2}a_{y}t^{2}}{jt}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+1-\left(\frac{p_{x}+v_{x}t+\frac{1}{2}a_{x}t^{2}}{jt}\right)^{2}=\left(\frac{p_{y}+v_{y}t+\frac{1}{2}a_{y}t^{2}}{jt}\right)^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+1-\left(\frac{p_{x}^{2}+2p_{x}v_{x}t+a_{x}p_{x}t^{2}+v_{x}^{2}t^{2}+a_{x}v_{x}t^{3}+\frac{1}{4}a_{x}^{2}t^{4}}{j^{2}t^{2}}\right)=\left(\frac{p_{y}^{2}+2p_{y}v_{y}t+a_{y}p_{y}t^{2}+v_{y}^{2}t^{2}+a_{y}v_{y}t^{3}+\frac{1}{4}a_{y}^{2}t^{4}}{j^{2}t^{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+j^{2}t^{2}-\left(p_{x}^{2}+2p_{x}v_{x}t+a_{x}p_{x}t^{2}+v_{x}^{2}t^{2}+a_{x}v_{x}t^{3}+\frac{1}{4}a_{x}^{2}t^{4}\right)=\left(p_{y}^{2}+2p_{y}v_{y}t+a_{y}p_{y}t^{2}+v_{y}^{2}t^{2}+a_{y}v_{y}t^{3}+\frac{1}{4}a_{y}^{2}t^{4}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+p_{x}^{2}+p_{y}^{2}+2p_{x}v_{x}t+2p_{y}v_{y}t+a_{x}p_{x}t^{2}+a_{y}p_{y}t^{2}+v_{x}^{2}t^{2}+v_{y}^{2}t^{2}-j^{2}t^{2}+a_{x}v_{x}t^{3}+a_{y}v_{y}t^{3}+\frac{1}{4}a_{x}^{2}t^{4}+\frac{1}{4}a_{y}^{2}t^{4}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{p}\cdot\hat{p}\right)+2\left(\hat{p}\cdot\hat{v}\right)t+\left(\hat{a}\cdot\hat{p}+\hat{v}\cdot\hat{v}-j^{2}\right)t^{2}+\left(\hat{a}\cdot\hat{v}\right)t^{3}+\frac{1}{4}\left(\hat{a}\cdot\hat{a}\right)t^{4}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+assume 
+\begin_inset Formula $T$
+\end_inset 
+
+ is the preferred solution for 
+\begin_inset Formula $t$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{n}=\frac{\hat{p}+\hat{v}T+\frac{1}{2}\hat{a}T^{2}}{jT}\]
+
+\end_inset 
+
+
+\the_end

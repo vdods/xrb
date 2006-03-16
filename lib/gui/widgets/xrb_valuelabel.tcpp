@@ -1,0 +1,50 @@
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_valuelabel.tcpp by Victor Dods, created 2005/XX/XX
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+// this file is included in xrb_valuelabel.h inside the namespace Xrb
+
+template <typename ValueType>
+ValueLabel<ValueType>::ValueLabel (
+    std::string const &printf_format,
+    TextToValueFunctionType text_to_value_function,
+    Widget *const parent,
+    std::string const &name)
+    :
+    Label("", parent, name),
+    m_receiver_set_value(&ValueLabel<ValueType>::SetValue, this)
+{
+    // set up the printf format string
+    SetPrintfFormat(printf_format);
+
+    m_text_to_value_function = text_to_value_function;
+
+    SetIsHeightFixedToTextHeight(true);
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetText (std::string const &text)
+{
+    SetValue(GetTextToValueFunction()(text.c_str()));
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetValue (ValueType const value)
+{
+    m_value = value;
+    Label::SetText(Util::StringPrintf(GetPrintfFormat().c_str(), m_value));
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetTextToValueFunction (
+    TextToValueFunctionType text_to_value_function)
+{
+    m_text_to_value_function = text_to_value_function;
+    SetText(GetText());
+}

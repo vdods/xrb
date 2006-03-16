@@ -1,0 +1,3998 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 1
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\leftmargin 0.25in
+\topmargin 0.25in
+\rightmargin 0.25in
+\bottommargin 0.25in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+title{Rigid Body Collision Physics}
+\layout Standard
+
+\backslash 
+author{Victor Dods}
+\layout Standard
+
+\backslash 
+maketitle{}
+\layout Standard
+
+\end_inset 
+
+
+\layout Standard
+\align left 
+The goal of this paper is to develop the necessary building blocks to create
+ a computerized model of the physical world on the scope of everyday life,
+ constituting solid objects and their interactions.
+ Through these concepts, one should gain a humble understanding of simple
+ Newtonian Mechanics.
+ 
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Definitions And Notation}
+\end_inset 
+
+
+\layout Standard
+\align left 
+There is a certain set of terms which will be used frequently in this paper
+ and understanding of them is necessary to comprehend the subject matter.
+ A grasp on linear algebra is also necessary to understand the material,
+ and knowledge of calculus is helpful, but their fundamentals are out of
+ the scope of this paper.
+ The following sections are key definitions and concepts.
+\layout Standard
+\align left 
+A few notational standards will be used throughout the paper, and will change
+ only when specified.
+\layout Standard
+
+- scalar values will be specified as a lower-case letter, e.g.
+ 
+\begin_inset Formula $b$
+\end_inset 
+
+, 
+\begin_inset Formula $\lambda$
+\end_inset 
+
+
+\layout Standard
+\align left 
+- vectors will be specified as a letter with a 
+\begin_inset Quotes eld
+\end_inset 
+
+hat
+\begin_inset Quotes erd
+\end_inset 
+
+ over it, e.g.
+ 
+\begin_inset Formula $\hat{x}$
+\end_inset 
+
+, 
+\begin_inset Formula $\hat{\alpha},$
+\end_inset 
+
+ 
+\begin_inset Formula $\hat{F}$
+\end_inset 
+
+
+\layout Standard
+\align left 
+- matrices will be specified as an upper-case, bold letter, e.g.
+ 
+\begin_inset Formula $\mathbf{I}$
+\end_inset 
+
+, 
+\begin_inset Formula $\mathbf{\Phi}$
+\end_inset 
+
+
+\layout Standard
+\align left 
+- vectors and matrices (and the space in which they operate) are of dimension
+ 
+\begin_inset Formula $d$
+\end_inset 
+
+
+\layout Standard
+\align left 
+- functions will be specified as an upper-case letter, with the arguments
+ in parentheses after.
+ The domain and range will be given at or before the function's definition,
+ e.g.
+ 
+\begin_inset Formula $Q\left(\hat{p}\right):\mathbb{R}^{d}\rightarrow\mathbb{R}$
+\end_inset 
+
+
+\layout Standard
+
+- the coordinate system right-handed.
+\layout Standard
+\align left 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Rigid Bodies}
+\end_inset 
+
+ 
+\series bold 
+Definition: Rigid Body 
+\series default 
+- A theoretical abstraction of stiff physical objects.
+ In the context of the physical world, 
+\begin_inset Quotes eld
+\end_inset 
+
+stiff
+\begin_inset Quotes erd
+\end_inset 
+
+ means effectively non-deformable.
+ Tangible
+\series bold 
+ 
+\series default 
+objects, in the scope of everyday life, are made up of countless tiny particles
+ (atoms).
+ Simulating objects in a correct manner by use of particle systems is infeasible
+ for providing real-time physics simulation on modern computers.
+ Abstracting the atomic particle structure into a continuous, solid, non-deforma
+ble, single object is an effective means to approximate correct physical
+ interaction between objects.
+ One further postulation about rigid bodies is that they encompass a non-zero
+ volume.
+ This restriction will become useful and apparent in the next section.
+\layout Standard
+\align left 
+For the scope of this paper, it is assumed that rigid bodies are not destroyable.
+ In other words, they cannot be split up into multiple pieces.
+\layout Standard
+
+Examples of objects in the real world which can effectively be considered
+ rigid bodies are:
+\layout Standard
+
+- steel blocks
+\layout Standard
+
+- billiard balls
+\layout Standard
+
+- boulders
+\layout Standard
+
+- buildings
+\layout Standard
+
+- planets (at least on the scale of human interaction)
+\layout Standard
+
+Computer games make frequent use of rigid body physics, and in their fictional
+ world, for the sake of gameplay and speed, almost everything can be considered
+ a rigid body (cars, car tires, people, garbage cans, etc).
+\layout Standard
+
+From here on, 
+\series bold 
+rigid bodies
+\series default 
+ will be referred to simply as 
+\series bold 
+bodies
+\series default 
+.
+\layout Standard
+\align left 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{First Moment Of Inertia}
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: First Moment Of Inertia
+\series default 
+ is the fancy name for the property commonly known as 
+\begin_inset Quotes eld
+\end_inset 
+
+mass
+\begin_inset Quotes erd
+\end_inset 
+
+ (and from here on, it will be referred to as 
+\series bold 
+mass
+\series default 
+).
+ It is a scalar value, 
+\begin_inset Formula $m$
+\end_inset 
+
+, which represents the proportion of a force applied to an object over the
+ object's acceleration resulting from the applied force.
+\layout Standard
+
+
+\begin_inset Formula \[
+m=\frac{F}{a}\]
+
+\end_inset 
+
+
+\layout Standard
+
+This is Newton's Second Law of Motion.
+ Here, 
+\begin_inset Formula $F$
+\end_inset 
+
+ is the scalar-valued force applied to an object, and 
+\begin_inset Formula $a$
+\end_inset 
+
+ is the scalar-valued acceleration resulting from the applied force.
+ Intuitively, the heavier an object is (the higher its mass is), the more
+ force it takes to accelerate it a given amount.
+\layout Standard
+
+One caveat is that mass cannot be zero, otherwise a permutation of the above
+ equation will result in a divide by zero.
+\layout Standard
+
+
+\begin_inset Formula \[
+a=\frac{F}{m}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Calculating the mass of an object is fairly simple.
+ A rigid body must have a density function 
+\begin_inset Formula $D\left(\hat{x}\right):\mathbb{R}^{d}\rightarrow\mathbb{R}$
+\end_inset 
+
+ defined over the volume it encompasses.
+ The mass of the body is defined as
+\layout Standard
+
+
+\begin_inset Formula \[
+m=\begin{array}{cc}
+\\\int & D\left(\hat{x}\right)\mathbf{dV}\\
+V\end{array}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Commonly, the density function will be simplified to be constant, as would
+ be the case for solid, homogeneous objects such as bricks or metal objects.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Center Of Gravity}
+\end_inset 
+
+
+\layout Standard
+\align left 
+
+\series bold 
+Definition: Center Of Gravity
+\series default 
+ of a body is a point at which all its mass can be considered to reside
+ at.
+ It is also used as the point of rotation for when the body attains spin.
+ The center of gravity, 
+\begin_inset Formula $\hat{g}$
+\end_inset 
+
+, is a vector value which is formally defined as the density-weighted vector
+ volume integral over the mass:
+\layout Standard
+\align left 
+
+\begin_inset Formula \[
+\hat{g}=\frac{\begin{array}{cc}
+\\\int & \hat{x}\cdot D\left(\hat{x}\right)\mathbf{dV}\\
+V\end{array}}{\begin{array}{cc}
+\\\int & D\left(\hat{x}\right)\mathbf{dV}\\
+V\end{array}}=\frac{1}{m}\begin{array}{cc}
+\\\int & \hat{x}\cdot D\left(\hat{x}\right)\mathbf{dV}\\
+V\end{array}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The center of gravity for a body is a convenient local origin when doing
+ calculations which pertain only to the body, such as rotation (as the axis
+ of rotation will pass directly through the center of gravity).
+ The center of gravity can also be referred to as the vector-valued 
+\series bold 
+position 
+\series default 
+of the body.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Velocity And Acceleration}
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Linear Velocity
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{v}$
+\end_inset 
+
+, which is the rate of change of a body's center of gravity with respect
+ to time.
+ When the word 
+\series bold 
+velocity
+\series default 
+ is used unqualified (as opposed to 
+\begin_inset Quotes eld
+\end_inset 
+
+angular velocity
+\begin_inset Quotes erd
+\end_inset 
+
+) it means linear velocity.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{v}=\frac{\mathbf{d}}{\mathbf{dt}}\hat{g}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Acceleration
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{a}$
+\end_inset 
+
+, which is the rate of change of a body's velocity with respect to time,
+ or the second derivative of the position.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}=\frac{\mathbf{d}}{\mathbf{dt}}\hat{v}=\frac{\mathbf{d}^{2}}{\mathbf{dt}^{2}}\hat{g}\]
+
+\end_inset 
+
+
+\layout Standard
+\align left 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Linear Momentum And Force}
+\end_inset 
+
+
+\layout Standard
+\align left 
+
+\series bold 
+Definition: Linear Momentum
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{p}$
+\end_inset 
+
+, which is the product of a body's mass and its velocity.
+\layout Standard
+\align left 
+
+\begin_inset Formula \[
+\hat{p}=m\hat{v}=m\frac{\mathbf{d}}{\mathbf{dt}}\hat{g}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Force
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{F}$
+\end_inset 
+
+, which is the rate of change of linear momentum with respect to time.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{F}=\frac{\mathbf{d}}{\mathbf{dt}}\hat{p}=\frac{\mathbf{d}}{\mathbf{dt}}m\hat{v}=m\frac{\mathbf{d}}{\mathbf{dt}}\hat{v}=m\hat{a}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{F}=m\hat{a}\qquad\hat{a}=\frac{\hat{F}}{m}\]
+
+\end_inset 
+
+
+\layout Standard
+
+This is where the commonly known Newtonian equations 
+\begin_inset Formula $F=ma$
+\end_inset 
+
+ and 
+\begin_inset Formula $a=\frac{F}{m}$
+\end_inset 
+
+ come from.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Angle, Angular Velocity, Angular Acceleration And Torque}
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Angle
+\series default 
+ - In order to completely specify the orientation of a body in 3 dimensions,
+ 3 scalar angle values must be used, each angle describing the rotation
+ which the body undergoes in each coordinate plane.
+ This method of specifying rotations is called 
+\series bold 
+Euler angles
+\series default 
+.
+ Normally Euler angles specify rotations around the 
+\begin_inset Formula $z$
+\end_inset 
+
+, 
+\begin_inset Formula $x$
+\end_inset 
+
+ and 
+\begin_inset Formula $y$
+\end_inset 
+
+ axes (in that order), but for purposes of this paper, it will be specified
+ in the order 
+\begin_inset Formula $x$
+\end_inset 
+
+, 
+\begin_inset Formula $y$
+\end_inset 
+
+ and 
+\begin_inset Formula $z$
+\end_inset 
+
+.
+ If you think of the 
+\begin_inset Formula $x$
+\end_inset 
+
+
+\series bold 
+ 
+\series default 
+axis as being forward, the 
+\begin_inset Formula $y$
+\end_inset 
+
+ axis as being left, and the 
+\begin_inset Formula $z$
+\end_inset 
+
+ axis as being up, then 
+\begin_inset Formula $\psi$
+\end_inset 
+
+ is the 
+\series bold 
+roll
+\series default 
+ angle around the 
+\begin_inset Formula $x$
+\end_inset 
+
+ axis, 
+\begin_inset Formula $\phi$
+\end_inset 
+
+ is the 
+\series bold 
+pitch
+\series default 
+ angle around the 
+\begin_inset Formula $y$
+\end_inset 
+
+ axis, and 
+\begin_inset Formula $\theta$
+\end_inset 
+
+ is the 
+\series bold 
+yaw
+\series default 
+ angle around the 
+\begin_inset Formula $z$
+\end_inset 
+
+ axis.
+ All angles specify counterclockwise rotation around their respective coordinate
+ axes.
+\layout Standard
+
+Another way to look at the way these angles work is from the perspective
+ of the space being transformed.
+ Euler angles are commonly used in 3D computer games to completely specify
+ the orientation of an object in space.
+ From a literal first person perspective, the 
+\series bold 
+yaw
+\series default 
+ angle changes when one turns their head left or right, or shakes their
+ head 'no'.
+ The 
+\series bold 
+pitch
+\series default 
+ angle changes when one looks up or down, or nods their head 'yes'.
+ The 
+\series bold 
+roll
+\series default 
+ angle changes when one rotates their head while looking forward, say to
+ attempt to read a sign which is hanging sideways.
+\layout Standard
+
+A complete Euler angle rotation matrix 
+\begin_inset Formula $\mathbf{R}$
+\end_inset 
+
+ consists of 3 separate atomic rotation matrices which specify the rotation
+ for each of the angles.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{R}=\mathbf{R}_{\theta}\mathbf{R}_{\phi}\mathbf{R}_{\psi}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The atomic transformations are applied in this specifc order (keep in mind
+ that the matrices are multiplied on the left of the vector) so that the
+ axes of rotation remains consistent with the axes of the head (referring
+ to the head-turning analogy above).
+ If the matrices were applied in reverse order, the axis of rotation would
+ be absolute, and would give unintuitive results in the head-turning scenario.
+ For example, if the yaw angle was 
+\begin_inset Formula $\frac{\pi}{2}$
+\end_inset 
+
+ the head would turn 
+\begin_inset Formula $90$
+\end_inset 
+
+ degrees to the left; if then a pitch angle was applied, the head would
+ not tilt back or forward as expected, but rather would tilt left and right
+ as if a roll angle was being applied.
+\layout Standard
+
+Each of the atomic rotation matrices are as follows.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{R}_{\theta}=\left[\begin{array}{ccc}
+\cos\theta & -\sin\theta & 0\\
+\sin\theta & \cos\theta & 0\\
+0 & 0 & 1\end{array}\right]\qquad\mathbf{R}_{\phi}=\left[\begin{array}{ccc}
+\cos\phi & 0 & \sin\phi\\
+0 & 1 & 0\\
+-\sin\phi & 0 & \cos\phi\end{array}\right]\qquad\mathbf{R}_{\psi}=\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \cos\psi & -\sin\psi\\
+0 & \sin\psi & \cos\psi\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Thus 
+\begin_inset Formula $\mathbf{R}$
+\end_inset 
+
+, the composite rotation matrix, is
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{R}=\left[\begin{array}{ccc}
+\cos\theta & -\sin\theta & 0\\
+\sin\theta & \cos\theta & 0\\
+0 & 0 & 1\end{array}\right]\left[\begin{array}{ccc}
+\cos\phi & 0 & \sin\phi\\
+0 & 1 & 0\\
+-\sin\phi & 0 & \cos\phi\end{array}\right]\left[\begin{array}{ccc}
+1 & 0 & 0\\
+0 & \cos\psi & -\sin\psi\\
+0 & \sin\psi & \cos\psi\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{R}=\left[\begin{array}{ccc}
+\cos\theta & -\sin\theta & 0\\
+\sin\theta & \cos\theta & 0\\
+0 & 0 & 1\end{array}\right]\left[\begin{array}{ccc}
+\cos\phi & \sin\psi\sin\phi & \cos\psi\sin\phi\\
+0 & \cos\psi & -\sin\psi\\
+-\sin\phi & \sin\psi\cos\phi & \cos\psi\cos\phi\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{R}=\left[\begin{array}{ccc}
+\cos\phi\cos\theta & \sin\psi\sin\phi\cos\theta-\cos\psi\sin\theta & \cos\psi\sin\phi\cos\theta+\sin\psi\sin\theta\\
+\cos\phi\sin\theta & \sin\psi\sin\phi\sin\theta+\cos\psi\cos\theta & \cos\psi\sin\phi\sin\theta-\sin\psi\cos\theta\\
+-\sin\phi & \sin\psi\cos\phi & \cos\psi\cos\phi\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Angular Velocity
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{\omega}$
+\end_inset 
+
+.
+ It describes the axis of rotation, and its magnitude is the scalar value
+ of the body's angular speed.
+ Rotating a body, whose orientation is specified by Euler angles, around
+ an arbitrary axis requires a bit of conversion work to know what the changes
+ in Euler angles actually are.
+ - more on this later
+\layout Standard
+
+
+\series bold 
+Definition: Torque
+\series default 
+ is the angular analog to force.
+ Although not intuitive, it is also a vector value, 
+\begin_inset Formula $\hat{\tau}$
+\end_inset 
+
+, and is the derivative of rotational angular momentum (which will be explained
+ in the next section) with respect to time.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\tau}=\frac{\mathbf{d}}{\mathbf{dt}}\hat{L}\]
+
+\end_inset 
+
+
+\layout Standard
+\align left 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Second Moment Of Inertia And Angular Momentum}
+\end_inset 
+
+
+\layout Standard
+\align left 
+
+\series bold 
+Definition: Second Moment Of Inertia
+\series default 
+ is the fancy wording for the rotational equivalent of mass.
+ It is a matrix 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+, which satisfies the equation:
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\tau}=\frac{\mathbf{d}}{\mathbf{dt}}\mathbf{M}\hat{\omega}\]
+
+\end_inset 
+
+
+\layout Standard
+
+In other words, torque is equal to the moment of inertia times the angular
+ acceleration vector, or the derivative of 
+\series bold 
+angular momentum
+\series default 
+ with respect to time.
+ The inertia tensor is commonly referred to by the symbol 
+\begin_inset Formula $\mathbf{I}$
+\end_inset 
+
+, however this standard will be avoided in this paper, to avoid confusing
+ it with the symbol for the identity matrix.
+\layout Standard
+
+
+\series bold 
+Definition: Angular Momentum
+\series default 
+ is a vector value, 
+\begin_inset Formula $\hat{L}$
+\end_inset 
+
+, which is the product of the 
+\begin_inset Quotes eld
+\end_inset 
+
+second moment of inertia tensor
+\begin_inset Quotes erd
+\end_inset 
+
+ (which will be discussed in the next section) and the angular velocity,
+ plus an additional term which will be explained next.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{L}=\mathbf{M}\hat{\omega}+\left(\hat{g}-\hat{x}\right)\times\hat{p}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The first term describes the rotational angular momentum, the angular momentum
+ imparted by the spin of the body.
+ The second term describes the translational angular momentum, which is
+ used when it is part of a system of bodies.
+ The value of 
+\begin_inset Formula $\hat{x}$
+\end_inset 
+
+ is an arbitrary relative constant point for the whole system.
+ For the purposes of a single-body system, 
+\begin_inset Formula $\hat{x}$
+\end_inset 
+
+ can be set to 
+\begin_inset Formula $\hat{g}$
+\end_inset 
+
+, which completely eliminates the translational component.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Second Moment Of Inertia Tensor And Calculating It}
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Second Moment Of Inertia Tensor
+\series default 
+ is a diagonalizable matrix which defines the relation between angular momentum
+ and angular velocity.
+ Let 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ be this tensor matrix, and it will be hereafter referred to as the 
+\series bold 
+inertia tensor
+\series default 
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{L}=\mathbf{M}\hat{\omega}\]
+
+\end_inset 
+
+
+\layout Standard
+
+To develop an intuition for the inertia tensor, it is useful to explore
+ some of its properties.
+ As mentioned above, the matrix is diagonalizable.
+ This means that there exists an orthogonal matrix which will transform
+ the tensor into a diagonal matrix (all zeros except for possibly on the
+ diagonal).
+ Note that the matrix 
+\begin_inset Formula $\mathbf{I}$
+\end_inset 
+
+ is the inertia tensor, and not the identity matrix.
+
+------------------ pick which blurb (above or below)
+
+ Because the matrix is diagonalizable, there exists an orthogonal matrix
+ which will transform the tensor into a diagonal matrix (all zeros except
+ for possibly on the diagonal).
+ Let 
+\begin_inset Formula $\mathbf{D}$
+\end_inset 
+
+ be the diagonalized version of 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+, while 
+\begin_inset Formula $\mathbf{T}$
+\end_inset 
+
+ is the orthogonal transformation matrix to transform 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ to 
+\begin_inset Formula $\mathbf{D}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\]
+
+\end_inset 
+
+Calculating eigenvalues for a diagonal matrix is extremely easy, as they
+ are plainly sitting on the diagonal.
+ The eigenvalues for an inertia tensor are referred to as the 
+\series bold 
+principle moments of inertia
+\series default 
+.
+ The corresponding eigenvectors are called the 
+\series bold 
+principle axes
+\series default 
+.
+ An inertia tensor which is diagonalized has its principle axes on the coordinat
+e axes.
+ It should be noted that the inertia tensor is fixed on the body's orientation.
+ If the body rotates, the inertia tensor must rotate the same way in order
+ to preserve relative orientation.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Kinetic Energy}
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Linear Kinetic Energy
+\series default 
+ is a scalar value which specifies the amount of energy a body has due to
+ its linear motion.
+ The equation
+\layout Standard
+
+
+\begin_inset Formula \[
+E_{t}=\frac{1}{2}m\hat{v}\cdot\hat{v}\]
+
+\end_inset 
+
+
+\layout Standard
+
+is obtained by the integral of the body's velocity with respect to its momentum:
+\layout Standard
+
+
+\begin_inset Formula \[
+E_{t}=\int\hat{v}\cdot\mathbf{d\hat{p}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Rotational Kinetic Energy
+\series default 
+ is a scalar value which specifies the amount of energy a body has due to
+ its rotational motion.
+ It is obtained in a similar way to its linear counterpart.
+ The equation is
+\layout Standard
+
+
+\begin_inset Formula \[
+E_{r}=\frac{1}{2}\hat{\omega}\cdot\left(\mathbf{I}\hat{\omega}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Definition: Total Kinetic Energy
+\series default 
+ is the scalar sum of linear and rotational kinetic energies.
+ It specifies the total amount of energy possessed by a body due to motion.
+\layout Standard
+
+
+\begin_inset Formula \[
+E=E_{t}+E_{r}=\frac{1}{2}m\hat{v}\cdot\hat{v}+\frac{1}{2}\hat{\omega}\cdot\left(\mathbf{I}\hat{\omega}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Instantaneous Linear Velocity Of A Point In A Rotating Rigid Body}
+\end_inset 
+
+
+\layout Standard
+
+In dealing rotating bodies, certain situations require knowledge of the
+ linear velocity of a point in a body which is rotating.
+ Since rotation imparts a curved path to any point outside the axis of rotation,
+ it is only valid to talk about the instantaneous linear velocity for a
+ point in a rotating velocity (the derivative).
+ Fortunately, calculus is not required to solve for this value, if we know
+ all the properties of the body at the time we wish to calculate the aforementio
+ned value.
+ Let 
+\begin_inset Formula $\hat{s}$
+\end_inset 
+
+ be the linear velocity of a point 
+\begin_inset Formula $\hat{R}$
+\end_inset 
+
+ in a rotating body with center of gravity 
+\begin_inset Formula $\hat{g}$
+\end_inset 
+
+, linear velocity 
+\begin_inset Formula $\hat{v}$
+\end_inset 
+
+, and angular velocity 
+\begin_inset Formula $\hat{\omega}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{s}=\hat{v}+\hat{\omega}\times\left(\hat{R}-\hat{g}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Conservation Laws}
+\end_inset 
+
+- intro conservation of momentum
+\layout Standard
+
+Let 
+\begin_inset Formula $\hat{p_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{p_{2}}$
+\end_inset 
+
+ be the linear momenta of two interacting bodies before their interaction.
+ Let 
+\begin_inset Formula $\hat{P_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{P_{2}}$
+\end_inset 
+
+ be the linear momenta of the two bodies after the interaction.
+ The sums of linear momenta before and after the interaction must be conserved.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{p_{1}}+\hat{p_{2}}=\hat{P_{1}}+\hat{P_{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let 
+\begin_inset Formula $\hat{l_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{l_{2}}$
+\end_inset 
+
+ be the angular momenta of two interacting bodies before their interaction.
+ Let 
+\begin_inset Formula $\hat{L_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{L_{2}}$
+\end_inset 
+
+ be the angular momenta of the two bodies after the interaction.
+ The sums of angular momenta before and after the interaction must be conserved.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{l_{1}}+\hat{l_{2}}=\hat{L_{1}}+\hat{L_{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+- intro conservation of kinetic energy
+\layout Standard
+
+Let 
+\begin_inset Formula $e_{1}$
+\end_inset 
+
+, 
+\begin_inset Formula $e_{2}$
+\end_inset 
+
+, 
+\begin_inset Formula $d_{1}$
+\end_inset 
+
+ and 
+\begin_inset Formula $d_{2}$
+\end_inset 
+
+ be the linear kinetic energy and angular kinetic energy respectively of
+ two bodies before their interaction.
+ Let 
+\begin_inset Formula $E_{1}$
+\end_inset 
+
+, 
+\begin_inset Formula $E_{2}$
+\end_inset 
+
+, 
+\begin_inset Formula $D_{1}$
+\end_inset 
+
+ and 
+\begin_inset Formula $D_{2}$
+\end_inset 
+
+ be the linear kinetic energy and angular kinetic energy respectively of
+ the two bodies after their interaction.
+ The sums of kinetic energies before and after the interaction must be conserved
+ in an elastic collision.
+\layout Standard
+
+
+\begin_inset Formula \[
+e_{1}+d_{1}+e_{2}+d_{2}=E_{1}+D_{1}+E_{2}+D_{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Solution To Rotating, Rigid Body Collisions}
+\end_inset 
+
+
+\layout Standard
+
+The goal of this section is to provide solutions to linear velocity and
+ angular velocity for two bodies interacting in a perfectly elastic collision,
+ where each body is free to rotate.
+ The values necessary to solve this are: linear velocity, angular velocity,
+ center of gravity, mass and inertial tensor for each body.
+ Additionally, the point of collision and the normal vector for the collision,
+ common to both bodies, must be known.
+ The post-collision values to be solved for are linear velocity and angular
+ velocity for each body.
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+per-body property
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+constant, pre-collision value
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+unknown, post-collision variable
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+linear velocity vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{v_{k}}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{V_{k}}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+angular velocity vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{\omega_{k}}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{\Omega_{k}}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+per-body constant property
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+symbol
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+center of gravity vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{g_{k}}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+mass scalar (first moment)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $m_{k}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+inertial tensor (second moment)
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\mathbf{M}_{k}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+\align center 
+
+\begin_inset  Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+common body properties
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+symbol
+\end_inset 
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+point of collision vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{R}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+collision's normal vector
+\end_inset 
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\layout Standard
+
+
+\begin_inset Formula $\hat{N}$
+\end_inset 
+
+
+\end_inset 
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset 
+
+
+\layout Standard
+
+The 
+\begin_inset Formula $k$
+\end_inset 
+
+ subscripts indicate they apply to both bodies (e.g.
+ 
+\begin_inset Formula $\hat{g_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{g_{2}}$
+\end_inset 
+
+ for the centers of gravity, or 
+\begin_inset Formula $\hat{\Omega_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{\Omega_{2}}$
+\end_inset 
+
+ for the post-collision angular velocity vectors).
+ From here on after, when a 
+\begin_inset Formula $k$
+\end_inset 
+
+ subscript is used, it will indicate that it can be replaced with the index
+ of any of the bodies, indicating that the symbol applies to that body.
+\layout Standard
+
+To simplify things a bit, express 
+\begin_inset Formula $\hat{V_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{V_{2}}$
+\end_inset 
+
+ in terms of the difference from their pre-collision counterparts, all in
+ terms of momentum.
+ An unknown scalar 
+\begin_inset Formula $c_{k}$
+\end_inset 
+
+ for each body is introduced to give the magnitude of the change in linear
+ momentum.
+ Also listed are permutations of the equation which will be useful later.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{k}\hat{N}=m_{k}\hat{V_{k}}-m_{k}\hat{v_{k}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{k}\hat{V_{k}}=m_{k}\hat{v_{k}}+c_{k}\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{V_{k}}=\hat{v_{k}}+\frac{c_{k}}{m_{k}}\hat{N}\label{eq:Vk}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+This is valid, because the change in linear momentum is along the normal
+ vector (find and cite some book reference or something).
+ Additionally, a similar simplification will be done for angular velocity.
+ 
+\layout Standard
+
+In any collision, momentum is conserved (linear momentum and angular momentum).
+ The equation for conservation of linear momentum is
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}+m_{2}\hat{v_{2}}=m_{1}\hat{V_{1}}+m_{2}\hat{V_{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=m_{1}\hat{V_{1}}-m_{1}\hat{v_{1}}+m_{2}\hat{V_{2}}-m_{2}\hat{v_{2}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Substitute the values of 
+\begin_inset Formula $c_{k}\hat{N}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+0=c_{1}\hat{N}+c_{2}\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\left(c_{1}+c_{2}\right)\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\left\Vert \hat{N}\right\Vert =1$
+\end_inset 
+
+, it cannot be the zero vector, so the only way to satisfy that equation
+ is if
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}+c_{2}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{2}=-c_{1}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Plug this value of 
+\begin_inset Formula $c_{2}$
+\end_inset 
+
+ back into (
+\begin_inset LatexCommand \ref{eq:Vk}
+
+\end_inset 
+
+).
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{V_{2}}=\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let 
+\begin_inset Formula $\hat{x}$
+\end_inset 
+
+ be a stationary point indicating a frame of reference.
+ The equation for conservation of angular momentum is
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\left(\hat{g_{1}}-\hat{x}\right)\times\left(m_{1}\hat{v_{1}}\right)+\mathbf{M}_{2}\hat{\omega_{2}}+\left(\hat{g_{2}}-\hat{x}\right)\times\left(m_{2}\hat{v_{2}}\right)=\mathbf{M}_{1}\hat{\Omega_{1}}+\left(\hat{g_{1}}-\hat{x}\right)\times\left(m_{1}\hat{V_{1}}\right)+\mathbf{M}_{2}\hat{\Omega_{2}}+\left(\hat{g_{2}}-\hat{x}\right)\times\left(m_{2}\hat{V_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+To simplify this equation, let 
+\begin_inset Formula $\hat{x}=\hat{0}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{v_{1}}\right)+\mathbf{M}_{2}\hat{\omega_{2}}+\hat{g_{2}}\times\left(m_{2}\hat{v_{2}}\right)=\mathbf{M}_{1}\hat{\Omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{V_{1}}\right)+\mathbf{M}_{2}\hat{\Omega_{2}}+\hat{g_{2}}\times\left(m_{2}\hat{V_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Substitute in for 
+\begin_inset Formula $m_{k}\hat{V_{k}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{v_{1}}\right)+\mathbf{M}_{2}\hat{\omega_{2}}+\hat{g_{2}}\times\left(m_{2}\hat{v_{2}}\right)=\mathbf{M}_{1}\hat{\Omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{v_{1}}+c_{1}\hat{N}\right)+\mathbf{M}_{2}\hat{\Omega_{2}}+\hat{g_{2}}\times\left(m_{1}\hat{v_{1}}-c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{v_{1}}\right)+\mathbf{M}_{2}\hat{\omega_{2}}+\hat{g_{2}}\times\left(m_{2}\hat{v_{2}}\right)=\mathbf{M}_{1}\hat{\Omega_{1}}+\hat{g_{1}}\times\left(m_{1}\hat{v_{1}}\right)+\hat{g_{1}}\times\left(c_{1}\hat{N}\right)+\mathbf{M}_{2}\hat{\Omega_{2}}+\hat{g_{2}}\times\left(m_{1}\hat{v_{1}}\right)-\hat{g_{2}}\times\left(c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+The terms 
+\begin_inset Formula $\hat{g_{k}}\times\left(m_{k}\hat{v_{k}}\right)$
+\end_inset 
+
+ cancel.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\mathbf{M}_{2}\hat{\omega_{2}}=\mathbf{M}_{1}\hat{\Omega_{1}}+\mathbf{M}_{2}\hat{\Omega_{2}}+\hat{g_{1}}\times\left(c_{1}\hat{N}\right)-\hat{g_{2}}\times\left(c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\mathbf{M}_{2}\hat{\omega_{2}}=\mathbf{M}_{1}\hat{\Omega_{1}}+\mathbf{M}_{2}\hat{\Omega_{2}}+\left(\hat{g_{1}}-\hat{g_{2}}\right)\times\left(c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+An unknown scalar 
+\begin_inset Formula $q_{k}$
+\end_inset 
+
+ for each body will be introduced to give the magnitude of the change in
+ angular momentum.
+ The values of 
+\begin_inset Formula $q_{k}$
+\end_inset 
+
+ scale a normalized torque vector 
+\begin_inset Formula $\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)$
+\end_inset 
+
+ to give actual torque.
+ The equation is given also with additional useful permutations.
+\layout Standard
+
+
+\begin_inset Formula \[
+q_{k}\left[\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)\right]=\mathbf{M}_{k}\hat{\Omega_{k}}-\mathbf{M}_{k}\hat{\omega_{k}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{k}\hat{\Omega_{k}}=\mathbf{M}_{k}\hat{\omega_{k}}+q_{k}\left[\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\Omega_{k}}=\hat{\omega_{k}}+q_{k}\mathbf{M}_{k}^{-1}\left[\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Substitute in for 
+\begin_inset Formula $\mathbf{M}_{k}\hat{\Omega_{k}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}_{1}\hat{\omega_{1}}+\mathbf{M}_{2}\hat{\omega_{2}}=\mathbf{M}_{1}\hat{\omega_{1}}+q_{1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]+\mathbf{M}_{2}\hat{\omega_{2}}+q_{2}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]+\left(\hat{g_{1}}-\hat{g_{2}}\right)\times\left(c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+The 
+\begin_inset Formula $\mathbf{M}_{k}\hat{\omega_{k}}$
+\end_inset 
+
+ terms cancel out.
+\layout Standard
+
+
+\begin_inset Formula \[
+0=q_{1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]+q_{2}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]+\left(\hat{g_{1}}-\hat{g_{2}}\right)\times\left(c_{1}\hat{N}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Switch the order and sign of the last cross product (
+\begin_inset Formula $\hat{g_{1}}-\hat{g_{2}}$
+\end_inset 
+
+ was switched to 
+\begin_inset Formula $\hat{g_{2}}-\hat{g_{1}}$
+\end_inset 
+
+ to switch sign).
+\layout Standard
+
+
+\begin_inset Formula \[
+0=q_{1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]+q_{2}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]+c_{1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{g_{1}}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[q_{1}\left(\hat{g_{1}}-\hat{R}\right)+q_{2}\left(\hat{g_{2}}-\hat{R}\right)+c_{1}\left(\hat{g_{2}}-\hat{g_{1}}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Do some identity fanciness and commutation.
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[q_{1}\left(\hat{g_{1}}-\hat{R}\right)+q_{2}\left(\hat{g_{2}}-\hat{R}\right)+c_{1}\left(\hat{g_{2}}-\hat{g_{1}}-\hat{R}+\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[q_{1}\left(\hat{g_{1}}-\hat{R}\right)+q_{2}\left(\hat{g_{2}}-\hat{R}\right)+c_{1}\left(\hat{g_{2}}-\hat{R}-\hat{g_{1}}+\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[q_{1}\left(\hat{g_{1}}-\hat{R}\right)+q_{2}\left(\hat{g_{2}}-\hat{R}\right)+c_{1}\left(\hat{g_{2}}-\hat{R}\right)-c_{1}\left(\hat{g_{1}}-\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[q_{1}\left(\hat{g_{1}}-\hat{R}\right)-c_{1}\left(\hat{g_{1}}-\hat{R}\right)+q_{2}\left(\hat{g_{2}}-\hat{R}\right)+c_{1}\left(\hat{g_{2}}-\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+0=\hat{N}\times\left[\left(q_{1}-c_{1}\right)\left(\hat{g_{1}}-\hat{R}\right)+\left(q_{2}+c_{1}\right)\left(\hat{g_{2}}-\hat{R}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+This equation is satisfied if
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(q_{1}-c_{1}\right)\left(\hat{g_{1}}-\hat{R}\right)+\left(q_{2}+c_{1}\right)\left(\hat{g_{2}}-\hat{R}\right)=\lambda\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+for some 
+\begin_inset Formula $\lambda\in\mathbb{R}$
+\end_inset 
+
+.
+ However, 
+\begin_inset Formula $\left(\hat{g_{1}}-\hat{R}\right)$
+\end_inset 
+
+ and 
+\begin_inset Formula $\left(\hat{g_{2}}-\hat{R}\right)$
+\end_inset 
+
+ may be linearly independent, in which case, the only solution is
+\layout Standard
+
+
+\begin_inset Formula \[
+0\cdot\left(\hat{g_{1}}-\hat{R}\right)+0\cdot\left(\hat{g_{2}}-\hat{R}\right)=0\cdot\hat{N}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The case where 
+\begin_inset Formula $\left(\hat{g_{1}}-\hat{R}\right)$
+\end_inset 
+
+ and 
+\begin_inset Formula $\left(\hat{g_{2}}-\hat{R}\right)$
+\end_inset 
+
+ are linearly dependent will be ignored, because the above equation satisfies
+ that case also.
+ The scalar coefficients of the vectors 
+\begin_inset Formula $\left(\hat{g_{1}}-\hat{R}\right)$
+\end_inset 
+
+ and 
+\begin_inset Formula $\left(\hat{g_{2}}-\hat{R}\right)$
+\end_inset 
+
+ are zero, so we now get expressions relating 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ to 
+\begin_inset Formula $q_{1}$
+\end_inset 
+
+ and 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ to 
+\begin_inset Formula $q_{2}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+q_{1}-c_{1}=0\qquad q_{2}+c_{1}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+q_{1}=c_{1}\qquad q_{2}=-c_{1}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The equations for 
+\begin_inset Formula $\hat{V_{k}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{\Omega_{k}}$
+\end_inset 
+
+ are now
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{V_{1}}=\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\qquad\hat{V_{2}}=\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\label{eq:V1V2}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{\Omega_{1}}=\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\qquad\hat{\Omega_{2}}=\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\label{eq:Omega1Omega2}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ is the only remaining unknown, only one equation is necessary to solve
+ everything.
+ We will examine two cases which use different equations to solve for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Perfectly Inelastic Case}
+\end_inset 
+
+
+\layout Standard
+
+Inelastic collisions are ones that result in a loss of kinetic energy (kinetic
+ energy is not conserved).
+ Perfectly inelastic collisions satisfy the minimum requirements for non-interpe
+netration of the involved bodies.
+ For example, two lumps of clay hitting each other is an inelastic collision.
+ This example isn't exactly analogous, since the clay lumps aren't rigid
+ bodies, so some of the kinetic energy of the clay goes into body deformation,
+ sound, heat, etc.
+ Inelastic, rigid body collisions are pathological in that sense, because
+ the loss of kinetic energy implies the body is deformable.
+ But for the sake of computer simulation (and mathematical interest), it
+ is worthwhile to explore.
+\layout Standard
+
+This section is a continuation of the work in the previous section.
+ It is branched here into inelastic and elastic cases, because the entire
+ previous section is common to both collision types.
+\layout Standard
+
+Before we jump into the condition for rotating, perfectly inelastic collisions,
+ we will first develop an intuition of what the condition is for non-rotating,
+ perfectly inelastic collisions.
+ If a perfectly inelastic body (a lump of clay is near enough to perfectly
+ inelastic for this example) is dropped to the ground, it will not bounce
+ back whatsoever.
+ From this we can deduce that the velocity between the two bodies (relative
+ velocity) must be zero after the collision.
+ This one-dimensional example is not sufficient however.
+ Suppose the ground is covered with something that makes it completely frictionl
+ess.
+ We throw the lump of clay horizontally such that it hits the ground at
+ an angle.
+ Because the surface is frictionless, there will be no lateral force imparted
+ to the lump of clay.
+ The only force imparted is to keep it from penetrating the ground.
+ The force is in the collision's normal direction.
+ Therefore we can deduce that the normal component of velocity must be zero
+ after the collision.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{V_{2}}-\hat{V_{1}}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+In the jump from non-rotating bodies to rotating bodies, since there is
+ a single point of collision, it must be guaranteed that the body at the
+ point of collision not penetrate its counterpart.
+ A similar equation is used.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{S_{2}}-\hat{S_{1}}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+where 
+\begin_inset Formula $\hat{S_{k}}=\hat{V_{k}}+\hat{\Omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)$
+\end_inset 
+
+ is the instantateous linear velocity (after the collision) of the collision
+ point 
+\begin_inset Formula $\hat{R}$
+\end_inset 
+
+ with respect to a rigid body 
+\begin_inset Formula $k$
+\end_inset 
+
+.
+ In other words, the instantaneous linear velocity between the collision
+ points with respect to each body, in the normal direction, is zero.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{V_{2}}+\hat{\Omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{V_{1}}-\hat{\Omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Plug in values for 
+\begin_inset Formula $\hat{V_{k}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{\Omega_{k}}$
+\end_inset 
+
+ to solve for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\frac{c_{1}}{m_{1}}\hat{N}-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Swap the sign of the 
+\begin_inset Formula $\hat{g_{k}}-\hat{R}$
+\end_inset 
+
+ terms by commuting the subtraction.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\left(\hat{v_{2}}+\hat{\omega_{2}}\times\left[\hat{R}-\hat{g_{2}}\right]\right)-\left(\hat{v_{1}}+\hat{\omega_{1}}\times\left[\hat{R}-\hat{g_{1}}\right]\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let 
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)\label{eq:sk}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+be the instantaneous linear velocity (before the collision) of the collision
+ point 
+\begin_inset Formula $\hat{R}$
+\end_inset 
+
+ with respect to a rigid body 
+\begin_inset Formula $k$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left[\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\cdot\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\left\Vert \hat{N}\right\Vert =1$
+\end_inset 
+
+, 
+\begin_inset Formula $\hat{N}\cdot\hat{N}=1$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using 
+\series bold 
+Lemma 1
+\series default 
+, the 
+\begin_inset Formula $\hat{N}\cdot\left[\left(\mathbf{M}_{k}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{k}}\right)\right]$
+\end_inset 
+
+ terms can be permuted.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\left(\hat{R}-\hat{g_{2}}\right)\times\hat{N}\right]+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\left(\hat{R}-\hat{g_{1}}\right)\times\hat{N}\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Commute the 
+\begin_inset Formula $\left(\hat{R}-\hat{g_{k}}\right)\times\hat{N}$
+\end_inset 
+
+ cross products (and switch their sign) .
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)-c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]-c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{b_{k}}=\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\label{eq:bk}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+Substitute that value in to tidy up the equation.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)-c_{1}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)-c_{1}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)-c_{1}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)-c_{1}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)=-\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)+c_{1}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)=\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Factor 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ out of everything possible.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}\left[\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\right]=\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Solve for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Perfectly Elastic Case}
+\end_inset 
+
+
+\layout Standard
+
+In a perfectly elastic collision, kinetic energy is conserved.
+ This provides the final equation necessary to solve for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+.
+ Kinetic energy for a body 
+\begin_inset Formula $k$
+\end_inset 
+
+ is given by
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{1}{2}m_{k}\hat{v_{k}}\cdot\hat{v_{k}}+\frac{1}{2}\hat{\omega_{k}}\cdot\left(\mathbf{M}_{k}\hat{\omega_{k}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+where the terms are the linear kinetic energy and rotational kinetic energy
+ respectively.
+ The equation which describes the conservation of kinetic energy in a two-body
+ collision is
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{1}{2}m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\frac{1}{2}\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\frac{1}{2}m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\frac{1}{2}\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=\frac{1}{2}m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\frac{1}{2}\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+\frac{1}{2}m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\frac{1}{2}\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Multiply both sides by 
+\begin_inset Formula $2$
+\end_inset 
+
+ to get rid of the fractional unpleasantness.
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using equations (
+\begin_inset LatexCommand \ref{eq:V1V2}
+
+\end_inset 
+
+), substitute in the values for 
+\begin_inset Formula $\hat{V_{k}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)\cdot\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)\cdot\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\left(\hat{v_{1}}\cdot\hat{v_{1}}+2\frac{c_{1}}{m_{1}}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\left(\hat{v_{2}}\cdot\hat{v_{2}}-2\frac{c_{1}}{m_{2}}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}\hat{N}\cdot\hat{N}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}\hat{N}\cdot\hat{N}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\left\Vert \hat{N}\right\Vert =1$
+\end_inset 
+
+, 
+\begin_inset Formula $\hat{N}\cdot\hat{N}=1$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+The 
+\begin_inset Formula $m_{k}\hat{v_{k}}\cdot\hat{v_{k}}$
+\end_inset 
+
+ terms cancel out
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using the equations in (
+\begin_inset LatexCommand \ref{eq:Omega1Omega2}
+
+\end_inset 
+
+)
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\right]-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Commute the subtraction in all 
+\begin_inset Formula $\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)$
+\end_inset 
+
+ and switch their signs.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\right]-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Use equation (
+\begin_inset LatexCommand \ref{eq:bk}
+
+\end_inset 
+
+) to substitute and tidy this mess up.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+The 
+\begin_inset Formula $\hat{\omega_{k}}\cdot\left(\mathbf{M}_{k}\hat{\omega_{k}}\right)$
+\end_inset 
+
+ terms cancel out.
+\layout Standard
+
+
+\begin_inset Formula \[
+0=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Combine like terms and factor with respect to 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{c_{1}^{2}}{m_{1}}+\frac{c_{1}^{2}}{m_{2}}+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)+2c_{1}\hat{v_{1}}\cdot\hat{N}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}^{2}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+c_{1}\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}\left(c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]\right)=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+For this equation to be satisfied, either 
+\begin_inset Formula $c_{1}=0$
+\end_inset 
+
+ (trivial case) or
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]=-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using 
+\series bold 
+Lemma 2
+\series default 
+, 
+\begin_inset Formula $\left(\mathbf{M}_{k}\hat{\omega_{k}}\right)\cdot\left(\mathbf{M}_{k}^{-1}\hat{b_{k}}\right)=\hat{\omega_{k}}\cdot\hat{b_{k}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\hat{\omega_{1}}\cdot\hat{b_{1}}+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\hat{\omega_{2}}\cdot\hat{b_{2}}}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{-2\hat{N}\cdot\hat{v_{1}}+2\hat{\omega_{1}}\cdot\hat{b_{1}}+2\hat{N}\cdot\hat{v_{2}}-2\hat{\omega_{2}}\cdot\hat{b_{2}}}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\left(\hat{N}\cdot\hat{v_{2}}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\hat{N}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\hat{b_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Replace 
+\begin_inset Formula $\hat{b_{k}}$
+\end_inset 
+
+ for its value from (
+\begin_inset LatexCommand \ref{eq:bk}
+
+\end_inset 
+
+) in the numerator only.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\left(\hat{N}\cdot\hat{v_{2}}-\hat{\omega_{2}}\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]-\hat{N}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using 
+\series bold 
+Lemma 1
+\series default 
+, the 
+\begin_inset Formula $\hat{\omega_{k}}\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\right]$
+\end_inset 
+
+ terms can be permuted.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\left(\hat{N}\cdot\hat{v_{2}}-\hat{N}\cdot\left[\left(\hat{R}-\hat{g_{2}}\right)\times\hat{\omega_{2}}\right]-\hat{N}\cdot\hat{v_{1}}+\hat{N}\cdot\left[\left(\hat{R}-\hat{g_{1}}\right)\times\hat{\omega_{1}}\right]\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\hat{N}\cdot\left[\hat{v_{2}}-\left(\hat{R}-\hat{g_{2}}\right)\times\hat{\omega_{2}}-\hat{v_{1}}+\left(\hat{R}-\hat{g_{1}}\right)\times\hat{\omega_{1}}\right]}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\hat{N}\cdot\left(\left[\hat{v_{2}}-\left(\hat{R}-\hat{g_{2}}\right)\times\hat{\omega_{2}}\right]-\left[\hat{v_{1}}-\left(\hat{R}-\hat{g_{1}}\right)\times\hat{\omega_{1}}\right]\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Commute the cross products and switch signs.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\hat{N}\cdot\left(\left[\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)\right]-\left[\hat{v_{1}}+\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The terms in the numerator exactly match equation (
+\begin_inset LatexCommand \ref{eq:sk}
+
+\end_inset 
+
+) for instantaneous linear velocity (before the collision) of the collision
+ point 
+\begin_inset Formula $\hat{R}$
+\end_inset 
+
+ with respect to each rigid body.
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\frac{2\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Hey, this looks familiar.
+ It happens to be exactly 
+\begin_inset Formula $2$
+\end_inset 
+
+ times the solution for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ of perfectly inelastic collisions.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Extrapolation For Partially Elastic Collisions}
+\end_inset 
+
+
+\layout Standard
+
+The mathematical extrapolation in this section is not known to be accurate
+ to real world physics (to the author, at the time of this writing).
+ Because the different case solutions for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ were linearly related, it's only natural to assume a linear relation (affine
+ relation to be more specific) between total collision elasticity and the
+ magnitude of 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+.
+ Let the total scalar elasticity for the collision be 
+\begin_inset Formula $E$
+\end_inset 
+
+.
+ The generalized equation for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ is
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+E\right)\cdot\frac{\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let each body have a scalar elasticity factor, 
+\begin_inset Formula $e_{k}\in\left[0,1\right]$
+\end_inset 
+
+, which will be used in computing the collision's total elasticity.
+ A factor of 
+\begin_inset Formula $1$
+\end_inset 
+
+ indicates a perfectly elastic collision, whereas a factor of 
+\begin_inset Formula $0$
+\end_inset 
+
+ indicates a perfectly inelastic collision.
+ Technically you may have elasticity factors of greater than 
+\begin_inset Formula $1$
+\end_inset 
+
+, for super-elastic collisions.
+ Negative elasticity factors would cause the bodies to be attracted to each
+ other, violating the goal of non-interpenetration.
+ 
+\layout Standard
+
+Let 
+\begin_inset Formula $E$
+\end_inset 
+
+ be defined by the scalar product of the elasticity factor for each body.
+\layout Standard
+
+
+\begin_inset Formula \[
+E=e_{1}e_{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Intuitively, this can be shown to be correct by the following examples.
+ A billiard ball hitting another billiard ball is a good example of a (nearly)
+ perfectly elastic collision, so 
+\begin_inset Formula $E=1$
+\end_inset 
+
+.
+ The only way for this to be satisfied is if both 
+\begin_inset Formula $e_{1}=1$
+\end_inset 
+
+ and 
+\begin_inset Formula $e_{2}=1$
+\end_inset 
+
+.
+ Another example is a lump of clay hitting a billiard ball.
+ Since the lump of clay is perfectly inelastic, it will cause the collision
+ to be perfectly inelastic.
+ Thus 
+\begin_inset Formula $E=0$
+\end_inset 
+
+.
+ The only way for this to be true is if 
+\begin_inset Formula $e_{1}=0$
+\end_inset 
+
+ or 
+\begin_inset Formula $e_{2}=0$
+\end_inset 
+
+.
+ The lump of clay will have an elasticity of zero, so this example is rationaliz
+ed.
+ A third example is of two clay lumps hitting each other.
+ In this collision, 
+\begin_inset Formula $E=0$
+\end_inset 
+
+, which is verified by the fact that 
+\begin_inset Formula $e_{1}=0$
+\end_inset 
+
+ and 
+\begin_inset Formula $e_{2}=0$
+\end_inset 
+
+, so 
+\begin_inset Formula $E=0\cdot0=0$
+\end_inset 
+
+.
+ The collision is perfectly inelastic, as is expected.
+\layout Standard
+
+The equation for 
+\begin_inset Formula $c_{1}$
+\end_inset 
+
+ with the definition of total collision elasticity in terms of the elasticity
+ factors of each body is
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+A more accurate physical study of elasticity factors can be made by studying
+ how much kinetic energy is absorbed (or released in the case of super-elastic
+ collisions) in the collision by each body, due to deformation, sound, heat,
+ etc.
+ It is the author's belief that the elasticity factor model given above
+ will show to be physically correct.
+\layout Standard
+
+--------------------------------------------------
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}+\hat{\omega_{2}}\times\hat{R}-\hat{\omega_{1}}\times\hat{R}-\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)+\hat{N}\cdot\left[\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\times\hat{R}-\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)\right]}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)+\hat{N}\cdot\left[\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\times\hat{R}\right]-\hat{N}\cdot\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)-\hat{N}\cdot\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)+\hat{R}\cdot\left[\hat{N}\times\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\right]}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Friction Resulting From Inelastic Collisions}
+\end_inset 
+
+
+\layout Standard
+
+blah
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Conservation Of Angular Momentum Of A Single Body}
+\end_inset 
+
+
+\layout Standard
+
+The tensor matrix which describes the second moment of inertia transforms
+ the angular velocity vector of a body into the corresponding angular momentum
+ vector.
+ The resulting angular momentum vector may not necessarily be colinear with
+ the angular velocity vector.
+ However, angular momentum must always be conserved, even when the system
+ involves only one body.
+ The angular velocity vector of the body must change in such a way so that
+ the angular momentum vector remains constant.
+ This indicates that the angular velocity vector is a function of time.
+\layout Standard
+
+
+\begin_inset Formula \[
+\frac{\mathbf{d}}{\mathbf{dt}}\hat{L}=\frac{\mathbf{d}}{\mathbf{dt}}\mathbf{M}\hat{\omega}=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+The inertia tensor 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ remains fixed relative to the rotating body, so any rotation applied to
+ the body must be applied to the inertia tensor as well.
+ This means that 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ is a function of time.
+\layout Standard
+
+Let 
+\begin_inset Formula $\hat{\omega}=\left[\begin{array}{c}
+x\\
+y\\
+z\end{array}\right]$
+\end_inset 
+
+ and let 
+\begin_inset Formula $\mathbf{R}$
+\end_inset 
+
+ be the rotation matrix which rotates 3-space around the axis 
+\begin_inset Formula $\hat{\omega}$
+\end_inset 
+
+ through the angle given by the magnitude of 
+\begin_inset Formula $\hat{\omega}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Further Topics Which Are Out Of The Scope Of This Paper}
+\end_inset 
+
+
+\layout Standard
+
+- explain about some more interesting subjects which are worth investigating
+\layout Standard
+
+- solutions to systems of collisions (3+ touching bodies)
+\layout Standard
+
+- non-rigid body collisions (deformable bodies)
+\layout Standard
+
+- connected rigid bodies (character skeletons, vehicles)
+\layout Standard
+
+- destroyable rigid bodies (splitting apart)
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Appendix}
+\end_inset 
+
+
+\layout Standard
+
+This section has auxilliary topics and lemmas which are used in the main
+ text.
+\layout Standard
+
+
+\series bold 
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Lemma 1}
+\end_inset 
+
+
+\series default 
+ A certain combination of dot and cross products can be permuted, rearranging
+ which operands the dot/cross products apply to.
+ Let 
+\begin_inset Formula $\hat{a},\hat{b},\hat{c}$
+\end_inset 
+
+ be 3-dimensional vectors.
+ Let the 
+\begin_inset Formula $\cdot$
+\end_inset 
+
+ operator and the 
+\begin_inset Formula $\times$
+\end_inset 
+
+ operator be the Euclidean inner product and the vector cross product operators
+ respectively.
+ This lemma states 
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\left(\hat{b}\times\hat{c}\right)=\hat{b}\cdot\left(\hat{c}\times\hat{a}\right)=\hat{c}\cdot\left(\hat{a}\times\hat{b}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Proof:
+\series default 
+ Let 
+\begin_inset Formula $\hat{a}=\left[\begin{array}{c}
+a_{1}\\
+a_{2}\\
+a_{3}\end{array}\right]\qquad\hat{b}=\left[\begin{array}{c}
+b_{1}\\
+b_{2}\\
+b_{3}\end{array}\right]\qquad\hat{c}=\left[\begin{array}{c}
+c_{1}\\
+c_{2}\\
+c_{3}\end{array}\right]$
+\end_inset 
+
+, and 
+\begin_inset Formula $i,j,k$
+\end_inset 
+
+ be the standard orthonormal Euclidean basis vectors.
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{b}\times\hat{c}=\left|\begin{array}{ccc}
+i & j & k\\
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\end{array}\right|\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{b}\times\hat{c}=i\left(b_{2}c_{3}-b_{3}c_{2}\right)-j\left(b_{1}c_{3}-b_{3}c_{1}\right)-k\left(b_{1}c_{2}-b_{2}c_{1}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\left(\hat{b}\times\hat{c}\right)=a_{1}\left(b_{2}c_{3}-b_{3}c_{2}\right)-a_{2}\left(b_{1}c_{3}-b_{3}c_{1}\right)-a_{3}\left(b_{1}c_{2}-b_{2}c_{1}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\left(\hat{b}\times\hat{c}\right)=\left|\begin{array}{ccc}
+a_{1} & a_{2} & a_{3}\\
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\end{array}\right|\]
+
+\end_inset 
+
+
+\layout Standard
+
+Because calculating determinants is done by multiplying each element along
+ an arbitrary row (multiplied by 
+\begin_inset Formula $\left(-1\right)^{m}$
+\end_inset 
+
+ where 
+\begin_inset Formula $m$
+\end_inset 
+
+ is the element's manhattan distance from the top-left element) by its cofactor
+ matrix, the determinant can be preserved even through certain permutations
+ of the rows.
+ For the determinant to remain constant, the relative ordering of the rows
+ must be constant (accounting for wrapping around).
+ Thus
+\layout Standard
+
+
+\begin_inset Formula \[
+\left|\begin{array}{ccc}
+a_{1} & a_{2} & a_{3}\\
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\end{array}\right|=\left|\begin{array}{ccc}
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\\
+a_{1} & a_{2} & a_{3}\end{array}\right|=\left|\begin{array}{ccc}
+c_{1} & c_{2} & c_{3}\\
+a_{1} & a_{2} & a_{3}\\
+b_{1} & b_{2} & b_{3}\end{array}\right|\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\left(\hat{b}\times\hat{c}\right)=\left|\begin{array}{ccc}
+a_{1} & a_{2} & a_{3}\\
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\end{array}\right|=\hat{b}\cdot\left(\hat{c}\times\hat{a}\right)=\left|\begin{array}{ccc}
+b_{1} & b_{2} & b_{3}\\
+c_{1} & c_{2} & c_{3}\\
+a_{1} & a_{2} & a_{3}\end{array}\right|=\hat{c}\cdot\left(\hat{a}\times\hat{b}\right)=\left|\begin{array}{ccc}
+c_{1} & c_{2} & c_{3}\\
+a_{1} & a_{2} & a_{3}\\
+b_{1} & b_{2} & b_{3}\end{array}\right|\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\left(\hat{b}\times\hat{c}\right)=\hat{b}\cdot\left(\hat{c}\times\hat{a}\right)=\hat{c}\cdot\left(\hat{a}\times\hat{b}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+This result is useful when trying to get to a value which is part of a cross
+ product and would not otherwise be seperable.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Lemma 2}
+\end_inset 
+
+
+\layout Standard
+
+If matrix 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ is symmetric (and thus diagonalizable) and invertable, and 
+\begin_inset Formula $\hat{a}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{b}$
+\end_inset 
+
+ are 3-dimensional vectors,
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{a}\cdot\hat{b}=\left(\mathbf{M}\hat{a}\right)\cdot\left(\mathbf{M}^{-1}\hat{b}\right)\label{eq:lemma2prop}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Proof: 
+\series default 
+Since 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ is diagonalizable and invertible, there exists an orthogonal matrix transformat
+ion 
+\begin_inset Formula $\mathbf{T}$
+\end_inset 
+
+ such that
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{TM}=\mathbf{D}\]
+
+\end_inset 
+
+
+\layout Standard
+
+where 
+\begin_inset Formula $\mathbf{D}$
+\end_inset 
+
+ is the diagonalized version of 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+.
+ Multiplying by 
+\begin_inset Formula $\mathbf{T}^{-1}$
+\end_inset 
+
+ (which exists because 
+\begin_inset Formula $\mathbf{T}$
+\end_inset 
+
+ is orthogonal),
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{T}^{-1}\mathbf{TM}=\mathbf{T}^{-1}\mathbf{D}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}=\mathbf{T}^{-1}\mathbf{D}\]
+
+\end_inset 
+
+
+\layout Standard
+
+And the inverse of which is
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}^{-1}=\mathbf{D}^{-1}\mathbf{T}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Thus (
+\begin_inset LatexCommand \ref{eq:lemma2prop}
+
+\end_inset 
+
+) becomes
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\mathbf{D}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ is symmetric,
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}=\mathbf{T}^{-1}\mathbf{D}=\mathbf{M}^{T}=\left(\mathbf{T}^{-1}\mathbf{D}\right)^{T}=\mathbf{D}^{T}\left(\mathbf{T}^{-1}\right)^{T}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\mathbf{T}$
+\end_inset 
+
+ is orthogonal (and thus 
+\begin_inset Formula $\mathbf{T}^{-1}$
+\end_inset 
+
+ is orthogonal), 
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{T}^{T}=\mathbf{T}^{-1}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Taking the transpose of both sides,
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{T}=\left(\mathbf{T}^{-1}\right)^{T}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula $\mathbf{M}$
+\end_inset 
+
+ is now
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}=\mathbf{D}^{T}\mathbf{T}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Because 
+\begin_inset Formula $\mathbf{D}$
+\end_inset 
+
+ is diagonal (and thus symmetric), 
+\begin_inset Formula $\mathbf{D}^{T}=\mathbf{D}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{M}=\mathbf{DT}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Now (
+\begin_inset LatexCommand \ref{eq:lemma2prop}
+
+\end_inset 
+
+) becomes
+\layout Standard
+
+
+\begin_inset Formula \begin{equation}
+\hat{a}\cdot\hat{b}=\left(\mathbf{DT}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\label{eq:TDcommuted}\end{equation}
+
+\end_inset 
+
+
+\layout Standard
+
+Let 
+\begin_inset Formula $\lambda_{1},\lambda_{2},\lambda_{3}$
+\end_inset 
+
+ be the elements along the diagonal of 
+\begin_inset Formula $\mathbf{D}$
+\end_inset 
+
+.
+ Therefore the elements along the diagonal of 
+\begin_inset Formula $\mathbf{D}^{-1}$
+\end_inset 
+
+ are 
+\begin_inset Formula $\frac{1}{\lambda_{1}},\frac{1}{\lambda_{2}},\frac{1}{\lambda_{3}}$
+\end_inset 
+
+.
+ Multiplying a vector by a diagonal matrix simply scales each component
+ of the vector by the corresponding diagonal element of the matrix.
+ Let 
+\begin_inset Formula $\hat{m}=\mathbf{T}\hat{a}=\left[\begin{array}{c}
+m_{1}\\
+m_{2}\\
+m_{3}\end{array}\right]$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{n}=\mathbf{T}\hat{b}=\left[\begin{array}{c}
+n_{1}\\
+n_{2}\\
+n_{3}\end{array}\right]$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\mathbf{D}\hat{m}=\left[\begin{array}{c}
+\lambda_{1}m_{1}\\
+\lambda_{2}m_{2}\\
+\lambda_{3}m_{3}\end{array}\right]\qquad\mathbf{D}^{-1}\hat{n}=\left[\begin{array}{c}
+\frac{1}{\lambda_{1}}n_{1}\\
+\frac{1}{\lambda_{2}}n_{2}\\
+\frac{1}{\lambda_{3}}n_{3}\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Taking the dot product,
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=\left[\begin{array}{c}
+\lambda_{1}m_{1}\\
+\lambda_{2}m_{2}\\
+\lambda_{3}m_{3}\end{array}\right]\cdot\left[\begin{array}{c}
+\frac{1}{\lambda_{1}}n_{1}\\
+\frac{1}{\lambda_{2}}n_{2}\\
+\frac{1}{\lambda_{3}}n_{3}\end{array}\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=m_{1}n_{1}+m_{2}n_{2}+m_{3}n_{3}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=\hat{m}\cdot\hat{n}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Using this result in equation (
+\begin_inset LatexCommand \ref{eq:TDcommuted}
+
+\end_inset 
+
+),
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}\hat{b}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta=\left\Vert \mathbf{T}\hat{a}\right\Vert \left\Vert \mathbf{T}\hat{b}\right\Vert \cos\theta_{\mathbf{T}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Since 
+\begin_inset Formula $\mathbf{T}$
+\end_inset 
+
+ is an orthogonal matrix, it preserves angles between vectors that it operates
+ on.
+ Thus 
+\begin_inset Formula $\theta_{\mathbf{T}}=\theta$
+\end_inset 
+
+.
+ Additionally, an orthogonal matrix will preserve the length of vectors
+ that it operates on.
+ Thus 
+\begin_inset Formula $\left\Vert \mathbf{T}\hat{a}\right\Vert =\left\Vert \hat{a}\right\Vert $
+\end_inset 
+
+ and 
+\begin_inset Formula $\left\Vert \mathbf{T}\hat{b}\right\Vert =\left\Vert \hat{b}\right\Vert $
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta=\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta\]
+
+\end_inset 
+
+
+\layout Standard
+
+The original equation has been shown to be true.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+subsection{Lemma 3}
+\end_inset 
+
+
+\layout Standard
+
+The sum of a sine and cosine function which operate on the same value (in
+ this case 
+\begin_inset Formula $\theta$
+\end_inset 
+
+) can be changed into a single sin function with modified amplitude and
+ operand.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\sin\left(\theta+\tan^{-1}\frac{b}{a}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\series bold 
+Proof:
+\series default 
+ Start with the simplest identity involving the left hand side of the above
+ equation.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=a\sin\theta+b\cos\theta\]
+
+\end_inset 
+
+
+\layout Standard
+
+For fun, multiply the right hand side by a fancy form of 
+\begin_inset Formula $1$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=\frac{\sqrt{a^{2}+b^{2}}}{\sqrt{a^{2}+b^{2}}}\left(a\sin\theta+b\cos\theta\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+Distribute the factor's denominator.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\left(\frac{a}{\sqrt{a^{2}+b^{2}}}\sin\theta+\frac{b}{\sqrt{a^{2}+b^{2}}}\cos\theta\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+** add picture here **
+\layout Standard
+
+Imagine a right triangle with base 
+\begin_inset Formula $a$
+\end_inset 
+
+, side 
+\begin_inset Formula $b$
+\end_inset 
+
+ and hypotenuse 
+\begin_inset Formula $\sqrt{a^{2}+b^{2}}$
+\end_inset 
+
+.
+ Let the angle between the base and the hypotenuse be 
+\begin_inset Formula $\phi$
+\end_inset 
+
+.
+ It is expressed by 
+\begin_inset Formula $\phi=\tan^{-1}\frac{b}{a}$
+\end_inset 
+
+.
+ 
+\begin_inset Formula $\cos\phi=\frac{a}{\sqrt{a^{2}+b^{2}}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\sin\phi=\frac{b}{\sqrt{a^{2}+b^{2}}}$
+\end_inset 
+
+.
+ Thus 
+\begin_inset Formula $\cos\left(\tan^{-1}\frac{b}{a}\right)=\frac{a}{\sqrt{a^{2}+b^{2}}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\sin\left(\tan^{-1}\frac{b}{a}\right)=\frac{b}{\sqrt{a^{2}+b^{2}}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\left[\sin\theta\cos\left(\tan^{-1}\frac{b}{a}\right)+\cos\theta\sin\left(\tan^{-1}\frac{b}{a}\right)\right]\]
+
+\end_inset 
+
+
+\layout Standard
+
+Use the identity 
+\begin_inset Formula $\sin x\cos y+\cos x\sin y=\sin\left(x+y\right)$
+\end_inset 
+
+ to condense the right hand side.
+\layout Standard
+
+
+\begin_inset Formula \[
+a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\sin\left(\theta+\tan^{-1}\frac{b}{a}\right)\]
+
+\end_inset 
+
+
+\layout Standard
+
+This is the desired identity.
+ 
+\series bold 
+Q.E.D.
+\layout Standard
+
+
+\begin_inset ERT
+status Open
+
+\layout Standard
+
+\backslash 
+section{Bibliography}
+\end_inset 
+
+
+\layout Standard
+
+Marion and Thornton, 
+\series bold 
+Classical Dynamics Of Particles And Systems
+\series default 
+, Saunders College Publishing, 1995.
+\layout Standard
+
+Howard Anton, 
+\series bold 
+Elementary Linear Algebra
+\series default 
+, John Wiley & Sons, Inc, 1994
+\layout Standard
+
+Daniel Greenhouse,
+\series bold 
+ 
+\series default 
+For various bits of advice and physics knowledge.
+\the_end
