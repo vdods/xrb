@@ -42,6 +42,14 @@ files which are somehow not included with Visual Studio itself).
     - Microsoft .NET Framework 1.1
     - Microsoft Platform SDK (PSDK)
 
+For now, until "the real" resource distro method is up and working, all the
+necessary resource files can be found at
+
+    http://www.thedods.com/victor/resources.zip
+
+The zip file contains a directory called "resources", which should be unzipped
+to the same directory as the executable file (e.g. disasteroids or mapeditor2)
+
 //////////////////////////////////////////////////////////////////////////////
 // Thanks to
 //////////////////////////////////////////////////////////////////////////////
@@ -57,3 +65,4 @@ The authors of the SDL library -- http://www.libsdl.org/credits.php
 Sam Lantinga and Mattias Engdegård -- the authors of SDL_image.
 
 David Turner, Robert Wilhelm, and Werner Lemberg -- the authors of FreeType.
+
