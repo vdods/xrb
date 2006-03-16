@@ -161,10 +161,8 @@
       <group pattern="app/unittest/*" name="/app/unittest" />
       <group pattern="app/*" name="/app" />
       <group pattern="doc/doxygen_pages/*" name="/doc/doxygen_pages" />
-      <group pattern="doc/notes/*" name="/doc/notes" />
       <group pattern="doc/*" name="/doc" />
       <group pattern="resources/*" name="/resources" />
-      <group pattern="resources_source/*" name="/resources_source" />
       <group pattern="*" name="/" />
       <hidenonprojectfiles>false</hidenonprojectfiles>
       <hidenonlocation>true</hidenonlocation>

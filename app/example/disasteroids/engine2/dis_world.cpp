@@ -354,7 +354,7 @@ void World::ProcessFrameOverride ()
 {
     Engine2::World::ProcessFrameOverride();
 
-    // update teh game stage
+    // update the game stage
     if (m_next_game_stage_time <= GetFrameTime() &&
         m_game_stage < GAME_STAGE_COUNT - 1)
     {
@@ -416,10 +416,16 @@ void World::ProcessFrameOverride ()
         
     // do game logic control stuff here
 
+    if (m_player_ship->GetLivesRemaining() > 0 || !m_player_ship->GetIsDead())
+        m_player_ship->IncrementTimeAlive(GetFrameDT());
+    
     switch (m_game_state)
     {
         case GS_CREATE_WORLD:
             // placeholder (though this technically should never happen)
+
+            // this could be a zoom-in or a fade-in or otherwise be the pause
+            // while some visual intro happens before gameplay begins.
             break;
     
         case GS_SPAWN_PLAYER_SHIP:
@@ -444,10 +450,14 @@ void World::ProcessFrameOverride ()
 
         case GS_GAME_OVER:
             // placeholder
+            
+            // record the player's time alive and score here
             break;
 
         case GS_DESTROY_WORLD:
             // placeholder
+
+            // fade-out or some other visual outro
             break;
             
         default:

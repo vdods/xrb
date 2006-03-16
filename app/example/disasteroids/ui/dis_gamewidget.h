@@ -65,11 +65,11 @@ public:
     void ActivateInventoryPanel ();
     void DeactivateInventoryPanel ();
     
-protected:
-
-    virtual void ProcessFrameOverride ();    
-    
 private:
+
+    void SetTimeAlive (Float time_alive);
+
+    void UpdateTimeAliveLabel ();
 
     WorldView *m_world_view;
     Engine2::WorldViewWidget *m_world_view_widget;
@@ -87,6 +87,7 @@ private:
     ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
 
     Label *m_time_alive_label;
+    Float m_time_alive;
     ValueLabel<Uint32> *m_score_label;
     ProgressBar *m_stoke_o_meter;
 
@@ -98,6 +99,7 @@ private:
     ProgressBar *m_weapon_status;
 
     SignalReceiver1<PlayerShip *> m_receiver_set_player_ship;
+    SignalReceiver1<Float> m_internal_receiver_set_time_alive;
     
     SignalReceiver0 m_receiver_activate_inventory_panel;
     SignalReceiver0 m_receiver_deactivate_inventory_panel;

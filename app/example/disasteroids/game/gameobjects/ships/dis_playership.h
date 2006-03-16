@@ -42,6 +42,7 @@ public:
     
     inline Uint32 GetScore () const { return m_score; }
     inline Float GetStoke () const { return m_stoke; }
+    inline Float GetTimeAlive () const { return m_time_alive; }
     inline Uint32 GetLivesRemaining () const { return m_lives_remaining; }
     
     inline Weapon const *GetMainWeapon () const { return m_main_weapon; }
@@ -81,12 +82,14 @@ public:
     // SignalSender accessors
     inline SignalSender1<Uint32> const *SenderScoreChanged () { return &m_sender_score_changed; }
     inline SignalSender1<Float> const *SenderStokeChanged () { return &m_sender_stoke_changed; }
+    inline SignalSender1<Float> const *SenderTimeAliveChanged () { return &m_sender_time_alive_changed; }
     inline SignalSender1<Float> const *SenderArmorStatusChanged () { return &m_sender_armor_status_changed; }
     inline SignalSender1<Float> const *SenderShieldStatusChanged () { return &m_sender_shield_status_changed; }
     inline SignalSender1<Float> const *SenderPowerStatusChanged () { return &m_sender_power_status_changed; }
     inline SignalSender1<Float> const *SenderWeaponStatusChanged () { return &m_sender_weapon_status_changed; }
     inline SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
 
+    void IncrementTimeAlive (Float time_alive_delta);
     void CreditEnemyKill (Type enemy_ship_type, Uint8 enemy_level);
     void GiveLotsOfMinerals ();
         
@@ -164,7 +167,7 @@ protected:
     }
 
     void SetStoke (Float stoke);
-    
+
     void IncrementScore (Uint32 score_delta);
     virtual void ResetInputs ();
     virtual void SetCurrentHealth (Float current_health);
@@ -198,6 +201,7 @@ private:
 
     Uint32 m_score;
     Float m_stoke;
+    Float m_time_alive;
     Uint32 m_lives_remaining;
     
     Uint8 m_engine_auxiliary_input;
@@ -226,7 +230,8 @@ private:
     GameObjectReference<ShieldEffect> m_shield_effect;
 
     SignalSender1<Uint32> m_sender_score_changed;
-    SignalSender1<Float > m_sender_stoke_changed;
+    SignalSender1<Float> m_sender_stoke_changed;
+    SignalSender1<Float> m_sender_time_alive_changed;
     SignalSender1<Float> m_sender_armor_status_changed;
     SignalSender1<Float> m_sender_shield_status_changed;
     SignalSender1<Float> m_sender_power_status_changed;

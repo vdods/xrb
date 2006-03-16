@@ -46,6 +46,7 @@ GameWidget::GameWidget (
     :
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
+    m_internal_receiver_set_time_alive(&GameWidget::SetTimeAlive, this),
     m_receiver_activate_inventory_panel(&GameWidget::ActivateInventoryPanel, this),
     m_receiver_deactivate_inventory_panel(&GameWidget::DeactivateInventoryPanel, this),
     m_receiver_set_mineral_inventory(&GameWidget::SetMineralInventory, this)
@@ -140,6 +141,10 @@ GameWidget::GameWidget (
         m_time_alive_label->SetAlignment(Dim::X, LEFT);
         m_time_alive_label->SetFontHeightRatio(0.05f);
 
+        m_time_alive = 0.0f;
+
+        UpdateTimeAliveLabel();
+        
         for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
         {
             m_mineral_inventory_label[mineral_type] =
@@ -254,6 +259,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 {
     // disconnect old player ship connections
     m_score_label->DetachAll();
+    m_internal_receiver_set_time_alive.DetachAll();
     m_armor_status->DetachAll();
     m_shield_status->DetachAll();
     m_power_status->DetachAll();
@@ -268,6 +274,9 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             player_ship->SenderStokeChanged(),
             NormalizeStoke,
             m_stoke_o_meter->ReceiverSetProgress());
+        SignalHandler::Connect1(
+            player_ship->SenderTimeAliveChanged(),
+            &m_internal_receiver_set_time_alive);
         SignalHandler::Connect1(
             player_ship->SenderScoreChanged(),
             m_score_label->ReceiverSetValue());
@@ -298,6 +307,8 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             
         // initialize the UI elements
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
+        m_time_alive = player_ship->GetTimeAlive();
+        UpdateTimeAliveLabel();
         m_score_label->SetValue(player_ship->GetScore());
         m_armor_status->SetProgress(player_ship->GetArmorStatus());
         m_shield_status->SetProgress(player_ship->GetShieldStatus());
@@ -312,6 +323,9 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
     else
     {
         m_score_label->Disable();
+        m_time_alive = 0.0f;
+        UpdateTimeAliveLabel();
+        m_time_alive_label->Disable();
         m_armor_status->Disable();
         m_shield_status->Disable();
         m_power_status->Disable();
@@ -391,16 +405,18 @@ void GameWidget::DeactivateInventoryPanel ()
     m_saved_game_timescale = -1.0f;
 }
 
-void GameWidget::ProcessFrameOverride ()
+void GameWidget::SetTimeAlive (Float const time_alive)
 {
-    Widget::ProcessFrameOverride();
+    m_time_alive = time_alive;
+    UpdateTimeAliveLabel();
+}
 
-    // TODO: replace this time-getting stuff when the real game controller is written
-    Float game_time = m_world_view->GetWorld()->GetMostRecentFrameTime();
-    Uint32 game_time_seconds = static_cast<Uint32>(game_time);
+void GameWidget::UpdateTimeAliveLabel ()
+{
+    Uint32 game_time_seconds = static_cast<Uint32>(m_time_alive);
     Uint32 minutes_alive = game_time_seconds / 60;
     Uint32 seconds_alive = game_time_seconds % 60;
-    Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * game_time) % 100;
+    Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * m_time_alive) % 100;
     m_time_alive_label->SetText(
         Util::StringPrintf(
             "%02u:%02u.%02u",

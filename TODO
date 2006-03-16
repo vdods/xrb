@@ -35,12 +35,10 @@ OPENGL CONVERSION TASKS:
 
 DISASTEROIDS:
 - finish writing AIs
-- progressing AI spawning
-- finish weapon code (add UT-style charge-up melee weapon)
+- finish weapon code (add UT-style charge-up melee weapon with
+  front-attaching secondary mode)
 - hook up score and extra lives
-- create start screen
 - create high scores screen
-- create master UI flow
   
 CURRENT:
 - fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer
@@ -54,9 +52,6 @@ CURRENT:
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
-- some sort of device that attaches shit to the front of the ship
-  so you can push it around (e.g. asteroids).  this would probably
-  work pretty well as the secondary fire for the tractor beam.
 - the framehandler time for WorldView must be synchronized with the
   framehandler time for World.
 - fix the crash when the ship dies while a mine is surveying.
