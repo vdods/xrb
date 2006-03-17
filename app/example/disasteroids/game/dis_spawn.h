@@ -131,7 +131,9 @@ Missile *SpawnMissile (
     FloatVector2 const &velocity,
     Float time_to_live,
     Float time_at_birth,
-    Float power,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
     Uint32 weapon_level,
     GameObjectReference<GameObject> const &owner,
     Float health);
@@ -163,8 +165,9 @@ DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float power,
-    Float final_size,
+    Float damage_amount,
+    Float damage_radius,
+    Float explosion_radius,
     Float time_to_live,
     Float time_at_birth,
     GameObjectReference<GameObject> const &owner);

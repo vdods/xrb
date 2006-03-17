@@ -137,16 +137,14 @@ public:
 
     inline GameObjectSubclass const *operator * () const
     {
-        ASSERT1(m_game_object_instance != NULL)
-        if (m_game_object_instance->GetIsValid())
+        if (m_game_object_instance != NULL && m_game_object_instance->GetIsValid())
             return static_cast<GameObjectSubclass const *>(**m_game_object_instance);
         else
             return NULL;
     }
     inline GameObjectSubclass *operator * ()
     {
-        ASSERT1(m_game_object_instance != NULL)
-        if (m_game_object_instance->GetIsValid())
+        if (m_game_object_instance != NULL && m_game_object_instance->GetIsValid())
             return static_cast<GameObjectSubclass *>(**m_game_object_instance);
         else
             return NULL;

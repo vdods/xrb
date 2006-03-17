@@ -22,6 +22,7 @@
 #include "dis_revulsion.h"
 #include "dis_shade.h"
 #include "dis_solitary.h"
+#include "dis_util.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_spriteentity.h"
 #include "xrb_engine2_world.h"
@@ -166,7 +167,7 @@ Grenade *SpawnGrenade (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        1.0f,
+        2.0f,
         velocity,
         1.0f,
         Math::RandomFloat(-30.0f, 30.0f),
@@ -224,12 +225,23 @@ Missile *SpawnMissile (
     FloatVector2 const &velocity,
     Float const time_to_live,
     Float const time_at_birth,
-    Float const power,
+    Float const damage_to_inflict,
+    Float const damage_radius,
+    Float const explosion_radius,
     Uint32 const weapon_level,
     GameObjectReference<GameObject> const &owner,
     Float const health)
 {
-    Missile *missile = new Missile(time_to_live, time_at_birth, power, weapon_level, owner, health);
+    Missile *missile =
+        new Missile(
+            time_to_live,
+            time_at_birth,
+            damage_to_inflict,
+            damage_radius,
+            explosion_radius,
+            weapon_level,
+            owner,
+            health);
     SpawnSpriteEntity(
         world,
         object_layer,
@@ -243,7 +255,7 @@ Missile *SpawnMissile (
         1.0f,
         0.0f,
         0.1f,
-        Engine2::CT_SOLID_COLLISION);
+        Engine2::CT_NONSOLID_COLLISION);//CT_SOLID_COLLISION);
     return missile;
 }
 
@@ -311,13 +323,21 @@ DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const power,
-    Float const final_size,
+    Float const damage_amount,
+    Float const damage_radius,
+    Float const explosion_radius,
     Float const time_to_live,
     Float const time_at_birth,
     GameObjectReference<GameObject> const &owner)
 {
-    DamageExplosion *damage_explosion = new DamageExplosion(power, final_size, time_to_live, time_at_birth, owner);
+    DamageExplosion *damage_explosion =
+        new DamageExplosion(
+            damage_amount,
+            damage_radius,
+            explosion_radius,
+            time_to_live,
+            time_at_birth,
+            owner);
     SpawnSpriteEntity(
         world,
         object_layer,

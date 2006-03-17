@@ -11,6 +11,7 @@ disasteroids_SOURCES = \
     game/dis_gameobject.cpp \
     game/dis_item.cpp \
     game/dis_spawn.cpp \
+    game/dis_util.cpp \
     game/gameobjects/dis_asteroid.cpp \
     game/gameobjects/dis_ballistic.cpp \
     game/gameobjects/dis_effect.cpp \
@@ -54,6 +55,7 @@ noinst_HEADERS = \
     game/dis_gameobjectreference.h \
     game/dis_item.h \
     game/dis_spawn.h \
+    game/dis_util.h \
     game/gameobjects/dis_asteroid.h \
     game/gameobjects/dis_ballistic.h \
     game/gameobjects/dis_effect.h \

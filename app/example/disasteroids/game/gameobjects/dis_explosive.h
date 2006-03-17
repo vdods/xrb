@@ -66,19 +66,6 @@ public:
         Float time,
         Float frame_dt);
 
-    static void DamageArea (
-        PhysicsHandler *physics_handler,
-        Engine2::ObjectLayer *object_layer,
-        GameObject *damager,
-        GameObject *damage_medium,
-        Float damage_amount,
-        FloatVector2 const &damage_area_center,
-        Float damage_area_radius,
-        DamageType damage_type,
-        GameObjectReference<Mortal> const &ignore_this_mortal,
-        Float time,
-        Float frame_dt);
-        
 protected:
 
     GameObjectReference<GameObject> m_owner;
@@ -245,7 +232,9 @@ public:
     Missile (
         Float const time_to_live,
         Float const time_at_birth,
-        Float const power,
+        Float const damage_to_inflict,
+        Float const damage_radius,
+        Float const explosion_radius,
         Uint32 const weapon_level,
         GameObjectReference<GameObject> const &owner,
         Float const max_health)
@@ -253,11 +242,14 @@ public:
         Explosive(owner, max_health, max_health, T_MISSILE),
         m_time_to_live(time_to_live),
         m_time_at_birth(time_at_birth),
-        m_power(power),
+        m_damage_to_inflict(damage_to_inflict),
+        m_damage_radius(damage_radius),
+        m_explosion_radius(explosion_radius),
         m_weapon_level(weapon_level)
     {
         ASSERT1(m_time_to_live > 0.0f)
-        ASSERT1(m_power > 0.0f)
+        ASSERT1(m_damage_to_inflict > 0.0f)
+        ASSERT1(m_explosion_radius > 0.0f)
     }
     virtual ~Missile () { }
 
@@ -275,7 +267,9 @@ private:
 
     Float const m_time_to_live;
     Float const m_time_at_birth;
-    Float const m_power;
+    Float const m_damage_to_inflict;
+    Float const m_damage_radius;
+    Float const m_explosion_radius;
     Uint32 m_weapon_level;
 }; // end of class Missile
 

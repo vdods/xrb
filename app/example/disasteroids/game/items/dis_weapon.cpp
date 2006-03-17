@@ -40,7 +40,7 @@ Float const Laser::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 2
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f }; //{ 2.0f, 2.5f, 3.0f, 4.0f };
 
 // FlameThrower properties
-Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 350.0f, 500.0f };
+Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
 Float const FlameThrower::ms_min_required_primary_power[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 20.0f, 25.0f };
 Float const FlameThrower::ms_max_damage_per_fireball[UPGRADE_LEVEL_COUNT] = { 12.0f, 25.0f, 50.0f, 90.0f };
@@ -72,13 +72,14 @@ Float const MineLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.45f, 0.425f
 Uint32 const MineLayer::ms_max_active_mine_count[UPGRADE_LEVEL_COUNT] = { 2, 3, 4, 6 };
 
 // MissileLauncher properties
-Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 100.0f, 120.0f, 140.0f, 150.0f };
+Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 150.0f, 180.0f, 220.0f, 260.0f };
 Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 70.0f, 75.0f, 80.0f };
 Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 100.0f, 110.0f, 125.0f, 150.0f };
-Float const MissileLauncher::ms_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.1f, 2.2f, 2.3f };
-Float const MissileLauncher::ms_missile_power[UPGRADE_LEVEL_COUNT] = { 100.0f, 110.0f, 125.0f, 150.0f };
+Float const MissileLauncher::ms_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
+Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 50.0f, 60.0f };
+Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.6f, 1.7f, 1.8f };
+Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 4.0f, 4.0f, 4.0f };
 
 // EMPBombLayer properties
 Float const EMPBombLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -91,7 +92,8 @@ Uint32 const EMPBombLayer::ms_max_active_emp_bomb_count[UPGRADE_LEVEL_COUNT] = {
 
 // AutoDestruct properties
 Float const AutoDestruct::ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT] = { 5.0f, 4.0f, 3.25f, 2.5f };
-Float const AutoDestruct::ms_explosion_power[UPGRADE_LEVEL_COUNT] = { 1000.0f, 1500.0f, 3000.0f, 6000.0f };
+Float const AutoDestruct::ms_damage_amount[UPGRADE_LEVEL_COUNT] = { 80.0f, 150.0f, 300.0f, 500.0f };
+Float const AutoDestruct::ms_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 120.0f, 200.0f };
 
 // Tractor properties
 Float const Tractor::ms_range[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
@@ -322,7 +324,7 @@ bool FlameThrower::Activate (
         GetMuzzleLocation() + 2.0f * GetMuzzleDirection(), // the extra is just so we don't fry ourselves
         ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
         power / ms_max_required_primary_power[GetUpgradeLevel()] * ms_max_damage_per_fireball[GetUpgradeLevel()],
-        40.0f,
+        ms_final_fireball_size[GetUpgradeLevel()],
         1.0f,
         time,
         GetOwnerShip()->GetReference());
@@ -723,7 +725,9 @@ bool MissileLauncher::Activate (
             ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
             ms_missile_time_to_live[GetUpgradeLevel()],
             time,
-            ms_missile_power[GetUpgradeLevel()],
+            ms_missile_damage_amount[GetUpgradeLevel()],
+            ms_missile_damage_radius[GetUpgradeLevel()],
+            2.0f * ms_missile_damage_radius[GetUpgradeLevel()],
             GetUpgradeLevel(),
             GetOwnerShip()->GetReference(),
             ms_missile_health[GetUpgradeLevel()]);
@@ -881,16 +885,6 @@ bool AutoDestruct::Activate (
 
     if (time - m_triggered_time >= ms_trigger_countdown_time[GetUpgradeLevel()])
     {
-        SpawnDamageExplosion(
-            GetOwnerShip()->GetWorld(),
-            GetOwnerShip()->GetObjectLayer(),
-            GetOwnerShip()->GetTranslation(),
-            GetOwnerShip()->GetVelocity(),
-            10.0f * ms_explosion_power[GetUpgradeLevel()],
-            ms_explosion_power[GetUpgradeLevel()],
-            0.2f,
-            time,
-            GetOwnerShip()->GetReference());
         GetOwnerShip()->Kill(
             GetOwnerShip(),
             NULL, // auto destruct does not have a GameObject kill medium
@@ -900,6 +894,17 @@ bool AutoDestruct::Activate (
             Mortal::D_SUICIDE,
             time,
             frame_dt);
+        SpawnDamageExplosion(
+            GetOwnerShip()->GetWorld(),
+            GetOwnerShip()->GetObjectLayer(),
+            GetOwnerShip()->GetTranslation(),
+            GetOwnerShip()->GetVelocity(),
+            ms_damage_amount[GetUpgradeLevel()],
+            ms_damage_radius[GetUpgradeLevel()],
+            2.0f * ms_damage_radius[GetUpgradeLevel()],
+            0.2f,
+            time,
+            GetOwnerShip()->GetReference());
     }
 
     return true;

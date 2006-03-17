@@ -102,26 +102,21 @@ class DamageExplosion : public Explosion
 public:
 
     DamageExplosion (
-        Float const power,
-        Float const final_size,
+        Float const damage_amount,
+        Float const damage_radius,
+        Float const explosion_radius,
         Float const time_to_live,
         Float const time_at_birth,
         GameObjectReference<GameObject> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION),
-        m_initial_power(power),
+        Explosion(explosion_radius, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION),
+        m_damage_amount(damage_amount),
+        m_damage_radius(damage_radius),
         m_owner(owner)
     {
-        ASSERT1(m_initial_power > 0.0f)
-        m_has_done_knockback = false;
+        ASSERT1(m_damage_amount > 0.0f)
+        m_has_done_impact = false;
     }
-
-    void ExplosionKnockback (
-        FloatVector2 const &explosion_area_center,
-        Float explosion_area_radius,
-        Float power,
-        Float time,
-        Float frame_dt);
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
@@ -134,8 +129,9 @@ public:
 
 private:
 
-    Float const m_initial_power;
-    bool m_has_done_knockback;
+    Float const m_damage_amount;
+    Float const m_damage_radius;
+    bool m_has_done_impact;
     GameObjectReference<GameObject> m_owner;
 }; // end of class DamageExplosion
 

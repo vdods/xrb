@@ -13,6 +13,7 @@
 #include "dis_physicshandler.h"
 #include "dis_ship.h"
 #include "dis_spawn.h"
+#include "dis_util.h"
 #include "dis_weapon.h"
 #include "xrb_engine2_objectlayer.h"
 
@@ -78,57 +79,6 @@ void Explosive::Detonate (
     ASSERT1(!GetHasDetonated())
     m_has_detonated = true;
     ScheduleForDeletion(0.0f);
-}
-
-void Explosive::DamageArea (
-    PhysicsHandler *const physics_handler,
-    Engine2::ObjectLayer *const object_layer,
-    GameObject *const damager,
-    GameObject *const damage_medium,
-    Float const damage_amount,
-    FloatVector2 const &damage_area_center,
-    Float const damage_area_radius,
-    DamageType const damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
-    Float const time,
-    Float const frame_dt)
-{
-    ASSERT1(physics_handler != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(damage_amount >= 0.0f)
-    if (damage_amount == 0.0f)
-        return;
-
-    AreaTraceList area_trace_list;
-    physics_handler->AreaTrace(
-        object_layer,
-        damage_area_center,
-        damage_area_radius,
-        false,
-        &area_trace_list);
-        
-    for (AreaTraceListIterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
-         it != it_end;
-         ++it)
-    {
-        GameObject *game_object = *it;
-        ASSERT1(game_object != NULL)
-
-        // damage mortals, unless it is the one to ignore.
-        if (game_object->GetIsMortal() && game_object != *ignore_this_mortal)
-            static_cast<Mortal *>(game_object)->Damage(
-                damager,
-                damage_medium,
-                damage_amount,
-                NULL,
-                damage_area_center, // maybe calculate this for real
-                FloatVector2::ms_zero, // maybe calculate this for real
-                0.0f,
-                damage_type,
-                time,
-                frame_dt);
-    }
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -206,27 +156,14 @@ void Grenade::Detonate (
 
     if (!GetHasDetonated())
     {
-        // do radius damage (the main damage), but don't damage ourselves
-        DamageArea(
-            GetPhysicsHandler<PhysicsHandler>(),
-            GetObjectLayer(),
-            *m_owner,
-            this,
-            m_damage_to_inflict,
-            GetTranslation(),
-            m_damage_radius,
-            Mortal::D_EXPLOSION,
-            GetReference(),
-            time,
-            frame_dt);
-    
         // spawn a damage explosion
         SpawnDamageExplosion(
             GetWorld(),
             GetObjectLayer(),
             GetTranslation(),
             GetVelocity(),
-            0.5f * m_damage_to_inflict,
+            m_damage_to_inflict,
+            m_damage_radius,
             m_explosion_radius,
             0.2f,
             time,
@@ -319,27 +256,14 @@ void Mine::Detonate (
 
     if (!GetHasDetonated())
     {
-        // do radius damage (the main damage), but don't damage ourselves
-        DamageArea(
-            GetPhysicsHandler<PhysicsHandler>(),
-            GetObjectLayer(),
-            *m_owner,
-            this,
-            m_damage_to_inflict,
-            GetTranslation(),
-            m_damage_radius,
-            Mortal::D_EXPLOSION,
-            GetReference(),
-            time,
-            frame_dt);
-    
         // spawn a damage explosion
         SpawnDamageExplosion(
             GetWorld(),
             GetObjectLayer(),
             GetTranslation(),
             GetVelocity(),
-            0.5f * m_damage_to_inflict,
+            m_damage_to_inflict,
+            m_damage_radius,
             m_explosion_radius,
             0.2f,
             time,
@@ -467,8 +391,9 @@ void Missile::Detonate (
             GetObjectLayer(),
             GetTranslation(),
             GetVelocity(),
-            10.0f * m_power,
-            2.0f * m_power,
+            m_damage_to_inflict,
+            m_damage_radius,
+            m_explosion_radius,
             0.2f,
             time,
             m_owner);

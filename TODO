@@ -42,6 +42,8 @@ DISASTEROIDS:
   
 CURRENT:
 - fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer
+  it is possibly a memory stomp (the vtable for a visibility quad tree was
+  getting stomped on causing a crash)
 - fix LineTrace screwing up on large entities sometimes at certain angles
 - in Dis::PhysicsHandler, the collision pairs may need to use
   GameObjectReferences, otherwise stuff might be deleted which will

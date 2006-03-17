@@ -593,7 +593,8 @@ private:
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_secondary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_time_to_live[UPGRADE_LEVEL_COUNT];
-    static Float const ms_missile_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_missile_damage_amount[UPGRADE_LEVEL_COUNT];
+    static Float const ms_missile_damage_radius[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_health[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
@@ -726,7 +727,8 @@ public:
 private:
 
     static Float const ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT];
-    static Float const ms_explosion_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_damage_amount[UPGRADE_LEVEL_COUNT];
+    static Float const ms_damage_radius[UPGRADE_LEVEL_COUNT];
 
     Float m_triggered_time;
 }; // end of class AutoDestruct

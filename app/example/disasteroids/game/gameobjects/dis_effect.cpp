@@ -13,6 +13,7 @@
 #include "dis_mortal.h"
 #include "dis_physicshandler.h"
 #include "dis_ship.h"
+#include "dis_util.h"
 #include "xrb_engine2_spriteentity.h"
 
 using namespace Xrb;
@@ -45,73 +46,34 @@ void Explosion::Think (Float const time, Float const frame_dt)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void DamageExplosion::ExplosionKnockback (
-    FloatVector2 const &explosion_area_center,
-    Float const explosion_area_radius,
-    Float const power,
-    Float const time,
-    Float const frame_dt)
-{
-    ASSERT1(explosion_area_radius > 0.0f)
-    ASSERT1(power > 0.0f)
-
-    AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
-        GetObjectLayer(),
-        explosion_area_center,
-        explosion_area_radius,
-        false,
-        &area_trace_list);
-
-    // iterate through the trace set and apply forces
-    for (AreaTraceListIterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
-         it != it_end;
-         ++it)
-    {
-        GameObject *game_object = *it;
-
-        if (game_object == NULL)
-            continue;
-            
-        if (game_object->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
-            continue;
-    
-        // center_to_center points towards the collider
-        FloatVector2 center_to_center = game_object->GetTranslation() - explosion_area_center;
-        Float distance = center_to_center.GetLength() - game_object->GetScaleFactor();
-        if (distance < 0.0f)
-            distance = 0.0f;
-        Float distance_factor;
-        if (distance < 1.0f)
-            distance_factor = 1.0f;
-        else
-            distance_factor = 1.0f / distance;
-    
-        // knockback forces
-        if (!center_to_center.GetIsZero())
-        {
-            static Float const s_knockback_factor = 2.0f;
-            Float knockback_momentum = s_knockback_factor * power * distance_factor;
-            game_object->AccumulateMomentum(
-                knockback_momentum *
-                center_to_center.GetNormalization() *
-                Math::Sqrt(game_object->GetScaleFactor()));
-        }
-    }
-}
-
 void DamageExplosion::Think (Float time, Float frame_dt)
 {
-    if (!m_has_done_knockback)
+    if (!m_has_done_impact)
     {
-        m_has_done_knockback = true;
-        ExplosionKnockback(
+        m_has_done_impact = true;
+        
+        RadiusKnockback(
+            GetPhysicsHandler<Dis::PhysicsHandler>(),
+            GetObjectLayer(),
             GetTranslation(),
             GetFinalSize(),
-            m_initial_power,
+            m_damage_amount,
             time,
             frame_dt);
+
+        if (m_damage_radius > 0.0f)
+            RadiusDamage(
+                GetPhysicsHandler<Dis::PhysicsHandler>(),
+                GetObjectLayer(),
+                *m_owner,
+                this,
+                m_damage_amount,
+                GetTranslation(),
+                m_damage_radius,
+                Mortal::D_EXPLOSION,
+                GameObjectReference<Mortal>::ms_null,
+                time,
+                frame_dt);
     }
 
     Explosion::Think(time, frame_dt);    
@@ -152,7 +114,7 @@ void DamageExplosion::Collide (
         DStaticCast<Mortal *>(collider)->Damage(
             *m_owner,
             this,
-            m_initial_power * reverse_lifetime_ratio * frame_dt * distance_factor,
+            m_damage_amount * reverse_lifetime_ratio * frame_dt * distance_factor,
             NULL,
             collision_location,
             collision_normal,

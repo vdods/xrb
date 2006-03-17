@@ -455,11 +455,15 @@ void PhysicsHandler::UpdateVelocities ()
             entity->ResetTorque();
         }
 
+        // limit the speed for entities with CT_SOLID_COLLISION only
         static Float const s_max_speed = 300.0f;
         static Float const s_max_speed_squared = s_max_speed * s_max_speed;
-        Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
-        if (entity_speed_squared > s_max_speed_squared)
-            entity->SetVelocity(s_max_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+        if (entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+        {
+            Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
+            if (entity_speed_squared > s_max_speed_squared)
+                entity->SetVelocity(s_max_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+        }
     }
 }
 
