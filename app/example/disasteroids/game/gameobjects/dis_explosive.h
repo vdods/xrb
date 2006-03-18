@@ -276,7 +276,7 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
-
+/*
 class EMPBombLayer;
 
 class EMPBomb : public Explosive
@@ -345,7 +345,7 @@ private:
     Float const m_blast_radius;
     Uint32 m_weapon_level;
 }; // end of class EMPBomb
-
+*/
 } // end of namespace Dis
 
 #endif // !defined(_DIS_EXPLOSIVE_H_)

@@ -39,7 +39,7 @@ Float Shield::Damage (
     Float available_damage_dissipation = GetAvailableDamageDissipation();
     // if there is no dissipation available, just return the full amount
     // of damage
-    if (available_damage_dissipation == 0.0f)
+    if (available_damage_dissipation == 0.0f || damage_amount == 0.0f)
     {
         if (damage_amount_used != NULL)
             *damage_amount_used = 0.0f;

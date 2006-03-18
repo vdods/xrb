@@ -103,7 +103,7 @@ Resource<GLTexture> InventoryButton::GetButtonTexture (
             "resources/button_missile_launcher_3.png",
             "resources/button_missile_launcher_4.png"
         },
-        // IT_WEAPON_EMP_BOMB_LAYER
+        // IT_WEAPON_EMP_CORE // IT_WEAPON_EMP_BOMB_LAYER
         {
             "resources/button_emp_bomb_layer_1.png",
             "resources/button_emp_bomb_layer_2.png",

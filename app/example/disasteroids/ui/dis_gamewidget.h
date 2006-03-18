@@ -84,6 +84,7 @@ private:
     ValueLabel<Uint32> *m_render_frame_time_label;
     ValueLabel<Float> *m_framerate_label;
 
+    ValueLabel<Uint32> *m_lives_remaining_label;
     ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
 
     Label *m_time_alive_label;

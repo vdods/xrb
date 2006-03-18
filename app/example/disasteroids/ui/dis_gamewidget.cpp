@@ -133,10 +133,10 @@ GameWidget::GameWidget (
 
     // time, mineral inventory, score layout and stoke-o-meter
     {
-        Layout *time_alive_minerals_and_score_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
-        time_alive_minerals_and_score_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+        Layout *stats_and_inventory_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
+        stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
         
-        m_time_alive_label = new Label("", time_alive_minerals_and_score_layout, "time-alive label");
+        m_time_alive_label = new Label("", stats_and_inventory_layout, "time-alive label");
         m_time_alive_label->SetIsHeightFixedToTextHeight(true);
         m_time_alive_label->SetAlignment(Dim::X, LEFT);
         m_time_alive_label->SetFontHeightRatio(0.05f);
@@ -144,6 +144,27 @@ GameWidget::GameWidget (
         m_time_alive = 0.0f;
 
         UpdateTimeAliveLabel();
+
+        // extra lives label and icon
+        {
+            m_lives_remaining_label =
+                new ValueLabel<Uint32>(
+                    "%u",
+                    Util::TextToUint32,
+                    stats_and_inventory_layout);
+            m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
+            m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
+    
+            Label *lives_remaining_icon_label =
+                new Label(
+                    Singletons::ResourceLibrary()->
+                        LoadFilename<GLTexture>(
+                            GLTexture::Create,
+                            "resources/sadface_small.png"),
+                    stats_and_inventory_layout);
+            lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
+            lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());
+        }
         
         for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
         {
@@ -151,7 +172,7 @@ GameWidget::GameWidget (
                 new ValueLabel<Uint32>(
                     "%u",
                     Util::TextToUint32,
-                    time_alive_minerals_and_score_layout);
+                    stats_and_inventory_layout);
             m_mineral_inventory_label[mineral_type]->SetIsHeightFixedToTextHeight(true);
             m_mineral_inventory_label[mineral_type]->SetAlignment(Dim::X, RIGHT);
             
@@ -161,17 +182,17 @@ GameWidget::GameWidget (
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             Item::GetMineralSpriteFilename(mineral_type)),
-                    time_alive_minerals_and_score_layout);
+                    stats_and_inventory_layout);
             mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_type]->GetHeight());
             mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_type]->GetHeight());
         }
         // a spacer to make things look even
-        new SpacerWidget(time_alive_minerals_and_score_layout);
+        new SpacerWidget(stats_and_inventory_layout);
 
         // a widget stack for the score label and stoke-o-meter
         WidgetStack *widget_stack =
             new WidgetStack(
-                time_alive_minerals_and_score_layout,
+                stats_and_inventory_layout,
                 "score label and stoke-o-meter widget stack");
 
         m_stoke_o_meter = new ProgressBar(ProgressBar::GO_LEFT, widget_stack, "stoke-o-meter");
@@ -258,6 +279,9 @@ SignalSender0 const *GameWidget::SenderQuitGame ()
 void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 {
     // disconnect old player ship connections
+    m_lives_remaining_label->DetachAll();
+    for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+        m_mineral_inventory_label[i]->DetachAll();
     m_score_label->DetachAll();
     m_internal_receiver_set_time_alive.DetachAll();
     m_armor_status->DetachAll();
@@ -278,6 +302,9 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             player_ship->SenderTimeAliveChanged(),
             &m_internal_receiver_set_time_alive);
         SignalHandler::Connect1(
+            player_ship->SenderLivesRemainingChanged(),
+            m_lives_remaining_label->ReceiverSetValue());
+        SignalHandler::Connect1(
             player_ship->SenderScoreChanged(),
             m_score_label->ReceiverSetValue());
         SignalHandler::Connect1(
@@ -297,18 +324,21 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             &m_receiver_set_mineral_inventory);
 
         // make sure the UI elements are enabled
+        m_time_alive_label->Enable();
+        m_lives_remaining_label->Enable();
+        for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+            m_mineral_inventory_label[i]->Enable();
         m_score_label->Enable();
         m_armor_status->Enable();
         m_shield_status->Enable();
         m_power_status->Enable();
         m_weapon_status->Enable();
-        for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-            m_mineral_inventory_label[i]->Enable();
             
         // initialize the UI elements
-        m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_time_alive = player_ship->GetTimeAlive();
         UpdateTimeAliveLabel();
+        m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
+        m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_score_label->SetValue(player_ship->GetScore());
         m_armor_status->SetProgress(player_ship->GetArmorStatus());
         m_shield_status->SetProgress(player_ship->GetShieldStatus());
@@ -322,17 +352,18 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
     // otherwise set the UI elements to zero, and disable them
     else
     {
-        m_score_label->Disable();
         m_time_alive = 0.0f;
         UpdateTimeAliveLabel();
         m_time_alive_label->Disable();
+        m_lives_remaining_label->Disable();
+        for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+            m_mineral_inventory_label[i]->Disable();
+        m_score_label->Disable();
         m_armor_status->Disable();
         m_shield_status->Disable();
         m_power_status->Disable();
         m_weapon_status->Disable();
-        for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-            m_mineral_inventory_label[i]->Disable();
-    }    
+    }
 }
 
 void GameWidget::SetWorldFrameTime (Uint32 const world_frame_time)

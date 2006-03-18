@@ -405,7 +405,7 @@ void Missile::Detonate (
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
-
+/*
 void EMPBomb::Collide (
     GameObject *const collider,
     FloatVector2 const &collision_location,
@@ -494,6 +494,6 @@ void EMPBomb::Detonate (
         Explosive::Detonate(time, frame_dt);
     }
 }
-
+*/
 } // end of namespace Dis
 

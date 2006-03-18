@@ -255,14 +255,15 @@ void CollisionQuadTree::LineTrace (
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
+        
         Float t0 = (-b - radical_part) / (2.0f * a);
+        if (t0 > 1.0f)
+            continue;
+            
         Float t1 = (-b + radical_part) / (2.0f * a);
-
         if (t1 < 0.0f)
             continue;
 
-        if (t0 > 1.0f)
-            continue;
 
         ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
         line_trace_binding_set->insert(
@@ -372,13 +373,13 @@ void CollisionQuadTree::LineTraceWrapped (
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
+        
         Float t0 = (-b - radical_part) / (2.0f * a);
-        Float t1 = (-b + radical_part) / (2.0f * a);
-
-        if (t1 < 0.0f)
+        if (t0 > 1.0f)
             continue;
 
-        if (t0 > 1.0f)
+        Float t1 = (-b + radical_part) / (2.0f * a);
+        if (t1 < 0.0f)
             continue;
 
         ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)

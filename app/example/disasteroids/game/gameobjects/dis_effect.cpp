@@ -140,7 +140,8 @@ void EMPExplosion::Collide (
     if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
         return;
 
-    if (collider->GetIsShip())
+    // only affect ships that aren't the owner
+    if (collider->GetIsShip() && collider != *m_owner)
         DStaticCast<Ship *>(collider)->AccumulateDisableTime(
             m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
 }

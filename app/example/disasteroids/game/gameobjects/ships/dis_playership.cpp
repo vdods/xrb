@@ -35,6 +35,7 @@ PlayerShip::PlayerShip (
     SignalHandler(),
     m_sender_score_changed(this),
     m_sender_stoke_changed(this),
+    m_sender_lives_remaining_changed(this),
     m_sender_time_alive_changed(this),
     m_sender_armor_status_changed(this),
     m_sender_shield_status_changed(this),
@@ -45,7 +46,7 @@ PlayerShip::PlayerShip (
     m_score = 0;
     m_stoke = 1.0f;
     m_time_alive = 0.0f;
-    m_lives_remaining = 3;
+    m_lives_remaining = 0;
 
     m_engine_auxiliary_input = 0;
     m_is_using_auxiliary_weapon = false;
@@ -92,16 +93,23 @@ PlayerShip::~PlayerShip ()
 
 Float PlayerShip::GetArmorStatus () const
 {
+
     return Max(0.0f, GetCurrentHealth() / GetMaxHealth());
 }
 
 Float PlayerShip::GetShieldStatus () const
 {
+    if (GetIsDead())
+        return 0.0f;
+
     return (GetShield() != NULL) ? GetShield()->GetIntensity() : 0.0f;
 }
 
 Float PlayerShip::GetPowerStatus () const
 {
+    if (GetIsDead())
+        return 0.0f;
+
     return (GetPowerGenerator() != NULL) ?
            GetPowerGenerator()->GetStoredPower() / GetPowerGenerator()->GetMaxPower() :
            0.0f;
@@ -109,6 +117,9 @@ Float PlayerShip::GetPowerStatus () const
 
 Float PlayerShip::GetWeaponStatus () const
 {
+    if (GetIsDead())
+        return 0.0f;
+
     Weapon const *current_weapon = GetCurrentWeapon();
     // getting the time from the world in this manner
     // is slightly ugly, but its the easiest way to do it.
@@ -249,6 +260,24 @@ void PlayerShip::IncrementTimeAlive (Float const time_alive_delta)
     }
 }
 
+void PlayerShip::IncrementScore (Uint32 const score_delta)
+{
+    if (score_delta != 0)
+    {
+        m_score += score_delta;
+        m_sender_score_changed.Signal(m_score);
+    }
+}
+
+void PlayerShip::IncrementLivesRemaining (Sint32 const lives_remaining_delta)
+{
+    if (lives_remaining_delta != 0)
+    {
+        m_lives_remaining += lives_remaining_delta;
+        m_sender_lives_remaining_changed.Signal(m_lives_remaining);
+    }
+}
+
 void PlayerShip::CreditEnemyKill (Type const enemy_ship_type, Uint8 const enemy_level)
 {
     static Uint32 const s_baseline_score[T_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
@@ -266,7 +295,8 @@ void PlayerShip::CreditEnemyKill (Type const enemy_ship_type, Uint8 const enemy_
     Uint32 enemy_ship_index = enemy_ship_type - T_ENEMY_SHIP_LOWEST;
     IncrementScore(static_cast<Uint32>(m_stoke * s_baseline_score[enemy_ship_index][enemy_level]));
 
-    SetStoke(m_stoke * 2.0f);
+    static Float const s_stoke_factor = Math::Pow(2.0f, 0.25f);
+    SetStoke(m_stoke * s_stoke_factor);
 }
 
 void PlayerShip::GiveLotsOfMinerals ()
@@ -417,6 +447,8 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
 
 void PlayerShip::Think (Float const time, Float const frame_dt)
 {
+    ASSERT1(!GetIsDead())
+
     bool is_disabled = GetIsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
@@ -444,7 +476,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         AimShipAtReticleCoordinates();
 
         // update the stoke O meter (exponential decay, with a lower limit of 1.0)
-        static Float const s_stoke_halflife = 1.2f;
+        static Float const s_stoke_halflife = 1.5f;
         SetStoke(Max(1.0f, m_stoke * Math::Pow(0.5f, frame_dt / s_stoke_halflife)));
         
         // figure out which weapon to use.
@@ -625,10 +657,15 @@ void PlayerShip::Die (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(m_lives_remaining > 0)
-
+    DStaticCast<World *>(GetWorld())->RecordDestroyedPlayerShip(this);
+    
     // reset the stoke O meter (dying bums me out, man)
     SetStoke(1.0f);
+    // zero out the shield, armor, power and weapon status
+    SetArmorStatus(0.0f);
+    SetShieldStatus(0.0f);
+    SetPowerStatus(0.0f);
+    SetWeaponStatus(0.0f);
     
     // spawn a really big explosion
     SpawnNoDamageExplosion(
@@ -651,9 +688,6 @@ void PlayerShip::Die (
     // remove the shield effect, if it exists
     if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
         m_shield_effect->RemoveFromWorld();
-
-    --m_lives_remaining;
-    DStaticCast<World *>(GetWorld())->RecordDestroyedPlayerShip(this);
 }
 
 void PlayerShip::SetMainWeaponNumber (Uint32 const weapon_number)
@@ -736,21 +770,15 @@ bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
     return true;
 }
 
-void PlayerShip::SetStoke (Float const stoke)
+void PlayerShip::SetStoke (Float stoke)
 {
+    if (GetIsDead() && m_stoke != 1.0f)
+        stoke = 1.0f;
+        
     if (m_stoke != stoke)
     {
         m_stoke = stoke;
         m_sender_stoke_changed.Signal(m_stoke);
-    }
-}
-
-void PlayerShip::IncrementScore (Uint32 const score_delta)
-{
-    if (score_delta != 0)
-    {
-        m_score += score_delta;
-        m_sender_score_changed.Signal(m_score);
     }
 }
 

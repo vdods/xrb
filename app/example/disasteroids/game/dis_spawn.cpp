@@ -258,7 +258,7 @@ Missile *SpawnMissile (
         Engine2::CT_NONSOLID_COLLISION);//CT_SOLID_COLLISION);
     return missile;
 }
-
+/*
 EMPBomb *SpawnEMPBomb (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
@@ -289,7 +289,7 @@ EMPBomb *SpawnEMPBomb (
         Engine2::CT_SOLID_COLLISION);
     return emp_bomb;
 }
-
+*/
 Powerup *SpawnMineral (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,

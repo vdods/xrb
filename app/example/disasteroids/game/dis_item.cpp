@@ -36,7 +36,8 @@ Item *Item::Create (ItemType const type, Uint8 const upgrade_level)
         case IT_WEAPON_GRENADE_LAUNCHER:      return new GrenadeLauncher(upgrade_level);
         case IT_WEAPON_MINE_LAYER:            return new MineLayer(upgrade_level);
         case IT_WEAPON_MISSILE_LAUNCHER:      return new MissileLauncher(upgrade_level);
-        case IT_WEAPON_EMP_BOMB_LAYER:        return new EMPBombLayer(upgrade_level);
+        case IT_WEAPON_EMP_CORE:              return new EMPCore(upgrade_level);
+//         case IT_WEAPON_EMP_BOMB_LAYER:        return new EMPBombLayer(upgrade_level);
         case IT_WEAPON_AUTO_DESTRUCT:         return new AutoDestruct(upgrade_level);
         case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_ENEMY_WEAPON_SLOW_BULLET_GUN: return new SlowBulletGun(upgrade_level);
@@ -114,7 +115,7 @@ Uint32 Item::GetItemPrice (
             {  64,  67,  68,   0},
             {  83,  76,  80,  81},
         },
-        { // IT_WEAPON_EMP_BOMB_LAYER
+        { // IT_WEAPON_EMP_CORE // IT_WEAPON_EMP_BOMB_LAYER
             {  41,   0,   0,   0},
             {  47,  49,   0,   0},
             {  63,  65,  71,   0},

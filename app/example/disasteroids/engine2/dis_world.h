@@ -151,6 +151,7 @@ private:
     GameState m_game_state;
     
     PlayerShip *m_player_ship;
+    Uint32 m_score_required_for_extra_life;
 
     Uint32 m_game_stage;
     Float m_next_game_stage_time;

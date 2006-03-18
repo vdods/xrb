@@ -82,6 +82,7 @@ public:
     // SignalSender accessors
     inline SignalSender1<Uint32> const *SenderScoreChanged () { return &m_sender_score_changed; }
     inline SignalSender1<Float> const *SenderStokeChanged () { return &m_sender_stoke_changed; }
+    inline SignalSender1<Uint32> const *SenderLivesRemainingChanged () { return &m_sender_lives_remaining_changed; }
     inline SignalSender1<Float> const *SenderTimeAliveChanged () { return &m_sender_time_alive_changed; }
     inline SignalSender1<Float> const *SenderArmorStatusChanged () { return &m_sender_armor_status_changed; }
     inline SignalSender1<Float> const *SenderShieldStatusChanged () { return &m_sender_shield_status_changed; }
@@ -90,6 +91,8 @@ public:
     inline SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
 
     void IncrementTimeAlive (Float time_alive_delta);
+    void IncrementScore (Uint32 score_delta);
+    void IncrementLivesRemaining (Sint32 lives_remaining_delta);
     void CreditEnemyKill (Type enemy_ship_type, Uint8 enemy_level);
     void GiveLotsOfMinerals ();
         
@@ -168,7 +171,6 @@ protected:
 
     void SetStoke (Float stoke);
 
-    void IncrementScore (Uint32 score_delta);
     virtual void ResetInputs ();
     virtual void SetCurrentHealth (Float current_health);
     
@@ -231,6 +233,7 @@ private:
 
     SignalSender1<Uint32> m_sender_score_changed;
     SignalSender1<Float> m_sender_stoke_changed;
+    SignalSender1<Uint32> m_sender_lives_remaining_changed;
     SignalSender1<Float> m_sender_time_alive_changed;
     SignalSender1<Float> m_sender_armor_status_changed;
     SignalSender1<Float> m_sender_shield_status_changed;

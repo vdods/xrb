@@ -38,8 +38,8 @@ class Asteroid;
 class Ballistic;
 class DamageExplosion;
 class Devourment;
-class EMPBomb;
-class EMPBombLayer;
+// class EMPBomb;
+// class EMPBombLayer;
 class EMPExplosion;
 class Fireball;
 class GaussGunTrail;
@@ -137,7 +137,7 @@ Missile *SpawnMissile (
     Uint32 weapon_level,
     GameObjectReference<GameObject> const &owner,
     Float health);
-
+/*
 EMPBomb *SpawnEMPBomb (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -150,7 +150,7 @@ EMPBomb *SpawnEMPBomb (
     Uint32 weapon_level,
     GameObjectReference<GameObject> const &owner,
     Float health);
-    
+*/  
 Powerup *SpawnMineral (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,

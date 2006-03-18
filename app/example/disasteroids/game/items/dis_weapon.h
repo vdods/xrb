@@ -601,6 +601,69 @@ private:
     Float m_time_last_fired;
 }; // end of class MissileLauncher
 
+// - EMP blast - disables enemies (maybe with certain exceptions) for a short
+//   time.  fire will cause an EMP explosion out from the player's ship,
+//   disabling enemies which touch it but not the player.  if any ship gets
+//   trapped in the blast radius, it is disabled for a short period of time
+//   (can't move or fire).
+class EMPCore : public Weapon // - primary: EMP explosion / secondary: ?
+{
+public:
+
+    EMPCore (Uint32 const upgrade_level)
+        :
+        Weapon(upgrade_level, IT_WEAPON_EMP_CORE)
+    {
+        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+    }
+    virtual ~EMPCore () { }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // Weapon interface methods
+    // ///////////////////////////////////////////////////////////////////////
+    
+    virtual bool GetRequiresAmmo () const
+    {
+        // TODO: this weapon should use ammo
+        return false;
+    }
+    virtual Float GetReadinessStatus (Float time) const
+    {
+        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const time_since_last_fire = time - m_time_last_fired;
+        ASSERT1(cycle_time > 0.0f)
+        ASSERT1(time_since_last_fire >= 0.0f)
+        if (time_since_last_fire > cycle_time)
+            return 1.0f;
+        else
+            return time_since_last_fire / cycle_time;
+    }
+    
+    // ///////////////////////////////////////////////////////////////////////
+    // PoweredDevice interface methods
+    // ///////////////////////////////////////////////////////////////////////
+    
+    virtual Float GetPowerToBeUsedBasedOnInputs (
+        Float time,
+        Float frame_dt) const;
+
+    virtual bool Activate (
+        Float power,
+        Float time,
+        Float frame_dt);
+        
+private:
+
+    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT];
+    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+
+    Float m_time_last_fired;
+}; // end of class EMPCore
+
+/*
 class EMPBomb;
 
 // - EMP bomb - disables enemies (maybe with certain exceptions) for a short
@@ -679,6 +742,7 @@ private:
     ActiveEMPBombSet m_active_emp_bomb_set;
     Float m_time_last_fired;
 }; // end of class EMPBombLayer
+*/
 
 // - AutoDestruct - suicide attack which causes a huge explosion and does
 //   lots and lots of damage

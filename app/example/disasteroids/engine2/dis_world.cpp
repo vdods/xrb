@@ -303,6 +303,7 @@ World::World (
     m_game_state = GS_CREATE_WORLD;
 
     m_player_ship = NULL;
+    m_score_required_for_extra_life = 50000;
 
     m_game_stage = 0;
     m_next_game_stage_time = 30.0f;
@@ -418,6 +419,14 @@ void World::ProcessFrameOverride ()
 
     if (m_player_ship->GetLivesRemaining() > 0 || !m_player_ship->GetIsDead())
         m_player_ship->IncrementTimeAlive(GetFrameDT());
+
+    if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
+    {
+        static Float const s_extra_live_score_factor = 2.0f;
+        m_player_ship->IncrementLivesRemaining(1);
+        m_score_required_for_extra_life =
+            static_cast<Uint32>(s_extra_live_score_factor * m_score_required_for_extra_life);
+    }
     
     switch (m_game_state)
     {
@@ -432,10 +441,12 @@ void World::ProcessFrameOverride ()
             ASSERT1(m_player_ship != NULL)
             ASSERT1(!m_player_ship->GetIsInWorld())
             ASSERT1(m_player_ship->GetIsDead())
+            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
             m_player_ship->Revive(GetFrameTime(), GetFrameDT());
             m_player_ship->SetVelocity(FloatVector2::ms_zero);
             // TODO place the player ship so it doesn't intersect anything
             m_player_ship->AddBackIntoWorld();
+            m_player_ship->IncrementLivesRemaining(-1);
             fprintf(stderr, "respawning player ship (%u lives left)\n", m_player_ship->GetLivesRemaining());
             SetGameState(GS_NORMAL_GAMEPLAY);
             break;
@@ -688,6 +699,8 @@ void World::CreateAndPopulateForegroundObjectLayer ()
     }
 
     static Uint32 const s_number_of_asteroids_to_spawn = 10;
+    static Float const s_asteroid_scale_factor_max = 35.0f;
+    static Float const s_asteroid_scale_factor_min = 5.0f;
     for (Uint32 i = 0; i < s_number_of_asteroids_to_spawn; ++i)
     {
         FloatVector2 translation;
@@ -707,7 +720,9 @@ void World::CreateAndPopulateForegroundObjectLayer ()
                 Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
             // this causes the randomness to favor smaller asteroids
             Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
-            scale_factor = 55.0f * scale_seed * scale_seed + 5.0f;
+            scale_factor =
+                (s_asteroid_scale_factor_max - s_asteroid_scale_factor_min) *
+                scale_seed * scale_seed + s_asteroid_scale_factor_min;
         }
         while (GetDisPhysicsHandler()->
                     GetDoesAreaOverlapAnyEntityInObjectLayer(

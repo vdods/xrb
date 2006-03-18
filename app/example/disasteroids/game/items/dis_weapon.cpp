@@ -81,6 +81,12 @@ Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 6
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
 Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 4.0f, 4.0f, 4.0f };
 
+// EMPCore properties
+Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
+Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 25.0f, 22.0f, 20.0f };
+Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 170.0f, 220.0f, 300.0f, 400.0f };
+Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.333f, 0.2f, 0.1666f, 0.1f };
+/*
 // EMPBombLayer properties
 Float const EMPBombLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
 Float const EMPBombLayer::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 70.0f, 75.0f, 80.0f };
@@ -89,6 +95,7 @@ Float const EMPBombLayer::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 100.
 Float const EMPBombLayer::ms_emp_bomb_health[UPGRADE_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
 Float const EMPBombLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.6f, 0.7f, 0.8f };
 Uint32 const EMPBombLayer::ms_max_active_emp_bomb_count[UPGRADE_LEVEL_COUNT] = { 1, 1, 2, 4 };
+*/
 
 // AutoDestruct properties
 Float const AutoDestruct::ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT] = { 5.0f, 4.0f, 3.25f, 2.5f };
@@ -750,6 +757,60 @@ bool MissileLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
+Float EMPCore::GetPowerToBeUsedBasedOnInputs (
+    Float const time,
+    Float const frame_dt) const
+{
+    // can't fire faster that the weapon's cycle time
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
+        return 0.0f;
+
+    // if the primary input is on at all, return the full primary power
+    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+}
+
+bool EMPCore::Activate (
+    Float const power,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+
+    // if not firing, return false
+    if (GetPrimaryInput() == 0.0f)
+    {
+        ASSERT1(power == 0.0f)
+        return false;
+    }
+
+    // can't fire primary if not enough power was supplied
+    if (power < ms_required_primary_power[GetUpgradeLevel()])
+        return false;
+
+    // fire the weapon -- spawn an EMPExplosion
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+
+    SpawnEMPExplosion(
+        GetOwnerShip()->GetWorld(),
+        GetOwnerShip()->GetObjectLayer(),
+        GetOwnerShip()->GetTranslation(),
+        GetOwnerShip()->GetVelocity(),
+        ms_emp_bomb_disable_time_factor[GetUpgradeLevel()],
+        ms_emp_bomb_blast_radius[GetUpgradeLevel()],
+        1.0f,
+        time,
+        GetOwnerShip()->GetReference());
+    
+    // update the last time fired
+    m_time_last_fired = time;
+        
+    // the weapon fired successfully
+    return true;
+}
+
+/*
 EMPBombLayer::~EMPBombLayer ()
 {
     for (ActiveEMPBombSetIterator it = m_active_emp_bomb_set.begin(),
@@ -856,6 +917,7 @@ bool EMPBombLayer::Activate (
     // the weapon fired successfully
     return true;
 }
+*/
 
 // ///////////////////////////////////////////////////////////////////////////
 //
