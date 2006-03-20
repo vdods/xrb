@@ -32,6 +32,7 @@
 #include "xrb_engine2_physicshandler.h"
 #include "xrb_engine2_sprite.h"
 #include "xrb_engine2_spriteentity.h"
+#include "xrb_eventqueue.h"
 
 using namespace Xrb;
 
@@ -240,16 +241,16 @@ void World::RecordDestroyedPlayerShip (PlayerShip const *const player_ship)
 {
     ASSERT1(player_ship != NULL)
     ASSERT1(m_player_ship == player_ship)
-    ASSERT1(m_game_state == GS_NORMAL_GAMEPLAY)
     if (m_player_ship->GetLivesRemaining() > 0)
     {
         SetGameState(GS_PLAYER_SHIP_IS_DEAD);
-        EnqueueEvent(new EventSetGameState(GS_SPAWN_PLAYER_SHIP, GetMostRecentFrameTime() + 3.0f));
+        ScheduleSetGameStateEvent(GS_SPAWN_PLAYER_SHIP, 3.0f);
     }
     else
     {
+        fprintf(stderr, "GAME OVER\n");
         SetGameState(GS_GAME_OVER);
-        EnqueueEvent(new EventSetGameState(GS_DESTROY_WORLD, GetMostRecentFrameTime() + 3.0f));
+        ScheduleSetGameStateEvent(GS_RECORD_HIGH_SCORE, 3.0f);
     }
 }
 
@@ -298,9 +299,13 @@ World::World (
     Engine2::PhysicsHandler *physics_handler,
     Uint32 entity_capacity)
     :
-    Engine2::World(owner_event_queue, physics_handler, entity_capacity)
+    Engine2::World(owner_event_queue, physics_handler, entity_capacity),
+    SignalHandler(),
+    m_sender_emit_score(this),
+    m_sender_end_game(this)
 {
     m_game_state = GS_CREATE_WORLD;
+    ScheduleSetGameStateEvent(GS_NORMAL_GAMEPLAY, 3.0f);
 
     m_player_ship = NULL;
     m_score_required_for_extra_life = 50000;
@@ -325,8 +330,6 @@ World::World (
     CreateAndPopulateForegroundObjectLayer();
 
     ASSERT1(m_player_ship != NULL)
-
-    SetGameState(GS_NORMAL_GAMEPLAY);
 }
 
 bool World::ProcessEventOverride (Event const *const e)
@@ -337,9 +340,9 @@ bool World::ProcessEventOverride (Event const *const e)
         return Engine2::World::ProcessEventOverride(e);
 
     EventBase const *dis_event = DStaticCast<EventBase const *>(e);
-    switch (dis_event->GetSubType())
+    switch (dis_event->GetCustomType())
     {
-        case EventBase::ST_SET_GAME_STATE:
+        case EventBase::SET_GAME_STATE:
             SetGameState(DStaticCast<EventSetGameState const *>(dis_event)->GetGameState());
             break;
 
@@ -355,6 +358,86 @@ void World::ProcessFrameOverride ()
 {
     Engine2::World::ProcessFrameOverride();
 
+    switch (m_game_state)
+    {
+        case GS_CREATE_WORLD:
+            // fade-in or some other visual intro
+            break;
+
+        case GS_SPAWN_PLAYER_SHIP:
+            ASSERT1(m_player_ship != NULL)
+            ASSERT1(!m_player_ship->GetIsInWorld())
+            ASSERT1(m_player_ship->GetIsDead())
+            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
+            m_player_ship->Revive(GetFrameTime(), GetFrameDT());
+            m_player_ship->SetVelocity(FloatVector2::ms_zero);
+            // TODO place the player ship so it doesn't intersect anything
+            m_player_ship->AddBackIntoWorld();
+            m_player_ship->IncrementLivesRemaining(-1);
+            fprintf(stderr, "respawning player ship (%u lives left)\n", m_player_ship->GetLivesRemaining());
+            SetGameState(GS_NORMAL_GAMEPLAY);
+            break;
+
+        case GS_NORMAL_GAMEPLAY:
+            // this is where all the good stuff happens (enemy spawning,
+            // extra life incrementing, difficulty increasing, etc).
+            ProcessNormalGameplayLogic();
+            break;
+
+        case GS_PLAYER_SHIP_IS_DEAD:
+            // placeholder
+            break;
+
+        case GS_GAME_OVER:
+            // placeholder
+            break;
+
+        case GS_RECORD_HIGH_SCORE:
+            m_sender_emit_score.Signal(m_player_ship->GetScore(), m_player_ship->GetTimeAlive());
+            // TODO: UI for entering the high score name
+            SetGameState(GS_DESTROY_WORLD);
+            fprintf(stderr, "scheduling quit for in 3 seconds\n");
+            ScheduleSetGameStateEvent(GS_QUIT, 3.0f);
+            break;
+
+        case GS_DESTROY_WORLD:
+            // fade-out or some other visual outro
+            break;
+            
+        case GS_QUIT:
+            m_sender_end_game.Signal();
+            break;
+            
+        default:
+            ASSERT1(false && "Invalid World::GameState")
+            break;
+    }
+}
+
+void World::HandleAttachWorldView (Engine2::WorldView *const world_view)
+{
+    DStaticCast<WorldView *>(world_view)->SetPlayerShip(m_player_ship);
+}
+
+void World::SetGameState (GameState const game_state)
+{
+    if (m_game_state != game_state)
+    {
+        m_game_state = game_state;
+        fprintf(stderr, "setting game state to %u\n", m_game_state);
+    }
+}
+
+void World::ScheduleSetGameStateEvent (GameState game_state, Float time_delay)
+{
+    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+        MatchCustomType,
+        static_cast<EventCustom::CustomType>(EventBase::SET_GAME_STATE));
+    EnqueueEvent(new EventSetGameState(game_state, GetMostRecentFrameTime() + time_delay));
+}
+
+void World::ProcessNormalGameplayLogic ()
+{
     // update the game stage
     if (m_next_game_stage_time <= GetFrameTime() &&
         m_game_stage < GAME_STAGE_COUNT - 1)
@@ -363,7 +446,7 @@ void World::ProcessFrameOverride ()
         fprintf(stderr, "increased game stage (%u)\n", m_game_stage);
         m_next_game_stage_time = GetFrameTime() + 30.0f;
     }
-    
+
     // asteroid spawning
     static Uint32 const s_max_asteroid_count = 30;
     static Float const s_max_asteroid_mass = 6000.0f;
@@ -414,7 +497,7 @@ void World::ProcessFrameOverride ()
             }
         }
     }
-        
+
     // do game logic control stuff here
 
     if (m_player_ship->GetLivesRemaining() > 0 || !m_player_ship->GetIsDead())
@@ -426,68 +509,6 @@ void World::ProcessFrameOverride ()
         m_player_ship->IncrementLivesRemaining(1);
         m_score_required_for_extra_life =
             static_cast<Uint32>(s_extra_live_score_factor * m_score_required_for_extra_life);
-    }
-    
-    switch (m_game_state)
-    {
-        case GS_CREATE_WORLD:
-            // placeholder (though this technically should never happen)
-
-            // this could be a zoom-in or a fade-in or otherwise be the pause
-            // while some visual intro happens before gameplay begins.
-            break;
-    
-        case GS_SPAWN_PLAYER_SHIP:
-            ASSERT1(m_player_ship != NULL)
-            ASSERT1(!m_player_ship->GetIsInWorld())
-            ASSERT1(m_player_ship->GetIsDead())
-            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
-            m_player_ship->Revive(GetFrameTime(), GetFrameDT());
-            m_player_ship->SetVelocity(FloatVector2::ms_zero);
-            // TODO place the player ship so it doesn't intersect anything
-            m_player_ship->AddBackIntoWorld();
-            m_player_ship->IncrementLivesRemaining(-1);
-            fprintf(stderr, "respawning player ship (%u lives left)\n", m_player_ship->GetLivesRemaining());
-            SetGameState(GS_NORMAL_GAMEPLAY);
-            break;
-
-        case GS_NORMAL_GAMEPLAY:
-            // placeholder
-            break;
-
-        case GS_PLAYER_SHIP_IS_DEAD:
-            // placeholder
-            break;
-
-        case GS_GAME_OVER:
-            // placeholder
-            
-            // record the player's time alive and score here
-            break;
-
-        case GS_DESTROY_WORLD:
-            // placeholder
-
-            // fade-out or some other visual outro
-            break;
-            
-        default:
-            ASSERT1(false && "Invalid World::GameState")
-            break;
-    }
-}
-
-void World::HandleAttachWorldView (Engine2::WorldView *const world_view)
-{
-    DStaticCast<WorldView *>(world_view)->SetPlayerShip(m_player_ship);
-}
-
-void World::SetGameState (GameState const game_state)
-{
-    if (m_game_state != game_state)
-    {
-        m_game_state = game_state;
-        fprintf(stderr, "setting game state to %u\n", m_game_state);
     }
 }
 

@@ -175,4 +175,16 @@ Event *Event::CreateEventFromSDLEvent (
 
 EventCustom::~EventCustom () { }
 
+// ///////////////////////////////////////////////////////////////////////////
+// event-matching functions for use in EventQueue
+// ///////////////////////////////////////////////////////////////////////////
+
+bool MatchCustomType (Event const *event, EventCustom::CustomType const custom_type)
+{
+    ASSERT1(event != NULL)
+
+    return dynamic_cast<EventCustom const *>(event) != NULL &&
+           static_cast<EventCustom const *>(event)->GetCustomType() == custom_type;
+}
+
 } // end of namespace Xrb

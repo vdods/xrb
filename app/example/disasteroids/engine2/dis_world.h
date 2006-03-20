@@ -15,6 +15,7 @@
 
 #include "dis_enemyship.h"
 #include "dis_gameobject.h"
+#include "xrb_signalhandler.h"
 
 using namespace Xrb;
 
@@ -72,7 +73,7 @@ class EnemyShip;
 class PlayerShip;
 class PhysicsHandler;
 
-class World : public Engine2::World
+class World : public Engine2::World, public SignalHandler
 {
 public:
 
@@ -83,7 +84,9 @@ public:
         GS_NORMAL_GAMEPLAY,
         GS_PLAYER_SHIP_IS_DEAD,
         GS_GAME_OVER,
+        GS_RECORD_HIGH_SCORE,
         GS_DESTROY_WORLD,
+        GS_QUIT,
 
         GS_COUNT
     }; // end of enum World::GameState
@@ -94,6 +97,9 @@ public:
         EventQueue *owner_event_queue,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
+    inline SignalSender2<Uint32, Float> const *SenderEmitScore () { return &m_sender_emit_score; }
+    inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
+        
     inline GameState GetGameState () const { return m_game_state; }
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     PhysicsHandler *GetDisPhysicsHandler ();
@@ -124,7 +130,10 @@ protected:
 private:
 
     void SetGameState (GameState game_state);
+    void ScheduleSetGameStateEvent (GameState game_state, Float time_delay);
 
+    void ProcessNormalGameplayLogic ();
+    
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
         GameObject::Type enemy_ship_type,
@@ -165,6 +174,9 @@ private:
 
     Uint32 m_enemy_ship_count[GameObject::T_ENEMY_SHIP_COUNT];
     Float m_next_enemy_ship_spawn_time[GameObject::T_ENEMY_SHIP_COUNT];
+
+    SignalSender2<Uint32, Float> m_sender_emit_score;
+    SignalSender0 m_sender_end_game;
 }; // end of class GameController
 
 } // end of namespace Dis

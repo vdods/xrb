@@ -213,12 +213,24 @@ class EventCustom : public Event
 {
 public:
 
+    typedef Uint16 CustomType;
+
     /** @brief Constructs an EventCustom.
       */
-    EventCustom (Float const time) : Event(time, CUSTOM) { }
+    EventCustom (CustomType const custom_type, Float const time)
+        :
+        Event(time, CUSTOM),
+        m_custom_type(custom_type)
+    { }
     /** @brief Pure virtual destructor.
       */
     virtual ~EventCustom () = 0;
+
+    inline CustomType GetCustomType () const { return m_custom_type; }
+
+private:
+
+    CustomType const m_custom_type;
 }; // end of class EventCustom
 
 /// @cond
@@ -236,6 +248,12 @@ private:
     friend class EventQueue;
 }; // end of class EventDummy
 /// @endcond
+
+// ///////////////////////////////////////////////////////////////////////////
+// event-matching functions for use in EventQueue
+// ///////////////////////////////////////////////////////////////////////////
+
+bool MatchCustomType (Event const *event, EventCustom::CustomType custom_type);
 
 } // end of namespace Xrb
 

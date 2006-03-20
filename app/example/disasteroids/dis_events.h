@@ -24,34 +24,24 @@ class EventBase : public EventCustom
 {
 public:
 
-    enum SubType
+    // custom event types
+    enum
     {
         // World events
-        ST_SET_GAME_STATE = 0,
+        SET_GAME_STATE = 0,
         // Master events
-        ST_ACTIVATE_TITLE_SCREEN,
-        ST_DEACTIVATE_TITLE_SCREEN,
-        ST_ACTIVATE_GAME,
-        ST_DEACTIVATE_GAME,
-        ST_QUIT_REQUESTED,
-
-        ST_COUNT
+        ACTIVATE_TITLE_SCREEN,
+        DEACTIVATE_TITLE_SCREEN,
+        ACTIVATE_GAME,
+        DEACTIVATE_GAME,
+        QUIT_REQUESTED
     }; // end of EventBase::SubType
 
-    EventBase (SubType sub_type, Float time)
+    EventBase (CustomType custom_type, Float time)
         :
-        EventCustom(time),
-        m_sub_type(sub_type)
-    {
-        ASSERT1(m_sub_type < ST_COUNT)
-    }
+        EventCustom(custom_type, time)
+    { }
     virtual ~EventBase () { }
-
-    inline SubType GetSubType () const { return m_sub_type; }
-
-private:
-
-    SubType m_sub_type;
 }; // end of class EventBase
 
 class EventSetGameState : public EventBase
@@ -60,7 +50,7 @@ public:
 
     EventSetGameState (World::GameState game_state, Float time)
         :
-        EventBase(ST_SET_GAME_STATE, time),
+        EventBase(SET_GAME_STATE, time),
         m_game_state(game_state)
     {
         ASSERT1(m_game_state < World::GS_COUNT)

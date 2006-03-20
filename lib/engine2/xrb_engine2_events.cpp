@@ -20,14 +20,8 @@ bool Engine2::MatchEntity (
     ASSERT1(event != NULL)
     ASSERT1(entity_to_match != NULL)
 
-    if (dynamic_cast<EventEntity const *>(event) != NULL)
-    {
-        Entity *entity = DStaticCast<Engine2::EventEntity const *>(event)->GetEntity();
-        ASSERT1(entity != NULL)
-        return entity == entity_to_match;
-    }
-    else
-        return false;
+    return dynamic_cast<EventEntity const *>(event) != NULL &&
+           static_cast<EventEntity const *>(event)->GetEntity() == entity_to_match;
 }
 
 } // end of namespace Xrb

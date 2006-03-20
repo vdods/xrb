@@ -77,8 +77,8 @@ void Master::Run ()
     // seed the random number generator
     srand(666);
 
-//     ActivateTitleScreen();
-    ActivateGame();
+    ActivateTitleScreen();
+//     ActivateGame();
 
     // TODO: initialization so that Run() could be called several times in a row
     
@@ -194,13 +194,13 @@ bool Master::ProcessEventOverride (Event const *const e)
     ASSERT1(e->GetType() == Event::CUSTOM)
 
     EventBase const *event = DStaticCast<EventBase const *>(e);
-    switch (event->GetSubType())
+    switch (event->GetCustomType())
     {
-        case EventBase::ST_ACTIVATE_TITLE_SCREEN:   ActivateTitleScreen();      return true;
-        case EventBase::ST_DEACTIVATE_TITLE_SCREEN: DeactivateTitleScreen();    return true;
-        case EventBase::ST_ACTIVATE_GAME:           ActivateGame();             return true;
-        case EventBase::ST_DEACTIVATE_GAME:         DeactivateGame();           return true;
-        case EventBase::ST_QUIT_REQUESTED:          m_is_quit_requested = true; return true;
+        case EventBase::ACTIVATE_TITLE_SCREEN:   ActivateTitleScreen();      return true;
+        case EventBase::DEACTIVATE_TITLE_SCREEN: DeactivateTitleScreen();    return true;
+        case EventBase::ACTIVATE_GAME:           ActivateGame();             return true;
+        case EventBase::DEACTIVATE_GAME:         DeactivateGame();           return true;
+        case EventBase::QUIT_REQUESTED:          m_is_quit_requested = true; return true;
         
         default: ASSERT1(false && "This event shouldn't be used here")
     }
@@ -214,8 +214,8 @@ void Master::StartGame ()
     ASSERT1(m_game_widget == NULL)
     ASSERT1(m_game_world == NULL)
 
-    EnqueueEvent(new EventBase(EventBase::ST_DEACTIVATE_TITLE_SCREEN, m_real_time));
-    EnqueueEvent(new EventBase(EventBase::ST_ACTIVATE_GAME, m_real_time));
+    EnqueueEvent(new EventBase(EventBase::DEACTIVATE_TITLE_SCREEN, m_real_time));
+    EnqueueEvent(new EventBase(EventBase::ACTIVATE_GAME, m_real_time));
 }
 
 void Master::QuitGame ()
@@ -226,16 +226,16 @@ void Master::QuitGame ()
     {
         ASSERT1(m_game_world != NULL)
         ASSERT1(m_title_screen_widget == NULL)
-        EnqueueEvent(new EventBase(EventBase::ST_DEACTIVATE_GAME, m_real_time));
+        EnqueueEvent(new EventBase(EventBase::DEACTIVATE_GAME, m_real_time));
     }
     else
     {
         ASSERT1(m_game_world == NULL)
         ASSERT1(m_title_screen_widget != NULL)
-        EnqueueEvent(new EventBase(EventBase::ST_DEACTIVATE_TITLE_SCREEN, m_real_time));
+        EnqueueEvent(new EventBase(EventBase::DEACTIVATE_TITLE_SCREEN, m_real_time));
     }
         
-    EnqueueEvent(new EventBase(EventBase::ST_QUIT_REQUESTED, m_real_time));
+    EnqueueEvent(new EventBase(EventBase::QUIT_REQUESTED, m_real_time));
 }
 
 void Master::EndGame ()
@@ -244,8 +244,8 @@ void Master::EndGame ()
     ASSERT1(m_game_widget != NULL)
     ASSERT1(m_game_world != NULL)
     
-    EnqueueEvent(new EventBase(EventBase::ST_DEACTIVATE_GAME, m_real_time));
-    EnqueueEvent(new EventBase(EventBase::ST_ACTIVATE_TITLE_SCREEN, m_real_time));
+    EnqueueEvent(new EventBase(EventBase::DEACTIVATE_GAME, m_real_time));
+    EnqueueEvent(new EventBase(EventBase::ACTIVATE_TITLE_SCREEN, m_real_time));
 }
 
 void Master::ActivateTitleScreen ()
@@ -292,6 +292,11 @@ void Master::ActivateGame ()
     // reset the game time
     m_game_time = 0.0f;
 
+    // TODO: connect high score signal
+    SignalHandler::Connect0(
+        m_game_world->SenderEndGame(),
+        &m_internal_receiver_end_game);
+    
     SignalHandler::Connect0(
         m_game_widget->SenderEndGame(),
         &m_internal_receiver_end_game);
