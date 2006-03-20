@@ -29,6 +29,7 @@ Master::Master (Screen *const screen)
     :
     SignalHandler(),
     EventHandler(NULL),
+    m_internal_receiver_accept_score(&Master::AcceptScore, this),
     m_internal_receiver_start_game(&Master::StartGame, this),
     m_internal_receiver_quit_game(&Master::QuitGame, this),
     m_internal_receiver_end_game(&Master::EndGame, this)
@@ -55,6 +56,9 @@ Master::Master (Screen *const screen)
     
     m_game_widget = NULL;
     m_game_world = NULL;
+
+    // TEMP
+    m_high_scores.Print(stderr);
 }
 
 Master::~Master ()
@@ -208,6 +212,16 @@ bool Master::ProcessEventOverride (Event const *const e)
     return false;
 }
 
+void Master::AcceptScore (Score const &score)
+{
+    if (m_high_scores.GetIsNewHighScore(score))
+    {
+        // TODO: pop up some UI for the player to enter his name
+        m_high_scores.AddScore(score);
+        m_high_scores.Print(stderr); // TEMP
+    }
+}
+
 void Master::StartGame ()
 {
     ASSERT1(m_title_screen_widget != NULL)
@@ -292,7 +306,9 @@ void Master::ActivateGame ()
     // reset the game time
     m_game_time = 0.0f;
 
-    // TODO: connect high score signal
+    SignalHandler::Connect1(
+        m_game_world->SenderEmitScore(),
+        &m_internal_receiver_accept_score);
     SignalHandler::Connect0(
         m_game_world->SenderEndGame(),
         &m_internal_receiver_end_game);

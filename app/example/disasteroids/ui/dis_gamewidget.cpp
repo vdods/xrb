@@ -16,6 +16,7 @@
 #include "dis_progressbar.h"
 #include "dis_shield.h"
 #include "dis_weapon.h"
+#include "dis_world.h"
 #include "dis_worldview.h"
 #include "xrb_engine2_world.h"
 #include "xrb_engine2_worldviewwidget.h"
@@ -41,14 +42,14 @@ Float NormalizeStoke (Float const stoke)
 }
 
 GameWidget::GameWidget (
-    Engine2::World *const world,
+    World *const world,
     Widget *const parent)
     :
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
     m_internal_receiver_set_time_alive(&GameWidget::SetTimeAlive, this),
-    m_receiver_activate_inventory_panel(&GameWidget::ActivateInventoryPanel, this),
-    m_receiver_deactivate_inventory_panel(&GameWidget::DeactivateInventoryPanel, this),
+    m_internal_receiver_activate_inventory_panel(&GameWidget::ActivateInventoryPanel, this),
+    m_internal_receiver_deactivate_inventory_panel(&GameWidget::DeactivateInventoryPanel, this),
     m_receiver_set_mineral_inventory(&GameWidget::SetMineralInventory, this)
 {
     ASSERT1(world != NULL)
@@ -62,10 +63,13 @@ GameWidget::GameWidget (
     m_world_view->SetViewZoomFactor(1.0f/256.0f);
     m_world_view_widget->SetWorldView(m_world_view);
 
-    // connect the inventory panel activate signal
+    // connect the inventory panel [de]activate signal
     SignalHandler::Connect0(
         m_world_view->SenderActivateInventoryPanel(),
-        &m_receiver_activate_inventory_panel);
+        &m_internal_receiver_activate_inventory_panel);
+    SignalHandler::Connect0(
+        m_world_view->SenderDeactivateInventoryPanel(),
+        &m_internal_receiver_deactivate_inventory_panel);
 
     m_saved_game_timescale = -1.0f;
     // create the inventory panel and hide it.
@@ -74,7 +78,7 @@ GameWidget::GameWidget (
     // connect the inventory panel deactivate signal
     SignalHandler::Connect0(
         m_inventory_panel->SenderDeactivate(),
-        &m_receiver_deactivate_inventory_panel);
+        &m_internal_receiver_deactivate_inventory_panel);
         
     // create the layout for the HUD
     Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
@@ -254,6 +258,22 @@ GameWidget::GameWidget (
         m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
     }
 
+    // create the game over label and hide it
+    {
+        m_game_over_label = new Label("GAME OVER", this, "game over label");
+        m_game_over_label->SetFontHeightRatio(0.10f);
+        m_game_over_label->CenterOnWidget(this);
+        m_game_over_label->Hide();
+    }
+
+    // connect the show/hide game over label signals
+    SignalHandler::Connect0(
+        m_world_view->SenderShowGameOverLabel(),
+        m_game_over_label->ReceiverShow());
+    SignalHandler::Connect0(
+        m_world_view->SenderHideGameOverLabel(),
+        m_game_over_label->ReceiverHide());
+        
     // initialize the player ship pointer, and connect up the
     // corresponding signal/receiver from the world view
     SetPlayerShip(m_world_view->GetPlayerShip());
@@ -401,8 +421,8 @@ void GameWidget::SetMineralInventory (
 
 void GameWidget::ActivateInventoryPanel ()
 {
-    ASSERT1(m_inventory_panel->GetIsHidden())
     ASSERT1(m_inventory_panel->GetIsModal())
+    ASSERT1(m_inventory_panel->GetIsHidden())
 
     // pause the game
     ASSERT1(m_saved_game_timescale == -1.0f)
@@ -410,10 +430,9 @@ void GameWidget::ActivateInventoryPanel ()
     m_world_view->GetWorld()->SetTimescale(0.0f);
 
     // update the owned inventory items
-    
-    
-    // show the inventory panel and resize appropriately
     m_inventory_panel->UpdatePanelState();
+
+    // show the inventory panel and resize appropriately
     m_inventory_panel->Show();
     m_inventory_panel->ResizeByRatios(FloatVector2(0.8f, 0.8f));
     m_inventory_panel->CenterOnWidget(GetTopLevelParent());
@@ -422,18 +441,20 @@ void GameWidget::ActivateInventoryPanel ()
 
 void GameWidget::DeactivateInventoryPanel ()
 {
-    ASSERT1(!m_inventory_panel->GetIsHidden())
     ASSERT1(m_inventory_panel->GetIsModal())
+    if (!m_inventory_panel->GetIsHidden())
+    {
 
-    // hide the inventory panel
-    m_inventory_panel->Hide();
-    // move the focus back to the world view widget
-    m_world_view_widget->Focus();
-
-    // unpause the game
-    ASSERT1(m_saved_game_timescale >= 0.0f)
-    m_world_view->GetWorld()->SetTimescale(m_saved_game_timescale);
-    m_saved_game_timescale = -1.0f;
+        // hide the inventory panel
+        m_inventory_panel->Hide();
+        // move the focus back to the world view widget
+        m_world_view_widget->Focus();
+    
+        // unpause the game
+        ASSERT1(m_saved_game_timescale >= 0.0f)
+        m_world_view->GetWorld()->SetTimescale(m_saved_game_timescale);
+        m_saved_game_timescale = -1.0f;
+    }
 }
 
 void GameWidget::SetTimeAlive (Float const time_alive)

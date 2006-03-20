@@ -2,6 +2,7 @@ bin_PROGRAMS = \
     disasteroids
 
 disasteroids_SOURCES = \
+    dis_highscores.cpp \
     dis_main.cpp \
     dis_master.cpp \
     dis_resourcecache.cpp \
@@ -43,6 +44,7 @@ disasteroids_SOURCES = \
 noinst_HEADERS = \
     dis_enums.h \
     dis_events.h \
+    dis_highscores.h \
     dis_master.h \
     dis_resourcecache.h \
     engine2/dis_areatracelist.h \

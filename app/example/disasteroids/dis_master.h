@@ -13,6 +13,7 @@
 
 #include "xrb_signalhandler.h"
 
+#include "dis_highscores.h"
 #include "xrb_eventqueue.h"
 #include "xrb_frameratecalculator.h"
 #include "xrb_keyrepeater.h"
@@ -76,6 +77,8 @@ protected:
     
 private:
 
+    void AcceptScore (Score const &score);
+
     void StartGame ();
     void QuitGame ();
     void EndGame ();
@@ -121,11 +124,15 @@ private:
     EventQueue m_game_world_event_queue;
     // stores the game world time
     Float m_game_time;
+    // high scores
+    HighScores m_high_scores;
 
+    SignalReceiver1<Score const &> m_internal_receiver_accept_score;
+    
     SignalReceiver0 m_internal_receiver_start_game;
     SignalReceiver0 m_internal_receiver_quit_game;
     SignalReceiver0 m_internal_receiver_end_game;
-}; // end of class MasterWidget
+}; // end of class Master
 
 } // end of namespace Dis
 

@@ -13,8 +13,11 @@
 
 #include "xrb_engine2_world.h"
 
+#include <time.h>
+
 #include "dis_enemyship.h"
 #include "dis_gameobject.h"
+#include "dis_highscores.h"
 #include "xrb_signalhandler.h"
 
 using namespace Xrb;
@@ -83,6 +86,7 @@ public:
         GS_SPAWN_PLAYER_SHIP,
         GS_NORMAL_GAMEPLAY,
         GS_PLAYER_SHIP_IS_DEAD,
+        GS_BEGIN_GAME_OVER,
         GS_GAME_OVER,
         GS_RECORD_HIGH_SCORE,
         GS_DESTROY_WORLD,
@@ -97,7 +101,7 @@ public:
         EventQueue *owner_event_queue,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    inline SignalSender2<Uint32, Float> const *SenderEmitScore () { return &m_sender_emit_score; }
+    inline SignalSender1<Score const &> const *SenderEmitScore () { return &m_sender_emit_score; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
         
     inline GameState GetGameState () const { return m_game_state; }
@@ -125,7 +129,7 @@ protected:
     virtual bool ProcessEventOverride (Event const *e);
     virtual void ProcessFrameOverride ();
 
-    virtual void HandleAttachWorldView (Engine2::WorldView *world_view);
+    virtual void HandleAttachWorldView (Engine2::WorldView *engine2_world_view);
     
 private:
 
@@ -175,7 +179,9 @@ private:
     Uint32 m_enemy_ship_count[GameObject::T_ENEMY_SHIP_COUNT];
     Float m_next_enemy_ship_spawn_time[GameObject::T_ENEMY_SHIP_COUNT];
 
-    SignalSender2<Uint32, Float> m_sender_emit_score;
+    SignalSender1<Score const &> m_sender_emit_score;
+    SignalSender0 m_sender_show_game_over_label;
+    SignalSender0 m_sender_hide_game_over_label;
     SignalSender0 m_sender_end_game;
 }; // end of class GameController
 

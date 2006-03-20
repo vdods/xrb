@@ -27,7 +27,6 @@ template <typename T> class ValueLabel;
 
 namespace Engine2
 {
-    class World;
     class WorldViewWidget;
 } // end of namespace Engine2
 
@@ -39,18 +38,19 @@ namespace Dis
 class InventoryPanel;
 class PlayerShip;
 class ProgressBar;
+class World;
 class WorldView;
 
 class GameWidget : public WidgetStack
 {
 public:
 
-    GameWidget (Engine2::World *world, Widget *parent);
+    GameWidget (World *world, Widget *parent);
     virtual ~GameWidget () { }
 
     SignalSender0 const *SenderEndGame ();
     SignalSender0 const *SenderQuitGame ();
-    
+
     inline WorldView *GetWorldView () { return m_world_view; }
 
     void SetPlayerShip (PlayerShip *player_ship);
@@ -99,11 +99,13 @@ private:
     ProgressBar *m_power_status;
     ProgressBar *m_weapon_status;
 
+    Label *m_game_over_label;
+    
     SignalReceiver1<PlayerShip *> m_receiver_set_player_ship;
     SignalReceiver1<Float> m_internal_receiver_set_time_alive;
     
-    SignalReceiver0 m_receiver_activate_inventory_panel;
-    SignalReceiver0 m_receiver_deactivate_inventory_panel;
+    SignalReceiver0 m_internal_receiver_activate_inventory_panel;
+    SignalReceiver0 m_internal_receiver_deactivate_inventory_panel;
 
     SignalReceiver2<Uint8, Float> m_receiver_set_mineral_inventory;
 }; // end of class GameWidget

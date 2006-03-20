@@ -29,16 +29,24 @@ public:
     WorldView (Engine2::WorldViewWidget *parent_world_view_widget);
     virtual ~WorldView ();
 
+    inline SignalSender1<PlayerShip *> const *SenderPlayerShipChanged () { return &m_sender_player_ship_changed; }
+    inline SignalSender1<bool> const *SenderIsDebugInfoEnabledChanged () { return &m_sender_is_debug_info_enabled_changed; }
+    inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
+    inline SignalSender0 const *SenderDeactivateInventoryPanel () { return &m_sender_deactivate_inventory_panel; }
+    inline SignalSender0 const *SenderShowGameOverLabel () const { return &m_sender_show_game_over_label; }
+    inline SignalSender0 const *SenderHideGameOverLabel () const { return &m_sender_hide_game_over_label; }
+
+    inline SignalReceiver0 const *ReceiverShowGameOverLabel () const { return &m_receiver_show_game_over_label; }
+    inline SignalReceiver0 const *ReceiverHideGameOverLabel () const { return &m_receiver_hide_game_over_label; }
+
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline bool GetIsDebugInfoEnabled () const { return m_is_debug_info_enabled; }
     
     void SetPlayerShip (PlayerShip *player_ship);
     void SetIsDebugInfoEnabled (bool is_debug_info_enabled);
 
-    inline SignalSender1<PlayerShip *> const *SenderPlayerShipChanged () { return &m_sender_player_ship_changed; }
-    inline SignalSender1<bool> const *SenderIsDebugInfoEnabledChanged () { return &m_sender_is_debug_info_enabled_changed; }
-    inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
-
+    void DisableInventoryPanel ();
+    
     virtual bool ProcessKeyEvent (EventKey const *e);
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
@@ -49,6 +57,9 @@ protected:
     virtual void ProcessFrameOverride ();
 
 private:
+
+    void ShowGameOverLabel ();
+    void HideGameOverLabel ();
 
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship
@@ -102,6 +113,7 @@ private:
 
     bool m_use_dvorak;
     bool m_is_debug_info_enabled;
+    bool m_disable_inventory_panel;
     
     // ///////////////////////////////////////////////////////////////////////
     // SignalSenders
@@ -109,6 +121,15 @@ private:
     SignalSender1<PlayerShip *> m_sender_player_ship_changed;
     SignalSender1<bool> m_sender_is_debug_info_enabled_changed;
     SignalSender0 m_sender_activate_inventory_panel;
+    SignalSender0 m_sender_deactivate_inventory_panel;
+    SignalSender0 m_sender_show_game_over_label;
+    SignalSender0 m_sender_hide_game_over_label;
+
+    // ///////////////////////////////////////////////////////////////////////
+    // SignalReceivers
+
+    SignalReceiver0 m_receiver_show_game_over_label;
+    SignalReceiver0 m_receiver_hide_game_over_label;
 }; // end of class WorldView
 
 } // end of namespace Dis

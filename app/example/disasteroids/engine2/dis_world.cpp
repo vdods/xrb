@@ -249,7 +249,7 @@ void World::RecordDestroyedPlayerShip (PlayerShip const *const player_ship)
     else
     {
         fprintf(stderr, "GAME OVER\n");
-        SetGameState(GS_GAME_OVER);
+        SetGameState(GS_BEGIN_GAME_OVER);
         ScheduleSetGameStateEvent(GS_RECORD_HIGH_SCORE, 3.0f);
     }
 }
@@ -302,6 +302,8 @@ World::World (
     Engine2::World(owner_event_queue, physics_handler, entity_capacity),
     SignalHandler(),
     m_sender_emit_score(this),
+    m_sender_show_game_over_label(this),
+    m_sender_hide_game_over_label(this),
     m_sender_end_game(this)
 {
     m_game_state = GS_CREATE_WORLD;
@@ -388,12 +390,29 @@ void World::ProcessFrameOverride ()
             // placeholder
             break;
 
+        case GS_BEGIN_GAME_OVER:
+            // make sure to disable the inventory panel for game over (because
+            // other UI stuff may happen that would interfere).
+            for (WorldViewListIterator it = m_world_view_list.begin(),
+                                       it_end = m_world_view_list.end();
+                 it != it_end;
+                 ++it)
+            {
+                WorldView *world_view = DStaticCast<WorldView *>(*it);
+                ASSERT1(world_view != NULL)
+                world_view->DisableInventoryPanel();
+            }
+            m_sender_show_game_over_label.Signal();
+            SetGameState(GS_GAME_OVER);
+            break;
+            
         case GS_GAME_OVER:
             // placeholder
             break;
 
         case GS_RECORD_HIGH_SCORE:
-            m_sender_emit_score.Signal(m_player_ship->GetScore(), m_player_ship->GetTimeAlive());
+            m_sender_hide_game_over_label.Signal();
+            m_sender_emit_score.Signal(Score("temp name", m_player_ship->GetScore(), m_player_ship->GetTimeAlive(), time(NULL)));
             // TODO: UI for entering the high score name
             SetGameState(GS_DESTROY_WORLD);
             fprintf(stderr, "scheduling quit for in 3 seconds\n");
@@ -414,9 +433,18 @@ void World::ProcessFrameOverride ()
     }
 }
 
-void World::HandleAttachWorldView (Engine2::WorldView *const world_view)
+void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
 {
-    DStaticCast<WorldView *>(world_view)->SetPlayerShip(m_player_ship);
+    WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
+
+    dis_world_view->SetPlayerShip(m_player_ship);
+    // connect the show/hide game over label signals
+    SignalHandler::Connect0(
+        &m_sender_show_game_over_label,
+        dis_world_view->ReceiverShowGameOverLabel());
+    SignalHandler::Connect0(
+        &m_sender_hide_game_over_label,
+        dis_world_view->ReceiverHideGameOverLabel());
 }
 
 void World::SetGameState (GameState const game_state)

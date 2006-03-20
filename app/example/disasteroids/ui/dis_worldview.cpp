@@ -29,7 +29,12 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     SignalHandler(),
     m_sender_player_ship_changed(this),
     m_sender_is_debug_info_enabled_changed(this),
-    m_sender_activate_inventory_panel(this)
+    m_sender_activate_inventory_panel(this),
+    m_sender_deactivate_inventory_panel(this),
+    m_sender_show_game_over_label(this),
+    m_sender_hide_game_over_label(this),
+    m_receiver_show_game_over_label(&WorldView::ShowGameOverLabel, this),
+    m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this)
 {
     m_player_ship = NULL;
 
@@ -50,6 +55,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_use_dvorak = false;
     m_is_debug_info_enabled = false;
     SetDrawBorderGridLines(m_is_debug_info_enabled);
+    m_disable_inventory_panel = false;
 }
 
 WorldView::~WorldView ()
@@ -75,6 +81,12 @@ void WorldView::SetIsDebugInfoEnabled (bool is_debug_info_enabled)
     }
 }
 
+void WorldView::DisableInventoryPanel ()
+{
+    m_disable_inventory_panel = true;
+    m_sender_deactivate_inventory_panel.Signal();
+}
+
 bool WorldView::ProcessKeyEvent (EventKey const *const e)
 {
     if (e->GetIsKeyDownEvent())
@@ -82,7 +94,8 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::ESCAPE:
-                m_sender_activate_inventory_panel.Signal();
+                if (!m_disable_inventory_panel)
+                    m_sender_activate_inventory_panel.Signal();
                 break;
         
             case Key::KP_DIVIDE:
@@ -403,6 +416,16 @@ void WorldView::ProcessFrameOverride ()
     {
         SetViewCenter(GetViewCenter() + m_view_velocity * GetFrameDT());
     }
+}
+
+void WorldView::ShowGameOverLabel ()
+{
+    m_sender_show_game_over_label.Signal();
+}
+
+void WorldView::HideGameOverLabel ()
+{
+    m_sender_hide_game_over_label.Signal();
 }
 
 } // end of namespace Dis

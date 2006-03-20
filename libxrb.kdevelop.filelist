@@ -7,6 +7,8 @@ app/Makefile.am
 app/example/disasteroids/Makefile.am
 app/example/disasteroids/dis_enums.h
 app/example/disasteroids/dis_events.h
+app/example/disasteroids/dis_highscores.cpp
+app/example/disasteroids/dis_highscores.h
 app/example/disasteroids/dis_main.cpp
 app/example/disasteroids/dis_master.cpp
 app/example/disasteroids/dis_master.h

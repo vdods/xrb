@@ -37,7 +37,6 @@ DISASTEROIDS:
 - finish writing AIs
 - finish weapon code (add UT-style charge-up melee weapon with
   front-attaching secondary mode)
-- hook up score and extra lives
 - create high scores screen
   
 CURRENT:
