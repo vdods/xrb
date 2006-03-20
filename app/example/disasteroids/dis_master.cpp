@@ -214,12 +214,18 @@ bool Master::ProcessEventOverride (Event const *const e)
 
 void Master::AcceptScore (Score const &score)
 {
+    ASSERT1(m_game_world != NULL)
+
     if (m_high_scores.GetIsNewHighScore(score))
     {
         // TODO: pop up some UI for the player to enter his name
         m_high_scores.AddScore(score);
         m_high_scores.Print(stderr); // TEMP
+        // TODO: real score UI will delay the submit-score-done
+        m_game_world->SubmitScoreDone();
     }
+    else
+        m_game_world->SubmitScoreDone();        
 }
 
 void Master::StartGame ()
@@ -307,15 +313,12 @@ void Master::ActivateGame ()
     m_game_time = 0.0f;
 
     SignalHandler::Connect1(
-        m_game_world->SenderEmitScore(),
+        m_game_world->SenderSubmitScore(),
         &m_internal_receiver_accept_score);
     SignalHandler::Connect0(
         m_game_world->SenderEndGame(),
         &m_internal_receiver_end_game);
     
-    SignalHandler::Connect0(
-        m_game_widget->SenderEndGame(),
-        &m_internal_receiver_end_game);
     SignalHandler::Connect0(
         m_game_widget->SenderQuitGame(),
         &m_internal_receiver_quit_game);

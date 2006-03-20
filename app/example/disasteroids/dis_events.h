@@ -28,7 +28,7 @@ public:
     enum
     {
         // World events
-        SET_GAME_STATE = 0,
+        STATE_MACHINE_INPUT = 0,
         // Master events
         ACTIVATE_TITLE_SCREEN,
         DEACTIVATE_TITLE_SCREEN,
@@ -44,24 +44,23 @@ public:
     virtual ~EventBase () { }
 }; // end of class EventBase
 
-class EventSetGameState : public EventBase
+class EventStateMachineInput : public EventBase
 {
 public:
 
-    EventSetGameState (World::GameState game_state, Float time)
+    EventStateMachineInput (StateMachineInput input, Float time)
         :
-        EventBase(SET_GAME_STATE, time),
-        m_game_state(game_state)
-    {
-        ASSERT1(m_game_state < World::GS_COUNT)
-    }
+        EventBase(STATE_MACHINE_INPUT, time),
+        m_input(input)
+    { }
 
-    inline World::GameState GetGameState () const { return m_game_state; }
+    inline StateMachineInput GetInput () const { return m_input; }
 
 private:
 
-    World::GameState m_game_state;
-}; // end of class EventSetGameState
+    StateMachineInput const m_input;
+}; // end of class EventStateMachineInput
+
 
 } // end of namespace Dis
 

@@ -35,10 +35,13 @@ public:
     inline SignalSender0 const *SenderDeactivateInventoryPanel () { return &m_sender_deactivate_inventory_panel; }
     inline SignalSender0 const *SenderShowGameOverLabel () { return &m_sender_show_game_over_label; }
     inline SignalSender0 const *SenderHideGameOverLabel () { return &m_sender_hide_game_over_label; }
+    inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
 
+    inline SignalReceiver0 const *ReceiverEnableInventoryPanel () { return &m_receiver_enable_inventory_panel; }
     inline SignalReceiver0 const *ReceiverDisableInventoryPanel () { return &m_receiver_disable_inventory_panel; }
     inline SignalReceiver0 const *ReceiverShowGameOverLabel () { return &m_receiver_show_game_over_label; }
     inline SignalReceiver0 const *ReceiverHideGameOverLabel () { return &m_receiver_hide_game_over_label; }
+    inline SignalReceiver0 const *ReceiverEndGame () { return &m_receiver_end_game; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline bool GetIsDebugInfoEnabled () const { return m_is_debug_info_enabled; }
@@ -46,8 +49,6 @@ public:
     void SetPlayerShip (PlayerShip *player_ship);
     void SetIsDebugInfoEnabled (bool is_debug_info_enabled);
 
-    void DisableInventoryPanel ();
-    
     virtual bool ProcessKeyEvent (EventKey const *e);
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
@@ -59,8 +60,11 @@ protected:
 
 private:
 
+    void EnableInventoryPanel ();
+    void DisableInventoryPanel ();    
     void ShowGameOverLabel ();
     void HideGameOverLabel ();
+    void EndGame ();
 
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship
@@ -125,13 +129,16 @@ private:
     SignalSender0 m_sender_deactivate_inventory_panel;
     SignalSender0 m_sender_show_game_over_label;
     SignalSender0 m_sender_hide_game_over_label;
+    SignalSender0 m_sender_end_game;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
 
+    SignalReceiver0 m_receiver_enable_inventory_panel;
     SignalReceiver0 m_receiver_disable_inventory_panel;
     SignalReceiver0 m_receiver_show_game_over_label;
     SignalReceiver0 m_receiver_hide_game_over_label;
+    SignalReceiver0 m_receiver_end_game;
 }; // end of class WorldView
 
 } // end of namespace Dis

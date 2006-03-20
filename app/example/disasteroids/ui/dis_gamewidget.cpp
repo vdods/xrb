@@ -79,6 +79,10 @@ GameWidget::GameWidget (
     SignalHandler::Connect0(
         m_inventory_panel->SenderDeactivate(),
         &m_internal_receiver_deactivate_inventory_panel);
+    // connect the inventory panel's end game button to the world view
+    SignalHandler::Connect0(
+        m_inventory_panel->SenderEndGame(),
+        m_world_view->ReceiverEndGame());
         
     // create the layout for the HUD
     Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
@@ -282,12 +286,6 @@ GameWidget::GameWidget (
         &m_receiver_set_player_ship);
     
     m_world_view_widget->Focus();
-}
-
-SignalSender0 const *GameWidget::SenderEndGame ()
-{
-    ASSERT1(m_inventory_panel != NULL)
-    return m_inventory_panel->SenderEndGame();
 }
 
 SignalSender0 const *GameWidget::SenderQuitGame ()

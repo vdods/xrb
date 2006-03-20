@@ -48,7 +48,6 @@ public:
     GameWidget (World *world, Widget *parent);
     virtual ~GameWidget () { }
 
-    SignalSender0 const *SenderEndGame ();
     SignalSender0 const *SenderQuitGame ();
 
     inline WorldView *GetWorldView () { return m_world_view; }

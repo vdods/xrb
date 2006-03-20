@@ -19,6 +19,7 @@
 #include "dis_gameobject.h"
 #include "dis_highscores.h"
 #include "xrb_signalhandler.h"
+#include "xrb_statemachine.h"
 
 using namespace Xrb;
 
@@ -80,35 +81,23 @@ class World : public Engine2::World, public SignalHandler
 {
 public:
 
-    enum GameState
-    {
-        GS_CREATE_WORLD = 0,
-        GS_SPAWN_PLAYER_SHIP,
-        GS_NORMAL_GAMEPLAY,
-        GS_PLAYER_SHIP_IS_DEAD,
-        GS_BEGIN_GAME_OVER,
-        GS_GAME_OVER,
-        GS_RECORD_HIGH_SCORE,
-        GS_DESTROY_WORLD,
-        GS_QUIT,
-
-        GS_COUNT
-    }; // end of enum World::GameState
-
     virtual ~World ();
 
     static World *Create (
         EventQueue *owner_event_queue,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    inline SignalSender1<Score const &> const *SenderEmitScore () { return &m_sender_emit_score; }
+    inline SignalSender1<Score const &> const *SenderSubmitScore () { return &m_sender_submit_score; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
-        
-    inline GameState GetGameState () const { return m_game_state; }
+
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     PhysicsHandler *GetDisPhysicsHandler ();
     inline Uint8 GetAsteroidMineralLevel () const { return m_asteroid_mineral_level; }
 
+    // for use by Master to indicate that the high score processing is done
+    // and the world can now transition to StateOutro
+    void SubmitScoreDone ();
+    
     void RecordDestroyedPlayerShip (PlayerShip const *player_ship);
     
     void RecordCreatedAsteroids (
@@ -133,10 +122,45 @@ protected:
     
 private:
 
-    void SetGameState (GameState game_state);
-    void ScheduleSetGameStateEvent (GameState game_state, Float time_delay);
+    // ///////////////////////////////////////////////////////////////////////
+    // begin state machine stuff
 
+    enum
+    {
+        IN_INTRO_DONE = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_PROCESS_FRAME,
+        IN_PLAYER_SHIP_DIED,
+        IN_END_GAME,
+        IN_WAIT_AFTER_PLAYER_DEATH_DONE,
+        IN_DEATH_RATTLE_DONE,
+        IN_GAME_OVER_DONE,
+        IN_SUBMIT_SCORE_DONE,
+        IN_OUTRO_DONE,
+    };
+
+    bool StateIntro (StateMachineInput);
+    bool StateSpawnPlayerShip (StateMachineInput);
+    bool StateNormalGameplay (StateMachineInput);
+    bool StateCheckLivesRemaining (StateMachineInput);
+    bool StateWaitAfterPlayerDeath (StateMachineInput);
+    bool StateWaitForDeathRattle (StateMachineInput);
+    bool StateGameOver (StateMachineInput);
+    bool StateSubmitScore (StateMachineInput);
+    bool StateWaitingForSubmitScoreResponse (StateMachineInput);
+    bool StateOutro (StateMachineInput);
+    bool StateEndGame (StateMachineInput);
+
+    void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
+    void CancelScheduledStateMachineInput ();
+
+    StateMachine<World> m_state_machine;
+    
+    // end state machine stuff
+    // ///////////////////////////////////////////////////////////////////////
+    
     void ProcessNormalGameplayLogic ();
+
+    void EndGame ();
     
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
@@ -161,8 +185,6 @@ private:
     static Uint8 const ms_enemy_level_distribution_table[GAME_STAGE_COUNT][GameObject::T_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE];
     static Float const ms_enemy_spawn_interval[GAME_STAGE_COUNT];
     
-    GameState m_game_state;
-    
     PlayerShip *m_player_ship;
     Uint32 m_score_required_for_extra_life;
 
@@ -179,12 +201,15 @@ private:
     Uint32 m_enemy_ship_count[GameObject::T_ENEMY_SHIP_COUNT];
     Float m_next_enemy_ship_spawn_time[GameObject::T_ENEMY_SHIP_COUNT];
 
-    SignalSender1<Score const &> m_sender_emit_score;
+    SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
 
+    SignalSender0 m_internal_sender_enable_inventory_panel;
     SignalSender0 m_internal_sender_disable_inventory_panel;
     SignalSender0 m_internal_sender_show_game_over_label;
     SignalSender0 m_internal_sender_hide_game_over_label;
+
+    SignalReceiver0 m_internal_receiver_end_game;
 }; // end of class GameController
 
 } // end of namespace Dis

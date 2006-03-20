@@ -33,9 +33,12 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_deactivate_inventory_panel(this),
     m_sender_show_game_over_label(this),
     m_sender_hide_game_over_label(this),
+    m_sender_end_game(this),
+    m_receiver_enable_inventory_panel(&WorldView::EnableInventoryPanel, this),
     m_receiver_disable_inventory_panel(&WorldView::DisableInventoryPanel, this),
     m_receiver_show_game_over_label(&WorldView::ShowGameOverLabel, this),
-    m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this)
+    m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this),
+    m_receiver_end_game(&WorldView::EndGame, this)
 {
     m_player_ship = NULL;
 
@@ -56,7 +59,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_use_dvorak = false;
     m_is_debug_info_enabled = false;
     SetDrawBorderGridLines(m_is_debug_info_enabled);
-    m_disable_inventory_panel = false;
+    m_disable_inventory_panel = true;
 }
 
 WorldView::~WorldView ()
@@ -80,12 +83,6 @@ void WorldView::SetIsDebugInfoEnabled (bool is_debug_info_enabled)
         SetDrawBorderGridLines(m_is_debug_info_enabled);
         m_sender_is_debug_info_enabled_changed.Signal(m_is_debug_info_enabled);
     }
-}
-
-void WorldView::DisableInventoryPanel ()
-{
-    m_disable_inventory_panel = true;
-    m_sender_deactivate_inventory_panel.Signal();
 }
 
 bool WorldView::ProcessKeyEvent (EventKey const *const e)
@@ -419,6 +416,17 @@ void WorldView::ProcessFrameOverride ()
     }
 }
 
+void WorldView::EnableInventoryPanel ()
+{
+    m_disable_inventory_panel = false;
+}
+
+void WorldView::DisableInventoryPanel ()
+{
+    m_disable_inventory_panel = true;
+    m_sender_deactivate_inventory_panel.Signal();
+}
+
 void WorldView::ShowGameOverLabel ()
 {
     m_sender_show_game_over_label.Signal();
@@ -427,6 +435,11 @@ void WorldView::ShowGameOverLabel ()
 void WorldView::HideGameOverLabel ()
 {
     m_sender_hide_game_over_label.Signal();
+}
+
+void WorldView::EndGame ()
+{
+    m_sender_end_game.Signal();
 }
 
 } // end of namespace Dis

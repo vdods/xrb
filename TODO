@@ -40,6 +40,8 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- when low power is supplied to the FlameThrower, the fireballs should
+  be less intense
 - fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer
   it is possibly a memory stomp (the vtable for a visibility quad tree was
   getting stomped on causing a crash)

@@ -237,21 +237,16 @@ PhysicsHandler *World::GetDisPhysicsHandler ()
     return DStaticCast<PhysicsHandler *>(GetPhysicsHandler());
 }
 
+void World::SubmitScoreDone ()
+{
+    ScheduleStateMachineInput(IN_SUBMIT_SCORE_DONE, 0.0f);
+}
+
 void World::RecordDestroyedPlayerShip (PlayerShip const *const player_ship)
 {
     ASSERT1(player_ship != NULL)
     ASSERT1(m_player_ship == player_ship)
-    if (m_player_ship->GetLivesRemaining() > 0)
-    {
-        SetGameState(GS_PLAYER_SHIP_IS_DEAD);
-        ScheduleSetGameStateEvent(GS_SPAWN_PLAYER_SHIP, 3.0f);
-    }
-    else
-    {
-        fprintf(stderr, "GAME OVER\n");
-        SetGameState(GS_BEGIN_GAME_OVER);
-        ScheduleSetGameStateEvent(GS_RECORD_HIGH_SCORE, 3.0f);
-    }
+    ScheduleStateMachineInput(IN_PLAYER_SHIP_DIED, 0.0f);
 }
 
 void World::RecordCreatedAsteroids (
@@ -301,15 +296,15 @@ World::World (
     :
     Engine2::World(owner_event_queue, physics_handler, entity_capacity),
     SignalHandler(),
-    m_sender_emit_score(this),
+    m_state_machine(this),
+    m_sender_submit_score(this),
     m_sender_end_game(this),
+    m_internal_sender_enable_inventory_panel(this),
     m_internal_sender_disable_inventory_panel(this),
     m_internal_sender_show_game_over_label(this),
-    m_internal_sender_hide_game_over_label(this)
+    m_internal_sender_hide_game_over_label(this),
+    m_internal_receiver_end_game(&World::EndGame, this)
 {
-    m_game_state = GS_CREATE_WORLD;
-    ScheduleSetGameStateEvent(GS_NORMAL_GAMEPLAY, 3.0f);
-
     m_player_ship = NULL;
     m_score_required_for_extra_life = 50000;
 
@@ -333,6 +328,9 @@ World::World (
     CreateAndPopulateForegroundObjectLayer();
 
     ASSERT1(m_player_ship != NULL)
+
+    // don't initialize the state machine just yet.  wait until
+    // ProcessFrameOverride, so that the WorldViews will be active
 }
 
 bool World::ProcessEventOverride (Event const *const e)
@@ -345,8 +343,8 @@ bool World::ProcessEventOverride (Event const *const e)
     EventBase const *dis_event = DStaticCast<EventBase const *>(e);
     switch (dis_event->GetCustomType())
     {
-        case EventBase::SET_GAME_STATE:
-            SetGameState(DStaticCast<EventSetGameState const *>(dis_event)->GetGameState());
+        case EventBase::STATE_MACHINE_INPUT:
+            m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
             break;
 
         default:
@@ -361,72 +359,10 @@ void World::ProcessFrameOverride ()
 {
     Engine2::World::ProcessFrameOverride();
 
-    switch (m_game_state)
-    {
-        case GS_CREATE_WORLD:
-            // fade-in or some other visual intro
-            break;
-
-        case GS_SPAWN_PLAYER_SHIP:
-            ASSERT1(m_player_ship != NULL)
-            ASSERT1(!m_player_ship->GetIsInWorld())
-            ASSERT1(m_player_ship->GetIsDead())
-            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
-            m_player_ship->Revive(GetFrameTime(), GetFrameDT());
-            m_player_ship->SetVelocity(FloatVector2::ms_zero);
-            // TODO place the player ship so it doesn't intersect anything
-            m_player_ship->AddBackIntoWorld();
-            m_player_ship->IncrementLivesRemaining(-1);
-            fprintf(stderr, "respawning player ship (%u lives left)\n", m_player_ship->GetLivesRemaining());
-            SetGameState(GS_NORMAL_GAMEPLAY);
-            break;
-
-        case GS_NORMAL_GAMEPLAY:
-            // this is where all the good stuff happens (enemy spawning,
-            // extra life incrementing, difficulty increasing, etc).
-            ProcessNormalGameplayLogic();
-            break;
-
-        case GS_PLAYER_SHIP_IS_DEAD:
-            // placeholder
-            break;
-
-        case GS_BEGIN_GAME_OVER:
-            // make sure to disable the inventory panel for game over (because
-            // other UI stuff may happen that would interfere).
-            m_internal_sender_disable_inventory_panel.Signal();
-            // put up the game over label
-            m_internal_sender_show_game_over_label.Signal();
-            SetGameState(GS_GAME_OVER);
-            break;
-            
-        case GS_GAME_OVER:
-            // placeholder
-            break;
-
-        case GS_RECORD_HIGH_SCORE:
-            // take down the game over label
-            m_internal_sender_hide_game_over_label.Signal();
-            // send the player's score to Master
-            m_sender_emit_score.Signal(Score("temp name", m_player_ship->GetScore(), m_player_ship->GetTimeAlive(), time(NULL)));
-            // TODO: UI for entering the high score name
-            SetGameState(GS_DESTROY_WORLD);
-            fprintf(stderr, "scheduling quit for in 3 seconds\n");
-            ScheduleSetGameStateEvent(GS_QUIT, 3.0f);
-            break;
-
-        case GS_DESTROY_WORLD:
-            // fade-out or some other visual outro
-            break;
-            
-        case GS_QUIT:
-            m_sender_end_game.Signal();
-            break;
-            
-        default:
-            ASSERT1(false && "Invalid World::GameState")
-            break;
-    }
+    if (m_state_machine.GetCurrentState() == NULL)
+        m_state_machine.Initialize(&World::StateIntro);
+    
+    m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 }
 
 void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
@@ -434,7 +370,10 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
-    // connect the disable inventory panel signal
+    // connect the enable/disable inventory panel signal
+    SignalHandler::Connect0(
+        &m_internal_sender_enable_inventory_panel,
+        dis_world_view->ReceiverEnableInventoryPanel());
     SignalHandler::Connect0(
         &m_internal_sender_disable_inventory_panel,
         dis_world_view->ReceiverDisableInventoryPanel());
@@ -445,24 +384,272 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     SignalHandler::Connect0(
         &m_internal_sender_hide_game_over_label,
         dis_world_view->ReceiverHideGameOverLabel());
+    // connect the worldview's end game signal
+    SignalHandler::Connect0(
+        dis_world_view->SenderEndGame(),
+        &m_internal_receiver_end_game);
 }
 
-void World::SetGameState (GameState const game_state)
+// ///////////////////////////////////////////////////////////////////////////
+// begin state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
+
+#define STATE_MACHINE_STATUS(state_name) \
+    if (input == SM_ENTER) \
+        fprintf(stderr, "World: --> " state_name "\n"); \
+    else if (input == SM_EXIT) \
+        fprintf(stderr, "World: <-- " state_name "\n"); \
+    else if (input != IN_PROCESS_FRAME) \
+        fprintf(stderr, "World: input: %u\n", input);
+
+#define TRANSITION_TO(x) m_state_machine.RequestStateTransition(&World::x)
+
+bool World::StateIntro (StateMachineInput const input)
 {
-    if (m_game_state != game_state)
+    STATE_MACHINE_STATUS("StateIntro")
+    switch (input)
     {
-        m_game_state = game_state;
-        fprintf(stderr, "setting game state to %u\n", m_game_state);
+        case SM_ENTER:
+            // TODO: signal to the worldviews that the intro is starting
+            ScheduleStateMachineInput(IN_INTRO_DONE, 2.0f);
+            return true;
+
+        case IN_PROCESS_FRAME:
+            return true;
+            
+        case IN_INTRO_DONE:
+            TRANSITION_TO(StateNormalGameplay);
+            return true;
+
+        case SM_EXIT:
+            // TODO: signal to the worldviews that the intro is ending (?)
+            m_internal_sender_enable_inventory_panel.Signal();
+            return true;
     }
+    return false;
 }
 
-void World::ScheduleSetGameStateEvent (GameState game_state, Float time_delay)
+bool World::StateSpawnPlayerShip (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateSpawnPlayerShip")
+    switch (input)
+    {
+        case IN_PROCESS_FRAME:
+            ASSERT1(m_player_ship != NULL)
+            ASSERT1(!m_player_ship->GetIsInWorld())
+            ASSERT1(m_player_ship->GetIsDead())
+            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
+            m_player_ship->Revive(GetFrameTime(), GetFrameDT());
+            m_player_ship->SetVelocity(FloatVector2::ms_zero);
+            // TODO place the player ship so it doesn't intersect anything
+            m_player_ship->AddBackIntoWorld();
+            m_player_ship->IncrementLivesRemaining(-1);
+            TRANSITION_TO(StateNormalGameplay);
+            return true;
+    }
+    return false;
+}
+
+bool World::StateNormalGameplay (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateNormalGameplay")
+    switch (input)
+    {
+        case IN_PROCESS_FRAME:
+            // this is where all the good stuff happens (enemy spawning,
+            // extra life incrementing, difficulty increasing, etc).
+            ProcessNormalGameplayLogic();
+            m_player_ship->IncrementTimeAlive(GetFrameDT());
+            return true;
+
+        case IN_PLAYER_SHIP_DIED:
+            TRANSITION_TO(StateCheckLivesRemaining);
+            return true;
+
+        case IN_END_GAME:
+            TRANSITION_TO(StateOutro);
+            return true;
+    }
+    return false;
+}
+
+bool World::StateCheckLivesRemaining (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateCheckLivesRemaining")
+    switch (input)
+    {
+        case SM_ENTER:
+            ASSERT1(m_player_ship != NULL)
+            if (m_player_ship->GetLivesRemaining() > 0)
+                TRANSITION_TO(StateWaitAfterPlayerDeath);
+            else
+                TRANSITION_TO(StateWaitForDeathRattle);
+            return true;
+    }
+    return false;
+}
+
+bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateWaitAfterPlayerDeath")
+    switch (input)
+    {
+        case SM_ENTER:
+            ScheduleStateMachineInput(IN_WAIT_AFTER_PLAYER_DEATH_DONE, 3.0f);
+            return true;
+
+        case IN_WAIT_AFTER_PLAYER_DEATH_DONE:
+            TRANSITION_TO(StateSpawnPlayerShip);
+            return true;
+            
+        case IN_PROCESS_FRAME:
+            m_player_ship->IncrementTimeAlive(GetFrameDT());
+            return true;
+    }
+    return false;
+}
+
+bool World::StateWaitForDeathRattle (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateWaitForDeathRattle")
+    switch (input)
+    {
+        case SM_ENTER:
+            ScheduleStateMachineInput(IN_DEATH_RATTLE_DONE, 3.0f);
+            return true;
+
+        case IN_DEATH_RATTLE_DONE:
+            TRANSITION_TO(StateGameOver);
+            return true;
+            
+        case IN_PROCESS_FRAME:
+            return true;
+    }
+    return false;
+}
+
+bool World::StateGameOver (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateGameOver")
+    switch (input)
+    {
+        case SM_ENTER:
+            // make sure to disable the inventory panel for game over (because
+            // other UI stuff may happen that would interfere).
+            m_internal_sender_disable_inventory_panel.Signal();
+            // put up the game over label
+            m_internal_sender_show_game_over_label.Signal();
+            ScheduleStateMachineInput(IN_GAME_OVER_DONE, 3.0f);
+            return true;
+
+        case IN_GAME_OVER_DONE:
+            TRANSITION_TO(StateSubmitScore);
+            return true;
+            
+        case IN_PROCESS_FRAME:
+            return true;
+
+        case SM_EXIT:
+            // take down the game over label
+            m_internal_sender_hide_game_over_label.Signal();
+            return true;
+    }
+    return false;
+}
+
+bool World::StateSubmitScore (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateSubmitScore")
+    switch (input)
+    {
+        case SM_ENTER:
+            // send the player's score to Master
+            m_sender_submit_score.Signal(
+                Score(
+                    "temp name",
+                    m_player_ship->GetScore(),
+                    m_player_ship->GetTimeAlive(),
+                    time(NULL)));
+            TRANSITION_TO(StateWaitingForSubmitScoreResponse);            
+            return true;
+    }
+    return false;
+}
+
+bool World::StateWaitingForSubmitScoreResponse (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateWaitingForSubmitScoreResponse")
+    switch (input)
+    {
+        case IN_SUBMIT_SCORE_DONE:
+            TRANSITION_TO(StateOutro);
+            return true;
+    
+        case IN_PROCESS_FRAME:
+            return true;
+    }
+    return false;
+}
+
+bool World::StateOutro (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateOutro")
+    switch (input)
+    {
+        case SM_ENTER:
+            // make sure to disable the inventory panel for game over (because
+            // other UI stuff may happen that would interfere).
+            m_internal_sender_disable_inventory_panel.Signal();
+            // TODO: signal to the worldviews that the outro is starting
+            ScheduleStateMachineInput(IN_OUTRO_DONE, 2.0f);
+            return true;
+
+        case IN_OUTRO_DONE:
+            TRANSITION_TO(StateEndGame);
+            return true;
+                
+        case IN_PROCESS_FRAME:
+            return true;
+
+        case SM_EXIT:
+            // TODO: signal to the worldviews that the outro is ending
+            return true;
+    }
+    return false;
+}
+
+bool World::StateEndGame (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateEndGame")
+    switch (input)
+    {
+        case SM_ENTER:
+            m_sender_end_game.Signal();
+            return true;
+    
+        case IN_PROCESS_FRAME:
+            ASSERT1(false && "The world should end before this happens")
+            return true;
+    }
+    return false;
+}
+
+void World::ScheduleStateMachineInput (StateMachineInput input, Float time_delay)
+{
+    CancelScheduledStateMachineInput();
+    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+}
+
+void World::CancelScheduledStateMachineInput ()
 {
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         MatchCustomType,
-        static_cast<EventCustom::CustomType>(EventBase::SET_GAME_STATE));
-    EnqueueEvent(new EventSetGameState(game_state, GetMostRecentFrameTime() + time_delay));
+        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// end state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
 
 void World::ProcessNormalGameplayLogic ()
 {
@@ -526,11 +713,7 @@ void World::ProcessNormalGameplayLogic ()
         }
     }
 
-    // do game logic control stuff here
-
-    if (m_player_ship->GetLivesRemaining() > 0 || !m_player_ship->GetIsDead())
-        m_player_ship->IncrementTimeAlive(GetFrameDT());
-
+    // extra live handling
     if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
     {
         static Float const s_extra_live_score_factor = 2.0f;
@@ -538,6 +721,11 @@ void World::ProcessNormalGameplayLogic ()
         m_score_required_for_extra_life =
             static_cast<Uint32>(s_extra_live_score_factor * m_score_required_for_extra_life);
     }
+}
+
+void World::EndGame ()
+{
+    ScheduleStateMachineInput(IN_END_GAME, 0.0f);
 }
 
 Asteroid *World::SpawnAsteroidOutOfView ()
@@ -784,7 +972,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
     
         Float first_moment = scale_factor * scale_factor;
         FloatVector2 velocity(
-            Math::RandomFloat(50.0f, 1000.0f) /
+            Math::RandomFloat(100.0f, 2000.0f) /
             Math::Sqrt(first_moment) *
             Math::UnitVector(Math::RandomAngle()));
 
@@ -856,7 +1044,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
     // starfield
     {
-        Float object_layer_side_length = 100000.0f;
+        Float object_layer_side_length = 50000.0f;
     
         // create an object layer
         Engine2::ObjectLayer *object_layer =
@@ -866,7 +1054,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 object_layer_side_length, // side length
                 6,                        // visibility quad tree depth
                 0.0f);                    // z depth
-        object_layer->SetZDepth(15000.0f);
+        object_layer->SetZDepth(7500.0f);
         AddObjectLayer(object_layer);
     
         static std::string const s_starfield_sprite_filenames[] =
