@@ -33,11 +33,12 @@ public:
     inline SignalSender1<bool> const *SenderIsDebugInfoEnabledChanged () { return &m_sender_is_debug_info_enabled_changed; }
     inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
     inline SignalSender0 const *SenderDeactivateInventoryPanel () { return &m_sender_deactivate_inventory_panel; }
-    inline SignalSender0 const *SenderShowGameOverLabel () const { return &m_sender_show_game_over_label; }
-    inline SignalSender0 const *SenderHideGameOverLabel () const { return &m_sender_hide_game_over_label; }
+    inline SignalSender0 const *SenderShowGameOverLabel () { return &m_sender_show_game_over_label; }
+    inline SignalSender0 const *SenderHideGameOverLabel () { return &m_sender_hide_game_over_label; }
 
-    inline SignalReceiver0 const *ReceiverShowGameOverLabel () const { return &m_receiver_show_game_over_label; }
-    inline SignalReceiver0 const *ReceiverHideGameOverLabel () const { return &m_receiver_hide_game_over_label; }
+    inline SignalReceiver0 const *ReceiverDisableInventoryPanel () { return &m_receiver_disable_inventory_panel; }
+    inline SignalReceiver0 const *ReceiverShowGameOverLabel () { return &m_receiver_show_game_over_label; }
+    inline SignalReceiver0 const *ReceiverHideGameOverLabel () { return &m_receiver_hide_game_over_label; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline bool GetIsDebugInfoEnabled () const { return m_is_debug_info_enabled; }
@@ -128,6 +129,7 @@ private:
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
 
+    SignalReceiver0 m_receiver_disable_inventory_panel;
     SignalReceiver0 m_receiver_show_game_over_label;
     SignalReceiver0 m_receiver_hide_game_over_label;
 }; // end of class WorldView

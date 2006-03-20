@@ -302,9 +302,10 @@ World::World (
     Engine2::World(owner_event_queue, physics_handler, entity_capacity),
     SignalHandler(),
     m_sender_emit_score(this),
-    m_sender_show_game_over_label(this),
-    m_sender_hide_game_over_label(this),
-    m_sender_end_game(this)
+    m_sender_end_game(this),
+    m_internal_sender_disable_inventory_panel(this),
+    m_internal_sender_show_game_over_label(this),
+    m_internal_sender_hide_game_over_label(this)
 {
     m_game_state = GS_CREATE_WORLD;
     ScheduleSetGameStateEvent(GS_NORMAL_GAMEPLAY, 3.0f);
@@ -393,16 +394,9 @@ void World::ProcessFrameOverride ()
         case GS_BEGIN_GAME_OVER:
             // make sure to disable the inventory panel for game over (because
             // other UI stuff may happen that would interfere).
-            for (WorldViewListIterator it = m_world_view_list.begin(),
-                                       it_end = m_world_view_list.end();
-                 it != it_end;
-                 ++it)
-            {
-                WorldView *world_view = DStaticCast<WorldView *>(*it);
-                ASSERT1(world_view != NULL)
-                world_view->DisableInventoryPanel();
-            }
-            m_sender_show_game_over_label.Signal();
+            m_internal_sender_disable_inventory_panel.Signal();
+            // put up the game over label
+            m_internal_sender_show_game_over_label.Signal();
             SetGameState(GS_GAME_OVER);
             break;
             
@@ -411,7 +405,9 @@ void World::ProcessFrameOverride ()
             break;
 
         case GS_RECORD_HIGH_SCORE:
-            m_sender_hide_game_over_label.Signal();
+            // take down the game over label
+            m_internal_sender_hide_game_over_label.Signal();
+            // send the player's score to Master
             m_sender_emit_score.Signal(Score("temp name", m_player_ship->GetScore(), m_player_ship->GetTimeAlive(), time(NULL)));
             // TODO: UI for entering the high score name
             SetGameState(GS_DESTROY_WORLD);
@@ -438,12 +434,16 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
+    // connect the disable inventory panel signal
+    SignalHandler::Connect0(
+        &m_internal_sender_disable_inventory_panel,
+        dis_world_view->ReceiverDisableInventoryPanel());
     // connect the show/hide game over label signals
     SignalHandler::Connect0(
-        &m_sender_show_game_over_label,
+        &m_internal_sender_show_game_over_label,
         dis_world_view->ReceiverShowGameOverLabel());
     SignalHandler::Connect0(
-        &m_sender_hide_game_over_label,
+        &m_internal_sender_hide_game_over_label,
         dis_world_view->ReceiverHideGameOverLabel());
 }
 

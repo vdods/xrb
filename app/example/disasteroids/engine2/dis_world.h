@@ -180,9 +180,11 @@ private:
     Float m_next_enemy_ship_spawn_time[GameObject::T_ENEMY_SHIP_COUNT];
 
     SignalSender1<Score const &> m_sender_emit_score;
-    SignalSender0 m_sender_show_game_over_label;
-    SignalSender0 m_sender_hide_game_over_label;
     SignalSender0 m_sender_end_game;
+
+    SignalSender0 m_internal_sender_disable_inventory_panel;
+    SignalSender0 m_internal_sender_show_game_over_label;
+    SignalSender0 m_internal_sender_hide_game_over_label;
 }; // end of class GameController
 
 } // end of namespace Dis

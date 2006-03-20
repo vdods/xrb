@@ -33,6 +33,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_deactivate_inventory_panel(this),
     m_sender_show_game_over_label(this),
     m_sender_hide_game_over_label(this),
+    m_receiver_disable_inventory_panel(&WorldView::DisableInventoryPanel, this),
     m_receiver_show_game_over_label(&WorldView::ShowGameOverLabel, this),
     m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this)
 {
