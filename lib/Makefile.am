@@ -147,6 +147,8 @@ include_HEADERS = \
     core/xrb_serializer.tcpp \
     core/xrb_signalhandler.h \
     core/xrb_singletons.h \
+    core/xrb_statemachine.h \
+    core/xrb_statemachine.tcpp \
     \
     core/serializers/xrb_binaryfileserializer.h \
     core/serializers/xrb_compressionserializer.h \

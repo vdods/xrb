@@ -146,6 +146,8 @@ lib/core/xrb_signalhandler.cpp
 lib/core/xrb_signalhandler.h
 lib/core/xrb_singletons.cpp
 lib/core/xrb_singletons.h
+lib/core/xrb_statemachine.h
+lib/core/xrb_statemachine.tcpp
 lib/engine2/physicshandlers/xrb_engine2_planetaryphysicshandler.cpp
 lib/engine2/physicshandlers/xrb_engine2_planetaryphysicshandler.h
 lib/engine2/physicshandlers/xrb_engine2_uniformgravityphysicshandler.cpp
