@@ -436,6 +436,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ui\dis_highscorenameentrydialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ui\dis_highscorenameentrydialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ui\dis_inventorybutton.cpp"
 				>
 			</File>
@@ -490,6 +498,14 @@
 		</File>
 		<File
 			RelativePath=".\dis_events.h"
+			>
+		</File>
+		<File
+			RelativePath=".\dis_highscores.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\dis_highscores.h"
 			>
 		</File>
 		<File

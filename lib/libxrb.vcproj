@@ -239,6 +239,14 @@
 				RelativePath=".\core\xrb_singletons.h"
 				>
 			</File>
+			<File
+				RelativePath=".\core\xrb_statemachine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\xrb_statemachine.h"
+				>
+			</File>
 			<Filter
 				Name="serializers"
 				>
