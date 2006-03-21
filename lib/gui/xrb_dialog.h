@@ -108,11 +108,19 @@ public:
     /** @brief Accessor for the SignalSender which signals that the OK
       *        button has been pressed.
       */
-    inline SignalSender0 const *SenderDialogReturnedOK () { return &m_sender_dialog_returned_ok; }
+    inline SignalSender0 const *SenderDialogReturnedOK ()
+    {
+        ASSERT1(GetHasOKButton())
+        return &m_sender_dialog_returned_ok;
+    }
     /** @brief Accessor for the SignalSender which signals that the Cancel
       *        button has been pressed.
       */
-    inline SignalSender0 const *SenderDialogReturnedCancel () { return &m_sender_dialog_returned_cancel; }
+    inline SignalSender0 const *SenderDialogReturnedCancel ()
+    {
+        ASSERT1(GetHasCancelButton())
+        return &m_sender_dialog_returned_cancel;
+    }
 
 protected:
 

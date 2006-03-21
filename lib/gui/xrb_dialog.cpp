@@ -54,6 +54,10 @@ Dialog::Dialog (
         m_ok_button = new Button("OK", m_button_layout, "OK button");
         m_ok_button->SetIsHeightFixedToTextHeight(true);
         ++added_button_count;
+    
+        SignalHandler::Connect0(
+            m_ok_button->SenderReleased(),
+            &m_internal_receiver_ok_button_activated);
     }
     if (GetHasCancelButton())
     {
@@ -61,19 +65,15 @@ Dialog::Dialog (
         m_cancel_button = new Button("Cancel", m_button_layout, "Cancel button");
         m_cancel_button->SetIsHeightFixedToTextHeight(true);
         ++added_button_count;
+        
+        SignalHandler::Connect0(
+            m_cancel_button->SenderReleased(),
+            &m_internal_receiver_cancel_button_activated);
     }
     new SpacerWidget(m_button_layout);
     ASSERT1(added_button_count > 0 && "No buttons were added to the Dialog")
 
     SetMainWidget(m_dialog_layout);
-
-    // connect up the appropriate signals
-    SignalHandler::Connect0(
-        m_ok_button->SenderReleased(),
-        &m_internal_receiver_ok_button_activated);
-    SignalHandler::Connect0(
-        m_cancel_button->SenderReleased(),
-        &m_internal_receiver_cancel_button_activated);
 }
 
 bool Dialog::GetHasButton (ButtonID const button_id) const
@@ -98,7 +98,7 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::RETURN:
-                if (e->GetIsEitherControlKeyPressed())
+                if (GetHasOKButton() && e->GetIsEitherControlKeyPressed())
                 {
                     OKButtonActivated();
                     return true;
@@ -107,7 +107,8 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
                     return false;
 
             case Key::ESCAPE:
-                CancelButtonActivated();
+                if (GetHasCancelButton())
+                    CancelButtonActivated();
                 return true;
 
             default:
@@ -120,6 +121,7 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
 
 void Dialog::OKButtonActivated ()
 {
+    ASSERT1(GetHasOKButton())
     Shutdown();
     m_sender_dialog_returned_a_value.Signal(ID_OK);
     m_sender_dialog_returned_ok.Signal();
@@ -127,6 +129,7 @@ void Dialog::OKButtonActivated ()
 
 void Dialog::CancelButtonActivated ()
 {
+    ASSERT1(GetHasCancelButton())
     Shutdown();
     m_sender_dialog_returned_a_value.Signal(ID_CANCEL);
     m_sender_dialog_returned_cancel.Signal();
