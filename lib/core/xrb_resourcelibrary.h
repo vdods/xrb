@@ -174,7 +174,7 @@ private:
             ASSERT1(m_reference_count < UINT32_UPPER_BOUND)
             ++m_reference_count;
         }
-        void DecrementReferenceCount ()
+        inline bool DecrementReferenceCount ()
         {
             ASSERT1(m_reference_count > 0)
             --m_reference_count;
@@ -184,7 +184,10 @@ private:
 //                 fprintf(stderr, "ResourceLibrary * unloading ");
 //                 Print(stderr);
                 DeleteData();
+                return true;
             }
+            else
+                return false;
         }
 
         void Print (FILE *fptr) const
@@ -247,7 +250,7 @@ private:
 
         virtual void DeleteData ()
         {
-            Delete(m_data);
+            DeleteAndNullify(m_data);
         }
         
     private:
@@ -342,8 +345,8 @@ public:
     {
         if (m_instance != NULL)
         {
-            m_instance->DecrementReferenceCount();
-            m_instance = NULL;
+            if (m_instance->DecrementReferenceCount())
+                DeleteAndNullify(m_instance);
         }
     }
 
@@ -354,7 +357,8 @@ public:
     void operator = (Resource<T> const &source)
     {
         if (m_instance != NULL)
-            m_instance->DecrementReferenceCount();
+            if (m_instance->DecrementReferenceCount())
+                Delete(m_instance);
         m_instance = source.m_instance;
         if (m_instance != NULL)
             m_instance->IncrementReferenceCount();
@@ -432,8 +436,8 @@ public:
     {
         if (m_instance != NULL)
         {
-            m_instance->DecrementReferenceCount();
-            m_instance = NULL;
+            if (m_instance->DecrementReferenceCount())
+                DeleteAndNullify(m_instance);
         }
     }
 

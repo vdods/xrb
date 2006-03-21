@@ -1167,8 +1167,8 @@ void Layout::DeleteColumnSizePropertyArrays () const
     if (m_column_size_properties != NULL)
     {
         DeleteArrayAndNullify(m_column_size_properties);
-        DeleteAndNullify(m_column_width);
-        DeleteAndNullify(m_column_is_hidden);
+        DeleteArrayAndNullify(m_column_width);
+        DeleteArrayAndNullify(m_column_is_hidden);
     }
     else
     {
@@ -1182,8 +1182,8 @@ void Layout::DeleteRowSizePropertyArrays () const
     if (m_row_size_properties != NULL)
     {
         DeleteArrayAndNullify(m_row_size_properties);
-        DeleteAndNullify(m_row_height);
-        DeleteAndNullify(m_row_is_hidden);
+        DeleteArrayAndNullify(m_row_height);
+        DeleteArrayAndNullify(m_row_is_hidden);
     }
     else
     {

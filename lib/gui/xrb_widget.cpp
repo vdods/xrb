@@ -57,6 +57,7 @@ Widget::Widget (
     m_stack_priority = SP_NEUTRAL;
     m_background = NULL;
     m_render_background = NULL;
+    m_frame_margins = ScreenCoordVector2::ms_zero;
     m_parent = NULL;
 
     // add this to the given parent

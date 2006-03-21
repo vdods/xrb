@@ -62,7 +62,7 @@ int main (int argc, char **argv)
         fprintf(stderr, "unable to initialize video mode\n");
         exit(-2);
     }
-    
+
     // create and run the game
     {
         Dis::Master master(screen);

@@ -26,11 +26,11 @@ namespace
     KeyBinds g_key_binds;
 
     // ResourceLibrary singleton -- loads and manages reference counted assets
-    ResourceLibrary g_resource_library;
+    ResourceLibrary *g_resource_library = NULL;
 
     // FreeType library singleton -- handles rendering font glyphs.
     // this pointer type should be equivalent to type FT_Library.
-    FT_LibraryRec_ *g_ft_library;
+    FT_LibraryRec_ *g_ft_library = NULL;
 
     // indicates if Singletons::Initialize has been called
     bool g_is_initialized = false;
@@ -45,7 +45,7 @@ KeyBinds *const Singletons::KeyBinds ()
 ResourceLibrary *const Singletons::ResourceLibrary ()
 {
     ASSERT1(g_is_initialized)
-    return &g_resource_library;
+    return g_resource_library;
 }
 
 FT_LibraryRec_ *const Singletons::FTLibrary ()
@@ -58,6 +58,8 @@ void Singletons::Initialize ()
 {
     ASSERT1(!g_is_initialized)
 
+    g_resource_library = new Xrb::ResourceLibrary();
+    
     g_ft_library = NULL;
     FT_Error error = FT_Init_FreeType(&g_ft_library);
     ASSERT0(error == 0 && "The FreeType library failed to initialize")
@@ -68,8 +70,11 @@ void Singletons::Initialize ()
 void Singletons::Shutdown ()
 {
     ASSERT1(g_is_initialized)
+    ASSERT1(g_resource_library != NULL)
     ASSERT1(g_ft_library != NULL)
 
+    Delete(g_resource_library);
+    
     FT_Done_FreeType(g_ft_library);
 
     g_is_initialized = false;
