@@ -34,6 +34,7 @@ disasteroids_SOURCES = \
     game/items/dis_shield.cpp \
     game/items/dis_weapon.cpp \
     ui/dis_gamewidget.cpp \
+    ui/dis_highscorenameentrydialog.cpp \
     ui/dis_inventorybutton.cpp \
     ui/dis_inventorypanel.cpp \
     ui/dis_optionspanel.cpp \
@@ -80,6 +81,7 @@ noinst_HEADERS = \
     game/items/dis_shield.h \
     game/items/dis_weapon.h \
     ui/dis_gamewidget.h \
+    ui/dis_highscorenameentrydialog.h \
     ui/dis_inventorybutton.h \
     ui/dis_inventorypanel.h \
     ui/dis_optionspanel.h \

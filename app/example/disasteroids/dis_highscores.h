@@ -26,6 +26,7 @@ class Score
 {
 public:
 
+    Score () { }
     Score (std::string const &name, Uint32 points, Float time_alive, time_t date)
         :
         m_name(name),
@@ -41,10 +42,10 @@ public:
 
 private:
 
-    std::string const m_name;
-    Uint32 const m_points;
-    Float const m_time_alive;
-    time_t const m_date;
+    std::string m_name;
+    Uint32 m_points;
+    Float m_time_alive;
+    time_t m_date;
 }; // end of class Score
 
 // orders by points, then time-alive, and then date (earlier is better)

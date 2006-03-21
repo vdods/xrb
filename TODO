@@ -40,6 +40,7 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
 - fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer

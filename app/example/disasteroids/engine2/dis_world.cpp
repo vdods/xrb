@@ -361,7 +361,7 @@ void World::ProcessFrameOverride ()
 
     if (m_state_machine.GetCurrentState() == NULL)
         m_state_machine.Initialize(&World::StateIntro);
-    
+
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 }
 
@@ -566,7 +566,7 @@ bool World::StateSubmitScore (StateMachineInput const input)
             // send the player's score to Master
             m_sender_submit_score.Signal(
                 Score(
-                    "temp name",
+                    "",
                     m_player_ship->GetScore(),
                     m_player_ship->GetTimeAlive(),
                     time(NULL)));

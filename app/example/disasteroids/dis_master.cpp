@@ -14,6 +14,7 @@
 
 #include "dis_events.h"
 #include "dis_gamewidget.h"
+#include "dis_highscorenameentrydialog.h"
 #include "dis_resourcecache.h"
 #include "dis_titlescreenwidget.h"
 #include "dis_world.h"
@@ -30,6 +31,7 @@ Master::Master (Screen *const screen)
     SignalHandler(),
     EventHandler(NULL),
     m_internal_receiver_accept_score(&Master::AcceptScore, this),
+    m_internal_receiver_accept_name(&Master::AcceptName, this),
     m_internal_receiver_start_game(&Master::StartGame, this),
     m_internal_receiver_quit_game(&Master::QuitGame, this),
     m_internal_receiver_end_game(&Master::EndGame, this)
@@ -81,6 +83,7 @@ void Master::Run ()
     // seed the random number generator
     srand(666);
 
+    // start at the title screen
     ActivateTitleScreen();
 //     ActivateGame();
 
@@ -218,14 +221,36 @@ void Master::AcceptScore (Score const &score)
 
     if (m_high_scores.GetIsNewHighScore(score))
     {
-        // TODO: pop up some UI for the player to enter his name
-        m_high_scores.AddScore(score);
-        m_high_scores.Print(stderr); // TEMP
-        // TODO: real score UI will delay the submit-score-done
-        m_game_world->SubmitScoreDone();
+        // create a HighScoreNameEntryDialog
+        HighScoreNameEntryDialog *dialog =
+            new HighScoreNameEntryDialog(score.GetPoints(), score.GetTimeAlive(), m_screen);
+        dialog->CenterOnWidget(m_screen);
+        // hook up the OK/cancel button signals
+        SignalHandler::Connect1(
+            dialog->SenderSubmitName(),
+            &m_internal_receiver_accept_name);
+        // save the score off
+        m_saved_score = score;
     }
     else
-        m_game_world->SubmitScoreDone();        
+        m_game_world->SubmitScoreDone();
+}
+
+void Master::AcceptName (std::string const &name)
+{
+    ASSERT1(m_game_world != NULL)
+
+    std::string checked_name(name);
+    if (checked_name.empty())
+        checked_name = "Anonymous";
+    Score named_score(
+        checked_name,
+        m_saved_score.GetPoints(),
+        m_saved_score.GetTimeAlive(),
+        m_saved_score.GetDate());
+    m_high_scores.AddScore(named_score);
+    m_high_scores.Print(stderr);
+    m_game_world->SubmitScoreDone();
 }
 
 void Master::StartGame ()

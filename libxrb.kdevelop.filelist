@@ -76,6 +76,8 @@ app/example/disasteroids/game/items/dis_weapon.cpp
 app/example/disasteroids/game/items/dis_weapon.h
 app/example/disasteroids/ui/dis_gamewidget.cpp
 app/example/disasteroids/ui/dis_gamewidget.h
+app/example/disasteroids/ui/dis_highscorenameentrydialog.cpp
+app/example/disasteroids/ui/dis_highscorenameentrydialog.h
 app/example/disasteroids/ui/dis_inventorybutton.cpp
 app/example/disasteroids/ui/dis_inventorybutton.h
 app/example/disasteroids/ui/dis_inventorypanel.cpp

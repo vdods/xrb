@@ -78,6 +78,7 @@ protected:
 private:
 
     void AcceptScore (Score const &score);
+    void AcceptName (std::string const &name);
 
     void StartGame ();
     void QuitGame ();
@@ -126,8 +127,11 @@ private:
     Float m_game_time;
     // high scores
     HighScores m_high_scores;
+    // saved score for while the high score name dialog is up
+    Score m_saved_score;
 
     SignalReceiver1<Score const &> m_internal_receiver_accept_score;
+    SignalReceiver1<std::string const &> m_internal_receiver_accept_name;
     
     SignalReceiver0 m_internal_receiver_start_game;
     SignalReceiver0 m_internal_receiver_quit_game;
