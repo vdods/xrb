@@ -117,6 +117,8 @@ void EventQueue::ProcessFrameOverride ()
             m_time_ordered_event_queue.begin();
         TimeOrderedEventBindingSetIterator it_end =
             m_time_ordered_event_queue.upper_bound(binding_limit);
+
+        // process each event and schedule it for deletion.
         for (TimeOrderedEventBindingSetIterator it = it_begin;
              it != it_end;
              ++it)
@@ -132,12 +134,20 @@ void EventQueue::ProcessFrameOverride ()
                 it->GetEventHandler()->ProcessEvent(it->GetEvent());
                 it->GetEvent()->ScheduleForDeletion();
             }
-
-            // actually delete the event
-            ASSERT1(it->GetEvent()->GetIsScheduledForDeletion())
-            delete it->GetEvent();
         }
 
+        // delete each event.  this must be done separately from the above
+        // for-loop, otherwise calls to ScheduleMatchingEventsForDeletion
+        // during processing of each event will potentially make invalid reads
+        // to the deleted events.
+        for (TimeOrderedEventBindingSetIterator it = it_begin;
+             it != it_end;
+             ++it)
+        {
+            ASSERT1(it->GetEvent()->GetIsScheduledForDeletion())
+            delete it->GetEvent();            
+        }
+        
         // clear the range of processed events from the time-ordered event queue
         m_time_ordered_event_queue.erase(it_begin, it_end);
     }
