@@ -97,8 +97,7 @@ void Master::Run ()
     {
         // figure out how much time to sleep before processing the next frame
         Sint32 milliseconds_to_sleep = static_cast<Uint32>(1000.0f * (next_real_time - m_real_time));
-        // 10 milliseconds is the minimum, so only sleep if it's above half
-        if (milliseconds_to_sleep > 5)
+        if (milliseconds_to_sleep > 0)
             SDL_Delay(milliseconds_to_sleep);
         m_real_time = 0.001f * SDL_GetTicks();
         next_real_time += 1.0f / m_maximum_framerate;
@@ -113,6 +112,7 @@ void Master::Run ()
             if (game_time_delta > 1.0f / m_minimum_framerate)
                 game_time_delta = 1.0f / m_minimum_framerate;
             ASSERT1(game_time_delta > 0.0f)
+
             m_game_time += game_time_delta * m_game_world->GetTimescale();
         }
 

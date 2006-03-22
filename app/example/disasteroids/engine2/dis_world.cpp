@@ -270,19 +270,21 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
 
 void World::RecordCreatedEnemyShip (GameObject::Type const enemy_ship_type)
 {
-    ASSERT1(enemy_ship_type >= GameObject::T_ENEMY_SHIP_LOWEST)
-    ASSERT1(enemy_ship_type <= GameObject::T_ENEMY_SHIP_HIGHEST)
-    ++m_enemy_ship_count[enemy_ship_type - GameObject::T_ENEMY_SHIP_LOWEST];
+    Uint32 enemy_ship_index = enemy_ship_type - GameObject::T_ENEMY_SHIP_LOWEST;
+    ASSERT1(enemy_ship_index < GameObject::T_ENEMY_SHIP_COUNT)
+    ++m_enemy_ship_count[enemy_ship_index];
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 {
     ASSERT1(enemy_ship != NULL)
-    ASSERT1(m_enemy_ship_count[enemy_ship->GetType() - GameObject::T_ENEMY_SHIP_LOWEST] > 0)
-    --m_enemy_ship_count[enemy_ship->GetType() - GameObject::T_ENEMY_SHIP_LOWEST];
+    Uint32 enemy_ship_index = enemy_ship->GetType() - GameObject::T_ENEMY_SHIP_LOWEST;
+    ASSERT1(enemy_ship_index < GameObject::T_ENEMY_SHIP_COUNT)
+    ASSERT1(m_enemy_ship_count[enemy_ship_index] > 0)
+    --m_enemy_ship_count[enemy_ship_index];
 
-    if (m_enemy_ship_count[enemy_ship->GetType()] == ms_max_enemy_ship_count[m_game_stage][enemy_ship->GetType()] - 1)
-        m_next_enemy_ship_spawn_time[enemy_ship->GetType()] =
+    if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
+        m_next_enemy_ship_spawn_time[enemy_ship_index] =
             GetFrameTime() +
             Math::RandomFloat(
                 ms_enemy_spawn_interval[m_game_stage] - 1.0f,
@@ -318,10 +320,10 @@ World::World (
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
 
-    for (Uint8 enemy_ship_type = 0; enemy_ship_type < GameObject::T_ENEMY_SHIP_COUNT; ++enemy_ship_type)
+    for (Uint8 enemy_ship_index = 0; enemy_ship_index < GameObject::T_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
-        m_enemy_ship_count[enemy_ship_type] = 0;
-        m_next_enemy_ship_spawn_time[enemy_ship_type] = 0.0f;
+        m_enemy_ship_count[enemy_ship_index] = 0;
+        m_next_enemy_ship_spawn_time[enemy_ship_index] = 0.0f;
     }
 
     CreateAndPopulateBackgroundObjectLayers();
@@ -691,20 +693,20 @@ void World::ProcessNormalGameplayLogic ()
     }
 
     // enemy ship spawning
-    for (Uint8 enemy_ship_type = 0; enemy_ship_type < GameObject::T_ENEMY_SHIP_COUNT; ++enemy_ship_type)
+    for (Uint8 enemy_ship_index = 0; enemy_ship_index < GameObject::T_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
-        if (m_enemy_ship_count[enemy_ship_type] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_type] &&
-            m_next_enemy_ship_spawn_time[enemy_ship_type] <= GetFrameTime())
+        if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] &&
+            m_next_enemy_ship_spawn_time[enemy_ship_index] <= GetFrameTime())
         {
             EnemyShip *enemy_ship =
                 SpawnEnemyShipOutOfView(
-                    static_cast<GameObject::Type>(GameObject::T_ENEMY_SHIP_LOWEST + enemy_ship_type),
-                    ms_enemy_level_distribution_table[m_game_stage][enemy_ship_type][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
+                    static_cast<GameObject::Type>(GameObject::T_ENEMY_SHIP_LOWEST + enemy_ship_index),
+                    ms_enemy_level_distribution_table[m_game_stage][enemy_ship_index][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
             if (enemy_ship != NULL)
             {
-                ++m_enemy_ship_count[enemy_ship_type];
-                if (m_enemy_ship_count[enemy_ship_type] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_type])
-                    m_next_enemy_ship_spawn_time[enemy_ship_type] =
+                ++m_enemy_ship_count[enemy_ship_index];
+                if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
+                    m_next_enemy_ship_spawn_time[enemy_ship_index] =
                         GetFrameTime() +
                         Math::RandomFloat(
                             ms_enemy_spawn_interval[m_game_stage] - 1.0f,
