@@ -231,6 +231,20 @@ public:
     }
 }; // end of class SimpleTransform2
 
+/** This templatized definition will take care of defining the static
+  * @c ms_identity member transform, assuming that @c static_cast<T>(0) and
+  * @c static_cast<T>(1) work.
+  * @brief Templatized static definition of the @c ms_identity transform.
+  */
+template <typename T>
+SimpleTransform2<T> const SimpleTransform2<T>::ms_identity(
+    static_cast<T>(1), static_cast<T>(1),
+    static_cast<T>(0), static_cast<T>(0));
+
+// ///////////////////////////////////////////////////////////////////////////
+// Operator overloads
+// ///////////////////////////////////////////////////////////////////////////
+
 // simpletransform * simpletransform
 template <typename T>
 inline SimpleTransform2<T> operator * (SimpleTransform2<T> const left_operand,

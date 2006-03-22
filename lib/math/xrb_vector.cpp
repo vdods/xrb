@@ -19,16 +19,6 @@
 namespace Xrb
 {
 
-// this template <> syntax seems to be necessary because otherwise the
-// compiler doesn't think any template parameters are specified
-
-template <>  
-FloatVector2 const FloatVector2::ms_zero(0.0, 0.0);
-template <>  
-Uint32Vector2 const Uint32Vector2::ms_zero(0, 0);
-template <>  
-Sint32Vector2 const Sint32Vector2::ms_zero(0, 0);
-
 void FprintVector (FILE *const fptr,
                    FloatVector2 const &vector,
                    bool const add_newline)

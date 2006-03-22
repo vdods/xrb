@@ -20,20 +20,6 @@
 namespace Xrb
 {
 
-// this template <> syntax seems to be necessary because otherwise the
-// compiler doesn't think any template parameters are specified
-
-template <>
-FloatTransform2 const FloatTransform2::ms_identity(
-    Vector<Float, 2>(0.0f, 0.0f),
-    Vector<Float, 2>(1.0f, 1.0f),
-    0.0f,
-    true); // the post-translate value for ms_identity is arbitrary
-template <>
-Float const FloatTransform2::ms_zero = 0.0f;
-template <>
-Float const FloatTransform2::ms_one = 1.0f;
-
 void FprintTransform2 (FILE *fptr,
                        FloatTransform2 const &transform,
                        bool add_newline)

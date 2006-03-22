@@ -82,6 +82,15 @@ public:
     inline Vector ()
     {
     }
+    /** Does/can not use any memcpy/memset functions.
+      * @brief Constructs a Vector, setting each component to @c fill_with.
+      * @param fill_with The value to set each component to.
+      */
+    inline Vector (T const fill_with)
+    {
+        for (Uint32 i = 0; i < dimension; ++i)
+            m[i] = fill_with;
+    }
     /** I gave up trying for partial template specialization (or whatever it's
       * called) to specify the two-parameter constructor for only
       * Vector<T, 2>, and settled for asserting that @c dimension is 2.
@@ -473,6 +482,17 @@ public:
         fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
     }
 }; // end of template <typename T> class Vector
+
+/** This templatized definition will take care of defining the static
+  * @c ms_zero member vector, assuming that @c static_cast<T>(0) work.
+  * @brief Templatized static definition of the @c ms_zero vector.
+  */
+template <typename T, Uint32 dimension>
+Vector<T, dimension> const Vector<T, dimension>::ms_zero(static_cast<T>(0));
+
+// ///////////////////////////////////////////////////////////////////////////
+// Operator overloads
+// ///////////////////////////////////////////////////////////////////////////
 
 /** Performs vector addition (a commutative operation) on the given vectors.
   * @brief Global addition operator.

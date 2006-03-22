@@ -318,6 +318,20 @@ public:
     }
 }; // end of class Matrix2
 
+/** This templatized definition will take care of defining the static
+  * @c ms_identity member matrix, assuming that @c static_cast<T>(0) and
+  * @c static_cast<T>(1) work.
+  * @brief Templatized static definition of the @c ms_identity matrix.
+  */
+template <typename T>
+Matrix2<T> const Matrix2<T>::ms_identity(
+    static_cast<T>(1), static_cast<T>(0), static_cast<T>(0),
+    static_cast<T>(0), static_cast<T>(1), static_cast<T>(0));
+
+// ///////////////////////////////////////////////////////////////////////////
+// Operator overloads
+// ///////////////////////////////////////////////////////////////////////////
+
 // matrix * matrix
 template <typename T>
 inline Matrix2<T> operator * (

@@ -26,8 +26,6 @@ class Transform2
 public:
 
     static Transform2<T> const ms_identity;
-    static T const ms_zero;
-    static T const ms_one;
 
     // ///////////////////////////////////////////////////////////////////////
     // constructors and destructor
@@ -60,7 +58,7 @@ public:
     {
         m_translation = source.m_translation;
         m_scale_factors = source.m_scale_factors;
-        m_angle = ms_zero;
+        m_angle = static_cast<T>(0);
         Dirtify();
     }
     inline Transform2 (Transform2<T> const &source)
@@ -223,12 +221,12 @@ public:
     }
     inline void ResetScale ()
     {
-        m_scale_factors.FillWith(ms_one);
+        m_scale_factors.FillWith(static_cast<T>(1));
         Dirtify();
     }
     inline void ResetAngle ()
     {
-        m_angle = ms_zero;
+        m_angle = static_cast<T>(0);
         Dirtify();
     }
 
@@ -382,6 +380,18 @@ private:
     mutable Matrix2<T> m_cached_scaling_and_rotation;
     mutable bool m_cached_scaling_and_rotation_is_dirty;
 }; // end of class Transform2
+
+/** This templatized definition will take care of defining the static
+  * @c ms_identity member transform, assuming that @c static_cast<T>(0)
+  * and @c static_cast<T>(1) work.
+  * @brief Templatized static definition of the @c ms_identity transform.
+  */
+template <typename T>
+Transform2<T> const Transform2<T>::ms_identity(
+    Vector<T, 2>(static_cast<T>(0), static_cast<T>(0)),
+    Vector<T, 2>(static_cast<T>(1), static_cast<T>(1)),
+    static_cast<T>(1),
+    true); // the post-translate value for ms_identity is arbitrary
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for Transform2 of different types,

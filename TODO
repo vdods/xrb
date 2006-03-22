@@ -194,8 +194,6 @@ TODO:
   data-file-driven and be loaded as resources from those files.
 - add WorldCoord/WorldCoordVector2/etc similar to ScreenCoord/etc.
 - make sure all the GetShiftedAscii codes are correct
-- add ms_one to SimpleTransform2 for inversion -- or change all that ms_one
-  and ms_zero scalar crap into static_casts.
 - add "activated" to Button, which is configurable to be either when
   the button is pressed or pressed then released.
 - maybe change all {Serializer read functions which don't return a primitive
@@ -224,8 +222,6 @@ TODO:
   signed int, unsigned int, float, double, etc.
 - change dynamic_casts into static_casts where not absolutely necessary
   and put the dynamic_casts into asserts before the static_casts
-- make some sort of macroized cast that asserts on a dynamic cast,
-  but then actually returns a static cast.
 - special Vector2 ValueEdit
 - add SetText override to ValueEdit and ValueLabel
 - add value transformations to sender->receiver connections (i.e.

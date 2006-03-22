@@ -19,14 +19,6 @@
 namespace Xrb
 {
 
-// this template <> syntax seems to be necessary because otherwise the
-// compiler doesn't think any template parameters are specified
-
-template <> 
-FloatMatrix2 const FloatMatrix2::ms_identity(
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f);
-
 void FprintMatrix2 (FILE *fptr,
                     FloatMatrix2 const &matrix)
 {
