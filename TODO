@@ -27,6 +27,9 @@ X platform-independent byte order for network/file serialization
   and all the other complicated systems.
 - UI demonstration - every UI feature demonstrated in a series
   of tabbed widgets.
+- simplification of Object/Entity/EntityGuts into just Object and Entity
+- abstraction of Engine2 classes into interfaces, to provide as
+  much flexibility as possible, and to avoid biasing game physics, etc.
 
 OPENGL CONVERSION TASKS:
 - look into applying HSV color to opengl renderings (i.e. making
@@ -77,20 +80,15 @@ TODO:
 - the map editor view should not create/destroy its own world -- it
   becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
-- entity attachment -- figure out where to put that (physics handler,
-  entity, etc)
 - again, rename identifiers like X_NUM_BLAH and num_blahblah to
   X_BLAH_COUNT and blahblah_count.
-- make accessor functions for the begin/end iterators in QuadTree, so
-  subclasses don't have direct access to m_object_set.
-- check if adding entities while in the middle of the Think() loop will
-  screw up the entities that have Think called on them
 - make Engine2::Entity::GetEntityGuts into a templatized function that takes
   the EntityGuts subclass type and does asserts on dynamic_cast and such.
   then rename the untemplatized one into GetRawEntityGuts.
 - rename Type to something more specific, and rename all enums to have prefixes
-- Entity might need to be a "scaling velocity" or "grow to X size by time Y"
-- move Label into /lib/gui/widgets (maybe?)
+- Entity might need to have a "scaling velocity" or "grow to X size by time Y"
+- move Label into /lib/gui/widgets (maybe?) - ensure the /lib/gui dir is
+  organized correctly.
 - drawing functions should all just push the modelview matrix, not load
   the identity (except for top-level ones like Screen and such).
 - maybe change Entity::Get/SetForce/Torque into Get/SetAccumulatedForce/Torque
@@ -102,6 +100,8 @@ TODO:
   quadnode needs to be fast, but now since objects only are removed/added
   when they actually change quadnodes (which is infrequent), it might be
   better to do the dumb method.
+  OR
+  implement loops using STL's for_each function.
 - make a function which ensures the objects' radius and transformations are
   calculated, so that certain sections of code (like in the physics handler)
   can just get the values directly, instead of checking if they need to be
@@ -109,12 +109,8 @@ TODO:
 - add GetIsEntity method to Object, which just checks the object subtype,
   (and does an assert on dynamic_cast'ing to an entity), then replace as
   much of the dynamic_cast'ing as possible.
-- look into wether or not the entity vector is really necessary in Engine2::World
-  once that is done, decide if the entities should be deleted from the vector,
-  or from the visibility quadtree.
 - compound editing operations: delete vertices, delete polygons, flip polygons,
   flip objects, unweld polygon vertices, clone polygons, splitting polygons
-- Label isn't working -- fix it
 - for static Create type functions for subclassable classes, see if the
   function can be templatized so that each subclass doesn't have to make
   a function that is identical except for the "new Blah" part.
@@ -126,7 +122,7 @@ TODO:
   convert everything to that, and get rid of locally tracking
   m_selected_entity_count and friends.
 - possibly make a Math::Radians namespace to contain properly typed
-  versions of the trig functions which take angles.
+  versions of the trig functions which take radian angles.
 - for overridable Widget methods, make it so that subclasses don't
   have to call anything to maintain widget functionality.
 - add DeleteSelf to Widget baseclass as a means for scheduling itself
@@ -136,19 +132,14 @@ TODO:
 - verify that when a mouse-grabbed widget is deleted, it un-mouse-grabs
 - verify that focusing a widget contained in a widget with m_accepts_focus
   set to false will not change the focus line.
-- deprecate Widget::SetScreenRect() ?
 - change the names of the vertex/compound selection functions in
   MapEditor2::ObjectLayer to indicate they only operate within the
   scope of the object selection set.
 - math-related operator overloads that are in the namespace
   Xrb should be moved out to the global namespace, so that applications
   that don't do "using namespace Xrb" can use them as well.
-- move Object::SelectionOperation and Object::TransformationMode
-  into a mapeditor2 enum header.
 - think about MapEditor2::MainWidget and if the Widget's main widget
   functionality should be renamed.
-- take the memcpy/memcmp calls out of Vector and friends (in favor of
-  the compiler vectorizing the loops).
 - it looks like Object::CalculateTransform might be unneseccary.
   check into that.
 - move Sprite::m_color_mask and Compound::m_color_mask into Object.
@@ -177,9 +168,7 @@ TODO:
   point-and-click cursor positioning, text selection, etc).
 - in map editor, make the scale/angle resetting code when changing
   transformation modes be optional.
-- make pre-cached, interpolating math functions which will be faster.
-- delay taking entities out of the quadtree unless they don't
-  belong in that node once they've moved.
+- implement FastXXXX Math functions
 - the resource instance should store the function that was created
   to create the resource data so that full correctness can be
   achieved.
@@ -201,9 +190,7 @@ TODO:
   with the requested data (to avoid having to return large structures
   by value)
 - (text) token reading in Serializer
-- change the IOE_IS_AT_END into IOE_INSUFFICIENT_AVAILABLE_DATA or
-  IOE_INSUFFICIENT_STORAGE so that the error value is the same and can
-  be used when iterating through serialization.
+- change the IOE_IS_AT_END checking for how many bytes/bits are left
 - unit test for the size of certain data types (e.g. floats are 4 bytes,
   doubles are 8, etc).
 - think of a better way to do UI event pre/processing
@@ -212,22 +199,11 @@ TODO:
 - maybe WidgetBackground should provide the FrameMargins and ContentMargins
 - make WidgetSkin properties data-driven and/or use events for the
   multiplexed functions.
-- consolidate min/max size checking code to use SizeProperties code
 - change all functions which accept a bool or int as a type of something
   or a behavior to use enums instead, to make code more self-documenting.
-- add center of gravity to EntityPropertiesPanel
-- add area to EntityPropertiesPanel
-- perhaps add linear and angular momentum to EntityPropertiesPanel
-- make some Util functions for verifying that a string is a valid
-  signed int, unsigned int, float, double, etc.
 - change dynamic_casts into static_casts where not absolutely necessary
   and put the dynamic_casts into asserts before the static_casts
 - special Vector2 ValueEdit
-- add SetText override to ValueEdit and ValueLabel
-- add value transformations to sender->receiver connections (i.e.
-  boolean negation, multiply by two, conversion from radians
-  to degrees, etc) and so that values can be converted (i.e. number
-  of objects in selection set (integer) -> is selection set empty (boolean)
 - once the game loop object is written, there should be an accessor to
   the game time, so that events that are enqueued can use that time,
   then move FrameHandler::GetMostRecentFrameTime back to being protected.
@@ -248,24 +224,12 @@ TODO:
 - add Z depth for sprites so that overlapping sprites can be correctly
   drawn in a specific ordering.  e.g. if there is a series of background
   sprites which are layered, drawing order is important.
-- use quadtrees for first-pass collision detection -- maybe use a
-  single quadtree for entities from all object layers.
-- adding-objects-into-quadtree optimization: attempt to add the moved
-  object back into the node it was at before moving.  if that fails,
-  attempt to add into the parent node, etc.
 - make all drawing functions const (if possible)
 - examine STL usage in Label, for if the cached string and the line format
   vector clear actually deletes and news stuff, or if it keeps the old array
   size after clearing
 - add smart usage of newline indexed data in Label, so that it could
   be used for very large texts
-- add some visualization tools like "stamping" a view radius,
-  which will create a circle in the world which is at the center
-  of the stamped view, with the same radius, so you can move around
-  and see how big the view was.  couple this with a quadtree
-  snapshot tool which freezes the visibility of a quadtree at
-  a particular time so you can move the view around and examine
-  what quads were in the view
 - change the 'distance culling' for sprite drawing in quadtrees
   to use a configurable setting, so that the size at which to cull
   sprites can be changed for performance

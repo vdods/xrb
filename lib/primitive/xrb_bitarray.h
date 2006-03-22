@@ -49,10 +49,10 @@ public:
         ONE = 1
     }; // end of enum BitValue
 
-    // convenient way to specify a bit array of all ones
-    static BitArray<bit_count> const ms_one;
     // convenient way to specify a bit array of all zeros
     static BitArray<bit_count> const ms_zero;
+    // convenient way to specify a bit array of all ones
+    static BitArray<bit_count> const ms_one;
 
     inline BitArray ()
     {
@@ -419,18 +419,6 @@ inline BitArray<bit_count> operator >> (
     retval >>= right_operand;
     return retval;
 }
-
-
-// this should be used in some implementation file for each unique
-// instance of BitArray<> to automatically declare the one and zero
-// vectors.
-#define BITARRAY_INSTANCE_STATIC_DEFINITIONS(bit_count) \
-/* this template <> syntax seems to be necessary because otherwise the \
-   compiler doesn't think any template parameters are specified */ \
-template <> \
-BitArray<bit_count> const BitArray<bit_count>::ms_one(BitArray::ONE); \
-template <> \
-BitArray<bit_count> const BitArray<bit_count>::ms_zero(BitArray::ZERO);
 
 } // end of namespace Xrb
 

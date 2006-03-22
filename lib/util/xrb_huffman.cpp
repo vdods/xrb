@@ -157,8 +157,6 @@ void HuffmanTreeNode::Fprint (FILE *fptr, Uint32 const indent_level) const
 // Huffman
 // ///////////////////////////////////////////////////////////////////////////
 
-BITARRAY_INSTANCE_STATIC_DEFINITIONS(256)
-
 Huffman::Huffman (Uint32 const *byte_weights)
 {
     ConstructTree(byte_weights);

@@ -836,15 +836,6 @@ protected:
     {
         m_render_background = render_background;
     }
-    /** @brief For use ONLY BY Screen.
-      * @note This is probably deprecated.
-      */
-    inline void SetScreenRect (ScreenCoordRect const &screen_rect)
-    {
-        // ensure this is a Screen object.
-        ASSERT1(m_parent == NULL)
-        m_screen_rect = screen_rect;
-    }
 
     /** @brief Called only by Widget and Screen after they get a WidgetSkin.
       */

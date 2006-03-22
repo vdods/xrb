@@ -11,6 +11,12 @@
 // this file is included from xrb_bitarray.h, inside the namespace Xrb
 
 template <Uint32 bit_count>
+BitArray<bit_count> const BitArray<bit_count>::ms_zero(ZERO);
+
+template <Uint32 bit_count>
+BitArray<bit_count> const BitArray<bit_count>::ms_one(ONE);
+
+template <Uint32 bit_count>
 void BitArray<bit_count>::Fprint (
     FILE *const fptr,
     Uint32 const chunk_size,
