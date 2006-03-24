@@ -146,5 +146,13 @@ void RadiusKnockback (
     }
 }
 
+std::string GetFormattedTimeString (Float const time)
+{
+    Uint32 game_time_seconds = static_cast<Uint32>(time);
+    Uint32 minutes = game_time_seconds / 60;
+    Uint32 seconds = game_time_seconds % 60;
+    Uint32 centiseconds = static_cast<Uint32>(100.0f * time) % 100;
+    return Util::StringPrintf("%02u:%02u.%02u", minutes, seconds, centiseconds);
+}
 
 } // end of namespace Dis

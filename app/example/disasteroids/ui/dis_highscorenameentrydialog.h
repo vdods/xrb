@@ -16,7 +16,9 @@
 #include "xrb_dialog.h"
 #include "xrb_lineedit.h"
 
-namespace Xrb
+using namespace Xrb;
+
+namespace Dis
 {
 
 class HighScoreNameEntryDialog : public Dialog
@@ -52,6 +54,6 @@ private:
     SignalReceiver1<std::string const &> m_internal_receiver_name_submitted;
 }; // end of class HighScoreNameEntryDialog
 
-} // end of namespace Xrb
+} // end of namespace Dis
 
 #endif // !defined(_DIS_HIGHSCORENAMEENTRYDIALOG_H_)

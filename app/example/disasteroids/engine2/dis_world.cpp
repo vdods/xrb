@@ -636,7 +636,7 @@ bool World::StateEndGame (StateMachineInput const input)
     return false;
 }
 
-void World::ScheduleStateMachineInput (StateMachineInput input, Float time_delay)
+void World::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
     EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));

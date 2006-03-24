@@ -13,6 +13,8 @@
 
 #include "xrb.h"
 
+#include <string>
+
 #include "dis_gameobjectreference.h"
 #include "dis_mortal.h"
 
@@ -53,7 +55,9 @@ void RadiusKnockback (
     Float power,
     Float time,
     Float frame_dt);
-    
+
+std::string GetFormattedTimeString (Float time);
+        
 } // end of namespace Dis
 
 #endif // !defined(_DIS_UTIL_H_)

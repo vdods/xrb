@@ -58,9 +58,6 @@ Master::Master (Screen *const screen)
     
     m_game_widget = NULL;
     m_game_world = NULL;
-
-    // TEMP
-    m_high_scores.Print(stderr);
 }
 
 Master::~Master ()
@@ -300,7 +297,9 @@ void Master::ActivateTitleScreen ()
     ASSERT1(m_title_screen_widget == NULL)
 
     // create a new title screen and set it as the main widget
-    m_title_screen_widget = new TitleScreenWidget(m_screen);
+    // TODO: think of way to determine if the high scores should be displayed immediately
+    m_title_screen_widget = new TitleScreenWidget(false, m_screen);
+    m_title_screen_widget->SetHighScores(m_high_scores);
     m_screen->SetMainWidget(m_title_screen_widget);
     
     // hook up the necessary signals

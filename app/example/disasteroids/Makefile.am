@@ -2,7 +2,6 @@ bin_PROGRAMS = \
     disasteroids
 
 disasteroids_SOURCES = \
-    dis_highscores.cpp \
     dis_main.cpp \
     dis_master.cpp \
     dis_resourcecache.cpp \
@@ -10,6 +9,7 @@ disasteroids_SOURCES = \
     engine2/dis_physicshandler.cpp \
     engine2/dis_world.cpp \
     game/dis_gameobject.cpp \
+    game/dis_highscores.cpp \
     game/dis_item.cpp \
     game/dis_spawn.cpp \
     game/dis_util.cpp \
@@ -35,6 +35,7 @@ disasteroids_SOURCES = \
     game/items/dis_weapon.cpp \
     ui/dis_gamewidget.cpp \
     ui/dis_highscorenameentrydialog.cpp \
+    ui/dis_highscoreswidget.cpp \
     ui/dis_inventorybutton.cpp \
     ui/dis_inventorypanel.cpp \
     ui/dis_optionspanel.cpp \
@@ -45,7 +46,6 @@ disasteroids_SOURCES = \
 noinst_HEADERS = \
     dis_enums.h \
     dis_events.h \
-    dis_highscores.h \
     dis_master.h \
     dis_resourcecache.h \
     engine2/dis_areatracelist.h \
@@ -56,6 +56,7 @@ noinst_HEADERS = \
     engine2/dis_world.h \
     game/dis_gameobject.h \
     game/dis_gameobjectreference.h \
+    game/dis_highscores.h \
     game/dis_item.h \
     game/dis_spawn.h \
     game/dis_util.h \
@@ -82,6 +83,7 @@ noinst_HEADERS = \
     game/items/dis_weapon.h \
     ui/dis_gamewidget.h \
     ui/dis_highscorenameentrydialog.h \
+    ui/dis_highscoreswidget.h \
     ui/dis_inventorybutton.h \
     ui/dis_inventorypanel.h \
     ui/dis_optionspanel.h \

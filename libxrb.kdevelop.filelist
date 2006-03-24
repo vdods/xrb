@@ -7,8 +7,6 @@ app/Makefile.am
 app/example/disasteroids/Makefile.am
 app/example/disasteroids/dis_enums.h
 app/example/disasteroids/dis_events.h
-app/example/disasteroids/dis_highscores.cpp
-app/example/disasteroids/dis_highscores.h
 app/example/disasteroids/dis_main.cpp
 app/example/disasteroids/dis_master.cpp
 app/example/disasteroids/dis_master.h
@@ -28,6 +26,8 @@ app/example/disasteroids/engine2/dis_world_events.h
 app/example/disasteroids/game/dis_gameobject.cpp
 app/example/disasteroids/game/dis_gameobject.h
 app/example/disasteroids/game/dis_gameobjectreference.h
+app/example/disasteroids/game/dis_highscores.cpp
+app/example/disasteroids/game/dis_highscores.h
 app/example/disasteroids/game/dis_item.cpp
 app/example/disasteroids/game/dis_item.h
 app/example/disasteroids/game/dis_powereddevice.h

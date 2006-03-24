@@ -27,7 +27,7 @@ public:
     // custom event types
     enum
     {
-        // World events
+        // StateMachine-related event(s)
         STATE_MACHINE_INPUT = 0,
         // Master events
         ACTIVATE_TITLE_SCREEN,

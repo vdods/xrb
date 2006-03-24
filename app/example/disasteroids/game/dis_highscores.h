@@ -100,9 +100,14 @@ public:
     };
 
     HighScores ();
+    HighScores (HighScores const &high_scores);
     ~HighScores ();
 
+    void operator = (HighScores const &high_scores);
+    
     bool GetIsNewHighScore (Score const &score);
+    Score const &GetBestPointsScore (Uint32 index) const;
+    Score const &GetBestTimeAliveScore (Uint32 index) const;
 
     void AddScore (Score const &score);
 

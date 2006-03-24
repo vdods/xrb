@@ -10,6 +10,8 @@
 
 #include "dis_highscores.h"
 
+#include "dis_util.h"
+
 using namespace Xrb;
 
 namespace Dis
@@ -26,8 +28,20 @@ HighScores::HighScores ()
     }
 }
 
+HighScores::HighScores (HighScores const &high_scores)
+{
+    m_best_points_score_set = high_scores.m_best_points_score_set;
+    m_best_time_alive_score_set = high_scores.m_best_time_alive_score_set;
+}
+
 HighScores::~HighScores ()
 {
+}
+
+void HighScores::operator = (HighScores const &high_scores)
+{
+    m_best_points_score_set = high_scores.m_best_points_score_set;
+    m_best_time_alive_score_set = high_scores.m_best_time_alive_score_set;
 }
 
 bool HighScores::GetIsNewHighScore (Score const &score)
@@ -53,6 +67,30 @@ bool HighScores::GetIsNewHighScore (Score const &score)
 
     // otherwise not
     return false;
+}
+
+Score const &HighScores::GetBestPointsScore (Uint32 index) const
+{
+    BestPointsScoreSetConstIterator it = m_best_points_score_set.begin();
+    while (index > 0)
+    {
+        --index;
+        ++it;
+        ASSERT1(it != m_best_points_score_set.end());
+    }
+    return *it;
+}
+
+Score const &HighScores::GetBestTimeAliveScore (Uint32 index) const
+{
+    BestTimeAliveScoreSetConstIterator it = m_best_time_alive_score_set.begin();
+    while (index > 0)
+    {
+        --index;
+        ++it;
+        ASSERT1(it != m_best_time_alive_score_set.end());
+    }
+    return *it;
 }
 
 void HighScores::AddScore (Score const &score)
@@ -92,19 +130,13 @@ void HighScores::Print (FILE *const fptr) const
          ++it)
     {
         Score const &score = *it;
-        Uint32 game_time_seconds = static_cast<Uint32>(score.GetTimeAlive());
-        Uint32 minutes_alive = game_time_seconds / 60;
-        Uint32 seconds_alive = game_time_seconds % 60;
-        Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * score.GetTimeAlive()) % 100;
         fprintf(
             fptr,
-            "#%2u - %40s - %10u - %02u:%02u.%02u\n",
+            "#%2u - %40s - %s - %10u\n",
             position++,
             score.GetName().c_str(),
-            score.GetPoints(),
-            minutes_alive,
-            seconds_alive,
-            centiseconds_alive);
+            GetFormattedTimeString(score.GetTimeAlive()).c_str(),
+            score.GetPoints());
     }
     fprintf(fptr, "\n");
     
@@ -116,18 +148,12 @@ void HighScores::Print (FILE *const fptr) const
          ++it)
     {
         Score const &score = *it;
-        Uint32 game_time_seconds = static_cast<Uint32>(score.GetTimeAlive());
-        Uint32 minutes_alive = game_time_seconds / 60;
-        Uint32 seconds_alive = game_time_seconds % 60;
-        Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * score.GetTimeAlive()) % 100;
         fprintf(
             fptr,
-            "#%2u - %40s - %02u:%02u.%02u - %10u\n",
+            "#%2u - %40s - %s - %10u\n",
             position++,
             score.GetName().c_str(),
-            minutes_alive,
-            seconds_alive,
-            centiseconds_alive,
+            GetFormattedTimeString(score.GetTimeAlive()).c_str(),
             score.GetPoints());
     }
     fprintf(fptr, "\n");

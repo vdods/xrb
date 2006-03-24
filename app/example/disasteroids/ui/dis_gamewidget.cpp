@@ -15,6 +15,7 @@
 #include "dis_playership.h"
 #include "dis_progressbar.h"
 #include "dis_shield.h"
+#include "dis_util.h"
 #include "dis_weapon.h"
 #include "dis_world.h"
 #include "dis_worldview.h"
@@ -463,16 +464,7 @@ void GameWidget::SetTimeAlive (Float const time_alive)
 
 void GameWidget::UpdateTimeAliveLabel ()
 {
-    Uint32 game_time_seconds = static_cast<Uint32>(m_time_alive);
-    Uint32 minutes_alive = game_time_seconds / 60;
-    Uint32 seconds_alive = game_time_seconds % 60;
-    Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * m_time_alive) % 100;
-    m_time_alive_label->SetText(
-        Util::StringPrintf(
-            "%02u:%02u.%02u",
-            minutes_alive,
-            seconds_alive,
-            centiseconds_alive));
+    m_time_alive_label->SetText(GetFormattedTimeString(m_time_alive));
 }
 
 } // end of namespace Dis

@@ -232,6 +232,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\dis_highscores.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\dis_highscores.h"
+				>
+			</File>
+			<File
 				RelativePath=".\game\dis_item.cpp"
 				>
 			</File>
@@ -444,6 +452,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ui\dis_highscoreswidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ui\dis_highscoreswidget.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ui\dis_inventorybutton.cpp"
 				>
 			</File>
@@ -498,14 +514,6 @@
 		</File>
 		<File
 			RelativePath=".\dis_events.h"
-			>
-		</File>
-		<File
-			RelativePath=".\dis_highscores.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\dis_highscores.h"
 			>
 		</File>
 		<File

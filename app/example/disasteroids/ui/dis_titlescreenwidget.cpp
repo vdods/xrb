@@ -10,10 +10,13 @@
 
 #include "dis_titlescreenwidget.h"
 
+#include "dis_events.h"
+#include "dis_highscoreswidget.h"
 #include "dis_optionspanel.h"
 #include "xrb_button.h"
 #include "xrb_cellpaddingwidget.h"
 #include "xrb_dialog.h"
+#include "xrb_eventqueue.h"
 #include "xrb_label.h"
 #include "xrb_layout.h"
 #include "xrb_widgetbackground.h" // TEMP
@@ -24,9 +27,10 @@ using namespace Xrb;
 namespace Dis
 {
 
-TitleScreenWidget::TitleScreenWidget (Widget *const parent)
+TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, Widget *const parent)
     :
     Widget(parent, "TitleScreenWidget"),
+    m_state_machine(this),
     m_internal_receiver_go_to_options(&TitleScreenWidget::GoToOptions, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
@@ -46,18 +50,11 @@ TitleScreenWidget::TitleScreenWidget (Widget *const parent)
     m_game_widget_dummy->SetFontHeightRatio(0.10f);
     m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
 
-    m_high_scores_widget_dummy =
-        new Label(
-            "high scores widget\n"
-            "high scores widget\n"
-            "high scores widget\n"
-            "high scores widget\n"
-            "high scores widget\n"
-            "high scores widget\n"
-            "high scores widget\n",
-            center_panel_widget_stack,
-            "high scores widget dummy");
-    m_high_scores_widget_dummy->Hide();
+    CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget(center_panel_widget_stack, "high scores padding widget");
+    
+    m_high_scores_widget = new HighScoresWidget(high_scores_padding_widget);
+    m_high_scores_widget->Hide();
+    m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
 
     Layout *stuff_layout = new Layout(VERTICAL, main_layout, "stuff layout");
     stuff_layout->FixHeightRatio(0.20f);
@@ -99,10 +96,17 @@ TitleScreenWidget::TitleScreenWidget (Widget *const parent)
     SignalHandler::Connect0(
         m_options_button->SenderReleased(),
         &m_internal_receiver_go_to_options);
+
+    // initialize the state machine
+    m_state_machine.Initialize(
+        immediately_show_high_scores ?
+        &TitleScreenWidget::StateDisplayBestPointsHighScores :
+        &TitleScreenWidget::StateGameDemo);
 }
 
 TitleScreenWidget::~TitleScreenWidget ()
 {
+    m_state_machine.Shutdown();
 }
 
 SignalSender0 const *TitleScreenWidget::SenderStartGame ()
@@ -121,11 +125,143 @@ void TitleScreenWidget::GoToOptions ()
 {
     Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
     // TODO: save this OptionsPanel for later retreival of the options
-    OptionsPanel *options_panel = new OptionsPanel(options_dialog->GetDialogLayout());
+/*    OptionsPanel *options_panel =*/ new OptionsPanel(options_dialog->GetDialogLayout());
     // TODO: hook up the dialog result signal
     options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
     options_dialog->CenterOnWidget(options_dialog->GetParent());
 }
+
+bool TitleScreenWidget::ProcessEventOverride (Event const *const e)
+{
+    ASSERT1(e != NULL)
+
+    Widget::ProcessEventOverride(e);
+    
+    if (e->GetType() == Event::CUSTOM)
+    {
+        EventBase const *dis_event = DStaticCast<EventBase const *>(e);
+        switch (dis_event->GetCustomType())
+        {
+            case EventBase::STATE_MACHINE_INPUT:
+                m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
+                break;
+    
+            default:
+                ASSERT1(false && "Unhandled custom event")
+                break;
+        }
+        return true;
+    }
+
+    return true;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// begin state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
+
+#define STATE_MACHINE_STATUS(state_name) \
+    if (input == SM_ENTER) \
+        fprintf(stderr, "TitleScreenWidget: --> " state_name "\n"); \
+    else if (input == SM_EXIT) \
+        fprintf(stderr, "TitleScreenWidget: <-- " state_name "\n"); \
+    else \
+        fprintf(stderr, "TitleScreenWidget: input: %u\n", input);
+
+#define TRANSITION_TO(x) m_state_machine.RequestStateTransition(&TitleScreenWidget::x)
+
+bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateGameDemo")
+    ASSERT1(m_high_scores_widget->GetIsHidden())
+    switch (input)
+    {
+        case SM_ENTER:
+            ScheduleStateMachineInput(IN_TIME_OUT, 20.0f);
+            return true;
+
+        case IN_TIME_OUT:
+            TRANSITION_TO(StateDisplayBestPointsHighScores);
+            return true;
+    }
+    return false;
+}
+
+bool TitleScreenWidget::StateDisplayBestPointsHighScores (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateDisplayBestPointsHighScores")
+    switch (input)
+    {
+        case SM_ENTER:
+            ASSERT1(m_high_scores_widget->GetIsHidden())
+            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_POINTS);
+            m_high_scores_widget->Show();
+            ScheduleStateMachineInput(IN_TIME_OUT, 10.0f);
+            return true;
+
+        case IN_TIME_OUT:
+            ASSERT1(!m_high_scores_widget->GetIsHidden())
+            m_high_scores_widget->Hide();
+            TRANSITION_TO(StatePauseBetweenHighScores);
+            return true;
+    }
+    return false;
+}
+
+bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StatePauseBetweenHighScores")
+    ASSERT1(m_high_scores_widget->GetIsHidden())
+    switch (input)
+    {
+        case SM_ENTER:
+            ScheduleStateMachineInput(IN_TIME_OUT, 1.0f);
+            return true;
+
+        case IN_TIME_OUT:
+            TRANSITION_TO(StateDisplayBestTimeAliveHighScores);
+            return true;
+    }
+    return false;
+}
+
+bool TitleScreenWidget::StateDisplayBestTimeAliveHighScores (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateDisplayBestTimeAliveHighScores")
+    switch (input)
+    {
+        case SM_ENTER:
+            ASSERT1(m_high_scores_widget->GetIsHidden())
+            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_TIME_ALIVE);
+            m_high_scores_widget->Show();
+            ScheduleStateMachineInput(IN_TIME_OUT, 10.0f);
+            return true;
+
+        case IN_TIME_OUT:
+            ASSERT1(!m_high_scores_widget->GetIsHidden())
+            m_high_scores_widget->Hide();
+            TRANSITION_TO(StateGameDemo);
+            return true;
+    }
+    return false;
+}
+
+void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
+{
+    CancelScheduledStateMachineInput();
+    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+}
+
+void TitleScreenWidget::CancelScheduledStateMachineInput ()
+{
+    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+        MatchCustomType,
+        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// end state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
 
 } // end of namespace Dis
 

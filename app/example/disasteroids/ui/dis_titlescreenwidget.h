@@ -13,6 +13,9 @@
 
 #include "xrb_widget.h"
 
+#include "dis_highscores.h"
+#include "xrb_statemachine.h"
+
 using namespace Xrb;
 
 namespace Xrb
@@ -24,28 +27,61 @@ class Button;
 namespace Dis
 {
 
+class HighScoresWidget;
+
 class TitleScreenWidget : public Widget
 {
 public:
 
-    TitleScreenWidget (Widget *parent);
+    TitleScreenWidget (bool immediately_show_high_scores, Widget *parent);
     virtual ~TitleScreenWidget ();
 
     SignalSender0 const *SenderStartGame ();
     SignalSender0 const *SenderQuitGame ();
     
     void GoToOptions ();
+
+    void SetHighScores (HighScores const &high_scores)
+    {
+        m_high_scores = high_scores;
+    }
+
+protected:
+
+    bool ProcessEventOverride (Event const *e);
     
 private:
+
+    // ///////////////////////////////////////////////////////////////////////
+    // begin state machine stuff
+
+    enum
+    {
+        IN_TIME_OUT = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+    };
+
+    bool StateGameDemo (StateMachineInput);
+    bool StateDisplayBestPointsHighScores (StateMachineInput);
+    bool StatePauseBetweenHighScores (StateMachineInput);
+    bool StateDisplayBestTimeAliveHighScores (StateMachineInput);
+
+    void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
+    void CancelScheduledStateMachineInput ();
+
+    StateMachine<TitleScreenWidget> m_state_machine;
+    
+    // end state machine stuff
+    // ///////////////////////////////////////////////////////////////////////
 
     Label *m_logo_label;
     // TODO: this should be a GameWidget
     Label *m_game_widget_dummy;
-    // TODO: this should be a HighScoresWidget
-    Label *m_high_scores_widget_dummy;
+    HighScoresWidget *m_high_scores_widget;
     Button *m_start_button;
     Button *m_options_button;
     Button *m_quit_button;
+
+    HighScores m_high_scores;
 
     SignalReceiver0 m_internal_receiver_go_to_options;
 }; // end of class TitleScreenWidget

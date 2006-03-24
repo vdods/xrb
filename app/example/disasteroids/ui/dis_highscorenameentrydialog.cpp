@@ -10,12 +10,15 @@
 
 #include "dis_highscorenameentrydialog.h"
 
+#include "dis_util.h"
 #include "xrb_label.h"
 #include "xrb_layout.h"
 #include "xrb_lineedit.h"
 #include "xrb_util.h"
 
-namespace Xrb
+using namespace Xrb;
+
+namespace Dis
 {
 
 HighScoreNameEntryDialog::HighScoreNameEntryDialog (
@@ -33,17 +36,7 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (
 
         Layout *score_layout = new Layout(HORIZONTAL, main_layout);
         {
-            Uint32 game_time_seconds = static_cast<Uint32>(time_alive);
-            Uint32 minutes_alive = game_time_seconds / 60;
-            Uint32 seconds_alive = game_time_seconds % 60;
-            Uint32 centiseconds_alive = static_cast<Uint32>(100.0f * time_alive) % 100;
-            new Label(
-                Util::StringPrintf(
-                    "%02u:%02u.%02u",
-                    minutes_alive,
-                    seconds_alive,
-                    centiseconds_alive),
-                score_layout);
+            new Label(GetFormattedTimeString(time_alive), score_layout);
     
             new Label(Util::StringPrintf("%u", points), score_layout);
         }
@@ -76,4 +69,4 @@ void HighScoreNameEntryDialog::InternalNameSubmitted (std::string const &name)
     OKButtonActivated();
 }
 
-} // end of namespace Xrb
+} // end of namespace Dis
