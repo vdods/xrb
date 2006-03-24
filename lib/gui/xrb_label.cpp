@@ -123,6 +123,13 @@ void Label::SetIsHeightFixedToTextHeight (
     SetIsMaxHeightFixedToTextHeight(is_height_fixed_to_text_height);
 }
 
+void Label::SetIsSizeFixedToTextSize (
+    bool const is_size_fixed_to_text_size)
+{
+    SetIsWidthFixedToTextWidth(is_size_fixed_to_text_size);
+    SetIsHeightFixedToTextHeight(is_size_fixed_to_text_size);
+}
+
 void Label::SetText (std::string const &text)
 {
     m_text = text;

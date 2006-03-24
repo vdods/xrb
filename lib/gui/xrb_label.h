@@ -200,6 +200,7 @@ public:
     void SetIsMinHeightFixedToTextHeight (bool is_min_height_fixed_to_text_height);
     void SetIsMaxHeightFixedToTextHeight (bool is_max_height_fixed_to_text_height);
     void SetIsHeightFixedToTextHeight (bool is_height_fixed_to_text_height);
+    void SetIsSizeFixedToTextSize (bool is_size_fixed_to_text_size);
     virtual void SetText (std::string const &text);
     virtual void SetTextColor (Color const &color);
     void SetAlignment (Alignment2 const &alignment);
