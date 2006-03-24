@@ -139,6 +139,8 @@ void WidgetStack::AttachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::DetachChild (Widget *const child)
@@ -152,6 +154,8 @@ void WidgetStack::DetachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
@@ -163,8 +167,13 @@ void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propogate the call up to this widget's parent
+    // propagate the call up to this widget's parent
     ParentChildSizePropertiesUpdate(false);
+}
+
+void WidgetStack::UpdateRenderBackground ()
+{
+    SetRenderBackground(NULL);
 }
 
 void WidgetStack::ResizeAndRepositionChildWidgets ()

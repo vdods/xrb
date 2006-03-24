@@ -73,6 +73,8 @@ protected:
 
     virtual void ChildSizePropertiesChanged (Widget *child);
 
+    virtual void UpdateRenderBackground ();
+
 private:
 
     // given the delegated column widths and row heights, resize the

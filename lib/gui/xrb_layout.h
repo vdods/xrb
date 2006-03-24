@@ -165,6 +165,8 @@ protected:
         Widget *child,
         StackPriority previous_stack_priority);
 
+    virtual void UpdateRenderBackground ();
+
 private:
 
     static int SizePropertiesSortingFunction (

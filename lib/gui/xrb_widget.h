@@ -954,7 +954,7 @@ protected:
       */
     virtual void RemoveModalWidget (Widget *modal_widget);
     /** Only used by container widgets that control the size and position
-      * if its child widgets.
+      * if their child widgets.
       * @brief Used to make sure this widget's min/max size constraints
       *        are consistent with those of its contained child widgets.
       */

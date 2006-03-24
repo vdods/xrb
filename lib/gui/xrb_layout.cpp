@@ -354,6 +354,8 @@ void Layout::AttachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::DetachChild (Widget *const child)
@@ -369,6 +371,8 @@ void Layout::DetachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildDown (Widget *const child)
@@ -385,6 +389,8 @@ void Layout::MoveChildDown (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildUp (Widget *const child)
@@ -401,6 +407,8 @@ void Layout::MoveChildUp (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildToBottom (Widget *const child)
@@ -417,6 +425,8 @@ void Layout::MoveChildToBottom (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildToTop (Widget *const child)
@@ -433,6 +443,8 @@ void Layout::MoveChildToTop (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
+    // propagate the changes up to the parent
+    ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::HandleChangedWidgetSkinMargins (
@@ -473,7 +485,7 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propogate the call up to this widget's parent
+    // propagate the call up to this widget's parent
     ParentChildSizePropertiesUpdate(false);
 }
 
@@ -492,8 +504,13 @@ void Layout::ChildStackPriorityChanged (
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propogate the call up to this widget's parent
+    // propagate the call up to this widget's parent
     ParentChildSizePropertiesUpdate(false);
+}
+
+void Layout::UpdateRenderBackground ()
+{
+    SetRenderBackground(NULL);
 }
 
 int Layout::SizePropertiesSortingFunction (
@@ -501,13 +518,6 @@ int Layout::SizePropertiesSortingFunction (
     SizeProperties const *const properties_b,
     Uint32 const index)
 {
-    // column/row ordering heuristic
-    // 1. max size enabled with max size < allotment,
-    //    preferring smaller max sizes
-    // 2. min size enabled with min size > allotment,
-    //    preferring larger min sizes
-    // 3. the rest
-
     ASSERT1(index <= 1)
     ASSERT1(properties_a != NULL)
     ASSERT1(properties_b != NULL)
@@ -516,47 +526,51 @@ int Layout::SizePropertiesSortingFunction (
     ASSERT1(properties_a->m_data == properties_b->m_data)
     ScreenCoord size_allotment = *properties_a->m_data;
 
-    // check if the (enabled) max sizes are below the size allotment,
-    // preferring smaller max sizes over larger ones.
-    if (properties_a->m_max_size_enabled[index] &&
-        properties_a->m_max_size[index] < size_allotment)
+    if (properties_a->m_max_size_enabled[index] && properties_a->m_max_size[index] < size_allotment)
     {
-        if (properties_b->m_max_size_enabled[index] &&
-            properties_b->m_max_size[index] < size_allotment)
-            // this should return < 0 if a is smaller than b,
-            // 0 if a is equal to b, and > 0 if a is larger than b.
+        if (properties_b->m_max_size_enabled[index] && properties_b->m_max_size[index] < size_allotment)
+        {
+            // take the one with a smaller max size
             return properties_a->m_max_size[index] - properties_b->m_max_size[index];
+        }
         else
+        {
+            // take a before b
             return -1;
+        }
     }
     else
     {
-        if (properties_b->m_max_size_enabled[index] &&
-            properties_b->m_max_size[index] < size_allotment)
+        if (properties_b->m_max_size_enabled[index] && properties_b->m_max_size[index] < size_allotment)
+        {
+            // take b before a
             return 1;
+        }
     }
 
-    // check if the (enabled) min sizes are above the size allotment,
-    // preferring larger min sizes over smaller ones.
-    if (properties_a->m_min_size_enabled[index] &&
-        properties_a->m_min_size[index] > size_allotment)
+    if (properties_a->m_min_size_enabled[index] && properties_a->m_min_size[index] > size_allotment)
     {
-        if (properties_b->m_min_size_enabled[index] &&
-            properties_b->m_min_size[index] > size_allotment)
-            // this should return > 0 if a is smaller than b,
-            // 0 if a is equal to b, and < 0 if a is larger than b.
+        if (properties_b->m_min_size_enabled[index] && properties_b->m_min_size[index] > size_allotment)
+        {
+            // take the one with a larger min size
             return properties_b->m_min_size[index] - properties_a->m_min_size[index];
+        }
         else
+        {
+            // take a before b
             return -1;
+        }
     }
     else
     {
-        if (properties_b->m_min_size_enabled[index] &&
-            properties_b->m_min_size[index] > size_allotment)
+        if (properties_b->m_min_size_enabled[index] && properties_b->m_min_size[index] > size_allotment)
+        {
+            // take b before a
             return 1;
+        }
     }
 
-    // otherwise there's no preference
+    // neither a nor b have priority.
     return 0;
 }
 
@@ -611,11 +625,9 @@ void Layout::DelegateWidthsToColumns ()
     // must split up the total width among the columns
     ASSERT1(m_hidden_column_count == GetColumnCount() - unhidden_column_count)
     ScreenCoord total_width_left = GetWidth() - GetTotalSpacing()[Dim::X];
-    // make sure total_width_left is not negative
-    if (total_width_left < 0)
-        total_width_left = 0;
+    ASSERT1(total_width_left >= 0)
 
-    // sort the array m_column_count times (to delegate the same number of widths)
+    // sort the array unhidden_column_count times (to delegate the same number of widths)
     for (Uint32 i = 0; i < unhidden_column_count; ++i)
     {
         m_line_share_of_size[Dim::X] = total_width_left / (unhidden_column_count - i);
@@ -667,11 +679,9 @@ void Layout::DelegateHeightsToRows ()
     // must split up the total height among the rows
     ASSERT1(m_hidden_row_count == GetRowCount() - unhidden_row_count)
     ScreenCoord total_height_left = GetHeight() - GetTotalSpacing()[Dim::Y];
-    // make sure total_height_left is not negative
-    if (total_height_left < 0)
-        total_height_left = 0;
-
-    // sort the array m_row_count times (to delegate the same number of heights)
+    ASSERT1(total_height_left >= 0)
+    
+    // sort the array unhidden_row_count times (to delegate the same number of heights)
     for (Uint32 i = 0; i < unhidden_row_count; ++i)
     {
         m_line_share_of_size[Dim::Y] = total_height_left / (unhidden_row_count - i);
@@ -1095,15 +1105,16 @@ void Layout::UpdateContentsSizeProperties () const
 
     m_contents_size_properties_need_update = false;
 
-    // initialize the min size properties
-    m_contents_size_properties.m_min_size_enabled = Bool2(false, false);
-    m_contents_size_properties.m_min_size = ScreenCoordVector2::ms_zero;
+    // initialize the min size properties, considering the total spacing
+    m_contents_size_properties.m_min_size_enabled =
+        Bool2(GetTotalSpacing()[Dim::X] > 0, GetTotalSpacing()[Dim::Y] > 0);
+    m_contents_size_properties.m_min_size = GetTotalSpacing();
 
-    // initialize the max size properties enabled
+    // initialize the max size properties, considering the total spacing
     m_contents_size_properties.m_max_size_enabled =
         Bool2(GetColumnCount() - m_hidden_column_count > 0,
               GetRowCount() - m_hidden_row_count > 0);
-    m_contents_size_properties.m_max_size = ScreenCoordVector2::ms_zero;
+    m_contents_size_properties.m_max_size = GetTotalSpacing();
 
     // horizontal using columns
     for (Uint32 i = 0; i < GetColumnCount(); ++i)

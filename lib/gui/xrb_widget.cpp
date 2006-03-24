@@ -421,8 +421,8 @@ void Widget::SetIsModal (bool const is_modal)
             m_is_modal = true;
             AddModalWidget(this);
         }
-        
-        m_parent->ChildSizePropertiesChanged(this);
+
+        ParentChildSizePropertiesUpdate(false);        
     }
 }
 
@@ -669,11 +669,7 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 
         // range checking
         SizeRangeAdjustment(&m_screen_rect);
-        // check it against the minimum size
-        AdjustFromMinSize(&m_screen_rect);
-        // check it against the maximum size
-        AdjustFromMaxSize(&m_screen_rect);
-
+        // indicate to the parent that a child has changed size properties
         ParentChildSizePropertiesUpdate(false);
     }
 
@@ -989,7 +985,7 @@ void Widget::ToggleIsHidden ()
         Unfocus();
 
     if (!GetIsModal())
-        m_parent->ChildSizePropertiesChanged(this);
+        ParentChildSizePropertiesUpdate(false);
 }
 
 void Widget::SetIsHidden (bool const is_hidden)
@@ -1270,54 +1266,61 @@ void Widget::RemoveModalWidget (Widget *const modal_widget)
 
 void Widget::CalculateMinAndMaxSizePropertiesFromContents ()
 {
-    for (Uint8 i = 0; i < 2; ++i)
+    // iterate over X and Y dimensions
+    for (Uint8 d = 0; d < 2; ++d)
     {
-        // calculate the min size enabled property
-        m_size_properties.m_min_size_enabled[i] =
-            GetContentsMinSizeEnabled()[i] ||
-            m_preferred_size_properties.m_min_size_enabled[i];
-        // calculate the actual min size
-        if (GetContentsMinSizeEnabled()[i])
         {
-            if (m_preferred_size_properties.m_min_size_enabled[i])
-                m_size_properties.m_min_size[i] =
-                    Max(GetContentsMinSize()[i],
-                        m_preferred_size_properties.m_min_size[i]);
+            bool contents_min_size_enabled = GetContentsMinSizeEnabled()[d];
+            // calculate the min size enabled property
+            m_size_properties.m_min_size_enabled[d] =
+                contents_min_size_enabled ||
+                m_preferred_size_properties.m_min_size_enabled[d];
+            // calculate the actual min size
+            if (contents_min_size_enabled)
+            {
+                if (m_preferred_size_properties.m_min_size_enabled[d])
+                    m_size_properties.m_min_size[d] =
+                        Max(GetContentsMinSize()[d],
+                            m_preferred_size_properties.m_min_size[d]);
+                else
+                    m_size_properties.m_min_size[d] = GetContentsMinSize()[d];
+            }
             else
-                m_size_properties.m_min_size[i] = GetContentsMinSize()[i];
-        }
-        else
-        {
-            if (m_preferred_size_properties.m_min_size_enabled[i])
-                m_size_properties.m_min_size[i] =
-                    m_preferred_size_properties.m_min_size[i];
-            else
-                m_size_properties.m_min_size[i] =
-                    SizeProperties::GetDefaultMinSizeComponent();
+            {
+                if (m_preferred_size_properties.m_min_size_enabled[d])
+                    m_size_properties.m_min_size[d] =
+                        m_preferred_size_properties.m_min_size[d];
+                else
+                    m_size_properties.m_min_size[d] =
+                        SizeProperties::GetDefaultMinSizeComponent();
+            }
         }
 
-        // calculate the max size enabled property
-        m_size_properties.m_max_size_enabled[i] =
-            GetContentsMaxSizeEnabled()[i] ||
-            m_preferred_size_properties.m_max_size_enabled[i];
-        // calculate the actual max size
-        if (GetContentsMaxSizeEnabled()[i])
         {
-            if (m_preferred_size_properties.m_max_size_enabled[i])
-                m_size_properties.m_max_size[i] =
-                    Min(GetContentsMaxSize()[i],
-                        m_preferred_size_properties.m_max_size[i]);
+            bool contents_max_size_enabled = GetContentsMaxSizeEnabled()[d];
+            // calculate the max size enabled property
+            m_size_properties.m_max_size_enabled[d] =
+                contents_max_size_enabled ||
+                m_preferred_size_properties.m_max_size_enabled[d];
+            // calculate the actual max size
+            if (contents_max_size_enabled)
+            {
+                if (m_preferred_size_properties.m_max_size_enabled[d])
+                    m_size_properties.m_max_size[d] =
+                        Min(GetContentsMaxSize()[d],
+                            m_preferred_size_properties.m_max_size[d]);
+                else
+                    m_size_properties.m_max_size[d] = GetContentsMaxSize()[d];
+            }
             else
-                m_size_properties.m_max_size[i] = GetContentsMaxSize()[i];
-        }
-        else
-        {
-            if (m_preferred_size_properties.m_max_size_enabled[i])
-                m_size_properties.m_max_size[i] =
-                    m_preferred_size_properties.m_max_size[i];
-            else
-                m_size_properties.m_max_size[i] =
-                    SizeProperties::GetDefaultMaxSizeComponent();
+            {
+                if (m_preferred_size_properties.m_max_size_enabled[d])
+                    m_size_properties.m_max_size[d] =
+                        m_preferred_size_properties.m_max_size[d];
+                else
+                    m_size_properties.m_max_size[d] =
+                        SizeProperties::GetDefaultMaxSizeComponent();
+            }
         }
     }
 
