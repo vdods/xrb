@@ -978,11 +978,16 @@ void Widget::ToggleIsHidden ()
 {
     ASSERT0(m_parent != NULL && "You can't show or hide a top-level widget!")
 
+    // if the widget is being hidden, then it should be
+    // unfocused and mouseover-off'ed
+    if (!m_is_hidden)
+    {
+        Unfocus();
+        MouseoverOff();
+    }
+    
     m_is_hidden = !m_is_hidden;
 
-    // if the widget is being hidden, then it should be unfocused
-    if (!m_is_hidden)
-        Unfocus();
 
     if (!GetIsModal())
         ParentChildSizePropertiesUpdate(false);
