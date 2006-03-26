@@ -275,7 +275,7 @@ MapEditor2::MainWidget::MainWidget (
 
     // temp
     WorldView *world_view = new WorldView(GetWorldViewWidget());
-    World *world = World::CreateEmpty(GetOwnerEventQueue());
+    World *world = World::CreateEmpty();
     world->AttachWorldView(world_view);
     SetMapEditorWorldView(world_view);
     
@@ -312,7 +312,7 @@ void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &filename)
 
     BinaryFileSerializer serializer;
     serializer.Open(filename.c_str(), "rb");
-    World *map_editor_world = World::Create(serializer, GetOwnerEventQueue());
+    World *map_editor_world = World::Create(serializer);
     serializer.Close();
 
     WorldView *world_view = new WorldView(GetWorldViewWidget());
@@ -575,7 +575,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 
             WorldView *world_view = new WorldView(GetWorldViewWidget());
-            World *world = World::CreateEmpty(GetOwnerEventQueue());
+            World *world = World::CreateEmpty();
             world->AttachWorldView(world_view);
             
             SetMapEditorWorldView(world_view);

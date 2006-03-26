@@ -21,6 +21,8 @@ namespace Xrb
 // ///////////////////////////////////////////////////////////////////////////
 
 EventQueue::EventQueue ()
+    :
+    FrameHandler()
 {
     m_current_event_id = 0;
 }
@@ -51,6 +53,7 @@ void EventQueue::EnqueueEvent (
 {
     ASSERT1(event_handler != NULL)
     ASSERT1(event != NULL)
+    ASSERT1(event_handler->GetMostRecentEventTime() <= event->GetTime())
 
     // this call makes sure that we don't overflow the IDs, which is essential
     // for proper ordering of events inside the queue.

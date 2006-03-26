@@ -43,6 +43,8 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- when a modal widget is deleted or whatever, the mouseover is not being
+  properly restored on whatever the mouse is actually over.
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense

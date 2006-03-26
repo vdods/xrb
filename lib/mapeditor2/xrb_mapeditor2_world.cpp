@@ -21,16 +21,14 @@
 namespace Xrb
 {
 
-MapEditor2::World *MapEditor2::World::Create (
-    Serializer &serializer,
-    EventQueue *const owner_event_queue)
+MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 {
     ASSERT1(serializer.GetIsOpen())
     ASSERT1(serializer.GetIODirection() == IOD_READ)
 
     Uint32 entity_capacity = serializer.ReadUint32();
     ASSERT1(entity_capacity > 0)
-    World *retval = new World(owner_event_queue, entity_capacity);
+    World *retval = new World(entity_capacity);
 
     retval->Read(serializer);
     retval->m_saved_main_object_layer =
@@ -39,12 +37,10 @@ MapEditor2::World *MapEditor2::World::Create (
     return retval;
 }
 
-MapEditor2::World *MapEditor2::World::CreateEmpty (
-    EventQueue *const owner_event_queue,
-    Uint32 const entity_capacity)
+MapEditor2::World *MapEditor2::World::CreateEmpty (Uint32 const entity_capacity)
 {
     ASSERT1(entity_capacity > 0)
-    World *retval = new World(owner_event_queue, entity_capacity);
+    World *retval = new World(entity_capacity);
 
     ObjectLayer *map_editor_object_layer = 
         ObjectLayer::Create(retval, false, 1024.0, 4, 0.0);
@@ -104,12 +100,9 @@ void MapEditor2::World::RemoveObject (MapEditor2::Object *const object)
         object->GetObjectLayer()->RemoveObject(object);
 }
 
-MapEditor2::World::World (
-    EventQueue *const owner_event_queue,
-    Uint32 const entity_capacity)
+MapEditor2::World::World (Uint32 const entity_capacity)
     :
     Engine2::World(
-        owner_event_queue,
         new Engine2::PlanetaryPhysicsHandler(), // temp physics handler
         entity_capacity),
     m_sender_main_object_layer_changed(this)

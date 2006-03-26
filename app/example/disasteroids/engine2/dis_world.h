@@ -83,9 +83,7 @@ public:
 
     virtual ~World ();
 
-    static World *Create (
-        EventQueue *owner_event_queue,
-        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+    static World *Create (Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
     inline SignalSender1<Score const &> const *SenderSubmitScore () { return &m_sender_submit_score; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
@@ -111,7 +109,6 @@ public:
 protected:
 
     World (
-        EventQueue *owner_event_queue,
         Engine2::PhysicsHandler *physics_handler,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 

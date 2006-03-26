@@ -93,7 +93,7 @@ void Master::Run ()
     while (!m_is_quit_requested)
     {
         // figure out how much time to sleep before processing the next frame
-        Sint32 milliseconds_to_sleep = static_cast<Uint32>(1000.0f * (next_real_time - m_real_time));
+        Sint32 milliseconds_to_sleep = static_cast<Sint32>(1000.0f * (next_real_time - m_real_time));
         if (milliseconds_to_sleep > 0)
             SDL_Delay(milliseconds_to_sleep);
         m_real_time = 0.001f * SDL_GetTicks();
@@ -141,7 +141,7 @@ void Master::Run ()
             m_screen->ProcessEvent(event);
             Delete(event);
         }
-        
+
         // key repeater frame computations
         m_key_repeater.ProcessFrame(m_real_time);
         // dequeue and process any key repeat events generated
@@ -157,17 +157,18 @@ void Master::Run ()
         {
             Uint32 world_frame_start_time = SDL_GetTicks();
             m_game_world->ProcessFrame(m_game_time);
-            m_game_world_event_queue.ProcessFrame(m_game_time);
             world_frame_time = SDL_GetTicks() - world_frame_start_time;
         }
         
-        // screen frame
+        // gui frame
         {
             Uint32 gui_frame_start_time = SDL_GetTicks();
             // process events from the gui event queue
             m_gui_event_queue->ProcessFrame(m_real_time);
             // frame computations for the UI/view system
             m_screen->ProcessFrame(m_real_time);
+            // process events from the gui event queue again
+            m_gui_event_queue->ProcessFrame(m_real_time);
             gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
         }
         
@@ -328,7 +329,7 @@ void Master::ActivateGame ()
     ASSERT1(m_title_screen_widget == NULL)
 
     // create the game world
-    m_game_world = World::Create(&m_game_world_event_queue);
+    m_game_world = World::Create();
     // create the game widget
     m_game_widget = new GameWidget(m_game_world, m_screen);
     // set it as the main widget

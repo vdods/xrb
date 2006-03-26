@@ -32,13 +32,9 @@ namespace MapEditor2
         virtual ~World () { }
     
         // creates a World by reading from the given serializer
-        static World *Create (
-            Serializer &serializer,
-            EventQueue *owner_event_queue);
+        static World *Create (Serializer &serializer);
         // creates an empty World
-        static World *CreateEmpty (
-            EventQueue *owner_event_queue,
-            Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+        static World *CreateEmpty (Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
     
         void IncrementMainObjectLayer ();
         void DecrementMainObjectLayer ();
@@ -72,7 +68,7 @@ namespace MapEditor2
     
     protected:
 
-        World (EventQueue *owner_event_queue, Uint32 entity_capacity);
+        World (Uint32 entity_capacity);
         
         virtual Uint32 GetMainObjectLayerIndex () const;
     

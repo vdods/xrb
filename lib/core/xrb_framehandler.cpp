@@ -15,22 +15,17 @@ namespace Xrb
 
 FrameHandler::FrameHandler ()
 {
-    ResetFrameHandler();
-}
-
-FrameHandler::~FrameHandler ()
-{
-    ASSERT1(m_lock == 0 && "Do not delete a FrameHandler while processing a frame")
-}
-
-void FrameHandler::ResetFrameHandler ()
-{
     m_most_recent_time = -1.0f;
     m_current_time = -1.0f;
     m_frame_dt = 0.0f;
     m_lock = 0;
     m_frame_count = 0;
     m_skip_time = false;
+}
+
+FrameHandler::~FrameHandler ()
+{
+    ASSERT1(m_lock == 0 && "Do not delete a FrameHandler while processing a frame")
 }
 
 void FrameHandler::ProcessFrame (Float const time)

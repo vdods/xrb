@@ -223,13 +223,10 @@ World::~World ()
     }
 }
 
-World *World::Create (
-    EventQueue *owner_event_queue,
-    Uint32 entity_capacity)
+World *World::Create (Uint32 entity_capacity)
 {
-    ASSERT1(owner_event_queue != NULL)
     ASSERT1(entity_capacity > 0)
-    return new World(owner_event_queue, new PhysicsHandler(), entity_capacity);
+    return new World(new PhysicsHandler(), entity_capacity);
 }
 
 PhysicsHandler *World::GetDisPhysicsHandler ()
@@ -292,11 +289,10 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 }
 
 World::World (
-    EventQueue *owner_event_queue,
     Engine2::PhysicsHandler *physics_handler,
     Uint32 entity_capacity)
     :
-    Engine2::World(owner_event_queue, physics_handler, entity_capacity),
+    Engine2::World(physics_handler, entity_capacity),
     SignalHandler(),
     m_state_machine(this),
     m_sender_submit_score(this),
@@ -630,7 +626,6 @@ bool World::StateEndGame (StateMachineInput const input)
             return true;
     
         case IN_PROCESS_FRAME:
-            ASSERT1(false && "The world should end before this happens")
             return true;
     }
     return false;

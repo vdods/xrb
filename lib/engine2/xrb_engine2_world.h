@@ -19,6 +19,7 @@
 
 #include "xrb_engine2_entity.h"
 #include "xrb_eventhandler.h"
+#include "xrb_eventqueue.h"
 #include "xrb_framehandler.h"
 
 namespace Xrb
@@ -67,10 +68,8 @@ namespace Engine2
     
         static World *Create (
             Serializer &serializer,
-            EventQueue *owner_event_queue,
             PhysicsHandler *physics_handler);
         static World *CreateEmpty (
-            EventQueue *owner_event_queue,
             PhysicsHandler *physics_handler,
             Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
         void Write (Serializer &serializer) const;
@@ -121,7 +120,6 @@ namespace Engine2
     protected:
 
         World (
-            EventQueue *owner_event_queue,
             PhysicsHandler *physics_handler,
             Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
@@ -179,7 +177,9 @@ namespace Engine2
         // lowest available entity number
         Entity::Index m_lowest_available_entity_number;
         // the physics handler for this world
-        PhysicsHandler *m_physics_handler;    
+        PhysicsHandler *m_physics_handler;
+        // the world's own private event queue
+        EventQueue m_owner_event_queue;
     }; // end of class Engine2::World
 
 } // end of namespace Engine2

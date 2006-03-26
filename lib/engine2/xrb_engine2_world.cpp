@@ -56,31 +56,27 @@ Engine2::World::~World ()
 
 Engine2::World *Engine2::World::Create (
     Serializer &serializer,
-    EventQueue *const owner_event_queue,
     PhysicsHandler *const physics_handler)
 {
     ASSERT1(serializer.GetIsOpen())
     ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(owner_event_queue != NULL)
     ASSERT1(physics_handler != NULL)
 
     Uint32 entity_capacity = serializer.ReadUint32();
     ASSERT1(entity_capacity > 0)
-    World *retval = new World(owner_event_queue, physics_handler, entity_capacity);
+    World *retval = new World(physics_handler, entity_capacity);
     retval->Read(serializer);
 
     return retval;
 }
 
 Engine2::World *Engine2::World::CreateEmpty (
-    EventQueue *const owner_event_queue,
     PhysicsHandler *const physics_handler,
     Uint32 const entity_capacity)
 {
-    ASSERT1(owner_event_queue != NULL)
     ASSERT1(physics_handler != NULL)
     ASSERT1(entity_capacity > 0)
-    return new World(owner_event_queue, physics_handler, entity_capacity);
+    return new World(physics_handler, entity_capacity);
 }
 
 void Engine2::World::Write (Serializer &serializer) const
@@ -217,14 +213,14 @@ void Engine2::World::RemoveEntity (Engine2::Entity *const entity)
 }
 
 Engine2::World::World (
-    EventQueue *const owner_event_queue,
     PhysicsHandler *const physics_handler,
     Uint32 const entity_capacity)
     :
-    EventHandler(owner_event_queue),
+    EventHandler(NULL),
     FrameHandler()
 {
-    ASSERT1(owner_event_queue != NULL)
+    SetOwnerEventQueue(&m_owner_event_queue);
+
     ASSERT1(physics_handler != NULL)
     ASSERT1(entity_capacity > 0)
     m_entity_vector.reserve(entity_capacity);
@@ -234,9 +230,6 @@ Engine2::World::World (
     for (Uint32 i = 0; i < m_entity_vector.size(); ++i)
         m_entity_vector[i] = NULL;
 
-    // reset the event queue as a FrameHandler for use in the new World
-    owner_event_queue->ResetFrameHandler();
-            
     m_lowest_available_entity_number = 0;
     m_physics_handler = physics_handler;
     m_physics_handler->SetOwnerWorld(this);
@@ -329,6 +322,7 @@ void Engine2::World::ProcessFrameOverride ()
     ASSERT1(m_main_object_layer != NULL)
     ASSERT1(m_physics_handler != NULL)
     m_physics_handler->ProcessFrame(GetFrameTime());
+    m_owner_event_queue.ProcessFrame(GetFrameTime());
 }
 
 void Engine2::World::IncrementLowestAvailableEntityNumber ()

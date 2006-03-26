@@ -1208,15 +1208,9 @@ bool Widget::ProcessDeleteChildWidgetEvent (
 {
     ASSERT1(e->GetChildToDelete() != NULL)
     ASSERT1(e->GetChildToDelete()->GetParent() == this)
-    fprintf(
-        stderr,
-        "Widget::ProcessDeleteChildWidgetEvent(); "
-        "deleting \"%s\" ... ",
-        e->GetChildToDelete()->GetName().c_str());
     // detach the child before deleting it
     DetachChild(e->GetChildToDelete());
     e->DeleteChildWidget();
-    fprintf(stderr, "deleted.\n");
     return true;
 }
 

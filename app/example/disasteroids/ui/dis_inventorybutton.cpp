@@ -193,6 +193,8 @@ void InventoryButton::SetStatus (Status const status)
 
 void InventoryButton::ProcessFrameOverride ()
 {
+    Button::ProcessFrameOverride();
+
     // if the item is equipped, cause the button to flash
     if (m_status == S_EQUIPPED)
     {

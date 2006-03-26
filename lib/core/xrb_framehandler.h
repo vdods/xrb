@@ -52,11 +52,6 @@ public:
       */
     inline void SetSkipTime (bool const skip_time) { m_skip_time = skip_time; }
 
-    /** @brief Resets the queue for use in a new EventHandler (one which may
-      *        depend on the frame time starting at 0 (e.g. Engine2::World).
-      */
-    void ResetFrameHandler ();
-    
     /** Sets up the frame variables and then calls the overridden
       * ProcessFrameOverride which is what actuall does the processing.
       * @brief Initiates once-per-game-loop-frame computation.

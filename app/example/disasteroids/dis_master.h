@@ -121,8 +121,6 @@ private:
     GameWidget *m_game_widget;
     // the game world itself (i.e. the "document" in the "doc/view" paradigm)
     World *m_game_world;
-    // the game world's event queue
-    EventQueue m_game_world_event_queue;
     // stores the game world time
     Float m_game_time;
     // high scores

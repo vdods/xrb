@@ -107,7 +107,6 @@ public:
         :
         Event(time, DELETE_CHILD_WIDGET)
     {
-        fprintf(stderr, "EventDeleteChildWidget::EventDeleteChildWidget();\n");
         ASSERT1(child_to_delete != NULL)
         m_child_to_delete = child_to_delete;
     }
@@ -115,7 +114,6 @@ public:
       */
     virtual ~EventDeleteChildWidget ()
     {
-        fprintf(stderr, "EventDeleteChildWidget::~EventDeleteChildWidget();\n");
         m_child_to_delete = NULL;
     }
 
