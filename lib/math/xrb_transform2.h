@@ -390,7 +390,7 @@ template <typename T>
 Transform2<T> const Transform2<T>::ms_identity(
     Vector<T, 2>(static_cast<T>(0), static_cast<T>(0)),
     Vector<T, 2>(static_cast<T>(1), static_cast<T>(1)),
-    static_cast<T>(1),
+    static_cast<T>(0),
     true); // the post-translate value for ms_identity is arbitrary
 
 // ///////////////////////////////////////////////////////////////////////////
