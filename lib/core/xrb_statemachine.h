@@ -39,6 +39,7 @@ public:
     StateMachine (OwnerClass *owner_class);
     ~StateMachine ();
 
+    bool GetIsInitialized () const { return m_current_state != NULL; }
     State GetCurrentState () const { return m_current_state; }
     
     void Initialize (State initial_state);

@@ -50,11 +50,7 @@ HighScoresWidget::HighScoresWidget (Widget *const parent)
         m_points_label[row]->SetFontHeightRatio(0.025f);
     }
 
-    fprintf(stderr, "HighScoresWidget size before: ");
-    FprintVector(stderr, GetSize());
     SetMainWidget(main_layout);
-    fprintf(stderr, "HighScoresWidget size after: ");
-    FprintVector(stderr, GetSize());
 }
 
 void HighScoresWidget::Update (

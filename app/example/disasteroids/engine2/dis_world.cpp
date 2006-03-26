@@ -361,7 +361,7 @@ void World::ProcessFrameOverride ()
 {
     Engine2::World::ProcessFrameOverride();
 
-    if (m_state_machine.GetCurrentState() == NULL)
+    if (!m_state_machine.GetIsInitialized())
         m_state_machine.Initialize(&World::StateIntro);
 
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);

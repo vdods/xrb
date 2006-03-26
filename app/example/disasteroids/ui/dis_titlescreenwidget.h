@@ -48,7 +48,8 @@ public:
 
 protected:
 
-    bool ProcessEventOverride (Event const *e);
+    virtual void ProcessFrameOverride ();
+    virtual bool ProcessEventOverride (Event const *e);
     
 private:
 
@@ -81,6 +82,7 @@ private:
     Button *m_options_button;
     Button *m_quit_button;
 
+    bool const m_immediately_show_high_scores;
     HighScores m_high_scores;
 
     SignalReceiver0 m_internal_receiver_go_to_options;

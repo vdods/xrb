@@ -31,6 +31,7 @@ TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, W
     :
     Widget(parent, "TitleScreenWidget"),
     m_state_machine(this),
+    m_immediately_show_high_scores(immediately_show_high_scores),
     m_internal_receiver_go_to_options(&TitleScreenWidget::GoToOptions, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
@@ -89,19 +90,9 @@ TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, W
 
     SetMainWidget(main_layout);
 
-    // ///////////////////////////////////////////////////////////////////////
-    // hook up the button signals
-    // ///////////////////////////////////////////////////////////////////////
-
     SignalHandler::Connect0(
         m_options_button->SenderReleased(),
         &m_internal_receiver_go_to_options);
-
-    // initialize the state machine
-    m_state_machine.Initialize(
-        immediately_show_high_scores ?
-        &TitleScreenWidget::StateDisplayBestPointsHighScores :
-        &TitleScreenWidget::StateGameDemo);
 }
 
 TitleScreenWidget::~TitleScreenWidget ()
@@ -129,6 +120,17 @@ void TitleScreenWidget::GoToOptions ()
     // TODO: hook up the dialog result signal
     options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
     options_dialog->CenterOnWidget(options_dialog->GetParent());
+}
+
+void TitleScreenWidget::ProcessFrameOverride ()
+{
+    Widget::ProcessFrameOverride();
+
+    if (!m_state_machine.GetIsInitialized())
+        m_state_machine.Initialize(
+            m_immediately_show_high_scores ?
+            &TitleScreenWidget::StateDisplayBestPointsHighScores :
+            &TitleScreenWidget::StateGameDemo);
 }
 
 bool TitleScreenWidget::ProcessEventOverride (Event const *const e)
