@@ -183,7 +183,7 @@ Bool2 Layout::GetContentsMinSizeEnabled () const
 ScreenCoordVector2 Layout::GetContentsMinSize () const
 {
     UpdateContentsSizeProperties();
-    return m_contents_size_properties.m_min_size + GetTotalSpacing();
+    return m_contents_size_properties.m_min_size;
 }
 
 Bool2 Layout::GetContentsMaxSizeEnabled () const
@@ -195,7 +195,7 @@ Bool2 Layout::GetContentsMaxSizeEnabled () const
 ScreenCoordVector2 Layout::GetContentsMaxSize () const
 {
     UpdateContentsSizeProperties();
-    return m_contents_size_properties.m_max_size + GetTotalSpacing();
+    return m_contents_size_properties.m_max_size;
 }
 
 void Layout::SetMajorDirection (LineDirection const major_direction)
@@ -508,11 +508,6 @@ void Layout::ChildStackPriorityChanged (
     ParentChildSizePropertiesUpdate(false);
 }
 
-void Layout::UpdateRenderBackground ()
-{
-    SetRenderBackground(NULL);
-}
-
 int Layout::SizePropertiesSortingFunction (
     SizeProperties const *const properties_a,
     SizeProperties const *const properties_b,
@@ -529,45 +524,33 @@ int Layout::SizePropertiesSortingFunction (
     if (properties_a->m_max_size_enabled[index] && properties_a->m_max_size[index] < size_allotment)
     {
         if (properties_b->m_max_size_enabled[index] && properties_b->m_max_size[index] < size_allotment)
-        {
             // take the one with a smaller max size
             return properties_a->m_max_size[index] - properties_b->m_max_size[index];
-        }
         else
-        {
             // take a before b
             return -1;
-        }
     }
     else
     {
         if (properties_b->m_max_size_enabled[index] && properties_b->m_max_size[index] < size_allotment)
-        {
             // take b before a
             return 1;
-        }
     }
 
     if (properties_a->m_min_size_enabled[index] && properties_a->m_min_size[index] > size_allotment)
     {
         if (properties_b->m_min_size_enabled[index] && properties_b->m_min_size[index] > size_allotment)
-        {
             // take the one with a larger min size
             return properties_b->m_min_size[index] - properties_a->m_min_size[index];
-        }
         else
-        {
             // take a before b
             return -1;
-        }
     }
     else
     {
         if (properties_b->m_min_size_enabled[index] && properties_b->m_min_size[index] > size_allotment)
-        {
             // take b before a
             return 1;
-        }
     }
 
     // neither a nor b have priority.
@@ -716,7 +699,7 @@ void Layout::ResizeAndRepositionChildWidgets ()
     for (Uint32 row = m_row_count - 1; row < m_row_count; --row)
     {
         positional_offset[Dim::X] =
-            GetScreenRect().GetLeft() + CalculateLayoutFrameMargins()[Dim::X];
+            GetPosition()[Dim::X] + CalculateLayoutFrameMargins()[Dim::X];
         for (Uint32 column = 0; column < m_column_count; ++column)
         {
             Widget *child = GetGridChildByColumnAndRow(column, row);
@@ -737,6 +720,7 @@ void Layout::ResizeAndRepositionChildWidgets ()
             ScreenCoordVector2 requested_size(
                 m_column_width[column],
                 m_row_height[row]);
+
             // resize the child using the corresponding column and row sizes
             child->Resize(requested_size);
             // if the child didn't use up all the space, then calculate
@@ -1107,7 +1091,8 @@ void Layout::UpdateContentsSizeProperties () const
 
     // initialize the min size properties, considering the total spacing
     m_contents_size_properties.m_min_size_enabled =
-        Bool2(GetTotalSpacing()[Dim::X] > 0, GetTotalSpacing()[Dim::Y] > 0);
+        Bool2(GetTotalSpacing()[Dim::X] > 0,
+              GetTotalSpacing()[Dim::Y] > 0);
     m_contents_size_properties.m_min_size = GetTotalSpacing();
 
     // initialize the max size properties, considering the total spacing

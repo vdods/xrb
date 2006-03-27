@@ -83,17 +83,9 @@ private:
     void ResizeAndRepositionChildWidgets ();
 
     // the functions which 'dirty' the caches
-    void DirtyContentsSizeProperties ();
-        
+    void DirtyContentsSizeProperties ();        
     // the functions which 'undirty' the caches
     void UpdateContentsSizeProperties () const;
-
-
-    // stores the 'preferred' size properties (i.e. size properties
-    // given by calls to SetMinSizeEnabled, SetMinSize, etc, so that
-    // when the size restrictions of the child widgets of this layout
-    // permit, they can be resized to satisfy these properties.
-    SizeProperties m_preferred_size_properties;
 
     // indicates if the cached size properties values must be recalculated
     mutable bool m_contents_size_properties_need_update;

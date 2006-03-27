@@ -262,11 +262,6 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
     ParentChildSizePropertiesUpdate(false);
 }
 
-void CellPaddingWidget::UpdateRenderBackground ()
-{
-    SetRenderBackground(NULL);
-}
-
 void CellPaddingWidget::PositionSingleChildWidget ()
 {
     Widget *child = GetSingleChildWidget();

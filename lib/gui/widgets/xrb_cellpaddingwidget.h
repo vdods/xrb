@@ -78,7 +78,6 @@ public:
 protected:
 
     virtual void ChildSizePropertiesChanged (Widget *child);
-    virtual void UpdateRenderBackground ();
 
 private:
 
@@ -92,11 +91,6 @@ private:
     
     // contains the alignment for the child widget
     Alignment2 m_alignment;
-    // stores the 'preferred' size properties (i.e. size properties
-    // given by calls to SetMinSizeEnabled, SetMinSize, etc, so that
-    // when the size restrictions of the child widgets of this layout
-    // permit, they can be resized to satisfy these properties.
-    SizeProperties m_preferred_size_properties;
     // indicates if the cached size properties values must be recalculated
     mutable bool m_contents_size_properties_need_update;
     mutable SizeProperties m_contents_size_properties;                

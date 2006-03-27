@@ -19,7 +19,6 @@ namespace Xrb
 
 Engine2::ObjectLayer::~ObjectLayer ()
 {
-    fprintf(stderr, "Engine2::ObjectLayer::~ObjectLayer(); this = %p, deleting quad tree %p\n", this, m_quad_tree);
     Delete(m_quad_tree);
 }
 
@@ -46,7 +45,6 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
             FloatVector2::ms_zero,
             0.5f*side_length,
             tree_depth);
-    fprintf(stderr, "Engine2::ObjectLayer::Create(); this = %p, quad tree = %p\n", retval, retval->m_quad_tree);
 
     return retval;
 }
@@ -71,7 +69,6 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
 
     // this call just constructs the quadtree nodes,
     retval->m_quad_tree = VisibilityQuadTree::Create(serializer);
-    fprintf(stderr, "Engine2::ObjectLayer::Create(); this = %p, quad tree = %p\n", retval, retval->m_quad_tree);
     // the objects have to be added here
     retval->m_quad_tree->ReadObjects(serializer, retval);
 
