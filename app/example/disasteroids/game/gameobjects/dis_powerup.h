@@ -47,6 +47,7 @@ public:
         :
         GameObject(T_POWERUP)
     {
+        m_delete_upon_next_think = false;
         m_item_type = item_type;
         m_item = NULL;
         SetPickupFlags(pickup_flags);
@@ -103,6 +104,7 @@ protected:
             
 private:
 
+    bool m_delete_upon_next_think;
     ItemType m_item_type;
     Item *m_item;
     Uint8 m_pickup_flags;

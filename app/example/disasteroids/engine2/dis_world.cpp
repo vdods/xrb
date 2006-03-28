@@ -763,7 +763,8 @@ Asteroid *World::SpawnAsteroidOutOfView ()
         scale_factor,
         first_moment,
         velocity,
-        Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level]);
+        Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level],
+        false);
 }
 
 EnemyShip *World::SpawnEnemyShipOutOfView (
@@ -982,7 +983,8 @@ void World::CreateAndPopulateForegroundObjectLayer ()
             scale_factor,
             first_moment,
             velocity,
-            Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level]);
+            Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level],
+            false);
     }
 }
 

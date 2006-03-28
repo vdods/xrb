@@ -295,7 +295,7 @@ void PlayerShip::CreditEnemyKill (Type const enemy_ship_type, Uint8 const enemy_
     Uint32 enemy_ship_index = enemy_ship_type - T_ENEMY_SHIP_LOWEST;
     IncrementScore(static_cast<Uint32>(m_stoke * s_baseline_score[enemy_ship_index][enemy_level]));
 
-    static Float const s_stoke_factor = Math::Pow(2.0f, 0.25f);
+    static Float const s_stoke_factor = Math::Pow(2.0f, 0.5f);
     SetStoke(m_stoke * s_stoke_factor);
 }
 
@@ -476,7 +476,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         AimShipAtReticleCoordinates();
 
         // update the stoke O meter (exponential decay, with a lower limit of 1.0)
-        static Float const s_stoke_halflife = 1.5f;
+        static Float const s_stoke_halflife = 2.0f;
         SetStoke(Max(1.0f, m_stoke * Math::Pow(0.5f, frame_dt / s_stoke_halflife)));
         
         // figure out which weapon to use.
@@ -774,7 +774,11 @@ void PlayerShip::SetStoke (Float stoke)
 {
     if (GetIsDead() && m_stoke != 1.0f)
         stoke = 1.0f;
-        
+
+    static Float const s_max_stoke = 4.0f;
+    if (stoke > s_max_stoke)
+        stoke = s_max_stoke;
+                
     if (m_stoke != stoke)
     {
         m_stoke = stoke;

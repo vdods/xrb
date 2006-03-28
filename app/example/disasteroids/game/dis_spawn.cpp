@@ -84,13 +84,14 @@ Asteroid *SpawnAsteroid (
     Float const scale_factor,
     Float const first_moment,
     FloatVector2 const &velocity,
-    Float const mineral_content)
+    Float const mineral_content,
+    bool const is_a_secondary_asteroid)
 {
     Asteroid *asteroid = 
         new Dis::Asteroid(
             first_moment,
             mineral_content,
-            false);
+            is_a_secondary_asteroid);
     Dis::SpawnSpriteEntity(
         world,
         object_layer,
@@ -167,7 +168,7 @@ Grenade *SpawnGrenade (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        2.0f,
+        8.0f,
         velocity,
         1.0f,
         Math::RandomFloat(-30.0f, 30.0f),

@@ -29,7 +29,7 @@ namespace Dis
 
 Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1000.0f, 1000.0f, 1000.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 16000.0f, 16000.0f, 16000.0f, 16000.0f };
-Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 40.0f, 40.0f, 40.0f };
+Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const Devourment::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 1600.0f, 1600.0f, 1600.0f, 1600.0f };
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Devourment::ms_mouth_damage_rate[ENEMY_LEVEL_COUNT] = { 10.0f, 25.0f, 50.0f, 80.0f };
@@ -215,7 +215,7 @@ bool Devourment::TakePowerup (Powerup *const powerup)
 
 void Devourment::Seek (Float const time, Float const frame_dt)
 {
-    static Float const s_seek_area_radius = 60.0f;
+    static Float const s_seek_area_radius = 200.0f;
 
     // do an area trace
     AreaTraceList area_trace_list;

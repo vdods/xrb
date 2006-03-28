@@ -51,7 +51,7 @@ Uint8 const Asteroid::ms_mineral_distribution_lookup_table
 
 Uint8 const Asteroid::ms_number_of_fragments_to_spawn = 5;
 Float const Asteroid::ms_minimum_breakup_mass = 40.0f;
-Float const Asteroid::ms_decay_scale_factor = 3.5f;
+Float const Asteroid::ms_decay_scale_factor = 5.0f;
 Float const Asteroid::ms_decay_delay = 10.0f;
 Float const Asteroid::ms_decay_time = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
@@ -70,11 +70,15 @@ void Asteroid::Think (Float const time, Float const frame_dt)
         SetNextTimeToThink(time + 10000.0f);
         return;
     }
+    else
+    {
+        if (m_delete_upon_next_think)
+            ScheduleForDeletion(0.0f);
+        else
+            m_delete_upon_next_think = true;
 
-    // dumb, easy way to make the asteroid go away
-    ScheduleForDeletion(ms_decay_delay);
-    // effectively set to NEVER THINK AGAIN!!
-    SetNextTimeToThink(time + ms_decay_delay + 10.0f);
+        SetNextTimeToThink(time + ms_decay_delay);
+    }
 }
 
 void Asteroid::Collide (
@@ -170,14 +174,15 @@ void Asteroid::Die (
                     (1.0f - proportion_of_mineral_content_to_allocate);
 
             Asteroid *new_asteroid =
-                SpawnAsteroid (
+                SpawnAsteroid(
                     GetWorld(),
                     GetObjectLayer(),
                     translation,
                     scale_factor,
                     first_moment,
                     velocity,
-                    mineral_content);
+                    mineral_content,
+                    true);
             // this makes the explosion way awesomer
             if (i == 0 && first_moment > ms_minimum_breakup_mass)
                 new_asteroid->Kill(

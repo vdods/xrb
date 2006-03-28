@@ -30,7 +30,8 @@ public:
         GameObject(T_BALLISTIC),
         m_owner(owner)
     {
-        ASSERT1(time_to_live > 0.0f);        
+        ASSERT1(time_to_live > 0.0f);
+        m_delete_upon_next_think = false;
         m_impact_damage = impact_damage;
         m_time_to_live = time_to_live;
     }
@@ -46,6 +47,7 @@ public:
 
 protected:
 
+    bool m_delete_upon_next_think;
     Float m_impact_damage;
     Float m_time_to_live;
     GameObjectReference<GameObject> m_owner;

@@ -82,7 +82,8 @@ Asteroid *SpawnAsteroid (
     Float scale_factor,
     Float first_moment,
     FloatVector2 const &velocity,
-    Float mineral_content);
+    Float mineral_content,
+    bool is_a_secondary_asteroid);
     
 Ballistic *SpawnBallistic (
     Engine2::World *world,

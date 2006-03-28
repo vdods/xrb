@@ -43,8 +43,6 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
-- when a modal widget is deleted or whatever, the mouseover is not being
-  properly restored on whatever the mouse is actually over.
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
@@ -79,6 +77,8 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- when a modal widget is deleted or whatever, the mouseover is not being
+  properly restored on whatever the mouse is actually over.
 - the map editor view should not create/destroy its own world -- it
   becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)

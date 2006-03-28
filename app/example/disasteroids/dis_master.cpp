@@ -93,9 +93,8 @@ void Master::Run ()
     while (!m_is_quit_requested)
     {
         // figure out how much time to sleep before processing the next frame
-        Sint32 milliseconds_to_sleep = static_cast<Sint32>(1000.0f * (next_real_time - m_real_time));
-        if (milliseconds_to_sleep > 0)
-            SDL_Delay(milliseconds_to_sleep);
+        Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - m_real_time)));
+        SDL_Delay(milliseconds_to_sleep);
         m_real_time = 0.001f * SDL_GetTicks();
         next_real_time += 1.0f / m_maximum_framerate;
 
@@ -247,7 +246,6 @@ void Master::AcceptName (std::string const &name)
         m_saved_score.GetTimeAlive(),
         m_saved_score.GetDate());
     m_high_scores.AddScore(named_score);
-    m_high_scores.Print(stderr);
     m_game_world->SubmitScoreDone();
 }
 

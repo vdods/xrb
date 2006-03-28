@@ -40,6 +40,7 @@ public:
             T_ASTEROID)
     {
         m_is_a_secondary_asteroid = is_a_secondary_asteroid;
+        m_delete_upon_next_think = false;
         m_time_at_decay_start = -1.0f;
         m_mineral_content_byte = GetMineralContentByte(mineral_content);
         SetStrength(D_FIRE|D_EXPLOSION);
@@ -96,6 +97,7 @@ private:
     static Float const ms_health_factor;
 
     bool m_is_a_secondary_asteroid;
+    bool m_delete_upon_next_think;
     Float m_time_at_decay_start;
     Uint8 m_mineral_content_byte;
 }; // end of class Asteroid

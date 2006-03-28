@@ -19,10 +19,13 @@ namespace Dis
 
 void Ballistic::Think (Float const time, Float const frame_dt)
 {
-    // schedule it for deletion immediately (with a delay)
-    ScheduleForDeletion(m_time_to_live);
-    // make sure that it will be deleted before it thinks again
-    SetNextTimeToThink(2.0f * m_time_to_live + time);
+    if (m_delete_upon_next_think)
+        ScheduleForDeletion(0.0f);
+    else
+    {
+        m_delete_upon_next_think = true;
+        SetNextTimeToThink(m_time_to_live);
+    }
 }
 
 void Ballistic::Collide (

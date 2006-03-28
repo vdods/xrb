@@ -19,8 +19,13 @@ namespace Dis
 
 void Powerup::Think (Float const time, Float const frame_dt)
 {
-    // TODO: nice fading out/decaying
-    ScheduleForDeletion(40.0f);
+    if (m_delete_upon_next_think)
+        ScheduleForDeletion(0.0f);
+    else
+    {
+        m_delete_upon_next_think = true;
+        SetNextTimeToThink(time + 40.0f);
+    }
 }
 
 void Powerup::Collide (
