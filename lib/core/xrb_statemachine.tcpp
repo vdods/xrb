@@ -86,7 +86,7 @@ void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput const i
     // make sure that states always handle all input (with the exception of
     // the StateMachine mechanism inputs)
     if (input >= SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE)
-        ASSERT1(state_handled_the_input)
+        ASSERT0(state_handled_the_input)
 
     if (input == SM_EXIT && m_next_state != NULL)
         ASSERT0(false && "You must not transition while exiting a state")
