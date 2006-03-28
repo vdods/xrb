@@ -34,7 +34,8 @@ Float const Devourment::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 1600.0f,
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Devourment::ms_mouth_damage_rate[ENEMY_LEVEL_COUNT] = { 10.0f, 25.0f, 50.0f, 80.0f };
 Float const Devourment::ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
-Float const Devourment::ms_mouth_tractor_acceleration[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
+Float const Devourment::ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT] = { 500.0f, 750.0f, 1000.0f, 1500.0f };
+Float const Devourment::ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT] = { 1000000.0f, 1000000.0f, 1000000.0f, 1000000.0f };
 
 Devourment::Devourment (Uint8 const enemy_level)
     :
@@ -47,7 +48,8 @@ Devourment::Devourment (Uint8 const enemy_level)
 
     m_mouth_tractor = new Tractor(0);
     m_mouth_tractor->SetBeamRadiusOverride(ms_mouth_tractor_beam_radius[GetEnemyLevel()]);
-    m_mouth_tractor->SetAccelerationOverride(ms_mouth_tractor_acceleration[GetEnemyLevel()]);
+    m_mouth_tractor->SetStrengthOverride(ms_mouth_tractor_strength[GetEnemyLevel()]);
+    m_mouth_tractor->SetMaxForceOverride(ms_mouth_tractor_max_force[GetEnemyLevel()]);
     TakeOwnershipOfItem(m_mouth_tractor);
 }
 

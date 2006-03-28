@@ -116,6 +116,9 @@ private:
 
     // contains start-game, options and quit buttons
     TitleScreenWidget *m_title_screen_widget;
+    // indicates if the high scores should be shown immediately
+    // upon the title screen being shown.
+    bool m_show_high_scores_immediately;
 
     // contains the WorldViewWidget which displays the game world
     GameWidget *m_game_widget;

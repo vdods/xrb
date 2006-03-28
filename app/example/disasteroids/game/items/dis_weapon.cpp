@@ -105,7 +105,8 @@ Float const AutoDestruct::ms_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f
 // Tractor properties
 Float const Tractor::ms_range[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
 Float const Tractor::ms_max_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
-Float const Tractor::ms_acceleration[UPGRADE_LEVEL_COUNT] = { 100.0f, 125.0f, 200.0f, 300.0f };
+Float const Tractor::ms_strength[UPGRADE_LEVEL_COUNT] = { 500.0f, 750.0f, 1000.0f, 1500.0f };
+Float const Tractor::ms_max_force[UPGRADE_LEVEL_COUNT] = { 2500.0f, 3750.0f, 5000.0f, 7500.0f };
 Float const Tractor::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 35.0f, 45.0f, 60.0f };
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -1024,10 +1025,14 @@ bool Tractor::Activate (
         GetIsBeamRadiusOverridden() ?
         GetBeamRadiusOverride() :
         ms_beam_radius[GetUpgradeLevel()];
-    Float acceleration =
-        GetIsAccelerationOverridden() ?
-        GetAccelerationOverride() :
-        ms_acceleration[GetUpgradeLevel()];
+    Float strength =
+        GetIsStrengthOverridden() ?
+        GetStrengthOverride() :
+        ms_strength[GetUpgradeLevel()];
+    Float max_force =
+        GetIsMaxForceOverridden() ?
+        GetMaxForceOverride() :
+        ms_max_force[GetUpgradeLevel()];
             
     AreaTraceList area_trace_list;
     GetOwnerShip()->GetPhysicsHandler<PhysicsHandler>()->AreaTrace(
@@ -1055,8 +1060,8 @@ bool Tractor::Activate (
         if (!pull_everything && game_object->GetType() != GameObject::T_POWERUP)
             continue;
 
-        Float max_thrust_force = input * acceleration * game_object->GetFirstMoment();
-        game_object->ApplyInterceptCourseAcceleration(GetOwnerShip(), max_thrust_force, true, &solution_set);
+        Float force = Min(input * strength * game_object->GetScaleFactor(), max_force);
+        game_object->ApplyInterceptCourseAcceleration(GetOwnerShip(), force, true, &solution_set);
     }
 
     // place the tractor beam effect

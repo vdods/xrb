@@ -46,13 +46,7 @@ CURRENT:
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
-- fix inconsistent crash while deleting m_quad_tree in Engine2::ObjectLayer
-  it is possibly a memory stomp (the vtable for a visibility quad tree was
-  getting stomped on causing a crash)
 - fix LineTrace screwing up on large entities sometimes at certain angles
-- in Dis::PhysicsHandler, the collision pairs may need to use
-  GameObjectReferences, otherwise stuff might be deleted which will
-  leave the collision pair pointers dangling.
 - make Devourment grow as it eats stuff
 - maybe move the game control logic out of World (because World is engine2)
 - ships should not be able to rotate to any angle instantly

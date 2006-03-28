@@ -77,7 +77,8 @@ private:
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_damage_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT];
-    static Float const ms_mouth_tractor_acceleration[ENEMY_LEVEL_COUNT];
+    static Float const ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT];
+    static Float const ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT];
 
     typedef void (Devourment::*ThinkState)(Float time, Float frame_dt);
 

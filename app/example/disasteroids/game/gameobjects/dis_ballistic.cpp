@@ -24,7 +24,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
     else
     {
         m_delete_upon_next_think = true;
-        SetNextTimeToThink(m_time_to_live);
+        SetNextTimeToThink(time + m_time_to_live);
     }
 }
 

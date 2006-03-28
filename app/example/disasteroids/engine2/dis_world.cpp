@@ -660,8 +660,8 @@ void World::ProcessNormalGameplayLogic ()
     }
 
     // asteroid spawning
-    static Uint32 const s_max_asteroid_count = 30;
-    static Float const s_max_asteroid_mass = 6000.0f;
+    static Uint32 const s_max_asteroid_count = 40;
+    static Float const s_max_asteroid_mass = 8000.0f;
     if (m_next_asteroid_spawn_time <= GetFrameTime() &&
         m_asteroid_count < s_max_asteroid_count &&
         m_asteroid_mass < s_max_asteroid_mass)
@@ -710,7 +710,7 @@ void World::ProcessNormalGameplayLogic ()
         }
     }
 
-    // extra live handling
+    // extra life handling
     if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
     {
         static Float const s_extra_live_score_factor = 2.0f;

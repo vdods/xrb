@@ -55,6 +55,7 @@ Master::Master (Screen *const screen)
     m_real_time = 0.0f;
 
     m_title_screen_widget = NULL;
+    m_show_high_scores_immediately = false;
     
     m_game_widget = NULL;
     m_game_world = NULL;
@@ -247,6 +248,8 @@ void Master::AcceptName (std::string const &name)
         m_saved_score.GetDate());
     m_high_scores.AddScore(named_score);
     m_game_world->SubmitScoreDone();
+
+    m_show_high_scores_immediately = true;
 }
 
 void Master::StartGame ()
@@ -297,9 +300,11 @@ void Master::ActivateTitleScreen ()
 
     // create a new title screen and set it as the main widget
     // TODO: think of way to determine if the high scores should be displayed immediately
-    m_title_screen_widget = new TitleScreenWidget(false, m_screen);
+    m_title_screen_widget = new TitleScreenWidget(m_show_high_scores_immediately, m_screen);
     m_title_screen_widget->SetHighScores(m_high_scores);
     m_screen->SetMainWidget(m_title_screen_widget);
+
+    m_show_high_scores_immediately = false;
     
     // hook up the necessary signals
     SignalHandler::Connect0(
