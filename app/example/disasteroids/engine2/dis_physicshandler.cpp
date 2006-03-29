@@ -776,8 +776,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
             entity,
             GetFrameDT(),
             &m_collision_pair_list,
-            object_layer_side_length,
-            half_object_layer_side_length);
+            object_layer_side_length);
     }
 }
 

@@ -82,8 +82,7 @@ public:
         Engine2::Entity *entity,
         Float frame_dt,
         CollisionPairList *collision_pair_list,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length);
+        Float object_layer_side_length);
 
 protected:
 
@@ -92,6 +91,48 @@ protected:
         Engine2::QuadTree(parent)
     {
     }
+
+private:
+
+    class CollideEntityWrappedLoopFunctor
+    {
+    public:
+
+        CollideEntityWrappedLoopFunctor (
+            Engine2::Entity *entity,
+            Float frame_dt,
+            CollisionPairList *collision_pair_list,
+            Float object_layer_side_length)
+            :
+            m_entity(entity),
+            m_frame_dt(frame_dt),
+            m_frame_dt_squared(frame_dt*frame_dt),
+            m_collision_pair_list(collision_pair_list),
+            m_object_layer_side_length(object_layer_side_length),
+            m_half_object_layer_side_length(0.5f*object_layer_side_length)
+        {
+            ASSERT1(m_entity != NULL)
+            ASSERT1(m_collision_pair_list != NULL)
+            ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+        }
+
+        void operator () (Engine2::Object *object);
+
+        inline Engine2::Entity *GetEntity () { return m_entity; }
+        inline Float GetObjectLayerSideLength () { return m_object_layer_side_length; }
+        inline Float GetHalfObjectLayerSideLength () { return m_half_object_layer_side_length; }
+                
+    private:
+    
+        Engine2::Entity *m_entity;
+        Float m_frame_dt;
+        Float m_frame_dt_squared;
+        CollisionPairList *m_collision_pair_list;
+        Float m_object_layer_side_length;
+        Float m_half_object_layer_side_length;
+    }; // end of class CollideEntityWrappedLoopFunctor
+
+    void CollideEntityWrapped (CollideEntityWrappedLoopFunctor &functor);
 }; // end of class CollisionQuadTree
 
 } // end of namespace Dis

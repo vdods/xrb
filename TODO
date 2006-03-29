@@ -43,6 +43,10 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- make VisibilityQuadTree::Draw be a public function that takes as arguments
+  the same as DrawData.  This will be a public frontend function which constructs
+  the DrawData (which will actually be DrawLoopFunctor), so the single functor
+  is passed in throughout the whole recursion.
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense

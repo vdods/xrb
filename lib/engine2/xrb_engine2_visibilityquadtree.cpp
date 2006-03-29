@@ -10,6 +10,8 @@
 
 #include "xrb_engine2_visibilityquadtree.h"
 
+#include <algorithm>
+
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_render.h"
@@ -150,7 +152,60 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     return retval;
 }
 
-Uint32 Engine2::VisibilityQuadTree::Draw (Engine2::VisibilityQuadTree::DrawData const &draw_data)
+// constants which control the thresholds at which objects use
+// alpha fading to fade away, when they become small enough.
+static Float const gs_radius_limit_upper = 3.0f;
+static Float const gs_radius_limit_lower = 0.8f;
+static Float const gs_distance_fade_slope = 1.0f / (gs_radius_limit_upper - gs_radius_limit_lower);
+static Float const gs_distance_fade_intercept = gs_radius_limit_lower / (gs_radius_limit_lower - gs_radius_limit_upper);
+
+// functor for iterating over m_object_set in Draw
+class DrawLoopFunctor
+{
+public:
+
+    DrawLoopFunctor (Engine2::VisibilityQuadTree::DrawData const &draw_data)
+        :
+        m_draw_data(draw_data),
+        m_drawn_objects(0)
+    { }
+
+    void operator () (Engine2::Object *object)
+    {
+        // calculate the object's pixel radius on screen
+        Float object_radius =
+            m_draw_data.GetPixelsInViewRadius() * object->GetRadius() /
+            m_draw_data.GetViewRadius();
+        // distance culling - don't draw objects that are below the
+        // gs_radius_limit_lower threshold
+        if (object_radius >= gs_radius_limit_lower)
+        {
+            // calculate the alpha value of the object due to its distance.
+            // sprites with radii between gs_radius_limit_lower and
+            // gs_radius_limit_upper will be partially transparent, fading away
+            // once they get to gs_radius_limit_lower.  this gives a very
+            // nice smooth transition for when the objects are not drawn
+            // because they are below the lower radius threshold.
+            Float distance_fade =
+                (object_radius > gs_radius_limit_upper) ?
+                1.0f :
+                (gs_distance_fade_slope * object_radius + gs_distance_fade_intercept);
+            // actually draw the sprite
+            object->Draw(m_draw_data.GetObjectDrawData(), distance_fade);
+            ++m_drawn_objects;
+        }
+    }
+
+    inline Uint32 GetDrawnObjects () const { return m_drawn_objects; }
+    
+private:
+
+    Engine2::VisibilityQuadTree::DrawData const &m_draw_data;
+    Uint32 m_drawn_objects;
+}; // end of class DrawLoopFunctor
+
+Uint32 Engine2::VisibilityQuadTree::Draw (
+    Engine2::VisibilityQuadTree::DrawData const &draw_data)
 {
     Uint32 retval = 0;
 
@@ -161,21 +216,13 @@ Uint32 Engine2::VisibilityQuadTree::Draw (Engine2::VisibilityQuadTree::DrawData 
     ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f)
     ASSERT2(draw_data.GetViewRadius() > 0.0f)
 
-    // constants which control the thresholds at which objects use
-    // alpha fading to fade away, when they become small enough.
-    Float const radius_limit_upper = 3.0f;
-    Float const radius_limit_lower = 0.8f;
-    Float const distance_fade_slope = 1.0f / (radius_limit_upper - radius_limit_lower);
-    Float const distance_fade_intercept = radius_limit_lower / (radius_limit_lower - radius_limit_upper);
-
     // don't draw quadtrees whose radii are lower than the
-    // radius_limit_lower threshold -- a form of distance culling,
+    // gs_radius_limit_lower threshold -- a form of distance culling,
     // which gives a huge speedup and allows zooming to any level
     // maintain a consistent framerate.
     if (draw_data.GetPixelsInViewRadius() * GetRadius()
-        / draw_data.GetViewRadius()
         <
-        radius_limit_lower)
+        draw_data.GetViewRadius() * gs_radius_limit_lower)
     {
         return retval;
     }
@@ -188,42 +235,13 @@ Uint32 Engine2::VisibilityQuadTree::Draw (Engine2::VisibilityQuadTree::DrawData 
 
 //     DrawBounds(draw_data.GetObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
 
-    // draw all the objects in this node's list
-    Object::DrawData object_draw_data = draw_data.GetObjectDrawData();
-    Object *object;
-    Float object_radius;
-    Float distance_fade;
-    for (ObjectSetIterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
-         it != it_end;
-         ++it)
-    {
-        object = *it;
-        ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) == this)
-        // calculate the object's pixel radius on screen
-        object_radius = draw_data.GetPixelsInViewRadius() * object->GetRadius() /
-                        draw_data.GetViewRadius();
-        // distance culling - don't draw objects that are below the
-        // radius_limit_lower threshold
-        if (object_radius >= radius_limit_lower)
-        {
-            // calculate the alpha value of the object due to its distance.
-            // sprites with radii between radius_limit_lower and
-            // radius_limit_upper will be partially transparent, fading away
-            // once they get to radius_limit_lower.  this gives a very
-            // nice smooth transition for when the objects are not drawn
-            // because they are below the lower radius threshold.
-            distance_fade =
-                (object_radius > radius_limit_upper) ?
-                1.0f :
-                (distance_fade_slope * object_radius + distance_fade_intercept);
-            // actually draw the sprite
-            object->Draw(object_draw_data, distance_fade);
-            ++retval;
-        }
-    }
+    retval +=
+        std::for_each(
+            m_object_set.begin(),
+            m_object_set.end(),
+            DrawLoopFunctor(draw_data)).GetDrawnObjects();
 
-    // if there are child nodes, call draw on each
+    // if there are child nodes, call Draw on each
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             GetChild<VisibilityQuadTree>(i)->Draw(draw_data);

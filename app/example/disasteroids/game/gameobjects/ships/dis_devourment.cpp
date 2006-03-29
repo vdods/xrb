@@ -43,7 +43,7 @@ Devourment::Devourment (Uint8 const enemy_level)
 {
     m_think_state = THINK_STATE(Seek);
 
-    SetImmunity(D_COLLISION);
+    SetImmunity(D_COLLISION|D_GRINDING);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 
     m_mouth_tractor = new Tractor(0);

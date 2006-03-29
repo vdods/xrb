@@ -10,6 +10,8 @@
 
 #include "dis_collisionquadtree.h"
 
+#include <algorithm>
+
 #include "dis_gameobject.h"
 
 using namespace Xrb;
@@ -653,19 +655,125 @@ void CollisionQuadTree::CollideEntity (
     }
 }
 
+void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::Object *const object)
+{
+    // don't collide the entity with itself
+    if (object == static_cast<Engine2::Object *>(m_entity))
+        return;
+
+    // this is a quick and easy way to avoid calculating
+    // the same collision pair twice
+    if (object->GetRadius() > m_entity->GetRadius()
+        ||
+        object->GetRadius() == m_entity->GetRadius() &&
+        object > static_cast<Engine2::Object *>(m_entity))
+        return;
+
+    FloatVector2 ce0_translation(m_entity->GetTranslation());
+    FloatVector2 ce1_translation(object->GetTranslation());
+
+    if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > m_half_object_layer_side_length)
+        ce1_translation[Dim::X] -= m_object_layer_side_length;
+    else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -m_half_object_layer_side_length)
+        ce1_translation[Dim::X] += m_object_layer_side_length;
+
+    if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > m_half_object_layer_side_length)
+        ce1_translation[Dim::Y] -= m_object_layer_side_length;
+    else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -m_half_object_layer_side_length)
+        ce1_translation[Dim::Y] += m_object_layer_side_length;
+
+    Float r = m_entity->GetRadius() + object->GetRadius();
+    FloatVector2 P = ce0_translation - ce1_translation;
+
+    if (P.GetLength() >= r)
+        return;
+
+    Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
+    ASSERT1(other_entity != NULL)
+
+    // calculate the collision
+
+    FloatVector2 V = m_entity->GetVelocity() - other_entity->GetVelocity();
+    FloatVector2 collision_location(
+        (other_entity->GetScaleFactor() * ce0_translation + m_entity->GetScaleFactor() * ce1_translation)
+        /
+        (m_entity->GetScaleFactor() + other_entity->GetScaleFactor()));
+    FloatVector2 collision_normal;
+    if (P.GetIsZero())
+        collision_normal = FloatVector2(1.0f, 0.0f);
+    else
+        collision_normal = P.GetNormalization();
+    Float collision_force = 0.0f;
+
+    if ((V | P) < 0.0f && // and if they're moving toward each other
+        m_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
+        other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
+        GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
+            DStaticCast<GameObject const *>(m_entity->GetEntityGuts()),
+            DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
+    {
+        Float M = 1.0f / m_entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
+        FloatVector2 Q(P + m_frame_dt*V);
+        FloatVector2 A(m_frame_dt_squared*M*collision_normal);
+
+        Float a = A | A;
+        Float b = 2.0f * (Q | A);
+        Float c = (Q | Q) - r*r;
+        Float discriminant = b*b - 4.0f*a*c;
+        if (discriminant >= 0.0f)
+        {
+            Float temp0 = sqrt(discriminant);
+            Float temp1 = 2.0f * a;
+
+            Float force0 = 0.8f * (-b - temp0) / temp1;
+            Float force1 = 0.8f * (-b + temp0) / temp1;
+
+            Float min_force = Min(force0, force1);
+            Float max_force = Max(force0, force1);
+            if (min_force > 0.0f)
+                collision_force = min_force;
+            else if (max_force > 0.0f)
+                collision_force = max_force;
+            else
+                collision_force = 0.0f;
+
+            collision_force *= (1.0f + m_entity->GetElasticity() * other_entity->GetElasticity());
+
+            m_entity->AccumulateForce(collision_force*collision_normal);
+            other_entity->AccumulateForce(-collision_force*collision_normal);
+        }
+    }
+
+    // record the collision in the collision pair list.
+    m_collision_pair_list->push_back(
+        CollisionPair(
+            m_entity,
+            other_entity,
+            collision_location,
+            collision_normal,
+            collision_force));
+}
+
 void CollisionQuadTree::CollideEntityWrapped (
     Engine2::Entity *const entity,
     Float const frame_dt,
     CollisionPairList *const collision_pair_list,
-    Float const object_layer_side_length,
-    Float const half_object_layer_side_length)
+    Float const object_layer_side_length)
+{
+    CollideEntityWrappedLoopFunctor
+        functor(
+            entity,
+            frame_dt,
+            collision_pair_list,
+            object_layer_side_length);
+    CollideEntityWrapped(functor);
+}
+
+void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWrappedLoopFunctor &functor)
 {
     ASSERT1(entity != NULL)
     ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
     ASSERT1(collision_pair_list != NULL)
-
-    Float const adjusted_dt = frame_dt;//1.0f/40.0f;
-    Float const dt_squared = adjusted_dt * adjusted_dt;
 
     // if there are no objects here or below, just return
     if (GetSubordinateObjectCount() == 0)
@@ -673,136 +781,26 @@ void CollisionQuadTree::CollideEntityWrapped (
 
     // return if the area doesn't intersect this node
     if (!GetDoesAreaOverlapQuadBoundsWrapped(
-            entity->GetTranslation(),
-            entity->GetRadius(),
-            object_layer_side_length,
-            half_object_layer_side_length))
+            functor.GetEntity()->GetTranslation(),
+            functor.GetEntity()->GetRadius(),
+            functor.GetObjectLayerSideLength(),
+            functor.GetHalfObjectLayerSideLength()))
         return;
 
-    // if there are child nodes, call CollideEntity on each
+    // if there are child nodes, call CollideEntityWrapped on each
     if (GetHasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->CollideEntityWrapped(
-                entity,
-                frame_dt,
-                collision_pair_list,
-                object_layer_side_length,
-                half_object_layer_side_length);
+            GetChild<CollisionQuadTree>(i)->CollideEntityWrapped(functor);
 
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!GetIsAllowableObjectRadius(entity))
+        if (!GetIsAllowableObjectRadius(functor.GetEntity()))
             return;
     }
 
-    // check if the entity overlaps any object in this node's list.
-    for (ObjectSetIterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
-         it != it_end;
-         ++it)
-    {
-        Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
-
-        // don't collide the entity with itself
-        if (object == static_cast<Engine2::Object *>(entity))
-            continue;
-
-        // this is a quick and easy way to avoid calculating
-        // the same collision pair twice
-        if (object->GetRadius() > entity->GetRadius())
-            continue;
-        else if (object->GetRadius() == entity->GetRadius() &&
-                 object > static_cast<Engine2::Object *>(entity))
-            continue;
-
-        FloatVector2 ce0_translation(entity->GetTranslation());
-        FloatVector2 ce1_translation(object->GetTranslation());
-
-        if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > half_object_layer_side_length)
-            ce1_translation[Dim::X] -= object_layer_side_length;
-        else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -half_object_layer_side_length)
-            ce1_translation[Dim::X] += object_layer_side_length;
-
-        if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > half_object_layer_side_length)
-            ce1_translation[Dim::Y] -= object_layer_side_length;
-        else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -half_object_layer_side_length)
-            ce1_translation[Dim::Y] += object_layer_side_length;
-
-        Float r = entity->GetRadius() + object->GetRadius();
-        FloatVector2 P = ce0_translation - ce1_translation;
-
-        if (P.GetLength() >= r)
-            continue;
-
-        Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
-        ASSERT1(other_entity != NULL)
-
-        // calculate the collision
-
-        FloatVector2 V = entity->GetVelocity() - other_entity->GetVelocity();
-        FloatVector2 collision_location(
-            (other_entity->GetScaleFactor() * ce0_translation + entity->GetScaleFactor() * ce1_translation)
-            /
-            (entity->GetScaleFactor() + other_entity->GetScaleFactor()));
-        FloatVector2 collision_normal;
-        if (P.GetIsZero())
-            collision_normal = FloatVector2(1.0f, 0.0f);
-        else
-            collision_normal = P.GetNormalization();
-        Float collision_force = 0.0f;
-
-        if ((V | P) < 0.0f && // and if they're moving toward each other
-            entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
-            other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
-            GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
-                DStaticCast<GameObject const *>(entity->GetEntityGuts()),
-                DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
-        {
-            Float M = 1.0f / entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
-            FloatVector2 Q(P + adjusted_dt*V);
-            FloatVector2 A(dt_squared*M*collision_normal);
-
-            Float a = A | A;
-            Float b = 2.0f * (Q | A);
-            Float c = (Q | Q) - r*r;
-            Float discriminant = b*b - 4.0f*a*c;
-            if (discriminant >= 0.0f)
-            {
-                Float temp0 = sqrt(discriminant);
-                Float temp1 = 2.0f * a;
-
-                Float force0 = 0.8f * (-b - temp0) / temp1;
-                Float force1 = 0.8f * (-b + temp0) / temp1;
-
-                Float min_force = Min(force0, force1);
-                Float max_force = Max(force0, force1);
-                if (min_force > 0.0f)
-                    collision_force = min_force;
-                else if (max_force > 0.0f)
-                    collision_force = max_force;
-                else
-                    collision_force = 0.0f;
-
-                collision_force *= (1.0f + entity->GetElasticity() * other_entity->GetElasticity());
-
-                entity->AccumulateForce(collision_force*collision_normal);
-                other_entity->AccumulateForce(-collision_force*collision_normal);
-            }
-        }
-
-        // record the collision in the collision pair list.
-        collision_pair_list->push_back(
-            CollisionPair(
-                entity,
-                other_entity,
-                collision_location,
-                collision_normal,
-                collision_force));
-    }
+    std::for_each(m_object_set.begin(), m_object_set.end(), functor);
 }
 
 } // end of namespace Dis
