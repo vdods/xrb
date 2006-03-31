@@ -74,9 +74,10 @@ Color const &MapEditor2::CompoundEntity::GetSelectedMetricsColor () const
 
 void MapEditor2::CompoundEntity::CloneProperties (Object const *const object)
 {
-    CompoundEntity const *compound_entity =
-        dynamic_cast<CompoundEntity const *>(object);
-    ASSERT1(compound_entity != NULL)
+//     CompoundEntity const *compound_entity =
+//         dynamic_cast<CompoundEntity const *>(object);
+//     ASSERT1(compound_entity != NULL)
+    ASSERT1(dynamic_cast<CompoundEntity const *>(object) != NULL)
 
     // nothing to do (yet)
 }

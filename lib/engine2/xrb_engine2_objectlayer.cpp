@@ -171,7 +171,8 @@ void Engine2::ObjectLayer::Write (Serializer &serializer) const
     // write the quad tree structure
     m_quad_tree->WriteStructure(serializer);
     // write the objects the quadtree contains
-    Uint32 number_of_non_entities_written = m_quad_tree->WriteObjects(serializer);
+    DEBUG1_CODE(Uint32 number_of_non_entities_written =)
+    m_quad_tree->WriteObjects(serializer);
     ASSERT1(number_of_non_entities_written == m_quad_tree->GetSubordinateNonEntityCount())
 }
 
@@ -198,11 +199,12 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
 
     HandleContainmentOrWrapping(object);
     // attempt to add it to the quad tree
-    bool add_success = m_quad_tree->AddObject(object);
+    DEBUG1_CODE(bool add_success =)
+    m_quad_tree->AddObject(object);
+    ASSERT1(add_success)
     // set the object's layer
     object->SetObjectLayer(this);
 
-    ASSERT1(add_success)
     ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL)
 }
 

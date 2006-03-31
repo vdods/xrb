@@ -527,7 +527,7 @@ bool GrenadeLauncher::Activate (
         {
             Grenade *active_grenade = *m_active_grenade_set.begin();
             ASSERT1(active_grenade != NULL)
-            DEBUG_EXPRESSION1(Uint32 active_grenade_set_size = m_active_grenade_set.size())
+            DEBUG1_CODE(Uint32 active_grenade_set_size = m_active_grenade_set.size());
             active_grenade->Detonate(time, frame_dt);
             ASSERT1(m_active_grenade_set.size() == active_grenade_set_size - 1)
         }
@@ -878,7 +878,7 @@ bool EMPBombLayer::Activate (
         {
             EMPBomb *active_emp_bomb = *m_active_emp_bomb_set.begin();
             ASSERT1(active_emp_bomb != NULL)
-            DEBUG_EXPRESSION1(Uint32 active_emp_bomb_set_size = m_active_emp_bomb_set.size())
+            DEBUG1_CODE(Uint32 active_emp_bomb_set_size = m_active_emp_bomb_set.size());
             active_emp_bomb->Detonate(time, frame_dt);
             ASSERT1(m_active_emp_bomb_set.size() == active_emp_bomb_set_size - 1)
         }

@@ -191,7 +191,7 @@ void Font::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
     FT_Error error;
     FT_FaceRec_ *ft_face = font_face->GetFTFace();
     ScreenCoord tallest_glyph_height = -1;
-    ScreenCoord tallest_glyph_bearing_y;
+    ScreenCoord tallest_glyph_bearing_y = -1;
 
     for (Uint32 unicode = RENDERED_GLYPH_LOWEST;
          unicode <= RENDERED_GLYPH_HIGHEST;
@@ -236,8 +236,8 @@ ScreenCoordVector2 Font::FindSmallestFittingTextureSize (
     while(texture_size[Dim::X] <= static_cast<ScreenCoord>(max_texture_size) &&
           texture_size[Dim::Y] <= static_cast<ScreenCoord>(max_texture_size))
     {
-        Uint32 total_area = texture_size[Dim::X] * texture_size[Dim::Y];
         Uint32 used_area = GetUsedTextureArea(texture_size, sorted_glyph_specification);
+        DEBUG1_CODE(Uint32 total_area = texture_size[Dim::X] * texture_size[Dim::Y]);
         ASSERT1(used_area <= total_area)
         if (used_area > 0)
             return texture_size;

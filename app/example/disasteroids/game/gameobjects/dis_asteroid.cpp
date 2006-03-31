@@ -237,9 +237,9 @@ Uint8 Asteroid::GetRandomMineral () const
     ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT)
     Uint16 random_element =
         Math::RandomUint16(0, DISTRIBUTION_LOOKUP_TABLE_SIZE-1);
-    DEBUG_EXPRESSION1(
+    DEBUG1_CODE(
         Uint8 mineral_type =
-            ms_mineral_distribution_lookup_table[mineral_level][random_element])
+            ms_mineral_distribution_lookup_table[mineral_level][random_element]);
     ASSERT1(mineral_type < MINERAL_COUNT)
     return ms_mineral_distribution_lookup_table[mineral_level][random_element];
 }

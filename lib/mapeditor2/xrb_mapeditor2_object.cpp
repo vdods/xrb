@@ -278,8 +278,8 @@ void MapEditor2::Object::AddToObjectSelectionSet ()
     ASSERT1(!m_is_selected)
     ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
     ASSERT1(map_editor_object_layer != NULL)
-    bool add_success =
-        map_editor_object_layer->AddObjectToObjectSelectionSet(this);
+    DEBUG1_CODE(bool add_success =)
+    map_editor_object_layer->AddObjectToObjectSelectionSet(this);
     ASSERT1(add_success)
     m_is_selected = true;
 }
@@ -291,8 +291,8 @@ void MapEditor2::Object::RemoveFromObjectSelectionSet ()
     ASSERT1(m_is_selected)
     ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
     ASSERT1(map_editor_object_layer != NULL)
-    bool remove_success =
-        map_editor_object_layer->RemoveObjectFromObjectSelectionSet(this);
+    DEBUG1_CODE(bool remove_success =)
+    map_editor_object_layer->RemoveObjectFromObjectSelectionSet(this);
     ASSERT1(remove_success)
     m_is_selected = false;
 }

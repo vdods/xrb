@@ -62,7 +62,7 @@ void MapEditor2::CompoundVertex::SetIsSelected (
 void MapEditor2::CompoundVertex::ToggleIsSelected (
     ObjectLayer *const object_layer)
 {
-    DEBUG_EXPRESSION1(bool old_is_selected = m_is_selected)
+    DEBUG1_CODE(bool old_is_selected = m_is_selected);
     if (m_is_selected)
         RemoveFromVertexSelectionSet(object_layer);
     else

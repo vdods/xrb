@@ -185,7 +185,8 @@ void PhysicsHandler::AddEntity (
     ASSERT1(m_main_object_layer != NULL)
     if (entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
     {
-        bool add_was_successful = m_quad_tree->AddObject(entity);
+        DEBUG1_CODE(bool add_was_successful =)
+        m_quad_tree->AddObject(entity);
         ASSERT1(add_was_successful)
     }
 }

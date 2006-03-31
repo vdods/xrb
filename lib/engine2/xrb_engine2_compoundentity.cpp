@@ -67,9 +67,10 @@ Engine2::CompoundEntity::CompoundEntity ()
 // copies the properties of the given object to this object
 void Engine2::CompoundEntity::CloneProperties (Engine2::Object const *const object)
 {
-    CompoundEntity const *compound_entity =
-        dynamic_cast<CompoundEntity const *>(object);
-    ASSERT1(compound_entity != NULL)
+//     CompoundEntity const *compound_entity =
+//         dynamic_cast<CompoundEntity const *>(object);
+//     ASSERT1(compound_entity != NULL)
+    ASSERT1(dynamic_cast<CompoundEntity const *>(object) != NULL)
 
     // nothing to do (yet)
 }

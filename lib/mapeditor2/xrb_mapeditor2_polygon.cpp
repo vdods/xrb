@@ -381,7 +381,7 @@ void MapEditor2::Polygon::SetIsSelected (
 void MapEditor2::Polygon::ToggleIsSelected (
     ObjectLayer *const object_layer)
 {
-    DEBUG_EXPRESSION1(bool old_is_selected = m_is_selected)
+    DEBUG1_CODE(bool old_is_selected = m_is_selected);
     if (m_is_selected)
         RemoveFromPolygonSelectionSet(object_layer);
     else

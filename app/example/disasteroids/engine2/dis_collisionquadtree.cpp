@@ -771,10 +771,6 @@ void CollisionQuadTree::CollideEntityWrapped (
 
 void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWrappedLoopFunctor &functor)
 {
-    ASSERT1(entity != NULL)
-    ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
-    ASSERT1(collision_pair_list != NULL)
-
     // if there are no objects here or below, just return
     if (GetSubordinateObjectCount() == 0)
         return;

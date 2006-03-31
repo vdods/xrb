@@ -26,25 +26,25 @@
 // macro which allows an expression to easily be compiled out
 // for non debug builds (for DEBUG_LEVEL < 1)
 #if DEBUG_LEVEL >= 1
-    #define DEBUG_EXPRESSION1(x) x;
+    #define DEBUG1_CODE(x) x
 #else // DEBUG_LEVEL < 1
-    #define DEBUG_EXPRESSION1(x) ;
+    #define DEBUG1_CODE(x)
 #endif // DEBUG_LEVEL < 1
 
 // macro which allows an expression to easily be compiled out
-// for non debug builds (for DEBUG_LEVEL < 3)
+// for non debug builds (for DEBUG_LEVEL < 2)
 #if DEBUG_LEVEL >= 2
-    #define DEBUG_EXPRESSION2(x) x;
+    #define DEBUG2_CODE(x) x
 #else // DEBUG_LEVEL < 2
-    #define DEBUG_EXPRESSION2(x) ;
+    #define DEBUG2_CODE(x)
 #endif // DEBUG_LEVEL < 2
 
 // macro which allows an expression to easily be compiled out
 // for non debug builds (for DEBUG_LEVEL < 3)
 #if DEBUG_LEVEL >= 3
-    #define DEBUG_EXPRESSION3(x) x;
+    #define DEBUG3_CODE(x) x
 #else // DEBUG_LEVEL < 3
-    #define DEBUG_EXPRESSION3(x) ;
+    #define DEBUG3_CODE(x)
 #endif // DEBUG_LEVEL < 3
 
 #endif // !defined(_XRB_DEBUG_H_)

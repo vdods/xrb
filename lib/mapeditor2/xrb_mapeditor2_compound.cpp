@@ -325,7 +325,7 @@ MapEditor2::Polygon *MapEditor2::Compound::GetSmallestPolygonTouchingPoint (
     FloatVector2 const &point) const
 {
     Polygon *smallest = NULL;
-    Float smallest_area;
+    Float smallest_area = 0.0f;
 
     // calculate what the point is in model-space
     FloatVector2 model_space_point(point);

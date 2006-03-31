@@ -162,7 +162,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
     ASSERT1(alpha_value <= 1.0f)
     ASSERT1(dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity()) != NULL)
     dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity())->
-        SetColorMask(Color(1.0f, 1.0f, 1.0f, m_current_damage / m_initial_damage));
+        SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
 }
 
 void Fireball::Collide (

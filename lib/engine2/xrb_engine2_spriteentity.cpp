@@ -74,9 +74,10 @@ Engine2::SpriteEntity::SpriteEntity (Resource<GLTexture> const &texture)
 
 void Engine2::SpriteEntity::CloneProperties (Engine2::Object const *const object)
 {
-    SpriteEntity const *sprite_entity =
-        dynamic_cast<SpriteEntity const *>(object);
-    ASSERT1(sprite_entity != NULL)
+//     SpriteEntity const *sprite_entity =
+//         dynamic_cast<SpriteEntity const *>(object);
+//     ASSERT1(sprite_entity != NULL)
+    ASSERT1(dynamic_cast<SpriteEntity const *>(object) != NULL)
 
     // nothing to do (yet)
 }
