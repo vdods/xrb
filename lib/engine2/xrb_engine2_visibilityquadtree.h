@@ -40,61 +40,6 @@ namespace Engine2
     {
     public:
     
-        // the VisibilityQuadTree::DrawData class nicely packages up a bunch of
-        // variables which are used in the recursive Draw function.
-        // passing a reference to an instance of this class speeds up access,
-        // because then using the variables contained within can all be done
-        // using known offsets from a single pointer.
-        class DrawData
-        {
-        public:
-    
-            DrawData (
-                RenderContext const &render_context,
-                FloatMatrix2 const &world_to_screen,
-                Float pixels_in_view_radius,
-                FloatVector2 const &view_center,
-                Float view_radius);
-            ~DrawData () { }
-    
-            inline Object::DrawData const &GetObjectDrawData () const
-            {
-                return m_object_draw_data;
-            }
-            inline FloatMatrix2 const &GetWorldToScreen () const
-            {
-                return m_object_draw_data.GetTransformation();
-            }
-            inline Float GetPixelsInViewRadius () const
-            {
-                return m_pixels_in_view_radius;
-            }
-            inline FloatVector2 const &GetViewCenter () const
-            {
-                return m_view_center;
-            }
-            inline Float GetViewRadius () const
-            {
-                return m_view_radius;
-            }
-    
-            inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen)
-            {
-                m_object_draw_data.SetTransformation(world_to_screen);
-            }
-            inline void SetViewCenter (FloatVector2 const view_center)
-            {
-                m_view_center = view_center;
-            }
-        
-        private:
-    
-            Object::DrawData m_object_draw_data;
-            Float m_pixels_in_view_radius;
-            FloatVector2 m_view_center;
-            Float m_view_radius;    
-        }; // end of class Engine2::VisibilityQuadTree::DrawData
-    
         VisibilityQuadTree (
             FloatVector2 const &center,
             Float half_side_length,
@@ -109,10 +54,20 @@ namespace Engine2
             Serializer &serializer,
             ObjectLayer *object_layer);
         Uint32 WriteObjects (Serializer &serializer) const;
-        
-        Uint32 Draw (VisibilityQuadTree::DrawData const &draw_data);
-        Uint32 DrawWrapped (VisibilityQuadTree::DrawData draw_data);
-    
+
+        Uint32 Draw (
+            RenderContext const &render_context,
+            FloatMatrix2 const &world_to_screen,
+            Float pixels_in_view_radius,
+            FloatVector2 const &view_center,
+            Float view_radius);
+        Uint32 DrawWrapped (
+            RenderContext const &render_context,
+            FloatMatrix2 const &world_to_screen,
+            Float pixels_in_view_radius,
+            FloatVector2 const &view_center,
+            Float view_radius);
+                
         // draw lines where the bounds of this quadtree node are
         void DrawBounds (
             RenderContext const &render_context,
@@ -126,6 +81,53 @@ namespace Engine2
     
         // for use in Create
         VisibilityQuadTree (VisibilityQuadTree *parent) : QuadTree(parent) { }
+    
+        // the VisibilityQuadTree::DrawLoopFunctor class nicely packages up a
+        // bunch of variables which are used in the recursive Draw function.
+        // passing a reference to an instance of this class speeds up access,
+        // because then using the variables contained within can all be done
+        // using known offsets from a single pointer.  It also behaves as a
+        // functor for use in a std::for_each call on each quadtree node's
+        // object set.  This is protected instead of private so that
+        // MapEditor2::VisibilityQuadTree can use it.
+        class DrawLoopFunctor
+        {
+        public:
+    
+            DrawLoopFunctor (
+                RenderContext const &render_context,
+                FloatMatrix2 const &world_to_screen,
+                Float pixels_in_view_radius,
+                FloatVector2 const &view_center,
+                Float view_radius);
+            ~DrawLoopFunctor () { }
+    
+            inline Object::DrawData const &GetObjectDrawData () const { return m_object_draw_data; }
+            inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
+            inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
+            inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
+            inline Float GetViewRadius () const { return m_view_radius; }
+            inline Uint32 GetDrawnObjectCount () const { return m_drawn_object_count; }
+    
+            inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
+            inline void SetViewCenter (FloatVector2 const view_center) { m_view_center = view_center; }
+
+            // this method is what std::for_each will use to draw each object.
+            void operator () (Engine2::Object *object);
+            
+        private:
+    
+            Object::DrawData m_object_draw_data;
+            Float m_pixels_in_view_radius;
+            FloatVector2 m_view_center;
+            Float m_view_radius;
+            mutable Uint32 m_drawn_object_count;
+        }; // end of class Engine2::VisibilityQuadTree::DrawLoopFunctor
+    
+    private:
+
+        void Draw (DrawLoopFunctor const &draw_data);
+        void DrawWrapped (DrawLoopFunctor draw_data);
     }; // end of class Engine2::VisibilityQuadTree
 
 } // end of namespace Engine2

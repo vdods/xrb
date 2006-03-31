@@ -140,7 +140,7 @@ namespace MapEditor2
             
         inline SignalSender1<Uint32> const *SenderSelectedPolygonCountChanged () { return &m_sender_selected_polygon_count_changed; }
             
-        Uint32 DrawMetrics (
+        void DrawMetrics (
             RenderContext const &render_context,
             FloatMatrix2 const &world_to_screen,
             Float pixels_in_view_radius,

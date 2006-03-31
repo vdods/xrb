@@ -21,24 +21,6 @@ namespace Xrb
 {
 
 // ///////////////////////////////////////////////////////////////////////////
-// Engine2::VisibilityQuadTree::DrawData
-// ///////////////////////////////////////////////////////////////////////////
-
-Engine2::VisibilityQuadTree::DrawData::DrawData (
-    RenderContext const &render_context,
-    FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const view_radius)
-    :
-    m_object_draw_data(render_context, world_to_screen)
-{
-    m_pixels_in_view_radius = pixels_in_view_radius;
-    m_view_center = view_center;
-    m_view_radius = view_radius;
-}
-
-// ///////////////////////////////////////////////////////////////////////////
 // Engine2::VisibilityQuadTree
 // ///////////////////////////////////////////////////////////////////////////
 
@@ -152,149 +134,40 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     return retval;
 }
 
-// constants which control the thresholds at which objects use
-// alpha fading to fade away, when they become small enough.
-static Float const gs_radius_limit_upper = 3.0f;
-static Float const gs_radius_limit_lower = 0.8f;
-static Float const gs_distance_fade_slope = 1.0f / (gs_radius_limit_upper - gs_radius_limit_lower);
-static Float const gs_distance_fade_intercept = gs_radius_limit_lower / (gs_radius_limit_lower - gs_radius_limit_upper);
-
-// functor for iterating over m_object_set in Draw
-class DrawLoopFunctor
-{
-public:
-
-    DrawLoopFunctor (Engine2::VisibilityQuadTree::DrawData const &draw_data)
-        :
-        m_draw_data(draw_data),
-        m_drawn_objects(0)
-    { }
-
-    void operator () (Engine2::Object *object)
-    {
-        // calculate the object's pixel radius on screen
-        Float object_radius =
-            m_draw_data.GetPixelsInViewRadius() * object->GetRadius() /
-            m_draw_data.GetViewRadius();
-        // distance culling - don't draw objects that are below the
-        // gs_radius_limit_lower threshold
-        if (object_radius >= gs_radius_limit_lower)
-        {
-            // calculate the alpha value of the object due to its distance.
-            // sprites with radii between gs_radius_limit_lower and
-            // gs_radius_limit_upper will be partially transparent, fading away
-            // once they get to gs_radius_limit_lower.  this gives a very
-            // nice smooth transition for when the objects are not drawn
-            // because they are below the lower radius threshold.
-            Float distance_fade =
-                (object_radius > gs_radius_limit_upper) ?
-                1.0f :
-                (gs_distance_fade_slope * object_radius + gs_distance_fade_intercept);
-            // actually draw the sprite
-            object->Draw(m_draw_data.GetObjectDrawData(), distance_fade);
-            ++m_drawn_objects;
-        }
-    }
-
-    inline Uint32 GetDrawnObjects () const { return m_drawn_objects; }
-    
-private:
-
-    Engine2::VisibilityQuadTree::DrawData const &m_draw_data;
-    Uint32 m_drawn_objects;
-}; // end of class DrawLoopFunctor
-
 Uint32 Engine2::VisibilityQuadTree::Draw (
-    Engine2::VisibilityQuadTree::DrawData const &draw_data)
+    RenderContext const &render_context,
+    FloatMatrix2 const &world_to_screen,
+    Float const pixels_in_view_radius,
+    FloatVector2 const &view_center,
+    Float const view_radius)
 {
-    Uint32 retval = 0;
-
-    // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
-        return retval;
-
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f)
-    ASSERT2(draw_data.GetViewRadius() > 0.0f)
-
-    // don't draw quadtrees whose radii are lower than the
-    // gs_radius_limit_lower threshold -- a form of distance culling,
-    // which gives a huge speedup and allows zooming to any level
-    // maintain a consistent framerate.
-    if (draw_data.GetPixelsInViewRadius() * GetRadius()
-        <
-        draw_data.GetViewRadius() * gs_radius_limit_lower)
-    {
-        return retval;
-    }
-
-    // return if the view doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(draw_data.GetViewCenter(), draw_data.GetViewRadius()))
-    {
-        return retval;
-    }
-
-//     DrawBounds(draw_data.GetObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
-
-    retval +=
-        std::for_each(
-            m_object_set.begin(),
-            m_object_set.end(),
-            DrawLoopFunctor(draw_data)).GetDrawnObjects();
-
-    // if there are child nodes, call Draw on each
-    if (GetHasChildren())
-        for (Uint8 i = 0; i < 4; ++i)
-            GetChild<VisibilityQuadTree>(i)->Draw(draw_data);
-
-    return retval;
+    DrawLoopFunctor
+        draw_loop_functor(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius);
+    Draw(draw_loop_functor);
+    return draw_loop_functor.GetDrawnObjectCount();
 }
 
-Uint32 Engine2::VisibilityQuadTree::DrawWrapped (Engine2::VisibilityQuadTree::DrawData draw_data)
+Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
+    RenderContext const &render_context,
+    FloatMatrix2 const &world_to_screen,
+    Float const pixels_in_view_radius,
+    FloatVector2 const &view_center,
+    Float const view_radius)
 {
-    Uint32 retval = 0;
-    
-    // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
-        return retval;
-
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f)
-    ASSERT2(draw_data.GetViewRadius() > 0.0f)
-    ASSERT2(m_half_side_length > 0.0f)
-
-    Float side_length = GetSideLength();
-    Float radius_sum = 2.0f*GetRadius() + draw_data.GetViewRadius();
-    Float top = floor((draw_data.GetViewCenter().m[1]+radius_sum)/side_length);
-    Float bottom = ceil((draw_data.GetViewCenter().m[1]-radius_sum)/side_length);
-    Float left = ceil((draw_data.GetViewCenter().m[0]-radius_sum)/side_length);
-    Float right = floor((draw_data.GetViewCenter().m[0]+radius_sum)/side_length);
-    FloatVector2 old_view_center(draw_data.GetViewCenter());
-    FloatVector2 view_offset;
-
-    glMatrixMode(GL_MODELVIEW);
-    
-    for (Float x = left; x <= right; x += 1.0)
-    {
-        for (Float y = bottom; y <= top; y += 1.0)
-        {
-            view_offset.SetComponents(side_length*x, side_length*y);
-            // this IF statement culls quadtree nodes that are outside of the
-            // circular view radius from the square grid of nodes to be drawn
-            if ((old_view_center - view_offset).GetLengthSquared() < radius_sum*radius_sum)
-            {
-                draw_data.SetViewCenter(old_view_center - view_offset);
-
-                glLoadIdentity();
-                glTranslatef(
-                    view_offset[Dim::X],
-                    view_offset[Dim::Y],
-                    0.0f);
-
-                retval += Draw(draw_data);
-            }
-        }
-    }
-
-    return retval;
+    DrawLoopFunctor
+        draw_loop_functor(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius);
+    DrawWrapped(draw_loop_functor);
+    return draw_loop_functor.GetDrawnObjectCount();
 }
 
 void Engine2::VisibilityQuadTree::DrawBounds (
@@ -356,6 +229,139 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             GetChild<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// Engine2::VisibilityQuadTree::DrawLoopFunctor
+// ///////////////////////////////////////////////////////////////////////////
+
+// constants which control the thresholds at which objects use
+// alpha fading to fade away, when they become small enough.
+static Float const gs_radius_limit_upper = 3.0f;
+static Float const gs_radius_limit_lower = 0.8f;
+static Float const gs_distance_fade_slope = 1.0f / (gs_radius_limit_upper - gs_radius_limit_lower);
+static Float const gs_distance_fade_intercept = gs_radius_limit_lower / (gs_radius_limit_lower - gs_radius_limit_upper);
+
+Engine2::VisibilityQuadTree::DrawLoopFunctor::DrawLoopFunctor (
+    RenderContext const &render_context,
+    FloatMatrix2 const &world_to_screen,
+    Float const pixels_in_view_radius,
+    FloatVector2 const &view_center,
+    Float const view_radius)
+    :
+    m_object_draw_data(render_context, world_to_screen)
+{
+    m_pixels_in_view_radius = pixels_in_view_radius;
+    m_view_center = view_center;
+    m_view_radius = view_radius;
+    m_drawn_object_count = 0;
+}
+
+void Engine2::VisibilityQuadTree::DrawLoopFunctor::operator () (Engine2::Object *object)
+{
+    // calculate the object's pixel radius on screen
+    Float object_radius = m_pixels_in_view_radius * object->GetRadius() / m_view_radius;
+    // distance culling - don't draw objects that are below the
+    // gs_radius_limit_lower threshold
+    if (object_radius >= gs_radius_limit_lower)
+    {
+        // calculate the alpha value of the object due to its distance.
+        // sprites with radii between gs_radius_limit_lower and
+        // gs_radius_limit_upper will be partially transparent, fading away
+        // once they get to gs_radius_limit_lower.  this gives a very
+        // nice smooth transition for when the objects are not drawn
+        // because they are below the lower radius threshold.
+        Float distance_fade =
+            (object_radius > gs_radius_limit_upper) ?
+            1.0f :
+            (gs_distance_fade_slope * object_radius + gs_distance_fade_intercept);
+        // actually draw the sprite
+        object->Draw(m_object_draw_data, distance_fade);
+        ++m_drawn_object_count;
+    }
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// Engine2::VisibilityQuadTree continued
+// ///////////////////////////////////////////////////////////////////////////
+
+void Engine2::VisibilityQuadTree::Draw (
+    Engine2::VisibilityQuadTree::DrawLoopFunctor const &draw_loop_functor)
+{
+    // if there are no objects here or below, just return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f)
+    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f)
+
+    // don't draw quadtrees whose radii are lower than the
+    // gs_radius_limit_lower threshold -- a form of distance culling,
+    // which gives a huge speedup and allows zooming to any level
+    // maintain a consistent framerate.
+    if (draw_loop_functor.GetPixelsInViewRadius() * GetRadius()
+        <
+        draw_loop_functor.GetViewRadius() * gs_radius_limit_lower)
+    {
+        return;
+    }
+
+    // return if the view doesn't intersect this node
+    if (!GetDoesAreaOverlapQuadBounds(draw_loop_functor.GetViewCenter(), draw_loop_functor.GetViewRadius()))
+        return;
+
+//     DrawBounds(draw_loop_functor.GetObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
+
+    std::for_each(m_object_set.begin(), m_object_set.end(), draw_loop_functor);
+
+    // if there are child nodes, call Draw on each
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
+}
+
+void Engine2::VisibilityQuadTree::DrawWrapped (Engine2::VisibilityQuadTree::DrawLoopFunctor draw_loop_functor)
+{
+    // if there are no objects here or below, just return
+    if (GetSubordinateObjectCount() == 0)
+        return;
+
+    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f)
+    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f)
+    ASSERT2(m_half_side_length > 0.0f)
+
+    Float side_length = GetSideLength();
+    Float radius_sum = 2.0f*GetRadius() + draw_loop_functor.GetViewRadius();
+    Float top = floor((draw_loop_functor.GetViewCenter().m[1]+radius_sum)/side_length);
+    Float bottom = ceil((draw_loop_functor.GetViewCenter().m[1]-radius_sum)/side_length);
+    Float left = ceil((draw_loop_functor.GetViewCenter().m[0]-radius_sum)/side_length);
+    Float right = floor((draw_loop_functor.GetViewCenter().m[0]+radius_sum)/side_length);
+    FloatVector2 old_view_center(draw_loop_functor.GetViewCenter());
+    FloatVector2 view_offset;
+
+    glMatrixMode(GL_MODELVIEW);
+    
+    for (Float x = left; x <= right; x += 1.0)
+    {
+        for (Float y = bottom; y <= top; y += 1.0)
+        {
+            view_offset.SetComponents(side_length*x, side_length*y);
+            // this IF statement culls quadtree nodes that are outside of the
+            // circular view radius from the square grid of nodes to be drawn
+            if ((old_view_center - view_offset).GetLengthSquared() < radius_sum*radius_sum)
+            {
+                draw_loop_functor.SetViewCenter(old_view_center - view_offset);
+
+                glLoadIdentity();
+                glTranslatef(
+                    view_offset[Dim::X],
+                    view_offset[Dim::Y],
+                    0.0f);
+
+                Draw(draw_loop_functor);
+            }
+        }
+    }
 }
 
 } // end of namespace Xrb

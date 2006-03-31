@@ -56,11 +56,19 @@ namespace MapEditor2
             Serializer &serializer,
             ObjectLayer *object_layer);
     
-        Uint32 DrawMetrics (
-            VisibilityQuadTree::DrawData const &draw_data,
+        void DrawMetrics (
+            RenderContext const &render_context,
+            FloatMatrix2 const &world_to_screen,
+            Float pixels_in_view_radius,
+            FloatVector2 const &view_center,
+            Float view_radius,
             Object::MetricMode metric_mode);
-        Uint32 DrawMetricsWrapped (
-            VisibilityQuadTree::DrawData draw_data,
+        void DrawMetricsWrapped (
+            RenderContext const &render_context,
+            FloatMatrix2 const &world_to_screen,
+            Float pixels_in_view_radius,
+            FloatVector2 const &view_center,
+            Float view_radius,
             Object::MetricMode metric_mode);
     
         // selects/selection-toggles all objects touching/inside the given circle
@@ -100,6 +108,13 @@ namespace MapEditor2
     
     private:
 
+        void DrawMetrics (
+            DrawLoopFunctor const &draw_data,
+            Object::MetricMode metric_mode);
+        void DrawMetricsWrapped (
+            DrawLoopFunctor draw_data,
+            Object::MetricMode metric_mode);
+    
         void ComputeNearestVertexPrivate (
             FloatVector2 const &center,
             Float radius,

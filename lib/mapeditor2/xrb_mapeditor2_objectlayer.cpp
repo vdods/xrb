@@ -183,7 +183,7 @@ MapEditor2::VisibilityQuadTree *MapEditor2::ObjectLayer::GetMapEditorQuadTree ()
     return retval;
 }
 
-Uint32 MapEditor2::ObjectLayer::DrawMetrics (
+void MapEditor2::ObjectLayer::DrawMetrics (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
@@ -194,28 +194,22 @@ Uint32 MapEditor2::ObjectLayer::DrawMetrics (
     ASSERT2(pixels_in_view_radius > 0.0)
     ASSERT2(view_radius > 0.0)
 
-    Uint32 retval = 0;
-
-    // package up the draw data
-    VisibilityQuadTree::DrawData draw_data(
-        render_context,
-        world_to_screen,
-        pixels_in_view_radius,
-        view_center,
-        view_radius);
-
     if (GetIsWrapped())
-        retval +=
-            GetMapEditorQuadTree()->DrawMetricsWrapped(
-                draw_data,
-                metric_mode);
+        GetMapEditorQuadTree()->DrawMetricsWrapped(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius,
+            metric_mode);
     else
-        retval +=
-            GetMapEditorQuadTree()->DrawMetrics(
-                draw_data,
-                metric_mode);
-
-    return retval;
+        GetMapEditorQuadTree()->DrawMetrics(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius,
+            metric_mode);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -184,22 +184,10 @@ Uint32 Engine2::ObjectLayer::Draw (
 {
     ASSERT2(view_radius > 0.0)
 
-    Uint32 retval = 0;
-
-    // package up the draw data
-    VisibilityQuadTree::DrawData draw_data(
-        render_context,
-        world_to_screen,
-        pixels_in_view_radius,
-        view_center,
-        view_radius);
-
     if (m_is_wrapped)
-        retval += m_quad_tree->DrawWrapped(draw_data);
+        return m_quad_tree->DrawWrapped(render_context, world_to_screen, pixels_in_view_radius, view_center, view_radius);
     else
-        retval += m_quad_tree->Draw(draw_data);
-
-    return retval;
+        return m_quad_tree->Draw(render_context, world_to_screen, pixels_in_view_radius, view_center, view_radius);
 }
 
 void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)

@@ -756,9 +756,6 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
     ASSERT1(m_quad_tree != NULL)
     ASSERT1(m_collision_pair_list.empty());
 
-    Float object_layer_side_length = m_main_object_layer->GetSideLength();
-    Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-    
     for (EntitySetIterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
@@ -776,7 +773,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
             entity,
             GetFrameDT(),
             &m_collision_pair_list,
-            object_layer_side_length);
+            m_main_object_layer->GetSideLength());
     }
 }
 
