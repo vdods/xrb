@@ -33,9 +33,6 @@ libxrb_la_SOURCES = \
     engine2/xrb_engine2_visibilityquadtree.cpp \
     engine2/xrb_engine2_world.cpp \
     \
-    engine2/physicshandlers/xrb_engine2_planetaryphysicshandler.cpp \
-    engine2/physicshandlers/xrb_engine2_uniformgravityphysicshandler.cpp \
-    \
     gui/xrb_dialog.cpp \
     gui/xrb_font.cpp \
     gui/xrb_fontface.cpp \
@@ -62,22 +59,6 @@ libxrb_la_SOURCES = \
     input/xrb_key.cpp \
     input/xrb_keybinds.cpp \
     input/xrb_keyrepeater.cpp \
-    \
-    mapeditor2/xrb_mapeditor2_compound.cpp \
-    mapeditor2/xrb_mapeditor2_compoundentity.cpp \
-    mapeditor2/xrb_mapeditor2_compoundvertex.cpp \
-    mapeditor2/xrb_mapeditor2_entity.cpp \
-    mapeditor2/xrb_mapeditor2_entitypropertiespanel.cpp \
-    mapeditor2/xrb_mapeditor2_mainwidget.cpp \
-    mapeditor2/xrb_mapeditor2_object.cpp \
-    mapeditor2/xrb_mapeditor2_objectlayer.cpp \
-    mapeditor2/xrb_mapeditor2_objectpropertiespanel.cpp \
-    mapeditor2/xrb_mapeditor2_polygon.cpp \
-    mapeditor2/xrb_mapeditor2_sprite.cpp \
-    mapeditor2/xrb_mapeditor2_spriteentity.cpp \
-    mapeditor2/xrb_mapeditor2_visibilityquadtree.cpp \
-    mapeditor2/xrb_mapeditor2_world.cpp \
-    mapeditor2/xrb_mapeditor2_worldview.cpp \
     \
     math/xrb_math.cpp \
     math/xrb_matrix2.cpp \
@@ -112,6 +93,25 @@ libxrb_la_SOURCES = \
     util/xrb_tokenizer.cpp \
     util/xrb_transformation.cpp \
     util/xrb_util.cpp
+
+# the mapeditor is temporarily out of service
+#    mapeditor2/xrb_mapeditor2_compound.cpp \
+#    mapeditor2/xrb_mapeditor2_compoundentity.cpp \
+#    mapeditor2/xrb_mapeditor2_compoundvertex.cpp \
+#    mapeditor2/xrb_mapeditor2_entity.cpp \
+#    mapeditor2/xrb_mapeditor2_entitypropertiespanel.cpp \
+#    mapeditor2/xrb_mapeditor2_mainwidget.cpp \
+#    mapeditor2/xrb_mapeditor2_object.cpp \
+#    mapeditor2/xrb_mapeditor2_objectlayer.cpp \
+#    mapeditor2/xrb_mapeditor2_objectpropertiespanel.cpp \
+#    mapeditor2/xrb_mapeditor2_polygon.cpp \
+#    mapeditor2/xrb_mapeditor2_sprite.cpp \
+#    mapeditor2/xrb_mapeditor2_spriteentity.cpp \
+#    mapeditor2/xrb_mapeditor2_visibilityquadtree.cpp \
+#    mapeditor2/xrb_mapeditor2_world.cpp \
+#    mapeditor2/xrb_mapeditor2_worldview.cpp \
+#    \
+#
 
 libxrb_la_LIBADD = \
     libdatafileparser.la \
@@ -169,9 +169,6 @@ include_HEADERS = \
     engine2/xrb_engine2_visibilityquadtree.h \
     engine2/xrb_engine2_world.h \
     \
-    engine2/physicshandlers/xrb_engine2_planetaryphysicshandler.h \
-    engine2/physicshandlers/xrb_engine2_uniformgravityphysicshandler.h \
-    \
     gui/xrb_dialog.h \
     gui/xrb_font.h \
     gui/xrb_fontface.h \
@@ -206,23 +203,6 @@ include_HEADERS = \
     input/xrb_key.h \
     input/xrb_keybinds.h \
     input/xrb_keyrepeater.h \
-    \
-    mapeditor2/xrb_mapeditor2_compound.h \
-    mapeditor2/xrb_mapeditor2_compoundentity.h \
-    mapeditor2/xrb_mapeditor2_compoundvertex.h \
-    mapeditor2/xrb_mapeditor2_compoundvertex.h \
-    mapeditor2/xrb_mapeditor2_entity.h \
-    mapeditor2/xrb_mapeditor2_entitypropertiespanel.h \
-    mapeditor2/xrb_mapeditor2_mainwidget.h \
-    mapeditor2/xrb_mapeditor2_object.h \
-    mapeditor2/xrb_mapeditor2_objectlayer.h \
-    mapeditor2/xrb_mapeditor2_objectpropertiespanel.h \
-    mapeditor2/xrb_mapeditor2_polygon.h \
-    mapeditor2/xrb_mapeditor2_sprite.h \
-    mapeditor2/xrb_mapeditor2_spriteentity.h \
-    mapeditor2/xrb_mapeditor2_visibilityquadtree.h \
-    mapeditor2/xrb_mapeditor2_world.h \
-    mapeditor2/xrb_mapeditor2_worldview.h \
     \
     math/xrb_math.h \
     math/xrb_matrix2.h \
@@ -268,6 +248,26 @@ include_HEADERS = \
     parsers/xrb_datafilevalue.h \
     parsers/xrb_linecalculator.h
 
+# the mapeditor is temporarily out of service
+#    mapeditor2/xrb_mapeditor2_compound.h \
+#    mapeditor2/xrb_mapeditor2_compoundentity.h \
+#    mapeditor2/xrb_mapeditor2_compoundvertex.h \
+#    mapeditor2/xrb_mapeditor2_compoundvertex.h \
+#    mapeditor2/xrb_mapeditor2_entity.h \
+#    mapeditor2/xrb_mapeditor2_entitypropertiespanel.h \
+#    mapeditor2/xrb_mapeditor2_mainwidget.h \
+#    mapeditor2/xrb_mapeditor2_object.h \
+#    mapeditor2/xrb_mapeditor2_objectlayer.h \
+#    mapeditor2/xrb_mapeditor2_objectpropertiespanel.h \
+#    mapeditor2/xrb_mapeditor2_polygon.h \
+#    mapeditor2/xrb_mapeditor2_sprite.h \
+#    mapeditor2/xrb_mapeditor2_spriteentity.h \
+#    mapeditor2/xrb_mapeditor2_visibilityquadtree.h \
+#    mapeditor2/xrb_mapeditor2_world.h \
+#    mapeditor2/xrb_mapeditor2_worldview.h \
+#    \
+#
+
 ##############################################################################
 # parser intermediate libraries -- they're special because they need
 # to be separate and have to have special flags for lex and yacc
@@ -304,11 +304,9 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/core/serializers \
     -I$(top_srcdir)/lib/engine2 \
-    -I$(top_srcdir)/lib/engine2/physicshandlers \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
-    -I$(top_srcdir)/lib/mapeditor2 \
     -I$(top_srcdir)/lib/math \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
@@ -316,6 +314,10 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/render/engine2_worldviews \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/util
+
+# the map editor is temporarily out of service
+#    -I$(top_srcdir)/lib/mapeditor2 \
+#
 
 AM_LDFLAGS = \
     `$(FREETYPE_CONFIG) --libtool` \

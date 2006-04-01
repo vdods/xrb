@@ -109,7 +109,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
-    -I$(top_srcdir)/lib/mapeditor2 \
     -I$(top_srcdir)/lib/math \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
@@ -117,6 +116,10 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/render/engine2_worldviews \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/util
+
+# the mapeditor is temporarily out of service
+#    -I$(top_srcdir)/lib/mapeditor2 \
+#
 
 AM_LDFLAGS = \
     `$(FREETYPE_CONFIG) --libs` \

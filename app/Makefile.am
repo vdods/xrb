@@ -1,4 +1,4 @@
 SUBDIRS = \
-    example \
-    mapeditor2
-#   unittest
+    example 
+#    mapeditor2
+#    unittest
