@@ -33,6 +33,8 @@ app/example/disasteroids/game/dis_item.h
 app/example/disasteroids/game/dis_powereddevice.h
 app/example/disasteroids/game/dis_spawn.cpp
 app/example/disasteroids/game/dis_spawn.h
+app/example/disasteroids/game/dis_util.cpp
+app/example/disasteroids/game/dis_util.h
 app/example/disasteroids/game/gameobjects/dis_asteroid.cpp
 app/example/disasteroids/game/gameobjects/dis_asteroid.h
 app/example/disasteroids/game/gameobjects/dis_ballistic.cpp
@@ -78,6 +80,8 @@ app/example/disasteroids/ui/dis_gamewidget.cpp
 app/example/disasteroids/ui/dis_gamewidget.h
 app/example/disasteroids/ui/dis_highscorenameentrydialog.cpp
 app/example/disasteroids/ui/dis_highscorenameentrydialog.h
+app/example/disasteroids/ui/dis_highscoreswidget.cpp
+app/example/disasteroids/ui/dis_highscoreswidget.h
 app/example/disasteroids/ui/dis_inventorybutton.cpp
 app/example/disasteroids/ui/dis_inventorybutton.h
 app/example/disasteroids/ui/dis_inventorypanel.cpp

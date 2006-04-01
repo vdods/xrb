@@ -61,7 +61,7 @@ public:
         T_ENEMY_SHIP_LOWEST = T_INTERLOPER,
         T_ENEMY_SHIP_HIGHEST = T_DEVOURMENT,
         T_ENEMY_SHIP_COUNT = T_ENEMY_SHIP_HIGHEST - T_ENEMY_SHIP_LOWEST + 1
-    }; // end of enum Dis::GameObject::Type
+    }; // end of enum GameObject::Type
 
     GameObject (Type const type)
         :
@@ -99,7 +99,7 @@ public:
     virtual bool GetIsEffect () const { return false; }
     
     // this is the Engine2::EntityGuts::ReadFunction to create
-    // Dis::GameObject subclass objects from a serializer.
+    // GameObject subclass objects from a serializer.
     static Engine2::EntityGuts *Create (Serializer &serializer);    
     virtual void Write (Serializer &serializer) const { }//= 0;
 

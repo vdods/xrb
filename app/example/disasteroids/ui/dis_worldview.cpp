@@ -66,7 +66,7 @@ WorldView::~WorldView ()
 {
 }
 
-void WorldView::SetPlayerShip (Dis::PlayerShip *const player_ship)
+void WorldView::SetPlayerShip (PlayerShip *const player_ship)
 {
     if (m_player_ship != player_ship)
     {

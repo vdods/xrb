@@ -54,7 +54,7 @@ struct CollisionPair
         ASSERT2(m_entity1 != NULL)
         ASSERT2(Epsilon(m_collision_normal.GetLength(), 1.0f, 0.0001f))
     }
-}; // end of struct Dis::CollisionPair
+}; // end of struct CollisionPair
 
 typedef std::list<CollisionPair> CollisionPairList;
 typedef CollisionPairList::iterator CollisionPairListIterator;

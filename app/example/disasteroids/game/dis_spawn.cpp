@@ -88,11 +88,11 @@ Asteroid *SpawnAsteroid (
     bool const is_a_secondary_asteroid)
 {
     Asteroid *asteroid = 
-        new Dis::Asteroid(
+        new Asteroid(
             first_moment,
             mineral_content,
             is_a_secondary_asteroid);
-    Dis::SpawnSpriteEntity(
+    SpawnSpriteEntity(
         world,
         object_layer,
         "resources/asteroid.png",
