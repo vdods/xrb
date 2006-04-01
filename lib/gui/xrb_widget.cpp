@@ -398,23 +398,17 @@ void Widget::SetIsModal (bool const is_modal)
     // only do stuff if the value is changing
     if (m_is_modal != is_modal)
     {
+        // make sure to remove mouseover when the modal state changes
+        MouseoverOff();
+        
         // make sure that m_is_modal is still true during the call to
         // RemoveModalWidget, or before the call to AddModalWidget
         if (m_is_modal)
         {
-            // make sure to remove mouseover when the modal state changes
-            MouseoverOff();
             ASSERT1(!GetIsMouseover())
             // remove this widget from the modal stack of the top level parent
             RemoveModalWidget(this);
             m_is_modal = false;
-            // send a mouseover event to the top level parent so that
-            // mouseover is correctly set after the change in the
-            // modal widget stack
-            EventMouseover mouseover_event(
-                GetTopLevelParent()->GetLastMousePosition(),
-                GetTopLevelParent()->GetMostRecentEventTime());
-            GetTopLevelParent()->ProcessEvent(&mouseover_event);
         }
         else
         {
