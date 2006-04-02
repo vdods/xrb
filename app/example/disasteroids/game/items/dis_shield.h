@@ -13,7 +13,7 @@
 
 #include "xrb.h"
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_mortal.h"
 #include "dis_powereddevice.h"
 #include "xrb_vector.h"
@@ -52,8 +52,8 @@ public:
     // takes damage for the ship, using power, and returns the amount of
     // unblocked damage that the ship should take.
     Float Damage (
-        GameObject *damager,
-        GameObject *damage_medium,
+        Entity *damager,
+        Entity *damage_medium,
         Float damage_amount,
         Float *damage_amount_used,
         FloatVector2 const &damage_location,

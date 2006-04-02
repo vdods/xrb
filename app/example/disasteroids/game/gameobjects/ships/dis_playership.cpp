@@ -592,8 +592,8 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
 }
 
 bool PlayerShip::Damage (
-    GameObject *const damager,
-    GameObject *const damage_medium,
+    Entity *const damager,
+    Entity *const damage_medium,
     Float const damage_amount,
     Float *const damage_amount_used,
     FloatVector2 const &damage_location,
@@ -648,8 +648,8 @@ bool PlayerShip::Damage (
 }
         
 void PlayerShip::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,

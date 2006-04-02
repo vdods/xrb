@@ -11,7 +11,7 @@
 #if !defined(_DIS_POWERUP_H_)
 #define _DIS_POWERUP_H_
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 
 #include "dis_item.h"
 
@@ -20,7 +20,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-class Powerup : public GameObject
+class Powerup : public Entity
 {
 public:
 
@@ -45,7 +45,7 @@ public:
         ItemType const item_type,
         Uint8 const pickup_flags)
         :
-        GameObject(T_POWERUP, CT_SOLID_COLLISION)
+        Entity(T_POWERUP, CT_SOLID_COLLISION)
     {
         m_delete_upon_next_think = false;
         m_item_type = item_type;
@@ -56,7 +56,7 @@ public:
         Item *const item,
         Uint8 const pickup_flags)
         :
-        GameObject(T_POWERUP, CT_SOLID_COLLISION)
+        Entity(T_POWERUP, CT_SOLID_COLLISION)
     {
         ASSERT1(item != NULL)
         m_item_type = IT_COUNT;
@@ -65,7 +65,7 @@ public:
     }
     virtual ~Powerup () { }
 
-    // GameObject interface method
+    // Entity interface method
     virtual bool GetIsPowerup () const { return true; }
     
     inline ItemType GetItemType () const
@@ -86,7 +86,7 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,

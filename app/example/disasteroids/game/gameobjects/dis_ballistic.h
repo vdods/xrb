@@ -11,23 +11,23 @@
 #if !defined(_DIS_BALLISTIC_H_)
 #define _DIS_BALLISTIC_H_
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
 
-class Ballistic : public GameObject
+class Ballistic : public Entity
 {
 public:
 
     Ballistic (
         Float impact_damage,
         Float time_to_live,
-        GameObjectReference<GameObject> const &owner)
+        EntityReference<Entity> const &owner)
         :
-        GameObject(T_BALLISTIC, CT_NONSOLID_COLLISION),
+        Entity(T_BALLISTIC, CT_NONSOLID_COLLISION),
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);
@@ -38,7 +38,7 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -50,7 +50,7 @@ protected:
     bool m_delete_upon_next_think;
     Float m_impact_damage;
     Float m_time_to_live;
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Entity> m_owner;
 }; // end of class Ballistic
 
 } // end of namespace Dis

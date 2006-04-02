@@ -24,7 +24,7 @@ namespace Dis
 {
 
 void Explosive::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,
@@ -50,8 +50,8 @@ void Explosive::Collide (
 }
 
 void Explosive::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -92,7 +92,7 @@ Grenade::Grenade (
     Float const damage_radius,
     Float const explosion_radius,
     Uint32 const weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float const max_health)
     :
     Explosive(owner, max_health, max_health, T_GRENADE, CT_SOLID_COLLISION),
@@ -107,8 +107,8 @@ Grenade::Grenade (
 }
 
 void Grenade::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -135,7 +135,7 @@ void Grenade::Die (
 }
 
 void Grenade::CheckIfItShouldDetonate (
-    GameObject *const collider,
+    Entity *const collider,
     Float const time,
     Float const frame_dt)
 {
@@ -207,8 +207,8 @@ void Mine::Think (
 }
 
 void Mine::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -235,7 +235,7 @@ void Mine::Die (
 }
 
 void Mine::CheckIfItShouldDetonate (
-    GameObject *const collider,
+    Entity *const collider,
     Float const time,
     Float const frame_dt)
 {
@@ -364,7 +364,7 @@ void Missile::Think (
 }
 
 void Missile::CheckIfItShouldDetonate (
-    GameObject *const collider,
+    Entity *const collider,
     Float const time,
     Float const frame_dt)
 {
@@ -408,7 +408,7 @@ void Missile::Detonate (
 // ///////////////////////////////////////////////////////////////////////////
 /*
 void EMPBomb::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,
@@ -426,8 +426,8 @@ void EMPBomb::Collide (
 }
 
 void EMPBomb::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -454,7 +454,7 @@ void EMPBomb::Die (
 }
 
 void EMPBomb::CheckIfItShouldDetonate (
-    GameObject *const collider,
+    Entity *const collider,
     Float const time,
     Float const frame_dt)
 {

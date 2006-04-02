@@ -103,8 +103,8 @@ void Revulsion::Think (Float const time, Float const frame_dt)
 }
 
 void Revulsion::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -148,12 +148,12 @@ void Revulsion::Seek (Float const time, Float const frame_dt)
          it != it_end;
          ++it)
     {
-        GameObject *game_object = *it;
-        ASSERT1(game_object != NULL)
-        if (game_object->GetType() == T_SOLITARY)
+        Entity *entity = *it;
+        ASSERT1(entity != NULL)
+        if (entity->GetType() == T_SOLITARY)
         {
             // if so, set m_target and transition to TrailTarget
-            m_target = game_object->GetReference();
+            m_target = entity->GetReference();
             FloatVector2 target_position(
                 GetObjectLayer()->GetAdjustedCoordinates(
                     m_target->GetTranslation(),

@@ -11,14 +11,14 @@
 #if !defined(_DIS_EFFECT_H_)
 #define _DIS_EFFECT_H_
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
 
-class Effect : public GameObject
+class Effect : public Entity
 {
 public:
 
@@ -28,7 +28,7 @@ public:
         Type const type,
         CollisionType const collision_type)
         :
-        GameObject(type, collision_type)
+        Entity(type, collision_type)
     {
         ASSERT1(time_to_live != 0.0f)
         ASSERT1(time_at_birth >= 0.0f)
@@ -112,7 +112,7 @@ public:
         Float const explosion_radius,
         Float const time_to_live,
         Float const time_at_birth,
-        GameObjectReference<GameObject> const &owner)
+        EntityReference<Entity> const &owner)
         :
         Explosion(explosion_radius, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION, CT_NONSOLID_COLLISION),
         m_damage_amount(damage_amount),
@@ -125,7 +125,7 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -137,7 +137,7 @@ private:
     Float const m_damage_amount;
     Float const m_damage_radius;
     bool m_has_done_impact;
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Entity> m_owner;
 }; // end of class DamageExplosion
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ public:
         Float const final_size,
         Float const time_to_live,
         Float const time_at_birth,
-        GameObjectReference<GameObject> const &owner)
+        EntityReference<Entity> const &owner)
         :
         Explosion(final_size, time_to_live, time_at_birth, T_EMP_EXPLOSION, CT_NONSOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
@@ -180,7 +180,7 @@ public:
     }
 
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -190,7 +190,7 @@ public:
 private:
 
     Float const m_disable_time_factor;
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Entity> m_owner;
 }; // end of class EMPExplosion
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -206,7 +206,7 @@ public:
         Float final_size,
         Float time_to_live,
         Float time_at_birth,
-        GameObjectReference<GameObject> const &owner)
+        EntityReference<Entity> const &owner)
         :
         Explosion(final_size, time_to_live, time_at_birth, T_FIREBALL, CT_NONSOLID_COLLISION),
         m_initial_damage(damage),
@@ -219,7 +219,7 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -233,7 +233,7 @@ private:
     // the amount of damage this fireball still has left to inflict on stuff
     Float m_current_damage;
     // the thing that fired this fireball
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Entity> m_owner;
 }; // end of class Fireball
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -62,7 +62,7 @@ private:
     typedef void (Interloper::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
-    GameObjectReference<Ship> m_target;
+    EntityReference<Ship> m_target;
     Float m_time_at_retreat_start;
 }; // end of class Interloper
 

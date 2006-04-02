@@ -69,8 +69,8 @@ public:
     
     virtual void Think (Float time, Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,

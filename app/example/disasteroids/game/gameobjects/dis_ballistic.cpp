@@ -29,7 +29,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
 }
 
 void Ballistic::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,

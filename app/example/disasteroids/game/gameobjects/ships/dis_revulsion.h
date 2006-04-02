@@ -31,8 +31,8 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -85,8 +85,8 @@ private:
     typedef void (Revulsion::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
-    GameObjectReference<Ship> m_target;
-    GameObjectReference<ReticleEffect> m_reticle_effect;
+    EntityReference<Ship> m_target;
+    EntityReference<ReticleEffect> m_reticle_effect;
     FloatVector2 m_aim_delta;
     Float m_aim_start_time;
     GaussGun *m_weapon;

@@ -18,10 +18,10 @@ namespace Dis
 HealthTrigger::HealthTrigger (
     Float const health_delta_rate,
     Mortal::DamageType const damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Entity> const &owner)
     :
-    GameObject(T_HEALTH_TRIGGER, CT_NONSOLID_COLLISION),
+    Entity(T_HEALTH_TRIGGER, CT_NONSOLID_COLLISION),
     m_ignore_this_mortal(ignore_this_mortal),
     m_owner(owner)
 {
@@ -30,7 +30,7 @@ HealthTrigger::HealthTrigger (
 }
 
 void HealthTrigger::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,

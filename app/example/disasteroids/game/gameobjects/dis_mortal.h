@@ -11,14 +11,14 @@
 #if !defined(_DIS_MORTAL_H_)
 #define _DIS_MORTAL_H_
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
 
-class Mortal : public GameObject
+class Mortal : public Entity
 {
 public:
 
@@ -46,7 +46,7 @@ public:
         Type const type,
         CollisionType const collision_type)
         :
-        GameObject(type, collision_type)
+        Entity(type, collision_type)
     {
         ASSERT1(current_health > 0.0f)
         ASSERT1(max_health > 0.0f)
@@ -104,8 +104,8 @@ public:
   
     void Revive (Float time, Float frame_dt);
     void Kill (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -114,7 +114,7 @@ public:
         Float frame_dt);
 
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -122,8 +122,8 @@ public:
         Float frame_dt);
     // the return value is true iff the Mortal died due to this damage.
     virtual bool Damage (
-        GameObject *damager,
-        GameObject *damage_medium,
+        Entity *damager,
+        Entity *damage_medium,
         Float damage_amount,
         Float *damage_amount_used,
         FloatVector2 const &damage_location,
@@ -133,8 +133,8 @@ public:
         Float time,
         Float frame_dt);
     virtual void Heal (
-        GameObject *healer,
-        GameObject *heal_medium,
+        Entity *healer,
+        Entity *heal_medium,
         Float heal_amount,
         FloatVector2 const &heal_location,
         FloatVector2 const &heal_normal,
@@ -142,8 +142,8 @@ public:
         Float time,
         Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,

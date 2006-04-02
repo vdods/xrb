@@ -52,8 +52,8 @@ void Ship::Think (Float const time, Float const frame_dt)
 }
 
 void Ship::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,

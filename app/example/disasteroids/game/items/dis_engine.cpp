@@ -10,7 +10,7 @@
 
 #include "dis_engine.h"
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_ship.h"
 #include "xrb_math.h"
 

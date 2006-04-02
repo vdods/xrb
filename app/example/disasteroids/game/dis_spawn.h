@@ -13,7 +13,6 @@
 
 #include <string>
 
-#include "dis_gameobject.h"
 #include "dis_mortal.h"
 #include "xrb_color.h"
 #include "xrb_vector.h"
@@ -39,6 +38,7 @@ class DamageExplosion;
 class Devourment;
 // class EMPBomb;
 // class EMPBombLayer;
+class Entity;
 class EMPExplosion;
 class Fireball;
 class GaussGunTrail;
@@ -63,7 +63,7 @@ Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_filename,
-    GameObject *game_object,
+    Entity *entity,
     FloatVector2 const &translation,
     Float scale_factor,
     Float angle,
@@ -90,7 +90,7 @@ Ballistic *SpawnBallistic (
     FloatVector2 const &velocity,
     Float impact_damage,
     Float time_to_live,
-    GameObjectReference<GameObject> const &owner);
+    EntityReference<Entity> const &owner);
     
 Grenade *SpawnGrenade (
     Engine2::World *world,
@@ -103,7 +103,7 @@ Grenade *SpawnGrenade (
     Float damage_radius,
     Float explosion_radius,
     Uint32 weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float health);
     
 Mine *SpawnMine (
@@ -117,7 +117,7 @@ Mine *SpawnMine (
     Float damage_radius,
     Float explosion_radius,
     Uint32 weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float health);
     
 Missile *SpawnMissile (
@@ -133,7 +133,7 @@ Missile *SpawnMissile (
     Float damage_radius,
     Float explosion_radius,
     Uint32 weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float health);
 /*
 EMPBomb *SpawnEMPBomb (
@@ -146,7 +146,7 @@ EMPBomb *SpawnEMPBomb (
     Float disable_time_factor,
     Float blast_radius,
     Uint32 weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float health);
 */  
 Powerup *SpawnMineral (
@@ -168,7 +168,7 @@ DamageExplosion *SpawnDamageExplosion (
     Float explosion_radius,
     Float time_to_live,
     Float time_at_birth,
-    GameObjectReference<GameObject> const &owner);
+    EntityReference<Entity> const &owner);
     
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::World *world,
@@ -188,7 +188,7 @@ EMPExplosion *SpawnEMPExplosion (
     Float final_size,
     Float time_to_live,
     Float time_at_birth,
-    GameObjectReference<GameObject> const &owner);
+    EntityReference<Entity> const &owner);
     
 Fireball *SpawnFireball (
     Engine2::World *world,
@@ -199,7 +199,7 @@ Fireball *SpawnFireball (
     Float final_size,
     Float time_to_live,
     Float time_at_birth,
-    GameObjectReference<GameObject> const &owner);
+    EntityReference<Entity> const &owner);
 
 LaserBeam *SpawnLaserBeam (
     Engine2::World *world,
@@ -236,8 +236,8 @@ HealthTrigger *SpawnHealthTrigger (
     FloatVector2 const &velocity,
     Float health_delta_rate,
     Mortal::DamageType damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
-    GameObjectReference<GameObject> const &owner);
+    EntityReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Entity> const &owner);
     
 Solitary *SpawnSolitary (
     Engine2::World *world,

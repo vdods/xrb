@@ -153,7 +153,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
 }
 
 void Devourment::Collide (
-    GameObject *collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -180,8 +180,8 @@ void Devourment::Collide (
 }
 
 void Devourment::Die (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -231,30 +231,30 @@ void Devourment::Seek (Float const time, Float const frame_dt)
          it != it_end;
          ++it)
     {
-        GameObject *game_object = *it;
-        ASSERT1(game_object != NULL)
+        Entity *entity = *it;
+        ASSERT1(entity != NULL)
 
         // don't try to eat ourselves
-        if (game_object == this)
+        if (entity == this)
             continue;
 
         // don't seek other Devourments
-        if (game_object->GetType() == T_DEVOURMENT)
+        if (entity->GetType() == T_DEVOURMENT)
             continue;
             
         // we're only interested in Mortals
-        if (dynamic_cast<Mortal *>(game_object) != NULL)
+        if (dynamic_cast<Mortal *>(entity) != NULL)
         {
             // if no target, use the current game object
             if (!m_target.GetIsValid())
-                m_target = game_object->GetReference();
+                m_target = entity->GetReference();
             // only override the current target if the current
             // game object is closer to the optimal mass
             else if (Math::Abs(m_target->GetFirstMoment() - s_optimal_target_mass) <
-                     Math::Abs(game_object->GetFirstMoment() - s_optimal_target_mass))
+                     Math::Abs(entity->GetFirstMoment() - s_optimal_target_mass))
             {
                 // if so, set m_target and transition to Pursue
-                m_target = game_object->GetReference();
+                m_target = entity->GetReference();
             }
         }
     } 

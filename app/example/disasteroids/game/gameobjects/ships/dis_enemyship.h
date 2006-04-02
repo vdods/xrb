@@ -36,14 +36,14 @@ public:
     }
     virtual ~EnemyShip () { }
 
-    // GameObject interface method
+    // Entity interface method
     virtual bool GetIsEnemyShip () const { return true; }
     
     inline Uint8 GetEnemyLevel () const { return m_enemy_level; }
 
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,

@@ -25,7 +25,7 @@ class Explosive : public Mortal
 public:
 
     Explosive (
-        GameObjectReference<GameObject> const &owner,
+        EntityReference<Entity> const &owner,
         Float const current_health,
         Float const max_health,
         Type const type,
@@ -43,15 +43,15 @@ public:
     virtual bool GetIsExplosive () const { return true; }
     
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
         Float time,
         Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -60,7 +60,7 @@ public:
         Float frame_dt);
 
     virtual void CheckIfItShouldDetonate (
-        GameObject *collider,
+        Entity *collider,
         Float time,
         Float frame_dt) = 0;
     virtual void Detonate (
@@ -69,7 +69,7 @@ public:
 
 protected:
 
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Entity> m_owner;
 
 private:
 
@@ -92,7 +92,7 @@ public:
         Float damage_radius,
         Float explosion_radius,
         Uint32 weapon_level,
-        GameObjectReference<GameObject> const &owner,
+        EntityReference<Entity> const &owner,
         Float max_health);
     virtual ~Grenade () { }
 
@@ -107,8 +107,8 @@ public:
     }
 
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -117,7 +117,7 @@ public:
         Float frame_dt);
         
     virtual void CheckIfItShouldDetonate (
-        GameObject *collider,
+        Entity *collider,
         Float time,
         Float frame_dt);
     virtual void Detonate (
@@ -149,7 +149,7 @@ public:
         Float damage_radius,
         Float explosion_radius,
         Uint32 const weapon_level,
-        GameObjectReference<GameObject> const &owner,
+        EntityReference<Entity> const &owner,
         Float const max_health)
         :
         Explosive(owner, max_health, max_health, T_MINE, CT_SOLID_COLLISION),
@@ -183,8 +183,8 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -193,7 +193,7 @@ public:
         Float frame_dt);
         
     virtual void CheckIfItShouldDetonate (
-        GameObject *collider,
+        Entity *collider,
         Float time,
         Float frame_dt);
     virtual void Detonate (
@@ -237,7 +237,7 @@ public:
         Float const damage_radius,
         Float const explosion_radius,
         Uint32 const weapon_level,
-        GameObjectReference<GameObject> const &owner,
+        EntityReference<Entity> const &owner,
         Float const max_health)
         :
         Explosive(owner, max_health, max_health, T_MISSILE, CT_NONSOLID_COLLISION),
@@ -257,7 +257,7 @@ public:
     virtual void Think (Float time, Float frame_dt);
         
     virtual void CheckIfItShouldDetonate (
-        GameObject *collider,
+        Entity *collider,
         Float time,
         Float frame_dt);
     virtual void Detonate (
@@ -289,7 +289,7 @@ public:
         Float const disable_time_factor,
         Float const blast_radius,
         Uint32 const weapon_level,
-        GameObjectReference<GameObject> const &owner,
+        EntityReference<Entity> const &owner,
         Float const max_health)
         :
         Explosive(owner, max_health, max_health, T_EMP_BOMB, CT_SOLID_COLLISION),
@@ -315,15 +315,15 @@ public:
     }
 
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
         Float time,
         Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -332,7 +332,7 @@ public:
         Float frame_dt);
         
     virtual void CheckIfItShouldDetonate (
-        GameObject *collider,
+        Entity *collider,
         Float time,
         Float frame_dt);
     virtual void Detonate (

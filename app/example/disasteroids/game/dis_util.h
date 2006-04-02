@@ -15,7 +15,7 @@
 
 #include <string>
 
-#include "dis_gameobjectreference.h"
+#include "dis_entityreference.h"
 #include "dis_mortal.h"
 
 using namespace Xrb;
@@ -31,19 +31,19 @@ namespace Engine2
 namespace Dis
 {
 
-class GameObject;
+class Entity;
 class PhysicsHandler;
 
 void RadiusDamage (
     PhysicsHandler *physics_handler,
     Engine2::ObjectLayer *object_layer,
-    GameObject *damager,
-    GameObject *damage_medium,
+    Entity *damager,
+    Entity *damage_medium,
     Float damage_amount,
     FloatVector2 const &damage_area_center,
     Float damage_area_radius,
     Mortal::DamageType damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Mortal> const &ignore_this_mortal,
     Float time,
     Float frame_dt);
         

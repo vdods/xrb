@@ -37,7 +37,7 @@ public:
     PlayerShip (Float max_health, Type type);
     virtual ~PlayerShip ();
 
-    // GameObject interface method
+    // Entity interface method
     virtual bool GetIsPlayerShip () const { return true; }
     
     inline Uint32 GetScore () const { return m_score; }
@@ -105,8 +105,8 @@ public:
 
     virtual void Think (Float time, Float frame_dt);
     virtual bool Damage (
-        GameObject *damager,
-        GameObject *damage_medium,
+        Entity *damager,
+        Entity *damage_medium,
         Float damage_amount,
         Float *damage_amount_used,
         FloatVector2 const &damage_location,
@@ -116,8 +116,8 @@ public:
         Float time,
         Float frame_dt);
     virtual void Die (
-        GameObject *killer,
-        GameObject *kill_medium,
+        Entity *killer,
+        Entity *kill_medium,
         FloatVector2 const &kill_location,
         FloatVector2 const &kill_normal,
         Float kill_force,
@@ -227,9 +227,9 @@ private:
     Item *m_item_inventory[IT_COUNT][UPGRADE_LEVEL_COUNT];
     Float m_mineral_inventory[MINERAL_COUNT];
 
-    GameObjectReference<LaserBeam> m_laser_beam;
-    GameObjectReference<TractorBeam> m_tractor_beam;
-    GameObjectReference<ShieldEffect> m_shield_effect;
+    EntityReference<LaserBeam> m_laser_beam;
+    EntityReference<TractorBeam> m_tractor_beam;
+    EntityReference<ShieldEffect> m_shield_effect;
 
     SignalSender1<Uint32> m_sender_score_changed;
     SignalSender1<Float> m_sender_stoke_changed;

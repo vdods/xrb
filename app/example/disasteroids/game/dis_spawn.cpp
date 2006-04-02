@@ -15,7 +15,7 @@
 #include "dis_devourment.h"
 #include "dis_effect.h"
 #include "dis_explosive.h"
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_healthtrigger.h"
 #include "dis_interloper.h"
 #include "dis_powerup.h"
@@ -36,7 +36,7 @@ Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
     std::string const &sprite_texture_filename,
-    GameObject *const game_object,
+    Entity *const entity,
     FloatVector2 const &translation,
     Float const scale_factor,
     Float const angle,
@@ -48,21 +48,21 @@ Engine2::Sprite *SpawnDynamicSprite (
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
     ASSERT1(!sprite_texture_filename.empty())
-    ASSERT1(game_object != NULL)
+    ASSERT1(entity != NULL)
     ASSERT1(scale_factor >= 0.0f)
     ASSERT1(first_moment > 0.0f)
     ASSERT1(elasticity >= 0.0f)
 
-    game_object->SetElasticity(elasticity);
-    game_object->SetFirstMoment(first_moment);
-    game_object->SetVelocity(velocity);
-    game_object->SetAngularVelocity(angular_velocity);
+    entity->SetElasticity(elasticity);
+    entity->SetFirstMoment(first_moment);
+    entity->SetVelocity(velocity);
+    entity->SetAngularVelocity(angular_velocity);
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_filename);
     sprite->SetTranslation(translation);
     sprite->SetScaleFactor(scale_factor);
     sprite->SetAngle(angle);
-    sprite->SetEntity(game_object);
+    sprite->SetEntity(entity);
 
     world->AddDynamicObject(sprite, object_layer);
 
@@ -107,7 +107,7 @@ Ballistic *SpawnBallistic (
     FloatVector2 const &velocity,
     Float const impact_damage,
     Float const time_to_live,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Entity> const &owner)
 {
     Ballistic *ballistic = new Ballistic(impact_damage, time_to_live, owner);
     SpawnDynamicSprite(
@@ -136,7 +136,7 @@ Grenade *SpawnGrenade (
     Float const damage_radius,
     Float const explosion_radius,
     Uint32 const weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float const health)
 {
     Grenade *grenade =
@@ -174,7 +174,7 @@ Mine *SpawnMine (
     Float const damage_radius,
     Float const explosion_radius,
     Uint32 const weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float const health)
 {
     Mine *mine =
@@ -214,7 +214,7 @@ Missile *SpawnMissile (
     Float const damage_radius,
     Float const explosion_radius,
     Uint32 const weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float const health)
 {
     Missile *missile =
@@ -252,7 +252,7 @@ EMPBomb *SpawnEMPBomb (
     Float const disable_time_factor,
     Float const blast_radius,
     Uint32 const weapon_level,
-    GameObjectReference<GameObject> const &owner,
+    EntityReference<Entity> const &owner,
     Float const health)
 {
     EMPBomb *emp_bomb = new EMPBomb(owner_emp_bomb_launcher, disable_time_factor, blast_radius, weapon_level, owner, health);
@@ -307,7 +307,7 @@ DamageExplosion *SpawnDamageExplosion (
     Float const explosion_radius,
     Float const time_to_live,
     Float const time_at_birth,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Entity> const &owner)
 {
     DamageExplosion *damage_explosion =
         new DamageExplosion(
@@ -366,7 +366,7 @@ EMPExplosion *SpawnEMPExplosion (
     Float const final_size,
     Float const time_to_live,
     Float const time_at_birth,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Entity> const &owner)
 {
     EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, final_size, time_to_live, time_at_birth, owner);
     SpawnDynamicSprite(
@@ -393,7 +393,7 @@ Fireball *SpawnFireball (
     Float const final_size,
     Float const time_to_live,
     Float const time_at_birth,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Entity> const &owner)
 {
     Fireball *fireball = new Fireball(power, final_size, time_to_live, time_at_birth, owner);
     SpawnDynamicSprite(
@@ -540,8 +540,8 @@ HealthTrigger *SpawnHealthTrigger (
     FloatVector2 const &velocity,
     Float const health_delta_rate,
     Mortal::DamageType const damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
-    GameObjectReference<GameObject> const &owner)
+    EntityReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Entity> const &owner)
 {
     HealthTrigger *health_trigger =
         new HealthTrigger(

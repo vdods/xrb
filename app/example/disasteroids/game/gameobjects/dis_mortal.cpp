@@ -87,8 +87,8 @@ void Mortal::Revive (Float time, Float frame_dt)
 }
 
 void Mortal::Kill (
-    GameObject *const killer,
-    GameObject *const kill_medium,
+    Entity *const killer,
+    Entity *const kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
     Float const kill_force,
@@ -108,7 +108,7 @@ void Mortal::Kill (
 }
 
 void Mortal::Collide (
-    GameObject *collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float collision_force,
@@ -142,8 +142,8 @@ void Mortal::Collide (
 }
 
 bool Mortal::Damage (
-    GameObject *const damager,
-    GameObject *const damage_medium,
+    Entity *const damager,
+    Entity *const damage_medium,
     Float const damage_amount,
     Float *const damage_amount_used,
     FloatVector2 const &damage_location,
@@ -244,8 +244,8 @@ bool Mortal::Damage (
 }
 
 void Mortal::Heal (
-    GameObject *const healer,
-    GameObject *const heal_medium,
+    Entity *const healer,
+    Entity *const heal_medium,
     Float const heal_amount,
     FloatVector2 const &heal_location,
     FloatVector2 const &heal_normal,  

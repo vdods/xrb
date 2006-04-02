@@ -69,7 +69,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
                 GetTranslation(),
                 m_damage_radius,
                 Mortal::D_EXPLOSION,
-                GameObjectReference<Mortal>::ms_null,
+                EntityReference<Mortal>::ms_null,
                 time,
                 frame_dt);
     }
@@ -78,7 +78,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
 }
 
 void DamageExplosion::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,
@@ -127,7 +127,7 @@ void DamageExplosion::Collide (
 // ///////////////////////////////////////////////////////////////////////////
 
 void EMPExplosion::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,
@@ -162,7 +162,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
 }
 
 void Fireball::Collide (
-    GameObject *const collider,
+    Entity *const collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
     Float const collision_force,

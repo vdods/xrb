@@ -62,7 +62,7 @@ private:
     typedef void (Shade::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
-    GameObjectReference<Ship> m_target;
+    EntityReference<Ship> m_target;
     Weapon *m_weapon;
 }; // end of class Shade
 

@@ -21,8 +21,8 @@ Float const Shield::ms_max_damage_dissipation[UPGRADE_LEVEL_COUNT] = { 8.0f, 12.
 Float const Shield::ms_recharge_interval[UPGRADE_LEVEL_COUNT] = { 3.0f, 2.5f, 2.0f, 1.5f };
 
 Float Shield::Damage (
-    GameObject *const damager,
-    GameObject *const damage_medium,
+    Entity *const damager,
+    Entity *const damage_medium,
     Float const damage_amount,
     Float *const damage_amount_used,
     FloatVector2 const &damage_location,

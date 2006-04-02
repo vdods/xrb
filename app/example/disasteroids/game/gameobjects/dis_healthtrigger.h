@@ -11,7 +11,7 @@
 #if !defined(_DIS_HEALTHTRIGGER_H_)
 #define _DIS_HEALTHTRIGGER_H_
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 
 #include "dis_mortal.h"
 
@@ -20,18 +20,18 @@ using namespace Xrb;
 namespace Dis
 {
 
-class HealthTrigger : public GameObject
+class HealthTrigger : public Entity
 {
 public:
 
     HealthTrigger (
         Float health_delta_rate,
         Mortal::DamageType damage_type,
-        GameObjectReference<Mortal> const &ignore_this_mortal,
-        GameObjectReference<GameObject> const &owner);
+        EntityReference<Mortal> const &ignore_this_mortal,
+        EntityReference<Entity> const &owner);
 
     virtual void Collide (
-        GameObject *collider,
+        Entity *collider,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float collision_force,
@@ -46,8 +46,8 @@ private:
 
     Float m_health_delta_rate;
     Mortal::DamageType m_damage_type;
-    GameObjectReference<Mortal> m_ignore_this_mortal;
-    GameObjectReference<GameObject> m_owner;
+    EntityReference<Mortal> m_ignore_this_mortal;
+    EntityReference<Entity> m_owner;
 }; // end of class HealthTrigger
         
 } // end of namespace Dis

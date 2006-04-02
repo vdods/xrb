@@ -10,7 +10,7 @@
 
 #include "dis_util.h"
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_physicshandler.h"
 
 using namespace Xrb;
@@ -21,13 +21,13 @@ namespace Dis
 void RadiusDamage (
     PhysicsHandler *const physics_handler,
     Engine2::ObjectLayer *const object_layer,
-    GameObject *const damager,
-    GameObject *const damage_medium,
+    Entity *const damager,
+    Entity *const damage_medium,
     Float const damage_amount,
     FloatVector2 const &damage_area_center,
     Float const damage_area_radius,
     Mortal::DamageType const damage_type,
-    GameObjectReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Mortal> const &ignore_this_mortal,
     Float const time,
     Float const frame_dt)
 {
@@ -51,18 +51,18 @@ void RadiusDamage (
          it != it_end;
          ++it)
     {
-        GameObject *game_object = *it;
-        ASSERT1(game_object != NULL)
+        Entity *entity = *it;
+        ASSERT1(entity != NULL)
 
         // damage mortals, unless it is the one to ignore.
-        if (game_object->GetIsMortal() && game_object != *ignore_this_mortal)
+        if (entity->GetIsMortal() && entity != *ignore_this_mortal)
         {
             // the damage tapers off with distance, so calculate how much
             // damage to apply (taking into account the size of the mortal)
             Float distance =
                 Max(0.0f,
-                    (game_object->GetTranslation() - damage_area_center).GetLength() -
-                     game_object->GetScaleFactor());
+                    (entity->GetTranslation() - damage_area_center).GetLength() -
+                     entity->GetScaleFactor());
             Float distance_ratio = distance / damage_area_radius;
             ASSERT1(distance_ratio >= 0.0f)
             Float damage_to_apply;
@@ -73,7 +73,7 @@ void RadiusDamage (
             else
                 damage_to_apply = damage_amount;
 
-            static_cast<Mortal *>(game_object)->Damage(
+            static_cast<Mortal *>(entity)->Damage(
                 damager,
                 damage_medium,
                 damage_to_apply,
@@ -114,17 +114,17 @@ void RadiusKnockback (
          it != it_end;
          ++it)
     {
-        GameObject *game_object = *it;
+        Entity *entity = *it;
 
-        if (game_object == NULL)
+        if (entity == NULL)
             continue;
             
-        if (game_object->GetCollisionType() == CT_NONSOLID_COLLISION)
+        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION)
             continue;
     
         // center_to_center points towards the collider
-        FloatVector2 center_to_center = game_object->GetTranslation() - knockback_area_center;
-        Float distance = center_to_center.GetLength() - game_object->GetScaleFactor();
+        FloatVector2 center_to_center = entity->GetTranslation() - knockback_area_center;
+        Float distance = center_to_center.GetLength() - entity->GetScaleFactor();
         if (distance < 0.0f)
             distance = 0.0f;
         Float distance_factor;
@@ -138,10 +138,10 @@ void RadiusKnockback (
         {
             static Float const s_knockback_factor = 20.0f;
             Float knockback_momentum = s_knockback_factor * power * distance_factor;
-            game_object->AccumulateMomentum(
+            entity->AccumulateMomentum(
                 knockback_momentum *
                 center_to_center.GetNormalization() *
-                Math::Sqrt(game_object->GetScaleFactor()));
+                Math::Sqrt(entity->GetScaleFactor()));
         }
     }
 }

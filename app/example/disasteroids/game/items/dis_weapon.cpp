@@ -12,7 +12,7 @@
 
 #include "dis_effect.h"
 #include "dis_explosive.h"
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_linetracebinding.h"
 #include "dis_physicshandler.h"
 #include "dis_ship.h"
@@ -233,27 +233,27 @@ bool Laser::Activate (
         LineTraceBindingSetIterator it = line_trace_binding_set.begin();
         LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
         // don't damage the owner of this weapon
-        if (it->m_game_object == GetOwnerShip())
+        if (it->m_entity == GetOwnerShip())
             ++it;
     
         FloatVector2 laser_beam_hit_location(
             GetMuzzleLocation() + ms_range[GetUpgradeLevel()] * GetMuzzleDirection());
 
         // we don't want to hit powerups, just skip them.
-        while (it != it_end && it->m_game_object->GetIsPowerup())
+        while (it != it_end && it->m_entity->GetIsPowerup())
             ++it;
             
         // damage the next thing if it exists
-        if (it != it_end && it->m_game_object != NULL)
+        if (it != it_end && it->m_entity != NULL)
         {
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
             laser_beam_hit_location =
                 GetMuzzleLocation() + it->m_time * ms_range[GetUpgradeLevel()] * GetMuzzleDirection();
-            if (it->m_game_object->GetIsMortal())
-                DStaticCast<Mortal *>(it->m_game_object)->Damage(
+            if (it->m_entity->GetIsMortal())
+                DStaticCast<Mortal *>(it->m_entity)->Damage(
                     GetOwnerShip(),
-                    NULL, // laser does not have a GameObject medium
+                    NULL, // laser does not have a Entity medium
                     ms_damage_rate[GetUpgradeLevel()] * ratio_of_max_power_output * frame_dt,
                     NULL, // we don't care how much damage was taken
                     laser_beam_hit_location,
@@ -391,7 +391,7 @@ bool GaussGun::Activate (
     LineTraceBindingSetIterator it = line_trace_binding_set.begin();
     LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
     // don't damage the owner of this weapon
-    if (it->m_game_object == GetOwnerShip())
+    if (it->m_entity == GetOwnerShip())
         ++it;
 
     // decide how much damage to inflict total
@@ -408,17 +408,17 @@ bool GaussGun::Activate (
     {
         // we don't want to hit powerups (continue without incrementing
         // the hit count or updating the furthest hit time)
-        if (it->m_game_object->GetIsPowerup())
+        if (it->m_entity->GetIsPowerup())
         {
             ++it;
             continue;
         }
     
         furthest_hit_time = it->m_time;
-        if (it->m_game_object->GetIsMortal())
-            DStaticCast<Mortal *>(it->m_game_object)->Damage(
+        if (it->m_entity->GetIsMortal())
+            DStaticCast<Mortal *>(it->m_entity)->Damage(
                 GetOwnerShip(),
-                NULL, // gauss gun does not have a GameObject medium
+                NULL, // gauss gun does not have a Entity medium
                 damage_left_to_inflict,
                 &damage_amount_used,
                 GetMuzzleLocation() + it->m_time * ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
@@ -950,7 +950,7 @@ bool AutoDestruct::Activate (
     {
         GetOwnerShip()->Kill(
             GetOwnerShip(),
-            NULL, // auto destruct does not have a GameObject kill medium
+            NULL, // auto destruct does not have a Entity kill medium
             GetOwnerShip()->GetTranslation(),
             Math::UnitVector(GetOwnerShip()->GetAngle()),
             0.0f,
@@ -1048,20 +1048,20 @@ bool Tractor::Activate (
          it != it_end;
          ++it)
     {
-        GameObject *game_object = *it;
-        ASSERT1(game_object != NULL)
+        Entity *entity = *it;
+        ASSERT1(entity != NULL)
         
         // we don't want to pull ourselves (it would cancel out anyway)
-        if (game_object == static_cast<GameObject *>(GetOwnerShip()))
+        if (entity == static_cast<Entity *>(GetOwnerShip()))
             continue;
 
         // if we're not pulling everything (secondary tractor mode),
         // then break if this game object isn't a powerup.
-        if (!pull_everything && game_object->GetType() != GameObject::T_POWERUP)
+        if (!pull_everything && entity->GetType() != Entity::T_POWERUP)
             continue;
 
-        Float force = Min(input * strength * game_object->GetScaleFactor(), max_force);
-        game_object->ApplyInterceptCourseAcceleration(GetOwnerShip(), force, true, &solution_set);
+        Float force = Min(input * strength * entity->GetScaleFactor(), max_force);
+        entity->ApplyInterceptCourseAcceleration(GetOwnerShip(), force, true, &solution_set);
     }
 
     // place the tractor beam effect
