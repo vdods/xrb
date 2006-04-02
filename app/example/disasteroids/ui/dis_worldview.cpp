@@ -10,7 +10,7 @@
 
 #include "dis_worldview.h"
 
-#include "dis_gameobject.h"
+#include "dis_entity.h"
 #include "dis_playership.h"
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"

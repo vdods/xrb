@@ -5,14 +5,14 @@ disasteroids_SOURCES = \
     dis_main.cpp \
     dis_master.cpp \
     dis_resourcecache.cpp \
-    engine2/dis_collisionquadtree.cpp \
-    engine2/dis_physicshandler.cpp \
-    engine2/dis_world.cpp \
-    game/dis_gameobject.cpp \
     game/dis_highscores.cpp \
     game/dis_item.cpp \
     game/dis_spawn.cpp \
     game/dis_util.cpp \
+    game/engine2/dis_collisionquadtree.cpp \
+    game/engine2/dis_entity.cpp \
+    game/engine2/dis_physicshandler.cpp \
+    game/engine2/dis_world.cpp \
     game/gameobjects/dis_asteroid.cpp \
     game/gameobjects/dis_ballistic.cpp \
     game/gameobjects/dis_effect.cpp \
@@ -48,18 +48,18 @@ noinst_HEADERS = \
     dis_events.h \
     dis_master.h \
     dis_resourcecache.h \
-    engine2/dis_areatracelist.h \
-    engine2/dis_collisionpair.h \
-    engine2/dis_collisionquadtree.h \
-    engine2/dis_linetracebinding.h \
-    engine2/dis_physicshandler.h \
-    engine2/dis_world.h \
-    game/dis_gameobject.h \
-    game/dis_gameobjectreference.h \
     game/dis_highscores.h \
     game/dis_item.h \
     game/dis_spawn.h \
     game/dis_util.h \
+    game/engine2/dis_areatracelist.h \
+    game/engine2/dis_collisionpair.h \
+    game/engine2/dis_collisionquadtree.h \
+    game/engine2/dis_entity.h \
+    game/engine2/dis_entityreference.h \
+    game/engine2/dis_linetracebinding.h \
+    game/engine2/dis_physicshandler.h \
+    game/engine2/dis_world.h \
     game/gameobjects/dis_asteroid.h \
     game/gameobjects/dis_ballistic.h \
     game/gameobjects/dis_effect.h \
@@ -95,8 +95,8 @@ AM_CPPFLAGS = \
     `$(FREETYPE_CONFIG) --cflags` \
     `$(SDL_CONFIG) --cflags` \
     \
-    -I$(top_srcdir)/app/example/disasteroids/engine2 \
     -I$(top_srcdir)/app/example/disasteroids/game \
+    -I$(top_srcdir)/app/example/disasteroids/game/engine2 \
     -I$(top_srcdir)/app/example/disasteroids/game/gameobjects \
     -I$(top_srcdir)/app/example/disasteroids/game/gameobjects/ships \
     -I$(top_srcdir)/app/example/disasteroids/game/items \
@@ -105,7 +105,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/core/serializers \
     -I$(top_srcdir)/lib/engine2 \
-    -I$(top_srcdir)/lib/engine2/physicshandlers \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
