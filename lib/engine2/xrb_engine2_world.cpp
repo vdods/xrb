@@ -288,7 +288,7 @@ bool Engine2::World::ProcessEventOverride (Event const *const event)
                 DStaticCast<EventEntity const *>(event);
             Entity *entity = event_entity->GetEntity();
             ASSERT1(entity != NULL)
-            ASSERT1(entity->GetWorld() == this)
+            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
             ASSERT1(entity->GetIsInWorld() &&
                     "You shouldn't schedule removed entities "
                     "for deletion -- just delete them")

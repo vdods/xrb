@@ -415,7 +415,7 @@ of each type of minerals it costs to build.
 //////////////////////////////////////////////////////////////////////////////
 
 Engine2::Entity - XuqRijBuh baseclass for game-specific entity data
-+---GameObject - baseclass for disasteroids game objects
++---Entity - baseclass for disasteroids game objects
     +---Mortal - CT_SOLID_COLLISION, has health, can be killed
     |   +---Asteroid - small, debris asteroids decay away over time
     |   +---Ship - a controllable game object
@@ -446,7 +446,7 @@ Engine2::Entity - XuqRijBuh baseclass for game-specific entity data
         +---TractorBeam - CT_NO_COLLISION, existence controlled by the owner ship
         +---Napalm - CT_NONSOLID_COLLISION, decays away over time
 
-GameObject methods:
+Entity methods:
 - Think
 - Collide
 - Damage

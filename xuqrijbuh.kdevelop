@@ -142,12 +142,11 @@
       <group pattern="lib/parsers/linecalculator/*" name="/lib/parsers/linecalculator" />
       <group pattern="lib/parsers/*" name="/lib/parsers" />
       <group pattern="lib/primitive/*" name="/lib/primitive" />
-      <group pattern="lib/render/engine2_worldviews/*" name="/lib/render/engine2_worldviews" />
       <group pattern="lib/render/*" name="/lib/render" />
       <group pattern="lib/sound/*" name="/lib/sound" />
       <group pattern="lib/util/*" name="/lib/util" />
       <group pattern="lib/*" name="/lib" />
-      <group pattern="app/example/disasteroids/engine2/*" name="/app/example/disasteroids/engine2" />
+      <group pattern="app/example/disasteroids/game/engine2/*" name="/app/example/disasteroids/game/engine2" />
       <group pattern="app/example/disasteroids/game/gameobjects/ships/*" name="/app/example/disasteroids/game/gameobjects/ships" />
       <group pattern="app/example/disasteroids/game/gameobjects/*" name="/app/example/disasteroids/game/gameobjects" />
       <group pattern="app/example/disasteroids/game/items/*" name="/app/example/disasteroids/game/items" />
