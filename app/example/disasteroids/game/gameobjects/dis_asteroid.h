@@ -37,7 +37,7 @@ public:
         Mortal(
             ms_health_factor * first_moment,
             ms_health_factor * first_moment,
-            T_ASTEROID,
+            ET_ASTEROID,
             CT_SOLID_COLLISION)
     {
         m_is_a_secondary_asteroid = is_a_secondary_asteroid;

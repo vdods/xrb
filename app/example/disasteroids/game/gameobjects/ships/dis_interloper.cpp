@@ -31,7 +31,7 @@ Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 
 
 Interloper::Interloper (Uint8 const enemy_level)
     :
-    EnemyShip(enemy_level, ms_max_health[enemy_level], T_INTERLOPER)
+    EnemyShip(enemy_level, ms_max_health[enemy_level], ET_INTERLOPER)
 {
     m_think_state = THINK_STATE(Seek);
 
@@ -83,7 +83,7 @@ void Interloper::Collide (
 
     // TODO: add the extra damage "weapon" for the front of the ship
     
-    if (m_target.GetIsValid() && collider->GetType() == T_SOLITARY)
+    if (m_target.GetIsValid() && collider->GetEntityType() == ET_SOLITARY)
     {
         // if the enemy level is ___, do extra damage and spawn effects
 
@@ -123,7 +123,7 @@ void Interloper::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
-        if (entity->GetType() == T_SOLITARY)
+        if (entity->GetEntityType() == ET_SOLITARY)
         {
             // if so, set m_target and transition to Charge
             m_target = entity->GetReference();

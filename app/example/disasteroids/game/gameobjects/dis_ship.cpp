@@ -26,7 +26,7 @@ namespace Dis
 
 Ship::Ship (
     Float const max_health,
-    Type const type)
+    EntityType const type)
     :
     Mortal(max_health, max_health, type, CT_SOLID_COLLISION),
     m_reticle_coordinates(FloatVector2::ms_zero)

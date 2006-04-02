@@ -21,7 +21,7 @@ HealthTrigger::HealthTrigger (
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner)
     :
-    Entity(T_HEALTH_TRIGGER, CT_NONSOLID_COLLISION),
+    Entity(ET_HEALTH_TRIGGER, CT_NONSOLID_COLLISION),
     m_ignore_this_mortal(ignore_this_mortal),
     m_owner(owner)
 {

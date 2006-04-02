@@ -40,7 +40,7 @@ namespace Dis
 {
 
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.3f, 0.4f, 0.5f, 0.6f };
-Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][Entity::T_ENEMY_SHIP_COUNT] =
+Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
 {
     {  1,  0,  0,  1 },
     {  2,  0,  0,  1 },
@@ -63,7 +63,7 @@ Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][Entity::T_ENEMY_SH
     { 10,  8,  6,  4 },
     { 10,  9,  6,  4 }
 };
-Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][Entity::T_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
+Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
 {
     { // stage 0
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Interloper
@@ -263,18 +263,18 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
     m_asteroid_mass -= asteroid->GetFirstMoment();
 }
 
-void World::RecordCreatedEnemyShip (Entity::Type const enemy_ship_type)
+void World::RecordCreatedEnemyShip (EntityType const enemy_ship_type)
 {
-    Uint32 enemy_ship_index = enemy_ship_type - Entity::T_ENEMY_SHIP_LOWEST;
-    ASSERT1(enemy_ship_index < Entity::T_ENEMY_SHIP_COUNT)
+    Uint32 enemy_ship_index = enemy_ship_type - ET_ENEMY_SHIP_LOWEST;
+    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
     ++m_enemy_ship_count[enemy_ship_index];
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 {
     ASSERT1(enemy_ship != NULL)
-    Uint32 enemy_ship_index = enemy_ship->GetType() - Entity::T_ENEMY_SHIP_LOWEST;
-    ASSERT1(enemy_ship_index < Entity::T_ENEMY_SHIP_COUNT)
+    Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
+    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
     ASSERT1(m_enemy_ship_count[enemy_ship_index] > 0)
     --m_enemy_ship_count[enemy_ship_index];
 
@@ -314,7 +314,7 @@ World::World (
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
 
-    for (Uint8 enemy_ship_index = 0; enemy_ship_index < Entity::T_ENEMY_SHIP_COUNT; ++enemy_ship_index)
+    for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
         m_enemy_ship_count[enemy_ship_index] = 0;
         m_next_enemy_ship_spawn_time[enemy_ship_index] = 0.0f;
@@ -686,14 +686,14 @@ void World::ProcessNormalGameplayLogic ()
     }
 
     // enemy ship spawning
-    for (Uint8 enemy_ship_index = 0; enemy_ship_index < Entity::T_ENEMY_SHIP_COUNT; ++enemy_ship_index)
+    for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
         if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] &&
             m_next_enemy_ship_spawn_time[enemy_ship_index] <= GetFrameTime())
         {
             EnemyShip *enemy_ship =
                 SpawnEnemyShipOutOfView(
-                    static_cast<Entity::Type>(Entity::T_ENEMY_SHIP_LOWEST + enemy_ship_index),
+                    static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
                     ms_enemy_level_distribution_table[m_game_stage][enemy_ship_index][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
             if (enemy_ship != NULL)
             {
@@ -766,11 +766,11 @@ Asteroid *World::SpawnAsteroidOutOfView ()
 }
 
 EnemyShip *World::SpawnEnemyShipOutOfView (
-    Entity::Type const enemy_ship_type,
+    EntityType const enemy_ship_type,
     Uint8 const enemy_level)
 {
-    ASSERT1(enemy_ship_type >= Entity::T_ENEMY_SHIP_LOWEST)
-    ASSERT1(enemy_ship_type <= Entity::T_ENEMY_SHIP_HIGHEST)
+    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST)
+    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST)
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
 
     Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
@@ -778,11 +778,11 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     Float personal_space_radius = 0.0f;
     switch (enemy_ship_type)
     {
-        case Entity::T_INTERLOPER: personal_space_radius = 12.0f; break;
-        case Entity::T_SHADE:      personal_space_radius = 8.0f;  break;
-        case Entity::T_REVULSION:  personal_space_radius = 15.0f; break;
-        case Entity::T_DEVOURMENT: personal_space_radius = 40.0f; break;
-        default: ASSERT1(false && "Invalid Entity::Type") break;
+        case ET_INTERLOPER: personal_space_radius = 12.0f; break;
+        case ET_SHADE:      personal_space_radius = 8.0f;  break;
+        case ET_REVULSION:  personal_space_radius = 15.0f; break;
+        case ET_DEVOURMENT: personal_space_radius = 40.0f; break;
+        default: ASSERT1(false && "Invalid EntityType") break;
     }
 
     Uint32 placement_attempts = 0;
@@ -802,7 +802,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
 
     switch (enemy_ship_type)
     {
-        case Entity::T_INTERLOPER:
+        case ET_INTERLOPER:
             return SpawnInterloper(
                 this,
                 GetMainObjectLayer(),
@@ -810,7 +810,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 FloatVector2::ms_zero,
                 enemy_level);
                 
-        case Entity::T_SHADE:
+        case ET_SHADE:
             return SpawnShade(
                 this,
                 GetMainObjectLayer(),
@@ -818,7 +818,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 FloatVector2::ms_zero,
                 enemy_level);
             
-        case Entity::T_REVULSION:
+        case ET_REVULSION:
             return SpawnRevulsion(
                 this,
                 GetMainObjectLayer(),
@@ -826,7 +826,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 FloatVector2::ms_zero,
                 enemy_level);
 
-        case Entity::T_DEVOURMENT:
+        case ET_DEVOURMENT:
             return SpawnDevourment(
                 this,
                 GetMainObjectLayer(),
@@ -835,7 +835,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 enemy_level);                
             
         default:
-            ASSERT1(false && "Invalid Entity::Type")
+            ASSERT1(false && "Invalid EntityType")
             return NULL;
     }
 }

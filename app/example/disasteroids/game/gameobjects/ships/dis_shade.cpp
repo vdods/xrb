@@ -36,7 +36,7 @@ Float const Shade::ms_move_relative_velocity[ENEMY_LEVEL_COUNT] = { 50.0f, 60.0f
 
 Shade::Shade (Uint8 const enemy_level)
     :
-    EnemyShip(enemy_level, ms_max_health[enemy_level], T_SHADE)
+    EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
     m_think_state = THINK_STATE(Seek);
 
@@ -107,7 +107,7 @@ void Shade::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
-        if (entity->GetType() == T_SOLITARY)
+        if (entity->GetEntityType() == ET_SOLITARY)
         {
             // if so, set m_target and transition to MoveToAttackRange
             m_target = entity->GetReference();

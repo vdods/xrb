@@ -39,7 +39,7 @@ Float const Revulsion::ms_flee_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 200.0f, 250.
 
 Revulsion::Revulsion (Uint8 const enemy_level)
     :
-    EnemyShip(enemy_level, ms_max_health[enemy_level], T_REVULSION)
+    EnemyShip(enemy_level, ms_max_health[enemy_level], ET_REVULSION)
 {
     m_think_state = THINK_STATE(Seek);
 
@@ -150,7 +150,7 @@ void Revulsion::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
-        if (entity->GetType() == T_SOLITARY)
+        if (entity->GetEntityType() == ET_SOLITARY)
         {
             // if so, set m_target and transition to TrailTarget
             m_target = entity->GetReference();

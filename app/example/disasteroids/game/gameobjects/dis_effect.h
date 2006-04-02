@@ -25,7 +25,7 @@ public:
     Effect (
         Float const time_to_live,
         Float const time_at_birth,
-        Type const type,
+        EntityType const type,
         CollisionType const collision_type)
         :
         Entity(type, collision_type)
@@ -80,7 +80,7 @@ public:
         Float const final_size,
         Float const time_to_live,
         Float const time_at_birth,
-        Type const type,
+        EntityType const type,
         CollisionType const collision_type)
         :
         Effect(time_to_live, time_at_birth, type, collision_type)
@@ -114,7 +114,7 @@ public:
         Float const time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(explosion_radius, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION, CT_NONSOLID_COLLISION),
+        Explosion(explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, CT_NONSOLID_COLLISION),
         m_damage_amount(damage_amount),
         m_damage_radius(damage_radius),
         m_owner(owner)
@@ -153,7 +153,7 @@ public:
         Float const time_to_live,
         Float const time_at_birth)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_NO_DAMAGE_EXPLOSION, CT_NO_COLLISION)
+        Explosion(final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, CT_NO_COLLISION)
     { }
 }; // end of class NoDamageExplosion
 
@@ -172,7 +172,7 @@ public:
         Float const time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_EMP_EXPLOSION, CT_NONSOLID_COLLISION),
+        Explosion(final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, CT_NONSOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
         m_owner(owner)
     {
@@ -208,7 +208,7 @@ public:
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_FIREBALL, CT_NONSOLID_COLLISION),
+        Explosion(final_size, time_to_live, time_at_birth, ET_FIREBALL, CT_NONSOLID_COLLISION),
         m_initial_damage(damage),
         m_owner(owner)
     {
@@ -248,7 +248,7 @@ public:
 
     LaserBeam ()
         :
-        Effect(-1.0f, 0.0f, T_LASER_BEAM, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_LASER_BEAM, CT_NO_COLLISION)
     { }
     
     // this is mainly just to override Effect::Think which changes the alpha
@@ -272,7 +272,7 @@ public:
 
     GaussGunTrail (Float const time_to_live, Float const time_at_birth)
         :
-        Effect(time_to_live, time_at_birth, T_GAUSS_GUN_TRAIL, CT_NO_COLLISION)
+        Effect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, CT_NO_COLLISION)
     { }
 }; // end of class GaussGunTrail
 
@@ -286,7 +286,7 @@ public:
 
     TractorBeam ()
         :
-        Effect(-1.0f, 0.0f, T_TRACTOR_BEAM, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_TRACTOR_BEAM, CT_NO_COLLISION)
     { }
     
     // this is mainly just to override Effect::Think which changes the alpha
@@ -308,7 +308,7 @@ public:
 
     ShieldEffect ()
         :
-        Effect(-1.0f, 0.0f, T_SHIELD_EFFECT, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_SHIELD_EFFECT, CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha
@@ -331,7 +331,7 @@ public:
 
     ReticleEffect ()
         :
-        Effect(-1.0f, 0.0f, T_RETICLE_EFFECT, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_RETICLE_EFFECT, CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha

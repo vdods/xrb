@@ -27,7 +27,7 @@ public:
         Float time_to_live,
         EntityReference<Entity> const &owner)
         :
-        Entity(T_BALLISTIC, CT_NONSOLID_COLLISION),
+        Entity(ET_BALLISTIC, CT_NONSOLID_COLLISION),
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);

@@ -30,40 +30,7 @@ class Entity : public Engine2::Entity
 {
 public:
 
-    enum Type
-    {
-        T_ASTEROID = 0,
-        T_SOLITARY,
-        T_INTERLOPER,
-        T_SHADE,
-        T_REVULSION,
-        T_DEVOURMENT,
-        T_DEMI,
-        T_GRENADE,
-        T_MINE,
-        T_MISSILE,
-        T_EMP_BOMB,
-        T_POWERUP,
-        T_BALLISTIC,
-        T_FIREBALL,
-        T_DAMAGE_EXPLOSION,
-        T_NO_DAMAGE_EXPLOSION,
-        T_EMP_EXPLOSION,
-        T_LASER_BEAM,
-        T_GAUSS_GUN_TRAIL,
-        T_TRACTOR_BEAM,
-        T_SHIELD_EFFECT,
-        T_RETICLE_EFFECT,
-        T_HEALTH_TRIGGER,
-
-        T_COUNT,
-
-        T_ENEMY_SHIP_LOWEST = T_INTERLOPER,
-        T_ENEMY_SHIP_HIGHEST = T_DEVOURMENT,
-        T_ENEMY_SHIP_COUNT = T_ENEMY_SHIP_HIGHEST - T_ENEMY_SHIP_LOWEST + 1
-    }; // end of enum Entity::Type
-
-    Entity (Type type, CollisionType collision_type);
+    Entity (EntityType type, CollisionType collision_type);
     virtual ~Entity ()
     {
         if (m_reference.GetIsValid())
@@ -74,7 +41,7 @@ public:
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline Type GetType () const { return m_type; }
+    inline EntityType GetEntityType () const { return m_type; }
     inline Float GetNextTimeToThink () const { return m_next_time_to_think; }
     inline EntityReference<Entity> const &GetReference ()
     {
@@ -255,8 +222,8 @@ public:
 
 protected:
 
-    static Type ReadType (Serializer &serializer);
-    void WriteType (Serializer &serializer) const;
+    static EntityType ReadEntityType (Serializer &serializer);
+    void WriteEntityType (Serializer &serializer) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // protected Entity interface methods
@@ -267,7 +234,7 @@ protected:
 
 private:
 
-    Type const m_type;
+    EntityType const m_type;
     Float m_next_time_to_think;
     EntityReference<Entity> m_reference;
     // indicates the collision response which the geometry in this entity provides

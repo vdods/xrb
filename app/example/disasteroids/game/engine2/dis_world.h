@@ -92,7 +92,7 @@ public:
         Float created_asteroids_mass);
     void RecordDestroyedAsteroid (Asteroid const *asteroid);
 
-    void RecordCreatedEnemyShip (Entity::Type enemy_ship_type);
+    void RecordCreatedEnemyShip (EntityType enemy_ship_type);
     void RecordDestroyedEnemyShip (EnemyShip const *enemy_ship);
             
 protected:
@@ -150,7 +150,7 @@ private:
     
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
-        Entity::Type enemy_ship_type,
+        EntityType enemy_ship_type,
         Uint8 enemy_level);
     bool IsAreaNotVisibleAndNotOverlappingAnyEntities (
         FloatVector2 const &translation,
@@ -167,8 +167,8 @@ private:
     };
     
     static Float const ms_asteroid_mineral_content_factor[MINERAL_CONTENT_LEVEL_COUNT];
-    static Uint32 const ms_max_enemy_ship_count[GAME_STAGE_COUNT][Entity::T_ENEMY_SHIP_COUNT];
-    static Uint8 const ms_enemy_level_distribution_table[GAME_STAGE_COUNT][Entity::T_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE];
+    static Uint32 const ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT];
+    static Uint8 const ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE];
     static Float const ms_enemy_spawn_interval[GAME_STAGE_COUNT];
     
     PlayerShip *m_player_ship;
@@ -184,8 +184,8 @@ private:
     Uint8 m_asteroid_mineral_content_level;
     Float m_next_asteroid_mineral_content_level_time;
 
-    Uint32 m_enemy_ship_count[Entity::T_ENEMY_SHIP_COUNT];
-    Float m_next_enemy_ship_spawn_time[Entity::T_ENEMY_SHIP_COUNT];
+    Uint32 m_enemy_ship_count[ET_ENEMY_SHIP_COUNT];
+    Float m_next_enemy_ship_spawn_time[ET_ENEMY_SHIP_COUNT];
 
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;

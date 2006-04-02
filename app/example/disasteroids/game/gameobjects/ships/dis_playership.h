@@ -34,7 +34,7 @@ class PlayerShip : public Ship, public SignalHandler
 {
 public:
 
-    PlayerShip (Float max_health, Type type);
+    PlayerShip (Float max_health, EntityType type);
     virtual ~PlayerShip ();
 
     // Entity interface method
@@ -93,7 +93,7 @@ public:
     void IncrementTimeAlive (Float time_alive_delta);
     void IncrementScore (Uint32 score_delta);
     void IncrementLivesRemaining (Sint32 lives_remaining_delta);
-    void CreditEnemyKill (Type enemy_ship_type, Uint8 enemy_level);
+    void CreditEnemyKill (EntityType enemy_ship_type, Uint8 enemy_level);
     void GiveLotsOfMinerals ();
         
     // attempts to add the item to the ship's inventory.  returns true if

@@ -1057,7 +1057,7 @@ bool Tractor::Activate (
 
         // if we're not pulling everything (secondary tractor mode),
         // then break if this game object isn't a powerup.
-        if (!pull_everything && entity->GetType() != Entity::T_POWERUP)
+        if (!pull_everything && entity->GetEntityType() != ET_POWERUP)
             continue;
 
         Float force = Min(input * strength * entity->GetScaleFactor(), max_force);

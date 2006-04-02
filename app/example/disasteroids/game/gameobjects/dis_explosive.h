@@ -28,7 +28,7 @@ public:
         EntityReference<Entity> const &owner,
         Float const current_health,
         Float const max_health,
-        Type const type,
+        EntityType const type,
         CollisionType const collision_type)
         :
         Mortal(current_health, max_health, type, collision_type),
@@ -152,7 +152,7 @@ public:
         EntityReference<Entity> const &owner,
         Float const max_health)
         :
-        Explosive(owner, max_health, max_health, T_MINE, CT_SOLID_COLLISION),
+        Explosive(owner, max_health, max_health, ET_MINE, CT_SOLID_COLLISION),
         m_damage_to_inflict(damage_to_inflict),
         m_damage_radius(damage_radius),
         m_explosion_radius(explosion_radius),
@@ -240,7 +240,7 @@ public:
         EntityReference<Entity> const &owner,
         Float const max_health)
         :
-        Explosive(owner, max_health, max_health, T_MISSILE, CT_NONSOLID_COLLISION),
+        Explosive(owner, max_health, max_health, ET_MISSILE, CT_NONSOLID_COLLISION),
         m_time_to_live(time_to_live),
         m_time_at_birth(time_at_birth),
         m_damage_to_inflict(damage_to_inflict),
@@ -292,7 +292,7 @@ public:
         EntityReference<Entity> const &owner,
         Float const max_health)
         :
-        Explosive(owner, max_health, max_health, T_EMP_BOMB, CT_SOLID_COLLISION),
+        Explosive(owner, max_health, max_health, ET_EMP_BOMB, CT_SOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
         m_blast_radius(blast_radius),
         m_weapon_level(weapon_level)

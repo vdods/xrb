@@ -29,7 +29,7 @@ namespace Dis
 
 PlayerShip::PlayerShip (
     Float const max_health,
-    Type const type)
+    EntityType const type)
     :
     Ship(max_health, type),
     SignalHandler(),
@@ -278,9 +278,9 @@ void PlayerShip::IncrementLivesRemaining (Sint32 const lives_remaining_delta)
     }
 }
 
-void PlayerShip::CreditEnemyKill (Type const enemy_ship_type, Uint8 const enemy_level)
+void PlayerShip::CreditEnemyKill (EntityType const enemy_ship_type, Uint8 const enemy_level)
 {
-    static Uint32 const s_baseline_score[T_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
+    static Uint32 const s_baseline_score[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
         {  100,  150,  225,  325 }, // Interloper
         {  200,  400,  700, 1100 }, // Shade
@@ -288,11 +288,11 @@ void PlayerShip::CreditEnemyKill (Type const enemy_ship_type, Uint8 const enemy_
         { 1000, 1500, 2200, 3000 }  // Devourment
     };
 
-    ASSERT1(enemy_ship_type >= T_ENEMY_SHIP_LOWEST)
-    ASSERT1(enemy_ship_type <= T_ENEMY_SHIP_HIGHEST)
+    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST)
+    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST)
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
 
-    Uint32 enemy_ship_index = enemy_ship_type - T_ENEMY_SHIP_LOWEST;
+    Uint32 enemy_ship_index = enemy_ship_type - ET_ENEMY_SHIP_LOWEST;
     IncrementScore(static_cast<Uint32>(m_stoke * s_baseline_score[enemy_ship_index][enemy_level]));
 
     static Float const s_stoke_factor = Math::Pow(2.0f, 0.5f);

@@ -40,7 +40,7 @@ Float const Devourment::ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT] = { 100000
 
 Devourment::Devourment (Uint8 const enemy_level)
     :
-    EnemyShip(enemy_level, ms_max_health[enemy_level], T_DEVOURMENT)
+    EnemyShip(enemy_level, ms_max_health[enemy_level], ET_DEVOURMENT)
 {
     m_think_state = THINK_STATE(Seek);
 
@@ -170,7 +170,7 @@ void Devourment::Collide (
 
     ASSERT1(collider != NULL)    
     if (collider->GetIsMortal() &&
-        collider->GetType() != T_DEVOURMENT &&
+        collider->GetEntityType() != ET_DEVOURMENT &&
         m_think_state == THINK_STATE(Seek))
     {
         m_target = collider->GetReference();
@@ -239,7 +239,7 @@ void Devourment::Seek (Float const time, Float const frame_dt)
             continue;
 
         // don't seek other Devourments
-        if (entity->GetType() == T_DEVOURMENT)
+        if (entity->GetEntityType() == ET_DEVOURMENT)
             continue;
             
         // we're only interested in Mortals

@@ -43,7 +43,7 @@ public:
     Mortal (
         Float const current_health,
         Float const max_health,
-        Type const type,
+        EntityType const type,
         CollisionType const collision_type)
         :
         Entity(type, collision_type)

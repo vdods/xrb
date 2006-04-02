@@ -22,7 +22,7 @@ class Solitary : public PlayerShip
 {
 public:
 
-    Solitary () : PlayerShip(100.0f, T_SOLITARY) { }
+    Solitary () : PlayerShip(100.0f, ET_SOLITARY) { }
     virtual ~Solitary () { }
 
     virtual void Die (

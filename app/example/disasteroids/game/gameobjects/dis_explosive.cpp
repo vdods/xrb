@@ -95,7 +95,7 @@ Grenade::Grenade (
     EntityReference<Entity> const &owner,
     Float const max_health)
     :
-    Explosive(owner, max_health, max_health, T_GRENADE, CT_SOLID_COLLISION),
+    Explosive(owner, max_health, max_health, ET_GRENADE, CT_SOLID_COLLISION),
     m_damage_to_inflict(damage_to_inflict),
     m_damage_radius(damage_radius),
     m_explosion_radius(explosion_radius),
