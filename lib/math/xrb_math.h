@@ -35,7 +35,6 @@ namespace Xrb
   */
 namespace Math
 {
-    // all trig functions are in angle
 
     /** @brief Converts degrees to radians.
       */
