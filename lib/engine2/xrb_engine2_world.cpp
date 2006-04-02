@@ -41,8 +41,8 @@ Engine2::World::~World ()
         }
     }
 
-    // the physics handler is now defunct, so delete it.
-    Delete(m_physics_handler);
+    // all entities have been removed, we can now delete the physics handler
+    delete m_physics_handler;
 
     // delete the ObjectLayers, which will delete the static objects directly.
     for (ObjectLayerListIterator it = m_object_layer_list.begin(),
@@ -209,19 +209,20 @@ Engine2::World::World (
     Uint32 const entity_capacity)
     :
     EventHandler(NULL),
-    FrameHandler()
+    FrameHandler(),
+    m_physics_handler(physics_handler)
 {
+    ASSERT1(m_physics_handler != NULL)
+
     SetOwnerEventQueue(&m_owner_event_queue);
 
-    ASSERT1(physics_handler != NULL)
+    m_physics_handler->SetOwnerWorld(this);
+    m_main_object_layer = NULL;
+    m_timescale = 1.0f;
     ASSERT1(entity_capacity > 0)
     m_entity_vector.resize(entity_capacity);
     std::fill(m_entity_vector.begin(), m_entity_vector.end(), static_cast<Entity *>(NULL));
     m_lowest_available_entity_index = 0;
-    m_physics_handler = physics_handler;
-    m_physics_handler->SetOwnerWorld(this);
-    m_main_object_layer = NULL;
-    m_timescale = 1.0f;
 }
 
 Uint32 Engine2::World::GetMainObjectLayerIndex () const

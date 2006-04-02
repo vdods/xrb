@@ -43,9 +43,10 @@ public:
     Mortal (
         Float const current_health,
         Float const max_health,
-        Type const type)
+        Type const type,
+        CollisionType const collision_type)
         :
-        GameObject(type)
+        GameObject(type, collision_type)
     {
         ASSERT1(current_health > 0.0f)
         ASSERT1(max_health > 0.0f)

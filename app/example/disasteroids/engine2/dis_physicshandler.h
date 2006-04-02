@@ -26,6 +26,7 @@ namespace Dis
 {
 
 class CollisionQuadTree;
+class GameObject;
 
 class PhysicsHandler : public Engine2::PhysicsHandler
 {
@@ -68,30 +69,13 @@ public:
     virtual void AddEntity (Engine2::Entity *entity);
     virtual void RemoveEntity (Engine2::Entity *entity);
 
-    virtual void HandleChangedEntityRadius (
-        Engine2::Entity *entity,
-        Float old_radius,
-        Float new_radius);
-    virtual void HandleChangedEntityCollisionType (
-        Engine2::Entity *entity,
-        Engine2::CollisionType old_collision_type,
-        Engine2::CollisionType new_collision_type);
-    virtual void HandleChangedEntityAppliesGravity (
-        Engine2::Entity *entity,
-        bool old_applies_gravity,
-        bool new_applies_gravity);
-    virtual void HandleChangedEntityReactsToGravity (
-        Engine2::Entity *entity,
-        bool old_reacts_to_gravity,
-        bool new_reacts_to_gravity);
-
 protected:
 
     virtual void ProcessFrameOverride ();
             
 private:
 
-    typedef std::set<Engine2::Entity *> EntitySet;
+    typedef std::set<GameObject *> EntitySet;
     typedef EntitySet::iterator EntitySetIterator;
 
     void ApplyGravitationalForce ();

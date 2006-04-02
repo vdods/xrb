@@ -65,7 +65,7 @@ public:
         m_disable_time += disable_time;
     }
 
-    virtual void HandleNewOwnerEntity ();
+    virtual void HandleNewOwnerObject ();
     
     virtual void Think (Float time, Float frame_dt);
     virtual void Die (

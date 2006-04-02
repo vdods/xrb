@@ -13,6 +13,7 @@
 #include "dis_armor.h" 
 #include "dis_asteroid.h"
 #include "dis_devourment.h"
+#include "dis_enemyship.h"
 #include "dis_engine.h"
 #include "dis_events.h"
 #include "dis_gameobject.h"
@@ -31,7 +32,6 @@
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_physicshandler.h"
 #include "xrb_engine2_sprite.h"
-#include "xrb_engine2_spriteentity.h"
 #include "xrb_eventqueue.h"
 
 using namespace Xrb;
@@ -215,11 +215,9 @@ World::~World ()
     // if the ship exists and has been removed from the world, add
     // it back in, so it gets deleted properly.
     // TODO: think of a better way to handle this
-    if (m_player_ship != NULL &&
-        m_player_ship->GetOwnerEntity() != NULL &&
-        !m_player_ship->GetOwnerEntity()->GetIsInWorld())
+    if (m_player_ship != NULL && !m_player_ship->GetIsInWorld())
     {
-        m_player_ship->GetOwnerEntity()->AddBackIntoWorld();
+        m_player_ship->AddBackIntoWorld();
     }
 }
 
@@ -229,9 +227,9 @@ World *World::Create (Uint32 entity_capacity)
     return new World(new PhysicsHandler(), entity_capacity);
 }
 
-PhysicsHandler *World::GetDisPhysicsHandler ()
+PhysicsHandler *World::GetPhysicsHandler ()
 {
-    return DStaticCast<PhysicsHandler *>(GetPhysicsHandler());
+    return DStaticCast<Dis::PhysicsHandler *>(m_physics_handler);
 }
 
 void World::SubmitScoreDone ()
@@ -888,7 +886,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     }
 
     // fail if the area overlaps any entity
-    if (GetDisPhysicsHandler()->GetDoesAreaOverlapAnyEntityInObjectLayer(
+    if (GetPhysicsHandler()->GetDoesAreaOverlapAnyEntityInObjectLayer(
             GetMainObjectLayer(),
             translation,
             scale_factor,
@@ -959,7 +957,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
                 (s_asteroid_scale_factor_max - s_asteroid_scale_factor_min) *
                 scale_seed * scale_seed + s_asteroid_scale_factor_min;
         }
-        while (GetDisPhysicsHandler()->
+        while (GetPhysicsHandler()->
                     GetDoesAreaOverlapAnyEntityInObjectLayer(
                         GetMainObjectLayer(),
                         translation,
@@ -1037,7 +1035,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     0.011f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
     
-            AddObject(sprite, object_layer);
+            AddStaticObject(sprite, object_layer);
         }
     }
 
@@ -1096,7 +1094,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     0.0025f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
     
-            AddObject(sprite, object_layer);
+            AddStaticObject(sprite, object_layer);
         }
     }
 
@@ -1152,7 +1150,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             sprite->SetScaleFactor(scale_factor);
             sprite->SetAngle(Math::RandomAngle());
 
-            AddObject(sprite, object_layer);
+            AddStaticObject(sprite, object_layer);
         }
     }
 }

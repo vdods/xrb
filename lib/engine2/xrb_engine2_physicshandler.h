@@ -52,11 +52,6 @@ public:
     virtual void AddEntity (Entity *entity) = 0;
     virtual void RemoveEntity (Entity *entity) = 0;
 
-    virtual void HandleChangedEntityRadius (
-        Entity *entity,
-        Float old_radius,
-        Float new_radius) = 0;
-
 protected:
 
     virtual void ProcessFrameOverride () = 0;

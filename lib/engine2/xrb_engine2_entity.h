@@ -54,7 +54,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // writes game-specific Entity data
-    virtual void Write (Serializer &serializer) = 0;
+    virtual void Write (Serializer &serializer) const = 0;
     // used e.g. for setting the component velocity to 0 when the owner
     // object hits the side of its non-wrapped ObjectLayer.  if the owner
     // object exceeded the ObjectLayer's boundaries in the X dimension,
@@ -83,7 +83,6 @@ public:
     // returns the owner object cast to a Compound (but it asserts that
     // the owner object is actually a compound).
     Compound *GetOwnerCompound () const;
-    PhysicsHandler *GetPhysicsHandler () const;
 
     // ///////////////////////////////////////////////////////////////////
     // modifiers
@@ -126,7 +125,6 @@ public:
     inline Float GetRadius () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadius(); }
     inline Float GetRadiusSquared () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadiusSquared(); }
     inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetObjectLayer(); }
-    inline World *GetWorld () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetWorld(); }
     inline bool GetHasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetHasOwnerQuadTree(quad_tree_type); }
     inline QuadTree *GetOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetOwnerQuadTree(quad_tree_type); }
 
@@ -140,19 +138,19 @@ public:
     inline FloatMatrix2 GetTransformationInverse () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransformationInverse(); }
     inline Float GetDeterminant () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetDeterminant(); }
     inline void SetTranslation (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL) m_owner_object->SetTranslation(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
-    inline void SetTranslation (Float const x, Float const y) { ASSERT3(m_owner_object != NULL) m_owner_object->SetTranslation(x, y); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER);}
-    void SetScaleFactors (FloatVector2 const &scale_factors);
-    void SetScaleFactors (Float r, Float s);
-    void SetScaleFactor (Float scale_factor);
+    inline void SetTranslation (Float const x, Float const y) { ASSERT3(m_owner_object != NULL) m_owner_object->SetTranslation(x, y); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void SetScaleFactors (FloatVector2 const &scale_factors) { ASSERT3(m_owner_object != NULL) m_owner_object->SetScaleFactors(scale_factors); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void SetScaleFactors (Float r, Float s) { ASSERT3(m_owner_object != NULL) m_owner_object->SetScaleFactors(r, s); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void SetScaleFactor (Float scale_factor) { ASSERT3(m_owner_object != NULL) m_owner_object->SetScaleFactor(scale_factor); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void SetAngle (Float const angle) { ASSERT3(m_owner_object != NULL) m_owner_object->SetAngle(angle); }
     inline void Translate (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL) m_owner_object->Translate(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void Translate (Float const x, Float const y) { ASSERT3(m_owner_object != NULL) m_owner_object->Translate(x, y); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
-    void Scale (FloatVector2 const &scale_factors);
-    void Scale (Float r, Float s);
-    void Scale (Float scale_factor);
+    inline void Scale (FloatVector2 const &scale_factors) { ASSERT3(m_owner_object != NULL) m_owner_object->Scale(scale_factors); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void Scale (Float r, Float s) { ASSERT3(m_owner_object != NULL) m_owner_object->Scale(r, s); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void Scale (Float scale_factor) { ASSERT3(m_owner_object != NULL) m_owner_object->Scale(scale_factor); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void Rotate (Float const angle) { ASSERT3(m_owner_object != NULL) m_owner_object->Rotate(angle); }
     inline void ResetTranslation () { ASSERT3(m_owner_object != NULL) m_owner_object->ResetTranslation(); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
-    void ResetScale ();
+    inline void ResetScale () { ASSERT3(m_owner_object != NULL) m_owner_object->ResetScale(); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void ResetAngle () { ASSERT3(m_owner_object != NULL) m_owner_object->ResetAngle(); }
 
 protected:

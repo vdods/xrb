@@ -78,7 +78,6 @@ public:
     inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
     virtual ObjectLayer const *GetMainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *GetMainObjectLayer () { return m_main_object_layer; }
-    inline PhysicsHandler *GetPhysicsHandler () { return m_physics_handler; }
     inline Float GetTimescale () { return m_timescale; }
 
     inline void SetTimescale (Float timescale)
@@ -147,6 +146,8 @@ protected:
 
     // list of WorldViews
     WorldViewList m_world_view_list;
+    // the physics handler for this world
+    PhysicsHandler *const m_physics_handler;
     // list of ObjectLayers, starting at the back-most layer
     ObjectLayerList m_object_layer_list;
     // the "main" object layer
@@ -169,8 +170,6 @@ private:
     EntityVector m_entity_vector;
     // lowest available entity number
     EntityWorldIndex m_lowest_available_entity_index;
-    // the physics handler for this world
-    PhysicsHandler *m_physics_handler;
     // the world's own private event queue
     EventQueue m_owner_event_queue;
 }; // end of class Engine2::World

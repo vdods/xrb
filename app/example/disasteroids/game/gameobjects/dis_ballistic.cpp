@@ -39,7 +39,7 @@ void Ballistic::Collide (
     ASSERT1(collider != NULL)
 
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
     // also, don't hit powerups

@@ -11,6 +11,7 @@
 #include "dis_gameobject.h"
 
 #include "dis_physicshandler.h"
+#include "dis_world.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_serializer.h"
 
@@ -19,42 +20,35 @@ using namespace Xrb;
 namespace Dis
 {
 
-Engine2::EntityGuts *GameObject::Create (Serializer &serializer)
+GameObject::GameObject (Type const type, CollisionType const collision_type)
+    :
+    Engine2::Entity(),
+    m_type(type),
+    m_collision_type(collision_type)
 {
-    return NULL; // TEMP
-    /*
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(m_type < T_COUNT)
+    ASSERT1(m_collision_type < CT_COUNT)
+    m_next_time_to_think = 0.0f;
+    m_elasticity = 1.0f;
+    m_first_moment = 1.0f;
+    m_velocity = FloatVector2::ms_zero;
+    m_force = FloatVector2::ms_zero;
+    m_angular_velocity = 0.0f;
+}
 
-    Engine2::EntityGuts *retval;
-    Type type = ReadType(serializer);
-    switch (type)
-    {
-        case PLAYER_SHIP:
-            retval = PlayerShip::Create(serializer);
-            break;
+Dis::World *GameObject::GetWorld () const
+{
+    return DStaticCast<Dis::World *>(GetOwnerObject()->GetWorld());
+}
 
-        case BULLET:
-            retval = Bullet::Create(serializer);
-            break;
+Dis::PhysicsHandler const *GameObject::GetPhysicsHandler () const
+{
+    return GetWorld()->GetPhysicsHandler();
+}
 
-        case ASTEROID:
-            retval = Asteroid::Create(serializer);
-            break;
-
-        case HEALTH_TRIGGER:
-            retval = HealthTrigger::Create(serializer);
-            break;
-
-        case EXPLOSION:
-            retval = Explosion::Create(serializer);
-            break;
-
-        default:
-            retval = NULL;
-            break;
-    }
-    return retval;
-    */
+Dis::PhysicsHandler *GameObject::GetPhysicsHandler ()
+{
+    return GetWorld()->GetPhysicsHandler();
 }
 
 FloatVector2 GameObject::GetAmbientVelocity (
@@ -63,7 +57,7 @@ FloatVector2 GameObject::GetAmbientVelocity (
 {
     // do an area trace
     AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+    GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
         scan_area_radius,
@@ -181,6 +175,63 @@ void GameObject::ApplyInterceptCourseAcceleration (
     AccumulateForce(force_vector);
     if (apply_force_on_target_also)
         target->AccumulateForce(-force_vector);
+}
+
+Engine2::Entity *GameObject::Create (Serializer &serializer)
+{
+    return NULL; // TEMP
+    /*
+    ASSERT1(serializer.GetIODirection() == IOD_READ)
+
+    Engine2::Entity *retval;
+    Type type = ReadType(serializer);
+    switch (type)
+    {
+        case PLAYER_SHIP:
+            retval = PlayerShip::Create(serializer);
+            break;
+
+        case BULLET:
+            retval = Bullet::Create(serializer);
+            break;
+
+        case ASTEROID:
+            retval = Asteroid::Create(serializer);
+            break;
+
+        case HEALTH_TRIGGER:
+            retval = HealthTrigger::Create(serializer);
+            break;
+
+        case EXPLOSION:
+            retval = Explosion::Create(serializer);
+            break;
+
+        default:
+            retval = NULL;
+            break;
+    }
+    return retval;
+    */
+}
+
+void GameObject::Write (Serializer &serializer) const
+{
+}
+
+void GameObject::HandleObjectLayerContainment (bool const component_x, bool const component_y)
+{
+    if (!GetObjectLayer()->GetIsWrapped())
+    {
+        if (component_x)
+            m_velocity[Dim::X] = 0.0f;
+        if (component_y)
+            m_velocity[Dim::Y] = 0.0f;
+    }
+}
+
+void GameObject::HandleScheduledDeletion (Float const time)
+{
 }
 
 GameObject::Type GameObject::ReadType (Serializer &serializer)

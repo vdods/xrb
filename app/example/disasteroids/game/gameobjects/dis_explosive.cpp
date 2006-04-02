@@ -15,6 +15,7 @@
 #include "dis_spawn.h"
 #include "dis_util.h"
 #include "dis_weapon.h"
+#include "dis_world.h"
 #include "xrb_engine2_objectlayer.h"
 
 using namespace Xrb;
@@ -35,7 +36,7 @@ void Explosive::Collide (
         return;
 
     // if it's a solid collision object, potentially detonate
-    if (collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION && !GetIsDead())
+    if (collider->GetCollisionType() == CT_SOLID_COLLISION && !GetIsDead())
         CheckIfItShouldDetonate(collider, time, frame_dt);
         
     // call the superclass collide
@@ -94,7 +95,7 @@ Grenade::Grenade (
     GameObjectReference<GameObject> const &owner,
     Float const max_health)
     :
-    Explosive(owner, max_health, max_health, T_GRENADE),
+    Explosive(owner, max_health, max_health, T_GRENADE, CT_SOLID_COLLISION),
     m_damage_to_inflict(damage_to_inflict),
     m_damage_radius(damage_radius),
     m_explosion_radius(explosion_radius),
@@ -139,7 +140,7 @@ void Grenade::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
     // TODO: weapon-level based checking
@@ -239,7 +240,7 @@ void Mine::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
     // TODO: weapon-level based checking
@@ -368,7 +369,7 @@ void Missile::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
     // TODO: weapon-level based checking
@@ -458,7 +459,7 @@ void EMPBomb::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
     // the emp_bomb is dumb, just detonate

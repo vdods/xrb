@@ -145,26 +145,79 @@ public:
     inline FloatMatrix2 const &GetTransformation () const { return m_transform.GetTransformation(); }
     inline FloatMatrix2 GetTransformationInverse () const { return m_transform.GetTransformationInverse(); }
     inline Float GetDeterminant () const { return m_transform.GetDeterminant(); }
-    inline void SetTranslation (FloatVector2 const &translation) { m_transform.SetTranslation(translation); }
-    inline void SetTranslation (Float const x, Float const y) { m_transform.SetTranslation(x, y); }
-    // these three scaling methods are virtual because the world/physics
-    // handler needs to know when an Entity's scale factor(s) have changed.
-    virtual void SetScaleFactors (FloatVector2 const &scale_factors) { m_transform.SetScaleFactors(scale_factors); }
-    virtual void SetScaleFactors (Float r, Float s) { m_transform.SetScaleFactors(r, s); }
-    virtual void SetScaleFactor (Float scale_factor) { m_transform.SetScaleFactor(scale_factor); }
-    inline void SetAngle (Float const angle) { m_transform.SetAngle(angle); }
-    inline void Translate (FloatVector2 const &translation) { m_transform.Translate(translation); }
-    inline void Translate (Float const x, Float const y) { m_transform.Translate(x, y); }
-    // these three scaling methods are virtual because the world/physics
-    // handler needs to know when an Entity's scale factor(s) have changed.
-    virtual void Scale (FloatVector2 const &scale_factors) { m_transform.Scale(scale_factors); }
-    virtual void Scale (Float r, Float s) { m_transform.Scale(r, s); }
-    virtual void Scale (Float scale_factor) { m_transform.Scale(scale_factor); }
-    inline void Rotate (Float const angle) { m_transform.Rotate(angle); }
+    
+    inline void SetTranslation (FloatVector2 const &translation)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
+        m_transform.SetTranslation(translation);
+    }
+    inline void SetTranslation (Float const x, Float const y)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
+        m_transform.SetTranslation(x, y);
+    }
+    inline void SetScaleFactors (FloatVector2 const &scale_factors)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
+        m_transform.SetScaleFactors(scale_factors);
+    }
+    inline void SetScaleFactors (Float r, Float s)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
+        m_transform.SetScaleFactors(r, s);
+    }
+    inline void SetScaleFactor (Float scale_factor)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
+        m_transform.SetScaleFactor(scale_factor);
+    }
+    inline void SetAngle (Float const angle)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
+        m_transform.SetAngle(angle);
+    }
+    
+    inline void Translate (FloatVector2 const &translation)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
+        m_transform.Translate(translation);
+    }
+    inline void Translate (Float const x, Float const y)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
+        m_transform.Translate(x, y);
+    }
+    inline void Scale (FloatVector2 const &scale_factors)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
+        m_transform.Scale(scale_factors);
+    }
+    inline void Scale (Float r, Float s)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
+        m_transform.Scale(r, s);
+    }
+    inline void Scale (Float scale_factor)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
+        m_transform.Scale(scale_factor);
+    }
+    inline void Rotate (Float const angle)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
+        m_transform.Rotate(angle);
+    }
+    
     inline void ResetTranslation () { m_transform.ResetTranslation(); }
-    // this is virtual because the world/physics handler needs
-    // to know when an Entity's scale factor(s) have changed.
-    virtual void ResetScale () { m_transform.ResetScale(); }
+    inline void ResetScale () { m_transform.ResetScale(); }
     inline void ResetAngle () { m_transform.ResetAngle(); }
 
 protected:

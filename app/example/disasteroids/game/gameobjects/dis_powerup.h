@@ -45,7 +45,7 @@ public:
         ItemType const item_type,
         Uint8 const pickup_flags)
         :
-        GameObject(T_POWERUP)
+        GameObject(T_POWERUP, CT_SOLID_COLLISION)
     {
         m_delete_upon_next_think = false;
         m_item_type = item_type;
@@ -56,7 +56,7 @@ public:
         Item *const item,
         Uint8 const pickup_flags)
         :
-        GameObject(T_POWERUP)
+        GameObject(T_POWERUP, CT_SOLID_COLLISION)
     {
         ASSERT1(item != NULL)
         m_item_type = IT_COUNT;

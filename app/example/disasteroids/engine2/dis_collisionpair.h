@@ -17,29 +17,23 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
-namespace Engine2
-{
-    class Entity;
-}; // end of namespace Engine2
-}; // end of namespace Xrb
-
 namespace Dis
 {
 
+class GameObject;
+
 struct CollisionPair
 {
-    Engine2::Entity *m_entity0;
-    Engine2::Entity *m_entity1;
+    GameObject *m_entity0;
+    GameObject *m_entity1;
     FloatVector2 m_collision_location;
     // the collision normal points towards entity 0
     FloatVector2 m_collision_normal;
     Float m_collision_force;
 
     inline CollisionPair (
-        Engine2::Entity *const entity0,
-        Engine2::Entity *const entity1,
+        GameObject *const entity0,
+        GameObject *const entity1,
         FloatVector2 const &collision_location,
         FloatVector2 const &collision_normal,
         Float const collision_force)

@@ -92,7 +92,7 @@ void Shade::Seek (Float const time, Float const frame_dt)
 
     // do an area trace
     AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+    GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
         s_seek_scan_radius,
@@ -263,7 +263,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
             ms_stalk_maximum_distance[GetEnemyLevel()] *
             Math::UnitVector(Math::RandomAngle());
     }
-    while (GetPhysicsHandler<PhysicsHandler>()->
+    while (GetPhysicsHandler()->
             GetDoesAreaOverlapAnyEntityInObjectLayer(
                 GetObjectLayer(),
                 teleport_destination,

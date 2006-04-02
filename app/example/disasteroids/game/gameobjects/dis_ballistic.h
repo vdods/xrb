@@ -27,7 +27,7 @@ public:
         Float time_to_live,
         GameObjectReference<GameObject> const &owner)
         :
-        GameObject(T_BALLISTIC),
+        GameObject(T_BALLISTIC, CT_NONSOLID_COLLISION),
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);

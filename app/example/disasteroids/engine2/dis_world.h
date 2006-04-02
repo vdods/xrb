@@ -15,7 +15,6 @@
 
 #include <time.h>
 
-#include "dis_enemyship.h"
 #include "dis_gameobject.h"
 #include "dis_highscores.h"
 #include "xrb_signalhandler.h"
@@ -59,16 +58,6 @@ user <--> worldview <--> world ( <-network-> serverworld )
                                (_________________________)
 */
 
-namespace Xrb
-{
-class EventQueue;
-
-namespace Engine2
-{
-    class PhysicsHandler;
-} // end of namespace Engine2
-} // end of namespace Xrb
-
 namespace Dis
 {
 
@@ -89,7 +78,7 @@ public:
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
-    PhysicsHandler *GetDisPhysicsHandler ();
+    PhysicsHandler *GetPhysicsHandler ();
     inline Uint8 GetAsteroidMineralLevel () const { return m_asteroid_mineral_level; }
 
     // for use by Master to indicate that the high score processing is done

@@ -41,92 +41,6 @@ Engine2::Compound *Engine2::Entity::GetOwnerCompound () const
     return static_cast<Compound *>(m_owner_object);
 }
 
-Engine2::PhysicsHandler *Engine2::Entity::GetPhysicsHandler () const
-{
-    ASSERT1(GetWorld() != NULL)
-    return GetWorld()->GetPhysicsHandler();
-}
-
-void Engine2::Entity::SetScaleFactors (FloatVector2 const &scale_factors)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
-    Float old_radius = GetRadius();
-    m_owner_object->SetScaleFactors(scale_factors);    
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::SetScaleFactors (Float const r, Float const s)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
-    Float old_radius = GetRadius();
-    m_owner_object->SetScaleFactors(r, s);
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::SetScaleFactor (Float const scale_factor)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
-    Float old_radius = GetRadius();
-    m_owner_object->SetScaleFactor(scale_factor);
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::Scale (FloatVector2 const &scale_factors)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
-    Float old_radius = GetRadius();
-    m_owner_object->Scale(scale_factors);
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::Scale (Float const r, Float const s)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
-    Float old_radius = GetRadius();
-    m_owner_object->Scale(r, s);
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::Scale (Float const scale_factor)
-{
-    ASSERT1(m_owner_object != NULL)
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
-    Float old_radius = GetRadius();
-    m_owner_object->Scale(scale_factor);
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
-void Engine2::Entity::ResetScale ()
-{
-    ASSERT1(m_owner_object != NULL)
-    Float old_radius = GetRadius();
-    m_owner_object->ResetScale();    
-    Float new_radius = GetRadius();
-    if (new_radius != old_radius)
-        HandleChangedRadius(old_radius, new_radius);
-}
-
 void Engine2::Entity::SetWrappedOffset (FloatVector2 const &wrapped_offset)
 {
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::X]))
@@ -219,28 +133,6 @@ void Engine2::Entity::WriteClassSpecific (Serializer &serializer) const
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
     serializer.WriteFloatVector2(m_wrapped_offset);
-}
-
-void Engine2::Entity::HandleChangedRadius (
-    Float const old_radius,
-    Float const new_radius)
-{
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(new_radius))
-    if (new_radius != old_radius)
-    {
-        if (GetIsInWorld())
-        {
-            ReAddToQuadTree(QTT_VISIBILITY);
-            ASSERT1(GetWorld() != NULL)
-            ASSERT1(GetWorld()->GetPhysicsHandler() != NULL)
-            GetWorld()->
-                GetPhysicsHandler()->
-                    HandleChangedEntityRadius(
-                        this,
-                        old_radius,
-                        new_radius);
-        }
-    }
 }
 
 } // end of namespace Xrb

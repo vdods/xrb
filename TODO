@@ -43,6 +43,11 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- make the disasteroids physics handler max speed be dependent on what
+  type of entity it is, so that missile and ballistic and such can turn
+  back into CT_SOLID_COLLISION like they should be
+- turn EntityWorldIndex into a Uint16
+- test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
 - make VisibilityQuadTree::Draw be a public function that takes as arguments
   the same as DrawData.  This will be a public frontend function which constructs
@@ -76,6 +81,8 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- Label text alignment doesn't seem to work (maybe it's just for non-word-wrapped labels)
+- move Sprite color mask and Compound color mask into Object
 - make Serializer::Write/ReadFloatTransform2 (and FloatVector2 and others)
   into templatized methods.
 - when a modal widget is deleted or whatever, the mouseover is not being

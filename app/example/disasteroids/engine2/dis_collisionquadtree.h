@@ -15,8 +15,8 @@
 
 #include "dis_areatracelist.h"
 #include "dis_collisionpair.h"
+#include "dis_gameobject.h"
 #include "dis_linetracebinding.h"
-#include "xrb_engine2_entity.h"
 
 using namespace Xrb;
 
@@ -75,11 +75,11 @@ public:
         Float half_object_layer_side_length);
 
     void CollideEntity (
-        Engine2::Entity *entity,
+        GameObject *entity,
         Float frame_dt,
         CollisionPairList *collision_pair_list);
     void CollideEntityWrapped (
-        Engine2::Entity *entity,
+        GameObject *entity,
         Float frame_dt,
         CollisionPairList *collision_pair_list,
         Float object_layer_side_length);
@@ -99,7 +99,7 @@ private:
     public:
 
         CollideEntityWrappedLoopFunctor (
-            Engine2::Entity *entity,
+            GameObject *entity,
             Float frame_dt,
             CollisionPairList *collision_pair_list,
             Float object_layer_side_length)
@@ -113,18 +113,18 @@ private:
         {
             ASSERT1(m_entity != NULL)
             ASSERT1(m_collision_pair_list != NULL)
-            ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+            ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
         }
 
         void operator () (Engine2::Object *object);
 
-        inline Engine2::Entity *GetEntity () { return m_entity; }
+        inline GameObject *GetEntity () { return m_entity; }
         inline Float GetObjectLayerSideLength () { return m_object_layer_side_length; }
         inline Float GetHalfObjectLayerSideLength () { return m_half_object_layer_side_length; }
                 
     private:
     
-        Engine2::Entity *m_entity;
+        GameObject *m_entity;
         Float m_frame_dt;
         Float m_frame_dt_squared;
         CollisionPairList *m_collision_pair_list;

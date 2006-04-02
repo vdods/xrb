@@ -15,7 +15,7 @@
 
 #include "dis_gameobject.h"
 #include "dis_mortal.h"
-#include "xrb_engine2_enums.h"
+#include "xrb_color.h"
 #include "xrb_vector.h"
 
 using namespace Xrb;
@@ -24,9 +24,8 @@ namespace Xrb
 {
 namespace Engine2
 {
-    class EntityGuts;
     class ObjectLayer;
-    class SpriteEntity;
+    class Sprite;
     class World;
 } // end of namespace Engine2
 } // end of namespace Xrb
@@ -60,20 +59,18 @@ class ShieldEffect;
 class Solitary;
 class TractorBeam;
 
-Engine2::SpriteEntity *SpawnSpriteEntity (
+Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_filename,
-    Engine2::EntityGuts *entity_guts,
+    GameObject *game_object,
     FloatVector2 const &translation,
     Float scale_factor,
     Float angle,
     Float first_moment,
     FloatVector2 const &velocity,
-    Float second_moment,
     Float angular_velocity,
-    Float elasticity,
-    Engine2::CollisionType collision_type);
+    Float elasticity);
 
 Asteroid *SpawnAsteroid (
     Engine2::World *world,

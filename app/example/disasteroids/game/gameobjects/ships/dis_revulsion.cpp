@@ -13,6 +13,7 @@
 #include "dis_physicshandler.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
+#include "dis_world.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_polynomial.h"
 
@@ -55,7 +56,7 @@ Revulsion::~Revulsion ()
     Delete(m_weapon);
 
     if (m_reticle_effect.GetIsValid() && !m_reticle_effect->GetIsInWorld())
-        delete m_reticle_effect->GetOwnerEntity();
+        delete m_reticle_effect->GetOwnerObject();
     ASSERT1(!m_reticle_effect.GetIsValid())
 }
 
@@ -134,7 +135,7 @@ void Revulsion::Seek (Float const time, Float const frame_dt)
     
     // do an area trace
     AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+    GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
         s_seek_scan_radius,

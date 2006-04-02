@@ -108,7 +108,7 @@ void Interloper::Seek (Float const time, Float const frame_dt)
 
     // do an area trace
     AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+    GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
         s_seek_scan_radius,

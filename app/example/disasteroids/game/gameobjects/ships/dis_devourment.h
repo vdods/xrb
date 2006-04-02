@@ -29,8 +29,6 @@ public:
     Devourment (Uint8 enemy_level);
     virtual ~Devourment ();
 
-    virtual void HandleNewOwnerEntity ();
-    
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
         GameObject *collider,

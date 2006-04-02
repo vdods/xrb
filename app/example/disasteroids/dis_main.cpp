@@ -414,7 +414,7 @@ of each type of minerals it costs to build.
 // Misc Programming Notes
 //////////////////////////////////////////////////////////////////////////////
 
-Engine2::EntityGuts - XuqRijBuh baseclass for game-specific entity data
+Engine2::Entity - XuqRijBuh baseclass for game-specific entity data
 +---GameObject - baseclass for disasteroids game objects
     +---Mortal - CT_SOLID_COLLISION, has health, can be killed
     |   +---Asteroid - small, debris asteroids decay away over time

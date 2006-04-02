@@ -17,6 +17,7 @@
 #include "dis_shield.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
+#include "dis_world.h"
 
 using namespace Xrb;
 
@@ -27,7 +28,7 @@ Ship::Ship (
     Float const max_health,
     Type const type)
     :
-    Mortal(max_health, max_health, type),
+    Mortal(max_health, max_health, type, CT_SOLID_COLLISION),
     m_reticle_coordinates(FloatVector2::ms_zero)
 {
     m_disable_time = 0.0f;
@@ -38,7 +39,7 @@ Ship::~Ship ()
 {
 }
 
-void Ship::HandleNewOwnerEntity ()
+void Ship::HandleNewOwnerObject ()
 {
     SetScaleFactor(GetShipScaleFactor());
     SetFirstMoment(GetShipBaselineFirstMoment());

@@ -14,7 +14,7 @@
 #include "dis_physicshandler.h"
 #include "dis_ship.h"
 #include "dis_util.h"
-#include "xrb_engine2_spriteentity.h"
+#include "xrb_engine2_sprite.h"
 
 using namespace Xrb;
 
@@ -23,9 +23,7 @@ namespace Dis
 
 void Effect::Think (Float const time, Float const frame_dt)
 {
-    ASSERT1(dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity()) != NULL)
-    dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity())->
-        SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - GetLifetimeRatio(time)));
+    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - GetLifetimeRatio(time)));
 
     if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
         ScheduleForDeletion(0.0f);
@@ -53,7 +51,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
         m_has_done_impact = true;
         
         RadiusKnockback(
-            GetPhysicsHandler<Dis::PhysicsHandler>(),
+            GetPhysicsHandler(),
             GetObjectLayer(),
             GetTranslation(),
             GetFinalSize(),
@@ -63,7 +61,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
 
         if (m_damage_radius > 0.0f)
             RadiusDamage(
-                GetPhysicsHandler<Dis::PhysicsHandler>(),
+                GetPhysicsHandler(),
                 GetObjectLayer(),
                 *m_owner,
                 this,
@@ -90,7 +88,7 @@ void DamageExplosion::Collide (
     ASSERT1(collider != NULL)
 
     // can't damage nonsolid objects
-    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
     // return if nothing would actually be done
@@ -137,7 +135,7 @@ void EMPExplosion::Collide (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL)
-    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
     // only affect ships that aren't the owner
@@ -160,9 +158,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
     // update the sprite's alpha value to reflect the damage left
     Float alpha_value = Max(0.0f, m_current_damage / m_initial_damage);
     ASSERT1(alpha_value <= 1.0f)
-    ASSERT1(dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity()) != NULL)
-    dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity())->
-        SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
+    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
 }
 
 void Fireball::Collide (
@@ -183,7 +179,7 @@ void Fireball::Collide (
     // TODO: when napalm is done, check if it hit napalm
     
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
     static Float const s_damage_dissipation_rate = 2.0f;
@@ -221,10 +217,7 @@ void LaserBeam::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
     ASSERT1(GetIsInWorld())
-    Engine2::SpriteEntity *sprite_entity =
-        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
-    ASSERT1(sprite_entity != NULL)
-    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
 void LaserBeam::SnapToShip (
@@ -251,13 +244,10 @@ void TractorBeam::SetPullingInputAndIntensity (
     ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f)
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
     ASSERT1(GetIsInWorld())
-    Engine2::SpriteEntity *sprite_entity =
-        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
-    ASSERT1(sprite_entity != NULL)
     if (pull_everything)
-        sprite_entity->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
+        GetOwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
     else
-        sprite_entity->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
+        GetOwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -267,10 +257,7 @@ void TractorBeam::SetPullingInputAndIntensity (
 void ShieldEffect::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
-    Engine2::SpriteEntity *sprite_entity =
-        dynamic_cast<Engine2::SpriteEntity *>(GetOwnerEntity());
-    ASSERT1(sprite_entity != NULL)
-    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
 void ShieldEffect::SnapToShip (

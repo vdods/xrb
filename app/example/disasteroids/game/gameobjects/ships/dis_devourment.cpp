@@ -17,6 +17,7 @@
 #include "dis_powergenerator.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
+#include "dis_world.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_polynomial.h"
 
@@ -59,7 +60,7 @@ Devourment::~Devourment ()
     {
         if (m_mouth_health_trigger->GetIsInWorld())
             m_mouth_health_trigger->RemoveFromWorld();
-        delete m_mouth_health_trigger->GetOwnerEntity();
+        delete m_mouth_health_trigger->GetOwnerObject();
     }
     
     Delete(m_mouth_tractor);
@@ -68,30 +69,8 @@ Devourment::~Devourment ()
     {
         if (m_mouth_tractor_beam->GetIsInWorld())
             m_mouth_tractor_beam->RemoveFromWorld();
-        delete m_mouth_tractor_beam->GetOwnerEntity();
+        delete m_mouth_tractor_beam->GetOwnerObject();
     }
-}
-
-void Devourment::HandleNewOwnerEntity ()
-{
-    Ship::HandleNewOwnerEntity();
-
-    // if Devourment is ever moved between different SpriteEntitys, this assert
-    // should go away (and the mouth health trigger should be deleted)
-    ASSERT1(!m_mouth_health_trigger.GetIsValid())
-
-    HealthTrigger *health_trigger = 
-        SpawnHealthTrigger(
-            GetWorld(),
-            GetObjectLayer(),
-            GetTranslation(),
-            0.5f * GetScaleFactor(),
-            FloatVector2::ms_zero, // moot, since we must move it ourselves,
-            -ms_mouth_damage_rate[GetEnemyLevel()],
-            Mortal::D_GRINDING,
-            GetReference(),
-            GetReference());
-    m_mouth_health_trigger = health_trigger->GetReference();
 }
 
 void Devourment::Think (Float const time, Float const frame_dt)
@@ -110,6 +89,23 @@ void Devourment::Think (Float const time, Float const frame_dt)
         // players that are being ganged up on)
         m_think_state = THINK_STATE(Seek);
         return;
+    }
+    
+    // if the mouth health trigger has not yet been created, create it.
+    if (!m_mouth_health_trigger.GetIsValid())
+    {
+        HealthTrigger *health_trigger = 
+            SpawnHealthTrigger(
+                GetWorld(),
+                GetObjectLayer(),
+                GetTranslation(),
+                0.5f * GetScaleFactor(),
+                FloatVector2::ms_zero, // moot, since we must move it ourselves,
+                -ms_mouth_damage_rate[GetEnemyLevel()],
+                Mortal::D_GRINDING,
+                GetReference(),
+                GetReference());
+        m_mouth_health_trigger = health_trigger->GetReference();
     }
     
     // set the mouth damage rate
@@ -221,7 +217,7 @@ void Devourment::Seek (Float const time, Float const frame_dt)
 
     // do an area trace
     AreaTraceList area_trace_list;
-    GetPhysicsHandler<Dis::PhysicsHandler>()->AreaTrace(
+    GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation() + 2.0f * GetScaleFactor() * Math::UnitVector(GetAngle()),
         s_seek_area_radius,

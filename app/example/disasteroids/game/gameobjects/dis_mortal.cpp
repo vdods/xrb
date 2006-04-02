@@ -126,7 +126,7 @@ void Mortal::Collide (
     
     if (collision_force > 0.0f)
     {
-        ASSERT1(collider->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+        ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
         Damage(
             collider,
             collider,

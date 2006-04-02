@@ -82,13 +82,13 @@ PlayerShip::~PlayerShip ()
             Delete(m_item_inventory[i][j]);
 
     if (m_laser_beam.GetIsValid() && !m_laser_beam->GetIsInWorld())
-        delete m_laser_beam->GetOwnerEntity();
+        delete m_laser_beam->GetOwnerObject();
 
     if (m_tractor_beam.GetIsValid() && !m_tractor_beam->GetIsInWorld())
-        delete m_tractor_beam->GetOwnerEntity();
+        delete m_tractor_beam->GetOwnerObject();
 
     if (m_shield_effect.GetIsValid() && !m_shield_effect->GetIsInWorld())
-        delete m_shield_effect->GetOwnerEntity();
+        delete m_shield_effect->GetOwnerObject();
 }
 
 Float PlayerShip::GetArmorStatus () const
@@ -225,7 +225,7 @@ void PlayerShip::SetArmor (Armor *const armor)
     m_armor = armor;
     // checking the owner entity pointer is necessary because it will be
     // NULL when deleting (and this function is called in ~PlayerShip)
-    if (GetOwnerEntity() != NULL)
+    if (GetOwnerObject() != NULL)
         SetFirstMoment(
             GetShipBaselineFirstMoment() +
             ((armor != NULL) ? armor->GetFirstMoment() : 0.0f));

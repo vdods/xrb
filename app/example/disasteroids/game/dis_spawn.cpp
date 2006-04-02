@@ -24,7 +24,7 @@
 #include "dis_solitary.h"
 #include "dis_util.h"
 #include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_spriteentity.h"
+#include "xrb_engine2_sprite.h"
 #include "xrb_engine2_world.h"
 
 using namespace Xrb;
@@ -32,49 +32,41 @@ using namespace Xrb;
 namespace Dis
 {
 
-Engine2::SpriteEntity *SpawnSpriteEntity (
+Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
     std::string const &sprite_texture_filename,
-    Engine2::EntityGuts  *entity_guts,
+    GameObject *const game_object,
     FloatVector2 const &translation,
     Float const scale_factor,
     Float const angle,
     Float const first_moment,
     FloatVector2 const &velocity,
-    Float const second_moment,
     Float const angular_velocity,
-    Float const elasticity,
-    Engine2::CollisionType const collision_type)
+    Float const elasticity)
 {
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
     ASSERT1(!sprite_texture_filename.empty())
+    ASSERT1(game_object != NULL)
     ASSERT1(scale_factor >= 0.0f)
     ASSERT1(first_moment > 0.0f)
-    ASSERT1(second_moment > 0.0f)
     ASSERT1(elasticity >= 0.0f)
 
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create(sprite_texture_filename);
+    game_object->SetElasticity(elasticity);
+    game_object->SetFirstMoment(first_moment);
+    game_object->SetVelocity(velocity);
+    game_object->SetAngularVelocity(angular_velocity);
 
-    sprite_entity->SetTranslation(translation);
-    sprite_entity->SetScaleFactor(scale_factor);
-    sprite_entity->SetAngle(angle);
-    sprite_entity->SetFirstMoment(first_moment);
-    sprite_entity->SetVelocity(velocity);
-    sprite_entity->SetSecondMoment(second_moment);
-    sprite_entity->SetAngularVelocity(angular_velocity);
-    sprite_entity->SetElasticity(elasticity);
-    sprite_entity->SetCollisionType(collision_type);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_filename);
+    sprite->SetTranslation(translation);
+    sprite->SetScaleFactor(scale_factor);
+    sprite->SetAngle(angle);
+    sprite->SetEntity(game_object);
 
-    world->AddEntity(sprite_entity, object_layer);
+    world->AddDynamicObject(sprite, object_layer);
 
-    // this should be done after setting everything else, so that a
-    // EntityGuts::HandleNewOwnerEntity override can have full control.
-    sprite_entity->SetEntityGuts(entity_guts);
-    
-    return sprite_entity;
+    return sprite;
 }
 
 Asteroid *SpawnAsteroid (
@@ -92,7 +84,7 @@ Asteroid *SpawnAsteroid (
             first_moment,
             mineral_content,
             is_a_secondary_asteroid);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/asteroid.png",
@@ -102,10 +94,8 @@ Asteroid *SpawnAsteroid (
         Math::RandomAngle(),
         first_moment,
         velocity,
-        1.0f,
         Math::RandomFloat(-90.0f, 90.0f),
-        0.2f,
-        Engine2::CT_SOLID_COLLISION);
+        0.2f);
     return asteroid;
 }
 
@@ -120,7 +110,7 @@ Ballistic *SpawnBallistic (
     GameObjectReference<GameObject> const &owner)
 {
     Ballistic *ballistic = new Ballistic(impact_damage, time_to_live, owner);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/sadface_small.png",
@@ -130,10 +120,8 @@ Ballistic *SpawnBallistic (
         Math::Atan(velocity),
         0.001f,
         velocity,
-        1.0f,
         0.0f,
-        0.0f,
-        Engine2::CT_NONSOLID_COLLISION);
+        0.0f);
     return ballistic;
 }
 
@@ -160,7 +148,7 @@ Grenade *SpawnGrenade (
             weapon_level,
             owner,
             health);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/grenade_small.png",
@@ -170,10 +158,8 @@ Grenade *SpawnGrenade (
         Math::Atan(velocity),
         8.0f,
         velocity,
-        1.0f,
         Math::RandomFloat(-30.0f, 30.0f),
-        0.1f,
-        Engine2::CT_SOLID_COLLISION);
+        0.1f);
     return grenade;
 }
 
@@ -200,7 +186,7 @@ Mine *SpawnMine (
             weapon_level,
             owner,
             health);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/mine_small.png",
@@ -210,10 +196,8 @@ Mine *SpawnMine (
         Math::Atan(velocity),
         20.0f,
         velocity,
-        1.0f,
         Math::RandomFloat(-30.0f, 30.0f),
-        0.1f,
-        Engine2::CT_SOLID_COLLISION);
+        0.1f);
     return mine;
 }
 
@@ -243,7 +227,7 @@ Missile *SpawnMissile (
             weapon_level,
             owner,
             health);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/missile_small.png",
@@ -253,10 +237,8 @@ Missile *SpawnMissile (
         angle,
         10.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.1f,
-        Engine2::CT_NONSOLID_COLLISION);//CT_SOLID_COLLISION);
+        0.1f);
     return missile;
 }
 /*
@@ -274,7 +256,7 @@ EMPBomb *SpawnEMPBomb (
     Float const health)
 {
     EMPBomb *emp_bomb = new EMPBomb(owner_emp_bomb_launcher, disable_time_factor, blast_radius, weapon_level, owner, health);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/grenade_small.png",
@@ -284,10 +266,8 @@ EMPBomb *SpawnEMPBomb (
         Math::Atan(velocity),
         1.0f,
         velocity,
-        1.0f,
         Math::RandomFloat(-30.0f, 30.0f),
-        0.1f,
-        Engine2::CT_SOLID_COLLISION);
+        0.1f);
     return emp_bomb;
 }
 */
@@ -302,7 +282,7 @@ Powerup *SpawnMineral (
 {
     ASSERT1(mineral_type < MINERAL_COUNT)
     Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_type), Powerup::PU_SOLITARY);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         Item::GetMineralSpriteFilename(mineral_type),
@@ -312,10 +292,8 @@ Powerup *SpawnMineral (
         Math::RandomAngle(),
         first_moment,
         velocity,
-        1.0f,
         Math::RandomFloat(-90.0f, 90.0f),
-        0.1f,
-        Engine2::CT_SOLID_COLLISION);
+        0.1f);
     return powerup;
 }
 
@@ -339,7 +317,7 @@ DamageExplosion *SpawnDamageExplosion (
             time_to_live,
             time_at_birth,
             owner);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/explosion1a_small.png",
@@ -349,10 +327,8 @@ DamageExplosion *SpawnDamageExplosion (
         Math::RandomAngle(),
         1.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.0f,
-        Engine2::CT_NONSOLID_COLLISION);
+        0.0f);
     return damage_explosion;
 }
 
@@ -366,7 +342,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     Float const time_at_birth)
 {
     NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(final_size, time_to_live, time_at_birth);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/explosion1a_small.png",
@@ -376,10 +352,8 @@ NoDamageExplosion *SpawnNoDamageExplosion (
         Math::RandomAngle(),
         1.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.0f,
-        Engine2::CT_NO_COLLISION);
+        0.0f);
     return no_damage_explosion;
 }
 
@@ -395,7 +369,7 @@ EMPExplosion *SpawnEMPExplosion (
     GameObjectReference<GameObject> const &owner)
 {
     EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, final_size, time_to_live, time_at_birth, owner);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/emp_explosion_small.png",
@@ -405,10 +379,8 @@ EMPExplosion *SpawnEMPExplosion (
         Math::RandomAngle(),
         1.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.0f,
-        Engine2::CT_NONSOLID_COLLISION);
+        0.0f);
     return emp_explosion;
 }
 
@@ -424,7 +396,7 @@ Fireball *SpawnFireball (
     GameObjectReference<GameObject> const &owner)
 {
     Fireball *fireball = new Fireball(power, final_size, time_to_live, time_at_birth, owner);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/fireball.png",
@@ -434,10 +406,8 @@ Fireball *SpawnFireball (
         Math::RandomAngle(),
         1.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.0f,
-        Engine2::CT_NONSOLID_COLLISION);
+        0.0f);
     return fireball;
 }
 
@@ -448,22 +418,16 @@ LaserBeam *SpawnLaserBeam (
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
 
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create("resources/beam_gradient_small.png");
-
-    LaserBeam *laser_beam = new LaserBeam();
-    sprite_entity->SetEntityGuts(laser_beam);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
-    sprite_entity->SetScaleFactor(0.5f * object_layer->GetSideLength());
-    sprite_entity->SetFirstMoment(1.0f);
-    sprite_entity->SetSecondMoment(1.0f);
-    sprite_entity->SetAngularVelocity(0.0f);
-    sprite_entity->SetElasticity(0.0f);
-    sprite_entity->SetCollisionType(Engine2::CT_NO_COLLISION);
+    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
 
-    world->AddEntity(sprite_entity, object_layer);
+    LaserBeam *laser_beam = new LaserBeam();
+
+    sprite->SetEntity(laser_beam);
+    world->AddDynamicObject(sprite, object_layer);
     
     return laser_beam;
 }
@@ -485,23 +449,16 @@ GaussGunTrail *SpawnGaussGunTrail (
 
     FloatVector2 trail_center = trail_start + 0.5f * trail_vector;
 
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
+    sprite->SetTranslation(trail_center);
+    sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
+    sprite->SetAngle(Math::Atan(trail_vector));
+    
     GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);
-        
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create("resources/beam_gradient_small.png");
+    gauss_gun_trail->SetVelocity(trail_velocity);
 
-    sprite_entity->SetEntityGuts(gauss_gun_trail);
-    sprite_entity->SetTranslation(trail_center);
-    sprite_entity->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
-    sprite_entity->SetAngle(Math::Atan(trail_vector));
-    sprite_entity->SetFirstMoment(1.0f);
-    sprite_entity->SetVelocity(trail_velocity);
-    sprite_entity->SetSecondMoment(1.0f);
-    sprite_entity->SetAngularVelocity(0.0f);
-    sprite_entity->SetElasticity(0.0f);
-    sprite_entity->SetCollisionType(Engine2::CT_NO_COLLISION);
-
-    world->AddEntity(sprite_entity, object_layer);
+    sprite->SetEntity(gauss_gun_trail);
+    world->AddDynamicObject(sprite, object_layer);
 
     return gauss_gun_trail;
 }
@@ -513,22 +470,16 @@ TractorBeam *SpawnTractorBeam (
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
 
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create("resources/tractor_beam.png");
-
-    TractorBeam *tractor_beam = new TractorBeam();
-    sprite_entity->SetEntityGuts(tractor_beam);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/tractor_beam.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Tractor will place
     // it for real later.
-    sprite_entity->SetScaleFactor(0.5f * object_layer->GetSideLength());
-    sprite_entity->SetFirstMoment(1.0f);
-    sprite_entity->SetSecondMoment(1.0f);
-    sprite_entity->SetAngularVelocity(0.0f);
-    sprite_entity->SetElasticity(0.0f);
-    sprite_entity->SetCollisionType(Engine2::CT_NO_COLLISION);
+    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
 
-    world->AddEntity(sprite_entity, object_layer);
+    TractorBeam *tractor_beam = new TractorBeam();
+
+    sprite->SetEntity(tractor_beam);
+    world->AddDynamicObject(sprite, object_layer);
     
     return tractor_beam;
 }
@@ -540,24 +491,19 @@ ShieldEffect *SpawnShieldEffect (
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
 
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create("resources/shield_effect_small.png");
-
-    ShieldEffect *shield_effect = new ShieldEffect();
-    sprite_entity->SetEntityGuts(shield_effect);
+    Engine2::Sprite *sprite =
+        Engine2::Sprite::Create("resources/shield_effect_small.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
-    sprite_entity->SetScaleFactor(0.5f * object_layer->GetSideLength());
-    sprite_entity->SetFirstMoment(1.0f);
-    sprite_entity->SetSecondMoment(1.0f);
-    sprite_entity->SetAngularVelocity(0.0f);
-    sprite_entity->SetElasticity(0.0f);
-    sprite_entity->SetCollisionType(Engine2::CT_NO_COLLISION);
+    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
     // default the shield effect to transparent
-    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
+    sprite->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
 
-    world->AddEntity(sprite_entity, object_layer);
+    ShieldEffect *shield_effect = new ShieldEffect();
+
+    sprite->SetEntity(shield_effect);
+    world->AddDynamicObject(sprite, object_layer);
     
     return shield_effect;
 }
@@ -570,23 +516,18 @@ ReticleEffect *SpawnReticleEffect (
     ASSERT1(world != NULL)
     ASSERT1(object_layer != NULL)
 
-    Engine2::SpriteEntity *sprite_entity =
-        Engine2::SpriteEntity::Create("resources/reticle1.png");
-
-    ReticleEffect *reticle_effect = new ReticleEffect();
-    sprite_entity->SetEntityGuts(reticle_effect);
+    Engine2::Sprite *sprite =
+        Engine2::Sprite::Create("resources/reticle1.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
-    sprite_entity->SetScaleFactor(0.5f * object_layer->GetSideLength());
-    sprite_entity->SetFirstMoment(1.0f);
-    sprite_entity->SetSecondMoment(1.0f);
-    sprite_entity->SetAngularVelocity(0.0f);
-    sprite_entity->SetElasticity(0.0f);
-    sprite_entity->SetCollisionType(Engine2::CT_NO_COLLISION);
-    sprite_entity->SetColorMask(color_mask);
+    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
+    sprite->SetColorMask(color_mask);
 
-    world->AddEntity(sprite_entity, object_layer);
+    ReticleEffect *reticle_effect = new ReticleEffect();
+
+    sprite->SetEntity(reticle_effect);
+    world->AddDynamicObject(sprite, object_layer);
     
     return reticle_effect;
 }
@@ -608,7 +549,7 @@ HealthTrigger *SpawnHealthTrigger (
             damage_type,
             ignore_this_mortal,
             owner);
-    Engine2::SpriteEntity *sprite_entity = SpawnSpriteEntity(
+    Engine2::Sprite *sprite = SpawnDynamicSprite(
         world,
         object_layer,
         "resources/sadface_small.png",
@@ -618,12 +559,10 @@ HealthTrigger *SpawnHealthTrigger (
         0.0f,
         1.0f,
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_NONSOLID_COLLISION);
+        0.3f);
     // make the sprite invisible
-    sprite_entity->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
+    sprite->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
     return health_trigger;
 }
 
@@ -634,7 +573,7 @@ Solitary *SpawnSolitary (
     FloatVector2 const &velocity)
 {
     Solitary *solitary = new Solitary();
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/sadface_small.png",
@@ -644,10 +583,8 @@ Solitary *SpawnSolitary (
         0.0f,
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_SOLID_COLLISION);
+        0.3f);
     return solitary;
 }
 
@@ -659,7 +596,7 @@ Interloper *SpawnInterloper (
     Uint8 const enemy_level)
 {
     Interloper *interloper = new Interloper(enemy_level);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/interloper.png",
@@ -669,10 +606,8 @@ Interloper *SpawnInterloper (
         Math::RandomAngle(),
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_SOLID_COLLISION);
+        0.3f);
     return interloper;
 }
 
@@ -684,7 +619,7 @@ Shade *SpawnShade (
     Uint8 const enemy_level)
 {
     Shade *shade = new Shade(enemy_level);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/shade.png",
@@ -694,10 +629,8 @@ Shade *SpawnShade (
         Math::RandomAngle(),
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_SOLID_COLLISION);
+        0.3f);
     return shade;
 }
 
@@ -709,7 +642,7 @@ Revulsion *SpawnRevulsion (
     Uint8 const enemy_level)
 {
     Revulsion *revulsion = new Revulsion(enemy_level);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/revulsion.png",
@@ -719,10 +652,8 @@ Revulsion *SpawnRevulsion (
         Math::RandomAngle(),
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_SOLID_COLLISION);
+        0.3f);
     return revulsion;
 }
 
@@ -734,7 +665,7 @@ Devourment *SpawnDevourment (
     Uint8 const enemy_level)
 {
     Devourment *devourment = new Devourment(enemy_level);
-    SpawnSpriteEntity(
+    SpawnDynamicSprite(
         world,
         object_layer,
         "resources/devourment.png",
@@ -744,10 +675,8 @@ Devourment *SpawnDevourment (
         Math::RandomAngle(),
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
-        1.0f,
         0.0f,
-        0.3f,
-        Engine2::CT_SOLID_COLLISION);
+        0.3f);
     return devourment;
 }
 

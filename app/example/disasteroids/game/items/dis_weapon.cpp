@@ -13,11 +13,11 @@
 #include "dis_effect.h"
 #include "dis_explosive.h"
 #include "dis_gameobject.h"
+#include "dis_linetracebinding.h"
 #include "dis_physicshandler.h"
 #include "dis_ship.h"
 #include "dis_spawn.h"
-#include "dis_linetracebinding.h"
-#include "xrb_engine2_spriteentity.h"
+#include "dis_world.h"
 #include "xrb_engine2_world.h"
 
 using namespace Xrb;
@@ -222,7 +222,7 @@ bool Laser::Activate (
     if (GetPrimaryInput() > 0.0f)
     {
         LineTraceBindingSet line_trace_binding_set;
-        GetOwnerShip()->GetPhysicsHandler<Dis::PhysicsHandler>()->LineTrace(
+        GetOwnerShip()->GetPhysicsHandler()->LineTrace(
             GetOwnerShip()->GetObjectLayer(),
             GetMuzzleLocation(),
             ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
@@ -380,7 +380,7 @@ bool GaussGun::Activate (
 
     // do a line trace
     LineTraceBindingSet line_trace_binding_set;
-    GetOwnerShip()->GetPhysicsHandler<Dis::PhysicsHandler>()->LineTrace(
+    GetOwnerShip()->GetPhysicsHandler()->LineTrace(
         GetOwnerShip()->GetObjectLayer(),
         GetMuzzleLocation(),
         ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
@@ -1035,7 +1035,7 @@ bool Tractor::Activate (
         ms_max_force[GetUpgradeLevel()];
             
     AreaTraceList area_trace_list;
-    GetOwnerShip()->GetPhysicsHandler<PhysicsHandler>()->AreaTrace(
+    GetOwnerShip()->GetPhysicsHandler()->AreaTrace(
         GetOwnerShip()->GetObjectLayer(),
         reticle_coordinates,
         beam_radius,

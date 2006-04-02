@@ -21,7 +21,7 @@ HealthTrigger::HealthTrigger (
     GameObjectReference<Mortal> const &ignore_this_mortal,
     GameObjectReference<GameObject> const &owner)
     :
-    GameObject(T_HEALTH_TRIGGER),
+    GameObject(T_HEALTH_TRIGGER, CT_NONSOLID_COLLISION),
     m_ignore_this_mortal(ignore_this_mortal),
     m_owner(owner)
 {

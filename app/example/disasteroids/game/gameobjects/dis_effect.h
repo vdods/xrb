@@ -22,9 +22,13 @@ class Effect : public GameObject
 {
 public:
 
-    Effect (Float const time_to_live, Float const time_at_birth, Type const type)
+    Effect (
+        Float const time_to_live,
+        Float const time_at_birth,
+        Type const type,
+        CollisionType const collision_type)
         :
-        GameObject(type)
+        GameObject(type, collision_type)
     {
         ASSERT1(time_to_live != 0.0f)
         ASSERT1(time_at_birth >= 0.0f)
@@ -76,9 +80,10 @@ public:
         Float const final_size,
         Float const time_to_live,
         Float const time_at_birth,
-        Type const type)
+        Type const type,
+        CollisionType const collision_type)
         :
-        Effect(time_to_live, time_at_birth, type)
+        Effect(time_to_live, time_at_birth, type, collision_type)
     {
         ASSERT1(final_size > 0.0f)
         m_final_size = final_size;
@@ -109,7 +114,7 @@ public:
         Float const time_at_birth,
         GameObjectReference<GameObject> const &owner)
         :
-        Explosion(explosion_radius, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION),
+        Explosion(explosion_radius, time_to_live, time_at_birth, T_DAMAGE_EXPLOSION, CT_NONSOLID_COLLISION),
         m_damage_amount(damage_amount),
         m_damage_radius(damage_radius),
         m_owner(owner)
@@ -148,7 +153,7 @@ public:
         Float const time_to_live,
         Float const time_at_birth)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_NO_DAMAGE_EXPLOSION)
+        Explosion(final_size, time_to_live, time_at_birth, T_NO_DAMAGE_EXPLOSION, CT_NO_COLLISION)
     { }
 }; // end of class NoDamageExplosion
 
@@ -167,7 +172,7 @@ public:
         Float const time_at_birth,
         GameObjectReference<GameObject> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_EMP_EXPLOSION),
+        Explosion(final_size, time_to_live, time_at_birth, T_EMP_EXPLOSION, CT_NONSOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
         m_owner(owner)
     {
@@ -203,7 +208,7 @@ public:
         Float time_at_birth,
         GameObjectReference<GameObject> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, T_FIREBALL),
+        Explosion(final_size, time_to_live, time_at_birth, T_FIREBALL, CT_NONSOLID_COLLISION),
         m_initial_damage(damage),
         m_owner(owner)
     {
@@ -243,7 +248,7 @@ public:
 
     LaserBeam ()
         :
-        Effect(-1.0f, 0.0f, T_LASER_BEAM)
+        Effect(-1.0f, 0.0f, T_LASER_BEAM, CT_NO_COLLISION)
     { }
     
     // this is mainly just to override Effect::Think which changes the alpha
@@ -267,7 +272,7 @@ public:
 
     GaussGunTrail (Float const time_to_live, Float const time_at_birth)
         :
-        Effect(time_to_live, time_at_birth, T_GAUSS_GUN_TRAIL)
+        Effect(time_to_live, time_at_birth, T_GAUSS_GUN_TRAIL, CT_NO_COLLISION)
     { }
 }; // end of class GaussGunTrail
 
@@ -281,7 +286,7 @@ public:
 
     TractorBeam ()
         :
-        Effect(-1.0f, 0.0f, T_TRACTOR_BEAM)
+        Effect(-1.0f, 0.0f, T_TRACTOR_BEAM, CT_NO_COLLISION)
     { }
     
     // this is mainly just to override Effect::Think which changes the alpha
@@ -303,7 +308,7 @@ public:
 
     ShieldEffect ()
         :
-        Effect(-1.0f, 0.0f, T_SHIELD_EFFECT)
+        Effect(-1.0f, 0.0f, T_SHIELD_EFFECT, CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha
@@ -326,7 +331,7 @@ public:
 
     ReticleEffect ()
         :
-        Effect(-1.0f, 0.0f, T_RETICLE_EFFECT)
+        Effect(-1.0f, 0.0f, T_RETICLE_EFFECT, CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha

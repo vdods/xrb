@@ -119,7 +119,7 @@ void RadiusKnockback (
         if (game_object == NULL)
             continue;
             
-        if (game_object->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+        if (game_object->GetCollisionType() == CT_NONSOLID_COLLISION)
             continue;
     
         // center_to_center points towards the collider

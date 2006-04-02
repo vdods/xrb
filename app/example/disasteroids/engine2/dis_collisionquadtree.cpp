@@ -63,12 +63,12 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
             <
             (object->GetRadius() + area_radius))
         {
-            Engine2::Entity const *entity = dynamic_cast<Engine2::Entity const *>(object);
+            GameObject const *entity = DStaticCast<GameObject const *>(object->GetEntity());
             ASSERT1(entity != NULL)
-            if (entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+            if (entity->GetCollisionType() == CT_SOLID_COLLISION)
                 return true;
             else if (check_nonsolid_collision_entities &&
-                     entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+                     entity->GetCollisionType() == CT_NONSOLID_COLLISION)
                 return true;
         }
     }
@@ -145,12 +145,12 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
             <
             (object->GetRadius() + area_radius))
         {
-            Engine2::Entity const *entity = dynamic_cast<Engine2::Entity const *>(object);
+            GameObject const *entity = DStaticCast<GameObject const *>(object->GetEntity());
             ASSERT1(entity != NULL)
-            if (entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION)
+            if (entity->GetCollisionType() == CT_SOLID_COLLISION)
                 return true;
             else if (check_nonsolid_collision_entities &&
-                     entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION)
+                     entity->GetCollisionType() == CT_NONSOLID_COLLISION)
                 return true;
         }
     }
@@ -236,13 +236,13 @@ void CollisionQuadTree::LineTrace (
         ASSERT1(object != NULL)
         ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
 
-        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        GameObject *entity = DStaticCast<GameObject *>(object->GetEntity());
         ASSERT1(entity != NULL)
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
-        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -266,12 +266,7 @@ void CollisionQuadTree::LineTrace (
         if (t1 < 0.0f)
             continue;
 
-
-        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
-        line_trace_binding_set->insert(
-            LineTraceBinding(
-                Max(0.0f, t0),
-                static_cast<GameObject *>(entity->GetEntityGuts())));
+        line_trace_binding_set->insert(LineTraceBinding(Max(0.0f, t0), entity));
     }
 }
 
@@ -342,13 +337,13 @@ void CollisionQuadTree::LineTraceWrapped (
         ASSERT1(object != NULL)
         ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
 
-        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        GameObject *entity = DStaticCast<GameObject *>(object->GetEntity());
         ASSERT1(entity != NULL)
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
-        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -384,11 +379,7 @@ void CollisionQuadTree::LineTraceWrapped (
         if (t1 < 0.0f)
             continue;
 
-        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
-        line_trace_binding_set->insert(
-            LineTraceBinding(
-                Max(0.0f, t0),
-                static_cast<GameObject *>(entity->GetEntityGuts())));
+        line_trace_binding_set->insert(LineTraceBinding(Max(0.0f, t0), entity));
     }
 }
 
@@ -428,13 +419,13 @@ void CollisionQuadTree::AreaTrace (
         ASSERT1(object != NULL)
         ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
 
-        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        GameObject *entity = DStaticCast<GameObject *>(object->GetEntity());
         ASSERT1(entity != NULL)
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
-        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -443,8 +434,7 @@ void CollisionQuadTree::AreaTrace (
         if (center_to_center.GetLength() >= entity->GetRadius() + trace_area_radius)
             continue;
 
-        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
-        area_trace_list->push_back(static_cast<GameObject *>(entity->GetEntityGuts()));
+        area_trace_list->push_back(entity);
     }
 }
 
@@ -492,13 +482,13 @@ void CollisionQuadTree::AreaTraceWrapped (
         ASSERT1(object != NULL)
         ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
 
-        Engine2::Entity *entity = dynamic_cast<Engine2::Entity *>(object);
+        GameObject *entity = DStaticCast<GameObject *>(object->GetEntity());
         ASSERT1(entity != NULL)
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
-        if (entity->GetCollisionType() == Engine2::CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -519,18 +509,17 @@ void CollisionQuadTree::AreaTraceWrapped (
         if (center_to_center.GetLength() >= entity->GetRadius() + trace_area_radius)
             continue;
 
-        ASSERT1(dynamic_cast<GameObject *>(entity->GetEntityGuts()) != NULL)
-        area_trace_list->push_back(static_cast<GameObject *>(entity->GetEntityGuts()));
+        area_trace_list->push_back(entity);
     }
 }
 
 void CollisionQuadTree::CollideEntity (
-    Engine2::Entity *const entity,
+    GameObject *const entity,
     Float const frame_dt,
     CollisionPairList *const collision_pair_list)
 {
     ASSERT1(entity != NULL)
-    ASSERT1(entity->GetCollisionType() != Engine2::CT_NO_COLLISION)
+    ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
     ASSERT1(collision_pair_list != NULL)
 
     Float const adjusted_dt = frame_dt;//1.0f/40.0f;
@@ -556,7 +545,7 @@ void CollisionQuadTree::CollideEntity (
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!GetIsAllowableObjectRadius(entity))
+        if (!GetIsAllowableObjectRadius(entity->GetOwnerObject()))
             return;
     }
 
@@ -571,7 +560,7 @@ void CollisionQuadTree::CollideEntity (
         ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
 
         // don't collide the entity with itself
-        if (object == static_cast<Engine2::Object *>(entity))
+        if (object == entity->GetOwnerObject())
             continue;
 
         // this is a quick and easy way to avoid calculating
@@ -579,7 +568,7 @@ void CollisionQuadTree::CollideEntity (
         if (object->GetRadius() > entity->GetRadius())
             continue;
         else if (object->GetRadius() == entity->GetRadius() &&
-                 object > static_cast<Engine2::Object *>(entity))
+                 object > entity->GetOwnerObject())
             continue;
 
         Float r = entity->GetRadius() + object->GetRadius();
@@ -588,7 +577,7 @@ void CollisionQuadTree::CollideEntity (
         if (P.GetLength() >= r)
             continue;
 
-        Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
+        GameObject *other_entity = DStaticCast<GameObject *>(object->GetEntity());
         ASSERT1(other_entity != NULL)
 
         // calculate the collision
@@ -606,11 +595,9 @@ void CollisionQuadTree::CollideEntity (
         Float collision_force = 0.0f;
 
         if ((V | P) < 0.0f && // and if they're moving toward each other
-            entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
-            other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
-            GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
-                DStaticCast<GameObject const *>(entity->GetEntityGuts()),
-                DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
+            entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
+            other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
+            GameObject::GetShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
         {
             Float M = 1.0f / entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
             FloatVector2 Q(P + adjusted_dt*V);
@@ -658,7 +645,7 @@ void CollisionQuadTree::CollideEntity (
 void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::Object *const object)
 {
     // don't collide the entity with itself
-    if (object == static_cast<Engine2::Object *>(m_entity))
+    if (object == m_entity->GetOwnerObject())
         return;
 
     // this is a quick and easy way to avoid calculating
@@ -666,7 +653,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     if (object->GetRadius() > m_entity->GetRadius()
         ||
         object->GetRadius() == m_entity->GetRadius() &&
-        object > static_cast<Engine2::Object *>(m_entity))
+        object > m_entity->GetOwnerObject())
         return;
 
     FloatVector2 ce0_translation(m_entity->GetTranslation());
@@ -688,7 +675,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     if (P.GetLength() >= r)
         return;
 
-    Engine2::Entity *other_entity = dynamic_cast<Engine2::Entity *>(object);
+    GameObject *other_entity = DStaticCast<GameObject *>(object->GetEntity());
     ASSERT1(other_entity != NULL)
 
     // calculate the collision
@@ -706,11 +693,9 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     Float collision_force = 0.0f;
 
     if ((V | P) < 0.0f && // and if they're moving toward each other
-        m_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION && // and if they're both solid
-        other_entity->GetCollisionType() == Engine2::CT_SOLID_COLLISION &&
-        GameObject::GetShouldApplyCollisionForces( // and if this isn't an exception to the rule
-            DStaticCast<GameObject const *>(m_entity->GetEntityGuts()),
-            DStaticCast<GameObject const *>(other_entity->GetEntityGuts())))
+        m_entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
+        other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
+        GameObject::GetShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule
     {
         Float M = 1.0f / m_entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
         FloatVector2 Q(P + m_frame_dt*V);
@@ -755,7 +740,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
 }
 
 void CollisionQuadTree::CollideEntityWrapped (
-    Engine2::Entity *const entity,
+    GameObject *const entity,
     Float const frame_dt,
     CollisionPairList *const collision_pair_list,
     Float const object_layer_side_length)
@@ -792,7 +777,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!GetIsAllowableObjectRadius(functor.GetEntity()))
+        if (!GetIsAllowableObjectRadius(functor.GetEntity()->GetOwnerObject()))
             return;
     }
 
