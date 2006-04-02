@@ -156,11 +156,8 @@ lib/core/xrb_statemachine.h
 lib/core/xrb_statemachine.tcpp
 lib/engine2/xrb_engine2_compound.cpp
 lib/engine2/xrb_engine2_compound.h
-lib/engine2/xrb_engine2_compoundentity.cpp
-lib/engine2/xrb_engine2_compoundentity.h
 lib/engine2/xrb_engine2_entity.cpp
 lib/engine2/xrb_engine2_entity.h
-lib/engine2/xrb_engine2_entityguts.h
 lib/engine2/xrb_engine2_enums.h
 lib/engine2/xrb_engine2_events.cpp
 lib/engine2/xrb_engine2_events.h
@@ -175,8 +172,7 @@ lib/engine2/xrb_engine2_quadtree.cpp
 lib/engine2/xrb_engine2_quadtree.h
 lib/engine2/xrb_engine2_sprite.cpp
 lib/engine2/xrb_engine2_sprite.h
-lib/engine2/xrb_engine2_spriteentity.cpp
-lib/engine2/xrb_engine2_spriteentity.h
+lib/engine2/xrb_engine2_types.h
 lib/engine2/xrb_engine2_visibilityquadtree.cpp
 lib/engine2/xrb_engine2_visibilityquadtree.h
 lib/engine2/xrb_engine2_world.cpp
@@ -303,8 +299,6 @@ lib/primitive/xrb_rect.cpp
 lib/primitive/xrb_rect.h
 lib/primitive/xrb_texture.cpp
 lib/primitive/xrb_texture.h
-lib/render/engine2_worldviews/xrb_engine2_freeflyingworldview.cpp
-lib/render/engine2_worldviews/xrb_engine2_freeflyingworldview.h
 lib/render/xrb_engine2_worldview.cpp
 lib/render/xrb_engine2_worldview.h
 lib/render/xrb_engine2_worldviewwidget.cpp

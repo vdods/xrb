@@ -13,9 +13,6 @@
 
 #include "xrb.h"
 
-#include <list>
-#include <vector>
-
 #include "xrb_engine2_object.h"
 #include "xrb_gltexture.h"
 #include "xrb_resourcelibrary.h"
@@ -26,69 +23,68 @@ namespace Xrb
 namespace Engine2
 {
 
-    struct Polygon;
-    
-    class Compound : public virtual Object
-    {
-    public:
-    
-        virtual ~Compound ();
+struct Polygon;
 
-        // ///////////////////////////////////////////////////////////////////
-        // public serialization functions
-        // ///////////////////////////////////////////////////////////////////
-    
-    //     static Compound *Create (std::string const &compound_filename);
-        static Compound *Create (Serializer &serializer);
-        // makes calls to WriteClassSpecific for this and all superclasses
-        virtual void Write (Serializer &serializer) const;
+class Compound : public Object
+{
+public:
 
-        // ///////////////////////////////////////////////////////////////////
-        // public overridable methods
-        // ///////////////////////////////////////////////////////////////////
-        
-        virtual Object *CreateClone () const;
-        // draws the compound
-        virtual void Draw (
-            DrawData const &draw_data,
-            Float alpha_mask) const;
-    
-    protected:
+    virtual ~Compound ();
 
-        // protected constructor so you must use Create()
-        Compound ();
+    // ///////////////////////////////////////////////////////////////////
+    // public serialization functions
+    // ///////////////////////////////////////////////////////////////////
 
-        // ///////////////////////////////////////////////////////////////////
-        // protected serialization functions
-        // ///////////////////////////////////////////////////////////////////
-                
-        // does the guts of serializing reading for this class (doesn't read
-        // the object subtype)
-        void ReadClassSpecific (Serializer &serializer);
-        // does the guts of serializing writing for this class (doesn't write
-        // the object subtype)
-        void WriteClassSpecific (Serializer &serializer) const;
+//     static Compound *Create (std::string const &compound_filename);
+    static Compound *Create (Serializer &serializer);
+    // makes calls to WriteClassSpecific for this and all superclasses
+    virtual void Write (Serializer &serializer) const;
 
-        // ///////////////////////////////////////////////////////////////////
-        // protected overridable methods
-        // ///////////////////////////////////////////////////////////////////
-        
-        // recalculates the radius based on the contents (TODO: obsolete?)
-        virtual void CalculateRadius () const;
+    // ///////////////////////////////////////////////////////////////////
+    // public Object interface methods
+    // ///////////////////////////////////////////////////////////////////
 
-        // ///////////////////////////////////////////////////////////////////
-                
-        // copies the properties of the given object (compound) to this compound
-        void CloneProperties (Object const *object);
-    
-        // move this geometry into CompoundGeometry (or some such)
-        // so that it can be ResourceLibrary'd
-    
-        Uint32 m_vertex_count;
-        FloatVector2 *m_vertex_array;
-        Uint32 m_polygon_count;
-        Polygon *m_polygon_array;
-    }; // end of class Engine2::Compound
+    // draws the compound
+    virtual void Draw (
+        DrawData const &draw_data,
+        Float alpha_mask) const;
+
+protected:
+
+    // protected constructor so you must use Create()
+    Compound ();
+
+    // ///////////////////////////////////////////////////////////////////
+    // protected serialization functions
+    // ///////////////////////////////////////////////////////////////////
+
+    // does the guts of serializing reading for this class (doesn't read
+    // the object subtype)
+    void ReadClassSpecific (Serializer &serializer);
+    // does the guts of serializing writing for this class (doesn't write
+    // the object subtype)
+    void WriteClassSpecific (Serializer &serializer) const;
+
+    // ///////////////////////////////////////////////////////////////////
+    // protected Object interface methods
+    // ///////////////////////////////////////////////////////////////////
+
+    // recalculates the radius based on the contents
+    virtual void CalculateRadius () const;
+
+    // ///////////////////////////////////////////////////////////////////
+
+    // copies the properties of the given object (compound) to this compound
+    void CloneProperties (Object const *object);
+
+    // move this geometry into CompoundGeometry (or some such)
+    // so that it can be ResourceLibrary'd
+
+    Uint32 m_vertex_count;
+    FloatVector2 *m_vertex_array;
+    Uint32 m_polygon_count;
+    Polygon *m_polygon_array;
+}; // end of class Engine2::Compound
 
 } // end of Engine2
 

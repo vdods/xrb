@@ -15,6 +15,7 @@
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_render.h"
+#include "xrb_rendercontext.h"
 #include "xrb_serializer.h"
 
 namespace Xrb
@@ -86,12 +87,15 @@ void Engine2::VisibilityQuadTree::ReadObjects (
     ASSERT1(object_layer != NULL)
 
     fprintf(stderr, "Engine2::VisibilityQuadTree::ReadObjects();\n");
-    Uint32 non_entity_count = serializer.ReadUint32();
-    while (non_entity_count > 0) {
-        Object *object = Object::Create(serializer);
-        ASSERT1(dynamic_cast<Entity *>(object) == NULL)
+    Uint32 static_object_count = serializer.ReadUint32();
+    while (static_object_count > 0)
+    {
+        // it's ok to pass NULL as CreateEntity because it won't be used,
+        // because these are all static objects (or at least better be)
+        Object *object = Object::Create(serializer, NULL);
+        ASSERT1(!object->GetIsDynamic())
         object_layer->AddObject(object);
-        --non_entity_count;
+        --static_object_count;
     }
 }
 
@@ -100,7 +104,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     // if this is the top level node, write out the number of
     // subordinate non-entities
     if (GetParent() == NULL)
-        serializer.WriteUint32(GetSubordinateNonEntityCount());
+        serializer.WriteUint32(GetSubordinateStaticObjectCount());
 
     // the number of non-entities written
     Uint32 retval = 0;
@@ -113,8 +117,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     {
         Object const *object = *it;
         ASSERT1(object != NULL)
-        bool object_is_non_entity = dynamic_cast<Entity const *>(object) == NULL;
-        if (object_is_non_entity)
+        if (!object->GetIsDynamic())
         {
             object->Write(serializer);
             ++retval;
@@ -183,27 +186,10 @@ void Engine2::VisibilityQuadTree::DrawBounds (
     upper_left  += m_center;
     lower_left  += m_center;
     lower_right += m_center;
-
-    Render::DrawLine(
-        render_context,
-        upper_right,
-        upper_left,
-        color);
-    Render::DrawLine(
-        render_context,
-        upper_left,
-        lower_left,
-        color);
-    Render::DrawLine(
-        render_context,
-        lower_left,
-        lower_right,
-        color);
-    Render::DrawLine(
-        render_context,
-        lower_right,
-        upper_right,
-        color);
+    Render::DrawLine(render_context, upper_right, upper_left,  color);
+    Render::DrawLine(render_context, upper_left,  lower_left,  color);
+    Render::DrawLine(render_context, lower_left,  lower_right, color);
+    Render::DrawLine(render_context, lower_right, upper_right, color);
 }
 
 void Engine2::VisibilityQuadTree::DrawTreeBounds (
@@ -320,7 +306,8 @@ void Engine2::VisibilityQuadTree::Draw (
             GetChild<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
 }
 
-void Engine2::VisibilityQuadTree::DrawWrapped (Engine2::VisibilityQuadTree::DrawLoopFunctor draw_loop_functor)
+void Engine2::VisibilityQuadTree::DrawWrapped (
+    Engine2::VisibilityQuadTree::DrawLoopFunctor draw_loop_functor)
 {
     // if there are no objects here or below, just return
     if (GetSubordinateObjectCount() == 0)

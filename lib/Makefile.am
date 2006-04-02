@@ -21,7 +21,6 @@ libxrb_la_SOURCES = \
     core/serializers/xrb_compressionserializer.cpp \
     \
     engine2/xrb_engine2_compound.cpp \
-    engine2/xrb_engine2_compoundentity.cpp \
     engine2/xrb_engine2_entity.cpp \
     engine2/xrb_engine2_events.cpp \
     engine2/xrb_engine2_object.cpp \
@@ -29,7 +28,6 @@ libxrb_la_SOURCES = \
     engine2/xrb_engine2_polygon.cpp \
     engine2/xrb_engine2_quadtree.cpp \
     engine2/xrb_engine2_sprite.cpp \
-    engine2/xrb_engine2_spriteentity.cpp \
     engine2/xrb_engine2_visibilityquadtree.cpp \
     engine2/xrb_engine2_world.cpp \
     \
@@ -80,8 +78,6 @@ libxrb_la_SOURCES = \
     render/xrb_rendercontext.cpp \
     render/xrb_screen.cpp \
     render/xrb_screencoord.cpp \
-    \
-    render/engine2_worldviews/xrb_engine2_freeflyingworldview.cpp \
     \
     util/xrb_bitcache.cpp \
     util/xrb_bitcachedcompression.cpp \
@@ -154,9 +150,7 @@ include_HEADERS = \
     core/serializers/xrb_compressionserializer.h \
     \
     engine2/xrb_engine2_compound.h \
-    engine2/xrb_engine2_compoundentity.h \
     engine2/xrb_engine2_entity.h \
-    engine2/xrb_engine2_entityguts.h \
     engine2/xrb_engine2_enums.h \
     engine2/xrb_engine2_events.h \
     engine2/xrb_engine2_object.h \
@@ -165,7 +159,7 @@ include_HEADERS = \
     engine2/xrb_engine2_polygon.h \
     engine2/xrb_engine2_quadtree.h \
     engine2/xrb_engine2_sprite.h \
-    engine2/xrb_engine2_spriteentity.h \
+    engine2/xrb_engine2_types.h \
     engine2/xrb_engine2_visibilityquadtree.h \
     engine2/xrb_engine2_world.h \
     \
@@ -228,8 +222,6 @@ include_HEADERS = \
     render/xrb_rendercontext.h \
     render/xrb_screen.h \
     render/xrb_screencoord.h \
-    \
-    render/engine2_worldviews/xrb_engine2_freeflyingworldview.h \
     \
     util/xrb_bitcache.h \
     util/xrb_bitcachedcompression.h \
@@ -311,7 +303,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
-    -I$(top_srcdir)/lib/render/engine2_worldviews \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/util
 

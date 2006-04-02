@@ -113,7 +113,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
-    -I$(top_srcdir)/lib/render/engine2_worldviews \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/util
 

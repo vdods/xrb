@@ -14,9 +14,6 @@
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_sprite.h"
-#include "xrb_engine2_spriteentity.h"
-#include "xrb_math.h"
-#include "xrb_render.h"
 #include "xrb_serializer.h"
 
 namespace Xrb
@@ -32,38 +29,51 @@ Engine2::Object::DrawData::DrawData (
     m_transformation = transformation;
 }
 
-Engine2::Object *Engine2::Object::Create (Serializer &serializer)
+Engine2::Object::~Object ()
 {
-    Object *retval;
-
-    SubType sub_type = ReadSubType(serializer);
-    switch (sub_type)
+    if (m_entity != NULL)
     {
-        case ST_OBJECT:
-            ASSERT1(false && "Invalid object type -- Object is abstract")
-            retval = NULL;
+        ASSERT1(m_entity->m_owner_object == this)
+        ASSERT1(!m_entity->GetIsInWorld())
+        m_entity->m_owner_object = NULL;
+        Delete(m_entity);
+    }
+}
+
+Engine2::Object *Engine2::Object::Create (
+    Serializer &serializer,
+    CreateEntityFunction CreateEntity)
+{
+    ASSERT1(serializer.GetIODirection() == IOD_READ)
+
+    Object *retval = NULL;
+    switch (ReadObjectType(serializer))
+    {
+        case OT_OBJECT:
+            retval = new Object(OT_OBJECT);
+            retval->Object::ReadClassSpecific(serializer);
             break;
 
-        case ST_SPRITE:
+        case OT_SPRITE:
             retval = Sprite::Create(serializer);
             break;
 
-        case ST_COMPOUND:
+        case OT_COMPOUND:
             retval = Compound::Create(serializer);
             break;
             
-        case ST_ENTITY:
-            retval = Entity::Create(serializer);
-            break;
-
-        case ST_SPRITE_ENTITY:
-            retval = SpriteEntity::Create(serializer);
-            break;
-
         default:
-            ASSERT1(false && "Invalid object type")
+            ASSERT0(false && "Invalid object type")
             retval = NULL;
             break;
+    }
+
+    // if there is an Entity attached to this object, read it
+    if (serializer.ReadBool())
+    {
+        ASSERT1(CreateEntity != NULL)
+        retval->m_entity = CreateEntity(serializer);
+        ASSERT1(retval->m_entity != NULL)
     }
 
     return retval;
@@ -71,9 +81,15 @@ Engine2::Object *Engine2::Object::Create (Serializer &serializer)
 
 void Engine2::Object::Write (Serializer &serializer) const
 {
-    WriteSubType(serializer);
+    WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
     Object::WriteClassSpecific(serializer);
+
+    // write true if there's an attached Entity, false if not.
+    serializer.WriteBool(m_entity != NULL);
+    // if there's an Entity attached to this object, write it
+    if (m_entity != NULL)
+        m_entity->Write(serializer);
 }
 
 Engine2::World *Engine2::Object::GetWorld () const
@@ -83,46 +99,54 @@ Engine2::World *Engine2::Object::GetWorld () const
     return m_object_layer->GetOwnerWorld();
 }
 
-Engine2::Object::Object ()
+void Engine2::Object::SetEntity (Entity *const entity)
+{
+    if (m_entity != NULL)
+    {
+        ASSERT1(m_entity->m_owner_object == this)
+        m_entity->m_owner_object = NULL;
+    }
+
+    m_entity = entity;
+
+    if (m_entity != NULL)
+    {
+        m_entity->m_owner_object = this;
+        m_entity->HandleNewOwnerObject();
+    }
+}
+
+Engine2::Object::Object (ObjectType object_type)
     :
+    m_object_type(object_type),
     m_transform(FloatTransform2::ms_identity, true)
 {
-    m_sub_type = ST_OBJECT;
-    m_radius = 0.0;
-    for (Uint32 i = 0; i < QTT_NUM_TYPES; ++i)
-        m_owner_quad_tree[i] = NULL;
+    ASSERT1(m_object_type < OT_COUNT)
+    m_radius = 0.0f;
     m_object_layer = NULL;
+    for (Uint32 i = 0; i < QTT_COUNT; ++i)
+        m_owner_quad_tree[i] = NULL;
+    m_entity = NULL;
     m_radius_needs_to_be_recalculated = true;
 }
 
-Engine2::Object::SubType Engine2::Object::ReadSubType (Serializer &serializer)
+Engine2::ObjectType Engine2::Object::ReadObjectType (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    SubType retval = static_cast<SubType>(serializer.ReadUint8());
-    ASSERT1(retval >= ST_LOWEST_SUB_TYPE && retval <= ST_HIGHEST_SUB_TYPE)
-    return retval;
+    return static_cast<ObjectType>(serializer.ReadUint8());
 }
 
-void Engine2::Object::WriteSubType (Serializer &serializer) const
+void Engine2::Object::WriteObjectType (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(m_sub_type >= ST_LOWEST_SUB_TYPE && m_sub_type <= ST_HIGHEST_SUB_TYPE)
-    serializer.WriteUint8(static_cast<Uint8>(m_sub_type));
+    serializer.WriteUint8(static_cast<Uint8>(m_object_type));
 }
 
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    
-    // read in the guts
     m_transform = serializer.ReadFloatTransform2();
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    
-    // write out the guts
     serializer.WriteFloatTransform2(m_transform);
 }
 
@@ -137,7 +161,9 @@ void Engine2::Object::CloneProperties (Object const *const object)
 
 void Engine2::Object::CalculateTransform () const
 {
-    /* original function code:
+    /*
+    // original function code (kept around because this version does the
+    // same thing but is much easier to read)
     if (m_transform.GetIsDirty() || m_radius_needs_to_be_recalculated)
     {
         m_transform.RecalculateTransformIfNecessary();
@@ -169,11 +195,6 @@ void Engine2::Object::CalculateTransform () const
         CalculateRadius();
         m_radius_needs_to_be_recalculated = false;
     }
-}
-
-void Engine2::Object::IndicateRadiusNeedsToBeRecalculated ()
-{
-    m_radius_needs_to_be_recalculated = true;
 }
 
 } // end of namespace Xrb

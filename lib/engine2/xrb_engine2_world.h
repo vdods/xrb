@@ -14,7 +14,6 @@
 #include "xrb.h"
 
 #include <list>
-#include <set>
 #include <vector>
 
 #include "xrb_engine2_entity.h"
@@ -42,145 +41,139 @@ class Serializer;
 namespace Engine2
 {
 
-    class ObjectLayer;
-    class Object;
-    class PhysicsHandler;
-    class WorldView;
-    
-    // The World class embodies the physical state of sprites in the world,
-    // and is view-independent.  This allows rendering-independent physics
-    // and gameplay to be computed.
-    class World : public EventHandler, public FrameHandler
+class ObjectLayer;
+class Object;
+class PhysicsHandler;
+class WorldView;
+
+// The World class embodies the physical state of sprites in the world,
+// and is view-independent.  This allows rendering-independent physics
+// and gameplay to be computed.
+class World : public EventHandler, public FrameHandler
+{
+public:
+
+    enum
     {
-    public:
-    
-        enum
-        {
-            DEFAULT_ENTITY_CAPACITY = 0x1000
-        };
-    
-        typedef std::list<ObjectLayer *> ObjectLayerList;
-        typedef ObjectLayerList::iterator ObjectLayerListIterator;
-        typedef ObjectLayerList::const_iterator ObjectLayerListConstIterator;
-        typedef ObjectLayerList::reverse_iterator ObjectLayerListReverseIterator;
-    
-        virtual ~World ();
-    
-        static World *Create (
-            Serializer &serializer,
-            PhysicsHandler *physics_handler);
-        static World *CreateEmpty (
-            PhysicsHandler *physics_handler,
-            Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
-        void Write (Serializer &serializer) const;
-    
-        inline ObjectLayerList &GetObjectLayerList ()
-        {
-            return m_object_layer_list;
-        }
-        inline Uint32 GetEntityCapacity () const
-        {
-            return m_entity_vector.capacity();
-        }
-        virtual ObjectLayer const *GetMainObjectLayer () const
-        {
-            return m_main_object_layer;
-        }
-        virtual ObjectLayer *GetMainObjectLayer ()
-        {
-            return m_main_object_layer;
-        }
-        inline PhysicsHandler *GetPhysicsHandler ()
-        {
-            return m_physics_handler;
-        }
-        inline Float GetTimescale ()
-        {
-            return m_timescale;
-        }
+        DEFAULT_ENTITY_CAPACITY = 0x1000
+    };
 
-        inline void SetTimescale (Float timescale)
-        {
-            ASSERT1(timescale >= 0.0f)
-            m_timescale = timescale;
-        }
+    typedef std::list<ObjectLayer *> ObjectLayerList;
+    typedef ObjectLayerList::iterator ObjectLayerListIterator;
+    typedef ObjectLayerList::const_iterator ObjectLayerListConstIterator;
+    typedef ObjectLayerList::reverse_iterator ObjectLayerListReverseIterator;
 
-        // you must call this method after creating a WorldView
-        void AttachWorldView (WorldView *world_view);
-        // you must call this method before destroying a WorldView
-        void DetachWorldView (WorldView *world_view);
-        
-        void AddObjectLayer (ObjectLayer *object_layer);
-        void SetMainObjectLayer (ObjectLayer *main_object_layer);
-            
-        void AddEntity (Entity *entity, ObjectLayer *object_layer);
-        void AddObject (Object *object, ObjectLayer *object_layer);
-        void RemoveEntity (Entity *entity);
+    virtual ~World ();
 
-    protected:
+    static World *Create (
+        Serializer &serializer,
+        CreateEntityFunction CreateEntity,
+        PhysicsHandler *physics_handler);
+    static World *CreateEmpty (
+        PhysicsHandler *physics_handler,
+        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+    void Write (Serializer &serializer) const;
 
-        World (
-            PhysicsHandler *physics_handler,
-            Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+    inline Uint32 GetEntityCapacity () const { return m_entity_vector.capacity(); }
+    inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
+    virtual ObjectLayer const *GetMainObjectLayer () const { return m_main_object_layer; }
+    virtual ObjectLayer *GetMainObjectLayer () { return m_main_object_layer; }
+    inline PhysicsHandler *GetPhysicsHandler () { return m_physics_handler; }
+    inline Float GetTimescale () { return m_timescale; }
 
-        virtual Uint32 GetMainObjectLayerIndex () const;
-    
-        virtual void SetMainObjectLayerIndex (Uint32 index);
+    inline void SetTimescale (Float timescale)
+    {
+        ASSERT1(timescale >= 0.0f)
+        m_timescale = timescale;
+    }
 
-        // process an event    
-        virtual bool ProcessEventOverride (Event const *e);
-        // this calculates one frame, called by the game loop
-        virtual void ProcessFrameOverride ();
-        void IncrementLowestAvailableEntityNumber ();
-        void UpdateLowestAvailableEntityNumber (Sint32 removed_entity_number);
-    
-        // this function should be called only from constructors (or Create)
-        void Read (Serializer &serializer);
+    // you must call this method after creating a WorldView
+    void AttachWorldView (WorldView *world_view);
+    // you must call this method before destroying a WorldView
+    void DetachWorldView (WorldView *world_view);
 
-        // this function is called after the worldview is added to the
-        // worldview list during AttachWorldView.
-        virtual void HandleAttachWorldView (WorldView *world_view) { }
-        // this function is called before the worldview is removed from the
-        // worldview list during DetachWorldView.
-        virtual void HandleDetachWorldView (WorldView *world_view) { }
-        
-        virtual void ReadObjectLayers (Serializer &serializer);
-        virtual void ReadEntitiesBelongingToLayer (
-            Serializer &serializer,
-            ObjectLayer *object_layer);
-    
-        typedef std::list<WorldView *> WorldViewList;
-        typedef WorldViewList::iterator WorldViewListIterator;
-                
-        // list of WorldViews
-        WorldViewList m_world_view_list;
-        // list of ObjectLayers, starting at the back-most layer
-        ObjectLayerList m_object_layer_list;
-        // the "main" object layer
-        ObjectLayer *m_main_object_layer;
-        // controls how fast world time moves compared to real time
-        Float m_timescale;
-    
-    private:
-    
-        void WriteObjectLayers (Serializer &serializer) const;
-        void WriteEntitiesBelongingToLayer (
-            Serializer &serializer,
-            ObjectLayer const *object_layer) const;
+    void AddObjectLayer (ObjectLayer *object_layer);
+    void SetMainObjectLayer (ObjectLayer *main_object_layer);
 
-        typedef std::vector<Entity *> EntityVector;
-        typedef EntityVector::iterator EntityVectorIterator;
-        typedef EntityVector::const_iterator EntityVectorConstIterator;
+    // for adding static objects only (because it will be added only to
+    // the object layer, which will delete it upon destruction.
+    // there is no way to remove a static object).
+    void AddStaticObject (Object *static_object, ObjectLayer *object_layer);
 
-        // entity array
-        EntityVector m_entity_vector;
-        // lowest available entity number
-        Entity::Index m_lowest_available_entity_number;
-        // the physics handler for this world
-        PhysicsHandler *m_physics_handler;
-        // the world's own private event queue
-        EventQueue m_owner_event_queue;
-    }; // end of class Engine2::World
+    // for adding dynamic objects only (causes them to be added to
+    // the dynamic object vector and the physics handler).
+    void AddDynamicObject (Object *dynamic_object, ObjectLayer *object_layer);
+    // for removing a dynamic object (causes them to be removed from
+    // the dynamic object vector and the physics handler).
+    void RemoveDynamicObject (Object *dynamic_object);
+
+protected:
+
+    World (
+        PhysicsHandler *physics_handler,
+        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+
+    virtual Uint32 GetMainObjectLayerIndex () const;
+
+    virtual void SetMainObjectLayerIndex (Uint32 index);
+
+    // process an event
+    virtual bool ProcessEventOverride (Event const *e);
+    // this calculates one frame, called by the game loop
+    virtual void ProcessFrameOverride ();
+    void IncrementLowestAvailableEntityIndex ();
+    void UpdateLowestAvailableEntityIndex (EntityWorldIndex removed_entity_index);
+
+    // this function should be called only from constructors (or Create)
+    void Read (Serializer &serializer, CreateEntityFunction CreateEntity);
+
+    // this function is called after the worldview is added to the
+    // worldview list during AttachWorldView.
+    virtual void HandleAttachWorldView (WorldView *world_view) { }
+    // this function is called before the worldview is removed from the
+    // worldview list during DetachWorldView.
+    virtual void HandleDetachWorldView (WorldView *world_view) { }
+
+    virtual void ReadObjectLayers (
+        Serializer &serializer,
+        CreateEntityFunction CreateEntity);
+    virtual void ReadDynamicObjectsBelongingToLayer (
+        Serializer &serializer,
+        ObjectLayer *object_layer,
+        CreateEntityFunction CreateEntity);
+
+    typedef std::list<WorldView *> WorldViewList;
+    typedef WorldViewList::iterator WorldViewListIterator;
+
+    // list of WorldViews
+    WorldViewList m_world_view_list;
+    // list of ObjectLayers, starting at the back-most layer
+    ObjectLayerList m_object_layer_list;
+    // the "main" object layer
+    ObjectLayer *m_main_object_layer;
+    // controls how fast world time moves compared to real time
+    Float m_timescale;
+
+private:
+
+    void WriteObjectLayers (Serializer &serializer) const;
+    void WriteDynamicObjectsBelongingToLayer (
+        Serializer &serializer,
+        ObjectLayer const *object_layer) const;
+
+    typedef std::vector<Entity *> EntityVector;
+    typedef EntityVector::iterator EntityVectorIterator;
+    typedef EntityVector::const_iterator EntityVectorConstIterator;
+
+    // array of dynamic objects (Object with attached Entity)
+    EntityVector m_entity_vector;
+    // lowest available entity number
+    EntityWorldIndex m_lowest_available_entity_index;
+    // the physics handler for this world
+    PhysicsHandler *m_physics_handler;
+    // the world's own private event queue
+    EventQueue m_owner_event_queue;
+}; // end of class Engine2::World
 
 } // end of namespace Engine2
 

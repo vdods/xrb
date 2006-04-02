@@ -88,7 +88,7 @@ void MapEditor2::World::DecrementMainObjectLayer ()
 void MapEditor2::World::RemoveObject (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetHasOwner(Engine2::QTT_VISIBILITY))
+    ASSERT1(object->GetHasOwnerQuadTree(Engine2::QTT_VISIBILITY))
 
     Entity *entity = dynamic_cast<Entity *>(object);
     if (entity != NULL)

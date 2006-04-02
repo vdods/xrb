@@ -11,7 +11,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/core/serializers \
     -I$(top_srcdir)/lib/engine2 \
-    -I$(top_srcdir)/lib/engine2/physicshandlers \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
@@ -20,7 +19,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
-    -I$(top_srcdir)/lib/render/engine2_worldviews \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/util
 

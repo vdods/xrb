@@ -12,6 +12,7 @@
 
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_visibilityquadtree.h"
+#include "xrb_rendercontext.h"
 #include "xrb_serializer.h"
 
 namespace Xrb
@@ -171,9 +172,9 @@ void Engine2::ObjectLayer::Write (Serializer &serializer) const
     // write the quad tree structure
     m_quad_tree->WriteStructure(serializer);
     // write the objects the quadtree contains
-    DEBUG1_CODE(Uint32 number_of_non_entities_written =)
+    DEBUG1_CODE(Uint32 written_static_object_count =)
     m_quad_tree->WriteObjects(serializer);
-    ASSERT1(number_of_non_entities_written == m_quad_tree->GetSubordinateNonEntityCount())
+    ASSERT1(written_static_object_count == m_quad_tree->GetSubordinateStaticObjectCount())
 }
 
 Uint32 Engine2::ObjectLayer::Draw (
@@ -222,7 +223,7 @@ void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
     ASSERT1(m_quad_tree != NULL)
     
     // make sure that it's inside the layer's bounds first
-    Entity *entity = dynamic_cast<Entity *>(object);
+    Entity *entity = object->GetEntity();
     if (m_is_wrapped)
     {
         if (entity != NULL)
@@ -266,22 +267,33 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
     ASSERT1(entity != NULL)
 
     FloatVector2 translation(entity->GetTranslation());
+    bool component_x = false;
+    bool component_y = false;
 
-    for (Uint32 i = 0; i <= 1; ++i)
+    if (translation[Dim::X] > m_half_side_length)
     {
-        if (translation.m[i] > m_half_side_length)
-        {
-            translation.m[i] = m_half_side_length;
-            entity->SetVelocityComponent(i, 0.0);
-        }
-        else if (translation.m[i] < -m_half_side_length)
-        {
-            translation.m[i] = -m_half_side_length;
-            entity->SetVelocityComponent(i, 0.0);
-        }
+        translation[Dim::X] = m_half_side_length;
+        component_x = true;
+    }
+    else if (translation[Dim::X] < -m_half_side_length)
+    {
+        translation[Dim::X] = -m_half_side_length;
+        component_x = true;
+    }
+
+    if (translation[Dim::Y] > m_half_side_length)
+    {
+        translation[Dim::Y] = m_half_side_length;
+        component_y = true;
+    }
+    else if (translation[Dim::Y] < -m_half_side_length)
+    {
+        translation[Dim::Y] = -m_half_side_length;
+        component_y = true;
     }
 
     entity->SetTranslation(translation);
+    entity->HandleObjectLayerContainment(component_x, component_y);
 }
 
 void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const

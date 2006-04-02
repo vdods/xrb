@@ -250,12 +250,10 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     if (object->GetRadius() > m_radius)
         object->SetScaleFactor(m_radius);
 
-    // check that the object's center is actually inside this node (return if
-    // not)
+    // return if the object's center is not inside this node
     if (!GetIsPointInsideQuad(object->GetTranslation()))
         return false;
 
-    bool object_is_non_entity = dynamic_cast<Entity *>(object) == NULL;
     // check if the object should be added to this node:
     // add to the object list if the object's radius is within the nominal size
     // for this quadtree's radius or if there are no child quadtree nodes.
@@ -265,33 +263,29 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
         object->SetOwnerQuadTree(m_type, this);
         m_object_set.insert(object);
         ++m_subordinate_object_count;
-        if (object_is_non_entity)
-            ++m_subordinate_non_entity_count;
-        return true;
+        if (!object->GetIsDynamic())
+            ++m_subordinate_static_object_count;
     }
     else
     {
         for (Uint8 i = 0; i < 4; ++i)
             ASSERT2(m_child[i] != NULL)
         // add it to only one child quadtree
-        bool retval = false;
+        bool add_succeeded = false;
         for (Uint8 i = 0; i < 4; ++i)
         {
-            retval = retval || m_child[i]->AddObject(object);
+            add_succeeded = add_succeeded || m_child[i]->AddObject(object);
             // we only want to add it to one
-            if (retval)
+            if (add_succeeded)
                 break;
         }
+        ASSERT1(add_succeeded)
 
-        if (retval)
-        {
-            ++m_subordinate_object_count;
-            if (object_is_non_entity)
-                ++m_subordinate_non_entity_count;
-        }
-
-        return retval;
+        ++m_subordinate_object_count;
+        if (!object->GetIsDynamic())
+            ++m_subordinate_static_object_count;
     }
+    return true;
 }
 
 bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
@@ -308,10 +302,9 @@ bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
         object->SetOwnerQuadTree(m_type, NULL);
         // decrement subordinate object count
         DecrementSubordinateObjectCount();
-        // decrement the subordinate non entity count if appropriate
-        bool object_is_non_entity = dynamic_cast<Entity *>(object) == NULL;
-        if (object_is_non_entity)
-            DecrementSubordinateNonEntityCount();
+        // decrement the subordinate static object count if appropriate
+        if (!object->GetIsDynamic())
+            DecrementSubordinateStaticObjectCount();
         // success
         return true;
     }
@@ -427,8 +420,8 @@ Engine2::QuadTree::QuadTree (QuadTree *const parent)
     for (Uint8 i = 0; i < 4; ++i)
         m_child[i] = NULL;
     m_subordinate_object_count = 0;
-    m_subordinate_non_entity_count = 0;
-    m_type = QTT_NUM_TYPES;
+    m_subordinate_static_object_count = 0;
+    m_type = QTT_COUNT;
 }
 
 bool Engine2::QuadTree::GetIsPointInsideQuad (FloatVector2 const &point) const
@@ -473,7 +466,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapQuadBoundsWrapped (
 
 void Engine2::QuadTree::SetType (QuadTreeType const type)
 {
-    ASSERT1(type < QTT_NUM_TYPES)
+    ASSERT1(type < QTT_COUNT)
     m_type = type;
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
@@ -491,13 +484,13 @@ void Engine2::QuadTree::IncrementSubordinateObjectCount ()
     }
 }
 
-void Engine2::QuadTree::IncrementSubordinateNonEntityCount ()
+void Engine2::QuadTree::IncrementSubordinateStaticObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
     {
-        ASSERT3(quad_node->m_subordinate_non_entity_count < UINT32_UPPER_BOUND)
-        ++quad_node->m_subordinate_non_entity_count;
+        ASSERT3(quad_node->m_subordinate_static_object_count < UINT32_UPPER_BOUND)
+        ++quad_node->m_subordinate_static_object_count;
         quad_node = quad_node->m_parent;
     }
 }
@@ -513,13 +506,13 @@ void Engine2::QuadTree::DecrementSubordinateObjectCount ()
     }
 }
 
-void Engine2::QuadTree::DecrementSubordinateNonEntityCount ()
+void Engine2::QuadTree::DecrementSubordinateStaticObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
     {
-        ASSERT3(quad_node->m_subordinate_non_entity_count > 0)
-        --quad_node->m_subordinate_non_entity_count;
+        ASSERT3(quad_node->m_subordinate_static_object_count > 0)
+        --quad_node->m_subordinate_static_object_count;
         quad_node = quad_node->m_parent;
     }
 }
@@ -536,7 +529,6 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
 
     ASSERT1(GetIsPointInsideQuad(object->GetTranslation()))
 
-    bool object_is_non_entity = dynamic_cast<Entity *>(object) == NULL;
     // check that the object should be added to this node:
     // assert that the object's radius is within the nominal size
     // for this quadtree's radius or that there are no child quadtree nodes.
@@ -545,8 +537,8 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
     object->SetOwnerQuadTree(m_type, this);
     m_object_set.insert(object);
     IncrementSubordinateObjectCount();
-    if (object_is_non_entity)
-        IncrementSubordinateNonEntityCount();
+    if (!object->GetIsDynamic())
+        IncrementSubordinateStaticObjectCount();
 }
 
 void Engine2::QuadTree::AddObjectIfNotAlreadyAdded (

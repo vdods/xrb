@@ -11,6 +11,7 @@
 #include "xrb_engine2_compound.h"
 
 #include "xrb_engine2_polygon.h"
+#include "xrb_rendercontext.h"
 
 namespace Xrb
 {
@@ -39,20 +40,10 @@ Engine2::Compound *Engine2::Compound::Create (Serializer &serializer)
 
 void Engine2::Compound::Write (Serializer &serializer) const
 {
-    WriteSubType(serializer);
+    WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
     Object::WriteClassSpecific(serializer);
     Compound::WriteClassSpecific(serializer);
-}
-
-Engine2::Object *Engine2::Compound::CreateClone () const
-{
-    Compound *retval = new Compound();
-    
-    retval->Object::CloneProperties(this);
-    retval->Compound::CloneProperties(this);
-
-    return static_cast<Object *>(retval);
 }
 
 void Engine2::Compound::Draw (
@@ -94,9 +85,9 @@ void Engine2::Compound::Draw (
 }
 
 Engine2::Compound::Compound ()
+    :
+    Engine2::Object(OT_COMPOUND)
 {
-    m_sub_type = ST_COMPOUND;
-
     m_vertex_count = 0;
     m_vertex_array = NULL;
     m_polygon_count = 0;
@@ -141,9 +132,8 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
 
 void Engine2::Compound::CalculateRadius () const
 {
-    m_radius = 0.0f;
-
     // get the distance from the origin to the furthest vertex
+    m_radius = 0.0f;
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
         m_radius = Max(
@@ -155,7 +145,8 @@ void Engine2::Compound::CalculateRadius () const
 
 void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
 {
-    Compound const *compound = dynamic_cast<Compound const *>(object);
+    ASSERT1(object->GetObjectType() == OT_COMPOUND)
+    Compound const *compound = DStaticCast<Compound const *>(object);
     ASSERT1(compound != NULL)
 
     ASSERT1(m_vertex_count == 0)

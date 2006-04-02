@@ -23,70 +23,58 @@ namespace Xrb
 namespace Engine2
 {
 
-    class Entity;
-    class ObjectLayer;
-    class World;
-    
-    // abstract interface class for use by World.
-    class PhysicsHandler : public FrameHandler
+class Entity;
+class ObjectLayer;
+class World;
+
+// abstract interface class for use by World.
+class PhysicsHandler : public FrameHandler
+{
+public:
+
+    PhysicsHandler ()
     {
-    public:
-    
-        PhysicsHandler ()
-        {
-            m_owner_world = NULL;
-        }
-        virtual ~PhysicsHandler ()
-        {
-            m_owner_world = NULL;
-        }
-    
-        inline World *GetOwnerWorld () const
-        {
-            return m_owner_world;
-        }
+        m_owner_world = NULL;
+    }
+    virtual ~PhysicsHandler ()
+    {
+        m_owner_world = NULL;
+    }
 
-        virtual void AddObjectLayer (ObjectLayer *object_layer) = 0;
-        virtual void SetMainObjectLayer (ObjectLayer *object_layer) = 0;
-            
-        virtual void AddEntity (Entity *entity) = 0;
-        virtual void RemoveEntity (Entity *entity) = 0;
+    inline World *GetOwnerWorld () const
+    {
+        return m_owner_world;
+    }
 
-        virtual void HandleChangedEntityRadius (
-            Entity *entity,
-            Float old_radius,
-            Float new_radius) = 0;
-        virtual void HandleChangedEntityCollisionType (
-            Entity *entity,
-            CollisionType old_collision_type,
-            CollisionType new_collision_type) = 0;
-        virtual void HandleChangedEntityAppliesGravity (
-            Entity *entity,
-            bool old_applies_gravity,
-            bool new_applies_gravity) = 0;
-        virtual void HandleChangedEntityReactsToGravity (
-            Entity *entity,
-            bool old_reacts_to_gravity,
-            bool new_reacts_to_gravity) = 0;
+    virtual void AddObjectLayer (ObjectLayer *object_layer) = 0;
+    virtual void SetMainObjectLayer (ObjectLayer *object_layer) = 0;
 
-    protected:
+    virtual void AddEntity (Entity *entity) = 0;
+    virtual void RemoveEntity (Entity *entity) = 0;
 
-        virtual void ProcessFrameOverride () = 0;
-                
-        inline void SetOwnerWorld (World *const owner_world)
-        {
-            ASSERT1(owner_world != NULL)
-            m_owner_world = owner_world;
-        }
-        
-    private:
+    virtual void HandleChangedEntityRadius (
+        Entity *entity,
+        Float old_radius,
+        Float new_radius) = 0;
 
-        World *m_owner_world;
+protected:
 
-        // this is so World can set m_owner_world
-        // the physics handler is passed to it.
-        friend class World;
-    }; // end of class Engine2::PhysicsHandler
+    virtual void ProcessFrameOverride () = 0;
+
+    inline void SetOwnerWorld (World *const owner_world)
+    {
+        ASSERT1(owner_world != NULL)
+        m_owner_world = owner_world;
+    }
+
+private:
+
+    World *m_owner_world;
+
+    // this is so World can set m_owner_world
+    // the physics handler is passed to it.
+    friend class World;
+}; // end of class Engine2::PhysicsHandler
 
 } // end of namespace Engine2
 

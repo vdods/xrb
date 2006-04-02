@@ -41,22 +41,10 @@ Engine2::Sprite *Engine2::Sprite::Create (Serializer &serializer)
 
 void Engine2::Sprite::Write (Serializer &serializer) const
 {
-    WriteSubType(serializer);
+    WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
     Object::WriteClassSpecific(serializer);
     Sprite::WriteClassSpecific(serializer);
-}
-
-Engine2::Object *Engine2::Sprite::CreateClone () const
-{
-    ASSERT1(m_texture.GetIsValid())
-    
-    Sprite *retval = new Sprite(m_texture);
-    
-    retval->Object::CloneProperties(this);
-    retval->Sprite::CloneProperties(this);
-
-    return static_cast<Object *>(retval);
 }
 
 void Engine2::Sprite::Draw (
@@ -125,9 +113,8 @@ void Engine2::Sprite::Draw (
 
 Engine2::Sprite::Sprite (Resource<GLTexture> const &texture)
     :
-    Object()
+    Object(OT_SPRITE)
 {
-    m_sub_type = Object::ST_SPRITE;
     m_texture = texture;
     m_is_round = true;
     m_color_mask = Color(1.0, 1.0, 1.0, 1.0);
@@ -167,7 +154,8 @@ void Engine2::Sprite::CalculateRadius () const
 
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
 {
-    Sprite const *sprite = dynamic_cast<Sprite const *>(object);
+    ASSERT1(object->GetObjectType() == OT_SPRITE)
+    Sprite const *sprite = DStaticCast<Sprite const *>(object);
     ASSERT1(sprite != NULL)
 
     m_texture = sprite->m_texture;

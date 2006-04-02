@@ -19,36 +19,36 @@ namespace Xrb
 namespace Engine2
 {
 
-    class Entity;
-    class ObjectLayer;
+class Entity;
+class ObjectLayer;
 
-    bool MatchEntity (Event const *event, Entity *entity_to_match);
+bool MatchEntity (Event const *event, Entity *entity_to_match);
 
-    class EventEntity : public Event
+class EventEntity : public Event
+{
+public:
+
+    EventEntity (Entity *entity, Float time, Type type)
+        :
+        Event(time, type)
     {
-    public:
+        ASSERT1(entity != NULL)
+        m_entity = entity;
+    }
+    virtual ~EventEntity () { }
 
-        EventEntity (Entity *entity, Float time, Type type)
-            :
-            Event(time, type)
-        {
-            ASSERT1(entity != NULL)
-            m_entity = entity;
-        }
-        virtual ~EventEntity () { }
+    inline Entity *GetEntity () const { return m_entity; }
 
-        inline Entity *GetEntity () const { return m_entity; }
+    inline void NullifyEntity () const
+    {
+        ASSERT1(m_entity != NULL)
+        m_entity = NULL;
+    }
 
-        inline void NullifyEntity () const
-        {
-            ASSERT1(m_entity != NULL)
-            m_entity = NULL;
-        }
+private:
 
-    private:
-
-        mutable Entity *m_entity;
-    }; // end of class Engine2::EntityEvent
+    mutable Entity *m_entity;
+}; // end of class Engine2::EntityEvent
 
 } // end of namespace Engine2
 

@@ -43,6 +43,7 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
+- write a delete functor for deleting objects out of STL containers with for_each
 - make VisibilityQuadTree::Draw be a public function that takes as arguments
   the same as DrawData.  This will be a public frontend function which constructs
   the DrawData (which will actually be DrawLoopFunctor), so the single functor
@@ -75,6 +76,8 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- make Serializer::Write/ReadFloatTransform2 (and FloatVector2 and others)
+  into templatized methods.
 - when a modal widget is deleted or whatever, the mouseover is not being
   properly restored on whatever the mouse is actually over.
 - the map editor view should not create/destroy its own world -- it

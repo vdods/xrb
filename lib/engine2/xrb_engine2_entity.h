@@ -13,344 +13,173 @@
 
 #include "xrb.h"
 
-#include <string>
-
+#include "xrb_engine2_enums.h"
 #include "xrb_engine2_object.h"
+#include "xrb_engine2_types.h"
 
 namespace Xrb
 {
 
+class Serializer;
+
 namespace Engine2
 {
 
-    class EntityGuts;
-    class ObjectLayer;
-    class PhysicsHandler;
-    
-    // "entity" is a perfectly good word to describe what this class is...
-    // so what if it's a ripoff of quake3? :)
-    class Entity : public virtual Object
+class Compound;
+class Object;
+class ObjectLayer;
+class PhysicsHandler;
+class QuadTree;
+class Sprite;
+class World;
+
+class Entity
+{
+public:
+
+    Entity ()
+        :
+        m_wrapped_offset(FloatVector2::ms_zero)
     {
-    public:
-    
-        typedef Sint32 Index;
-    
-        virtual ~Entity ();
+        ResetWorldIndex();
+        m_owner_object = NULL;
+    }
+    virtual ~Entity ()
+    {
+        ASSERT1(m_owner_object == NULL)
+    }
 
-        // ///////////////////////////////////////////////////////////////////
-        // public serialization functions
-        // ///////////////////////////////////////////////////////////////////
-        
-        // write a Create function once plain Entities are supported
-        
-        // makes calls to WriteClassSpecific for this and all superclasses
-        virtual void Write (Serializer &serializer) const;
-            
-        // ///////////////////////////////////////////////////////////////////
-        // public accessors
-        // ///////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////
+    // public interface methods
+    // ///////////////////////////////////////////////////////////////////
 
-        PhysicsHandler *GetPhysicsHandler ();
-        inline EntityGuts *GetEntityGuts () 
-        {
-            return m_entity_guts;
-        }
-        inline Index GetNumber () const
-        {
-            return m_number;
-        }
-        inline std::string const &GetName () const
-        {
-            return m_name;
-        }
-        inline FloatVector2 const &GetWrappedOffset () const
-        {
-            return m_wrapped_offset;
-        }
-        inline FloatVector2 GetUnwrappedTranslation () const
-        {
-            return GetTranslation() + m_wrapped_offset;
-        }
-        inline bool GetIsInWorld () const
-        {
-            return m_number >= 0;
-        }
-        inline Float GetElasticity () const
-        {
-            return m_elasticity;
-        }
-        inline Float GetFirstMoment () const
-        {
-            return m_first_moment;
-        }
-        inline Float GetSpeed () const
-        {
-            return m_velocity.GetLength();
-        }
-        inline FloatVector2 const &GetVelocity () const
-        {
-            return m_velocity;
-        }
-        inline FloatVector2 GetMomentum () const
-        {
-            return m_first_moment * m_velocity;
-        }
-        inline Float GetSecondMoment () const
-        {
-            return m_second_moment;
-        }
-        inline Float GetAngularVelocity () const
-        {
-            return m_angular_velocity;
-        }
-        inline Float GetAngularMomentum () const
-        {
-            return m_second_moment * m_angular_velocity;
-        }
-        inline bool GetAppliesGravity () const
-        {
-            return m_applies_gravity;
-        }
-        inline bool GetReactsToGravity () const
-        {
-            return m_reacts_to_gravity;
-        }
-        inline CollisionType GetCollisionType () const
-        {
-            return m_collision_type;
-        }
-    
-        // returns the force vector which has been accumulated during this frame
-        inline FloatVector2 const &GetForce () const
-        {
-            return m_force;
-        }
-        // returns the torque value which has been accumulated during this frame
-        inline Float GetTorque () const
-        {
-            return m_torque;
-        }
+    // writes game-specific Entity data
+    virtual void Write (Serializer &serializer) = 0;
+    // used e.g. for setting the component velocity to 0 when the owner
+    // object hits the side of its non-wrapped ObjectLayer.  if the owner
+    // object exceeded the ObjectLayer's boundaries in the X dimension,
+    // component_x will be true.  component_y will be set analogously.
+    virtual void HandleObjectLayerContainment (bool component_x, bool component_y) = 0;
+    // will be called right before this object is deleted
+    // due to being ScheduleForDeletion'ed.
+    virtual void HandleScheduledDeletion (Float time) = 0;
 
-        // ///////////////////////////////////////////////////////////////////
-        // public modifiers
-        // ///////////////////////////////////////////////////////////////////
-        
-        void SetEntityGuts (EntityGuts *const entity_guts);
-        inline void SetNumber (Index const number)
-        {
-            m_number = number;
-        }
-        inline void SetName (std::string const &name)
-        {
-            m_name = name;
-        }
-        inline void SetWrappedOffset (FloatVector2 const &wrapped_offset)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::Y]))
-            m_wrapped_offset = wrapped_offset;
-        }
-        inline void SetElasticity (Float const elasticity)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity))
-            m_elasticity = (elasticity >= 0.0f) ? elasticity : 0.0f;
-        }
-        inline void SetFirstMoment (Float const first_moment)
-        {
-            ASSERT1(first_moment > 0.0f)
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(first_moment))
-            m_first_moment = first_moment;
-        }
-        inline void SetVelocity (FloatVector2 const &velocity)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]))
-            m_velocity = velocity;
-        }
-        inline void SetVelocityComponent (Uint32 const index, Float const value)
-        {
-            ASSERT1(index <= 1)
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value))
-            m_velocity.m[index] = value;
-        }
-        inline void SetSecondMoment (Float const second_moment)
-        {
-            ASSERT1(second_moment > 0.0f)
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(second_moment))
-            m_second_moment = second_moment;
-        }
-        inline void SetAngularVelocity (Float const angular_velocity)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity))
-            m_angular_velocity = angular_velocity;
-        }
-        void SetAppliesGravity (bool applies_gravity);
-        void SetReactsToGravity (bool reacts_to_gravity);
-        void SetCollisionType (CollisionType collision_type);
-    
-        inline void SetForce (FloatVector2 const &force)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]))
-            m_force = force;
-        }
-        inline void SetTorque (Float const torque)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(torque))
-            m_torque = torque;
-        }
+    // ///////////////////////////////////////////////////////////////////
+    // accessors
+    // ///////////////////////////////////////////////////////////////////
 
-        // ///////////////////////////////////////////////////////////////////
-        // public overrides from Engine2::Object
-        // ///////////////////////////////////////////////////////////////////
-        
-        virtual void SetScaleFactors (FloatVector2 const &scale_factors);
-        virtual void SetScaleFactors (Float r, Float s);
-        virtual void SetScaleFactor (Float scale_factor);
-        virtual void Scale (FloatVector2 const &scale_factors);
-        virtual void Scale (Float r, Float s);
-        virtual void Scale (Float scale_factor);
-        virtual void ResetScale ();
+    // index in World's Entity array
+    inline EntityWorldIndex GetWorldIndex () const { return m_world_index; }
+    inline bool GetIsInWorld () const { return m_world_index >= 0; }
+    // (TODO: should this be implemented by the Entity subclass?)
+    inline FloatVector2 const &GetWrappedOffset () const { return m_wrapped_offset; }
+    // (TODO: should this be implemented by the Entity subclass?)
+    inline FloatVector2 GetUnwrappedTranslation () const { return GetTranslation() + m_wrapped_offset; }
+    // the Object which this Entity is attached to
+    inline Object *GetOwnerObject () const { return m_owner_object; }
+    // returns the owner object cast to a Sprite (but it asserts that
+    // the owner object is actually a sprite).
+    Sprite *GetOwnerSprite () const;
+    // returns the owner object cast to a Compound (but it asserts that
+    // the owner object is actually a compound).
+    Compound *GetOwnerCompound () const;
+    PhysicsHandler *GetPhysicsHandler () const;
 
-        // ///////////////////////////////////////////////////////////////////
-        // public procedures
-        // ///////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////
+    // modifiers
+    // ///////////////////////////////////////////////////////////////////
 
-        // moves an entity which has changed position/size to the correct
-        // quadnode, using its current quadnode as the starting point
-        // for high efficiency.        
-        void ReAddToQuadTree (QuadTreeType quad_tree_type);
-            
-        inline void AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::Y]))
-            m_wrapped_offset += wrapped_offset_delta;
-        }
-        // adds the given vector to the velocity
-        inline void AccumulateVelocity (FloatVector2 const &velocity)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]))
-            m_velocity += velocity;
-        }
-        // adds the given value to the angular velocity
-        inline void AccumulateAngularVelocity (Float const angular_velocity)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity))
-            m_angular_velocity += angular_velocity;
-        }
-        // accumulates velocity, given a momentum impulse
-        inline void AccumulateMomentum (FloatVector2 const &momentum_impulse)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::Y]))
-            m_velocity += momentum_impulse / m_first_moment;
-        }
-        // accumulates angular velocity, given an angular momentum impulse
-        inline void AccumulateAngularMomentum (Float const angular_momentum_impulse)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_momentum_impulse))
-            m_angular_velocity += angular_momentum_impulse / m_second_moment;
-        }
-        // adds the given vector to the accumulating force vector for this frame
-        inline void AccumulateForce (FloatVector2 const &force)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]))
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]))
-            m_force += force;
-        }
-        // adds the given torque to the accumulating torque value for this frame
-        inline void AccumulateTorque (Float const torque)
-        {
-            ASSERT_NAN_SANITY_CHECK(Math::IsFinite(torque))
-            m_torque += torque;
-        }
-        // resets the force vector
-        inline void ResetForce ()
-        {
-            m_force = FloatVector2::ms_zero;
-        }
-        // resets the torque value
-        inline void ResetTorque ()
-        {
-            m_torque = 0.0f;
-        }
-        // remove an entity from the world and physics handler (but don't delete it).
-        void RemoveFromWorld ();
-        // add a previously removed entity back into the world and object
-        // layer it previously resided in.  must not already be in the world.
-        void AddBackIntoWorld ();
-        // resets the ent num to the sentinel 'not in world' number of -1
-        inline void ResetNumber ()
-        {
-            m_number = -1;
-        }
+    // this should only be used by World
+    inline void SetWorldIndex (EntityWorldIndex world_index) { m_world_index = world_index; }
+    // (TODO: should this be implemented by the Entity subclass?)
+    void SetWrappedOffset (FloatVector2 const &wrapped_offset);
 
-        // ///////////////////////////////////////////////////////////////////
-        // event-scheduling procedures
-        // ///////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////
+    // procedures
+    // ///////////////////////////////////////////////////////////////////
 
-        void ScheduleForRemovalFromWorld (Float time_delay);
-        
-        void ScheduleForDeletion (Float time_delay);
-        
-    protected:
-    
-        // protected constructor so that you must use Create()
-        Entity ();
-    
-        // ///////////////////////////////////////////////////////////////////
-        // protected serialization functions
-        // ///////////////////////////////////////////////////////////////////
-        
-        // does the guts of serializing reading for this class (doesn't read
-        // the object subtype)
-        void ReadClassSpecific (Serializer &serializer);
-        // does the guts of serializing writing for this class (doesn't write
-        // the object subtype)
-        void WriteClassSpecific (Serializer &serializer) const;
-        
-        // ///////////////////////////////////////////////////////////////////
-        
-        // copies the properties of the given object to this object
-        void CloneProperties (Object const *object);
-        
-        // elasticity factor (nominally between 0.0 and 1.0)
-        Float m_elasticity;
-        // entity's first moment of inertia (mass)
-        Float m_first_moment;
-        // velocity of the entity
-        FloatVector2 m_velocity;
-        // entity's second moment of inertia ('angular mass')
-        Float m_second_moment;
-        // angular velocity of the entity (positive is counterclockwise)
-        Float m_angular_velocity;
-        
-    private:
+    // for use in wrapped worlds (TODO: should this be implemented by the Entity subclass?)
+    void AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta);
+    // remove an entity from the world and physics handler (but don't delete it).
+    void RemoveFromWorld ();
+    // add a previously removed entity back into the world and object
+    // layer it previously resided in.  must not already be in the world.
+    void AddBackIntoWorld ();
+    // resets the World's Entity index to the sentinel 'not in world'
+    // value of -1.  should only be used by World
+    inline void ResetWorldIndex () { m_world_index = -1; }
+    // efficiently re-adds this Entity's object back into the quadtree
+    void ReAddToQuadTree (QuadTreeType quad_tree_type);
 
-        // does code common to each of the scale-factor-changing Object method overrides
-        void HandleChangedRadius (Float old_radius, Float new_radius);
-    
-        // the interface class pointer to the game-specific guts of this entity.
-        EntityGuts *m_entity_guts;
-        // entity number (index in World::m_entity_vector)
-        Index m_number;
-        // the name of the entity (used for debugging mainly)
-        std::string m_name;
-        // the offset vector for wrapped object layers
-        FloatVector2 m_wrapped_offset;
-        // temporary storage of force applied to the entity for usage in calculations
-        FloatVector2 m_force;
-        // temporary storage of torque applied to the entity for usage in calculations
-        Float m_torque;
-        // flag to indicate if this entity applies gravity to others
-        bool m_applies_gravity;
-        // flag to indicate if this entity reacts to gravity from other entities
-        bool m_reacts_to_gravity;
-        // indicates the collision response which the geometry in this entity provides
-        CollisionType m_collision_type;
-    }; // end of class Engine2::Entity
+    // ///////////////////////////////////////////////////////////////////
+    // event-scheduling procedures
+    // ///////////////////////////////////////////////////////////////////
+
+//     void ScheduleForRemovalFromWorld (Float time_delay);
+    void ScheduleForDeletion (Float time_delay);
+
+    // ///////////////////////////////////////////////////////////////////
+    // Object frontend methods
+    // ///////////////////////////////////////////////////////////////////
+
+    inline ObjectType GetObjectType () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetObjectType(); }
+    inline Float GetRadius () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadius(); }
+    inline Float GetRadiusSquared () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadiusSquared(); }
+    inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetObjectLayer(); }
+    inline World *GetWorld () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetWorld(); }
+    inline bool GetHasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetHasOwnerQuadTree(quad_tree_type); }
+    inline QuadTree *GetOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetOwnerQuadTree(quad_tree_type); }
+
+    inline FloatVector2 const &GetTranslation () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTranslation(); }
+    inline FloatVector2 const &GetScaleFactors () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetScaleFactors(); }
+    inline Float GetScaleFactor () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetScaleFactor(); }
+    inline Float GetAngle () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetAngle(); }
+    inline FloatTransform2 &GetTransform () { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransform(); }
+    inline FloatTransform2 const &GetTransform () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransform(); }
+    inline FloatMatrix2 const &GetTransformation () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransformation(); }
+    inline FloatMatrix2 GetTransformationInverse () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransformationInverse(); }
+    inline Float GetDeterminant () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetDeterminant(); }
+    inline void SetTranslation (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL) m_owner_object->SetTranslation(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void SetTranslation (Float const x, Float const y) { ASSERT3(m_owner_object != NULL) m_owner_object->SetTranslation(x, y); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER);}
+    void SetScaleFactors (FloatVector2 const &scale_factors);
+    void SetScaleFactors (Float r, Float s);
+    void SetScaleFactor (Float scale_factor);
+    inline void SetAngle (Float const angle) { ASSERT3(m_owner_object != NULL) m_owner_object->SetAngle(angle); }
+    inline void Translate (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL) m_owner_object->Translate(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    inline void Translate (Float const x, Float const y) { ASSERT3(m_owner_object != NULL) m_owner_object->Translate(x, y); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    void Scale (FloatVector2 const &scale_factors);
+    void Scale (Float r, Float s);
+    void Scale (Float scale_factor);
+    inline void Rotate (Float const angle) { ASSERT3(m_owner_object != NULL) m_owner_object->Rotate(angle); }
+    inline void ResetTranslation () { ASSERT3(m_owner_object != NULL) m_owner_object->ResetTranslation(); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
+    void ResetScale ();
+    inline void ResetAngle () { ASSERT3(m_owner_object != NULL) m_owner_object->ResetAngle(); }
+
+protected:
+
+    // ///////////////////////////////////////////////////////////////////
+    // protected interface methods
+    // ///////////////////////////////////////////////////////////////////
+
+    // will be called when this Entity is assigned to an Object
+    virtual void HandleNewOwnerObject () = 0;
+    // duplicates the given Entity's properties onto this one
+    virtual void CloneProperties (Entity const *entity) = 0;
+
+private:
+
+    void ReadClassSpecific (Serializer &serializer);
+    void WriteClassSpecific (Serializer &serializer) const;
+
+    void HandleChangedRadius (Float old_radius, Float new_radius);
+
+    EntityWorldIndex m_world_index;
+    // (TODO: should this be implemented by the Entity subclass?)
+    FloatVector2 m_wrapped_offset;
+    Object *m_owner_object;
+
+    friend class Object;
+};
 
 } // end of namespace Engine2
 

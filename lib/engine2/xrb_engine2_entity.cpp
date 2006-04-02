@@ -10,11 +10,12 @@
 
 #include "xrb_engine2_entity.h"
 
-#include "xrb_engine2_entityguts.h"
+#include "xrb_engine2_compound.h"
 #include "xrb_engine2_events.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_physicshandler.h"
 #include "xrb_engine2_quadtree.h"
+#include "xrb_engine2_sprite.h"
 #include "xrb_engine2_world.h"
 #include "xrb_render.h"
 #include "xrb_serializer.h"
@@ -22,113 +23,37 @@
 namespace Xrb
 {
 
-Engine2::Entity::~Entity ()
+Engine2::Sprite *Engine2::Entity::GetOwnerSprite () const
 {
-    ASSERT1(!GetIsInWorld())
-    if (m_entity_guts != NULL)
-    {
-        ASSERT1(m_entity_guts->m_owner_entity == this)
-        m_entity_guts->m_owner_entity = NULL;
-    }
-    Delete(m_entity_guts);
+    if (m_owner_object == NULL)
+        return NULL;
+        
+    ASSERT1(m_owner_object->GetObjectType() == OT_SPRITE)
+    return static_cast<Sprite *>(m_owner_object);
 }
 
-void Engine2::Entity::Write (Serializer &serializer) const
+Engine2::Compound *Engine2::Entity::GetOwnerCompound () const
 {
-    WriteSubType(serializer);
-    
-    // call WriteClassSpecific for this and all superclasses
-    Object::WriteClassSpecific(serializer);
-    Entity::WriteClassSpecific(serializer);
+    if (m_owner_object == NULL)
+        return NULL;
+        
+    ASSERT1(m_owner_object->GetObjectType() == OT_COMPOUND)
+    return static_cast<Compound *>(m_owner_object);
 }
 
-Engine2::PhysicsHandler *Engine2::Entity::GetPhysicsHandler ()
+Engine2::PhysicsHandler *Engine2::Entity::GetPhysicsHandler () const
 {
-    ASSERT1(GetIsInWorld())
     ASSERT1(GetWorld() != NULL)
     return GetWorld()->GetPhysicsHandler();
 }
 
-void Engine2::Entity::SetEntityGuts (EntityGuts *const entity_guts)
-{
-    ASSERT1(
-        (entity_guts == NULL || m_entity_guts == NULL) &&
-        "You must set the guts to NULL before supplying new guts")
-    if (m_entity_guts != NULL)
-    {
-        ASSERT1(m_entity_guts->m_owner_entity == this)
-        m_entity_guts->m_owner_entity = NULL;
-    }
-    if (entity_guts != NULL)
-    {
-        ASSERT1(entity_guts->m_owner_entity == NULL)
-        entity_guts->m_owner_entity = this;
-        entity_guts->HandleNewOwnerEntity();
-    }
-    m_entity_guts = entity_guts;
-}
-
-void Engine2::Entity::SetAppliesGravity (bool const applies_gravity)
-{
-    if (m_applies_gravity != applies_gravity)
-    {
-        m_applies_gravity = applies_gravity;
-        if (GetIsInWorld())
-        {
-            ASSERT1(GetWorld() != NULL)
-            GetWorld()->
-                GetPhysicsHandler()->
-                    HandleChangedEntityAppliesGravity(
-                        this,
-                        !m_applies_gravity,
-                        m_applies_gravity);
-        }
-    }
-}
-
-void Engine2::Entity::SetReactsToGravity (bool const reacts_to_gravity)
-{
-    if (m_reacts_to_gravity != reacts_to_gravity)
-    {
-        m_reacts_to_gravity = reacts_to_gravity;
-        if (GetIsInWorld())
-        {
-            ASSERT1(GetWorld() != NULL)
-            GetWorld()->
-                GetPhysicsHandler()->
-                    HandleChangedEntityReactsToGravity(
-                        this,
-                        !m_reacts_to_gravity,
-                        m_reacts_to_gravity);
-        }
-    }
-}
-
-void Engine2::Entity::SetCollisionType (CollisionType const collision_type)
-{
-    if (m_collision_type != collision_type)
-    {
-        CollisionType old_collision_type = m_collision_type;
-        m_collision_type = collision_type;
-        if (GetIsInWorld())
-        {
-            ASSERT1(GetWorld() != NULL)
-            GetWorld()->
-                GetPhysicsHandler()->
-                    HandleChangedEntityCollisionType(
-                        this,
-                        old_collision_type,
-                        m_collision_type);
-        }
-    }
-}
-
 void Engine2::Entity::SetScaleFactors (FloatVector2 const &scale_factors)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
     Float old_radius = GetRadius();
-    Object::SetScaleFactors(scale_factors);
+    m_owner_object->SetScaleFactors(scale_factors);    
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -136,10 +61,11 @@ void Engine2::Entity::SetScaleFactors (FloatVector2 const &scale_factors)
 
 void Engine2::Entity::SetScaleFactors (Float const r, Float const s)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
     Float old_radius = GetRadius();
-    Object::SetScaleFactors(r, s);
+    m_owner_object->SetScaleFactors(r, s);
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -147,9 +73,10 @@ void Engine2::Entity::SetScaleFactors (Float const r, Float const s)
 
 void Engine2::Entity::SetScaleFactor (Float const scale_factor)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
     Float old_radius = GetRadius();
-    Object::SetScaleFactor(scale_factor);
+    m_owner_object->SetScaleFactor(scale_factor);
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -157,10 +84,11 @@ void Engine2::Entity::SetScaleFactor (Float const scale_factor)
 
 void Engine2::Entity::Scale (FloatVector2 const &scale_factors)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
     Float old_radius = GetRadius();
-    Object::Scale(scale_factors);
+    m_owner_object->Scale(scale_factors);
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -168,10 +96,11 @@ void Engine2::Entity::Scale (FloatVector2 const &scale_factors)
 
 void Engine2::Entity::Scale (Float const r, Float const s)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
     Float old_radius = GetRadius();
-    Object::Scale(r, s);
+    m_owner_object->Scale(r, s);
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -179,9 +108,10 @@ void Engine2::Entity::Scale (Float const r, Float const s)
 
 void Engine2::Entity::Scale (Float const scale_factor)
 {
+    ASSERT1(m_owner_object != NULL)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
     Float old_radius = GetRadius();
-    Object::Scale(scale_factor);
+    m_owner_object->Scale(scale_factor);
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
@@ -189,21 +119,26 @@ void Engine2::Entity::Scale (Float const scale_factor)
 
 void Engine2::Entity::ResetScale ()
 {
+    ASSERT1(m_owner_object != NULL)
     Float old_radius = GetRadius();
-    Object::ResetScale();
+    m_owner_object->ResetScale();    
     Float new_radius = GetRadius();
     if (new_radius != old_radius)
         HandleChangedRadius(old_radius, new_radius);
 }
 
-void Engine2::Entity::ReAddToQuadTree (
-    Engine2::QuadTreeType const quad_tree_type)
+void Engine2::Entity::SetWrappedOffset (FloatVector2 const &wrapped_offset)
 {
-    if (GetOwnerQuadTree(quad_tree_type) != NULL)
-    {
-        GetObjectLayer()->HandleContainmentOrWrapping(this);
-        GetOwnerQuadTree(quad_tree_type)->ReAddObject(this);
-    }
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::Y]))
+    m_wrapped_offset = wrapped_offset;
+}
+        
+void Engine2::Entity::AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta)
+{
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::Y]))
+    m_wrapped_offset += wrapped_offset_delta;
 }
 
 void Engine2::Entity::RemoveFromWorld ()
@@ -211,7 +146,7 @@ void Engine2::Entity::RemoveFromWorld ()
     ASSERT1(GetIsInWorld())
     ASSERT1(GetWorld() != NULL)
     ASSERT1(GetObjectLayer() != NULL)
-    GetWorld()->RemoveEntity(this);
+    GetWorld()->RemoveDynamicObject(GetOwnerObject());
 }
 
 void Engine2::Entity::AddBackIntoWorld ()
@@ -219,9 +154,20 @@ void Engine2::Entity::AddBackIntoWorld ()
     ASSERT1(!GetIsInWorld())
     ASSERT1(GetWorld() != NULL)
     ASSERT1(GetObjectLayer() != NULL)
-    GetWorld()->AddEntity(this, GetObjectLayer());
+    GetWorld()->AddDynamicObject(GetOwnerObject(), GetObjectLayer());
 }
 
+void Engine2::Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
+{
+    ASSERT1(m_owner_object != NULL)
+    if (GetOwnerQuadTree(quad_tree_type) != NULL)
+    {
+        GetObjectLayer()->HandleContainmentOrWrapping(m_owner_object);
+        GetOwnerQuadTree(quad_tree_type)->ReAddObject(m_owner_object);
+    }
+}
+
+/*
 void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
 {
     ASSERT1(GetIsInWorld())
@@ -237,6 +183,7 @@ void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
             GetWorld()->GetMostRecentFrameTime() + time_delay,
             Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
 }
+*/
 
 void Engine2::Entity::ScheduleForDeletion (Float time_delay)
 {
@@ -252,89 +199,26 @@ void Engine2::Entity::ScheduleForDeletion (Float time_delay)
             Event::ENGINE2_DELETE_ENTITY));
 }
 
-Engine2::Entity::Entity ()
-    :
-    Engine2::Object()
+void Engine2::Entity::CloneProperties (Engine2::Entity const *const entity)
 {
-    m_sub_type = Object::ST_ENTITY;
-
-    m_entity_guts = NULL;
-    m_number = -1;
-    m_name = "";
-    m_wrapped_offset = FloatVector2::ms_zero;
-
-    // default values
-    m_elasticity = 1.0;
-    m_first_moment = 1.0;
-    m_velocity = FloatVector2::ms_zero;
-    m_force = FloatVector2::ms_zero;
-    m_second_moment = 1.0;
-    m_angular_velocity = 0.0;
-    m_torque = 0.0;
-    m_applies_gravity = false;
-    m_reacts_to_gravity = true;
-    m_collision_type = CT_NO_COLLISION;
+    ASSERT1(entity != NULL)
+    m_wrapped_offset = entity->m_wrapped_offset;
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
 }
 
 void Engine2::Entity::ReadClassSpecific (Serializer &serializer)
 {
-    // read in the guts
-    m_name = serializer.ReadStdString();
-    serializer.ReadFloat(&m_elasticity);
-    serializer.ReadFloat(&m_first_moment);
-    m_velocity = serializer.ReadFloatVector2();
-    serializer.ReadFloat(&m_second_moment);
-    serializer.ReadFloat(&m_angular_velocity);
-    m_applies_gravity = serializer.ReadBool();
-    m_reacts_to_gravity = serializer.ReadBool();
-
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_elasticity))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_first_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::Y]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_second_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_angular_velocity))
+    m_wrapped_offset = serializer.ReadFloatVector2();
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
 }
 
 void Engine2::Entity::WriteClassSpecific (Serializer &serializer) const
 {
-    // write out the guts
-    serializer.WriteStdString(m_name);
-    serializer.WriteFloat(m_elasticity);
-    serializer.WriteFloat(m_first_moment);
-    serializer.WriteFloatVector2(m_velocity);
-    serializer.WriteFloat(m_second_moment);
-    serializer.WriteFloat(m_angular_velocity);
-    serializer.WriteBool(m_applies_gravity);
-    serializer.WriteBool(m_reacts_to_gravity);
-
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_elasticity))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_first_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::Y]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_second_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_angular_velocity))
-}
-
-void Engine2::Entity::CloneProperties (Engine2::Object const *const object)
-{
-    Entity const *entity = dynamic_cast<Entity const *>(object);
-    ASSERT1(entity != NULL)
-
-    m_elasticity = entity->GetElasticity();
-    m_first_moment = entity->GetFirstMoment();
-    m_velocity = entity->GetVelocity();
-    m_second_moment = entity->GetSecondMoment();
-    m_angular_velocity = entity->GetAngularVelocity();
-    m_applies_gravity = entity->GetAppliesGravity();
-    m_reacts_to_gravity = entity->GetReactsToGravity();
-
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_elasticity))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_first_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_velocity[Dim::Y]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_second_moment))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_angular_velocity))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
+    serializer.WriteFloatVector2(m_wrapped_offset);
 }
 
 void Engine2::Entity::HandleChangedRadius (

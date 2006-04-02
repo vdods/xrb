@@ -47,47 +47,20 @@ namespace Engine2
             // number of sprites drawn this Draw()
             Uint32 m_drawn_sprite_count;
     
-            inline void Reset ()
-            {
-                m_drawn_sprite_count = 0;
-            }
+            inline void Reset () { m_drawn_sprite_count = 0; }
         }; // end of struct DrawInfo
     
         WorldView (WorldViewWidget *parent_virtual_view);
         virtual ~WorldView ();
     
-        inline WorldViewWidget *GetParentWorldViewWidget () const
-        {
-            return m_parent_world_view_widget;
-        }
-        inline World *GetWorld () const
-        {
-            return m_world;
-        }
-        inline DrawInfo const &GetDrawInfo () const
-        {
-            return m_draw_info;
-        }
-        inline Float GetViewZoomFactor () const
-        {
-            return m_zoom_factor;
-        }
-        inline FloatVector2 GetViewCenter () const
-        {
-            return -GetTranslation();
-        }
-        inline Float GetViewAngle () const
-        {
-            return -GetAngle();
-        }
-        inline bool GetIsViewLocked () const
-        {
-            return m_is_view_locked;
-        }
-        inline bool GetDrawBorderGridLines () const
-        {
-            return m_draw_border_grid_lines;
-        }
+        inline WorldViewWidget *GetParentWorldViewWidget () const { return m_parent_world_view_widget; }
+        inline World *GetWorld () const { return m_world; }
+        inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
+        inline Float GetViewZoomFactor () const { return m_zoom_factor; }
+        inline FloatVector2 GetViewCenter () const { return -GetTranslation(); }
+        inline Float GetViewAngle () const { return -GetAngle(); }
+        inline bool GetIsViewLocked () const { return m_is_view_locked; }
+        inline bool GetDrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 GetCompoundTransformation () const;
         Float GetViewDepth (ObjectLayer const *object_layer) const;
         inline Float GetParallaxFactor (
@@ -106,14 +79,8 @@ namespace Engine2
         Float GetMajorAxisRadius () const;
         Float GetCornerRadius () const;
     
-        inline void SetIsViewLocked (bool const is_view_locked)
-        {
-            m_is_view_locked = is_view_locked;
-        }
-        inline void SetDrawBorderGridLines (bool const draw_border_grid_lines)
-        {
-            m_draw_border_grid_lines = draw_border_grid_lines;
-        }
+        inline void SetIsViewLocked (bool const is_view_locked) { m_is_view_locked = is_view_locked; }
+        inline void SetDrawBorderGridLines (bool const draw_border_grid_lines) { m_draw_border_grid_lines = draw_border_grid_lines; }
         // formalized ways to change the view's position/zoom/rotation
         void SetViewCenter (FloatVector2 const &position);
         void SetViewZoomFactor (Float zoom_factor);
@@ -229,90 +196,27 @@ namespace Engine2
         // frontends to FloatTransform2 functions (for m_transform)
         // ///////////////////////////////////////////////////////////////////////
 
-        inline FloatVector2 const &GetTranslation () const
-        {
-            return m_transform.GetTranslation();
-        }
-        inline FloatVector2 const &GetScaleFactors () const
-        {
-            return m_transform.GetScaleFactors();
-        }
-        inline Float GetAngle () const
-        {
-            return m_transform.GetAngle();
-        }
-        inline FloatMatrix2 const &GetTransformation () const
-        {
-            return m_transform.GetTransformation();
-        }
-        inline FloatMatrix2 GetTransformationInverse () const
-        {
-            return m_transform.GetTransformationInverse();
-        }
-        inline Float GetDeterminant () const
-        {
-            return m_transform.GetDeterminant();
-        }
-        inline void SetTranslation (FloatVector2 const &translation)
-        {
-            m_transform.SetTranslation(translation);
-        }
-        inline void SetTranslation (Float const x, Float const y)
-        {
-            m_transform.SetTranslation(x, y);
-        }
-        inline void SetScaleFactors (FloatVector2 const &scale_factors)
-        {
-            m_transform.SetScaleFactors(scale_factors);
-        }
-        inline void SetScaleFactors (Float const r, Float const s)
-        {
-            m_transform.SetScaleFactors(r, s);
-        }
-        inline void SetScaleFactor (Float const scale_factor)
-        {
-            m_transform.SetScaleFactor(scale_factor);
-        }
-        inline void SetAngle (Float const angle)
-        {
-            m_transform.SetAngle(angle);
-        }
-        inline void Translate (FloatVector2 const &translation)
-        {
-            m_transform.Translate(translation);
-        }
-        inline void Translate (Float const x, Float const y)
-        {
-            m_transform.Translate(x, y);
-        }
-        inline void Scale (FloatVector2 const &scale_factors)
-        {
-            m_transform.Scale(scale_factors);
-        }
-        inline void Scale (Float const r, Float const s)
-        {
-            m_transform.Scale(r, s);
-        }
-        inline void Scale (Float const scale_factor)
-        {
-            m_transform.Scale(scale_factor);
-        }
-        inline void Rotate (Float const angle)
-        {
-            m_transform.Rotate(-angle);
-        }
-        inline void ResetTranslation ()
-        {
-            m_transform.ResetTranslation();
-        }
-        inline void ResetScale ()
-        {
-            m_transform.ResetScale();
-        }
-        inline void ResetAngle ()
-        {
-            m_transform.ResetAngle();
-        }
+        inline FloatVector2 const &GetTranslation () const { return m_transform.GetTranslation(); }
+        inline FloatVector2 const &GetScaleFactors () const { return m_transform.GetScaleFactors(); }
+        inline Float GetAngle () const { return m_transform.GetAngle(); }
+        inline FloatMatrix2 const &GetTransformation () const { return m_transform.GetTransformation(); }
+        inline FloatMatrix2 GetTransformationInverse () const { return m_transform.GetTransformationInverse(); }
+        inline Float GetDeterminant () const { return m_transform.GetDeterminant(); }
+        inline void SetTranslation (FloatVector2 const &translation) { m_transform.SetTranslation(translation); }
+        inline void SetTranslation (Float const x, Float const y) { m_transform.SetTranslation(x, y); }
+        inline void SetScaleFactors (FloatVector2 const &scale_factors) { m_transform.SetScaleFactors(scale_factors); }
+        inline void SetScaleFactors (Float const r, Float const s) { m_transform.SetScaleFactors(r, s); }
+        inline void SetScaleFactor (Float const scale_factor) { m_transform.SetScaleFactor(scale_factor); }
+        inline void SetAngle (Float const angle) { m_transform.SetAngle(angle); }
+        inline void Translate (FloatVector2 const &translation) { m_transform.Translate(translation); }
+        inline void Translate (Float const x, Float const y) { m_transform.Translate(x, y); }
+        inline void Scale (FloatVector2 const &scale_factors) { m_transform.Scale(scale_factors); }
+        inline void Scale (Float const r, Float const s) { m_transform.Scale(r, s); }
+        inline void Scale (Float const scale_factor) { m_transform.Scale(scale_factor); }
+        inline void Rotate (Float const angle) { m_transform.Rotate(-angle); }
+        inline void ResetTranslation () { m_transform.ResetTranslation(); }
+        inline void ResetScale () { m_transform.ResetScale(); }
+        inline void ResetAngle () { m_transform.ResetAngle(); }
 
         // ///////////////////////////////////////////////////////////////////////
         // end of frontends to FloatTransform2 functions (for m_transform)
