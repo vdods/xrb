@@ -13,21 +13,21 @@ disasteroids_SOURCES = \
     game/engine2/dis_entity.cpp \
     game/engine2/dis_physicshandler.cpp \
     game/engine2/dis_world.cpp \
-    game/gameobjects/dis_asteroid.cpp \
-    game/gameobjects/dis_ballistic.cpp \
-    game/gameobjects/dis_effect.cpp \
-    game/gameobjects/dis_explosive.cpp \
-    game/gameobjects/dis_healthtrigger.cpp \
-    game/gameobjects/dis_mortal.cpp \
-    game/gameobjects/dis_powerup.cpp \
-    game/gameobjects/dis_ship.cpp \
-    game/gameobjects/ships/dis_devourment.cpp \
-    game/gameobjects/ships/dis_enemyship.cpp \
-    game/gameobjects/ships/dis_interloper.cpp \
-    game/gameobjects/ships/dis_playership.cpp \
-    game/gameobjects/ships/dis_revulsion.cpp \
-    game/gameobjects/ships/dis_shade.cpp \
-    game/gameobjects/ships/dis_solitary.cpp \
+    game/entities/dis_asteroid.cpp \
+    game/entities/dis_ballistic.cpp \
+    game/entities/dis_effect.cpp \
+    game/entities/dis_explosive.cpp \
+    game/entities/dis_healthtrigger.cpp \
+    game/entities/dis_mortal.cpp \
+    game/entities/dis_powerup.cpp \
+    game/entities/dis_ship.cpp \
+    game/entities/ships/dis_devourment.cpp \
+    game/entities/ships/dis_enemyship.cpp \
+    game/entities/ships/dis_interloper.cpp \
+    game/entities/ships/dis_playership.cpp \
+    game/entities/ships/dis_revulsion.cpp \
+    game/entities/ships/dis_shade.cpp \
+    game/entities/ships/dis_solitary.cpp \
     game/items/dis_armor.cpp \
     game/items/dis_engine.cpp \
     game/items/dis_powergenerator.cpp \
@@ -60,21 +60,21 @@ noinst_HEADERS = \
     game/engine2/dis_linetracebinding.h \
     game/engine2/dis_physicshandler.h \
     game/engine2/dis_world.h \
-    game/gameobjects/dis_asteroid.h \
-    game/gameobjects/dis_ballistic.h \
-    game/gameobjects/dis_effect.h \
-    game/gameobjects/dis_explosive.h \
-    game/gameobjects/dis_healthtrigger.h \
-    game/gameobjects/dis_mortal.h \
-    game/gameobjects/dis_powerup.h \
-    game/gameobjects/dis_ship.h \
-    game/gameobjects/ships/dis_devourment.h \
-    game/gameobjects/ships/dis_enemyship.h \
-    game/gameobjects/ships/dis_interloper.h \
-    game/gameobjects/ships/dis_playership.h \
-    game/gameobjects/ships/dis_revulsion.h \
-    game/gameobjects/ships/dis_shade.h \
-    game/gameobjects/ships/dis_solitary.h \
+    game/entities/dis_asteroid.h \
+    game/entities/dis_ballistic.h \
+    game/entities/dis_effect.h \
+    game/entities/dis_explosive.h \
+    game/entities/dis_healthtrigger.h \
+    game/entities/dis_mortal.h \
+    game/entities/dis_powerup.h \
+    game/entities/dis_ship.h \
+    game/entities/ships/dis_devourment.h \
+    game/entities/ships/dis_enemyship.h \
+    game/entities/ships/dis_interloper.h \
+    game/entities/ships/dis_playership.h \
+    game/entities/ships/dis_revulsion.h \
+    game/entities/ships/dis_shade.h \
+    game/entities/ships/dis_solitary.h \
     game/items/dis_armor.h \
     game/items/dis_engine.h \
     game/items/dis_powereddevice.h \
@@ -97,8 +97,8 @@ AM_CPPFLAGS = \
     \
     -I$(top_srcdir)/app/example/disasteroids/game \
     -I$(top_srcdir)/app/example/disasteroids/game/engine2 \
-    -I$(top_srcdir)/app/example/disasteroids/game/gameobjects \
-    -I$(top_srcdir)/app/example/disasteroids/game/gameobjects/ships \
+    -I$(top_srcdir)/app/example/disasteroids/game/entities \
+    -I$(top_srcdir)/app/example/disasteroids/game/entities/ships \
     -I$(top_srcdir)/app/example/disasteroids/game/items \
     -I$(top_srcdir)/app/example/disasteroids/ui \
     \
