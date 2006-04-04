@@ -3,9 +3,7 @@ implement a robust, enjoyable, and graphically-modern 2d video game,
 including network support.
 
 MAJOR TASKS:
-X openGL conversion
 - circle/polygon collision/entity areas
-X specific UI widgets
 / physics engine
 - console command stuff
 - console logger/debugging logger
@@ -14,12 +12,7 @@ X specific UI widgets
 - music and sound effects
 / map editor + sprite/entity prefab editor
 / comment/document the code with doxygen
-- text logging system
-- memory tracker/manager/leak detector
-- profiling tools (gcov, gprof)
-X private/public correctness
 - exceptions for user errors
-X platform-independent byte order for network/file serialization
 - x/y independent scaling (the physics portion of that is tough)
 / bracket indenting style and 80-column conformance.  change
   long function parameter lists to be vertical.
@@ -27,7 +20,6 @@ X platform-independent byte order for network/file serialization
   and all the other complicated systems.
 - UI demonstration - every UI feature demonstrated in a series
   of tabbed widgets.
-- simplification of Object/Entity/EntityGuts into just Object and Entity
 - abstraction of Engine2 classes into interfaces, to provide as
   much flexibility as possible, and to avoid biasing game physics, etc.
 
@@ -40,9 +32,10 @@ DISASTEROIDS:
 - finish writing AIs
 - finish weapon code (add UT-style charge-up melee weapon with
   front-attaching secondary mode)
-- create high scores screen
   
 CURRENT:
+- get rid of all the extra unused Scale and Translate overloads in Object and
+  Transform2 and such which take separate x/y r/s params
 - add collision_location and collision_normal to LineTrace
 - turn EntityWorldIndex into a Uint16
 - test disasteroids with a non-wrapped main ObjectLayer
@@ -72,9 +65,6 @@ CURRENT:
 - the trace_radius trace screws up because it traces a circle along the
   line, instead of a perpendicular line.
 - look into compile-time asserts
-- SpriteEntity should have a configurable collision radius that can be
-  bigger or smaller than the visible radius, so that the collision circle
-  can be fit to the sprite better.
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length
 

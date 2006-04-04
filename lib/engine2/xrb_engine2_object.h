@@ -97,8 +97,12 @@ public:
     inline ObjectType GetObjectType () const { return m_object_type; }
     inline bool GetIsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
-    inline Float GetVisibleRadius () const { CalculateTransform(); return m_visible_radius; }
-    inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_visible_radius*m_visible_radius; }
+    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]; }
+    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
+    inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
+    inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
+    inline Float GetPhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
+    inline Float GetPhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
     // returns the object_layer of this entity
     inline ObjectLayer *GetObjectLayer () const { return m_object_layer; }
     // returns the world this object resides in
@@ -246,23 +250,23 @@ protected:
     // protected overridable methods
     // ///////////////////////////////////////////////////////////////////
 
-    // recalculates the radius (this should be called if/when the object's
-    // transformation matrix changes, setting m_visible_radius to the calculated
-    // value.
-    virtual void CalculateVisibleRadius () const { m_visible_radius = GetScaleFactor(); }
+    // recalculates the radii (visible, physical) of the object.
+    // this should be called if/when the object's transformation matrix
+    // changes, setting m_radius[quad_tree_type] to the calculated value.
+    virtual void CalculateRadius (QuadTreeType quad_tree_type) const { m_radius[quad_tree_type] = GetScaleFactor(); }
 
     // ///////////////////////////////////////////////////////////////////
 
     // copies the properties of the given object to this object
     void CloneProperties (Object const *object);
     // takes care of recalculating the transform if necessary, and
-    // recalculating the radius if necessary.
+    // recalculating the radii if necessary.
     void CalculateTransform () const;
     // causes the m_radii_need_to_be_recalculated flag to be set
     inline void IndicateRadiiNeedToBeRecalculated () { m_radii_need_to_be_recalculated = true; }
 
-    // the radius of the visible portion of the object
-    mutable Float m_visible_radius;
+    // the radii of this object, one for each QuadTreeType (visible and physical)
+    mutable Float m_radius[QTT_COUNT];
     // points to the ObjectLayer which this object exists in
     ObjectLayer *m_object_layer;
     // points to the quadtree nodes which currently 'own' this object.
@@ -281,7 +285,7 @@ private:
     // object with a soul".
     Entity *m_entity;
     // indicates that the contents of the object have changed and the
-    // radius needs to be recalculated
+    // visible and physical radii need to be recalculated
     mutable bool m_radii_need_to_be_recalculated;
 }; // end of class Engine2::Object
 

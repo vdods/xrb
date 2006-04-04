@@ -150,7 +150,8 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
             world_to_screen,
             pixels_in_view_radius,
             view_center,
-            view_radius);
+            view_radius,
+            GetType());
     Draw(draw_loop_functor);
     return draw_loop_functor.GetDrawnObjectCount();
 }
@@ -168,7 +169,8 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
             world_to_screen,
             pixels_in_view_radius,
             view_center,
-            view_radius);
+            view_radius,
+            GetType());
     DrawWrapped(draw_loop_functor);
     return draw_loop_functor.GetDrawnObjectCount();
 }
@@ -233,20 +235,22 @@ Engine2::VisibilityQuadTree::DrawLoopFunctor::DrawLoopFunctor (
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
-    Float const view_radius)
+    Float const view_radius,
+    QuadTreeType const type)
     :
     m_object_draw_data(render_context, world_to_screen)
 {
     m_pixels_in_view_radius = pixels_in_view_radius;
     m_view_center = view_center;
     m_view_radius = view_radius;
+    m_type = type;
     m_drawn_object_count = 0;
 }
 
 void Engine2::VisibilityQuadTree::DrawLoopFunctor::operator () (Engine2::Object *object)
 {
     // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->GetVisibleRadius() / m_view_radius;
+    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_type) / m_view_radius;
     // distance culling - don't draw objects that are below the
     // gs_radius_limit_lower threshold
     if (object_radius >= gs_radius_limit_lower)

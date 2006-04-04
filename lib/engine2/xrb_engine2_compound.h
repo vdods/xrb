@@ -69,8 +69,7 @@ protected:
     // protected Object interface methods
     // ///////////////////////////////////////////////////////////////////
 
-    // recalculates the radius based on the contents
-    virtual void CalculateVisibleRadius () const;
+    virtual void CalculateRadius (QuadTreeType quad_tree_type) const;
 
     // ///////////////////////////////////////////////////////////////////
 

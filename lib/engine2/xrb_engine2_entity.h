@@ -122,8 +122,12 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     inline ObjectType GetObjectType () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetObjectType(); }
+    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadius(quad_tree_type); }
+    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetRadiusSquared(quad_tree_type); }
     inline Float GetVisibleRadius () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetVisibleRadius(); }
     inline Float GetVisibleRadiusSquared () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetVisibleRadiusSquared(); }
+    inline Float GetPhysicalRadius () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetPhysicalRadius(); }
+    inline Float GetPhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetPhysicalRadiusSquared(); }
     inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetObjectLayer(); }
     inline bool GetHasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetHasOwnerQuadTree(quad_tree_type); }
     inline QuadTree *GetOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetOwnerQuadTree(quad_tree_type); }

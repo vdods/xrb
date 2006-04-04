@@ -52,7 +52,7 @@ public:
     inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
-    inline bool GetIsAllowableObjectRadius (Object const *object) const { return object->GetVisibleRadius() / m_radius > 0.5f; }
+    inline bool GetIsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetType()) / m_radius > 0.5f; }
 
     bool GetDoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,

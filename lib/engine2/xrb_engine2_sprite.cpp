@@ -111,9 +111,24 @@ void Engine2::Sprite::Draw (
     glPopMatrix();
 }
 
+void Engine2::Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
+{
+    ASSERT1(physical_size_ratios[Dim::X] > 0.0f)
+    ASSERT1(physical_size_ratios[Dim::Y] > 0.0f)
+    m_physical_size_ratios = physical_size_ratios;
+    IndicateRadiiNeedToBeRecalculated();
+}
+
+void Engine2::Sprite::SetPhysicalSizeRatio (Float const physical_size_ratio)
+{
+    m_physical_size_ratios.SetComponents(physical_size_ratio, physical_size_ratio);
+    IndicateRadiiNeedToBeRecalculated();
+}
+
 Engine2::Sprite::Sprite (Resource<GLTexture> const &texture)
     :
-    Object(OT_SPRITE)
+    Object(OT_SPRITE),
+    m_physical_size_ratios(1.0f, 1.0f)
 {
     m_texture = texture;
     m_is_round = true;
@@ -128,6 +143,7 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
             GLTexture::Create,
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();
+    m_physical_size_ratios = serializer.ReadFloatVector2();
     m_color_mask = serializer.ReadColor();
     IndicateRadiiNeedToBeRecalculated();
 
@@ -141,15 +157,29 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     // write out the guts
     serializer.WriteStdString(m_texture.GetFilename());
     serializer.WriteBool(m_is_round);
+    serializer.WriteFloatVector2(m_physical_size_ratios);
     serializer.WriteColor(m_color_mask);
 }
 
-void Engine2::Sprite::CalculateVisibleRadius () const
+void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
 {
-    if (m_is_round)
-        m_visible_radius = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
+    ASSERT1(QTT_COUNT == 2)
+    if (quad_tree_type == QTT_VISIBILITY)
+    {
+        if (m_is_round)
+            m_radius[quad_tree_type] = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
+        else
+            m_radius[quad_tree_type] = GetScaleFactors().GetLength();
+    }
     else
-        m_visible_radius = GetScaleFactors().GetLength();
+    {
+        if (m_is_round)
+            m_radius[quad_tree_type] =
+                Max(GetScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
+                    GetScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
+        else
+            m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).GetLength();
+    }
 }
 
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
@@ -160,6 +190,7 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
 
     m_texture = sprite->m_texture;
     m_is_round = sprite->m_is_round;
+    m_physical_size_ratios = sprite->m_physical_size_ratios;
     m_color_mask = sprite->m_color_mask;
     IndicateRadiiNeedToBeRecalculated();
 }

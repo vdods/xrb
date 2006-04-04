@@ -130,15 +130,18 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
         m_polygon_array[i].Write(serializer, m_vertex_array);
 }
 
-void Engine2::Compound::CalculateVisibleRadius () const
+void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
 {
+    ASSERT1(QTT_COUNT == 2)
+    // TODO: real code that checks for collision-only polygons - for now
+    // just calculate the radius the same way for visible and physical
+
     // get the distance from the origin to the furthest vertex
-    // TODO: real code that checks for collision-only polygons
-    m_visible_radius = 0.0f;
+    m_radius[quad_tree_type] = 0.0f;
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
-        m_visible_radius = Max(
-            m_visible_radius,
+        m_radius[quad_tree_type] = Max(
+            m_radius[quad_tree_type],
             (GetTransformation() * m_vertex_array[i] -
              GetTransformation() * FloatVector2::ms_zero).GetLength());
     }

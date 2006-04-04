@@ -122,10 +122,12 @@ Engine2::Object::Object (ObjectType object_type)
     m_transform(FloatTransform2::ms_identity, true)
 {
     ASSERT1(m_object_type < OT_COUNT)
-    m_visible_radius = 0.0f;
     m_object_layer = NULL;
     for (Uint32 i = 0; i < QTT_COUNT; ++i)
+    {
+        m_radius[i] = 0.0f;
         m_owner_quad_tree[i] = NULL;
+    }
     m_entity = NULL;
     m_radii_need_to_be_recalculated = true;
 }
@@ -167,7 +169,9 @@ void Engine2::Object::CalculateTransform () const
     if (m_transform.GetIsDirty() || m_radii_need_to_be_recalculated)
     {
         m_transform.RecalculateTransformIfNecessary();
-        CalculateVisibleRadius();
+        // recalculate all radii
+        for (Uint32 i = 0; i < QTT_COUNT; ++i)
+            CalculateRadius(static_cast<QuadTreeType>(i));
         m_radii_need_to_be_recalculated = false;
     }
     */
@@ -178,13 +182,17 @@ void Engine2::Object::CalculateTransform () const
         if (m_transform.GetScalingAndRotationIsDirty())
         {
             m_transform.RecalculateTransform();
-            CalculateVisibleRadius();
+            // recalculate all radii
+            for (Uint32 i = 0; i < QTT_COUNT; ++i)
+                CalculateRadius(static_cast<QuadTreeType>(i));
             m_radii_need_to_be_recalculated = false;
         }
         else if (m_radii_need_to_be_recalculated)
         {
             m_transform.RecalculateTransformWithoutScalingAndRotation();
-            CalculateVisibleRadius();
+            // recalculate all radii
+            for (Uint32 i = 0; i < QTT_COUNT; ++i)
+                CalculateRadius(static_cast<QuadTreeType>(i));
             m_radii_need_to_be_recalculated = false;
         }
         else
@@ -192,7 +200,9 @@ void Engine2::Object::CalculateTransform () const
     }
     else if (m_radii_need_to_be_recalculated)
     {
-        CalculateVisibleRadius();
+        // recalculate all radii
+        for (Uint32 i = 0; i < QTT_COUNT; ++i)
+            CalculateRadius(static_cast<QuadTreeType>(i));
         m_radii_need_to_be_recalculated = false;
     }
 }

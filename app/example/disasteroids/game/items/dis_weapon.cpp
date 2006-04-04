@@ -154,7 +154,7 @@ bool PeaShooter::Activate (
     ASSERT1(GetOwnerShip()->GetWorld() != NULL)
     ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
-    static Float const s_pea_size = 4.0f;
+    static Float const s_pea_size = 10.0f;
     SpawnSmartBallistic(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),

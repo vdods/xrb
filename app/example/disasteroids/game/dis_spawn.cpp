@@ -118,18 +118,22 @@ Ballistic *SpawnSmartBallistic (
             time_at_birth,
             owner,
             true);
-    SpawnDynamicSprite(
-        world,
-        object_layer,
-        "resources/plasma_bullet.png",
-        ballistic,
-        translation,
-        scale_factor,
-        Math::Atan(velocity),
-        first_moment,
-        velocity,
-        0.0f,
-        0.0f);
+    Engine2::Sprite *sprite = 
+        SpawnDynamicSprite(
+            world,
+            object_layer,
+            "resources/plasma_bullet.png",
+            ballistic,
+            translation,
+            scale_factor,
+            Math::Atan(velocity),
+            first_moment,
+            velocity,
+            0.0f,
+            0.0f);
+    // set the physical size ratio to reflect the largest circle that
+    // can be inscribed inside the shape of the sprite's bitmap.
+    sprite->SetPhysicalSizeRatio(22.0f / 128.0f);
     return ballistic;
 }
 
@@ -269,18 +273,22 @@ Missile *SpawnMissile (
             weapon_level,
             owner,
             health);
-    SpawnDynamicSprite(
-        world,
-        object_layer,
-        "resources/missile_small.png",
-        missile,
-        translation,
-        scale_factor,
-        angle,
-        5.0f,
-        velocity,
-        0.0f,
-        0.1f);
+    Engine2::Sprite *sprite =
+        SpawnDynamicSprite(
+            world,
+            object_layer,
+            "resources/missile_small.png",
+            missile,
+            translation,
+            scale_factor,
+            angle,
+            5.0f,
+            velocity,
+            0.0f,
+            0.1f);
+    // set the physical size ratio to reflect the largest circle that
+    // can be inscribed inside the shape of the sprite's bitmap.
+    sprite->SetPhysicalSizeRatio(26.0f / 128.0f);
     return missile;
 }
 /*

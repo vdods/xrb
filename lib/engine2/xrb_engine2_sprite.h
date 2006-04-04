@@ -61,11 +61,40 @@ public:
     // returns true iff this is a "round" sprite (see comment
     // above m_is_round).
     inline bool GetIsRound () const { return m_is_round; }
+    // returns the relative physical sizes (component-wise ratios of the
+    // physical geometry scale factors over the visible geometry scale
+    // factors).
+    inline FloatVector2 const &GetPhysicalSizeRatios () const
+    {
+        return m_physical_size_ratios;
+    }
+    // returns the relative physical size -- only valid when both
+    // components of the size ratios are equal.
+    // see @c GetPhysicalSizeRatios
+    inline Float GetPhysicalSizeRatio () const
+    {
+        ASSERT1(m_physical_size_ratios[Dim::X] ==
+                m_physical_size_ratios[Dim::Y])
+        return m_physical_size_ratios[Dim::X];
+    }
+    // returns the calculated scale factors for the physical geometry,
+    // based upon the object's scale factors, and the physical size ratios.
+    inline FloatVector2 GetPhysicalScaleFactors () const { return m_physical_size_ratios * GetScaleFactors(); }
+    // returns the calculated scale factor for the physical geometry,
+    // based upon the object's scale factor, and the physical size ratio.
+    inline Float GetPhysicalScaleFactor () const { return GetPhysicalSizeRatio() * GetScaleFactor(); }
     // returns the color mask
     inline Color const &GetColorMask () const { return m_color_mask; }
 
+    // sets the physical size ratios
+    void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);
+    // sets the physical size ratios (both components to the given value)
+    void SetPhysicalSizeRatio (Float physical_size_ratio);
     // sets the color mask
     inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
+
+    // resets the physical size ratios to [1, 1]
+    inline void ResetPhysicalSizeRatios () { SetPhysicalSizeRatio(1.0f); }
 
 protected:
 
@@ -87,9 +116,7 @@ protected:
     // protected Object interface methods
     // ///////////////////////////////////////////////////////////////////
 
-    // recalculates the radius (this should be called if/when the sprite's
-    // transformation matrix changes
-    virtual void CalculateVisibleRadius () const;
+    virtual void CalculateRadius (QuadTreeType quad_tree_type) const;
 
     // ///////////////////////////////////////////////////////////////////
 
@@ -105,6 +132,8 @@ protected:
     // area as indicated by the texture.  this property can be used or
     // ignored by the PhysicsHandler subclass as appropriate.
     bool m_is_round;
+    // the component-wise ratios of the physical to the visible scales
+    FloatVector2 m_physical_size_ratios;
     // color mask
     Color m_color_mask;
 }; // end of class Engine2::Sprite
