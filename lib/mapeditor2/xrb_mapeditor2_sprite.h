@@ -90,7 +90,7 @@ namespace MapEditor2
             Engine2::Sprite(texture)
         { }
     
-        virtual void CalculateRadius () const { Engine2::Sprite::CalculateRadius(); }
+        virtual void CalculateVisibleRadius () const { Engine2::Sprite::CalculateVisibleRadius(); }
     }; // end of class MapEditor2::Sprite
 
 } // end of namespace MapEditor2

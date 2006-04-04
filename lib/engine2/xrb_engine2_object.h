@@ -249,7 +249,7 @@ protected:
     // recalculates the radius (this should be called if/when the object's
     // transformation matrix changes, setting m_visible_radius to the calculated
     // value.
-    virtual void CalculateRadius () const { m_visible_radius = GetScaleFactor(); }
+    virtual void CalculateVisibleRadius () const { m_visible_radius = GetScaleFactor(); }
 
     // ///////////////////////////////////////////////////////////////////
 
@@ -258,8 +258,8 @@ protected:
     // takes care of recalculating the transform if necessary, and
     // recalculating the radius if necessary.
     void CalculateTransform () const;
-    // causes the m_radius_needs_to_be_recalculated flag to be set
-    inline void IndicateRadiusNeedsToBeRecalculated () { m_radius_needs_to_be_recalculated = true; }
+    // causes the m_radii_need_to_be_recalculated flag to be set
+    inline void IndicateRadiiNeedToBeRecalculated () { m_radii_need_to_be_recalculated = true; }
 
     // the radius of the visible portion of the object
     mutable Float m_visible_radius;
@@ -282,7 +282,7 @@ private:
     Entity *m_entity;
     // indicates that the contents of the object have changed and the
     // radius needs to be recalculated
-    mutable bool m_radius_needs_to_be_recalculated;
+    mutable bool m_radii_need_to_be_recalculated;
 }; // end of class Engine2::Object
 
 } // end of namespace Engine2

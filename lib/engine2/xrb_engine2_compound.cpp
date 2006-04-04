@@ -130,7 +130,7 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
         m_polygon_array[i].Write(serializer, m_vertex_array);
 }
 
-void Engine2::Compound::CalculateRadius () const
+void Engine2::Compound::CalculateVisibleRadius () const
 {
     // get the distance from the origin to the furthest vertex
     // TODO: real code that checks for collision-only polygons

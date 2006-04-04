@@ -506,7 +506,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
 
     // the contents of the compound have changed, so the Object
     // radius needs to be recalculated.
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
     
     return W_SUCCESSFUL;
 }
@@ -588,7 +588,7 @@ void MapEditor2::Compound::AddDrawnPolygon (
 
     m_polygon_list.push_back(polygon);
 
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 void MapEditor2::Compound::UnweldSelectedPolygons ()
@@ -686,7 +686,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
 
     // the contents of the compound have changed, so the radius
     // needs to be recalculated.
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 void MapEditor2::Compound::ApplyVertexSelectionOperation(
@@ -819,7 +819,7 @@ void MapEditor2::Compound::TranslateVertex (
     
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 void MapEditor2::Compound::ScaleVertex (
@@ -841,7 +841,7 @@ void MapEditor2::Compound::ScaleVertex (
         
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 void MapEditor2::Compound::RotateVertex (
@@ -861,7 +861,7 @@ void MapEditor2::Compound::RotateVertex (
     
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
@@ -974,7 +974,7 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
     ResetVertexIndices();
 }
 
-void MapEditor2::Compound::CalculateRadius () const
+void MapEditor2::Compound::CalculateVisibleRadius () const
 {
     m_radius = 0.0f;
     Uint32 vertex_count = GetVertexCount();

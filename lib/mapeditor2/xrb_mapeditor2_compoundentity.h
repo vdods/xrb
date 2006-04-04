@@ -115,9 +115,9 @@ namespace MapEditor2
         // protected overridable methods
         // ///////////////////////////////////////////////////////////////////
 
-        virtual void CalculateRadius () const
+        virtual void CalculateVisibleRadius () const
         {
-            Compound::CalculateRadius();
+            Compound::CalculateVisibleRadius();
         }
 
         // ///////////////////////////////////////////////////////////////////

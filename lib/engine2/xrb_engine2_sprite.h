@@ -89,7 +89,7 @@ protected:
 
     // recalculates the radius (this should be called if/when the sprite's
     // transformation matrix changes
-    virtual void CalculateRadius () const;
+    virtual void CalculateVisibleRadius () const;
 
     // ///////////////////////////////////////////////////////////////////
 

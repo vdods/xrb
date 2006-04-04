@@ -127,7 +127,7 @@ Engine2::Object::Object (ObjectType object_type)
     for (Uint32 i = 0; i < QTT_COUNT; ++i)
         m_owner_quad_tree[i] = NULL;
     m_entity = NULL;
-    m_radius_needs_to_be_recalculated = true;
+    m_radii_need_to_be_recalculated = true;
 }
 
 Engine2::ObjectType Engine2::Object::ReadObjectType (Serializer &serializer)
@@ -164,11 +164,11 @@ void Engine2::Object::CalculateTransform () const
     /*
     // original function code (kept around because this version does the
     // same thing but is much easier to read)
-    if (m_transform.GetIsDirty() || m_radius_needs_to_be_recalculated)
+    if (m_transform.GetIsDirty() || m_radii_need_to_be_recalculated)
     {
         m_transform.RecalculateTransformIfNecessary();
-        CalculateRadius();
-        m_radius_needs_to_be_recalculated = false;
+        CalculateVisibleRadius();
+        m_radii_need_to_be_recalculated = false;
     }
     */
     
@@ -178,22 +178,22 @@ void Engine2::Object::CalculateTransform () const
         if (m_transform.GetScalingAndRotationIsDirty())
         {
             m_transform.RecalculateTransform();
-            CalculateRadius();
-            m_radius_needs_to_be_recalculated = false;
+            CalculateVisibleRadius();
+            m_radii_need_to_be_recalculated = false;
         }
-        else if (m_radius_needs_to_be_recalculated)
+        else if (m_radii_need_to_be_recalculated)
         {
             m_transform.RecalculateTransformWithoutScalingAndRotation();
-            CalculateRadius();
-            m_radius_needs_to_be_recalculated = false;
+            CalculateVisibleRadius();
+            m_radii_need_to_be_recalculated = false;
         }
         else
             m_transform.RecalculateTransformWithoutScalingAndRotation();
     }
-    else if (m_radius_needs_to_be_recalculated)
+    else if (m_radii_need_to_be_recalculated)
     {
-        CalculateRadius();
-        m_radius_needs_to_be_recalculated = false;
+        CalculateVisibleRadius();
+        m_radii_need_to_be_recalculated = false;
     }
 }
 

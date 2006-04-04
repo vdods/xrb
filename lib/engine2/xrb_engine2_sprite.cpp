@@ -129,7 +129,7 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();
     m_color_mask = serializer.ReadColor();
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 
     ASSERT1(m_texture.GetIsValid())
 }
@@ -144,7 +144,7 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     serializer.WriteColor(m_color_mask);
 }
 
-void Engine2::Sprite::CalculateRadius () const
+void Engine2::Sprite::CalculateVisibleRadius () const
 {
     if (m_is_round)
         m_visible_radius = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
@@ -161,7 +161,7 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
     m_texture = sprite->m_texture;
     m_is_round = sprite->m_is_round;
     m_color_mask = sprite->m_color_mask;
-    IndicateRadiusNeedsToBeRecalculated();
+    IndicateRadiiNeedToBeRecalculated();
 }
 
 } // end of namespace Xrb
