@@ -66,7 +66,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
             smallest_candidate = m_child[i]->GetSmallestObjectTouchingPoint(point);
             if (retval == NULL ||
                 smallest_candidate != NULL &&
-                smallest_candidate->GetRadius() < retval->GetRadius())
+                smallest_candidate->GetVisibleRadius() < retval->GetVisibleRadius())
                 retval = smallest_candidate;
         }
     }
@@ -88,10 +88,10 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
 
         // if the point is touching the object
         if ((point - smallest_candidate->GetTranslation()).GetLengthSquared() <=
-            smallest_candidate->GetRadiusSquared())
+            smallest_candidate->GetVisibleRadiusSquared())
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
-                smallest_candidate->GetRadius() < retval->GetRadius())
+                smallest_candidate->GetVisibleRadius() < retval->GetVisibleRadius())
                 // assign it as the smallest
                 retval = smallest_candidate;
     }
@@ -122,7 +122,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObject (
         ASSERT1(object->GetOwnerQuadTree(m_type) == this)
         if ((object->GetTranslation() - area_center).GetLength()
             <
-            (object->GetRadius() + area_radius))
+            (object->GetVisibleRadius() + area_radius))
             return true;
     }
 
@@ -191,7 +191,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
 
         if ((object_translation - adjusted_area_center).GetLength()
             <
-            (object->GetRadius() + area_radius))
+            (object->GetVisibleRadius() + area_radius))
             return true;
     }
 
@@ -247,7 +247,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
 
     // do range adjusting -- an object can't have a larger radius
     // than the quadnode that owns it
-    if (object->GetRadius() > m_radius)
+    if (object->GetVisibleRadius() > m_radius)
         object->SetScaleFactor(m_radius);
 
     // return if the object's center is not inside this node
@@ -325,7 +325,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
     // if the object's position is inside current quadnode
     if (GetIsPointInsideQuad(object->GetTranslation()))
     {
-        Float object_radius_over_quad_radius = object->GetRadius() / m_radius;
+        Float object_radius_over_quad_radius = object->GetVisibleRadius() / m_radius;
         // if the object is too big for current quadnode
         if (object_radius_over_quad_radius > 1.0f)
         {
@@ -524,7 +524,7 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
 
     // do range adjusting -- an object can't have a larger radius
     // than the quadnode that owns it
-    if (object->GetRadius() > m_radius)
+    if (object->GetVisibleRadius() > m_radius)
         object->SetScaleFactor(m_radius);
 
     ASSERT1(GetIsPointInsideQuad(object->GetTranslation()))

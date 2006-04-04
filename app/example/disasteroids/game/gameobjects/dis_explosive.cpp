@@ -387,7 +387,7 @@ void Missile::Think (
             GetObjectLayer(),
             trace_start,
             trace_vector,
-            GetRadius(),
+            GetVisibleRadius(),
             false,
             &line_trace_binding_set);
     

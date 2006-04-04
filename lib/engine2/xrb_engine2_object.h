@@ -97,8 +97,8 @@ public:
     inline ObjectType GetObjectType () const { return m_object_type; }
     inline bool GetIsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
-    inline Float GetRadius () const { CalculateTransform(); return m_radius; }
-    inline Float GetRadiusSquared () const { CalculateTransform(); return m_radius*m_radius; }
+    inline Float GetVisibleRadius () const { CalculateTransform(); return m_visible_radius; }
+    inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_visible_radius*m_visible_radius; }
     // returns the object_layer of this entity
     inline ObjectLayer *GetObjectLayer () const { return m_object_layer; }
     // returns the world this object resides in
@@ -247,9 +247,9 @@ protected:
     // ///////////////////////////////////////////////////////////////////
 
     // recalculates the radius (this should be called if/when the object's
-    // transformation matrix changes, setting m_radius to the calculated
+    // transformation matrix changes, setting m_visible_radius to the calculated
     // value.
-    virtual void CalculateRadius () const { m_radius = GetScaleFactor(); }
+    virtual void CalculateRadius () const { m_visible_radius = GetScaleFactor(); }
 
     // ///////////////////////////////////////////////////////////////////
 
@@ -261,8 +261,8 @@ protected:
     // causes the m_radius_needs_to_be_recalculated flag to be set
     inline void IndicateRadiusNeedsToBeRecalculated () { m_radius_needs_to_be_recalculated = true; }
 
-    // "radius" of the object
-    mutable Float m_radius;
+    // the radius of the visible portion of the object
+    mutable Float m_visible_radius;
     // points to the ObjectLayer which this object exists in
     ObjectLayer *m_object_layer;
     // points to the quadtree nodes which currently 'own' this object.

@@ -47,14 +47,14 @@ void MapEditor2::Entity::DrawMetrics (
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetRadius()),
+                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
                 color);
             // draw the little horizontal bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.125f*GetRadius(), 0.0f),
-                GetTranslation() - FloatVector2(0.125f*GetRadius(), 0.0f),
+                GetTranslation() + FloatVector2(0.125f*GetVisibleRadius(), 0.0f),
+                GetTranslation() - FloatVector2(0.125f*GetVisibleRadius(), 0.0f),
                 color);
             break;
 
@@ -63,13 +63,13 @@ void MapEditor2::Entity::DrawMetrics (
             Render::DrawLine(
                 draw_data.GetRenderContext(),
                 GetTranslation(),
-                GetTranslation() + 1.5f*GetRadius()*FloatVector2(1.0, 0.0),
+                GetTranslation() + 1.5f*GetVisibleRadius()*FloatVector2(1.0f, 0.0f),
                 color);
             Render::DrawLine(
                 draw_data.GetRenderContext(),
                 GetTranslation(),
                 GetTranslation() +
-                1.5f*GetRadius()*FloatVector2(
+                1.5f*GetVisibleRadius()*FloatVector2(
                     Math::Cos(GetAngularVelocity()),
                     Math::Sin(GetAngularVelocity())),
                 color);
@@ -78,15 +78,15 @@ void MapEditor2::Entity::DrawMetrics (
                 draw_data.GetRenderContext(),
                 draw_data.GetTransformation(),
                 GetTranslation(),
-                1.25f*GetRadius(),
+                1.25f*GetVisibleRadius(),
                 0.0f,
                 GetAngularVelocity(),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetRadius()),
+                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
                 color);
             break;
 

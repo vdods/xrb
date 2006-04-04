@@ -267,7 +267,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
             GetDoesAreaOverlapAnyEntityInObjectLayer(
                 GetObjectLayer(),
                 teleport_destination,
-                1.5f * GetRadius(),
+                1.5f * GetVisibleRadius(),
                 false));
 
     // TODO: spawn some teleport effect at the old location and at the new

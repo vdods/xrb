@@ -122,7 +122,7 @@ Engine2::Object::Object (ObjectType object_type)
     m_transform(FloatTransform2::ms_identity, true)
 {
     ASSERT1(m_object_type < OT_COUNT)
-    m_radius = 0.0f;
+    m_visible_radius = 0.0f;
     m_object_layer = NULL;
     for (Uint32 i = 0; i < QTT_COUNT; ++i)
         m_owner_quad_tree[i] = NULL;

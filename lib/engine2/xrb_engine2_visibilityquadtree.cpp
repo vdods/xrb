@@ -246,7 +246,7 @@ Engine2::VisibilityQuadTree::DrawLoopFunctor::DrawLoopFunctor (
 void Engine2::VisibilityQuadTree::DrawLoopFunctor::operator () (Engine2::Object *object)
 {
     // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->GetRadius() / m_view_radius;
+    Float object_radius = m_pixels_in_view_radius * object->GetVisibleRadius() / m_view_radius;
     // distance culling - don't draw objects that are below the
     // gs_radius_limit_lower threshold
     if (object_radius >= gs_radius_limit_lower)

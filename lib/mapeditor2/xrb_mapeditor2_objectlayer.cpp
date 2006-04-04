@@ -787,7 +787,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
 
         if (entity != NULL)
             entity->SetFirstMoment(
-                density * static_cast<Float>(M_PI) * entity->GetRadius() * entity->GetRadius());
+                density * static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -1605,7 +1605,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetDensity ()
     Entity *entity = GetSingleSelectedEntity();
     Float object_selection_set_density =
         entity->GetFirstMoment() /
-        static_cast<Float>(M_PI) * entity->GetRadius() * entity->GetRadius();
+        static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius();
     if (m_object_selection_set_density != object_selection_set_density)
     {
         m_object_selection_set_density = object_selection_set_density;

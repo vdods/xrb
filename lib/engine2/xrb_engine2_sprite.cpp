@@ -147,9 +147,9 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
 void Engine2::Sprite::CalculateRadius () const
 {
     if (m_is_round)
-        m_radius = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
+        m_visible_radius = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
     else
-        m_radius = GetScaleFactors().GetLength();
+        m_visible_radius = GetScaleFactors().GetLength();
 }
 
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)

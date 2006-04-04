@@ -109,7 +109,7 @@ void MapEditor2::Object::DrawMetrics (
             draw_data.GetRenderContext(),
             draw_data.GetTransformation(),
             GetTranslation(),
-            GetRadius(),
+            GetVisibleRadius(),
             color);
     }
 
@@ -121,13 +121,13 @@ void MapEditor2::Object::DrawMetrics (
                 draw_data.GetRenderContext(),
                 GetTranslation(),
                 GetTranslation() +
-                1.25f * GetRadius() * FloatVector2(1.0, 0.0),
+                1.25f * GetVisibleRadius() * FloatVector2(1.0f, 0.0f),
                 color);
             Render::DrawLine(
                 draw_data.GetRenderContext(),
                 GetTranslation(),
                 GetTranslation() +
-                1.25f * GetRadius() *
+                1.25f * GetVisibleRadius() *
                 FloatVector2(
                     Math::Cos(GetAngle()),
                     Math::Sin(GetAngle())),
@@ -137,15 +137,15 @@ void MapEditor2::Object::DrawMetrics (
                 draw_data.GetRenderContext(),
                 draw_data.GetTransformation(),
                 GetTranslation(),
-                1.25f*GetRadius(),
+                1.25f*GetVisibleRadius(),
                 0.0f,
                 Math::GetCanonicalAngle(GetAngle()),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetRadius()),
+                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
                 color);
             break;
 

@@ -133,11 +133,12 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
 void Engine2::Compound::CalculateRadius () const
 {
     // get the distance from the origin to the furthest vertex
-    m_radius = 0.0f;
+    // TODO: real code that checks for collision-only polygons
+    m_visible_radius = 0.0f;
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
-        m_radius = Max(
-            m_radius,
+        m_visible_radius = Max(
+            m_visible_radius,
             (GetTransformation() * m_vertex_array[i] -
              GetTransformation() * FloatVector2::ms_zero).GetLength());
     }

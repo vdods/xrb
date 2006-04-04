@@ -219,10 +219,10 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
             (center - object->GetTranslation()).GetLength();
         if (select_touching)
             object_is_in_operand_set =
-                object_distance <= radius + object->GetRadius();
+                object_distance <= radius + object->GetVisibleRadius();
         else
             object_is_in_operand_set =
-                object_distance <= radius - object->GetRadius();
+                object_distance <= radius - object->GetVisibleRadius();
 
         // perform the requested selection operation on the object
         object->ApplyObjectSelectionOperation(
@@ -274,7 +274,7 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - GetCenter()).GetLength() > radius + 2*GetRadius())
+    if ((center - GetCenter()).GetLength() > radius + 2.0f*GetRadius())
         return;
 
     // iterate through all objects at this node and perform the
@@ -486,7 +486,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
         ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
         // calculate the object's pixel radius on screen
         object_radius =
-            draw_data.GetPixelsInViewRadius() * object->GetRadius() /
+            draw_data.GetPixelsInViewRadius() * object->GetVisibleRadius() /
             draw_data.GetViewRadius();
         // distance culling - don't draw objects that are below the
         // radius_limit_lower threshold
@@ -572,7 +572,7 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - GetCenter()).GetLength() > radius + 2*GetRadius())
+    if ((center - GetCenter()).GetLength() > radius + 2.0f*GetRadius())
         return;
 
     // iterate through all objects at this node and perform the
