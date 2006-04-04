@@ -84,7 +84,6 @@ public:
         EXPOSE,
         QUIT,
         SYSWM,
-        ENGINE2_REMOVE_ENTITY_FROM_WORLD,
         ENGINE2_DELETE_ENTITY,
         CUSTOM,
 

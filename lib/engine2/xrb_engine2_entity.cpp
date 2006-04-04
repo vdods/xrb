@@ -81,24 +81,6 @@ void Engine2::Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
     }
 }
 
-/*
-void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
-{
-    ASSERT1(GetIsInWorld())
-    ASSERT1(GetOwnerObject()->GetWorld() != NULL)
-    ASSERT1(GetObjectLayer() != NULL)
-
-    if (time_delay < 0.0f)
-        time_delay = 0.0f;
-
-    GetOwnerObject()->GetWorld()->EnqueueEvent(
-        new EventEntity(
-            this,
-            GetOwnerObject()->GetWorld()->GetMostRecentFrameTime() + time_delay,
-            Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
-}
-*/
-
 void Engine2::Entity::ScheduleForDeletion (Float time_delay)
 {
     ASSERT1(GetIsInWorld())

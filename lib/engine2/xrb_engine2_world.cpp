@@ -269,19 +269,6 @@ bool Engine2::World::ProcessEventOverride (Event const *const event)
     ASSERT1(event != NULL)
     switch (event->GetType())
     {
-    /*
-        case Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD:
-        {
-            EventEntity const *event_entity =
-                DStaticCast<EventEntity const *>(event);
-            Entity *entity = event_entity->GetEntity();
-            ASSERT1(entity != NULL)
-            entity->RemoveFromWorld();
-            event_entity->NullifyEntity();
-            break;
-        }
-    */
-        
         case Event::ENGINE2_DELETE_ENTITY:
         {
             EventEntity const *event_entity =
