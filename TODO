@@ -43,22 +43,20 @@ DISASTEROIDS:
 - create high scores screen
   
 CURRENT:
-- make the disasteroids physics handler max speed be dependent on what
-  type of entity it is, so that missile and ballistic and such can turn
-  back into CT_SOLID_COLLISION like they should be
+- add collision_location and collision_normal to LineTrace
 - turn EntityWorldIndex into a Uint16
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
-- make VisibilityQuadTree::Draw be a public function that takes as arguments
-  the same as DrawData.  This will be a public frontend function which constructs
-  the DrawData (which will actually be DrawLoopFunctor), so the single functor
-  is passed in throughout the whole recursion.
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
+- put caps on the disasteroids WorldView zooming
+- disasteroids WorldView intro/outro (zooming, fading)
+- when player ship dies, it should eject its current equipped inventory,
+  with the exception of the starting inventory -- the items will be spawned
+  as Powerups, which the player can then recollect.
 - fix LineTrace screwing up on large entities sometimes at certain angles
 - make Devourment grow as it eats stuff
-- maybe move the game control logic out of World (because World is engine2)
 - ships should not be able to rotate to any angle instantly
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,

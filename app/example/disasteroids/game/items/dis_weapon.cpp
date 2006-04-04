@@ -27,7 +27,7 @@ namespace Dis
 
 // PeaShooter properties
 Float const PeaShooter::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 3.0f, 6.0f, 10.0f };
-Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 275.0f, 325.0f, 400.0f };
+Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
 Float const PeaShooter::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 6.0f, 7.0f, 8.0f, 10.0f };
@@ -155,14 +155,16 @@ bool PeaShooter::Activate (
     ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
     static Float const s_pea_size = 4.0f;
-    SpawnBallistic(
+    SpawnSmartBallistic(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
         GetMuzzleLocation() + s_pea_size * GetMuzzleDirection(),
         s_pea_size,
+        1.0f,
         ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
         ms_impact_damage[GetUpgradeLevel()],
         ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
+        time,
         GetOwnerShip()->GetReference());
 
     // update the last time fired
@@ -239,8 +241,8 @@ bool Laser::Activate (
         FloatVector2 laser_beam_hit_location(
             GetMuzzleLocation() + ms_range[GetUpgradeLevel()] * GetMuzzleDirection());
 
-        // we don't want to hit powerups, just skip them.
-        while (it != it_end && it->m_entity->GetIsPowerup())
+        // we don't want to hit powerups or ballistics, just skip them.
+        while (it != it_end && (it->m_entity->GetIsPowerup() || it->m_entity->GetIsBallistic()))
             ++it;
             
         // damage the next thing if it exists
@@ -1110,14 +1112,16 @@ bool SlowBulletGun::Activate (
     ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
     static Float const s_bullet_size = 3.0f;
-    SpawnBallistic(
+    SpawnDumbBallistic(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
         GetMuzzleLocation() + s_bullet_size * GetMuzzleDirection(),
         s_bullet_size,
+        3.0f,
         ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
         ms_impact_damage[GetUpgradeLevel()],
         ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
+        time,
         GetOwnerShip()->GetReference());
 
     // update the last time fired

@@ -280,13 +280,19 @@ void PhysicsHandler::UpdateVelocities ()
         }
 
         // limit the speed for entities with CT_SOLID_COLLISION only
-        static Float const s_max_speed = 300.0f;
-        static Float const s_max_speed_squared = s_max_speed * s_max_speed;
         if (entity->GetCollisionType() == CT_SOLID_COLLISION)
         {
-            Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
-            if (entity_speed_squared > s_max_speed_squared)
-                entity->SetVelocity(s_max_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+            static Float const s_max_speed = 300.0f;
+            static Float const s_max_speed_squared = s_max_speed * s_max_speed;
+
+            // limit the speed for non-projectiles only
+            if ((entity->GetEntityType() < ET_GRENADE || entity->GetEntityType() > ET_EMP_BOMB) &&
+                entity->GetEntityType() != ET_BALLISTIC)
+            {                
+                Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
+                if (entity_speed_squared > s_max_speed_squared)
+                    entity->SetVelocity(s_max_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+            }
         }
     }
 }

@@ -37,7 +37,8 @@ void Explosive::Collide (
 
     // if it's a solid collision object, potentially detonate
     if (collider->GetCollisionType() == CT_SOLID_COLLISION && !GetIsDead())
-        CheckIfItShouldDetonate(collider, time, frame_dt);
+        if (CheckIfItShouldDetonate(collider, time, frame_dt))
+            Detonate(time, frame_dt);
         
     // call the superclass collide
     Mortal::Collide(
@@ -59,18 +60,21 @@ void Explosive::Die (
     Float const time,
     Float const frame_dt)
 {
-    // do not detonate. spawn a small explosion
-    SpawnNoDamageExplosion(
-        GetWorld(),
-        GetObjectLayer(),
-        GetTranslation(),
-        GetVelocity(),
-        GetScaleFactor(),
-        1.0f,
-        time);
-
-    // delete this object
-    ScheduleForDeletion(0.0f);
+    if (!m_has_detonated)
+    {
+        // do not detonate. spawn a small explosion
+        SpawnNoDamageExplosion(
+            GetWorld(),
+            GetObjectLayer(),
+            GetTranslation(),
+            GetVelocity(),
+            GetScaleFactor(),
+            1.0f,
+            time);
+    
+        // delete this object
+        ScheduleForDeletion(0.0f);
+    }
 }
 
 void Explosive::Detonate (
@@ -134,7 +138,7 @@ void Grenade::Die (
         frame_dt);    
 }
 
-void Grenade::CheckIfItShouldDetonate (
+bool Grenade::CheckIfItShouldDetonate (
     Entity *const collider,
     Float const time,
     Float const frame_dt)
@@ -143,10 +147,8 @@ void Grenade::CheckIfItShouldDetonate (
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
-    // TODO: weapon-level based checking
-
     // this grenade is dumb, just detonate
-    Detonate(time, frame_dt);
+    return true;
 }
 
 void Grenade::Detonate (
@@ -234,7 +236,7 @@ void Mine::Die (
         frame_dt);    
 }
 
-void Mine::CheckIfItShouldDetonate (
+bool Mine::CheckIfItShouldDetonate (
     Entity *const collider,
     Float const time,
     Float const frame_dt)
@@ -243,10 +245,8 @@ void Mine::CheckIfItShouldDetonate (
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
-    // TODO: weapon-level based checking
-
     // this mine is dumb, just detonate
-    Detonate(time, frame_dt);
+    return true;
 }
 
 void Mine::Detonate (
@@ -359,11 +359,54 @@ void Missile::Think (
     static Float const s_thrust_force = 300.0f * GetFirstMoment();
     AccumulateForce(s_thrust_force * Math::UnitVector(GetAngle()));
 
+    // lazily initialize m_initial_velocity with the owner's velocity
+    if (m_first_think)
+    {
+        m_initial_velocity = m_owner->GetVelocity();
+        m_first_think = false;
+    }
+
+    // update the angle to reflect the direction of motion
+    {
+        FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
+        if (!velocity_delta.GetIsZero())
+            SetAngle(Math::Atan(velocity_delta));
+    }
+
+    // if the time to live has expired, detonate.
     if (m_time_at_birth + m_time_to_live <= time)
         Detonate(time, frame_dt);
+    // otherwise, peform a line trace for frame_dt/2 time's
+    // worth of velocity in front and behind this missile
+    else
+    {
+        FloatVector2 trace_vector(frame_dt * GetVelocity());
+        FloatVector2 trace_start(GetTranslation() - 0.5f * trace_vector);
+        LineTraceBindingSet line_trace_binding_set;
+        GetPhysicsHandler()->LineTrace(
+            GetObjectLayer(),
+            trace_start,
+            trace_vector,
+            GetRadius(),
+            false,
+            &line_trace_binding_set);
+    
+        FloatVector2 collision_normal(trace_vector.GetNormalization());
+        for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
+                                         it_end = line_trace_binding_set.end();
+             it != it_end;
+             ++it)
+        {
+            if (CheckIfItShouldDetonate(it->m_entity, time, frame_dt))
+            {
+                Detonate(time, frame_dt);
+                break;
+            }
+        }
+    }
 }
 
-void Missile::CheckIfItShouldDetonate (
+bool Missile::CheckIfItShouldDetonate (
     Entity *const collider,
     Float const time,
     Float const frame_dt)
@@ -372,10 +415,20 @@ void Missile::CheckIfItShouldDetonate (
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
     ASSERT1(!GetIsDead())
 
-    // TODO: weapon-level based checking
+    // don't detonate on ourselves
+    if (collider == this)
+        return false;
 
-    // this missile is dumb, just detonate
-    Detonate(time, frame_dt);
+    // don't detonate on powerups
+    if (collider->GetIsPowerup())
+        return false;
+
+    // don't detonate on the entity that fired this missile
+    if (collider == *m_owner)
+        return false;
+
+    // otherwise, detonate
+    return true;
 }
 
 void Missile::Detonate (
@@ -453,7 +506,7 @@ void EMPBomb::Die (
         frame_dt);    
 }
 
-void EMPBomb::CheckIfItShouldDetonate (
+bool EMPBomb::CheckIfItShouldDetonate (
     Entity *const collider,
     Float const time,
     Float const frame_dt)
@@ -463,7 +516,7 @@ void EMPBomb::CheckIfItShouldDetonate (
     ASSERT1(!GetIsDead())
 
     // the emp_bomb is dumb, just detonate
-    Detonate(time, frame_dt);
+    return true;
 }
 
 void EMPBomb::Detonate (

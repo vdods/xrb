@@ -82,14 +82,28 @@ Asteroid *SpawnAsteroid (
     Float mineral_content,
     bool is_a_secondary_asteroid);
     
-Ballistic *SpawnBallistic (
+Ballistic *SpawnSmartBallistic (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
+    Float first_moment,
     FloatVector2 const &velocity,
     Float impact_damage,
     Float time_to_live,
+    Float time_at_birth,
+    EntityReference<Entity> const &owner);
+    
+Ballistic *SpawnDumbBallistic (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    Float scale_factor,
+    Float first_moment,
+    FloatVector2 const &velocity,
+    Float impact_damage,
+    Float time_to_live,
+    Float time_at_birth,
     EntityReference<Entity> const &owner);
     
 Grenade *SpawnGrenade (

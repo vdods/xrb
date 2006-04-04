@@ -99,17 +99,59 @@ Asteroid *SpawnAsteroid (
     return asteroid;
 }
 
-Ballistic *SpawnBallistic (
+Ballistic *SpawnSmartBallistic (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
+    Float const first_moment,
     FloatVector2 const &velocity,
     Float const impact_damage,
     Float const time_to_live,
+    Float const time_at_birth,
     EntityReference<Entity> const &owner)
 {
-    Ballistic *ballistic = new Ballistic(impact_damage, time_to_live, owner);
+    Ballistic *ballistic =
+        new Ballistic(
+            impact_damage,
+            time_to_live,
+            time_at_birth,
+            owner,
+            true);
+    SpawnDynamicSprite(
+        world,
+        object_layer,
+        "resources/plasma_bullet.png",
+        ballistic,
+        translation,
+        scale_factor,
+        Math::Atan(velocity),
+        first_moment,
+        velocity,
+        0.0f,
+        0.0f);
+    return ballistic;
+}
+
+Ballistic *SpawnDumbBallistic (
+    Engine2::World *const world,
+    Engine2::ObjectLayer *const object_layer,
+    FloatVector2 const &translation,
+    Float const scale_factor,
+    Float const first_moment,
+    FloatVector2 const &velocity,
+    Float const impact_damage,
+    Float const time_to_live,
+    Float const time_at_birth,
+    EntityReference<Entity> const &owner)
+{
+    Ballistic *ballistic =
+        new Ballistic(
+            impact_damage,
+            time_to_live,
+            time_at_birth,
+            owner,
+            false);
     SpawnDynamicSprite(
         world,
         object_layer,
@@ -118,7 +160,7 @@ Ballistic *SpawnBallistic (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        0.001f,
+        first_moment,
         velocity,
         0.0f,
         0.0f);
@@ -156,7 +198,7 @@ Grenade *SpawnGrenade (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        8.0f,
+        4.0f,
         velocity,
         Math::RandomFloat(-30.0f, 30.0f),
         0.1f);
@@ -235,7 +277,7 @@ Missile *SpawnMissile (
         translation,
         scale_factor,
         angle,
-        10.0f,
+        5.0f,
         velocity,
         0.0f,
         0.1f);

@@ -75,10 +75,14 @@ public:
         if (entity1 == NULL || entity2 == NULL)
             return true;
 
-        if (entity1->GetIsPlayerShip() && entity2->GetIsPowerup())
+        if (entity2->GetIsPowerup() &&
+            (entity1->GetIsPlayerShip() ||
+             entity1->GetEntityType() == ET_BALLISTIC))
             return false;
             
-        if (entity2->GetIsPlayerShip() && entity1->GetIsPowerup())
+        if (entity1->GetIsPowerup() &&
+            (entity2->GetIsPlayerShip() ||
+             entity2->GetEntityType() == ET_BALLISTIC))
             return false;
 
         return true;
@@ -193,6 +197,7 @@ public:
     virtual bool GetIsExplosive () const { return false; }
     virtual bool GetIsPowerup () const { return false; }
     virtual bool GetIsEffect () const { return false; }
+    virtual bool GetIsBallistic () const { return false; }
 
     virtual void Think (Float time, Float frame_dt)
     {

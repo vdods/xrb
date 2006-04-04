@@ -59,7 +59,7 @@ public:
         Float time,
         Float frame_dt);
 
-    virtual void CheckIfItShouldDetonate (
+    virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
         Float frame_dt) = 0;
@@ -116,7 +116,7 @@ public:
         Float time,
         Float frame_dt);
         
-    virtual void CheckIfItShouldDetonate (
+    virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
         Float frame_dt);
@@ -192,7 +192,7 @@ public:
         Float time,
         Float frame_dt);
         
-    virtual void CheckIfItShouldDetonate (
+    virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
         Float frame_dt);
@@ -240,7 +240,7 @@ public:
         EntityReference<Entity> const &owner,
         Float const max_health)
         :
-        Explosive(owner, max_health, max_health, ET_MISSILE, CT_NONSOLID_COLLISION),
+        Explosive(owner, max_health, max_health, ET_MISSILE, CT_SOLID_COLLISION),
         m_time_to_live(time_to_live),
         m_time_at_birth(time_at_birth),
         m_damage_to_inflict(damage_to_inflict),
@@ -251,12 +251,13 @@ public:
         ASSERT1(m_time_to_live > 0.0f)
         ASSERT1(m_damage_to_inflict > 0.0f)
         ASSERT1(m_explosion_radius > 0.0f)
+        m_first_think = true;
     }
     virtual ~Missile () { }
 
     virtual void Think (Float time, Float frame_dt);
         
-    virtual void CheckIfItShouldDetonate (
+    virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
         Float frame_dt);
@@ -272,6 +273,8 @@ private:
     Float const m_damage_radius;
     Float const m_explosion_radius;
     Uint32 m_weapon_level;
+    bool m_first_think;
+    FloatVector2 m_initial_velocity;
 }; // end of class Missile
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -331,7 +334,7 @@ public:
         Float time,
         Float frame_dt);
         
-    virtual void CheckIfItShouldDetonate (
+    virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
         Float frame_dt);
