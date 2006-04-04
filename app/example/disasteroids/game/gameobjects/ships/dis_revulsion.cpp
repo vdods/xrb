@@ -55,9 +55,12 @@ Revulsion::~Revulsion ()
     ASSERT1(m_weapon != NULL)
     Delete(m_weapon);
 
-    if (m_reticle_effect.GetIsValid() && !m_reticle_effect->GetIsInWorld())
+    if (m_reticle_effect.GetIsValid())
+    {
+        if (m_reticle_effect->GetIsInWorld())
+            m_reticle_effect->RemoveFromWorld();
         delete m_reticle_effect->GetOwnerObject();
-    ASSERT1(!m_reticle_effect.GetIsValid())
+    }
 }
 
 void Revulsion::Think (Float const time, Float const frame_dt)
