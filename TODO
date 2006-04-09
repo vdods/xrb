@@ -40,7 +40,6 @@ CURRENT:
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
-- put caps on the disasteroids WorldView zooming
 - disasteroids WorldView intro/outro (zooming, fading)
 - when player ship dies, it should eject its current equipped inventory,
   with the exception of the starting inventory -- the items will be spawned
@@ -51,16 +50,14 @@ CURRENT:
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
-- the framehandler time for WorldView must be synchronized with the
-  framehandler time for World.
-- fix the crash when the ship dies while a mine is surveying.
 - split the physics and visibility computation up so their frame
   processing isn't dependent.
+- the framehandler time for WorldView must be synchronized with the
+  framehandler time for World.  (depends on having the physics and
+  visibility computation split up)
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- the trace_radius trace screws up because it traces a circle along the
-  line, instead of a perpendicular line.
 - look into compile-time asserts
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length

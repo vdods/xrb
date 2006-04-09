@@ -37,6 +37,8 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_current_grid_scale = 1;
 
     m_zoom_factor = 0.0625f;
+    m_min_zoom_factor = 0.0f; // (sort of) arbitrary
+    m_max_zoom_factor = 1000000.0f; // arbitrary
     m_is_view_locked = false;
     m_is_gl_projection_matrix_in_use = false;
     m_draw_border_grid_lines = false;
@@ -155,7 +157,7 @@ Float Engine2::WorldView::GetCornerRadius () const
          GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
 }
 
-void Engine2::WorldView::SetViewCenter (FloatVector2 const &position)
+void Engine2::WorldView::SetCenter (FloatVector2 const &position)
 {
     if (!GetIsViewLocked())
     {
@@ -165,9 +167,15 @@ void Engine2::WorldView::SetViewCenter (FloatVector2 const &position)
     }
 }
 
-void Engine2::WorldView::SetViewZoomFactor (Float const zoom_factor)
+void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
 {
     ASSERT1(zoom_factor > 0.0)
+
+    if (zoom_factor < m_min_zoom_factor)
+        zoom_factor = m_min_zoom_factor;
+
+    if (zoom_factor > m_max_zoom_factor)
+        zoom_factor = m_max_zoom_factor;
 
     if (!GetIsViewLocked())
     {
@@ -177,14 +185,38 @@ void Engine2::WorldView::SetViewZoomFactor (Float const zoom_factor)
     }
 }
 
-void Engine2::WorldView::SetViewAngle (Float const angle)
+void Engine2::WorldView::SetAngle (Float const angle)
 {
     if (!GetIsViewLocked())
     {
-        SetAngle(-angle);
+        FloatTransform2::SetAngle(-angle);
         // set the appropriate dirty bits
         DirtyAllParallaxedTransformations();
     }
+}
+
+void Engine2::WorldView::SetMinZoomFactor (Float const min_zoom_factor)
+{
+    ASSERT1(min_zoom_factor >= 0.0f)
+    // adjust the max zoom factor from the new min zoom factor
+    if (m_max_zoom_factor < min_zoom_factor)
+        m_max_zoom_factor = min_zoom_factor;
+    // set the min zoom factor
+    m_min_zoom_factor = min_zoom_factor;
+    // attempt to use the current zoom factor
+    SetZoomFactor(m_zoom_factor);
+}
+
+void Engine2::WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
+{
+    ASSERT1(max_zoom_factor > 0.0f)
+    // adjust the min zoom factor from the new max zoom factor
+    if (m_min_zoom_factor > max_zoom_factor)
+        m_min_zoom_factor = max_zoom_factor;
+    // set the max zoom factor
+    m_max_zoom_factor = max_zoom_factor;
+    // attempt to use the current zoom factor
+    SetZoomFactor(m_zoom_factor);
 }
 
 void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
@@ -200,13 +232,7 @@ void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
 void Engine2::WorldView::ZoomView (Float const delta_zoom_factor)
 {
     ASSERT1(delta_zoom_factor > 0.0)
-
-    if (!GetIsViewLocked())
-    {
-        m_zoom_factor *= delta_zoom_factor;
-        // set the appropriate dirty bits
-        DirtyAllParallaxedTransformations();
-    }
+    SetZoomFactor(m_zoom_factor * delta_zoom_factor);
 }
 
 void Engine2::WorldView::RotateView (Float const delta_angle)
@@ -444,10 +470,6 @@ FloatMatrix2 const &Engine2::WorldView::GetParallaxedScreenToWorld () const
     }
 
     return m_parallaxed_screen_to_world;
-}
-
-void Engine2::WorldView::ProcessFrameOverride ()
-{
 }
 
 void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)

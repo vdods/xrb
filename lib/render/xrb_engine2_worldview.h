@@ -39,7 +39,7 @@ namespace Engine2
     // Transform2, and is used as the world-to-view transformation.
     // The WorldView is pre-translated.
     // WorldView inherits FloatTransform2 non-virtually.
-    class WorldView : public FloatTransform2, public FrameHandler
+    class WorldView : protected FloatTransform2, public FrameHandler
     {
     public:
     
@@ -83,9 +83,12 @@ namespace Engine2
         inline void SetIsViewLocked (bool const is_view_locked) { m_is_view_locked = is_view_locked; }
         inline void SetDrawBorderGridLines (bool const draw_border_grid_lines) { m_draw_border_grid_lines = draw_border_grid_lines; }
         // formalized ways to change the view's position/zoom/rotation
-        void SetViewCenter (FloatVector2 const &position);
-        void SetViewZoomFactor (Float zoom_factor);
-        void SetViewAngle (Float angle);
+        void SetCenter (FloatVector2 const &position);
+        void SetZoomFactor (Float zoom_factor);
+        void SetAngle (Float angle);
+        // modifiers for the zoom factor caps
+        void SetMinZoomFactor (Float min_zoom_factor);
+        void SetMaxZoomFactor (Float max_zoom_factor);
         // this method should only be called by World!
         inline void SetWorld (World *world)
         {
@@ -137,8 +140,6 @@ namespace Engine2
         // this is called in SetWorld, after m_world is assigned.
         virtual void HandleAttachedWorld () { }
             
-        virtual void ProcessFrameOverride ();
-
         void DrawGridLines (RenderContext const &render_context);
         void DrawGridLineSet (
             RenderContext const &render_context,
@@ -197,6 +198,12 @@ namespace Engine2
         // because of the parallax computations).  the higher this number
         // goes, the more zoomed in the view is.
         Float m_zoom_factor;
+        // minimum allowable zoom factor value.  m_zoom_factor will be clamped
+        // at this value if it is lower.
+        Float m_min_zoom_factor;
+        // maximum allowable zoom factor value.  m_zoom_factor will be clamped
+        // at this value if it is higher.
+        Float m_max_zoom_factor;
         // indicates if the view cannot be moved/zoomed/rotated (used when
         // certain editing modes are engaged which require a static reference
         // frame)

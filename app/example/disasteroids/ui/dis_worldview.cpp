@@ -60,6 +60,9 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_is_debug_info_enabled = false;
     SetDrawBorderGridLines(m_is_debug_info_enabled);
     m_disable_inventory_panel = true;
+
+    SetMinZoomFactor(0.0025f);
+    SetMaxZoomFactor(0.0078f);
 }
 
 WorldView::~WorldView ()
@@ -336,7 +339,7 @@ void WorldView::ProcessFrameOverride ()
     {
         /*
         { // simple dead-on follow
-            SetViewCenter(m_player_ship->GetUnwrappedTranslation());
+            SetCenter(m_player_ship->GetUnwrappedTranslation());
             m_view_velocity = m_player_ship->GetVelocity();
         }
         */
@@ -379,14 +382,14 @@ void WorldView::ProcessFrameOverride ()
             if (m_is_view_recovering && m_recover_parameter < 1.0f)
             {
                 ASSERT1(m_recover_parameter >= 0.0f)
-                SetViewCenter(
+                SetCenter(
                     m_calculated_view_center * (1.0f - m_recover_parameter) +
                     traveling_at * m_recover_parameter);
                 m_recover_parameter += GetFrameDT() / s_time_to_recover;
             }
             else
             {
-                SetViewCenter(traveling_at);
+                SetCenter(traveling_at);
                 m_is_view_recovering = false;
             }
         }
@@ -402,7 +405,7 @@ void WorldView::ProcessFrameOverride ()
                 dragging_factor = m_dragging_factor;
             dragging_factor *= GetFrameDT();
         
-            SetViewCenter(
+            SetCenter(
                 GetViewCenter() * (1.0f - dragging_factor)
                 +
                 m_player_ship->GetUnwrappedTranslation() * dragging_factor);
@@ -412,7 +415,7 @@ void WorldView::ProcessFrameOverride ()
     }
     else
     {
-        SetViewCenter(GetViewCenter() + m_view_velocity * GetFrameDT());
+        SetCenter(GetViewCenter() + m_view_velocity * GetFrameDT());
     }
 }
 
