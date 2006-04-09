@@ -107,6 +107,11 @@ public:
     {
         return m_scale_factors;
     }
+    inline T GetScaleFactor () const
+    {
+        ASSERT1(m_scale_factors[Dim::X] == m_scale_factors[Dim::Y])
+        return m_scale_factors[Dim::X];
+    }
     inline T GetAngle () const
     {
         return m_angle;
@@ -150,66 +155,86 @@ public:
 
     inline void SetTranslation (Vector<T, 2> const &translation)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
         m_translation = translation;
         m_cached_transform_is_dirty = true;
     }
     inline void SetTranslation (T x, T y)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
         m_translation[Dim::X] = x;
         m_translation[Dim::Y] = y;
         m_cached_transform_is_dirty = true;
     }
     inline void SetScaleFactors (Vector<T, 2> const &scale_factors)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
         m_scale_factors = scale_factors;
         Dirtify();
     }
     inline void SetScaleFactors (T r, T s)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
         m_scale_factors[Dim::X] = r;
         m_scale_factors[Dim::Y] = s;
         Dirtify();
     }
     inline void SetScaleFactor (T scale_factor)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
         m_scale_factors.FillWith(scale_factor);
         Dirtify();
     }
     inline void SetAngle (T angle)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
         m_angle = angle;
         Dirtify();
     }
 
     inline void Translate (Vector<T, 2> const &translation)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
         m_translation += translation;
         m_cached_transform_is_dirty = true;
     }
     inline void Translate (T x, T y)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
         m_translation[Dim::X] += x;
         m_translation[Dim::Y] += y;
         m_cached_transform_is_dirty = true;
     }
     inline void Scale (Vector<T, 2> const &scale_factors)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
         m_scale_factors *= scale_factors;
         Dirtify();
     }
     inline void Scale (T r, T s)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
         m_scale_factors[Dim::X] *= r;
         m_scale_factors[Dim::Y] *= s;
         Dirtify();
     }
     inline void Scale (T scale_factor)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
         m_scale_factors *= scale_factor;
         Dirtify();
     }
     inline void Rotate (T angle)
     {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
         m_angle += angle;
         Dirtify();
     }
