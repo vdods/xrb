@@ -70,10 +70,8 @@ public:
 
     // index in World's Entity array
     inline EntityWorldIndex GetWorldIndex () const { return m_world_index; }
-    inline bool GetIsInWorld () const { return m_world_index >= 0; }
-    // (TODO: should this be implemented by the Entity subclass?)
+    inline bool GetIsInWorld () const { return m_world_index != ENTITY_IS_NOT_IN_WORLD; }
     inline FloatVector2 const &GetWrappedOffset () const { return m_wrapped_offset; }
-    // (TODO: should this be implemented by the Entity subclass?)
     inline FloatVector2 GetUnwrappedTranslation () const { return GetTranslation() + m_wrapped_offset; }
     // the Object which this Entity is attached to
     inline Object *GetOwnerObject () const { return m_owner_object; }
@@ -90,14 +88,13 @@ public:
 
     // this should only be used by World
     inline void SetWorldIndex (EntityWorldIndex world_index) { m_world_index = world_index; }
-    // (TODO: should this be implemented by the Entity subclass?)
     void SetWrappedOffset (FloatVector2 const &wrapped_offset);
 
     // ///////////////////////////////////////////////////////////////////
     // procedures
     // ///////////////////////////////////////////////////////////////////
 
-    // for use in wrapped worlds (TODO: should this be implemented by the Entity subclass?)
+    // for use in wrapped worlds
     void AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta);
     // remove an entity from the world and physics handler (but don't delete it).
     void RemoveFromWorld ();
@@ -106,7 +103,7 @@ public:
     void AddBackIntoWorld ();
     // resets the World's Entity index to the sentinel 'not in world'
     // value of -1.  should only be used by World
-    inline void ResetWorldIndex () { m_world_index = -1; }
+    inline void ResetWorldIndex () { m_world_index = ENTITY_IS_NOT_IN_WORLD; }
     // efficiently re-adds this Entity's object back into the quadtree
     void ReAddToQuadTree (QuadTreeType quad_tree_type);
 
@@ -114,7 +111,6 @@ public:
     // event-scheduling procedures
     // ///////////////////////////////////////////////////////////////////
 
-//     void ScheduleForRemovalFromWorld (Float time_delay);
     void ScheduleForDeletion (Float time_delay);
 
     // ///////////////////////////////////////////////////////////////////

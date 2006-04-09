@@ -65,7 +65,7 @@ Engine2::World *Engine2::World::Create (
     ASSERT1(serializer.GetIsOpen())
     ASSERT1(serializer.GetIODirection() == IOD_READ)
 
-    Uint32 entity_capacity = serializer.ReadUint32();
+    Uint16 entity_capacity = serializer.ReadUint32();
     World *retval = new World(physics_handler, entity_capacity);
     // it's ok to pass NULL as CreateEntity because it won't be used
     retval->Read(serializer, NULL);
@@ -75,7 +75,7 @@ Engine2::World *Engine2::World::Create (
 
 Engine2::World *Engine2::World::CreateEmpty (
     PhysicsHandler *const physics_handler,
-    Uint32 const entity_capacity)
+    EntityWorldIndex const entity_capacity)
 {
     return new World(physics_handler, entity_capacity);
 }
@@ -206,7 +206,7 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
 
 Engine2::World::World (
     PhysicsHandler *const physics_handler,
-    Uint32 const entity_capacity)
+    EntityWorldIndex const entity_capacity)
     :
     EventHandler(NULL),
     FrameHandler(),
@@ -220,7 +220,7 @@ Engine2::World::World (
     m_main_object_layer = NULL;
     m_timescale = 1.0f;
     ASSERT1(entity_capacity > 0)
-    m_entity_vector.resize(entity_capacity);
+    m_entity_vector.resize(Min(entity_capacity, static_cast<EntityWorldIndex>(MAXIMUM_ENTITY_CAPACITY)));
     std::fill(m_entity_vector.begin(), m_entity_vector.end(), static_cast<Entity *>(NULL));
     m_lowest_available_entity_index = 0;
 }
@@ -314,8 +314,6 @@ void Engine2::World::IncrementLowestAvailableEntityIndex ()
 void Engine2::World::UpdateLowestAvailableEntityIndex (
     EntityWorldIndex const removed_entity_index)
 {
-    ASSERT1(removed_entity_index >= 0)
-
     if (removed_entity_index < m_lowest_available_entity_index)
         m_lowest_available_entity_index = removed_entity_index;
 }

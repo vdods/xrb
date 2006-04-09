@@ -34,10 +34,7 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- get rid of all the extra unused Scale and Translate overloads in Object and
-  Transform2 and such which take separate x/y r/s params
 - add collision_location and collision_normal to LineTrace
-- turn EntityWorldIndex into a Uint16
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
 - the stoke O meter is still not being reset when the player dies

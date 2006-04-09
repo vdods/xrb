@@ -55,6 +55,7 @@ public:
 
     enum
     {
+        MAXIMUM_ENTITY_CAPACITY = ENTITY_IS_NOT_IN_WORLD - 1,
         DEFAULT_ENTITY_CAPACITY = 0x1000
     };
 
@@ -71,7 +72,7 @@ public:
         PhysicsHandler *physics_handler);
     static World *CreateEmpty (
         PhysicsHandler *physics_handler,
-        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+        EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
     inline Uint32 GetEntityCapacity () const { return m_entity_vector.capacity(); }
@@ -110,7 +111,7 @@ protected:
 
     World (
         PhysicsHandler *physics_handler,
-        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+        EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
     virtual Uint32 GetMainObjectLayerIndex () const;
 

@@ -23,8 +23,13 @@ namespace Engine2
 
 class Entity;
 
-typedef Sint32 EntityWorldIndex;
+typedef Uint32 EntityWorldIndex;
 typedef Entity *(*CreateEntityFunction)(Serializer &);
+
+enum
+{
+    ENTITY_IS_NOT_IN_WORLD = static_cast<EntityWorldIndex>(-1)
+};
 
 } // end of namespace Engine2
 
