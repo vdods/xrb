@@ -69,6 +69,8 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- child widgets should be based off the position of their parents, so
+  screen-relative moving is unnecessary.
 - Label text alignment doesn't seem to work (maybe it's just for non-word-wrapped labels)
 - move Sprite color mask and Compound color mask into Object
 - make Serializer::Write/ReadFloatTransform2 (and FloatVector2 and others)

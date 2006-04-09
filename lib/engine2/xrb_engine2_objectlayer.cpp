@@ -229,14 +229,14 @@ void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
         if (entity != NULL)
             WrapEntity(entity);
         else
-            WrapTransform2(&object->GetTransform());
+            WrapTransform2(object);
     }
     else
     {
         if (entity != NULL)
             ContainEntity(entity);
         else
-            ContainTransform2(&object->GetTransform());
+            ContainTransform2(object);
     }
 }
 
@@ -328,7 +328,7 @@ void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
     ASSERT1(entity != NULL)
 
     FloatVector2 previous_translation(entity->GetTranslation());
-    WrapTransform2(&entity->GetTransform());
+    WrapTransform2(entity->GetOwnerObject());
     entity->AccumulateWrappedOffset(previous_translation - entity->GetTranslation());
 }
 

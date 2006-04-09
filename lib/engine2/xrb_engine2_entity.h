@@ -136,8 +136,6 @@ public:
     inline FloatVector2 const &GetScaleFactors () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetScaleFactors(); }
     inline Float GetScaleFactor () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetScaleFactor(); }
     inline Float GetAngle () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetAngle(); }
-    inline FloatTransform2 &GetTransform () { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransform(); }
-    inline FloatTransform2 const &GetTransform () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransform(); }
     inline FloatMatrix2 const &GetTransformation () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransformation(); }
     inline FloatMatrix2 GetTransformationInverse () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetTransformationInverse(); }
     inline Float GetDeterminant () const { ASSERT3(m_owner_object != NULL) return m_owner_object->GetDeterminant(); }

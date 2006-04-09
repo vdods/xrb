@@ -118,8 +118,8 @@ void Engine2::Object::SetEntity (Entity *const entity)
 
 Engine2::Object::Object (ObjectType object_type)
     :
-    m_object_type(object_type),
-    m_transform(FloatTransform2::ms_identity, true)
+    FloatTransform2(FloatTransform2::ms_identity, true),
+    m_object_type(object_type)
 {
     ASSERT1(m_object_type < OT_COUNT)
     m_object_layer = NULL;
@@ -144,12 +144,12 @@ void Engine2::Object::WriteObjectType (Serializer &serializer) const
 
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
-    m_transform = serializer.ReadFloatTransform2();
+    FloatTransform2::operator=(serializer.ReadFloatTransform2());
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 {
-    serializer.WriteFloatTransform2(m_transform);
+    serializer.WriteFloatTransform2(*static_cast<FloatTransform2 const *>(this));
 }
 
 void Engine2::Object::CloneProperties (Object const *const object)
@@ -166,9 +166,9 @@ void Engine2::Object::CalculateTransform () const
     /*
     // original function code (kept around because this version does the
     // same thing but is much easier to read)
-    if (m_transform.GetIsDirty() || m_radii_need_to_be_recalculated)
+    if (GetIsDirty() || m_radii_need_to_be_recalculated)
     {
-        m_transform.RecalculateTransformIfNecessary();
+        RecalculateTransformIfNecessary();
         // recalculate all radii
         for (Uint32 i = 0; i < QTT_COUNT; ++i)
             CalculateRadius(static_cast<QuadTreeType>(i));
@@ -177,11 +177,11 @@ void Engine2::Object::CalculateTransform () const
     */
     
     // optimized function code:
-    if (m_transform.GetIsDirty())
+    if (GetIsDirty())
     {
-        if (m_transform.GetScalingAndRotationIsDirty())
+        if (GetScalingAndRotationIsDirty())
         {
-            m_transform.RecalculateTransform();
+            RecalculateTransform();
             // recalculate all radii
             for (Uint32 i = 0; i < QTT_COUNT; ++i)
                 CalculateRadius(static_cast<QuadTreeType>(i));
@@ -189,14 +189,14 @@ void Engine2::Object::CalculateTransform () const
         }
         else if (m_radii_need_to_be_recalculated)
         {
-            m_transform.RecalculateTransformWithoutScalingAndRotation();
+            RecalculateTransformWithoutScalingAndRotation();
             // recalculate all radii
             for (Uint32 i = 0; i < QTT_COUNT; ++i)
                 CalculateRadius(static_cast<QuadTreeType>(i));
             m_radii_need_to_be_recalculated = false;
         }
         else
-            m_transform.RecalculateTransformWithoutScalingAndRotation();
+            RecalculateTransformWithoutScalingAndRotation();
     }
     else if (m_radii_need_to_be_recalculated)
     {

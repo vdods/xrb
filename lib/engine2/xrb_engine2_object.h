@@ -35,7 +35,8 @@ class World;
 // base class for Sprite and Compound.  an Object which does not have an
 // attached Entity will be referred to as a "static object" while an Object
 // which has an attached Entity will be called a "dynamic object".
-class Object
+// Object inherits FloatTransform2 non-virtually.
+class Object : public FloatTransform2 
 {
 public:
 
@@ -136,38 +137,6 @@ public:
         m_owner_quad_tree[quad_tree_type] = owner_quad_tree;
     }
 
-    // ///////////////////////////////////////////////////////////////////
-    // frontends to FloatTransform2 functions (for m_transform)
-    // ///////////////////////////////////////////////////////////////////
-
-    inline FloatVector2 const &GetTranslation () const { return m_transform.GetTranslation(); }
-    inline FloatVector2 const &GetScaleFactors () const { return m_transform.GetScaleFactors(); }
-    inline Float GetScaleFactor () const { return m_transform.GetScaleFactor(); }
-    inline Float GetAngle () const { return m_transform.GetAngle(); }
-    inline FloatTransform2 &GetTransform () { return m_transform; }
-    inline FloatTransform2 const &GetTransform () const { return m_transform; }
-    inline FloatMatrix2 const &GetTransformation () const { return m_transform.GetTransformation(); }
-    inline FloatMatrix2 GetTransformationInverse () const { return m_transform.GetTransformationInverse(); }
-    inline Float GetDeterminant () const { return m_transform.GetDeterminant(); }
-    
-    inline void SetTranslation (FloatVector2 const &translation) { m_transform.SetTranslation(translation); }
-    inline void SetTranslation (Float const x, Float const y) { m_transform.SetTranslation(x, y); }
-    inline void SetScaleFactors (FloatVector2 const &scale_factors) { m_transform.SetScaleFactors(scale_factors); }
-    inline void SetScaleFactors (Float r, Float s) { m_transform.SetScaleFactors(r, s); }
-    inline void SetScaleFactor (Float scale_factor) { m_transform.SetScaleFactor(scale_factor); }
-    inline void SetAngle (Float const angle) { m_transform.SetAngle(angle); }
-    
-    inline void Translate (FloatVector2 const &translation) { m_transform.Translate(translation); }
-    inline void Translate (Float const x, Float const y) { m_transform.Translate(x, y); }
-    inline void Scale (FloatVector2 const &scale_factors) { m_transform.Scale(scale_factors); }
-    inline void Scale (Float r, Float s) { m_transform.Scale(r, s); }
-    inline void Scale (Float scale_factor) { m_transform.Scale(scale_factor); }
-    inline void Rotate (Float const angle) { m_transform.Rotate(angle); }
-    
-    inline void ResetTranslation () { m_transform.ResetTranslation(); }
-    inline void ResetScale () { m_transform.ResetScale(); }
-    inline void ResetAngle () { m_transform.ResetAngle(); }
-
 protected:
 
     // protected constructor so you must use Create()
@@ -223,8 +192,6 @@ private:
 
     // the type of object
     ObjectType const m_object_type;
-    // this object's spatial transform
-    FloatTransform2 m_transform;
     // a pointer to the optional Entity object which can "imbue this
     // object with a soul".
     Entity *m_entity;

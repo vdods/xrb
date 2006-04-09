@@ -38,7 +38,8 @@ namespace Engine2
     // the contents of what's in a World object.  WorldView inherits from
     // Transform2, and is used as the world-to-view transformation.
     // The WorldView is pre-translated.
-    class WorldView : public FrameHandler
+    // WorldView inherits FloatTransform2 non-virtually.
+    class WorldView : public FloatTransform2, public FrameHandler
     {
     public:
     
@@ -191,39 +192,6 @@ namespace Engine2
     private:
     
         void DirtyAllParallaxedTransformations ();
-    
-        // ///////////////////////////////////////////////////////////////////////
-        // frontends to FloatTransform2 functions (for m_transform)
-        // ///////////////////////////////////////////////////////////////////////
-
-        inline FloatVector2 const &GetTranslation () const { return m_transform.GetTranslation(); }
-        inline FloatVector2 const &GetScaleFactors () const { return m_transform.GetScaleFactors(); }
-        inline Float GetAngle () const { return m_transform.GetAngle(); }
-        inline FloatMatrix2 const &GetTransformation () const { return m_transform.GetTransformation(); }
-        inline FloatMatrix2 GetTransformationInverse () const { return m_transform.GetTransformationInverse(); }
-        inline Float GetDeterminant () const { return m_transform.GetDeterminant(); }
-        inline void SetTranslation (FloatVector2 const &translation) { m_transform.SetTranslation(translation); }
-        inline void SetTranslation (Float const x, Float const y) { m_transform.SetTranslation(x, y); }
-        inline void SetScaleFactors (FloatVector2 const &scale_factors) { m_transform.SetScaleFactors(scale_factors); }
-        inline void SetScaleFactors (Float const r, Float const s) { m_transform.SetScaleFactors(r, s); }
-        inline void SetScaleFactor (Float const scale_factor) { m_transform.SetScaleFactor(scale_factor); }
-        inline void SetAngle (Float const angle) { m_transform.SetAngle(angle); }
-        inline void Translate (FloatVector2 const &translation) { m_transform.Translate(translation); }
-        inline void Translate (Float const x, Float const y) { m_transform.Translate(x, y); }
-        inline void Scale (FloatVector2 const &scale_factors) { m_transform.Scale(scale_factors); }
-        inline void Scale (Float const r, Float const s) { m_transform.Scale(r, s); }
-        inline void Scale (Float const scale_factor) { m_transform.Scale(scale_factor); }
-        inline void Rotate (Float const angle) { m_transform.Rotate(-angle); }
-        inline void ResetTranslation () { m_transform.ResetTranslation(); }
-        inline void ResetScale () { m_transform.ResetScale(); }
-        inline void ResetAngle () { m_transform.ResetAngle(); }
-
-        // ///////////////////////////////////////////////////////////////////////
-        // end of frontends to FloatTransform2 functions (for m_transform)
-        // ///////////////////////////////////////////////////////////////////////
-
-        // World-to-WorldView transformation
-        FloatTransform2 m_transform;
     
         // view's zoom factor (this is decoupled from the transform
         // because of the parallax computations).  the higher this number

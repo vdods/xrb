@@ -24,8 +24,8 @@ namespace Xrb
 
 Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     :
-    FrameHandler(),
-    m_transform(FloatTransform2::ms_identity, false)
+    FloatTransform2(FloatTransform2::ms_identity, false),
+    FrameHandler()
 {
     ASSERT1(parent_world_view_widget != NULL)
 
@@ -631,12 +631,12 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
         1.0f);
 
     // perform the world-to-view transformation
-    ASSERT1(m_transform.GetScaleFactors()[Dim::X] == 1.0f)
-    ASSERT1(m_transform.GetScaleFactors()[Dim::Y] == 1.0f)
-    glRotatef(m_transform.GetAngle(), 0.0f, 0.0f, 1.0f);
+    ASSERT1(GetScaleFactors()[Dim::X] == 1.0f)
+    ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f)
+    glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
     glTranslatef(
-        m_transform.GetTranslation()[Dim::X],
-        m_transform.GetTranslation()[Dim::Y],
+        GetTranslation()[Dim::X],
+        GetTranslation()[Dim::Y],
         0.0f);
 }
 
