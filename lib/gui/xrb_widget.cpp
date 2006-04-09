@@ -1250,9 +1250,10 @@ void Widget::RemoveModalWidget (Widget *const modal_widget)
     // modal widget stack.  otherwise, pass it up to the parent
     if (GetIsTopLevelParent())
     {
-        ASSERT1(modal_widget == *m_modal_widget_stack.rbegin())
         modal_widget->Unfocus();
-        m_modal_widget_stack.pop_back();
+        WidgetListIterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
+        ASSERT1(it != m_modal_widget_stack.end())
+        m_modal_widget_stack.erase(it);
     }
     else
         GetParent()->RemoveModalWidget(modal_widget);
