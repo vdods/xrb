@@ -210,8 +210,8 @@ void PhysicsHandler::ProcessFrameOverride ()
     // is so that we don't have to worry about not removing the
     // currently-iterating entity during its Think method.
     for (EntitySetIterator inc_it = m_entity_set.begin(),
-                           it = inc_it++,
-                           it_end = m_entity_set.end();
+                           it_end = m_entity_set.end(),
+                           it = (inc_it != it_end) ? inc_it++ : inc_it;
          it != it_end;
          it = (inc_it != it_end) ? inc_it++ : inc_it)
     {
