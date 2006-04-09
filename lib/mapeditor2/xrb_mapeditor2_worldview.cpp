@@ -420,7 +420,7 @@ void MapEditor2::WorldView::CreateStaticSprite (std::string const &filename)
 
     // add the sprite to the world in the current object layer
     fprintf(stderr, "MapEditor2::WorldView::CreateStaticSprite(); creating a static sprite from filename \"%s\" at ", filename.c_str());
-    FprintVector(stderr, position);
+    Fprint(stderr, position);
     GetWorld()->AddObject(sprite, GetMainObjectLayer());
     sprite->SetIsSelected(true);
 }
@@ -437,7 +437,7 @@ void MapEditor2::WorldView::CreateSpriteEntity (std::string const &filename)
 
     // add the sprite to the world in the current object layer
     fprintf(stderr, "MapEditor2::WorldView::CreateSpriteEntity(); creating a sprite entity from filename \"%s\" at ", filename.c_str());
-    FprintVector(stderr, position);
+    Fprint(stderr, position);
     GetWorld()->AddEntity(sprite, GetMainObjectLayer());
     sprite->SetIsSelected(true);
 }

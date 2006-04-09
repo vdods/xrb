@@ -20,9 +20,7 @@
 namespace Xrb
 {
 
-void FprintSimpleTransform2 (
-    FILE *fptr,
-    FloatSimpleTransform2 const &simple_transform)
+void Fprint (FILE *fptr, FloatSimpleTransform2 const &simple_transform)
 {
     simple_transform.Fprint(fptr, "%g");
 }

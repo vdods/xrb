@@ -1027,8 +1027,9 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     s_galaxy_sprite_filenames[
                         Math::RandomUint16(0, galaxy_sprite_filename_count-1)]);
             sprite->SetTranslation(
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
+                FloatVector2(
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
                     0.007f*object_layer_side_length,
@@ -1086,8 +1087,9 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     s_starfield_sprite_filenames[
                         Math::RandomUint16(0, starfield_sprite_filename_count-1)]);
             sprite->SetTranslation(
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
+                FloatVector2(
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
                     0.00125f*object_layer_side_length,

@@ -20,9 +20,7 @@
 namespace Xrb
 {
 
-void FprintTransform2 (FILE *fptr,
-                       FloatTransform2 const &transform,
-                       bool add_newline)
+void Fprint (FILE *fptr, FloatTransform2 const &transform, bool add_newline)
 {
     transform.Fprint(fptr, "%g", add_newline);
 }

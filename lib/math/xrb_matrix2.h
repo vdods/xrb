@@ -425,9 +425,7 @@ typedef Matrix2<Float> FloatMatrix2;
   * @param fptr The file stream to print to.
   * @param matrix The FloatMatrix2 to print.
   */
-void FprintMatrix2 (
-    FILE *fptr,
-    FloatMatrix2 const &matrix);
+void Fprint (FILE *fptr, FloatMatrix2 const &matrix);
 
 } // end of namespace Xrb
     

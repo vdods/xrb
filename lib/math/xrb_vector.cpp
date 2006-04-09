@@ -19,23 +19,17 @@
 namespace Xrb
 {
 
-void FprintVector (FILE *const fptr,
-                   FloatVector2 const &vector,
-                   bool const add_newline)
+void Fprint (FILE *const fptr, FloatVector2 const &vector, bool const add_newline)
 {
     vector.Fprint(fptr, "%g", add_newline);
 }
 
-void FprintVector (FILE *const fptr,
-                   Uint32Vector2 const &vector,
-                   bool const add_newline)
+void Fprint (FILE *const fptr, Uint32Vector2 const &vector, bool const add_newline)
 {
     vector.Fprint(fptr, "%u", add_newline);
 }
 
-void FprintVector (FILE *const fptr,
-                   Sint32Vector2 const &vector,
-                   bool const add_newline)
+void Fprint (FILE *const fptr, Sint32Vector2 const &vector, bool const add_newline)
 {
     vector.Fprint(fptr, "%d", add_newline);
 }

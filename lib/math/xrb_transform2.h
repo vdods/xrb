@@ -156,27 +156,11 @@ public:
         m_translation = translation;
         m_cached_transform_is_dirty = true;
     }
-    inline void SetTranslation (T x, T y)
-    {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
-        m_translation[Dim::X] = x;
-        m_translation[Dim::Y] = y;
-        m_cached_transform_is_dirty = true;
-    }
     inline void SetScaleFactors (Vector<T, 2> const &scale_factors)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
         m_scale_factors = scale_factors;
-        Dirtify();
-    }
-    inline void SetScaleFactors (T r, T s)
-    {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
-        m_scale_factors[Dim::X] = r;
-        m_scale_factors[Dim::Y] = s;
         Dirtify();
     }
     inline void SetScaleFactor (T scale_factor)
@@ -204,27 +188,11 @@ public:
         m_translation += translation;
         m_cached_transform_is_dirty = true;
     }
-    inline void Translate (T x, T y)
-    {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(x))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(y))
-        m_translation[Dim::X] += x;
-        m_translation[Dim::Y] += y;
-        m_cached_transform_is_dirty = true;
-    }
     inline void Scale (Vector<T, 2> const &scale_factors)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
         m_scale_factors *= scale_factors;
-        Dirtify();
-    }
-    inline void Scale (T r, T s)
-    {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(r))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(s))
-        m_scale_factors[Dim::X] *= r;
-        m_scale_factors[Dim::Y] *= s;
         Dirtify();
     }
     inline void Scale (T scale_factor)
@@ -436,9 +404,7 @@ typedef Transform2<Float> FloatTransform2;
   * @param fptr The file stream to print to.
   * @param transform The FloatTransform2 to print.
   */
-void FprintTransform2 (FILE *fptr,
-                       FloatTransform2 const &transform,
-                       bool add_newline = true);
+void Fprint (FILE *fptr, FloatTransform2 const &transform, bool add_newline = true);
 
 } // end of namespace Xrb
                        

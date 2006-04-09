@@ -13,7 +13,7 @@
 namespace Xrb
 {
 
-void FprintRect (
+void Fprint (
     FILE *fptr,
     FloatRect const &rect,
     bool const show_size_instead_of_top_right,
@@ -22,7 +22,7 @@ void FprintRect (
     rect.Fprint(fptr, "%g", show_size_instead_of_top_right, add_newline);
 }
 
-void FprintRect (
+void Fprint (
     FILE *fptr,
     Sint32Rect const &rect,
     bool const show_size_instead_of_top_right,

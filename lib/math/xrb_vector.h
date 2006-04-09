@@ -395,7 +395,7 @@ public:
         operator/=(Math::Sqrt(*this | *this));
     }
     /** I gave up trying for partial template specialization (or whatever it's
-      * called) to specify the two-parameter constructor for only
+      * called) to specify the two-parameter SetComponents for only
       * Vector<T, 2>, and settled for asserting that the dimension is 2.
       * @brief Assigns the specified ordered pair to this vector.
       * @param component0 The value to assign to the first component (m[0]).
@@ -408,7 +408,7 @@ public:
         m[1] = component1;
     }
     /** I gave up trying for partial template specialization (or whatever it's
-      * called) to specify the three-parameter constructor for only
+      * called) to specify the three-parameter SetComponents for only
       * Vector<T, 3>, and settled for asserting that the dimension is 3.
       * @brief Assigns the specified ordered triplet to this vector.
       * @param component0 The value to assign to the first component (m[0]).
@@ -747,10 +747,7 @@ typedef Vector<Sint32, 2> Sint32Vector2;
   * @param add_newline Indicates if a newline should be printed at the
   *                    end of the formatted output.
   */
-void FprintVector (
-    FILE *fptr,
-    FloatVector2 const &vector,
-    bool add_newline = true);
+void Fprint (FILE *fptr, FloatVector2 const &vector, bool add_newline = true);
 /** This is a convenience function to provide a default printf format to
   * Vector::Fprint.
   * @brief Prints the given Uint32Vector2 to the given file stream.
@@ -759,10 +756,7 @@ void FprintVector (
   * @param add_newline Indicates if a newline should be printed at the
   *                    end of the formatted output.
   */
-void FprintVector (
-    FILE *fptr,
-    Uint32Vector2 const &vector,
-    bool add_newline = true);
+void Fprint (FILE *fptr, Uint32Vector2 const &vector, bool add_newline = true);
 /** This is a convenience function to provide a default printf format to
   * Vector::Fprint.
   * @brief Prints the given Sint32Vector2 to the given file stream.
@@ -771,10 +765,7 @@ void FprintVector (
   * @param add_newline Indicates if a newline should be printed at the
   *                    end of the formatted output.
   */
-void FprintVector (
-    FILE *fptr,
-    Sint32Vector2 const &vector,
-    bool add_newline = true);
+void Fprint (FILE *fptr, Sint32Vector2 const &vector, bool add_newline = true);
 
 } // end of namespace Xrb
     

@@ -19,8 +19,7 @@
 namespace Xrb
 {
 
-void FprintMatrix2 (FILE *fptr,
-                    FloatMatrix2 const &matrix)
+void Fprint (FILE *fptr, FloatMatrix2 const &matrix)
 {
     matrix.Fprint(fptr, "%g");
 }

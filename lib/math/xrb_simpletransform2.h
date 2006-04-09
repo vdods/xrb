@@ -301,9 +301,7 @@ typedef SimpleTransform2<Sint32> Sint32SimpleTransform2;
   * @param fptr The file stream to print to.
   * @param matrix The FloatSimpleTransform2 to print.
   */
-void FprintSimpleTransform2 (
-    FILE *fptr,
-    FloatSimpleTransform2 const &simple_transform);
+void Fprint (FILE *fptr, FloatSimpleTransform2 const &simple_transform);
 
 } // end of namespace Xrb
     

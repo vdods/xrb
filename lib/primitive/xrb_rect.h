@@ -443,13 +443,13 @@ typedef Rect<Float> FloatRect;
   */
 typedef Rect<Sint32> Sint32Rect;
 
-void FprintRect (
+void Fprint (
     FILE *fptr,
     FloatRect const &rect,
     bool const show_size_instead_of_top_right = true,
     bool add_newline = true);
 
-void FprintRect (
+void Fprint (
     FILE *fptr,
     Sint32Rect const &rect,
     bool const show_size_instead_of_top_right = true,

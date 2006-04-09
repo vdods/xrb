@@ -401,7 +401,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
         else
         {
             ASSERT1(object_was_added == false)
-            FprintVector(stderr, object->GetTranslation());
+            Fprint(stderr, object->GetTranslation());
             ASSERT1(false)
             // error - nowhere to go
         }
