@@ -73,8 +73,6 @@ TODO:
   screen-relative moving is unnecessary.
 - Label text alignment doesn't seem to work (maybe it's just for non-word-wrapped labels)
 - move Sprite color mask and Compound color mask into Object
-- make Serializer::Write/ReadFloatTransform2 (and FloatVector2 and others)
-  into templatized methods.
 - when a modal widget is deleted or whatever, the mouseover is not being
   properly restored on whatever the mouse is actually over.
 - the map editor view should not create/destroy its own world -- it
@@ -185,11 +183,6 @@ TODO:
 - make sure all the GetShiftedAscii codes are correct
 - add "activated" to Button, which is configurable to be either when
   the button is pressed or pressed then released.
-- maybe change all {Serializer read functions which don't return a primitive
-  assignable type} to take a pointer to an object which should be populated
-  with the requested data (to avoid having to return large structures
-  by value)
-- (text) token reading in Serializer
 - change the IOE_IS_AT_END checking for how many bytes/bits are left
 - unit test for the size of certain data types (e.g. floats are 4 bytes,
   doubles are 8, etc).

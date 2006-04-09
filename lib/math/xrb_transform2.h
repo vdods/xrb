@@ -32,9 +32,8 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     inline Transform2 (bool post_translate)
-        :
-        m_post_translate(post_translate)
     {
+        m_post_translate = post_translate;
         Dirtify();
     }
     inline Transform2 (
@@ -42,43 +41,39 @@ public:
         Vector<T, 2> const &scale_factors,
         T angle,
         bool post_translate)
-        :
-        m_post_translate(post_translate)
     {
         m_translation = translation;
         m_scale_factors = scale_factors;
         m_angle = angle;
+        m_post_translate = post_translate;
         Dirtify();
     }
     inline Transform2 (
         SimpleTransform2<T> const &source,
         bool post_translate)
-        :
-        m_post_translate(post_translate)
     {
         m_translation = source.m_translation;
         m_scale_factors = source.m_scale_factors;
         m_angle = static_cast<T>(0);
+        m_post_translate = post_translate;
         Dirtify();
     }
     inline Transform2 (Transform2<T> const &source)
-        :
-        m_post_translate(source.m_post_translate)
     {
         m_translation = source.m_translation;
         m_scale_factors = source.m_scale_factors;
         m_angle = source.m_angle;
+        m_post_translate = source.m_post_translate;
         Dirtify();
     }
     inline Transform2 (
         Transform2<T> const &source,
         bool post_translate)
-        :
-        m_post_translate(post_translate)
     {
         m_translation = source.m_translation;
         m_scale_factors = source.m_scale_factors;
         m_angle = source.m_angle;
+        m_post_translate = post_translate;
         Dirtify();
     }
     inline ~Transform2 () { }
@@ -92,6 +87,7 @@ public:
         m_translation = source.m_translation;
         m_scale_factors = source.m_scale_factors;
         m_angle = source.m_angle;
+        // NOTE: does not set m_post_translate!
         Dirtify();
     }
 
@@ -193,6 +189,11 @@ public:
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
         m_angle = angle;
+        Dirtify();
+    }
+    inline void SetPostTranslate (bool post_translate)
+    {
+        m_post_translate = post_translate;
         Dirtify();
     }
 
@@ -397,7 +398,7 @@ private:
     Vector<T, 2> m_scale_factors;
     // angle in degrees
     T m_angle;
-    bool const m_post_translate;
+    bool m_post_translate;
 
     mutable Matrix2<T> m_cached_transform;
     mutable bool m_cached_transform_is_dirty;

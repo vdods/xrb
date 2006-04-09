@@ -449,7 +449,25 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    std::string ReadStdString (Uint32 *string_length = NULL);
+    inline std::string ReadStdString (Uint32 *string_length = NULL)
+    {
+        std::string retval;
+        ReadStdString(&retval, string_length);
+        return retval;
+    }
+    /** @brief Reads a std::string character string from the stream.
+      * @param destination A pointer to a std::string object to read into.
+      * @param string_length An optional pointer to a Uint32 which, if not
+      *                      null, will be assigned the actual length of the
+      *                      read-in string, not including the
+      *                      null-terminating character.
+      * @return A std::string character string read in from the stream.
+      * @note This is more or less an alias for the pure-virtual ReadString().
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    void ReadStdString (std::string *destination, Uint32 *string_length = NULL);
     /** @brief Writes the given std::string character string to the stream.
       * @param source The std::string character string to write to the stream.
       * @param string_length An optional pointer to a Uint32 which, if not
@@ -469,7 +487,19 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual Color ReadColor () = 0;
+    inline Color ReadColor ()
+    {
+        Color retval;
+        ReadColor(&retval);
+        return retval;
+    }
+    /** @brief Reads a Color from the stream.
+      * @param destination A pointer to the Color object to read into.
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadColor (Color *destination) = 0;
     /** @brief Writes the given std::string character string to the stream.
       * @param source The std::string character string to write to the stream.
       * @pre @c GetIsOpen() must return true, @c GetIODirection() must
@@ -484,7 +514,19 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual FloatVector2 ReadFloatVector2 () = 0;
+    inline FloatVector2 ReadFloatVector2 ()
+    {
+        FloatVector2 retval;
+        ReadFloatVector2(&retval);
+        return retval;
+    }
+    /** @brief Reads a FloatVector2 from the stream.
+      * @param destination A pointer to the FloatVector2 object to read into.
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadFloatVector2 (FloatVector2 *destination) = 0;
     /** @brief Writes the given FloatVector2 to the stream.
       * @param source The FloatVector2 to write to the stream.
       * @pre @c GetIsOpen() must return true, @c GetIODirection() must
@@ -499,7 +541,20 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual FloatSimpleTransform2 ReadFloatSimpleTransform2 () = 0;
+    inline FloatSimpleTransform2 ReadFloatSimpleTransform2 ()
+    {
+        FloatSimpleTransform2 retval;
+        ReadFloatSimpleTransform2(&retval);
+        return retval;
+    }
+    /** @brief Reads a FloatSimpleTransform2 from the stream.
+      * @param destination A pointer to the FloatSimpleTransform2 object to
+      *        read into.
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadFloatSimpleTransform2 (FloatSimpleTransform2 *destination) = 0;
     /** @brief Writes the given FloatSimpleTransform2 to the stream.
       * @param source The FloatSimpleTransform2 to write to the stream.
       * @pre @c GetIsOpen() must return true, @c GetIODirection() must
@@ -514,7 +569,19 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual FloatMatrix2 ReadFloatMatrix2 () = 0;
+    inline FloatMatrix2 ReadFloatMatrix2 ()
+    {
+        FloatMatrix2 retval;
+        ReadFloatMatrix2(&retval);
+        return retval;
+    }
+    /** @brief Reads a FloatMatrix2 from the stream.
+      * @param destination A pointer to the FloatMatrix2 object to read into.
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadFloatMatrix2 (FloatMatrix2 *destination) = 0;
     /** @brief Writes the given FloatMatrix2 to the stream.
       * @param source The FloatMatrix2 to write to the stream.
       * @pre @c GetIsOpen() must return true, @c GetIODirection() must
@@ -529,7 +596,20 @@ public:
       *      return IOD_READ, and @c GetIsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual FloatTransform2 ReadFloatTransform2 () = 0;
+    inline FloatTransform2 ReadFloatTransform2 ()
+    {
+        FloatTransform2 retval(true);
+        ReadFloatTransform2(&retval);
+        return retval;
+    }
+    /** @brief Reads a FloatTransform2 from the stream.
+      * @param destination A pointer to the FloatTransform2 object to read
+      *        into.
+      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadFloatTransform2 (FloatTransform2 *destination) = 0;
     /** @brief Writes the given FloatTransform2 to the stream.
       * @param source The FloatTransform2 to write to the stream.
       * @pre @c GetIsOpen() must return true, @c GetIODirection() must

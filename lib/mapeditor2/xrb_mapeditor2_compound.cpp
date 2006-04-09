@@ -921,7 +921,7 @@ void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
     {
         Instance<CompoundVertex> *vertex_instance =
             new Instance<CompoundVertex>(CompoundVertex(this));
-        (*vertex_instance)->m_coordinate = serializer.ReadFloatVector2();
+        serializer.ReadFloatVector2(&(*vertex_instance)->m_coordinate);
         m_vertex_list.push_back(vertex_instance);
     }
 

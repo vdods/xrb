@@ -105,7 +105,7 @@ void Engine2::Entity::CloneProperties (Engine2::Entity const *const entity)
 
 void Engine2::Entity::ReadClassSpecific (Serializer &serializer)
 {
-    m_wrapped_offset = serializer.ReadFloatVector2();
+    serializer.ReadFloatVector2(&m_wrapped_offset);
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
 }

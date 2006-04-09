@@ -74,19 +74,19 @@ public:
     virtual Uint32 ReadBufferString (char *destination, Uint32 destination_length);
     virtual Uint32 WriteBufferString (char const *source, Uint32 source_length);
 
-    virtual Color ReadColor ();
+    virtual void ReadColor (Color *destination);
     virtual void WriteColor (Color const &value);
 
-    virtual FloatVector2 ReadFloatVector2 ();
+    virtual void ReadFloatVector2 (FloatVector2 *destination);
     virtual void WriteFloatVector2 (FloatVector2 const &value);
 
-    virtual FloatSimpleTransform2 ReadFloatSimpleTransform2 ();
+    virtual void ReadFloatSimpleTransform2 (FloatSimpleTransform2 *destination);
     virtual void WriteFloatSimpleTransform2 (FloatSimpleTransform2 const &value);
 
-    virtual FloatMatrix2 ReadFloatMatrix2 ();
+    virtual void ReadFloatMatrix2 (FloatMatrix2 *destination);
     virtual void WriteFloatMatrix2 (FloatMatrix2 const &value);
 
-    virtual FloatTransform2 ReadFloatTransform2 ();
+    virtual void ReadFloatTransform2 (FloatTransform2 *destination);
     virtual void WriteFloatTransform2 (FloatTransform2 const &value);
 
 protected:

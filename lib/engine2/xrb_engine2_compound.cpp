@@ -104,7 +104,7 @@ void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
     ASSERT1(m_vertex_count > 0)
     m_vertex_array = new FloatVector2[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
-        m_vertex_array[i] = serializer.ReadFloatVector2();
+        serializer.ReadFloatVector2(&m_vertex_array[i]);
 
     m_polygon_count = serializer.ReadUint32();
     ASSERT1(m_polygon_count > 0)

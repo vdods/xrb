@@ -18,7 +18,6 @@ libxrb_la_SOURCES = \
     core/xrb_singletons.cpp \
     \
     core/serializers/xrb_binaryfileserializer.cpp \
-    core/serializers/xrb_compressionserializer.cpp \
     \
     engine2/xrb_engine2_compound.cpp \
     engine2/xrb_engine2_entity.cpp \
@@ -80,15 +79,19 @@ libxrb_la_SOURCES = \
     render/xrb_screencoord.cpp \
     \
     util/xrb_bitcache.cpp \
-    util/xrb_bitcachedcompression.cpp \
     util/xrb_bitcachedfile.cpp \
     util/xrb_characterfilter.cpp \
     util/xrb_frameratecalculator.cpp \
-    util/xrb_huffman.cpp \
     util/xrb_indentformatter.cpp \
     util/xrb_tokenizer.cpp \
     util/xrb_transformation.cpp \
     util/xrb_util.cpp
+
+# the compression stuff is temporarily out of service
+#    core/serializers/xrb_compressionserializer.cpp \
+#    util/xrb_bitcachedcompression.cpp \
+#    util/xrb_huffman.cpp \
+#
 
 # the mapeditor is temporarily out of service
 #    mapeditor2/xrb_mapeditor2_compound.cpp \
@@ -147,7 +150,6 @@ include_HEADERS = \
     core/xrb_statemachine.tcpp \
     \
     core/serializers/xrb_binaryfileserializer.h \
-    core/serializers/xrb_compressionserializer.h \
     \
     engine2/xrb_engine2_compound.h \
     engine2/xrb_engine2_entity.h \
@@ -224,11 +226,9 @@ include_HEADERS = \
     render/xrb_screencoord.h \
     \
     util/xrb_bitcache.h \
-    util/xrb_bitcachedcompression.h \
     util/xrb_bitcachedfile.h \
     util/xrb_characterfilter.h \
     util/xrb_frameratecalculator.h \
-    util/xrb_huffman.h \
     util/xrb_indentformatter.h \
     util/xrb_reference.h \
     util/xrb_tokenizer.h \
@@ -240,6 +240,12 @@ include_HEADERS = \
     parsers/xrb_datafilevalue.h \
     parsers/xrb_linecalculator.h
 
+# the compression stuff is temporarily out of service
+#    core/serializers/xrb_compressionserializer.h \
+#    util/xrb_bitcachedcompression.h \
+#    util/xrb_huffman.h \
+#
+    
 # the mapeditor is temporarily out of service
 #    mapeditor2/xrb_mapeditor2_compound.h \
 #    mapeditor2/xrb_mapeditor2_compoundentity.h \

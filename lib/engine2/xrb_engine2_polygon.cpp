@@ -143,7 +143,7 @@ void Engine2::Polygon::Read (
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
         m_vertex_array[i].m_model_coordinate = compound_vertex_array + serializer.ReadUint32();
-        m_vertex_array[i].m_texture_coordinate = serializer.ReadFloatVector2();
+        serializer.ReadFloatVector2(&m_vertex_array[i].m_texture_coordinate);
     }
     m_texture =
         Singletons::ResourceLibrary()->

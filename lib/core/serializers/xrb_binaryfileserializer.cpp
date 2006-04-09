@@ -243,24 +243,23 @@ inline Uint32 BinaryFileSerializer::WriteBufferString (
     return retval;
 }
 
-Color BinaryFileSerializer::ReadColor ()
+void BinaryFileSerializer::ReadColor (Color *const destination)
 {
-    Color retval;
+    ASSERT1(destination != NULL)
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::R]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::R]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::G]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::G]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::B]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::B]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::A]);
-    return retval;
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::A]);
 }
 
 void BinaryFileSerializer::WriteColor (Color const &value)
@@ -280,16 +279,15 @@ void BinaryFileSerializer::WriteColor (Color const &value)
     BinaryFileSerializer::WriteFloat(value[Dim::A]);
 }
 
-FloatVector2 BinaryFileSerializer::ReadFloatVector2 ()
+void BinaryFileSerializer::ReadFloatVector2 (FloatVector2 *const destination)
 {
-    FloatVector2 retval;
+    ASSERT1(destination != NULL)
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::X]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::X]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[Dim::Y]);
-    return retval;
+    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::Y]);
 }
 
 void BinaryFileSerializer::WriteFloatVector2 (FloatVector2 const &value)
@@ -301,24 +299,24 @@ void BinaryFileSerializer::WriteFloatVector2 (FloatVector2 const &value)
     BinaryFileSerializer::WriteFloat(value[Dim::Y]);
 }
 
-FloatSimpleTransform2 BinaryFileSerializer::ReadFloatSimpleTransform2 ()
+void BinaryFileSerializer::ReadFloatSimpleTransform2 (
+    FloatSimpleTransform2 *const destination)
 {
-    FloatSimpleTransform2 retval;
+    ASSERT1(destination != NULL)
 
-    BinaryFileSerializer::ReadFloat(&retval.m_scale_factors[Dim::X]);
+    BinaryFileSerializer::ReadFloat(&(*destination).m_scale_factors[Dim::X]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval.m_scale_factors[Dim::Y]);
+    BinaryFileSerializer::ReadFloat(&(*destination).m_scale_factors[Dim::Y]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval.m_translation[Dim::X]);
+    BinaryFileSerializer::ReadFloat(&(*destination).m_translation[Dim::X]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval.m_translation[Dim::Y]);
-    return retval;
+    BinaryFileSerializer::ReadFloat(&(*destination).m_translation[Dim::Y]);
 }
 
 void BinaryFileSerializer::WriteFloatSimpleTransform2 (
@@ -339,32 +337,31 @@ void BinaryFileSerializer::WriteFloatSimpleTransform2 (
     BinaryFileSerializer::WriteFloat(value.m_translation[Dim::Y]);
 }
 
-FloatMatrix2 BinaryFileSerializer::ReadFloatMatrix2 ()
+void BinaryFileSerializer::ReadFloatMatrix2 (FloatMatrix2 *const destination)
 {
-    FloatMatrix2 retval;
+    ASSERT1(destination != NULL)
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::A]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::A]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::B]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::B]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::X]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::X]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::C]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::C]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::D]);
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::D]);
     if (GetError() != IOE_NONE)
-        return retval;
+        return;
 
-    BinaryFileSerializer::ReadFloat(&retval[FloatMatrix2::Y]);
-    return retval;
+    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::Y]);
 }
 
 void BinaryFileSerializer::WriteFloatMatrix2 (FloatMatrix2 const &value)
@@ -392,26 +389,41 @@ void BinaryFileSerializer::WriteFloatMatrix2 (FloatMatrix2 const &value)
     BinaryFileSerializer::WriteFloat(value[FloatMatrix2::Y]);
 }
 
-FloatTransform2 BinaryFileSerializer::ReadFloatTransform2 ()
+void BinaryFileSerializer::ReadFloatTransform2 (
+    FloatTransform2 *const destination)
 {
-    FloatVector2 translation = BinaryFileSerializer::ReadFloatVector2();
-    if (GetError() != IOE_NONE)
-        return FloatTransform2(true);
+    ASSERT1(destination != NULL)
 
-    FloatVector2 scale = BinaryFileSerializer::ReadFloatVector2();
-    if (GetError() != IOE_NONE)
-        return FloatTransform2(true);
+    {
+        FloatVector2 translation;
+        BinaryFileSerializer::ReadFloatVector2(&translation);
+        if (GetError() != IOE_NONE)
+            return;
+        destination->SetTranslation(translation);
+    }
 
-    Float angle;
-    BinaryFileSerializer::ReadFloat(&angle);
-    if (GetError() != IOE_NONE)
-        return FloatTransform2(true);
+    {
+        FloatVector2 scale_factors;
+        BinaryFileSerializer::ReadFloatVector2(&scale_factors);
+        if (GetError() != IOE_NONE)
+            return;
+        destination->SetScaleFactors(scale_factors);
+    }
 
-    bool post_translate = BinaryFileSerializer::ReadBool();
-    if (GetError() != IOE_NONE)
-        return FloatTransform2(true);
+    {
+        Float angle;
+        BinaryFileSerializer::ReadFloat(&angle);
+        if (GetError() != IOE_NONE)
+            return;
+        destination->SetAngle(angle);
+    }
 
-    return FloatTransform2(translation, scale, angle, post_translate);
+    {
+        bool post_translate = BinaryFileSerializer::ReadBool();
+        if (GetError() != IOE_NONE)
+            return;
+        destination->SetPostTranslate(post_translate);
+    }
 }
 
 void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)

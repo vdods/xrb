@@ -46,6 +46,8 @@ Uint32 Serializer::ReadString (char **const destination)
 
 Uint32 Serializer::WriteString (char const *const source)
 {
+    ASSERT1(source != NULL)
+
     Uint32 actual_string_length = static_cast<Uint32>(strlen(source));
     Uint32 written_string_length =
         WriteBufferString(
@@ -54,15 +56,18 @@ Uint32 Serializer::WriteString (char const *const source)
     return written_string_length;
 }
 
-std::string Serializer::ReadStdString (Uint32 *const string_length)
+void Serializer::ReadStdString (std::string *const destination, Uint32 *const string_length)
 {
+    ASSERT1(destination != NULL)
+
     char buffer[MAX_SUPPORTED_STRING_BUFFER_SIZE];
     Uint32 const read_string_length =
         ReadBufferString(buffer, MAX_SUPPORTED_STRING_BUFFER_SIZE);
-    std::string retval(buffer);
-    if (string_length)
+    if (string_length != NULL)
         *string_length = read_string_length;
-    return retval;
+    if (GetError() != IOE_NONE)
+        return;
+    *destination = buffer;
 }
 
 void Serializer::WriteStdString (std::string const &source, Uint32 *const string_length)
@@ -71,7 +76,7 @@ void Serializer::WriteStdString (std::string const &source, Uint32 *const string
         WriteBufferString(
             source.c_str(), 
             static_cast<Uint32>(source.length()+1));
-    if (string_length)
+    if (string_length != NULL)
         *string_length = written_string_length;
 }
 

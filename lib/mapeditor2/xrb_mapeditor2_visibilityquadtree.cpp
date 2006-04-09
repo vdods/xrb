@@ -108,7 +108,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
 void MapEditor2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
 {
     // write the VisibilityQuadTree's structure info
-    m_center = serializer.ReadFloatVector2();
+    serializer.ReadFloatVector2(&m_center);
     serializer.ReadFloat(&m_half_side_length);
     serializer.ReadFloat(&m_radius);
     bool has_children = serializer.ReadBool();

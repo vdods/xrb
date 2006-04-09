@@ -143,8 +143,8 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
             GLTexture::Create,
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();
-    m_physical_size_ratios = serializer.ReadFloatVector2();
-    m_color_mask = serializer.ReadColor();
+    serializer.ReadFloatVector2(&m_physical_size_ratios);
+    serializer.ReadColor(&m_color_mask);
     IndicateRadiiNeedToBeRecalculated();
 
     ASSERT1(m_texture.GetIsValid())

@@ -417,7 +417,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
         Vertex vertex;
         vertex.m_compound_vertex =
             m_owner_compound->GetVertexInstance(serializer.ReadUint32());
-        vertex.m_texture_coordinate = serializer.ReadFloatVector2();
+        serializer.ReadFloatVector2(&vertex.m_texture_coordinate);
         m_vertex_list.push_back(vertex);
     }
     m_texture =

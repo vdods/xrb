@@ -144,7 +144,7 @@ void Engine2::Object::WriteObjectType (Serializer &serializer) const
 
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
-    FloatTransform2::operator=(serializer.ReadFloatTransform2());
+    serializer.ReadFloatTransform2(this);
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
