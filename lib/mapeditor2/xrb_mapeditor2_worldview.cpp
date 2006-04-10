@@ -715,7 +715,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
             render_context,
             GetParallaxedWorldToScreen(),
             pixels_in_view_radius,
-            GetViewCenter(),
+            GetCenter(),
             parallaxed_view_radius,
             m_metric_editing_mode);
     }

@@ -63,7 +63,6 @@ GameWidget::GameWidget (
     m_world_view =
         new WorldView(m_world_view_widget);
     world->AttachWorldView(m_world_view);
-    m_world_view->SetZoomFactor(1.0f/256.0f);
     m_world_view_widget->SetWorldView(m_world_view);
 
     // connect the controls [de]activate signal

@@ -68,6 +68,8 @@ protected:
 
 private:
 
+    void ProcessPlayerInput ();
+
     void EndGame ();
     
     void BeginIntro ();
@@ -109,6 +111,8 @@ private:
 
     Float m_intro_outro_time_total;
     Float m_intro_outro_time_left;
+    Float m_zoom_factor_begin;
+    Float m_zoom_factor_end;
     
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship

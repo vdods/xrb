@@ -66,9 +66,6 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_is_debug_info_enabled = false;
     SetDrawBorderGridLines(m_is_debug_info_enabled);
 
-    SetMinZoomFactor(0.0025f);
-    SetMaxZoomFactor(0.0078f);
-
     m_state_machine.Initialize(&WorldView::StatePreIntro);
 }
 
@@ -149,11 +146,15 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
             case Key::SEVEN:
             case Key::EIGHT:
             case Key::NINE:
+                // this looks wrong, but the keys start at 1 and end at 0,
+                // and the weapon indices start at 0 and end at 9.
                 if (m_player_ship != NULL)
                     m_player_ship->SetMainWeaponNumber(e->GetKeyCode() - Key::ONE);
                 break;
 
             case Key::ZERO:
+                // this looks wrong, but the keys start at 1 and end at 0,
+                // and the weapon indices start at 0 and end at 9.
                 if (m_player_ship != NULL)
                     m_player_ship->SetMainWeaponNumber(9);
                 break;
@@ -270,16 +271,101 @@ void WorldView::ProcessFrameOverride ()
     if (GetParentWorldViewWidget()->GetIsHidden())
         return;
 
+    // update the view position
+    if (m_player_ship != NULL)
+    {
+        /*
+        { // simple dead-on follow
+            SetCenter(m_player_ship->GetUnwrappedTranslation());
+            m_view_velocity = m_player_ship->GetVelocity();
+        }
+        */
+        // lookahead
+        if (GetFrameDT() > 0.0f)
+        { 
+            Float minor_axis_radius = GetMinorAxisRadius();
+            FloatVector2 ship_velocity_direction;
+            if (m_player_ship->GetVelocity().GetIsZero())
+                ship_velocity_direction = FloatVector2::ms_zero;
+            else
+                ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
+            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(0.003f * m_player_ship->GetSpeed()) / 90.0f;
+            FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
+    
+            FloatVector2 view_center_delta(traveling_at - (GetCenter() + m_view_velocity * GetFrameDT()));
+            bool is_view_recovering_this_frame;
+            static Float const s_max_view_center_delta = 500.0f;
+            static Float const s_time_to_recover = 0.5f;
+            if (view_center_delta.GetLength() > s_max_view_center_delta * GetFrameDT())
+            {
+                m_view_velocity += view_center_delta.GetNormalization() * s_max_view_center_delta * GetFrameDT();
+                is_view_recovering_this_frame = true;
+            }
+            else
+            {
+                m_view_velocity = m_player_ship->GetVelocity();
+                is_view_recovering_this_frame = false;
+            }
+    
+            if (!m_is_view_recovering && is_view_recovering_this_frame)
+            {
+                m_is_view_recovering = true;
+                m_calculated_view_center = GetCenter() + m_view_velocity * GetFrameDT();
+                m_recover_parameter = 0.0f;
+            }
+            else if (m_is_view_recovering && !is_view_recovering_this_frame)
+                m_calculated_view_center = m_calculated_view_center + m_view_velocity * GetFrameDT();
+            
+            if (m_is_view_recovering && m_recover_parameter < 1.0f)
+            {
+                ASSERT1(m_recover_parameter >= 0.0f)
+                SetCenter(
+                    m_calculated_view_center * (1.0f - m_recover_parameter) +
+                    traveling_at * m_recover_parameter);
+                m_recover_parameter += GetFrameDT() / s_time_to_recover;
+            }
+            else
+            {
+                SetCenter(traveling_at);
+                m_is_view_recovering = false;
+            }
+        }
+        /*
+        { // view dragging
+            Float minor_axis_radius = GetMinorAxisRadius();
+            FloatVector2 view_to_ship = GetCenter() - m_player_ship->GetUnwrappedTranslation();
+            Float view_to_ship_ratio = view_to_ship.GetLength() / (0.5f * minor_axis_radius);
+            Float dragging_factor;
+            if (view_to_ship_ratio >= 1.0f)
+                dragging_factor = m_dragging_factor * view_to_ship_ratio;
+            else
+                dragging_factor = m_dragging_factor;
+            dragging_factor *= GetFrameDT();
+        
+            SetCenter(
+                GetCenter() * (1.0f - dragging_factor)
+                +
+                m_player_ship->GetUnwrappedTranslation() * dragging_factor);
+            m_view_velocity = m_player_ship->GetVelocity();
+        }
+        */
+    }
+    else
+    {
+        SetCenter(GetCenter() + m_view_velocity * GetFrameDT());
+    }
+}
+
+void WorldView::ProcessPlayerInput ()
+{
     // handle view zooming (from accumulated mouse wheel events)
     {
         Float zoom_by_power;
 
         if (m_zoom_accumulator > 0)
-            zoom_by_power = Min(m_zoom_accumulator,
-                                m_zoom_speed*GetFrameDT());
+            zoom_by_power = Min(m_zoom_accumulator, m_zoom_speed*GetFrameDT());
         else if (m_zoom_accumulator < 0)
-            zoom_by_power = Max(m_zoom_accumulator,
-                                -m_zoom_speed*GetFrameDT());
+            zoom_by_power = Max(m_zoom_accumulator, -m_zoom_speed*GetFrameDT());
         else
             zoom_by_power = 0.0f;
 
@@ -292,11 +378,9 @@ void WorldView::ProcessFrameOverride ()
         Float rotate_by_angle;
 
         if (m_rotation_accumulator > 0)
-            rotate_by_angle = Min(m_rotation_accumulator,
-                                  m_rotation_speed*GetFrameDT());
+            rotate_by_angle = Min(m_rotation_accumulator, m_rotation_speed*GetFrameDT());
         else if (m_rotation_accumulator < 0)
-            rotate_by_angle = Max(m_rotation_accumulator,
-                                  -m_rotation_speed*GetFrameDT());
+            rotate_by_angle = Max(m_rotation_accumulator, -m_rotation_speed*GetFrameDT());
         else
             rotate_by_angle = 0.0f;
 
@@ -304,7 +388,7 @@ void WorldView::ProcessFrameOverride ()
         m_rotation_accumulator -= rotate_by_angle;
     }
 
-    // handle view movement and shooting (from the arrow keys and space)
+    // handle player ship input (movement, shooting and reticle coordinates)
     if (GetParentWorldViewWidget()->GetIsFocused())
     {
         Sint8 engine_right_left_input;
@@ -333,7 +417,7 @@ void WorldView::ProcessFrameOverride ()
                 (Singletons::KeyBinds()->GetIsKeyPressed(Key::C) ? UINT8_UPPER_BOUND : 0);
         }
 
-        Uint8 weapon_primary_input = 
+        Uint8 weapon_primary_input =
             Singletons::KeyBinds()->GetIsKeyPressed(Key::LMOUSE) ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
             Singletons::KeyBinds()->GetIsKeyPressed(Key::RMOUSE) ? UINT8_UPPER_BOUND : 0;
@@ -355,90 +439,6 @@ void WorldView::ProcessFrameOverride ()
             m_player_ship->SetWeaponSecondaryInput(weapon_secondary_input);
             m_player_ship->SetIsUsingAuxiliaryWeapon(is_using_auxiliary_weapon);
         }
-    }
-
-    // update the view position and angle
-    if (m_player_ship != NULL)
-    {
-        /*
-        { // simple dead-on follow
-            SetCenter(m_player_ship->GetUnwrappedTranslation());
-            m_view_velocity = m_player_ship->GetVelocity();
-        }
-        */
-        // lookahead
-        if (GetFrameDT() > 0.0f)
-        { 
-            Float minor_axis_radius = GetMinorAxisRadius();
-            FloatVector2 ship_velocity_direction;
-            if (m_player_ship->GetVelocity().GetIsZero())
-                ship_velocity_direction = FloatVector2::ms_zero;
-            else
-                ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
-            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(0.003f * m_player_ship->GetSpeed()) / 90.0f;
-            FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
-    
-            FloatVector2 view_center_delta(traveling_at - (GetViewCenter() + m_view_velocity * GetFrameDT()));
-            bool is_view_recovering_this_frame;
-            static Float const s_max_view_center_delta = 500.0f;
-            static Float const s_time_to_recover = 0.5f;
-            if (view_center_delta.GetLength() > s_max_view_center_delta * GetFrameDT())
-            {
-                m_view_velocity += view_center_delta.GetNormalization() * s_max_view_center_delta * GetFrameDT();
-                is_view_recovering_this_frame = true;
-            }
-            else
-            {
-                m_view_velocity = m_player_ship->GetVelocity();
-                is_view_recovering_this_frame = false;
-            }
-    
-            if (!m_is_view_recovering && is_view_recovering_this_frame)
-            {
-                m_is_view_recovering = true;
-                m_calculated_view_center = GetViewCenter() + m_view_velocity * GetFrameDT();
-                m_recover_parameter = 0.0f;
-            }
-            else if (m_is_view_recovering && !is_view_recovering_this_frame)
-                m_calculated_view_center = m_calculated_view_center + m_view_velocity * GetFrameDT();
-            
-            if (m_is_view_recovering && m_recover_parameter < 1.0f)
-            {
-                ASSERT1(m_recover_parameter >= 0.0f)
-                SetCenter(
-                    m_calculated_view_center * (1.0f - m_recover_parameter) +
-                    traveling_at * m_recover_parameter);
-                m_recover_parameter += GetFrameDT() / s_time_to_recover;
-            }
-            else
-            {
-                SetCenter(traveling_at);
-                m_is_view_recovering = false;
-            }
-        }
-        /*
-        { // view dragging
-            Float minor_axis_radius = GetMinorAxisRadius();
-            FloatVector2 view_to_ship = GetViewCenter() - m_player_ship->GetUnwrappedTranslation();
-            Float view_to_ship_ratio = view_to_ship.GetLength() / (0.5f * minor_axis_radius);
-            Float dragging_factor;
-            if (view_to_ship_ratio >= 1.0f)
-                dragging_factor = m_dragging_factor * view_to_ship_ratio;
-            else
-                dragging_factor = m_dragging_factor;
-            dragging_factor *= GetFrameDT();
-        
-            SetCenter(
-                GetViewCenter() * (1.0f - dragging_factor)
-                +
-                m_player_ship->GetUnwrappedTranslation() * dragging_factor);
-            m_view_velocity = m_player_ship->GetVelocity();
-        }
-        */
-    }
-    else
-    {
-        SetCenter(GetViewCenter() + m_view_velocity * GetFrameDT());
     }
 }
 
@@ -465,27 +465,33 @@ void WorldView::BeginOutro ()
 void WorldView::SetIntroTimeLeft (Float intro_time_left)
 {
     ASSERT1(m_intro_outro_time_total > 0.0f)
+    ASSERT1(m_zoom_factor_begin > 0.0f)
+    ASSERT1(m_zoom_factor_end > 0.0f)
 
     if (intro_time_left < 0.0f)
         intro_time_left = 0.0f;
 
     m_intro_outro_time_left = intro_time_left;
     ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
-    Float fade = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
-    GetParentWorldViewWidget()->SetColorMask(Color(fade, fade, fade, 1.0f));
+    Float parameter = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
+    GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
+    SetZoomFactor(m_zoom_factor_begin * (1.0 - parameter) + m_zoom_factor_end * parameter);
 }
 
 void WorldView::SetOutroTimeLeft (Float outro_time_left)
 {
     ASSERT1(m_intro_outro_time_total > 0.0f)
+    ASSERT1(m_zoom_factor_begin > 0.0f)
+    ASSERT1(m_zoom_factor_end > 0.0f)
 
     if (outro_time_left < 0.0f)
         outro_time_left = 0.0f;
 
     m_intro_outro_time_left = outro_time_left;
     ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
-    Float fade = m_intro_outro_time_left / m_intro_outro_time_total;
-    GetParentWorldViewWidget()->SetColorMask(Color(fade, fade, fade, 1.0f));
+    Float parameter = m_intro_outro_time_left / m_intro_outro_time_total;
+    GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
+    SetZoomFactor(m_zoom_factor_end * (1.0 - parameter) + m_zoom_factor_begin * parameter);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -508,6 +514,13 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
+            // relax the min/max zoom factors
+            SetMinZoomFactor(0.0f);
+            SetMaxZoomFactor(10000.0f);
+            // set the begin/end zoom factors
+            m_zoom_factor_begin = 0.0005f;
+            m_zoom_factor_end = 0.0039f;
+            // initialize the intro time        
             m_intro_outro_time_total = 2.0f;
             SetIntroTimeLeft(m_intro_outro_time_total);
             return true;
@@ -545,6 +558,9 @@ bool WorldView::StateIntro (StateMachineInput const input)
         case SM_EXIT:
             // show the GameWidget's controls
             m_sender_show_controls.Signal();
+            // zero out the zoom and rotation accumulators
+            m_zoom_accumulator = 0.0f;
+            m_rotation_accumulator = 0.0f;
             return true;
     }
     return false;
@@ -555,12 +571,24 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
     STATE_MACHINE_STATUS("StateNormalGameplay")
     switch (input)
     {
+        case SM_ENTER:
+            // set the in-game zoom factor limits
+            SetMinZoomFactor(0.0025f);
+            SetMaxZoomFactor(0.0078f);
+            break;
+    
         case IN_PROCESS_FRAME:
-            // we're just waiting for game over to begin.
+            ProcessPlayerInput();        
             return true;
 
         case IN_BEGIN_GAME_OVER:
             TRANSITION_TO(StateGameOver);
+            return true;
+
+        case IN_BEGIN_OUTRO:
+            // we can go straight to the outro if the player hits
+            // the "end" button in the inventory panel
+            TRANSITION_TO(StateOutro);
             return true;
     }
     return false;
@@ -596,6 +624,13 @@ bool WorldView::StateOutro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
+            // relax the min/max zoom factors
+            SetMinZoomFactor(0.0f);
+            SetMaxZoomFactor(10000.0f);
+            // set the begin/end zoom factors
+            m_zoom_factor_begin = GetZoomFactor();
+            m_zoom_factor_end = 0.0005f;
+            // initialize the outro time        
             m_intro_outro_time_total = 2.0f;
             SetOutroTimeLeft(m_intro_outro_time_total);
             // hide the GameWidget's controls

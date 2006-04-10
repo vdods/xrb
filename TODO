@@ -41,7 +41,6 @@ CURRENT:
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
-- add zooming to the disasteroids intro/outro
 - when player ship dies, it should eject its current equipped inventory,
   with the exception of the starting inventory -- the items will be spawned
   as Powerups, which the player can then recollect.

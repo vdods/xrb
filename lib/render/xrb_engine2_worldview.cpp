@@ -66,7 +66,7 @@ Float Engine2::WorldView::GetViewDepth (Engine2::ObjectLayer const *object_layer
     if (object_layer == NULL)
         object_layer = GetWorld()->GetMainObjectLayer();
 
-    return object_layer->GetZDepth() - 1.0f / GetViewZoomFactor();
+    return object_layer->GetZDepth() - 1.0f / GetZoomFactor();
 }
 
 Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *object_layer) const
@@ -83,7 +83,7 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
         CalculateViewRadius(
             world_to_screen.GetInverse(),
             GetParentWorldViewWidget()->GetScreenRect(),
-            GetViewCenter())
+            GetCenter())
         *
         GetParallaxFactor(
 //             GetViewDepth(object_layer), // this seems wrong, because the view depth is derived from the main object layer
@@ -348,7 +348,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                 view_render_context,
                 parallaxed_world_to_screen,
                 pixels_in_view_radius,
-                GetViewCenter(),
+                GetCenter(),
                 parallaxed_view_radius);
 
             m_draw_info.m_drawn_sprite_count += drawn_sprite_count;
@@ -380,7 +380,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             0,
             true,
             GetMainObjectLayer()->GetIsWrapped(),
-            GetViewCenter(),
+            GetCenter(),
             parallaxed_view_radius,
             Color(1.0f, 1.0f, 0.0f, 1.0f));
 
@@ -487,7 +487,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         m_current_grid_scale+1,
         false,
         is_wrapped,
-        GetViewCenter(),
+        GetCenter(),
         view_radius,
         Color(0.4f, 0.4f, 0.4f, 1.0f));
     // draw the major grid
@@ -496,7 +496,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         m_current_grid_scale,
         false,
         is_wrapped,
-        GetViewCenter(),
+        GetCenter(),
         view_radius,
         Color(0.7f, 0.7f, 0.7f, 1.0f));
 }
@@ -655,7 +655,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // perform the world-to-view transformation
     ASSERT1(GetScaleFactors()[Dim::X] == 1.0f)
     ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f)
-    glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
+    glRotatef(FloatTransform2::GetAngle(), 0.0f, 0.0f, 1.0f);
     glTranslatef(
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],

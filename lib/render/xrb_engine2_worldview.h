@@ -57,9 +57,9 @@ namespace Engine2
         inline WorldViewWidget *GetParentWorldViewWidget () const { return m_parent_world_view_widget; }
         inline World *GetWorld () const { return m_world; }
         inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
-        inline Float GetViewZoomFactor () const { return m_zoom_factor; }
-        inline FloatVector2 GetViewCenter () const { return -GetTranslation(); }
-        inline Float GetViewAngle () const { return -GetAngle(); }
+        inline Float GetZoomFactor () const { return m_zoom_factor; }
+        inline FloatVector2 GetCenter () const { return -GetTranslation(); }
+        inline Float GetAngle () const { return -FloatTransform2::GetAngle(); }
         inline bool GetIsViewLocked () const { return m_is_view_locked; }
         inline bool GetDrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 GetCompoundTransformation () const;

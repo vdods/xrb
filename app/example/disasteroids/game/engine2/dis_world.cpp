@@ -869,7 +869,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     {
         WorldView *world_view = DStaticCast<WorldView *>(*it);
         ASSERT1(world_view != NULL)
-        FloatVector2 world_view_center(world_view->GetViewCenter());
+        FloatVector2 world_view_center(world_view->GetCenter());
 
         // temp hack until real wrapped view coordinates are done
         {
