@@ -113,9 +113,10 @@ private:
 
     enum
     {
-        IN_BEGIN_INTRO = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_PROCESS_FRAME = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        
+        IN_BEGIN_INTRO,
         IN_END_INTRO,
-        IN_PROCESS_FRAME,
         IN_PLAYER_SHIP_DIED,
         IN_END_GAME,
         IN_WAIT_AFTER_PLAYER_DEATH_DONE,
@@ -193,9 +194,8 @@ private:
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
 
-    SignalSender0 m_internal_sender_show_game_over_label;
-    SignalSender0 m_internal_sender_hide_game_over_label;
     SignalSender0 m_internal_sender_begin_intro;
+    SignalSender0 m_internal_sender_begin_game_over;
     SignalSender0 m_internal_sender_begin_outro;
 
     SignalReceiver0 m_internal_receiver_end_game;

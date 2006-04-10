@@ -295,9 +295,8 @@ World::World (
     m_state_machine(this),
     m_sender_submit_score(this),
     m_sender_end_game(this),
-    m_internal_sender_show_game_over_label(this),
-    m_internal_sender_hide_game_over_label(this),
     m_internal_sender_begin_intro(this),
+    m_internal_sender_begin_game_over(this),
     m_internal_sender_begin_outro(this),
     m_internal_receiver_end_game(&World::EndGame, this),
     m_internal_receiver_end_intro(&World::EndIntro, this),
@@ -368,21 +367,17 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
-    // connect the show/hide game over label signals
-    SignalHandler::Connect0(
-        &m_internal_sender_show_game_over_label,
-        dis_world_view->ReceiverShowGameOverLabel());
-    SignalHandler::Connect0(
-        &m_internal_sender_hide_game_over_label,
-        dis_world_view->ReceiverHideGameOverLabel());
     // connect the worldview's end game signal
     SignalHandler::Connect0(
         dis_world_view->SenderEndGame(),
         &m_internal_receiver_end_game);
-    // connect the worldview's begin intro/outro signals
+    // connect the worldview's begin intro/gameover/outro signals
     SignalHandler::Connect0(
         &m_internal_sender_begin_intro,
         dis_world_view->ReceiverBeginIntro());
+    SignalHandler::Connect0(
+        &m_internal_sender_begin_game_over,
+        dis_world_view->ReceiverBeginGameOver());
     SignalHandler::Connect0(
         &m_internal_sender_begin_outro,
         dis_world_view->ReceiverBeginOutro());
@@ -539,8 +534,8 @@ bool World::StateGameOver (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            // put up the game over label
-            m_internal_sender_show_game_over_label.Signal();
+            // signal the worldview that game over has started
+            m_internal_sender_begin_game_over.Signal();
             ScheduleStateMachineInput(IN_GAME_OVER_DONE, 3.0f);
             return true;
 
@@ -549,11 +544,6 @@ bool World::StateGameOver (StateMachineInput const input)
             return true;
             
         case IN_PROCESS_FRAME:
-            return true;
-
-        case SM_EXIT:
-            // take down the game over label
-            m_internal_sender_hide_game_over_label.Signal();
             return true;
     }
     return false;

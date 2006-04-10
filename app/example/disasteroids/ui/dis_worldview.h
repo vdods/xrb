@@ -43,10 +43,9 @@ public:
     inline SignalSender0 const *SenderEndIntro () { return &m_sender_end_intro; }
     inline SignalSender0 const *SenderEndOutro () { return &m_sender_end_outro; }
 
-    inline SignalReceiver0 const *ReceiverShowGameOverLabel () { return &m_receiver_show_game_over_label; }
-    inline SignalReceiver0 const *ReceiverHideGameOverLabel () { return &m_receiver_hide_game_over_label; }
     inline SignalReceiver0 const *ReceiverEndGame () { return &m_receiver_end_game; }
     inline SignalReceiver0 const *ReceiverBeginIntro () { return &m_receiver_begin_intro; }
+    inline SignalReceiver0 const *ReceiverBeginGameOver () { return &m_receiver_begin_game_over; }
     inline SignalReceiver0 const *ReceiverBeginOutro () { return &m_receiver_begin_outro; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
@@ -69,10 +68,10 @@ protected:
 
 private:
 
-    void ShowGameOverLabel ();
-    void HideGameOverLabel ();
     void EndGame ();
+    
     void BeginIntro ();
+    void BeginGameOver ();
     void BeginOutro ();
 
     void SetIntroTimeLeft (Float intro_time_left);
@@ -83,14 +82,17 @@ private:
 
     enum
     {
-        IN_BEGIN_INTRO = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
-        IN_PROCESS_FRAME,
+        IN_PROCESS_FRAME = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        
+        IN_BEGIN_INTRO,
+        IN_BEGIN_GAME_OVER,
         IN_BEGIN_OUTRO
     };
 
     bool StatePreIntro (StateMachineInput);
     bool StateIntro (StateMachineInput);
     bool StateNormalGameplay (StateMachineInput);
+    bool StateGameOver (StateMachineInput);
     bool StateOutro (StateMachineInput);
     bool StatePostOutro (StateMachineInput);
 
@@ -179,10 +181,9 @@ private:
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
 
-    SignalReceiver0 m_receiver_show_game_over_label;
-    SignalReceiver0 m_receiver_hide_game_over_label;
     SignalReceiver0 m_receiver_end_game;
     SignalReceiver0 m_receiver_begin_intro;
+    SignalReceiver0 m_receiver_begin_game_over;
     SignalReceiver0 m_receiver_begin_outro;
 }; // end of class WorldView
 

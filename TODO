@@ -34,7 +34,6 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- move the game-over-label-showing control into WorldView's state machine
 - move EventStateMachineInput into Xrb as a real event
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer

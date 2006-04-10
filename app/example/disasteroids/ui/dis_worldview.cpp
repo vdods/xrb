@@ -41,10 +41,9 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_end_game(this),
     m_sender_end_intro(this),
     m_sender_end_outro(this),
-    m_receiver_show_game_over_label(&WorldView::ShowGameOverLabel, this),
-    m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this),
     m_receiver_end_game(&WorldView::EndGame, this),
     m_receiver_begin_intro(&WorldView::BeginIntro, this),
+    m_receiver_begin_game_over(&WorldView::BeginGameOver, this),
     m_receiver_begin_outro(&WorldView::BeginOutro, this)
 {
     m_player_ship = NULL;
@@ -443,16 +442,6 @@ void WorldView::ProcessFrameOverride ()
     }
 }
 
-void WorldView::ShowGameOverLabel ()
-{
-    m_sender_show_game_over_label.Signal();
-}
-
-void WorldView::HideGameOverLabel ()
-{
-    m_sender_hide_game_over_label.Signal();
-}
-
 void WorldView::EndGame ()
 {
     m_sender_end_game.Signal();
@@ -461,6 +450,11 @@ void WorldView::EndGame ()
 void WorldView::BeginIntro ()
 {
     ScheduleStateMachineInput(IN_BEGIN_INTRO, 0.0f);
+}
+
+void WorldView::BeginGameOver ()
+{
+    ScheduleStateMachineInput(IN_BEGIN_GAME_OVER, 0.0f);
 }
 
 void WorldView::BeginOutro ()
@@ -562,11 +556,35 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
     switch (input)
     {
         case IN_PROCESS_FRAME:
+            // we're just waiting for game over to begin.
+            return true;
+
+        case IN_BEGIN_GAME_OVER:
+            TRANSITION_TO(StateGameOver);
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StateGameOver (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateGameOver")
+    switch (input)
+    {
+        case SM_ENTER:
+            m_sender_show_game_over_label.Signal();            
+            return true;
+    
+        case IN_PROCESS_FRAME:
             // we're just waiting for the outro to begin.
             return true;
 
         case IN_BEGIN_OUTRO:
             TRANSITION_TO(StateOutro);
+            return true;
+
+        case SM_EXIT:
+            m_sender_hide_game_over_label.Signal();
             return true;
     }
     return false;
