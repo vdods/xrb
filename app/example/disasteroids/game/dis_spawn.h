@@ -170,7 +170,7 @@ Powerup *SpawnMineral (
     Float scale_factor,
     Float first_moment,
     FloatVector2 const &velocity,
-    Uint8 mineral_type);
+    Uint8 mineral_index);
     
 DamageExplosion *SpawnDamageExplosion (
     Engine2::World *world,

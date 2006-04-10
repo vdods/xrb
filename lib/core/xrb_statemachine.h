@@ -46,7 +46,7 @@ public:
     void RunCurrentState (StateMachineInput input);
     void Shutdown ();
     
-    void RequestStateTransition (State state);
+    void SetNextState (State state);
 
 private:
 

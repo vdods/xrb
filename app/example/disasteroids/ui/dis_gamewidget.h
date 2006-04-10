@@ -59,15 +59,18 @@ public:
     void SetRenderFrameTime (Uint32 render_frame_time);
     void SetFramerate (Float framerate);
 
-    void SetMineralInventory (Uint8 mineral_type, Float mineral_inventory);
+    void SetMineralInventory (Uint8 mineral_index, Float mineral_inventory);
 
-    void ActivateInventoryPanel ();
-    void DeactivateInventoryPanel ();
-    
 private:
 
     void SetTimeAlive (Float time_alive);
 
+    void ShowControls ();
+    void HideControls ();
+    
+    void ActivateInventoryPanel ();
+    void DeactivateInventoryPanel ();
+    
     void UpdateTimeAliveLabel ();
 
     WorldView *m_world_view;
@@ -83,15 +86,20 @@ private:
     ValueLabel<Uint32> *m_render_frame_time_label;
     ValueLabel<Float> *m_framerate_label;
 
-    ValueLabel<Uint32> *m_lives_remaining_label;
-    ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
-
+    Layout *m_stats_and_inventory_layout;
+    
     Label *m_time_alive_label;
     Float m_time_alive;
+    
+    ValueLabel<Uint32> *m_lives_remaining_label;
+    ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
+    
     ValueLabel<Uint32> *m_score_label;
     ProgressBar *m_stoke_o_meter;
 
     SpacerWidget *m_view_spacer_widget;
+    
+    Layout *m_ship_status_layout;
     
     ProgressBar *m_armor_status;
     ProgressBar *m_shield_status;
@@ -103,6 +111,9 @@ private:
     SignalReceiver1<PlayerShip *> m_receiver_set_player_ship;
     SignalReceiver1<Float> m_internal_receiver_set_time_alive;
     
+    SignalReceiver0 m_internal_receiver_show_controls;
+    SignalReceiver0 m_internal_receiver_hide_controls;
+
     SignalReceiver0 m_internal_receiver_activate_inventory_panel;
     SignalReceiver0 m_internal_receiver_deactivate_inventory_panel;
 

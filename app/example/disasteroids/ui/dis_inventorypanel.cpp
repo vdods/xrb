@@ -67,28 +67,28 @@ InventoryPanel::InventoryPanel (
     // a horizontal layout for the price display
     Layout *price_layout = new Layout(HORIZONTAL, main_layout, "InventoryPanel price layout");
 
-    for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
+    for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
-        m_mineral_cost_label[mineral_type] =
+        m_mineral_cost_label[mineral_index] =
             new ValueLabel<Uint32>(
                 "%u",
                 Util::TextToUint32,
                 price_layout);
-        m_mineral_cost_label[mineral_type]->SetIsHeightFixedToTextHeight(true);
-        m_mineral_cost_label[mineral_type]->SetAlignment(Dim::X, RIGHT);
-        m_mineral_cost_label[mineral_type]->SetValue(0);
-        m_mineral_cost_label[mineral_type]->Disable();
+        m_mineral_cost_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
+        m_mineral_cost_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
+        m_mineral_cost_label[mineral_index]->SetValue(0);
+        m_mineral_cost_label[mineral_index]->Disable();
 
-        m_mineral_icon_label[mineral_type] =
+        m_mineral_icon_label[mineral_index] =
             new Label(
                 Singletons::ResourceLibrary()->
                     LoadFilename<GLTexture>(
                         GLTexture::Create,
-                        Item::GetMineralSpriteFilename(mineral_type)),
+                        Item::GetMineralSpriteFilename(mineral_index)),
                 price_layout);
-        m_mineral_icon_label[mineral_type]->FixWidth(m_mineral_cost_label[mineral_type]->GetHeight());
-        m_mineral_icon_label[mineral_type]->FixHeight(m_mineral_cost_label[mineral_type]->GetHeight());
-        m_mineral_icon_label[mineral_type]->Disable();
+        m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->GetHeight());
+        m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->GetHeight());
+        m_mineral_icon_label[mineral_index]->Disable();
     }
     // a spacer to make things look even
     new SpacerWidget(price_layout);
@@ -163,7 +163,7 @@ void InventoryPanel::UpdatePanelState ()
 
         if (m_prices_are_shown)
         {
-            for (Uint32 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
+            for (Uint32 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
             {
                 Uint32 mineral_cost;
                 if (m_inventory_owner_ship->GetIsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
@@ -172,28 +172,28 @@ void InventoryPanel::UpdatePanelState ()
                     mineral_cost = Item::GetItemPrice(
                         m_currently_shown_price_item_type,
                         m_currently_shown_price_upgrade_level,
-                        mineral_type);
-                m_mineral_cost_label[mineral_type]->SetValue(mineral_cost);
+                        mineral_index);
+                m_mineral_cost_label[mineral_index]->SetValue(mineral_cost);
 
                 if (mineral_cost > 0)
                 {
-                    m_mineral_cost_label[mineral_type]->Enable();
-                    m_mineral_icon_label[mineral_type]->Enable();
+                    m_mineral_cost_label[mineral_index]->Enable();
+                    m_mineral_icon_label[mineral_index]->Enable();
                 }
                 else
                 {
-                    m_mineral_cost_label[mineral_type]->Disable();
-                    m_mineral_icon_label[mineral_type]->Disable();
+                    m_mineral_cost_label[mineral_index]->Disable();
+                    m_mineral_icon_label[mineral_index]->Disable();
                 }
                 
                 Uint32 player_ship_minerals =
                     static_cast<Uint32>(
-                        m_inventory_owner_ship->GetMineralInventory(mineral_type));
-                Uint32 item_cost_minerals = m_mineral_cost_label[mineral_type]->GetValue();
+                        m_inventory_owner_ship->GetMineralInventory(mineral_index));
+                Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
                 if (player_ship_minerals < item_cost_minerals)
-                    m_mineral_cost_label[mineral_type]->SetColorMask(ms_not_affordable_mineral_color_mask);
+                    m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
                 else
-                    m_mineral_cost_label[mineral_type]->SetColorMask(ms_affordable_mineral_color_mask);
+                    m_mineral_cost_label[mineral_index]->SetColorMask(ms_affordable_mineral_color_mask);
             }
         }
     }
@@ -271,10 +271,10 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
     m_currently_shown_price_upgrade_level = upgrade_level;
 
     // enable the widgets and set the prices
-    for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
+    for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
-        ASSERT1(!m_mineral_cost_label[mineral_type]->GetIsEnabled())
-        ASSERT1(!m_mineral_icon_label[mineral_type]->GetIsEnabled())
+        ASSERT1(!m_mineral_cost_label[mineral_index]->GetIsEnabled())
+        ASSERT1(!m_mineral_icon_label[mineral_index]->GetIsEnabled())
 
         Uint32 mineral_cost;
         if (m_inventory_owner_ship->GetIsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
@@ -283,23 +283,23 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
             mineral_cost = Item::GetItemPrice(
                 m_currently_shown_price_item_type,
                 m_currently_shown_price_upgrade_level,
-                mineral_type);
+                mineral_index);
 
         if (mineral_cost > 0)
         {
-            m_mineral_cost_label[mineral_type]->Enable();
-            m_mineral_icon_label[mineral_type]->Enable();
+            m_mineral_cost_label[mineral_index]->Enable();
+            m_mineral_icon_label[mineral_index]->Enable();
 
-            m_mineral_cost_label[mineral_type]->SetValue(mineral_cost);
+            m_mineral_cost_label[mineral_index]->SetValue(mineral_cost);
         
             Uint32 player_ship_minerals =
                 static_cast<Uint32>(
-                    m_inventory_owner_ship->GetMineralInventory(mineral_type));
-            Uint32 item_cost_minerals = m_mineral_cost_label[mineral_type]->GetValue();
+                    m_inventory_owner_ship->GetMineralInventory(mineral_index));
+            Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
             if (player_ship_minerals < item_cost_minerals)
-                m_mineral_cost_label[mineral_type]->SetColorMask(ms_not_affordable_mineral_color_mask);
+                m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
             else
-                m_mineral_cost_label[mineral_type]->SetColorMask(ms_affordable_mineral_color_mask);
+                m_mineral_cost_label[mineral_index]->SetColorMask(ms_affordable_mineral_color_mask);
         }
     }
 

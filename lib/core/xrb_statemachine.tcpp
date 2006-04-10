@@ -60,7 +60,7 @@ void StateMachine<OwnerClass>::Shutdown ()
 }
 
 template <typename OwnerClass>
-void StateMachine<OwnerClass>::RequestStateTransition (State state)
+void StateMachine<OwnerClass>::SetNextState (State state)
 {
     ASSERT1(m_is_running_a_state && "This method should only be used from inside a state")
     ASSERT1(m_current_state != NULL && "This state machine has not been initialized")

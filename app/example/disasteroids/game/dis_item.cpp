@@ -52,7 +52,7 @@ Item *Item::Create (ItemType const type, Uint8 const upgrade_level)
     }
 }
 
-std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_type)
+std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_index)
 {
     static std::string const s_mineral_sprite_filename[MINERAL_COUNT] =
     {
@@ -62,14 +62,14 @@ std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_type)
         "resources/mineral_3.png",
     };
 
-    ASSERT1(mineral_type < MINERAL_COUNT)
-    return s_mineral_sprite_filename[mineral_type];
+    ASSERT1(mineral_index < MINERAL_COUNT)
+    return s_mineral_sprite_filename[mineral_index];
 }
 
 Uint32 Item::GetItemPrice (
     ItemType const item_type,
     Uint8 const upgrade_level,
-    Uint8 const mineral_type)
+    Uint8 const mineral_index)
 {
     static Uint32 const s_item_price[IT_COUNT][UPGRADE_LEVEL_COUNT][MINERAL_COUNT] =
     {
@@ -161,9 +161,9 @@ Uint32 Item::GetItemPrice (
 
     ASSERT1(item_type < IT_COUNT)
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
-    ASSERT1(mineral_type < MINERAL_COUNT)
+    ASSERT1(mineral_index < MINERAL_COUNT)
 
-    return s_item_price[item_type][upgrade_level][mineral_type];
+    return s_item_price[item_type][upgrade_level][mineral_index];
 }
 
 } // end of namespace Dis

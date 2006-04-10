@@ -11,6 +11,7 @@
 #include "dis_worldview.h"
 
 #include "dis_entity.h"
+#include "dis_events.h"
 #include "dis_playership.h"
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
@@ -26,19 +27,25 @@ namespace Dis
 WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     :
     Engine2::WorldView(parent_world_view_widget),
+    EventHandler(parent_world_view_widget->GetOwnerEventQueue()),
     SignalHandler(),
+    m_state_machine(this),
     m_sender_player_ship_changed(this),
     m_sender_is_debug_info_enabled_changed(this),
+    m_sender_show_controls(this),
+    m_sender_hide_controls(this),
     m_sender_activate_inventory_panel(this),
     m_sender_deactivate_inventory_panel(this),
     m_sender_show_game_over_label(this),
     m_sender_hide_game_over_label(this),
     m_sender_end_game(this),
-    m_receiver_enable_inventory_panel(&WorldView::EnableInventoryPanel, this),
-    m_receiver_disable_inventory_panel(&WorldView::DisableInventoryPanel, this),
+    m_sender_end_intro(this),
+    m_sender_end_outro(this),
     m_receiver_show_game_over_label(&WorldView::ShowGameOverLabel, this),
     m_receiver_hide_game_over_label(&WorldView::HideGameOverLabel, this),
-    m_receiver_end_game(&WorldView::EndGame, this)
+    m_receiver_end_game(&WorldView::EndGame, this),
+    m_receiver_begin_intro(&WorldView::BeginIntro, this),
+    m_receiver_begin_outro(&WorldView::BeginOutro, this)
 {
     m_player_ship = NULL;
 
@@ -59,10 +66,11 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_use_dvorak = false;
     m_is_debug_info_enabled = false;
     SetDrawBorderGridLines(m_is_debug_info_enabled);
-    m_disable_inventory_panel = true;
 
     SetMinZoomFactor(0.0025f);
     SetMaxZoomFactor(0.0078f);
+
+    m_state_machine.Initialize(&WorldView::StatePreIntro);
 }
 
 WorldView::~WorldView ()
@@ -95,8 +103,14 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::ESCAPE:
-                if (!m_disable_inventory_panel)
+                // not allowed to use the inventory panel if we're in the intro or outro
+                if (m_state_machine.GetCurrentState() != &WorldView::StatePreIntro &&
+                    m_state_machine.GetCurrentState() != &WorldView::StateIntro &&
+                    m_state_machine.GetCurrentState() != &WorldView::StateOutro &&
+                    m_state_machine.GetCurrentState() != &WorldView::StatePostOutro)
+                {
                     m_sender_activate_inventory_panel.Signal();
+                }
                 break;
         
             case Key::KP_DIVIDE:
@@ -224,25 +238,35 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 
 bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
 {
-/*        
-    // get the mouse movement's delta, in world coordinates
-    FloatVector2 position_delta(
-        GetParallaxedScreenToWorld() * FloatVector2::ms_zero -
-        GetParallaxedScreenToWorld() * e->GetDelta().StaticCast<Float>());
+    return true;
+}
 
-    // the right mouse is being held and neither shift key is pressed, drag the view
-    if (e->GetIsRightMouseButtonPressed() &&
-        !e->GetIsEitherShiftKeyPressed())
+bool WorldView::ProcessEventOverride (Event const *const e)
+{
+    ASSERT1(e != NULL)
+
+    if (e->GetType() != Event::CUSTOM)
+        return false;
+        
+    EventBase const *dis_event = DStaticCast<EventBase const *>(e);
+    switch (dis_event->GetCustomType())
     {
-        // translate the view by the transformed delta
-        MoveView(position_delta);
+        case EventBase::STATE_MACHINE_INPUT:
+            m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
+            break;
+
+        default:
+            ASSERT1(false && "Unhandled custom event")
+            break;
     }
-*/
+
     return true;
 }
 
 void WorldView::ProcessFrameOverride ()
 {
+    m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
+
     // don't do anything if this view is hidden
     if (GetParentWorldViewWidget()->GetIsHidden())
         return;
@@ -419,17 +443,6 @@ void WorldView::ProcessFrameOverride ()
     }
 }
 
-void WorldView::EnableInventoryPanel ()
-{
-    m_disable_inventory_panel = false;
-}
-
-void WorldView::DisableInventoryPanel ()
-{
-    m_disable_inventory_panel = true;
-    m_sender_deactivate_inventory_panel.Signal();
-}
-
 void WorldView::ShowGameOverLabel ()
 {
     m_sender_show_game_over_label.Signal();
@@ -444,6 +457,173 @@ void WorldView::EndGame ()
 {
     m_sender_end_game.Signal();
 }
+
+void WorldView::BeginIntro ()
+{
+    ScheduleStateMachineInput(IN_BEGIN_INTRO, 0.0f);
+}
+
+void WorldView::BeginOutro ()
+{
+    ScheduleStateMachineInput(IN_BEGIN_OUTRO, 0.0f);
+}
+
+void WorldView::SetIntroTimeLeft (Float intro_time_left)
+{
+    ASSERT1(m_intro_outro_time_total > 0.0f)
+
+    if (intro_time_left < 0.0f)
+        intro_time_left = 0.0f;
+
+    m_intro_outro_time_left = intro_time_left;
+    ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
+    Float fade = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
+    GetParentWorldViewWidget()->SetColorMask(Color(fade, fade, fade, 1.0f));
+}
+
+void WorldView::SetOutroTimeLeft (Float outro_time_left)
+{
+    ASSERT1(m_intro_outro_time_total > 0.0f)
+
+    if (outro_time_left < 0.0f)
+        outro_time_left = 0.0f;
+
+    m_intro_outro_time_left = outro_time_left;
+    ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
+    Float fade = m_intro_outro_time_left / m_intro_outro_time_total;
+    GetParentWorldViewWidget()->SetColorMask(Color(fade, fade, fade, 1.0f));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// begin state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
+
+#define STATE_MACHINE_STATUS(state_name) \
+    if (input == SM_ENTER) \
+        fprintf(stderr, "WorldView: --> " state_name "\n"); \
+    else if (input == SM_EXIT) \
+        fprintf(stderr, "WorldView: <-- " state_name "\n"); \
+    else if (input != IN_PROCESS_FRAME) \
+        fprintf(stderr, "WorldView: input: %u\n", input);
+
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&WorldView::x)
+
+bool WorldView::StatePreIntro (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StatePreIntro")
+    switch (input)
+    {
+        case SM_ENTER:
+            m_intro_outro_time_total = 2.0f;
+            SetIntroTimeLeft(m_intro_outro_time_total);
+            return true;
+
+        case IN_PROCESS_FRAME:
+            // we're just waiting for the intro to begin.
+            return true;
+            
+        case IN_BEGIN_INTRO:
+            TRANSITION_TO(StateIntro);
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StateIntro (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateIntro")
+    switch (input)
+    {
+        case SM_ENTER:
+            // hide the GameWidget's controls
+            m_sender_hide_controls.Signal();
+            return true;
+
+        case IN_PROCESS_FRAME:
+            SetIntroTimeLeft(m_intro_outro_time_left - GetFrameDT());
+            if (m_intro_outro_time_left <= 0.0f)
+            {
+                m_sender_end_intro.Signal();
+                TRANSITION_TO(StateNormalGameplay);
+            }
+            return true;
+
+        case SM_EXIT:
+            // show the GameWidget's controls
+            m_sender_show_controls.Signal();
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StateNormalGameplay (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateNormalGameplay")
+    switch (input)
+    {
+        case IN_PROCESS_FRAME:
+            // we're just waiting for the outro to begin.
+            return true;
+
+        case IN_BEGIN_OUTRO:
+            TRANSITION_TO(StateOutro);
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StateOutro (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateOutro")
+    switch (input)
+    {
+        case SM_ENTER:
+            m_intro_outro_time_total = 2.0f;
+            SetOutroTimeLeft(m_intro_outro_time_total);
+            // hide the GameWidget's controls
+            m_sender_hide_controls.Signal();
+            return true;
+
+        case IN_PROCESS_FRAME:
+            SetOutroTimeLeft(m_intro_outro_time_left - GetFrameDT());
+            if (m_intro_outro_time_left <= 0.0f)
+            {
+                m_sender_end_outro.Signal();
+                TRANSITION_TO(StatePostOutro);
+            }
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StatePostOutro (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StatePostOutro")
+    switch (input)
+    {
+        case IN_PROCESS_FRAME:
+            // we're in eternal limbo, so do nothing.
+            return true;
+    }
+    return false;
+}
+
+void WorldView::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
+{
+    CancelScheduledStateMachineInput();
+    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+}
+
+void WorldView::CancelScheduledStateMachineInput ()
+{
+    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+        MatchCustomType,
+        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// end state machine stuff
+// ///////////////////////////////////////////////////////////////////////////
 
 } // end of namespace Dis
 

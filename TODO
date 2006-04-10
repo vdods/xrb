@@ -34,13 +34,15 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
+- move the game-over-label-showing control into WorldView's state machine
+- move EventStateMachineInput into Xrb as a real event
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
 - the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
-- disasteroids WorldView intro/outro (zooming, fading)
+- add zooming to the disasteroids intro/outro
 - when player ship dies, it should eject its current equipped inventory,
   with the exception of the starting inventory -- the items will be spawned
   as Powerups, which the player can then recollect.

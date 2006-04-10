@@ -49,6 +49,8 @@ GameWidget::GameWidget (
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
     m_internal_receiver_set_time_alive(&GameWidget::SetTimeAlive, this),
+    m_internal_receiver_show_controls(&GameWidget::ShowControls, this),
+    m_internal_receiver_hide_controls(&GameWidget::HideControls, this),
     m_internal_receiver_activate_inventory_panel(&GameWidget::ActivateInventoryPanel, this),
     m_internal_receiver_deactivate_inventory_panel(&GameWidget::DeactivateInventoryPanel, this),
     m_receiver_set_mineral_inventory(&GameWidget::SetMineralInventory, this)
@@ -64,6 +66,13 @@ GameWidget::GameWidget (
     m_world_view->SetZoomFactor(1.0f/256.0f);
     m_world_view_widget->SetWorldView(m_world_view);
 
+    // connect the controls [de]activate signal
+    SignalHandler::Connect0(
+        m_world_view->SenderShowControls(),
+        &m_internal_receiver_show_controls);
+    SignalHandler::Connect0(
+        m_world_view->SenderHideControls(),
+        &m_internal_receiver_hide_controls);
     // connect the inventory panel [de]activate signal
     SignalHandler::Connect0(
         m_world_view->SenderActivateInventoryPanel(),
@@ -142,10 +151,12 @@ GameWidget::GameWidget (
 
     // time, mineral inventory, score layout and stoke-o-meter
     {
-        Layout *stats_and_inventory_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
-        stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+        m_stats_and_inventory_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
+        m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
+        // start with this layout hidden, because the WorldView will show it later
+        m_stats_and_inventory_layout->Hide();
         
-        m_time_alive_label = new Label("", stats_and_inventory_layout, "time-alive label");
+        m_time_alive_label = new Label("", m_stats_and_inventory_layout, "time-alive label");
         m_time_alive_label->SetIsHeightFixedToTextHeight(true);
         m_time_alive_label->SetAlignment(Dim::X, LEFT);
         m_time_alive_label->SetFontHeightRatio(0.05f);
@@ -160,7 +171,7 @@ GameWidget::GameWidget (
                 new ValueLabel<Uint32>(
                     "%u",
                     Util::TextToUint32,
-                    stats_and_inventory_layout);
+                    m_stats_and_inventory_layout);
             m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
             m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
     
@@ -170,38 +181,38 @@ GameWidget::GameWidget (
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             "resources/sadface_small.png"),
-                    stats_and_inventory_layout);
+                    m_stats_and_inventory_layout);
             lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
             lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());
         }
         
-        for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
+        for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
         {
-            m_mineral_inventory_label[mineral_type] =
+            m_mineral_inventory_label[mineral_index] =
                 new ValueLabel<Uint32>(
                     "%u",
                     Util::TextToUint32,
-                    stats_and_inventory_layout);
-            m_mineral_inventory_label[mineral_type]->SetIsHeightFixedToTextHeight(true);
-            m_mineral_inventory_label[mineral_type]->SetAlignment(Dim::X, RIGHT);
+                    m_stats_and_inventory_layout);
+            m_mineral_inventory_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
+            m_mineral_inventory_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
             
             Label *mineral_icon_label =
                 new Label(
                     Singletons::ResourceLibrary()->
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
-                            Item::GetMineralSpriteFilename(mineral_type)),
-                    stats_and_inventory_layout);
-            mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_type]->GetHeight());
-            mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_type]->GetHeight());
+                            Item::GetMineralSpriteFilename(mineral_index)),
+                    m_stats_and_inventory_layout);
+            mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->GetHeight());
+            mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->GetHeight());
         }
         // a spacer to make things look even
-        new SpacerWidget(stats_and_inventory_layout);
+        new SpacerWidget(m_stats_and_inventory_layout);
 
         // a widget stack for the score label and stoke-o-meter
         WidgetStack *widget_stack =
             new WidgetStack(
-                stats_and_inventory_layout,
+                m_stats_and_inventory_layout,
                 "score label and stoke-o-meter widget stack");
 
         m_stoke_o_meter = new ProgressBar(ProgressBar::GO_LEFT, widget_stack, "stoke-o-meter");
@@ -224,11 +235,13 @@ GameWidget::GameWidget (
 
     // armor/shield, power and weapon status layout
     {
-        Layout *ship_status_layout = new Layout(HORIZONTAL, main_layout, "ship status layout");
+        m_ship_status_layout = new Layout(HORIZONTAL, main_layout, "ship status layout");
+        // start with this layout hidden, because the WorldView will show it later
+        m_ship_status_layout->Hide();
 
         // contains the armor and shield status bars, and keeps the
         // shield status bar on top of the armor status bar        
-        WidgetStack *armor_and_shield_stack = new WidgetStack(ship_status_layout);
+        WidgetStack *armor_and_shield_stack = new WidgetStack(m_ship_status_layout);
         
         m_armor_status =
             new ProgressBar(
@@ -249,7 +262,7 @@ GameWidget::GameWidget (
         m_power_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
-                ship_status_layout,
+                m_ship_status_layout,
                 "power status");
         m_power_status->FixHeight(m_score_label->GetHeight()/2);
         m_power_status->SetColor(Color(1.0f, 1.0f, 0.5f, 0.5f));
@@ -257,7 +270,7 @@ GameWidget::GameWidget (
         m_weapon_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
-                ship_status_layout,
+                m_ship_status_layout,
                 "weapon status");    
         m_weapon_status->FixHeight(m_score_label->GetHeight()/2);
         m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
@@ -410,12 +423,25 @@ void GameWidget::SetFramerate (Float const framerate)
 }
 
 void GameWidget::SetMineralInventory (
-    Uint8 const mineral_type,
+    Uint8 const mineral_index,
     Float const mineral_inventory)
 {
-    ASSERT1(mineral_type < MINERAL_COUNT)
+    ASSERT1(mineral_index < MINERAL_COUNT)
     ASSERT1(mineral_inventory >= 0.0f)
-    m_mineral_inventory_label[mineral_type]->SetValue(static_cast<Uint32>(mineral_inventory));
+    m_mineral_inventory_label[mineral_index]->SetValue(static_cast<Uint32>(mineral_inventory));
+}
+
+void GameWidget::ShowControls ()
+{
+    m_stats_and_inventory_layout->Show();
+    m_ship_status_layout->Show();
+}
+
+void GameWidget::HideControls ()
+{
+    DeactivateInventoryPanel();
+    m_stats_and_inventory_layout->Hide();
+    m_ship_status_layout->Hide();
 }
 
 void GameWidget::ActivateInventoryPanel ()

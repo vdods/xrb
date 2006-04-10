@@ -12,7 +12,9 @@
 #define _DIS_WORLDVIEW_H_
 
 #include "xrb_engine2_worldview.h"
+#include "xrb_eventhandler.h"
 #include "xrb_signalhandler.h"
+#include "xrb_statemachine.h"
 
 using namespace Xrb;
 
@@ -22,7 +24,7 @@ namespace Dis
 class InventoryPanel;
 class PlayerShip;
 
-class WorldView : public Engine2::WorldView, public SignalHandler
+class WorldView : public Engine2::WorldView, public EventHandler, public SignalHandler
 {
 public:
 
@@ -31,17 +33,21 @@ public:
 
     inline SignalSender1<PlayerShip *> const *SenderPlayerShipChanged () { return &m_sender_player_ship_changed; }
     inline SignalSender1<bool> const *SenderIsDebugInfoEnabledChanged () { return &m_sender_is_debug_info_enabled_changed; }
+    inline SignalSender0 const *SenderShowControls () { return &m_sender_show_controls; }
+    inline SignalSender0 const *SenderHideControls () { return &m_sender_hide_controls; }
     inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
     inline SignalSender0 const *SenderDeactivateInventoryPanel () { return &m_sender_deactivate_inventory_panel; }
     inline SignalSender0 const *SenderShowGameOverLabel () { return &m_sender_show_game_over_label; }
     inline SignalSender0 const *SenderHideGameOverLabel () { return &m_sender_hide_game_over_label; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
+    inline SignalSender0 const *SenderEndIntro () { return &m_sender_end_intro; }
+    inline SignalSender0 const *SenderEndOutro () { return &m_sender_end_outro; }
 
-    inline SignalReceiver0 const *ReceiverEnableInventoryPanel () { return &m_receiver_enable_inventory_panel; }
-    inline SignalReceiver0 const *ReceiverDisableInventoryPanel () { return &m_receiver_disable_inventory_panel; }
     inline SignalReceiver0 const *ReceiverShowGameOverLabel () { return &m_receiver_show_game_over_label; }
     inline SignalReceiver0 const *ReceiverHideGameOverLabel () { return &m_receiver_hide_game_over_label; }
     inline SignalReceiver0 const *ReceiverEndGame () { return &m_receiver_end_game; }
+    inline SignalReceiver0 const *ReceiverBeginIntro () { return &m_receiver_begin_intro; }
+    inline SignalReceiver0 const *ReceiverBeginOutro () { return &m_receiver_begin_outro; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline bool GetIsDebugInfoEnabled () const { return m_is_debug_info_enabled; }
@@ -49,6 +55,8 @@ public:
     void SetPlayerShip (PlayerShip *player_ship);
     void SetIsDebugInfoEnabled (bool is_debug_info_enabled);
 
+    // NOT ASSOCIATED WITH EventHandler !!
+    // these are overrides of Engine2::WorldView methods!
     virtual bool ProcessKeyEvent (EventKey const *e);
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
@@ -56,16 +64,50 @@ public:
     
 protected:
 
+    virtual bool ProcessEventOverride (Event const *e);
     virtual void ProcessFrameOverride ();
 
 private:
 
-    void EnableInventoryPanel ();
-    void DisableInventoryPanel ();    
     void ShowGameOverLabel ();
     void HideGameOverLabel ();
     void EndGame ();
+    void BeginIntro ();
+    void BeginOutro ();
 
+    void SetIntroTimeLeft (Float intro_time_left);
+    void SetOutroTimeLeft (Float outro_time_left);
+
+    // ///////////////////////////////////////////////////////////////////////
+    // begin state machine stuff
+
+    enum
+    {
+        IN_BEGIN_INTRO = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_PROCESS_FRAME,
+        IN_BEGIN_OUTRO
+    };
+
+    bool StatePreIntro (StateMachineInput);
+    bool StateIntro (StateMachineInput);
+    bool StateNormalGameplay (StateMachineInput);
+    bool StateOutro (StateMachineInput);
+    bool StatePostOutro (StateMachineInput);
+
+    void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
+    void CancelScheduledStateMachineInput ();
+
+    StateMachine<WorldView> m_state_machine;
+    
+    // end state machine stuff
+    // ///////////////////////////////////////////////////////////////////////
+    
+    // ///////////////////////////////////////////////////////////////////////
+    // intro/outro vars
+
+    Float m_intro_outro_time_total;
+    Float m_intro_outro_time_left;
+    
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship
     
@@ -118,27 +160,30 @@ private:
 
     bool m_use_dvorak;
     bool m_is_debug_info_enabled;
-    bool m_disable_inventory_panel;
     
     // ///////////////////////////////////////////////////////////////////////
     // SignalSenders
 
     SignalSender1<PlayerShip *> m_sender_player_ship_changed;
     SignalSender1<bool> m_sender_is_debug_info_enabled_changed;
+    SignalSender0 m_sender_show_controls;
+    SignalSender0 m_sender_hide_controls;
     SignalSender0 m_sender_activate_inventory_panel;
     SignalSender0 m_sender_deactivate_inventory_panel;
     SignalSender0 m_sender_show_game_over_label;
     SignalSender0 m_sender_hide_game_over_label;
     SignalSender0 m_sender_end_game;
+    SignalSender0 m_sender_end_intro;
+    SignalSender0 m_sender_end_outro;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
 
-    SignalReceiver0 m_receiver_enable_inventory_panel;
-    SignalReceiver0 m_receiver_disable_inventory_panel;
     SignalReceiver0 m_receiver_show_game_over_label;
     SignalReceiver0 m_receiver_hide_game_over_label;
     SignalReceiver0 m_receiver_end_game;
+    SignalReceiver0 m_receiver_begin_intro;
+    SignalReceiver0 m_receiver_begin_outro;
 }; // end of class WorldView
 
 } // end of namespace Dis

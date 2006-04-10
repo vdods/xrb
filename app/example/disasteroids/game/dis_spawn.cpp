@@ -328,14 +328,14 @@ Powerup *SpawnMineral (
     Float const scale_factor,
     Float const first_moment,
     FloatVector2 const &velocity,
-    Uint8 const mineral_type)
+    Uint8 const mineral_index)
 {
-    ASSERT1(mineral_type < MINERAL_COUNT)
-    Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_type), Powerup::PU_SOLITARY);
+    ASSERT1(mineral_index < MINERAL_COUNT)
+    Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_index), Powerup::PU_SOLITARY);
     SpawnDynamicSprite(
         world,
         object_layer,
-        Item::GetMineralSpriteFilename(mineral_type),
+        Item::GetMineralSpriteFilename(mineral_index),
         powerup,
         translation,
         scale_factor,

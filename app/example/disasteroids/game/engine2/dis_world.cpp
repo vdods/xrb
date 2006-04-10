@@ -295,11 +295,13 @@ World::World (
     m_state_machine(this),
     m_sender_submit_score(this),
     m_sender_end_game(this),
-    m_internal_sender_enable_inventory_panel(this),
-    m_internal_sender_disable_inventory_panel(this),
     m_internal_sender_show_game_over_label(this),
     m_internal_sender_hide_game_over_label(this),
-    m_internal_receiver_end_game(&World::EndGame, this)
+    m_internal_sender_begin_intro(this),
+    m_internal_sender_begin_outro(this),
+    m_internal_receiver_end_game(&World::EndGame, this),
+    m_internal_receiver_end_intro(&World::EndIntro, this),
+    m_internal_receiver_end_outro(&World::EndOutro, this)
 {
     m_player_ship = NULL;
     m_score_required_for_extra_life = 50000;
@@ -366,13 +368,6 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
-    // connect the enable/disable inventory panel signal
-    SignalHandler::Connect0(
-        &m_internal_sender_enable_inventory_panel,
-        dis_world_view->ReceiverEnableInventoryPanel());
-    SignalHandler::Connect0(
-        &m_internal_sender_disable_inventory_panel,
-        dis_world_view->ReceiverDisableInventoryPanel());
     // connect the show/hide game over label signals
     SignalHandler::Connect0(
         &m_internal_sender_show_game_over_label,
@@ -384,6 +379,20 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     SignalHandler::Connect0(
         dis_world_view->SenderEndGame(),
         &m_internal_receiver_end_game);
+    // connect the worldview's begin intro/outro signals
+    SignalHandler::Connect0(
+        &m_internal_sender_begin_intro,
+        dis_world_view->ReceiverBeginIntro());
+    SignalHandler::Connect0(
+        &m_internal_sender_begin_outro,
+        dis_world_view->ReceiverBeginOutro());
+    // connect the worldview's end intro/outro signals
+    SignalHandler::Connect0(
+        dis_world_view->SenderEndIntro(),
+        &m_internal_receiver_end_intro);
+    SignalHandler::Connect0(
+        dis_world_view->SenderEndOutro(),
+        &m_internal_receiver_end_outro);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -398,7 +407,7 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     else if (input != IN_PROCESS_FRAME) \
         fprintf(stderr, "World: input: %u\n", input);
 
-#define TRANSITION_TO(x) m_state_machine.RequestStateTransition(&World::x)
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x)
 
 bool World::StateIntro (StateMachineInput const input)
 {
@@ -406,20 +415,20 @@ bool World::StateIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            // TODO: signal to the worldviews that the intro is starting
-            ScheduleStateMachineInput(IN_INTRO_DONE, 2.0f);
+            // delay starting the intro a short while
+            ScheduleStateMachineInput(IN_BEGIN_INTRO, 0.1f);
             return true;
 
         case IN_PROCESS_FRAME:
             return true;
-            
-        case IN_INTRO_DONE:
-            TRANSITION_TO(StateNormalGameplay);
-            return true;
 
-        case SM_EXIT:
-            // TODO: signal to the worldviews that the intro is ending (?)
-            m_internal_sender_enable_inventory_panel.Signal();
+        case IN_BEGIN_INTRO:
+            // signal the WorldViews that the intro has started
+            m_internal_sender_begin_intro.Signal();
+            return true;
+            
+        case IN_END_INTRO:
+            TRANSITION_TO(StateNormalGameplay);
             return true;
     }
     return false;
@@ -479,7 +488,7 @@ bool World::StateCheckLivesRemaining (StateMachineInput const input)
             if (m_player_ship->GetLivesRemaining() > 0)
                 TRANSITION_TO(StateWaitAfterPlayerDeath);
             else
-                TRANSITION_TO(StateWaitForDeathRattle);
+                TRANSITION_TO(StateWaitAfterFinalPlayerDeath);
             return true;
     }
     return false;
@@ -505,16 +514,16 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaitForDeathRattle (StateMachineInput const input)
+bool World::StateWaitAfterFinalPlayerDeath (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateWaitForDeathRattle")
+    STATE_MACHINE_STATUS("StateWaitAfterFinalPlayerDeath")
     switch (input)
     {
         case SM_ENTER:
-            ScheduleStateMachineInput(IN_DEATH_RATTLE_DONE, 3.0f);
+            ScheduleStateMachineInput(IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE, 3.0f);
             return true;
 
-        case IN_DEATH_RATTLE_DONE:
+        case IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE:
             TRANSITION_TO(StateGameOver);
             return true;
             
@@ -530,9 +539,6 @@ bool World::StateGameOver (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            // make sure to disable the inventory panel for game over (because
-            // other UI stuff may happen that would interfere).
-            m_internal_sender_disable_inventory_panel.Signal();
             // put up the game over label
             m_internal_sender_show_game_over_label.Signal();
             ScheduleStateMachineInput(IN_GAME_OVER_DONE, 3.0f);
@@ -592,15 +598,12 @@ bool World::StateOutro (StateMachineInput const input)
     STATE_MACHINE_STATUS("StateOutro")
     switch (input)
     {
-        case SM_ENTER:
-            // make sure to disable the inventory panel for game over (because
-            // other UI stuff may happen that would interfere).
-            m_internal_sender_disable_inventory_panel.Signal();
-            // TODO: signal to the worldviews that the outro is starting
-            ScheduleStateMachineInput(IN_OUTRO_DONE, 2.0f);
+        case SM_ENTER:            
+            // signal the WorldViews that the outro has started
+            m_internal_sender_begin_outro.Signal();
             return true;
 
-        case IN_OUTRO_DONE:
+        case IN_END_OUTRO:
             TRANSITION_TO(StateEndGame);
             return true;
                 
@@ -721,6 +724,22 @@ void World::ProcessNormalGameplayLogic ()
 void World::EndGame ()
 {
     ScheduleStateMachineInput(IN_END_GAME, 0.0f);
+}
+
+void World::EndIntro ()
+{
+    // ignore this signal unless we're in the intro state (because i don't
+    // want to have to ignore the state machine input in each event).
+    if (m_state_machine.GetCurrentState() == &World::StateIntro)
+        ScheduleStateMachineInput(IN_END_INTRO, 0.0f);
+}
+
+void World::EndOutro ()
+{
+    // ignore this signal unless we're in the intro state (because i don't
+    // want to have to ignore the state machine input in each event).
+    if (m_state_machine.GetCurrentState() == &World::StateOutro)
+        ScheduleStateMachineInput(IN_END_OUTRO, 0.0f);
 }
 
 Asteroid *World::SpawnAsteroidOutOfView ()

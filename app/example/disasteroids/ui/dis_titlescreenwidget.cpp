@@ -170,7 +170,7 @@ bool TitleScreenWidget::ProcessEventOverride (Event const *const e)
     else \
         fprintf(stderr, "TitleScreenWidget: input: %u\n", input);
 
-#define TRANSITION_TO(x) m_state_machine.RequestStateTransition(&TitleScreenWidget::x)
+#define TRANSITION_TO(x) m_state_machine.SetNextState(&TitleScreenWidget::x)
 
 bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
 {

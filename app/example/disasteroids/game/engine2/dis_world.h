@@ -113,15 +113,16 @@ private:
 
     enum
     {
-        IN_INTRO_DONE = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_BEGIN_INTRO = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_END_INTRO,
         IN_PROCESS_FRAME,
         IN_PLAYER_SHIP_DIED,
         IN_END_GAME,
         IN_WAIT_AFTER_PLAYER_DEATH_DONE,
-        IN_DEATH_RATTLE_DONE,
+        IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE,
         IN_GAME_OVER_DONE,
         IN_SUBMIT_SCORE_DONE,
-        IN_OUTRO_DONE,
+        IN_END_OUTRO,
     };
 
     bool StateIntro (StateMachineInput);
@@ -129,7 +130,7 @@ private:
     bool StateNormalGameplay (StateMachineInput);
     bool StateCheckLivesRemaining (StateMachineInput);
     bool StateWaitAfterPlayerDeath (StateMachineInput);
-    bool StateWaitForDeathRattle (StateMachineInput);
+    bool StateWaitAfterFinalPlayerDeath (StateMachineInput);
     bool StateGameOver (StateMachineInput);
     bool StateSubmitScore (StateMachineInput);
     bool StateWaitingForSubmitScoreResponse (StateMachineInput);
@@ -147,6 +148,8 @@ private:
     void ProcessNormalGameplayLogic ();
 
     void EndGame ();
+    void EndIntro ();
+    void EndOutro ();
     
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
@@ -190,12 +193,14 @@ private:
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
 
-    SignalSender0 m_internal_sender_enable_inventory_panel;
-    SignalSender0 m_internal_sender_disable_inventory_panel;
     SignalSender0 m_internal_sender_show_game_over_label;
     SignalSender0 m_internal_sender_hide_game_over_label;
+    SignalSender0 m_internal_sender_begin_intro;
+    SignalSender0 m_internal_sender_begin_outro;
 
     SignalReceiver0 m_internal_receiver_end_game;
+    SignalReceiver0 m_internal_receiver_end_intro;
+    SignalReceiver0 m_internal_receiver_end_outro;
 }; // end of class GameController
 
 } // end of namespace Dis
