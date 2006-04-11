@@ -25,14 +25,19 @@ namespace Dim
       */
     enum Component
     {
-        X = 0, ///< The X-component index
-        Y,     ///< The Y-component index
-        Z,     ///< The Z-component index
+        X = 0,     ///< The X-component index
+        Y,         ///< The Y-component index
+        Z,         ///< The Z-component index
 
-        R = 0, ///< The red color component index
-        G,     ///< The green color component index
-        B,     ///< The blue color component index
-        A      ///< The alpha color component index
+        R = 0,     ///< The red color component index
+        G,         ///< The green color component index
+        B,         ///< The blue color component index
+        A,         ///< The alpha color component index
+        
+        RED = R,   ///< The red color component index
+        GREEN = G, ///< The green color component index
+        BLUE = B,  ///< The blue color component index
+        ALPHA = A  ///< The alpha color component index
     };
 } // end namespace Dim
 

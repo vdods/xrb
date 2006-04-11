@@ -84,6 +84,7 @@ public:
         EXPOSE,
         QUIT,
         SYSWM,
+        STATE_MACHINE_INPUT,
         ENGINE2_DELETE_ENTITY,
         CUSTOM,
 
@@ -203,6 +204,30 @@ private:
     friend class EventQueue;
 }; // end of class Event
 
+/** There is no built-in facility for sending this event to StateMachine --
+  * a StateMachine isn't an EventHandler, so you must inherit EventHandler
+  * manually, and provide the necessary code in ProcessEventOverride().
+  * @brief Event for asynchronously sending input to state machines.
+  */
+class EventStateMachineInput : public Event
+{
+public:
+
+    /** @brief Constructs an EventStateMachineInput.
+      */
+    EventStateMachineInput (StateMachineInput input, Float time)
+        :
+        Event(time, STATE_MACHINE_INPUT),
+        m_input(input)
+    { }
+
+    inline StateMachineInput GetInput () const { return m_input; }
+
+private:
+
+    StateMachineInput const m_input;
+}; // end of class EventStateMachineInput
+
 /** For events not forseen by XuqRijBuh, EventCustom provides a baseclass
   * from which custom events can be derived.  Widget provides a special
   * overridable function for handling custom events.
@@ -252,6 +277,7 @@ private:
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
+bool MatchEventType (Event const *event, Event::Type event_type);
 bool MatchCustomType (Event const *event, EventCustom::CustomType custom_type);
 
 } // end of namespace Xrb

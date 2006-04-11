@@ -16,15 +16,13 @@
 namespace Xrb
 {
 
-// StateMachine input value typedef
-typedef Uint16 StateMachineInput;
 // StateMachine mechanism inputs
 enum
 {
-    SM_ENTER = 0,
-    SM_EXIT,
+    SM_ENTER = static_cast<StateMachineInput>(-1),
+    SM_EXIT = static_cast<StateMachineInput>(-2),
 
-    SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE
+    SM_HIGHEST_USER_INPUT_VALUE = static_cast<StateMachineInput>(-3)
 };
 
 // this class is to be used in composition with another, as opposed to

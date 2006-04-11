@@ -84,7 +84,7 @@ private:
 
     enum
     {
-        IN_PROCESS_FRAME = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_PROCESS_FRAME = 0,
         
         IN_BEGIN_INTRO,
         IN_BEGIN_GAME_OVER,

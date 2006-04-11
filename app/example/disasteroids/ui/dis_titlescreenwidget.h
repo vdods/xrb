@@ -49,7 +49,8 @@ public:
 protected:
 
     virtual void ProcessFrameOverride ();
-    virtual bool ProcessEventOverride (Event const *e);
+
+    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e);
     
 private:
 
@@ -58,7 +59,7 @@ private:
 
     enum
     {
-        IN_TIME_OUT = SM_USER_DEFINED_INPUT_STARTS_AT_THIS_VALUE,
+        IN_TIME_OUT = 0,
     };
 
     bool StateGameDemo (StateMachineInput);

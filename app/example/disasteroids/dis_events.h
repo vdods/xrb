@@ -27,10 +27,8 @@ public:
     // custom event types
     enum
     {
-        // StateMachine-related event(s)
-        STATE_MACHINE_INPUT = 0,
         // Master events
-        ACTIVATE_TITLE_SCREEN,
+        ACTIVATE_TITLE_SCREEN = 0,
         DEACTIVATE_TITLE_SCREEN,
         ACTIVATE_GAME,
         DEACTIVATE_GAME,
@@ -43,24 +41,6 @@ public:
     { }
     virtual ~EventBase () { }
 }; // end of class EventBase
-
-class EventStateMachineInput : public EventBase
-{
-public:
-
-    EventStateMachineInput (StateMachineInput input, Float time)
-        :
-        EventBase(STATE_MACHINE_INPUT, time),
-        m_input(input)
-    { }
-
-    inline StateMachineInput GetInput () const { return m_input; }
-
-private:
-
-    StateMachineInput const m_input;
-}; // end of class EventStateMachineInput
-
 
 } // end of namespace Dis
 

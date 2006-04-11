@@ -129,6 +129,7 @@ noinst_LTLIBRARIES = \
 ##############################################################################
 
 include_HEADERS = \
+    core/xrb.h \
     core/xrb_assert.h \
     core/xrb_debug.h \
     core/xrb_delete.h \
@@ -139,7 +140,6 @@ include_HEADERS = \
     core/xrb_eventqueue.h \
     core/xrb_eventqueue.tcpp \
     core/xrb_framehandler.h \
-    core/xrb.h \
     core/xrb_resourcelibrary.h \
     core/xrb_resourcelibrary.tcpp \
     core/xrb_serializer.h \
@@ -148,6 +148,7 @@ include_HEADERS = \
     core/xrb_singletons.h \
     core/xrb_statemachine.h \
     core/xrb_statemachine.tcpp \
+    core/xrb_types.h \
     \
     core/serializers/xrb_binaryfileserializer.h \
     \

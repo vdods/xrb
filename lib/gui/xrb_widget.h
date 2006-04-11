@@ -37,17 +37,19 @@
 namespace Xrb
 {
 
-class WidgetBackground;
-class Screen;
+class EventCustom;
+class EventDeleteChildWidget;
+class EventFocus;
+class EventJoy;
 class EventKey;
 class EventMouse;
 class EventMouseButton;
-class EventMouseWheel;
 class EventMouseMotion;
-class EventJoy;
-class EventFocus;
+class EventMouseWheel;
 class EventMouseover;
-class EventDeleteChildWidget;
+class EventStateMachineInput;
+class Screen;
+class WidgetBackground;
 
 /** The base class for all GUI widgets and provides 90% of the framework
   * necessary for the GUI's operation.
@@ -878,11 +880,15 @@ protected:
       * @brief Process a joystick event.
       */
     virtual bool ProcessJoyEvent (EventJoy const *e) { return false; }
+    /** Subclasses may override this to process StateMachineInput events.
+      * @brief Process a StateMachineInput event.
+      */
+    virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e) { return false; }
     /** Subclasses may override this to process custom events -- events not
       * explicitly handled by the above overridable handlers.
       * @brief Process a custom event.
       */
-    virtual bool ProcessCustomEvent (Event const *e) { return false; }
+    virtual bool ProcessCustomEvent (EventCustom const *e) { return false; }
     /** @brief Processes a delete child widget event.  This is used mainly to
       *        delete modal widgets.
       */

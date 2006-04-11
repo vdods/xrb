@@ -11,11 +11,11 @@
 #include "dis_worldview.h"
 
 #include "dis_entity.h"
-#include "dis_events.h"
 #include "dis_playership.h"
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_worldviewwidget.h"
+#include "xrb_eventqueue.h"
 #include "xrb_input_events.h"
 #include "xrb_keybinds.h"
 
@@ -245,22 +245,13 @@ bool WorldView::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
-    if (e->GetType() != Event::CUSTOM)
-        return false;
-        
-    EventBase const *dis_event = DStaticCast<EventBase const *>(e);
-    switch (dis_event->GetCustomType())
+    if (e->GetType() == Event::STATE_MACHINE_INPUT)
     {
-        case EventBase::STATE_MACHINE_INPUT:
-            m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
-            break;
-
-        default:
-            ASSERT1(false && "Unhandled custom event")
-            break;
+        m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void WorldView::ProcessFrameOverride ()
@@ -670,8 +661,8 @@ void WorldView::ScheduleStateMachineInput (StateMachineInput const input, Float 
 void WorldView::CancelScheduledStateMachineInput ()
 {
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
-        MatchCustomType,
-        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
+        MatchEventType,
+        Event::STATE_MACHINE_INPUT);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -1072,7 +1072,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
     if (e->GetType() == Event::MOUSEOVER)
     {
         EventMouseover const *mouseover_event =
-            static_cast<EventMouseover const *const>(e);
+            DStaticCast<EventMouseover const *>(e);
         m_last_mouse_position = mouseover_event->GetPosition();
     }
 
@@ -1084,7 +1084,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
         if (e->GetIsMouseMotionEvent())
         {
             EventMouseMotion const *mouse_motion_event =
-                static_cast<EventMouseMotion const *const>(e);
+                DStaticCast<EventMouseMotion const *>(e);
 
             // generate a mouseover event from the mouse motion event
             EventMouseover mouseover_event(
@@ -1117,7 +1117,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
             if (e->GetIsMouseEvent())
             {
                 EventMouse const *mouse_event =
-                    static_cast<EventMouse const *>(e);
+                    DStaticCast<EventMouse const *>(e);
                 if (!modal_widget->GetScreenRect().GetIsPointInside(
                         mouse_event->GetPosition()))
                 {
@@ -1138,7 +1138,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
         case Event::KEYDOWN:
         case Event::KEYUP:
         case Event::KEYREPEAT:
-            if (ProcessKeyEvent(static_cast<EventKey const *const>(e)))
+            if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
                 return true;
             else if (m_focus != NULL)
                 return m_focus->ProcessEvent(e);
@@ -1148,22 +1148,22 @@ bool Widget::ProcessEventOverride (Event const *const e)
         case Event::MOUSEBUTTONDOWN:
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEMOTION:
-            if (PreprocessMouseEvent(static_cast<EventMouse const *const>(e)))
+            if (PreprocessMouseEvent(DStaticCast<EventMouse const *>(e)))
                 return true;
             else
                 return SendMouseEventToChild(
-                    static_cast<EventMouse const *const>(e));
+                    DStaticCast<EventMouse const *>(e));
 
         case Event::MOUSEWHEEL:
             return PreprocessMouseWheelEvent(
-                static_cast<EventMouseWheel const *const>(e));
+                DStaticCast<EventMouseWheel const *>(e));
 
         case Event::JOYAXIS:
         case Event::JOYBALL:
         case Event::JOYBUTTONDOWN:
         case Event::JOYBUTTONUP:
         case Event::JOYHAT:
-            if (ProcessJoyEvent(static_cast<EventJoy const *const>(e)))
+            if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
                 return true;
             else if (m_focus != NULL)
                 return m_focus->ProcessEvent(e);
@@ -1172,15 +1172,15 @@ bool Widget::ProcessEventOverride (Event const *const e)
 
         case Event::FOCUS:
             return PreprocessFocusEvent(
-                static_cast<EventFocus const *const>(e));
+                DStaticCast<EventFocus const *>(e));
 
         case Event::MOUSEOVER:
             return PreprocessMouseoverEvent(
-                static_cast<EventMouseover const *const>(e));
+                DStaticCast<EventMouseover const *>(e));
 
         case Event::DELETE_CHILD_WIDGET:
             return ProcessDeleteChildWidgetEvent(
-                static_cast<EventDeleteChildWidget const *const>(e));
+                DStaticCast<EventDeleteChildWidget const *>(e));
 
         case Event::ACTIVE:
         case Event::RESIZE:
@@ -1189,8 +1189,11 @@ bool Widget::ProcessEventOverride (Event const *const e)
         case Event::SYSWM:
             return false;
 
+        case Event::STATE_MACHINE_INPUT:
+            return ProcessStateMachineInputEvent(DStaticCast<EventStateMachineInput const *>(e));
+
         case Event::CUSTOM:
-            return ProcessCustomEvent(e);
+            return ProcessCustomEvent(DStaticCast<EventCustom const *>(e));
 
         default:
             ASSERT0(false && "Unknown event type")

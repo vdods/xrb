@@ -179,6 +179,13 @@ EventCustom::~EventCustom () { }
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
+bool MatchEventType (Event const *event, Event::Type const event_type)
+{
+    ASSERT1(event != NULL)
+
+    return event->GetType() == event_type;
+}
+
 bool MatchCustomType (Event const *event, EventCustom::CustomType const custom_type)
 {
     ASSERT1(event != NULL)

@@ -10,7 +10,6 @@
 
 #include "dis_titlescreenwidget.h"
 
-#include "dis_events.h"
 #include "dis_highscoreswidget.h"
 #include "dis_optionspanel.h"
 #include "xrb_button.h"
@@ -133,28 +132,10 @@ void TitleScreenWidget::ProcessFrameOverride ()
             &TitleScreenWidget::StateGameDemo);
 }
 
-bool TitleScreenWidget::ProcessEventOverride (Event const *const e)
+bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput const *e)
 {
     ASSERT1(e != NULL)
-
-    Widget::ProcessEventOverride(e);
-    
-    if (e->GetType() == Event::CUSTOM)
-    {
-        EventBase const *dis_event = DStaticCast<EventBase const *>(e);
-        switch (dis_event->GetCustomType())
-        {
-            case EventBase::STATE_MACHINE_INPUT:
-                m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
-                break;
-    
-            default:
-                ASSERT1(false && "Unhandled custom event")
-                break;
-        }
-        return true;
-    }
-
+    m_state_machine.RunCurrentState(e->GetInput());
     return true;
 }
 
@@ -257,8 +238,8 @@ void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput const input
 void TitleScreenWidget::CancelScheduledStateMachineInput ()
 {
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
-        MatchCustomType,
-        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
+        MatchEventType,
+        Event::STATE_MACHINE_INPUT);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

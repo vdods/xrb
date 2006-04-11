@@ -154,6 +154,7 @@ lib/core/xrb_singletons.cpp
 lib/core/xrb_singletons.h
 lib/core/xrb_statemachine.h
 lib/core/xrb_statemachine.tcpp
+lib/core/xrb_types.h
 lib/engine2/xrb_engine2_compound.cpp
 lib/engine2/xrb_engine2_compound.h
 lib/engine2/xrb_engine2_entity.cpp

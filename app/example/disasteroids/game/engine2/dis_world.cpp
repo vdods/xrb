@@ -15,7 +15,6 @@
 #include "dis_devourment.h"
 #include "dis_enemyship.h"
 #include "dis_engine.h"
-#include "dis_events.h"
 #include "dis_entity.h"
 #include "dis_interloper.h"
 #include "dis_physicshandler.h"
@@ -314,7 +313,7 @@ World::World (
     m_next_asteroid_mineral_level_time = 1.0f * 60.0f;
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
-
+                   
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
         m_enemy_ship_count[enemy_ship_index] = 0;
@@ -334,22 +333,13 @@ bool World::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
-    if (e->GetType() != Event::CUSTOM)
-        return Engine2::World::ProcessEventOverride(e);
-
-    EventBase const *dis_event = DStaticCast<EventBase const *>(e);
-    switch (dis_event->GetCustomType())
+    if (e->GetType() == Event::STATE_MACHINE_INPUT)
     {
-        case EventBase::STATE_MACHINE_INPUT:
-            m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(dis_event)->GetInput());
-            break;
-
-        default:
-            ASSERT1(false && "Unhandled custom event")
-            break;
+        m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
+        return true;
     }
-
-    return true;
+    
+    return Engine2::World::ProcessEventOverride(e);
 }
 
 void World::ProcessFrameOverride ()
@@ -631,8 +621,8 @@ void World::ScheduleStateMachineInput (StateMachineInput const input, Float cons
 void World::CancelScheduledStateMachineInput ()
 {
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
-        MatchCustomType,
-        static_cast<EventCustom::CustomType>(EventBase::STATE_MACHINE_INPUT));
+        MatchEventType,
+        Event::STATE_MACHINE_INPUT);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
