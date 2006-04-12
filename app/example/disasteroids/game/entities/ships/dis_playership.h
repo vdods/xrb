@@ -185,11 +185,14 @@ private:
     Shield *GetInventoryShield (Uint8 upgrade_level);
     PowerGenerator *GetInventoryPowerGenerator (Uint8 upgrade_level);
 
+    bool GetIsInStartingInventory (Item *item);
+
     void SetArmorStatus (Float armor_status);
     void SetShieldStatus (Float shield_status);
     void SetPowerStatus (Float power_status);
     void SetWeaponStatus (Float weapon_status);
 
+    void EjectPowerup (Item *ejectee, Float ejection_angle);
     void ChangeMineralInventory (Uint8 mineral_type, Float mineral_delta);
     
     enum DeviceToPower

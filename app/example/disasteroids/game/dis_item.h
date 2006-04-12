@@ -31,7 +31,9 @@ public:
         :
         m_upgrade_level(upgrade_level),
         m_type(type)
-    { }
+    {
+        ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT)
+    }
     virtual ~Item () { }
 
     static Item *Create (ItemType type, Uint8 upgrade_level);

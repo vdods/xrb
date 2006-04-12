@@ -15,6 +15,7 @@
 #include "dis_healthtrigger.h"
 #include "dis_physicshandler.h"
 #include "dis_powergenerator.h"
+#include "dis_powerup.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
 #include "dis_world.h"
@@ -208,6 +209,8 @@ bool Devourment::TakePowerup (Powerup *const powerup)
 {
     ASSERT1(powerup != NULL)
     // just suck up all powerups, to piss off the player
+    delete powerup->GetItem();
+    powerup->ClearItem();
     return true;
 }
 

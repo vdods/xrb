@@ -688,6 +688,16 @@ void PlayerShip::Die (
     // remove the shield effect, if it exists
     if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
         m_shield_effect->RemoveFromWorld();
+
+    // eject the currently equipped inventory as powerups (with the exception
+    // of the starting inventory), re-equipping the next-best item.
+
+    EjectPowerup(m_main_weapon, 0.0f);
+    EjectPowerup(m_auxiliary_weapon, 60.0f);
+    EjectPowerup(m_engine, 120.0f);
+    EjectPowerup(m_armor, 180.0f);
+    EjectPowerup(m_shield, 240.0f);
+    EjectPowerup(m_power_generator, 300.0f);
 }
 
 void PlayerShip::SetMainWeaponNumber (Uint32 const weapon_number)
@@ -734,7 +744,13 @@ bool PlayerShip::TakePowerup (Powerup *const powerup)
     else
     {
         ASSERT1(powerup->GetItem() != NULL)
-        return AddItem(powerup->GetItem());
+        if (AddItem(powerup->GetItem()))
+        {
+            powerup->ClearItem();
+            return true;
+        }
+        else
+            return false;
     }
 }
 
@@ -860,6 +876,16 @@ PowerGenerator *PlayerShip::GetInventoryPowerGenerator (Uint8 const upgrade_leve
     return static_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]);
 }
 
+bool PlayerShip::GetIsInStartingInventory (Item *const item)
+{
+    ASSERT1(item != NULL)
+
+    return item->GetUpgradeLevel() == 0 &&
+           (item->GetType() == IT_WEAPON_PEA_SHOOTER ||
+            item->GetType() == IT_ENGINE ||
+            item->GetType() == IT_POWER_GENERATOR);
+}
+
 void PlayerShip::SetArmorStatus (Float const armor_status)
 {
     ASSERT1(armor_status >= 0.0f && armor_status <= 1.0f)
@@ -897,6 +923,108 @@ void PlayerShip::SetWeaponStatus (Float const weapon_status)
     {
         m_weapon_status = weapon_status;
         m_sender_weapon_status_changed.Signal(m_weapon_status);
+    }
+}
+
+void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
+{
+    if (ejectee == NULL || GetIsInStartingInventory(ejectee))
+        return;
+
+    static Float const s_powerup_scale_factor = 5.0f;
+    static Float const s_powerup_ejection_speed = 50.0f;
+    
+    FloatVector2 ejection_normal(Math::UnitVector(GetAngle() + ejection_angle));
+    SpawnPowerup(
+        GetWorld(),
+        GetObjectLayer(),
+        s_powerup_scale_factor * ejection_normal + GetTranslation(),
+        s_powerup_scale_factor,
+        s_powerup_scale_factor * s_powerup_scale_factor,
+        s_powerup_ejection_speed * ejection_normal,
+        ejectee);
+
+    // remove the item from the inventory
+    ItemType item_type = ejectee->GetType();
+    ASSERT1(item_type < IT_COUNT)
+    m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
+
+    // figure out what item to equip it its place
+    Item *item_to_equip = NULL;
+
+    for (Uint8 i = UPGRADE_LEVEL_COUNT-1; i < UPGRADE_LEVEL_COUNT; --i)
+    {
+        if (m_item_inventory[item_type][i] != NULL)
+        {
+            item_to_equip = m_item_inventory[item_type][i];
+            break;
+        }
+    }
+
+    // if we didn't find an item to equip (and the item type is
+    // a main weapon type), figure out what main weapon to equip.
+    if (item_to_equip == NULL &&
+        item_type >= IT_WEAPON_LOWEST &&
+        item_type <= IT_WEAPON_HIGHEST &&
+        item_type != IT_WEAPON_TRACTOR)
+    {
+        // the priority goes GaussGun, FlameThrower, MissileLauncher,
+        // Laser, GrenadeLauncher, PeaShooter, MineLayer, EMPCore
+        // (note that AutoDestruct is not auto-equipped)
+        static ItemType const s_weapon_priority[] =
+        {
+            IT_WEAPON_GAUSS_GUN,
+            IT_WEAPON_FLAME_THROWER,
+            IT_WEAPON_MISSILE_LAUNCHER,
+            IT_WEAPON_LASER,
+            IT_WEAPON_GRENADE_LAUNCHER,
+            IT_WEAPON_PEA_SHOOTER,
+            IT_WEAPON_MINE_LAYER,
+            IT_WEAPON_EMP_CORE
+        };
+        static Uint32 const s_weapon_priority_count =
+            sizeof(s_weapon_priority) / sizeof(ItemType);
+
+        for (Uint32 priority = 0; priority < s_weapon_priority_count; ++priority)
+        {
+            for (Uint8 i = UPGRADE_LEVEL_COUNT-1; i < UPGRADE_LEVEL_COUNT; --i)
+            {
+                if (m_item_inventory[s_weapon_priority[priority]][i] != NULL)
+                {
+                    item_to_equip = m_item_inventory[s_weapon_priority[priority]][i];
+                    break;
+                }
+            }
+            if (item_to_equip != NULL)
+                break;
+        }
+    }
+
+    // set the equipped item
+    if (item_type == IT_WEAPON_TRACTOR)
+    {
+        SetAuxiliaryWeapon(DStaticCast<Weapon *>(item_to_equip));
+    }
+    else if (item_type >= IT_WEAPON_LOWEST &&
+             item_type <= IT_WEAPON_HIGHEST)
+    {
+        SetMainWeapon(DStaticCast<Weapon *>(item_to_equip));
+    }
+    else if (item_type == IT_ENGINE)
+    {
+        SetEngine(DStaticCast<Engine *>(item_to_equip));
+    }
+    else if (item_type == IT_ARMOR)
+    {
+        SetArmor(DStaticCast<Armor *>(item_to_equip));
+    }
+    else if (item_type == IT_SHIELD)
+    {
+        SetShield(DStaticCast<Shield *>(item_to_equip));
+    }
+    else if (item_type == IT_POWER_GENERATOR)
+    {
+        SetPowerGenerator(DStaticCast<PowerGenerator *>(item_to_equip));
     }
 }
 

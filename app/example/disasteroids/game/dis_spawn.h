@@ -46,6 +46,7 @@ class Grenade;
 class GrenadeLauncher;
 class HealthTrigger;
 class Interloper;
+class Item;
 class LaserBeam;
 class Mine;
 class MineLayer;
@@ -163,6 +164,15 @@ EMPBomb *SpawnEMPBomb (
     EntityReference<Entity> const &owner,
     Float health);
 */  
+Powerup *SpawnPowerup (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    Float scale_factor,
+    Float first_moment,
+    FloatVector2 const &velocity,
+    Item *item);
+    
 Powerup *SpawnMineral (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,

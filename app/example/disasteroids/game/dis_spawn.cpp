@@ -321,6 +321,32 @@ EMPBomb *SpawnEMPBomb (
     return emp_bomb;
 }
 */
+Powerup *SpawnPowerup (
+    Engine2::World *const world,
+    Engine2::ObjectLayer *const object_layer,
+    FloatVector2 const &translation,
+    Float const scale_factor,
+    Float const first_moment,
+    FloatVector2 const &velocity,
+    Item *const item)
+{
+    ASSERT1(item != NULL)
+    Powerup *powerup = new Powerup(item, Powerup::PU_SOLITARY);
+    SpawnDynamicSprite(
+        world,
+        object_layer,
+        "resources/powerup.png",
+        powerup,
+        translation,
+        scale_factor,
+        Math::RandomAngle(),
+        first_moment,
+        velocity,
+        Math::RandomFloat(-90.0f, 90.0f),
+        0.1f);
+    return powerup;
+}
+
 Powerup *SpawnMineral (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,

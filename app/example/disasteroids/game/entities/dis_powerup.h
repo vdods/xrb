@@ -63,7 +63,10 @@ public:
         m_item = item;
         SetPickupFlags(pickup_flags);
     }
-    virtual ~Powerup () { }
+    virtual ~Powerup ()
+    {
+        Delete(m_item);
+    }
 
     // Entity interface method
     virtual bool GetIsPowerup () const { return true; }

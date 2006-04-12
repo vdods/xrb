@@ -34,16 +34,15 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- move EventStateMachineInput into Xrb as a real event
+- bug: Revulsion's gauss gun trail is passing through the player.
+- bug: player is able to pop up the inventory panel at the game over screen.
+- change all GetType()s into GetBlahType() so it's more self-documenting.
+- make consistent the Powerup pickup flags and the Devourment powerup grabbing
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
-- the stoke O meter is still not being reset when the player dies
 - when low power is supplied to the FlameThrower, the fireballs should
   be less intense
-- when player ship dies, it should eject its current equipped inventory,
-  with the exception of the starting inventory -- the items will be spawned
-  as Powerups, which the player can then recollect.
 - fix LineTrace screwing up on large entities sometimes at certain angles
 - make Devourment grow as it eats stuff
 - ships should not be able to rotate to any angle instantly
