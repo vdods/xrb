@@ -448,7 +448,7 @@ void WorldView::BeginOutro ()
     ScheduleStateMachineInput(IN_BEGIN_OUTRO, 0.0f);
 }
 
-void WorldView::SetIntroTimeLeft (Float intro_time_left)
+void WorldView::SetIntroTimeLeft (Float intro_time_left, Float const dt)
 {
     ASSERT1(m_intro_outro_time_total > 0.0f)
     ASSERT1(m_zoom_factor_begin > 0.0f)
@@ -462,9 +462,10 @@ void WorldView::SetIntroTimeLeft (Float intro_time_left)
     Float parameter = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
     GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
     SetZoomFactor(m_zoom_factor_begin * (1.0 - parameter) + m_zoom_factor_end * parameter);
+    RotateView(dt * (m_angular_speed_begin * (1.0 - parameter) + m_angular_speed_end * parameter));
 }
 
-void WorldView::SetOutroTimeLeft (Float outro_time_left)
+void WorldView::SetOutroTimeLeft (Float outro_time_left, Float const dt)
 {
     ASSERT1(m_intro_outro_time_total > 0.0f)
     ASSERT1(m_zoom_factor_begin > 0.0f)
@@ -478,6 +479,7 @@ void WorldView::SetOutroTimeLeft (Float outro_time_left)
     Float parameter = m_intro_outro_time_left / m_intro_outro_time_total;
     GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
     SetZoomFactor(m_zoom_factor_end * (1.0 - parameter) + m_zoom_factor_begin * parameter);
+    RotateView(dt * (m_angular_speed_end * (1.0 - parameter) + m_angular_speed_begin * parameter));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -504,11 +506,14 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
             SetMinZoomFactor(0.0f);
             SetMaxZoomFactor(10000.0f);
             // set the begin/end zoom factors
-            m_zoom_factor_begin = 0.0005f;
+            m_zoom_factor_begin = 0.0001f;
             m_zoom_factor_end = 0.0039f;
+            // set the begin/end angular speeds
+            m_angular_speed_begin = 180.0f;
+            m_angular_speed_end = 0.0f;
             // initialize the intro time        
             m_intro_outro_time_total = 2.0f;
-            SetIntroTimeLeft(m_intro_outro_time_total);
+            SetIntroTimeLeft(m_intro_outro_time_total, 0.0f);
             return true;
 
         case IN_PROCESS_FRAME:
@@ -533,7 +538,7 @@ bool WorldView::StateIntro (StateMachineInput const input)
             return true;
 
         case IN_PROCESS_FRAME:
-            SetIntroTimeLeft(m_intro_outro_time_left - GetFrameDT());
+            SetIntroTimeLeft(m_intro_outro_time_left - GetFrameDT(), GetFrameDT());
             if (m_intro_outro_time_left <= 0.0f)
             {
                 m_sender_end_intro.Signal();
@@ -615,16 +620,19 @@ bool WorldView::StateOutro (StateMachineInput const input)
             SetMaxZoomFactor(10000.0f);
             // set the begin/end zoom factors
             m_zoom_factor_begin = GetZoomFactor();
-            m_zoom_factor_end = 0.0005f;
+            m_zoom_factor_end = 0.0001f;
+            // set the begin/end angular speeds
+            m_angular_speed_begin = 0.0f;
+            m_angular_speed_end = 180.0f;
             // initialize the outro time        
             m_intro_outro_time_total = 2.0f;
-            SetOutroTimeLeft(m_intro_outro_time_total);
+            SetOutroTimeLeft(m_intro_outro_time_total, 0.0f);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
             return true;
 
         case IN_PROCESS_FRAME:
-            SetOutroTimeLeft(m_intro_outro_time_left - GetFrameDT());
+            SetOutroTimeLeft(m_intro_outro_time_left - GetFrameDT(), GetFrameDT());
             if (m_intro_outro_time_left <= 0.0f)
             {
                 m_sender_end_outro.Signal();

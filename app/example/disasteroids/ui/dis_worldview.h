@@ -76,8 +76,8 @@ private:
     void BeginGameOver ();
     void BeginOutro ();
 
-    void SetIntroTimeLeft (Float intro_time_left);
-    void SetOutroTimeLeft (Float outro_time_left);
+    void SetIntroTimeLeft (Float intro_time_left, Float dt);
+    void SetOutroTimeLeft (Float outro_time_left, Float dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // begin state machine stuff
@@ -113,6 +113,8 @@ private:
     Float m_intro_outro_time_left;
     Float m_zoom_factor_begin;
     Float m_zoom_factor_end;
+    Float m_angular_speed_begin;
+    Float m_angular_speed_end;
     
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship
