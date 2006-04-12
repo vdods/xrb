@@ -35,7 +35,6 @@ DISASTEROIDS:
   
 CURRENT:
 - bug: Revulsion's gauss gun trail is passing through the player.
-- bug: player is able to pop up the inventory panel at the game over screen.
 - change all GetType()s into GetBlahType() so it's more self-documenting.
 - make consistent the Powerup pickup flags and the Devourment powerup grabbing
 - add collision_location and collision_normal to LineTrace

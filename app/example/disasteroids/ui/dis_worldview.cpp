@@ -99,14 +99,9 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::ESCAPE:
-                // not allowed to use the inventory panel if we're in the intro or outro
-                if (m_state_machine.GetCurrentState() != &WorldView::StatePreIntro &&
-                    m_state_machine.GetCurrentState() != &WorldView::StateIntro &&
-                    m_state_machine.GetCurrentState() != &WorldView::StateOutro &&
-                    m_state_machine.GetCurrentState() != &WorldView::StatePostOutro)
-                {
+                // only allowed to use the inventory panel if we're StateNormalGameplay
+                if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
                     m_sender_activate_inventory_panel.Signal();
-                }
                 break;
         
             case Key::KP_DIVIDE:
