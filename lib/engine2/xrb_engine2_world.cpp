@@ -264,15 +264,15 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
     ASSERT0(false && "Invalid index (higher than the highest object layer index)")
 }
 
-bool Engine2::World::ProcessEventOverride (Event const *const event)
+bool Engine2::World::ProcessEventOverride (Event const *const e)
 {
-    ASSERT1(event != NULL)
-    switch (event->GetType())
+    ASSERT1(e != NULL)
+    switch (e->GetEventType())
     {
         case Event::ENGINE2_DELETE_ENTITY:
         {
             EventEntity const *event_entity =
-                DStaticCast<EventEntity const *>(event);
+                DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
             ASSERT1(entity != NULL)
             ASSERT1(entity->GetOwnerObject()->GetWorld() == this)

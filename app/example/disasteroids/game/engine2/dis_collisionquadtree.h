@@ -103,7 +103,7 @@ private:
             Float frame_dt,
             CollisionPairList *collision_pair_list,
             Float object_layer_side_length,
-            Engine2::QuadTreeType type)
+            Engine2::QuadTreeType quad_tree_type)
             :
             m_entity(entity),
             m_frame_dt(frame_dt),
@@ -111,7 +111,7 @@ private:
             m_collision_pair_list(collision_pair_list),
             m_object_layer_side_length(object_layer_side_length),
             m_half_object_layer_side_length(0.5f*object_layer_side_length),
-            m_type(type)
+            m_quad_tree_type(quad_tree_type)
         {
             ASSERT1(m_entity != NULL)
             ASSERT1(m_collision_pair_list != NULL)
@@ -132,7 +132,7 @@ private:
         CollisionPairList *m_collision_pair_list;
         Float m_object_layer_side_length;
         Float m_half_object_layer_side_length;
-        Engine2::QuadTreeType m_type;
+        Engine2::QuadTreeType m_quad_tree_type;
     }; // end of class CollideEntityWrappedLoopFunctor
 
     void CollideEntityWrapped (CollideEntityWrappedLoopFunctor &functor);

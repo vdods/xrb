@@ -333,7 +333,7 @@ bool World::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
-    if (e->GetType() == Event::STATE_MACHINE_INPUT)
+    if (e->GetEventType() == Event::STATE_MACHINE_INPUT)
     {
         m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
         return true;

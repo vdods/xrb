@@ -39,7 +39,7 @@ public:
 
     virtual ~QuadTree () = 0;
 
-    inline QuadTreeType GetType () const { return m_type; }
+    inline QuadTreeType GetQuadTreeType () const { return m_quad_tree_type; }
     inline QuadTree *GetParent () const { return m_parent; }
     inline bool GetHasChildren () const { return m_child[0] != NULL; }
     // returns the root node (top level parent) of this quadtree node
@@ -52,7 +52,7 @@ public:
     inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
-    inline bool GetIsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetType()) / m_radius > 0.5f; }
+    inline bool GetIsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetQuadTreeType()) / m_radius > 0.5f; }
 
     bool GetDoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
@@ -117,7 +117,7 @@ protected:
         Float object_layer_side_length,
         Float half_object_layer_side_length) const;
 
-    void SetType (QuadTreeType type);
+    void SetQuadTreeType (QuadTreeType quad_tree_type);
 
     // increment m_subordinate_object_count at this node and up through all parents
     void IncrementSubordinateObjectCount ();
@@ -204,10 +204,10 @@ private:
     Uint32 m_subordinate_object_count;
     // number of non-entities this quad node and all its children contain
     Uint32 m_subordinate_static_object_count;
-    // the type of quadtree this is (the index into
+    // the quad_tree_type of quadtree this is (the index into
     // Engine2::Object::m_owner_quad_tree that stores a pointer to this
     // quadtree
-    QuadTreeType m_type;
+    QuadTreeType m_quad_tree_type;
 }; // end of class Engine2::QuadTree
 
 } // end of namespace Engine2

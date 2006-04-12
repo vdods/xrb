@@ -30,7 +30,7 @@ class Entity : public Engine2::Entity
 {
 public:
 
-    Entity (EntityType type, CollisionType collision_type);
+    Entity (EntityType entity_type, CollisionType collision_type);
     virtual ~Entity ()
     {
         if (m_reference.GetIsValid())
@@ -41,7 +41,7 @@ public:
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline EntityType GetEntityType () const { return m_type; }
+    inline EntityType GetEntityType () const { return m_entity_type; }
     inline Float GetNextTimeToThink () const { return m_next_time_to_think; }
     inline EntityReference<Entity> const &GetReference ()
     {
@@ -239,7 +239,7 @@ protected:
 
 private:
 
-    EntityType const m_type;
+    EntityType const m_entity_type;
     Float m_next_time_to_think;
     EntityReference<Entity> m_reference;
     // indicates the collision response which the geometry in this entity provides

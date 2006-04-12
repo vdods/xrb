@@ -34,26 +34,26 @@ Event *Event::CreateEventFromSDLEvent (
     {
         case SDL_ACTIVEEVENT:
             retval = new EventActive(
-                reinterpret_cast<SDL_ActiveEvent const *const>(e),
+                reinterpret_cast<SDL_ActiveEvent const *>(e),
                 time);
             break;
 
         case SDL_KEYDOWN:
             retval = new EventKeyDown(
-                reinterpret_cast<SDL_KeyboardEvent const *const>(e),
+                reinterpret_cast<SDL_KeyboardEvent const *>(e),
                 time);
             break;
 
         case SDL_KEYUP:
             retval = new EventKeyUp(
-                reinterpret_cast<SDL_KeyboardEvent const *const>(e),
+                reinterpret_cast<SDL_KeyboardEvent const *>(e),
                 time);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
         {
             SDL_MouseButtonEvent const *mouse_button_event =
-                reinterpret_cast<SDL_MouseButtonEvent const *const>(e);
+                reinterpret_cast<SDL_MouseButtonEvent const *>(e);
             if (mouse_button_event->button == Key::MOUSEWHEELUP ||
                 mouse_button_event->button == Key::MOUSEWHEELDOWN)
             {
@@ -77,7 +77,7 @@ Event *Event::CreateEventFromSDLEvent (
         case SDL_MOUSEBUTTONUP:
         {
             SDL_MouseButtonEvent const *mouse_button_event =
-                reinterpret_cast<SDL_MouseButtonEvent const *const>(e);
+                reinterpret_cast<SDL_MouseButtonEvent const *>(e);
             if (mouse_button_event->button == Key::MOUSEWHEELUP ||
                 mouse_button_event->button == Key::MOUSEWHEELDOWN)
             {
@@ -98,7 +98,7 @@ Event *Event::CreateEventFromSDLEvent (
 
         case SDL_MOUSEMOTION:
             retval = new EventMouseMotion(
-                reinterpret_cast<SDL_MouseMotionEvent const *const>(e),
+                reinterpret_cast<SDL_MouseMotionEvent const *>(e),
                 Singletons::KeyBinds()->GetModifiers(),
                 screen,
                 time);
@@ -106,55 +106,55 @@ Event *Event::CreateEventFromSDLEvent (
 
         case SDL_JOYAXISMOTION:
             retval = new EventJoyAxis(
-                reinterpret_cast<SDL_JoyAxisEvent const *const>(e),
+                reinterpret_cast<SDL_JoyAxisEvent const *>(e),
                 time);
             break;
 
         case SDL_JOYBALLMOTION:
             retval = new EventJoyBall(
-                reinterpret_cast<SDL_JoyBallEvent const *const>(e),
+                reinterpret_cast<SDL_JoyBallEvent const *>(e),
                 time);
             break;
 
         case SDL_JOYBUTTONDOWN:
             retval = new EventJoyButtonDown(
-                reinterpret_cast<SDL_JoyButtonEvent const *const>(e),
+                reinterpret_cast<SDL_JoyButtonEvent const *>(e),
                 time);
             break;
 
         case SDL_JOYBUTTONUP:
             retval = new EventJoyButtonUp(
-                reinterpret_cast<SDL_JoyButtonEvent const *const>(e),
+                reinterpret_cast<SDL_JoyButtonEvent const *>(e),
                 time);
             break;
 
         case SDL_JOYHATMOTION:
             retval = new EventJoyHat(
-                reinterpret_cast<SDL_JoyHatEvent const *const>(e),
+                reinterpret_cast<SDL_JoyHatEvent const *>(e),
                 time);
             break;
 
         case SDL_QUIT:
             retval = new EventQuit(
-                reinterpret_cast<SDL_QuitEvent const *const>(e),
+                reinterpret_cast<SDL_QuitEvent const *>(e),
                 time);
             break;
 
         case SDL_SYSWMEVENT:
             retval = new EventSysWM(
-                reinterpret_cast<SDL_SysWMEvent const *const>(e),
+                reinterpret_cast<SDL_SysWMEvent const *>(e),
                 time);
             break;
 
         case SDL_VIDEORESIZE:
             retval = new EventResize(
-                reinterpret_cast<SDL_ResizeEvent const *const>(e),
+                reinterpret_cast<SDL_ResizeEvent const *>(e),
                 time);
             break;
 
         case SDL_VIDEOEXPOSE:
             retval = new EventExpose(
-                reinterpret_cast<SDL_ExposeEvent const *const>(e),
+                reinterpret_cast<SDL_ExposeEvent const *>(e),
                 time);
             break;
 
@@ -179,11 +179,11 @@ EventCustom::~EventCustom () { }
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool MatchEventType (Event const *event, Event::Type const event_type)
+bool MatchEventType (Event const *event, Event::EventType const event_type)
 {
     ASSERT1(event != NULL)
 
-    return event->GetType() == event_type;
+    return event->GetEventType() == event_type;
 }
 
 bool MatchCustomType (Event const *event, EventCustom::CustomType const custom_type)

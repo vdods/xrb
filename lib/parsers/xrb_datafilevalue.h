@@ -72,7 +72,7 @@ public:
     typedef AllocationTracker::const_iterator AllocationTrackerConstIterator;
     typedef AllocationTracker::iterator AllocationTrackerIterator;
 
-    enum Type
+    enum DataType
     {
         T_BOOLEAN = 0,
         T_INTEGER,
@@ -85,13 +85,13 @@ public:
         T_NO_LIST_ELEMENTS,
 
         T_TYPE_COUNT
-    }; // end of enum DataFileValue::Type
+    }; // end of enum DataFileValue::DataType
 
     DataFileValue (AllocationTracker *owner_allocation_tracker);
     virtual ~DataFileValue ();
 
-    virtual Type GetType () const = 0;
-    virtual Type GetUltimateType () const = 0;
+    virtual DataType GetDataType () const = 0;
+    virtual DataType GetUltimateType () const = 0;
     virtual Uint32 GetListRecursionLevel () const = 0;
 
     inline bool GetIsOwnedByAllocationTracker () const
@@ -143,11 +143,11 @@ public:
     }
     virtual ~DataFileBoolean () { }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_BOOLEAN;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_BOOLEAN;
     }
@@ -199,11 +199,11 @@ public:
     }
     virtual ~DataFileInteger () { }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_INTEGER;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_INTEGER;
     }
@@ -257,11 +257,11 @@ public:
     }
     virtual ~DataFileFloat () { }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_FLOAT;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_FLOAT;
     }
@@ -303,11 +303,11 @@ public:
     }
     virtual ~DataFileCharacter () { }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_CHARACTER;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_CHARACTER;
     }
@@ -357,11 +357,11 @@ public:
     }
     virtual ~DataFileString () { }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_STRING;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_STRING;
     }
@@ -420,11 +420,11 @@ public:
         Delete(m_value);
     }
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_KEY_VALUE_PAIR;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_KEY_VALUE_PAIR;
     }
@@ -463,11 +463,11 @@ public:
     DataFileStructure (AllocationTracker *owner_allocation_tracker);
     virtual ~DataFileStructure ();
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_STRUCTURE;
     }
-    virtual Type GetUltimateType () const
+    virtual DataType GetUltimateType () const
     {
         return T_STRUCTURE;
     }
@@ -509,11 +509,11 @@ public:
     DataFileList (AllocationTracker *owner_allocation_tracker);
     virtual ~DataFileList ();
 
-    virtual Type GetType () const
+    virtual DataType GetDataType () const
     {
         return T_LIST;
     }
-    virtual Type GetUltimateType () const;
+    virtual DataType GetUltimateType () const;
     virtual Uint32 GetListRecursionLevel () const;
     bool GetShouldBeFormattedInline () const;
 

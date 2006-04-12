@@ -43,12 +43,12 @@ class Weapon : public PoweredDevice
 {
 public:
 
-    Weapon (Uint8 const upgrade_level, ItemType const type)
+    Weapon (Uint8 const upgrade_level, ItemType const item_type)
         :
-        PoweredDevice(upgrade_level, type)
+        PoweredDevice(upgrade_level, item_type)
     {
-        ASSERT1(type >= IT_WEAPON_LOWEST && type <= IT_WEAPON_HIGHEST ||
-                type >= IT_ENEMY_WEAPON_LOWEST && type <= IT_ENEMY_WEAPON_HIGHEST)
+        ASSERT1(item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST ||
+                item_type >= IT_ENEMY_WEAPON_LOWEST && item_type <= IT_ENEMY_WEAPON_HIGHEST)
         m_current_ammo = 0;
         m_max_ammo = 0;
     }

@@ -30,7 +30,7 @@ public:
 
     /** @brief Constructs an EventKey from the given SDL_KeyboardEvent.
       */
-    EventKey (SDL_KeyboardEvent const *e, Float time, Type type);
+    EventKey (SDL_KeyboardEvent const *e, Float time, EventType event_type);
     /** EventKey is an abstract baseclass.
       * @brief Pure virtual destructor.
       */
@@ -201,7 +201,7 @@ public:
         Uint16 const sdl_event_x,
         Uint16 const sdl_event_y,
         Float const time,
-        Type const type);
+        EventType const event_type);
     /** @brief Pure virtual destructor.
       */
     virtual ~EventMouse () = 0;
@@ -276,7 +276,7 @@ public:
         SDLMod const modifiers,
         Screen const *const screen,
         Float const time,
-        Type type);
+        EventType event_type);
     /** @brief Pure virtual destructor.
       */
     virtual ~EventMouseButton () = 0;
@@ -465,7 +465,7 @@ public:
 
     /** @brief Constructs an EventJoy.
       */
-    EventJoy (Float const time, Type const type) : Event(time, type) { }
+    EventJoy (Float const time, EventType const event_type) : Event(time, event_type) { }
     /** @brief Pure virtual destructor.
       */
     virtual ~EventJoy () = 0;
@@ -516,7 +516,7 @@ public:
 
     EventJoyButton (SDL_JoyButtonEvent const *const e,
                     Float const time,
-                    Type const type);
+                    EventType const event_type);
     virtual ~EventJoyButton () { }
 
     SDL_JoyButtonEvent const &GetSDLEvent () const { return m_event; }

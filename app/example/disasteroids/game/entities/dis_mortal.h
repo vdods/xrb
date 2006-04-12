@@ -43,10 +43,10 @@ public:
     Mortal (
         Float const current_health,
         Float const max_health,
-        EntityType const type,
+        EntityType const entity_type,
         CollisionType const collision_type)
         :
-        Entity(type, collision_type)
+        Entity(entity_type, collision_type)
     {
         ASSERT1(current_health > 0.0f)
         ASSERT1(max_health > 0.0f)

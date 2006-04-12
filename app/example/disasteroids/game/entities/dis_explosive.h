@@ -28,10 +28,10 @@ public:
         EntityReference<Entity> const &owner,
         Float const current_health,
         Float const max_health,
-        EntityType const type,
+        EntityType const entity_type,
         CollisionType const collision_type)
         :
-        Mortal(current_health, max_health, type, collision_type),
+        Mortal(current_health, max_health, entity_type, collision_type),
         m_owner(owner)
     {
         SetDamageDissipationRate(1.0f);

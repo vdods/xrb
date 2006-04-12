@@ -29,9 +29,9 @@ public:
 
     PoweredDevice (
         Uint8 const upgrade_level,
-        ItemType const type)
+        ItemType const item_type)
         :
-        Item(upgrade_level, type)
+        Item(upgrade_level, item_type)
     {
         m_owner_ship = NULL;
     }

@@ -27,9 +27,9 @@ public:
         ENEMY_LEVEL_COUNT = 4
     };
 
-    EnemyShip (Uint8 const enemy_level, Float const max_health, EntityType const type)
+    EnemyShip (Uint8 const enemy_level, Float const max_health, EntityType const entity_type)
         :
-        Ship(max_health, type),
+        Ship(max_health, entity_type),
         m_enemy_level(enemy_level)
     {
         ASSERT1(enemy_level < ENEMY_LEVEL_COUNT)

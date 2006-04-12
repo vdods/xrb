@@ -19,9 +19,9 @@ namespace Xrb
 EventKey::EventKey (
     SDL_KeyboardEvent const *const e,
     Float const time,
-    Type type)
+    EventType event_type)
     :
-    Event(time, type)
+    Event(time, event_type)
 {
     // this is not an ASSERT just because KeyRepeater needs be able to
     // construct an EventKeyDown with no SDL key event.
@@ -85,9 +85,9 @@ EventMouse::EventMouse (
     Uint16 const sdl_event_x,
     Uint16 const sdl_event_y,
     Float const time,
-    Type const type)
+    EventType const event_type)
     :
-    Event(time, type)
+    Event(time, event_type)
 {
     ASSERT1(screen != NULL)
     m_position = screen->GetScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);
@@ -101,9 +101,9 @@ EventMouseButton::EventMouseButton (
     SDLMod const modifiers,
     Screen const *const screen,
     Float const time,
-    Type type)
+    EventType event_type)
     :
-    EventMouse(modifiers, screen, e->x, e->y, time, type)
+    EventMouse(modifiers, screen, e->x, e->y, time, event_type)
 {
     ASSERT1(e != NULL)
     m_event = *e;
@@ -150,9 +150,9 @@ EventJoyBall::EventJoyBall (
 EventJoyButton::EventJoyButton (
     SDL_JoyButtonEvent const *const e,
     Float const time,
-    Type const type)
+    EventType const event_type)
     :
-    EventJoy(time, type)
+    EventJoy(time, event_type)
 {
     ASSERT1(e != NULL)
     m_event = *e;

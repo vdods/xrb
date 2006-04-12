@@ -204,7 +204,7 @@ bool KeyBinds::ProcessEventOverride (Event const *const e)
     ASSERT1(e != NULL)
 
     Key::Code code;
-    switch (e->GetType())
+    switch (e->GetEventType())
     {
         case Event::KEYDOWN:
             code = static_cast<EventKeyDown const *const>(e)->GetKeyCode();

@@ -74,7 +74,7 @@ public:
     inline ItemType GetItemType () const
     {
         if (m_item != NULL)
-            return m_item->GetType();
+            return m_item->GetItemType();
         else
             return m_item_type;
     }

@@ -28,7 +28,7 @@ class Ship : public Mortal
 {
 public:
 
-    Ship (Float max_health, EntityType type);
+    Ship (Float max_health, EntityType entity_type);
     virtual ~Ship ();
 
     virtual bool GetIsShip () const { return true; }

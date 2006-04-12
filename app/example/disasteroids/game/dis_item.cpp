@@ -22,12 +22,12 @@ using namespace Xrb;
 namespace Dis
 {
 
-Item *Item::Create (ItemType const type, Uint8 const upgrade_level)
+Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(type < IT_COUNT)
+    ASSERT1(item_type < IT_COUNT)
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
 
-    switch (type)
+    switch (item_type)
     {
         case IT_WEAPON_PEA_SHOOTER:           return new PeaShooter(upgrade_level);
         case IT_WEAPON_LASER:                 return new Laser(upgrade_level);

@@ -33,7 +33,7 @@ Engine2::VisibilityQuadTree::VisibilityQuadTree (
     QuadTree(NULL)
 {
     Initialize<VisibilityQuadTree>(center, half_side_length, depth);
-    SetType(QTT_VISIBILITY);
+    SetQuadTreeType(QTT_VISIBILITY);
 }
 
 Engine2::VisibilityQuadTree *Engine2::VisibilityQuadTree::Create (Serializer &serializer)
@@ -41,7 +41,7 @@ Engine2::VisibilityQuadTree *Engine2::VisibilityQuadTree::Create (Serializer &se
     VisibilityQuadTree *retval = new VisibilityQuadTree(NULL);
 
     retval->ReadStructure(serializer);
-    retval->SetType(QTT_VISIBILITY);
+    retval->SetQuadTreeType(QTT_VISIBILITY);
     // the objects are left to be read once this new quadtree
     // is returned to the objectlayer
 
@@ -151,7 +151,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
             pixels_in_view_radius,
             view_center,
             view_radius,
-            GetType());
+            GetQuadTreeType());
     Draw(draw_loop_functor);
     return draw_loop_functor.GetDrawnObjectCount();
 }
@@ -170,7 +170,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
             pixels_in_view_radius,
             view_center,
             view_radius,
-            GetType());
+            GetQuadTreeType());
     DrawWrapped(draw_loop_functor);
     return draw_loop_functor.GetDrawnObjectCount();
 }
@@ -236,21 +236,21 @@ Engine2::VisibilityQuadTree::DrawLoopFunctor::DrawLoopFunctor (
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
     Float const view_radius,
-    QuadTreeType const type)
+    QuadTreeType const quad_tree_type)
     :
     m_object_draw_data(render_context, world_to_screen)
 {
     m_pixels_in_view_radius = pixels_in_view_radius;
     m_view_center = view_center;
     m_view_radius = view_radius;
-    m_type = type;
+    m_quad_tree_type = quad_tree_type;
     m_drawn_object_count = 0;
 }
 
 void Engine2::VisibilityQuadTree::DrawLoopFunctor::operator () (Engine2::Object *object)
 {
     // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_type) / m_view_radius;
+    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_quad_tree_type) / m_view_radius;
     // distance culling - don't draw objects that are below the
     // gs_radius_limit_lower threshold
     if (object_radius >= gs_radius_limit_lower)

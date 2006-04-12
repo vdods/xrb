@@ -86,7 +86,7 @@ bool Key::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
-    switch (e->GetType())
+    switch (e->GetEventType())
     {
         case Event::KEYDOWN:
             // assert so that we don't pass the event to the wrong key

@@ -19,7 +19,7 @@ char CharacterFilter::GetFilteredCharacter (char const c) const
 
     // filter the character according to if the filter
     // specifies allowed/disallowed
-    switch (GetType())
+    switch (GetFilterType())
     {
         case ALLOW:
             // allowed indicates that only characters in the filter

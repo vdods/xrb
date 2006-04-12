@@ -20,13 +20,13 @@ using namespace Xrb;
 namespace Dis
 {
 
-Entity::Entity (EntityType const type, CollisionType const collision_type)
+Entity::Entity (EntityType const entity_type, CollisionType const collision_type)
     :
     Engine2::Entity(),
-    m_type(type),
+    m_entity_type(entity_type),
     m_collision_type(collision_type)
 {
-    ASSERT1(m_type < ET_COUNT)
+    ASSERT1(m_entity_type < ET_COUNT)
     ASSERT1(m_collision_type < CT_COUNT)
     m_next_time_to_think = 0.0f;
     m_elasticity = 1.0f;
@@ -184,8 +184,8 @@ Engine2::Entity *Entity::Create (Serializer &serializer)
     ASSERT1(serializer.GetIODirection() == IOD_READ)
 
     Engine2::Entity *retval;
-    EntityType type = ReadEntityType(serializer);
-    switch (type)
+    EntityType entity_type = ReadEntityType(serializer);
+    switch (entity_type)
     {
         case PLAYER_SHIP:
             retval = PlayerShip::Create(serializer);
@@ -245,7 +245,7 @@ void Entity::WriteEntityType (Serializer &serializer) const
 {
     ASSERT1(serializer.GetIODirection() == IOD_WRITE)
     ASSERT1(ET_COUNT < 0x100)
-    serializer.WriteUint8(static_cast<Uint8>(m_type));
+    serializer.WriteUint8(static_cast<Uint8>(m_entity_type));
 }
 
 } // end of namespace Dis

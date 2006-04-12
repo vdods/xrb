@@ -1069,7 +1069,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
         return false;
 
     // mouse-position-related preprocessing
-    if (e->GetType() == Event::MOUSEOVER)
+    if (e->GetEventType() == Event::MOUSEOVER)
     {
         EventMouseover const *mouseover_event =
             DStaticCast<EventMouseover const *>(e);
@@ -1133,7 +1133,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
         ASSERT1(m_modal_widget_stack.empty())
     }
 
-    switch (e->GetType())
+    switch (e->GetEventType())
     {
         case Event::KEYDOWN:
         case Event::KEYUP:
@@ -1196,7 +1196,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
             return ProcessCustomEvent(DStaticCast<EventCustom const *>(e));
 
         default:
-            ASSERT0(false && "Unknown event type")
+            ASSERT0(false && "Invalid Event::EventType")
             return false;
     }
 }
@@ -1663,7 +1663,7 @@ bool Widget::PreprocessMouseEvent (EventMouse const *const e)
         return m_focus->ProcessEvent(e);
 
     // now give this widget the chance to process the event
-    switch (e->GetType())
+    switch (e->GetEventType())
     {
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEBUTTONDOWN:
@@ -1697,7 +1697,7 @@ bool Widget::PreprocessMouseEvent (EventMouse const *const e)
         }
 
         default:
-            ASSERT1(false && "Invalid/unknown event type")
+            ASSERT1(false && "Invalid Event::EventType")
             break;
     }
 

@@ -25,10 +25,10 @@ public:
     Effect (
         Float const time_to_live,
         Float const time_at_birth,
-        EntityType const type,
+        EntityType const entity_type,
         CollisionType const collision_type)
         :
-        Entity(type, collision_type)
+        Entity(entity_type, collision_type)
     {
         ASSERT1(time_to_live != 0.0f)
         ASSERT1(time_at_birth >= 0.0f)
@@ -80,10 +80,10 @@ public:
         Float const final_size,
         Float const time_to_live,
         Float const time_at_birth,
-        EntityType const type,
+        EntityType const entity_type,
         CollisionType const collision_type)
         :
-        Effect(time_to_live, time_at_birth, type, collision_type)
+        Effect(time_to_live, time_at_birth, entity_type, collision_type)
     {
         ASSERT1(final_size > 0.0f)
         m_final_size = final_size;

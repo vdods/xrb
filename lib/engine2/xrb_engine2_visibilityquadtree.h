@@ -100,7 +100,7 @@ protected:
             Float pixels_in_view_radius,
             FloatVector2 const &view_center,
             Float view_radius,
-            QuadTreeType type);
+            QuadTreeType quad_tree_type);
         ~DrawLoopFunctor () { }
 
         inline Object::DrawData const &GetObjectDrawData () const { return m_object_draw_data; }
@@ -122,7 +122,7 @@ protected:
         Float m_pixels_in_view_radius;
         FloatVector2 m_view_center;
         Float m_view_radius;
-        QuadTreeType m_type;
+        QuadTreeType m_quad_tree_type;
         mutable Uint32 m_drawn_object_count;
     }; // end of class Engine2::VisibilityQuadTree::DrawLoopFunctor
 

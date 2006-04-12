@@ -61,7 +61,7 @@ public:
       * to process the event.
       * @brief Enumeration for all Event subclasses.
       */
-    enum Type
+    enum EventType
     {
         DUMMY = 0,
         KEYDOWN,
@@ -89,19 +89,19 @@ public:
         CUSTOM,
 
         NUM_EVENT_TYPES
-    }; // end of enum Type
+    }; // end of enum Event::EventType
 
     /** It should be noted that EventHandler checks that the events it
       * processes have non-descending timestamps.  Processing an event
       * with a time less than the most recently processed will cause an
       * assert.
-      * @brief Construct an event with the given timestamp and type.
+      * @brief Construct an event with the given timestamp and event_type.
       */
-    inline Event (Float const time, Type const type)
+    inline Event (Float const time, EventType const event_type)
     {
         ASSERT1(time >= 0.0)
         m_time = time;
-        m_type = type;
+        m_event_type = event_type;
         m_id = 0;
         m_is_scheduled_for_deletion = false;
     }
@@ -120,9 +120,9 @@ public:
     }
     /** @brief Returns the event's type.
       */
-    inline Type GetType () const
+    inline EventType GetEventType () const
     {
-        return m_type;
+        return m_event_type;
     }
     /** This is used by EventQueue.  You should not need to use it.
       * @brief Returns the ID of the event.
@@ -197,7 +197,7 @@ private:
     }
 
     Float m_time;
-    Type m_type;
+    EventType m_event_type;
     mutable Uint32 m_id;
     mutable bool m_is_scheduled_for_deletion;
 
@@ -277,7 +277,7 @@ private:
 // event-matching functions for use in EventQueue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool MatchEventType (Event const *event, Event::Type event_type);
+bool MatchEventType (Event const *event, Event::EventType event_type);
 bool MatchCustomType (Event const *event, EventCustom::CustomType custom_type);
 
 } // end of namespace Xrb

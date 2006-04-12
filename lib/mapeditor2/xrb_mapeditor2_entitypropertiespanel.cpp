@@ -162,7 +162,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_first_moment_edit =
         new LineEdit(20, control_layout, "per-entity first moment edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_first_moment_edit =
@@ -180,7 +180,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_velocity_x_edit =
         new LineEdit(20, control_layout, "per-entity velocity x edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_velocity_x_edit =
@@ -197,7 +197,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_velocity_y_edit =
         new LineEdit(20, control_layout, "per-entity velocity y edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_velocity_y_edit =
@@ -214,7 +214,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_speed_edit =
         new LineEdit(20, control_layout, "per-entity speed edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_speed_edit =
@@ -231,7 +231,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_velocity_angle_edit =
         new LineEdit(20, control_layout, "per-entity velocity angle edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_velocity_angle_edit =
@@ -248,7 +248,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_second_moment_edit =
         new LineEdit(20, control_layout, "per-entity second moment edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_second_moment_edit =
@@ -266,7 +266,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_angular_velocity_edit =
         new LineEdit(20, control_layout, "per-entity angular_velocity edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_angular_velocity_edit =
@@ -283,7 +283,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_elasticity_edit =
         new LineEdit(20, control_layout, "per-entity elasticity edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_elasticity_edit =
@@ -301,7 +301,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
 
     le = m_per_entity_density_edit =
         new LineEdit(20, control_layout, "per-entity density edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_density_edit =

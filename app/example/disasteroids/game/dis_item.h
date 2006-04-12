@@ -27,16 +27,16 @@ class Item
 {
 public:
 
-    Item (Uint8 const upgrade_level, ItemType const type)
+    Item (Uint8 const upgrade_level, ItemType const item_type)
         :
         m_upgrade_level(upgrade_level),
-        m_type(type)
+        m_item_type(item_type)
     {
         ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT)
     }
     virtual ~Item () { }
 
-    static Item *Create (ItemType type, Uint8 upgrade_level);
+    static Item *Create (ItemType item_type, Uint8 upgrade_level);
     
     static std::string const &GetMineralSpriteFilename (Uint8 mineral_index);
     static Uint32 GetItemPrice (
@@ -45,12 +45,12 @@ public:
         Uint8 mineral_index);
     
     inline Uint8 GetUpgradeLevel () const { return m_upgrade_level; }
-    inline ItemType GetType () const { return m_type; }
+    inline ItemType GetItemType () const { return m_item_type; }
     
 private:
 
     Uint8 const m_upgrade_level;
-    ItemType const m_type;
+    ItemType const m_item_type;
 }; // end of class Item
 
 } // end of namespace Dis

@@ -93,7 +93,7 @@ MapEditor2::ObjectPropertiesPanel::ObjectPropertiesPanel (
 
     le = m_per_object_origin_x_edit =
         new LineEdit(20, control_layout, "per-object origin x edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_origin_x_edit =
@@ -110,7 +110,7 @@ MapEditor2::ObjectPropertiesPanel::ObjectPropertiesPanel (
 
     le = m_per_object_origin_y_edit =
         new LineEdit(20, control_layout, "per-object origin y edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_origin_y_edit =
@@ -127,7 +127,7 @@ MapEditor2::ObjectPropertiesPanel::ObjectPropertiesPanel (
 
     le = m_per_object_scale_edit =
         new LineEdit(20, control_layout, "per-object scale edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_scale_edit =
@@ -145,7 +145,7 @@ MapEditor2::ObjectPropertiesPanel::ObjectPropertiesPanel (
 
     le = m_per_object_angle_edit =
         new LineEdit(20, control_layout, "per-object angle edit");
-    le->GetCharacterFilter().SetType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
+    le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
     vef = m_object_selection_set_angle_edit =

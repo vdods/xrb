@@ -35,7 +35,6 @@ DISASTEROIDS:
   
 CURRENT:
 - bug: Revulsion's gauss gun trail is passing through the player.
-- change all GetType()s into GetBlahType() so it's more self-documenting.
 - make consistent the Powerup pickup flags and the Devourment powerup grabbing
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
@@ -75,7 +74,7 @@ TODO:
 - make Engine2::Entity::GetEntityGuts into a templatized function that takes
   the EntityGuts subclass type and does asserts on dynamic_cast and such.
   then rename the untemplatized one into GetRawEntityGuts.
-- rename Type to something more specific, and rename all enums to have prefixes
+- rename all enums to have prefixes (where appropriate)
 - Entity might need to have a "scaling velocity" or "grow to X size by time Y"
 - move Label into /lib/gui/widgets (maybe?) - ensure the /lib/gui dir is
   organized correctly.
@@ -200,7 +199,7 @@ TODO:
   object layer in world so that the nomenclature of the stuff in
   MapEditorWorld is a little more clear
 - for accessors that return a member pointer, think about which ones
-  should be made into "Type const *"
+  should be made into "Blah const *"
 - make a handy Util function which does quantizing
 - add a 'time type' which allows changing of what data type actually
   stores times (i.e. ints or floats, etc)

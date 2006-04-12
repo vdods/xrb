@@ -28,9 +28,9 @@ class EventEntity : public Event
 {
 public:
 
-    EventEntity (Entity *entity, Float time, Type type)
+    EventEntity (Entity *entity, Float time, EventType event_type)
         :
-        Event(time, type)
+        Event(time, event_type)
     {
         ASSERT1(entity != NULL)
         m_entity = entity;

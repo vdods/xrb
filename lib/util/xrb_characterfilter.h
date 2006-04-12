@@ -37,11 +37,11 @@ public:
 
     /** @brief Enumerates the two filter types.
       */
-    enum Type
+    enum FilterType
     {
         ALLOW = 0, ///< Allow-only-chars - pass only the chars found in the filter string.
         DENY       ///< Deny-only-chars - pass only the chars <strong>not</strong> found in the filter string.
-    }; // end of enum Type
+    }; // end of enum FilterType
 
     /** The default filter mode is deny-only-chars, with the filter string
       * being empty, meaning that no characters are filtered out.
@@ -49,17 +49,17 @@ public:
       */
     inline CharacterFilter ()
     {
-        m_type = DENY;
+        m_filter_type = DENY;
     }
     /** @brief Construct a filter with the given type and filter string.
-      * @param type The filter type to use.
+      * @param filter_type The filter type to use.
       * @param filter The string containing the filter characters.
       */
     inline CharacterFilter (
-        Type const type,
+        FilterType const filter_type,
         std::string const &filter)
     {
-        m_type = type;
+        m_filter_type = filter_type;
         m_filter = filter;
     }
     /** @brief Boring old destructor.
@@ -68,9 +68,9 @@ public:
 
     /** @brief Returns the filter type.
       */
-    inline Type GetType () const
+    inline FilterType GetFilterType () const
     {
-        return m_type;
+        return m_filter_type;
     }
     /** @brief Returns the string containing the filter characters.
       */
@@ -85,11 +85,11 @@ public:
     char GetFilteredCharacter (char c) const;
 
     /** @brief Sets the filter type.
-      * @brief param type The filter type to use.
+      * @brief param filter_type The filter type to use.
       */
-    inline void SetType (Type const type)
+    inline void SetFilterType (FilterType const filter_type)
     {
-        m_type = type;
+        m_filter_type = filter_type;
     }
     /** @brief Sets the string containing the filter chars.
       * @param filter The new filter string to use.
@@ -102,7 +102,7 @@ public:
 private:
 
     // indicates if the characters in the filter will be allowed or denied
-    Type m_type;
+    FilterType m_filter_type;
     // contains the filtered characters
     std::string m_filter;
 }; // end of class CharacterFilter

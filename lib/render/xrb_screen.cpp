@@ -118,7 +118,7 @@ bool Screen::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
-    switch (e->GetType())
+    switch (e->GetEventType())
     {
         case Event::QUIT:
             fprintf(stderr,

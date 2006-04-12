@@ -196,7 +196,7 @@ void Master::Run ()
 bool Master::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
-    ASSERT1(e->GetType() == Event::CUSTOM)
+    ASSERT1(e->GetEventType() == Event::CUSTOM)
 
     EventBase const *event = DStaticCast<EventBase const *>(e);
     switch (event->GetCustomType())

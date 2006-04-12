@@ -34,7 +34,7 @@ class PlayerShip : public Ship, public SignalHandler
 {
 public:
 
-    PlayerShip (Float max_health, EntityType type);
+    PlayerShip (Float max_health, EntityType entity_type);
     virtual ~PlayerShip ();
 
     // Entity interface method

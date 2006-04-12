@@ -29,9 +29,9 @@ namespace Dis
 
 PlayerShip::PlayerShip (
     Float const max_health,
-    EntityType const type)
+    EntityType const entity_type)
     :
-    Ship(max_health, type),
+    Ship(max_health, entity_type),
     SignalHandler(),
     m_sender_score_changed(this),
     m_sender_stoke_changed(this),
@@ -137,11 +137,11 @@ bool PlayerShip::GetIsItemEquipped (
 
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
         return GetMainWeapon() != NULL &&
-               GetMainWeapon()->GetType() == item_type &&
+               GetMainWeapon()->GetItemType() == item_type &&
                GetMainWeapon()->GetUpgradeLevel() == upgrade_level
                ||
                GetAuxiliaryWeapon() != NULL &&
-               GetAuxiliaryWeapon()->GetType() == item_type &&
+               GetAuxiliaryWeapon()->GetItemType() == item_type &&
                GetAuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level;
 
     switch (item_type)
@@ -308,21 +308,21 @@ void PlayerShip::GiveLotsOfMinerals ()
 bool PlayerShip::AddItem (Item *item)
 {
     ASSERT1(item != NULL)
-    ASSERT1(item->GetType() < IT_COUNT)
+    ASSERT1(item->GetItemType() < IT_COUNT)
     ASSERT1(item->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
 
-    if (m_item_inventory[item->GetType()][item->GetUpgradeLevel()] != NULL)
+    if (m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] != NULL)
         return false;
 
-    m_item_inventory[item->GetType()][item->GetUpgradeLevel()] = item;
+    m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] = item;
     TakeOwnershipOfItem(item);
     
-    if (item->GetType() >= IT_WEAPON_LOWEST &&
-        item->GetType() <= IT_WEAPON_HIGHEST)
+    if (item->GetItemType() >= IT_WEAPON_LOWEST &&
+        item->GetItemType() <= IT_WEAPON_HIGHEST)
     {
         Weapon *weapon = DStaticCast<Weapon *>(item);
         
-        if (item->GetType() == IT_WEAPON_TRACTOR)
+        if (item->GetItemType() == IT_WEAPON_TRACTOR)
         {
             if (GetAuxiliaryWeapon() == NULL ||
                 weapon->GetUpgradeLevel() > GetAuxiliaryWeapon()->GetUpgradeLevel())
@@ -342,7 +342,7 @@ bool PlayerShip::AddItem (Item *item)
         return true;    
     }
     
-    switch (item->GetType())
+    switch (item->GetItemType())
     {
         case IT_ENGINE:
         {
@@ -487,7 +487,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         {
             // special treatment for Lasers (because the LaserBeam is effectively
             // attached to the ship's main weapon muzzle.
-            if (current_weapon->GetType() == IT_WEAPON_LASER)
+            if (current_weapon->GetItemType() == IT_WEAPON_LASER)
             {
                 // ensure the laser beam is allocated (lazy allocation)
                 if (!m_laser_beam.GetIsValid())
@@ -505,7 +505,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
     
             // special treatment for Tractors (because the TractorBeam is effectively
             // attached to the ship's main weapon muzzle.
-            if (current_weapon->GetType() == IT_WEAPON_TRACTOR)
+            if (current_weapon->GetItemType() == IT_WEAPON_TRACTOR)
             {
                 // ensure the tractor beam is allocated (lazy allocation)
                 if (!m_tractor_beam.GetIsValid())
@@ -881,9 +881,9 @@ bool PlayerShip::GetIsInStartingInventory (Item *const item)
     ASSERT1(item != NULL)
 
     return item->GetUpgradeLevel() == 0 &&
-           (item->GetType() == IT_WEAPON_PEA_SHOOTER ||
-            item->GetType() == IT_ENGINE ||
-            item->GetType() == IT_POWER_GENERATOR);
+           (item->GetItemType() == IT_WEAPON_PEA_SHOOTER ||
+            item->GetItemType() == IT_ENGINE ||
+            item->GetItemType() == IT_POWER_GENERATOR);
 }
 
 void PlayerShip::SetArmorStatus (Float const armor_status)
@@ -945,7 +945,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         ejectee);
 
     // remove the item from the inventory
-    ItemType item_type = ejectee->GetType();
+    ItemType item_type = ejectee->GetItemType();
     ASSERT1(item_type < IT_COUNT)
     m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
 

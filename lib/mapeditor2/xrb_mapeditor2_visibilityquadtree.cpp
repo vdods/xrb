@@ -28,7 +28,7 @@ MapEditor2::VisibilityQuadTree::VisibilityQuadTree (
     Engine2::VisibilityQuadTree(NULL)
 {
     Initialize<VisibilityQuadTree>(center, half_side_length, depth);
-    SetType(Engine2::QTT_VISIBILITY);
+    SetQuadTreeType(Engine2::QTT_VISIBILITY);
 }
 
 MapEditor2::VisibilityQuadTree *MapEditor2::VisibilityQuadTree::Create (Serializer &serializer)
@@ -36,7 +36,7 @@ MapEditor2::VisibilityQuadTree *MapEditor2::VisibilityQuadTree::Create (Serializ
     VisibilityQuadTree *retval = new VisibilityQuadTree(NULL);
 
     retval->ReadStructure(serializer);
-    retval->SetType(Engine2::QTT_VISIBILITY);
+    retval->SetQuadTreeType(Engine2::QTT_VISIBILITY);
     // the objects are left to be read once this new quadtree
     // is returned to the objectlayer
 

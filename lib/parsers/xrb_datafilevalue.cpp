@@ -123,7 +123,7 @@ void DataFileString::Print (IndentFormatter &formatter) const
 void DataFileKeyValuePair::Print (IndentFormatter &formatter) const
 {
     ASSERT1(m_value != NULL)
-    if (m_value->GetType() == T_STRUCTURE)
+    if (m_value->GetDataType() == T_STRUCTURE)
     {
         formatter.PrintLine("%s\n{", m_key.c_str());
         formatter.Indent();
@@ -131,7 +131,7 @@ void DataFileKeyValuePair::Print (IndentFormatter &formatter) const
         formatter.Unindent();
         formatter.BeginLine("}");
     }
-    else if (m_value->GetType() == T_LIST)
+    else if (m_value->GetDataType() == T_LIST)
     {
         DataFileList const *list = DStaticCast<DataFileList const *>(m_value);
         if (list->GetShouldBeFormattedInline())
@@ -289,7 +289,7 @@ DataFileList::~DataFileList ()
     }
 }
 
-DataFileValue::Type DataFileList::GetUltimateType () const
+DataFileValue::DataType DataFileList::GetUltimateType () const
 {
     ElementListConstIterator it = m_element_list.begin();
     ElementListConstIterator it_end = m_element_list.end();
@@ -297,13 +297,13 @@ DataFileValue::Type DataFileList::GetUltimateType () const
     {
         DataFileValue const *value = *it;
         ASSERT1(value != NULL)
-        if (value->GetType() == T_LIST)
+        if (value->GetDataType() == T_LIST)
         {
             DataFileList const *list = DStaticCast<DataFileList const *>(value);
             return list->GetUltimateType();
         }
         else
-            return value->GetType();
+            return value->GetDataType();
     }
     else
         return T_NO_LIST_ELEMENTS;
@@ -332,10 +332,10 @@ bool DataFileList::GetShouldBeFormattedInline () const
     {
         DataFileValue const *value = *it;
         ASSERT1(value != NULL)
-        ASSERT1(value->GetType() != T_STRUCTURE)
+        ASSERT1(value->GetDataType() != T_STRUCTURE)
         return
-            value->GetType() != T_LIST &&
-            value->GetType() != T_KEY_VALUE_PAIR;
+            value->GetDataType() != T_LIST &&
+            value->GetDataType() != T_KEY_VALUE_PAIR;
     }
     else
         // empty lists should be inlined.
@@ -391,7 +391,7 @@ void DataFileList::AppendValue (DataFileValue const *const value)
         DataFileValue const *first_element_value = *it;
         ASSERT1(first_element_value != NULL)
         if (value->GetListRecursionLevel() != first_element_value->GetListRecursionLevel() ||
-            value->GetType() != first_element_value->GetType() ||
+            value->GetDataType() != first_element_value->GetDataType() ||
             value->GetUltimateType() != first_element_value->GetUltimateType())
         {
             throw "non-homogeneous list";
@@ -426,7 +426,7 @@ void DataFileList::Print (IndentFormatter &formatter) const
     {
         DataFileValue const *value = *it;
         ASSERT1(value != NULL)
-        ASSERT1(value->GetType() != T_STRUCTURE)
+        ASSERT1(value->GetDataType() != T_STRUCTURE)
         
         value->Print(formatter);
 
@@ -467,8 +467,8 @@ bool DataFileList::GetIsListOfOneType () const
 
     DataFileValue const *value = *it;
     Uint32 first_element_list_recursion_level = value->GetListRecursionLevel();
-    Type first_element_type = value->GetType();
-    Type first_element_ultimate_type = value->GetUltimateType();
+    DataType first_element_type = value->GetDataType();
+    DataType first_element_ultimate_type = value->GetUltimateType();
     ++it;
 
     // if any of the elements is not the same type, then return false.
@@ -476,7 +476,7 @@ bool DataFileList::GetIsListOfOneType () const
     {
         value = *it;
         if (value->GetListRecursionLevel() != first_element_list_recursion_level ||
-            value->GetType() != first_element_type ||
+            value->GetDataType() != first_element_type ||
             value->GetUltimateType() != first_element_ultimate_type)
         {
             return false;

@@ -66,7 +66,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
             smallest_candidate = m_child[i]->GetSmallestObjectTouchingPoint(point);
             if (retval == NULL ||
                 smallest_candidate != NULL &&
-                smallest_candidate->GetRadius(GetType()) < retval->GetRadius(GetType()))
+                smallest_candidate->GetRadius(GetQuadTreeType()) < retval->GetRadius(GetQuadTreeType()))
                 retval = smallest_candidate;
         }
     }
@@ -88,10 +88,10 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
 
         // if the point is touching the object
         if ((point - smallest_candidate->GetTranslation()).GetLengthSquared() <=
-            smallest_candidate->GetRadiusSquared(GetType()))
+            smallest_candidate->GetRadiusSquared(GetQuadTreeType()))
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
-                smallest_candidate->GetRadius(GetType()) < retval->GetRadius(GetType()))
+                smallest_candidate->GetRadius(GetQuadTreeType()) < retval->GetRadius(GetQuadTreeType()))
                 // assign it as the smallest
                 retval = smallest_candidate;
     }
@@ -119,10 +119,10 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObject (
     {
         Object const *object = *it;
         ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerQuadTree(m_type) == this)
+        ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == this)
         if ((object->GetTranslation() - area_center).GetLength()
             <
-            (object->GetRadius(GetType()) + area_radius))
+            (object->GetRadius(GetQuadTreeType()) + area_radius))
             return true;
     }
 
@@ -174,7 +174,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
     {
         Object const *object = *it;
         ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerQuadTree(m_type) == this)
+        ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == this)
 
         FloatVector2 object_translation(object->GetTranslation());
         FloatVector2 adjusted_area_center(area_center);
@@ -191,7 +191,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
 
         if ((object_translation - adjusted_area_center).GetLength()
             <
-            (object->GetRadius(GetType()) + area_radius))
+            (object->GetRadius(GetQuadTreeType()) + area_radius))
             return true;
     }
 
@@ -243,11 +243,11 @@ void Engine2::QuadTree::Clear ()
 bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(m_type) == NULL)
+    ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == NULL)
 
     // range checking -- an object can't have a larger radius
     // than the quadnode that owns it
-    ASSERT1(object->GetRadius(GetType()) <= m_radius)
+    ASSERT1(object->GetRadius(GetQuadTreeType()) <= m_radius)
 
     // return if the object's center is not inside this node
     if (!GetIsPointInsideQuad(object->GetTranslation()))
@@ -259,7 +259,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     if (GetIsAllowableObjectRadius(object) || !GetHasChildren())
     {
         // add to this node
-        object->SetOwnerQuadTree(m_type, this);
+        object->SetOwnerQuadTree(m_quad_tree_type, this);
         m_object_set.insert(object);
         ++m_subordinate_object_count;
         if (!object->GetIsDynamic())
@@ -290,15 +290,15 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
 bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(m_type) == this)
+    ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == this)
 
     ObjectSetIterator it = m_object_set.find(object);
     if (it != m_object_set.end())
     {
         // remove the object from the object set of its owner
-        object->GetOwnerQuadTree(m_type)->m_object_set.erase(it);
+        object->GetOwnerQuadTree(m_quad_tree_type)->m_object_set.erase(it);
         // set the object to un-owned
-        object->SetOwnerQuadTree(m_type, NULL);
+        object->SetOwnerQuadTree(m_quad_tree_type, NULL);
         // decrement subordinate object count
         DecrementSubordinateObjectCount();
         // decrement the subordinate static object count if appropriate
@@ -317,14 +317,14 @@ bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
 bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(m_type) != NULL)
+    ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) != NULL)
 
     bool object_was_added = false;
 
     // if the object's position is inside current quadnode
     if (GetIsPointInsideQuad(object->GetTranslation()))
     {
-        Float object_radius_over_quad_radius = object->GetRadius(GetType()) / m_radius;
+        Float object_radius_over_quad_radius = object->GetRadius(GetQuadTreeType()) / m_radius;
         // if the object is too big for current quadnode
         if (object_radius_over_quad_radius > 1.0f)
         {
@@ -420,7 +420,7 @@ Engine2::QuadTree::QuadTree (QuadTree *const parent)
         m_child[i] = NULL;
     m_subordinate_object_count = 0;
     m_subordinate_static_object_count = 0;
-    m_type = QTT_COUNT;
+    m_quad_tree_type = QTT_COUNT;
 }
 
 bool Engine2::QuadTree::GetIsPointInsideQuad (FloatVector2 const &point) const
@@ -463,13 +463,13 @@ bool Engine2::QuadTree::GetDoesAreaOverlapQuadBoundsWrapped (
     return GetDoesAreaOverlapQuadBounds(area_center, area_radius);
 }
 
-void Engine2::QuadTree::SetType (QuadTreeType const type)
+void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
 {
-    ASSERT1(type < QTT_COUNT)
-    m_type = type;
+    ASSERT1(quad_tree_type < QTT_COUNT)
+    m_quad_tree_type = quad_tree_type;
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            m_child[i]->SetType(m_type);
+            m_child[i]->SetQuadTreeType(m_quad_tree_type);
 }
 
 void Engine2::QuadTree::IncrementSubordinateObjectCount ()
@@ -519,11 +519,11 @@ void Engine2::QuadTree::DecrementSubordinateStaticObjectCount ()
 void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(m_type) == NULL)
+    ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == NULL)
 
     // do range adjusting -- an object can't have a larger radius
     // than the quadnode that owns it
-    if (object->GetRadius(GetType()) > m_radius)
+    if (object->GetRadius(GetQuadTreeType()) > m_radius)
         object->SetScaleFactor(m_radius);
 
     ASSERT1(GetIsPointInsideQuad(object->GetTranslation()))
@@ -533,7 +533,7 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
     // for this quadtree's radius or that there are no child quadtree nodes.
     ASSERT1(GetIsAllowableObjectRadius(object) || !GetHasChildren())
     // add to this node
-    object->SetOwnerQuadTree(m_type, this);
+    object->SetOwnerQuadTree(m_quad_tree_type, this);
     m_object_set.insert(object);
     IncrementSubordinateObjectCount();
     if (!object->GetIsDynamic())
@@ -544,12 +544,12 @@ void Engine2::QuadTree::AddObjectIfNotAlreadyAdded (
     Engine2::Object *const object)
 {
     ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(m_type) != NULL)
+    ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) != NULL)
 
     // only move the object to this quadnode if it's not already here.
-    if (object->GetOwnerQuadTree(m_type) != this)
+    if (object->GetOwnerQuadTree(m_quad_tree_type) != this)
     {
-        object->GetOwnerQuadTree(m_type)->RemoveObject(object);
+        object->GetOwnerQuadTree(m_quad_tree_type)->RemoveObject(object);
         NonRecursiveAddObject(object);
     }
 }
