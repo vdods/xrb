@@ -39,25 +39,19 @@ void Powerup::Collide (
     ASSERT1(collider != NULL)
 
     // early-out if already taken
-    if (m_pickup_flags == PU_NONE)
+    if (m_has_been_picked_up)
         return;
 
     // early-out if the collider is not a ship
     if (!collider->GetIsShip())
         return;
 
-    Ship *collider_ship = static_cast<Ship *>(collider);
-
-    // TODO: test the pickup flags against what the ship actually is
-
-    // if the ship accepted the powerup, delete it
-    if (collider_ship->TakePowerup(this))
+    if (DStaticCast<Ship *>(collider)->TakePowerup(this))
     {
         // make sure the ship took the powerup item and cleared it
         ASSERT1(m_item == NULL)
         // this will prevent any other ships from getting the powerup
-        // in the same frame
-        m_pickup_flags = PU_NONE;
+        m_has_been_picked_up = true;
         // schedule this for deletion        
         ScheduleForDeletion(0.0f);
     }

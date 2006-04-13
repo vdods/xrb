@@ -155,6 +155,9 @@ bool Mortal::Damage (
 {
     ASSERT1(damage_amount >= 0.0f)
 
+    if (damage_amount_used != NULL)
+        *damage_amount_used = 0.0f;
+
     if (m_current_health <= 0.0f)
         return false;
 
@@ -164,9 +167,6 @@ bool Mortal::Damage (
     ASSERT1((m_weakness & m_strength) == 0 && "Can't be weak and strong against the same thing")
     ASSERT1((m_weakness & m_immunity) == 0 && "Can't be weak and immune against the same thing")
     ASSERT1((m_strength & m_immunity) == 0 && "Can't be strong and immune against the same thing")
-
-    if (damage_amount_used != NULL)
-        *damage_amount_used = 0.0f;
 
     Float damage_factor;
     if (GetIsWeakAgainst(damage_type))
@@ -189,11 +189,12 @@ bool Mortal::Damage (
         m_dissipated_damage_accumulator = 0.0f;
     // otherwise, just linearly decay the accumulator down with time.
     else
+    {
         m_dissipated_damage_accumulator -= (time - m_time_last_damaged) * m_damage_dissipation_rate;
-
-    // make sure the damage threshold accumulator doesn't go below zero
-    if (m_dissipated_damage_accumulator < 0.0f)
-        m_dissipated_damage_accumulator = 0.0f;
+        // make sure the damage threshold accumulator doesn't go below zero
+        if (m_dissipated_damage_accumulator < 0.0f)
+            m_dissipated_damage_accumulator = 0.0f;
+    }
             
     // renew the last time damaged
     m_time_last_damaged = time;

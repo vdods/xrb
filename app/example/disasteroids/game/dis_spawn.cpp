@@ -331,7 +331,7 @@ Powerup *SpawnPowerup (
     Item *const item)
 {
     ASSERT1(item != NULL)
-    Powerup *powerup = new Powerup(item, Powerup::PU_SOLITARY);
+    Powerup *powerup = new Powerup(item);
     SpawnDynamicSprite(
         world,
         object_layer,
@@ -357,7 +357,7 @@ Powerup *SpawnMineral (
     Uint8 const mineral_index)
 {
     ASSERT1(mineral_index < MINERAL_COUNT)
-    Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_index), Powerup::PU_SOLITARY);
+    Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_index));
     SpawnDynamicSprite(
         world,
         object_layer,

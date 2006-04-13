@@ -34,8 +34,10 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- bug: Revulsion's gauss gun trail is passing through the player.
-- make consistent the Powerup pickup flags and the Devourment powerup grabbing
+- need a way to un-equip certain inventory items (e.g. shields, armor)
+- disasteroids: after enough time elapses, the asteroids should start
+  attacking/going after the player, just to make things that much more hectic.
+- bug: intermittent crash in Dis::PhysicsHandler's entity think loop
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each

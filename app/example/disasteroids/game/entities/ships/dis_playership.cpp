@@ -603,7 +603,7 @@ bool PlayerShip::Damage (
     Float const time,
     Float const frame_dt)
 {
-    Float temp_damage_taken;
+    Float temp_damage_taken = 0.0f;
     
     // let the shield take the damage first
     Float unblocked_damage = damage_amount;
@@ -628,6 +628,7 @@ bool PlayerShip::Damage (
     // if there was any unblocked damage, inflict it on the ship
     if (unblocked_damage > 0.0f)
     {
+        temp_damage_taken = 0.0f;
         player_ship_died = Mortal::Damage(
             damager,
             damage_medium,
@@ -698,6 +699,11 @@ void PlayerShip::Die (
     EjectPowerup(m_armor, 180.0f);
     EjectPowerup(m_shield, 240.0f);
     EjectPowerup(m_power_generator, 300.0f);
+
+    // make sure we have at least the bare minimum equipped inventory
+    ASSERT1(m_main_weapon != NULL)
+    ASSERT1(m_engine != NULL)
+    ASSERT1(m_power_generator != NULL)
 }
 
 void PlayerShip::SetMainWeaponNumber (Uint32 const weapon_number)

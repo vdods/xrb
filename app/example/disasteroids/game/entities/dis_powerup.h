@@ -24,44 +24,23 @@ class Powerup : public Entity
 {
 public:
 
-    // bit flags for what sorts of ships can pick up powerups
-    enum
-    {
-        PU_NONE          = 0x00,
-    
-        PU_SOLITARY      = 0x01,
-        
-        PU_INTERLOPER    = 0x02,
-        PU_SHADE         = 0x04,
-        PU_REVULSION     = 0x08,
-        PU_DEVOURMENT    = 0x10,
-        PU_DEMI          = 0x20,
-        
-        PU_ALL_ENEMIES   = PU_INTERLOPER|PU_SHADE|PU_REVULSION|PU_DEVOURMENT|PU_DEMI,
-        PU_ALL_SHIPS     = PU_SOLITARY|PU_ALL_ENEMIES 
-    };
-
-    Powerup (
-        ItemType const item_type,
-        Uint8 const pickup_flags)
+    Powerup (ItemType const item_type)
         :
         Entity(ET_POWERUP, CT_SOLID_COLLISION)
     {
         m_delete_upon_next_think = false;
         m_item_type = item_type;
         m_item = NULL;
-        SetPickupFlags(pickup_flags);
+        m_has_been_picked_up = false;
     }
-    Powerup (
-        Item *const item,
-        Uint8 const pickup_flags)
+    Powerup (Item *const item)
         :
         Entity(ET_POWERUP, CT_SOLID_COLLISION)
     {
         ASSERT1(item != NULL)
         m_item_type = IT_COUNT;
         m_item = item;
-        SetPickupFlags(pickup_flags);
+        m_has_been_picked_up = false;
     }
     virtual ~Powerup ()
     {
@@ -79,7 +58,6 @@ public:
             return m_item_type;
     }
     inline Item *GetItem () const { return m_item; }
-    inline Uint8 GetPickupFlags () const { return m_pickup_flags; }
 
     inline void ClearItem ()
     {
@@ -96,21 +74,12 @@ public:
         Float time,
         Float frame_dt);
 
-protected:
-
-    inline void SetPickupFlags (Uint8 const pickup_flags)
-    {
-        ASSERT1(pickup_flags != 0)
-        ASSERT1((pickup_flags & ~PU_ALL_SHIPS) == 0)
-        m_pickup_flags = pickup_flags;
-    }
-            
 private:
 
     bool m_delete_upon_next_think;
     ItemType m_item_type;
     Item *m_item;
-    Uint8 m_pickup_flags;
+    bool m_has_been_picked_up;
 }; // end of class Powerup
         
 } // end of namespace Dis
