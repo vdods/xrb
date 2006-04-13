@@ -62,12 +62,11 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- create Resource loading functions for common Resource<blah> types
+  (e.g. LoadGLTexture, LoadFont, etc)
 - child widgets should be based off the position of their parents, so
   screen-relative moving is unnecessary.
 - Label text alignment doesn't seem to work (maybe it's just for non-word-wrapped labels)
-- move Sprite color mask and Compound color mask into Object
-- when a modal widget is deleted or whatever, the mouseover is not being
-  properly restored on whatever the mouse is actually over.
 - the map editor view should not create/destroy its own world -- it
   becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
@@ -84,22 +83,10 @@ TODO:
   the identity (except for top-level ones like Screen and such).
 - maybe change Entity::Get/SetForce/Torque into Get/SetAccumulatedForce/Torque
   or something including the word "frame" like GetFrameTorque
-- see if quadtree should change its storage container from set to list
-  (_Rb_tree_base_iterator::_M_increment uses up 20-30% of the frame time
-  in entity-heavy worlds.  this might make sense because the only reason
-  the container is a set is because adding/removing an object to/from a
-  quadnode needs to be fast, but now since objects only are removed/added
-  when they actually change quadnodes (which is infrequent), it might be
-  better to do the dumb method.
-  OR
-  implement loops using STL's for_each function.
 - make a function which ensures the objects' radius and transformations are
   calculated, so that certain sections of code (like in the physics handler)
   can just get the values directly, instead of checking if they need to be
   computed each time.
-- add GetIsEntity method to Object, which just checks the object subtype,
-  (and does an assert on dynamic_cast'ing to an entity), then replace as
-  much of the dynamic_cast'ing as possible.
 - compound editing operations: delete vertices, delete polygons, flip polygons,
   flip objects, unweld polygon vertices, clone polygons, splitting polygons
 - for static Create type functions for subclassable classes, see if the
@@ -126,14 +113,12 @@ TODO:
 - change the names of the vertex/compound selection functions in
   MapEditor2::ObjectLayer to indicate they only operate within the
   scope of the object selection set.
-- math-related operator overloads that are in the namespace
-  Xrb should be moved out to the global namespace, so that applications
-  that don't do "using namespace Xrb" can use them as well.
+- verify that the operator overloads for math constructs (e.g. Vector)
+  work when "using namespace Xrb" is not used.
 - think about MapEditor2::MainWidget and if the Widget's main widget
   functionality should be renamed.
 - it looks like Object::CalculateTransform might be unneseccary.
   check into that.
-- move Sprite::m_color_mask and Compound::m_color_mask into Object.
 - make the map editor use only meta-keyed shortcuts so that handling
   key events is much simpler.
 - if the screen widget gets resized to larger than the video resolution,
@@ -166,8 +151,6 @@ TODO:
 - GL singleton should have checks to see if it's been initialized
   so when gl calls fail mysteriously, it's obvious what happened.
 - replace drawing the sprite quad with a display list
-- do some sort of partial template specialization so that Resources of
-  specific types can be implicitly constructed via filenames.
 - hide the defer-parent-update SetSizeProperty* versions and make public
   versions of each without that parameter.
 - all resource-related crap that has a Create function should be

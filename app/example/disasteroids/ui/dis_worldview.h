@@ -32,7 +32,7 @@ public:
     virtual ~WorldView ();
 
     inline SignalSender1<PlayerShip *> const *SenderPlayerShipChanged () { return &m_sender_player_ship_changed; }
-    inline SignalSender1<bool> const *SenderIsDebugInfoEnabledChanged () { return &m_sender_is_debug_info_enabled_changed; }
+    inline SignalSender1<bool> const *SenderIsDebugModeEnabledChanged () { return &m_sender_is_debug_mode_enabled_changed; }
     inline SignalSender0 const *SenderShowControls () { return &m_sender_show_controls; }
     inline SignalSender0 const *SenderHideControls () { return &m_sender_hide_controls; }
     inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
@@ -49,10 +49,10 @@ public:
     inline SignalReceiver0 const *ReceiverBeginOutro () { return &m_receiver_begin_outro; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
-    inline bool GetIsDebugInfoEnabled () const { return m_is_debug_info_enabled; }
+    inline bool GetIsDebugInfoEnabled () const { return m_is_debug_mode_enabled; }
     
     void SetPlayerShip (PlayerShip *player_ship);
-    void SetIsDebugInfoEnabled (bool is_debug_info_enabled);
+    void SetIsDebugModeEnabled (bool is_debug_mode_enabled);
 
     // NOT ASSOCIATED WITH EventHandler !!
     // these are overrides of Engine2::WorldView methods!
@@ -167,13 +167,13 @@ private:
     // other shit
 
     bool m_use_dvorak;
-    bool m_is_debug_info_enabled;
+    bool m_is_debug_mode_enabled;
     
     // ///////////////////////////////////////////////////////////////////////
     // SignalSenders
 
     SignalSender1<PlayerShip *> m_sender_player_ship_changed;
-    SignalSender1<bool> m_sender_is_debug_info_enabled_changed;
+    SignalSender1<bool> m_sender_is_debug_mode_enabled_changed;
     SignalSender0 m_sender_show_controls;
     SignalSender0 m_sender_hide_controls;
     SignalSender0 m_sender_activate_inventory_panel;

@@ -15,7 +15,6 @@
 
 #include <string>
 
-#include "xrb_color.h"
 #include "xrb_engine2_object.h"
 #include "xrb_gltexture.h"
 #include "xrb_resourcelibrary.h"
@@ -83,15 +82,11 @@ public:
     // returns the calculated scale factor for the physical geometry,
     // based upon the object's scale factor, and the physical size ratio.
     inline Float GetPhysicalScaleFactor () const { return GetPhysicalSizeRatio() * GetScaleFactor(); }
-    // returns the color mask
-    inline Color const &GetColorMask () const { return m_color_mask; }
 
     // sets the physical size ratios
     void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);
     // sets the physical size ratios (both components to the given value)
     void SetPhysicalSizeRatio (Float physical_size_ratio);
-    // sets the color mask
-    inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
 
     // resets the physical size ratios to [1, 1]
     inline void ResetPhysicalSizeRatios () { SetPhysicalSizeRatio(1.0f); }
@@ -134,8 +129,6 @@ protected:
     bool m_is_round;
     // the component-wise ratios of the physical to the visible scales
     FloatVector2 m_physical_size_ratios;
-    // color mask
-    Color m_color_mask;
 }; // end of class Engine2::Sprite
 
 } // end of namespace Engine2

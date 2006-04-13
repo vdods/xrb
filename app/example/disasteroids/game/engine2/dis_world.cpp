@@ -41,26 +41,26 @@ namespace Dis
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.3f, 0.4f, 0.5f, 0.6f };
 Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
 {
-    {  1,  0,  0,  1 },
-    {  2,  0,  0,  1 },
-    {  3,  1,  1,  1 },
-    {  4,  1,  1,  1 },
-    {  4,  2,  1,  1 },
-    {  5,  3,  2,  1 },
-    {  5,  3,  2,  2 },
-    {  6,  4,  2,  2 },
-    {  6,  4,  3,  2 },
-    {  7,  5,  3,  2 },
-    {  7,  5,  3,  2 },
-    {  8,  6,  4,  2 },
-    {  8,  6,  4,  3 },
-    {  8,  7,  4,  3 },
-    {  8,  7,  5,  3 },
-    {  9,  7,  5,  3 },
-    {  9,  8,  5,  3 },
-    {  9,  8,  6,  4 },
-    { 10,  8,  6,  4 },
-    { 10,  9,  6,  4 }
+    {  2,  0,  0,  2 },
+    {  4,  1,  0,  2 },
+    {  6,  2,  1,  2 },
+    {  8,  3,  1,  2 },
+    { 10,  4,  2,  2 },
+    { 12,  5,  2,  3 },
+    { 14,  6,  3,  3 },
+    { 16,  7,  3,  3 },
+    { 18,  8,  4,  3 },
+    { 20,  9,  4,  4 },
+    { 22, 10,  5,  4 },
+    { 24, 11,  5,  4 },
+    { 26, 12,  6,  4 },
+    { 28, 13,  6,  4 },
+    { 30, 14,  7,  4 },
+    { 32, 15,  7,  5 },
+    { 34, 16,  8,  5 },
+    { 36, 17,  8,  5 },
+    { 38, 18,  9,  5 },
+    { 40, 19,  9,  5 }
 };
 Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
 {
@@ -641,8 +641,8 @@ void World::ProcessNormalGameplayLogic ()
     }
 
     // asteroid spawning
-    static Uint32 const s_max_asteroid_count = 40;
-    static Float const s_max_asteroid_mass = 8000.0f;
+    static Uint32 const s_max_asteroid_count = 80;
+    static Float const s_max_asteroid_mass = 16000.0f;
     if (m_next_asteroid_spawn_time <= GetFrameTime() &&
         m_asteroid_count < s_max_asteroid_count &&
         m_asteroid_mass < s_max_asteroid_mass)
@@ -898,7 +898,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 
 void World::CreateAndPopulateForegroundObjectLayer ()
 {
-    Float object_layer_side_length = 1250.0f;
+    Float object_layer_side_length = 2000.0f;
     
     // create an object layer
     Engine2::ObjectLayer *object_layer =
@@ -930,7 +930,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
         ASSERT1(add_succeeded)
     }
 
-    static Uint32 const s_number_of_asteroids_to_spawn = 10;
+    static Uint32 const s_number_of_asteroids_to_spawn = 40;
     static Float const s_asteroid_scale_factor_max = 35.0f;
     static Float const s_asteroid_scale_factor_min = 5.0f;
     for (Uint32 i = 0; i < s_number_of_asteroids_to_spawn; ++i)

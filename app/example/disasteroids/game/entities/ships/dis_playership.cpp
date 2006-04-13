@@ -952,6 +952,8 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
+    if (ejectee->GetIsPoweredDevice())
+        DStaticCast<PoweredDevice *>(ejectee)->SetOwnerShip(NULL);
     ASSERT1(item_type < IT_COUNT)
     m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
 

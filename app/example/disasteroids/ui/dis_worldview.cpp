@@ -31,7 +31,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     SignalHandler(),
     m_state_machine(this),
     m_sender_player_ship_changed(this),
-    m_sender_is_debug_info_enabled_changed(this),
+    m_sender_is_debug_mode_enabled_changed(this),
     m_sender_show_controls(this),
     m_sender_hide_controls(this),
     m_sender_activate_inventory_panel(this),
@@ -63,8 +63,8 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_rotation_speed = 120.0f;
 
     m_use_dvorak = false;
-    m_is_debug_info_enabled = false;
-    SetDrawBorderGridLines(m_is_debug_info_enabled);
+    m_is_debug_mode_enabled = false;
+    SetDrawBorderGridLines(m_is_debug_mode_enabled);
 
     m_state_machine.Initialize(&WorldView::StatePreIntro);
 }
@@ -82,13 +82,25 @@ void WorldView::SetPlayerShip (PlayerShip *const player_ship)
     }
 }
 
-void WorldView::SetIsDebugInfoEnabled (bool is_debug_info_enabled)
+void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
 {
-    if (m_is_debug_info_enabled != is_debug_info_enabled)
+    if (m_is_debug_mode_enabled != is_debug_mode_enabled)
     {
-        m_is_debug_info_enabled = is_debug_info_enabled;
-        SetDrawBorderGridLines(m_is_debug_info_enabled);
-        m_sender_is_debug_info_enabled_changed.Signal(m_is_debug_info_enabled);
+        m_is_debug_mode_enabled = is_debug_mode_enabled;
+        SetDrawBorderGridLines(m_is_debug_mode_enabled);
+        m_sender_is_debug_mode_enabled_changed.Signal(m_is_debug_mode_enabled);
+
+        // effectively no zoom factor limits in debug mode
+        if (m_is_debug_mode_enabled)
+        {
+            SetMinZoomFactor(0.0f);
+            SetMaxZoomFactor(10000.0f);
+        }
+        else
+        {
+            SetMinZoomFactor(0.0025f);
+            SetMaxZoomFactor(0.0078f);
+        }
     }
 }
 
@@ -155,7 +167,7 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                 break;
 
             case Key::F1:
-                SetIsDebugInfoEnabled(!GetIsDebugInfoEnabled());
+                SetIsDebugModeEnabled(!GetIsDebugInfoEnabled());
                 break;
                 
             case Key::F2:

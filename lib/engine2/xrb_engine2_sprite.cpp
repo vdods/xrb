@@ -75,7 +75,7 @@ void Engine2::Sprite::Draw (
         1.0f);
 
     // set the color mask
-    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(m_color_mask));
+    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;
     glColor4fv(color_mask.m);
 
@@ -132,7 +132,6 @@ Engine2::Sprite::Sprite (Resource<GLTexture> const &texture)
 {
     m_texture = texture;
     m_is_round = true;
-    m_color_mask = Color(1.0, 1.0, 1.0, 1.0);
 }
 
 void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
@@ -144,7 +143,6 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();
     serializer.ReadFloatVector2(&m_physical_size_ratios);
-    serializer.ReadColor(&m_color_mask);
     IndicateRadiiNeedToBeRecalculated();
 
     ASSERT1(m_texture.GetIsValid())
@@ -158,7 +156,6 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     serializer.WriteStdString(m_texture.GetFilename());
     serializer.WriteBool(m_is_round);
     serializer.WriteFloatVector2(m_physical_size_ratios);
-    serializer.WriteColor(m_color_mask);
 }
 
 void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
@@ -191,7 +188,6 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
     m_texture = sprite->m_texture;
     m_is_round = sprite->m_is_round;
     m_physical_size_ratios = sprite->m_physical_size_ratios;
-    m_color_mask = sprite->m_color_mask;
     IndicateRadiiNeedToBeRecalculated();
 }
 

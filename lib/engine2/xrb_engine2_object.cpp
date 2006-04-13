@@ -129,6 +129,7 @@ Engine2::Object::Object (ObjectType object_type)
         m_owner_quad_tree[i] = NULL;
     }
     m_entity = NULL;
+    m_color_mask = Color(1.0f, 1.0f, 1.0f, 1.0f);
     m_radii_need_to_be_recalculated = true;
 }
 
@@ -145,11 +146,13 @@ void Engine2::Object::WriteObjectType (Serializer &serializer) const
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
     serializer.ReadFloatTransform2(this);
+    serializer.ReadColor(&m_color_mask);
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 {
     serializer.WriteFloatTransform2(*static_cast<FloatTransform2 const *>(this));
+    serializer.WriteColor(m_color_mask);
 }
 
 void Engine2::Object::CloneProperties (Object const *const object)
@@ -159,6 +162,7 @@ void Engine2::Object::CloneProperties (Object const *const object)
     SetTranslation(object->GetTranslation());
     SetScaleFactors(object->GetScaleFactors());
     SetAngle(object->GetAngle());
+    m_color_mask = object->m_color_mask;
 }
 
 void Engine2::Object::CalculateTransform () const

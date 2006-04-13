@@ -13,6 +13,7 @@
 
 #include "xrb.h"
 
+#include "xrb_color.h"
 #include "xrb_engine2_enums.h"
 #include "xrb_engine2_types.h"
 #include "xrb_transform2.h"
@@ -98,6 +99,7 @@ public:
     inline ObjectType GetObjectType () const { return m_object_type; }
     inline bool GetIsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
+    inline Color const &GetColorMask () const { return m_color_mask; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
@@ -123,6 +125,8 @@ public:
 
     // imbues this object with a soul
     void SetEntity (Entity *entity);
+    // sets the color mask
+    inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
     // sets the object_layer for this object
     inline void SetObjectLayer (ObjectLayer *const object_layer)
     {
@@ -195,6 +199,8 @@ private:
     // a pointer to the optional Entity object which can "imbue this
     // object with a soul".
     Entity *m_entity;
+    // color mask
+    Color m_color_mask;
     // indicates that the contents of the object have changed and the
     // visible and physical radii need to be recalculated
     mutable bool m_radii_need_to_be_recalculated;
