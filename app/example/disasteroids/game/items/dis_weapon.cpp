@@ -334,6 +334,7 @@ bool FlameThrower::Activate (
         GetMuzzleLocation() + 2.0f * GetMuzzleDirection(), // the extra is just so we don't fry ourselves
         ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
         power / ms_max_required_primary_power[GetUpgradeLevel()] * ms_max_damage_per_fireball[GetUpgradeLevel()],
+        ms_max_damage_per_fireball[GetUpgradeLevel()],
         ms_final_fireball_size[GetUpgradeLevel()],
         1.0f,
         time,
@@ -744,6 +745,8 @@ bool MissileLauncher::Activate (
     
         // update the last time fired
         m_time_last_fired = time;
+        // the weapon fired successfully
+        return true;
     }
     else if (GetSecondaryInput() > 0.0f &&
              power == ms_required_secondary_power[GetUpgradeLevel()])
@@ -752,8 +755,8 @@ bool MissileLauncher::Activate (
         return false;
     }
     
-    // the weapon fired successfully
-    return true;
+    // the weapon did not fire
+    return false;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

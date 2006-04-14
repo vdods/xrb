@@ -53,9 +53,9 @@ void PowerGenerator::PowerDevices (
 
     for (Uint32 i = 0; i < powered_device_count; ++i)
     {
-        if (powered_device[i] != NULL)
+        if (powered_device[i] != NULL &&
+            powered_device[i]->Activate(power_allocator[i], time, frame_dt))
         {
-            powered_device[i]->Activate(power_allocator[i], time, frame_dt);
             m_stored_power -= power_allocator[i];
         }
     }

@@ -465,13 +465,21 @@ Fireball *SpawnFireball (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const power,
+    Float const starting_damage,
+    Float const potential_damage,
     Float const final_size,
     Float const time_to_live,
     Float const time_at_birth,
     EntityReference<Entity> const &owner)
 {
-    Fireball *fireball = new Fireball(power, final_size, time_to_live, time_at_birth, owner);
+    Fireball *fireball =
+        new Fireball(
+            starting_damage,
+            potential_damage,
+            final_size,
+            time_to_live,
+            time_at_birth,
+            owner);
     SpawnDynamicSprite(
         world,
         object_layer,

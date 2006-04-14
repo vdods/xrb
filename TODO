@@ -34,7 +34,6 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- move Dis::ProgressBar into Xrb
 - need a way to un-equip certain inventory items (e.g. shields, armor)
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
@@ -42,8 +41,6 @@ CURRENT:
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
-- when low power is supplied to the FlameThrower, the fireballs should
-  be less intense
 - fix LineTrace screwing up on large entities sometimes at certain angles
 - make Devourment grow as it eats stuff
 - ships should not be able to rotate to any angle instantly

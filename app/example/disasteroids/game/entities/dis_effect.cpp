@@ -151,12 +151,12 @@ void EMPExplosion::Collide (
 void Fireball::Think (Float const time, Float const frame_dt)
 {
     // the power decays as time goes on
-    m_current_damage -= m_initial_damage * frame_dt / GetTimeToLive();
+    m_current_damage -= m_potential_damage * frame_dt / GetTimeToLive();
 
     Explosion::Think(time, frame_dt);
 
     // update the sprite's alpha value to reflect the damage left
-    Float alpha_value = Max(0.0f, m_current_damage / m_initial_damage);
+    Float alpha_value = Max(0.0f, m_current_damage / m_potential_damage);
     ASSERT1(alpha_value <= 1.0f)
     GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
 }
@@ -189,7 +189,7 @@ void Fireball::Collide (
         Mortal *mortal = DStaticCast<Mortal *>(collider);
         Float damage_to_inflict =
             Min(m_current_damage,
-                s_damage_dissipation_rate * m_initial_damage * frame_dt);
+                s_damage_dissipation_rate * m_potential_damage * frame_dt);
         m_current_damage -= damage_to_inflict;
         mortal->Damage(
             *m_owner,

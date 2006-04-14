@@ -202,18 +202,20 @@ class Fireball : public Explosion
 public:
 
     Fireball (
-        Float damage,
+        Float starting_damage,
+        Float potential_damage,
         Float final_size,
         Float time_to_live,
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
         Explosion(final_size, time_to_live, time_at_birth, ET_FIREBALL, CT_NONSOLID_COLLISION),
-        m_initial_damage(damage),
+        m_potential_damage(potential_damage),
         m_owner(owner)
     {
-        ASSERT1(damage > 0.0f)
-        m_current_damage = m_initial_damage;
+        ASSERT1(starting_damage >= 0.0f)
+        ASSERT1(m_potential_damage > 0.0f)
+        m_current_damage = starting_damage;
     }
     virtual ~Fireball () { }
 
@@ -228,8 +230,8 @@ public:
     
 private:
 
-    // the initial amount of damage given to this fireball to dissipate
-    Float const m_initial_damage;
+    // the max amount of damage this (class of) fireball can dissipate
+    Float const m_potential_damage;
     // the amount of damage this fireball still has left to inflict on stuff
     Float m_current_damage;
     // the thing that fired this fireball
