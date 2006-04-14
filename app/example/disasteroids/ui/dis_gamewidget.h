@@ -22,6 +22,7 @@ namespace Xrb
 
 class Label;
 class Layout;
+class ProgressBar;
 class SpacerWidget;
 template <typename T> class ValueLabel;
 
@@ -37,7 +38,6 @@ namespace Dis
 
 class InventoryPanel;
 class PlayerShip;
-class ProgressBar;
 class World;
 class WorldView;
 

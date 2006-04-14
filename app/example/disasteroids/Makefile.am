@@ -39,7 +39,6 @@ disasteroids_SOURCES = \
     ui/dis_inventorybutton.cpp \
     ui/dis_inventorypanel.cpp \
     ui/dis_optionspanel.cpp \
-    ui/dis_progressbar.cpp \
     ui/dis_titlescreenwidget.cpp \
     ui/dis_worldview.cpp
     
@@ -87,7 +86,6 @@ noinst_HEADERS = \
     ui/dis_inventorybutton.h \
     ui/dis_inventorypanel.h \
     ui/dis_optionspanel.h \
-    ui/dis_progressbar.h \
     ui/dis_titlescreenwidget.h \
     ui/dis_worldview.h
 

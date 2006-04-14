@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_progressbar.cpp by Victor Dods, created 2005/12/16
+// xrb_progressbar.cpp by Victor Dods, created 2005/12/16
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,13 +8,13 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_progressbar.h"
+#include "xrb_progressbar.h"
 
 #include "xrb_render.h"
 
 using namespace Xrb;
 
-namespace Dis
+namespace Xrb
 {
 
 ProgressBar::ProgressBar (
@@ -76,5 +76,5 @@ void ProgressBar::Draw (RenderContext const &render_context) const
         progress_rect);
 }
 
-} // end of namespace Dis
+} // end of namespace Xrb
 

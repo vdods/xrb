@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_progressbar.h by Victor Dods, created 2005/12/16
+// xrb_progressbar.h by Victor Dods, created 2005/12/16
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_DIS_PROGRESSBAR_H_)
-#define _DIS_PROGRESSBAR_H_
+#if !defined(_XRB_PROGRESSBAR_H_)
+#define _XRB_PROGRESSBAR_H_
 
 #include "xrb_widget.h"
 
@@ -17,7 +17,7 @@
 
 using namespace Xrb;
 
-namespace Dis
+namespace Xrb
 {
 
 class ProgressBar : public Widget
@@ -72,7 +72,7 @@ private:
     SignalReceiver1<Float> m_receiver_set_progress;
 }; // end of class ProgressBar
 
-} // end of namespace Dis
+} // end of namespace Xrb
 
-#endif // !defined(_DIS_PROGRESSBAR_H_)
+#endif // !defined(_XRB_PROGRESSBAR_H_)
 

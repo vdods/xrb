@@ -30,13 +30,9 @@ libxrb_la_SOURCES = \
     engine2/xrb_engine2_visibilityquadtree.cpp \
     engine2/xrb_engine2_world.cpp \
     \
-    gui/xrb_dialog.cpp \
     gui/xrb_font.cpp \
     gui/xrb_fontface.cpp \
     gui/xrb_gui_events.cpp \
-    gui/xrb_label.cpp \
-    gui/xrb_layout.cpp \
-    gui/xrb_modalwidget.cpp \
     gui/xrb_sizeproperties.cpp \
     gui/xrb_widget.cpp \
     gui/xrb_widgetbackground.cpp \
@@ -46,9 +42,14 @@ libxrb_la_SOURCES = \
     gui/widgets/xrb_button.cpp \
     gui/widgets/xrb_cellpaddingwidget.cpp \
     gui/widgets/xrb_checkbox.cpp \
+    gui/widgets/xrb_dialog.cpp \
     gui/widgets/xrb_filedialog.cpp \
     gui/widgets/xrb_filepanel.cpp \
+    gui/widgets/xrb_label.cpp \
+    gui/widgets/xrb_layout.cpp \
     gui/widgets/xrb_lineedit.cpp \
+    gui/widgets/xrb_modalwidget.cpp \
+    gui/widgets/xrb_progressbar.cpp \
     gui/widgets/xrb_spacerwidget.cpp \
     gui/widgets/xrb_widgetstack.cpp \
     \
@@ -166,13 +167,9 @@ include_HEADERS = \
     engine2/xrb_engine2_visibilityquadtree.h \
     engine2/xrb_engine2_world.h \
     \
-    gui/xrb_dialog.h \
     gui/xrb_font.h \
     gui/xrb_fontface.h \
     gui/xrb_gui_events.h \
-    gui/xrb_label.h \
-    gui/xrb_layout.h \
-    gui/xrb_modalwidget.h \
     gui/xrb_sizeproperties.h \
     gui/xrb_widget.h \
     gui/xrb_widgetbackground.h \
@@ -182,9 +179,14 @@ include_HEADERS = \
     gui/widgets/xrb_button.h \
     gui/widgets/xrb_cellpaddingwidget.h \
     gui/widgets/xrb_checkbox.h \
+    gui/widgets/xrb_dialog.h \
     gui/widgets/xrb_filedialog.h \
     gui/widgets/xrb_filepanel.h \
+    gui/widgets/xrb_label.h \
+    gui/widgets/xrb_layout.h \
     gui/widgets/xrb_lineedit.h \
+    gui/widgets/xrb_modalwidget.h \
+    gui/widgets/xrb_progressbar.h \
     gui/widgets/xrb_radiobutton.h \
     gui/widgets/xrb_radiobutton.tcpp \
     gui/widgets/xrb_spacerwidget.h \

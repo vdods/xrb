@@ -34,6 +34,7 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
+- move Dis::ProgressBar into Xrb
 - need a way to un-equip certain inventory items (e.g. shields, armor)
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
@@ -77,8 +78,6 @@ TODO:
   then rename the untemplatized one into GetRawEntityGuts.
 - rename all enums to have prefixes (where appropriate)
 - Entity might need to have a "scaling velocity" or "grow to X size by time Y"
-- move Label into /lib/gui/widgets (maybe?) - ensure the /lib/gui dir is
-  organized correctly.
 - drawing functions should all just push the modelview matrix, not load
   the identity (except for top-level ones like Screen and such).
 - maybe change Entity::Get/SetForce/Torque into Get/SetAccumulatedForce/Torque
