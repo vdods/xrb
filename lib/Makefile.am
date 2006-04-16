@@ -8,6 +8,7 @@ lib_LTLIBRARIES = \
     libxrb.la
 
 libxrb_la_SOURCES = \
+    core/xrb_compiletimeasserts.cpp \
     core/xrb_event.cpp \
     core/xrb_eventhandler.cpp \
     core/xrb_eventqueue.cpp \

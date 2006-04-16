@@ -180,18 +180,16 @@ namespace Math
       */
     inline Float Nan ()
     {
-        // this assert should be changed if sizeof(Float) changes
-        ASSERT3(sizeof(Float) == 4)
-
         // hacky type way to get the IEEE single precision floating
         // point representation of not-a-number.
     #if defined(WORDS_BIGENDIAN)
-        static Uint8 const s_nan_bytes[4] = { 0x7F, 0xFF, 0xFF, 0xFF };
+        static Uint8 const s_nan_bytes[8] = { 0x7F, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+        static Float const s_nan = *reinterpret_cast<Float const *>(s_nan_bytes);
     #else // !defined(WORDS_BIGENDIAN)
-        static Uint8 const s_nan_bytes[4] = { 0xFF, 0xFF, 0xFF, 0x7F };
+        static Uint8 const s_nan_bytes[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F };
+        static Float const s_nan = *reinterpret_cast<Float const *>(s_nan_bytes + 8 - sizeof(Float));
     #endif // !defined(WORDS_BIGENDIAN)
         
-        static Float const s_nan = *reinterpret_cast<Float const *>(s_nan_bytes);
         return s_nan;
     }
     /** @brief Returns true iff the number is a normal finite number.  i.e.

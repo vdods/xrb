@@ -17,6 +17,35 @@
 
 #include <assert.h>
 
+// ///////////////////////////////////////////////////////////////////////////
+// compile-time assert macro
+// ///////////////////////////////////////////////////////////////////////////
+
+template <bool condition> struct ThisCompileErrorIsActuallyAFailedCompileTimeAssert;
+
+template <>
+struct ThisCompileErrorIsActuallyAFailedCompileTimeAssert<true>
+{
+    enum { BLAH };
+};
+
+// this assert is intended to be used in the global scope and will produce a
+// compile error on conditions that are decidable during compilation
+// (e.g. "sizeof(char) == 1").  each call to this macro must supply an assert
+// name that is unique to that source file (e.g. CHAR_SIZE_CHECK).
+#define GLOBAL_SCOPE_COMPILE_TIME_ASSERT(assert_name, x) \
+namespace { inline int assert_name () { return ThisCompileErrorIsActuallyAFailedCompileTimeAssert<static_cast<bool>(x)>::BLAH; } }
+
+// this assert is intended to be used within the body of a function/method
+// and will produce a compile error on conditions that are decidable during
+// compilation (e.g. "sizeof(something) == 4").
+#define CODE_SCOPE_COMPILE_TIME_ASSERT(x) \
+ThisCompileErrorIsActuallyAFailedCompileTimeAssert<static_cast<bool>(x)>::BLAH;
+
+// ///////////////////////////////////////////////////////////////////////////
+// run-time assert macros
+// ///////////////////////////////////////////////////////////////////////////
+
 // assert macro which is ALWAYS compiled in
 #define ASSERT0(x) { assert(x); }
 

@@ -34,10 +34,9 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- figure out how to reset Items that are un-equipped -- actually figure
-  out a way to do this and manage fire rates between all weapons (so the
-  player can't fire arbitrarily fast by switching weapons between each
-  fire)
+- figure out a way to do this and manage fire rates between all
+  weapons (so the player can't fire arbitrarily fast by switching
+  weapons between each fire)
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
 - bug: intermittent crash in Dis::PhysicsHandler's entity think loop
@@ -58,7 +57,6 @@ CURRENT:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- look into compile-time asserts
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length
 
@@ -73,9 +71,6 @@ TODO:
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
 - again, rename identifiers like X_NUM_BLAH and num_blahblah to
   X_BLAH_COUNT and blahblah_count.
-- make Engine2::Entity::GetEntityGuts into a templatized function that takes
-  the EntityGuts subclass type and does asserts on dynamic_cast and such.
-  then rename the untemplatized one into GetRawEntityGuts.
 - rename all enums to have prefixes (where appropriate)
 - Entity might need to have a "scaling velocity" or "grow to X size by time Y"
 - drawing functions should all just push the modelview matrix, not load
@@ -169,8 +164,6 @@ TODO:
   multiplexed functions.
 - change all functions which accept a bool or int as a type of something
   or a behavior to use enums instead, to make code more self-documenting.
-- change dynamic_casts into static_casts where not absolutely necessary
-  and put the dynamic_casts into asserts before the static_casts
 - special Vector2 ValueEdit
 - once the game loop object is written, there should be an accessor to
   the game time, so that events that are enqueued can use that time,

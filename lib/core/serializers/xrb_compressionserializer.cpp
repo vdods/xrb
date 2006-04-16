@@ -184,28 +184,24 @@ void CompressionSerializer::WriteUint32 (Uint32 value)
 
 void CompressionSerializer::ReadFloat (float *destination)
 {
-    ASSERT1(sizeof(float) == 4)
     m_cache.Read4ByteWordFromCache(destination);
     SetError(m_cache.GetError());
 }
 
 void CompressionSerializer::WriteFloat (float value)
 {
-    ASSERT1(sizeof(float) == 4)
     m_cache.Write4ByteWordToCache(&value);
     SetError(m_cache.GetError());
 }
 
 void CompressionSerializer::ReadFloat (double *destination)
 {
-    ASSERT1(sizeof(double) == 8)
     m_cache.Read8ByteWordFromCache(destination);
     SetError(m_cache.GetError());
 }
 
 void CompressionSerializer::WriteFloat (double value)
 {
-    ASSERT1(sizeof(double) == 8)
     m_cache.Write8ByteWordToCache(&value);
     SetError(m_cache.GetError());
 }
