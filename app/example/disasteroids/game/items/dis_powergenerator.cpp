@@ -47,6 +47,9 @@ void PowerGenerator::PowerDevices (
     if (total_required_power > 0.0f)
     {
         Float available_power_ratio = Min(m_stored_power, total_required_power) / total_required_power;
+        // we never want to supply too much power to devices (or many many
+        // asserts will be triggered)
+        ASSERT1(available_power_ratio <= 1.0f)
         for (Uint32 i = 0; i < powered_device_count; ++i)
             power_allocator[i] *= available_power_ratio;
     }

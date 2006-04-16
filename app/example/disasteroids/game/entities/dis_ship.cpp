@@ -73,13 +73,6 @@ void Ship::Die (
     ScheduleForDeletion(0.0f);
 }
 
-void Ship::TakeOwnershipOfItem (Item *const item)
-{
-    ASSERT1(item != NULL)
-    if (dynamic_cast<PoweredDevice *>(item) != NULL)
-        static_cast<PoweredDevice *>(item)->SetOwnerShip(this);
-}
-
 void Ship::AimShipAtReticleCoordinates ()
 {
     // set the ship's angle based on where it's aiming at

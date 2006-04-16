@@ -26,11 +26,15 @@ namespace Dis
 {
 
 // PeaShooter properties
-Float const PeaShooter::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 3.0f, 6.0f, 10.0f };
+Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 3.0f, 6.0f, 10.0f };
+Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 35.0f, 55.0f, 70.0f, 120.0f };
 Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
+Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f, 14.0f, 16.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
 Float const PeaShooter::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
+Float const PeaShooter::ms_max_secondary_power_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 225.0f, 300.0f };
 Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 6.0f, 7.0f, 8.0f, 10.0f };
+Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Laser properties
 Float const Laser::ms_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
@@ -133,8 +137,19 @@ Float PeaShooter::GetPowerToBeUsedBasedOnInputs (
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
-    // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    // secondary fire (charge-up) overrides primary fire
+    if (GetSecondaryInput() > 0.0f)
+    {
+        ASSERT1(ms_charge_up_time[GetUpgradeLevel()] > 0.0f)
+        return GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
+               ms_charge_up_time[GetUpgradeLevel()];
+    }
+    // otherwise if primary fire is on at all, return full power
+    else if (GetPrimaryInput() > 0.0f)
+        return ms_required_primary_power[GetUpgradeLevel()];
+    // otherwise return 0.
+    else
+        return 0.0f;
 }
 
 bool PeaShooter::Activate (
@@ -142,35 +157,94 @@ bool PeaShooter::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
-
-    // can't fire if not enough power was supplied
-    if (power < ms_required_primary_power[GetUpgradeLevel()])
-        return false;
-
-    ASSERT1(GetPrimaryInput() > 0.0f)
-
-    // fire the weapon -- create a Pea and set its position and velocity
     ASSERT1(GetOwnerShip()->GetWorld() != NULL)
     ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
-    ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
-    static Float const s_pea_size = 10.0f;
-    SpawnSmartBallistic(
-        GetOwnerShip()->GetWorld(),
-        GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation() + s_pea_size * GetMuzzleDirection(),
-        s_pea_size,
-        1.0f,
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
-        ms_impact_damage[GetUpgradeLevel()],
-        ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
-        time,
-        GetOwnerShip()->GetReference());
 
-    // update the last time fired
-    m_time_last_fired = time;
+    // determine if the secondary fire was released, indicating the
+    // charge-up weapon should fire.
+    if (GetSecondaryInput() == 0.0f && m_charge_up_ratio > 0.0f)
+    {
+        ASSERT1(power == 0.0f)
 
-    return true;
+        ASSERT1(m_charge_up_ratio >= 0.0f)
+        ASSERT1(m_charge_up_ratio <= 1.0f)
+    
+        // calculate the ballistic size and impact damage
+        Float ballistic_size =
+            ms_ballistic_size[GetUpgradeLevel()] * (m_charge_up_ratio + 1.0f);
+        Float impact_damage =
+            ms_primary_impact_damage[GetUpgradeLevel()] * (1.0f - m_charge_up_ratio) +
+            ms_max_secondary_impact_damage[GetUpgradeLevel()] * m_charge_up_ratio;
+        // spawn it
+        SpawnSmartBallistic(
+            GetOwnerShip()->GetWorld(),
+            GetOwnerShip()->GetObjectLayer(),
+            GetMuzzleLocation() + ballistic_size * GetMuzzleDirection(),
+            ballistic_size,
+            1.0f,
+            1.5f * ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            impact_damage,
+            ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
+            time,
+            GetOwnerShip()->GetReference());
+
+        // reset the charge-up ratio
+        m_charge_up_ratio = 0.0f;
+        // update the last time fired
+        m_time_last_fired = time;
+        // we didn't actually use any power here, because the weapon
+        // charges up beforehand.  therefore, return false.
+        return false;
+    }
+    // secondary fire (charge-up) overrides primary fire
+    else if (GetSecondaryInput() > 0.0f && power > 0.0f)
+    {
+        Float max_power = GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
+                          ms_charge_up_time[GetUpgradeLevel()];
+        ASSERT1(power <= max_power)
+
+        // if completely charged up, don't use up the power
+        if (m_charge_up_ratio == 1.0f)
+            return false;
+
+        // increment the charge up ratio at the given rate
+        m_charge_up_ratio += power / ms_max_secondary_power_rate[GetUpgradeLevel()];
+        if (m_charge_up_ratio > 1.0f)
+            m_charge_up_ratio = 1.0f;
+
+        // power was used up, so return true.
+        return true;
+    }
+    // primary fire
+    else
+    {
+        ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    
+        // can't fire if not enough power was supplied
+        if (power < ms_required_primary_power[GetUpgradeLevel()])
+            return false;
+    
+        ASSERT1(GetPrimaryInput() > 0.0f)
+    
+        // fire the weapon -- create a Pea and set its position and velocity
+        ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
+        SpawnSmartBallistic(
+            GetOwnerShip()->GetWorld(),
+            GetOwnerShip()->GetObjectLayer(),
+            GetMuzzleLocation() + ms_ballistic_size[GetUpgradeLevel()] * GetMuzzleDirection(),
+            ms_ballistic_size[GetUpgradeLevel()],
+            1.0f,
+            ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            ms_primary_impact_damage[GetUpgradeLevel()],
+            ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
+            time,
+            GetOwnerShip()->GetReference());
+    
+        // update the last time fired
+        m_time_last_fired = time;
+    
+        return true;
+    }
 }
 
 // ///////////////////////////////////////////////////////////////////////////

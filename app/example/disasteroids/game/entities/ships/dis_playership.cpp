@@ -205,23 +205,55 @@ void PlayerShip::SetIsUsingAuxiliaryWeapon (bool const is_using_auxiliary_weapon
 
 void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
 {
+    // unequip the old one
+    if (m_main_weapon != NULL)
+        m_main_weapon->Unequip(this);
+    
+    // equip the new one
+    if (main_weapon != NULL)
+        main_weapon->Equip(this);
+    
     m_main_weapon = main_weapon;
     SetWeaponStatus(GetWeaponStatus());
 }
 
 void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
 {
+    // unequip the old one
+    if (m_auxiliary_weapon != NULL)
+        m_auxiliary_weapon->Unequip(this);
+    
+    // equip the new one
+    if (auxiliary_weapon != NULL)
+        auxiliary_weapon->Equip(this);
+    
     m_auxiliary_weapon = auxiliary_weapon;
     SetWeaponStatus(GetWeaponStatus());    
 }
 
 void PlayerShip::SetEngine (Engine *const engine)
 {
+    // unequip the old one
+    if (m_engine != NULL)
+        m_engine->Unequip(this);
+    
+    // equip the new one
+    if (engine != NULL)
+        engine->Equip(this);
+
     m_engine = engine;
 }
 
 void PlayerShip::SetArmor (Armor *const armor)
 {
+    // unequip the old one
+    if (m_armor != NULL)
+        m_armor->Unequip(this);
+    
+    // equip the new one
+    if (armor != NULL)
+        armor->Equip(this);
+        
     m_armor = armor;
     // checking the owner entity pointer is necessary because it will be
     // NULL when deleting (and this function is called in ~PlayerShip)
@@ -237,6 +269,14 @@ void PlayerShip::SetArmor (Armor *const armor)
 
 void PlayerShip::SetShield (Shield *shield)
 {
+    // unequip the old one
+    if (m_shield != NULL)
+        m_shield->Unequip(this);
+    
+    // equip the new one
+    if (shield != NULL)
+        shield->Equip(this);
+        
     m_shield = shield;
 
     // TODO: add the strength/immunity/weakness that the shield provides
@@ -246,6 +286,14 @@ void PlayerShip::SetShield (Shield *shield)
 
 void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
 {
+    // unequip the old one
+    if (m_power_generator != NULL)
+        m_power_generator->Unequip(this);
+    
+    // equip the new one
+    if (power_generator != NULL)
+        power_generator->Equip(this);
+        
     m_power_generator = power_generator;
     SetPowerStatus(GetPowerStatus());
 }
@@ -315,7 +363,6 @@ bool PlayerShip::AddItem (Item *item)
         return false;
 
     m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] = item;
-    TakeOwnershipOfItem(item);
     
     if (item->GetItemType() >= IT_WEAPON_LOWEST &&
         item->GetItemType() <= IT_WEAPON_HIGHEST)
@@ -952,8 +999,6 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
-    if (ejectee->GetIsPoweredDevice())
-        DStaticCast<PoweredDevice *>(ejectee)->SetOwnerShip(NULL);
     ASSERT1(item_type < IT_COUNT)
     m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
 
@@ -1033,6 +1078,10 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     else if (item_type == IT_POWER_GENERATOR)
     {
         SetPowerGenerator(DStaticCast<PowerGenerator *>(item_to_equip));
+    }
+    else
+    {
+        ejectee->Unequip(this);
     }
 }
 

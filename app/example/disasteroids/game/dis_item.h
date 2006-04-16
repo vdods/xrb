@@ -22,6 +22,8 @@ using namespace Xrb;
 namespace Dis
 {
 
+class Ship;
+
 // baseclass for all items that can be stored in a ship's inventory
 class Item
 {
@@ -48,6 +50,9 @@ public:
     inline ItemType GetItemType () const { return m_item_type; }
 
     virtual bool GetIsPoweredDevice () const { return false; }
+
+    virtual void Equip (Ship *owner_ship) { }
+    virtual void Unequip (Ship *owner_ship) { }
     
 private:
 

@@ -27,7 +27,7 @@ class Ship;
 Weapon design:
 
 Weapon
-+---PeaShooter      - primary: shoots Pea               secondary: none
++---PeaShooter      - primary: shoots Ballistic         secondary: charge-up weapon
 +---Laser           - primary: trace/LaserBeam          secondary: proximity laser
 +---FlameThrower    - primary: shoots Fireball          secondary: shoots Napalm
 +---GaussGun        - primary: trace/GaussGunTrail      secondary: none
@@ -135,7 +135,7 @@ private:
 // - pea shooter (player starts off with this)
 //   * upgrades will be to the projectile speed and damage (the projectiles will
 //     not harm you by default)
-class PeaShooter : public Weapon      //- primary: shoots Pea / secondary: none
+class PeaShooter : public Weapon      //- primary: shoots Ballistic / secondary: charge-up weapon
 {
 public:
 
@@ -145,6 +145,7 @@ public:
     {
         ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
         m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        m_charge_up_ratio = 0.0f;
     }
     virtual ~PeaShooter () { }
 
@@ -163,7 +164,13 @@ public:
         ASSERT1(cycle_time > 0.0f)
         ASSERT1(time_since_last_fire >= 0.0f)
         if (time_since_last_fire > cycle_time)
-            return 1.0f;
+        {
+            // if a charge-up is in progress, return its status
+            if (m_charge_up_ratio > 0.0f)
+                return m_charge_up_ratio;
+            else
+                return 1.0f;
+        }
         else
             return time_since_last_fire / cycle_time;
     }
@@ -181,14 +188,29 @@ public:
         Float time,
         Float frame_dt);
 
+    // ///////////////////////////////////////////////////////////////////////
+    // Item interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual void Unequip (Ship *owner_ship)
+    {
+        m_charge_up_ratio = 0.0f;
+        Weapon::Unequip(owner_ship);
+    }
+
 private:
 
-    static Float const ms_impact_damage[UPGRADE_LEVEL_COUNT];
+    static Float const ms_primary_impact_damage[UPGRADE_LEVEL_COUNT];
+    static Float const ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT];
     static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
+    static Float const ms_ballistic_size[UPGRADE_LEVEL_COUNT];
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_max_secondary_power_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+    static Float const ms_charge_up_time[UPGRADE_LEVEL_COUNT];
     Float m_time_last_fired;
+    Float m_charge_up_ratio;
 }; // end of class PeaShooter
 
 class LaserBeam;

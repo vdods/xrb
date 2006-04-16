@@ -128,7 +128,6 @@ protected:
 
     void AimShipAtReticleCoordinates ();
     virtual void ResetInputs ();
-    void TakeOwnershipOfItem (Item *item);
         
 private:
 

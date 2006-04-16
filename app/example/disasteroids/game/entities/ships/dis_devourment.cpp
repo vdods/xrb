@@ -52,7 +52,7 @@ Devourment::Devourment (Uint8 const enemy_level)
     m_mouth_tractor->SetBeamRadiusOverride(ms_mouth_tractor_beam_radius[GetEnemyLevel()]);
     m_mouth_tractor->SetStrengthOverride(ms_mouth_tractor_strength[GetEnemyLevel()]);
     m_mouth_tractor->SetMaxForceOverride(ms_mouth_tractor_max_force[GetEnemyLevel()]);
-    TakeOwnershipOfItem(m_mouth_tractor);
+    m_mouth_tractor->Equip(this);
 }
 
 Devourment::~Devourment ()

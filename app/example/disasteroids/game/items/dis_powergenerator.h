@@ -53,6 +53,7 @@ public:
         Uint32 powered_device_count,
         Float time,
         Float frame_dt);
+    // NOTE: this method is not associated with Entity!
     void Think (Float time, Float frame_dt);
     
 private:

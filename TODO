@@ -34,7 +34,10 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
-- need a way to un-equip certain inventory items (e.g. shields, armor)
+- figure out how to reset Items that are un-equipped -- actually figure
+  out a way to do this and manage fire rates between all weapons (so the
+  player can't fire arbitrarily fast by switching weapons between each
+  fire)
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
 - bug: intermittent crash in Dis::PhysicsHandler's entity think loop

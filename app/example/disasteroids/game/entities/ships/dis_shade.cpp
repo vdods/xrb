@@ -41,7 +41,7 @@ Shade::Shade (Uint8 const enemy_level)
     m_think_state = THINK_STATE(Seek);
 
     m_weapon = new SlowBulletGun(GetEnemyLevel());
-    TakeOwnershipOfItem(m_weapon);
+    m_weapon->Equip(this);
 
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
     SetWeakness(D_COLLISION);

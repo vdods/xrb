@@ -44,7 +44,7 @@ Revulsion::Revulsion (Uint8 const enemy_level)
     m_think_state = THINK_STATE(Seek);
 
     m_weapon = new GaussGun(0);
-    TakeOwnershipOfItem(m_weapon);
+    m_weapon->Equip(this);
     m_weapon->SetImpactDamageOverride(ms_weapon_impact_damage[GetEnemyLevel()]);
 
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);

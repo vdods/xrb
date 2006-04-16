@@ -32,36 +32,9 @@ void Engine::SetInputs (
     ASSERT1(up_down_input >= -1.0f && up_down_input <= 1.0f)
     ASSERT1(auxiliary_input >= 0.0f && auxiliary_input <= 1.0f)
 
-    switch (GetUpgradeLevel())
-    {
-        case 0:
-            m_right_left_input = 0.0f;
-            m_up_down_input = Max(up_down_input, 0.0f);
-            m_auxiliary_input = 0.0f;
-            break;
-
-        case 1:
-            m_right_left_input = 0.0f;
-            m_up_down_input = up_down_input;
-            m_auxiliary_input = 0.0f;
-            break;
-
-        case 2:
-            m_right_left_input = right_left_input;
-            m_up_down_input = up_down_input;
-            m_auxiliary_input = 0.0f;
-            break;
-
-        case 3:
-            m_right_left_input = right_left_input;
-            m_up_down_input = up_down_input;
-            m_auxiliary_input = auxiliary_input;
-            break;
-
-        default:
-            ASSERT1(false && "Invalid upgrade level")
-            break;
-    }
+    m_right_left_input = right_left_input;
+    m_up_down_input = up_down_input;
+    m_auxiliary_input = auxiliary_input;
 }
 
 Float Engine::GetPowerToBeUsedBasedOnInputs (
