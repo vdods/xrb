@@ -660,7 +660,7 @@ Solitary *SpawnSolitary (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/sadface_small.png",
+        "resources/solitary_small.png",
         solitary,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -683,7 +683,7 @@ Interloper *SpawnInterloper (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/interloper.png",
+        "resources/interloper_small.png",
         interloper,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -706,7 +706,7 @@ Shade *SpawnShade (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/shade.png",
+        "resources/shade_small.png",
         shade,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -729,7 +729,7 @@ Revulsion *SpawnRevulsion (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/revulsion.png",
+        "resources/revulsion_small.png",
         revulsion,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -752,7 +752,7 @@ Devourment *SpawnDevourment (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/devourment.png",
+        "resources/devourment_small.png",
         devourment,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -762,6 +762,38 @@ Devourment *SpawnDevourment (
         0.0f,
         0.3f);
     return devourment;
+}
+
+HealthTrigger *SpawnDevourmentMouthHealthTrigger (
+    Engine2::World *const world,
+    Engine2::ObjectLayer *const object_layer,
+    FloatVector2 const &translation,
+    Float const scale_factor,
+    FloatVector2 const &velocity,
+    Float const health_delta_rate,
+    Mortal::DamageType const damage_type,
+    EntityReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Entity> const &owner)
+{
+    HealthTrigger *health_trigger =
+        new HealthTrigger(
+            health_delta_rate,
+            damage_type,
+            ignore_this_mortal,
+            owner);
+    SpawnDynamicSprite(
+        world,
+        object_layer,
+        "resources/grinder_small.png",
+        health_trigger,
+        translation,
+        scale_factor,
+        0.0f,
+        1.0f,
+        velocity,
+        0.0f,
+        0.3f);
+    return health_trigger;
 }
 
 } // end of namespace Dis

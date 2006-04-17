@@ -179,7 +179,7 @@ GameWidget::GameWidget (
                     Singletons::ResourceLibrary()->
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
-                            "resources/sadface_small.png"),
+                            "resources/solitary_small.png"),
                     m_stats_and_inventory_layout);
             lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
             lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());

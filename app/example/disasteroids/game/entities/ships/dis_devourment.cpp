@@ -96,11 +96,11 @@ void Devourment::Think (Float const time, Float const frame_dt)
     if (!m_mouth_health_trigger.GetIsValid())
     {
         HealthTrigger *health_trigger = 
-            SpawnHealthTrigger(
+            SpawnDevourmentMouthHealthTrigger(
                 GetWorld(),
                 GetObjectLayer(),
                 GetTranslation(),
-                0.5f * GetScaleFactor(),
+                0.72f * GetScaleFactor(),
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
                 -ms_mouth_damage_rate[GetEnemyLevel()],
                 Mortal::D_GRINDING,
@@ -148,8 +148,9 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ASSERT1(m_mouth_health_trigger.GetIsValid())
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->GetNormalizedCoordinates(
-            GetTranslation() + 0.666f * GetScaleFactor() * Math::UnitVector(GetAngle())));
+            GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(GetAngle())));
     m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
+    m_mouth_health_trigger->SetAngle(GetAngle());
     m_mouth_health_trigger->SetVelocity(GetVelocity());
 }
 

@@ -298,6 +298,17 @@ Devourment *SpawnDevourment (
     FloatVector2 const &velocity,
     Uint8 enemy_level);
     
+HealthTrigger *SpawnDevourmentMouthHealthTrigger (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    Float scale_factor,
+    FloatVector2 const &velocity,
+    Float health_delta_rate,
+    Mortal::DamageType damage_type,
+    EntityReference<Mortal> const &ignore_this_mortal,
+    EntityReference<Entity> const &owner);
+    
 } // end of namespace Dis
 
 #endif // !defined(_DIS_SPAWN_H_)

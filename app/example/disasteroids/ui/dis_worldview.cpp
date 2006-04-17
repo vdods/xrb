@@ -576,8 +576,11 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
     {
         case SM_ENTER:
             // set the in-game zoom factor limits
-            SetMinZoomFactor(0.0025f);
-            SetMaxZoomFactor(0.0078f);
+            if (!m_is_debug_mode_enabled)
+            {
+                SetMinZoomFactor(0.0025f);
+                SetMaxZoomFactor(0.0078f);
+            }
             break;
     
         case IN_PROCESS_FRAME:
