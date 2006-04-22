@@ -37,7 +37,7 @@ subscript 1 is for the interceptor, 0 is for the target
 \end_inset 
 
  and 
-\begin_inset Formula $\hat{n}_{0}$
+\begin_inset Formula $\hat{n}_{1}$
 \end_inset 
 
  are the unknowns
@@ -54,7 +54,7 @@ subscript 1 is for the interceptor, 0 is for the target
 
 
 \begin_inset Formula \[
-\left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=0\]
+\left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=\hat{0}\]
 
 \end_inset 
 
@@ -63,7 +63,7 @@ subscript 1 is for the interceptor, 0 is for the target
 
 
 \begin_inset Formula \[
-\hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=0\]
+\hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}=\hat{0}\]
 
 \end_inset 
 
@@ -772,4 +772,99 @@ a\hat{n}=\frac{2\hat{p}+2\hat{v}T}{T^{2}}\]
 \end_inset 
 
 
+\layout Standard
+
+----------------------------------
+\layout Standard
+
+solve for the case where we take into account the intercepting bodies' radii
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \left(\hat{p}_{0}-\hat{p}_{1}\right)+\left(\hat{v}_{0}-\hat{v}_{1}\right)t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\right\Vert =r_{0}+r_{1}\]
+
+\end_inset 
+
+
+\layout Standard
+
+let 
+\begin_inset Formula $R=r_{0}+r_{1}$
+\end_inset 
+
+, 
+\begin_inset Formula $\hat{p}=\hat{p}_{0}-\hat{p}_{1}$
+\end_inset 
+
+, 
+\begin_inset Formula $\hat{v}=\hat{v}_{0}-\hat{v}_{1}$
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\right\Vert ^{2}=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\right)\cdot\left(\hat{p}+\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\right)=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \begin{eqnarray*}
+\hat{p}\cdot\hat{p}+\hat{v}t\cdot\hat{p}+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\cdot\hat{p}\\
++\hat{p}\cdot\hat{v}t+\hat{v}t\cdot\hat{v}t+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\cdot\hat{v}t & = & R^{2}\\
++\hat{p}\cdot\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}+\hat{v}t\cdot\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}+\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\cdot\frac{1}{2}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}\end{eqnarray*}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \begin{eqnarray*}
+\hat{p}\cdot\hat{p}+2\hat{p}\cdot\hat{v}t+\hat{v}\cdot\hat{v}t^{2}\\
++\hat{p}\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}+\hat{v}\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{3} & = & R^{2}\\
++\frac{1}{4}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{4}\end{eqnarray*}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \begin{eqnarray*}
+\hat{p}\cdot\hat{p}+2\hat{p}\cdot\hat{v}t+\hat{v}\cdot\hat{v}t^{2}\\
++\hat{p}\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{2}+\hat{v}\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{3} & = & R^{2}\\
++\frac{1}{4}\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)\cdot\left(a_{0}\hat{n}_{0}-a_{1}\hat{n}_{1}\right)t^{4}\end{eqnarray*}
+
+\end_inset 
+
+
+\layout Standard
+
+uhh.
+ yeah...
+ do this later.
 \the_end

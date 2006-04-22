@@ -41,26 +41,26 @@ namespace Dis
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.3f, 0.4f, 0.5f, 0.6f };
 Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
 {
-    {  2,  0,  0,  2 },
-    {  4,  1,  0,  2 },
-    {  6,  2,  1,  2 },
-    {  8,  3,  1,  2 },
-    { 10,  4,  2,  2 },
-    { 12,  5,  2,  3 },
-    { 14,  6,  3,  3 },
-    { 16,  7,  3,  3 },
-    { 18,  8,  4,  3 },
-    { 20,  9,  4,  4 },
-    { 22, 10,  5,  4 },
-    { 24, 11,  5,  4 },
-    { 26, 12,  6,  4 },
-    { 28, 13,  6,  4 },
-    { 30, 14,  7,  4 },
-    { 32, 15,  7,  5 },
-    { 34, 16,  8,  5 },
-    { 36, 17,  8,  5 },
-    { 38, 18,  9,  5 },
-    { 40, 19,  9,  5 }
+    {  3,  2,  1,  4 },
+    {  6,  4,  2,  4 },
+    {  9,  6,  3,  4 },
+    { 12,  8,  4,  4 },
+    { 15, 10,  5,  5 },
+    { 18, 12,  6,  5 },
+    { 21, 14,  7,  5 },
+    { 24, 16,  8,  5 },
+    { 27, 18,  9,  6 },
+    { 30, 20, 10,  6 },
+    { 33, 22, 11,  6 },
+    { 36, 24, 12,  6 },
+    { 39, 26, 13,  7 },
+    { 42, 28, 14,  7 },
+    { 45, 30, 15,  7 },
+    { 48, 32, 16,  7 },
+    { 51, 34, 17,  8 },
+    { 54, 36, 18,  8 },
+    { 57, 38, 19,  8 },
+    { 60, 40, 20,  8 }
 };
 Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
 {
@@ -187,26 +187,26 @@ Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_
 };
 Float const World::ms_enemy_spawn_interval[GAME_STAGE_COUNT] =
 {
-    5.0f,
-    5.5f,
-    6.0f,
-    6.5f,
-    7.0f,
-    7.0f,
-    7.5f,
-    7.5f,
-    8.0f,
-    8.0f,
-    8.0f,
-    8.5f,
-    8.5f,
-    8.5f,
-    8.5f,
-    9.0f,
-    9.0f,
-    9.0f,
-    9.0f,
-    9.0f
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f,
+    1.5f
 };
 
 World::~World ()
@@ -278,11 +278,10 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     --m_enemy_ship_count[enemy_ship_index];
 
     if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
-        m_next_enemy_ship_spawn_time[enemy_ship_index] =
-            GetFrameTime() +
-            Math::RandomFloat(
-                ms_enemy_spawn_interval[m_game_stage] - 1.0f,
-                ms_enemy_spawn_interval[m_game_stage] + 1.0f);
+        m_next_enemy_ship_spawn_time[enemy_ship_index] = GetFrameTime() + 1.0f;
+//             Math::RandomFloat(
+//                 ms_enemy_spawn_interval[m_game_stage] - 1.0f,
+//                 ms_enemy_spawn_interval[m_game_stage] + 1.0f);
 }
 
 World::World (

@@ -119,7 +119,7 @@ Float const Tractor::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 35.0f, 45.0f
 
 // SlowBulletGun properties
 Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 5.0f, 7.0f, 10.0f, 15.0f };
-Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
+Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.0f, 160.0f, 180.0f };
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const SlowBulletGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.666f, 0.7f, 0.8f, 1.0f };

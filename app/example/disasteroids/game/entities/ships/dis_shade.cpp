@@ -33,12 +33,13 @@ Float const Shade::ms_alarm_distance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f
 Float const Shade::ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT] = { 100.0f, 150.0f, 200.0f, 250.0f };
 Float const Shade::ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT] = { 150.0f, 200.0f, 250.0f, 300.0f };
 Float const Shade::ms_move_relative_velocity[ENEMY_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
+Float const Shade::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 
 Shade::Shade (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
-    m_think_state = THINK_STATE(Seek);
+    m_think_state = THINK_STATE(PickWanderDirection);
 
     m_weapon = new SlowBulletGun(GetEnemyLevel());
     m_weapon->Equip(this);
@@ -59,9 +60,9 @@ void Shade::Think (Float const time, Float const frame_dt)
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
-        // if disabled, then reset the think state to Seek (a way out for
+        // if disabled, then reset the think state to PickWanderDirection (a way out for
         // players that are being ganged up on)
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -86,20 +87,66 @@ void Shade::Think (Float const time, Float const frame_dt)
     ResetInputs();
 }
 
-void Shade::Seek (Float const time, Float const frame_dt)
+Float Shade::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
 {
-    static Float const s_seek_scan_radius = 400.0f;
+    FloatVector2 adjusted_entity_translation(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            entity->GetTranslation(),
+            GetTranslation()));
 
-    // do an area trace
+    FloatVector2 p(GetTranslation() - adjusted_entity_translation);
+    FloatVector2 v(GetVelocity() - entity->GetVelocity());
+    // the 2.0f coefficient is so we account for near-collisions as well
+    Float R = 2.0f * GetRadius(Engine2::QTT_PHYSICS_HANDLER) + entity->GetRadius(Engine2::QTT_PHYSICS_HANDLER);
+    
+    Polynomial poly;
+    poly.Set(2, v | v);
+    poly.Set(1, 2.0f * (p | v));
+    poly.Set(0, (p | p) - R*R);
+    Polynomial::SolutionSet solution_set;
+    poly.Solve(&solution_set, 0.0001f);
+    
+    Float T = -1.0f;
+    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+                                         it_end = solution_set.end();
+         it != it_end;
+         ++it)
+    {
+        if (*it > 0.0f && *it <= lookahead_time)
+        {
+            T = *it;
+            break;
+        }
+    }
+    return T;
+}
+
+void Shade::PickWanderDirection (Float const time, Float const frame_dt)
+{
+    // update the next time to pick a wander direction
+    m_next_wander_time = time + 6.0f;
+    // pick a direction/speed to wander in
+    m_wander_angle = Math::RandomAngle();
+    m_slow_angle = m_wander_angle;
+    m_think_state = THINK_STATE(Wander);
+}
+
+void Shade::Wander (Float const time, Float const frame_dt)
+{
+    static Float const s_scan_radius = 200.0f;
+    static Float const s_collision_lookahead_time = 3.0f;
+    
+    // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
-        s_seek_scan_radius,
+        s_scan_radius,
         false,
         &area_trace_list);
-        
-    // check if there is a solitary in the area
+    // check the area trace list for targets and collisions
+    Float collision_time = -1.0f;
+    Entity *collision_entity = NULL;
     for (AreaTraceListIterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
@@ -107,20 +154,60 @@ void Shade::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
+        // if this entity is a solitary, set m_target and transition
+        // to MoveToAttackRange
         if (entity->GetEntityType() == ET_SOLITARY)
         {
-            // if so, set m_target and transition to MoveToAttackRange
             m_target = entity->GetReference();
             m_think_state = THINK_STATE(MoveToAttackRange);
             return;
         }
-    } 
-
-    // wander around - TODO: real wandering
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+        // otherwise if we will collide with something in the next short
+        // while, perform collision avoidance calculations
+        else
+        {
+            Float potential_collision_time = GetCollisionTime(entity, s_collision_lookahead_time);
+            if (potential_collision_time >= 0.0f &&
+                (collision_entity == NULL || potential_collision_time < collision_time))
+            {
+                collision_time = potential_collision_time;
+                collision_entity = entity;
+            }
+        }
+    }
     
-    // if not, set next think time to a while later
-    SetNextTimeToThink(time + Math::RandomFloat(0.3f, 0.5f));
+    // if there is an imminent collision, pick a new direction to avoid it
+    if (collision_entity != NULL)
+    {
+        FloatVector2 v(GetSpeed() * Math::UnitVector(m_slow_angle));
+        FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
+        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        ASSERT1(!perpendicular_velocity.GetIsZero())
+        if ((perpendicular_velocity | v) > -(perpendicular_velocity | v))
+            m_wander_angle = Math::Atan(perpendicular_velocity);
+        else
+            m_wander_angle = Math::Atan(-perpendicular_velocity);
+        m_next_wander_time = time + 6.0f;
+    }
+    
+    // incrementally accelerate up to the wander direction/speed
+    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    MatchVelocity(wander_velocity, frame_dt);
+
+    // the "slow angle" is used like a low-pass filter for the wander angle
+    // in the above calculations.  this is necessary to avoid a feedback loop
+    // due to the successive m_wander_angle-dependent calculations.
+    static Float const s_slow_angle_delta_rate = 135.0f;
+    Float slow_angle_delta =
+        Min(s_slow_angle_delta_rate * frame_dt,
+            Math::Abs(m_wander_angle - m_slow_angle));
+    if (m_wander_angle < m_slow_angle)
+        m_slow_angle -= slow_angle_delta;
+    else
+        m_slow_angle += slow_angle_delta;
+    
+    if (time >= m_next_wander_time)
+        m_think_state = THINK_STATE(PickWanderDirection);
 }
 
 void Shade::Stalk (Float const time, Float const frame_dt)
@@ -128,7 +215,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -145,32 +232,15 @@ void Shade::Stalk (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(Teleport);
         return;
     }
-    // if we're inside the hole of the stalk donut, move to attack range
-    else if (distance_to_target < ms_stalk_minimum_distance[GetEnemyLevel()])
+    // if we're not within the stalk donut, move to attack range
+    else if (distance_to_target < ms_stalk_minimum_distance[GetEnemyLevel()] ||
+             distance_to_target > ms_stalk_maximum_distance[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(MoveToAttackRange);
         return;
     }
-    // if we're outside the stalk donut, move to attack range
-    else if (distance_to_target > ms_stalk_maximum_distance[GetEnemyLevel()])
-    {
-        m_think_state = THINK_STATE(MoveToAttackRange);
-        return;
-    }
-    
-    // calculate what thrust is required to match the velocity of the target
-    FloatVector2 velocity_differential =
-        m_target->GetVelocity() -
-        (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
-    {
-        Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
 
-        AccumulateForce(thrust_vector);
-    }
+    MatchVelocity(m_target->GetVelocity(), frame_dt);
 
     AimWeapon(target_position);
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
@@ -181,7 +251,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
     
@@ -277,12 +347,28 @@ void Shade::Teleport (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(MoveToAttackRange);
 }
 
+void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+{
+    // calculate what thrust is required to match the desired velocity 
+    FloatVector2 velocity_differential =
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
+    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+    if (!thrust_vector.GetIsZero())
+    {
+        Float thrust_force = thrust_vector.GetLength();
+        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
+            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+
+        AccumulateForce(thrust_vector);
+    }
+}
+
 void Shade::AimWeapon (FloatVector2 const &target_position)
 {
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
     
