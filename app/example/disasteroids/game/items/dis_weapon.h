@@ -832,25 +832,29 @@ public:
         Weapon(upgrade_level, IT_WEAPON_TRACTOR)
     {
         m_tractor_beam = NULL;
-        m_beam_radius_override = -1.0f;
+        m_range_override = -1.0f;
         m_strength_override = -1.0f;
         m_max_force_override = -1.0f;
+        m_beam_radius_override = -1.0f;
     }
     virtual ~Tractor () { }
 
-    inline bool GetIsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
-    inline Float GetBeamRadiusOverride () const { return m_beam_radius_override; }
-
+    inline bool GetIsRangeOverridden () const { return m_range_override >= 0.0f; }
+    inline Float GetRangeOverride () const { return m_range_override; }
+    
     inline bool GetIsStrengthOverridden () const { return m_strength_override >= 0.0f; }
     inline Float GetStrengthOverride () const { return m_strength_override; }
     
     inline bool GetIsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
     inline Float GetMaxForceOverride () const { return m_max_force_override; }
     
-    inline void SetBeamRadiusOverride (Float beam_radius_override)
+    inline bool GetIsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
+    inline Float GetBeamRadiusOverride () const { return m_beam_radius_override; }
+
+    inline void SetRangeOverride (Float range_override)
     {
-        ASSERT1(beam_radius_override >= 0.0f)
-        m_beam_radius_override = beam_radius_override;
+        ASSERT1(range_override >= 0.0f)
+        m_range_override = range_override;
     }
     inline void SetStrengthOverride (Float strength_override)
     {
@@ -862,10 +866,16 @@ public:
         ASSERT1(max_force_override >= 0.0f)
         m_max_force_override = max_force_override;
     }
-
-    inline void ClearBeamRadiusOverride () { m_beam_radius_override = -1.0f; }
+    inline void SetBeamRadiusOverride (Float beam_radius_override)
+    {
+        ASSERT1(beam_radius_override >= 0.0f)
+        m_beam_radius_override = beam_radius_override;
+    }
+    
+    inline void ClearRangeOverride () { m_range_override = -1.0f; }
     inline void ClearStrengthOverride () { m_strength_override = -1.0f; }
     inline void ClearMaxForceOverride () { m_max_force_override = -1.0f; }
+    inline void ClearBeamRadiusOverride () { m_beam_radius_override = -1.0f; }
     
     inline void SetTractorBeam (TractorBeam *const tractor_beam)
     {
@@ -908,9 +918,10 @@ private:
     static Float const ms_beam_radius[UPGRADE_LEVEL_COUNT];
 
     TractorBeam *m_tractor_beam;
-    Float m_beam_radius_override;
+    Float m_range_override;
     Float m_strength_override;
     Float m_max_force_override;
+    Float m_beam_radius_override;
 }; // end of class Tractor
 
 // ///////////////////////////////////////////////////////////////////////////

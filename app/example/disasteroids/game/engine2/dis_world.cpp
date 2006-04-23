@@ -278,7 +278,7 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     --m_enemy_ship_count[enemy_ship_index];
 
     if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
-        m_next_enemy_ship_spawn_time[enemy_ship_index] = GetFrameTime() + 1.0f;
+        m_next_enemy_ship_spawn_time[enemy_ship_index] = GetFrameTime() + 0.0f;
 //             Math::RandomFloat(
 //                 ms_enemy_spawn_interval[m_game_stage] - 1.0f,
 //                 ms_enemy_spawn_interval[m_game_stage] + 1.0f);
@@ -682,10 +682,10 @@ void World::ProcessNormalGameplayLogic ()
                 ++m_enemy_ship_count[enemy_ship_index];
                 if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
                     m_next_enemy_ship_spawn_time[enemy_ship_index] =
-                        GetFrameTime() +
-                        Math::RandomFloat(
-                            ms_enemy_spawn_interval[m_game_stage] - 1.0f,
-                            ms_enemy_spawn_interval[m_game_stage] + 1.0f);
+                        GetFrameTime() + 0.0f;
+//                         Math::RandomFloat(
+//                             ms_enemy_spawn_interval[m_game_stage] - 1.0f,
+//                             ms_enemy_spawn_interval[m_game_stage] + 1.0f);
             }
         }
     }

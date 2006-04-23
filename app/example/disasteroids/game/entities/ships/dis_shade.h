@@ -61,17 +61,8 @@ public:
 
 private:
 
-    // TEMP - move into Ship (or Entity)
-    // TEMP - move into Ship (or Entity)
-    // TEMP - move into Ship (or Entity)
-    Float GetCollisionTime (Entity *entity, Float lookahead_time) const;
-    // TEMP - move into Ship (or Entity)
-    // TEMP - move into Ship (or Entity)
-    // TEMP - move into Ship (or Entity)
-
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
-//     void Seek (Float time, Float frame_dt);
     void Stalk (Float time, Float frame_dt);
     void MoveToAttackRange (Float time, Float frame_dt);
     void Teleport (Float time, Float frame_dt);

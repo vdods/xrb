@@ -126,8 +126,21 @@ public:
 
         // decrement the old instance's ref count (if it exists)
         if (m_entity_instance != NULL)
+            m_entity_instance->DecrementReferenceCount();                
+        // copy the entity_instance and increment the instance's ref
+        // count (if it exists)
+        m_entity_instance = entity_reference.m_entity_instance;
+        if (m_entity_instance != NULL)
+            m_entity_instance->IncrementReferenceCount();
+    }
+    // this assignment operator overload is necessary because the above,
+    // templatized assignment operator overload goes all wacky when used
+    // with the same EntitySubClass.
+    inline void operator = (EntityReference<EntitySubclass> const &entity_reference)
+    {
+        // decrement the old instance's ref count (if it exists)
+        if (m_entity_instance != NULL)
             m_entity_instance->DecrementReferenceCount();
-                
         // copy the entity_instance and increment the instance's ref
         // count (if it exists)
         m_entity_instance = entity_reference.m_entity_instance;

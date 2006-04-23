@@ -49,6 +49,7 @@ public:
         {
             m_reference.SetInstance(new EntityInstance(this));
             ASSERT1(m_reference.GetIsValid())
+            ASSERT1(*m_reference == this)
         }
         return m_reference;
     }
@@ -226,6 +227,10 @@ public:
     virtual void HandleScheduledDeletion (Float time);
 
 protected:
+
+    // does the calculation to see if/when the given entity will collide
+    // with this one.
+    Float GetCollisionTime (Entity *entity, Float lookahead_time) const;
 
     static EntityType ReadEntityType (Serializer &serializer);
     void WriteEntityType (Serializer &serializer) const;

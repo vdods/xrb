@@ -34,6 +34,7 @@ DISASTEROIDS:
   front-attaching secondary mode)
   
 CURRENT:
+- make Devourments stay away from each other so they stop clustering (?)
 - wave spawning, instead of continuous.
 - figure out a way to manage fire rates between all weapons (so the
   player can't fire arbitrarily fast by switching weapons between each fire)

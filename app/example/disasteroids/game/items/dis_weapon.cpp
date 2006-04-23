@@ -1089,21 +1089,10 @@ bool Tractor::Activate (
     bool pull_everything = GetSecondaryInput() > 0.0f;
     Float input = pull_everything ? GetSecondaryInput() : GetPrimaryInput();
 
-    // use the reticle coordinates for the area the tractor pulls/pushes,
-    // but make sure it's inside the maximum range.
-    FloatVector2 reticle_coordinates(GetReticleCoordinates());
-    Float reticle_distance =
-        (reticle_coordinates - GetOwnerShip()->GetTranslation()).GetLength();
-    if (reticle_distance > ms_range[GetUpgradeLevel()])
-        reticle_coordinates =
-            ms_range[GetUpgradeLevel()] / reticle_distance *
-            (reticle_coordinates - GetOwnerShip()->GetTranslation()) +
-            GetOwnerShip()->GetTranslation();
-
-    Float beam_radius =
-        GetIsBeamRadiusOverridden() ?
-        GetBeamRadiusOverride() :
-        ms_beam_radius[GetUpgradeLevel()];
+    Float range =
+        GetIsRangeOverridden() ?
+        GetRangeOverride() :
+        ms_range[GetUpgradeLevel()];
     Float strength =
         GetIsStrengthOverridden() ?
         GetStrengthOverride() :
@@ -1112,7 +1101,22 @@ bool Tractor::Activate (
         GetIsMaxForceOverridden() ?
         GetMaxForceOverride() :
         ms_max_force[GetUpgradeLevel()];
+    Float beam_radius =
+        GetIsBeamRadiusOverridden() ?
+        GetBeamRadiusOverride() :
+        ms_beam_radius[GetUpgradeLevel()];
             
+    // use the reticle coordinates for the area the tractor pulls/pushes,
+    // but make sure it's inside the maximum range.
+    FloatVector2 reticle_coordinates(GetReticleCoordinates());
+    Float reticle_distance =
+        (reticle_coordinates - GetOwnerShip()->GetTranslation()).GetLength();
+    if (reticle_distance > range)
+        reticle_coordinates =
+            range / reticle_distance *
+            (reticle_coordinates - GetOwnerShip()->GetTranslation()) +
+            GetOwnerShip()->GetTranslation();
+
     AreaTraceList area_trace_list;
     GetOwnerShip()->GetPhysicsHandler()->AreaTrace(
         GetOwnerShip()->GetObjectLayer(),

@@ -87,40 +87,6 @@ void Shade::Think (Float const time, Float const frame_dt)
     ResetInputs();
 }
 
-Float Shade::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
-{
-    FloatVector2 adjusted_entity_translation(
-        GetObjectLayer()->GetAdjustedCoordinates(
-            entity->GetTranslation(),
-            GetTranslation()));
-
-    FloatVector2 p(GetTranslation() - adjusted_entity_translation);
-    FloatVector2 v(GetVelocity() - entity->GetVelocity());
-    // the 2.0f coefficient is so we account for near-collisions as well
-    Float R = 2.0f * GetRadius(Engine2::QTT_PHYSICS_HANDLER) + entity->GetRadius(Engine2::QTT_PHYSICS_HANDLER);
-    
-    Polynomial poly;
-    poly.Set(2, v | v);
-    poly.Set(1, 2.0f * (p | v));
-    poly.Set(0, (p | p) - R*R);
-    Polynomial::SolutionSet solution_set;
-    poly.Solve(&solution_set, 0.0001f);
-    
-    Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
-                                         it_end = solution_set.end();
-         it != it_end;
-         ++it)
-    {
-        if (*it > 0.0f && *it <= lookahead_time)
-        {
-            T = *it;
-            break;
-        }
-    }
-    return T;
-}
-
 void Shade::PickWanderDirection (Float const time, Float const frame_dt)
 {
     // update the next time to pick a wander direction
@@ -154,6 +120,11 @@ void Shade::Wander (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
+
+        // ignore ourselves
+        if (entity == this)
+            continue;
+        
         // if this entity is a solitary, set m_target and transition
         // to MoveToAttackRange
         if (entity->GetEntityType() == ET_SOLITARY)

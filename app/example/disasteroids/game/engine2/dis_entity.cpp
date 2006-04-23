@@ -234,6 +234,40 @@ void Entity::HandleScheduledDeletion (Float const time)
 {
 }
 
+Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
+{
+    FloatVector2 adjusted_entity_translation(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            entity->GetTranslation(),
+            GetTranslation()));
+
+    FloatVector2 p(GetTranslation() - adjusted_entity_translation);
+    FloatVector2 v(GetVelocity() - entity->GetVelocity());
+    Float R = GetRadius(Engine2::QTT_PHYSICS_HANDLER) + entity->GetRadius(Engine2::QTT_PHYSICS_HANDLER);
+    
+    Polynomial poly;
+    poly.Set(2, v | v);
+    poly.Set(1, 2.0f * (p | v));
+    poly.Set(0, (p | p) - R*R);
+    Polynomial::SolutionSet solution_set;
+    poly.Solve(&solution_set, 0.0001f);
+    
+    Float T = -1.0f;
+    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+                                         it_end = solution_set.end();
+         it != it_end;
+         ++it)
+    {
+        if (*it > 0.0f && *it <= lookahead_time)
+        {
+            T = *it;
+            break;
+        }
+    }
+    return T;
+}
+
+
 EntityType Entity::ReadEntityType (Serializer &serializer)
 {
     ASSERT1(serializer.GetIODirection() == IOD_READ)

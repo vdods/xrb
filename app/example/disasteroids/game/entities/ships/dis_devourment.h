@@ -64,23 +64,31 @@ public:
             
 private:
 
-    void Seek (Float time, Float frame_dt);
+    void PickWanderDirection (Float time, Float frame_dt);
+    void Wander (Float time, Float frame_dt);
     void Pursue (Float time, Float frame_dt);
     void Consume (Float time, Float frame_dt);
 
+    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    EntityReference<Mortal> ScanAreaForTargets ();
+
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
     static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_damage_rate[ENEMY_LEVEL_COUNT];
-    static Float const ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT];
+    static Float const ms_mouth_tractor_range[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT];
+    static Float const ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT];
 
     typedef void (Devourment::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
+    Float m_next_whatever_time;
+    Float m_wander_angle;
     EntityReference<Mortal> m_target;
 
     EntityReference<HealthTrigger> m_mouth_health_trigger;

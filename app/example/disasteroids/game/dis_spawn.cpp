@@ -760,7 +760,7 @@ Devourment *SpawnDevourment (
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
         0.0f,
-        0.3f);
+        0.05f);
     return devourment;
 }
 
