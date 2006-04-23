@@ -28,14 +28,15 @@ Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 12000.0f, 14000.
 Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 15.0f, 16.0f, 17.0f, 18.0f };
 Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
+Float const Interloper::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 
 Interloper::Interloper (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_INTERLOPER)
 {
-    m_think_state = THINK_STATE(Seek);
+    m_think_state = THINK_STATE(PickWanderDirection);
 
-    SetStrength(D_COLLISION);
+    SetStrength(D_LASER|D_COLLISION);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 }
 
@@ -49,9 +50,9 @@ void Interloper::Think (Float const time, Float const frame_dt)
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
-        // if disabled, then reset the think state to Seek (a way out for
+        // if disabled, then reset the think state to PickWanderDirection (a way out for
         // players that are being ganged up on)
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -102,20 +103,32 @@ void Interloper::Collide (
         frame_dt);
 }
 
-void Interloper::Seek (Float const time, Float const frame_dt)
+void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    static Float const s_seek_scan_radius = 400.0f;
+    // update the next time to pick a wander direction
+    m_next_wander_time = time + 6.0f;
+    // pick a direction/speed to wander in
+    m_wander_angle = Math::RandomAngle();
+    m_slow_angle = m_wander_angle;
+    m_think_state = THINK_STATE(Wander);
+}
 
-    // do an area trace
+void Interloper::Wander (Float const time, Float const frame_dt)
+{
+    static Float const s_scan_radius = 200.0f;
+    static Float const s_collision_lookahead_time = 3.0f;
+    
+    // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
-        s_seek_scan_radius,
+        s_scan_radius,
         false,
         &area_trace_list);
-        
-    // check if there is a solitary in the area
+    // check the area trace list for targets and collisions
+    Float collision_time = -1.0f;
+    Entity *collision_entity = NULL;
     for (AreaTraceListIterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
@@ -123,21 +136,65 @@ void Interloper::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
+
+        // ignore ourselves
+        if (entity == this)
+            continue;
+        
+        // if this entity is a solitary, set m_target and transition
+        // to Charge
         if (entity->GetEntityType() == ET_SOLITARY)
         {
-            // if so, set m_target and transition to Charge
             m_target = entity->GetReference();
             m_think_state = THINK_STATE(Charge);
             return;
         }
-    } 
-
-    // wander around - TODO: real wandering
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
-    SetEngineUpDownInput(0);
+        // otherwise if we will collide with something in the next short
+        // while, perform collision avoidance calculations
+        else
+        {
+            Float potential_collision_time = GetCollisionTime(entity, s_collision_lookahead_time);
+            if (potential_collision_time >= 0.0f &&
+                (collision_entity == NULL || potential_collision_time < collision_time))
+            {
+                collision_time = potential_collision_time;
+                collision_entity = entity;
+            }
+        }
+    }
     
-    // if not, set next think time to a while later
-    SetNextTimeToThink(time + Math::RandomFloat(0.3f, 0.5f));
+    // if there is an imminent collision, pick a new direction to avoid it
+    if (collision_entity != NULL)
+    {
+        FloatVector2 v(GetSpeed() * Math::UnitVector(m_slow_angle));
+        FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
+        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        ASSERT1(!perpendicular_velocity.GetIsZero())
+        if ((perpendicular_velocity | v) > -(perpendicular_velocity | v))
+            m_wander_angle = Math::Atan(perpendicular_velocity);
+        else
+            m_wander_angle = Math::Atan(-perpendicular_velocity);
+        m_next_wander_time = time + 6.0f;
+    }
+    
+    // incrementally accelerate up to the wander direction/speed
+    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    MatchVelocity(wander_velocity, frame_dt);
+
+    // the "slow angle" is used like a low-pass filter for the wander angle
+    // in the above calculations.  this is necessary to avoid a feedback loop
+    // due to the successive m_wander_angle-dependent calculations.
+    static Float const s_slow_angle_delta_rate = 135.0f;
+    Float slow_angle_delta =
+        Min(s_slow_angle_delta_rate * frame_dt,
+            Math::Abs(m_wander_angle - m_slow_angle));
+    if (m_wander_angle < m_slow_angle)
+        m_slow_angle -= slow_angle_delta;
+    else
+        m_slow_angle += slow_angle_delta;
+    
+    if (time >= m_next_wander_time)
+        m_think_state = THINK_STATE(PickWanderDirection);
 }
 
 void Interloper::Charge (Float const time, Float const frame_dt)
@@ -145,7 +202,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -229,7 +286,7 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -244,6 +301,27 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
     SetReticleCoordinates(GetTranslation() + (GetTranslation() - target_position).GetNormalization());
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
+}
+
+void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+{
+    // calculate what thrust is required to match the desired velocity 
+    FloatVector2 velocity_differential =
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
+    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+    if (!thrust_vector.GetIsZero())
+    {
+        Float thrust_force = thrust_vector.GetLength();
+        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
+            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+        thrust_force = thrust_vector.GetLength();
+
+        SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
+        SetEngineUpDownInput(
+            static_cast<Sint8>(
+                SINT8_UPPER_BOUND * thrust_force /
+                ms_engine_thrust[GetEnemyLevel()]));
+    }
 }
 
 } // end of namespace Dis

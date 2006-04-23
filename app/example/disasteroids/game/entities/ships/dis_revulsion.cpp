@@ -47,6 +47,7 @@ Revulsion::Revulsion (Uint8 const enemy_level)
     m_weapon->Equip(this);
     m_weapon->SetImpactDamageOverride(ms_weapon_impact_damage[GetEnemyLevel()]);
 
+    SetStrength(D_LASER);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 }
 

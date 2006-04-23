@@ -49,19 +49,26 @@ public:
         
 private:
 
-    void Seek (Float time, Float frame_dt);
+    void PickWanderDirection (Float time, Float frame_dt);
+    void Wander (Float time, Float frame_dt);
     void Charge (Float time, Float frame_dt);
     void Retreat (Float time, Float frame_dt);
+
+    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
 
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
     static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
     static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Interloper::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
+    Float m_next_wander_time;
+    Float m_wander_angle;
+    Float m_slow_angle;
     EntityReference<Ship> m_target;
     Float m_time_at_retreat_start;
 }; // end of class Interloper
