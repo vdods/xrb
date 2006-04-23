@@ -41,7 +41,7 @@ public:
 
     virtual Float GetShipScaleFactor () const
     {
-        return 10.0f;
+        return 11.0f;
     }
     virtual Float GetShipBaselineFirstMoment () const
     {

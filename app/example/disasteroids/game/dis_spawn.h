@@ -307,7 +307,8 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     Float health_delta_rate,
     Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
-    EntityReference<Entity> const &owner);
+    EntityReference<Entity> const &owner,
+    Uint8 enemy_level);
     
 } // end of namespace Dis
 

@@ -31,6 +31,8 @@ public:
     Ship (Float max_health, EntityType entity_type);
     virtual ~Ship ();
 
+    static std::string const &GetShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
+
     virtual bool GetIsShip () const { return true; }
     bool GetIsDisabled () const { return m_disable_time > 0.0f; }
     

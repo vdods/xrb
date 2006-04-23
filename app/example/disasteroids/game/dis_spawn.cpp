@@ -660,7 +660,7 @@ Solitary *SpawnSolitary (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/solitary_small.png",
+        Ship::GetShipSpriteFilename(ET_SOLITARY, 0),
         solitary,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -668,7 +668,7 @@ Solitary *SpawnSolitary (
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
         0.0f,
-        0.3f);
+        0.05f);
     return solitary;
 }
 
@@ -683,7 +683,7 @@ Interloper *SpawnInterloper (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/interloper_small.png",
+        Ship::GetShipSpriteFilename(ET_INTERLOPER, enemy_level),
         interloper,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -691,7 +691,7 @@ Interloper *SpawnInterloper (
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
         0.0f,
-        0.3f);
+        0.05f);
     return interloper;
 }
 
@@ -706,7 +706,7 @@ Shade *SpawnShade (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/shade_small.png",
+        Ship::GetShipSpriteFilename(ET_SHADE, enemy_level),
         shade,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -714,7 +714,7 @@ Shade *SpawnShade (
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
         0.0f,
-        0.3f);
+        0.05f);
     return shade;
 }
 
@@ -729,7 +729,7 @@ Revulsion *SpawnRevulsion (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/revulsion_small.png",
+        Ship::GetShipSpriteFilename(ET_REVULSION, enemy_level),
         revulsion,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -737,7 +737,7 @@ Revulsion *SpawnRevulsion (
         1.0f, // arbitrary, the ship will set its own first moment
         velocity,
         0.0f,
-        0.3f);
+        0.05f);
     return revulsion;
 }
 
@@ -752,7 +752,7 @@ Devourment *SpawnDevourment (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/devourment_small.png",
+        Ship::GetShipSpriteFilename(ET_DEVOURMENT, enemy_level),
         devourment,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -773,8 +773,19 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     Float const health_delta_rate,
     Mortal::DamageType const damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
-    EntityReference<Entity> const &owner)
+    EntityReference<Entity> const &owner,
+    Uint8 const enemy_level)
 {
+    static std::string const s_grinder_sprite_filename[EnemyShip::ENEMY_LEVEL_COUNT] =
+    {
+        "resources/grinder0_small.png",
+        "resources/grinder1_small.png",
+        "resources/grinder2_small.png",
+        "resources/grinder3_small.png"
+    };
+
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+
     HealthTrigger *health_trigger =
         new HealthTrigger(
             health_delta_rate,
@@ -784,7 +795,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/grinder_small.png",
+        s_grinder_sprite_filename[enemy_level],
         health_trigger,
         translation,
         scale_factor,

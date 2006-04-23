@@ -108,7 +108,8 @@ void Devourment::Think (Float const time, Float const frame_dt)
                 -ms_mouth_damage_rate[GetEnemyLevel()],
                 Mortal::D_GRINDING,
                 GetReference(),
-                GetReference());
+                GetReference(),
+                GetEnemyLevel());
         m_mouth_health_trigger = health_trigger->GetReference();
     }
     

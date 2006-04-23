@@ -12,6 +12,7 @@
 
 #include "dis_armor.h"
 #include "dis_effect.h"
+#include "dis_enemyship.h"
 #include "dis_engine.h"
 #include "dis_powergenerator.h"
 #include "dis_shield.h"
@@ -37,6 +38,50 @@ Ship::Ship (
 
 Ship::~Ship ()
 {
+}
+
+std::string const &Ship::GetShipSpriteFilename (
+    EntityType const ship_type,
+    Uint8 const enemy_level)
+{
+    static std::string const s_ship_sprite_filename[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
+    {
+        {   // ET_SOLITARY
+            "resources/solitary_small.png",
+            "resources/solitary_small.png",
+            "resources/solitary_small.png",
+            "resources/solitary_small.png"
+        },
+        {   // ET_INTERLOPER
+            "resources/interloper0_small.png",
+            "resources/interloper1_small.png",
+            "resources/interloper2_small.png",
+            "resources/interloper3_small.png"
+        },
+        {   // ET_SHADE
+            "resources/shade0_small.png",
+            "resources/shade1_small.png",
+            "resources/shade2_small.png",
+            "resources/shade3_small.png"
+        },
+        {   // ET_REVULSION
+            "resources/revulsion0_small.png",
+            "resources/revulsion1_small.png",
+            "resources/revulsion2_small.png",
+            "resources/revulsion3_small.png"
+        },
+        {   // ET_DEVOURMENT
+            "resources/devourment0_small.png",
+            "resources/devourment1_small.png",
+            "resources/devourment2_small.png",
+            "resources/devourment3_small.png"
+        }
+    };
+
+    Uint32 ship_index = ship_type - ET_SHIP_LOWEST;
+    ASSERT1(ship_index < ET_SHIP_COUNT)
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    return s_ship_sprite_filename[ship_index][enemy_level];
 }
 
 void Ship::HandleNewOwnerObject ()

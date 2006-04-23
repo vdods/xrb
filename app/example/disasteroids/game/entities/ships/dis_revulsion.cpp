@@ -26,7 +26,7 @@ namespace Dis
 
 Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 25.0f, 35.0f, 50.0f };
 Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
-Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 11.0f, 11.5f, 12.5f, 15.0f };
+Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 13.0f, 14.0f, 15.0f, 16.0f };
 Float const Revulsion::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Revulsion::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Revulsion::ms_weapon_impact_damage[ENEMY_LEVEL_COUNT] = { 10.0f, 17.0f, 25.0f, 40.0f };
