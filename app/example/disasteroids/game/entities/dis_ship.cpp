@@ -121,7 +121,9 @@ void Ship::Die (
 void Ship::AimShipAtReticleCoordinates ()
 {
     // set the ship's angle based on where it's aiming at
-    SetAngle(Math::Atan(m_reticle_coordinates - GetTranslation()));
+    FloatVector2 aim_direction(m_reticle_coordinates - GetTranslation());
+    if (!aim_direction.GetIsZero())
+        SetAngle(Math::Atan(aim_direction));
 }
 
 void Ship::ResetInputs ()

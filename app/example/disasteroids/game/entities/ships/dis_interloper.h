@@ -49,12 +49,16 @@ public:
         
 private:
 
+    inline bool GetIsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
+
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
+    void Flock (Float time, Float frame_dt);
     void Charge (Float time, Float frame_dt);
     void Retreat (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    void AddFlockLeaderWeight (Float weight);
 
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
@@ -68,9 +72,12 @@ private:
     ThinkState m_think_state;
     Float m_next_wander_time;
     Float m_wander_angle;
-    Float m_slow_angle;
+    Float m_wander_angle_low_pass;
+    Float m_wander_angle_derivative;
     EntityReference<Ship> m_target;
     Float m_time_at_retreat_start;
+    Float m_flock_leader_weight;
+    EntityReference<Interloper> m_closest_flock_member;
 }; // end of class Interloper
 
 } // end of namespace Dis

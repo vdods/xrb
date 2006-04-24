@@ -38,8 +38,8 @@ public:
     
     inline void SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
-        ASSERT1(reticle_coordinates[Dim::X] != Math::Nan()) // temp
-        ASSERT1(reticle_coordinates[Dim::Y] != Math::Nan()) // temp
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
         m_reticle_coordinates = reticle_coordinates;
     }
     inline void SetEngineRightLeftInput (Sint8 const engine_right_left_input)

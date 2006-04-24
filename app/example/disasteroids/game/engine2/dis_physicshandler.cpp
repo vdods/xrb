@@ -270,8 +270,8 @@ void PhysicsHandler::UpdateVelocities ()
 
         if (!entity->GetForce().GetIsZero())
         {
-            ASSERT1(entity->GetForce()[Dim::X] != Math::Nan())
-            ASSERT1(entity->GetForce()[Dim::Y] != Math::Nan())
+            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]))
+            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]))
             ASSERT1(entity->GetFirstMoment() > 0.0f)
             entity->AccumulateVelocity(
                 GetFrameDT() * entity->GetForce() /

@@ -94,7 +94,7 @@ void Shade::PickWanderDirection (Float const time, Float const frame_dt)
     m_next_wander_time = time + 6.0f;
     // pick a direction/speed to wander in
     m_wander_angle = Math::RandomAngle();
-    m_slow_angle = m_wander_angle;
+    m_wander_angle_low_pass = m_wander_angle;
     m_think_state = THINK_STATE(Wander);
 }
 
@@ -151,7 +151,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
-        FloatVector2 v(GetSpeed() * Math::UnitVector(m_slow_angle));
+        FloatVector2 v(GetSpeed() * Math::UnitVector(m_wander_angle_low_pass));
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.GetIsZero())
@@ -172,11 +172,11 @@ void Shade::Wander (Float const time, Float const frame_dt)
     static Float const s_slow_angle_delta_rate = 135.0f;
     Float slow_angle_delta =
         Min(s_slow_angle_delta_rate * frame_dt,
-            Math::Abs(m_wander_angle - m_slow_angle));
-    if (m_wander_angle < m_slow_angle)
-        m_slow_angle -= slow_angle_delta;
+            Math::Abs(m_wander_angle - m_wander_angle_low_pass));
+    if (m_wander_angle < m_wander_angle_low_pass)
+        m_wander_angle_low_pass -= slow_angle_delta;
     else
-        m_slow_angle += slow_angle_delta;
+        m_wander_angle_low_pass += slow_angle_delta;
     
     if (time >= m_next_wander_time)
         m_think_state = THINK_STATE(PickWanderDirection);
