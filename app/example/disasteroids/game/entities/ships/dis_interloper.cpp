@@ -69,6 +69,9 @@ void Interloper::Think (Float const time, Float const frame_dt)
         // if disabled, then reset the think state to PickWanderDirection (a way out for
         // players that are being ganged up on)
         m_think_state = THINK_STATE(PickWanderDirection);
+        // reset other stuff
+        m_flock_leader_weight = 0.0f;
+        m_closest_flock_member.Release();
         return;
     }
 

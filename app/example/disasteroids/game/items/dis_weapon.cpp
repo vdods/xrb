@@ -164,8 +164,6 @@ bool PeaShooter::Activate (
     // charge-up weapon should fire.
     if (GetSecondaryInput() == 0.0f && m_charge_up_ratio > 0.0f)
     {
-        ASSERT1(power == 0.0f)
-
         ASSERT1(m_charge_up_ratio >= 0.0f)
         ASSERT1(m_charge_up_ratio <= 1.0f)
     

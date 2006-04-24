@@ -38,7 +38,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.3f, 0.4f, 0.5f, 0.6f };
+Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.4f, 0.5f, 0.6f };
 Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
 {
     {  3,  2,  1,  4 },
@@ -740,7 +740,8 @@ Asteroid *World::SpawnAsteroidOutOfView ()
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
         // this causes the randomness to favor smaller asteroids
         Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
-        scale_factor = 55.0f * scale_seed * scale_seed + 5.0f;
+        scale_seed = Math::Pow(scale_seed, 2.5f);
+        scale_factor = 55.0f * scale_seed + 5.0f;
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, scale_factor));
 
