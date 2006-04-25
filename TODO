@@ -29,15 +29,18 @@ OPENGL CONVERSION TASKS:
   up/down the saturation).
 
 DISASTEROIDS:
-- finish writing AIs
+- finish writing AIs (add wandering to Revulsion and write Demi)
 - finish weapon code (add UT-style charge-up melee weapon with
   front-attaching secondary mode)
+- make own grenade/missile explosions not damage self
+- different enemy levels of devourments and revulsions need to look less alike
+- shield auxiliary input -- temporary extra-strong shields (but drains power
+  quickly)
+- extra engine thrust -- double-tap forward to make the engine thrust harder
+  (but drains power quickly)
   
 CURRENT:
-- make Devourments stay away from each other so they stop clustering (?)
 - wave spawning, instead of continuous.
-- figure out a way to manage fire rates between all weapons (so the
-  player can't fire arbitrarily fast by switching weapons between each fire)
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
 - bug: intermittent crash in Dis::PhysicsHandler's entity think loop

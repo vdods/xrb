@@ -85,26 +85,13 @@ private:
     void HandleInterpenetrationsWrapped ();
     void HandleInterpenetrationsUsingCollisionQuadTree ();
     void HandleInterpenetrationsUsingCollisionQuadTreeWrapped ();
-    void CrossProductBetweenGravitationalEntitySets (
-        EntitySet *set0,
-        EntitySet *set1);
 
     // set of all added entities
     EntitySet m_entity_set;
 
-    // set of applies-gravity entities
-    EntitySet m_applies_gravity_set;
-    // set of applies-gravity and reacts-to-gravity entities
-    EntitySet m_applies_and_reacts_to_gravity_set;
-    // set of reacts-to-gravity entities
-    EntitySet m_reacts_to_gravity_set;
-
     // the list of collision pairs for this frame
     CollisionPairList m_collision_pair_list;
     
-    // the universal gravitational constant
-    Float m_gravitational_constant;
-
     // keeps track of the main object layer (really only used to make
     // sure that all entities are added to the main object layer)
     Engine2::ObjectLayer *m_main_object_layer;

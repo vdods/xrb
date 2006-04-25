@@ -41,26 +41,46 @@ namespace Dis
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.4f, 0.5f, 0.6f };
 Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
 {
-    {  3,  2,  1,  4 },
-    {  6,  4,  2,  4 },
-    {  9,  6,  3,  4 },
-    { 12,  8,  4,  4 },
-    { 15, 10,  5,  5 },
-    { 18, 12,  6,  5 },
-    { 21, 14,  7,  5 },
-    { 24, 16,  8,  5 },
-    { 27, 18,  9,  6 },
-    { 30, 20, 10,  6 },
-    { 33, 22, 11,  6 },
-    { 36, 24, 12,  6 },
-    { 39, 26, 13,  7 },
-    { 42, 28, 14,  7 },
-    { 45, 30, 15,  7 },
-    { 48, 32, 16,  7 },
-    { 51, 34, 17,  8 },
-    { 54, 36, 18,  8 },
-    { 57, 38, 19,  8 },
-    { 60, 40, 20,  8 }
+    {  2,  2,  1,  3 }, // 0
+    {  4,  4,  2,  3 },
+    {  6,  6,  3,  3 },
+    {  8,  8,  4,  3 },
+    { 10, 10,  5,  3 },
+    { 12, 12,  6,  3 },
+    { 14, 14,  7,  4 },
+    { 16, 16,  8,  4 },
+    { 18, 18,  9,  4 },
+    { 20, 20, 10,  4 },
+    { 22, 22, 11,  4 }, // 10
+    { 24, 24, 12,  4 },
+    { 26, 26, 13,  5 },
+    { 28, 28, 14,  5 },
+    { 30, 30, 15,  5 },
+    { 32, 32, 16,  5 },
+    { 34, 34, 17,  5 },
+    { 36, 36, 18,  5 },
+    { 38, 38, 19,  6 },
+    { 40, 40, 20,  6 },
+    { 40, 40, 20,  6 }, // 20
+    { 40, 40, 20,  6 },
+    { 40, 40, 20,  6 },
+    { 40, 40, 20,  6 },
+    { 40, 40, 20,  6 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 }, // 30
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  7 },
+    { 40, 40, 20,  8 },
+    { 40, 40, 20,  8 },
+    { 40, 40, 20,  8 },
+    { 40, 40, 20,  8 },
+    { 40, 40, 20,  8 }
 };
 Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
 {
@@ -70,115 +90,235 @@ Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
     },
-    { // stage 1
+    {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
+    },
+    {
         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Interloper
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
     },
-    { // stage 2
+    {
+        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
+    },
+    {
         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Interloper
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
     },
-    { // stage 3
+    {
+        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Devourment
+    },
+    {
         { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Interloper
         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }  // Devourment
     },
-    { // stage 4
+    {
+        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }  // Devourment
+    },
+    {
         { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Interloper
         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }  // Devourment
     },
-    { // stage 5
+    {
+        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }  // Devourment
+    },
+    { // stage 10
         { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Interloper
         { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }  // Devourment
     },
-    { // stage 6
+    {
+        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Interloper
+        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }  // Devourment
+    },
+    {
         { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Interloper
         { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }  // Devourment
     },
-    { // stage 7
+    {
+        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Interloper
+        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }  // Devourment
+    },
+    {
         { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Interloper
         { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Shade
         { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Revulsion
         { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }  // Devourment
     },
-    { // stage 8
+    {
+        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Interloper
+        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Revulsion
+        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }  // Devourment
+    },
+    {
         { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Interloper
         { 0, 0, 0, 1, 1, 1, 1, 1, 1, 2 }, // Shade
         { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
         { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }  // Devourment
     },
-    { // stage 9
+    {
+        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Interloper
+        { 0, 0, 0, 1, 1, 1, 1, 1, 1, 2 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
+        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }  // Devourment
+    },
+    {
         { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Interloper
         { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Shade
         { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
         { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2 }  // Devourment
     },
-    { // stage 10
+    {
+        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Interloper
+        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Shade
+        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
+        { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2 }  // Devourment
+    },
+    { // stage 20
         { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Interloper
         { 0, 0, 1, 1, 1, 1, 1, 1, 2, 2 }, // Shade
         { 0, 0, 0, 0, 0, 1, 1, 1, 2, 2 }, // Revulsion
         { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }  // Devourment
     },
-    { // stage 11
+    {
+        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Interloper
+        { 0, 0, 1, 1, 1, 1, 1, 1, 2, 2 }, // Shade
+        { 0, 0, 0, 0, 0, 1, 1, 1, 2, 2 }, // Revulsion
+        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }  // Devourment
+    },
+    {
         { 0, 1, 2, 2, 2, 2, 3, 3, 3, 3 }, // Interloper
         { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Shade
         { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2 }, // Revulsion
         { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }  // Devourment
     },
-    { // stage 12
+    {
+        { 0, 1, 2, 2, 2, 2, 3, 3, 3, 3 }, // Interloper
+        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Shade
+        { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2 }, // Revulsion
+        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }  // Devourment
+    },
+    {
         { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Shade
         { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
         { 0, 0, 1, 1, 1, 1, 2, 2, 2, 3 }  // Devourment
     },
-    { // stage 13
+    {
+        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Shade
+        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
+        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Shade
         { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
         { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }  // Devourment
     },
-    { // stage 14
+    {
+        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Shade
+        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
+        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Shade
         { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
         { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }  // Devourment
     },
-    { // stage 15
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Shade
+        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
+        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }  // Devourment
+    },
+    { // 30
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Shade
         { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
         { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }  // Devourment
     },
-    { // stage 16
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Shade
+        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
+        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Shade
         { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Revulsion
         { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }  // Devourment
     },
-    { // stage 17
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Shade
+        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Revulsion
+        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Shade
         { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Revulsion
         { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }  // Devourment
     },
-    { // stage 18
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Shade
+        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Revulsion
+        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Shade
         { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 }, // Revulsion
         { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }  // Devourment
     },
-    { // stage 19
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Shade
+        { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 }, // Revulsion
+        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }  // Devourment
+    },
+    {
+        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
+        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Shade
+        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Revulsion
+        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }  // Devourment
+    },
+    {
         { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
         { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Shade
         { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Revulsion
@@ -187,26 +327,46 @@ Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_
 };
 Float const World::ms_enemy_spawn_interval[GAME_STAGE_COUNT] =
 {
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f,
-    1.5f
+    2.5f, // stage 0
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f, // stage 10
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f, // stage 20
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f, // stage 30
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f,
+    2.5f
 };
 
 World::~World ()
@@ -278,10 +438,11 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     --m_enemy_ship_count[enemy_ship_index];
 
     if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
-        m_next_enemy_ship_spawn_time[enemy_ship_index] = GetFrameTime() + 0.0f;
+        m_next_enemy_ship_spawn_time[enemy_ship_index] =
+            GetFrameTime() + 0.3f;
 //             Math::RandomFloat(
-//                 ms_enemy_spawn_interval[m_game_stage] - 1.0f,
-//                 ms_enemy_spawn_interval[m_game_stage] + 1.0f);
+//                 0.9f * ms_enemy_spawn_interval[m_game_stage],
+//                 1.1f * ms_enemy_spawn_interval[m_game_stage]);
 }
 
 World::World (
@@ -682,10 +843,10 @@ void World::ProcessNormalGameplayLogic ()
                 ++m_enemy_ship_count[enemy_ship_index];
                 if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
                     m_next_enemy_ship_spawn_time[enemy_ship_index] =
-                        GetFrameTime() + 0.0f;
+                        GetFrameTime() + 0.3f;
 //                         Math::RandomFloat(
-//                             ms_enemy_spawn_interval[m_game_stage] - 1.0f,
-//                             ms_enemy_spawn_interval[m_game_stage] + 1.0f);
+//                             0.9f * ms_enemy_spawn_interval[m_game_stage],
+//                             1.1f * ms_enemy_spawn_interval[m_game_stage]);
             }
         }
     }
@@ -694,7 +855,7 @@ void World::ProcessNormalGameplayLogic ()
     if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
     {
         static Float const s_extra_live_score_factor = 2.0f;
-        m_player_ship->IncrementLivesRemaining(1);
+//         m_player_ship->IncrementLivesRemaining(1);
         m_score_required_for_extra_life =
             static_cast<Uint32>(s_extra_live_score_factor * m_score_required_for_extra_life);
     }

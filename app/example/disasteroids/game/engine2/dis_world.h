@@ -166,7 +166,7 @@ private:
     enum
     {
         MINERAL_CONTENT_LEVEL_COUNT = 4,
-        GAME_STAGE_COUNT = 20,
+        GAME_STAGE_COUNT = 40,
         DISTRIBUTION_TABLE_SIZE = 10
     };
     

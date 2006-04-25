@@ -236,15 +236,18 @@ void LaserBeam::SnapToShip (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void TractorBeam::SetPullingInputAndIntensity (
+void TractorBeam::SetParameters (
     bool const pull_everything,
+    bool const push_instead_of_pull,
     Float const pulling_input,
     Float const intensity)
 {
     ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f)
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
     ASSERT1(GetIsInWorld())
-    if (pull_everything)
+    if (push_instead_of_pull)
+        GetOwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
+    else if (pull_everything)
         GetOwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
     else
         GetOwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));

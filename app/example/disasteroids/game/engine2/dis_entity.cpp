@@ -100,6 +100,7 @@ void Entity::ApplyInterceptCourseAcceleration (
     Entity *const target,
     Float const maximum_thrust_force,
     bool const apply_force_on_target_also,
+    bool const reverse_thrust,
     Polynomial::SolutionSet *const solution_set)
 {
     ASSERT1(target != NULL)
@@ -168,6 +169,10 @@ void Entity::ApplyInterceptCourseAcceleration (
     else
         // this one is for when the force is only on the tractoree and not the tractoror
         force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * GetFirstMoment();
+
+    // if we want reverse thrust (push instead of pull), negate the force vector
+    if (reverse_thrust)
+        force_vector = -force_vector;
 
     // exert the force on one body or both, depending on the value of
     // apply_force_on_target_also.  if it is true, apply the force equally

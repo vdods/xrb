@@ -24,7 +24,6 @@ PhysicsHandler::PhysicsHandler ()
     :
     Engine2::PhysicsHandler()
 {
-    m_gravitational_constant = 1.0;
     m_main_object_layer = NULL;
     m_quad_tree = NULL;
 }
@@ -32,9 +31,6 @@ PhysicsHandler::PhysicsHandler ()
 PhysicsHandler::~PhysicsHandler ()
 {
     m_entity_set.clear();
-    m_applies_gravity_set.clear();
-    m_applies_and_reacts_to_gravity_set.clear();
-    m_reacts_to_gravity_set.clear();
     m_quad_tree->Clear();
     Delete(m_quad_tree);
 }

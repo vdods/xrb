@@ -172,19 +172,22 @@ public:
     inline void ApplyInterceptCourseAcceleration (
         Entity *target,
         Float maximum_thrust_force,
-        bool apply_force_on_target_also)
+        bool apply_force_on_target_also,
+        bool reverse_thrust)
     {
         Polynomial::SolutionSet solution_set;
         ApplyInterceptCourseAcceleration(
             target,
             maximum_thrust_force,
             apply_force_on_target_also,
+            reverse_thrust,
             &solution_set);
     }
     void ApplyInterceptCourseAcceleration (
         Entity *target,
         Float maximum_thrust_force,
         bool apply_force_on_target_also,
+        bool reverse_thrust,
         Polynomial::SolutionSet *solution_set);
 
     // ///////////////////////////////////////////////////////////////////////

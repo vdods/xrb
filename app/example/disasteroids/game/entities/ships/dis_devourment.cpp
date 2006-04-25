@@ -29,7 +29,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1000.0f, 1000.0f, 1000.0f };
+Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1250.0f, 1500.0f, 2000.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
 Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };

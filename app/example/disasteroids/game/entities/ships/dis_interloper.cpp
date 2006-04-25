@@ -23,7 +23,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 15.0f, 25.0f, 50.0f };
+Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 12000.0f, 14000.0f, 16000.0f, 20000.0f };
 Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 15.0f, 16.0f, 17.0f, 18.0f };
 Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };

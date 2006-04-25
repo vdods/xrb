@@ -889,6 +889,7 @@ Weapon *PlayerShip::GetInventoryWeapon (
     ItemType const weapon_type,
     Uint8 const upgrade_level)
 {
+    ASSERT1(weapon_type < IT_COUNT)
     ASSERT1(weapon_type >= IT_WEAPON_LOWEST)
     ASSERT1(weapon_type <= IT_WEAPON_HIGHEST)
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
@@ -1000,6 +1001,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
     ASSERT1(item_type < IT_COUNT)
+    ASSERT1(ejectee->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
     m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
 
     // figure out what item to equip it its place
@@ -1042,6 +1044,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         {
             for (Uint8 i = UPGRADE_LEVEL_COUNT-1; i < UPGRADE_LEVEL_COUNT; --i)
             {
+                ASSERT1(s_weapon_priority[priority] < IT_COUNT)
                 if (m_item_inventory[s_weapon_priority[priority]][i] != NULL)
                 {
                     item_to_equip = m_item_inventory[s_weapon_priority[priority]][i];

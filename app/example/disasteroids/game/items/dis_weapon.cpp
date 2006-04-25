@@ -27,7 +27,7 @@ namespace Dis
 
 // PeaShooter properties
 Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 3.0f, 6.0f, 10.0f };
-Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 35.0f, 55.0f, 70.0f, 120.0f };
+Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 40.0f, 60.0f, 90.0f, 150.0f };
 Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
 Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f, 14.0f, 16.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
@@ -39,7 +39,7 @@ Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1
 // Laser properties
 Float const Laser::ms_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
 Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 35.0f, 45.0f, 50.0f, 55.0f };
-Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 40.0f, 60.0f, 100.0f, 200.0f };
+Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 60.0f, 90.0f, 120.0f, 200.0f };
 Float const Laser::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 28.0f, 27.5f, 29.8666f };
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f }; //{ 2.0f, 2.5f, 3.0f, 4.0f };
 
@@ -53,9 +53,9 @@ Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12
 
 // GaussGun properties
 Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 130.0f, 200.0f };
-Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 350.0f, 425.0f, 500.0f, 600.0f };
-Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 75.0f, 100.0f, 125.0f, 150.0f };
-Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.75f, 1.0f, 1.333f, 1.5f };
+Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 350.0f, 400.0f, 450.0f, 500.0f };
+Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
+Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.75f, 2.333f, 3.0f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -170,9 +170,10 @@ bool PeaShooter::Activate (
         // calculate the ballistic size and impact damage
         Float ballistic_size =
             ms_ballistic_size[GetUpgradeLevel()] * (m_charge_up_ratio + 1.0f);
+        Float parameter = m_charge_up_ratio * m_charge_up_ratio;
         Float impact_damage =
-            ms_primary_impact_damage[GetUpgradeLevel()] * (1.0f - m_charge_up_ratio) +
-            ms_max_secondary_impact_damage[GetUpgradeLevel()] * m_charge_up_ratio;
+            ms_primary_impact_damage[GetUpgradeLevel()] * (1.0f - parameter) +
+            ms_max_secondary_impact_damage[GetUpgradeLevel()] * parameter;
         // spawn it
         SpawnSmartBallistic(
             GetOwnerShip()->GetWorld(),
@@ -1078,13 +1079,14 @@ bool Tractor::Activate (
     // don't do anything if no power was supplied
     if (power == 0.0f)
     {
-        m_tractor_beam->SetPullingInputAndIntensity(true, 0.0f, 0.0f);
+        m_tractor_beam->SetParameters(true, false, 0.0f, 0.0f);
         return false;
     }
 
     ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f)
     // the secondary tractor mode pulls everything, not just powerups
     bool pull_everything = GetSecondaryInput() > 0.0f;
+    bool push_instead_of_pull = GetPrimaryInput() > 0.0f && GetSecondaryInput() > 0.0f;
     Float input = pull_everything ? GetSecondaryInput() : GetPrimaryInput();
 
     Float range =
@@ -1142,7 +1144,12 @@ bool Tractor::Activate (
             continue;
 
         Float force = Min(input * strength * entity->GetScaleFactor(), max_force);
-        entity->ApplyInterceptCourseAcceleration(GetOwnerShip(), force, true, &solution_set);
+        entity->ApplyInterceptCourseAcceleration(
+            GetOwnerShip(),
+            force,
+            true,
+            push_instead_of_pull,
+            &solution_set);
     }
 
     // place the tractor beam effect
@@ -1151,7 +1158,7 @@ bool Tractor::Activate (
     // set its pulling input and intensity
     Float intensity = power / (frame_dt * ms_max_power_output_rate[GetUpgradeLevel()]);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
-    m_tractor_beam->SetPullingInputAndIntensity(pull_everything, GetPrimaryInput(), intensity);
+    m_tractor_beam->SetParameters(pull_everything, push_instead_of_pull, GetPrimaryInput(), intensity);
     
     return true;
 }
