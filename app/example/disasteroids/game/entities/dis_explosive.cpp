@@ -356,6 +356,10 @@ void Missile::Think (
     Float const time,
     Float const frame_dt)
 {
+    // if we're dead, don't bother thinking
+    if (GetIsDead())
+        return;
+
     static Float const s_thrust_force = 300.0f * GetFirstMoment();
     AccumulateForce(s_thrust_force * Math::UnitVector(GetAngle()));
 

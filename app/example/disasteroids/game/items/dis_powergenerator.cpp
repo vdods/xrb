@@ -17,8 +17,8 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const PowerGenerator::ms_max_power_output_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 250.0f, 400.0f };
-Float const PowerGenerator::ms_max_power_storage_capacity[UPGRADE_LEVEL_COUNT] = { 150.0f, 300.0f, 500.0f, 800.0f };
+Float const PowerGenerator::ms_max_power_output_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 250.0f, 600.0f };
+Float const PowerGenerator::ms_max_power_storage_capacity[UPGRADE_LEVEL_COUNT] = { 150.0f, 300.0f, 500.0f, 1000.0f };
 
 void PowerGenerator::PowerDevices (
     PoweredDevice *const *const powered_device,

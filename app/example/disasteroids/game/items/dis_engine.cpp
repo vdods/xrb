@@ -20,8 +20,8 @@ namespace Dis
 {
 
 Float const Engine::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 66.6f, 90.0f, 125.0f, 225.0f };
-Float const Engine::ms_max_auxiliary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 150.0f, 225.0f, 300.0f, 400.0f };
-Float const Engine::ms_max_thrust_force[UPGRADE_LEVEL_COUNT] = { 15000.0f, 30000.0f, 60000.0f, 100000.0f };
+Float const Engine::ms_max_auxiliary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 80.0f, 160.0f, 240.0f, 320.0f };
+Float const Engine::ms_max_thrust_force[UPGRADE_LEVEL_COUNT] = { 15000.0f, 45000.0f, 87500.0f, 150000.0f };
 
 void Engine::SetInputs (
     Float const right_left_input,

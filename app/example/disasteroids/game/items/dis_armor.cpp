@@ -16,6 +16,6 @@ namespace Dis
 {
 
 Float const Armor::ms_damage_dissipation_rate[UPGRADE_LEVEL_COUNT] = { 1.0f, 2.0f, 3.0f, 4.0f };
-Float const Armor::ms_first_moment[UPGRADE_LEVEL_COUNT] = { 20.0f, 80.0f, 170.0f, 250.0f };
+Float const Armor::ms_first_moment[UPGRADE_LEVEL_COUNT] = { 0.0f, 125.0f, 250.0f, 375.0f };
 
 } // end of namespace Dis

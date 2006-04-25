@@ -38,7 +38,7 @@ Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1
 
 // Laser properties
 Float const Laser::ms_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
-Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 35.0f, 45.0f, 50.0f, 55.0f };
+Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
 Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 60.0f, 90.0f, 120.0f, 200.0f };
 Float const Laser::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 28.0f, 27.5f, 29.8666f };
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f }; //{ 2.0f, 2.5f, 3.0f, 4.0f };

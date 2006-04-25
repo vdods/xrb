@@ -278,7 +278,7 @@ void PhysicsHandler::UpdateVelocities ()
         // limit the speed for entities with CT_SOLID_COLLISION only
         if (entity->GetCollisionType() == CT_SOLID_COLLISION)
         {
-            static Float const s_max_speed = 300.0f;
+            static Float const s_max_speed = 350.0f;
             static Float const s_max_speed_squared = s_max_speed * s_max_speed;
 
             // limit the speed for non-projectiles only

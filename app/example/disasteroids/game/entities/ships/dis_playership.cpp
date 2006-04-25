@@ -937,6 +937,7 @@ bool PlayerShip::GetIsInStartingInventory (Item *const item)
     return item->GetUpgradeLevel() == 0 &&
            (item->GetItemType() == IT_WEAPON_PEA_SHOOTER ||
             item->GetItemType() == IT_ENGINE ||
+            item->GetItemType() == IT_ARMOR ||
             item->GetItemType() == IT_POWER_GENERATOR);
 }
 

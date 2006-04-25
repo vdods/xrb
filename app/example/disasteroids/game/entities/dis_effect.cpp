@@ -69,7 +69,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
                 GetTranslation(),
                 m_damage_radius,
                 Mortal::D_EXPLOSION,
-                EntityReference<Mortal>::ms_null,
+                m_owner, // do not damage the owner
                 time,
                 frame_dt);
     }
@@ -107,8 +107,8 @@ void DamageExplosion::Collide (
     else
         distance_factor = 1.0f / Math::Sqrt(distance);
     
-    // if it's a Mortal, damage it
-    if (collider->GetIsMortal())
+    // if it's a Mortal, damage it (unless it's the owner)
+    if (collider->GetIsMortal() && collider != *m_owner)
         DStaticCast<Mortal *>(collider)->Damage(
             *m_owner,
             this,

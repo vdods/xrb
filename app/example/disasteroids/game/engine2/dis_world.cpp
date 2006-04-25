@@ -1087,6 +1087,8 @@ void World::CreateAndPopulateForegroundObjectLayer ()
         ASSERT1(add_succeeded)
         add_succeeded = m_player_ship->AddItem(new Engine(0));
         ASSERT1(add_succeeded)
+        add_succeeded = m_player_ship->AddItem(new Armor(0));
+        ASSERT1(add_succeeded)
         add_succeeded = m_player_ship->AddItem(new PowerGenerator(0));
         ASSERT1(add_succeeded)
     }

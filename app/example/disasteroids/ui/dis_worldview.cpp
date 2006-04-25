@@ -292,11 +292,11 @@ void WorldView::ProcessFrameOverride ()
     
             FloatVector2 view_center_delta(traveling_at - (GetCenter() + m_view_velocity * GetFrameDT()));
             bool is_view_recovering_this_frame;
-            static Float const s_max_view_center_delta = 500.0f;
+            Float const max_view_center_delta = 2.4f / GetZoomFactor();
             static Float const s_time_to_recover = 0.5f;
-            if (view_center_delta.GetLength() > s_max_view_center_delta * GetFrameDT())
+            if (view_center_delta.GetLength() > max_view_center_delta * GetFrameDT())
             {
-                m_view_velocity += view_center_delta.GetNormalization() * s_max_view_center_delta * GetFrameDT();
+                m_view_velocity += view_center_delta.GetNormalization() * max_view_center_delta * GetFrameDT();
                 is_view_recovering_this_frame = true;
             }
             else
