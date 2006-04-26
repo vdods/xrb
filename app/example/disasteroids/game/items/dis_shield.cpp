@@ -16,8 +16,8 @@ namespace Dis
 {
 
 Float const Shield::ms_power_consumption_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 22.0f, 30.0f };
-Float const Shield::ms_max_charged_power[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 60.0f, 80.0f };
-Float const Shield::ms_max_damage_dissipation[UPGRADE_LEVEL_COUNT] = { 8.0f, 12.0f, 20.0f, 30.0f };
+Float const Shield::ms_max_charged_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 60.0f, 90.0f, 120.0f };
+Float const Shield::ms_max_damage_dissipation[UPGRADE_LEVEL_COUNT] = { 4.0f, 8.0f, 16.0f, 32.0f };
 Float const Shield::ms_recharge_interval[UPGRADE_LEVEL_COUNT] = { 3.0f, 2.5f, 2.0f, 1.5f };
 
 Float Shield::Damage (

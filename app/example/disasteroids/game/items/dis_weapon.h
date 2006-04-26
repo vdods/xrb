@@ -226,6 +226,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_LASER)
     {
+        ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f)
+        m_time_last_fired = -1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
         m_laser_beam = NULL;
     }
     virtual ~Laser () { }
@@ -246,7 +248,14 @@ public:
     }
     virtual Float GetReadinessStatus (Float time) const
     {
-        return 1.0f;
+        Float const cycle_time = 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
+        Float const time_since_last_fire = time - m_time_last_fired;
+        ASSERT1(cycle_time > 0.0f)
+        ASSERT1(time_since_last_fire >= 0.0f)
+        if (time_since_last_fire > cycle_time)
+            return 1.0f;
+        else
+            return time_since_last_fire / cycle_time;
     }
     
     // ///////////////////////////////////////////////////////////////////////
@@ -264,12 +273,15 @@ public:
         
 private:
 
-    static Float const ms_range[UPGRADE_LEVEL_COUNT];
+    static Float const ms_primary_range[UPGRADE_LEVEL_COUNT];
+    static Float const ms_secondary_range[UPGRADE_LEVEL_COUNT];
+    static Float const ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_damage_rate[UPGRADE_LEVEL_COUNT];
-    static Float const ms_required_secondary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT];
     static Float const ms_beam_radius[UPGRADE_LEVEL_COUNT];
 
+    Float m_time_last_fired;
     LaserBeam *m_laser_beam;
 }; // end of class Laser
 

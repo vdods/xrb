@@ -26,18 +26,18 @@ public:
 
     enum
     {
-        D_NONE      = 0x00,
+        D_NONE         = 0x00,
         
-        D_BALLISTIC = 0x01,
-        D_LASER     = 0x02,
-        D_FIRE      = 0x04,
-        D_EXPLOSION = 0x08,
-        D_EMP       = 0x10,
-        D_COLLISION = 0x20,
-        D_SUICIDE   = 0x40,
-        D_GRINDING  = 0x80,
+        D_BALLISTIC    = 0x01,
+        D_MINING_LASER = 0x02,
+        D_COMBAT_LASER = 0x04,
+        D_FIRE         = 0x08,
+        D_EXPLOSION    = 0x10,
+        D_EMP          = 0x20,
+        D_COLLISION    = 0x40,
+        D_GRINDING     = 0x80,
 
-        D_ALL       = D_BALLISTIC|D_LASER|D_FIRE|D_EXPLOSION|D_EMP|D_COLLISION|D_SUICIDE|D_GRINDING
+        D_ALL          = D_BALLISTIC|D_MINING_LASER|D_COMBAT_LASER|D_FIRE|D_EXPLOSION|D_EMP|D_COLLISION|D_GRINDING
     }; // end of enum 
 
     Mortal (

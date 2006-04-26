@@ -24,9 +24,9 @@ namespace Dis
 {
 
 Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
-Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 12000.0f, 14000.0f, 16000.0f, 20000.0f };
-Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 15.0f, 16.0f, 17.0f, 18.0f };
-Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
+Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 18000.0f, 40000.0f, 88000.0f };
+Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
+Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Interloper::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 
@@ -36,13 +36,10 @@ Interloper::Interloper (Uint8 const enemy_level)
 {
     m_think_state = THINK_STATE(PickWanderDirection);
 
-    SetStrength(D_LASER);
+    SetStrength(D_MINING_LASER);
     SetImmunity(D_COLLISION);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 
-//     m_wander_angle = 0.0f;
-//     m_wander_angle_low_pass = 0.0f;
-//     m_wander_angle_derivative = 0.0f;
     m_flock_leader_weight = 0.0f;
 }
 
@@ -137,15 +134,9 @@ void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
     // pick a direction/speed to wander in
-//     ASSERT1(Math::IsFinite(m_wander_angle))
     m_wander_angle = Math::RandomAngle();
-//     ASSERT1(Math::IsFinite(m_wander_angle))
-//     ASSERT1(Math::IsFinite(m_wander_angle_low_pass))
     m_wander_angle_low_pass = m_wander_angle;
-//     ASSERT1(Math::IsFinite(m_wander_angle_low_pass))
-//     ASSERT1(Math::IsFinite(m_wander_angle_derivative))
     m_wander_angle_derivative = 0.0f;
-//     ASSERT1(Math::IsFinite(m_wander_angle_derivative))
     m_think_state = THINK_STATE(Wander);
 }
 
@@ -223,12 +214,10 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.GetIsZero())
-//         ASSERT1(Math::IsFinite(m_wander_angle))
         if ((perpendicular_velocity | v) > -(perpendicular_velocity | v))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
             m_wander_angle = Math::Atan(-perpendicular_velocity);
-//         ASSERT1(Math::IsFinite(m_wander_angle))
         m_next_wander_time = time + 6.0f;
     }
     
@@ -244,22 +233,16 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     Float wander_angle_low_pass_delta =
         Min(s_wander_angle_low_pass_delta_rate * frame_dt,
             Math::Abs(m_wander_angle - m_wander_angle_low_pass));
-//     ASSERT1(Math::IsFinite(m_wander_angle_low_pass))
     if (m_wander_angle < m_wander_angle_low_pass)
         m_wander_angle_low_pass -= wander_angle_low_pass_delta;
     else
         m_wander_angle_low_pass += wander_angle_low_pass_delta;
-//     ASSERT1(Math::IsFinite(m_wander_angle_low_pass))
 
-//     ASSERT1(Math::IsFinite(m_wander_angle))
     m_wander_angle += m_wander_angle_derivative * frame_dt;
-//     ASSERT1(Math::IsFinite(m_wander_angle))
     
     if (time >= m_next_wander_time)
     {
-//         ASSERT1(Math::IsFinite(m_wander_angle_derivative))
         m_wander_angle_derivative = Math::RandomFloat(-30.0f, 30.0f);
-//         ASSERT1(Math::IsFinite(m_wander_angle_derivative))
         m_next_wander_time = time + 6.0f;
     }
 }

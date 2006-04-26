@@ -40,6 +40,7 @@ public:
     virtual bool GetIsEnemyShip () const { return true; }
     
     inline Uint8 GetEnemyLevel () const { return m_enemy_level; }
+    Uint32 GetTargetPriority () const;
 
     virtual void Die (
         Entity *killer,

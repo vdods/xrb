@@ -26,7 +26,7 @@ namespace Dis
 
 Float const Shade::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Shade::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
-Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 11.0f, 11.5f, 12.0f, 12.5f };
+Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15.0f };
 Float const Shade::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Shade::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Shade::ms_alarm_distance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 125.0f };
@@ -45,7 +45,7 @@ Shade::Shade (Uint8 const enemy_level)
     m_weapon->Equip(this);
 
     SetWeakness(D_COLLISION);
-    SetStrength(D_LASER);
+    SetStrength(D_MINING_LASER);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 }
 

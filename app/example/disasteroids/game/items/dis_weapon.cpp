@@ -11,6 +11,7 @@
 #include "dis_weapon.h"
 
 #include "dis_effect.h"
+#include "dis_enemyship.h"
 #include "dis_explosive.h"
 #include "dis_entity.h"
 #include "dis_linetracebinding.h"
@@ -18,6 +19,7 @@
 #include "dis_ship.h"
 #include "dis_spawn.h"
 #include "dis_world.h"
+#include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_world.h"
 
 using namespace Xrb;
@@ -33,15 +35,17 @@ Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f,
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
 Float const PeaShooter::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const PeaShooter::ms_max_secondary_power_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 225.0f, 300.0f };
-Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 6.0f, 7.0f, 8.0f, 10.0f };
+Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 10.0f, 10.0f, 10.0f };
 Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Laser properties
-Float const Laser::ms_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
+Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
+Float const Laser::ms_secondary_range[UPGRADE_LEVEL_COUNT] = { 75.0f, 100.0f, 125.0f, 150.0f };
+Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
 Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 60.0f, 90.0f, 120.0f, 200.0f };
-Float const Laser::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 28.0f, 27.5f, 29.8666f };
-Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f }; //{ 2.0f, 2.5f, 3.0f, 4.0f };
+Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 6.0f, 12.0f, 24.0f, 48.0f };
+Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 // FlameThrower properties
 Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
@@ -52,16 +56,16 @@ Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f,
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
 
 // GaussGun properties
-Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 130.0f, 200.0f };
+Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 400.0f };
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 350.0f, 400.0f, 450.0f, 500.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
-Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.75f, 2.333f, 3.0f };
+Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.8333f, 2.333f, 2.8333f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
 Float const GrenadeLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const GrenadeLauncher::ms_grenade_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
-Float const GrenadeLauncher::ms_grenade_damage_radius[UPGRADE_LEVEL_COUNT] = { 40.0f, 40.0f, 40.0f, 40.0f };
+Float const GrenadeLauncher::ms_grenade_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 30.0f, 60.0f, 90.0f, 120.0f };
+Float const GrenadeLauncher::ms_grenade_damage_radius[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 50.0f, 60.0f };
 Float const GrenadeLauncher::ms_grenade_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15.0f, 15.0f };
 Float const GrenadeLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 7.0f, 10.0f };
 Uint32 const GrenadeLauncher::ms_max_active_grenade_count[UPGRADE_LEVEL_COUNT] = { 6, 7, 8, 10 };
@@ -76,20 +80,20 @@ Float const MineLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.45f, 0.425f
 Uint32 const MineLayer::ms_max_active_mine_count[UPGRADE_LEVEL_COUNT] = { 2, 3, 4, 6 };
 
 // MissileLauncher properties
-Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 150.0f, 180.0f, 220.0f, 260.0f };
-Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 70.0f, 75.0f, 80.0f };
-Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 100.0f, 110.0f, 125.0f, 150.0f };
+Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
+Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
+Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const MissileLauncher::ms_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
-Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 50.0f, 60.0f };
-Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
+Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
+Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 4.0f, 4.0f, 4.0f };
+Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 6.5f, 8.0f };
 
 // EMPCore properties
 Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
-Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 25.0f, 22.0f, 20.0f };
-Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 170.0f, 220.0f, 300.0f, 400.0f };
-Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.333f, 0.2f, 0.1666f, 0.1f };
+Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
+Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 300.0f, 400.0f, 550.0f };
+Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.4f, 0.3f, 0.25f };
 /*
 // EMPBombLayer properties
 Float const EMPBombLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -118,11 +122,11 @@ Float const Tractor::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 35.0f, 45.0f
 // ///////////////////////////////////////////////////////////////////////////
 
 // SlowBulletGun properties
-Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 5.0f, 7.0f, 10.0f, 15.0f };
+Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 6.0f, 12.0f, 24.0f, 48.0f };
 Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.0f, 160.0f, 180.0f };
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
-Float const SlowBulletGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.666f, 0.7f, 0.8f, 1.0f };
+Float const SlowBulletGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.333f, 0.35f, 0.4f, 0.5f };
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -257,11 +261,8 @@ Float Laser::GetPowerToBeUsedBasedOnInputs (
     ASSERT1(GetPrimaryInput() <= 1.0f)
     ASSERT1(GetSecondaryInput() <= 1.0f)
 
-    // primary fire overrides secondary fire.
     if (GetPrimaryInput() > 0.0f)
         return GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
-    else if (GetSecondaryInput() > 0.0f)
-        return ms_required_secondary_power[GetUpgradeLevel()];
     else
         return 0.0f;
 }
@@ -271,36 +272,106 @@ bool Laser::Activate (
     Float const time,
     Float const frame_dt)
 {
-    // the epsilon is because floating point arithmetic isn't exact
-    // and the first condition was sometimes failing.
-    if (GetPrimaryInput() > 0.0f)
-        ASSERT1(
-            power <= frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] + 0.001f)
-    else if (GetSecondaryInput() > 0.0f)
-        ASSERT1(power <= ms_required_secondary_power[GetUpgradeLevel()])
-    if (power > frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()])
-        power = frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
-
     ASSERT1(m_laser_beam != NULL)
     ASSERT1(m_laser_beam->GetIsInWorld())
 
-    // don't do anything if no power was supplied
-    if (power == 0.0f)
+    // secondary fire can happen in parallel with primary
+    ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f)
+    if (GetSecondaryInput() > 0.0f &&
+        time >= m_time_last_fired + 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()])
     {
-        m_laser_beam->SetIntensity(0.0f);
-        return false;
+        AreaTraceList area_trace_list;
+        GetOwnerShip()->GetPhysicsHandler()->AreaTrace(
+            GetOwnerShip()->GetObjectLayer(),
+            GetOwnerShip()->GetTranslation(),
+            ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor(),
+            false,
+            &area_trace_list);
+
+        EnemyShip *best_target = NULL;
+        for (AreaTraceListIterator it = area_trace_list.begin(),
+                                   it_end = area_trace_list.end();
+             it != it_end;
+             ++it)
+        {
+            Entity *entity = *it;
+            ASSERT1(entity != NULL)
+            
+            // we don't want to shoot ourselves
+            if (entity == GetOwnerShip())
+                continue;
+
+            // only target enemy ships
+            if (entity->GetIsEnemyShip())
+            {
+                EnemyShip *enemy_ship = DStaticCast<EnemyShip *>(entity);
+                // prefer more powerful enemies over weaker ones
+                if (best_target == NULL ||
+                    enemy_ship->GetEnemyLevel() > best_target->GetEnemyLevel() ||
+                    enemy_ship->GetTargetPriority() > best_target->GetTargetPriority())
+                {
+                    best_target = enemy_ship;
+                }
+            }
+        }
+
+        // only fire if we found a target
+        if (best_target != NULL)
+        {
+            FloatVector2 fire_vector(
+                GetOwnerShip()->GetObjectLayer()->GetAdjustedCoordinates(
+                    best_target->GetTranslation(),
+                    GetOwnerShip()->GetTranslation())
+                -
+                GetOwnerShip()->GetTranslation());
+
+            // TODO: do a real line trace for the damage (there might be something blocking the beam)
+
+            if (fire_vector.GetLength() > ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor())
+            {
+                fire_vector.Normalize();
+                fire_vector *= ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor();
+            }
+        
+            // spawn the "gauss gun trail"
+            SpawnGaussGunTrail(
+                GetOwnerShip()->GetWorld(),
+                GetOwnerShip()->GetObjectLayer(),
+                GetOwnerShip()->GetTranslation() + GetOwnerShip()->GetScaleFactor() * fire_vector.GetNormalization(),
+                fire_vector,
+                GetOwnerShip()->GetVelocity(),
+                2.0f,
+                0.5f,
+                time);
+            
+            // damage the target (the gauss gun trail is just a visual effect)
+            best_target->Damage(
+                GetOwnerShip(),
+                NULL, // laser does not have a Entity medium
+                ms_secondary_impact_damage[GetUpgradeLevel()],
+                NULL,
+                best_target->GetTranslation(), // TEMP for now, do real calculation later
+                GetMuzzleDirection(),
+                0.0f,
+                Mortal::D_COMBAT_LASER,
+                time,
+                frame_dt);
+            
+            // update the last time fired
+            m_time_last_fired = time;
+        }
     }
 
-    ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f)
-    
     // primary constant beam firing mode
-    if (GetPrimaryInput() > 0.0f)
+    if (GetPrimaryInput() > 0.0f && power > 0.0f)
     {
+        ASSERT1(power <= GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()])
+    
         LineTraceBindingSet line_trace_binding_set;
         GetOwnerShip()->GetPhysicsHandler()->LineTrace(
             GetOwnerShip()->GetObjectLayer(),
             GetMuzzleLocation(),
-            ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
+            ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection(),
             ms_beam_radius[GetUpgradeLevel()],
             false,
             &line_trace_binding_set);
@@ -312,7 +383,7 @@ bool Laser::Activate (
             ++it;
     
         FloatVector2 laser_beam_hit_location(
-            GetMuzzleLocation() + ms_range[GetUpgradeLevel()] * GetMuzzleDirection());
+            GetMuzzleLocation() + ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection());
 
         // we don't want to hit powerups or ballistics, just skip them.
         while (it != it_end && (it->m_entity->GetIsPowerup() || it->m_entity->GetIsBallistic()))
@@ -324,7 +395,7 @@ bool Laser::Activate (
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
             laser_beam_hit_location =
-                GetMuzzleLocation() + it->m_time * ms_range[GetUpgradeLevel()] * GetMuzzleDirection();
+                GetMuzzleLocation() + it->m_time * ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection();
             if (it->m_entity->GetIsMortal())
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
                     GetOwnerShip(),
@@ -334,7 +405,7 @@ bool Laser::Activate (
                     laser_beam_hit_location,
                     GetMuzzleDirection(),
                     0.0f,
-                    Mortal::D_LASER,
+                    Mortal::D_MINING_LASER,
                     time,
                     frame_dt);
         }
@@ -348,15 +419,17 @@ bool Laser::Activate (
             GetMuzzleLocation() + frame_dt * GetOwnerShip()->GetVelocity(),
             laser_beam_hit_location + frame_dt * GetOwnerShip()->GetVelocity(),
             s_laser_beam_width);
+
+        // the weapon fired successfully
+        return true;
     }
     else
     {
-        // TODO: proximity laser secondary fire mode
-
+        // turn off the constant fire laser
         m_laser_beam->SetIntensity(0.0f);
+        // the weapon was not fired
+        return false;
     }
-    
-    return true;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -516,7 +589,7 @@ bool GaussGun::Activate (
         furthest_hit_time = 1.0f;
 
     // spawn the gauss gun trail
-    SpawnGaussGunTrail (
+    SpawnGaussGunTrail(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
         GetMuzzleLocation(),
@@ -1032,7 +1105,7 @@ bool AutoDestruct::Activate (
             GetOwnerShip()->GetTranslation(),
             Math::UnitVector(GetOwnerShip()->GetAngle()),
             0.0f,
-            Mortal::D_SUICIDE,
+            Mortal::D_EXPLOSION,
             time,
             frame_dt);
         SpawnDamageExplosion(
@@ -1135,7 +1208,7 @@ bool Tractor::Activate (
         ASSERT1(entity != NULL)
         
         // we don't want to pull ourselves (it would cancel out anyway)
-        if (entity == static_cast<Entity *>(GetOwnerShip()))
+        if (entity == GetOwnerShip())
             continue;
 
         // if we're not pulling everything (secondary tractor mode),

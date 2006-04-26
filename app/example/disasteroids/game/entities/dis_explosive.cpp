@@ -37,7 +37,7 @@ void Explosive::Collide (
 
     // if it's a solid collision object, potentially detonate
     if (collider->GetCollisionType() == CT_SOLID_COLLISION && !GetIsDead())
-        if (CheckIfItShouldDetonate(collider, time, frame_dt))
+        if (!GetHasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
         
     // call the superclass collide
@@ -120,7 +120,8 @@ void Grenade::Die (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    if (GetHasDetonated())
+        return;
 
     // if there is an owner grenade launcher, signal to it that this
     // grenade has been destroyed
@@ -155,30 +156,31 @@ void Grenade::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetIsDead())
+    ASSERT1(!GetHasDetonated())
+    
+    // can't detonate if we're already dead
+    if (GetIsDead())
+        return;
 
-    if (!GetHasDetonated())
-    {
-        // spawn a damage explosion
-        SpawnDamageExplosion(
-            GetWorld(),
-            GetObjectLayer(),
-            GetTranslation(),
-            GetVelocity(),
-            m_damage_to_inflict,
-            m_damage_radius,
-            m_explosion_radius,
-            0.2f,
-            time,
-            m_owner);
+    // spawn a damage explosion
+    SpawnDamageExplosion(
+        GetWorld(),
+        GetObjectLayer(),
+        GetTranslation(),
+        GetVelocity(),
+        m_damage_to_inflict,
+        m_damage_radius,
+        m_explosion_radius,
+        0.2f,
+        time,
+        m_owner);
 
-        // if there is an owner grenade launcher, signal to it that this
-        // grenade has been destroyed
-        if (m_owner_grenade_launcher != NULL)
-            m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
-                
-        Explosive::Detonate(time, frame_dt);
-    }
+    // if there is an owner grenade launcher, signal to it that this
+    // grenade has been destroyed
+    if (m_owner_grenade_launcher != NULL)
+        m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
+
+    Explosive::Detonate(time, frame_dt);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -200,6 +202,10 @@ void Mine::Think (
     Float const time,
     Float const frame_dt)
 {
+    // if we're dead, don't bother thinking
+    if (GetIsDead())
+        return;
+    
     // level 0 : no seeking, dumb triggering, no ambient velocity matching (2 mines)
     // level 1 : no seeking, dumb triggering, uses ambient velocity matching (3 mines)
     // level 2 : dumb seeking, smart triggering, uses ambient velocity matching (4 mines)
@@ -218,7 +224,8 @@ void Mine::Die (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    if (GetHasDetonated())
+        return;
 
     // if there is an owner mine layer, signal to it that this
     // mine has been destroyed
@@ -253,30 +260,31 @@ void Mine::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetIsDead())
+    ASSERT1(!GetHasDetonated())
 
-    if (!GetHasDetonated())
-    {
-        // spawn a damage explosion
-        SpawnDamageExplosion(
-            GetWorld(),
-            GetObjectLayer(),
-            GetTranslation(),
-            GetVelocity(),
-            m_damage_to_inflict,
-            m_damage_radius,
-            m_explosion_radius,
-            0.2f,
-            time,
-            m_owner);
+    // can't detonate if we're dead
+    if (GetIsDead())
+        return;
 
-        // if there is an owner mine layer, signal to it that this
-        // mine has been destroyed
-        if (m_owner_mine_layer != NULL)
-            m_owner_mine_layer->ActiveMineDestroyed(this);
-                
-        Explosive::Detonate(time, frame_dt);
-    }
+    // spawn a damage explosion
+    SpawnDamageExplosion(
+        GetWorld(),
+        GetObjectLayer(),
+        GetTranslation(),
+        GetVelocity(),
+        m_damage_to_inflict,
+        m_damage_radius,
+        m_explosion_radius,
+        0.2f,
+        time,
+        m_owner);
+
+    // if there is an owner mine layer, signal to it that this
+    // mine has been destroyed
+    if (m_owner_mine_layer != NULL)
+        m_owner_mine_layer->ActiveMineDestroyed(this);
+
+    Explosive::Detonate(time, frame_dt);
 }
 
 void Mine::Level0Survey (Float const time, Float const frame_dt)
@@ -439,25 +447,26 @@ void Missile::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetIsDead())
+    ASSERT1(!GetHasDetonated())
 
-    if (!GetHasDetonated())
-    {
-        // spawn a damage explosion
-        SpawnDamageExplosion(
-            GetWorld(),
-            GetObjectLayer(),
-            GetTranslation(),
-            GetVelocity(),
-            m_damage_to_inflict,
-            m_damage_radius,
-            m_explosion_radius,
-            0.2f,
-            time,
-            m_owner);
+    // can't detonate if we're dead
+    if (GetIsDead())
+        return;
 
-        Explosive::Detonate(time, frame_dt);
-    }
+    // spawn a damage explosion
+    SpawnDamageExplosion(
+        GetWorld(),
+        GetObjectLayer(),
+        GetTranslation(),
+        GetVelocity(),
+        m_damage_to_inflict,
+        m_damage_radius,
+        m_explosion_radius,
+        0.2f,
+        time,
+        m_owner);
+
+    Explosive::Detonate(time, frame_dt);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
