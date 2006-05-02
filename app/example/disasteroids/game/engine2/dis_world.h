@@ -131,7 +131,7 @@ private:
     bool StateNormalGameplay (StateMachineInput);
     bool StateCheckLivesRemaining (StateMachineInput);
     bool StateWaitAfterPlayerDeath (StateMachineInput);
-    bool StateWaitAfterFinalPlayerDeath (StateMachineInput);
+    bool StateDeathRattle (StateMachineInput);
     bool StateGameOver (StateMachineInput);
     bool StateSubmitScore (StateMachineInput);
     bool StateWaitingForSubmitScoreResponse (StateMachineInput);
@@ -195,6 +195,7 @@ private:
     SignalSender0 m_sender_end_game;
 
     SignalSender0 m_internal_sender_begin_intro;
+    SignalSender0 m_internal_sender_begin_death_rattle;
     SignalSender0 m_internal_sender_begin_game_over;
     SignalSender0 m_internal_sender_begin_outro;
 

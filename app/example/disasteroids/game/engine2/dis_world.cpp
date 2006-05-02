@@ -455,6 +455,7 @@ World::World (
     m_sender_submit_score(this),
     m_sender_end_game(this),
     m_internal_sender_begin_intro(this),
+    m_internal_sender_begin_death_rattle(this),
     m_internal_sender_begin_game_over(this),
     m_internal_sender_begin_outro(this),
     m_internal_receiver_end_game(&World::EndGame, this),
@@ -521,10 +522,13 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     SignalHandler::Connect0(
         dis_world_view->SenderEndGame(),
         &m_internal_receiver_end_game);
-    // connect the worldview's begin intro/gameover/outro signals
+    // connect the worldview's begin intro/death-rattle/game-over/outro signals
     SignalHandler::Connect0(
         &m_internal_sender_begin_intro,
         dis_world_view->ReceiverBeginIntro());
+    SignalHandler::Connect0(
+        &m_internal_sender_begin_death_rattle,
+        dis_world_view->ReceiverBeginDeathRattle());
     SignalHandler::Connect0(
         &m_internal_sender_begin_game_over,
         dis_world_view->ReceiverBeginGameOver());
@@ -633,7 +637,7 @@ bool World::StateCheckLivesRemaining (StateMachineInput const input)
             if (m_player_ship->GetLivesRemaining() > 0)
                 TRANSITION_TO(StateWaitAfterPlayerDeath);
             else
-                TRANSITION_TO(StateWaitAfterFinalPlayerDeath);
+                TRANSITION_TO(StateDeathRattle);
             return true;
     }
     return false;
@@ -659,12 +663,14 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaitAfterFinalPlayerDeath (StateMachineInput const input)
+bool World::StateDeathRattle (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateWaitAfterFinalPlayerDeath")
+    STATE_MACHINE_STATUS("StateDeathRattle")
     switch (input)
     {
         case SM_ENTER:
+            // signal the worldview that the death rattle has started
+            m_internal_sender_begin_death_rattle.Signal();
             ScheduleStateMachineInput(IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE, 3.0f);
             return true;
 

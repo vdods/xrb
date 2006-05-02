@@ -29,13 +29,12 @@ OPENGL CONVERSION TASKS:
   up/down the saturation).
 
 DISASTEROIDS:
-- finish writing AIs (add wandering to Revulsion and write Demi)
-- finish weapon code (add UT-style charge-up melee weapon with
-  front-attaching secondary mode)
+- finish writing AIs (write Demi)
+- wave spawning, punctuated with Demis
+- finish weapon code (guided missiles)
 - different enemy levels of devourments and revulsions need to look less alike
 
 CURRENT:
-- wave spawning, instead of continuous.
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
 - bug: intermittent crash in Dis::PhysicsHandler's entity think loop

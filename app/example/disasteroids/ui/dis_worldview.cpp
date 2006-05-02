@@ -43,6 +43,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_end_outro(this),
     m_receiver_end_game(&WorldView::EndGame, this),
     m_receiver_begin_intro(&WorldView::BeginIntro, this),
+    m_receiver_begin_death_rattle(&WorldView::BeginDeathRattle, this),
     m_receiver_begin_game_over(&WorldView::BeginGameOver, this),
     m_receiver_begin_outro(&WorldView::BeginOutro, this)
 {
@@ -111,7 +112,7 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::ESCAPE:
-                // only allowed to use the inventory panel if we're StateNormalGameplay
+                // only allowed to use the inventory panel during normal gameplay
                 if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
                     m_sender_activate_inventory_panel.Signal();
                 break;
@@ -450,6 +451,11 @@ void WorldView::BeginIntro ()
     ScheduleStateMachineInput(IN_BEGIN_INTRO, 0.0f);
 }
 
+void WorldView::BeginDeathRattle ()
+{
+    ScheduleStateMachineInput(IN_BEGIN_DEATH_RATTLE, 0.0f);
+}
+
 void WorldView::BeginGameOver ()
 {
     ScheduleStateMachineInput(IN_BEGIN_GAME_OVER, 0.0f);
@@ -587,14 +593,30 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
             ProcessPlayerInput();        
             return true;
 
-        case IN_BEGIN_GAME_OVER:
-            TRANSITION_TO(StateGameOver);
+        case IN_BEGIN_DEATH_RATTLE:
+            TRANSITION_TO(StateDeathRattle);
             return true;
 
         case IN_BEGIN_OUTRO:
             // we can go straight to the outro if the player hits
             // the "end" button in the inventory panel
             TRANSITION_TO(StateOutro);
+            return true;
+    }
+    return false;
+}
+
+bool WorldView::StateDeathRattle (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateDeathRattle")
+    switch (input)
+    {
+        case IN_PROCESS_FRAME:
+            // we're just waiting for the game-over state to begin.
+            return true;
+
+        case IN_BEGIN_GAME_OVER:
+            TRANSITION_TO(StateGameOver);
             return true;
     }
     return false;

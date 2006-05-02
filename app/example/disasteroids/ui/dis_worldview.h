@@ -45,6 +45,7 @@ public:
 
     inline SignalReceiver0 const *ReceiverEndGame () { return &m_receiver_end_game; }
     inline SignalReceiver0 const *ReceiverBeginIntro () { return &m_receiver_begin_intro; }
+    inline SignalReceiver0 const *ReceiverBeginDeathRattle () { return &m_receiver_begin_death_rattle; }
     inline SignalReceiver0 const *ReceiverBeginGameOver () { return &m_receiver_begin_game_over; }
     inline SignalReceiver0 const *ReceiverBeginOutro () { return &m_receiver_begin_outro; }
 
@@ -73,6 +74,7 @@ private:
     void EndGame ();
     
     void BeginIntro ();
+    void BeginDeathRattle ();
     void BeginGameOver ();
     void BeginOutro ();
 
@@ -87,6 +89,7 @@ private:
         IN_PROCESS_FRAME = 0,
         
         IN_BEGIN_INTRO,
+        IN_BEGIN_DEATH_RATTLE,
         IN_BEGIN_GAME_OVER,
         IN_BEGIN_OUTRO
     };
@@ -94,6 +97,7 @@ private:
     bool StatePreIntro (StateMachineInput);
     bool StateIntro (StateMachineInput);
     bool StateNormalGameplay (StateMachineInput);
+    bool StateDeathRattle (StateMachineInput);
     bool StateGameOver (StateMachineInput);
     bool StateOutro (StateMachineInput);
     bool StatePostOutro (StateMachineInput);
@@ -189,6 +193,7 @@ private:
 
     SignalReceiver0 m_receiver_end_game;
     SignalReceiver0 m_receiver_begin_intro;
+    SignalReceiver0 m_receiver_begin_death_rattle;
     SignalReceiver0 m_receiver_begin_game_over;
     SignalReceiver0 m_receiver_begin_outro;
 }; // end of class WorldView

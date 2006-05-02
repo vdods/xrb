@@ -39,7 +39,8 @@ namespace Dis
 Float NormalizeStoke (Float const stoke)
 {
     ASSERT1(stoke >= 1.0f)
-    return Math::Atan(stoke - 1.0f) / 90.0f;
+    ASSERT1(stoke <= 4.0f)
+    return (stoke - 1.0f) / 3.0f;
 }
 
 GameWidget::GameWidget (
