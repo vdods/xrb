@@ -479,7 +479,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
+    if (thrust_vector.GetLength() > 0.01f)
     {
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
@@ -487,28 +487,6 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 
         AccumulateForce(thrust_vector);
     }
-    
-/*
-    // this is the real engine-using thrust code
-    
-    // calculate what thrust is required to match the desired velocity 
-    FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
-    {
-        Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
-        thrust_force = thrust_vector.GetLength();
-
-        SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
-        SetEngineUpDownInput(
-            static_cast<Sint8>(
-                SINT8_UPPER_BOUND * thrust_force /
-                ms_engine_thrust[GetEnemyLevel()]));
-    }
-*/
 }
 
 void Interloper::AddFlockLeaderWeight (Float const weight)

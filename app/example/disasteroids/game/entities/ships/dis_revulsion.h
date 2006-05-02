@@ -55,7 +55,8 @@ public:
 
 private:
 
-    void Seek (Float time, Float frame_dt);
+    void PickWanderDirection (Float time, Float frame_dt);
+    void Wander (Float time, Float frame_dt);
     void TrailTarget (Float time, Float frame_dt);
     void StartAimAtTarget (Float time, Float frame_dt);
     void ContinueAimAtTarget (Float time, Float frame_dt);
@@ -69,6 +70,8 @@ private:
         return Math::Atan(target_delta) - Math::GetCanonicalAngle(m_target->GetAngle());
     }
     
+    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
     static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
@@ -81,10 +84,15 @@ private:
     static Float const ms_aim_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_flee_speed[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Revulsion::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
+    Float m_next_wander_time;
+    Float m_wander_angle;
+    Float m_wander_angle_low_pass;
+    Float m_wander_angle_derivative;
     EntityReference<Ship> m_target;
     EntityReference<ReticleEffect> m_reticle_effect;
     FloatVector2 m_aim_delta;

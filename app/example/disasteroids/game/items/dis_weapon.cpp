@@ -81,8 +81,8 @@ Uint32 const MineLayer::ms_max_active_mine_count[UPGRADE_LEVEL_COUNT] = { 2, 3, 
 
 // MissileLauncher properties
 Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
-Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
-Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
+Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
+Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 70.0f, 80.0f, 90.0f };
 Float const MissileLauncher::ms_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
 Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
@@ -94,6 +94,7 @@ Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 8
 Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
 Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 300.0f, 400.0f, 550.0f };
 Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.333f, 0.2f, 0.1666f };
+
 /*
 // EMPBombLayer properties
 Float const EMPBombLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -122,7 +123,7 @@ Float const Tractor::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 35.0f, 45.0f
 // ///////////////////////////////////////////////////////////////////////////
 
 // SlowBulletGun properties
-Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 6.0f, 12.0f, 24.0f, 48.0f };
+Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 5.0f, 10.0f, 20.0f, 40.0f };
 Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.0f, 160.0f, 180.0f };
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };

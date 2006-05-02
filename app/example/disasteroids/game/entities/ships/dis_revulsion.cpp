@@ -36,12 +36,13 @@ Float const Revulsion::ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUN
 Float const Revulsion::ms_aim_duration[ENEMY_LEVEL_COUNT] = { 0.7f, 0.7f, 0.7f, 0.7f };
 Float const Revulsion::ms_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Revulsion::ms_flee_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 200.0f, 250.0f, 300.0f };
+Float const Revulsion::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
 
 Revulsion::Revulsion (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_REVULSION)
 {
-    m_think_state = THINK_STATE(Seek);
+    m_think_state = THINK_STATE(PickWanderDirection);
 
     m_weapon = new GaussGun(0);
     m_weapon->Equip(this);
@@ -73,9 +74,9 @@ void Revulsion::Think (Float const time, Float const frame_dt)
         if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
             m_reticle_effect->RemoveFromWorld();
         
-        // if disabled, then reset the think state to Seek (a way out for
+        // if disabled, then reset the think state to PickWanderDirection (a way out for
         // players that are being ganged up on)
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -131,22 +132,33 @@ void Revulsion::Die (
         m_reticle_effect->RemoveFromWorld();
 }
 
-void Revulsion::Seek (Float const time, Float const frame_dt)
+void Revulsion::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    static Float const s_seek_scan_radius = 400.0f;
+    // update the next time to pick a wander direction
+    m_next_wander_time = time + 6.0f;
+    // pick a direction/speed to wander in
+    m_wander_angle = Math::RandomAngle();
+    m_wander_angle_low_pass = m_wander_angle;
+    m_wander_angle_derivative = 0.0f;
+    m_think_state = THINK_STATE(Wander);
+}
 
-    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld())
+void Revulsion::Wander (Float const time, Float const frame_dt)
+{
+    static Float const s_scan_radius = 200.0f;
+    static Float const s_collision_lookahead_time = 3.0f;
     
-    // do an area trace
+    // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         GetTranslation(),
-        s_seek_scan_radius,
+        s_scan_radius,
         false,
         &area_trace_list);
-        
-    // check if there is a solitary in the area
+    // check the area trace list for targets and collisions
+    Float collision_time = -1.0f;
+    Entity *collision_entity = NULL;
     for (AreaTraceListIterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
@@ -154,24 +166,70 @@ void Revulsion::Seek (Float const time, Float const frame_dt)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
+
+        // ignore ourselves
+        if (entity == this)
+            continue;
+
+        // if this entity is a solitary, set m_target and transition
+        // to TrailTarget
         if (entity->GetEntityType() == ET_SOLITARY)
         {
-            // if so, set m_target and transition to TrailTarget
             m_target = entity->GetReference();
-            FloatVector2 target_position(
-                GetObjectLayer()->GetAdjustedCoordinates(
-                    m_target->GetTranslation(),
-                    GetTranslation()));    
             m_think_state = THINK_STATE(TrailTarget);
             return;
         }
+        // otherwise if we will collide with something in the next short
+        // while, perform collision avoidance calculations
+        else
+        {
+            Float potential_collision_time = GetCollisionTime(entity, s_collision_lookahead_time);
+            if (potential_collision_time >= 0.0f &&
+                (collision_entity == NULL || potential_collision_time < collision_time))
+            {
+                collision_time = potential_collision_time;
+                collision_entity = entity;
+            }
+        }
     }
 
-    // wander around - TODO: real wandering
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+    // if there is an imminent collision, pick a new direction to avoid it
+    if (collision_entity != NULL)
+    {
+        FloatVector2 v(GetSpeed() * Math::UnitVector(m_wander_angle_low_pass));
+        FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
+        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        ASSERT1(!perpendicular_velocity.GetIsZero())
+        if ((perpendicular_velocity | v) > -(perpendicular_velocity | v))
+            m_wander_angle = Math::Atan(perpendicular_velocity);
+        else
+            m_wander_angle = Math::Atan(-perpendicular_velocity);
+        m_next_wander_time = time + 6.0f;
+    }
     
-    // if not, set next think time to a while later
-    SetNextTimeToThink(time + Math::RandomFloat(0.3f, 0.5f));
+    // incrementally accelerate up to the wander direction/speed
+    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    MatchVelocity(wander_velocity, frame_dt);
+
+    // the "slow angle" is used like a low-pass filter for the wander angle
+    // in the above calculations.  this is necessary to avoid a feedback loop
+    // due to the successive m_wander_angle-dependent calculations.
+    static Float const s_wander_angle_low_pass_delta_rate = 135.0f;
+    Float wander_angle_low_pass_delta =
+        Min(s_wander_angle_low_pass_delta_rate * frame_dt,
+            Math::Abs(m_wander_angle - m_wander_angle_low_pass));
+    if (m_wander_angle < m_wander_angle_low_pass)
+        m_wander_angle_low_pass -= wander_angle_low_pass_delta;
+    else
+        m_wander_angle_low_pass += wander_angle_low_pass_delta;
+
+    m_wander_angle += m_wander_angle_derivative * frame_dt;
+    
+    if (time >= m_next_wander_time)
+    {
+        m_wander_angle_derivative = Math::RandomFloat(-30.0f, 30.0f);
+        m_next_wander_time = time + 6.0f;
+    }
 }
 
 void Revulsion::TrailTarget (Float const time, Float const frame_dt)
@@ -181,7 +239,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
     
@@ -263,7 +321,7 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -297,7 +355,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->RemoveFromWorld();    
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
     
@@ -342,7 +400,7 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -364,7 +422,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(Seek);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -382,22 +440,30 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     }
 
     FloatVector2 position_delta(GetTranslation() - target_position);
-    FloatVector2 desired_velocity(ms_flee_speed[GetEnemyLevel()] * GetPerpendicularVector2(position_delta).GetNormalization());
-    FloatVector2 velocity_differential(
-        desired_velocity - 
-        (GetVelocity() + frame_dt * GetForce() / GetFirstMoment()));
+    FloatVector2 desired_velocity(
+        ms_flee_speed[GetEnemyLevel()] *
+        GetPerpendicularVector2(position_delta).GetNormalization());
+    MatchVelocity(desired_velocity, frame_dt);
+}
+
+void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+{
+    // calculate what thrust is required to match the desired velocity
+    FloatVector2 velocity_differential =
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
+    if (thrust_vector.GetLength() > 0.01f)
     {
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
             thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
         thrust_force = thrust_vector.GetLength();
 
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Math::Atan(thrust_vector)));
+        SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
         SetEngineUpDownInput(
             static_cast<Sint8>(
-                static_cast<Float>(SINT8_UPPER_BOUND) * thrust_force / ms_engine_thrust[GetEnemyLevel()]));
+                SINT8_UPPER_BOUND * thrust_force /
+                ms_engine_thrust[GetEnemyLevel()]));
     }
 }
 
