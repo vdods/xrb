@@ -149,10 +149,10 @@ MapEditor2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_view_wi
 
     m_draw_object_metrics = true;
 
-    m_transformation_mode = Object::TM_NUM_TRANSFORMATION_MODES;
-    m_metric_editing_mode = Object::MM_NUM_METRIC_MODES;
+    m_transformation_mode = Object::TM_COUNT;
+    m_metric_editing_mode = Object::MM_COUNT;
     m_editing_sub_mode = ESM_EDITING_SUB_MODE_COUNT;
-    m_saved_metric_editing_mode = Object::MM_NUM_METRIC_MODES;
+    m_saved_metric_editing_mode = Object::MM_COUNT;
     ResetEditDeltas();
     m_polygon_tesselation = 4;
     m_clear_object_selection_upon_mouse_button_up = false;
@@ -852,7 +852,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 
             case Key::ESCAPE:
                 SetEditingSubMode(ESM_DEFAULT);
-                m_saved_metric_editing_mode = Object::MM_NUM_METRIC_MODES;
+                m_saved_metric_editing_mode = Object::MM_COUNT;
                 return true;
                 
             case Key::ONE:
@@ -873,7 +873,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
             case Key::L:
                 m_grid_line_type = static_cast<GridLineType>(
                     (static_cast<Uint32>(m_grid_line_type) + 1) %
-                     GR_NUM_GRID_LINE_TYPES);
+                     GR_COUNT);
                 return true;
 
             case Key::M:
@@ -1411,7 +1411,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS)
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
                 GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1)
-        ASSERT1(m_saved_metric_editing_mode != Object::MM_NUM_METRIC_MODES)
+        ASSERT1(m_saved_metric_editing_mode != Object::MM_COUNT)
     
         // create the polygon that has been dragged out
         FloatVector2 bounding_circle_ray(transformed_mouse_event_position);
@@ -1459,14 +1459,14 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         // reset the editing sub mode back to default
         SetEditingSubMode(ESM_DEFAULT);
         SetMetricEditingMode(m_saved_metric_editing_mode);
-        m_saved_metric_editing_mode = Object::MM_NUM_METRIC_MODES;
+        m_saved_metric_editing_mode = Object::MM_COUNT;
     }
 
     if (m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR &&
         e->GetIsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LMOUSE)
     {
-        ASSERT1(m_saved_metric_editing_mode == Object::MM_NUM_METRIC_MODES)
+        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
 
         // set the global origin cursor's position
         m_origin_cursor_position = transformed_mouse_event_position;
@@ -1479,7 +1479,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         e->GetIsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LMOUSE)
     {
-        ASSERT1(m_saved_metric_editing_mode == Object::MM_NUM_METRIC_MODES)
+        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
 
         GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
         

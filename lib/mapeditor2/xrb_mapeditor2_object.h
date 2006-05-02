@@ -42,7 +42,7 @@ namespace MapEditor2
             SO_XOR,        // exclusive OR operation between the sets
             SO_AND,        // AND operation between the sets
     
-            SO_NUM_SELECTION_OPERATIONS
+            SO_COUNT
         }; // end of enum MapEditor2::Object::SelectionOperation
     
         enum TransformationMode
@@ -51,7 +51,7 @@ namespace MapEditor2
             TM_SELECTION_SET_ORIGIN,        // using the selected set's origin
             TM_EACH_SELECTED_OBJECT_ORIGIN, // using each selected object's origin
     
-            TM_NUM_TRANSFORMATION_MODES
+            TM_COUNT
         }; // end of enum MapEditor2::Object::TransformationMode
     
         enum MetricMode
@@ -62,7 +62,7 @@ namespace MapEditor2
             MM_POLYGONS,           // compounds' polygons
             MM_VERTICES,           // compounds' vertices
     
-            MM_NUM_METRIC_MODES
+            MM_COUNT
         }; // end of enum MapEditor2::Object::MetricMode
     
         virtual ~Object ();

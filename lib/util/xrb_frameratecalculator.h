@@ -27,11 +27,6 @@ class FramerateCalculator
 {
 public:
 
-    enum
-    {
-        DEFAULT_NUM_FRAMES_TO_STORE = 100
-    };
-
     /** The time unit conversion ratio is simply multiplied into the
       * calculated framerate before returning it, in GetFramerate.
       * @brief Constructs a framerate calculator with the given time
@@ -53,8 +48,13 @@ public:
 
 private:
 
+    enum
+    {
+        FRAME_COUNT = 64
+    };
+
     // the circular queue which stores the frame times
-    CircularQueue<Float, DEFAULT_NUM_FRAMES_TO_STORE> m_frame_queue;
+    CircularQueue<Float, FRAME_COUNT> m_frame_queue;
     // the last frame time (to compute frame deltas)
     Float m_last_frame_time;
     // time conversion ratio (from input units to output units)

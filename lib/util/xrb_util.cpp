@@ -170,7 +170,7 @@ char Util::GetEscapedCharacter (char const escape_code)
 
 char const *Util::GetIOErrorString (IOError error)
 {
-    static char const *error_string[IOE_NUM_ERRORS] =
+    static char const *error_string[IOE_COUNT] =
     {
         STRINGIFY(IOE_NONE),
         STRINGIFY(IOE_IS_AT_END),

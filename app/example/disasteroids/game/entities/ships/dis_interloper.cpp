@@ -49,6 +49,10 @@ Interloper::~Interloper ()
 
 void Interloper::Think (Float const time, Float const frame_dt)
 {
+    // can't think if we're dead.
+    if (GetIsDead())
+        return;
+
     // decay the flock leader weight
     {
         static Float const s_flock_leader_weight_halflife = 1.5f;

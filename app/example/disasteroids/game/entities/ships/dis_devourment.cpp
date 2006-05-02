@@ -80,21 +80,14 @@ Devourment::~Devourment ()
 
 void Devourment::Think (Float const time, Float const frame_dt)
 {
-    bool is_disabled = GetIsDisabled();
-    Ship::Think(time, frame_dt);
-    if (is_disabled)
-    {
-        if (m_mouth_tractor_beam.GetIsValid() && m_mouth_tractor_beam->GetIsInWorld())
-            m_mouth_tractor_beam->RemoveFromWorld();
-
-        // the mouth can't damage if disabled
-        m_mouth_health_trigger->SetHealthDeltaRate(0.0f);
-                    
-        // if disabled, then reset the think state to PickWanderDirection (a way out for
-        // players that are being ganged up on)
-        m_think_state = THINK_STATE(PickWanderDirection);
+    // can't think if we're dead.
+    if (GetIsDead())
         return;
-    }
+
+    Ship::Think(time, frame_dt);
+
+    // NOTE: Devourment can't be disabled -- the
+    // disabled code would go here otherwise
     
     // if the mouth health trigger has not yet been created, create it.
     if (!m_mouth_health_trigger.GetIsValid())
@@ -112,11 +105,10 @@ void Devourment::Think (Float const time, Float const frame_dt)
                 GetReference(),
                 GetEnemyLevel());
         m_mouth_health_trigger = health_trigger->GetReference();
+        // set the mouth damage rate
+        m_mouth_health_trigger->SetHealthDeltaRate(-ms_mouth_damage_rate[GetEnemyLevel()]);
     }
     
-    // set the mouth damage rate
-    m_mouth_health_trigger->SetHealthDeltaRate(-ms_mouth_damage_rate[GetEnemyLevel()]);
-
     // ensure the tractor beam is allocated (lazy allocation)
     if (!m_mouth_tractor_beam.GetIsValid())
         m_mouth_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();

@@ -169,7 +169,7 @@ namespace Engine2
             GR_NO_DRAW,
             GR_ABOVE_MAIN_LAYER,
     
-            GR_NUM_GRID_LINE_TYPES
+            GR_COUNT
         }; // end of enum GridLineType
     
         // the WorldViewWidget that owns this view

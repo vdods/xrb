@@ -86,9 +86,7 @@ public:
         SYSWM,
         STATE_MACHINE_INPUT,
         ENGINE2_DELETE_ENTITY,
-        CUSTOM,
-
-        NUM_EVENT_TYPES
+        CUSTOM
     }; // end of enum Event::EventType
 
     /** It should be noted that EventHandler checks that the events it

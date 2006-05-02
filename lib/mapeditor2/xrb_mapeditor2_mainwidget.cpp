@@ -77,12 +77,12 @@ MapEditor2::MainWidget::MainWidget (
 
     // transformation mode toolbar button group
     RadioButton<Object::TransformationMode,
-                Object::TM_NUM_TRANSFORMATION_MODES> *radio_button_tm;
+                Object::TM_COUNT> *radio_button_tm;
 
     // global origin cursor
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
-                          Object::TM_NUM_TRANSFORMATION_MODES>(
+                          Object::TM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -97,7 +97,7 @@ MapEditor2::MainWidget::MainWidget (
     // selected set local origin
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
-                          Object::TM_NUM_TRANSFORMATION_MODES>(
+                          Object::TM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -112,7 +112,7 @@ MapEditor2::MainWidget::MainWidget (
     // each selected object origin
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
-                          Object::TM_NUM_TRANSFORMATION_MODES>(
+                          Object::TM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -133,12 +133,12 @@ MapEditor2::MainWidget::MainWidget (
 
     // edit mode toolbar button group
     RadioButton<Object::MetricMode,
-                Object::MM_NUM_METRIC_MODES> *radio_button_mm;
+                Object::MM_COUNT> *radio_button_mm;
 
     // transformation metric editing mode
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
-                          Object::MM_NUM_METRIC_MODES>(
+                          Object::MM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -152,7 +152,7 @@ MapEditor2::MainWidget::MainWidget (
     // linear velocity metric editing mode
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
-                          Object::MM_NUM_METRIC_MODES>(
+                          Object::MM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -166,7 +166,7 @@ MapEditor2::MainWidget::MainWidget (
     // angular velocity metric editing mode
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
-                          Object::MM_NUM_METRIC_MODES>(
+                          Object::MM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -180,7 +180,7 @@ MapEditor2::MainWidget::MainWidget (
     // polygon metric editing mode
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
-                          Object::MM_NUM_METRIC_MODES>(
+                          Object::MM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
@@ -194,7 +194,7 @@ MapEditor2::MainWidget::MainWidget (
     // vertices metric editing mode
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
-                          Object::MM_NUM_METRIC_MODES>(
+                          Object::MM_COUNT>(
             Singletons::ResourceLibrary()->
                 LoadFilename<GLTexture>(
                     GLTexture::Create,

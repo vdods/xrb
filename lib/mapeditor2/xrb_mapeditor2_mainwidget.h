@@ -79,13 +79,13 @@ namespace MapEditor2
         // button group for the transformation mode toolbar buttons
         RadioButtonGroup<
             Object::TransformationMode,
-            Object::TM_NUM_TRANSFORMATION_MODES> m_transformation_mode_group;
+            Object::TM_COUNT> m_transformation_mode_group;
         // label to print the text of the current transformation mode
         Label *m_transformation_mode_label;
         // button group for the metric mode toolbar buttons
         RadioButtonGroup<
             Object::MetricMode,
-            Object::MM_NUM_METRIC_MODES> m_metric_editing_mode_group;
+            Object::MM_COUNT> m_metric_editing_mode_group;
         // label to print the text of the current metric editing mode
         Label *m_metric_editing_mode_label;
     

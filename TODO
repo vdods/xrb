@@ -24,7 +24,7 @@ MAJOR TASKS:
   much flexibility as possible, and to avoid biasing game physics, etc.
 
 OPENGL CONVERSION TASKS:
-- look into applying HSV color to opengl renderings (i.e. making
+- look into applying HSV color to opengl textures (i.e. making
   stuff's color converge towards a particular color -- turning
   up/down the saturation).
 
@@ -67,18 +67,9 @@ TODO:
 - the map editor view should not create/destroy its own world -- it
   becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
-- again, rename identifiers like X_NUM_BLAH and num_blahblah to
-  X_BLAH_COUNT and blahblah_count.
 - rename all enums to have prefixes (where appropriate)
-- Entity might need to have a "scaling velocity" or "grow to X size by time Y"
 - drawing functions should all just push the modelview matrix, not load
   the identity (except for top-level ones like Screen and such).
-- maybe change Entity::Get/SetForce/Torque into Get/SetAccumulatedForce/Torque
-  or something including the word "frame" like GetFrameTorque
-- make a function which ensures the objects' radius and transformations are
-  calculated, so that certain sections of code (like in the physics handler)
-  can just get the values directly, instead of checking if they need to be
-  computed each time.
 - compound editing operations: delete vertices, delete polygons, flip polygons,
   flip objects, unweld polygon vertices, clone polygons, splitting polygons
 - for static Create type functions for subclassable classes, see if the

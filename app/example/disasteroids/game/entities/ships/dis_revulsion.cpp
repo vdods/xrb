@@ -29,7 +29,7 @@ Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 14000.0f
 Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
 Float const Revulsion::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Revulsion::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
-Float const Revulsion::ms_weapon_impact_damage[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
+Float const Revulsion::ms_weapon_impact_damage[ENEMY_LEVEL_COUNT] = { 8.0f, 16.0f, 32.0f, 64.0f };
 Float const Revulsion::ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT] = { 60.0f, 50.0f, 40.0f, 30.0f };
 Float const Revulsion::ms_target_aim_angle_trail_limit[ENEMY_LEVEL_COUNT] = { 110.0f, 120.0f, 130.0f, 140.0f };
 Float const Revulsion::ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 150.0f };
@@ -67,6 +67,10 @@ Revulsion::~Revulsion ()
 
 void Revulsion::Think (Float const time, Float const frame_dt)
 {
+    // can't think if we're dead.
+    if (GetIsDead())
+        return;
+
     bool is_disabled = GetIsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)

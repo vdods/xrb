@@ -92,7 +92,7 @@ enum IOError
     IOE_UNABLE_TO_OPEN_FILE,
     IOE_INVALID_FILE_OPEN_MODE,
 
-    IOE_NUM_ERRORS,
+    IOE_COUNT,
 
     IOE_LOWEST_ERROR = IOE_NONE,
     IOE_HIGHEST_ERROR = IOE_INVALID_FILE_OPEN_MODE
@@ -107,7 +107,7 @@ enum IODirection
     IOD_READ,
     IOD_WRITE,
 
-    IOD_NUM_DIRECTIONS
+    IOD_COUNT
 }; // end of enum IODirection
 
 } // end of namespace Xrb

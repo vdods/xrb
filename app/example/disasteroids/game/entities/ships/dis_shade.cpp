@@ -57,6 +57,10 @@ Shade::~Shade ()
 
 void Shade::Think (Float const time, Float const frame_dt)
 {
+    // can't think if we're dead.
+    if (GetIsDead())
+        return;
+
     bool is_disabled = GetIsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
