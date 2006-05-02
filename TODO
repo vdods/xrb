@@ -33,10 +33,6 @@ DISASTEROIDS:
 - finish weapon code (add UT-style charge-up melee weapon with
   front-attaching secondary mode)
 - different enemy levels of devourments and revulsions need to look less alike
-? shield auxiliary input -- temporary extra-strong shields (but drains power
-  quickly)
-- extra engine thrust -- double-tap forward to make the engine thrust harder
-  (but drains power quickly)
 
 CURRENT:
 - wave spawning, instead of continuous.

@@ -93,7 +93,7 @@ Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 6
 Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
 Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
 Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 300.0f, 400.0f, 550.0f };
-Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.4f, 0.3f, 0.25f };
+Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.333f, 0.2f, 0.1666f };
 /*
 // EMPBombLayer properties
 Float const EMPBombLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -1159,7 +1159,7 @@ bool Tractor::Activate (
     ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f)
     // the secondary tractor mode pulls everything, not just powerups
     bool pull_everything = GetSecondaryInput() > 0.0f;
-    bool push_instead_of_pull = GetPrimaryInput() > 0.0f && GetSecondaryInput() > 0.0f;
+    bool push_instead_of_pull = GetPrimaryInput() == 0.0f;
     Float input = pull_everything ? GetSecondaryInput() : GetPrimaryInput();
 
     Float range =

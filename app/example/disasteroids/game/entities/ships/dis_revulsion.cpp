@@ -283,7 +283,7 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
     // if the reticle effect is already allocated but not in the world, re-add it.
     else if (!m_reticle_effect->GetIsInWorld())
         m_reticle_effect->AddBackIntoWorld();
-    ASSERT1(m_reticle_effect.GetIsValid() || m_reticle_effect->GetIsInWorld())
+    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         
     // transition to and call ContinueAimAtTarget 
     m_think_state = THINK_STATE(ContinueAimAtTarget);

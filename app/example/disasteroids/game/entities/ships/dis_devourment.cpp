@@ -323,6 +323,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     }
 
     // activate the mouth tractor
+    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
     if (T <= 0.0f)
     {
@@ -355,6 +356,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
     // set the reticle coordinates and aim the mouth tractor
     SetReticleCoordinates(m_target->GetTranslation());
+    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
         
     // if we're no longer close enough to the target, transition to Pursue
