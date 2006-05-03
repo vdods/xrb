@@ -27,12 +27,15 @@ OPENGL CONVERSION TASKS:
 - look into applying HSV color to opengl textures (i.e. making
   stuff's color converge towards a particular color -- turning
   up/down the saturation).
+  ***
+  glPixelTransfer -- GL_RED_BIAS, GL_RED_SCALE, GL_GREEN_BIAS,
+                     GL_GREEN_SCALE, GL_BLUE_BIAS, GL_BLUE_SCALE, etc.
 
 DISASTEROIDS:
 - finish writing AIs (write Demi)
 - wave spawning, punctuated with Demis
-- finish weapon code (guided missiles)
-- different enemy levels of devourments and revulsions need to look less alike
+- different enemy levels of devourments and revulsions (and level
+  2/3 shades) need to look less alike
 
 CURRENT:
 - disasteroids: after enough time elapses, the asteroids should start

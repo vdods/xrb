@@ -44,6 +44,7 @@ class Fireball;
 class GaussGunTrail;
 class Grenade;
 class GrenadeLauncher;
+class GuidedMissile;
 class HealthTrigger;
 class Interloper;
 class Item;
@@ -136,6 +137,22 @@ Mine *SpawnMine (
     Float health);
     
 Missile *SpawnMissile (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    Float scale_factor,
+    Float angle,
+    FloatVector2 const &velocity,
+    Float time_to_live,
+    Float time_at_birth,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
+    EntityReference<Entity> const &owner,
+    Float health);
+    
+GuidedMissile *SpawnGuidedMissile (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,

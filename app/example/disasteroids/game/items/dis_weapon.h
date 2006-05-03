@@ -623,10 +623,12 @@ public:
         
 private:
 
-    static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
+    static Float const ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT];
+    static Float const ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_secondary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_missile_time_to_live[UPGRADE_LEVEL_COUNT];
+    static Float const ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT];
+    static Float const ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_damage_amount[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_damage_radius[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_health[UPGRADE_LEVEL_COUNT];

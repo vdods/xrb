@@ -19,6 +19,7 @@ namespace Dis
 {
 
 class PhysicsHandler;
+class Ship;
 
 class Explosive : public Mortal
 {
@@ -164,6 +165,7 @@ public:
         m_most_recent_survey_time = 0.0f;
         m_seek_start_time = -2.0f; // this is the s_seek_stale_interval in Mine::MoveTowardsSeekCoordinates
         m_owner_mine_layer = owner_mine_layer;
+        SetImmunity(D_COLLISION|D_EXPLOSION);
     }
     virtual ~Mine () { }
 
@@ -252,6 +254,7 @@ public:
         ASSERT1(m_damage_to_inflict > 0.0f)
         ASSERT1(m_explosion_radius > 0.0f)
         m_first_think = true;
+        SetImmunity(D_COLLISION|D_EXPLOSION);
     }
     virtual ~Missile () { }
 
@@ -265,6 +268,12 @@ public:
         Float time,
         Float frame_dt);
 
+protected:
+
+    inline Uint32 GetWeaponLevel () const { return m_weapon_level; }
+
+    static Float const ms_acceleration[UPGRADE_LEVEL_COUNT];
+
 private:
 
     Float const m_time_to_live;
@@ -272,10 +281,55 @@ private:
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
     Float const m_explosion_radius;
-    Uint32 m_weapon_level;
+    Uint32 const m_weapon_level;
     bool m_first_think;
     FloatVector2 m_initial_velocity;
 }; // end of class Missile
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+class GuidedMissile : public Missile
+{
+public:
+
+    GuidedMissile (
+        Float const time_to_live,
+        Float const time_at_birth,
+        Float const damage_to_inflict,
+        Float const damage_radius,
+        Float const explosion_radius,
+        Uint32 const weapon_level,
+        EntityReference<Entity> const &owner,
+        Float const max_health)
+        :
+        Missile(
+            time_to_live,
+            time_at_birth,
+            damage_to_inflict,
+            damage_radius,
+            explosion_radius,
+            weapon_level,
+            owner,
+            max_health)
+    {
+        m_next_search_time = -1.0f;
+    }
+    virtual ~GuidedMissile () { }
+
+    virtual void Think (Float time, Float frame_dt);
+    
+private:
+
+    void Search (Float time, Float frame_dt);
+    void Seek (Float time, Float frame_dt);
+
+    void AimAt (FloatVector2 const &position);
+
+    Float m_next_search_time;
+    EntityReference<Ship> m_target;
+}; // end of class GuidedMissile
 
 // ///////////////////////////////////////////////////////////////////////////
 //

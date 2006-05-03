@@ -291,6 +291,52 @@ Missile *SpawnMissile (
     sprite->SetPhysicalSizeRatio(26.0f / 128.0f);
     return missile;
 }
+
+GuidedMissile *SpawnGuidedMissile (
+    Engine2::World *const world,
+    Engine2::ObjectLayer *const object_layer,
+    FloatVector2 const &translation,
+    Float const scale_factor,
+    Float const angle,
+    FloatVector2 const &velocity,
+    Float const time_to_live,
+    Float const time_at_birth,
+    Float const damage_to_inflict,
+    Float const damage_radius,
+    Float const explosion_radius,
+    Uint32 const weapon_level,
+    EntityReference<Entity> const &owner,
+    Float const health)
+{
+    GuidedMissile *guided_missile =
+        new GuidedMissile(
+            time_to_live,
+            time_at_birth,
+            damage_to_inflict,
+            damage_radius,
+            explosion_radius,
+            weapon_level,
+            owner,
+            health);
+    Engine2::Sprite *sprite =
+        SpawnDynamicSprite(
+            world,
+            object_layer,
+            "resources/missile_small.png",
+            guided_missile,
+            translation,
+            scale_factor,
+            angle,
+            5.0f,
+            velocity,
+            0.0f,
+            0.1f);
+    // set the physical size ratio to reflect the largest circle that
+    // can be inscribed inside the shape of the sprite's bitmap.
+    sprite->SetPhysicalSizeRatio(26.0f / 128.0f);
+    return guided_missile;
+}
+
 /*
 EMPBomb *SpawnEMPBomb (
     Engine2::World *const world,

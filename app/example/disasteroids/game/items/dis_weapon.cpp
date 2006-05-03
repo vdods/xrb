@@ -80,10 +80,12 @@ Float const MineLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.45f, 0.425f
 Uint32 const MineLayer::ms_max_active_mine_count[UPGRADE_LEVEL_COUNT] = { 2, 3, 4, 6 };
 
 // MissileLauncher properties
-Float const MissileLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
-Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
-Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 70.0f, 80.0f, 90.0f };
-Float const MissileLauncher::ms_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
+Float const MissileLauncher::ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
+Float const MissileLauncher::ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 100.0f, 125.0f, 150.0f, 175.0f };
+Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
+Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
+Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
+Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 6.0f, 5.7f, 5.4f, 4.5f };
 Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
@@ -905,8 +907,8 @@ bool MissileLauncher::Activate (
             GetMuzzleLocation() + missile_scale_factor * GetMuzzleDirection(),
             missile_scale_factor,
             Math::Atan(GetMuzzleDirection()),
-            ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
-            ms_missile_time_to_live[GetUpgradeLevel()],
+            ms_primary_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            ms_primary_missile_time_to_live[GetUpgradeLevel()],
             time,
             ms_missile_damage_amount[GetUpgradeLevel()],
             ms_missile_damage_radius[GetUpgradeLevel()],
@@ -923,8 +925,31 @@ bool MissileLauncher::Activate (
     else if (GetSecondaryInput() > 0.0f &&
              power == ms_required_secondary_power[GetUpgradeLevel()])
     {
-        // TODO : real guided missile
-        return false;
+        // fire the weapon -- spawn a GuidedMissile
+        ASSERT1(GetOwnerShip()->GetWorld() != NULL)
+        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    
+        Float const missile_scale_factor = 10.0f;
+        SpawnGuidedMissile(
+            GetOwnerShip()->GetWorld(),
+            GetOwnerShip()->GetObjectLayer(),
+            GetMuzzleLocation() + missile_scale_factor * GetMuzzleDirection(),
+            missile_scale_factor,
+            Math::Atan(GetMuzzleDirection()),
+            ms_secondary_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            ms_secondary_missile_time_to_live[GetUpgradeLevel()],
+            time,
+            ms_missile_damage_amount[GetUpgradeLevel()],
+            ms_missile_damage_radius[GetUpgradeLevel()],
+            2.0f * ms_missile_damage_radius[GetUpgradeLevel()],
+            GetUpgradeLevel(),
+            GetOwnerShip()->GetReference(),
+            ms_missile_health[GetUpgradeLevel()]);
+    
+        // update the last time fired
+        m_time_last_fired = time;
+        // the weapon fired successfully
+        return true;
     }
     
     // the weapon did not fire

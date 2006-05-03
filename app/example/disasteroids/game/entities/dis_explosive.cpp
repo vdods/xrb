@@ -23,6 +23,12 @@ using namespace Xrb;
 namespace Dis
 {
 
+Float const Missile::ms_acceleration[UPGRADE_LEVEL_COUNT] = { 200.0f, 225.0f, 250.0f, 300.0f };
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
 void Explosive::Collide (
     Entity *const collider,
     FloatVector2 const &collision_location,
@@ -368,8 +374,7 @@ void Missile::Think (
     if (GetIsDead())
         return;
 
-    static Float const s_thrust_force = 300.0f * GetFirstMoment();
-    AccumulateForce(s_thrust_force * Math::UnitVector(GetAngle()));
+    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(GetAngle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     if (m_first_think)
@@ -467,6 +472,123 @@ void Missile::Detonate (
         m_owner);
 
     Explosive::Detonate(time, frame_dt);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void GuidedMissile::Think (Float const time, Float const frame_dt)
+{
+    if (time >= m_next_search_time)
+        Search(time, frame_dt);
+    else if (m_target.GetIsValid())
+        Seek(time, frame_dt);
+
+    Missile::Think(time, frame_dt);
+}
+
+void GuidedMissile::Search (Float const time, Float const frame_dt)
+{
+    // don't search if there is a living target
+    if (m_target.GetIsValid() && !m_target->GetIsDead())
+    {
+        m_next_search_time = time + 0.25f;
+        return;
+    }
+
+    // do a line trace in front of the missile to find a target
+    if (GetSpeed() >= 0.01f)
+    {
+        m_next_search_time = time + 0.25f;
+
+        static Float const s_search_distance = 400.0f;
+        static Float const s_search_radius = 70.0f;
+        
+        LineTraceBindingSet line_trace_binding_set;
+        GetPhysicsHandler()->LineTrace(
+            GetObjectLayer(),
+            GetTranslation(),
+            s_search_distance * Math::UnitVector(GetAngle()),
+            s_search_radius,
+            false,
+            &line_trace_binding_set);
+    
+        for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
+                                         it_end = line_trace_binding_set.end();
+             it != it_end;
+             ++it)
+        {
+            if (it->m_entity->GetIsShip() && it->m_entity != *m_owner)
+            {
+                m_target = it->m_entity->GetReference();
+                return;
+            }
+        }
+    }
+}
+
+void GuidedMissile::Seek (Float const time, Float const frame_dt)
+{
+    ASSERT1(m_target.GetIsValid())
+
+    if (m_target->GetIsDead())
+    {
+        m_target.Release();
+        return;
+    }
+
+    FloatVector2 target_position(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation()));
+
+    // adjust our course to hit the target -- plot intercept course
+    Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
+    FloatVector2 p(target_position - GetTranslation());
+    FloatVector2 v(m_target->GetVelocity() - GetVelocity());
+    FloatVector2 a(m_target->GetForce() / m_target->GetFirstMoment());
+
+    Polynomial poly;
+    poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+    poly.Set(3, 4.0f * (a | v));
+    poly.Set(2, 4.0f * ((a | p) + (v | v)));
+    poly.Set(1, 8.0f * (p | v));
+    poly.Set(0, 4.0f * (p | p));
+
+    Polynomial::SolutionSet solution_set;
+    poly.Solve(&solution_set, 0.001f);
+
+    Float T = -1.0f;
+    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+                                         it_end = solution_set.end();
+         it != it_end;
+         ++it)
+    {
+        if (*it >= 0.0f)
+        {
+            T = *it;
+            break;
+        }
+    }
+
+    if (T <= 0.0f)
+    {
+        // if no acceptable solution, just do dumb approach
+        AimAt(target_position);
+    }
+    else
+    {
+        FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
+        AimAt(GetTranslation() + real_approach_direction);
+    }
+}
+
+void GuidedMissile::AimAt (FloatVector2 const &position)
+{
+    FloatVector2 delta(position - GetTranslation());
+    if (delta.GetLength() >= 0.01f)
+        SetAngle(Math::Atan(delta));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
