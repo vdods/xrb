@@ -41,10 +41,10 @@ Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1
 // Laser properties
 Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
 Float const Laser::ms_secondary_range[UPGRADE_LEVEL_COUNT] = { 75.0f, 100.0f, 125.0f, 150.0f };
-Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.5f, 3.0f, 3.5f };
 Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
-Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 60.0f, 90.0f, 120.0f, 200.0f };
-Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 6.0f, 12.0f, 24.0f, 48.0f };
+Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 70.0f, 140.0f, 280.0f, 560.0f };
+Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 7.0f, 14.0f, 28.0f, 56.0f };
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 // FlameThrower properties
@@ -316,7 +316,7 @@ bool Laser::Activate (
             }
         }
 
-        // only fire if we found a target
+        // only attempt to fire if we found a target
         if (best_target != NULL)
         {
             FloatVector2 fire_vector(
@@ -325,8 +325,10 @@ bool Laser::Activate (
                     GetOwnerShip()->GetTranslation())
                 -
                 GetOwnerShip()->GetTranslation());
-
-            // TODO: do a real line trace for the damage (there might be something blocking the beam)
+            FloatVector2 fire_location(
+                GetOwnerShip()->GetTranslation() +
+                    GetOwnerShip()->GetScaleFactor() *
+                    fire_vector.GetNormalization());
 
             if (fire_vector.GetLength() > ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor())
             {
@@ -334,32 +336,55 @@ bool Laser::Activate (
                 fire_vector *= ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor();
             }
         
-            // spawn the "gauss gun trail"
-            SpawnGaussGunTrail(
-                GetOwnerShip()->GetWorld(),
+            // do a line trace
+            LineTraceBindingSet line_trace_binding_set;
+            GetOwnerShip()->GetPhysicsHandler()->LineTrace(
                 GetOwnerShip()->GetObjectLayer(),
-                GetOwnerShip()->GetTranslation() + GetOwnerShip()->GetScaleFactor() * fire_vector.GetNormalization(),
+                fire_location,
                 fire_vector,
-                GetOwnerShip()->GetVelocity(),
-                2.0f,
-                0.5f,
-                time);
-            
-            // damage the target (the gauss gun trail is just a visual effect)
-            best_target->Damage(
-                GetOwnerShip(),
-                NULL, // laser does not have a Entity medium
-                ms_secondary_impact_damage[GetUpgradeLevel()],
-                NULL,
-                best_target->GetTranslation(), // TEMP for now, do real calculation later
-                GetMuzzleDirection(),
                 0.0f,
-                Mortal::D_COMBAT_LASER,
-                time,
-                frame_dt);
-            
-            // update the last time fired
-            m_time_last_fired = time;
+                false,
+                &line_trace_binding_set);
+        
+            LineTraceBindingSetIterator it = line_trace_binding_set.begin();
+            LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
+            // don't damage the owner of this weapon or powerups
+            while (it != it_end &&
+                   (it->m_entity->GetIsPowerup() ||
+                    it->m_entity->GetIsBallistic() ||
+                    it->m_entity == GetOwnerShip()))
+            {
+                ++it;
+            }
+
+            // only fire at ships
+            if (it != it_end && it->m_entity->GetIsShip())
+            {
+                // damage the mortal
+                DStaticCast<Mortal *>(it->m_entity)->Damage(
+                    GetOwnerShip(),
+                    NULL, // laser does not have an Entity medium
+                    ms_secondary_impact_damage[GetUpgradeLevel()],
+                    NULL,
+                    fire_location + it->m_time * fire_vector,
+                    GetMuzzleDirection(),
+                    0.0f,
+                    Mortal::D_COMBAT_LASER,
+                    time,
+                    frame_dt);
+                // spawn the "gauss gun trail"
+                SpawnGaussGunTrail(
+                    GetOwnerShip()->GetWorld(),
+                    GetOwnerShip()->GetObjectLayer(),
+                    fire_location,
+                    it->m_time * fire_vector,
+                    GetOwnerShip()->GetVelocity(),
+                    2.0f,
+                    0.5f,
+                    time);
+                // update the last time fired
+                m_time_last_fired = time;
+            }            
         }
     }
 
