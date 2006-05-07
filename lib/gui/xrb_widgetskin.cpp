@@ -55,7 +55,7 @@ WidgetSkin::WidgetSkin (Screen const *screen)
 
     // 0.03 looks like about the smallest font that appears decently
     // on a 640x480 screen.
-    m_font_specification[DEFAULT_FONT].m_font_height_ratio = 0.02f;
+    m_font_specification[DEFAULT_FONT].m_font_height_ratio = 0.023f;
     UpdateFontHeight(DEFAULT_FONT);
     SetFontFaceFilename(
         DEFAULT_FONT,
@@ -179,7 +179,7 @@ void WidgetSkin::SetFontFaceFilename (
     ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
 }
 
- 
+
 void WidgetSkin::SetFontHeightRatio (
     FontType const font_type,
     Float const font_height_ratio)

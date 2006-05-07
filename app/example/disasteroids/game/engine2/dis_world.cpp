@@ -10,7 +10,7 @@
 
 #include "dis_world.h"
 
-#include "dis_armor.h" 
+#include "dis_armor.h"
 #include "dis_asteroid.h"
 #include "dis_devourment.h"
 #include "dis_enemyship.h"
@@ -474,7 +474,7 @@ World::World (
     m_next_asteroid_mineral_level_time = 1.0f * 60.0f;
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
-                   
+
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
         m_enemy_ship_count[enemy_ship_index] = 0;
@@ -499,7 +499,7 @@ bool World::ProcessEventOverride (Event const *const e)
         m_state_machine.RunCurrentState(DStaticCast<EventStateMachineInput const *>(e)->GetInput());
         return true;
     }
-    
+
     return Engine2::World::ProcessEventOverride(e);
 }
 
@@ -575,7 +575,7 @@ bool World::StateIntro (StateMachineInput const input)
             // signal the WorldViews that the intro has started
             m_internal_sender_begin_intro.Signal();
             return true;
-            
+
         case IN_END_INTRO:
             TRANSITION_TO(StateNormalGameplay);
             return true;
@@ -655,7 +655,7 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
         case IN_WAIT_AFTER_PLAYER_DEATH_DONE:
             TRANSITION_TO(StateSpawnPlayerShip);
             return true;
-            
+
         case IN_PROCESS_FRAME:
             m_player_ship->IncrementTimeAlive(GetFrameDT());
             return true;
@@ -677,7 +677,7 @@ bool World::StateDeathRattle (StateMachineInput const input)
         case IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE:
             TRANSITION_TO(StateGameOver);
             return true;
-            
+
         case IN_PROCESS_FRAME:
             return true;
     }
@@ -698,7 +698,7 @@ bool World::StateGameOver (StateMachineInput const input)
         case IN_GAME_OVER_DONE:
             TRANSITION_TO(StateSubmitScore);
             return true;
-            
+
         case IN_PROCESS_FRAME:
             return true;
     }
@@ -718,7 +718,7 @@ bool World::StateSubmitScore (StateMachineInput const input)
                     m_player_ship->GetScore(),
                     m_player_ship->GetTimeAlive(),
                     time(NULL)));
-            TRANSITION_TO(StateWaitingForSubmitScoreResponse);            
+            TRANSITION_TO(StateWaitingForSubmitScoreResponse);
             return true;
     }
     return false;
@@ -732,7 +732,7 @@ bool World::StateWaitingForSubmitScoreResponse (StateMachineInput const input)
         case IN_SUBMIT_SCORE_DONE:
             TRANSITION_TO(StateOutro);
             return true;
-    
+
         case IN_PROCESS_FRAME:
             return true;
     }
@@ -744,7 +744,7 @@ bool World::StateOutro (StateMachineInput const input)
     STATE_MACHINE_STATUS("StateOutro")
     switch (input)
     {
-        case SM_ENTER:            
+        case SM_ENTER:
             // signal the WorldViews that the outro has started
             m_internal_sender_begin_outro.Signal();
             return true;
@@ -752,7 +752,7 @@ bool World::StateOutro (StateMachineInput const input)
         case IN_END_OUTRO:
             TRANSITION_TO(StateEndGame);
             return true;
-                
+
         case IN_PROCESS_FRAME:
             return true;
 
@@ -771,7 +771,7 @@ bool World::StateEndGame (StateMachineInput const input)
         case SM_ENTER:
             m_sender_end_game.Signal();
             return true;
-    
+
         case IN_PROCESS_FRAME:
             return true;
     }
@@ -901,7 +901,7 @@ Asteroid *World::SpawnAsteroidOutOfView ()
         if (placement_attempts == 30)
             return NULL;
         ++placement_attempts;
-        
+
         translation.SetComponents(
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
@@ -959,7 +959,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         if (placement_attempts == 30)
             return NULL;
         ++placement_attempts;
-        
+
         translation.SetComponents(
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
@@ -975,7 +975,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
-                
+
         case ET_SHADE:
             return SpawnShade(
                 this,
@@ -983,7 +983,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
-            
+
         case ET_REVULSION:
             return SpawnRevulsion(
                 this,
@@ -998,8 +998,8 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
-                enemy_level);                
-            
+                enemy_level);
+
         default:
             ASSERT1(false && "Invalid EntityType")
             return NULL;
@@ -1032,17 +1032,17 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
         {
             while (world_view_center[Dim::X] < -half_object_layer_side_length)
                 world_view_center[Dim::X] += object_layer_side_length;
-                
+
             while (world_view_center[Dim::X] > half_object_layer_side_length)
                 world_view_center[Dim::X] -= object_layer_side_length;
-                
+
             while (world_view_center[Dim::Y] < -half_object_layer_side_length)
                 world_view_center[Dim::Y] += object_layer_side_length;
-                
+
             while (world_view_center[Dim::Y] > half_object_layer_side_length)
                 world_view_center[Dim::Y] -= object_layer_side_length;
         }
-        
+
         Float distance_from_world_view =
             (GetMainObjectLayer()->GetAdjustedCoordinates(translation, world_view_center) -
              world_view_center).GetLength();
@@ -1066,7 +1066,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 void World::CreateAndPopulateForegroundObjectLayer ()
 {
     Float object_layer_side_length = 2000.0f;
-    
+
     // create an object layer
     Engine2::ObjectLayer *object_layer =
         Engine2::ObjectLayer::Create(
@@ -1115,7 +1115,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
             if (placement_attempts == s_max_placement_attempts)
                 break;
             ++placement_attempts;
-            
+
             translation.SetComponents(
                 Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
                 Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
@@ -1133,7 +1133,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
                         false));
         if (placement_attempts == s_max_placement_attempts)
             continue;
-    
+
         Float first_moment = scale_factor * scale_factor;
         FloatVector2 velocity(
             Math::RandomFloat(100.0f, 2000.0f) /
@@ -1159,7 +1159,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
     // galaxies in the distance
     {
         Float object_layer_side_length = 200000.0f;
-    
+
         // create an object layer
         Engine2::ObjectLayer *object_layer =
             Engine2::ObjectLayer::Create(
@@ -1170,7 +1170,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 0.0f);                    // z depth
         object_layer->SetZDepth(30000.0f);
         AddObjectLayer(object_layer);
-    
+
         static std::string const s_galaxy_sprite_filenames[] =
         {
             "resources/starfield/galaxy_small01.png",
@@ -1186,7 +1186,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         };
         Uint32 const galaxy_sprite_filename_count =
             sizeof(s_galaxy_sprite_filenames) / sizeof(std::string);
-    
+
         Uint32 const number_of_galaxies_to_create = 100;
         for (Uint32 i = 0; i < number_of_galaxies_to_create; ++i)
         {
@@ -1200,10 +1200,10 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
-                    0.007f*object_layer_side_length,
-                    0.011f*object_layer_side_length));
+                    0.010f*object_layer_side_length,
+                    0.015f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
-    
+
             AddStaticObject(sprite, object_layer);
         }
     }
@@ -1211,7 +1211,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
     // starfield
     {
         Float object_layer_side_length = 50000.0f;
-    
+
         // create an object layer
         Engine2::ObjectLayer *object_layer =
             Engine2::ObjectLayer::Create(
@@ -1222,7 +1222,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 0.0f);                    // z depth
         object_layer->SetZDepth(7500.0f);
         AddObjectLayer(object_layer);
-    
+
         static std::string const s_starfield_sprite_filenames[] =
         {
             "resources/starfield/star_dot01.png",
@@ -1246,7 +1246,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         };
         Uint32 const starfield_sprite_filename_count =
             sizeof(s_starfield_sprite_filenames) / sizeof(std::string);
-    
+
         Uint32 const number_of_stars_to_create = 1000;
         for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
         {
@@ -1260,10 +1260,10 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
-                    0.00125f*object_layer_side_length,
-                    0.0025f*object_layer_side_length));
+                    0.002f*object_layer_side_length,
+                    0.003f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
-    
+
             AddStaticObject(sprite, object_layer);
         }
     }
@@ -1272,7 +1272,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
     if (false)
     {
         Float object_layer_side_length = 100000.0f;
-    
+
         // create an object layer
         Engine2::ObjectLayer *object_layer =
             Engine2::ObjectLayer::Create(
@@ -1293,7 +1293,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         };
         Uint32 const nebula_sprite_filename_count =
             sizeof(s_nebula_sprite_filenames) / sizeof(std::string);
-    
+
         for (Uint32 i = 0; i < nebula_sprite_filename_count; ++i)
         {
             FloatVector2 translation;
@@ -1312,7 +1312,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             while (retry_count < 50 && object_layer->GetDoesAreaOverlapAnyObject(translation, 1.2f * scale_factor));
             if (retry_count >= 50)
                 break;
-            
+
             Engine2::Sprite *sprite =
 //                 Engine2::Sprite::Create(s_nebula_sprite_filenames[i]);
                 Engine2::Sprite::Create(s_nebula_sprite_filenames[Math::RandomUint16(0, nebula_sprite_filename_count-1)]);

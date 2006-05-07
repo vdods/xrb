@@ -225,8 +225,8 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
 
 // constants which control the thresholds at which objects use
 // alpha fading to fade away, when they become small enough.
-static Float const gs_radius_limit_upper = 3.0f;
-static Float const gs_radius_limit_lower = 0.8f;
+static Float const gs_radius_limit_upper = 1.0f;
+static Float const gs_radius_limit_lower = 0.5f;
 static Float const gs_distance_fade_slope = 1.0f / (gs_radius_limit_upper - gs_radius_limit_lower);
 static Float const gs_distance_fade_intercept = gs_radius_limit_lower / (gs_radius_limit_lower - gs_radius_limit_upper);
 
@@ -331,7 +331,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     FloatVector2 view_offset;
 
     glMatrixMode(GL_MODELVIEW);
-    
+
     for (Float x = left; x <= right; x += 1.0)
     {
         for (Float y = bottom; y <= top; y += 1.0)

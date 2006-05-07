@@ -66,12 +66,12 @@ int main (int argc, char **argv)
     // create and run the game
     {
         Dis::Master master(screen);
-    
+
         master.Run();
     }
-    
+
     Delete(screen);
-    
+
     Singletons::Shutdown();
 
     // return with no error condition
@@ -91,7 +91,7 @@ int main (int argc, char **argv)
 The player is piloting a small spaceship which is on a quest really just to
 blow shit up.  The game only ends when the action gets too crazy and the
 player snuffs it.
-  
+
 //////////////////////////////////////////////////////////////////////////////
 // Game world
 //////////////////////////////////////////////////////////////////////////////
@@ -147,12 +147,12 @@ Weapons (each have infinite ammo, unless otherwise specified)
 Engines (maybe combine with armor)
 - engine level X (each level outputs more thrust, and uses more power)
   * upgrade: reverse-thrust
-  
+
 Armor (designed to be able to deflect weaker enemies' attacks with no damage)
 - no armor (player starts off with this)
 - armor level X (as the level goes up, it provides better protection, weighs
   the player's ship down more, and increases the size of the player's ship).
-  
+
 Shields
 level 0: plain old shields
 level 1: strong against collision damage
@@ -181,7 +181,7 @@ Tractors
     - power
     - does not enact a counterforce on the player's ship, only the tractoree --
       this can be used to fling really heavy stuff in the way of enemies.
-    
+
 Misc Equipment
 - mr. fusion - allows the player to collect the "useless" rock to generate
   power (but only ones that are small enough).  this will be useful towards
@@ -201,7 +201,7 @@ Misc Equipment
 - metalloids: common, used in building most equipment
 - heavy metals: somewhat uncommon, used in most equipment
 - radioactives: least common, used in top-of-the-line equipment
-      
+
 //////////////////////////////////////////////////////////////////////////////
 // Gameplay
 //////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ short while, there will be no bonus.
 
 Points are used to gain extra lives.  The number of points required to get
 an extra life starts off relavitely low, but then increases exponentially,
-to make it impossible to keep getting extra lives forever.  
+to make it impossible to keep getting extra lives forever.
 
 The player's score (and time alive) will naturally be fed into a high scores
 scoreboard.
@@ -384,7 +384,7 @@ of each type that the player has.  The equipment inventory will be more
 substantial, containing a row of buttons for each type of equipment (and one
 row for each upgrade?)
 
-- one row for each weapon 
+- one row for each weapon
 - one row for engines
 - one row for armors
 - one row for shields
