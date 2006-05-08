@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;engine2;game;game\gameobjects;game\gameobjects\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\engine2\physicshandlers;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\engine2_worldviews;..\..\..\lib\sound;..\..\..\lib\util;&quot;..\..\..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\..\..\freetype-2.1.10\include&quot;"
+				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\sound;..\..\..\lib\util;&quot;..\..\..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\..\..\freetype-2.1.10\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;engine2;game;game\gameobjects;game\gameobjects\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\engine2\physicshandlers;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\engine2_worldviews;..\..\..\lib\sound;..\..\..\lib\util;&quot;..\..\..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\..\..\freetype-2.1.10\include&quot;"
+				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\sound;..\..\..\lib\util;&quot;..\..\..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\..\..\freetype-2.1.10\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -177,66 +177,14 @@
 	</References>
 	<Files>
 		<Filter
-			Name="engine2"
-			>
-			<File
-				RelativePath=".\engine2\dis_areatracelist.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_collisionpair.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_collisionquadtree.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_collisionquadtree.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_linetracebinding.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_physicshandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_physicshandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_world.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\dis_world.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="game"
 			>
 			<File
-				RelativePath=".\game\dis_gameobject.cpp"
+				RelativePath=".\game\dis_highscores.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\game\dis_gameobject.h"
-				>
-			</File>
-			<File
-				RelativePath=".\game\dis_gameobjectreference.h"
-				>
-			</File>
-			<File
-				RelativePath=".\dis_highscores.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\dis_highscores.h"
+				RelativePath=".\game\dis_highscores.h"
 				>
 			</File>
 			<File
@@ -255,130 +203,138 @@
 				RelativePath=".\game\dis_spawn.h"
 				>
 			</File>
+			<File
+				RelativePath=".\game\dis_util.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\game\dis_util.h"
+				>
+			</File>
 			<Filter
-				Name="gameobjects"
+				Name="entities"
 				>
 				<File
-					RelativePath=".\game\gameobjects\dis_asteroid.cpp"
+					RelativePath=".\game\entities\dis_asteroid.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_asteroid.h"
+					RelativePath=".\game\entities\dis_asteroid.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_ballistic.cpp"
+					RelativePath=".\game\entities\dis_ballistic.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_ballistic.h"
+					RelativePath=".\game\entities\dis_ballistic.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_effect.cpp"
+					RelativePath=".\game\entities\dis_effect.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_effect.h"
+					RelativePath=".\game\entities\dis_effect.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_explosive.cpp"
+					RelativePath=".\game\entities\dis_explosive.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_explosive.h"
+					RelativePath=".\game\entities\dis_explosive.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_healthtrigger.cpp"
+					RelativePath=".\game\entities\dis_healthtrigger.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_healthtrigger.h"
+					RelativePath=".\game\entities\dis_healthtrigger.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_mortal.cpp"
+					RelativePath=".\game\entities\dis_mortal.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_mortal.h"
+					RelativePath=".\game\entities\dis_mortal.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_powerup.cpp"
+					RelativePath=".\game\entities\dis_powerup.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_powerup.h"
+					RelativePath=".\game\entities\dis_powerup.h"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_ship.cpp"
+					RelativePath=".\game\entities\dis_ship.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\gameobjects\dis_ship.h"
+					RelativePath=".\game\entities\dis_ship.h"
 					>
 				</File>
 				<Filter
 					Name="ships"
 					>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_devourment.cpp"
+						RelativePath=".\game\entities\ships\dis_devourment.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_devourment.h"
+						RelativePath=".\game\entities\ships\dis_devourment.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_enemyship.cpp"
+						RelativePath=".\game\entities\ships\dis_enemyship.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_enemyship.h"
+						RelativePath=".\game\entities\ships\dis_enemyship.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_interloper.cpp"
+						RelativePath=".\game\entities\ships\dis_interloper.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_interloper.h"
+						RelativePath=".\game\entities\ships\dis_interloper.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_playership.cpp"
+						RelativePath=".\game\entities\ships\dis_playership.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_playership.h"
+						RelativePath=".\game\entities\ships\dis_playership.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_revulsion.cpp"
+						RelativePath=".\game\entities\ships\dis_revulsion.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_revulsion.h"
+						RelativePath=".\game\entities\ships\dis_revulsion.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_shade.cpp"
+						RelativePath=".\game\entities\ships\dis_shade.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_shade.h"
+						RelativePath=".\game\entities\ships\dis_shade.h"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_solitary.cpp"
+						RelativePath=".\game\entities\ships\dis_solitary.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\game\gameobjects\ships\dis_solitary.h"
+						RelativePath=".\game\entities\ships\dis_solitary.h"
 						>
 					</File>
 				</Filter>
@@ -428,6 +384,58 @@
 				</File>
 				<File
 					RelativePath=".\game\items\dis_weapon.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="engine2"
+				>
+				<File
+					RelativePath=".\game\engine2\dis_areatracelist.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_collisionpair.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_collisionquadtree.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_collisionquadtree.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_entity.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_entity.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_entityreference.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_linetracebinding.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_physicshandler.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_physicshandler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_world.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\game\engine2\dis_world.h"
 					>
 				</File>
 			</Filter>
@@ -481,14 +489,6 @@
 			</File>
 			<File
 				RelativePath=".\ui\dis_optionspanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ui\dis_progressbar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ui\dis_progressbar.h"
 				>
 			</File>
 			<File

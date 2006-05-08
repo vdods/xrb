@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;engine2\physicshandlers;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\engine2_worldviews;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
+				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;engine2\physicshandlers;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\engine2_worldviews;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
+				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\xrb_compiletimeasserts.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\core\xrb_debug.h"
 				>
 			</File>
@@ -200,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\xrb_eventqueue.tcpp"
+				>
+			</File>
+			<File
 				RelativePath=".\core\xrb_framehandler.cpp"
 				>
 			</File>
@@ -216,11 +224,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\xrb_resourcelibrary.tcpp"
+				>
+			</File>
+			<File
 				RelativePath=".\core\xrb_serializer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\core\xrb_serializer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\core\xrb_serializer.tcpp"
 				>
 			</File>
 			<File
@@ -240,11 +256,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_statemachine.cpp"
+				RelativePath=".\core\xrb_statemachine.h"
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_statemachine.h"
+				RelativePath=".\core\xrb_statemachine.tcpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\xrb_types.h"
 				>
 			</File>
 			<Filter
@@ -256,14 +276,6 @@
 				</File>
 				<File
 					RelativePath=".\core\serializers\xrb_binaryfileserializer.h"
-					>
-				</File>
-				<File
-					RelativePath=".\core\serializers\xrb_compressionserializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\core\serializers\xrb_compressionserializer.h"
 					>
 				</File>
 			</Filter>
@@ -280,23 +292,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_compoundentity.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\xrb_engine2_compoundentity.h"
-				>
-			</File>
-			<File
 				RelativePath=".\engine2\xrb_engine2_entity.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\engine2\xrb_engine2_entity.h"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\xrb_engine2_entityguts.h"
 				>
 			</File>
 			<File
@@ -356,14 +356,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_spriteentity.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\engine2\xrb_engine2_spriteentity.h"
-				>
-			</File>
-			<File
 				RelativePath=".\engine2\xrb_engine2_visibilityquadtree.cpp"
 				>
 			</File>
@@ -379,38 +371,10 @@
 				RelativePath=".\engine2\xrb_engine2_world.h"
 				>
 			</File>
-			<Filter
-				Name="physicshandlers"
-				>
-				<File
-					RelativePath=".\engine2\physicshandlers\xrb_engine2_planetaryphysicshandler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\engine2\physicshandlers\xrb_engine2_planetaryphysicshandler.h"
-					>
-				</File>
-				<File
-					RelativePath=".\engine2\physicshandlers\xrb_engine2_uniformgravityphysicshandler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\engine2\physicshandlers\xrb_engine2_uniformgravityphysicshandler.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="gui"
 			>
-			<File
-				RelativePath=".\gui\xrb_dialog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_dialog.h"
-				>
-			</File>
 			<File
 				RelativePath=".\gui\xrb_font.cpp"
 				>
@@ -433,30 +397,6 @@
 			</File>
 			<File
 				RelativePath=".\gui\xrb_gui_events.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_label.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_label.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_layout.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_layout.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_modalwidget.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_modalwidget.h"
 				>
 			</File>
 			<File
@@ -527,6 +467,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_dialog.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_dialog.h"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_filedialog.cpp"
 					>
 				</File>
@@ -543,6 +491,22 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_label.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_label.h"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_layout.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_layout.h"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_lineedit.cpp"
 					>
 				</File>
@@ -551,7 +515,27 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_modalwidget.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_modalwidget.h"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_progressbar.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_progressbar.h"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_radiobutton.h"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_radiobutton.tcpp"
 					>
 				</File>
 				<File
@@ -567,11 +551,23 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_toolbarbutton.tcpp"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_valueedit.h"
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_valueedit.tcpp"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_valuelabel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_valuelabel.tcpp"
 					>
 				</File>
 				<File
@@ -617,130 +613,6 @@
 			</File>
 			<File
 				RelativePath=".\input\xrb_keyrepeater.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="mapeditor2"
-			>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compound.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compound.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compoundentity.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compoundentity.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compoundvertex.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_compoundvertex.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_entity.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_entity.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_entitypropertiespanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_entitypropertiespanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_mainwidget.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_mainwidget.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_object.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_object.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_objectlayer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_objectlayer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_objectpropertiespanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_objectpropertiespanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_polygon.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_polygon.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_sprite.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_sprite.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_spriteentity.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_spriteentity.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_visibilityquadtree.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_visibilityquadtree.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_world.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_world.h"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_worldview.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\mapeditor2\xrb_mapeditor2_worldview.h"
 				>
 			</File>
 		</Filter>
@@ -840,7 +712,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\primitive\xrb_bitarray.tcpp"
+				>
+			</File>
+			<File
 				RelativePath=".\primitive\xrb_circularqueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\primitive\xrb_circularqueue.tcpp"
 				>
 			</File>
 			<File
@@ -943,18 +823,6 @@
 				RelativePath=".\render\xrb_screencoord.h"
 				>
 			</File>
-			<Filter
-				Name="engine2_worldviews"
-				>
-				<File
-					RelativePath=".\render\engine2_worldviews\xrb_engine2_freeflyingworldview.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\render\engine2_worldviews\xrb_engine2_freeflyingworldview.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="sound"
@@ -969,14 +837,6 @@
 			</File>
 			<File
 				RelativePath=".\util\xrb_bitcache.h"
-				>
-			</File>
-			<File
-				RelativePath=".\util\xrb_bitcachedcompression.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\util\xrb_bitcachedcompression.h"
 				>
 			</File>
 			<File
@@ -1001,14 +861,6 @@
 			</File>
 			<File
 				RelativePath=".\util\xrb_frameratecalculator.h"
-				>
-			</File>
-			<File
-				RelativePath=".\util\xrb_huffman.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\util\xrb_huffman.h"
 				>
 			</File>
 			<File

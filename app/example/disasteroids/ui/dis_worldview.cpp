@@ -479,8 +479,8 @@ void WorldView::SetIntroTimeLeft (Float intro_time_left, Float const dt)
     ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
     Float parameter = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
     GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
-    SetZoomFactor(m_zoom_factor_begin * (1.0 - parameter) + m_zoom_factor_end * parameter);
-    RotateView(dt * (m_angular_speed_begin * (1.0 - parameter) + m_angular_speed_end * parameter));
+    SetZoomFactor(m_zoom_factor_begin * (1.0f - parameter) + m_zoom_factor_end * parameter);
+    RotateView(dt * (m_angular_speed_begin * (1.0f - parameter) + m_angular_speed_end * parameter));
 }
 
 void WorldView::SetOutroTimeLeft (Float outro_time_left, Float const dt)
@@ -496,8 +496,8 @@ void WorldView::SetOutroTimeLeft (Float outro_time_left, Float const dt)
     ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
     Float parameter = m_intro_outro_time_left / m_intro_outro_time_total;
     GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
-    SetZoomFactor(m_zoom_factor_end * (1.0 - parameter) + m_zoom_factor_begin * parameter);
-    RotateView(dt * (m_angular_speed_end * (1.0 - parameter) + m_angular_speed_begin * parameter));
+    SetZoomFactor(m_zoom_factor_end * (1.0f - parameter) + m_zoom_factor_begin * parameter);
+    RotateView(dt * (m_angular_speed_end * (1.0f - parameter) + m_angular_speed_begin * parameter));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
