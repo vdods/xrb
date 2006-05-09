@@ -51,6 +51,8 @@ app/example/disasteroids/game/entities/dis_powerup.cpp
 app/example/disasteroids/game/entities/dis_powerup.h
 app/example/disasteroids/game/entities/dis_ship.cpp
 app/example/disasteroids/game/entities/dis_ship.h
+app/example/disasteroids/game/entities/ships/dis_demi.cpp
+app/example/disasteroids/game/entities/ships/dis_demi.h
 app/example/disasteroids/game/entities/ships/dis_devourment.cpp
 app/example/disasteroids/game/entities/ships/dis_devourment.h
 app/example/disasteroids/game/entities/ships/dis_enemyship.cpp

@@ -172,10 +172,7 @@
     </tree>
   </kdevfileview>
   <kdevcppsupport>
-    <references>
-      <pcs>lib</pcs>
-      <pcs>disasteroids</pcs>
-    </references>
+    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

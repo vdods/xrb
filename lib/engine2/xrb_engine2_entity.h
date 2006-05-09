@@ -60,9 +60,6 @@ public:
     // object exceeded the ObjectLayer's boundaries in the X dimension,
     // component_x will be true.  component_y will be set analogously.
     virtual void HandleObjectLayerContainment (bool component_x, bool component_y) = 0;
-    // will be called right before this object is deleted
-    // due to being ScheduleForDeletion'ed.
-    virtual void HandleScheduledDeletion (Float time) = 0;
 
     // ///////////////////////////////////////////////////////////////////
     // accessors
@@ -112,6 +109,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     void ScheduleForDeletion (Float time_delay);
+    void ScheduleForRemovalFromWorld (Float time_delay);
 
     // ///////////////////////////////////////////////////////////////////
     // Object frontend methods

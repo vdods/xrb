@@ -54,7 +54,7 @@ public:
         Float trace_radius,
         bool check_nonsolid_collision_entities,
         LineTraceBindingSet *line_trace_binding_set) const;
-        
+
     // does an area trace in the quadtree
     void AreaTrace (
         Engine2::ObjectLayer const *object_layer,
@@ -62,23 +62,22 @@ public:
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
         AreaTraceList *area_trace_list) const;
-        
+
     virtual void AddObjectLayer (Engine2::ObjectLayer *object_layer);
     virtual void SetMainObjectLayer (Engine2::ObjectLayer *object_layer);
-        
+
     virtual void AddEntity (Engine2::Entity *entity);
     virtual void RemoveEntity (Engine2::Entity *entity);
 
 protected:
 
     virtual void ProcessFrameOverride ();
-            
+
 private:
 
     typedef std::set<Entity *> EntitySet;
     typedef EntitySet::iterator EntitySetIterator;
 
-    void ApplyGravitationalForce ();
     void UpdateVelocities ();
     void UpdatePositions ();
     void HandleInterpenetrations ();
@@ -91,7 +90,7 @@ private:
 
     // the list of collision pairs for this frame
     CollisionPairList m_collision_pair_list;
-    
+
     // keeps track of the main object layer (really only used to make
     // sure that all entities are added to the main object layer)
     Engine2::ObjectLayer *m_main_object_layer;

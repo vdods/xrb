@@ -27,7 +27,7 @@ Engine2::Sprite *Engine2::Entity::GetOwnerSprite () const
 {
     if (m_owner_object == NULL)
         return NULL;
-        
+
     ASSERT1(m_owner_object->GetObjectType() == OT_SPRITE)
     return static_cast<Sprite *>(m_owner_object);
 }
@@ -36,7 +36,7 @@ Engine2::Compound *Engine2::Entity::GetOwnerCompound () const
 {
     if (m_owner_object == NULL)
         return NULL;
-        
+
     ASSERT1(m_owner_object->GetObjectType() == OT_COMPOUND)
     return static_cast<Compound *>(m_owner_object);
 }
@@ -47,7 +47,7 @@ void Engine2::Entity::SetWrappedOffset (FloatVector2 const &wrapped_offset)
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::Y]))
     m_wrapped_offset = wrapped_offset;
 }
-        
+
 void Engine2::Entity::AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta)
 {
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::X]))
@@ -93,6 +93,20 @@ void Engine2::Entity::ScheduleForDeletion (Float time_delay)
             this,
             GetOwnerObject()->GetWorld()->GetMostRecentFrameTime() + time_delay,
             Event::ENGINE2_DELETE_ENTITY));
+}
+
+void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
+{
+    ASSERT1(GetIsInWorld())
+
+    if (time_delay < 0.0f)
+        time_delay = 0.0f;
+
+    GetOwnerObject()->GetWorld()->EnqueueEvent(
+        new EventEntity(
+            this,
+            GetOwnerObject()->GetWorld()->GetMostRecentFrameTime() + time_delay,
+            Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
 }
 
 void Engine2::Entity::CloneProperties (Engine2::Entity const *const entity)

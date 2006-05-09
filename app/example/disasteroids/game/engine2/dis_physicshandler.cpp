@@ -108,17 +108,17 @@ void PhysicsHandler::AreaTrace (
     {
         Float object_layer_side_length = m_main_object_layer->GetSideLength();
         Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-        
+
         if (trace_area_center[Dim::X] < -half_object_layer_side_length)
             trace_area_center[Dim::X] += object_layer_side_length;
         else if (trace_area_center[Dim::X] > half_object_layer_side_length)
             trace_area_center[Dim::X] -= object_layer_side_length;
-        
+
         if (trace_area_center[Dim::Y] < -half_object_layer_side_length)
             trace_area_center[Dim::Y] += object_layer_side_length;
         else if (trace_area_center[Dim::Y] > half_object_layer_side_length)
             trace_area_center[Dim::Y] -= object_layer_side_length;
-        
+
         m_quad_tree->AreaTraceWrapped(
             trace_area_center,
             trace_area_radius,
@@ -195,30 +195,37 @@ void PhysicsHandler::ProcessFrameOverride ()
     // if the frame time delta is zero (e.g. the game is paused), return.
     if (GetFrameDT() == 0.0f)
         return;
-    
+
     // resolve interpenetrations / calculate collisions
     if (m_main_object_layer->GetIsWrapped())
         HandleInterpenetrationsUsingCollisionQuadTreeWrapped();
     else
         HandleInterpenetrationsUsingCollisionQuadTree();
 
-    // call Think on all entity guts.  the funky incrementing
-    // is so that we don't have to worry about not removing the
-    // currently-iterating entity during its Think method.
-    for (EntitySetIterator inc_it = m_entity_set.begin(),
-                           it_end = m_entity_set.end(),
-                           it = (inc_it != it_end) ? inc_it++ : inc_it;
+    // call Think on all entity guts.  no entities must be left
+    // removed during this loop.  removing and re-adding is ok --
+    // see ShieldEffect::SnapToShip().
+    for (EntitySetIterator it = m_entity_set.begin(),
+                           it_end = m_entity_set.end();
          it != it_end;
-         it = (inc_it != it_end) ? inc_it++ : inc_it)
+         ++it)
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
+
+        DEBUG1_CODE(Uint32 entity_set_size = m_entity_set.size());
+
         if (GetFrameTime() >= entity->GetNextTimeToThink())
             entity->Think(GetFrameTime(), GetFrameDT());
-    } 
-    
+
+        ASSERT1(m_entity_set.size() >= entity_set_size &&
+                "You must not remove entities during the Think loop -- "
+                "use ScheduleForRemovalFromWorld(0.0f) instead")
+    }
+
     // apply the accumulated forces and torques
     UpdateVelocities();
+
     // update the entities' positions
     UpdatePositions();
 
@@ -249,7 +256,7 @@ void PhysicsHandler::ProcessFrameOverride ()
             GetFrameDT());
     }
     // clear the collision pair list
-    m_collision_pair_list.clear();    
+    m_collision_pair_list.clear();
 }
 
 void PhysicsHandler::UpdateVelocities ()
@@ -284,7 +291,7 @@ void PhysicsHandler::UpdateVelocities ()
             // limit the speed for non-projectiles only
             if ((entity->GetEntityType() < ET_GRENADE || entity->GetEntityType() > ET_EMP_BOMB) &&
                 entity->GetEntityType() != ET_BALLISTIC)
-            {                
+            {
                 Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
                 if (entity_speed_squared > s_max_speed_squared)
                     entity->SetVelocity(s_max_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());

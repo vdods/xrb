@@ -36,7 +36,7 @@ public:
         if (m_reference.GetIsValid())
             m_reference.NullifyEntity();
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
     Dis::World *GetWorld () const;
     Dis::PhysicsHandler const *GetPhysicsHandler () const;
     Dis::PhysicsHandler *GetPhysicsHandler ();
-    
+
     FloatVector2 GetAmbientVelocity (
         Float scan_area_radius,
         Entity const *ignore_me) const;
@@ -80,7 +80,7 @@ public:
             (entity1->GetIsPlayerShip() ||
              entity1->GetEntityType() == ET_BALLISTIC))
             return false;
-            
+
         if (entity1->GetIsPowerup() &&
             (entity2->GetIsPlayerShip() ||
              entity2->GetEntityType() == ET_BALLISTIC))
@@ -88,15 +88,15 @@ public:
 
         return true;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // public modifiers
     // ///////////////////////////////////////////////////////////////////////
-    
+
     inline void SetNextTimeToThink (Float next_time_to_think)
     {
         m_next_time_to_think = next_time_to_think;
-    }    
+    }
     inline void SetElasticity (Float const elasticity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity))
@@ -222,12 +222,11 @@ public:
     // public Entity interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    // this is the Engine2::CreateEntityFunction to create 
+    // this is the Engine2::CreateEntityFunction to create
     // Entity subclass objects from a serializer.
     static Engine2::Entity *Create (Serializer &serializer);
     virtual void Write (Serializer &serializer) const;
     virtual void HandleObjectLayerContainment (bool component_x, bool component_y);
-    virtual void HandleScheduledDeletion (Float time);
 
 protected:
 

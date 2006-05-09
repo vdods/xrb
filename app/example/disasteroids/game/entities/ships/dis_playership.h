@@ -39,12 +39,12 @@ public:
 
     // Entity interface method
     virtual bool GetIsPlayerShip () const { return true; }
-    
+
     inline Uint32 GetScore () const { return m_score; }
     inline Float GetStoke () const { return m_stoke; }
     inline Float GetTimeAlive () const { return m_time_alive; }
     inline Uint32 GetLivesRemaining () const { return m_lives_remaining; }
-    
+
     inline Weapon const *GetMainWeapon () const { return m_main_weapon; }
     inline Weapon const *GetAuxiliaryWeapon () const { return m_auxiliary_weapon; }
     inline Engine const *GetEngine () const { return m_engine; }
@@ -66,7 +66,7 @@ public:
     bool GetIsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;
 
     void SetMainWeaponNumber (Uint32 weapon_number);
-    void SetAuxiliaryWeaponNumber (Uint32 weapon_number);    
+    void SetAuxiliaryWeaponNumber (Uint32 weapon_number);
     inline void SetEngineAuxiliaryInput (Uint8 const engine_auxiliary_input)
     {
         m_engine_auxiliary_input = engine_auxiliary_input;
@@ -95,7 +95,7 @@ public:
     void IncrementLivesRemaining (Sint32 lives_remaining_delta);
     void CreditEnemyKill (EntityType enemy_ship_type, Uint8 enemy_level);
     void GiveLotsOfMinerals ();
-        
+
     // attempts to add the item to the ship's inventory.  returns true if
     // the ship took the item (and responsibility for deleting the item),
     // false if the ship did not take the item (and did NOT take
@@ -173,7 +173,7 @@ protected:
 
     virtual void ResetInputs ();
     virtual void SetCurrentHealth (Float current_health);
-    
+
 private:
 
     Weapon const *GetCurrentWeapon () const;
@@ -194,7 +194,7 @@ private:
 
     void EjectPowerup (Item *ejectee, Float ejection_angle);
     void ChangeMineralInventory (Uint8 mineral_type, Float mineral_delta);
-    
+
     enum DeviceToPower
     {
         DTP_ENGINE = 0,
@@ -208,13 +208,13 @@ private:
     Float m_stoke;
     Float m_time_alive;
     Uint32 m_lives_remaining;
-    
+
     Uint8 m_engine_auxiliary_input;
     bool m_is_using_auxiliary_weapon;
 
     PoweredDevice *m_devices_to_power[DTP_COUNT];
     Float m_power_allocator[DTP_COUNT];
-    
+
     Weapon *m_main_weapon;
     Weapon *m_auxiliary_weapon;
     Engine *m_engine;
@@ -226,7 +226,7 @@ private:
     Float m_shield_status;
     Float m_power_status;
     Float m_weapon_status;
-    
+
     Item *m_item_inventory[IT_COUNT][UPGRADE_LEVEL_COUNT];
     Float m_mineral_inventory[MINERAL_COUNT];
 
@@ -244,7 +244,7 @@ private:
     SignalSender1<Float> m_sender_weapon_status_changed;
     SignalSender2<Uint8, Float> m_sender_mineral_inventory_changed;
 }; // end of class PlayerShip
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_PLAYERSHIP_H_)

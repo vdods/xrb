@@ -67,7 +67,7 @@ Devourment::~Devourment ()
             m_mouth_health_trigger->RemoveFromWorld();
         delete m_mouth_health_trigger->GetOwnerObject();
     }
-    
+
     Delete(m_mouth_tractor);
 
     if (m_mouth_tractor_beam.GetIsValid())
@@ -88,11 +88,11 @@ void Devourment::Think (Float const time, Float const frame_dt)
 
     // NOTE: Devourment can't be disabled -- the
     // disabled code would go here otherwise
-    
+
     // if the mouth health trigger has not yet been created, create it.
     if (!m_mouth_health_trigger.GetIsValid())
     {
-        HealthTrigger *health_trigger = 
+        HealthTrigger *health_trigger =
             SpawnDevourmentMouthHealthTrigger(
                 GetWorld(),
                 GetObjectLayer(),
@@ -108,7 +108,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
         // set the mouth damage rate
         m_mouth_health_trigger->SetHealthDeltaRate(-ms_mouth_damage_rate[GetEnemyLevel()]);
     }
-    
+
     // ensure the tractor beam is allocated (lazy allocation)
     if (!m_mouth_tractor_beam.GetIsValid())
         m_mouth_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
@@ -119,7 +119,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     m_mouth_tractor->SetTractorBeam(*m_mouth_tractor_beam);
 
     SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
-    
+
     // call the think state function (which will set the inputs)
     (this->*m_think_state)(time, frame_dt);
 
@@ -167,7 +167,7 @@ void Devourment::Collide (
         time,
         frame_dt);
 
-    ASSERT1(collider != NULL)    
+    ASSERT1(collider != NULL)
     if (collider->GetIsMortal() &&
         collider->GetEntityType() != ET_DEVOURMENT &&
         m_think_state == THINK_STATE(PickWanderDirection))
@@ -198,10 +198,10 @@ void Devourment::Die (
         kill_type,
         time,
         frame_dt);
-        
+
     // remove the mouth tractor beam, if it exists
     if (m_mouth_tractor_beam.GetIsValid() && m_mouth_tractor_beam->GetIsInWorld())
-        m_mouth_tractor_beam->RemoveFromWorld();
+        m_mouth_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
 }
 
 bool Devourment::TakePowerup (Powerup *const powerup)
@@ -226,7 +226,7 @@ void Devourment::PickWanderDirection (Float const time, Float const frame_dt)
 void Devourment::Wander (Float const time, Float const frame_dt)
 {
     m_target = ScanAreaForTargets();
-    
+
     // if we acquired a target, transition to Pursue
     if (m_target.GetIsValid())
     {
@@ -239,7 +239,7 @@ void Devourment::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
         MatchVelocity(wander_velocity, frame_dt);
-    
+
         if (time >= m_next_whatever_time)
             m_think_state = THINK_STATE(PickWanderDirection);
     }
@@ -259,10 +259,10 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     }
 
     SetReticleCoordinates(m_target->GetTranslation());
-    
+
     FloatVector2 mouth_position(GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle()));
     FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
-    
+
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
     static Float const s_give_up_distance = 200.0f;
@@ -280,11 +280,11 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
         SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
         return;
     }
-    
+
     // adjust our course to hit the target
 
     // TODO: expensive polynomial solving shouldn't happen every single frame
-        
+
     Float interceptor_acceleration =
         ms_engine_thrust[GetEnemyLevel()] / GetFirstMoment();
     FloatVector2 p(target_position - GetTranslation());
@@ -350,7 +350,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     SetReticleCoordinates(m_target->GetTranslation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
-        
+
     // if we're no longer close enough to the target, transition to Pursue
     static Float const s_pursue_distance = 40.0f;
     if ((target_position - mouth_position).GetLength() > s_pursue_distance + m_target->GetScaleFactor())
@@ -371,7 +371,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
 void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 {
-    // calculate what thrust is required to match the desired velocity 
+    // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
@@ -391,11 +391,11 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
     EntityReference<Mortal> target;
 
     static Float const s_optimal_target_mass = 400.0f;
-    
+
     Float scan_radius =
         ms_mouth_tractor_range[GetEnemyLevel()] +
         ms_mouth_tractor_beam_radius[GetEnemyLevel()];
-    
+
     // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
@@ -413,7 +413,7 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
         ASSERT1(entity != NULL)
 
         ASSERT1(*entity->GetReference() == entity)
-        
+
         // don't try to eat ourselves
         if (entity == this)
             continue;
@@ -421,7 +421,7 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
         // don't seek other Devourments
         if (entity->GetEntityType() == ET_DEVOURMENT)
             continue;
-            
+
         // we're only interested in Mortals
         if (dynamic_cast<Mortal *>(entity) != NULL)
         {

@@ -54,7 +54,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_view_velocity = FloatVector2::ms_zero;
     m_is_view_recovering = false;
     m_recover_parameter = 0.0f;
-    
+
     m_zoom_accumulator = 0.0f;
     m_zoom_increment = pow(2.0f, 0.25f);
     m_zoom_speed = 10.0f;
@@ -116,7 +116,7 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                 if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
                     m_sender_activate_inventory_panel.Signal();
                 break;
-        
+
             case Key::KP_DIVIDE:
                 if (m_rotation_accumulator < 0.0f)
                     m_rotation_accumulator -=
@@ -170,15 +170,21 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
             case Key::F1:
                 SetIsDebugModeEnabled(!GetIsDebugInfoEnabled());
                 break;
-                
+
             case Key::F2:
-                m_player_ship->GiveLotsOfMinerals();
+                if (m_player_ship != NULL)
+                    m_player_ship->GiveLotsOfMinerals();
                 break;
 
             case Key::F3:
                 m_use_dvorak = !m_use_dvorak;
                 break;
-                
+
+            case Key::F4:
+                if (m_player_ship != NULL)
+                    m_player_ship->SetIsInvincible(!m_player_ship->GetIsInvincible());
+                break;
+
             default:
                 break;
         }
@@ -281,7 +287,7 @@ void WorldView::ProcessFrameOverride ()
         */
         // lookahead
         if (GetFrameDT() > 0.0f)
-        { 
+        {
             Float minor_axis_radius = GetMinorAxisRadius();
             FloatVector2 ship_velocity_direction;
             if (m_player_ship->GetVelocity().GetIsZero())
@@ -290,7 +296,7 @@ void WorldView::ProcessFrameOverride ()
                 ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
             Float view_distance = 0.8f * minor_axis_radius * Math::Atan(0.003f * m_player_ship->GetSpeed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
-    
+
             FloatVector2 view_center_delta(traveling_at - (GetCenter() + m_view_velocity * GetFrameDT()));
             bool is_view_recovering_this_frame;
             Float const max_view_center_delta = 2.4f / GetZoomFactor();
@@ -305,7 +311,7 @@ void WorldView::ProcessFrameOverride ()
                 m_view_velocity = m_player_ship->GetVelocity();
                 is_view_recovering_this_frame = false;
             }
-    
+
             if (!m_is_view_recovering && is_view_recovering_this_frame)
             {
                 m_is_view_recovering = true;
@@ -314,7 +320,7 @@ void WorldView::ProcessFrameOverride ()
             }
             else if (m_is_view_recovering && !is_view_recovering_this_frame)
                 m_calculated_view_center = m_calculated_view_center + m_view_velocity * GetFrameDT();
-            
+
             if (m_is_view_recovering && m_recover_parameter < 1.0f)
             {
                 ASSERT1(m_recover_parameter >= 0.0f)
@@ -340,7 +346,7 @@ void WorldView::ProcessFrameOverride ()
             else
                 dragging_factor = m_dragging_factor;
             dragging_factor *= GetFrameDT();
-        
+
             SetCenter(
                 GetCenter() * (1.0f - dragging_factor)
                 +
@@ -529,7 +535,7 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
             // set the begin/end angular speeds
             m_angular_speed_begin = 180.0f;
             m_angular_speed_end = 0.0f;
-            // initialize the intro time        
+            // initialize the intro time
             m_intro_outro_time_total = 2.0f;
             SetIntroTimeLeft(m_intro_outro_time_total, 0.0f);
             return true;
@@ -537,7 +543,7 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
         case IN_PROCESS_FRAME:
             // we're just waiting for the intro to begin.
             return true;
-            
+
         case IN_BEGIN_INTRO:
             TRANSITION_TO(StateIntro);
             return true;
@@ -588,9 +594,9 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
                 SetMaxZoomFactor(0.0078f);
             }
             break;
-    
+
         case IN_PROCESS_FRAME:
-            ProcessPlayerInput();        
+            ProcessPlayerInput();
             return true;
 
         case IN_BEGIN_DEATH_RATTLE:
@@ -628,9 +634,9 @@ bool WorldView::StateGameOver (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            m_sender_show_game_over_label.Signal();            
+            m_sender_show_game_over_label.Signal();
             return true;
-    
+
         case IN_PROCESS_FRAME:
             // we're just waiting for the outro to begin.
             return true;
@@ -661,7 +667,7 @@ bool WorldView::StateOutro (StateMachineInput const input)
             // set the begin/end angular speeds
             m_angular_speed_begin = 0.0f;
             m_angular_speed_end = 180.0f;
-            // initialize the outro time        
+            // initialize the outro time
             m_intro_outro_time_total = 2.0f;
             SetOutroTimeLeft(m_intro_outro_time_total, 0.0f);
             // hide the GameWidget's controls

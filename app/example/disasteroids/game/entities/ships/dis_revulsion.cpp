@@ -76,8 +76,8 @@ void Revulsion::Think (Float const time, Float const frame_dt)
     if (is_disabled)
     {
         if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-            m_reticle_effect->RemoveFromWorld();
-        
+            m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
+
         // if disabled, then reset the think state to PickWanderDirection (a way out for
         // players that are being ganged up on)
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -133,7 +133,7 @@ void Revulsion::Die (
 
     // remove the reticle effect, if it exists
     if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-        m_reticle_effect->RemoveFromWorld();
+        m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 }
 
 void Revulsion::PickWanderDirection (Float const time, Float const frame_dt)
@@ -151,7 +151,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
 {
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
-    
+
     // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
@@ -210,7 +210,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
             m_wander_angle = Math::Atan(-perpendicular_velocity);
         m_next_wander_time = time + 6.0f;
     }
-    
+
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
@@ -228,7 +228,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
         m_wander_angle_low_pass += wander_angle_low_pass_delta;
 
     m_wander_angle += m_wander_angle_derivative * frame_dt;
-    
+
     if (time >= m_next_wander_time)
     {
         m_wander_angle_derivative = Math::RandomFloat(-30.0f, 30.0f);
@@ -246,11 +246,11 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
-    
+
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),
-            GetTranslation()));    
+            GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);
     // if we're too close to the target's line of fire, transition to FleeTarget
     if (target_aim_angle >= -ms_target_aim_angle_flee_limit[GetEnemyLevel()] &&
@@ -259,7 +259,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(FleeTarget);
         return;
     }
-    
+
     // figure out where to go to get behind the target
     FloatVector2 preferred_location(
         GetObjectLayer()->GetAdjustedCoordinates(
@@ -277,7 +277,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     }
 
     // otherwise, plot an intercept course with the preferred location
-    
+
     Float interceptor_acceleration =
         ms_engine_thrust[GetEnemyLevel()] / GetFirstMoment();
     FloatVector2 p(preferred_location - GetTranslation());
@@ -346,8 +346,8 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
     else if (!m_reticle_effect->GetIsInWorld())
         m_reticle_effect->AddBackIntoWorld();
     ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-        
-    // transition to and call ContinueAimAtTarget 
+
+    // transition to and call ContinueAimAtTarget
     m_think_state = THINK_STATE(ContinueAimAtTarget);
     ContinueAimAtTarget(time, frame_dt);
 }
@@ -357,27 +357,27 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-        m_reticle_effect->RemoveFromWorld();    
+        m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
-    
+
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),
-            GetTranslation()));    
+            GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);
     // if we're too close to the target's line of fire, transition to FleeTarget
     if (target_aim_angle >= -ms_target_aim_angle_flee_limit[GetEnemyLevel()] &&
         target_aim_angle <=  ms_target_aim_angle_flee_limit[GetEnemyLevel()])
     {
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-        m_reticle_effect->RemoveFromWorld();    
+        m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_think_state = THINK_STATE(FleeTarget);
         return;
     }
-                
+
     ASSERT1(ms_aim_duration[GetEnemyLevel()] > 0.0f)
     Float aim_time_parameter = Min(1.0f, 0.25f + 0.75f * (time - m_aim_start_time) / ms_aim_duration[GetEnemyLevel()]);
     SetReticleCoordinates(
@@ -390,7 +390,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
         GetReticleCoordinates(),
         s_final_reticle_radius * aim_time_parameter);
-        
+
     // if the aim duration has elapsed, transition to FireAtTarget
     if (time - m_aim_start_time >= ms_aim_duration[GetEnemyLevel()])
         m_think_state = THINK_STATE(FireAtTarget);
@@ -399,8 +399,8 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
 void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
 {
     ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-    m_reticle_effect->RemoveFromWorld();
-    
+    m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
+
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
@@ -433,7 +433,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),
-            GetTranslation()));    
+            GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);
     // if we're far enough behind the target, transition to TrailTarget
     if (target_aim_angle <= -ms_target_aim_angle_trail_limit[GetEnemyLevel()] ||

@@ -86,6 +86,7 @@ public:
         SYSWM,
         STATE_MACHINE_INPUT,
         ENGINE2_DELETE_ENTITY,
+        ENGINE2_REMOVE_ENTITY_FROM_WORLD,
         CUSTOM
     }; // end of enum Event::EventType
 
@@ -188,7 +189,7 @@ private:
     {
         m_id = id;
     }
-    
+
     inline void ScheduleForDeletion () const
     {
         m_is_scheduled_for_deletion = true;

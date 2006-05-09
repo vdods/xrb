@@ -34,13 +34,11 @@ OPENGL CONVERSION TASKS:
 DISASTEROIDS:
 - finish writing AIs (write Demi)
 - wave spawning, punctuated with Demis
-- different enemy levels of devourments and revulsions (and level
-  2/3 shades) need to look less alike
 
 CURRENT:
+- change CollisionPairList into a std::vector?
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
-- bug: intermittent crash in Dis::PhysicsHandler's entity think loop
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each

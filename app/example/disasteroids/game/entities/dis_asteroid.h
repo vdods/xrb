@@ -49,8 +49,6 @@ public:
     }
     virtual ~Asteroid () { }
 
-    virtual void HandleScheduledDeletion (Float time);
-        
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
         Entity *collider,

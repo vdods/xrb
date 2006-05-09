@@ -61,11 +61,11 @@ PlayerShip::PlayerShip (
     m_shield_status = 0.0f;
     m_power_status = 0.0f;
     m_weapon_status = 0.0f;
-    
+
     for (Uint32 i = 0; i < IT_COUNT; ++i)
         for (Uint32 j = 0; j < UPGRADE_LEVEL_COUNT; ++j)
             m_item_inventory[i][j] = NULL;
-    
+
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory[i] = 0.0f;
 }
@@ -161,7 +161,7 @@ bool PlayerShip::GetIsItemEquipped (
         case IT_POWER_GENERATOR:
             return GetPowerGenerator() != NULL &&
                    GetPowerGenerator()->GetUpgradeLevel() == upgrade_level;
-                   
+
         default:
             ASSERT1(false && "Invalid ItemType")
             return false;
@@ -208,11 +208,11 @@ void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
     // unequip the old one
     if (m_main_weapon != NULL)
         m_main_weapon->Unequip(this);
-    
+
     // equip the new one
     if (main_weapon != NULL)
         main_weapon->Equip(this);
-    
+
     m_main_weapon = main_weapon;
     SetWeaponStatus(GetWeaponStatus());
 }
@@ -222,13 +222,13 @@ void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
     // unequip the old one
     if (m_auxiliary_weapon != NULL)
         m_auxiliary_weapon->Unequip(this);
-    
+
     // equip the new one
     if (auxiliary_weapon != NULL)
         auxiliary_weapon->Equip(this);
-    
+
     m_auxiliary_weapon = auxiliary_weapon;
-    SetWeaponStatus(GetWeaponStatus());    
+    SetWeaponStatus(GetWeaponStatus());
 }
 
 void PlayerShip::SetEngine (Engine *const engine)
@@ -236,7 +236,7 @@ void PlayerShip::SetEngine (Engine *const engine)
     // unequip the old one
     if (m_engine != NULL)
         m_engine->Unequip(this);
-    
+
     // equip the new one
     if (engine != NULL)
         engine->Equip(this);
@@ -249,11 +249,11 @@ void PlayerShip::SetArmor (Armor *const armor)
     // unequip the old one
     if (m_armor != NULL)
         m_armor->Unequip(this);
-    
+
     // equip the new one
     if (armor != NULL)
         armor->Equip(this);
-        
+
     m_armor = armor;
     // checking the owner entity pointer is necessary because it will be
     // NULL when deleting (and this function is called in ~PlayerShip)
@@ -272,11 +272,11 @@ void PlayerShip::SetShield (Shield *shield)
     // unequip the old one
     if (m_shield != NULL)
         m_shield->Unequip(this);
-    
+
     // equip the new one
     if (shield != NULL)
         shield->Equip(this);
-        
+
     m_shield = shield;
 
     // TODO: add the strength/immunity/weakness that the shield provides
@@ -289,11 +289,11 @@ void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
     // unequip the old one
     if (m_power_generator != NULL)
         m_power_generator->Unequip(this);
-    
+
     // equip the new one
     if (power_generator != NULL)
         power_generator->Equip(this);
-        
+
     m_power_generator = power_generator;
     SetPowerStatus(GetPowerStatus());
 }
@@ -363,12 +363,12 @@ bool PlayerShip::AddItem (Item *item)
         return false;
 
     m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] = item;
-    
+
     if (item->GetItemType() >= IT_WEAPON_LOWEST &&
         item->GetItemType() <= IT_WEAPON_HIGHEST)
     {
         Weapon *weapon = DStaticCast<Weapon *>(item);
-        
+
         if (item->GetItemType() == IT_WEAPON_TRACTOR)
         {
             if (GetAuxiliaryWeapon() == NULL ||
@@ -386,66 +386,66 @@ bool PlayerShip::AddItem (Item *item)
             }
         }
 
-        return true;    
+        return true;
     }
-    
+
     switch (item->GetItemType())
     {
         case IT_ENGINE:
         {
             Engine *engine = DStaticCast<Engine *>(item);
-            
+
             if (GetEngine() == NULL ||
                 engine->GetUpgradeLevel() > GetEngine()->GetUpgradeLevel())
             {
                 SetEngine(engine);
             }
-                
+
             return true;
         }
 
         case IT_ARMOR:
         {
             Armor *armor = DStaticCast<Armor *>(item);
-            
+
             if (GetArmor() == NULL ||
                 armor->GetUpgradeLevel() > GetArmor()->GetUpgradeLevel())
             {
                 SetArmor(armor);
             }
-                
+
             return true;
         }
 
         case IT_SHIELD:
         {
             Shield *shield = DStaticCast<Shield *>(item);
-            
+
             if (GetShield() == NULL ||
                 shield->GetUpgradeLevel() > GetShield()->GetUpgradeLevel())
             {
                 SetShield(shield);
             }
-                
+
             return true;
         }
 
         case IT_POWER_GENERATOR:
         {
             PowerGenerator *power_generator = DStaticCast<PowerGenerator *>(item);
-            
+
             if (GetPowerGenerator() == NULL ||
                 power_generator->GetUpgradeLevel() > GetPowerGenerator()->GetUpgradeLevel())
-            {                
+            {
                 SetPowerGenerator(power_generator);
             }
-                
+
             return true;
         }
 
         default:
             ASSERT1(false && "Invalid ItemType")
-            break;        
+            break;
     }
 
     return false;
@@ -456,7 +456,7 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
     ASSERT1(item_type < IT_COUNT)
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
     ASSERT1(m_item_inventory[item_type][upgrade_level] != NULL)
-    
+
     if (item_type >= IT_WEAPON_LOWEST &&
         item_type <= IT_WEAPON_HIGHEST)
     {
@@ -472,22 +472,22 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
             case IT_ENGINE:
                 SetEngine(DStaticCast<Engine *>(m_item_inventory[item_type][upgrade_level]));
                 break;
-    
+
             case IT_ARMOR:
                 SetArmor(DStaticCast<Armor *>(m_item_inventory[item_type][upgrade_level]));
                 break;
-    
+
             case IT_SHIELD:
                 SetShield(DStaticCast<Shield *>(m_item_inventory[item_type][upgrade_level]));
                 break;
-    
+
             case IT_POWER_GENERATOR:
                 SetPowerGenerator(DStaticCast<PowerGenerator *>(m_item_inventory[item_type][upgrade_level]));
                 break;
-    
+
             default:
                 ASSERT1(false && "Invalid ItemType")
-                break;        
+                break;
         }
     }
 }
@@ -502,7 +502,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
     {
         // reset the stoke O meter (getting disabled bums me out, man)
         SetStoke(1.0f);
-    
+
         // drain the shields (if they exist)
         if (m_shield != NULL)
             m_shield->Drain();
@@ -512,11 +512,11 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
 
         // remove all the effects
         if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
-            m_laser_beam->RemoveFromWorld();
+            m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
         if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
-            m_tractor_beam->RemoveFromWorld();
+            m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
-            m_shield_effect->RemoveFromWorld();
+            m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
     }
     else
     {
@@ -525,11 +525,11 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         // update the stoke O meter (exponential decay, with a lower limit of 1.0)
         static Float const s_stoke_halflife = 2.0f;
         SetStoke(Max(1.0f, m_stoke * Math::Pow(0.5f, frame_dt / s_stoke_halflife)));
-        
+
         // figure out which weapon to use.
         Weapon *current_weapon = GetCurrentWeapon();
-    
-        // figure out what to do with the LaserBeam/TractorBeam    
+
+        // figure out what to do with the LaserBeam/TractorBeam
         if (current_weapon != NULL)
         {
             // special treatment for Lasers (because the LaserBeam is effectively
@@ -548,8 +548,8 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             // if there is no Laser equipped and the laser beam is allocated
             // AND in the world, remove it from the world.
             else if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
-                m_laser_beam->RemoveFromWorld();
-    
+                m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+
             // special treatment for Tractors (because the TractorBeam is effectively
             // attached to the ship's main weapon muzzle.
             if (current_weapon->GetItemType() == IT_WEAPON_TRACTOR)
@@ -566,19 +566,19 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             // if there is no Tractor equipped and the tractor beam is allocated
             // AND in the world, remove it from the world.
             else if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
-                m_tractor_beam->RemoveFromWorld();
+                m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         }
         else
         {
             if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
-                m_laser_beam->RemoveFromWorld();
-    
+                m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+
             if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
-                m_tractor_beam->RemoveFromWorld();
+                m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         }
-            
+
         // set the devices' inputs
-        
+
         if (current_weapon != NULL)
             current_weapon->SetInputs(
                 GetNormalizedWeaponPrimaryInput(),
@@ -586,15 +586,15 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
                 GetMuzzleLocation(GetMainWeapon()),
                 GetMuzzleDirection(GetMainWeapon()),
                 GetReticleCoordinates());
-    
+
         if (m_engine != NULL)
             m_engine->SetInputs(
                 GetNormalizedEngineRightLeftInput(),
                 GetNormalizedEngineUpDownInput(),
                 GetNormalizedEngineAuxiliaryInput());
-    
+
         // apply power to the devices
-                
+
         m_devices_to_power[DTP_WEAPON] = current_weapon;
         m_devices_to_power[DTP_ENGINE] = m_engine;
         m_devices_to_power[DTP_SHIELD] = m_shield;
@@ -606,10 +606,10 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             DTP_COUNT,
             time,
             frame_dt);
-    
+
         // here is where the power generator recharges (after supplying power)
         m_power_generator->Think(time, frame_dt);
-    
+
         // update the shield effect position and intensity
         if (m_shield != NULL && !GetIsDead())
         {
@@ -627,9 +627,9 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         // if there is no shield equipped and the shield effect is
         // allocated AND in the world, remove it from the world.
         else if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
-            m_shield_effect->RemoveFromWorld();
+            m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
     }
-  
+
     ResetInputs();
 
     // update the shield status
@@ -651,7 +651,7 @@ bool PlayerShip::Damage (
     Float const frame_dt)
 {
     Float temp_damage_taken = 0.0f;
-    
+
     // let the shield take the damage first
     Float unblocked_damage = damage_amount;
     if (GetShield() != NULL)
@@ -669,9 +669,9 @@ bool PlayerShip::Damage (
 
     if (damage_amount_used != NULL)
         *damage_amount_used = temp_damage_taken;
-            
+
     bool player_ship_died = false;
-            
+
     // if there was any unblocked damage, inflict it on the ship
     if (unblocked_damage > 0.0f)
     {
@@ -691,10 +691,10 @@ bool PlayerShip::Damage (
         if (damage_amount_used != NULL)
             *damage_amount_used += temp_damage_taken;
     }
-            
+
     return player_ship_died;
 }
-        
+
 void PlayerShip::Die (
     Entity *const killer,
     Entity *const kill_medium,
@@ -706,7 +706,7 @@ void PlayerShip::Die (
     Float const frame_dt)
 {
     DStaticCast<World *>(GetWorld())->RecordDestroyedPlayerShip(this);
-    
+
     // reset the stoke O meter (dying bums me out, man)
     SetStoke(1.0f);
     // zero out the shield, armor, power and weapon status
@@ -714,7 +714,7 @@ void PlayerShip::Die (
     SetShieldStatus(0.0f);
     SetPowerStatus(0.0f);
     SetWeaponStatus(0.0f);
-    
+
     // spawn a really big explosion
     SpawnNoDamageExplosion(
         GetWorld(),
@@ -726,16 +726,16 @@ void PlayerShip::Die (
         time);
 
     // the player's ship is not deleted
-    RemoveFromWorld();
+    ScheduleForRemovalFromWorld(0.0f);
     // remove the laser beam, if it exists
     if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
-        m_laser_beam->RemoveFromWorld();
+        m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
     // remove the tractor beam, if it exists
     if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
-        m_tractor_beam->RemoveFromWorld();
+        m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
     // remove the shield effect, if it exists
     if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
-        m_shield_effect->RemoveFromWorld();
+        m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
 
     // eject the currently equipped inventory as powerups (with the exception
     // of the starting inventory), re-equipping the next-best item.
@@ -819,11 +819,11 @@ bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
         if (static_cast<Uint32>(m_mineral_inventory[mineral_type]) < item_price)
             return false;
     }
-    
+
     // check if we have the item already
     if (m_item_inventory[item_type][upgrade_level] != NULL)
         return false;
-        
+
     // if we don't have an item of this type and upgrade level, create
     // it and add it to the inventory
     AddItem(Item::Create(item_type, upgrade_level));
@@ -835,7 +835,7 @@ bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
         ChangeMineralInventory(mineral_type, -static_cast<Float>(item_price));
     }
 
-    EquipItem(item_type, upgrade_level);    
+    EquipItem(item_type, upgrade_level);
     return true;
 }
 
@@ -847,7 +847,7 @@ void PlayerShip::SetStoke (Float stoke)
     static Float const s_max_stoke = 4.0f;
     if (stoke > s_max_stoke)
         stoke = s_max_stoke;
-                
+
     if (m_stoke != stoke)
     {
         m_stoke = stoke;
@@ -864,7 +864,7 @@ void PlayerShip::ResetInputs ()
 void PlayerShip::SetCurrentHealth (Float const current_health)
 {
     Mortal::SetCurrentHealth(current_health);
-    
+
     SetArmorStatus(GetArmorStatus());
     SetShieldStatus(GetShieldStatus());
 }
@@ -988,7 +988,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 
     static Float const s_powerup_scale_factor = 5.0f;
     static Float const s_powerup_ejection_speed = 50.0f;
-    
+
     FloatVector2 ejection_normal(Math::UnitVector(GetAngle() + ejection_angle));
     SpawnPowerup(
         GetWorld(),
@@ -1094,7 +1094,7 @@ void PlayerShip::ChangeMineralInventory (
     Float const mineral_delta)
 {
     ASSERT1(mineral_type < MINERAL_COUNT)
-    
+
     if (mineral_delta == 0.0f)
         return;
 

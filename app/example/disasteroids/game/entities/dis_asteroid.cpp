@@ -56,12 +56,6 @@ Float const Asteroid::ms_decay_delay = 10.0f;
 Float const Asteroid::ms_decay_time = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
 
-void Asteroid::HandleScheduledDeletion (Float const time)
-{
-    // let the world know this asteroid went bye-bye
-    DStaticCast<World *>(GetWorld())->RecordDestroyedAsteroid(this);
-}
-
 void Asteroid::Think (Float const time, Float const frame_dt)
 {
     // if this asteroid shouldn't decay, then defer the think for a long time
@@ -73,7 +67,12 @@ void Asteroid::Think (Float const time, Float const frame_dt)
     else
     {
         if (m_delete_upon_next_think)
+        {
+            // let the world know this asteroid went bye-bye
+            DStaticCast<World *>(GetWorld())->RecordDestroyedAsteroid(this);
+            // go bye-bye
             ScheduleForDeletion(0.0f);
+        }
         else
             m_delete_upon_next_think = true;
 
@@ -132,7 +131,7 @@ void Asteroid::Die (
     // this will store the amount of mass (multiplied by the mineral
     // content) to use to spawn minerals
     Float converted_mass;
-            
+
     // if it's big enough, spawn some smaller asteroids, to simulate
     // this asteroid breaking up
     if (GetFirstMoment() > ms_minimum_breakup_mass)
@@ -147,7 +146,7 @@ void Asteroid::Die (
         // mass is exactly equal to the destroyed asteroid's mass.
         DStaticCast<World *>(GetWorld())->
             RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, GetFirstMoment());
-        
+
         for (Uint8 i = 0; i < ms_number_of_fragments_to_spawn; ++i)
         {
             Float velocity_angle = seed_angle;
@@ -163,7 +162,7 @@ void Asteroid::Die (
                 explosion_speed * Math::UnitVector(velocity_angle);
             Float scale_factor = Math::Sqrt(first_moment);
             FloatVector2 translation(
-                GetTranslation() + 
+                GetTranslation() +
                 1.7f * scale_factor * Math::UnitVector(velocity_angle));
 
             Float proportion_of_mineral_content_to_allocate;
@@ -227,7 +226,10 @@ void Asteroid::Die (
             mineral_mass_to_spawn -= mass;
         }
     }
-    
+
+    // let the world know this asteroid went bye-bye
+    DStaticCast<World *>(GetWorld())->RecordDestroyedAsteroid(this);
+    // go bye-bye
     ScheduleForDeletion(0.0f);
 }
 
@@ -252,7 +254,7 @@ Float Asteroid::GetProportionToConvertToMinerals () const
     static Float const s_M = Math::Sqrt(1.0f / 1.0f);
     static Float const s_slope = (s_N - s_M) / (s_n - s_m);
     static Float const s_offset = (s_M * s_n - s_N * s_m) / (s_n - s_m);
-    
+
     Float proportion_to_convert;
     if (GetFirstMoment() > s_n)
         proportion_to_convert = s_N;

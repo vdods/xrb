@@ -63,7 +63,7 @@ FloatVector2 Entity::GetAmbientVelocity (
         scan_area_radius,
         false,
         &area_trace_list);
-    
+
     // calculate the ambient velocity
     FloatVector2 total_momentum(FloatVector2::ms_zero);
     Float total_mass = 0.0f;
@@ -82,7 +82,7 @@ FloatVector2 Entity::GetAmbientVelocity (
         // if it matches the ignore object, skip it.
         else if (entity == ignore_me)
             continue;
-            
+
         total_momentum += entity->GetMomentum();
         total_mass += entity->GetFirstMoment();
     }
@@ -235,10 +235,6 @@ void Entity::HandleObjectLayerContainment (bool const component_x, bool const co
     }
 }
 
-void Entity::HandleScheduledDeletion (Float const time)
-{
-}
-
 Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
 {
     FloatVector2 adjusted_entity_translation(
@@ -249,14 +245,14 @@ Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time
     FloatVector2 p(GetTranslation() - adjusted_entity_translation);
     FloatVector2 v(GetVelocity() - entity->GetVelocity());
     Float R = GetRadius(Engine2::QTT_PHYSICS_HANDLER) + entity->GetRadius(Engine2::QTT_PHYSICS_HANDLER);
-    
+
     Polynomial poly;
     poly.Set(2, v | v);
     poly.Set(1, 2.0f * (p | v));
     poly.Set(0, (p | p) - R*R);
     Polynomial::SolutionSet solution_set;
     poly.Solve(&solution_set, 0.0001f);
-    
+
     Float T = -1.0f;
     for (Polynomial::SolutionSetIterator it = solution_set.begin(),
                                          it_end = solution_set.end();

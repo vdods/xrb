@@ -27,7 +27,7 @@ public:
     enum
     {
         D_NONE         = 0x00,
-        
+
         D_BALLISTIC    = 0x01,
         D_MINING_LASER = 0x02,
         D_COMBAT_LASER = 0x04,
@@ -38,7 +38,7 @@ public:
         D_GRINDING     = 0x80,
 
         D_ALL          = D_BALLISTIC|D_MINING_LASER|D_COMBAT_LASER|D_FIRE|D_EXPLOSION|D_EMP|D_COLLISION|D_GRINDING
-    }; // end of enum 
+    }; // end of enum
 
     Mortal (
         Float const current_health,
@@ -53,6 +53,7 @@ public:
 
         m_current_health = current_health;
         m_max_health = max_health;
+        m_is_invincible = false;
         m_damage_dissipation_rate = 0.0f;
         m_dissipated_damage_accumulator = 0.0f;
         m_time_last_damaged = -1.0f;
@@ -65,6 +66,7 @@ public:
     inline Float GetCurrentHealth () const { return m_current_health; }
     inline Float GetMaxHealth () const { return m_max_health; }
     inline bool GetIsDead () const { return m_current_health <= 0.0f; }
+    inline bool GetIsInvincible () const { return m_is_invincible; }
     inline Float GetDamageDissipationRate () const { return m_damage_dissipation_rate; }
     inline DamageType GetWeakness () const { return m_weakness; }
     inline DamageType GetStrength () const { return m_strength; }
@@ -88,7 +90,8 @@ public:
         return (damage_type & m_immunity) != 0;
     }
     virtual bool GetIsMortal () const { return true; }
-    
+
+    inline void SetIsInvincible (bool is_invincible) { m_is_invincible = is_invincible; }
     void SetDamageDissipationRate (Float damage_dissipation_rate);
     void SetWeakness (DamageType weakness);
     void SetStrength (DamageType strength);
@@ -101,7 +104,7 @@ public:
     void RemoveWeakness (DamageType weakness);
     void RemoveStrength (DamageType strength);
     void RemoveImmunity (DamageType immunity);
-  
+
     void Revive (Float time, Float frame_dt);
     void Kill (
         Entity *killer,
@@ -158,11 +161,12 @@ protected:
     {
         m_current_health = current_health;
     }
-    
+
 private:
 
     Float m_current_health;
     Float m_max_health;
+    bool m_is_invincible;
     Float m_damage_dissipation_rate;
     Float m_dissipated_damage_accumulator;
     Float m_time_last_damaged;
@@ -170,7 +174,7 @@ private:
     DamageType m_strength;
     DamageType m_immunity;
 }; // end of class Mortal
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_MORTAL_H_)

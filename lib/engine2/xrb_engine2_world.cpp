@@ -198,7 +198,7 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         Engine2::MatchEntity,
         entity);
-    
+
     // remove the entity from the physics handler
     ASSERT1(m_physics_handler != NULL)
     m_physics_handler->RemoveEntity(entity);
@@ -275,13 +275,26 @@ bool Engine2::World::ProcessEventOverride (Event const *const e)
                 DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
             ASSERT1(entity != NULL)
-            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
             ASSERT1(entity->GetIsInWorld() &&
                     "You shouldn't schedule removed entities "
                     "for deletion -- just delete them")
+            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
             RemoveDynamicObject(entity->GetOwnerObject());
-            entity->HandleScheduledDeletion(GetMostRecentFrameTime());
             delete entity->GetOwnerObject();
+            event_entity->NullifyEntity();
+            break;
+        }
+
+        case Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD:
+        {
+            EventEntity const *event_entity =
+                DStaticCast<EventEntity const *>(e);
+            Entity *entity = event_entity->GetEntity();
+            ASSERT1(entity != NULL)
+            ASSERT1(entity->GetIsInWorld() &&
+                    "You can only remove entities already in the world")
+            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
+            RemoveDynamicObject(entity->GetOwnerObject());
             event_entity->NullifyEntity();
             break;
         }

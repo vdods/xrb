@@ -21,6 +21,7 @@ disasteroids_SOURCES = \
     game/entities/dis_mortal.cpp \
     game/entities/dis_powerup.cpp \
     game/entities/dis_ship.cpp \
+    game/entities/ships/dis_demi.cpp \
     game/entities/ships/dis_devourment.cpp \
     game/entities/ships/dis_enemyship.cpp \
     game/entities/ships/dis_interloper.cpp \
@@ -41,7 +42,7 @@ disasteroids_SOURCES = \
     ui/dis_optionspanel.cpp \
     ui/dis_titlescreenwidget.cpp \
     ui/dis_worldview.cpp
-    
+
 noinst_HEADERS = \
     dis_enums.h \
     dis_events.h \
@@ -67,6 +68,7 @@ noinst_HEADERS = \
     game/entities/dis_mortal.h \
     game/entities/dis_powerup.h \
     game/entities/dis_ship.h \
+    game/entities/ships/dis_demi.h \
     game/entities/ships/dis_devourment.h \
     game/entities/ships/dis_enemyship.h \
     game/entities/ships/dis_interloper.h \
