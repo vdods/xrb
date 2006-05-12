@@ -18,28 +18,20 @@ using namespace Xrb;
 namespace Dis
 {
 
-/*
-state machine:
-
-PickWanderDirection
-    pick a direction/speed to wander in
-    goto Wander
-
-Wander
-    incrementally accelerate up to the wander direction/speed
-    scan area for targets
-    if (found a target)
-        goto MoveToAttackRange
-    else if (collision is imminent)
-        pick a direction/speed to avoid the collision
-        
-    // slowly change the wander direction        
-
-*/
-
 class Shade : public EnemyShip
 {
 public:
+
+    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
+    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
+    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
+    static Float const ms_alarm_distance[ENEMY_LEVEL_COUNT];
+    static Float const ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT];
+    static Float const ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT];
+    static Float const ms_move_relative_velocity[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     Shade (Uint8 enemy_level);
     virtual ~Shade ();
@@ -69,17 +61,6 @@ private:
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
     void AimWeapon (FloatVector2 const &target_position);
-    
-    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
-    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
-    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
-    static Float const ms_alarm_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_move_relative_velocity[ENEMY_LEVEL_COUNT];
-    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Shade::*ThinkState)(Float time, Float frame_dt);
 

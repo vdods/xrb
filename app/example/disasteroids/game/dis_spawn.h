@@ -35,6 +35,7 @@ namespace Dis
 class Asteroid;
 class Ballistic;
 class DamageExplosion;
+class Demi;
 class Devourment;
 // class EMPBomb;
 // class EMPBombLayer;
@@ -83,7 +84,7 @@ Asteroid *SpawnAsteroid (
     FloatVector2 const &velocity,
     Float mineral_content,
     bool is_a_secondary_asteroid);
-    
+
 Ballistic *SpawnSmartBallistic (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -95,7 +96,7 @@ Ballistic *SpawnSmartBallistic (
     Float time_to_live,
     Float time_at_birth,
     EntityReference<Entity> const &owner);
-    
+
 Ballistic *SpawnDumbBallistic (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -107,7 +108,7 @@ Ballistic *SpawnDumbBallistic (
     Float time_to_live,
     Float time_at_birth,
     EntityReference<Entity> const &owner);
-    
+
 Grenade *SpawnGrenade (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -121,7 +122,7 @@ Grenade *SpawnGrenade (
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
     Float health);
-    
+
 Mine *SpawnMine (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -135,7 +136,7 @@ Mine *SpawnMine (
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
     Float health);
-    
+
 Missile *SpawnMissile (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -151,7 +152,7 @@ Missile *SpawnMissile (
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
     Float health);
-    
+
 GuidedMissile *SpawnGuidedMissile (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -180,7 +181,7 @@ EMPBomb *SpawnEMPBomb (
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
     Float health);
-*/  
+*/
 Powerup *SpawnPowerup (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -189,7 +190,7 @@ Powerup *SpawnPowerup (
     Float first_moment,
     FloatVector2 const &velocity,
     Item *item);
-    
+
 Powerup *SpawnMineral (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -198,7 +199,7 @@ Powerup *SpawnMineral (
     Float first_moment,
     FloatVector2 const &velocity,
     Uint8 mineral_index);
-    
+
 DamageExplosion *SpawnDamageExplosion (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -210,7 +211,7 @@ DamageExplosion *SpawnDamageExplosion (
     Float time_to_live,
     Float time_at_birth,
     EntityReference<Entity> const &owner);
-    
+
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -219,7 +220,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     Float final_size,
     Float time_to_live,
     Float time_at_birth);
-    
+
 EMPExplosion *SpawnEMPExplosion (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -230,7 +231,7 @@ EMPExplosion *SpawnEMPExplosion (
     Float time_to_live,
     Float time_at_birth,
     EntityReference<Entity> const &owner);
-    
+
 Fireball *SpawnFireball (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -246,7 +247,7 @@ Fireball *SpawnFireball (
 LaserBeam *SpawnLaserBeam (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer);
-        
+
 GaussGunTrail *SpawnGaussGunTrail (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -259,8 +260,8 @@ GaussGunTrail *SpawnGaussGunTrail (
 
 TractorBeam *SpawnTractorBeam (
     Engine2::World *world,
-    Engine2::ObjectLayer *object_layer); 
-            
+    Engine2::ObjectLayer *object_layer);
+
 ShieldEffect *SpawnShieldEffect (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer);
@@ -280,41 +281,48 @@ HealthTrigger *SpawnHealthTrigger (
     Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner);
-    
+
 Solitary *SpawnSolitary (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity);
-    
+
 Interloper *SpawnInterloper (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
-    
+
 Shade *SpawnShade (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
-    
+
 Revulsion *SpawnRevulsion (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
-    
+
 Devourment *SpawnDevourment (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
-    
+
+Demi *SpawnDemi (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    Uint8 enemy_level);
+
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
@@ -326,7 +334,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner,
     Uint8 enemy_level);
-    
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_SPAWN_H_)

@@ -29,7 +29,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1250.0f, 1500.0f, 2000.0f };
+Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1500.0f, 2250.0f, 3375.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
 Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
@@ -170,6 +170,7 @@ void Devourment::Collide (
     ASSERT1(collider != NULL)
     if (collider->GetIsMortal() &&
         collider->GetEntityType() != ET_DEVOURMENT &&
+        collider->GetEntityType() != ET_DEMI &&
         m_think_state == THINK_STATE(PickWanderDirection))
     {
         m_target = collider->GetReference();
@@ -418,9 +419,12 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
         if (entity == this)
             continue;
 
-        // don't seek other Devourments
-        if (entity->GetEntityType() == ET_DEVOURMENT)
+        // don't seek other Devourments or Demis
+        if (entity->GetEntityType() == ET_DEVOURMENT ||
+            entity->GetEntityType() == ET_DEMI)
+        {
             continue;
+        }
 
         // we're only interested in Mortals
         if (dynamic_cast<Mortal *>(entity) != NULL)

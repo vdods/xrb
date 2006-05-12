@@ -45,7 +45,7 @@ void Explosive::Collide (
     if (collider->GetCollisionType() == CT_SOLID_COLLISION && !GetIsDead())
         if (!GetHasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
-        
+
     // call the superclass collide
     Mortal::Collide(
         collider,
@@ -77,7 +77,7 @@ void Explosive::Die (
             GetScaleFactor(),
             1.0f,
             time);
-    
+
         // delete this object
         ScheduleForDeletion(0.0f);
     }
@@ -133,7 +133,7 @@ void Grenade::Die (
     // grenade has been destroyed
     if (m_owner_grenade_launcher != NULL)
         m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
-        
+
     Explosive::Die(
         killer,
         kill_medium,
@@ -142,7 +142,7 @@ void Grenade::Die (
         kill_force,
         kill_type,
         time,
-        frame_dt);    
+        frame_dt);
 }
 
 bool Grenade::CheckIfItShouldDetonate (
@@ -163,7 +163,7 @@ void Grenade::Detonate (
     Float const frame_dt)
 {
     ASSERT1(!GetHasDetonated())
-    
+
     // can't detonate if we're already dead
     if (GetIsDead())
         return;
@@ -211,7 +211,7 @@ void Mine::Think (
     // if we're dead, don't bother thinking
     if (GetIsDead())
         return;
-    
+
     // level 0 : no seeking, dumb triggering, no ambient velocity matching (2 mines)
     // level 1 : no seeking, dumb triggering, uses ambient velocity matching (3 mines)
     // level 2 : dumb seeking, smart triggering, uses ambient velocity matching (4 mines)
@@ -237,7 +237,7 @@ void Mine::Die (
     // mine has been destroyed
     if (m_owner_mine_layer != NULL)
         m_owner_mine_layer->ActiveMineDestroyed(this);
-        
+
     Explosive::Die(
         killer,
         kill_medium,
@@ -246,7 +246,7 @@ void Mine::Die (
         kill_force,
         kill_type,
         time,
-        frame_dt);    
+        frame_dt);
 }
 
 bool Mine::CheckIfItShouldDetonate (
@@ -348,7 +348,7 @@ void Mine::Level0MoveTowardsSeekCoordinates (Float const time, Float const frame
         (this->*m_think_state)(time, frame_dt);
         return;
     }
-    
+
     // TODO: the fancy intercept course shit later
 
     // adjust the seek coordinates for space wrapping
@@ -407,7 +407,7 @@ void Missile::Think (
             GetPhysicalRadius(),
             false,
             &line_trace_binding_set);
-    
+
         FloatVector2 collision_normal(trace_vector.GetNormalization());
         for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
                                          it_end = line_trace_binding_set.end();
@@ -498,13 +498,13 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
     }
 
     // do a line trace in front of the missile to find a target
-    if (GetSpeed() >= 0.01f)
+    if (GetVelocity().GetLengthSquared() >= 0.001f)
     {
         m_next_search_time = time + 0.25f;
 
         static Float const s_search_distance = 400.0f;
         static Float const s_search_radius = 70.0f;
-        
+
         LineTraceBindingSet line_trace_binding_set;
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
@@ -513,7 +513,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
             s_search_radius,
             false,
             &line_trace_binding_set);
-    
+
         for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
                                          it_end = line_trace_binding_set.end();
              it != it_end;
@@ -587,7 +587,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
 void GuidedMissile::AimAt (FloatVector2 const &position)
 {
     FloatVector2 delta(position - GetTranslation());
-    if (delta.GetLength() >= 0.01f)
+    if (delta.GetLengthSquared() >= 0.001f)
         SetAngle(Math::Atan(delta));
 }
 
@@ -629,7 +629,7 @@ void EMPBomb::Die (
     // emp_bomb has been destroyed
     if (m_owner_emp_bomb_launcher != NULL)
         m_owner_emp_bomb_launcher->ActiveEMPBombDestroyed(this);
-        
+
     Explosive::Die(
         killer,
         kill_medium,
@@ -638,7 +638,7 @@ void EMPBomb::Die (
         kill_force,
         kill_type,
         time,
-        frame_dt);    
+        frame_dt);
 }
 
 bool EMPBomb::CheckIfItShouldDetonate (
@@ -679,7 +679,7 @@ void EMPBomb::Detonate (
         // emp_bomb has been destroyed
         if (m_owner_emp_bomb_launcher != NULL)
             m_owner_emp_bomb_launcher->ActiveEMPBombDestroyed(this);
-                
+
         Explosive::Detonate(time, frame_dt);
     }
 }

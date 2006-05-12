@@ -43,7 +43,6 @@ actions:
                       at the player)
     missile launcher: intermittent barrages of guided missiles (which seek
                       only the player, not enemy ships)
-    EMP bomb layer: occasionally shoot out an EMB bomb and detonate it
     tractor: when there are missiles/grenades/ballistics in front, they
              are deflected away with the tractor
     tractor: when player is close enough, tractor some nearby asteroids into
@@ -51,37 +50,54 @@ actions:
     tractor: tractor the player closer so we can throw some flames on it
     tractor: tractor the player towards a Devourment
     enemy spawner: intermittent barrages of certain types of enemies
+    ---maybe---
+    EMP bomb layer: occasionally shoot out an EMB bomb and detonate it
     mine layer: occasionally lay a mine
 
 ------------------------------------------------------------------------------
 
 state machine:
 
-PickWanderDirection
-Wander -- no collision avoidance -- Demis don't care about pittling asteroids
+PickWanderDirection -> Wander
+Wander - no collision avoidance -> Stalk
 
-
+Stalk - has a target.  moving around for a better position
 
 GaussGunPause -> GaussGunAim
 GaussGunAim -> GaussGunFire
-GaussGunFire ->
+GaussGunFire -> Stalk
 
-FlameThrowStart
-FlameThrowContinue
+FlameThrowStart -> FlameThrowContinue
+FlameThrowContinue -> Stalk
 
-MissileLaunchStart
-MissileLaunchContinue
+MissileLaunchStart -> MissileLaunchContinue
+MissileLaunchContinue -> Stalk
 
-GuidedMissileLaunchStart
-GuidedMissileLaunchContinue
-
-
+GuidedMissileLaunchStart -> GuidedMissileLaunchContinue
+GuidedMissileLaunchContinue -> Stalk
 
 */
+
+class FlameThrower;
+class GaussGun;
+class MissileLauncher;
+class ReticleEffect;
+class Tractor;
 
 class Demi : public EnemyShip
 {
 public:
+
+    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
+    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
+    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
+    static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
+    static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
+    static Float const ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT];
+    static Float const ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT];
 
     Demi (Uint8 enemy_level);
     virtual ~Demi ();
@@ -92,6 +108,8 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
+//     virtual FloatVector2 GetMuzzleLocation (Weapon const *weapon) const;
+//     virtual FloatVector2 GetMuzzleDirection (Weapon const *weapon) const;
     virtual Float GetShipScaleFactor () const
     {
         return ms_scale_factor[GetEnemyLevel()];
@@ -105,23 +123,11 @@ private:
 
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
-    void Stalk (Float time, Float frame_dt);
-    void MoveToAttackRange (Float time, Float frame_dt);
-    void Teleport (Float time, Float frame_dt);
+    void GaussGunStartAim (Float time, Float frame_dt);
+    void GaussGunContinueAim (Float time, Float frame_dt);
+    void GaussGunFire (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
-    void AimWeapon (FloatVector2 const &target_position);
-
-    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
-    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
-    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
-    static Float const ms_alarm_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT];
-    static Float const ms_move_relative_velocity[ENEMY_LEVEL_COUNT];
-    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Demi::*ThinkState)(Float time, Float frame_dt);
 
@@ -130,7 +136,17 @@ private:
     Float m_wander_angle;
     Float m_wander_angle_low_pass;
     EntityReference<Ship> m_target;
-    Weapon *m_weapon;
+    Float m_attack_start_time;
+
+    // currently equipped (main) weapon -- TODO: i don't really like
+    // this main weapon stuff.  the think states should handle firing of the weapons
+    // instead of Think().
+    Weapon *m_main_weapon;
+    // choices for main weapon (gauss gun, flame thrower, missile launcher)
+    GaussGun *m_gauss_gun;
+    EntityReference<ReticleEffect> m_reticle_effect;
+    FlameThrower *m_flame_thrower;
+    MissileLauncher *m_missile_launcher;
 }; // end of class Demi
 
 } // end of namespace Dis

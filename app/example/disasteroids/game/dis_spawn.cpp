@@ -12,6 +12,7 @@
 
 #include "dis_asteroid.h"
 #include "dis_ballistic.h"
+#include "dis_demi.h"
 #include "dis_devourment.h"
 #include "dis_effect.h"
 #include "dis_explosive.h"
@@ -79,7 +80,7 @@ Asteroid *SpawnAsteroid (
     Float const mineral_content,
     bool const is_a_secondary_asteroid)
 {
-    Asteroid *asteroid = 
+    Asteroid *asteroid =
         new Asteroid(
             first_moment,
             mineral_content,
@@ -118,7 +119,7 @@ Ballistic *SpawnSmartBallistic (
             time_at_birth,
             owner,
             true);
-    Engine2::Sprite *sprite = 
+    Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             world,
             object_layer,
@@ -558,7 +559,7 @@ LaserBeam *SpawnLaserBeam (
 
     sprite->SetEntity(laser_beam);
     world->AddDynamicObject(sprite, object_layer);
-    
+
     return laser_beam;
 }
 
@@ -583,7 +584,7 @@ GaussGunTrail *SpawnGaussGunTrail (
     sprite->SetTranslation(trail_center);
     sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
     sprite->SetAngle(Math::Atan(trail_vector));
-    
+
     GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);
     gauss_gun_trail->SetVelocity(trail_velocity);
 
@@ -610,7 +611,7 @@ TractorBeam *SpawnTractorBeam (
 
     sprite->SetEntity(tractor_beam);
     world->AddDynamicObject(sprite, object_layer);
-    
+
     return tractor_beam;
 }
 
@@ -634,7 +635,7 @@ ShieldEffect *SpawnShieldEffect (
 
     sprite->SetEntity(shield_effect);
     world->AddDynamicObject(sprite, object_layer);
-    
+
     return shield_effect;
 }
 
@@ -658,7 +659,7 @@ ReticleEffect *SpawnReticleEffect (
 
     sprite->SetEntity(reticle_effect);
     world->AddDynamicObject(sprite, object_layer);
-    
+
     return reticle_effect;
 }
 
@@ -808,6 +809,29 @@ Devourment *SpawnDevourment (
         0.0f,
         0.05f);
     return devourment;
+}
+
+Demi *SpawnDemi (
+    Engine2::World *const world,
+    Engine2::ObjectLayer *const object_layer,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    Uint8 const enemy_level)
+{
+    Demi *demi = new Demi(enemy_level);
+    SpawnDynamicSprite(
+        world,
+        object_layer,
+        Ship::GetShipSpriteFilename(ET_DEMI, enemy_level),
+        demi,
+        translation,
+        1.0f, // arbitrary, the ship will set its own scale factor
+        Math::RandomAngle(),
+        1.0f, // arbitrary, the ship will set its own first moment
+        velocity,
+        0.0f,
+        0.05f);
+    return demi;
 }
 
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (

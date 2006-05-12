@@ -88,7 +88,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
         SetAngle(Math::Atan(GetVelocity()));
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
-    if (thrust_direction.GetLength() < 0.01f)
+    if (thrust_direction.GetLengthSquared() < 0.001f)
         thrust_direction = Math::UnitVector(GetAngle());
     else
         thrust_direction.Normalize();
@@ -111,17 +111,17 @@ void Interloper::Collide (
     ASSERT1(collider != NULL)
 
     // TODO: add the extra damage "weapon" for the front of the ship
-    
+
     if (m_target.GetIsValid() && collider->GetEntityType() == ET_SOLITARY)
     {
         // if the enemy level is ___, do extra damage and spawn effects
 
-    
+
         m_time_at_retreat_start = time;
         m_think_state = THINK_STATE(Retreat);
         // make sure to save the target, because we'll charge at it again.
     }
-    
+
     Mortal::Collide(
         collider,
         collision_location,
@@ -147,10 +147,10 @@ void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 void Interloper::Wander (Float const time, Float const frame_dt)
 {
     ASSERT1(!m_closest_flock_member.GetIsValid())
-    
+
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
-    
+
     // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
@@ -210,7 +210,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(Flock);
         return;
     }
-    
+
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
@@ -224,7 +224,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
             m_wander_angle = Math::Atan(-perpendicular_velocity);
         m_next_wander_time = time + 6.0f;
     }
-    
+
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
@@ -243,7 +243,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         m_wander_angle_low_pass += wander_angle_low_pass_delta;
 
     m_wander_angle += m_wander_angle_derivative * frame_dt;
-    
+
     if (time >= m_next_wander_time)
     {
         m_wander_angle_derivative = Math::RandomFloat(-30.0f, 30.0f);
@@ -311,7 +311,7 @@ void Interloper::Flock (Float time, Float frame_dt)
             // add flock leader weight to the Interloper we're following
             // and remove flock leader weight from ourselves.
             Interloper *interloper = DStaticCast<Interloper *>(entity);
-        
+
             FloatVector2 interloper_position(
                 GetObjectLayer()->GetAdjustedCoordinates(
                     interloper->GetTranslation(),
@@ -324,7 +324,7 @@ void Interloper::Flock (Float time, Float frame_dt)
                 closest_flock_member = interloper;
                 closest_flock_member_distance = interloper_distance;
             }
-            
+
             flock_center_of_gravity += interloper->GetFirstMoment() * interloper_position;
             flock_mass += interloper->GetFirstMoment();
             ++flock_member_count;
@@ -389,7 +389,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     // level 1 plots a near-intercept course with the target, not accounting for acceleration.
     // level 2 plots an intercept course with the the target, not accounting for acceleration.
     // level 3 plots a direct intercept course with the target, accounting for acceleration.
-    else 
+    else
     {
         Float interceptor_acceleration =
             ms_engine_thrust[GetEnemyLevel()] / GetFirstMoment();
@@ -406,12 +406,12 @@ void Interloper::Charge (Float const time, Float const frame_dt)
             v = m_target->GetVelocity() - GetVelocity();
             a = FloatVector2::ms_zero;
         }
-        else 
+        else
         {
             v = m_target->GetVelocity() - GetVelocity();
             a = m_target->GetForce() / m_target->GetFirstMoment();
         }
-        
+
         Polynomial poly;
         poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
         poly.Set(3, 4.0f * (a | v));
@@ -434,7 +434,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
                 break;
             }
         }
-        
+
         if (T <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
@@ -452,7 +452,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
 void Interloper::Retreat (Float const time, Float const frame_dt)
 {
     ASSERT1(!m_closest_flock_member.GetIsValid())
-    
+
     static Float const s_retreat_time = 1.0f;
 
     if (!m_target.GetIsValid() || m_target->GetIsDead())
@@ -479,7 +479,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 {
     // this is the fake force-accumulating thrust code
 
-    // calculate what thrust is required to match the desired velocity 
+    // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;

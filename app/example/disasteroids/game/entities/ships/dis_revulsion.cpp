@@ -10,6 +10,7 @@
 
 #include "dis_revulsion.h"
 
+#include "dis_effect.h"
 #include "dis_physicshandler.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
@@ -413,7 +414,6 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
             m_target->GetTranslation(),
             GetTranslation()));
 
-    // TODO: set weapon firing input and inaccurate aiming
     SetReticleCoordinates(target_position + m_aim_delta);
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 
@@ -456,7 +456,7 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (thrust_vector.GetLength() > 0.01f)
+    if (thrust_vector.GetLengthSquared() > 0.001f)
     {
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > ms_engine_thrust[GetEnemyLevel()])

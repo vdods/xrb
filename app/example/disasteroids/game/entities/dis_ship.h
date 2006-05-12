@@ -32,10 +32,11 @@ public:
     virtual ~Ship ();
 
     static std::string const &GetShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
+    static Float GetShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
 
     virtual bool GetIsShip () const { return true; }
     bool GetIsDisabled () const { return m_disable_time > 0.0f; }
-    
+
     inline void SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
         ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
@@ -68,7 +69,7 @@ public:
     }
 
     virtual void HandleNewOwnerObject ();
-    
+
     virtual void Think (Float time, Float frame_dt);
     virtual void Die (
         Entity *killer,
@@ -100,7 +101,7 @@ public:
     virtual bool TakePowerup (Powerup *powerup) = 0;
 
 protected:
-    
+
     inline FloatVector2 const &GetReticleCoordinates () const
     {
         return m_reticle_coordinates;
@@ -128,9 +129,10 @@ protected:
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
-    void AimShipAtReticleCoordinates ();
+    inline void AimShipAtReticleCoordinates () { AimShipAtCoordinates(m_reticle_coordinates); }
+    void AimShipAtCoordinates (FloatVector2 const &coordinates);
     virtual void ResetInputs ();
-        
+
 private:
 
     Float m_disable_time;
@@ -141,7 +143,7 @@ private:
     Uint8 m_weapon_primary_input;
     Uint8 m_weapon_secondary_input;
 }; // end of class Ship
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_SHIP_H_)

@@ -11,14 +11,21 @@
 #include "dis_ship.h"
 
 #include "dis_armor.h"
+#include "dis_demi.h"
+#include "dis_devourment.h"
 #include "dis_effect.h"
 #include "dis_enemyship.h"
 #include "dis_engine.h"
+#include "dis_interloper.h"
 #include "dis_powergenerator.h"
+#include "dis_revulsion.h"
+#include "dis_shade.h"
 #include "dis_shield.h"
+#include "dis_solitary.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
 #include "dis_world.h"
+#include "xrb_engine2_objectlayer.h"
 
 using namespace Xrb;
 
@@ -75,6 +82,12 @@ std::string const &Ship::GetShipSpriteFilename (
             "resources/devourment1_small.png",
             "resources/devourment2_small.png",
             "resources/devourment3_small.png"
+        },
+        {   // ET_DEMI
+            "resources/demi0_small.png",
+            "resources/demi1_small.png",
+            "resources/demi2_small.png",
+            "resources/demi3_small.png"
         }
     };
 
@@ -82,6 +95,21 @@ std::string const &Ship::GetShipSpriteFilename (
     ASSERT1(ship_index < ET_SHIP_COUNT)
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
     return s_ship_sprite_filename[ship_index][enemy_level];
+}
+
+Float Ship::GetShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)
+{
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    switch (ship_type)
+    {
+        case ET_SOLITARY:   return Solitary::ms_scale_factor;
+        case ET_INTERLOPER: return Interloper::ms_scale_factor[enemy_level];
+        case ET_SHADE:      return Shade::ms_scale_factor[enemy_level];
+        case ET_REVULSION:  return Revulsion::ms_scale_factor[enemy_level];
+        case ET_DEVOURMENT: return Devourment::ms_scale_factor[enemy_level];
+        case ET_DEMI:       return Demi::ms_scale_factor[enemy_level];
+        default: ASSERT1(false && "Invalid enemy ship type") return 1.0f;
+    }
 }
 
 void Ship::HandleNewOwnerObject ()
@@ -118,10 +146,14 @@ void Ship::Die (
     ScheduleForDeletion(0.0f);
 }
 
-void Ship::AimShipAtReticleCoordinates ()
+void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates)
 {
-    // set the ship's angle based on where it's aiming at
-    FloatVector2 aim_direction(m_reticle_coordinates - GetTranslation());
+    FloatVector2 aim_direction(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            coordinates,
+            GetTranslation())
+        -
+        GetTranslation());
     if (!aim_direction.GetIsZero())
         SetAngle(Math::Atan(aim_direction));
 }

@@ -22,6 +22,13 @@ class Interloper : public EnemyShip
 {
 public:
 
+    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
+    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
+    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
+
     Interloper (Uint8 enemy_level);
     virtual ~Interloper ();
 
@@ -46,7 +53,7 @@ public:
     {
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
-        
+
 private:
 
     inline bool GetIsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
@@ -59,13 +66,6 @@ private:
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
     void AddFlockLeaderWeight (Float weight);
-
-    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
-    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
-    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
-    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Interloper::*ThinkState)(Float time, Float frame_dt);
 

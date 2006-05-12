@@ -22,6 +22,9 @@ class Solitary : public PlayerShip
 {
 public:
 
+    static Float const ms_scale_factor;
+    static Float const ms_baseline_first_moment;
+
     Solitary () : PlayerShip(100.0f, ET_SOLITARY) { }
     virtual ~Solitary () { }
 
@@ -34,21 +37,21 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-                
+
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
     virtual Float GetShipScaleFactor () const
     {
-        return 11.0f;
+        return ms_scale_factor;
     }
     virtual Float GetShipBaselineFirstMoment () const
     {
-        return 100.0f;
+        return ms_baseline_first_moment;
     }
 }; // end of class Solitary
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_SOLITARY_H_)

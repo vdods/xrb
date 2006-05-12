@@ -23,6 +23,9 @@ using namespace Xrb;
 namespace Dis
 {
 
+Float const Solitary::ms_scale_factor = 11.0f;
+Float const Solitary::ms_baseline_first_moment = 100.0f;
+
 void Solitary::Die (
     Entity *const killer,
     Entity *const kill_medium,

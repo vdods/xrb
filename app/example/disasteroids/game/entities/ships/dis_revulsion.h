@@ -13,18 +13,31 @@
 
 #include "dis_enemyship.h"
 
-#include "dis_effect.h"
-
 using namespace Xrb;
 
 namespace Dis
 {
 
 class GaussGun;
+class ReticleEffect;
 
 class Revulsion : public EnemyShip
 {
 public:
+
+    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
+    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
+    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
+    static Float const ms_weapon_impact_damage[ENEMY_LEVEL_COUNT];
+    static Float const ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT];
+    static Float const ms_target_aim_angle_trail_limit[ENEMY_LEVEL_COUNT];
+    static Float const ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUNT];
+    static Float const ms_aim_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_aim_error_radius[ENEMY_LEVEL_COUNT];
+    static Float const ms_flee_speed[ENEMY_LEVEL_COUNT];
+    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     Revulsion (Uint8 enemy_level);
     virtual ~Revulsion ();
@@ -69,22 +82,8 @@ private:
         FloatVector2 target_delta(GetTranslation() - target_position);
         return Math::Atan(target_delta) - Math::GetCanonicalAngle(m_target->GetAngle());
     }
-    
+
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
-    
-    static Float const ms_max_health[ENEMY_LEVEL_COUNT];
-    static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
-    static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
-    static Float const ms_weapon_impact_damage[ENEMY_LEVEL_COUNT];
-    static Float const ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT];
-    static Float const ms_target_aim_angle_trail_limit[ENEMY_LEVEL_COUNT];
-    static Float const ms_preferred_location_distance_tolerance[ENEMY_LEVEL_COUNT];
-    static Float const ms_aim_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_aim_error_radius[ENEMY_LEVEL_COUNT];
-    static Float const ms_flee_speed[ENEMY_LEVEL_COUNT];
-    static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
 
     typedef void (Revulsion::*ThinkState)(Float time, Float frame_dt);
 
