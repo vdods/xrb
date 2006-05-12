@@ -40,6 +40,7 @@ Engine2::World::~World ()
             delete entity->GetOwnerObject();
         }
     }
+    ASSERT1(m_entity_count == 0)
 
     // all entities have been removed, we can now delete the physics handler
     delete m_physics_handler;
@@ -165,6 +166,9 @@ void Engine2::World::AddDynamicObject (
     entity->SetWorldIndex(static_cast<EntityWorldIndex>(m_lowest_available_entity_index));
     // increment the lowest entnum
     IncrementLowestAvailableEntityIndex();
+    // increment the entity count
+    ASSERT1(m_entity_count < UINT32_UPPER_BOUND)
+    ++m_entity_count;
 
     // add the entity to the physics handler (must be done after adding
     // it to the object layer)
@@ -193,6 +197,9 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
         m_lowest_available_entity_index = entity_index;
     // set the entnum to the sentinel 'not in array' number
     entity->ResetWorldIndex();
+    // decrement the entity count
+    ASSERT1(m_entity_count > 0)
+    --m_entity_count;
 
     // schedule the entity's events to be deleted.
     GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
@@ -223,6 +230,7 @@ Engine2::World::World (
     m_entity_vector.resize(Min(entity_capacity, static_cast<EntityWorldIndex>(MAXIMUM_ENTITY_CAPACITY)));
     std::fill(m_entity_vector.begin(), m_entity_vector.end(), static_cast<Entity *>(NULL));
     m_lowest_available_entity_index = 0;
+    m_entity_count = 0;
 }
 
 Uint32 Engine2::World::GetMainObjectLayerIndex () const

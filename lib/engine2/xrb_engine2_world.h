@@ -76,6 +76,7 @@ public:
     void Write (Serializer &serializer) const;
 
     inline Uint32 GetEntityCapacity () const { return m_entity_vector.capacity(); }
+    inline Uint32 GetEntityCount () const { return m_entity_count; }
     inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
     virtual ObjectLayer const *GetMainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *GetMainObjectLayer () { return m_main_object_layer; }
@@ -171,6 +172,8 @@ private:
     EntityVector m_entity_vector;
     // lowest available entity number
     EntityWorldIndex m_lowest_available_entity_index;
+    // number of entities in this World
+    Uint32 m_entity_count;
     // the world's own private event queue
     EventQueue m_owner_event_queue;
 }; // end of class Engine2::World

@@ -56,7 +56,7 @@ Master::Master (Screen *const screen)
 
     m_title_screen_widget = NULL;
     m_show_high_scores_immediately = false;
-    
+
     m_game_widget = NULL;
     m_game_world = NULL;
 }
@@ -86,7 +86,7 @@ void Master::Run ()
 //     ActivateGame();
 
     // TODO: initialization so that Run() could be called several times in a row
-    
+
     m_real_time = 0.0f;
     Float previous_real_time = 0.0f;
     Float next_real_time = 0.0f;
@@ -101,7 +101,7 @@ void Master::Run ()
 
         // process the Master event queue
         m_master_event_queue.ProcessFrame(m_real_time);
-        
+
         // only run the world if it's active.
         if (m_game_world != NULL)
         {
@@ -114,12 +114,12 @@ void Master::Run ()
         }
 
         previous_real_time = m_real_time;
-        
+
         // framerate calculation
         m_framerate_calculator.AddFrameTime(m_real_time);
         if (m_game_widget != NULL)
             m_game_widget->SetFramerate(m_framerate_calculator.GetFramerate());
-        
+
         // process SDL events
         SDL_Event sdl_event;
         while (SDL_PollEvent(&sdl_event))
@@ -151,7 +151,7 @@ void Master::Run ()
         Uint32 world_frame_time = 0;
         Uint32 gui_frame_time = 0;
         Uint32 render_frame_time = 0;
-        
+
         // world frame
         if (m_game_world != NULL)
         {
@@ -159,7 +159,7 @@ void Master::Run ()
             m_game_world->ProcessFrame(m_game_time);
             world_frame_time = SDL_GetTicks() - world_frame_start_time;
         }
-        
+
         // gui frame
         {
             Uint32 gui_frame_start_time = SDL_GetTicks();
@@ -171,7 +171,7 @@ void Master::Run ()
             m_gui_event_queue->ProcessFrame(m_real_time);
             gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
         }
-        
+
         // rendering
         {
             Uint32 render_frame_start_time = SDL_GetTicks();
@@ -185,6 +185,7 @@ void Master::Run ()
             m_game_widget->SetWorldFrameTime(world_frame_time);
             m_game_widget->SetGUIFrameTime(gui_frame_time);
             m_game_widget->SetRenderFrameTime(render_frame_time);
+            m_game_widget->SetEntityCount(m_game_world->GetEntityCount());
         }
     }
 
@@ -206,7 +207,7 @@ bool Master::ProcessEventOverride (Event const *const e)
         case EventBase::ACTIVATE_GAME:           ActivateGame();             return true;
         case EventBase::DEACTIVATE_GAME:         DeactivateGame();           return true;
         case EventBase::QUIT_REQUESTED:          m_is_quit_requested = true; return true;
-        
+
         default: ASSERT1(false && "This event shouldn't be used here")
     }
 
@@ -265,7 +266,7 @@ void Master::StartGame ()
 void Master::QuitGame ()
 {
     // this can happen either at the title screen or during the game
-    
+
     if (m_game_widget != NULL)
     {
         ASSERT1(m_game_world != NULL)
@@ -278,7 +279,7 @@ void Master::QuitGame ()
         ASSERT1(m_title_screen_widget != NULL)
         EnqueueEvent(new EventBase(EventBase::DEACTIVATE_TITLE_SCREEN, m_real_time));
     }
-        
+
     EnqueueEvent(new EventBase(EventBase::QUIT_REQUESTED, m_real_time));
 }
 
@@ -287,7 +288,7 @@ void Master::EndGame ()
     ASSERT1(m_title_screen_widget == NULL)
     ASSERT1(m_game_widget != NULL)
     ASSERT1(m_game_world != NULL)
-    
+
     EnqueueEvent(new EventBase(EventBase::DEACTIVATE_GAME, m_real_time));
     EnqueueEvent(new EventBase(EventBase::ACTIVATE_TITLE_SCREEN, m_real_time));
 }
@@ -305,7 +306,7 @@ void Master::ActivateTitleScreen ()
     m_screen->SetMainWidget(m_title_screen_widget);
 
     m_show_high_scores_immediately = false;
-    
+
     // hook up the necessary signals
     SignalHandler::Connect0(
         m_title_screen_widget->SenderStartGame(),
@@ -346,7 +347,7 @@ void Master::ActivateGame ()
     SignalHandler::Connect0(
         m_game_world->SenderEndGame(),
         &m_internal_receiver_end_game);
-    
+
     SignalHandler::Connect0(
         m_game_widget->SenderQuitGame(),
         &m_internal_receiver_quit_game);

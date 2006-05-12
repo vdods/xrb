@@ -93,7 +93,7 @@ GameWidget::GameWidget (
     SignalHandler::Connect0(
         m_inventory_panel->SenderEndGame(),
         m_world_view->ReceiverEndGame());
-        
+
     // create the layout for the HUD
     Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
     main_layout->SetIsUsingZeroedFrameMargins(true);
@@ -103,7 +103,7 @@ GameWidget::GameWidget (
     {
         m_debug_info_layout = new Layout(HORIZONTAL, main_layout, "debugging info layout");
         m_debug_info_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
-        
+
         m_world_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (world frame)",
@@ -112,7 +112,7 @@ GameWidget::GameWidget (
                 "world frame time label");
         m_world_frame_time_label->SetIsHeightFixedToTextHeight(true);
         m_world_frame_time_label->SetAlignment(Dim::X, RIGHT);
-        
+
         m_gui_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (gui processing)",
@@ -121,7 +121,7 @@ GameWidget::GameWidget (
                 "gui frame time label");
         m_gui_frame_time_label->SetIsHeightFixedToTextHeight(true);
         m_gui_frame_time_label->SetAlignment(Dim::X, RIGHT);
-        
+
         m_render_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (render)",
@@ -130,7 +130,16 @@ GameWidget::GameWidget (
                 "render frame time label");
         m_render_frame_time_label->SetIsHeightFixedToTextHeight(true);
         m_render_frame_time_label->SetAlignment(Dim::X, RIGHT);
-        
+
+        m_entity_count_label =
+            new ValueLabel<Uint32>(
+                "%u entities",
+                Util::TextToUint32,
+                m_debug_info_layout,
+                "entity count label");
+        m_entity_count_label->SetIsHeightFixedToTextHeight(true);
+        m_entity_count_label->SetAlignment(Dim::X, RIGHT);
+
         m_framerate_label =
             new ValueLabel<Float>(
                 "%.1f fps",
@@ -141,7 +150,7 @@ GameWidget::GameWidget (
         m_framerate_label->SetAlignment(Dim::X, RIGHT);
 
         // start hidden
-        m_debug_info_layout->Hide();    
+        m_debug_info_layout->Hide();
         // connect the debug info enabled signal
         SignalHandler::Connect1(
             m_world_view->SenderIsDebugModeEnabledChanged(),
@@ -155,7 +164,7 @@ GameWidget::GameWidget (
         m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
         // start with this layout hidden, because the WorldView will show it later
         m_stats_and_inventory_layout->Hide();
-        
+
         m_time_alive_label = new Label("", m_stats_and_inventory_layout, "time-alive label");
         m_time_alive_label->SetIsHeightFixedToTextHeight(true);
         m_time_alive_label->SetAlignment(Dim::X, LEFT);
@@ -174,7 +183,7 @@ GameWidget::GameWidget (
                     m_stats_and_inventory_layout);
             m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
             m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
-    
+
             Label *lives_remaining_icon_label =
                 new Label(
                     Singletons::ResourceLibrary()->
@@ -185,7 +194,7 @@ GameWidget::GameWidget (
             lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
             lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());
         }
-        
+
         for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
         {
             m_mineral_inventory_label[mineral_index] =
@@ -195,7 +204,7 @@ GameWidget::GameWidget (
                     m_stats_and_inventory_layout);
             m_mineral_inventory_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
             m_mineral_inventory_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
-            
+
             Label *mineral_icon_label =
                 new Label(
                     Singletons::ResourceLibrary()->
@@ -217,7 +226,7 @@ GameWidget::GameWidget (
 
         m_stoke_o_meter = new ProgressBar(ProgressBar::GO_LEFT, widget_stack, "stoke-o-meter");
         m_stoke_o_meter->SetColor(Color(1.0f, 1.0f, 1.0f, 0.3f));
-                
+
         m_score_label =
             new ValueLabel<Uint32>(
                 "%u",
@@ -240,9 +249,9 @@ GameWidget::GameWidget (
         m_ship_status_layout->Hide();
 
         // contains the armor and shield status bars, and keeps the
-        // shield status bar on top of the armor status bar        
+        // shield status bar on top of the armor status bar
         WidgetStack *armor_and_shield_stack = new WidgetStack(m_ship_status_layout);
-        
+
         m_armor_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
@@ -250,7 +259,7 @@ GameWidget::GameWidget (
                 "armor status");
         m_armor_status->FixHeight(m_score_label->GetHeight()/2);
         m_armor_status->SetColor(Color(0.5f, 1.0f, 0.5f, 0.5f));
-        
+
         m_shield_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
@@ -258,7 +267,7 @@ GameWidget::GameWidget (
                 "shield status");
         m_shield_status->FixHeight(m_score_label->GetHeight()/2);
         m_shield_status->SetColor(Color(0.5f, 0.5f, 1.0f, 0.5f));
-        
+
         m_power_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
@@ -266,12 +275,12 @@ GameWidget::GameWidget (
                 "power status");
         m_power_status->FixHeight(m_score_label->GetHeight()/2);
         m_power_status->SetColor(Color(1.0f, 1.0f, 0.5f, 0.5f));
-        
+
         m_weapon_status =
             new ProgressBar(
                 ProgressBar::GO_RIGHT,
                 m_ship_status_layout,
-                "weapon status");    
+                "weapon status");
         m_weapon_status->FixHeight(m_score_label->GetHeight()/2);
         m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
     }
@@ -291,14 +300,14 @@ GameWidget::GameWidget (
     SignalHandler::Connect0(
         m_world_view->SenderHideGameOverLabel(),
         m_game_over_label->ReceiverHide());
-        
+
     // initialize the player ship pointer, and connect up the
     // corresponding signal/receiver from the world view
     SetPlayerShip(m_world_view->GetPlayerShip());
     SignalHandler::Connect1(
         m_world_view->SenderPlayerShipChanged(),
         &m_receiver_set_player_ship);
-    
+
     m_world_view_widget->Focus();
 }
 
@@ -365,7 +374,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_shield_status->Enable();
         m_power_status->Enable();
         m_weapon_status->Enable();
-            
+
         // initialize the UI elements
         m_time_alive = player_ship->GetTimeAlive();
         UpdateTimeAliveLabel();
@@ -414,6 +423,12 @@ void GameWidget::SetRenderFrameTime (Uint32 const render_frame_time)
 {
     ASSERT1(m_render_frame_time_label != NULL)
     m_render_frame_time_label->SetValue(render_frame_time);
+}
+
+void GameWidget::SetEntityCount (Uint32 const entity_count)
+{
+    ASSERT1(m_entity_count_label != NULL)
+    m_entity_count_label->SetValue(entity_count);
 }
 
 void GameWidget::SetFramerate (Float const framerate)
@@ -474,7 +489,7 @@ void GameWidget::DeactivateInventoryPanel ()
         m_inventory_panel->Hide();
         // move the focus back to the world view widget
         m_world_view_widget->Focus();
-    
+
         // unpause the game
         ASSERT1(m_saved_game_timescale >= 0.0f)
         m_world_view->GetWorld()->SetTimescale(m_saved_game_timescale);
