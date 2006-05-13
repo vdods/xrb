@@ -49,7 +49,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
     if (!m_has_done_impact)
     {
         m_has_done_impact = true;
-        
+
         RadiusKnockback(
             GetPhysicsHandler(),
             GetObjectLayer(),
@@ -74,7 +74,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
                 frame_dt);
     }
 
-    Explosion::Think(time, frame_dt);    
+    Explosion::Think(time, frame_dt);
 }
 
 void DamageExplosion::Collide (
@@ -95,7 +95,7 @@ void DamageExplosion::Collide (
     Float reverse_lifetime_ratio = 1.0f - GetLifetimeRatio(time);
     if (reverse_lifetime_ratio < 0.0f)
         return;
-        
+
     // center_to_center points towards the collider
     FloatVector2 center_to_center = collider->GetTranslation() - GetTranslation();
     Float distance = center_to_center.GetLength() - collider->GetScaleFactor();
@@ -106,7 +106,7 @@ void DamageExplosion::Collide (
         distance_factor = 1.0f;
     else
         distance_factor = 1.0f / Math::Sqrt(distance);
-    
+
     // if it's a Mortal, damage it (unless it's the owner)
     if (collider->GetIsMortal() && collider != *m_owner)
         DStaticCast<Mortal *>(collider)->Damage(
@@ -175,15 +175,19 @@ void Fireball::Collide (
     // gets used up on one object before all its collisions are computed)
     if (m_current_damage <= 0.0f)
         return;
-    
+
+    // don't damage the owner
+    if (collider == *m_owner)
+        return;
+
     // TODO: when napalm is done, check if it hit napalm
-    
+
     // we only care about hitting solid things
     if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
     static Float const s_damage_dissipation_rate = 2.0f;
-        
+
     if (collider->GetIsMortal())
     {
         Mortal *mortal = DStaticCast<Mortal *>(collider);
