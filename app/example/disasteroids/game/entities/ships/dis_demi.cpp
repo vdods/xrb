@@ -31,12 +31,15 @@ Float const Demi::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 10000.0f, 1400
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const Demi::ms_main_weapon_fov[ENEMY_LEVEL_COUNT] = { 45.0f, 45.0f, 45.0f, 45.0f };
+Float const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 1.5f, 1.5f, 1.5f, 1.5f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
 Float const Demi::ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
 Float const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 3.0f, 3.0f, 3.0f, 3.0f };
 Float const Demi::ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT] = { 0.15f, 0.15f, 0.15f, 0.15f };
+Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Float const Demi::ms_spinning_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 
@@ -55,7 +58,7 @@ Demi::Demi (Uint8 const enemy_level)
     {
         // the gauss gun weapon level is only used to indicate
         // weapon range and fire rate
-        m_gauss_gun = new GaussGun(1);
+        m_gauss_gun = new GaussGun(3);
         m_gauss_gun->Equip(this);
         m_gauss_gun->SetImpactDamageOverride(ms_gauss_gun_impact_damage[GetEnemyLevel()]);
 
@@ -64,7 +67,7 @@ Demi::Demi (Uint8 const enemy_level)
         m_flame_thrower->Equip(this);
 
         // TODO: overrides for missile launcher damage/etc
-        m_missile_launcher = new MissileLauncher(3);
+        m_missile_launcher = new MissileLauncher(0);
         m_missile_launcher->Equip(this);
     }
 
@@ -75,6 +78,9 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_port_flame_thrower = new FlameThrower(3);
         m_port_flame_thrower->Equip(this);
+
+        m_port_missile_launcher = new MissileLauncher(0);
+        m_port_missile_launcher->Equip(this);
     }
 
     // starboard-side weapon setup
@@ -84,6 +90,9 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_starboard_flame_thrower = new FlameThrower(3);
         m_starboard_flame_thrower->Equip(this);
+
+        m_starboard_missile_launcher = new MissileLauncher(0);
+        m_starboard_missile_launcher->Equip(this);
     }
 
     // aft-port weapon setup
@@ -94,6 +103,9 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_aft_flame_thrower = new FlameThrower(3);
         m_aft_flame_thrower->Equip(this);
+
+        m_aft_missile_launcher = new MissileLauncher(0);
+        m_aft_missile_launcher->Equip(this);
     }
 
     SetStrength(D_MINING_LASER);
@@ -137,10 +149,13 @@ void Demi::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    if (m_target.GetIsValid())
-        AimShipAtCoordinates(m_target->GetTranslation());
-    else if (GetVelocity().GetLengthSquared() > 0.001f)
-        SetAngle(Math::Atan(GetVelocity()));
+    if (GetAngularVelocity() == 0.0f)
+    {
+        if (m_target.GetIsValid())
+            AimShipAtCoordinates(m_target->GetTranslation());
+        else if (GetVelocity().GetLengthSquared() > 0.001f)
+            SetAngle(Math::Atan(GetVelocity()));
+    }
 
     // set the main weapon inputs and activate
     if (m_main_weapon != NULL)
@@ -208,15 +223,15 @@ FloatVector2 Demi::GetMuzzleLocation (Weapon const *weapon) const
     {
         return EnemyShip::GetMuzzleLocation(weapon);
     }
-    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower)
+    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
         return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle() + ms_side_port_angle);
     }
-    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower)
+    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
         return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle() - ms_side_port_angle);
     }
-    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower)
+    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
         return GetTranslation() - GetScaleFactor() * Math::UnitVector(GetAngle());
     }
@@ -245,24 +260,25 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
 
         Float reticle_angle = Math::Atan(reticle_offset);
         ASSERT1(reticle_angle >= -180.0f && reticle_angle <= 180.0f)
-        reticle_angle -= GetAngle();
+        Float canonical_angle = Math::GetCanonicalAngle(GetAngle());
+        reticle_angle -= canonical_angle;
         if (reticle_angle < -ms_main_weapon_fov[GetEnemyLevel()])
             reticle_angle = -ms_main_weapon_fov[GetEnemyLevel()];
         else if (reticle_angle > ms_main_weapon_fov[GetEnemyLevel()])
             reticle_angle = ms_main_weapon_fov[GetEnemyLevel()];
-        reticle_angle += GetAngle();
+        reticle_angle += canonical_angle;
 
         return Math::UnitVector(reticle_angle);
     }
-    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower)
+    else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
         return Math::UnitVector(GetAngle() + ms_side_port_angle);
     }
-    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower)
+    else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
         return Math::UnitVector(GetAngle() - ms_side_port_angle);
     }
-    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower)
+    else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
         return Math::UnitVector(GetAngle() + 180.0f);
     }
@@ -319,7 +335,9 @@ void Demi::Wander (Float const time, Float const frame_dt)
             m_target = entity->GetReference();
 //             m_think_state = THINK_STATE(GaussGunStartAim);
 //             m_think_state = THINK_STATE(FlameThrowSweepStart);
-            m_think_state = THINK_STATE(FlameThrowBlastStart);
+//             m_think_state = THINK_STATE(FlameThrowBlastStart);
+//             m_think_state = THINK_STATE(MissileLaunchStart);
+            m_think_state = THINK_STATE(SpinningMissileLaunchStart);
             return;
         }
     }
@@ -381,7 +399,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
@@ -420,7 +438,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
@@ -441,7 +459,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
@@ -470,7 +488,7 @@ void Demi::GaussGunFire (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
@@ -504,7 +522,7 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
     if (time >= m_attack_start_time + ms_flame_throw_sweep_duration[GetEnemyLevel()])
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
@@ -545,6 +563,126 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
     SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+}
+
+void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
+{
+    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    {
+        m_target.Release();
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    m_main_weapon = m_missile_launcher;
+
+    // record the time we started launching missiles
+    m_attack_start_time = time;
+
+    // transition to and call MissileLaunchContinue
+    m_think_state = THINK_STATE(MissileLaunchContinue);
+    MissileLaunchContinue(time, frame_dt);
+}
+
+void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
+{
+    if (time >= m_attack_start_time + ms_missile_launch_duration[GetEnemyLevel()])
+    {
+        m_target.Release();
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    FloatVector2 target_position(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation()));
+
+    SetReticleCoordinates(target_position);
+    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+}
+
+void Demi::SpinningMissileLaunchStart (Float const time, Float const frame_dt)
+{
+    m_main_weapon = m_missile_launcher;
+    m_port_weapon = m_port_missile_launcher;
+    m_starboard_weapon = m_starboard_missile_launcher;
+    m_aft_weapon = m_aft_missile_launcher;
+
+    // record the time we started launching missiles
+    m_attack_start_time = time;
+    // randomly decide to go counter/clockwise
+    m_spin_direction = (Math::RandomUint16()&1) == 0 ? 1.0f : -1.0f;
+
+    fprintf(stderr, "Demi::SpinningMissileLaunchStart();\n");
+
+    fprintf(stderr, "Demi::SpinningMissileLaunchAccelerate();\n");
+
+    // transition to and call SpinningMissileLaunchAccelerate
+    m_think_state = THINK_STATE(SpinningMissileLaunchAccelerate);
+    SpinningMissileLaunchAccelerate(time, frame_dt);
+}
+
+void Demi::SpinningMissileLaunchAccelerate (Float const time, Float const frame_dt)
+{
+    // if we're done accelerating the spin, transition to SpinningMissileLaunchFire
+    if (time >= m_attack_start_time + ms_spinning_attack_acceleration_duration[GetEnemyLevel()])
+    {
+        m_attack_start_time = time;
+        fprintf(stderr, "Demi::SpinningMissileLaunchFire();\n");
+        m_think_state = THINK_STATE(SpinningMissileLaunchFire);
+        return;
+    }
+
+    // calculate the angular acceleration (we want to accelerate
+    // through one whole revolution up to the spinning speed).
+    // accel = 2*angle/T^2
+    Float const angular_acceleration =
+        m_spin_direction * 2.0f * 360.0f /
+        (ms_spinning_attack_acceleration_duration[GetEnemyLevel()] *
+         ms_spinning_attack_acceleration_duration[GetEnemyLevel()]);
+    // accelerate the spin
+    SetAngularVelocity(GetAngularVelocity() + angular_acceleration * frame_dt);
+}
+
+void Demi::SpinningMissileLaunchFire (Float const time, Float const frame_dt)
+{
+    // if we're done firing, start decelerating
+    if (time >= m_attack_start_time + ms_spinning_missile_launch_duration[GetEnemyLevel()])
+    {
+        m_attack_start_time = time;
+        fprintf(stderr, "Demi::SpinningMissileLaunchDecelerate();\n");
+        m_think_state = THINK_STATE(SpinningMissileLaunchDecelerate);
+        return;
+    }
+
+    SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(GetAngle()));
+    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+    SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
+    SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
+    SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+}
+
+void Demi::SpinningMissileLaunchDecelerate (Float const time, Float const frame_dt)
+{
+    // if we're done decelerating the spin, we're done with this attack
+    if (time >= m_attack_start_time + ms_spinning_attack_acceleration_duration[GetEnemyLevel()])
+    {
+        m_target.Release();
+        fprintf(stderr, "Demi::PauseStart();\n");
+        SetAngularVelocity(0.0f);
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    // calculate the angular deceleration (we want to decelerate
+    // through one whole revolution down to 0 angular speed).
+    Float const angular_acceleration =
+        -m_spin_direction * 2.0f * 360.0f /
+        (ms_spinning_attack_acceleration_duration[GetEnemyLevel()] *
+         ms_spinning_attack_acceleration_duration[GetEnemyLevel()]);
+    // accelerate the spin
+    SetAngularVelocity(GetAngularVelocity() + angular_acceleration * frame_dt);
 }
 
 void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)

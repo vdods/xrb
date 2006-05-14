@@ -36,6 +36,7 @@ DISASTEROIDS:
 - wave spawning, punctuated with Demis
 
 CURRENT:
+- make proximity laser attack explosives (grenades, missiles, EMP bombs)
 - change CollisionPairList into a std::vector?
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
