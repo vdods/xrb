@@ -153,7 +153,7 @@ FloatVector2 Math::FastUnitVector (Float angle)
 {
     ASSERT0(false && "Not implemented yet")
     return UnitVector(angle);
-}    
+}
 
 Float Math::FastSqrt (Float const x)
 {
@@ -165,18 +165,6 @@ Float Math::FastPow (Float const base, Float const exponent)
 {
     ASSERT0(false && "Not implemented yet")
     return Pow(base, exponent);
-}
-
-Float Math::FastRandomFloat (Float const lower_bound, Float const upper_bound)
-{
-    ASSERT0(false && "Not implemented yet")
-    return RandomFloat(lower_bound, upper_bound);
-}
-
-Uint16 Math::FastRandomUint16 (Uint16 const lower_bound, Uint16 const upper_bound)
-{
-    ASSERT0(false && "Not implemented yet")
-    return RandomUint16(lower_bound, upper_bound);
 }
 
 } // end of namespace Xrb

@@ -134,13 +134,15 @@ namespace Math
     {
         return (x >= 0.0f) ? x : -x;
     }
-    /** @brief Returns a Float within the range [lower_bound, upper_bound].
+    /** @brief Returns a random Float within the range [lower_bound, upper_bound].
       */
     Float RandomFloat (Float lower_bound, Float upper_bound);
-    /** @brief Returns a Uint16 within the range [lower_bound, upper_bound].
+    /** The default parameter values are the lower and upper bounds of the
+      * Uint16 type 0 and 65535 respectively.
+      * @brief Returns a random Uint16 within the range [lower_bound, upper_bound].
       */
-    Uint16 RandomUint16 (Uint16 lower_bound, Uint16 upper_bound);
-    /** @brief Returns a Float within 0.0f and 360.0f (an angle).
+    Uint16 RandomUint16 (Uint16 lower_bound = 0, Uint16 upper_bound = 65535);
+    /** @brief Returns a random Float within 0.0f and 360.0f (an angle).
       */
     inline Float RandomAngle ()
     {
@@ -189,7 +191,7 @@ namespace Math
         static Uint8 const s_nan_bytes[8] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F };
         static Float const s_nan = *reinterpret_cast<Float const *>(s_nan_bytes + 8 - sizeof(Float));
     #endif // !defined(WORDS_BIGENDIAN)
-        
+
         return s_nan;
     }
     /** @brief Returns true iff the number is a normal finite number.  i.e.
@@ -243,22 +245,6 @@ namespace Math
       *        precision.
       */
     Float FastPow (Float base, Float exponent);
-    /** @brief Returns a Float within the range [lower_bound, upper_bound],
-      *        with lower precision.
-      */
-    Float FastRandomFloat (Float lower_bound, Float upper_bound);
-    /** @brief Returns a Uint16 within the range [lower_bound, upper_bound],
-      *        with lower precision.
-      */
-    Uint16 FastRandomUint16 (Uint16 lower_bound, Uint16 upper_bound);
-    /** @brief Returns a Float within 0.0f and 360.0f (an angle), with
-      *        lower precision
-      */
-    inline Float FastRandomAngle ()
-    {
-        ASSERT0(false && "Not implemented yet")
-        return FastRandomFloat(static_cast<Float>(0), static_cast<Float>(360));
-    }
 
     /** @brief Returns the floating-point representation of the nearest
       *        integer less than or equal to @c x.
