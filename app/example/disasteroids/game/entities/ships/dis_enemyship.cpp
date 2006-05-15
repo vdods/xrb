@@ -18,19 +18,6 @@ using namespace Xrb;
 namespace Dis
 {
 
-Uint32 EnemyShip::GetTargetPriority () const
-{
-    switch (GetEntityType())
-    {
-        case ET_INTERLOPER: return 10;
-        case ET_SHADE:      return 20;
-        case ET_REVULSION:  return 30;
-        case ET_DEVOURMENT: return 1;
-        case ET_DEMI:       return 5;
-        default: ASSERT0(false && "Unknown enemy type") return 0;
-    }
-}
-
 void EnemyShip::Die (
     Entity *const killer,
     Entity *const kill_medium,
@@ -54,7 +41,7 @@ void EnemyShip::Die (
     // handle scoring
     if (killer != NULL && killer->GetIsPlayerShip())
         static_cast<PlayerShip *>(killer)->CreditEnemyKill(GetEntityType(), GetEnemyLevel());
-                
+
     // notify the world that this enemyship is going bye-bye
     DStaticCast<World *>(GetWorld())->RecordDestroyedEnemyShip(this);
 }

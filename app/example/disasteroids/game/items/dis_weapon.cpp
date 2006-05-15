@@ -85,7 +85,7 @@ Float const MissileLauncher::ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 
 Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
-Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 6.0f, 5.7f, 5.4f, 4.5f };
+Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
 Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
@@ -291,7 +291,8 @@ bool Laser::Activate (
             false,
             &area_trace_list);
 
-        EnemyShip *best_target = NULL;
+        Mortal *best_target = NULL;
+        Sint32 best_target_priority = 0;
         for (AreaTraceListIterator it = area_trace_list.begin(),
                                    it_end = area_trace_list.end();
              it != it_end;
@@ -304,16 +305,16 @@ bool Laser::Activate (
             if (entity == GetOwnerShip())
                 continue;
 
-            // only target enemy ships
-            if (entity->GetIsEnemyShip())
+            // only target enemy ships or explosives
+            if (entity->GetIsEnemyShip() || entity->GetIsExplosive())
             {
-                EnemyShip *enemy_ship = DStaticCast<EnemyShip *>(entity);
-                // prefer more powerful enemies over weaker ones
+                Mortal *potential_target = DStaticCast<Mortal *>(entity);
+                Sint32 potential_target_priority = potential_target->GetTargetPriority();
                 if (best_target == NULL ||
-                    enemy_ship->GetEnemyLevel() > best_target->GetEnemyLevel() ||
-                    enemy_ship->GetTargetPriority() > best_target->GetTargetPriority())
+                    potential_target_priority > best_target_priority)
                 {
-                    best_target = enemy_ship;
+                    best_target = potential_target;
+                    best_target_priority = potential_target_priority;
                 }
             }
         }
@@ -359,8 +360,8 @@ bool Laser::Activate (
                 ++it;
             }
 
-            // only fire at ships
-            if (it != it_end && it->m_entity->GetIsShip())
+            // only fire at ships and explosives
+            if (it != it_end && (it->m_entity->GetIsShip() || it->m_entity->GetIsExplosive()))
             {
                 // damage the mortal
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
@@ -917,7 +918,8 @@ bool MissileLauncher::Activate (
             2.0f * ms_missile_damage_radius[GetUpgradeLevel()],
             GetUpgradeLevel(),
             GetOwnerShip()->GetReference(),
-            ms_missile_health[GetUpgradeLevel()]);
+            ms_missile_health[GetUpgradeLevel()],
+            m_spawn_enemy_missiles);
 
         // update the last time fired
         m_time_last_fired = time;
@@ -946,7 +948,8 @@ bool MissileLauncher::Activate (
             2.0f * ms_missile_damage_radius[GetUpgradeLevel()],
             GetUpgradeLevel(),
             GetOwnerShip()->GetReference(),
-            ms_missile_health[GetUpgradeLevel()]);
+            ms_missile_health[GetUpgradeLevel()],
+            m_spawn_enemy_missiles);
 
         // update the last time fired
         m_time_last_fired = time;

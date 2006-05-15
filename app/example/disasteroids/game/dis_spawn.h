@@ -151,7 +151,8 @@ Missile *SpawnMissile (
     Float explosion_radius,
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float health);
+    Float health,
+    bool is_enemy_missile);
 
 GuidedMissile *SpawnGuidedMissile (
     Engine2::World *world,
@@ -167,7 +168,9 @@ GuidedMissile *SpawnGuidedMissile (
     Float explosion_radius,
     Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float health);
+    Float health,
+    bool is_enemy_missile);
+
 /*
 EMPBomb *SpawnEMPBomb (
     Engine2::World *world,

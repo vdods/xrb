@@ -38,9 +38,8 @@ public:
 
     // Entity interface method
     virtual bool GetIsEnemyShip () const { return true; }
-    
+
     inline Uint8 GetEnemyLevel () const { return m_enemy_level; }
-    Uint32 GetTargetPriority () const;
 
     virtual void Die (
         Entity *killer,
@@ -51,21 +50,21 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool TakePowerup (Powerup *powerup)
     {
         return false;
-    }            
-    
+    }
+
 private:
 
     Uint8 m_enemy_level;
 }; // end of class EnemyShip
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_ENEMYSHIP_H_)

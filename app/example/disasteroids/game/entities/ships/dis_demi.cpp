@@ -31,7 +31,7 @@ Float const Demi::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 10000.0f, 1400
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const Demi::ms_main_weapon_fov[ENEMY_LEVEL_COUNT] = { 45.0f, 45.0f, 45.0f, 45.0f };
-Float const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 1.5f, 1.5f, 1.5f, 1.5f };
+Float const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 0.75f, 0.75f, 0.75f, 0.75f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
@@ -69,6 +69,7 @@ Demi::Demi (Uint8 const enemy_level)
         // TODO: overrides for missile launcher damage/etc
         m_missile_launcher = new MissileLauncher(0);
         m_missile_launcher->Equip(this);
+        m_missile_launcher->SetSpawnEnemyMissiles(true);
     }
 
     // port-side weapon setup
@@ -81,6 +82,7 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_port_missile_launcher = new MissileLauncher(0);
         m_port_missile_launcher->Equip(this);
+        m_port_missile_launcher->SetSpawnEnemyMissiles(true);
     }
 
     // starboard-side weapon setup
@@ -93,6 +95,7 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_starboard_missile_launcher = new MissileLauncher(0);
         m_starboard_missile_launcher->Equip(this);
+        m_starboard_missile_launcher->SetSpawnEnemyMissiles(true);
     }
 
     // aft-port weapon setup
@@ -106,6 +109,7 @@ Demi::Demi (Uint8 const enemy_level)
 
         m_aft_missile_launcher = new MissileLauncher(0);
         m_aft_missile_launcher->Equip(this);
+        m_aft_missile_launcher->SetSpawnEnemyMissiles(true);
     }
 
     SetStrength(D_MINING_LASER);
@@ -657,10 +661,14 @@ void Demi::SpinningMissileLaunchFire (Float const time, Float const frame_dt)
     }
 
     SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(GetAngle()));
-    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
-    SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
-    SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
-    SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+    SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
+    SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
+    SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
+    SetAftWeaponSecondaryInput(UINT8_UPPER_BOUND);
 }
 
 void Demi::SpinningMissileLaunchDecelerate (Float const time, Float const frame_dt)

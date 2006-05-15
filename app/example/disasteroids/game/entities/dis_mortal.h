@@ -90,6 +90,7 @@ public:
         return (damage_type & m_immunity) != 0;
     }
     virtual bool GetIsMortal () const { return true; }
+    Sint32 GetTargetPriority () const;
 
     inline void SetIsInvincible (bool is_invincible) { m_is_invincible = is_invincible; }
     void SetDamageDissipationRate (Float damage_dissipation_rate);

@@ -13,11 +13,16 @@
 
 #include "dis_mortal.h"
 
+#include "dis_linetracebinding.h"
+
 using namespace Xrb;
 
 namespace Dis
 {
 
+// class EMPBombLayer;
+class GrenadeLauncher;
+class MineLayer;
 class PhysicsHandler;
 class Ship;
 
@@ -26,6 +31,7 @@ class Explosive : public Mortal
 public:
 
     Explosive (
+        Uint8 const weapon_level,
         EntityReference<Entity> const &owner,
         Float const current_health,
         Float const max_health,
@@ -33,16 +39,20 @@ public:
         CollisionType const collision_type)
         :
         Mortal(current_health, max_health, entity_type, collision_type),
-        m_owner(owner)
+        m_owner(owner),
+        m_weapon_level(weapon_level)
     {
+        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT)
+        SetWeakness(D_BALLISTIC);
         SetDamageDissipationRate(1.0f);
         m_has_detonated = false;
     }
     virtual ~Explosive () { }
 
+    inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
     inline bool GetHasDetonated () const { return m_has_detonated; }
     virtual bool GetIsExplosive () const { return true; }
-    
+
     virtual void Collide (
         Entity *collider,
         FloatVector2 const &collision_location,
@@ -74,14 +84,13 @@ protected:
 
 private:
 
+    Uint8 const m_weapon_level;
     bool m_has_detonated;
 }; // end of class Explosive
 
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
-
-class GrenadeLauncher;
 
 class Grenade : public Explosive
 {
@@ -116,7 +125,7 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-        
+
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
@@ -131,14 +140,11 @@ private:
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
     Float const m_explosion_radius;
-    Uint32 m_weapon_level;
 }; // end of class Grenade
 
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
-
-class MineLayer;
 
 class Mine : public Explosive
 {
@@ -153,11 +159,10 @@ public:
         EntityReference<Entity> const &owner,
         Float const max_health)
         :
-        Explosive(owner, max_health, max_health, ET_MINE, CT_SOLID_COLLISION),
+        Explosive(weapon_level, owner, max_health, max_health, ET_MINE, CT_SOLID_COLLISION),
         m_damage_to_inflict(damage_to_inflict),
         m_damage_radius(damage_radius),
-        m_explosion_radius(explosion_radius),
-        m_weapon_level(weapon_level)
+        m_explosion_radius(explosion_radius)
     {
         ASSERT1(m_damage_to_inflict > 0.0f)
         m_think_state = &Mine::Level0Survey;
@@ -193,7 +198,7 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-        
+
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
@@ -216,12 +221,11 @@ private:
 
     FloatVector2 m_seek_coordinates;
     Float m_seek_start_time;
-    
+
     MineLayer *m_owner_mine_layer;
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
     Float const m_explosion_radius;
-    Uint32 m_weapon_level;
 }; // end of class Mine
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -240,26 +244,30 @@ public:
         Float const explosion_radius,
         Uint32 const weapon_level,
         EntityReference<Entity> const &owner,
-        Float const max_health)
+        Float const max_health,
+        EntityType const entity_type = ET_MISSILE)
         :
-        Explosive(owner, max_health, max_health, ET_MISSILE, CT_SOLID_COLLISION),
+        Explosive(weapon_level, owner, max_health, max_health, entity_type, CT_SOLID_COLLISION),
         m_time_to_live(time_to_live),
         m_time_at_birth(time_at_birth),
         m_damage_to_inflict(damage_to_inflict),
         m_damage_radius(damage_radius),
-        m_explosion_radius(explosion_radius),
-        m_weapon_level(weapon_level)
+        m_explosion_radius(explosion_radius)
     {
         ASSERT1(m_time_to_live > 0.0f)
         ASSERT1(m_damage_to_inflict > 0.0f)
         ASSERT1(m_explosion_radius > 0.0f)
+        ASSERT1(entity_type == ET_MISSILE ||
+                entity_type == ET_GUIDED_MISSILE ||
+                entity_type == ET_ENEMY_MISSILE ||
+                entity_type == ET_GUIDED_ENEMY_MISSILE)
         m_first_think = true;
         SetImmunity(D_COLLISION|D_EXPLOSION);
     }
     virtual ~Missile () { }
 
     virtual void Think (Float time, Float frame_dt);
-        
+
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,
@@ -270,18 +278,16 @@ public:
 
 protected:
 
-    inline Uint32 GetWeaponLevel () const { return m_weapon_level; }
-
     static Float const ms_acceleration[UPGRADE_LEVEL_COUNT];
+
+    Float m_time_to_live;
 
 private:
 
-    Float const m_time_to_live;
     Float const m_time_at_birth;
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
     Float const m_explosion_radius;
-    Uint32 const m_weapon_level;
     bool m_first_think;
     FloatVector2 m_initial_velocity;
 }; // end of class Missile
@@ -302,7 +308,8 @@ public:
         Float const explosion_radius,
         Uint32 const weapon_level,
         EntityReference<Entity> const &owner,
-        Float const max_health)
+        Float const max_health,
+        EntityType const entity_type = ET_GUIDED_MISSILE)
         :
         Missile(
             time_to_live,
@@ -312,14 +319,21 @@ public:
             explosion_radius,
             weapon_level,
             owner,
-            max_health)
+            max_health,
+            entity_type)
     {
+        ASSERT1(entity_type == ET_GUIDED_MISSILE ||
+                entity_type == ET_GUIDED_ENEMY_MISSILE)
         m_next_search_time = -1.0f;
     }
     virtual ~GuidedMissile () { }
 
     virtual void Think (Float time, Float frame_dt);
-    
+
+protected:
+
+    virtual EntityReference<Ship> FindTarget (LineTraceBindingSet const &scan_set);
+
 private:
 
     void Search (Float time, Float frame_dt);
@@ -334,8 +348,43 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
+
+class GuidedEnemyMissile : public GuidedMissile
+{
+public:
+
+    GuidedEnemyMissile (
+        Float const time_to_live,
+        Float const time_at_birth,
+        Float const damage_to_inflict,
+        Float const damage_radius,
+        Float const explosion_radius,
+        Uint32 const weapon_level,
+        EntityReference<Entity> const &owner,
+        Float const max_health)
+        :
+        GuidedMissile(
+            time_to_live,
+            time_at_birth,
+            damage_to_inflict,
+            damage_radius,
+            explosion_radius,
+            weapon_level,
+            owner,
+            max_health,
+            ET_GUIDED_ENEMY_MISSILE)
+    { }
+    virtual ~GuidedEnemyMissile () { }
+
+protected:
+
+    virtual EntityReference<Ship> FindTarget (LineTraceBindingSet const &scan_set);
+}; // end of class GuidedMissile
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
 /*
-class EMPBombLayer;
 
 class EMPBomb : public Explosive
 {
@@ -387,7 +436,7 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-        
+
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
         Float time,

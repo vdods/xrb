@@ -69,7 +69,7 @@ public:
         m_muzzle_direction = muzzle_direction;
         m_reticle_coordinates = reticle_coordinates;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ public:
     // power to fire the weapon)
     virtual bool GetRequiresAmmo () const = 0;
     virtual Float GetReadinessStatus (Float time) const = 0;
-    
+
 protected:
 
     inline Float GetPrimaryInput () const { return m_primary_input; }
@@ -96,12 +96,12 @@ protected:
     {
         return m_max_ammo;
     }
-    
-    inline void SetCurrentAmmo (Uint32 const current_ammo) 
+
+    inline void SetCurrentAmmo (Uint32 const current_ammo)
     {
         m_current_ammo = Min(current_ammo, m_max_ammo);
     }
-    
+
     inline void AddAmmo (Uint32 const ammo_to_add)
     {
         // protect against the ammo amount wrapping around
@@ -118,7 +118,7 @@ protected:
         ASSERT1(new_ammo < m_current_ammo)
         m_current_ammo = new_ammo;
     }
-        
+
 private:
 
     Uint32 m_current_ammo;
@@ -152,7 +152,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -174,11 +174,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-        
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -237,11 +237,11 @@ public:
         ASSERT1(laser_beam != NULL)
         m_laser_beam = laser_beam;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -257,11 +257,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -270,7 +270,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_primary_range[UPGRADE_LEVEL_COUNT];
@@ -304,7 +304,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -320,11 +320,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -333,7 +333,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
@@ -377,11 +377,11 @@ public:
     }
 
     inline void ClearImpactDamageOverride () { m_impact_damage_override = -1.0f; }
-        
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -397,11 +397,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -410,7 +410,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     Float m_time_last_fired;
@@ -439,13 +439,13 @@ public:
     {
         return m_active_grenade_set.size();
     }
-    
+
     void ActiveGrenadeDestroyed (Grenade *active_grenade);
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -461,11 +461,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -474,7 +474,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     typedef std::set<Grenade *> ActiveGrenadeSet;
@@ -517,13 +517,13 @@ public:
     {
         return m_active_mine_set.size();
     }
-    
+
     void ActiveMineDestroyed (Mine *active_mine);
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -539,11 +539,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -552,7 +552,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     typedef std::set<Mine *> ActiveMineSet;
@@ -585,13 +585,21 @@ public:
     {
         ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
         m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        m_spawn_enemy_missiles = false;
     }
     virtual ~MissileLauncher () { }
+
+    inline bool GetSpawnEnemyMissiles () const { return m_spawn_enemy_missiles; }
+
+    inline void SetSpawnEnemyMissiles (bool spawn_enemy_missiles)
+    {
+        m_spawn_enemy_missiles = spawn_enemy_missiles;
+    }
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -607,11 +615,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -620,7 +628,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT];
@@ -635,6 +643,7 @@ private:
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
     Float m_time_last_fired;
+    bool m_spawn_enemy_missiles;
 }; // end of class MissileLauncher
 
 // - EMP blast - disables enemies (maybe with certain exceptions) for a short
@@ -658,7 +667,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         // TODO: this weapon should use ammo
@@ -675,11 +684,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -688,7 +697,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
@@ -725,13 +734,13 @@ public:
     {
         return m_active_emp_bomb_set.size();
     }
-    
+
     void ActiveEMPBombDestroyed (EMPBomb *active_emp_bomb);
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         // TODO: this weapon should use ammo
@@ -748,11 +757,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -761,7 +770,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     typedef std::set<EMPBomb *> ActiveEMPBombSet;
@@ -797,7 +806,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -810,11 +819,11 @@ public:
         else
             return 1.0f;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -823,7 +832,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT];
@@ -855,13 +864,13 @@ public:
 
     inline bool GetIsRangeOverridden () const { return m_range_override >= 0.0f; }
     inline Float GetRangeOverride () const { return m_range_override; }
-    
+
     inline bool GetIsStrengthOverridden () const { return m_strength_override >= 0.0f; }
     inline Float GetStrengthOverride () const { return m_strength_override; }
-    
+
     inline bool GetIsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
     inline Float GetMaxForceOverride () const { return m_max_force_override; }
-    
+
     inline bool GetIsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
     inline Float GetBeamRadiusOverride () const { return m_beam_radius_override; }
 
@@ -885,22 +894,22 @@ public:
         ASSERT1(beam_radius_override >= 0.0f)
         m_beam_radius_override = beam_radius_override;
     }
-    
+
     inline void ClearRangeOverride () { m_range_override = -1.0f; }
     inline void ClearStrengthOverride () { m_strength_override = -1.0f; }
     inline void ClearMaxForceOverride () { m_max_force_override = -1.0f; }
     inline void ClearBeamRadiusOverride () { m_beam_radius_override = -1.0f; }
-    
+
     inline void SetTractorBeam (TractorBeam *const tractor_beam)
     {
         ASSERT1(tractor_beam != NULL)
         m_tractor_beam = tractor_beam;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -909,11 +918,11 @@ public:
     {
         return 1.0f;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
@@ -922,7 +931,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
@@ -952,7 +961,7 @@ public:
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
-    
+
     SlowBulletGun (Uint32 const upgrade_level)
         :
         Weapon(upgrade_level, IT_ENEMY_WEAPON_SLOW_BULLET_GUN)
@@ -965,7 +974,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual bool GetRequiresAmmo () const
     {
         return false;
@@ -981,11 +990,11 @@ public:
         else
             return time_since_last_fire / cycle_time;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual Float GetPowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;

@@ -262,7 +262,8 @@ Missile *SpawnMissile (
     Float const explosion_radius,
     Uint32 const weapon_level,
     EntityReference<Entity> const &owner,
-    Float const health)
+    Float const health,
+    bool const is_enemy_missile)
 {
     Missile *missile =
         new Missile(
@@ -273,7 +274,8 @@ Missile *SpawnMissile (
             explosion_radius,
             weapon_level,
             owner,
-            health);
+            health,
+            is_enemy_missile ? ET_ENEMY_MISSILE : ET_MISSILE);
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             world,
@@ -307,9 +309,22 @@ GuidedMissile *SpawnGuidedMissile (
     Float const explosion_radius,
     Uint32 const weapon_level,
     EntityReference<Entity> const &owner,
-    Float const health)
+    Float const health,
+    bool const is_enemy_missile)
 {
     GuidedMissile *guided_missile =
+        is_enemy_missile
+        ?
+        new GuidedEnemyMissile(
+            time_to_live,
+            time_at_birth,
+            damage_to_inflict,
+            damage_radius,
+            explosion_radius,
+            weapon_level,
+            owner,
+            health)
+        :
         new GuidedMissile(
             time_to_live,
             time_at_birth,

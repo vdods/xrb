@@ -145,9 +145,19 @@ private:
         return static_cast<Float>(m_port_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
+    inline Float GetNormalizedPortWeaponSecondaryInput () const
+    {
+        return static_cast<Float>(m_port_weapon_secondary_input) /
+               static_cast<Float>(UINT8_UPPER_BOUND);
+    }
     inline Float GetNormalizedStarboardWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_starboard_weapon_primary_input) /
+               static_cast<Float>(UINT8_UPPER_BOUND);
+    }
+    inline Float GetNormalizedStarboardWeaponSecondaryInput () const
+    {
+        return static_cast<Float>(m_starboard_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
     inline Float GetNormalizedAftWeaponPrimaryInput () const
@@ -155,18 +165,35 @@ private:
         return static_cast<Float>(m_aft_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
+    inline Float GetNormalizedAftWeaponSecondaryInput () const
+    {
+        return static_cast<Float>(m_aft_weapon_secondary_input) /
+               static_cast<Float>(UINT8_UPPER_BOUND);
+    }
 
     inline void SetPortWeaponPrimaryInput (Uint8 const port_weapon_primary_input)
     {
         m_port_weapon_primary_input = port_weapon_primary_input;
     }
+    inline void SetPortWeaponSecondaryInput (Uint8 const port_weapon_secondary_input)
+    {
+        m_port_weapon_secondary_input = port_weapon_secondary_input;
+    }
     inline void SetStarboardWeaponPrimaryInput (Uint8 const starboard_weapon_primary_input)
     {
         m_starboard_weapon_primary_input = starboard_weapon_primary_input;
     }
+    inline void SetStarboardWeaponSecondaryInput (Uint8 const starboard_weapon_secondary_input)
+    {
+        m_starboard_weapon_secondary_input = starboard_weapon_secondary_input;
+    }
     inline void SetAftWeaponPrimaryInput (Uint8 const aft_weapon_primary_input)
     {
         m_aft_weapon_primary_input = aft_weapon_primary_input;
+    }
+    inline void SetAftWeaponSecondaryInput (Uint8 const aft_weapon_secondary_input)
+    {
+        m_aft_weapon_secondary_input = aft_weapon_secondary_input;
     }
 
     // TEMP
@@ -210,8 +237,11 @@ private:
     Float m_spin_direction;
 
     Uint8 m_port_weapon_primary_input;
+    Uint8 m_port_weapon_secondary_input;
     Uint8 m_starboard_weapon_primary_input;
+    Uint8 m_starboard_weapon_secondary_input;
     Uint8 m_aft_weapon_primary_input;
+    Uint8 m_aft_weapon_secondary_input;
 
     // currently equipped (main) weapon -- TODO: i don't really like
     // this main weapon stuff.  the think states should handle firing of the weapons

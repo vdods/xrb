@@ -10,10 +10,50 @@
 
 #include "dis_mortal.h"
 
+#include "dis_enemyship.h"
+#include "dis_explosive.h"
+
 using namespace Xrb;
 
 namespace Dis
 {
+
+Sint32 Mortal::GetTargetPriority () const
+{
+    Sint32 major = -1;
+    Sint32 minor = -1;
+    switch (GetEntityType())
+    {
+        case ET_ENEMY_MISSILE:
+        case ET_GUIDED_ENEMY_MISSILE:
+            major = 40;
+            minor = DStaticCast<Missile const *>(this)->GetWeaponLevel();
+            break;
+        case ET_INTERLOPER:
+            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            minor = 10;
+            break;
+        case ET_SHADE:
+            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            minor = 20;
+            break;
+        case ET_REVULSION:
+            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            minor = 30;
+            break;
+        case ET_DEVOURMENT:
+            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            minor = 1;
+            break;
+        case ET_DEMI:
+            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            minor = 5;
+            break;
+        default:
+            break;
+    }
+    return major * 1000 + minor;
+}
 
 void Mortal::SetDamageDissipationRate (Float const damage_dissipation_rate)
 {

@@ -105,11 +105,10 @@ Grenade::Grenade (
     EntityReference<Entity> const &owner,
     Float const max_health)
     :
-    Explosive(owner, max_health, max_health, ET_GRENADE, CT_SOLID_COLLISION),
+    Explosive(weapon_level, owner, max_health, max_health, ET_GRENADE, CT_SOLID_COLLISION),
     m_damage_to_inflict(damage_to_inflict),
     m_damage_radius(damage_radius),
-    m_explosion_radius(explosion_radius),
-    m_weapon_level(weapon_level)
+    m_explosion_radius(explosion_radius)
 {
     ASSERT1(m_damage_to_inflict > 0.0f)
     m_owner_grenade_launcher = owner_grenade_launcher;
@@ -370,8 +369,8 @@ void Missile::Think (
     Float const time,
     Float const frame_dt)
 {
-    // if we're dead, don't bother thinking
-    if (GetIsDead())
+    // if we're dead or have detonated, don't bother thinking
+    if (GetIsDead() || GetHasDetonated())
         return;
 
     AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(GetAngle()));
@@ -430,6 +429,7 @@ bool Missile::CheckIfItShouldDetonate (
 {
     ASSERT1(collider != NULL)
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
+    ASSERT1(!GetHasDetonated())
     ASSERT1(!GetIsDead())
 
     // don't detonate on ourselves
@@ -438,6 +438,11 @@ bool Missile::CheckIfItShouldDetonate (
 
     // don't detonate on powerups
     if (collider->GetIsPowerup())
+        return false;
+
+    // don't detonate on ballistics (because then it would make it
+    // pointless to try to shoot missiles down with ballistic weapons)
+    if (collider->GetIsBallistic())
         return false;
 
     // don't detonate on the entity that fired this missile
@@ -483,9 +488,27 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
     if (time >= m_next_search_time)
         Search(time, frame_dt);
     else if (m_target.GetIsValid())
+    {
+        // if the missile is actively seeking a target, let it live longer
+        m_time_to_live += 0.75f * frame_dt;
         Seek(time, frame_dt);
+    }
 
     Missile::Think(time, frame_dt);
+}
+
+EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan_set)
+{
+    for (LineTraceBindingSetIterator it = scan_set.begin(),
+                                     it_end = scan_set.end();
+         it != it_end;
+         ++it)
+    {
+        if (it->m_entity->GetIsShip() && it->m_entity != *m_owner)
+            return it->m_entity->GetReference();
+    }
+    // if no target found, return an invalid reference
+    return EntityReference<Ship>();
 }
 
 void GuidedMissile::Search (Float const time, Float const frame_dt)
@@ -514,17 +537,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
             false,
             &line_trace_binding_set);
 
-        for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
-                                         it_end = line_trace_binding_set.end();
-             it != it_end;
-             ++it)
-        {
-            if (it->m_entity->GetIsShip() && it->m_entity != *m_owner)
-            {
-                m_target = it->m_entity->GetReference();
-                return;
-            }
-        }
+        m_target = FindTarget(line_trace_binding_set);
     }
 }
 
@@ -589,6 +602,24 @@ void GuidedMissile::AimAt (FloatVector2 const &position)
     FloatVector2 delta(position - GetTranslation());
     if (delta.GetLengthSquared() >= 0.001f)
         SetAngle(Math::Atan(delta));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+EntityReference<Ship> GuidedEnemyMissile::FindTarget (LineTraceBindingSet const &scan_set)
+{
+    for (LineTraceBindingSetIterator it = scan_set.begin(),
+                                     it_end = scan_set.end();
+         it != it_end;
+         ++it)
+    {
+        if (it->m_entity->GetEntityType() == ET_SOLITARY)
+            return it->m_entity->GetReference();
+    }
+    // if no target found, return an invalid reference
+    return EntityReference<Ship>();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
