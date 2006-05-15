@@ -110,6 +110,7 @@ Ballistic *SpawnSmartBallistic (
     Float const impact_damage,
     Float const time_to_live,
     Float const time_at_birth,
+    Uint8 const weapon_level,
     EntityReference<Entity> const &owner)
 {
     Ballistic *ballistic =
@@ -117,6 +118,7 @@ Ballistic *SpawnSmartBallistic (
             impact_damage,
             time_to_live,
             time_at_birth,
+            weapon_level,
             owner,
             true);
     Engine2::Sprite *sprite =
@@ -148,6 +150,7 @@ Ballistic *SpawnDumbBallistic (
     Float const impact_damage,
     Float const time_to_live,
     Float const time_at_birth,
+    Uint8 const weapon_level,
     EntityReference<Entity> const &owner)
 {
     Ballistic *ballistic =
@@ -155,6 +158,7 @@ Ballistic *SpawnDumbBallistic (
             impact_damage,
             time_to_live,
             time_at_birth,
+            weapon_level,
             owner,
             false);
     SpawnDynamicSprite(

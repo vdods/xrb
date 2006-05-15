@@ -44,10 +44,11 @@ actions:
     flame thrower: if the player gets close enough in front, spray fire
                    left/right for a few seconds
     flame thrower: short blast of flames out of front/side/aft ports simultaneously
+    flame thrower: spinning flame throwing
     missile launcher: intermittent barrages of non-guided missiles (directed
                       at the player) -- out of the front port only
     missile launcher: spinning blasts of non-guided missiles out all ports
-    missile launcher: short, intermittent blasts of guided missiles out of
+    missile launcher: spinning blasts of guided missiles out of
                       all weapon ports (which seek only the player, not enemy ships)
     tractor: when there are missiles/grenades/ballistics in front, they
              are deflected away with the tractor
@@ -92,6 +93,7 @@ class GaussGun;
 class MissileLauncher;
 class ReticleEffect;
 class Tractor;
+class TractorBeam;
 
 // TEMP
 class PeaShooter;
@@ -107,7 +109,7 @@ public:
     static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
-    static Float const ms_main_weapon_fov[ENEMY_LEVEL_COUNT];
+    static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
@@ -117,11 +119,24 @@ public:
     static Float const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_missile_launch_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_tractor_range[ENEMY_LEVEL_COUNT];
+    static Float const ms_tractor_strength[ENEMY_LEVEL_COUNT];
+    static Float const ms_tractor_max_force[ENEMY_LEVEL_COUNT];
+    static Float const ms_tractor_beam_radius[ENEMY_LEVEL_COUNT];
 
     Demi (Uint8 enemy_level);
     virtual ~Demi ();
 
     virtual void Think (Float time, Float frame_dt);
+    virtual void Die (
+        Entity *killer,
+        Entity *kill_medium,
+        FloatVector2 const &kill_location,
+        FloatVector2 const &kill_normal,
+        Float kill_force,
+        DamageType kill_type,
+        Float time,
+        Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Ship interface methods
@@ -139,6 +154,7 @@ public:
     }
 
 private:
+
 
     inline Float GetNormalizedPortWeaponPrimaryInput () const
     {
@@ -171,6 +187,12 @@ private:
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
+    inline void SetPortReticleCoordinates (FloatVector2 const &reticle_coordinates)
+    {
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+        m_port_reticle_coordinates = reticle_coordinates;
+    }
     inline void SetPortWeaponPrimaryInput (Uint8 const port_weapon_primary_input)
     {
         m_port_weapon_primary_input = port_weapon_primary_input;
@@ -178,6 +200,12 @@ private:
     inline void SetPortWeaponSecondaryInput (Uint8 const port_weapon_secondary_input)
     {
         m_port_weapon_secondary_input = port_weapon_secondary_input;
+    }
+    inline void SetStarboardReticleCoordinates (FloatVector2 const &reticle_coordinates)
+    {
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+        m_starboard_reticle_coordinates = reticle_coordinates;
     }
     inline void SetStarboardWeaponPrimaryInput (Uint8 const starboard_weapon_primary_input)
     {
@@ -205,6 +233,7 @@ private:
     // TEMP
     // TEMP
 
+    // main think states
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
     void Stalk (Float time, Float frame_dt);
@@ -217,27 +246,44 @@ private:
     void FlameThrowBlastContinue (Float time, Float frame_dt);
     void MissileLaunchStart (Float time, Float frame_dt);
     void MissileLaunchContinue (Float time, Float frame_dt);
-    void SpinningMissileLaunchStart (Float time, Float frame_dt);
-    void SpinningMissileLaunchAccelerate (Float time, Float frame_dt);
-    void SpinningMissileLaunchFire (Float time, Float frame_dt);
-    void SpinningMissileLaunchDecelerate (Float time, Float frame_dt);
+    void SpinningFlameThrow (Float time, Float frame_dt);
+    void SpinningMissileLaunch (Float time, Float frame_dt);
+    void SpinningGuidedMissileLaunch (Float time, Float frame_dt);
+    void SpinningAttackStart (Float time, Float frame_dt);
+    void SpinningAttackAccelerate (Float time, Float frame_dt);
+    void SpinningAttackFire (Float time, Float frame_dt);
+    void SpinningAttackDecelerate (Float time, Float frame_dt);
+
+    // tractor think states
+    void PortTractorDeflectStuff (Float time, Float frame_dt);
+    void StarboardTractorDeflectStuff (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    Entity *FindTractorDeflectTarget (
+        FloatVector2 const &muzzle_location,
+        FloatVector2 const &muzzle_direction,
+        Float time,
+        Float frame_dt);
 
     typedef void (Demi::*ThinkState)(Float time, Float frame_dt);
 
     static Float const ms_side_port_angle;
 
     ThinkState m_think_state;
+    ThinkState m_port_tractor_think_state;
+    ThinkState m_starboard_tractor_think_state;
     Float m_next_wander_time;
     Float m_wander_angle;
     Float m_wander_angle_low_pass;
     EntityReference<Ship> m_target;
     Float m_attack_start_time;
     Float m_spin_direction;
+    bool m_spinning_attack_uses_secondary_fire;
 
+    FloatVector2 m_port_reticle_coordinates;
     Uint8 m_port_weapon_primary_input;
     Uint8 m_port_weapon_secondary_input;
+    FloatVector2 m_starboard_reticle_coordinates;
     Uint8 m_starboard_weapon_primary_input;
     Uint8 m_starboard_weapon_secondary_input;
     Uint8 m_aft_weapon_primary_input;
@@ -257,6 +303,7 @@ private:
     Weapon *m_port_weapon;
     // port-side weapons (tractor, flame thrower)
     Tractor *m_port_tractor;
+    EntityReference<TractorBeam> m_port_tractor_beam;
     FlameThrower *m_port_flame_thrower;
     MissileLauncher *m_port_missile_launcher;
 
@@ -264,6 +311,7 @@ private:
     Weapon *m_starboard_weapon;
     // starboard-side weapons (tractor, flame thrower)
     Tractor *m_starboard_tractor;
+    EntityReference<TractorBeam> m_starboard_tractor_beam;
     FlameThrower *m_starboard_flame_thrower;
     MissileLauncher *m_starboard_missile_launcher;
 

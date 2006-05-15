@@ -192,6 +192,7 @@ bool PeaShooter::Activate (
             impact_damage,
             ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
             time,
+            GetUpgradeLevel(),
             GetOwnerShip()->GetReference());
 
         // reset the charge-up ratio
@@ -244,6 +245,7 @@ bool PeaShooter::Activate (
             ms_primary_impact_damage[GetUpgradeLevel()],
             ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
             time,
+            GetUpgradeLevel(),
             GetOwnerShip()->GetReference());
 
         // update the last time fired
@@ -1243,8 +1245,8 @@ bool Tractor::Activate (
     if (reticle_distance > range)
         reticle_coordinates =
             range / reticle_distance *
-            (reticle_coordinates - GetOwnerShip()->GetTranslation()) +
-            GetOwnerShip()->GetTranslation();
+            (reticle_coordinates - GetMuzzleLocation()) +
+            GetMuzzleLocation();
 
     AreaTraceList area_trace_list;
     GetOwnerShip()->GetPhysicsHandler()->AreaTrace(
@@ -1337,6 +1339,7 @@ bool SlowBulletGun::Activate (
         ms_impact_damage[GetUpgradeLevel()],
         ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
         time,
+        GetUpgradeLevel(),
         GetOwnerShip()->GetReference());
 
     // update the last time fired

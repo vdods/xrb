@@ -68,6 +68,7 @@ Devourment::~Devourment ()
         delete m_mouth_health_trigger->GetOwnerObject();
     }
 
+    ASSERT1(m_mouth_tractor != NULL);
     Delete(m_mouth_tractor);
 
     if (m_mouth_tractor_beam.GetIsValid())

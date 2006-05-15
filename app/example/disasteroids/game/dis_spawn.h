@@ -95,6 +95,7 @@ Ballistic *SpawnSmartBallistic (
     Float impact_damage,
     Float time_to_live,
     Float time_at_birth,
+    Uint8 weapon_level,
     EntityReference<Entity> const &owner);
 
 Ballistic *SpawnDumbBallistic (
@@ -107,6 +108,7 @@ Ballistic *SpawnDumbBallistic (
     Float impact_damage,
     Float time_to_live,
     Float time_at_birth,
+    Uint8 weapon_level,
     EntityReference<Entity> const &owner);
 
 Grenade *SpawnGrenade (

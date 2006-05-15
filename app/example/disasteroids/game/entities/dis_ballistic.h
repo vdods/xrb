@@ -26,14 +26,17 @@ public:
         Float impact_damage,
         Float time_to_live,
         Float time_at_birth,
+        Uint8 const weapon_level,
         EntityReference<Entity> const &owner,
         bool perform_line_trace_for_accuracy)
         :
         Entity(ET_BALLISTIC, CT_SOLID_COLLISION),
+        m_weapon_level(weapon_level),
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);
         ASSERT1(time_at_birth >= 0.0f)
+        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT)
         m_first_think = true;
         m_impact_damage = impact_damage;
         m_time_to_live = time_to_live;
@@ -42,7 +45,9 @@ public:
     }
 
     virtual bool GetIsBallistic () const { return true; }
-    
+
+    inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
+
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
         Entity *collider,
@@ -67,6 +72,7 @@ protected:
     Float m_impact_damage;
     Float m_time_to_live;
     Float m_time_at_birth;
+    Uint8 const m_weapon_level;
     EntityReference<Entity> m_owner;
     bool m_perform_line_trace_for_accuracy;
     FloatVector2 m_initial_velocity;
