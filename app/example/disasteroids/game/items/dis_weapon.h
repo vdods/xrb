@@ -45,7 +45,8 @@ public:
 
     Weapon (Uint8 const upgrade_level, ItemType const item_type)
         :
-        PoweredDevice(upgrade_level, item_type)
+        PoweredDevice(upgrade_level, item_type),
+        m_reticle_coordinates(FloatVector2::ms_zero)
     {
         ASSERT1(item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST ||
                 item_type >= IT_ENEMY_WEAPON_LOWEST && item_type <= IT_ENEMY_WEAPON_HIGHEST)

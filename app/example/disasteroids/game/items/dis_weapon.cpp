@@ -1243,10 +1243,18 @@ bool Tractor::Activate (
     Float reticle_distance =
         (reticle_coordinates - GetOwnerShip()->GetTranslation()).GetLength();
     if (reticle_distance > range)
+    {
+        ASSERT1(reticle_distance > 0.0f)
         reticle_coordinates =
             range / reticle_distance *
             (reticle_coordinates - GetMuzzleLocation()) +
             GetMuzzleLocation();
+    }
+    // ensure the reticle coordinates are inside the object layer
+    reticle_coordinates =
+        GetOwnerShip()->GetObjectLayer()->GetAdjustedCoordinates(
+            reticle_coordinates,
+            FloatVector2::ms_zero);
 
     AreaTraceList area_trace_list;
     GetOwnerShip()->GetPhysicsHandler()->AreaTrace(

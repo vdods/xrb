@@ -41,25 +41,28 @@ aft port:
 actions:
     gauss gun fire: if the player trespasses in a certain area in front of us,
                     pause, slowly aim, then fire dramatically
-    flame thrower: if the player gets close enough in front, spray fire
+    gauss gun fire: if the player gets too far away, initiate the gauss gun
+                    fire sequence (so the player will just see a reticle approaching it)
+x   flame thrower: if the player gets close enough in front, spray fire
                    left/right for a few seconds
-    flame thrower: short blast of flames out of front/side/aft ports simultaneously
-    flame thrower: spinning flame throwing
-    missile launcher: intermittent barrages of non-guided missiles (directed
+x   flame thrower: short blast of flames out of front/side/aft ports simultaneously
+x   flame thrower: spinning flame throwing
+x   missile launcher: intermittent barrages of non-guided missiles (directed
                       at the player) -- out of the front port only
-    missile launcher: spinning blasts of non-guided missiles out all ports
-    missile launcher: spinning blasts of guided missiles out of
+x   missile launcher: spinning blasts of non-guided missiles out all ports
+x   missile launcher: spinning blasts of guided missiles out of
                       all weapon ports (which seek only the player, not enemy ships)
-    tractor: when there are missiles/grenades/ballistics in front, they
+x   tractor: when there are missiles/grenades/ballistics in front, they
              are deflected away with the tractor
+    tractor: tractor the player closer so we can throw some flames on it
     tractor: when player is close enough, tractor some nearby asteroids into
              a collision course with the player
-    tractor: tractor the player closer so we can throw some flames on it
-    tractor: tractor the player towards a Devourment
     tractor: throw interlopers at the player
+    tractor: tractor the player towards a Devourment
     enemy spawner: intermittent barrages of certain types of enemies
     asteroid destruction: if we collide head-on with a large enough asteroid,
                           somehow destroy it
+    blah: if player gets too far away, charge at it
     ---maybe---
     EMP bomb layer: occasionally shoot out an EMB bomb and detonate it
     mine layer: occasionally lay a mine
@@ -111,6 +114,7 @@ public:
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_spinning_attack_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT];
@@ -118,7 +122,7 @@ public:
     static Float const ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
-    static Float const ms_spinning_missile_launch_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_range[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_strength[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_max_force[ENEMY_LEVEL_COUNT];
@@ -152,6 +156,10 @@ public:
     {
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
+
+protected:
+
+    virtual void ResetInputs ();
 
 private:
 
@@ -253,10 +261,14 @@ private:
     void SpinningAttackAccelerate (Float time, Float frame_dt);
     void SpinningAttackFire (Float time, Float frame_dt);
     void SpinningAttackDecelerate (Float time, Float frame_dt);
+    void TractorTargetCloserStart (Float time, Float frame_dt);
+    void TractorTargetCloserContinue (Float time, Float frame_dt);
 
     // tractor think states
     void PortTractorDeflectStuff (Float time, Float frame_dt);
     void StarboardTractorDeflectStuff (Float time, Float frame_dt);
+    void PortTractorPullTargetCloser (Float time, Float frame_dt);
+    void StarboardTractorPullTargetCloser (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
     Entity *FindTractorDeflectTarget (

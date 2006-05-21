@@ -37,6 +37,8 @@ DISASTEROIDS:
 - wave spawning, punctuated with Demis
 
 CURRENT:
+- when a new high score is posted and you're taken back to the title screen,
+  the best high score should be shown first (time or score based)
 - change CollisionPairList into a std::vector?
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.

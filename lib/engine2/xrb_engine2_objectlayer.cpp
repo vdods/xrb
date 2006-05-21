@@ -101,7 +101,7 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
     FloatVector2 const &coordinates) const
 {
     FloatVector2 normalized_coordinates(coordinates);
-    
+
     Float const half_object_layer_side_length = 0.5f * GetSideLength();
     if (GetIsWrapped())
     {
@@ -109,11 +109,11 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
             normalized_coordinates[Dim::X] += GetSideLength();
         else if (normalized_coordinates[Dim::X] > half_object_layer_side_length)
             normalized_coordinates[Dim::X] -= GetSideLength();
-            
+
         if (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
             normalized_coordinates[Dim::Y] += GetSideLength();
         else if (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] -= GetSideLength();            
+            normalized_coordinates[Dim::Y] -= GetSideLength();
     }
     else
     {
@@ -121,13 +121,13 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
             normalized_coordinates[Dim::X] = -half_object_layer_side_length;
         else if (normalized_coordinates[Dim::X] > half_object_layer_side_length)
             normalized_coordinates[Dim::X] = half_object_layer_side_length;
-            
+
         if (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
             normalized_coordinates[Dim::Y] = -half_object_layer_side_length;
         else if (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
             normalized_coordinates[Dim::Y] = half_object_layer_side_length;
     }
-    
+
     return normalized_coordinates;
 }
 
@@ -135,6 +135,11 @@ FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
     FloatVector2 const &coordinates,
     FloatVector2 const &reference_coordinates) const
 {
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::X]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::Y]))
+
     if (GetIsWrapped())
     {
         Float const half_object_layer_side_length = 0.5f * GetSideLength();
@@ -144,16 +149,28 @@ FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
         ASSERT1(reference_coordinates[Dim::X] <=  half_object_layer_side_length)
         ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length)
         ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length)
-        
+
         if (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
+        {
             adjusted_coordinates[Dim::X] += GetSideLength();
+            ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length)
+        }
         else if (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
+        {
             adjusted_coordinates[Dim::X] -= GetSideLength();
-        
+            ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length)
+        }
+
         if (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
+        {
             adjusted_coordinates[Dim::Y] += GetSideLength();
+            ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length)
+        }
         else if (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
+        {
             adjusted_coordinates[Dim::Y] -= GetSideLength();
+            ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length)
+        }
 
         return adjusted_coordinates;
     }
@@ -221,7 +238,7 @@ void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
 {
     ASSERT1(object != NULL)
     ASSERT1(m_quad_tree != NULL)
-    
+
     // make sure that it's inside the layer's bounds first
     Entity *entity = object->GetEntity();
     if (m_is_wrapped)
