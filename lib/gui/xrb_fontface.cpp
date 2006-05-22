@@ -46,7 +46,30 @@ FontFace *FontFace::Create (std::string const &filename)
         return retval;
 
     ASSERT1(face != NULL)
-//     ASSERT1((face->internal->flags & FT_FACE_FLAG_SCALABLE) != 0)
+
+    // check if there is a metrics file associated with this font file.
+    // (this is sort of a hacky way to check for type1 fonts, but i don't
+    // know of any better way).
+    if (filename.find_last_of(".pfa") < filename.length() ||
+        filename.find_last_of(".pfb") < filename.length())
+    {
+        std::string metrics_filename(filename.substr(0, filename.length()-4));
+        metrics_filename += ".afm";
+        // attempt to attach the font metrics file, but ignore errors,
+        // since loading this file is not mandatory.
+        FT_Attach_File(face, metrics_filename.c_str());
+
+        metrics_filename = filename.substr(0, filename.length()-4);
+        metrics_filename += ".pfm";
+        // attempt to attach the font metrics file, but ignore errors,
+        // since loading this file is not mandatory.
+        FT_Attach_File(face, metrics_filename.c_str());
+    }
+
+    if (FT_HAS_KERNING(face))
+        fprintf(stderr, "FontFace::Create(\"%s\"); loaded font with kerning\n", filename.c_str());
+    else
+        fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", filename.c_str());
 
     retval = new FontFace;
     retval->m_face = face;

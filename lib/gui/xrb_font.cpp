@@ -90,6 +90,7 @@ Font *Font::Create (
         return retval;
 
     retval = new Font;
+    retval->m_has_kerning = FT_HAS_KERNING(ft_face);
     retval->m_pixel_height = pixel_height;
     retval->m_font_face = font_face;
 
@@ -117,6 +118,30 @@ Font *Font::Create (
     ASSERT1(retval->m_gl_texture != NULL)
 
     return retval;
+}
+
+ScreenCoord Font::GetKerningPixelAdvance (Uint32 left, Uint32 right) const
+{
+    if (!m_has_kerning)
+        return 0;
+
+    ASSERT1(m_font_face.GetIsValid());
+    FT_FaceRec_ *ft_face = m_font_face->GetFTFace();
+
+    FT_Error error = FT_Set_Pixel_Sizes(ft_face, 0, m_pixel_height);
+    if (error != 0)
+        return 0;
+
+    FT_Vector delta;
+    FT_Get_Kerning(
+        ft_face,
+        FT_Get_Char_Index(ft_face, left),
+        FT_Get_Char_Index(ft_face, right),
+        FT_KERNING_DEFAULT,
+        &delta);
+
+    // delta is in 26.6 fixed point, so return only the integer portion.
+    return delta.x >> 6;
 }
 
 ScreenCoordRect Font::GetStringRect (char const *string) const
@@ -197,7 +222,7 @@ void Font::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
          unicode <= RENDERED_GLYPH_HIGHEST;
          ++unicode)
     {
-        error = FT_Load_Char(ft_face, unicode, FT_LOAD_DEFAULT);
+        error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, unicode), FT_LOAD_DEFAULT);
         ASSERT1(error == 0)
 
         GlyphSpecification &glyph =
@@ -323,7 +348,7 @@ void Font::GenerateTexture (ScreenCoordVector2 const &texture_size)
     {
         GlyphSpecification &glyph = m_glyph_specification[i];
 
-        error = FT_Load_Char(ft_face, glyph.m_unicode, FT_LOAD_RENDER);
+        error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, glyph.m_unicode), FT_LOAD_RENDER);
         ASSERT1(error == 0)
         ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP)
 

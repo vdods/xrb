@@ -95,6 +95,11 @@ public:
     {
         return m_glyph_specification[GetGlyphIndex(unicode)].m_advance;
     }
+    /** @brief Returns the horizontal kerning offset between the given glyphs.
+      * @param left The unicode value of the (visually) left glyph.
+      * @param right The unicode value of the (visually) right glyph.
+      */
+    ScreenCoord GetKerningPixelAdvance (Uint32 left, Uint32 right) const;
     /** @brief Returns the "bearing" property of a particular glyph (see
       *        FreeType documentation).
       * @param unicode The unicode value of the glyph to be queried.
@@ -161,7 +166,7 @@ protected:
 
     /** Protected so that you must use @ref Xrb::Font::Create .
       * @brief Default constructor.
-      */    
+      */
     inline Font ()
     {
         m_gl_texture = NULL;
@@ -222,6 +227,7 @@ private:
     void GenerateTexture (ScreenCoordVector2 const &texture_size);
 
     Resource<FontFace> m_font_face;
+    bool m_has_kerning;
     ScreenCoord m_pixel_height;
     GLTexture *m_gl_texture;
     GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];

@@ -59,7 +59,7 @@ WidgetSkin::WidgetSkin (Screen const *screen)
     UpdateFontHeight(DEFAULT_FONT);
     SetFontFaceFilename(
         DEFAULT_FONT,
-        "resources/FreeSansBold.ttf");
+        "resources/FreeSansBoldCustom.ttf");
 
     // ///////////////////////////////////////////////////////////////////////
     // gl textures

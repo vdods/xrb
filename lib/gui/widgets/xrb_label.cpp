@@ -526,9 +526,9 @@ void Label::DrawTextInternal (
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, GetRenderFont()->GetTextureHandle());
 
-    glMatrixMode(GL_MODELVIEW);    
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    
+
     glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
     glScalef(
@@ -594,6 +594,7 @@ void Label::DrawTextInternal (
 
     Uint32 line = 0;
     bool start_of_line = true;
+    char previous_char = '\0';
     ScreenCoordRect glyph_texture_coordinates;
     ScreenCoordRect glyph_vertex_coordinates;
     Uint32 lines_left = m_line_format_vector.size() - 1;
@@ -646,7 +647,6 @@ void Label::DrawTextInternal (
             }
         }
 
-        start_of_line = false;
         if (*string == '\n')
         {
             start_of_line = true;
@@ -671,6 +671,11 @@ void Label::DrawTextInternal (
         }
         else
         {
+            // apply kerning offset (if not at the start of the line)
+            if (!start_of_line)
+                current_position[Dim::X] +=
+                    GetRenderFont()->GetKerningPixelAdvance(previous_char, *string);
+
             // draw the current char
             glyph_texture_coordinates =
                 GetRenderFont()->GetGlyphPixelSize(*string);
@@ -709,6 +714,8 @@ void Label::DrawTextInternal (
             --chars_left;
         }
 
+        start_of_line = false;
+        previous_char = *string;
         ++string;
     }
     glEnd();
