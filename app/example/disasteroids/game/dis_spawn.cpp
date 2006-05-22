@@ -24,6 +24,7 @@
 #include "dis_shade.h"
 #include "dis_solitary.h"
 #include "dis_util.h"
+#include "dis_world.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_sprite.h"
 #include "xrb_engine2_world.h"
@@ -758,6 +759,7 @@ Interloper *SpawnInterloper (
         velocity,
         0.0f,
         0.05f);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_INTERLOPER);
     return interloper;
 }
 
@@ -781,6 +783,7 @@ Shade *SpawnShade (
         velocity,
         0.0f,
         0.05f);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_SHADE);
     return shade;
 }
 
@@ -804,6 +807,7 @@ Revulsion *SpawnRevulsion (
         velocity,
         0.0f,
         0.05f);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_REVULSION);
     return revulsion;
 }
 
@@ -827,6 +831,7 @@ Devourment *SpawnDevourment (
         velocity,
         0.0f,
         0.05f);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_DEVOURMENT);
     return devourment;
 }
 
@@ -850,6 +855,7 @@ Demi *SpawnDemi (
         velocity,
         0.0f,
         0.05f);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_DEMI);
     return demi;
 }
 

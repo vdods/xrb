@@ -18,7 +18,7 @@
 
 using namespace Xrb;
 
-#define FULLSCREEN 0
+#define FULLSCREEN 1
 
 // exit handler
 void Exit ()

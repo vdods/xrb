@@ -14,8 +14,11 @@
 #include "dis_enemyship.h"
 #include "dis_explosive.h"
 #include "dis_entity.h"
+#include "dis_interloper.h"
 #include "dis_linetracebinding.h"
 #include "dis_physicshandler.h"
+#include "dis_revulsion.h"
+#include "dis_shade.h"
 #include "dis_ship.h"
 #include "dis_spawn.h"
 #include "dis_world.h"
@@ -130,6 +133,11 @@ Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const SlowBulletGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.333f, 0.35f, 0.4f, 0.5f };
+
+// EnemySpawner properties
+Float const EnemySpawner::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
+Float const EnemySpawner::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 10.0f, 10.0f, 10.0f };
+Float const EnemySpawner::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15.0f, 15.0f };
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -1349,6 +1357,92 @@ bool SlowBulletGun::Activate (
         time,
         GetUpgradeLevel(),
         GetOwnerShip()->GetReference());
+
+    // update the last time fired
+    m_time_last_fired = time;
+
+    return true;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
+    Float const time,
+    Float const frame_dt) const
+{
+    Float const fire_rate =
+        GetIsFireRateOverridden() ?
+        GetFireRateOverride() :
+        ms_fire_rate[GetUpgradeLevel()];
+
+    // can't fire faster that the weapon's cycle time
+    ASSERT1(fire_rate)
+    if (time < m_time_last_fired + 1.0f / fire_rate)
+        return 0.0f;
+
+    // if the primary input is on at all, return the full primary power
+    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+}
+
+bool EnemySpawner::Activate (
+    Float const power,
+    Float const time,
+    Float const frame_dt)
+{
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+
+    // can't fire if not enough power was supplied
+    if (power < ms_required_primary_power[GetUpgradeLevel()])
+        return false;
+
+    ASSERT1(GetPrimaryInput() > 0.0f)
+
+    // fire the weapon -- spawn the specified type/level of enemy
+    ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
+    FloatVector2 muzzle_velocity(
+        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() +
+        GetOwnerShip()->GetVelocity());
+
+    EnemyShip *enemy_ship = NULL;
+    switch (GetEnemySpawnType())
+    {
+        case ET_INTERLOPER:
+            enemy_ship = SpawnInterloper(
+                GetOwnerShip()->GetWorld(),
+                GetOwnerShip()->GetObjectLayer(),
+                FloatVector2::ms_zero,
+                muzzle_velocity,
+                GetUpgradeLevel());
+            break;
+
+        case ET_SHADE:
+            enemy_ship = SpawnShade(
+                GetOwnerShip()->GetWorld(),
+                GetOwnerShip()->GetObjectLayer(),
+                FloatVector2::ms_zero,
+                muzzle_velocity,
+                GetUpgradeLevel());
+            break;
+
+        case ET_REVULSION:
+            enemy_ship = SpawnRevulsion(
+                GetOwnerShip()->GetWorld(),
+                GetOwnerShip()->GetObjectLayer(),
+                FloatVector2::ms_zero,
+                muzzle_velocity,
+                GetUpgradeLevel());
+            break;
+
+        default:
+            ASSERT0(false && "You shouldn't be spawning this type")
+            break;
+    }
+
+    ASSERT1(enemy_ship != NULL)
+    enemy_ship->SetTranslation(GetMuzzleLocation() + enemy_ship->GetScaleFactor() * GetMuzzleDirection());
+    enemy_ship->SetAngle(Math::Atan(GetMuzzleDirection()));
 
     // update the last time fired
     m_time_last_fired = time;

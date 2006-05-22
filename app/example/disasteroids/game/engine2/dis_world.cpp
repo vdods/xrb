@@ -467,7 +467,14 @@ void World::RecordCreatedEnemyShip (EntityType const enemy_ship_type)
 {
     Uint32 enemy_ship_index = enemy_ship_type - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
+
     ++m_enemy_ship_count[enemy_ship_index];
+    if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
+        m_next_enemy_ship_spawn_time[enemy_ship_index] =
+            GetFrameTime() + 0.3f;
+//                 Math::RandomFloat(
+//                     0.9f * ms_enemy_spawn_interval[m_game_stage],
+//                     1.1f * ms_enemy_spawn_interval[m_game_stage]);
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
@@ -476,8 +483,8 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
     ASSERT1(m_enemy_ship_count[enemy_ship_index] > 0)
-    --m_enemy_ship_count[enemy_ship_index];
 
+    --m_enemy_ship_count[enemy_ship_index];
     if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
         m_next_enemy_ship_spawn_time[enemy_ship_index] =
             GetFrameTime() + 0.3f;
@@ -881,20 +888,9 @@ void World::ProcessNormalGameplayLogic ()
         if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] &&
             m_next_enemy_ship_spawn_time[enemy_ship_index] <= GetFrameTime())
         {
-            EnemyShip *enemy_ship =
-                SpawnEnemyShipOutOfView(
-                    static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
-                    ms_enemy_level_distribution_table[m_game_stage][enemy_ship_index][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
-            if (enemy_ship != NULL)
-            {
-                ++m_enemy_ship_count[enemy_ship_index];
-                if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
-                    m_next_enemy_ship_spawn_time[enemy_ship_index] =
-                        GetFrameTime() + 0.3f;
-//                         Math::RandomFloat(
-//                             0.9f * ms_enemy_spawn_interval[m_game_stage],
-//                             1.1f * ms_enemy_spawn_interval[m_game_stage]);
-            }
+            SpawnEnemyShipOutOfView(
+                static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
+                ms_enemy_level_distribution_table[m_game_stage][enemy_ship_index][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
         }
     }
 

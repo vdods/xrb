@@ -54,7 +54,7 @@ x   missile launcher: spinning blasts of guided missiles out of
                       all weapon ports (which seek only the player, not enemy ships)
 x   tractor: when there are missiles/grenades/ballistics in front, they
              are deflected away with the tractor
-    tractor: tractor the player closer so we can throw some flames on it
+x   tractor: tractor the player closer so we can throw some flames on it
     tractor: when player is close enough, tractor some nearby asteroids into
              a collision course with the player
     tractor: throw interlopers at the player
@@ -91,16 +91,13 @@ GuidedMissileLaunchContinue -> Stalk
 
 */
 
+class EnemySpawner;
 class FlameThrower;
 class GaussGun;
 class MissileLauncher;
 class ReticleEffect;
 class Tractor;
 class TractorBeam;
-
-// TEMP
-class PeaShooter;
-// TEMP
 
 class Demi : public EnemyShip
 {
@@ -122,6 +119,7 @@ public:
     static Float const ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_range[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_strength[ENEMY_LEVEL_COUNT];
@@ -254,9 +252,12 @@ private:
     void FlameThrowBlastContinue (Float time, Float frame_dt);
     void MissileLaunchStart (Float time, Float frame_dt);
     void MissileLaunchContinue (Float time, Float frame_dt);
+    void EnemySpawnBlastStart (Float time, Float frame_dt);
+    void EnemySpawnBlastContinue (Float time, Float frame_dt);
     void SpinningFlameThrow (Float time, Float frame_dt);
     void SpinningMissileLaunch (Float time, Float frame_dt);
     void SpinningGuidedMissileLaunch (Float time, Float frame_dt);
+    void SpinningEnemySpawn (Float time, Float frame_dt);
     void SpinningAttackStart (Float time, Float frame_dt);
     void SpinningAttackAccelerate (Float time, Float frame_dt);
     void SpinningAttackFire (Float time, Float frame_dt);
@@ -288,8 +289,11 @@ private:
     Float m_wander_angle;
     Float m_wander_angle_low_pass;
     EntityReference<Ship> m_target;
-    Float m_attack_start_time;
+    Float m_start_time;
     Float m_spin_direction;
+    Float m_spin_accelerate_through_angle;
+    Float m_spin_acceleration_duration;
+    Float m_spin_duration;
     bool m_spinning_attack_uses_secondary_fire;
 
     FloatVector2 m_port_reticle_coordinates;
@@ -301,11 +305,9 @@ private:
     Uint8 m_aft_weapon_primary_input;
     Uint8 m_aft_weapon_secondary_input;
 
-    // currently equipped (main) weapon -- TODO: i don't really like
-    // this main weapon stuff.  the think states should handle firing of the weapons
-    // instead of Think().
+    // currently equipped (main) weapon
     Weapon *m_main_weapon;
-    // choices for main weapon (gauss gun, flame thrower, missile launcher)
+    // choices for main weapon
     GaussGun *m_gauss_gun;
     EntityReference<ReticleEffect> m_reticle_effect;
     FlameThrower *m_flame_thrower;
@@ -313,7 +315,7 @@ private:
 
     // currently equipped port-side weapon
     Weapon *m_port_weapon;
-    // port-side weapons (tractor, flame thrower)
+    // port-side weapons
     Tractor *m_port_tractor;
     EntityReference<TractorBeam> m_port_tractor_beam;
     FlameThrower *m_port_flame_thrower;
@@ -321,7 +323,7 @@ private:
 
     // currently equipped starboard-side weapon
     Weapon *m_starboard_weapon;
-    // starboard-side weapons (tractor, flame thrower)
+    // starboard-side weapons
     Tractor *m_starboard_tractor;
     EntityReference<TractorBeam> m_starboard_tractor_beam;
     FlameThrower *m_starboard_flame_thrower;
@@ -329,8 +331,8 @@ private:
 
     // currently equipped aft-port weapon
     Weapon *m_aft_weapon;
-    // aft-port weapons (enemy spawner, flame thrower)
-    PeaShooter *m_aft_enemy_spawner; // dummy for now
+    // aft-port weapons
+    EnemySpawner *m_aft_enemy_spawner;
     FlameThrower *m_aft_flame_thrower;
     MissileLauncher *m_aft_missile_launcher;
 }; // end of class Demi

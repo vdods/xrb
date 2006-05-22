@@ -11,10 +11,9 @@
 #if !defined(_DIS_WEAPON_H_)
 #define _DIS_WEAPON_H_
 
-#include <set>
-
 #include "dis_powereddevice.h"
-#include "xrb_vector.h"
+
+#include "dis_enemyship.h"
 
 using namespace Xrb;
 
@@ -952,7 +951,6 @@ private:
 // enemy weapons
 // ///////////////////////////////////////////////////////////////////////////
 
-
 class SlowBulletGun : public Weapon
 {
 public:
@@ -1010,6 +1008,86 @@ private:
     Float m_time_last_fired;
 }; // end of class SlowBulletGun
 
+class EnemySpawner : public Weapon
+{
+public:
+
+    static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
+    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+
+    EnemySpawner (Uint32 const upgrade_level)
+        :
+        Weapon(upgrade_level, IT_ENEMY_WEAPON_ENEMY_SPAWNER)
+    {
+        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        SetEnemySpawnType(ET_INTERLOPER);
+        ClearFireRateOverride();
+    }
+    virtual ~EnemySpawner () { }
+
+    inline EntityType GetEnemySpawnType () const { return m_enemy_spawn_type; }
+    inline bool GetIsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
+    inline Float GetFireRateOverride () const { return m_fire_rate_override; }
+
+    inline void SetEnemySpawnType (EntityType enemy_spawn_type)
+    {
+        ASSERT1(enemy_spawn_type >= ET_ENEMY_SHIP_LOWEST)
+        ASSERT1(enemy_spawn_type <= ET_ENEMY_SHIP_HIGHEST)
+        m_enemy_spawn_type = enemy_spawn_type;
+    }
+    inline void SetFireRateOverride (Float fire_rate_override)
+    {
+        ASSERT1(fire_rate_override > 0.0f)
+        m_fire_rate_override = fire_rate_override;
+    }
+
+    inline void ClearFireRateOverride () { m_fire_rate_override = -1.0f; }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // Weapon interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual bool GetRequiresAmmo () const
+    {
+        return false;
+    }
+    virtual Float GetReadinessStatus (Float time) const
+    {
+        Float const fire_rate =
+            GetIsFireRateOverridden() ?
+            GetFireRateOverride() :
+            ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / fire_rate;
+        Float const time_since_last_fire = time - m_time_last_fired;
+        ASSERT1(cycle_time > 0.0f)
+        ASSERT1(time_since_last_fire >= 0.0f)
+        if (time_since_last_fire > cycle_time)
+            return 1.0f;
+        else
+            return time_since_last_fire / cycle_time;
+    }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // PoweredDevice interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual Float GetPowerToBeUsedBasedOnInputs (
+        Float time,
+        Float frame_dt) const;
+
+    virtual bool Activate (
+        Float power,
+        Float time,
+        Float frame_dt);
+
+private:
+
+    EntityType m_enemy_spawn_type;
+    Float m_fire_rate_override;
+    Float m_time_last_fired;
+}; // end of class EnemySpawner
 
 } // end of namespace Dis
 
