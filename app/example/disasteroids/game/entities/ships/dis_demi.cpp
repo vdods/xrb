@@ -369,6 +369,7 @@ FloatVector2 Demi::GetMuzzleLocation (Weapon const *weapon) const
     else
     {
         ASSERT1(false && "Unknown weapon")
+        return FloatVector2::ms_zero;
     }
 }
 
@@ -413,6 +414,7 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
     else
     {
         ASSERT1(false && "Unknown weapon")
+        return FloatVector2::ms_zero;
     }
 }
 

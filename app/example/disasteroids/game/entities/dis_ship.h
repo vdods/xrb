@@ -81,14 +81,14 @@ public:
         Float time,
         Float frame_dt);
 
-    virtual FloatVector2 GetMuzzleLocation (Weapon const *const weapon) const
+    virtual FloatVector2 GetMuzzleLocation (Weapon const *weapon) const
     {
         ASSERT1(weapon != NULL)
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
         return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle());
     }
-    virtual FloatVector2 GetMuzzleDirection (Weapon const *const weapon) const
+    virtual FloatVector2 GetMuzzleDirection (Weapon const *weapon) const
     {
         ASSERT1(weapon != NULL)
         // by default, just return the direction the ship is facing,

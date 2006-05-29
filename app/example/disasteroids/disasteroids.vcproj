@@ -282,6 +282,14 @@
 					Name="ships"
 					>
 					<File
+						RelativePath=".\game\entities\ships\dis_demi.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\game\entities\ships\dis_demi.h"
+						>
+					</File>
+					<File
 						RelativePath=".\game\entities\ships\dis_devourment.cpp"
 						>
 					</File>

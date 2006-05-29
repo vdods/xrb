@@ -499,8 +499,8 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
 
 EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSetIterator it = scan_set.begin(),
-                                     it_end = scan_set.end();
+    for (LineTraceBindingSetConstIterator it = scan_set.begin(),
+                                          it_end = scan_set.end();
          it != it_end;
          ++it)
     {
@@ -610,8 +610,8 @@ void GuidedMissile::AimAt (FloatVector2 const &position)
 
 EntityReference<Ship> GuidedEnemyMissile::FindTarget (LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSetIterator it = scan_set.begin(),
-                                     it_end = scan_set.end();
+    for (LineTraceBindingSetConstIterator it = scan_set.begin(),
+                                          it_end = scan_set.end();
          it != it_end;
          ++it)
     {

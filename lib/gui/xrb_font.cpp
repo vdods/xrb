@@ -93,7 +93,7 @@ Font *Font::Create (
         return retval;
 
     retval = new Font;
-    retval->m_has_kerning = FT_HAS_KERNING(ft_face);
+    retval->m_has_kerning = FT_HAS_KERNING(ft_face) != 0;
     retval->m_pixel_height = pixel_height;
     retval->m_font_face = font_face;
 
@@ -569,7 +569,7 @@ FontBase *AsciiFont::Create (
         return retval;
 
     retval = new AsciiFont(pixel_height);
-    retval->m_has_kerning = FT_HAS_KERNING(ft_face);
+    retval->m_has_kerning = FT_HAS_KERNING(ft_face) != 0;
     retval->m_pixel_height = pixel_height;
     retval->m_font_face = font_face;
 

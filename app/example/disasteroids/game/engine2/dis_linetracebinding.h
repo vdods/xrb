@@ -47,6 +47,7 @@ struct OrderLineTraceBindingsByTime
 
 typedef std::set<LineTraceBinding, OrderLineTraceBindingsByTime> LineTraceBindingSet;
 typedef LineTraceBindingSet::iterator LineTraceBindingSetIterator;
+typedef LineTraceBindingSet::const_iterator LineTraceBindingSetConstIterator;
 
 } // end of namespace Dis
 
