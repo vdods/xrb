@@ -46,7 +46,7 @@ public:
         Widget *const parent,
         std::string const &name = "Label");
     /** The picture texture is stretched to fill the area inside the
-      * frame margins, adding the content margins.  
+      * frame margins, adding the content margins.
       * @brief Constructs a picture label.
       */
     Label (
@@ -61,7 +61,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
-    
+
     /** If true, when the text's width changes, the minimum width of this
       * widget will change, and the widget may be resized.
       * @brief Returns true iff the label's minimum width is fixed to the
@@ -193,7 +193,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // public modifiers
     // ///////////////////////////////////////////////////////////////////////
-    
+
     void SetIsMinWidthFixedToTextWidth (bool is_min_width_fixed_to_text_width);
     void SetIsMaxWidthFixedToTextWidth (bool is_max_width_fixed_to_text_width);
     void SetIsWidthFixedToTextWidth (bool is_width_fixed_to_text_width);
@@ -278,6 +278,14 @@ protected:
     }; // end of struct LineFormat
 
     typedef std::vector<LineFormat> LineFormatVector;
+
+    // TEMP
+    // TEMP
+    // TEMP
+//     Resource<FontBase> m_temp_font;
+    // TEMP
+    // TEMP
+    // TEMP
 
     // the text of the label
     std::string m_text;

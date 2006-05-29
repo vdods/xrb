@@ -521,6 +521,12 @@ void Label::DrawTextInternal (
     RenderContext const &render_context,
     char const *string) const
 {
+/*
+    ASSERT1(m_temp_font.GetIsValid())
+    ScreenCoordVector2 initial_pen_position(GetContentsRect().GetTopLeft() + m_text_offset);
+    m_temp_font->DrawString(render_context, string, initial_pen_position);
+*/
+
     // set up the GL texture transform so we can use the integer
     // texture coordinates of each glyph directly.
     glEnable(GL_TEXTURE_2D);
@@ -671,10 +677,10 @@ void Label::DrawTextInternal (
         }
         else
         {
-            // apply kerning offset (if not at the start of the line)
-            if (!start_of_line)
-                current_position[Dim::X] +=
-                    GetRenderFont()->GetKerningPixelAdvance(previous_char, *string);
+//             // apply kerning offset (if not at the start of the line)
+//             if (!start_of_line)
+//                 current_position[Dim::X] +=
+//                     GetRenderFont()->GetKerningPixelAdvance(previous_char, *string);
 
             // draw the current char
             glyph_texture_coordinates =
@@ -960,6 +966,18 @@ void Label::Initialize ()
 {
     m_accepts_focus = false;
     m_accepts_mouseover = false;
+
+    // TEMP
+    // TEMP
+    // TEMP
+//     m_temp_font =
+//         Singletons::ResourceLibrary()->LoadFilename<FontBase>(
+//             AsciiFont::Create,
+//             "resources/FreeSansBoldCustom.ttf",
+//             18);
+    // TEMP
+    // TEMP
+    // TEMP
 
     DirtyTextFormatting();
     ASSERT1(m_text.empty())

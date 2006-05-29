@@ -172,12 +172,6 @@ namespace Math
     {
         return log10f(x);
     }
-    /** If @c x is zero, then zero will be returned (even though there are
-      * no bits set in the integer representation of zero.
-      * @brief Returns the zero-based index of the highest bit in @c x
-      *        (an unsigned, 32 bit value).
-      */
-    Uint32 HighestBitIndex (Uint32 x);
     /** @brief Returns the floating-point representation of not-a-number.
       */
     inline Float Nan ()
@@ -204,6 +198,25 @@ namespace Math
     #else // !defined(WIN32)
         return isfinite(x);
     #endif
+    }
+    /** If @c x is zero, then zero will be returned (even though there are
+      * no bits set in the integer representation of zero.
+      * @brief Returns the zero-based index of the highest bit in @c x
+      *        (an unsigned, 32 bit value).
+      */
+    Uint32 HighestBitIndex (Uint32 x);
+    /** @brief Returns the closest integer (non-fixed-point) to the
+      *        fixed-point value given by @c x .
+      * @param x The fixed-point format value to round.
+      */
+    template <Uint32 fractional_bits, typename IntType>
+    inline IntType FixedPointRound (IntType x)
+    {
+        if (x < 0)
+            x -= (1<<(fractional_bits-1));
+        else
+            x += (1<<(fractional_bits-1));
+        return x >> fractional_bits;
     }
 
     /** @brief Returns the sine of the given angle, with lower precision.
