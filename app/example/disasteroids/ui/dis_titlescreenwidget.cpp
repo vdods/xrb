@@ -40,18 +40,18 @@ TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, W
     CellPaddingWidget *logo_padding_widget =
         new CellPaddingWidget(main_layout, "logo padding widget");
     logo_padding_widget->FixHeightRatio(0.20f);
-    
+
     m_logo_label = new Label("DISASTEROIDS", logo_padding_widget, "logo label");
     m_logo_label->SetFontHeightRatio(0.10f);
 
     WidgetStack *center_panel_widget_stack = new WidgetStack(main_layout, "center panel widget stack");
-    
+
     m_game_widget_dummy = new Label("game demo widget", center_panel_widget_stack, "game widget dummy");
     m_game_widget_dummy->SetFontHeightRatio(0.10f);
     m_game_widget_dummy->SetBackground(new WidgetBackgroundColored(Color(1.0f, 0.0f, 0.0f, 1.0f)));
 
     CellPaddingWidget *high_scores_padding_widget = new CellPaddingWidget(center_panel_widget_stack, "high scores padding widget");
-    
+
     m_high_scores_widget = new HighScoresWidget(high_scores_padding_widget);
     m_high_scores_widget->Hide();
     m_high_scores_widget->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
@@ -60,7 +60,7 @@ TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, W
     stuff_layout->FixHeightRatio(0.20f);
     stuff_layout->SetIsUsingZeroedFrameMargins(true);
     stuff_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
-        
+
     CellPaddingWidget *controls_padding_widget =
         new CellPaddingWidget(stuff_layout, "controls padding widget");
 
@@ -68,10 +68,10 @@ TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, W
 
     m_start_button = new Button("START", controls_layout, "start button");
     m_start_button->SetIsHeightFixedToTextHeight(true);
-    
+
     m_options_button = new Button("OPTIONS", controls_layout, "options button");
     m_options_button->SetIsHeightFixedToTextHeight(true);
-    
+
     m_quit_button = new Button("QUIT", controls_layout, "quit button");
     m_quit_button->SetIsHeightFixedToTextHeight(true);
 

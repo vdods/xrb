@@ -69,21 +69,41 @@ Screen *Screen::Create (
 
 void Screen::Draw () const
 {
-    // this function encompasses all drawing.
+    // NOTE: this method encompasses all drawing.
+
+    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1)
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1)
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1)
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1)
 
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // make sure the screen rect we're constructing the render context
+    // with does not extend past the physical screen
+    ScreenCoordRect screen_rect(GetScreenRect());
+    ASSERT1(screen_rect.GetLeft() == 0)
+    ASSERT1(screen_rect.GetBottom() == 0)
+    if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
+        screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
+    if (screen_rect.GetHeight() > m_current_video_resolution[Dim::Y])
+        screen_rect.SetHeight(m_current_video_resolution[Dim::Y]);
+
     // create the render context.  we must do it manually because the
     // top-level widget (Screen) has no parent to do it automatically.
-    RenderContext render_context(GetScreenRect(), Color(1.0, 1.0, 1.0, 1.0));
+    RenderContext render_context(screen_rect, Color(1.0, 1.0, 1.0, 1.0));
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     render_context.SetupGLClipRect();
 
     // call draw on the Widget base class.
     Widget::Draw(render_context);
+
+    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere")
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "You forgot to pop a GL_MODELVIEW matrix somewhere")
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "You forgot to pop a GL_PROJECTION matrix somewhere")
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "You forgot to pop a GL_TEXTURE matrix somewhere")
 
     // all drawing is complete for this frame, so flush it down
     // and then swap the backbuffer.

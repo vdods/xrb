@@ -205,7 +205,7 @@ namespace Math
       *        (an unsigned, 32 bit value).
       */
     Uint32 HighestBitIndex (Uint32 x);
-    /** @brief Returns the closest integer (non-fixed-point) to the
+    /** @brief Returns the closest integer (fixed-point) to the
       *        fixed-point value given by @c x .
       * @param x The fixed-point format value to round.
       */
@@ -216,7 +216,7 @@ namespace Math
             x -= (1<<(fractional_bits-1));
         else
             x += (1<<(fractional_bits-1));
-        return x >> fractional_bits;
+        return x;
     }
 
     /** @brief Returns the sine of the given angle, with lower precision.

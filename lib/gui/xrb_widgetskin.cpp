@@ -173,7 +173,7 @@ void WidgetSkin::SetFontFaceFilename (
             m_font_specification[font_type].m_font_height_ratio);
     m_font_specification[font_type].m_font =
         Singletons::ResourceLibrary()->LoadFilename<Font>(
-            Font::Create,
+            AsciiFont::Create,
             font_face_filename,
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
@@ -191,7 +191,7 @@ void WidgetSkin::SetFontHeightRatio (
         GetScreenCoordFromRatio(font_height_ratio);
     m_font_specification[font_type].m_font =
         Singletons::ResourceLibrary()->LoadFilename<Font>(
-            Font::Create,
+            AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
@@ -208,7 +208,7 @@ void WidgetSkin::SetFontHeight (
         GetRatioFromScreenCoord(font_height);
     m_font_specification[font_type].m_font =
         Singletons::ResourceLibrary()->LoadFilename<Font>(
-            Font::Create,
+            AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.GetIsValid())

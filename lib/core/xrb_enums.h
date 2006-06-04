@@ -33,13 +33,13 @@ namespace Dim
         G,         ///< The green color component index
         B,         ///< The blue color component index
         A,         ///< The alpha color component index
-        
+
         RED = R,   ///< The red color component index
         GREEN = G, ///< The green color component index
         BLUE = B,  ///< The blue color component index
         ALPHA = A  ///< The alpha color component index
-    };
-} // end namespace Dim
+    }; // end of enum Component
+} // end of namespace Dim
 
 /** @brief Enums for text-alignment in Label (also used by CellPaddingWidget).
   */
@@ -51,7 +51,7 @@ enum Alignment
     BOTTOM,  ///< Align the bottom side of the content to the bottom side of the widget.
     RIGHT,   ///< Align the right side of the content to the right side of the widget.
     SPACED   ///< The text will be spaced to the left/right and/or top/bottom.
-}; // end enum Alignment
+}; // end of enum Alignment
 
 /** @brief Enums for child widget stack priority.
   */
@@ -60,7 +60,7 @@ enum StackPriority
     SP_STAY_ON_BOTTOM = 0, ///< The child will stay at the bottom of the stack.
     SP_NEUTRAL,            ///< The child will stay between the bottom and top children.
     SP_STAY_ON_TOP         ///< The child will stay at the top of the stack.
-}; // end enum StackPriority
+}; // end of enum StackPriority
 
 /** @brief Enums for Layout row or column specification.
   */

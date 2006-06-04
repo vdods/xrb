@@ -241,21 +241,35 @@ void LineEdit::SignalTextUpdated ()
 
 ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
 {
-    ScreenCoord retval = 0;
+    ASSERT1(GetRenderFont().GetIsValid())
+
+    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
 
     if (cursor_position < 0)
         cursor_position = 0;
-    else if (cursor_position > m_text.length())
-        cursor_position = m_text.length();
 
-    for (Uint32 i = 0; i < cursor_position; ++i)
-        retval += GetRenderFont()->GetGlyphPixelAdvance(m_text[i]);
+    char const *current_glyph = m_text.c_str();
+    char const *next_glyph = GetRenderFont()->GetNextGlyph(current_glyph);
+    for (Uint32 i = 0; i < cursor_position && current_glyph != next_glyph; ++i)
+    {
+        GetRenderFont()->MoveThroughGlyph(
+            &pen_position_26_6,
+            ScreenCoordVector2::ms_zero,
+            current_glyph,
+            next_glyph);
+        current_glyph = next_glyph;
+        next_glyph = GetRenderFont()->GetNextGlyph(next_glyph);
+    }
 
-    return retval;
+    return pen_position_26_6[Dim::X] >> 6;
 }
 
 ScreenCoord LineEdit::GetCursorWidth (Uint32 cursor_position) const
 {
+    return m_does_cursor_overwrite ?
+           GetRenderFont()->GetPixelHeight() :
+           GetRenderFont()->GetPixelHeight() / 4;
+/*
     if (cursor_position < 0)
         cursor_position = 0;
     else if (cursor_position > m_text.length())
@@ -264,6 +278,7 @@ ScreenCoord LineEdit::GetCursorWidth (Uint32 cursor_position) const
     return m_does_cursor_overwrite ?
            GetRenderFont()->GetGlyphPixelAdvance(m_text[cursor_position]) :
            static_cast<ScreenCoord>(GetTopLevelParent()->GetSizeRatioBasis() * 0.003f);
+*/
 }
 
 void LineEdit::SetCursorPosition (Uint32 cursor_position)

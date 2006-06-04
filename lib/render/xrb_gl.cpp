@@ -34,12 +34,6 @@ void GL::Initialize ()
     glClearColor(0, 0, 0, 0);
     glShadeModel(GL_SMOOTH);
 
-//     glViewport(500, 500, width-500, height-500);
-
-//     glMatrixMode(GL_PROJECTION);
-//     glLoadIdentity();
-//     glOrtho(0.0, (Float)width/height, 0.0, 1.0, -10.0, 10.0);
-
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glPixelStorei(GL_PACK_LSB_FIRST, 0);
     glPixelStorei(GL_UNPACK_LSB_FIRST, 0);
@@ -52,10 +46,38 @@ GLint GL::GetMatrixMode ()
     return matrix_mode;
 }
 
+GLint GL::GetMatrixStackDepth (GLenum const matrix_mode)
+{
+    GLint stack_depth;
+    switch (matrix_mode)
+    {
+        case GL_COLOR:      glGetIntegerv(GL_COLOR_MATRIX_STACK_DEPTH, &stack_depth); break;
+        case GL_MODELVIEW:  glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &stack_depth); break;
+        case GL_PROJECTION: glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &stack_depth); break;
+        case GL_TEXTURE:    glGetIntegerv(GL_TEXTURE_STACK_DEPTH, &stack_depth); break;
+        default: ASSERT0(false && "Invalid matrix mode") break;
+    }
+    return stack_depth;
+}
+
+GLint GL::GetMaxMatrixStackDepth (GLenum const matrix_mode)
+{
+    GLint max_stack_depth;
+    switch (matrix_mode)
+    {
+        case GL_COLOR:      glGetIntegerv(GL_MAX_COLOR_MATRIX_STACK_DEPTH, &max_stack_depth); break;
+        case GL_MODELVIEW:  glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &max_stack_depth); break;
+        case GL_PROJECTION: glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &max_stack_depth); break;
+        case GL_TEXTURE:    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &max_stack_depth); break;
+        default: ASSERT0(false && "Invalid matrix mode") break;
+    }
+    return max_stack_depth;
+}
+
 bool GL::GetIsTexture2dOn ()
 {
-    GLint is_texture_2d_on;
-    glGetIntegerv(GL_TEXTURE_2D, &is_texture_2d_on);
+    GLboolean is_texture_2d_on;
+    glGetBooleanv(GL_TEXTURE_2D, &is_texture_2d_on);
     return is_texture_2d_on == GL_TRUE;
 }
 
@@ -70,9 +92,6 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
         clip_rect.GetLeft(), clip_rect.GetRight(),
         clip_rect.GetBottom(), clip_rect.GetTop(),
         -10.0, 10.0); // these values (-10, 10) are arbitrary
-    // switch to the modelview matrix, because no other
-    // functions should mess with the projection matrix.
-    glMatrixMode(GL_MODELVIEW);
 
     // set up the viewport which is the rectangle on screen which
     // will be rendered to.  this also properly sets up the clipping

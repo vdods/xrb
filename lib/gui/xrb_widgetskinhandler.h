@@ -196,7 +196,7 @@ protected:
       * @brief A pointer to the contained WidgetSkin object.
       */
     WidgetSkin *m_widget_skin;
-     
+
     /** The default value is false.  Widget/Screen sets this according to
       * wether or not it is a top-level widget.
       * @brief Indicates if m_widget_skin should be deleted upon destruction.

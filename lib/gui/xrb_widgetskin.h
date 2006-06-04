@@ -127,7 +127,7 @@ public:
       */
     ScreenCoordVector2 GetScreenCoordsFromRatios (
         FloatVector2 const &ratios) const;
-    
+
     /** @brief Returns a pointer to the const WidgetBackground object of the
       *        requested type.
       * @param widget_background_type The specific type of background to return.

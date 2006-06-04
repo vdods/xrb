@@ -14,7 +14,6 @@
 #include "xrb.h"
 
 #include <string>
-#include <vector>
 
 #include "xrb_color.h"
 #include "xrb_widget.h"
@@ -270,23 +269,6 @@ protected:
     void UpdateMinHeight ();
     void UpdateMaxHeight ();
 
-    struct LineFormat
-    {
-        char const *m_ptr;
-        ScreenCoord m_width;
-        Uint32 m_char_count;
-    }; // end of struct LineFormat
-
-    typedef std::vector<LineFormat> LineFormatVector;
-
-    // TEMP
-    // TEMP
-    // TEMP
-//     Resource<FontBase> m_temp_font;
-    // TEMP
-    // TEMP
-    // TEMP
-
     // the text of the label
     std::string m_text;
     // move the drawn text by this offset (used by LineEdit)
@@ -310,27 +292,16 @@ private:
         RenderContext const &render_context,
         char const *string) const;
 
-    enum TokenClass
-    {
-        WHITESPACE = 0,
-        WORD,
-        NEWLINE,
-        NULLCHAR
-    }; // end of enum TokenClass
-
-    static TokenClass GetTokenClass (char const c);
-    static char const *GetStartOfNextToken (char const *string);
-    ScreenCoord GetTokenWidth (char const *string) const;
-
     void UpdateCachedFormattedText () const;
-    void UpdateLineFormatVector (char const *string) const;
 
     void Initialize ();
 
     // the cached string which is used in word wrapping to speed up processing
     mutable std::string m_cached_formatted_text;
+    // the string from which m_cached_formatted_text was generated
+    mutable std::string const *m_line_format_vector_source;
     // line-indexed addressing for faster vertical access
-    mutable LineFormatVector m_line_format_vector;
+    mutable Font::LineFormatVector m_line_format_vector;
     // indicates if the render properties have changed and require the
     // m_cached_formatted_text/m_line_format_vector to be updated
     mutable bool m_text_formatting_update_required;

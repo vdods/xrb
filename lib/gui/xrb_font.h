@@ -14,7 +14,9 @@
 #include "xrb.h"
 
 #include <string>
+#include <vector>
 
+#include "xrb_enums.h"
 #include "xrb_fontface.h"
 #include "xrb_gltexture.h"
 #include "xrb_ntuple.h"
@@ -27,222 +29,6 @@ namespace Xrb
 class RenderContext;
 class Texture;
 
-/** This class uses FontFace to generate pixelized font renderings and
-  * stores the resulting data in an OpenGL texture, attempting to use
-  * a reasonably small texture to store the set of all rendered glyphs.
-  * @brief The font class which is used to render fonts to screen.
-  */
-class Font
-{
-public:
-
-    /** @brief Destructor.  Deletes the gl texture.
-      */
-    inline ~Font ()
-    {
-        Delete(m_gl_texture);
-    }
-
-    /** This is the means to construct a Font object.  Using this class
-      * by pointed-to instances is preferred, so that it can be used in
-      * @ref Xrb::Resource .
-      * @brief Returns a pointer to a new instance of Font, loaded from the
-      *        given filename, with glyphs rendered to the given maximum
-      *        height.
-      * @param filename The filename of the font to load.
-      * @param pixel_height The maximum height, in pixels, of the glyphs
-      *                     to render.
-      */
-    static Font *Create (
-        std::string const &filename,
-        ScreenCoord pixel_height);
-    /** This is the means to construct a Font object.  Using this class
-      * by pointed-to instances is preferred, so that it can be used in
-      * @ref Xrb::Resource .
-      * @brief Returns a pointer to a new instance of Font, generated using
-      *        the given font face, with glyphs rendered to the given maximum
-      *        height.
-      * @param font_face The FontFace to use when rendering glyphs.
-      * @param pixel_height The maximum height, in pixels, of the glyphs
-      *                     to render.
-      */
-    static Font *Create (
-        Resource<FontFace> const &font_face,
-        ScreenCoord pixel_height);
-
-    /** @brief Returns the font face that was used to generate this Font.
-      */
-    inline Resource<FontFace> const &GetFontFace () const
-    {
-        return m_font_face;
-    }
-    /** @brief Returns the pixel height used to generate this Font.
-      */
-    inline ScreenCoord GetPixelHeight () const
-    {
-        return m_pixel_height;
-    }
-    /** @brief Returns the pixel height of a particular glyph.
-      * @param unicode The unicode value of the glyph to be queried.
-      */
-    inline ScreenCoordVector2 GetGlyphPixelSize (Uint32 const unicode) const
-    {
-        return m_glyph_specification[GetGlyphIndex(unicode)].m_size;
-    }
-    /** @brief Returns the "advance" property of a particular glyph (see
-      *        FreeType documentation).
-      * @param unicode The unicode value of the glyph to be queried.
-      */
-    inline ScreenCoord GetGlyphPixelAdvance (Uint32 const unicode) const
-    {
-        return m_glyph_specification[GetGlyphIndex(unicode)].m_advance;
-    }
-    /** @brief Returns the horizontal kerning offset between the given glyphs.
-      * @param left The unicode value of the (visually) left glyph.
-      * @param right The unicode value of the (visually) right glyph.
-      */
-    ScreenCoord GetKerningPixelAdvance (Uint32 left, Uint32 right) const;
-    /** @brief Returns the "bearing" property of a particular glyph (see
-      *        FreeType documentation).
-      * @param unicode The unicode value of the glyph to be queried.
-      */
-    inline ScreenCoordVector2 GetGlyphBearing (Uint32 const unicode) const
-    {
-        return m_glyph_specification[GetGlyphIndex(unicode)].m_bearing;
-    }
-    /** @brief Returns the top-left-corner OpenGL texture coordinates of a
-      *        particular glyph (remember, texture coords are left-handed).
-      * @param unicode The unicode value of the glyph to be queried.
-      */
-    inline ScreenCoordVector2 GetGlyphTextureCoordinates (Uint32 const unicode) const
-    {
-        return
-            m_glyph_specification[GetGlyphIndex(unicode)].m_texture_coordinates;
-    }
-    /** The string is not justified.  It is formatted exactly as given,
-      * newlines and all.
-      * @brief Returns a rectangle exactly large enough to bound the glyphs
-      *        in the given string, if it were rendered.
-      */
-    ScreenCoordRect GetStringRect (char const *string) const;
-    /** The string is not justified.  It is formatted exactly as given,
-      * newlines and all.
-      * @brief Returns a the width of the given string, if it were rendered.
-      */
-    ScreenCoord GetStringWidth (char const *string) const;
-    /** The string is not justified.  It is formatted exactly as given,
-      * newlines and all.
-      * @brief Returns a the height of the given string, if it were rendered.
-      */
-    ScreenCoord GetStringHeight (char const *string) const;
-    /** @brief Returns the OpenGL texture handle associated with this Font.
-      */
-    inline GLuint GetTextureHandle () const
-    {
-        ASSERT1(m_gl_texture != NULL)
-        return m_gl_texture->GetHandle();
-    }
-    /** @brief Returns the size of the OpenGL texture contained by this Font.
-      */
-    inline ScreenCoordVector2 const &GetTextureSize () const
-    {
-        return m_gl_texture->GetSize();
-    }
-    /** This value is the number of pixels up from the bottom of the font's
-      * height box that glyphs' baselines should reside at.
-      * @brief Returns the baseline height of the font.
-      */
-    inline ScreenCoord GetBaselineHeight () const
-    {
-        return m_baseline_height;
-    }
-    /** @brief Returns the unicode value of the glyph to display for glyphs
-      *        that haven't been rendered into the font texture.
-      */
-    inline Uint32 GetErrorGlyph () const
-    {
-        return m_error_glyph;
-    }
-
-protected:
-
-    /** Protected so that you must use @ref Xrb::Font::Create .
-      * @brief Default constructor.
-      */
-    inline Font ()
-    {
-        m_gl_texture = NULL;
-        m_error_glyph = '~';
-    }
-
-private:
-
-    enum
-    {
-        RENDERED_GLYPH_LOWEST = ' ',
-        RENDERED_GLYPH_HIGHEST = '~',
-
-        RENDERED_GLYPH_COUNT = RENDERED_GLYPH_HIGHEST - RENDERED_GLYPH_LOWEST + 1
-    };
-
-    // each glyph's properties are:
-    //
-    // bitmap width
-    // bitmap height
-    // bearing x
-    // bearing y
-    // advance
-    // ascender - or some way to know what the actual distance from the top
-    //            of the font coordinates to the baseline is.
-
-    struct GlyphSpecification
-    {
-        Uint32 m_unicode;
-        ScreenCoordVector2 m_size;
-        ScreenCoordVector2 m_bearing;
-        ScreenCoord m_advance;
-        ScreenCoordVector2 m_texture_coordinates;
-
-        static int SortByWidthFirst (
-            void const *left_operand,
-            void const *right_operand);
-        static int SortByHeightFirst (
-            void const *left_operand,
-            void const *right_operand);
-    }; // end of class GlyphSpecification
-
-    inline Uint32 GetGlyphIndex (Uint32 const unicode) const
-    {
-        if (unicode >= RENDERED_GLYPH_LOWEST && unicode <= RENDERED_GLYPH_HIGHEST)
-            return unicode - RENDERED_GLYPH_LOWEST;
-        else
-            return m_error_glyph - RENDERED_GLYPH_LOWEST;
-    }
-
-    // helper functions for generating the font texture
-    void PopulateGlyphSpecification (Resource<FontFace> const &font_face);
-    ScreenCoordVector2 FindSmallestFittingTextureSize (
-        GlyphSpecification *const *sorted_glyph_specification);
-    Uint32 GetUsedTextureArea (
-        ScreenCoordVector2 const &texture_size,
-        GlyphSpecification *const *sorted_glyph_specification);
-    void GenerateTexture (ScreenCoordVector2 const &texture_size);
-
-    Resource<FontFace> m_font_face;
-    bool m_has_kerning;
-    ScreenCoord m_pixel_height;
-    GLTexture *m_gl_texture;
-    GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];
-    // height from bottom of font glyph coordinates
-    ScreenCoord m_baseline_height;
-    // the unicode value of the "error glyph"
-    Uint32 m_error_glyph;
-}; // end of class Font
-
-// ///////////////////////////////////////////////////////////////////////////
-// reworked font class
-// ///////////////////////////////////////////////////////////////////////////
-
 /*
 
 class hierarchy
@@ -253,51 +39,78 @@ Font (pure virtual)
 
 */
 
+/** This class uses FontFace to generate pixelized font renderings and
+  * stores the resulting data in an OpenGL texture, attempting to use
+  * a reasonably small texture to store the set of all rendered glyphs.
+  * @brief The font class which is used to render fonts to screen.
+  */
+
 // this is an abstract interface for Font metrics and rendering.  the goal
 // should be to hide all the ugly ascent/advance/kerning/etc away from the
 // programmer, so s/he only must make calls like font->DrawString("blah");
-class FontBase
+class Font
 {
 public:
 
-    virtual ~FontBase () { }
+    /** For example, Latin text is LEFT_TO_RIGHT, while Arabic text
+      * is RIGHT_TO_LEFT.
+      * @brief Enums for specifying the direction text is rendered.
+      */
+    enum TextDirection
+    {
+        LEFT_TO_RIGHT = 0,
+        RIGHT_TO_LEFT,
+    }; // end of enum Font::TextDirection
+
+    struct LineFormat
+    {
+        char const *m_ptr;
+        ScreenCoord m_length;
+        Uint32 m_glyph_count;
+    }; // end of struct Font::LineFormat
+
+    typedef std::vector<LineFormat> LineFormatVector;
+
+    virtual ~Font () { }
 
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
     inline ScreenCoord GetPixelHeight () const { return m_pixel_height; }
-    // indicates the orientation of the pen relative to the glyphs being rendered.
-    // for example, english text is rendered left-to-right, top-to-bottom,
-    // so its initial position would be LEFT for the X dimension, and TOP
-    // for the Y dimension.
-    inline Alignment2 const &GetInitialPenOrientation () const { return m_initial_pen_orientation; }
+    inline TextDirection GetTextDirection () const { return m_text_direction; }
 
     // returns the rectangle containing the given string as rendered in
     // this font.  the rectangle's lower left corner is at (0, 0).
     ScreenCoordRect GetStringRect (
         char const *string,
-        ScreenCoordVector2 const &initial_pen_position) const;
+        ScreenCoordVector2 const &initial_pen_position,
+        char const *string_terminator = NULL) const;
 
     // draw the given string, starting at the given position.  the position's
     // meaning is indicated by the return value of GetInitialPenOrientation().
-    // TODO: add left/right/spaced justification
     void DrawString (
         RenderContext const &render_context,
+        ScreenCoordVector2 const &initial_pen_position,
         char const *string,
-        ScreenCoordVector2 const &initial_pen_position) const;
+        char const *string_terminator = NULL,
+        Uint32 remaining_glyph_count = 0,
+        ScreenCoord remaining_space = 0) const;
 
-protected:
+    // generates the formatting necessary to draw text of alignment other than
+    // (LEFT, LEFT), or text with word-wrapping.
+    void GenerateLineFormatVector (
+        char const *source_string,
+        LineFormatVector *dest_line_format_vector) const;
 
-    FontBase (ScreenCoord pixel_height, Alignment2 const &initial_pen_orientation)
-        :
-        m_pixel_height(pixel_height),
-        m_initial_pen_orientation(initial_pen_orientation)
-    {
-        ASSERT1(initial_pen_orientation[Dim::X] == LEFT || initial_pen_orientation[Dim::X] ==  RIGHT)
-        ASSERT1(initial_pen_orientation[Dim::Y] ==  TOP || initial_pen_orientation[Dim::Y] == BOTTOM)
-    }
+    // draws formatted text with advanced alignment and/or word-wrapping.
+    void DrawLineFormattedText (
+        RenderContext const &render_context,
+        ScreenCoordRect const &text_rect,
+        char const *source_string,
+        LineFormatVector const &line_format_vector,
+        Alignment2 const &alignment) const;
 
     // ///////////////////////////////////////////////////////////////////////
-    // protected interface methods
+    // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
     // because a glyph can be made up of a sequence of chars, this method
@@ -305,6 +118,9 @@ protected:
     // glyph in a string.  if current_glyph represents the end of the string,
     // then this method should return current_glyph.
     virtual char const *GetNextGlyph (char const *current_glyph) const = 0;
+    // returns true iff (glyph0 != NULL && glyph1 != NULL &&
+    // glyph0 is the same as glyph1)
+    virtual bool GetAreGlyphsEqual (char const *glyph0, char const *glyph1) const = 0;
 
     // moves the given pen position as if the given character was rendered.
     // the previous glyph is supplied so that kerning calculations can be
@@ -328,7 +144,30 @@ protected:
         ScreenCoordVector2 *pen_position_26_6,
         ScreenCoordVector2 const &initial_pen_position,
         char const *current_glyph,
-        char const *next_glyph) const = 0;
+        char const *next_glyph,
+        Uint32 *remaining_glyph_count = NULL,
+        ScreenCoord *major_space_26_6 = NULL) const = 0;
+
+    // creates a word-wrapped string
+    virtual void GenerateWordWrappedString (
+        std::string const &source_string,
+        std::string *dest_string,
+        ScreenCoordVector2 const &text_area_size) const = 0;
+
+protected:
+
+    // see TextDirection for a description of its meaning.
+    Font::Font (
+        ScreenCoord pixel_height,
+        TextDirection text_direction)
+        :
+        m_pixel_height(pixel_height),
+        m_text_direction(text_direction)
+    { }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // protected interface methods
+    // ///////////////////////////////////////////////////////////////////////
 
     // this is called once by DrawString before any calls to DrawGlyph are made
     virtual void DrawGlyphSetup (RenderContext const &render_context) const = 0;
@@ -343,19 +182,20 @@ protected:
 
 private:
 
+    void TrackBoundingBox (
+        ScreenCoordVector2 *pen_position_span_26_6,
+        ScreenCoordVector2 const &pen_position_26_6) const;
+
     ScreenCoord const m_pixel_height;
-    Alignment2 const m_initial_pen_orientation;
-}; // end of class FontBase
-
-
-
+    TextDirection const m_text_direction;
+}; // end of class Font
 
 /** This class uses FontFace to generate pixelized font renderings and
   * stores the resulting data in an OpenGL texture, attempting to use
   * a reasonably small texture to store the set of all rendered glyphs.
   * @brief The font class which is used to render fonts to screen.
   */
-class AsciiFont : public FontBase
+class AsciiFont : public Font
 {
 public:
 
@@ -376,7 +216,7 @@ public:
       * @param pixel_height The maximum height, in pixels, of the glyphs
       *                     to render.
       */
-    static FontBase *Create (
+    static Font *Create (
         std::string const &filename,
         ScreenCoord pixel_height);
     /** This is the means to construct a AsciiFont object.  Using this class
@@ -389,9 +229,29 @@ public:
       * @param pixel_height The maximum height, in pixels, of the glyphs
       *                     to render.
       */
-    static FontBase *Create (
+    static Font *Create (
         Resource<FontFace> const &font_face,
         ScreenCoord pixel_height);
+
+    // ///////////////////////////////////////////////////////////////////////
+    // public Font interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual char const *GetNextGlyph (char const *current_glyph) const;
+    virtual bool GetAreGlyphsEqual (char const *glyph0, char const *glyph1) const;
+
+    virtual void MoveThroughGlyph (
+        ScreenCoordVector2 *pen_position_26_6,
+        ScreenCoordVector2 const &initial_pen_position,
+        char const *current_glyph,
+        char const *next_glyph,
+        Uint32 *remaining_glyph_count = NULL,
+        ScreenCoord *major_space_26_6 = NULL) const;
+
+    virtual void GenerateWordWrappedString (
+        std::string const &source_string,
+        std::string *dest_string,
+        ScreenCoordVector2 const &text_area) const;
 
 protected:
 
@@ -400,23 +260,15 @@ protected:
       */
     AsciiFont (ScreenCoord pixel_height)
         :
-        FontBase(pixel_height, Alignment2(LEFT, TOP))
+        Font(pixel_height, LEFT_TO_RIGHT)
     {
         m_gl_texture = NULL;
         m_error_glyph = '~';
     }
 
     // ///////////////////////////////////////////////////////////////////////
-    // protected FontBase interface methods
+    // protected Font interface methods
     // ///////////////////////////////////////////////////////////////////////
-
-    virtual char const *GetNextGlyph (char const *current_glyph) const;
-
-    virtual void MoveThroughGlyph (
-        ScreenCoordVector2 *pen_position_26_6,
-        ScreenCoordVector2 const &initial_pen_position,
-        char const *current_glyph,
-        char const *next_glyph) const;
 
     virtual void DrawGlyphSetup (RenderContext const &render_context) const;
     virtual void DrawGlyphShutdown (RenderContext const &render_context) const;
@@ -427,8 +279,14 @@ protected:
 
 private:
 
+    // ///////////////////////////////////////////////////////////////////////
+    // font metrics and font bitmap rendering stuff
+    // ///////////////////////////////////////////////////////////////////////
+
     enum
     {
+        TAB_SIZE = 4,
+
         RENDERED_GLYPH_LOWEST = ' ',
         RENDERED_GLYPH_HIGHEST = '~',
 
@@ -483,6 +341,26 @@ private:
         ScreenCoordVector2 const &texture_size,
         GlyphSpecification *const *sorted_glyph_specification);
     void GenerateTexture (ScreenCoordVector2 const &texture_size);
+
+    // ///////////////////////////////////////////////////////////////////////
+    // text justification stuff
+    // ///////////////////////////////////////////////////////////////////////
+
+    enum TokenClass
+    {
+        WHITESPACE = 0,
+        WORD,
+        NEWLINE,
+        NULLCHAR
+    }; // end of enum TokenClass
+
+    static TokenClass GetTokenClass (char const c);
+    static char const *GetStartOfNextToken (char const *string);
+    ScreenCoord GetTokenWidth_26_6 (char const *string) const;
+
+    // ///////////////////////////////////////////////////////////////////////
+    // member vars
+    // ///////////////////////////////////////////////////////////////////////
 
     Resource<FontFace> m_font_face;
     bool m_has_kerning;

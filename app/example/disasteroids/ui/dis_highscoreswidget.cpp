@@ -34,22 +34,18 @@ HighScoresWidget::HighScoresWidget (Widget *const parent)
     for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
     {
         Label *position_label = new Label(Util::StringPrintf("#%u", row+1), scores_layout);
-        position_label->SetIsSizeFixedToTextSize(true);
         position_label->SetFontHeightRatio(0.025f);
         position_label->SetAlignment(Dim::X, RIGHT);
 
         m_name_label[row] = new Label("x", scores_layout);
-        m_name_label[row]->SetIsSizeFixedToTextSize(true);
         m_name_label[row]->SetFontHeightRatio(0.025f);
-        
+
         m_time_alive_label[row] = new Label("x", scores_layout);
-        m_time_alive_label[row]->SetIsSizeFixedToTextSize(true);
         m_time_alive_label[row]->SetFontHeightRatio(0.025f);
         m_time_alive_label[row]->SetAlignment(Dim::X, RIGHT);
-        
+
         m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint32, scores_layout);
         m_points_label[row]->SetValue(0);
-        m_points_label[row]->SetIsSizeFixedToTextSize(true);
         m_points_label[row]->SetFontHeightRatio(0.025f);
         m_points_label[row]->SetAlignment(Dim::X, RIGHT);
     }
@@ -75,6 +71,6 @@ void HighScoresWidget::Update (
         m_points_label[row]->SetValue(score.GetPoints());
     }
 }
-    
+
 } // end of namespace Dis
 

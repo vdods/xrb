@@ -22,6 +22,9 @@ MAJOR TASKS:
   of tabbed widgets.
 - abstraction of Engine2 classes into interfaces, to provide as
   much flexibility as possible, and to avoid biasing game physics, etc.
+- ensure different areas of the engine are cleanly separated so that
+  they could be compiled without others (i.e. core+engine could be
+  used without gui or render, etc) -- make dependency chart
 
 OPENGL CONVERSION TASKS:
 - look into applying HSV color to opengl textures (i.e. making
@@ -37,6 +40,12 @@ DISASTEROIDS:
 - wave spawning, punctuated with Demis
 
 CURRENT:
+- fix up LineEdit
+- change Math::Abs, Math::Min and Math::Max into std::abs, min and max
+- resource library should not map resources to filenames, but to sets of
+  properties (the properties being one of many possible subclasses of some
+  "property" baseclass).  this will allow loading of the same filename for
+  different things (among other extra versatilities).
 - when a new high score is posted and you're taken back to the title screen,
   the best high score should be shown first (time or score based)
 - change CollisionPairList into a std::vector?
@@ -68,7 +77,6 @@ TODO:
   (e.g. LoadGLTexture, LoadFont, etc)
 - child widgets should be based off the position of their parents, so
   screen-relative moving is unnecessary.
-- Label text alignment doesn't seem to work (maybe it's just for non-word-wrapped labels)
 - the map editor view should not create/destroy its own world -- it
   becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
