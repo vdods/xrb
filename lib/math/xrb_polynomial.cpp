@@ -291,7 +291,7 @@ bool Polynomial::NewtonsMethod (
             return false;
             
         ++iteration_count;
-        epsilon = Math::Abs(iterator[0] - iterator[1]);
+        epsilon = Abs(iterator[0] - iterator[1]);
     }
     while (epsilon > tolerance && iteration_count < 50);
     

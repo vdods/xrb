@@ -128,12 +128,6 @@ namespace Math
     /** @brief Returns @c base raised to the integer @c exponent power.
       */
     Float PowInt (Float base, Uint32 exponent);
-    /** @brief Returns @c x if @x is non-negative, otherwise @c -x.
-      */
-    inline Float Abs (Float x)
-    {
-        return (x >= 0.0f) ? x : -x;
-    }
     /** @brief Returns a random Float within the range [lower_bound, upper_bound].
       */
     Float RandomFloat (Float lower_bound, Float upper_bound);

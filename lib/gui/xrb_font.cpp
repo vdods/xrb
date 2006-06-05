@@ -165,7 +165,7 @@ void Font::GenerateLineFormatVector (
             // if the text direction is RIGHT_TO_LEFT, the appropriate
             // pen_position_26_6 component will be negative, so
             // use its absolute value.
-            line_format.m_length = std::abs(pen_position_26_6[Dim::X]) >> 6;
+            line_format.m_length = Abs(pen_position_26_6[Dim::X]) >> 6;
             dest_line_format_vector->push_back(line_format);
         }
         // otherwise move through the glyph
@@ -185,7 +185,7 @@ void Font::GenerateLineFormatVector (
         next_glyph = GetNextGlyph(next_glyph);
     }
     // make sure to push the last one
-    line_format.m_length = std::abs(pen_position_26_6[Dim::X]) >> 6;
+    line_format.m_length = Abs(pen_position_26_6[Dim::X]) >> 6;
     dest_line_format_vector->push_back(line_format);
 }
 

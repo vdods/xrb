@@ -435,8 +435,8 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
                 target = entity->GetReference();
             // only override the current target if the current
             // game object is closer to the optimal mass
-            else if (Math::Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
-                     Math::Abs(target->GetFirstMoment() - s_optimal_target_mass))
+            else if (Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
+                     Abs(target->GetFirstMoment() - s_optimal_target_mass))
             {
                 // if so, set target
                 target = entity->GetReference();

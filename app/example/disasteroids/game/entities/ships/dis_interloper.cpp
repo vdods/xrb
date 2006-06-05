@@ -236,7 +236,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     static Float const s_wander_angle_low_pass_delta_rate = 135.0f;
     Float wander_angle_low_pass_delta =
         Min(s_wander_angle_low_pass_delta_rate * frame_dt,
-            Math::Abs(m_wander_angle - m_wander_angle_low_pass));
+            Abs(m_wander_angle - m_wander_angle_low_pass));
     if (m_wander_angle < m_wander_angle_low_pass)
         m_wander_angle_low_pass -= wander_angle_low_pass_delta;
     else

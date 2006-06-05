@@ -41,22 +41,32 @@
 namespace Xrb
 {
 
-/** If @c x @c == @c y, @c y is preferred.
-  * @brief Macro to choose the minimum of two values.
+/** The template type @c T must allow static_cast-ing from the integer value
+  * 0, and must have a less-than operator defined.
+  * @brief Returns the absolute value of @c x.
   */
 template <typename T>
-inline T Min (T const x, T const y)
+inline T Abs (T const &x)
+{
+    return (x < static_cast<T>(0)) ? -x : x;
+}
+
+/** The template type @c T must have a less-than operator defined.
+  * @brief Returns the minimum of two values.
+  */
+template <typename T>
+inline T const &Min (T const &x, T const &y)
 {
     return (x < y) ? x : y;
 }
 
-/** If @c x @c == @c y, @c y is preferred.
-  * @brief Macro to choose the maximum of two values.
+/** The template type @c T must have a less-than operator defined.
+  * @brief Returns the maximum of two values.
   */
 template <typename T>
-inline T Max (T const x, T const y)
+inline T const &Max (T const &x, T const &y)
 {
-    return (x > y) ? x : y;
+    return (x < y) ? y : x;
 }
 
 /** Iff @c x is within @c epsilon of @c y, this evaluates to true.

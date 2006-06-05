@@ -257,11 +257,11 @@ void CollisionQuadTree::LineTrace (
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
-        
+
         Float t0 = (-b - radical_part) / (2.0f * a);
         if (t0 > 1.0f)
             continue;
-            
+
         Float t1 = (-b + radical_part) / (2.0f * a);
         if (t1 < 0.0f)
             continue;
@@ -370,7 +370,7 @@ void CollisionQuadTree::LineTraceWrapped (
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
-        
+
         Float t0 = (-b - radical_part) / (2.0f * a);
         if (t0 > 1.0f)
             continue;

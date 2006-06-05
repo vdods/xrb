@@ -41,7 +41,6 @@ DISASTEROIDS:
 
 CURRENT:
 - fix up LineEdit
-- change Math::Abs, Math::Min and Math::Max into std::abs, min and max
 - resource library should not map resources to filenames, but to sets of
   properties (the properties being one of many possible subclasses of some
   "property" baseclass).  this will allow loading of the same filename for
