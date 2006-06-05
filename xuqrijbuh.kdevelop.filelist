@@ -94,6 +94,10 @@ app/example/disasteroids/ui/dis_titlescreenwidget.cpp
 app/example/disasteroids/ui/dis_titlescreenwidget.h
 app/example/disasteroids/ui/dis_worldview.cpp
 app/example/disasteroids/ui/dis_worldview.h
+app/example/guidemo/Makefile.am
+app/example/guidemo/gui_main.cpp
+app/example/guidemo/gui_masterwidget.cpp
+app/example/guidemo/gui_masterwidget.h
 app/mapeditor2/Makefile.am
 app/mapeditor2/main.cpp
 app/unittest/Makefile.am
@@ -205,6 +209,8 @@ lib/gui/widgets/xrb_radiobutton.h
 lib/gui/widgets/xrb_radiobutton.tcpp
 lib/gui/widgets/xrb_spacerwidget.cpp
 lib/gui/widgets/xrb_spacerwidget.h
+lib/gui/widgets/xrb_tabbedwidget.cpp
+lib/gui/widgets/xrb_tabbedwidget.h
 lib/gui/widgets/xrb_toolbarbutton.h
 lib/gui/widgets/xrb_toolbarbutton.tcpp
 lib/gui/widgets/xrb_valueedit.h

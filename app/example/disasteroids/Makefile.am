@@ -95,6 +95,7 @@ AM_CPPFLAGS = \
     `$(FREETYPE_CONFIG) --cflags` \
     `$(SDL_CONFIG) --cflags` \
     \
+    -I$(top_srcdir)/app/example/disasteroids \
     -I$(top_srcdir)/app/example/disasteroids/game \
     -I$(top_srcdir)/app/example/disasteroids/game/engine2 \
     -I$(top_srcdir)/app/example/disasteroids/game/entities \

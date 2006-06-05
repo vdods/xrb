@@ -264,10 +264,11 @@ protected:
     {
         m_text_formatting_update_required = true;
     }
-    void UpdateMinWidth ();
-    void UpdateMaxWidth ();
-    void UpdateMinHeight ();
-    void UpdateMaxHeight ();
+    void UpdateMinAndMaxSizes ();
+//     void UpdateMinWidth ();
+//     void UpdateMaxWidth ();
+//     void UpdateMinHeight ();
+//     void UpdateMaxHeight ();
 
     // the text of the label
     std::string m_text;
@@ -287,10 +288,6 @@ protected:
     bool m_is_max_height_fixed_to_text_height;
 
 private:
-
-    void DrawTextInternal (
-        RenderContext const &render_context,
-        char const *string) const;
 
     void UpdateCachedFormattedText () const;
 

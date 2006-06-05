@@ -30,11 +30,11 @@ AC_ARG_WITH(
     [ARCH_TYPE=])
 
 AC_ARG_ENABLE(
-    [debug], 
+    [debug],
     AC_HELP_STRING(
-        [--enable-debug], 
+        [--enable-debug],
         [enable debugging symbols and disable optimizations]),
-    [DEBUG_ENABLED="yes"], 
+    [DEBUG_ENABLED="yes"],
     [DEBUG_ENABLED="no"])
 
 AC_ARG_ENABLE(
@@ -60,7 +60,7 @@ AC_ARG_ENABLE(
         [Xrb::BitArray<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
     [BITARRAY_USES_MEMCPY="yes"],
     [BITARRAY_USES_MEMCPY="no"])
-        
+
 AC_ARG_ENABLE(
     [bitarray-uses-memset],
     AC_HELP_STRING(
@@ -68,7 +68,7 @@ AC_ARG_ENABLE(
         [Xrb::BitArray<> assignments and copies will use memset() instead of assigning/copying each element in a loop]),
     [BITARRAY_USES_MEMSET="yes"],
     [BITARRAY_USES_MEMSET="no"])
-        
+
 AC_ARG_ENABLE(
     [matrix2-uses-memcpy],
     AC_HELP_STRING(
@@ -76,7 +76,7 @@ AC_ARG_ENABLE(
         [Xrb::Matrix2<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
     [MATRIX2_USES_MEMCPY="yes"],
     [MATRIX2_USES_MEMCPY="no"])
-            
+
 AC_ARG_ENABLE(
     [ntuple-uses-memcmp],
     AC_HELP_STRING(
@@ -92,7 +92,7 @@ AC_ARG_ENABLE(
         [Xrb::NTuple<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
     [NTUPLE_USES_MEMCPY="yes"],
     [NTUPLE_USES_MEMCPY="no"])
-        
+
 AC_ARG_ENABLE(
     [vector-uses-memcmp],
     AC_HELP_STRING(
@@ -108,7 +108,7 @@ AC_ARG_ENABLE(
         [Xrb::Vector<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
     [VECTOR_USES_MEMCPY="yes"],
     [VECTOR_USES_MEMCPY="no"])
-        
+
 AC_ARG_ENABLE(
     [nan-sanity-check],
     AC_HELP_STRING(
@@ -116,7 +116,7 @@ AC_ARG_ENABLE(
         [Performs pedantic checks in Engine2::Entity code to detect when any NaN (or Inf) is introduced]),
     [NAN_SANITY_CHECK="yes"],
     [NAN_SANITY_CHECK="no"])
-        
+
 ##############################################################################
 # processing of above commandline options
 ##############################################################################
@@ -267,13 +267,14 @@ AC_SUBST(FREETYPE_CONFIG)
 
 # specify the Makefiles
 AC_OUTPUT(
-    Makefile 
-    
+    Makefile
+
     lib/Makefile
-    
+
     app/Makefile
     app/example/Makefile
     app/example/disasteroids/Makefile
+    app/example/guidemo/Makefile
     app/mapeditor2/Makefile
     app/unittest/Makefile
 )

@@ -72,6 +72,10 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- change KeyBinds into Keyboard (which is a better description)
+- make Xrb::Initialize and Xrb::Shutdown functions which take care of
+  singleton setup/shutdown.  it should also handle setting up the atexit()
+  function, and possibly creating/deleting the Screen.
 - should Screen make its own event queue?
 - create Resource loading functions for common Resource<blah> types
   (e.g. LoadGLTexture, LoadFont, etc)

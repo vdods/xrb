@@ -69,7 +69,8 @@ void Label::SetIsMinWidthFixedToTextWidth (
         if (m_is_min_width_fixed_to_text_width)
             ASSERT1(!GetWordWrap())
         m_is_min_width_fixed_to_text_width = is_min_width_fixed_to_text_width;
-        UpdateMinWidth();
+//         UpdateMinWidth();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -81,7 +82,8 @@ void Label::SetIsMaxWidthFixedToTextWidth (
         if (m_is_max_width_fixed_to_text_width)
             ASSERT1(!GetWordWrap())
         m_is_max_width_fixed_to_text_width = is_max_width_fixed_to_text_width;
-        UpdateMaxWidth();
+//         UpdateMaxWidth();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -100,7 +102,8 @@ void Label::SetIsMinHeightFixedToTextHeight (
         if (m_is_min_height_fixed_to_text_height)
             ASSERT1(!GetWordWrap())
         m_is_min_height_fixed_to_text_height = is_min_height_fixed_to_text_height;
-        UpdateMinHeight();
+//         UpdateMinHeight();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -112,7 +115,8 @@ void Label::SetIsMaxHeightFixedToTextHeight (
         if (m_is_max_height_fixed_to_text_height)
             ASSERT1(!GetWordWrap())
         m_is_max_height_fixed_to_text_height = is_max_height_fixed_to_text_height;
-        UpdateMaxHeight();
+//         UpdateMaxHeight();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -134,10 +138,11 @@ void Label::SetText (std::string const &text)
 {
     m_text = text;
     DirtyTextFormatting();
-    UpdateMinWidth();
-    UpdateMaxWidth();
-    UpdateMinHeight();
-    UpdateMaxHeight();
+//     UpdateMinWidth();
+//     UpdateMaxWidth();
+//     UpdateMinHeight();
+//     UpdateMaxHeight();
+    UpdateMinAndMaxSizes();
 }
 
 void Label::SetTextColor (Color const &color)
@@ -163,10 +168,11 @@ void Label::SetWordWrap (bool const word_wrap)
     {
         if (word_wrap)
         {
-            SetIsMinWidthFixedToTextWidth(false);
-            SetIsMaxWidthFixedToTextWidth(false);
-            SetIsMinHeightFixedToTextHeight(false);
-            SetIsMaxHeightFixedToTextHeight(false);
+            SetIsSizeFixedToTextSize(false);
+//             SetIsMinWidthFixedToTextWidth(false);
+//             SetIsMaxWidthFixedToTextWidth(false);
+//             SetIsMinHeightFixedToTextHeight(false);
+//             SetIsMaxHeightFixedToTextHeight(false);
         }
         m_word_wrap = word_wrap;
         DirtyTextFormatting();
@@ -312,10 +318,11 @@ void Label::HandleChangedLabelFont ()
 {
     UpdateRenderFont();
     DirtyTextFormatting();
-    UpdateMinWidth();
-    UpdateMaxWidth();
-    UpdateMinHeight();
-    UpdateMaxHeight();
+//     UpdateMinWidth();
+//     UpdateMaxWidth();
+//     UpdateMinHeight();
+//     UpdateMaxHeight();
+    UpdateMinAndMaxSizes();
 }
 
 void Label::HandleChangedFrameMargins ()
@@ -324,10 +331,11 @@ void Label::HandleChangedFrameMargins ()
     if (!GetRenderPicture().GetIsValid())
     {
         DirtyTextFormatting();
-        UpdateMinWidth();
-        UpdateMaxWidth();
-        UpdateMinHeight();
-        UpdateMaxHeight();
+//         UpdateMinWidth();
+//         UpdateMaxWidth();
+//         UpdateMinHeight();
+//         UpdateMaxHeight();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -336,10 +344,11 @@ void Label::HandleChangedContentMargins ()
     if (!GetRenderPicture().GetIsValid())
     {
         DirtyTextFormatting();
-        UpdateMinWidth();
-        UpdateMaxWidth();
-        UpdateMinHeight();
-        UpdateMaxHeight();
+//         UpdateMinWidth();
+//         UpdateMaxWidth();
+//         UpdateMinHeight();
+//         UpdateMaxHeight();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -354,6 +363,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // give it a chance to update the formatted text if
         // m_text_formatting_update_required is set
         UpdateCachedFormattedText();
+        ASSERT1(!m_text_formatting_update_required)
         // generate a render context for the string drawing function
         RenderContext string_render_context(render_context);
         // calculate the clip rect
@@ -362,11 +372,14 @@ void Label::DrawText (RenderContext const &render_context) const
         string_render_context.ApplyColorMask(GetRenderTextColor());
         // set up the GL clip rect
         string_render_context.SetupGLClipRect();
-        // draw using the appropriate text buffer
-        if (m_word_wrap)
-            DrawTextInternal(string_render_context, m_cached_formatted_text.c_str());
-        else
-            DrawTextInternal(string_render_context, m_text.c_str());
+        // draw the text
+        ASSERT1(m_line_format_vector_source != NULL)
+        GetRenderFont()->DrawLineFormattedText(
+            string_render_context,
+            GetContentsRect() + m_text_offset,
+            m_line_format_vector_source->c_str(),
+            m_line_format_vector,
+            m_alignment);
     }
 }
 
@@ -435,10 +448,11 @@ void Label::SetRenderFont (Resource<Font> const &render_font)
     {
         m_render_font = render_font;
         DirtyTextFormatting();
-        UpdateMinWidth();
-        UpdateMaxWidth();
-        UpdateMinHeight();
-        UpdateMaxHeight();
+//         UpdateMinWidth();
+//         UpdateMaxWidth();
+//         UpdateMinHeight();
+//         UpdateMaxHeight();
+        UpdateMinAndMaxSizes();
     }
 }
 
@@ -457,6 +471,37 @@ void Label::UpdateRenderPicture ()
     SetRenderPicture(GetPicture());
 }
 
+void Label::UpdateMinAndMaxSizes ()
+{
+    ASSERT1(GetRenderFont().GetIsValid())
+
+    ScreenCoordRect string_rect(
+        GetRenderFont()->GetStringRect(
+            GetText().c_str(),
+            ScreenCoordVector2::ms_zero));
+    ScreenCoord width =
+        string_rect.GetWidth() +
+        2 * (GetFrameMargins()[Dim::X] + GetContentMargins()[Dim::X]);
+    ScreenCoord height =
+        string_rect.GetHeight() +
+        2 * (GetFrameMargins()[Dim::Y] + GetContentMargins()[Dim::Y]);
+
+    if (GetIsMinWidthFixedToTextWidth())
+        SetSizeProperty(SizeProperties::MIN, Dim::X, width);
+    if (GetIsMaxWidthFixedToTextWidth())
+        SetSizeProperty(SizeProperties::MAX, Dim::X, width);
+    if (GetIsMinHeightFixedToTextHeight())
+        SetSizeProperty(SizeProperties::MIN, Dim::Y, height);
+    if (GetIsMaxHeightFixedToTextHeight())
+        SetSizeProperty(SizeProperties::MAX, Dim::Y, height);
+    SetSizePropertyEnabled(
+        SizeProperties::MIN,
+        Bool2(GetIsMinWidthFixedToTextWidth(), GetIsMinHeightFixedToTextHeight()));
+    SetSizePropertyEnabled(
+        SizeProperties::MAX,
+        Bool2(GetIsMaxWidthFixedToTextWidth(), GetIsMaxHeightFixedToTextHeight()));
+}
+/*
 void Label::UpdateMinWidth ()
 {
     ASSERT1(GetRenderFont().GetIsValid())
@@ -536,27 +581,7 @@ void Label::UpdateMaxHeight ()
         Dim::Y,
         GetIsMaxHeightFixedToTextHeight());
 }
-
-void Label::DrawTextInternal (
-    RenderContext const &render_context,
-    char const *string) const
-{
-    ASSERT1(GetRenderFont().GetIsValid())
-    ASSERT1(!m_text_formatting_update_required)
-    ASSERT1(m_line_format_vector_source != NULL)
-
-    GetRenderFont()->DrawLineFormattedText(
-        render_context,
-        GetContentsRect() + m_text_offset,
-        m_line_format_vector_source->c_str(),
-        m_line_format_vector,
-        m_alignment);
-
-//     ScreenCoordVector2 initial_pen_position(GetContentsRect().GetTopLeft() + m_text_offset);
-//     // TODO: add the label's text color to the render context's color mask
-//     GetRenderFont()->DrawString(render_context, initial_pen_position, string);
-}
-
+*/
 void Label::UpdateCachedFormattedText () const
 {
     // if no render font is set, early out

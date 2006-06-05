@@ -36,8 +36,8 @@ LineEdit::LineEdit (
     m_does_cursor_overwrite = false;
 
     m_is_cursor_visible = false;
-    m_cursor_blink_period = 0.5;
-    m_next_cursor_blink_time = 0.0;
+    m_cursor_blink_period = 0.5f;
+    m_next_cursor_blink_time = 0.0f;
 
     // default filter denies nothing (allows anything), except for newlines
     // which are always filtered

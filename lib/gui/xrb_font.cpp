@@ -204,10 +204,15 @@ void Font::DrawLineFormattedText (
     if (alignment[Dim::Y] == TOP)
     {
         if (m_text_direction == LEFT_TO_RIGHT && alignment[Dim::X] == LEFT)
+        {
             DrawString(render_context, text_rect.GetTopLeft(), source_string);
+            return;
+        }
         else if (m_text_direction == RIGHT_TO_LEFT && alignment[Dim::X] == RIGHT)
+        {
             DrawString(render_context, text_rect.GetTopRight(), source_string);
-        return;
+            return;
+        }
     }
 
     ScreenCoord text_height =

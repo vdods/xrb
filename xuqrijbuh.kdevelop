@@ -152,6 +152,7 @@
       <group pattern="app/example/disasteroids/game/*" name="/app/example/disasteroids/game" />
       <group pattern="app/example/disasteroids/ui/*" name="/app/example/disasteroids/ui" />
       <group pattern="app/example/disasteroids/*" name="/app/example/disasteroids" />
+      <group pattern="app/example/guidemo/*" name="/app/example/guidemo" />
       <group pattern="app/example/*" name="/app/example" />
       <group pattern="app/mapeditor2/*" name="/app/mapeditor2" />
       <group pattern="app/unittest/tests/*" name="/app/unittest/tests" />
@@ -161,8 +162,6 @@
       <group pattern="doc/*" name="/doc" />
       <group pattern="resources/*" name="/resources" />
       <group pattern="*" name="/" />
-      <hidenonprojectfiles>false</hidenonprojectfiles>
-      <hidenonlocation>true</hidenonlocation>
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
