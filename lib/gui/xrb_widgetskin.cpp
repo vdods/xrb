@@ -172,7 +172,7 @@ void WidgetSkin::SetFontFaceFilename (
         GetScreenCoordFromRatio(
             m_font_specification[font_type].m_font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             font_face_filename,
             m_font_specification[font_type].m_font_height);
@@ -190,7 +190,7 @@ void WidgetSkin::SetFontHeightRatio (
     m_font_specification[font_type].m_font_height =
         GetScreenCoordFromRatio(font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
@@ -207,7 +207,7 @@ void WidgetSkin::SetFontHeight (
     m_font_specification[font_type].m_font_height_ratio =
         GetRatioFromScreenCoord(font_height);
     m_font_specification[font_type].m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
@@ -228,7 +228,7 @@ void WidgetSkin::SetTextureFilename (
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT)
     m_texture[texture_type] =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
 }

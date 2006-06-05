@@ -49,7 +49,7 @@ WidgetBackgroundTextured::WidgetBackgroundTextured (
     ASSERT1(texture_name.length() > 0)
 
     m_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_name);
     ASSERT1(m_texture.GetIsValid())
@@ -97,25 +97,25 @@ WidgetBackgroundStylized::WidgetBackgroundStylized (
     WidgetBackground()
 {
     m_corner_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             corner_texture_name);
     ASSERT1(m_corner_texture.GetIsValid())
 
     m_top_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             top_texture_name);
     ASSERT1(m_top_texture.GetIsValid())
 
     m_left_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             left_texture_name);
     ASSERT1(m_left_texture.GetIsValid())
 
     m_center_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             center_texture_name);
     ASSERT1(m_center_texture.GetIsValid())

@@ -47,26 +47,6 @@ bool Key::GetIsKeyRepeatable (Key::Code const code)
     return false;
 }
 
-void Key::SetPressedBind (std::string const &bind)
-{
-    m_pressed_bind = bind;
-}
-
-void Key::SetReleasedBind (std::string const &bind)
-{
-    m_released_bind = bind;
-}
-
-void Key::UnbindPressed ()
-{
-    m_pressed_bind = "";
-}
-
-void Key::UnbindReleased ()
-{
-    m_released_bind = "";
-}
-
 void Key::ResetPressed ()
 {
     m_pressed = false;
@@ -78,8 +58,6 @@ Key::Key ()
 {
     m_code = Key::INVALID;
     m_pressed = false;
-    m_pressed_bind = "";
-    m_released_bind = "";
 }
 
 bool Key::ProcessEventOverride (Event const *const e)

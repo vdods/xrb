@@ -421,7 +421,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
         m_vertex_list.push_back(vertex);
     }
     m_texture =
-        Singletons::ResourceLibrary()->
+        Singletons::ResourceLibrary().
             LoadFilename<GLTexture>(
                 GLTexture::Create,
                 serializer.ReadStdString());

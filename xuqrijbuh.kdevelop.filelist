@@ -235,12 +235,12 @@ lib/gui/xrb_widgetskin.cpp
 lib/gui/xrb_widgetskin.h
 lib/gui/xrb_widgetskinhandler.cpp
 lib/gui/xrb_widgetskinhandler.h
+lib/input/xrb_input.cpp
+lib/input/xrb_input.h
 lib/input/xrb_input_events.cpp
 lib/input/xrb_input_events.h
 lib/input/xrb_key.cpp
 lib/input/xrb_key.h
-lib/input/xrb_keybinds.cpp
-lib/input/xrb_keybinds.h
 lib/input/xrb_keyrepeater.cpp
 lib/input/xrb_keyrepeater.h
 lib/mapeditor2/xrb_mapeditor2_compound.cpp

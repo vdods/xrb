@@ -19,7 +19,7 @@ namespace Xrb
 Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_filename)
 {
     Resource<GLTexture> texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
     if (!texture.GetIsValid())
@@ -138,7 +138,7 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
     m_texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();

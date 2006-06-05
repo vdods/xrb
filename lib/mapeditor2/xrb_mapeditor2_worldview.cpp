@@ -16,7 +16,7 @@
 #include "xrb_engine2_worldviewwidget.h"
 #include "xrb_filedialog.h"
 #include "xrb_input_events.h"
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 #include "xrb_mapeditor2_compound.h"
 #include "xrb_mapeditor2_objectlayer.h"
 #include "xrb_mapeditor2_sprite.h"
@@ -721,8 +721,8 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     }
 
     // draw the selection circle (if appropriate)
-    if (Singletons::KeyBinds()->GetIsKeyPressed(Key::RMOUSE) &&
-        Singletons::KeyBinds()->GetIsEitherShiftKeyPressed() &&
+    if (Singletons::Input().GetIsKeyPressed(Key::RMOUSE) &&
+        Singletons::Input().GetIsEitherShiftKeyPressed() &&
         m_rmouse_dragged &&
         m_editing_sub_mode == ESM_DEFAULT)
     {
@@ -742,7 +742,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 
     // draw the polygon-creating circle/polygon (if appropriate)
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
-        Singletons::KeyBinds()->GetIsKeyPressed(Key::LMOUSE) &&
+        Singletons::Input().GetIsKeyPressed(Key::LMOUSE) &&
         m_lmouse_dragged)
     {
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
@@ -1429,7 +1429,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     bounding_circle_ray.GetLength(),
                     polygon_angle,
                     m_polygon_tesselation,
-                    Singletons::ResourceLibrary()->
+                    Singletons::ResourceLibrary().
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             "resources/texture1.png"));
@@ -1450,7 +1450,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 bounding_circle_ray.GetLength(),
                 polygon_angle,
                 m_polygon_tesselation,
-                Singletons::ResourceLibrary()->
+                Singletons::ResourceLibrary().
                     LoadFilename<GLTexture>(
                         GLTexture::Create,
                         "resources/texture1.png"));
@@ -1752,11 +1752,11 @@ void MapEditor2::WorldView::ProcessFrameOverride ()
             GetParallaxedWorldViewToWorld() * FloatVector2(0.0, 1.0) - origin);
 
         Sint8 left_right_input =
-            static_cast<Sint8>(Singletons::KeyBinds()->GetIsKeyPressed(Key::RIGHT)) -
-            static_cast<Sint8>(Singletons::KeyBinds()->GetIsKeyPressed(Key::LEFT));
+            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::RIGHT)) -
+            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::LEFT));
         Sint8 up_down_input =
-            static_cast<Sint8>(Singletons::KeyBinds()->GetIsKeyPressed(Key::UP)) -
-            static_cast<Sint8>(Singletons::KeyBinds()->GetIsKeyPressed(Key::DOWN));
+            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::UP)) -
+            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::DOWN));
 
         right *= (Float)left_right_input;
         up *= (Float)up_down_input;

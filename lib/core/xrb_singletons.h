@@ -20,7 +20,7 @@ struct FT_LibraryRec_;
 namespace Xrb
 {
 
-class KeyBinds;
+class Input;
 class ResourceLibrary;
 
 /** Contains functions Initialize and Shutdown which should be the first and
@@ -31,12 +31,12 @@ class ResourceLibrary;
   */
 namespace Singletons
 {
-    /** @brief Returns a pointer to the KeyBinds singleton object.
+    /** @brief Returns a reference to the Input singleton object.
       */
-    KeyBinds *const KeyBinds ();
-    /** @brief Returns a pointer to the ResourceLibrary singleton object.
+    Input &Input ();
+    /** @brief Returns a reference to the ResourceLibrary singleton object.
       */
-    ResourceLibrary *const ResourceLibrary ();
+    ResourceLibrary &ResourceLibrary ();
     /** @brief Returns a pointer to the FreeType library singleton object.
       */
     FT_LibraryRec_ *const FTLibrary ();

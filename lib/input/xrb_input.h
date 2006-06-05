@@ -23,24 +23,20 @@
 namespace Xrb
 {
 
-/** The KeyBinds class will process events, and store the state of the
+/** The Input class will process events, and store the state of the
   * keyboard and mouse buttons in a map (which indicates if any key is pressed
   * or not).  Key modifiers are also tracked and stored.
   * @brief Stores the current state of the keyboard and mouse buttons.
   */
-class KeyBinds : public EventHandler
+class Input : public EventHandler
 {
 public:
 
-    KeyBinds ();
-    ~KeyBinds ();
+    Input ();
+    ~Input ();
 
     Key *GetKey (Key::Code code) const;
     Key *GetKey (std::string const &name) const;
-    std::string GetPressedBind (Key::Code code) const;
-    std::string GetPressedBind (std::string const &name) const;
-    std::string GetReleasedBind (Key::Code code) const;
-    std::string GetReleasedBind (std::string const &name) const;
     inline bool GetIsKeyPressed (Key::Code const code) const
     {
         return GetKey(code)->GetPressed();
@@ -65,11 +61,6 @@ public:
         return m_is_scroll_lock_on;
     }
     SDLMod GetModifiers () const;
-
-    void SetPressedBinding (Key::Code code, std::string const &bind);
-    void SetPressedBinding (std::string const &name, std::string const &bind);
-    void SetReleasedBinding (Key::Code code, std::string const &bind);
-    void SetReleasedBinding (std::string const &name, std::string const &bind);
 
     // calls ResetPressed on all the keys
     void ResetPressed ();
@@ -108,7 +99,7 @@ private:
     /** @brief Indicates if the scroll lock is engaged.
       */
     bool m_is_scroll_lock_on;
-}; // end of class KeyBinds
+}; // end of class Input
 
 } // end of namespace Xrb
 

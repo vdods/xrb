@@ -17,7 +17,7 @@
 #include "xrb_engine2_worldviewwidget.h"
 #include "xrb_eventqueue.h"
 #include "xrb_input_events.h"
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 
 using namespace Xrb;
 
@@ -402,33 +402,33 @@ void WorldView::ProcessPlayerInput ()
         if (m_use_dvorak)
         {
             engine_right_left_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::I) ?  127 : 0) +
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::E) ? -127 : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::I) ?  127 : 0) +
+                (Singletons::Input().GetIsKeyPressed(Key::E) ? -127 : 0);
             engine_up_down_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::P) ?  127 : 0) +
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::U) ? -127 : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::P) ?  127 : 0) +
+                (Singletons::Input().GetIsKeyPressed(Key::U) ? -127 : 0);
             engine_auxiliary_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::X) ? UINT8_UPPER_BOUND : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::X) ? UINT8_UPPER_BOUND : 0);
         }
         else
         {
             engine_right_left_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::D) ?  127 : 0) +
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::A) ? -127 : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::D) ?  127 : 0) +
+                (Singletons::Input().GetIsKeyPressed(Key::A) ? -127 : 0);
             engine_up_down_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::W) ?  127 : 0) +
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::S) ? -127 : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::W) ?  127 : 0) +
+                (Singletons::Input().GetIsKeyPressed(Key::S) ? -127 : 0);
             engine_auxiliary_input =
-                (Singletons::KeyBinds()->GetIsKeyPressed(Key::C) ? UINT8_UPPER_BOUND : 0);
+                (Singletons::Input().GetIsKeyPressed(Key::C) ? UINT8_UPPER_BOUND : 0);
         }
 
         Uint8 weapon_primary_input =
-            Singletons::KeyBinds()->GetIsKeyPressed(Key::LMOUSE) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(Key::LMOUSE) ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::KeyBinds()->GetIsKeyPressed(Key::RMOUSE) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(Key::RMOUSE) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::KeyBinds()->GetIsKeyPressed(Key::SPACE);
+            Singletons::Input().GetIsKeyPressed(Key::SPACE);
 
         if (m_player_ship != NULL)
         {

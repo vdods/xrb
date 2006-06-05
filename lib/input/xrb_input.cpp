@@ -8,14 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 
 #include "xrb_input_events.h"
 
 namespace Xrb
 {
 
-KeyBinds::KeyBinds () :
+Input::Input ()
+    :
     EventHandler(NULL)
 {
     m_is_caps_lock_on = false;
@@ -25,7 +26,7 @@ KeyBinds::KeyBinds () :
     InitKeyMaps();
 }
 
-KeyBinds::~KeyBinds ()
+Input::~Input ()
 {
     // shut down the key maps and delete the Key objects
     for (KeyCodeMapIterator it = m_keycode_map.begin(),
@@ -38,7 +39,7 @@ KeyBinds::~KeyBinds ()
     m_keycode_map.clear();
 }
 
-Key *KeyBinds::GetKey (Key::Code const code) const
+Key *Input::GetKey (Key::Code const code) const
 {
     KeyCodeMapIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -50,7 +51,7 @@ Key *KeyBinds::GetKey (Key::Code const code) const
     }
 }
 
-Key *KeyBinds::GetKey (std::string const &name) const
+Key *Input::GetKey (std::string const &name) const
 {
     KeyNameMapIterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
@@ -62,73 +63,25 @@ Key *KeyBinds::GetKey (std::string const &name) const
     }
 }
 
-std::string KeyBinds::GetPressedBind (Key::Code const code) const
-{
-    KeyCodeMapIterator it = m_keycode_map.find(code);
-    if (it == m_keycode_map.end())
-        return std::string("");
-    else
-    {
-        ASSERT1(it->second != NULL)
-        return it->second->GetPressedBind();
-    }
-}
-
-std::string KeyBinds::GetPressedBind (std::string const &name) const
-{
-    KeyNameMapIterator it = m_keyname_map.find(name);
-    if (it == m_keyname_map.end())
-        return std::string("");
-    else
-    {
-        ASSERT1(it->second != NULL)
-        return it->second->GetPressedBind();
-    }
-}
-
-std::string KeyBinds::GetReleasedBind (Key::Code const code) const
-{
-    KeyCodeMapIterator it = m_keycode_map.find(code);
-    if (it == m_keycode_map.end())
-        return std::string("");
-    else
-    {
-        ASSERT1(it->second != NULL)
-        return it->second->GetReleasedBind();
-    }
-}
-
-std::string KeyBinds::GetReleasedBind (std::string const &name) const
-{
-    KeyNameMapIterator it = m_keyname_map.find(name);
-    if (it == m_keyname_map.end())
-        return std::string("");
-    else
-    {
-        ASSERT1(it->second != NULL)
-        return it->second->GetReleasedBind();
-    }
-}
-
-bool KeyBinds::GetIsEitherAltKeyPressed ()
+bool Input::GetIsEitherAltKeyPressed ()
 {
     return GetKey(Key::LALT)->GetPressed() ||
            GetKey(Key::RALT)->GetPressed();
 }
 
-bool KeyBinds::GetIsEitherControlKeyPressed ()
+bool Input::GetIsEitherControlKeyPressed ()
 {
     return GetKey(Key::LCTRL)->GetPressed() ||
            GetKey(Key::RCTRL)->GetPressed();
 }
 
-bool KeyBinds::GetIsEitherShiftKeyPressed ()
+bool Input::GetIsEitherShiftKeyPressed ()
 {
     return GetKey(Key::LSHIFT)->GetPressed() ||
            GetKey(Key::RSHIFT)->GetPressed();
 }
 
-SDLMod KeyBinds::GetModifiers () const
+SDLMod Input::GetModifiers () const
 {
     return (SDLMod)(
         (GetIsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
@@ -143,51 +96,7 @@ SDLMod KeyBinds::GetModifiers () const
         (GetIsKeyPressed(Key::CAPSLOCK) ? KMOD_CAPS   : 0));
 }
 
-void KeyBinds::SetPressedBinding (Key::Code const code,
-                                  std::string const &bind)
-{
-    KeyCodeMapIterator it = m_keycode_map.find(code);
-    if (it != m_keycode_map.end())
-    {
-        ASSERT1(it->second != NULL)
-        it->second->SetPressedBind(bind);
-    }
-}
-
-void KeyBinds::SetPressedBinding (std::string const &name,
-                                  std::string const &bind)
-{
-    KeyNameMapIterator it = m_keyname_map.find(name);
-    if (it != m_keyname_map.end())
-    {
-        ASSERT1(it->second != NULL)
-        it->second->SetPressedBind(bind);
-    }
-}
-
-void KeyBinds::SetReleasedBinding (Key::Code const code,
-                                   std::string const &bind)
-{
-    KeyCodeMapIterator it = m_keycode_map.find(code);
-    if (it != m_keycode_map.end())
-    {
-        ASSERT1(it->second != NULL)
-        it->second->SetReleasedBind(bind);
-    }
-}
-
-void KeyBinds::SetReleasedBinding (std::string const &name,
-                                   std::string const &bind)
-{
-    KeyNameMapIterator it = m_keyname_map.find(name);
-    if (it != m_keyname_map.end())
-    {
-        ASSERT1(it->second != NULL)
-        it->second->SetReleasedBind(bind);
-    }
-}
-
-void KeyBinds::ResetPressed ()
+void Input::ResetPressed ()
 {
     for (KeyCodeMapIterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
@@ -199,7 +108,7 @@ void KeyBinds::ResetPressed ()
     }
 }
 
-bool KeyBinds::ProcessEventOverride (Event const *const e)
+bool Input::ProcessEventOverride (Event const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -245,7 +154,7 @@ bool KeyBinds::ProcessEventOverride (Event const *const e)
         return false;
 }
 
-void KeyBinds::InitKeyMaps ()
+void Input::InitKeyMaps ()
 {
     // explicitly initialize every single enumerated key
     // (boy do i love unix command line utilities!)

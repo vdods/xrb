@@ -12,7 +12,7 @@
 
 #include "xrb_gui_events.h"
 #include "xrb_input_events.h"
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 
 namespace Xrb
 {
@@ -59,7 +59,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseWheel(
                     mouse_button_event,
-                    Singletons::KeyBinds()->GetModifiers(),
+                    Singletons::Input().GetModifiers(),
                     screen,
                     time);
             }
@@ -67,7 +67,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonDown(
                     mouse_button_event,
-                    Singletons::KeyBinds()->GetModifiers(),
+                    Singletons::Input().GetModifiers(),
                     screen,
                     time);
             }
@@ -89,7 +89,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonUp(
                     mouse_button_event,
-                    Singletons::KeyBinds()->GetModifiers(),
+                    Singletons::Input().GetModifiers(),
                     screen,
                     time);
             }
@@ -99,7 +99,7 @@ Event *Event::CreateEventFromSDLEvent (
         case SDL_MOUSEMOTION:
             retval = new EventMouseMotion(
                 reinterpret_cast<SDL_MouseMotionEvent const *>(e),
-                Singletons::KeyBinds()->GetModifiers(),
+                Singletons::Input().GetModifiers(),
                 screen,
                 time);
             break;

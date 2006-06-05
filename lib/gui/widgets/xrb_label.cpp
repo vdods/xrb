@@ -213,7 +213,7 @@ void Label::SetFontFaceFilename (std::string const &font_face_filename)
     ASSERT1(!GetRenderPicture().GetIsValid())
 
     m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             font_face_filename,
             m_font->GetPixelHeight());
@@ -230,7 +230,7 @@ void Label::SetFontHeightRatio (Float const font_height_ratio)
     ScreenCoord font_height =
         GetWidgetSkin()->GetScreenCoordFromRatio(font_height_ratio);
     m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             m_font.GetFilename(),
             font_height);
@@ -245,7 +245,7 @@ void Label::SetFontHeight (ScreenCoord const font_height)
     ASSERT1(!GetRenderPicture().GetIsValid())
 
     m_font =
-        Singletons::ResourceLibrary()->LoadFilename<Font>(
+        Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             m_font.GetFilename(),
             font_height);
@@ -261,7 +261,7 @@ void Label::SetPicture (std::string const &picture_name)
     ASSERT1(!picture_name.empty())
 
     m_picture =
-        Singletons::ResourceLibrary()->
+        Singletons::ResourceLibrary().
             LoadFilename<GLTexture>(GLTexture::Create, picture_name);
     ASSERT1(m_picture.GetIsValid())
 

@@ -17,7 +17,7 @@
 #include <time.h>
 
 #include "xrb_eventqueue.h"
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 #include "xrb_keyrepeater.h"
 #include "xrb_mapeditor2_mainwidget.h"
 #include "xrb_screen.h"
@@ -138,7 +138,7 @@ int main (int argc, char **argv)
 
             // make sure to process key events through the key binds first
             if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
-                Singletons::KeyBinds()->ProcessEvent(event);
+                Singletons::Input().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
             key_repeater.ProcessEvent(event);

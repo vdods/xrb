@@ -146,7 +146,7 @@ void Engine2::Polygon::Read (
         serializer.ReadFloatVector2(&m_vertex_array[i].m_texture_coordinate);
     }
     m_texture =
-        Singletons::ResourceLibrary()->
+        Singletons::ResourceLibrary().
             LoadFilename<GLTexture>(GLTexture::Create, serializer.ReadStdString());
     m_area = GetArea();
 

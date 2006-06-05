@@ -54,9 +54,9 @@ libxrb_la_SOURCES = \
     gui/widgets/xrb_spacerwidget.cpp \
     gui/widgets/xrb_widgetstack.cpp \
     \
+    input/xrb_input.cpp \
     input/xrb_input_events.cpp \
     input/xrb_key.cpp \
-    input/xrb_keybinds.cpp \
     input/xrb_keyrepeater.cpp \
     \
     math/xrb_math.cpp \
@@ -125,7 +125,7 @@ libxrb_la_LIBADD = \
 noinst_LTLIBRARIES = \
     libdatafileparser.la \
     liblinecalculatorparser.la
-    
+
 ##############################################################################
 # these headers will be installed in $(prefix)/include/xrb/
 ##############################################################################
@@ -199,9 +199,9 @@ include_HEADERS = \
     gui/widgets/xrb_valuelabel.tcpp \
     gui/widgets/xrb_widgetstack.h \
     \
+    input/xrb_input.h \
     input/xrb_input_events.h \
     input/xrb_key.h \
-    input/xrb_keybinds.h \
     input/xrb_keyrepeater.h \
     \
     math/xrb_math.h \
@@ -249,7 +249,7 @@ include_HEADERS = \
 #    util/xrb_bitcachedcompression.h \
 #    util/xrb_huffman.h \
 #
-    
+
 # the mapeditor is temporarily out of service
 #    mapeditor2/xrb_mapeditor2_compound.h \
 #    mapeditor2/xrb_mapeditor2_compoundentity.h \

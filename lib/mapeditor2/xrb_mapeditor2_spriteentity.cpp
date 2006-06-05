@@ -32,7 +32,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
     std::string const &texture_filename)
 {
     Resource<GLTexture> texture =
-        Singletons::ResourceLibrary()->LoadFilename<GLTexture>(
+        Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
     if (!texture.GetIsValid())

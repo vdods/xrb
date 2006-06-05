@@ -18,7 +18,7 @@
 #include "dis_resourcecache.h"
 #include "dis_titlescreenwidget.h"
 #include "dis_world.h"
-#include "xrb_keybinds.h"
+#include "xrb_input.h"
 #include "xrb_screen.h"
 
 using namespace Xrb;
@@ -132,7 +132,7 @@ void Master::Run ()
 
             // make sure to process key events through the key binds first
             if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
-                Singletons::KeyBinds()->ProcessEvent(event);
+                Singletons::Input().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
             m_key_repeater.ProcessEvent(event);

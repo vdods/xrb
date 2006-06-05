@@ -381,7 +381,7 @@ Font *AsciiFont::Create (
     ScreenCoord const pixel_height)
 {
     Resource<FontFace> font_face =
-        Singletons::ResourceLibrary()->LoadFilename<FontFace>(
+        Singletons::ResourceLibrary().LoadFilename<FontFace>(
             FontFace::Create,
             font_face_filename);
     return Create(font_face, pixel_height);

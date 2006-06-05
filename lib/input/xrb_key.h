@@ -295,20 +295,7 @@ public:
     {
         return m_pressed;
     }
-    inline std::string const &GetPressedBind () const
-    {
-        return m_pressed_bind;
-    }
-    inline std::string const &GetReleasedBind () const
-    {
-        return m_released_bind;
-    }
 
-    void SetPressedBind (std::string const &bind);
-    void SetReleasedBind (std::string const &bind);
-
-    void UnbindPressed ();
-    void UnbindReleased ();
     // resets the m_pressed state to false
     void ResetPressed ();
 
@@ -328,10 +315,6 @@ private:
     std::string m_name;
     // indicates if the button is currently pressed
     bool m_pressed;
-    // the command which is bound to the keypress when the key is pressed
-    std::string m_pressed_bind;
-    // the command which is bound to the keypress when the key is released
-    std::string m_released_bind;
 }; // end of class Key
 
 } // end of namespace Xrb
