@@ -31,8 +31,6 @@ libxrb_la_SOURCES = \
     engine2/xrb_engine2_visibilityquadtree.cpp \
     engine2/xrb_engine2_world.cpp \
     \
-    gui/xrb_font.cpp \
-    gui/xrb_fontface.cpp \
     gui/xrb_gui_events.cpp \
     gui/xrb_sizeproperties.cpp \
     gui/xrb_widget.cpp \
@@ -74,6 +72,8 @@ libxrb_la_SOURCES = \
     \
     render/xrb_engine2_worldview.cpp \
     render/xrb_engine2_worldviewwidget.cpp \
+    render/xrb_font.cpp \
+    render/xrb_fontface.cpp \
     render/xrb_gl.cpp \
     render/xrb_render.cpp \
     render/xrb_rendercontext.cpp \
@@ -87,6 +87,7 @@ libxrb_la_SOURCES = \
     util/xrb_indentformatter.cpp \
     util/xrb_tokenizer.cpp \
     util/xrb_transformation.cpp \
+    util/xrb_utf8.cpp \
     util/xrb_util.cpp
 
 # the compression stuff is temporarily out of service
@@ -168,8 +169,6 @@ include_HEADERS = \
     engine2/xrb_engine2_visibilityquadtree.h \
     engine2/xrb_engine2_world.h \
     \
-    gui/xrb_font.h \
-    gui/xrb_fontface.h \
     gui/xrb_gui_events.h \
     gui/xrb_sizeproperties.h \
     gui/xrb_widget.h \
@@ -223,6 +222,8 @@ include_HEADERS = \
     \
     render/xrb_engine2_worldview.h \
     render/xrb_engine2_worldviewwidget.h \
+    render/xrb_font.h \
+    render/xrb_fontface.h \
     render/xrb_gl.h \
     render/xrb_render.h \
     render/xrb_rendercontext.h \
@@ -237,6 +238,7 @@ include_HEADERS = \
     util/xrb_reference.h \
     util/xrb_tokenizer.h \
     util/xrb_transformation.h \
+    util/xrb_utf8.h \
     util/xrb_util.h \
     util/xrb_validator.h \
     \

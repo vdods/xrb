@@ -13,6 +13,7 @@
 #include "xrb_input_events.h"
 #include "xrb_render.h"
 #include "xrb_screen.h"
+#include "xrb_utf8.h"
 
 namespace Xrb
 {
@@ -249,16 +250,16 @@ ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
         cursor_position = 0;
 
     char const *current_glyph = m_text.c_str();
-    char const *next_glyph = GetRenderFont()->GetNextGlyph(current_glyph);
+    char const *next_glyph;
     for (Uint32 i = 0; i < cursor_position && current_glyph != next_glyph; ++i)
     {
+        next_glyph = UTF8::GetNextCharacter(current_glyph);
         GetRenderFont()->MoveThroughGlyph(
             &pen_position_26_6,
             ScreenCoordVector2::ms_zero,
             current_glyph,
             next_glyph);
         current_glyph = next_glyph;
-        next_glyph = GetRenderFont()->GetNextGlyph(next_glyph);
     }
 
     return pen_position_26_6[Dim::X] >> 6;

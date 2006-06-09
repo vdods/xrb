@@ -16,6 +16,7 @@
 #include "xrb_math.h"
 #include "xrb_rendercontext.h"
 #include "xrb_texture.h"
+#include "xrb_utf8.h"
 
 namespace Xrb
 {
@@ -26,8 +27,7 @@ namespace Xrb
 
 ScreenCoordRect Font::GetStringRect (
     char const *const string,
-    ScreenCoordVector2 const &initial_pen_position,
-    char const *const string_terminator) const
+    ScreenCoordVector2 const &initial_pen_position) const
 {
     ASSERT1(string != NULL)
 
@@ -37,13 +37,12 @@ ScreenCoordRect Font::GetStringRect (
     ScreenCoordVector2 pen_position_span_26_6(pen_position_26_6);
 
     char const *current_glyph = string;
-    char const *next_glyph = GetNextGlyph(current_glyph);
-    // the end of the string is indicated when current_glyph == next_glyph or
-    // when the current glyph matches string_terminator (if string_terminator
-    // is NULL, then the glyphs will never compare as equal).
-    while (current_glyph != next_glyph &&
-           !GetAreGlyphsEqual(current_glyph, string_terminator))
+    char const *next_glyph;
+    // the end of the string is indicated when current_glyph == next_glyph
+    while (*current_glyph != '\0')
     {
+        // get the glyph after the current one
+        next_glyph = UTF8::GetNextCharacter(current_glyph);
         // move through all the normal glyphs (do no spacing)
         MoveThroughGlyph(
             &pen_position_26_6,
@@ -52,8 +51,8 @@ ScreenCoordRect Font::GetStringRect (
             next_glyph,
             NULL,
             NULL);
+        // advance one glyph
         current_glyph = next_glyph;
-        next_glyph = GetNextGlyph(next_glyph);
         // keep track of the bounding box
         TrackBoundingBox(&pen_position_span_26_6, pen_position_26_6);
     }
@@ -90,44 +89,13 @@ ScreenCoordRect Font::GetStringRect (
 void Font::DrawString (
     RenderContext const &render_context,
     ScreenCoordVector2 const &initial_pen_position,
-    char const *const string,
-    char const *const string_terminator,
-    Uint32 remaining_glyph_count,
-    ScreenCoord const remaining_space) const
+    char const *const string) const
 {
-    ASSERT1(string != NULL)
-
     // this is for any pre-rendering setup DrawGlyph needs to do
     DrawGlyphSetup(render_context);
-
-    ScreenCoordVector2 pen_position_26_6(
-        initial_pen_position[Dim::X] << 6,
-        initial_pen_position[Dim::Y] << 6);
-    ScreenCoord major_space_26_6 = remaining_space << 6;
-
-    char const *current_glyph = string;
-    char const *next_glyph = GetNextGlyph(current_glyph);
-    // the end of the string is indicated when current_glyph == next_glyph or
-    // when the current glyph matches string_terminator (if string_terminator
-    // is NULL, then the glyphs will never compare as equal).
-    while (current_glyph != next_glyph &&
-           !GetAreGlyphsEqual(current_glyph, string_terminator))
-    {
-        // draw the glyph
-        DrawGlyph(render_context, current_glyph, pen_position_26_6);
-        // advance the pen
-        MoveThroughGlyph(
-            &pen_position_26_6,
-            initial_pen_position,
-            current_glyph,
-            next_glyph,
-            &remaining_glyph_count,
-            &major_space_26_6);
-        current_glyph = next_glyph;
-        next_glyph = GetNextGlyph(next_glyph);
-    }
-
-    // this is for any post-rendering setup DrawGlyph needs to do
+    // this does the actual rendering
+    DrawStringPrivate(render_context, initial_pen_position, string);
+    // this is for any post-rendering shutdown DrawGlyph needs to do
     DrawGlyphShutdown(render_context);
 }
 
@@ -145,9 +113,12 @@ void Font::GenerateLineFormatVector (
     bool line_start = true;
     // iterate over the whole string
     char const *current_glyph = source_string;
-    char const *next_glyph = GetNextGlyph(current_glyph);
-    while (current_glyph != next_glyph)
+    char const *next_glyph;
+    while (*current_glyph != '\0')
     {
+        // get the glyph after the current one
+        next_glyph = UTF8::GetNextCharacter(current_glyph);
+
         // if this is a new line, re-init the format values and line_start
         if (line_start)
         {
@@ -180,9 +151,8 @@ void Font::GenerateLineFormatVector (
             ++line_format.m_glyph_count;
         }
 
-        // next glyph
+        // advance one glyph
         current_glyph = next_glyph;
-        next_glyph = GetNextGlyph(next_glyph);
     }
     // make sure to push the last one
     line_format.m_length = Abs(pen_position_26_6[Dim::X]) >> 6;
@@ -256,6 +226,9 @@ void Font::DrawLineFormattedText (
         default: ASSERT0(false && "Invalid Alignment") break;
     }
 
+    // this is for any pre-rendering setup DrawGlyph needs to do
+    DrawGlyphSetup(render_context);
+
     Uint32 spacing_lines_left = line_format_vector.size() - 1;
     for (Uint32 line = 0; line < line_format_vector.size(); ++line)
     {
@@ -299,7 +272,7 @@ void Font::DrawLineFormattedText (
                 break;
         }
 
-        DrawString(
+        DrawStringPrivate(
             render_context,
             pen_position,
             line_format_vector[line].m_ptr,
@@ -315,6 +288,47 @@ void Font::DrawLineFormattedText (
             pen_position[Dim::Y] -= spacing_to_use;
             total_spacing[Dim::Y] -= spacing_to_use;
         }
+    }
+
+    // this is for any post-rendering shutdown DrawGlyph needs to do
+    DrawGlyphShutdown(render_context);
+}
+
+void Font::DrawStringPrivate (
+    RenderContext const &render_context,
+    ScreenCoordVector2 const &initial_pen_position,
+    char const *const string,
+    char const *const string_terminator,
+    Uint32 remaining_glyph_count,
+    ScreenCoord const remaining_space) const
+{
+    ASSERT1(string != NULL)
+
+    ScreenCoordVector2 pen_position_26_6(
+        initial_pen_position[Dim::X] << 6,
+        initial_pen_position[Dim::Y] << 6);
+    ScreenCoord major_space_26_6 = remaining_space << 6;
+
+    char const *current_glyph = string;
+    char const *next_glyph;
+    // loop until a NULL char (or the string_terminator, if specified) is hit.
+    while (*current_glyph != '\0' &&
+           !UTF8::GetAreCharactersEqual(current_glyph, string_terminator))
+    {
+        // get the glyph after the current one
+        next_glyph = UTF8::GetNextCharacter(current_glyph);
+        // draw the glyph
+        DrawGlyph(render_context, current_glyph, pen_position_26_6);
+        // advance the pen
+        MoveThroughGlyph(
+            &pen_position_26_6,
+            initial_pen_position,
+            current_glyph,
+            next_glyph,
+            &remaining_glyph_count,
+            &major_space_26_6);
+        // advance one glyph
+        current_glyph = next_glyph;
     }
 }
 
@@ -433,24 +447,6 @@ Font *AsciiFont::Create (
     ASSERT1(retval->m_gl_texture != NULL)
 
     return retval;
-}
-
-char const *AsciiFont::GetNextGlyph (char const *current_glyph) const
-{
-    ASSERT1(current_glyph != NULL)
-    // in ascii, each glyph is a single character, so simple pointer
-    // incrementing works.  but if we're at a null character, return
-    // the same value to indicate the end of the string.
-    if (*current_glyph != '\0')
-        ++current_glyph;
-    return current_glyph;
-}
-
-bool AsciiFont::GetAreGlyphsEqual (char const *const glyph0, char const *const glyph1) const
-{
-    // in ascii, each glyph is a single character, so comparing
-    // the dereferenced pointer values is all that is needed.
-    return glyph0 != NULL && glyph1 != NULL && *glyph0 == *glyph1;
 }
 
 void AsciiFont::MoveThroughGlyph (
@@ -921,11 +917,12 @@ ScreenCoord AsciiFont::GetTokenWidth_26_6 (char const *const string) const
     ASSERT1(string != NULL)
 
     char const *current_glyph = string;
-    char const *next_glyph = GetNextGlyph(current_glyph);
+    char const *next_glyph;
     char const *const end_glyph = GetStartOfNextToken(current_glyph);
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     while (current_glyph != end_glyph)
     {
+        next_glyph = current_glyph + 1;
         if (*string != '\n')
             MoveThroughGlyph(
                 &pen_position_26_6,
@@ -933,7 +930,6 @@ ScreenCoord AsciiFont::GetTokenWidth_26_6 (char const *const string) const
                 current_glyph,
                 next_glyph);
         current_glyph = next_glyph;
-        next_glyph = GetNextGlyph(next_glyph);
     }
 
     return pen_position_26_6[Dim::X];

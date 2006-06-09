@@ -162,6 +162,8 @@
       <group pattern="doc/*" name="/doc" />
       <group pattern="resources/*" name="/resources" />
       <group pattern="*" name="/" />
+      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonlocation>true</hidenonlocation>
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>

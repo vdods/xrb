@@ -29,25 +29,11 @@ namespace Xrb
 class RenderContext;
 class Texture;
 
-/*
-
-class hierarchy
-
-Font (pure virtual)
-    AsciiFont (uses only ascii chars; fast & light)
-    UnicodeFont (supports an arbitrary set of glyphs; uses UTF8, slow & heavy)
-
-*/
-
-/** This class uses FontFace to generate pixelized font renderings and
-  * stores the resulting data in an OpenGL texture, attempting to use
-  * a reasonably small texture to store the set of all rendered glyphs.
-  * @brief The font class which is used to render fonts to screen.
+/** All fonts must use UTF8 encoding (which conveniently includes standard
+  * 7-bit ASCII encoding).  Left-to-right and right-to-left fonts are
+  * supported, but vertically-rendered fonts are not.
+  * @brief Abstract interface class for all fonts.
   */
-
-// this is an abstract interface for Font metrics and rendering.  the goal
-// should be to hide all the ugly ascent/advance/kerning/etc away from the
-// programmer, so s/he only must make calls like font->DrawString("blah");
 class Font
 {
 public:
@@ -62,6 +48,8 @@ public:
         RIGHT_TO_LEFT,
     }; // end of enum Font::TextDirection
 
+    /** @brief Structure used in text formatting (word wrapping and alignment).
+      */
     struct LineFormat
     {
         char const *m_ptr;
@@ -82,18 +70,14 @@ public:
     // this font.  the rectangle's lower left corner is at (0, 0).
     ScreenCoordRect GetStringRect (
         char const *string,
-        ScreenCoordVector2 const &initial_pen_position,
-        char const *string_terminator = NULL) const;
+        ScreenCoordVector2 const &initial_pen_position) const;
 
     // draw the given string, starting at the given position.  the position's
     // meaning is indicated by the return value of GetInitialPenOrientation().
     void DrawString (
         RenderContext const &render_context,
         ScreenCoordVector2 const &initial_pen_position,
-        char const *string,
-        char const *string_terminator = NULL,
-        Uint32 remaining_glyph_count = 0,
-        ScreenCoord remaining_space = 0) const;
+        char const *string) const;
 
     // generates the formatting necessary to draw text of alignment other than
     // (LEFT, LEFT), or text with word-wrapping.
@@ -112,15 +96,6 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
-
-    // because a glyph can be made up of a sequence of chars, this method
-    // provides a way for the implementation subclass to retrieve the next
-    // glyph in a string.  if current_glyph represents the end of the string,
-    // then this method should return current_glyph.
-    virtual char const *GetNextGlyph (char const *current_glyph) const = 0;
-    // returns true iff (glyph0 != NULL && glyph1 != NULL &&
-    // glyph0 is the same as glyph1)
-    virtual bool GetAreGlyphsEqual (char const *glyph0, char const *glyph1) const = 0;
 
     // moves the given pen position as if the given character was rendered.
     // the previous glyph is supplied so that kerning calculations can be
@@ -182,6 +157,14 @@ protected:
 
 private:
 
+    // this does not call DrawGlyphSetup or DrawGlyphShutdown
+    void DrawStringPrivate (
+        RenderContext const &render_context,
+        ScreenCoordVector2 const &initial_pen_position,
+        char const *string,
+        char const *string_terminator = NULL,
+        Uint32 remaining_glyph_count = 0,
+        ScreenCoord remaining_space = 0) const;
     void TrackBoundingBox (
         ScreenCoordVector2 *pen_position_span_26_6,
         ScreenCoordVector2 const &pen_position_26_6) const;
@@ -193,7 +176,7 @@ private:
 /** This class uses FontFace to generate pixelized font renderings and
   * stores the resulting data in an OpenGL texture, attempting to use
   * a reasonably small texture to store the set of all rendered glyphs.
-  * @brief The font class which is used to render fonts to screen.
+  * @brief Fast and light @a Font implementation for 7-bit-ASCII text.
   */
 class AsciiFont : public Font
 {
@@ -236,9 +219,6 @@ public:
     // ///////////////////////////////////////////////////////////////////////
     // public Font interface methods
     // ///////////////////////////////////////////////////////////////////////
-
-    virtual char const *GetNextGlyph (char const *current_glyph) const;
-    virtual bool GetAreGlyphsEqual (char const *glyph0, char const *glyph1) const;
 
     virtual void MoveThroughGlyph (
         ScreenCoordVector2 *pen_position_26_6,
@@ -292,16 +272,6 @@ private:
 
         RENDERED_GLYPH_COUNT = RENDERED_GLYPH_HIGHEST - RENDERED_GLYPH_LOWEST + 1
     };
-
-    // each glyph's properties are:
-    //
-    // bitmap width
-    // bitmap height
-    // bearing x
-    // bearing y
-    // advance
-    // ascender - or some way to know what the actual distance from the top
-    //            of the font coordinates to the baseline is.
 
     struct GlyphSpecification
     {
@@ -372,6 +342,10 @@ private:
     // the unicode value of the "error glyph"
     Uint32 m_error_glyph;
 }; // end of class AsciiFont
+
+// ///////////////////////////////////////////////////////////////////////////
+// TODO: UnicodeFont (supports an arbitrary set of glyphs; uses UTF8, slow & heavy)
+// ///////////////////////////////////////////////////////////////////////////
 
 } // end of namespace Xrb
 

@@ -15,6 +15,7 @@
 #include "xrb_input.h"
 #include "xrb_keyrepeater.h"
 #include "xrb_screen.h"
+#include "xrb_utf8.h" // TEMP
 
 using namespace Xrb;
 
@@ -33,6 +34,36 @@ void Exit ()
 int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
+
+    // TEMP
+    // TEMP
+    // TEMP
+    {
+        std::string temp;
+        for (Uint32 i = 0x0; i < 0x110000; (i == 0xD7FF ? i = 0xE000 : ++i))
+        {
+            temp.clear();
+            UTF8::AppendSequence(&temp, i);
+            Uint32 result = UTF8::GetUnicode(temp.c_str());
+            if (i != result)
+            {
+                fprintf(stderr, "failed: i = 0x%X, result = 0x%X, seq = ", i, result);
+                for (Uint8 const *s = reinterpret_cast<Uint8 const *>(temp.c_str()); *s != '\0'; ++s)
+                    fprintf(stderr, "0x%02X ", static_cast<Uint32>(*s));
+                fprintf(stderr, "\n");
+            }
+            ASSERT1(i == result)
+        }
+        for (Uint32 i = 0xD800; i < 0x120000; (i == 0xDFFF ? i = 0x110000 : ++i))
+        {
+            temp.clear();
+            UTF8::AppendSequence(&temp, i);
+            ASSERT1(temp.empty())
+        }
+    }
+    // TEMP
+    // TEMP
+    // TEMP
 
     Singletons::Initialize();
 

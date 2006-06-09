@@ -33,6 +33,7 @@ OPENGL CONVERSION TASKS:
   ***
   glPixelTransfer -- GL_RED_BIAS, GL_RED_SCALE, GL_GREEN_BIAS,
                      GL_GREEN_SCALE, GL_BLUE_BIAS, GL_BLUE_SCALE, etc.
+  glFog
 
 DISASTEROIDS:
 - finish writing AIs (write Demi)
@@ -40,7 +41,9 @@ DISASTEROIDS:
 - wave spawning, punctuated with Demis
 
 CURRENT:
-- fix up LineEdit
+- make AsciiFont properly use UTF8
+- move the content margins from Label to Widget, and then redo LineEdit
+  to derive from Widget instead of Label (Label is too heavyweight)
 - resource library should not map resources to filenames, but to sets of
   properties (the properties being one of many possible subclasses of some
   "property" baseclass).  this will allow loading of the same filename for
@@ -71,6 +74,10 @@ CURRENT:
   1/2 of the object side length
 
 TODO:
+- do tab/shift-tab control of child widget focus
+- add Z depth for sprites so that overlapping sprites can be correctly
+  drawn in a specific ordering.  e.g. if there is a series of background
+  sprites which are layered, drawing order is important.
 - make Xrb::Initialize and Xrb::Shutdown functions which take care of
   singleton setup/shutdown.  it should also handle setting up the atexit()
   function, and possibly creating/deleting the Screen.
@@ -119,8 +126,6 @@ TODO:
   check into that.
 - make the map editor use only meta-keyed shortcuts so that handling
   key events is much simpler.
-- if the screen widget gets resized to larger than the video resolution,
-  then it doesn't go back once the contents smallify.  fix that.
 - add modal widget frame/content margins (maybe just make it so that
   setting a main widget puts stuff inside the content margins)
 - for widgets who take the default property a single time at the beginning,
@@ -184,11 +189,7 @@ TODO:
 - make a handy Util function which does quantizing
 - add a 'time type' which allows changing of what data type actually
   stores times (i.e. ints or floats, etc)
-- do tab/shift-tab control of child widget focus
 - look into normal mapping to give lighting effects
-- add Z depth for sprites so that overlapping sprites can be correctly
-  drawn in a specific ordering.  e.g. if there is a series of background
-  sprites which are layered, drawing order is important.
 - make all drawing functions const (if possible)
 - examine STL usage in Label, for if the cached string and the line format
   vector clear actually deletes and news stuff, or if it keeps the old array
