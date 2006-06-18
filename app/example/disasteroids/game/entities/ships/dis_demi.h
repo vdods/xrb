@@ -59,7 +59,7 @@ x   tractor: tractor the player closer so we can throw some flames on it
              a collision course with the player
     tractor: throw interlopers at the player
     tractor: tractor the player towards a Devourment
-    enemy spawner: intermittent barrages of certain types of enemies
+x   enemy spawner: intermittent barrages of certain types of enemies
     asteroid destruction: if we collide head-on with a large enough asteroid,
                           somehow destroy it
     blah: if player gets too far away, charge at it
@@ -75,6 +75,22 @@ PickWanderDirection -> Wander
 Wander - no collision avoidance -> Stalk
 
 Stalk - has a target.  moving around for a better position
+    if the player is close enough, goto
+        FlameThrowSweepStart or
+        MissileLaunchStart or
+        SpinningEnemySpawn
+    if the player is a mid distance away, goto
+        GaussGunStartAim or
+        FlameThrowBlastStart or
+        SpinningFlameThrow
+        SpinningMissileLaunch
+        SpinningGuidedMissileLaunch
+        EnemySpawnBlastStart
+        TractorTargetCloserStart
+    if the player is a long distance away, goto
+        GaussGunStartAim
+        TractorTargetCloserStart
+        MissileLaunchStart
 
 GaussGunPause -> GaussGunAim
 GaussGunAim -> GaussGunFire
@@ -125,6 +141,9 @@ public:
     static Float const ms_tractor_strength[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_max_force[ENEMY_LEVEL_COUNT];
     static Float const ms_tractor_beam_radius[ENEMY_LEVEL_COUNT];
+    static Float const ms_target_near_range_distance[ENEMY_LEVEL_COUNT];
+    static Float const ms_target_mid_range_distance[ENEMY_LEVEL_COUNT];
+    static Float const ms_pause_duration[ENEMY_LEVEL_COUNT];
 
     Demi (Uint8 enemy_level);
     virtual ~Demi ();
@@ -230,19 +249,12 @@ private:
         m_aft_weapon_secondary_input = aft_weapon_secondary_input;
     }
 
-    // TEMP
-    // TEMP
-    // TEMP
-    void PauseStart (Float time, Float frame_dt);
-    void PauseContinue (Float time, Float frame_dt);
-    // TEMP
-    // TEMP
-    // TEMP
-
     // main think states
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
     void Stalk (Float time, Float frame_dt);
+    void PauseStart (Float time, Float frame_dt);
+    void PauseContinue (Float time, Float frame_dt);
     void GaussGunStartAim (Float time, Float frame_dt);
     void GaussGunContinueAim (Float time, Float frame_dt);
     void GaussGunFire (Float time, Float frame_dt);

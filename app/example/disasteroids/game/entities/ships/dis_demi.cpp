@@ -48,6 +48,9 @@ Float const Demi::ms_tractor_range[ENEMY_LEVEL_COUNT] = { 20000.0f, 20000.0f, 20
 Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 2000.0f, 3000.0f, 4000.0f, 5000.0f };
 Float const Demi::ms_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
+Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
+Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
+Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 3.0f, 2.0f, 1.0f, 0.666f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 
@@ -474,16 +477,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
         if (entity->GetEntityType() == ET_SOLITARY)
         {
             m_target = entity->GetReference();
-//             m_think_state = THINK_STATE(GaussGunStartAim);
-//             m_think_state = THINK_STATE(FlameThrowSweepStart);
-//             m_think_state = THINK_STATE(FlameThrowBlastStart);
-//             m_think_state = THINK_STATE(MissileLaunchStart);
-//             m_think_state = THINK_STATE(EnemySpawnBlastStart);
-//             m_think_state = THINK_STATE(SpinningFlameThrow);
-//             m_think_state = THINK_STATE(SpinningMissileLaunch);
-//             m_think_state = THINK_STATE(SpinningGuidedMissileLaunch);
-            m_think_state = THINK_STATE(SpinningEnemySpawn);
-//             m_think_state = THINK_STATE(TractorTargetCloserStart);
+            m_think_state = THINK_STATE(Stalk);
             return;
         }
     }
@@ -517,36 +511,70 @@ void Demi::Stalk (Float const time, Float const frame_dt)
         return;
     }
 
-    // DO LATER
+    FloatVector2 target_position(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation()));
+    Float target_distance = (target_position - GetTranslation()).GetLength();
+
+//     m_think_state = THINK_STATE(GaussGunStartAim);
+//     return;
+
+    if (target_distance < ms_target_near_range_distance[GetEnemyLevel()])
+    {
+        switch (Math::RandomUint16() % 3)
+        {
+            case 0: m_think_state = THINK_STATE(FlameThrowSweepStart); break;
+            case 1: m_think_state = THINK_STATE(MissileLaunchStart); break;
+            case 2: m_think_state = THINK_STATE(SpinningEnemySpawn); break;
+        }
+    }
+    else if (target_distance < ms_target_mid_range_distance[GetEnemyLevel()])
+    {
+        switch (Math::RandomUint16() % 7)
+        {
+            case 0: m_think_state = THINK_STATE(GaussGunStartAim); break;
+            case 1: m_think_state = THINK_STATE(FlameThrowBlastStart); break;
+            case 2: m_think_state = THINK_STATE(SpinningFlameThrow); break;
+            case 3: m_think_state = THINK_STATE(SpinningMissileLaunch); break;
+            case 4: m_think_state = THINK_STATE(SpinningGuidedMissileLaunch); break;
+            case 5: m_think_state = THINK_STATE(EnemySpawnBlastStart); break;
+            case 6: m_think_state = THINK_STATE(TractorTargetCloserStart); break;
+        }
+    }
+    else
+    {
+        switch (Math::RandomUint16() % 4)
+        {
+            case 0: m_think_state = THINK_STATE(GaussGunStartAim); break;
+            case 1: m_think_state = THINK_STATE(EnemySpawnBlastStart); break;
+            case 2: m_think_state = THINK_STATE(TractorTargetCloserStart); break;
+            case 3: m_think_state = THINK_STATE(MissileLaunchStart); break;
+        }
+    }
 }
 
-// TEMP
-// TEMP
-// TEMP
 void Demi::PauseStart (Float const time, Float const frame_dt)
 {
     m_start_time = time;
     m_think_state = THINK_STATE(PauseContinue);
 }
+
 void Demi::PauseContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + 1.0f)
+    if (time >= m_start_time + ms_pause_duration[GetEnemyLevel()])
     {
-        m_target.Release();
-        m_think_state = THINK_STATE(PickWanderDirection);
+        m_think_state = THINK_STATE(Stalk);
         return;
     }
 }
-// TEMP
-// TEMP
-// TEMP
 
 void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
 {
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PauseStart);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
@@ -558,7 +586,11 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld())
     // ensure the reticle effect is allocated (lazy allocation)
     if (!m_reticle_effect.GetIsValid())
-        m_reticle_effect = SpawnReticleEffect(GetWorld(), GetObjectLayer(), Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
+        m_reticle_effect =
+            SpawnReticleEffect(
+                GetWorld(),
+                GetObjectLayer(),
+                Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
     else if (!m_reticle_effect->GetIsInWorld())
         m_reticle_effect->AddBackIntoWorld();
@@ -585,36 +617,47 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
-        m_think_state = THINK_STATE(PauseStart);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
-    // TODO: maybe add a time-out (we don't want to waste all our time aiming)
-
+    FloatVector2 muzzle_location(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            GetMuzzleLocation(m_gauss_gun),
+            GetTranslation()));
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),
+            muzzle_location));
+    FloatVector2 reticle_target_position(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
             m_reticle_effect->GetTranslation()));
-    FloatVector2 aim_direction(target_position - m_reticle_effect->GetTranslation());
-    Float target_distance = aim_direction.GetLength();
-    Float distance_parameter = target_distance / GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()];
+    FloatVector2 aim_direction(reticle_target_position - m_reticle_effect->GetTranslation());
+    Float target_distance = (target_position - muzzle_location).GetLength();
+    Float reticle_target_distance = aim_direction.GetLength();
+    Float distance_parameter =
+        reticle_target_distance /
+        GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()];
 
-    // if the target went out of range, transition back to sum'm
-    if (distance_parameter > 1.0f)
+    // if the target went out of range, or if we're wasting time
+    // transition back to sum'm
+    if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
+        time > m_start_time + 10.0f)
     {
-        // TEMP - go to Stalk for real
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
-        m_target.Release();
         m_think_state = THINK_STATE(PauseStart);
         return;
     }
 
     SetReticleCoordinates(m_reticle_effect->GetTranslation());
-    m_reticle_effect->SetScaleFactor(ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()] * (1.0f - 0.5f * distance_parameter));
+    m_reticle_effect->SetScaleFactor(
+        ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()] *
+        (1.0f - 0.5f * distance_parameter));
 
     ASSERT1(ms_gauss_gun_aim_error_radius[GetEnemyLevel()] > 0.0f)
-    if (target_distance <= ms_gauss_gun_aim_error_radius[GetEnemyLevel()])
+    if (reticle_target_distance <= ms_gauss_gun_aim_error_radius[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(GaussGunFire);
         return;
@@ -622,8 +665,9 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     else
     {
         aim_direction.Normalize();
-        // TODO: should this velocity be relative to the Demi?
-        m_reticle_effect->SetVelocity(ms_gauss_gun_aim_max_speed[GetEnemyLevel()] * aim_direction);
+        m_reticle_effect->SetVelocity(
+            ms_gauss_gun_aim_max_speed[GetEnemyLevel()] * aim_direction +
+            GetVelocity());
     }
 }
 
@@ -635,20 +679,14 @@ void Demi::GaussGunFire (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PauseStart);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
-
-    FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
-            m_target->GetTranslation(),
-            m_reticle_effect->GetTranslation()));
 
     SetReticleCoordinates(m_reticle_effect->GetTranslation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 
-    m_target.Release();
-    m_think_state = THINK_STATE(PickWanderDirection);
+    m_think_state = THINK_STATE(PauseStart);
     SetNextTimeToThink(time + 0.3f);
 }
 
@@ -715,7 +753,7 @@ void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
         m_target.Release();
-        m_think_state = THINK_STATE(PauseStart);
+        m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
 
