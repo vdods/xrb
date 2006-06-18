@@ -16,7 +16,6 @@ namespace Xrb
 FrameHandler::FrameHandler ()
 {
     m_most_recent_time = -1.0f;
-    m_current_time = -1.0f;
     m_frame_dt = 0.0f;
     m_lock = 0;
     m_frame_count = 0;
@@ -58,12 +57,12 @@ void FrameHandler::StartFrame (Float const time)
             m_most_recent_time = time;
         }
 
-        // set up the current frame time
-        m_current_time = time;
-
         // calculate dt
-        ASSERT1(m_current_time >= m_most_recent_time)
-        m_frame_dt = m_current_time - m_most_recent_time;
+        ASSERT1(time >= m_most_recent_time)
+        m_frame_dt = time - m_most_recent_time;
+
+        // store the most recent time
+        m_most_recent_time = time;
     }
 
     // assert if there will be overflow
@@ -80,10 +79,6 @@ void FrameHandler::EndFrame ()
 
     if (m_lock == 0)
     {
-        ASSERT1(m_current_time >= m_most_recent_time)
-        // only end the frame if the lock is unused
-        // assign the current time to the previous time
-        m_most_recent_time = m_current_time;
         // zero out the delta time
         m_frame_dt = 0.0f;
         // increment the frame count

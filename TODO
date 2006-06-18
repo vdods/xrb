@@ -38,7 +38,6 @@ OPENGL CONVERSION TASKS:
 DISASTEROIDS:
 - finish writing AIs (write Demi)
 - secondary shield input -- strengthen shields at the cost of a lot of power
-- wave spawning, punctuated with Demis
 
 CURRENT:
 - make picture labels use alignment properly

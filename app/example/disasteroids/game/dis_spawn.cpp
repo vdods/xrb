@@ -759,7 +759,7 @@ Interloper *SpawnInterloper (
         velocity,
         0.0f,
         0.05f);
-    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_INTERLOPER);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(interloper);
     return interloper;
 }
 
@@ -783,7 +783,7 @@ Shade *SpawnShade (
         velocity,
         0.0f,
         0.05f);
-    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_SHADE);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(shade);
     return shade;
 }
 
@@ -807,7 +807,7 @@ Revulsion *SpawnRevulsion (
         velocity,
         0.0f,
         0.05f);
-    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_REVULSION);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(revulsion);
     return revulsion;
 }
 
@@ -831,7 +831,7 @@ Devourment *SpawnDevourment (
         velocity,
         0.0f,
         0.05f);
-    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_DEVOURMENT);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(devourment);
     return devourment;
 }
 
@@ -855,7 +855,7 @@ Demi *SpawnDemi (
         velocity,
         0.0f,
         0.05f);
-    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(ET_DEMI);
+    DStaticCast<Dis::World *>(world)->RecordCreatedEnemyShip(demi);
     return demi;
 }
 

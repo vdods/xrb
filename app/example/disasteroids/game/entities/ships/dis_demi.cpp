@@ -624,7 +624,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     FloatVector2 muzzle_location(
         GetObjectLayer()->GetAdjustedCoordinates(
             GetMuzzleLocation(m_gauss_gun),
-            GetTranslation()));
+            FloatVector2::ms_zero));
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),

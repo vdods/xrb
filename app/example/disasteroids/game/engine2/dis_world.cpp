@@ -39,376 +39,82 @@ using namespace Xrb;
 namespace Dis
 {
 
+// number of each type/level of enemy to spawn
+// the threshold of remaining non-demi non-devourment enemies to end the wave
+// maximum amount of time this wave will last
+// post-wave pause duration
+// bonus score for completing the wave?
+struct Wave
+{
+    // Devourments don't count when ending a wave from killing enough
+    // enemy ships, therefore, the spawn count for Devourment is an
+    // upper limit on the counts per wave.
+    // the array size 3 is for Interloper, Shade and Revulsion
+    Uint32 const m_enemy_ship_spawn_count[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
+    // a negative value here indicates no threshold
+    // (so there better be a max wave duration)
+    Float const m_enemy_ship_threshold;
+    // a negative value here indicates no maximum
+    // (so there better be an enemy ship threshold)
+    Float const m_max_wave_duration;
+    // valid values are any non-negative number
+    Float const m_wave_intermission_duration;
+}; // end of struct World::Wave
+
+static Wave const gs_wave[] =
+{
+    { // wave 0
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }, // Demi
+        },
+        -1.0f,  // enemy ship threshold
+        20.0f,  // max wave duration
+        0.0f    // wave intermission duration
+    },
+    {
+        {
+            {  40,   1,   0,   0 }, // Interloper
+            {   5,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   3,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }, // Demi
+        },
+        0.05f,  // enemy ship threshold
+        60.0f,  // max wave duration
+        0.0f    // wave intermission duration
+    },
+    {
+        {
+            {  20,   1,   0,   0 }, // Interloper
+            {  60,   1,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   3,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }, // Demi
+        },
+        0.05f,  // enemy ship threshold
+        60.0f,  // max wave duration
+        0.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   3,   0,   0,   0 }, // Devourment
+            {   1,   0,   0,   0 }, // Demi
+        },
+        -1.0f,  // enemy ship threshold
+        -1.0f,  // max wave duration
+        10.0f   // wave intermission duration
+    },
+};
+static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
+
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.4f, 0.5f, 0.6f };
-Uint32 const World::ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT] =
-{
-    {  2,  2,  1,  3,  1 }, // 0
-    {  4,  4,  2,  3,  1 },
-    {  6,  6,  3,  3,  1 },
-    {  8,  8,  4,  3,  1 },
-    { 10, 10,  5,  3,  1 },
-    { 12, 12,  6,  3,  1 },
-    { 14, 14,  7,  4,  1 },
-    { 16, 16,  8,  4,  1 },
-    { 18, 18,  9,  4,  1 },
-    { 20, 20, 10,  4,  1 },
-    { 22, 22, 11,  4,  1 }, // 10
-    { 24, 24, 12,  4,  1 },
-    { 26, 26, 13,  5,  1 },
-    { 28, 28, 14,  5,  1 },
-    { 30, 30, 15,  5,  1 },
-    { 32, 32, 16,  5,  1 },
-    { 34, 34, 17,  5,  1 },
-    { 36, 36, 18,  5,  1 },
-    { 38, 38, 19,  6,  1 },
-    { 40, 40, 20,  6,  1 },
-    { 40, 40, 20,  6,  1 }, // 20
-    { 40, 40, 20,  6,  1 },
-    { 40, 40, 20,  6,  1 },
-    { 40, 40, 20,  6,  1 },
-    { 40, 40, 20,  6,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 }, // 30
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  7,  1 },
-    { 40, 40, 20,  8,  1 },
-    { 40, 40, 20,  8,  1 },
-    { 40, 40, 20,  8,  1 },
-    { 40, 40, 20,  8,  1 },
-    { 40, 40, 20,  8,  1 }
-};
-Uint8 const World::ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE] =
-{
-    { // stage 0
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    { // stage 10
-        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 0, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Interloper
-        { 0, 0, 0, 0, 1, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1 }, // Revulsion
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Interloper
-        { 0, 0, 0, 1, 1, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
-        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Interloper
-        { 0, 0, 0, 1, 1, 1, 1, 1, 1, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
-        { 0, 0, 0, 0, 0, 1, 1, 1, 1, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Interloper
-        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
-        { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Interloper
-        { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 0, 1, 1, 1, 2 }, // Revulsion
-        { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    { // stage 20
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Interloper
-        { 0, 0, 1, 1, 1, 1, 1, 1, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 1, 1, 1, 2, 2 }, // Revulsion
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Interloper
-        { 0, 0, 1, 1, 1, 1, 1, 1, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 0, 1, 1, 1, 2, 2 }, // Revulsion
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 2, 2, 3, 3, 3, 3 }, // Interloper
-        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 2, 2, 3, 3, 3, 3 }, // Interloper
-        { 0, 0, 1, 1, 1, 1, 1, 2, 2, 2 }, // Shade
-        { 0, 0, 0, 0, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Shade
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 1, 2, 2, 2, 2 }, // Shade
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Shade
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Shade
-        { 0, 0, 0, 1, 1, 1, 1, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Shade
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Shade
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 1, 2, 2, 2, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    { // 30
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Shade
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Shade
-        { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 }, // Revulsion
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Revulsion
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 1, 2, 2, 2, 2, 3 }, // Revulsion
-        { 0, 1, 1, 2, 2, 2, 2, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Revulsion
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 2, 2, 2, 2, 3, 3 }, // Revulsion
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 }, // Revulsion
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 1, 2, 2, 2, 3, 3, 3 }, // Revulsion
-        { 0, 1, 2, 2, 2, 3, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Revulsion
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    },
-    {
-        { 0, 1, 2, 3, 3, 3, 3, 3, 3, 3 }, // Interloper
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Shade
-        { 0, 1, 1, 2, 2, 2, 3, 3, 3, 3 }, // Revulsion
-        { 0, 1, 2, 2, 3, 3, 3, 3, 3, 3 }, // Devourment
-        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }  // Demi
-    }
-};
-Float const World::ms_enemy_spawn_interval[GAME_STAGE_COUNT] =
-{
-    2.5f, // stage 0
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f, // stage 10
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f, // stage 20
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f, // stage 30
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f,
-    2.5f
-};
 
 World::~World ()
 {
@@ -463,18 +169,20 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
     m_asteroid_mass -= asteroid->GetFirstMoment();
 }
 
-void World::RecordCreatedEnemyShip (EntityType const enemy_ship_type)
+void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
 {
-    Uint32 enemy_ship_index = enemy_ship_type - ET_ENEMY_SHIP_LOWEST;
+    ASSERT1(enemy_ship != NULL)
+    Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
+    ASSERT1(m_is_demi_wave
+            ||
+            m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] <
+            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->GetEnemyLevel()])
 
-    ++m_enemy_ship_count[enemy_ship_index];
-    if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index])
-        m_next_enemy_ship_spawn_time[enemy_ship_index] =
-            GetFrameTime() + 0.3f;
-//                 Math::RandomFloat(
-//                     0.9f * ms_enemy_spawn_interval[m_game_stage],
-//                     1.1f * ms_enemy_spawn_interval[m_game_stage]);
+    ++m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
+        if (m_enemy_ship_left[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
+            --m_enemy_ship_left[enemy_ship_index][enemy_ship->GetEnemyLevel()];
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
@@ -482,15 +190,14 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     ASSERT1(enemy_ship != NULL)
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
-    ASSERT1(m_enemy_ship_count[enemy_ship_index] > 0)
+    ASSERT1(m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
 
-    --m_enemy_ship_count[enemy_ship_index];
-    if (m_enemy_ship_count[enemy_ship_index] == ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] - 1)
-        m_next_enemy_ship_spawn_time[enemy_ship_index] =
-            GetFrameTime() + 0.3f;
-//             Math::RandomFloat(
-//                 0.9f * ms_enemy_spawn_interval[m_game_stage],
-//                 1.1f * ms_enemy_spawn_interval[m_game_stage]);
+    --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
+    {
+        ASSERT1(m_enemy_ship_wave_left > 0)
+        --m_enemy_ship_wave_left;
+    }
 }
 
 World::World (
@@ -513,8 +220,6 @@ World::World (
     m_player_ship = NULL;
     m_score_required_for_extra_life = 50000;
 
-    m_game_stage = 0;
-    m_next_game_stage_time = 30.0f;
     m_asteroid_count = 0;
     m_asteroid_mass = 0.0f;
     m_next_asteroid_spawn_time = 0.0f;
@@ -523,11 +228,12 @@ World::World (
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
 
+    m_current_wave_index = 0;
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
-    {
-        m_enemy_ship_count[enemy_ship_index] = 0;
-        m_next_enemy_ship_spawn_time[enemy_ship_index] = 0.0f;
-    }
+        for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
+            m_enemy_ship_count[enemy_ship_index][enemy_level] = 0;
+    m_enemy_ship_wave_total = 0;
+    m_enemy_ship_wave_left = 0;
 
     CreateAndPopulateBackgroundObjectLayers();
     CreateAndPopulateForegroundObjectLayer();
@@ -625,7 +331,7 @@ bool World::StateIntro (StateMachineInput const input)
             return true;
 
         case IN_END_INTRO:
-            TRANSITION_TO(StateNormalGameplay);
+            TRANSITION_TO(StateWaveInitialize);
             return true;
     }
     return false;
@@ -646,22 +352,106 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
             // TODO place the player ship so it doesn't intersect anything
             m_player_ship->AddBackIntoWorld();
             m_player_ship->IncrementLivesRemaining(-1);
-            TRANSITION_TO(StateNormalGameplay);
+//             TRANSITION_TO(StateNormalGameplay);
             return true;
     }
     return false;
 }
 
-bool World::StateNormalGameplay (StateMachineInput const input)
+bool World::StateWaveInitialize (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateNormalGameplay")
+    STATE_MACHINE_STATUS("StateWaveInitialize")
+    switch (input)
+    {
+        case SM_ENTER:
+            fprintf(stderr, "m_current_wave_index = %u\n", m_current_wave_index);
+            m_enemy_ship_wave_total = 0;
+            m_is_demi_wave = false;
+            for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
+                if (gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
+                    m_is_demi_wave = true;
+            for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
+            {
+                for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
+                {
+                    if (enemy_ship_index + ET_ENEMY_SHIP_LOWEST != ET_DEVOURMENT)
+                    {
+                        m_enemy_ship_left[enemy_ship_index][enemy_level] =
+                            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level] -
+                            Min(m_enemy_ship_count[enemy_ship_index][enemy_level],
+                                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]);
+                        ASSERT1(m_enemy_ship_left[enemy_ship_index][enemy_level] <=
+                                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level])
+                        m_enemy_ship_wave_total +=
+                            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level];
+                    }
+                }
+            }
+            m_enemy_ship_wave_left += m_enemy_ship_wave_total;
+            if (gs_wave[m_current_wave_index].m_max_wave_duration >= 0.0f)
+                ScheduleStateMachineInput(IN_END_WAVE, gs_wave[m_current_wave_index].m_max_wave_duration);
+            TRANSITION_TO(StateWaveGameplay);
+            return true;
+    }
+    return false;
+}
+
+bool World::StateWaveGameplay (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateWaveGameplay")
     switch (input)
     {
         case IN_PROCESS_FRAME:
-            // this is where all the good stuff happens (enemy spawning,
-            // extra life incrementing, difficulty increasing, etc).
-            ProcessNormalGameplayLogic();
-            m_player_ship->IncrementTimeAlive(GetFrameDT());
+            ProcessWaveGameplayLogic();
+            if (m_is_demi_wave)
+            {
+                bool all_demis_killed = true;
+                for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
+                    if (m_enemy_ship_left[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
+                        all_demis_killed = false;
+                if (all_demis_killed)
+                    ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
+            }
+            else if (gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f &&
+                     m_enemy_ship_wave_left <= gs_wave[m_current_wave_index].m_enemy_ship_threshold * m_enemy_ship_wave_total)
+            {
+                ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
+            }
+            return true;
+
+        case IN_END_WAVE:
+            TRANSITION_TO(StateWaveIntermissionGameplay);
+            return true;
+
+        case IN_PLAYER_SHIP_DIED:
+            TRANSITION_TO(StateCheckLivesRemaining);
+            return true;
+
+        case IN_END_GAME:
+            TRANSITION_TO(StateOutro);
+            return true;
+    }
+    return false;
+}
+
+bool World::StateWaveIntermissionGameplay (StateMachineInput const input)
+{
+    STATE_MACHINE_STATUS("StateWaveIntermissionGameplay")
+    switch (input)
+    {
+        case SM_ENTER:
+            ASSERT1(gs_wave[m_current_wave_index].m_wave_intermission_duration >= 0.0f)
+            ScheduleStateMachineInput(IN_END_WAVE_INTERMISSION, gs_wave[m_current_wave_index].m_wave_intermission_duration);
+            if (m_current_wave_index < gs_wave_count-1)
+                ++m_current_wave_index;
+            return true;
+
+        case IN_PROCESS_FRAME:
+            ProcessWaveIntermissionGameplayLogic();
+            return true;
+
+        case IN_END_WAVE_INTERMISSION:
+            TRANSITION_TO(StateWaveInitialize);
             return true;
 
         case IN_PLAYER_SHIP_DIED:
@@ -701,7 +491,8 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
             return true;
 
         case IN_WAIT_AFTER_PLAYER_DEATH_DONE:
-            TRANSITION_TO(StateSpawnPlayerShip);
+            ASSERT0(false) // TODO: stuff later
+//             TRANSITION_TO(StateSpawnPlayerShip);
             return true;
 
         case IN_PROCESS_FRAME:
@@ -843,16 +634,40 @@ void World::CancelScheduledStateMachineInput ()
 // end state machine stuff
 // ///////////////////////////////////////////////////////////////////////////
 
-void World::ProcessNormalGameplayLogic ()
+void World::ProcessWaveGameplayLogic ()
 {
-    // update the game stage
-    if (m_next_game_stage_time <= GetFrameTime() &&
-        m_game_stage < GAME_STAGE_COUNT - 1)
+    ProcessCommonGameplayLogic();
+
+    // enemy ship spawning (this behaves differently when the world runs
+    // at different framerates, but it shouldn't matter)
+    for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
-        ++m_game_stage;
-        fprintf(stderr, "increased game stage (%u)\n", m_game_stage);
-        m_next_game_stage_time = GetFrameTime() + 30.0f;
+        for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
+        {
+            if (m_enemy_ship_count[enemy_ship_index][enemy_level] <
+                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]
+                &&
+                (enemy_ship_index + ET_ENEMY_SHIP_LOWEST == ET_DEVOURMENT
+                 ||
+                 enemy_ship_index + ET_ENEMY_SHIP_LOWEST != ET_DEVOURMENT &&
+                 m_enemy_ship_left[enemy_ship_index][enemy_level] > 0))
+            {
+                SpawnEnemyShipOutOfView(
+                    static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
+                    enemy_level);
+            }
+        }
     }
+}
+
+void World::ProcessWaveIntermissionGameplayLogic ()
+{
+    ProcessCommonGameplayLogic();
+}
+
+void World::ProcessCommonGameplayLogic ()
+{
+    m_player_ship->IncrementTimeAlive(GetFrameDT());
 
     // asteroid spawning
     static Uint32 const s_max_asteroid_count = 80;
@@ -882,26 +697,16 @@ void World::ProcessNormalGameplayLogic ()
         m_next_asteroid_mineral_content_level_time = GetFrameTime() + 60.0f;
     }
 
-    // enemy ship spawning
-    for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
-    {
-        if (m_enemy_ship_count[enemy_ship_index] < ms_max_enemy_ship_count[m_game_stage][enemy_ship_index] &&
-            m_next_enemy_ship_spawn_time[enemy_ship_index] <= GetFrameTime())
-        {
-            SpawnEnemyShipOutOfView(
-                static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
-                ms_enemy_level_distribution_table[m_game_stage][enemy_ship_index][Math::RandomUint16(0, DISTRIBUTION_TABLE_SIZE-1)]);
-        }
-    }
-
     // extra life handling
+/*
     if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
     {
         static Float const s_extra_live_score_factor = 2.0f;
-//         m_player_ship->IncrementLivesRemaining(1);
+        m_player_ship->IncrementLivesRemaining(1);
         m_score_required_for_extra_life =
             static_cast<Uint32>(s_extra_live_score_factor * m_score_required_for_extra_life);
     }
+*/
 }
 
 void World::EndGame ()

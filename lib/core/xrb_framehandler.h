@@ -68,7 +68,7 @@ protected:
     inline Float GetFrameTime () const
     {
         ASSERT1(m_lock > 0)
-        return m_current_time;
+        return m_most_recent_time;
     }
     /** Only valid inside ProcessFrameOverride.  If this method is called
       * from outside of ProcessFrameOverride, it will assert.
@@ -96,10 +96,9 @@ private:
 
     // mutual exclusion so that calls to superclass Frames work
     Uint32 m_lock;
-    // the previous frame's time
+    // the most recently processed frame's time (stores the current frame
+    // time during ProcessFrame()
     Float m_most_recent_time;
-    // the current frame's time
-    Float m_current_time;
     // the delta time value
     Float m_frame_dt;
     // the frame counter

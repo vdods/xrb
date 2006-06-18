@@ -13,8 +13,7 @@
 
 #include "xrb_engine2_world.h"
 
-#include <time.h>
-
+#include "dis_enemyship.h"
 #include "dis_entity.h"
 #include "dis_highscores.h"
 #include "xrb_signalhandler.h"
@@ -23,26 +22,16 @@
 using namespace Xrb;
 
 /*
-world design:
 
-this module controls the game logic for an instantiated game (e.g. spawning
-enemies/asteroids, etc), as well as game synchronization over the network,
-if it is decided ever to make this a network game.
+wave spawning:
 
-- control the player as it is killed and respawns
-- control the player's score and time alive
-- control the [rate of] spawning of asteroids
-- control the [rate of] spawning of enemy ships
-
-state machine for game logic
-
-1. create the world
-2. spawn the player
-3. normal gameplay
-4. player is killed (backtrack spawning stage?)
-5. if player has remaining lives, delay a bit and then goto 2.
-6. game over.  delay a bit and then continue to 7 (destroy the world)
-7. destroy the world
+each wave is made up of:
+    number of each type/level of enemy to spawn
+    the threshold of remaining enemies before spawning the boss(es)
+    maximum amount of time before spawnining the boss(es)
+    number of each type/level of boss to spawn
+    post-wave pause duration
+    bonus score for completing the wave?
 
 //////////////////////////////////////////////////////////////////////////////
 // stuff to be considered if disasteroids was going to be made network-aware
@@ -84,17 +73,17 @@ public:
     // for use by Master to indicate that the high score processing is done
     // and the world can now transition to StateOutro
     void SubmitScoreDone ();
-    
+
     void RecordDestroyedPlayerShip (PlayerShip const *player_ship);
-    
+
     void RecordCreatedAsteroids (
         Uint32 created_asteroid_count,
         Float created_asteroids_mass);
     void RecordDestroyedAsteroid (Asteroid const *asteroid);
 
-    void RecordCreatedEnemyShip (EntityType enemy_ship_type);
+    void RecordCreatedEnemyShip (EnemyShip const *enemy_ship);
     void RecordDestroyedEnemyShip (EnemyShip const *enemy_ship);
-            
+
 protected:
 
     World (
@@ -105,7 +94,7 @@ protected:
     virtual void ProcessFrameOverride ();
 
     virtual void HandleAttachWorldView (Engine2::WorldView *engine2_world_view);
-    
+
 private:
 
     // ///////////////////////////////////////////////////////////////////////
@@ -114,9 +103,11 @@ private:
     enum
     {
         IN_PROCESS_FRAME = 0,
-        
+
         IN_BEGIN_INTRO,
         IN_END_INTRO,
+        IN_END_WAVE,
+        IN_END_WAVE_INTERMISSION,
         IN_PLAYER_SHIP_DIED,
         IN_END_GAME,
         IN_WAIT_AFTER_PLAYER_DEATH_DONE,
@@ -128,7 +119,9 @@ private:
 
     bool StateIntro (StateMachineInput);
     bool StateSpawnPlayerShip (StateMachineInput);
-    bool StateNormalGameplay (StateMachineInput);
+    bool StateWaveInitialize (StateMachineInput);
+    bool StateWaveGameplay (StateMachineInput);
+    bool StateWaveIntermissionGameplay (StateMachineInput);
     bool StateCheckLivesRemaining (StateMachineInput);
     bool StateWaitAfterPlayerDeath (StateMachineInput);
     bool StateDeathRattle (StateMachineInput);
@@ -142,16 +135,18 @@ private:
     void CancelScheduledStateMachineInput ();
 
     StateMachine<World> m_state_machine;
-    
+
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////
-    
-    void ProcessNormalGameplayLogic ();
+
+    void ProcessWaveGameplayLogic ();
+    void ProcessWaveIntermissionGameplayLogic ();
+    void ProcessCommonGameplayLogic ();
 
     void EndGame ();
     void EndIntro ();
     void EndOutro ();
-    
+
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
         EntityType enemy_ship_type,
@@ -169,17 +164,12 @@ private:
         GAME_STAGE_COUNT = 40,
         DISTRIBUTION_TABLE_SIZE = 10
     };
-    
+
     static Float const ms_asteroid_mineral_content_factor[MINERAL_CONTENT_LEVEL_COUNT];
-    static Uint32 const ms_max_enemy_ship_count[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT];
-    static Uint8 const ms_enemy_level_distribution_table[GAME_STAGE_COUNT][ET_ENEMY_SHIP_COUNT][DISTRIBUTION_TABLE_SIZE];
-    static Float const ms_enemy_spawn_interval[GAME_STAGE_COUNT];
-    
+
     PlayerShip *m_player_ship;
     Uint32 m_score_required_for_extra_life;
 
-    Uint32 m_game_stage;
-    Float m_next_game_stage_time;
     Uint32 m_asteroid_count;
     Float m_asteroid_mass;
     Float m_next_asteroid_spawn_time;
@@ -188,8 +178,13 @@ private:
     Uint8 m_asteroid_mineral_content_level;
     Float m_next_asteroid_mineral_content_level_time;
 
-    Uint32 m_enemy_ship_count[ET_ENEMY_SHIP_COUNT];
-    Float m_next_enemy_ship_spawn_time[ET_ENEMY_SHIP_COUNT];
+    Uint32 m_current_wave_index;
+    bool m_is_demi_wave;
+    // TODO: change into std::vector?
+    Uint32 m_enemy_ship_count[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
+    Uint32 m_enemy_ship_left[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
+    Uint32 m_enemy_ship_wave_total;
+    Uint32 m_enemy_ship_wave_left;
 
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
