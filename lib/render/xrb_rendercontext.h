@@ -126,7 +126,7 @@ public:
     }
     /** @brief Causes OpenGL to use the current clipping rectangle.
       */
-    void SetupGLClipRect ();
+    void SetupGLClipRect () const;
 
     /** Simply copies the properties of the source.
       * @brief Assignment operator.

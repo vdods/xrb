@@ -211,6 +211,8 @@ lib/gui/widgets/xrb_spacerwidget.cpp
 lib/gui/widgets/xrb_spacerwidget.h
 lib/gui/widgets/xrb_tabbedwidget.cpp
 lib/gui/widgets/xrb_tabbedwidget.h
+lib/gui/widgets/xrb_textwidget.cpp
+lib/gui/widgets/xrb_textwidget.h
 lib/gui/widgets/xrb_toolbarbutton.h
 lib/gui/widgets/xrb_toolbarbutton.tcpp
 lib/gui/widgets/xrb_valueedit.h

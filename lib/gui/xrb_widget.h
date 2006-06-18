@@ -328,6 +328,15 @@ public:
     {
         return m_frame_margins;
     }
+    /** The content margins are added to the frame margins to indicate the
+      * content area of the label.  The content margins can be negative (up to
+      * the point that they totally cancel the frame margins).
+      * @brief Returns the content margins for this widget.
+      */
+    inline ScreenCoordVector2 const &GetContentMargins () const
+    {
+        return m_content_margins;
+    }
     /** @brief Returns the last known mouse position (derived from the most
       *        recent mouse motion event received by this widget).
       */
@@ -412,6 +421,15 @@ public:
     {
         return m_screen_rect;
     }
+    /** The content area is the area within the sum of the frame margins
+      * and the content margins.  Note that the content margins can be
+      * negative, up to the negative of the frame margins.
+      * @brief Returns the rectangle representing the content area.
+      */
+    inline ScreenCoordRect GetContentsRect () const
+    {
+        return GetScreenRect().GetGrown(-(GetFrameMargins() + GetContentMargins()));
+    }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
@@ -426,7 +444,7 @@ public:
 
     /** This function is used to set the minimum-size-enabled and
       * maximum-size-enabled for both the X/Y components, separately.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size-enabled property of a widget is changed.
       * @see Layout::SetSizePropertyEnabled
@@ -448,7 +466,7 @@ public:
         bool defer_parent_update = false);
     /** This function is used to set either the minimum-size-enabled and
       * maximum-size-enabled for both the X/Y components at once.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size-enabled property of a widget is changed.
       * @see Layout::SetSizePropertyEnabled
@@ -467,7 +485,7 @@ public:
         bool defer_parent_update = false);
     /** This function is used to set the minimum-size and
       * maximum-size for both the X/Y components, separately.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size property of a widget is changed.
       * @see Layout::SetSizeProperty
@@ -489,7 +507,7 @@ public:
         bool defer_parent_update = false);
     /** This function is used to set either the minimum-size and
       * maximum-size for both the X/Y components at once.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size property of a widget is changed.
       * @see Layout::SetSizeProperty
@@ -509,7 +527,7 @@ public:
     /** This function is used to set the minimum-size-to-screen-basis ratio
       * and maximum-size-to-screen-basis for both the X/Y components,
       * separately.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size-to-screen-basis ratio of a widget is
       * changed.
@@ -532,7 +550,7 @@ public:
         bool defer_parent_update = false);
     /** This function is used to set the minimum-size-to-screen-basis ratio
       * and maximum-size-to-screen-basis for both the X/Y components at once.
-      * 
+      *
       * This function should be overridden in a subclass when it is necessary
       * to know when the min/max-size-to-screen-basis ratio of a widget is
       * changed.
@@ -588,10 +606,19 @@ public:
     void SetFrameMargins (ScreenCoordVector2 const &frame_margins);
     /** Actually just calls @a SetFrameMargins with the product of the given
       * ratios and the screen basis.
-      * @see Screen::GetSizeRatioBasis
       * @brief Sets the frame margins for this widget via screen-basis ratios.
+      * @see Screen::GetSizeRatioBasis
       */
     void SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios);
+    /** @brief Sets the content margins for this widget (in direct screen coordinates).
+      */
+    void SetContentMargins (ScreenCoordVector2 const &content_margins);
+    /** Actually just calls @a SetContentMargins with the product of the given
+      * ratios and the screen basis.
+      * @brief Sets the content margins for this widget via screen-basis ratios.
+      * @see Screen::GetSizeRatioBasis
+      */
+    void SetContentMarginRatios (FloatVector2 const &content_margin_ratios);
 
     // ///////////////////////////////////////////////////////////////////////
     // procedures
@@ -780,7 +807,7 @@ public:
     inline void Disable () { SetIsEnabled(false); }
 
     /** Must not currently be a modal widget.
-      * @brief Toggles the hidden state.  
+      * @brief Toggles the hidden state.
       */
     void ToggleIsHidden ();
     /** If this widget is a child in a layout widget, then this will cause
@@ -823,8 +850,8 @@ protected:
     virtual ScreenCoordVector2 GetContentsMinSize () const;
     virtual Bool2 GetContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 GetContentsMaxSize () const;
-    
-    /** @brief Returns the a pointer to the background object which is 
+
+    /** @brief Returns the a pointer to the background object which is
       *        rendered in @a Widget::Draw.
       */
     inline WidgetBackground const *GetRenderBackground () const
@@ -945,6 +972,13 @@ protected:
       *        changed.
       */
     virtual void HandleChangedFrameMargins () { }
+    /** Subclasses should override this when they need to do something when
+      * the content margins have been changed.
+      * @see Layout
+      * @brief Handler that is called when the content margins have been
+      *        changed.
+      */
+    virtual void HandleChangedContentMargins () { }
 
     /** Modal widget behavior requires the top level widget to divert events
       * directly to the modal widget immediately, bypassing the widget
@@ -1108,12 +1142,12 @@ private:
     bool PreprocessMouseoverEvent (EventMouseover const *e);
     /** @brief A convenience function for sending a mouse event to the
       *        child widget highest in m_child_vector which lies underneath
-      *        the mouse event position.   
+      *        the mouse event position.
       * @return True iff the mouse event was accepted by any of the children.
       */
     bool SendMouseEventToChild (EventMouse const *e);
 
-    /** Currently only used for debugging purposes 
+    /** Currently only used for debugging purposes
       * @brief Textual name of this instance of the widget.
       */
     std::string m_name;
@@ -1184,11 +1218,14 @@ private:
       *        and various other Widget subclasses for drawing and layout.
       */
     ScreenCoordVector2 m_frame_margins;
+    /** @brief Contains the content margins which are used by various widgets.
+      */
+    ScreenCoordVector2 m_content_margins;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers
     // ///////////////////////////////////////////////////////////////////////
-    
+
     /** @brief SignalReceiver which calls @a SetIsEnabled with the
       *        received value.
       */

@@ -210,26 +210,22 @@ private:
     // all the SetBlahBlah functions
     // ///////////////////////////////////////////////////////////////////////
 
-    template <
-        typename PropertyType,
-        typename DataType,
-        void (WidgetSkin::*SetWidgetSkinProperty)(PropertyType, DataType),
-        void (WidgetSkinHandler::*PropagateChangedPropertyFunction)(PropertyType)>
+    template <typename PropertyType, typename DataType>
     void SetProperty (
         PropertyType const property,
-        DataType const data)
+        DataType const data,
+        void (WidgetSkin::*SetWidgetSkinProperty)(PropertyType, DataType),
+        void (WidgetSkinHandler::*PropagateChangedPropertyFunction)(PropertyType))
     {
         // make sure we go up to the top level parent before setting
         // the property and propagating the changes.
         if (GetWidgetSkinHandlerParent() != NULL)
         {
-            GetWidgetSkinHandlerParent()->SetProperty<
-                PropertyType,
-                DataType,
+            GetWidgetSkinHandlerParent()->SetProperty<PropertyType, DataType>(
+                property,
+                data,
                 SetWidgetSkinProperty,
-                PropagateChangedPropertyFunction>(
-                    property,
-                    data);
+                PropagateChangedPropertyFunction);
         }
         else
         {
@@ -245,10 +241,10 @@ private:
     // these functions propagate property changes to child widgets
     // ///////////////////////////////////////////////////////////////////////
 
-    template <
-        typename PropertyType,
-        void (WidgetSkinHandler::*HandleChangedProperty)(PropertyType)>
-    void PropagateChangedProperty (PropertyType const property)
+    template <typename PropertyType>
+    void PropagateChangedProperty (
+        PropertyType const property,
+        void (WidgetSkinHandler::*HandleChangedProperty)(PropertyType))
     {
         // call HandleChangedProperty on this WidgetSkinHandler
         (this->*HandleChangedProperty)(property);
@@ -257,10 +253,9 @@ private:
         {
             WidgetSkinHandler *child = GetWidgetSkinHandlerChild(i);
             ASSERT1(child != NULL)
-            child->PropagateChangedProperty<
-                PropertyType,
-                HandleChangedProperty>(
-                    property);
+            child->PropagateChangedProperty<PropertyType>(
+                property,
+                HandleChangedProperty);
         }
     }
 

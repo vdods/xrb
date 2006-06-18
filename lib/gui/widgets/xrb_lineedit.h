@@ -13,15 +13,13 @@
 
 #include "xrb.h"
 
-#include <string>
-
-#include "xrb_label.h"
 #include "xrb_characterfilter.h"
+#include "xrb_textwidget.h"
 
 namespace Xrb
 {
 
-class LineEdit : public Label
+class LineEdit : public TextWidget
 {
 public:
 
@@ -31,42 +29,24 @@ public:
         std::string const &name = "LineEdit");
     virtual ~LineEdit () { }
 
-    inline Uint32 GetCharacterLimit () const
-    {
-        return m_character_limit;
-    }
-    inline CharacterFilter &GetCharacterFilter ()
-    {
-        return m_character_filter;
-    }
-    inline bool GetIsReadOnly () const
-    {
-        return m_is_read_only;
-    }
+    inline Alignment GetAlignment () const { return m_alignment; }
+    inline Uint32 GetCharacterLimit () const { return m_character_limit; }
+    inline CharacterFilter &GetCharacterFilter () { return m_character_filter; }
+    inline bool GetIsReadOnly () const { return m_is_read_only; }
 
     virtual void SetText (std::string const &text);
-    virtual void SetWordWrap (bool word_wrap);
-    inline void SetCharacterFilter (CharacterFilter const &character_filter)
-    {
-        m_character_filter = character_filter;
-    }
-    inline void SetIsReadOnly (bool const is_read_only)
-    {
-        m_is_read_only = is_read_only;
-    }
+    void SetAlignment (Alignment alignment);
+    inline void SetCharacterFilter (CharacterFilter const &character_filter) { m_character_filter = character_filter; }
+    inline void SetIsReadOnly (bool is_read_only) { m_is_read_only = is_read_only; }
 
-    inline SignalSender1<std::string const &> const *SenderTextUpdated ()
-    {
-        return &m_sender_text_updated;
-    }
-    inline SignalSender1<std::string const &> const *SenderTextSetByEnterKey ()
-    {
-        return &m_sender_text_set_by_enter_key;
-    }
+    inline SignalSender1<std::string const &> const *SenderTextUpdated () { return &m_sender_text_updated; }
+    inline SignalSender1<std::string const &> const *SenderTextSetByEnterKey () { return &m_sender_text_set_by_enter_key; }
 
     virtual void Draw (RenderContext const &render_context) const;
 
 protected:
+
+    virtual void SetRenderFont (Resource<Font> const &render_font);
 
     virtual void UpdateRenderBackground ();
 
@@ -88,8 +68,11 @@ protected:
 
     virtual void SignalTextUpdated ();
 
+    virtual void UpdateMinAndMaxSizesFromText ();
+
 private:
 
+    ScreenCoord GetInitialPenPositionX () const;
     ScreenCoord GetCursorOffset (Uint32 cursor_position) const;
     ScreenCoord GetCursorWidth (Uint32 cursor_position) const;
 
@@ -97,6 +80,7 @@ private:
     // line edit scrolls properly
     void SetCursorPosition (Uint32 cursor_position);
 
+    void UpdateTextWidth ();
     void MakeCursorVisible ();
     void MoveCursorLeft ();
     void MoveCursorRight ();
@@ -104,6 +88,12 @@ private:
     bool ShiftText (Uint32 position, Sint32 offset);
     void AssignFilteredString (std::string const &string);
 
+    // for alignment
+    ScreenCoord m_text_width;
+    // for scrolling
+    ScreenCoordVector2 m_text_offset;
+    // horizontal text alignment (may only be LEFT, CENTER or RIGHT)
+    Alignment m_alignment;
     // the maximum number of characters that can be typed into this widget
     Uint32 m_character_limit;
     // the current cursor position in the contents string
@@ -123,8 +113,10 @@ private:
     // indicates if this LineEdit is read-only
     bool m_is_read_only;
 
-    //////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////
     // SignalSenders
+    // ///////////////////////////////////////////////////////////////////////
+
     SignalSender1<std::string const &> m_sender_text_updated;
     SignalSender1<std::string const &> m_sender_text_set_by_enter_key;
 }; // end of class LineEdit

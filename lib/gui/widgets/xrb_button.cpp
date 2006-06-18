@@ -25,6 +25,7 @@ Button::Button (
     m_sender_pressed(this),
     m_sender_released(this)
 {
+    SetAlignment(Alignment2(CENTER, CENTER));
     Initialize();
 }
 
@@ -134,8 +135,6 @@ void Button::Initialize ()
     m_accepts_focus = true;
     m_accepts_mouseover = true;
     m_is_pressed = false;
-
-    SetAlignment(Alignment2(CENTER, CENTER));
 
     Button::UpdateRenderBackground();
 }

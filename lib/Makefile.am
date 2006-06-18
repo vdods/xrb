@@ -50,6 +50,7 @@ libxrb_la_SOURCES = \
     gui/widgets/xrb_modalwidget.cpp \
     gui/widgets/xrb_progressbar.cpp \
     gui/widgets/xrb_spacerwidget.cpp \
+    gui/widgets/xrb_textwidget.cpp \
     gui/widgets/xrb_widgetstack.cpp \
     \
     input/xrb_input.cpp \
@@ -190,6 +191,7 @@ include_HEADERS = \
     gui/widgets/xrb_radiobutton.h \
     gui/widgets/xrb_radiobutton.tcpp \
     gui/widgets/xrb_spacerwidget.h \
+    gui/widgets/xrb_textwidget.h \
     gui/widgets/xrb_toolbarbutton.h \
     gui/widgets/xrb_toolbarbutton.tcpp \
     gui/widgets/xrb_valueedit.h \

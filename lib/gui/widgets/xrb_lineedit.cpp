@@ -23,7 +23,7 @@ LineEdit::LineEdit (
     Widget *const parent,
     std::string const &name)
     :
-    Label("", parent, name),
+    TextWidget("", parent, name),
     m_sender_text_updated(this),
     m_sender_text_set_by_enter_key(this)
 {
@@ -31,21 +31,18 @@ LineEdit::LineEdit (
 
     m_character_limit = character_limit;
     m_text.reserve(m_character_limit);
-    SetAlignment(Alignment2(LEFT, CENTER));
-
+    m_text_width = 0;
+    m_text_offset = ScreenCoordVector2::ms_zero;
+    m_alignment = LEFT;
     m_cursor_position = 0;
     m_does_cursor_overwrite = false;
-
     m_is_cursor_visible = false;
     m_cursor_blink_period = 0.5f;
     m_next_cursor_blink_time = 0.0f;
-
-    // default filter denies nothing (allows anything), except for newlines
-    // which are always filtered
     m_character_filter = CharacterFilter(CharacterFilter::DENY, "");
-
     m_is_read_only = false;
 
+    ASSERT1(m_text.empty())
     ASSERT1(m_last_text_update.empty())
 
     SetIsHeightFixedToTextHeight(true);
@@ -55,64 +52,82 @@ LineEdit::LineEdit (
 
 void LineEdit::SetText (std::string const &text)
 {
+    ASSERT1(GetRenderFont().GetIsValid())
+
     // only do stuff if the text is different
     if (m_text != text)
     {
         AssignFilteredString(text);
-
         if (m_cursor_position > m_text.length())
             SetCursorPosition(m_text.length());
-
         SignalTextUpdated();
-
-        // this is necessary so that the Label text stuff is updated
-        DirtyTextFormatting();
+        UpdateMinAndMaxSizesFromText();
     }
 }
 
-void LineEdit::SetWordWrap (bool const word_wrap)
+void LineEdit::SetAlignment (Alignment const alignment)
 {
-    ASSERT1(!word_wrap && "You can't turn word wrapping on in a LineEdit")
+    ASSERT1(alignment == LEFT || alignment == CENTER || alignment == RIGHT)
+    m_alignment = alignment;
 }
 
 void LineEdit::Draw (RenderContext const &render_context) const
 {
-    ASSERT1(!GetWordWrap())
+    ASSERT1(GetRenderFont().GetIsValid())
+
     // call the superclass Draw (for the background and such)
     Widget::Draw(render_context);
-    // have Label draw the text
-    Label::DrawText(render_context);
 
-    // the clip rect from the call to Label::DrawTextInternal will be used
+    ScreenCoordRect contents_rect(GetContentsRect());
+    ScreenCoordVector2 initial_pen_position(GetInitialPenPositionX(), contents_rect.GetTop());
+
+    // draw the text
+    {
+        if (contents_rect.GetIsValid())
+        {
+            // generate a render context for the string drawing function
+            RenderContext string_render_context(render_context);
+            // calculate the clip rect
+            string_render_context.ApplyClipRect(contents_rect);
+            // calculate the color mask
+            string_render_context.ApplyColorMask(GetRenderTextColor());
+            // set up the GL clip rect
+            string_render_context.SetupGLClipRect();
+            // draw the text
+            GetRenderFont()->DrawString(
+                string_render_context,
+                initial_pen_position,
+                m_text.c_str());
+        }
+    }
 
     // draw the cursor (if it's visible and the widget is not read-only)
     if (m_is_cursor_visible && !GetIsReadOnly())
     {
-        // figure out where the cursor is in relation to the text
-        ScreenCoord cursor_offset = GetCursorOffset(m_cursor_position);
-        // calculate the cursor's position on screen
-        ScreenCoordVector2 cursor_screen_position(
-            GetPosition() +
-            GetFrameMargins() +
-            GetContentMargins());
-        cursor_screen_position +=
-            ScreenCoordVector2(cursor_offset + m_text_offset[Dim::X], 0);
-        // calculate the width (based on if overwrite mode is set)
-        ScreenCoord cursor_width = GetCursorWidth(m_cursor_position);
+        initial_pen_position[Dim::Y] = contents_rect.GetBottom();
         // calculate the cursor rectangle
         ScreenCoordRect cursor_rect(
             ScreenCoordVector2(
-                cursor_width,
-                GetHeight() -
-                2 * (GetFrameMargins()[Dim::Y] + GetContentMargins()[Dim::Y])));
+                GetCursorWidth(m_cursor_position),
+                GetRenderFont()->GetPixelHeight()));
+        // calculate the cursor's position on screen
+        ScreenCoordVector2 cursor_screen_position(initial_pen_position);
+        cursor_screen_position += ScreenCoordVector2(GetCursorOffset(m_cursor_position), 0);
+        // move the cursor rect by the calculated amount
         cursor_rect += cursor_screen_position;
 
-        // do the drawing call
+        // draw the cursor
         Render::DrawScreenRect(
             render_context,
-            GetTextColor(),
+            GetRenderTextColor(),
             cursor_rect);
     }
+}
+
+void LineEdit::SetRenderFont (Resource<Font> const &render_font)
+{
+    TextWidget::SetRenderFont(render_font);
+    UpdateTextWidth();
 }
 
 void LineEdit::UpdateRenderBackground ()
@@ -161,7 +176,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
                 break;
 
             case Key::HOME:
-                m_cursor_position = 0;
+                SetCursorPosition(0);
                 MakeCursorVisible();
                 break;
 
@@ -180,20 +195,24 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
                     bool shift_text_worked = ShiftText(m_cursor_position, -1);
                     if (shift_text_worked)
                         MoveCursorLeft();
+                    UpdateTextWidth();
                 }
                 MakeCursorVisible();
                 break;
 
             case Key::DELETE:
                 if (m_cursor_position < m_text.length())
+                {
                     ShiftText(m_cursor_position + 1, -1);
+                    UpdateTextWidth();
+                }
                 MakeCursorVisible();
                 break;
 
             case Key::RETURN:
             case Key::KP_ENTER:
                 SignalTextUpdated();
-                m_sender_text_set_by_enter_key.Signal(GetText());
+                m_sender_text_set_by_enter_key.Signal(m_text);
                 break;
 
             default:
@@ -207,6 +226,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
                 {
                     TypeCharacter(c);
                     MakeCursorVisible();
+                    UpdateTextWidth();
                 }
                 break;
         }
@@ -233,11 +253,48 @@ void LineEdit::HandleUnfocus ()
 
 void LineEdit::SignalTextUpdated ()
 {
-    if (m_last_text_update != GetText())
+    if (m_last_text_update != m_text)
     {
-        m_last_text_update = GetText();
+        m_last_text_update = m_text;
         m_sender_text_updated.Signal(m_last_text_update);
     }
+}
+
+void LineEdit::UpdateMinAndMaxSizesFromText ()
+{
+    m_is_min_width_fixed_to_text_width = false;
+    m_is_max_width_fixed_to_text_width = false;
+    m_is_min_height_fixed_to_text_height = true;
+    m_is_max_height_fixed_to_text_height = true;
+    TextWidget::UpdateMinAndMaxSizesFromText();
+}
+
+ScreenCoord LineEdit::GetInitialPenPositionX () const
+{
+    ScreenCoordRect contents_rect(GetContentsRect());
+    ScreenCoord initial_pen_position_x;
+    switch (m_alignment)
+    {
+        case LEFT:
+            initial_pen_position_x = 0;
+            break;
+        case CENTER:
+            initial_pen_position_x =
+                m_text_width < contents_rect.GetWidth() ?
+                (contents_rect.GetRight()-contents_rect.GetLeft()-m_text_width)/2 :
+                0;
+            break;
+        case RIGHT:
+            initial_pen_position_x =
+                m_text_width < contents_rect.GetWidth() ?
+                contents_rect.GetRight()-contents_rect.GetLeft()-m_text_width :
+                0;
+            break;
+        default:     ASSERT1(false && "Invalid Alignment") break;
+    }
+    initial_pen_position_x += contents_rect.GetLeft();
+    initial_pen_position_x += m_text_offset[Dim::X];
+    return initial_pen_position_x;
 }
 
 ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
@@ -248,10 +305,12 @@ ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
 
     if (cursor_position < 0)
         cursor_position = 0;
+    else if (cursor_position > m_text.length())
+        cursor_position = m_text.length();
 
     char const *current_glyph = m_text.c_str();
     char const *next_glyph;
-    for (Uint32 i = 0; i < cursor_position && current_glyph != next_glyph; ++i)
+    for (Uint32 i = 0; i < cursor_position && current_glyph != '\0'; ++i)
     {
         next_glyph = UTF8::GetNextCharacter(current_glyph);
         GetRenderFont()->MoveThroughGlyph(
@@ -267,19 +326,17 @@ ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
 
 ScreenCoord LineEdit::GetCursorWidth (Uint32 cursor_position) const
 {
-    return m_does_cursor_overwrite ?
-           GetRenderFont()->GetPixelHeight() :
-           GetRenderFont()->GetPixelHeight() / 4;
-/*
     if (cursor_position < 0)
         cursor_position = 0;
     else if (cursor_position > m_text.length())
         cursor_position = m_text.length();
 
-    return m_does_cursor_overwrite ?
-           GetRenderFont()->GetGlyphPixelAdvance(m_text[cursor_position]) :
-           static_cast<ScreenCoord>(GetTopLevelParent()->GetSizeRatioBasis() * 0.003f);
-*/
+    if (!m_does_cursor_overwrite)
+        return Max(1, GetRenderFont()->GetPixelHeight()/6);
+    else
+        return (cursor_position == m_text.length()) ?
+               GetRenderFont()->GetGlyphWidth("n") :
+               GetRenderFont()->GetGlyphWidth(m_text.c_str()+cursor_position);
 }
 
 void LineEdit::SetCursorPosition (Uint32 cursor_position)
@@ -289,16 +346,24 @@ void LineEdit::SetCursorPosition (Uint32 cursor_position)
     else if (cursor_position > m_text.length())
         cursor_position = m_text.length();
 
+    ScreenCoordRect contents_rect(GetContentsRect());
     ScreenCoord desired_cursor_offset = GetCursorOffset(cursor_position);
-    ScreenCoord text_space = GetWidth() - 2 * GetFrameMargins()[Dim::X];
     ScreenCoord cursor_width = GetCursorWidth(cursor_position);
 
     if (desired_cursor_offset + m_text_offset[Dim::X] < 0)
         m_text_offset[Dim::X] = -desired_cursor_offset;
-    else if (desired_cursor_offset + m_text_offset[Dim::X] > text_space - cursor_width)
-        m_text_offset[Dim::X] = -desired_cursor_offset - cursor_width + text_space;
+    else if (desired_cursor_offset + m_text_offset[Dim::X] > contents_rect.GetWidth() - cursor_width)
+        m_text_offset[Dim::X] = -desired_cursor_offset + contents_rect.GetWidth() - cursor_width;
 
     m_cursor_position = cursor_position;
+}
+
+void LineEdit::UpdateTextWidth ()
+{
+    ScreenCoordRect contents_rect(GetContentsRect());
+    m_text_width = GetRenderFont()->GetStringRect(m_text.c_str()).GetWidth();
+    if (m_text_width <= contents_rect.GetWidth())
+        m_text_offset = 0;
 }
 
 void LineEdit::MakeCursorVisible ()
@@ -338,9 +403,8 @@ void LineEdit::TypeCharacter (char const c)
                 m_text[m_cursor_position] = c;
                 MoveCursorRight();
             }
-
-        // otherwise just set the char and move the cursor
         }
+        // otherwise just set the char and move the cursor
         else
         {
             m_text[m_cursor_position] = c;
@@ -382,10 +446,7 @@ void LineEdit::AssignFilteredString (std::string const &string)
     m_text.clear();
     while (string_index < string.length() && text_size < m_character_limit)
     {
-        char filtered_char =
-            GetCharacterFilter().
-                GetFilteredCharacter(
-                    string[string_index]);
+        char filtered_char = GetCharacterFilter().GetFilteredCharacter(string[string_index]);
 
         if (filtered_char != '\0' && filtered_char != '\n')
             m_text += filtered_char;
@@ -393,6 +454,7 @@ void LineEdit::AssignFilteredString (std::string const &string)
         ++text_size;
         ++string_index;
     }
+    UpdateTextWidth();
 }
 
 } // end of namespace Xrb

@@ -22,6 +22,7 @@ MasterWidget::MasterWidget (Widget *const parent)
     Widget(parent, "MasterWidget")
 {
     Layout *main_layout = new Layout(ROW, 3, this, "main master widget layout");
+    SetMainWidget(main_layout);
 
     Alignment2 const alignment[9] =
     {
@@ -49,18 +50,19 @@ MasterWidget::MasterWidget (Widget *const parent)
         }
     }
 
+    Fprint(stderr, main_layout->GetScreenRect());
+
     {
         LineEdit *line_edit;
 
-        for (Uint32 i = 0; i < 9; ++i)
+        for (Uint32 i = 0; i < 3; ++i)
         {
-            line_edit = new LineEdit(50, main_layout);
-            line_edit->SetIsSizeFixedToTextSize(false);
-            line_edit->SetAlignment(alignment[i]);
+            line_edit = new LineEdit(100, main_layout);
+            line_edit->SetAlignment(alignment[i][Dim::X]);
             line_edit->SetText("I LIKE EDIT ZOMBIES.");
         }
     }
 
-    SetMainWidget(main_layout);
+//     SetMainWidget(main_layout);
 }
 

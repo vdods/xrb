@@ -15,7 +15,7 @@
 namespace Xrb
 {
 
-void RenderContext::SetupGLClipRect ()
+void RenderContext::SetupGLClipRect () const
 {
     GL::SetClipRect(m_clip_rect);
 }

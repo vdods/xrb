@@ -58,6 +58,7 @@ Widget::Widget (
     m_background = NULL;
     m_render_background = NULL;
     m_frame_margins = ScreenCoordVector2::ms_zero;
+    m_content_margins = ScreenCoordVector2::ms_zero;
     m_parent = NULL;
 
     // add this to the given parent
@@ -81,7 +82,7 @@ Widget::~Widget ()
     SetIsModal(false);
     // make sure that mouseover is off
     MouseoverOff();
-    
+
     // DESTROY all the poor little child widgets (in reverse order).
     while (m_child_vector.size() > 0)
     {
@@ -91,7 +92,7 @@ Widget::~Widget ()
         // element from m_child_vector -- hence the weird traversal.
         Delete(child);
     }
-    
+
     // clear the modal widget stack
     m_modal_widget_stack.clear();
 
@@ -100,7 +101,7 @@ Widget::~Widget ()
     // will clean up pointers that may otherwise be left dangling.
     if (m_parent != NULL)
         DetachFromParent();
-    
+
     // nullify the pointers
     m_parent = NULL;
     m_focus = NULL;
@@ -229,7 +230,7 @@ void Widget::SetSizePropertyEnabled (
         m_preferred_size_properties.m_min_size_enabled = value;
     else
         m_preferred_size_properties.m_max_size_enabled = value;
-        
+
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
@@ -278,7 +279,7 @@ void Widget::SetSizeProperty (
         m_preferred_size_properties.m_min_size[component] = value;
     else
         m_preferred_size_properties.m_max_size[component] = value;
-        
+
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
@@ -328,7 +329,7 @@ void Widget::SetSizeProperty (
         m_preferred_size_properties.m_min_size = value;
     else
         m_preferred_size_properties.m_max_size = value;
-        
+
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
@@ -400,7 +401,7 @@ void Widget::SetIsModal (bool const is_modal)
     {
         // make sure to remove mouseover when the modal state changes
         MouseoverOff();
-        
+
         // make sure that m_is_modal is still true during the call to
         // RemoveModalWidget, or before the call to AddModalWidget
         if (m_is_modal)
@@ -416,7 +417,7 @@ void Widget::SetIsModal (bool const is_modal)
             AddModalWidget(this);
         }
 
-        ParentChildSizePropertiesUpdate(false);        
+        ParentChildSizePropertiesUpdate(false);
     }
 }
 
@@ -468,6 +469,27 @@ void Widget::SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios)
         (static_cast<Float>(size_ratio_basis) *
          frame_margin_ratios).StaticCast<ScreenCoord>();
     SetFrameMargins(calculated_frame_margins);
+}
+
+void Widget::SetContentMargins (ScreenCoordVector2 const &content_margins)
+{
+    ScreenCoordVector2 adjusted_content_margins(
+        Max(content_margins[Dim::X], -m_frame_margins[Dim::X]),
+        Max(content_margins[Dim::Y], -m_frame_margins[Dim::Y]));
+    if (m_content_margins != adjusted_content_margins)
+    {
+        m_content_margins = adjusted_content_margins;
+        HandleChangedContentMargins();
+    }
+}
+
+void Widget::SetContentMarginRatios (FloatVector2 const &content_margin_ratios)
+{
+    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
+    ScreenCoordVector2 calculated_content_margins =
+        (static_cast<Float>(size_ratio_basis) *
+         content_margin_ratios).StaticCast<ScreenCoord>();
+    SetContentMargins(calculated_content_margins);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -546,9 +568,7 @@ void Widget::Draw (RenderContext const &render_context) const
 
     // if the background exists, draw it
     if (GetRenderBackground())
-        GetRenderBackground()->Draw(render_context,
-                                    GetScreenRect(),
-                                    GetFrameMargins());
+        GetRenderBackground()->Draw(render_context, GetScreenRect(), GetFrameMargins());
 
     // create a render context for the child widgets
     RenderContext child_render_context(render_context);
@@ -606,7 +626,7 @@ void Widget::Draw (RenderContext const &render_context) const
             // skip hidden modal widgets
             if (modal_widget->GetIsHidden())
                 continue;
-            
+
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
             child_render_context.SetClipRect(
@@ -626,6 +646,11 @@ void Widget::Draw (RenderContext const &render_context) const
             }
         }
     }
+
+    // restore the GL clip rect for this widget (this may be unnecessary,
+    // because any widget that has child widgets shouldn't really be drawing
+    // anything explicitly -- all its drawing will be handled by Widget).
+    render_context.SetupGLClipRect();
 }
 
 void Widget::MoveTo (ScreenCoordVector2 const &position)
@@ -980,7 +1005,7 @@ void Widget::ToggleIsHidden ()
         Unfocus();
         MouseoverOff();
     }
-    
+
     m_is_hidden = !m_is_hidden;
 
 
@@ -1044,6 +1069,7 @@ void Widget::InitializeFromWidgetSkinProperties ()
 {
     UpdateRenderBackground();
     SetFrameMargins(GetWidgetSkinMargins(WidgetSkin::DEFAULT_FRAME_MARGINS));
+    SetContentMargins(GetWidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
 void Widget::ProcessFrameOverride ()
@@ -1109,7 +1135,7 @@ bool Widget::ProcessEventOverride (Event const *const e)
             }
         }
 
-        // if there's a non-hidden modal widget, send the event to it.         
+        // if there's a non-hidden modal widget, send the event to it.
         if (modal_widget != NULL)
         {
             // check if this is a mouse event and it doesn't fall inside the
@@ -1733,7 +1759,7 @@ bool Widget::PreprocessFocusEvent (EventFocus const *const e)
         return false;
 
     // if there are any modal widgets, then focus can only go the top
-    // unhidden modal widget.  
+    // unhidden modal widget.
     Widget *modal_widget = NULL;
     for (WidgetListReverseIterator it = m_modal_widget_stack.rbegin(),
                                    it_end = m_modal_widget_stack.rend();

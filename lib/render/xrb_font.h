@@ -65,12 +65,18 @@ public:
 
     inline ScreenCoord GetPixelHeight () const { return m_pixel_height; }
     inline TextDirection GetTextDirection () const { return m_text_direction; }
+    inline ScreenCoord GetGlyphWidth (char const *glyph) const
+    {
+        ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
+        MoveThroughGlyph(&pen_position_26_6, ScreenCoordVector2::ms_zero, glyph, NULL);
+        return Abs(pen_position_26_6[Dim::X] >> 6);
+    }
 
     // returns the rectangle containing the given string as rendered in
     // this font.  the rectangle's lower left corner is at (0, 0).
     ScreenCoordRect GetStringRect (
         char const *string,
-        ScreenCoordVector2 const &initial_pen_position) const;
+        ScreenCoordVector2 const &initial_pen_position = ScreenCoordVector2::ms_zero) const;
 
     // draw the given string, starting at the given position.  the position's
     // meaning is indicated by the return value of GetInitialPenOrientation().
