@@ -49,8 +49,6 @@ public:
     {
         ASSERT1(item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST ||
                 item_type >= IT_ENEMY_WEAPON_LOWEST && item_type <= IT_ENEMY_WEAPON_HIGHEST)
-        m_current_ammo = 0;
-        m_max_ammo = 0;
     }
     virtual ~Weapon () { }
 
@@ -74,10 +72,6 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    // returns true iff this weapon requires ammo in addition to power.
-    // false effectively means infinite ammo (though it might require extra
-    // power to fire the weapon)
-    virtual bool GetRequiresAmmo () const = 0;
     virtual Float GetReadinessStatus (Float time) const = 0;
 
 protected:
@@ -88,41 +82,7 @@ protected:
     inline FloatVector2 const &GetMuzzleDirection () const { return m_muzzle_direction; }
     inline FloatVector2 const &GetReticleCoordinates () const { return m_reticle_coordinates; }
 
-    inline Uint32 GetCurrentAmmo () const
-    {
-        return m_current_ammo;
-    }
-    inline Uint32 GetMaxAmmo () const
-    {
-        return m_max_ammo;
-    }
-
-    inline void SetCurrentAmmo (Uint32 const current_ammo)
-    {
-        m_current_ammo = Min(current_ammo, m_max_ammo);
-    }
-
-    inline void AddAmmo (Uint32 const ammo_to_add)
-    {
-        // protect against the ammo amount wrapping around
-        Uint32 new_ammo = m_current_ammo + ammo_to_add;
-        if (new_ammo < m_current_ammo || new_ammo > m_max_ammo)
-            m_current_ammo = m_max_ammo;
-        else
-            m_current_ammo = new_ammo;
-    }
-    void RemoveAmmo (Uint32 const ammo_to_remove)
-    {
-        Uint32 new_ammo = m_current_ammo -= ammo_to_remove;
-        // protect against the ammo amount wrapping around
-        ASSERT1(new_ammo < m_current_ammo)
-        m_current_ammo = new_ammo;
-    }
-
 private:
-
-    Uint32 m_current_ammo;
-    Uint32 m_max_ammo;
 
     // inputs
     Float m_primary_input;
@@ -153,10 +113,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -242,10 +198,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
@@ -326,10 +278,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -405,10 +353,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -469,10 +413,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -547,10 +487,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -623,10 +559,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -691,11 +623,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        // TODO: this weapon should use ammo
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -764,11 +691,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        // TODO: this weapon should use ammo
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -830,10 +752,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         ASSERT1(ms_trigger_countdown_time[GetUpgradeLevel()] > 0.0f)
@@ -933,10 +851,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         return 1.0f;
@@ -997,10 +911,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
@@ -1072,10 +982,6 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetRequiresAmmo () const
-    {
-        return false;
-    }
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const fire_rate =
