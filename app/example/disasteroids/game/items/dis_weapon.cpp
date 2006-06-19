@@ -60,7 +60,7 @@ Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12
 
 // GaussGun properties
 Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 400.0f };
-Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 350.0f, 450.0f, 650.0f, 900.0f };
+Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
 Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.8333f, 2.333f, 2.8333f };
 
@@ -89,9 +89,9 @@ Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 
 Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
 Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
-Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
-Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 70.0f, 75.0f, 80.0f, 85.0f };
-Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
+Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 15.0f, 30.0f, 45.0f, 60.0f };
+Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
+Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 20.0f, 22.0f, 26.0f, 30.0f };
 Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 6.5f, 8.0f };
 
 // EMPCore properties
@@ -512,15 +512,27 @@ bool FlameThrower::Activate (
     ASSERT1(power >= 0.0f)
     ASSERT1(GetPrimaryInput() > 0.0f)
 
+    Float max_damage_per_fireball =
+        GetIsMaxDamagePerFireballOverridden() ?
+        m_max_damage_per_fireball_override :
+        ms_max_damage_per_fireball[GetUpgradeLevel()];
+    ASSERT1(max_damage_per_fireball > 0.0f)
+
+    Float final_fireball_size =
+        GetIsFinalFireballSizeOverridden() ?
+        m_final_fireball_size_override :
+        ms_final_fireball_size[GetUpgradeLevel()];
+    ASSERT1(final_fireball_size > 0.0f)
+
     // fire the weapon
     SpawnFireball(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
         GetMuzzleLocation() + 2.0f * GetMuzzleDirection(), // the extra is just so we don't fry ourselves
         ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
-        power / ms_max_required_primary_power[GetUpgradeLevel()] * ms_max_damage_per_fireball[GetUpgradeLevel()],
-        ms_max_damage_per_fireball[GetUpgradeLevel()],
-        ms_final_fireball_size[GetUpgradeLevel()],
+        power / ms_max_required_primary_power[GetUpgradeLevel()] * max_damage_per_fireball,
+        max_damage_per_fireball,
+        final_fireball_size,
         1.0f,
         time,
         GetOwnerShip()->GetReference());

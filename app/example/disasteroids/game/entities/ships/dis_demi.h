@@ -128,6 +128,8 @@ public:
     static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_spinning_attack_duration[ENEMY_LEVEL_COUNT];
+    static Float const ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT];
+    static Float const ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT];

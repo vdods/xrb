@@ -298,8 +298,29 @@ public:
     {
         ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
         m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        m_max_damage_per_fireball_override = -1.0f;
+        m_final_fireball_size_override = -1.0f;
     }
     virtual ~FlameThrower () { }
+
+    inline bool GetIsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
+    inline bool GetIsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
+    inline Float GetMaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
+    inline Float GetFinalFireballSizeOverride () const { return m_final_fireball_size_override; }
+
+    inline void SetMaxDamagePerFireballOverride (Float max_damage_per_fireball_override)
+    {
+        ASSERT1(max_damage_per_fireball_override > 0.0f)
+        m_max_damage_per_fireball_override = max_damage_per_fireball_override;
+    }
+    inline void SetFinalFireballSizeOverride (Float final_fireball_size_override)
+    {
+        ASSERT1(final_fireball_size_override > 0.0f)
+        m_final_fireball_size_override = final_fireball_size_override;
+    }
+
+    inline void ClearMaxDamagePerFireballOverride () { m_max_damage_per_fireball_override = -1.0f; }
+    inline void ClearFinalFireballSizeOverride () { m_final_fireball_size_override = -1.0f; }
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
@@ -343,6 +364,8 @@ private:
     static Float const ms_final_fireball_size[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
     Float m_time_last_fired;
+    Float m_max_damage_per_fireball_override;
+    Float m_final_fireball_size_override;
 }; // end of class FlameThrower
 
 // - gauss gun (high power instant-hit type weapon)

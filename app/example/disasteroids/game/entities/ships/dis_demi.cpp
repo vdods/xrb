@@ -26,7 +26,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 4000.0f, 6000.0f, 9000.0f, 13500.0f };
+Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 2000.0f, 4000.0f, 7000.0f, 13000.0f };
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
 Float const Demi::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };
 Float const Demi::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18500.0f, 24000.0f };
@@ -35,6 +35,8 @@ Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60
 Float const Demi::ms_weapon_fov[ENEMY_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
 Float const Demi::ms_spinning_attack_acceleration_duration[ENEMY_LEVEL_COUNT] = { 0.75f, 0.75f, 0.75f, 0.75f };
 Float const Demi::ms_spinning_attack_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Float const Demi::ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
+Float const Demi::ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
 Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
@@ -45,7 +47,7 @@ Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 
 Float const Demi::ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Demi::ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const Demi::ms_tractor_range[ENEMY_LEVEL_COUNT] = { 20000.0f, 20000.0f, 20000.0f, 20000.0f };
-Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 2000.0f, 3000.0f, 4000.0f, 5000.0f };
+Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
 Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
@@ -79,8 +81,9 @@ Demi::Demi (Uint8 const enemy_level)
         m_gauss_gun->SetImpactDamageOverride(ms_gauss_gun_impact_damage[GetEnemyLevel()]);
         m_gauss_gun->Equip(this);
 
-        // TODO: overrides for flame thrower damage/etc
         m_flame_thrower = new FlameThrower(3);
+        m_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
+        m_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
         m_flame_thrower->Equip(this);
 
         // TODO: overrides for missile launcher damage/etc
@@ -99,6 +102,8 @@ Demi::Demi (Uint8 const enemy_level)
         m_port_tractor->Equip(this);
 
         m_port_flame_thrower = new FlameThrower(3);
+        m_port_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
+        m_port_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
         m_port_flame_thrower->Equip(this);
 
         m_port_missile_launcher = new MissileLauncher(0);
@@ -116,6 +121,8 @@ Demi::Demi (Uint8 const enemy_level)
         m_starboard_tractor->Equip(this);
 
         m_starboard_flame_thrower = new FlameThrower(3);
+        m_starboard_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
+        m_starboard_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
         m_starboard_flame_thrower->Equip(this);
 
         m_starboard_missile_launcher = new MissileLauncher(0);
@@ -129,6 +136,8 @@ Demi::Demi (Uint8 const enemy_level)
         m_aft_enemy_spawner->Equip(this);
 
         m_aft_flame_thrower = new FlameThrower(3);
+        m_aft_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
+        m_aft_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
         m_aft_flame_thrower->Equip(this);
 
         m_aft_missile_launcher = new MissileLauncher(0);

@@ -54,9 +54,6 @@ struct Wave
     // a negative value here indicates no threshold
     // (so there better be a max wave duration)
     Float const m_enemy_ship_threshold;
-    // a negative value here indicates no maximum
-    // (so there better be an enemy ship threshold)
-    Float const m_max_wave_duration;
     // valid values are any non-negative number
     Float const m_wave_intermission_duration;
 }; // end of struct World::Wave
@@ -69,11 +66,10 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   0,   0,   0,   0 }, // Devourment
-            {   0,   0,   0,   0 }, // Demi
+            {   0,   0,   0,   0 }  // Demi
         },
-        -1.0f,  // enemy ship threshold
-        20.0f,  // max wave duration
-        0.0f    // wave intermission duration
+        0.0f,   // enemy ship threshold
+        20.0f   // wave intermission duration
     },
     {
         {
@@ -81,36 +77,99 @@ static Wave const gs_wave[] =
             {   5,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
-            {   0,   0,   0,   0 }, // Demi
+            {   0,   0,   0,   0 }  // Demi
         },
-        0.05f,  // enemy ship threshold
-        60.0f,  // max wave duration
-        0.0f    // wave intermission duration
+        0.15f,  // enemy ship threshold
+        5.0f    // wave intermission duration
     },
     {
         {
-            {  20,   1,   0,   0 }, // Interloper
-            {  60,   1,   0,   0 }, // Shade
+            {  10,   1,   0,   0 }, // Interloper
+            {  40,   1,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
-            {   0,   0,   0,   0 }, // Demi
+            {   0,   0,   0,   0 }  // Demi
         },
-        0.05f,  // enemy ship threshold
-        60.0f,  // max wave duration
-        0.0f    // wave intermission duration
+        0.15f,  // enemy ship threshold
+        10.0f   // wave intermission duration
     },
     {
         {
             {   0,   0,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
-            {   3,   0,   0,   0 }, // Devourment
-            {   1,   0,   0,   0 }, // Demi
+            {   1,   2,   0,   0 }, // Devourment
+            {   1,   0,   0,   0 }  // Demi
         },
         -1.0f,  // enemy ship threshold
-        -1.0f,  // max wave duration
         10.0f   // wave intermission duration
     },
+    {
+        {
+            {  15,   5,   0,   0 }, // Interloper
+            {   0,   1,   0,   0 }, // Shade
+            {  20,   1,   0,   0 }, // Revulsion
+            {   1,   2,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        5.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   1 }, // Interloper
+            {   0,   0,   0,   1 }, // Shade
+            {   0,   0,   0,   1 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        3.0f    // wave intermission duration
+    },
+    {
+        {
+            {   5,  25,   2,   0 }, // Interloper
+            {   1,   2,   1,   0 }, // Shade
+            {   2,   5,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        5.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   2,   0,   0 }, // Devourment
+            {   0,   1,   0,   0 }  // Demi
+        },
+        -1.0f,  // enemy ship threshold
+        10.0f   // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,  20,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        2.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,  20,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        2.0f    // wave intermission duration
+    }
 };
 static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
 
@@ -194,10 +253,8 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 
     --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
-    {
-        ASSERT1(m_enemy_ship_wave_left > 0)
-        --m_enemy_ship_wave_left;
-    }
+        if (m_enemy_ship_wave_left > 0)
+            --m_enemy_ship_wave_left;
 }
 
 World::World (
@@ -388,8 +445,6 @@ bool World::StateWaveInitialize (StateMachineInput const input)
                 }
             }
             m_enemy_ship_wave_left += m_enemy_ship_wave_total;
-            if (gs_wave[m_current_wave_index].m_max_wave_duration >= 0.0f)
-                ScheduleStateMachineInput(IN_END_WAVE, gs_wave[m_current_wave_index].m_max_wave_duration);
             TRANSITION_TO(StateWaveGameplay);
             return true;
     }
@@ -407,8 +462,13 @@ bool World::StateWaveGameplay (StateMachineInput const input)
             {
                 bool all_demis_killed = true;
                 for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
-                    if (m_enemy_ship_left[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
+                {
+                    if (m_enemy_ship_left[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0 ||
+                        m_enemy_ship_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
+                    {
                         all_demis_killed = false;
+                    }
+                }
                 if (all_demis_killed)
                     ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
             }
@@ -672,6 +732,14 @@ void World::ProcessCommonGameplayLogic ()
     // asteroid spawning
     static Uint32 const s_max_asteroid_count = 80;
     static Float const s_max_asteroid_mass = 16000.0f;
+    while (m_asteroid_count < s_max_asteroid_count &&
+           m_asteroid_mass < s_max_asteroid_mass &&
+           SpawnAsteroidOutOfView() != NULL)
+    {
+        // hi.
+    }
+
+    /*
     if (m_next_asteroid_spawn_time <= GetFrameTime() &&
         m_asteroid_count < s_max_asteroid_count &&
         m_asteroid_mass < s_max_asteroid_mass)
@@ -680,6 +748,7 @@ void World::ProcessCommonGameplayLogic ()
         if (asteroid != NULL)
             m_next_asteroid_spawn_time = GetFrameTime() + Math::RandomFloat(0.5f, 1.0f);
     }
+    */
 
     // update the asteroid mineral level
     if (m_asteroid_mineral_level < Asteroid::MAX_MINERAL_LEVEL &&
@@ -907,7 +976,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 
 void World::CreateAndPopulateForegroundObjectLayer ()
 {
-    Float object_layer_side_length = 2000.0f;
+    Float object_layer_side_length = 1000.0f;
 
     // create an object layer
     Engine2::ObjectLayer *object_layer =
@@ -940,7 +1009,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
         add_succeeded = m_player_ship->AddItem(new PowerGenerator(0));
         ASSERT1(add_succeeded)
     }
-
+/*
     static Uint32 const s_number_of_asteroids_to_spawn = 40;
     static Float const s_asteroid_scale_factor_max = 35.0f;
     static Float const s_asteroid_scale_factor_min = 5.0f;
@@ -994,6 +1063,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
             Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level],
             false);
     }
+*/
 }
 
 void World::CreateAndPopulateBackgroundObjectLayers ()

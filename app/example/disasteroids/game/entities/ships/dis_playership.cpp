@@ -494,7 +494,9 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
 
 void PlayerShip::Think (Float const time, Float const frame_dt)
 {
-    ASSERT1(!GetIsDead())
+    // can't think if we're dead.
+    if (GetIsDead())
+        return;
 
     bool is_disabled = GetIsDisabled();
     Ship::Think(time, frame_dt);
