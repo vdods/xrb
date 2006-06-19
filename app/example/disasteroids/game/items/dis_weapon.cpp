@@ -214,9 +214,9 @@ bool PeaShooter::Activate (
     // secondary fire (charge-up) overrides primary fire
     else if (GetSecondaryInput() > 0.0f && power > 0.0f)
     {
-        Float max_power = GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
-                          ms_charge_up_time[GetUpgradeLevel()];
-        ASSERT1(power <= max_power)
+        ASSERT1(power <=
+                GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
+                ms_charge_up_time[GetUpgradeLevel()])
 
         // if completely charged up, don't use up the power
         if (m_charge_up_ratio == 1.0f)

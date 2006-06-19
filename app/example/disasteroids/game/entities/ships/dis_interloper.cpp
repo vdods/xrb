@@ -280,7 +280,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     // iterate through -- check for targets and do flock calculations
     FloatVector2 flock_center_of_gravity(FloatVector2::ms_zero);
     Interloper *closest_flock_member = NULL;
-    Float closest_flock_member_distance;
+    Float closest_flock_member_distance = -1.0f;
     Float flock_mass = 0.0f;
     Uint32 flock_member_count = 0;
     for (AreaTraceListIterator it = area_trace_list.begin(),
