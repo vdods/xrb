@@ -73,7 +73,7 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {  40,   1,   0,   0 }, // Interloper
+            {  40,   0,   0,   0 }, // Interloper
             {   5,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
@@ -84,14 +84,36 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {  10,   1,   0,   0 }, // Interloper
-            {  40,   1,   0,   0 }, // Shade
+            {  10,   0,   0,   0 }, // Interloper
+            {  40,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
         10.0f   // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   5,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   3,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.25f,  // enemy ship threshold
+        5.0f    // wave intermission duration
+    },
+    {
+        {
+            {  10,   0,   0,   0 }, // Interloper
+            {  10,   0,   0,   0 }, // Shade
+            {  10,   0,   0,   0 }, // Revulsion
+            {   3,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        0.0f    // wave intermission duration
     },
     {
         {
@@ -106,9 +128,9 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {  15,   5,   0,   0 }, // Interloper
-            {   0,   1,   0,   0 }, // Shade
-            {  20,   1,   0,   0 }, // Revulsion
+            {   0,   5,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {  20,   0,   0,   0 }, // Revulsion
             {   1,   2,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
@@ -117,20 +139,53 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {   0,   0,   0,   1 }, // Interloper
-            {   0,   0,   0,   1 }, // Shade
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   5,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.25f,  // enemy ship threshold
+        3.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,  25,   0,   0 }, // Interloper
+            {   0,   2,   0,   0 }, // Shade
+            {   5,   0,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        5.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   5,   0,   0 }, // Interloper
+            {   0,  25,   0,   0 }, // Shade
+            {   5,   0,   0,   0 }, // Revulsion
+            {   1,   2,   1,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        5.0f    // wave intermission duration
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   1 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        3.0f    // wave intermission duration
+        5.0f    // wave intermission duration
     },
     {
         {
-            {   5,  25,   2,   0 }, // Interloper
-            {   1,   2,   1,   0 }, // Shade
-            {   2,   5,   0,   0 }, // Revulsion
+            {   0,  13,   0,   0 }, // Interloper
+            {   0,  13,   0,   0 }, // Shade
+            {   0,  13,   0,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
@@ -161,9 +216,9 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {   0,   0,   0,   0 }, // Interloper
-            {   0,   0,  20,   0 }, // Shade
-            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,  10,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,  10,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },

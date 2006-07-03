@@ -45,7 +45,7 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
         case IT_ARMOR:                        return new Armor(upgrade_level);
         case IT_SHIELD:                       return new Shield(upgrade_level);
         case IT_POWER_GENERATOR:              return new PowerGenerator(upgrade_level);
-            
+
         default:
             ASSERT1(false && "Invalid ItemType")
             return NULL;
@@ -76,32 +76,32 @@ Uint32 Item::GetItemPrice (
         { // IT_WEAPON_PEA_SHOOTER
             {   0,   0,   0,   0}, // player always has this
             {   7,   0,   0,   0},
-            {  95,   0,   0,   0},
-            {  78,  40,   0,   0},
+            {  75,  33,   0,   0},
+            { 118,  75,  32,   0},
         },
         { // IT_WEAPON_LASER
             {  22,   0,   0,   0},
-            {  73,   0,   0,   0},
-            {  92,  75,   0,   0},
-            { 167, 125, 104,  99},
+            { 123,   0,   0,   0},
+            { 162,  75,   0,   0},
+            { 209, 125,  94,   0},
         },
         { // IT_WEAPON_FLAME_THROWER
             {  12,   0,   0,   0},
-            {  32,  34,   0,   0},
-            {  46,  55,  48,   0},
+            {  52,  34,   0,   0},
+            {  76,  55,  48,   0},
             { 100, 106, 110,  18},
         },
         { // IT_WEAPON_GAUSS_GUN
-            {  29,  23,   0,   0},
+            {  29,   0,   0,   0},
             {  41,  43,   0,   0},
             {  88,  80,  84,   0},
             { 125, 113, 123,  68},
         },
         { // IT_WEAPON_GRENADE_LAUNCHER
             {  37,   0,   0,   0},
-            {  38,  35,   0,   0},
-            {  59,  56,  48,   0},
-            {  58,  59,  61,  60},
+            {  58,  55,   0,   0},
+            {  79,  66,  48,   0},
+            { 248, 189, 161,  60},
         },
         { // IT_WEAPON_MINE_LAYER
             {  32,  36,   0,   0},
@@ -110,10 +110,10 @@ Uint32 Item::GetItemPrice (
             {  82,  75,  79,  81},
         },
         { // IT_WEAPON_MISSILE_LAUNCHER
-            {  58,   0,   0,   0},
-            {  57,  59,   0,   0},
-            {  64,  67,  68,   0},
-            {  83,  76,  80,  81},
+            { 117,   0,   0,   0},
+            { 124,  89,   0,   0},
+            { 163,  91,  68,   0},
+            { 233, 116,  80,  81},
         },
         { // IT_WEAPON_EMP_CORE // IT_WEAPON_EMP_BOMB_LAYER
             {  31,   0,   0,   0},

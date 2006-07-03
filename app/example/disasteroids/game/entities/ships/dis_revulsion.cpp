@@ -25,7 +25,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 15.0f, 30.0f, 60.0f, 120.0f };
+Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 15.0f, 60.0f, 240.0f, 960.0f };
 Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 14000.0f, 32000.0f, 72000.0f };
 Float const Revulsion::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 360.0f, 360.0f, 360.0f, 360.0f };
 Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
@@ -50,7 +50,7 @@ Revulsion::Revulsion (Uint8 const enemy_level)
     m_weapon->Equip(this);
     m_weapon->SetImpactDamageOverride(ms_weapon_impact_damage[GetEnemyLevel()]);
 
-    SetStrength(D_MINING_LASER);
+    SetStrength(D_MINING_LASER|D_COLLISION);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 }
 
