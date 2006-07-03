@@ -49,7 +49,7 @@ GameWidget::GameWidget (
     :
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
-    m_internal_receiver_set_time_alive(&GameWidget::SetTimeAlive, this),
+    m_internal_receiver_set_wave_count(&GameWidget::SetWaveCount, this),
     m_internal_receiver_show_controls(&GameWidget::ShowControls, this),
     m_internal_receiver_hide_controls(&GameWidget::HideControls, this),
     m_internal_receiver_activate_inventory_panel(&GameWidget::ActivateInventoryPanel, this),
@@ -165,14 +165,19 @@ GameWidget::GameWidget (
         // start with this layout hidden, because the WorldView will show it later
         m_stats_and_inventory_layout->Hide();
 
-        m_time_alive_label = new Label("", m_stats_and_inventory_layout, "time-alive label");
-        m_time_alive_label->SetIsHeightFixedToTextHeight(true);
-        m_time_alive_label->SetAlignment(Dim::X, LEFT);
-        m_time_alive_label->SetFontHeightRatio(0.05f);
+        m_wave_count_label =
+            new ValueLabel<Uint32>(
+                "WAVE %u",
+                Util::TextToUint32,
+                m_stats_and_inventory_layout,
+                "wave count label");
+        m_wave_count_label->SetIsHeightFixedToTextHeight(true);
+        m_wave_count_label->SetAlignment(Dim::X, LEFT);
+        m_wave_count_label->SetFontHeightRatio(0.05f);
 
-        m_time_alive = 0.0f;
+        m_wave_count = 0;
 
-        UpdateTimeAliveLabel();
+        UpdateWaveCountLabel();
 
         // extra lives label and icon
         {
@@ -324,7 +329,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory_label[i]->DetachAll();
     m_score_label->DetachAll();
-    m_internal_receiver_set_time_alive.DetachAll();
+    m_internal_receiver_set_wave_count.DetachAll();
     m_armor_status->DetachAll();
     m_shield_status->DetachAll();
     m_power_status->DetachAll();
@@ -340,8 +345,8 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             NormalizeStoke,
             m_stoke_o_meter->ReceiverSetProgress());
         SignalHandler::Connect1(
-            player_ship->SenderTimeAliveChanged(),
-            &m_internal_receiver_set_time_alive);
+            player_ship->SenderWaveCountChanged(),
+            &m_internal_receiver_set_wave_count);
         SignalHandler::Connect1(
             player_ship->SenderLivesRemainingChanged(),
             m_lives_remaining_label->ReceiverSetValue());
@@ -365,7 +370,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
             &m_receiver_set_mineral_inventory);
 
         // make sure the UI elements are enabled
-        m_time_alive_label->Enable();
+        m_wave_count_label->Enable();
         m_lives_remaining_label->Enable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Enable();
@@ -376,8 +381,8 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_weapon_status->Enable();
 
         // initialize the UI elements
-        m_time_alive = player_ship->GetTimeAlive();
-        UpdateTimeAliveLabel();
+        m_wave_count = player_ship->GetWaveCount();
+        UpdateWaveCountLabel();
         m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_score_label->SetValue(player_ship->GetScore());
@@ -393,9 +398,9 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
     // otherwise set the UI elements to zero, and disable them
     else
     {
-        m_time_alive = 0.0f;
-        UpdateTimeAliveLabel();
-        m_time_alive_label->Disable();
+        m_wave_count = 0;
+        UpdateWaveCountLabel();
+        m_wave_count_label->Disable();
         m_lives_remaining_label->Disable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Disable();
@@ -497,15 +502,15 @@ void GameWidget::DeactivateInventoryPanel ()
     }
 }
 
-void GameWidget::SetTimeAlive (Float const time_alive)
+void GameWidget::SetWaveCount (Uint32 const wave_count)
 {
-    m_time_alive = time_alive;
-    UpdateTimeAliveLabel();
+    m_wave_count = wave_count;
+    UpdateWaveCountLabel();
 }
 
-void GameWidget::UpdateTimeAliveLabel ()
+void GameWidget::UpdateWaveCountLabel ()
 {
-    m_time_alive_label->SetText(GetFormattedTimeString(m_time_alive));
+    m_wave_count_label->SetValue(m_wave_count);
 }
 
 } // end of namespace Dis

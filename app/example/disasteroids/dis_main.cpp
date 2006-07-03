@@ -18,8 +18,6 @@
 
 using namespace Xrb;
 
-#define FULLSCREEN 0
-
 // exit handler
 void Exit ()
 {
@@ -56,7 +54,7 @@ int main (int argc, char **argv)
         1024,
         768,
         32,
-        (FULLSCREEN ? SDL_FULLSCREEN : 0));
+        (argc == 1 ? SDL_FULLSCREEN : 0)); // temp hacky way to specify fullscreen from the commandline
     if (screen == NULL)
     {
         fprintf(stderr, "unable to initialize video mode\n");

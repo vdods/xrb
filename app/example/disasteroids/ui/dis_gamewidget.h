@@ -64,7 +64,7 @@ public:
 
 private:
 
-    void SetTimeAlive (Float time_alive);
+    void SetWaveCount (Uint32 wave_count);
 
     void ShowControls ();
     void HideControls ();
@@ -72,7 +72,7 @@ private:
     void ActivateInventoryPanel ();
     void DeactivateInventoryPanel ();
 
-    void UpdateTimeAliveLabel ();
+    void UpdateWaveCountLabel ();
 
     WorldView *m_world_view;
     Engine2::WorldViewWidget *m_world_view_widget;
@@ -90,8 +90,8 @@ private:
 
     Layout *m_stats_and_inventory_layout;
 
-    Label *m_time_alive_label;
-    Float m_time_alive;
+    ValueLabel<Uint32> *m_wave_count_label;
+    Uint32 m_wave_count;
 
     ValueLabel<Uint32> *m_lives_remaining_label;
     ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
@@ -111,7 +111,7 @@ private:
     Label *m_game_over_label;
 
     SignalReceiver1<PlayerShip *> m_receiver_set_player_ship;
-    SignalReceiver1<Float> m_internal_receiver_set_time_alive;
+    SignalReceiver1<Uint32> m_internal_receiver_set_wave_count;
 
     SignalReceiver0 m_internal_receiver_show_controls;
     SignalReceiver0 m_internal_receiver_hide_controls;

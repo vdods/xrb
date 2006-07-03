@@ -40,9 +40,9 @@ HighScoresWidget::HighScoresWidget (Widget *const parent)
         m_name_label[row] = new Label("x", scores_layout);
         m_name_label[row]->SetFontHeightRatio(0.025f);
 
-        m_time_alive_label[row] = new Label("x", scores_layout);
-        m_time_alive_label[row]->SetFontHeightRatio(0.025f);
-        m_time_alive_label[row]->SetAlignment(Dim::X, RIGHT);
+        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %3u", Util::TextToUint32, scores_layout);
+        m_wave_count_label[row]->SetFontHeightRatio(0.025f);
+        m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
 
         m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint32, scores_layout);
         m_points_label[row]->SetValue(0);
@@ -57,17 +57,17 @@ void HighScoresWidget::Update (
     HighScores const &high_scores,
     HighScoresWidget::Mode const mode)
 {
-    m_title_label->SetText((mode == M_BEST_POINTS) ? "HIGH SCORES - BEST POINTS" : "HIGH SCORES - BEST TIME ALIVE");
+    m_title_label->SetText((mode == M_BEST_POINTS) ? "HIGH SCORES -- POINTS" : "HIGH SCORES -- WAVES");
 
     for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
     {
         Score const &score =
             (mode == M_BEST_POINTS) ?
             high_scores.GetBestPointsScore(row) :
-            high_scores.GetBestTimeAliveScore(row);
+            high_scores.GetBestWaveCountScore(row);
 
         m_name_label[row]->SetText(score.GetName());
-        m_time_alive_label[row]->SetText(GetFormattedTimeString(score.GetTimeAlive()));
+        m_wave_count_label[row]->SetValue(score.GetWaveCount());
         m_points_label[row]->SetValue(score.GetPoints());
     }
 }

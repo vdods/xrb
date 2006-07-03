@@ -29,7 +29,7 @@ public:
     enum Mode
     {
         M_BEST_POINTS = 0,
-        M_BEST_TIME_ALIVE,
+        M_BEST_WAVE_COUNT,
 
         M_COUNT
     }; // end of enum HighScoresWidget::Mode
@@ -37,13 +37,13 @@ public:
     HighScoresWidget (Widget *parent);
 
     void Update (HighScores const &high_scores, Mode mode);
-    
+
 private:
 
     Label *m_title_label;
 
     Label *m_name_label[HighScores::MAX_HIGH_SCORES];
-    Label *m_time_alive_label[HighScores::MAX_HIGH_SCORES];
+    ValueLabel<Uint32> *m_wave_count_label[HighScores::MAX_HIGH_SCORES];
     ValueLabel<Uint32> *m_points_label[HighScores::MAX_HIGH_SCORES];
 }; // end of class HighScoresWidget
 

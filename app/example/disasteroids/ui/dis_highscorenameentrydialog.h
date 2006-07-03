@@ -25,7 +25,7 @@ class HighScoreNameEntryDialog : public Dialog
 {
 public:
 
-    HighScoreNameEntryDialog (Uint32 points, Float time_alive, Widget *parent);
+    HighScoreNameEntryDialog (Uint32 points, Uint32 wave_count, Widget *parent);
     virtual ~HighScoreNameEntryDialog () { }
 
     inline SignalSender1<std::string const &> const *SenderSubmitName ()
@@ -38,7 +38,7 @@ public:
         ASSERT1(m_name_edit != NULL)
         return m_name_edit->GetText();
     }
-    
+
 protected:
 
     virtual void OKButtonActivated ();
@@ -48,7 +48,7 @@ private:
     void InternalNameSubmitted (std::string const &name);
 
     LineEdit *m_name_edit;
-    
+
     SignalSender1<std::string const &> m_sender_submit_name;
 
     SignalReceiver1<std::string const &> m_internal_receiver_name_submitted;

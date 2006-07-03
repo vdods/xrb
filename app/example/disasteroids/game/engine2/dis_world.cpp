@@ -477,6 +477,8 @@ bool World::StateWaveInitialize (StateMachineInput const input)
     {
         case SM_ENTER:
             fprintf(stderr, "m_current_wave_index = %u\n", m_current_wave_index);
+            if (m_current_wave_index > 0)
+                m_player_ship->IncrementWaveCount();
             m_enemy_ship_wave_total = 0;
             m_is_demi_wave = false;
             for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
@@ -611,7 +613,6 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
             return true;
 
         case IN_PROCESS_FRAME:
-            m_player_ship->IncrementTimeAlive(GetFrameDT());
             return true;
     }
     return false;
@@ -670,7 +671,7 @@ bool World::StateSubmitScore (StateMachineInput const input)
                 Score(
                     "",
                     m_player_ship->GetScore(),
-                    m_player_ship->GetTimeAlive(),
+                    m_player_ship->GetWaveCount(),
                     time(NULL)));
             TRANSITION_TO(StateWaitingForSubmitScoreResponse);
             return true;
@@ -782,8 +783,6 @@ void World::ProcessWaveIntermissionGameplayLogic ()
 
 void World::ProcessCommonGameplayLogic ()
 {
-    m_player_ship->IncrementTimeAlive(GetFrameDT());
-
     // asteroid spawning
     static Uint32 const s_max_asteroid_count = 80;
     static Float const s_max_asteroid_mass = 16000.0f;
@@ -793,17 +792,6 @@ void World::ProcessCommonGameplayLogic ()
     {
         // hi.
     }
-
-    /*
-    if (m_next_asteroid_spawn_time <= GetFrameTime() &&
-        m_asteroid_count < s_max_asteroid_count &&
-        m_asteroid_mass < s_max_asteroid_mass)
-    {
-        Asteroid *asteroid = SpawnAsteroidOutOfView();
-        if (asteroid != NULL)
-            m_next_asteroid_spawn_time = GetFrameTime() + Math::RandomFloat(0.5f, 1.0f);
-    }
-    */
 
     // update the asteroid mineral level
     if (m_asteroid_mineral_level < Asteroid::MAX_MINERAL_LEVEL &&
@@ -821,8 +809,8 @@ void World::ProcessCommonGameplayLogic ()
         m_next_asteroid_mineral_content_level_time = GetFrameTime() + 60.0f;
     }
 
-    // extra life handling
 /*
+    // extra life handling
     if (m_player_ship->GetScore() >= m_score_required_for_extra_life)
     {
         static Float const s_extra_live_score_factor = 2.0f;

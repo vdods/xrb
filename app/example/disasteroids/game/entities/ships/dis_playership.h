@@ -42,7 +42,7 @@ public:
 
     inline Uint32 GetScore () const { return m_score; }
     inline Float GetStoke () const { return m_stoke; }
-    inline Float GetTimeAlive () const { return m_time_alive; }
+    inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline Uint32 GetLivesRemaining () const { return m_lives_remaining; }
 
     inline Weapon const *GetMainWeapon () const { return m_main_weapon; }
@@ -83,14 +83,14 @@ public:
     inline SignalSender1<Uint32> const *SenderScoreChanged () { return &m_sender_score_changed; }
     inline SignalSender1<Float> const *SenderStokeChanged () { return &m_sender_stoke_changed; }
     inline SignalSender1<Uint32> const *SenderLivesRemainingChanged () { return &m_sender_lives_remaining_changed; }
-    inline SignalSender1<Float> const *SenderTimeAliveChanged () { return &m_sender_time_alive_changed; }
+    inline SignalSender1<Uint32> const *SenderWaveCountChanged () { return &m_sender_wave_count_changed; }
     inline SignalSender1<Float> const *SenderArmorStatusChanged () { return &m_sender_armor_status_changed; }
     inline SignalSender1<Float> const *SenderShieldStatusChanged () { return &m_sender_shield_status_changed; }
     inline SignalSender1<Float> const *SenderPowerStatusChanged () { return &m_sender_power_status_changed; }
     inline SignalSender1<Float> const *SenderWeaponStatusChanged () { return &m_sender_weapon_status_changed; }
     inline SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
 
-    void IncrementTimeAlive (Float time_alive_delta);
+    void IncrementWaveCount ();
     void IncrementScore (Uint32 score_delta);
     void IncrementLivesRemaining (Sint32 lives_remaining_delta);
     void CreditEnemyKill (EntityType enemy_ship_type, Uint8 enemy_level);
@@ -206,7 +206,7 @@ private:
 
     Uint32 m_score;
     Float m_stoke;
-    Float m_time_alive;
+    Uint32 m_wave_count;
     Uint32 m_lives_remaining;
 
     Uint8 m_engine_auxiliary_input;
@@ -237,7 +237,7 @@ private:
     SignalSender1<Uint32> m_sender_score_changed;
     SignalSender1<Float> m_sender_stoke_changed;
     SignalSender1<Uint32> m_sender_lives_remaining_changed;
-    SignalSender1<Float> m_sender_time_alive_changed;
+    SignalSender1<Uint32> m_sender_wave_count_changed;
     SignalSender1<Float> m_sender_armor_status_changed;
     SignalSender1<Float> m_sender_shield_status_changed;
     SignalSender1<Float> m_sender_power_status_changed;

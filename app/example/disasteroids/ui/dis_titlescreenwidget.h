@@ -38,7 +38,7 @@ public:
 
     SignalSender0 const *SenderStartGame ();
     SignalSender0 const *SenderQuitGame ();
-    
+
     void GoToOptions ();
 
     void SetHighScores (HighScores const &high_scores)
@@ -51,7 +51,7 @@ protected:
     virtual void ProcessFrameOverride ();
 
     virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e);
-    
+
 private:
 
     // ///////////////////////////////////////////////////////////////////////
@@ -65,13 +65,13 @@ private:
     bool StateGameDemo (StateMachineInput);
     bool StateDisplayBestPointsHighScores (StateMachineInput);
     bool StatePauseBetweenHighScores (StateMachineInput);
-    bool StateDisplayBestTimeAliveHighScores (StateMachineInput);
+    bool StateDisplayBestWaveCountHighScores (StateMachineInput);
 
     void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
     void CancelScheduledStateMachineInput ();
 
     StateMachine<TitleScreenWidget> m_state_machine;
-    
+
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////
 

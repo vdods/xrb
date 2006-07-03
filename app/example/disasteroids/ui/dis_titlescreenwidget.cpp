@@ -202,20 +202,20 @@ bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const inp
             return true;
 
         case IN_TIME_OUT:
-            TRANSITION_TO(StateDisplayBestTimeAliveHighScores);
+            TRANSITION_TO(StateDisplayBestWaveCountHighScores);
             return true;
     }
     return false;
 }
 
-bool TitleScreenWidget::StateDisplayBestTimeAliveHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StateDisplayBestWaveCountHighScores (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateDisplayBestTimeAliveHighScores")
+    STATE_MACHINE_STATUS("StateDisplayBestWaveCountHighScores")
     switch (input)
     {
         case SM_ENTER:
             ASSERT1(m_high_scores_widget->GetIsHidden())
-            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_TIME_ALIVE);
+            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_WAVE_COUNT);
             m_high_scores_widget->Show();
             ScheduleStateMachineInput(IN_TIME_OUT, 10.0f);
             return true;

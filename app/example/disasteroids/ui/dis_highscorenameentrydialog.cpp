@@ -23,7 +23,7 @@ namespace Dis
 
 HighScoreNameEntryDialog::HighScoreNameEntryDialog (
     Uint32 const points,
-    Float const time_alive,
+    Uint32 const wave_count,
     Widget *const parent)
     :
     Dialog(DT_OK, parent, "HighScoreNameEntryDialog"),
@@ -36,11 +36,11 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (
 
         Layout *score_layout = new Layout(HORIZONTAL, main_layout);
         {
-            new Label(GetFormattedTimeString(time_alive), score_layout);
-    
+            new Label(Util::StringPrintf("WAVE %u", wave_count), score_layout);
+
             new Label(Util::StringPrintf("%u", points), score_layout);
         }
-                
+
         Layout *name_entry_layout = new Layout(HORIZONTAL, main_layout);
         {
             new Label("ENTER YOUR NAME", name_entry_layout);
@@ -51,7 +51,7 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (
 
     // set the LineEdit to be in focus
     m_name_edit->Focus();
-    
+
     SignalHandler::Connect1(
         m_name_edit->SenderTextSetByEnterKey(),
         &m_internal_receiver_name_submitted);

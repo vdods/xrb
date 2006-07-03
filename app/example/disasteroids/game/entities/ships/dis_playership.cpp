@@ -36,7 +36,7 @@ PlayerShip::PlayerShip (
     m_sender_score_changed(this),
     m_sender_stoke_changed(this),
     m_sender_lives_remaining_changed(this),
-    m_sender_time_alive_changed(this),
+    m_sender_wave_count_changed(this),
     m_sender_armor_status_changed(this),
     m_sender_shield_status_changed(this),
     m_sender_power_status_changed(this),
@@ -45,7 +45,7 @@ PlayerShip::PlayerShip (
 {
     m_score = 0;
     m_stoke = 1.0f;
-    m_time_alive = 0.0f;
+    m_wave_count = 0;
     m_lives_remaining = 0;
 
     m_engine_auxiliary_input = 0;
@@ -298,14 +298,10 @@ void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
     SetPowerStatus(GetPowerStatus());
 }
 
-void PlayerShip::IncrementTimeAlive (Float const time_alive_delta)
+void PlayerShip::IncrementWaveCount ()
 {
-    ASSERT1(time_alive_delta >= 0.0f)
-    if (time_alive_delta > 0.0f)
-    {
-        m_time_alive += time_alive_delta;
-        m_sender_time_alive_changed.Signal(m_time_alive);
-    }
+    ++m_wave_count;
+    m_sender_wave_count_changed.Signal(m_wave_count);
 }
 
 void PlayerShip::IncrementScore (Uint32 const score_delta)

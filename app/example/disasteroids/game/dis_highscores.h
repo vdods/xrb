@@ -27,68 +27,56 @@ class Score
 public:
 
     Score () { }
-    Score (std::string const &name, Uint32 points, Float time_alive, time_t date)
+    Score (
+        std::string const &name,
+        Uint32 points,
+        Uint32 wave_count,
+        time_t date)
         :
         m_name(name),
         m_points(points),
-        m_time_alive(time_alive),
+        m_wave_count(wave_count),
         m_date(date)
     { }
 
     inline std::string const &GetName () const { return m_name; }
     inline Uint32 GetPoints () const { return m_points; }
-    inline Float GetTimeAlive () const { return m_time_alive; }
+    inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline time_t GetDate () const { return m_date; }
 
 private:
 
     std::string m_name;
     Uint32 m_points;
-    Float m_time_alive;
+    Uint32 m_wave_count;
     time_t m_date;
 }; // end of class Score
 
-// orders by points, then time-alive, and then date (earlier is better)
+// orders by points, then wave count, then time-alive, and then date (earlier is better)
 struct ScoreOrderByPoints
 {
     bool operator () (Score const &s0, Score const &s1)
     {
-        if (s0.GetPoints() > s1.GetPoints())
-            return true;
-        else if (s0.GetPoints() == s1.GetPoints())
-        {
-            if (s0.GetTimeAlive() > s1.GetTimeAlive())
-                return true;
-            else if (s0.GetTimeAlive() == s1.GetTimeAlive())
-                return s0.GetDate() < s1.GetDate();
-            else
-                return false;
-        }
-        else
-            return false;
+        return s0.GetPoints() > s1.GetPoints()
+               ||
+               s0.GetPoints() == s1.GetPoints() && s0.GetWaveCount() > s1.GetWaveCount()
+               ||
+               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetDate() < s1.GetDate();
     }
 }; // end of struct ScoreOrderByPoints
 
-// orders by time-alive, then points, and then date (earlier is better)
-struct ScoreOrderByTimeAlive
+// orders by wave count, then points, then time-alive, and then date (earlier is better)
+struct ScoreOrderByWaveCount
 {
     bool operator () (Score const &s0, Score const &s1)
     {
-        if (s0.GetTimeAlive() > s1.GetTimeAlive())
-            return true;
-        else if (s0.GetTimeAlive() == s1.GetTimeAlive())
-        {
-            if (s0.GetPoints() > s1.GetPoints())
-                return true;
-            else if (s0.GetPoints() == s1.GetPoints())
-                return s0.GetDate() < s1.GetDate();
-            else
-                return false;
-        }
-        else
-            return false;
+        return s0.GetWaveCount() > s1.GetWaveCount()
+               ||
+               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetPoints() > s1.GetPoints()
+               ||
+               s0.GetPoints() == s1.GetPoints() && s0.GetDate() < s1.GetDate();
     }
-}; // end of struct ScoreOrderByTimeAlive
+}; // end of struct ScoreOrderByWaveCount
 
 class HighScores
 {
@@ -104,26 +92,26 @@ public:
     ~HighScores ();
 
     void operator = (HighScores const &high_scores);
-    
+
     bool GetIsNewHighScore (Score const &score);
     Score const &GetBestPointsScore (Uint32 index) const;
-    Score const &GetBestTimeAliveScore (Uint32 index) const;
+    Score const &GetBestWaveCountScore (Uint32 index) const;
 
     void AddScore (Score const &score);
 
     // TEMP
     void Print (FILE *fptr) const;
-    
+
 private:
 
     typedef std::set<Score, ScoreOrderByPoints> BestPointsScoreSet;
     typedef BestPointsScoreSet::const_iterator BestPointsScoreSetConstIterator;
 
-    typedef std::set<Score, ScoreOrderByTimeAlive> BestTimeAliveScoreSet;
-    typedef BestTimeAliveScoreSet::const_iterator BestTimeAliveScoreSetConstIterator;
+    typedef std::set<Score, ScoreOrderByWaveCount> BestWaveCountScoreSet;
+    typedef BestWaveCountScoreSet::const_iterator BestWaveCountScoreSetConstIterator;
 
     BestPointsScoreSet m_best_points_score_set;
-    BestTimeAliveScoreSet m_best_time_alive_score_set;
+    BestWaveCountScoreSet m_best_wave_count_score_set;
 }; // end of class HighScores
 
 } // end of namespace Dis
