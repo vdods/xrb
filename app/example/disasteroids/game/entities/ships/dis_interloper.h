@@ -24,6 +24,7 @@ public:
 
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
+    static Float const ms_max_angular_velocity[ENEMY_LEVEL_COUNT];
     static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
     static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
@@ -45,6 +46,10 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
+    virtual Float GetMaxAngularVelocity () const
+    {
+        return ms_max_angular_velocity[GetEnemyLevel()];
+    }
     virtual Float GetShipScaleFactor () const
     {
         return ms_scale_factor[GetEnemyLevel()];

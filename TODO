@@ -3,11 +3,11 @@ implement a robust, enjoyable, and graphically-modern 2d video game,
 including network support.
 
 MAJOR TASKS:
-- circle/polygon collision/entity areas
+/ circle/polygon collision/entity areas
 / physics engine
 - console command stuff
 - console logger/debugging logger
-- embedded scripting
+? embedded scripting
 - split world into client and server and add networking
 - music and sound effects
 / map editor + sprite/entity prefab editor
@@ -36,19 +36,20 @@ OPENGL CONVERSION TASKS:
   glFog
 
 DISASTEROIDS:
-- finish writing AIs (write Demi)
-- secondary shield input -- strengthen shields at the cost of a lot of power
+- finish writing Demi
+- maybe secondary shield input -- strengthen shields at the cost of a lot of power
 
 CURRENT:
 - make picture labels use alignment properly
 - make AsciiFont properly use UTF8
-- account for right-to-left fonts
+- deprecate right-to-left fonts (fuck it)
 - resource library should not map resources to filenames, but to sets of
   properties (the properties being one of many possible subclasses of some
   "property" baseclass).  this will allow loading of the same filename for
   different things (among other extra versatilities).
 - when a new high score is posted and you're taken back to the title screen,
   the best high score should be shown first (time or score based)
+- change time-based score to wave-count-based
 - change CollisionPairList into a std::vector?
 - disasteroids: after enough time elapses, the asteroids should start
   attacking/going after the player, just to make things that much more hectic.
@@ -56,8 +57,6 @@ CURRENT:
 - test disasteroids with a non-wrapped main ObjectLayer
 - write a delete functor for deleting objects out of STL containers with for_each
 - fix LineTrace screwing up on large entities sometimes at certain angles
-- make Devourment grow as it eats stuff
-- ships should not be able to rotate to any angle instantly
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
@@ -96,14 +95,13 @@ TODO:
 - for static Create type functions for subclassable classes, see if the
   function can be templatized so that each subclass doesn't have to make
   a function that is identical except for the "new Blah" part.
-- change all occurrences of "retval" into the proper word?
 - change BinarySerializer and BitCache to use IODirection enum instead of
   retarded stdio file mode string in Open.
 - cursor position in map editor status bar
 - when the Action system is written, go into MapEditor2::WorldView and
   convert everything to that, and get rid of locally tracking
   m_selected_entity_count and friends.
-- possibly make a Math::Radians namespace to contain properly typed
+- possibly make a Math::Radian namespace to contain properly typed
   versions of the trig functions which take radian angles.
 - for overridable Widget methods, make it so that subclasses don't
   have to call anything to maintain widget functionality.
@@ -121,8 +119,6 @@ TODO:
   work when "using namespace Xrb" is not used.
 - think about MapEditor2::MainWidget and if the Widget's main widget
   functionality should be renamed.
-- it looks like Object::CalculateTransform might be unneseccary.
-  check into that.
 - make the map editor use only meta-keyed shortcuts so that handling
   key events is much simpler.
 - add modal widget frame/content margins (maybe just make it so that

@@ -28,6 +28,7 @@ namespace Dis
 
 Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 2000.0f, 4000.0f, 7000.0f, 13000.0f };
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
+Float const Demi::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
 Float const Demi::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };
 Float const Demi::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18500.0f, 24000.0f };
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
@@ -248,9 +249,9 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (GetAngularVelocity() == 0.0f)
     {
         if (m_target.GetIsValid())
-            AimShipAtCoordinates(m_target->GetTranslation());
+            AimShipAtCoordinates(m_target->GetTranslation(), frame_dt);
         else if (GetVelocity().GetLengthSquared() > 0.001f)
-            SetAngle(Math::Atan(GetVelocity()));
+            AimShipAtCoordinates(GetTranslation() + GetVelocity(), frame_dt);
     }
 
     // set the main weapon inputs and activate

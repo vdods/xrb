@@ -32,6 +32,7 @@ namespace Dis
 Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 1500.0f, 2250.0f, 3375.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
+Float const Devourment::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
 Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const Devourment::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 1600.0f, 2000.0f, 2400.0f, 2800.0f };
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
@@ -127,7 +128,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    AimShipAtReticleCoordinates();
+    AimShipAtReticleCoordinates(frame_dt);
     // set the weapon inputs and activate
     m_mouth_tractor->SetInputs(
         GetNormalizedWeaponPrimaryInput(),

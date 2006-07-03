@@ -522,7 +522,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
     }
     else
     {
-        AimShipAtReticleCoordinates();
+        AimShipAtReticleCoordinates(frame_dt);
 
         // update the stoke O meter (exponential decay, with a lower limit of 1.0)
         static Float const s_stoke_halflife = 2.0f;

@@ -26,6 +26,7 @@ namespace Dis
 
 Float const Shade::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Shade::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
+Float const Shade::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 720.0f, 720.0f, 720.0f, 720.0f };
 Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15.0f };
 Float const Shade::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Shade::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
@@ -77,7 +78,7 @@ void Shade::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    AimShipAtReticleCoordinates();
+    AimShipAtReticleCoordinates(frame_dt);
     m_weapon->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
         GetNormalizedWeaponSecondaryInput(),
@@ -106,7 +107,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
 {
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
-    
+
     // scan area for targets
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
@@ -129,7 +130,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
         // ignore ourselves
         if (entity == this)
             continue;
-        
+
         // if this entity is a solitary, set m_target and transition
         // to MoveToAttackRange
         if (entity->GetEntityType() == ET_SOLITARY)
@@ -151,7 +152,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
             }
         }
     }
-    
+
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
@@ -165,7 +166,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
             m_wander_angle = Math::Atan(-perpendicular_velocity);
         m_next_wander_time = time + 6.0f;
     }
-    
+
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
@@ -181,7 +182,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
         m_wander_angle_low_pass -= slow_angle_delta;
     else
         m_wander_angle_low_pass += slow_angle_delta;
-    
+
     if (time >= m_next_wander_time)
         m_think_state = THINK_STATE(PickWanderDirection);
 }
@@ -230,7 +231,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
-    
+
     FloatVector2 target_position(
         GetObjectLayer()->GetAdjustedCoordinates(
             m_target->GetTranslation(),
@@ -256,7 +257,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
             thrust_vector *= ms_engine_thrust[GetEnemyLevel()];
         }
         AccumulateForce(thrust_vector);
-    
+
         AimWeapon(target_position);
         if (distance_to_target >= ms_stalk_minimum_distance[GetEnemyLevel()] &&
             distance_to_target <= ms_stalk_maximum_distance[GetEnemyLevel()])
@@ -288,7 +289,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     else
     {
         m_think_state = THINK_STATE(Stalk);
-    }        
+    }
 }
 
 void Shade::Teleport (Float const time, Float const frame_dt)
@@ -304,7 +305,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
         if (placement_attempt_count == placement_attempt_max)
             return;
         ++placement_attempt_count;
-    
+
         teleport_destination =
             ms_stalk_maximum_distance[GetEnemyLevel()] *
             Math::UnitVector(Math::RandomAngle());
@@ -325,7 +326,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
 
 void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 {
-    // calculate what thrust is required to match the desired velocity 
+    // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
@@ -347,12 +348,12 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         m_think_state = THINK_STATE(PickWanderDirection);
         return;
     }
-    
+
     if (GetEnemyLevel() == 0)
     {
         SetReticleCoordinates(target_position);
     }
-    else 
+    else
     {
         ASSERT1(m_weapon != NULL)
         FloatVector2 p(target_position - GetTranslation());
@@ -374,7 +375,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
 
         Polynomial::SolutionSet solution_set;
         poly.Solve(&solution_set, 0.001f);
-    
+
         Float T = -1.0f;
         for (Polynomial::SolutionSetIterator it = solution_set.begin(),
                                              it_end = solution_set.end();
@@ -387,7 +388,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
                 break;
             }
         }
-        
+
         if (T <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach

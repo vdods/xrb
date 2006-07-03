@@ -22,6 +22,7 @@ class Solitary : public PlayerShip
 {
 public:
 
+    static Float const ms_max_angular_velocity;
     static Float const ms_scale_factor;
     static Float const ms_baseline_first_moment;
 
@@ -42,6 +43,10 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
+    virtual Float GetMaxAngularVelocity () const
+    {
+        return ms_max_angular_velocity;
+    }
     virtual Float GetShipScaleFactor () const
     {
         return ms_scale_factor;

@@ -95,6 +95,7 @@ public:
         // (so that not all ships have to override this method)
         return Math::UnitVector(GetAngle());
     }
+    virtual Float GetMaxAngularVelocity () const = 0;
     virtual Float GetShipScaleFactor () const = 0;
     virtual Float GetShipBaselineFirstMoment () const = 0;
 
@@ -129,8 +130,8 @@ protected:
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
-    inline void AimShipAtReticleCoordinates () { AimShipAtCoordinates(m_reticle_coordinates); }
-    void AimShipAtCoordinates (FloatVector2 const &coordinates);
+    inline void AimShipAtReticleCoordinates (Float frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
+    void AimShipAtCoordinates (FloatVector2 const &coordinates, Float frame_dt);
     virtual void ResetInputs ();
 
 private:

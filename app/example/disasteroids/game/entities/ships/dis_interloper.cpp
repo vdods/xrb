@@ -25,6 +25,7 @@ namespace Dis
 
 Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 18000.0f, 40000.0f, 88000.0f };
+Float const Interloper::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 360.0f, 360.0f, 360.0f, 360.0f };
 Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
 Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };

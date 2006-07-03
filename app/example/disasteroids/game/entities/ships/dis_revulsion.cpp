@@ -27,6 +27,7 @@ namespace Dis
 
 Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 15.0f, 30.0f, 60.0f, 120.0f };
 Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 14000.0f, 32000.0f, 72000.0f };
+Float const Revulsion::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 360.0f, 360.0f, 360.0f, 360.0f };
 Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
 Float const Revulsion::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Revulsion::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
@@ -91,7 +92,7 @@ void Revulsion::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    AimShipAtReticleCoordinates();
+    AimShipAtReticleCoordinates(frame_dt);
     // apply ship thrust in the appropriate direction
     AccumulateForce(
         GetNormalizedEngineUpDownInput() *

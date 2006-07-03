@@ -146,7 +146,7 @@ void Ship::Die (
     ScheduleForDeletion(0.0f);
 }
 
-void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates)
+void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Float const frame_dt)
 {
     FloatVector2 aim_direction(
         GetObjectLayer()->GetAdjustedCoordinates(
@@ -155,7 +155,15 @@ void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates)
         -
         GetTranslation());
     if (!aim_direction.GetIsZero())
-        SetAngle(Math::Atan(aim_direction));
+    {
+        Float angle_delta = Math::GetCanonicalAngle(Math::Atan(aim_direction) - GetAngle());
+        Float max_angle_delta = GetMaxAngularVelocity() * frame_dt;
+        if (angle_delta > max_angle_delta)
+            angle_delta = max_angle_delta;
+        else if (angle_delta < -max_angle_delta)
+            angle_delta = -max_angle_delta;
+        SetAngle(GetAngle() + angle_delta);
+    }
 }
 
 void Ship::ResetInputs ()
