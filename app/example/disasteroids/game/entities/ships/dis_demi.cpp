@@ -40,8 +40,9 @@ Float const Demi::ms_flame_thrower_max_damage_per_fireball[ENEMY_LEVEL_COUNT] = 
 Float const Demi::ms_flame_thrower_final_fireball_size[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
 Float const Demi::ms_gauss_gun_impact_damage[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 160.0f };
 Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20.0f, 15.0f, 10.0f };
-Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
+Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 Float const Demi::ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
+Float const Demi::ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT] = { 7.0f, 7.0f, 7.0f, 7.0f };
 Float const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 3.0f, 3.0f, 3.0f, 3.0f };
 Float const Demi::ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT] = { 0.15f, 0.15f, 0.15f, 0.15f };
 Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -51,9 +52,9 @@ Float const Demi::ms_tractor_range[ENEMY_LEVEL_COUNT] = { 20000.0f, 20000.0f, 20
 Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
-Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
-Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
-Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 3.0f, 2.0f, 1.0f, 0.666f };
+Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 210.0f, 220.0f, 230.0f };
+Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
+Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 
@@ -538,41 +539,79 @@ void Demi::Stalk (Float const time, Float const frame_dt)
             GetTranslation()));
     Float target_distance = (target_position - GetTranslation()).GetLength();
 
-//     m_think_state = THINK_STATE(GaussGunStartAim);
+//     m_think_state = THINK_STATE(ChargeStart);
 //     return;
+
+    static WeightedThinkState const s_transition_near[] =
+    {
+        { THINK_STATE(FlameThrowSweepStart), 2 },
+        {   THINK_STATE(MissileLaunchStart), 1 },
+        {   THINK_STATE(SpinningEnemySpawn), 2 }
+    };
+    static Uint32 const s_transition_near_count = sizeof(s_transition_near) / sizeof(WeightedThinkState);
+    static Uint32 const s_transition_near_total_weight = 5;
+
+    static WeightedThinkState const s_transition_mid[] =
+    {
+        {            THINK_STATE(GaussGunStartAim), 10 },
+        {        THINK_STATE(FlameThrowBlastStart), 20 },
+        {          THINK_STATE(SpinningFlameThrow), 10 },
+        {       THINK_STATE(SpinningMissileLaunch), 10 },
+        { THINK_STATE(SpinningGuidedMissileLaunch),  2 },
+        {        THINK_STATE(EnemySpawnBlastStart),  3 },
+        {    THINK_STATE(TractorTargetCloserStart),  3 }
+    };
+    static Uint32 const s_transition_mid_count = sizeof(s_transition_mid) / sizeof(WeightedThinkState);
+    static Uint32 const s_transition_mid_total_weight = 58;
+
+    static WeightedThinkState const s_transition_far[] =
+    {
+        {     THINK_STATE(EnemySpawnBlastStart),  2 },
+        { THINK_STATE(TractorTargetCloserStart),  5 },
+        {              THINK_STATE(ChargeStart), 10 }
+    };
+    static Uint32 const s_transition_far_count = sizeof(s_transition_far) / sizeof(WeightedThinkState);
+    static Uint32 const s_transition_far_total_weight = 17;
+
+    WeightedThinkState const *transition = NULL;
+    Uint32 transition_count = 0;
+    Uint32 transition_total_weight = 0;
 
     if (target_distance < ms_target_near_range_distance[GetEnemyLevel()])
     {
-        switch (Math::RandomUint16() % 3)
-        {
-            case 0: m_think_state = THINK_STATE(FlameThrowSweepStart); break;
-            case 1: m_think_state = THINK_STATE(MissileLaunchStart); break;
-            case 2: m_think_state = THINK_STATE(SpinningEnemySpawn); break;
-        }
+        transition = s_transition_near;
+        transition_count = s_transition_near_count;
+        transition_total_weight = s_transition_near_total_weight;
     }
     else if (target_distance < ms_target_mid_range_distance[GetEnemyLevel()])
     {
-        switch (Math::RandomUint16() % 7)
-        {
-            case 0: m_think_state = THINK_STATE(GaussGunStartAim); break;
-            case 1: m_think_state = THINK_STATE(FlameThrowBlastStart); break;
-            case 2: m_think_state = THINK_STATE(SpinningFlameThrow); break;
-            case 3: m_think_state = THINK_STATE(SpinningMissileLaunch); break;
-            case 4: m_think_state = THINK_STATE(SpinningGuidedMissileLaunch); break;
-            case 5: m_think_state = THINK_STATE(EnemySpawnBlastStart); break;
-            case 6: m_think_state = THINK_STATE(TractorTargetCloserStart); break;
-        }
+        transition = s_transition_mid;
+        transition_count = s_transition_mid_count;
+        transition_total_weight = s_transition_mid_total_weight;
     }
     else
     {
-        switch (Math::RandomUint16() % 4)
+        transition = s_transition_far;
+        transition_count = s_transition_far_count;
+        transition_total_weight = s_transition_far_total_weight;
+    }
+
+    ASSERT1(transition != NULL)
+    ASSERT1(transition_count > 0)
+    ASSERT1(transition_total_weight > 0)
+
+    Uint32 seed = Math::RandomUint16() % transition_total_weight;
+    Uint32 i;
+    for (i = 0; i < transition_count; seed -= transition[i].m_weight, ++i)
+    {
+        ASSERT1(seed < transition_total_weight)
+        if (seed < transition[i].m_weight)
         {
-            case 0: m_think_state = THINK_STATE(GaussGunStartAim); break;
-            case 1: m_think_state = THINK_STATE(EnemySpawnBlastStart); break;
-            case 2: m_think_state = THINK_STATE(TractorTargetCloserStart); break;
-            case 3: m_think_state = THINK_STATE(MissileLaunchStart); break;
+            m_think_state = transition[i].m_think_state;
+            break;
         }
     }
+    ASSERT1(i < transition_count)
 }
 
 void Demi::PauseStart (Float const time, Float const frame_dt)
@@ -588,6 +627,80 @@ void Demi::PauseContinue (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(Stalk);
         return;
     }
+}
+
+void Demi::ChargeStart (Float const time, Float const frame_dt)
+{
+    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    {
+        m_target.Release();
+        m_think_state = THINK_STATE(PickWanderDirection);
+        return;
+    }
+
+    // record the time we picked where to aim
+    m_start_time = time;
+    // record the direction to charge in
+    FloatVector2 target_position(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation()));
+    m_charge_velocity = target_position - GetTranslation();
+    ASSERT1(!m_charge_velocity.GetIsZero())
+    m_charge_velocity.Normalize();
+    m_charge_velocity *= 300.0f;
+
+    // transition to and call ChargeAccelerate
+    m_think_state = THINK_STATE(ChargeAccelerate);
+    ChargeAccelerate(time, frame_dt);
+}
+
+void Demi::ChargeAccelerate (Float const time, Float const frame_dt)
+{
+    if (time >= m_start_time + 1.0f)
+    {
+        m_start_time = time;
+        m_think_state = THINK_STATE(ChargeCoast);
+        return;
+    }
+
+    MatchVelocity(m_charge_velocity, frame_dt, 10.0f * ms_engine_thrust[GetEnemyLevel()]);
+}
+
+void Demi::ChargeCoast (Float const time, Float const frame_dt)
+{
+    if (time >= m_start_time + 2.0f)
+    {
+        m_start_time = time;
+        m_think_state = THINK_STATE(ChargeDecelerate);
+    }
+    else if (m_target.GetIsValid() && !m_target->GetIsDead())
+    {
+        FloatVector2 target_position(
+            GetObjectLayer()->GetAdjustedCoordinates(
+                m_target->GetTranslation(),
+                GetTranslation()));
+        Float target_distance = (target_position - GetTranslation()).GetLength();
+
+        static Float const s_threshold_distance = 200.0f;
+        if (target_distance <= s_threshold_distance)
+        {
+            m_start_time = time;
+            m_think_state = THINK_STATE(ChargeDecelerate);
+        }
+    }
+}
+
+void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
+{
+    if (GetSpeed() < 10.0f)
+    {
+        m_start_time = time;
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    MatchVelocity(FloatVector2::ms_zero, frame_dt, 10.0f * ms_engine_thrust[GetEnemyLevel()]);
 }
 
 void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
@@ -664,7 +777,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     // if the target went out of range, or if we're wasting time
     // transition back to sum'm
     if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
-        time > m_start_time + 10.0f)
+        time > m_start_time + ms_gauss_gun_max_duration[GetEnemyLevel()])
     {
         ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
@@ -1115,7 +1228,7 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
     SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Float max_thrust)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
@@ -1123,9 +1236,12 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
     if (!thrust_vector.GetIsZero())
     {
+        if (max_thrust < 0.0f)
+            max_thrust = ms_engine_thrust[GetEnemyLevel()];
+
         Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+        if (thrust_force > max_thrust)
+            thrust_vector = max_thrust * thrust_vector.GetNormalization();
 
         AccumulateForce(thrust_vector);
     }

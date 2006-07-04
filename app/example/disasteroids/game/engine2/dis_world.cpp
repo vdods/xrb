@@ -246,7 +246,7 @@ static Wave const gs_wave[] =
 };
 static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
 
-Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.4f, 0.5f, 0.6f };
+Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.35f, 0.35f, 0.35f };
 
 World::~World ()
 {
@@ -333,12 +333,19 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 
     --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
+    {
         if (m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
         {
             --m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()];
             ASSERT1(m_enemy_ship_wave_left > 0)
             --m_enemy_ship_wave_left;
         }
+    }
+    else
+    {
+        ASSERT1(m_devourment_count > 0)
+        --m_devourment_count;
+    }
 }
 
 World::World (
@@ -507,7 +514,6 @@ bool World::StateWaveInitialize (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            fprintf(stderr, "m_current_wave_index = %u\n", m_current_wave_index);
             if (m_current_wave_index > 0)
                 m_player_ship->IncrementWaveCount();
             m_enemy_ship_wave_total = 0;

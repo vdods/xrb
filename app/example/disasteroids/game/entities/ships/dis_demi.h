@@ -135,6 +135,7 @@ public:
     static Float const ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_missile_launch_duration[ENEMY_LEVEL_COUNT];
@@ -268,6 +269,10 @@ private:
     void Stalk (Float time, Float frame_dt);
     void PauseStart (Float time, Float frame_dt);
     void PauseContinue (Float time, Float frame_dt);
+    void ChargeStart (Float time, Float frame_dt);
+    void ChargeAccelerate (Float time, Float frame_dt);
+    void ChargeCoast (Float time, Float frame_dt);
+    void ChargeDecelerate (Float time, Float frame_dt);
     void GaussGunStartAim (Float time, Float frame_dt);
     void GaussGunContinueAim (Float time, Float frame_dt);
     void GaussGunFire (Float time, Float frame_dt);
@@ -296,7 +301,7 @@ private:
     void PortTractorPullTargetCloser (Float time, Float frame_dt);
     void StarboardTractorPullTargetCloser (Float time, Float frame_dt);
 
-    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
+    void MatchVelocity (FloatVector2 const &velocity, Float frame_dt, Float max_thrust = -1.0f);
     Entity *FindTractorDeflectTarget (
         FloatVector2 const &muzzle_location,
         FloatVector2 const &muzzle_direction,
@@ -304,6 +309,12 @@ private:
         Float frame_dt);
 
     typedef void (Demi::*ThinkState)(Float time, Float frame_dt);
+
+    struct WeightedThinkState
+    {
+        ThinkState m_think_state;
+        Uint32 m_weight;
+    }; // end of struct Demi::WeightedThinkState
 
     static Float const ms_side_port_angle;
 
@@ -320,6 +331,7 @@ private:
     Float m_spin_acceleration_duration;
     Float m_spin_duration;
     bool m_spinning_attack_uses_secondary_fire;
+    FloatVector2 m_charge_velocity;
 
     FloatVector2 m_port_reticle_coordinates;
     Uint8 m_port_weapon_primary_input;
