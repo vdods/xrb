@@ -26,7 +26,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 2000.0f, 4000.0f, 8000.0f, 16000.0f };
+Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
 Float const Demi::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
 Float const Demi::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };

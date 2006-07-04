@@ -983,7 +983,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 {
     if (ejectee == NULL || GetIsInStartingInventory(ejectee))
         return;
-
+/*
     static Float const s_powerup_scale_factor = 5.0f;
     static Float const s_powerup_ejection_speed = 50.0f;
 
@@ -996,7 +996,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         s_powerup_scale_factor * s_powerup_scale_factor,
         s_powerup_ejection_speed * ejection_normal,
         ejectee);
-
+*/
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
     ASSERT1(item_type < IT_COUNT)

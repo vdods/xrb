@@ -72,7 +72,7 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        20.0f,  // wave intermission duration
+        25.0f,  // wave intermission duration
         false   // notify new spawns of target
     },
     {
@@ -84,13 +84,13 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f,   // wave intermission duration
+        7.0f,   // wave intermission duration
         false   // notify new spawns of target
     },
     {
         {
             {   0,   0,   0,   0 }, // Interloper
-            {  40,   0,   0,   0 }, // Shade
+            {  35,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
@@ -107,7 +107,7 @@ static Wave const gs_wave[] =
             {   3,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
-        0.0f,   // enemy ship threshold
+        0.21f,  // enemy ship threshold
         5.0f,   // wave intermission duration
         true    // notify new spawns of target
     },
@@ -132,7 +132,7 @@ static Wave const gs_wave[] =
             {   1,   0,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        10.0f,  // wave intermission duration
+        20.0f,  // wave intermission duration
         true    // notify new spawns of target
     },
     {
@@ -161,7 +161,7 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {   0,  25,   0,   0 }, // Interloper
+            {   0,  20,   0,   0 }, // Interloper
             {   0,   2,   0,   0 }, // Shade
             {   5,   0,   0,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
@@ -246,7 +246,7 @@ static Wave const gs_wave[] =
 };
 static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
 
-Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.35f, 0.35f, 0.35f, 0.35f };
+Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.37f, 0.37f, 0.37f, 0.37f };
 
 World::~World ()
 {
@@ -337,8 +337,8 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
         if (m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
         {
             --m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()];
-            ASSERT1(m_enemy_ship_wave_left > 0)
-            --m_enemy_ship_wave_left;
+            if (m_enemy_ship_wave_left > 0)
+                --m_enemy_ship_wave_left;
         }
     }
     else

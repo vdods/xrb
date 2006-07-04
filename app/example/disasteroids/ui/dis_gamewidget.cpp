@@ -179,6 +179,7 @@ GameWidget::GameWidget (
 
         UpdateWaveCountLabel();
 
+/*
         // extra lives label and icon
         {
             m_lives_remaining_label =
@@ -199,6 +200,7 @@ GameWidget::GameWidget (
             lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
             lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());
         }
+*/
 
         for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
         {
@@ -325,7 +327,7 @@ SignalSender0 const *GameWidget::SenderQuitGame ()
 void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 {
     // disconnect old player ship connections
-    m_lives_remaining_label->DetachAll();
+//     m_lives_remaining_label->DetachAll();
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory_label[i]->DetachAll();
     m_score_label->DetachAll();
@@ -347,9 +349,9 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         SignalHandler::Connect1(
             player_ship->SenderWaveCountChanged(),
             &m_internal_receiver_set_wave_count);
-        SignalHandler::Connect1(
-            player_ship->SenderLivesRemainingChanged(),
-            m_lives_remaining_label->ReceiverSetValue());
+//         SignalHandler::Connect1(
+//             player_ship->SenderLivesRemainingChanged(),
+//             m_lives_remaining_label->ReceiverSetValue());
         SignalHandler::Connect1(
             player_ship->SenderScoreChanged(),
             m_score_label->ReceiverSetValue());
@@ -371,7 +373,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 
         // make sure the UI elements are enabled
         m_wave_count_label->Enable();
-        m_lives_remaining_label->Enable();
+//         m_lives_remaining_label->Enable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Enable();
         m_score_label->Enable();
@@ -383,7 +385,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         // initialize the UI elements
         m_wave_count = player_ship->GetWaveCount();
         UpdateWaveCountLabel();
-        m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
+//         m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_score_label->SetValue(player_ship->GetScore());
         m_armor_status->SetProgress(player_ship->GetArmorStatus());
@@ -401,7 +403,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_wave_count = 0;
         UpdateWaveCountLabel();
         m_wave_count_label->Disable();
-        m_lives_remaining_label->Disable();
+//         m_lives_remaining_label->Disable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Disable();
         m_score_label->Disable();
