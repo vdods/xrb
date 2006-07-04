@@ -45,8 +45,7 @@ Shade::Shade (Uint8 const enemy_level)
     m_weapon = new SlowBulletGun(GetEnemyLevel());
     m_weapon->Equip(this);
 
-    SetWeakness(D_COLLISION);
-    SetStrength(D_MINING_LASER);
+    SetStrength(D_MINING_LASER|D_COLLISION);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 }
 

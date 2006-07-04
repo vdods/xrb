@@ -74,7 +74,7 @@ static Wave const gs_wave[] =
     {
         {
             {  40,   0,   0,   0 }, // Interloper
-            {   5,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
@@ -84,7 +84,7 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {  10,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Interloper
             {  40,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
@@ -95,7 +95,7 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {   0,   0,   5,   0 }, // Interloper
+            {   0,   5,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   3,   0,   0,   0 }, // Devourment
@@ -295,8 +295,15 @@ void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
 
     ++m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
-        if (m_enemy_ship_left[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
-            --m_enemy_ship_left[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    {
+        if (m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
+            --m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    }
+    else
+    {
+        ASSERT1(m_devourment_count < m_devourment_max)
+        ++m_devourment_count;
+    }
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
@@ -308,8 +315,12 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 
     --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
-        if (m_enemy_ship_wave_left > 0)
+        if (m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
+        {
+            --m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+            ASSERT1(m_enemy_ship_wave_left > 0)
             --m_enemy_ship_wave_left;
+        }
 }
 
 World::World (
@@ -346,6 +357,8 @@ World::World (
             m_enemy_ship_count[enemy_ship_index][enemy_level] = 0;
     m_enemy_ship_wave_total = 0;
     m_enemy_ship_wave_left = 0;
+    m_devourment_max = 0;
+    m_devourment_count = 0;
 
     CreateAndPopulateBackgroundObjectLayers();
     CreateAndPopulateForegroundObjectLayer();
@@ -480,6 +493,7 @@ bool World::StateWaveInitialize (StateMachineInput const input)
             if (m_current_wave_index > 0)
                 m_player_ship->IncrementWaveCount();
             m_enemy_ship_wave_total = 0;
+            m_devourment_max = 0;
             m_is_demi_wave = false;
             for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
                 if (gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
@@ -490,18 +504,23 @@ bool World::StateWaveInitialize (StateMachineInput const input)
                 {
                     if (enemy_ship_index + ET_ENEMY_SHIP_LOWEST != ET_DEVOURMENT)
                     {
-                        m_enemy_ship_left[enemy_ship_index][enemy_level] =
+                        m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_level] =
+                            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level];
+                        m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level] =
                             gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level] -
                             Min(m_enemy_ship_count[enemy_ship_index][enemy_level],
                                 gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]);
-                        ASSERT1(m_enemy_ship_left[enemy_ship_index][enemy_level] <=
+                        ASSERT1(m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level] <=
                                 gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level])
-                        m_enemy_ship_wave_total +=
-                            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level];
+                        m_enemy_ship_wave_total += m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level];
+                    }
+                    else
+                    {
+                        ++m_devourment_max;
                     }
                 }
             }
-            m_enemy_ship_wave_left += m_enemy_ship_wave_total;
+            m_enemy_ship_wave_left = m_enemy_ship_wave_total;
             TRANSITION_TO(StateWaveGameplay);
             return true;
     }
@@ -520,7 +539,7 @@ bool World::StateWaveGameplay (StateMachineInput const input)
                 bool all_demis_killed = true;
                 for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
                 {
-                    if (m_enemy_ship_left[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0 ||
+                    if (m_enemy_ship_left_to_spawn[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0 ||
                         m_enemy_ship_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
                     {
                         all_demis_killed = false;
@@ -758,15 +777,32 @@ void World::ProcessWaveGameplayLogic ()
     // at different framerates, but it shouldn't matter)
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
     {
+        if (enemy_ship_index + ET_ENEMY_SHIP_LOWEST == ET_DEVOURMENT)
+            continue;
+
         for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
         {
             if (m_enemy_ship_count[enemy_ship_index][enemy_level] <
                 gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]
                 &&
-                (enemy_ship_index + ET_ENEMY_SHIP_LOWEST == ET_DEVOURMENT
-                 ||
-                 enemy_ship_index + ET_ENEMY_SHIP_LOWEST != ET_DEVOURMENT &&
-                 m_enemy_ship_left[enemy_ship_index][enemy_level] > 0))
+                m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level] > 0)
+            {
+                SpawnEnemyShipOutOfView(
+                    static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),
+                    enemy_level);
+            }
+        }
+    }
+
+    {
+        Uint8 enemy_ship_index = ET_DEVOURMENT - ET_ENEMY_SHIP_LOWEST;
+        ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
+        for (Uint8 enemy_level = EnemyShip::ENEMY_LEVEL_COUNT-1; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; --enemy_level)
+        {
+            if (m_enemy_ship_count[enemy_ship_index][enemy_level] <
+                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]
+                &&
+                m_devourment_count < m_devourment_max)
             {
                 SpawnEnemyShipOutOfView(
                     static_cast<EntityType>(ET_ENEMY_SHIP_LOWEST + enemy_ship_index),

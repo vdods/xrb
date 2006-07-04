@@ -40,7 +40,7 @@ HighScoresWidget::HighScoresWidget (Widget *const parent)
         m_name_label[row] = new Label("x", scores_layout);
         m_name_label[row]->SetFontHeightRatio(0.025f);
 
-        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %3u", Util::TextToUint32, scores_layout);
+        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint32, scores_layout);
         m_wave_count_label[row]->SetFontHeightRatio(0.025f);
         m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
 
@@ -57,7 +57,7 @@ void HighScoresWidget::Update (
     HighScores const &high_scores,
     HighScoresWidget::Mode const mode)
 {
-    m_title_label->SetText((mode == M_BEST_POINTS) ? "HIGH SCORES -- POINTS" : "HIGH SCORES -- WAVES");
+    m_title_label->SetText((mode == M_BEST_POINTS) ? "HIGHEST SCORE" : "HIGHEST WAVE");
 
     for (Uint32 row = 0; row < HighScores::MAX_HIGH_SCORES; ++row)
     {

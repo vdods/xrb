@@ -22,7 +22,7 @@ HighScores::HighScores ()
     // add some modest fake scores
     for (Uint32 i = 1; i <= MAX_HIGH_SCORES; ++i)
     {
-        Score fake_score("XuqRijBuh", 500 * i, i, static_cast<time_t>(0));
+        Score fake_score("XuqRijBuh", 500 * i, (i-1)/2+1, static_cast<time_t>(0));
         m_best_points_score_set.insert(fake_score);
         m_best_wave_count_score_set.insert(fake_score);
     }

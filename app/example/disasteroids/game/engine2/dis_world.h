@@ -182,9 +182,12 @@ private:
     bool m_is_demi_wave;
     // TODO: change into std::vector?
     Uint32 m_enemy_ship_count[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
-    Uint32 m_enemy_ship_left[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
+    Uint32 m_enemy_ship_left_to_spawn[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
+    Uint32 m_enemy_ship_left_to_destroy[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];
     Uint32 m_enemy_ship_wave_total;
     Uint32 m_enemy_ship_wave_left;
+    Uint32 m_devourment_max;
+    Uint32 m_devourment_count;
 
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
