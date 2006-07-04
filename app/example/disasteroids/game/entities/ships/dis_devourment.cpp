@@ -216,6 +216,17 @@ bool Devourment::TakePowerup (Powerup *const powerup)
     return true;
 }
 
+void Devourment::SetTarget (Mortal *const target)
+{
+    if (target == NULL)
+        m_target.Release();
+    else
+    {
+        m_target = target->GetReference();
+        m_think_state = THINK_STATE(Pursue);
+    }
+}
+
 void Devourment::PickWanderDirection (Float const time, Float const frame_dt)
 {
     // update the next time to pick a wander direction

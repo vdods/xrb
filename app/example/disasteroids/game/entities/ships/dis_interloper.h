@@ -59,6 +59,12 @@ public:
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
 
+    // ///////////////////////////////////////////////////////////////////////
+    // EnemyShip interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual void SetTarget (Mortal *target);
+
 private:
 
     inline bool GetIsFlockLeader () const { return m_flock_leader_weight > 0.25f; }

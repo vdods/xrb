@@ -132,6 +132,17 @@ void Interloper::Collide (
         frame_dt);
 }
 
+void Interloper::SetTarget (Mortal *const target)
+{
+    if (target == NULL)
+        m_target.Release();
+    else
+    {
+        m_target = target->GetReference();
+        m_think_state = THINK_STATE(Charge);
+    }
+}
+
 void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 {
     ASSERT1(!m_closest_flock_member.GetIsValid())

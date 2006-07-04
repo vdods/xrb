@@ -138,6 +138,17 @@ void Revulsion::Die (
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 }
 
+void Revulsion::SetTarget (Mortal *const target)
+{
+    if (target == NULL)
+        m_target.Release();
+    else
+    {
+        m_target = target->GetReference();
+        m_think_state = THINK_STATE(TrailTarget);
+    }
+}
+
 void Revulsion::PickWanderDirection (Float const time, Float const frame_dt)
 {
     // update the next time to pick a wander direction

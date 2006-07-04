@@ -56,6 +56,9 @@ struct Wave
     Float const m_enemy_ship_threshold;
     // valid values are any non-negative number
     Float const m_wave_intermission_duration;
+    // true iff the world will notify each newly spawned enemy of
+    // the player ship as a target.
+    bool const m_notify_new_spawns_of_target;
 }; // end of struct World::Wave
 
 static Wave const gs_wave[] =
@@ -69,7 +72,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        20.0f   // wave intermission duration
+        20.0f,  // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -80,7 +84,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -91,7 +96,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        10.0f   // wave intermission duration
+        10.0f,  // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -101,8 +107,9 @@ static Wave const gs_wave[] =
             {   3,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
-        0.25f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        0.0f,   // enemy ship threshold
+        5.0f,   // wave intermission duration
+        true    // notify new spawns of target
     },
     {
         {
@@ -113,7 +120,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        0.0f    // wave intermission duration
+        0.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -123,8 +131,9 @@ static Wave const gs_wave[] =
             {   1,   2,   0,   0 }, // Devourment
             {   1,   0,   0,   0 }  // Demi
         },
-        -1.0f,  // enemy ship threshold
-        10.0f   // wave intermission duration
+        0.0f,   // enemy ship threshold
+        10.0f,  // wave intermission duration
+        true    // notify new spawns of target
     },
     {
         {
@@ -135,7 +144,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -145,8 +155,9 @@ static Wave const gs_wave[] =
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
-        0.25f,  // enemy ship threshold
-        3.0f    // wave intermission duration
+        0.0f,   // enemy ship threshold
+        3.0f,   // wave intermission duration
+        true    // notify new spawns of target
     },
     {
         {
@@ -157,7 +168,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -168,18 +180,20 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
-            {   0,   0,   0,   0 }, // Interloper
-            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   1 }, // Interloper
+            {   0,   0,   0,   1 }, // Shade
             {   0,   0,   0,   1 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        true    // notify new spawns of target
     },
     {
         {
@@ -190,7 +204,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f    // wave intermission duration
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -200,8 +215,9 @@ static Wave const gs_wave[] =
             {   1,   2,   0,   0 }, // Devourment
             {   0,   1,   0,   0 }  // Demi
         },
-        -1.0f,  // enemy ship threshold
-        10.0f   // wave intermission duration
+        0.0f,   // enemy ship threshold
+        10.0f,  // wave intermission duration
+        true    // notify new spawns of target
     },
     {
         {
@@ -212,7 +228,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.2f,   // enemy ship threshold
-        2.0f    // wave intermission duration
+        2.0f,   // wave intermission duration
+        false   // notify new spawns of target
     },
     {
         {
@@ -223,7 +240,8 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.2f,   // enemy ship threshold
-        2.0f    // wave intermission duration
+        2.0f,   // wave intermission duration
+        false   // notify new spawns of target
     }
 };
 static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
@@ -534,22 +552,8 @@ bool World::StateWaveGameplay (StateMachineInput const input)
     {
         case IN_PROCESS_FRAME:
             ProcessWaveGameplayLogic();
-            if (m_is_demi_wave)
-            {
-                bool all_demis_killed = true;
-                for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
-                {
-                    if (m_enemy_ship_left_to_spawn[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0 ||
-                        m_enemy_ship_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
-                    {
-                        all_demis_killed = false;
-                    }
-                }
-                if (all_demis_killed)
-                    ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
-            }
-            else if (gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f &&
-                     m_enemy_ship_wave_left <= gs_wave[m_current_wave_index].m_enemy_ship_threshold * m_enemy_ship_wave_total)
+            ASSERT1(gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f)
+            if (m_enemy_ship_wave_left <= gs_wave[m_current_wave_index].m_enemy_ship_threshold * m_enemy_ship_wave_total)
             {
                 ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
             }
@@ -948,52 +952,66 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, personal_space_radius));
 
+    EnemyShip *spawned_ship = NULL;
     switch (enemy_ship_type)
     {
         case ET_INTERLOPER:
-            return SpawnInterloper(
+            spawned_ship = SpawnInterloper(
                 this,
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
+            break;
 
         case ET_SHADE:
-            return SpawnShade(
+            spawned_ship = SpawnShade(
                 this,
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
+            break;
 
         case ET_REVULSION:
-            return SpawnRevulsion(
+            spawned_ship = SpawnRevulsion(
                 this,
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
+            break;
 
         case ET_DEVOURMENT:
-            return SpawnDevourment(
+            spawned_ship = SpawnDevourment(
                 this,
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
+            break;
 
         case ET_DEMI:
-            return SpawnDemi(
+            spawned_ship = SpawnDemi(
                 this,
                 GetMainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
+            break;
 
         default:
             ASSERT1(false && "Invalid EntityType")
-            return NULL;
+            spawned_ship = NULL;
+            break;
     }
+
+    if (gs_wave[m_current_wave_index].m_notify_new_spawns_of_target &&
+        enemy_ship_type != ET_DEVOURMENT)
+    {
+        spawned_ship->SetTarget(m_player_ship);
+    }
+    return spawned_ship;
 }
 
 bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (

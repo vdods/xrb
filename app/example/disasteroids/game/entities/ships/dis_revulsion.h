@@ -71,6 +71,12 @@ public:
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
 
+    // ///////////////////////////////////////////////////////////////////////
+    // EnemyShip interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual void SetTarget (Mortal *target);
+
 private:
 
     void PickWanderDirection (Float time, Float frame_dt);

@@ -92,6 +92,17 @@ void Shade::Think (Float const time, Float const frame_dt)
     ResetInputs();
 }
 
+void Shade::SetTarget (Mortal *const target)
+{
+    if (target == NULL)
+        m_target.Release();
+    else
+    {
+        m_target = target->GetReference();
+        m_think_state = THINK_STATE(MoveToAttackRange);
+    }
+}
+
 void Shade::PickWanderDirection (Float const time, Float const frame_dt)
 {
     // update the next time to pick a wander direction

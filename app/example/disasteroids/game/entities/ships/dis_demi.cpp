@@ -431,6 +431,17 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
     }
 }
 
+void Demi::SetTarget (Mortal *const target)
+{
+    if (target == NULL)
+        m_target.Release();
+    else
+    {
+        m_target = target->GetReference();
+        m_think_state = THINK_STATE(Stalk);
+    }
+}
+
 void Demi::ResetInputs ()
 {
     EnemyShip::ResetInputs();

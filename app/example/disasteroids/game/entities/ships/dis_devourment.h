@@ -79,6 +79,12 @@ public:
 
     virtual bool TakePowerup (Powerup *powerup);
 
+    // ///////////////////////////////////////////////////////////////////////
+    // EnemyShip interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual void SetTarget (Mortal *target);
+
 private:
 
     void PickWanderDirection (Float time, Float frame_dt);

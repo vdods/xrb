@@ -181,6 +181,12 @@ public:
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
 
+    // ///////////////////////////////////////////////////////////////////////
+    // EnemyShip interface methods
+    // ///////////////////////////////////////////////////////////////////////
+
+    virtual void SetTarget (Mortal *target);
+
 protected:
 
     virtual void ResetInputs ();
