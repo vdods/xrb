@@ -73,15 +73,6 @@ Float const GrenadeLauncher::ms_grenade_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 1
 Float const GrenadeLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 7.0f, 10.0f };
 Uint32 const GrenadeLauncher::ms_max_active_grenade_count[UPGRADE_LEVEL_COUNT] = { 6, 7, 8, 10 };
 
-// MineLayer properties
-Float const MineLayer::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const MineLayer::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 50.0f, 50.0f, 50.0f };
-Float const MineLayer::ms_mine_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 200.0f, 200.0f, 200.0f, 200.0f };
-Float const MineLayer::ms_mine_damage_radius[UPGRADE_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
-Float const MineLayer::ms_mine_health[UPGRADE_LEVEL_COUNT] = { 100.0f, 100.0f, 100.0f, 100.0f };
-Float const MineLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.45f, 0.425f, 0.4f };
-Uint32 const MineLayer::ms_max_active_mine_count[UPGRADE_LEVEL_COUNT] = { 2, 3, 4, 6 };
-
 // MissileLauncher properties
 Float const MissileLauncher::ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
 Float const MissileLauncher::ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 100.0f, 125.0f, 150.0f, 175.0f };
@@ -110,11 +101,6 @@ Float const EMPBombLayer::ms_emp_bomb_health[UPGRADE_LEVEL_COUNT] = { 60.0f, 60.
 Float const EMPBombLayer::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.6f, 0.7f, 0.8f };
 Uint32 const EMPBombLayer::ms_max_active_emp_bomb_count[UPGRADE_LEVEL_COUNT] = { 1, 1, 2, 4 };
 */
-
-// AutoDestruct properties
-Float const AutoDestruct::ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT] = { 5.0f, 4.0f, 3.25f, 2.5f };
-Float const AutoDestruct::ms_damage_amount[UPGRADE_LEVEL_COUNT] = { 80.0f, 150.0f, 300.0f, 500.0f };
-Float const AutoDestruct::ms_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 120.0f, 200.0f };
 
 // Tractor properties
 Float const Tractor::ms_range[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
@@ -775,119 +761,6 @@ bool GrenadeLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-MineLayer::~MineLayer ()
-{
-    for (ActiveMineSetIterator it = m_active_mine_set.begin(),
-                               it_end = m_active_mine_set.end();
-         it != it_end;
-         ++it)
-    {
-        Mine *active_mine = *it;
-        active_mine->SetOwnerMineLayer(NULL);
-    }
-    m_active_mine_set.clear();
-}
-
-void MineLayer::ActiveMineDestroyed (Mine *const active_mine)
-{
-    ASSERT1(active_mine != NULL)
-    ASSERT1(active_mine->GetOwnerMineLayer() == this)
-    ASSERT1(GetActiveMineCount() > 0)
-
-    // delete the active mine from the active mine set
-    ActiveMineSetIterator it = m_active_mine_set.find(active_mine);
-    ActiveMineSetIterator it_end = m_active_mine_set.end();
-    ASSERT1(it != it_end)
-    m_active_mine_set.erase(it);
-
-    active_mine->SetOwnerMineLayer(NULL);
-}
-
-Float MineLayer::GetPowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
-{
-    // can't apply power if the maximum number of active mines has been reached
-    if (GetActiveMineCount() >= ms_max_active_mine_count[GetUpgradeLevel()])
-        return 0.0f;
-
-    // can't apply power if the weapon isn't ready to fire
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
-    if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
-        return 0.0f;
-
-    // return the sum of the primary and secondary required powers
-    // if each is on respectively.
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
-}
-
-bool MineLayer::Activate (
-    Float power,
-    Float const time,
-    Float const frame_dt)
-{
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
-
-    // since the primary and secondary fires can be simultaneously
-    // activated we must check both
-    if (GetPrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
-        return false;
-
-    // primary takes precedence over secondary fire
-    if (GetPrimaryInput() > 0.0f &&
-        power >= ms_required_primary_power[GetUpgradeLevel()])
-    {
-        // fire the weapon -- spawn a Mine
-        ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
-
-        Float const mine_scale_factor = 8.0f;
-        Mine *mine = SpawnMine(
-            GetOwnerShip()->GetWorld(),
-            GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation() + mine_scale_factor * GetMuzzleDirection(),
-            mine_scale_factor,
-            ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
-            this,
-            ms_mine_damage_to_inflict[GetUpgradeLevel()],
-            ms_mine_damage_radius[GetUpgradeLevel()],
-            2.0f * ms_mine_damage_radius[GetUpgradeLevel()],
-            GetUpgradeLevel(),
-            GetOwnerShip()->GetReference(),
-            ms_mine_health[GetUpgradeLevel()]);
-
-        // add the mine to the active mine set
-        ASSERT1(mine != NULL)
-        m_active_mine_set.insert(mine);
-
-        // update the last time fired
-        m_time_last_fired = time;
-
-        power -= ms_required_primary_power[GetUpgradeLevel()];
-    }
-
-    if (GetSecondaryInput() > 0.0f)
-    {
-        // guide all the mines to the aim reticle
-        for (ActiveMineSetIterator it = m_active_mine_set.begin(),
-                                   it_end = m_active_mine_set.end();
-             it != it_end;
-             ++it)
-        {
-            Mine *active_mine = *it;
-            ASSERT1(active_mine != NULL)
-            active_mine->GiveSeekCoordinates(GetReticleCoordinates(), time);
-        }
-    }
-
-    // the weapon fired successfully
-    return true;
-}
-
-// ///////////////////////////////////////////////////////////////////////////
-//
-// ///////////////////////////////////////////////////////////////////////////
-
 Float MissileLauncher::GetPowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
@@ -1148,59 +1021,6 @@ bool EMPBombLayer::Activate (
     return true;
 }
 */
-
-// ///////////////////////////////////////////////////////////////////////////
-//
-// ///////////////////////////////////////////////////////////////////////////
-
-Float AutoDestruct::GetPowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
-{
-    // the amount of power to trigger it is small
-    return (GetPrimaryInput() > 0.0f) ? 1.0f : 0.0f;
-}
-
-bool AutoDestruct::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
-{
-    if (power == 0.0f)
-    {
-        m_triggered_time = -1.0f;
-        return false;
-    }
-
-    if (m_triggered_time < 0.0f)
-        m_triggered_time = time;
-
-    if (time - m_triggered_time >= ms_trigger_countdown_time[GetUpgradeLevel()])
-    {
-        GetOwnerShip()->Kill(
-            GetOwnerShip(),
-            NULL, // auto destruct does not have a Entity kill medium
-            GetOwnerShip()->GetTranslation(),
-            Math::UnitVector(GetOwnerShip()->GetAngle()),
-            0.0f,
-            Mortal::D_EXPLOSION,
-            time,
-            frame_dt);
-        SpawnDamageExplosion(
-            GetOwnerShip()->GetWorld(),
-            GetOwnerShip()->GetObjectLayer(),
-            GetOwnerShip()->GetTranslation(),
-            GetOwnerShip()->GetVelocity(),
-            ms_damage_amount[GetUpgradeLevel()],
-            ms_damage_radius[GetUpgradeLevel()],
-            2.0f * ms_damage_radius[GetUpgradeLevel()],
-            0.2f,
-            time,
-            GetOwnerShip()->GetReference());
-    }
-
-    return true;
-}
 
 // ///////////////////////////////////////////////////////////////////////////
 //

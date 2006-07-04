@@ -21,7 +21,7 @@ namespace Dis
             LoadFilename<GLTexture>( \
                 GLTexture::Create, \
                 "resources/" #basename ".png");
-                
+
 ResourceCache::ResourceCache ()
 {
     RESOURCE_GLTEXTURE_INITIALIZATION(asteroid)
@@ -39,7 +39,6 @@ ResourceCache::ResourceCache ()
     RESOURCE_GLTEXTURE_INITIALIZATION(grinder2_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(grinder3_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(interloper0_small)
-    RESOURCE_GLTEXTURE_INITIALIZATION(mine_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(mineral_0)
     RESOURCE_GLTEXTURE_INITIALIZATION(mineral_1)
     RESOURCE_GLTEXTURE_INITIALIZATION(mineral_2)

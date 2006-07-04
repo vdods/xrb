@@ -36,7 +36,6 @@ aft port:
     enemy spawner
     flame thrower
     missile launcher
-    mine layer
 
 actions:
     gauss gun fire: if the player trespasses in a certain area in front of us,
@@ -65,7 +64,6 @@ x   enemy spawner: intermittent barrages of certain types of enemies
     blah: if player gets too far away, charge at it
     ---maybe---
     EMP bomb layer: occasionally shoot out an EMB bomb and detonate it
-    mine layer: occasionally lay a mine
 
 ------------------------------------------------------------------------------
 

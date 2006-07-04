@@ -22,7 +22,6 @@ namespace Dis
 
 // class EMPBombLayer;
 class GrenadeLauncher;
-class MineLayer;
 class PhysicsHandler;
 class Ship;
 
@@ -141,92 +140,6 @@ private:
     Float const m_damage_radius;
     Float const m_explosion_radius;
 }; // end of class Grenade
-
-// ///////////////////////////////////////////////////////////////////////////
-//
-// ///////////////////////////////////////////////////////////////////////////
-
-class Mine : public Explosive
-{
-public:
-
-    Mine (
-        MineLayer *const owner_mine_layer,
-        Float damage_to_inflict,
-        Float damage_radius,
-        Float explosion_radius,
-        Uint32 const weapon_level,
-        EntityReference<Entity> const &owner,
-        Float const max_health)
-        :
-        Explosive(weapon_level, owner, max_health, max_health, ET_MINE, CT_SOLID_COLLISION),
-        m_damage_to_inflict(damage_to_inflict),
-        m_damage_radius(damage_radius),
-        m_explosion_radius(explosion_radius)
-    {
-        ASSERT1(m_damage_to_inflict > 0.0f)
-        m_think_state = &Mine::Level0Survey;
-        m_ambient_velocity = FloatVector2::ms_zero;
-        m_most_recent_survey_time = 0.0f;
-        m_seek_start_time = -2.0f; // this is the s_seek_stale_interval in Mine::MoveTowardsSeekCoordinates
-        m_owner_mine_layer = owner_mine_layer;
-        SetImmunity(D_COLLISION|D_EXPLOSION);
-    }
-    virtual ~Mine () { }
-
-    inline MineLayer *GetOwnerMineLayer ()
-    {
-        return m_owner_mine_layer;
-    }
-
-    inline void SetOwnerMineLayer (MineLayer *const owner_mine_layer)
-    {
-        m_owner_mine_layer = owner_mine_layer;
-    }
-
-    void GiveSeekCoordinates (
-        FloatVector2 const &seek_coordinates,
-        Float seek_start_time);
-
-    virtual void Think (Float time, Float frame_dt);
-    virtual void Die (
-        Entity *killer,
-        Entity *kill_medium,
-        FloatVector2 const &kill_location,
-        FloatVector2 const &kill_normal,
-        Float kill_force,
-        DamageType kill_type,
-        Float time,
-        Float frame_dt);
-
-    virtual bool CheckIfItShouldDetonate (
-        Entity *collider,
-        Float time,
-        Float frame_dt);
-    virtual void Detonate (
-        Float time,
-        Float frame_dt);
-
-private:
-
-    void Level0Survey (Float time, Float frame_dt);
-    void Level0FireThrusters (Float time, Float frame_dt);
-    void Level0MoveTowardsSeekCoordinates (Float time, Float frame_dt);
-
-    typedef void (Mine::*ThinkState)(Float time, Float frame_dt);
-
-    ThinkState m_think_state;
-    FloatVector2 m_ambient_velocity;
-    Float m_most_recent_survey_time;
-
-    FloatVector2 m_seek_coordinates;
-    Float m_seek_start_time;
-
-    MineLayer *m_owner_mine_layer;
-    Float const m_damage_to_inflict;
-    Float const m_damage_radius;
-    Float const m_explosion_radius;
-}; // end of class Mine
 
 // ///////////////////////////////////////////////////////////////////////////
 //

@@ -596,7 +596,6 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         m_devices_to_power[DTP_WEAPON] = current_weapon;
         m_devices_to_power[DTP_ENGINE] = m_engine;
         m_devices_to_power[DTP_SHIELD] = m_shield;
-        // NOTE: the player ship can die in this call (AutoDestruct)
         ASSERT1(m_power_generator != NULL)
         m_power_generator->PowerDevices(
             m_devices_to_power,
@@ -1023,8 +1022,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         item_type != IT_WEAPON_TRACTOR)
     {
         // the priority goes GaussGun, FlameThrower, MissileLauncher,
-        // Laser, GrenadeLauncher, PeaShooter, MineLayer, EMPCore
-        // (note that AutoDestruct is not auto-equipped)
+        // Laser, GrenadeLauncher, PeaShooter, EMPCore
         static ItemType const s_weapon_priority[] =
         {
             IT_WEAPON_GAUSS_GUN,
@@ -1033,7 +1031,6 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
             IT_WEAPON_LASER,
             IT_WEAPON_GRENADE_LAUNCHER,
             IT_WEAPON_PEA_SHOOTER,
-            IT_WEAPON_MINE_LAYER,
             IT_WEAPON_EMP_CORE
         };
         static Uint32 const s_weapon_priority_count =

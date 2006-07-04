@@ -123,14 +123,6 @@ Weapons (each have infinite ammo, unless otherwise specified)
 - grenade launcher (hold the button down to fire, release to explode)
   * upgrades will be to the power of the grenade explosion and to make the
     explosions not harm you
-- mine layer
-  you can only have up to X mines active in the world at any given time.
-  * upgrades will be to the power of the mine explosion, adding dumb-seeking
-    (will seek anything, including the player), smart-seeking (will only seek
-    enemies), combined with dumb-triggered (triggers on anything, including
-    the player), and smart-triggered (only triggers when touched by an enemy).
-    another upgrade is to increase the number of mines active in the world.
-    another upgrade is to make the explosions not harm you.
 - missile launcher
   * upgrades will be to the projectile speed and explosion power,
     dumb-seeking, smart-seeking, to make the explosions not hurt you
@@ -140,7 +132,7 @@ Weapons (each have infinite ammo, unless otherwise specified)
   in the blast radius, the player's ship is disabled for a short period of
   time (can't move or fire).  each EMP bomb must be produced one at a time --
   there is no infinite ammo with this one.  EMPs also damage grenades,
-  mines and missiles.
+  missiles.
 
 Engines (maybe combine with armor)
 - engine level X (each level outputs more thrust, and uses more power)
@@ -336,25 +328,15 @@ sizes.
   beam up minerals nearby, thus pissing off the player.
   * upgrades include:
     - smaller and slightly faster one that goes only after ships.
-- enemy mines - they sit there until something touches them, and then they
-  blow up.  of the same varieties as the player's mines, only bigger and
-  do more damage.
-  * upgrades (same as player's mines)
-    - explosion power
-    - dumb-seeking (seek anything)
-    - smart-seeking (will seek only the player's ship)
-    - dumb-triggering (default, triggers on anything)
-    - smart-triggering (triggers only on player's ship)
 - Demi - large, intelligent ship that moves purposefully and slowly, but
   then strikes out decisively when it does.  has a decent array of weapons:
   - flame thrower for close range battle
   - gauss gun for long-range battle
-  - lays mines
   - EMP bomb
   has lots of defensive mechanisms:
-  - a "flare" type projectile it will shoot when a seeking mine/missile
-    approaches, which the mine/missile will seek, instead of it (but this
-    will be used only when there is a mine/missile in front of it).
+  - a "flare" type projectile it will shoot when a seeking missile
+    approaches, which the missile will seek, instead of it (but this
+    will be used only when there is a missile in front of it).
   - a non-full-circle shield that will deflect weapons (maybe with certain
     exceptions)
   - lots and lots of health
@@ -425,7 +407,6 @@ Engine2::Entity - XuqRijBuh baseclass for game-specific entity data
     |   |   +---Demi
     |   +---Explosive - CT_SOLID_COLLISION
     |       +---Grenade
-    |       +---Mine
     |       +---Missile
     |       +---EMPBomb
     +---Shield - CT_NONSOLID_COLLISION, existence controlled by the owner ship
@@ -467,16 +448,14 @@ Weapon
 +---FlameThrower    - primary: shoots Fireball          secondary: shoots Napalm
 +---GaussGun        - primary: trace/GaussGunTrail      secondary: none
 +---GrenadeLauncher - primary: shoots Grenade           secondary: detonates Grenade
-+---MineLayer       - primary: shoots Mine              secondary: guides Mine
 +---MissileLauncher - primary: shoots Missile           secondary: shoots seeking Missile
 +---EMPBombLayer    - primary: shoots EMPBomb           secondary: detonates EMPBomb
-+---AutoDestruct    - primary: blows shit up            secondary: none
 +---Tractor         - primary: pulls stuff              secondary: pushes stuff
 
 required interfaces for Weapon:
 
 - PrimaryFire (the basic firing method.  shooting peas and flames and such)
-- SecondaryFire (optional additional firing method.  detonating mines and such)
+- SecondaryFire (optional additional firing method.  detonating grenades and such)
 - GetReloadTime -- (0 for always ready)
 - GetTimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
 - GetRequiresAmmo

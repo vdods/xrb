@@ -50,8 +50,6 @@ class HealthTrigger;
 class Interloper;
 class Item;
 class LaserBeam;
-class Mine;
-class MineLayer;
 class Missile;
 class NoDamageExplosion;
 class Powerup;
@@ -118,20 +116,6 @@ Grenade *SpawnGrenade (
     Float scale_factor,
     FloatVector2 const &velocity,
     GrenadeLauncher *owner_grenade_launcher,
-    Float damage_to_inflict,
-    Float damage_radius,
-    Float explosion_radius,
-    Uint32 weapon_level,
-    EntityReference<Entity> const &owner,
-    Float health);
-
-Mine *SpawnMine (
-    Engine2::World *world,
-    Engine2::ObjectLayer *object_layer,
-    FloatVector2 const &translation,
-    Float scale_factor,
-    FloatVector2 const &velocity,
-    MineLayer *owner_mine_layer,
     Float damage_to_inflict,
     Float damage_radius,
     Float explosion_radius,

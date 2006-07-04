@@ -215,44 +215,6 @@ Grenade *SpawnGrenade (
     return grenade;
 }
 
-Mine *SpawnMine (
-    Engine2::World *const world,
-    Engine2::ObjectLayer *const object_layer,
-    FloatVector2 const &translation,
-    Float const scale_factor,
-    FloatVector2 const &velocity,
-    MineLayer *const owner_mine_layer,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
-    EntityReference<Entity> const &owner,
-    Float const health)
-{
-    Mine *mine =
-        new Mine(
-            owner_mine_layer,
-            damage_to_inflict,
-            damage_radius,
-            explosion_radius,
-            weapon_level,
-            owner,
-            health);
-    SpawnDynamicSprite(
-        world,
-        object_layer,
-        "resources/mine_small.png",
-        mine,
-        translation,
-        scale_factor,
-        Math::Atan(velocity),
-        20.0f,
-        velocity,
-        Math::RandomFloat(-30.0f, 30.0f),
-        0.1f);
-    return mine;
-}
-
 Missile *SpawnMissile (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,

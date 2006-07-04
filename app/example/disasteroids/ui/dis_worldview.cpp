@@ -145,26 +145,17 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                 m_zoom_accumulator -= 1.0f;
                 break;
 
-            case Key::ONE:
-            case Key::TWO:
-            case Key::THREE:
-            case Key::FOUR:
-            case Key::FIVE:
-            case Key::SIX:
-            case Key::SEVEN:
-            case Key::EIGHT:
-            case Key::NINE:
+            case Key::ONE:      // PeaShooter
+            case Key::TWO:      // Laser
+            case Key::THREE:    // FlameThrower
+            case Key::FOUR:     // GaussGun
+            case Key::FIVE:     // GrenadeLauncher
+            case Key::SIX:      // MissileLauncher
+            case Key::SEVEN:    // EMPCore
                 // this looks wrong, but the keys start at 1 and end at 0,
                 // and the weapon indices start at 0 and end at 9.
                 if (m_player_ship != NULL)
                     m_player_ship->SetMainWeaponNumber(e->GetKeyCode() - Key::ONE);
-                break;
-
-            case Key::ZERO:
-                // this looks wrong, but the keys start at 1 and end at 0,
-                // and the weapon indices start at 0 and end at 9.
-                if (m_player_ship != NULL)
-                    m_player_ship->SetMainWeaponNumber(9);
                 break;
 
             case Key::F1:

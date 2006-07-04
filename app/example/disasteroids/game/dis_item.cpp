@@ -34,11 +34,9 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
         case IT_WEAPON_FLAME_THROWER:         return new FlameThrower(upgrade_level);
         case IT_WEAPON_GAUSS_GUN:             return new GaussGun(upgrade_level);
         case IT_WEAPON_GRENADE_LAUNCHER:      return new GrenadeLauncher(upgrade_level);
-        case IT_WEAPON_MINE_LAYER:            return new MineLayer(upgrade_level);
         case IT_WEAPON_MISSILE_LAUNCHER:      return new MissileLauncher(upgrade_level);
         case IT_WEAPON_EMP_CORE:              return new EMPCore(upgrade_level);
 //         case IT_WEAPON_EMP_BOMB_LAYER:        return new EMPBombLayer(upgrade_level);
-        case IT_WEAPON_AUTO_DESTRUCT:         return new AutoDestruct(upgrade_level);
         case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_ENEMY_WEAPON_SLOW_BULLET_GUN: return new SlowBulletGun(upgrade_level);
         case IT_ENGINE:                       return new Engine(upgrade_level);
@@ -103,12 +101,6 @@ Uint32 Item::GetItemPrice (
             {  79,  66,  48,   0},
             { 248, 189, 161,  60},
         },
-        { // IT_WEAPON_MINE_LAYER
-            {  32,  36,   0,   0},
-            {  41,  45,  44,   0},
-            {  66,  70,  62,  65},
-            {  82,  75,  79,  81},
-        },
         { // IT_WEAPON_MISSILE_LAUNCHER
             { 117,   0,   0,   0},
             { 124,  89,   0,   0},
@@ -120,12 +112,6 @@ Uint32 Item::GetItemPrice (
             {  37,  39,   0,   0},
             {  53,  55,  61,   0},
             {  89,  77,  88, 101},
-        },
-        { // IT_WEAPON_AUTO_DESTRUCT
-            { 103,   0,   0,   0},
-            {   0, 195,   0,   0},
-            {   0,   0, 310,   0},
-            {   0,   0,   0, 451},
         },
         { // IT_WEAPON_TRACTOR
             {  10,   0,   0,   0},

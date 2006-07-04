@@ -31,10 +31,8 @@ Weapon
 +---FlameThrower    - primary: shoots Fireball          secondary: shoots Napalm
 +---GaussGun        - primary: trace/GaussGunTrail      secondary: none
 +---GrenadeLauncher - primary: shoots Grenade           secondary: detonates Grenade
-+---MineLayer       - primary: shoots Mine              secondary: guides Mine
 +---MissileLauncher - primary: shoots Missile           secondary: shoots seeking Missile
 +---EMPBombLayer    - primary: shoots EMPBomb           secondary: detonates EMPBomb
-+---AutoDestruct    - primary: blows shit up            secondary: none
 +---Tractor         - primary: pulls powerups           secondary: pulls anything
 */
 
@@ -455,80 +453,6 @@ private:
     Float m_time_last_fired;
 }; // end of class GrenadeLauncher
 
-class Mine;
-
-// - mine layer
-//   you can only have up to X mines active in the world at any given time.
-//   - level 0 : no seeking, dumb triggering, no ambient velocity matching (2 mines)
-//   - level 1 : no seeking, dumb triggering, uses ambient velocity matching (3 mines)
-//   - level 2 : dumb seeking, smart triggering, uses ambient velocity matching (4 mines)
-//   - level 3 : smart seeking, smart triggering, uses ambient velocity matching (6 mines)
-class MineLayer : public Weapon // - primary: shoots Mine / secondary: guides Mine
-{
-public:
-
-    MineLayer (Uint32 const upgrade_level)
-        :
-        Weapon(upgrade_level, IT_WEAPON_MINE_LAYER)
-    {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
-    }
-    virtual ~MineLayer ();
-
-    inline Uint32 GetActiveMineCount () const
-    {
-        return m_active_mine_set.size();
-    }
-
-    void ActiveMineDestroyed (Mine *active_mine);
-
-    // ///////////////////////////////////////////////////////////////////////
-    // Weapon interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float GetReadinessStatus (Float time) const
-    {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
-        ASSERT1(cycle_time > 0.0f)
-        ASSERT1(time_since_last_fire >= 0.0f)
-        if (time_since_last_fire > cycle_time)
-            return 1.0f;
-        else
-            return time_since_last_fire / cycle_time;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // PoweredDevice interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float GetPowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
-
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
-
-private:
-
-    typedef std::set<Mine *> ActiveMineSet;
-    typedef ActiveMineSet::iterator ActiveMineSetIterator;
-
-    static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
-    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_mine_damage_to_inflict[UPGRADE_LEVEL_COUNT];
-    static Float const ms_mine_damage_radius[UPGRADE_LEVEL_COUNT];
-    static Float const ms_mine_health[UPGRADE_LEVEL_COUNT];
-    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
-    static Uint32 const ms_max_active_mine_count[UPGRADE_LEVEL_COUNT];
-
-    ActiveMineSet m_active_mine_set;
-    Float m_time_last_fired;
-}; // end of class MineLayer
-
 class Missile;
 
 // - missile launcher
@@ -733,55 +657,6 @@ private:
     Float m_time_last_fired;
 }; // end of class EMPBombLayer
 */
-
-// - AutoDestruct - suicide attack which causes a huge explosion and does
-//   lots and lots of damage
-class AutoDestruct : public Weapon // - primary: blows shit up
-{
-public:
-
-    AutoDestruct (Uint32 const upgrade_level)
-        :
-        Weapon(upgrade_level, IT_WEAPON_AUTO_DESTRUCT)
-    {
-        m_triggered_time = -1.0f;
-    }
-    virtual ~AutoDestruct () { }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // Weapon interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float GetReadinessStatus (Float time) const
-    {
-        ASSERT1(ms_trigger_countdown_time[GetUpgradeLevel()] > 0.0f)
-        if (m_triggered_time >= 0.0f)
-            return Max(0.0f, 1.0f - (time - m_triggered_time) / ms_trigger_countdown_time[GetUpgradeLevel()]);
-        else
-            return 1.0f;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // PoweredDevice interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float GetPowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
-
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
-
-private:
-
-    static Float const ms_trigger_countdown_time[UPGRADE_LEVEL_COUNT];
-    static Float const ms_damage_amount[UPGRADE_LEVEL_COUNT];
-    static Float const ms_damage_radius[UPGRADE_LEVEL_COUNT];
-
-    Float m_triggered_time;
-}; // end of class AutoDestruct
 
 class TractorBeam;
 

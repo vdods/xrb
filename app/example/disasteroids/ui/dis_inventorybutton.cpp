@@ -89,13 +89,6 @@ Resource<GLTexture> InventoryButton::GetButtonTexture (
             "resources/button_grenade_launcher_3.png",
             "resources/button_grenade_launcher_4.png"
         },
-        // IT_WEAPON_MINE_LAYER
-        {
-            "resources/button_mine_layer_1.png",
-            "resources/button_mine_layer_2.png",
-            "resources/button_mine_layer_3.png",
-            "resources/button_mine_layer_4.png"
-        },
         // IT_WEAPON_MISSILE_LAUNCHER
         {
             "resources/button_missile_launcher_1.png",
@@ -109,13 +102,6 @@ Resource<GLTexture> InventoryButton::GetButtonTexture (
             "resources/button_emp_bomb_layer_2.png",
             "resources/button_emp_bomb_layer_3.png",
             "resources/button_emp_bomb_layer_4.png"
-        },
-        // IT_WEAPON_AUTO_DESTRUCT
-        {
-            "resources/button_auto_destruct_1.png",
-            "resources/button_auto_destruct_2.png",
-            "resources/button_auto_destruct_3.png",
-            "resources/button_auto_destruct_4.png"
         },
         // IT_WEAPON_TRACTOR
         {
@@ -185,7 +171,7 @@ void InventoryButton::SetStatus (Status const status)
 
         default:
             ASSERT1(false && "Invalid InventoryButton::Status")
-            break;            
+            break;
     }
 
 //     SetCurrentSizeParameter(m_current_size_parameter);
@@ -257,7 +243,7 @@ void InventoryButton::SetCurrentSizeParameter (Float const current_size_paramete
         FloatVector2 current_size(
             m_current_size_parameter * equipped_size +
             (1.0f - m_current_size_parameter) * unequipped_size);
-        
+
         SetContentMargins((GetSize() - current_size.StaticCast<ScreenCoord>()) / 2 - GetFrameMargins());
     }
 }

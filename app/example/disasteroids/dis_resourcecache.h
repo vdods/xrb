@@ -48,7 +48,6 @@ private:
     RESOURCE_GLTEXTURE_DECLARATION(grinder2_small)
     RESOURCE_GLTEXTURE_DECLARATION(grinder3_small)
     RESOURCE_GLTEXTURE_DECLARATION(interloper0_small)
-    RESOURCE_GLTEXTURE_DECLARATION(mine_small)
     RESOURCE_GLTEXTURE_DECLARATION(mineral_0)
     RESOURCE_GLTEXTURE_DECLARATION(mineral_1)
     RESOURCE_GLTEXTURE_DECLARATION(mineral_2)
@@ -69,7 +68,7 @@ private:
     RESOURCE_GLTEXTURE_DECLARATION(tractor_beam)
 }; // end of class ResourceCache
 
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_RESOURCECACHE_H_)
