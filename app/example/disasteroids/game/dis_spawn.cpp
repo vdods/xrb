@@ -89,7 +89,7 @@ Asteroid *SpawnAsteroid (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/asteroid.png",
+        "resources/asteroid_small.png",
         asteroid,
         translation,
         scale_factor,

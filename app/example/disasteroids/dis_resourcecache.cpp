@@ -24,7 +24,7 @@ namespace Dis
 
 ResourceCache::ResourceCache ()
 {
-    RESOURCE_GLTEXTURE_INITIALIZATION(asteroid)
+    RESOURCE_GLTEXTURE_INITIALIZATION(asteroid_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(beam_gradient_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(devourment0_small)
     RESOURCE_GLTEXTURE_INITIALIZATION(devourment1_small)

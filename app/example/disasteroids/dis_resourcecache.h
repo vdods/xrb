@@ -33,7 +33,7 @@ public:
 
 private:
 
-    RESOURCE_GLTEXTURE_DECLARATION(asteroid)
+    RESOURCE_GLTEXTURE_DECLARATION(asteroid_small)
     RESOURCE_GLTEXTURE_DECLARATION(beam_gradient_small)
     RESOURCE_GLTEXTURE_DECLARATION(devourment0_small)
     RESOURCE_GLTEXTURE_DECLARATION(devourment1_small)
