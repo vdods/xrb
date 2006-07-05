@@ -376,22 +376,6 @@
 			Name="gui"
 			>
 			<File
-				RelativePath=".\gui\xrb_font.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_font.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_fontface.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\gui\xrb_fontface.h"
-				>
-			</File>
-			<File
 				RelativePath=".\gui\xrb_gui_events.cpp"
 				>
 			</File>
@@ -547,6 +531,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_textwidget.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_textwidget.h"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_toolbarbutton.h"
 					>
 				</File>
@@ -584,6 +576,14 @@
 			Name="input"
 			>
 			<File
+				RelativePath=".\input\xrb_input.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\input\xrb_input.h"
+				>
+			</File>
+			<File
 				RelativePath=".\input\xrb_input_events.cpp"
 				>
 			</File>
@@ -597,14 +597,6 @@
 			</File>
 			<File
 				RelativePath=".\input\xrb_key.h"
-				>
-			</File>
-			<File
-				RelativePath=".\input\xrb_keybinds.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\input\xrb_keybinds.h"
 				>
 			</File>
 			<File
@@ -784,6 +776,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\render\xrb_font.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\render\xrb_font.h"
+				>
+			</File>
+			<File
+				RelativePath=".\render\xrb_fontface.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\render\xrb_fontface.h"
+				>
+			</File>
+			<File
 				RelativePath=".\render\xrb_gl.cpp"
 				>
 			</File>
@@ -889,6 +897,14 @@
 			</File>
 			<File
 				RelativePath=".\util\xrb_transformation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\util\xrb_utf8.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\xrb_utf8.h"
 				>
 			</File>
 			<File

@@ -71,10 +71,12 @@ void Screen::Draw () const
 {
     // NOTE: this method encompasses all drawing.
 
+#if !defined(WIN32)
     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1)
     ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1)
     ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1)
     ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1)
+#endif // !defined(WIN32)
 
     glClear(GL_COLOR_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -100,10 +102,12 @@ void Screen::Draw () const
     // call draw on the Widget base class.
     Widget::Draw(render_context);
 
+#if !defined(WIN32)
     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere")
     ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "You forgot to pop a GL_MODELVIEW matrix somewhere")
     ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "You forgot to pop a GL_PROJECTION matrix somewhere")
     ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "You forgot to pop a GL_TEXTURE matrix somewhere")
+#endif // !defined(WIN32)
 
     // all drawing is complete for this frame, so flush it down
     // and then swap the backbuffer.

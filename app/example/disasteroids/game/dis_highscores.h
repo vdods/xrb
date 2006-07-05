@@ -55,7 +55,7 @@ private:
 // orders by points, then wave count, then time-alive, and then date (earlier is better)
 struct ScoreOrderByPoints
 {
-    bool operator () (Score const &s0, Score const &s1)
+    bool operator () (Score const &s0, Score const &s1) const
     {
         return s0.GetPoints() > s1.GetPoints()
                ||
@@ -68,7 +68,7 @@ struct ScoreOrderByPoints
 // orders by wave count, then points, then time-alive, and then date (earlier is better)
 struct ScoreOrderByWaveCount
 {
-    bool operator () (Score const &s0, Score const &s1)
+    bool operator () (Score const &s0, Score const &s1) const
     {
         return s0.GetWaveCount() > s1.GetWaveCount()
                ||

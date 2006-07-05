@@ -117,8 +117,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\sound;..\..\..\lib\util;&quot;..\..\..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\..\..\freetype-2.1.10\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
+				StringPooling="true"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
