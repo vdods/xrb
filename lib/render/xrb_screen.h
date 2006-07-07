@@ -33,14 +33,13 @@ public:
     virtual ~Screen ();
 
     static Screen *Create (
-        EventQueue *owner_event_queue,
         ScreenCoord width,
         ScreenCoord height,
         Uint32 bit_depth,
         Uint32 flags);
 
     SignalSender0 const *SenderQuitRequested () { return &m_sender_quit_requested; }
-        
+
     // returns true if the quit condition has been hit
     bool GetIsQuitRequested () const
     {
@@ -69,7 +68,7 @@ public:
 protected:
 
     // protected constructor so that you must use Create
-    Screen (EventQueue *owner_event_queue);
+    Screen ();
 
     // this calculates one frame, called by the game loop
     virtual void ProcessFrameOverride ();

@@ -38,7 +38,7 @@ inventory screen
 
 option screen
     UI to change the various UI controls and resolution and such
-    
+
 //////////////////////////////////////////////////////////////////////////////
 
 title screen contents:
@@ -74,7 +74,7 @@ public:
 protected:
 
     virtual bool ProcessEventOverride (Event const *e);
-    
+
 private:
 
     void AcceptScore (Score const &score);
@@ -89,18 +89,16 @@ private:
 
     void ActivateGame ();
     void DeactivateGame ();
-    
+
     void ProcessKeyRepeatEvents ();
 
     // the owner event queue for Master
     EventQueue m_master_event_queue;
-    
+
     // the physical screen (and top-level widget)
     Screen *m_screen;
     // indicates if quit has been requested and the game loop should be exited
     bool m_is_quit_requested;
-    // the GUI event queue (retrieved from m_screen)
-    EventQueue *m_gui_event_queue;
     // the KeyRepeater which generates EventKeyRepeat events
     KeyRepeater m_key_repeater;
     // calculates rendering framerate
@@ -133,7 +131,7 @@ private:
 
     SignalReceiver1<Score const &> m_internal_receiver_accept_score;
     SignalReceiver1<std::string const &> m_internal_receiver_accept_name;
-    
+
     SignalReceiver0 m_internal_receiver_start_game;
     SignalReceiver0 m_internal_receiver_quit_game;
     SignalReceiver0 m_internal_receiver_end_game;

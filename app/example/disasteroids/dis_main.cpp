@@ -46,11 +46,8 @@ int main (int argc, char **argv)
     // set a window title (i dunno what the icon string is)
     SDL_WM_SetCaption("Disasteroids", "icon thingy");
 
-    // the GUI event queue
-    EventQueue gui_event_queue;
     // init the screen
     Screen *screen = Screen::Create(
-        &gui_event_queue,
         1024,
         768,
         32,

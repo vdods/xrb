@@ -47,9 +47,7 @@ Master::Master (Screen *const screen)
         &m_internal_receiver_quit_game);
     // initialize m_is_quit_requested from m_screen's
     m_is_quit_requested = m_screen->GetIsQuitRequested();
-    // steal a pointer to the GUI event queue from m_screen
-    m_gui_event_queue = m_screen->GetOwnerEventQueue();
-    ASSERT1(m_gui_event_queue != NULL)
+    ASSERT1(m_screen->GetOwnerEventQueue() != NULL)
     m_minimum_framerate = 20.0f;
     m_maximum_framerate = 60.0f;
     m_real_time = 0.0f;
@@ -67,7 +65,6 @@ Master::~Master ()
     ASSERT1(m_game_world == NULL)
     ASSERT1(m_title_screen_widget == NULL)
 
-    m_gui_event_queue = NULL;
     m_screen = NULL;
 
     SetOwnerEventQueue(NULL);
@@ -164,11 +161,11 @@ void Master::Run ()
         {
             Uint32 gui_frame_start_time = SDL_GetTicks();
             // process events from the gui event queue
-            m_gui_event_queue->ProcessFrame(m_real_time);
+            m_screen->GetOwnerEventQueue()->ProcessFrame(m_real_time);
             // frame computations for the UI/view system
             m_screen->ProcessFrame(m_real_time);
             // process events from the gui event queue again
-            m_gui_event_queue->ProcessFrame(m_real_time);
+            m_screen->GetOwnerEventQueue()->ProcessFrame(m_real_time);
             gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
         }
 
@@ -375,7 +372,7 @@ void Master::ProcessKeyRepeatEvents ()
         EventKeyRepeat *event = m_key_repeater.DequeueEvent();
         ASSERT1(event != NULL)
         // process event
-        m_gui_event_queue->EnqueueEvent(m_screen, event);
+        m_screen->GetOwnerEventQueue()->EnqueueEvent(m_screen, event);
     }
 }
 

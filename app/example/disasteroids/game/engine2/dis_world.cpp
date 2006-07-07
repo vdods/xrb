@@ -733,6 +733,10 @@ bool World::StateOutro (StateMachineInput const input)
             m_internal_sender_begin_outro.Signal();
             return true;
 
+        case IN_PLAYER_SHIP_DIED:
+            // ignore this
+            return true;
+
         case IN_END_OUTRO:
             TRANSITION_TO(StateEndGame);
             return true;
@@ -754,6 +758,10 @@ bool World::StateEndGame (StateMachineInput const input)
     {
         case SM_ENTER:
             m_sender_end_game.Signal();
+            return true;
+
+        case IN_PLAYER_SHIP_DIED:
+            // ignore this
             return true;
 
         case IN_PROCESS_FRAME:

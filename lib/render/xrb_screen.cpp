@@ -10,6 +10,7 @@
 
 #include "xrb_screen.h"
 
+#include "xrb_eventqueue.h"
 #include "xrb_gl.h"
 #include "xrb_input_events.h"
 
@@ -18,17 +19,21 @@ namespace Xrb
 
 Screen::~Screen ()
 {
+    fprintf(stderr, "Screen::~Screen();\n");
+    // because we created our own event queue in the constructor,
+    // we must delete it ourselves here in the destructor.
+    ASSERT1(GetOwnerEventQueue() != NULL)
+    delete GetOwnerEventQueue();
+    SetOwnerEventQueue(NULL);
 }
 
 Screen *Screen::Create (
-    EventQueue *const owner_event_queue,
     ScreenCoord const width,
     ScreenCoord const height,
     Uint32 const bit_depth,
     Uint32 const flags)
 {
     // maybe change these to actual code-checks and error handling
-    ASSERT1(owner_event_queue != NULL)
     ASSERT1(width > 0)
     ASSERT1(height > 0)
     ASSERT1(bit_depth > 0)
@@ -53,7 +58,7 @@ Screen *Screen::Create (
     // it is important that all the SDL video init and GL init
     // happens before this constructor, because the Widget constructor
     // is called, which loads textures and makes GL calls.
-    retval = new Screen(owner_event_queue);
+    retval = new Screen();
     // this resizing must happen before the widget skin is created.
     retval->m_current_video_resolution.SetComponents(width, height);
     retval->MoveTo(ScreenCoordVector2::ms_zero);
@@ -118,7 +123,7 @@ void Screen::Draw () const
     m_framerate_calculator.AddFrameTime(GetMostRecentFrameTime());
 }
 
-Screen::Screen (EventQueue *const owner_event_queue)
+Screen::Screen ()
     :
     Widget(NULL, "Screen"),
     m_sender_quit_requested(this)
@@ -126,9 +131,9 @@ Screen::Screen (EventQueue *const owner_event_queue)
     m_is_quit_requested = false;
     m_current_video_resolution = ScreenCoordVector2::ms_zero;
 
-    // when adding a Widget to its parent, this is done by the parent,
-    // but since Screen has no parent Widget, we must do it manually.
-    SetOwnerEventQueue(owner_event_queue);
+    // Screen creates its own EventQueue (which is the
+    // master EventQueue for all the widgets it commands).
+    SetOwnerEventQueue(new EventQueue());
 }
 
 void Screen::ProcessFrameOverride ()

@@ -79,11 +79,8 @@ int main (int argc, char **argv)
     // set a window title (i dunno what the icon string is)
     SDL_WM_SetCaption("XuqRijBuh GUI System Demo", "icon thingy");
 
-    // the GUI event queue
-    EventQueue gui_event_queue;
     // init the screen
     Screen *screen = Screen::Create(
-        &gui_event_queue,
         1024,
         768,
         32,
@@ -147,7 +144,7 @@ int main (int argc, char **argv)
                     EventKeyRepeat *event = key_repeater.DequeueEvent();
                     ASSERT1(event != NULL)
                     // process event
-                    gui_event_queue.EnqueueEvent(screen, event);
+                    screen->GetOwnerEventQueue()->EnqueueEvent(screen, event);
                 }
             }
 
@@ -159,11 +156,11 @@ int main (int argc, char **argv)
             {
                 Uint32 gui_frame_start_time = SDL_GetTicks();
                 // process events from the gui event queue
-                gui_event_queue.ProcessFrame(real_time);
+                screen->GetOwnerEventQueue()->ProcessFrame(real_time);
                 // frame computations for the UI/view system
                 screen->ProcessFrame(real_time);
                 // process events from the gui event queue again
-                gui_event_queue.ProcessFrame(real_time);
+                screen->GetOwnerEventQueue()->ProcessFrame(real_time);
                 gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
             }
 
