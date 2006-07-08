@@ -31,8 +31,8 @@ namespace Dis
 {
 
 // PeaShooter properties
-Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 3.0f, 6.0f, 10.0f };
-Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 40.0f, 60.0f, 90.0f, 150.0f };
+Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 4.0f, 10.0f, 20.0f };
+Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 40.0f, 70.0f, 120.0f, 200.0f };
 Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
 Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f, 14.0f, 16.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
@@ -44,7 +44,7 @@ Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1
 // Laser properties
 Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 175.0f, 200.0f };
 Float const Laser::ms_secondary_range[UPGRADE_LEVEL_COUNT] = { 75.0f, 80.0f, 85.0f, 90.0f };
-Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
+Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 3.0f, 3.0f, 3.0f, 3.0f };
 Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
 Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 70.0f, 130.0f, 190.0f, 250.0f };
 Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 7.0f, 14.0f, 21.0f, 28.0f };
@@ -59,10 +59,10 @@ Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f,
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
 
 // GaussGun properties
-Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 130.0f, 200.0f };
+Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 90.0f, 140.0f, 200.0f };
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
-Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.8333f, 2.333f, 2.8333f };
+Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.666f, 1.666f, 1.666f, 1.666f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
@@ -114,7 +114,7 @@ Float const Tractor::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 35.0f, 45.0f
 // ///////////////////////////////////////////////////////////////////////////
 
 // SlowBulletGun properties
-Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 5.0f, 10.0f, 20.0f, 40.0f };
+Float const SlowBulletGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 5.0f, 10.0f, 17.0f, 32.0f };
 Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.0f, 160.0f, 180.0f };
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
