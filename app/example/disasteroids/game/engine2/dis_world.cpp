@@ -80,7 +80,7 @@ static Wave const gs_wave[] =
             {  40,   0,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
-            {   3,   0,   0,   0 }, // Devourment
+            {   2,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
@@ -92,7 +92,7 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }, // Interloper
             {  35,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
-            {   3,   0,   0,   0 }, // Devourment
+            {   2,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
@@ -104,7 +104,7 @@ static Wave const gs_wave[] =
             {   0,   5,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
-            {   3,   0,   0,   0 }, // Devourment
+            {   2,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.21f,  // enemy ship threshold
@@ -116,15 +116,15 @@ static Wave const gs_wave[] =
             {  10,   0,   0,   0 }, // Interloper
             {  10,   0,   0,   0 }, // Shade
             {  10,   0,   0,   0 }, // Revulsion
-            {   3,   0,   0,   0 }, // Devourment
+            {   2,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        0.0f,   // wave intermission duration
+        5.0f,   // wave intermission duration
         false   // notify new spawns of target
     },
     {
-        {
+        { // 1ST DEMI WAVE
             {   0,   0,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
@@ -150,7 +150,7 @@ static Wave const gs_wave[] =
     {
         {
             {   0,   0,   0,   0 }, // Interloper
-            {   0,   0,   5,   0 }, // Shade
+            {   0,   0,   4,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
@@ -168,7 +168,7 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f,   // wave intermission duration
+        10.0f,  // wave intermission duration
         false   // notify new spawns of target
     },
     {
@@ -180,14 +180,14 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f,   // wave intermission duration
+        11.0f,  // wave intermission duration
         false   // notify new spawns of target
     },
-    {
+    { // wave 10
         {
-            {   0,   0,   0,   1 }, // Interloper
-            {   0,   0,   0,   1 }, // Shade
-            {   0,   0,   0,   1 }, // Revulsion
+            {   0,   0,   3,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },
@@ -204,11 +204,11 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.15f,  // enemy ship threshold
-        5.0f,   // wave intermission duration
+        8.0f,   // wave intermission duration
         false   // notify new spawns of target
     },
     {
-        {
+        { // 2ND DEMI WAVE
             {   0,   0,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
@@ -216,7 +216,7 @@ static Wave const gs_wave[] =
             {   0,   1,   0,   0 }  // Demi
         },
         0.0f,   // enemy ship threshold
-        10.0f,  // wave intermission duration
+        20.0f,  // wave intermission duration
         true    // notify new spawns of target
     },
     {
@@ -228,7 +228,7 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.2f,   // enemy ship threshold
-        2.0f,   // wave intermission duration
+        6.0f,   // wave intermission duration
         false   // notify new spawns of target
     },
     {
@@ -240,9 +240,167 @@ static Wave const gs_wave[] =
             {   0,   0,   0,   0 }  // Demi
         },
         0.2f,   // enemy ship threshold
-        2.0f,   // wave intermission duration
+        15.0f,  // wave intermission duration
         false   // notify new spawns of target
-    }
+    },
+///////////////////////
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,  20,   0,   0 }, // Revulsion
+            {   1,   1,   2,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.1f,   // enemy ship threshold
+        4.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {  10,  10,  10,   1 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   1,   2,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        8.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {  10,  10,  10,   1 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   1,   2,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        8.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {  10,  10,  10,   1 }, // Revulsion
+            {   1,   1,   2,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        8.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        { // 3RD DEMI WAVE
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   1,   1,   2,   0 }, // Devourment
+            {   0,   0,   1,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        20.0f,  // wave intermission duration
+        true    // notify new spawns of target
+    },
+    { // wave 20
+        {
+            {   0,   5,   5,   0 }, // Interloper
+            {   0,   5,   5,   0 }, // Shade
+            {   0,   5,   5,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        10.0f,  // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {  50,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.1f,   // enemy ship threshold
+        3.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   5,   0,   0 }, // Interloper
+            {   0,   0,  10,  10 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        9.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,  30,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.1f,   // enemy ship threshold
+        6.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   8,   0 }, // Interloper
+            {   0,   2,   8,   0 }, // Shade
+            {   5,   8,  12,   2 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        7.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   5 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.21f,  // enemy ship threshold
+        3.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        { // 4TH DEMI WAVE
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   1,   1,   1 }, // Devourment
+            {   0,   0,   0,   1 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        20.0f,  // wave intermission duration
+        false   // notify new spawns of target
+    }/*,
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   1,   2 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.2f,   // enemy ship threshold
+        5.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+*/
 };
 static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
 

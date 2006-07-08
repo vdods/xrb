@@ -42,12 +42,12 @@ Float const PeaShooter::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 10.0f, 10.0
 Float const PeaShooter::ms_charge_up_time[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Laser properties
-Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 185.0f, 250.0f };
-Float const Laser::ms_secondary_range[UPGRADE_LEVEL_COUNT] = { 75.0f, 100.0f, 125.0f, 150.0f };
-Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.5f, 3.0f, 3.5f };
+Float const Laser::ms_primary_range[UPGRADE_LEVEL_COUNT] = { 125.0f, 150.0f, 175.0f, 200.0f };
+Float const Laser::ms_secondary_range[UPGRADE_LEVEL_COUNT] = { 75.0f, 80.0f, 85.0f, 90.0f };
+Float const Laser::ms_secondary_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
-Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 70.0f, 140.0f, 280.0f, 560.0f };
-Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 7.0f, 14.0f, 28.0f, 56.0f };
+Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 70.0f, 130.0f, 190.0f, 250.0f };
+Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 7.0f, 14.0f, 21.0f, 28.0f };
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 // FlameThrower properties
@@ -59,7 +59,7 @@ Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f,
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
 
 // GaussGun properties
-Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 400.0f };
+Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 80.0f, 130.0f, 200.0f };
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
 Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.8333f, 2.333f, 2.8333f };
@@ -67,7 +67,7 @@ Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.333f, 1.8333f, 2.3
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };
 Float const GrenadeLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const GrenadeLauncher::ms_grenade_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 30.0f, 60.0f, 90.0f, 120.0f };
+Float const GrenadeLauncher::ms_grenade_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 30.0f, 50.0f, 70.0f, 100.0f };
 Float const GrenadeLauncher::ms_grenade_damage_radius[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 50.0f, 60.0f };
 Float const GrenadeLauncher::ms_grenade_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15.0f, 15.0f };
 Float const GrenadeLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 7.0f, 10.0f };
@@ -82,14 +82,14 @@ Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT
 Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
 Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 15.0f, 30.0f, 45.0f, 60.0f };
 Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
-Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 20.0f, 22.0f, 26.0f, 30.0f };
+Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 17.0f, 20.0f, 25.0f };
 Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 6.5f, 8.0f };
 
 // EMPCore properties
 Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
 Float const EMPCore::ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 300.0f, 400.0f, 550.0f };
-Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.5f, 0.333f, 0.2f, 0.1666f };
+Float const EMPCore::ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 250.0f, 300.0f, 375.0f };
+Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.0333f, 0.0333f, 0.0333f, 0.0333f };
 
 /*
 // EMPBombLayer properties
