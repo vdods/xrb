@@ -123,6 +123,19 @@ private:
     // ///////////////////////////////////////////////////////////////////////
 
     // ///////////////////////////////////////////////////////////////////////
+    // static constants
+
+    static Float const ms_zoom_factor_intro_begin;
+    static Float const ms_zoom_factor_non_alert_wave;
+    static Float const ms_zoom_factor_alert_wave;
+    static Float const ms_zoom_factor_outro_end;
+
+    static Float const ms_intro_duration;
+    static Float const ms_non_alert_wave_zoom_duration;
+    static Float const ms_alert_wave_zoom_duration;
+    static Float const ms_outro_duration;
+
+    // ///////////////////////////////////////////////////////////////////////
     // intro/outro vars
 
     Float m_zoom_time_total;

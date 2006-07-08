@@ -25,6 +25,16 @@ using namespace Xrb;
 namespace Dis
 {
 
+Float const WorldView::ms_zoom_factor_intro_begin = 0.05f;
+Float const WorldView::ms_zoom_factor_non_alert_wave = 0.0048f;
+Float const WorldView::ms_zoom_factor_alert_wave = 0.003f;
+Float const WorldView::ms_zoom_factor_outro_end = 0.0004f;
+
+Float const WorldView::ms_intro_duration = 2.0f;
+Float const WorldView::ms_non_alert_wave_zoom_duration = 1.5f;
+Float const WorldView::ms_alert_wave_zoom_duration = 1.5f;
+Float const WorldView::ms_outro_duration = 2.0f;
+
 WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     :
     Engine2::WorldView(parent_world_view_widget),
@@ -52,10 +62,10 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
 {
     m_zoom_time_total = 0.0f;
     m_zoom_time_left = 0.0f;
-    m_zoom_factor_begin = 0.05f;
-    m_zoom_factor_end = 0.05f;
+    m_zoom_factor_begin = ms_zoom_factor_intro_begin;
+    m_zoom_factor_end = ms_zoom_factor_intro_begin;
     m_signal_alert_zoom_done = false;
-    SetZoomFactor(0.05f);
+    SetZoomFactor(ms_zoom_factor_intro_begin);
 
     m_spin_time_total = 0.0f;
     m_spin_time_left = 0.0f;
@@ -313,7 +323,7 @@ void WorldView::ProcessFrameOverride ()
                 ship_velocity_direction = FloatVector2::ms_zero;
             else
                 ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
-            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(0.003f * m_player_ship->GetSpeed()) / 90.0f;
+            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->GetSpeed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
 
             FloatVector2 view_center_delta(traveling_at - (GetCenter() + m_view_velocity * GetFrameDT()));
@@ -474,9 +484,9 @@ void WorldView::EndGame ()
 void WorldView::SetIsAlertWave (bool const is_alert_wave)
 {
     if (is_alert_wave)
-        InitiateZoom(0.003f, 1.5f, true);
+        InitiateZoom(ms_zoom_factor_alert_wave, ms_alert_wave_zoom_duration, true);
     else
-        InitiateZoom(0.0043f, 1.5f, true);
+        InitiateZoom(ms_zoom_factor_non_alert_wave, ms_non_alert_wave_zoom_duration, true);
 }
 
 void WorldView::BeginIntro ()
@@ -623,12 +633,12 @@ bool WorldView::StateIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(0.0043f, 2.0f, false);
+            InitiateZoom(ms_zoom_factor_non_alert_wave, ms_intro_duration, false);
             m_spin_rate_end = 180.0f; // this will be used as the starting spin rate
-            InitiateSpin(0.0f, 2.0f);
+            InitiateSpin(0.0f, ms_intro_duration);
             m_fade_alpha_end = 0.0f; // this will be used as the starting alpha
-            InitiateFade(1.0f, 2.0f);
-            ScheduleStateMachineInput(IN_END_INTRO, 2.0f);
+            InitiateFade(1.0f, ms_intro_duration);
+            ScheduleStateMachineInput(IN_END_INTRO, ms_intro_duration);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
             return true;
@@ -724,10 +734,10 @@ bool WorldView::StateOutro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(0.0003f, 2.0f, false);
-            InitiateSpin(180.0f, 2.0f);
-            InitiateFade(0.0f, 2.0f);
-            ScheduleStateMachineInput(IN_END_OUTRO, 2.0f);
+            InitiateZoom(ms_zoom_factor_outro_end, ms_outro_duration, false);
+            InitiateSpin(180.0f, ms_outro_duration);
+            InitiateFade(0.0f, ms_outro_duration);
+            ScheduleStateMachineInput(IN_END_OUTRO, ms_outro_duration);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
             return true;
