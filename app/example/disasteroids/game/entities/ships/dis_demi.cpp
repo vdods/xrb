@@ -463,6 +463,10 @@ void Demi::PickWanderDirection (Float const time, Float const frame_dt)
     m_starboard_weapon = NULL;
     m_aft_weapon = NULL;
 
+    // restore the tractor think functions
+    m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
+    m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
+
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
     // pick a direction/speed to wander in
@@ -544,34 +548,40 @@ void Demi::Stalk (Float const time, Float const frame_dt)
 
     static WeightedThinkState const s_transition_near[] =
     {
-        { THINK_STATE(FlameThrowSweepStart), 2 },
-        {   THINK_STATE(MissileLaunchStart), 1 },
-        {   THINK_STATE(SpinningEnemySpawn), 2 }
+        {    THINK_STATE(FlameThrowSweepStart), 8 },
+        { THINK_STATE(SpinningInterloperSpawn), 4 }, // level 0
+        {      THINK_STATE(SpinningShadeSpawn), 2 }, // level 1
+        {      THINK_STATE(MissileLaunchStart), 3 }, // level 2
+        {  THINK_STATE(SpinningRevulsionSpawn), 1 }  // level 3
     };
-    static Uint32 const s_transition_near_count = sizeof(s_transition_near) / sizeof(WeightedThinkState);
-    static Uint32 const s_transition_near_total_weight = 5;
+    static Uint32 const s_transition_near_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
+    static Uint32 const s_transition_near_total_weight[ENEMY_LEVEL_COUNT] = { 12, 14, 17, 18 };
 
     static WeightedThinkState const s_transition_mid[] =
     {
+        {    THINK_STATE(TractorTargetCloserStart),  3 },
         {            THINK_STATE(GaussGunStartAim), 10 },
         {        THINK_STATE(FlameThrowBlastStart), 20 },
-        {          THINK_STATE(SpinningFlameThrow), 10 },
+        {          THINK_STATE(SpinningFlameThrow), 10 }, // level 0
         {       THINK_STATE(SpinningMissileLaunch), 10 },
-        { THINK_STATE(SpinningGuidedMissileLaunch),  2 },
-        {        THINK_STATE(EnemySpawnBlastStart),  3 },
-        {    THINK_STATE(TractorTargetCloserStart),  3 }
+        {   THINK_STATE(InterloperSpawnBlastStart),  4 }, // level 1
+        {        THINK_STATE(ShadeSpawnBlastStart),  2 }, // level 2
+        {    THINK_STATE(RevulsionSpawnBlastStart),  1 },
+        { THINK_STATE(SpinningGuidedMissileLaunch),  2 }  // level 3
     };
-    static Uint32 const s_transition_mid_count = sizeof(s_transition_mid) / sizeof(WeightedThinkState);
-    static Uint32 const s_transition_mid_total_weight = 58;
+    static Uint32 const s_transition_mid_count[ENEMY_LEVEL_COUNT] = { 4, 6, 7, 9 };
+    static Uint32 const s_transition_mid_total_weight[ENEMY_LEVEL_COUNT] = { 43, 57, 59, 62 };
 
     static WeightedThinkState const s_transition_far[] =
     {
-        {     THINK_STATE(EnemySpawnBlastStart),  2 },
-        { THINK_STATE(TractorTargetCloserStart),  5 },
-        {              THINK_STATE(ChargeStart), 10 }
+        {               THINK_STATE(ChargeStart), 20 },
+        {  THINK_STATE(TractorTargetCloserStart), 10 }, // level 0
+        { THINK_STATE(InterloperSpawnBlastStart),  4 }, // level 1
+        {      THINK_STATE(ShadeSpawnBlastStart),  2 }, // level 2
+        {  THINK_STATE(RevulsionSpawnBlastStart),  1 }  // level 3
     };
-    static Uint32 const s_transition_far_count = sizeof(s_transition_far) / sizeof(WeightedThinkState);
-    static Uint32 const s_transition_far_total_weight = 17;
+    static Uint32 const s_transition_far_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
+    static Uint32 const s_transition_far_total_weight[ENEMY_LEVEL_COUNT] = { 30, 34, 36, 37 };
 
     WeightedThinkState const *transition = NULL;
     Uint32 transition_count = 0;
@@ -580,20 +590,20 @@ void Demi::Stalk (Float const time, Float const frame_dt)
     if (target_distance < ms_target_near_range_distance[GetEnemyLevel()])
     {
         transition = s_transition_near;
-        transition_count = s_transition_near_count;
-        transition_total_weight = s_transition_near_total_weight;
+        transition_count = s_transition_near_count[GetEnemyLevel()];
+        transition_total_weight = s_transition_near_total_weight[GetEnemyLevel()];
     }
     else if (target_distance < ms_target_mid_range_distance[GetEnemyLevel()])
     {
         transition = s_transition_mid;
-        transition_count = s_transition_mid_count;
-        transition_total_weight = s_transition_mid_total_weight;
+        transition_count = s_transition_mid_count[GetEnemyLevel()];
+        transition_total_weight = s_transition_mid_total_weight[GetEnemyLevel()];
     }
     else
     {
         transition = s_transition_far;
-        transition_count = s_transition_far_count;
-        transition_total_weight = s_transition_far_total_weight;
+        transition_count = s_transition_far_count[GetEnemyLevel()];
+        transition_total_weight = s_transition_far_total_weight[GetEnemyLevel()];
     }
 
     ASSERT1(transition != NULL)
@@ -724,7 +734,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
             SpawnReticleEffect(
                 GetWorld(),
                 GetObjectLayer(),
-                Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
+                Color(1.0f, 0.0f, 0.0f, 0.65f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
     else if (!m_reticle_effect->GetIsInWorld())
         m_reticle_effect->AddBackIntoWorld();
@@ -733,7 +743,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     // initialize the reticle coordinates
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
         GetMuzzleLocation(m_gauss_gun),
-        0.5f * ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()]);
+        ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()]);
     SetReticleCoordinates(m_reticle_effect->GetTranslation());
 
     // transition to and call GaussGunContinueAim
@@ -831,6 +841,9 @@ void Demi::FlameThrowSweepStart (Float const time, Float const frame_dt)
     // record the time we started throwing flames
     m_start_time = time;
 
+    // disable the tractor think functions
+    m_port_tractor_think_state = NULL;
+    m_starboard_tractor_think_state = NULL;
     // transition to and call FlameThrowSweepContinue
     m_think_state = THINK_STATE(FlameThrowSweepContinue);
     FlameThrowSweepContinue(time, frame_dt);
@@ -841,6 +854,9 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_flame_throw_sweep_duration[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
+        // restore the tractor think functions
+        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
+        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -862,6 +878,9 @@ void Demi::FlameThrowBlastStart (Float const time, Float const frame_dt)
     // record the time we started throwing flames
     m_start_time = time;
 
+    // disable the tractor think functions
+    m_port_tractor_think_state = NULL;
+    m_starboard_tractor_think_state = NULL;
     // transition to and call FlameThrowBlastContinue
     m_think_state = THINK_STATE(FlameThrowBlastContinue);
     FlameThrowBlastContinue(time, frame_dt);
@@ -872,6 +891,9 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_flame_throw_blast_duration[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
+        // restore the tractor think functions
+        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
+        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -896,6 +918,9 @@ void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
     // record the time we started launching missiles
     m_start_time = time;
 
+    // disable the tractor think functions
+    m_port_tractor_think_state = NULL;
+    m_starboard_tractor_think_state = NULL;
     // transition to and call MissileLaunchContinue
     m_think_state = THINK_STATE(MissileLaunchContinue);
     MissileLaunchContinue(time, frame_dt);
@@ -906,6 +931,9 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_missile_launch_duration[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
+        // restore the tractor think functions
+        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
+        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -920,18 +948,67 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Demi::EnemySpawnBlastStart (Float const time, Float const frame_dt)
+void Demi::InterloperSpawnBlastStart (Float const time, Float const frame_dt)
 {
     m_aft_enemy_spawner->SetFireRateOverride(5.0f);
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_INTERLOPER);
     m_aft_weapon = m_aft_enemy_spawner;
     // record the time we started spawning enemies
     m_start_time = time;
-    // transition to and call EnemySpawnBlastContinue
-    m_think_state = THINK_STATE(EnemySpawnBlastContinue);
-    EnemySpawnBlastContinue(time, frame_dt);
+    // transition to and call InterloperSpawnBlastContinue
+    m_think_state = THINK_STATE(InterloperSpawnBlastContinue);
+    InterloperSpawnBlastContinue(time, frame_dt);
 }
 
-void Demi::EnemySpawnBlastContinue (Float const time, Float const frame_dt)
+void Demi::InterloperSpawnBlastContinue (Float const time, Float const frame_dt)
+{
+    if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
+    {
+        m_aft_enemy_spawner->ClearFireRateOverride();
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+}
+
+void Demi::ShadeSpawnBlastStart (Float const time, Float const frame_dt)
+{
+    m_aft_enemy_spawner->SetFireRateOverride(5.0f);
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_SHADE);
+    m_aft_weapon = m_aft_enemy_spawner;
+    // record the time we started spawning enemies
+    m_start_time = time;
+    // transition to and call ShadeSpawnBlastContinue
+    m_think_state = THINK_STATE(ShadeSpawnBlastContinue);
+    ShadeSpawnBlastContinue(time, frame_dt);
+}
+
+void Demi::ShadeSpawnBlastContinue (Float const time, Float const frame_dt)
+{
+    if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
+    {
+        m_aft_enemy_spawner->ClearFireRateOverride();
+        m_think_state = THINK_STATE(PauseStart);
+        return;
+    }
+
+    SetAftWeaponPrimaryInput(UINT8_UPPER_BOUND);
+}
+
+void Demi::RevulsionSpawnBlastStart (Float const time, Float const frame_dt)
+{
+    m_aft_enemy_spawner->SetFireRateOverride(5.0f);
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_REVULSION);
+    m_aft_weapon = m_aft_enemy_spawner;
+    // record the time we started spawning enemies
+    m_start_time = time;
+    // transition to and call RevulsionSpawnBlastContinue
+    m_think_state = THINK_STATE(RevulsionSpawnBlastContinue);
+    RevulsionSpawnBlastContinue(time, frame_dt);
+}
+
+void Demi::RevulsionSpawnBlastContinue (Float const time, Float const frame_dt)
 {
     if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
     {
@@ -991,12 +1068,53 @@ void Demi::SpinningGuidedMissileLaunch (Float const time, Float const frame_dt)
     SpinningAttackStart(time, frame_dt);
 }
 
-void Demi::SpinningEnemySpawn (Float const time, Float const frame_dt)
+void Demi::SpinningInterloperSpawn (Float const time, Float const frame_dt)
 {
     // set the appropriate weapons
     m_main_weapon = NULL;
     m_port_weapon = NULL;
     m_starboard_weapon = NULL;
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_INTERLOPER);
+    m_aft_weapon = m_aft_enemy_spawner;
+    m_spin_accelerate_through_angle = 90.0f;
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
+    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
+    ASSERT1(v > 0.0f)
+    m_spin_duration = (360.0f - 2.0f * m_spin_accelerate_through_angle) / v;
+    m_spinning_attack_uses_secondary_fire = false;
+    // transition to and call SpinningAttackStart
+    m_think_state = THINK_STATE(SpinningAttackStart);
+    SpinningAttackStart(time, frame_dt);
+}
+
+void Demi::SpinningShadeSpawn (Float const time, Float const frame_dt)
+{
+    // set the appropriate weapons
+    m_main_weapon = NULL;
+    m_port_weapon = NULL;
+    m_starboard_weapon = NULL;
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_SHADE);
+    m_aft_weapon = m_aft_enemy_spawner;
+    m_spin_accelerate_through_angle = 90.0f;
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
+    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
+    ASSERT1(v > 0.0f)
+    m_spin_duration = (360.0f - 2.0f * m_spin_accelerate_through_angle) / v;
+    m_spinning_attack_uses_secondary_fire = false;
+    // transition to and call SpinningAttackStart
+    m_think_state = THINK_STATE(SpinningAttackStart);
+    SpinningAttackStart(time, frame_dt);
+}
+
+void Demi::SpinningRevulsionSpawn (Float const time, Float const frame_dt)
+{
+    // set the appropriate weapons
+    m_main_weapon = NULL;
+    m_port_weapon = NULL;
+    m_starboard_weapon = NULL;
+    m_aft_enemy_spawner->SetEnemySpawnType(ET_REVULSION);
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
     m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
@@ -1012,7 +1130,7 @@ void Demi::SpinningEnemySpawn (Float const time, Float const frame_dt)
 
 void Demi::SpinningAttackStart (Float const time, Float const frame_dt)
 {
-    // disable the tractor beam think functions
+    // disable the tractor think functions
     m_port_tractor_think_state = NULL;
     m_starboard_tractor_think_state = NULL;
 
@@ -1084,6 +1202,7 @@ void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
     {
         SetAngularVelocity(0.0f);
         m_think_state = THINK_STATE(PauseStart);
+        // restore the tractor think functions
         m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
         m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
@@ -1118,6 +1237,7 @@ void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
+        // restore the tractor think functions
         m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
         m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;

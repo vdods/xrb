@@ -76,14 +76,14 @@ Stalk - has a target.  moving around for a better position
     if the player is close enough, goto
         FlameThrowSweepStart or
         MissileLaunchStart or
-        SpinningEnemySpawn
+        SpinningInterloperSpawn
     if the player is a mid distance away, goto
         GaussGunStartAim or
         FlameThrowBlastStart or
         SpinningFlameThrow
         SpinningMissileLaunch
         SpinningGuidedMissileLaunch
-        EnemySpawnBlastStart
+        InterloperSpawnBlastStart
         TractorTargetCloserStart
     if the player is a long distance away, goto
         GaussGunStartAim
@@ -280,12 +280,18 @@ private:
     void FlameThrowBlastContinue (Float time, Float frame_dt);
     void MissileLaunchStart (Float time, Float frame_dt);
     void MissileLaunchContinue (Float time, Float frame_dt);
-    void EnemySpawnBlastStart (Float time, Float frame_dt);
-    void EnemySpawnBlastContinue (Float time, Float frame_dt);
+    void InterloperSpawnBlastStart (Float time, Float frame_dt);
+    void InterloperSpawnBlastContinue (Float time, Float frame_dt);
+    void ShadeSpawnBlastStart (Float time, Float frame_dt);
+    void ShadeSpawnBlastContinue (Float time, Float frame_dt);
+    void RevulsionSpawnBlastStart (Float time, Float frame_dt);
+    void RevulsionSpawnBlastContinue (Float time, Float frame_dt);
     void SpinningFlameThrow (Float time, Float frame_dt);
     void SpinningMissileLaunch (Float time, Float frame_dt);
     void SpinningGuidedMissileLaunch (Float time, Float frame_dt);
-    void SpinningEnemySpawn (Float time, Float frame_dt);
+    void SpinningInterloperSpawn (Float time, Float frame_dt);
+    void SpinningShadeSpawn (Float time, Float frame_dt);
+    void SpinningRevulsionSpawn (Float time, Float frame_dt);
     void SpinningAttackStart (Float time, Float frame_dt);
     void SpinningAttackAccelerate (Float time, Float frame_dt);
     void SpinningAttackFire (Float time, Float frame_dt);
