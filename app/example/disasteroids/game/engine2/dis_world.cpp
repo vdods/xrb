@@ -243,7 +243,6 @@ static Wave const gs_wave[] =
         15.0f,  // wave intermission duration
         false   // notify new spawns of target
     },
-///////////////////////
     {
         {
             {   0,   0,   0,   0 }, // Interloper
@@ -515,10 +514,12 @@ World::World (
     m_state_machine(this),
     m_sender_submit_score(this),
     m_sender_end_game(this),
+    m_internal_sender_is_alert_wave(this),
     m_internal_sender_begin_intro(this),
     m_internal_sender_begin_death_rattle(this),
     m_internal_sender_begin_game_over(this),
     m_internal_sender_begin_outro(this),
+    m_internal_receiver_begin_wave(&World::BeginWave, this),
     m_internal_receiver_end_game(&World::EndGame, this),
     m_internal_receiver_end_intro(&World::EndIntro, this),
     m_internal_receiver_end_outro(&World::EndOutro, this)
@@ -535,6 +536,7 @@ World::World (
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
 
     m_current_wave_index = 0;
+    m_is_demi_wave = false;
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
         for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
             m_enemy_ship_count[enemy_ship_index][enemy_level] = 0;
@@ -580,10 +582,10 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
-    // connect the worldview's end game signal
-    SignalHandler::Connect0(
-        dis_world_view->SenderEndGame(),
-        &m_internal_receiver_end_game);
+    // connect the worldview's set-is-alert-wave signal
+    SignalHandler::Connect1(
+        &m_internal_sender_is_alert_wave,
+        dis_world_view->ReceiverSetIsAlertWave());
     // connect the worldview's begin intro/death-rattle/game-over/outro signals
     SignalHandler::Connect0(
         &m_internal_sender_begin_intro,
@@ -597,6 +599,14 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     SignalHandler::Connect0(
         &m_internal_sender_begin_outro,
         dis_world_view->ReceiverBeginOutro());
+    // connect the worldview's alert zoom done signal
+    SignalHandler::Connect0(
+        dis_world_view->SenderAlertZoomDone(),
+        &m_internal_receiver_begin_wave);
+    // connect the worldview's end game signal
+    SignalHandler::Connect0(
+        dis_world_view->SenderEndGame(),
+        &m_internal_receiver_end_game);
     // connect the worldview's end intro/outro signals
     SignalHandler::Connect0(
         dis_world_view->SenderEndIntro(),
@@ -641,6 +651,10 @@ bool World::StateIntro (StateMachineInput const input)
         case IN_END_INTRO:
             TRANSITION_TO(StateWaveInitialize);
             return true;
+
+        case IN_PLAYER_SHIP_DIED:
+            TRANSITION_TO(StateCheckLivesRemaining);
+            return true;
     }
     return false;
 }
@@ -672,14 +686,13 @@ bool World::StateWaveInitialize (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            if (m_current_wave_index > 0)
-                m_player_ship->IncrementWaveCount();
             m_enemy_ship_wave_total = 0;
             m_devourment_max = 0;
             m_is_demi_wave = false;
             for (Uint32 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
                 if (gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[ET_DEMI - ET_ENEMY_SHIP_LOWEST][enemy_level] > 0)
                     m_is_demi_wave = true;
+            SetIsAlertWave(m_is_demi_wave || gs_wave[m_current_wave_index].m_notify_new_spawns_of_target);
             for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
             {
                 for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
@@ -703,7 +716,22 @@ bool World::StateWaveInitialize (StateMachineInput const input)
                 }
             }
             m_enemy_ship_wave_left = m_enemy_ship_wave_total;
+            return true;
+
+        case IN_PROCESS_FRAME:
+            ProcessWaveIntermissionGameplayLogic();
+            return true;
+
+        case IN_BEGIN_WAVE:
             TRANSITION_TO(StateWaveGameplay);
+            return true;
+
+        case IN_PLAYER_SHIP_DIED:
+            TRANSITION_TO(StateCheckLivesRemaining);
+            return true;
+
+        case IN_END_GAME:
+            TRANSITION_TO(StateOutro);
             return true;
     }
     return false;
@@ -714,6 +742,11 @@ bool World::StateWaveGameplay (StateMachineInput const input)
     STATE_MACHINE_STATUS("StateWaveGameplay")
     switch (input)
     {
+        case SM_ENTER:
+            if (m_current_wave_index > 0)
+                m_player_ship->IncrementWaveCount();
+            return true;
+
         case IN_PROCESS_FRAME:
             ProcessWaveGameplayLogic();
             ASSERT1(gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f)
@@ -1033,6 +1066,12 @@ void World::ProcessCommonGameplayLogic ()
 */
 }
 
+void World::BeginWave ()
+{
+    if (m_state_machine.GetCurrentState() == &World::StateWaveInitialize)
+        ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
+}
+
 void World::EndGame ()
 {
     ScheduleStateMachineInput(IN_END_GAME, 0.0f);
@@ -1052,6 +1091,11 @@ void World::EndOutro ()
     // want to have to ignore the state machine input in each event).
     if (m_state_machine.GetCurrentState() == &World::StateOutro)
         ScheduleStateMachineInput(IN_END_OUTRO, 0.0f);
+}
+
+void World::SetIsAlertWave (bool const is_alert_wave)
+{
+    m_internal_sender_is_alert_wave.Signal(is_alert_wave);
 }
 
 Asteroid *World::SpawnAsteroidOutOfView ()

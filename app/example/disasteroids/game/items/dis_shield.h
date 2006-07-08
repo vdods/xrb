@@ -26,7 +26,7 @@ namespace Dis
 // level 0: plain old shields
 // level 1: strong against collision damage
 // level 2: damages enemies (also protects against collision damage)
-// level 3: strong against explosion damage (also damages enemies and strong 
+// level 3: strong against explosion damage (also damages enemies and strong
 //          against collision damage)
 class Shield : public PoweredDevice
 {
@@ -36,7 +36,7 @@ public:
         :
         PoweredDevice(upgrade_level, IT_SHIELD)
     {
-        m_charged_power = ms_max_charged_power[GetUpgradeLevel()];
+        m_charged_power = 0.0f;
         m_time_last_damaged = -1.0f;
     }
     virtual ~Shield () { }
@@ -82,7 +82,7 @@ public:
         Float power,
         Float time,
         Float frame_dt);
-        
+
 private:
 
     inline Float GetAvailableDamageDissipation () const

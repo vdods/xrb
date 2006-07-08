@@ -39,10 +39,12 @@ public:
     inline SignalSender0 const *SenderDeactivateInventoryPanel () { return &m_sender_deactivate_inventory_panel; }
     inline SignalSender0 const *SenderShowGameOverLabel () { return &m_sender_show_game_over_label; }
     inline SignalSender0 const *SenderHideGameOverLabel () { return &m_sender_hide_game_over_label; }
+    inline SignalSender0 const *SenderAlertZoomDone () { return &m_sender_alert_zoom_done; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
     inline SignalSender0 const *SenderEndIntro () { return &m_sender_end_intro; }
     inline SignalSender0 const *SenderEndOutro () { return &m_sender_end_outro; }
 
+    inline SignalReceiver1<bool> const *ReceiverSetIsAlertWave () { return &m_receiver_set_is_alert_wave; }
     inline SignalReceiver0 const *ReceiverEndGame () { return &m_receiver_end_game; }
     inline SignalReceiver0 const *ReceiverBeginIntro () { return &m_receiver_begin_intro; }
     inline SignalReceiver0 const *ReceiverBeginDeathRattle () { return &m_receiver_begin_death_rattle; }
@@ -51,7 +53,7 @@ public:
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline bool GetIsDebugInfoEnabled () const { return m_is_debug_mode_enabled; }
-    
+
     void SetPlayerShip (PlayerShip *player_ship);
     void SetIsDebugModeEnabled (bool is_debug_mode_enabled);
 
@@ -61,7 +63,7 @@ public:
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
     virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e);
-    
+
 protected:
 
     virtual bool ProcessEventOverride (Event const *e);
@@ -72,14 +74,22 @@ private:
     void ProcessPlayerInput ();
 
     void EndGame ();
-    
+
+    void SetIsAlertWave (bool is_alert_wave);
+
     void BeginIntro ();
     void BeginDeathRattle ();
     void BeginGameOver ();
     void BeginOutro ();
 
-    void SetIntroTimeLeft (Float intro_time_left, Float dt);
-    void SetOutroTimeLeft (Float outro_time_left, Float dt);
+    void InitiateZoom (Float target_zoom_factor, Float zoom_duration, bool signal_alert_zoom_done);
+    void ProcessZoom (Float frame_dt);
+
+    void InitiateSpin (Float target_spin_rate, Float spin_duration);
+    void ProcessSpin (Float frame_dt);
+
+    void InitiateFade (Float target_fade_alpha, Float fade_duration);
+    void ProcessFade (Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // begin state machine stuff
@@ -87,11 +97,13 @@ private:
     enum
     {
         IN_PROCESS_FRAME = 0,
-        
+
         IN_BEGIN_INTRO,
+        IN_END_INTRO,
         IN_BEGIN_DEATH_RATTLE,
         IN_BEGIN_GAME_OVER,
-        IN_BEGIN_OUTRO
+        IN_BEGIN_OUTRO,
+        IN_END_OUTRO
     };
 
     bool StatePreIntro (StateMachineInput);
@@ -106,23 +118,32 @@ private:
     void CancelScheduledStateMachineInput ();
 
     StateMachine<WorldView> m_state_machine;
-    
+
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // intro/outro vars
 
-    Float m_intro_outro_time_total;
-    Float m_intro_outro_time_left;
+    Float m_zoom_time_total;
+    Float m_zoom_time_left;
     Float m_zoom_factor_begin;
     Float m_zoom_factor_end;
-    Float m_angular_speed_begin;
-    Float m_angular_speed_end;
-    
+    bool m_signal_alert_zoom_done;
+
+    Float m_spin_time_total;
+    Float m_spin_time_left;
+    Float m_spin_rate_begin;
+    Float m_spin_rate_end;
+
+    Float m_fade_time_total;
+    Float m_fade_time_left;
+    Float m_fade_alpha_begin;
+    Float m_fade_alpha_end;
+
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship
-    
+
     PlayerShip *m_player_ship;
 
     // ///////////////////////////////////////////////////////////////////////
@@ -172,7 +193,7 @@ private:
 
     bool m_use_dvorak;
     bool m_is_debug_mode_enabled;
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // SignalSenders
 
@@ -184,6 +205,7 @@ private:
     SignalSender0 m_sender_deactivate_inventory_panel;
     SignalSender0 m_sender_show_game_over_label;
     SignalSender0 m_sender_hide_game_over_label;
+    SignalSender0 m_sender_alert_zoom_done;
     SignalSender0 m_sender_end_game;
     SignalSender0 m_sender_end_intro;
     SignalSender0 m_sender_end_outro;
@@ -192,6 +214,7 @@ private:
     // SignalReceivers
 
     SignalReceiver0 m_receiver_end_game;
+    SignalReceiver1<bool> m_receiver_set_is_alert_wave;
     SignalReceiver0 m_receiver_begin_intro;
     SignalReceiver0 m_receiver_begin_death_rattle;
     SignalReceiver0 m_receiver_begin_game_over;

@@ -57,10 +57,10 @@ PlayerShip::PlayerShip (
     m_shield = NULL;
     m_power_generator = NULL;
 
-    m_armor_status = 0.0f;
+    m_armor_status = 1.0f;
     m_shield_status = 0.0f;
-    m_power_status = 0.0f;
-    m_weapon_status = 0.0f;
+    m_power_status = 1.0f;
+    m_weapon_status = 1.0f;
 
     for (Uint32 i = 0; i < IT_COUNT; ++i)
         for (Uint32 j = 0; j < UPGRADE_LEVEL_COUNT; ++j)
@@ -93,7 +93,6 @@ PlayerShip::~PlayerShip ()
 
 Float PlayerShip::GetArmorStatus () const
 {
-
     return Max(0.0f, GetCurrentHealth() / GetMaxHealth());
 }
 

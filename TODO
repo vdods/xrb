@@ -38,6 +38,7 @@ OPENGL CONVERSION TASKS:
 DISASTEROIDS:
 - finish writing Demi
 - make Demi track the number of enemies it has spawned so it doesn't make too many
+- make Demi's gauss gun reticle way bigger (and maybe brighter)
 - make low level Demis not do certain behaviors (guided missiles), but high level Demis should
 - make Shade circle around the player one it has locked on
 - there seems to be a bug in the aiming of Shade (but only the first shot)

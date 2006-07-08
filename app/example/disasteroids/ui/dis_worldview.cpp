@@ -12,6 +12,7 @@
 
 #include "dis_entity.h"
 #include "dis_playership.h"
+#include "dis_world.h"
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_worldviewwidget.h"
@@ -38,15 +39,34 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_deactivate_inventory_panel(this),
     m_sender_show_game_over_label(this),
     m_sender_hide_game_over_label(this),
+    m_sender_alert_zoom_done(this),
     m_sender_end_game(this),
     m_sender_end_intro(this),
     m_sender_end_outro(this),
     m_receiver_end_game(&WorldView::EndGame, this),
+    m_receiver_set_is_alert_wave(&WorldView::SetIsAlertWave, this),
     m_receiver_begin_intro(&WorldView::BeginIntro, this),
     m_receiver_begin_death_rattle(&WorldView::BeginDeathRattle, this),
     m_receiver_begin_game_over(&WorldView::BeginGameOver, this),
     m_receiver_begin_outro(&WorldView::BeginOutro, this)
 {
+    m_zoom_time_total = 0.0f;
+    m_zoom_time_left = 0.0f;
+    m_zoom_factor_begin = 0.05f;
+    m_zoom_factor_end = 0.05f;
+    m_signal_alert_zoom_done = false;
+    SetZoomFactor(0.05f);
+
+    m_spin_time_total = 0.0f;
+    m_spin_time_left = 0.0f;
+    m_spin_rate_begin = 0.0f;
+    m_spin_rate_end = 0.0f;
+
+    m_fade_time_total = 0.0f;
+    m_fade_time_left = 0.0f;
+    m_fade_alpha_begin = 0.0f;
+    m_fade_alpha_end = 0.0f;
+
     m_player_ship = NULL;
 
     m_key_movement_speed_factor = 0.5f;
@@ -90,18 +110,6 @@ void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
         m_is_debug_mode_enabled = is_debug_mode_enabled;
         SetDrawBorderGridLines(m_is_debug_mode_enabled);
         m_sender_is_debug_mode_enabled_changed.Signal(m_is_debug_mode_enabled);
-
-        // effectively no zoom factor limits in debug mode
-        if (m_is_debug_mode_enabled)
-        {
-            SetMinZoomFactor(0.0f);
-            SetMaxZoomFactor(10000.0f);
-        }
-        else
-        {
-            SetMinZoomFactor(0.0025f);
-            SetMaxZoomFactor(0.0078f);
-        }
     }
 }
 
@@ -176,6 +184,19 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                     m_player_ship->SetIsInvincible(!m_player_ship->GetIsInvincible());
                 break;
 
+            case Key::F5:
+                if (m_player_ship != NULL && !m_player_ship->GetIsDead())
+                    m_player_ship->Kill(
+                        NULL,
+                        NULL,
+                        FloatVector2::ms_zero,
+                        FloatVector2::ms_zero,
+                        0.0f,
+                        Mortal::D_NONE,
+                        m_player_ship->GetWorld()->GetMostRecentFrameTime(),
+                        0.0f);
+                break;
+
             default:
                 break;
         }
@@ -195,6 +216,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     if (!GetParentWorldViewWidget()->GetIsFocused())
         return false;
 
+/*
     if (e->GetIsEitherAltKeyPressed())
     {
         // when the alt key is held down, change the view's rotation
@@ -219,6 +241,8 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
             ASSERT0(false && "Invalid mouse wheel event (button code not recognized)")
     }
     else
+    */
+    if (m_is_debug_mode_enabled)
     {
         // otherwise, change the view's zoom
 
@@ -266,6 +290,10 @@ void WorldView::ProcessFrameOverride ()
     // don't do anything if this view is hidden
     if (GetParentWorldViewWidget()->GetIsHidden())
         return;
+
+    ProcessZoom(GetFrameDT());
+    ProcessSpin(GetFrameDT());
+    ProcessFade(GetFrameDT());
 
     // update the view position
     if (m_player_ship != NULL)
@@ -443,6 +471,14 @@ void WorldView::EndGame ()
     m_sender_end_game.Signal();
 }
 
+void WorldView::SetIsAlertWave (bool const is_alert_wave)
+{
+    if (is_alert_wave)
+        InitiateZoom(0.003f, 1.5f, true);
+    else
+        InitiateZoom(0.0043f, 1.5f, true);
+}
+
 void WorldView::BeginIntro ()
 {
     ScheduleStateMachineInput(IN_BEGIN_INTRO, 0.0f);
@@ -463,38 +499,92 @@ void WorldView::BeginOutro ()
     ScheduleStateMachineInput(IN_BEGIN_OUTRO, 0.0f);
 }
 
-void WorldView::SetIntroTimeLeft (Float intro_time_left, Float const dt)
+void WorldView::InitiateZoom (Float const target_zoom_factor, Float const zoom_duration, bool const signal_alert_zoom_done)
 {
-    ASSERT1(m_intro_outro_time_total > 0.0f)
-    ASSERT1(m_zoom_factor_begin > 0.0f)
-    ASSERT1(m_zoom_factor_end > 0.0f)
-
-    if (intro_time_left < 0.0f)
-        intro_time_left = 0.0f;
-
-    m_intro_outro_time_left = intro_time_left;
-    ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
-    Float parameter = 1.0f - m_intro_outro_time_left / m_intro_outro_time_total;
-    GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
-    SetZoomFactor(m_zoom_factor_begin * (1.0f - parameter) + m_zoom_factor_end * parameter);
-    RotateView(dt * (m_angular_speed_begin * (1.0f - parameter) + m_angular_speed_end * parameter));
+    ASSERT1(target_zoom_factor > 0.0f)
+    m_zoom_factor_begin = GetZoomFactor();
+    m_zoom_factor_end = target_zoom_factor;
+    m_zoom_time_total = zoom_duration;
+    m_zoom_time_left = zoom_duration;
+    m_signal_alert_zoom_done = signal_alert_zoom_done;
 }
 
-void WorldView::SetOutroTimeLeft (Float outro_time_left, Float const dt)
+void WorldView::ProcessZoom (Float const frame_dt)
 {
-    ASSERT1(m_intro_outro_time_total > 0.0f)
     ASSERT1(m_zoom_factor_begin > 0.0f)
     ASSERT1(m_zoom_factor_end > 0.0f)
 
-    if (outro_time_left < 0.0f)
-        outro_time_left = 0.0f;
+    // don't adjust the zoom while in debug mode
+    if (m_is_debug_mode_enabled)
+        return;
 
-    m_intro_outro_time_left = outro_time_left;
-    ASSERT1(m_intro_outro_time_left <= m_intro_outro_time_total)
-    Float parameter = m_intro_outro_time_left / m_intro_outro_time_total;
-    GetParentWorldViewWidget()->SetColorMask(Color(parameter, parameter, parameter, 1.0f));
-    SetZoomFactor(m_zoom_factor_end * (1.0f - parameter) + m_zoom_factor_begin * parameter);
-    RotateView(dt * (m_angular_speed_end * (1.0f - parameter) + m_angular_speed_begin * parameter));
+    if (m_zoom_time_left < 0.0f)
+        m_zoom_time_left = 0.0f;
+
+    if (m_zoom_time_left == 0.0f)
+    {
+        SetZoomFactor(m_zoom_factor_end);
+        if (m_signal_alert_zoom_done)
+        {
+            m_sender_alert_zoom_done.Signal();
+            m_signal_alert_zoom_done = false;
+        }
+    }
+    else
+    {
+        ASSERT1(m_zoom_time_total > 0.0f)
+        ASSERT1(m_zoom_time_left <= m_zoom_time_total)
+        Float parameter = 1.0f - m_zoom_time_left / m_zoom_time_total;
+        SetZoomFactor(m_zoom_factor_begin * (1.0f - parameter) + m_zoom_factor_end * parameter);
+        m_zoom_time_left -= frame_dt;
+    }
+}
+
+void WorldView::InitiateSpin (Float const target_spin_rate, Float const spin_duration)
+{
+    m_spin_rate_begin = m_spin_rate_end;
+    m_spin_rate_end = target_spin_rate;
+    m_spin_time_total = spin_duration;
+    m_spin_time_left = spin_duration;
+}
+
+void WorldView::ProcessSpin (Float const frame_dt)
+{
+    if (m_spin_time_left < 0.0f)
+        m_spin_time_left = 0.0f;
+
+    if (m_spin_time_left == 0.0f)
+        m_spin_time_total = 1.0f;
+
+    ASSERT1(m_spin_time_total > 0.0f)
+    ASSERT1(m_spin_time_left <= m_spin_time_total)
+    Float parameter = 1.0f - m_spin_time_left / m_spin_time_total;
+    RotateView(frame_dt * (m_spin_rate_begin * (1.0f - parameter) + m_spin_rate_end * parameter));
+    m_spin_time_left -= frame_dt;
+}
+
+void WorldView::InitiateFade (Float const target_fade_alpha, Float const fade_duration)
+{
+    m_fade_alpha_begin = m_fade_alpha_end;
+    m_fade_alpha_end = target_fade_alpha;
+    m_fade_time_total = fade_duration;
+    m_fade_time_left = fade_duration;
+}
+
+void WorldView::ProcessFade (Float const frame_dt)
+{
+    if (m_fade_time_left < 0.0f)
+        m_fade_time_left = 0.0f;
+
+    if (m_fade_time_left == 0.0f)
+        m_fade_time_total = 1.0f;
+
+    ASSERT1(m_fade_time_total > 0.0f)
+    ASSERT1(m_fade_time_left <= m_fade_time_total)
+    Float parameter = 1.0f - m_fade_time_left / m_fade_time_total;
+    Float alpha = m_fade_alpha_begin * (1.0f - parameter) + m_fade_alpha_end * parameter;
+    GetParentWorldViewWidget()->SetColorMask(Color(alpha, alpha, alpha, 1.0f));
+    m_fade_time_left -= frame_dt;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -516,21 +606,6 @@ bool WorldView::StatePreIntro (StateMachineInput const input)
     STATE_MACHINE_STATUS("StatePreIntro")
     switch (input)
     {
-        case SM_ENTER:
-            // relax the min/max zoom factors
-            SetMinZoomFactor(0.0f);
-            SetMaxZoomFactor(10000.0f);
-            // set the begin/end zoom factors
-            m_zoom_factor_begin = 0.0001f;
-            m_zoom_factor_end = 0.0039f;
-            // set the begin/end angular speeds
-            m_angular_speed_begin = 180.0f;
-            m_angular_speed_end = 0.0f;
-            // initialize the intro time
-            m_intro_outro_time_total = 2.0f;
-            SetIntroTimeLeft(m_intro_outro_time_total, 0.0f);
-            return true;
-
         case IN_PROCESS_FRAME:
             // we're just waiting for the intro to begin.
             return true;
@@ -548,17 +623,26 @@ bool WorldView::StateIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
+            InitiateZoom(0.0043f, 2.0f, false);
+            m_spin_rate_end = 180.0f; // this will be used as the starting spin rate
+            InitiateSpin(0.0f, 2.0f);
+            m_fade_alpha_end = 0.0f; // this will be used as the starting alpha
+            InitiateFade(1.0f, 2.0f);
+            ScheduleStateMachineInput(IN_END_INTRO, 2.0f);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
             return true;
 
         case IN_PROCESS_FRAME:
-            SetIntroTimeLeft(m_intro_outro_time_left - GetFrameDT(), GetFrameDT());
-            if (m_intro_outro_time_left <= 0.0f)
-            {
-                m_sender_end_intro.Signal();
-                TRANSITION_TO(StateNormalGameplay);
-            }
+            return true;
+
+        case IN_END_INTRO:
+            m_sender_end_intro.Signal();
+            TRANSITION_TO(StateNormalGameplay);
+            return true;
+
+        case IN_BEGIN_DEATH_RATTLE:
+            TRANSITION_TO(StateDeathRattle);
             return true;
 
         case SM_EXIT:
@@ -577,15 +661,6 @@ bool WorldView::StateNormalGameplay (StateMachineInput const input)
     STATE_MACHINE_STATUS("StateNormalGameplay")
     switch (input)
     {
-        case SM_ENTER:
-            // set the in-game zoom factor limits
-            if (!m_is_debug_mode_enabled)
-            {
-                SetMinZoomFactor(0.0025f);
-                SetMaxZoomFactor(0.0078f);
-            }
-            break;
-
         case IN_PROCESS_FRAME:
             ProcessPlayerInput();
             return true;
@@ -649,29 +724,20 @@ bool WorldView::StateOutro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            // relax the min/max zoom factors
-            SetMinZoomFactor(0.0f);
-            SetMaxZoomFactor(10000.0f);
-            // set the begin/end zoom factors
-            m_zoom_factor_begin = GetZoomFactor();
-            m_zoom_factor_end = 0.0001f;
-            // set the begin/end angular speeds
-            m_angular_speed_begin = 0.0f;
-            m_angular_speed_end = 180.0f;
-            // initialize the outro time
-            m_intro_outro_time_total = 2.0f;
-            SetOutroTimeLeft(m_intro_outro_time_total, 0.0f);
+            InitiateZoom(0.0003f, 2.0f, false);
+            InitiateSpin(180.0f, 2.0f);
+            InitiateFade(0.0f, 2.0f);
+            ScheduleStateMachineInput(IN_END_OUTRO, 2.0f);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
             return true;
 
         case IN_PROCESS_FRAME:
-            SetOutroTimeLeft(m_intro_outro_time_left - GetFrameDT(), GetFrameDT());
-            if (m_intro_outro_time_left <= 0.0f)
-            {
-                m_sender_end_outro.Signal();
-                TRANSITION_TO(StatePostOutro);
-            }
+            return true;
+
+        case IN_END_OUTRO:
+            m_sender_end_outro.Signal();
+            TRANSITION_TO(StatePostOutro);
             return true;
     }
     return false;

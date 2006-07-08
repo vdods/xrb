@@ -106,6 +106,7 @@ private:
 
         IN_BEGIN_INTRO,
         IN_END_INTRO,
+        IN_BEGIN_WAVE,
         IN_END_WAVE,
         IN_END_WAVE_INTERMISSION,
         IN_PLAYER_SHIP_DIED,
@@ -143,9 +144,13 @@ private:
     void ProcessWaveIntermissionGameplayLogic ();
     void ProcessCommonGameplayLogic ();
 
+    void BeginWave ();
+
     void EndGame ();
     void EndIntro ();
     void EndOutro ();
+
+    void SetIsAlertWave (bool is_alert_wave);
 
     Asteroid *SpawnAsteroidOutOfView ();
     EnemyShip *SpawnEnemyShipOutOfView (
@@ -192,11 +197,13 @@ private:
     SignalSender1<Score const &> m_sender_submit_score;
     SignalSender0 m_sender_end_game;
 
+    SignalSender1<bool> m_internal_sender_is_alert_wave;
     SignalSender0 m_internal_sender_begin_intro;
     SignalSender0 m_internal_sender_begin_death_rattle;
     SignalSender0 m_internal_sender_begin_game_over;
     SignalSender0 m_internal_sender_begin_outro;
 
+    SignalReceiver0 m_internal_receiver_begin_wave;
     SignalReceiver0 m_internal_receiver_end_game;
     SignalReceiver0 m_internal_receiver_end_intro;
     SignalReceiver0 m_internal_receiver_end_outro;
