@@ -10,12 +10,15 @@
 
 #include "xrb.h"
 
+#include <iostream>
 #include <stdio.h>
 
 #include "dis_master.h"
+#include "dis_options.h"
 #include "xrb_eventqueue.h"
 #include "xrb_screen.h"
 
+using namespace std;
 using namespace Xrb;
 
 // exit handler
@@ -32,45 +35,55 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
 
-    Singletons::Initialize();
-
-    // initialize video (no parachute so we get core dumps)
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        exit(-1);
+        Dis::Options options(argc, argv);
+        if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
+        {
+            options.PrintHelpMessage(cerr);
+            return options.GetParseSucceeded() ? 0 : 1;
+        }
+
+        Singletons::Initialize();
+
+        // initialize video (no parachute so we get core dumps)
+        if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
+        {
+            fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
+            return 2;
+        }
+
+        // register on-exit function. SDL_Quit takes care of deleting the
+        // screen.  the function registered with atexit will be called
+        // after main() has returned.
+        atexit(Exit);
+        // set a window title (i dunno what the icon string is)
+        SDL_WM_SetCaption("Disasteroids", "icon thingy");
+
+        // init the screen
+        Screen *screen = Screen::Create(
+            options.GetResolution()[Dim::X],
+            options.GetResolution()[Dim::Y],
+            32,
+            (options.GetFullscreen() ? SDL_FULLSCREEN : 0));
+        if (screen == NULL)
+        {
+            fprintf(stderr, "unable to initialize video mode\n");
+            return 3;
+        }
+
+        // create and run the game
+        {
+            Dis::Master master(screen);
+            master.Run();
+        }
+
+        Delete(screen);
+
+        Singletons::Shutdown();
     }
-
-    // register on-exit function. SDL_Quit takes care of deleting the screen
-    atexit(Exit);
-    // set a window title (i dunno what the icon string is)
-    SDL_WM_SetCaption("Disasteroids", "icon thingy");
-
-    // init the screen
-    Screen *screen = Screen::Create(
-        1024,
-        768,
-        32,
-        (argc == 1 ? SDL_FULLSCREEN : 0)); // temp hacky way to specify fullscreen from the commandline
-    if (screen == NULL)
-    {
-        fprintf(stderr, "unable to initialize video mode\n");
-        exit(-2);
-    }
-
-    // create and run the game
-    {
-        Dis::Master master(screen);
-
-        master.Run();
-    }
-
-    Delete(screen);
-
-    Singletons::Shutdown();
 
     // return with no error condition
-    exit(0);
+    return 0;
 }
 
 /*

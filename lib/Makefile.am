@@ -84,6 +84,7 @@ libxrb_la_SOURCES = \
     util/xrb_bitcache.cpp \
     util/xrb_bitcachedfile.cpp \
     util/xrb_characterfilter.cpp \
+    util/xrb_commandlineparser.cpp \
     util/xrb_frameratecalculator.cpp \
     util/xrb_indentformatter.cpp \
     util/xrb_tokenizer.cpp \
@@ -235,6 +236,7 @@ include_HEADERS = \
     util/xrb_bitcache.h \
     util/xrb_bitcachedfile.h \
     util/xrb_characterfilter.h \
+    util/xrb_commandlineparser.h \
     util/xrb_frameratecalculator.h \
     util/xrb_indentformatter.h \
     util/xrb_reference.h \

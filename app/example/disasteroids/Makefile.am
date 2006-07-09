@@ -4,6 +4,7 @@ bin_PROGRAMS = \
 disasteroids_SOURCES = \
     dis_main.cpp \
     dis_master.cpp \
+    dis_options.cpp \
     dis_resourcecache.cpp \
     game/dis_highscores.cpp \
     game/dis_item.cpp \
@@ -47,6 +48,7 @@ noinst_HEADERS = \
     dis_enums.h \
     dis_events.h \
     dis_master.h \
+    dis_options.h \
     dis_resourcecache.h \
     game/dis_highscores.h \
     game/dis_item.h \
