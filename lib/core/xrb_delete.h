@@ -37,9 +37,9 @@ inline void Delete (T *&pointer)
         pointer != reinterpret_cast<T *>(0xFBADFACE) &&
         "This pointer has already been deleted")
     delete pointer;
-#if DEBUG_LEVEL > 0
+#if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T *>(0xFBADFACE);
-#endif // DEBUG_LEVEL > 0
+#endif // XRB_DEBUG_LEVEL > 0
 }
 
 /** In debug builds, the pointer is checked for the special "bad" value
@@ -57,9 +57,9 @@ inline void Delete (T const *&pointer)
         pointer != reinterpret_cast<T const *>(0xFBADFACE) &&
         "This pointer has already been deleted")
     delete pointer;
-#if DEBUG_LEVEL > 0
+#if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T const *>(0xFBADFACE);
-#endif // DEBUG_LEVEL > 0
+#endif // XRB_DEBUG_LEVEL > 0
 }
 
 /** In debug builds, the pointer is checked for the special "bad" value
@@ -77,9 +77,9 @@ inline void DeleteArray (T *&pointer)
         pointer != reinterpret_cast<T *>(0xFBADFACE) &&
         "This pointer has already been deleted")
     delete[] pointer;
-#if DEBUG_LEVEL > 0
+#if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T *>(0xFBADFACE);
-#endif // DEBUG_LEVEL > 0
+#endif // XRB_DEBUG_LEVEL > 0
 }
 
 /** In debug builds, the pointer is checked for the special "bad" value
@@ -97,9 +97,9 @@ inline void DeleteArray (T const *&pointer)
         pointer != reinterpret_cast<T const *>(0xFBADFACE) &&
         "This pointer has already been deleted")
     delete[] pointer;
-#if DEBUG_LEVEL > 0
+#if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T const *>(0xFBADFACE);
-#endif // DEBUG_LEVEL > 0
+#endif // XRB_DEBUG_LEVEL > 0
 }
 
 /** This deletion function should be used when the pointer needs to be reset

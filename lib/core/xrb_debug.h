@@ -14,9 +14,9 @@
 // don't include xrb.h here, because xrb.h includes this file.
 
 // debugging level (determines which asserts are compiled in/out)
-#if !defined(DEBUG_LEVEL)
-    #define DEBUG_LEVEL 3
-#endif // !defined(DEBUG_LEVEL)
+#if !defined(XRB_DEBUG_LEVEL)
+    #define XRB_DEBUG_LEVEL 3
+#endif // !defined(XRB_DEBUG_LEVEL)
 
 // make sure NDEBUG is not defined (used to compile out assert())
 #if defined(NDEBUG)
@@ -24,28 +24,28 @@
 #endif // defined(NDEBUG)
 
 // macro which allows an expression to easily be compiled out
-// for non debug builds (for DEBUG_LEVEL < 1)
-#if DEBUG_LEVEL >= 1
+// for non debug builds (for XRB_DEBUG_LEVEL < 1)
+#if XRB_DEBUG_LEVEL >= 1
     #define DEBUG1_CODE(x) x
-#else // DEBUG_LEVEL < 1
+#else // XRB_DEBUG_LEVEL < 1
     #define DEBUG1_CODE(x)
-#endif // DEBUG_LEVEL < 1
+#endif // XRB_DEBUG_LEVEL < 1
 
 // macro which allows an expression to easily be compiled out
-// for non debug builds (for DEBUG_LEVEL < 2)
-#if DEBUG_LEVEL >= 2
+// for non debug builds (for XRB_DEBUG_LEVEL < 2)
+#if XRB_DEBUG_LEVEL >= 2
     #define DEBUG2_CODE(x) x
-#else // DEBUG_LEVEL < 2
+#else // XRB_DEBUG_LEVEL < 2
     #define DEBUG2_CODE(x)
-#endif // DEBUG_LEVEL < 2
+#endif // XRB_DEBUG_LEVEL < 2
 
 // macro which allows an expression to easily be compiled out
-// for non debug builds (for DEBUG_LEVEL < 3)
-#if DEBUG_LEVEL >= 3
+// for non debug builds (for XRB_DEBUG_LEVEL < 3)
+#if XRB_DEBUG_LEVEL >= 3
     #define DEBUG3_CODE(x) x
-#else // DEBUG_LEVEL < 3
+#else // XRB_DEBUG_LEVEL < 3
     #define DEBUG3_CODE(x)
-#endif // DEBUG_LEVEL < 3
+#endif // XRB_DEBUG_LEVEL < 3
 
 #endif // !defined(_XRB_DEBUG_H_)
 

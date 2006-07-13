@@ -37,6 +37,14 @@ AC_ARG_ENABLE(
     [DEBUG_ENABLED="yes"],
     [DEBUG_ENABLED="no"])
 
+AC_ARG_WITH(
+    [debug-level],
+    AC_HELP_STRING(
+        [--with-debug-level=N],
+        [sets assert level -- 0 for fewest asserts, up to 3 for all asserts -- default is 3]),
+    [DEBUG_LEVEL_VAL=$withval],
+    [DEBUG_LEVEL_VAL=3])
+
 AC_ARG_ENABLE(
     [gprof],
     AC_HELP_STRING(
@@ -140,7 +148,37 @@ fi
 
 if test "${GPROF_ENABLED}" = "yes"; then
     # setting DEBUG_LEVEL to 0 so asserts are not compiled in
-    CXXFLAGS="${CXXFLAGS} -pg -fprofile-arcs -DDEBUG_LEVEL=0 -g3"
+    DEBUG_LEVEL_VAL=0
+    # adding compiler flags necessary for gprof
+    CXXFLAGS="${CXXFLAGS} -pg -fprofile-arcs -g3"
+fi
+
+# this is utterly retarded, but AC_DEFINE([DEBUG_LEVEL],${DEBUG_LEVEL_VAL}) 
+# doesn't work.  fuck this retarded macro language.
+if test "${DEBUG_LEVEL_VAL}" = "0"; then
+    AC_DEFINE(
+        [XRB_DEBUG_LEVEL],
+        [0],
+        [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
+else 
+if test "${DEBUG_LEVEL_VAL}" = "1"; then
+    AC_DEFINE(
+        [XRB_DEBUG_LEVEL],
+        [1],
+        [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
+else 
+if test "${DEBUG_LEVEL_VAL}" = "2"; then
+    AC_DEFINE(
+        [XRB_DEBUG_LEVEL],
+        [2],
+        [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
+else
+    AC_DEFINE(
+        [XRB_DEBUG_LEVEL],
+        [3],
+        [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
+fi
+fi
 fi
 
 if test "${BITARRAY_USES_MEMCMP}" = "yes"; then
