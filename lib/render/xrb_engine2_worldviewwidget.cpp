@@ -26,6 +26,7 @@ Engine2::WorldViewWidget::WorldViewWidget (
     ASSERT1(parent != NULL)
 
     m_transform = FloatSimpleTransform2::ms_identity;
+    m_is_transform_scaling_based_upon_widget_radius = false;
 
     m_draw_focus_frame = true;
     m_accepts_focus = true;
@@ -58,6 +59,18 @@ void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_vie
     }
     Delete(m_world_view);
     m_world_view = world_view;
+    SetIsTransformScalingBasedUponWidgetRadius(m_world_view->GetIsTransformScalingBasedUponWidgetRadius());
+}
+
+void Engine2::WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
+{
+    if (m_is_transform_scaling_based_upon_widget_radius != is_transform_scaling_based_upon_widget_radius)
+    {
+        m_is_transform_scaling_based_upon_widget_radius = is_transform_scaling_based_upon_widget_radius;
+        if (m_world_view != NULL)
+            m_world_view->SetIsTransformScalingBasedUponWidgetRadius(m_is_transform_scaling_based_upon_widget_radius);
+        ComputeTransform();
+    }
 }
 
 void Engine2::WorldViewWidget::Draw (RenderContext const &render_context) const
@@ -156,7 +169,10 @@ void Engine2::WorldViewWidget::ComputeTransform ()
     // scale 1 unit up to the smaller of width or height.
     // the 0.5f factor is because normally the viewport maps to the rect
     // (-1, -1) to (1, 1)
-    m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), GetHeight())));
+    if (m_is_transform_scaling_based_upon_widget_radius)
+        m_transform.Scale(0.5f * GetSize().StaticCast<Float>().GetLength());
+    else
+        m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), GetHeight())));
     // translate so the origin of the view is at the center of the
     // WorldViewWidget widget
     m_transform.Translate(GetScreenRect().GetCenter().StaticCast<Float>());

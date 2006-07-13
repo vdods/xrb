@@ -25,10 +25,10 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const WorldView::ms_zoom_factor_intro_begin = 0.05f;
-Float const WorldView::ms_zoom_factor_non_alert_wave = 0.0048f;
-Float const WorldView::ms_zoom_factor_alert_wave = 0.003f;
-Float const WorldView::ms_zoom_factor_outro_end = 0.0004f;
+Float const WorldView::ms_zoom_factor_intro_begin = 0.03f;//0.05f;
+Float const WorldView::ms_zoom_factor_non_alert_wave = 0.00288f;//0.0048f;
+Float const WorldView::ms_zoom_factor_alert_wave = 0.0018f;//0.003f;
+Float const WorldView::ms_zoom_factor_outro_end = 0.00024f;//0.0004f;
 
 Float const WorldView::ms_intro_duration = 2.0f;
 Float const WorldView::ms_non_alert_wave_zoom_duration = 1.5f;
@@ -96,6 +96,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_use_dvorak = false;
     m_is_debug_mode_enabled = false;
     SetDrawBorderGridLines(m_is_debug_mode_enabled);
+    SetIsTransformScalingBasedUponWidgetRadius(true);
 
     m_state_machine.Initialize(&WorldView::StatePreIntro);
 }

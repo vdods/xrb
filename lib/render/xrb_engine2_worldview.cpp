@@ -42,6 +42,7 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_is_view_locked = false;
     m_is_gl_projection_matrix_in_use = false;
     m_draw_border_grid_lines = false;
+    m_is_transform_scaling_based_upon_widget_radius = false;
 
     m_is_parallaxed_world_to_view_dirty = true;
     m_is_parallaxed_view_to_world_dirty = true;
@@ -86,7 +87,6 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
             GetCenter())
         *
         GetParallaxFactor(
-//             GetViewDepth(object_layer), // this seems wrong, because the view depth is derived from the main object layer
             GetViewDepth(GetMainObjectLayer()),
             object_layer->GetZDepth());
 }
@@ -217,6 +217,15 @@ void Engine2::WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
     m_max_zoom_factor = max_zoom_factor;
     // attempt to use the current zoom factor
     SetZoomFactor(m_zoom_factor);
+}
+
+void Engine2::WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
+{
+    if (m_is_transform_scaling_based_upon_widget_radius != is_transform_scaling_based_upon_widget_radius)
+    {
+        m_is_transform_scaling_based_upon_widget_radius = is_transform_scaling_based_upon_widget_radius;
+        GetParentWorldViewWidget()->SetIsTransformScalingBasedUponWidgetRadius(m_is_transform_scaling_based_upon_widget_radius);
+    }
 }
 
 void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
@@ -630,16 +639,25 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
 
     // viewport perspective correction - this effectively takes
     // the place of the view-to-screen transform.
-    Float min_viewport_size =
-        static_cast<Float>(
-            Min(render_context.GetClipRect().GetSize()[Dim::X],
-                render_context.GetClipRect().GetSize()[Dim::Y]));
-    glScalef(
-        min_viewport_size /
-        render_context.GetClipRect().GetSize()[Dim::X],
-        min_viewport_size /
-        render_context.GetClipRect().GetSize()[Dim::Y],
-        1.0f);
+    if (m_is_transform_scaling_based_upon_widget_radius)
+    {
+        Float viewport_radius = render_context.GetClipRect().GetSize().StaticCast<Float>().GetLength();
+        glScalef(
+            viewport_radius / render_context.GetClipRect().GetSize()[Dim::X],
+            viewport_radius / render_context.GetClipRect().GetSize()[Dim::Y],
+            1.0f);
+    }
+    else
+    {
+        Float min_viewport_size =
+            static_cast<Float>(
+                Min(render_context.GetClipRect().GetSize()[Dim::X],
+                    render_context.GetClipRect().GetSize()[Dim::Y]));
+        glScalef(
+            min_viewport_size / render_context.GetClipRect().GetSize()[Dim::X],
+            min_viewport_size / render_context.GetClipRect().GetSize()[Dim::Y],
+            1.0f);
+    }
 
     // perform the view parallaxing transformation
     Float parallax_factor =

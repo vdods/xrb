@@ -22,9 +22,9 @@ namespace Xrb
 
 namespace Engine2
 {
-    
+
     class WorldView;
-    
+
     // The WorldViewWidget class serves as the viewport-size-dependent intermediary
     // between WorldView and Screen which will manage drawing the WorldView in
     // the correct position (also allowing for multiple WorldViews in one
@@ -33,13 +33,13 @@ namespace Engine2
     class WorldViewWidget : public Widget
     {
     public:
-    
+
         WorldViewWidget (
             WorldView *world_view,
             Widget *parent,
             std::string const &name = "Engine2::WorldViewWidget");
         virtual ~WorldViewWidget ();
-    
+
         inline WorldView *GetWorldView ()
         {
             return m_world_view;
@@ -52,10 +52,15 @@ namespace Engine2
         {
             return m_transform;
         }
-    
+        inline bool GetIsTransformScalingBasedUponWidgetRadius () const
+        {
+            return m_is_transform_scaling_based_upon_widget_radius;
+        }
+
         // sets the world_view to the given one, deleting the current one if not null
         void SetWorldView (WorldView *world_view);
-    
+        void SetIsTransformScalingBasedUponWidgetRadius (bool is_transform_scaling_based_upon_widget_radius);
+
         // draws the contents of the world view
         virtual void Draw (RenderContext const &render_context) const;
         // overridden MoveBy so that m_dirty can be set and the transform
@@ -64,9 +69,9 @@ namespace Engine2
         // overridden Resize so that m_dirty can be set and the transform
         // updated correctly
         virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);
-    
+
     protected:
-    
+
         // this calculates one frame, called by the game loop
         virtual void ProcessFrameOverride ();
         // process a key event
@@ -80,21 +85,26 @@ namespace Engine2
 
         virtual void HandleFocus ();
         virtual void HandleUnfocus ();
-        
+
         // draws the inside border of the widget
         void DrawFocusFrame (RenderContext const &render_context) const;
         // recomputes the Transform2 with the new virtual rect size
         void ComputeTransform ();
-    
+
         // indicates wether or not to draw the focus frame
         bool m_draw_focus_frame;
-    
+
     private:
-    
+
         // the attached world_view
         WorldView *m_world_view;
         // gives the transformation from WorldView coordinates to Screen coordinates.
         FloatSimpleTransform2 m_transform;
+        // if true, indicates the WorldView -> WorldViewWidget transform scaling is
+        // based upon the widget radius (1/2 of its diagonal length).  otherwise,
+        // indicates said scaling is based upon the smaller of the widget's height
+        // and width.
+        bool m_is_transform_scaling_based_upon_widget_radius;
     }; // end of class Engine2::WorldViewWidget
 
 } // end of namespace Engine2
