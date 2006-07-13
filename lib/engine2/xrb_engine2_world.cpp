@@ -56,6 +56,11 @@ Engine2::World::~World ()
         Delete(object_layer);
     }
     m_object_layer_list.clear();
+
+    // we have to un-set the owner EventQueue, because EventHandler
+    // tries to use it in its destructor (which would be bad, because
+    // it goes bye-bye at the end of this destructor).
+    SetOwnerEventQueue(NULL);
 }
 
 Engine2::World *Engine2::World::Create (

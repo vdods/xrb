@@ -864,6 +864,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\xrb_commandlineparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\xrb_commandlineparser.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\xrb_frameratecalculator.cpp"
 				>
 			</File>

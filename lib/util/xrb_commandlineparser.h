@@ -28,6 +28,9 @@
 #define OPTION_HEADER(text) { '\n', "", NO_PARAMETER, NULL, text }
 #define OPTION_HANDLER(method) static_cast<void (CommandLineParser::*)(string const &)>(method)
 
+namespace Xrb
+{
+
 struct CommandLineOption;
 
 class CommandLineParser
@@ -88,5 +91,7 @@ struct CommandLineOption
     HandlerFunction m_handler_function;
     std::string m_description;
 }; // end of struct CommandLineOption
+
+} // end of namespace Xrb
 
 #endif // !defined(_XRB_COMMANDLINEPARSER_H_)

@@ -540,6 +540,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\dis_options.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\dis_options.h"
+			>
+		</File>
+		<File
 			RelativePath=".\dis_resourcecache.cpp"
 			>
 		</File>
