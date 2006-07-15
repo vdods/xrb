@@ -65,6 +65,9 @@ libxrb_la_SOURCES = \
     math/xrb_transform2.cpp \
     math/xrb_vector.cpp \
     \
+    parsers/xrb_datafilescanner.cpp \
+    parsers/xrb_datafilevalue.cpp \
+    \
     primitive/xrb_color.cpp \
     primitive/xrb_gltexture.cpp \
     primitive/xrb_ntuple.cpp \
@@ -117,17 +120,17 @@ libxrb_la_SOURCES = \
 #    \
 #
 
-libxrb_la_LIBADD = \
-    libdatafileparser.la \
-    liblinecalculatorparser.la
+#libxrb_la_LIBADD = \
+#    libdatafileparser.la
+#    liblinecalculatorparser.la
 
 ##############################################################################
 # the intermediate libraries shouldn't be intalled.
 ##############################################################################
 
-noinst_LTLIBRARIES = \
-    libdatafileparser.la \
-    liblinecalculatorparser.la
+#noinst_LTLIBRARIES = \
+#    libdatafileparser.la
+#    liblinecalculatorparser.la
 
 ##############################################################################
 # these headers will be installed in $(prefix)/include/xrb/
@@ -213,6 +216,11 @@ include_HEADERS = \
     math/xrb_transform2.h \
     math/xrb_vector.h \
     \
+    parsers/xrb_datafile.h \
+    parsers/xrb_datafilescanner.h \
+    parsers/xrb_datafilevalue.h \
+    parsers/xrb_linecalculator.h \
+    \
     primitive/xrb_bitarray.h \
     primitive/xrb_bitarray.tcpp \
     primitive/xrb_circularqueue.h \
@@ -244,11 +252,7 @@ include_HEADERS = \
     util/xrb_transformation.h \
     util/xrb_utf8.h \
     util/xrb_util.h \
-    util/xrb_validator.h \
-    \
-    parsers/xrb_datafile.h \
-    parsers/xrb_datafilevalue.h \
-    parsers/xrb_linecalculator.h
+    util/xrb_validator.h
 
 # the compression stuff is temporarily out of service
 #    core/serializers/xrb_compressionserializer.h \
@@ -281,24 +285,24 @@ include_HEADERS = \
 # to be separate and have to have special flags for lex and yacc
 ##############################################################################
 
-libdatafileparser_la_SOURCES = \
-    parsers/datafile/xrb_datafileparser.ypp \
-    parsers/datafile/xrb_datafilescanner.lpp \
-    parsers/xrb_datafile.cpp \
-    parsers/xrb_datafilevalue.cpp
-libdatafileparser_la_YFLAGS = \
-    -d -v -p DataFile_
-libdatafileparser_la_LFLAGS = \
-    --prefix DataFile_ --outfile=lex.yy.c
+#libdatafileparser_la_SOURCES = \
+#    parsers/datafile/xrb_datafileparser.ypp \
+#    parsers/datafile/xrb_datafilescanner.lpp \
+#    parsers/xrb_datafile.cpp \
+#    parsers/xrb_datafilevalue.cpp
+#libdatafileparser_la_YFLAGS = \
+#    -d -v -p DataFile_
+#libdatafileparser_la_LFLAGS = \
+#    --prefix DataFile_ --outfile=lex.yy.c
 
-liblinecalculatorparser_la_SOURCES = \
-    parsers/linecalculator/xrb_linecalculatorparser.ypp \
-    parsers/linecalculator/xrb_linecalculatorscanner.lpp \
-    parsers/xrb_linecalculator.cpp
-liblinecalculatorparser_la_YFLAGS = \
-    -d -v -p LineCalculator_
-liblinecalculatorparser_la_LFLAGS = \
-    --prefix LineCalculator_ --outfile=lex.yy.c
+#liblinecalculatorparser_la_SOURCES = \
+#    parsers/linecalculator/xrb_linecalculatorparser.ypp \
+#    parsers/linecalculator/xrb_linecalculatorscanner.lpp \
+#    parsers/xrb_linecalculator.cpp
+#liblinecalculatorparser_la_YFLAGS = \
+#    -d -v -p LineCalculator_
+#liblinecalculatorparser_la_LFLAGS = \
+#    --prefix LineCalculator_ --outfile=lex.yy.c
 
 ##############################################################################
 # general preprocessor and linker flags

@@ -86,6 +86,22 @@ char *Util::StringDuplicate (char const *string_to_duplicate)
     return duplicated_string;
 }
 
+void Util::MakeLowercase (std::string *const str)
+{
+    ASSERT1(str != NULL)
+    for (Uint32 i = 0; i < str->length(); ++i)
+        if ((*str)[i] >= 'A' && (*str)[i] <= 'Z')
+            (*str)[i] += 'a' - 'A';
+}
+
+void Util::MakeUppercase (std::string *const str)
+{
+    ASSERT1(str != NULL)
+    for (Uint32 i = 0; i < str->length(); ++i)
+        if ((*str)[i] >= 'a' && (*str)[i] <= 'z')
+            (*str)[i] += 'A' - 'a';
+}
+
 char Util::GetShiftedAscii (char const c)
 {
     static char const ascii_to_shifted_ascii[128] =
@@ -111,9 +127,9 @@ char Util::GetShiftedAscii (char const c)
     return (c >= 0) ? ascii_to_shifted_ascii[(Uint32)c] : '\0';
 }
 
-bool Util::GetDoesCharacterNeedEscaping (char character)
+bool Util::GetDoesCharacterNeedEscaping (char c)
 {
-    switch (character)
+    switch (c)
     {
         case '\0':
         case '\a':
@@ -125,14 +141,13 @@ bool Util::GetDoesCharacterNeedEscaping (char character)
         case '\r':
         case '\\':
         case '\"': return true;
-
         default  : return false;
     }
 }
 
-char Util::GetEscapeCharacter (char const character)
+char Util::GetEscapedCharacter (char const c)
 {
-    switch (character)
+    switch (c)
     {
         case '\0': return '0';
         case '\a': return 'a';
@@ -142,16 +157,13 @@ char Util::GetEscapeCharacter (char const character)
         case '\v': return 'v';
         case '\f': return 'f';
         case '\r': return 'r';
-        case '\\': return '\\';
-        case '\"': return '"';
-
-        default  : return character;
+        default  : return c;
     }
 }
 
-char Util::GetEscapedCharacter (char const escape_code)
+char Util::GetEscapedCharacterBase (char const c)
 {
-    switch (escape_code)
+    switch (c)
     {
         case '0' : return '\0';
         case 'a' : return '\a';
@@ -161,11 +173,37 @@ char Util::GetEscapedCharacter (char const escape_code)
         case 'v' : return '\v';
         case 'f' : return '\f';
         case 'r' : return '\r';
-        case '\\': return '\\';
-        case '"' : return '\"';
+        default  : return c;
     }
+}
 
-    return escape_code;
+std::string Util::GetEscapedCharacterString (char const c)
+{
+    switch (c)
+    {
+        case '\0': return "\\0";
+        case '\a': return "\\a";
+        case '\b': return "\\b";
+        case '\t': return "\\t";
+        case '\n': return "\\n";
+        case '\v': return "\\v";
+        case '\f': return "\\f";
+        case '\r': return "\\r";
+        case '\"': return "\\\"";
+        case '\\': return "\\\\";
+        default  : return std::string(&c, 1);
+    }
+}
+
+std::string Util::GetEscapedString (std::string const &str)
+{
+    std::string retval;
+    for (Uint32 i = 0; i < str.length(); ++i)
+        if (GetDoesCharacterNeedEscaping(str[i]))
+            retval += GetEscapedCharacterString(str[i]);
+        else
+            retval += str[i];
+    return retval;
 }
 
 char const *Util::GetIOErrorString (IOError error)

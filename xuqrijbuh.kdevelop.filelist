@@ -291,6 +291,8 @@ lib/parsers/linecalculator/xrb_linecalculatorparser.ypp
 lib/parsers/linecalculator/xrb_linecalculatorscanner.lpp
 lib/parsers/xrb_datafile.cpp
 lib/parsers/xrb_datafile.h
+lib/parsers/xrb_datafilescanner.cpp
+lib/parsers/xrb_datafilescanner.h
 lib/parsers/xrb_datafilevalue.cpp
 lib/parsers/xrb_datafilevalue.h
 lib/parsers/xrb_linecalculator.cpp

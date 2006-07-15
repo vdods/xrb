@@ -17,6 +17,11 @@
 #include "xrb_screen.h"
 #include "xrb_utf8.h" // TEMP
 
+// TEMP
+#include "xrb_datafilescanner.h"
+#include "xrb_datafilevalue.h"
+// TEMP
+
 using namespace Xrb;
 
 #define FULLSCREEN 0
@@ -35,6 +40,37 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
 
+    // TEMP data file scanner testing stuff
+    DataFileScanner scanner;
+    scanner.Open("test.dat");
+    TempTokenType token_type;
+    DataFileValue *token;
+    do
+    {
+        token = NULL;
+        token_type = scanner.Scan(&token);
+        std::cout << scanner.GetInputFilename() << ':' << scanner.GetLineNumber() << ' ' << token_type << " - ";
+        if (token != NULL)
+            switch (token->GetElementType())
+            {
+                case DAT_BOOLEAN    : std::cout << BOOL_TO_STRING(DStaticCast<DataFileBoolean *>(token)->GetValue()); break;
+                case DAT_INTEGER    : std::cout << DStaticCast<DataFileInteger *>(token)->GetUnsignedValue(); break;
+                case DAT_FLOAT      : std::cout << DStaticCast<DataFileFloat *>(token)->GetValue(); break;
+                case DAT_CHARACTER  : std::cout << '\'' << Util::GetEscapedCharacterString(DStaticCast<DataFileCharacter *>(token)->GetValue()) << '\''; break;
+                case DAT_STRING     : std::cout << '"' << Util::GetEscapedString(DStaticCast<DataFileString *>(token)->GetValue()) << '"'; break;
+//                 case DAT_STRING     : std::cout << '"' << DStaticCast<DataFileString *>(token)->GetValue() << '"'; break;
+                case DAT_KEY_PAIR   : ASSERT0(false) break;
+                case DAT_ARRAY      : ASSERT0(false) break;
+                case DAT_STRUCTURE  : ASSERT0(false) break;
+                case DAT_UNSPECIFIED: ASSERT0(false) break;
+                default             : ASSERT0(false) break;
+            }
+        std::cout << std::endl;
+    }
+    while (token_type != TTT__END);
+
+    return 0;
+/*
     // TEMP
     // TEMP
     // TEMP
@@ -182,5 +218,6 @@ int main (int argc, char **argv)
 
     // return with no error condition
     exit(0);
+*/
 }
 

@@ -50,6 +50,12 @@ namespace Util
       * @brief Returns a newly allocated copy of the given string.
       */
     char *StringDuplicate (char const *string_to_duplicate);
+    /** @brief Converts all alphabetic characters in the string to lowercase.
+      */
+    void MakeLowercase (std::string *str);
+    /** @brief Converts all alphabetic characters in the string to uppercase.
+      */
+    void MakeUppercase (std::string *str);
     /** @brief Returns the ASCII code of the given character as it would be
       *        interpreted with the SHIFT key held down.
       */
@@ -58,15 +64,15 @@ namespace Util
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a quoted string.
       */
-    bool GetDoesCharacterNeedEscaping (char character);
-    /** For example, GetEscapeCharacter('\0') returns '0'.
+    bool GetDoesCharacterNeedEscaping (char c);
+    /** For example, GetEscapedCharacter('\0') returns '0'.
       *
       * This function returns the given character if it is not an
       * escapable character.
       *
       * @brief Returns the escape character code for escapable characters.
       */
-    char GetEscapeCharacter (char character);
+    char GetEscapedCharacter (char c);
     /** For example, GetEscapedCharacter('0') returns '\0'.
       *
       * This function returns the given character if it is not an
@@ -74,7 +80,17 @@ namespace Util
       *
       * @brief Returns the escaped character for the escaped character codes.
       */
-    char GetEscapedCharacter (char escape_code);
+    char GetEscapedCharacterBase (char c);
+    /** For example, GetEscapedCharacterString('\n') returns the ascii string
+      * "\\n" (a backslash followed by a lowercase 'n').  if a character does
+      * not need to be escaped, then a string containing that single character
+      * will be returned.
+      * @brief Returns the string-literal representation of the given character.
+      */
+    std::string GetEscapedCharacterString (char c);
+    /** @brief Runs the string's characters through GetEscapedCharacterString.
+      */
+    std::string GetEscapedString (std::string const &str);
 
     /** @brief Returns the signed, base 10 integer value parsed from the
       *        given text.

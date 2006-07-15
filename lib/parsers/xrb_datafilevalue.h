@@ -13,11 +13,10 @@
 
 #include "xrb.h"
 
-#include <list>
 #include <map>
-#include <set>
 #include <stdio.h>
 #include <string>
+#include <vector>
 
 #include "xrb_util.h"
 #include "xrb_indentformatter.h"
@@ -28,6 +27,103 @@ namespace Xrb
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileValue
 // ///////////////////////////////////////////////////////////////////////////
+
+/*
+temp DataFileValue notes - turn into real doxygen docs later
+
+data types:
+    boolean        - true = on = yes, false = off = no
+    [un]signed int - binary, octal, decimal or hexidecimal
+    floating point - IEEE floating point (of the type given by Float)
+    character      - ascii character
+    string         - string of ascii characters
+
+atomic language prototypes:
+    identifier     - C-language identifier [_a-zA-Z][_a-zA-Z0-9]*
+
+conglomerate data types:
+    key/value pair - identifier/value
+    array          - comma-delimited list of homogenous values,
+                     all enclosed inside [ ].  possible element types are:
+                     boolean, int, float, character, string, key/value pair,
+                     array, and no elements.  array nesting indicates
+                     multiple dimensions.  if the array contains key/value
+                     pairs, the key identifiers do not have to be unique.
+    structure      - semicolon-delimited list (semicolon after each key/value
+                     pair) of key/value pairs, with all keys having names
+                     unique to that structure, all enclosed inside { }
+
+the format of a data file is the inside of a structure -- semicolon-delimited
+list (semicolon after each key/value pair) of key/value pairs.  e.g.
+
+    mass 5.6;
+    elasticity 0.311;
+    vertices [ [0, 0], [1, 0], [1, 1], [0, 1] ];
+    properties
+    {
+        name "spiny norman";
+        is_enemy true;
+        AI_level 18;
+    };
+
+the data file is parsed and stored as a tree structure, with the root node
+being a key/value pair with the path/filename as the identifier, and the
+file's contents as a structure.  therefore, a complete path can be specified
+to any individual piece of data in the file (similar to xpath).  arrays can
+be indexed as in C-language (e.g. arrayname[3][4]).  because the root node
+identifier is a filesystem path and may contain slashes, a different character
+will be used to delimit each element in the datapath.  the datapath delimiting
+character will be the pipe character '|'.  the pipe character will therefore
+not be allowed in filenames in this context.  example path:
+
+    /usr/data/map.dat|entities|enemies[0]|name
+
+this path returns the name of the 0th element of enemies (indices are 0-based),
+which is a member of the entities structure, in the file /usr/data/map.dat
+
+//////////////////////////////////////////////////////////////////////////////
+
+random notes:
+
+class hierarchy:
+
+DataFileValue
+    DataFileBoolean
+    DataFileInteger
+    DataFileFloat
+    DataFileCharacter
+    DataFileString
+    DataFileKeyPair
+    DataFileArray
+    DataFileStructure
+
+class containment:
+
+DataFileKeyPair (contains a string for the key)
+    DataFileValue *
+
+DataFileArray
+    vector<DataFileValue *>
+
+DataFileStructure
+    map<DataFileKeyPair>
+
+*/
+
+enum DataFileElementType
+{
+    DAT_BOOLEAN = 0,
+    DAT_INTEGER,
+    DAT_FLOAT,
+    DAT_CHARACTER,
+    DAT_STRING,
+    DAT_KEY_PAIR,
+    DAT_ARRAY,
+    DAT_STRUCTURE,
+    DAT_UNSPECIFIED,
+
+    DAT_COUNT
+}; // end of enum DataFileElementType
 
 /** A data file is a human-readable text file which functions as a generalized
   * storage medium.  The file is organized up into sets of potentially nested
@@ -40,9 +136,9 @@ namespace Xrb
   *     <li>Floating-point value</li>
   *     <li>Character</li>
   *     <li>String</li>
-  *     <li>Key/value pair</li>
+  *     <li>Keypair</li>
+  *     <li>Array</li>
   *     <li>Structure</li>
-  *     <li>List</li>
   *     </ul>
   *
   * The basic data types (boolean, integer, floating point, character, string)
@@ -50,7 +146,7 @@ namespace Xrb
   * basic_string).  The significance of the key/value pair is to give the
   * ability to give a name to a particular value.  The structure is used
   * to store nested key/value pairs (where the values can be anything except
-  * key/value pairs).  The list is used to store nested values (where the
+  * key/value pairs).  The array is used to store nested values (where the
   * values can be any of the above).
   *
   * Here is an example of a data file.
@@ -68,61 +164,15 @@ class DataFileValue
 {
 public:
 
-    typedef std::set<DataFileValue const *> AllocationTracker;
-    typedef AllocationTracker::const_iterator AllocationTrackerConstIterator;
-    typedef AllocationTracker::iterator AllocationTrackerIterator;
+    virtual ~DataFileValue () { }
 
-    enum DataType
-    {
-        T_BOOLEAN = 0,
-        T_INTEGER,
-        T_FLOAT,
-        T_CHARACTER,
-        T_STRING,
-        T_KEY_VALUE_PAIR,
-        T_STRUCTURE,
-        T_LIST,
-        T_NO_LIST_ELEMENTS,
-
-        T_TYPE_COUNT
-    }; // end of enum DataFileValue::DataType
-
-    DataFileValue (AllocationTracker *owner_allocation_tracker);
-    virtual ~DataFileValue ();
-
-    virtual DataType GetDataType () const = 0;
-    virtual DataType GetUltimateType () const = 0;
-    virtual Uint32 GetListRecursionLevel () const = 0;
-
-    inline bool GetIsOwnedByAllocationTracker () const
-    {
-        return m_owner_allocation_tracker != NULL;
-    }
-    inline bool GetHasSameOwnerAllocationTracker (
-        DataFileValue const *const value) const
-    {
-        ASSERT1(m_owner_allocation_tracker != NULL)
-        ASSERT1(value->m_owner_allocation_tracker != NULL)
-        return m_owner_allocation_tracker == value->m_owner_allocation_tracker;
-    }
+    virtual DataFileElementType GetElementType () const = 0;
 
     virtual void Print (IndentFormatter &formatter) const = 0;
 
-    static void FprintAllocations (
-        FILE *fptr,
-        AllocationTracker const &allocation_tracker);
-    static void DeleteAllocations (
-        AllocationTracker *allocation_tracker);
-    static void RemoveFromOwnerAllocationTracker (DataFileValue const *value);
-
 protected:
 
-    static void AddAllocation (DataFileValue const *value);
-    static void RemoveAllocation (DataFileValue const *value);
-
-private:
-
-    mutable AllocationTracker *m_owner_allocation_tracker;
+    DataFileValue () { }
 }; // end of class DataFileValue
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -133,33 +183,15 @@ class DataFileBoolean : public DataFileValue
 {
 public:
 
-    DataFileBoolean (
-        bool const value,
-        AllocationTracker *const owner_allocation_tracker)
+    DataFileBoolean (bool value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_value = value;
-    }
-    virtual ~DataFileBoolean () { }
+        DataFileValue (),
+        m_value(value)
+    { }
 
-    virtual DataType GetDataType () const
-    {
-        return T_BOOLEAN;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_BOOLEAN;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    inline bool GetValue () const { return m_value; }
 
-    inline bool GetValue () const
-    {
-        return m_value;
-    }
+    virtual DataFileElementType GetElementType () const { return DAT_BOOLEAN; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -168,7 +200,7 @@ public:
 
 private:
 
-    bool m_value;
+    bool const m_value;
 }; // end of class DataFileBoolean
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -179,51 +211,24 @@ class DataFileInteger : public DataFileValue
 {
 public:
 
-    DataFileInteger (
-        Uint32 const value,
-        AllocationTracker *const owner_allocation_tracker)
+    DataFileInteger (Uint32 value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_was_constructed_as_unsigned = true;
-        m_value = value;
-    }
-    DataFileInteger (
-        Sint32 const value,
-        AllocationTracker *const owner_allocation_tracker)
+        DataFileValue (),
+        m_value(value),
+        m_was_constructed_as_unsigned(true)
+    { }
+    DataFileInteger (Sint32 value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_was_constructed_as_unsigned = false;
-        m_value = static_cast<Uint32>(value);
-    }
-    virtual ~DataFileInteger () { }
+        DataFileValue (),
+        m_value(static_cast<Uint32>(value)),
+        m_was_constructed_as_unsigned(false)
+    { }
 
-    virtual DataType GetDataType () const
-    {
-        return T_INTEGER;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_INTEGER;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    inline bool GetIsUnsigned () const { return m_was_constructed_as_unsigned; }
+    inline Sint32 GetSignedValue () const { return static_cast<Sint32>(m_value); }
+    inline Uint32 GetUnsignedValue () const { return m_value; }
 
-    inline bool GetIsUnsigned () const
-    {
-        return m_was_constructed_as_unsigned;
-    }
-    inline Sint32 GetSignedValue () const
-    {
-        return static_cast<Sint32>(m_value);
-    }
-    inline Uint32 GetUnsignedValue () const
-    {
-        return m_value;
-    }
+    virtual DataFileElementType GetElementType () const { return DAT_INTEGER; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -235,8 +240,8 @@ public:
 
 private:
 
-    bool m_was_constructed_as_unsigned;
-    Uint32 m_value;
+    Uint32 const m_value;
+    bool const m_was_constructed_as_unsigned;
 }; // end of class DataFileInteger
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -247,33 +252,15 @@ class DataFileFloat : public DataFileValue
 {
 public:
 
-    DataFileFloat (
-        Float const value,
-        AllocationTracker *const owner_allocation_tracker)
+    DataFileFloat (Float value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_value = value;
-    }
-    virtual ~DataFileFloat () { }
+        DataFileValue (),
+        m_value(value)
+    { }
 
-    virtual DataType GetDataType () const
-    {
-        return T_FLOAT;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_FLOAT;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    inline Float GetValue () const { return m_value; }
 
-    inline Float GetValue () const
-    {
-        return m_value;
-    }
+    virtual DataFileElementType GetElementType () const { return DAT_FLOAT; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -282,7 +269,7 @@ public:
 
 private:
 
-    Float m_value;
+    Float const m_value;
 }; // end of class DataFileFloat
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -293,45 +280,27 @@ class DataFileCharacter : public DataFileValue
 {
 public:
 
-    DataFileCharacter (
-        char const value,
-        AllocationTracker *const owner_allocation_tracker)
+    DataFileCharacter (char value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_value = value;
-    }
-    virtual ~DataFileCharacter () { }
+        DataFileValue (),
+        m_value(value)
+    { }
 
-    virtual DataType GetDataType () const
-    {
-        return T_CHARACTER;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_CHARACTER;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    inline char GetValue () const { return m_value; }
 
-    inline char GetValue () const
-    {
-        return m_value;
-    }
+    virtual DataFileElementType GetElementType () const { return DAT_CHARACTER; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
         if (Util::GetDoesCharacterNeedEscaping(m_value))
-            formatter.BeginLine("'\\%c'", Util::GetEscapeCharacter(m_value));
+            formatter.BeginLine("'\\%c'", Util::GetEscapedCharacterBase(m_value));
         else
             formatter.BeginLine("'%c'", m_value);
     }
 
 private:
 
-    char m_value;
+    char const m_value;
 }; // end of class DataFileCharacter
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -342,47 +311,22 @@ class DataFileString : public DataFileValue
 {
 public:
 
-    DataFileString (AllocationTracker *const owner_allocation_tracker)
+    DataFileString ()
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-    }
-    DataFileString (
-        std::string const &value,
-        AllocationTracker *const owner_allocation_tracker)
+        DataFileValue()
+    { }
+    DataFileString (std::string const &value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        m_value = value;
-    }
-    virtual ~DataFileString () { }
+        DataFileValue (),
+        m_value(value)
+    { }
 
-    virtual DataType GetDataType () const
-    {
-        return T_STRING;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_STRING;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    inline std::string const &GetValue () const { return m_value; }
 
-    inline std::string const &GetValue () const
-    {
-        return m_value;
-    }
+    inline void AppendString (std::string const &string) { m_value += string; }
+    inline void AppendCharacter (char const character) { m_value += character; }
 
-    inline void AppendString (std::string const &string)
-    {
-        m_value += string;
-    }
-    inline void AppendCharacter (char const character)
-    {
-        m_value += character;
-    }
+    virtual DataFileElementType GetElementType () const { return DAT_STRING; }
 
     virtual void Print (IndentFormatter &formatter) const;
 
@@ -392,65 +336,92 @@ private:
 }; // end of class DataFileString
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileKeyValuePair
+// DataFileKeyPair
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileKeyValuePair : public DataFileValue
+class DataFileKeyPair : public DataFileValue
 {
 public:
 
-    DataFileKeyValuePair (
-        std::string const &key,
-        DataFileValue const *const value,
-        AllocationTracker *const owner_allocation_tracker)
+    DataFileKeyPair (std::string const &key, DataFileValue const *value)
         :
-        DataFileValue (owner_allocation_tracker)
-    {
-        ASSERT1(key.length() > 0)
-        ASSERT1(value != NULL)
-        ASSERT1(GetHasSameOwnerAllocationTracker(value))
-        m_key = key;
-        m_value = value;
-        RemoveAllocation(m_value);
-    }
-    virtual ~DataFileKeyValuePair ()
-    {
-        ASSERT1(m_value != NULL)
-        ASSERT1(!m_value->GetIsOwnedByAllocationTracker())
-        Delete(m_value);
-    }
-
-    virtual DataType GetDataType () const
-    {
-        return T_KEY_VALUE_PAIR;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_KEY_VALUE_PAIR;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
-
-    inline std::string const &GetKey () const
+        DataFileValue (),
+        m_key(key),
+        m_value(value)
     {
         ASSERT1(m_key.length() > 0)
-        return m_key;
+        ASSERT1(m_value != NULL)
     }
+    virtual ~DataFileKeyPair ()
+    {
+        delete m_value;
+    }
+
+    inline std::string const &GetKey () const { return m_key; }
     inline DataFileValue const *GetValue () const
     {
-        ASSERT1(m_value != NULL)
+        ASSERT1(m_value != NULL && "you shouldn't call this after StealValue()")
         return m_value;
     }
+
+    inline DataFileValue const *StealValue ()
+    {
+        DataFileValue const *value = m_value;
+        m_value = NULL;
+        return value;
+    }
+
+    virtual DataFileElementType GetElementType () const { return DAT_KEY_PAIR; }
 
     virtual void Print (IndentFormatter &formatter) const;
 
 private:
 
-    std::string m_key;
+    std::string const m_key;
     DataFileValue const *m_value;
-}; // end of class DataFileKeyValuePair
+}; // end of class DataFileKeyPair
+
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileArray
+// ///////////////////////////////////////////////////////////////////////////
+
+class DataFileArray : public DataFileValue
+{
+public:
+
+    DataFileArray ()
+        :
+        DataFileValue()
+    { }
+    virtual ~DataFileArray ();
+
+    bool GetShouldBeFormattedInline () const;
+    inline Uint32 GetElementCount () const { return m_element_vector.size(); }
+    Uint32 GetDimension () const;
+    inline DataFileValue const *GetElement (Uint32 index)
+    {
+        if (index >= m_element_vector.size())
+            return NULL;
+        else
+            return m_element_vector[index];
+    }
+
+    void AppendValue (DataFileValue const *value);
+
+    virtual DataFileElementType GetElementType () const { return DAT_ARRAY; }
+
+    virtual void Print (IndentFormatter &formatter) const;
+
+private:
+
+    static bool GetDoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
+
+    typedef std::vector<DataFileValue const *> ElementVector;
+    typedef ElementVector::iterator ElementVectorIterator;
+    typedef ElementVector::const_iterator ElementVectorConstIterator;
+
+    ElementVector m_element_vector;
+}; // end of class DataFileArray
 
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileStructure
@@ -460,84 +431,28 @@ class DataFileStructure : public DataFileValue
 {
 public:
 
-    DataFileStructure (AllocationTracker *owner_allocation_tracker);
+    DataFileStructure ()
+        :
+        DataFileValue()
+    { }
     virtual ~DataFileStructure ();
 
-    virtual DataType GetDataType () const
-    {
-        return T_STRUCTURE;
-    }
-    virtual DataType GetUltimateType () const
-    {
-        return T_STRUCTURE;
-    }
-    virtual Uint32 GetListRecursionLevel () const
-    {
-        return 0;
-    }
+    DataFileValue const *GetValue (std::string const &key) const;
 
-    // this function does not invalidate iteration.
-    DataFileKeyValuePair const *GetValue (std::string const &key) const;
-    // returns the first value in the structure, or NULL if the structure is empty.
-    DataFileKeyValuePair const *GetFirstKeyValuePair () const;
-    // returns the next value in the structure, or NULL if at the end of the structure.
-    DataFileKeyValuePair const *GetNextKeyValuePair () const;
+    void AddKeyPair (DataFileKeyPair *key_value_pair);
 
-    void AddKeyValuePair (DataFileKeyValuePair const *key_value_pair);
+    virtual DataFileElementType GetElementType () const { return DAT_STRUCTURE; }
+
     virtual void Print (IndentFormatter &formatter) const;
 
 private:
 
-    typedef std::map<std::string, DataFileKeyValuePair const *> MemberMap;
+    typedef std::map<std::string, DataFileValue const *> MemberMap;
     typedef MemberMap::iterator MemberMapIterator;
     typedef MemberMap::const_iterator MemberMapConstIterator;
 
     MemberMap m_member_map;
-    mutable MemberMapConstIterator m_it;
-    mutable MemberMapConstIterator m_it_end;
-    mutable bool m_iteration_is_valid;
 }; // end of class DataFileStructure
-
-// ///////////////////////////////////////////////////////////////////////////
-// DataFileList
-// ///////////////////////////////////////////////////////////////////////////
-
-class DataFileList : public DataFileValue
-{
-public:
-
-    DataFileList (AllocationTracker *owner_allocation_tracker);
-    virtual ~DataFileList ();
-
-    virtual DataType GetDataType () const
-    {
-        return T_LIST;
-    }
-    virtual DataType GetUltimateType () const;
-    virtual Uint32 GetListRecursionLevel () const;
-    bool GetShouldBeFormattedInline () const;
-
-    // returns the first value in the list, or NULL if the list is empty.
-    DataFileValue const *GetFirstValue () const;
-    // returns the next value in the list, or NULL if at the end of the list.
-    DataFileValue const *GetNextValue () const;
-
-    void AppendValue (DataFileValue const *value);
-    virtual void Print (IndentFormatter &formatter) const;
-
-private:
-
-    bool GetIsListOfOneType () const;
-
-    typedef std::list<DataFileValue const *> ElementList;
-    typedef ElementList::iterator ElementListIterator;
-    typedef ElementList::const_iterator ElementListConstIterator;
-
-    ElementList m_element_list;
-    mutable ElementListConstIterator m_it;
-    mutable ElementListConstIterator m_it_end;
-    mutable bool m_iteration_is_valid;
-}; // end of class DataFileList
 
 } // end of namespace Xrb
 

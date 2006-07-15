@@ -1,15 +1,11 @@
 AC_INIT(configure.ac)
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(libxrb, 0.1)
+AM_INIT_AUTOMAKE(xuqrijbuh, 0.1)
 
 # C++ stuff
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
-# lex
-AC_PROG_LEX
-# yacc
-AC_PROG_YACC
 # this enables libtool usage for creating libraries
 AM_PROG_LIBTOOL
 # this determines the machine's byte order
@@ -153,20 +149,20 @@ if test "${GPROF_ENABLED}" = "yes"; then
     CXXFLAGS="${CXXFLAGS} -pg -fprofile-arcs -g3"
 fi
 
-# this is utterly retarded, but AC_DEFINE([DEBUG_LEVEL],${DEBUG_LEVEL_VAL}) 
+# this is utterly retarded, but AC_DEFINE([DEBUG_LEVEL],${DEBUG_LEVEL_VAL})
 # doesn't work.  fuck this retarded macro language.
 if test "${DEBUG_LEVEL_VAL}" = "0"; then
     AC_DEFINE(
         [XRB_DEBUG_LEVEL],
         [0],
         [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
-else 
+else
 if test "${DEBUG_LEVEL_VAL}" = "1"; then
     AC_DEFINE(
         [XRB_DEBUG_LEVEL],
         [1],
         [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
-else 
+else
 if test "${DEBUG_LEVEL_VAL}" = "2"; then
     AC_DEFINE(
         [XRB_DEBUG_LEVEL],
