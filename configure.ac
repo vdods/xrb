@@ -12,6 +12,17 @@ AM_PROG_LIBTOOL
 AC_C_BIGENDIAN
 # checks for the strip program for `make install-strip`
 AC_CHECK_TOOL(STRIP, strip)
+# checks for trison, a parser for LALR(1) grammars
+AC_CHECK_TOOL(TRISON, trison)
+
+##############################################################################
+# processing for above tool checks
+##############################################################################
+
+# this conditional will be used by Makefile.am in lib for determining
+# wether or not to generate the trison parsers from source, or use the
+# pregenerated parsers.
+AM_CONDITIONAL(TRISON_EXISTS, [test "${TRISON}" != ""])
 
 ##############################################################################
 # configure script commandline options
@@ -122,7 +133,7 @@ AC_ARG_ENABLE(
     [NAN_SANITY_CHECK="no"])
 
 ##############################################################################
-# processing of above commandline options
+# processing for above commandline options
 ##############################################################################
 
 if test "x${ARCH_TYPE}" = "x"; then

@@ -13,7 +13,7 @@
 
 #include "xrb.h"
 
-#include <map>
+#include <set>
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -350,7 +350,6 @@ public:
         m_value(value)
     {
         ASSERT1(m_key.length() > 0)
-        ASSERT1(m_value != NULL)
     }
     virtual ~DataFileKeyPair ()
     {
@@ -447,11 +446,21 @@ public:
 
 private:
 
-    typedef std::map<std::string, DataFileValue const *> MemberMap;
-    typedef MemberMap::iterator MemberMapIterator;
-    typedef MemberMap::const_iterator MemberMapConstIterator;
+    struct KeyPairOrder
+    {
+        bool operator () (DataFileKeyPair const *p0, DataFileKeyPair const *p1) const
+        {
+            ASSERT1(p0 != NULL)
+            ASSERT1(p1 != NULL)
+            return p0->GetKey() < p1->GetKey();
+        }
+    }; // end of struct DataFileStructure::KeyPairOrder
 
-    MemberMap m_member_map;
+    typedef std::set<DataFileKeyPair const *, KeyPairOrder> MemberSet;
+    typedef MemberSet::iterator MemberSetIterator;
+    typedef MemberSet::const_iterator MemberSetConstIterator;
+
+    MemberSet m_member_set;
 }; // end of class DataFileStructure
 
 } // end of namespace Xrb

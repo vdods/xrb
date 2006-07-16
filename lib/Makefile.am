@@ -65,6 +65,8 @@ libxrb_la_SOURCES = \
     math/xrb_transform2.cpp \
     math/xrb_vector.cpp \
     \
+    parsers/xrb_datafileparser.cpp \
+    parsers/xrb_datafileparser.trison \
     parsers/xrb_datafilescanner.cpp \
     parsers/xrb_datafilevalue.cpp \
     \
@@ -217,6 +219,7 @@ include_HEADERS = \
     math/xrb_vector.h \
     \
     parsers/xrb_datafile.h \
+    parsers/xrb_datafileparser.h \
     parsers/xrb_datafilescanner.h \
     parsers/xrb_datafilevalue.h \
     parsers/xrb_linecalculator.h \
@@ -279,6 +282,15 @@ include_HEADERS = \
 #    mapeditor2/xrb_mapeditor2_worldview.h \
 #    \
 #
+
+##############################################################################
+# custom make rules
+##############################################################################
+
+if TRISON_EXISTS
+$(srcdir)/parsers/xrb_datafileparser.h $(srcdir)/parsers/xrb_datafileparser.cpp: $(srcdir)/parsers/xrb_datafileparser.trison
+	$(TRISON) $(srcdir)/parsers/xrb_datafileparser.trison --output-basename $(srcdir)/parsers/xrb_datafileparser --generate-states-file $(srcdir)/parsers/xrb_datafileparser.states
+endif
 
 ##############################################################################
 # parser intermediate libraries -- they're special because they need

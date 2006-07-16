@@ -18,7 +18,7 @@
 #include "xrb_utf8.h" // TEMP
 
 // TEMP
-#include "xrb_datafilescanner.h"
+#include "xrb_datafileparser.h"
 #include "xrb_datafilevalue.h"
 // TEMP
 
@@ -40,35 +40,19 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
 
-    // TEMP data file scanner testing stuff
-    DataFileScanner scanner;
-    scanner.Open("test.dat");
-    TempTokenType token_type;
-    DataFileValue *token;
-    do
+    // TEMP parser testing stuff
+    DataFileParser parser;
+    parser.SetDebugSpewLevel(2);
+    parser.SetInputFilename("form.dat");
+    if (parser.Parse() == DataFileParser::RC_SUCCESS)
     {
-        token = NULL;
-        token_type = scanner.Scan(&token);
-        std::cout << scanner.GetInputFilename() << ':' << scanner.GetLineNumber() << ' ' << token_type << " - ";
-        if (token != NULL)
-            switch (token->GetElementType())
-            {
-                case DAT_BOOLEAN    : std::cout << BOOL_TO_STRING(DStaticCast<DataFileBoolean *>(token)->GetValue()); break;
-                case DAT_INTEGER    : std::cout << DStaticCast<DataFileInteger *>(token)->GetUnsignedValue(); break;
-                case DAT_FLOAT      : std::cout << DStaticCast<DataFileFloat *>(token)->GetValue(); break;
-                case DAT_CHARACTER  : std::cout << '\'' << Util::GetEscapedCharacterString(DStaticCast<DataFileCharacter *>(token)->GetValue()) << '\''; break;
-                case DAT_STRING     : std::cout << '"' << Util::GetEscapedString(DStaticCast<DataFileString *>(token)->GetValue()) << '"'; break;
-//                 case DAT_STRING     : std::cout << '"' << DStaticCast<DataFileString *>(token)->GetValue() << '"'; break;
-                case DAT_KEY_PAIR   : ASSERT0(false) break;
-                case DAT_ARRAY      : ASSERT0(false) break;
-                case DAT_STRUCTURE  : ASSERT0(false) break;
-                case DAT_UNSPECIFIED: ASSERT0(false) break;
-                default             : ASSERT0(false) break;
-            }
-        std::cout << std::endl;
+        IndentFormatter formatter(stderr, "    ");
+        parser.GetAcceptedKeyPair()->Print(formatter);
     }
-    while (token_type != TTT__END);
-
+    else
+    {
+        fprintf(stderr, "parse error\n");
+    }
     return 0;
 /*
     // TEMP

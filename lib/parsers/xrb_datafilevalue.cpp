@@ -121,7 +121,6 @@ void DataFileArray::AppendValue (DataFileValue const *const value)
                 DStaticCast<DataFileArray const *>(value),
                 DStaticCast<DataFileArray const *>(first_element_value)))
         {
-            delete value;
             throw "non-homogeneous array";
         }
     }
@@ -210,25 +209,26 @@ bool DataFileArray::GetDoesMatchDimensionAndType (DataFileArray const *const arr
 
 DataFileStructure::~DataFileStructure ()
 {
-    for (MemberMapIterator it = m_member_map.begin(),
-                           it_end = m_member_map.end();
+    for (MemberSetIterator it = m_member_set.begin(),
+                           it_end = m_member_set.end();
          it != it_end;
          ++it)
     {
-        DataFileValue const *value = it->second;
-        ASSERT1(value != NULL)
-        Delete(value);
+        DataFileKeyPair const *key_pair = *it;
+        ASSERT1(key_pair != NULL)
+        Delete(key_pair);
     }
 }
 
 DataFileValue const *DataFileStructure::GetValue (std::string const &key) const
 {
     ASSERT1(key.length() > 0)
-    MemberMapConstIterator it = m_member_map.find(key);
-    if (it == m_member_map.end())
+    DataFileKeyPair key_pair_search(key, NULL);
+    MemberSetConstIterator it = m_member_set.find(&key_pair_search);
+    if (it == m_member_set.end())
         return NULL;
     else
-        return it->second;
+        return (*it)->GetValue();
 }
 
 void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
@@ -237,31 +237,22 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
     ASSERT1(key_pair->GetKey().length() > 0)
     ASSERT1(key_pair->GetValue() != NULL)
 
-    if (m_member_map.find(key_pair->GetKey()) != m_member_map.end())
-    {
-        delete key_pair;
+    if (m_member_set.find(key_pair) != m_member_set.end())
         throw "DataFileStructure::AddKeyPair(); key collision";
-    }
     else
-    {
-        m_member_map[key_pair->GetKey()] = key_pair->StealValue();
-        delete key_pair;
-    }
+        m_member_set.insert(key_pair);
 }
 
 void DataFileStructure::Print (IndentFormatter &formatter) const
 {
-    for (MemberMapConstIterator it = m_member_map.begin(),
-                                it_end = m_member_map.end();
+    for (MemberSetConstIterator it = m_member_set.begin(),
+                                it_end = m_member_set.end();
          it != it_end;
          ++it)
     {
-        std::string const &key = it->first;
-        DataFileValue const *value = it->second;
-        ASSERT1(!key.empty())
-        ASSERT1(value != NULL)
-        formatter.BeginLine(key.c_str());
-        value->Print(formatter);
+        DataFileKeyPair const *key_pair = *it;
+        ASSERT1(key_pair != NULL)
+        key_pair->Print(formatter);
         formatter.EndLine(";");
     }
 }

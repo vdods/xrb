@@ -1,0 +1,290 @@
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_datafileparser.trison by Victor Dods, created 2006/07/15
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+%parser_header_file_top"
+#include \"xrb.h\"
+
+#include <string>
+
+namespace Xrb
+{
+
+class DataFileKeyPair;
+class DataFileScanner;
+class DataFileValue;
+"
+
+%parser_class_name "DataFileParser"
+
+%parser_class_methods_and_members{
+    inline DataFileKeyPair *GetAcceptedKeyPair () const
+    {
+        return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
+    }
+
+    bool SetInputFilename (std::string const &input_filename);
+
+    Token::Type Scan ();
+
+private:
+
+    DataFileScanner *m_scanner;
+}
+
+%parser_header_file_bottom"
+} // end of namespace Xrb
+"
+
+%parser_implementation_file_top"
+#include \"xrb_datafilescanner.h\"
+#include \"xrb_datafilevalue.h\"
+
+#undef FL
+#define FL FileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
+
+namespace Xrb
+{
+"
+
+%parser_constructor_actions{
+    m_scanner = new DataFileScanner();
+}
+
+%parser_destructor_actions{
+    delete m_scanner;
+}
+
+%parser_throw_away_token_actions{
+    delete token;
+}
+
+%parser_implementation_file_bottom"
+bool DataFileParser::SetInputFilename (std::string const &input_filename)
+{
+    assert(m_scanner != NULL);
+    m_scanner->Close();
+    // TODO: make sure there are no pipe characters in the input filename
+    return m_scanner->Open(input_filename);
+}
+
+DataFileParser::Token::Type DataFileParser::Scan ()
+{
+    assert(m_scanner != NULL);
+    return m_scanner->Scan(&m_lookahead_token);
+}
+
+} // end of namespace Xrb
+"
+
+%parser_base_assigned_type "DataFileValue *"
+%parser_base_assigned_type_sentinel "NULL"
+
+%parser_custom_cast "DStaticCast"
+
+%token ERROR
+%token BOOLEAN %type "DataFileBoolean *"
+%token INTEGER %type "DataFileInteger *"
+%token FLOAT %type "DataFileFloat *"
+%token CHARACTER %type "DataFileCharacter *"
+%token STRING_FRAGMENT %type "DataFileString *"
+%token IDENTIFIER %type "DataFileString *"
+%token ';' ',' '-' '{' '}' '[' ']'
+
+%start data_file
+
+%%
+
+data_file %type "DataFileStructure *"
+:
+    element_list:element_list
+    {
+        ASSERT1(element_list != NULL)
+        return new DataFileKeyPair(m_scanner->GetInputFilename(), element_list);
+    }
+;
+
+element_list %type "DataFileStructure *"
+:
+    element_list:element_list element:element
+    {
+        ASSERT1(element_list != NULL)
+        ASSERT1(element != NULL)
+        try
+        {
+            element_list->AddKeyPair(element);
+        }
+        catch (char const *exception)
+        {
+            // TODO: emit error message
+        }
+        return element_list;
+    }
+|
+    {
+        return new DataFileStructure();
+    }
+;
+
+element %type "DataFileKeyPair *"
+:
+    key_pair:key_pair ';'
+    {
+        ASSERT1(key_pair != NULL)
+        return key_pair;
+    }
+;
+
+key_pair %type "DataFileKeyPair *"
+:
+    IDENTIFIER:key value:value
+    {
+        ASSERT1(key != NULL)
+        ASSERT1(value != NULL)
+        DataFileKeyPair *key_pair = new DataFileKeyPair(key->GetValue(), value);
+        Delete(key);
+        return key_pair;
+    }
+;
+
+structure %type "DataFileStructure *"
+:
+    '{' element_list:element_list '}'
+    {
+        ASSERT1(element_list != NULL)
+        return element_list;
+    }
+;
+
+array %type "DataFileArray *"
+:
+    '[' list:list ']'
+    {
+        ASSERT1(list != NULL)
+        return list;
+    }
+|
+    '[' ']'
+    {
+        return new DataFileArray();
+    }
+;
+
+list %type "DataFileArray *"
+:
+    list:list ',' list_element:list_element
+    {
+        ASSERT1(list != NULL)
+        ASSERT1(list_element != NULL)
+        try
+        {
+            list->AppendValue(list_element);
+        }
+        catch (char const *exception)
+        {
+            // TODO: emit error message
+            Delete(list_element);
+        }
+        return list;
+    }
+|
+    list_element:list_element
+    {
+        ASSERT1(list_element != NULL)
+        DataFileArray *list = new DataFileArray();
+        try
+        {
+            list->AppendValue(list_element);
+        }
+        catch (char const *exception)
+        {
+            ASSERT1(false && "this should never happen")
+            Delete(list_element);
+        }
+        return list;
+    }
+;
+
+list_element %type "DataFileValue *"
+:
+    key_pair:key_pair
+    {
+        ASSERT1(key_pair != NULL)
+        return key_pair;
+    }
+|
+    value:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+;
+
+value %type "DataFileValue *"
+:
+    BOOLEAN:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    INTEGER:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    FLOAT:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    CHARACTER:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    string:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    structure:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    array:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+;
+
+string %type "DataFileString *"
+:
+    string:string STRING_FRAGMENT:string_fragment
+    {
+        ASSERT1(string != NULL)
+        ASSERT1(string_fragment != NULL)
+        string->AppendString(string_fragment->GetValue());
+        Delete(string_fragment);
+        return string;
+    }
+|
+    STRING_FRAGMENT:string_fragment
+    {
+        ASSERT1(string_fragment != NULL)
+        return string_fragment;
+    }
+;
