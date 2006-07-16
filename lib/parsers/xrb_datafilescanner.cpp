@@ -10,11 +10,14 @@
 
 #include "xrb_datafilescanner.h"
 
+#include <iostream>
+
+#include "xrb_datafilelocation.h"
 #include "xrb_datafilevalue.h"
 #include "xrb_util.h"
 
 #undef FL
-#define FL FileLocation(m_input_filename, m_line_number)
+#define FL DataFileLocation(m_input_filename, m_line_number)
 
 namespace Xrb
 {
@@ -43,6 +46,9 @@ Uint32 GetHexidecimalDigitValue (char c)
 DataFileScanner::DataFileScanner ()
 {
     m_line_number = 0;
+    m_in_preamble = true;
+    m_were_warnings_encountered = false;
+    m_were_errors_encountered = false;
 }
 
 DataFileScanner::~DataFileScanner ()
@@ -52,7 +58,7 @@ DataFileScanner::~DataFileScanner ()
 
 bool DataFileScanner::Open (std::string const &input_filename)
 {
-    assert(!m_input.is_open() && "you must call Close() first");
+    ASSERT1(!m_input.is_open() && "you must call Close() first");
 
     m_input.open(input_filename.c_str());
     m_input.unsetf(std::ios_base::skipws);
@@ -62,6 +68,9 @@ bool DataFileScanner::Open (std::string const &input_filename)
         m_input_filename.clear();
     m_text.clear();
     m_line_number = 1;
+    m_in_preamble = true;
+    m_were_warnings_encountered = false;
+    m_were_errors_encountered = false;
     return m_input.is_open();
 }
 
@@ -70,13 +79,50 @@ void DataFileScanner::Close ()
     m_input_filename.clear();
     if (m_input.is_open())
         m_input.close();
+    m_text.clear();
     m_line_number = 0;
+}
+
+void DataFileScanner::EmitWarning (std::string const &message)
+{
+    ASSERT1(!m_input_filename.empty())
+    ASSERT1(m_input.is_open())
+    std::cerr << m_input_filename << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileScanner::EmitWarning (DataFileLocation const &file_location, std::string const &message)
+{
+    ASSERT1(!m_input_filename.empty())
+    ASSERT1(m_input.is_open())
+    std::cerr << file_location << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileScanner::EmitError (std::string const &message)
+{
+    ASSERT1(!m_input_filename.empty())
+    ASSERT1(m_input.is_open())
+    std::cerr << m_input_filename << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
+}
+
+void DataFileScanner::EmitError (DataFileLocation const &file_location, std::string const &message)
+{
+    ASSERT1(!m_input_filename.empty())
+    ASSERT1(m_input.is_open())
+    std::cerr << file_location << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
 }
 
 DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
+    ASSERT1(!m_input_filename.empty())
+    ASSERT1(m_input.is_open())
+    ASSERT1(m_line_number > 0)
+
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
 
     while (true)
     {
@@ -110,8 +156,8 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
                 }
                 catch (DataFileParser::Token::Type token_type)
                 {
-//                     if (token_type == DataFileParser::Token::_END)
-//                         EmitWarning(FL, "unterminated comment");
+                    if (token_type == DataFileParser::Token::_END)
+                        EmitWarning(FL, "unterminated comment");
                     return token_type;
                 }
                 break;
@@ -123,9 +169,9 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
 
 DataFileParser::Token::Type DataFileScanner::ScanIdentifier (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
-    assert(!m_input.eof());
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
 
@@ -155,18 +201,18 @@ DataFileParser::Token::Type DataFileScanner::ScanIdentifier (DataFileValue **con
 
 DataFileParser::Token::Type DataFileScanner::ScanOperator (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
-    assert(!m_input.eof());
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     return static_cast<DataFileParser::Token::Type>(m_text[0]);
 }
 
 DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
-    assert(!m_input.eof());
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
 
@@ -373,9 +419,9 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
 
 DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
-    assert(!m_input.eof());
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     m_text.clear();
     m_text += '\'';
@@ -441,9 +487,9 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
 
 DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **const scanned_token)
 {
-    assert(scanned_token != NULL);
-    assert(*scanned_token == NULL);
-    assert(!m_input.eof());
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
 
@@ -500,7 +546,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
 
 void DataFileScanner::ScanComment ()
 {
-    assert(!m_input.eof());
+    ASSERT1(!m_input.eof());
 
     char c;
 

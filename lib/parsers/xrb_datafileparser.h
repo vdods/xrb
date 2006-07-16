@@ -27,12 +27,6 @@ class DataFileParser
 {
 public:
 
-    enum ReturnCode
-    {
-        RC_SUCCESS = 0,
-        RC_UNHANDLED_ERROR = 1
-    }; // end of enum ReturnCode
-
     struct Token
     {
         enum Type
@@ -74,39 +68,54 @@ public:
     DataFileParser ();
     ~DataFileParser ();
 
-    inline DataFileValue * GetAcceptedToken () const
-    {
-        return m_reduction_token;
-    }
-    inline unsigned int GetDebugSpewLevel () const
-    {
-        return m_debug_spew_level;
-    }
+    inline DataFileValue * const &GetAcceptedToken () const { return m_reduction_token; }
+    inline void ClearAcceptedToken () { m_reduction_token = NULL; }
 
-    inline void SetDebugSpewLevel (unsigned int debug_spew_level)
-    {
-        m_debug_spew_level = debug_spew_level;
-    }
-
-    ReturnCode Parse ();
+    inline uint GetDebugSpewLevel () const { return m_debug_spew_level; }
+    inline void SetDebugSpewLevel (uint debug_spew_level) { m_debug_spew_level = debug_spew_level; }
 
     static void CheckStateConsistency ();
 
+private:
 
-#line 27 "../../lib/parsers/xrb_datafileparser.trison"
+    enum ParserReturnCode
+    {
+        PRC_SUCCESS = 0,
+        PRC_UNHANDLED_PARSE_ERROR = 1
+    }; // end of enum ParserReturnCode
 
-    inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
-    inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
+    ParserReturnCode Parse ();
+
+public:
+
+
+#line 29 "../../lib/parsers/xrb_datafileparser.trison"
+
+    enum ReturnCode
+    {
+        RC_SUCCESS = 0,
+        RC_INVALID_FILENAME,
+        RC_FILE_OPEN_FAILURE,
+        RC_PARSE_ERROR,
+        RC_ERRORS_ENCOUNTERED
+    }; // end of enum ReturnCode
+
     inline DataFileKeyPair *GetAcceptedKeyPair () const
     {
         return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
     }
+    inline DataFileKeyPair *StealAcceptedKeyPair ()
+    {
+        DataFileKeyPair *accepted_key_pair = GetAcceptedKeyPair();
+        ClearAcceptedToken();
+        return accepted_key_pair;
+    }
 
-    bool SetInputFilename (std::string const &input_filename);
-
-    Token::Type Scan ();
+    ReturnCode Parse (std::string const &input_filename);
 
 private:
+
+    Token::Type Scan ();
 
     void EmitWarning (std::string const &message);
     void EmitWarning (DataFileLocation const &file_location, std::string const &message);
@@ -115,14 +124,12 @@ private:
     void EmitError (DataFileLocation const &file_location, std::string const &message);
 
     DataFileScanner *m_scanner;
-    bool m_were_warnings_encountered;
-    bool m_were_errors_encountered;
 
-#line 122 "../../lib/parsers/xrb_datafileparser.h"
+#line 129 "../../lib/parsers/xrb_datafileparser.h"
 
 private:
 
-    typedef unsigned int StateNumber;
+    typedef uint StateNumber;
 
     enum TransitionAction
     {
@@ -146,7 +153,7 @@ private:
         typedef DataFileValue * (DataFileParser::*ReductionRuleHandler)();
 
         Token::Type m_non_terminal_to_reduce_to;
-        unsigned int m_number_of_tokens_to_reduce_by;
+        uint m_number_of_tokens_to_reduce_by;
         ReductionRuleHandler m_handler;
         std::string m_description;
     };
@@ -154,7 +161,7 @@ private:
     struct Action
     {
         TransitionAction m_transition_action;
-        unsigned int m_data;
+        uint m_data;
     };
 
     struct StateTransition
@@ -165,11 +172,11 @@ private:
 
     struct State
     {
-        unsigned int m_lookahead_transition_offset;
-        unsigned int m_lookahead_transition_count;
-        unsigned int m_default_action_offset;
-        unsigned int m_non_terminal_transition_offset;
-        unsigned int m_non_terminal_transition_count;
+        uint m_lookahead_transition_offset;
+        uint m_lookahead_transition_count;
+        uint m_default_action_offset;
+        uint m_non_terminal_transition_offset;
+        uint m_non_terminal_transition_count;
     };
 
     inline void GetNewLookaheadToken ()
@@ -198,16 +205,16 @@ private:
     }
     bool GetDoesStateAcceptErrorToken (StateNumber state_number) const;
 
-    ReturnCode PrivateParse ();
+    ParserReturnCode PrivateParse ();
 
     ActionReturnCode ProcessAction (Action const &action);
     void ShiftLookaheadToken ();
     void PushState (StateNumber state_number);
     void ReduceUsingRule (ReductionRule const &reduction_rule, bool and_accept);
-    void PopStates (unsigned int number_of_states_to_pop, bool print_state_stack = true);
+    void PopStates (uint number_of_states_to_pop, bool print_state_stack = true);
     void PrintStateStack () const;
     void PrintTokenStack () const;
-    void PrintStateTransition (unsigned int state_transition_number) const;
+    void PrintStateTransition (uint state_transition_number) const;
     void ScanANewLookaheadToken ();
     void ThrowAwayToken (DataFileValue * token);
     void ThrowAwayTokenStack ();
@@ -218,7 +225,7 @@ private:
     typedef std::vector< DataFileValue * > TokenStack;
     typedef TokenStack::const_iterator TokenStackConstIterator;
 
-    unsigned int m_debug_spew_level;
+    uint m_debug_spew_level;
 
     StateStack m_state_stack;
     TokenStack m_token_stack;
@@ -235,14 +242,14 @@ private:
     Token::Type m_returning_with_this_non_terminal;
 
     DataFileValue * m_reduction_token;
-    unsigned int m_reduction_rule_token_count;
+    uint m_reduction_rule_token_count;
 
     static State const ms_state[];
-    static unsigned int const ms_state_count;
+    static uint const ms_state_count;
     static ReductionRule const ms_reduction_rule[];
-    static unsigned int const ms_reduction_rule_count;
+    static uint const ms_reduction_rule_count;
     static StateTransition const ms_state_transition[];
-    static unsigned int const ms_state_transition_count;
+    static uint const ms_state_transition_count;
 
     DataFileValue * ReductionRuleHandler0000 ();
     DataFileValue * ReductionRuleHandler0001 ();
@@ -279,11 +286,11 @@ private:
 std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type token_type);
 
 
-#line 52 "../../lib/parsers/xrb_datafileparser.trison"
+#line 65 "../../lib/parsers/xrb_datafileparser.trison"
 
 } // end of namespace Xrb
 
-#line 287 "../../lib/parsers/xrb_datafileparser.h"
+#line 294 "../../lib/parsers/xrb_datafileparser.h"
 
 #endif // !defined(_DataFileParser_H_)
 

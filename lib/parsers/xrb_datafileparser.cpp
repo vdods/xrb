@@ -8,7 +8,7 @@
 #define DEBUG_SPEW_2(x) if (m_debug_spew_level >= 2) std::cerr << x
 
 
-#line 56 "../../lib/parsers/xrb_datafileparser.trison"
+#line 69 "../../lib/parsers/xrb_datafileparser.trison"
 
 #include <sstream>
 
@@ -28,52 +28,32 @@ DataFileParser::DataFileParser ()
 
 {
 
-#line 70 "../../lib/parsers/xrb_datafileparser.trison"
+#line 83 "../../lib/parsers/xrb_datafileparser.trison"
 
     m_scanner = new DataFileScanner();
 
 #line 36 "../../lib/parsers/xrb_datafileparser.cpp"
     m_debug_spew_level = 0;
     DEBUG_SPEW_2("### number of state transitions = " << ms_state_transition_count << std::endl);
+    m_reduction_token = NULL;
 }
 
 DataFileParser::~DataFileParser ()
 {
 
-#line 74 "../../lib/parsers/xrb_datafileparser.trison"
+#line 87 "../../lib/parsers/xrb_datafileparser.trison"
 
     ASSERT1(m_scanner != NULL)
     Delete(m_scanner);
+   delete StealAcceptedKeyPair();
 
-#line 49 "../../lib/parsers/xrb_datafileparser.cpp"
-}
-
-DataFileParser::ReturnCode DataFileParser::Parse ()
-{
-
-#line 79 "../../lib/parsers/xrb_datafileparser.trison"
-
-    m_were_warnings_encountered = false;
-    m_were_errors_encountered = false;
-
-#line 60 "../../lib/parsers/xrb_datafileparser.cpp"
-
-    ReturnCode return_code = PrivateParse();
-
-
-#line 84 "../../lib/parsers/xrb_datafileparser.trison"
-
-    m_scanner->Close();
-
-#line 69 "../../lib/parsers/xrb_datafileparser.cpp"
-
-    return return_code;
+#line 51 "../../lib/parsers/xrb_datafileparser.cpp"
 }
 
 void DataFileParser::CheckStateConsistency ()
 {
-    unsigned int counter = 1;
-    for (unsigned int i = 0; i < ms_state_count; ++i)
+    uint counter = 1;
+    for (uint i = 0; i < ms_state_count; ++i)
     {
         if (ms_state[i].m_lookahead_transition_offset > 0)
         {
@@ -101,12 +81,33 @@ void DataFileParser::CheckStateConsistency ()
     assert(counter == ms_state_transition_count);
 }
 
+DataFileParser::ParserReturnCode DataFileParser::Parse ()
+{
+
+#line 93 "../../lib/parsers/xrb_datafileparser.trison"
+
+    delete StealAcceptedKeyPair();
+
+#line 92 "../../lib/parsers/xrb_datafileparser.cpp"
+
+    ParserReturnCode return_code = PrivateParse();
+
+
+#line 97 "../../lib/parsers/xrb_datafileparser.trison"
+
+    m_scanner->Close();
+
+#line 101 "../../lib/parsers/xrb_datafileparser.cpp"
+
+    return return_code;
+}
+
 bool DataFileParser::GetDoesStateAcceptErrorToken (DataFileParser::StateNumber state_number) const
 {
     assert(state_number < ms_state_count);
     State const &state = ms_state[state_number];
 
-    for (unsigned int transition = state.m_lookahead_transition_offset,
+    for (uint transition = state.m_lookahead_transition_offset,
                       transition_end = state.m_lookahead_transition_offset +
                                        state.m_lookahead_transition_count;
          transition < transition_end;
@@ -119,7 +120,7 @@ bool DataFileParser::GetDoesStateAcceptErrorToken (DataFileParser::StateNumber s
     return false;
 }
 
-DataFileParser::ReturnCode DataFileParser::PrivateParse ()
+DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
 {
     m_state_stack.clear();
     m_token_stack.clear();
@@ -144,9 +145,9 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
         assert(current_state_number < ms_state_count);
         State const &current_state = ms_state[current_state_number];
 
-        unsigned int state_transition_number;
-        unsigned int state_transition_count;
-        unsigned int default_action_state_transition_number;
+        uint state_transition_number;
+        uint state_transition_count;
+        uint default_action_state_transition_number;
         Token::Type state_transition_token_type;
 
         // if we've just reduced to a non-terminal, coming from
@@ -174,7 +175,7 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
             }
         }
 
-        unsigned int i;
+        uint i;
         for (i = 0;
              i < state_transition_count;
              ++i, ++state_transition_number)
@@ -191,7 +192,7 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
 
                 PrintStateTransition(state_transition_number);
                 if (ProcessAction(state_transition.m_action) == ARC_ACCEPT_AND_RETURN)
-                    return RC_SUCCESS; // the accepted token is in m_reduction_token
+                    return PRC_SUCCESS; // the accepted token is in m_reduction_token
                 else
                     break;
             }
@@ -207,7 +208,7 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
                 Action const &default_action =
                     ms_state_transition[default_action_state_transition_number].m_action;
                 if (ProcessAction(default_action) == ARC_ACCEPT_AND_RETURN)
-                    return RC_SUCCESS; // the accepted token is in m_reduction_token
+                    return PRC_SUCCESS; // the accepted token is in m_reduction_token
             }
             // otherwise go into error recovery mode
             else
@@ -258,7 +259,7 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
                         {
                             ThrowAwayTokenStack();
                             DEBUG_SPEW_1("!!! error recovery: unhandled error -- quitting" << std::endl);
-                            return RC_UNHANDLED_ERROR;
+                            return PRC_UNHANDLED_PARSE_ERROR;
                         }
 
                         assert(m_token_stack.size() > 0);
@@ -276,7 +277,7 @@ DataFileParser::ReturnCode DataFileParser::PrivateParse ()
     }
 
     // this should never happen because the above loop is infinite
-    return RC_UNHANDLED_ERROR;
+    return PRC_UNHANDLED_PARSE_ERROR;
 }
 
 DataFileParser::ActionReturnCode DataFileParser::ProcessAction (DataFileParser::Action const &action)
@@ -292,14 +293,14 @@ DataFileParser::ActionReturnCode DataFileParser::ProcessAction (DataFileParser::
     }
     else if (action.m_transition_action == TA_REDUCE_USING_RULE)
     {
-        unsigned int reduction_rule_number = action.m_data;
+        uint reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, false);
     }
     else if (action.m_transition_action == TA_REDUCE_AND_ACCEPT_USING_RULE)
     {
-        unsigned int reduction_rule_number = action.m_data;
+        uint reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, true);
@@ -369,7 +370,7 @@ void DataFileParser::ReduceUsingRule (ReductionRule const &reduction_rule, bool 
     }
 }
 
-void DataFileParser::PopStates (unsigned int number_of_states_to_pop, bool print_state_stack)
+void DataFileParser::PopStates (uint number_of_states_to_pop, bool print_state_stack)
 {
     assert(number_of_states_to_pop < m_state_stack.size());
     assert(number_of_states_to_pop <= m_token_stack.size());
@@ -397,7 +398,7 @@ void DataFileParser::PrintStateStack () const
     DEBUG_SPEW_2(std::endl);
 }
 
-void DataFileParser::PrintStateTransition (unsigned int const state_transition_number) const
+void DataFileParser::PrintStateTransition (uint const state_transition_number) const
 {
     assert(state_transition_number < ms_state_transition_count);
     DEBUG_SPEW_2("&&& exercising state transition " << std::setw(4) << std::right << state_transition_number << std::endl);
@@ -414,11 +415,11 @@ void DataFileParser::ScanANewLookaheadToken ()
 void DataFileParser::ThrowAwayToken (DataFileValue * token)
 {
 
-#line 88 "../../lib/parsers/xrb_datafileparser.trison"
+#line 101 "../../lib/parsers/xrb_datafileparser.trison"
 
     Delete(token);
 
-#line 422 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 423 "../../lib/parsers/xrb_datafileparser.cpp"
 }
 
 void DataFileParser::ThrowAwayTokenStack ()
@@ -459,11 +460,11 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
         "_DEFAULT",
         "_INVALID"
     };
-    static unsigned int const s_token_type_string_count =
+    static uint const s_token_type_string_count =
         sizeof(s_token_type_string) /
         sizeof(std::string);
 
-    unsigned token_type_value = static_cast<unsigned int>(token_type);
+    unsigned token_type_value = static_cast<uint>(token_type);
     if (token_type_value < 0x20)
         stream << token_type_value;
     else if (token_type_value < 0x7F)
@@ -497,12 +498,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0001 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileStructure * element_list = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 161 "../../lib/parsers/xrb_datafileparser.trison"
+#line 184 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
         return new DataFileKeyPair(m_scanner->GetInputFilename(), element_list);
     
-#line 506 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 507 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -510,12 +511,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0001 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0002 ()
 {
 
-#line 167 "../../lib/parsers/xrb_datafileparser.trison"
+#line 190 "../../lib/parsers/xrb_datafileparser.trison"
 
         EmitError(FL, "general syntax error");
         return new DataFileKeyPair(m_scanner->GetInputFilename(), new DataFileStructure());
     
-#line 519 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 520 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -527,7 +528,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileKeyPair * element = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 176 "../../lib/parsers/xrb_datafileparser.trison"
+#line 199 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
 
@@ -547,7 +548,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
         }
         return element_list;
     
-#line 551 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 552 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -555,11 +556,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0004 ()
 {
 
-#line 196 "../../lib/parsers/xrb_datafileparser.trison"
+#line 219 "../../lib/parsers/xrb_datafileparser.trison"
 
         return new DataFileStructure();
     
-#line 563 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 564 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -569,11 +570,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileKeyPair * key_pair = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 204 "../../lib/parsers/xrb_datafileparser.trison"
+#line 227 "../../lib/parsers/xrb_datafileparser.trison"
 
         return key_pair;
     
-#line 577 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 578 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -581,12 +582,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0006 ()
 {
 
-#line 209 "../../lib/parsers/xrb_datafileparser.trison"
+#line 232 "../../lib/parsers/xrb_datafileparser.trison"
 
         EmitError(FL, "syntax error in element");
         return NULL;
     
-#line 590 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 591 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -598,7 +599,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0007 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 218 "../../lib/parsers/xrb_datafileparser.trison"
+#line 241 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(key != NULL)
         if (value == NULL)
@@ -611,7 +612,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0007 ()
         Delete(key);
         return key_pair;
     
-#line 615 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 616 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -623,7 +624,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0008 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 232 "../../lib/parsers/xrb_datafileparser.trison"
+#line 255 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(key != NULL)
         std::ostringstream out;
@@ -634,7 +635,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0008 ()
             Delete(value);
         return NULL;
     
-#line 638 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 639 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -644,7 +645,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0009 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * key = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 244 "../../lib/parsers/xrb_datafileparser.trison"
+#line 267 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(key != NULL)
         std::ostringstream out;
@@ -653,7 +654,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0009 ()
         Delete(key);
         return NULL;
     
-#line 657 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 658 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -663,12 +664,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0010 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileStructure * element_list = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 257 "../../lib/parsers/xrb_datafileparser.trison"
+#line 280 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
         return element_list;
     
-#line 672 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 673 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -676,12 +677,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0010 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0011 ()
 {
 
-#line 263 "../../lib/parsers/xrb_datafileparser.trison"
+#line 286 "../../lib/parsers/xrb_datafileparser.trison"
 
         EmitError(FL, "syntax error in structure");
         return new DataFileStructure();
     
-#line 685 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 686 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -691,12 +692,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0012 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileArray * list = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 272 "../../lib/parsers/xrb_datafileparser.trison"
+#line 295 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(list != NULL)
         return list;
     
-#line 700 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 701 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -706,12 +707,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0013 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileArray * list = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 278 "../../lib/parsers/xrb_datafileparser.trison"
+#line 301 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(list != NULL)
         return list;
     
-#line 715 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 716 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -719,11 +720,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0013 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0014 ()
 {
 
-#line 284 "../../lib/parsers/xrb_datafileparser.trison"
+#line 307 "../../lib/parsers/xrb_datafileparser.trison"
 
         return new DataFileArray();
     
-#line 727 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 728 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -731,12 +732,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0014 ()
 DataFileValue * DataFileParser::ReductionRuleHandler0015 ()
 {
 
-#line 289 "../../lib/parsers/xrb_datafileparser.trison"
+#line 312 "../../lib/parsers/xrb_datafileparser.trison"
 
         EmitError(FL, "syntax error in array");
         return NULL;
     
-#line 740 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 741 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -748,7 +749,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0016 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     DataFileValue * list_element = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 298 "../../lib/parsers/xrb_datafileparser.trison"
+#line 321 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(list != NULL)
         if (list_element != NULL)
@@ -765,7 +766,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0016 ()
         }
         return list;
     
-#line 769 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 770 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -775,7 +776,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0017 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileValue * list_element = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 316 "../../lib/parsers/xrb_datafileparser.trison"
+#line 339 "../../lib/parsers/xrb_datafileparser.trison"
 
         DataFileArray *list = new DataFileArray();
         if (list_element != NULL)
@@ -792,7 +793,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0017 ()
         }
         return list;
     
-#line 796 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 797 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -802,11 +803,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0018 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileKeyPair * key_pair = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 337 "../../lib/parsers/xrb_datafileparser.trison"
+#line 360 "../../lib/parsers/xrb_datafileparser.trison"
 
         return key_pair;
     
-#line 810 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 811 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -816,11 +817,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0019 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 342 "../../lib/parsers/xrb_datafileparser.trison"
+#line 365 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 824 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 825 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -830,11 +831,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0020 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileBoolean * value = DStaticCast< DataFileBoolean * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 350 "../../lib/parsers/xrb_datafileparser.trison"
+#line 373 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 838 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 839 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -844,11 +845,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0021 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileInteger * value = DStaticCast< DataFileInteger * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 355 "../../lib/parsers/xrb_datafileparser.trison"
+#line 378 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 852 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 853 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -858,11 +859,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0022 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileFloat * value = DStaticCast< DataFileFloat * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 360 "../../lib/parsers/xrb_datafileparser.trison"
+#line 383 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 866 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 867 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -872,11 +873,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0023 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileCharacter * value = DStaticCast< DataFileCharacter * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 365 "../../lib/parsers/xrb_datafileparser.trison"
+#line 388 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 880 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 881 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -886,11 +887,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0024 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * value = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 370 "../../lib/parsers/xrb_datafileparser.trison"
+#line 393 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 894 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 895 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -900,11 +901,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0025 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileStructure * value = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 375 "../../lib/parsers/xrb_datafileparser.trison"
+#line 398 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 908 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 909 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -914,11 +915,11 @@ DataFileValue * DataFileParser::ReductionRuleHandler0026 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileArray * value = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 380 "../../lib/parsers/xrb_datafileparser.trison"
+#line 403 "../../lib/parsers/xrb_datafileparser.trison"
 
         return value;
     
-#line 922 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 923 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -930,7 +931,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0027 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileString * string_fragment = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 396 "../../lib/parsers/xrb_datafileparser.trison"
+#line 419 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(string != NULL)
         ASSERT1(string_fragment != NULL)
@@ -938,7 +939,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0027 ()
         Delete(string_fragment);
         return string;
     
-#line 942 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 943 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -948,12 +949,12 @@ DataFileValue * DataFileParser::ReductionRuleHandler0028 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * string_fragment = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 405 "../../lib/parsers/xrb_datafileparser.trison"
+#line 428 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(string_fragment != NULL)
         return string_fragment;
     
-#line 957 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 958 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -999,7 +1000,7 @@ DataFileParser::ReductionRule const DataFileParser::ms_reduction_rule[] =
     {                 Token::_ERROR,  1,                                     NULL, "* -> error"}
 };
 
-unsigned int const DataFileParser::ms_reduction_rule_count =
+uint const DataFileParser::ms_reduction_rule_count =
     sizeof(DataFileParser::ms_reduction_rule) /
     sizeof(DataFileParser::ReductionRule);
 
@@ -1052,7 +1053,7 @@ DataFileParser::State const DataFileParser::ms_state[] =
 
 };
 
-unsigned int const DataFileParser::ms_state_count =
+uint const DataFileParser::ms_state_count =
     sizeof(DataFileParser::ms_state) /
     sizeof(DataFileParser::State);
 
@@ -1388,23 +1389,35 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 
 };
 
-unsigned int const DataFileParser::ms_state_transition_count =
+uint const DataFileParser::ms_state_transition_count =
     sizeof(DataFileParser::ms_state_transition) /
     sizeof(DataFileParser::StateTransition);
 
 
-#line 92 "../../lib/parsers/xrb_datafileparser.trison"
+#line 105 "../../lib/parsers/xrb_datafileparser.trison"
 
-bool DataFileParser::SetInputFilename (std::string const &input_filename)
+DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
 {
     ASSERT1(m_scanner != NULL)
-    m_scanner->Close();
+    ASSERT1(!m_scanner->GetIsOpen())
     // if there are any pipe characters in the filename, return failure
     if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
-        return false;
-    // otherwise attempt to open the filename and return the result
-    else
-        return m_scanner->Open(input_filename);
+        return RC_INVALID_FILENAME;
+
+    // attempt to open the filename and return the result
+    if (!m_scanner->Open(input_filename))
+        return RC_FILE_OPEN_FAILURE;
+
+    // start parsing, and return parse error if we got an unhandled error
+    if (Parse() == PRC_UNHANDLED_PARSE_ERROR)
+        return RC_PARSE_ERROR;
+
+    // if any errors were encountered, return parse error
+    if (m_scanner->GetWereErrorsEncountered())
+        return RC_ERRORS_ENCOUNTERED;
+
+    // otherwise return success
+    return RC_SUCCESS;
 }
 
 DataFileParser::Token::Type DataFileParser::Scan ()
@@ -1416,30 +1429,28 @@ DataFileParser::Token::Type DataFileParser::Scan ()
 void DataFileParser::EmitWarning (std::string const &message)
 {
     ASSERT1(m_scanner != NULL)
-    std::cerr << m_scanner->GetInputFilename() << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
+    m_scanner->EmitWarning(message);
 }
 
 void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    std::cerr << file_location << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
+    ASSERT1(m_scanner != NULL)
+    m_scanner->EmitWarning(file_location, message);
 }
 
 void DataFileParser::EmitError (std::string const &message)
 {
     ASSERT1(m_scanner != NULL)
-    std::cerr << m_scanner->GetInputFilename() << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
+    m_scanner->EmitError(message);
 }
 
 void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    std::cerr << file_location << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
+    ASSERT1(m_scanner != NULL)
+    m_scanner->EmitError(file_location, message);
 }
 
 } // end of namespace Xrb
 
-#line 1445 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 1456 "../../lib/parsers/xrb_datafileparser.cpp"
 

@@ -24,19 +24,34 @@ class DataFileValue;
 
 %parser_class_name "DataFileParser"
 
+%parser_parse_method_access "private:"
+
 %parser_class_methods_and_members{
-    inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
-    inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
+    enum ReturnCode
+    {
+        RC_SUCCESS = 0,
+        RC_INVALID_FILENAME,
+        RC_FILE_OPEN_FAILURE,
+        RC_PARSE_ERROR,
+        RC_ERRORS_ENCOUNTERED
+    }; // end of enum ReturnCode
+
     inline DataFileKeyPair *GetAcceptedKeyPair () const
     {
         return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
     }
+    inline DataFileKeyPair *StealAcceptedKeyPair ()
+    {
+        DataFileKeyPair *accepted_key_pair = GetAcceptedKeyPair();
+        ClearAcceptedToken();
+        return accepted_key_pair;
+    }
 
-    bool SetInputFilename (std::string const &input_filename);
-
-    Token::Type Scan ();
+    ReturnCode Parse (std::string const &input_filename);
 
 private:
+
+    Token::Type Scan ();
 
     void EmitWarning (std::string const &message);
     void EmitWarning (DataFileLocation const &file_location, std::string const &message);
@@ -45,8 +60,6 @@ private:
     void EmitError (DataFileLocation const &file_location, std::string const &message);
 
     DataFileScanner *m_scanner;
-    bool m_were_warnings_encountered;
-    bool m_were_errors_encountered;
 } // end of %parser_class_methods_and_members
 
 %parser_header_file_bottom%{
@@ -74,32 +87,44 @@ namespace Xrb
 %parser_destructor_actions{
     ASSERT1(m_scanner != NULL)
     Delete(m_scanner);
+    delete StealAcceptedKeyPair();
 }
 
-%parser_start_of_parse_method_actions{
-    m_were_warnings_encountered = false;
-    m_were_errors_encountered = false;
-}
+%parser_start_of_parse_method_actions%{
+    delete StealAcceptedKeyPair();
+%}
 
-%parser_end_of_parse_method_actions{
+%parser_end_of_parse_method_actions%{
     m_scanner->Close();
-}
+%}
 
 %parser_throw_away_token_actions{
     Delete(token);
 }
 
 %parser_implementation_file_bottom%{
-bool DataFileParser::SetInputFilename (std::string const &input_filename)
+DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
 {
     ASSERT1(m_scanner != NULL)
-    m_scanner->Close();
+    ASSERT1(!m_scanner->GetIsOpen())
     // if there are any pipe characters in the filename, return failure
     if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
-        return false;
-    // otherwise attempt to open the filename and return the result
-    else
-        return m_scanner->Open(input_filename);
+        return RC_INVALID_FILENAME;
+
+    // attempt to open the filename and return the result
+    if (!m_scanner->Open(input_filename))
+        return RC_FILE_OPEN_FAILURE;
+
+    // start parsing, and return parse error if we got an unhandled error
+    if (Parse() == PRC_UNHANDLED_PARSE_ERROR)
+        return RC_PARSE_ERROR;
+
+    // if any errors were encountered, return parse error
+    if (m_scanner->GetWereErrorsEncountered())
+        return RC_ERRORS_ENCOUNTERED;
+
+    // otherwise return success
+    return RC_SUCCESS;
 }
 
 DataFileParser::Token::Type DataFileParser::Scan ()
@@ -111,27 +136,25 @@ DataFileParser::Token::Type DataFileParser::Scan ()
 void DataFileParser::EmitWarning (std::string const &message)
 {
     ASSERT1(m_scanner != NULL)
-    std::cerr << m_scanner->GetInputFilename() << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
+    m_scanner->EmitWarning(message);
 }
 
 void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    std::cerr << file_location << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
+    ASSERT1(m_scanner != NULL)
+    m_scanner->EmitWarning(file_location, message);
 }
 
 void DataFileParser::EmitError (std::string const &message)
 {
     ASSERT1(m_scanner != NULL)
-    std::cerr << m_scanner->GetInputFilename() << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
+    m_scanner->EmitError(message);
 }
 
 void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    std::cerr << file_location << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
+    ASSERT1(m_scanner != NULL)
+    m_scanner->EmitError(file_location, message);
 }
 
 } // end of namespace Xrb

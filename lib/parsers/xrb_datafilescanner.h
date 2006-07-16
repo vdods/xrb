@@ -21,6 +21,7 @@
 namespace Xrb
 {
 
+class DataFileLocation;
 class DataFileValue;
 
 class DataFileScanner
@@ -30,11 +31,21 @@ public:
     DataFileScanner ();
     ~DataFileScanner ();
 
+    inline bool GetIsOpen () const { return m_input.is_open(); }
     inline std::string const &GetInputFilename () const { return m_input_filename; }
     inline uint GetLineNumber () const { return m_line_number; }
+    inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
+    inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
 
     bool Open (std::string const &input_filename);
     void Close ();
+
+    void EmitWarning (std::string const &message);
+    void EmitWarning (DataFileLocation const &file_location, std::string const &message);
+
+    void EmitError (std::string const &message);
+    void EmitError (DataFileLocation const &file_location, std::string const &message);
+
     DataFileParser::Token::Type Scan (DataFileValue **scanned_token);
 
 private:
@@ -64,6 +75,8 @@ private:
     std::string m_text;
     uint m_line_number;
     bool m_in_preamble;
+    bool m_were_warnings_encountered;
+    bool m_were_errors_encountered;
 }; // end of class DataFileScanner
 
 } // end of namespace Xrb
