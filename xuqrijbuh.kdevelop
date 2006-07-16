@@ -137,7 +137,6 @@
       <group pattern="lib/input/*" name="/lib/input" />
       <group pattern="lib/mapeditor2/*" name="/lib/mapeditor2" />
       <group pattern="lib/math/*" name="/lib/math" />
-      <group pattern="lib/parsers/datafile/*" name="/lib/parsers/datafile" />
       <group pattern="lib/parsers/linecalculator/*" name="/lib/parsers/linecalculator" />
       <group pattern="lib/parsers/*" name="/lib/parsers" />
       <group pattern="lib/primitive/*" name="/lib/primitive" />

@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-%parser_header_file_top"
-#include \"xrb.h\"
+%parser_header_file_top%{
+#include "xrb.h"
 
 #include <string>
 
@@ -17,13 +17,16 @@ namespace Xrb
 {
 
 class DataFileKeyPair;
+class DataFileLocation;
 class DataFileScanner;
 class DataFileValue;
-"
+%} // end of %parser_header_file_top
 
 %parser_class_name "DataFileParser"
 
 %parser_class_methods_and_members{
+    inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
+    inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
     inline DataFileKeyPair *GetAcceptedKeyPair () const
     {
         return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
@@ -35,53 +38,104 @@ class DataFileValue;
 
 private:
 
+    void EmitWarning (std::string const &message);
+    void EmitWarning (DataFileLocation const &file_location, std::string const &message);
+
+    void EmitError (std::string const &message);
+    void EmitError (DataFileLocation const &file_location, std::string const &message);
+
     DataFileScanner *m_scanner;
-}
+    bool m_were_warnings_encountered;
+    bool m_were_errors_encountered;
+} // end of %parser_class_methods_and_members
 
-%parser_header_file_bottom"
+%parser_header_file_bottom%{
 } // end of namespace Xrb
-"
+%} // end of %parser_header_file_bottom
 
-%parser_implementation_file_top"
-#include \"xrb_datafilescanner.h\"
-#include \"xrb_datafilevalue.h\"
+%parser_implementation_file_top%{
+#include <sstream>
+
+#include "xrb_datafilelocation.h"
+#include "xrb_datafilescanner.h"
+#include "xrb_datafilevalue.h"
 
 #undef FL
-#define FL FileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
+#define FL DataFileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
 
 namespace Xrb
 {
-"
+%} // end of %parser_implementation_file_top
 
 %parser_constructor_actions{
     m_scanner = new DataFileScanner();
 }
 
 %parser_destructor_actions{
-    delete m_scanner;
+    ASSERT1(m_scanner != NULL)
+    Delete(m_scanner);
+}
+
+%parser_start_of_parse_method_actions{
+    m_were_warnings_encountered = false;
+    m_were_errors_encountered = false;
+}
+
+%parser_end_of_parse_method_actions{
+    m_scanner->Close();
 }
 
 %parser_throw_away_token_actions{
-    delete token;
+    Delete(token);
 }
 
-%parser_implementation_file_bottom"
+%parser_implementation_file_bottom%{
 bool DataFileParser::SetInputFilename (std::string const &input_filename)
 {
-    assert(m_scanner != NULL);
+    ASSERT1(m_scanner != NULL)
     m_scanner->Close();
-    // TODO: make sure there are no pipe characters in the input filename
-    return m_scanner->Open(input_filename);
+    // if there are any pipe characters in the filename, return failure
+    if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
+        return false;
+    // otherwise attempt to open the filename and return the result
+    else
+        return m_scanner->Open(input_filename);
 }
 
 DataFileParser::Token::Type DataFileParser::Scan ()
 {
-    assert(m_scanner != NULL);
+    ASSERT1(m_scanner != NULL)
     return m_scanner->Scan(&m_lookahead_token);
 }
 
+void DataFileParser::EmitWarning (std::string const &message)
+{
+    ASSERT1(m_scanner != NULL)
+    std::cerr << m_scanner->GetInputFilename() << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
+{
+    std::cerr << file_location << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileParser::EmitError (std::string const &message)
+{
+    ASSERT1(m_scanner != NULL)
+    std::cerr << m_scanner->GetInputFilename() << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
+}
+
+void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
+{
+    std::cerr << file_location << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
+}
+
 } // end of namespace Xrb
-"
+%} // end of %parser_implementation_file_bottom
 
 %parser_base_assigned_type "DataFileValue *"
 %parser_base_assigned_type_sentinel "NULL"
@@ -108,6 +162,12 @@ data_file %type "DataFileStructure *"
         ASSERT1(element_list != NULL)
         return new DataFileKeyPair(m_scanner->GetInputFilename(), element_list);
     }
+|
+    %error
+    {
+        EmitError(FL, "general syntax error");
+        return new DataFileKeyPair(m_scanner->GetInputFilename(), new DataFileStructure());
+    }
 ;
 
 element_list %type "DataFileStructure *"
@@ -115,14 +175,20 @@ element_list %type "DataFileStructure *"
     element_list:element_list element:element
     {
         ASSERT1(element_list != NULL)
-        ASSERT1(element != NULL)
-        try
+
+        if (element != NULL)
         {
-            element_list->AddKeyPair(element);
-        }
-        catch (char const *exception)
-        {
-            // TODO: emit error message
+            try
+            {
+                element_list->AddKeyPair(element);
+            }
+            catch (char const *exception)
+            {
+                std::ostringstream out;
+                out << "collision with key \"" << element->GetKey() << "\"";
+                EmitError(FL, out.str());
+                Delete(element);
+            }
         }
         return element_list;
     }
@@ -136,8 +202,13 @@ element %type "DataFileKeyPair *"
 :
     key_pair:key_pair ';'
     {
-        ASSERT1(key_pair != NULL)
         return key_pair;
+    }
+|
+    %error ';'
+    {
+        EmitError(FL, "syntax error in element");
+        return NULL;
     }
 ;
 
@@ -146,10 +217,37 @@ key_pair %type "DataFileKeyPair *"
     IDENTIFIER:key value:value
     {
         ASSERT1(key != NULL)
-        ASSERT1(value != NULL)
+        if (value == NULL)
+        {
+            Delete(key);
+            return NULL;
+        }
+
         DataFileKeyPair *key_pair = new DataFileKeyPair(key->GetValue(), value);
         Delete(key);
         return key_pair;
+    }
+|
+    IDENTIFIER:key value:value %error
+    {
+        ASSERT1(key != NULL)
+        std::ostringstream out;
+        out << "syntax error in element with key \"" << key->GetValue() << "\"";
+        EmitError(FL, out.str());
+        Delete(key);
+        if (value != NULL)
+            Delete(value);
+        return NULL;
+    }
+|
+    IDENTIFIER:key %error
+    {
+        ASSERT1(key != NULL)
+        std::ostringstream out;
+        out << "syntax error in element with key \"" << key->GetValue() << "\"";
+        EmitError(FL, out.str());
+        Delete(key);
+        return NULL;
     }
 ;
 
@@ -159,6 +257,12 @@ structure %type "DataFileStructure *"
     {
         ASSERT1(element_list != NULL)
         return element_list;
+    }
+|
+    '{' %error '}'
+    {
+        EmitError(FL, "syntax error in structure");
+        return new DataFileStructure();
     }
 ;
 
@@ -170,9 +274,21 @@ array %type "DataFileArray *"
         return list;
     }
 |
+    '[' list:list ',' ']'
+    {
+        ASSERT1(list != NULL)
+        return list;
+    }
+|
     '[' ']'
     {
         return new DataFileArray();
+    }
+|
+    '[' %error ']'
+    {
+        EmitError(FL, "syntax error in array");
+        return NULL;
     }
 ;
 
@@ -181,31 +297,35 @@ list %type "DataFileArray *"
     list:list ',' list_element:list_element
     {
         ASSERT1(list != NULL)
-        ASSERT1(list_element != NULL)
-        try
+        if (list_element != NULL)
         {
-            list->AppendValue(list_element);
-        }
-        catch (char const *exception)
-        {
-            // TODO: emit error message
-            Delete(list_element);
+            try
+            {
+                list->AppendValue(list_element);
+            }
+            catch (char const *exception)
+            {
+                EmitError(FL, exception);
+                Delete(list_element);
+            }
         }
         return list;
     }
 |
     list_element:list_element
     {
-        ASSERT1(list_element != NULL)
         DataFileArray *list = new DataFileArray();
-        try
+        if (list_element != NULL)
         {
-            list->AppendValue(list_element);
-        }
-        catch (char const *exception)
-        {
-            ASSERT1(false && "this should never happen")
-            Delete(list_element);
+            try
+            {
+                list->AppendValue(list_element);
+            }
+            catch (char const *exception)
+            {
+                ASSERT1(false && "this should never happen")
+                Delete(list_element);
+            }
         }
         return list;
     }
@@ -215,13 +335,11 @@ list_element %type "DataFileValue *"
 :
     key_pair:key_pair
     {
-        ASSERT1(key_pair != NULL)
         return key_pair;
     }
 |
     value:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 ;
@@ -230,45 +348,46 @@ value %type "DataFileValue *"
 :
     BOOLEAN:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     INTEGER:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     FLOAT:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     CHARACTER:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     string:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     structure:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
 |
     array:value
     {
-        ASSERT1(value != NULL)
         return value;
     }
+/*
+|
+    %error
+    {
+        EmitError(FL, "syntax error in value");
+        return NULL;
+    }
+*/
 ;
 
 string %type "DataFileString *"

@@ -16,10 +16,11 @@ namespace Xrb
 {
 
 class DataFileKeyPair;
+class DataFileLocation;
 class DataFileScanner;
 class DataFileValue;
 
-#line 23 "../../lib/parsers/xrb_datafileparser.h"
+#line 24 "../../lib/parsers/xrb_datafileparser.h"
 
 class DataFileParser
 
@@ -92,8 +93,10 @@ public:
     static void CheckStateConsistency ();
 
 
-#line 26 "../../lib/parsers/xrb_datafileparser.trison"
+#line 27 "../../lib/parsers/xrb_datafileparser.trison"
 
+    inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
+    inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
     inline DataFileKeyPair *GetAcceptedKeyPair () const
     {
         return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
@@ -105,9 +108,17 @@ public:
 
 private:
 
-    DataFileScanner *m_scanner;
+    void EmitWarning (std::string const &message);
+    void EmitWarning (DataFileLocation const &file_location, std::string const &message);
 
-#line 111 "../../lib/parsers/xrb_datafileparser.h"
+    void EmitError (std::string const &message);
+    void EmitError (DataFileLocation const &file_location, std::string const &message);
+
+    DataFileScanner *m_scanner;
+    bool m_were_warnings_encountered;
+    bool m_were_errors_encountered;
+
+#line 122 "../../lib/parsers/xrb_datafileparser.h"
 
 private:
 
@@ -255,17 +266,24 @@ private:
     DataFileValue * ReductionRuleHandler0019 ();
     DataFileValue * ReductionRuleHandler0020 ();
     DataFileValue * ReductionRuleHandler0021 ();
+    DataFileValue * ReductionRuleHandler0022 ();
+    DataFileValue * ReductionRuleHandler0023 ();
+    DataFileValue * ReductionRuleHandler0024 ();
+    DataFileValue * ReductionRuleHandler0025 ();
+    DataFileValue * ReductionRuleHandler0026 ();
+    DataFileValue * ReductionRuleHandler0027 ();
+    DataFileValue * ReductionRuleHandler0028 ();
 
 }; // end of class DataFileParser
 
 std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type token_type);
 
 
-#line 41 "../../lib/parsers/xrb_datafileparser.trison"
+#line 52 "../../lib/parsers/xrb_datafileparser.trison"
 
 } // end of namespace Xrb
 
-#line 269 "../../lib/parsers/xrb_datafileparser.h"
+#line 287 "../../lib/parsers/xrb_datafileparser.h"
 
 #endif // !defined(_DataFileParser_H_)
 

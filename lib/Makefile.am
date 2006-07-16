@@ -65,6 +65,7 @@ libxrb_la_SOURCES = \
     math/xrb_transform2.cpp \
     math/xrb_vector.cpp \
     \
+    parsers/xrb_datafilelocation.cpp \
     parsers/xrb_datafileparser.cpp \
     parsers/xrb_datafileparser.trison \
     parsers/xrb_datafilescanner.cpp \
@@ -218,7 +219,7 @@ include_HEADERS = \
     math/xrb_transform2.h \
     math/xrb_vector.h \
     \
-    parsers/xrb_datafile.h \
+    parsers/xrb_datafilelocation.h \
     parsers/xrb_datafileparser.h \
     parsers/xrb_datafilescanner.h \
     parsers/xrb_datafilevalue.h \
@@ -288,24 +289,15 @@ include_HEADERS = \
 ##############################################################################
 
 if TRISON_EXISTS
-$(srcdir)/parsers/xrb_datafileparser.h $(srcdir)/parsers/xrb_datafileparser.cpp: $(srcdir)/parsers/xrb_datafileparser.trison
-	$(TRISON) $(srcdir)/parsers/xrb_datafileparser.trison --output-basename $(srcdir)/parsers/xrb_datafileparser --generate-states-file $(srcdir)/parsers/xrb_datafileparser.states
+$(srcdir)/parsers/xrb_datafileparser.h: $(srcdir)/parsers/xrb_datafileparser.cpp
+$(srcdir)/parsers/xrb_datafileparser.cpp: $(srcdir)/parsers/xrb_datafileparser.trison
+	$(TRISON) $(srcdir)/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(srcdir)/parsers/xrb_datafileparser --generate-states-file $(srcdir)/parsers/xrb_datafileparser.states
 endif
 
 ##############################################################################
 # parser intermediate libraries -- they're special because they need
 # to be separate and have to have special flags for lex and yacc
 ##############################################################################
-
-#libdatafileparser_la_SOURCES = \
-#    parsers/datafile/xrb_datafileparser.ypp \
-#    parsers/datafile/xrb_datafilescanner.lpp \
-#    parsers/xrb_datafile.cpp \
-#    parsers/xrb_datafilevalue.cpp
-#libdatafileparser_la_YFLAGS = \
-#    -d -v -p DataFile_
-#libdatafileparser_la_LFLAGS = \
-#    --prefix DataFile_ --outfile=lex.yy.c
 
 #liblinecalculatorparser_la_SOURCES = \
 #    parsers/linecalculator/xrb_linecalculatorparser.ypp \

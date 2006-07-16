@@ -114,14 +114,16 @@ void DataFileArray::AppendValue (DataFileValue const *const value)
     {
         DataFileValue const *first_element_value = *it;
         ASSERT1(first_element_value != NULL)
-        if (value->GetElementType() != first_element_value->GetElementType()
-            ||
-            value->GetElementType() == DAT_ARRAY &&
-            !GetDoesMatchDimensionAndType(
-                DStaticCast<DataFileArray const *>(value),
-                DStaticCast<DataFileArray const *>(first_element_value)))
+        if (value->GetElementType() != first_element_value->GetElementType())
         {
-            throw "non-homogeneous array";
+            throw "array elements must all be identically typed";
+        }
+        else if (value->GetElementType() == DAT_ARRAY &&
+                    !GetDoesMatchDimensionAndType(
+                        DStaticCast<DataFileArray const *>(value),
+                        DStaticCast<DataFileArray const *>(first_element_value)))
+        {
+            throw "sibling elements in nested arrays must be of identical dimension and type";
         }
     }
 

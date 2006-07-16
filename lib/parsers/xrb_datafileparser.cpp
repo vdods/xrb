@@ -8,28 +8,31 @@
 #define DEBUG_SPEW_2(x) if (m_debug_spew_level >= 2) std::cerr << x
 
 
-#line 45 "../../lib/parsers/xrb_datafileparser.trison"
+#line 56 "../../lib/parsers/xrb_datafileparser.trison"
 
+#include <sstream>
+
+#include "xrb_datafilelocation.h"
 #include "xrb_datafilescanner.h"
 #include "xrb_datafilevalue.h"
 
 #undef FL
-#define FL FileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
+#define FL DataFileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
 
 namespace Xrb
 {
 
-#line 23 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 26 "../../lib/parsers/xrb_datafileparser.cpp"
 
 DataFileParser::DataFileParser ()
 
 {
 
-#line 56 "../../lib/parsers/xrb_datafileparser.trison"
+#line 70 "../../lib/parsers/xrb_datafileparser.trison"
 
     m_scanner = new DataFileScanner();
 
-#line 33 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 36 "../../lib/parsers/xrb_datafileparser.cpp"
     m_debug_spew_level = 0;
     DEBUG_SPEW_2("### number of state transitions = " << ms_state_transition_count << std::endl);
 }
@@ -37,24 +40,32 @@ DataFileParser::DataFileParser ()
 DataFileParser::~DataFileParser ()
 {
 
-#line 60 "../../lib/parsers/xrb_datafileparser.trison"
+#line 74 "../../lib/parsers/xrb_datafileparser.trison"
 
-    delete m_scanner;
+    ASSERT1(m_scanner != NULL)
+    Delete(m_scanner);
 
-#line 45 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 49 "../../lib/parsers/xrb_datafileparser.cpp"
 }
 
 DataFileParser::ReturnCode DataFileParser::Parse ()
 {
-    {
 
-    }
+#line 79 "../../lib/parsers/xrb_datafileparser.trison"
+
+    m_were_warnings_encountered = false;
+    m_were_errors_encountered = false;
+
+#line 60 "../../lib/parsers/xrb_datafileparser.cpp"
 
     ReturnCode return_code = PrivateParse();
 
-    {
 
-    }
+#line 84 "../../lib/parsers/xrb_datafileparser.trison"
+
+    m_scanner->Close();
+
+#line 69 "../../lib/parsers/xrb_datafileparser.cpp"
 
     return return_code;
 }
@@ -403,11 +414,11 @@ void DataFileParser::ScanANewLookaheadToken ()
 void DataFileParser::ThrowAwayToken (DataFileValue * token)
 {
 
-#line 64 "../../lib/parsers/xrb_datafileparser.trison"
+#line 88 "../../lib/parsers/xrb_datafileparser.trison"
 
-    delete token;
+    Delete(token);
 
-#line 411 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 422 "../../lib/parsers/xrb_datafileparser.cpp"
 }
 
 void DataFileParser::ThrowAwayTokenStack ()
@@ -486,326 +497,440 @@ DataFileValue * DataFileParser::ReductionRuleHandler0001 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileStructure * element_list = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 107 "../../lib/parsers/xrb_datafileparser.trison"
+#line 161 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
         return new DataFileKeyPair(m_scanner->GetInputFilename(), element_list);
     
-#line 495 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 506 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 2: element_list <- element_list:element_list element:element    
+// rule 2: data_file <- %error    
 DataFileValue * DataFileParser::ReductionRuleHandler0002 ()
+{
+
+#line 167 "../../lib/parsers/xrb_datafileparser.trison"
+
+        EmitError(FL, "general syntax error");
+        return new DataFileKeyPair(m_scanner->GetInputFilename(), new DataFileStructure());
+    
+#line 519 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 3: element_list <- element_list:element_list element:element    
+DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileStructure * element_list = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileKeyPair * element = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 116 "../../lib/parsers/xrb_datafileparser.trison"
+#line 176 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
-        ASSERT1(element != NULL)
-        try
+
+        if (element != NULL)
         {
-            element_list->AddKeyPair(element);
-        }
-        catch (char const *exception)
-        {
-            // TODO: emit error message
+            try
+            {
+                element_list->AddKeyPair(element);
+            }
+            catch (char const *exception)
+            {
+                std::ostringstream out;
+                out << "collision with key \"" << element->GetKey() << "\"";
+                EmitError(FL, out.str());
+                Delete(element);
+            }
         }
         return element_list;
     
-#line 521 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 551 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 3: element_list <-     
-DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
+// rule 4: element_list <-     
+DataFileValue * DataFileParser::ReductionRuleHandler0004 ()
 {
 
-#line 130 "../../lib/parsers/xrb_datafileparser.trison"
+#line 196 "../../lib/parsers/xrb_datafileparser.trison"
 
         return new DataFileStructure();
     
-#line 533 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 563 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 4: element <- key_pair:key_pair ';'    
-DataFileValue * DataFileParser::ReductionRuleHandler0004 ()
+// rule 5: element <- key_pair:key_pair ';'    
+DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileKeyPair * key_pair = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 138 "../../lib/parsers/xrb_datafileparser.trison"
+#line 204 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(key_pair != NULL)
         return key_pair;
     
-#line 548 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 577 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 5: key_pair <- IDENTIFIER:key value:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
+// rule 6: element <- %error ';'    
+DataFileValue * DataFileParser::ReductionRuleHandler0006 ()
+{
+
+#line 209 "../../lib/parsers/xrb_datafileparser.trison"
+
+        EmitError(FL, "syntax error in element");
+        return NULL;
+    
+#line 590 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 7: key_pair <- IDENTIFIER:key value:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0007 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * key = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 147 "../../lib/parsers/xrb_datafileparser.trison"
+#line 218 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(key != NULL)
-        ASSERT1(value != NULL)
+        if (value == NULL)
+        {
+            Delete(key);
+            return NULL;
+        }
+
         DataFileKeyPair *key_pair = new DataFileKeyPair(key->GetValue(), value);
         Delete(key);
         return key_pair;
     
-#line 568 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 615 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 6: structure <- '{' element_list:element_list '}'    
-DataFileValue * DataFileParser::ReductionRuleHandler0006 ()
+// rule 8: key_pair <- IDENTIFIER:key value:value %error    
+DataFileValue * DataFileParser::ReductionRuleHandler0008 ()
+{
+    assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
+    DataFileString * key = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
+    assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
+    DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
+
+#line 232 "../../lib/parsers/xrb_datafileparser.trison"
+
+        ASSERT1(key != NULL)
+        std::ostringstream out;
+        out << "syntax error in element with key \"" << key->GetValue() << "\"";
+        EmitError(FL, out.str());
+        Delete(key);
+        if (value != NULL)
+            Delete(value);
+        return NULL;
+    
+#line 638 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 9: key_pair <- IDENTIFIER:key %error    
+DataFileValue * DataFileParser::ReductionRuleHandler0009 ()
+{
+    assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
+    DataFileString * key = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
+
+#line 244 "../../lib/parsers/xrb_datafileparser.trison"
+
+        ASSERT1(key != NULL)
+        std::ostringstream out;
+        out << "syntax error in element with key \"" << key->GetValue() << "\"";
+        EmitError(FL, out.str());
+        Delete(key);
+        return NULL;
+    
+#line 657 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 10: structure <- '{' element_list:element_list '}'    
+DataFileValue * DataFileParser::ReductionRuleHandler0010 ()
 {
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileStructure * element_list = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 159 "../../lib/parsers/xrb_datafileparser.trison"
+#line 257 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(element_list != NULL)
         return element_list;
     
-#line 583 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 672 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 7: array <- '[' list:list ']'    
-DataFileValue * DataFileParser::ReductionRuleHandler0007 ()
+// rule 11: structure <- '{' %error '}'    
+DataFileValue * DataFileParser::ReductionRuleHandler0011 ()
+{
+
+#line 263 "../../lib/parsers/xrb_datafileparser.trison"
+
+        EmitError(FL, "syntax error in structure");
+        return new DataFileStructure();
+    
+#line 685 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 12: array <- '[' list:list ']'    
+DataFileValue * DataFileParser::ReductionRuleHandler0012 ()
 {
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileArray * list = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 168 "../../lib/parsers/xrb_datafileparser.trison"
+#line 272 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(list != NULL)
         return list;
     
-#line 598 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 700 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 8: array <- '[' ']'    
-DataFileValue * DataFileParser::ReductionRuleHandler0008 ()
+// rule 13: array <- '[' list:list ',' ']'    
+DataFileValue * DataFileParser::ReductionRuleHandler0013 ()
+{
+    assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
+    DataFileArray * list = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
+
+#line 278 "../../lib/parsers/xrb_datafileparser.trison"
+
+        ASSERT1(list != NULL)
+        return list;
+    
+#line 715 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 14: array <- '[' ']'    
+DataFileValue * DataFileParser::ReductionRuleHandler0014 ()
 {
 
-#line 174 "../../lib/parsers/xrb_datafileparser.trison"
+#line 284 "../../lib/parsers/xrb_datafileparser.trison"
 
         return new DataFileArray();
     
-#line 610 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 727 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 9: list <- list:list ',' list_element:list_element    
-DataFileValue * DataFileParser::ReductionRuleHandler0009 ()
+// rule 15: array <- '[' %error ']'    
+DataFileValue * DataFileParser::ReductionRuleHandler0015 ()
+{
+
+#line 289 "../../lib/parsers/xrb_datafileparser.trison"
+
+        EmitError(FL, "syntax error in array");
+        return NULL;
+    
+#line 740 "../../lib/parsers/xrb_datafileparser.cpp"
+    return NULL;
+}
+
+// rule 16: list <- list:list ',' list_element:list_element    
+DataFileValue * DataFileParser::ReductionRuleHandler0016 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileArray * list = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     DataFileValue * list_element = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 182 "../../lib/parsers/xrb_datafileparser.trison"
+#line 298 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(list != NULL)
-        ASSERT1(list_element != NULL)
-        try
+        if (list_element != NULL)
         {
-            list->AppendValue(list_element);
-        }
-        catch (char const *exception)
-        {
-            // TODO: emit error message
-            Delete(list_element);
+            try
+            {
+                list->AppendValue(list_element);
+            }
+            catch (char const *exception)
+            {
+                EmitError(FL, exception);
+                Delete(list_element);
+            }
         }
         return list;
     
-#line 637 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 769 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 10: list <- list_element:list_element    
-DataFileValue * DataFileParser::ReductionRuleHandler0010 ()
+// rule 17: list <- list_element:list_element    
+DataFileValue * DataFileParser::ReductionRuleHandler0017 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileValue * list_element = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 198 "../../lib/parsers/xrb_datafileparser.trison"
+#line 316 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(list_element != NULL)
         DataFileArray *list = new DataFileArray();
-        try
+        if (list_element != NULL)
         {
-            list->AppendValue(list_element);
-        }
-        catch (char const *exception)
-        {
-            ASSERT1(false && "this should never happen")
-            Delete(list_element);
+            try
+            {
+                list->AppendValue(list_element);
+            }
+            catch (char const *exception)
+            {
+                ASSERT1(false && "this should never happen")
+                Delete(list_element);
+            }
         }
         return list;
     
-#line 662 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 796 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 11: list_element <- key_pair:key_pair    
-DataFileValue * DataFileParser::ReductionRuleHandler0011 ()
+// rule 18: list_element <- key_pair:key_pair    
+DataFileValue * DataFileParser::ReductionRuleHandler0018 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileKeyPair * key_pair = DStaticCast< DataFileKeyPair * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 217 "../../lib/parsers/xrb_datafileparser.trison"
+#line 337 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(key_pair != NULL)
         return key_pair;
     
-#line 677 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 810 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 12: list_element <- value:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0012 ()
+// rule 19: list_element <- value:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0019 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileValue * value = DStaticCast< DataFileValue * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 223 "../../lib/parsers/xrb_datafileparser.trison"
+#line 342 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 692 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 824 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 13: value <- BOOLEAN:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0013 ()
+// rule 20: value <- BOOLEAN:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0020 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileBoolean * value = DStaticCast< DataFileBoolean * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 232 "../../lib/parsers/xrb_datafileparser.trison"
+#line 350 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 707 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 838 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 14: value <- INTEGER:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0014 ()
+// rule 21: value <- INTEGER:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0021 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileInteger * value = DStaticCast< DataFileInteger * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 238 "../../lib/parsers/xrb_datafileparser.trison"
+#line 355 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 722 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 852 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 15: value <- FLOAT:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0015 ()
+// rule 22: value <- FLOAT:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0022 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileFloat * value = DStaticCast< DataFileFloat * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 244 "../../lib/parsers/xrb_datafileparser.trison"
+#line 360 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 737 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 866 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 16: value <- CHARACTER:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0016 ()
+// rule 23: value <- CHARACTER:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0023 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileCharacter * value = DStaticCast< DataFileCharacter * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 250 "../../lib/parsers/xrb_datafileparser.trison"
+#line 365 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 752 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 880 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 17: value <- string:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0017 ()
+// rule 24: value <- string:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0024 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * value = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 256 "../../lib/parsers/xrb_datafileparser.trison"
+#line 370 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 767 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 894 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 18: value <- structure:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0018 ()
+// rule 25: value <- structure:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0025 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileStructure * value = DStaticCast< DataFileStructure * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 262 "../../lib/parsers/xrb_datafileparser.trison"
+#line 375 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 782 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 908 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 19: value <- array:value    
-DataFileValue * DataFileParser::ReductionRuleHandler0019 ()
+// rule 26: value <- array:value    
+DataFileValue * DataFileParser::ReductionRuleHandler0026 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileArray * value = DStaticCast< DataFileArray * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 268 "../../lib/parsers/xrb_datafileparser.trison"
+#line 380 "../../lib/parsers/xrb_datafileparser.trison"
 
-        ASSERT1(value != NULL)
         return value;
     
-#line 797 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 922 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 20: string <- string:string STRING_FRAGMENT:string_fragment    
-DataFileValue * DataFileParser::ReductionRuleHandler0020 ()
+// rule 27: string <- string:string STRING_FRAGMENT:string_fragment    
+DataFileValue * DataFileParser::ReductionRuleHandler0027 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * string = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     DataFileString * string_fragment = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 277 "../../lib/parsers/xrb_datafileparser.trison"
+#line 396 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(string != NULL)
         ASSERT1(string_fragment != NULL)
@@ -813,22 +938,22 @@ DataFileValue * DataFileParser::ReductionRuleHandler0020 ()
         Delete(string_fragment);
         return string;
     
-#line 817 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 942 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
-// rule 21: string <- STRING_FRAGMENT:string_fragment    
-DataFileValue * DataFileParser::ReductionRuleHandler0021 ()
+// rule 28: string <- STRING_FRAGMENT:string_fragment    
+DataFileValue * DataFileParser::ReductionRuleHandler0028 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     DataFileString * string_fragment = DStaticCast< DataFileString * >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 286 "../../lib/parsers/xrb_datafileparser.trison"
+#line 405 "../../lib/parsers/xrb_datafileparser.trison"
 
         ASSERT1(string_fragment != NULL)
         return string_fragment;
     
-#line 832 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 957 "../../lib/parsers/xrb_datafileparser.cpp"
     return NULL;
 }
 
@@ -842,26 +967,33 @@ DataFileParser::ReductionRule const DataFileParser::ms_reduction_rule[] =
 {
     {                 Token::_START,  2, &DataFileParser::ReductionRuleHandler0000, "rule 0: %start <- data_file _END    "},
     {            Token::__data_file,  1, &DataFileParser::ReductionRuleHandler0001, "rule 1: data_file <- element_list    "},
-    {         Token::__element_list,  2, &DataFileParser::ReductionRuleHandler0002, "rule 2: element_list <- element_list element    "},
-    {         Token::__element_list,  0, &DataFileParser::ReductionRuleHandler0003, "rule 3: element_list <-     "},
-    {              Token::__element,  2, &DataFileParser::ReductionRuleHandler0004, "rule 4: element <- key_pair ';'    "},
-    {             Token::__key_pair,  2, &DataFileParser::ReductionRuleHandler0005, "rule 5: key_pair <- IDENTIFIER value    "},
-    {            Token::__structure,  3, &DataFileParser::ReductionRuleHandler0006, "rule 6: structure <- '{' element_list '}'    "},
-    {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0007, "rule 7: array <- '[' list ']'    "},
-    {                Token::__array,  2, &DataFileParser::ReductionRuleHandler0008, "rule 8: array <- '[' ']'    "},
-    {                 Token::__list,  3, &DataFileParser::ReductionRuleHandler0009, "rule 9: list <- list ',' list_element    "},
-    {                 Token::__list,  1, &DataFileParser::ReductionRuleHandler0010, "rule 10: list <- list_element    "},
-    {         Token::__list_element,  1, &DataFileParser::ReductionRuleHandler0011, "rule 11: list_element <- key_pair    "},
-    {         Token::__list_element,  1, &DataFileParser::ReductionRuleHandler0012, "rule 12: list_element <- value    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0013, "rule 13: value <- BOOLEAN    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0014, "rule 14: value <- INTEGER    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0015, "rule 15: value <- FLOAT    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0016, "rule 16: value <- CHARACTER    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: value <- string    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: value <- structure    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: value <- array    "},
-    {               Token::__string,  2, &DataFileParser::ReductionRuleHandler0020, "rule 20: string <- string STRING_FRAGMENT    "},
-    {               Token::__string,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: string <- STRING_FRAGMENT    "},
+    {            Token::__data_file,  1, &DataFileParser::ReductionRuleHandler0002, "rule 2: data_file <- %error    "},
+    {         Token::__element_list,  2, &DataFileParser::ReductionRuleHandler0003, "rule 3: element_list <- element_list element    "},
+    {         Token::__element_list,  0, &DataFileParser::ReductionRuleHandler0004, "rule 4: element_list <-     "},
+    {              Token::__element,  2, &DataFileParser::ReductionRuleHandler0005, "rule 5: element <- key_pair ';'    "},
+    {              Token::__element,  2, &DataFileParser::ReductionRuleHandler0006, "rule 6: element <- %error ';'    "},
+    {             Token::__key_pair,  2, &DataFileParser::ReductionRuleHandler0007, "rule 7: key_pair <- IDENTIFIER value    "},
+    {             Token::__key_pair,  3, &DataFileParser::ReductionRuleHandler0008, "rule 8: key_pair <- IDENTIFIER value %error    "},
+    {             Token::__key_pair,  2, &DataFileParser::ReductionRuleHandler0009, "rule 9: key_pair <- IDENTIFIER %error    "},
+    {            Token::__structure,  3, &DataFileParser::ReductionRuleHandler0010, "rule 10: structure <- '{' element_list '}'    "},
+    {            Token::__structure,  3, &DataFileParser::ReductionRuleHandler0011, "rule 11: structure <- '{' %error '}'    "},
+    {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0012, "rule 12: array <- '[' list ']'    "},
+    {                Token::__array,  4, &DataFileParser::ReductionRuleHandler0013, "rule 13: array <- '[' list ',' ']'    "},
+    {                Token::__array,  2, &DataFileParser::ReductionRuleHandler0014, "rule 14: array <- '[' ']'    "},
+    {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0015, "rule 15: array <- '[' %error ']'    "},
+    {                 Token::__list,  3, &DataFileParser::ReductionRuleHandler0016, "rule 16: list <- list ',' list_element    "},
+    {                 Token::__list,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: list <- list_element    "},
+    {         Token::__list_element,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: list_element <- key_pair    "},
+    {         Token::__list_element,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: list_element <- value    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0020, "rule 20: value <- BOOLEAN    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: value <- INTEGER    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0022, "rule 22: value <- FLOAT    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0023, "rule 23: value <- CHARACTER    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0024, "rule 24: value <- string    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0025, "rule 25: value <- structure    "},
+    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0026, "rule 26: value <- array    "},
+    {               Token::__string,  2, &DataFileParser::ReductionRuleHandler0027, "rule 27: string <- string STRING_FRAGMENT    "},
+    {               Token::__string,  1, &DataFileParser::ReductionRuleHandler0028, "rule 28: string <- STRING_FRAGMENT    "},
 
     // special error panic reduction rule
     {                 Token::_ERROR,  1,                                     NULL, "* -> error"}
@@ -877,36 +1009,46 @@ unsigned int const DataFileParser::ms_reduction_rule_count =
 
 DataFileParser::State const DataFileParser::ms_state[] =
 {
-    {   0,    0,    1,    2,    2}, // state    0
-    {   4,    1,    0,    0,    0}, // state    1
-    {   5,    1,    6,    7,    2}, // state    2
-    {   0,    0,    9,    0,    0}, // state    3
-    {  10,    7,    0,   17,    4}, // state    4
-    {   0,    0,   21,    0,    0}, // state    5
-    {  22,    1,    0,    0,    0}, // state    6
-    {   0,    0,   23,    0,    0}, // state    7
-    {   0,    0,   24,    0,    0}, // state    8
-    {   0,    0,   25,    0,    0}, // state    9
-    {   0,    0,   26,    0,    0}, // state   10
-    {   0,    0,   27,    0,    0}, // state   11
-    {   0,    0,   28,   29,    1}, // state   12
-    {  30,    9,    0,   39,    7}, // state   13
-    {   0,    0,   46,    0,    0}, // state   14
-    {   0,    0,   47,    0,    0}, // state   15
-    {   0,    0,   48,    0,    0}, // state   16
-    {  49,    1,   50,    0,    0}, // state   17
-    {   0,    0,   51,    0,    0}, // state   18
-    {  52,    2,    0,   54,    2}, // state   19
-    {   0,    0,   56,    0,    0}, // state   20
-    {   0,    0,   57,    0,    0}, // state   21
-    {  58,    2,    0,    0,    0}, // state   22
-    {   0,    0,   60,    0,    0}, // state   23
-    {   0,    0,   61,    0,    0}, // state   24
-    {   0,    0,   62,    0,    0}, // state   25
-    {   0,    0,   63,    0,    0}, // state   26
-    {  64,    8,    0,   72,    6}, // state   27
-    {   0,    0,   78,    0,    0}, // state   28
-    {   0,    0,   79,    0,    0}  // state   29
+    {   1,    4,    0,    5,    2}, // state    0
+    {   7,    2,    0,    0,    0}, // state    1
+    {   9,    1,    0,    0,    0}, // state    2
+    {  10,    3,    0,   13,    2}, // state    3
+    {   0,    0,   15,    0,    0}, // state    4
+    {  16,    2,    0,    0,    0}, // state    5
+    {  18,    8,    0,   26,    4}, // state    6
+    {   0,    0,   30,    0,    0}, // state    7
+    {  31,    1,    0,    0,    0}, // state    8
+    {   0,    0,   32,    0,    0}, // state    9
+    {  33,    4,    0,    0,    0}, // state   10
+    {   0,    0,   37,    0,    0}, // state   11
+    {   0,    0,   38,    0,    0}, // state   12
+    {   0,    0,   39,    0,    0}, // state   13
+    {   0,    0,   40,    0,    0}, // state   14
+    {   0,    0,   41,    0,    0}, // state   15
+    {  42,    4,    0,   46,    1}, // state   16
+    {  47,   10,    0,   57,    7}, // state   17
+    {   0,    0,   64,    0,    0}, // state   18
+    {   0,    0,   65,    0,    0}, // state   19
+    {  66,    4,    0,    0,    0}, // state   20
+    {  70,    1,   71,    0,    0}, // state   21
+    {   0,    0,   72,    0,    0}, // state   22
+    {  73,    2,    0,    0,    0}, // state   23
+    {  75,    3,    0,   78,    2}, // state   24
+    {  80,    2,    0,    0,    0}, // state   25
+    {   0,    0,   82,    0,    0}, // state   26
+    {   0,    0,   83,    0,    0}, // state   27
+    {  84,    2,    0,    0,    0}, // state   28
+    {   0,    0,   86,    0,    0}, // state   29
+    {   0,    0,   87,    0,    0}, // state   30
+    {  88,    4,    0,    0,    0}, // state   31
+    {   0,    0,   92,    0,    0}, // state   32
+    {   0,    0,   93,    0,    0}, // state   33
+    {   0,    0,   94,    0,    0}, // state   34
+    {   0,    0,   95,    0,    0}, // state   35
+    {  96,    9,    0,  105,    6}, // state   36
+    {   0,    0,  111,    0,    0}, // state   37
+    {   0,    0,  112,    0,    0}, // state   38
+    {   0,    0,  113,    0,    0}  // state   39
 
 };
 
@@ -926,240 +1068,323 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 // ///////////////////////////////////////////////////////////////////////////
 // state    0
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    3}},
+    // terminal transitions
+    {                   Token::_END, {           TA_REDUCE_USING_RULE,    4}},
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    1}},
+    {             Token::IDENTIFIER, {           TA_REDUCE_USING_RULE,    4}},
+    { static_cast<Token::Type>('}'), {           TA_REDUCE_USING_RULE,    4}},
     // nonterminal transitions
-    {            Token::__data_file, {                  TA_PUSH_STATE,    1}},
-    {         Token::__element_list, {                  TA_PUSH_STATE,    2}},
+    {            Token::__data_file, {                  TA_PUSH_STATE,    2}},
+    {         Token::__element_list, {                  TA_PUSH_STATE,    3}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    1
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {        TA_SHIFT_AND_PUSH_STATE,    3}},
+    {                   Token::_END, {           TA_REDUCE_USING_RULE,    2}},
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    2
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    4}},
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    1}},
-    // nonterminal transitions
-    {              Token::__element, {                  TA_PUSH_STATE,    5}},
-    {             Token::__key_pair, {                  TA_PUSH_STATE,    6}},
+    {                   Token::_END, {        TA_SHIFT_AND_PUSH_STATE,    4}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    3
+// ///////////////////////////////////////////////////////////////////////////
+    // terminal transitions
+    {                   Token::_END, {           TA_REDUCE_USING_RULE,    1}},
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    5}},
+    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
+    // nonterminal transitions
+    {              Token::__element, {                  TA_PUSH_STATE,    7}},
+    {             Token::__key_pair, {                  TA_PUSH_STATE,    8}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state    4
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
     {               Token::_DEFAULT, {TA_REDUCE_AND_ACCEPT_USING_RULE,    0}},
 
 // ///////////////////////////////////////////////////////////////////////////
-// state    4
-// ///////////////////////////////////////////////////////////////////////////
-    // terminal transitions
-    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,    7}},
-    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,    8}},
-    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,    9}},
-    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   10}},
-    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   11}},
-    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   12}},
-    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   13}},
-    // nonterminal transitions
-    {            Token::__structure, {                  TA_PUSH_STATE,   14}},
-    {                Token::__array, {                  TA_PUSH_STATE,   15}},
-    {                Token::__value, {                  TA_PUSH_STATE,   16}},
-    {               Token::__string, {                  TA_PUSH_STATE,   17}},
-
-// ///////////////////////////////////////////////////////////////////////////
 // state    5
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    2}},
+    // terminal transitions
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    { static_cast<Token::Type>(';'), {        TA_SHIFT_AND_PUSH_STATE,    9}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    6
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    { static_cast<Token::Type>(';'), {        TA_SHIFT_AND_PUSH_STATE,   18}},
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   10}},
+    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,   11}},
+    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,   12}},
+    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,   13}},
+    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   14}},
+    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   15}},
+    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   16}},
+    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   17}},
+    // nonterminal transitions
+    {            Token::__structure, {                  TA_PUSH_STATE,   18}},
+    {                Token::__array, {                  TA_PUSH_STATE,   19}},
+    {                Token::__value, {                  TA_PUSH_STATE,   20}},
+    {               Token::__string, {                  TA_PUSH_STATE,   21}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    7
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   13}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    3}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    8
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   14}},
+    // terminal transitions
+    { static_cast<Token::Type>(';'), {        TA_SHIFT_AND_PUSH_STATE,   22}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    9
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   15}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    6}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   10
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   16}},
+    // terminal transitions
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    { static_cast<Token::Type>(';'), {           TA_REDUCE_USING_RULE,    9}},
+    { static_cast<Token::Type>(','), {           TA_REDUCE_USING_RULE,    9}},
+    { static_cast<Token::Type>(']'), {           TA_REDUCE_USING_RULE,    9}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   11
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   21}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   20}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   12
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    3}},
-    // nonterminal transitions
-    {         Token::__element_list, {                  TA_PUSH_STATE,   19}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   21}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   13
 // ///////////////////////////////////////////////////////////////////////////
-    // terminal transitions
-    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,    7}},
-    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,    8}},
-    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,    9}},
-    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   10}},
-    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   11}},
-    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    4}},
-    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   12}},
-    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   13}},
-    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   20}},
-    // nonterminal transitions
-    {             Token::__key_pair, {                  TA_PUSH_STATE,   21}},
-    {            Token::__structure, {                  TA_PUSH_STATE,   14}},
-    {                Token::__array, {                  TA_PUSH_STATE,   15}},
-    {                 Token::__list, {                  TA_PUSH_STATE,   22}},
-    {         Token::__list_element, {                  TA_PUSH_STATE,   23}},
-    {                Token::__value, {                  TA_PUSH_STATE,   24}},
-    {               Token::__string, {                  TA_PUSH_STATE,   17}},
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   22}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   14
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   18}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   23}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   15
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   19}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   28}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   16
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    5}},
+    // terminal transitions
+    {                   Token::_END, {           TA_REDUCE_USING_RULE,    4}},
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   23}},
+    {             Token::IDENTIFIER, {           TA_REDUCE_USING_RULE,    4}},
+    { static_cast<Token::Type>('}'), {           TA_REDUCE_USING_RULE,    4}},
+    // nonterminal transitions
+    {         Token::__element_list, {                  TA_PUSH_STATE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   17
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   25}},
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   17}},
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   25}},
+    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,   11}},
+    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,   12}},
+    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,   13}},
+    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   14}},
+    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   15}},
+    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
+    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   16}},
+    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   17}},
+    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   26}},
+    // nonterminal transitions
+    {             Token::__key_pair, {                  TA_PUSH_STATE,   27}},
+    {            Token::__structure, {                  TA_PUSH_STATE,   18}},
+    {                Token::__array, {                  TA_PUSH_STATE,   19}},
+    {                 Token::__list, {                  TA_PUSH_STATE,   28}},
+    {         Token::__list_element, {                  TA_PUSH_STATE,   29}},
+    {                Token::__value, {                  TA_PUSH_STATE,   30}},
+    {               Token::__string, {                  TA_PUSH_STATE,   21}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   18
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    4}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   25}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   19
 // ///////////////////////////////////////////////////////////////////////////
-    // terminal transitions
-    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    4}},
-    { static_cast<Token::Type>('}'), {        TA_SHIFT_AND_PUSH_STATE,   26}},
-    // nonterminal transitions
-    {              Token::__element, {                  TA_PUSH_STATE,    5}},
-    {             Token::__key_pair, {                  TA_PUSH_STATE,    6}},
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   26}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   20
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    8}},
+    // terminal transitions
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   31}},
+    { static_cast<Token::Type>(';'), {           TA_REDUCE_USING_RULE,    7}},
+    { static_cast<Token::Type>(','), {           TA_REDUCE_USING_RULE,    7}},
+    { static_cast<Token::Type>(']'), {           TA_REDUCE_USING_RULE,    7}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   21
 // ///////////////////////////////////////////////////////////////////////////
+    // terminal transitions
+    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   32}},
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   11}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   22
 // ///////////////////////////////////////////////////////////////////////////
-    // terminal transitions
-    { static_cast<Token::Type>(','), {        TA_SHIFT_AND_PUSH_STATE,   27}},
-    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   28}},
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    5}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   23
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   10}},
+    // terminal transitions
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    { static_cast<Token::Type>('}'), {        TA_SHIFT_AND_PUSH_STATE,   33}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   24
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   12}},
+    // terminal transitions
+    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    5}},
+    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
+    { static_cast<Token::Type>('}'), {        TA_SHIFT_AND_PUSH_STATE,   34}},
+    // nonterminal transitions
+    {              Token::__element, {                  TA_PUSH_STATE,    7}},
+    {             Token::__key_pair, {                  TA_PUSH_STATE,    8}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   25
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   20}},
+    // terminal transitions
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   35}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   26
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    6}},
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   14}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   27
 // ///////////////////////////////////////////////////////////////////////////
-    // terminal transitions
-    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,    7}},
-    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,    8}},
-    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,    9}},
-    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   10}},
-    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   11}},
-    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    4}},
-    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   12}},
-    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   13}},
-    // nonterminal transitions
-    {             Token::__key_pair, {                  TA_PUSH_STATE,   21}},
-    {            Token::__structure, {                  TA_PUSH_STATE,   14}},
-    {                Token::__array, {                  TA_PUSH_STATE,   15}},
-    {         Token::__list_element, {                  TA_PUSH_STATE,   29}},
-    {                Token::__value, {                  TA_PUSH_STATE,   24}},
-    {               Token::__string, {                  TA_PUSH_STATE,   17}},
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   18}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   28
 // ///////////////////////////////////////////////////////////////////////////
-    // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    7}},
+    // terminal transitions
+    { static_cast<Token::Type>(','), {        TA_SHIFT_AND_PUSH_STATE,   36}},
+    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   37}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   29
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    9}}
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   17}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   30
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   19}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   31
+// ///////////////////////////////////////////////////////////////////////////
+    // terminal transitions
+    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    { static_cast<Token::Type>(';'), {           TA_REDUCE_USING_RULE,    8}},
+    { static_cast<Token::Type>(','), {           TA_REDUCE_USING_RULE,    8}},
+    { static_cast<Token::Type>(']'), {           TA_REDUCE_USING_RULE,    8}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   32
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   27}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   33
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   11}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   34
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   10}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   35
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   15}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   36
+// ///////////////////////////////////////////////////////////////////////////
+    // terminal transitions
+    {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,   11}},
+    {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,   12}},
+    {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,   13}},
+    {              Token::CHARACTER, {        TA_SHIFT_AND_PUSH_STATE,   14}},
+    {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   15}},
+    {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
+    { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   16}},
+    { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   17}},
+    { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   38}},
+    // nonterminal transitions
+    {             Token::__key_pair, {                  TA_PUSH_STATE,   27}},
+    {            Token::__structure, {                  TA_PUSH_STATE,   18}},
+    {                Token::__array, {                  TA_PUSH_STATE,   19}},
+    {         Token::__list_element, {                  TA_PUSH_STATE,   39}},
+    {                Token::__value, {                  TA_PUSH_STATE,   30}},
+    {               Token::__string, {                  TA_PUSH_STATE,   21}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   37
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   12}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   38
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   13}},
+
+// ///////////////////////////////////////////////////////////////////////////
+// state   39
+// ///////////////////////////////////////////////////////////////////////////
+    // default transition
+    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   16}}
 
 };
 
@@ -1168,23 +1393,53 @@ unsigned int const DataFileParser::ms_state_transition_count =
     sizeof(DataFileParser::StateTransition);
 
 
-#line 68 "../../lib/parsers/xrb_datafileparser.trison"
+#line 92 "../../lib/parsers/xrb_datafileparser.trison"
 
 bool DataFileParser::SetInputFilename (std::string const &input_filename)
 {
-    assert(m_scanner != NULL);
+    ASSERT1(m_scanner != NULL)
     m_scanner->Close();
-    // TODO: make sure there are no pipe characters in the input filename
-    return m_scanner->Open(input_filename);
+    // if there are any pipe characters in the filename, return failure
+    if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
+        return false;
+    // otherwise attempt to open the filename and return the result
+    else
+        return m_scanner->Open(input_filename);
 }
 
 DataFileParser::Token::Type DataFileParser::Scan ()
 {
-    assert(m_scanner != NULL);
+    ASSERT1(m_scanner != NULL)
     return m_scanner->Scan(&m_lookahead_token);
+}
+
+void DataFileParser::EmitWarning (std::string const &message)
+{
+    ASSERT1(m_scanner != NULL)
+    std::cerr << m_scanner->GetInputFilename() << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
+{
+    std::cerr << file_location << ": warning: " << message << std::endl;
+    m_were_warnings_encountered = true;
+}
+
+void DataFileParser::EmitError (std::string const &message)
+{
+    ASSERT1(m_scanner != NULL)
+    std::cerr << m_scanner->GetInputFilename() << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
+}
+
+void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
+{
+    std::cerr << file_location << ": error: " << message << std::endl;
+    m_were_errors_encountered = true;
 }
 
 } // end of namespace Xrb
 
-#line 1190 "../../lib/parsers/xrb_datafileparser.cpp"
+#line 1445 "../../lib/parsers/xrb_datafileparser.cpp"
 

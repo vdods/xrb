@@ -42,16 +42,12 @@ int main (int argc, char **argv)
 
     // TEMP parser testing stuff
     DataFileParser parser;
-    parser.SetDebugSpewLevel(2);
+//     parser.SetDebugSpewLevel(2);
     parser.SetInputFilename("form.dat");
-    if (parser.Parse() == DataFileParser::RC_SUCCESS)
+    if (parser.Parse() == DataFileParser::RC_SUCCESS && !parser.GetWereErrorsEncountered())
     {
         IndentFormatter formatter(stderr, "    ");
         parser.GetAcceptedKeyPair()->Print(formatter);
-    }
-    else
-    {
-        fprintf(stderr, "parse error\n");
     }
     return 0;
 /*

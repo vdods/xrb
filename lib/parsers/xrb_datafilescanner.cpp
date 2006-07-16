@@ -67,6 +67,7 @@ bool DataFileScanner::Open (std::string const &input_filename)
 
 void DataFileScanner::Close ()
 {
+    m_input_filename.clear();
     if (m_input.is_open())
         m_input.close();
     m_line_number = 0;
