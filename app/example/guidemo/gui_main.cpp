@@ -20,6 +20,7 @@
 // TEMP
 #include "xrb_datafileparser.h"
 #include "xrb_datafilevalue.h"
+#include <string>
 // TEMP
 
 using namespace Xrb;
@@ -46,13 +47,38 @@ int main (int argc, char **argv)
     if (parser.Parse("form.dat") == DataFileParser::RC_SUCCESS)
     {
         IndentFormatter formatter(stderr, "    ");
-        parser.GetAcceptedKeyPair()->Print(formatter);
+        parser.GetAcceptedKeyPair()->GetValue()->Print(formatter);
+        formatter.EndLine("\n");
+
+        DataFileKeyPair const *root = parser.GetAcceptedKeyPair();
+        DataFileValue const *value;
+
+        value = root->GetPathElement("|queries|");
+        DataFileArray const *queries = DStaticCast<DataFileArray const *>(value);
+        if (queries != NULL && queries->GetArrayElementType() == DAT_STRING)
+        {
+            for (Uint32 i = 0; i < queries->GetElementCount(); ++i)
+            {
+                DataFileString const *query =
+                    DStaticCast<DataFileString const *>(queries->GetElement(i));
+                value = root->GetPathElement(query->GetValue());
+                formatter.PrintLine("result for path query \"%s\":", query->GetValue().c_str());
+                formatter.Indent();
+                if (value != NULL)
+                    value->PrintAST(formatter);
+                else
+                    formatter.PrintLine("NULL");
+                formatter.Unindent();
+                formatter.PrintLine("");
+            }
+        }
     }
-    if (parser.Parse("form2.dat") == DataFileParser::RC_SUCCESS)
-    {
-        IndentFormatter formatter(stderr, "    ");
-        parser.GetAcceptedKeyPair()->Print(formatter);
-    }
+//     if (parser.Parse("form2.dat") == DataFileParser::RC_SUCCESS)
+//     {
+//         IndentFormatter formatter(stderr, "    ");
+//         parser.GetAcceptedKeyPair()->Print(formatter);
+//         fprintf(stderr, "\n");
+//     }
     return 0;
 /*
     // TEMP

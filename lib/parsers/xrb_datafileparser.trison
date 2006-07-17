@@ -205,11 +205,9 @@ element_list %type "DataFileStructure *"
             {
                 element_list->AddKeyPair(element);
             }
-            catch (char const *exception)
+            catch (std::string const &exception)
             {
-                std::ostringstream out;
-                out << "collision with key \"" << element->GetKey() << "\"";
-                EmitError(FL, out.str());
+                EmitError(FL, exception);
                 Delete(element);
             }
         }
@@ -326,7 +324,7 @@ list %type "DataFileArray *"
             {
                 list->AppendValue(list_element);
             }
-            catch (char const *exception)
+            catch (std::string const &exception)
             {
                 EmitError(FL, exception);
                 Delete(list_element);
@@ -344,7 +342,7 @@ list %type "DataFileArray *"
             {
                 list->AppendValue(list_element);
             }
-            catch (char const *exception)
+            catch (std::string const &exception)
             {
                 ASSERT1(false && "this should never happen")
                 Delete(list_element);

@@ -13,7 +13,7 @@
 
 #include "xrb.h"
 
-#include <set>
+#include <map>
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -32,7 +32,7 @@ namespace Xrb
 temp DataFileValue notes - turn into real doxygen docs later
 
 data types:
-    boolean        - true = on = yes, false = off = no
+    boolean        - true, false
     [un]signed int - binary, octal, decimal or hexidecimal
     floating point - IEEE floating point (of the type given by Float)
     character      - ascii character
@@ -70,13 +70,14 @@ the data file is parsed and stored as a tree structure, with the root node
 being a key/value pair with the path/filename as the identifier, and the
 file's contents as a structure.  therefore, a complete path can be specified
 to any individual piece of data in the file (similar to xpath).  arrays can
-be indexed as in C-language (e.g. arrayname[3][4]).  because the root node
-identifier is a filesystem path and may contain slashes, a different character
-will be used to delimit each element in the datapath.  the datapath delimiting
-character will be the pipe character '|'.  the pipe character will therefore
-not be allowed in filenames in this context.  example path:
+be indexed using unsigned decimal integers (instead of element names (e.g.
+"arrayname|3").  because the root node identifier is a filesystem path and may
+contain slashes, a different character will be used to delimit each element
+in the datapath.  the datapath delimiting character will be the pipe character
+'|'.  the pipe character will therefore not be allowed in filenames in this
+context.  example path:
 
-    /usr/data/map.dat|entities|enemies[0]|name
+    |/usr/data/map.dat|entities|enemies|0|name
 
 this path returns the name of the 0th element of enemies (indices are 0-based),
 which is a member of the entities structure, in the file /usr/data/map.dat
@@ -120,10 +121,12 @@ enum DataFileElementType
     DAT_KEY_PAIR,
     DAT_ARRAY,
     DAT_STRUCTURE,
-    DAT_UNSPECIFIED,
+    DAT_NO_TYPE,
 
     DAT_COUNT
 }; // end of enum DataFileElementType
+
+std::string const &GetDataFileElementTypeString (DataFileElementType data_file_element_type);
 
 /** A data file is a human-readable text file which functions as a generalized
   * storage medium.  The file is organized up into sets of potentially nested
@@ -169,23 +172,55 @@ public:
     virtual DataFileElementType GetElementType () const = 0;
 
     virtual void Print (IndentFormatter &formatter) const = 0;
+    virtual void PrintAST (IndentFormatter &formatter) const = 0;
 
 protected:
 
     DataFileValue () { }
+
+    virtual DataFileValue const *GetPathElement (
+        std::string const &path,
+        Uint32 start) const = 0;
+
+    // sort of a kludgey way for these to call GetPathElement
+    // on other objects, but then again, fuck it.
+    friend class DataFileKeyPair;
+    friend class DataFileArray;
+    friend class DataFileStructure;
 }; // end of class DataFileValue
+
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileLeafValue
+// ///////////////////////////////////////////////////////////////////////////
+
+class DataFileLeafValue : public DataFileValue
+{
+public:
+
+    DataFileLeafValue ()
+        :
+        DataFileValue()
+    { }
+    virtual ~DataFileLeafValue () = 0;
+
+protected:
+
+    virtual DataFileValue const *GetPathElement (
+        std::string const &path,
+        Uint32 start) const;
+}; // end of class DataFileLeafValue
 
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileBoolean
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileBoolean : public DataFileValue
+class DataFileBoolean : public DataFileLeafValue
 {
 public:
 
     DataFileBoolean (bool value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(value)
     { }
 
@@ -197,6 +232,7 @@ public:
     {
         formatter.BeginLine("%s", BOOL_TO_STRING(m_value));
     }
+    virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
@@ -207,19 +243,19 @@ private:
 // DataFileInteger
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileInteger : public DataFileValue
+class DataFileInteger : public DataFileLeafValue
 {
 public:
 
     DataFileInteger (Uint32 value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(value),
         m_was_constructed_as_unsigned(true)
     { }
     DataFileInteger (Sint32 value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(static_cast<Uint32>(value)),
         m_was_constructed_as_unsigned(false)
     { }
@@ -237,6 +273,7 @@ public:
         else
             formatter.BeginLine("%d", static_cast<Sint32>(m_value));
     }
+    virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
@@ -248,13 +285,13 @@ private:
 // DataFileFloat
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileFloat : public DataFileValue
+class DataFileFloat : public DataFileLeafValue
 {
 public:
 
     DataFileFloat (Float value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(value)
     { }
 
@@ -266,6 +303,7 @@ public:
     {
         formatter.BeginLine("%e", m_value);
     }
+    virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
@@ -276,13 +314,13 @@ private:
 // DataFileCharacter
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileCharacter : public DataFileValue
+class DataFileCharacter : public DataFileLeafValue
 {
 public:
 
     DataFileCharacter (char value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(value)
     { }
 
@@ -297,6 +335,7 @@ public:
         else
             formatter.BeginLine("'%c'", m_value);
     }
+    virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
@@ -307,17 +346,17 @@ private:
 // DataFileString
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileString : public DataFileValue
+class DataFileString : public DataFileLeafValue
 {
 public:
 
     DataFileString ()
         :
-        DataFileValue()
+        DataFileLeafValue()
     { }
     DataFileString (std::string const &value)
         :
-        DataFileValue (),
+        DataFileLeafValue(),
         m_value(value)
     { }
 
@@ -329,6 +368,7 @@ public:
     virtual DataFileElementType GetElementType () const { return DAT_STRING; }
 
     virtual void Print (IndentFormatter &formatter) const;
+    virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
@@ -371,13 +411,25 @@ public:
     }
 
     virtual DataFileElementType GetElementType () const { return DAT_KEY_PAIR; }
+    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetPathElement(path, 0); }
 
     virtual void Print (IndentFormatter &formatter) const;
+    virtual void PrintAST (IndentFormatter &formatter) const;
+
+protected:
+
+    virtual DataFileValue const *GetPathElement (
+        std::string const &path,
+        Uint32 start) const;
 
 private:
 
     std::string const m_key;
     DataFileValue const *m_value;
+
+    // sort of a kludgey way to call GetPathElement
+    // on keypairs, but then again, fuck it.
+    friend class DataFileStructure;
 }; // end of class DataFileKeyPair
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -395,14 +447,13 @@ public:
     virtual ~DataFileArray ();
 
     bool GetShouldBeFormattedInline () const;
+    DataFileElementType GetArrayElementType () const;
+    DataFileElementType GetUltimateArrayElementType () const;
+    Uint32 GetDimensionCount () const;
     inline Uint32 GetElementCount () const { return m_element_vector.size(); }
-    Uint32 GetDimension () const;
-    inline DataFileValue const *GetElement (Uint32 index)
+    inline DataFileValue const *GetElement (Uint32 index) const
     {
-        if (index >= m_element_vector.size())
-            return NULL;
-        else
-            return m_element_vector[index];
+        return index < m_element_vector.size() ? m_element_vector[index] : NULL;
     }
 
     void AppendValue (DataFileValue const *value);
@@ -410,6 +461,13 @@ public:
     virtual DataFileElementType GetElementType () const { return DAT_ARRAY; }
 
     virtual void Print (IndentFormatter &formatter) const;
+    virtual void PrintAST (IndentFormatter &formatter) const;
+
+protected:
+
+    virtual DataFileValue const *GetPathElement (
+        std::string const &path,
+        Uint32 start) const;
 
 private:
 
@@ -437,30 +495,28 @@ public:
     virtual ~DataFileStructure ();
 
     DataFileValue const *GetValue (std::string const &key) const;
+    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetPathElement(path, 0); }
 
     void AddKeyPair (DataFileKeyPair *key_value_pair);
 
     virtual DataFileElementType GetElementType () const { return DAT_STRUCTURE; }
 
     virtual void Print (IndentFormatter &formatter) const;
+    virtual void PrintAST (IndentFormatter &formatter) const;
+
+protected:
+
+    virtual DataFileValue const *GetPathElement (
+        std::string const &path,
+        Uint32 start) const;
 
 private:
 
-    struct KeyPairOrder
-    {
-        bool operator () (DataFileKeyPair const *p0, DataFileKeyPair const *p1) const
-        {
-            ASSERT1(p0 != NULL)
-            ASSERT1(p1 != NULL)
-            return p0->GetKey() < p1->GetKey();
-        }
-    }; // end of struct DataFileStructure::KeyPairOrder
+    typedef std::map<std::string, DataFileKeyPair const *> MemberMap;
+    typedef MemberMap::iterator MemberMapIterator;
+    typedef MemberMap::const_iterator MemberMapConstIterator;
 
-    typedef std::set<DataFileKeyPair const *, KeyPairOrder> MemberSet;
-    typedef MemberSet::iterator MemberSetIterator;
-    typedef MemberSet::const_iterator MemberSetConstIterator;
-
-    MemberSet m_member_set;
+    MemberMap m_member_map;
 }; // end of class DataFileStructure
 
 } // end of namespace Xrb

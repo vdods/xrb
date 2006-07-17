@@ -184,12 +184,12 @@ DataFileParser::Token::Type DataFileScanner::ScanIdentifier (DataFileValue **con
     // check if it matches any keywords
     std::string lowercase_text(m_text);
     Util::MakeLowercase(&lowercase_text);
-    if (lowercase_text == "true" || lowercase_text == "on" || lowercase_text == "yes")
+    if (lowercase_text == "true")
     {
         *scanned_token = new DataFileBoolean(true);
         return DataFileParser::Token::BOOLEAN;
     }
-    else if (lowercase_text == "false" || lowercase_text == "off" || lowercase_text == "no")
+    else if (lowercase_text == "false")
     {
         *scanned_token = new DataFileBoolean(false);
         return DataFileParser::Token::BOOLEAN;
