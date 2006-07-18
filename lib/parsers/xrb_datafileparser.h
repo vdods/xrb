@@ -50,7 +50,6 @@ public:
             __element_list,
             __key_pair,
             __list,
-            __list_element,
             __string,
             __structure,
             __value,
@@ -125,7 +124,7 @@ private:
 
     DataFileScanner *m_scanner;
 
-#line 129 "../../lib/parsers/xrb_datafileparser.h"
+#line 128 "../../lib/parsers/xrb_datafileparser.h"
 
 private:
 
@@ -278,8 +277,6 @@ private:
     DataFileValue * ReductionRuleHandler0024 ();
     DataFileValue * ReductionRuleHandler0025 ();
     DataFileValue * ReductionRuleHandler0026 ();
-    DataFileValue * ReductionRuleHandler0027 ();
-    DataFileValue * ReductionRuleHandler0028 ();
 
 }; // end of class DataFileParser
 
@@ -290,7 +287,7 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
 
 } // end of namespace Xrb
 
-#line 294 "../../lib/parsers/xrb_datafileparser.h"
+#line 291 "../../lib/parsers/xrb_datafileparser.h"
 
 #endif // !defined(_DataFileParser_H_)
 

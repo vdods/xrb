@@ -315,53 +315,40 @@ array %type "DataFileArray *"
 
 list %type "DataFileArray *"
 :
-    list:list ',' list_element:list_element
+    list:list ',' value:value
     {
         ASSERT1(list != NULL)
-        if (list_element != NULL)
+        if (value != NULL)
         {
             try
             {
-                list->AppendValue(list_element);
+                list->AppendValue(value);
             }
             catch (std::string const &exception)
             {
                 EmitError(FL, exception);
-                Delete(list_element);
+                Delete(value);
             }
         }
         return list;
-    }
-|
-    list_element:list_element
-    {
-        DataFileArray *list = new DataFileArray();
-        if (list_element != NULL)
-        {
-            try
-            {
-                list->AppendValue(list_element);
-            }
-            catch (std::string const &exception)
-            {
-                ASSERT1(false && "this should never happen")
-                Delete(list_element);
-            }
-        }
-        return list;
-    }
-;
-
-list_element %type "DataFileValue *"
-:
-    key_pair:key_pair
-    {
-        return key_pair;
     }
 |
     value:value
     {
-        return value;
+        DataFileArray *list = new DataFileArray();
+        if (value != NULL)
+        {
+            try
+            {
+                list->AppendValue(value);
+            }
+            catch (std::string const &exception)
+            {
+                ASSERT1(false && "this should never happen")
+                Delete(value);
+            }
+        }
+        return list;
     }
 ;
 

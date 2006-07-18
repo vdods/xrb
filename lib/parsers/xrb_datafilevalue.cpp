@@ -46,7 +46,7 @@ DataFileValue const *DataFileLeafValue::GetPathElement (
 {
     ASSERT1(start <= path.length())
 
-    if (start >= path.length() || start == path.length()-1 && path[start] == '|')
+    if (start >= path.length())
         return this;
 
     fprintf(
@@ -163,7 +163,7 @@ DataFileValue const *DataFileKeyPair::GetPathElement (
 //     fprintf(stderr, "DataFileKeyPair::GetPathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
-        return this;
+        return GetValue();
 
     if (path[start] != '|')
     {
@@ -204,8 +204,8 @@ bool DataFileArray::GetShouldBeFormattedInline () const
     {
         DataFileValue const *value = *it;
         ASSERT1(value != NULL)
-        ASSERT1(value->GetElementType() != DAT_STRUCTURE)
-        return value->GetElementType() != DAT_ARRAY && value->GetElementType() != DAT_KEY_PAIR;
+        ASSERT1(value->GetElementType() != DAT_KEY_PAIR)
+        return value->GetElementType() != DAT_ARRAY && value->GetElementType() != DAT_STRUCTURE;
     }
     else
         // empty arrays should be inlined.
@@ -288,9 +288,23 @@ void DataFileArray::Print (IndentFormatter &formatter) const
     {
         DataFileValue const *value = *it;
         ASSERT1(value != NULL)
-        ASSERT1(value->GetElementType() != DAT_STRUCTURE)
+        ASSERT1(value->GetElementType() != DAT_KEY_PAIR)
+
+        if (value->GetElementType() == DAT_STRUCTURE)
+        {
+            ASSERT1(!inlined_array)
+            formatter.PrintLine("{");
+            formatter.Indent();
+        }
 
         value->Print(formatter);
+
+        if (value->GetElementType() == DAT_STRUCTURE)
+        {
+            ASSERT1(!inlined_array)
+            formatter.Unindent();
+            formatter.BeginLine("}");
+        }
 
         it_test = it;
         ++it_test;
@@ -344,7 +358,7 @@ DataFileValue const *DataFileArray::GetPathElement (
 
 //     fprintf(stderr, "DataFileArray::GetPathElement(\"%s\");\n", path.c_str()+start);
 
-    if (start >= path.length() || start == path.length()-1 && path[start] == '|')
+    if (start >= path.length())
         return this;
 
     if (path[start] != '|')
@@ -505,7 +519,7 @@ DataFileValue const *DataFileStructure::GetPathElement (
 
 //     fprintf(stderr, "DataFileStructure::GetPathElement(\"%s\");\n", path.c_str()+start);
 
-    if (start >= path.length() || start == path.length()-1 && path[start] == '|')
+    if (start >= path.length())
         return this;
 
     if (path[start] != '|')

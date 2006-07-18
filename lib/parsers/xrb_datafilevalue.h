@@ -24,10 +24,6 @@
 namespace Xrb
 {
 
-// ///////////////////////////////////////////////////////////////////////////
-// DataFileValue
-// ///////////////////////////////////////////////////////////////////////////
-
 /*
 temp DataFileValue notes - turn into real doxygen docs later
 
@@ -65,6 +61,21 @@ list (semicolon after each key/value pair) of key/value pairs.  e.g.
         is_enemy true;
         AI_level 18;
     };
+    array_of_structs
+    [
+        {
+            name "bob";
+            punch_strength 8.7;
+        },
+        {
+            name "joe";
+            punch_strength 7.72;
+        },
+        {
+            name "frankie";
+            punch_strength 1.453e8;
+        }
+    ];
 
 the data file is parsed and stored as a tree structure, with the root node
 being a key/value pair with the path/filename as the identifier, and the
@@ -81,6 +92,28 @@ context.  example path:
 
 this path returns the name of the 0th element of enemies (indices are 0-based),
 which is a member of the entities structure, in the file /usr/data/map.dat
+data paths should never end in a '|' character.
+
+//////////////////////////////////////////////////////////////////////////////
+
+creating DataFileValue ASTs from in-program data:
+
+in a valid data path, all elements before the last in the sequence are
+guaranteed to be "container" elements (meaning they can contain other
+elements).  these containers are DataFileArray and DataFileStructure.  a
+DataFileKeyPair can technically contain another value, but in this context,
+it merely represents an element name in the data path.
+
+therefore, writing to any arbitrary data path can be done without needing to
+create the necessary container classes leading up to its leaf value.  more
+specifically, any arbitrary (valid) path can imply the requirement of a
+certain type of container element, and thusly each container along the path
+can be created.
+
+for example, say i want to write a string to the element
+
+TODO: write example
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +141,29 @@ DataFileArray
 
 DataFileStructure
     map<DataFileKeyPair>
+
+more random notes:
+
+creation of/referral to array elements:
+
+use ^ to refer to the first element (can be used in any path) (is this necessary?)
+use $ to refer to the last element (can be used in any path)
+use + to indicate that a new element should be made (can only be used in element creation paths)
+
+SetPathElement("|mapdata|entities|+|name", std::string("boss"));
+SetPathElement("|mapdata|entities|$|mass", 100.0f);
+SetPathElement("|mapdata|entities|$|translation|+", 1.0f);
+SetPathElement("|mapdata|entities|$|translation|+", 0.0f);
+SetPathElement("|mapdata|entities|$|applies_gravity|", false);
+
+in SetPathElement, there should never be a trailing '|' character (because it
+"dereferences" key pairs).  however, maybe this will be accounted for, and
+the trailing '|' removed if present, for ease of use.
+
+TODO: think about wether or not it's useful to retrieve the DataFileKeyPair
+object instead of just its value (because the only thing extra you'll be able
+to get from it is the key name, and you would already know it if you
+constructed a path referring to it).
 
 */
 

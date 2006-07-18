@@ -53,7 +53,7 @@ int main (int argc, char **argv)
         DataFileKeyPair const *root = parser.GetAcceptedKeyPair();
         DataFileValue const *value;
 
-        value = root->GetPathElement("|queries|");
+        value = root->GetPathElement("|queries");
         DataFileArray const *queries = DStaticCast<DataFileArray const *>(value);
         if (queries != NULL && queries->GetArrayElementType() == DAT_STRING)
         {
