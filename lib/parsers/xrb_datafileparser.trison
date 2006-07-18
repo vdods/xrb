@@ -172,7 +172,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 %token CHARACTER %type "DataFileCharacter *"
 %token STRING_FRAGMENT %type "DataFileString *"
 %token IDENTIFIER %type "DataFileString *"
-%token ';' ',' '-' '{' '}' '[' ']'
+%token ';' ',' '+' '-' '{' '}' '[' ']'
 
 %start data_file
 
@@ -221,21 +221,7 @@ element_list %type "DataFileStructure *"
 
 element %type "DataFileKeyPair *"
 :
-    key_pair:key_pair ';'
-    {
-        return key_pair;
-    }
-|
-    %error ';'
-    {
-        EmitError(FL, "syntax error in element");
-        return NULL;
-    }
-;
-
-key_pair %type "DataFileKeyPair *"
-:
-    IDENTIFIER:key value:value
+    IDENTIFIER:key value:value ';'
     {
         ASSERT1(key != NULL)
         if (value == NULL)
@@ -249,25 +235,19 @@ key_pair %type "DataFileKeyPair *"
         return key_pair;
     }
 |
-    IDENTIFIER:key value:value %error
+    IDENTIFIER:key %error ';'
     {
         ASSERT1(key != NULL)
         std::ostringstream out;
         out << "syntax error in element with key \"" << key->GetValue() << "\"";
         EmitError(FL, out.str());
         Delete(key);
-        if (value != NULL)
-            Delete(value);
         return NULL;
     }
 |
-    IDENTIFIER:key %error
+    %error ';'
     {
-        ASSERT1(key != NULL)
-        std::ostringstream out;
-        out << "syntax error in element with key \"" << key->GetValue() << "\"";
-        EmitError(FL, out.str());
-        Delete(key);
+        EmitError(FL, "syntax error in element");
         return NULL;
     }
 ;
@@ -289,16 +269,16 @@ structure %type "DataFileStructure *"
 
 array %type "DataFileArray *"
 :
-    '[' list:list ']'
+    '[' value_list:value_list ']'
     {
-        ASSERT1(list != NULL)
-        return list;
+        ASSERT1(value_list != NULL)
+        return value_list;
     }
 |
-    '[' list:list ',' ']'
+    '[' value_list:value_list ',' ']'
     {
-        ASSERT1(list != NULL)
-        return list;
+        ASSERT1(value_list != NULL)
+        return value_list;
     }
 |
     '[' ']'
@@ -313,16 +293,16 @@ array %type "DataFileArray *"
     }
 ;
 
-list %type "DataFileArray *"
+value_list %type "DataFileArray *"
 :
-    list:list ',' value:value
+    value_list:value_list ',' value:value
     {
-        ASSERT1(list != NULL)
+        ASSERT1(value_list != NULL)
         if (value != NULL)
         {
             try
             {
-                list->AppendValue(value);
+                value_list->AppendValue(value);
             }
             catch (std::string const &exception)
             {
@@ -330,17 +310,17 @@ list %type "DataFileArray *"
                 Delete(value);
             }
         }
-        return list;
+        return value_list;
     }
 |
     value:value
     {
-        DataFileArray *list = new DataFileArray();
+        DataFileArray *value_list = new DataFileArray();
         if (value != NULL)
         {
             try
             {
-                list->AppendValue(value);
+                value_list->AppendValue(value);
             }
             catch (std::string const &exception)
             {
@@ -348,7 +328,7 @@ list %type "DataFileArray *"
                 Delete(value);
             }
         }
-        return list;
+        return value_list;
     }
 ;
 
@@ -400,7 +380,7 @@ value %type "DataFileValue *"
 
 string %type "DataFileString *"
 :
-    string:string STRING_FRAGMENT:string_fragment
+    string:string '+' STRING_FRAGMENT:string_fragment
     {
         ASSERT1(string != NULL)
         ASSERT1(string_fragment != NULL)
@@ -413,5 +393,15 @@ string %type "DataFileString *"
     {
         ASSERT1(string_fragment != NULL)
         return string_fragment;
+    }
+|
+    string:string STRING_FRAGMENT:string_fragment
+    {
+        ASSERT1(string != NULL)
+        ASSERT1(string_fragment != NULL)
+        string->AppendString(string_fragment->GetValue());
+        Delete(string_fragment);
+        EmitError(FL, "use + to concatenate strings (or did you forget a comma?)");
+        return string;
     }
 ;
