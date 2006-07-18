@@ -148,7 +148,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
         uint state_transition_number;
         uint state_transition_count;
         uint default_action_state_transition_number;
-        Token::Type state_transition_token_type;
+        Token::Type state_transition_token_type = Token::_INVALID;
 
         // if we've just reduced to a non-terminal, coming from
         // another state, use the non-terminal transitions.

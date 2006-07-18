@@ -285,8 +285,6 @@ lib/math/xrb_transform2.cpp
 lib/math/xrb_transform2.h
 lib/math/xrb_vector.cpp
 lib/math/xrb_vector.h
-lib/parsers/datafile/xrb_datafileparser.ypp
-lib/parsers/datafile/xrb_datafilescanner.lpp
 lib/parsers/linecalculator/xrb_linecalculatorparser.ypp
 lib/parsers/linecalculator/xrb_linecalculatorscanner.lpp
 lib/parsers/xrb_datafile.cpp
