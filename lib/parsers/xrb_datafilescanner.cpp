@@ -14,6 +14,7 @@
 
 #include "xrb_datafilelocation.h"
 #include "xrb_datafilevalue.h"
+#include "xrb_math.h"
 #include "xrb_util.h"
 
 #undef FL
@@ -29,7 +30,6 @@ inline bool IsBinaryDigit (char c) { return c == '0' || c == '1'; }
 inline bool IsOctalDigit (char c) { return c >= '0' && c <= '7'; }
 inline bool IsDecimalDigit (char c) { return c >= '0' && c <= '9'; }
 inline bool IsHexidecimalDigit (char c) { return c >= '0' && c <= '9' || c >= 'A' && c <= 'F' || c >= 'a' && c <= 'f'; }
-inline bool IsEscapableCharacter (char c) { return c == '0' || c == 'a' || c == 'b' || c == 't' || c == 'n' || c == 'v' || c == 'f' || c == 'r' || c == '\\' || c == '"'; }
 
 Uint32 GetHexidecimalDigitValue (char c)
 {
@@ -251,18 +251,25 @@ DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (DataFileValue **
     ASSERT1(!m_input.eof())
 
     char c;
+    bool overflow = false;
     Uint32 value = 0;
     while (!IsNextCharEOF(&c) && IsBinaryDigit(c))
     {
         m_input >> c;
         m_text += c;
-        // TODO: check for overflow
-        value = 2 * value + (c - '0');
+        // if the highest bit is about to be pushed off
+        // the top, set the overflow flag.
+        if ((value&0x80000000) != 0)
+            overflow = true;
+        value = (value << 1) + (c - '0');
     }
 
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
         return DataFileParser::Token::ERROR;
+
+    if (overflow)
+        EmitError(FL, std::string("overflow in binary value ") + m_text);
 
     *scanned_token = new DataFileInteger(value);
     return DataFileParser::Token::INTEGER;
@@ -275,18 +282,25 @@ DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (DataFileValue **c
     ASSERT1(!m_input.eof())
 
     char c;
+    bool overflow = false;
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsOctalDigit(c))
     {
         m_input >> c;
         m_text += c;
-        // TODO: check for overflow
-        value = 8 * value + (c - '0');
+        // if any of the 3 highest bits are about to be
+        // pushed off the top, set the overflow flag.
+        if ((value&0xE0000000) != 0)
+            overflow = true;
+        value = (value << 3) + (c - '0');
     }
 
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
         return DataFileParser::Token::ERROR;
+
+    if (overflow)
+        EmitError(FL, std::string("overflow in octal value ") + m_text);
 
     *scanned_token = new DataFileInteger(value);
     return DataFileParser::Token::INTEGER;
@@ -299,12 +313,18 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue *
     ASSERT1(!m_input.eof())
 
     char c;
+    bool overflow = false;
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsDecimalDigit(c))
     {
         m_input >> c;
         m_text += c;
-        // TODO: check for overflow
+        // if the value is above the maximum for which multiplying
+        // by 10 does not overflow, or if the value is said maximum
+        // and a value which would overflow the value is about to
+        // be added, set the overflow flag.
+        if (value > 429496729 || value == 429496729 && (c - '0') > 5)
+            overflow = true;
         value = 10 * value + (c - '0');
     }
 
@@ -319,6 +339,9 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue *
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
         return DataFileParser::Token::ERROR;
 
+    if (overflow)
+        EmitError(FL, std::string("overflow in decimal value ") + m_text);
+
     *scanned_token = new DataFileInteger(value);
     return DataFileParser::Token::INTEGER;
 }
@@ -330,18 +353,23 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (DataFileVal
     ASSERT1(!m_input.eof())
 
     char c;
+    bool overflow = false;
     Uint32 value = 0;
     while (!IsNextCharEOF(&c) && IsHexidecimalDigit(c))
     {
         m_input >> c;
         m_text += c;
-        // TODO: check for overflow
-        value = 16 * value + GetHexidecimalDigitValue(c);
+        if ((value&0xF0000000) != 0)
+            overflow = true;
+        value = (value << 4) + GetHexidecimalDigitValue(c);
     }
 
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
         return DataFileParser::Token::ERROR;
+
+    if (overflow)
+        EmitError(FL, std::string("overflow in hexadecimal value ") + m_text);
 
     *scanned_token = new DataFileInteger(value);
     return DataFileParser::Token::INTEGER;
@@ -413,7 +441,11 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
         return DataFileParser::Token::ERROR;
 
-    *scanned_token = new DataFileFloat(Util::TextToFloat(m_text.c_str()));
+    Float value = Util::TextToFloat(m_text.c_str());
+    if (!Math::IsFinite(value))
+        EmitError(FL, std::string("overflow/underflow in floating point value ") + m_text);
+
+    *scanned_token = new DataFileFloat(value);
     return DataFileParser::Token::FLOAT;
 }
 
@@ -431,7 +463,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
 
     if (IsNextCharEOF(&c))
     {
-        // TODO: emit fatal error
+        EmitError(FL, "unexpected end of file");
         return DataFileParser::Token::ERROR;
     }
 
@@ -443,23 +475,34 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
 
         if (IsNextCharEOF(&c))
         {
-            // TODO: emit fatal error
+            EmitError(FL, "unexpected end of file");
             return DataFileParser::Token::ERROR;
         }
-    }
-
-    if (c == '\n')
-    {
-        // TODO: emit fatal error
-        return DataFileParser::Token::ERROR;
     }
 
     m_input >> c;
     m_text += c;
 
+    if (c == '\n' || (!escaped_char && c == '\''))
+    {
+        if (c == '\n')
+            ++m_line_number;
+        if (!escaped_char && c == '\'')
+        {
+            if (!IsNextCharEOF(&c) && c == '\'')
+            {
+                m_input >> c;
+                m_text += c;
+            }
+        }
+
+        EmitError(FL, "malformed character literal");
+        return DataFileParser::Token::ERROR;
+    }
+
     if (IsNextCharEOF(&c))
     {
-        // TODO: emit fatal error
+        EmitError(FL, "unexpected end of file");
         return DataFileParser::Token::ERROR;
     }
 
@@ -473,14 +516,14 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
             return DataFileParser::Token::ERROR;
 
         if (escaped_char)
-            *scanned_token = new DataFileCharacter(Util::GetEscapedCharacterBase(m_text[m_text.length()-2]));
+            *scanned_token = new DataFileCharacter(Util::GetEscapedChar(m_text[m_text.length()-2]));
         else
             *scanned_token = new DataFileCharacter(m_text[m_text.length()-2]);
         return DataFileParser::Token::CHARACTER;
     }
     else
     {
-        // TODO: emit fatal error
+        EmitError(FL, "malformed character literal");
         return DataFileParser::Token::ERROR;
     }
 }
@@ -492,6 +535,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
     ASSERT1(!m_input.eof());
 
     char c;
+    Uint32 starting_line = m_line_number;
 
     m_text.clear();
 
@@ -503,8 +547,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
         {
             if (IsNextCharEOF(&c))
             {
-//                 EmitFatalError(FL, "unterminated std::string");
-//                 // this is moot because EmitFatalError throws
+                EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
                 return DataFileParser::Token::ERROR;
             }
             else if (c == '\n')
@@ -516,7 +559,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
             else
             {
                 m_input >> c;
-                m_text += Util::GetEscapedCharacterBase(c);
+                m_text += Util::GetEscapedChar(c);
             }
         }
         else
@@ -538,8 +581,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
     }
     else
     {
-//         EmitFatalError(FL, "unterminated std::string");
-//         // this is moot because EmitFatalError throws
+        EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
         return DataFileParser::Token::ERROR;
     }
 }

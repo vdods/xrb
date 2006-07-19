@@ -62,35 +62,46 @@ namespace Util
     char GetShiftedAscii (char c);
 
     /** @brief Returns true iff the given character needs to be escaped to be
-      *        properly represented in a quoted string.
+      *        properly represented in a C-style character literal.
       */
-    bool GetDoesCharacterNeedEscaping (char c);
-    /** For example, GetEscapedCharacter('\0') returns '0'.
+    bool GetCharacterLiteralCharNeedsEscaping (char c);
+    /** @brief Returns true iff the given character needs to be escaped to be
+      *        properly represented in a C-style string literal.
+      */
+    bool GetStringLiteralCharNeedsEscaping (char c);
+    /** For example, GetEscapeCode('\0') returns '0'.
       *
       * This function returns the given character if it is not an
-      * escapable character.
+      * escapable character (e.g. GetEscapeCode('j') returns 'j'.
       *
-      * @brief Returns the escape character code for escapable characters.
+      * GetEscapedChar(GetEscapeCode(c)) should return c.
+      *
+      * @brief Returns the escape character code for escaped characters.
       */
-    char GetEscapedCharacter (char c);
-    /** For example, GetEscapedCharacter('0') returns '\0'.
+    char GetEscapeCode (char c);
+    /** For example, GetEscapedChar('0') returns '\0'.
       *
       * This function returns the given character if it is not an
-      * escapable character.
+      * escapable character (e.g. GetEscapedChar('h') returns 'h'.
       *
-      * @brief Returns the escaped character for the escaped character codes.
+      * GetEscapeCode(GetEscapedChar(c)) should return c.
+      *
+      * @brief Returns the escaped character for the given escape code.
       */
-    char GetEscapedCharacterBase (char c);
-    /** For example, GetEscapedCharacterString('\n') returns the ascii string
-      * "\\n" (a backslash followed by a lowercase 'n').  if a character does
-      * not need to be escaped, then a string containing that single character
-      * will be returned.
-      * @brief Returns the string-literal representation of the given character.
+    char GetEscapedChar (char c);
+
+    /** For example, GetCharacterLiteral('\n') returns std::string("'\\n'"),
+      * while GetCharacterLiteral('j') returns std::string("'j'").
+      * @brief Returns the single-quote-surrounded C-style character literal
+               for the given character in the form of a std::string.
       */
-    std::string GetEscapedCharacterString (char c);
-    /** @brief Runs the string's characters through GetEscapedCharacterString.
+    std::string GetCharacterLiteral (char c);
+    /** For example, GetStringLiteral("eat shit\t\"and die\".")
+      * returns std::string("\"eat shit\\t\\\"and die\\\".\"").
+      * @brief Returns the double-quote-surrounded C-style string literal
+      *        for the given text in the form of a std::string.
       */
-    std::string GetEscapedString (std::string const &str);
+    std::string GetStringLiteral (std::string const &text);
 
     /** @brief Returns the signed, base 10 integer value parsed from the
       *        given text.

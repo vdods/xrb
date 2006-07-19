@@ -71,17 +71,60 @@ void DataFileBoolean::PrintAST (IndentFormatter &formatter) const
 // DataFileInteger
 // ///////////////////////////////////////////////////////////////////////////
 
+void DataFileInteger::Sign (NumericSign const sign)
+{
+    ASSERT1(!m_is_signed && "you should only call this method on an unsigned value")
+    m_is_signed = true;
+
+    ASSERT1(sign == NEGATIVE || sign == POSITIVE)
+    if (sign == POSITIVE)
+    {
+        if (m_value > static_cast<Uint32>(SINT32_UPPER_BOUND))
+        {
+            std::ostringstream out;
+            out << "signed integer value +" << m_value << " is not representable in 32 bits";
+            throw out.str();
+        }
+        else
+        {
+            // nothing needs to be done to convert the value to signed
+        }
+    }
+    else
+    {
+        if (m_value > static_cast<Uint32>(SINT32_LOWER_BOUND))
+        {
+            std::ostringstream out;
+            out << "signed integer value -" << m_value << " is not representable in 32 bits";
+            throw out.str();
+        }
+        else
+        {
+            // bitwise negation (one's compliment negative) is = -x-1.
+            // therefore we add one to get -x.
+            m_value = ~m_value + 1;
+        }
+    }
+}
+
 void DataFileInteger::PrintAST (IndentFormatter &formatter) const
 {
-    if (m_was_constructed_as_unsigned)
-        formatter.EndLine("DAT_INTEGER - %u", m_value);
+    if (m_is_signed)
+        formatter.EndLine("DAT_INTEGER - %+d", static_cast<Sint32>(m_value));
     else
-        formatter.EndLine("DAT_INTEGER - %u", static_cast<Sint32>(m_value));
+        formatter.EndLine("DAT_INTEGER - %u", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileFloat
 // ///////////////////////////////////////////////////////////////////////////
+
+void DataFileFloat::Sign (NumericSign const sign)
+{
+    ASSERT1(sign == NEGATIVE || sign == POSITIVE)
+    if (sign == NEGATIVE)
+        m_value = -m_value;
+}
 
 void DataFileFloat::PrintAST (IndentFormatter &formatter) const
 {
@@ -103,12 +146,12 @@ void DataFileCharacter::PrintAST (IndentFormatter &formatter) const
 
 void DataFileString::Print (IndentFormatter &formatter) const
 {
-    formatter.ContinueLine("\"%s\"", Util::GetEscapedString(m_value).c_str());
+    formatter.ContinueLine("%s", Util::GetStringLiteral(m_value).c_str());
 }
 
 void DataFileString::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_STRING - \"%s\"", Util::GetEscapedString(m_value).c_str());
+    formatter.EndLine("DAT_STRING - %s", Util::GetStringLiteral(m_value).c_str());
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -127,26 +127,26 @@ char Util::GetShiftedAscii (char const c)
     return (c >= 0) ? ascii_to_shifted_ascii[(Uint32)c] : '\0';
 }
 
-bool Util::GetDoesCharacterNeedEscaping (char c)
+bool Util::GetCharacterLiteralCharNeedsEscaping (char const c)
 {
-    switch (c)
-    {
-        case '\0':
-        case '\a':
-        case '\b':
-        case '\t':
-        case '\n':
-        case '\v':
-        case '\f':
-        case '\r':
-        case '\\':
-        case '\"': return true;
-        default  : return false;
-    }
+    // TODO: make lookup table? (decide what to do for non-ascii chars)
+
+    // '\a' '\b' '\t' '\n' '\v' '\f' and '\r' are all contiguous in ASCII
+    return c >= '\a' && c <= '\r' || c == '\0' || c == '\n' || c == '\\' || c == '\'';
 }
 
-char Util::GetEscapedCharacter (char const c)
+bool Util::GetStringLiteralCharNeedsEscaping (char const c)
 {
+    // TODO: make lookup table? (decide what to do for non-ascii chars)
+
+    // '\a' '\b' '\t' '\n' '\v' '\f' and '\r' are all contiguous in ASCII
+    return c >= '\a' && c <= '\r' || c == '\0' || c == '\n' || c == '\\' || c == '\"';
+}
+
+char Util::GetEscapeCode (char const c)
+{
+    // TODO: make lookup table? (decide what to do for non-ascii chars)
+
     switch (c)
     {
         case '\0': return '0';
@@ -161,48 +161,49 @@ char Util::GetEscapedCharacter (char const c)
     }
 }
 
-char Util::GetEscapedCharacterBase (char const c)
+char Util::GetEscapedChar (char const c)
 {
+    // TODO: make lookup table? (decide what to do for non-ascii chars)
+
     switch (c)
     {
-        case '0' : return '\0';
-        case 'a' : return '\a';
-        case 'b' : return '\b';
-        case 't' : return '\t';
-        case 'n' : return '\n';
-        case 'v' : return '\v';
-        case 'f' : return '\f';
-        case 'r' : return '\r';
-        default  : return c;
+        case '0': return '\0';
+        case 'a': return '\a';
+        case 'b': return '\b';
+        case 't': return '\t';
+        case 'n': return '\n';
+        case 'v': return '\v';
+        case 'f': return '\f';
+        case 'r': return '\r';
+        default : return c;
     }
 }
 
-std::string Util::GetEscapedCharacterString (char const c)
+std::string Util::GetCharacterLiteral (char const c)
 {
-    switch (c)
-    {
-        case '\0': return "\\0";
-        case '\a': return "\\a";
-        case '\b': return "\\b";
-        case '\t': return "\\t";
-        case '\n': return "\\n";
-        case '\v': return "\\v";
-        case '\f': return "\\f";
-        case '\r': return "\\r";
-        case '\"': return "\\\"";
-        case '\\': return "\\\\";
-        default  : return std::string(&c, 1);
-    }
+    std::string retval("'");
+    if (GetCharacterLiteralCharNeedsEscaping(c))
+        retval += '\\', retval += GetEscapeCode(c);
+    else
+        retval += c;
+    retval += '\'';
+    return retval;
 }
 
-std::string Util::GetEscapedString (std::string const &str)
+std::string Util::GetStringLiteral (std::string const &text)
 {
-    std::string retval;
-    for (Uint32 i = 0; i < str.length(); ++i)
-        if (GetDoesCharacterNeedEscaping(str[i]))
-            retval += GetEscapedCharacterString(str[i]);
+    std::string retval("\"");
+    for (std::string::const_iterator it = text.begin(),
+                                     it_end = text.end();
+         it != it_end;
+         ++it)
+    {
+        if (GetStringLiteralCharNeedsEscaping(*it))
+            retval += '\\', retval += GetEscapeCode(*it);
         else
-            retval += str[i];
+            retval += *it;
+    }
+    retval += '"';
     return retval;
 }
 

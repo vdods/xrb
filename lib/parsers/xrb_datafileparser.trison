@@ -339,12 +339,12 @@ value %type "DataFileValue *"
         return value;
     }
 |
-    INTEGER:value
+    integer:value
     {
         return value;
     }
 |
-    FLOAT:value
+    float:value
     {
         return value;
     }
@@ -376,6 +376,66 @@ value %type "DataFileValue *"
         return NULL;
     }
 */
+;
+
+integer %type "DataFileInteger *"
+:
+    INTEGER:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    '+' INTEGER:value
+    {
+        ASSERT1(value != NULL)
+        try
+        {
+            value->Sign(POSITIVE);
+        }
+        catch (std::string const &exception)
+        {
+            EmitError(FL, exception);
+        }
+        return value;
+    }
+|
+    '-' INTEGER:value
+    {
+        ASSERT1(value != NULL)
+        try
+        {
+            value->Sign(NEGATIVE);
+        }
+        catch (std::string const &exception)
+        {
+            EmitError(FL, exception);
+        }
+        return value;
+    }
+;
+
+float %type "DataFileFloat *"
+:
+    FLOAT:value
+    {
+        ASSERT1(value != NULL)
+        return value;
+    }
+|
+    '+' FLOAT:value
+    {
+        ASSERT1(value != NULL)
+        value->Sign(POSITIVE);
+        return value;
+    }
+|
+    '-' FLOAT:value
+    {
+        ASSERT1(value != NULL)
+        value->Sign(NEGATIVE);
+        return value;
+    }
 ;
 
 string %type "DataFileString *"

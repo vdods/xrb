@@ -110,9 +110,47 @@ specifically, any arbitrary (valid) path can imply the requirement of a
 certain type of container element, and thusly each container along the path
 can be created.
 
-for example, say i want to write a string to the element
+examples:
 
-TODO: write example
+    SetPathElement("|map|name", "Blood Bowl");
+    SetPathElement("|map|timelimit", 15);
+    SetPathElement("|map|max_players", 8);
+    SetPathElement("|map|entities|+|name", "THE ERADICATOR!");
+    SetPathElement("|map|entities|$|mass", 175.65);
+    SetPathElement("|map|entities|$|position|+", 0.0);
+    SetPathElement("|map|entities|$|position|+", 15.0);
+    SetPathElement("|map|entities|$|position|+", 0.3);
+    SetPathElement("|map|entities|+|name", "Spiny Norman");
+    SetPathElement("|map|entities|$|mass", 6.2e15);
+    SetPathElement("|map|entities|$|position|+", 124.24);
+    SetPathElement("|map|entities|$|position|+", 6547.0);
+    SetPathElement("|map|entities|$|position|+", -2240.3);
+
+the resulting AST is:
+
+    map
+    {
+        name "Blood Bowl";
+        timelimit 15;
+        max_players 8;
+        entities
+        [
+            {
+                name "THE ERADICATOR";
+                mass 175.65;
+                position [ 0.0, 15.0, 0.3 ];
+            },
+            {
+                name "Spiny Norman";
+                mass 6.2e15;
+                position [ 124.24, 6547.0, -2240.3 ];
+            }
+        ];
+    };
+
+notice that entities is an array.  the + element indicates that a new array
+element should be appended.  the $ element specifies the last (highest index)
+element.
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -142,29 +180,6 @@ DataFileArray
 DataFileStructure
     map<DataFileKeyPair>
 
-more random notes:
-
-creation of/referral to array elements:
-
-use ^ to refer to the first element (can be used in any path) (is this necessary?)
-use $ to refer to the last element (can be used in any path)
-use + to indicate that a new element should be made (can only be used in element creation paths)
-
-SetPathElement("|mapdata|entities|+|name", std::string("boss"));
-SetPathElement("|mapdata|entities|$|mass", 100.0f);
-SetPathElement("|mapdata|entities|$|translation|+", 1.0f);
-SetPathElement("|mapdata|entities|$|translation|+", 0.0f);
-SetPathElement("|mapdata|entities|$|applies_gravity|", false);
-
-in SetPathElement, there should never be a trailing '|' character (because it
-"dereferences" key pairs).  however, maybe this will be accounted for, and
-the trailing '|' removed if present, for ease of use.
-
-TODO: think about wether or not it's useful to retrieve the DataFileKeyPair
-object instead of just its value (because the only thing extra you'll be able
-to get from it is the key name, and you would already know it if you
-constructed a path referring to it).
-
 */
 
 enum DataFileElementType
@@ -181,6 +196,12 @@ enum DataFileElementType
 
     DAT_COUNT
 }; // end of enum DataFileElementType
+
+enum NumericSign
+{
+    NEGATIVE = 0,
+    POSITIVE = 1
+}; // end of enum NumericSign
 
 std::string const &GetDataFileElementTypeString (DataFileElementType data_file_element_type);
 
@@ -307,34 +328,36 @@ public:
         :
         DataFileLeafValue(),
         m_value(value),
-        m_was_constructed_as_unsigned(true)
+        m_is_signed(false)
     { }
     DataFileInteger (Sint32 value)
         :
         DataFileLeafValue(),
-        m_value(static_cast<Uint32>(value)),
-        m_was_constructed_as_unsigned(false)
+        m_value(value),
+        m_is_signed(true)
     { }
 
-    inline bool GetIsUnsigned () const { return m_was_constructed_as_unsigned; }
+    inline bool GetIsSigned () const { return m_is_signed; }
     inline Sint32 GetSignedValue () const { return static_cast<Sint32>(m_value); }
     inline Uint32 GetUnsignedValue () const { return m_value; }
 
     virtual DataFileElementType GetElementType () const { return DAT_INTEGER; }
 
+    void Sign (NumericSign sign);
+
     virtual void Print (IndentFormatter &formatter) const
     {
-        if (m_was_constructed_as_unsigned)
-            formatter.BeginLine("%u", m_value);
+        if (m_is_signed)
+            formatter.BeginLine("%+d", static_cast<Sint32>(m_value));
         else
-            formatter.BeginLine("%d", static_cast<Sint32>(m_value));
+            formatter.BeginLine("%u", m_value);
     }
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
-    Uint32 const m_value;
-    bool const m_was_constructed_as_unsigned;
+    Uint32 m_value;
+    bool m_is_signed;
 }; // end of class DataFileInteger
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -355,6 +378,8 @@ public:
 
     virtual DataFileElementType GetElementType () const { return DAT_FLOAT; }
 
+    void Sign (NumericSign sign);
+
     virtual void Print (IndentFormatter &formatter) const
     {
         formatter.BeginLine("%e", m_value);
@@ -363,7 +388,7 @@ public:
 
 private:
 
-    Float const m_value;
+    Float m_value;
 }; // end of class DataFileFloat
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -386,10 +411,7 @@ public:
 
     virtual void Print (IndentFormatter &formatter) const
     {
-        if (Util::GetDoesCharacterNeedEscaping(m_value))
-            formatter.BeginLine("'\\%c'", Util::GetEscapedCharacterBase(m_value));
-        else
-            formatter.BeginLine("'%c'", m_value);
+        formatter.BeginLine("%s", Util::GetCharacterLiteral(m_value).c_str());
     }
     virtual void PrintAST (IndentFormatter &formatter) const;
 
