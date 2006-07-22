@@ -52,8 +52,8 @@ DataFileParser::~DataFileParser ()
 
 void DataFileParser::CheckStateConsistency ()
 {
-    Uint32 counter = 1;
-    for (Uint32 i = 0; i < ms_state_count; ++i)
+    unsigned int counter = 1;
+    for (unsigned int i = 0; i < ms_state_count; ++i)
     {
         if (ms_state[i].m_lookahead_transition_offset > 0)
         {
@@ -107,13 +107,13 @@ bool DataFileParser::GetDoesStateAcceptErrorToken (DataFileParser::StateNumber s
     assert(state_number < ms_state_count);
     State const &state = ms_state[state_number];
 
-    for (Uint32 transition = state.m_lookahead_transition_offset,
+    for (unsigned int transition = state.m_lookahead_transition_offset,
                       transition_end = state.m_lookahead_transition_offset +
                                        state.m_lookahead_transition_count;
          transition < transition_end;
          ++transition)
     {
-        if (ms_state_transition[transition].m_token_type == Token::_ERROR)
+        if (ms_state_transition[transition].m_token_type == Token::ERROR_)
             return true;
     }
 
@@ -125,16 +125,16 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
     m_state_stack.clear();
     m_token_stack.clear();
 
-    m_lookahead_token_type = Token::_INVALID;
+    m_lookahead_token_type = Token::INVALID_;
     m_lookahead_token = NULL;
     m_is_new_lookahead_token_required = true;
 
-    m_saved_lookahead_token_type = Token::_INVALID;
+    m_saved_lookahead_token_type = Token::INVALID_;
     m_get_new_lookahead_token_type_from_saved = false;
     m_previous_transition_accepted_error_token = false;
 
     m_is_returning_with_non_terminal = false;
-    m_returning_with_this_non_terminal = Token::_INVALID;
+    m_returning_with_this_non_terminal = Token::INVALID_;
 
     // start in state 0
     PushState(0);
@@ -145,10 +145,10 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
         assert(current_state_number < ms_state_count);
         State const &current_state = ms_state[current_state_number];
 
-        Uint32 state_transition_number;
-        Uint32 state_transition_count;
-        Uint32 default_action_state_transition_number;
-        Token::Type state_transition_token_type = Token::_INVALID;
+        unsigned int state_transition_number;
+        unsigned int state_transition_count;
+        unsigned int default_action_state_transition_number;
+        Token::Type state_transition_token_type = Token::INVALID_;
 
         // if we've just reduced to a non-terminal, coming from
         // another state, use the non-terminal transitions.
@@ -175,7 +175,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
             }
         }
 
-        Uint32 i;
+        unsigned int i;
         for (i = 0;
              i < state_transition_count;
              ++i, ++state_transition_number)
@@ -185,7 +185,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
             // if this token matches the current transition, do its action
             if (state_transition.m_token_type == state_transition_token_type)
             {
-                if (state_transition.m_token_type == Token::_ERROR)
+                if (state_transition.m_token_type == Token::ERROR_)
                     m_previous_transition_accepted_error_token = true;
                 else
                     m_previous_transition_accepted_error_token = false;
@@ -236,16 +236,16 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
                     {
                         m_saved_lookahead_token_type = m_lookahead_token_type;
                         m_get_new_lookahead_token_type_from_saved = true;
-                        m_lookahead_token_type = Token::_ERROR;
+                        m_lookahead_token_type = Token::ERROR_;
                     }
                 }
                 // otherwise save off the lookahead token for the error panic popping
                 else
                 {
-                    // save off the lookahead token type and set the current to Token::_ERROR
+                    // save off the lookahead token type and set the current to Token::ERROR_
                     m_saved_lookahead_token_type = m_lookahead_token_type;
                     m_get_new_lookahead_token_type_from_saved = true;
-                    m_lookahead_token_type = Token::_ERROR;
+                    m_lookahead_token_type = Token::ERROR_;
 
                     // pop until we either run off the stack, or find a state
                     // which accepts the %error token.
@@ -293,14 +293,14 @@ DataFileParser::ActionReturnCode DataFileParser::ProcessAction (DataFileParser::
     }
     else if (action.m_transition_action == TA_REDUCE_USING_RULE)
     {
-        Uint32 reduction_rule_number = action.m_data;
+        unsigned int reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, false);
     }
     else if (action.m_transition_action == TA_REDUCE_AND_ACCEPT_USING_RULE)
     {
-        Uint32 reduction_rule_number = action.m_data;
+        unsigned int reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, true);
@@ -320,8 +320,8 @@ DataFileParser::ActionReturnCode DataFileParser::ProcessAction (DataFileParser::
 
 void DataFileParser::ShiftLookaheadToken ()
 {
-    assert(m_lookahead_token_type != Token::_DEFAULT);
-    assert(m_lookahead_token_type != Token::_INVALID);
+    assert(m_lookahead_token_type != Token::DEFAULT_);
+    assert(m_lookahead_token_type != Token::INVALID_);
     DEBUG_SPEW_1("*** shifting lookahead token -- type " << m_lookahead_token_type << std::endl);
     m_token_stack.push_back(m_lookahead_token);
     m_is_new_lookahead_token_required = true;
@@ -370,7 +370,7 @@ void DataFileParser::ReduceUsingRule (ReductionRule const &reduction_rule, bool 
     }
 }
 
-void DataFileParser::PopStates (Uint32 number_of_states_to_pop, bool print_state_stack)
+void DataFileParser::PopStates (unsigned int number_of_states_to_pop, bool print_state_stack)
 {
     assert(number_of_states_to_pop < m_state_stack.size());
     assert(number_of_states_to_pop <= m_token_stack.size());
@@ -398,7 +398,7 @@ void DataFileParser::PrintStateStack () const
     DEBUG_SPEW_2(std::endl);
 }
 
-void DataFileParser::PrintStateTransition (Uint32 const state_transition_number) const
+void DataFileParser::PrintStateTransition (unsigned int const state_transition_number) const
 {
     assert(state_transition_number < ms_state_transition_count);
     DEBUG_SPEW_2("&&& exercising state transition " << std::setw(4) << std::right << state_transition_number << std::endl);
@@ -442,7 +442,7 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
         "IDENTIFIER",
         "INTEGER",
         "STRING_FRAGMENT",
-        "_END",
+        "END_",
 
         "array",
         "data_file",
@@ -454,17 +454,17 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
         "structure",
         "value",
         "value_list",
-        "_START",
+        "START_",
 
         "%error",
-        "_DEFAULT",
-        "_INVALID"
+        "DEFAULT_",
+        "INVALID_"
     };
-    static Uint32 const s_token_type_string_count =
+    static unsigned int const s_token_type_string_count =
         sizeof(s_token_type_string) /
         sizeof(std::string);
 
-    unsigned token_type_value = static_cast<Uint32>(token_type);
+    unsigned token_type_value = static_cast<unsigned int>(token_type);
     if (token_type_value < 0x20)
         stream << token_type_value;
     else if (token_type_value < 0x7F)
@@ -483,7 +483,7 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
 // state machine reduction rule handlers
 // ///////////////////////////////////////////////////////////////////////////
 
-// rule 0: %start <- data_file _END    
+// rule 0: %start <- data_file END_    
 DataFileValue * DataFileParser::ReductionRuleHandler0000 ()
 {
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
@@ -1028,44 +1028,44 @@ DataFileValue * DataFileParser::ReductionRuleHandler0031 ()
 
 DataFileParser::ReductionRule const DataFileParser::ms_reduction_rule[] =
 {
-    {                 Token::_START,  2, &DataFileParser::ReductionRuleHandler0000, "rule 0: %start <- data_file _END    "},
-    {            Token::__data_file,  1, &DataFileParser::ReductionRuleHandler0001, "rule 1: data_file <- element_list    "},
-    {            Token::__data_file,  1, &DataFileParser::ReductionRuleHandler0002, "rule 2: data_file <- %error    "},
-    {         Token::__element_list,  2, &DataFileParser::ReductionRuleHandler0003, "rule 3: element_list <- element_list element    "},
-    {         Token::__element_list,  0, &DataFileParser::ReductionRuleHandler0004, "rule 4: element_list <-     "},
-    {              Token::__element,  3, &DataFileParser::ReductionRuleHandler0005, "rule 5: element <- IDENTIFIER value ';'    "},
-    {              Token::__element,  3, &DataFileParser::ReductionRuleHandler0006, "rule 6: element <- IDENTIFIER %error ';'    "},
-    {              Token::__element,  2, &DataFileParser::ReductionRuleHandler0007, "rule 7: element <- %error ';'    "},
-    {            Token::__structure,  3, &DataFileParser::ReductionRuleHandler0008, "rule 8: structure <- '{' element_list '}'    "},
-    {            Token::__structure,  3, &DataFileParser::ReductionRuleHandler0009, "rule 9: structure <- '{' %error '}'    "},
-    {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0010, "rule 10: array <- '[' value_list ']'    "},
-    {                Token::__array,  4, &DataFileParser::ReductionRuleHandler0011, "rule 11: array <- '[' value_list ',' ']'    "},
-    {                Token::__array,  2, &DataFileParser::ReductionRuleHandler0012, "rule 12: array <- '[' ']'    "},
-    {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0013, "rule 13: array <- '[' %error ']'    "},
-    {           Token::__awesome_value_list,  3, &DataFileParser::ReductionRuleHandler0014, "rule 14: value_list <- value_list ',' value    "},
-    {           Token::__awesome_value_list,  1, &DataFileParser::ReductionRuleHandler0015, "rule 15: value_list <- value    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0016, "rule 16: value <- BOOLEAN    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: value <- integer    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: value <- float    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: value <- CHARACTER    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0020, "rule 20: value <- string    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: value <- structure    "},
-    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0022, "rule 22: value <- array    "},
-    {              Token::__integer,  1, &DataFileParser::ReductionRuleHandler0023, "rule 23: integer <- INTEGER    "},
-    {              Token::__integer,  2, &DataFileParser::ReductionRuleHandler0024, "rule 24: integer <- '+' INTEGER    "},
-    {              Token::__integer,  2, &DataFileParser::ReductionRuleHandler0025, "rule 25: integer <- '-' INTEGER    "},
-    {                Token::__float,  1, &DataFileParser::ReductionRuleHandler0026, "rule 26: float <- FLOAT    "},
-    {                Token::__float,  2, &DataFileParser::ReductionRuleHandler0027, "rule 27: float <- '+' FLOAT    "},
-    {                Token::__float,  2, &DataFileParser::ReductionRuleHandler0028, "rule 28: float <- '-' FLOAT    "},
-    {               Token::__string,  3, &DataFileParser::ReductionRuleHandler0029, "rule 29: string <- string '+' STRING_FRAGMENT    "},
-    {               Token::__string,  1, &DataFileParser::ReductionRuleHandler0030, "rule 30: string <- STRING_FRAGMENT    "},
-    {               Token::__string,  2, &DataFileParser::ReductionRuleHandler0031, "rule 31: string <- string STRING_FRAGMENT    "},
+    {                 Token::START_,  2, &DataFileParser::ReductionRuleHandler0000, "rule 0: %start <- data_file END_    "},
+    {            Token::data_file__,  1, &DataFileParser::ReductionRuleHandler0001, "rule 1: data_file <- element_list    "},
+    {            Token::data_file__,  1, &DataFileParser::ReductionRuleHandler0002, "rule 2: data_file <- %error    "},
+    {         Token::element_list__,  2, &DataFileParser::ReductionRuleHandler0003, "rule 3: element_list <- element_list element    "},
+    {         Token::element_list__,  0, &DataFileParser::ReductionRuleHandler0004, "rule 4: element_list <-     "},
+    {              Token::element__,  3, &DataFileParser::ReductionRuleHandler0005, "rule 5: element <- IDENTIFIER value ';'    "},
+    {              Token::element__,  3, &DataFileParser::ReductionRuleHandler0006, "rule 6: element <- IDENTIFIER %error ';'    "},
+    {              Token::element__,  2, &DataFileParser::ReductionRuleHandler0007, "rule 7: element <- %error ';'    "},
+    {            Token::structure__,  3, &DataFileParser::ReductionRuleHandler0008, "rule 8: structure <- '{' element_list '}'    "},
+    {            Token::structure__,  3, &DataFileParser::ReductionRuleHandler0009, "rule 9: structure <- '{' %error '}'    "},
+    {                Token::array__,  3, &DataFileParser::ReductionRuleHandler0010, "rule 10: array <- '[' value_list ']'    "},
+    {                Token::array__,  4, &DataFileParser::ReductionRuleHandler0011, "rule 11: array <- '[' value_list ',' ']'    "},
+    {                Token::array__,  2, &DataFileParser::ReductionRuleHandler0012, "rule 12: array <- '[' ']'    "},
+    {                Token::array__,  3, &DataFileParser::ReductionRuleHandler0013, "rule 13: array <- '[' %error ']'    "},
+    {           Token::value_list__,  3, &DataFileParser::ReductionRuleHandler0014, "rule 14: value_list <- value_list ',' value    "},
+    {           Token::value_list__,  1, &DataFileParser::ReductionRuleHandler0015, "rule 15: value_list <- value    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0016, "rule 16: value <- BOOLEAN    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: value <- integer    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: value <- float    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: value <- CHARACTER    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0020, "rule 20: value <- string    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: value <- structure    "},
+    {                Token::value__,  1, &DataFileParser::ReductionRuleHandler0022, "rule 22: value <- array    "},
+    {              Token::integer__,  1, &DataFileParser::ReductionRuleHandler0023, "rule 23: integer <- INTEGER    "},
+    {              Token::integer__,  2, &DataFileParser::ReductionRuleHandler0024, "rule 24: integer <- '+' INTEGER    "},
+    {              Token::integer__,  2, &DataFileParser::ReductionRuleHandler0025, "rule 25: integer <- '-' INTEGER    "},
+    {                Token::float__,  1, &DataFileParser::ReductionRuleHandler0026, "rule 26: float <- FLOAT    "},
+    {                Token::float__,  2, &DataFileParser::ReductionRuleHandler0027, "rule 27: float <- '+' FLOAT    "},
+    {                Token::float__,  2, &DataFileParser::ReductionRuleHandler0028, "rule 28: float <- '-' FLOAT    "},
+    {               Token::string__,  3, &DataFileParser::ReductionRuleHandler0029, "rule 29: string <- string '+' STRING_FRAGMENT    "},
+    {               Token::string__,  1, &DataFileParser::ReductionRuleHandler0030, "rule 30: string <- STRING_FRAGMENT    "},
+    {               Token::string__,  2, &DataFileParser::ReductionRuleHandler0031, "rule 31: string <- string STRING_FRAGMENT    "},
 
     // special error panic reduction rule
-    {                 Token::_ERROR,  1,                                     NULL, "* -> error"}
+    {                 Token::ERROR_,  1,                                     NULL, "* -> error"}
 };
 
-Uint32 const DataFileParser::ms_reduction_rule_count =
+unsigned int const DataFileParser::ms_reduction_rule_count =
     sizeof(DataFileParser::ms_reduction_rule) /
     sizeof(DataFileParser::ReductionRule);
 
@@ -1125,7 +1125,7 @@ DataFileParser::State const DataFileParser::ms_state[] =
 
 };
 
-Uint32 const DataFileParser::ms_state_count =
+unsigned int const DataFileParser::ms_state_count =
     sizeof(DataFileParser::ms_state) /
     sizeof(DataFileParser::State);
 
@@ -1136,61 +1136,61 @@ Uint32 const DataFileParser::ms_state_count =
 DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 {
     // dummy transition in the NULL transition
-    {               Token::_INVALID, {                       TA_COUNT,    0}},
+    {               Token::INVALID_, {                       TA_COUNT,    0}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    0
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {           TA_REDUCE_USING_RULE,    4}},
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    1}},
+    {                   Token::END_, {           TA_REDUCE_USING_RULE,    4}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,    1}},
     {             Token::IDENTIFIER, {           TA_REDUCE_USING_RULE,    4}},
     { static_cast<Token::Type>('}'), {           TA_REDUCE_USING_RULE,    4}},
     // nonterminal transitions
-    {            Token::__data_file, {                  TA_PUSH_STATE,    2}},
-    {         Token::__element_list, {                  TA_PUSH_STATE,    3}},
+    {            Token::data_file__, {                  TA_PUSH_STATE,    2}},
+    {         Token::element_list__, {                  TA_PUSH_STATE,    3}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    1
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {           TA_REDUCE_USING_RULE,    2}},
-    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    {                   Token::END_, {           TA_REDUCE_USING_RULE,    2}},
+    {                 Token::ERROR_, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    2
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {        TA_SHIFT_AND_PUSH_STATE,    4}},
+    {                   Token::END_, {        TA_SHIFT_AND_PUSH_STATE,    4}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    3
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {           TA_REDUCE_USING_RULE,    1}},
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    5}},
+    {                   Token::END_, {           TA_REDUCE_USING_RULE,    1}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,    5}},
     {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
     // nonterminal transitions
-    {              Token::__element, {                  TA_PUSH_STATE,    7}},
+    {              Token::element__, {                  TA_PUSH_STATE,    7}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    4
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {TA_REDUCE_AND_ACCEPT_USING_RULE,    0}},
+    {               Token::DEFAULT_, {TA_REDUCE_AND_ACCEPT_USING_RULE,    0}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    5
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    {                 Token::ERROR_, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
     { static_cast<Token::Type>(';'), {        TA_SHIFT_AND_PUSH_STATE,    8}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    6
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    9}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,    9}},
     {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,   10}},
     {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,   11}},
     {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,   12}},
@@ -1201,61 +1201,61 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     { static_cast<Token::Type>('{'), {        TA_SHIFT_AND_PUSH_STATE,   17}},
     { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   18}},
     // nonterminal transitions
-    {            Token::__structure, {                  TA_PUSH_STATE,   19}},
-    {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {                Token::__awesome_value, {                  TA_PUSH_STATE,   21}},
-    {              Token::__integer, {                  TA_PUSH_STATE,   22}},
-    {                Token::__float, {                  TA_PUSH_STATE,   23}},
-    {               Token::__string, {                  TA_PUSH_STATE,   24}},
+    {            Token::structure__, {                  TA_PUSH_STATE,   19}},
+    {                Token::array__, {                  TA_PUSH_STATE,   20}},
+    {                Token::value__, {                  TA_PUSH_STATE,   21}},
+    {              Token::integer__, {                  TA_PUSH_STATE,   22}},
+    {                Token::float__, {                  TA_PUSH_STATE,   23}},
+    {               Token::string__, {                  TA_PUSH_STATE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    7
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    3}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    3}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    8
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    7}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    7}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state    9
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    {                 Token::ERROR_, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
     { static_cast<Token::Type>(';'), {        TA_SHIFT_AND_PUSH_STATE,   25}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   10
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   16}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   16}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   11
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   23}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   23}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   12
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   26}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   26}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   13
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   19}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   19}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   14
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   30}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   30}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   15
@@ -1275,18 +1275,18 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 // state   17
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                   Token::_END, {           TA_REDUCE_USING_RULE,    4}},
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   30}},
+    {                   Token::END_, {           TA_REDUCE_USING_RULE,    4}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,   30}},
     {             Token::IDENTIFIER, {           TA_REDUCE_USING_RULE,    4}},
     { static_cast<Token::Type>('}'), {           TA_REDUCE_USING_RULE,    4}},
     // nonterminal transitions
-    {         Token::__element_list, {                  TA_PUSH_STATE,   31}},
+    {         Token::element_list__, {                  TA_PUSH_STATE,   31}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   18
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,   32}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,   32}},
     {                Token::BOOLEAN, {        TA_SHIFT_AND_PUSH_STATE,   10}},
     {                Token::INTEGER, {        TA_SHIFT_AND_PUSH_STATE,   11}},
     {                  Token::FLOAT, {        TA_SHIFT_AND_PUSH_STATE,   12}},
@@ -1298,25 +1298,25 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   18}},
     { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   33}},
     // nonterminal transitions
-    {            Token::__structure, {                  TA_PUSH_STATE,   19}},
-    {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {           Token::__awesome_value_list, {                  TA_PUSH_STATE,   34}},
-    {                Token::__awesome_value, {                  TA_PUSH_STATE,   35}},
-    {              Token::__integer, {                  TA_PUSH_STATE,   22}},
-    {                Token::__float, {                  TA_PUSH_STATE,   23}},
-    {               Token::__string, {                  TA_PUSH_STATE,   24}},
+    {            Token::structure__, {                  TA_PUSH_STATE,   19}},
+    {                Token::array__, {                  TA_PUSH_STATE,   20}},
+    {           Token::value_list__, {                  TA_PUSH_STATE,   34}},
+    {                Token::value__, {                  TA_PUSH_STATE,   35}},
+    {              Token::integer__, {                  TA_PUSH_STATE,   22}},
+    {                Token::float__, {                  TA_PUSH_STATE,   23}},
+    {               Token::string__, {                  TA_PUSH_STATE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   19
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   21}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   21}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   20
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   22}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   22}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   21
@@ -1328,13 +1328,13 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 // state   22
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   17}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   17}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   23
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   18}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   18}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   24
@@ -1343,67 +1343,67 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     {        Token::STRING_FRAGMENT, {        TA_SHIFT_AND_PUSH_STATE,   37}},
     { static_cast<Token::Type>('+'), {        TA_SHIFT_AND_PUSH_STATE,   38}},
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   20}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   20}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   25
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    6}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    6}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   26
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   24}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   27
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   27}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   27}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   28
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   25}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   25}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   29
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   28}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   28}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   30
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    {                 Token::ERROR_, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
     { static_cast<Token::Type>('}'), {        TA_SHIFT_AND_PUSH_STATE,   39}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   31
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {        TA_SHIFT_AND_PUSH_STATE,    5}},
+    {                 Token::ERROR_, {        TA_SHIFT_AND_PUSH_STATE,    5}},
     {             Token::IDENTIFIER, {        TA_SHIFT_AND_PUSH_STATE,    6}},
     { static_cast<Token::Type>('}'), {        TA_SHIFT_AND_PUSH_STATE,   40}},
     // nonterminal transitions
-    {              Token::__element, {                  TA_PUSH_STATE,    7}},
+    {              Token::element__, {                  TA_PUSH_STATE,    7}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   32
 // ///////////////////////////////////////////////////////////////////////////
     // terminal transitions
-    {                 Token::_ERROR, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
+    {                 Token::ERROR_, {  TA_THROW_AWAY_LOOKAHEAD_TOKEN,    0}},
     { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   41}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   33
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   12}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   12}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   34
@@ -1416,19 +1416,19 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 // state   35
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   15}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   15}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   36
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    5}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    5}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   37
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   31}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   31}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   38
@@ -1440,19 +1440,19 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 // state   39
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    9}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    9}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   40
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,    8}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,    8}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   41
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   13}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   13}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   42
@@ -1469,40 +1469,40 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     { static_cast<Token::Type>('['), {        TA_SHIFT_AND_PUSH_STATE,   18}},
     { static_cast<Token::Type>(']'), {        TA_SHIFT_AND_PUSH_STATE,   45}},
     // nonterminal transitions
-    {            Token::__structure, {                  TA_PUSH_STATE,   19}},
-    {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {                Token::__awesome_value, {                  TA_PUSH_STATE,   46}},
-    {              Token::__integer, {                  TA_PUSH_STATE,   22}},
-    {                Token::__float, {                  TA_PUSH_STATE,   23}},
-    {               Token::__string, {                  TA_PUSH_STATE,   24}},
+    {            Token::structure__, {                  TA_PUSH_STATE,   19}},
+    {                Token::array__, {                  TA_PUSH_STATE,   20}},
+    {                Token::value__, {                  TA_PUSH_STATE,   46}},
+    {              Token::integer__, {                  TA_PUSH_STATE,   22}},
+    {                Token::float__, {                  TA_PUSH_STATE,   23}},
+    {               Token::string__, {                  TA_PUSH_STATE,   24}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   43
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   10}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   10}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   44
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   29}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   29}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   45
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   11}},
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   11}},
 
 // ///////////////////////////////////////////////////////////////////////////
 // state   46
 // ///////////////////////////////////////////////////////////////////////////
     // default transition
-    {               Token::_DEFAULT, {           TA_REDUCE_USING_RULE,   14}}
+    {               Token::DEFAULT_, {           TA_REDUCE_USING_RULE,   14}}
 
 };
 
-Uint32 const DataFileParser::ms_state_transition_count =
+unsigned int const DataFileParser::ms_state_transition_count =
     sizeof(DataFileParser::ms_state_transition) /
     sizeof(DataFileParser::StateTransition);
 

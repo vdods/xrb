@@ -12,10 +12,6 @@
 
 #include <string>
 
-#if defined(WIN32)
-    #undef ERROR
-#endif // defined(WIN32)
-
 namespace Xrb
 {
 
@@ -45,27 +41,27 @@ public:
             STRING_FRAGMENT,
 
             // special end-of-input terminal
-            _END,
+            END_,
 
             // user-defined nonterminal tokens
-            __array,
-            __data_file,
-            __element,
-            __element_list,
-            __float,
-            __integer,
-            __string,
-            __structure,
-            __awesome_value,
-            __awesome_value_list,
+            array__,
+            data_file__,
+            element__,
+            element_list__,
+            float__,
+            integer__,
+            string__,
+            structure__,
+            value__,
+            value_list__,
 
             // special start nonterminal
-            _START,
+            START_,
 
             // parser's sentinel and special tokens
-            _ERROR,
-            _DEFAULT,
-            _INVALID
+            ERROR_,
+            DEFAULT_,
+            INVALID_
         }; // end of enum DataFileParser::Token::Type
     }; // end of struct DataFileParser::Token
 
@@ -75,8 +71,8 @@ public:
     inline DataFileValue * const &GetAcceptedToken () const { return m_reduction_token; }
     inline void ClearAcceptedToken () { m_reduction_token = NULL; }
 
-    inline Uint32 GetDebugSpewLevel () const { return m_debug_spew_level; }
-    inline void SetDebugSpewLevel (Uint32 debug_spew_level) { m_debug_spew_level = debug_spew_level; }
+    inline unsigned int GetDebugSpewLevel () const { return m_debug_spew_level; }
+    inline void SetDebugSpewLevel (unsigned int debug_spew_level) { m_debug_spew_level = debug_spew_level; }
 
     static void CheckStateConsistency ();
 
@@ -133,7 +129,7 @@ private:
 
 private:
 
-    typedef Uint32 StateNumber;
+    typedef unsigned int StateNumber;
 
     enum TransitionAction
     {
@@ -157,7 +153,7 @@ private:
         typedef DataFileValue * (DataFileParser::*ReductionRuleHandler)();
 
         Token::Type m_non_terminal_to_reduce_to;
-        Uint32 m_number_of_tokens_to_reduce_by;
+        unsigned int m_number_of_tokens_to_reduce_by;
         ReductionRuleHandler m_handler;
         std::string m_description;
     };
@@ -165,7 +161,7 @@ private:
     struct Action
     {
         TransitionAction m_transition_action;
-        Uint32 m_data;
+        unsigned int m_data;
     };
 
     struct StateTransition
@@ -176,11 +172,11 @@ private:
 
     struct State
     {
-        Uint32 m_lookahead_transition_offset;
-        Uint32 m_lookahead_transition_count;
-        Uint32 m_default_action_offset;
-        Uint32 m_non_terminal_transition_offset;
-        Uint32 m_non_terminal_transition_count;
+        unsigned int m_lookahead_transition_offset;
+        unsigned int m_lookahead_transition_count;
+        unsigned int m_default_action_offset;
+        unsigned int m_non_terminal_transition_offset;
+        unsigned int m_non_terminal_transition_count;
     };
 
     inline void GetNewLookaheadToken ()
@@ -215,10 +211,10 @@ private:
     void ShiftLookaheadToken ();
     void PushState (StateNumber state_number);
     void ReduceUsingRule (ReductionRule const &reduction_rule, bool and_accept);
-    void PopStates (Uint32 number_of_states_to_pop, bool print_state_stack = true);
+    void PopStates (unsigned int number_of_states_to_pop, bool print_state_stack = true);
     void PrintStateStack () const;
     void PrintTokenStack () const;
-    void PrintStateTransition (Uint32 state_transition_number) const;
+    void PrintStateTransition (unsigned int state_transition_number) const;
     void ScanANewLookaheadToken ();
     void ThrowAwayToken (DataFileValue * token);
     void ThrowAwayTokenStack ();
@@ -229,7 +225,7 @@ private:
     typedef std::vector< DataFileValue * > TokenStack;
     typedef TokenStack::const_iterator TokenStackConstIterator;
 
-    Uint32 m_debug_spew_level;
+    unsigned int m_debug_spew_level;
 
     StateStack m_state_stack;
     TokenStack m_token_stack;
@@ -246,14 +242,14 @@ private:
     Token::Type m_returning_with_this_non_terminal;
 
     DataFileValue * m_reduction_token;
-    Uint32 m_reduction_rule_token_count;
+    unsigned int m_reduction_rule_token_count;
 
     static State const ms_state[];
-    static Uint32 const ms_state_count;
+    static unsigned int const ms_state_count;
     static ReductionRule const ms_reduction_rule[];
-    static Uint32 const ms_reduction_rule_count;
+    static unsigned int const ms_reduction_rule_count;
     static StateTransition const ms_state_transition[];
-    static Uint32 const ms_state_transition_count;
+    static unsigned int const ms_state_transition_count;
 
     DataFileValue * ReductionRuleHandler0000 ();
     DataFileValue * ReductionRuleHandler0001 ();

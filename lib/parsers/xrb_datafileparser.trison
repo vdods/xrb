@@ -322,7 +322,7 @@ value_list %type "DataFileArray *"
             {
                 value_list->AppendValue(value);
             }
-            catch (std::string const &exception)
+            catch (std::string const &)
             {
                 ASSERT1(false && "this should never happen")
                 Delete(value);

@@ -135,7 +135,7 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
 
         m_input >> c;
         if (m_input.eof())
-            return DataFileParser::Token::_END;
+            return DataFileParser::Token::END_;
         m_text += c;
 
         if (IsAlpha(c) || c == '_')
@@ -156,7 +156,7 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
                 }
                 catch (DataFileParser::Token::Type token_type)
                 {
-                    if (token_type == DataFileParser::Token::_END)
+                    if (token_type == DataFileParser::Token::END_)
                         EmitWarning(FL, "unterminated comment");
                     return token_type;
                 }
@@ -605,7 +605,7 @@ void DataFileScanner::ScanComment ()
             if (c == '*')
             {
                 if (IsNextCharEOF(&c))
-                    throw DataFileParser::Token::_END;
+                    throw DataFileParser::Token::END_;
                 else if (c == '/')
                 {
                     m_input >> c;
@@ -618,7 +618,7 @@ void DataFileScanner::ScanComment ()
         }
 
         if (IsNextCharEOF())
-            throw DataFileParser::Token::_END;
+            throw DataFileParser::Token::END_;
     }
     else if (c == '/')
     {
@@ -631,7 +631,7 @@ void DataFileScanner::ScanComment ()
         }
 
         if (IsNextCharEOF())
-            throw DataFileParser::Token::_END;
+            throw DataFileParser::Token::END_;
 
         m_input >> c;
         m_text += c;
