@@ -39,8 +39,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
-				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=3"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,8 +105,8 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;..\..\..\SDL-1.2.9\include&quot;;&quot;..\..\..\SDL_image-1.2.4\include&quot;;&quot;..\..\..\freetype-2.1.10\include&quot;"
-				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
@@ -664,11 +664,27 @@
 			Name="parsers"
 			>
 			<File
-				RelativePath=".\parsers\xrb_datafile.cpp"
+				RelativePath=".\parsers\xrb_datafilelocation.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\parsers\xrb_datafile.h"
+				RelativePath=".\parsers\xrb_datafilelocation.h"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_datafileparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_datafileparser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_datafilescanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_datafilescanner.h"
 				>
 			</File>
 			<File
@@ -687,10 +703,6 @@
 				RelativePath=".\parsers\xrb_linecalculator.h"
 				>
 			</File>
-			<Filter
-				Name="datafile"
-				>
-			</Filter>
 			<Filter
 				Name="linecalculator"
 				>

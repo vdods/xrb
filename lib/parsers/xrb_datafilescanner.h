@@ -33,7 +33,7 @@ public:
 
     inline bool GetIsOpen () const { return m_input.is_open(); }
     inline std::string const &GetInputFilename () const { return m_input_filename; }
-    inline uint GetLineNumber () const { return m_line_number; }
+    inline Uint32 GetLineNumber () const { return m_line_number; }
     inline bool GetWereWarningsEncountered () const { return m_were_warnings_encountered; }
     inline bool GetWereErrorsEncountered () const { return m_were_errors_encountered; }
 
@@ -73,7 +73,7 @@ private:
     std::string m_input_filename;
     std::ifstream m_input;
     std::string m_text;
-    uint m_line_number;
+    Uint32 m_line_number;
     bool m_in_preamble;
     bool m_were_warnings_encountered;
     bool m_were_errors_encountered;

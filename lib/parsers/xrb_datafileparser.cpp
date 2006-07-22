@@ -52,8 +52,8 @@ DataFileParser::~DataFileParser ()
 
 void DataFileParser::CheckStateConsistency ()
 {
-    uint counter = 1;
-    for (uint i = 0; i < ms_state_count; ++i)
+    Uint32 counter = 1;
+    for (Uint32 i = 0; i < ms_state_count; ++i)
     {
         if (ms_state[i].m_lookahead_transition_offset > 0)
         {
@@ -107,7 +107,7 @@ bool DataFileParser::GetDoesStateAcceptErrorToken (DataFileParser::StateNumber s
     assert(state_number < ms_state_count);
     State const &state = ms_state[state_number];
 
-    for (uint transition = state.m_lookahead_transition_offset,
+    for (Uint32 transition = state.m_lookahead_transition_offset,
                       transition_end = state.m_lookahead_transition_offset +
                                        state.m_lookahead_transition_count;
          transition < transition_end;
@@ -145,9 +145,9 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
         assert(current_state_number < ms_state_count);
         State const &current_state = ms_state[current_state_number];
 
-        uint state_transition_number;
-        uint state_transition_count;
-        uint default_action_state_transition_number;
+        Uint32 state_transition_number;
+        Uint32 state_transition_count;
+        Uint32 default_action_state_transition_number;
         Token::Type state_transition_token_type = Token::_INVALID;
 
         // if we've just reduced to a non-terminal, coming from
@@ -175,7 +175,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
             }
         }
 
-        uint i;
+        Uint32 i;
         for (i = 0;
              i < state_transition_count;
              ++i, ++state_transition_number)
@@ -293,14 +293,14 @@ DataFileParser::ActionReturnCode DataFileParser::ProcessAction (DataFileParser::
     }
     else if (action.m_transition_action == TA_REDUCE_USING_RULE)
     {
-        uint reduction_rule_number = action.m_data;
+        Uint32 reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, false);
     }
     else if (action.m_transition_action == TA_REDUCE_AND_ACCEPT_USING_RULE)
     {
-        uint reduction_rule_number = action.m_data;
+        Uint32 reduction_rule_number = action.m_data;
         assert(reduction_rule_number < ms_reduction_rule_count);
         ReductionRule const &reduction_rule = ms_reduction_rule[reduction_rule_number];
         ReduceUsingRule(reduction_rule, true);
@@ -370,7 +370,7 @@ void DataFileParser::ReduceUsingRule (ReductionRule const &reduction_rule, bool 
     }
 }
 
-void DataFileParser::PopStates (uint number_of_states_to_pop, bool print_state_stack)
+void DataFileParser::PopStates (Uint32 number_of_states_to_pop, bool print_state_stack)
 {
     assert(number_of_states_to_pop < m_state_stack.size());
     assert(number_of_states_to_pop <= m_token_stack.size());
@@ -398,7 +398,7 @@ void DataFileParser::PrintStateStack () const
     DEBUG_SPEW_2(std::endl);
 }
 
-void DataFileParser::PrintStateTransition (uint const state_transition_number) const
+void DataFileParser::PrintStateTransition (Uint32 const state_transition_number) const
 {
     assert(state_transition_number < ms_state_transition_count);
     DEBUG_SPEW_2("&&& exercising state transition " << std::setw(4) << std::right << state_transition_number << std::endl);
@@ -460,11 +460,11 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
         "_DEFAULT",
         "_INVALID"
     };
-    static uint const s_token_type_string_count =
+    static Uint32 const s_token_type_string_count =
         sizeof(s_token_type_string) /
         sizeof(std::string);
 
-    unsigned token_type_value = static_cast<uint>(token_type);
+    unsigned token_type_value = static_cast<Uint32>(token_type);
     if (token_type_value < 0x20)
         stream << token_type_value;
     else if (token_type_value < 0x7F)
@@ -746,7 +746,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0015 ()
             {
                 value_list->AppendValue(value);
             }
-            catch (std::string const &exception)
+            catch (std::string const &)
             {
                 ASSERT1(false && "this should never happen")
                 Delete(value);
@@ -1042,15 +1042,15 @@ DataFileParser::ReductionRule const DataFileParser::ms_reduction_rule[] =
     {                Token::__array,  4, &DataFileParser::ReductionRuleHandler0011, "rule 11: array <- '[' value_list ',' ']'    "},
     {                Token::__array,  2, &DataFileParser::ReductionRuleHandler0012, "rule 12: array <- '[' ']'    "},
     {                Token::__array,  3, &DataFileParser::ReductionRuleHandler0013, "rule 13: array <- '[' %error ']'    "},
-    {           Token::__value_list,  3, &DataFileParser::ReductionRuleHandler0014, "rule 14: value_list <- value_list ',' value    "},
-    {           Token::__value_list,  1, &DataFileParser::ReductionRuleHandler0015, "rule 15: value_list <- value    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0016, "rule 16: value <- BOOLEAN    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: value <- integer    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: value <- float    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: value <- CHARACTER    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0020, "rule 20: value <- string    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: value <- structure    "},
-    {                Token::__value,  1, &DataFileParser::ReductionRuleHandler0022, "rule 22: value <- array    "},
+    {           Token::__awesome_value_list,  3, &DataFileParser::ReductionRuleHandler0014, "rule 14: value_list <- value_list ',' value    "},
+    {           Token::__awesome_value_list,  1, &DataFileParser::ReductionRuleHandler0015, "rule 15: value_list <- value    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0016, "rule 16: value <- BOOLEAN    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0017, "rule 17: value <- integer    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0018, "rule 18: value <- float    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0019, "rule 19: value <- CHARACTER    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0020, "rule 20: value <- string    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0021, "rule 21: value <- structure    "},
+    {                Token::__awesome_value,  1, &DataFileParser::ReductionRuleHandler0022, "rule 22: value <- array    "},
     {              Token::__integer,  1, &DataFileParser::ReductionRuleHandler0023, "rule 23: integer <- INTEGER    "},
     {              Token::__integer,  2, &DataFileParser::ReductionRuleHandler0024, "rule 24: integer <- '+' INTEGER    "},
     {              Token::__integer,  2, &DataFileParser::ReductionRuleHandler0025, "rule 25: integer <- '-' INTEGER    "},
@@ -1065,7 +1065,7 @@ DataFileParser::ReductionRule const DataFileParser::ms_reduction_rule[] =
     {                 Token::_ERROR,  1,                                     NULL, "* -> error"}
 };
 
-uint const DataFileParser::ms_reduction_rule_count =
+Uint32 const DataFileParser::ms_reduction_rule_count =
     sizeof(DataFileParser::ms_reduction_rule) /
     sizeof(DataFileParser::ReductionRule);
 
@@ -1125,7 +1125,7 @@ DataFileParser::State const DataFileParser::ms_state[] =
 
 };
 
-uint const DataFileParser::ms_state_count =
+Uint32 const DataFileParser::ms_state_count =
     sizeof(DataFileParser::ms_state) /
     sizeof(DataFileParser::State);
 
@@ -1203,7 +1203,7 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     // nonterminal transitions
     {            Token::__structure, {                  TA_PUSH_STATE,   19}},
     {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {                Token::__value, {                  TA_PUSH_STATE,   21}},
+    {                Token::__awesome_value, {                  TA_PUSH_STATE,   21}},
     {              Token::__integer, {                  TA_PUSH_STATE,   22}},
     {                Token::__float, {                  TA_PUSH_STATE,   23}},
     {               Token::__string, {                  TA_PUSH_STATE,   24}},
@@ -1300,8 +1300,8 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     // nonterminal transitions
     {            Token::__structure, {                  TA_PUSH_STATE,   19}},
     {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {           Token::__value_list, {                  TA_PUSH_STATE,   34}},
-    {                Token::__value, {                  TA_PUSH_STATE,   35}},
+    {           Token::__awesome_value_list, {                  TA_PUSH_STATE,   34}},
+    {                Token::__awesome_value, {                  TA_PUSH_STATE,   35}},
     {              Token::__integer, {                  TA_PUSH_STATE,   22}},
     {                Token::__float, {                  TA_PUSH_STATE,   23}},
     {               Token::__string, {                  TA_PUSH_STATE,   24}},
@@ -1471,7 +1471,7 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
     // nonterminal transitions
     {            Token::__structure, {                  TA_PUSH_STATE,   19}},
     {                Token::__array, {                  TA_PUSH_STATE,   20}},
-    {                Token::__value, {                  TA_PUSH_STATE,   46}},
+    {                Token::__awesome_value, {                  TA_PUSH_STATE,   46}},
     {              Token::__integer, {                  TA_PUSH_STATE,   22}},
     {                Token::__float, {                  TA_PUSH_STATE,   23}},
     {               Token::__string, {                  TA_PUSH_STATE,   24}},
@@ -1502,7 +1502,7 @@ DataFileParser::StateTransition const DataFileParser::ms_state_transition[] =
 
 };
 
-uint const DataFileParser::ms_state_transition_count =
+Uint32 const DataFileParser::ms_state_transition_count =
     sizeof(DataFileParser::ms_state_transition) /
     sizeof(DataFileParser::StateTransition);
 
