@@ -54,7 +54,7 @@ int main (int argc, char **argv)
         DataFileValue const *value;
 
         value = root->GetPathElement("|queries");
-        DataFileArray const *queries = DStaticCast<DataFileArray const *>(value);
+        DataFileArray const *queries = dynamic_cast<DataFileArray const *>(value);
         if (queries != NULL && queries->GetArrayElementType() == DAT_STRING)
         {
             for (Uint32 i = 0; i < queries->GetElementCount(); ++i)

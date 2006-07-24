@@ -40,7 +40,7 @@ std::string const &GetDataFileElementTypeString (DataFileElementType data_file_e
 
 DataFileLeafValue::~DataFileLeafValue () { }
 
-DataFileValue const *DataFileLeafValue::GetPathElement (
+DataFileValue const *DataFileLeafValue::GetSubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
@@ -51,7 +51,7 @@ DataFileValue const *DataFileLeafValue::GetPathElement (
 
     fprintf(
         stderr,
-        "data path error: in path \"%s\" - element type %s can not have subelements (subpath \"%s\")\n",
+        "GetPathElement error: in path \"%s\" - element type %s can not have subelements (subpath \"%s\")\n",
         path.c_str(),
         GetDataFileElementTypeString(GetElementType()).c_str(),
         path.c_str() + start);
@@ -155,6 +155,94 @@ void DataFileString::PrintAST (IndentFormatter &formatter) const
 }
 
 // ///////////////////////////////////////////////////////////////////////////
+// DataFileContainer
+// ///////////////////////////////////////////////////////////////////////////
+
+bool DataFileContainer::SetPathElement (std::string const &path, bool const value)
+{
+    return SetPathElement(path, 0, new DataFileBoolean(value));
+}
+
+bool DataFileContainer::SetPathElement (std::string const &path, Uint32 const value)
+{
+    return SetPathElement(path, 0, new DataFileInteger(value));
+}
+
+bool DataFileContainer::SetPathElement (std::string const &path, Sint32 const value)
+{
+    return SetPathElement(path, 0, new DataFileInteger(value));
+}
+
+bool DataFileContainer::SetPathElement (std::string const &path, Float const value)
+{
+    return SetPathElement(path, 0, new DataFileFloat(value));
+}
+
+bool DataFileContainer::SetPathElement (std::string const &path, char const value)
+{
+    return SetPathElement(path, 0, new DataFileCharacter(value));
+}
+
+bool DataFileContainer::SetPathElement (std::string const &path, std::string const &value)
+{
+    return SetPathElement(path, 0, new DataFileString(value));
+}
+
+DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) const
+{
+    ASSERT1(start <= path.length())
+
+    if (start >= path.length())
+        return NT_LEAF;
+
+    if (path[start] != '|')
+    {
+        fprintf(
+            stderr,
+            "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
+            path.c_str(),
+            path.c_str() + start);
+        return NT_PATH_ERROR;
+    }
+
+    ++start;
+    if (start < path.length())
+    {
+        if (path[start] == '|')
+            return NT_PATH_ERROR;
+        if (path[start] >= '0' && path[start] <= '9')
+        {
+            do ++start; while (start < path.length() && path[start] >= '0' && path[start] <= '9');
+            if (start >= path.length() || path[start] == '|')
+                return NT_ARRAY;
+            else
+            {
+                fprintf(
+                    stderr,
+                    "SetPathElement error: in path \"%s\" - invalid array index\n",
+                    path.c_str());
+                return NT_PATH_ERROR;
+            }
+        }
+        else if ((path[start] == '+' || path[start] == '$') &&
+                 (start+1 >= path.length() || path[start+1] == '|'))
+        {
+            return NT_ARRAY;
+        }
+        else
+            return NT_STRUCTURE;
+    }
+    else
+    {
+        fprintf(
+            stderr,
+            "SetPathElement error: in path \"%s\" - path can not end with '|' character\n",
+            path.c_str());
+        return NT_PATH_ERROR;
+    }
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // DataFileKeyPair
 // ///////////////////////////////////////////////////////////////////////////
 
@@ -197,13 +285,13 @@ void DataFileKeyPair::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileKeyPair::GetPathElement (
+DataFileValue const *DataFileKeyPair::GetSubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
     ASSERT1(start <= path.length())
 
-//     fprintf(stderr, "DataFileKeyPair::GetPathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileKeyPair::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return GetValue();
@@ -212,13 +300,85 @@ DataFileValue const *DataFileKeyPair::GetPathElement (
     {
         fprintf(
             stderr,
-            "data path error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
+            "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
             path.c_str(),
             path.c_str() + start);
         return NULL;
     }
 
-    return GetValue()->GetPathElement(path, start);
+    return GetValue()->GetSubpathElement(path, start);
+}
+
+bool DataFileKeyPair::SetPathElement (
+    std::string const &path,
+    Uint32 const start,
+    DataFileLeafValue *const value)
+{
+    ASSERT1(start <= path.length())
+    ASSERT1(value != NULL)
+
+    switch (GetParentElementNodeType(path, start))
+    {
+        case NT_LEAF:
+            if (m_value != NULL)
+                Delete(m_value);
+            m_value = value;
+            return true;
+
+        case NT_ARRAY:
+            // if the key pair's value is an array, call SetPathElement on it.
+            if (m_value != NULL && m_value->GetElementType() == DAT_ARRAY)
+                return DStaticCast<DataFileContainer *>(m_value)->SetPathElement(path, start, value);
+            // otherwise, attempt to replace it, but only replace if SetPathElement succeeds.
+            else
+            {
+                // create an array to replace m_value
+                DataFileValue *array = new DataFileArray();
+                // only delete and replace m_value if the SetPathElement worked
+                if (static_cast<DataFileContainer *>(array)->SetPathElement(path, start, value))
+                {
+                    Delete(m_value);
+                    m_value = array;
+                    return true;
+                }
+                // otherwise delete the recently created array
+                else
+                {
+                    Delete(array);
+                    return false;
+                }
+            }
+            ASSERT1(false && "this should never happen")
+            return false;
+
+        case NT_STRUCTURE:
+            // if the key pair's value is an structure, call SetPathElement on it.
+            if (m_value != NULL && m_value->GetElementType() == DAT_STRUCTURE)
+                return DStaticCast<DataFileContainer *>(m_value)->SetPathElement(path, start, value);
+            // otherwise, attempt to replace it, but only replace if SetPathElement succeeds.
+            else
+            {
+                // create an structure to replace m_value
+                DataFileValue *structure = new DataFileStructure();
+                // only delete and replace m_value if the SetPathElement worked
+                if (static_cast<DataFileContainer *>(structure)->SetPathElement(path, start, value))
+                {
+                    Delete(m_value);
+                    m_value = structure;
+                    return true;
+                }
+                // otherwise delete the recently created structure
+                else
+                {
+                    Delete(structure);
+                    return false;
+                }
+            }
+            ASSERT1(false && "this should never happen")
+            return false;
+
+        default: return false;
+    }
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -279,7 +439,7 @@ Uint32 DataFileArray::GetDimensionCount () const
         return 1;
 }
 
-void DataFileArray::AppendValue (DataFileValue const *const value)
+void DataFileArray::AppendValue (DataFileValue *const value)
 {
     ASSERT1(value != NULL)
 
@@ -393,13 +553,13 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileArray::GetPathElement (
+DataFileValue const *DataFileArray::GetSubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length())
 
-//     fprintf(stderr, "DataFileArray::GetPathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileArray::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
@@ -408,7 +568,7 @@ DataFileValue const *DataFileArray::GetPathElement (
     {
         fprintf(
             stderr,
-            "data path error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
+            "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
             path.c_str(),
             path.c_str() + start);
         return NULL;
@@ -421,7 +581,7 @@ DataFileValue const *DataFileArray::GetPathElement (
     {
         fprintf(
             stderr,
-            "data path error: in path \"%s\" - missing array index\n",
+            "GetPathElement error: in path \"%s\" - missing array index\n",
             path.c_str());
         return NULL;
     }
@@ -435,7 +595,7 @@ DataFileValue const *DataFileArray::GetPathElement (
         {
             fprintf(
                 stderr,
-                "data path error: in path \"%s\" - invalid array index \"%s\"\n",
+                "GetPathElement error: in path \"%s\" - invalid array index \"%s\"\n",
                 path.c_str(),
                 path.substr(start, key_delim-start).c_str());
             return NULL;
@@ -446,14 +606,133 @@ DataFileValue const *DataFileArray::GetPathElement (
     {
         fprintf(
             stderr,
-            "data path error: in path \"%s\" - out of bounds array index \"%s\"\n",
+            "GetPathElement error: in path \"%s\" - out of bounds array index \"%s\"\n",
             path.c_str(),
             path.substr(start, key_delim-start).c_str());
         return NULL;
     }
 
     ASSERT1(key_delim < UINT32_UPPER_BOUND)
-    return m_element_vector[array_index]->GetPathElement(path, key_delim);
+    return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
+}
+
+bool DataFileArray::SetPathElement (
+    std::string const &path,
+    Uint32 const start,
+    DataFileLeafValue *const value)
+{
+    ASSERT1(start <= path.length())
+    ASSERT1(value != NULL)
+
+    return false;
+/*
+    if (start >= path.length())
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - can't assign a value to an array itself\n", path.c_str());
+        return false;
+    }
+
+    if (path[start] != '|')
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
+        return false;
+    }
+
+    ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY)
+
+    ++start;
+    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    NodeType element_type = GetParentElementNodeType(path, key_delim);
+
+    // determine what array index is being referenced
+    Uint32 array_index = UINT32_UPPER_BOUND;
+    bool create_new_element = false;
+    if (key_delim-start == 1 && (path[start] == '+' || path[start] == '$'))
+    {
+        if (path[start] == '+')
+            create_new_element = true;
+        else if (path[start] == '$')
+        {
+            if (m_element_vector.empty())
+            {
+                fprintf(stderr, "SetPathElement error: in path \"%s\" - $ can not be used on array with no elements\n", path.c_str());
+                return false;
+            }
+            array_index = m_element_vector.size()-1;
+        }
+        else
+            ASSERT1(false && "this should never happen")
+    }
+    // check for array index
+    else
+    {
+        Uint32 i = start;
+        array_index = 0;
+        char c;
+        while (i < key_delim && (c = path[i], c >= '0' && c <= '9'))
+        {
+            // check for overflow
+            if (array_index > 429496729 || array_index == 429496729 && (c - '0') > 5)
+            {
+                array_index = UINT32_UPPER_BOUND;
+                break;
+            }
+            else
+                array_index = 10 * array_index + (c - '0');
+            ++i;
+        }
+        if (c < '0' || c > '9')
+        {
+            fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid array index in subpath \"%s\"\n", path.c_str(), path.c_str()+start);
+            return false;
+        }
+    }
+
+    // this is pedantic, but hey.
+    ASSERT1(m_element_vector.size() < UINT32_UPPER_BOUND)
+
+    if (create_new_element)
+    {
+        DataFileValue *element;
+        switch (element_type)
+        {
+            case NT_LEAF:
+                element = value;
+                break;
+
+            case NT_ARRAY:
+                element = new DataFileArray();
+                if (!element->SetPathElement(path, key_delim, value))
+                {
+                    Delete(element);
+                    return false;
+                }
+                break;
+
+            case NT_STRUCTURE:
+                element = new DataFileStructure();
+                if (!element->SetPathElement(path, key_delim, value))
+                {
+                    Delete(element);
+                    return false;
+                }
+                break;
+
+            default: return false;
+        }
+        m_element_vector.push_back(element);
+        return true;
+    }
+    else if (array_index > m_element_vector.size())
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - array index %u out of bounds\n", path.c_str(), array_index);
+        return false;
+    }
+    else
+    {
+        if (element_type == NT_LEAF fuck
+    }
+*/
 }
 
 bool DataFileArray::GetDoesMatchDimensionAndType (
@@ -514,12 +793,19 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
     ASSERT1(key_pair->GetKey().length() > 0)
     ASSERT1(key_pair->GetValue() != NULL)
 
+    if (!GetIsValidKey(key_pair->GetKey()))
+    {
+        std::ostringstream out;
+        out << "key \"" << key_pair->GetKey() << "\" contains invalid characters";
+        throw out.str();
+    }
+
     if (m_member_map.find(key_pair->GetKey()) == m_member_map.end())
         m_member_map[key_pair->GetKey()] = key_pair;
     else
     {
         std::ostringstream out;
-        out << "collision with key " << key_pair->GetKey();
+        out << "collision with key \"" << key_pair->GetKey() << "\"";
         throw out.str();
     }
 }
@@ -554,24 +840,20 @@ void DataFileStructure::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileStructure::GetPathElement (
+DataFileValue const *DataFileStructure::GetSubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length())
 
-//     fprintf(stderr, "DataFileStructure::GetPathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileStructure::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
 
     if (path[start] != '|')
     {
-        fprintf(
-            stderr,
-            "data path error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
-            path.c_str(),
-            path.c_str() + start);
+        fprintf(stderr, "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
         return NULL;
     }
 
@@ -581,18 +863,83 @@ DataFileValue const *DataFileStructure::GetPathElement (
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
     {
-        fprintf(
-            stderr,
-            "data path error: in path \"%s\" - unmatched element \"%s\"\n",
-            path.c_str(),
-            key.c_str());
+        fprintf(stderr, "GetPathElement error: in path \"%s\" - unmatched element \"%s\"\n", path.c_str(), key.c_str());
         return NULL;
     }
     else
     {
         ASSERT1(key_delim < UINT32_UPPER_BOUND)
-        return it->second->GetPathElement(path, key_delim);
+        return it->second->GetValue()->GetSubpathElement(path, key_delim);
     }
+}
+
+bool DataFileStructure::SetPathElement (
+    std::string const &path,
+    Uint32 start,
+    DataFileLeafValue *const value)
+{
+    ASSERT1(start <= path.length())
+    ASSERT1(value != NULL)
+
+    if (start >= path.length())
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - can't assign a value to a structure itself\n", path.c_str());
+        return false;
+    }
+
+    if (path[start] != '|')
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
+        return false;
+    }
+
+    ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE)
+
+    ++start;
+    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+
+    NodeType element_type = GetParentElementNodeType(path, key_delim);
+    if (element_type == NT_PATH_ERROR)
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - type mismatch before subpath \"%s\"\n", path.c_str(), path.c_str() + start);
+        return false;
+    }
+
+    std::string key(path.substr(start, key_delim-start));
+    if (!GetIsValidKey(key))
+    {
+        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid key \"%s\"\n", path.c_str(), key.c_str());
+        return false;
+    }
+
+    return false; // temp
+/*
+    MemberMapConstIterator it = m_member_map.find(key);
+    if (it == m_member_map.end())
+    {
+    }
+    else
+    {
+        ASSERT1(key_delim < UINT32_UPPER_BOUND)
+        return it->second->SetPathElement(path, key_delim);
+    }
+*/
+}
+
+bool DataFileStructure::GetIsValidKey (std::string const &key)
+{
+    char c = key[0];
+    if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_')
+        return false;
+
+    for (Uint32 i = 1; i < key.length(); ++i)
+    {
+        c = key[i];
+        if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_' && (c < '0' || c > '9'))
+            return false;
+    }
+
+    return true;
 }
 
 } // end of namespace Xrb

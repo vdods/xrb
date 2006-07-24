@@ -180,6 +180,22 @@ DataFileArray
 DataFileStructure
     map<DataFileKeyPair>
 
+more random notes:
+
+SetPathElement on structure
+{
+    if (at end of path) return ERROR;
+    if (at last char of path && last char == '|') return INVALID_PATH;
+    ASSERT(GetParentElementNodeType() == structure)
+    get key string
+    if (!GetIsValidKey(key)) return INVALID_KEY;
+    if (key exists in this structure) return matching_key_pair->SetPathElement(value);
+    temp_key_pair = new keypair();
+    retval = temp_key_pair->SetPathElement(value);
+    if (retval != NULL) add temp_key_pair
+    return retval;
+}
+
 */
 
 enum DataFileElementType
@@ -247,19 +263,18 @@ public:
     virtual ~DataFileValue () { }
 
     virtual DataFileElementType GetElementType () const = 0;
+    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;
 
 protected:
 
-    DataFileValue () { }
-
-    virtual DataFileValue const *GetPathElement (
+    virtual DataFileValue const *GetSubpathElement (
         std::string const &path,
         Uint32 start) const = 0;
 
-    // sort of a kludgey way for these to call GetPathElement
+    // sort of a kludgey way for these to call GetSubpathElement
     // on other objects, but then again, fuck it.
     friend class DataFileKeyPair;
     friend class DataFileArray;
@@ -282,7 +297,7 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetPathElement (
+    virtual DataFileValue const *GetSubpathElement (
         std::string const &path,
         Uint32 start) const;
 }; // end of class DataFileLeafValue
@@ -454,16 +469,56 @@ private:
 }; // end of class DataFileString
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileKeyPair
+// DataFileContainer
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileKeyPair : public DataFileValue
+class DataFileContainer : public DataFileValue
 {
 public:
 
-    DataFileKeyPair (std::string const &key, DataFileValue const *value)
+    DataFileContainer ()
         :
-        DataFileValue (),
+        DataFileValue()
+    { }
+
+    bool SetPathElement (std::string const &path, bool value);
+    bool SetPathElement (std::string const &path, Uint32 value);
+    bool SetPathElement (std::string const &path, Sint32 value);
+    bool SetPathElement (std::string const &path, Float value);
+    bool SetPathElement (std::string const &path, char value);
+    bool SetPathElement (std::string const &path, std::string const &value);
+
+protected:
+
+    enum NodeType
+    {
+        NT_LEAF = 0,
+        NT_ARRAY,
+        NT_STRUCTURE,
+        NT_PATH_ERROR
+    }; // end of enum DataFileContainer::NodeType
+
+    NodeType GetParentElementNodeType (std::string const &path, Uint32 start) const;
+
+    virtual bool SetPathElement (
+        std::string const &path,
+        Uint32 start,
+        DataFileLeafValue *value) = 0;
+
+    friend class DataFileKeyPair;
+}; // end of class DataFileContainer
+
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileKeyPair
+// ///////////////////////////////////////////////////////////////////////////
+
+class DataFileKeyPair : public DataFileContainer
+{
+public:
+
+    DataFileKeyPair (std::string const &key, DataFileValue *value)
+        :
+        DataFileContainer(),
         m_key(key),
         m_value(value)
     {
@@ -475,52 +530,41 @@ public:
     }
 
     inline std::string const &GetKey () const { return m_key; }
-    inline DataFileValue const *GetValue () const
-    {
-        ASSERT1(m_value != NULL && "you shouldn't call this after StealValue()")
-        return m_value;
-    }
-
-    inline DataFileValue const *StealValue ()
-    {
-        DataFileValue const *value = m_value;
-        m_value = NULL;
-        return value;
-    }
+    inline DataFileValue *GetValue () const { return m_value; }
 
     virtual DataFileElementType GetElementType () const { return DAT_KEY_PAIR; }
-    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetPathElement(path, 0); }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 protected:
 
-    virtual DataFileValue const *GetPathElement (
+    virtual DataFileValue const *GetSubpathElement (
         std::string const &path,
         Uint32 start) const;
+
+    virtual bool SetPathElement (
+        std::string const &path,
+        Uint32 start,
+        DataFileLeafValue *value);
 
 private:
 
     std::string const m_key;
-    DataFileValue const *m_value;
-
-    // sort of a kludgey way to call GetPathElement
-    // on keypairs, but then again, fuck it.
-    friend class DataFileStructure;
+    DataFileValue *m_value;
 }; // end of class DataFileKeyPair
 
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileArray
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileArray : public DataFileValue
+class DataFileArray : public DataFileContainer
 {
 public:
 
     DataFileArray ()
         :
-        DataFileValue()
+        DataFileContainer()
     { }
     virtual ~DataFileArray ();
 
@@ -529,12 +573,12 @@ public:
     DataFileElementType GetUltimateArrayElementType () const;
     Uint32 GetDimensionCount () const;
     inline Uint32 GetElementCount () const { return m_element_vector.size(); }
-    inline DataFileValue const *GetElement (Uint32 index) const
+    inline DataFileValue *GetElement (Uint32 index) const
     {
         return index < m_element_vector.size() ? m_element_vector[index] : NULL;
     }
 
-    void AppendValue (DataFileValue const *value);
+    void AppendValue (DataFileValue *value);
 
     virtual DataFileElementType GetElementType () const { return DAT_ARRAY; }
 
@@ -543,15 +587,20 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetPathElement (
+    virtual DataFileValue const *GetSubpathElement (
         std::string const &path,
         Uint32 start) const;
+
+    virtual bool SetPathElement (
+        std::string const &path,
+        Uint32 start,
+        DataFileLeafValue *value);
 
 private:
 
     static bool GetDoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
 
-    typedef std::vector<DataFileValue const *> ElementVector;
+    typedef std::vector<DataFileValue *> ElementVector;
     typedef ElementVector::iterator ElementVectorIterator;
     typedef ElementVector::const_iterator ElementVectorConstIterator;
 
@@ -562,18 +611,17 @@ private:
 // DataFileStructure
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileStructure : public DataFileValue
+class DataFileStructure : public DataFileContainer
 {
 public:
 
     DataFileStructure ()
         :
-        DataFileValue()
+        DataFileContainer()
     { }
     virtual ~DataFileStructure ();
 
     DataFileValue const *GetValue (std::string const &key) const;
-    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetPathElement(path, 0); }
 
     void AddKeyPair (DataFileKeyPair *key_value_pair);
 
@@ -584,11 +632,18 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetPathElement (
+    virtual DataFileValue const *GetSubpathElement (
         std::string const &path,
         Uint32 start) const;
 
+    virtual bool SetPathElement (
+        std::string const &path,
+        Uint32 start,
+        DataFileLeafValue *value);
+
 private:
+
+    static bool GetIsValidKey (std::string const &key);
 
     typedef std::map<std::string, DataFileKeyPair const *> MemberMap;
     typedef MemberMap::iterator MemberMapIterator;
