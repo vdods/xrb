@@ -481,12 +481,12 @@ public:
         DataFileValue()
     { }
 
-    bool SetPathElement (std::string const &path, bool value);
-    bool SetPathElement (std::string const &path, Uint32 value);
-    bool SetPathElement (std::string const &path, Sint32 value);
-    bool SetPathElement (std::string const &path, Float value);
-    bool SetPathElement (std::string const &path, char value);
-    bool SetPathElement (std::string const &path, std::string const &value);
+    bool SetPathElementBoolean (std::string const &path, bool value);
+    bool SetPathElementUnsignedInteger (std::string const &path, Uint32 value);
+    bool SetPathElementSignedInteger (std::string const &path, Sint32 value);
+    bool SetPathElementFloat (std::string const &path, Float value);
+    bool SetPathElementCharacter (std::string const &path, char value);
+    bool SetPathElementString (std::string const &path, std::string const &value);
 
 protected:
 
@@ -500,12 +500,14 @@ protected:
 
     NodeType GetParentElementNodeType (std::string const &path, Uint32 start) const;
 
-    virtual bool SetPathElement (
+    virtual bool SetSubpathElement (
         std::string const &path,
         Uint32 start,
         DataFileLeafValue *value) = 0;
 
     friend class DataFileKeyPair;
+    friend class DataFileArray;
+    friend class DataFileStructure;
 }; // end of class DataFileContainer
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -543,7 +545,7 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetPathElement (
+    virtual bool SetSubpathElement (
         std::string const &path,
         Uint32 start,
         DataFileLeafValue *value);
@@ -591,7 +593,7 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetPathElement (
+    virtual bool SetSubpathElement (
         std::string const &path,
         Uint32 start,
         DataFileLeafValue *value);
@@ -636,7 +638,7 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetPathElement (
+    virtual bool SetSubpathElement (
         std::string const &path,
         Uint32 start,
         DataFileLeafValue *value);
@@ -645,7 +647,7 @@ private:
 
     static bool GetIsValidKey (std::string const &key);
 
-    typedef std::map<std::string, DataFileKeyPair const *> MemberMap;
+    typedef std::map<std::string, DataFileKeyPair *> MemberMap;
     typedef MemberMap::iterator MemberMapIterator;
     typedef MemberMap::const_iterator MemberMapConstIterator;
 

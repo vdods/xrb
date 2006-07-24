@@ -41,6 +41,26 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
 
+    IndentFormatter formatter(stderr, "    ");
+
+    DataFileStructure *root = new DataFileStructure();
+    root->SetPathElementString("|test|thingy", "stupid");
+    root->SetPathElementFloat("|test|dumb", 123.4f);
+    root->Print(formatter);
+    formatter.EndLine("");
+
+    root->SetPathElementCharacter("|test|dumb", 'X');
+    root->Print(formatter);
+    formatter.EndLine("");
+
+    root->SetPathElementBoolean("|test|dumb|eyeball", true);
+    root->Print(formatter);
+
+    Delete(root);
+
+    return 0;
+
+/*
     // TEMP parser testing stuff
     DataFileParser parser;
 //     parser.SetDebugSpewLevel(2);
@@ -80,6 +100,7 @@ int main (int argc, char **argv)
 //         fprintf(stderr, "\n");
 //     }
     return 0;
+    */
 /*
     // TEMP
     // TEMP

@@ -158,34 +158,34 @@ void DataFileString::PrintAST (IndentFormatter &formatter) const
 // DataFileContainer
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DataFileContainer::SetPathElement (std::string const &path, bool const value)
+bool DataFileContainer::SetPathElementBoolean (std::string const &path, bool const value)
 {
-    return SetPathElement(path, 0, new DataFileBoolean(value));
+    return SetSubpathElement(path, 0, new DataFileBoolean(value));
 }
 
-bool DataFileContainer::SetPathElement (std::string const &path, Uint32 const value)
+bool DataFileContainer::SetPathElementUnsignedInteger (std::string const &path, Uint32 const value)
 {
-    return SetPathElement(path, 0, new DataFileInteger(value));
+    return SetSubpathElement(path, 0, new DataFileInteger(value));
 }
 
-bool DataFileContainer::SetPathElement (std::string const &path, Sint32 const value)
+bool DataFileContainer::SetPathElementSignedInteger (std::string const &path, Sint32 const value)
 {
-    return SetPathElement(path, 0, new DataFileInteger(value));
+    return SetSubpathElement(path, 0, new DataFileInteger(value));
 }
 
-bool DataFileContainer::SetPathElement (std::string const &path, Float const value)
+bool DataFileContainer::SetPathElementFloat (std::string const &path, Float const value)
 {
-    return SetPathElement(path, 0, new DataFileFloat(value));
+    return SetSubpathElement(path, 0, new DataFileFloat(value));
 }
 
-bool DataFileContainer::SetPathElement (std::string const &path, char const value)
+bool DataFileContainer::SetPathElementCharacter (std::string const &path, char const value)
 {
-    return SetPathElement(path, 0, new DataFileCharacter(value));
+    return SetSubpathElement(path, 0, new DataFileCharacter(value));
 }
 
-bool DataFileContainer::SetPathElement (std::string const &path, std::string const &value)
+bool DataFileContainer::SetPathElementString (std::string const &path, std::string const &value)
 {
-    return SetPathElement(path, 0, new DataFileString(value));
+    return SetSubpathElement(path, 0, new DataFileString(value));
 }
 
 DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) const
@@ -309,7 +309,7 @@ DataFileValue const *DataFileKeyPair::GetSubpathElement (
     return GetValue()->GetSubpathElement(path, start);
 }
 
-bool DataFileKeyPair::SetPathElement (
+bool DataFileKeyPair::SetSubpathElement (
     std::string const &path,
     Uint32 const start,
     DataFileLeafValue *const value)
@@ -326,16 +326,16 @@ bool DataFileKeyPair::SetPathElement (
             return true;
 
         case NT_ARRAY:
-            // if the key pair's value is an array, call SetPathElement on it.
+            // if the key pair's value is an array, call SetSubpathElement on it.
             if (m_value != NULL && m_value->GetElementType() == DAT_ARRAY)
-                return DStaticCast<DataFileContainer *>(m_value)->SetPathElement(path, start, value);
-            // otherwise, attempt to replace it, but only replace if SetPathElement succeeds.
+                return DStaticCast<DataFileContainer *>(m_value)->SetSubpathElement(path, start, value);
+            // otherwise, attempt to replace it, but only replace if SetSubpathElement succeeds.
             else
             {
                 // create an array to replace m_value
                 DataFileValue *array = new DataFileArray();
-                // only delete and replace m_value if the SetPathElement worked
-                if (static_cast<DataFileContainer *>(array)->SetPathElement(path, start, value))
+                // only delete and replace m_value if the SetSubpathElement worked
+                if (static_cast<DataFileContainer *>(array)->SetSubpathElement(path, start, value))
                 {
                     Delete(m_value);
                     m_value = array;
@@ -352,16 +352,16 @@ bool DataFileKeyPair::SetPathElement (
             return false;
 
         case NT_STRUCTURE:
-            // if the key pair's value is an structure, call SetPathElement on it.
+            // if the key pair's value is an structure, call SetSubpathElement on it.
             if (m_value != NULL && m_value->GetElementType() == DAT_STRUCTURE)
-                return DStaticCast<DataFileContainer *>(m_value)->SetPathElement(path, start, value);
-            // otherwise, attempt to replace it, but only replace if SetPathElement succeeds.
+                return DStaticCast<DataFileContainer *>(m_value)->SetSubpathElement(path, start, value);
+            // otherwise, attempt to replace it, but only replace if SetSubpathElement succeeds.
             else
             {
                 // create an structure to replace m_value
                 DataFileValue *structure = new DataFileStructure();
-                // only delete and replace m_value if the SetPathElement worked
-                if (static_cast<DataFileContainer *>(structure)->SetPathElement(path, start, value))
+                // only delete and replace m_value if the SetSubpathElement worked
+                if (static_cast<DataFileContainer *>(structure)->SetSubpathElement(path, start, value))
                 {
                     Delete(m_value);
                     m_value = structure;
@@ -616,7 +616,7 @@ DataFileValue const *DataFileArray::GetSubpathElement (
     return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
 }
 
-bool DataFileArray::SetPathElement (
+bool DataFileArray::SetSubpathElement (
     std::string const &path,
     Uint32 const start,
     DataFileLeafValue *const value)
@@ -702,7 +702,7 @@ bool DataFileArray::SetPathElement (
 
             case NT_ARRAY:
                 element = new DataFileArray();
-                if (!element->SetPathElement(path, key_delim, value))
+                if (!element->SetSubpathElement(path, key_delim, value))
                 {
                     Delete(element);
                     return false;
@@ -711,7 +711,7 @@ bool DataFileArray::SetPathElement (
 
             case NT_STRUCTURE:
                 element = new DataFileStructure();
-                if (!element->SetPathElement(path, key_delim, value))
+                if (!element->SetSubpathElement(path, key_delim, value))
                 {
                     Delete(element);
                     return false;
@@ -873,7 +873,7 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
     }
 }
 
-bool DataFileStructure::SetPathElement (
+bool DataFileStructure::SetSubpathElement (
     std::string const &path,
     Uint32 start,
     DataFileLeafValue *const value)
@@ -897,6 +897,7 @@ bool DataFileStructure::SetPathElement (
 
     ++start;
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    ASSERT1(key_delim < UINT32_UPPER_BOUND)
 
     NodeType element_type = GetParentElementNodeType(path, key_delim);
     if (element_type == NT_PATH_ERROR)
@@ -912,18 +913,25 @@ bool DataFileStructure::SetPathElement (
         return false;
     }
 
-    return false; // temp
-/*
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
     {
+        DataFileKeyPair *key_pair = new DataFileKeyPair(key, NULL);
+        if (static_cast<DataFileContainer *>(key_pair)->SetSubpathElement(path, key_delim, value))
+        {
+            m_member_map[key] = key_pair;
+            return true;
+        }
+        else
+        {
+            Delete(key_pair);
+            return false;
+        }
     }
     else
     {
-        ASSERT1(key_delim < UINT32_UPPER_BOUND)
-        return it->second->SetPathElement(path, key_delim);
+        return static_cast<DataFileContainer *>(it->second)->SetSubpathElement(path, key_delim, value);
     }
-*/
 }
 
 bool DataFileStructure::GetIsValidKey (std::string const &key)
