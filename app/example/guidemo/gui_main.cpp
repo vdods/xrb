@@ -54,6 +54,21 @@ int main (int argc, char **argv)
     formatter.EndLine("");
 
     root->SetPathElementBoolean("|test|dumb|eyeball", true);
+    root->SetPathElementUnsignedInteger("|test|bah|+|+", 1);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|+|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 1);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|+|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
+    root->SetPathElementUnsignedInteger("|test|bah|$|+", 1);
+    root->SetPathElementString("|test|bah|$|+", "hee hee");
+
+    root->Print(formatter);
+    formatter.EndLine("");
+
+    root->SetPathElementFloat("|test|bah", 69.0f);
     root->Print(formatter);
 
     Delete(root);

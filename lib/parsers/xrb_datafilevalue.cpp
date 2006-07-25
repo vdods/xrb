@@ -618,14 +618,12 @@ DataFileValue const *DataFileArray::GetSubpathElement (
 
 bool DataFileArray::SetSubpathElement (
     std::string const &path,
-    Uint32 const start,
+    Uint32 start,
     DataFileLeafValue *const value)
 {
     ASSERT1(start <= path.length())
     ASSERT1(value != NULL)
 
-    return false;
-/*
     if (start >= path.length())
     {
         fprintf(stderr, "SetPathElement error: in path \"%s\" - can't assign a value to an array itself\n", path.c_str());
@@ -650,7 +648,9 @@ bool DataFileArray::SetSubpathElement (
     if (key_delim-start == 1 && (path[start] == '+' || path[start] == '$'))
     {
         if (path[start] == '+')
+        {
             create_new_element = true;
+        }
         else if (path[start] == '$')
         {
             if (m_element_vector.empty())
@@ -661,7 +661,9 @@ bool DataFileArray::SetSubpathElement (
             array_index = m_element_vector.size()-1;
         }
         else
+        {
             ASSERT1(false && "this should never happen")
+        }
     }
     // check for array index
     else
@@ -702,7 +704,7 @@ bool DataFileArray::SetSubpathElement (
 
             case NT_ARRAY:
                 element = new DataFileArray();
-                if (!element->SetSubpathElement(path, key_delim, value))
+                if (!static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value))
                 {
                     Delete(element);
                     return false;
@@ -711,7 +713,7 @@ bool DataFileArray::SetSubpathElement (
 
             case NT_STRUCTURE:
                 element = new DataFileStructure();
-                if (!element->SetSubpathElement(path, key_delim, value))
+                if (!static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value))
                 {
                     Delete(element);
                     return false;
@@ -720,19 +722,100 @@ bool DataFileArray::SetSubpathElement (
 
             default: return false;
         }
+
+        // if there are existing elements, check type and dimension
+        if (!m_element_vector.empty())
+        {
+            DataFileValue const *first_element = m_element_vector[0];
+            ASSERT1(first_element != NULL)
+            if (element->GetElementType() != first_element->GetElementType())
+            {
+                fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array element type %s, assignment type %s\n", path.c_str(), GetDataFileElementTypeString(first_element->GetElementType()).c_str(), GetDataFileElementTypeString(element->GetElementType()).c_str());
+                Delete(element);
+                return false;
+            }
+            else if (element->GetElementType() == DAT_ARRAY &&
+                    (DStaticCast<DataFileArray const *>(first_element)->GetDimensionCount() !=
+                    DStaticCast<DataFileArray const *>(element)->GetDimensionCount()
+                    ||
+                    static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType() !=
+                    static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()))
+            {
+                fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array depth %u/type %s, assignment depth %u/type %s\n", path.c_str(), static_cast<DataFileArray const *>(first_element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType()).c_str(), static_cast<DataFileArray const *>(element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()).c_str());
+                Delete(element);
+                return false;
+            }
+        }
+
         m_element_vector.push_back(element);
         return true;
     }
-    else if (array_index > m_element_vector.size())
+    else if (array_index >= m_element_vector.size())
     {
         fprintf(stderr, "SetPathElement error: in path \"%s\" - array index %u out of bounds\n", path.c_str(), array_index);
         return false;
     }
     else
     {
-        if (element_type == NT_LEAF fuck
+        ASSERT1(element_type == NT_LEAF || element_type == NT_ARRAY || element_type == NT_STRUCTURE)
+        ASSERT1(!m_element_vector.empty())
+        ASSERT1(m_element_vector[array_index] != NULL)
+        DataFileValue *&element = m_element_vector[array_index];
+
+        if (element_type == NT_LEAF && value->GetElementType() != element->GetElementType()
+            ||
+            element_type == NT_ARRAY && element->GetElementType() != DAT_ARRAY
+            ||
+            element_type == NT_STRUCTURE && element->GetElementType() != DAT_STRUCTURE)
+        {
+            DataFileElementType assignment_type = DAT_NO_TYPE;
+            if (element_type == NT_LEAF)
+                assignment_type = value->GetElementType();
+            else if (element_type == NT_ARRAY)
+                assignment_type = DAT_ARRAY;
+            else if (element_type == NT_STRUCTURE)
+                assignment_type = DAT_STRUCTURE;
+
+            ASSERT1(assignment_type != DAT_NO_TYPE)
+            fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array element type %s, assignment type %s\n", path.c_str(), GetDataFileElementTypeString(element->GetElementType()).c_str(), GetDataFileElementTypeString(assignment_type).c_str());
+            return false;
+        }
+
+        if (element_type == NT_LEAF)
+        {
+            Delete(element);
+            element = value;
+            return true;
+        }
+        else if (element_type == NT_ARRAY || element_type == NT_STRUCTURE)
+        {
+            return DStaticCast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+        }
+        else
+        {
+            ASSERT1(false && "this should never happen")
+            return false;
+        }
     }
-*/
+}
+
+std::string DataFileArray::GetDimensionAndTypeString () const
+{
+    std::ostringstream out;
+
+    out << GetDataFileElementTypeString(GetUltimateArrayElementType());
+
+    DataFileValue const *value = this;
+    while (value != NULL && value->GetElementType() == DAT_ARRAY)
+    {
+        out << '[' << DStaticCast<DataFileArray const *>(value)->m_element_vector.size() << ']';
+        if (DStaticCast<DataFileArray const *>(value)->m_element_vector.empty())
+            value = NULL;
+        else
+            value = DStaticCast<DataFileArray const *>(value)->m_element_vector[0];
+    }
+
+    return out.str();
 }
 
 bool DataFileArray::GetDoesMatchDimensionAndType (

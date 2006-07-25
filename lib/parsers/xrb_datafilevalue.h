@@ -600,6 +600,7 @@ protected:
 
 private:
 
+    std::string GetDimensionAndTypeString () const;
     static bool GetDoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
 
     typedef std::vector<DataFileValue *> ElementVector;
