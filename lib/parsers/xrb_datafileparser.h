@@ -15,9 +15,9 @@
 namespace Xrb
 {
 
-class DataFileKeyPair;
 class DataFileLocation;
 class DataFileScanner;
+class DataFileStructure;
 class DataFileValue;
 
 #line 24 "../../lib/parsers/xrb_datafileparser.h"
@@ -32,13 +32,14 @@ public:
         enum Type
         {
             // user-defined terminal, non-single-character tokens
-            BOOLEAN = 0x100,
+            BAD_TOKEN = 0x100,
+            BOOLEAN,
             CHARACTER,
-            ERROR,
             FLOAT,
             IDENTIFIER,
-            INTEGER,
+            SINT32,
             STRING_FRAGMENT,
+            UINT32,
 
             // special end-of-input terminal
             END_,
@@ -48,8 +49,6 @@ public:
             data_file__,
             element__,
             element_list__,
-            float__,
-            integer__,
             string__,
             structure__,
             value__,
@@ -100,15 +99,15 @@ public:
         RC_ERRORS_ENCOUNTERED
     }; // end of enum ReturnCode
 
-    inline DataFileKeyPair *GetAcceptedKeyPair () const
+    inline DataFileStructure *GetAcceptedStructure () const
     {
-        return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
+        return DStaticCast<DataFileStructure *>(GetAcceptedToken());
     }
-    inline DataFileKeyPair *StealAcceptedKeyPair ()
+    inline DataFileStructure *StealAcceptedStructure ()
     {
-        DataFileKeyPair *accepted_key_pair = GetAcceptedKeyPair();
+        DataFileStructure *accepted_structure = GetAcceptedStructure();
         ClearAcceptedToken();
-        return accepted_key_pair;
+        return accepted_structure;
     }
 
     ReturnCode Parse (std::string const &input_filename);
@@ -125,7 +124,7 @@ private:
 
     DataFileScanner *m_scanner;
 
-#line 129 "../../lib/parsers/xrb_datafileparser.h"
+#line 128 "../../lib/parsers/xrb_datafileparser.h"
 
 private:
 
@@ -278,11 +277,6 @@ private:
     DataFileValue * ReductionRuleHandler0024 ();
     DataFileValue * ReductionRuleHandler0025 ();
     DataFileValue * ReductionRuleHandler0026 ();
-    DataFileValue * ReductionRuleHandler0027 ();
-    DataFileValue * ReductionRuleHandler0028 ();
-    DataFileValue * ReductionRuleHandler0029 ();
-    DataFileValue * ReductionRuleHandler0030 ();
-    DataFileValue * ReductionRuleHandler0031 ();
 
 }; // end of class DataFileParser
 
@@ -293,7 +287,7 @@ std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type tok
 
 } // end of namespace Xrb
 
-#line 297 "../../lib/parsers/xrb_datafileparser.h"
+#line 291 "../../lib/parsers/xrb_datafileparser.h"
 
 #endif // !defined(_DataFileParser_H_)
 

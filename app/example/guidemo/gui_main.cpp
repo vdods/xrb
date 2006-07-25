@@ -40,7 +40,7 @@ void Exit ()
 int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
-
+/*
     IndentFormatter formatter(stderr, "    ");
 
     DataFileStructure *root = new DataFileStructure();
@@ -74,18 +74,17 @@ int main (int argc, char **argv)
     Delete(root);
 
     return 0;
-
-/*
+*/
     // TEMP parser testing stuff
     DataFileParser parser;
 //     parser.SetDebugSpewLevel(2);
     if (parser.Parse("form.dat") == DataFileParser::RC_SUCCESS)
     {
         IndentFormatter formatter(stderr, "    ");
-        parser.GetAcceptedKeyPair()->GetValue()->Print(formatter);
+        parser.GetAcceptedStructure()->Print(formatter);
         formatter.EndLine("\n");
 
-        DataFileKeyPair const *root = parser.GetAcceptedKeyPair();
+        DataFileStructure const *root = parser.GetAcceptedStructure();
         DataFileValue const *value;
 
         value = root->GetPathElement("|queries");
@@ -115,7 +114,6 @@ int main (int argc, char **argv)
 //         fprintf(stderr, "\n");
 //     }
     return 0;
-    */
 /*
     // TEMP
     // TEMP

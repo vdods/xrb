@@ -16,9 +16,9 @@
 namespace Xrb
 {
 
-class DataFileKeyPair;
 class DataFileLocation;
 class DataFileScanner;
+class DataFileStructure;
 class DataFileValue;
 %} // end of %parser_header_file_top
 
@@ -36,15 +36,15 @@ class DataFileValue;
         RC_ERRORS_ENCOUNTERED
     }; // end of enum ReturnCode
 
-    inline DataFileKeyPair *GetAcceptedKeyPair () const
+    inline DataFileStructure *GetAcceptedStructure () const
     {
-        return DStaticCast<DataFileKeyPair *>(GetAcceptedToken());
+        return DStaticCast<DataFileStructure *>(GetAcceptedToken());
     }
-    inline DataFileKeyPair *StealAcceptedKeyPair ()
+    inline DataFileStructure *StealAcceptedStructure ()
     {
-        DataFileKeyPair *accepted_key_pair = GetAcceptedKeyPair();
+        DataFileStructure *accepted_structure = GetAcceptedStructure();
         ClearAcceptedToken();
-        return accepted_key_pair;
+        return accepted_structure;
     }
 
     ReturnCode Parse (std::string const &input_filename);
@@ -87,11 +87,11 @@ namespace Xrb
 %parser_destructor_actions{
     ASSERT1(m_scanner != NULL)
     Delete(m_scanner);
-    delete StealAcceptedKeyPair();
+    delete StealAcceptedStructure();
 }
 
 %parser_start_of_parse_method_actions%{
-    delete StealAcceptedKeyPair();
+    delete StealAcceptedStructure();
 %}
 
 %parser_end_of_parse_method_actions%{
@@ -165,14 +165,15 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 
 %parser_custom_cast "DStaticCast"
 
-%token ERROR
+%token BAD_TOKEN
 %token BOOLEAN %type "DataFileBoolean *"
-%token INTEGER %type "DataFileInteger *"
+%token SINT32 %type "DataFileSint32 *"
+%token UINT32 %type "DataFileUint32 *"
 %token FLOAT %type "DataFileFloat *"
 %token CHARACTER %type "DataFileCharacter *"
 %token STRING_FRAGMENT %type "DataFileString *"
 %token IDENTIFIER %type "DataFileString *"
-%token ';' ',' '+' '-' '{' '}' '[' ']'
+%token ';' ',' '+' '{' '}' '[' ']'
 
 %start data_file
 
@@ -183,13 +184,13 @@ data_file %type "DataFileStructure *"
     element_list:element_list
     {
         ASSERT1(element_list != NULL)
-        return new DataFileKeyPair(m_scanner->GetInputFilename(), element_list);
+        return element_list;
     }
 |
     %error
     {
         EmitError(FL, "general syntax error");
-        return new DataFileKeyPair(m_scanner->GetInputFilename(), new DataFileStructure());
+        return new DataFileStructure();
     }
 ;
 
@@ -339,12 +340,17 @@ value %type "DataFileValue *"
         return value;
     }
 |
-    integer:value
+    SINT32:value
     {
         return value;
     }
 |
-    float:value
+    UINT32:value
+    {
+        return value;
+    }
+|
+    FLOAT:value
     {
         return value;
     }
@@ -376,66 +382,6 @@ value %type "DataFileValue *"
         return NULL;
     }
 */
-;
-
-integer %type "DataFileInteger *"
-:
-    INTEGER:value
-    {
-        ASSERT1(value != NULL)
-        return value;
-    }
-|
-    '+' INTEGER:value
-    {
-        ASSERT1(value != NULL)
-        try
-        {
-            value->Sign(POSITIVE);
-        }
-        catch (std::string const &exception)
-        {
-            EmitError(FL, exception);
-        }
-        return value;
-    }
-|
-    '-' INTEGER:value
-    {
-        ASSERT1(value != NULL)
-        try
-        {
-            value->Sign(NEGATIVE);
-        }
-        catch (std::string const &exception)
-        {
-            EmitError(FL, exception);
-        }
-        return value;
-    }
-;
-
-float %type "DataFileFloat *"
-:
-    FLOAT:value
-    {
-        ASSERT1(value != NULL)
-        return value;
-    }
-|
-    '+' FLOAT:value
-    {
-        ASSERT1(value != NULL)
-        value->Sign(POSITIVE);
-        return value;
-    }
-|
-    '-' FLOAT:value
-    {
-        ASSERT1(value != NULL)
-        value->Sign(NEGATIVE);
-        return value;
-    }
 ;
 
 string %type "DataFileString *"

@@ -198,10 +198,19 @@ SetPathElement on structure
 
 */
 
+class DataFileBoolean;
+class DataFileInteger;
+class DataFileFloat;
+class DataFileCharacter;
+class DataFileString;
+class DataFileArray;
+class DataFileStructure;
+
 enum DataFileElementType
 {
     DAT_BOOLEAN = 0,
-    DAT_INTEGER,
+    DAT_SINT32,
+    DAT_UINT32,
     DAT_FLOAT,
     DAT_CHARACTER,
     DAT_STRING,
@@ -264,6 +273,17 @@ public:
 
     virtual DataFileElementType GetElementType () const = 0;
     inline DataFileValue const *GetPathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
+
+    // these methods will throw a std::string if there is a path error
+    bool GetPathElementBoolean (std::string const &path) const;
+    Sint32 GetPathElementSint32 (std::string const &path) const;
+    Uint32 GetPathElementUint32 (std::string const &path) const;
+    Float GetPathElementFloat (std::string const &path) const;
+    char GetPathElementCharacter (std::string const &path) const;
+    std::string const &GetPathElementString (std::string const &path) const;
+    // these methods will return NULL if there is a path error
+    DataFileArray const *GetPathElementArray (std::string const &path) const;
+    DataFileStructure const *GetPathElementStructure (std::string const &path) const;
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;
@@ -332,48 +352,56 @@ private:
 }; // end of class DataFileBoolean
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileInteger
+// DataFileSint32
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileInteger : public DataFileLeafValue
+class DataFileSint32 : public DataFileLeafValue
 {
 public:
 
-    DataFileInteger (Uint32 value)
+    DataFileSint32 (Uint32 value)
         :
         DataFileLeafValue(),
-        m_value(value),
-        m_is_signed(false)
+        m_value(value)
     { }
-    DataFileInteger (Sint32 value)
+
+    inline Sint32 GetValue () const { return m_value; }
+
+    virtual DataFileElementType GetElementType () const { return DAT_SINT32; }
+
+    virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%+d", m_value); }
+    virtual void PrintAST (IndentFormatter &formatter) const;
+
+private:
+
+    Sint32 m_value;
+}; // end of class DataFileSint32
+
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileUint32
+// ///////////////////////////////////////////////////////////////////////////
+
+class DataFileUint32 : public DataFileLeafValue
+{
+public:
+
+    DataFileUint32 (Uint32 value)
         :
         DataFileLeafValue(),
-        m_value(value),
-        m_is_signed(true)
+        m_value(value)
     { }
 
-    inline bool GetIsSigned () const { return m_is_signed; }
-    inline Sint32 GetSignedValue () const { return static_cast<Sint32>(m_value); }
-    inline Uint32 GetUnsignedValue () const { return m_value; }
+    inline Uint32 GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_INTEGER; }
+    virtual DataFileElementType GetElementType () const { return DAT_UINT32; }
 
-    void Sign (NumericSign sign);
-
-    virtual void Print (IndentFormatter &formatter) const
-    {
-        if (m_is_signed)
-            formatter.BeginLine("%+d", static_cast<Sint32>(m_value));
-        else
-            formatter.BeginLine("%u", m_value);
-    }
+    virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%u", m_value); }
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 private:
 
     Uint32 m_value;
-    bool m_is_signed;
-}; // end of class DataFileInteger
+}; // end of class DataFileUint32
 
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileFloat
@@ -482,8 +510,8 @@ public:
     { }
 
     bool SetPathElementBoolean (std::string const &path, bool value);
-    bool SetPathElementUnsignedInteger (std::string const &path, Uint32 value);
-    bool SetPathElementSignedInteger (std::string const &path, Sint32 value);
+    bool SetPathElementSint32 (std::string const &path, Sint32 value);
+    bool SetPathElementUint32 (std::string const &path, Uint32 value);
     bool SetPathElementFloat (std::string const &path, Float value);
     bool SetPathElementCharacter (std::string const &path, char value);
     bool SetPathElementString (std::string const &path, std::string const &value);
@@ -626,6 +654,7 @@ public:
 
     DataFileValue const *GetValue (std::string const &key) const;
 
+    void AddKeyPair (std::string const &key, DataFileValue *value);
     void AddKeyPair (DataFileKeyPair *key_value_pair);
 
     virtual DataFileElementType GetElementType () const { return DAT_STRUCTURE; }

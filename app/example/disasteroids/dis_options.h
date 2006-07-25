@@ -24,18 +24,26 @@ class Options : public CommandLineParser
 {
 public:
 
-    Options (Sint32 argc, char const *const *argv);
+    Options (std::string const &executable_name);
+
+    inline void InitializeFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
+    inline void InitializeResolution (ScreenCoordVector2 const &resolution) { m_resolution = resolution; }
 
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
     inline bool GetIsHelpRequested () const { return m_is_help_requested; }
+
+    void Parse (Sint32 argc, char const *const *argv);
+
+private:
 
     void SetFullscreen (std::string const &arg);
     void SetResolution (std::string const &arg);
 
     void RequestHelp (std::string const &arg);
 
-private:
+    static CommandLineOption const ms_option[];
+    static Uint32 const ms_option_count;
 
     bool m_fullscreen;
     ScreenCoordVector2 m_resolution;

@@ -18,7 +18,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-static CommandLineOption const gs_option[] =
+CommandLineOption const Options::ms_option[] =
 {
     OPTION_HEADER("Video options"),
     {
@@ -48,23 +48,25 @@ static CommandLineOption const gs_option[] =
         "    Prints this help message."
     }
 };
-static Uint32 const gs_option_count = sizeof(gs_option) / sizeof(CommandLineOption);
+Uint32 const Options::ms_option_count = sizeof(Options::ms_option) / sizeof(CommandLineOption);
 
-Options::Options (Sint32 const argc, char const *const *const argv)
+Options::Options (std::string const &executable_name)
     :
     CommandLineParser(
-        argc,
-        argv,
         NULL, // no non-option argument handler function
-        gs_option,
-        gs_option_count,
+        ms_option,
+        ms_option_count,
+        executable_name,
         "Disasteroids - written by Victor Dods, as part of the XuqRijBuh Game Engine.",
         "[options]"),
     m_fullscreen(true),
-    m_resolution(1024, 768),
+    m_resolution(ScreenCoordVector2::ms_zero),
     m_is_help_requested(false)
+{ }
+
+void Options::Parse (Sint32 const argc, char const *const *const argv)
 {
-    Parse(argc, argv);
+    CommandLineParser::Parse(argc, argv);
 }
 
 void Options::SetFullscreen (string const &arg)

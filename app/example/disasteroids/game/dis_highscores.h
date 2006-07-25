@@ -13,6 +13,7 @@
 
 #include "xrb.h"
 
+#include <list>
 #include <set>
 #include <string>
 #include <time.h>
@@ -36,20 +37,25 @@ public:
         m_name(name),
         m_points(points),
         m_wave_count(wave_count),
-        m_date(date)
+        m_date(date),
+        m_hash(ComputeHash(name, points, wave_count, date))
     { }
 
     inline std::string const &GetName () const { return m_name; }
     inline Uint32 GetPoints () const { return m_points; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline time_t GetDate () const { return m_date; }
+    inline Uint32 GetHash () const { return m_hash; }
 
 private:
+
+    static Uint32 ComputeHash (std::string const &name, Uint32 points, Uint32 wave_count, time_t date);
 
     std::string m_name;
     Uint32 m_points;
     Uint32 m_wave_count;
     time_t m_date;
+    Uint32 m_hash;
 }; // end of class Score
 
 // orders by points, then wave count, then time-alive, and then date (earlier is better)
@@ -99,6 +105,8 @@ public:
 
     void AddScore (Score const &score);
 
+    void Read (std::string const &filename);
+    void Write (std::string const &filename);
     // TEMP
     void Print (FILE *fptr) const;
 
@@ -110,8 +118,12 @@ private:
     typedef std::set<Score, ScoreOrderByWaveCount> BestWaveCountScoreSet;
     typedef BestWaveCountScoreSet::const_iterator BestWaveCountScoreSetConstIterator;
 
+    typedef std::list<Score> ScoreList;
+    typedef ScoreList::const_iterator ScoreListConstIterator;
+
     BestPointsScoreSet m_best_points_score_set;
     BestWaveCountScoreSet m_best_wave_count_score_set;
+    ScoreList m_score_list;
 }; // end of class HighScores
 
 } // end of namespace Dis

@@ -24,7 +24,7 @@ namespace Xrb
 {
 
 inline bool IsWhitespace (char c) { return c == ' ' || c == '\t'; }
-inline bool IsOperator (char c) { return c == '{' || c == '}' || c == '[' || c == ']' || c == ';' || c == ',' || c == '-' || c == '+'; }
+inline bool IsOperator (char c) { return c == '{' || c == '}' || c == '[' || c == ']' || c == ';' || c == ','; }
 inline bool IsAlpha (char c) { return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'; }
 inline bool IsBinaryDigit (char c) { return c == '0' || c == '1'; }
 inline bool IsOctalDigit (char c) { return c >= '0' && c <= '7'; }
@@ -142,7 +142,7 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
             return ScanIdentifier(scanned_token);
         else if (IsOperator(c))
             return ScanOperator(scanned_token);
-        else if (IsDecimalDigit(c))
+        else if (IsDecimalDigit(c) || c == '+' || c == '-')
             return ScanNumeric(scanned_token);
         else switch (c)
         {
@@ -162,7 +162,7 @@ DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned
                 }
                 break;
             default:
-                return DataFileParser::Token::ERROR;
+                return DataFileParser::Token::BAD_TOKEN;
         }
     }
 }
@@ -214,47 +214,82 @@ DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const 
     ASSERT1(*scanned_token == NULL);
     ASSERT1(!m_input.eof());
 
-    char c;
+    char c = m_text[0];
 
-    ASSERT1(IsDecimalDigit(m_text[0]))
-    if (m_text[0] == '0')
+    ASSERT1(IsDecimalDigit(c) || c == '+' || c == '-')
+
+    bool is_signed = false;
+    bool is_positive = true;
+    if (c == '+' || c == '-')
+    {
+        is_signed = true;
+        is_positive = c == '+';
+
+        if (IsNextCharEOF(&c) || !IsDecimalDigit(c))
+        {
+            ASSERT1(m_text.length() == 1)
+            if (m_text[0] == '+')
+                return static_cast<DataFileParser::Token::Type>('+');
+
+            EmitError(FL, "malformed numeric value");
+            return DataFileParser::Token::BAD_TOKEN;
+        }
+
+        m_input >> c;
+        m_text += c;
+    }
+
+    if (c == '0')
     {
         // check if it's a standalone 0
         if (IsNextCharEOF(&c) || c != 'b' && !IsDecimalDigit(c) && c != 'x' && c != '.' && c != 'e' && c != 'E')
         {
-            *scanned_token = new DataFileInteger(static_cast<Uint32>(0));
-            return DataFileParser::Token::INTEGER;
+            if (is_signed)
+            {
+                *scanned_token = new DataFileSint32(0);
+                return DataFileParser::Token::SINT32;
+            }
+            else
+            {
+                *scanned_token = new DataFileUint32(0);
+                return DataFileParser::Token::UINT32;
+            }
         }
 
         m_input >> c;
         m_text += c;
 
         if (c == 'b')
-            return ScanBinaryNumeric(scanned_token);
+            return ScanBinaryNumeric(scanned_token, is_signed, is_positive);
         else if (IsOctalDigit(c))
-            return ScanOctalNumeric(scanned_token, c);
+            return ScanOctalNumeric(scanned_token, is_signed, is_positive, c);
         else if (c == 'x')
-            return ScanHexidecimalNumeric(scanned_token);
+            return ScanHexidecimalNumeric(scanned_token, is_signed, is_positive);
         else if (c == '.' || c == 'e' || c == 'E')
             return ScanFloatingPointNumeric(scanned_token);
         else
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
     }
     else
-        return ScanDecimalNumeric(scanned_token, m_text[0]);
+        return ScanDecimalNumeric(scanned_token, is_signed, is_positive, c);
 }
 
-DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (DataFileValue **const scanned_token)
+DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (
+    DataFileValue **const scanned_token,
+    bool const is_signed,
+    bool const is_positive)
 {
     ASSERT1(scanned_token != NULL)
     ASSERT1(*scanned_token == NULL)
     ASSERT1(!m_input.eof())
 
     char c;
+    bool actually_read_digits = false;
     bool overflow = false;
     Uint32 value = 0;
     while (!IsNextCharEOF(&c) && IsBinaryDigit(c))
     {
+        actually_read_digits = true;
         m_input >> c;
         m_text += c;
         // if the highest bit is about to be pushed off
@@ -264,18 +299,45 @@ DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (DataFileValue **
         value = (value << 1) + (c - '0');
     }
 
+    if (!actually_read_digits)
+    {
+        EmitError(FL, std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
+        return DataFileParser::Token::BAD_TOKEN;
+    }
+
+    // if signed, check for signed overflow
+    if (is_signed &&
+        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+         ||
+         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+    {
+        overflow = true;
+    }
+
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in binary value ") + m_text);
+        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
 
-    *scanned_token = new DataFileInteger(value);
-    return DataFileParser::Token::INTEGER;
+    if (is_signed)
+    {
+        *scanned_token = new DataFileSint32(is_positive ? static_cast<Sint32>(value) : -static_cast<Sint32>(value));
+        return DataFileParser::Token::SINT32;
+    }
+    else
+    {
+        *scanned_token = new DataFileUint32(value);
+        return DataFileParser::Token::UINT32;
+    }
 }
 
-DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (DataFileValue **const scanned_token, char const first_char)
+DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (
+    DataFileValue **const scanned_token,
+    bool const is_signed,
+    bool const is_positive,
+    char const first_char)
 {
     ASSERT1(scanned_token != NULL)
     ASSERT1(*scanned_token == NULL)
@@ -283,6 +345,7 @@ DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (DataFileValue **c
 
     char c;
     bool overflow = false;
+    ASSERT1(first_char >= '0')
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsOctalDigit(c))
     {
@@ -295,18 +358,39 @@ DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (DataFileValue **c
         value = (value << 3) + (c - '0');
     }
 
+    // if signed, check for signed overflow
+    if (is_signed &&
+        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+         ||
+         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+    {
+        overflow = true;
+    }
+
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in octal value ") + m_text);
+        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " octal value " + m_text);
 
-    *scanned_token = new DataFileInteger(value);
-    return DataFileParser::Token::INTEGER;
+    if (is_signed)
+    {
+        *scanned_token = new DataFileSint32(is_positive ? static_cast<Sint32>(value) : -static_cast<Sint32>(value));
+        return DataFileParser::Token::SINT32;
+    }
+    else
+    {
+        *scanned_token = new DataFileUint32(value);
+        return DataFileParser::Token::UINT32;
+    }
 }
 
-DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue **const scanned_token, char const first_char)
+DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (
+    DataFileValue **const scanned_token,
+    bool const is_signed,
+    bool const is_positive,
+    char const first_char)
 {
     ASSERT1(scanned_token != NULL)
     ASSERT1(*scanned_token == NULL)
@@ -314,6 +398,7 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue *
 
     char c;
     bool overflow = false;
+    ASSERT1(first_char >= '0')
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsDecimalDigit(c))
     {
@@ -323,7 +408,7 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue *
         // by 10 does not overflow, or if the value is said maximum
         // and a value which would overflow the value is about to
         // be added, set the overflow flag.
-        if (value > 429496729 || value == 429496729 && (c - '0') > 5)
+        if (value > 429496729 || value == 429496729 && c > '5')
             overflow = true;
         value = 10 * value + (c - '0');
     }
@@ -335,28 +420,50 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (DataFileValue *
         return ScanFloatingPointNumeric(scanned_token);
     }
 
+    // if signed, check for signed overflow
+    if (is_signed &&
+        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+         ||
+         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+    {
+        overflow = true;
+    }
+
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in decimal value ") + m_text);
+        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " decimal value " + m_text);
 
-    *scanned_token = new DataFileInteger(value);
-    return DataFileParser::Token::INTEGER;
+    if (is_signed)
+    {
+        *scanned_token = new DataFileSint32(is_positive ? static_cast<Sint32>(value) : -static_cast<Sint32>(value));
+        return DataFileParser::Token::SINT32;
+    }
+    else
+    {
+        *scanned_token = new DataFileUint32(value);
+        return DataFileParser::Token::UINT32;
+    }
 }
 
-DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (DataFileValue **const scanned_token)
+DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
+    DataFileValue **const scanned_token,
+    bool const is_signed,
+    bool const is_positive)
 {
     ASSERT1(scanned_token != NULL)
     ASSERT1(*scanned_token == NULL)
     ASSERT1(!m_input.eof())
 
     char c;
+    bool actually_read_digits = false;
     bool overflow = false;
     Uint32 value = 0;
     while (!IsNextCharEOF(&c) && IsHexidecimalDigit(c))
     {
+        actually_read_digits = true;
         m_input >> c;
         m_text += c;
         if ((value&0xF0000000) != 0)
@@ -364,15 +471,38 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (DataFileVal
         value = (value << 4) + GetHexidecimalDigitValue(c);
     }
 
+    if (!actually_read_digits)
+    {
+        EmitError(FL, std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
+        return DataFileParser::Token::BAD_TOKEN;
+    }
+
+    // if signed, check for signed overflow
+    if (is_signed &&
+        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+         ||
+         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+    {
+        overflow = true;
+    }
+
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in hexadecimal value ") + m_text);
+        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " hexidecimal value " + m_text);
 
-    *scanned_token = new DataFileInteger(value);
-    return DataFileParser::Token::INTEGER;
+    if (is_signed)
+    {
+        *scanned_token = new DataFileSint32(is_positive ? static_cast<Sint32>(value) : -static_cast<Sint32>(value));
+        return DataFileParser::Token::SINT32;
+    }
+    else
+    {
+        *scanned_token = new DataFileUint32(value);
+        return DataFileParser::Token::UINT32;
+    }
 }
 
 DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileValue **const scanned_token)
@@ -394,7 +524,7 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
         }
         // if it was EOF or a non-decimal digit, return error
         if (m_input.eof() || !IsDecimalDigit(c))
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
         // read the rest of the fractional part
         while (!IsNextCharEOF(&c) && IsDecimalDigit(c))
         {
@@ -419,7 +549,7 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
         }
         // if it was EOF or (a non-sign and non-decimal digit), return error
         if (m_input.eof() || (c != '+' && c != '-' && !IsDecimalDigit(c)))
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
         // read the minimum one exponent digit
         if (!IsNextCharEOF(&c) && IsDecimalDigit(c))
         {
@@ -428,7 +558,7 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
         }
         // if it was EOF or a non-decimal digit, return error
         if (m_input.eof() || !IsDecimalDigit(c))
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
         // read the exponent
         while (!IsNextCharEOF(&c) && IsDecimalDigit(c))
         {
@@ -439,7 +569,7 @@ DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileV
 
     // an operator, whitespace, newline, or possible comment must follow a numeric
     if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
 
     Float value = Util::TextToFloat(m_text.c_str());
     if (!Math::IsFinite(value))
@@ -464,7 +594,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
     if (IsNextCharEOF(&c))
     {
         EmitError(FL, "unexpected end of file");
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
     }
 
     if (c == '\\')
@@ -476,7 +606,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
         if (IsNextCharEOF(&c))
         {
             EmitError(FL, "unexpected end of file");
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
         }
     }
 
@@ -497,13 +627,13 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
         }
 
         EmitError(FL, "malformed character literal");
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
     }
 
     if (IsNextCharEOF(&c))
     {
         EmitError(FL, "unexpected end of file");
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
     }
 
     if (c == '\'')
@@ -513,7 +643,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
 
         // an operator, whitespace, newline, or possible comment must follow a character literal
         if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
 
         if (escaped_char)
             *scanned_token = new DataFileCharacter(Util::GetEscapedChar(m_text[m_text.length()-2]));
@@ -524,7 +654,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
     else
     {
         EmitError(FL, "malformed character literal");
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
     }
 }
 
@@ -548,7 +678,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
             if (IsNextCharEOF(&c))
             {
                 EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
-                return DataFileParser::Token::ERROR;
+                return DataFileParser::Token::BAD_TOKEN;
             }
             else if (c == '\n')
             {
@@ -564,6 +694,9 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
         }
         else
         {
+            if (c == '\n')
+                ++m_line_number;
+
             m_text += c;
         }
     }
@@ -574,7 +707,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
 
         // an operator, whitespace, newline, or possible comment must follow a string literal
         if (!IsNextCharEOF(&c) && !IsOperator(c) && !IsWhitespace(c) && c != '\n' && c != '/')
-            return DataFileParser::Token::ERROR;
+            return DataFileParser::Token::BAD_TOKEN;
 
         *scanned_token = new DataFileString(m_text);
         return DataFileParser::Token::STRING_FRAGMENT;
@@ -582,7 +715,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
     else
     {
         EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
-        return DataFileParser::Token::ERROR;
+        return DataFileParser::Token::BAD_TOKEN;
     }
 }
 
@@ -593,7 +726,7 @@ void DataFileScanner::ScanComment ()
     char c;
 
     if (IsNextCharEOF(&c))
-        throw DataFileParser::Token::ERROR;
+        throw DataFileParser::Token::BAD_TOKEN;
     else if (c == '*')
     {
         m_input >> c;
@@ -638,7 +771,7 @@ void DataFileScanner::ScanComment ()
         ++m_line_number;
     }
     else
-        throw DataFileParser::Token::ERROR;
+        throw DataFileParser::Token::BAD_TOKEN;
 }
 
 } // end of namespace Xrb

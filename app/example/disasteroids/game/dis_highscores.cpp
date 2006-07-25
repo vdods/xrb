@@ -11,11 +11,33 @@
 #include "dis_highscores.h"
 
 #include "dis_util.h"
+#include "xrb_datafileparser.h"
+#include "xrb_datafilevalue.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
+
+// ///////////////////////////////////////////////////////////////////////////
+// Score
+// ///////////////////////////////////////////////////////////////////////////
+
+Uint32 Score::ComputeHash (
+    std::string const &name,
+    Uint32 const points,
+    Uint32 const wave_count,
+    time_t const date)
+{
+    Uint32 hash = points ^ wave_count ^ static_cast<Uint32>(date);
+    for (Uint32 i = 0; i < name.length(); ++i)
+        hash ^= hash * 11 + hash * 13 + static_cast<Uint32>(name[i] - 'a');
+    return hash;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// HighScores
+// ///////////////////////////////////////////////////////////////////////////
 
 HighScores::HighScores ()
 {
@@ -32,6 +54,7 @@ HighScores::HighScores (HighScores const &high_scores)
 {
     m_best_points_score_set = high_scores.m_best_points_score_set;
     m_best_wave_count_score_set = high_scores.m_best_wave_count_score_set;
+    m_score_list = high_scores.m_score_list;
 }
 
 HighScores::~HighScores ()
@@ -42,6 +65,7 @@ void HighScores::operator = (HighScores const &high_scores)
 {
     m_best_points_score_set = high_scores.m_best_points_score_set;
     m_best_wave_count_score_set = high_scores.m_best_wave_count_score_set;
+    m_score_list = high_scores.m_score_list;
 }
 
 bool HighScores::GetIsNewHighScore (Score const &score)
@@ -114,6 +138,76 @@ void HighScores::AddScore (Score const &score)
         m_best_wave_count_score_set.insert(score);
         m_best_wave_count_score_set.erase(*m_best_wave_count_score_set.rbegin());
     }
+
+    // always add it to the score list
+    m_score_list.push_back(score);
+}
+
+void HighScores::Read (std::string const &filename)
+{
+    DataFileParser parser;
+    if (parser.Parse(filename) == DataFileParser::RC_SUCCESS)
+    {
+        DataFileStructure const *root = parser.GetAcceptedStructure();
+
+        // we're looking for a structure called high_scores, which is an
+        // array of structures each with elements
+        // name (string)
+        // points (unsigned integer)
+        // wave_count (unsigned integer)
+        // date (unsigned integer)
+        // hash (unsigned integer) -- TODO later
+
+        DataFileArray const *high_scores = root->GetPathElementArray("|high_scores");
+        if (high_scores == NULL)
+            return;
+
+        for (Uint32 i = 0; i < high_scores->GetElementCount(); ++i)
+        {
+            DataFileValue const *high_score = high_scores->GetElement(i);
+            try
+            {
+                Score score(
+                    high_score->GetPathElementString("|name"),
+                    high_score->GetPathElementUint32("|points"),
+                    high_score->GetPathElementUint32("|wave_count"),
+                    high_score->GetPathElementUint32("|date"));
+                Uint32 hash = high_score->GetPathElementUint32("|hash");
+                // this check is to prevent people from editing the high scores
+                // file to add fake high scores
+                if (hash == score.GetHash())
+                    AddScore(score);
+            }
+            catch (...)
+            {
+                // ignore malformed high scores
+            }
+        }
+    }
+}
+
+void HighScores::Write (std::string const &filename)
+{
+    FILE *fptr = fopen(filename.c_str(), "wt");
+    if (fptr == NULL)
+        return;
+
+    DataFileStructure *root = new DataFileStructure();
+    for (ScoreListConstIterator it = m_score_list.begin(),
+                                it_end = m_score_list.end();
+         it != it_end;
+         ++it)
+    {
+        root->SetPathElementString("|high_scores|+|name", it->GetName());
+        root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
+        root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
+        root->SetPathElementUint32("|high_scores|$|date", it->GetDate());
+        root->SetPathElementUint32("|high_scores|$|hash", it->GetHash());
+    }
+
+    IndentFormatter formatter(fptr, "    ");
+    root->Print(formatter);
+    fclose(fptr);
 }
 
 void HighScores::Print (FILE *const fptr) const

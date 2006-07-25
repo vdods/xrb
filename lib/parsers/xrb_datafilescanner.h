@@ -53,10 +53,10 @@ private:
     DataFileParser::Token::Type ScanIdentifier (DataFileValue **scanned_token);
     DataFileParser::Token::Type ScanOperator (DataFileValue **scanned_token);
     DataFileParser::Token::Type ScanNumeric (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanBinaryNumeric (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanOctalNumeric (DataFileValue **scanned_token, char first_char);
-    DataFileParser::Token::Type ScanDecimalNumeric (DataFileValue **scanned_token, char first_char);
-    DataFileParser::Token::Type ScanHexidecimalNumeric (DataFileValue **scanned_token);
+    DataFileParser::Token::Type ScanBinaryNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive);
+    DataFileParser::Token::Type ScanOctalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive, char first_char);
+    DataFileParser::Token::Type ScanDecimalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive, char first_char);
+    DataFileParser::Token::Type ScanHexidecimalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive);
     DataFileParser::Token::Type ScanFloatingPointNumeric (DataFileValue **scanned_token);
     DataFileParser::Token::Type ScanCharacterLiteral (DataFileValue **scanned_token);
     DataFileParser::Token::Type ScanStringLiteral (DataFileValue **scanned_token);

@@ -36,7 +36,10 @@ int main (int argc, char **argv)
     fprintf(stderr, "\nmain();\n");
 
     {
-        Dis::Options options(argc, argv);
+        Dis::Options options(argv[0]);
+        options.InitializeFullscreen(true);
+        options.InitializeResolution(ScreenCoordVector2(1024, 768));
+        options.Parse(argc, argv);
         if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
         {
             options.PrintHelpMessage(cerr);

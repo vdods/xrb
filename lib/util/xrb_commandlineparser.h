@@ -40,11 +40,10 @@ public:
     typedef void (CommandLineParser::*HandlerFunction)(std::string const &);
 
     CommandLineParser (
-        Sint32 argc,
-        char const *const *argv,
         HandlerFunction non_option_argument_handler_function,
         CommandLineOption const *option,
         Uint32 option_count,
+        std::string const &executable_name,
         std::string const &program_description,
         std::string const &usage_message);
     virtual ~CommandLineParser () = 0;
@@ -75,9 +74,9 @@ private:
     HandlerFunction const m_non_option_argument_handler_function;
     CommandLineOption const *const m_option;
     Uint32 const m_option_count;
+    std::string const m_executable_name;
     std::string const m_program_description;
     std::string const m_usage_message;
-    std::string const m_argv0;
     bool m_parse_succeeded;
 }; // end of class CommandLineParser
 

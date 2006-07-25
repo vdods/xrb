@@ -123,18 +123,6 @@ libxrb_la_SOURCES = \
 #    \
 #
 
-#libxrb_la_LIBADD = \
-#    libdatafileparser.la
-#    liblinecalculatorparser.la
-
-##############################################################################
-# the intermediate libraries shouldn't be intalled.
-##############################################################################
-
-#noinst_LTLIBRARIES = \
-#    libdatafileparser.la
-#    liblinecalculatorparser.la
-
 ##############################################################################
 # these headers will be installed in $(prefix)/include/xrb/
 ##############################################################################
@@ -223,7 +211,6 @@ include_HEADERS = \
     parsers/xrb_datafileparser.h \
     parsers/xrb_datafilescanner.h \
     parsers/xrb_datafilevalue.h \
-    parsers/xrb_linecalculator.h \
     \
     primitive/xrb_bitarray.h \
     primitive/xrb_bitarray.tcpp \
@@ -293,20 +280,6 @@ $(srcdir)/parsers/xrb_datafileparser.h: $(srcdir)/parsers/xrb_datafileparser.cpp
 $(srcdir)/parsers/xrb_datafileparser.cpp: $(srcdir)/parsers/xrb_datafileparser.trison
 	$(TRISON) $(srcdir)/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(srcdir)/parsers/xrb_datafileparser --generate-states-file $(srcdir)/parsers/xrb_datafileparser.states
 endif
-
-##############################################################################
-# parser intermediate libraries -- they're special because they need
-# to be separate and have to have special flags for lex and yacc
-##############################################################################
-
-#liblinecalculatorparser_la_SOURCES = \
-#    parsers/linecalculator/xrb_linecalculatorparser.ypp \
-#    parsers/linecalculator/xrb_linecalculatorscanner.lpp \
-#    parsers/xrb_linecalculator.cpp
-#liblinecalculatorparser_la_YFLAGS = \
-#    -d -v -p LineCalculator_
-#liblinecalculatorparser_la_LFLAGS = \
-#    --prefix LineCalculator_ --outfile=lex.yy.c
 
 ##############################################################################
 # general preprocessor and linker flags

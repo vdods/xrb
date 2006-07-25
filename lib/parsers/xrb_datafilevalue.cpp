@@ -20,7 +20,8 @@ std::string const &GetDataFileElementTypeString (DataFileElementType data_file_e
     static std::string const s_data_file_element_type_string[DAT_COUNT] =
     {
         "DAT_BOOLEAN",
-        "DAT_INTEGER",
+        "DAT_SINT32",
+        "DAT_UINT32",
         "DAT_FLOAT",
         "DAT_CHARACTER",
         "DAT_STRING",
@@ -32,6 +33,68 @@ std::string const &GetDataFileElementTypeString (DataFileElementType data_file_e
 
     ASSERT1(data_file_element_type < DAT_COUNT)
     return s_data_file_element_type_string[data_file_element_type];
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileValue
+// ///////////////////////////////////////////////////////////////////////////
+
+bool DataFileValue::GetPathElementBoolean (std::string const &path) const
+{
+    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+Sint32 DataFileValue::GetPathElementSint32 (std::string const &path) const
+{
+    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+Uint32 DataFileValue::GetPathElementUint32 (std::string const &path) const
+{
+    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+Float DataFileValue::GetPathElementFloat (std::string const &path) const
+{
+    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+char DataFileValue::GetPathElementCharacter (std::string const &path) const
+{
+    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+std::string const &DataFileValue::GetPathElementString (std::string const &path) const
+{
+    DataFileString const *value = dynamic_cast<DataFileString const *>(GetPathElement(path));
+    if (value == NULL)
+        throw std::string("path error");
+    return value->GetValue();
+}
+
+DataFileArray const *DataFileValue::GetPathElementArray (std::string const &path) const
+{
+    return dynamic_cast<DataFileArray const *>(GetPathElement(path));
+}
+
+DataFileStructure const *DataFileValue::GetPathElementStructure (std::string const &path) const
+{
+    return dynamic_cast<DataFileStructure const *>(GetPathElement(path));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -68,51 +131,21 @@ void DataFileBoolean::PrintAST (IndentFormatter &formatter) const
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileInteger
+// DataFileSint32
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileInteger::Sign (NumericSign const sign)
+void DataFileSint32::PrintAST (IndentFormatter &formatter) const
 {
-    ASSERT1(!m_is_signed && "you should only call this method on an unsigned value")
-    m_is_signed = true;
-
-    ASSERT1(sign == NEGATIVE || sign == POSITIVE)
-    if (sign == POSITIVE)
-    {
-        if (m_value > static_cast<Uint32>(SINT32_UPPER_BOUND))
-        {
-            std::ostringstream out;
-            out << "signed integer value +" << m_value << " is not representable in 32 bits";
-            throw out.str();
-        }
-        else
-        {
-            // nothing needs to be done to convert the value to signed
-        }
-    }
-    else
-    {
-        if (m_value > static_cast<Uint32>(SINT32_LOWER_BOUND))
-        {
-            std::ostringstream out;
-            out << "signed integer value -" << m_value << " is not representable in 32 bits";
-            throw out.str();
-        }
-        else
-        {
-            // bitwise negation (one's compliment negative) is = -x-1.
-            // therefore we add one to get -x.
-            m_value = ~m_value + 1;
-        }
-    }
+    formatter.EndLine("DAT_SINT32 - %+d", m_value);
 }
 
-void DataFileInteger::PrintAST (IndentFormatter &formatter) const
+// ///////////////////////////////////////////////////////////////////////////
+// DataFileUint32
+// ///////////////////////////////////////////////////////////////////////////
+
+void DataFileUint32::PrintAST (IndentFormatter &formatter) const
 {
-    if (m_is_signed)
-        formatter.EndLine("DAT_INTEGER - %+d", static_cast<Sint32>(m_value));
-    else
-        formatter.EndLine("DAT_INTEGER - %u", m_value);
+    formatter.EndLine("DAT_UINT32 - %u", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -163,14 +196,14 @@ bool DataFileContainer::SetPathElementBoolean (std::string const &path, bool con
     return SetSubpathElement(path, 0, new DataFileBoolean(value));
 }
 
-bool DataFileContainer::SetPathElementUnsignedInteger (std::string const &path, Uint32 const value)
+bool DataFileContainer::SetPathElementSint32 (std::string const &path, Sint32 const value)
 {
-    return SetSubpathElement(path, 0, new DataFileInteger(value));
+    return SetSubpathElement(path, 0, new DataFileSint32(value));
 }
 
-bool DataFileContainer::SetPathElementSignedInteger (std::string const &path, Sint32 const value)
+bool DataFileContainer::SetPathElementUint32 (std::string const &path, Uint32 const value)
 {
-    return SetSubpathElement(path, 0, new DataFileInteger(value));
+    return SetSubpathElement(path, 0, new DataFileUint32(value));
 }
 
 bool DataFileContainer::SetPathElementFloat (std::string const &path, Float const value)
@@ -870,10 +903,32 @@ DataFileValue const *DataFileStructure::GetValue (std::string const &key) const
         return it->second->GetValue();
 }
 
+void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value)
+{
+    ASSERT1(!key.empty())
+    ASSERT1(value != NULL)
+
+    if (!GetIsValidKey(key))
+    {
+        std::ostringstream out;
+        out << "key \"" << key << "\" contains invalid characters";
+        throw out.str();
+    }
+
+    if (m_member_map.find(key) == m_member_map.end())
+        m_member_map[key] = new DataFileKeyPair(key, value);
+    else
+    {
+        std::ostringstream out;
+        out << "collision with key \"" << key << "\"";
+        throw out.str();
+    }
+}
+
 void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
 {
     ASSERT1(key_pair != NULL)
-    ASSERT1(key_pair->GetKey().length() > 0)
+    ASSERT1(!key_pair->GetKey().empty())
     ASSERT1(key_pair->GetValue() != NULL)
 
     if (!GetIsValidKey(key_pair->GetKey()))

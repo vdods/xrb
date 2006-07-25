@@ -13,7 +13,7 @@ MAJOR TASKS:
 / map editor + sprite/entity prefab editor
 / comment/document the code with doxygen
 - exceptions for user errors
-- x/y independent scaling (the physics portion of that is tough)
+/ x/y independent scaling (the physics portion of that is tough)
 / bracket indenting style and 80-column conformance.  change
   long function parameter lists to be vertical.
 / document the behavior of Widget, Layout, the Rendering stack,
@@ -60,6 +60,12 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
+- GetPathElement* calls should throw string errors, rather than printing
+  errors, same with SetPathElement*, so that the caller can do whatever it
+  wants with it.
+- make the position given for text drawing be the left/center/right for
+  left-justified, centered, or right-justified respectively, and same for
+  vertical justification.  this will make arbitrary text drawing easier
 - make picture labels use alignment properly
 - make AsciiFont properly use UTF8
 - deprecate right-to-left fonts (fuck it)

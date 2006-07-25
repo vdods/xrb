@@ -21,6 +21,8 @@
 #include "xrb_input.h"
 #include "xrb_screen.h"
 
+#define HIGH_SCORES_FILENAME "disasteroids.scores"
+
 using namespace Xrb;
 
 namespace Dis
@@ -57,6 +59,8 @@ Master::Master (Screen *const screen)
 
     m_game_widget = NULL;
     m_game_world = NULL;
+
+    m_high_scores.Read(HIGH_SCORES_FILENAME);
 }
 
 Master::~Master ()
@@ -245,6 +249,7 @@ void Master::AcceptName (std::string const &name)
         m_saved_score.GetWaveCount(),
         m_saved_score.GetDate());
     m_high_scores.AddScore(named_score);
+    m_high_scores.Write(HIGH_SCORES_FILENAME);
     m_game_world->SubmitScoreDone();
 
     m_show_high_scores_immediately = true;
