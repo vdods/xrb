@@ -1,5 +1,6 @@
 SUBDIRS = \
     disasteroids \
     guidemo \
-    lesson00
+    lesson00 \
+    lesson01
 

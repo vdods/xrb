@@ -18,8 +18,7 @@
 // definitions necessary for the correct usage and operation of libxrb.
 #include "xrb.h"
 
-// for use of the Screen class.
-#include "xrb_screen.h"
+#include "xrb_screen.h" // for use of the necessary Screen widget class
 
 // this using statement is useful so that we don't need to qualify every
 // library type/class/etc with Xrb::
@@ -72,15 +71,14 @@ int main (int argc, char **argv)
     SDL_WM_SetCaption("XuqRijBuh Lesson 00", "icon thingy");
 
     // this call creates the Screen object and initializes the given video
-    // mode (1024x768, 32 bit color).  there is no constraint on the size
+    // mode (800x600, 32 bit color).  there is no constraint on the size
     // or aspect ratio of the screen, apart from the ability of your video
     // hardware to handle it.  the Screen object is the root widget of the
     // GUI widget hierarchy, and does a bunch of special handling to draw
-    // its child widgets properly.  depending on the value of the FULLSCREEN
-    // macro, set fullscreen or not.
+    // its child widgets properly.
     Screen *screen = Screen::Create(
-        1024,                   // video mode/screen width
-        768,                    // video mode/screen height
+        800,                    // video mode/screen width
+        600,                    // video mode/screen height
         32,                     // video mode pixel bitdepth
         /*SDL_FULLSCREEN*/ 0);  // SDL_SetVideomode flags.  use SDL_FULLSCREEN
                                 // instead of 0 to set fullscreen video mode.
