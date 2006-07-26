@@ -80,11 +80,10 @@ void Master::Run ()
     ResourceCache resource_cache;
 
     // seed the random number generator
-    srand(666);
+    srand(time(NULL));
 
     // start at the title screen
     ActivateTitleScreen();
-//     ActivateGame();
 
     // TODO: initialization so that Run() could be called several times in a row
 

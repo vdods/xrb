@@ -21,10 +21,12 @@
 using namespace std;
 using namespace Xrb;
 
-// exit handler
-void Exit ()
+// cleans up the singletons and shuts down SDL.
+void CleanUp ()
 {
-    fprintf(stderr, "Exit();\n");
+    fprintf(stderr, "CleanUp();\n");
+
+    Singletons::Shutdown();
     // make sure input isn't grabbed
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     // call SDL's cleanup func
@@ -46,8 +48,6 @@ int main (int argc, char **argv)
             return options.GetParseSucceeded() ? 0 : 1;
         }
 
-        Singletons::Initialize();
-
         // initialize video (no parachute so we get core dumps)
         if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
         {
@@ -55,10 +55,12 @@ int main (int argc, char **argv)
             return 2;
         }
 
+        Singletons::Initialize();
+
         // register on-exit function. SDL_Quit takes care of deleting the
         // screen.  the function registered with atexit will be called
         // after main() has returned.
-        atexit(Exit);
+        atexit(CleanUp);
         // set a window title (i dunno what the icon string is)
         SDL_WM_SetCaption("Disasteroids", "icon thingy");
 
@@ -81,8 +83,6 @@ int main (int argc, char **argv)
         }
 
         Delete(screen);
-
-        Singletons::Shutdown();
     }
 
     // return with no error condition

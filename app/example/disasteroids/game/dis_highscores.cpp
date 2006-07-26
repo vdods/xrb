@@ -31,7 +31,7 @@ Uint32 Score::ComputeHash (
 {
     Uint32 hash = points ^ wave_count ^ static_cast<Uint32>(date);
     for (Uint32 i = 0; i < name.length(); ++i)
-        hash ^= hash * 11 + hash * 13 + static_cast<Uint32>(name[i] - 'a');
+        hash ^= hash * 11 + static_cast<Uint32>(name[i] - 'a');
     return hash;
 }
 
