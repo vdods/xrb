@@ -31,6 +31,9 @@
     #if defined(DELETE)
         #undef DELETE
     #endif
+    #if defined(ERROR)
+        #undef ERROR
+    #endif
 #endif // defined(WIN32)
 
 /** Contains all classes, functions, enumerations, and typedefs that libxrb
