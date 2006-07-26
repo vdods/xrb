@@ -129,6 +129,22 @@
   </kdevfilecreate>
   <kdevfileview>
     <groups>
+      <group pattern="app/example/disasteroids/game/engine2/*" name="/app/example/disasteroids/game/engine2" />
+      <group pattern="app/example/disasteroids/game/entities/ships/*" name="/app/example/disasteroids/game/entities/ships" />
+      <group pattern="app/example/disasteroids/game/entities/*" name="/app/example/disasteroids/game/entities" />
+      <group pattern="app/example/disasteroids/game/items/*" name="/app/example/disasteroids/game/items" />
+      <group pattern="app/example/disasteroids/game/*" name="/app/example/disasteroids/game" />
+      <group pattern="app/example/disasteroids/ui/*" name="/app/example/disasteroids/ui" />
+      <group pattern="app/example/disasteroids/*" name="/app/example/disasteroids" />
+      <group pattern="app/example/guidemo/*" name="/app/example/guidemo" />
+      <group pattern="app/example/lesson00/*" name="/app/example/lesson00" />
+      <group pattern="app/example/*" name="/app/example" />
+      <group pattern="app/mapeditor2/*" name="/app/mapeditor2" />
+      <group pattern="app/unittest/tests/*" name="/app/unittest/tests" />
+      <group pattern="app/unittest/*" name="/app/unittest" />
+      <group pattern="app/*" name="/app" />
+      <group pattern="doc/doxygen_pages/*" name="/doc/doxygen_pages" />
+      <group pattern="doc/*" name="/doc" />
       <group pattern="lib/core/serializers/*" name="/lib/core/serializers" />
       <group pattern="lib/core/*" name="/lib/core" />
       <group pattern="lib/engine2/*" name="/lib/engine2" />
@@ -144,21 +160,6 @@
       <group pattern="lib/sound/*" name="/lib/sound" />
       <group pattern="lib/util/*" name="/lib/util" />
       <group pattern="lib/*" name="/lib" />
-      <group pattern="app/example/disasteroids/game/engine2/*" name="/app/example/disasteroids/game/engine2" />
-      <group pattern="app/example/disasteroids/game/entities/ships/*" name="/app/example/disasteroids/game/entities/ships" />
-      <group pattern="app/example/disasteroids/game/entities/*" name="/app/example/disasteroids/game/entities" />
-      <group pattern="app/example/disasteroids/game/items/*" name="/app/example/disasteroids/game/items" />
-      <group pattern="app/example/disasteroids/game/*" name="/app/example/disasteroids/game" />
-      <group pattern="app/example/disasteroids/ui/*" name="/app/example/disasteroids/ui" />
-      <group pattern="app/example/disasteroids/*" name="/app/example/disasteroids" />
-      <group pattern="app/example/guidemo/*" name="/app/example/guidemo" />
-      <group pattern="app/example/*" name="/app/example" />
-      <group pattern="app/mapeditor2/*" name="/app/mapeditor2" />
-      <group pattern="app/unittest/tests/*" name="/app/unittest/tests" />
-      <group pattern="app/unittest/*" name="/app/unittest" />
-      <group pattern="app/*" name="/app" />
-      <group pattern="doc/doxygen_pages/*" name="/doc/doxygen_pages" />
-      <group pattern="doc/*" name="/doc" />
       <group pattern="resources/*" name="/resources" />
       <group pattern="*" name="/" />
       <hidenonprojectfiles>true</hidenonprojectfiles>

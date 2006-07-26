@@ -4,6 +4,7 @@ Makefile.am
 README
 TODO
 app/Makefile.am
+app/example/Makefile.am
 app/example/disasteroids/Makefile.am
 app/example/disasteroids/dis_enums.h
 app/example/disasteroids/dis_events.h
@@ -100,6 +101,8 @@ app/example/guidemo/Makefile.am
 app/example/guidemo/gui_main.cpp
 app/example/guidemo/gui_masterwidget.cpp
 app/example/guidemo/gui_masterwidget.h
+app/example/lesson00/Makefile.am
+app/example/lesson00/lesson00_main.cpp
 app/mapeditor2/Makefile.am
 app/mapeditor2/main.cpp
 app/unittest/Makefile.am

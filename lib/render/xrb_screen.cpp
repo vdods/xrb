@@ -19,7 +19,6 @@ namespace Xrb
 
 Screen::~Screen ()
 {
-    fprintf(stderr, "Screen::~Screen();\n");
     // because we created our own event queue in the constructor,
     // we must delete it ourselves here in the destructor.
     ASSERT1(GetOwnerEventQueue() != NULL)
