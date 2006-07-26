@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="lesson00"
-	ProjectGUID="{58AD120B-A255-441B-B50C-BB2442A73AE8}"
-	RootNamespace="lesson00"
+	Name="lesson01"
+	ProjectGUID="{36DC55FA-CFF3-45B1-A24B-5D767F97042E}"
+	RootNamespace="lesson01"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -182,7 +182,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\lesson00_main.cpp"
+			RelativePath=".\lesson01_main.cpp"
 			>
 		</File>
 	</Files>
