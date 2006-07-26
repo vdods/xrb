@@ -703,11 +703,11 @@ bool DataFileArray::SetSubpathElement (
     {
         Uint32 i = start;
         array_index = 0;
-        char c;
+        char c = path[i];
         while (i < key_delim && (c = path[i], c >= '0' && c <= '9'))
         {
             // check for overflow
-            if (array_index > 429496729 || array_index == 429496729 && (c - '0') > 5)
+            if (array_index > 429496729 || array_index == 429496729 && c > '5')
             {
                 array_index = UINT32_UPPER_BOUND;
                 break;
