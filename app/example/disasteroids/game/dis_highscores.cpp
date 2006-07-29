@@ -207,6 +207,7 @@ void HighScores::Write (std::string const &filename)
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);
+    Delete(root);
     fclose(fptr);
 }
 
