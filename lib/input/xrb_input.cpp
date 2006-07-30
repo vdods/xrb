@@ -123,7 +123,7 @@ bool Input::ProcessEventOverride (Event const *const e)
                 m_is_caps_lock_on = !m_is_caps_lock_on;
             else if (code == Key::NUMLOCK)
                 m_is_num_lock_on = !m_is_num_lock_on;
-            else if (code == Key::SCROLLOCK)
+            else if (code == Key::SCROLLLOCK)
                 m_is_scroll_lock_on = !m_is_scroll_lock_on;
             break;
 
@@ -377,7 +377,7 @@ void Input::InitKeyMaps ()
     m_keycode_map[Key::F15] = Key::Create(Key::F15, "F15");
     m_keycode_map[Key::NUMLOCK] = Key::Create(Key::NUMLOCK, "NUMLOCK");
     m_keycode_map[Key::CAPSLOCK] = Key::Create(Key::CAPSLOCK, "CAPSLOCK");
-    m_keycode_map[Key::SCROLLOCK] = Key::Create(Key::SCROLLOCK, "SCROLLOCK");
+    m_keycode_map[Key::SCROLLLOCK] = Key::Create(Key::SCROLLLOCK, "SCROLLOCK");
     m_keycode_map[Key::RSHIFT] = Key::Create(Key::RSHIFT, "RSHIFT");
     m_keycode_map[Key::LSHIFT] = Key::Create(Key::LSHIFT, "LSHIFT");
     m_keycode_map[Key::RCTRL] = Key::Create(Key::RCTRL, "RCTRL");
