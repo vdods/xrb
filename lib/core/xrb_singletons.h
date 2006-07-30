@@ -21,6 +21,7 @@ namespace Xrb
 {
 
 class Input;
+class KeyMap;
 class ResourceLibrary;
 
 /** Contains functions Initialize and Shutdown which should be the first and
@@ -34,6 +35,9 @@ namespace Singletons
     /** @brief Returns a reference to the Input singleton object.
       */
     Input &Input ();
+    /** @brief Returns a const reference to the KeyMap singleton object.
+      */
+    KeyMap const &KeyMap ();
     /** @brief Returns a reference to the ResourceLibrary singleton object.
       */
     ResourceLibrary &ResourceLibrary ();
@@ -45,9 +49,18 @@ namespace Singletons
       * the usage of the singleton objects.  If this function is not called
       * before other systems activate, the singleton object accessors will
       * assert.
+      *
+      * @c key_map can be specified to perform key mapping to supplement the
+      * windows-version-of-SDL's lack of alternate keyboard layout support
+      * (e.g. Dvorak).  This is not necessary in Unix (it is currently unknown
+      * if it is necessary for Mac OS).
+      *
       * @brief Initializes the singleton objects.
+      * @param key_map Specifies the KeyMap object to use.  If @c NULL, creates
+      *                a @ref KeyMapIdentity (which does not alter the key
+      *                input).  This pointer will be deleted upon Shutdown().
       */
-    void Initialize ();
+    void Initialize (Xrb::KeyMap const *key_map);
     /** This should be the last thing done, so that proper cleanup is
       * performed for the singleton objects.
       * @brief Shuts down the singleton objects.

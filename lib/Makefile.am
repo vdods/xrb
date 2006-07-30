@@ -56,6 +56,7 @@ libxrb_la_SOURCES = \
     input/xrb_input.cpp \
     input/xrb_input_events.cpp \
     input/xrb_key.cpp \
+    input/xrb_keymap.cpp \
     input/xrb_keyrepeater.cpp \
     \
     math/xrb_math.cpp \
@@ -198,6 +199,7 @@ include_HEADERS = \
     input/xrb_input.h \
     input/xrb_input_events.h \
     input/xrb_key.h \
+    input/xrb_keymap.h \
     input/xrb_keyrepeater.h \
     \
     math/xrb_math.h \

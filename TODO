@@ -68,7 +68,6 @@ TODO:
   vertical justification.  this will make arbitrary text drawing easier
 - make picture labels use alignment properly
 - make AsciiFont properly use UTF8
-- deprecate right-to-left fonts (fuck it)
 - resource library should not map resources to filenames, but to sets of
   properties (the properties being one of many possible subclasses of some
   "property" baseclass).  this will allow loading of the same filename for

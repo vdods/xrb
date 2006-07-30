@@ -156,11 +156,6 @@ bool Input::ProcessEventOverride (Event const *const e)
 
 void Input::InitKeyMaps ()
 {
-    // explicitly initialize every single enumerated key
-    // (boy do i love unix command line utilities!)
-
-    // the commented-out lines are those who are shifted keys
-    // so they have duplicates in the non-shifted keys
     m_keycode_map[Key::UNKNOWN] = Key::Create(Key::UNKNOWN, "UNKNOWN");
     m_keycode_map[Key::LMOUSE] = Key::Create(Key::LMOUSE, "LMOUSE");
     m_keycode_map[Key::MMOUSE] = Key::Create(Key::MMOUSE, "MMOUSE");
@@ -174,16 +169,7 @@ void Input::InitKeyMaps ()
     m_keycode_map[Key::PAUSE] = Key::Create(Key::PAUSE, "PAUSE");
     m_keycode_map[Key::ESCAPE] = Key::Create(Key::ESCAPE, "ESCAPE");
     m_keycode_map[Key::SPACE] = Key::Create(Key::SPACE, "SPACE");
-//    m_keycode_map[Key::EXCLAIM] = Key::Create(Key::EXCLAIM, "EXCLAIM");
-//    m_keycode_map[Key::QUOTEDBL] = Key::Create(Key::QUOTEDBL, "QUOTEDBL");
-//    m_keycode_map[Key::HASH] = Key::Create(Key::HASH, "HASH");
-//    m_keycode_map[Key::DOLLAR] = Key::Create(Key::DOLLAR, "DOLLAR");
-//    m_keycode_map[Key::AMPERSAND] = Key::Create(Key::AMPERSAND, "AMPERSAND");
     m_keycode_map[Key::QUOTE] = Key::Create(Key::QUOTE, "QUOTE");
-//    m_keycode_map[Key::LEFTPAREN] = Key::Create(Key::LEFTPAREN, "LEFTPAREN");
-//    m_keycode_map[Key::RIGHTPAREN] = Key::Create(Key::RIGHTPAREN, "RIGHTPAREN");
-//    m_keycode_map[Key::ASTERISK] = Key::Create(Key::ASTERISK, "ASTERISK");
-//    m_keycode_map[Key::PLUS] = Key::Create(Key::PLUS, "PLUS");
     m_keycode_map[Key::COMMA] = Key::Create(Key::COMMA, "COMMA");
     m_keycode_map[Key::MINUS] = Key::Create(Key::MINUS, "MINUS");
     m_keycode_map[Key::PERIOD] = Key::Create(Key::PERIOD, "PERIOD");
@@ -198,18 +184,11 @@ void Input::InitKeyMaps ()
     m_keycode_map[Key::SEVEN] = Key::Create(Key::SEVEN, "7");
     m_keycode_map[Key::EIGHT] = Key::Create(Key::EIGHT, "8");
     m_keycode_map[Key::NINE] = Key::Create(Key::NINE, "9");
-//    m_keycode_map[Key::COLON] = Key::Create(Key::COLON, "COLON");
     m_keycode_map[Key::SEMICOLON] = Key::Create(Key::SEMICOLON, "SEMICOLON");
-//    m_keycode_map[Key::LESS] = Key::Create(Key::LESS, "LESS");
     m_keycode_map[Key::EQUALS] = Key::Create(Key::EQUALS, "EQUALS");
-//    m_keycode_map[Key::GREATER] = Key::Create(Key::GREATER, "GREATER");
-//    m_keycode_map[Key::QUESTION] = Key::Create(Key::QUESTION, "QUESTION");
-//    m_keycode_map[Key::AT] = Key::Create(Key::AT, "AT");
     m_keycode_map[Key::LEFTBRACKET] = Key::Create(Key::LEFTBRACKET, "LEFTBRACKET");
     m_keycode_map[Key::BACKSLASH] = Key::Create(Key::BACKSLASH, "BACKSLASH");
     m_keycode_map[Key::RIGHTBRACKET] = Key::Create(Key::RIGHTBRACKET, "RIGHTBRACKET");
-//    m_keycode_map[Key::CARET] = Key::Create(Key::CARET, "CARET");
-//    m_keycode_map[Key::UNDERSCORE] = Key::Create(Key::UNDERSCORE, "UNDERSCORE");
     m_keycode_map[Key::BACKQUOTE] = Key::Create(Key::BACKQUOTE, "TILDE");
     m_keycode_map[Key::A] = Key::Create(Key::A, "A");
     m_keycode_map[Key::B] = Key::Create(Key::B, "B");

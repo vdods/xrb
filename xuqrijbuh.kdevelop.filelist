@@ -246,6 +246,8 @@ lib/input/xrb_input_events.cpp
 lib/input/xrb_input_events.h
 lib/input/xrb_key.cpp
 lib/input/xrb_key.h
+lib/input/xrb_keymap.cpp
+lib/input/xrb_keymap.h
 lib/input/xrb_keyrepeater.cpp
 lib/input/xrb_keyrepeater.h
 lib/mapeditor2/xrb_mapeditor2_compound.cpp

@@ -68,9 +68,12 @@ int main (int argc, char **argv)
     // - Input: accessor for the immediate state of the keyboard and mouse
     //          (and eventually joysticks, etc).  this is not the primary/only
     //          means for user input, but we'll get to that later.
+    // - KeyMap: performs keyboard layout mapping (e.g. Dvorak), which is
+    //           necessary only on windows builds because the windows version
+    //           of SDL lacks proper key mapping.
     // - FTLibrary: this is used by the font system to use the FreeType font
     //              rendering facilities.  you shouldn't need to worry about it.
-    Singletons::Initialize();
+    Singletons::Initialize(NULL);
 
     // set the caption for the application's window.  i haven't figured out
     // what the icon string is, maybe it's supposed to be the filename for
@@ -85,7 +88,7 @@ int main (int argc, char **argv)
     // its child widgets properly.
     //
     // In this example, do not set fullscreen mode, because we will need
-    // to hit Alt+F4 or click the X button in the window frame to quit 
+    // to hit Alt+F4 or click the X button in the window frame to quit
     // the app.
     Screen *screen = Screen::Create(
         800,                    // video mode/screen width

@@ -10,6 +10,7 @@
 
 #include "xrb_input_events.h"
 
+#include "xrb_keymap.h"
 #include "xrb_screen.h"
 #include "xrb_util.h"
 
@@ -28,27 +29,33 @@ EventKey::EventKey (
     if (e == NULL)
         return;
 
+    // store the SDL_KeyboardEvent away
     m_event = *e;
 
+    // perform key mapping using the KeyMap singleton, and store the
+    // mapped value back into m_event.
+    Key::Code code = static_cast<Key::Code>(m_event.keysym.sym);
+    code = Singletons::KeyMap().GetMappedKey(code);
+    m_event.keysym.sym = static_cast<SDLKey>(code);
+
     // set the raw ascii code (SDLKey maps to ascii)
-    if ((Key::Code)m_event.keysym.sym >= Key::SPACE &&
-        (Key::Code)m_event.keysym.sym < Key::DELETE)
-        m_modified_ascii = (char)m_event.keysym.sym;
+    if (code >= Key::SPACE && code < Key::DELETE)
+        m_modified_ascii = (char)code;
     else
         m_modified_ascii = '\0';
 
     // caps lock modification
-    if (m_event.keysym.mod & (KMOD_CAPS))
+    if ((m_event.keysym.mod&KMOD_CAPS) != 0)
         m_modified_ascii = toupper(m_modified_ascii);
 
     // shift key modification
-    if (m_event.keysym.mod & (KMOD_LSHIFT|KMOD_RSHIFT))
+    if ((m_event.keysym.mod&(KMOD_LSHIFT|KMOD_RSHIFT)) != 0)
         m_modified_ascii = Util::GetShiftedAscii(m_modified_ascii);
 
     // num lock modification
-    if (m_event.keysym.mod & KMOD_NUM)
+    if ((m_event.keysym.mod&KMOD_NUM) != 0)
     {
-        switch (m_event.keysym.sym)
+        switch (code)
         {
             case Key::KP0:       m_modified_ascii = '0'; break;
             case Key::KP1:       m_modified_ascii = '1'; break;
@@ -66,7 +73,7 @@ EventKey::EventKey (
     }
 
     // keypad arithmetic keys
-    switch (m_event.keysym.sym)
+    switch (code)
     {
         case Key::KP_DIVIDE:   m_modified_ascii = '/'; break;
         case Key::KP_MULTIPLY: m_modified_ascii = '*'; break;
