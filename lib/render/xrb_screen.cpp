@@ -161,6 +161,7 @@ bool Screen::ProcessEventOverride (Event const *const e)
             return true;
 
         case Event::KEYDOWN:
+            /*
             switch (static_cast<EventKey const *const>(e)->GetKeyCode())
             {
 //                 case Key::PRINT:
@@ -169,8 +170,8 @@ bool Screen::ProcessEventOverride (Event const *const e)
 //                             "- capturing screenshot to screenshot.png\n");
 //                     SDL::WritePNG(m_surface, "screenshot.png");
 //                     return true;
-/*
-                case Key::RETURN:
+                case Key::SCROLLLOCK:
+                    // TODO: don't capture input if fullscreen is set
                     fprintf(stderr, "Screen::ProcessEventOverride(); toggling input grab\n");
                     if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
                         SDL_ShowCursor(SDL_ENABLE);
@@ -181,23 +182,11 @@ bool Screen::ProcessEventOverride (Event const *const e)
                     }
 
                     return true;
-*/
-/*
-                case Key::F5:
-                    SetWidgetSkinTextureFilename(
-                        WidgetSkin::CHECK_BOX_CHECK_TEXTURE,
-                        "resources/ui/radiobutton_dot.png");
-                    break;
 
-                case Key::F6:
-                    SetWidgetSkinTextureFilename(
-                        WidgetSkin::CHECK_BOX_CHECK_TEXTURE,
-                        "resources/ui/black_checkmark.png");
-                    break;
-*/
                 default:
                     break;
             }
+            */
             break;
 
         default:

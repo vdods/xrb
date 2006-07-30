@@ -65,7 +65,7 @@
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(XRB_SDL_PATH)\lib&quot;;&quot;$(XRB_SDL_image_PATH)\lib&quot;;&quot;$(XRB_FREETYPE_PATH)\objs&quot;"
 				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="msvcrt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"

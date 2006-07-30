@@ -80,7 +80,7 @@ void Master::Run ()
     ResourceCache resource_cache;
 
     // seed the random number generator
-    srand(time(NULL));
+    srand(static_cast<Uint32>(time(NULL)));
 
     // start at the title screen
     ActivateTitleScreen();
