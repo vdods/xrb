@@ -600,6 +600,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\input\xrb_keymap.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\input\xrb_keymap.h"
+				>
+			</File>
+			<File
 				RelativePath=".\input\xrb_keyrepeater.cpp"
 				>
 			</File>
