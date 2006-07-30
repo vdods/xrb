@@ -793,6 +793,12 @@ public:
       *              a child of this widget.
       */
     virtual void MoveChildToTop (Widget *child);
+    /** This happens automatically during the destructor, so there is no
+      * reason to call this unless you want to delete all child widgets
+      * without deleting this widget.
+      * @brief Deletes all child widgets (they are automatically detached).
+      */
+    void DeleteAllChildren ();
 
     /** Disabled widgets will not accept events.
       * @brief Sets the enabled state of this widget.

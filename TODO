@@ -60,11 +60,6 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
-- there's still a fundamental problem with Screen creating/deleting its
-  own owner EventQueue -- after the EventQueue is deleted, the child widgets
-  of the Screen are deleted, and they access the same owner EventQueue.
-  perhaps actively delete child widgets in ~Screen() before deleting the
-  owner EventQueue.
 - GetPathElement* calls should throw string errors, rather than printing
   errors, same with SetPathElement*, so that the caller can do whatever it
   wants with it.

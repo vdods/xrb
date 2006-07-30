@@ -19,8 +19,12 @@ namespace Xrb
 
 Screen::~Screen ()
 {
-    // because we created our own event queue in the constructor,
-    // we must delete it ourselves here in the destructor.
+    // because we created our own event queue in the constructor, we must
+    // delete it ourselves here in the destructor.  BUT, before we do that,
+    // we must delete all child widgets, because they will potentially access
+    // the condemned owner EventQueue via ~EventHandler.
+    DeleteAllChildren();
+    // now delete the owner EventQueue.
     ASSERT1(GetOwnerEventQueue() != NULL)
     delete GetOwnerEventQueue();
     SetOwnerEventQueue(NULL);

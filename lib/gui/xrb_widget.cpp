@@ -83,18 +83,8 @@ Widget::~Widget ()
     // make sure that mouseover is off
     MouseoverOff();
 
-    // DESTROY all the poor little child widgets (in reverse order).
-    while (m_child_vector.size() > 0)
-    {
-        Widget *child = m_child_vector.back();
-        ASSERT1(child != NULL)
-        // this will detach the child from the parent and remove its
-        // element from m_child_vector -- hence the weird traversal.
-        Delete(child);
-    }
-
-    // clear the modal widget stack
-    m_modal_widget_stack.clear();
+    // delete all child widgets
+    DeleteAllChildren();
 
     // detach this widget from its parent (if it has one), so that
     // "just deleting" a widget is acceptable.  detaching the widget
@@ -964,6 +954,22 @@ void Widget::MoveChildToTop (Widget *const child)
         // remove it from this widget's child list and set its parent to null
         m_child_vector.erase(it);
     }
+}
+
+void Widget::DeleteAllChildren ()
+{
+    // DESTROY all the poor little child widgets (in reverse order).
+    while (m_child_vector.size() > 0)
+    {
+        Widget *child = m_child_vector.back();
+        ASSERT1(child != NULL)
+        // this will detach the child from the parent and remove its
+        // element from m_child_vector -- hence the backwards traversal.
+        Delete(child);
+    }
+
+    // clear the modal widget stack
+    m_modal_widget_stack.clear();
 }
 
 void Widget::SetIsEnabled (bool const is_enabled)
