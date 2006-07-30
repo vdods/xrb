@@ -38,16 +38,6 @@ class Font
 {
 public:
 
-    /** For example, Latin text is LEFT_TO_RIGHT, while Arabic text
-      * is RIGHT_TO_LEFT.
-      * @brief Enums for specifying the direction text is rendered.
-      */
-    enum TextDirection
-    {
-        LEFT_TO_RIGHT = 0,
-        RIGHT_TO_LEFT,
-    }; // end of enum Font::TextDirection
-
     /** @brief Structure used in text formatting (word wrapping and alignment).
       */
     struct LineFormat
@@ -65,7 +55,6 @@ public:
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
     inline ScreenCoord GetPixelHeight () const { return m_pixel_height; }
-    inline TextDirection GetTextDirection () const { return m_text_direction; }
     inline ScreenCoord GetGlyphWidth (char const *glyph) const
     {
         ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
@@ -137,13 +126,9 @@ public:
 
 protected:
 
-    // see TextDirection for a description of its meaning.
-    Font::Font (
-        ScreenCoord pixel_height,
-        TextDirection text_direction)
+    Font::Font (ScreenCoord pixel_height)
         :
-        m_pixel_height(pixel_height),
-        m_text_direction(text_direction)
+        m_pixel_height(pixel_height)
     { }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -176,7 +161,6 @@ private:
         ScreenCoordVector2 const &pen_position_26_6) const;
 
     ScreenCoord const m_pixel_height;
-    TextDirection const m_text_direction;
 }; // end of class Font
 
 /** This class uses FontFace to generate pixelized font renderings and
@@ -246,7 +230,7 @@ protected:
       */
     AsciiFont (ScreenCoord pixel_height)
         :
-        Font(pixel_height, LEFT_TO_RIGHT)
+        Font(pixel_height)
     {
         m_gl_texture = NULL;
         m_error_glyph = '~';

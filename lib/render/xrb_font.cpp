@@ -137,10 +137,7 @@ void Font::GenerateLineFormatVector (
         if (*current_glyph == '\n')
         {
             line_start = true;
-            // if the text direction is RIGHT_TO_LEFT, the appropriate
-            // pen_position_26_6 component will be negative, so
-            // use its absolute value.
-            line_format.m_width = Abs(pen_position_26_6[Dim::X]) >> 6;
+            line_format.m_width = pen_position_26_6[Dim::X] >> 6;
             dest_line_format_vector->push_back(line_format);
         }
         // otherwise increment the glyph count
@@ -172,33 +169,17 @@ void Font::DrawLineFormattedText (
 {
     ASSERT1(line_format_vector.size() > 0)
 
-    // early out in simple cases:
-    // LEFT_TO_RIGHT text direction, (LEFT, TOP) alignment
-    // RIGHT_TO_LEFT text direction, (RIGHT, TOP) alignment
-    if (alignment[Dim::Y] == TOP)
+    // early out if alignment is (LEFT, TOP)
+    if (alignment[Dim::X] == LEFT && alignment[Dim::Y] == TOP)
     {
-        if (m_text_direction == LEFT_TO_RIGHT && alignment[Dim::X] == LEFT)
-        {
-            DrawString(render_context, draw_rect.GetTopLeft(), source_string);
-            return;
-        }
-        else if (m_text_direction == RIGHT_TO_LEFT && alignment[Dim::X] == RIGHT)
-        {
-            DrawString(render_context, draw_rect.GetTopRight(), source_string);
-            return;
-        }
+        DrawString(render_context, draw_rect.GetTopLeft(), source_string);
+        return;
     }
 
     ScreenCoord text_height =
         line_format_vector.size() * GetPixelHeight();
     ScreenCoordVector2 total_spacing = ScreenCoordVector2::ms_zero;
-    ScreenCoordVector2 initial_pen_position;
-    switch (m_text_direction)
-    {
-        case LEFT_TO_RIGHT: initial_pen_position[Dim::X] = draw_rect.GetLeft(); break;
-        case RIGHT_TO_LEFT: initial_pen_position[Dim::X] = draw_rect.GetRight(); break;
-    }
-    initial_pen_position[Dim::Y] = draw_rect.GetTop();
+    ScreenCoordVector2 initial_pen_position(draw_rect.GetTopLeft());
     ScreenCoordVector2 pen_position(initial_pen_position);
 
     switch (alignment[Dim::Y])
@@ -240,24 +221,15 @@ void Font::DrawLineFormattedText (
         switch (alignment[Dim::X])
         {
             case LEFT:
-                if (m_text_direction == LEFT_TO_RIGHT)
-                    pen_position[Dim::X] = initial_pen_position[Dim::X];
-                else
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] - draw_rect.GetWidth() + line_format_vector[line].m_width;
+                pen_position[Dim::X] = initial_pen_position[Dim::X];
                 break;
 
             case CENTER:
-                if (m_text_direction == LEFT_TO_RIGHT)
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] + (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
-                else
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] - (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
+                pen_position[Dim::X] = initial_pen_position[Dim::X] + (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
                 break;
 
             case RIGHT:
-                if (m_text_direction == LEFT_TO_RIGHT)
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] + draw_rect.GetWidth() - line_format_vector[line].m_width;
-                else
-                    pen_position[Dim::X] = initial_pen_position[Dim::X];
+                pen_position[Dim::X] = initial_pen_position[Dim::X] + draw_rect.GetWidth() - line_format_vector[line].m_width;
                 break;
 
             case SPACED:
@@ -342,11 +314,7 @@ void Font::TrackBoundingBox (
 {
     ASSERT1(pen_position_span_26_6 != NULL)
 
-    if (m_text_direction == LEFT_TO_RIGHT)
-        (*pen_position_span_26_6)[Dim::X] = Max((*pen_position_span_26_6)[Dim::X], pen_position_26_6[Dim::X]);
-    else
-        (*pen_position_span_26_6)[Dim::X] = Min((*pen_position_span_26_6)[Dim::X], pen_position_26_6[Dim::X]);
-
+    (*pen_position_span_26_6)[Dim::X] = Max((*pen_position_span_26_6)[Dim::X], pen_position_26_6[Dim::X]);
     (*pen_position_span_26_6)[Dim::Y] = Min((*pen_position_span_26_6)[Dim::Y], pen_position_26_6[Dim::Y]);
 }
 
