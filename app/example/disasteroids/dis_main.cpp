@@ -55,7 +55,7 @@ int main (int argc, char **argv)
             return 2;
         }
 
-        Singletons::Initialize(NULL);
+        Singletons::Initialize(options.GetKeyMapName().c_str());
 
         // register on-exit function. SDL_Quit takes care of deleting the
         // screen.  the function registered with atexit will be called

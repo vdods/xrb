@@ -66,7 +66,7 @@ int main (int argc, char **argv)
     //           of SDL lacks proper key mapping.
     // - FTLibrary: this is used by the font system to use the FreeType font
     //              rendering facilities.  you shouldn't need to worry about it.
-    Singletons::Initialize(NULL);
+    Singletons::Initialize("none");
 
     // set the caption for the application's window.  i haven't figured out
     // what the icon string is, maybe it's supposed to be the filename for

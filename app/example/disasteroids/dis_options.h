@@ -31,6 +31,7 @@ public:
 
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
+    inline std::string const &GetKeyMapName () const { return m_key_map_name; }
     inline bool GetIsHelpRequested () const { return m_is_help_requested; }
 
     void Parse (Sint32 argc, char const *const *argv);
@@ -39,6 +40,7 @@ private:
 
     void SetFullscreen (std::string const &arg);
     void SetResolution (std::string const &arg);
+    void SetKeyMapName (std::string const &arg);
 
     void RequestHelp (std::string const &arg);
 
@@ -47,6 +49,7 @@ private:
 
     bool m_fullscreen;
     ScreenCoordVector2 m_resolution;
+    std::string m_key_map_name;
 
     bool m_is_help_requested;
 }; // end of class Options

@@ -11,6 +11,8 @@
 #if !defined(_XRB_SINGLETONS_H_)
 #define _XRB_SINGLETONS_H_
 
+// this header is included by xrb.h
+
 // this header declares all the singletons which behave essentially as
 // "devices".  e.g. the keyboard/mouse button input, the resource manager.
 // (possibly move the screen into this category).
@@ -50,17 +52,17 @@ namespace Singletons
       * before other systems activate, the singleton object accessors will
       * assert.
       *
-      * @c key_map can be specified to perform key mapping to supplement the
-      * windows-version-of-SDL's lack of alternate keyboard layout support
+      * @c key_map_name can be specified to perform key mapping to supplement
+      * the windows-version-of-SDL's lack of alternate keyboard layout support
       * (e.g. Dvorak).  This is not necessary in Unix (it is currently unknown
       * if it is necessary for Mac OS).
       *
       * @brief Initializes the singleton objects.
-      * @param key_map Specifies the KeyMap object to use.  If @c NULL, creates
-      *                a @ref KeyMapIdentity (which does not alter the key
-      *                input).  This pointer will be deleted upon Shutdown().
+      * @param key_map_name Specifies the name of the KeyMap to use.  Must
+      *                     not be @c NULL.  See @ref KeyMap::Create for valid
+      *                     arguments.
       */
-    void Initialize (Xrb::KeyMap const *key_map);
+    void Initialize (char const *key_map_name);
     /** This should be the last thing done, so that proper cleanup is
       * performed for the singleton objects.
       * @brief Shuts down the singleton objects.

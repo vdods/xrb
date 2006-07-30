@@ -60,7 +60,7 @@ private:
 
     inline bool GetIsASpecialShortName (char short_name) const
     {
-        return short_name == '\0' || short_name == '\n';
+        return short_name == '\n';
     }
 
     void PerformOptionConsistencyCheck () const;

@@ -39,6 +39,17 @@ CommandLineOption const Options::ms_option[] =
         "    where the first value is width, and the second is height.  The default\n"
         "    value is 1024x768.  See also option -f."
     },
+    OPTION_HEADER("Keyboard options"),
+    {
+        'k',
+        "keymap",
+        REQUIRES_A_PARAMETER,
+        OPTION_HANDLER(&Options::SetKeyMapName),
+        "    Sets the keyboard layout to use.  The windows version of SDL does not\n"
+        "    support alternate keyboard layouts (this option is unnecessary in other\n"
+        "    operating systems).  Valid values are: \"dvorak\" (quotes for clarity).\n"
+        "    Anything else will disable altered key mapping (this is the default)."
+    },
     OPTION_HEADER(""),
     {
         'h',
@@ -61,6 +72,7 @@ Options::Options (std::string const &executable_name)
         "[options]"),
     m_fullscreen(true),
     m_resolution(ScreenCoordVector2::ms_zero),
+    m_key_map_name("none"),
     m_is_help_requested(false)
 { }
 
@@ -101,6 +113,14 @@ void Options::SetResolution (string const &arg)
     in >> resolution[Dim::Y];
 
     m_resolution = resolution;
+}
+
+void Options::SetKeyMapName (std::string const &arg)
+{
+    if (arg.empty())
+        throw string("error: invalid parameter to --keymap");
+
+    m_key_map_name = arg;
 }
 
 void Options::RequestHelp (std::string const &arg)

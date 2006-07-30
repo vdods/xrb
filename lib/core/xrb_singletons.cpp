@@ -66,16 +66,19 @@ FT_LibraryRec_ *const Singletons::FTLibrary ()
     return g_ft_library;
 }
 
-void Singletons::Initialize (Xrb::KeyMap const *const key_map)
+void Singletons::Initialize (char const *const key_map_name)
 {
+    ASSERT1(key_map_name != NULL)
+
     ASSERT1(!g_is_initialized)
 
     fprintf(stderr, "Singletons::Initialize();\n");
 
     g_input = new Xrb::Input();
 
-    g_key_map = (key_map != NULL) ? key_map : new KeyMapIdentity();
-    fprintf(stderr, "\tusing %s\n", g_key_map->GetName().c_str());
+    fprintf(stderr, "\tattempting to use KeyMap \"%s\" ... ", key_map_name);
+    g_key_map = Xrb::KeyMap::Create(key_map_name);
+    fprintf(stderr, "got \"%s\"\n", g_key_map->GetName().c_str());
 
     g_resource_library = new Xrb::ResourceLibrary();
 
