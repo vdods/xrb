@@ -82,9 +82,11 @@ int main (int argc, char **argv)
     // or aspect ratio of the screen, apart from the ability of your video
     // hardware to handle it.  the Screen object is the root widget of the
     // GUI widget hierarchy, and does a bunch of special handling to draw
-    // its child widgets properly.  In this example, do not set fullscreen
-    // mode, because we will need to hit Alt+F4 or click the X button in
-    // the window frame to quit the app.
+    // its child widgets properly.
+    //
+    // In this example, do not set fullscreen mode, because we will need
+    // to hit Alt+F4 or click the X button in the window frame to quit 
+    // the app.
     Screen *screen = Screen::Create(
         800,                    // video mode/screen width
         600,                    // video mode/screen height
