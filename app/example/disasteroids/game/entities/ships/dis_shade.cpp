@@ -77,7 +77,7 @@ void Shade::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    AimShipAtReticleCoordinates(frame_dt);
+    // we don't aim the ship, because it stays at the same angle all the time
     m_weapon->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
         GetNormalizedWeaponSecondaryInput(),
@@ -90,6 +90,38 @@ void Shade::Think (Float const time, Float const frame_dt)
         frame_dt);
 
     ResetInputs();
+}
+
+FloatVector2 Shade::GetMuzzleLocation (Weapon const *weapon) const
+{
+    ASSERT1(weapon != NULL)
+
+    if (!m_target.GetIsValid())
+        return Ship::GetMuzzleLocation(weapon);
+
+    FloatVector2 target_offset(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation())
+        -
+        GetTranslation());
+    return GetTranslation() + GetScaleFactor() * target_offset.GetNormalization();
+}
+
+FloatVector2 Shade::GetMuzzleDirection (Weapon const *weapon) const
+{
+    ASSERT1(weapon != NULL)
+
+    if (!m_target.GetIsValid())
+        return Ship::GetMuzzleDirection(weapon);
+
+    FloatVector2 target_offset(
+        GetObjectLayer()->GetAdjustedCoordinates(
+            m_target->GetTranslation(),
+            GetTranslation())
+        -
+        GetTranslation());
+    return target_offset.GetNormalization();
 }
 
 void Shade::SetTarget (Mortal *const target)

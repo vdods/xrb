@@ -39,7 +39,6 @@ DISASTEROIDS:
 - make Demi track the number of enemies it has spawned so it doesn't make too many
 - there seems to be a bug in the aiming in the front weapon of Demi
 - make Shade circle around the player once it has locked on
-- there seems to be a bug in the aiming of Shade (but only the first shot)
 - Interloper shouldn't flip around immediately
 - take out the low-pass filter for ship angle in the enemy ships
 - there seems to be a bug in the tractoring in Devourment (sometimes the beam
