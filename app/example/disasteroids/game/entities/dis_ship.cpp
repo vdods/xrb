@@ -112,6 +112,13 @@ Float Ship::GetShipScaleFactor (EntityType const ship_type, Uint8 const enemy_le
     }
 }
 
+void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
+{
+    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
+    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+    m_reticle_coordinates = GetObjectLayer()->GetAdjustedCoordinates(reticle_coordinates, GetTranslation());
+}
+
 void Ship::HandleNewOwnerObject ()
 {
     SetScaleFactor(GetShipScaleFactor());

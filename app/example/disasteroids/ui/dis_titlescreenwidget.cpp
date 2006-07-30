@@ -144,12 +144,12 @@ bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput co
 // ///////////////////////////////////////////////////////////////////////////
 
 #define STATE_MACHINE_STATUS(state_name) \
-    if (input == SM_ENTER) \
+    /* if (input == SM_ENTER) \
         fprintf(stderr, "TitleScreenWidget: --> " state_name "\n"); \
     else if (input == SM_EXIT) \
         fprintf(stderr, "TitleScreenWidget: <-- " state_name "\n"); \
     else \
-        fprintf(stderr, "TitleScreenWidget: input: %u\n", input);
+        fprintf(stderr, "TitleScreenWidget: input: %u\n", input);*/
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&TitleScreenWidget::x)
 

@@ -37,12 +37,7 @@ public:
     virtual bool GetIsShip () const { return true; }
     bool GetIsDisabled () const { return m_disable_time > 0.0f; }
 
-    inline void SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
-    {
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
-        m_reticle_coordinates = reticle_coordinates;
-    }
+    void SetReticleCoordinates (FloatVector2 const &reticle_coordinates);
     inline void SetEngineRightLeftInput (Sint8 const engine_right_left_input)
     {
         ASSERT1(engine_right_left_input >= -SINT8_UPPER_BOUND)

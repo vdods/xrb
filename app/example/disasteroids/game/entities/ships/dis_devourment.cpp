@@ -129,6 +129,21 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // weapons, etc must be activated/simulated manually here.
 
     AimShipAtReticleCoordinates(frame_dt);
+    // if we're not facing the target nearly enough, set the tractor inputs to 0
+    {
+        static Float const s_max_tractor_angle = 15.0f;
+
+        FloatVector2 target_direction(GetReticleCoordinates() - GetTranslation());
+        if (!target_direction.GetIsZero())
+        {
+            Float angle_delta = Math::GetCanonicalAngle(Math::Atan(target_direction) - GetAngle());
+            if (Abs(angle_delta) > s_max_tractor_angle)
+            {
+                SetWeaponPrimaryInput(0);
+                SetWeaponSecondaryInput(0);
+            }
+        }
+    }
     // set the weapon inputs and activate
     m_mouth_tractor->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
@@ -274,20 +289,23 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
 
     SetReticleCoordinates(m_target->GetTranslation());
 
-    FloatVector2 mouth_position(GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle()));
     FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
 
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
-    static Float const s_give_up_distance = 200.0f;
-    Float target_distance = (target_position - mouth_position).GetLength();
-    if (target_distance <= s_consume_distance + m_target->GetScaleFactor())
+    Float const give_up_distance =
+        ms_mouth_tractor_range[GetEnemyLevel()] +
+        0.5f * ms_mouth_tractor_beam_radius[GetEnemyLevel()] +
+        GetScaleFactor();
+
+    Float target_distance = (target_position - GetTranslation()).GetLength();
+    if (target_distance <= s_consume_distance + GetScaleFactor() + m_target->GetScaleFactor())
     {
         m_think_state = THINK_STATE(Consume);
         m_next_whatever_time = time + 3.0f;
         return;
     }
-    else if (target_distance > s_give_up_distance)
+    else if (target_distance > give_up_distance)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -357,7 +375,6 @@ void Devourment::Consume (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 mouth_position(GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle()));
     FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
 
     // set the reticle coordinates and aim the mouth tractor
@@ -366,8 +383,8 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
 
     // if we're no longer close enough to the target, transition to Pursue
-    static Float const s_pursue_distance = 40.0f;
-    if ((target_position - mouth_position).GetLength() > s_pursue_distance + m_target->GetScaleFactor())
+    Float const pursue_distance = 40.0f + GetScaleFactor();
+    if ((target_position - GetTranslation()).GetLength() > pursue_distance + m_target->GetScaleFactor())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -408,7 +425,7 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
 
     Float scan_radius =
         ms_mouth_tractor_range[GetEnemyLevel()] +
-        ms_mouth_tractor_beam_radius[GetEnemyLevel()];
+        GetScaleFactor();
 
     // scan area for targets
     AreaTraceList area_trace_list;
@@ -440,15 +457,19 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
         }
 
         // we're only interested in Mortals
-        if (dynamic_cast<Mortal *>(entity) != NULL)
+        if (entity->GetIsMortal())
         {
+            ASSERT1(dynamic_cast<Mortal *>(entity) != NULL)
+
             // if no target, use the current game object
             if (!target.GetIsValid())
                 target = entity->GetReference();
-            // only override the current target if the current
-            // game object is closer to the optimal mass
+            // only override the current target if the current game object is
+            // closer to the optimal mass.  the -0.01f bidness is so if there
+            // are multiple potential targets of the exact same mass, we don't
+            // switch between them really fast between frames.
             else if (Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
-                     Abs(target->GetFirstMoment() - s_optimal_target_mass))
+                     Abs(target->GetFirstMoment() - s_optimal_target_mass) - 0.01f)
             {
                 // if so, set target
                 target = entity->GetReference();

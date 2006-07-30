@@ -621,12 +621,12 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
 // ///////////////////////////////////////////////////////////////////////////
 
 #define STATE_MACHINE_STATUS(state_name) \
-    if (input == SM_ENTER) \
+    /* if (input == SM_ENTER) \
         fprintf(stderr, "World: --> " state_name "\n"); \
     else if (input == SM_EXIT) \
         fprintf(stderr, "World: <-- " state_name "\n"); \
     else if (input != IN_PROCESS_FRAME) \
-        fprintf(stderr, "World: input: %u\n", input);
+        fprintf(stderr, "World: input: %u\n", input);*/
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x)
 
