@@ -96,16 +96,13 @@ public:
     void SetIsMinHeightFixedToTextHeight (bool is_min_height_fixed_to_text_height);
     void SetIsMaxHeightFixedToTextHeight (bool is_max_height_fixed_to_text_height);
     void SetIsHeightFixedToTextHeight (bool is_height_fixed_to_text_height);
+    void SetIsMinSizeFixedToTextSize (bool is_min_size_fixed_to_text_size);
+    void SetIsMaxSizeFixedToTextSize (bool is_max_size_fixed_to_text_size);
     void SetIsSizeFixedToTextSize (bool is_size_fixed_to_text_size);
 
     virtual void Draw (RenderContext const &render_context) const = 0;
 
 protected:
-
-    // NOT part of WidgetSkinHandler
-    virtual void HandleChangedFont ();
-    virtual void HandleChangedFrameMargins ();
-    virtual void HandleChangedContentMargins ();
 
     inline Color const &GetRenderTextColor () const { return m_render_text_color; }
     inline Resource<Font> const &GetRenderFont () const { return m_render_font; }
@@ -113,9 +110,17 @@ protected:
     inline void SetRenderTextColor (Color const &render_text_color) { m_render_text_color = render_text_color; }
     virtual void SetRenderFont (Resource<Font> const &render_font);
 
+    // NOT part of WidgetSkinHandler
+    virtual void HandleChangedFont ();
+    virtual void HandleChangedFrameMargins ();
+    virtual void HandleChangedContentMargins ();
+
     virtual void UpdateRenderTextColor ();
     virtual void UpdateRenderFont ();
 
+    // if you need to specify a custom text bounding box accessor,
+    // do it with an override of this.
+    virtual ScreenCoordRect GetTextRect () const;
     // if you want to clamp m_is_min_width_fixed_to_text_width and all
     // that to certain values, do it in an override of this.
     virtual void UpdateMinAndMaxSizesFromText ();

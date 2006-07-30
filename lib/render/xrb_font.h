@@ -53,11 +53,12 @@ public:
     struct LineFormat
     {
         char const *m_ptr;
-        ScreenCoord m_length;
+        ScreenCoord m_width;
         Uint32 m_glyph_count;
     }; // end of struct Font::LineFormat
 
     typedef std::vector<LineFormat> LineFormatVector;
+    typedef LineFormatVector::const_iterator LineFormatVectorConstIterator;
 
     virtual ~Font () { }
 
@@ -74,9 +75,8 @@ public:
 
     // returns the rectangle containing the given string as rendered in
     // this font.  the rectangle's lower left corner is at (0, 0).
-    ScreenCoordRect GetStringRect (
-        char const *string,
-        ScreenCoordVector2 const &initial_pen_position = ScreenCoordVector2::ms_zero) const;
+    ScreenCoordRect GetStringRect (char const *string) const;
+    ScreenCoordRect GetStringRect (LineFormatVector const &line_format_vector) const;
 
     // draw the given string, starting at the given position.  the position's
     // meaning is indicated by the return value of GetInitialPenOrientation().
@@ -86,7 +86,7 @@ public:
         char const *string) const;
 
     // generates the formatting necessary to draw text of alignment other than
-    // (LEFT, LEFT), or text with word-wrapping.
+    // (LEFT, TOP), or text with word-wrapping.
     void GenerateLineFormatVector (
         char const *source_string,
         LineFormatVector *dest_line_format_vector) const;
@@ -94,7 +94,7 @@ public:
     // draws formatted text with advanced alignment and/or word-wrapping.
     void DrawLineFormattedText (
         RenderContext const &render_context,
-        ScreenCoordRect const &text_rect,
+        ScreenCoordRect const &draw_rect,
         char const *source_string,
         LineFormatVector const &line_format_vector,
         Alignment2 const &alignment) const;

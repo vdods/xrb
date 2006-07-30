@@ -150,33 +150,92 @@ int main (int argc, char **argv)
         // do something.  This button isn't connected to anything, but we'll get
         // to that later.
         new Button("This button does nothing", main_layout, "do-nothing button");
+
         // Layouts, just like any Widget subclass, can be contained within
         // other Layouts.  This layout will be used to place a text Label
-        // and a LineEdit side-by-side.
-        Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "label and line-edit layout");
-        // Create a text Label to indicate what to do with the following LineEdit.
-        new Label("You can enter up to 30 characters in this LineEdit ->", sub_layout, "indicator label");
-        // a LineEdit is a text-entry box.  the first parameter indicates the
-        // maximum number of characters that can be entered.
-        new LineEdit(30, sub_layout, "30-char line edit");
-        // Another text Label.  It notes that holding down a key will not cause
-        // the character to repeat.  Doing this will be discussed later.  This
-        // Label demonstrates word wrapping and justification.
-        Label *note_label =
-            new Label(
-                "Note that holding a key down while typing into the LineEdit does "
-                "not cause more than one character to be entered (i.e. no keyboard "
-                "repeating).  Doing so complicates the event-polling loop, and "
-                "it was omitted to keep this example as simple as possible.  For "
-                "now, just admire the fancy word-wrapping done by this Label.",
-                main_layout,
-                "note label with word-wrapping");
-        // This call does exactly what it looks like it does.
-        note_label->SetWordWrap(true);
-        // This call disables text-centering along the X axis, and changes it
-        // into spaced text (the characters are spaced out so that each line
-        // spans the entire Label).
-        note_label->SetAlignment(Dim::X, SPACED);
+        // and a LineEdit side-by-side.  The code block is only being used
+        // to indicate creation of the layout and its child widgets.
+        {
+            Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "label and line-edit layout");
+
+            // Create a text Label to indicate what to do with the following LineEdit.
+            new Label("You can enter up to 30 characters in this LineEdit ->", sub_layout, "indicator label");
+            // a LineEdit is a text-entry box.  the first parameter indicates the
+            // maximum number of characters that can be entered.
+            new LineEdit(30, sub_layout, "30-char line edit");
+        }
+
+        // add another horizontal Layout so we can have a row of text Labels
+        // to demonstrate the word wrapping and alignment properties.  Again,
+        // the code block is only being used to indicate creation of the layout
+        // and its child widgets.
+        {
+            Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "note label layout");
+
+            // Another text Label.  It notes that holding down a key will not cause
+            // the character to repeat.  Doing this will be discussed later.  This
+            // Label demonstrates word wrapping and justification.
+            Label *note_label =
+                new Label(
+                    "Note that holding a key down while typing into the\n"
+                    "LineEdit does not cause more than one character to\n"
+                    "be entered (i.e. no keyboard repeating).  Doing so\n"
+                    "complicates the event-polling loop, and it was\n"
+                    "omitted to keep this example as simple as possible.\n"
+                    "Notice how this text Label is wider than the other\n"
+                    "three adjacent Labels.  This is because by default,\n"
+                    "text Labels' minimum width is fixed to the text\n"
+                    "width, so none of the text is cut off.  The other\n"
+                    "three Labels can be resized horizontally because\n"
+                    "they each have word wrapping enabled, so the text\n"
+                    "formatting is dictated by the width of the Label.",
+                    sub_layout,
+                    "left-aligned note label");
+            // All text will be aligned with the left edge of the Label.  By default,
+            // a Label's alignment is CENTER.
+            note_label->SetAlignment(Dim::X, LEFT);
+
+            // Add another label, this time, with centered alignment.
+            note_label =
+                new Label(
+                    "This Label widget is using word wrapping with center alignment.  "
+                    "The width of the Label dictates where the words will be wrapped.",
+                    sub_layout,
+                    "center-aligned note label with word wrapping");
+            // This call does exactly what it looks like it does.
+            note_label->SetWordWrap(true);
+            // The default alignment is already CENTER, so we don't need to do anything.
+
+            // Add another label, this time, with right alignment.
+            note_label =
+                new Label(
+                    "This Label widget is using word wrapping with right alignment. "
+                    "Any Label (not just word wrapped Labels) can use the alignment "
+                    "property, including aspect-ratio-preserving picture Labels.",
+                    sub_layout,
+                    "right-aligned note label with word wrapping");
+            // This call does exactly what it looks like it does.
+            note_label->SetWordWrap(true);
+            // All text will be aligned with the right edge of the Label.
+            note_label->SetAlignment(Dim::X, RIGHT);
+
+            // Add another label, this time, with right alignment.
+            note_label =
+                new Label(
+                    "This Label widget uses word wrapping with character spacing. "
+                    "Spacing is a special type of alignment that only applies to word "
+                    "wrapped Labels, and will attempt to space the characters out to "
+                    "fill out the entire width of the Label.  The extra spacing between "
+                    "characters seems to sometimes screw up the font's kerning (the "
+                    "space between specific glyph pairs to make the text look more "
+                    "natural).",
+                    sub_layout,
+                    "spaced note label with word wrapping");
+            // This call does exactly what it looks like it does.
+            note_label->SetWordWrap(true);
+            // see note_label's text for a description.
+            note_label->SetAlignment(Dim::X, SPACED);
+        }
 
         // Note the apparently dangling pointers that the above calls to "new"
         // returned.  We don't have to ever worry about deleting widgets

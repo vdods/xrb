@@ -121,8 +121,7 @@ void TextWidget::SetFontHeight (ScreenCoord const font_height)
     }
 }
 
-void TextWidget::SetIsMinWidthFixedToTextWidth (
-    bool const is_min_width_fixed_to_text_width)
+void TextWidget::SetIsMinWidthFixedToTextWidth (bool const is_min_width_fixed_to_text_width)
 {
     if (m_is_min_width_fixed_to_text_width != is_min_width_fixed_to_text_width)
     {
@@ -131,8 +130,7 @@ void TextWidget::SetIsMinWidthFixedToTextWidth (
     }
 }
 
-void TextWidget::SetIsMaxWidthFixedToTextWidth (
-    bool const is_max_width_fixed_to_text_width)
+void TextWidget::SetIsMaxWidthFixedToTextWidth (bool const is_max_width_fixed_to_text_width)
 {
     if (m_is_max_width_fixed_to_text_width != is_max_width_fixed_to_text_width)
     {
@@ -141,8 +139,7 @@ void TextWidget::SetIsMaxWidthFixedToTextWidth (
     }
 }
 
-void TextWidget::SetIsWidthFixedToTextWidth (
-    bool const is_width_fixed_to_text_width)
+void TextWidget::SetIsWidthFixedToTextWidth (bool const is_width_fixed_to_text_width)
 {
     if (m_is_min_width_fixed_to_text_width != is_width_fixed_to_text_width ||
         m_is_max_width_fixed_to_text_width != is_width_fixed_to_text_width)
@@ -153,8 +150,7 @@ void TextWidget::SetIsWidthFixedToTextWidth (
     }
 }
 
-void TextWidget::SetIsMinHeightFixedToTextHeight (
-    bool const is_min_height_fixed_to_text_height)
+void TextWidget::SetIsMinHeightFixedToTextHeight (bool const is_min_height_fixed_to_text_height)
 {
     if (m_is_min_height_fixed_to_text_height != is_min_height_fixed_to_text_height)
     {
@@ -163,8 +159,7 @@ void TextWidget::SetIsMinHeightFixedToTextHeight (
     }
 }
 
-void TextWidget::SetIsMaxHeightFixedToTextHeight (
-    bool const is_max_height_fixed_to_text_height)
+void TextWidget::SetIsMaxHeightFixedToTextHeight (bool const is_max_height_fixed_to_text_height)
 {
     if (m_is_max_height_fixed_to_text_height != is_max_height_fixed_to_text_height)
     {
@@ -173,8 +168,7 @@ void TextWidget::SetIsMaxHeightFixedToTextHeight (
     }
 }
 
-void TextWidget::SetIsHeightFixedToTextHeight (
-    bool const is_height_fixed_to_text_height)
+void TextWidget::SetIsHeightFixedToTextHeight (bool const is_height_fixed_to_text_height)
 {
     if (m_is_min_height_fixed_to_text_height != is_height_fixed_to_text_height ||
         m_is_max_height_fixed_to_text_height != is_height_fixed_to_text_height)
@@ -185,8 +179,29 @@ void TextWidget::SetIsHeightFixedToTextHeight (
     }
 }
 
-void TextWidget::SetIsSizeFixedToTextSize (
-    bool const is_size_fixed_to_text_size)
+void TextWidget::SetIsMinSizeFixedToTextSize (bool const is_min_size_fixed_to_text_size)
+{
+    if (m_is_min_width_fixed_to_text_width != is_min_size_fixed_to_text_size ||
+        m_is_min_height_fixed_to_text_height != is_min_size_fixed_to_text_size)
+    {
+        m_is_min_width_fixed_to_text_width = is_min_size_fixed_to_text_size;
+        m_is_min_height_fixed_to_text_height = is_min_size_fixed_to_text_size;
+        UpdateMinAndMaxSizesFromText();
+    }
+}
+
+void TextWidget::SetIsMaxSizeFixedToTextSize (bool const is_max_size_fixed_to_text_size)
+{
+    if (m_is_max_width_fixed_to_text_width != is_max_size_fixed_to_text_size ||
+        m_is_max_height_fixed_to_text_height != is_max_size_fixed_to_text_size)
+    {
+        m_is_max_width_fixed_to_text_width = is_max_size_fixed_to_text_size;
+        m_is_max_height_fixed_to_text_height = is_max_size_fixed_to_text_size;
+        UpdateMinAndMaxSizesFromText();
+    }
+}
+
+void TextWidget::SetIsSizeFixedToTextSize (bool const is_size_fixed_to_text_size)
 {
     if (m_is_min_width_fixed_to_text_width != is_size_fixed_to_text_size ||
         m_is_max_width_fixed_to_text_width != is_size_fixed_to_text_size ||
@@ -197,6 +212,15 @@ void TextWidget::SetIsSizeFixedToTextSize (
         m_is_max_width_fixed_to_text_width = is_size_fixed_to_text_size;
         m_is_min_height_fixed_to_text_height = is_size_fixed_to_text_size;
         m_is_max_height_fixed_to_text_height = is_size_fixed_to_text_size;
+        UpdateMinAndMaxSizesFromText();
+    }
+}
+
+void TextWidget::SetRenderFont (Resource<Font> const &render_font)
+{
+    if (m_render_font != render_font)
+    {
+        m_render_font = render_font;
         UpdateMinAndMaxSizesFromText();
     }
 }
@@ -218,15 +242,6 @@ void TextWidget::HandleChangedContentMargins ()
     UpdateMinAndMaxSizesFromText();
 }
 
-void TextWidget::SetRenderFont (Resource<Font> const &render_font)
-{
-    if (m_render_font != render_font)
-    {
-        m_render_font = render_font;
-        UpdateMinAndMaxSizesFromText();
-    }
-}
-
 void TextWidget::UpdateRenderTextColor ()
 {
     SetRenderTextColor(GetTextColor());
@@ -237,30 +252,26 @@ void TextWidget::UpdateRenderFont ()
     SetRenderFont(GetFont());
 }
 
+ScreenCoordRect TextWidget::GetTextRect () const
+{
+    return GetRenderFont()->GetStringRect(GetText().c_str());
+}
+
 void TextWidget::UpdateMinAndMaxSizesFromText ()
 {
     if (!GetRenderFont().GetIsValid())
         return;
 
-    ScreenCoordRect string_rect(GetRenderFont()->GetStringRect(GetText().c_str()));
-    ScreenCoord width =
-        string_rect.GetWidth() +
-        2 * (GetFrameMargins()[Dim::X] + GetContentMargins()[Dim::X]);
-    ScreenCoord height =
-        string_rect.GetHeight() +
-        2 * (GetFrameMargins()[Dim::Y] + GetContentMargins()[Dim::Y]);
-
-    // TODO: keep "preferred" min/max sizes, so that they can be reverted to
-    // if/when the text-based min/max sizes no longer apply
+    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (GetFrameMargins() + GetContentMargins()));
 
     if (m_is_min_width_fixed_to_text_width)
-        SetSizeProperty(SizeProperties::MIN, Dim::X, width);
+        SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);
     if (m_is_max_width_fixed_to_text_width)
-        SetSizeProperty(SizeProperties::MAX, Dim::X, width);
+        SetSizeProperty(SizeProperties::MAX, Dim::X, size[Dim::X]);
     if (m_is_min_height_fixed_to_text_height)
-        SetSizeProperty(SizeProperties::MIN, Dim::Y, height);
+        SetSizeProperty(SizeProperties::MIN, Dim::Y, size[Dim::Y]);
     if (m_is_max_height_fixed_to_text_height)
-        SetSizeProperty(SizeProperties::MAX, Dim::Y, height);
+        SetSizeProperty(SizeProperties::MAX, Dim::Y, size[Dim::Y]);
     SetSizePropertyEnabled(
         SizeProperties::MIN,
         Bool2(m_is_min_width_fixed_to_text_width, m_is_min_height_fixed_to_text_height));

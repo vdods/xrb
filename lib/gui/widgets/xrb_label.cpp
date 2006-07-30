@@ -31,8 +31,7 @@ Label::Label (
     m_alignment = Alignment2(CENTER, CENTER);
     m_word_wrap = false;
     m_is_picture_label = false;
-    SetIsMinHeightFixedToTextHeight(true);
-    SetIsMinWidthFixedToTextWidth(true);
+    SetIsMinSizeFixedToTextSize(true);
     ASSERT1(!m_picture.GetIsValid())
     ASSERT1(!m_render_picture.GetIsValid())
 }
@@ -56,39 +55,50 @@ Label::Label (
 
 void Label::SetText (std::string const &text)
 {
-    ASSERT1(!m_is_picture_label)
+    if (m_is_picture_label)
+        return;
+
     DirtyTextFormatting();
     TextWidget::SetText(text);
 }
 
 void Label::SetAlignment (Alignment2 const &alignment)
 {
-    ASSERT1(!m_is_picture_label)
+    if (m_is_picture_label)
+        return;
+
     m_alignment = alignment;
 }
 
 void Label::SetAlignment (Uint32 const component, Alignment const alignment)
 {
-    ASSERT1(!m_is_picture_label)
+    if (m_is_picture_label)
+        return;
+
     ASSERT1(component <= 1)
     m_alignment[component] = alignment;
 }
 
 void Label::SetWordWrap (bool const word_wrap)
 {
-    ASSERT1(!m_is_picture_label)
+    if (m_is_picture_label)
+        return;
+
+    ASSERT1(GetRenderFont().GetIsValid())
+
     if (m_word_wrap != word_wrap)
     {
         m_word_wrap = word_wrap;
         DirtyTextFormatting();
-        // this will set all m_is_min_width_fixed_to_text_width etc to false
         UpdateMinAndMaxSizesFromText();
     }
 }
 
 void Label::SetPicture (std::string const &picture_name)
 {
-    ASSERT1(m_is_picture_label)
+    if (!m_is_picture_label)
+        return;
+
     ASSERT1(!picture_name.empty())
 
     Resource<GLTexture> picture =
@@ -104,7 +114,9 @@ void Label::SetPicture (std::string const &picture_name)
 
 void Label::SetPicture (Resource<GLTexture> const &picture)
 {
-    ASSERT1(m_is_picture_label)
+    if (!m_is_picture_label)
+        return;
+
     if (m_picture != picture)
     {
         m_picture = picture;
@@ -129,20 +141,20 @@ ScreenCoordVector2 Label::Resize (ScreenCoordVector2 const &size)
 {
     if (!m_is_picture_label && m_word_wrap && GetSize()[Dim::X] != size[Dim::X])
         DirtyTextFormatting();
-    return Widget::Resize(size);
+    Widget::Resize(size);
+    UpdateMinAndMaxSizesFromText();
+    return GetSize();
 }
 
 void Label::HandleChangedFrameMargins ()
 {
-    if (!m_is_picture_label && m_word_wrap)
-        DirtyTextFormatting();
+    DirtyTextFormatting();
     TextWidget::HandleChangedFrameMargins();
 }
 
 void Label::HandleChangedContentMargins ()
 {
-    if (!m_is_picture_label && m_word_wrap)
-        DirtyTextFormatting();
+    DirtyTextFormatting();
     TextWidget::HandleChangedContentMargins();
 }
 
@@ -226,15 +238,20 @@ void Label::DrawPicture (RenderContext const &render_context) const
 
 void Label::SetRenderFont (Resource<Font> const &render_font)
 {
-    ASSERT1(!m_is_picture_label)
-    if (m_word_wrap)
-        DirtyTextFormatting();
+    if (m_is_picture_label)
+        return;
+
     TextWidget::SetRenderFont(render_font);
+
+    DirtyTextFormatting();
+    UpdateMinAndMaxSizesFromText();
 }
 
-void Label:: SetRenderPicture (Resource<GLTexture> const &render_picture)
+void Label::SetRenderPicture (Resource<GLTexture> const &render_picture)
 {
-    ASSERT1(m_is_picture_label)
+    if (!m_is_picture_label)
+        return;
+
     m_render_picture = render_picture;
 }
 
@@ -249,23 +266,33 @@ void Label::UpdateRenderPicture ()
     SetRenderPicture(GetPicture());
 }
 
+ScreenCoordRect Label::GetTextRect () const
+{
+    ASSERT1(!m_is_picture_label)
+    ASSERT1(GetRenderFont().GetIsValid())
+
+    UpdateCachedFormattedText();
+    return GetRenderFont()->GetStringRect(m_line_format_vector);
+}
+
 void Label::UpdateMinAndMaxSizesFromText ()
 {
     // no text-based min/max sizes if this is a picture label
     if (m_is_picture_label)
         return;
 
-    // if word-wrapping is enabled, then we can't base the min/max size
-    // of this widget off the text, because the size of the widget dictates
+    ASSERT1(GetRenderFont().GetIsValid())
+
+    // if word-wrapping is enabled, then we can't base the min/max width
+    // of this widget off the text, because the width of the widget dictates
     // the formatting of the text.
     if (m_word_wrap)
     {
         m_is_min_width_fixed_to_text_width = false;
         m_is_max_width_fixed_to_text_width = false;
-        m_is_min_height_fixed_to_text_height = false;
-        m_is_max_height_fixed_to_text_height = false;
     }
 
+    UpdateCachedFormattedText();
     TextWidget::UpdateMinAndMaxSizesFromText();
 }
 

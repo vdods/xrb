@@ -25,15 +25,11 @@ namespace Xrb
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
-ScreenCoordRect Font::GetStringRect (
-    char const *const string,
-    ScreenCoordVector2 const &initial_pen_position) const
+ScreenCoordRect Font::GetStringRect (char const *const string) const
 {
     ASSERT1(string != NULL)
 
-    ScreenCoordVector2 pen_position_26_6(
-        initial_pen_position[Dim::X] << 6,
-        initial_pen_position[Dim::Y] << 6);
+    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     ScreenCoordVector2 pen_position_span_26_6(pen_position_26_6);
 
     char const *current_glyph = string;
@@ -46,7 +42,7 @@ ScreenCoordRect Font::GetStringRect (
         // move through all the normal glyphs (do no spacing)
         MoveThroughGlyph(
             &pen_position_26_6,
-            initial_pen_position,
+            ScreenCoordVector2::ms_zero,
             current_glyph,
             next_glyph,
             NULL,
@@ -60,7 +56,7 @@ ScreenCoordRect Font::GetStringRect (
     // tack on a newline at the end so the last line is counted (do no spacing)
     MoveThroughGlyph(
         &pen_position_26_6,
-        initial_pen_position,
+        ScreenCoordVector2::ms_zero,
         "\n",
         NULL,
         NULL,
@@ -68,22 +64,30 @@ ScreenCoordRect Font::GetStringRect (
     // update the bounding box one more time
     TrackBoundingBox(&pen_position_span_26_6, pen_position_26_6);
 
-    // round pen_position_span away from inital_pen_position
-    {
-        pen_position_span_26_6[Dim::X] -= initial_pen_position[Dim::X]<<6;
-        pen_position_span_26_6[Dim::X] = Math::FixedPointRound<6>(pen_position_span_26_6[Dim::X]);
-        pen_position_span_26_6[Dim::X] += initial_pen_position[Dim::X]<<6;
-
-        pen_position_span_26_6[Dim::Y] -= initial_pen_position[Dim::Y]<<6;
-        pen_position_span_26_6[Dim::Y] = Math::FixedPointRound<6>(pen_position_span_26_6[Dim::Y]);
-        pen_position_span_26_6[Dim::Y] += initial_pen_position[Dim::Y]<<6;
-    }
+    // round pen_position_span
+    pen_position_span_26_6[Dim::X] = Math::FixedPointRound<6>(pen_position_span_26_6[Dim::X]);
+    pen_position_span_26_6[Dim::Y] = Math::FixedPointRound<6>(pen_position_span_26_6[Dim::Y]);
 
     return ScreenCoordRect(
-        Min(pen_position_span_26_6[Dim::X]>>6, initial_pen_position[Dim::X]),
-        Min(pen_position_span_26_6[Dim::Y]>>6, initial_pen_position[Dim::Y]),
-        Max(pen_position_span_26_6[Dim::X]>>6, initial_pen_position[Dim::X]),
-        Max(pen_position_span_26_6[Dim::Y]>>6, initial_pen_position[Dim::Y]));
+        Min(pen_position_span_26_6[Dim::X]>>6, 0),
+        Min(pen_position_span_26_6[Dim::Y]>>6, 0),
+        Max(pen_position_span_26_6[Dim::X]>>6, 0),
+        Max(pen_position_span_26_6[Dim::Y]>>6, 0));
+}
+
+ScreenCoordRect Font::GetStringRect (LineFormatVector const &line_format_vector) const
+{
+    ASSERT1(!line_format_vector.empty())
+
+    ScreenCoord width = 0;
+    for (Font::LineFormatVectorConstIterator it = line_format_vector.begin(),
+                                             it_end = line_format_vector.end();
+         it != it_end;
+         ++it)
+    {
+        width = Max(width, it->m_width);
+    }
+    return ScreenCoordRect(ScreenCoordVector2(width, line_format_vector.size() * GetPixelHeight()));
 }
 
 void Font::DrawString (
@@ -108,7 +112,7 @@ void Font::GenerateLineFormatVector (
 
     dest_line_format_vector->clear();
 
-    ScreenCoordVector2 pen_position_26_6;
+    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     LineFormat line_format;
     bool line_start = true;
     // iterate over the whole string
@@ -136,32 +140,32 @@ void Font::GenerateLineFormatVector (
             // if the text direction is RIGHT_TO_LEFT, the appropriate
             // pen_position_26_6 component will be negative, so
             // use its absolute value.
-            line_format.m_length = Abs(pen_position_26_6[Dim::X]) >> 6;
+            line_format.m_width = Abs(pen_position_26_6[Dim::X]) >> 6;
             dest_line_format_vector->push_back(line_format);
         }
-        // otherwise move through the glyph
+        // otherwise increment the glyph count
         else
-        {
-            MoveThroughGlyph(
-                &pen_position_26_6,
-                ScreenCoordVector2::ms_zero,
-                current_glyph,
-                next_glyph);
-
             ++line_format.m_glyph_count;
-        }
+
+        // now move through the glyph (which, if a newline,
+        // will advance the pen downward).
+        MoveThroughGlyph(
+            &pen_position_26_6,
+            ScreenCoordVector2::ms_zero,
+            current_glyph,
+            next_glyph);
 
         // advance one glyph
         current_glyph = next_glyph;
     }
     // make sure to push the last one
-    line_format.m_length = Abs(pen_position_26_6[Dim::X]) >> 6;
+    line_format.m_width = Abs(pen_position_26_6[Dim::X]) >> 6;
     dest_line_format_vector->push_back(line_format);
 }
 
 void Font::DrawLineFormattedText (
     RenderContext const &render_context,
-    ScreenCoordRect const &text_rect,
+    ScreenCoordRect const &draw_rect,
     char const *const source_string,
     LineFormatVector const &line_format_vector,
     Alignment2 const &alignment) const
@@ -175,12 +179,12 @@ void Font::DrawLineFormattedText (
     {
         if (m_text_direction == LEFT_TO_RIGHT && alignment[Dim::X] == LEFT)
         {
-            DrawString(render_context, text_rect.GetTopLeft(), source_string);
+            DrawString(render_context, draw_rect.GetTopLeft(), source_string);
             return;
         }
         else if (m_text_direction == RIGHT_TO_LEFT && alignment[Dim::X] == RIGHT)
         {
-            DrawString(render_context, text_rect.GetTopRight(), source_string);
+            DrawString(render_context, draw_rect.GetTopRight(), source_string);
             return;
         }
     }
@@ -191,10 +195,10 @@ void Font::DrawLineFormattedText (
     ScreenCoordVector2 initial_pen_position;
     switch (m_text_direction)
     {
-        case LEFT_TO_RIGHT: initial_pen_position[Dim::X] = text_rect.GetLeft(); break;
-        case RIGHT_TO_LEFT: initial_pen_position[Dim::X] = text_rect.GetRight(); break;
+        case LEFT_TO_RIGHT: initial_pen_position[Dim::X] = draw_rect.GetLeft(); break;
+        case RIGHT_TO_LEFT: initial_pen_position[Dim::X] = draw_rect.GetRight(); break;
     }
-    initial_pen_position[Dim::Y] = text_rect.GetTop();
+    initial_pen_position[Dim::Y] = draw_rect.GetTop();
     ScreenCoordVector2 pen_position(initial_pen_position);
 
     switch (alignment[Dim::Y])
@@ -202,22 +206,22 @@ void Font::DrawLineFormattedText (
         case TOP: break; // pen_position and total_spacing are correct already
 
         case CENTER:
-            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (text_rect.GetHeight() - text_height) / 2;
+            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height) / 2;
             // total spacing is already set up correctly
             break;
 
         case BOTTOM:
-            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (text_rect.GetHeight() - text_height);
+            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height);
             // total spacing is already set up correctly
             break;
 
         case SPACED:
             if (line_format_vector.size() == 1)
-                pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (text_rect.GetHeight() - text_height) / 2;
+                pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height) / 2;
                 // total spacing is set up correctly
             else
                 // current position is set up correctly
-                total_spacing[Dim::Y] = text_rect.GetHeight() - text_height;
+                total_spacing[Dim::Y] = draw_rect.GetHeight() - text_height;
             // range checking
             if (total_spacing[Dim::Y] < 0)
                 total_spacing[Dim::Y] = 0;
@@ -239,28 +243,28 @@ void Font::DrawLineFormattedText (
                 if (m_text_direction == LEFT_TO_RIGHT)
                     pen_position[Dim::X] = initial_pen_position[Dim::X];
                 else
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] - text_rect.GetWidth() + line_format_vector[line].m_length;
+                    pen_position[Dim::X] = initial_pen_position[Dim::X] - draw_rect.GetWidth() + line_format_vector[line].m_width;
                 break;
 
             case CENTER:
                 if (m_text_direction == LEFT_TO_RIGHT)
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] + (text_rect.GetWidth() - line_format_vector[line].m_length) / 2;
+                    pen_position[Dim::X] = initial_pen_position[Dim::X] + (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
                 else
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] - (text_rect.GetWidth() - line_format_vector[line].m_length) / 2;
+                    pen_position[Dim::X] = initial_pen_position[Dim::X] - (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
                 break;
 
             case RIGHT:
                 if (m_text_direction == LEFT_TO_RIGHT)
-                    pen_position[Dim::X] = initial_pen_position[Dim::X] + text_rect.GetWidth() - line_format_vector[line].m_length;
+                    pen_position[Dim::X] = initial_pen_position[Dim::X] + draw_rect.GetWidth() - line_format_vector[line].m_width;
                 else
                     pen_position[Dim::X] = initial_pen_position[Dim::X];
                 break;
 
             case SPACED:
                 pen_position[Dim::X] = initial_pen_position[Dim::X];
-                total_spacing[Dim::X] = text_rect.GetWidth() - line_format_vector[line].m_length;
+                total_spacing[Dim::X] = draw_rect.GetWidth() - line_format_vector[line].m_width;
                 // if the line isn't long enough, don't space it out
-                if (3 * total_spacing[Dim::X] > text_rect.GetWidth())
+                if (total_spacing[Dim::X] > 4 * m_pixel_height)
                     total_spacing[Dim::X] = 0;
                 // range checking
                 else if (total_spacing[Dim::X] < 0)
@@ -503,7 +507,7 @@ void AsciiFont::GenerateWordWrappedString (
     // the width of the string rect
     ScreenCoord wrap_width_26_6 = text_area_size[Dim::X] << 6;
 
-    bool forced_newline = true;
+    bool forced_newline = false;
     bool line_start = true;
     char const *current_token;
     char const *next_token;
@@ -517,17 +521,13 @@ void AsciiFont::GenerateWordWrappedString (
         if (line_start)
         {
             current_pos_26_6 = 0;
-            if (forced_newline/* && m_indent*/) // assume indent is true for now
-            {
-                for (Uint32 i = 0; i < TAB_SIZE; ++i)
-                {
-                    *dest_string += '\t';
-                    current_pos_26_6 += GetTokenWidth_26_6("\t");
-                }
-            }
+            // if indents are to be put back in, they should go right here
+            if (forced_newline)
+                *dest_string += '\n';
             while (GetTokenClass(*current_token) == WHITESPACE)
                 current_token = GetStartOfNextToken(current_token);
             line_start = false;
+            forced_newline = false;
         }
 
         switch (GetTokenClass(*current_token))

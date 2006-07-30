@@ -271,10 +271,10 @@ if test "${NAN_SANITY_CHECK}" = "yes"; then
 fi
 
 ##############################################################################
-# add -Wall to the compiler flags
+# add some good stuff to the compiler flags
 ##############################################################################
 
-CXXFLAGS="${CXXFLAGS} -Wall"
+CXXFLAGS="${CXXFLAGS} -Wall -Werror"
 
 ##############################################################################
 # set up the include directory properly

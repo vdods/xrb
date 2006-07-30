@@ -156,7 +156,7 @@ void HighScores::Read (std::string const &filename)
         // points (unsigned integer)
         // wave_count (unsigned integer)
         // date (unsigned integer)
-        // hash (unsigned integer) -- TODO later
+        // hash (unsigned integer)
 
         DataFileArray const *high_scores = root->GetPathElementArray("|high_scores");
         if (high_scores == NULL)
