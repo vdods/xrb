@@ -31,8 +31,8 @@ namespace Dis
 {
 
 // PeaShooter properties
-Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 4.0f, 10.0f, 20.0f };
-Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 40.0f, 70.0f, 120.0f, 200.0f };
+Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 4.0f, 20.0f, 50.0f };
+Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 40.0f, 70.0f, 150.0f, 220.0f };
 Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
 Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f, 14.0f, 16.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
@@ -53,7 +53,7 @@ Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0
 // FlameThrower properties
 Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
 Float const FlameThrower::ms_min_required_primary_power[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
-Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 22.0f, 35.0f };
+Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f }; //{ 10.0f, 15.0f, 22.0f, 35.0f };
 Float const FlameThrower::ms_max_damage_per_fireball[UPGRADE_LEVEL_COUNT] = { 15.0f, 30.0f, 60.0f, 120.0f };
 Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 70.0f, 100.0f };
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };

@@ -29,7 +29,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 2000.0f, 4000.0f, 8000.0f };
+Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 2500.0f, 6250.0f, 15625.0f };
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
 Float const Devourment::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
@@ -37,8 +37,8 @@ Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.
 Float const Devourment::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 1600.0f, 2000.0f, 2400.0f, 2800.0f };
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Devourment::ms_mouth_damage_rate[ENEMY_LEVEL_COUNT] = { 10.0f, 25.0f, 50.0f, 80.0f };
-Float const Devourment::ms_mouth_tractor_range[ENEMY_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
-Float const Devourment::ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT] = { 700.0f, 1000.0f, 1500.0f, 2000.0f };
+Float const Devourment::ms_mouth_tractor_range[ENEMY_LEVEL_COUNT] = { 100.0f, 133.0f, 166.0f, 200.0f };
+Float const Devourment::ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT] = { 700.0f, 1200.0f, 1800.0f, 2500.0f };
 Float const Devourment::ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Devourment::ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
 

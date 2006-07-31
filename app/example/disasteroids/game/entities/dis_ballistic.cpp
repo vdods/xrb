@@ -32,14 +32,14 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                 m_initial_velocity = m_owner->GetVelocity();
                 m_first_think = false;
             }
-            
+
             // update the angle to reflect the direction of motion
             {
                 FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
                 if (!velocity_delta.GetIsZero())
                     SetAngle(Math::Atan(velocity_delta));
             }
-        
+
             // peform a line trace for frame_dt/2 time's worth
             // of velocity in front and behind this ballistic
             {
@@ -53,7 +53,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     GetPhysicalRadius(),
                     false,
                     &line_trace_binding_set);
-    
+
                 FloatVector2 collision_normal(trace_vector.GetNormalization());
                 for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
                                                  it_end = line_trace_binding_set.end();
@@ -63,11 +63,11 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     // don't hit ourselves
                     if (it->m_entity == this)
                         continue;
-    
+
                     // don't hit the entity that fired us
                     if (it->m_entity == *m_owner)
                         continue;
-    
+
                     FloatVector2 collision_location(trace_start + it->m_time * trace_vector);
                     bool there_was_a_collision =
                         CollidePrivate(
@@ -85,7 +85,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
         }
     }
     else
-    {    
+    {
         if (!m_first_think)
             ScheduleForDeletion(0.0f);
         else
@@ -133,6 +133,11 @@ bool Ballistic::CollidePrivate (
     if (collider->GetIsPowerup())
         return false;
 
+    // if this is a smart ballistic (m_perform_line_trace_for_accuracy
+    // is true), then don't hurt the owner
+    if (m_perform_line_trace_for_accuracy && *m_owner == collider)
+        return false;
+
     // if this call to CollidePrivate was the result of a LineTrace,
     // then we should call Collide on the other entity
     if (was_collision_from_line_trace)
@@ -162,7 +167,7 @@ bool Ballistic::CollidePrivate (
     }
 
     // spawn some sort of effect here
-    
+
     // it hit something, so get rid of it.
     ScheduleForDeletion(0.0f);
     return true;

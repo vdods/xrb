@@ -77,7 +77,7 @@ static Wave const gs_wave[] =
     },
     {
         {
-            {  40,   0,   0,   0 }, // Interloper
+            {  25,   0,   0,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   2,   0,   0,   0 }, // Devourment
@@ -90,7 +90,7 @@ static Wave const gs_wave[] =
     {
         {
             {   0,   0,   0,   0 }, // Interloper
-            {  35,   0,   0,   0 }, // Shade
+            {  25,   0,   0,   0 }, // Shade
             {   0,   0,   0,   0 }, // Revulsion
             {   2,   0,   0,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
@@ -121,6 +121,42 @@ static Wave const gs_wave[] =
         },
         0.15f,  // enemy ship threshold
         5.0f,   // wave intermission duration
+        false   // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   2,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   2,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.51f,  // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {  40,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   2,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.21f,  // enemy ship threshold
+        3.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   8,   6,   0,   0 }, // Revulsion
+            {   2,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.15f,  // enemy ship threshold
+        3.0f,   // wave intermission duration
         false   // notify new spawns of target
     },
     {
@@ -183,7 +219,7 @@ static Wave const gs_wave[] =
         11.0f,  // wave intermission duration
         false   // notify new spawns of target
     },
-    { // wave 10
+    {
         {
             {   0,   0,   3,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
@@ -303,7 +339,7 @@ static Wave const gs_wave[] =
         20.0f,  // wave intermission duration
         true    // notify new spawns of target
     },
-    { // wave 20
+    {
         {
             {   0,   5,   5,   0 }, // Interloper
             {   0,   5,   5,   0 }, // Shade
@@ -1117,14 +1153,14 @@ Asteroid *World::SpawnAsteroidOutOfView ()
             Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
         // this causes the randomness to favor smaller asteroids
         Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
-        scale_seed = Math::Pow(scale_seed, 2.5f);
+        scale_seed = Math::Pow(scale_seed, 3.0f);
         scale_factor = 55.0f * scale_seed + 5.0f;
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, scale_factor));
 
     Float first_moment = scale_factor * scale_factor;
     FloatVector2 velocity(
-        Math::RandomFloat(50.0f, 1000.0f) /
+        Math::RandomFloat(75.0f, 1500.0f) /
         Math::Sqrt(first_moment) *
         Math::UnitVector(Math::RandomAngle()));
 
@@ -1322,61 +1358,6 @@ void World::CreateAndPopulateForegroundObjectLayer ()
         add_succeeded = m_player_ship->AddItem(new PowerGenerator(0));
         ASSERT1(add_succeeded)
     }
-/*
-    static Uint32 const s_number_of_asteroids_to_spawn = 40;
-    static Float const s_asteroid_scale_factor_max = 35.0f;
-    static Float const s_asteroid_scale_factor_min = 5.0f;
-    for (Uint32 i = 0; i < s_number_of_asteroids_to_spawn; ++i)
-    {
-        FloatVector2 translation;
-        Float scale_factor;
-        Uint32 placement_attempts = 0;
-        static Uint32 const s_max_placement_attempts = 30;
-        do
-        {
-            // don't bother spawning an asteroid if it takes
-            // too many tries to place it.
-            if (placement_attempts == s_max_placement_attempts)
-                break;
-            ++placement_attempts;
-
-            translation.SetComponents(
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
-                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length));
-            // this causes the randomness to favor smaller asteroids
-            Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
-            scale_factor =
-                (s_asteroid_scale_factor_max - s_asteroid_scale_factor_min) *
-                scale_seed * scale_seed + s_asteroid_scale_factor_min;
-        }
-        while (GetPhysicsHandler()->
-                    GetDoesAreaOverlapAnyEntityInObjectLayer(
-                        GetMainObjectLayer(),
-                        translation,
-                        scale_factor + 40.0f,
-                        false));
-        if (placement_attempts == s_max_placement_attempts)
-            continue;
-
-        Float first_moment = scale_factor * scale_factor;
-        FloatVector2 velocity(
-            Math::RandomFloat(100.0f, 2000.0f) /
-            Math::Sqrt(first_moment) *
-            Math::UnitVector(Math::RandomAngle()));
-
-        ++m_asteroid_count;
-        m_asteroid_mass += first_moment;
-        SpawnAsteroid(
-            this,
-            GetMainObjectLayer(),
-            translation,
-            scale_factor,
-            first_moment,
-            velocity,
-            Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level],
-            false);
-    }
-*/
 }
 
 void World::CreateAndPopulateBackgroundObjectLayers ()
