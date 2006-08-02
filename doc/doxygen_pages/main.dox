@@ -1,9 +1,21 @@
 /** @mainpage XuqRijBuh - A Game Engine
 
+What is XuqRijBuh?  Also referred to as Xrb, it is a portable 2D game engine,
+intended to make development of game design conceptually (and hopefully practically)
+easy.  For general information, see the SourceForge homepage:
+
+http://sourceforge.net/projects/xuqrijbuh/
+
 For the impatient, please see "Super Duper Quick Overview"
 
 @section section_table_of_contents Table Of Contents
 <ul>
+<li>@ref setup "Setting Up The Development Environment"</li>
+    <ul>
+    <li>@ref setup_msvc "Setup For Microsoft Visual Studio"</li>
+    <li>@ref setup_linux "Setup For Linux"</li>
+    <li>Setup For Mac OS X</li>
+    </ul>
 <li>@ref goals "Goals Of XuqRijBuh"</li>
 <li>@ref programming_philosophy "Programming Philosophy"</li>
     <ul>
@@ -28,13 +40,13 @@ For the impatient, please see "Super Duper Quick Overview"
     </ul>
 <li>Systems Of XuqRijBuh</li>
     <ul>
-    <li>Overview Of The Main Systems</li>
+    <li>Overview Of Main Systems</li>
         <ul>
-        <li>GUI System Overview</li>
-        <li>Event System Overview</li>
-        <li>Engine2 Overview</li>
-        <li>The Render Stack Overview</li>
-        <li>SignalHandler Overview</li>
+        <li>GUI System</li>
+        <li>Event System</li>
+        <li>Engine2</li>
+        <li>The Render Stack</li>
+        <li>SignalHandler</li>
         </ul>
     <li>@ref source_tree_layout "Source Tree Layout"</li>
     <li>@ref portable_cpp_types "Portable C++ Types"</li>

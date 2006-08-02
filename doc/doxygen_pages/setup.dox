@@ -1,0 +1,13 @@
+/** @page setup Setting Up The Development Environment
+
+This page describes how to set up the build environment for a variety of
+operating systems and compilers.  I hope to add more, especially free,
+open-source alternatives such as MinGW.
+
+    <ul>
+    <li>@ref setup_msvc "Setup For Microsoft Visual Studio"</li>
+    <li>@ref setup_linux "Setup For Linux"</li>
+    <li>Setup For Mac OS X</li>
+    </ul>
+
+*/

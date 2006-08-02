@@ -1,0 +1,311 @@
+/** @page setup_msvc Setup For Microsoft Visual Studio
+Most people use Windows, so dealing with it is an unfortunate reality of
+most PC development project, and especially for games.  Lucky for you, I
+have ran the gauntlet and braved the hell that is Setting Up Visual Studio
+And All Necessary SDKs And Other Dependencies (TM).  Microsoft Visual
+Studio will hereafter be referred to as MSVC and Microsoft will be referred
+to sardonically as Mother.
+
+It should be noted that there is a FREE version of MSVC 2005 (version 8),
+called "Express Edition".  It requires registering with their little
+developer's world thingy, but if you don't want to stray from The
+Pointy-Clicky Safety Of Mother, it's your best bet.
+
+I'm also assuming you know how to get around in MSVC, and will not be going
+over how to use it (except for necessary instruction).
+
+Here is your list of chores:
+    <ul>
+    <li>@ref setup_msvc_msvc "MSVC 2005"</li>
+    <li>@ref setup_msvc_dotnet_framework "Mother's Own .NET Framework 1.1"</li>
+    <li>@ref setup_msvc_platform_sdk "Mother's Platform SDK"</li>
+    <li>@ref setup_msvc_vc80_crt "Redistributable Turds"</li>
+    <li>@ref setup_msvc_sdl "SDL"</li>
+    <li>@ref setup_msvc_sdl_image "SDL_image"</li>
+    <li>@ref setup_msvc_freetype2 "FreeType2"</li>
+    <li>@ref setup_msvc_subversion "Subversion Client"</li>
+    <li>@ref setup_msvc_where_to_put_it "Deciding Where To Dump This Crap"</li>
+    <li>@ref setup_msvc_xuqrijbuh "XuqRijBuh"</li>
+    <li>@ref setup_msvc_xuqrijbuh_resources "XuqRijBuh Resources"</li>
+    <li>@ref setup_msvc_env_vars "Environment Variables"</li>
+    <li>@ref setup_msvc_projects "Which Projects Do What And Running Them"</li>
+    <li>@ref setup_msvc_releases "Creating Releases Of Your Application"</li>
+    </ul>
+
+@section setup_msvc_msvc MSVC 2005
+As of August 2006, the latest incarnation of MSVC is 2005 (version 8 of the compiler).
+You can get it for free (for the time being, but who knows how long Mother's Generosity
+will last) from:
+
+http://msdn.microsoft.com/vstudio/express/visualc/download/
+
+The free version comes as a 30 day trial version which needs to be permanently
+activated by getting a serial number by registering through a link given at the above
+URL.  You might try using a fake email address, because they tell you the serial
+number in the registration confirmation page you're brought to after registering
+(unless you really don't mind getting spam from Mother).
+
+@section setup_msvc_dotnet_framework Mother's Own .NET Framework 1.1
+I forget exactly what header it was that .NET Framework 1.1 provides, but it was
+missing from MSVC 2005.  It was either <tt>windows.h</tt> or <tt>opengl.h</tt> .  Either way, you
+should feel ripped off.  Anyway, to right this wrong, install this lovely SDK:
+
+http://www.microsoft.com/downloads/details.aspx?FamilyID=262d25e3-f589-4842-8157-034d1e7cf3a3&DisplayLang=en
+
+If the above link dries up, go to http://msdn.microsoft.com and search for
+".NET Framework 1.1".  <tt>dotnetfx.exe</tt> is the filename you want.
+
+@section setup_msvc_platform_sdk Mother's Platform SDK
+This SDK supplies the other of the missing header files (and probably other crap
+too).  It's a web-installer, and you get a choice of what to download and install
+(which is good, because everything it offers is huge).  Make sure you download the
+appropriate binary for your architecture (x86, AMD64, or Intel ia64).  If you don't
+know what I'm talking about, just use PSDK-x86.exe.
+
+http://www.microsoft.com/downloads/details.aspx?FamilyID=a55b6b43-e24f-4ea3-a93e-40c0ec4f68e5&DisplayLang=en
+
+When you're presented with installation options, make sure ONLY the following are enabled
+(unless you don't mind downloading and installing an assload of files):
+
+    <ul>
+    <li>Configuration Options (but NOT "Register Environment Variables")</li>
+    <li>Microsoft Windows Core SDK > Build Environment > Build Environment (x86 32-bit) -- add other(s) if you know what you're doing</li>
+    <li>Microsoft Windows Core SDK > Redistributable Components</li>
+    <li>Microsoft Windows Installer SDK > Tools</li>
+    <li>Microsoft Windows Installer SDK > Build Environment > Build Environment (x86 32-bit) -- add other(s) if you know what you're doing</li>
+    <li>Debugging Tools For Windows</li>
+    </ul>
+
+Plus any other extra pieces of Mother's Worthless Crap you care to install.
+
+If the above link dries up, go to http://msdn.microsoft.com and search for
+"PSDK-x86.exe".  <tt>PSDK-x86.exe</tt> is the filename you want.
+
+@section setup_msvc_vc80_crt Redistributable Turds
+Mother seems to have a problem supplying all the files you need to properly compile
+and run developed applications, and the C libraries (aka the C runtime or "CRT") are
+no exception.  If you were to compile up a classic "hello world" C program (making
+sure it uses the C library call <tt>printf</tt>) and link the C libraries dynamically,
+you will find out that no matter what seemingly appropriate DLL files you distribute
+with your bastard application, certain Windows machines will complain of either
+missing DLL files, or that the "application configuration is incorrect".
+
+The hand-wavey explanation is that Mother has devised a brilliant new method of
+specifying DLL dependencies through manifest files, and you can no longer just lump
+the requisite DLL files in with your release executables.
+
+Fortunately you can just lump in a directory containing said DLL files, plus a manifest
+file which contains certain metadata about its DLL buddies.  This directory is included
+in the full, non-free version of MSVC 2005 (but not the free version).  I've uploaded a
+zip file containing the necessary turds which you can just throw in with your release
+executables.  This particular set of files is specific to MSVC 8 (hence the "VC80").
+
+TODO: upload a zip file with the turds
+
+It should be noted that these files are unnecessary if you don't release your application
+to the general non-MSVC-having populace.
+
+Supposedly since these files are "redistributable components", there is no legal
+issue with me providing them for download outside of Mother's Domain.
+
+@section setup_msvc_where_to_put_it Deciding Where To Dump This Crap
+Before getting the game engine source and supplementary libraries, you'll need to
+figure out where to put them.  A "projects" directory, if you will, is needed.
+Use/create whatever directory you find convenient (e.g. <tt>C:/projects</tt>).
+
+@section setup_msvc_sdl SDL
+SDL is an abstraction layer for computer hardware designed to make development of
+portable games simple.  It provides low-level facilities for interaction with
+devices such as the framebuffer (video memory), keyboard/mouse/joystick input,
+sound, OpenGL, the CD-rom, etc.
+
+http://www.libsdl.org/index.php
+
+Look under "Download" for SDL 1.X (1.2 is the most recent as of August 2006).  There
+will be several different packages you can choose from, but you want the pre-compiled
+library with headers.  This is the file called <tt>SDL-1.X.X.zip</tt> (<tt>SDL-1.2.11.zip</tt> is the
+most recent as of August 2006).  Download away.
+
+Unzip the file you downloaded into your projects directory.  It should create
+a subdirectory such as <tt>SDL-1.2.11</tt>.
+
+@section setup_msvc_sdl_image SDL_image
+The SDL website hosts releases of many different libraries that have been written
+for use with SDL.  One is SDL_image -- a frontend to several libraries to support
+reading image files (such as JPEG, PNG, etc).  As of August 2006, writing images
+is not supported (which seems stupid, but whatever).
+
+http://www.libsdl.org/projects/SDL_image/
+
+Similarly, you want to download the package of the form <tt>SDL_image-1.X.X.zip</tt>
+(<tt>SDL_image-1.2.5.zip</tt> is the most recent as of August 2006).
+
+Unzip the file you downloaded into your projects directory.  It should create
+a subdirectory such as <tt>SDL_image-1.2.5</tt>.
+
+@section setup_msvc_freetype2 FreeType2
+FreeType is a handy library which renders scalable fonts (read "makes them letters look
+real purty").  It supports reading from TrueType and Type 1 formats, and possibly
+others.
+
+http://download.savannah.gnu.org/releases/freetype/
+
+You want the package of the form <tt>ftXXXX.zip</tt> (<tt>ft221.zip</tt> is the most
+recent as of August 2006).
+
+Unzip the file you downloaded into your projects directory.  It should create
+a subdirectory such as <tt>freetype-2.2.1</tt>.  FreeType does not come precompiled,
+so you'll need to open it using MSVC (the solution file is located at
+<tt>freetype-2.2.1/builds/win32/visualc/freetype.sln</tt>) and compile a "Release"
+build.  This should produce a file called <tt>freetype-2.2.1/objs/freetype221.lib</tt>.
+
+If the above link ceases to be, go to http://www.freetype.org and "go ahead, snoop around!"
+
+@section setup_msvc_subversion Subversion Client
+As of August 2006, the only way to get the source for XuqRijBuh (there have been no
+packaged releases of the XuqRijBuh source code) is to get the latest tree from the
+Subversion repository on SourceForge.  In order to do that, you'll need a Subversion
+client.  An excellent one is TortoiseSVN -- actually a plugin to Windows Explorer
+(so you pointy-clicky types have nothing to fear).
+
+http://tortoisesvn.tigris.org/
+
+I'm sick of writing specific instructions on what to download.  Just look around
+for downloads.  You'll want to download a ".msi" file (which is some sort of
+installable format) and run it as if it were a regular exe file.  It will probably
+require you to reboot Winders to take effect.
+
+To use TortoiseSVN, just use Windows Explorer normally.  It adds menu items to
+the context menu (the right-click menu).
+
+@section setup_msvc_xuqrijbuh XuqRijBuh
+In order to get this fine mess working, you'll need the game engine source.  In
+Windows Explorer, navigate to your projects directory and right click on it.  The
+context menu should appear, with the fresh new TortoiseSVN options.  Click on
+"SVN Checkout".  A dialog box will appear with places to enter URLs and such.
+Enter https://svn.sourceforge.net/svnroot/xuqrijbuh for the repository URL
+and ensure that the checkout directory is your projects directory.  Click OK
+and it will chug for a while, download the full latest source tree.  This will
+create a directory under your projects directory called <tt>xuqrijbuh</tt> which contains
+the game engine source.
+
+There are three subdirectories of <tt>xuqrijbuh</tt>:
+
+    <ul>
+    <li><tt>branches</tt> contains development branches of various [sub]trees, when applicable</li>
+    <li><tt>tags</tt> contains text files indicating revision numbers for notable landmarks in the tree's development</li>
+    <li><tt>trunk</tt> contains the main development tree of the source code -- this is where everyone usually hangs out</li>
+    </ul>
+
+The game engine solution file is under the <tt>trunk</tt> directory and is predictably called <tt>xuqrijbuh.sln</tt>.
+
+For general information on XuqRijBuh, go to the SourceForge homepage:
+
+http://sourceforge.net/projects/xuqrijbuh/
+
+@section setup_msvc_xuqrijbuh_resources XuqRijBuh Resources
+All the example applications (described @ref setup_msvc_projects "Which Projects Do What And Running Them")
+require file assets in order to function (e.g. fonts, textures, etc).  As of August 2006,
+these are provided in a zip file:
+
+http://www.thedods.com/victor/resources.zip
+
+Download this, but don't unzip it anywhere yet.  This will be explained in
+@ref setup_msvc_projects "Which Projects Do What And Running Them".
+
+@section setup_msvc_env_vars Environment Variables
+In order to avoid having to edit the game engine project files (every single one)
+to each point to the correct include and library paths for each supplementary
+library, some environment variables must be defined.
+
+Go to the desktop and right-click on the icon with the patronizing title of
+"My Computer".  Select the "Advanced" tab, and then click on the
+"Environment Variables" button.  An inappropriately small dialog will appear
+where you can add and edit environment variables.  Assuming your projects
+directory is <tt>C:/projects</tt>, Add the following user variables (accounting
+for differences in library versions):
+
+    <ul>
+    <li><tt>XRB_SDL_PATH</tt> with the value <tt>C:/projects/SDL-1.2.11</tt></li>
+    <li><tt>XRB_SDL_image_PATH</tt> with the value <tt>C:/projects/SDL_image-1.2.5</tt></li>
+    <li><tt>XRB_FREETYPE_PATH</tt> with the value <tt>C:/projects/freetype-2.2.1</tt></li>
+    <li><tt>XRB_FREETYPE_LIB</tt> with the value <tt>freetype221.lib</tt></li>
+    </ul>
+
+Hit OK and get out of that 'hole of a menu, and you're ready to compile the game engine!
+
+@section setup_msvc_projects Which Projects Do What And Running Them
+
+The XuqRijBuh solution file contains several projects.  As of August 2006, they are:
+
+    <ul>
+    <li>disasteroids</li>
+    <li>lesson00</li>
+    <li>lesson01</li>
+    <li>libxrb</li>
+    </ul>
+
+The libxrb project is the library itself, and produces a .lib file which is linked
+into each application to produce executables.  It is a dependency for every application
+in the solution.  All projects besides libxrb are applications.
+
+Disasteroids is the first full sample game implementation provided with XuqRijBuh and
+as of August 2006, is still under development.
+
+All projects prefixed with "lesson" are tutorials intended to teach usage of the game
+engine library incrementally in small, manageable steps.
+
+In order to run any of the example applications, you'll need to unzip the previously
+downloaded <tt>resources.zip</tt> file into the application's output directory (e.g.
+<tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).  This will create a directory,
+predictably called <tt>resources</tt>.  If you ever run an app, and it fails inexplicably,
+it's probably because you're missing the resources directory (though I mean to make this slightly
+more obvious in the future).
+
+In addition to the resources directory, you'll need to copy several DLL files into the
+application's output directory (e.g. <tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).
+These are (again, replacing the applicable project directory and library version numbers):
+
+    <ul>
+    <li><tt>C:/projects/SDL-1.2.11/lib/SDL.dll</tt></li>
+    <li><tt>C:/projects/SDL_image-1.2.5/lib/SDL_image.dll</tt></li>
+    <li><tt>C:/projects/SDL_image-1.2.5/lib/jpeg.dll</tt></li>
+    <li><tt>C:/projects/SDL_image-1.2.5/lib/libpng13.dll</tt></li>
+    <li><tt>C:/projects/SDL_image-1.2.5/lib/zlib1.dll</tt></li>
+    </ul>
+
+You can optionally put these files in your executable path, but then you might forget
+to package them up when making a release of your application.
+
+@section setup_msvc_releases Creating Releases Of Your Application
+It is advisable to copy one of the example application project files when you begin
+the project for your own application.  This is so you use known-working configuration
+options (e.g. linking the C library dynamically, and using the correct release/debug
+version, etc.).  This also makes a difference what files you must distribute.
+
+In theory, you could compile all libraries and the game engine statically, and only
+have to distribute the executable along with any file assets you may require.  This
+sounds nice in principle, but it requires downloading the full sources to all
+aforementioned libraries (plus a few that SDL_image relies on such as libpng),
+installing any other necessary supplementary development files (such as DirectX headers,
+needed for a full compilation of SDL in Winderps) and compiling them all as static
+libraries (something that SDL and SDL_image do not currently support, so it would
+require some project file hacking).  Your application's project file would then require
+modifications to statically link the recompiled libraries.  It is certainly possible,
+but explaining how to do so is out of the scope of this document.
+
+Anyway, assuming you followed the example applications' configurations, you'll need
+to package the following files in your release:
+
+    <ul>
+    <li><tt>your_application.exe</tt></li>
+    <li><tt>SDL.dll</tt></li>
+    <li><tt>SDL_image.dll</tt></li>
+    <li><tt>jpeg.dll</tt></li>
+    <li><tt>libpng13.dll</tt></li>
+    <li><tt>zlib1.dll</tt></li>
+    <li><tt>Microsoft.VC80.CRT</tt> (the directory described in @ref setup_msvc_vc80_crt "Redistributable Turds")</li>
+    <li>Any necessary files specific to your application</li>
+    </ul>
+
+*/

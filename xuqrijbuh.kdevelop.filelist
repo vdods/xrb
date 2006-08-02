@@ -125,12 +125,16 @@ app/unittest/unittest_controller.cpp
 app/unittest/unittest_controller.h
 bootstrap.sh
 configure.ac
+doc/doxygen_pages/footer.html
 doc/doxygen_pages/goals.dox
 doc/doxygen_pages/main.dox
 doc/doxygen_pages/math.dox
 doc/doxygen_pages/portable_cpp_types.dox
 doc/doxygen_pages/programming_conventions.dox
 doc/doxygen_pages/programming_philosophy.dox
+doc/doxygen_pages/setup.dox
+doc/doxygen_pages/setup_linux.dox
+doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
 lib/Makefile.am
