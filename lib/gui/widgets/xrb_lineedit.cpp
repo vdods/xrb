@@ -290,7 +290,10 @@ ScreenCoord LineEdit::GetInitialPenPositionX () const
                 contents_rect.GetRight()-contents_rect.GetLeft()-m_text_width :
                 0;
             break;
-        default:     ASSERT1(false && "Invalid Alignment") break;
+        default:
+            ASSERT1(false && "Invalid Alignment")
+            initial_pen_position_x = 0;
+            break;
     }
     initial_pen_position_x += contents_rect.GetLeft();
     initial_pen_position_x += m_text_offset[Dim::X];
