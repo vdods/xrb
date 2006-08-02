@@ -59,10 +59,10 @@ Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f,
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
 
 // GaussGun properties
-Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 90.0f, 140.0f, 200.0f };
+Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 300.0f };
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
-Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.666f, 1.666f, 1.666f, 1.666f };
+Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.222f, 0.9444f, 0.666f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 300.0f, 300.0f, 300.0f, 300.0f };

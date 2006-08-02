@@ -56,6 +56,25 @@ Float const Asteroid::ms_decay_delay = 10.0f;
 Float const Asteroid::ms_decay_time = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
 
+Asteroid::Asteroid (
+    Float const first_moment,
+    Float const mineral_content,
+    bool const is_a_secondary_asteroid)
+    :
+    Mortal(
+        ms_health_factor * first_moment,
+        ms_health_factor * first_moment,
+        ET_ASTEROID,
+        CT_SOLID_COLLISION)
+{
+    m_is_a_secondary_asteroid = is_a_secondary_asteroid;
+    m_delete_upon_next_think = false;
+    m_time_at_decay_start = -1.0f;
+    m_mineral_content_byte = GetMineralContentByte(mineral_content);
+    SetStrength(D_EXPLOSION);
+    SetImmunity(D_FIRE|D_EMP);
+}
+
 void Asteroid::Think (Float const time, Float const frame_dt)
 {
     // if this asteroid shouldn't decay, then defer the think for a long time

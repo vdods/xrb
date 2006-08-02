@@ -29,24 +29,7 @@ public:
         MAX_MINERAL_LEVEL = 3
     };
 
-    Asteroid (
-        Float const first_moment,
-        Float const mineral_content,
-        bool const is_a_secondary_asteroid)
-        :
-        Mortal(
-            ms_health_factor * first_moment,
-            ms_health_factor * first_moment,
-            ET_ASTEROID,
-            CT_SOLID_COLLISION)
-    {
-        m_is_a_secondary_asteroid = is_a_secondary_asteroid;
-        m_delete_upon_next_think = false;
-        m_time_at_decay_start = -1.0f;
-        m_mineral_content_byte = GetMineralContentByte(mineral_content);
-        SetStrength(D_FIRE|D_EXPLOSION);
-        SetImmunity(D_EMP);
-    }
+    Asteroid (Float first_moment, Float mineral_content, bool is_a_secondary_asteroid);
     virtual ~Asteroid () { }
 
     virtual void Think (Float time, Float frame_dt);
