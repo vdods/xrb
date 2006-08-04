@@ -276,42 +276,25 @@ const float value0;
 // I always put the const keyword on the right
 // of the token it's qualifying.
 float const value1;
-
-// Both of the above declarations are
-// syntactically identical.  The const keyword
-// can be applied to pointers as well.  However,
-// There is no left-side equivalent for pointer
-// const qualifiers, which is why I choose to
-// always place the const qualifier on the right.
-
-// This declaration is a read-only pointer
-// to a read-or-write integer.
-int *const ptr0;
-
-// This declaration is a read-or-write pointer
-// to a read-only integer.
-int const *ptr1;
-
-// This declaration is a read-only pointer
-// to a read-only integer.
-int const *const ptr2;
 @endcode
 
-<strong>Different Types Of Constness</strong>
+Both of the above declarations are syntactically identical.  The const keyword
+can be applied to pointers as well.  However, There is no left-side equivalent
+for pointer const qualifiers, which is why I choose to always place the const
+qualifier on the right.
+
+@subsubsection philosophy_subsubsection Different Types Of Constness
 
     <ul>
     <li><strong>Normal variable constness</strong>
-
-        E.g. @code float const tuning_coefficient @endcode
+        For example,
+        @code float const tuning_coefficient @endcode
         This is the most basic type of constness.  It renders
         tuning_coefficient unchangeable, without using some scandalous C cast
-        or C++ const_cast business.
-
+        or C++ const_cast business.</li>
     <li><strong>Const mixed with pointers</strong>
-
-        Since, in pointer declarations, there is
-        more than one keyword/operator that can be qualified as const, there
-        is a larger realm of possibilities.
+        Since, in pointer declarations, there is more than one keyword/operator
+        that can be qualified as const, there is a larger realm of possibilities.
 
         For example
         @code char const *string @endcode
@@ -328,40 +311,89 @@ int const *const ptr2;
         strings, whose characters are constant.  Another example is
         @code char const **const array_of_strings @endcode
         This declaration provides a constant pointer to an array of
-        <i>non</i>-constant pointers to strings, whose characters are constant.
-
+        <i>non</i>-constant pointers to strings, whose characters are
+        constant.</li>
     <li><strong>Class method constness</strong>
+        One very useful type of constness is that of const methods.  A const
+        method, declared by the @c const keyword after its parenthesized
+        parameter list, is one that does not change the value of any of its
+        members (excepting members that are declared <tt>mutable</tt>).
+
+        Furthermore, only const methods can be called on const objects.  Look
+        at the following code.
 
         @code
+#include <math.h>
 
-        @endcode
-        (e.g. "Vector::GetLength () const;")</li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    </ul>
-
-For example, examine a vector addition function, which takes two arrays of
-floating point values, and
-
-@code
-class Tokenizer
+class Vector
 {
 public:
 
-    Tokenizer (char *string_to_tokenize);
-    ~Tokenizer ();
-
-    char *GetToken ();
-
-private:
-
-    ...
+    float m_x;
+    float m_y;
+    Vector (float x, float y) : m_x(x), m_y(y) { }
+    void Normalize ()
+    {
+        float length = sqrtf(m_x*m_x + m_y*m_y);
+        m_x /= length;
+        m_y /= length;
+    }
+    void Print () const
+    {
+        printf("(%g, %g)", m_x, m_y);
+    }
 };
+
+void SomeFunction ()
+{
+    Vector non_const_vector(3.45f, 67.8f);
+    Vector const const_vector(12.34f, 56.78f);
+
+    non_const_vector.Normalize();;
+    non_const_vector.Print();
+
+    const_vector.Normalize();
+    const_vector.Print();
+}
+        @endcode
+
+        <tt>Vector</tt> is a class declared with two methods -- one non-const, and
+        the other const (<tt>Normalize</tt> and <tt>Print</tt> respectively).
+        <tt>Print</tt> can be called on any <tt>Vector</tt> object, const or not.
+        However, <tt>Normalize</tt> can only be called on non-const objects,
+        because there is no guarantee that a non-const method won't change its
+        members.
+
+        Thus, the first two method calls do not produce an error.  A const
+        method can be called on a non-const object, because non-const types
+        can always be cast to be const.
+        @code
+    non_const_vector.Normalize();;
+    non_const_vector.Print();
+        @endcode
+
+        However, the next method call <i>does</i> produce an error, because
+        a non-const method is being called on a const object.  The final
+        method call does not produce an error, because calling a const method
+        on a const object is allowed (and in fact, that is the only type
+        of method that can be called on a const object).
+        @code
+    const_vector.Normalize();
+    const_vector.Print();
+        @endcode </li>
+    </ul>
+
+@subsubsection philosophy_subsubsection Usage Of Constness
+Although pedantic, I use the @c const qualifier almost wherever syntactically
+possible.  The most notable uncommon usage of it in XuqRijBuh is declaring
+function and method parameter values (and most pointed-to values) const.
+
+For example:
+@code
+TODO
 @endcode
 
-
+TODO: where putting const doesn't matter (function/method declarations)
 
 @subsection philosophy_subsection_asserts_for_safety Asserts For Safety
 Generously lining code with assertions of expressions that may seem like
@@ -429,10 +461,14 @@ can easily screw her/himself over with expensive temporary object construction.
 
 The earlier example of virtual function tables is also fitting.  In order to
 make a virtual function call in C++, two extra pointer dereferences must be
-done -- one to dereference the object's v-table, and the second to call the
-function which is pointed to by the appropriate v-table entry.  One can get
-the sense of how much code is actually produced by examining the intermediate
-assembler code typically generated during compilation.
+done -- one to dereference the object's virtual method table, and the second to
+dereference the pointer to the code of the desired virtual method.
+
+TODO: graph of v-table dereferencing in virtual method call
+
+One can get the sense of how much code is actually produced by examining the
+intermediate assembler code typically generated during compilation (try adding
+<tt>-save-temps</tt> to your <tt>g++</tt> commandline).
 
 Ideally, a programmer would like to use all the fancy features of high level
 languages, but without the overhead involved.  Most of the time, this isn't
@@ -477,7 +513,7 @@ void SomeFunction ()
 Note that no functions were declared as virtual.
 
 In the above example, a "dumb" compiler (that doesn't do any automatic
-inlining or optimization) would make three unnecessary function calls --
+inlining or optimization) would make three unnecessary function calls:
     <ul>
     <li>Calling the default constructor for Complex for w</li>
     <li>Calling the destructor for z</li>
