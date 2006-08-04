@@ -25,7 +25,7 @@ Here is your list of chores:
     <li>@ref setup_msvc_freetype2 "FreeType2"</li>
     <li>@ref setup_msvc_subversion "Subversion Client"</li>
     <li>@ref setup_msvc_where_to_put_it "Deciding Where To Dump This Crap"</li>
-    <li>@ref setup_msvc_xuqrijbuh "XuqRijBuh"</li>
+    <li>@ref setup_msvc_xuqrijbuh "XuqRijBuh Game Engine Source"</li>
     <li>@ref setup_msvc_xuqrijbuh_resources "XuqRijBuh Resources"</li>
     <li>@ref setup_msvc_env_vars "Environment Variables"</li>
     <li>@ref setup_msvc_projects "Which Projects Do What And Running Them"</li>
@@ -122,12 +122,13 @@ sound, OpenGL, the CD-rom, etc.
 http://www.libsdl.org/index.php
 
 Look under "Download" for SDL 1.X (1.2 is the most recent as of August 2006).  There
-will be several different packages you can choose from, but you want the pre-compiled
-library with headers.  This is the file called <tt>SDL-1.X.X.zip</tt> (<tt>SDL-1.2.11.zip</tt> is the
-most recent as of August 2006).  Download away.
+will be several different packages you can choose from, but you want development
+library package.  This is <tt>SDL-devel-1.X.X-VC6.zip</tt>
+(<tt>SDL-devel-1.2.11-VC6.zip</tt> is the most recent as of August 2006).
+Download away.
 
-Unzip the file you downloaded into your projects directory.  It should create
-a subdirectory such as <tt>SDL-1.2.11</tt>.
+Unzip the file you downloaded into your projects directory.  It should create a
+subdirectory matching the name and version of the library, such as <tt>SDL-1.2.11</tt>.
 
 @section setup_msvc_sdl_image SDL_image
 The SDL website hosts releases of many different libraries that have been written
@@ -137,11 +138,12 @@ is not supported (which seems stupid, but whatever).
 
 http://www.libsdl.org/projects/SDL_image/
 
-Similarly, you want to download the package of the form <tt>SDL_image-1.X.X.zip</tt>
-(<tt>SDL_image-1.2.5.zip</tt> is the most recent as of August 2006).
+Similarly, you want to download the package of the form <tt>SDL_image-devel-1.X.X-VC6.zip</tt>
+(<tt>SDL_image-devel-1.2.5-VC6.zip</tt> is the most recent as of August 2006).
 
 Unzip the file you downloaded into your projects directory.  It should create
-a subdirectory such as <tt>SDL_image-1.2.5</tt>.
+a subdirectory matching the name and version of the library, such as
+<tt>SDL_image-1.2.5</tt>.
 
 @section setup_msvc_freetype2 FreeType2
 FreeType is a handy library which renders scalable fonts (read "makes them letters look
@@ -154,7 +156,8 @@ You want the package of the form <tt>ftXXXX.zip</tt> (<tt>ft221.zip</tt> is the 
 recent as of August 2006).
 
 Unzip the file you downloaded into your projects directory.  It should create
-a subdirectory such as <tt>freetype-2.2.1</tt>.  FreeType does not come precompiled,
+a subdirectory matching the name and version of the library, such as
+<tt>freetype-2.2.1</tt>.  FreeType does not come precompiled,
 so you'll need to open it using MSVC (the solution file is located at
 <tt>freetype-2.2.1/builds/win32/visualc/freetype.sln</tt>) and compile a "Release"
 build.  This should produce a file called <tt>freetype-2.2.1/objs/freetype221.lib</tt>.
@@ -178,7 +181,7 @@ require you to reboot Winders to take effect.
 To use TortoiseSVN, just use Windows Explorer normally.  It adds menu items to
 the context menu (the right-click menu).
 
-@section setup_msvc_xuqrijbuh XuqRijBuh
+@section setup_msvc_xuqrijbuh XuqRijBuh Game Engine Source
 In order to get this fine mess working, you'll need the game engine source.  In
 Windows Explorer, navigate to your projects directory and right click on it.  The
 context menu should appear, with the fresh new TortoiseSVN options.  Click on
@@ -204,7 +207,7 @@ For general information on XuqRijBuh, go to the SourceForge homepage:
 http://sourceforge.net/projects/xuqrijbuh/
 
 @section setup_msvc_xuqrijbuh_resources XuqRijBuh Resources
-All the example applications (described @ref setup_msvc_projects "Which Projects Do What And Running Them")
+All the example applications (described in @ref setup_msvc_projects "Which Projects Do What And Running Them")
 require file assets in order to function (e.g. fonts, textures, etc).  As of August 2006,
 these are provided in a zip file:
 
@@ -235,7 +238,6 @@ for differences in library versions):
 Hit OK and get out of that 'hole of a menu, and you're ready to compile the game engine!
 
 @section setup_msvc_projects Which Projects Do What And Running Them
-
 The XuqRijBuh solution file contains several projects.  As of August 2006, they are:
 
     <ul>
@@ -259,8 +261,8 @@ In order to run any of the example applications, you'll need to unzip the previo
 downloaded <tt>resources.zip</tt> file into the application's output directory (e.g.
 <tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).  This will create a directory,
 predictably called <tt>resources</tt>.  If you ever run an app, and it fails inexplicably,
-it's probably because you're missing the resources directory (though I mean to make this slightly
-more obvious in the future).
+it's probably because you're a douche bag.  Either that or you're missing the resources
+directory (though I mean to make this slightly more obvious in the future).
 
 In addition to the resources directory, you'll need to copy several DLL files into the
 application's output directory (e.g. <tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).

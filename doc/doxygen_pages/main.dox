@@ -6,7 +6,7 @@ easy.  For general information, see the SourceForge homepage:
 
 http://sourceforge.net/projects/xuqrijbuh/
 
-For the impatient, please see "Super Duper Quick Overview"
+<!-- For the impatient, please see "Super Duper Quick Overview" (TODO) -->
 
 @section section_table_of_contents Table Of Contents
 <ul>
@@ -17,26 +17,26 @@ For the impatient, please see "Super Duper Quick Overview"
     <li>Setup For Mac OS X</li>
     </ul>
 <li>@ref goals "Goals Of XuqRijBuh"</li>
-<li>@ref programming_philosophy "Programming Philosophy"</li>
+<li>@ref philosophy "Programming Philosophy Pontification"</li>
     <ul>
-    <li>@ref section_conceptual_hierarchy "Conceptual Hierarchy"</li>
-    <li>@ref section_self_documenting_code "Self-Documenting Code"</li>
-    <li>@ref section_asserts_and_exceptions "Asserts And Exceptions"</li>
-    <li>@ref section_making_the_compiler_force_correctness "Making The Compiler Force Correctness"</li>
-    <li>@ref section_programming_language_as_syntactic_sugarcoating "Programming Language As Syntactic Sugarcoating"</li>
-    <li>@ref section_code_reuse_and_abstraction "Code Reuse And Abstraction"</li>
-    <li>@ref section_contextual_hints "Contextual Hints"</li>
-    <li>@ref section_reentrancy_and_singletons "Reentrancy And Singletons"</li>
-    <li>@ref section_code_maturity "Code Maturity"</li>
+    <li>@ref philosophy_conceptual_hierarchy "Conceptual Hierarchy"</li>
+    <li>@ref philosophy_self_documenting_code "Self-Documenting Code"</li>
+    <li>@ref philosophy_asserts_and_exceptions "Asserts And Exceptions"</li>
+    <li>@ref philosophy_making_the_compiler_force_correctness "Making The Compiler Force Correctness"</li>
+    <li>@ref philosophy_programming_language_as_syntactic_sugarcoating "Programming Language As Syntactic Sugarcoating"</li>
+    <li>@ref philosophy_code_reuse_and_abstraction "Code Reuse And Abstraction"</li>
+    <li>@ref philosophy_contextual_hints "Contextual Hints"</li>
+    <li>@ref philosophy_reentrancy_and_singletons "Reentrancy And Singletons"</li>
+    <li>@ref philosophy_code_maturity "Code Maturity"</li>
     </ul>
-<li>@ref programming_conventions "Programming Conventions"</li>
+<li>@ref conventions "Programming Conventions"</li>
     <ul>
-    <li>@ref section_general_verbosity "General Verbosity"</li>
-    <li>@ref section_nomenclature "Nomenclature"</li>
-    <li>@ref section_const_correctness "Const Correctness"</li>
-    <li>@ref section_indentation_and_formatting "Indentation And Formatting"</li>
-    <li>@ref section_contextual_hints "Contextual Hints"</li>
-    <li>@ref section_asserts "Asserts"</li>
+    <li>@ref conventions_general_verbosity "General Verbosity"</li>
+    <li>@ref conventions_nomenclature "Nomenclature"</li>
+    <li>@ref conventions_const_correctness "Const Correctness"</li>
+    <li>@ref conventions_indentation_and_formatting "Indentation And Formatting"</li>
+    <li>@ref conventions_contextual_hints "Contextual Hints"</li>
+    <li>@ref conventions_asserts "Asserts"</li>
     </ul>
 <li>Systems Of XuqRijBuh</li>
     <ul>

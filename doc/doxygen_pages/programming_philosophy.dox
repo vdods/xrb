@@ -1,8 +1,9 @@
-/** @page programming_philosophy Programming Philosophy
+/** @page philosophy Programming Philosophy Pontification
 
-Here is some pontification on good coding practices.
+Here is some commentary on good coding practices.  This isn't required
+reading, but not reading it will make you a bad person.
 
-@section section_conceptual_hierarchy Conceptual Hierarchy
+@section philosophy_conceptual_hierarchy Conceptual Hierarchy
 Human beings can only fully comprehend a limited set of concepts at any given
 time.  For instance, you might understand how the many systems in an
 automobile work as separate entities (e.g. internal combustion, alternator,
@@ -26,7 +27,7 @@ to have a full comprehension of the program at any given level in the
 hierarchy.  This will also help in writing modular code that has distinct
 boundaries, lending itself to easier code-refactoring or even module-plugging.
 
-@section section_self_documenting_code Self Documenting Code
+@section philosophy_self_documenting_code Self Documenting Code
 When someone is attempting to teach or convey a programming concept, or
 even a specific code implementation, they will often write it out in
 pseudocode -- high-level informal code written out in a natural language
@@ -62,7 +63,7 @@ Vector2 Outer (unsigned int const l, Vector2 const *array, int q)
             continue;
         if (q == 4 && (array[i].x <  0 || array[i].y >= 0))
             continue;
-            
+
         float d = sqrtf(array[i].x * array[i].x + array[i].y * array[i].y);
         if (d > longest)
         {
@@ -124,7 +125,7 @@ Vector2 GetFurthestQuadrantPointFromOrigin (
             continue;
         if (quadrant_index == 4 && (vector_array[i].x <  0.0f || vector_array[i].y >= 0.0f))
             continue;
-        
+
         float current_vector_distance =
             sqrtf(vector_array[i].x * vector_array[i].x +
                   vector_array[i].y * vector_array[i].y);
@@ -182,10 +183,10 @@ Vector2 GetFurthestQuadrantPointFromOrigin (
     for (unsigned int i = 0; i < vector_array_length; ++i)
     {
         Vector2 const &current_vector = vector_array[i];
-    
+
         if (current_vector.GetQuadrantIndex() != quadrant_index)
             continue;
-        
+
         float current_vector_distance = current_vector.GetLength();
         if (current_vector_distance > furthest_point_distance)
         {
@@ -198,7 +199,7 @@ Vector2 GetFurthestQuadrantPointFromOrigin (
 }
 @endcode
 
-@section section_asserts_and_exceptions Asserts And Exceptions
+@section philosophy_asserts_and_exceptions Asserts And Exceptions
 Asserts and exceptions are techniques used to ensure proper operation of
 a program at runtime.  The former is a programmer's tool for use during
 development, meant to catch flaws in the state of a running program (e.g.
@@ -207,7 +208,7 @@ expected range).  The latter is a method of facilitating robust error
 handling for "acceptable" program errors (e.g. the user provides an invalid
 filename).
 
-@subsection subsection_assert Asserts
+@subsection philosophy_subsection_asserts Asserts
 The assert is a debugging technique which is used to ensure assumptions made
 about the state of the executing program are valid.  Functionally, an assert
 is simply an expression which, if evaluates to false, will immediately abort
@@ -227,16 +228,16 @@ before they become serious bugs.  If these program flaws remain unknown,
 then the programmer will continue writing code that may even become dependent
 upon the existing flaws.
 
-See @ref subsection_asserts_for_safety "Asserts For Safety" for more.
+See @ref philosophy_subsection_asserts_for_safety "Asserts For Safety" for more.
 
-@subsection subsection_exceptions Exceptions
+@subsection philosophy_subsection_exceptions Exceptions
 Exceptions are used to expose user errors (or other acceptable errors) during
 run-time.  For any program that accepts input from the user (which is
 practically every program), some measure of error handling must be done.
 
 uhhh.. words... words.
 
-@section section_making_the_compiler_force_correctness Making The Compiler Force Correctness
+@section philosophy_making_the_compiler_force_correctness Making The Compiler Force Correctness
 In the realm of programming, the sheer number of possible mistakes is
 uncountable.  Therefore, reasonable measures one can take to protect
 against programmer errors are worth taking.  Additionally, steps can be
@@ -256,7 +257,7 @@ detail some methods of doing this.
 Remember, the compiler is your friend.  It (in theory) is the pillar of
 consistency you require to get the job done.
 
-@subsection subsection_const_correctness_for_safety Const Correctness For Safety
+@subsection philosophy_subsection_const_correctness_for_safety Const Correctness For Safety
 Const correctness is one of the most common things that is missing from
 the majority of source code I have seen, yet it is such a valuable tool --
 providing assurance that qualified variables will not be changed by
@@ -285,7 +286,7 @@ is identical in meaning to
         This is the most basic type of constness.  It renders
         tuning_coefficient unchangeable, without using some scandalous C cast
         or C++ const_cast business.
-        
+
     <li><strong>Const mixed with pointers</strong>
 
         Since, in pointer declarations, there is
@@ -308,7 +309,7 @@ is identical in meaning to
         @code char const **const array_of_strings @endcode
         This declaration provides a constant pointer to an array of
         <i>non</i>-constant pointers to strings, whose characters are constant.
-        
+
     <li><strong>Class method constness</strong> (e.g. "Vector::GetLength () const;")</li>
     <li></li>
     <li></li>
@@ -317,7 +318,7 @@ is identical in meaning to
     </ul>
 
 For example, examine a vector addition function, which takes two arrays of
-floating point values, and 
+floating point values, and
 
 @code
 class Tokenizer
@@ -337,7 +338,7 @@ private:
 
 
 
-@subsection subsection_asserts_for_safety Asserts For Safety
+@subsection philosophy_subsection_asserts_for_safety Asserts For Safety
 Generously lining code with assertions of expressions that may seem like
 they could be taken for granted is a very useful practice.  It may seem
 unnecessary to assert really simple or seemingly obvious expressions, but
@@ -351,11 +352,56 @@ to the sculpture that most deviations will be detected and dealt with, before
 further changes to the sculpture depend on previous deformities that would
 have otherwise gone unnoticed.
 
-@section section_programming_language_as_syntactic_sugarcoating Programming Language As Syntactic Sugarcoating
+@section philosophy_programming_language_as_syntactic_sugarcoating Programming Language As Syntactic Sugarcoating
 As programming languages get more and more abstracted, the amount of overhead
-required tends to increase (e.g. C++'s virtual function tables).  A naive
-C++ programmer might not know about implicit constructors, and would never
-realize there is an entire constructor function call happening each time.
+required tends to increase (e.g. C++'s virtual function tables).  The trick is
+to learn the details of the abstraction versus overhead, so it can be diligently
+used or avoided.
+
+For example, a naive C++ programmer might not know about implicit constructors, and
+would never realize there is an entire constructor function call happening each time
+a value is passed to a function which doesn't take the given type explicitly,
+but for which an acceptable type's constructor does.  Example:
+
+@code
+#include <stdio.h>
+#include <string.h>
+
+class String
+{
+public:
+
+    String (char const *text) : m_text(text), m_length(strlen(m_text)) { }
+
+    void Print () { printf("String of length %u: \"%s\"\n", m_length, m_text); }
+
+private:
+
+    char const *const m_text;
+    unsigned int const m_length;
+};
+
+void AwesomeFunction (String const &str)
+{
+    str.Print();
+}
+
+int main (int argc, char **argv)
+{
+    AwesomeFunction("punches to one's own face");
+    AwesomeFunction("are a real treat");
+    AwesomeFunction("even tigers prefer a cup of it");
+    AwesomeFunction("to having to.. uhh.. do stuff.");
+    return 0;
+}
+@endcode
+
+In the above example, since AwesomeFunction doesn't take a @code char const * @endcode
+but does take a @code String const & @endcode a temporary @c String object is being
+implicitly constructed on the stack to be passed in for the function call.  This
+is what is known as implicit construction.  If a programmer isn't careful, s/he
+can easily screw her/himself over with expensive temporary object construction.
+
 The earlier example of virtual function tables is also fitting.  In order to
 make a virtual function call in C++, two extra pointer dereferences must be
 done -- one to dereference the object's v-table, and the second to call the
@@ -499,12 +545,12 @@ used in such a way so that all of the overhead one would normally assume
 accompanies the high-levelness of the feature just boils away, leaving only
 the bare minimum -- as if it were handwritten assembler.
 
-@subsection subsection_templates_as_syntactic_sugarcoating Templates As Syntactic Sugarcoating
+@subsection philosophy_subsection_templates_as_syntactic_sugarcoating Templates As Syntactic Sugarcoating
 blah -- compare C language, weak-typed void* generalized code with
 strong-typed template code, pointing out that template code is instanced.
 
 
-@section section_code_reuse_and_abstraction Code Reuse And Abstraction
+@section philosophy_code_reuse_and_abstraction Code Reuse And Abstraction
 It is useful for many reasons to make generalized and reuseable code.
 
 The most obvious reason is that writing generalized code once will save time
@@ -527,7 +573,7 @@ humans can only comprehend a limited amount of conceptual information at
 any given time.  Limiting the expanse of parallel concepts will simplify
 understanding of the program's systems.  In other words, simple is better.
 
-@section section_contextual_hints Contextual Hints
+@section philosophy_contextual_hints Contextual Hints
 In order for maximum code-readability (which is especially important while
 code-diving), certain hints can provide the reader with a small extra bit
 of information about the contents of the code, without having to explicitly
@@ -575,9 +621,9 @@ declaration of variables while code-diving saves a huge amount of time,
 since the majority of time spent during code augmentation and
 maintenence is spent reading and understanding it.
 
-@section section_reentrancy_and_singletons Reentrancy And Singletons
+@section philosophy_reentrancy_and_singletons Reentrancy And Singletons
 
-@section section_code_maturity Code Maturity
+@section philosophy_code_maturity Code Maturity
 
 */
 

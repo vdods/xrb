@@ -1,5 +1,330 @@
 /** @page setup_linux Setup For Linux
+This document assumes you have a working knowledge of how to use a Linux command prompt
+and how to locate and install software.  In modern Linux distributions, there is usually
+a SAWEET package management system through which all software can be located and installed
+through a dependency-tracking package management system such as <tt>apt-get</tt> or
+<tt>rpm</tt>.  Additionally, there are equally SAWEET frontends for said package
+management systems to make the software installation process even cleaner and more
+user-friendly (for example, <tt>synaptic</tt> is a good li'l GUI buddy for <tt>apt-get</tt>).
 
-TODO
+If you aren't using a package management system, I highly recommend you start doing so,
+because it makes locating and installing software WAY easier -- much easier even than
+installing stuff in Winders -- no manual downloading or running installers or anything.
+
+Apart from the Linux-distribution-specific package management details, these instructions
+should, in theory, suffice for any flavor of Unix, possibly including Mac OS X.  Maybe
+even for Cygwin under Winderps, but just who the hell knows with that retarded operating system.
+
+    <ul>
+    <li>@ref setup_linux_super_quick "Super-Quick Setup For Those In The Know"</li>
+    </ul>
+
+Instructions for the unwashed masses:
+
+    <ul>
+    <li>@ref setup_linux_common_tools "Common Unix Development Tools"</li>
+    <li>@ref setup_linux_sdl "SDL"</li>
+    <li>@ref setup_linux_sdl_image "SDL_image"</li>
+    <li>@ref setup_linux_freetype2 "FreeType2"</li>
+    <li>@ref setup_linux_xuqrijbuh "XuqRijBuh Game Engine Source"</li>
+    <li>@ref setup_linux_xuqrijbuh_resources "XuqRijBuh Resources"</li>
+    <li>@ref setup_linux_bootstrapping "Bootstrapping The configure Script"</li>
+    <li>@ref setup_linux_configuring "Configuring A Build"</li>
+    <li>@ref setup_linux_compiling "Compiling A Build"</li>
+    <li>@ref setup_linux_build_targets "Which Build Targets Do What And Running Them"</li>
+    <li>@ref setup_linux_releases "Creating Releases Of Your Application"</li>
+    </ul>
+
+@section setup_linux_super_quick Super-Quick Setup For Those In The Know
+If you already know what you're doing, follow these high-level instructions.  If these
+instructions make no sense to you, skip this section and go to
+@ref setup_linux_common_tools "Common Unix Development Tools".
+
+Through whatever your preferred means, install the development versions of the SDL,
+SDL_image and FreeType2 libraries.  The specific package names and versions may vary
+from the following example for your specific package management system.
+
+<tt>apt-get install libsdl1.2-dev libsdl-image1.2-dev libfreetype6</tt>
+
+Go to a directory appropriate to dump source code and checkout the XuqRijBuh game
+engine source via Subversion using the following command.
+
+<tt>svn co https://svn.sourceforge.net/svnroot/xuqrijbuh xuqrijbuh</tt>
+
+Download the XuqRijBuh resources and unzip it (later instructions assume you've
+squirted it into the <tt>xuqrijbuh/trunk</tt> directory).
+
+<tt>wget http://www.thedods.com/victor/resources.zip && unzip resources.zip -d xuqrijbuh/trunk</tt>
+
+Create the <tt>configure</tt> script.  This must be done every time <tt>configure.ac</tt> is modified.
+
+<tt>cd xuqrijbuh/trunk && ./bootstrap.sh</tt>
+
+Configure.  See @ref setup_linux_configuring "Configuring A Build" if that's what floats your boat.
+
+<tt>mkdir debug && cd debug && ../configure --enable-debug --disable-static --enable-nan-sanity-check</tt>
+
+Compile.  See @ref setup_linux_compiling "Compiling A Build" for more.
+
+<tt>make</tt>
+
+Go directly to @ref setup_linux_build_targets "Which Build Targets Do What And Running Them".  Do not collect $200.
+    
+@section setup_linux_common_tools Common Unix Development Tools
+The following tools are required for development using the XuqRijBuh game engine
+in Linux.  They are likely already installed on your system -- what good is a Unix
+machine without development tools?
+
+    <ul>
+    <li>GCC (GNU Compiler Collection), specifically <tt>g++</tt></li>
+    <li><tt>make</tt></li>
+    <li><tt>autoconf</tt> (version 2.59 is known to work)</li>
+    <li><tt>automake</tt> (version 1.9 is known to work)</li>
+    <li><tt>libtool</tt> (1.5.6 is known to work)</li>
+    <li><tt>svn</tt> (a Subversion client)</li>
+    </ul>
+
+Implicitly, a Bourne-compatible shell (e.g. <tt>sh</tt> or <tt>bash</tt>) is required
+for make and the auto-tools to work.
+
+@section setup_linux_sdl SDL
+SDL is an abstraction layer for computer hardware designed to make development of
+portable games simple.  It provides low-level facilities for interaction with
+devices such as the framebuffer (video memory), keyboard/mouse/joystick input,
+sound, OpenGL, the CD-rom, etc.
+
+If you are not installing packages through a package management system, you can
+find the necessary source or pre-compiled binary packages here:
+
+http://www.libsdl.org/index.php
+
+Look under "Download" for SDL 1.X (1.2 is the most recent as of August 2006).
+You'll need both the runtime and development libraries.  Choose whichever format
+packages are appropriate for your system.
+
+@section setup_linux_sdl_image SDL_image
+The SDL website hosts releases of many different libraries that have been written
+for use with SDL.  One is SDL_image -- a frontend to several libraries to support
+reading image files (such as JPEG, PNG, etc).  As of August 2006, writing images
+is not supported (which seems stupid, but whatever).
+
+If you are not installing packages through a package management system, you can
+find the necessary source or pre-compiled binary packages here:
+
+http://www.libsdl.org/projects/SDL_image/
+
+You'll need both the runtime and development libraries.  Choose whichever format
+packages are appropriate for your system.  This library requires others, such as
+libpng, libjpeg, libtiff, and zlib.  Uhh, like, it is left as an exercise to the
+reader on finding and installing these libs.  Ha ha.  Serves you right for not
+using <tt>apt-get</tt>.
+
+@section setup_linux_freetype2 FreeType2
+FreeType is a handy library which renders scalable fonts (read "makes them letters look
+real purty").  It supports reading from TrueType and Type 1 formats, and possibly
+others.
+
+If you are not installing packages through a package management system, you can
+find the necessary source or pre-compiled binary packages here:
+
+http://download.savannah.gnu.org/releases/freetype/
+
+You want the package of the form <tt>ftXXXX.zip</tt> (<tt>ft221.zip</tt> is the most
+recent as of August 2006) -- the only available format is the source package.
+
+@section setup_linux_xuqrijbuh XuqRijBuh Game Engine Source
+In order to get this fine mess working, you'll need the game engine source.  The
+source tree can be found at the following Subversion URL:
+
+<tt>https://svn.sourceforge.net/svnroot/xuqrijbuh</tt>
+
+So if you're using the commandline <tt>svn</tt> client, you would <tt>cd</tt> to
+the directory you want to dump the source tree, and issue this command:
+
+<tt>svn co https://svn.sourceforge.net/svnroot/xuqrijbuh xuqrijbuh</tt>
+
+A directory containing the full source tree, called <tt>xuqrijbuh</tt>, will be
+created in your current working directory.
+
+There are three subdirectories of <tt>xuqrijbuh</tt>:
+
+    <ul>
+    <li><tt>branches</tt> contains development branches of various [sub]trees, when applicable</li>
+    <li><tt>tags</tt> contains text files indicating revision numbers for notable landmarks in the tree's development</li>
+    <li><tt>trunk</tt> contains the main development tree of the source code -- this is where everyone usually hangs out</li>
+    </ul>
+
+For general information on XuqRijBuh, go to the SourceForge homepage:
+
+http://sourceforge.net/projects/xuqrijbuh/
+
+@section setup_linux_xuqrijbuh_resources XuqRijBuh Resources
+All the example applications (described in @ref setup_linux_build_targets "Which Build Targets Do What And Running Them")
+require file assets in order to function (e.g. fonts, textures, etc).  As of August 2006,
+these are provided in a zip file:
+
+http://www.thedods.com/victor/resources.zip
+
+Download this, and unzip it anywhere you like -- I recommend unzipping into
+<tt>xuqrijbuh/trunk</tt>.  No specific location is necessary because it can
+be symbolically linked from anywhere.
+
+@section setup_linux_bootstrapping Bootstrapping The configure Script
+All you need to know is that to generate <tt>configure</tt>, from the
+<tt>xuqrijbuh/trunk</tt> directory, you must run the following command.
+
+<tt>./bootstrap.sh</tt>
+
+This must be run every time <tt>configure.ac</tt> is modified -- either by you
+or through <tt>svn update</tt>.
+
+This uses <tt>aclocal</tt>, <tt>autoheader</tt>, <tt>libtoolize</tt>, <tt>automake</tt>
+and <tt>autoconf</tt> to generate the files necessary for building -- <tt>configure</tt>
+and all instances of <tt>Makefile.in</tt>.
+
+The <tt>autoconf</tt> tool generates the <tt>configure</tt> script which detects
+locations and versions of libraries, header files, compilers, tools, etc. in order
+to make the build process consistent across many platforms (primarily Unices).
+The file <tt>configure.ac</tt> is the source file which <tt>autoconf</tt> reads
+in order to produce the <tt>configure</tt> script.
+
+Similarly, <tt>automake</tt> is a program which automates generation of complicated
+<tt>Makefile</tt>s.  It uses (many instances of) <tt>Makefile.am</tt> to generate (analogous
+instances of) <tt>Makefile.in</tt>, which are in turn used by the <tt>configure</tt>
+script to produce (analogous instances of) <tt>Makefile</tt>.
+
+Even though the syntax and much of the design detail of these two apps is completely
+retarded and irrational, they do work very well, and are what facilitate the ubiquitous
+"configure, make, make install" configuration/compilation/installation commands as used
+by practically all open-source C/C++ Unix software.
+
+More information on <tt>autoconf</tt> and <tt>automake</tt> can be found at
+http://www.gnu.org/software/autoconf/ and http://www.gnu.org/software/automake/
+respectively.
+
+@section setup_linux_configuring Configuring A Build
+The <tt>configure</tt> script is the central point of control for detecting and specifying
+system characteristics and other build options.  To see what specific options are available, run:
+
+<tt>./configure --help</tt>
+
+Some useful options include:
+
+    <ul>
+    <li><tt>--disable-static</tt> Causes only dynamically-linked binaries to be produced.</li>
+    <li><tt>--disable-shared</tt> Causes only statically-linked binaries to be produced.</li>
+    <li><tt>--enable-debug</tt> Turns on debugging symbols, turns off optimizations.</li>
+    <li><tt>--enable-gprof</tt> Enables gprof (performance profiling) instrumentation, sets the debug level to 0, and enables optimizations.  Must be paired with <tt>--disable-shared</tt>.</li>
+    <li><tt>--enable-nan-sanity-check</tt> Enables specific asserts in the 2D engine system which are useful to detect accidental divide-by-zero errors in game logic code.</li>
+    <li><tt>--with-debug-level=#</tt> Specifies the assert threshold -- 0 being the minimum and 3 being the most pedantic.  Use with argument 0, 1, 2 or the default value of 3.</li>
+    </ul>
+
+The default linking behavior is to produce both dynamic and static libraries, but only
+dynamically-linked executables.
+
+During the development cycle, it is recommended to use options:
+
+<tt>--disable-static --enable-debug --enable-nan-sanity-check</tt>
+
+For a (statically-linked) release, use:
+
+<tt>--disable-shared --with-debug-level=0 --with-arch=XXX</tt>
+
+Where <tt>XXX</tt> is the name of the target architecture (see your compiler's
+documentation for specific architecture names).
+
+I recommend not running <tt>configure</tt> in the source directory (<tt>xuqrijbuh/trunk</tt>),
+but rather creating a subdirectory (<tt>debug</tt> or <tt>release</tt> or <tt>profile</tt> etc.)
+and running <tt>configure</tt> from there.  For example:
+
+<tt>cd xuqrijbuh/trunk</tt>
+<tt>mkdir debug</tt>
+<tt>cd debug</tt>
+<tt>../configure --disable-static --enable-debug --enable-nan-sanity-check</tt>
+
+This will cause the <tt>xuqrijbuh/trunk/debug</tt> directory to contain all generated
+files (object, library and executable).  Since it is strictly separated from the source
+tree, it is easy to delete the directory should the need arise to start completely cleanly.
+
+Running <tt>configure</tt> will produce a number of <tt>Makefile</tt>s which are
+used by <tt>make</tt> to build the libraries and applications.  There should be
+a <tt>Makefile</tt> in the directory from which you ran <tt>configure</tt>, which
+contains the top-level build targets.
+
+@section setup_linux_compiling Compiling A Build
+To build everything, simply run:
+
+<tt>make</tt>
+
+in the directory from which you ran <tt>configure</tt>.  This will build the game engine
+library and all example applications in their respective directories, using the options
+specified to <tt>configure</tt>.  This is accomplished by a series of recursive
+<tt>Makefile</tt>s.  As of August 2006, they are:
+
+    <ul>
+    <li><tt>Makefile</tt></li>
+    <li><tt>lib/Makefile</tt></li>
+    <li><tt>app/Makefile</tt></li>
+    <li><tt>app/example/Makefile</tt></li>
+    <li><tt>app/example/disasteroids/Makefile</tt></li>
+    <li><tt>app/example/guidemo/Makefile</tt></li>
+    <li><tt>app/example/lesson00/Makefile</tt></li>
+    <li><tt>app/example/lesson01/Makefile</tt></li>
+    </ul>
+
+You can build specific targets (e.g. the engine library, or disasteroids) by running
+<tt>make</tt> in the respective directory (e.g. <tt>lib/</tt> or
+<tt>app/example/disasteroids</tt>).  Running <tt>make</tt> in a directory with
+several <tt>make</tt>-able subdirectories will build all of them.
+
+One caveat about recursive <tt>Makefile</tt>s is that build depedencies (e.g. building
+the game engine library before an application) cannot be automatically handled -- if
+at all, they must be specified by hand in their respective <tt>Makefile.am</tt>.  Thus,
+this recursive <tt>Makefile</tt> setup may be changed in the future for a single,
+top-level <tt>Makefile</tt>, opting to specify targets by name, rather than by
+position in the directory hierarchy.
+
+@section setup_linux_build_targets Which Build Targets Do What And Running Them
+XuqRijBuh provides several build targets.  As of August 2006, they are:
+
+    <ul>
+    <li>disasteroids -- Built in <tt>app/example/disasteroids/</tt></li>
+    <li>guidemo -- Built in <tt>app/example/guidemo/</tt></li>
+    <li>lesson00 -- Built in <tt>app/example/lesson00/</tt></li>
+    <li>lesson01 -- Built in <tt>app/example/lesson01/</tt></li>
+    <li>libxrb -- Built in <tt>lib/</tt></li>
+    </ul>
+
+The libxrb target is the library itself, and produces a libtool library which is linked
+(statically or dynamically, depending on the <tt>configure</tt> options used) into each
+application to produce executables.  All projects besides libxrb are applications.
+
+Disasteroids is the first full sample game implementation provided with XuqRijBuh and
+as of August 2006, is still under development.
+
+All targets prefixed with "lesson" are tutorials intended to teach usage of the game
+engine library incrementally in small, manageable steps.
+
+In order to run any of the example applications, you'll need to create a symbolic link
+to the previously-unzipped <tt>resources</tt> directory in each application's directory
+(e.g. in <tt>app/example/disasteroids/</tt>).  If you ever run an app, and it fails inexplicably,
+it's probably because you're a douche bag.  Either that or you're missing the resources
+directory (though I mean to make this slightly more obvious in the future).
+
+It should be noted that if you made a dynamically-linked build (see <tt>configure</tt> option
+<tt>--disable-static</tt>, the "real" executable is located in the <tt>.libs</tt> subdirectory of
+the target, with the prefix <tt>lt-</tt> and what you thought was the executable is actually
+a <tt>libtool</tt>-generated shell script which does some fancy hoodoo to set things up for execution
+of the dynamically-linked binary in the development directory tree.  For example, for
+disasteroids, the binary produced is <tt>app/example/disasteroids/.libs/lt-disasteroids</tt>,
+and the file <tt>app/example/disasteroids/disasteroids</tt> is the <tt>libtool</tt>-generated
+shell script.
+
+@section setup_linux_releases Creating Releases Of Your Application
+I'm not an expert on this yet, so for now, just link your app statically
+(see @ref setup_linux_configuring "Configuring A Build") and distribute the monolithic
+binary along with whatever other resources your app needs.  Otherwise, if you're cool
+and you know how to write <tt>Makefile.am</tt>s, you can use <tt>automake</tt>'s
+<tt>make install</tt> facility (see http://www.gnu.org/software/automake/ for more details).
 
 */

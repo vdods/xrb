@@ -1,11 +1,25 @@
-/** @page programming_conventions Programming Conventions
+/** @page conventions Programming Conventions
 
-@section section_general_verbosity General Verbosity
+Here is some pontification on the programming conventions used in XuqRijBuh.
+This isn't required reading.  Go ahead, skip this section.  You know you
+want to.  You're probably simple anyway.  Just leave.  GET OUTTA HERE!
 
-@section section_nomenclature Nomenclature
-NO CAMEL CASE.  DIE.
+@section conventions_general_verbosity General Verbosity
 
-@subsection subsection_nomenclature_variables Variables
+@section conventions_nomenclature Nomenclature
+NO CAMEL-CASE.  Only people lacking morals use camel-case.  Don't even think
+about dishonoring my game engine by linking it with code written using
+camel-case identifiers.  You will spend eternity trapped in the stygian depths
+of Programmer Hell.
+
+<strong>Corollary</strong>
+
+Java programmers are completely without morals or even the barest semblance
+of a soul.  Their veins are filled with poisonous ichor, and they sup upon
+the living essence of small, inoffensive animals such as kittens, puppies and
+quality-assurance testers.
+
+@subsection conventions_subsection_nomenclature_variables Variables
 Variables will always be in lower case, with words separated by
 underscores ("_").  Exceptions can be made for the sake of code-readability.
 
@@ -67,11 +81,11 @@ to avoid scope qualifiers for these variable types was made for the sake of
 convenience.  A variable without a scope qualifier is assumed to be of local
 scope.
 
-@subsection subsection_nomenclature_specific_variables Specific Variables
+@subsection conventions_subsection_nomenclature_specific_variables Specific Variables
 SignalSender/Receiver
 
 
-@subsection subsection_nomenclature_functions Functions
+@subsection conventions_subsection_nomenclature_functions Functions
 Function names will be concatenations of capitalized words, forming
 descriptive names.  A function name should be a concise description
 of what the function does.  Examples:
@@ -82,7 +96,7 @@ int GetManhattanDistanceBetween (int *point1, int *point2);
 bool IsEscapableCharacter (char c);
 @endcode
 
-@subsection subsection_nomenclature_methods Methods
+@subsection conventions_subsection_nomenclature_methods Methods
 Class methods fall under three different categories:
     <ul>
     <li>Accessors: Return a value which depends on the class' members
@@ -109,10 +123,10 @@ by means of semantics -- readability is the primary goal of this naming
 convention.  See @a Vector and @a Matrix for examples of accessors, modifiers
 and procedures.
 
-@subsection subsection_nomenclature_specific_methods Specific Methods
+@subsection conventions_subsection_nomenclature_specific_methods Specific Methods
 Sender/Receiver accessors
 
-@subsection subsection_nomenclature_types Types
+@subsection conventions_subsection_nomenclature_types Types
 Types (classes, structures, typedefs, namespaces, enums and unions) will use
 the naming scheme of functions -- Capitalized words.
 
@@ -147,7 +161,7 @@ struct Color
 };
 @endcode
 
-@subsection subsection_nomenclature_macros Macros
+@subsection conventions_subsection_nomenclature_macros Macros
 Preprocessor macros will always be in upper case, with words separated by
 underscores ("_").  Exceptions can be made for the sake of code-readability.
 
@@ -159,9 +173,9 @@ Examples:
 #define _STUPIDFILE10_H_
 @endcode
 
-@section section_const_correctness Const Correctness
+@section conventions_const_correctness Const Correctness
 
-@section section_indentation_and_formatting Indentation And Formatting
+@section conventions_indentation_and_formatting Indentation And Formatting
 In general, code should be structured and formatted such that it blends
 in seamlessly with the surrounding code.
 
@@ -205,7 +219,7 @@ int main (int argc, char **argv)
     };
 
     DoStuff();
-    
+
     printf("argc = %d\n", argc);
     for (int i = 0; i < argc; ++i)
     {
@@ -223,7 +237,7 @@ int main (int argc, char **argv)
         return 0;
     }
 }
-@endcode   
+@endcode
 
 Great care should be taken to ensure all the code fits within 80 character
 lines.  This is so that all text editors can view the entire width of the
@@ -351,12 +365,12 @@ This is done so that grepping code will reveal as much scope information as
 possible.  This convention can be bypassed if it enhances readability (e.g.
 when encasing an entire library in a namespace such as "namespace Xrb").
 
-@section section_contextual_hints Contextual Hints
+@section conventions_contextual_hints Contextual Hints
 comparing pointers to NULL instead of as booleans
 
 scope specification for namespaces (greppability)
 
-@section section_asserts Asserts
+@section conventions_asserts Asserts
 
 */
 
