@@ -266,18 +266,38 @@ be used while writing and debugging code.
 
 There are many manifestations const correctness (and there are probably some
 esoteric ones I don't know about) -- note that I avoid the inconsistent
-English-language-like convention of declaring things like
+English-language-like convention of declarations with the @c const keyword
+on the left side.
 
-@code const float value @endcode
+@code
+// Most people make declarations like this:
+const float value0;
 
-and always put the const qualifier on the right side of the keyword/operator
-being qualified.
+// I always put the const keyword on the right
+// of the token it's qualifying.
+float const value1;
 
-@code float const value @endcode
+// Both of the above declarations are
+// syntactically identical.  The const keyword
+// can be applied to pointers as well.  However,
+// There is no left-side equivalent for pointer
+// const qualifiers, which is why I choose to
+// always place the const qualifier on the right.
 
-is identical in meaning to
+// This declaration is a read-only pointer
+// to a read-or-write integer.
+int *const ptr0;
 
-@code const float value @endcode
+// This declaration is a read-or-write pointer
+// to a read-only integer.
+int const *ptr1;
+
+// This declaration is a read-only pointer
+// to a read-only integer.
+int const *const ptr2;
+@endcode
+
+<strong>Different Types Of Constness</strong>
 
     <ul>
     <li><strong>Normal variable constness</strong>
@@ -310,7 +330,12 @@ is identical in meaning to
         This declaration provides a constant pointer to an array of
         <i>non</i>-constant pointers to strings, whose characters are constant.
 
-    <li><strong>Class method constness</strong> (e.g. "Vector::GetLength () const;")</li>
+    <li><strong>Class method constness</strong>
+
+        @code
+
+        @endcode
+        (e.g. "Vector::GetLength () const;")</li>
     <li></li>
     <li></li>
     <li></li>

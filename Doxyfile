@@ -74,7 +74,10 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = doc/doxygen_pages #lib # TEMPORARILY TOOK OUT "lib" for quickness in doc-generation
+INPUT                  = doc/doxygen_pages \
+                         app/example/lesson00 \
+                         app/example/lesson01 \
+                         #lib # TEMPORARILY TOOK OUT "lib" for quickness in doc-generation
 FILE_PATTERNS          = *.cpp \
                          *.h \
                          *.tcpp \

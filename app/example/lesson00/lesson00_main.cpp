@@ -10,31 +10,66 @@
 
 
 // ///////////////////////////////////////////////////////////////////////////
-// Lesson 00 - initializing and shutting down the engine
+// Lesson 00 - Initializing And Shutting Down The Engine
 // ///////////////////////////////////////////////////////////////////////////
 
 
-// this header MUST be included in every source/header file, as it contains
-// definitions necessary for the correct usage and operation of libxrb.
+/** @page lesson00 Lesson 00 - Initializing And Shutting Down The Engine
+@code *//* @endcode
+This lesson will show you how to initialize the basic systems needed by
+XuqRijBuh -- initializing video mode and Singletons and shutting down.  If
+you're reading the source file directly, instead of the doxygen-generated
+document, then pay no attention to the "code" and "endcode" tags in each
+comment.
+
+    <ul>
+    <li>@ref lesson00_main.cpp "This lesson's source code"</li>
+    <li>@ref lessons "Main lesson index"</li>
+    </ul>
+
+<strong>Procedural Overview</strong>
+
+    <ul>
+    <li>Initialize SDL (video, sound, and whatever else is needed).</li>
+    <li>Initialize game engine singletons (necessary for correct operation of the game engine).</li>
+    <li>Create the Screen object.  This is what sets the video mode. </li>
+    <li>Execute game-specific code.</li>
+    <li>Delete the Screen object.  This does NOT reset the video mode.</li>
+    <li>Shutdown game engine singletons (necessary for correct operation of the game engine).</li>
+    <li>Shutdown SDL (this is what resets the video mode).</li>
+    </ul>
+
+<strong>Code Diving!</strong>
+
+To start off, the <tt>"xrb.h"</tt> header MUST be included in every source and
+header file, as it contains definitions necessary for the correct usage and
+operation of the game engine.
+@code */
 #include "xrb.h"
 
-#include "xrb_screen.h" // for use of the necessary Screen widget class
+#include "xrb_screen.h" // For use of the necessary Screen widget class
 
-// this using statement is useful so that we don't need to qualify every
-// library type/class/etc with Xrb::
+/* @endcode
+Every declaration in the game engine library is within the <tt>Xrb</tt>
+namespace.  Although this is pedantic, it is used to avoid any possible naming
+collision.  It turns out not to be inconvenient, because of C++'s
+<tt>using</tt> keyword.  This <tt>using</tt> statement is used so we don't
+need to qualify every library type/class/etc with <tt>Xrb::</tt>
+@code */
 using namespace Xrb;
 
-// cleans stuff up.  see below
+// This is just a helper function to group all the shutdown code together.
 void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
 
-    // shutdown the singletons
+    // Shutdown the game engine singletons.  This is necessary for the
+    // game engine to shutdown cleanly.
     Singletons::Shutdown();
-    // make sure the application doesn't still have the mouse grabbed,
+    // Make sure the application doesn't still have the mouse grabbed,
     // or you'll have a hard time pointy-clickying at stuff.
     SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // call SDL's cleanup function.
+    // Call SDL's shutdown function.
     SDL_Quit();
 }
 
@@ -42,11 +77,13 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "main();\n");
 
-    // first attempt to initialize SDL.  currently this just involves
-    // initializing the video, but will later initialize sound, once
-    // sound code is actually written.  the SDL_INIT_NOPARACHUTE flag
-    // is used because we want crashes that will be useful in debug mode
-    // (meaning, in unix, it will core dump).
+    /* @endcode
+    First, attempt to initialize SDL.  Currently this just initializes the
+    video, but will later initialize sound, once sound code is actually
+    written.  The <tt>SDL_INIT_NOPARACHUTE</tt> flag is used because we want
+    crashes that will be useful in debug mode; the debugger will be able to
+    catch it (or if you're in Unix, you get a nice, warm, smelly core dump).
+    @code */
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
         fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
@@ -54,63 +91,79 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    // this call initializes libxrb's singleton facilities.  this must
-    // be done, or the engine will just not work.  the singletons include:
-    // - ResourceLibrary: ensures that we only load one copy of certain
-    //                    resources (textures, fonts, sounds, etc) into memory.
-    // - Input: accessor for the immediate state of the keyboard and mouse
-    //          (and eventually joysticks, etc).  this is not the primary/only
-    //          means for user input, but we'll get to that later.
-    // - KeyMap: performs keyboard layout mapping (e.g. Dvorak), which is
-    //           necessary only on windows builds because the windows version
-    //           of SDL lacks proper key mapping.
-    // - FTLibrary: this is used by the font system to use the FreeType font
-    //              rendering facilities.  you shouldn't need to worry about it.
+    /* @endcode
+    This call initializes the game engine singleton facilities.  This must
+    be done, or the engine will just not work.  The singletons include:
+        <ul>
+        <li>ResourceLibrary ensures that we only load one copy of certain
+            resources (textures, fonts, sounds, etc) into memory.</li>
+        <li>Input provides accessors for the immediate state of the keyboard
+            and mouse (and eventually joysticks, etc).  This is not the
+            primary or only means for user input, but we'll get to that
+            later.</li>
+        <li>KeyMap performs keyboard layout mapping (e.g. Dvorak), which is
+            necessary only on Windows builds because the Windows version of
+            SDL lacks proper key mapping.</li>
+        <li>FTLibrary is used by the font system to use the FreeType font
+            rendering facilities.  you shouldn't need to worry about it.</li>
+        </ul>
+    @code */
     Singletons::Initialize("none");
 
-    // set the caption for the application's window.  i haven't figured out
-    // what the icon string is, maybe it's supposed to be the filename for
-    // a BMP file or something.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "icon thingy");
+    /* @endcode
+    Set the caption for the application's window.  Although documented as
+    "the icon name", the second parameter apparently doesn't do anything,
+    so don't bother with it.  I heard it was an asshole anyway.
+    @code */
+    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "");
 
-    // this call creates the Screen object and initializes the given video
-    // mode (800x600, 32 bit color).  there is no constraint on the size
-    // or aspect ratio of the screen, apart from the ability of your video
-    // hardware to handle it.  the Screen object is the root widget of the
-    // GUI widget hierarchy, and does a bunch of special handling to draw
-    // its child widgets properly.
+    /* @endcode
+    This call creates the Screen object and initializes the given video mode
+    (800x600, 32 bit color).  There is no constraint on the size or aspect
+    ratio of the screen, apart from the ability of your video hardware to
+    handle it.  The Screen object is the root widget of the GUI widget
+    hierarchy, and does a bunch of special handling to draw its child widgets
+    properly.
+    @code */
     Screen *screen = Screen::Create(
-        800,                    // video mode/screen width
-        600,                    // video mode/screen height
-        32,                     // video mode pixel bitdepth
-        /*SDL_FULLSCREEN*/ 0);  // SDL_SetVideomode flags.  use SDL_FULLSCREEN
-                                // instead of 0 to set fullscreen video mode.
-    // if the Screen failed to initialize for whatever reason (probably because
-    // the system was unable to set the video mode), screen will be NULL.  if
-    // this happens, print an error message and quit with an error code.
+        800,    // video mode/screen width
+        600,    // video mode/screen height
+        32,     // video mode pixel bitdepth
+        0);     // SDL_SetVideomode flags -- none for now.
+    /* @endcode
+    If the Screen failed to initialize for whatever reason (probably because
+    the system was unable to set the video mode), screen will be NULL.  If
+    this happens, print an error message and quit with an error code.
+    @code */
     if (screen == NULL)
     {
         fprintf(stderr, "unable to initialize video mode\n");
-        // this shuts down libxrb's singletons, and shuts down SDL.
+        // this shuts down the game engine singletons, and shuts down SDL.
         CleanUp();
         // return with an error value.
         return 2;
     }
 
-    // here is where the game code goes.  for now we'll just pause for 5 seconds.
+    /* @endcode
+    Here is where the game code goes.  To avoid overloading your brain, for
+    now we'll just pause for 5 seconds.
+    @code */
     {
         fprintf(stderr, "pausing for 5000 milliseconds...\n");
         SDL_Delay(5000);
     }
 
-    // delete the Screen object, and with it the entire GUI widget hierarchy.
-    // this call doesn't reset the video mode however, that is done by
-    // calling SDL_Quit(), which we have stashed away in CleanUp().
+    /* @endcode
+    Delete the Screen object, and with it the entire GUI widget hierarchy.
+    This call doesn't reset the video mode however; that is done by calling
+    <tt>SDL_Quit</tt>, which we have stashed away in <tt>CleanUp</tt>.
+    @code */
     Delete(screen);
-
-    // this shuts down libxrb's singletons, and shuts down SDL.
+    // this shuts down the game engine singletons, and shuts down SDL.
     CleanUp();
     // return with success value.
     return 0;
 }
-
+/* @endcode
+Thus concludes the first lesson.  Did it hurt?  The fuck it didn't.
+*/

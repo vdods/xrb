@@ -10,38 +10,74 @@
 
 
 // ///////////////////////////////////////////////////////////////////////////
-// Lesson 01 - GUI widgets and the game loop
+// Lesson 01 - GUI Widgets And The Game Loop
 // ///////////////////////////////////////////////////////////////////////////
 
 
-// this header MUST be included in every source/header file, as it contains
-// definitions necessary for the correct usage and operation of libxrb.
+/** @page lesson01 Lesson 01 - GUI Widgets And The Game Loop
+@code *//* @endcode
+This lesson will show you how to begin creating use graphical user interfaces
+and how to design and run a game loop -- the heartbeat of a game engine.
+
+    <ul>
+    <li>@ref lesson01_main.cpp "This lesson's source code"</li>
+    <li>@ref lessons "Main lesson index"</li>
+    </ul>
+
+<strong>Procedural Overview</strong>
+
+    <ul>
+    <li>Initialize SDL and game engine singletons.  Create the Screen object.
+        This was covered in previous lesson(s).</li>
+    <li>Execute game-specific code.</li>
+        <ul>
+        <li>Create formatted layouts of GUI widgets.</li>
+        <li>Run the game loop</li>
+            <ul>
+            <li>Handle events (user and system-generated).</li>
+            <li>Perform off-screen processing.</li>
+            <li>Draw the Screen object's entire widget hierarchy.</li>
+            </ul>
+        </ul>
+    <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
+        This was covered in previous lesson(s).</li>
+    </ul>
+
+Comments explaining previously covered material will be made terser (or
+deleted entirely) in each successive lesson.  If something is not explained
+well enough, it was probably already explained in
+@ref lessons "previous lessons".
+
+<strong>Code Diving!</strong>
+
+@code */
+// This header MUST be included in every source/header file.
 #include "xrb.h"
 
-#include "xrb_button.h"     // for use of the Button widget class
-#include "xrb_event.h"      // for use of the Event classes
-#include "xrb_eventqueue.h" // for use of the EventQueue class
-#include "xrb_input.h"      // for use of the Input class (via Singletons::)
-#include "xrb_label.h"      // for use of the Label widget class
-#include "xrb_layout.h"     // for use of the Layout widget class
-#include "xrb_lineedit.h"   // for use of the LineEdit widget class
-#include "xrb_screen.h"     // for use of the necessary Screen widget class
+#include "xrb_button.h"     // For use of the Button widget class
+#include "xrb_event.h"      // For use of the Event classes
+#include "xrb_eventqueue.h" // For use of the EventQueue class
+#include "xrb_input.h"      // For use of the Input class (via Singletons::)
+#include "xrb_label.h"      // For use of the Label widget class
+#include "xrb_layout.h"     // For use of the Layout widget class
+#include "xrb_lineedit.h"   // For use of the LineEdit widget class
+#include "xrb_screen.h"     // For use of the necessary Screen widget class
 
-// this using statement is useful so that we don't need to qualify every
-// library type/class/etc with Xrb::
+// Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
 
-// cleans stuff up.  see below
+// This is just a helper function to group all the shutdown code together.
 void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
 
-    // shutdown the singletons
+    // Shutdown the game engine singletons.  This is necessary for the
+    // game engine to shutdown cleanly.
     Singletons::Shutdown();
-    // make sure the application doesn't still have the mouse grabbed,
+    // Make sure the application doesn't still have the mouse grabbed,
     // or you'll have a hard time pointy-clickying at stuff.
     SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // call SDL's cleanup function.
+    // Call SDL's shutdown function.
     SDL_Quit();
 }
 
@@ -49,11 +85,7 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "main();\n");
 
-    // first attempt to initialize SDL.  currently this just involves
-    // initializing the video, but will later initialize sound, once
-    // sound code is actually written.  the SDL_INIT_NOPARACHUTE flag
-    // is used because we want crashes that will be useful in debug mode
-    // (meaning, in unix, it will core dump).
+    // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
         fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
@@ -61,119 +93,122 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    // this call initializes libxrb's singleton facilities.  this must
-    // be done, or the engine will just not work.  the singletons include:
-    // - ResourceLibrary: ensures that we only load one copy of certain
-    //                    resources (textures, fonts, sounds, etc) into memory.
-    // - Input: accessor for the immediate state of the keyboard and mouse
-    //          (and eventually joysticks, etc).  this is not the primary/only
-    //          means for user input, but we'll get to that later.
-    // - KeyMap: performs keyboard layout mapping (e.g. Dvorak), which is
-    //           necessary only on windows builds because the windows version
-    //           of SDL lacks proper key mapping.
-    // - FTLibrary: this is used by the font system to use the FreeType font
-    //              rendering facilities.  you shouldn't need to worry about it.
+    // Initialize the game engine singleton facilities.
     Singletons::Initialize("none");
 
-    // set the caption for the application's window.  i haven't figured out
-    // what the icon string is, maybe it's supposed to be the filename for
-    // a BMP file or something.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 01", "icon thingy");
+    // Set the caption for the application's window.
+    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "");
 
-    // this call creates the Screen object and initializes the given video
-    // mode (800x600, 32 bit color).  there is no constraint on the size
-    // or aspect ratio of the screen, apart from the ability of your video
-    // hardware to handle it.  the Screen object is the root widget of the
-    // GUI widget hierarchy, and does a bunch of special handling to draw
-    // its child widgets properly.
-    //
-    // In this example, do not set fullscreen mode, because we will need
-    // to hit Alt+F4 or click the X button in the window frame to quit
-    // the app.
+    // This call creates the Screen object and initializes the given video mode.
+    // The Screen object is the root widget of the GUI widget hierarchy, and
+    // does a bunch of special handling to draw its child widgets properly.
     Screen *screen = Screen::Create(
-        800,                    // video mode/screen width
-        600,                    // video mode/screen height
-        32,                     // video mode pixel bitdepth
-        0);                     // SDL_SetVideomode flags (none currently)
-    // if the Screen failed to initialize for whatever reason (probably because
-    // the system was unable to set the video mode), screen will be NULL.  if
-    // this happens, print an error message and quit with an error code.
+        800,    // video mode/screen width
+        600,    // video mode/screen height
+        32,     // video mode pixel bitdepth
+        0);     // SDL_SetVideomode flags -- none for now.
+    // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
         fprintf(stderr, "unable to initialize video mode\n");
-        // this shuts down libxrb's singletons, and shuts down SDL.
+        // this shuts down the game engine singletons, and shuts down SDL.
         CleanUp();
         // return with an error value.
         return 2;
     }
 
-    // at this point, SDL has been initialized, the engine is ready to go and
-    // the video mode has been set.  here is where the application-specific
-    // code begins.
+    /* @endcode
+    At this point, SDL has been initialized, the video mode has been set and
+    the engine is ready to go.  Here is where the application-specific code
+    begins.
+
+    Everything that is visible in this game engine happens inside an instance
+    of a Widget subclass.  Therefore, we need to instantiate some widgets
+    before anything interesting can happen.
+
+    There are custom subclasses of Widget (such as Label, LineEdit, Button,
+    Layout, etc) to perform various functions.  Widgets are organized in a
+    hierarchy (i.e. parent/child relationship) which also dictates the spatial
+    organisation of widgets onscreen -- a child widget is completely contained
+    within its parent, and cannot draw anything outside itself.  This is the
+    same widget paradigm as used by the FLTK, MFC, QT (and many other)
+    toolkits.  The GUI system in this game engine is primarily modeled
+    after Trolltech's excellent QT GUI toolkit.
+
+    Instead of having to worry about the exact screen coordinates at which to
+    place our widgets, there is a Widget subclass called Layout which
+    automatically handles widget sizing and placement.  Layouts can place
+    widgets in horizontal/vertical lines or in grids, and can be nested
+    within one another to form complicated formatting of widgets.
+    @code */
     {
-        // everything that is visible in this game engine is a Widget.
-        // therefore, we need to instantiate some widgets before anything
-        // interesting can happen.
-
-        // there are custom subclasses of Widget (such as Label, LineEdit,
-        // Button, Layout, etc) to perform various functions.  Widgets are
-        // organized in a hierarchy (i.e. parent/child relationship) which
-        // also dictates the spatial organisation of widgets onscreen -- a
-        // child widget is completely contained within its parent, and cannot
-        // draw anything outside itself.
-
-        // instead of having to worry about the exact screen coordinates to
-        // place our widgets at, there is a Widget subclass called Layout which
-        // automatically handles widget sizing and placement for us.  Layouts
-        // can place widgets in horizontal/vertical lines, or in grids.
-
-        // we will now create a Layout widget as a child of our Screen (which,
-        // not coincidentally, is itself a Widget subclass).  this Layout will
-        // be the parent to the widgets we place inside.  The first parameter
-        // is the orientation of the Layout (a vertical column of widgets).
-        // The second parameter is the Widget to assign as its parent -- in
-        // this case, the Screen itself.  The third parameter, which is present
-        // in almost all Widget subclasses after the parent widget parameter,
-        // is the "name" of the widget.  This isn't used directly by the engine,
-        // but is useful in debugging GUI problems (being able to identify
-        // which widget you're dealing with in a big confusing call stack).
+        /* @endcode
+        We will now create a Layout widget as a child of our Screen (which,
+        not coincidentally, is itself a Widget subclass).  this Layout will be
+        the parent to the widgets we place inside.  The first parameter is the
+        orientation of the Layout (a vertical column of widgets). The second
+        parameter is the Widget to assign as its parent -- in this case, the
+        Screen itself.  The third parameter, which is present in almost all
+        Widget subclasses after the parent widget parameter, is the "name" of
+        the widget.  This parameter is optional, but its use is recommended.
+        It isn't used directly by the engine, but is invaluable in debugging
+        GUI problems -- the ability to identify which widget you're dealing
+        with in a mostly meaningless call stack within some event loop.
+        @code */
         Layout *main_layout = new Layout(VERTICAL, screen, "main layout");
-        // This call causes main_layout to fill out the entire space of
-        // screen (SetMainWidget is a Widget method, so can be used on any
-        // parent widget for a child).  If the parent widget's size or location
-        // change, its main widget will be resized or moved accordingly.
+        /* @endcode
+        This call causes main_layout to fill out the entire space of screen.
+        SetMainWidget is a Widget method, so can be used on any parent widget
+        for a child.  If the parent widget's size or location change, its
+        main widget will be resized and/or moved accordingly.
+        @code */
         screen->SetMainWidget(main_layout);
 
-        // now to create some directly useful widgets.
+        /* @endcode
+        Now to create some directly useful widgets.
 
-        // a Label is a simple, unmoving widget which draws text or a picture
-        // (we'll get to picture labels later).  the default justification for
-        // a Label is centered both horizontally and vertically, but this, among
-        // other properties, can be changed.
+        A Label is a simple, non-interactive widget which draws text or a
+        picture (we'll get to picture labels later).  the default
+        justification for a Label's contents is centered both horizontally
+        and vertically, but this, among other properties, can be changed.
+        @code */
         new Label("I LIKE ZOMBIES.", main_layout, "awesome zombie text label");
-        // a Button can be clicked upon to signal some other piece of code to
-        // do something.  This button isn't connected to anything, but we'll get
-        // to that later.
+        /* @endcode
+        A Button can be clicked upon to signal some other piece of code to do
+        something.  This button isn't connected to anything, but we'll get to
+        that later.
+        @code */
         new Button("This button does nothing", main_layout, "do-nothing button");
 
-        // Layouts, just like any Widget subclass, can be contained within
-        // other Layouts.  This layout will be used to place a text Label
-        // and a LineEdit side-by-side.  The code block is only being used
-        // to indicate creation of the layout and its child widgets.
+        /* @endcode
+        Layouts, just like any Widget subclass, can be contained within other
+        Layouts.  This layout will be used to place a text Label and a LineEdit
+        side-by-side.  The code block is only being used to indicate creation
+        of the layout and its child widgets.
+
+        A LineEdit is a text-entry box.  The first parameter in its
+        constructor indicates the maximum number of characters that can be
+        entered into it.  It derives from the same baseclass as Label, so it
+        shares many of the same properties as Label, such as alignment, text
+        color, and so forth.
+        @code */
         {
             Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "label and line-edit layout");
 
             // Create a text Label to indicate what to do with the following LineEdit.
             new Label("You can enter up to 30 characters in this LineEdit ->", sub_layout, "indicator label");
-            // a LineEdit is a text-entry box.  the first parameter indicates the
-            // maximum number of characters that can be entered.
+            // Create the LineEdit after the Label, and it will be placed next
+            // in the horizontal layout.
             new LineEdit(30, sub_layout, "30-char line edit");
         }
 
-        // add another horizontal Layout so we can have a row of text Labels
-        // to demonstrate the word wrapping and alignment properties.  Again,
-        // the code block is only being used to indicate creation of the layout
-        // and its child widgets.
+        /* @endcode
+        Add another horizontal Layout so we can have a row of text Labels to
+        demonstrate the word wrapping and alignment properties.  Again, the
+        code block is only being used to indicate creation of the layout and
+        its child widgets.  Make sure to read the text contained in each Label,
+        as each contains useful information.
+        @code */
         {
             Layout *sub_layout = new Layout(HORIZONTAL, main_layout, "note label layout");
 
@@ -242,105 +277,131 @@ int main (int argc, char **argv)
             note_label->SetAlignment(Dim::X, SPACED);
         }
 
-        // Note the apparently dangling pointers that the above calls to "new"
-        // returned.  We don't have to ever worry about deleting widgets
-        // manually (except for the Screen), because when a Widget is destroyed,
-        // it deletes all its children.
+        /* @endcode
+        Note the apparently dangling pointers that the above calls to "new"
+        returned.  We don't have to ever worry about deleting widgets manually
+        (except for the Screen), because when a Widget is destroyed, it deletes
+        all its children (pretty heartless, huh?).  Thus, when the Screen is
+        deleted, its entire widget hierarchy is massacred.
 
-        // We're done creating widgets for this example.  Next up is the game
-        // loop, where all the computation, screen-rendering, event-processing,
-        // user-input-processing, etc takes place.
+        We're done creating widgets for this example.  Next up is the game
+        loop, where all the computation, screen-rendering, event-processing,
+        user-input-processing, etc takes place.
 
-        // The screen keeps track of if SDL detected a quit request (i.e. Alt+F4
-        // or clicking the little X in the corner of the window pane).  We want
-        // to loop until the user requests to quit the app.
+        The screen keeps track of if SDL detected a quit request (i.e. Alt+F4
+        or clicking the little X in the corner of the window pane).  We want
+        to loop until the user requests to quit the app.
+        @code */
         while (!screen->GetIsQuitRequested())
         {
-            // Sleep for 33 milliseconds so we don't suck up too much CPU time.
-            // This will result in the game loop running at about 30 frames per
-            // second (because there is one screen-rendering per game loop
-            // iteration).
+            /* @endcode
+            Sleep for 33 milliseconds so we don't suck up too much CPU time.
+            This will result in limiting the game loop framerate to about 30
+            frames per second (because there is one screen-rendering per game
+            loop iteration).
+            @code */
             SDL_Delay(33);
-
-            // Certain facilities of the game engine require the current time.
-            // This value should be represented as a Float (notice the
-            // capitalization), and should measure the number of seconds since
-            // the application started.  SDL_GetTicks() returns the number of
-            // milliseconds since the app started, so take one thousandth of that.
+            /* @endcode
+            Certain facilities of the game engine require the current time.
+            This value should be represented as a Float (notice the
+            capitalization), and should measure the number of seconds since
+            the application started.  SDL_GetTicks() returns the number of
+            milliseconds since the app started, so take one thousandth of that.
+            @code */
             Float time = 0.001f * SDL_GetTicks();
-
-            // SDL is an abstraction layer on top of the operating system to
-            // homogenize various facilities a game may need to use (specifically,
-            // here, we're interested in keyboard and mouse events).  This loop
-            // sucks up all pending events, creates Xrb::Event objects out of
-            // them, and hands them to the top of the widget hierarchy (the
-            // Screen).  SDL_Event is the structure provided by SDL to house
-            // event data.  SDL_PollEvent will return true while there are still
-            // events in the queue to process.  It will place the event data
-            // in the SDL_Event pointer passed to it.
-
+            /* @endcode
+            SDL is an abstraction layer on top of the operating system to
+            homogenize various facilities a game may need to use (specifically,
+            here, we're interested in keyboard and mouse events).  This loop
+            sucks up all pending events, produces Xrb::Event objects out of
+            them, and craps them onto the top of the widget hierarchy (the
+            Screen object).  SDL_Event is the structure provided by SDL to
+            house event data.  SDL_PollEvent will return true while there are
+            still events in the queue to process.  It will place the event
+            data in the SDL_Event pointer passed to it.  We will loop until
+            there are no more events left.
+            @code */
             SDL_Event sdl_event;
             while (SDL_PollEvent(&sdl_event))
             {
-                // Here is where we repackage the SDL_Event into a (subclass of)
-                // Xrb::Event, for use by the Screen.  Events require the current
-                // time (this will be discussed later for EventQueue).
+                /* @endcode
+                Here is where we repackage the SDL_Event into a (subclass of)
+                Xrb::Event, for use by the Screen.  Events require the current
+                time (this will be discussed later for EventQueue).
+                @code */
                 Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, time);
 
-                // if it was a dud, skip this loop
+                // Event::CreateEventFromSDLEvent may in certain cases return
+                // NULL. If it was a dud, skip this event-handling loop.
                 if (event == NULL)
                     continue;
 
-                // this step is necessary so that the Input singleton (the
-                // state of the user-input devices such as the keyboard and
-                // mouse) is updated.
+                /* @endcode
+                If the event is of the keyboard or mouse, let the Input
+                singleton process it.  This step is necessary so that the
+                state of said user-input devices is updated.
+                @code */
                 if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
-
-                // All events are delegated to the proper widgets via the top of
-                // the widget hierarchy (the Screen).  Events must go through
-                // the widget hierarchy because certain events are handled based
-                // on locations of widgets (e.g. mousewheel events always go to
-                // the widget(s) directly under the mouse cursor).
+                /* @endcode
+                All events are delegated to the proper widgets via the top of
+                the widget hierarchy (the Screen object).  Events must go
+                through the widget hierarchy because certain events are handled
+                based on locations of widgets (e.g. mousewheel events always
+                go to the widget(s) directly under the mouse cursor).
+                @code */
                 screen->ProcessEvent(event);
-                // We don't want to rely on widgets deleting events themselves,
-                // as it would create a maintainence nightmare, so we insist
-                // that events must be deleted at whatever code scope they were
-                // created.
+                /* @endcode
+                We don't want to rely on widgets deleting events themselves, as
+                it would create a maintainence nightmare, so we insist that
+                events must be deleted at whatever code scope they were
+                created.  This also allows events that were created on the
+                stack to be passed in without fear that they will be illegally
+                deleted.
+                @code */
                 Delete(event);
             }
 
-            // Events can be enqueued for later processing (which will be
-            // discussed later), and so processing them on a time-basis
-            // must be done each game loop iteration.
+            /* @endcode
+            Events can be enqueued for asynchronous/delayed processing (which
+            will be discussed later), and so processing them on a time-basis
+            must be done each game loop iteration.
+            @code */
             screen->GetOwnerEventQueue()->ProcessFrame(time);
-            // This call is where all the invisible (non-rendering) computation
-            // for the widget hierarchy takes place.  Widget subclasses can
-            // override a particular method so that they can do per-frame
-            // computation.  The widget hierarchy is traversed in an undefined
-            // order, calling each widget's "think" method.
+            /* @endcode
+            This call is where all the off-screen (strictly non-rendering)
+            computation for the widget hierarchy takes place.  Widget
+            subclasses can override a particular method so that they can do
+            per-frame computation.  The widget hierarchy is traversed in an
+            undefined order (not strictly prefix, infix or postfix), calling
+            each widget's "think" method.
+            @code */
             screen->ProcessFrame(time);
-            // Turn the crank on the event queue again, since there may have
-            // been new events enqueued during the previous call, and we want
-            // to handle these delayed events at the earliest possible time.
+            /* @endcode
+            Turn the crank on the event queue again, since there may have been
+            new events enqueued during the previous call, and we want to handle
+            these delayed events at the earliest possible time.
+            @code */
             screen->GetOwnerEventQueue()->ProcessFrame(time);
-
-            // Here is where the visual magic happens.  All the (visible)
-            // widgets are drawn in this call (if a widget is invisible --
-            // if it is not on-screen, hidden, of zero area, etc -- its
-            // Draw method is not called.
+            /* @endcode
+            Here is where the visual magic happens.  All the visible widgets
+            in this hierarchy are drawn in this call.  If a widget is invisible
+            -- if it is hidden, of zero area, or it is not on-screen -- its
+            Draw method is not called.
+            @code */
             screen->Draw();
         }
     }
 
-    // delete the Screen object, and with it the entire GUI widget hierarchy.
-    // this call doesn't reset the video mode however, that is done by
-    // calling SDL_Quit(), which we have stashed away in CleanUp().
+    // Delete the Screen object, and with it the entire GUI widget hierarchy.
+    // This call doesn't reset the video mode however; that is done by
+    // calling SDL_Quit, which we have stashed away in CleanUp.
     Delete(screen);
-
-    // this shuts down libxrb's singletons, and shuts down SDL.
+    // this shuts down the game engine singletons, and shuts down SDL.
     CleanUp();
     // return with success value.
     return 0;
 }
-
+/* @endcode
+Thus concludes the second lesson.  Do you feel smarter?  Well, you aren't.
+*/

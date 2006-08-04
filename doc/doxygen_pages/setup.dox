@@ -7,7 +7,7 @@ open-source alternatives such as MinGW.
     <ul>
     <li>@ref setup_msvc "Setup For Microsoft Visual Studio"</li>
     <li>@ref setup_linux "Setup For Linux"</li>
-    <li>Setup For Mac OS X</li>
+    <li>@ref setup_macosx "Setup For Mac OS X"</li>
     </ul>
 
 */
