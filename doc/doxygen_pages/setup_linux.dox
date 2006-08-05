@@ -1,7 +1,7 @@
 /** @page setup_linux Setup For Linux
 This document assumes you have a working knowledge of how to use a Linux command prompt
 and how to locate and install software.  In modern Linux distributions, there is usually
-a SAWEET package management system through which all software can be located and installed
+a SWEET package management system through which all software can be located and installed
 through a dependency-tracking package management system such as <tt>apt-get</tt> or
 <tt>rpm</tt>.  Additionally, there are equally SAWEET frontends for said package
 management systems to make the software installation process even cleaner and more
@@ -30,8 +30,7 @@ Instructions for the unwashed masses:
     <li>@ref setup_linux_xuqrijbuh_resources "XuqRijBuh Resources"</li>
     <li>@ref setup_linux_bootstrapping "Bootstrapping The configure Script"</li>
     <li>@ref setup_linux_configuring "Configuring A Build"</li>
-    <li>@ref setup_linux_compiling "Compiling A Build"</li>
-    <li>@ref setup_linux_build_targets "Which Build Targets Do What And Running Them"</li>
+    <li>@ref setup_linux_compiling "Compiling And Build Targets"</li>
     <li>@ref setup_linux_releases "Creating Releases Of Your Application"</li>
     </ul>
 
@@ -56,27 +55,31 @@ squirted it into the <tt>xuqrijbuh/trunk</tt> directory).
 
 <tt>wget http://www.thedods.com/victor/resources.zip && unzip resources.zip -d xuqrijbuh/trunk</tt>
 
-Create the <tt>configure</tt> script.  This must be done every time <tt>configure.ac</tt> is modified.
+Create the <tt>configure</tt> script.  This must be done every time
+<tt>configure.ac</tt> is modified.
 
 <tt>cd xuqrijbuh/trunk && ./bootstrap.sh</tt>
 
-Configure.  See @ref setup_linux_configuring "Configuring A Build" if that's what floats your boat.
+Create a build directory, change directory to it, and Configure.  See
+@ref setup_linux_configuring "Configuring A Build" if that's what floats your boat.
 
 <tt>mkdir debug && cd debug && ../configure --enable-debug --disable-static --enable-nan-sanity-check</tt>
 
-Compile.  See @ref setup_linux_compiling "Compiling A Build" for more.
+Symbolically link the resources directory and then Compile.  See
+@ref setup_linux_compiling "Compiling And Build Targets" if that's what
+tickles your pickle.
 
-<tt>make</tt>
+<tt>ln -s ../resources . && make</tt>
 
-Go directly to @ref setup_linux_build_targets "Which Build Targets Do What And Running Them".  Do not collect $200.
-    
+Your applications are waiting in the build directory, suh.  Run them at your leisure.
+
 @section setup_linux_common_tools Common Unix Development Tools
 The following tools are required for development using the XuqRijBuh game engine
 in Linux.  They are likely already installed on your system -- what good is a Unix
 machine without development tools?
 
     <ul>
-    <li>GCC (GNU Compiler Collection), specifically <tt>g++</tt></li>
+    <li>GNU Compiler Collection, specifically <tt>g++</tt></li>
     <li><tt>make</tt></li>
     <li><tt>autoconf</tt> (version 2.59 is known to work)</li>
     <li><tt>automake</tt> (version 1.9 is known to work)</li>
@@ -85,7 +88,7 @@ machine without development tools?
     </ul>
 
 Implicitly, a Bourne-compatible shell (e.g. <tt>sh</tt> or <tt>bash</tt>) is required
-for make and the auto-tools to work.
+for make and the auto-tools to work (though I might be on crack).
 
 @section setup_linux_sdl SDL
 SDL is an abstraction layer for computer hardware designed to make development of
@@ -159,15 +162,13 @@ For general information on XuqRijBuh, go to the SourceForge homepage:
 http://sourceforge.net/projects/xuqrijbuh/
 
 @section setup_linux_xuqrijbuh_resources XuqRijBuh Resources
-All the example applications (described in @ref setup_linux_build_targets "Which Build Targets Do What And Running Them")
+All the example applications (described in @ref setup_linux_compiling "Compiling And Build Targets")
 require file assets in order to function (e.g. fonts, textures, etc).  As of August 2006,
 these are provided in a zip file:
 
 http://www.thedods.com/victor/resources.zip
 
-Download this, and unzip it anywhere you like -- I recommend unzipping into
-<tt>xuqrijbuh/trunk</tt>.  No specific location is necessary because it can
-be symbolically linked from anywhere.
+Download this, and unzip it into <tt>xuqrijbuh/trunk</tt>.
 
 @section setup_linux_bootstrapping Bootstrapping The configure Script
 All you need to know is that to generate <tt>configure</tt>, from the
@@ -180,7 +181,7 @@ or through <tt>svn update</tt>.
 
 This uses <tt>aclocal</tt>, <tt>autoheader</tt>, <tt>libtoolize</tt>, <tt>automake</tt>
 and <tt>autoconf</tt> to generate the files necessary for building -- <tt>configure</tt>
-and all instances of <tt>Makefile.in</tt>.
+and <tt>Makefile.in</tt>.
 
 The <tt>autoconf</tt> tool generates the <tt>configure</tt> script which detects
 locations and versions of libraries, header files, compilers, tools, etc. in order
@@ -189,9 +190,9 @@ The file <tt>configure.ac</tt> is the source file which <tt>autoconf</tt> reads
 in order to produce the <tt>configure</tt> script.
 
 Similarly, <tt>automake</tt> is a program which automates generation of complicated
-<tt>Makefile</tt>s.  It uses (many instances of) <tt>Makefile.am</tt> to generate (analogous
-instances of) <tt>Makefile.in</tt>, which are in turn used by the <tt>configure</tt>
-script to produce (analogous instances of) <tt>Makefile</tt>.
+<tt>Makefile</tt>s.  It uses <tt>Makefile.am</tt> to generate an analogous instances
+of <tt>Makefile.in</tt>, which are in turn used by the <tt>configure</tt>
+script to produce <tt>Makefile</tt>.
 
 Even though the syntax and much of the design detail of these two apps is completely
 retarded and irrational, they do work very well, and are what facilitate the ubiquitous
@@ -234,8 +235,9 @@ Where <tt>XXX</tt> is the name of the target architecture (see your compiler's
 documentation for specific architecture names).
 
 I recommend not running <tt>configure</tt> in the source directory (<tt>xuqrijbuh/trunk</tt>),
-but rather creating a subdirectory (<tt>debug</tt> or <tt>release</tt> or <tt>profile</tt> etc.)
-and running <tt>configure</tt> from there.  For example:
+but rather creating a subdirectory (<tt>debug</tt> or <tt>release</tt> or <tt>profile</tt> etc.),
+hereafter referred to as the "build directory" and running <tt>configure</tt> from there.
+For example:
 
 <tt>cd xuqrijbuh/trunk</tt>
 <tt>mkdir debug</tt>
@@ -246,78 +248,68 @@ This will cause the <tt>xuqrijbuh/trunk/debug</tt> directory to contain all gene
 files (object, library and executable).  Since it is strictly separated from the source
 tree, it is easy to delete the directory should the need arise to start completely cleanly.
 
-Running <tt>configure</tt> will produce a number of <tt>Makefile</tt>s which are
-used by <tt>make</tt> to build the libraries and applications.  There should be
-a <tt>Makefile</tt> in the directory from which you ran <tt>configure</tt>, which
-contains the top-level build targets.
+Running <tt>configure</tt> will produce a <tt>Makefile</tt> in the build directory which is
+used by <tt>make</tt> to build the libraries and applications.  This <tt>Makefile</tt>
+defines the build targets (the applications and game engine library)
 
-@section setup_linux_compiling Compiling A Build
+@section setup_linux_compiling Compiling And Build Targets
 To build everything, simply run:
 
 <tt>make</tt>
 
-in the directory from which you ran <tt>configure</tt>.  This will build the game engine
-library and all example applications in their respective directories, using the options
-specified to <tt>configure</tt>.  This is accomplished by a series of recursive
-<tt>Makefile</tt>s.  As of August 2006, they are:
+in the build directory.  This will build the game engine library (in the
+<tt>lib/</tt> subdir) and all application executables (in the build dir).
+You can also build one or more of the targets specifically, should you not
+want to waste time building stuff you're not working on or don't care about.
+As of August 2006, the build targets are:
 
     <ul>
-    <li><tt>Makefile</tt></li>
-    <li><tt>lib/Makefile</tt></li>
-    <li><tt>app/Makefile</tt></li>
-    <li><tt>app/example/Makefile</tt></li>
-    <li><tt>app/example/disasteroids/Makefile</tt></li>
-    <li><tt>app/example/guidemo/Makefile</tt></li>
-    <li><tt>app/example/lesson00/Makefile</tt></li>
-    <li><tt>app/example/lesson01/Makefile</tt></li>
+    <li><tt>lib/libxrb.la</tt> is the library itself, and produces a libtool
+        library which is linked (statically or dynamically, depending on the
+        <tt>configure</tt> options used) into each application to produce
+        executables.  All projects besides this library are applications.</li>
+    <li><tt>disasteroids</tt> is the first full example game implementation
+        provided with XuqRijBuh and as of August 2006, is still under
+        development.</li>
+    <li><tt>guidemo</tt> is a demonstration of the GUI system (which is very
+        in-progress as of August 2006), designed to showcase what capabilities
+        are available and how the GUI system behaves.</li>
+    <li><tt>lesson00</tt> ... <tt>lesson01</tt> are tutorials intended to
+        teach usage of the game engine library incrementally in small,
+        manageable steps.</li>
     </ul>
 
-You can build specific targets (e.g. the engine library, or disasteroids) by running
-<tt>make</tt> in the respective directory (e.g. <tt>lib/</tt> or
-<tt>app/example/disasteroids</tt>).  Running <tt>make</tt> in a directory with
-several <tt>make</tt>-able subdirectories will build all of them.
+Building a target by name is done by specifying it as a parameter to <tt>make</tt>.
 
-One caveat about recursive <tt>Makefile</tt>s is that build depedencies (e.g. building
-the game engine library before an application) cannot be automatically handled -- if
-at all, they must be specified by hand in their respective <tt>Makefile.am</tt>.  Thus,
-this recursive <tt>Makefile</tt> setup may be changed in the future for a single,
-top-level <tt>Makefile</tt>, opting to specify targets by name, rather than by
-position in the directory hierarchy.
+<tt>make lib/libxrb.la</tt>
 
-@section setup_linux_build_targets Which Build Targets Do What And Running Them
-XuqRijBuh provides several build targets.  As of August 2006, they are:
+Or to build multiple targets,
 
-    <ul>
-    <li>disasteroids -- Built in <tt>app/example/disasteroids/</tt></li>
-    <li>guidemo -- Built in <tt>app/example/guidemo/</tt></li>
-    <li>lesson00 -- Built in <tt>app/example/lesson00/</tt></li>
-    <li>lesson01 -- Built in <tt>app/example/lesson01/</tt></li>
-    <li>libxrb -- Built in <tt>lib/</tt></li>
-    </ul>
+<tt>make disasteroids guidemo</tt>
 
-The libxrb target is the library itself, and produces a libtool library which is linked
-(statically or dynamically, depending on the <tt>configure</tt> options used) into each
-application to produce executables.  All projects besides libxrb are applications.
+Building an application will cause make to build all its dependencies if necessary
+(e.g. if the library code has changed, <tt>lib/libxrb.la</tt> will be rebuilt before
+linking the application).
 
-Disasteroids is the first full sample game implementation provided with XuqRijBuh and
-as of August 2006, is still under development.
+For the example applications to run properly, they need access to the <tt>resources</tt>
+directory.  The easiest way to do this is to create a symlink from the build dir to wherever
+you unzipped <tt>resources.zip</tt>.  Assuming you unzipped <tt>resources.zip</tt> into
+<tt>xuqrijbuh/trunk</tt> and you're in the build directory -- <tt>xuqrijbuh/trunk/debug</tt>:
 
-All targets prefixed with "lesson" are tutorials intended to teach usage of the game
-engine library incrementally in small, manageable steps.
+<tt>ln -s ../resources .</tt>
 
-In order to run any of the example applications, you'll need to create a symbolic link
-to the previously-unzipped <tt>resources</tt> directory in each application's directory
-(e.g. in <tt>app/example/disasteroids/</tt>).  If you ever run an app, and it fails inexplicably,
-it's probably because you're a douche bag.  Either that or you're missing the resources
-directory (though I mean to make this slightly more obvious in the future).
+If you ever run an app, and it fails inexplicably, it's probably because you're a douche bag.
+Either that or you're missing the resources directory (explained in
+@ref setup_linux_xuqrijbuh_resources "XuqRijBuh Resources"), or you screwed up the above
+symlink command.
 
 It should be noted that if you made a dynamically-linked build (see <tt>configure</tt> option
 <tt>--disable-static</tt>, the "real" executable is located in the <tt>.libs</tt> subdirectory of
 the target, with the prefix <tt>lt-</tt> and what you thought was the executable is actually
-a <tt>libtool</tt>-generated shell script which does some fancy hoodoo to set things up for execution
+a <tt>libtool</tt>-generated shell script which does some fancy voodoo to set things up for execution
 of the dynamically-linked binary in the development directory tree.  For example, for
-disasteroids, the binary produced is <tt>app/example/disasteroids/.libs/lt-disasteroids</tt>,
-and the file <tt>app/example/disasteroids/disasteroids</tt> is the <tt>libtool</tt>-generated
+disasteroids, the binary produced is <tt>.libs/lt-disasteroids</tt>,
+and the file <tt>disasteroids</tt> is the <tt>libtool</tt>-generated
 shell script.
 
 @section setup_linux_releases Creating Releases Of Your Application

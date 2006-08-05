@@ -3,9 +3,6 @@ Doxyfile
 Makefile.am
 README
 TODO
-app/Makefile.am
-app/example/Makefile.am
-app/example/disasteroids/Makefile.am
 app/example/disasteroids/dis_config.cpp
 app/example/disasteroids/dis_config.h
 app/example/disasteroids/dis_enums.h
@@ -99,17 +96,12 @@ app/example/disasteroids/ui/dis_titlescreenwidget.cpp
 app/example/disasteroids/ui/dis_titlescreenwidget.h
 app/example/disasteroids/ui/dis_worldview.cpp
 app/example/disasteroids/ui/dis_worldview.h
-app/example/guidemo/Makefile.am
 app/example/guidemo/gui_main.cpp
 app/example/guidemo/gui_masterwidget.cpp
 app/example/guidemo/gui_masterwidget.h
-app/example/lesson00/Makefile.am
 app/example/lesson00/lesson00_main.cpp
-app/example/lesson01/Makefile.am
 app/example/lesson01/lesson01_main.cpp
-app/mapeditor2/Makefile.am
 app/mapeditor2/main.cpp
-app/unittest/Makefile.am
 app/unittest/main.cpp
 app/unittest/tests/unittest_matrix2.cpp
 app/unittest/tests/unittest_matrix2.h
@@ -141,7 +133,6 @@ doc/doxygen_pages/setup_macosx.dox
 doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
-lib/Makefile.am
 lib/core/serializers/xrb_binaryfileserializer.cpp
 lib/core/serializers/xrb_binaryfileserializer.h
 lib/core/serializers/xrb_compressionserializer.cpp
