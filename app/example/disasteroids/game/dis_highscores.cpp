@@ -82,12 +82,18 @@ bool HighScores::GetIsNewHighScore (Score const &score)
     ASSERT1(m_best_wave_count_score_set.find(score) == m_best_wave_count_score_set.end())
 
     // if the score surpasses the worst best-points, it's a new high score
-    if (score_order_by_points(score, *m_best_points_score_set.rbegin()))
+    if (m_best_points_score_set.empty() ||
+        score_order_by_points(score, *m_best_points_score_set.rbegin()))
+    {
         return true;
+    }
 
     // if the score surpasses the worst best-time-alive, it's a new high score
-    if (score_order_by_wave_count(score, *m_best_wave_count_score_set.rbegin()))
+    if (m_best_wave_count_score_set.empty() ||
+        score_order_by_wave_count(score, *m_best_wave_count_score_set.rbegin()))
+    {
         return true;
+    }
 
     // otherwise not
     return false;
@@ -126,17 +132,25 @@ void HighScores::AddScore (Score const &score)
     ScoreOrderByWaveCount score_order_by_wave_count;
 
     // if the score surpasses the worst best-points, add it and remove the worst score
-    if (score_order_by_points(score, *m_best_points_score_set.rbegin()))
+    if (m_best_points_score_set.empty())
     {
         m_best_points_score_set.insert(score);
-        m_best_points_score_set.erase(*m_best_points_score_set.rbegin());
+    }
+    else if (score_order_by_points(score, *m_best_points_score_set.rbegin()))
+    {
+        StlContainerEraseRBegin(m_best_points_score_set);
+        m_best_points_score_set.insert(score);
     }
 
     // if the score surpasses the worst best-time-alive, add it and remove the worst score
-    if (score_order_by_wave_count(score, *m_best_wave_count_score_set.rbegin()))
+    if (m_best_wave_count_score_set.empty())
     {
         m_best_wave_count_score_set.insert(score);
-        m_best_wave_count_score_set.erase(*m_best_wave_count_score_set.rbegin());
+    }
+    else if (score_order_by_wave_count(score, *m_best_wave_count_score_set.rbegin()))
+    {
+        StlContainerEraseRBegin(m_best_wave_count_score_set);
+        m_best_wave_count_score_set.insert(score);
     }
 
     // always add it to the score list
@@ -209,49 +223,6 @@ void HighScores::Write (std::string const &filename)
     root->Print(formatter);
     Delete(root);
     fclose(fptr);
-}
-
-void HighScores::Print (FILE *const fptr) const
-{
-    ASSERT1(fptr != NULL)
-
-    Uint32 position;
-
-    fprintf(fptr, "best by number of points\n");
-    position = 1;
-    for (BestPointsScoreSetConstIterator it = m_best_points_score_set.begin(),
-                                         it_end = m_best_points_score_set.end();
-         it != it_end;
-         ++it)
-    {
-        Score const &score = *it;
-        fprintf(
-            fptr,
-            "#%2u - %40s - %10u - wave %3u\n",
-            position++,
-            score.GetName().c_str(),
-            score.GetPoints(),
-            score.GetWaveCount());
-    }
-    fprintf(fptr, "\n");
-
-    fprintf(fptr, "best by time alive\n");
-    position = 1;
-    for (BestWaveCountScoreSetConstIterator it = m_best_wave_count_score_set.begin(),
-                                            it_end = m_best_wave_count_score_set.end();
-         it != it_end;
-         ++it)
-    {
-        Score const &score = *it;
-        fprintf(
-            fptr,
-            "#%2u - %40s - %10u - wave %3u\n",
-            position++,
-            score.GetName().c_str(),
-            score.GetPoints(),
-            score.GetWaveCount());
-    }
-    fprintf(fptr, "\n");
 }
 
 } // end of namespace Dis

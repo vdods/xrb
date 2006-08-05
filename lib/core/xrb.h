@@ -91,6 +91,19 @@ inline CastToType DStaticCast (CastFromType cast_from)
     return static_cast<CastToType>(cast_from);
 }
 
+/** This function is used to avoid placing the ugliness in code at large.
+  * @brief Convenience function for erasing the end of a container
+  * whose erase method does not accept reverse_iterator
+  * @param container The STL container (e.g. set, map, etc) for which
+  *                  to remove its rbegin().
+  */
+template <typename ContainerType>
+inline void StlContainerEraseRBegin (ContainerType &container)
+{
+    ASSERT1(!container.empty())
+    container.erase(typename ContainerType::iterator((++container.rbegin()).base()));
+}
+
 } // end of namespace Xrb
 
 /** Iff @c x is true, evaluates to the ASCII string "true", otherwise "false".

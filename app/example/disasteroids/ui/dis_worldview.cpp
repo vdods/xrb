@@ -208,6 +208,11 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                         0.0f);
                 break;
 
+            case Key::F6:
+                if (m_player_ship != NULL)
+                    m_player_ship->IncrementScore(50000);
+                break;
+
             default:
                 break;
         }
@@ -603,12 +608,12 @@ void WorldView::ProcessFade (Float const frame_dt)
 // ///////////////////////////////////////////////////////////////////////////
 
 #define STATE_MACHINE_STATUS(state_name) \
-    if (input == SM_ENTER) \
+    /* if (input == SM_ENTER) \
         fprintf(stderr, "WorldView: --> " state_name "\n"); \
     else if (input == SM_EXIT) \
         fprintf(stderr, "WorldView: <-- " state_name "\n"); \
     else if (input != IN_PROCESS_FRAME) \
-        fprintf(stderr, "WorldView: input: %u\n", input);
+        fprintf(stderr, "WorldView: input: %u\n", input); */
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&WorldView::x)
 

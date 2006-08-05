@@ -13,6 +13,7 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "dis_config.h"
 #include "dis_master.h"
 #include "dis_options.h"
 #include "xrb_eventqueue.h"
@@ -20,6 +21,8 @@
 
 using namespace std;
 using namespace Xrb;
+
+#define CONFIG_FILENAME "disasteroids.config"
 
 // cleans up the singletons and shuts down SDL.
 void CleanUp ()
@@ -38,9 +41,16 @@ int main (int argc, char **argv)
     fprintf(stderr, "\nmain();\n");
 
     {
+        // read in the user's config file (video resolution, key binds, etc).
+        Dis::Config config;
+        config.Read(CONFIG_FILENAME);
+
+        // initialize the commandline options with the config values and then
+        // parse the commandline into the options object.
         Dis::Options options(argv[0]);
-        options.InitializeFullscreen(true);
-        options.InitializeResolution(ScreenCoordVector2(1024, 768));
+        options.InitializeFullscreen(config.GetFullscreen());
+        options.InitializeResolution(config.GetResolution());
+        options.InitializeKeyMapName(config.GetKeyMapName());
         options.Parse(argc, argv);
         if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
         {
@@ -83,6 +93,10 @@ int main (int argc, char **argv)
         }
 
         Delete(screen);
+
+        // write the config file back out (because it may have changed during
+        // the execution of the game.
+        config.Write(CONFIG_FILENAME);
     }
 
     // return with no error condition

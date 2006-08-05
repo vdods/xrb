@@ -24,10 +24,11 @@ class Options : public CommandLineParser
 {
 public:
 
-    Options (std::string const &executable_name);
+    Options (std::string const &executable_filename);
 
     inline void InitializeFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
     inline void InitializeResolution (ScreenCoordVector2 const &resolution) { m_resolution = resolution; }
+    inline void InitializeKeyMapName (std::string const &key_map_name) { m_key_map_name = key_map_name; }
 
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }

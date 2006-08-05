@@ -6,6 +6,8 @@ TODO
 app/Makefile.am
 app/example/Makefile.am
 app/example/disasteroids/Makefile.am
+app/example/disasteroids/dis_config.cpp
+app/example/disasteroids/dis_config.h
 app/example/disasteroids/dis_enums.h
 app/example/disasteroids/dis_events.h
 app/example/disasteroids/dis_main.cpp

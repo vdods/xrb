@@ -107,8 +107,6 @@ public:
 
     void Read (std::string const &filename);
     void Write (std::string const &filename);
-    // TEMP
-    void Print (FILE *fptr) const;
 
 private:
 

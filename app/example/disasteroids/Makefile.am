@@ -2,6 +2,7 @@ bin_PROGRAMS = \
     disasteroids
 
 disasteroids_SOURCES = \
+    dis_config.cpp \
     dis_main.cpp \
     dis_master.cpp \
     dis_options.cpp \
@@ -45,6 +46,7 @@ disasteroids_SOURCES = \
     ui/dis_worldview.cpp
 
 noinst_HEADERS = \
+    dis_config.h \
     dis_enums.h \
     dis_events.h \
     dis_master.h \

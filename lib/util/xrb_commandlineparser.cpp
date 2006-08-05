@@ -19,14 +19,14 @@ CommandLineParser::CommandLineParser (
     HandlerFunction non_option_argument_handler_function,
     CommandLineOption const *const option,
     Uint32 const option_count,
-    std::string const &executable_name,
+    std::string const &executable_filename,
     string const &program_description,
     string const &usage_message)
     :
     m_non_option_argument_handler_function(non_option_argument_handler_function),
     m_option(option),
     m_option_count(option_count),
-    m_executable_name(executable_name),
+    m_executable_filename(executable_filename),
     m_program_description(program_description),
     m_usage_message(usage_message),
     m_parse_succeeded(true)
@@ -34,7 +34,7 @@ CommandLineParser::CommandLineParser (
     // m_non_option_argument_handler_function may be NULL
     ASSERT1(m_option != NULL);
     ASSERT1(m_option_count > 0);
-    ASSERT1(!m_executable_name.empty());
+    ASSERT1(!m_executable_filename.empty());
 
     PerformOptionConsistencyCheck();
 }
@@ -46,7 +46,7 @@ void CommandLineParser::PrintHelpMessage (ostream &stream) const
     if (!m_program_description.empty())
         stream << m_program_description << "\n\n";
 
-    stream << "usage: " << m_executable_name << " " << m_usage_message << "\n";
+    stream << "usage: " << m_executable_filename << " " << m_usage_message << "\n";
 
     if (m_option[0].m_short_name != '\n')
         stream << "\n";
