@@ -67,7 +67,12 @@ struct ScoreOrderByPoints
                ||
                s0.GetPoints() == s1.GetPoints() && s0.GetWaveCount() > s1.GetWaveCount()
                ||
-               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetDate() < s1.GetDate();
+               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetDate() < s1.GetDate()
+               ||
+               s0.GetDate() == s1.GetDate() && s0.GetHash() < s1.GetHash()
+               ||
+               s0.GetHash() == s1.GetHash() && &s0 < &s1;
+
     }
 }; // end of struct ScoreOrderByPoints
 
@@ -80,7 +85,11 @@ struct ScoreOrderByWaveCount
                ||
                s0.GetWaveCount() == s1.GetWaveCount() && s0.GetPoints() > s1.GetPoints()
                ||
-               s0.GetPoints() == s1.GetPoints() && s0.GetDate() < s1.GetDate();
+               s0.GetPoints() == s1.GetPoints() && s0.GetDate() < s1.GetDate()
+               ||
+               s0.GetDate() == s1.GetDate() && s0.GetHash() < s1.GetHash()
+               ||
+               s0.GetHash() == s1.GetHash() && &s0 < &s1;
     }
 }; // end of struct ScoreOrderByWaveCount
 
@@ -103,7 +112,9 @@ public:
     Score const &GetBestPointsScore (Uint32 index) const;
     Score const &GetBestWaveCountScore (Uint32 index) const;
 
-    void AddScore (Score const &score);
+    // the return value is true iff the points rank was
+    // equal to or better than the wave count rank
+    bool AddScore (Score const &score);
 
     void Read (std::string const &filename);
     void Write (std::string const &filename);

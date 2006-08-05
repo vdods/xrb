@@ -43,16 +43,14 @@ DISASTEROIDS:
 - make Demi track the number of enemies it has spawned so it doesn't make too many
 - make Demi spawn more stuff
 - make Demi's deflection tractors have a higher range angle
+- make Demi push away if its taking too much damage and the player is close
 - there seems to be a bug in the aiming in the front weapon of Demi
 - make Shade circle around the player once it has locked on
 - make Shade teleport or fly away if it takes too much damage
-- move in the attack distance for level 3 Shade
 - Interloper shouldn't flip around immediately
 - take out the low-pass filter for ship angle in the enemy ships
-- there seems to be a bug in the tractoring in Devourment (sometimes the beam
-  doesn't appear and sometimes it appears in the wrong place)
 - when a new high score is posted and you're taken back to the title screen,
-  the best high score should be shown first (time or score based)
+  the just-added score should be highlighted or blinking somehow
 - change CollisionPairList into a std::vector?
 - add collision_location and collision_normal to LineTrace
 - test disasteroids with a non-wrapped main ObjectLayer

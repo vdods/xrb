@@ -79,7 +79,7 @@ When you're presented with installation options, make sure ONLY the following ar
 Plus any other extra pieces of Mother's Worthless Crap you care to install.
 
 If the above link dries up, go to http://msdn.microsoft.com and search for
-"PSDK-x86.exe".  <tt>PSDK-x86.exe</tt> is the filename you want.
+"PSDK-x86.exe".
 
 @section setup_msvc_vc80_crt Redistributable Turds
 Mother seems to have a problem supplying all the files you need to properly compile
@@ -99,8 +99,9 @@ file which contains certain metadata about its DLL buddies.  This directory is i
 in the full, non-free version of MSVC 2005 (but not the free version).  I've uploaded a
 zip file containing the necessary turds which you can just throw in with your release
 executables.  This particular set of files is specific to MSVC 8 (hence the "VC80").
+You can find the little bastards here:
 
-TODO: upload a zip file with the turds
+http://www.thedods.com/victor/Microsoft.VC80.CRT.zip
 
 It should be noted that these files are unnecessary if you don't release your application
 to the general non-MSVC-having populace.
@@ -197,7 +198,7 @@ There are three subdirectories of <tt>xuqrijbuh</tt>:
     <ul>
     <li><tt>branches</tt> contains development branches of various [sub]trees, when applicable</li>
     <li><tt>tags</tt> contains text files indicating revision numbers for notable landmarks in the tree's development</li>
-    <li><tt>trunk</tt> contains the main development tree of the source code -- this is where everyone usually hangs out</li>
+    <li><tt>trunk</tt> contains the main development tree of the source code -- also where the application binaries are produced</li>
     </ul>
 
 The game engine solution file is under the <tt>trunk</tt> directory and is predictably called <tt>xuqrijbuh.sln</tt>.
@@ -213,8 +214,7 @@ these are provided in a zip file:
 
 http://www.thedods.com/victor/resources.zip
 
-Download this, but don't unzip it anywhere yet.  This will be explained in
-@ref setup_msvc_projects "Which Projects Do What And Running Them".
+Download this and unzip it into the <tt>xuqrijbuh/trunk</tt> directory.
 
 @section setup_msvc_env_vars Environment Variables
 In order to avoid having to edit the game engine project files (every single one)
@@ -241,32 +241,26 @@ Hit OK and get out of that 'hole of a menu, and you're ready to compile the game
 The XuqRijBuh solution file contains several projects.  As of August 2006, they are:
 
     <ul>
-    <li>disasteroids</li>
-    <li>lesson00</li>
-    <li>lesson01</li>
-    <li>libxrb</li>
+    <li><tt>libxrb</tt> is the library itself, and produces a .lib file which
+        is linked into each application to produce executables.  It is a
+        dependency for every application in the solution.  All projects besides
+        libxrb are applications.</li>
+    <li><tt>disasteroids</tt> is the first full sample game implementation
+        provided with XuqRijBuh and as of August 2006, is still under
+        development.</li>
+    <li><tt>lesson00</tt> ... <tt>lesson01</tt> are tutorials intended to teach
+        usage of the game engine library incrementally in small, manageable
+        steps.</li>
     </ul>
 
-The libxrb project is the library itself, and produces a .lib file which is linked
-into each application to produce executables.  It is a dependency for every application
-in the solution.  All projects besides libxrb are applications.
+If you ever run an app, and it fails inexplicably, it's probably because you're
+a douche bag.  Either that or you're missing the resources directory (though I
+mean to make this slightly more obvious in the future).  See
+@ref setup_msvc_xuqrijbuh_resources "XuqRijBuh Resources".
 
-Disasteroids is the first full sample game implementation provided with XuqRijBuh and
-as of August 2006, is still under development.
-
-All projects prefixed with "lesson" are tutorials intended to teach usage of the game
-engine library incrementally in small, manageable steps.
-
-In order to run any of the example applications, you'll need to unzip the previously
-downloaded <tt>resources.zip</tt> file into the application's output directory (e.g.
-<tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).  This will create a directory,
-predictably called <tt>resources</tt>.  If you ever run an app, and it fails inexplicably,
-it's probably because you're a douche bag.  Either that or you're missing the resources
-directory (though I mean to make this slightly more obvious in the future).
-
-In addition to the resources directory, you'll need to copy several DLL files into the
-application's output directory (e.g. <tt>xuqrijbuh/trunk/app/example/disasteroids/Debug</tt>).
-These are (again, replacing the applicable project directory and library version numbers):
+In addition to requiring the resources directory, you'll need to copy several DLL files
+into the <tt>xuqrijbuh/trunk</tt> directory.  These are (again, replacing library
+version numbers):
 
     <ul>
     <li><tt>C:/projects/SDL-1.2.11/lib/SDL.dll</tt></li>
@@ -278,6 +272,14 @@ These are (again, replacing the applicable project directory and library version
 
 You can optionally put these files in your executable path, but then you might forget
 to package them up when making a release of your application.
+
+Each project has a "Debug" and a "Release" configuration.  Their object files are
+built in separate directories, so one can switch between configurations without
+clobbering files that would otherwise have to be recompiled.  Each application
+is configured to produce its executables in the <tt>xuqrijbuh/trunk</tt> directory.
+Furthermore, the Debug configuration for each will produce an executable which
+ends in <tt>_debug.exe</tt> -- thus allowing the Debug and Release executables
+to peacefully coexist in the same directory.
 
 @section setup_msvc_releases Creating Releases Of Your Application
 It is advisable to copy one of the example application project files when you begin

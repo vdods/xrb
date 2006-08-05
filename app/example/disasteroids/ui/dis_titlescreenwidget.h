@@ -33,7 +33,10 @@ class TitleScreenWidget : public Widget
 {
 public:
 
-    TitleScreenWidget (bool immediately_show_high_scores, Widget *parent);
+    TitleScreenWidget (
+        bool immediately_show_high_scores,
+        bool show_best_points_high_scores_first,
+        Widget *parent);
     virtual ~TitleScreenWidget ();
 
     SignalSender0 const *SenderStartGame ();
@@ -63,9 +66,9 @@ private:
     };
 
     bool StateGameDemo (StateMachineInput);
-    bool StateDisplayBestPointsHighScores (StateMachineInput);
+    bool StateDisplayFirstHighScores (StateMachineInput);
     bool StatePauseBetweenHighScores (StateMachineInput);
-    bool StateDisplayBestWaveCountHighScores (StateMachineInput);
+    bool StateDisplaySecondHighScores (StateMachineInput);
 
     void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
     void CancelScheduledStateMachineInput ();
@@ -84,6 +87,7 @@ private:
     Button *m_quit_button;
 
     bool const m_immediately_show_high_scores;
+    bool const m_show_best_points_high_scores_first;
     HighScores m_high_scores;
 
     SignalReceiver0 m_internal_receiver_go_to_options;

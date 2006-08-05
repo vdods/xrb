@@ -117,6 +117,9 @@ private:
     // indicates if the high scores should be shown immediately
     // upon the title screen being shown.
     bool m_show_high_scores_immediately;
+    // indicates if the best points high scores should be shown before
+    // the best wave count high scores.
+    bool m_show_best_points_high_scores_first;
 
     // contains the WorldViewWidget which displays the game world
     GameWidget *m_game_widget;

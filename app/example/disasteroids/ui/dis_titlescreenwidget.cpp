@@ -26,11 +26,15 @@ using namespace Xrb;
 namespace Dis
 {
 
-TitleScreenWidget::TitleScreenWidget (bool const immediately_show_high_scores, Widget *const parent)
+TitleScreenWidget::TitleScreenWidget (
+    bool const immediately_show_high_scores,
+    bool const show_best_points_high_scores_first,
+    Widget *const parent)
     :
     Widget(parent, "TitleScreenWidget"),
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
+    m_show_best_points_high_scores_first(show_best_points_high_scores_first),
     m_internal_receiver_go_to_options(&TitleScreenWidget::GoToOptions, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
@@ -128,7 +132,7 @@ void TitleScreenWidget::ProcessFrameOverride ()
     if (!m_state_machine.GetIsInitialized())
         m_state_machine.Initialize(
             m_immediately_show_high_scores ?
-            &TitleScreenWidget::StateDisplayBestPointsHighScores :
+            &TitleScreenWidget::StateDisplayFirstHighScores :
             &TitleScreenWidget::StateGameDemo);
 }
 
@@ -164,20 +168,24 @@ bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
             return true;
 
         case IN_TIME_OUT:
-            TRANSITION_TO(StateDisplayBestPointsHighScores);
+            TRANSITION_TO(StateDisplayFirstHighScores);
             return true;
     }
     return false;
 }
 
-bool TitleScreenWidget::StateDisplayBestPointsHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateDisplayBestPointsHighScores")
+    STATE_MACHINE_STATUS("StateDisplayFirstHighScores")
     switch (input)
     {
         case SM_ENTER:
             ASSERT1(m_high_scores_widget->GetIsHidden())
-            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_POINTS);
+            m_high_scores_widget->Update(
+                m_high_scores,
+                m_show_best_points_high_scores_first ?
+                    HighScoresWidget::M_BEST_POINTS :
+                    HighScoresWidget::M_BEST_WAVE_COUNT);
             m_high_scores_widget->Show();
             ScheduleStateMachineInput(IN_TIME_OUT, 10.0f);
             return true;
@@ -202,20 +210,24 @@ bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const inp
             return true;
 
         case IN_TIME_OUT:
-            TRANSITION_TO(StateDisplayBestWaveCountHighScores);
+            TRANSITION_TO(StateDisplaySecondHighScores);
             return true;
     }
     return false;
 }
 
-bool TitleScreenWidget::StateDisplayBestWaveCountHighScores (StateMachineInput const input)
+bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const input)
 {
-    STATE_MACHINE_STATUS("StateDisplayBestWaveCountHighScores")
+    STATE_MACHINE_STATUS("StateDisplaySecondHighScores")
     switch (input)
     {
         case SM_ENTER:
             ASSERT1(m_high_scores_widget->GetIsHidden())
-            m_high_scores_widget->Update(m_high_scores, HighScoresWidget::M_BEST_WAVE_COUNT);
+            m_high_scores_widget->Update(
+                m_high_scores,
+                m_show_best_points_high_scores_first ?
+                    HighScoresWidget::M_BEST_WAVE_COUNT :
+                    HighScoresWidget::M_BEST_POINTS);
             m_high_scores_widget->Show();
             ScheduleStateMachineInput(IN_TIME_OUT, 10.0f);
             return true;
