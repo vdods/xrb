@@ -67,6 +67,9 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
+- change MSVC output exe files into form like:
+  disasteroids.exe and disasteroids_debug.exe so they can go back in the same
+  directory.
 - GetPathElement* calls should throw string errors, rather than printing
   errors, same with SetPathElement*, so that the caller can do whatever it
   wants with it.

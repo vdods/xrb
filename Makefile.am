@@ -1,13 +1,516 @@
-# not a GNU package. You can remove this line, if
-# have all needed files, that a GNU package needs
-AUTOMAKE_OPTIONS = foreign 1.4
-
-SUBDIRS = \
-    lib \
-    app
+# subdir-objects causes object files to be created in the corresponding subdir
+# foreign indicates this is not a GNU package so it won't halt if any
+#         GNU-required files (e.g. NEWS) are not found
+# 1.4 indicates the minimum automake version to proceed
+AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
 EXTRA_DIST = \
+	configure.ac \
+	Doxyfile \
+	INSTALL \
     LICENSE \
+    README \
     TODO \
     bootstrap.sh
 
+lib_LTLIBRARIES = \
+	lib/libxrb.la
+
+bin_PROGRAMS = \
+    disasteroids \
+    guidemo \
+    lesson00 \
+    lesson01
+#    mapeditor2 \ # is temporarily out of commission
+#    unittest # is temporarily out of commission
+
+##############################################################################
+# general preprocessor and linker flags
+##############################################################################
+
+AM_CPPFLAGS = \
+    `$(FREETYPE_CONFIG) --cflags` \
+    `$(SDL_CONFIG) --cflags` \
+    \
+    -I$(top_srcdir)/lib/core \
+    -I$(top_srcdir)/lib/core/serializers \
+    -I$(top_srcdir)/lib/engine2 \
+    -I$(top_srcdir)/lib/gui \
+    -I$(top_srcdir)/lib/gui/widgets \
+    -I$(top_srcdir)/lib/input \
+    -I$(top_srcdir)/lib/math \
+    -I$(top_srcdir)/lib/parsers \
+    -I$(top_srcdir)/lib/primitive \
+    -I$(top_srcdir)/lib/render \
+    -I$(top_srcdir)/lib/sound \
+    -I$(top_srcdir)/lib/util
+
+# the map editor is temporarily out of service
+#    -I$(top_srcdir)/lib/mapeditor2 \
+#
+
+AM_LDFLAGS = \
+    `$(FREETYPE_CONFIG) --libtool` \
+    `$(SDL_CONFIG) --libs`
+
+LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
+
+##############################################################################
+# libxrb source and header files
+##############################################################################
+
+lib_libxrb_la_SOURCES = \
+    lib/core/xrb_compiletimeasserts.cpp \
+    lib/core/xrb_event.cpp \
+    lib/core/xrb_eventhandler.cpp \
+    lib/core/xrb_eventqueue.cpp \
+    lib/core/xrb_framehandler.cpp \
+    lib/core/xrb_resourcelibrary.cpp \
+    lib/core/xrb_serializer.cpp \
+    lib/core/xrb_signalhandler.cpp \
+    lib/core/xrb_singletons.cpp \
+    \
+    lib/core/serializers/xrb_binaryfileserializer.cpp \
+    \
+    lib/engine2/xrb_engine2_compound.cpp \
+    lib/engine2/xrb_engine2_entity.cpp \
+    lib/engine2/xrb_engine2_events.cpp \
+    lib/engine2/xrb_engine2_object.cpp \
+    lib/engine2/xrb_engine2_objectlayer.cpp \
+    lib/engine2/xrb_engine2_polygon.cpp \
+    lib/engine2/xrb_engine2_quadtree.cpp \
+    lib/engine2/xrb_engine2_sprite.cpp \
+    lib/engine2/xrb_engine2_visibilityquadtree.cpp \
+    lib/engine2/xrb_engine2_world.cpp \
+    \
+    lib/gui/xrb_gui_events.cpp \
+    lib/gui/xrb_sizeproperties.cpp \
+    lib/gui/xrb_widget.cpp \
+    lib/gui/xrb_widgetbackground.cpp \
+    lib/gui/xrb_widgetskin.cpp \
+    lib/gui/xrb_widgetskinhandler.cpp \
+    \
+    lib/gui/widgets/xrb_button.cpp \
+    lib/gui/widgets/xrb_cellpaddingwidget.cpp \
+    lib/gui/widgets/xrb_checkbox.cpp \
+    lib/gui/widgets/xrb_dialog.cpp \
+    lib/gui/widgets/xrb_filedialog.cpp \
+    lib/gui/widgets/xrb_filepanel.cpp \
+    lib/gui/widgets/xrb_label.cpp \
+    lib/gui/widgets/xrb_layout.cpp \
+    lib/gui/widgets/xrb_lineedit.cpp \
+    lib/gui/widgets/xrb_modalwidget.cpp \
+    lib/gui/widgets/xrb_progressbar.cpp \
+    lib/gui/widgets/xrb_spacerwidget.cpp \
+    lib/gui/widgets/xrb_textwidget.cpp \
+    lib/gui/widgets/xrb_widgetstack.cpp \
+    \
+    lib/input/xrb_input.cpp \
+    lib/input/xrb_input_events.cpp \
+    lib/input/xrb_key.cpp \
+    lib/input/xrb_keymap.cpp \
+    lib/input/xrb_keyrepeater.cpp \
+    \
+    lib/math/xrb_math.cpp \
+    lib/math/xrb_matrix2.cpp \
+    lib/math/xrb_polynomial.cpp \
+    lib/math/xrb_simpletransform2.cpp \
+    lib/math/xrb_transform2.cpp \
+    lib/math/xrb_vector.cpp \
+    \
+    lib/parsers/xrb_datafilelocation.cpp \
+    lib/parsers/xrb_datafileparser.cpp \
+    lib/parsers/xrb_datafileparser.trison \
+    lib/parsers/xrb_datafilescanner.cpp \
+    lib/parsers/xrb_datafilevalue.cpp \
+    \
+    lib/primitive/xrb_color.cpp \
+    lib/primitive/xrb_gltexture.cpp \
+    lib/primitive/xrb_ntuple.cpp \
+    lib/primitive/xrb_rect.cpp \
+    lib/primitive/xrb_texture.cpp \
+    \
+    lib/render/xrb_engine2_worldview.cpp \
+    lib/render/xrb_engine2_worldviewwidget.cpp \
+    lib/render/xrb_font.cpp \
+    lib/render/xrb_fontface.cpp \
+    lib/render/xrb_gl.cpp \
+    lib/render/xrb_render.cpp \
+    lib/render/xrb_rendercontext.cpp \
+    lib/render/xrb_screen.cpp \
+    lib/render/xrb_screencoord.cpp \
+    \
+    lib/util/xrb_bitcache.cpp \
+    lib/util/xrb_bitcachedfile.cpp \
+    lib/util/xrb_characterfilter.cpp \
+    lib/util/xrb_commandlineparser.cpp \
+    lib/util/xrb_frameratecalculator.cpp \
+    lib/util/xrb_indentformatter.cpp \
+    lib/util/xrb_tokenizer.cpp \
+    lib/util/xrb_transformation.cpp \
+    lib/util/xrb_utf8.cpp \
+    lib/util/xrb_util.cpp
+
+# the compression stuff is temporarily out of service
+#    lib/core/serializers/xrb_compressionserializer.cpp \
+#    lib/util/xrb_bitcachedcompression.cpp \
+#    lib/util/xrb_huffman.cpp \
+#
+
+# the mapeditor is temporarily out of service
+#    lib/mapeditor2/xrb_mapeditor2_compound.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_compoundentity.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_entity.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_mainwidget.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_object.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_objectlayer.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_polygon.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_sprite.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_spriteentity.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_world.cpp \
+#    lib/mapeditor2/xrb_mapeditor2_worldview.cpp \
+#    \
+#
+
+##############################################################################
+# these headers will be installed in $(prefix)/include/xrb/
+##############################################################################
+
+include_HEADERS = \
+    lib/core/xrb.h \
+    lib/core/xrb_assert.h \
+    lib/core/xrb_debug.h \
+    lib/core/xrb_delete.h \
+    lib/core/xrb_endian.h \
+    lib/core/xrb_enums.h \
+    lib/core/xrb_event.h \
+    lib/core/xrb_eventhandler.h \
+    lib/core/xrb_eventqueue.h \
+    lib/core/xrb_eventqueue.tcpp \
+    lib/core/xrb_framehandler.h \
+    lib/core/xrb_resourcelibrary.h \
+    lib/core/xrb_resourcelibrary.tcpp \
+    lib/core/xrb_serializer.h \
+    lib/core/xrb_serializer.tcpp \
+    lib/core/xrb_signalhandler.h \
+    lib/core/xrb_singletons.h \
+    lib/core/xrb_statemachine.h \
+    lib/core/xrb_statemachine.tcpp \
+    lib/core/xrb_types.h \
+    \
+    lib/core/serializers/xrb_binaryfileserializer.h \
+    \
+    lib/engine2/xrb_engine2_compound.h \
+    lib/engine2/xrb_engine2_entity.h \
+    lib/engine2/xrb_engine2_enums.h \
+    lib/engine2/xrb_engine2_events.h \
+    lib/engine2/xrb_engine2_object.h \
+    lib/engine2/xrb_engine2_objectlayer.h \
+    lib/engine2/xrb_engine2_physicshandler.h \
+    lib/engine2/xrb_engine2_polygon.h \
+    lib/engine2/xrb_engine2_quadtree.h \
+    lib/engine2/xrb_engine2_sprite.h \
+    lib/engine2/xrb_engine2_types.h \
+    lib/engine2/xrb_engine2_visibilityquadtree.h \
+    lib/engine2/xrb_engine2_world.h \
+    \
+    lib/gui/xrb_gui_events.h \
+    lib/gui/xrb_sizeproperties.h \
+    lib/gui/xrb_widget.h \
+    lib/gui/xrb_widgetbackground.h \
+    lib/gui/xrb_widgetskin.h \
+    lib/gui/xrb_widgetskinhandler.h \
+    \
+    lib/gui/widgets/xrb_button.h \
+    lib/gui/widgets/xrb_cellpaddingwidget.h \
+    lib/gui/widgets/xrb_checkbox.h \
+    lib/gui/widgets/xrb_dialog.h \
+    lib/gui/widgets/xrb_filedialog.h \
+    lib/gui/widgets/xrb_filepanel.h \
+    lib/gui/widgets/xrb_label.h \
+    lib/gui/widgets/xrb_layout.h \
+    lib/gui/widgets/xrb_lineedit.h \
+    lib/gui/widgets/xrb_modalwidget.h \
+    lib/gui/widgets/xrb_progressbar.h \
+    lib/gui/widgets/xrb_radiobutton.h \
+    lib/gui/widgets/xrb_radiobutton.tcpp \
+    lib/gui/widgets/xrb_spacerwidget.h \
+    lib/gui/widgets/xrb_textwidget.h \
+    lib/gui/widgets/xrb_toolbarbutton.h \
+    lib/gui/widgets/xrb_toolbarbutton.tcpp \
+    lib/gui/widgets/xrb_valueedit.h \
+    lib/gui/widgets/xrb_valueedit.tcpp \
+    lib/gui/widgets/xrb_valuelabel.h \
+    lib/gui/widgets/xrb_valuelabel.tcpp \
+    lib/gui/widgets/xrb_widgetstack.h \
+    \
+    lib/input/xrb_input.h \
+    lib/input/xrb_input_events.h \
+    lib/input/xrb_key.h \
+    lib/input/xrb_keymap.h \
+    lib/input/xrb_keyrepeater.h \
+    \
+    lib/math/xrb_math.h \
+    lib/math/xrb_matrix2.h \
+    lib/math/xrb_polynomial.h \
+    lib/math/xrb_simpletransform2.h \
+    lib/math/xrb_transform2.h \
+    lib/math/xrb_vector.h \
+    \
+    lib/parsers/xrb_datafilelocation.h \
+    lib/parsers/xrb_datafileparser.h \
+    lib/parsers/xrb_datafilescanner.h \
+    lib/parsers/xrb_datafilevalue.h \
+    \
+    lib/primitive/xrb_bitarray.h \
+    lib/primitive/xrb_bitarray.tcpp \
+    lib/primitive/xrb_circularqueue.h \
+    lib/primitive/xrb_circularqueue.tcpp \
+    lib/primitive/xrb_color.h \
+    lib/primitive/xrb_gltexture.h \
+    lib/primitive/xrb_ntuple.h \
+    lib/primitive/xrb_rect.h \
+    lib/primitive/xrb_texture.h \
+    \
+    lib/render/xrb_engine2_worldview.h \
+    lib/render/xrb_engine2_worldviewwidget.h \
+    lib/render/xrb_font.h \
+    lib/render/xrb_fontface.h \
+    lib/render/xrb_gl.h \
+    lib/render/xrb_render.h \
+    lib/render/xrb_rendercontext.h \
+    lib/render/xrb_screen.h \
+    lib/render/xrb_screencoord.h \
+    \
+    lib/util/xrb_bitcache.h \
+    lib/util/xrb_bitcachedfile.h \
+    lib/util/xrb_characterfilter.h \
+    lib/util/xrb_commandlineparser.h \
+    lib/util/xrb_frameratecalculator.h \
+    lib/util/xrb_indentformatter.h \
+    lib/util/xrb_reference.h \
+    lib/util/xrb_tokenizer.h \
+    lib/util/xrb_transformation.h \
+    lib/util/xrb_utf8.h \
+    lib/util/xrb_util.h \
+    lib/util/xrb_validator.h
+
+# the compression stuff is temporarily out of service
+#    lib/core/serializers/xrb_compressionserializer.h \
+#    lib/util/xrb_bitcachedcompression.h \
+#    lib/util/xrb_huffman.h \
+#
+
+# the mapeditor is temporarily out of service
+#    lib/mapeditor2/xrb_mapeditor2_compound.h \
+#    lib/mapeditor2/xrb_mapeditor2_compoundentity.h \
+#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.h \
+#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.h \
+#    lib/mapeditor2/xrb_mapeditor2_entity.h \
+#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.h \
+#    lib/mapeditor2/xrb_mapeditor2_mainwidget.h \
+#    lib/mapeditor2/xrb_mapeditor2_object.h \
+#    lib/mapeditor2/xrb_mapeditor2_objectlayer.h \
+#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.h \
+#    lib/mapeditor2/xrb_mapeditor2_polygon.h \
+#    lib/mapeditor2/xrb_mapeditor2_sprite.h \
+#    lib/mapeditor2/xrb_mapeditor2_spriteentity.h \
+#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.h \
+#    lib/mapeditor2/xrb_mapeditor2_world.h \
+#    lib/mapeditor2/xrb_mapeditor2_worldview.h \
+#    \
+#
+
+##############################################################################
+# custom make rules
+##############################################################################
+
+if TRISON_EXISTS
+$(srcdir)/lib/parsers/xrb_datafileparser.h: $(srcdir)/lib/parsers/xrb_datafileparser.cpp
+$(srcdir)/lib/parsers/xrb_datafileparser.cpp: $(srcdir)/lib/parsers/xrb_datafileparser.trison
+	$(TRISON) $(srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(srcdir)/lib/parsers/xrb_datafileparser.states
+endif
+
+##############################################################################
+# disasteroids
+##############################################################################
+
+disasteroids_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+    \
+    -I$(top_srcdir)/app/example/disasteroids \
+    -I$(top_srcdir)/app/example/disasteroids/game \
+    -I$(top_srcdir)/app/example/disasteroids/game/engine2 \
+    -I$(top_srcdir)/app/example/disasteroids/game/entities \
+    -I$(top_srcdir)/app/example/disasteroids/game/entities/ships \
+    -I$(top_srcdir)/app/example/disasteroids/game/items \
+    -I$(top_srcdir)/app/example/disasteroids/ui
+
+disasteroids_SOURCES = \
+    app/example/disasteroids/dis_config.cpp \
+    app/example/disasteroids/dis_main.cpp \
+    app/example/disasteroids/dis_master.cpp \
+    app/example/disasteroids/dis_options.cpp \
+    app/example/disasteroids/dis_resourcecache.cpp \
+    app/example/disasteroids/game/dis_highscores.cpp \
+    app/example/disasteroids/game/dis_item.cpp \
+    app/example/disasteroids/game/dis_spawn.cpp \
+    app/example/disasteroids/game/dis_util.cpp \
+    app/example/disasteroids/game/engine2/dis_collisionquadtree.cpp \
+    app/example/disasteroids/game/engine2/dis_entity.cpp \
+    app/example/disasteroids/game/engine2/dis_physicshandler.cpp \
+    app/example/disasteroids/game/engine2/dis_world.cpp \
+    app/example/disasteroids/game/entities/dis_asteroid.cpp \
+    app/example/disasteroids/game/entities/dis_ballistic.cpp \
+    app/example/disasteroids/game/entities/dis_effect.cpp \
+    app/example/disasteroids/game/entities/dis_explosive.cpp \
+    app/example/disasteroids/game/entities/dis_healthtrigger.cpp \
+    app/example/disasteroids/game/entities/dis_mortal.cpp \
+    app/example/disasteroids/game/entities/dis_powerup.cpp \
+    app/example/disasteroids/game/entities/dis_ship.cpp \
+    app/example/disasteroids/game/entities/ships/dis_demi.cpp \
+    app/example/disasteroids/game/entities/ships/dis_devourment.cpp \
+    app/example/disasteroids/game/entities/ships/dis_enemyship.cpp \
+    app/example/disasteroids/game/entities/ships/dis_interloper.cpp \
+    app/example/disasteroids/game/entities/ships/dis_playership.cpp \
+    app/example/disasteroids/game/entities/ships/dis_revulsion.cpp \
+    app/example/disasteroids/game/entities/ships/dis_shade.cpp \
+    app/example/disasteroids/game/entities/ships/dis_solitary.cpp \
+    app/example/disasteroids/game/items/dis_armor.cpp \
+    app/example/disasteroids/game/items/dis_engine.cpp \
+    app/example/disasteroids/game/items/dis_powergenerator.cpp \
+    app/example/disasteroids/game/items/dis_shield.cpp \
+    app/example/disasteroids/game/items/dis_weapon.cpp \
+    app/example/disasteroids/ui/dis_gamewidget.cpp \
+    app/example/disasteroids/ui/dis_highscorenameentrydialog.cpp \
+    app/example/disasteroids/ui/dis_highscoreswidget.cpp \
+    app/example/disasteroids/ui/dis_inventorybutton.cpp \
+    app/example/disasteroids/ui/dis_inventorypanel.cpp \
+    app/example/disasteroids/ui/dis_optionspanel.cpp \
+    app/example/disasteroids/ui/dis_titlescreenwidget.cpp \
+    app/example/disasteroids/ui/dis_worldview.cpp
+
+##############################################################################
+# guidemo
+##############################################################################
+
+guidemo_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	\
+    -I$(top_srcdir)/app/example/guidemo
+
+guidemo_SOURCES = \
+    app/example/guidemo/gui_main.cpp \
+    app/example/guidemo/gui_masterwidget.cpp
+
+##############################################################################
+# lessons
+##############################################################################
+
+lesson00_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson00
+lesson00_SOURCES = app/example/lesson00/lesson00_main.cpp
+
+lesson01_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson01
+lesson01_SOURCES = app/example/lesson01/lesson01_main.cpp
+
+##############################################################################
+# mapeditor2
+##############################################################################
+
+#mapeditor2_CPPFLAGS = \
+#	$(AM_CPPFLAGS) \
+#	\
+#	-I$(top_srcdir)/app/mapeditor2
+#
+#mapeditor2_SOURCES = \
+#    app/mapeditor2/main.cpp
+
+##############################################################################
+# unittest
+##############################################################################
+
+#unittest_CPPFLAGS = \
+#	$(AM_CPPFLAGS) \
+#    \
+#    -I$(top_srcdir)/app/unittest \
+#    -I$(top_srcdir)/app/unittest/tests
+#
+#unittest_SOURCES = \
+#    app/unittest/main.cpp \
+#    app/unittest/unittest_base.cpp \
+#    app/unittest/unittest_controller.cpp \
+#    \
+#    app/unittest/tests/unittest_matrix2.cpp \
+#    app/unittest/tests/unittest_serializer.cpp \
+#    app/unittest/tests/unittest_simpletransform2.cpp \
+#    app/unittest/tests/unittest_transform2.cpp \
+#    app/unittest/tests/unittest_vector.cpp
+
+##############################################################################
+# all the no-install header files for the examples
+##############################################################################
+
+noinst_HEADERS = \
+    app/example/disasteroids/dis_config.h \
+    app/example/disasteroids/dis_enums.h \
+    app/example/disasteroids/dis_events.h \
+    app/example/disasteroids/dis_master.h \
+    app/example/disasteroids/dis_options.h \
+    app/example/disasteroids/dis_resourcecache.h \
+    app/example/disasteroids/game/dis_highscores.h \
+    app/example/disasteroids/game/dis_item.h \
+    app/example/disasteroids/game/dis_spawn.h \
+    app/example/disasteroids/game/dis_util.h \
+    app/example/disasteroids/game/engine2/dis_areatracelist.h \
+    app/example/disasteroids/game/engine2/dis_collisionpair.h \
+    app/example/disasteroids/game/engine2/dis_collisionquadtree.h \
+    app/example/disasteroids/game/engine2/dis_entity.h \
+    app/example/disasteroids/game/engine2/dis_entityreference.h \
+    app/example/disasteroids/game/engine2/dis_linetracebinding.h \
+    app/example/disasteroids/game/engine2/dis_physicshandler.h \
+    app/example/disasteroids/game/engine2/dis_world.h \
+    app/example/disasteroids/game/entities/dis_asteroid.h \
+    app/example/disasteroids/game/entities/dis_ballistic.h \
+    app/example/disasteroids/game/entities/dis_effect.h \
+    app/example/disasteroids/game/entities/dis_explosive.h \
+    app/example/disasteroids/game/entities/dis_healthtrigger.h \
+    app/example/disasteroids/game/entities/dis_mortal.h \
+    app/example/disasteroids/game/entities/dis_powerup.h \
+    app/example/disasteroids/game/entities/dis_ship.h \
+    app/example/disasteroids/game/entities/ships/dis_demi.h \
+    app/example/disasteroids/game/entities/ships/dis_devourment.h \
+    app/example/disasteroids/game/entities/ships/dis_enemyship.h \
+    app/example/disasteroids/game/entities/ships/dis_interloper.h \
+    app/example/disasteroids/game/entities/ships/dis_playership.h \
+    app/example/disasteroids/game/entities/ships/dis_revulsion.h \
+    app/example/disasteroids/game/entities/ships/dis_shade.h \
+    app/example/disasteroids/game/entities/ships/dis_solitary.h \
+    app/example/disasteroids/game/items/dis_armor.h \
+    app/example/disasteroids/game/items/dis_engine.h \
+    app/example/disasteroids/game/items/dis_powereddevice.h \
+    app/example/disasteroids/game/items/dis_powergenerator.h \
+    app/example/disasteroids/game/items/dis_shield.h \
+    app/example/disasteroids/game/items/dis_weapon.h \
+    app/example/disasteroids/ui/dis_gamewidget.h \
+    app/example/disasteroids/ui/dis_highscorenameentrydialog.h \
+    app/example/disasteroids/ui/dis_highscoreswidget.h \
+    app/example/disasteroids/ui/dis_inventorybutton.h \
+    app/example/disasteroids/ui/dis_inventorypanel.h \
+    app/example/disasteroids/ui/dis_optionspanel.h \
+    app/example/disasteroids/ui/dis_titlescreenwidget.h \
+    app/example/disasteroids/ui/dis_worldview.h \
+	\
+	app/example/guidemo/gui_masterwidget.h \
+	\
+    app/unittest/unittest_base.h \
+    app/unittest/unittest_controller.h \
+    \
+    app/unittest/tests/unittest_matrix2.h \
+    app/unittest/tests/unittest_serializer.h \
+    app/unittest/tests/unittest_simpletransform2.h \
+    app/unittest/tests/unittest_transform2.h \
+    app/unittest/tests/unittest_vector.h

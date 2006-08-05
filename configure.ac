@@ -313,16 +313,5 @@ AC_SUBST(FREETYPE_CONFIG)
 # specify the Makefiles
 AC_OUTPUT(
     Makefile
-
-    lib/Makefile
-
-    app/Makefile
-    app/example/Makefile
-    app/example/disasteroids/Makefile
-    app/example/guidemo/Makefile
-    app/example/lesson00/Makefile
-    app/example/lesson01/Makefile
-    app/mapeditor2/Makefile
-    app/unittest/Makefile
 )
 
