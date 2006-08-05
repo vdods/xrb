@@ -15,6 +15,7 @@
 
 #include <string>
 
+#include "xrb_key.h"
 #include "xrb_screencoord.h"
 
 using namespace Xrb;
@@ -34,6 +35,12 @@ public:
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
     inline std::string const &GetKeyMapName () const { return m_key_map_name; }
+    inline Key::Code GetKeyMoveRight () const { return m_key_move_right; }
+    inline Key::Code GetKeyMoveLeft () const { return m_key_move_left; }
+    inline Key::Code GetKeyMoveForward () const { return m_key_move_forward; }
+    inline Key::Code GetKeyMoveBack () const { return m_key_move_back; }
+    inline Key::Code GetKeyEngineBrake () const { return m_key_engine_brake; }
+    inline Key::Code GetKeyUseTractor () const { return m_key_use_tractor; }
 
     void ResetToDefaults ();
 
@@ -45,6 +52,12 @@ private:
     bool m_fullscreen;
     ScreenCoordVector2 m_resolution;
     std::string m_key_map_name;
+    Key::Code m_key_move_right;
+    Key::Code m_key_move_left;
+    Key::Code m_key_move_forward;
+    Key::Code m_key_move_back;
+    Key::Code m_key_engine_brake;
+    Key::Code m_key_use_tractor;
 }; // end of class Config
 
 } // end of namespace Dis

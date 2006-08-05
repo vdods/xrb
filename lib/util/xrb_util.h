@@ -50,6 +50,14 @@ namespace Util
       * @brief Returns a newly allocated copy of the given string.
       */
     char *StringDuplicate (char const *string_to_duplicate);
+    /** @brief If c is an uppercase letter, returns it in lowercase, otherwise returns c.
+      * @param c The character to convert to lowercase.
+      */
+    char Lowercase (char c);
+    /** @brief If c is a lowercase letter, returns it in uppercase, otherwise returns c.
+      * @param c The character to convert to uppercase.
+      */
+    char Uppercase (char c);
     /** @brief Converts all alphabetic characters in the string to lowercase.
       */
     void MakeLowercase (std::string *str);

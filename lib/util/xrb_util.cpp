@@ -86,6 +86,22 @@ char *Util::StringDuplicate (char const *string_to_duplicate)
     return duplicated_string;
 }
 
+char Util::Lowercase (char c)
+{
+    if (c >= 'A' && c <= 'Z')
+        return c += 'a' - 'A';
+    else
+        return c;
+}
+
+char Util::Uppercase (char c)
+{
+    if (c >= 'a' && c <= 'z')
+        return c += 'A' - 'a';
+    else
+        return c;
+}
+
 void Util::MakeLowercase (std::string *const str)
 {
     ASSERT1(str != NULL)

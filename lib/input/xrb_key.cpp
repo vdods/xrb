@@ -47,6 +47,36 @@ bool Key::GetIsKeyRepeatable (Key::Code const code)
     return false;
 }
 
+bool Key::GetIsKeyAscii (Key::Code const code)
+{
+    if (code >= ZERO && code <= NINE || code >= A && code <= Z)
+        return true;
+
+    switch (code)
+    {
+        case TAB:
+        case RETURN:
+        case ESCAPE:
+        case SPACE:
+        case QUOTE:
+        case COMMA:
+        case MINUS:
+        case PERIOD:
+        case SLASH:
+        case SEMICOLON:
+        case EQUALS:
+        case LEFTBRACKET:
+        case BACKSLASH:
+        case RIGHTBRACKET:
+        case BACKQUOTE:
+        case DELETE:
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 void Key::ResetPressed ()
 {
     m_pressed = false;

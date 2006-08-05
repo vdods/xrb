@@ -267,6 +267,7 @@ public:
         return (Key::Code)key;
     }
     static bool GetIsKeyRepeatable (Key::Code code);
+    static bool GetIsKeyAscii (Key::Code code);
     inline Key::Code GetCode () const
     {
         return m_code;

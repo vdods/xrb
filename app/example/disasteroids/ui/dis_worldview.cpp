@@ -10,6 +10,7 @@
 
 #include "dis_worldview.h"
 
+#include "dis_config.h"
 #include "dis_entity.h"
 #include "dis_playership.h"
 #include "dis_world.h"
@@ -22,13 +23,15 @@
 
 using namespace Xrb;
 
+extern Dis::Config g_config;
+
 namespace Dis
 {
 
-Float const WorldView::ms_zoom_factor_intro_begin = 0.03f;//0.05f;
-Float const WorldView::ms_zoom_factor_non_alert_wave = 0.00288f;//0.0048f;
-Float const WorldView::ms_zoom_factor_alert_wave = 0.0018f;//0.003f;
-Float const WorldView::ms_zoom_factor_outro_end = 0.00024f;//0.0004f;
+Float const WorldView::ms_zoom_factor_intro_begin = 0.03f;
+Float const WorldView::ms_zoom_factor_non_alert_wave = 0.00288f;
+Float const WorldView::ms_zoom_factor_alert_wave = 0.0018f;
+Float const WorldView::ms_zoom_factor_outro_end = 0.00024f;
 
 Float const WorldView::ms_intro_duration = 2.0f;
 Float const WorldView::ms_non_alert_wave_zoom_duration = 1.5f;
@@ -93,7 +96,6 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_rotation_increment = 15.0f;
     m_rotation_speed = 120.0f;
 
-    m_use_dvorak = false;
     m_is_debug_mode_enabled = false;
     SetDrawBorderGridLines(m_is_debug_mode_enabled);
     SetIsTransformScalingBasedUponWidgetRadius(true);
@@ -187,7 +189,8 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                 break;
 
             case Key::F3:
-                m_use_dvorak = !m_use_dvorak;
+                if (m_player_ship != NULL)
+                    m_player_ship->IncrementScore(50000);
                 break;
 
             case Key::F4:
@@ -206,11 +209,6 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
                         Mortal::D_NONE,
                         m_player_ship->GetWorld()->GetMostRecentFrameTime(),
                         0.0f);
-                break;
-
-            case Key::F6:
-                if (m_player_ship != NULL)
-                    m_player_ship->IncrementScore(50000);
                 break;
 
             default:
@@ -431,31 +429,14 @@ void WorldView::ProcessPlayerInput ()
     // handle player ship input (movement, shooting and reticle coordinates)
     if (GetParentWorldViewWidget()->GetIsFocused())
     {
-        Sint8 engine_right_left_input;
-        Sint8 engine_up_down_input;
-        Uint8 engine_auxiliary_input;
-        if (m_use_dvorak)
-        {
-            engine_right_left_input =
-                (Singletons::Input().GetIsKeyPressed(Key::I) ?  127 : 0) +
-                (Singletons::Input().GetIsKeyPressed(Key::E) ? -127 : 0);
-            engine_up_down_input =
-                (Singletons::Input().GetIsKeyPressed(Key::P) ?  127 : 0) +
-                (Singletons::Input().GetIsKeyPressed(Key::U) ? -127 : 0);
-            engine_auxiliary_input =
-                (Singletons::Input().GetIsKeyPressed(Key::X) ? UINT8_UPPER_BOUND : 0);
-        }
-        else
-        {
-            engine_right_left_input =
-                (Singletons::Input().GetIsKeyPressed(Key::D) ?  127 : 0) +
-                (Singletons::Input().GetIsKeyPressed(Key::A) ? -127 : 0);
-            engine_up_down_input =
-                (Singletons::Input().GetIsKeyPressed(Key::W) ?  127 : 0) +
-                (Singletons::Input().GetIsKeyPressed(Key::S) ? -127 : 0);
-            engine_auxiliary_input =
-                (Singletons::Input().GetIsKeyPressed(Key::C) ? UINT8_UPPER_BOUND : 0);
-        }
+        Sint8 engine_right_left_input =
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveRight())   ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveLeft())    ? -SINT8_UPPER_BOUND : 0);
+        Sint8 engine_up_down_input =
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveForward()) ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveBack())    ? -SINT8_UPPER_BOUND : 0);
+        Uint8 engine_auxiliary_input =
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyEngineBrake())  ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
             Singletons::Input().GetIsKeyPressed(Key::LMOUSE) ? UINT8_UPPER_BOUND : 0;
@@ -463,7 +444,7 @@ void WorldView::ProcessPlayerInput ()
             Singletons::Input().GetIsKeyPressed(Key::RMOUSE) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().GetIsKeyPressed(Key::SPACE);
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyUseTractor());
 
         if (m_player_ship != NULL)
         {

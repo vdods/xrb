@@ -15,6 +15,7 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 #include "xrb_input.h"
+#include "xrb_key.h"
 #include "xrb_keymap.h"
 #include "xrb_resourcelibrary.h"
 

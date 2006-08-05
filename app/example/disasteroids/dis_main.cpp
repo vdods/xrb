@@ -24,11 +24,11 @@ using namespace Xrb;
 
 #define CONFIG_FILENAME "disasteroids.config"
 
+Dis::Config g_config;
+
 // cleans up the singletons and shuts down SDL.
 void CleanUp ()
 {
-    fprintf(stderr, "CleanUp();\n");
-
     Singletons::Shutdown();
     // make sure input isn't grabbed
     SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -42,15 +42,14 @@ int main (int argc, char **argv)
 
     {
         // read in the user's config file (video resolution, key binds, etc).
-        Dis::Config config;
-        config.Read(CONFIG_FILENAME);
+        g_config.Read(CONFIG_FILENAME);
 
         // initialize the commandline options with the config values and then
         // parse the commandline into the options object.
         Dis::Options options(argv[0]);
-        options.InitializeFullscreen(config.GetFullscreen());
-        options.InitializeResolution(config.GetResolution());
-        options.InitializeKeyMapName(config.GetKeyMapName());
+        options.InitializeFullscreen(g_config.GetFullscreen());
+        options.InitializeResolution(g_config.GetResolution());
+        options.InitializeKeyMapName(g_config.GetKeyMapName());
         options.Parse(argc, argv);
         if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
         {
@@ -96,7 +95,7 @@ int main (int argc, char **argv)
 
         // write the config file back out (because it may have changed during
         // the execution of the game.
-        config.Write(CONFIG_FILENAME);
+        g_config.Write(CONFIG_FILENAME);
     }
 
     // return with no error condition
