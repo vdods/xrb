@@ -4,6 +4,8 @@ Here is a set of tutorials designed to incrementally teach usage of the game
 engine in small, easily digestable steps -- each lesson building upon the
 previous.
 
+The source files can be found in their respective directories under the <tt>xuqrijbuh/trunk/app/example/</tt> directory (e.g. <tt>xuqrijbuh/trunk/app/example/lesson00/lesson00_main.cpp</tt>).
+
     <ul>
     <li>@ref lesson00 "Lesson 00 - Initializing And Shutting Down The Engine" - @ref lesson00_main.cpp "source code"</li>
     <li>@ref lesson01 "Lesson 01 - GUI Widgets And The Game Loop" - @ref lesson01_main.cpp "source code"</li>

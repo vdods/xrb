@@ -105,7 +105,7 @@ int main (int argc, char **argv)
             necessary only on Windows builds because the Windows version of
             SDL lacks proper key mapping.</li>
         <li>FTLibrary is used by the font system to use the FreeType font
-            rendering facilities.  you shouldn't need to worry about it.</li>
+            rendering facilities.  You shouldn't need to worry about it.</li>
         </ul>
     @code */
     Singletons::Initialize("none");

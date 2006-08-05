@@ -1,7 +1,56 @@
 /** @page philosophy Programming Philosophy Pontification
 
 Here is some commentary on good coding practices.  This isn't required
-reading, but not reading it will make you a bad person.
+reading, but not reading it will make you a bad person.  The topics are
+ordered roughly in descending order of importance.
+
+@section philosophy_code_maturity Code Maturity
+Well-designed code is seldom created quickly or on the first time.  Code
+maturity necessarily involves extensive usage and testing, but there are
+two ways for code to become well-designed.  Design/planning in this context
+refers to design of implementation and not some type of abstract or
+conceptual design, though this may apply to both.
+
+    <ul>
+    <li>Careful planning before implementation</li>
+    <li>Post-implementation design iteration</li>
+    </ul>
+
+Arguably the first method is superior, because you generally end up with a
+more well-thought-out system, as you've attempted to account for all
+contingencies and corner-cases, and have probably devised a set of test cases
+to prove the design's correctness.  This method also tends to be easier during
+the actual implementation, because the design is formalized, and implementation
+really just involves perfunctory transcription of the design into code.  You
+could hand the design to some douche bag programmer and have a reasonable
+expectation that s/he would implement it correctly, unless they were some sort
+of incredi-douche.  This method is great for applications with well-defined
+behavior, such as a C compiler or web server.
+
+There are some times when the first method is impractical or even unwise.  Such
+cases are when the requirements of the application may change quickly or
+drastically in the future.  Spending copious amounts of time and effort trying
+to perfect A Design For All Of Eternity would be futile, since Your Highness'
+Inerrant Design will be obsolete anyway.  Games typically fall into this
+category, because the initial game design rarely goes unchanged, let alone any
+implementation design.
+
+The second method is necessarily an evolutionary one.  It involves creating a
+first-pass implementation, and then seeing where the strengths and deficiencies
+are.  The implementation is reworked iteratively until it reaches an equilibrium
+with the requirements of the client (be it application code or human beings).
+Each iteration of the design is relatively fast compared to the meticulous
+planning of the aforementioned design method, allowing several iterations to be
+done in roughly the same time.  This development method is specifically
+pragmatic because for each design iteration to improve, it must consider and
+adapt to the requirements of the client.  Note that this method doesn't
+prohibit pre-implementation planning, but does imply that such planning
+shouldn't try to be too profound or attempt to account for all contingencies --
+the contingencies will be dictated by its performance in the real world.
+
+The point to this ranting is that code is matured by definition through real
+world usage.  If code has not been used in a practical setting, it is necessarily
+not mature.  So, like, test your code, n' stuff.  And drink beer.
 
 @section philosophy_conceptual_hierarchy Conceptual Hierarchy
 Human beings can only fully comprehend a limited set of concepts at any given
@@ -20,12 +69,67 @@ having only a limited number of relevant concepts being simultaneously
 mentally-juggled in any particular system of the program.  This implies a
 hierarchical structure for system usage.
 
-*** picture of example system hierarchy (ideally of the XuqRijBuh system) ***
+<!-- TODO: picture of example system hierarchy (ideally of the XuqRijBuh system) -->
 
 By limiting the number of parts in the system, the programmer is more likely
 to have a full comprehension of the program at any given level in the
 hierarchy.  This will also help in writing modular code that has distinct
 boundaries, lending itself to easier code-refactoring or even module-plugging.
+
+@section philosophy_contextual_hints Contextual Hints
+In order for maximum code-readability (which is essential for code-diving),
+certain easily-used hints can provide the reader with a small extra bit of
+information about the contents of the code, without having to explicitly
+investigate further.  Contextual hints are a good way to achieve this.  By
+using very simple conventions regarding variable/function nomenclature, as
+well as inside expressions, the reader will be able to glean certain facts
+such as the type of a variable.
+
+Take this block of code, as if it had come out of the middle of some large,
+complex function.
+
+@code
+    a = 0;
+    if (!b)
+        return;
+    while (*b)
+    {
+        ++b;
+        a += 5;
+    }
+@endcode
+
+The variables are intentionally named badly, to illustrate how adding
+contextual hints can improve readability significantly.
+
+@code
+    a = 0.0f;
+    if (b == NULL)
+        return;
+    while (*b != '\0')
+    {
+        ++b;
+        a += 5.0f;
+    }
+@endcode
+
+From the added hints, we can see that @c a is likely a @c float ,
+while @c b is likely a <tt>char *</tt> or <tt>char const *</tt>.  This section
+of code is conceivably designed to calculate the total width of the characters
+in the ASCII string pointed to by @c b , assuming a fixed character width of
+<tt>5.0f</tt>.
+
+The declarations for @c a and @c b may be in a piece of code that
+is inconvenient to check.  Being able to forgo looking up the
+declaration of variables while code-diving saves a huge amount of time,
+since the majority of time spent during code augmentation and
+maintenence is spent reading and understanding it.
+
+The added expense of typing a few extra characters for each contextual hint
+is negligible especially when you consider what small portion of development
+time is actually spent writing new code.  Anyone who objects to this extremely
+helpful technique on the grounds of laziness or time constraints is obviously
+not a human being and should be killed immediately.
 
 @section philosophy_self_documenting_code Self Documenting Code
 When someone is attempting to teach or convey a programming concept, or
@@ -199,14 +303,22 @@ Vector2 GetFurthestQuadrantPointFromOrigin (
 }
 @endcode
 
+Again, since writing new code is such a small fraction of the total time spent
+developing software, there is no reason to avoid writing verbose and
+self-descriptive code.  Those who disagree are likely witches, communists,
+terrorists, or [insert applicable scapegoat], and will be served a light
+hippopotamus-slurry aperitif, before the main course of lawyer offal and
+donkey urine.
+
 @section philosophy_asserts_and_exceptions Asserts And Exceptions
 Asserts and exceptions are techniques used to ensure proper operation of
 a program at runtime.  The former is a programmer's tool for use during
 development, meant to catch flaws in the state of a running program (e.g.
 ensuring the output of an algorithmically calculated value is within the
-expected range).  The latter is a method of facilitating robust error
-handling for "acceptable" program errors (e.g. the user provides an invalid
-filename).
+expected range).  In other words, to catch programmer errors.  The latter is
+a method of facilitating robust error handling for "acceptable" program
+errors (e.g. the user provides an invalid filename, or an input file is
+corrupt).
 
 @subsection philosophy_subsection_asserts Asserts
 The assert is a debugging technique which is used to ensure assumptions made
@@ -228,14 +340,33 @@ before they become serious bugs.  If these program flaws remain unknown,
 then the programmer will continue writing code that may even become dependent
 upon the existing flaws.
 
-See @ref philosophy_subsection_asserts_for_safety "Asserts For Safety" for more.
+Relentlessly impregnating code with assertions of seemingly truistic expressions
+is a very useful practice.  It may appear unnecessary to assert really simple
+or seemingly obvious expressions, but the set of asserts in the program act as
+a sort of scaffolding for the program; the program can be thought of as a
+sculpture.  An assert is triggered if the sculpture touches the scaffolding.
+Changes made to the sculpture in one place may cause another part of it to
+collapse. However, the scaffolding will immediately detect the error condition.
+By supplying a sufficiently comprehensive cornucopia of assertions, you can make
+your scaffolding close enough to the sculpture that most deviations will be
+detected and dealt with, before further changes to the sculpture depend on
+previous deformities that would have otherwise gone unnoticed.  The scaffolding
+analogy is doubly appropriate, because when the program is released, the
+asserts are not compiled, so it is as if the scaffolding is taken away.
 
 @subsection philosophy_subsection_exceptions Exceptions
 Exceptions are used to expose user errors (or other acceptable errors) during
-run-time.  For any program that accepts input from the user (which is
-practically every program), some measure of error handling must be done.
+run-time.  Exceptions should be use necessarily for non-programmer errors
+(this isn't Jorva after all).  For any program that accepts input from the user
+or any external source (which is practically every useful program), some
+measure of error handling must be done.
 
-uhhh.. words... words.
+It is bad form for an application to crash just from certain input.  A robust
+program would detect the error and handle it gracefully in whatever context is
+applicable.  Exceptions are designed to ease the spaghettiness of
+error-handling code, so by all means, use them.  I won't go into any more detail
+here, because the rest is identifying the application-specific places that
+require throwing and catching of exceptions.
 
 @section philosophy_making_the_compiler_force_correctness Making The Compiler Force Correctness
 In the realm of programming, the sheer number of possible mistakes is
@@ -383,31 +514,116 @@ void SomeFunction ()
         @endcode </li>
     </ul>
 
-@subsubsection philosophy_subsubsection Usage Of Constness
+@subsubsection philosophy_subsubsection Usage Of Constness And Where Const Matters
 Although pedantic, I use the @c const qualifier almost wherever syntactically
 possible.  The most notable uncommon usage of it in XuqRijBuh is declaring
 function and method parameter values (and most pointed-to values) const.
 
-For example:
+For example, see the following header and implementation code
 @code
-TODO
+// header file - function declaration
+void SquirtErrorMessage (unsigned int message_count, char const *const *message);
 @endcode
 
-TODO: where putting const doesn't matter (function/method declarations)
+@code
+// implementation file - function definition
+void SquirtErrorMessages (unsigned int const message_count, char const *const *const message)
+{
+    for (unsigned int i = 0; i < message_count; ++i)
+        printf("%u -> %s\n", i, message[i]);
+}
+@endcode
 
-@subsection philosophy_subsection_asserts_for_safety Asserts For Safety
-Generously lining code with assertions of expressions that may seem like
-they could be taken for granted is a very useful practice.  It may seem
-unnecessary to assert really simple or seemingly obvious expressions, but
-the set of asserts in the program act as a sort of scaffolding for the
-program, which can be thought of as a sculpture.  An assert is triggered if
-the sculpture touches the scaffolding.  Changes made to the sculpture in one
-place may cause another part of it to collapse.  However, the scaffolding
-will immediately detect the error condition.  By supplying a sufficiently
-comprehensive level of assertions, you can make your scaffolding close enough
-to the sculpture that most deviations will be detected and dealt with, before
-further changes to the sculpture depend on previous deformities that would
-have otherwise gone unnoticed.
+First note the function declaration.  The second parameter is a pointer to an
+array of NULL-terminated strings.  It only contains two @c const qualifiers,
+specifically indicating that the ascii string data is read-only, and that each
+string pointer value in the array is read-only.
+
+Now look how it differs from the parameter list of the function definition.
+There are two extra @c const qualifiers, each placed immediately before the
+parameter name.  These both indicate that the parameter's value is read-only.
+In this case, @c message_count is a read-only <tt>unsigned int</tt> and
+@c message is a read-only pointer to an array of read-only pointers to strings
+containing read-only ascii data.
+
+One might assume that the header file's function declaration does not identify
+the function as defined in the implementation file, but one would be wrong,
+and one should deliver a single punch to one's own face.  NOW.  The reason the
+two functions are not differentiated is because the additional @c const
+qualifiers in the function definition apply only to the <i>values</i> of the
+parameters.  Since these parameters are passed in by <i>value</i>, wether or
+not their values are @c const are moot to the caller.  It should be noted that
+adding the @c const qualifier to the parameter values in the function
+declarations is moot.  To avoid visual noise, I don't add the @c const
+qualifiers in function declarations.  Unfortunately MSVC is retarded in this
+regard and pukes up a warning when a function declaration's parameter list
+doesn't exactly match its definition's parameter list, const parameter values
+and all.
+
+Also note that any pointed-to constness must be shared between the function
+declaration and definition.  In this example, the <tt>char const *const *</tt>
+was shared.  This is so because from the function-caller's perspective, it
+actually matters if those qualities are read-only (the string pointers in the
+array, and the ascii string data itself).
+
+References deserve special attention because syntactically, they seem like
+regular stack values.  They're actually read-only pointers that are
+automatically dereferenced by the compiler -- syntactic sugarcoating (and
+safety) -- which is why you can use references as if they were regular values.
+
+@code
+struct Vector { float x, y; };
+
+// function declaration
+void PrintVector (Vector &vector);
+
+// function definition
+void PrintVector (Vector const &vector)
+{
+    printf("(%g, %g)", vector.x, vector.y);
+}
+@endcode
+
+This code, while apparently similar in form to the first example, will produce
+a linker error -- "undefined reference to 'PrintVector(Vector&)'".  This means
+that the definition we gave doesn't actually implement the function we declared
+in the header file.  The difference is the @c const qualifier applied to the
+@c Vector type declaration.  I mentioned earlier that references are really just
+read-only pointers.  Thus the above code is analogous to the following.
+
+@code
+struct Vector { float x, y; };
+
+// function declaration - note I have added the
+// parameter value const qualifier for clarity.
+void PrintVector (Vector *const vector);
+
+// function definition
+void PrintVector (Vector const *const vector)
+{
+    printf("(%g, %g)", vector->x, vector->y);
+}
+@endcode
+
+The problem is obvious now.  Because the function declaration accepts a pointer
+to a <i>non-const</i> <tt>Vector</tt> and the function definition accepts a
+pointer to a <i>const</i> <tt>Vector</tt>, they do not declare/define the same
+function.  Therefore, assuming the function definition uses the correct
+parameters, the original reference-using code should be changed to the
+following.
+
+@code
+struct Vector { float x, y; };
+
+// function declaration
+void PrintVector (Vector const &vector);
+
+// function definition
+void PrintVector (Vector const &vector)
+{
+    printf("(%g, %g)", vector.x, vector.y);
+}
+@endcode
 
 @section philosophy_programming_language_as_syntactic_sugarcoating Programming Language As Syntactic Sugarcoating
 As programming languages get more and more abstracted, the amount of overhead
@@ -415,10 +631,10 @@ required tends to increase (e.g. C++'s virtual function tables).  The trick is
 to learn the details of the abstraction versus overhead, so it can be diligently
 used or avoided.
 
-For example, a naive C++ programmer might not know about implicit constructors, and
-would never realize there is an entire constructor function call happening each time
-a value is passed to a function which doesn't take the given type explicitly,
-but for which an acceptable type's constructor does.  Example:
+For example, a naive C++ programmer might not know about implicit constructors,
+and would never realize there is an entire constructor function call happening
+each time a value is passed to a function which doesn't take the given type
+explicitly, but for which an acceptable type's constructor does.  Example:
 
 @code
 #include <stdio.h>
@@ -476,7 +692,13 @@ possible -- because C++ polymorphic objects may depend on the runtime state of
 the program, the compiler can't skip the v-table dereferencing.
 
 However, there are some features which, with a little care, can be used
-without any undue overhead.  Function inlining is a prime example of this.
+without any undue overhead.  The point of the following is to demonstrate that
+certain language features can be used in such a way so that all of the
+overhead one would normally assume accompanies the high-levelness of the
+feature just boils away, leaving only the bare minimum -- as if it were
+handwritten assembler.
+
+Function inlining is a prime example of this.
 
 @code
 struct Complex
@@ -601,16 +823,6 @@ void SomeFunction ()
 }
 @endcode
 
-The point of all this is to demonstrate that certain language features can be
-used in such a way so that all of the overhead one would normally assume
-accompanies the high-levelness of the feature just boils away, leaving only
-the bare minimum -- as if it were handwritten assembler.
-
-@subsection philosophy_subsection_templates_as_syntactic_sugarcoating Templates As Syntactic Sugarcoating
-blah -- compare C language, weak-typed void* generalized code with
-strong-typed template code, pointing out that template code is instanced.
-
-
 @section philosophy_code_reuse_and_abstraction Code Reuse And Abstraction
 It is useful for many reasons to make generalized and reuseable code.
 
@@ -618,7 +830,7 @@ The most obvious reason is that writing generalized code once will save time
 over later rewriting limited code to accomodate.  Similarly, using abstraction
 (i.e. class inheritance) can save time by combining sections of systems
 that share functionality.  Furthermore, extending a generalized baseclass
-can be much easier than rewriting a specialized class.
+can be much easier than writing a specialized class.
 
 Another reason, which you may or may not care about, is code footprint size.
 It should be noted that templates, although a very good way to generalize
@@ -634,57 +846,141 @@ humans can only comprehend a limited amount of conceptual information at
 any given time.  Limiting the expanse of parallel concepts will simplify
 understanding of the program's systems.  In other words, simple is better.
 
-@section philosophy_contextual_hints Contextual Hints
-In order for maximum code-readability (which is especially important while
-code-diving), certain hints can provide the reader with a small extra bit
-of information about the contents of the code, without having to explicitly
-investigate further.  Contextual hints are a good way to achieve this.  By
-using very simple conventions regarding variable/function nomenclature, as
-well as inside expressions, the reader will be able to glean certain facts
-such as the type of a variable.
-
-Take this block of code, as if it had come out of the middle of some large,
-complex function.
-
-@code
-    x = 0;
-    if (!y)
-        return;
-    while (*y)
-    {
-        ++y;
-        x += 5;
-    }
-@endcode
-
-The variables are intentionally named badly, to illustrate how adding
-contextual hints can improve readability significantly.
-
-@code
-    x = 0.0f;
-    if (y == NULL)
-        return;
-    while (*y != '\0')
-    {
-        ++y;
-        x += 5.0f;
-    }
-@endcode
-
-From the added hints, we can see that @c x is likely a @c float ,
-while @c y is likely a @c char @c * .  This section of code is
-conceivably to calculate the total width of the characters in the
-ASCII string pointed to by @c y .
-
-The declarations for @c x and @c y may be in a piece of code that
-is inconvenient to check.  Being able to forgo looking up the
-declaration of variables while code-diving saves a huge amount of time,
-since the majority of time spent during code augmentation and
-maintenence is spent reading and understanding it.
-
 @section philosophy_reentrancy_and_singletons Reentrancy And Singletons
+Using global variables for non-singleton type values is the perfect way to
+write non-reentrant code.  The perfect example is in a single-player game,
+keeping a global pointer to the "player" object -- call it <tt>g_player</tt>.
+In a certain past project, I was enraged innumerable times by that little
+turd of a variable.  Using global variables in this manner is a very bad
+practice, and if not suppressed, will become a crutch that one cannot do
+without.
 
-@section philosophy_code_maturity Code Maturity
+When possible these sorts of global variables should be avoided.  The primary
+drawback to these bastard variables is that it makes code non-reentrant,
+meaning there can be only one correctly-functioning instance of it running at
+any given time.  Non-reentrant code is not very flexible and not easily
+reusable, because it has such delicate and unwieldy machinery associated with
+it.
+
+In my awesome opinion, there are only two reasons to ever use global variables.
+
+<strong>Singleton objects such as device-accessing facilities (see Xrb::Singletons)</strong>
+
+Some variables and objects only make sense to be global singletons.  Things
+such as the keyboard state, the current video settings, a global resource
+library, and so on.  These make sense only as global singletons because they
+correspond directly with either physical devices, of which there is only one
+of, or for things like the resource library, benefit from being a singleton.
+
+Unless each "device" is used in a strictly read-only manner (with exceptions
+like the resource library -- see Xrb::ResourceLibrary), the code which
+uses it is not reentrant.  For example, accessing the state of the keyboard
+without changing it can be done by many concurrenly running threads in an
+application without effecting each other.  However, if several concurrently
+running threads attempt to all draw something to the screen device
+simultaneously, your shit will be hella busted.
+
+<strong>Intensely speed-sensitive code that doesn't need to be flexible or reusable</strong>
+
+If speed is of the utmost criticality, then reusability or flexibility is
+secondary, and you have an excuse to commit whatever atrocities are necessary
+to achieve optimal performance.  This example demonstrates it well.
+
+@code
+// some dumb drawable shape class
+class Shape
+{
+public:
+    void Draw (
+        Matrix const &world_transformation,
+        float z_depth,
+        Color const &color_mask,
+        float fade_coefficient) const
+    {
+        // use world_transformation, z_depth, color_mask
+        // and fade_coefficient to draw the Shape
+        ...
+    }
+};
+
+// recursive spatial structure for containing Shapes
+class QuadTree
+{
+public:
+    void Draw (
+        Matrix const &world_transformation,
+        float z_depth,
+        Color const &color_mask,
+        float fade_coefficient) const
+    {
+        if (this QuadTree has children)
+        {
+            this QuadTree is not a leaf node, so call Draw on each QuadTree child
+        else
+            this QuadTree is a leaf node, so call Draw on each Shape it contains
+    }
+private:
+    // QuadTree-specific members
+    ...
+};
+@endcode
+
+The above code will make unnecessary use of the stack by passing 4 values in to each call.  Couple this fact with the recursive and exponential nature of QuadTrees will produce an exponential number of stack pushes for a call to the root node QuadTree's <tt>Draw</tt> method.
+
+It should be noted that none of the values passed into <tt>Draw</tt> are changed -- they remain constant for the duration of the root node QuadTree's <tt>Draw</tt> method.  We can streamline this process by sticking these values in global variables, and avoid passing any extra values with each call.  The code then becomes:
+
+@code
+Matrix g_world_transformation;
+float g_z_depth;
+Color g_color_mask;
+float g_fade_coefficient;
+
+// some dumb drawable shape class
+class Shape
+{
+public:
+    void Draw () const
+    {
+        // use g_world_transformation, g_z_depth, g_color_mask
+        // and g_fade_coefficient to draw the Shape
+        ...
+    }
+};
+
+// recursive spatial structure for containing Shapes
+class QuadTree
+{
+public:
+    void Draw (
+        Matrix const &world_transformation,
+        float z_depth,
+        Color const &color_mask,
+        float fade_coefficient) const
+    {
+        g_world_transformation = world_transformation;
+        g_z_depth = z_depth;
+        g_color_mask = color_mask;
+        g_fade_coefficient = fade_coefficient;
+        DrawPrivate();
+    }
+private:
+    void DrawPrivate () const
+    {
+        if (this QuadTree has children)
+        {
+            this QuadTree is not a leaf node, so call Draw on each QuadTree child
+        else
+            this QuadTree is a leaf node, so call Draw on each Shape it contains
+    }
+    
+    // QuadTree-specific members
+    ...
+};
+@endcode
+
+This solution is not reentrant because until <tt>QuadTree::Draw</tt> is
+finished executing, that method can not be called without everything going
+fucking apeshit.
 
 */
 

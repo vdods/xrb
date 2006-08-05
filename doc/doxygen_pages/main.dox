@@ -25,15 +25,15 @@ http://sourceforge.net/projects/xuqrijbuh/
     </ul>
 <li>@ref philosophy "Programming Philosophy Pontification"</li>
     <ul>
+    <li>@ref philosophy_code_maturity "Code Maturity"</li>
     <li>@ref philosophy_conceptual_hierarchy "Conceptual Hierarchy"</li>
+    <li>@ref philosophy_contextual_hints "Contextual Hints"</li>
     <li>@ref philosophy_self_documenting_code "Self-Documenting Code"</li>
     <li>@ref philosophy_asserts_and_exceptions "Asserts And Exceptions"</li>
     <li>@ref philosophy_making_the_compiler_force_correctness "Making The Compiler Force Correctness"</li>
     <li>@ref philosophy_programming_language_as_syntactic_sugarcoating "Programming Language As Syntactic Sugarcoating"</li>
     <li>@ref philosophy_code_reuse_and_abstraction "Code Reuse And Abstraction"</li>
-    <li>@ref philosophy_contextual_hints "Contextual Hints"</li>
     <li>@ref philosophy_reentrancy_and_singletons "Reentrancy And Singletons"</li>
-    <li>@ref philosophy_code_maturity "Code Maturity"</li>
     </ul>
 <li>@ref conventions "Programming Conventions"</li>
     <ul>
@@ -60,6 +60,10 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>Primitive Class Types</li>
     <li>Utility Functions</li>
     <li>Parsers</li>
+        <ul>
+        <li>DataFile</li>
+        <li>LineCalculator</li>
+        </ul>
     <li>Input</li>
     <li>Endian Awareness And Code</li>
     <li>FrameHandler</li>
@@ -152,6 +156,7 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>Writing Custom PhysicsHandlers</li>
     <li>Writing Custom WorldViews</li>
     </ul>
+<li>Acknowledgements And Credits</li>
 </ul>
 
 */
