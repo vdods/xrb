@@ -105,7 +105,7 @@ int main (int argc, char **argv)
             necessary only on Windows builds because the Windows version of
             SDL lacks proper key mapping.</li>
         <li>FTLibrary is used by the font system to use the FreeType font
-            rendering facilities.  You shouldn't need to worry about it.</li>
+            rendering facilities.  you shouldn't need to worry about it.</li>
         </ul>
     @code */
     Singletons::Initialize("none");
@@ -165,5 +165,20 @@ int main (int argc, char **argv)
     return 0;
 }
 /* @endcode
+
+<strong>Exercises</strong>
+
+    <ul>
+    <li>Change the last parameter passed to Screen::Create -- currently
+        <tt>0</tt> -- to <tt>SDL_FULLSCREEN</tt>.  This will cause the
+        application to be run in fullscreen mode.</li>
+    <li>With <tt>SDL_FULLSCREEN</tt> enabled, change the video mode width,
+        height and bitdepth to various values, seeing what video modes are
+        supported by your hardware.</li>
+    <li>Write code that parses the commandline arguments so you can specify
+        what video mode width, height and bitdepth to use from the
+        commandline.</li>
+    </ul>
+
 Thus concludes the first lesson.  Did it hurt?  The fuck it didn't.
 */

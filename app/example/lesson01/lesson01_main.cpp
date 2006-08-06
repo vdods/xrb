@@ -403,5 +403,28 @@ int main (int argc, char **argv)
     return 0;
 }
 /* @endcode
+
+<strong>Exercises</strong>
+
+    <ul>
+    <li>Do NOT set a fullscreen video mode, because Alt+F4 and the window
+        pane's X button will be unavailable.  Fullscreen-able apps must
+        provide their own facilities for detecting the user's desire to quit
+        (such as a quit button, or a certain keypress).</li>
+    <li>Change the value of the @c SDL_Delay call in the game loop, and see
+        what effect it has on the responsiveness of the Button and
+        LineEdit.</li>
+    <li>Add more text Label widgets to @c main_layout after the do-nothing
+        button.  Note that their on-screen position in the vertical
+        @c main_layout is directly reflected by the order they're created
+        as children of <tt>main_layout</tt>.</li>
+    <li>Enable word wrapping for the Label with the name
+        <tt>"left-aligned note label"</tt>.  Notice how each newline in the
+        Label's text starts a new paragraph.</li>
+    <li>Comment out the event-polling loop -- the one starting with
+        <tt>while (SDL_PollEvent(&sdl_event))</tt> -- and see what effect it
+        has on the responsiveness of the application.</li>
+    </ul>
+    
 Thus concludes the second lesson.  Do you feel smarter?  Well, you aren't.
 */
