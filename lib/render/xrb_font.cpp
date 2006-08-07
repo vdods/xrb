@@ -114,6 +114,8 @@ void Font::GenerateLineFormatVector (
 
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     LineFormat line_format;
+    line_format.m_ptr = source_string;
+    line_format.m_glyph_count = 0;
     bool line_start = true;
     // iterate over the whole string
     char const *current_glyph = source_string;
