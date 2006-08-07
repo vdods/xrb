@@ -65,6 +65,7 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
+- add @ref tags to appropriate places in lessons
 - change MSVC output exe files into form like:
   disasteroids.exe and disasteroids_debug.exe so they can go back in the same
   directory.

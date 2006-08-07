@@ -101,6 +101,7 @@ app/example/guidemo/gui_masterwidget.cpp
 app/example/guidemo/gui_masterwidget.h
 app/example/lesson00/lesson00_main.cpp
 app/example/lesson01/lesson01_main.cpp
+app/example/lesson02/lesson02_main.cpp
 app/mapeditor2/main.cpp
 app/unittest/main.cpp
 app/unittest/tests/unittest_matrix2.cpp

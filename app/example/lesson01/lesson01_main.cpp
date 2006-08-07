@@ -24,19 +24,19 @@ and how to design and run a game loop -- the heartbeat of a game engine.
     <li>@ref lessons "Main lesson index"</li>
     </ul>
 
-<strong>Procedural Overview</strong>
+<strong>Procedural Overview</strong> -- Items in bold are additions/changes to the previous lesson.
 
     <ul>
     <li>Initialize SDL and game engine singletons.  Create the Screen object.
         This was covered in previous lesson(s).</li>
     <li>Execute game-specific code.</li>
         <ul>
-        <li>Create formatted layouts of GUI widgets.</li>
-        <li>Run the game loop</li>
+        <li><strong>Create formatted layouts of GUI widgets.</strong></li>
+        <li><strong>Run the game loop</strong></li>
             <ul>
-            <li>Handle events (user and system-generated).</li>
-            <li>Perform off-screen processing.</li>
-            <li>Draw the Screen object's entire widget hierarchy.</li>
+            <li><strong>Handle events (user and system-generated).</strong></li>
+            <li><strong>Perform off-screen processing.</strong></li>
+            <li><strong>Draw the Screen object's entire widget hierarchy.</strong></li>
             </ul>
         </ul>
     <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
@@ -353,7 +353,7 @@ int main (int argc, char **argv)
                 screen->ProcessEvent(event);
                 /* @endcode
                 We don't want to rely on widgets deleting events themselves, as
-                it would create a maintainence nightmare, so we insist that
+                it would create a maintenance nightmare, so we insist that
                 events must be deleted at whatever code scope they were
                 created.  This also allows events that were created on the
                 stack to be passed in without fear that they will be illegally
@@ -425,6 +425,6 @@ int main (int argc, char **argv)
         <tt>while (SDL_PollEvent(&sdl_event))</tt> -- and see what effect it
         has on the responsiveness of the application.</li>
     </ul>
-    
+
 Thus concludes the second lesson.  Do you feel smarter?  Well, you aren't.
 */

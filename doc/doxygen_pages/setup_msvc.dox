@@ -248,7 +248,7 @@ The XuqRijBuh solution file contains several projects.  As of August 2006, they 
     <li><tt>disasteroids</tt> is the first full sample game implementation
         provided with XuqRijBuh and as of August 2006, is still under
         development.</li>
-    <li><tt>lesson00</tt> ... <tt>lesson01</tt> are tutorials intended to teach
+    <li><tt>lesson00</tt> <tt>lesson01</tt> ... are tutorials intended to teach
         usage of the game engine library incrementally in small, manageable
         steps.</li>
     </ul>

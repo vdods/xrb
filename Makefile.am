@@ -20,7 +20,8 @@ bin_PROGRAMS = \
     disasteroids \
     guidemo \
     lesson00 \
-    lesson01
+    lesson01 \
+    lesson02
 #    mapeditor2 \ # is temporarily out of commission
 #    unittest # is temporarily out of commission
 
@@ -416,6 +417,9 @@ lesson00_SOURCES = app/example/lesson00/lesson00_main.cpp
 
 lesson01_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson01
 lesson01_SOURCES = app/example/lesson01/lesson01_main.cpp
+
+lesson02_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson02
+lesson02_SOURCES = app/example/lesson02/lesson02_main.cpp
 
 ##############################################################################
 # mapeditor2

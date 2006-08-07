@@ -274,7 +274,7 @@ As of August 2006, the build targets are:
     <li><tt>guidemo</tt> is a demonstration of the GUI system (which is very
         in-progress as of August 2006), designed to showcase what capabilities
         are available and how the GUI system behaves.</li>
-    <li><tt>lesson00</tt> ... <tt>lesson01</tt> are tutorials intended to
+    <li><tt>lesson00</tt> <tt>lesson01</tt> ... are tutorials intended to
         teach usage of the game engine library incrementally in small,
         manageable steps.</li>
     </ul>
