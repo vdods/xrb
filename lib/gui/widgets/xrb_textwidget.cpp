@@ -26,7 +26,8 @@ TextWidget::TextWidget (
     :
     Widget(parent, name),
     m_text(text),
-    m_receiver_set_text(&TextWidget::SetText, this)
+    m_receiver_set_text(&TextWidget::SetText, this),
+    m_receiver_set_text_v(&TextWidget::SetTextV, this)
 {
     m_accepts_focus = false;
     m_accepts_mouseover = false;

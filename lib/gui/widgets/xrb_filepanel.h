@@ -38,16 +38,11 @@ public:
         std::string const &name = "FilePanel");
     virtual ~FilePanel () { }
 
-    inline Operation GetFileOperation () const
-    {
-        return m_file_operation;
-    }
+    inline Operation GetFileOperation () const { return m_file_operation; }
     std::string const &GetFilename () const;
 
-    inline SignalSender1<std::string const &> const *SenderSubmitFilename ()
-    {
-        return &m_sender_submit_filename;
-    }
+    inline SignalSender1<std::string const &> const *SenderSubmitFilename () { return &m_sender_submit_filename; }
+    inline SignalSender1<std::string> const *SenderSubmitFilenameV () { return &m_sender_submit_filename_v; }
 
 protected:
 
@@ -73,6 +68,7 @@ private:
     LineEdit *m_filename_edit;
 
     SignalSender1<std::string const &> m_sender_submit_filename;
+    SignalSender1<std::string> m_sender_submit_filename_v;
 
     SignalReceiver1<std::string const &> m_internal_receiver_filename_set_by_enter_key;
 }; // end of class FilePanel

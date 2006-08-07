@@ -79,6 +79,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     inline SignalReceiver1<std::string const &> const *ReceiverSetText () { return &m_receiver_set_text; }
+    inline SignalReceiver1<std::string> const *ReceiverSetTextV () { return &m_receiver_set_text_v; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public modifiers
@@ -138,6 +139,8 @@ protected:
 
 private:
 
+    void SetTextV (std::string text) { SetText(text); }
+
     // the basic font for this label
     Resource<Font> m_font;
     // the font which will be used for text drawing calculations
@@ -152,6 +155,7 @@ private:
     // ///////////////////////////////////////////////////////////////////////
 
     SignalReceiver1<std::string const &> m_receiver_set_text;
+    SignalReceiver1<std::string> m_receiver_set_text_v;
 
 }; // end of class TextWidget
 

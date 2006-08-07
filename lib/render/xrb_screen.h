@@ -40,11 +40,10 @@ public:
 
     SignalSender0 const *SenderQuitRequested () { return &m_sender_quit_requested; }
 
+    SignalReceiver0 const *ReceiverRequestQuit () { return &m_receiver_request_quit; }
+
     // returns true if the quit condition has been hit
-    bool GetIsQuitRequested () const
-    {
-        return m_is_quit_requested;
-    }
+    bool GetIsQuitRequested () const { return m_is_quit_requested; }
     inline ScreenCoord GetSizeRatioBasis () const
     {
         return Min(GetWidth(), GetHeight());
@@ -62,6 +61,8 @@ public:
         return m_framerate_calculator.GetFramerate();
     }
 
+    // if the is-quit-requested flag is false, sets it to true and signals.
+    void RequestQuit ();
     // draws the whole fucking thing.
     void Draw () const;
 
@@ -87,6 +88,8 @@ private:
     mutable FramerateCalculator m_framerate_calculator;
 
     SignalSender0 m_sender_quit_requested;
+
+    SignalReceiver0 m_receiver_request_quit;
 }; // end of class Screen
 
 } // end of namespace Xrb

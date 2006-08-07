@@ -10,8 +10,21 @@
 
 #include "xrb_transformation.h"
 
+#include "xrb_util.h"
+
 namespace Xrb
 {
 
+std::string Transformation::Lowercase (std::string value)
+{
+    Util::MakeLowercase(&value);
+    return value;
+}
+
+std::string Transformation::Uppercase (std::string value)
+{
+    Util::MakeUppercase(&value);
+    return value;
+}
 
 } // end of namespace Xrb

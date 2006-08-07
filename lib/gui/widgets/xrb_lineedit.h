@@ -40,7 +40,9 @@ public:
     inline void SetIsReadOnly (bool is_read_only) { m_is_read_only = is_read_only; }
 
     inline SignalSender1<std::string const &> const *SenderTextUpdated () { return &m_sender_text_updated; }
+    inline SignalSender1<std::string> const *SenderTextUpdatedV () { return &m_sender_text_updated_v; }
     inline SignalSender1<std::string const &> const *SenderTextSetByEnterKey () { return &m_sender_text_set_by_enter_key; }
+    inline SignalSender1<std::string> const *SenderTextSetByEnterKeyV () { return &m_sender_text_set_by_enter_key_v; }
 
     virtual void Draw (RenderContext const &render_context) const;
 
@@ -118,7 +120,9 @@ private:
     // ///////////////////////////////////////////////////////////////////////
 
     SignalSender1<std::string const &> m_sender_text_updated;
+    SignalSender1<std::string> m_sender_text_updated_v;
     SignalSender1<std::string const &> m_sender_text_set_by_enter_key;
+    SignalSender1<std::string> m_sender_text_set_by_enter_key_v;
 }; // end of class LineEdit
 
 } // end of namespace Xrb

@@ -13,6 +13,8 @@
 
 #include "xrb.h"
 
+#include <string>
+
 namespace Xrb
 {
 
@@ -24,10 +26,16 @@ namespace Transformation
 {
 
 /// Returns the logical negation of @c value.
-inline bool BooleanNegation (bool value)
+bool BooleanNegation (bool value)
 {
     return !value;
 }
+
+/// Returns @c value with uppercase letters changed to lowercase.
+std::string Lowercase (std::string value);
+
+/// Returns @c value with lowercase letters changed to uppercase.
+std::string Uppercase (std::string value);
 
 } // end of namespace Transformation
 

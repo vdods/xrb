@@ -23,25 +23,18 @@ class FileDialog : public Dialog
 {
 public:
 
-    FileDialog (std::string const &title_text,
-                FilePanel::Operation file_operation,
-                Widget *parent,
-                std::string const &name = "FileDialog");
+    FileDialog (
+        std::string const &title_text,
+        FilePanel::Operation file_operation,
+        Widget *parent,
+        std::string const &name = "FileDialog");
     virtual ~FileDialog () { }
 
-    inline FilePanel::Operation GetFileOperation () const
-    {
-        return m_file_panel->GetFileOperation();
-    }
-    inline std::string const &GetFilename () const
-    {
-        return m_file_panel->GetFilename();
-    }
+    inline FilePanel::Operation GetFileOperation () const { return m_file_panel->GetFileOperation(); }
+    inline std::string const &GetFilename () const { return m_file_panel->GetFilename(); }
 
-    inline SignalSender1<std::string const &> const *SenderSubmitFilename ()
-    {
-        return &m_sender_submit_filename;
-    }
+    inline SignalSender1<std::string const &> const *SenderSubmitFilename () { return &m_sender_submit_filename; }
+    inline SignalSender1<std::string> const *SenderSubmitFilenameV () { return &m_sender_submit_filename_v; }
 
 protected:
 
@@ -54,6 +47,7 @@ private:
     FilePanel *m_file_panel;
 
     SignalSender1<std::string const &> m_sender_submit_filename;
+    SignalSender1<std::string> m_sender_submit_filename_v;
 
     SignalReceiver1<std::string const &> m_internal_receiver_filename_submitted;
 }; // end of class FileDialog

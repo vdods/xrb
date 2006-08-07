@@ -26,6 +26,7 @@ FilePanel::FilePanel (
     :
     Widget(parent, name),
     m_sender_submit_filename(this),
+    m_sender_submit_filename_v(this),
     m_internal_receiver_filename_set_by_enter_key(
         &FilePanel::InternalFilenameSetByEnterKey, this)
 {
@@ -88,6 +89,7 @@ void FilePanel::UpdateRenderBackground ()
 void FilePanel::InternalFilenameSetByEnterKey (std::string const &filename)
 {
     m_sender_submit_filename.Signal(filename);
+    m_sender_submit_filename_v.Signal(filename);
 }
 
 } // end of namespace Xrb

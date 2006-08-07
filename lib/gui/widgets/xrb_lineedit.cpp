@@ -25,7 +25,9 @@ LineEdit::LineEdit (
     :
     TextWidget("", parent, name),
     m_sender_text_updated(this),
-    m_sender_text_set_by_enter_key(this)
+    m_sender_text_updated_v(this),
+    m_sender_text_set_by_enter_key(this),
+    m_sender_text_set_by_enter_key_v(this)
 {
     m_accepts_focus = true;
 
@@ -213,6 +215,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
             case Key::KP_ENTER:
                 SignalTextUpdated();
                 m_sender_text_set_by_enter_key.Signal(m_text);
+                m_sender_text_set_by_enter_key_v.Signal(m_text);
                 break;
 
             default:
@@ -257,6 +260,7 @@ void LineEdit::SignalTextUpdated ()
     {
         m_last_text_update = m_text;
         m_sender_text_updated.Signal(m_last_text_update);
+        m_sender_text_updated_v.Signal(m_last_text_update);
     }
 }
 

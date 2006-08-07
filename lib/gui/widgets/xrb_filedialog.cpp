@@ -26,8 +26,8 @@ FileDialog::FileDialog (
     :
     Dialog(DT_OK_CANCEL, parent, name),
     m_sender_submit_filename(this),
-    m_internal_receiver_filename_submitted(
-        &FileDialog::InternalFilenameSubmitted, this)
+    m_sender_submit_filename_v(this),
+    m_internal_receiver_filename_submitted(&FileDialog::InternalFilenameSubmitted, this)
 {
     m_file_panel =
         new FilePanel(
@@ -44,6 +44,7 @@ void FileDialog::OKButtonActivated ()
 {
     Dialog::OKButtonActivated();
     m_sender_submit_filename.Signal(GetFilename());
+    m_sender_submit_filename_v.Signal(GetFilename());
 }
 
 void FileDialog::InternalFilenameSubmitted (std::string const &filename)

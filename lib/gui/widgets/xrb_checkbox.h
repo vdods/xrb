@@ -41,14 +41,15 @@ public:
     inline SignalReceiver1<bool> const *ReceiverSetIsChecked () { return &m_receiver_set_is_checked; }
     inline SignalReceiver0 const *ReceiverCheck () { return &m_receiver_check; }
     inline SignalReceiver0 const *ReceiverUncheck () { return &m_receiver_uncheck; }
+    inline SignalReceiver0 const *ReceiverToggleIsChecked () { return &m_receiver_toggle_is_checked; }
     // end SignalReceiver accessors
     //////////////////////////////////////////////////////////////////////////
 
     virtual void SetIsEnabled (bool is_enabled);
     void SetIsChecked (bool is_checked);
+
     inline void Check () { SetIsChecked(true); }
     inline void Uncheck () { SetIsChecked(false); }
-
     void ToggleIsChecked ();
 
 protected:
@@ -56,6 +57,8 @@ protected:
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
     virtual void UpdateRenderBackground ();
     virtual void UpdateRenderPicture ();
+
+    virtual void HandleIsCheckedChanged () { }
 
     // WidgetSkinHandler overrides
     virtual void HandleChangedWidgetSkinWidgetBackground (
@@ -80,6 +83,7 @@ private:
     SignalReceiver1<bool> m_receiver_set_is_checked;
     SignalReceiver0 m_receiver_check;
     SignalReceiver0 m_receiver_uncheck;
+    SignalReceiver0 m_receiver_toggle_is_checked;
     // end SignalReceivers
     //////////////////////////////////////////////////////////////////////////
 };

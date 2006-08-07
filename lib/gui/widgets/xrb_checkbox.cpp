@@ -25,7 +25,8 @@ CheckBox::CheckBox (
     m_sender_unchecked(this),
     m_receiver_set_is_checked(&CheckBox::SetIsChecked, this),
     m_receiver_check(&CheckBox::Check, this),
-    m_receiver_uncheck(&CheckBox::Uncheck, this)
+    m_receiver_uncheck(&CheckBox::Uncheck, this),
+    m_receiver_toggle_is_checked(&CheckBox::ToggleIsChecked, this)
 {
     m_is_checked = false;
 
@@ -47,6 +48,7 @@ void CheckBox::SetIsChecked (bool const is_checked)
 void CheckBox::ToggleIsChecked ()
 {
     m_is_checked = !m_is_checked;
+    HandleIsCheckedChanged();
     UpdateRenderPicture();
 
     m_sender_checked_state_changed.Signal(m_is_checked);

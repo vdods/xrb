@@ -75,6 +75,16 @@ Screen *Screen::Create (
     return retval;
 }
 
+void Screen::RequestQuit ()
+{
+    if (!m_is_quit_requested)
+    {
+        m_is_quit_requested = true;
+        fprintf(stderr, "Screen::RequestQuit();\n");
+        m_sender_quit_requested.Signal();
+    }
+}
+
 void Screen::Draw () const
 {
     // NOTE: this method encompasses all drawing.
@@ -129,7 +139,8 @@ void Screen::Draw () const
 Screen::Screen ()
     :
     Widget(NULL, "Screen"),
-    m_sender_quit_requested(this)
+    m_sender_quit_requested(this),
+    m_receiver_request_quit(&Screen::RequestQuit, this)
 {
     m_is_quit_requested = false;
     m_current_video_resolution = ScreenCoordVector2::ms_zero;
@@ -153,11 +164,7 @@ bool Screen::ProcessEventOverride (Event const *const e)
     switch (e->GetEventType())
     {
         case Event::QUIT:
-            fprintf(stderr,
-                    "Screen::ProcessEventOverride(); quit "
-                    "event received: quitting\n");
-            m_is_quit_requested = true;
-            m_sender_quit_requested.Signal();
+            RequestQuit();
             return true;
 
         case Event::KEYDOWN:
