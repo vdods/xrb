@@ -41,7 +41,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-debug],
         [enable debugging symbols and disable optimizations]),
-    [DEBUG_ENABLED="yes"],
+    [DEBUG_ENABLED=$enableval],
     [DEBUG_ENABLED="no"])
 
 AC_ARG_WITH(
@@ -53,11 +53,19 @@ AC_ARG_WITH(
     [DEBUG_LEVEL_VAL=3])
 
 AC_ARG_ENABLE(
+    [warnings-as-errors],
+    AC_HELP_STRING(
+        [--disable-warnings-as-errors],
+        [disables the default behavior of interpreting warnings as errors]),
+    [WARNINGS_AS_ERRORS=$enableval],
+    [WARNINGS_AS_ERRORS="yes"])
+
+AC_ARG_ENABLE(
     [gprof],
     AC_HELP_STRING(
         [--enable-gprof],
         [enable runtime profiling using gprof (only works on static compilations]),
-    [GPROF_ENABLED="yes"],
+    [GPROF_ENABLED=$enableval],
     [GPROF_ENABLED="no"])
 
 AC_ARG_ENABLE(
@@ -65,7 +73,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-bitarray-uses-memcmp],
         [Xrb::BitArray<> comparisons will use memcmp() instead of comparing each element in a loop]),
-    [BITARRAY_USES_MEMCMP="yes"],
+    [BITARRAY_USES_MEMCMP=$enableval],
     [BITARRAY_USES_MEMCMP="no"])
 
 AC_ARG_ENABLE(
@@ -73,7 +81,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-bitarray-uses-memcpy],
         [Xrb::BitArray<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
-    [BITARRAY_USES_MEMCPY="yes"],
+    [BITARRAY_USES_MEMCPY=$enableval],
     [BITARRAY_USES_MEMCPY="no"])
 
 AC_ARG_ENABLE(
@@ -81,7 +89,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-bitarray-uses-memset],
         [Xrb::BitArray<> assignments and copies will use memset() instead of assigning/copying each element in a loop]),
-    [BITARRAY_USES_MEMSET="yes"],
+    [BITARRAY_USES_MEMSET=$enableval],
     [BITARRAY_USES_MEMSET="no"])
 
 AC_ARG_ENABLE(
@@ -89,7 +97,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-matrix2-uses-memcpy],
         [Xrb::Matrix2<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
-    [MATRIX2_USES_MEMCPY="yes"],
+    [MATRIX2_USES_MEMCPY=$enableval],
     [MATRIX2_USES_MEMCPY="no"])
 
 AC_ARG_ENABLE(
@@ -97,7 +105,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-ntuple-uses-memcmp],
         [Xrb::NTuple<> comparisons will use memcmp() instead of comparing each element in a loop]),
-    [NTUPLE_USES_MEMCMP="yes"],
+    [NTUPLE_USES_MEMCMP=$enableval],
     [NTUPLE_USES_MEMCMP="no"])
 
 AC_ARG_ENABLE(
@@ -105,7 +113,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-ntuple-uses-memcpy],
         [Xrb::NTuple<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
-    [NTUPLE_USES_MEMCPY="yes"],
+    [NTUPLE_USES_MEMCPY=$enableval],
     [NTUPLE_USES_MEMCPY="no"])
 
 AC_ARG_ENABLE(
@@ -113,7 +121,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-vector-uses-memcmp],
         [Xrb::Vector<> comparisons will use memcmp() instead of comparing each element in a loop]),
-    [VECTOR_USES_MEMCMP="yes"],
+    [VECTOR_USES_MEMCMP=$enableval],
     [VECTOR_USES_MEMCMP="no"])
 
 AC_ARG_ENABLE(
@@ -121,7 +129,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-vector-uses-memcpy],
         [Xrb::Vector<> assignments and copies will use memcpy() instead of assigning/copying each element in a loop]),
-    [VECTOR_USES_MEMCPY="yes"],
+    [VECTOR_USES_MEMCPY=$enableval],
     [VECTOR_USES_MEMCPY="no"])
 
 AC_ARG_ENABLE(
@@ -129,7 +137,7 @@ AC_ARG_ENABLE(
     AC_HELP_STRING(
         [--enable-nan-sanity-check],
         [Performs pedantic checks in Engine2::Entity code to detect when any NaN (or Inf) is introduced]),
-    [NAN_SANITY_CHECK="yes"],
+    [NAN_SANITY_CHECK=$enableval],
     [NAN_SANITY_CHECK="no"])
 
 ##############################################################################
@@ -186,6 +194,11 @@ else
         [Defines the assert/debug code level.  0 for fewest asserts, ranging up to 3 for all asserts.  If undefined, the value is 3.])
 fi
 fi
+fi
+
+# if warnings should be interpreted as errors, add -Wall to the compiler flags
+if test "${WARNINGS_AS_ERRORS}" = "yes"; then
+    CXXFLAGS="${CXXFLAGS} -Werror"
 fi
 
 if test "${BITARRAY_USES_MEMCMP}" = "yes"; then
@@ -274,7 +287,7 @@ fi
 # add some good stuff to the compiler flags
 ##############################################################################
 
-CXXFLAGS="${CXXFLAGS} -Wall -Werror"
+CXXFLAGS="${CXXFLAGS} -Wall"
 
 ##############################################################################
 # set up the include directory properly
