@@ -454,17 +454,6 @@ int main (int argc, char **argv)
         transformation which performs ROT13 encryption on the passed-in value
         (see http://en.wikipedia.org/wiki/ROT13).  Use this transformation in
         the newly added signal connection.</li>
-    <li><strong>Extra Credit:</strong> Create an implementation of the
-        electronic light-grid game "Lights Out" (see
-        http://en.wikipedia.org/wiki/Lights_Out_%28game%29) using:
-            <ul>
-            <li>Another grid Layout added to <tt>main_layout</tt></li>
-            <li>Your own custom subclass of CheckBox</li>
-            </ul>
-        Hint: in your CheckBox subclass, keep pointers to each of the 4
-        adjacent boxes, and override the virtual method
-        CheckBox::HandleIsCheckedChanged.  Also, CheckBox::ToggleIsChecked
-        is your buddy.</li>
     </ul>
 
 Thus concludes the third lesson.  Three down, countless more to go.
