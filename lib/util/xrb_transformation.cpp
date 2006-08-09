@@ -15,6 +15,11 @@
 namespace Xrb
 {
 
+bool Transformation::BooleanNegation (bool value)
+{
+    return !value;
+}
+
 std::string Transformation::Lowercase (std::string value)
 {
     Util::MakeLowercase(&value);

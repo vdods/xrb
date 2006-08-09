@@ -26,10 +26,7 @@ namespace Transformation
 {
 
 /// Returns the logical negation of @c value.
-bool BooleanNegation (bool value)
-{
-    return !value;
-}
+bool BooleanNegation (bool value);
 
 /// Returns @c value with uppercase letters changed to lowercase.
 std::string Lowercase (std::string value);

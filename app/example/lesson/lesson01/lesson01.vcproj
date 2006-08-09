@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="..\..\.."
+			OutputDirectory="..\..\..\.."
 			IntermediateDirectory="Debug"
 			ConfigurationType="1"
 			>
@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\sound;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories=".;..\..\..\..\lib\core;..\..\..\..\lib\core\serializers;..\..\..\..\lib\engine2;..\..\..\..\lib\gui\widgets;..\..\..\..\lib\gui;..\..\..\..\lib\input;..\..\..\..\lib\mapeditor2;..\..\..\..\lib\math;..\..\..\..\lib\parsers;..\..\..\..\lib\primitive;..\..\..\..\lib\render;..\..\..\..\lib\sound;..\..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -98,7 +98,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="..\..\.."
+			OutputDirectory="..\..\..\.."
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
 			>
@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".;..\..\..\lib\core;..\..\..\lib\core\serializers;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\sound;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories=".;..\..\..\..\lib\core;..\..\..\..\lib\core\serializers;..\..\..\..\lib\engine2;..\..\..\..\lib\gui\widgets;..\..\..\..\lib\gui;..\..\..\..\lib\input;..\..\..\..\lib\mapeditor2;..\..\..\..\lib\math;..\..\..\..\lib\parsers;..\..\..\..\lib\primitive;..\..\..\..\lib\render;..\..\..\..\lib\sound;..\..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="2"
