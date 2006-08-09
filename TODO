@@ -68,12 +68,6 @@ TODO:
 - possibly move all the lesson?? dirs into app/example/lesson/ so they're all
   in one place and don't clutter up other files and such so much.
 - add @ref tags to appropriate places in lessons
-- change MSVC output exe files into form like:
-  disasteroids.exe and disasteroids_debug.exe so they can go back in the same
-  directory.
-- GetPathElement* calls should throw string errors, rather than printing
-  errors, same with SetPathElement*, so that the caller can do whatever it
-  wants with it.
 - make the position given for text drawing be the left/center/right for
   left-justified, centered, or right-justified respectively, and same for
   vertical justification.  this will make arbitrary text drawing easier
@@ -83,7 +77,6 @@ TODO:
   properties (the properties being one of many possible subclasses of some
   "property" baseclass).  this will allow loading of the same filename for
   different things (among other extra versatilities).
-- write a delete functor for deleting objects out of STL containers with for_each
 - the framehandler time for WorldView must be synchronized with the
   framehandler time for World.  (depends on having the physics and
   visibility computation split up)
@@ -94,8 +87,7 @@ TODO:
   drawn in a specific ordering.  e.g. if there is a series of background
   sprites which are layered, drawing order is important.
 - make Xrb::Initialize and Xrb::Shutdown functions which take care of
-  singleton setup/shutdown.  it should also handle setting up the atexit()
-  function, and possibly creating/deleting the Screen.
+  SDL and singleton setup/shutdown.  and possibly creating/deleting the Screen?
 - should Screen make its own event queue?
 - create Resource loading functions for common Resource<blah> types
   (e.g. LoadGLTexture, LoadFont, etc)
@@ -168,16 +160,7 @@ TODO:
 - replace drawing the sprite quad with a display list
 - hide the defer-parent-update SetSizeProperty* versions and make public
   versions of each without that parameter.
-- all resource-related crap that has a Create function should be
-  data-file-driven and be loaded as resources from those files.
-- add WorldCoord/WorldCoordVector2/etc similar to ScreenCoord/etc.
-- make sure all the GetShiftedAscii codes are correct
-- add "activated" to Button, which is configurable to be either when
-  the button is pressed or pressed then released.
 - change the IOE_IS_AT_END checking for how many bytes/bits are left
-- unit test for the size of certain data types (e.g. floats are 4 bytes,
-  doubles are 8, etc).
-- think of a better way to do UI event pre/processing
 - support for bit depths besides 32
 - WidgetSkin properties for checkbox/radiobutton/toolbar button sizes
 - maybe WidgetBackground should provide the FrameMargins and ContentMargins
@@ -186,9 +169,6 @@ TODO:
 - change all functions which accept a bool or int as a type of something
   or a behavior to use enums instead, to make code more self-documenting.
 - special Vector2 ValueEdit
-- once the game loop object is written, there should be an accessor to
-  the game time, so that events that are enqueued can use that time,
-  then move FrameHandler::GetMostRecentFrameTime back to being protected.
 - add menu/popup system and menu items
 - move keyboard shortcuts into 'actions' similar to QT, which menu items
   and normal functions can use.
@@ -203,9 +183,6 @@ TODO:
   stores times (i.e. ints or floats, etc)
 - look into normal mapping to give lighting effects
 - make all drawing functions const (if possible)
-- examine STL usage in Label, for if the cached string and the line format
-  vector clear actually deletes and news stuff, or if it keeps the old array
-  size after clearing
 - add smart usage of newline indexed data in Label, so that it could
   be used for very large texts
 - change the 'distance culling' for sprite drawing in quadtrees
@@ -213,11 +190,6 @@ TODO:
   sprites can be changed for performance
 - do some sort of video refresh synchronizing so the display
   looks smoother
-- implement a sort of allocation/deletion logger to check
-  that everything is being deleted properly
-- implement a sort of memory usage logger to record how much
-  memory is being used for what type of thing
-- change World class into a WorldClient and WorldServer pair
 
 GAME IDEAS:
 - different types of ships should have different limitations on propulsion,

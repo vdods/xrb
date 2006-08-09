@@ -274,16 +274,15 @@ public:
     virtual DataFileElementType GetElementType () const = 0;
     inline DataFileValue const *GetPathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
 
-    // these methods will throw a std::string if there is a path error
-    bool GetPathElementBoolean (std::string const &path) const;
-    Sint32 GetPathElementSint32 (std::string const &path) const;
-    Uint32 GetPathElementUint32 (std::string const &path) const;
-    Float GetPathElementFloat (std::string const &path) const;
-    char GetPathElementCharacter (std::string const &path) const;
-    std::string const &GetPathElementString (std::string const &path) const;
-    // these methods will return NULL if there is a path error
-    DataFileArray const *GetPathElementArray (std::string const &path) const;
-    DataFileStructure const *GetPathElementStructure (std::string const &path) const;
+    // these methods will throw a string describing the path or type mismatch error
+    bool GetPathElementBoolean (std::string const &path) const throw (std::string);
+    Sint32 GetPathElementSint32 (std::string const &path) const throw (std::string);
+    Uint32 GetPathElementUint32 (std::string const &path) const throw (std::string);
+    Float GetPathElementFloat (std::string const &path) const throw (std::string);
+    char GetPathElementCharacter (std::string const &path) const throw (std::string);
+    std::string const &GetPathElementString (std::string const &path) const throw (std::string);
+    DataFileArray const *GetPathElementArray (std::string const &path) const throw (std::string);
+    DataFileStructure const *GetPathElementStructure (std::string const &path) const throw (std::string);
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;

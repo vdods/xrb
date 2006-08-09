@@ -195,9 +195,9 @@ void HighScores::Read (std::string const &filename)
         // date (unsigned integer)
         // hash (unsigned integer)
 
-        DataFileArray const *high_scores = root->GetPathElementArray("|high_scores");
-        if (high_scores == NULL)
-            return;
+        DataFileArray const *high_scores;
+        try { high_scores = root->GetPathElementArray("|high_scores"); }
+        catch (...) { /* if no high scores, quit. */ return; }
 
         for (Uint32 i = 0; i < high_scores->GetElementCount(); ++i)
         {
@@ -215,10 +215,7 @@ void HighScores::Read (std::string const &filename)
                 if (hash == score.GetHash())
                     AddScore(score);
             }
-            catch (...)
-            {
-                // ignore malformed high scores
-            }
+            catch (...) { /* ignore malformed high scores */ }
         }
     }
 }

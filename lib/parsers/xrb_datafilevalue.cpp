@@ -12,6 +12,13 @@
 
 #include <sstream>
 
+#define THROW_STRING(x) \
+{ \
+    std::ostringstream out; \
+    out << x; \
+    throw out.str(); \
+}
+
 namespace Xrb
 {
 
@@ -39,62 +46,68 @@ std::string const &GetDataFileElementTypeString (DataFileElementType data_file_e
 // DataFileValue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DataFileValue::GetPathElementBoolean (std::string const &path) const
+bool DataFileValue::GetPathElementBoolean (std::string const &path) const throw (std::string)
 {
     DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a Boolean")
     return value->GetValue();
 }
 
-Sint32 DataFileValue::GetPathElementSint32 (std::string const &path) const
+Sint32 DataFileValue::GetPathElementSint32 (std::string const &path) const throw (std::string)
 {
     DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a Sint32")
     return value->GetValue();
 }
 
-Uint32 DataFileValue::GetPathElementUint32 (std::string const &path) const
+Uint32 DataFileValue::GetPathElementUint32 (std::string const &path) const throw (std::string)
 {
     DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a Uint32")
     return value->GetValue();
 }
 
-Float DataFileValue::GetPathElementFloat (std::string const &path) const
+Float DataFileValue::GetPathElementFloat (std::string const &path) const throw (std::string)
 {
     DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a Float")
     return value->GetValue();
 }
 
-char DataFileValue::GetPathElementCharacter (std::string const &path) const
+char DataFileValue::GetPathElementCharacter (std::string const &path) const throw (std::string)
 {
     DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a Character")
     return value->GetValue();
 }
 
-std::string const &DataFileValue::GetPathElementString (std::string const &path) const
+std::string const &DataFileValue::GetPathElementString (std::string const &path) const throw (std::string)
 {
     DataFileString const *value = dynamic_cast<DataFileString const *>(GetPathElement(path));
     if (value == NULL)
-        throw std::string("path error");
+        THROW_STRING("element is not a String")
     return value->GetValue();
 }
 
-DataFileArray const *DataFileValue::GetPathElementArray (std::string const &path) const
+DataFileArray const *DataFileValue::GetPathElementArray (std::string const &path) const throw (std::string)
 {
-    return dynamic_cast<DataFileArray const *>(GetPathElement(path));
+    DataFileArray const *value = dynamic_cast<DataFileArray const *>(GetPathElement(path));
+    if (value == NULL)
+        THROW_STRING("element is not an Array")
+    return value;
 }
 
-DataFileStructure const *DataFileValue::GetPathElementStructure (std::string const &path) const
+DataFileStructure const *DataFileValue::GetPathElementStructure (std::string const &path) const throw (std::string)
 {
-    return dynamic_cast<DataFileStructure const *>(GetPathElement(path));
+    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(GetPathElement(path));
+    if (value == NULL)
+        THROW_STRING("element is not a Structure")
+    return value;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -109,16 +122,11 @@ DataFileValue const *DataFileLeafValue::GetSubpathElement (
 {
     ASSERT1(start <= path.length())
 
-    if (start >= path.length())
-        return this;
-
-    fprintf(
-        stderr,
-        "GetPathElement error: in path \"%s\" - element type %s can not have subelements (subpath \"%s\")\n",
-        path.c_str(),
-        GetDataFileElementTypeString(GetElementType()).c_str(),
-        path.c_str() + start);
-    return NULL;
+    if (start < path.length())
+        THROW_STRING("error: in path \"" << path << "\" - element type " <<
+                     GetDataFileElementTypeString(GetElementType()) <<
+                     " can not have subelements (subpath \"" << &path[start] << "\")")
+    return this;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -330,14 +338,7 @@ DataFileValue const *DataFileKeyPair::GetSubpathElement (
         return GetValue();
 
     if (path[start] != '|')
-    {
-        fprintf(
-            stderr,
-            "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
-            path.c_str(),
-            path.c_str() + start);
-        return NULL;
-    }
+        THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
     return GetValue()->GetSubpathElement(path, start);
 }
@@ -484,13 +485,10 @@ void DataFileArray::AppendValue (DataFileValue *const value)
         DataFileValue const *first_element_value = *it;
         ASSERT1(first_element_value != NULL)
         if (value->GetElementType() != first_element_value->GetElementType())
-        {
-            std::ostringstream out;
-            out << "cannot add a " << GetDataFileElementTypeString(value->GetElementType())
-                << " to an array with element type "
-                << GetDataFileElementTypeString(first_element_value->GetElementType());
-            throw out.str();
-        }
+            THROW_STRING("cannot add a " <<
+                         GetDataFileElementTypeString(value->GetElementType()) <<
+                         " to an array with element type " <<
+                         GetDataFileElementTypeString(first_element_value->GetElementType()))
         else if (value->GetElementType() == DAT_ARRAY &&
                     !GetDoesMatchDimensionAndType(
                         DStaticCast<DataFileArray const *>(value),
@@ -598,26 +596,13 @@ DataFileValue const *DataFileArray::GetSubpathElement (
         return this;
 
     if (path[start] != '|')
-    {
-        fprintf(
-            stderr,
-            "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
-            path.c_str(),
-            path.c_str() + start);
-        return NULL;
-    }
+        THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
     ++start;
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
 
     if (start == key_delim)
-    {
-        fprintf(
-            stderr,
-            "GetPathElement error: in path \"%s\" - missing array index\n",
-            path.c_str());
-        return NULL;
-    }
+        THROW_STRING("missing array index")
 
     Uint32 array_index = 0;
     for (Uint32 i = start; i < key_delim; ++i)
@@ -625,25 +610,11 @@ DataFileValue const *DataFileArray::GetSubpathElement (
         if (path[i] >= '0' && path[i] <= '9')
             array_index = 10 * array_index + path[i] - '0';
         else
-        {
-            fprintf(
-                stderr,
-                "GetPathElement error: in path \"%s\" - invalid array index \"%s\"\n",
-                path.c_str(),
-                path.substr(start, key_delim-start).c_str());
-            return NULL;
-        }
+            THROW_STRING("invalid array index \"" << path.substr(start, key_delim-start) << "\"")
     }
 
     if (array_index >= m_element_vector.size())
-    {
-        fprintf(
-            stderr,
-            "GetPathElement error: in path \"%s\" - out of bounds array index \"%s\"\n",
-            path.c_str(),
-            path.substr(start, key_delim-start).c_str());
-        return NULL;
-    }
+        THROW_STRING("out of bounds array index \"" << path.substr(start, key_delim-start) << "\"")
 
     ASSERT1(key_delim < UINT32_UPPER_BOUND)
     return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
@@ -774,7 +745,9 @@ bool DataFileArray::SetSubpathElement (
                     static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType() !=
                     static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()))
             {
-                fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array depth %u/type %s, assignment depth %u/type %s\n", path.c_str(), static_cast<DataFileArray const *>(first_element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType()).c_str(), static_cast<DataFileArray const *>(element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()).c_str());
+                fprintf(
+                    stderr,
+                    "SetPathElement error: in path \"%s\" - mismatch: array depth %u/type %s, assignment depth %u/type %s\n", path.c_str(), static_cast<DataFileArray const *>(first_element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType()).c_str(), static_cast<DataFileArray const *>(element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()).c_str());
                 Delete(element);
                 return false;
             }
@@ -909,20 +882,12 @@ void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value
     ASSERT1(value != NULL)
 
     if (!GetIsValidKey(key))
-    {
-        std::ostringstream out;
-        out << "key \"" << key << "\" contains invalid characters";
-        throw out.str();
-    }
+        THROW_STRING("key \"" << key << "\" contains invalid characters")
 
     if (m_member_map.find(key) == m_member_map.end())
         m_member_map[key] = new DataFileKeyPair(key, value);
     else
-    {
-        std::ostringstream out;
-        out << "collision with key \"" << key << "\"";
-        throw out.str();
-    }
+        THROW_STRING("collision with key \"" << key << "\"")
 }
 
 void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
@@ -932,20 +897,12 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
     ASSERT1(key_pair->GetValue() != NULL)
 
     if (!GetIsValidKey(key_pair->GetKey()))
-    {
-        std::ostringstream out;
-        out << "key \"" << key_pair->GetKey() << "\" contains invalid characters";
-        throw out.str();
-    }
+        THROW_STRING("key \"" << key_pair->GetKey() << "\" contains invalid characters")
 
     if (m_member_map.find(key_pair->GetKey()) == m_member_map.end())
         m_member_map[key_pair->GetKey()] = key_pair;
     else
-    {
-        std::ostringstream out;
-        out << "collision with key \"" << key_pair->GetKey() << "\"";
-        throw out.str();
-    }
+        THROW_STRING("collision with key \"" << key_pair->GetKey() << "\"")
 }
 
 void DataFileStructure::Print (IndentFormatter &formatter) const
@@ -990,20 +947,14 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
         return this;
 
     if (path[start] != '|')
-    {
-        fprintf(stderr, "GetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
-        return NULL;
-    }
+        THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
     ++start;
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
     std::string key(path.substr(start, key_delim-start));
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
-    {
-        fprintf(stderr, "GetPathElement error: in path \"%s\" - unmatched element \"%s\"\n", path.c_str(), key.c_str());
-        return NULL;
-    }
+        THROW_STRING("unmatched element \"" << key << "\"")
     else
     {
         ASSERT1(key_delim < UINT32_UPPER_BOUND)
