@@ -256,7 +256,7 @@ private:
     CustomType const m_custom_type;
 }; // end of class EventCustom
 
-/// @cond
+/// @cond IGNORE_THIS
 // skip documenting this class
 /** Ignore it.
   * @brief An event subclass that is only used by EventQueue.

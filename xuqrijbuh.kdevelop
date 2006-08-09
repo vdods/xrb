@@ -137,9 +137,7 @@
       <group pattern="app/example/disasteroids/ui/*" name="/app/example/disasteroids/ui" />
       <group pattern="app/example/disasteroids/*" name="/app/example/disasteroids" />
       <group pattern="app/example/guidemo/*" name="/app/example/guidemo" />
-      <group pattern="app/example/lesson00/*" name="/app/example/lesson00" />
-      <group pattern="app/example/lesson01/*" name="/app/example/lesson01" />
-      <group pattern="app/example/lesson02/*" name="/app/example/lesson02" />
+      <group pattern="app/example/lesson/*" name="/app/example/lesson" />
       <group pattern="app/example/*" name="/app/example" />
       <group pattern="app/mapeditor2/*" name="/app/mapeditor2" />
       <group pattern="app/unittest/tests/*" name="/app/unittest/tests" />

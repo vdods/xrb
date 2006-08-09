@@ -412,14 +412,14 @@ guidemo_SOURCES = \
 # lessons
 ##############################################################################
 
-lesson00_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson00
-lesson00_SOURCES = app/example/lesson00/lesson00_main.cpp
+lesson00_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson00
+lesson00_SOURCES = app/example/lesson/lesson00/lesson00_main.cpp
 
-lesson01_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson01
-lesson01_SOURCES = app/example/lesson01/lesson01_main.cpp
+lesson01_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson01
+lesson01_SOURCES = app/example/lesson/lesson01/lesson01_main.cpp
 
-lesson02_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson02
-lesson02_SOURCES = app/example/lesson02/lesson02_main.cpp
+lesson02_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson02
+lesson02_SOURCES = app/example/lesson/lesson02/lesson02_main.cpp
 
 ##############################################################################
 # mapeditor2

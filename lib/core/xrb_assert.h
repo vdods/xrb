@@ -21,6 +21,7 @@
 // compile-time assert macro
 // ///////////////////////////////////////////////////////////////////////////
 
+/// @cond IGNORE_THIS
 template <bool condition> struct ThisCompileErrorIsActuallyAFailedCompileTimeAssert;
 
 template <>
@@ -28,6 +29,7 @@ struct ThisCompileErrorIsActuallyAFailedCompileTimeAssert<true>
 {
     enum { BLAH };
 };
+/// @endcond
 
 // this assert is intended to be used in the global scope and will produce a
 // compile error on conditions that are decidable during compilation
