@@ -16,18 +16,6 @@
 #include <iostream>
 #include <string>
 
-// #if defined(ENABLE_COMMANDLINEPARSER_DEBUG_SPEW)
-//     #define DEBUG_SPEW(x) cerr << x << endl
-// #else // !defined(ENABLE_COMMANDLINEPARSER_DEBUG_SPEW)
-    #define DEBUG_SPEW(x)
-// #endif // !defined(ENABLE_COMMANDLINEPARSER_DEBUG_SPEW)
-
-#define REQUIRES_A_PARAMETER true
-#define NO_PARAMETER         false
-
-#define OPTION_HEADER(text) { '\n', "", NO_PARAMETER, NULL, text }
-#define OPTION_HANDLER(method) static_cast<void (CommandLineParser::*)(string const &)>(method)
-
 namespace Xrb
 {
 
@@ -37,10 +25,11 @@ class CommandLineParser
 {
 public:
 
-    typedef void (CommandLineParser::*HandlerMethod)(std::string const &);
+    typedef void (CommandLineParser::*HandlerMethodWithArgument)(std::string const &);
+    typedef void (CommandLineParser::*HandlerMethodWithoutArgument)();
 
     CommandLineParser (
-        HandlerMethod non_option_argument_handler_method,
+        HandlerMethodWithArgument non_option_argument_handler_method,
         CommandLineOption const *option,
         Uint32 option_count,
         std::string const &executable_filename,
@@ -50,23 +39,26 @@ public:
 
     inline bool GetParseSucceeded () const { return m_parse_succeeded; }
 
-    void PrintHelpMessage (std::ostream &stream) const;
-
-protected:
-
     void Parse (Sint32 argc, char const *const *argv);
+    void PrintHelpMessage (std::ostream &stream) const;
 
 private:
 
+    static bool GetIsAControlOption (CommandLineOption const &option);
+    static bool GetIsAShortNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
+    static bool GetIsALongNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
+
     void PerformOptionConsistencyCheck () const;
 
-    bool HandleShortNameOption (char const *arg, char const *next_argv);
-    bool HandleLongNameOption (char const *arg, char const *next_argv);
+    // the return value indicates if next_arg was eaten up and should be skipped
+    bool HandleShortNameOption (char const *arg, char const *next_arg);
+    // the return value indicates if next_arg was eaten up and should be skipped
+    bool HandleLongNameOption (char const *arg, char const *next_arg);
 
     CommandLineOption const *FindOptionByShortName (char short_name) const;
     CommandLineOption const *FindOptionByLongName (char const *long_name) const;
 
-    HandlerMethod const m_non_option_argument_handler_method;
+    HandlerMethodWithArgument const m_non_option_argument_handler_method;
     CommandLineOption const *const m_option;
     Uint32 const m_option_count;
     std::string const m_executable_filename;
@@ -77,13 +69,60 @@ private:
 
 struct CommandLineOption
 {
-    typedef void (CommandLineParser::*HandlerMethod)(std::string const &);
+public:
 
-    char m_short_name;
-    std::string m_long_name;
-    bool m_requires_a_parameter;
-    HandlerMethod m_handler_method;
-    std::string m_description;
+    CommandLineOption (std::string const &header_text)
+        :
+        m_short_name('\n'),
+        m_long_name(),
+        m_requires_an_argument(false),
+        m_handler_method_with_argument(NULL),
+        m_handler_method_without_argument(NULL),
+        m_description(header_text)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        char short_name,
+        std::string const &long_name,
+        void (CommandLineParserSubclass::*handler_method_with_argument)(std::string const &),
+        std::string const &description)
+        :
+        m_short_name(short_name),
+        m_long_name(long_name),
+        m_requires_an_argument(true),
+        m_handler_method_with_argument(static_cast<HandlerMethodWithArgument>(handler_method_with_argument)),
+        m_handler_method_without_argument(NULL),
+        m_description(description)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        char short_name,
+        std::string const &long_name,
+        void (CommandLineParserSubclass::*handler_method_without_argument)(),
+        std::string const &description)
+        :
+        m_short_name(short_name),
+        m_long_name(long_name),
+        m_requires_an_argument(false),
+        m_handler_method_with_argument(NULL),
+        m_handler_method_without_argument(static_cast<HandlerMethodWithoutArgument>(handler_method_without_argument)),
+        m_description(description)
+    { }
+
+private:
+
+    typedef void (CommandLineParser::*HandlerMethodWithArgument)(std::string const &);
+    typedef void (CommandLineParser::*HandlerMethodWithoutArgument)();
+
+    char const m_short_name;
+    std::string const m_long_name;
+    bool const m_requires_an_argument;
+    HandlerMethodWithArgument const m_handler_method_with_argument;
+    HandlerMethodWithoutArgument const m_handler_method_without_argument;
+    std::string const m_description;
+
+    // kludgey, but it's using this as a struct anyway
+    friend class CommandLineParser;
 }; // end of struct CommandLineOption
 
 } // end of namespace Xrb

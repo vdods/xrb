@@ -20,51 +20,43 @@ namespace Dis
 
 CommandLineOption const Options::ms_option[] =
 {
-    OPTION_HEADER("Video options"),
-    {
+    CommandLineOption("Video options"),
+    CommandLineOption(
         'f',
         "fullscreen",
-        REQUIRES_A_PARAMETER,
-        OPTION_HANDLER(&Options::SetFullscreen),
+        &Options::SetFullscreen,
         "    Indicates if fullscreen video will be used.  The parameter must be\n"
         "    either 1 or 0, indicating fullscreen and non-fullscreen respectively.\n"
-        "    The default value is 1.  See also option -r."
-    },
-    {
+        "    The default value is 1.  See also option -r."),
+    CommandLineOption(
         'r',
         "resolution",
-        REQUIRES_A_PARAMETER,
-        OPTION_HANDLER(&Options::SetResolution),
+        &Options::SetResolution,
         "    Set the screen resolution.  The parameter must be of the form 123x456,\n"
         "    where the first value is width, and the second is height.  The default\n"
-        "    value is 1024x768.  See also option -f."
-    },
-    OPTION_HEADER("Keyboard options"),
-    {
+        "    value is 1024x768.  See also option -f."),
+    CommandLineOption("Keyboard options"),
+    CommandLineOption(
         'k',
         "keymap",
-        REQUIRES_A_PARAMETER,
-        OPTION_HANDLER(&Options::SetKeyMapName),
+        &Options::SetKeyMapName,
         "    Sets the keyboard layout to use.  The windows version of SDL does not\n"
         "    support alternate keyboard layouts (this option is unnecessary in other\n"
         "    operating systems).  Valid values are: \"dvorak\" (quotes for clarity).\n"
-        "    Anything else will disable altered key mapping (this is the default)."
-    },
-    OPTION_HEADER(""),
-    {
+        "    Anything else will disable altered key mapping (this is the default)."),
+    CommandLineOption(""),
+    CommandLineOption(
         'h',
         "help",
-        NO_PARAMETER,
-        OPTION_HANDLER(&Options::RequestHelp),
-        "    Prints this help message."
-    }
+        &Options::RequestHelp,
+        "    Prints this help message.")
 };
 Uint32 const Options::ms_option_count = sizeof(Options::ms_option) / sizeof(CommandLineOption);
 
 Options::Options (std::string const &executable_filename)
     :
     CommandLineParser(
-        OPTION_HANDLER(&Options::NonOptionArgumentHandler),
+        OPTION_HANDLER_METHOD_WITH_ARGUMENT(&Options::NonOptionArgumentHandler),
         ms_option,
         ms_option_count,
         executable_filename,
@@ -75,11 +67,6 @@ Options::Options (std::string const &executable_filename)
     m_key_map_name("none"),
     m_is_help_requested(false)
 { }
-
-void Options::Parse (Sint32 const argc, char const *const *const argv)
-{
-    CommandLineParser::Parse(argc, argv);
-}
 
 void Options::SetFullscreen (string const &arg)
 {
@@ -128,10 +115,8 @@ void Options::NonOptionArgumentHandler (std::string const &arg)
     throw string("error: invalid non-option argument \"") + arg + "\"";
 }
 
-void Options::RequestHelp (std::string const &arg)
+void Options::RequestHelp ()
 {
-    ASSERT1(arg.empty())
-
     m_is_help_requested = true;
 }
 

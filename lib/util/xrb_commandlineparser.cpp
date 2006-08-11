@@ -13,39 +13,12 @@
 namespace Xrb
 {
 
-static bool GetIsAControlOption (CommandLineOption const &option)
-{
-    return option.m_short_name == '\n';
-}
-
-static bool GetIsAShortNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1)
-{
-    if (GetIsAControlOption(option_0) || GetIsAControlOption(option_1))
-        return false;
-
-    if (option_0.m_short_name == '\0' || option_1.m_short_name == '\0')
-        return false;
-
-    return option_0.m_short_name == option_1.m_short_name;
-}
-
-static bool GetIsALongNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1)
-{
-    if (GetIsAControlOption(option_0) || GetIsAControlOption(option_1))
-        return false;
-
-    if (option_0.m_long_name.empty() || option_1.m_long_name.empty())
-        return false;
-
-    return option_0.m_long_name == option_1.m_long_name;
-}
-
 // ///////////////////////////////////////////////////////////////////////////
 // CommandLineParser
 // ///////////////////////////////////////////////////////////////////////////
 
 CommandLineParser::CommandLineParser (
-    HandlerMethod non_option_argument_handler_method,
+    HandlerMethodWithArgument non_option_argument_handler_method,
     CommandLineOption const *const option,
     Uint32 const option_count,
     std::string const &executable_filename,
@@ -69,6 +42,47 @@ CommandLineParser::CommandLineParser (
 }
 
 CommandLineParser::~CommandLineParser () { }
+
+void CommandLineParser::Parse (Sint32 argc, char const *const *argv)
+{
+    ASSERT1(argc >= 1)
+    ASSERT1(argv != NULL)
+
+    try
+    {
+        while (++argv, --argc > 0)
+        {
+            ASSERT1(*argv != NULL)
+            char const *arg = *argv;
+            if (*arg == '-')
+            {
+                ++arg;
+
+                char const *next_arg = (argc == 1) ? NULL : *(argv + 1);
+
+                if (*arg == '-')
+                {
+                    if (HandleLongNameOption(++arg, next_arg))
+                        ++argv, --argc;
+                }
+                else
+                {
+                    if (HandleShortNameOption(arg, next_arg))
+                        ++argv, --argc;
+                }
+            }
+            else
+            {
+                (this->*m_non_option_argument_handler_method)(arg);
+            }
+        }
+    }
+    catch (std::string const &exception)
+    {
+        std::cerr << exception << "\n";
+        m_parse_succeeded = false;
+    }
+}
 
 void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
 {
@@ -105,8 +119,8 @@ void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
 
             if (!option->m_long_name.empty())
                 stream << "--" << option->m_long_name;
-            if (option->m_requires_a_parameter)
-                stream << "=<parameter>";
+            if (option->m_requires_an_argument)
+                stream << "=<argument>";
 
             if (!option->m_description.empty())
                 stream << "\n" << option->m_description;
@@ -116,45 +130,31 @@ void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
     }
 }
 
-void CommandLineParser::Parse (Sint32 argc, char const *const *argv)
+bool CommandLineParser::GetIsAControlOption (CommandLineOption const &option)
 {
-    ASSERT1(argc >= 1)
-    ASSERT1(argv != NULL)
+    return option.m_short_name == '\n';
+}
 
-    try
-    {
-        while (++argv, --argc > 0)
-        {
-            ASSERT1(*argv != NULL)
-            char const *arg = *argv;
-            if (*arg == '-')
-            {
-                ++arg;
+bool CommandLineParser::GetIsAShortNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1)
+{
+    if (GetIsAControlOption(option_0) || GetIsAControlOption(option_1))
+        return false;
 
-                char const *next_argv = (argc == 1) ? NULL : *(argv + 1);
+    if (option_0.m_short_name == '\0' || option_1.m_short_name == '\0')
+        return false;
 
-                if (*arg == '-')
-                {
-                    if (HandleLongNameOption(++arg, next_argv))
-                        ++argv, --argc;
-                }
-                else
-                {
-                    if (HandleShortNameOption(arg, next_argv))
-                        ++argv, --argc;
-                }
-            }
-            else
-            {
-                (this->*m_non_option_argument_handler_method)(arg);
-            }
-        }
-    }
-    catch (std::string const &exception)
-    {
-        std::cerr << exception << "\n";
-        m_parse_succeeded = false;
-    }
+    return option_0.m_short_name == option_1.m_short_name;
+}
+
+bool CommandLineParser::GetIsALongNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1)
+{
+    if (GetIsAControlOption(option_0) || GetIsAControlOption(option_1))
+        return false;
+
+    if (option_0.m_long_name.empty() || option_1.m_long_name.empty())
+        return false;
+
+    return option_0.m_long_name == option_1.m_long_name;
 }
 
 void CommandLineParser::PerformOptionConsistencyCheck () const
@@ -169,11 +169,21 @@ void CommandLineParser::PerformOptionConsistencyCheck () const
         if (GetIsAControlOption(*option))
         {
             ASSERT0(option->m_long_name.empty() && "must not supply a long name for a control option")
-            ASSERT0(option->m_handler_method == NULL && "must not supply a handler method for a control option")
+            ASSERT0(option->m_handler_method_with_argument == NULL && "must not supply a handler method for a control option")
+            ASSERT0(option->m_handler_method_without_argument == NULL && "must not supply a handler method for a control option")
         }
         else
         {
-            ASSERT0(option->m_handler_method != NULL && "must specify a handler method for a normal option")
+            if (option->m_requires_an_argument)
+            {
+                ASSERT0(option->m_handler_method_with_argument != NULL && "must specify an argument-accepting handler method for a normal argument-accepting option")
+                ASSERT0(option->m_handler_method_without_argument == NULL && "must not specify a no-argument handler method for a normal argument-accepting option")
+            }
+            else
+            {
+                ASSERT0(option->m_handler_method_with_argument == NULL && "must not specify an argument-accepting handler method for a normal no-argument option")
+                ASSERT0(option->m_handler_method_without_argument != NULL && "must specify a no-argument handler method for a normal no-argument option")
+            }
         }
     }
 
@@ -197,10 +207,10 @@ void CommandLineParser::PerformOptionConsistencyCheck () const
 
 bool CommandLineParser::HandleShortNameOption (
     char const *arg,
-    char const *const next_argv)
+    char const *const next_arg)
 {
     ASSERT1(arg != NULL)
-    // next_argv may be NULL
+    // next_arg may be NULL
 
     if (*arg == '\0')
         throw std::string("error: no option letter specified after \"-\"");
@@ -213,18 +223,25 @@ bool CommandLineParser::HandleShortNameOption (
 
     if (*arg != '\0')
     {
-        // if the option doesn't take a parameter, then this argument
-        // is a concatenated std::string of short options
-        if (!option->m_requires_a_parameter)
+        // if the option takes an argument, call the option handler
+        // method with the argument.
+        if (option->m_requires_an_argument)
+        {
+            ASSERT1(option->m_handler_method_with_argument != NULL)
+            ASSERT1(option->m_handler_method_without_argument == NULL)
+            (this->*(option->m_handler_method_with_argument))(std::string(arg));
+        }
+        // otherwise this argument is a concatenated string of short options
+        else
         {
             // iterate through the concatenated short options, processing
-            // each one, but throwing an error if one requires a parameter
+            // each one, but throwing an error if one requires an argument
             while (true)
             {
-                // call the option handler function with an empty argument
-                DEBUG_SPEW("short option -" << option->m_short_name);
-                ASSERT1(option->m_handler_method != NULL)
-                (this->*(option->m_handler_method))(std::string());
+                // call the option handler method with an empty argument
+                ASSERT1(option->m_handler_method_with_argument == NULL)
+                ASSERT1(option->m_handler_method_without_argument != NULL)
+                (this->*(option->m_handler_method_without_argument))();
 
                 if (*arg == '\0')
                     break;
@@ -232,42 +249,35 @@ bool CommandLineParser::HandleShortNameOption (
                 option = FindOptionByShortName(*arg);
                 if (option == NULL)
                     throw std::string("error: no such option: -") + *arg;
-                else if (option->m_requires_a_parameter)
-                    throw std::string("error: may not concatenate short options which require a parameter (option -") + *arg + ")";
+                else if (option->m_requires_an_argument)
+                    throw std::string("error: may not concatenate short options which require an argument (option -") + *arg + ")";
 
                 ++arg;
             }
-        }
-        else
-        {
-            // call the option handler function with the argument
-            DEBUG_SPEW("short option -" << option->m_short_name << " with arg \"" << arg << "\"");
-            ASSERT1(option->m_handler_method != NULL)
-            (this->*(option->m_handler_method))(std::string(arg));
         }
 
         return false;
     }
     else
     {
-        if (option->m_requires_a_parameter)
+        if (option->m_requires_an_argument)
         {
-            if (next_argv == NULL)
-                throw std::string("error: option -") + option->m_short_name + " requires a parameter";
+            if (next_arg == NULL)
+                throw std::string("error: option -") + option->m_short_name + " requires an argument";
 
-            // call the option handler function with the argument
-            DEBUG_SPEW("short option -" << option->m_short_name << " with arg \"" << next_argv << "\"");
-            ASSERT1(option->m_handler_method != NULL)
-            (this->*(option->m_handler_method))(std::string(next_argv));
+            // call the option handler method with the argument
+            ASSERT1(option->m_handler_method_with_argument != NULL)
+            ASSERT1(option->m_handler_method_without_argument == NULL)
+            (this->*(option->m_handler_method_with_argument))(std::string(next_arg));
 
             return true;
         }
         else
         {
-            // call the option handler function with an empty argument
-            DEBUG_SPEW("short option -" << option->m_short_name);
-            ASSERT1(option->m_handler_method != NULL)
-            (this->*(option->m_handler_method))(std::string());
+            // call the option handler method with an empty argument
+            ASSERT1(option->m_handler_method_with_argument == NULL)
+            ASSERT1(option->m_handler_method_without_argument != NULL)
+            (this->*(option->m_handler_method_without_argument))();
 
             return false;
         }
@@ -276,10 +286,10 @@ bool CommandLineParser::HandleShortNameOption (
 
 bool CommandLineParser::HandleLongNameOption (
     char const *arg,
-    char const *const next_argv)
+    char const *const next_arg)
 {
     ASSERT1(arg != NULL)
-    // next_argv may be NULL
+    // next_arg may be NULL
 
     if (*arg == '\0')
         throw std::string("error: no option name specified after \"--\"");
@@ -292,39 +302,39 @@ bool CommandLineParser::HandleLongNameOption (
 
     if (*arg != '\0')
     {
-        if (!option->m_requires_a_parameter)
-            throw std::string("error: option --") + option->m_long_name + " does not take a parameter";
+        if (!option->m_requires_an_argument)
+            throw std::string("error: option --") + option->m_long_name + " does not take an argument";
 
         ASSERT1(*arg == '=')
         ++arg;
 
-        // call the option handler function with the argument
-        DEBUG_SPEW("long option --" << option->m_long_name << " with arg \"" << arg << "\"");
-        ASSERT1(option->m_handler_method != NULL)
-        (this->*(option->m_handler_method))(std::string(arg));
+        // call the option handler method with the argument
+        ASSERT1(option->m_handler_method_with_argument != NULL)
+        ASSERT1(option->m_handler_method_without_argument == NULL)
+        (this->*(option->m_handler_method_with_argument))(std::string(arg));
 
         return false;
     }
     else
     {
-        if (option->m_requires_a_parameter)
+        if (option->m_requires_an_argument)
         {
-            if (next_argv == NULL)
-                throw std::string("error: option --") + option->m_long_name + " requires a parameter";
+            if (next_arg == NULL)
+                throw std::string("error: option --") + option->m_long_name + " requires an argument";
 
-            // call the option handler function with the argument
-            DEBUG_SPEW("long option --" << option->m_long_name << " with arg \"" << next_argv << "\"");
-            ASSERT1(option->m_handler_method != NULL)
-            (this->*(option->m_handler_method))(std::string(next_argv));
+            // call the option handler method with the argument
+            ASSERT1(option->m_handler_method_with_argument != NULL)
+            ASSERT1(option->m_handler_method_without_argument == NULL)
+            (this->*(option->m_handler_method_with_argument))(std::string(next_arg));
 
             return true;
         }
         else
         {
-            // call the option handler function with an empty argument
-            DEBUG_SPEW("long option --" << option->m_long_name);
-            ASSERT1(option->m_handler_method != NULL)
-            (this->*(option->m_handler_method))(std::string());
+            // call the option handler method with an empty argument
+            ASSERT1(option->m_handler_method_with_argument == NULL)
+            ASSERT1(option->m_handler_method_without_argument != NULL)
+            (this->*(option->m_handler_method_without_argument))();
 
             return false;
         }

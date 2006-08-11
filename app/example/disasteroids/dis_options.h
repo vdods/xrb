@@ -35,8 +35,6 @@ public:
     inline std::string const &GetKeyMapName () const { return m_key_map_name; }
     inline bool GetIsHelpRequested () const { return m_is_help_requested; }
 
-    void Parse (Sint32 argc, char const *const *argv);
-
 private:
 
     void SetFullscreen (std::string const &arg);
@@ -44,7 +42,7 @@ private:
     void SetKeyMapName (std::string const &arg);
 
     void NonOptionArgumentHandler (std::string const &arg);
-    void RequestHelp (std::string const &arg);
+    void RequestHelp ();
 
     static CommandLineOption const ms_option[];
     static Uint32 const ms_option_count;
