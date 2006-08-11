@@ -43,6 +43,7 @@ private:
     void SetResolution (std::string const &arg);
     void SetKeyMapName (std::string const &arg);
 
+    void NonOptionArgumentHandler (std::string const &arg);
     void RequestHelp (std::string const &arg);
 
     static CommandLineOption const ms_option[];

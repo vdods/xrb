@@ -37,10 +37,10 @@ class CommandLineParser
 {
 public:
 
-    typedef void (CommandLineParser::*HandlerFunction)(std::string const &);
+    typedef void (CommandLineParser::*HandlerMethod)(std::string const &);
 
     CommandLineParser (
-        HandlerFunction non_option_argument_handler_function,
+        HandlerMethod non_option_argument_handler_method,
         CommandLineOption const *option,
         Uint32 option_count,
         std::string const &executable_filename,
@@ -58,11 +58,6 @@ protected:
 
 private:
 
-    inline bool GetIsASpecialShortName (char short_name) const
-    {
-        return short_name == '\n';
-    }
-
     void PerformOptionConsistencyCheck () const;
 
     bool HandleShortNameOption (char const *arg, char const *next_argv);
@@ -71,7 +66,7 @@ private:
     CommandLineOption const *FindOptionByShortName (char short_name) const;
     CommandLineOption const *FindOptionByLongName (char const *long_name) const;
 
-    HandlerFunction const m_non_option_argument_handler_function;
+    HandlerMethod const m_non_option_argument_handler_method;
     CommandLineOption const *const m_option;
     Uint32 const m_option_count;
     std::string const m_executable_filename;
@@ -82,12 +77,12 @@ private:
 
 struct CommandLineOption
 {
-    typedef void (CommandLineParser::*HandlerFunction)(std::string const &);
+    typedef void (CommandLineParser::*HandlerMethod)(std::string const &);
 
     char m_short_name;
     std::string m_long_name;
     bool m_requires_a_parameter;
-    HandlerFunction m_handler_function;
+    HandlerMethod m_handler_method;
     std::string m_description;
 }; // end of struct CommandLineOption
 

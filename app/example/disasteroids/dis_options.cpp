@@ -64,7 +64,7 @@ Uint32 const Options::ms_option_count = sizeof(Options::ms_option) / sizeof(Comm
 Options::Options (std::string const &executable_filename)
     :
     CommandLineParser(
-        NULL, // no non-option argument handler function
+        OPTION_HANDLER(&Options::NonOptionArgumentHandler),
         ms_option,
         ms_option_count,
         executable_filename,
@@ -121,6 +121,11 @@ void Options::SetKeyMapName (std::string const &arg)
         throw string("error: invalid parameter to --keymap");
 
     m_key_map_name = arg;
+}
+
+void Options::NonOptionArgumentHandler (std::string const &arg)
+{
+    throw string("error: invalid non-option argument \"") + arg + "\"";
 }
 
 void Options::RequestHelp (std::string const &arg)
