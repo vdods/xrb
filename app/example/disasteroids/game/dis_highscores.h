@@ -67,12 +67,7 @@ struct ScoreOrderByPoints
                ||
                s0.GetPoints() == s1.GetPoints() && s0.GetWaveCount() > s1.GetWaveCount()
                ||
-               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetDate() < s1.GetDate()
-               ||
-               s0.GetDate() == s1.GetDate() && s0.GetHash() < s1.GetHash()
-               ||
-               s0.GetHash() == s1.GetHash() && &s0 < &s1;
-
+               s0.GetWaveCount() == s1.GetWaveCount() && s0.GetDate() < s1.GetDate();
     }
 }; // end of struct ScoreOrderByPoints
 
@@ -85,11 +80,7 @@ struct ScoreOrderByWaveCount
                ||
                s0.GetWaveCount() == s1.GetWaveCount() && s0.GetPoints() > s1.GetPoints()
                ||
-               s0.GetPoints() == s1.GetPoints() && s0.GetDate() < s1.GetDate()
-               ||
-               s0.GetDate() == s1.GetDate() && s0.GetHash() < s1.GetHash()
-               ||
-               s0.GetHash() == s1.GetHash() && &s0 < &s1;
+               s0.GetPoints() == s1.GetPoints() && s0.GetDate() < s1.GetDate();
     }
 }; // end of struct ScoreOrderByWaveCount
 
