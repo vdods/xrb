@@ -281,6 +281,12 @@ Furthermore, the Debug configuration for each will produce an executable which
 ends in <tt>_debug.exe</tt> -- thus allowing the Debug and Release executables
 to peacefully coexist in the same directory.
 
+Before you can run the applications (at least from the MSVC IDE), you must edit each
+of the applications' project properties (not that of <tt>libxrb</tt> though).  Pick
+<tt>All Configurations</tt> and then go to <tt>Configuration Properties > Debugging</tt>
+and change "Working Directory" to <tt>$(OutDir)</tt>.  This should correctly place
+the working directory where the executables, DLL files and resource directory are.
+
 @section setup_msvc_releases Creating Releases Of Your Application
 It is advisable to copy one of the example application project files when you begin
 the project for your own application.  This is so you use known-working configuration
