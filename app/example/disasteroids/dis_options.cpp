@@ -25,14 +25,14 @@ CommandLineOption const Options::ms_option[] =
         'f',
         "fullscreen",
         &Options::SetFullscreen,
-        "    Indicates if fullscreen video will be used.  The parameter must be\n"
+        "    Indicates if fullscreen video will be used.  The argument must be\n"
         "    either 1 or 0, indicating fullscreen and non-fullscreen respectively.\n"
         "    The default value is 1.  See also option -r."),
     CommandLineOption(
         'r',
         "resolution",
         &Options::SetResolution,
-        "    Set the screen resolution.  The parameter must be of the form 123x456,\n"
+        "    Set the screen resolution.  The argument must be of the form 123x456,\n"
         "    where the first value is width, and the second is height.  The default\n"
         "    value is 1024x768.  See also option -f."),
     CommandLineOption("Keyboard options"),
@@ -56,7 +56,7 @@ Uint32 const Options::ms_option_count = sizeof(Options::ms_option) / sizeof(Comm
 Options::Options (std::string const &executable_filename)
     :
     CommandLineParser(
-        OPTION_HANDLER_METHOD_WITH_ARGUMENT(&Options::NonOptionArgumentHandler),
+        &Options::NonOptionArgumentHandler,
         ms_option,
         ms_option_count,
         executable_filename,
@@ -71,7 +71,7 @@ Options::Options (std::string const &executable_filename)
 void Options::SetFullscreen (string const &arg)
 {
     if (arg.length() != 1 || arg[0] != '0' && arg[0] != '1')
-        throw string("error: invalid parameter to --fullscreen");
+        throw string("error: invalid argument to --fullscreen - \"") + arg + "\"";
     else
         m_fullscreen = arg[0] == '1';
 }
@@ -79,7 +79,7 @@ void Options::SetFullscreen (string const &arg)
 void Options::SetResolution (string const &arg)
 {
     if (arg.empty())
-        throw string("error: invalid parameter to --resolution");
+        throw string("error: invalid argument to --resolution - \"") + arg + "\"";
 
     istringstream in(arg);
     ScreenCoordVector2 resolution;
@@ -87,16 +87,16 @@ void Options::SetResolution (string const &arg)
 
     c = in.peek();
     if (c < '0' || c > '9')
-        throw string("error: invalid parameter to --resolution");
+        throw string("error: invalid argument to --resolution - \"") + arg + "\"";
     in >> resolution[Dim::X];
 
     in >> c;
     if (c != 'x' && c != 'X')
-        throw string("error: invalid parameter to --resolution");
+        throw string("error: invalid argument to --resolution - \"") + arg + "\"";
 
     c = in.peek();
     if (c < '0' || c > '9')
-        throw string("error: invalid parameter to --resolution");
+        throw string("error: invalid argument to --resolution - \"") + arg + "\"";
     in >> resolution[Dim::Y];
 
     m_resolution = resolution;
@@ -105,14 +105,14 @@ void Options::SetResolution (string const &arg)
 void Options::SetKeyMapName (std::string const &arg)
 {
     if (arg.empty())
-        throw string("error: invalid parameter to --keymap");
+        throw string("error: invalid argument to --keymap - \"") + arg + "\"";
 
     m_key_map_name = arg;
 }
 
 void Options::NonOptionArgumentHandler (std::string const &arg)
 {
-    throw string("error: invalid non-option argument \"") + arg + "\"";
+    throw string("error: invalid non-option argument - \"") + arg + "\"";
 }
 
 void Options::RequestHelp ()

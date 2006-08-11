@@ -28,13 +28,30 @@ public:
     typedef void (CommandLineParser::*HandlerMethodWithArgument)(std::string const &);
     typedef void (CommandLineParser::*HandlerMethodWithoutArgument)();
 
+    template <typename CommandLineParserSubclass>
     CommandLineParser (
-        HandlerMethodWithArgument non_option_argument_handler_method,
+        void (CommandLineParserSubclass::*non_option_argument_handler_method)(std::string const &),
         CommandLineOption const *option,
         Uint32 option_count,
         std::string const &executable_filename,
         std::string const &program_description,
-        std::string const &usage_message);
+        std::string const &usage_message)
+        :
+        m_non_option_argument_handler_method(static_cast<HandlerMethodWithArgument>(non_option_argument_handler_method)),
+        m_option(option),
+        m_option_count(option_count),
+        m_executable_filename(executable_filename),
+        m_program_description(program_description),
+        m_usage_message(usage_message),
+        m_parse_succeeded(true)
+    {
+        ASSERT0(m_non_option_argument_handler_method != NULL)
+        ASSERT0(m_option != NULL)
+        ASSERT0(m_option_count > 0)
+        ASSERT1(!m_executable_filename.empty())
+
+        PerformOptionConsistencyCheck();
+    }
     virtual ~CommandLineParser () = 0;
 
     inline bool GetParseSucceeded () const { return m_parse_succeeded; }
@@ -83,6 +100,32 @@ public:
     template <typename CommandLineParserSubclass>
     CommandLineOption (
         char short_name,
+        void (CommandLineParserSubclass::*handler_method_with_argument)(std::string const &),
+        std::string const &description)
+        :
+        m_short_name(short_name),
+        m_long_name(),
+        m_requires_an_argument(true),
+        m_handler_method_with_argument(static_cast<HandlerMethodWithArgument>(handler_method_with_argument)),
+        m_handler_method_without_argument(NULL),
+        m_description(description)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        std::string const &long_name,
+        void (CommandLineParserSubclass::*handler_method_with_argument)(std::string const &),
+        std::string const &description)
+        :
+        m_short_name('\0'),
+        m_long_name(long_name),
+        m_requires_an_argument(true),
+        m_handler_method_with_argument(static_cast<HandlerMethodWithArgument>(handler_method_with_argument)),
+        m_handler_method_without_argument(NULL),
+        m_description(description)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        char short_name,
         std::string const &long_name,
         void (CommandLineParserSubclass::*handler_method_with_argument)(std::string const &),
         std::string const &description)
@@ -92,6 +135,32 @@ public:
         m_requires_an_argument(true),
         m_handler_method_with_argument(static_cast<HandlerMethodWithArgument>(handler_method_with_argument)),
         m_handler_method_without_argument(NULL),
+        m_description(description)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        char short_name,
+        void (CommandLineParserSubclass::*handler_method_without_argument)(),
+        std::string const &description)
+        :
+        m_short_name(short_name),
+        m_long_name(),
+        m_requires_an_argument(false),
+        m_handler_method_with_argument(NULL),
+        m_handler_method_without_argument(static_cast<HandlerMethodWithoutArgument>(handler_method_without_argument)),
+        m_description(description)
+    { }
+    template <typename CommandLineParserSubclass>
+    CommandLineOption (
+        std::string const &long_name,
+        void (CommandLineParserSubclass::*handler_method_without_argument)(),
+        std::string const &description)
+        :
+        m_short_name('\0'),
+        m_long_name(long_name),
+        m_requires_an_argument(false),
+        m_handler_method_with_argument(NULL),
+        m_handler_method_without_argument(static_cast<HandlerMethodWithoutArgument>(handler_method_without_argument)),
         m_description(description)
     { }
     template <typename CommandLineParserSubclass>

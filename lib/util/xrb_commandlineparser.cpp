@@ -17,30 +17,6 @@ namespace Xrb
 // CommandLineParser
 // ///////////////////////////////////////////////////////////////////////////
 
-CommandLineParser::CommandLineParser (
-    HandlerMethodWithArgument non_option_argument_handler_method,
-    CommandLineOption const *const option,
-    Uint32 const option_count,
-    std::string const &executable_filename,
-    std::string const &program_description,
-    std::string const &usage_message)
-    :
-    m_non_option_argument_handler_method(non_option_argument_handler_method),
-    m_option(option),
-    m_option_count(option_count),
-    m_executable_filename(executable_filename),
-    m_program_description(program_description),
-    m_usage_message(usage_message),
-    m_parse_succeeded(true)
-{
-    ASSERT0(m_non_option_argument_handler_method != NULL)
-    ASSERT0(m_option != NULL)
-    ASSERT0(m_option_count > 0)
-    ASSERT1(!m_executable_filename.empty())
-
-    PerformOptionConsistencyCheck();
-}
-
 CommandLineParser::~CommandLineParser () { }
 
 void CommandLineParser::Parse (Sint32 argc, char const *const *argv)
@@ -108,19 +84,21 @@ void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
         }
         else
         {
+            ASSERT1(option->m_short_name != '\0' || !option->m_long_name.empty())
+
             if (option->m_short_name == '\0')
                 stream << "   ";
             else
-            {
                 stream << "-" << option->m_short_name;
-                if (!option->m_long_name.empty())
-                    stream << ",";
-            }
+
+            if (option->m_short_name != '\0' && !option->m_long_name.empty())
+                stream << ",";
 
             if (!option->m_long_name.empty())
                 stream << "--" << option->m_long_name;
+
             if (option->m_requires_an_argument)
-                stream << "=<argument>";
+                stream << " <argument>";
 
             if (!option->m_description.empty())
                 stream << "\n" << option->m_description;
@@ -174,6 +152,12 @@ void CommandLineParser::PerformOptionConsistencyCheck () const
         }
         else
         {
+            if (option->m_short_name != '\0')
+                ASSERT0(option->m_short_name != ' ' && option->m_short_name != '\t' && option->m_short_name != '\n' && "must not use whitespace in option short names")
+
+            if (!option->m_long_name.empty())
+                ASSERT0(option->m_long_name.find_first_of(" \t\n") == std::string::npos && "must not use whitespace in option long names")
+
             if (option->m_requires_an_argument)
             {
                 ASSERT0(option->m_handler_method_with_argument != NULL && "must specify an argument-accepting handler method for a normal argument-accepting option")
