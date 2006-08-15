@@ -30,13 +30,16 @@ comment.
 <strong>Procedural Overview</strong>
 
     <ul>
-    <li>Initialize SDL (video, sound, and whatever else is needed).</li>
-    <li>Initialize game engine singletons (necessary for correct operation of the game engine).</li>
-    <li>Create the Screen object.  This is what sets the video mode. </li>
-    <li>Execute game-specific code.</li>
-    <li>Delete the Screen object.  This does NOT reset the video mode.</li>
-    <li>Shutdown game engine singletons (necessary for correct operation of the game engine).</li>
-    <li>Shutdown SDL (this is what resets the video mode).</li>
+    <li>Main function</li>
+        <ul>
+        <li>Initialize SDL (video, sound, and whatever else is needed).</li>
+        <li>Initialize game engine singletons (necessary for correct operation of the game engine).</li>
+        <li>Create the Screen object.  This is what sets the video mode. </li>
+        <li>Execute game-specific code.</li>
+        <li>Delete the Screen object.  This does NOT reset the video mode.</li>
+        <li>Shutdown game engine singletons (necessary for correct operation of the game engine).</li>
+        <li>Shutdown SDL (this is what resets the video mode).</li>
+        </ul>
     </ul>
 
 <strong>Code Diving!</strong>
@@ -171,7 +174,10 @@ int main (int argc, char **argv)
     <ul>
     <li>Change the last parameter passed to Screen::Create -- currently
         <tt>0</tt> -- to <tt>SDL_FULLSCREEN</tt>.  This will cause the
-        application to be run in fullscreen mode.</li>
+        application to be run in fullscreen mode.  Make sure not to use
+        fullscreen mode while developing/debugging, because hitting a
+        breakpoint while in fullscreen video mode will make your computer
+        a touch ornery.</li>
     <li>With <tt>SDL_FULLSCREEN</tt> enabled, change the video mode width,
         height and bitdepth to various values, seeing what video modes are
         supported by your hardware.</li>

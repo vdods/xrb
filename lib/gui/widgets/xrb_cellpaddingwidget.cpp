@@ -26,7 +26,7 @@ CellPaddingWidget::CellPaddingWidget (
     m_alignment = Alignment2(CENTER, CENTER);
 
     CellPaddingWidget::UpdateRenderBackground();
-    
+
     DirtyContentsSizeProperties();
 }
 
@@ -127,7 +127,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
         m_preferred_size_properties.m_max_size_enabled[component] = value;
     Widget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::SetSizePropertyEnabled (
@@ -140,7 +140,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
         m_preferred_size_properties.m_max_size_enabled = value;
     Widget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::SetSizeProperty (
@@ -156,7 +156,7 @@ void CellPaddingWidget::SetSizeProperty (
         m_preferred_size_properties.m_max_size[component] = value;
     Widget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::SetSizeProperty (
@@ -171,7 +171,7 @@ void CellPaddingWidget::SetSizeProperty (
         m_preferred_size_properties.m_max_size = value;
     Widget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::SetSizePropertyRatio (
@@ -227,8 +227,8 @@ void CellPaddingWidget::AttachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::DetachChild (Widget *const child)
@@ -244,8 +244,8 @@ void CellPaddingWidget::DetachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
@@ -258,8 +258,8 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the call up to this widget's parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the call up to this widget's parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void CellPaddingWidget::PositionSingleChildWidget ()
@@ -329,7 +329,7 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
 
     Widget const *child = GetSingleChildWidget();
     ASSERT1(child != NULL)
-    
+
     // skip hidden and modal children
     if (child->GetIsHidden() || child->GetIsModal())
     {

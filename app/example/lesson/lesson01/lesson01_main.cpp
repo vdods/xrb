@@ -27,23 +27,26 @@ and how to design and run a game loop -- the heartbeat of a game engine.
 <strong>Procedural Overview</strong> -- Items in bold are additions/changes to the previous lesson.
 
     <ul>
-    <li>Initialize SDL and game engine singletons.  Create the Screen object.
-        This was covered in previous lesson(s).</li>
-    <li>Execute game-specific code.</li>
+    <li>Main function</li>
         <ul>
-        <li><strong>Create formatted layouts of GUI widgets.</strong></li>
-        <li><strong>Run the game loop</strong></li>
+        <li>Initialize SDL and game engine singletons.  Create the Screen object.
+            This was covered in previous lesson(s).</li>
+        <li>Execute game-specific code.</li>
             <ul>
-            <li><strong>Handle events (user and system-generated).</strong></li>
-            <li><strong>Perform off-screen processing.</strong></li>
-            <li><strong>Draw the Screen object's entire widget hierarchy.</strong></li>
+            <li><strong>Create formatted layouts of GUI widgets.</strong></li>
+            <li><strong>Run the game loop</strong></li>
+                <ul>
+                <li><strong>Handle events (user and system-generated).</strong></li>
+                <li><strong>Perform off-screen processing.</strong></li>
+                <li><strong>Draw the Screen object's entire widget hierarchy.</strong></li>
+                </ul>
             </ul>
+        <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
+            This was covered in previous lesson(s).</li>
         </ul>
-    <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
-        This was covered in previous lesson(s).</li>
     </ul>
 
-Comments explaining previously covered material will be made terser or
+Comments explaining previously covered material will be made more terse or
 deleted entirely in each successive lesson.  If something is not explained
 well enough, it was probably already explained in
 @ref lessons "previous lessons".
@@ -97,7 +100,7 @@ int main (int argc, char **argv)
     Singletons::Initialize("none");
 
     // Set the caption for the application's window.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "");
+    SDL_WM_SetCaption("XuqRijBuh Lesson 01", "");
 
     // This call creates the Screen object and initializes the given video mode.
     // The Screen object is the root widget of the GUI widget hierarchy, and
@@ -129,7 +132,7 @@ int main (int argc, char **argv)
     There are custom subclasses of Widget (such as Label, LineEdit, Button,
     Layout, etc) to perform various functions.  Widgets are organized in a
     hierarchy (i.e. parent/child relationship) which also dictates the spatial
-    organisation of widgets onscreen -- a child widget is completely contained
+    organization of widgets onscreen -- a child widget is completely contained
     within its parent, and cannot draw anything outside itself.  This is the
     same widget paradigm as used by the FLTK, MFC, QT (and many other)
     toolkits.  The GUI system in this game engine is primarily modeled

@@ -60,24 +60,27 @@ fuck this is all about, looking at the example code should make things clear.
 <strong>Procedural Overview</strong> -- Items in bold are additions/changes to the previous lesson.
 
     <ul>
-    <li>Initialize SDL and game engine singletons.  Create the Screen object.
-        This was covered in previous lesson(s).</li>
-    <li>Execute game-specific code.</li>
+    <li>Main function</li>
         <ul>
-        <li>Create formatted layouts of GUI widgets.</li>
-        <li><strong>Connect SignalSenders up to SignalReceivers.</strong></li>
-        <li>Run the game loop</li>
+        <li>Initialize SDL and game engine singletons.  Create the Screen object.
+            This was covered in previous lesson(s).</li>
+        <li>Execute game-specific code.</li>
             <ul>
-            <li>Handle events (user and system-generated).</li>
-            <li>Perform off-screen processing.</li>
-            <li>Draw the Screen object's entire widget hierarchy.</li>
+            <li>Create formatted layouts of GUI widgets.</li>
+            <li><strong>Connect SignalSenders up to SignalReceivers.</strong></li>
+            <li>Run the game loop</li>
+                <ul>
+                <li>Handle events (user and system-generated).</li>
+                <li>Perform off-screen processing.</li>
+                <li>Draw the Screen object's entire widget hierarchy.</li>
+                </ul>
             </ul>
+        <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
+            This was covered in previous lesson(s).</li>
         </ul>
-    <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
-        This was covered in previous lesson(s).</li>
     </ul>
 
-Comments explaining previously covered material will be made terser or
+Comments explaining previously covered material will be made more terse or
 deleted entirely in each successive lesson.  If something is not explained
 well enough, it was probably already explained in
 @ref lessons "previous lessons".
@@ -128,7 +131,7 @@ int main (int argc, char **argv)
     // Initialize the game engine singleton facilities.
     Singletons::Initialize("none");
     // Set the caption for the application's window.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "");
+    SDL_WM_SetCaption("XuqRijBuh Lesson 02", "");
     // Create Screen object and initialize given video mode.
     Screen *screen = Screen::Create(800, 600, 32, 0);
     // If the Screen failed to initialize, print an error message and quit.

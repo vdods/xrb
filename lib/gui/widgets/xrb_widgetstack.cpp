@@ -51,7 +51,7 @@ void WidgetStack::SetSizePropertyEnabled (
         m_preferred_size_properties.m_max_size_enabled[component] = value;
     Widget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::SetSizePropertyEnabled (
@@ -64,7 +64,7 @@ void WidgetStack::SetSizePropertyEnabled (
         m_preferred_size_properties.m_max_size_enabled = value;
     Widget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::SetSizeProperty (
@@ -80,7 +80,7 @@ void WidgetStack::SetSizeProperty (
         m_preferred_size_properties.m_max_size[component] = value;
     Widget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::SetSizeProperty (
@@ -95,7 +95,7 @@ void WidgetStack::SetSizeProperty (
         m_preferred_size_properties.m_max_size = value;
     Widget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::SetSizePropertyRatio (
@@ -139,8 +139,8 @@ void WidgetStack::AttachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::DetachChild (Widget *const child)
@@ -154,8 +154,8 @@ void WidgetStack::DetachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
@@ -167,8 +167,8 @@ void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the call up to this widget's parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the call up to this widget's parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void WidgetStack::UpdateRenderBackground ()
@@ -248,7 +248,7 @@ void WidgetStack::UpdateContentsSizeProperties () const
 
         // iterate over X and Y dimensions
         for (Uint8 d = 0; d < 2; ++d)
-        {   
+        {
             // if the child has a min size, then the contents as a whole
             // have a min size
             if (child->GetMinSizeEnabled()[d])
@@ -258,7 +258,7 @@ void WidgetStack::UpdateContentsSizeProperties () const
                     Max(child->GetMinSize()[d],
                         m_contents_size_properties.m_min_size[d]);
             }
-    
+
             // if the child has a max size, then the contents as a whole
             // have a max size
             if (child->GetMaxSizeEnabled()[d])

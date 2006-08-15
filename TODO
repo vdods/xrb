@@ -65,8 +65,15 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
-- possibly move all the lesson?? dirs into app/example/lesson/ so they're all
-  in one place and don't clutter up other files and such so much.
+- make a stack-based block for keeping container widgets from doing contents
+  min/max size calculations until all widgets are added -- to increase layout
+  creation speed.
+- create ContainerWidget subclass of Widget which all container-style
+  widgets will use
+- refactor the layout code to be more efficient (so it can handle really
+  complex/huge layouts quickly)
+- should Widget::Draw be protected?
+- add a "mental note" advice-sort of section to the documents
 - add @ref tags to appropriate places in lessons
 - make the position given for text drawing be the left/center/right for
   left-justified, centered, or right-justified respectively, and same for

@@ -43,7 +43,7 @@ Key *Input::GetKey (Key::Code const code) const
 {
     KeyCodeMapIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
-        return 0;
+        return NULL;
     else
     {
         ASSERT1(it->second != NULL)
@@ -55,11 +55,23 @@ Key *Input::GetKey (std::string const &name) const
 {
     KeyNameMapIterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
-        return 0;
+        return NULL;
     else
     {
         ASSERT1(it->second != NULL)
         return it->second;
+    }
+}
+
+std::string const &Input::GetKeyName (Key::Code const code) const
+{
+    KeyCodeMapIterator it = m_keycode_map.find(code);
+    if (it == m_keycode_map.end())
+        return std::string();
+    else
+    {
+        ASSERT1(it->second != NULL)
+        return it->second->GetName();
     }
 }
 

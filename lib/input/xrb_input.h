@@ -37,6 +37,7 @@ public:
 
     Key *GetKey (Key::Code code) const;
     Key *GetKey (std::string const &name) const;
+    std::string const &GetKeyName (Key::Code code) const;
     inline bool GetIsKeyPressed (Key::Code const code) const
     {
         return GetKey(code)->GetPressed();

@@ -60,7 +60,7 @@ class WidgetBackground;
   * @c CheckBox.
   *
   * A hierarchy of widgets (a widget being essentially a rectangular area
-  * on the screen) is created to suit the task at hand.Widgets
+  * on the screen) is created to suit the task at hand.  Widgets
   * subordinate to a particular widget in the hierarchy are referred to as
   * its "child widgets" or "children".  The hierarchy dictates specific
   * rules as to how widgets are drawn and how they receive events.

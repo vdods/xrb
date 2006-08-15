@@ -259,7 +259,7 @@ void Layout::SetSizePropertyEnabled (
     ConstrainPreferredSizeProperties();
     Widget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::SetSizePropertyEnabled (
@@ -273,7 +273,7 @@ void Layout::SetSizePropertyEnabled (
     ConstrainPreferredSizeProperties();
     Widget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::SetSizeProperty (
@@ -290,7 +290,7 @@ void Layout::SetSizeProperty (
     ConstrainPreferredSizeProperties();
     Widget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::SetSizeProperty (
@@ -306,7 +306,7 @@ void Layout::SetSizeProperty (
     ConstrainPreferredSizeProperties();
     Widget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::SetSizePropertyRatio (
@@ -354,8 +354,8 @@ void Layout::AttachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::DetachChild (Widget *const child)
@@ -371,8 +371,8 @@ void Layout::DetachChild (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildDown (Widget *const child)
@@ -389,8 +389,8 @@ void Layout::MoveChildDown (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildUp (Widget *const child)
@@ -407,8 +407,8 @@ void Layout::MoveChildUp (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildToBottom (Widget *const child)
@@ -425,8 +425,8 @@ void Layout::MoveChildToBottom (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::MoveChildToTop (Widget *const child)
@@ -443,8 +443,8 @@ void Layout::MoveChildToTop (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the changes up to the parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the changes up to the parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::HandleChangedWidgetSkinMargins (
@@ -462,7 +462,7 @@ void Layout::HandleChangedLayoutFrameMargins ()
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::HandleChangedLayoutSpacingMargins ()
@@ -471,7 +471,7 @@ void Layout::HandleChangedLayoutSpacingMargins ()
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
     CalculateMinAndMaxSizePropertiesFromContents();
-    ParentChildSizePropertiesUpdate(false);
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::ChildSizePropertiesChanged (Widget *const child)
@@ -485,8 +485,8 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the call up to this widget's parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the call up to this widget's parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 void Layout::ChildStackPriorityChanged (
@@ -504,8 +504,8 @@ void Layout::ChildStackPriorityChanged (
     CalculateMinAndMaxSizePropertiesFromContents();
     // attempt to resize the widget to the current size
     Resize(GetSize());
-    // propagate the call up to this widget's parent
-    ParentChildSizePropertiesUpdate(false);
+//     // propagate the call up to this widget's parent
+//     ParentChildSizePropertiesUpdate(false);
 }
 
 int Layout::SizePropertiesSortingFunction (
