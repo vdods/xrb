@@ -73,6 +73,7 @@ well enough, it was probably already explained in
 #include "xrb_valueedit.h" // TEMP
 #include "xrb_valuelabel.h" // temp
 #include "xrb_label.h" // temp
+#include "xrb_validator.h" // temp
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
@@ -173,16 +174,16 @@ private:
 
     enum
     {
-        GRID_WIDTH = 12,
-        GRID_HEIGHT = 15,
+        GRID_WIDTH = 16,
+        GRID_HEIGHT = 12,
         DISTRIBUTION_FUNCTION_WIDTH = 5,
         DISTRIBUTION_FUNCTION_HEIGHT = 5
     };
 
-    void SetFramerate (Float framerate)
+    void SetFramerate (Uint32 framerate)
     {
-        ASSERT0(framerate > 0.0f)
-        g_framerate = framerate;
+        ASSERT0(framerate > 0)
+        g_framerate = static_cast<Float>(framerate);
     }
     void SetTemperatureRetentionRate (Float temperature_retention_rate)
     {
@@ -195,9 +196,13 @@ private:
 
     Layout *m_grid_layout;
     FireButton *m_button_grid[GRID_HEIGHT][GRID_WIDTH];
+    ValueLabel<Uint32> *m_framerate_label;
+    FramerateCalculator m_framerate_calculator;
+    GreaterOrEqualValidator<Uint32> m_framerate_validator;
+    RangeExclusiveValidator<Float> m_temperature_retention_range;
     Float m_distribution_normalization;
 
-    SignalReceiver1<Float> m_internal_receiver_set_framerate;
+    SignalReceiver1<Uint32> m_internal_receiver_set_framerate;
     SignalReceiver1<Float> m_internal_receiver_set_temperature_retention_rate;
 };
 
@@ -220,10 +225,13 @@ Float const FireGrid::ms_distribution_function[DISTRIBUTION_FUNCTION_HEIGHT][DIS
 FireGrid::FireGrid (Widget *parent)
     :
     Widget(parent, "FireGrid"),
+    m_framerate_validator(1),
+    m_temperature_retention_range(0.0f, 1e-20f, 0.999999f, 1.0f),
     m_internal_receiver_set_framerate(&FireGrid::SetFramerate, this),
     m_internal_receiver_set_temperature_retention_rate(&FireGrid::SetTemperatureRetentionRate, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this);
+    main_layout->SetIsUsingZeroedFrameMargins(true);
 
     m_grid_layout = new Layout(ROW, GRID_WIDTH, main_layout, "grid layout");
     m_grid_layout->SetIsUsingZeroedFrameMargins(true);
@@ -238,15 +246,23 @@ FireGrid::FireGrid (Widget *parent)
 
     Layout *sub_layout = new Layout(HORIZONTAL, main_layout);
     sub_layout->SetIsUsingZeroedFrameMargins(true);
-    new Label("Desired framerate:", sub_layout);
-    ValueEdit<Float> *framerate_edit = new ValueEdit<Float>("%g", Util::TextToFloat, sub_layout);
-    framerate_edit->SetValue(g_framerate);
+
+    new Label("Actual Framerate:", sub_layout);
+    m_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint32, sub_layout);
+    m_framerate_label->SetAlignment(Dim::X, LEFT);
+
+    new Label("Desired Framerate:", sub_layout);
+    ValueEdit<Uint32> *framerate_edit = new ValueEdit<Uint32>("%u", Util::TextToUint32, sub_layout);
+    framerate_edit->SetValidator(&m_framerate_validator);
+    framerate_edit->SetValue(static_cast<Uint32>(Math::Round(g_framerate)));
     SignalHandler::Connect1(
         framerate_edit->SenderValueUpdated(),
         &m_internal_receiver_set_framerate);
-    new Label("Temperature retention rate:", sub_layout);
+
+    new Label("Temperature Retention Rate:", sub_layout);
     ValueEdit<Float> *temperature_retention_rate_edit = new ValueEdit<Float>("%g", Util::TextToFloat, sub_layout);
     temperature_retention_rate_edit->SetValue(g_temperature_retention_rate);
+    temperature_retention_rate_edit->SetValidator(&m_temperature_retention_range);
     SignalHandler::Connect1(
         temperature_retention_rate_edit->SenderValueUpdated(),
         &m_internal_receiver_set_temperature_retention_rate);
@@ -270,6 +286,9 @@ FireGrid::FireGrid (Widget *parent)
 void FireGrid::ProcessFrameOverride ()
 {
     Widget::ProcessFrameOverride();
+
+    m_framerate_calculator.AddFrameTime(GetFrameTime());
+    m_framerate_label->SetValue(static_cast<Uint32>(Math::Round(m_framerate_calculator.GetFramerate())));
 
     for (Sint32 gy = 0; gy < GRID_HEIGHT; ++gy)
     {
@@ -321,7 +340,7 @@ int main (int argc, char **argv)
     // Initialize engine singletons, set window caption and create the Screen.
     Singletons::Initialize("none");
     SDL_WM_SetCaption("XuqRijBuh Lesson 03", "");
-    Screen *screen = Screen::Create(800, 1000, 32, 0);
+    Screen *screen = Screen::Create(800, 600, 32, 0);
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
@@ -343,22 +362,24 @@ int main (int argc, char **argv)
 
         // TODO: add a button bar at the bottom with a quit button
 
+        Float frame_time = 0.0f;
+        Float next_frame_time = 0.0f;
         // Run the game loop until the Screen no longer has the will to live.
         while (!screen->GetIsQuitRequested())
         {
-            // Limit the framerate to 1000/33 frames per second.
-            ASSERT1(g_framerate > 0.0f)
-            Uint32 delay = static_cast<Uint32>(1000.0f / g_framerate);
-            if (delay > 0)
-                SDL_Delay(delay);
+            // figure out how much time to sleep before processing the next frame
+            Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_frame_time - frame_time)));
+            SDL_Delay(milliseconds_to_sleep);
+            next_frame_time += 1.0f / g_framerate;
             // Retrieve the current time in seconds as a Float.
-            Float time = 0.001f * SDL_GetTicks();
+            frame_time = 0.001f * SDL_GetTicks();
+
             // Process SDL events until there are no more.
             SDL_Event sdl_event;
             while (SDL_PollEvent(&sdl_event))
             {
                 // Repackage SDL_Event into Xrb::Event subclasses.
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, time);
+                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, frame_time);
                 // If it was a dud, skip this event-handling loop.
                 if (event == NULL)
                     continue;
@@ -372,11 +393,11 @@ int main (int argc, char **argv)
             }
 
             // Turn the crank on the EventQueue.
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->GetOwnerEventQueue()->ProcessFrame(frame_time);
             // Perform all off-screen GUI hierarchy processing.
-            screen->ProcessFrame(time);
+            screen->ProcessFrame(frame_time);
             // Turn the crank on the EventQueue again.
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->GetOwnerEventQueue()->ProcessFrame(frame_time);
             // Draw the whole mu'erfucking thing.
             screen->Draw();
         }

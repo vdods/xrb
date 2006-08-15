@@ -50,7 +50,7 @@ private:
 
     enum
     {
-        FRAME_COUNT = 64
+        FRAME_COUNT = 32
     };
 
     // the circular queue which stores the frame times

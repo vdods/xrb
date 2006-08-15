@@ -36,26 +36,26 @@ struct Validator
 template <typename ValueType>
 struct GreaterThanValidator : public Validator<ValueType>
 {
-    ValueType const m_comparison_value;
-    ValueType const m_smallest_valid_value;
+    ValueType const m_lower_bound;
+    ValueType const m_lowest_valid_value;
 
     GreaterThanValidator (
-        ValueType const comparison_value,
-        ValueType const smallest_valid_value)
+        ValueType const lower_bound,
+        ValueType const lowest_valid_value)
         :
-        m_comparison_value(comparison_value),
-        m_smallest_valid_value(smallest_valid_value)
+        m_lower_bound(lower_bound),
+        m_lowest_valid_value(lowest_valid_value)
     { }
 
     virtual bool GetIsValid (ValueType value) const
     {
-        return value > m_comparison_value;
+        return value > m_lower_bound;
     }
     virtual ValueType Validate (ValueType value) const
     {
-        return value > m_comparison_value ?
+        return value > m_lower_bound ?
                value :
-               m_smallest_valid_value;
+               m_lowest_valid_value;
     }
 }; // end of struct GreaterThanValidator<ValueType>
 
@@ -66,23 +66,23 @@ struct GreaterThanValidator : public Validator<ValueType>
 template <typename ValueType>
 struct GreaterOrEqualValidator : public Validator<ValueType>
 {
-    ValueType const m_comparison_value;
+    ValueType const m_lower_bound;
 
     GreaterOrEqualValidator (
-        ValueType const comparison_value)
+        ValueType const lower_bound)
         :
-        m_comparison_value(comparison_value)
+        m_lower_bound(lower_bound)
     { }
 
     virtual bool GetIsValid (ValueType value) const
     {
-        return value >= m_comparison_value;
+        return value >= m_lower_bound;
     }
     virtual ValueType Validate (ValueType value) const
     {
-        return value >= m_comparison_value ?
+        return value >= m_lower_bound ?
                value :
-               m_comparison_value;
+               m_lower_bound;
     }
 }; // end of struct GreaterOrEqualValidator<ValueType>
 
@@ -93,26 +93,26 @@ struct GreaterOrEqualValidator : public Validator<ValueType>
 template <typename ValueType>
 struct LessThanValidator : public Validator<ValueType>
 {
-    ValueType const m_comparison_value;
-    ValueType const m_largest_valid_value;
+    ValueType const m_upper_bound;
+    ValueType const m_highest_valid_value;
 
     LessThanValidator (
-        ValueType const comparison_value,
-        ValueType const largest_valid_value)
+        ValueType const upper_bound,
+        ValueType const highest_valid_value)
         :
-        m_comparison_value(comparison_value),
-        m_largest_valid_value(largest_valid_value)
+        m_upper_bound(upper_bound),
+        m_highest_valid_value(highest_valid_value)
     { }
 
     virtual bool GetIsValid (ValueType value) const
     {
-        return value < m_comparison_value;
+        return value < m_upper_bound;
     }
     virtual ValueType Validate (ValueType value) const
     {
-        return value < m_comparison_value ?
+        return value < m_upper_bound ?
                value :
-               m_largest_valid_value;
+               m_highest_valid_value;
     }
 }; // end of struct LessThanValidator<ValueType>
 
@@ -123,37 +123,37 @@ struct LessThanValidator : public Validator<ValueType>
 template <typename ValueType>
 struct LessOrEqualValidator : public Validator<ValueType>
 {
-    ValueType const m_comparison_value;
+    ValueType const m_upper_bound;
 
     LessOrEqualValidator (
-        ValueType const comparison_value)
+        ValueType const upper_bound)
         :
-        m_comparison_value(comparison_value)
+        m_upper_bound(upper_bound)
     { }
 
     virtual bool GetIsValid (ValueType value) const
     {
-        return value <= m_comparison_value;
+        return value <= m_upper_bound;
     }
     virtual ValueType Validate (ValueType value) const
     {
-        return value <= m_comparison_value ?
+        return value <= m_upper_bound ?
                value :
-               m_comparison_value;
+               m_upper_bound;
     }
 }; // end of struct LessOrEqualValidator<ValueType>
 
 // ///////////////////////////////////////////////////////////////////////////
-// RangeValidator<ValueType>
+// RangeInclusiveValidator<ValueType>
 // ///////////////////////////////////////////////////////////////////////////
 
 template <typename ValueType>
-struct RangeValidator : public Validator<ValueType>
+struct RangeInclusiveValidator : public Validator<ValueType>
 {
     ValueType const m_lower_bound;
     ValueType const m_upper_bound;
 
-    RangeValidator (
+    RangeInclusiveValidator (
         ValueType const lower_bound,
         ValueType const upper_bound)
         :
@@ -177,7 +177,51 @@ struct RangeValidator : public Validator<ValueType>
         else
             return value;
     }
-}; // end of struct RangeValidator<ValueType>
+}; // end of struct RangeInclusiveValidator<ValueType>
+
+// ///////////////////////////////////////////////////////////////////////////
+// RangeExclusiveValidator<ValueType>
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename ValueType>
+struct RangeExclusiveValidator : public Validator<ValueType>
+{
+    ValueType const m_lower_bound;
+    ValueType const m_lowest_valid_value;
+    ValueType const m_highest_valid_value;
+    ValueType const m_upper_bound;
+
+    RangeExclusiveValidator (
+        ValueType const lower_bound,
+        ValueType const lowest_valid_value,
+        ValueType const highest_valid_value,
+        ValueType const upper_bound)
+        :
+        m_lower_bound(lower_bound),
+        m_lowest_valid_value(lowest_valid_value),
+        m_highest_valid_value(highest_valid_value),
+        m_upper_bound(upper_bound)
+    {
+        ASSERT1(lower_bound < lowest_valid_value)
+        ASSERT1(lowest_valid_value < highest_valid_value)
+        ASSERT1(highest_valid_value < upper_bound)
+    }
+
+    virtual bool GetIsValid (ValueType value) const
+    {
+        return m_lower_bound <= value &&
+               value <= m_upper_bound;
+    }
+    virtual ValueType Validate (ValueType value) const
+    {
+        if (value < m_lower_bound)
+            return m_lowest_valid_value;
+        else if (value > m_upper_bound)
+            return m_highest_valid_value;
+        else
+            return value;
+    }
+}; // end of struct RangeExclusiveValidator<ValueType>
 
 } // end of namespace Xrb
 
