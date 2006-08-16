@@ -321,7 +321,35 @@ public:
     HeatSimulation (Widget *parent, std::string const &name = "HeatSimulation")
         :
         Widget(parent, "HeatSimulation"),
+        /* @endcode
+        The single argument to this validator's constructor is the lower
+        bound for GreaterOrEqualValidator<Uint32>.  Anything greator or equal
+        to 1 is valid.
+        @code */
         m_desired_framerate_validator(1),
+        /* @endcode
+        There are two classifications of range validators.  Inclusive
+        (GreaterOrEqualValidator, LessOrEqualValidator and
+        RangeInclusiveValidator) and Exclusive (GreaterThanValidator,
+        LessThanValidator and RangeExclusiveValidator).  The inclusive range
+        validators can simply define the lower and/or upper bounds, but the
+        exclusive range validators must specify both lower and/or upper bounds,
+        as well as minimum and/or maximum valid values (in order to bring an
+        invalid value into the valid range).  Because the validator subclasses
+        are templatized, one can't assume that one could just add/subtract 1
+        (or some other general value) to the lower/upper bound to get the
+        minimum/maximum valid value.  Thus, the necessity for a minimum and/or
+        maximum valid value parameter.
+
+        In the following constructor -- for RangeExclusive<Float> -- the first
+        parameter is the lower bound of the exclusive range.  The second is
+        the minimum valid value which will be used if a value-to-be-validated
+        is less than or equal to the lower bound value.  The third parameter
+        is the maximum valid value.  It is similarly used when a
+        value-to-be-validated is greater or equal to the upper bound value.
+        The final parameter is the upper bound of the exclusive range.  See
+        @ref Xrb::RangeExclusiveValidator for more.
+        @code */
         m_temperature_retention_range_validator(0.0f, 1e-20f, 0.999999f, 1.0f),
         m_internal_receiver_set_desired_framerate(&HeatSimulation::SetDesiredFramerate, this),
         m_internal_receiver_set_temperature_retention_rate(&HeatSimulation::SetTemperatureRetentionRate, this)
