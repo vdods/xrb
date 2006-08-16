@@ -45,7 +45,7 @@ and how to design and run a game loop -- the heartbeat of a game engine.
             This was covered in previous lesson(s).</li>
         </ul>
     </ul>
-
+    
 Comments explaining previously covered material will be made more terse or
 deleted entirely in each successive lesson.  If something is not explained
 well enough, it was probably already explained in

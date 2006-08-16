@@ -65,9 +65,10 @@ Key *Input::GetKey (std::string const &name) const
 
 std::string const &Input::GetKeyName (Key::Code const code) const
 {
+    static std::string const empty_string;
     KeyCodeMapIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
-        return std::string();
+        return empty_string;
     else
     {
         ASSERT1(it->second != NULL)

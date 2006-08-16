@@ -76,7 +76,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = doc/doxygen_pages \
                          app/example/lesson \
-                         lib
+                         #lib
 FILE_PATTERNS          = *.cpp \
                          *.h \
                          *.tcpp \

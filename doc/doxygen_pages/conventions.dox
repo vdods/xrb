@@ -5,23 +5,23 @@ This isn't required reading.  Go ahead, skip this section.  You know you
 want to.  You're probably simple anyway.  Just leave.  GET OUTTA HERE!
 
 @section conventions_general_verbosity General Verbosity
+Typing up code is such a small part of software development that there is no
+reason not to write verbose, descriptive code.  Many modern IDEs have
+autocompletion to make coding even faster, so the number of excuses not to write
+self-documenting code is vanishing rapidly.
 
 @section conventions_nomenclature Nomenclature
 NO CAMEL-CASE.  Only people lacking morals use camel-case.  Don't even think
-about dishonoring my game engine by linking it with code written using
-camel-case identifiers.  You will spend eternity trapped in the stygian depths
-of Programmer Hell.
+about dishonoring my game engine by linking it with such filth.  You WILL spend
+eternity trapped in the stygian depths of Programmer Hell.
 
-<strong>Corollary</strong>
-
-Java programmers are completely without morals or even the barest semblance
-of a soul.  Their veins are filled with poisonous ichor, and they sup upon
-the living essence of small, inoffensive animals such as kittens, puppies and
-quality-assurance testers.
-
-@subsection conventions_subsection_nomenclature_variables Variables
-Variables will always be in lower case, with words separated by
-underscores ("_").  Exceptions can be made for the sake of code-readability.
+Corollary to the aforementioned, java programmers are completely without morals
+or even the barest semblance of a soul.  Their veins are filled with poisonous
+ichor; they sup upon the living essence of small, inoffensive animals such as
+kittens, puppies and quality-assurance testers.  By the way, variables will
+always be in lower case, with words separated by underscores ("_").  Exceptions
+can be made for the sake of code-readability.  Unless it involves using
+camel-case.
 
 Examples:
 
@@ -84,6 +84,40 @@ scope.
 @subsection conventions_subsection_nomenclature_specific_variables Specific Variables
 SignalSender/Receiver
 
+SignalSender and SignalReceiver member variables will be prefixed with
+<tt>m_sender_</tt> and <tt>m_receiver_</tt> respectively.  The accessor methods
+for publicly-connectable signals will be prefixed with <tt>Sender</tt> and
+<tt>Receiver</tt> respectively.  In cases where signals are not publicly available,
+but are internal to a class, the member variables should be prefixed with
+<tt>m_internal_sender_</tt> and <tt>m_internal_receiver_</tt> respectively.
+
+See the following example, taking note of the return type for the signal accessors.
+@code
+class SignalExample : public SignalHandler
+{
+public:
+
+    ...
+
+    SignalSender const *SenderValueChanged () { return &m_sender_value_changed; }
+    SignalReceiver const *ReceiverSetValue () { return &m_receiver_set_value; }
+
+    // no public accessor for m_internal_receiver_negate_value
+
+    ...
+
+private:
+
+    ...
+
+    SignalSender m_sender_value_changed;
+    SignalReceiver m_receiver_set_value;
+
+    SignalReceiver m_internal_receiver_negate_value;
+
+    ...
+};
+@endcode
 
 @subsection conventions_subsection_nomenclature_functions Functions
 Function names will be concatenations of capitalized words, forming

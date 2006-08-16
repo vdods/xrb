@@ -6,7 +6,7 @@ widgets, widget focus, mouseover status, etc.  The Widget baseclass can be
 specialized in subclasses, using its many overridable functions as hooks for
 handling various events and other occurrences.
 
-<li>Concepts In Widget</li>
+<strong>Concepts In Widget</strong>
     <ul>
     <li>@ref section_widget_introduction "Introduction"</li>
     <li>@ref section_widget_hierarchy "Hierarchy"</li>
@@ -110,7 +110,7 @@ baseclass only has two parameters in its constructor -- the parent widget
 (required) and the name of the widget (optional, and it's really only used
 for debugging as of now).  When a widget is constructed, it is automatically
 added to the @ref Xrb::Widget::m_child_vector "m_child_vector" of its parent
-(if the parent is not @c NULL ), and gets a default 
+(if the parent is not @c NULL ), and gets a default
 @ref Xrb::StackPriority "StackPriority" of @ref Xrb::SP_NEUTRAL "SP_NEUTRAL" .
 The widget placed into @c m_child_vector at the end of the @c SP_NEUTRAL
 block of widgets.
@@ -558,14 +558,14 @@ using a variety of methods:
 @ref Xrb::Widget::UnfixHeight "Widget::UnfixHeight" .
 
 Other relevant methods include
-@ref Xrb::Widget::GetMinSizeEnabled "Widget::GetMinSizeEnabled" , 
+@ref Xrb::Widget::GetMinSizeEnabled "Widget::GetMinSizeEnabled" ,
 @ref Xrb::Widget::GetMinSize "Widget::GetMinSize" ,
 @ref Xrb::Widget::GetMaxSizeEnabled "Widget::GetMaxSizeEnabled" ,
 @ref Xrb::Widget::GetMaxSize "Widget::GetMaxSize" , and
 @ref Xrb::Widget::GetAdjustedSize "Widget::GetAdjustedSize" .
 
 See @ref Xrb::Layout "Layout" for extensive examples of controlling and
-interacting with resizing size-constrained widgets.  See also 
+interacting with resizing size-constrained widgets.  See also
 @ref section_widget_automatic_placement "Automatic Widget Placement" .
 
 @section section_widget_automatic_placement Automatic Widget Placement
@@ -717,7 +717,7 @@ See also @ref section_widget_skinning "Widget Skinning" for more details.
 draw the background for a widget.  Any sort of background can be made by
 subclassing @c WidgetBackground , and any background can be used in any
 widget (though it should be noted that some widgets intentionally do not
-use their backgrounds).  
+use their backgrounds).
 
 *** pictures of different backgrounds ***
 
@@ -740,7 +740,7 @@ Widget skinning provides a centralized way of specifying standard sizes,
 colors, textures, fonts, etc. for various widget types.  A
 @ref Xrb::WidgetSkin is an object which is assigned to an entire hierarchy
 of widgets to provide a consistent look.  The widgets will access the
-properties of the @c WidgetSkin to use in various functions ( for example, 
+properties of the @c WidgetSkin to use in various functions ( for example,
 @ref Xrb::Button::UpdateRenderBackground ).  @c WidgetSkin objects are
 handled through @ref Xrb::WidgetSkinHandler , which @ref Xrb::Widget derives
 from.  The bulk of the accessors and modifiers for dealing with @c WidgetSkin
@@ -753,7 +753,7 @@ done, the entire widget hierarchy is traversed, calling the appropriate
 property-changed handler function ( see
 @ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinWidgetBackground ,
 @ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinFont ,
-@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinTexture , and 
+@ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinTexture , and
 @ref Xrb::WidgetSkinHandler::HandleChangedWidgetSkinMargins ).  Each
 of these handler functions indicates which specific property has changed
 (e.g. button background, button-pressed background, etc).  The

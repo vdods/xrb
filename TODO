@@ -65,6 +65,8 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
+- ValueLabel and ValueEdit should take some sort of value-to-text function
+  instead of a printf format.
 - make a stack-based block for keeping container widgets from doing contents
   min/max size calculations until all widgets are added -- to increase layout
   creation speed.

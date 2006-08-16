@@ -23,6 +23,7 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>@ref lesson00 "Lesson 00 - Initializing And Shutting Down The Engine" - @ref lesson00_main.cpp "source code"</li>
     <li>@ref lesson01 "Lesson 01 - GUI Widgets And The Game Loop" - @ref lesson01_main.cpp "source code"</li>
     <li>@ref lesson02 "Lesson 02 - SignalHandler, SignalSender and SignalReceiver" - @ref lesson02_main.cpp "source code"</li>
+    <li>@ref lesson03 "Lesson 03 - Creating Your Own Customized GUI Widgets" - @ref lesson03_main.cpp "source code"</li>
     </ul>
 <li>@ref philosophy "Programming Philosophy Pontification"</li>
     <ul>
