@@ -23,6 +23,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson02", "app\example\les
 		{9F396BE0-4AC7-4E0A-8906-4329D96F87E4} = {9F396BE0-4AC7-4E0A-8906-4329D96F87E4}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lesson03", "app\example\lesson\lesson03\lesson03.vcproj", "{1BB62F75-20DF-4B90-9149-0D535B387B2C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9F396BE0-4AC7-4E0A-8906-4329D96F87E4} = {9F396BE0-4AC7-4E0A-8906-4329D96F87E4}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +54,10 @@ Global
 		{7BCADE66-2E9C-48D2-81F1-CE068855DD8C}.Debug|Win32.Build.0 = Debug|Win32
 		{7BCADE66-2E9C-48D2-81F1-CE068855DD8C}.Release|Win32.ActiveCfg = Release|Win32
 		{7BCADE66-2E9C-48D2-81F1-CE068855DD8C}.Release|Win32.Build.0 = Release|Win32
+		{1BB62F75-20DF-4B90-9149-0D535B387B2C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1BB62F75-20DF-4B90-9149-0D535B387B2C}.Debug|Win32.Build.0 = Debug|Win32
+		{1BB62F75-20DF-4B90-9149-0D535B387B2C}.Release|Win32.ActiveCfg = Release|Win32
+		{1BB62F75-20DF-4B90-9149-0D535B387B2C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
