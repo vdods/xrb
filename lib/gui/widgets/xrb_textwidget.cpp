@@ -21,7 +21,7 @@ namespace Xrb
 
 TextWidget::TextWidget (
     std::string const &text,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Widget(parent, name),

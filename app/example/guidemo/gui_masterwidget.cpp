@@ -17,9 +17,9 @@
 
 using namespace Xrb;
 
-MasterWidget::MasterWidget (Widget *const parent)
+MasterWidget::MasterWidget (ContainerWidget *const parent)
     :
-    Widget(parent, "MasterWidget")
+    ContainerWidget(parent, "MasterWidget")
 {
     Layout *main_layout = new Layout(ROW, 3, this, "main master widget layout");
     SetMainWidget(main_layout);

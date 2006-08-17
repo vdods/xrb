@@ -25,7 +25,7 @@ public:
 
     LineEdit (
         Uint32 character_limit,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "LineEdit");
     virtual ~LineEdit () { }
 

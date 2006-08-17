@@ -13,7 +13,6 @@
 
 #include "xrb.h"
 
-#include <vector>
 #include <string>
 
 #include "xrb_color.h"
@@ -37,6 +36,7 @@
 namespace Xrb
 {
 
+class ContainerWidget;
 class EventCustom;
 class EventDeleteChildWidget;
 class EventFocus;
@@ -104,14 +104,14 @@ public:
 
     /** @brief Constructs a Widget.  The widget will be attached to the given
       *        parent widget during construction.
-      * @param parent The parent widget to attach to during construction.
-      *               This must not be NULL, except in the case of a
-      *               @c Screen (the top-level widget).
+      * @param parent The parent ContainerWidget to attach to during
+      *               construction. This must not be NULL, except in the case
+      *               of a @c Screen (the top-level widget).
       * @param name A textual label applied to the specific widget being
       *             constructed.  As for now, this is only used in a debug-
       *             related capacity.
       */
-    Widget (Widget *parent, std::string const &name = "Widget");
+    Widget (ContainerWidget *parent, std::string const &name = "Widget");
     /** Ensures the widget is set to not modal, ensures mouseover is off,
       * deletes all children, and clears the modal widget stack.
       * @brief Destructor.  Deletes all children.
@@ -125,46 +125,28 @@ public:
     /** @brief Accessor for the SignalReceiver which calls @a SetIsEnabled
       *        with the received value.
       */
-    inline SignalReceiver1<bool> const *ReceiverSetIsEnabled ()
-    {
-        return &m_receiver_set_is_enabled;
-    }
+    inline SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; }
     /** @brief Accessor for the SignalReceiver which enables the widget.
       *        Calls @a Enable.
       */
-    inline SignalReceiver0 const *ReceiverEnable ()
-    {
-        return &m_receiver_enable;
-    }
+    inline SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }
     /** @brief Accessor for the SignalReceiver which disables the widget.
       *        Calls @a Disable.
       */
-    inline SignalReceiver0 const *ReceiverDisable ()
-    {
-        return &m_receiver_disable;
-    }
+    inline SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }
 
     /** @brief Accessor for the SignalReceiver which calls @a SetIsHidden
       *        with the received value.
       */
-    inline SignalReceiver1<bool> const *ReceiverSetIsHidden ()
-    {
-        return &m_receiver_set_is_hidden;
-    }
+    inline SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }
     /** @brief Accessor for the SignalReceiver which hides the widget.
       *        Calls @a Hide.
       */
-    inline SignalReceiver0 const *ReceiverHide ()
-    {
-        return &m_receiver_hide;
-    }
+    inline SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }
     /** @brief Accessor for the SignalReceiver which shows the widget.
       *        Calls @a Show.
       */
-    inline SignalReceiver0 const *ReceiverShow ()
-    {
-        return &m_receiver_show;
-    }
+    inline SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }
 
     // ///////////////////////////////////////////////////////////////////////
     // accessors
@@ -172,22 +154,13 @@ public:
 
     /** @brief Returns the name of this widget
       */
-    inline std::string const &GetName () const
-    {
-        return m_name;
-    }
+    inline std::string const &GetName () const { return m_name; }
     /** @brief Returns a pointer to the parent (const) of this widget.
       */
-    inline Widget const *GetParent () const
-    {
-        return m_parent;
-    }
+    inline ContainerWidget const *GetParent () const { return m_parent; }
     /** @brief Returns a pointer to the parent (non-const) of this widget.
       */
-    inline Widget *GetParent ()
-    {
-        return m_parent;
-    }
+    inline ContainerWidget *GetParent () { return m_parent; }
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
       * is the top-level parent (see @c Screen), which does some special
@@ -196,7 +169,7 @@ public:
       *        widget -- if this is a modal widget, the top-level parent is
       *        returned, otherwise its direct parent.
       */
-    Widget const *GetEffectiveParent () const;
+    ContainerWidget const *GetEffectiveParent () const;
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
       * is the top-level parent (see @c Screen), which does some special
@@ -205,7 +178,7 @@ public:
       *        widget -- if this is a modal widget, the top-level parent is
       *        returned, otherwise its direct parent.
       */
-    Widget *GetEffectiveParent ();
+    ContainerWidget *GetEffectiveParent ();
     /** @brief Returns a pointer to the top-level parent (const) of this
       *        widget hierarchy (a @c Screen).
       */
@@ -217,17 +190,7 @@ public:
     /** @brief Returns true iff this is a top-level widget (i.e. it has
       *        no parent).
       */
-    inline bool GetIsTopLevelParent () const
-    {
-        return m_parent == NULL;
-    }
-    /** @brief Returns a pointer to the focused child widget, or NULL if
-      *        no child widget is currently focused.
-      */
-    inline Widget *GetFocus () const
-    {
-        return m_focus;
-    }
+    inline bool GetIsTopLevelParent () const { return m_parent == NULL; }
     /** @brief Returns true iff this widget is focused.  If this is a
       *        top-level widget, then it has focus by default.
       */
@@ -237,17 +200,7 @@ public:
       * default value set by the constructor of Widget is false.
       * @brief Returns true iff this widget even accepts focus.
       */
-    inline bool GetAcceptsFocus () const
-    {
-        return m_accepts_focus;
-    }
-    /** @brief Returns the currently mouseover-focused child widget,
-      *        or NULL if none.
-      */
-    inline Widget *GetMouseoverFocus () const
-    {
-        return m_mouseover_focus;
-    }
+    inline bool GetAcceptsFocus () const { return m_accepts_focus; }
     /** @brief Returns true iff this widget currently has mouseover focus
       *        (i.e. its parent has this widget as its m_mouseover_focus
       *        value).
@@ -258,145 +211,73 @@ public:
       * The default value set by the constructor of Widget is true.
       * @brief Returns true iff this widget accepts mouseover focus.
       */
-    inline bool GetAcceptsMouseover () const
-    {
-        return m_accepts_mouseover;
-    }
+    inline bool GetAcceptsMouseover () const { return m_accepts_mouseover; }
     /** @brief Returns true iff this widget has mouse grab focus (meaning that
       *        all mouse events will go to/through it even if the mouse is not
       *        directly over it).
       */
     bool GetIsMouseGrabbed () const;
-    /** @brief Returns true iff the focused child widget has mouse grab on.
-      */
-    inline bool GetFocusHasMouseGrab () const
-    {
-        return m_focus_has_mouse_grab;
-    }
     /** @brief Returns true iff this widget is enabled.
       */
-    inline bool GetIsEnabled () const
-    {
-        return m_is_enabled;
-    }
+    inline bool GetIsEnabled () const { return m_is_enabled; }
     /** @brief Returns true iff this widget is hidden.
       */
-    inline bool GetIsHidden () const
-    {
-        return m_is_hidden;
-    }
+    inline bool GetIsHidden () const { return m_is_hidden; }
     /** @brief Returns true iff this widget is currently modal.
       */
-    inline bool GetIsModal () const
-    {
-        return m_is_modal;
-    }
-    /** @brief Returns the "main widget" child, or NULL if there is
-      *        none currently.
-      */
-    inline Widget *GetMainWidget () const
-    {
-        return m_main_widget;
-    }
+    inline bool GetIsModal () const { return m_is_modal; }
     /** @brief Returns the widget stack priority of this widget.
       * @see StackPriority
       */
-    inline StackPriority GetStackPriority () const
-    {
-        return m_stack_priority;
-    }
+    inline StackPriority GetStackPriority () const { return m_stack_priority; }
     /** @brief Returns the basic background for this widget.
       * @see WidgetBackground
       */
-    inline WidgetBackground *GetBackground () const
-    {
-        return m_background;
-    }
+    inline WidgetBackground *GetBackground () const { return m_background; }
     /** @brief Returns the frame margins for this widget.
       */
-    inline ScreenCoordVector2 const &GetFrameMargins () const
-    {
-        return m_frame_margins;
-    }
+    inline ScreenCoordVector2 const &GetFrameMargins () const { return m_frame_margins; }
     /** The content margins are added to the frame margins to indicate the
       * content area of the label.  The content margins can be negative (up to
       * the point that they totally cancel the frame margins).
       * @brief Returns the content margins for this widget.
       */
-    inline ScreenCoordVector2 const &GetContentMargins () const
-    {
-        return m_content_margins;
-    }
+    inline ScreenCoordVector2 const &GetContentMargins () const { return m_content_margins; }
     /** @brief Returns the last known mouse position (derived from the most
       *        recent mouse motion event received by this widget).
       */
-    inline ScreenCoordVector2 const &GetLastMousePosition () const
-    {
-        return m_last_mouse_position;
-    }
+    inline ScreenCoordVector2 const &GetLastMousePosition () const { return m_last_mouse_position; }
     /** @brief Returns the current position of the lower-left corner of
       *        this widget.
       */
-    inline ScreenCoordVector2 GetPosition () const
-    {
-        return m_screen_rect.GetBottomLeft();
-    }
+    inline ScreenCoordVector2 GetPosition () const { return m_screen_rect.GetBottomLeft(); }
     /** @brief Returns the current size of this widget.
       */
-    inline ScreenCoordVector2 GetSize () const
-    {
-        return m_screen_rect.GetSize();
-    }
+    inline ScreenCoordVector2 GetSize () const { return m_screen_rect.GetSize(); }
     /** @brief Returns the widget of this widget.
       */
-    inline ScreenCoord GetWidth () const
-    {
-        return m_screen_rect.GetWidth();
-    }
+    inline ScreenCoord GetWidth () const { return m_screen_rect.GetWidth(); }
     /** @brief Returns the height of this widget.
       */
-    inline ScreenCoord GetHeight () const
-    {
-        return m_screen_rect.GetHeight();
-    }
+    inline ScreenCoord GetHeight () const { return m_screen_rect.GetHeight(); }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
       */
-    inline Bool2 const &GetMinSizeEnabled () const
-    {
-        return m_main_widget ?
-               m_main_widget->GetMinSizeEnabled() :
-               m_size_properties.m_min_size_enabled;
-    }
+    virtual Bool2 const &GetMinSizeEnabled () const { return m_size_properties.m_min_size_enabled; }
     /** @brief Returns the screen-coordinate vector containing the minimum
       *        width and height in the X and Y components respectively.
       */
-    inline ScreenCoordVector2 const &GetMinSize () const
-    {
-        return m_main_widget ?
-               m_main_widget->GetMinSize() :
-               m_size_properties.m_min_size;
-    }
+    virtual ScreenCoordVector2 const &GetMinSize () const { return m_size_properties.m_min_size; }
     /** @brief Returns the boolean vector containing the
       *        is-maximum-size-enabled values for width and height in the
       *        X and Y components respectively.
       */
-    inline Bool2 const &GetMaxSizeEnabled () const
-    {
-        return m_main_widget ?
-               m_main_widget->GetMaxSizeEnabled() :
-               m_size_properties.m_max_size_enabled;
-    }
+    virtual Bool2 const &GetMaxSizeEnabled () const { return m_size_properties.m_max_size_enabled; }
     /** @brief Returns the screen-coordinate vector containing the maximum
       *        width and height in the X and Y components respectively.
       */
-    inline ScreenCoordVector2 const &GetMaxSize () const
-    {
-        return m_main_widget ?
-               m_main_widget->GetMaxSize() :
-               m_size_properties.m_max_size;
-    }
+    virtual ScreenCoordVector2 const &GetMaxSize () const { return m_size_properties.m_max_size; }
     /** Adjusts the size vector to satisfy the minimum size properties
       * of this widget.  Then adjusts the resulting value to satisfy
       * the maximum size properties of this widget.  If there is a
@@ -404,13 +285,10 @@ public:
       * @brief Returns the adjusted value of the given size vector.
       * @param size The size vector to adjust.
       */
-    ScreenCoordVector2 GetAdjustedSize (ScreenCoordVector2 const &size) const;
+    virtual ScreenCoordVector2 GetAdjustedSize (ScreenCoordVector2 const &size) const;
     /** @brief Returns this widget's screen coordinate rectangle.
       */
-    inline ScreenCoordRect const &GetScreenRect () const
-    {
-        return m_screen_rect;
-    }
+    inline ScreenCoordRect const &GetScreenRect () const { return m_screen_rect; }
     /** The content area is the area within the sum of the frame margins
       * and the content margins.  Note that the content margins can be
       * negative, up to the negative of the frame margins.
@@ -423,10 +301,7 @@ public:
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
-    inline Color const &GetColorMask () const
-    {
-        return m_color_mask;
-    }
+    inline Color const &GetColorMask () const { return m_color_mask; }
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers
@@ -533,7 +408,7 @@ public:
       * @param defer_parent_update This parameter is likely to be moved out
       *                            of the public API.
       */
-    virtual void SetSizePropertyRatio (
+    void SetSizePropertyRatio (
         SizeProperties::Property property,
         Uint32 component,
         Float ratio,
@@ -557,17 +432,14 @@ public:
       * @param defer_parent_update This parameter is likely to be moved out
       *                            of the public API.
       */
-    virtual void SetSizePropertyRatios (
+    void SetSizePropertyRatios (
         SizeProperties::Property property,
         FloatVector2 const &ratios,
         bool defer_parent_update = false);
 
     /** @brief Sets the color mask of this widget.
       */
-    void SetColorMask (Color const &color_mask)
-    {
-        m_color_mask = color_mask;
-    }
+    void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
 
     /** Makes the call to @a AddModalWidget or @a RemoveModalWidget as
       * appropriate).  If this causes the widget to become not modal, then
@@ -575,11 +447,6 @@ public:
       * @brief Sets the modal state of this widget.
       */
     void SetIsModal (bool is_modal);
-    /** Attempts to resize the given main widget to the size of this widget.
-      * If NULL is given, then the main widget is cleared.
-      * @brief Sets the main [child] widget for this widget.
-      */
-    virtual void SetMainWidget (Widget *main_widget);
     /** Will cause a reshuffling of child widgets in this widget's parent's
       * child vector, in order to maintain proper widget stack priority
       * ordering.
@@ -627,7 +494,6 @@ public:
       *        components.
       */
     void UnfixSize ();
-
     /** @brief Sets the min and max width to the given width, and then enables
       *        min/max size enabled properties for the X component only.
       */
@@ -641,7 +507,6 @@ public:
       *        component only.
       */
     void UnfixWidth ();
-
     /** @brief Sets the min and max height to the given height, and then
       *        enables min/max size enabled properties for the Y component
       *        only.
@@ -718,77 +583,24 @@ public:
       * @brief Focuses this widget with respect to its parent widget.
       * @return True iff it (or any of its children) accepted focus.
       */
-    virtual bool Focus ();
+    bool Focus ();
     /** The parent widget remains focused.
       * @brief Unfocuses this widget with respect to its parent widget.
       */
-    virtual void Unfocus ();
+    void Unfocus ();
     /** All mouse events will be exclusively sent to this widget via its
       * ancestors.
       * @brief Grabs the mouse input.
       */
-    virtual void GrabMouse ();
+    void GrabMouse ();
     /** Other widgets may now receive mouse events.
       * @brief Lets go of the mouse input.
       */
-    virtual void UnGrabMouse ();
-    /** The given @c child widget must not currently have a parent widget.
-      * @brief Attaches the given widget as a child of this widget.
-      */
-    virtual void AttachChild (Widget *child);
-    /** The given @c child widget must be a child of this widget.
-      * @brief Detaches the given widget from this widget.
-      */
-    virtual void DetachChild (Widget *child);
+    void UnGrabMouse ();
     /** This widget must have a parent widget.
       * @brief Detaches this widget from its parent.
       */
-    virtual void DetachFromParent ();
-    /** The position of the given child widget will be swapped with the
-      * one whose index is one less in @c m_child_vector, unless the given
-      * child widget's position index is 0, in which case, nothing happens.
-      * @brief Moves the given child down the visibility stack
-      *        (m_child_vector) by one.
-      * @param child A pointer to the child widget to move.  Must actually be
-      *              a child of this widget.
-      */
-    virtual void MoveChildDown (Widget *child);
-    /** The position of the given child widget will be swapped with the
-      * one whose index is one higher in @c m_child_vector, unless the given
-      * child widget's position index is the highest possible, in which case,
-      * nothing happens.
-      * @brief Moves the given child up the visibility stack
-      *        (m_child_vector) by one.
-      * @param child A pointer to the child widget to move.  Must actually be
-      *              a child of this widget.
-      */
-    virtual void MoveChildUp (Widget *child);
-    /** The given child widget will be moved to index 0 in @c m_child_vector,
-      * and the widgets occupying the indices below its original position will
-      * all be shifted up one index.  If the given child widget is already at
-      * index 0, nothing happens.
-      * @brief Moves the given child to the bottom of the visibility stack
-      *        (m_child_vector).
-      * @param child A pointer to the child widget to move.  Must actually be
-      *              a child of this widget.
-      */
-    virtual void MoveChildToBottom (Widget *child);
-    /** The given child widget will be moved to the highest index in
-      * @c m_child_vector, and the widgets occupying the indices above its
-      * original position will all be shifted down one index.  If the given
-      * child widget is already at the highest index, nothing happens.
-      * @brief Moves the given child to the top of the visibility stack
-      *        (m_child_vector).
-      * @param child A pointer to the child widget to move.  Must actually be
-      *              a child of this widget.
-      */
-    virtual void MoveChildToTop (Widget *child);
-    /** This happens automatically during the destructor, so there is no
-      * reason to call this unless you want to delete all child widgets
-      * without deleting this widget.
-      * @brief Deletes all child widgets (they are automatically detached).
-      */
-    void DeleteAllChildren ();
+    void DetachFromParent ();
 
     /** Disabled widgets will not accept events.
       * @brief Sets the enabled state of this widget.
@@ -830,37 +642,24 @@ protected:
     /** @brief This implementation was required by @c WidgetSkinHandler.
       * @see WidgetSkinHandler::GetWidgetSkinHandlerChildCount
       */
-    virtual Uint32 GetWidgetSkinHandlerChildCount () const;
+    virtual Uint32 GetWidgetSkinHandlerChildCount () const { return 0; }
     /** @brief This implementation was required by @c WidgetSkinHandler.
       * @see WidgetSkinHandler::GetWidgetSkinHandlerChild
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerChild (Uint32 index);
+    virtual WidgetSkinHandler *GetWidgetSkinHandlerChild (Uint32 index) { return NULL; }
     /** @brief This implementation was required by @c WidgetSkinHandler.
       * @see WidgetSkinHandler::GetWidgetSkinHandlerParent
       */
     virtual WidgetSkinHandler *GetWidgetSkinHandlerParent ();
 
-    // TODO document
-    // these are interfaces for container widgets
-    virtual Bool2 GetContentsMinSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMinSize () const;
-    virtual Bool2 GetContentsMaxSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMaxSize () const;
-
     /** @brief Returns the a pointer to the background object which is
       *        rendered in @a Widget::Draw.
       */
-    inline WidgetBackground const *GetRenderBackground () const
-    {
-        return m_render_background;
-    }
+    inline WidgetBackground const *GetRenderBackground () const { return m_render_background; }
 
     /** @brief Sets the background to use in @a Widget::Draw.
       */
-    inline void SetRenderBackground (WidgetBackground const *render_background)
-    {
-        m_render_background = render_background;
-    }
+    inline void SetRenderBackground (WidgetBackground const *render_background) { m_render_background = render_background; }
 
     /** @brief Called only by Widget and Screen after they get a WidgetSkin.
       */
@@ -875,7 +674,7 @@ protected:
       *        anything that needs to be done once per iteration of the game
       *        loop.
       */
-    virtual void HandleFrame ();
+    virtual void HandleFrame () { }
     /** Subclasses of widget <strong>should not</strong> override this
       * function -- all of the user interface behavior for Widget is
       * handled/delegated here.
@@ -915,7 +714,7 @@ protected:
     /** @brief Processes a delete child widget event.  This is used mainly to
       *        delete modal widgets.
       */
-    bool ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e);
+    virtual bool ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *e);
 
     /** Subclasses should override this when they need to do something when
       * the widget gains focus.
@@ -950,7 +749,6 @@ protected:
       *        mouse input.
       */
     virtual void HandleMouseGrabOff () { }
-
     /** Subclasses should override this when they need to do something when
       * the basic render background object has changed.
       * @brief Handler that is called when the basic background object is
@@ -976,49 +774,11 @@ protected:
       */
     virtual void HandleChangedContentMargins () { }
 
-    /** Modal widget behavior requires the top level widget to divert events
-      * directly to the modal widget immediately, bypassing the widget
-      * hierarchy.
-      * @brief Adds a modal widget to the Screen (the top level widget).
-      * @note You shouldn't use this function directly.  It is called
-      *       automatically when making a non-modal widget modal.
-      */
-    virtual void AddModalWidget (Widget *modal_widget);
-    /** @brief Removes a modal widget from the Screen (the top level widget).
-      * @note You shouldn't use this function directly.  It is called
-      *       automatically when making a modal widget non-modal.
-      */
-    virtual void RemoveModalWidget (Widget *modal_widget);
-    /** Only used by container widgets that control the size and position
-      * if their child widgets.
-      * @brief Used to make sure this widget's min/max size constraints
-      *        are consistent with those of its contained child widgets.
-      */
-    virtual void CalculateMinAndMaxSizePropertiesFromContents ();
-    /** @brief This function is called (by a child widget) when a child
-      *        widget's size properties have changed and the parent may
-      *        need to update its properties.
-      * @see Layout
-      */
-    virtual void ChildSizePropertiesChanged (Widget *child);
-    /** @brief This function is called (by a child widget) when a child
-      *        widget's stack priority has changed, and the parent needs
-      *        to reorder the child vector to compensate.
-      * @param child The child whose stack priority has changed.
-      * @param previous_stack_priority Its most recent stack priority.
-      * @note You shouldn't need to call this function directly.  It is
-      *       called automatically when changing the stack priority
-      *       of a widget.
-      */
-    virtual void ChildStackPriorityChanged (
-        Widget *child,
-        StackPriority previous_stack_priority);
     /** Subclasses may override this function to implement custom background
       * behavior such as mouseover highlighting and button-depressing.
       * @brief Assigns the basic widget background to the render background.
       */
     virtual void UpdateRenderBackground ();
-
     /** @brief Calls ChildSizePropertiesChanged on this widget's parent,
       *        with the "this" pointer as the parameter.
       * @param defer_parent_update If this is false, nothing is done.
@@ -1048,30 +808,10 @@ protected:
       */
     void SizeRangeAdjustment (ScreenCoordRect *rect) const;
 
-    typedef std::vector<Widget *> WidgetVector;
-    typedef WidgetVector::iterator WidgetVectorIterator;
-    typedef WidgetVector::const_iterator WidgetVectorConstIterator;
-    typedef WidgetVector::reverse_iterator WidgetVectorReverseIterator;
-
-    /** Stored in back-to-front drawing order (back-most having index 0).
-      * @brief Ordered container of child widgets.
-      */
-    WidgetVector m_child_vector;
     /** @brief Contains the min/max and min/max-enabled size
       *        properties of this widget.
       */
     SizeProperties m_size_properties;
-    /** This stores the size properties given by calls to SetMinSizeEnabled,
-      * SetMinSize, etc, so that when the size restrictions of the child
-      * widgets of this layout permit, they can be resized to satisfy
-      * these properties.
-      *
-      * This is only used when a main widget is set, as well as in Layout
-      * and WidgetStack.
-      *
-      * @brief Stores the 'preferred' size properties.
-      */
-    SizeProperties m_preferred_size_properties;
     /** A value of false <strong>will</strong> prevent container widgets
       * from blocking child widgets from gaining focus.
       * @brief Indicates if this widget accepts focus on its own.
@@ -1089,15 +829,6 @@ protected:
 
 private:
 
-    typedef std::list<Widget *> WidgetList;
-    typedef WidgetList::iterator WidgetListIterator;
-    typedef WidgetList::const_iterator WidgetListConstIterator;
-    typedef WidgetList::reverse_iterator WidgetListReverseIterator;
-
-    /** @brief Returns a WidgetVectorIterator which matches the given
-      *        child in m_child_vector.
-      */
-    WidgetVectorIterator FindChildWidget (Widget const *child);
     /** @brief Focuses all widgets in this widget's line of parency,
       *        from top down.
       */
@@ -1125,14 +856,14 @@ private:
     /** @brief Performs some necessary event processing on mouse
       *        events before the mouse event handler gets them.
       */
-    bool PreprocessMouseEvent (EventMouse const *e);
+    virtual bool PreprocessMouseEvent (EventMouse const *e);
     /** @brief Performs some necessary event processing on mouse wheel
       *        events before the mouse wheel event handler gets them.
       */
-    bool PreprocessMouseWheelEvent (EventMouseWheel const *e);
+    virtual bool PreprocessMouseWheelEvent (EventMouseWheel const *e);
     /** @brief Performs some necessary event processing on focus events.
       */
-    bool PreprocessFocusEvent (EventFocus const *e);
+    virtual bool PreprocessFocusEvent (EventFocus const *e);
     /** @brief Performs some necessary event processing on mouseover events.
       */
     bool PreprocessMouseoverEvent (EventMouseover const *e);
@@ -1141,7 +872,7 @@ private:
       *        the mouse event position.
       * @return True iff the mouse event was accepted by any of the children.
       */
-    bool SendMouseEventToChild (EventMouse const *e);
+    virtual bool SendMouseEventToChild (EventMouse const *e);
 
     /** Currently only used for debugging purposes
       * @brief Textual name of this instance of the widget.
@@ -1151,18 +882,7 @@ private:
       * hanging out in limbo).
       * @brief Pointer to the parent widget.
       */
-    Widget *m_parent;
-    /** NULL indicates that there is currently no focused widget.
-      * @brief Child widget which currently has focus.
-      */
-    Widget *m_focus;
-    /** NULL indicates that there is currently no mouseover focus widget.
-      * @brief Child widget which currently has mouseover focus.
-      */
-    Widget *m_mouseover_focus;
-    /** @brief Iff true, the focused widget has mouse grab.
-      */
-    bool m_focus_has_mouse_grab;
+    ContainerWidget *m_parent;
     /** @brief Indicates if this widget is enabled.
       */
     bool m_is_enabled;
@@ -1183,18 +903,6 @@ private:
     /** @brief Iff true, this is a modal widget.
       */
     bool m_is_modal;
-    /** The beginning of the list is the bottom of the stack, while the
-      * end is the top.  The modal widgets are drawn from bottom to top.
-      * @brief Contains the stack of modal widgets (used only if this is a
-      *        top-level widget).
-      */
-    WidgetList m_modal_widget_stack;
-    /** The main widget gets resized/repositioned whenever this widget does,
-      * and when the main widget is resized, this widget is resized to match
-      * it.  Also the size properties of each are matched in a similar manner.
-      * @brief Pointer to the 'main' widget.
-      */
-    Widget *m_main_widget;
     /** Indicates which block this widget will remain in inside
       * m_child_vector.
       * @brief Widget stack priority.
@@ -1203,7 +911,6 @@ private:
     /** @brief the basic background for the widget
       */
     WidgetBackground *m_background;
-    //
     /** Subclasses can use this to specify different backgrounds for different
       * behaviors.  NULL indicates no background will be rendered
       * (transparent).
@@ -1243,6 +950,9 @@ private:
     /** @brief SignalReceiver which calls @a Show .
       */
     SignalReceiver0 m_receiver_show;
+
+    // kludgey (as are all friend statements), but this is the simplest way
+    friend class ContainerWidget;
 }; // end of class Widget
 
 } // end of namespace Xrb

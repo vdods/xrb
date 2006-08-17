@@ -24,7 +24,7 @@ namespace Dis
 HighScoreNameEntryDialog::HighScoreNameEntryDialog (
     Uint32 const points,
     Uint32 const wave_count,
-    Widget *const parent)
+    ContainerWidget *const parent)
     :
     Dialog(DT_OK, parent, "HighScoreNameEntryDialog"),
     m_sender_submit_name(this),

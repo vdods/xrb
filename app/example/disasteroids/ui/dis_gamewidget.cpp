@@ -45,7 +45,7 @@ Float NormalizeStoke (Float const stoke)
 
 GameWidget::GameWidget (
     World *const world,
-    Widget *const parent)
+    ContainerWidget *const parent)
     :
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),

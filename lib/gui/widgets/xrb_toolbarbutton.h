@@ -27,7 +27,7 @@ public:
         Resource<GLTexture> const &picture,
         T id,
         RadioButtonGroup<T, sentinel> *group,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "ToolbarButton");
     virtual ~ToolbarButton () { }
 

@@ -13,18 +13,18 @@
 
 #include "xrb.h"
 
+#include "xrb_containerwidget.h"
 #include "xrb_ntuple.h"
-#include "xrb_widget.h"
 
 namespace Xrb
 {
 
-class CellPaddingWidget : public Widget
+class CellPaddingWidget : public ContainerWidget
 {
 public:
 
     CellPaddingWidget (
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "CellPaddingWidget");
     virtual ~CellPaddingWidget () { }
 
@@ -36,10 +36,8 @@ public:
     virtual ScreenCoordVector2 GetContentsMinSize () const;
     virtual Bool2 GetContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 GetContentsMaxSize () const;
-    
-    void SetAlignmentComponent (
-        Uint32 const index,
-        Alignment const alignment);
+
+    void SetAlignmentComponent (Uint32 const index, Alignment const alignment);
     void SetAlignment (Alignment2 const &alignment);
 
     virtual void SetSizePropertyEnabled (
@@ -58,19 +56,11 @@ public:
         SizeProperties::Property property,
         ScreenCoordVector2 const &value);
 
-    virtual void SetSizePropertyRatio (
-        SizeProperties::Property property,
-        Uint32 component,
-        Float ratio);
-    virtual void SetSizePropertyRatios (
-        SizeProperties::Property property,
-        FloatVector2 const &ratios);
-
     virtual void SetMainWidget (Widget *main_widget)
     {
         ASSERT0(false && "Setting a main widget in a CellPaddingWidget is pointless")
     }
-            
+
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);
     virtual void AttachChild (Widget *child);
     virtual void DetachChild (Widget *child);
@@ -85,15 +75,15 @@ private:
 
     // the functions which 'dirty' the caches
     void DirtyContentsSizeProperties ();
-        
+
     // the functions which 'undirty' the caches
     void UpdateContentsSizeProperties () const;
-    
+
     // contains the alignment for the child widget
     Alignment2 m_alignment;
     // indicates if the cached size properties values must be recalculated
     mutable bool m_contents_size_properties_need_update;
-    mutable SizeProperties m_contents_size_properties;                
+    mutable SizeProperties m_contents_size_properties;
 }; // end of class CellPaddingWidget
 
 } // end of namespace Xrb

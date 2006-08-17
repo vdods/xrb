@@ -31,7 +31,7 @@ namespace MapEditor2
     public:
     
         ObjectPropertiesPanel (
-            Widget *parent,
+            ContainerWidget *parent,
             std::string const &name = "MapEditor2::ObjectPropertiesPanel");
         virtual ~ObjectPropertiesPanel () { }
     

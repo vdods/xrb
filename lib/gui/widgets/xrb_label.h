@@ -37,7 +37,7 @@ public:
       */
     Label (
         std::string const &text,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "Label");
     /** The picture texture is stretched to fill the area inside the
       * frame margins, adding the content margins.
@@ -45,7 +45,7 @@ public:
       */
     Label (
         Resource<GLTexture> const &picture,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "Label");
     /** @brief Destructor.
       */

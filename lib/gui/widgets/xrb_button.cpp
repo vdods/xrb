@@ -17,7 +17,7 @@ namespace Xrb
 
 Button::Button (
     std::string const &text,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Label(text, parent, name),
@@ -31,7 +31,7 @@ Button::Button (
 
 Button::Button (
     Resource<GLTexture> const &picture,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Label(picture, parent, name),

@@ -80,7 +80,7 @@ public:
     virtual ~EventMouseover () { }
 
     /** @brief Returns the position used to construct this event.
-      */    
+      */
     ScreenCoordVector2 const &GetPosition () const { return m_position; }
 
 private:
@@ -129,7 +129,7 @@ private:
 
     mutable Widget *m_child_to_delete;
 
-    friend class Widget;
+    friend class ContainerWidget;
 }; // end of class EventDeleteChildWidget
 
 /** Analogous to SDL_ActiveEvent.
@@ -143,7 +143,7 @@ public:
     /** @brief Constructs an EventActive from the given SDL_ActiveEvent.
       */
     EventActive (SDL_ActiveEvent const *e, Float time);
-    /** @brief Boring old destructor. 
+    /** @brief Boring old destructor.
       */
     virtual ~EventActive () { }
 

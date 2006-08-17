@@ -20,7 +20,7 @@ namespace Xrb
 
 Dialog::Dialog (
     DialogType const dialog_type,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     ModalWidget(parent, name),

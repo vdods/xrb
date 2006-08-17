@@ -16,7 +16,7 @@ namespace Xrb
 {
 
 CheckBox::CheckBox (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Button(Resource<GLTexture>(), parent, name),

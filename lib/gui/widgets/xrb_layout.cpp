@@ -18,20 +18,20 @@ namespace Xrb
 Layout::Layout (
     LineDirection const major_direction,
     Uint32 const major_count,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
-    Widget(parent, name)
+    ContainerWidget(parent, name)
 {
     Initialize(major_direction, major_count);
 }
 
 Layout::Layout (
     Orientation const orientation,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
-    Widget(parent, name)
+    ContainerWidget(parent, name)
 {
     LineDirection major_direction;
     Uint32 major_count = 1;
@@ -257,7 +257,7 @@ void Layout::SetSizePropertyEnabled (
     else
         m_preferred_size_properties.m_max_size_enabled[component] = value;
     ConstrainPreferredSizeProperties();
-    Widget::SetSizePropertyEnabled(property, component, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -271,7 +271,7 @@ void Layout::SetSizePropertyEnabled (
     else
         m_preferred_size_properties.m_max_size_enabled = value;
     ConstrainPreferredSizeProperties();
-    Widget::SetSizePropertyEnabled(property, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -288,7 +288,7 @@ void Layout::SetSizeProperty (
     else
         m_preferred_size_properties.m_max_size[component] = value;
     ConstrainPreferredSizeProperties();
-    Widget::SetSizeProperty(property, component, value, true);
+    ContainerWidget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -304,35 +304,14 @@ void Layout::SetSizeProperty (
     else
         m_preferred_size_properties.m_max_size = value;
     ConstrainPreferredSizeProperties();
-    Widget::SetSizeProperty(property, value, true);
+    ContainerWidget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void Layout::SetSizePropertyRatio (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    Float const ratio)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoord calculated_value =
-        static_cast<ScreenCoord>(size_ratio_basis * ratio);
-    Layout::SetSizeProperty(property, component, calculated_value);
-}
-
-void Layout::SetSizePropertyRatios (
-    SizeProperties::Property const property,
-    FloatVector2 const &ratios)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoordVector2 calculated_value =
-        (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
-    Layout::SetSizeProperty(property, calculated_value);
-}
-
 ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
 {
-    Widget::Resize(size);
+    ContainerWidget::Resize(size);
 
     DelegateWidthsToColumns();
     DelegateHeightsToRows();
@@ -344,7 +323,7 @@ ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
 void Layout::AttachChild (Widget *const child)
 {
     // call the superclass to actually attach the child
-    Widget::AttachChild(child);
+    ContainerWidget::AttachChild(child);
     // the number of widgets has changed, which means the cached number
     // of columns and rows isn't valid anymore, and must be reallocated
     DirtyTotalSpacing();
@@ -361,7 +340,7 @@ void Layout::AttachChild (Widget *const child)
 void Layout::DetachChild (Widget *const child)
 {
     // call the superclass to actually detach the child
-    Widget::DetachChild(child);
+    ContainerWidget::DetachChild(child);
     // the number of widgets has changed, which means the cached number
     // of columns and rows isn't valid anymore, and must be reallocated
     DirtyTotalSpacing();
@@ -378,7 +357,7 @@ void Layout::DetachChild (Widget *const child)
 void Layout::MoveChildDown (Widget *const child)
 {
     // call the superclass to actually move the child in the vector
-    Widget::MoveChildDown(child);
+    ContainerWidget::MoveChildDown(child);
     // moving existing children around in the layout could mean that
     // a column/row has become hidden/unhidden, so the contents size
     // properties are invalid
@@ -396,7 +375,7 @@ void Layout::MoveChildDown (Widget *const child)
 void Layout::MoveChildUp (Widget *const child)
 {
     // call the superclass to actually move the child in the vector
-    Widget::MoveChildUp(child);
+    ContainerWidget::MoveChildUp(child);
     // moving existing children around in the layout could mean that
     // a column/row has become hidden/unhidden, so the contents size
     // properties are invalid
@@ -414,7 +393,7 @@ void Layout::MoveChildUp (Widget *const child)
 void Layout::MoveChildToBottom (Widget *const child)
 {
     // call the superclass to actually move the child in the vector
-    Widget::MoveChildToBottom(child);
+    ContainerWidget::MoveChildToBottom(child);
     // moving existing children around in the layout could mean that
     // a column/row has become hidden/unhidden, so the contents size
     // properties are invalid
@@ -432,7 +411,7 @@ void Layout::MoveChildToBottom (Widget *const child)
 void Layout::MoveChildToTop (Widget *const child)
 {
     // call the superclass to actually move the child in the vector
-    Widget::MoveChildToTop(child);
+    ContainerWidget::MoveChildToTop(child);
     // moving existing children around in the layout could mean that
     // a column/row has become hidden/unhidden, so the contents size
     // properties are invalid
@@ -493,7 +472,7 @@ void Layout::ChildStackPriorityChanged (
     Widget *const child,
     StackPriority const previous_stack_priority)
 {
-    Widget::ChildStackPriorityChanged(child, previous_stack_priority);
+    ContainerWidget::ChildStackPriorityChanged(child, previous_stack_priority);
 
     // the children have been reordered, so the column and row size
     // properties aren't valid anymore, and must be recalculated

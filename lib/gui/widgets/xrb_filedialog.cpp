@@ -21,7 +21,7 @@ namespace Xrb
 FileDialog::FileDialog (
     std::string const &title_text,
     FilePanel::Operation const file_operation,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Dialog(DT_OK_CANCEL, parent, name),

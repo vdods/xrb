@@ -13,7 +13,7 @@
 namespace Xrb
 {
 
-SpacerWidget::SpacerWidget (Widget *const parent)
+SpacerWidget::SpacerWidget (ContainerWidget *const parent)
     :
     Widget(parent, "SpacerWidget")
 {

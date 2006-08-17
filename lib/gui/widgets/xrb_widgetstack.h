@@ -13,18 +13,18 @@
 
 #include "xrb.h"
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 namespace Xrb
 {
 
-class WidgetStack : public Widget
+class WidgetStack : public ContainerWidget
 {
 public:
 
-    WidgetStack (Widget *const parent, std::string const &name = "WidgetStack")
+    WidgetStack (ContainerWidget *const parent, std::string const &name = "WidgetStack")
         :
-        Widget(parent, name)
+        ContainerWidget(parent, name)
     {
         DirtyContentsSizeProperties();
     }
@@ -34,7 +34,7 @@ public:
     virtual ScreenCoordVector2 GetContentsMinSize () const;
     virtual Bool2 GetContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 GetContentsMaxSize () const;
-    
+
     virtual void SetSizePropertyEnabled (
         SizeProperties::Property property,
         Uint32 component,
@@ -50,14 +50,6 @@ public:
     virtual void SetSizeProperty (
         SizeProperties::Property property,
         ScreenCoordVector2 const &value);
-
-    virtual void SetSizePropertyRatio (
-        SizeProperties::Property property,
-        Uint32 component,
-        Float ratio);
-    virtual void SetSizePropertyRatios (
-        SizeProperties::Property property,
-        FloatVector2 const &ratios);
 
     virtual void SetMainWidget (Widget *main_widget)
     {
@@ -83,13 +75,13 @@ private:
     void ResizeAndRepositionChildWidgets ();
 
     // the functions which 'dirty' the caches
-    void DirtyContentsSizeProperties ();        
+    void DirtyContentsSizeProperties ();
     // the functions which 'undirty' the caches
     void UpdateContentsSizeProperties () const;
 
     // indicates if the cached size properties values must be recalculated
     mutable bool m_contents_size_properties_need_update;
-    mutable SizeProperties m_contents_size_properties;                
+    mutable SizeProperties m_contents_size_properties;
 }; // end of class WidgetStack
 
 } // end of namespace Xrb

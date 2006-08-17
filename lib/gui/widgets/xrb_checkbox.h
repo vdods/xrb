@@ -22,7 +22,7 @@ class CheckBox : public Button {
 public:
 
     CheckBox (
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "CheckBox");
     virtual ~CheckBox () { }
 

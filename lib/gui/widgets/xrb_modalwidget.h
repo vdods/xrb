@@ -13,7 +13,7 @@
 
 #include "xrb.h"
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 namespace Xrb
 {
@@ -32,14 +32,14 @@ namespace Xrb
   *
   * @brief Baseclass for modal widgets.
   */
-class ModalWidget : public Widget
+class ModalWidget : public ContainerWidget
 {
 public:
 
     /** @brief Constructs a modal widget in the same manner as a Widget.
       */
     ModalWidget (
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "ModalWidget");
     /** @brief Boring destructor.
       */

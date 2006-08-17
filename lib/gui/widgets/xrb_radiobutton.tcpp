@@ -18,7 +18,7 @@ template <typename T, T sentinel>
 RadioButton<T, sentinel>::RadioButton (
     T const id,
     RadioButtonGroup<T, sentinel> *const group,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Button(Resource<GLTexture>(), parent, name),
@@ -35,7 +35,7 @@ RadioButton<T, sentinel>::RadioButton (
     Resource<GLTexture> const &picture,
     T const id,
     RadioButtonGroup<T, sentinel> *const group,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Button(picture, parent, name),

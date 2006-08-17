@@ -17,9 +17,9 @@ using namespace Xrb;
 namespace Dis
 {
 
-OptionsPanel::OptionsPanel (Widget *const parent)
+OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     :
-    Widget(parent, "OptionsPanel")
+    ContainerWidget(parent, "OptionsPanel")
 {
     SetMainWidget(new Label("dummy option controls", this));
 }

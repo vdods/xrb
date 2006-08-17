@@ -16,10 +16,10 @@ namespace Xrb
 {
 
 CellPaddingWidget::CellPaddingWidget (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
-    Widget(parent, name)
+    ContainerWidget(parent, name)
 {
     m_accepts_focus = false;
     m_accepts_mouseover = true;
@@ -125,7 +125,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
         m_preferred_size_properties.m_max_size_enabled[component] = value;
-    Widget::SetSizePropertyEnabled(property, component, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -138,7 +138,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
         m_preferred_size_properties.m_min_size_enabled = value;
     else
         m_preferred_size_properties.m_max_size_enabled = value;
-    Widget::SetSizePropertyEnabled(property, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -154,7 +154,7 @@ void CellPaddingWidget::SetSizeProperty (
         m_preferred_size_properties.m_min_size[component] = value;
     else
         m_preferred_size_properties.m_max_size[component] = value;
-    Widget::SetSizeProperty(property, component, value, true);
+    ContainerWidget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -169,36 +169,15 @@ void CellPaddingWidget::SetSizeProperty (
         m_preferred_size_properties.m_min_size = value;
     else
         m_preferred_size_properties.m_max_size = value;
-    Widget::SetSizeProperty(property, value, true);
+    ContainerWidget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
-}
-
-void CellPaddingWidget::SetSizePropertyRatio (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    Float const ratio)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoord calculated_value =
-        static_cast<ScreenCoord>(size_ratio_basis * ratio);
-    CellPaddingWidget::SetSizeProperty(property, component, calculated_value);
-}
-
-void CellPaddingWidget::SetSizePropertyRatios (
-    SizeProperties::Property const property,
-    FloatVector2 const &ratios)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoordVector2 calculated_value =
-        (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
-    CellPaddingWidget::SetSizeProperty(property, calculated_value);
 }
 
 ScreenCoordVector2 CellPaddingWidget::Resize (
     ScreenCoordVector2 const &size)
 {
-    Widget::Resize(size);
+    ContainerWidget::Resize(size);
 
     // place the single child widget if it exists
     Widget *child = GetSingleChildWidget();
@@ -219,7 +198,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
     // this widget can have only zero or one.
     ASSERT0(GetSingleChildWidget() == NULL)
     // call the superclass to actually attach the child
-    Widget::AttachChild(child);
+    ContainerWidget::AttachChild(child);
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
@@ -236,7 +215,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
     // make sure there is already a single child widget
     ASSERT0(GetSingleChildWidget() != NULL)
     // call the superclass to actually detach the child
-    Widget::DetachChild(child);
+    ContainerWidget::DetachChild(child);
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();

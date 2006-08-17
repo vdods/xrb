@@ -19,7 +19,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
     Resource<GLTexture> const &picture,
     T const id,
     RadioButtonGroup<T, sentinel> *const group,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     RadioButton<T, sentinel>(picture, id, group, parent, name)

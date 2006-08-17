@@ -36,7 +36,7 @@ class InventoryPanel : public ModalWidget
 public:
 
     InventoryPanel (
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "InventoryPanel");
     virtual ~InventoryPanel () { }
 

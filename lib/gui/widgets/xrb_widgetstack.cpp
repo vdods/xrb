@@ -49,7 +49,7 @@ void WidgetStack::SetSizePropertyEnabled (
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
         m_preferred_size_properties.m_max_size_enabled[component] = value;
-    Widget::SetSizePropertyEnabled(property, component, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -62,7 +62,7 @@ void WidgetStack::SetSizePropertyEnabled (
         m_preferred_size_properties.m_min_size_enabled = value;
     else
         m_preferred_size_properties.m_max_size_enabled = value;
-    Widget::SetSizePropertyEnabled(property, value, true);
+    ContainerWidget::SetSizePropertyEnabled(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -78,7 +78,7 @@ void WidgetStack::SetSizeProperty (
         m_preferred_size_properties.m_min_size[component] = value;
     else
         m_preferred_size_properties.m_max_size[component] = value;
-    Widget::SetSizeProperty(property, component, value, true);
+    ContainerWidget::SetSizeProperty(property, component, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
@@ -93,35 +93,14 @@ void WidgetStack::SetSizeProperty (
         m_preferred_size_properties.m_min_size = value;
     else
         m_preferred_size_properties.m_max_size = value;
-    Widget::SetSizeProperty(property, value, true);
+    ContainerWidget::SetSizeProperty(property, value, true);
     CalculateMinAndMaxSizePropertiesFromContents();
 //     ParentChildSizePropertiesUpdate(false);
 }
 
-void WidgetStack::SetSizePropertyRatio (
-    SizeProperties::Property const property,
-    Uint32 const component,
-    Float const ratio)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoord calculated_value =
-        static_cast<ScreenCoord>(size_ratio_basis * ratio);
-    WidgetStack::SetSizeProperty(property, component, calculated_value);
-}
-
-void WidgetStack::SetSizePropertyRatios (
-    SizeProperties::Property const property,
-    FloatVector2 const &ratios)
-{
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
-    ScreenCoordVector2 calculated_value =
-        (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
-    WidgetStack::SetSizeProperty(property, calculated_value);
-}
-
 ScreenCoordVector2 WidgetStack::Resize (ScreenCoordVector2 const &size)
 {
-    Widget::Resize(size);
+    ContainerWidget::Resize(size);
 
     ResizeAndRepositionChildWidgets();
 
@@ -131,7 +110,7 @@ ScreenCoordVector2 WidgetStack::Resize (ScreenCoordVector2 const &size)
 void WidgetStack::AttachChild (Widget *const child)
 {
     // call the superclass to actually attach the child
-    Widget::AttachChild(child);
+    ContainerWidget::AttachChild(child);
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
@@ -146,7 +125,7 @@ void WidgetStack::AttachChild (Widget *const child)
 void WidgetStack::DetachChild (Widget *const child)
 {
     // call the superclass to actually detach the child
-    Widget::DetachChild(child);
+    ContainerWidget::DetachChild(child);
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();

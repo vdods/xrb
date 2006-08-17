@@ -11,7 +11,7 @@
 #if !defined(_DIS_TITLESCREENWIDGET_H_)
 #define _DIS_TITLESCREENWIDGET_H_
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 #include "dis_highscores.h"
 #include "xrb_statemachine.h"
@@ -29,14 +29,14 @@ namespace Dis
 
 class HighScoresWidget;
 
-class TitleScreenWidget : public Widget
+class TitleScreenWidget : public ContainerWidget
 {
 public:
 
     TitleScreenWidget (
         bool immediately_show_high_scores,
         bool show_best_points_high_scores_first,
-        Widget *parent);
+        ContainerWidget *parent);
     virtual ~TitleScreenWidget ();
 
     SignalSender0 const *SenderStartGame ();

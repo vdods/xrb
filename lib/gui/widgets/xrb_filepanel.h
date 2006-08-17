@@ -13,7 +13,7 @@
 
 #include "xrb.h"
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 namespace Xrb
 {
@@ -21,7 +21,7 @@ namespace Xrb
 class Label;
 class LineEdit;
 
-class FilePanel : public Widget
+class FilePanel : public ContainerWidget
 {
 public:
 
@@ -34,7 +34,7 @@ public:
     FilePanel (
         std::string const &title_text,
         Operation file_operation,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "FilePanel");
     virtual ~FilePanel () { }
 

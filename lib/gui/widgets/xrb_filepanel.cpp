@@ -21,10 +21,10 @@ namespace Xrb
 FilePanel::FilePanel (
     std::string const &title_text,
     Operation const file_operation,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
-    Widget(parent, name),
+    ContainerWidget(parent, name),
     m_sender_submit_filename(this),
     m_sender_submit_filename_v(this),
     m_internal_receiver_filename_set_by_enter_key(

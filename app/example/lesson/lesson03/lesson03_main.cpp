@@ -114,20 +114,22 @@ well enough, it was probably already explained in
 <strong>Code Diving!</strong>
 
 @code */
-#include "xrb.h"                // Must be included in every source/header file.
+#include "xrb.h"                    // Must be included in every source/header file.
 
-#include "xrb_event.h"          // For use of the Event classes.
-#include "xrb_eventqueue.h"     // For use of the EventQueue class.
-#include "xrb_input.h"          // For use of the Input class (via Singletons::).
-#include "xrb_label.h"          // For use of the Label class.
-#include "xrb_layout.h"         // For use of the Layout widget class.
-#include "xrb_render.h"         // For use of the Render namespace functions.
-#include "xrb_screen.h"         // For use of the necessary Screen widget class.
-#include "xrb_validator.h"      // For use of various Validator subclasses.
-#include "xrb_valueedit.h"      // For use of ValueEdit<T>.
-#include "xrb_valuelabel.h"     // For use of ValueLabel<T>.
+#include "xrb_containerwidget.h"    // For use of the ContainerWidget class.
+#include "xrb_event.h"              // For use of the Event classes.
+#include "xrb_eventqueue.h"         // For use of the EventQueue class.
+#include "xrb_input.h"              // For use of the Input class (via Singletons::).
+#include "xrb_label.h"              // For use of the Label class.
+#include "xrb_layout.h"             // For use of the Layout widget class.
+#include "xrb_render.h"             // For use of the Render namespace functions.
+#include "xrb_screen.h"             // For use of the necessary Screen widget class.
+#include "xrb_validator.h"          // For use of various Validator subclasses.
+#include "xrb_valueedit.h"          // For use of the ValueEdit<T> template class.
+#include "xrb_valuelabel.h"         // For use of the ValueLabel<T> template class.
+#include "xrb_widget.h"             // For use of the Widget class.
 
-using namespace Xrb;            // To avoid having to use Xrb:: everywhere.
+using namespace Xrb;                // To avoid having to use Xrb:: everywhere.
 
 /* @endcode
 Define some global variables to hold the tuning parameters for the simulation.
@@ -181,7 +183,7 @@ public:
     to the widget(s) behind it, including its parent widget, which may be
     desirable if you're writing custom HUD widgets for a game.
     @code */
-    HeatButton (Widget *parent, std::string const &name = "HeatButton")
+    HeatButton (ContainerWidget *parent, std::string const &name = "HeatButton")
         :
         Widget(parent, name)
     {
@@ -288,7 +290,7 @@ We will only need to override Widget::HandleFrame for the desired
 custom behavior, since a container widget is only rendered to screen by proxy
 through its children's Draw methods.
 @code */
-class HeatSimulation : public Widget
+class HeatSimulation : public ContainerWidget
 {
 public:
 
@@ -318,9 +320,9 @@ public:
     be greater or equal to 1 (the parameter passed into the constructor for
     <tt>m_desired_framerate_validator</tt>).
     @code */
-    HeatSimulation (Widget *parent, std::string const &name = "HeatSimulation")
+    HeatSimulation (ContainerWidget *parent, std::string const &name = "HeatSimulation")
         :
-        Widget(parent, "HeatSimulation"),
+        ContainerWidget(parent, "HeatSimulation"),
         /* @endcode
         The single argument to this validator's constructor is the lower
         bound for GreaterOrEqualValidator<Uint32>.  Anything greator or equal

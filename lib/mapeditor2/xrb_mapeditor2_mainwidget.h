@@ -41,7 +41,7 @@ namespace MapEditor2
     public:
     
         MainWidget (
-            Widget *parent,
+            ContainerWidget *parent,
             std::string const &name = "MapEditor2::MainWidget");
         virtual ~MainWidget ();
     

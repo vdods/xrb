@@ -19,9 +19,9 @@ using namespace Xrb;
 namespace Dis
 {
 
-HighScoresWidget::HighScoresWidget (Widget *const parent)
+HighScoresWidget::HighScoresWidget (ContainerWidget *const parent)
     :
-    Widget(parent, "HighScoresWidget")
+    ContainerWidget(parent, "HighScoresWidget")
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main HighScoresWidget layout");
 

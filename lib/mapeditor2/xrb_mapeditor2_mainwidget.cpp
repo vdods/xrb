@@ -34,7 +34,7 @@ namespace Xrb
 {
 
 MapEditor2::MainWidget::MainWidget (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Widget(parent, name),

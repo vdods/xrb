@@ -20,7 +20,7 @@ namespace Xrb
 
 LineEdit::LineEdit (
     Uint32 const character_limit,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     TextWidget("", parent, name),

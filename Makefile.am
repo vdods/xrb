@@ -110,6 +110,7 @@ lib_libxrb_la_SOURCES = \
     lib/gui/widgets/xrb_button.cpp \
     lib/gui/widgets/xrb_cellpaddingwidget.cpp \
     lib/gui/widgets/xrb_checkbox.cpp \
+    lib/gui/widgets/xrb_containerwidget.cpp \
     lib/gui/widgets/xrb_dialog.cpp \
     lib/gui/widgets/xrb_filedialog.cpp \
     lib/gui/widgets/xrb_filepanel.cpp \
@@ -245,6 +246,7 @@ include_HEADERS = \
     lib/gui/widgets/xrb_button.h \
     lib/gui/widgets/xrb_cellpaddingwidget.h \
     lib/gui/widgets/xrb_checkbox.h \
+    lib/gui/widgets/xrb_containerwidget.h \
     lib/gui/widgets/xrb_dialog.h \
     lib/gui/widgets/xrb_filedialog.h \
     lib/gui/widgets/xrb_filepanel.h \

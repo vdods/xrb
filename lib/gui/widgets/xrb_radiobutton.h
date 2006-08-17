@@ -32,13 +32,13 @@ public:
     RadioButton (
         T id,
         RadioButtonGroup<T, sentinel> *group,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "RadioButton");
     RadioButton (
         Resource<GLTexture> const &picture,
         T id,
         RadioButtonGroup<T, sentinel> *group,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 

@@ -19,7 +19,7 @@ namespace Xrb
 
 ProgressBar::ProgressBar (
     GrowOrientation const grow_orientation,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Widget(parent, name),

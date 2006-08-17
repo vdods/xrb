@@ -28,7 +28,7 @@ Color const InventoryPanel::ms_affordable_mineral_color_mask(1.0f, 1.0f, 1.0f, 1
 Color const InventoryPanel::ms_not_affordable_mineral_color_mask(1.0f, 0.3f, 0.0f, 1.0f);
 
 InventoryPanel::InventoryPanel (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     ModalWidget(parent, name),
@@ -40,9 +40,9 @@ InventoryPanel::InventoryPanel (
     m_internal_receiver_deactivate(&InventoryPanel::Deactivate, this)
 {
     m_accepts_focus = true;
-    
+
     m_inventory_owner_ship = NULL;
-        
+
     // a vertical layout to hold the sublayouts
     Layout *main_layout = new Layout(VERTICAL, this, "main InventoryPanel layout");
     SetMainWidget(main_layout);
@@ -63,7 +63,7 @@ InventoryPanel::InventoryPanel (
             ConnectInventoryButton(m_inventory_button[item][level]);
         }
     }
-    
+
     // a horizontal layout for the price display
     Layout *price_layout = new Layout(HORIZONTAL, main_layout, "InventoryPanel price layout");
 
@@ -95,17 +95,17 @@ InventoryPanel::InventoryPanel (
     m_prices_are_shown = false;
 
     Layout *menu_button_layout = new Layout(HORIZONTAL, main_layout, "menu button layout");
-    
+
     m_return_button = new Button("RETURN", menu_button_layout, "return button");
     m_return_button->SetIsHeightFixedToTextHeight(true);
 
     SignalHandler::Connect0(
         m_return_button->SenderReleased(),
         &m_internal_receiver_deactivate);
-    
+
     m_end_button = new Button("END", menu_button_layout, "end button");
     m_end_button->SetIsHeightFixedToTextHeight(true);
-    
+
     m_quit_button = new Button("QUIT", menu_button_layout, "quit button");
     m_quit_button->SetIsHeightFixedToTextHeight(true);
 
@@ -144,9 +144,9 @@ void InventoryPanel::UpdatePanelState ()
             for (Uint32 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
             {
                 ASSERT1(m_inventory_button[item][level] != NULL)
-    
+
                 InventoryButton::Status status;
-                
+
                 if (m_inventory_owner_ship->GetIsItemEquipped(static_cast<ItemType>(item), level))
                     status = InventoryButton::S_EQUIPPED;
                 else if (m_inventory_owner_ship->GetIsItemInInventory(static_cast<ItemType>(item), level))
@@ -185,7 +185,7 @@ void InventoryPanel::UpdatePanelState ()
                     m_mineral_cost_label[mineral_index]->Disable();
                     m_mineral_icon_label[mineral_index]->Disable();
                 }
-                
+
                 Uint32 player_ship_minerals =
                     static_cast<Uint32>(
                         m_inventory_owner_ship->GetMineralInventory(mineral_index));
@@ -208,7 +208,7 @@ void InventoryPanel::UpdatePanelState ()
                 m_inventory_button[i][j]->SetStatus(InventoryButton::S_NOT_AFFORDABLE);
             }
         }
-    
+
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_cost_label[i]->SetColorMask(ms_affordable_mineral_color_mask);
     }
@@ -291,7 +291,7 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
             m_mineral_icon_label[mineral_index]->Enable();
 
             m_mineral_cost_label[mineral_index]->SetValue(mineral_cost);
-        
+
             Uint32 player_ship_minerals =
                 static_cast<Uint32>(
                     m_inventory_owner_ship->GetMineralInventory(mineral_index));
@@ -323,7 +323,7 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
             ASSERT1(m_mineral_icon_label[i]->GetIsEnabled())
 
             m_mineral_cost_label[i]->SetValue(0);
-            
+
             m_mineral_cost_label[i]->Disable();
             m_mineral_icon_label[i]->Disable();
 

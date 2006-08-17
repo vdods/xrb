@@ -29,7 +29,7 @@ public:
       */
     TextWidget (
         std::string const &text,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "TextWidget");
     virtual ~TextWidget () { }
 

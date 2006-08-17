@@ -25,7 +25,7 @@ namespace Xrb
 {
 
 MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Widget(parent, name),

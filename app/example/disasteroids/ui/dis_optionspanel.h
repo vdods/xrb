@@ -11,24 +11,24 @@
 #if !defined(_DIS_OPTIONSPANEL_H_)
 #define _DIS_OPTIONSPANEL_H_
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
 
-class OptionsPanel : public Widget
+class OptionsPanel : public ContainerWidget
 {
 public:
 
-    OptionsPanel (Widget *parent);
+    OptionsPanel (ContainerWidget *parent);
     virtual ~OptionsPanel ();
 
 private:
 
 }; // end of class OptionsPanel
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_OPTIONSPANEL_H_)

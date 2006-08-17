@@ -13,24 +13,24 @@
 
 #include "xrb.h"
 
+#include "xrb_containerwidget.h"
 #include "xrb_enums.h"
-#include "xrb_widget.h"
 
 namespace Xrb
 {
 
-class Layout : public Widget
+class Layout : public ContainerWidget
 {
 public:
 
     Layout (
         LineDirection major_direction,
         Uint32 major_count,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "Layout");
     Layout (
         Orientation orientation,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "Layout");
     virtual ~Layout ();
 
@@ -113,14 +113,6 @@ public:
     virtual void SetSizeProperty (
         SizeProperties::Property property,
         ScreenCoordVector2 const &value);
-
-    virtual void SetSizePropertyRatio (
-        SizeProperties::Property property,
-        Uint32 component,
-        Float ratio);
-    virtual void SetSizePropertyRatios (
-        SizeProperties::Property property,
-        FloatVector2 const &ratios);
 
     virtual void SetMainWidget (Widget *main_widget)
     {

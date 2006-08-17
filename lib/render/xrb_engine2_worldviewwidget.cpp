@@ -18,7 +18,7 @@ namespace Xrb
 
 Engine2::WorldViewWidget::WorldViewWidget (
     Engine2::WorldView *const world_view,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Widget(parent, name)

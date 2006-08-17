@@ -36,7 +36,7 @@ public:
 
     ProgressBar (
         GrowOrientation grow_orientation,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "ProgressBar");
     virtual ~ProgressBar ();
 

@@ -16,10 +16,10 @@ namespace Xrb
 {
 
 ModalWidget::ModalWidget (
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
-    Widget(parent, name)
+    ContainerWidget(parent, name)
 {
     // make this widget modal
     SetIsModal(true);

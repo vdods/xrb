@@ -45,7 +45,7 @@ class GameWidget : public WidgetStack
 {
 public:
 
-    GameWidget (World *world, Widget *parent);
+    GameWidget (World *world, ContainerWidget *parent);
     virtual ~GameWidget () { }
 
     SignalSender0 const *SenderQuitGame ();

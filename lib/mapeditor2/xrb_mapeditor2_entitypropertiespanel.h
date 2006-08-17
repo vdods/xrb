@@ -32,7 +32,7 @@ namespace MapEditor2
     public:
     
         EntityPropertiesPanel (
-            Widget *parent,
+            ContainerWidget *parent,
             std::string const &name = "MapEditor2::EntityPropertiesPanel");
         virtual ~EntityPropertiesPanel () { }
     

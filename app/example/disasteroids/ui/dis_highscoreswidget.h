@@ -11,7 +11,7 @@
 #if !defined(_DIS_HIGHSCORESWIDGET_H_)
 #define _DIS_HIGHSCORESWIDGET_H_
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 #include "dis_highscores.h"
 #include "xrb_label.h"
@@ -22,7 +22,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-class HighScoresWidget : public Widget
+class HighScoresWidget : public ContainerWidget
 {
 public:
 
@@ -34,7 +34,7 @@ public:
         M_COUNT
     }; // end of enum HighScoresWidget::Mode
 
-    HighScoresWidget (Widget *parent);
+    HighScoresWidget (ContainerWidget *parent);
 
     void Update (HighScores const &high_scores, Mode mode);
 

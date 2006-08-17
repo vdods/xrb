@@ -71,7 +71,7 @@ public:
       */
     Dialog (
         DialogType const dialog_type,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "Dialog");
     /** Doesn't do anything special.  The child widgets are deleted
       * by Widget's destructor.

@@ -65,7 +65,7 @@ Screen *Screen::Create (
     // this resizing must happen before the widget skin is created.
     retval->m_current_video_resolution.SetComponents(width, height);
     retval->MoveTo(ScreenCoordVector2::ms_zero);
-    retval->Widget::Resize(retval->m_current_video_resolution);
+    retval->ContainerWidget::Resize(retval->m_current_video_resolution);
     retval->FixSize(retval->m_current_video_resolution);
     retval->m_widget_skin = new WidgetSkin(retval);
     retval->m_delete_widget_skin = true;
@@ -117,8 +117,8 @@ void Screen::Draw () const
     // as the render context).
     render_context.SetupGLClipRect();
 
-    // call draw on the Widget base class.
-    Widget::Draw(render_context);
+    // call draw on the ContainerWidget base class.
+    ContainerWidget::Draw(render_context);
 
 #if !defined(WIN32)
     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere")
@@ -138,7 +138,7 @@ void Screen::Draw () const
 
 Screen::Screen ()
     :
-    Widget(NULL, "Screen"),
+    ContainerWidget(NULL, "Screen"),
     m_sender_quit_requested(this),
     m_receiver_request_quit(&Screen::RequestQuit, this)
 {
@@ -152,7 +152,7 @@ Screen::Screen ()
 
 void Screen::HandleFrame ()
 {
-    Widget::HandleFrame();
+    ContainerWidget::HandleFrame();
 
     // nothing needs to be done for now
 }
@@ -200,8 +200,8 @@ bool Screen::HandleEvent (Event const *const e)
             break;
     }
 
-    // pass the event to the Widget base class
-    return Widget::HandleEvent(e);
+    // pass the event to the ContainerWidget base class
+    return ContainerWidget::HandleEvent(e);
 }
 
 } // end of namespace Xrb

@@ -29,9 +29,9 @@ namespace Dis
 TitleScreenWidget::TitleScreenWidget (
     bool const immediately_show_high_scores,
     bool const show_best_points_high_scores_first,
-    Widget *const parent)
+    ContainerWidget *const parent)
     :
-    Widget(parent, "TitleScreenWidget"),
+    ContainerWidget(parent, "TitleScreenWidget"),
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
@@ -127,7 +127,7 @@ void TitleScreenWidget::GoToOptions ()
 
 void TitleScreenWidget::HandleFrame ()
 {
-    Widget::HandleFrame();
+    ContainerWidget::HandleFrame();
 
     if (!m_state_machine.GetIsInitialized())
         m_state_machine.Initialize(

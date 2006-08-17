@@ -11,15 +11,15 @@
 #if !defined(_GUI_MASTERWIDGET_H_)
 #define _GUI_MASTERWIDGET_H_
 
-#include "xrb_widget.h"
+#include "xrb_containerwidget.h"
 
 using namespace Xrb;
 
-class MasterWidget : public Widget
+class MasterWidget : public ContainerWidget
 {
 public:
 
-    MasterWidget (Widget *parent);
+    MasterWidget (ContainerWidget *parent);
 
 private:
 

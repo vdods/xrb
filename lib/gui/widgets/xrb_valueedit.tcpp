@@ -14,7 +14,7 @@ template <typename ValueType>
 ValueEdit<ValueType>::ValueEdit (
     std::string const &printf_format,
     TextToValueFunctionType text_to_value_function,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     LineEdit(20, parent, name),

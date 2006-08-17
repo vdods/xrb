@@ -24,11 +24,11 @@ public:
 
     Button (
         std::string const &text,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "Button");
     Button (
         Resource<GLTexture> const &picture,
-        Widget *const parent,
+        ContainerWidget *const parent,
         std::string const &name = "Button");
     virtual ~Button () { }
 

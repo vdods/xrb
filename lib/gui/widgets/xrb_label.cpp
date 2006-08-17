@@ -21,7 +21,7 @@ namespace Xrb
 
 Label::Label (
     std::string const &text,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     TextWidget(text, parent, name)
@@ -38,7 +38,7 @@ Label::Label (
 
 Label::Label (
     Resource<GLTexture> const &picture,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     TextWidget("", parent, name),

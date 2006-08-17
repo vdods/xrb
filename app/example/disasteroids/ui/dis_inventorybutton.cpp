@@ -23,7 +23,7 @@ Float const InventoryButton::ms_size_parameter_change_rate = 4.0f;
 InventoryButton::InventoryButton (
     ItemType const item_type,
     Uint8 const upgrade_level,
-    Widget *const parent,
+    ContainerWidget *const parent,
     std::string const &name)
     :
     Button(GetButtonTexture(item_type, upgrade_level), parent, name),

@@ -37,7 +37,7 @@ public:
     InventoryButton (
         ItemType item_type,
         Uint8 upgrade_level,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "InventoryButton");
     virtual ~InventoryButton () { }
 

@@ -13,8 +13,8 @@
 
 #include "xrb.h"
 
+#include "xrb_containerwidget.h"
 #include "xrb_frameratecalculator.h"
-#include "xrb_widget.h"
 
 namespace Xrb
 {
@@ -26,7 +26,7 @@ class EventQueue;
 // coordinates to left-handed screen coordinates, etc).  It inherits from
 // Transform2, which serves as the view-to-screen transformation.
 // The Screen is post-translated.
-class Screen : public Widget
+class Screen : public ContainerWidget
 {
 public:
 

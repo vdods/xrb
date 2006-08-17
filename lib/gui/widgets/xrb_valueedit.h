@@ -34,7 +34,7 @@ public:
     ValueEdit (
         std::string const &printf_format,
         typename ValueEdit<ValueType>::TextToValueFunctionType text_to_value_function,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "ValueEdit");
     virtual ~ValueEdit () { }
 

@@ -26,7 +26,7 @@ public:
     FileDialog (
         std::string const &title_text,
         FilePanel::Operation file_operation,
-        Widget *parent,
+        ContainerWidget *parent,
         std::string const &name = "FileDialog");
     virtual ~FileDialog () { }
 

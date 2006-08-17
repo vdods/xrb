@@ -197,6 +197,8 @@ lib/gui/widgets/xrb_cellpaddingwidget.cpp
 lib/gui/widgets/xrb_cellpaddingwidget.h
 lib/gui/widgets/xrb_checkbox.cpp
 lib/gui/widgets/xrb_checkbox.h
+lib/gui/widgets/xrb_containerwidget.cpp
+lib/gui/widgets/xrb_containerwidget.h
 lib/gui/widgets/xrb_dialog.cpp
 lib/gui/widgets/xrb_dialog.h
 lib/gui/widgets/xrb_filedialog.cpp
