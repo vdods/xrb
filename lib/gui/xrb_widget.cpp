@@ -117,14 +117,6 @@ Widget *Widget::GetEffectiveParent ()
            m_parent;
 }
 
-Screen *Widget::GetTopLevelParent ()
-{
-    if (m_parent != NULL)
-        return m_parent->GetTopLevelParent();
-    else
-        return static_cast<Screen *>(this);
-}
-
 Screen const *Widget::GetTopLevelParent () const
 {
     if (m_parent != NULL)
@@ -133,12 +125,30 @@ Screen const *Widget::GetTopLevelParent () const
         return static_cast<Screen const *>(this);
 }
 
+Screen *Widget::GetTopLevelParent ()
+{
+    if (m_parent != NULL)
+        return m_parent->GetTopLevelParent();
+    else
+        return static_cast<Screen *>(this);
+}
+
+bool Widget::GetIsFocused () const
+{
+    Widget const *parent = GetEffectiveParent();
+    return parent != NULL ? parent->m_focus == this : true;
+}
+
 bool Widget::GetIsMouseover () const
 {
     Widget const *parent = GetEffectiveParent();
-    return parent != NULL ?
-           (parent->m_mouseover_focus == this) :
-           true;
+    return parent != NULL ? parent->m_mouseover_focus == this : true;
+}
+
+bool Widget::GetIsMouseGrabbed () const
+{
+    Widget const *parent = GetEffectiveParent();
+    return parent != NULL ? parent->m_focus == this && parent->m_focus_has_mouse_grab : true;
 }
 
 ScreenCoordVector2 Widget::GetAdjustedSize (ScreenCoordVector2 const &size) const
@@ -488,6 +498,7 @@ void Widget::SetContentMarginRatios (FloatVector2 const &content_margin_ratios)
 
 void Widget::FixSize (ScreenCoordVector2 const &size)
 {
+    // TODO: make into atomic operation
     SetSizeProperty(SizeProperties::MIN, size);
     SetSizeProperty(SizeProperties::MAX, size);
     SetSizePropertyEnabled(SizeProperties::MIN, Bool2(true, true));
@@ -496,6 +507,7 @@ void Widget::FixSize (ScreenCoordVector2 const &size)
 
 void Widget::FixSizeRatios (FloatVector2 const &size_ratios)
 {
+    // TODO: make into atomic operation
     SetSizePropertyRatios(SizeProperties::MIN, size_ratios);
     SetSizePropertyRatios(SizeProperties::MAX, size_ratios);
     SetSizePropertyEnabled(SizeProperties::MIN, Bool2(true, true));
@@ -504,12 +516,14 @@ void Widget::FixSizeRatios (FloatVector2 const &size_ratios)
 
 void Widget::UnfixSize ()
 {
+    // TODO: make into atomic operation
     SetSizePropertyEnabled(SizeProperties::MIN, Bool2(false, false));
     SetSizePropertyEnabled(SizeProperties::MAX, Bool2(false, false));
 }
 
 void Widget::FixWidth (ScreenCoord const width)
 {
+    // TODO: make into atomic operation
     SetSizeProperty(SizeProperties::MIN, Dim::X, width);
     SetSizeProperty(SizeProperties::MAX, Dim::X, width);
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
@@ -518,6 +532,7 @@ void Widget::FixWidth (ScreenCoord const width)
 
 void Widget::FixWidthRatio (Float const width_ratio)
 {
+    // TODO: make into atomic operation
     SetSizePropertyRatio(SizeProperties::MIN, Dim::X, width_ratio);
     SetSizePropertyRatio(SizeProperties::MAX, Dim::X, width_ratio);
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
@@ -526,12 +541,14 @@ void Widget::FixWidthRatio (Float const width_ratio)
 
 void Widget::UnfixWidth ()
 {
+    // TODO: make into atomic operation
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, false);
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::X, false);
 }
 
 void Widget::FixHeight (ScreenCoord const height)
 {
+    // TODO: make into atomic operation
     SetSizeProperty(SizeProperties::MIN, Dim::Y, height);
     SetSizeProperty(SizeProperties::MAX, Dim::Y, height);
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::Y, true);
@@ -540,6 +557,7 @@ void Widget::FixHeight (ScreenCoord const height)
 
 void Widget::FixHeightRatio (Float const height_ratio)
 {
+    // TODO: make into atomic operation
     SetSizePropertyRatio(SizeProperties::MIN, Dim::Y, height_ratio);
     SetSizePropertyRatio(SizeProperties::MAX, Dim::Y, height_ratio);
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::Y, true);
@@ -548,6 +566,7 @@ void Widget::FixHeightRatio (Float const height_ratio)
 
 void Widget::UnfixHeight ()
 {
+    // TODO: make into atomic operation
     SetSizePropertyEnabled(SizeProperties::MIN, Dim::Y, false);
     SetSizePropertyEnabled(SizeProperties::MAX, Dim::Y, false);
 }
@@ -768,7 +787,6 @@ void Widget::GrabMouse ()
         m_parent->GrabMouse();
         // set this widget to mouse grabbing
         m_parent->m_focus_has_mouse_grab = true;
-
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOn();
     }
@@ -785,10 +803,8 @@ void Widget::UnGrabMouse ()
     {
         // set this widget to not mouse grabbing
         m_parent->m_focus_has_mouse_grab = false;
-
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOff();
-
         // recurse to the parent widget
         m_parent->UnGrabMouse();
     }
@@ -1183,12 +1199,10 @@ bool Widget::HandleEvent (Event const *const e)
             if (PreprocessMouseEvent(DStaticCast<EventMouse const *>(e)))
                 return true;
             else
-                return SendMouseEventToChild(
-                    DStaticCast<EventMouse const *>(e));
+                return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
 
         case Event::MOUSEWHEEL:
-            return PreprocessMouseWheelEvent(
-                DStaticCast<EventMouseWheel const *>(e));
+            return PreprocessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e));
 
         case Event::JOYAXIS:
         case Event::JOYBALL:
@@ -1203,16 +1217,13 @@ bool Widget::HandleEvent (Event const *const e)
                 return false;
 
         case Event::FOCUS:
-            return PreprocessFocusEvent(
-                DStaticCast<EventFocus const *>(e));
+            return PreprocessFocusEvent(DStaticCast<EventFocus const *>(e));
 
         case Event::MOUSEOVER:
-            return PreprocessMouseoverEvent(
-                DStaticCast<EventMouseover const *>(e));
+            return PreprocessMouseoverEvent(DStaticCast<EventMouseover const *>(e));
 
         case Event::DELETE_CHILD_WIDGET:
-            return ProcessDeleteChildWidgetEvent(
-                DStaticCast<EventDeleteChildWidget const *>(e));
+            return ProcessDeleteChildWidgetEvent(DStaticCast<EventDeleteChildWidget const *>(e));
 
         case Event::ACTIVE:
         case Event::RESIZE:
@@ -1745,12 +1756,7 @@ bool Widget::PreprocessMouseWheelEvent (EventMouseWheel const *const e)
         return m_focus->ProcessEvent(e);
 
     // otherwise let this widget have a chance at the event
-    if (ProcessMouseWheelEvent(e))
-        return true;
-
-    // otherwise attempt to send it to the widget that is below
-    // the mouse cursor
-    return SendMouseEventToChild(e);
+    return ProcessMouseWheelEvent(e);
 }
 
 bool Widget::PreprocessFocusEvent (EventFocus const *const e)

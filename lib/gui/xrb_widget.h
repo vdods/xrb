@@ -231,12 +231,7 @@ public:
     /** @brief Returns true iff this widget is focused.  If this is a
       *        top-level widget, then it has focus by default.
       */
-    inline bool GetIsFocused () const
-    {
-        return (m_parent != NULL) ?
-               m_parent->m_focus == this :
-               true;
-    }
+    bool GetIsFocused () const;
     /** The member variable @c m_accepts_focus should be set in Widget
       * derivative classes to indicate if they will accept focus.  The
       * default value set by the constructor of Widget is false.
@@ -271,12 +266,7 @@ public:
       *        all mouse events will go to/through it even if the mouse is not
       *        directly over it).
       */
-    inline bool GetIsMouseGrabbed () const
-    {
-        return m_parent ?
-               (GetIsFocused() && m_parent->m_focus_has_mouse_grab) :
-               true;
-    }
+    bool GetIsMouseGrabbed () const;
     /** @brief Returns true iff the focused child widget has mouse grab on.
       */
     inline bool GetFocusHasMouseGrab () const
