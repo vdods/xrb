@@ -71,7 +71,7 @@ public:
 
 protected:
 
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
 
 private:
 

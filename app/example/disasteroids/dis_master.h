@@ -73,7 +73,7 @@ public:
 
 protected:
 
-    virtual bool ProcessEventOverride (Event const *e);
+    virtual bool HandleEvent (Event const *e);
 
 private:
 

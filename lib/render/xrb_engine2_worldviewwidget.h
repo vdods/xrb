@@ -73,7 +73,7 @@ namespace Engine2
     protected:
 
         // this calculates one frame, called by the game loop
-        virtual void ProcessFrameOverride ();
+        virtual void HandleFrame ();
         // process a key event
         virtual bool ProcessKeyEvent (EventKey const *e);
         // process a mouse button event

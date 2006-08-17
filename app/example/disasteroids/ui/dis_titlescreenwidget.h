@@ -51,7 +51,7 @@ public:
 
 protected:
 
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
 
     virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e);
 

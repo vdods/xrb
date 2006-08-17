@@ -881,18 +881,18 @@ protected:
       * This function is guaranteed to be called once per game loop frame,
       * unlike @a Widget::Draw.
       *
-      * @brief Override of @a FrameHandler::ProcessFrameOverride which does
+      * @brief Override of @a FrameHandler::HandleFrame which does
       *        anything that needs to be done once per iteration of the game
       *        loop.
       */
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
     /** Subclasses of widget <strong>should not</strong> override this
       * function -- all of the user interface behavior for Widget is
       * handled/delegated here.
-      * @brief Override of @a EventHandler::ProcessEventOverride which does
+      * @brief Override of @a EventHandler::HandleEvent which does
       *        generic event processing.
       */
-    virtual bool ProcessEventOverride (Event const *e);
+    virtual bool HandleEvent (Event const *e);
     /** Subclasses may override this to process key events.
       * @brief Process a key event.
       */

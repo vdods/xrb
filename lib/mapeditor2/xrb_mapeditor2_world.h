@@ -75,7 +75,7 @@ namespace MapEditor2
         virtual void SetMainObjectLayerIndex (Uint32 index);
     
         // this calculates one frame, called by the game loop
-        virtual void ProcessFrameOverride ();
+        virtual void HandleFrame ();
     
         virtual void ReadObjectLayers (Serializer &serializer);
         virtual void ReadEntitiesBelongingToLayer (

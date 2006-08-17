@@ -1,17 +1,15 @@
+##############################################################################
 # subdir-objects causes object files to be created in the corresponding subdir
 # foreign indicates this is not a GNU package so it won't halt if any
 #         GNU-required files (e.g. NEWS) are not found
 # 1.4 indicates the minimum automake version to proceed
+##############################################################################
+
 AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
-EXTRA_DIST = \
-	configure.ac \
-	Doxyfile \
-	INSTALL \
-    LICENSE \
-    README \
-    TODO \
-    bootstrap.sh
+##############################################################################
+# build targets and extra files to add to the distribution
+##############################################################################
 
 lib_LTLIBRARIES = \
 	lib/libxrb.la
@@ -25,6 +23,23 @@ bin_PROGRAMS = \
     lesson03
 #    mapeditor2 \ # is temporarily out of commission
 #    unittest # is temporarily out of commission
+
+EXTRA_DIST = \
+	configure.ac \
+	Doxyfile \
+	INSTALL \
+    LICENSE \
+    README \
+    TODO \
+    bootstrap.sh
+
+##############################################################################
+# phony target alias for lib/libxrb.la for your convenience
+##############################################################################
+
+.PHONY: libxrb
+
+libxrb: lib/libxrb.la
 
 ##############################################################################
 # general preprocessor and linker flags

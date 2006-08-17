@@ -57,7 +57,7 @@ protected:
         WidgetSkin::WidgetBackgroundType widget_background_type);
 
     // process one computation frame
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
     // process a key event
     virtual bool ProcessKeyEvent (EventKey const *e);
     // process a mouse button event

@@ -157,10 +157,10 @@ void MapEditor2::World::SetMainObjectLayerIndex (Uint32 const index)
     ASSERT0(false && "Invalid index (higher than the highest object layer index)")
 }
 
-void MapEditor2::World::ProcessFrameOverride ()
+void MapEditor2::World::HandleFrame ()
 {
     if (GetIsRunning())
-        Engine2::World::ProcessFrameOverride();
+        Engine2::World::HandleFrame();
 }
 
 void MapEditor2::World::ReadObjectLayers (Serializer &serializer)

@@ -41,7 +41,7 @@ public:
     virtual ~EventHandler ();
 
     /** Returns true iff the event was used by this eventhandler.  If events
-      * are being blocked, it will not call ProcessEventOverride.
+      * are being blocked, it will not call HandleEvent.
       * @brief Called to process an event immediately.
       */
     bool ProcessEvent (Event const *e);
@@ -79,7 +79,7 @@ public:
     {
         return Max(m_most_recent_event_time, 0.0f);
     }
-    /** This function may only be called from within ProcessEventOverride,
+    /** This function may only be called from within HandleEvent,
       * since it would be meaningless anywhere else.  Calling it elsewhere
       * will cause an assert.
       * @brief Returns time of the event currently being processed.
@@ -89,7 +89,7 @@ public:
         ASSERT1(m_event_dt >= 0.0)
         return m_current_event_time;
     }
-    /** This function may only be called from within ProcessEventOverride,
+    /** This function may only be called from within HandleEvent,
       * since it would be meaningless anywhere else.  Calling it elsewhere
       * will cause an assert.
       * @brief Returns the time delta since the most recently processed event.
@@ -128,7 +128,7 @@ protected:
       * @brief Subclasses must override this to provide the actual event
       *        handling necessary.
       */
-    virtual bool ProcessEventOverride (Event const *e) = 0;
+    virtual bool HandleEvent (Event const *e) = 0;
 
 private:
 

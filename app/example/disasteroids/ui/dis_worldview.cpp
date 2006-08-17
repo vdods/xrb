@@ -284,7 +284,7 @@ bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
     return true;
 }
 
-bool WorldView::ProcessEventOverride (Event const *const e)
+bool WorldView::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -297,7 +297,7 @@ bool WorldView::ProcessEventOverride (Event const *const e)
     return false;
 }
 
-void WorldView::ProcessFrameOverride ()
+void WorldView::HandleFrame ()
 {
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 

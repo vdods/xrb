@@ -587,10 +587,10 @@ World::World (
     ASSERT1(m_player_ship != NULL)
 
     // don't initialize the state machine just yet.  wait until
-    // ProcessFrameOverride, so that the WorldViews will be active
+    // HandleFrame, so that the WorldViews will be active
 }
 
-bool World::ProcessEventOverride (Event const *const e)
+bool World::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -600,12 +600,12 @@ bool World::ProcessEventOverride (Event const *const e)
         return true;
     }
 
-    return Engine2::World::ProcessEventOverride(e);
+    return Engine2::World::HandleEvent(e);
 }
 
-void World::ProcessFrameOverride ()
+void World::HandleFrame ()
 {
-    Engine2::World::ProcessFrameOverride();
+    Engine2::World::HandleFrame();
 
     if (!m_state_machine.GetIsInitialized())
         m_state_machine.Initialize(&World::StateIntro);

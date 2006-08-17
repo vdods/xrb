@@ -150,14 +150,14 @@ Screen::Screen ()
     SetOwnerEventQueue(new EventQueue());
 }
 
-void Screen::ProcessFrameOverride ()
+void Screen::HandleFrame ()
 {
-    Widget::ProcessFrameOverride();
+    Widget::HandleFrame();
 
     // nothing needs to be done for now
 }
 
-bool Screen::ProcessEventOverride (Event const *const e)
+bool Screen::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -173,13 +173,13 @@ bool Screen::ProcessEventOverride (Event const *const e)
             {
 //                 case Key::PRINT:
 //                     fprintf(stderr,
-//                             "Screen::ProcessEventOverride(); Key::PRINT "
+//                             "Screen::HandleEvent(); Key::PRINT "
 //                             "- capturing screenshot to screenshot.png\n");
 //                     SDL::WritePNG(m_surface, "screenshot.png");
 //                     return true;
                 case Key::SCROLLLOCK:
                     // TODO: don't capture input if fullscreen is set
-                    fprintf(stderr, "Screen::ProcessEventOverride(); toggling input grab\n");
+                    fprintf(stderr, "Screen::HandleEvent(); toggling input grab\n");
                     if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
                         SDL_ShowCursor(SDL_ENABLE);
                         SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -201,7 +201,7 @@ bool Screen::ProcessEventOverride (Event const *const e)
     }
 
     // pass the event to the Widget base class
-    return Widget::ProcessEventOverride(e);
+    return Widget::HandleEvent(e);
 }
 
 } // end of namespace Xrb

@@ -42,13 +42,13 @@ EventKeyRepeat *KeyRepeater::DequeueEvent ()
     return m_key_event_queue.Dequeue();
 }
 
-void KeyRepeater::ProcessFrameOverride ()
+void KeyRepeater::HandleFrame ()
 {
     // generate key events from the current state
     GenerateKeyEvents(GetFrameTime());
 }
 
-bool KeyRepeater::ProcessEventOverride (Event const *const e)
+bool KeyRepeater::HandleEvent (Event const *const e)
 {
     if (e->GetIsKeyEvent())
     {

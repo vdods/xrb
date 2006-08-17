@@ -221,7 +221,7 @@ namespace MapEditor2
 
         virtual void HandleAttachedWorld ();
                         
-        virtual void ProcessFrameOverride ();
+        virtual void HandleFrame ();
 
         ObjectLayer *GetMainMapEditorObjectLayer () const;
         

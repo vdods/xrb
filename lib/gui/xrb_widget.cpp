@@ -1078,7 +1078,7 @@ void Widget::InitializeFromWidgetSkinProperties ()
     SetContentMargins(GetWidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
-void Widget::ProcessFrameOverride ()
+void Widget::HandleFrame ()
 {
     // call ProcessFrame on all the child widgets
     for (WidgetVectorIterator it = m_child_vector.begin(),
@@ -1092,7 +1092,7 @@ void Widget::ProcessFrameOverride ()
     }
 }
 
-bool Widget::ProcessEventOverride (Event const *const e)
+bool Widget::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 

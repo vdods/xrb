@@ -119,9 +119,9 @@ protected:
     virtual void SetMainObjectLayerIndex (Uint32 index);
 
     // process an event
-    virtual bool ProcessEventOverride (Event const *e);
+    virtual bool HandleEvent (Event const *e);
     // this calculates one frame, called by the game loop
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
     void IncrementLowestAvailableEntityIndex ();
     void UpdateLowestAvailableEntityIndex (EntityWorldIndex removed_entity_index);
 

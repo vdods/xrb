@@ -25,7 +25,7 @@ namespace Xrb
   * while typing, simulating many keystrokes of the same key very quickly.
   *
   * Keyboard events are processed by this class, and a series of
-  * EventKeyRepeat events are queued up when ProcessFrameOverride is called
+  * EventKeyRepeat events are queued up when HandleFrame is called
   * to indicate each iteration of the game loop.
   *
   * @brief Processes keyboard events and produces key repeat events.
@@ -49,18 +49,18 @@ public:
       */
     ~KeyRepeater ();
 
-    /** ProcessFrameOverride generates the key repeat events and queues them
+    /** HandleFrame generates the key repeat events and queues them
       * so they can be later removed and put in the main EventQueue.  This
       * accessor is used when generating the key repeat events, indicating
       * one of the conditions to stop generating key repeat events during
-      * this ProcessFrameOverride.
+      * this HandleFrame.
       * @brief Returns true iff the key repeat event queue is full.
       */
     inline bool GetIsEventQueueFull () const
     {
         return m_key_event_queue.GetIsFull();
     }
-    /** ProcessFrameOverride generates the key repeat events and queues them
+    /** HandleFrame generates the key repeat events and queues them
       * so they can be later removed and put in the main EventQueue.  This
       * accessor is used when emptying the queue of key repeat events and
       * putting them into the main EventQueue.
@@ -81,12 +81,12 @@ protected:
     /** @brief Does time-based generation of key repeat events, based on
       *        the current state of the most recently pressed key.
       */
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
     /** Performs the necessary tracking for most recently pressed key
       * and timings and such.
       * @brief Processes key events.
       */
-    virtual bool ProcessEventOverride (Event const *e);
+    virtual bool HandleEvent (Event const *e);
 
 private:
 

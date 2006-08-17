@@ -59,7 +59,7 @@ bool EventHandler::ProcessEvent (Event const *const e)
     // set the event time delta
     m_event_dt = m_current_event_time - m_most_recent_event_time;
 
-    if (ProcessEventOverride(e))
+    if (HandleEvent(e))
     {
         // update the most recent event time only if this event was used
         m_most_recent_event_time = m_current_event_time;

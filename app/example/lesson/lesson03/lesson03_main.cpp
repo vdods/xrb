@@ -70,7 +70,7 @@ to the (as of August 2006) calculation-intensive Layout resizing code.
             <li><strong>Override Widget::Draw for customized drawing code --
                 fill the widget with a solid color representing its
                 temperature.</strong></li>
-            <li><strong>Override Widget::ProcessFrameOverride for customized
+            <li><strong>Override Widget::HandleFrame for customized
                 off-screen, per-frame processing -- update the current
                 temperature based on the ambient temperature and react to
                 mouse input.</strong></li>
@@ -80,12 +80,12 @@ to the (as of August 2006) calculation-intensive Layout resizing code.
             <li><strong>In the constructor, create the grid of HeatButton
                 widgets along with other control widgets, and make necessary
                 signal connections.</strong></li>
-            <li><strong>Override Widget::ProcessFrameOverride for customized
+            <li><strong>Override Widget::HandleFrame for customized
                 off-screen, per-frame processing -- calculate and set the
                 ambient temperature for each HeatButton.</strong></li>
             <li><strong>Define the static member
                 HeatSimulation::ms_distribution_function for use in
-                HeatSimulation::ProcessFrameOverride.</strong></li>
+                HeatSimulation::HandleFrame.</strong></li>
             </ul>
         </ul>
     <li>Main function</li>
@@ -160,7 +160,7 @@ extra are needed here.  The convention is to put additional parameters before
 the superclass' parameters (see Label, Button, ValueLabel, etc).
 
 For this widget, there are 2 Widget methods we will override to implement
-the custom behavior -- <tt>Draw</tt> and <tt>ProcessFrameOverride</tt>.  Widget
+the custom behavior -- <tt>Draw</tt> and <tt>HandleFrame</tt>.  Widget
 provides many many overridable virtual methods to facilitate behavior
 customization.
 @code */
@@ -191,9 +191,9 @@ public:
         m_accepts_mouseover = true;
     }
 
-    // Accessor for temperature -- used in HeatSimulation::ProcessFrameOverride.
+    // Accessor for temperature -- used in HeatSimulation::HandleFrame.
     inline Float GetTemperature () const { return m_temperature; }
-    // Modifier for ambient temperature -- also used in HeatSimulation::ProcessFrameOverride.
+    // Modifier for ambient temperature -- also used in HeatSimulation::HandleFrame.
     inline void SetAmbientTemperature (Float ambient_temperature)
     {
         m_ambient_temperature = ambient_temperature;
@@ -235,18 +235,18 @@ public:
 protected:
 
     /* @endcode
-    Here is the override of Widget::ProcessFrameOverride.  This method is what
+    Here is the override of Widget::HandleFrame.  This method is what
     performs all the off-screen, per-frame computation specific to the widget.
     For HeatButton specifically, it is to recalculate <tt>m_temperature</tt> using
     <tt>m_ambient_temperature</tt> and to modify <tt>m_temperature</tt> based on mouse
-    input.  The ProcessFrameOverride method originally comes from FrameHandler
+    input.  The HandleFrame method originally comes from FrameHandler
     (which is inherited by Widget) and there are a few notable provided methods:
     FrameHandler::GetFrameTime and FrameHandler::GetFrameDT which are only
-    available during the execution of ProcessFrameOverride (or in a function
+    available during the execution of HandleFrame (or in a function
     called by it), and FrameHandler::GetMostRecentFrameTime which is available
     at any time.
     @code */
-    virtual void ProcessFrameOverride ()
+    virtual void HandleFrame ()
     {
         ASSERT1(g_temperature_retention_rate > 0.0f)
         ASSERT1(g_temperature_retention_rate < 1.0f)
@@ -284,7 +284,7 @@ ever not inherit Widget publicly).
 The constructor will create and initialize all the subordinate GUI elements
 and make necessary signal connections.
 
-We will only need to override Widget::ProcessFrameOverride for the desired
+We will only need to override Widget::HandleFrame for the desired
 custom behavior, since a container widget is only rendered to screen by proxy
 through its children's Draw methods.
 @code */
@@ -430,18 +430,18 @@ public:
 protected:
 
     /* @endcode
-    Our customized override of Widget::ProcessFrameOverride is where the
+    Our customized override of Widget::HandleFrame is where the
     ambient temperature for each grid cell is computed.  We also call the
-    superclass' ProcessFrameOverride method and keep track of the framerate
+    superclass' HandleFrame method and keep track of the framerate
     in order to display the "Actual Framerate:" value.  The reason we have to
-    call Widget::ProcessFrameOverride is because that's where the child
+    call Widget::HandleFrame is because that's where the child
     widgets' ProcessFrameOverrides are recursively called.
     @code */
-    virtual void ProcessFrameOverride ()
+    virtual void HandleFrame ()
     {
-        // must call the superclass' ProcessFrameOverride -- this is where
+        // must call the superclass' HandleFrame -- this is where
         // all the child widgets' ProcessFrameOverrides are called.
-        Widget::ProcessFrameOverride();
+        Widget::HandleFrame();
 
         // Keep track of the framerate and update the "Actual Framerate" label.
         m_framerate_calculator.AddFrameTime(GetFrameTime());

@@ -90,8 +90,8 @@ protected:
         Engine2::PhysicsHandler *physics_handler,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    virtual bool ProcessEventOverride (Event const *e);
-    virtual void ProcessFrameOverride ();
+    virtual bool HandleEvent (Event const *e);
+    virtual void HandleFrame ();
 
     virtual void HandleAttachWorldView (Engine2::WorldView *engine2_world_view);
 

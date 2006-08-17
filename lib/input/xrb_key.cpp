@@ -90,7 +90,7 @@ Key::Key ()
     m_pressed = false;
 }
 
-bool Key::ProcessEventOverride (Event const *const e)
+bool Key::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -121,7 +121,7 @@ bool Key::ProcessEventOverride (Event const *const e)
             break;
 
         default:
-            ASSERT1(0 && "Events which are not of type KEYDOWN, KEYUP, MOUSEBUTTONDOWN, or MOUSEBUTTONUP should not be passed to Key::ProcessEventOverride()")
+            ASSERT1(0 && "Events which are not of type KEYDOWN, KEYUP, MOUSEBUTTONDOWN, or MOUSEBUTTONUP should not be passed to Key::HandleEvent()")
             break;
     }
 

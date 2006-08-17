@@ -145,9 +145,9 @@ void LineEdit::HandleChangedWidgetSkinWidgetBackground (
         UpdateRenderBackground();
 }
 
-void LineEdit::ProcessFrameOverride ()
+void LineEdit::HandleFrame ()
 {
-    Widget::ProcessFrameOverride();
+    Widget::HandleFrame();
 
     // blink the cursor if it's time
     if (GetIsFocused() && GetFrameTime() >= m_next_cursor_blink_time)

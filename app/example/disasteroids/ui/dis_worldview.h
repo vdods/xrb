@@ -66,8 +66,8 @@ public:
 
 protected:
 
-    virtual bool ProcessEventOverride (Event const *e);
-    virtual void ProcessFrameOverride ();
+    virtual bool HandleEvent (Event const *e);
+    virtual void HandleFrame ();
 
 private:
 

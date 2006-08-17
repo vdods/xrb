@@ -109,7 +109,7 @@ protected:
     /** @brief Processes all events in the event queue with time less than or
       *        equal to the current frame time.
       */
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
 
 private:
 

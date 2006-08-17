@@ -103,7 +103,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
     }
 }
 
-void EventQueue::ProcessFrameOverride ()
+void EventQueue::HandleFrame ()
 {
     // make sure the buffered events are added into the main queue
     EnqueueBufferedEvents();

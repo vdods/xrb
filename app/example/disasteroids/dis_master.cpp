@@ -195,7 +195,7 @@ void Master::Run ()
     ASSERT1(m_title_screen_widget == NULL)
 }
 
-bool Master::ProcessEventOverride (Event const *const e)
+bool Master::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
     ASSERT1(e->GetEventType() == Event::CUSTOM)

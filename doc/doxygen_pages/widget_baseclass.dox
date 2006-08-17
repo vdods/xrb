@@ -134,10 +134,10 @@ XuqRijBuh is driven by a game loop, in which events are generated, rendering
 is performed, and the important task of supplementary computation is done.
 Widgets have the ability to do once-per-frame computation, achieved by
 overriding the
-@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" method.
+@ref Xrb::Widget::HandleFrame "Widget::HandleFrame" method.
 This function is guaranteed to be called for every single widget, exactly once
 per game loop iteration.  If a subclass of Widget overrides this function, it
-must explicitly call its superclass' ProcessFrameOverride for proper traversal
+must explicitly call its superclass' HandleFrame for proper traversal
 of the widget hierarchy.
 
 @section section_widget_event_handling Event Handling
@@ -159,7 +159,7 @@ Widget provides a number of specialized overridable event-handling methods:
 @ref Xrb::Widget::ProcessMouseMotionEvent "Widget::ProcessMouseMotionEvent" ,
 @ref Xrb::Widget::ProcessJoyEvent "Widget::ProcessJoyEvent" , and
 @ref Xrb::Widget::ProcessCustomEvent "Widget::ProcessCustomEvent" .  The
-method @ref Xrb::Widget::ProcessEventOverride "Widget::ProcessEventOverride"
+method @ref Xrb::Widget::HandleEvent "Widget::HandleEvent"
 should not be overridden by widget subclasses, as critical event wrangling
 goes on in this method.
 
@@ -434,7 +434,7 @@ Relevant methods include
 
 @section section_widget_mouseover Mouseover And Mouseover Focus
 When mouse motion events are handled by
-@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" ,
+@ref Xrb::Widget::HandleFrame "Widget::HandleFrame" ,
 mouseover events are generated so that widgets know if the mouse cursor
 is currently over them, and they know when the mouse cursor moves onto
 or off of them.  This processing is done before any other event processing,
@@ -481,7 +481,7 @@ Other relevant methods include
 @section section_widget_enabled_state Enabled State
 Widgets have an "enabled" property which simply indicates that they currently
 accept events.  A disabled widget will block all events sent to it ( see
-@ref Xrb::Widget::ProcessFrameOverride "Widget::ProcessFrameOverride" ).
+@ref Xrb::Widget::HandleFrame "Widget::HandleFrame" ).
 There is a default change in appearance for disabled widgets: they are
 drawn with a higher transparency in the color mask.  This provides a uniform
 look for disabled widgets and their children.  Due to the hierarchical
@@ -653,7 +653,7 @@ top-level widget.  This is necessary to implement the "on top of everything"
 nature of modal widgets.  To this end, you will see the relevant code for
 handling events when modal widgets exist in
 @ref Xrb::Widget::Draw "Widget::Draw" and
-@ref Xrb::Widget::ProcessEventOverride "Widget::ProcessEventOverride" .
+@ref Xrb::Widget::HandleEvent "Widget::HandleEvent" .
 
 Because modal widgets have exclusive control when they are active, and
 it is unwise to delete an object from within its own code, there is a special

@@ -54,7 +54,7 @@ public:
 
 protected:
 
-    virtual void ProcessFrameOverride () = 0;
+    virtual void HandleFrame () = 0;
 
     inline void SetOwnerWorld (World *const owner_world)
     {

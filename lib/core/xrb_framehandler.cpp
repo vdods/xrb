@@ -32,7 +32,7 @@ void FrameHandler::ProcessFrame (Float const time)
     // start the frame
     StartFrame(time);
     // call the Float guts of the frame handler, supplied by the derived class
-    ProcessFrameOverride();
+    HandleFrame();
     // end the frame
     EndFrame();
 }

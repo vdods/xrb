@@ -53,16 +53,16 @@ public:
     inline void SetSkipTime (bool const skip_time) { m_skip_time = skip_time; }
 
     /** Sets up the frame variables and then calls the overridden
-      * ProcessFrameOverride which is what actuall does the processing.
+      * HandleFrame which is what actuall does the processing.
       * @brief Initiates once-per-game-loop-frame computation.
       */
     void ProcessFrame (Float const time);
 
 protected:
 
-    /** Only valid inside ProcessFrameOverride -- use GetMostRecentFrameTime
+    /** Only valid inside HandleFrame -- use GetMostRecentFrameTime
       * otherwise.  If this method is called from outside of
-      * ProcessFrameOverride, it will assert.
+      * HandleFrame, it will assert.
       * @brief Returns the current frame time.
       */
     inline Float GetFrameTime () const
@@ -70,8 +70,8 @@ protected:
         ASSERT1(m_lock > 0)
         return m_most_recent_time;
     }
-    /** Only valid inside ProcessFrameOverride.  If this method is called
-      * from outside of ProcessFrameOverride, it will assert.
+    /** Only valid inside HandleFrame.  If this method is called
+      * from outside of HandleFrame, it will assert.
       * @brief Returns the time delta from the most recently processed frame.
       */
     inline Float GetFrameDT () const
@@ -85,7 +85,7 @@ protected:
       * @brief Overridable method for the actual computation required
       *        by subclasses.
       */
-    virtual void ProcessFrameOverride () = 0;
+    virtual void HandleFrame () = 0;
 
 private:
 

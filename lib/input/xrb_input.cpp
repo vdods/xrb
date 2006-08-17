@@ -121,7 +121,7 @@ void Input::ResetPressed ()
     }
 }
 
-bool Input::ProcessEventOverride (Event const *const e)
+bool Input::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
 

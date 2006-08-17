@@ -72,11 +72,11 @@ protected:
     Screen ();
 
     // this calculates one frame, called by the game loop
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
     // processes an event, returning true if the event was captured,
     // otherwise it will pass the event to VirtualScreen::ProcessEvent()
     // and return that function's return value.
-    virtual bool ProcessEventOverride (Event const *e);
+    virtual bool HandleEvent (Event const *e);
 
 private:
 

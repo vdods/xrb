@@ -277,7 +277,7 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
     ASSERT0(false && "Invalid index (higher than the highest object layer index)")
 }
 
-bool Engine2::World::ProcessEventOverride (Event const *const e)
+bool Engine2::World::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
     switch (e->GetEventType())
@@ -319,7 +319,7 @@ bool Engine2::World::ProcessEventOverride (Event const *const e)
     return true;
 }
 
-void Engine2::World::ProcessFrameOverride ()
+void Engine2::World::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL)
     ASSERT1(m_physics_handler != NULL)

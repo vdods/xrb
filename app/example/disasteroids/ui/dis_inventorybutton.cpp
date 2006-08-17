@@ -165,7 +165,7 @@ void InventoryButton::SetStatus (Status const status)
             break;
 
         case S_EQUIPPED:
-            // the color mask is set in ProcessFrameOverride
+            // the color mask is set in HandleFrame
             m_target_size_parameter = 1.0f;
             break;
 
@@ -177,9 +177,9 @@ void InventoryButton::SetStatus (Status const status)
 //     SetCurrentSizeParameter(m_current_size_parameter);
 }
 
-void InventoryButton::ProcessFrameOverride ()
+void InventoryButton::HandleFrame ()
 {
-    Button::ProcessFrameOverride();
+    Button::HandleFrame();
 
     // if the item is equipped, cause the button to flash
     if (m_status == S_EQUIPPED)

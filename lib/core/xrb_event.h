@@ -25,13 +25,13 @@ class Screen;
   * such as a key stroke, mouse motion, etc.  The Event object itself
   * carries all the information about the event as well.  Events are processed
   * by subclasses of EventHandler, in their overridden
-  * @ref Xrb::EventHandler::ProcessEventOverride methods.
+  * @ref Xrb::EventHandler::HandleEvent methods.
   *
   * Events are generally created in the game loop, though they are also
   * produced elsewhere ( e.g. in @ref Xrb::Widget::PreprocessMouseEvent ).
   * The most important concept is that the event handler should never delete
   * the event itself.  This restriction is made so that the event pointer
-  * points to valid memory for the entire scope of all ProcessEventOverride
+  * points to valid memory for the entire scope of all HandleEvent
   * calls (specifically referring to the recursive event handling of the
   * widget hierarchy), only being deleted when execution gets back to the
   * scope at which the event was created (e.g. the game loop).
@@ -205,7 +205,7 @@ private:
 
 /** There is no built-in facility for sending this event to StateMachine --
   * a StateMachine isn't an EventHandler, so you must inherit EventHandler
-  * manually, and provide the necessary code in ProcessEventOverride().
+  * manually, and provide the necessary code in HandleEvent().
   * @brief Event for asynchronously sending input to state machines.
   */
 class EventStateMachineInput : public Event

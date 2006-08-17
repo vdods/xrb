@@ -1702,7 +1702,7 @@ void MapEditor2::WorldView::HandleAttachedWorld ()
     m_view_owned_world = DStaticCast<World *>(m_world);
 }
 
-void MapEditor2::WorldView::ProcessFrameOverride ()
+void MapEditor2::WorldView::HandleFrame ()
 {
     // don't do anything if this view is hidden
     if (GetParentWorldViewWidget()->GetIsHidden())

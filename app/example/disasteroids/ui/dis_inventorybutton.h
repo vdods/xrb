@@ -52,7 +52,7 @@ public:
     
 protected:
 
-    virtual void ProcessFrameOverride ();
+    virtual void HandleFrame ();
 
     virtual void HandleMouseoverOn ();
     virtual void HandleMouseoverOff ();

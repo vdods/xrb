@@ -125,9 +125,9 @@ void TitleScreenWidget::GoToOptions ()
     options_dialog->CenterOnWidget(options_dialog->GetParent());
 }
 
-void TitleScreenWidget::ProcessFrameOverride ()
+void TitleScreenWidget::HandleFrame ()
 {
-    Widget::ProcessFrameOverride();
+    Widget::HandleFrame();
 
     if (!m_state_machine.GetIsInitialized())
         m_state_machine.Initialize(

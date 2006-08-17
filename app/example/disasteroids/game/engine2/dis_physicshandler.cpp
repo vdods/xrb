@@ -187,7 +187,7 @@ void PhysicsHandler::RemoveEntity (
         dis_entity->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER)->RemoveObject(dis_entity->GetOwnerObject());
 }
 
-void PhysicsHandler::ProcessFrameOverride ()
+void PhysicsHandler::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL)
     ASSERT1(GetFrameDT() >= 0.0f)
