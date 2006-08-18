@@ -80,7 +80,7 @@ to the (as of August 2006) calculation-intensive Layout resizing code.
             <li><strong>In the constructor, create the grid of HeatButton
                 widgets along with other control widgets, and make necessary
                 signal connections.</strong></li>
-            <li><strong>Override Widget::HandleFrame for customized
+            <li><strong>Override ContainerWidget::HandleFrame for customized
                 off-screen, per-frame processing -- calculate and set the
                 ambient temperature for each HeatButton.</strong></li>
             <li><strong>Define the static member
@@ -286,7 +286,7 @@ ever not inherit Widget publicly).
 The constructor will create and initialize all the subordinate GUI elements
 and make necessary signal connections.
 
-We will only need to override Widget::HandleFrame for the desired
+We will only need to override ContainerWidget::HandleFrame for the desired
 custom behavior, since a container widget is only rendered to screen by proxy
 through its children's Draw methods.
 @code */
@@ -319,6 +319,16 @@ public:
     GreaterOrEqualValidator<Uint32> -- we will limit the desired framerate to
     be greater or equal to 1 (the parameter passed into the constructor for
     <tt>m_desired_framerate_validator</tt>).
+
+    Note that unlike the constructor for <tt>HeatButton</tt>, we do <i>not</i>
+    set <tt>m_accepts_mouseover</tt> to <tt>true</tt>.  This is because
+    ContainerWidgets by themselves should not accept mouseover -- only their
+    children should.  This is to prevent ContainerWidgets which contain only
+    <tt>m_accepts_mouseover = false</tt> from accepting mouseover instead of
+    perhaps some background widget (such as a game view widget) which may want
+    it.  For example, an in-game HUD Layout containing only Labels -- you would
+    not want it or its children accepting mouseover and blocking the game view
+    widget from accepting mouseover.
     @code */
     HeatSimulation (ContainerWidget *parent, std::string const &name = "HeatSimulation")
         :
@@ -432,18 +442,18 @@ public:
 protected:
 
     /* @endcode
-    Our customized override of Widget::HandleFrame is where the
+    Our customized override of ContainerWidget::HandleFrame is where the
     ambient temperature for each grid cell is computed.  We also call the
     superclass' HandleFrame method and keep track of the framerate
     in order to display the "Actual Framerate:" value.  The reason we have to
-    call Widget::HandleFrame is because that's where the child
+    call ContainerWidget::HandleFrame is because that's where the child
     widgets' ProcessFrameOverrides are recursively called.
     @code */
     virtual void HandleFrame ()
     {
         // must call the superclass' HandleFrame -- this is where
         // all the child widgets' ProcessFrameOverrides are called.
-        Widget::HandleFrame();
+        ContainerWidget::HandleFrame();
 
         // Keep track of the framerate and update the "Actual Framerate" label.
         m_framerate_calculator.AddFrameTime(GetFrameTime());

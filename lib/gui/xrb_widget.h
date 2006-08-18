@@ -866,7 +866,7 @@ private:
     virtual bool PreprocessFocusEvent (EventFocus const *e);
     /** @brief Performs some necessary event processing on mouseover events.
       */
-    bool PreprocessMouseoverEvent (EventMouseover const *e);
+    virtual bool PreprocessMouseoverEvent (EventMouseover const *e);
     /** @brief A convenience function for sending a mouse event to the
       *        child widget highest in m_child_vector which lies underneath
       *        the mouse event position.

@@ -29,6 +29,7 @@ ContainerWidget::ContainerWidget (ContainerWidget *const parent, std::string con
 {
 //     fprintf(stderr, "ContainerWidget::ContainerWidget(%s);\n", name.c_str());
 
+    m_accepts_focus = false;
     m_focus = NULL;
     m_focus_has_mouse_grab = false;
     m_mouseover_focus = NULL;
@@ -948,10 +949,6 @@ bool ContainerWidget::PreprocessMouseoverEvent (EventMouseover const *const e)
 {
     // hidden widgets can't be moused over
     if (GetIsHidden())
-        return false;
-
-    // widgets that don't accept mouseover-focus return false
-    if (!m_accepts_mouseover)
         return false;
 
     // loop through all the child widgets (from top to bottom)

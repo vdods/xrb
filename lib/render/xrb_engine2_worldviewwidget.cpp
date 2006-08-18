@@ -92,8 +92,6 @@ void Engine2::WorldViewWidget::HandleFrame ()
     // the WorldView's frame handler
     if (m_world_view != NULL)
         m_world_view->ProcessFrame(GetFrameTime());
-    // call the base class HandleFrame
-    Widget::HandleFrame();
 }
 
 void Engine2::WorldViewWidget::MoveBy (ScreenCoordVector2 const &delta)
