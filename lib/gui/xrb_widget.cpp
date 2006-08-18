@@ -534,11 +534,11 @@ bool Widget::Focus ()
     if (m_parent != NULL)
     {
         // find the first ancestor of this widget that is focused
-        ContainerWidget *first_focused_ancestor = m_parent;
-        while (first_focused_ancestor->m_parent != NULL &&
+        ContainerWidget *first_focused_ancestor = GetEffectiveParent();
+        while (first_focused_ancestor->GetEffectiveParent() != NULL &&
                !first_focused_ancestor->GetIsFocused())
         {
-            first_focused_ancestor = first_focused_ancestor->m_parent;
+            first_focused_ancestor = first_focused_ancestor->GetEffectiveParent();
         }
 
         // unfocus all widgets from the focused child of the first focused
@@ -575,12 +575,13 @@ void Widget::GrabMouse ()
     Focus();
 
     // set the mouse grab on this and up through the parent widgets
-    if (m_parent != NULL)
+    ContainerWidget *parent = GetEffectiveParent();
+    if (parent != NULL)
     {
         // recurse to the parent widget
-        m_parent->GrabMouse();
+        parent->GrabMouse();
         // set this widget to mouse grabbing
-        m_parent->m_focus_has_mouse_grab = true;
+        parent->m_focus_has_mouse_grab = true;
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOn();
     }
@@ -593,14 +594,15 @@ void Widget::UnGrabMouse ()
         return;
 
     // unset the mouse grab on this and up through the parent widgets
-    if (m_parent != NULL)
+    ContainerWidget *parent = GetEffectiveParent();
+    if (parent != NULL)
     {
         // set this widget to not mouse grabbing
-        m_parent->m_focus_has_mouse_grab = false;
+        parent->m_focus_has_mouse_grab = false;
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOff();
         // recurse to the parent widget
-        m_parent->UnGrabMouse();
+        parent->UnGrabMouse();
     }
 }
 
@@ -925,14 +927,16 @@ void Widget::FocusWidgetLine ()
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL)
 
+    ContainerWidget *parent = GetEffectiveParent();
+
     // make sure to focus parent widgets first, so that the focusing
     // happens from top down
-    if (m_parent != NULL && !m_parent->GetIsFocused())
-        m_parent->FocusWidgetLine();
+    if (parent != NULL && !parent->GetIsFocused())
+        parent->FocusWidgetLine();
 
     // make this widget focused
-    if (m_parent != NULL)
-        m_parent->m_focus = this;
+    if (parent != NULL)
+        parent->m_focus = this;
 
     // call the focus handler and emit the focus signals
     HandleFocus();
@@ -949,9 +953,10 @@ void Widget::UnfocusWidgetLine ()
     if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
         this_container_widget->m_focus->UnfocusWidgetLine();
 
+    ContainerWidget *parent = GetEffectiveParent();
     // set the focus state
-    if (m_parent != NULL)
-        m_parent->m_focus = 0;
+    if (parent != NULL)
+        parent->m_focus = NULL;
 
     // call the unfocus handler and emit the focus signals
     HandleUnfocus();

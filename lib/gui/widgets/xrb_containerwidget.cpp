@@ -936,15 +936,11 @@ bool ContainerWidget::PreprocessFocusEvent (EventFocus const *const e)
             if (!child->GetIsHidden() &&
                 child->GetScreenRect().GetIsPointInside(e->GetPosition()) &&
                 child->PreprocessFocusEvent(e))
-                break;
+                return true;
         }
 
         // if none of the widgets accepted focus, hand it to the superclass' method
-        if (it == it_end)
-            return Widget::PreprocessFocusEvent(e);
-        // otherwise return true (child->PreprocessFocusEvent() returned true above)
-        else
-            return true;
+        return Widget::PreprocessFocusEvent(e);
     }
 }
 
@@ -970,15 +966,11 @@ bool ContainerWidget::PreprocessMouseoverEvent (EventMouseover const *const e)
         ASSERT1(child != NULL)
         if (child->GetScreenRect().GetIsPointInside(e->GetPosition()))
             if (child->PreprocessMouseoverEvent(e))
-                break;
+                return true;
     }
 
     // if none of the widgets accepted mouseover-focus, hand it to the superclass' method
-    if (it == it_end)
-        return Widget::PreprocessMouseoverEvent(e);
-    // otherwise return true (child->PreprocessMouseoverEvent() returned true above)
-    else
-        return true;
+    return Widget::PreprocessMouseoverEvent(e);
 }
 
 bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
