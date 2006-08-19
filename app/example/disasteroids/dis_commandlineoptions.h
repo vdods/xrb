@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_options.h by Victor Dods, created 2006/07/08
+// dis_commandlineoptions.h by Victor Dods, created 2006/07/08
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_DIS_OPTIONS_H_)
-#define _DIS_OPTIONS_H_
+#if !defined(_DIS_COMMANDLINEOPTIONS_H_)
+#define _DIS_COMMANDLINEOPTIONS_H_
 
 #include "xrb_commandlineparser.h"
 
@@ -20,11 +20,11 @@ using namespace Xrb;
 namespace Dis
 {
 
-class Options : public CommandLineParser
+class CommandLineOptions : public CommandLineParser
 {
 public:
 
-    Options (std::string const &executable_filename);
+    CommandLineOptions (std::string const &executable_filename);
 
     inline void InitializeFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
     inline void InitializeResolution (ScreenCoordVector2 const &resolution) { m_resolution = resolution; }
@@ -52,9 +52,9 @@ private:
     std::string m_key_map_name;
 
     bool m_is_help_requested;
-}; // end of class Options
+}; // end of class CommandLineOptions
 
 } // end of namespace Dis
 
-#endif // !defined(_DIS_OPTIONS_H_)
+#endif // !defined(_DIS_COMMANDLINEOPTIONS_H_)
 

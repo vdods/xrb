@@ -10,13 +10,9 @@
 
 #include "xrb.h"
 
-#include <iostream>
-#include <stdio.h>
-
+#include "dis_commandlineoptions.h"
 #include "dis_config.h"
 #include "dis_master.h"
-#include "dis_options.h"
-#include "xrb_eventqueue.h"
 #include "xrb_screen.h"
 
 using namespace std;
@@ -46,7 +42,7 @@ int main (int argc, char **argv)
 
         // initialize the commandline options with the config values and then
         // parse the commandline into the options object.
-        Dis::Options options(argv[0]);
+        Dis::CommandLineOptions options(argv[0]);
         options.InitializeFullscreen(g_config.GetFullscreen());
         options.InitializeResolution(g_config.GetResolution());
         options.InitializeKeyMapName(g_config.GetKeyMapName());

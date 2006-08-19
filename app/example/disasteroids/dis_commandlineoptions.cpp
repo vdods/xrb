@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_options.cpp by Victor Dods, created 2006/07/08
+// dis_commandlineoptions.cpp by Victor Dods, created 2006/07/08
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_options.h"
+#include "dis_commandlineoptions.h"
 
 #include <sstream>
 
@@ -18,20 +18,20 @@ using namespace Xrb;
 namespace Dis
 {
 
-CommandLineOption const Options::ms_option[] =
+CommandLineOption const CommandLineOptions::ms_option[] =
 {
     CommandLineOption("Video options"),
     CommandLineOption(
         'f',
         "fullscreen",
-        &Options::SetFullscreen,
+        &CommandLineOptions::SetFullscreen,
         "    Indicates if fullscreen video will be used.  The argument must be\n"
         "    either 1 or 0, indicating fullscreen and non-fullscreen respectively.\n"
         "    The default value is 1.  See also option -r."),
     CommandLineOption(
         'r',
         "resolution",
-        &Options::SetResolution,
+        &CommandLineOptions::SetResolution,
         "    Set the screen resolution.  The argument must be of the form 123x456,\n"
         "    where the first value is width, and the second is height.  The default\n"
         "    value is 1024x768.  See also option -f."),
@@ -39,7 +39,7 @@ CommandLineOption const Options::ms_option[] =
     CommandLineOption(
         'k',
         "keymap",
-        &Options::SetKeyMapName,
+        &CommandLineOptions::SetKeyMapName,
         "    Sets the keyboard layout to use.  The windows version of SDL does not\n"
         "    support alternate keyboard layouts (this option is unnecessary in other\n"
         "    operating systems).  Valid values are: \"dvorak\" (quotes for clarity).\n"
@@ -48,15 +48,15 @@ CommandLineOption const Options::ms_option[] =
     CommandLineOption(
         'h',
         "help",
-        &Options::RequestHelp,
+        &CommandLineOptions::RequestHelp,
         "    Prints this help message.")
 };
-Uint32 const Options::ms_option_count = sizeof(Options::ms_option) / sizeof(CommandLineOption);
+Uint32 const CommandLineOptions::ms_option_count = sizeof(CommandLineOptions::ms_option) / sizeof(CommandLineOption);
 
-Options::Options (std::string const &executable_filename)
+CommandLineOptions::CommandLineOptions (std::string const &executable_filename)
     :
     CommandLineParser(
-        &Options::NonOptionArgumentHandler,
+        &CommandLineOptions::NonOptionArgumentHandler,
         ms_option,
         ms_option_count,
         executable_filename,
@@ -68,7 +68,7 @@ Options::Options (std::string const &executable_filename)
     m_is_help_requested(false)
 { }
 
-void Options::SetFullscreen (string const &arg)
+void CommandLineOptions::SetFullscreen (string const &arg)
 {
     if (arg.length() != 1 || arg[0] != '0' && arg[0] != '1')
         throw string("error: invalid argument to --fullscreen - \"") + arg + "\"";
@@ -76,7 +76,7 @@ void Options::SetFullscreen (string const &arg)
         m_fullscreen = arg[0] == '1';
 }
 
-void Options::SetResolution (string const &arg)
+void CommandLineOptions::SetResolution (string const &arg)
 {
     if (arg.empty())
         throw string("error: invalid argument to --resolution - \"") + arg + "\"";
@@ -102,7 +102,7 @@ void Options::SetResolution (string const &arg)
     m_resolution = resolution;
 }
 
-void Options::SetKeyMapName (std::string const &arg)
+void CommandLineOptions::SetKeyMapName (std::string const &arg)
 {
     if (arg.empty())
         throw string("error: invalid argument to --keymap - \"") + arg + "\"";
@@ -110,12 +110,12 @@ void Options::SetKeyMapName (std::string const &arg)
     m_key_map_name = arg;
 }
 
-void Options::NonOptionArgumentHandler (std::string const &arg)
+void CommandLineOptions::NonOptionArgumentHandler (std::string const &arg)
 {
     throw string("error: invalid non-option argument - \"") + arg + "\"";
 }
 
-void Options::RequestHelp ()
+void CommandLineOptions::RequestHelp ()
 {
     m_is_help_requested = true;
 }

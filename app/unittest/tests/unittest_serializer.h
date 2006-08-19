@@ -46,7 +46,7 @@ private:
         HIGHEST_IMPLEMENTATION = COMPRESSION
     };
 
-    inline static void IncrementImplementation (Implementation &implementation)
+    static inline void IncrementImplementation (Implementation &implementation)
     {
         implementation = static_cast<Implementation>(static_cast<int>(implementation) + 1);
     }

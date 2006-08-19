@@ -18,6 +18,23 @@ using namespace Xrb;
 namespace Dis
 {
 
+/*
+video:
+- screen resolution X/Y
+- fullscreen
+audio:
+- none yet
+input:
+- forward
+- left
+- back
+- right
+- primary weapon fire
+- secondary weapon fire
+- tractor mode
+- engine brake
+*/
+
 class OptionsPanel : public ContainerWidget
 {
 public:
