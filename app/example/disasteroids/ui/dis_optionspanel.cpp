@@ -23,13 +23,7 @@ namespace Dis
 OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     :
     ContainerWidget(parent, "OptionsPanel"),
-    m_greater_than_zero_validator(0, 1),
-    m_internal_sender_resolution_x_changed(this),
-    m_internal_sender_resolution_y_changed(this),
-    m_internal_sender_fullscreen_changed(this),
-    m_internal_receiver_set_resolution_x(&OptionsPanel::SetResolutionX, this),
-    m_internal_receiver_set_resolution_y(&OptionsPanel::SetResolutionY, this),
-    m_internal_receiver_set_fullscreen(&OptionsPanel::SetFullscreen, this)
+    m_greater_than_zero_validator(0, 1)
 {
     Label *l = NULL;
 
@@ -39,51 +33,44 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     Layout *left_side_layout = new Layout(VERTICAL, main_layout);
 
     {
-        new Label("Video Options", left_side_layout);
+        l = new Label("Video Options", left_side_layout);
+        l->SetIsHeightFixedToTextHeight(true);
         Layout *video_options_layout = new Layout(ROW, 2, left_side_layout);
 
         l = new Label("Horizontal Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        ValueEdit<ScreenCoord> *resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
-        resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
-        SignalHandler::Connect1(
-            &m_internal_sender_resolution_x_changed,
-            resolution_x_edit->ReceiverSetValue());
-        SignalHandler::Connect1(
-            resolution_x_edit->SenderValueUpdated(),
-            &m_internal_receiver_set_resolution_x);
+        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
+        m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
 
         l = new Label("Vertical Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        ValueEdit<ScreenCoord> *resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
-        resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
-        SignalHandler::Connect1(
-            &m_internal_sender_resolution_y_changed,
-            resolution_y_edit->ReceiverSetValue());
-        SignalHandler::Connect1(
-            resolution_y_edit->SenderValueUpdated(),
-            &m_internal_receiver_set_resolution_y);
+        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
+        m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
 
         l = new Label("Fullscreen:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        CheckBox *fullscreen_checkbox = new CheckBox(video_options_layout);
-        SignalHandler::Connect1(
-            &m_internal_sender_fullscreen_changed,
-            fullscreen_checkbox->ReceiverSetIsChecked());
-        SignalHandler::Connect1(
-            fullscreen_checkbox->SenderCheckedStateChanged(),
-            &m_internal_receiver_set_fullscreen);
-    }
+        m_fullscreen_checkbox = new CheckBox(video_options_layout);
 
+        l = new Label("Changes to the video options will take effect after restarting.", left_side_layout);
+        l->SetIsHeightFixedToTextHeight(true);
+        l->SetWordWrap(true);
+    }
+/*
     {
         new Label("Audio Options", left_side_layout);
     }
-
+*/
     Layout *right_side_layout = new Layout(VERTICAL, main_layout);
 
     {
-        new Label("Input Options", right_side_layout);
-//         Layout *input_options_layout = new Layout(ROW, 2, right_side_layout);
+        l = new Label("Input Options", right_side_layout);
+        l->SetIsHeightFixedToTextHeight(true);
+        Layout *input_options_layout = new Layout(ROW, 2, right_side_layout);
+
+        l = new Label("Move Forward:", input_options_layout);
+        l->SetAlignment(Dim::X, RIGHT);
+//         LineEdit *move_forward_edit = new LineEdit(30, input_options_layout);
+
     }
 }
 
@@ -91,32 +78,42 @@ OptionsPanel::~OptionsPanel ()
 {
 }
 
+ScreenCoordVector2 OptionsPanel::GetResolution () const
+{
+    ASSERT1(m_resolution_x_edit != NULL)
+    ASSERT1(m_resolution_y_edit != NULL)
+    return ScreenCoordVector2(m_resolution_x_edit->GetValue(), m_resolution_y_edit->GetValue());
+}
+
+bool OptionsPanel::GetFullscreen () const
+{
+    ASSERT1(m_fullscreen_checkbox != NULL)
+    return m_fullscreen_checkbox->GetIsChecked();
+}
+
+// std::string const &OptionsPanel::GetInputActionKeyName (Config::InputAction input_action) const
+// {
+// }
+
 void OptionsPanel::SetResolutionX (ScreenCoord const resolution_x)
 {
-    if (m_resolution[Dim::X] != resolution_x)
-    {
-        m_resolution[Dim::X] = resolution_x;
-        m_internal_sender_resolution_x_changed.Signal(m_resolution[Dim::X]);
-    }
+    ASSERT1(m_resolution_x_edit != NULL)
+    m_resolution_x_edit->SetValue(resolution_x);
 }
 
 void OptionsPanel::SetResolutionY (ScreenCoord const resolution_y)
 {
-    if (m_resolution[Dim::Y] != resolution_y)
-    {
-        m_resolution[Dim::Y] = resolution_y;
-        m_internal_sender_resolution_y_changed.Signal(m_resolution[Dim::Y]);
-    }
+    ASSERT1(m_resolution_y_edit != NULL)
+    m_resolution_y_edit->SetValue(resolution_y);
 }
 
 void OptionsPanel::SetFullscreen (bool const fullscreen)
 {
-    if (m_fullscreen != fullscreen)
-    {
-        m_fullscreen = fullscreen;
-        m_internal_sender_fullscreen_changed.Signal(m_fullscreen);
-    }
+    ASSERT1(m_fullscreen_checkbox != NULL)
+    m_fullscreen_checkbox->SetIsChecked(fullscreen);
 }
+
+// void OptionsPanel::SetInputActionKeyName (Config::InputAction input_action, std::string const &key_name);
 
 } // end of namespace Dis
 

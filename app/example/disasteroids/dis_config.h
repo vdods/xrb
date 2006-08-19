@@ -51,6 +51,12 @@ public:
     inline std::string const &GetKeyMapName () const { return m_key_map_name; }
     Key::Code GetKeyCode (InputAction input_action) const;
 
+    inline void SetFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
+    inline void SetResolutionX (ScreenCoord resolution_x) { m_resolution[Dim::X] = resolution_x; }
+    inline void SetResolutionY (ScreenCoord resolution_y) { m_resolution[Dim::Y] = resolution_y; }
+    inline void SetKeyMapName (std::string const &key_map_name) { m_key_map_name = key_map_name; }
+    void SetInputActionKeyName (InputAction input_action, std::string const &key_name);
+
     void ResetToDefaults ();
 
     void Read (std::string const &config_filename, bool reset_to_defaults_before_reading = true);

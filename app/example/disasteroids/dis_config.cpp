@@ -66,6 +66,12 @@ Key::Code Config::GetKeyCode (InputAction const input_action) const
     return m_input_action_key_code[input_action];
 }
 
+void Config::SetInputActionKeyName (InputAction const input_action, std::string const &key_name)
+{
+    ASSERT1(input_action < IA_COUNT)
+    m_input_action_key_name[input_action] = key_name;
+}
+
 void Config::ResetToDefaults ()
 {
     m_fullscreen = true;

@@ -10,6 +10,7 @@
 
 #include "dis_titlescreenwidget.h"
 
+#include "dis_config.h"
 #include "dis_highscoreswidget.h"
 #include "dis_optionspanel.h"
 #include "xrb_button.h"
@@ -23,6 +24,8 @@
 
 using namespace Xrb;
 
+extern Dis::Config g_config;
+
 namespace Dis
 {
 
@@ -35,7 +38,8 @@ TitleScreenWidget::TitleScreenWidget (
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
-    m_internal_receiver_go_to_options(&TitleScreenWidget::GoToOptions, this)
+    m_internal_receiver_activate_options_dialog(&TitleScreenWidget::ActivateOptionsDialog, this),
+    m_internal_receiver_options_dialog_returned(&TitleScreenWidget::OptionsDialogReturned, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
     main_layout->SetIsUsingZeroedFrameMargins(true);
@@ -95,7 +99,9 @@ TitleScreenWidget::TitleScreenWidget (
 
     SignalHandler::Connect0(
         m_options_button->SenderReleased(),
-        &m_internal_receiver_go_to_options);
+        &m_internal_receiver_activate_options_dialog);
+
+    m_options_panel = NULL;
 }
 
 TitleScreenWidget::~TitleScreenWidget ()
@@ -115,16 +121,6 @@ SignalSender0 const *TitleScreenWidget::SenderQuitGame ()
     return m_quit_button->SenderReleased();
 }
 
-void TitleScreenWidget::GoToOptions ()
-{
-    Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
-    // TODO: save this OptionsPanel for later retreival of the options
-/*    OptionsPanel *options_panel =*/ new OptionsPanel(options_dialog->GetDialogLayout());
-    // TODO: hook up the dialog result signal
-    options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
-    options_dialog->CenterOnWidget(options_dialog->GetParent());
-}
-
 void TitleScreenWidget::HandleFrame ()
 {
     ContainerWidget::HandleFrame();
@@ -141,6 +137,42 @@ bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput co
     ASSERT1(e != NULL)
     m_state_machine.RunCurrentState(e->GetInput());
     return true;
+}
+
+void TitleScreenWidget::ActivateOptionsDialog ()
+{
+    ASSERT1(m_options_panel == NULL)
+
+    // create the dialog and add a new OptionsPanel to it
+    Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
+    m_options_panel = new OptionsPanel(options_dialog->GetDialogLayout());
+    options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
+    options_dialog->CenterOnWidget(options_dialog->GetParent());
+
+    // initialize the OptionsPanel with the Config values
+    m_options_panel->SetFullscreen(g_config.GetFullscreen());
+    m_options_panel->SetResolutionX(g_config.GetResolution()[Dim::X]);
+    m_options_panel->SetResolutionY(g_config.GetResolution()[Dim::Y]);
+
+    // connect up the dialog OK button to OptionsDialogReturnedOK
+    SignalHandler::Connect1(
+        options_dialog->SenderDialogReturnedAValue(),
+        &m_internal_receiver_options_dialog_returned);
+}
+
+void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
+{
+    ASSERT1(m_options_panel != NULL)
+
+    // only save the OptionsPanel values back into the Config if OK button was hit
+    if (button_id == Dialog::ID_OK)
+    {
+        g_config.SetFullscreen(m_options_panel->GetFullscreen());
+        g_config.SetResolutionX(m_options_panel->GetResolution()[Dim::X]);
+        g_config.SetResolutionY(m_options_panel->GetResolution()[Dim::Y]);
+    }
+
+    m_options_panel = NULL;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

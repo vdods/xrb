@@ -14,6 +14,7 @@
 #include "xrb_containerwidget.h"
 
 #include "dis_highscores.h"
+#include "xrb_dialog.h"
 #include "xrb_statemachine.h"
 
 using namespace Xrb;
@@ -28,6 +29,7 @@ namespace Dis
 {
 
 class HighScoresWidget;
+class OptionsPanel;
 
 class TitleScreenWidget : public ContainerWidget
 {
@@ -42,8 +44,6 @@ public:
     SignalSender0 const *SenderStartGame ();
     SignalSender0 const *SenderQuitGame ();
 
-    void GoToOptions ();
-
     void SetHighScores (HighScores const &high_scores)
     {
         m_high_scores = high_scores;
@@ -56,6 +56,9 @@ protected:
     virtual bool ProcessStateMachineInputEvent (EventStateMachineInput const *e);
 
 private:
+
+    void ActivateOptionsDialog ();
+    void OptionsDialogReturned (Dialog::ButtonID button_id);
 
     // ///////////////////////////////////////////////////////////////////////
     // begin state machine stuff
@@ -85,12 +88,14 @@ private:
     Button *m_start_button;
     Button *m_options_button;
     Button *m_quit_button;
+    OptionsPanel *m_options_panel;
 
     bool const m_immediately_show_high_scores;
     bool const m_show_best_points_high_scores_first;
     HighScores m_high_scores;
 
-    SignalReceiver0 m_internal_receiver_go_to_options;
+    SignalReceiver0 m_internal_receiver_activate_options_dialog;
+    SignalReceiver1<Dialog::ButtonID> m_internal_receiver_options_dialog_returned;
 }; // end of class TitleScreenWidget
 
 } // end of namespace Dis
