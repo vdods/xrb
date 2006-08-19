@@ -523,6 +523,14 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\dis_commandlineoptions.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\dis_commandlineoptions.h"
+			>
+		</File>
+		<File
 			RelativePath=".\dis_config.cpp"
 			>
 		</File>
@@ -548,14 +556,6 @@
 		</File>
 		<File
 			RelativePath=".\dis_master.h"
-			>
-		</File>
-		<File
-			RelativePath=".\dis_options.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\dis_options.h"
 			>
 		</File>
 		<File

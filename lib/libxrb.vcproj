@@ -451,6 +451,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\widgets\xrb_containerwidget.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_containerwidget.h"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\widgets\xrb_dialog.cpp"
 					>
 				</File>
@@ -889,6 +897,14 @@
 			</File>
 			<File
 				RelativePath=".\util\xrb_commandlineparser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\util\xrb_emptystring.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\xrb_emptystring.h"
 				>
 			</File>
 			<File
