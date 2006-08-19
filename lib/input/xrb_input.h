@@ -35,32 +35,18 @@ public:
     Input ();
     ~Input ();
 
-    Key *GetKey (Key::Code code) const;
-    Key *GetKey (std::string const &name) const;
+    Key const *GetKey (Key::Code code) const;
+    Key const *GetKey (std::string const &name) const;
+    Key::Code GetKeyCode (std::string const &name) const;
     std::string const &GetKeyName (Key::Code code) const;
-    inline bool GetIsKeyPressed (Key::Code const code) const
-    {
-        return GetKey(code)->GetPressed();
-    }
-    inline bool GetIsKeyPressed (std::string const &name) const
-    {
-        return GetKey(name)->GetPressed();
-    }
-    bool GetIsEitherAltKeyPressed ();
-    bool GetIsEitherControlKeyPressed ();
-    bool GetIsEitherShiftKeyPressed ();
-    inline bool GetIsCapsLockOn () const
-    {
-        return m_is_caps_lock_on;
-    }
-    inline bool GetIsNumLockOn () const
-    {
-        return m_is_num_lock_on;
-    }
-    inline bool GetIsScrollLockOn () const
-    {
-        return m_is_scroll_lock_on;
-    }
+    bool GetIsKeyPressed (Key::Code const code) const;
+    bool GetIsKeyPressed (std::string const &name) const;
+    bool GetIsEitherAltKeyPressed () const;
+    bool GetIsEitherControlKeyPressed () const;
+    bool GetIsEitherShiftKeyPressed () const;
+    inline bool GetIsCapsLockOn () const { return m_is_caps_lock_on; }
+    inline bool GetIsNumLockOn () const { return m_is_num_lock_on; }
+    inline bool GetIsScrollLockOn () const { return m_is_scroll_lock_on; }
     SDLMod GetModifiers () const;
 
     // calls ResetPressed on all the keys
@@ -77,20 +63,24 @@ private:
     // mapping Key::Code to Key objects, so SDL_Event codes can access
     typedef std::map<Key::Code, Key *> KeyCodeMap;
     typedef KeyCodeMap::iterator KeyCodeMapIterator;
+    typedef KeyCodeMap::const_iterator KeyCodeMapConstIterator;
 
     // mapping std::string names to Key objects, so there is human-readable access
     typedef std::map<std::string, Key *> KeyNameMap;
     typedef KeyNameMap::iterator KeyNameMapIterator;
+    typedef KeyNameMap::const_iterator KeyNameMapConstIterator;
+
+    mutable
 
     /** Stores the command-bind for each, each entry mapped to an Key::Code.
       * @brief The keycode-to-key map.
       */
-    mutable KeyCodeMap m_keycode_map;
+    /*mutable */KeyCodeMap m_keycode_map;
     /** Maps everything from m_keycode_map to a human-readable std::string
       * which is the name of each key (i.e. "a" or "LALT" or "F11").
       * @brief the name-to-key map
       */
-    mutable KeyNameMap m_keyname_map;
+    /*mutable */KeyNameMap m_keyname_map;
     /** @brief Indicates if the caps lock is engaged.
       */
     bool m_is_caps_lock_on;

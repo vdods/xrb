@@ -30,21 +30,30 @@ class Config
 {
 public:
 
+    enum InputAction
+    {
+        IA_MOVE_FORWARD = 0,
+        IA_MOVE_LEFT,
+        IA_MOVE_BACK,
+        IA_MOVE_RIGHT,
+        IA_PRIMARY_FIRE,
+        IA_SECONDARY_FIRE,
+        IA_ENGINE_BRAKE,
+        IA_USE_TRACTOR,
+
+        IA_COUNT
+    }; // end of enum Config::InputAction
+
     Config ();
 
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
     inline std::string const &GetKeyMapName () const { return m_key_map_name; }
-    inline Key::Code GetKeyMoveRight () const { return m_key_move_right; }
-    inline Key::Code GetKeyMoveLeft () const { return m_key_move_left; }
-    inline Key::Code GetKeyMoveForward () const { return m_key_move_forward; }
-    inline Key::Code GetKeyMoveBack () const { return m_key_move_back; }
-    inline Key::Code GetKeyEngineBrake () const { return m_key_engine_brake; }
-    inline Key::Code GetKeyUseTractor () const { return m_key_use_tractor; }
+    Key::Code GetKeyCode (InputAction input_action) const;
 
     void ResetToDefaults ();
 
-    void Read (std::string const &config_filename);
+    void Read (std::string const &config_filename, bool reset_to_defaults_before_reading = true);
     void Write (std::string const &config_filename) const;
 
 private:
@@ -52,12 +61,10 @@ private:
     bool m_fullscreen;
     ScreenCoordVector2 m_resolution;
     std::string m_key_map_name;
-    Key::Code m_key_move_right;
-    Key::Code m_key_move_left;
-    Key::Code m_key_move_forward;
-    Key::Code m_key_move_back;
-    Key::Code m_key_engine_brake;
-    Key::Code m_key_use_tractor;
+    mutable std::string m_input_action_key_name[IA_COUNT];
+    mutable Key::Code m_input_action_key_code[IA_COUNT];
+    static std::string const ms_input_action_default_key_name[IA_COUNT];
+    static std::string const ms_input_action_path[IA_COUNT];
 }; // end of class Config
 
 } // end of namespace Dis

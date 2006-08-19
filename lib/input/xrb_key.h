@@ -262,26 +262,14 @@ public:
 
     static Key *Create (Key::Code key, std::string const &name);
 
-    static inline Key::Code GetCodeFromSDLKey (SDLKey const key)
-    {
-        return (Key::Code)key;
-    }
+    static inline Key::Code GetCodeFromSDLKey (SDLKey const key) { return (Key::Code)key; }
     static bool GetIsKeyRepeatable (Key::Code code);
     static bool GetIsKeyAscii (Key::Code code);
-    inline Key::Code GetCode () const
-    {
-        return m_code;
-    }
-    inline std::string const &GetName () const
-    {
-        return m_name;
-    }
-    inline bool GetPressed () const
-    {
-        return m_pressed;
-    }
+    inline Key::Code GetCode () const { return m_code; }
+    inline std::string const &GetName () const { return m_name; }
+    inline bool GetIsPressed () const { return m_is_pressed; }
 
-    // resets the m_pressed state to false
+    // resets the m_is_pressed state to false
     void ResetPressed ();
 
 protected:
@@ -299,7 +287,7 @@ private:
     // the name of the button (i.e. "A" or "LALT" or "F11")
     std::string m_name;
     // indicates if the button is currently pressed
-    bool m_pressed;
+    bool m_is_pressed;
 }; // end of class Key
 
 } // end of namespace Xrb

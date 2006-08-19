@@ -41,28 +41,28 @@ namespace
 
 Input &Singletons::Input ()
 {
-    ASSERT1(g_is_initialized)
+    ASSERT1(g_is_initialized && "can't use Singletons::Input() before Singletons::Initialize()")
     ASSERT1(g_input != NULL)
     return *g_input;
 }
 
 KeyMap const &Singletons::KeyMap ()
 {
-    ASSERT1(g_is_initialized)
+    ASSERT1(g_is_initialized && "can't use Singletons::KeyMap() before Singletons::Initialize()")
     ASSERT1(g_key_map != NULL)
     return *g_key_map;
 }
 
 ResourceLibrary &Singletons::ResourceLibrary ()
 {
-    ASSERT1(g_is_initialized)
+    ASSERT1(g_is_initialized && "can't use Singletons::ResourceLibrary() before Singletons::Initialize()")
     ASSERT1(g_resource_library != NULL)
     return *g_resource_library;
 }
 
 FT_LibraryRec_ *const Singletons::FTLibrary ()
 {
-    ASSERT1(g_is_initialized)
+    ASSERT1(g_is_initialized && "can't use Singletons::FTLibrary() before Singletons::Initialize()")
     ASSERT1(g_ft_library != NULL)
     return g_ft_library;
 }

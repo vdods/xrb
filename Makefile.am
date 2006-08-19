@@ -162,6 +162,7 @@ lib_libxrb_la_SOURCES = \
     lib/util/xrb_bitcachedfile.cpp \
     lib/util/xrb_characterfilter.cpp \
     lib/util/xrb_commandlineparser.cpp \
+    lib/util/xrb_emptystring.cpp \
     lib/util/xrb_frameratecalculator.cpp \
     lib/util/xrb_indentformatter.cpp \
     lib/util/xrb_tokenizer.cpp \
@@ -309,6 +310,7 @@ include_HEADERS = \
     lib/util/xrb_bitcachedfile.h \
     lib/util/xrb_characterfilter.h \
     lib/util/xrb_commandlineparser.h \
+    lib/util/xrb_emptystring.h \
     lib/util/xrb_frameratecalculator.h \
     lib/util/xrb_indentformatter.h \
     lib/util/xrb_reference.h \
@@ -370,10 +372,10 @@ disasteroids_CPPFLAGS = \
     -I$(top_srcdir)/app/example/disasteroids/ui
 
 disasteroids_SOURCES = \
+    app/example/disasteroids/dis_commandlineoptions.cpp \
     app/example/disasteroids/dis_config.cpp \
     app/example/disasteroids/dis_main.cpp \
     app/example/disasteroids/dis_master.cpp \
-    app/example/disasteroids/dis_options.cpp \
     app/example/disasteroids/dis_resourcecache.cpp \
     app/example/disasteroids/game/dis_highscores.cpp \
     app/example/disasteroids/game/dis_item.cpp \
@@ -480,11 +482,11 @@ lesson03_SOURCES = app/example/lesson/lesson03/lesson03_main.cpp
 ##############################################################################
 
 noinst_HEADERS = \
+    app/example/disasteroids/dis_commandlineoptions.h \
     app/example/disasteroids/dis_config.h \
     app/example/disasteroids/dis_enums.h \
     app/example/disasteroids/dis_events.h \
     app/example/disasteroids/dis_master.h \
-    app/example/disasteroids/dis_options.h \
     app/example/disasteroids/dis_resourcecache.h \
     app/example/disasteroids/game/dis_highscores.h \
     app/example/disasteroids/game/dis_item.h \

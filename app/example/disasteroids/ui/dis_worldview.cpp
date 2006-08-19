@@ -430,21 +430,21 @@ void WorldView::ProcessPlayerInput ()
     if (GetParentWorldViewWidget()->GetIsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveRight())   ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveLeft())    ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveForward()) ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyMoveBack())    ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyEngineBrake())  ?  UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singletons::Input().GetIsKeyPressed(Key::LMOUSE) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::Input().GetIsKeyPressed(Key::RMOUSE) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyUseTractor());
+            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

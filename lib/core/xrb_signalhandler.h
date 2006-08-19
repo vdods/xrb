@@ -67,7 +67,7 @@ public:
     /** @brief Signal/callback blocking state accessor.
       * @return True iff this SignalSender* is disallowing outgoing signals.
       */
-    inline bool GetIsBlocking () const 
+    inline bool GetIsBlocking () const
     {
         return m_is_blocking;
     }
@@ -96,7 +96,7 @@ public:
       * @brief Detaches all attached SignalReceiver*s.
       */
     virtual void DetachAll () const = 0;
-    
+
 protected:
 
     /** Adds this SignalSender* object to the SignalHandler @c owner.
@@ -108,7 +108,7 @@ protected:
       * @param owner The SignalHandler that this SignalSenderBase belongs to.
       */
     SignalSenderBase (SignalHandler *owner);
-    
+
 private:
 
     /// Indicates if this sender is blocking outgoing signals.
@@ -172,12 +172,12 @@ public:
         ASSERT1(m_iterator != m_iterator_end)
         ++m_iterator;
     }
-    
+
     inline void Detach (ReceiverAnalog const *receiver) const
     {
         DetachPrivate(receiver, true);
     }
-        
+
     virtual void DetachAll () const
     {
         for (AttachmentListIterator it = m_attachment_list.begin(),
@@ -199,14 +199,14 @@ protected:
     { }
 
 private:
-    
+
     inline void Attach (
         TransformationSet transformation_set,
         ReceiverAnalog const *receiver) const
     {
         AttachPrivate(transformation_set, receiver, true);
     }
-    
+
     template <typename SenderAnalog>
     void AttachPrivate (
         TransformationSet transformation_set,
@@ -235,7 +235,7 @@ private:
         if (reciprocate)
             receiver->AttachPrivate(this);
     }
-    
+
     template <typename SenderAnalog>
     void DetachPrivate (
         SignalReceiver<SenderAnalog> const *receiver,
@@ -345,7 +345,7 @@ public:
         {
             Attachment<SignalReceiver1<T>, TransformationSet1<T> > const &attachment =
                 this->GetIteratorAttachment();
-            
+
             ASSERT1(attachment.m_receiver != NULL)
             // only proceed with the callback if this sender's owner isn't
             // blocking senders and this sender isn't blocking itself.
@@ -426,7 +426,7 @@ public:
         {
             Attachment<SignalReceiver2<T, U>, TransformationSet2<T, U> > const &attachment =
                 this->GetIteratorAttachment();
-            
+
             ASSERT1(attachment.m_receiver != NULL)
             // only proceed with the callback if this sender's owner isn't
             // blocking senders and this sender isn't blocking itself.
@@ -491,7 +491,7 @@ public:
       * @return True iff this SignalReceiver* is disallowing its
       *         callback to be called.
       */
-    inline bool GetIsBlocking () const 
+    inline bool GetIsBlocking () const
     {
         return m_is_blocking;
     }
@@ -520,7 +520,7 @@ public:
       * @brief Detaches all attached SignalSender*s.
       */
     virtual void DetachAll () const = 0;
-    
+
 protected:
 
     /** Adds this SignalReceiver* object to the SignalHandler @c owner.
@@ -532,7 +532,7 @@ protected:
       * @param owner The SignalHandler that this SignalReceiverBase belongs to.
       */
     SignalReceiverBase (SignalHandler *owner);
-    
+
 private:
 
     /// Indicates if this receiver is blocking calls to its callback method.
@@ -556,7 +556,7 @@ public:
     {
         DetachPrivate(sender, true);
     }
-        
+
     virtual void DetachAll () const
     {
         for (AttachmentListIterator it = m_attachment_list.begin(),
@@ -579,7 +579,7 @@ protected:
     { }
 
 private:
-    
+
     template <typename ReceiverAnalog, typename TransformationSet>
     void AttachPrivate (
         SignalSender<ReceiverAnalog, TransformationSet> const *sender) const
@@ -600,7 +600,7 @@ private:
         m_attachment_list.push_back(real_sender);
     }
 
-    template <typename ReceiverAnalog, typename TransformationSet>    
+    template <typename ReceiverAnalog, typename TransformationSet>
     void DetachPrivate (
         SignalSender<ReceiverAnalog, TransformationSet> const *sender,
         bool reciprocate) const
@@ -788,7 +788,7 @@ public:
       * @param sender This object will be connected to @c receiver.
       * @param receiver This object will be connected to @c sender.
       */
-    inline static void Connect0 (
+    static inline void Connect0 (
         SignalSender0 const *sender,
         SignalReceiver0 const *receiver)
     {
@@ -796,14 +796,14 @@ public:
         ASSERT1(receiver != NULL)
         sender->Attach(TransformationSet0(), receiver);
     }
-    
+
     /** @brief The official way to connect a SignalSender1<T> to a
       *        SignalReceiver1<T>.
       * @param sender This object will be connected to @c receiver.
       * @param receiver This object will be connected to @c sender.
       */
     template <typename T>
-    inline static void Connect1 (
+    static inline void Connect1 (
         SignalSender1<T> const *sender,
         SignalReceiver1<T> const *receiver)
     {
@@ -821,7 +821,7 @@ public:
       * @param receiver This object will be connected to @c sender.
       */
     template <typename T>
-    inline static void Connect1 (
+    static inline void Connect1 (
         SignalSender1<T> const *sender,
         T (*transformation_function)(T),
         SignalReceiver1<T> const *receiver)
@@ -830,14 +830,14 @@ public:
         ASSERT1(receiver != NULL)
         sender->Attach(TransformationSet1<T>(transformation_function), receiver);
     }
-    
+
     /** @brief The official way to connect a SignalSender2<T, U> to a
       *        SignalReceiver2<T, U>.
       * @param sender This object will be connected to @c receiver.
       * @param receiver This object will be connected to @c sender.
       */
     template <typename T, typename U>
-    inline static void Connect2 (
+    static inline void Connect2 (
         SignalSender2<T, U> const *sender,
         SignalReceiver2<T, U> const *receiver)
     {
@@ -861,7 +861,7 @@ public:
       * @param receiver This object will be connected to @c sender.
       */
     template <typename T, typename U>
-    inline static void Connect2 (
+    static inline void Connect2 (
         SignalSender2<T, U> const *sender,
         T (*transformation_function_1)(T),
         U (*transformation_function_2)(U),

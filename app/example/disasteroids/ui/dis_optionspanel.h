@@ -13,6 +13,8 @@
 
 #include "xrb_containerwidget.h"
 
+#include "xrb_validator.h"
+
 using namespace Xrb;
 
 namespace Dis
@@ -42,8 +44,27 @@ public:
     OptionsPanel (ContainerWidget *parent);
     virtual ~OptionsPanel ();
 
+    inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
+    inline bool GetFullscreen () const { return m_fullscreen; }
+
+    void SetResolutionX (ScreenCoord resolution_x);
+    void SetResolutionY (ScreenCoord resolution_y);
+    void SetFullscreen (bool fullscreen);
+
 private:
 
+    ScreenCoordVector2 m_resolution;
+    bool m_fullscreen;
+
+    GreaterThanValidator<ScreenCoord> m_greater_than_zero_validator;
+
+    SignalSender1<ScreenCoord> m_internal_sender_resolution_x_changed;
+    SignalSender1<ScreenCoord> m_internal_sender_resolution_y_changed;
+    SignalSender1<bool> m_internal_sender_fullscreen_changed;
+
+    SignalReceiver1<ScreenCoord> m_internal_receiver_set_resolution_x;
+    SignalReceiver1<ScreenCoord> m_internal_receiver_set_resolution_y;
+    SignalReceiver1<bool> m_internal_receiver_set_fullscreen;
 }; // end of class OptionsPanel
 
 } // end of namespace Dis

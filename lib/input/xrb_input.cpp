@@ -10,6 +10,7 @@
 
 #include "xrb_input.h"
 
+#include "xrb_emptystring.h"
 #include "xrb_input_events.h"
 
 namespace Xrb
@@ -37,11 +38,12 @@ Input::~Input ()
         Delete(it->second);
     }
     m_keycode_map.clear();
+    m_keyname_map.clear();
 }
 
-Key *Input::GetKey (Key::Code const code) const
+Key const *Input::GetKey (Key::Code const code) const
 {
-    KeyCodeMapIterator it = m_keycode_map.find(code);
+    KeyCodeMapConstIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
         return NULL;
     else
@@ -51,9 +53,9 @@ Key *Input::GetKey (Key::Code const code) const
     }
 }
 
-Key *Input::GetKey (std::string const &name) const
+Key const *Input::GetKey (std::string const &name) const
 {
-    KeyNameMapIterator it = m_keyname_map.find(name);
+    KeyNameMapConstIterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
         return NULL;
     else
@@ -63,12 +65,23 @@ Key *Input::GetKey (std::string const &name) const
     }
 }
 
+Key::Code Input::GetKeyCode (std::string const &name) const
+{
+    KeyNameMapConstIterator it = m_keyname_map.find(name);
+    if (it == m_keyname_map.end())
+        return Key::INVALID;
+    else
+    {
+        ASSERT1(it->second != NULL)
+        return it->second->GetCode();
+    }
+}
+
 std::string const &Input::GetKeyName (Key::Code const code) const
 {
-    static std::string const empty_string;
-    KeyCodeMapIterator it = m_keycode_map.find(code);
+    KeyCodeMapConstIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
-        return empty_string;
+        return g_empty_string;
     else
     {
         ASSERT1(it->second != NULL)
@@ -76,22 +89,40 @@ std::string const &Input::GetKeyName (Key::Code const code) const
     }
 }
 
-bool Input::GetIsEitherAltKeyPressed ()
+bool Input::GetIsKeyPressed (Key::Code const code) const
 {
-    return GetKey(Key::LALT)->GetPressed() ||
-           GetKey(Key::RALT)->GetPressed();
+    Key const *key = GetKey(code);
+    if (key != NULL)
+        return key->GetIsPressed();
+    else
+        return false;
 }
 
-bool Input::GetIsEitherControlKeyPressed ()
+bool Input::GetIsKeyPressed (std::string const &name) const
 {
-    return GetKey(Key::LCTRL)->GetPressed() ||
-           GetKey(Key::RCTRL)->GetPressed();
+    Key const *key = GetKey(name);
+    if (key != NULL)
+        return key->GetIsPressed();
+    else
+        return false;
 }
 
-bool Input::GetIsEitherShiftKeyPressed ()
+bool Input::GetIsEitherAltKeyPressed () const
 {
-    return GetKey(Key::LSHIFT)->GetPressed() ||
-           GetKey(Key::RSHIFT)->GetPressed();
+    return GetKey(Key::LALT)->GetIsPressed() ||
+           GetKey(Key::RALT)->GetIsPressed();
+}
+
+bool Input::GetIsEitherControlKeyPressed () const
+{
+    return GetKey(Key::LCTRL)->GetIsPressed() ||
+           GetKey(Key::RCTRL)->GetIsPressed();
+}
+
+bool Input::GetIsEitherShiftKeyPressed () const
+{
+    return GetKey(Key::LSHIFT)->GetIsPressed() ||
+           GetKey(Key::RSHIFT)->GetIsPressed();
 }
 
 SDLMod Input::GetModifiers () const
@@ -111,7 +142,7 @@ SDLMod Input::GetModifiers () const
 
 void Input::ResetPressed ()
 {
-    for (KeyCodeMapIterator it = m_keycode_map.begin(),
+    for (KeyCodeMapConstIterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
          it != it_end;
          ++it)
@@ -156,7 +187,7 @@ bool Input::HandleEvent (Event const *const e)
             return false;
     }
 
-    KeyCodeMapIterator it = m_keycode_map.find(code);
+    KeyCodeMapConstIterator it = m_keycode_map.find(code);
     if (it != m_keycode_map.end())
     {
         ASSERT1(it->second != NULL)
@@ -392,7 +423,7 @@ void Input::InitKeyMaps ()
     m_keycode_map[Key::UNDO] = Key::Create(Key::UNDO, "UNDO");
 
     // now create the name-key binding
-    for (KeyCodeMapIterator it = m_keycode_map.begin(),
+    for (KeyCodeMapConstIterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
          it != it_end;
          ++it)
