@@ -842,7 +842,7 @@ void Widget::UpdateRenderBackground ()
 
 void Widget::ParentChildSizePropertiesUpdate (bool const defer_parent_update)
 {
-    if (!defer_parent_update && m_parent != NULL)
+    if (!defer_parent_update && m_parent != NULL/* && !GetIsHidden() && !GetIsModal()*/) // TODO: enable and test this
         m_parent->ChildSizePropertiesChanged(this);
 }
 

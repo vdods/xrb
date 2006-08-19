@@ -183,10 +183,16 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
     Widget *child = GetSingleChildWidget();
     if (child != NULL)
     {
-        // attempt to resize the child to the current size
-        child->Resize(size);
-        // put the child in its place!
-        PositionSingleChildWidget();
+        // only update size stuff if not blocked
+        if (GetChildResizeBlockerCount() == 0)
+        {
+            // attempt to resize the child to the current size
+            child->Resize(size);
+            // put the child in its place!
+            PositionSingleChildWidget();
+        }
+        else
+            IndicateChildResizeWasBlocked();
     }
 
     return GetSize();
@@ -202,12 +208,18 @@ void CellPaddingWidget::AttachChild (Widget *const child)
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void CellPaddingWidget::DetachChild (Widget *const child)
@@ -219,12 +231,18 @@ void CellPaddingWidget::DetachChild (Widget *const child)
     // size a child's size properties have potentially changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
@@ -233,12 +251,17 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
     // size a child's size properties have changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the call up to this widget's parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the call up to this widget's parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+        IndicateChildResizeWasBlocked();
 }
 
 void CellPaddingWidget::PositionSingleChildWidget ()

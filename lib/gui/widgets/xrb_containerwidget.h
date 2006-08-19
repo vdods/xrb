@@ -26,6 +26,35 @@ class ContainerWidget : public Widget
 {
 public:
 
+    // used to prevent resizing child widgets e.g. while creating
+    // the contents of a complicated Layout.
+    class ChildResizeBlocker
+    {
+    public:
+
+        ChildResizeBlocker (ContainerWidget *container_widget)
+        {
+            ASSERT1(container_widget != NULL)
+            m_container_widget = container_widget;
+            m_container_widget->IncrementResizeBlockerCount();
+        }
+        ~ChildResizeBlocker ()
+        {
+            ASSERT1(m_container_widget != NULL)
+            m_container_widget->DecrementResizeBlockerCount();
+            m_container_widget = NULL;
+        }
+
+    private:
+
+        void *operator new (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack") return NULL; }
+        void *operator new[] (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack") return NULL; }
+        void operator delete (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack") }
+        void operator delete[] (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack") }
+
+        ContainerWidget *m_container_widget;
+    }; // end of class ContainerWidget::ChildResizeBlocker
+
     // ///////////////////////////////////////////////////////////////////////
     // constructor and destructor
     // ///////////////////////////////////////////////////////////////////////
@@ -313,6 +342,11 @@ protected:
     virtual Bool2 GetContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 GetContentsMaxSize () const;
 
+    inline Uint32 GetChildResizeBlockerCount () const { return m_child_resize_blocker_count; }
+    inline bool GetChildResizeWasBlocked () const { return m_child_resize_was_blocked; }
+
+    inline void IndicateChildResizeWasBlocked () { m_child_resize_was_blocked = true; }
+
     /** Calls FrameHandler::ProcessFrame on all child widgets.
       *
       * This function is guaranteed to be called once per game loop frame,
@@ -419,6 +453,9 @@ private:
       */
     virtual bool SendMouseEventToChild (EventMouse const *e);
 
+    void IncrementResizeBlockerCount ();
+    void DecrementResizeBlockerCount ();
+
     /** NULL indicates that there is currently no focused widget.
       * @brief Child widget which currently has focus.
       */
@@ -442,8 +479,18 @@ private:
       * @brief Pointer to the 'main' widget.
       */
     Widget *m_main_widget;
+    /** Once this value goes from 1 to 0, this widget will attempt to resize
+      * the children to bring its layout up to date.
+      * @brief Number of ResizeBlockers currently blocking this widget from
+      *        resizing its child widgets.
+      */
+    Uint32 m_child_resize_blocker_count;
+    /// Indicates that a resize (this widget or a child) was blocked and Resize
+    /// should be called once the last ChildResizeBlocker is released.
+    bool m_child_resize_was_blocked;
 
     // kludgey (as are all friend statements), but this is the simplest way
+    friend class ChildResizeBlocker;
     friend class Widget;
 }; // end of class ContainerWidget
 

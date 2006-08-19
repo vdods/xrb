@@ -308,9 +308,9 @@ public:
     to a particular range.  The motivation to use these seemingly unwieldy
     objects is to avoid having to add in extra code to manually correct invalid
     values.  The goal is to have all GUI elements, signal connections, value
-    validation (and really everything in general) to be as easily
-    plug-and-forget as possible.  The Validator subclasses are templatized for
-    your convenience.
+    validation (and really everything in general) to be as plug-and-forget
+    (pronounced "hard to fuck up") as possible.  The Validator subclasses are
+    templatized for your convenience.
 
     In the game loop, the calculations to determine the value to pass to
     SDL_Delay involves dividing by <tt>g_desired_framerate</tt>, and therefore we must
@@ -369,8 +369,27 @@ public:
         Layout *main_layout = new Layout(VERTICAL, this);
         main_layout->SetIsUsingZeroedFrameMargins(true);
         main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
+        SetMainWidget(main_layout);
 
         Layout *grid_layout = new Layout(ROW, GRID_WIDTH, main_layout, "grid layout");
+        /* @endcode
+        This next variable declaration is a little mechanism to speed up
+        creation of complex (many-widget) GUI containers.  The
+        ContainerWidget::ChildResizeBlocker object blocks all children of
+        the ContainerWidget passed to its constructor from being resized or
+        otherwise changing size properties (min/max size, etc).  The idea is
+        that it's pointless to resize all the widgets in a ContainerWidget
+        before they're all added.  ContainerWidget::ChildResizeBlocker's
+        destructor is what unblocks the ContainerWidget and resizes the child
+        widgets appropriately.
+
+        ContainerWidget::ChildResizeBlocker must be created as a stack variable
+        (no new'ing one up on the heap) so that when it goes out of scope and
+        its destructor is called, the applicable ContainerWidget is unblocked.
+        The rationale is again to provide a plug-and-forget mechanism for ease
+        of use and to reduce the possibility of programmer error.
+        @code */
+        ContainerWidget::ChildResizeBlocker blocker(grid_layout);
         grid_layout->SetIsUsingZeroedFrameMargins(true);
         grid_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
@@ -418,10 +437,6 @@ public:
         SignalHandler::Connect1(
             temperature_retention_rate_edit->SenderValueUpdated(),
             &m_internal_receiver_set_temperature_retention_rate);
-
-        // Remember to set the main widget, or none of the nice GUI layout
-        // formatting will take effect.
-        SetMainWidget(main_layout);
 
         // Ensure DISTRIBUTION_FUNCTION_WIDTH and DISTRIBUTION_FUNCTION_HEIGHT
         // are odd, so that there is an exact center in the array.

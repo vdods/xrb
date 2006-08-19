@@ -313,9 +313,15 @@ ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
 {
     ContainerWidget::Resize(size);
 
-    DelegateWidthsToColumns();
-    DelegateHeightsToRows();
-    ResizeAndRepositionChildWidgets();
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        DelegateWidthsToColumns();
+        DelegateHeightsToRows();
+        ResizeAndRepositionChildWidgets();
+    }
+    else
+        IndicateChildResizeWasBlocked();
 
     return GetSize();
 }
@@ -329,12 +335,18 @@ void Layout::AttachChild (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizePropertyAllocations();
     DirtyRowSizePropertyAllocations();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::DetachChild (Widget *const child)
@@ -346,12 +358,18 @@ void Layout::DetachChild (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizePropertyAllocations();
     DirtyRowSizePropertyAllocations();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::MoveChildDown (Widget *const child)
@@ -364,12 +382,18 @@ void Layout::MoveChildDown (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::MoveChildUp (Widget *const child)
@@ -382,12 +406,18 @@ void Layout::MoveChildUp (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::MoveChildToBottom (Widget *const child)
@@ -400,12 +430,18 @@ void Layout::MoveChildToBottom (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::MoveChildToTop (Widget *const child)
@@ -418,12 +454,18 @@ void Layout::MoveChildToTop (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the changes up to the parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::HandleChangedWidgetSkinMargins (
@@ -440,8 +482,14 @@ void Layout::HandleChangedLayoutFrameMargins ()
     DirtyTotalSpacing();
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
-    CalculateMinAndMaxSizePropertiesFromContents();
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        CalculateMinAndMaxSizePropertiesFromContents();
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::HandleChangedLayoutSpacingMargins ()
@@ -449,8 +497,14 @@ void Layout::HandleChangedLayoutSpacingMargins ()
     DirtyTotalSpacing();
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
-    CalculateMinAndMaxSizePropertiesFromContents();
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        CalculateMinAndMaxSizePropertiesFromContents();
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::ChildSizePropertiesChanged (Widget *const child)
@@ -460,12 +514,18 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the call up to this widget's parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 void Layout::ChildStackPriorityChanged (
@@ -479,12 +539,18 @@ void Layout::ChildStackPriorityChanged (
     DirtyTotalSpacing();
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
-    // make sure that the min/max sizes are consistent with the contents
-    CalculateMinAndMaxSizePropertiesFromContents();
-    // attempt to resize the widget to the current size
-    Resize(GetSize());
-//     // propagate the call up to this widget's parent
-//     ParentChildSizePropertiesUpdate(false);
+    // only update size stuff if not blocked
+    if (GetChildResizeBlockerCount() == 0)
+    {
+        // make sure that the min/max sizes are consistent with the contents
+        CalculateMinAndMaxSizePropertiesFromContents();
+        // attempt to resize the widget to the current size
+        Resize(GetSize());
+//         // propagate the changes up to the parent
+//         ParentChildSizePropertiesUpdate(false);
+    }
+    else
+        IndicateChildResizeWasBlocked();
 }
 
 int Layout::SizePropertiesSortingFunction (

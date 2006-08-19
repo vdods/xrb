@@ -12,9 +12,7 @@
 
 #include "xrb_gui_events.h"
 #include "xrb_input_events.h"
-#include "xrb_key.h"
 #include "xrb_screen.h"
-#include "xrb_widgetbackground.h"
 
 namespace Xrb
 {
@@ -34,17 +32,15 @@ ContainerWidget::ContainerWidget (ContainerWidget *const parent, std::string con
     m_focus_has_mouse_grab = false;
     m_mouseover_focus = NULL;
     m_main_widget = NULL;
+    m_child_resize_blocker_count = 0;
+    m_child_resize_was_blocked = false;
 }
 
 ContainerWidget::~ContainerWidget ()
 {
 //     fprintf(stderr, "ContainerWidget::~ContainerWidget(%s);\n", m_name.c_str());
 
-//     // if this is a modal widget, make sure it gets taken off the
-//     // top-level widget's modal widget stack
-//     SetIsModal(false);
-//     // make sure that mouseover is off
-//     MouseoverOff();
+    ASSERT1(m_child_resize_blocker_count == 0 && "you must not delete a ChildResizeBlocker'ed ContainerWidget")
 
     // delete all child widgets
     DeleteAllChildren();
@@ -95,11 +91,14 @@ void ContainerWidget::SetSizePropertyEnabled (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        m_main_widget->SetSizePropertyEnabled(
-            property,
-            component,
-            value,
-            defer_parent_update);
+        if (GetChildResizeBlockerCount() == 0)
+            m_main_widget->SetSizePropertyEnabled(
+                property,
+                component,
+                value,
+                defer_parent_update);
+        else
+            IndicateChildResizeWasBlocked();
     }
     else
     {
@@ -142,10 +141,13 @@ void ContainerWidget::SetSizePropertyEnabled (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        m_main_widget->SetSizePropertyEnabled(
-            property,
-            value,
-            defer_parent_update);
+        if (GetChildResizeBlockerCount() == 0)
+            m_main_widget->SetSizePropertyEnabled(
+                property,
+                value,
+                defer_parent_update);
+        else
+            IndicateChildResizeWasBlocked();
     }
     else
     {
@@ -191,11 +193,14 @@ void ContainerWidget::SetSizeProperty (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        m_main_widget->SetSizeProperty(
-            property,
-            component,
-            value,
-            defer_parent_update);
+        if (GetChildResizeBlockerCount() == 0)
+            m_main_widget->SetSizeProperty(
+                property,
+                component,
+                value,
+                defer_parent_update);
+        else
+            IndicateChildResizeWasBlocked();
     }
     else
     {
@@ -241,10 +246,13 @@ void ContainerWidget::SetSizeProperty (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        m_main_widget->SetSizeProperty(
-            property,
-            value,
-            defer_parent_update);
+        if (GetChildResizeBlockerCount() == 0)
+            m_main_widget->SetSizeProperty(
+                property,
+                value,
+                defer_parent_update);
+        else
+            IndicateChildResizeWasBlocked();
     }
     else
     {
@@ -401,13 +409,20 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 {
     ScreenCoordVector2 adjusted_size(m_size_properties.GetAdjustedSize(size));
 
-    if (m_screen_rect.GetSize() != adjusted_size)
+    if (m_screen_rect.GetSize() != adjusted_size || GetChildResizeBlockerCount() == 0 && GetChildResizeWasBlocked())
     {
         m_screen_rect.SetSize(adjusted_size);
 
-        // if there is a main widget, resize it to match this one
-        if (m_main_widget != NULL)
-            m_main_widget->Resize(m_screen_rect.GetSize());
+        // only update size stuff if not blocked
+        if (GetChildResizeBlockerCount() == 0)
+        {
+            m_child_resize_was_blocked = false;
+            // if there is a main widget, resize it to match this one
+            if (m_main_widget != NULL)
+                m_main_widget->Resize(m_screen_rect.GetSize());
+        }
+        else
+            IndicateChildResizeWasBlocked();
 
         // range checking
         SizeRangeAdjustment(&m_screen_rect);
@@ -767,12 +782,18 @@ void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
 {
     ASSERT1(child != NULL)
     ASSERT1(child->GetParent() == this)
+
     if (child == m_main_widget)
     {
-        // adjust the size properties based on the contents (the main widget)
-        CalculateMinAndMaxSizePropertiesFromContents();
-        // attempt to resize the widget to the current size
-        Resize(m_main_widget->GetSize());
+        if (GetChildResizeBlockerCount() == 0)
+        {
+            // adjust the size properties based on the contents (the main widget)
+            CalculateMinAndMaxSizePropertiesFromContents();
+            // attempt to resize the widget to the current size
+            Resize(m_main_widget->GetSize());
+        }
+        else
+            IndicateChildResizeWasBlocked();
     }
 }
 
@@ -991,6 +1012,21 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
     }
     // if no widget accepted it, return false
     return false;
+}
+
+void ContainerWidget::IncrementResizeBlockerCount ()
+{
+    ASSERT1(m_child_resize_blocker_count < UINT32_UPPER_BOUND)
+    ++m_child_resize_blocker_count;
+}
+
+void ContainerWidget::DecrementResizeBlockerCount ()
+{
+    ASSERT1(m_child_resize_blocker_count > 0)
+    --m_child_resize_blocker_count;
+    if (m_child_resize_blocker_count == 0)
+        Resize(GetSize());
+    m_child_resize_was_blocked = false;
 }
 
 } // end of namespace Xrb
