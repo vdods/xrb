@@ -14,6 +14,7 @@
 #include "xrb_input_events.h"
 #include "xrb_label.h"
 #include "xrb_layout.h"
+#include "xrb_screen.h"
 
 namespace Xrb
 {
@@ -44,7 +45,11 @@ void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 void KeySelectorButton::HandleReleased ()
 {
     ASSERT1(m_key_selector_dialog == NULL)
-    m_key_selector_dialog = new KeySelectorDialog("Press new key/button for \"" + m_input_action_name + "\"", GetParent());
+    m_key_selector_dialog =
+        new KeySelectorDialog(
+            "Press new key/button for \"" + m_input_action_name + "\"",
+            GetTopLevelParent());
+    m_key_selector_dialog->CenterOnWidget(GetTopLevelParent());
     SignalHandler::Connect1(
         m_key_selector_dialog->SenderDialogReturned(),
         &m_internal_receiver_dialog_returned);
@@ -53,7 +58,8 @@ void KeySelectorButton::HandleReleased ()
 void KeySelectorButton::DialogReturned (Dialog::ButtonID const button_id)
 {
     ASSERT1(m_key_selector_dialog != NULL)
-    SetKeyCode(m_key_selector_dialog->GetKeyCode());
+    if (button_id == Dialog::ID_OK)
+        SetKeyCode(m_key_selector_dialog->GetKeyCode());
     m_key_selector_dialog = NULL;
 }
 
@@ -68,6 +74,13 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
     :
     Dialog(DT_CANCEL, parent, name)
 {
+    // this is so clicking on the CANCEL button eats the mouse event and
+    // ProcessMouseButtonEvent is not called
+    m_children_get_input_events_first = true;
+    // this is so if you want to set a mouse button/wheel as the key code,
+    // the mouse cursor doesn't have to be over this dialog to register it.
+    GrabMouse();
+
     m_key_code = Key::INVALID;
 
     Label *l = new Label(message, GetDialogLayout());
@@ -86,11 +99,15 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     ASSERT1(e != NULL)
+    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()))
+    m_key_code = e->GetButtonCode();
+    OKButtonActivated();
+    return true;
+}
 
-    // this call is necessary so the CANCEL button still works.
-    if (Dialog::ProcessMouseButtonEvent(e))
-        return true;
-
+bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+{
+    ASSERT1(e != NULL)
     ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()))
     m_key_code = e->GetButtonCode();
     OKButtonActivated();

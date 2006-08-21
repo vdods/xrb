@@ -17,12 +17,14 @@
 namespace Xrb
 {
 
+EventInput::~EventInput () { }
+
 EventKey::EventKey (
     SDL_KeyboardEvent const *const e,
     Float const time,
     EventType event_type)
     :
-    Event(time, event_type)
+    EventInput(time, event_type)
 {
     // this is not an ASSERT just because KeyRepeater needs be able to
     // construct an EventKeyDown with no SDL key event.
@@ -94,7 +96,7 @@ EventMouse::EventMouse (
     Float const time,
     EventType const event_type)
     :
-    Event(time, event_type)
+    EventInput(time, event_type)
 {
     ASSERT1(screen != NULL)
     m_position = screen->GetScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);

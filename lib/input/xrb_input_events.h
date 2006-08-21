@@ -18,13 +18,32 @@
 namespace Xrb
 {
 
+/// Base class for all input events (key, mouse and joy events).
+class EventInput : public Event
+{
+public:
+
+    /// Boring old constructor.
+    EventInput (Float time, EventType event_type)
+        :
+        Event(time, event_type)
+    { }
+    /// Pure virtual destructor so you may not instantiate this class.
+    virtual ~EventInput () = 0;
+
+    /** @brief Override of Event::GetIsInputEvent to indicate that this is,
+      *        indeed, an input event.
+      */
+    virtual bool GetIsInputEvent () const { return true; }
+};
+
 /** Provides accessors for checking if any of the key modifiers (shift,
   * control, alt) were active during this event.  Provides accessors
   * for retrieving the key code via enumerated @ref Xrb::Key::Code as
   * well as text-oriented ASCII codes.
   * @brief Baseclass for all keyboard events.
   */
-class EventKey : public Event
+class EventKey : public EventInput
 {
 public:
 
@@ -49,23 +68,23 @@ public:
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherAltKeyPressed () const 
-    { 
-        return (m_event.keysym.mod & KMOD_ALT) != 0; 
+    inline bool GetIsEitherAltKeyPressed () const
+    {
+        return (m_event.keysym.mod & KMOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherControlKeyPressed () const 
-    { 
-        return (m_event.keysym.mod & KMOD_CTRL) != 0; 
+    inline bool GetIsEitherControlKeyPressed () const
+    {
+        return (m_event.keysym.mod & KMOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or right shift keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherShiftKeyPressed () const 
-    { 
-        return (m_event.keysym.mod & KMOD_SHIFT) != 0; 
+    inline bool GetIsEitherShiftKeyPressed () const
+    {
+        return (m_event.keysym.mod & KMOD_SHIFT) != 0;
     }
     /** @brief Returns the ascii code of the key event, modified by capslock,
       *        numlock, and shift key modifiers.
@@ -188,7 +207,7 @@ public:
   * control, alt, capslock, numlock) were active during this event.
   * @brief Baseclass for all mouse events.
   */
-class EventMouse : public Event
+class EventMouse : public EventInput
 {
 public:
 
@@ -196,12 +215,12 @@ public:
       *        and mouse event position.
       */
     EventMouse (
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Uint16 const sdl_event_x,
-        Uint16 const sdl_event_y,
-        Float const time,
-        EventType const event_type);
+        SDLMod modifiers,
+        Screen const *screen,
+        Uint16 sdl_event_x,
+        Uint16 sdl_event_y,
+        Float time,
+        EventType event_type);
     /** @brief Pure virtual destructor.
       */
     virtual ~EventMouse () = 0;
@@ -216,36 +235,36 @@ public:
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherAltKeyPressed () const 
-    { 
-        return (m_modifiers & KMOD_ALT) != 0; 
+    inline bool GetIsEitherAltKeyPressed () const
+    {
+        return (m_modifiers & KMOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherControlKeyPressed () const 
-    { 
-        return (m_modifiers & KMOD_CTRL) != 0; 
+    inline bool GetIsEitherControlKeyPressed () const
+    {
+        return (m_modifiers & KMOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or shift alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherShiftKeyPressed () const 
-    { 
-        return (m_modifiers & KMOD_SHIFT) != 0; 
+    inline bool GetIsEitherShiftKeyPressed () const
+    {
+        return (m_modifiers & KMOD_SHIFT) != 0;
     }
     /** @brief Returns true iff capslock was active when this event
       *        was generated.
       */
-    inline bool GetIsCapsLockOn () const 
-    { 
-        return (m_modifiers & KMOD_CAPS) != 0; 
+    inline bool GetIsCapsLockOn () const
+    {
+        return (m_modifiers & KMOD_CAPS) != 0;
     }
     /** @brief Returns true iff numlock was active when this event
       *        was generated.
       */
-    inline bool GetIsNumLockOn () const 
-    { 
+    inline bool GetIsNumLockOn () const
+    {
         return (m_modifiers & KMOD_NUM) != 0;
     }
 
@@ -272,10 +291,10 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButton (
-        SDL_MouseButtonEvent const *const e,
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Float const time,
+        SDL_MouseButtonEvent const *e,
+        SDLMod modifiers,
+        Screen const *screen,
+        Float time,
         EventType event_type);
     /** @brief Pure virtual destructor.
       */
@@ -322,10 +341,10 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButtonDown (
-        SDL_MouseButtonEvent const *const e,
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Float const time)
+        SDL_MouseButtonEvent const *e,
+        SDLMod modifiers,
+        Screen const *screen,
+        Float time)
         :
         EventMouseButton(e, modifiers, screen, time, MOUSEBUTTONDOWN)
     { }
@@ -352,10 +371,10 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButtonUp (
-        SDL_MouseButtonEvent const *const e,
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Float const time)
+        SDL_MouseButtonEvent const *e,
+        SDLMod modifiers,
+        Screen const *screen,
+        Float time)
         :
         EventMouseButton(e, modifiers, screen, time, MOUSEBUTTONUP)
     { }
@@ -382,10 +401,10 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseWheel (
-        SDL_MouseButtonEvent const *const e,
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Float const time)
+        SDL_MouseButtonEvent const *e,
+        SDLMod modifiers,
+        Screen const *screen,
+        Float time)
         :
         EventMouseButton(e, modifiers, screen, time, MOUSEWHEEL)
     { }
@@ -410,10 +429,10 @@ public:
       * SDL_MouseMotionEvent, keyboard modifiers, and Screen.
       */
     EventMouseMotion (
-        SDL_MouseMotionEvent const *const e,
-        SDLMod const modifiers,
-        Screen const *const screen,
-        Float const time);
+        SDL_MouseMotionEvent const *e,
+        SDLMod modifiers,
+        Screen const *screen,
+        Float time);
     virtual ~EventMouseMotion () { }
 
     /** @brief Override of Event::GetIsMouseMotionEvent to indicate that
@@ -429,23 +448,23 @@ public:
     /** @brief Returns true iff the left mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsLeftMouseButtonPressed () const 
-    { 
-        return (m_event.state & SDL_BUTTON_LMASK) != 0; 
+    inline bool GetIsLeftMouseButtonPressed () const
+    {
+        return (m_event.state & SDL_BUTTON_LMASK) != 0;
     }
     /** @brief Returns true iff the middle mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsMiddleMouseButtonPressed () const 
-    { 
-        return (m_event.state & SDL_BUTTON_MMASK) != 0; 
+    inline bool GetIsMiddleMouseButtonPressed () const
+    {
+        return (m_event.state & SDL_BUTTON_MMASK) != 0;
     }
     /** @brief Returns true iff the right mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsRightMouseButtonPressed () const 
-    { 
-        return (m_event.state & SDL_BUTTON_RMASK) != 0; 
+    inline bool GetIsRightMouseButtonPressed () const
+    {
+        return (m_event.state & SDL_BUTTON_RMASK) != 0;
     }
 
 private:
@@ -459,16 +478,21 @@ private:
   * simply supply the SDL events via accessors.
   * @brief Abstract baseclass for all joystick events.
   */
-class EventJoy : public Event
+class EventJoy : public EventInput
 {
 public:
 
     /** @brief Constructs an EventJoy.
       */
-    EventJoy (Float const time, EventType const event_type) : Event(time, event_type) { }
+    EventJoy (Float time, EventType event_type) : EventInput(time, event_type) { }
     /** @brief Pure virtual destructor.
       */
     virtual ~EventJoy () = 0;
+
+    /** @brief Override of Event::GetIsJoyEvent to indicate that this is,
+      *        indeed, a joy event.
+      */
+    virtual bool GetIsJoyEvent () const { return true; }
 }; // end of class EventJoy
 
 /** See the man page for SDL_JoyAxisEvent for more details.

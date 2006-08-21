@@ -122,19 +122,19 @@ Screen *Widget::GetTopLevelParent ()
 bool Widget::GetIsFocused () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
-    return parent != NULL ? parent->m_focus == this : true;
+    return parent == NULL || parent->m_focus == this;
 }
 
 bool Widget::GetIsMouseover () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
-    return parent != NULL ? parent->m_mouseover_focus == this : true;
+    return parent == NULL || parent->m_mouseover_focus == this;
 }
 
 bool Widget::GetIsMouseGrabbed () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
-    return parent != NULL ? parent->m_focus == this && parent->m_focus_has_mouse_grab : true;
+    return parent == NULL || parent->m_focus == this && parent->m_focus_has_mouse_grab;
 }
 
 ScreenCoordVector2 Widget::GetAdjustedSize (ScreenCoordVector2 const &size) const
@@ -522,16 +522,12 @@ bool Widget::Focus ()
     // you may not focus a hidden widget.
     ASSERT1(!GetIsHidden())
 
-    // if this widget doesn't accept focus then return
-    if (!m_accepts_focus)
-        return false;
-
     // if already focused, then we don't need to do anything
     if (GetIsFocused())
         return true;
 
     // if this is not a top level widget, proceed normally
-    if (m_parent != NULL)
+    if (!GetIsTopLevelParent())
     {
         // find the first ancestor of this widget that is focused
         ContainerWidget *first_focused_ancestor = GetEffectiveParent();
@@ -550,7 +546,8 @@ bool Widget::Focus ()
 
     // focus all widgets from this widget on up to the first focused ancestor
     FocusWidgetLine();
-
+    // make sure the parent's m_focus actually points to this widget
+    ASSERT1(GetEffectiveParent() == NULL || GetEffectiveParent()->m_focus == this)
     // focus was taken, return true
     return true;
 }
@@ -567,21 +564,30 @@ void Widget::Unfocus ()
 
 void Widget::GrabMouse ()
 {
+    ContainerWidget *parent = GetEffectiveParent();
+
     // if this widget already has the mouse grabbed, don't do anything
     if (GetIsMouseGrabbed())
+    {
+        ASSERT1(parent == NULL || parent->m_focus_has_mouse_grab)
         return;
+    }
 
     // gotta make sure that this widget has focus
+    DEBUG1_CODE(bool was_focused =)
     Focus();
+    ASSERT1(was_focused)
+    ASSERT1(parent == NULL || parent->m_focus == this)
 
     // set the mouse grab on this and up through the parent widgets
-    ContainerWidget *parent = GetEffectiveParent();
     if (parent != NULL)
     {
         // recurse to the parent widget
         parent->GrabMouse();
         // set this widget to mouse grabbing
         parent->m_focus_has_mouse_grab = true;
+        // make sure the parent's m_focus actually points to this widget
+        ASSERT1(parent->m_focus == this)
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOn();
     }
@@ -589,12 +595,16 @@ void Widget::GrabMouse ()
 
 void Widget::UnGrabMouse ()
 {
+    ContainerWidget *parent = GetEffectiveParent();
+
     // if this widget already doesn't have the mouse grabbed, don't do anything
     if (!GetIsMouseGrabbed())
+    {
+        ASSERT1(parent == NULL || !parent->m_focus_has_mouse_grab)
         return;
+    }
 
     // unset the mouse grab on this and up through the parent widgets
-    ContainerWidget *parent = GetEffectiveParent();
     if (parent != NULL)
     {
         // set this widget to not mouse grabbing
@@ -690,82 +700,6 @@ bool Widget::HandleEvent (Event const *const e)
     if (!GetIsEnabled())
         return false;
 
-    if (e->GetIsMouseMotionEvent())
-        m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->GetPosition();
-
-    ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
-
-    // the top-level widget gets an opportunity to pre-process events
-    // (e.g. for generating mouseover events, or sending them to
-    // modal widgets)
-    if (GetIsTopLevelParent())
-    {
-        ASSERT1(this_container_widget != NULL)
-
-        if (e->GetIsMouseMotionEvent())
-        {
-            EventMouseMotion const *mouse_motion_event =
-                DStaticCast<EventMouseMotion const *>(e);
-
-            // generate a mouseover event from the mouse motion event
-            EventMouseover mouseover_event(
-                mouse_motion_event->GetPosition(),
-                mouse_motion_event->GetTime());
-            ProcessEvent(&mouseover_event);
-        }
-
-        if (e->GetEventType() == Event::MOUSEBUTTONDOWN)
-        {
-            // create a focus event
-            EventFocus focus_event(
-                DStaticCast<EventMouseButton const *>(e)->GetPosition(),
-                e->GetTime());
-            // send it to the event processor
-            ProcessEvent(&focus_event);
-        }
-
-        // get the top of the modal widget stack
-        Widget *modal_widget = NULL;
-        for (ContainerWidget::WidgetListReverseIterator
-                 it = this_container_widget->m_modal_widget_stack.rbegin(),
-                 it_end = this_container_widget->m_modal_widget_stack.rend();
-             it != it_end;
-             ++it)
-        {
-            Widget *widget = *it;
-            ASSERT1(widget != NULL)
-            if (!widget->GetIsHidden())
-            {
-                modal_widget = widget;
-                break;
-            }
-        }
-
-        // if there's a non-hidden modal widget, send the event to it.
-        if (modal_widget != NULL)
-        {
-            // check if this is a mouse event and it doesn't fall inside the
-            // top modal widget.  if so, throw the event out
-            if (e->GetIsMouseEvent())
-            {
-                EventMouse const *mouse_event =
-                    DStaticCast<EventMouse const *>(e);
-                if (!modal_widget->GetScreenRect().GetIsPointInside(
-                        mouse_event->GetPosition()))
-                {
-                    return false;
-                }
-            }
-
-            return modal_widget->ProcessEvent(e);
-        }
-    }
-    else
-    {
-        if (this_container_widget != NULL)
-            ASSERT1(this_container_widget->m_modal_widget_stack.empty())
-    }
-
     switch (e->GetEventType())
     {
         case Event::KEYDOWN:
@@ -775,11 +709,9 @@ bool Widget::HandleEvent (Event const *const e)
 
         case Event::MOUSEBUTTONDOWN:
         case Event::MOUSEBUTTONUP:
+        case Event::MOUSEWHEEL:
         case Event::MOUSEMOTION:
             return InternalProcessMouseEvent(DStaticCast<EventMouse const *>(e));
-
-        case Event::MOUSEWHEEL:
-            return InternalProcessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e));
 
         case Event::JOYAXIS:
         case Event::JOYBALL:
@@ -1070,15 +1002,7 @@ void Widget::MouseoverOffWidgetLine ()
 bool Widget::InternalProcessKeyEvent (EventKey const *const e)
 {
     ASSERT1(e != NULL)
-
-    ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
-
-    if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
-        return true;
-    else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
-        return this_container_widget->m_focus->ProcessEvent(e);
-    else
-        return false;
+    return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
 }
 
 bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
@@ -1095,7 +1019,14 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
                 return true;
             break;
 
+        case Event::MOUSEWHEEL:
+            if (ProcessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e)))
+                return true;
+            break;
+
         case Event::MOUSEMOTION:
+            // record the mouse position over this widget
+            m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->GetPosition();
             // let this widget have an opportunity at the event
             if (ProcessMouseMotionEvent(DStaticCast<EventMouseMotion const *>(e)))
                 return true;
@@ -1106,28 +1037,13 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
             break;
     }
 
-    // if it wasn't used by now, give it to the appropriate child widget.
-    return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
-}
-
-bool Widget::InternalProcessMouseWheelEvent (EventMouseWheel const *const e)
-{
-    // let this widget have a chance at the event
-    return ProcessMouseWheelEvent(e);
+    return false;
 }
 
 bool Widget::InternalProcessJoyEvent (EventJoy const *const e)
 {
     ASSERT1(e != NULL)
-
-    ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
-
-    if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
-        return true;
-    else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
-        return this_container_widget->m_focus->ProcessEvent(e);
-    else
-        return false;
+    return ProcessJoyEvent(DStaticCast<EventJoy const *>(e));
 }
 
 bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
@@ -1159,11 +1075,6 @@ bool Widget::InternalProcessMouseoverEvent (EventMouseover const *const e)
     // this is the bottom-most widget which should be mouseovered
     MouseoverOn();
     return true;
-}
-
-bool Widget::SendMouseEventToChild (EventMouse const *const e)
-{
-    return false;
 }
 
 } // end of namespace Xrb

@@ -96,7 +96,7 @@ public:
       * assert.
       * @brief Construct an event with the given timestamp and event_type.
       */
-    inline Event (Float const time, EventType const event_type)
+    inline Event (Float time, EventType event_type)
     {
         ASSERT1(time >= 0.0)
         m_time = time;
@@ -116,62 +116,47 @@ public:
     static std::string const &GetName (EventType event_type);
     /** @brief Returns the event's timestamp.
       */
-    inline Float GetTime () const
-    {
-        return m_time;
-    }
+    inline Float GetTime () const { return m_time; }
     /** @brief Returns the event's type.
       */
-    inline EventType GetEventType () const
-    {
-        return m_event_type;
-    }
+    inline EventType GetEventType () const { return m_event_type; }
     /** This is used by EventQueue.  You should not need to use it.
       * @brief Returns the ID of the event.
       */
-    inline Uint32 GetID () const
-    {
-        return m_id;
-    }
+    inline Uint32 GetID () const { return m_id; }
     /** Events that have been scheduled to be deleted should never be
       * processed.
       * @brief Returns true iff the EventQueue has scheduled this event to
       * be deleted.
       */
-    inline bool GetIsScheduledForDeletion () const
-    {
-        return m_is_scheduled_for_deletion;
-    }
+    inline bool GetIsScheduledForDeletion () const { return m_is_scheduled_for_deletion; }
+    /** Input event subclasses (key/mouse/joy) will override this function to
+      * return true.
+      * @brief Returns true iff this is an input event (key/mouse/joy).
+      */
+    virtual bool GetIsInputEvent () const { return false; }
     /** Keyboard event subclasses will override this function to return true.
       * @brief Returns true iff this is a keyboard event.
       */
-    virtual bool GetIsKeyEvent () const
-    {
-        return false;
-    }
+    virtual bool GetIsKeyEvent () const { return false; }
     /** Mouse event subclasses will override this function to return true.
       * @brief Returns true iff this is a mouse event.
       */
-    virtual bool GetIsMouseEvent () const
-    {
-        return false;
-    }
+    virtual bool GetIsMouseEvent () const { return false; }
     /** Mouse button event subclasses will override this function to return
       * true.
       * @brief Returns true iff this is a mouse button event.
       */
-    virtual bool GetIsMouseButtonEvent () const
-    {
-        return false;
-    }
+    virtual bool GetIsMouseButtonEvent () const { return false; }
     /** Mouse motion event subclasses will override this function to return
       * true.
       * @brief Returns true iff this is a mouse motion event.
       */
-    virtual bool GetIsMouseMotionEvent () const
-    {
-        return false;
-    }
+    virtual bool GetIsMouseMotionEvent () const { return false; }
+    /** Joy event subclasses will override this function to return true.
+      * @brief Returns true iff this is a joy event.
+      */
+    virtual bool GetIsJoyEvent () const { return false; }
 
     /** The SDL_Event itself will be saved in the Event, and the created
       * event will be populated with the necessary class-specific information.
@@ -188,15 +173,9 @@ public:
 
 private:
 
-    inline void SetID (Uint32 const id) const
-    {
-        m_id = id;
-    }
+    inline void SetID (Uint32 id) const { m_id = id; }
 
-    inline void ScheduleForDeletion () const
-    {
-        m_is_scheduled_for_deletion = true;
-    }
+    inline void ScheduleForDeletion () const { m_is_scheduled_for_deletion = true; }
 
     Float m_time;
     EventType m_event_type;
@@ -243,7 +222,7 @@ public:
 
     /** @brief Constructs an EventCustom.
       */
-    EventCustom (CustomType const custom_type, Float const time)
+    EventCustom (CustomType custom_type, Float time)
         :
         Event(time, CUSTOM),
         m_custom_type(custom_type)
@@ -268,7 +247,7 @@ class EventDummy : public Event
 {
 private:
 
-    EventDummy (Float const time) : Event(time, DUMMY) { }
+    EventDummy (Float time) : Event(time, DUMMY) { }
     ~EventDummy () { }
 
     friend class EventQueue;

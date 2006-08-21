@@ -51,8 +51,8 @@ std::string const &Event::GetName (EventType const event_type)
     };
     static Uint32 const s_event_type_name_count = sizeof(s_event_type_name) / sizeof(std::string);
 
-    ASSERT1(event_type < s_event_type_name_count)
-    return s_event_type_name[event_type];
+    ASSERT1(static_cast<Uint32>(event_type) < s_event_type_name_count)
+    return s_event_type_name[static_cast<Uint32>(event_type)];
 }
 
 Event *Event::CreateEventFromSDLEvent (

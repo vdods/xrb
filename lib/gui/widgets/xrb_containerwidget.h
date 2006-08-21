@@ -441,19 +441,15 @@ private:
     /** @brief Performs some necessary event processing on key
       *        events before the key event handler gets them.
       */
-//     virtual bool InternalProcessKeyEvent (EventKey const *e);
+    virtual bool InternalProcessKeyEvent (EventKey const *e);
     /** @brief Performs some necessary event processing on mouse
       *        events before the mouse event handler gets them.
       */
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
-    /** @brief Performs some necessary event processing on mouse wheel
-      *        events before the mouse wheel event handler gets them.
-      */
-    virtual bool InternalProcessMouseWheelEvent (EventMouseWheel const *e);
     /** @brief Performs some necessary event processing on joy
       *        events before the joy event handler gets them.
       */
-//     virtual bool InternalProcessJoyEvent (EventJoy const *e);
+    virtual bool InternalProcessJoyEvent (EventJoy const *e);
     /** @brief Performs some necessary event processing on focus events.
       */
     virtual bool InternalProcessFocusEvent (EventFocus const *e);
@@ -465,7 +461,7 @@ private:
       *        the mouse event position.
       * @return True iff the mouse event was accepted by any of the children.
       */
-    virtual bool SendMouseEventToChild (EventMouse const *e);
+    bool SendMouseEventToChild (EventMouse const *e);
 
     void IncrementResizeBlockerCount ();
     void DecrementResizeBlockerCount ();
@@ -505,6 +501,7 @@ private:
 
     // kludgey (as are all friend statements), but this is the simplest way
     friend class ChildResizeBlocker;
+    friend class Screen;
     friend class Widget;
 }; // end of class ContainerWidget
 

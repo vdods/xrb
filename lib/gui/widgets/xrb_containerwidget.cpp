@@ -468,13 +468,10 @@ void ContainerWidget::AttachChild (Widget *const child)
 void ContainerWidget::DetachChild (Widget *const child)
 {
     ASSERT1(child != NULL)
-    ASSERT1(child->GetParent() != NULL)
     ASSERT1(child->GetParent() == this)
     // check that its actually a child
     WidgetVectorIterator it = FindChildWidget(child);
-    ASSERT1((*it)->GetParent() == this &&
-            it != m_child_vector.end() &&
-            "not a child of this widget")
+    ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget")
     // make sure to unfocus it
     child->Unfocus();
     // make sure mouseover-off it
@@ -662,10 +659,7 @@ void ContainerWidget::HandleFrame ()
 
 bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
 {
-    ASSERT1(e->GetChildToDelete() != NULL)
-    ASSERT1(e->GetChildToDelete()->GetParent() == this)
-    // detach the child before deleting it
-    DetachChild(e->GetChildToDelete());
+    ASSERT1(e->GetChildToDelete() != this && "a widget must not delete itself")
     e->DeleteChildWidget();
     return true;
 }
@@ -884,43 +878,75 @@ ContainerWidget::WidgetVectorIterator ContainerWidget::FindChildWidget (Widget c
     }
     return it;
 }
-/*
+
 bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
 {
     ASSERT1(e != NULL)
 
-
+    if (m_children_get_input_events_first)
+    {
+        if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
+    }
+    else
+    {
+        if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
+            return true;
+        else if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return false;
+    }
 }
-*/
+
 bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
 {
     ASSERT1(e != NULL)
 
-    // if there is a widget in focus and it has mouse grab
-    // on, send the mouse event there
-    if (m_focus != NULL && m_focus_has_mouse_grab)
-        return m_focus->ProcessEvent(e);
-    // otherwise, hand it to the superclass' method
+    if (m_children_get_input_events_first)
+    {
+        if (m_focus != NULL && m_focus_has_mouse_grab)
+            return m_focus->ProcessEvent(e);
+        else if (SendMouseEventToChild(DStaticCast<EventMouse const *>(e)))
+            return true;
+        else
+            return Widget::InternalProcessMouseEvent(e);
+    }
     else
-        return Widget::InternalProcessMouseEvent(e);
+    {
+        if (m_focus != NULL && m_focus_has_mouse_grab)
+            return m_focus->ProcessEvent(e);
+        else if (Widget::InternalProcessMouseEvent(e))
+            return true;
+        else
+            return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
+    }
 }
 
-bool ContainerWidget::InternalProcessMouseWheelEvent (EventMouseWheel const *const e)
-{
-    // if there is a widget in focus and it has mouse grab
-    // on, send the mouse event there
-    if (m_focus != NULL && m_focus_has_mouse_grab)
-        return m_focus->ProcessEvent(e);
-    // otherwise, hand it to the superclass' method
-    else
-        return Widget::InternalProcessMouseWheelEvent(e);
-}
-/*
 bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
 {
     ASSERT1(e != NULL)
+
+    if (m_children_get_input_events_first)
+    {
+        if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
+            return true;
+    }
+    else
+    {
+        if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
+            return true;
+        else if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+    }
+
+    return false;
 }
-*/
+
 bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 {
     // hidden widgets can't be focused

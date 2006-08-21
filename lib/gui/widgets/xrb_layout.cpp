@@ -744,41 +744,40 @@ void Layout::ResizeAndRepositionChildWidgets ()
     positional_offset[Dim::Y] = GetPosition()[Dim::Y] + layout_frame_margins[Dim::Y];
     for (Uint32 row = m_row_count - 1; row < m_row_count; --row)
     {
+        if (m_row_is_hidden[row])
+            continue;
+
         positional_offset[Dim::X] = GetPosition()[Dim::X] + layout_frame_margins[Dim::X];
         for (Uint32 column = 0; column < m_column_count; ++column)
         {
+            if (m_column_is_hidden[column])
+                continue;
+
             Widget *child = GetGridChildByColumnAndRow(column, row);
 
-            // ship NULL children (they can be NULL when there are not
-            // enough child widgets to fill out the whole grid)
-            if (child == NULL)
-                continue;
+            // only resize and reposition non-NULL, unhidden and non-modal widgets
+            if (child != NULL &&
+                !child->GetIsHidden() &&
+                !child->GetIsModal())
+            {
+                ScreenCoordVector2 requested_size(
+                    m_column_width[column],
+                    m_row_height[row]);
 
-            // skip hidden children
-            if (child->GetIsHidden())
-                continue;
-
-            // skip modal children
-            if (child->GetIsModal())
-                continue;
-
-            ScreenCoordVector2 requested_size(
-                m_column_width[column],
-                m_row_height[row]);
-
-            // resize the child using the corresponding column and row sizes
-            child->Resize(requested_size);
-            // if the child didn't use up all the space, then calculate
-            // how much extra space there is so that the child can be
-            // properly centered on the grid slot.
-            ScreenCoordVector2 extra_space(requested_size - child->GetSize());
-//             // these asserts seem to fuck things up, so we'll see if they can be taken out
-//             ASSERT1(extra_space[Dim::X] >= 0)
-//             ASSERT1(extra_space[Dim::Y] >= 0)
-            // move the child to the tracked current positional offset,
-            // plus half of the extra space, so the child is centered
-            // on the grid slot.
-            child->MoveTo(positional_offset + extra_space / 2);
+                // resize the child using the corresponding column and row sizes
+                child->Resize(requested_size);
+                // if the child didn't use up all the space, then calculate
+                // how much extra space there is so that the child can be
+                // properly centered on the grid slot.
+                ScreenCoordVector2 extra_space(requested_size - child->GetSize());
+//                 // these asserts seem to fuck things up, so we'll see if they can be taken out
+//                 ASSERT1(extra_space[Dim::X] >= 0)
+//                 ASSERT1(extra_space[Dim::Y] >= 0)
+                // move the child to the tracked current positional offset,
+                // plus half of the extra space, so the child is centered
+                // on the grid slot.
+                child->MoveTo(positional_offset + extra_space / 2);
+            }
 
             positional_offset[Dim::X] += m_column_width[column] + layout_spacing_margins[Dim::X];
         }
@@ -834,12 +833,13 @@ void Layout::CalculateLineSizeProperties (
         SizeProperties::GetDefaultMaxSizeComponent();
 
     // loop through all the child widgets
-    Uint32 s = (line_direction == GetMajorDirection()) ?
-               GetMajorCount() :
-               GetMinorCount();
+    Uint32 line_widget_count =
+        (line_direction == GetMajorDirection()) ?
+        GetMajorCount() :
+        GetMinorCount();
     // the total number of hidden child widgets
     Uint32 hidden_child_widget_count = 0;
-    for (Uint32 i = 0; i < s; ++i)
+    for (Uint32 i = 0; i < line_widget_count; ++i)
     {
         Widget const *child;
         if (line_direction == GetMajorDirection())
@@ -848,23 +848,9 @@ void Layout::CalculateLineSizeProperties (
             child = GetGridChild(i, line_index);
 
         // skip empty grid slots
-        if (child == NULL)
-        {
-            // technically an empty slot counts as a hidden widget
-            // because it's just a spacer
-            ++hidden_child_widget_count;
-            continue;
-        }
-
-        // skip hidden children (but count them up)
-        if (child->GetIsHidden())
-        {
-            ++hidden_child_widget_count;
-            continue;
-        }
-
-        // skip modal children (but count them up)
-        if (child->GetIsModal())
+        if (child == NULL || // empty slot counts as hidden
+            child->GetIsHidden() || // actually hidden
+            child->GetIsModal()) // modal widgets are reparented to the Screen
         {
             ++hidden_child_widget_count;
             continue;
@@ -927,7 +913,7 @@ void Layout::CalculateLineSizeProperties (
         size_properties->GetAdjustedSize(size_properties->m_max_size);
 
     // if all child widgets are hidden, then this line is hidden
-    *line_is_hidden = (hidden_child_widget_count == s);
+    *line_is_hidden = (hidden_child_widget_count == line_widget_count);
 }
 
 void Layout::DirtyTotalSpacing ()
@@ -980,12 +966,18 @@ void Layout::UpdateTotalSpacing () const
     if (GetColumnCount() == 0 || GetColumnCount() == GetHiddenColumnCount())
         column_spaces = 0;
     else
-        column_spaces = GetColumnCount() - GetHiddenColumnCount() - 1;
+    {
+        ASSERT1(GetColumnCount() > GetHiddenColumnCount())
+        column_spaces = GetColumnCount() - 1 - GetHiddenColumnCount();
+    }
 
     if (GetRowCount() == 0 || GetRowCount() == GetHiddenRowCount())
         row_spaces = 0;
     else
-        row_spaces = Max(GetRowCount() - GetHiddenRowCount() - 1, static_cast<Uint32>(0));
+    {
+        ASSERT1(GetRowCount() > GetHiddenRowCount())
+        row_spaces = GetRowCount() - 1 - GetHiddenRowCount();
+    }
 
     m_total_spacing =
         CalculateLayoutFrameMargins() * 2 +

@@ -56,6 +56,7 @@ private:
 
         virtual bool ProcessKeyEvent (EventKey const *e);
         virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
+        virtual bool KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *e);
 
     private:
 

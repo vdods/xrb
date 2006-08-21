@@ -861,10 +861,6 @@ private:
       *        events before the mouse event handler gets them.
       */
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
-    /** @brief Performs some necessary event processing on mouse wheel
-      *        events before the mouse wheel event handler gets them.
-      */
-    virtual bool InternalProcessMouseWheelEvent (EventMouseWheel const *e);
     /** @brief Performs some necessary event processing on joy
       *        events before the joy event handler gets them.
       */
@@ -875,12 +871,6 @@ private:
     /** @brief Performs some necessary event processing on mouseover events.
       */
     virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
-    /** @brief A convenience function for sending a mouse event to the
-      *        child widget highest in m_child_vector which lies underneath
-      *        the mouse event position.
-      * @return True iff the mouse event was accepted by any of the children.
-      */
-    virtual bool SendMouseEventToChild (EventMouse const *e);
 
     /** Currently only used for debugging purposes
       * @brief Textual name of this instance of the widget.

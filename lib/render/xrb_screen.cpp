@@ -12,6 +12,7 @@
 
 #include "xrb_eventqueue.h"
 #include "xrb_gl.h"
+#include "xrb_gui_events.h"
 #include "xrb_input_events.h"
 
 namespace Xrb
@@ -198,6 +199,64 @@ bool Screen::HandleEvent (Event const *const e)
 
         default:
             break;
+    }
+
+    // special handling for the top-level parent widget (Screen)
+    {
+        if (e->GetIsMouseMotionEvent())
+        {
+            EventMouseMotion const *mouse_motion_event =
+                DStaticCast<EventMouseMotion const *>(e);
+
+            // generate a mouseover event from the mouse motion event
+            EventMouseover mouseover_event(
+                mouse_motion_event->GetPosition(),
+                mouse_motion_event->GetTime());
+            ProcessEvent(&mouseover_event);
+        }
+
+        if (e->GetEventType() == Event::MOUSEBUTTONDOWN)
+        {
+            // create a focus event
+            EventFocus focus_event(
+                DStaticCast<EventMouseButton const *>(e)->GetPosition(),
+                e->GetTime());
+            // send it to the event processor
+            ProcessEvent(&focus_event);
+        }
+
+        // get the top of the modal widget stack
+        Widget *modal_widget = NULL;
+        for (ContainerWidget::WidgetListReverseIterator
+                 it = m_modal_widget_stack.rbegin(),
+                 it_end = m_modal_widget_stack.rend();
+             it != it_end;
+             ++it)
+        {
+            Widget *widget = *it;
+            ASSERT1(widget != NULL)
+            if (!widget->GetIsHidden())
+            {
+                modal_widget = widget;
+                break;
+            }
+        }
+
+        // if there's a non-hidden modal widget, send the event to it.
+        if (modal_widget != NULL)
+        {
+            // if the modal widget has mouse grab, send all input events to it
+            if (modal_widget->GetIsMouseGrabbed() && e->GetIsInputEvent())
+                return modal_widget->ProcessEvent(e);
+
+            // check if this is a mouse event and it doesn't fall inside the
+            // top modal widget.  if so, throw the event out.
+            if (e->GetIsMouseEvent())
+                if (!modal_widget->GetScreenRect().GetIsPointInside(DStaticCast<EventMouse const *>(e)->GetPosition()))
+                    return false;
+
+            return modal_widget->ProcessEvent(e);
+        }
     }
 
     // pass the event to the ContainerWidget base class

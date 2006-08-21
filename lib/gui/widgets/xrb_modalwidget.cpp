@@ -27,16 +27,16 @@ ModalWidget::ModalWidget (
 
 void ModalWidget::Shutdown ()
 {
-    // make this widget not modal
-    SetIsModal(false);
-    // block future events
-    SetIsBlockingEvents(true);
-
     // tell the parent to delete this widget
     ASSERT1(GetParent() != NULL)
     EventDeleteChildWidget *delete_child_widget_event =
         new EventDeleteChildWidget(this, GetParent()->GetMostRecentFrameTime());
     GetParent()->EnqueueEvent(delete_child_widget_event);
+
+    // make this widget un-modal
+    SetIsModal(false);
+    // block future events
+    SetIsBlockingEvents(true);
 }
 
 void ModalWidget::UpdateRenderBackground ()
