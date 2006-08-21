@@ -100,7 +100,10 @@ lib_libxrb_la_SOURCES = \
     lib/engine2/xrb_engine2_visibilityquadtree.cpp \
     lib/engine2/xrb_engine2_world.cpp \
     \
+    lib/gui/xrb_containerwidget.cpp \
     lib/gui/xrb_gui_events.cpp \
+    lib/gui/xrb_screen.cpp \
+    lib/gui/xrb_screencoord.cpp \
     lib/gui/xrb_sizeproperties.cpp \
     lib/gui/xrb_widget.cpp \
     lib/gui/xrb_widgetbackground.cpp \
@@ -110,7 +113,6 @@ lib_libxrb_la_SOURCES = \
     lib/gui/widgets/xrb_button.cpp \
     lib/gui/widgets/xrb_cellpaddingwidget.cpp \
     lib/gui/widgets/xrb_checkbox.cpp \
-    lib/gui/widgets/xrb_containerwidget.cpp \
     lib/gui/widgets/xrb_dialog.cpp \
     lib/gui/widgets/xrb_filedialog.cpp \
     lib/gui/widgets/xrb_filepanel.cpp \
@@ -156,8 +158,6 @@ lib_libxrb_la_SOURCES = \
     lib/render/xrb_gl.cpp \
     lib/render/xrb_render.cpp \
     lib/render/xrb_rendercontext.cpp \
-    lib/render/xrb_screen.cpp \
-    lib/render/xrb_screencoord.cpp \
     \
     lib/util/xrb_bitcache.cpp \
     lib/util/xrb_bitcachedfile.cpp \
@@ -238,7 +238,10 @@ include_HEADERS = \
     lib/engine2/xrb_engine2_visibilityquadtree.h \
     lib/engine2/xrb_engine2_world.h \
     \
+    lib/gui/xrb_containerwidget.h \
     lib/gui/xrb_gui_events.h \
+    lib/gui/xrb_screen.h \
+    lib/gui/xrb_screencoord.h \
     lib/gui/xrb_sizeproperties.h \
     lib/gui/xrb_widget.h \
     lib/gui/xrb_widgetbackground.h \
@@ -248,7 +251,6 @@ include_HEADERS = \
     lib/gui/widgets/xrb_button.h \
     lib/gui/widgets/xrb_cellpaddingwidget.h \
     lib/gui/widgets/xrb_checkbox.h \
-    lib/gui/widgets/xrb_containerwidget.h \
     lib/gui/widgets/xrb_dialog.h \
     lib/gui/widgets/xrb_filedialog.h \
     lib/gui/widgets/xrb_filepanel.h \
@@ -305,8 +307,6 @@ include_HEADERS = \
     lib/render/xrb_gl.h \
     lib/render/xrb_render.h \
     lib/render/xrb_rendercontext.h \
-    lib/render/xrb_screen.h \
-    lib/render/xrb_screencoord.h \
     \
     lib/util/xrb_bitcache.h \
     lib/util/xrb_bitcachedfile.h \

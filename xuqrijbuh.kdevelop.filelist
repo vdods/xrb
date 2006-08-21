@@ -197,8 +197,6 @@ lib/gui/widgets/xrb_cellpaddingwidget.cpp
 lib/gui/widgets/xrb_cellpaddingwidget.h
 lib/gui/widgets/xrb_checkbox.cpp
 lib/gui/widgets/xrb_checkbox.h
-lib/gui/widgets/xrb_containerwidget.cpp
-lib/gui/widgets/xrb_containerwidget.h
 lib/gui/widgets/xrb_dialog.cpp
 lib/gui/widgets/xrb_dialog.h
 lib/gui/widgets/xrb_filedialog.cpp
@@ -233,8 +231,14 @@ lib/gui/widgets/xrb_valuelabel.h
 lib/gui/widgets/xrb_valuelabel.tcpp
 lib/gui/widgets/xrb_widgetstack.cpp
 lib/gui/widgets/xrb_widgetstack.h
+lib/gui/xrb_containerwidget.cpp
+lib/gui/xrb_containerwidget.h
 lib/gui/xrb_gui_events.cpp
 lib/gui/xrb_gui_events.h
+lib/gui/xrb_screen.cpp
+lib/gui/xrb_screen.h
+lib/gui/xrb_screencoord.cpp
+lib/gui/xrb_screencoord.h
 lib/gui/xrb_sizeproperties.cpp
 lib/gui/xrb_sizeproperties.h
 lib/gui/xrb_widget.cpp
@@ -336,10 +340,6 @@ lib/render/xrb_render.cpp
 lib/render/xrb_render.h
 lib/render/xrb_rendercontext.cpp
 lib/render/xrb_rendercontext.h
-lib/render/xrb_screen.cpp
-lib/render/xrb_screen.h
-lib/render/xrb_screencoord.cpp
-lib/render/xrb_screencoord.h
 lib/util/xrb_bitcache.cpp
 lib/util/xrb_bitcache.h
 lib/util/xrb_bitcachedcompression.cpp
