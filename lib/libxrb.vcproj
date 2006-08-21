@@ -376,11 +376,71 @@
 			Name="gui"
 			>
 			<File
+				RelativePath=".\gui\xrb_containerwidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\gui\xrb_containerwidget.h"
+				>
+			</File>
+			<File
 				RelativePath=".\gui\xrb_gui_events.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\gui\xrb_gui_events.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gui\xrb_screen.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\gui\xrb_screen.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gui\xrb_screencoord.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\gui\xrb_screencoord.h"
 				>
 			</File>
 			<File
@@ -451,14 +511,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_containerwidget.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\gui\widgets\xrb_containerwidget.h"
-					>
-				</File>
-				<File
 					RelativePath=".\gui\widgets\xrb_dialog.cpp"
 					>
 				</File>
@@ -480,6 +532,14 @@
 				</File>
 				<File
 					RelativePath=".\gui\widgets\xrb_filepanel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_keyselectorbutton.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\widgets\xrb_keyselectorbutton.h"
 					>
 				</File>
 				<File
@@ -841,22 +901,6 @@
 			</File>
 			<File
 				RelativePath=".\render\xrb_rendercontext.h"
-				>
-			</File>
-			<File
-				RelativePath=".\render\xrb_screen.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\render\xrb_screen.h"
-				>
-			</File>
-			<File
-				RelativePath=".\render\xrb_screencoord.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\render\xrb_screencoord.h"
 				>
 			</File>
 		</Filter>
