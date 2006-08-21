@@ -36,9 +36,9 @@ public:
     {
         INVALID = -1,
         UNKNOWN = SDLK_UNKNOWN,
-        LMOUSE = SDL_BUTTON_LEFT,
-        MMOUSE = SDL_BUTTON_MIDDLE,
-        RMOUSE = SDL_BUTTON_RIGHT,
+        LEFTMOUSE = SDL_BUTTON_LEFT,
+        MIDDLEMOUSE = SDL_BUTTON_MIDDLE,
+        RIGHTMOUSE = SDL_BUTTON_RIGHT,
         MOUSEWHEELUP = 4,   // for some reason this isn't in my version of SDL_mouse.h
         MOUSEWHEELDOWN = 5, // for some reason this isn't in my version of SDL_mouse.h
         BACKSPACE = SDLK_BACKSPACE,

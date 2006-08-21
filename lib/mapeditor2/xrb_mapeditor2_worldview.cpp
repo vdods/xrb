@@ -721,7 +721,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     }
 
     // draw the selection circle (if appropriate)
-    if (Singletons::Input().GetIsKeyPressed(Key::RMOUSE) &&
+    if (Singletons::Input().GetIsKeyPressed(Key::RIGHTMOUSE) &&
         Singletons::Input().GetIsEitherShiftKeyPressed() &&
         m_rmouse_dragged &&
         m_editing_sub_mode == ESM_DEFAULT)
@@ -742,7 +742,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 
     // draw the polygon-creating circle/polygon (if appropriate)
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
-        Singletons::Input().GetIsKeyPressed(Key::LMOUSE) &&
+        Singletons::Input().GetIsKeyPressed(Key::LEFTMOUSE) &&
         m_lmouse_dragged)
     {
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
@@ -1275,13 +1275,13 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     // properties if appropriate
     if (e->GetIsMouseButtonDownEvent())
     {
-        if (e->GetButtonCode() == Key::LMOUSE)
+        if (e->GetButtonCode() == Key::LEFTMOUSE)
         {
             m_lmouse_pressed_position = e->GetPosition().StaticCast<Float>();
             m_lmouse_pressed_world_position = transformed_mouse_event_position;
             m_lmouse_dragged = false;
         }
-        else if (e->GetButtonCode() == Key::RMOUSE)
+        else if (e->GetButtonCode() == Key::RIGHTMOUSE)
         {
             m_rmouse_pressed_position = e->GetPosition().StaticCast<Float>();
             m_rmouse_pressed_world_position = transformed_mouse_event_position;
@@ -1315,7 +1315,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     
     // right mouse button up event + shift key is held down
     if (e->GetIsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::RMOUSE &&
+        e->GetButtonCode() == Key::RIGHTMOUSE &&
         e->GetIsEitherShiftKeyPressed())
     {
         Object::SelectionOperation selection_operation = GetSelectionOperation(e);
@@ -1406,7 +1406,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
         m_lmouse_dragged &&
         e->GetIsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LMOUSE)
+        e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS)
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
@@ -1464,7 +1464,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     if (m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR &&
         e->GetIsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LMOUSE)
+        e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
 
@@ -1477,7 +1477,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     if (m_editing_sub_mode == ESM_ADD_SPRITE &&
         e->GetIsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LMOUSE)
+        e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
 
@@ -1503,7 +1503,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 &&
         e->GetIsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LMOUSE &&
+        e->GetButtonCode() == Key::LEFTMOUSE &&
         !e->GetIsEitherAltKeyPressed() &&
         !e->GetIsEitherControlKeyPressed())
     {
@@ -1518,7 +1518,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedPolygonCount() == 0 &&
         e->GetIsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LMOUSE &&
+        e->GetButtonCode() == Key::LEFTMOUSE &&
         !e->GetIsEitherAltKeyPressed() &&
         !e->GetIsEitherControlKeyPressed())
     {
@@ -1534,7 +1534,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedVertexCount() == 0 &&
         e->GetIsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LMOUSE &&
+        e->GetButtonCode() == Key::LEFTMOUSE &&
         !e->GetIsEitherAltKeyPressed() &&
         !e->GetIsEitherControlKeyPressed())
     {

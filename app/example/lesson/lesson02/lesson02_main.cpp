@@ -459,5 +459,5 @@ int main (int argc, char **argv)
         the newly added signal connection.</li>
     </ul>
 
-Thus concludes the third lesson.  Three down, countless more to go.
+Thus concludes lesson02.  Three down, countless more to go.
 */

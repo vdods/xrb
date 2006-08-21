@@ -65,6 +65,16 @@ Key const *Input::GetKey (std::string const &name) const
     }
 }
 
+bool Input::GetIsValidKeyCode (Key::Code const code) const
+{
+    return m_keycode_map.find(code) != m_keycode_map.end();
+}
+
+bool Input::GetIsValidKeyName (std::string const &name) const
+{
+    return m_keyname_map.find(name) != m_keyname_map.end();
+}
+
 Key::Code Input::GetKeyCode (std::string const &name) const
 {
     KeyNameMapConstIterator it = m_keyname_map.find(name);
@@ -200,10 +210,11 @@ bool Input::HandleEvent (Event const *const e)
 
 void Input::InitKeyMaps ()
 {
+    // NOTE: Key::INVALID is not and should not be mapped.
     m_keycode_map[Key::UNKNOWN] = Key::Create(Key::UNKNOWN, "UNKNOWN");
-    m_keycode_map[Key::LMOUSE] = Key::Create(Key::LMOUSE, "LMOUSE");
-    m_keycode_map[Key::MMOUSE] = Key::Create(Key::MMOUSE, "MMOUSE");
-    m_keycode_map[Key::RMOUSE] = Key::Create(Key::RMOUSE, "RMOUSE");
+    m_keycode_map[Key::LEFTMOUSE] = Key::Create(Key::LEFTMOUSE, "LEFTMOUSE");
+    m_keycode_map[Key::MIDDLEMOUSE] = Key::Create(Key::MIDDLEMOUSE, "MIDDLEMOUSE");
+    m_keycode_map[Key::RIGHTMOUSE] = Key::Create(Key::RIGHTMOUSE, "RIGHTMOUSE");
     m_keycode_map[Key::MOUSEWHEELUP] = Key::Create(Key::MOUSEWHEELUP, "MOUSEWHEELUP");
     m_keycode_map[Key::MOUSEWHEELDOWN] = Key::Create(Key::MOUSEWHEELDOWN, "MOUSEWHEELDOWN");
     m_keycode_map[Key::BACKSPACE] = Key::Create(Key::BACKSPACE, "BACKSPACE");

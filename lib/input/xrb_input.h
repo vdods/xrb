@@ -37,6 +37,8 @@ public:
 
     Key const *GetKey (Key::Code code) const;
     Key const *GetKey (std::string const &name) const;
+    bool GetIsValidKeyCode (Key::Code code) const;
+    bool GetIsValidKeyName (std::string const &name) const;
     Key::Code GetKeyCode (std::string const &name) const;
     std::string const &GetKeyName (Key::Code code) const;
     bool GetIsKeyPressed (Key::Code const code) const;

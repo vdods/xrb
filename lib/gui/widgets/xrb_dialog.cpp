@@ -24,7 +24,7 @@ Dialog::Dialog (
     std::string const &name)
     :
     ModalWidget(parent, name),
-    m_sender_dialog_returned_a_value(this),
+    m_sender_dialog_returned(this),
     m_sender_dialog_returned_ok(this),
     m_sender_dialog_returned_cancel(this),
     m_internal_receiver_ok_button_activated(&Dialog::OKButtonActivated, this),
@@ -54,7 +54,7 @@ Dialog::Dialog (
         m_ok_button = new Button("OK", m_button_layout, "OK button");
         m_ok_button->SetIsHeightFixedToTextHeight(true);
         ++added_button_count;
-    
+
         SignalHandler::Connect0(
             m_ok_button->SenderReleased(),
             &m_internal_receiver_ok_button_activated);
@@ -65,7 +65,7 @@ Dialog::Dialog (
         m_cancel_button = new Button("Cancel", m_button_layout, "Cancel button");
         m_cancel_button->SetIsHeightFixedToTextHeight(true);
         ++added_button_count;
-        
+
         SignalHandler::Connect0(
             m_cancel_button->SenderReleased(),
             &m_internal_receiver_cancel_button_activated);
@@ -121,17 +121,15 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
 
 void Dialog::OKButtonActivated ()
 {
-    ASSERT1(GetHasOKButton())
     Shutdown();
-    m_sender_dialog_returned_a_value.Signal(ID_OK);
+    m_sender_dialog_returned.Signal(ID_OK);
     m_sender_dialog_returned_ok.Signal();
 }
 
 void Dialog::CancelButtonActivated ()
 {
-    ASSERT1(GetHasCancelButton())
     Shutdown();
-    m_sender_dialog_returned_a_value.Signal(ID_CANCEL);
+    m_sender_dialog_returned.Signal(ID_CANCEL);
     m_sender_dialog_returned_cancel.Signal();
 }
 

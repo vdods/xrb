@@ -690,13 +690,8 @@ bool Widget::HandleEvent (Event const *const e)
     if (!GetIsEnabled())
         return false;
 
-    // mouse-position-related preprocessing
-    if (e->GetEventType() == Event::MOUSEOVER)
-    {
-        EventMouseover const *mouseover_event =
-            DStaticCast<EventMouseover const *>(e);
-        m_last_mouse_position = mouseover_event->GetPosition();
-    }
+    if (e->GetIsMouseMotionEvent())
+        m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->GetPosition();
 
     ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
 
@@ -717,6 +712,16 @@ bool Widget::HandleEvent (Event const *const e)
                 mouse_motion_event->GetPosition(),
                 mouse_motion_event->GetTime());
             ProcessEvent(&mouseover_event);
+        }
+
+        if (e->GetEventType() == Event::MOUSEBUTTONDOWN)
+        {
+            // create a focus event
+            EventFocus focus_event(
+                DStaticCast<EventMouseButton const *>(e)->GetPosition(),
+                e->GetTime());
+            // send it to the event processor
+            ProcessEvent(&focus_event);
         }
 
         // get the top of the modal widget stack
@@ -766,41 +771,28 @@ bool Widget::HandleEvent (Event const *const e)
         case Event::KEYDOWN:
         case Event::KEYUP:
         case Event::KEYREPEAT:
-            if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
-                return true;
-            else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
-                return this_container_widget->m_focus->ProcessEvent(e);
-            else
-                return false;
+            return InternalProcessKeyEvent(DStaticCast<EventKey const *>(e));
 
         case Event::MOUSEBUTTONDOWN:
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEMOTION:
-            if (PreprocessMouseEvent(DStaticCast<EventMouse const *>(e)))
-                return true;
-            else
-                return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
+            return InternalProcessMouseEvent(DStaticCast<EventMouse const *>(e));
 
         case Event::MOUSEWHEEL:
-            return PreprocessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e));
+            return InternalProcessMouseWheelEvent(DStaticCast<EventMouseWheel const *>(e));
 
         case Event::JOYAXIS:
         case Event::JOYBALL:
         case Event::JOYBUTTONDOWN:
         case Event::JOYBUTTONUP:
         case Event::JOYHAT:
-            if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
-                return true;
-            else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
-                return this_container_widget->m_focus->ProcessEvent(e);
-            else
-                return false;
+            return InternalProcessJoyEvent(DStaticCast<EventJoy const *>(e));
 
         case Event::FOCUS:
-            return PreprocessFocusEvent(DStaticCast<EventFocus const *>(e));
+            return InternalProcessFocusEvent(DStaticCast<EventFocus const *>(e));
 
         case Event::MOUSEOVER:
-            return PreprocessMouseoverEvent(DStaticCast<EventMouseover const *>(e));
+            return InternalProcessMouseoverEvent(DStaticCast<EventMouseover const *>(e));
 
         case Event::DELETE_CHILD_WIDGET:
             return ProcessDeleteChildWidgetEvent(DStaticCast<EventDeleteChildWidget const *>(e));
@@ -1075,57 +1067,70 @@ void Widget::MouseoverOffWidgetLine ()
     HandleMouseoverOff();
 }
 
-bool Widget::PreprocessMouseEvent (EventMouse const *const e)
+bool Widget::InternalProcessKeyEvent (EventKey const *const e)
 {
     ASSERT1(e != NULL)
 
-    // now give this widget the chance to process the event
+    ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
+
+    if (ProcessKeyEvent(DStaticCast<EventKey const *>(e)))
+        return true;
+    else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
+        return this_container_widget->m_focus->ProcessEvent(e);
+    else
+        return false;
+}
+
+bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
+{
+    ASSERT1(e != NULL)
+
+    // give this widget the chance to process the event
     switch (e->GetEventType())
     {
         case Event::MOUSEBUTTONUP:
         case Event::MOUSEBUTTONDOWN:
             // let this widget have an opportunity at the event
-            if (ProcessMouseButtonEvent((EventMouseButton const *const)e))
+            if (ProcessMouseButtonEvent(DStaticCast<EventMouseButton const *>(e)))
                 return true;
-            // if the event was not used, send a focus event down the line
-            else
-            {
-                // create a focus event
-                EventFocus focus_event(
-                    static_cast<EventMouseButton const *const>(e)->GetPosition(),
-                    e->GetTime());
-                // send it to the event processor
-                ProcessEvent(&focus_event);
-            }
             break;
 
         case Event::MOUSEMOTION:
-        {
-            EventMouseMotion const *mouse_motion_event =
-                static_cast<EventMouseMotion const *const>(e);
             // let this widget have an opportunity at the event
-            bool retval = ProcessMouseMotionEvent(mouse_motion_event);
-            // save the event's position as the last known mouse position
-            m_last_mouse_position = e->GetPosition();
-            return retval;
-        }
+            if (ProcessMouseMotionEvent(DStaticCast<EventMouseMotion const *>(e)))
+                return true;
+            break;
 
         default:
             ASSERT1(false && "Invalid Event::EventType")
             break;
     }
 
-    // no widget accepted it, return false
-    return false;
+    // if it wasn't used by now, give it to the appropriate child widget.
+    return SendMouseEventToChild(DStaticCast<EventMouse const *>(e));
 }
 
-bool Widget::PreprocessMouseWheelEvent (EventMouseWheel const *const e)
+bool Widget::InternalProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // let this widget have a chance at the event
     return ProcessMouseWheelEvent(e);
 }
 
-bool Widget::PreprocessFocusEvent (EventFocus const *const e)
+bool Widget::InternalProcessJoyEvent (EventJoy const *const e)
+{
+    ASSERT1(e != NULL)
+
+    ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
+
+    if (ProcessJoyEvent(DStaticCast<EventJoy const *>(e)))
+        return true;
+    else if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
+        return this_container_widget->m_focus->ProcessEvent(e);
+    else
+        return false;
+}
+
+bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
 {
     // hidden widgets can't be focused
     if (GetIsHidden())
@@ -1141,7 +1146,7 @@ bool Widget::PreprocessFocusEvent (EventFocus const *const e)
     return retval;
 }
 
-bool Widget::PreprocessMouseoverEvent (EventMouseover const *const e)
+bool Widget::InternalProcessMouseoverEvent (EventMouseover const *const e)
 {
     // hidden widgets can't be moused over
     if (GetIsHidden())
@@ -1151,7 +1156,7 @@ bool Widget::PreprocessMouseoverEvent (EventMouseover const *const e)
     if (!m_accepts_mouseover)
         return false;
 
-    // this is the bottom-most widget which should be focused.
+    // this is the bottom-most widget which should be mouseovered
     MouseoverOn();
     return true;
 }

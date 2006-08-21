@@ -21,16 +21,28 @@ using namespace Xrb;
 namespace Dis
 {
 
-std::string const Config::ms_input_action_default_key_name[IA_COUNT] =
+std::string const Config::ms_input_action_name[IA_COUNT] =
 {
-    "W",        // IA_MOVE_FORWARD = 0,
-    "A",        // IA_MOVE_LEFT,
-    "S",        // IA_MOVE_BACK,
-    "D",        // IA_MOVE_RIGHT,
-    "LMOUSE",   // IA_PRIMARY_FIRE,
-    "RMOUSE",   // IA_SECONDARY_FIRE,
-    "C",        // IA_ENGINE_BRAKE,
-    "SPACE"     // IA_USE_TRACTOR,
+    "Move Forward",     // IA_MOVE_FORWARD = 0,
+    "Move Left",        // IA_MOVE_LEFT,
+    "Move Back",        // IA_MOVE_BACK,
+    "Move Right",       // IA_MOVE_RIGHT,
+    "Primary Fire",     // IA_PRIMARY_FIRE,
+    "Secondary Fire",   // IA_SECONDARY_FIRE,
+    "Engine Brake",     // IA_ENGINE_BRAKE,
+    "Use Tractor"       // IA_USE_TRACTOR,
+};
+
+Key::Code const Config::ms_input_action_default_key_code[IA_COUNT] =
+{
+    Key::W,             // IA_MOVE_FORWARD = 0,
+    Key::A,             // IA_MOVE_LEFT,
+    Key::S,             // IA_MOVE_BACK,
+    Key::D,             // IA_MOVE_RIGHT,
+    Key::LEFTMOUSE,     // IA_PRIMARY_FIRE,
+    Key::RIGHTMOUSE,    // IA_SECONDARY_FIRE,
+    Key::C,             // IA_ENGINE_BRAKE,
+    Key::SPACE          // IA_USE_TRACTOR,
 };
 
 std::string const Config::ms_input_action_path[IA_COUNT] =
@@ -50,26 +62,29 @@ Config::Config ()
     ResetToDefaults();
 }
 
-Key::Code Config::GetKeyCode (InputAction const input_action) const
+Key::Code Config::GetInputActionKeyCode (InputAction const input_action) const
 {
     ASSERT1(input_action < IA_COUNT)
 
-    if (m_input_action_key_code[input_action] == Key::INVALID)
+    if (!m_input_action_key_name[input_action].empty())
     {
         m_input_action_key_code[input_action] = Singletons::Input().GetKeyCode(m_input_action_key_name[input_action]);
-        if (m_input_action_key_code[input_action] == Key::INVALID)
-        {
-            m_input_action_key_name[input_action] = ms_input_action_default_key_name[input_action];
-            m_input_action_key_code[input_action] = Singletons::Input().GetKeyCode(m_input_action_key_name[input_action]);
-        }
+        m_input_action_key_name[input_action].clear();
     }
+
+    if (m_input_action_key_code[input_action] == Key::INVALID)
+        m_input_action_key_code[input_action] = ms_input_action_default_key_code[input_action];
+
     return m_input_action_key_code[input_action];
 }
 
-void Config::SetInputActionKeyName (InputAction const input_action, std::string const &key_name)
+void Config::SetInputActionKeyCode (InputAction const input_action, Key::Code const key_code)
 {
     ASSERT1(input_action < IA_COUNT)
-    m_input_action_key_name[input_action] = key_name;
+    m_input_action_key_code[input_action] =
+        Singletons::Input().GetIsValidKeyCode(key_code) ?
+        key_code :
+        Key::INVALID;
 }
 
 void Config::ResetToDefaults ()
@@ -130,11 +145,9 @@ void Config::Write (string const &config_filename) const
     root->SetPathElementString("|key_map_name", m_key_map_name);
 
     for (Uint32 i = 0; i < IA_COUNT; ++i)
-    {
-        // this call is to ensure m_input_action_key_name[i] is updated
-        GetKeyCode(static_cast<InputAction>(i));
-        root->SetPathElementString(ms_input_action_path[i], m_input_action_key_name[i]);
-    }
+        root->SetPathElementString(
+            ms_input_action_path[i],
+            Singletons::Input().GetKeyName(GetInputActionKeyCode(static_cast<InputAction>(i))));
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);

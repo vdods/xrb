@@ -11,6 +11,7 @@
 #include "dis_optionspanel.h"
 
 #include "xrb_checkbox.h"
+#include "xrb_keyselectorbutton.h"
 #include "xrb_label.h"
 #include "xrb_layout.h"
 #include "xrb_valueedit.h"
@@ -67,10 +68,13 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         l->SetIsHeightFixedToTextHeight(true);
         Layout *input_options_layout = new Layout(ROW, 2, right_side_layout);
 
-        l = new Label("Move Forward:", input_options_layout);
-        l->SetAlignment(Dim::X, RIGHT);
-//         LineEdit *move_forward_edit = new LineEdit(30, input_options_layout);
-
+        for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+        {
+            l = new Label(Config::ms_input_action_name[i], input_options_layout);
+            l->SetAlignment(Dim::X, RIGHT);
+            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_name[i], Key::INVALID, input_options_layout);
+            m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
+        }
     }
 }
 
@@ -91,9 +95,12 @@ bool OptionsPanel::GetFullscreen () const
     return m_fullscreen_checkbox->GetIsChecked();
 }
 
-// std::string const &OptionsPanel::GetInputActionKeyName (Config::InputAction input_action) const
-// {
-// }
+Key::Code OptionsPanel::GetInputActionKeyCode (Config::InputAction const input_action) const
+{
+    ASSERT1(input_action < Config::IA_COUNT)
+    ASSERT1(m_input_action_button[input_action] != NULL)
+    return m_input_action_button[input_action]->GetKeyCode();
+}
 
 void OptionsPanel::SetResolutionX (ScreenCoord const resolution_x)
 {
@@ -113,7 +120,14 @@ void OptionsPanel::SetFullscreen (bool const fullscreen)
     m_fullscreen_checkbox->SetIsChecked(fullscreen);
 }
 
-// void OptionsPanel::SetInputActionKeyName (Config::InputAction input_action, std::string const &key_name);
+void OptionsPanel::SetInputActionKeyCode (
+    Config::InputAction const input_action,
+    Key::Code const key_code)
+{
+    ASSERT1(input_action < Config::IA_COUNT)
+    ASSERT1(m_input_action_button[input_action] != NULL)
+    m_input_action_button[input_action]->SetKeyCode(key_code);
+}
 
 } // end of namespace Dis
 

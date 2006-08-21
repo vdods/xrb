@@ -28,7 +28,7 @@ class Screen;
   * @ref Xrb::EventHandler::HandleEvent methods.
   *
   * Events are generally created in the game loop, though they are also
-  * produced elsewhere ( e.g. in @ref Xrb::Widget::PreprocessMouseEvent ).
+  * produced elsewhere ( e.g. in @ref Xrb::Widget::InternalProcessMouseEvent ).
   * The most important concept is that the event handler should never delete
   * the event itself.  This restriction is made so that the event pointer
   * points to valid memory for the entire scope of all HandleEvent
@@ -111,6 +111,9 @@ public:
       */
     virtual ~Event () = 0;
 
+    /** @brief Returns the textual representation of the event type.
+      */
+    static std::string const &GetName (EventType event_type);
     /** @brief Returns the event's timestamp.
       */
     inline Float GetTime () const

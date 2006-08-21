@@ -430,21 +430,21 @@ void WorldView::ProcessPlayerInput ()
     if (GetParentWorldViewWidget()->GetIsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().GetIsKeyPressed(g_config.GetKeyCode(Config::IA_USE_TRACTOR));
+            Singletons::Input().GetIsKeyPressed(g_config.GetInputActionKeyCode(Config::IA_USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

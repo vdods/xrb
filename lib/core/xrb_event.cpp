@@ -19,6 +19,42 @@ namespace Xrb
 
 Event::~Event () { }
 
+std::string const &Event::GetName (EventType const event_type)
+{
+    static std::string const s_event_type_name[] =
+    {
+        "DUMMY",
+        "KEYDOWN",
+        "KEYUP",
+        "KEYREPEAT",
+        "MOUSEBUTTONDOWN",
+        "MOUSEBUTTONUP",
+        "MOUSEWHEEL",
+        "MOUSEMOTION",
+        "JOYAXIS",
+        "JOYBALL",
+        "JOYBUTTONDOWN",
+        "JOYBUTTONUP",
+        "JOYHAT",
+        "FOCUS",
+        "MOUSEOVER",
+        "DELETE_CHILD_WIDGET",
+        "ACTIVE",
+        "RESIZE",
+        "EXPOSE",
+        "QUIT",
+        "SYSWM",
+        "STATE_MACHINE_INPUT",
+        "ENGINE2_DELETE_ENTITY",
+        "ENGINE2_REMOVE_ENTITY_FROM_WORLD"
+        "CUSTOM"
+    };
+    static Uint32 const s_event_type_name_count = sizeof(s_event_type_name) / sizeof(std::string);
+
+    ASSERT1(event_type < s_event_type_name_count)
+    return s_event_type_name[event_type];
+}
+
 Event *Event::CreateEventFromSDLEvent (
     SDL_Event const *const e,
     Screen const *const screen,

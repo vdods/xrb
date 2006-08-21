@@ -268,7 +268,7 @@ protected:
         // to manually heat up grid cells.  Note that this isn't the primary
         // method of facilitating mouse input -- Xrb::Event based mouse input
         // will be covered later.
-        if (GetIsMouseover() && Singletons::Input().GetIsKeyPressed(Key::LMOUSE))
+        if (GetIsMouseover() && Singletons::Input().GetIsKeyPressed(Key::LEFTMOUSE))
             m_temperature += g_mouse_temperature_change_rate * GetFrameDT();
     }
 
@@ -681,5 +681,5 @@ int main (int argc, char **argv)
         Screen::ReceiverRequestQuit method from @ref lesson02 "lesson02").</li>
     </ul>
 
-Thus concludes the fourth lesson.  Somehow you're actually dumber now from it.
+Thus concludes lesson03.  Somehow you're actually dumber now from it.
 */

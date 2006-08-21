@@ -28,6 +28,7 @@ ContainerWidget::ContainerWidget (ContainerWidget *const parent, std::string con
 //     fprintf(stderr, "ContainerWidget::ContainerWidget(%s);\n", name.c_str());
 
     m_accepts_focus = false;
+    m_children_get_input_events_first = false;
     m_focus = NULL;
     m_focus_has_mouse_grab = false;
     m_mouseover_focus = NULL;
@@ -883,8 +884,15 @@ ContainerWidget::WidgetVectorIterator ContainerWidget::FindChildWidget (Widget c
     }
     return it;
 }
+/*
+bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
+{
+    ASSERT1(e != NULL)
 
-bool ContainerWidget::PreprocessMouseEvent (EventMouse const *const e)
+
+}
+*/
+bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
 {
     ASSERT1(e != NULL)
 
@@ -894,10 +902,10 @@ bool ContainerWidget::PreprocessMouseEvent (EventMouse const *const e)
         return m_focus->ProcessEvent(e);
     // otherwise, hand it to the superclass' method
     else
-        return Widget::PreprocessMouseEvent(e);
+        return Widget::InternalProcessMouseEvent(e);
 }
 
-bool ContainerWidget::PreprocessMouseWheelEvent (EventMouseWheel const *const e)
+bool ContainerWidget::InternalProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // if there is a widget in focus and it has mouse grab
     // on, send the mouse event there
@@ -905,10 +913,15 @@ bool ContainerWidget::PreprocessMouseWheelEvent (EventMouseWheel const *const e)
         return m_focus->ProcessEvent(e);
     // otherwise, hand it to the superclass' method
     else
-        return Widget::PreprocessMouseWheelEvent(e);
+        return Widget::InternalProcessMouseWheelEvent(e);
 }
-
-bool ContainerWidget::PreprocessFocusEvent (EventFocus const *const e)
+/*
+bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
+{
+    ASSERT1(e != NULL)
+}
+*/
+bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 {
     // hidden widgets can't be focused
     if (GetIsHidden())
@@ -939,7 +952,7 @@ bool ContainerWidget::PreprocessFocusEvent (EventFocus const *const e)
     if (modal_widget != NULL)
     {
         if (modal_widget->GetScreenRect().GetIsPointInside(e->GetPosition()))
-            return modal_widget->PreprocessFocusEvent(e);
+            return modal_widget->InternalProcessFocusEvent(e);
         else
             return false;
     }
@@ -957,16 +970,16 @@ bool ContainerWidget::PreprocessFocusEvent (EventFocus const *const e)
             ASSERT1(child != NULL)
             if (!child->GetIsHidden() &&
                 child->GetScreenRect().GetIsPointInside(e->GetPosition()) &&
-                child->PreprocessFocusEvent(e))
+                child->InternalProcessFocusEvent(e))
                 return true;
         }
 
         // if none of the widgets accepted focus, hand it to the superclass' method
-        return Widget::PreprocessFocusEvent(e);
+        return Widget::InternalProcessFocusEvent(e);
     }
 }
 
-bool ContainerWidget::PreprocessMouseoverEvent (EventMouseover const *const e)
+bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const e)
 {
     // hidden widgets can't be moused over
     if (GetIsHidden())
@@ -983,12 +996,12 @@ bool ContainerWidget::PreprocessMouseoverEvent (EventMouseover const *const e)
         Widget *child = *it;
         ASSERT1(child != NULL)
         if (child->GetScreenRect().GetIsPointInside(e->GetPosition()))
-            if (child->PreprocessMouseoverEvent(e))
+            if (child->InternalProcessMouseoverEvent(e))
                 return true;
     }
 
     // if none of the widgets accepted mouseover-focus, hand it to the superclass' method
-    return Widget::PreprocessMouseoverEvent(e);
+    return Widget::InternalProcessMouseoverEvent(e);
 }
 
 bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)

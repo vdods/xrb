@@ -853,20 +853,28 @@ private:
       *        down, starting at lowest child, going up.
       */
     void MouseoverOffWidgetLine ();
+    /** @brief Performs some necessary event processing on key
+      *        events before the key event handler gets them.
+      */
+    virtual bool InternalProcessKeyEvent (EventKey const *e);
     /** @brief Performs some necessary event processing on mouse
       *        events before the mouse event handler gets them.
       */
-    virtual bool PreprocessMouseEvent (EventMouse const *e);
+    virtual bool InternalProcessMouseEvent (EventMouse const *e);
     /** @brief Performs some necessary event processing on mouse wheel
       *        events before the mouse wheel event handler gets them.
       */
-    virtual bool PreprocessMouseWheelEvent (EventMouseWheel const *e);
+    virtual bool InternalProcessMouseWheelEvent (EventMouseWheel const *e);
+    /** @brief Performs some necessary event processing on joy
+      *        events before the joy event handler gets them.
+      */
+    virtual bool InternalProcessJoyEvent (EventJoy const *e);
     /** @brief Performs some necessary event processing on focus events.
       */
-    virtual bool PreprocessFocusEvent (EventFocus const *e);
+    virtual bool InternalProcessFocusEvent (EventFocus const *e);
     /** @brief Performs some necessary event processing on mouseover events.
       */
-    virtual bool PreprocessMouseoverEvent (EventMouseover const *e);
+    virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
     /** @brief A convenience function for sending a mouse event to the
       *        child widget highest in m_child_vector which lies underneath
       *        the mouse event position.

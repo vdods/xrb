@@ -64,7 +64,7 @@ bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
     Button::ProcessMouseButtonEvent(e);
 
     // if the left mouse button was clicked and released, toggle m_is_checked
-    if (e->GetButtonCode() == Key::LMOUSE && e->GetIsMouseButtonUpEvent())
+    if (e->GetButtonCode() == Key::LEFTMOUSE && e->GetIsMouseButtonUpEvent())
         ToggleIsChecked();
 
     return true;

@@ -420,6 +420,12 @@ protected:
       * @brief Stores the 'preferred' size properties.
       */
     SizeProperties m_preferred_size_properties;
+    /** The default value is false.
+      * @brief True indicates child widgets get first chance at key/mouse/joy
+      *        events (with this widget getting second chance).  False
+      *        indicates this widget gets first chance and children get second.
+      */
+    bool m_children_get_input_events_first;
 
 private:
 
@@ -432,20 +438,28 @@ private:
       *        child in m_child_vector.
       */
     WidgetVectorIterator FindChildWidget (Widget const *child);
+    /** @brief Performs some necessary event processing on key
+      *        events before the key event handler gets them.
+      */
+//     virtual bool InternalProcessKeyEvent (EventKey const *e);
     /** @brief Performs some necessary event processing on mouse
       *        events before the mouse event handler gets them.
       */
-    virtual bool PreprocessMouseEvent (EventMouse const *e);
+    virtual bool InternalProcessMouseEvent (EventMouse const *e);
     /** @brief Performs some necessary event processing on mouse wheel
       *        events before the mouse wheel event handler gets them.
       */
-    virtual bool PreprocessMouseWheelEvent (EventMouseWheel const *e);
+    virtual bool InternalProcessMouseWheelEvent (EventMouseWheel const *e);
+    /** @brief Performs some necessary event processing on joy
+      *        events before the joy event handler gets them.
+      */
+//     virtual bool InternalProcessJoyEvent (EventJoy const *e);
     /** @brief Performs some necessary event processing on focus events.
       */
-    virtual bool PreprocessFocusEvent (EventFocus const *e);
+    virtual bool InternalProcessFocusEvent (EventFocus const *e);
     /** @brief Performs some necessary event processing on mouseover events.
       */
-    virtual bool PreprocessMouseoverEvent (EventMouseover const *e);
+    virtual bool InternalProcessMouseoverEvent (EventMouseover const *e);
     /** @brief A convenience function for sending a mouse event to the
       *        child widget highest in m_child_vector which lies underneath
       *        the mouse event position.

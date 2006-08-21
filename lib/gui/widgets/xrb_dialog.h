@@ -20,10 +20,6 @@ namespace Xrb
 
 class Layout;
 class Button;
-class SignalSender0;
-template <typename T> class SignalSender1;
-class SignalReceiver0;
-class SignalHandler;
 
 /** Child widgets are added to a Layout inside of the Dialog, not to the
   * Dialog itself.  The button controls are inside the Layout as well, but
@@ -54,7 +50,7 @@ public:
         DT_CANCEL = BUTTON_CANCEL
     }; // end of enum DialogType
 
-    /** Used by m_sender_dialog_returned_a_value.
+    /** Used by m_sender_dialog_returned.
       * @brief Used to signal when a button has been pressed.
       */
     enum ButtonID
@@ -63,7 +59,7 @@ public:
         ID_CANCEL,
     }; // end of enum ButtonID
 
-    /** 
+    /**
       * @brief Constructs a Dialog using the given button combination.
       * @param dialog_type Indicates which buttons to add to the dialog.
       * @param parent The parent of this widget (see Widget::Widget).
@@ -90,21 +86,21 @@ public:
     bool GetHasButton (ButtonID const button_id) const;
     /** @brief Explicitly checks for an OK button.
       */
-    inline bool GetHasOKButton () const 
-    { 
-        return (m_dialog_type & BUTTON_OK) != 0; 
+    inline bool GetHasOKButton () const
+    {
+        return (m_dialog_type & BUTTON_OK) != 0;
     }
     /** @brief Explicitly checks for a Cancel button.
       */
-    inline bool GetHasCancelButton () const 
-    { 
-        return (m_dialog_type & BUTTON_CANCEL) != 0; 
+    inline bool GetHasCancelButton () const
+    {
+        return (m_dialog_type & BUTTON_CANCEL) != 0;
     }
-    
+
     /** @brief Accessor for the SignalSender which signals the ID of a button
       *        when a button has been pressed.
       */
-    inline SignalSender1<ButtonID> const *SenderDialogReturnedAValue () { return &m_sender_dialog_returned_a_value; }
+    inline SignalSender1<ButtonID> const *SenderDialogReturned () { return &m_sender_dialog_returned; }
     /** @brief Accessor for the SignalSender which signals that the OK
       *        button has been pressed.
       */
@@ -131,19 +127,19 @@ protected:
 
     /** Shuts down the dialog, and emits the appropriate signals.
       * This function can be called directly to simulate the OK button
-      * being pressed. 
+      * being pressed.
       * @brief Called when the OK button is pressed.
       */
     virtual void OKButtonActivated ();
     /** Shuts down the dialog, and emits the appropriate signals.
       * This function can be called directly to simulate the Cancel button
-      * being pressed. 
+      * being pressed.
       * @brief Called when the Cancel button is pressed.
       */
     virtual void CancelButtonActivated ();
 
 private:
-    
+
     DialogType m_dialog_type;
 
     Layout *m_dialog_layout;
@@ -151,7 +147,7 @@ private:
     Button *m_ok_button;
     Button *m_cancel_button;
 
-    SignalSender1<ButtonID> m_sender_dialog_returned_a_value;
+    SignalSender1<ButtonID> m_sender_dialog_returned;
     SignalSender0 m_sender_dialog_returned_ok;
     SignalSender0 m_sender_dialog_returned_cancel;
 

@@ -44,18 +44,20 @@ public:
         IA_COUNT
     }; // end of enum Config::InputAction
 
+    static std::string const ms_input_action_name[IA_COUNT];
+
     Config ();
 
     inline bool GetFullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
     inline std::string const &GetKeyMapName () const { return m_key_map_name; }
-    Key::Code GetKeyCode (InputAction input_action) const;
+    Key::Code GetInputActionKeyCode (InputAction input_action) const;
 
     inline void SetFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
     inline void SetResolutionX (ScreenCoord resolution_x) { m_resolution[Dim::X] = resolution_x; }
     inline void SetResolutionY (ScreenCoord resolution_y) { m_resolution[Dim::Y] = resolution_y; }
     inline void SetKeyMapName (std::string const &key_map_name) { m_key_map_name = key_map_name; }
-    void SetInputActionKeyName (InputAction input_action, std::string const &key_name);
+    void SetInputActionKeyCode (InputAction input_action, Key::Code key_code);
 
     void ResetToDefaults ();
 
@@ -69,7 +71,7 @@ private:
     std::string m_key_map_name;
     mutable std::string m_input_action_key_name[IA_COUNT];
     mutable Key::Code m_input_action_key_code[IA_COUNT];
-    static std::string const ms_input_action_default_key_name[IA_COUNT];
+    static Key::Code const ms_input_action_default_key_code[IA_COUNT];
     static std::string const ms_input_action_path[IA_COUNT];
 }; // end of class Config
 

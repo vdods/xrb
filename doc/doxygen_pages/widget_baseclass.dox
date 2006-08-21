@@ -171,7 +171,7 @@ event and that no other widgets should process it.  When an event is
 "processed", nothing actually happens to the event (it is qualified as
 const).  Deletion of the event object almost always happens at the same
 scope as it was generated (e.g. the game loop, or inside
-@ref Xrb::Widget::PreprocessMouseEvent "Widget::PreprocessMouseEvent" in the
+@ref Xrb::Widget::InternalProcessMouseEvent "Widget::InternalProcessMouseEvent" in the
 case of focus events).  An exception to this rule is in
 @ref Xrb::Widget::ProcessDeleteChildWidgetEvent "Widget::ProcessDeleteChildWidgetEvent" ,
 which is an asynchronous event (meaning the event is queued up for later

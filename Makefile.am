@@ -114,6 +114,7 @@ lib_libxrb_la_SOURCES = \
     lib/gui/widgets/xrb_dialog.cpp \
     lib/gui/widgets/xrb_filedialog.cpp \
     lib/gui/widgets/xrb_filepanel.cpp \
+    lib/gui/widgets/xrb_keyselectorbutton.cpp \
     lib/gui/widgets/xrb_label.cpp \
     lib/gui/widgets/xrb_layout.cpp \
     lib/gui/widgets/xrb_lineedit.cpp \
@@ -251,6 +252,7 @@ include_HEADERS = \
     lib/gui/widgets/xrb_dialog.h \
     lib/gui/widgets/xrb_filedialog.h \
     lib/gui/widgets/xrb_filepanel.h \
+    lib/gui/widgets/xrb_keyselectorbutton.h \
     lib/gui/widgets/xrb_label.h \
     lib/gui/widgets/xrb_layout.h \
     lib/gui/widgets/xrb_lineedit.h \

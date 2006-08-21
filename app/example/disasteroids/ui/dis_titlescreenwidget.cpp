@@ -153,10 +153,14 @@ void TitleScreenWidget::ActivateOptionsDialog ()
     m_options_panel->SetFullscreen(g_config.GetFullscreen());
     m_options_panel->SetResolutionX(g_config.GetResolution()[Dim::X]);
     m_options_panel->SetResolutionY(g_config.GetResolution()[Dim::Y]);
+    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+        m_options_panel->SetInputActionKeyCode(
+            static_cast<Config::InputAction>(i),
+            g_config.GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
 
     // connect up the dialog OK button to OptionsDialogReturnedOK
     SignalHandler::Connect1(
-        options_dialog->SenderDialogReturnedAValue(),
+        options_dialog->SenderDialogReturned(),
         &m_internal_receiver_options_dialog_returned);
 }
 
@@ -170,6 +174,10 @@ void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
         g_config.SetFullscreen(m_options_panel->GetFullscreen());
         g_config.SetResolutionX(m_options_panel->GetResolution()[Dim::X]);
         g_config.SetResolutionY(m_options_panel->GetResolution()[Dim::Y]);
+        for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+            g_config.SetInputActionKeyCode(
+                static_cast<Config::InputAction>(i),
+                m_options_panel->GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
     }
 
     m_options_panel = NULL;

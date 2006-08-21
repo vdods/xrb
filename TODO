@@ -236,4 +236,8 @@ GAME IDEAS:
   speed, or hover effortlessly without gravity affecting them
 - special black hole sprite that warps the background image in the same
   manner as a real blackhole (have to rewrite my thesis program for this)
-
+--- platformer
+- normal and "ice" shoes - for different ground friction
+- point-and-teleport gun
+- grappling hook gun
+- tractor beam gun
