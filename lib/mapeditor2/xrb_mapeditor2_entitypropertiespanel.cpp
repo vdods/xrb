@@ -320,7 +320,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     cpw = new CellPaddingWidget(
         control_layout,
         "applies gravity checkbox cell padding widget");
-    cpw->SetAlignmentComponent(0, LEFT);
+    cpw->SetAlignment(Dim::X, LEFT);
 
     cb = m_per_entity_applies_gravity_checkbox =
         new CheckBox(cpw, "applies gravity checkbox");
@@ -352,7 +352,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     cpw = new CellPaddingWidget(
         control_layout,
         "reacts to gravity checkbox cell padding widget");
-    cpw->SetAlignmentComponent(0, LEFT);
+    cpw->SetAlignment(Dim::X, LEFT);
 
     cb = m_per_entity_reacts_to_gravity_checkbox =
         new CheckBox(cpw, "reacts to gravity checkbox");

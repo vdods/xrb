@@ -30,6 +30,11 @@ CheckBox::CheckBox (
 {
     m_is_checked = false;
 
+    FixSize(
+        ScreenCoordVector2(
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight(),
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight()));
+
     CheckBox::UpdateRenderBackground();
     CheckBox::UpdateRenderPicture();
 }

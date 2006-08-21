@@ -10,6 +10,7 @@
 
 #include "dis_optionspanel.h"
 
+#include "xrb_cellpaddingwidget.h"
 #include "xrb_checkbox.h"
 #include "xrb_keyselectorbutton.h"
 #include "xrb_label.h"
@@ -49,8 +50,11 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
 
         l = new Label("Fullscreen:", video_options_layout);
+        l->SetIsHeightFixedToTextHeight(true);
         l->SetAlignment(Dim::X, RIGHT);
-        m_fullscreen_checkbox = new CheckBox(video_options_layout);
+        CellPaddingWidget *cpw = new CellPaddingWidget(video_options_layout);
+        cpw->SetAlignment(Dim::X, LEFT);
+        m_fullscreen_checkbox = new CheckBox(cpw);
 
         l = new Label("Changes to the video options will take effect after restarting.", left_side_layout);
         l->SetIsHeightFixedToTextHeight(true);

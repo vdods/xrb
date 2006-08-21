@@ -37,7 +37,7 @@ public:
     virtual Bool2 GetContentsMaxSizeEnabled () const;
     virtual ScreenCoordVector2 GetContentsMaxSize () const;
 
-    void SetAlignmentComponent (Uint32 const index, Alignment const alignment);
+    void SetAlignment (Uint32 const index, Alignment const alignment);
     void SetAlignment (Alignment2 const &alignment);
 
     virtual void SetSizePropertyEnabled (

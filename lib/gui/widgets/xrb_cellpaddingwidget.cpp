@@ -90,7 +90,7 @@ ScreenCoordVector2 CellPaddingWidget::GetContentsMaxSize () const
     return m_contents_size_properties.m_max_size;
 }
 
-void CellPaddingWidget::SetAlignmentComponent (
+void CellPaddingWidget::SetAlignment (
     Uint32 const index,
     Alignment const alignment)
 {
