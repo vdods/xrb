@@ -145,7 +145,6 @@
       <group pattern="app/*" name="/app" />
       <group pattern="doc/doxygen_pages/*" name="/doc/doxygen_pages" />
       <group pattern="doc/*" name="/doc" />
-      <group pattern="lib/core/serializers/*" name="/lib/core/serializers" />
       <group pattern="lib/core/*" name="/lib/core" />
       <group pattern="lib/engine2/*" name="/lib/engine2" />
       <group pattern="lib/gui/widgets/*" name="/lib/gui/widgets" />
@@ -158,6 +157,7 @@
       <group pattern="lib/primitive/*" name="/lib/primitive" />
       <group pattern="lib/render/*" name="/lib/render" />
       <group pattern="lib/sound/*" name="/lib/sound" />
+      <group pattern="lib/system/serializers/*" name="/lib/system/serializers" />
       <group pattern="lib/system/*" name="/lib/system" />
       <group pattern="lib/util/*" name="/lib/util" />
       <group pattern="lib/*" name="/lib" />

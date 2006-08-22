@@ -80,8 +80,6 @@ LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 lib_libxrb_la_SOURCES = \
     lib/core/xrb_compiletimeasserts.cpp \
     \
-    lib/core/serializers/xrb_binaryfileserializer.cpp \
-    \
     lib/engine2/xrb_engine2_compound.cpp \
     lib/engine2/xrb_engine2_entity.cpp \
     lib/engine2/xrb_engine2_events.cpp \
@@ -161,6 +159,8 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_signalhandler.cpp \
     lib/system/xrb_singletons.cpp \
     \
+    lib/system/serializers/xrb_binaryfileserializer.cpp \
+    \
     lib/util/xrb_bitcache.cpp \
     lib/util/xrb_bitcachedfile.cpp \
     lib/util/xrb_characterfilter.cpp \
@@ -208,8 +208,6 @@ include_HEADERS = \
     lib/core/xrb_debug.h \
     lib/core/xrb_delete.h \
     lib/core/xrb_types.h \
-    \
-    lib/core/serializers/xrb_binaryfileserializer.h \
     \
     lib/engine2/xrb_engine2_compound.h \
     lib/engine2/xrb_engine2_entity.h \
@@ -309,6 +307,8 @@ include_HEADERS = \
     lib/system/xrb_singletons.h \
     lib/system/xrb_statemachine.h \
     lib/system/xrb_statemachine.tcpp \
+    \
+    lib/system/serializers/xrb_binaryfileserializer.h \
     \
     lib/util/xrb_bitcache.h \
     lib/util/xrb_bitcachedfile.h \

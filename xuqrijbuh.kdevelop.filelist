@@ -135,10 +135,6 @@ doc/doxygen_pages/setup_macosx.dox
 doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
-lib/core/serializers/xrb_binaryfileserializer.cpp
-lib/core/serializers/xrb_binaryfileserializer.h
-lib/core/serializers/xrb_compressionserializer.cpp
-lib/core/serializers/xrb_compressionserializer.h
 lib/core/xrb.h
 lib/core/xrb_assert.h
 lib/core/xrb_compiletimeasserts.cpp
@@ -317,6 +313,10 @@ lib/render/xrb_render.cpp
 lib/render/xrb_render.h
 lib/render/xrb_rendercontext.cpp
 lib/render/xrb_rendercontext.h
+lib/system/serializers/xrb_binaryfileserializer.cpp
+lib/system/serializers/xrb_binaryfileserializer.h
+lib/system/serializers/xrb_compressionserializer.cpp
+lib/system/serializers/xrb_compressionserializer.h
 lib/system/xrb_enums.h
 lib/system/xrb_event.cpp
 lib/system/xrb_event.h
