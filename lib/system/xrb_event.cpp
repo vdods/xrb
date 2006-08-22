@@ -49,8 +49,7 @@ std::string const &Event::GetName (EventType const event_type)
         "ENGINE2_REMOVE_ENTITY_FROM_WORLD"
         "CUSTOM"
     };
-    static Uint32 const s_event_type_name_count = sizeof(s_event_type_name) / sizeof(std::string);
-
+    DEBUG1_CODE(static Uint32 const s_event_type_name_count = sizeof(s_event_type_name) / sizeof(std::string));
     ASSERT1(static_cast<Uint32>(event_type) < s_event_type_name_count)
     return s_event_type_name[static_cast<Uint32>(event_type)];
 }

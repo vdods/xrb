@@ -158,6 +158,7 @@
       <group pattern="lib/primitive/*" name="/lib/primitive" />
       <group pattern="lib/render/*" name="/lib/render" />
       <group pattern="lib/sound/*" name="/lib/sound" />
+      <group pattern="lib/system/*" name="/lib/system" />
       <group pattern="lib/util/*" name="/lib/util" />
       <group pattern="lib/*" name="/lib" />
       <group pattern="resources/*" name="/resources" />

@@ -65,19 +65,11 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
-- improve modal widget handling so that they actually reparent to Screen,
-  and are kept in the normal child vector (using a higher-than-highest
-  StackPriority), etc.
 - add HandleDisabled/HandleEnabled and make Widget::SetIsEnabled not virtual
 - see if all the modal widget tracking code (including event handling)
   can be moved appropriately into Screen.
 - ValueLabel and ValueEdit should take some sort of value-to-text function
   instead of a printf format.
-- make a stack-based block for keeping container widgets from doing contents
-  min/max size calculations until all widgets are added -- to increase layout
-  creation speed.
-- create ContainerWidget subclass of Widget which all container-style
-  widgets will use
 - refactor the layout code to be more efficient (so it can handle really
   complex/huge layouts quickly)
 - should Widget::Draw be protected?

@@ -60,6 +60,7 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
     -I$(top_srcdir)/lib/sound \
+    -I$(top_srcdir)/lib/system \
     -I$(top_srcdir)/lib/util
 
 # the map editor is temporarily out of service
@@ -78,14 +79,6 @@ LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 
 lib_libxrb_la_SOURCES = \
     lib/core/xrb_compiletimeasserts.cpp \
-    lib/core/xrb_event.cpp \
-    lib/core/xrb_eventhandler.cpp \
-    lib/core/xrb_eventqueue.cpp \
-    lib/core/xrb_framehandler.cpp \
-    lib/core/xrb_resourcelibrary.cpp \
-    lib/core/xrb_serializer.cpp \
-    lib/core/xrb_signalhandler.cpp \
-    lib/core/xrb_singletons.cpp \
     \
     lib/core/serializers/xrb_binaryfileserializer.cpp \
     \
@@ -159,6 +152,15 @@ lib_libxrb_la_SOURCES = \
     lib/render/xrb_render.cpp \
     lib/render/xrb_rendercontext.cpp \
     \
+    lib/system/xrb_event.cpp \
+    lib/system/xrb_eventhandler.cpp \
+    lib/system/xrb_eventqueue.cpp \
+    lib/system/xrb_framehandler.cpp \
+    lib/system/xrb_resourcelibrary.cpp \
+    lib/system/xrb_serializer.cpp \
+    lib/system/xrb_signalhandler.cpp \
+    lib/system/xrb_singletons.cpp \
+    \
     lib/util/xrb_bitcache.cpp \
     lib/util/xrb_bitcachedfile.cpp \
     lib/util/xrb_characterfilter.cpp \
@@ -205,21 +207,6 @@ include_HEADERS = \
     lib/core/xrb_assert.h \
     lib/core/xrb_debug.h \
     lib/core/xrb_delete.h \
-    lib/core/xrb_endian.h \
-    lib/core/xrb_enums.h \
-    lib/core/xrb_event.h \
-    lib/core/xrb_eventhandler.h \
-    lib/core/xrb_eventqueue.h \
-    lib/core/xrb_eventqueue.tcpp \
-    lib/core/xrb_framehandler.h \
-    lib/core/xrb_resourcelibrary.h \
-    lib/core/xrb_resourcelibrary.tcpp \
-    lib/core/xrb_serializer.h \
-    lib/core/xrb_serializer.tcpp \
-    lib/core/xrb_signalhandler.h \
-    lib/core/xrb_singletons.h \
-    lib/core/xrb_statemachine.h \
-    lib/core/xrb_statemachine.tcpp \
     lib/core/xrb_types.h \
     \
     lib/core/serializers/xrb_binaryfileserializer.h \
@@ -308,11 +295,27 @@ include_HEADERS = \
     lib/render/xrb_render.h \
     lib/render/xrb_rendercontext.h \
     \
+    lib/system/xrb_enums.h \
+    lib/system/xrb_event.h \
+    lib/system/xrb_eventhandler.h \
+    lib/system/xrb_eventqueue.h \
+    lib/system/xrb_eventqueue.tcpp \
+    lib/system/xrb_framehandler.h \
+    lib/system/xrb_resourcelibrary.h \
+    lib/system/xrb_resourcelibrary.tcpp \
+    lib/system/xrb_serializer.h \
+    lib/system/xrb_serializer.tcpp \
+    lib/system/xrb_signalhandler.h \
+    lib/system/xrb_singletons.h \
+    lib/system/xrb_statemachine.h \
+    lib/system/xrb_statemachine.tcpp \
+    \
     lib/util/xrb_bitcache.h \
     lib/util/xrb_bitcachedfile.h \
     lib/util/xrb_characterfilter.h \
     lib/util/xrb_commandlineparser.h \
     lib/util/xrb_emptystring.h \
+    lib/util/xrb_endian.h \
     lib/util/xrb_frameratecalculator.h \
     lib/util/xrb_indentformatter.h \
     lib/util/xrb_reference.h \
