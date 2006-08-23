@@ -134,7 +134,7 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
         {
             case Key::ESCAPE:
                 // only allowed to use the inventory panel during normal gameplay
-                if (m_state_machine.GetIsCurrentStateEqualTo(&WorldView::StateNormalGameplay))
+                if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
                     m_sender_activate_inventory_panel.Signal();
                 break;
 

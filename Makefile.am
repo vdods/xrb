@@ -158,7 +158,6 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_serializer.cpp \
     lib/system/xrb_signalhandler.cpp \
     lib/system/xrb_singletons.cpp \
-    lib/system/xrb_statemachine.cpp \
     \
     lib/system/serializers/xrb_binaryfileserializer.cpp \
     \
@@ -307,6 +306,7 @@ include_HEADERS = \
     lib/system/xrb_signalhandler.h \
     lib/system/xrb_singletons.h \
     lib/system/xrb_statemachine.h \
+    lib/system/xrb_statemachine.tcpp \
     \
     lib/system/serializers/xrb_binaryfileserializer.h \
     \

@@ -24,7 +24,7 @@ namespace Dis
 class InventoryPanel;
 class PlayerShip;
 
-class WorldView : public Engine2::WorldView, public EventHandler, public SignalHandler, public StateMachineHandler
+class WorldView : public Engine2::WorldView, public EventHandler, public SignalHandler
 {
 public:
 
@@ -117,7 +117,7 @@ private:
     void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
     void CancelScheduledStateMachineInput ();
 
-    StateMachine m_state_machine;
+    StateMachine<WorldView> m_state_machine;
 
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////

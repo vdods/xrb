@@ -936,6 +936,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\system\xrb_eventqueue.tcpp"
+				>
+			</File>
+			<File
 				RelativePath=".\system\xrb_framehandler.cpp"
 				>
 			</File>
@@ -952,11 +956,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\system\xrb_resourcelibrary.tcpp"
+				>
+			</File>
+			<File
 				RelativePath=".\system\xrb_serializer.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\system\xrb_serializer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_serializer.tcpp"
 				>
 			</File>
 			<File
@@ -976,11 +988,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_statemachine.cpp"
+				RelativePath=".\system\xrb_statemachine.h"
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_statemachine.h"
+				RelativePath=".\system\xrb_statemachine.tcpp"
 				>
 			</File>
 			<Filter

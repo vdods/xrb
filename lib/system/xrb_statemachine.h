@@ -25,66 +25,39 @@ enum
     SM_HIGHEST_USER_INPUT_VALUE = static_cast<StateMachineInput>(-3)
 };
 
-// this class is only used so StateMachine can properly static_cast
-// method pointers from the class which is using it.
-class StateMachineHandler { };
-
 // this class is to be used in composition with another, as opposed to
 // using it via inheritance.
+template <typename OwnerClass>
 class StateMachine
 {
 public:
 
-    typedef bool (StateMachineHandler::*State)(StateMachineInput);
+    typedef bool (OwnerClass::*State)(StateMachineInput);
 
-    StateMachine (StateMachineHandler *owner_class);
+    StateMachine (OwnerClass *owner_class);
     ~StateMachine ();
 
-    inline bool GetIsInitialized () const { return m_current_state != NULL; }
-    template <typename StateMachineHandlerSubclass>
-    inline bool GetIsCurrentStateEqualTo (bool (StateMachineHandlerSubclass::*test_state)(StateMachineInput)) const
-    {
-        return m_current_state == static_cast<State>(test_state);
-    }
-
-    void Test (State state)
-    {
-        m_current_state = state;
-    }
-    template <typename StateMachineHandlerSubclass>
-    inline void Initialize (bool (StateMachineHandlerSubclass::*initial_state)(StateMachineInput))
-    {
-        // just make sure this happens only once at the beginning
-        ASSERT1(!m_is_running_a_state && "This method should not be used from inside a state")
-        ASSERT1(m_current_state == NULL && "This state machine is already initialized")
-
-        // set the current state and run it with SM_ENTER.
-        m_current_state = static_cast<State>(initial_state);
-        RunCurrentStatePrivate(SM_ENTER);
-    }
+    bool GetIsInitialized () const { return m_current_state != NULL; }
+    State GetCurrentState () const { return m_current_state; }
+    
+    void Initialize (State initial_state);
     void RunCurrentState (StateMachineInput input);
     void Shutdown ();
-
-    template <typename StateMachineHandlerSubclass>
-    inline void SetNextState (bool (StateMachineHandlerSubclass::*state)(StateMachineInput))
-    {
-        ASSERT1(m_is_running_a_state && "This method should only be used from inside a state")
-        ASSERT1(m_current_state != NULL && "This state machine has not been initialized")
-
-        // note: a NULL value for state is acceptable.  it is
-        // effectively canceling an earlier requested transition.
-        m_next_state = static_cast<State>(state);
-    }
+    
+    void SetNextState (State state);
 
 private:
 
     void RunCurrentStatePrivate (StateMachineInput input);
 
-    StateMachineHandler *m_owner_class;
+    OwnerClass *m_owner_class;
     bool m_is_running_a_state;
     State m_current_state;
     State m_next_state;
 }; // end of class StateMachine
+
+// template function definitions for StateMachine
+#include "xrb_statemachine.tcpp"
 
 } // end of namespace Xrb
 

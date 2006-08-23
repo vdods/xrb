@@ -1104,7 +1104,7 @@ void World::ProcessCommonGameplayLogic ()
 
 void World::BeginWave ()
 {
-    if (m_state_machine.GetIsCurrentStateEqualTo(&World::StateWaveInitialize))
+    if (m_state_machine.GetCurrentState() == &World::StateWaveInitialize)
         ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
 }
 
@@ -1117,7 +1117,7 @@ void World::EndIntro ()
 {
     // ignore this signal unless we're in the intro state (because i don't
     // want to have to ignore the state machine input in each event).
-    if (m_state_machine.GetIsCurrentStateEqualTo(&World::StateIntro))
+    if (m_state_machine.GetCurrentState() == &World::StateIntro)
         ScheduleStateMachineInput(IN_END_INTRO, 0.0f);
 }
 
@@ -1125,7 +1125,7 @@ void World::EndOutro ()
 {
     // ignore this signal unless we're in the intro state (because i don't
     // want to have to ignore the state machine input in each event).
-    if (m_state_machine.GetIsCurrentStateEqualTo(&World::StateOutro))
+    if (m_state_machine.GetCurrentState() == &World::StateOutro)
         ScheduleStateMachineInput(IN_END_OUTRO, 0.0f);
 }
 

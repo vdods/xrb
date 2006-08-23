@@ -31,7 +31,7 @@ namespace Dis
 class HighScoresWidget;
 class OptionsPanel;
 
-class TitleScreenWidget : public ContainerWidget, public StateMachineHandler
+class TitleScreenWidget : public ContainerWidget
 {
 public:
 
@@ -76,7 +76,7 @@ private:
     void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
     void CancelScheduledStateMachineInput ();
 
-    StateMachine m_state_machine;
+    StateMachine<TitleScreenWidget> m_state_machine;
 
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////
