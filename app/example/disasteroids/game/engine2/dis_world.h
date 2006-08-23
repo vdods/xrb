@@ -55,7 +55,7 @@ class EnemyShip;
 class PlayerShip;
 class PhysicsHandler;
 
-class World : public Engine2::World, public SignalHandler
+class World : public Engine2::World, public SignalHandler, public StateMachineHandler
 {
 public:
 
@@ -135,7 +135,7 @@ private:
     void ScheduleStateMachineInput (StateMachineInput input, Float time_delay);
     void CancelScheduledStateMachineInput ();
 
-    StateMachine<World> m_state_machine;
+    StateMachine m_state_machine;
 
     // end state machine stuff
     // ///////////////////////////////////////////////////////////////////////

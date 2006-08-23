@@ -8,10 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-// this file is included in xrb_statemachine.h, inside the namespace Xrb
+#include "xrb_statemachine.h"
 
-template <typename OwnerClass>
-StateMachine<OwnerClass>::StateMachine (OwnerClass *const owner_class)
+namespace Xrb
+{
+
+StateMachine::StateMachine (StateMachineHandler *const owner_class)
 {
     ASSERT1(owner_class != NULL)
     m_owner_class = owner_class;
@@ -20,33 +22,18 @@ StateMachine<OwnerClass>::StateMachine (OwnerClass *const owner_class)
     m_next_state = NULL;
 }
 
-template <typename OwnerClass>
-StateMachine<OwnerClass>::~StateMachine ()
+StateMachine::~StateMachine ()
 {
     Shutdown();
 }
 
-template <typename OwnerClass>
-void StateMachine<OwnerClass>::Initialize (State initial_state)
-{
-    // just make sure this happens only once at the beginning
-    ASSERT1(!m_is_running_a_state && "This method should not be used from inside a state")
-    ASSERT1(m_current_state == NULL && "This state machine is already initialized")
-
-    // set the current state and run it with SM_ENTER.
-    m_current_state = initial_state;
-    RunCurrentStatePrivate(SM_ENTER);
-}
-
-template <typename OwnerClass>
-void StateMachine<OwnerClass>::RunCurrentState (StateMachineInput const input)
+void StateMachine::RunCurrentState (StateMachineInput const input)
 {
     ASSERT1(input <= SM_HIGHEST_USER_INPUT_VALUE && "Users are not allowed to send state-machine-defined input")
     RunCurrentStatePrivate(input);
 }
 
-template <typename OwnerClass>
-void StateMachine<OwnerClass>::Shutdown ()
+void StateMachine::Shutdown ()
 {
     ASSERT1(!m_is_running_a_state)
 
@@ -59,23 +46,11 @@ void StateMachine<OwnerClass>::Shutdown ()
     }
 }
 
-template <typename OwnerClass>
-void StateMachine<OwnerClass>::SetNextState (State state)
-{
-    ASSERT1(m_is_running_a_state && "This method should only be used from inside a state")
-    ASSERT1(m_current_state != NULL && "This state machine has not been initialized")
-
-    // note: a NULL value for state is acceptable.  it is
-    // effectively canceling an earlier requested transition.
-    m_next_state = state;
-}
-
-template <typename OwnerClass>
-void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput const input)
+void StateMachine::RunCurrentStatePrivate (StateMachineInput const input)
 {
     ASSERT1(!m_is_running_a_state && "This method should not be used from inside a state")
     ASSERT1(m_current_state != NULL && "This state machine has not been initialized")
-    
+
     // NULL is a sentinel value so we know if the state has transitioned
     m_next_state = NULL;
 
@@ -90,7 +65,7 @@ void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput const i
 
     if (input == SM_EXIT && m_next_state != NULL)
         ASSERT0(false && "You must not transition while exiting a state")
-        
+
     // if a transition was requested, perform the necessary exit/enter machinery.
     // this is a while-loop because you can transition during SM_ENTER.
     while (m_next_state != NULL)
@@ -115,3 +90,5 @@ void StateMachine<OwnerClass>::RunCurrentStatePrivate (StateMachineInput const i
         m_is_running_a_state = false;
     }
 }
+
+} // end of namespace Xrb
