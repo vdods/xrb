@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories="core;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;system;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=3"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="core;core\serializers;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories="core;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;sound;system;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -172,113 +172,9 @@
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_endian.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_enums.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_event.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_event.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_eventhandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_eventhandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_eventqueue.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_eventqueue.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_eventqueue.tcpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_framehandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_framehandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_resourcelibrary.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_resourcelibrary.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_resourcelibrary.tcpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_serializer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_serializer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_serializer.tcpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_signalhandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_signalhandler.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_singletons.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_singletons.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_statemachine.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\xrb_statemachine.tcpp"
-				>
-			</File>
-			<File
 				RelativePath=".\core\xrb_types.h"
 				>
 			</File>
-			<Filter
-				Name="serializers"
-				>
-				<File
-					RelativePath=".\core\serializers\xrb_binaryfileserializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\core\serializers\xrb_binaryfileserializer.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="engine2"
@@ -1007,6 +903,106 @@
 				RelativePath=".\util\xrb_validator.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="system"
+			>
+			<File
+				RelativePath=".\system\xrb_enums.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_event.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_event.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_eventhandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_eventhandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_eventqueue.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_eventqueue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_framehandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_framehandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_resourcelibrary.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_resourcelibrary.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_serializer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_serializer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_signalhandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_signalhandler.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_singletons.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_singletons.h"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_statemachine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\system\xrb_statemachine.h"
+				>
+			</File>
+			<Filter
+				Name="serializers"
+				>
+				<File
+					RelativePath=".\system\serializers\xrb_binaryfileserializer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\system\serializers\xrb_binaryfileserializer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\system\serializers\xrb_compressionserializer.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\system\serializers\xrb_compressionserializer.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

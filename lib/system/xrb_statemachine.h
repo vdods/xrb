@@ -47,8 +47,12 @@ public:
         return m_current_state == static_cast<State>(test_state);
     }
 
+    void Test (State state)
+    {
+        m_current_state = state;
+    }
     template <typename StateMachineHandlerSubclass>
-    void Initialize (bool (StateMachineHandlerSubclass::*initial_state)(StateMachineInput))
+    inline void Initialize (bool (StateMachineHandlerSubclass::*initial_state)(StateMachineInput))
     {
         // just make sure this happens only once at the beginning
         ASSERT1(!m_is_running_a_state && "This method should not be used from inside a state")
