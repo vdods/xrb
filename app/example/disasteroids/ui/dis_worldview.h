@@ -13,6 +13,7 @@
 
 #include "xrb_engine2_worldview.h"
 #include "xrb_eventhandler.h"
+#include "xrb_key.h"
 #include "xrb_signalhandler.h"
 #include "xrb_statemachine.h"
 
@@ -71,6 +72,7 @@ protected:
 
 private:
 
+    void HandleInput (Key::Code input);
     void ProcessPlayerInput ();
 
     void EndGame ();

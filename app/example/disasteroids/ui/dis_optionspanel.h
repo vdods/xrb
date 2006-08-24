@@ -21,6 +21,7 @@ using namespace Xrb;
 namespace Xrb
 {
 class CheckBox;
+class Config;
 class KeySelectorButton;
 template <typename T> class ValueEdit;
 } // end of namespace Xrb
@@ -28,29 +29,12 @@ template <typename T> class ValueEdit;
 namespace Dis
 {
 
-/*
-video:
-- screen resolution X/Y
-- fullscreen
-audio:
-- none yet
-input:
-- forward
-- left
-- back
-- right
-- primary weapon fire
-- secondary weapon fire
-- tractor mode
-- engine brake
-*/
-
 class OptionsPanel : public ContainerWidget
 {
 public:
 
     OptionsPanel (ContainerWidget *parent);
-    virtual ~OptionsPanel ();
+    virtual ~OptionsPanel () { }
 
     ScreenCoordVector2 GetResolution () const;
     bool GetFullscreen () const;
@@ -60,6 +44,9 @@ public:
     void SetResolutionY (ScreenCoord resolution_y);
     void SetFullscreen (bool fullscreen);
     void SetInputActionKeyCode (Config::InputAction input_action, Key::Code key_code);
+
+    void ReadValuesFromConfig (Config const &config);
+    void WriteValuesToConfig (Config *config);
 
 private:
 

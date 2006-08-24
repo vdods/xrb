@@ -65,8 +65,8 @@ public:
     bool GetIsItemInInventory (ItemType item_type, Uint8 upgrade_level) const;
     bool GetIsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;
 
-    void SetMainWeaponNumber (Uint32 weapon_number);
-    void SetAuxiliaryWeaponNumber (Uint32 weapon_number);
+    void SetMainWeaponType (ItemType main_weapon_type);
+    void SetAuxiliaryWeaponType (ItemType auxiliary_weapon_type);
     inline void SetEngineAuxiliaryInput (Uint8 const engine_auxiliary_input)
     {
         m_engine_auxiliary_input = engine_auxiliary_input;

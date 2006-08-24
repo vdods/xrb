@@ -749,12 +749,12 @@ void PlayerShip::Die (
     ASSERT1(m_power_generator != NULL)
 }
 
-void PlayerShip::SetMainWeaponNumber (Uint32 const weapon_number)
+void PlayerShip::SetMainWeaponType (ItemType const main_weapon_type)
 {
-    ASSERT1(weapon_number < IT_WEAPON_COUNT)
+    ASSERT1(main_weapon_type >= IT_WEAPON_LOWEST && main_weapon_type <= IT_WEAPON_HIGHEST)
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
     {
-        Weapon *weapon = GetInventoryWeapon(static_cast<ItemType>(IT_WEAPON_LOWEST + weapon_number), i);
+        Weapon *weapon = GetInventoryWeapon(main_weapon_type, i);
         if (weapon != NULL)
         {
             SetMainWeapon(weapon);
@@ -763,12 +763,12 @@ void PlayerShip::SetMainWeaponNumber (Uint32 const weapon_number)
     }
 }
 
-void PlayerShip::SetAuxiliaryWeaponNumber (Uint32 const weapon_number)
+void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
 {
-    ASSERT1(weapon_number < IT_WEAPON_COUNT)
+    ASSERT1(auxiliary_weapon_type >= IT_WEAPON_LOWEST && auxiliary_weapon_type <= IT_WEAPON_HIGHEST)
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
     {
-        Weapon *weapon = GetInventoryWeapon(static_cast<ItemType>(IT_WEAPON_LOWEST + weapon_number), i);
+        Weapon *weapon = GetInventoryWeapon(auxiliary_weapon_type, i);
         if (weapon != NULL)
         {
             SetAuxiliaryWeapon(weapon);

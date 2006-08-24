@@ -32,7 +32,8 @@ public:
 
     enum InputAction
     {
-        IA_MOVE_FORWARD = 0,
+        IA_IN_GAME_INVENTORY_PANEL = 0,
+        IA_MOVE_FORWARD,
         IA_MOVE_LEFT,
         IA_MOVE_BACK,
         IA_MOVE_RIGHT,
@@ -40,6 +41,13 @@ public:
         IA_SECONDARY_FIRE,
         IA_ENGINE_BRAKE,
         IA_USE_TRACTOR,
+        IA_EQUIP_PEA_SHOOTER,
+        IA_EQUIP_LASER,
+        IA_EQUIP_FLAME_THROWER,
+        IA_EQUIP_GAUSS_GUN,
+        IA_EQUIP_GRENADE_LAUNCHER,
+        IA_EQUIP_MISSILE_LAUNCHER,
+        IA_EQUIP_EMP_CORE,
 
         IA_COUNT
     }; // end of enum Config::InputAction

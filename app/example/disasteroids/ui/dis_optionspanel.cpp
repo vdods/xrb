@@ -10,6 +10,7 @@
 
 #include "dis_optionspanel.h"
 
+#include "dis_config.h"
 #include "xrb_cellpaddingwidget.h"
 #include "xrb_checkbox.h"
 #include "xrb_keyselectorbutton.h"
@@ -76,14 +77,10 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         {
             l = new Label(Config::ms_input_action_name[i], input_options_layout);
             l->SetAlignment(Dim::X, RIGHT);
-            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_name[i], Key::INVALID, input_options_layout);
+            m_input_action_button[i] = new KeySelectorButton( Config::ms_input_action_name[i], Key::INVALID, input_options_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
         }
     }
-}
-
-OptionsPanel::~OptionsPanel ()
-{
 }
 
 ScreenCoordVector2 OptionsPanel::GetResolution () const
@@ -131,6 +128,32 @@ void OptionsPanel::SetInputActionKeyCode (
     ASSERT1(input_action < Config::IA_COUNT)
     ASSERT1(m_input_action_button[input_action] != NULL)
     m_input_action_button[input_action]->SetKeyCode(key_code);
+}
+
+void OptionsPanel::ReadValuesFromConfig (Config const &config)
+{
+    SetResolutionX(config.GetResolution()[Dim::X]);
+    SetResolutionY(config.GetResolution()[Dim::Y]);
+    SetFullscreen(config.GetFullscreen());
+
+    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+        SetInputActionKeyCode(
+            static_cast<Config::InputAction>(i),
+            config.GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
+}
+
+void OptionsPanel::WriteValuesToConfig (Config *const config)
+{
+    ASSERT1(config != NULL)
+
+    config->SetResolutionX(GetResolution()[Dim::X]);
+    config->SetResolutionY(GetResolution()[Dim::Y]);
+    config->SetFullscreen(GetFullscreen());
+
+    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+        config->SetInputActionKeyCode(
+            static_cast<Config::InputAction>(i),
+            GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
 }
 
 } // end of namespace Dis

@@ -65,6 +65,7 @@ DISASTEROIDS:
   metal, minerals, blood, guts, etc).
 
 TODO:
+- have SetPathElement... check for whitespace in the path
 - make a StateMachineHandler baseclass so that StateMachine can be un-templatized
 - add HandleDisabled/HandleEnabled and make Widget::SetIsEnabled not virtual
 - see if all the modal widget tracking code (including event handling)

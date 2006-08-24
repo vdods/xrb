@@ -145,16 +145,8 @@ void TitleScreenWidget::ActivateOptionsDialog ()
     m_options_panel = new OptionsPanel(options_dialog->GetDialogLayout());
     options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
     options_dialog->CenterOnWidget(options_dialog->GetParent());
-
     // initialize the OptionsPanel with the Config values
-    m_options_panel->SetFullscreen(g_config.GetFullscreen());
-    m_options_panel->SetResolutionX(g_config.GetResolution()[Dim::X]);
-    m_options_panel->SetResolutionY(g_config.GetResolution()[Dim::Y]);
-    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
-        m_options_panel->SetInputActionKeyCode(
-            static_cast<Config::InputAction>(i),
-            g_config.GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
-
+    m_options_panel->ReadValuesFromConfig(g_config);
     // connect up the dialog OK button to OptionsDialogReturnedOK
     SignalHandler::Connect1(
         options_dialog->SenderDialogReturned(),
@@ -167,15 +159,7 @@ void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
 
     // only save the OptionsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)
-    {
-        g_config.SetFullscreen(m_options_panel->GetFullscreen());
-        g_config.SetResolutionX(m_options_panel->GetResolution()[Dim::X]);
-        g_config.SetResolutionY(m_options_panel->GetResolution()[Dim::Y]);
-        for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
-            g_config.SetInputActionKeyCode(
-                static_cast<Config::InputAction>(i),
-                m_options_panel->GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
-    }
+        m_options_panel->WriteValuesToConfig(&g_config);
 
     m_options_panel = NULL;
 }

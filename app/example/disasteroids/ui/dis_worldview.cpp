@@ -129,98 +129,14 @@ void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
 bool WorldView::ProcessKeyEvent (EventKey const *const e)
 {
     if (e->GetIsKeyDownEvent())
-    {
-        switch (e->GetKeyCode())
-        {
-            case Key::ESCAPE:
-                // only allowed to use the inventory panel during normal gameplay
-                if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
-                    m_sender_activate_inventory_panel.Signal();
-                break;
-
-            case Key::KP_DIVIDE:
-                if (m_rotation_accumulator < 0.0f)
-                    m_rotation_accumulator -=
-                        m_rotation_increment *
-                        static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
-                m_rotation_accumulator += m_rotation_increment;
-                break;
-
-            case Key::KP_MULTIPLY:
-                if (m_rotation_accumulator > 0.0f)
-                    m_rotation_accumulator -=
-                        m_rotation_increment *
-                        static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
-                m_rotation_accumulator -= m_rotation_increment;
-                break;
-
-            case Key::KP_PLUS:
-                if (m_zoom_accumulator < 0.0f)
-                    m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
-                m_zoom_accumulator += 1.0f;
-                break;
-
-            case Key::KP_MINUS:
-                if (m_zoom_accumulator > 0.0f)
-                    m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
-                m_zoom_accumulator -= 1.0f;
-                break;
-
-            case Key::ONE:      // PeaShooter
-            case Key::TWO:      // Laser
-            case Key::THREE:    // FlameThrower
-            case Key::FOUR:     // GaussGun
-            case Key::FIVE:     // GrenadeLauncher
-            case Key::SIX:      // MissileLauncher
-            case Key::SEVEN:    // EMPCore
-                // this looks wrong, but the keys start at 1 and end at 0,
-                // and the weapon indices start at 0 and end at 9.
-                if (m_player_ship != NULL)
-                    m_player_ship->SetMainWeaponNumber(e->GetKeyCode() - Key::ONE);
-                break;
-
-            case Key::F1:
-                SetIsDebugModeEnabled(!GetIsDebugInfoEnabled());
-                break;
-
-            case Key::F2:
-                if (m_player_ship != NULL)
-                    m_player_ship->GiveLotsOfMinerals();
-                break;
-
-            case Key::F3:
-                if (m_player_ship != NULL)
-                    m_player_ship->IncrementScore(50000);
-                break;
-
-            case Key::F4:
-                if (m_player_ship != NULL)
-                    m_player_ship->SetIsInvincible(!m_player_ship->GetIsInvincible());
-                break;
-
-            case Key::F5:
-                if (m_player_ship != NULL && !m_player_ship->GetIsDead())
-                    m_player_ship->Kill(
-                        NULL,
-                        NULL,
-                        FloatVector2::ms_zero,
-                        FloatVector2::ms_zero,
-                        0.0f,
-                        Mortal::D_NONE,
-                        m_player_ship->GetWorld()->GetMostRecentFrameTime(),
-                        0.0f);
-                break;
-
-            default:
-                break;
-        }
-    }
-
+        HandleInput(e->GetKeyCode());
     return true;
 }
 
 bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
+    if (e->GetIsMouseButtonDownEvent())
+        HandleInput(e->GetButtonCode());
     return true;
 }
 
@@ -229,6 +145,8 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     // don't allow mouse wheel input while the widget is not focused
     if (!GetParentWorldViewWidget()->GetIsFocused())
         return false;
+
+    HandleInput(e->GetButtonCode());
 
 /*
     if (e->GetIsEitherAltKeyPressed())
@@ -391,6 +309,117 @@ void WorldView::HandleFrame ()
     else
     {
         SetCenter(GetCenter() + m_view_velocity * GetFrameDT());
+    }
+}
+
+void WorldView::HandleInput (Key::Code const input)
+{
+    if (input == g_config.GetInputActionKeyCode(Config::IA_IN_GAME_INVENTORY_PANEL))
+    {
+        // only allowed to use the inventory panel during normal gameplay
+        if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
+            m_sender_activate_inventory_panel.Signal();
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_PEA_SHOOTER))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_PEA_SHOOTER);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_LASER))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_LASER);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_FLAME_THROWER))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_FLAME_THROWER);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_GAUSS_GUN))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_GAUSS_GUN);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_GRENADE_LAUNCHER))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_GRENADE_LAUNCHER);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_MISSILE_LAUNCHER))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_MISSILE_LAUNCHER);
+    }
+    else if (input == g_config.GetInputActionKeyCode(Config::IA_EQUIP_EMP_CORE))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SetMainWeaponType(IT_WEAPON_EMP_CORE);
+    }
+    else switch (input)
+    {
+/*
+        case Key::KP_DIVIDE:
+            if (m_rotation_accumulator < 0.0f)
+                m_rotation_accumulator -=
+                    m_rotation_increment *
+                    static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
+            m_rotation_accumulator += m_rotation_increment;
+            break;
+
+        case Key::KP_MULTIPLY:
+            if (m_rotation_accumulator > 0.0f)
+                m_rotation_accumulator -=
+                    m_rotation_increment *
+                    static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
+            m_rotation_accumulator -= m_rotation_increment;
+            break;
+
+        case Key::KP_PLUS:
+            if (m_zoom_accumulator < 0.0f)
+                m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
+            m_zoom_accumulator += 1.0f;
+            break;
+
+        case Key::KP_MINUS:
+            if (m_zoom_accumulator > 0.0f)
+                m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
+            m_zoom_accumulator -= 1.0f;
+            break;
+*/
+        case Key::F1:
+            SetIsDebugModeEnabled(!GetIsDebugInfoEnabled());
+            break;
+
+        case Key::F2:
+            if (m_player_ship != NULL)
+                m_player_ship->GiveLotsOfMinerals();
+            break;
+
+        case Key::F3:
+            if (m_player_ship != NULL)
+                m_player_ship->IncrementScore(50000);
+            break;
+
+        case Key::F4:
+            if (m_player_ship != NULL)
+                m_player_ship->SetIsInvincible(!m_player_ship->GetIsInvincible());
+            break;
+
+        case Key::F5:
+            if (m_player_ship != NULL && !m_player_ship->GetIsDead())
+                m_player_ship->Kill(
+                    NULL,
+                    NULL,
+                    FloatVector2::ms_zero,
+                    FloatVector2::ms_zero,
+                    0.0f,
+                    Mortal::D_NONE,
+                    m_player_ship->GetWorld()->GetMostRecentFrameTime(),
+                    0.0f);
+            break;
+
+        default:
+            break;
     }
 }
 

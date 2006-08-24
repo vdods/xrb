@@ -10,16 +10,19 @@
 
 #include "dis_inventorypanel.h"
 
+#include "dis_optionspanel.h"
 #include "dis_playership.h"
 #include "xrb_input_events.h"
-#include "xrb_math.h"
 #include "xrb_layout.h"
+#include "xrb_math.h"
 #include "xrb_screen.h"
 #include "xrb_spacerwidget.h"
 #include "xrb_valuelabel.h"
 #include "xrb_widgetbackground.h"
 
 using namespace Xrb;
+
+extern Dis::Config g_config;
 
 namespace Dis
 {
@@ -37,7 +40,9 @@ InventoryPanel::InventoryPanel (
     m_receiver_equip_item(&InventoryPanel::EquipItem, this),
     m_receiver_show_price(&InventoryPanel::ShowPrice, this),
     m_receiver_hide_price(&InventoryPanel::HidePrice, this),
-    m_internal_receiver_deactivate(&InventoryPanel::Deactivate, this)
+    m_internal_receiver_deactivate(&InventoryPanel::Deactivate, this),
+    m_internal_receiver_activate_options_dialog(&InventoryPanel::ActivateOptionsDialog, this),
+    m_internal_receiver_options_dialog_returned(&InventoryPanel::OptionsDialogReturned, this)
 {
     m_accepts_focus = true;
 
@@ -142,6 +147,13 @@ InventoryPanel::InventoryPanel (
     SignalHandler::Connect0(
         m_return_button->SenderReleased(),
         &m_internal_receiver_deactivate);
+
+    m_options_button = new Button("OPTIONS", menu_button_layout, "options button");
+    m_options_button->SetIsHeightFixedToTextHeight(true);
+
+    SignalHandler::Connect0(
+        m_options_button->SenderReleased(),
+        &m_internal_receiver_activate_options_dialog);
 
     m_end_button = new Button("END", menu_button_layout, "end button");
     m_end_button->SetIsHeightFixedToTextHeight(true);
@@ -397,6 +409,33 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
 void InventoryPanel::Deactivate ()
 {
     m_sender_deactivate.Signal();
+}
+
+void InventoryPanel::ActivateOptionsDialog ()
+{
+    ASSERT1(m_options_panel == NULL)
+    // create the dialog and add a new OptionsPanel to it
+    Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
+    m_options_panel = new OptionsPanel(options_dialog->GetDialogLayout());
+    options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
+    options_dialog->CenterOnWidget(options_dialog->GetParent());
+    // initialize the OptionsPanel with the Config values
+    m_options_panel->ReadValuesFromConfig(g_config);
+    // connect up the dialog OK button to OptionsDialogReturnedOK
+    SignalHandler::Connect1(
+        options_dialog->SenderDialogReturned(),
+        &m_internal_receiver_options_dialog_returned);
+}
+
+void InventoryPanel::OptionsDialogReturned (Dialog::ButtonID const button_id)
+{
+    ASSERT1(m_options_panel != NULL)
+
+    // only save the OptionsPanel values back into the Config if OK button was hit
+    if (button_id == Dialog::ID_OK)
+        m_options_panel->WriteValuesToConfig(&g_config);
+
+    m_options_panel = NULL;
 }
 
 } // end of namespace Dis

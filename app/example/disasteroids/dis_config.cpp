@@ -23,38 +23,62 @@ namespace Dis
 
 std::string const Config::ms_input_action_name[IA_COUNT] =
 {
-    "Move Forward",     // IA_MOVE_FORWARD = 0,
-    "Move Left",        // IA_MOVE_LEFT,
-    "Move Back",        // IA_MOVE_BACK,
-    "Move Right",       // IA_MOVE_RIGHT,
-    "Primary Fire",     // IA_PRIMARY_FIRE,
-    "Secondary Fire",   // IA_SECONDARY_FIRE,
-    "Engine Brake",     // IA_ENGINE_BRAKE,
-    "Use Tractor"       // IA_USE_TRACTOR,
+    "In-Game Inventory Panel",  // IA_IN_GAME_INVENTORY_PANEL = 0,
+    "Move Forward",             // IA_MOVE_FORWARD,
+    "Move Left",                // IA_MOVE_LEFT,
+    "Move Back",                // IA_MOVE_BACK,
+    "Move Right",               // IA_MOVE_RIGHT,
+    "Primary Fire",             // IA_PRIMARY_FIRE,
+    "Secondary Fire",           // IA_SECONDARY_FIRE,
+    "Engine Brake",             // IA_ENGINE_BRAKE,
+    "Use Tractor",              // IA_USE_TRACTOR,
+    "Equip Pea Shooter",        // IA_EQUIP_PEA_SHOOTER,
+    "Equip Laser",              // IA_EQUIP_LASER,
+    "Equip Flame Thrower",      // IA_EQUIP_FLAME_THROWER,
+    "Equip Gauss Gun",          // IA_EQUIP_GAUSS_GUN,
+    "Equip Grenade Launcher",   // IA_EQUIP_GRENADE_LAUNCHER,
+    "Equip Missile Launcher",   // IA_EQUIP_MISSILE_LAUNCHER,
+    "Equip EMP Core"            // IA_EQUIP_EMP_CORE,
 };
 
 Key::Code const Config::ms_input_action_default_key_code[IA_COUNT] =
 {
-    Key::W,             // IA_MOVE_FORWARD = 0,
+    Key::ESCAPE,        // IA_IN_GAME_INVENTORY_PANEL = 0,
+    Key::W,             // IA_MOVE_FORWARD,
     Key::A,             // IA_MOVE_LEFT,
     Key::S,             // IA_MOVE_BACK,
     Key::D,             // IA_MOVE_RIGHT,
     Key::LEFTMOUSE,     // IA_PRIMARY_FIRE,
     Key::RIGHTMOUSE,    // IA_SECONDARY_FIRE,
     Key::C,             // IA_ENGINE_BRAKE,
-    Key::SPACE          // IA_USE_TRACTOR,
+    Key::SPACE,         // IA_USE_TRACTOR,
+    Key::ONE,           // IA_EQUIP_PEA_SHOOTER,
+    Key::TWO,           // IA_EQUIP_LASER,
+    Key::THREE,         // IA_EQUIP_FLAME_THROWER,
+    Key::FOUR,          // IA_EQUIP_GAUSS_GUN,
+    Key::FIVE,          // IA_EQUIP_GRENADE_LAUNCHER,
+    Key::SIX,           // IA_EQUIP_MISSILE_LAUNCHER,
+    Key::SEVEN          // IA_EQUIP_EMP_CORE,
 };
 
 std::string const Config::ms_input_action_path[IA_COUNT] =
 {
-    "|controls|move_forward",   // IA_MOVE_FORWARD = 0,
-    "|controls|move_left",      // IA_MOVE_LEFT,
-    "|controls|move_back",      // IA_MOVE_BACK,
-    "|controls|move_right",     // IA_MOVE_RIGHT,
-    "|controls|primary_fire",   // IA_PRIMARY_FIRE,
-    "|controls|secondary_fire", // IA_SECONDARY_FIRE,
-    "|controls|engine_brake",   // IA_ENGINE_BRAKE,
-    "|controls|use_tractor"     // IA_USE_TRACTOR,
+    "|input|in_game_inventory_panel",        // IA_IN_GAME_INVENTORY_PANEL = 0,
+    "|input|move_forward",                   // IA_MOVE_FORWARD,
+    "|input|move_left",                      // IA_MOVE_LEFT,
+    "|input|move_back",                      // IA_MOVE_BACK,
+    "|input|move_right",                     // IA_MOVE_RIGHT,
+    "|input|primary_fire",                   // IA_PRIMARY_FIRE,
+    "|input|secondary_fire",                 // IA_SECONDARY_FIRE,
+    "|input|engine_brake",                   // IA_ENGINE_BRAKE,
+    "|input|use_tractor",                    // IA_USE_TRACTOR,
+    "|input|equip_weapon1_pea_shooter",      // IA_EQUIP_PEA_SHOOTER,
+    "|input|equip_weapon2_laser",            // IA_EQUIP_LASER,
+    "|input|equip_weapon3_flame_thrower",    // IA_EQUIP_FLAME_THROWER,
+    "|input|equip_weapon4_gauss_gun",        // IA_EQUIP_GAUSS_GUN,
+    "|input|equip_weapon5_grenade_launcher", // IA_EQUIP_GRENADE_LAUNCHER,
+    "|input|equip_weapon6_missile_launcher", // IA_EQUIP_MISSILE_LAUNCHER,
+    "|input|equip_weapon7_emp_core"          // IA_EQUIP_EMP_CORE,
 };
 
 Config::Config ()
@@ -114,9 +138,9 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
         #define GET_CONFIG_VALUE(member, Type, path) \
             try { member = root->GetPathElement##Type(path); } \
             catch (...) { }
-        GET_CONFIG_VALUE(m_fullscreen, Boolean, "|fullscreen");
-        GET_CONFIG_VALUE(m_resolution[Dim::X], Uint32, "|resolution_x");
-        GET_CONFIG_VALUE(m_resolution[Dim::Y], Uint32, "|resolution_y");
+        GET_CONFIG_VALUE(m_fullscreen, Boolean, "|video|fullscreen");
+        GET_CONFIG_VALUE(m_resolution[Dim::X], Uint32, "|video|resolution_x");
+        GET_CONFIG_VALUE(m_resolution[Dim::Y], Uint32, "|video|resolution_y");
         GET_CONFIG_VALUE(m_key_map_name, String, "|key_map_name");
         #undef GET_CONFIG_VALUE
 
@@ -139,9 +163,9 @@ void Config::Write (string const &config_filename) const
 
     DataFileStructure *root = new DataFileStructure();
 
-    root->SetPathElementBoolean("|fullscreen", m_fullscreen);
-    root->SetPathElementUint32("|resolution_x", m_resolution[Dim::X]);
-    root->SetPathElementUint32("|resolution_y", m_resolution[Dim::Y]);
+    root->SetPathElementBoolean("|video|fullscreen", m_fullscreen);
+    root->SetPathElementUint32("|video|resolution_x", m_resolution[Dim::X]);
+    root->SetPathElementUint32("|video|resolution_y", m_resolution[Dim::Y]);
     root->SetPathElementString("|key_map_name", m_key_map_name);
 
     for (Uint32 i = 0; i < IA_COUNT; ++i)
