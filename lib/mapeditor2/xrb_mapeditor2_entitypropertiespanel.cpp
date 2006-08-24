@@ -133,7 +133,6 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     CellPaddingWidget *cpw;
 
     Layout *main_layout = new Layout(VERTICAL, this, "main layout");
-    main_layout->SetIsUsingZeroedFrameMargins(true);
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     l = new Label("Entity Properties", main_layout, "title label");
@@ -331,7 +330,6 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
             HORIZONTAL,
             control_layout,
             "applies gravity object selection set button layout");
-    applies_gravity_button_layout->SetIsUsingZeroedFrameMargins(true);
 
     button = m_object_selection_set_turn_on_applies_gravity_button =
         new Button(
@@ -363,7 +361,6 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
             HORIZONTAL,
             control_layout,
             "reacts to gravity object selection set button layout");
-    reacts_to_gravity_button_layout->SetIsUsingZeroedFrameMargins(true);
 
     button = m_object_selection_set_turn_on_reacts_to_gravity_button =
         new Button(

@@ -43,26 +43,66 @@ InventoryPanel::InventoryPanel (
 
     m_inventory_owner_ship = NULL;
 
+    Label *l;
+    Float const grid_label_font_height_ratio = 0.018f;
+
     // a vertical layout to hold the sublayouts
     Layout *main_layout = new Layout(VERTICAL, this, "main InventoryPanel layout");
     SetMainWidget(main_layout);
 
-    // a grid layout for all the inventory buttons
-    Layout *button_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, main_layout, "InventoryButton grid layout");
+    // a horizontal layout to hold the sublayouts for each of
+    // weapons/tractor/engine/shield/armor/power
+    Layout *penultimate_layout = new Layout(HORIZONTAL, main_layout, "penultimate InventoryPanel layout");
 
-    for (Uint8 item = 0; item < IT_COUNT; ++item)
-    {
-        for (Uint8 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
-        {
-            m_inventory_button[item][level] =
-                new InventoryButton(
-                    static_cast<ItemType>(item),
-                    level,
-                    button_grid_layout);
-            m_inventory_button[item][level]->FixSizeRatios(FloatVector2(0.07f, 0.07f));
-            ConnectInventoryButton(m_inventory_button[item][level]);
-        }
-    }
+    // weapons layout
+    Layout *weapons_layout = new Layout(VERTICAL, penultimate_layout, "weapons layout");
+    l = new Label("WEAPONS", weapons_layout, "weapons layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *weapons_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, weapons_layout, "weapons grid-layout");
+    // this doesn't include IT_WEAPON_TRACTOR
+    for (Uint8 item_type = IT_WEAPON_LOWEST; item_type < IT_WEAPON_HIGHEST; ++item_type)
+        CreateInventoryButtonColumn(static_cast<ItemType>(item_type), weapons_grid_layout);
+
+    // tractor layout
+    Layout *tractor_layout = new Layout(VERTICAL, penultimate_layout, "tractor layout");
+    l = new Label("TRACTOR", tractor_layout, "tractor layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *tractor_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, tractor_layout, "tractor grid-layout");
+    CreateInventoryButtonColumn(IT_WEAPON_TRACTOR, tractor_grid_layout);
+
+    // engine layout
+    Layout *engine_layout = new Layout(VERTICAL, penultimate_layout, "engine layout");
+    l = new Label("ENGINE", engine_layout, "engine layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *engine_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, engine_layout, "engine grid-layout");
+    CreateInventoryButtonColumn(IT_ENGINE, engine_grid_layout);
+
+    // armor layout
+    Layout *armor_layout = new Layout(VERTICAL, penultimate_layout, "armor layout");
+    l = new Label("ARMOR", armor_layout, "armor layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *armor_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, armor_layout, "armor grid-layout");
+    CreateInventoryButtonColumn(IT_ARMOR, armor_grid_layout);
+
+    // shield layout
+    Layout *shield_layout = new Layout(VERTICAL, penultimate_layout, "shield layout");
+    l = new Label("SHIELD", shield_layout, "shield layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *shield_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, shield_layout, "shield grid-layout");
+    CreateInventoryButtonColumn(IT_SHIELD, shield_grid_layout);
+
+    // power layout
+    Layout *power_layout = new Layout(VERTICAL, penultimate_layout, "power layout");
+    l = new Label("POWER", power_layout, "power layout label");
+    l->SetFontHeightRatio(grid_label_font_height_ratio);
+    l->SetIsHeightFixedToTextHeight(true);
+    Layout *power_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, power_layout, "power grid-layout");
+    CreateInventoryButtonColumn(IT_POWER_GENERATOR, power_grid_layout);
 
     // a horizontal layout for the price display
     Layout *price_layout = new Layout(HORIZONTAL, main_layout, "InventoryPanel price layout");
@@ -223,6 +263,21 @@ bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
     }
     else
         return false;
+}
+
+void InventoryPanel::CreateInventoryButtonColumn (ItemType item_type, Layout *parent)
+{
+    ASSERT1(parent != NULL)
+    for (Uint8 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
+    {
+        m_inventory_button[item_type][level] =
+            new InventoryButton(
+                static_cast<ItemType>(item_type),
+                level,
+                parent);
+        m_inventory_button[item_type][level]->FixSizeRatios(FloatVector2(0.07f, 0.07f));
+        ConnectInventoryButton(m_inventory_button[item_type][level]);
+    }
 }
 
 void InventoryPanel::ConnectInventoryButton (InventoryButton *const inventory_button)

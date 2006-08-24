@@ -64,7 +64,6 @@ MapEditor2::ObjectPropertiesPanel::ObjectPropertiesPanel (
     ValueEdit<Float> *vef;
 
     Layout *main_layout = new Layout(VERTICAL, this, "main layout");
-    main_layout->SetIsUsingZeroedFrameMargins(true);
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     l = new Label("Object Properties", main_layout, "title label");

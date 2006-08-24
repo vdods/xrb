@@ -42,7 +42,6 @@ TitleScreenWidget::TitleScreenWidget (
     m_internal_receiver_options_dialog_returned(&TitleScreenWidget::OptionsDialogReturned, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
-    main_layout->SetIsUsingZeroedFrameMargins(true);
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     CellPaddingWidget *logo_padding_widget =
@@ -66,7 +65,6 @@ TitleScreenWidget::TitleScreenWidget (
 
     Layout *stuff_layout = new Layout(VERTICAL, main_layout, "stuff layout");
     stuff_layout->FixHeightRatio(0.20f);
-    stuff_layout->SetIsUsingZeroedFrameMargins(true);
     stuff_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     CellPaddingWidget *controls_padding_widget =
@@ -84,7 +82,6 @@ TitleScreenWidget::TitleScreenWidget (
     m_quit_button->SetIsHeightFixedToTextHeight(true);
 
     Layout *footnotes_layout = new Layout(HORIZONTAL, stuff_layout, "footnotes_layout layout");
-    footnotes_layout->SetIsUsingZeroedFrameMargins(true);
     footnotes_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     Label *credits_label = new Label("(C)opyright 2004-2006 by Victor Dods", footnotes_layout, "credits label");

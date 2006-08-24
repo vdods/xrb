@@ -24,6 +24,7 @@ HighScoresWidget::HighScoresWidget (ContainerWidget *const parent)
     ContainerWidget(parent, "HighScoresWidget")
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main HighScoresWidget layout");
+    main_layout->SetIsUsingZeroedFrameMargins(false);
 
     m_title_label = new Label("x", main_layout);
     m_title_label->SetIsSizeFixedToTextSize(true);

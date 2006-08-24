@@ -48,7 +48,6 @@ MapEditor2::MainWidget::MainWidget (
     // ///////////////////////////////////////////////////////////////////////
 
     m_main_layout = new Layout(VERTICAL, this, "main layout");
-    m_main_layout->SetIsUsingZeroedFrameMargins(true);
     m_main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     m_toolbar_layout =
@@ -62,7 +61,6 @@ MapEditor2::MainWidget::MainWidget (
             HORIZONTAL,
             m_main_layout,
             "main panel layout");
-    m_main_panel_layout->SetIsUsingZeroedFrameMargins(true);
     m_main_panel_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     m_status_bar_layout =
@@ -226,7 +224,6 @@ MapEditor2::MainWidget::MainWidget (
             VERTICAL,
             m_main_panel_layout,
             "Control panel layout");
-    m_control_panel_layout->SetIsUsingZeroedFrameMargins(true);
     m_control_panel_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
     m_control_panel_layout->SetSizePropertyRatio(SizeProperties::MAX, Dim::X, 0.45f);
     m_control_panel_layout->SetSizePropertyEnabled(SizeProperties::MAX, Dim::X, true);
@@ -266,7 +263,7 @@ MapEditor2::MainWidget::MainWidget (
     m_polygon_tesselation_label =
         new Label("", m_status_bar_layout, "polygon tesselation value label");
     m_polygon_tesselation_label->SetIsWidthFixedToTextWidth(true);
-        
+
     // ///////////////////////////////////////////////////////////////////////
     // make the main layout be the main widget
     // ///////////////////////////////////////////////////////////////////////
@@ -278,7 +275,7 @@ MapEditor2::MainWidget::MainWidget (
     World *world = World::CreateEmpty();
     world->AttachWorldView(world_view);
     SetMapEditorWorldView(world_view);
-    
+
     m_world_view_widget->Focus();
 }
 
@@ -317,7 +314,7 @@ void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &filename)
 
     WorldView *world_view = new WorldView(GetWorldViewWidget());
     map_editor_world->AttachWorldView(world_view);
-    
+
     SetMapEditorWorldView(world_view);
 }
 
@@ -577,7 +574,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             WorldView *world_view = new WorldView(GetWorldViewWidget());
             World *world = World::CreateEmpty();
             world->AttachWorldView(world_view);
-            
+
             SetMapEditorWorldView(world_view);
             return true;
         }

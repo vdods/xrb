@@ -1250,7 +1250,7 @@ void Layout::Initialize (
     m_major_count = major_count;
     m_major_direction = major_direction;
 
-    m_is_using_zeroed_frame_margins = false;
+    m_is_using_zeroed_frame_margins = true;
     m_is_using_zeroed_layout_spacing_margins = false;
 
     SetBackground(NULL);

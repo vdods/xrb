@@ -367,7 +367,6 @@ public:
         m_internal_receiver_set_temperature_retention_rate(&HeatSimulation::SetTemperatureRetentionRate, this)
     {
         Layout *main_layout = new Layout(VERTICAL, this);
-        main_layout->SetIsUsingZeroedFrameMargins(true);
         main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
         SetMainWidget(main_layout);
 
@@ -400,8 +399,10 @@ public:
             for (Uint32 x = 0; x < GRID_WIDTH; ++x)
                 m_button_grid[y][x] = new HeatButton(grid_layout);
 
-        // Create a layout for the controls below the grid.
+        // Create a layout for the controls below the grid and enable
+        // the frame margins (which are zeroed-out by default).
         Layout *sub_layout = new Layout(HORIZONTAL, main_layout);
+        sub_layout->SetIsUsingZeroedFrameMargins(false);
 
         // ValueLabel<T> is a templatized subclass of Label which contains a
         // value instead of a string.  It has GetValue and SetValue methods,

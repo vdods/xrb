@@ -96,7 +96,7 @@ GameWidget::GameWidget (
 
     // create the layout for the HUD
     Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
-    main_layout->SetIsUsingZeroedFrameMargins(true);
+    main_layout->SetIsUsingZeroedFrameMargins(false);
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     // framerate (and other stuff later) layout

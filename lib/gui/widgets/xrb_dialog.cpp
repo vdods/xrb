@@ -37,9 +37,11 @@ Dialog::Dialog (
     // the main layout which contains the button layout and to which the user
     // can add more controls
     m_dialog_layout = new Layout(VERTICAL, this, "dialog layout");
+    m_dialog_layout->SetIsUsingZeroedFrameMargins(false);
 
     // the horizontal layout for the OK and cancel, etc. buttons
     m_button_layout = new Layout(HORIZONTAL, m_dialog_layout, "button layout");
+    m_button_layout->SetIsUsingZeroedFrameMargins(false);
     // make the buttons stay at the bottom of the dialog box
     m_button_layout->SetStackPriority(SP_STAY_ON_TOP);
 
