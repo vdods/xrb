@@ -68,8 +68,8 @@ DISASTEROIDS:
 - add a max speed for nonsolid entities in Dis::PhysicsHandler
 
 TODO:
-- track drawn opaque object count and drawn transparent object count in
-  Engine2::Object::DrawLoopFunctor
+- somehow properly return both drawn opaque and transparent object counts from
+  Engine2::ObjectLayer::Draw and make UI labels for them in the debug view.
 - have SetPathElement... check for whitespace in the path
 - make a StateMachineHandler baseclass so that StateMachine can be un-templatized
 - add HandleDisabled/HandleEnabled and make Widget::SetIsEnabled not virtual

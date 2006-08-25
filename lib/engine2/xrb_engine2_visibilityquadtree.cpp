@@ -197,7 +197,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     // restore the GL state
     glDisable(GL_DEPTH_TEST);
 
-    return draw_loop_functor.GetDrawnObjectCount();
+    return draw_loop_functor.GetDrawnOpaqueObjectCount();
 }
 
 Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
@@ -256,7 +256,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     // restore the GL state
     glDisable(GL_DEPTH_TEST);
 
-    return draw_loop_functor.GetDrawnObjectCount();
+    return draw_loop_functor.GetDrawnOpaqueObjectCount();
 }
 
 void Engine2::VisibilityQuadTree::DrawBounds (

@@ -31,6 +31,21 @@
 
 using namespace Xrb;
 
+// lower z-depth values indicate closer to the screen
+
+#define Z_DEPTH_EMP_EXPLOSION      -0.8f
+#define Z_DEPTH_RETICLE_EFFECT     -0.2f
+#define Z_DEPTH_BALLISTIC          -0.05f
+#define Z_DEPTH_SOLID               0.0f
+#define Z_DEPTH_DEVOURMENT_GRINDER  0.05f
+#define Z_DEPTH_SHIELD_EFFECT       0.1f
+#define Z_DEPTH_FIREBALL            0.3f
+#define Z_DEPTH_LASER_BEAM          0.4f
+#define Z_DEPTH_GAUSS_GUN_TRAIL     0.45f
+#define Z_DEPTH_DAMAGE_EXPLOSION    0.5f
+#define Z_DEPTH_NO_DAMAGE_EXPLOSION 0.55f
+#define Z_DEPTH_TRACTOR_BEAM        0.8f
+
 namespace Dis
 {
 
@@ -94,7 +109,7 @@ Asteroid *SpawnAsteroid (
         world,
         object_layer,
         "resources/asteroid_small.png",
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         asteroid,
         translation,
@@ -133,7 +148,7 @@ Ballistic *SpawnSmartBallistic (
             world,
             object_layer,
             "resources/plasma_bullet.png",
-            -0.05f, // z depth
+            Z_DEPTH_BALLISTIC,
             true, // is transparent
             ballistic,
             translation,
@@ -174,7 +189,7 @@ Ballistic *SpawnDumbBallistic (
         world,
         object_layer,
         "resources/sadface_small.png",
-        -0.05f, // z depth
+        Z_DEPTH_BALLISTIC,
         false, // is transparent
         ballistic,
         translation,
@@ -214,7 +229,7 @@ Grenade *SpawnGrenade (
         world,
         object_layer,
         "resources/grenade_small.png",
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         grenade,
         translation,
@@ -260,7 +275,7 @@ Missile *SpawnMissile (
             world,
             object_layer,
             "resources/missile_small.png",
-            0.0f, // z depth
+            Z_DEPTH_SOLID,
             false, // is transparent
             missile,
             translation,
@@ -320,7 +335,7 @@ GuidedMissile *SpawnGuidedMissile (
             world,
             object_layer,
             "resources/missile_small.png",
-            0.0f, // z depth
+            Z_DEPTH_SOLID,
             false, // is transparent
             guided_missile,
             translation,
@@ -355,7 +370,7 @@ EMPBomb *SpawnEMPBomb (
         world,
         object_layer,
         "resources/grenade_small.png",
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         emp_bomb,
         translation,
@@ -383,7 +398,7 @@ Powerup *SpawnPowerup (
         world,
         object_layer,
         "resources/powerup.png",
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
         translation,
@@ -411,7 +426,7 @@ Powerup *SpawnMineral (
         world,
         object_layer,
         Item::GetMineralSpriteFilename(mineral_index),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
         translation,
@@ -448,7 +463,7 @@ DamageExplosion *SpawnDamageExplosion (
         world,
         object_layer,
         "resources/explosion1a_small.png",
-        0.5f, // z depth
+        Z_DEPTH_DAMAGE_EXPLOSION,
         true, // is transparent
         damage_explosion,
         translation,
@@ -475,7 +490,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
         world,
         object_layer,
         "resources/explosion1a_small.png",
-        0.5f, // z depth
+        Z_DEPTH_NO_DAMAGE_EXPLOSION,
         true, // is transparent
         no_damage_explosion,
         translation,
@@ -504,7 +519,7 @@ EMPExplosion *SpawnEMPExplosion (
         world,
         object_layer,
         "resources/emp_explosion_small.png",
-        -0.8f, // z depth
+        Z_DEPTH_EMP_EXPLOSION,
         true, // is transparent
         emp_explosion,
         translation,
@@ -541,7 +556,7 @@ Fireball *SpawnFireball (
         world,
         object_layer,
         "resources/fireball.png",
-        0.3f, // z depth
+        Z_DEPTH_FIREBALL,
         true, // is transparent
         fireball,
         translation,
@@ -565,7 +580,7 @@ LaserBeam *SpawnLaserBeam (
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
-    sprite->SetZDepth(0.5f);
+    sprite->SetZDepth(Z_DEPTH_LASER_BEAM);
     sprite->SetIsTransparent(true);
     sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
 
@@ -595,7 +610,7 @@ GaussGunTrail *SpawnGaussGunTrail (
     FloatVector2 trail_center = trail_start + 0.5f * trail_vector;
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
-    sprite->SetZDepth(0.4f);
+    sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
     sprite->SetIsTransparent(true);
     sprite->SetTranslation(trail_center);
     sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
@@ -618,7 +633,7 @@ TractorBeam *SpawnTractorBeam (
     ASSERT1(object_layer != NULL)
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/tractor_beam.png");
-    sprite->SetZDepth(0.8f);
+    sprite->SetZDepth(Z_DEPTH_TRACTOR_BEAM);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Tractor will place
@@ -642,7 +657,7 @@ ShieldEffect *SpawnShieldEffect (
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/shield_effect_small.png");
-    sprite->SetZDepth(0.1f);
+    sprite->SetZDepth(Z_DEPTH_SHIELD_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
@@ -669,7 +684,7 @@ ReticleEffect *SpawnReticleEffect (
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/reticle1.png");
-    sprite->SetZDepth(-0.2f);
+    sprite->SetZDepth(Z_DEPTH_RETICLE_EFFECT);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
@@ -706,7 +721,7 @@ HealthTrigger *SpawnHealthTrigger (
             world,
             object_layer,
             "resources/sadface_small.png",
-            -0.1f, // z depth
+            0.01f, // z depth (arbitrary, since its invisible)
             true, // is transparent
             health_trigger,
             translation,
@@ -732,7 +747,7 @@ Solitary *SpawnSolitary (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_SOLITARY, 0),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         solitary,
         translation,
@@ -757,7 +772,7 @@ Interloper *SpawnInterloper (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_INTERLOPER, enemy_level),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         interloper,
         translation,
@@ -783,7 +798,7 @@ Shade *SpawnShade (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_SHADE, enemy_level),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         shade,
         translation,
@@ -809,7 +824,7 @@ Revulsion *SpawnRevulsion (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_REVULSION, enemy_level),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         revulsion,
         translation,
@@ -835,7 +850,7 @@ Devourment *SpawnDevourment (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_DEVOURMENT, enemy_level),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         devourment,
         translation,
@@ -861,7 +876,7 @@ Demi *SpawnDemi (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_DEMI, enemy_level),
-        0.0f, // z depth
+        Z_DEPTH_SOLID,
         false, // is transparent
         demi,
         translation,
@@ -907,7 +922,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
         world,
         object_layer,
         s_grinder_sprite_filename[enemy_level],
-        0.1f, // z depth
+        Z_DEPTH_DEVOURMENT_GRINDER,
         false, // is transparent
         health_trigger,
         translation,

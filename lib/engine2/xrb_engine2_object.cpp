@@ -53,7 +53,8 @@ Engine2::Object::DrawLoopFunctor::DrawLoopFunctor (
     m_view_radius = view_radius;
     m_is_collect_transparent_object_pass = is_collect_transparent_object_pass;
     m_quad_tree_type = quad_tree_type;
-    m_drawn_object_count = 0;
+    m_drawn_opaque_object_count = 0;
+    m_drawn_transparent_object_count = 0;
 }
 
 void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *object)
@@ -66,41 +67,50 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
     // gs_radius_limit_lower threshold
     if (object_radius >= ms_radius_limit_lower)
     {
-        // TODO: structure the below compound if-statement to avoid calculating
-        // distance_fade unless it has to.
-
-        // calculate the alpha value of the object due to its distance.
-        // sprites with radii between ms_radius_limit_lower and
-        // gs_radius_limit_upper will be partially transparent, fading away
-        // once they get to ms_radius_limit_lower.  this gives a very
-        // nice smooth transition for when the objects are not drawn
-        // because they are below the lower radius threshold.
-        Float distance_fade =
-            (object_radius > ms_radius_limit_upper) ?
-            1.0f :
-            (ms_distance_fade_slope * object_radius + ms_distance_fade_intercept);
-        ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f)
-        ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f)
-        ASSERT3(distance_fade <= 1.0f)
-        // if it's a transparent object and the transparent object vector
-        // exists, add it to the transparent object vector.
-        if (m_is_collect_transparent_object_pass &&
-            (object->GetIsTransparent() ||
-             object->GetColorMask()[Dim::A] < 1.0f ||
-             distance_fade < 1.0f ||
-             m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] < 1.0f))
+        Float distance_fade;
+        if (m_is_collect_transparent_object_pass)
         {
-            m_transparent_object_vector->push_back(object);
+            ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f)
+            ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f)
+            // if it's a transparent object and the transparent object vector
+            // exists, add it to the transparent object vector.
+            if (object->GetIsTransparent() ||
+                object->GetColorMask()[Dim::A] < 1.0f ||
+                (distance_fade = CalculateDistanceFade(object_radius)) < 1.0f ||
+                m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] < 1.0f)
+            {
+                m_transparent_object_vector->push_back(object);
+                // no need to do anything else, so return
+                return;
+            }
         }
-        // otherwise draw it now and increment the drawn object count
         else
-        {
-            // TODO: add separate opaque/transparent drawn object counts
+            distance_fade = CalculateDistanceFade(object_radius);
 
-            object->Draw(m_object_draw_data, distance_fade);
-            ++m_drawn_object_count;
-        }
+        // if we got this far, draw it now
+        object->Draw(m_object_draw_data, distance_fade);
+        // increment the appropriate drawn object count
+        if (m_is_collect_transparent_object_pass)
+            ++m_drawn_opaque_object_count;
+        else
+            ++m_drawn_transparent_object_count;
     }
+}
+
+Float Engine2::Object::DrawLoopFunctor::CalculateDistanceFade (Float const object_radius)
+{
+    // calculate the alpha value of the object due to its distance.
+    // sprites with radii between ms_radius_limit_lower and
+    // gs_radius_limit_upper will be partially transparent, fading away
+    // once they get to ms_radius_limit_lower.  this gives a very
+    // nice smooth transition for when the objects are not drawn
+    // because they are below the lower radius threshold.
+    Float distance_fade =
+        (object_radius > ms_radius_limit_upper) ?
+        1.0f :
+        (ms_distance_fade_slope * object_radius + ms_distance_fade_intercept);
+    ASSERT1(distance_fade <= 1.0f)
+    return distance_fade;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
