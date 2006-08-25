@@ -13,6 +13,8 @@
 
 #include "xrb.h"
 
+#include <vector>
+
 namespace Xrb
 {
 
@@ -22,6 +24,7 @@ namespace Engine2
 {
 
 class Entity;
+class Object;
 
 typedef Uint32 EntityWorldIndex;
 typedef Entity *(*CreateEntityFunction)(Serializer &);
@@ -30,6 +33,9 @@ enum
 {
     ENTITY_IS_NOT_IN_WORLD = static_cast<EntityWorldIndex>(-1)
 };
+
+typedef std::vector<Object const *> TransparentObjectVector;
+typedef TransparentObjectVector::iterator TransparentObjectVectorIterator;
 
 } // end of namespace Engine2
 

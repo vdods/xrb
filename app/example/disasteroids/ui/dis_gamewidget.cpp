@@ -96,12 +96,12 @@ GameWidget::GameWidget (
 
     // create the layout for the HUD
     Layout *main_layout = new Layout(VERTICAL, this, "main GameWidget layout");
-    main_layout->SetIsUsingZeroedFrameMargins(false);
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
     // framerate (and other stuff later) layout
     {
         m_debug_info_layout = new Layout(HORIZONTAL, main_layout, "debugging info layout");
+        m_debug_info_layout->SetIsUsingZeroedFrameMargins(false);
         m_debug_info_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
 
         m_world_frame_time_label =
@@ -161,6 +161,7 @@ GameWidget::GameWidget (
     // time, mineral inventory, score layout and stoke-o-meter
     {
         m_stats_and_inventory_layout = new Layout(HORIZONTAL, main_layout, "time-alive and score layout");
+        m_stats_and_inventory_layout->SetIsUsingZeroedFrameMargins(false);
         m_stats_and_inventory_layout->SetBackground(new WidgetBackgroundColored(Color(0.0f, 0.0f, 0.0f, 0.5f)));
         // start with this layout hidden, because the WorldView will show it later
         m_stats_and_inventory_layout->Hide();
@@ -252,6 +253,7 @@ GameWidget::GameWidget (
     // armor/shield, power and weapon status layout
     {
         m_ship_status_layout = new Layout(HORIZONTAL, main_layout, "ship status layout");
+        m_ship_status_layout->SetIsUsingZeroedFrameMargins(false);
         // start with this layout hidden, because the WorldView will show it later
         m_ship_status_layout->Hide();
 

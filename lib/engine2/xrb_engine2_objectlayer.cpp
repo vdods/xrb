@@ -199,14 +199,27 @@ Uint32 Engine2::ObjectLayer::Draw (
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
-    Float const &view_radius)
+    Float const &view_radius,
+    TransparentObjectVector *const transparent_object_vector)
 {
     ASSERT2(view_radius > 0.0)
 
     if (m_is_wrapped)
-        return m_quad_tree->DrawWrapped(render_context, world_to_screen, pixels_in_view_radius, view_center, view_radius);
+        return m_quad_tree->DrawWrapped(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius,
+            transparent_object_vector);
     else
-        return m_quad_tree->Draw(render_context, world_to_screen, pixels_in_view_radius, view_center, view_radius);
+        return m_quad_tree->Draw(
+            render_context,
+            world_to_screen,
+            pixels_in_view_radius,
+            view_center,
+            view_radius,
+            transparent_object_vector);
 }
 
 void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)

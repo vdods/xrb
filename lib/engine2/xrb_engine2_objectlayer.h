@@ -16,6 +16,7 @@
 #include <string>
 
 #include "xrb_engine2_object.h"
+#include "xrb_engine2_types.h"
 #include "xrb_matrix2.h"
 #include "xrb_transform2.h"
 #include "xrb_vector.h"
@@ -73,7 +74,8 @@ public:
         FloatMatrix2 const &world_to_screen,
         Float pixels_in_view_radius,
         FloatVector2 const &view_center,
-        Float const &view_radius);
+        Float const &view_radius,
+        TransparentObjectVector *transparent_object_vector);
     void AddObject (Object *object);
     void RemoveObject (Object *object);
     // makes sure that the given object is within the object layer's

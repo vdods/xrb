@@ -142,17 +142,61 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
-    Float const view_radius)
+    Float const view_radius,
+    TransparentObjectVector *const transparent_object_vector)
 {
-    DrawLoopFunctor
+    ASSERT1(transparent_object_vector != NULL)
+    ASSERT1(m_parent == NULL)
+
+    // clear the transparent object vector and create the draw loop functor
+    transparent_object_vector->clear();
+    Object::DrawLoopFunctor
         draw_loop_functor(
             render_context,
             world_to_screen,
             pixels_in_view_radius,
             view_center,
             view_radius,
+            true,
+            transparent_object_vector,
             GetQuadTreeType());
-    Draw(draw_loop_functor);
+
+    // draw opaque objects while collecting transparent objects
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glClearDepth(1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        // TODO: look into glPolygonOffset, as this might save having
+        // to clear the depth buffer for each ObjectLayer
+        // TODO: use glDepthRange to set the per-ObjectLayer depth range
+
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+
+        Draw(draw_loop_functor);
+    }
+
+    // sort opaque objects back-to-front and draw them
+    {
+        glDepthMask(GL_FALSE);
+        glDisable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_ALWAYS, 0.0f);
+        std::sort(
+            &(*transparent_object_vector)[0],
+            &(*transparent_object_vector)[0]+transparent_object_vector->size(),
+            Object::TransparentObjectOrder());
+
+        draw_loop_functor.SetIsCollectTransparentObjectPass(false);
+        std::for_each(
+            draw_loop_functor.GetTransparentObjectVector()->begin(),
+            draw_loop_functor.GetTransparentObjectVector()->end(),
+            draw_loop_functor);
+    }
+
+    // restore the GL state
+    glDisable(GL_DEPTH_TEST);
+
     return draw_loop_functor.GetDrawnObjectCount();
 }
 
@@ -161,17 +205,57 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
-    Float const view_radius)
+    Float const view_radius,
+    TransparentObjectVector *const transparent_object_vector)
 {
-    DrawLoopFunctor
+    ASSERT1(transparent_object_vector != NULL)
+    ASSERT1(m_parent == NULL)
+
+    // clear the transparent object vector and create the draw loop functor
+    transparent_object_vector->clear();
+    Object::DrawLoopFunctor
         draw_loop_functor(
             render_context,
             world_to_screen,
             pixels_in_view_radius,
             view_center,
             view_radius,
+            true,
+            transparent_object_vector,
             GetQuadTreeType());
-    DrawWrapped(draw_loop_functor);
+
+    // draw opaque objects while collecting transparent objects
+    {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glClearDepth(1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        // TODO: look into glPolygonOffset, as this might save having
+        // to clear the depth buffer for each ObjectLayer
+        // TODO: use glDepthRange to set the per-ObjectLayer depth range
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+
+        DrawWrapped(draw_loop_functor);
+    }
+
+    // sort opaque objects back-to-front and draw them
+    {
+        glDepthMask(GL_FALSE);
+        glDisable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_ALWAYS, 0.0f);
+        std::sort(
+            &(*transparent_object_vector)[0],
+            &(*transparent_object_vector)[0]+transparent_object_vector->size(),
+            Object::TransparentObjectOrder());
+
+        draw_loop_functor.SetIsCollectTransparentObjectPass(false);
+        DrawWrapped(draw_loop_functor);
+    }
+
+    // restore the GL state
+    glDisable(GL_DEPTH_TEST);
+
     return draw_loop_functor.GetDrawnObjectCount();
 }
 
@@ -219,64 +303,8 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
             GetChild<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
 }
 
-// ///////////////////////////////////////////////////////////////////////////
-// Engine2::VisibilityQuadTree::DrawLoopFunctor
-// ///////////////////////////////////////////////////////////////////////////
-
-// constants which control the thresholds at which objects use
-// alpha fading to fade away, when they become small enough.
-static Float const gs_radius_limit_upper = 1.0f;
-static Float const gs_radius_limit_lower = 0.5f;
-static Float const gs_distance_fade_slope = 1.0f / (gs_radius_limit_upper - gs_radius_limit_lower);
-static Float const gs_distance_fade_intercept = gs_radius_limit_lower / (gs_radius_limit_lower - gs_radius_limit_upper);
-
-Engine2::VisibilityQuadTree::DrawLoopFunctor::DrawLoopFunctor (
-    RenderContext const &render_context,
-    FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const view_radius,
-    QuadTreeType const quad_tree_type)
-    :
-    m_object_draw_data(render_context, world_to_screen)
-{
-    m_pixels_in_view_radius = pixels_in_view_radius;
-    m_view_center = view_center;
-    m_view_radius = view_radius;
-    m_quad_tree_type = quad_tree_type;
-    m_drawn_object_count = 0;
-}
-
-void Engine2::VisibilityQuadTree::DrawLoopFunctor::operator () (Engine2::Object *object)
-{
-    // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_quad_tree_type) / m_view_radius;
-    // distance culling - don't draw objects that are below the
-    // gs_radius_limit_lower threshold
-    if (object_radius >= gs_radius_limit_lower)
-    {
-        // calculate the alpha value of the object due to its distance.
-        // sprites with radii between gs_radius_limit_lower and
-        // gs_radius_limit_upper will be partially transparent, fading away
-        // once they get to gs_radius_limit_lower.  this gives a very
-        // nice smooth transition for when the objects are not drawn
-        // because they are below the lower radius threshold.
-        Float distance_fade =
-            (object_radius > gs_radius_limit_upper) ?
-            1.0f :
-            (gs_distance_fade_slope * object_radius + gs_distance_fade_intercept);
-        // actually draw the sprite
-        object->Draw(m_object_draw_data, distance_fade);
-        ++m_drawn_object_count;
-    }
-}
-
-// ///////////////////////////////////////////////////////////////////////////
-// Engine2::VisibilityQuadTree continued
-// ///////////////////////////////////////////////////////////////////////////
-
 void Engine2::VisibilityQuadTree::Draw (
-    Engine2::VisibilityQuadTree::DrawLoopFunctor const &draw_loop_functor)
+    Engine2::Object::DrawLoopFunctor const &draw_loop_functor)
 {
     // if there are no objects here or below, just return
     if (GetSubordinateObjectCount() == 0)
@@ -291,7 +319,7 @@ void Engine2::VisibilityQuadTree::Draw (
     // maintain a consistent framerate.
     if (draw_loop_functor.GetPixelsInViewRadius() * GetRadius()
         <
-        draw_loop_functor.GetViewRadius() * gs_radius_limit_lower)
+        draw_loop_functor.GetViewRadius() * Object::DrawLoopFunctor::ms_radius_limit_lower)
     {
         return;
     }
@@ -311,7 +339,7 @@ void Engine2::VisibilityQuadTree::Draw (
 }
 
 void Engine2::VisibilityQuadTree::DrawWrapped (
-    Engine2::VisibilityQuadTree::DrawLoopFunctor draw_loop_functor)
+    Engine2::Object::DrawLoopFunctor draw_loop_functor)
 {
     // if there are no objects here or below, just return
     if (GetSubordinateObjectCount() == 0)
@@ -349,7 +377,13 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
                     view_offset[Dim::Y],
                     0.0f);
 
-                Draw(draw_loop_functor);
+                if (draw_loop_functor.GetIsCollectTransparentObjectPass())
+                    Draw(draw_loop_functor);
+                else
+                    std::for_each(
+                        draw_loop_functor.GetTransparentObjectVector()->begin(),
+                        draw_loop_functor.GetTransparentObjectVector()->end(),
+                        draw_loop_functor);
             }
         }
     }

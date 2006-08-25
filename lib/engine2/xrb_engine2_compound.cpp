@@ -62,7 +62,7 @@ void Engine2::Compound::Draw (
     glTranslatef(
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],
-        0.0f);
+        GetZDepth());
     glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
     glScalef(
         GetScaleFactors()[Dim::X],
@@ -155,12 +155,12 @@ void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
 
     ASSERT1(m_vertex_count == 0)
     ASSERT1(m_vertex_array == NULL)
-    
+
     m_vertex_count = compound->m_vertex_count;
     m_vertex_array = new FloatVector2[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
         m_vertex_array[i] = compound->m_vertex_array[i];
-    
+
     m_polygon_count = compound->m_polygon_count;
     m_polygon_array = new Polygon[m_polygon_count];
     for (Uint32 i = 0; i < m_polygon_count; ++i)

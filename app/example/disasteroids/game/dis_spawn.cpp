@@ -38,6 +38,8 @@ Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
     std::string const &sprite_texture_filename,
+    Float const z_depth,
+    bool const is_transparent,
     Entity *const entity,
     FloatVector2 const &translation,
     Float const scale_factor,
@@ -61,6 +63,8 @@ Engine2::Sprite *SpawnDynamicSprite (
     entity->SetAngularVelocity(angular_velocity);
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_filename);
+    sprite->SetZDepth(z_depth);
+    sprite->SetIsTransparent(is_transparent);
     sprite->SetTranslation(translation);
     sprite->SetScaleFactor(scale_factor);
     sprite->SetAngle(angle);
@@ -90,6 +94,8 @@ Asteroid *SpawnAsteroid (
         world,
         object_layer,
         "resources/asteroid_small.png",
+        0.0f, // z depth
+        false, // is transparent
         asteroid,
         translation,
         scale_factor,
@@ -127,6 +133,8 @@ Ballistic *SpawnSmartBallistic (
             world,
             object_layer,
             "resources/plasma_bullet.png",
+            -0.05f, // z depth
+            true, // is transparent
             ballistic,
             translation,
             scale_factor,
@@ -166,6 +174,8 @@ Ballistic *SpawnDumbBallistic (
         world,
         object_layer,
         "resources/sadface_small.png",
+        -0.05f, // z depth
+        false, // is transparent
         ballistic,
         translation,
         scale_factor,
@@ -204,6 +214,8 @@ Grenade *SpawnGrenade (
         world,
         object_layer,
         "resources/grenade_small.png",
+        0.0f, // z depth
+        false, // is transparent
         grenade,
         translation,
         scale_factor,
@@ -248,6 +260,8 @@ Missile *SpawnMissile (
             world,
             object_layer,
             "resources/missile_small.png",
+            0.0f, // z depth
+            false, // is transparent
             missile,
             translation,
             scale_factor,
@@ -306,6 +320,8 @@ GuidedMissile *SpawnGuidedMissile (
             world,
             object_layer,
             "resources/missile_small.png",
+            0.0f, // z depth
+            false, // is transparent
             guided_missile,
             translation,
             scale_factor,
@@ -339,6 +355,8 @@ EMPBomb *SpawnEMPBomb (
         world,
         object_layer,
         "resources/grenade_small.png",
+        0.0f, // z depth
+        false, // is transparent
         emp_bomb,
         translation,
         scale_factor,
@@ -365,6 +383,8 @@ Powerup *SpawnPowerup (
         world,
         object_layer,
         "resources/powerup.png",
+        0.0f, // z depth
+        false, // is transparent
         powerup,
         translation,
         scale_factor,
@@ -391,6 +411,8 @@ Powerup *SpawnMineral (
         world,
         object_layer,
         Item::GetMineralSpriteFilename(mineral_index),
+        0.0f, // z depth
+        false, // is transparent
         powerup,
         translation,
         scale_factor,
@@ -426,6 +448,8 @@ DamageExplosion *SpawnDamageExplosion (
         world,
         object_layer,
         "resources/explosion1a_small.png",
+        0.5f, // z depth
+        true, // is transparent
         damage_explosion,
         translation,
         0.1f,
@@ -451,6 +475,8 @@ NoDamageExplosion *SpawnNoDamageExplosion (
         world,
         object_layer,
         "resources/explosion1a_small.png",
+        0.5f, // z depth
+        true, // is transparent
         no_damage_explosion,
         translation,
         0.1f,
@@ -478,6 +504,8 @@ EMPExplosion *SpawnEMPExplosion (
         world,
         object_layer,
         "resources/emp_explosion_small.png",
+        -0.8f, // z depth
+        true, // is transparent
         emp_explosion,
         translation,
         0.1f,
@@ -513,6 +541,8 @@ Fireball *SpawnFireball (
         world,
         object_layer,
         "resources/fireball.png",
+        0.3f, // z depth
+        true, // is transparent
         fireball,
         translation,
         0.1f,
@@ -535,6 +565,8 @@ LaserBeam *SpawnLaserBeam (
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
+    sprite->SetZDepth(0.5f);
+    sprite->SetIsTransparent(true);
     sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
 
     LaserBeam *laser_beam = new LaserBeam();
@@ -563,6 +595,8 @@ GaussGunTrail *SpawnGaussGunTrail (
     FloatVector2 trail_center = trail_start + 0.5f * trail_vector;
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
+    sprite->SetZDepth(0.4f);
+    sprite->SetIsTransparent(true);
     sprite->SetTranslation(trail_center);
     sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
     sprite->SetAngle(Math::Atan(trail_vector));
@@ -584,6 +618,8 @@ TractorBeam *SpawnTractorBeam (
     ASSERT1(object_layer != NULL)
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/tractor_beam.png");
+    sprite->SetZDepth(0.8f);
+    sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Tractor will place
     // it for real later.
@@ -606,6 +642,8 @@ ShieldEffect *SpawnShieldEffect (
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/shield_effect_small.png");
+    sprite->SetZDepth(0.1f);
+    sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
@@ -631,6 +669,7 @@ ReticleEffect *SpawnReticleEffect (
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/reticle1.png");
+    sprite->SetZDepth(-0.2f);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
@@ -662,18 +701,21 @@ HealthTrigger *SpawnHealthTrigger (
             damage_type,
             ignore_this_mortal,
             owner);
-    Engine2::Sprite *sprite = SpawnDynamicSprite(
-        world,
-        object_layer,
-        "resources/sadface_small.png",
-        health_trigger,
-        translation,
-        scale_factor,
-        0.0f,
-        1.0f,
-        velocity,
-        0.0f,
-        0.3f);
+    Engine2::Sprite *sprite =
+        SpawnDynamicSprite(
+            world,
+            object_layer,
+            "resources/sadface_small.png",
+            -0.1f, // z depth
+            true, // is transparent
+            health_trigger,
+            translation,
+            scale_factor,
+            0.0f,
+            1.0f,
+            velocity,
+            0.0f,
+            0.3f);
     // make the sprite invisible
     sprite->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
     return health_trigger;
@@ -690,6 +732,8 @@ Solitary *SpawnSolitary (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_SOLITARY, 0),
+        0.0f, // z depth
+        false, // is transparent
         solitary,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -713,6 +757,8 @@ Interloper *SpawnInterloper (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_INTERLOPER, enemy_level),
+        0.0f, // z depth
+        false, // is transparent
         interloper,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -737,6 +783,8 @@ Shade *SpawnShade (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_SHADE, enemy_level),
+        0.0f, // z depth
+        false, // is transparent
         shade,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -761,6 +809,8 @@ Revulsion *SpawnRevulsion (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_REVULSION, enemy_level),
+        0.0f, // z depth
+        false, // is transparent
         revulsion,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -785,6 +835,8 @@ Devourment *SpawnDevourment (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_DEVOURMENT, enemy_level),
+        0.0f, // z depth
+        false, // is transparent
         devourment,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -809,6 +861,8 @@ Demi *SpawnDemi (
         world,
         object_layer,
         Ship::GetShipSpriteFilename(ET_DEMI, enemy_level),
+        0.0f, // z depth
+        false, // is transparent
         demi,
         translation,
         1.0f, // arbitrary, the ship will set its own scale factor
@@ -853,6 +907,8 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
         world,
         object_layer,
         s_grinder_sprite_filename[enemy_level],
+        0.1f, // z depth
+        false, // is transparent
         health_trigger,
         translation,
         scale_factor,

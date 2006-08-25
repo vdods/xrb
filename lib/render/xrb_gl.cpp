@@ -15,11 +15,11 @@ namespace Xrb
 
 void GL::Initialize ()
 {
-    fprintf(stderr, "GL::Initialize();\n");
-
-    GLint max_texture_size;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
-    fprintf(stderr, "\tGL_MAX_TEXTURE_SIZE = %d\n", max_texture_size);
+//     fprintf(stderr, "GL::Initialize();\n");
+//
+//     GLint max_texture_size;
+//     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
+//     fprintf(stderr, "\tGL_MAX_TEXTURE_SIZE = %d\n", max_texture_size);
 
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
@@ -30,6 +30,8 @@ void GL::Initialize ()
     glDisable(GL_LIGHTING);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthFunc(GL_LEQUAL);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
     glClearColor(0, 0, 0, 0);
     glShadeModel(GL_SMOOTH);
@@ -91,7 +93,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glOrtho(
         clip_rect.GetLeft(), clip_rect.GetRight(),
         clip_rect.GetBottom(), clip_rect.GetTop(),
-        -10.0, 10.0); // these values (-10, 10) are arbitrary
+        -1.0, 1.0); // these values (-1, 1) are arbitrary
 
     // set up the viewport which is the rectangle on screen which
     // will be rendered to.  this also properly sets up the clipping

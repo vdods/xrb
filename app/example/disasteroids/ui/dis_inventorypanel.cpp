@@ -53,6 +53,7 @@ InventoryPanel::InventoryPanel (
 
     // a vertical layout to hold the sublayouts
     Layout *main_layout = new Layout(VERTICAL, this, "main InventoryPanel layout");
+    main_layout->SetIsUsingZeroedFrameMargins(false);
     SetMainWidget(main_layout);
 
     // a horizontal layout to hold the sublayouts for each of

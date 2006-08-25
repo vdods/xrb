@@ -60,19 +60,6 @@ class ShieldEffect;
 class Solitary;
 class TractorBeam;
 
-Engine2::Sprite *SpawnDynamicSprite (
-    Engine2::World *world,
-    Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_filename,
-    Entity *entity,
-    FloatVector2 const &translation,
-    Float scale_factor,
-    Float angle,
-    Float first_moment,
-    FloatVector2 const &velocity,
-    Float angular_velocity,
-    Float elasticity);
-
 Asteroid *SpawnAsteroid (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,

@@ -296,7 +296,6 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     {
         ObjectLayer *object_layer;
         Float layer_offset;
-        Uint32 drawn_sprite_count;
         Float parallaxed_view_radius;
 
         object_layer = *it;
@@ -352,15 +351,16 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             // calculate the parallaxed view radius for this layer
             parallaxed_view_radius = GetParallaxedViewRadius(object_layer);
 
-            // call the draw function
-            drawn_sprite_count = object_layer->Draw(
-                view_render_context,
-                parallaxed_world_to_screen,
-                pixels_in_view_radius,
-                GetCenter(),
-                parallaxed_view_radius);
-
-            m_draw_info.m_drawn_sprite_count += drawn_sprite_count;
+            // draw the contents of the object layer (this does opaque and then
+            // back-to-front transparent rendering for correct z-depth order).
+            m_draw_info.m_drawn_opaque_object_count =
+                object_layer->Draw(
+                    view_render_context,
+                    parallaxed_world_to_screen,
+                    pixels_in_view_radius,
+                    GetCenter(),
+                    parallaxed_view_radius,
+                    &m_transparent_object_vector);
 
             // if indicated, draw the grid lines after the main layer
             if (object_layer == GetWorld()->GetMainObjectLayer() &&
@@ -635,8 +635,6 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // start our matrix from scratch
     glLoadIdentity();
 
-    // TODO: make functions to apply transformations to the gl matrix
-
     // viewport perspective correction - this effectively takes
     // the place of the view-to-screen transform.
     if (m_is_transform_scaling_based_upon_widget_radius)
@@ -683,6 +681,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
 void Engine2::WorldView::PopGLProjectionMatrix ()
 {
     ASSERT1(m_is_gl_projection_matrix_in_use)
+    // restore the projection matrix
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     m_is_gl_projection_matrix_in_use = false;

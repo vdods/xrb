@@ -14,20 +14,98 @@
 #include "xrb_engine2_entity.h"
 #include "xrb_engine2_objectlayer.h"
 #include "xrb_engine2_sprite.h"
+#include "xrb_rendercontext.h"
 #include "xrb_serializer.h"
 
 namespace Xrb
 {
 
-Engine2::Object::DrawData::DrawData (
+// ///////////////////////////////////////////////////////////////////////////
+// Engine2::Object::DrawLoopFunctor
+// ///////////////////////////////////////////////////////////////////////////
+
+// constants which control the thresholds at which objects use
+// alpha fading to fade away, when they become small enough.
+Float const Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper = 1.0f;
+Float const Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower = 0.5f;
+Float const Engine2::Object::DrawLoopFunctor::ms_distance_fade_slope =
+    1.0f /
+    (Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper - Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower);
+Float const Engine2::Object::DrawLoopFunctor::ms_distance_fade_intercept =
+    Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower /
+    (Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower - Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper);
+
+Engine2::Object::DrawLoopFunctor::DrawLoopFunctor (
     RenderContext const &render_context,
-    FloatMatrix2 const &transformation)
+    FloatMatrix2 const &world_to_screen,
+    Float const pixels_in_view_radius,
+    FloatVector2 const &view_center,
+    Float const view_radius,
+    bool const is_collect_transparent_object_pass,
+    TransparentObjectVector *const transparent_object_vector,
+    QuadTreeType const quad_tree_type)
     :
-    m_render_context(render_context)
+    m_object_draw_data(render_context, world_to_screen),
+    m_transparent_object_vector(transparent_object_vector)
 {
-    // m_render_context is initialized above
-    m_transformation = transformation;
+    m_pixels_in_view_radius = pixels_in_view_radius;
+    m_view_center = view_center;
+    m_view_radius = view_radius;
+    m_is_collect_transparent_object_pass = is_collect_transparent_object_pass;
+    m_quad_tree_type = quad_tree_type;
+    m_drawn_object_count = 0;
 }
+
+void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *object)
+{
+    ASSERT3(m_transparent_object_vector != NULL)
+
+    // calculate the object's pixel radius on screen
+    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_quad_tree_type) / m_view_radius;
+    // distance culling - don't draw objects that are below the
+    // gs_radius_limit_lower threshold
+    if (object_radius >= ms_radius_limit_lower)
+    {
+        // TODO: structure the below compound if-statement to avoid calculating
+        // distance_fade unless it has to.
+
+        // calculate the alpha value of the object due to its distance.
+        // sprites with radii between ms_radius_limit_lower and
+        // gs_radius_limit_upper will be partially transparent, fading away
+        // once they get to ms_radius_limit_lower.  this gives a very
+        // nice smooth transition for when the objects are not drawn
+        // because they are below the lower radius threshold.
+        Float distance_fade =
+            (object_radius > ms_radius_limit_upper) ?
+            1.0f :
+            (ms_distance_fade_slope * object_radius + ms_distance_fade_intercept);
+        ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f)
+        ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f)
+        ASSERT3(distance_fade <= 1.0f)
+        // if it's a transparent object and the transparent object vector
+        // exists, add it to the transparent object vector.
+        if (m_is_collect_transparent_object_pass &&
+            (object->GetIsTransparent() ||
+             object->GetColorMask()[Dim::A] < 1.0f ||
+             distance_fade < 1.0f ||
+             m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] < 1.0f))
+        {
+            m_transparent_object_vector->push_back(object);
+        }
+        // otherwise draw it now and increment the drawn object count
+        else
+        {
+            // TODO: add separate opaque/transparent drawn object counts
+
+            object->Draw(m_object_draw_data, distance_fade);
+            ++m_drawn_object_count;
+        }
+    }
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// Engine2::Object
+// ///////////////////////////////////////////////////////////////////////////
 
 Engine2::Object::~Object ()
 {
@@ -61,7 +139,7 @@ Engine2::Object *Engine2::Object::Create (
         case OT_COMPOUND:
             retval = Compound::Create(serializer);
             break;
-            
+
         default:
             ASSERT0(false && "Invalid object type")
             retval = NULL;
@@ -119,9 +197,11 @@ void Engine2::Object::SetEntity (Entity *const entity)
 Engine2::Object::Object (ObjectType object_type)
     :
     FloatTransform2(FloatTransform2::ms_identity, true),
-    m_object_type(object_type)
+    m_object_type(object_type),
+    m_color_mask(1.0f, 1.0f, 1.0f, 1.0f)
 {
     ASSERT1(m_object_type < OT_COUNT)
+    m_z_depth = 0.0f;
     m_object_layer = NULL;
     for (Uint32 i = 0; i < QTT_COUNT; ++i)
     {
@@ -129,7 +209,7 @@ Engine2::Object::Object (ObjectType object_type)
         m_owner_quad_tree[i] = NULL;
     }
     m_entity = NULL;
-    m_color_mask = Color(1.0f, 1.0f, 1.0f, 1.0f);
+    m_is_transparent = false;
     m_radii_need_to_be_recalculated = true;
 }
 
@@ -179,7 +259,7 @@ void Engine2::Object::CalculateTransform () const
         m_radii_need_to_be_recalculated = false;
     }
     */
-    
+
     // optimized function code:
     if (GetIsDirty())
     {

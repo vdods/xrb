@@ -63,8 +63,13 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
+- there's an assert when you zoom out in debug mode
+- the explosion and EMP effects seem to get brighter for a moment mid-explosion
+- add a max speed for nonsolid entities in Dis::PhysicsHandler
 
 TODO:
+- track drawn opaque object count and drawn transparent object count in
+  Engine2::Object::DrawLoopFunctor
 - have SetPathElement... check for whitespace in the path
 - make a StateMachineHandler baseclass so that StateMachine can be un-templatized
 - add HandleDisabled/HandleEnabled and make Widget::SetIsEnabled not virtual
@@ -92,9 +97,6 @@ TODO:
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length
 - do tab/shift-tab control of child widget focus
-- add Z depth for sprites so that overlapping sprites can be correctly
-  drawn in a specific ordering.  e.g. if there is a series of background
-  sprites which are layered, drawing order is important.
 - make Xrb::Initialize and Xrb::Shutdown functions which take care of
   SDL and singleton setup/shutdown.  and possibly creating/deleting the Screen?
 - should Screen make its own event queue?

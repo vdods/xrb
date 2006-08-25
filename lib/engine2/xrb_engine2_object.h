@@ -37,7 +37,7 @@ class World;
 // attached Entity will be referred to as a "static object" while an Object
 // which has an attached Entity will be called a "dynamic object".
 // Object inherits FloatTransform2 non-virtually.
-class Object : public FloatTransform2 
+class Object : public FloatTransform2
 {
 public:
 
@@ -52,7 +52,11 @@ public:
 
         DrawData (
             RenderContext const &render_context,
-            FloatMatrix2 const &transformation);
+            FloatMatrix2 const &transformation)
+            :
+            m_render_context(render_context),
+            m_transformation(transformation)
+        { }
         ~DrawData () { }
 
         inline RenderContext const &GetRenderContext () const { return m_render_context; }
@@ -65,6 +69,73 @@ public:
         RenderContext const &m_render_context;
         FloatMatrix2 m_transformation;
     }; // end of class Engine2::Object::DrawData
+
+    struct TransparentObjectOrder
+    {
+        bool operator () (Object const *t0, Object const *t1)
+        {
+            return t0->GetZDepth() > t1->GetZDepth()
+                   ||
+                   t0->GetZDepth() == t1->GetZDepth() && t0 < t1;
+        }
+    }; // end of struct Engine2::Object::TransparentObjectOrder
+
+    // the Engine2::Object::DrawLoopFunctor class nicely packages up a
+    // bunch of variables which are used in the recursive Draw function.
+    // passing a reference to an instance of this class speeds up access,
+    // because then using the variables contained within can all be done
+    // using known offsets from a single pointer.  It also behaves as a
+    // functor for use in a std::for_each call on each quadtree node's
+    // object set.
+    class DrawLoopFunctor
+    {
+    public:
+
+        // constants which control the thresholds at which objects use
+        // alpha fading to fade away, when they become small enough.
+        static Float const ms_radius_limit_upper;
+        static Float const ms_radius_limit_lower;
+        static Float const ms_distance_fade_slope;
+        static Float const ms_distance_fade_intercept;
+
+        DrawLoopFunctor (
+            RenderContext const &render_context,
+            FloatMatrix2 const &world_to_screen,
+            Float pixels_in_view_radius,
+            FloatVector2 const &view_center,
+            Float view_radius,
+            bool is_collect_transparent_object_pass,
+            TransparentObjectVector *transparent_object_vector,
+            QuadTreeType quad_tree_type);
+        ~DrawLoopFunctor () { }
+
+        inline Object::DrawData const &GetObjectDrawData () const { return m_object_draw_data; }
+        inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
+        inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
+        inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
+        inline Float GetViewRadius () const { return m_view_radius; }
+        inline bool GetIsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
+        inline TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
+        inline Uint32 GetDrawnObjectCount () const { return m_drawn_object_count; }
+
+        inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
+        inline void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }
+        inline void SetIsCollectTransparentObjectPass (bool is_collect_transparent_object_pass) { m_is_collect_transparent_object_pass = is_collect_transparent_object_pass; }
+
+        // this method is what std::for_each will use to draw each object.
+        void operator () (Engine2::Object const *object);
+
+    private:
+
+        Object::DrawData m_object_draw_data;
+        Float m_pixels_in_view_radius;
+        FloatVector2 m_view_center;
+        Float m_view_radius;
+        bool m_is_collect_transparent_object_pass;
+        TransparentObjectVector *const m_transparent_object_vector;
+        QuadTreeType m_quad_tree_type;
+        mutable Uint32 m_drawn_object_count;
+    }; // end of class Engine2::Object::DrawLoopFunctor
 
     virtual ~Object ();
 
@@ -97,9 +168,11 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     inline ObjectType GetObjectType () const { return m_object_type; }
+    inline Float GetZDepth () const { return m_z_depth; }
     inline bool GetIsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &GetColorMask () const { return m_color_mask; }
+    inline bool GetIsTransparent () const { return m_is_transparent; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
@@ -123,12 +196,22 @@ public:
         return m_owner_quad_tree[quad_tree_type];
     }
 
+    // set the z depth (as used by the OpenGL depth buffer during drawing).
+    // a lower value indicates closer to the viewpoint (and will be drawn
+    // on top of things with higher z-depth values).
+    inline void SetZDepth (Float z_depth)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(z_depth))
+        m_z_depth = z_depth;
+    }
     // imbues this object with a soul
     void SetEntity (Entity *entity);
     // sets the color mask
     inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
+    // sets the is-transparent property
+    inline void SetIsTransparent (bool is_transparent) { m_is_transparent = is_transparent; }
     // sets the object_layer for this object
-    inline void SetObjectLayer (ObjectLayer *const object_layer)
+    inline void SetObjectLayer (ObjectLayer *object_layer)
     {
         m_object_layer = object_layer;
     }
@@ -196,6 +279,10 @@ private:
 
     // the type of object
     ObjectType const m_object_type;
+    // the z-depth value -- as used by the OpenGL depth buffer while drawing.
+    // a lower value indicates closer to the viewpoint (and will be drawn
+    // on top of things with higher z-depth values).
+    Float m_z_depth;
     // a pointer to the optional Entity object which can "imbue this
     // object with a soul".
     Entity *m_entity;
@@ -204,12 +291,15 @@ private:
     // indicates that the contents of the object have changed and the
     // visible and physical radii need to be recalculated
     mutable bool m_radii_need_to_be_recalculated;
+    // indicates that this object is (partially) transparent and should always go
+    // into the TransparentObjectVector for sorted back-to-front drawing.
+    bool m_is_transparent;
 }; // end of class Engine2::Object
 
 } // end of namespace Engine2
 
 } // end of namespace Xrb
-    
+
 #endif // !defined(_XRB_ENGINE2_OBJECT_H_)
 
 /*
@@ -226,7 +316,7 @@ Sprite (a simple single circle/square) and Compound (one or more polygons).
                                  Object
                                 /      \
                           Sprite        Compound
-    
+
 Object can now be "imbued with a soul" by means of giving it a pointer to
 an Entity (which is no longer part of the Object class hierarchy).  Entity
 is now analogous to what EntityGuts was (an interface for the game-specific

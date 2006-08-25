@@ -14,6 +14,7 @@
 #include "xrb.h"
 
 #include "xrb_color.h"
+#include "xrb_engine2_types.h"
 #include "xrb_framehandler.h"
 #include "xrb_rendercontext.h"
 #include "xrb_transform2.h"
@@ -45,10 +46,16 @@ namespace Engine2
 
         struct DrawInfo
         {
-            // number of sprites drawn this Draw()
-            Uint32 m_drawn_sprite_count;
+            // number of opaque Objects drawn this Draw()
+            Uint32 m_drawn_opaque_object_count;
+            // number of non-opaque Objects drawn this Draw()
+            Uint32 m_drawn_transparent_object_count;
 
-            inline void Reset () { m_drawn_sprite_count = 0; }
+            void Reset ()
+            {
+                m_drawn_opaque_object_count = 0;
+                m_drawn_transparent_object_count = 0;
+            }
         }; // end of struct DrawInfo
 
         WorldView (WorldViewWidget *parent_virtual_view);
@@ -223,6 +230,9 @@ namespace Engine2
         // indicates said scaling is based upon the smaller of the widget's height
         // and width.
         bool m_is_transform_scaling_based_upon_widget_radius;
+        // used by Object::DrawLoopFunctor in ObjectLayer::Draw and
+        // VisibilityQuadTree::Draw.
+        TransparentObjectVector m_transparent_object_vector;
 
         //////////////////////////////////////////////////////////////////////////
         // cached parallaxed transformations/view-and-object-layer properties

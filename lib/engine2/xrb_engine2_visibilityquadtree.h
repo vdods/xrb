@@ -17,6 +17,7 @@
 
 #include "xrb_color.h"
 #include "xrb_engine2_quadtree.h"
+#include "xrb_engine2_types.h"
 #include "xrb_math.h"
 #include "xrb_matrix2.h"
 
@@ -60,13 +61,15 @@ public:
         FloatMatrix2 const &world_to_screen,
         Float pixels_in_view_radius,
         FloatVector2 const &view_center,
-        Float view_radius);
+        Float view_radius,
+        TransparentObjectVector *transparent_object_vector);
     Uint32 DrawWrapped (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
         Float pixels_in_view_radius,
         FloatVector2 const &view_center,
-        Float view_radius);
+        Float view_radius,
+        TransparentObjectVector *transparent_object_vector);
 
     // draw lines where the bounds of this quadtree node are
     void DrawBounds (
@@ -82,54 +85,10 @@ protected:
     // for use in Create
     VisibilityQuadTree (VisibilityQuadTree *parent) : QuadTree(parent) { }
 
-    // the VisibilityQuadTree::DrawLoopFunctor class nicely packages up a
-    // bunch of variables which are used in the recursive Draw function.
-    // passing a reference to an instance of this class speeds up access,
-    // because then using the variables contained within can all be done
-    // using known offsets from a single pointer.  It also behaves as a
-    // functor for use in a std::for_each call on each quadtree node's
-    // object set.  This is protected instead of private so that
-    // MapEditor2::VisibilityQuadTree can use it.
-    class DrawLoopFunctor
-    {
-    public:
-
-        DrawLoopFunctor (
-            RenderContext const &render_context,
-            FloatMatrix2 const &world_to_screen,
-            Float pixels_in_view_radius,
-            FloatVector2 const &view_center,
-            Float view_radius,
-            QuadTreeType quad_tree_type);
-        ~DrawLoopFunctor () { }
-
-        inline Object::DrawData const &GetObjectDrawData () const { return m_object_draw_data; }
-        inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
-        inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
-        inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
-        inline Float GetViewRadius () const { return m_view_radius; }
-        inline Uint32 GetDrawnObjectCount () const { return m_drawn_object_count; }
-
-        inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
-        inline void SetViewCenter (FloatVector2 const view_center) { m_view_center = view_center; }
-
-        // this method is what std::for_each will use to draw each object.
-        void operator () (Engine2::Object *object);
-
-    private:
-
-        Object::DrawData m_object_draw_data;
-        Float m_pixels_in_view_radius;
-        FloatVector2 m_view_center;
-        Float m_view_radius;
-        QuadTreeType m_quad_tree_type;
-        mutable Uint32 m_drawn_object_count;
-    }; // end of class Engine2::VisibilityQuadTree::DrawLoopFunctor
-
 private:
 
-    void Draw (DrawLoopFunctor const &draw_data);
-    void DrawWrapped (DrawLoopFunctor draw_data);
+    void Draw (Object::DrawLoopFunctor const &draw_data);
+    void DrawWrapped (Object::DrawLoopFunctor draw_data);
 }; // end of class Engine2::VisibilityQuadTree
 
 } // end of namespace Engine2

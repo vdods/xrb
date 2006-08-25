@@ -54,7 +54,7 @@ void Engine2::Sprite::Draw (
     // don't do anything if there's no texture
     if (!m_texture.GetIsValid())
         return;
-        
+
     // set up the gl modelview matrix
     glMatrixMode(GL_MODELVIEW);
     // we have to push the matrix here (instead of loading the
@@ -67,7 +67,7 @@ void Engine2::Sprite::Draw (
     glTranslatef(
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],
-        0.0f);
+        GetZDepth());
     glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
     glScalef(
         GetScaleFactors()[Dim::X],
