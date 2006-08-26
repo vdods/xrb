@@ -577,7 +577,7 @@ bool GaussGun::Activate (
     LineTraceBindingSetIterator it = line_trace_binding_set.begin();
     LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
     // don't damage the owner of this weapon
-    if (it->m_entity == GetOwnerShip())
+    if (it != it_end && it->m_entity == GetOwnerShip())
         ++it;
 
     // decide how much damage to inflict total
