@@ -636,6 +636,22 @@
 			Name="parsers"
 			>
 			<File
+				RelativePath=".\parsers\xrb_arithmeticparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_arithmeticparser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_arithmeticscanner.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\parsers\xrb_arithmeticscanner.h"
+				>
+			</File>
+			<File
 				RelativePath=".\parsers\xrb_datafilelocation.cpp"
 				>
 			</File>
@@ -667,18 +683,6 @@
 				RelativePath=".\parsers\xrb_datafilevalue.h"
 				>
 			</File>
-			<File
-				RelativePath=".\parsers\xrb_linecalculator.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\parsers\xrb_linecalculator.h"
-				>
-			</File>
-			<Filter
-				Name="linecalculator"
-				>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="primitive"

@@ -6,7 +6,7 @@
 #include <vector>
 
 
-#line 11 "../lib/parsers/xrb_arithmeticparser.trison"
+#line 11 "../../lib/parsers/xrb_arithmeticparser.trison"
 
 #include "xrb.h"
 
@@ -15,7 +15,7 @@ namespace Xrb
 
 class ArithmeticScanner;
 
-#line 19 "../lib/parsers/xrb_arithmeticparser.h"
+#line 19 "../../lib/parsers/xrb_arithmeticparser.h"
 
 class ArithmeticParser
 
@@ -70,7 +70,7 @@ private:
 public:
 
 
-#line 24 "../lib/parsers/xrb_arithmeticparser.trison"
+#line 24 "../../lib/parsers/xrb_arithmeticparser.trison"
 
     Float Parse (std::string const &input_string);
 
@@ -80,7 +80,7 @@ private:
 
     ArithmeticScanner *m_scanner;
 
-#line 84 "../lib/parsers/xrb_arithmeticparser.h"
+#line 84 "../../lib/parsers/xrb_arithmeticparser.h"
 
 private:
 
@@ -222,11 +222,11 @@ private:
 std::ostream &operator << (std::ostream &stream, ArithmeticParser::Token::Type token_type);
 
 
-#line 34 "../lib/parsers/xrb_arithmeticparser.trison"
+#line 34 "../../lib/parsers/xrb_arithmeticparser.trison"
 
 } // end of namespace Xrb
 
-#line 230 "../lib/parsers/xrb_arithmeticparser.h"
+#line 230 "../../lib/parsers/xrb_arithmeticparser.h"
 
 #endif // !defined(_ArithmeticParser_H_)
 

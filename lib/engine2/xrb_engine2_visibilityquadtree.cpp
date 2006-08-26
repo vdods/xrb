@@ -182,10 +182,11 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
         glDepthMask(GL_FALSE);
         glDisable(GL_ALPHA_TEST);
         glAlphaFunc(GL_ALWAYS, 0.0f);
-        std::sort(
-            &(*transparent_object_vector)[0],
-            &(*transparent_object_vector)[0]+transparent_object_vector->size(),
-            Object::TransparentObjectOrder());
+        if (!transparent_object_vector->empty())
+            std::sort(
+                &(*transparent_object_vector)[0],
+                &(*transparent_object_vector)[0]+transparent_object_vector->size(),
+                Object::TransparentObjectOrder());
 
         draw_loop_functor.SetIsCollectTransparentObjectPass(false);
         std::for_each(
@@ -244,10 +245,11 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         glDepthMask(GL_FALSE);
         glDisable(GL_ALPHA_TEST);
         glAlphaFunc(GL_ALWAYS, 0.0f);
-        std::sort(
-            &(*transparent_object_vector)[0],
-            &(*transparent_object_vector)[0]+transparent_object_vector->size(),
-            Object::TransparentObjectOrder());
+        if (!transparent_object_vector->empty())
+            std::sort(
+                &(*transparent_object_vector)[0],
+                &(*transparent_object_vector)[0]+transparent_object_vector->size(),
+                Object::TransparentObjectOrder());
 
         draw_loop_functor.SetIsCollectTransparentObjectPass(false);
         DrawWrapped(draw_loop_functor);
