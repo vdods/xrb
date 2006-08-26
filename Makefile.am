@@ -135,6 +135,9 @@ lib_libxrb_la_SOURCES = \
     lib/parsers/xrb_datafileparser.trison \
     lib/parsers/xrb_datafilescanner.cpp \
     lib/parsers/xrb_datafilevalue.cpp \
+    lib/parsers/xrb_arithmeticparser.cpp \
+    lib/parsers/xrb_arithmeticparser.trison \
+    lib/parsers/xrb_arithmeticscanner.cpp \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_gltexture.cpp \
@@ -274,6 +277,8 @@ include_HEADERS = \
     lib/parsers/xrb_datafileparser.h \
     lib/parsers/xrb_datafilescanner.h \
     lib/parsers/xrb_datafilevalue.h \
+    lib/parsers/xrb_arithmeticparser.h \
+    lib/parsers/xrb_arithmeticscanner.h \
     \
     lib/primitive/xrb_bitarray.h \
     lib/primitive/xrb_bitarray.tcpp \
@@ -359,6 +364,10 @@ if TRISON_EXISTS
 $(srcdir)/lib/parsers/xrb_datafileparser.h: $(srcdir)/lib/parsers/xrb_datafileparser.cpp
 $(srcdir)/lib/parsers/xrb_datafileparser.cpp: $(srcdir)/lib/parsers/xrb_datafileparser.trison
 	$(TRISON) $(srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(srcdir)/lib/parsers/xrb_datafileparser.states
+
+$(srcdir)/lib/parsers/xrb_arithmeticparser.h: $(srcdir)/lib/parsers/xrb_arithmeticparser.cpp
+$(srcdir)/lib/parsers/xrb_arithmeticparser.cpp: $(srcdir)/lib/parsers/xrb_arithmeticparser.trison
+	$(TRISON) $(srcdir)/lib/parsers/xrb_arithmeticparser.trison --warnings-as-errors --output-basename $(srcdir)/lib/parsers/xrb_arithmeticparser --generate-states-file $(srcdir)/lib/parsers/xrb_arithmeticparser.states
 endif
 
 ##############################################################################

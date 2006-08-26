@@ -15,12 +15,10 @@
 #include "xrb_input.h"
 #include "xrb_keyrepeater.h"
 #include "xrb_screen.h"
-#include "xrb_utf8.h" // TEMP
 
 // TEMP
-#include "xrb_datafileparser.h"
-#include "xrb_datafilevalue.h"
-#include <string>
+#include "xrb_arithmeticparser.h"
+#include "xrb_math.h"
 // TEMP
 
 using namespace Xrb;
@@ -37,114 +35,75 @@ void Exit ()
     SDL_Quit();
 }
 
+struct ExpressionValuePair
+{
+    std::string m_expression;
+    Float m_value;
+};
+
 int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
-/*
-    IndentFormatter formatter(stderr, "    ");
 
-    DataFileStructure *root = new DataFileStructure();
-    root->SetPathElementString("|test|thingy", "stupid");
-    root->SetPathElementFloat("|test|dumb", 123.4f);
-    root->Print(formatter);
-    formatter.EndLine("");
+    ExpressionValuePair const pair[] =
+    {
+        { "0", 0.0f },
+        { "1", 1.0f },
+        { "+3", +3.0f },
+        { "-2", -2.0f },
+        { "1+2", 1.0f + 2.0f },
+        { "1-2", 1.0f - 2.0f },
+        { "3*4", 3.0f * 4.0f },
+        { "3/4", 3.0f / 4.0f },
+        { "3^4", Math::Pow(3.0f, 4.0f) },
+        { "0^4", Math::Pow(0.0f, 4.0f) },
+        { "3^0", Math::Pow(3.0f, 0.0f) },
+        { "0^0", Math::Pow(0.0f, 0.0f) },
+        { "2+3*4-5/-7^2", 2.0f + 3.0f * 4.0f - 5.0f / -Math::Pow(7.0f, 2.0f) },
+        { "2.34", 2.34f },
+        { "2.34e2", 2.34e2f },
+        { "2.", 2.f },
+        { "2.e2", 2.e2f },
+        { "2e2", 2e2f },
+        { "2e-2", 2e-2f },
+        { ".34", .34f },
+        { "0.5", 0.5f },
+        { "2^0.5", Math::Pow(2.0f, 0.5f) },
+        { "-2^0.5", -Math::Pow(2.0f, 0.5f) },
+        { "(8)", (8.0f) },
+        { "1-2-3", 1.0f - 2.0f - 3.0f },
+        { "(1-2-3)", (1.0f - 2.0f - 3.0f) },
+        { "(1-2)-3", (1.0f - 2.0f) - 3.0f },
+        { "1-(2-3)", 1.0f - (2.0f - 3.0f) },
+        { "1/0", Math::Nan() },
+        { "2+(1/0)", Math::Nan() },
+        { "2-(1/0)", Math::Nan() },
+        { "2*(1/0)", Math::Nan() },
+        { "2/(1/0)", Math::Nan() },
+        { "2^(1/0)", Math::Nan() },
+        { "(1/0)+(1/0)", Math::Nan() },
+        { "(-2)^0.5", Math::Pow(-2.0f, 0.5f) },
+    };
+    Uint32 const pair_count = sizeof(pair) / sizeof(ExpressionValuePair);
 
-    root->SetPathElementCharacter("|test|dumb", 'X');
-    root->Print(formatter);
-    formatter.EndLine("");
+    ArithmeticParser parser;
 
-    root->SetPathElementBoolean("|test|dumb|eyeball", true);
-    root->SetPathElementUnsignedInteger("|test|bah|+|+", 1);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|+|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 1);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|+|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 0);
-    root->SetPathElementUnsignedInteger("|test|bah|$|+", 1);
-    root->SetPathElementString("|test|bah|$|+", "hee hee");
-
-    root->Print(formatter);
-    formatter.EndLine("");
-
-    root->SetPathElementFloat("|test|bah", 69.0f);
-    root->Print(formatter);
-
-    Delete(root);
+    for (Uint32 i = 0; i < pair_count; ++i)
+    {
+        Float expression_value = parser.Parse(pair[i].m_expression);
+        fprintf(
+            stderr,
+            "%s - expression = \"%s\", actual = %g, calculated = %g\n",
+            pair[i].m_value == expression_value || (!Math::IsFinite(pair[i].m_value) && !Math::IsFinite(expression_value)) ?
+                "  PASS  " :
+                "! FAIL !",
+            pair[i].m_expression.c_str(),
+            pair[i].m_value,
+            expression_value);
+    }
 
     return 0;
-*/
-    // TEMP parser testing stuff
-    DataFileParser parser;
-//     parser.SetDebugSpewLevel(2);
-    if (parser.Parse("form.dat") == DataFileParser::RC_SUCCESS)
-    {
-        IndentFormatter formatter(stderr, "    ");
-        parser.GetAcceptedStructure()->Print(formatter);
-        formatter.EndLine("\n");
-
-        DataFileStructure const *root = parser.GetAcceptedStructure();
-        DataFileValue const *value;
-
-        value = root->GetPathElement("|queries");
-        DataFileArray const *queries = dynamic_cast<DataFileArray const *>(value);
-        if (queries != NULL && queries->GetArrayElementType() == DAT_STRING)
-        {
-            for (Uint32 i = 0; i < queries->GetElementCount(); ++i)
-            {
-                DataFileString const *query =
-                    DStaticCast<DataFileString const *>(queries->GetElement(i));
-                value = root->GetPathElement(query->GetValue());
-                formatter.PrintLine("result for path query \"%s\":", query->GetValue().c_str());
-                formatter.Indent();
-                if (value != NULL)
-                    value->PrintAST(formatter);
-                else
-                    formatter.PrintLine("NULL");
-                formatter.Unindent();
-                formatter.PrintLine("");
-            }
-        }
-    }
-//     if (parser.Parse("form2.dat") == DataFileParser::RC_SUCCESS)
-//     {
-//         IndentFormatter formatter(stderr, "    ");
-//         parser.GetAcceptedKeyPair()->Print(formatter);
-//         fprintf(stderr, "\n");
-//     }
-    return 0;
 /*
-    // TEMP
-    // TEMP
-    // TEMP
-    {
-        std::string temp;
-        for (Uint32 i = 0x0; i < 0x110000; (i == 0xD7FF ? i = 0xE000 : ++i))
-        {
-            temp.clear();
-            UTF8::AppendSequence(&temp, i);
-            Uint32 result = UTF8::GetUnicode(temp.c_str());
-            if (i != result)
-            {
-                fprintf(stderr, "failed: i = 0x%X, result = 0x%X, seq = ", i, result);
-                for (Uint8 const *s = reinterpret_cast<Uint8 const *>(temp.c_str()); *s != '\0'; ++s)
-                    fprintf(stderr, "0x%02X ", static_cast<Uint32>(*s));
-                fprintf(stderr, "\n");
-            }
-            ASSERT1(i == result)
-        }
-        for (Uint32 i = 0xD800; i < 0x120000; (i == 0xDFFF ? i = 0x110000 : ++i))
-        {
-            temp.clear();
-            UTF8::AppendSequence(&temp, i);
-            ASSERT1(temp.empty())
-        }
-    }
-    // TEMP
-    // TEMP
-    // TEMP
-
     Singletons::Initialize();
 
     // initialize video (no parachute so we get core dumps)

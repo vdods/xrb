@@ -274,8 +274,6 @@ lib/math/xrb_transform2.cpp
 lib/math/xrb_transform2.h
 lib/math/xrb_vector.cpp
 lib/math/xrb_vector.h
-lib/parsers/linecalculator/xrb_linecalculatorparser.ypp
-lib/parsers/linecalculator/xrb_linecalculatorscanner.lpp
 lib/parsers/xrb_datafilelocation.cpp
 lib/parsers/xrb_datafilelocation.h
 lib/parsers/xrb_datafileparser.trison
@@ -283,8 +281,9 @@ lib/parsers/xrb_datafilescanner.cpp
 lib/parsers/xrb_datafilescanner.h
 lib/parsers/xrb_datafilevalue.cpp
 lib/parsers/xrb_datafilevalue.h
-lib/parsers/xrb_linecalculator.cpp
-lib/parsers/xrb_linecalculator.h
+lib/parsers/xrb_arithmeticparser.trison
+lib/parsers/xrb_arithmeticscanner.cpp
+lib/parsers/xrb_arithmeticscanner.h
 lib/primitive/xrb_bitarray.h
 lib/primitive/xrb_bitarray.tcpp
 lib/primitive/xrb_circularqueue.h

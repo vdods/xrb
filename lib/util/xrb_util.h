@@ -135,6 +135,19 @@ namespace Util
         return strtof(text, NULL);
     #endif
     }
+    /** The extra parameter will return a pointer to the portion of the string
+      * after the numeric value.
+      * @brief Returns the floating point value parsed from the given text.
+      */
+    inline Float TextToFloat (char const *const text, char const **const end)
+    {
+        // the const_cast BS is because strtof/d's second parameter type is wrong
+    #if defined(WIN32)
+        return static_cast<Float>(strtod(text, const_cast<char **>(end)));
+    #else
+        return strtof(text, const_cast<char **>(end));
+    #endif
+    }
 
     /** @brief Returns textual representations of the IOError enums.
       */
