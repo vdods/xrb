@@ -27,6 +27,8 @@ using namespace Xrb;
 namespace Dis
 {
 
+Float const PlayerShip::ms_max_stoke = 4.0f;
+
 PlayerShip::PlayerShip (
     Float const max_health,
     EntityType const entity_type)
@@ -837,12 +839,11 @@ bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
 
 void PlayerShip::SetStoke (Float stoke)
 {
-    if (GetIsDead() && m_stoke != 1.0f)
+    if (GetIsDead())
         stoke = 1.0f;
 
-    static Float const s_max_stoke = 4.0f;
-    if (stoke > s_max_stoke)
-        stoke = s_max_stoke;
+    if (stoke > ms_max_stoke)
+        stoke = ms_max_stoke;
 
     if (m_stoke != stoke)
     {

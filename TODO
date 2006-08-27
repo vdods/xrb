@@ -63,7 +63,6 @@ DISASTEROIDS:
 - get non-wrapped ObjectLayers back up and running (because they totally
   don't work in disasteroids)
 - fix LineTrace screwing up on large entities sometimes at certain angles
-- the stupid fucking stoke-o-meter still isn't resetting to zero when the player dies
 
 TODO:
 - somehow properly return both drawn opaque and transparent object counts from

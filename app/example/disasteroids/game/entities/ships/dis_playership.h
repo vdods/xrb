@@ -34,6 +34,8 @@ class PlayerShip : public Ship, public SignalHandler
 {
 public:
 
+    static Float const ms_max_stoke;
+
     PlayerShip (Float max_health, EntityType entity_type);
     virtual ~PlayerShip ();
 

@@ -39,8 +39,8 @@ namespace Dis
 Float NormalizeStoke (Float const stoke)
 {
     ASSERT1(stoke >= 1.0f)
-    ASSERT1(stoke <= 4.0f)
-    return (stoke - 1.0f) / 3.0f;
+    ASSERT1(stoke <= PlayerShip::ms_max_stoke)
+    return (stoke - 1.0f) / (PlayerShip::ms_max_stoke - 1.0f);
 }
 
 GameWidget::GameWidget (
