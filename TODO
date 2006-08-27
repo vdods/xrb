@@ -53,7 +53,8 @@ DISASTEROIDS:
   the just-added score should be highlighted or blinking somehow
 - change CollisionPairList into a std::vector?
 - add collision_location and collision_normal to LineTrace
-- test disasteroids with a non-wrapped main ObjectLayer
+- get non-wrapped ObjectLayers back up and running (because they totally
+  don't work in disasteroids)
 - fix LineTrace screwing up on large entities sometimes at certain angles
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
@@ -64,19 +65,14 @@ DISASTEROIDS:
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
 - there's an assert when you zoom out in debug mode
-- the explosion and EMP effects seem to get brighter for a moment mid-explosion
-- add a max speed for nonsolid entities in Dis::PhysicsHandler
 
 TODO:
 - somehow properly return both drawn opaque and transparent object counts from
   Engine2::ObjectLayer::Draw and make UI labels for them in the debug view.
 - have SetPathElement... check for whitespace in the path
-- make a StateMachineHandler baseclass so that StateMachine can be un-templatized
 - add HandleDisabled/HandleEnabled and make Widget::SetIsEnabled not virtual
-- see if all the modal widget tracking code (including event handling)
-  can be moved appropriately into Screen.
 - ValueLabel and ValueEdit should take some sort of value-to-text function
-  instead of a printf format.
+  instead of a printf format (so it can be used to make vector ValueLabel/Edits)
 - refactor the layout code to be more efficient (so it can handle really
   complex/huge layouts quickly)
 - should Widget::Draw be protected?

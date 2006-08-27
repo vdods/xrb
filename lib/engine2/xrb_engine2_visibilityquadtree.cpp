@@ -245,10 +245,27 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         glDisable(GL_ALPHA_TEST);
         glAlphaFunc(GL_ALWAYS, 0.0f);
         if (!transparent_object_vector->empty())
+        {
             std::sort(
                 &(*transparent_object_vector)[0],
                 &(*transparent_object_vector)[0]+transparent_object_vector->size(),
                 Object::TransparentObjectOrder());
+            // remove duplicates from transparent_object_vector, which should
+            // all contiguous because of the above sorting.
+            Uint32 write = 0;
+            Uint32 read = 0;
+            Uint32 size = transparent_object_vector->size();
+            while (read < size)
+            {
+                Object const *skip_object = (*transparent_object_vector)[read];
+                (*transparent_object_vector)[write] = skip_object;
+                ++write;
+                ++read;
+                while (read < size && (*transparent_object_vector)[read] == skip_object)
+                    ++read;
+            }
+            transparent_object_vector->resize(write);
+        }
 
         draw_loop_functor.SetIsCollectTransparentObjectPass(false);
         DrawWrapped(draw_loop_functor);
@@ -346,6 +363,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     if (GetSubordinateObjectCount() == 0)
         return;
 
+    ASSERT1(GetParent() == NULL)
     ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f)
     ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f)
     ASSERT2(m_half_side_length > 0.0f)
@@ -361,9 +379,9 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
 
     glMatrixMode(GL_MODELVIEW);
 
-    for (Float x = left; x <= right; x += 1.0)
+    for (Float x = left; x <= right; x += 1.0f)
     {
-        for (Float y = bottom; y <= top; y += 1.0)
+        for (Float y = bottom; y <= top; y += 1.0f)
         {
             view_offset.SetComponents(side_length*x, side_length*y);
             // this IF statement culls quadtree nodes that are outside of the

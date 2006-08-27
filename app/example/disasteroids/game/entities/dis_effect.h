@@ -55,10 +55,10 @@ protected:
         if (m_time_to_live < 0.0f)
             return 0.0f;
         else
-            return (current_time - m_time_at_birth) / m_time_to_live;
+            return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
     }
     virtual bool GetIsEffect () const { return true; }
-    
+
 private:
 
     // indicates how long this effect will last (negative values indicate that
@@ -90,7 +90,7 @@ public:
     }
 
     inline Float GetFinalSize () const { return m_final_size; }
-    
+
     virtual void Think (Float time, Float frame_dt);
 
 private:
@@ -227,7 +227,7 @@ public:
         Float collision_force,
         Float time,
         Float frame_dt);
-    
+
 private:
 
     // the max amount of damage this (class of) fireball can dissipate
@@ -252,12 +252,12 @@ public:
         :
         Effect(-1.0f, 0.0f, ET_LASER_BEAM, CT_NO_COLLISION)
     { }
-    
+
     // this is mainly just to override Effect::Think which changes the alpha
     virtual void Think (Float time, Float frame_dt) { }
 
     void SetIntensity (Float intensity);
-    
+
     void SnapToShip (
         FloatVector2 const &muzzle_location,
         FloatVector2 const &hit_location,
@@ -290,7 +290,7 @@ public:
         :
         Effect(-1.0f, 0.0f, ET_TRACTOR_BEAM, CT_NO_COLLISION)
     { }
-    
+
     // this is mainly just to override Effect::Think which changes the alpha
     virtual void Think (Float time, Float frame_dt) { }
 
@@ -323,7 +323,7 @@ public:
         FloatVector2 const &ship_translation,
         Float ship_scale_factor);
 }; // end of class ShieldEffect
-        
+
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
@@ -344,7 +344,7 @@ public:
         FloatVector2 const &location,
         Float scale_factor);
 }; // end of class ReticleEffect
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_EFFECT_H_)
