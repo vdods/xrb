@@ -101,7 +101,6 @@ private:
     ThinkState m_think_state;
     Float m_next_wander_time;
     Float m_wander_angle;
-    Float m_wander_angle_low_pass;
     Float m_wander_angle_derivative;
     EntityReference<Ship> m_target;
     EntityReference<ReticleEffect> m_reticle_effect;

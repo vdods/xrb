@@ -81,7 +81,6 @@ private:
     ThinkState m_think_state;
     Float m_next_wander_time;
     Float m_wander_angle;
-    Float m_wander_angle_low_pass;
     EntityReference<Ship> m_target;
     Weapon *m_weapon;
 }; // end of class Shade

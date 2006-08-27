@@ -141,7 +141,6 @@ void Shade::PickWanderDirection (Float const time, Float const frame_dt)
     m_next_wander_time = time + 6.0f;
     // pick a direction/speed to wander in
     m_wander_angle = Math::RandomAngle();
-    m_wander_angle_low_pass = m_wander_angle;
     m_think_state = THINK_STATE(Wander);
 }
 
@@ -198,11 +197,10 @@ void Shade::Wander (Float const time, Float const frame_dt)
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
-        FloatVector2 v(GetSpeed() * Math::UnitVector(m_wander_angle_low_pass));
-        FloatVector2 delta_velocity(collision_entity->GetVelocity() - v);
+        FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.GetIsZero())
-        if ((perpendicular_velocity | v) > -(perpendicular_velocity | v))
+        if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
             m_wander_angle = Math::Atan(-perpendicular_velocity);
@@ -212,18 +210,6 @@ void Shade::Wander (Float const time, Float const frame_dt)
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
-
-    // the "slow angle" is used like a low-pass filter for the wander angle
-    // in the above calculations.  this is necessary to avoid a feedback loop
-    // due to the successive m_wander_angle-dependent calculations.
-    static Float const s_slow_angle_delta_rate = 135.0f;
-    Float slow_angle_delta =
-        Min(s_slow_angle_delta_rate * frame_dt,
-            Abs(m_wander_angle - m_wander_angle_low_pass));
-    if (m_wander_angle < m_wander_angle_low_pass)
-        m_wander_angle_low_pass -= slow_angle_delta;
-    else
-        m_wander_angle_low_pass += slow_angle_delta;
 
     if (time >= m_next_wander_time)
         m_think_state = THINK_STATE(PickWanderDirection);

@@ -327,7 +327,6 @@ private:
     ThinkState m_starboard_tractor_think_state;
     Float m_next_wander_time;
     Float m_wander_angle;
-    Float m_wander_angle_low_pass;
     EntityReference<Ship> m_target;
     Float m_start_time;
     Float m_spin_direction;
