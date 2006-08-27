@@ -36,6 +36,7 @@ OPENGL CONVERSION TASKS:
   glFog
 
 DISASTEROIDS:
+** feature-related **
 - add a post-teleport wait period to Shade so it doesn't teleport a
   bunch of times in a row
 - make Devourment track who damaged it and how much, so it can retaliate
@@ -44,16 +45,11 @@ DISASTEROIDS:
 - make Demi spawn more stuff
 - make Demi's deflection tractors have a higher range angle
 - make Demi push away if its taking too much damage and the player is close
-- there seems to be a bug in the aiming in the front weapon of Demi
 - make Shade circle around the player once it has locked on
 - make Shade teleport or fly away if it takes too much damage
 - when a new high score is posted and you're taken back to the title screen,
   the just-added score should be highlighted or blinking somehow
-- change CollisionPairList into a std::vector?
 - add collision_location and collision_normal to LineTrace
-- get non-wrapped ObjectLayers back up and running (because they totally
-  don't work in disasteroids)
-- fix LineTrace screwing up on large entities sometimes at certain angles
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
@@ -62,7 +58,12 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- there's an assert when you zoom out in debug mode
+** bug-related **
+- there seems to be a bug in the aiming in the front weapon of Demi
+- get non-wrapped ObjectLayers back up and running (because they totally
+  don't work in disasteroids)
+- fix LineTrace screwing up on large entities sometimes at certain angles
+- the stupid fucking stoke-o-meter still isn't resetting to zero when the player dies
 
 TODO:
 - somehow properly return both drawn opaque and transparent object counts from

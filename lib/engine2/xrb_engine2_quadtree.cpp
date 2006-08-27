@@ -179,14 +179,14 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
         FloatVector2 object_translation(object->GetTranslation());
         FloatVector2 adjusted_area_center(area_center);
 
-        if (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
+        while (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
             adjusted_area_center[Dim::X] += object_layer_side_length;
-        else if (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
+        while (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
             adjusted_area_center[Dim::X] -= object_layer_side_length;
 
-        if (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
+        while (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
             adjusted_area_center[Dim::Y] += object_layer_side_length;
-        else if (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
+        while (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
             adjusted_area_center[Dim::Y] -= object_layer_side_length;
 
         if ((object_translation - adjusted_area_center).GetLength()

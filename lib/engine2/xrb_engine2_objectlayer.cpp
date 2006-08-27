@@ -105,14 +105,14 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
     Float const half_object_layer_side_length = 0.5f * GetSideLength();
     if (GetIsWrapped())
     {
-        if (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
+        while (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
             normalized_coordinates[Dim::X] += GetSideLength();
-        else if (normalized_coordinates[Dim::X] > half_object_layer_side_length)
+        while (normalized_coordinates[Dim::X] > half_object_layer_side_length)
             normalized_coordinates[Dim::X] -= GetSideLength();
 
-        if (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
+        while (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
             normalized_coordinates[Dim::Y] += GetSideLength();
-        else if (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
+        while (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
             normalized_coordinates[Dim::Y] -= GetSideLength();
     }
     else
@@ -150,27 +150,21 @@ FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
         ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length)
         ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length)
 
-        if (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
-        {
+        while (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
             adjusted_coordinates[Dim::X] += GetSideLength();
-            ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length)
-        }
-        else if (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
-        {
-            adjusted_coordinates[Dim::X] -= GetSideLength();
-            ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length)
-        }
+        ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length)
 
-        if (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
-        {
+        while (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
+            adjusted_coordinates[Dim::X] -= GetSideLength();
+        ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length)
+
+        while (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
             adjusted_coordinates[Dim::Y] += GetSideLength();
-            ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length)
-        }
-        else if (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
-        {
+        ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length)
+
+        while (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
             adjusted_coordinates[Dim::Y] -= GetSideLength();
-            ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length)
-        }
+        ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length)
 
         return adjusted_coordinates;
     }

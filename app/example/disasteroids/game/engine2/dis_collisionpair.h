@@ -13,7 +13,7 @@
 
 #include "xrb_vector.h"
 
-#include <list>
+#include <vector>
 
 using namespace Xrb;
 
@@ -50,7 +50,7 @@ struct CollisionPair
     }
 }; // end of struct CollisionPair
 
-typedef std::list<CollisionPair> CollisionPairList;
+typedef std::vector<CollisionPair> CollisionPairList;
 typedef CollisionPairList::iterator CollisionPairListIterator;
 
 } // end of namespace Dis
