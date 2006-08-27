@@ -164,4 +164,31 @@ t=\frac{-\left[\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\right]\pm\sqrt{\left[\le
 \end_inset 
 
 
+\layout Standard
+
+
+\begin_inset Formula \[
+t=\frac{-\frac{b}{2}\pm\sqrt{\left(\frac{b}{2}\right)^{2}-ac}}{a}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a=\hat{v}\cdot\hat{v}\qquad b'=\left(\hat{p}-\hat{c}\right)\cdot\hat{v}\qquad c=\left(\hat{p}-\hat{c}\right)\cdot\left(\hat{p}-\hat{c}\right)-R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+t=\frac{-b'\pm\sqrt{\left(b'\right)^{2}-ac}}{a}\]
+
+\end_inset 
+
+
 \the_end

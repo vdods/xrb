@@ -62,7 +62,6 @@ DISASTEROIDS:
 - there seems to be a bug in the aiming in the front weapon of Demi
 - get non-wrapped ObjectLayers back up and running (because they totally
   don't work in disasteroids)
-- fix LineTrace screwing up on large entities sometimes at certain angles
 
 TODO:
 - somehow properly return both drawn opaque and transparent object counts from

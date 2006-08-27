@@ -209,22 +209,12 @@ void CollisionQuadTree::LineTrace (
     {
         FloatVector2 p_minus_c = trace_start - GetCenter();
         Float R = GetRadius() + trace_radius;
-        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
-        Float determinant = b * b - 4.0f * a * c;
+        Float determinant = b * b - a * c;
         if (determinant < 0.0f)
             return;
     }
-
-    // call this function on the child nodes, if they exist
-    if (GetHasChildren())
-        for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->LineTrace(
-                trace_start,
-                trace_vector,
-                trace_radius,
-                check_nonsolid_collision_entities,
-                line_trace_binding_set);
 
     // check the line against the objects in this node
     for (ObjectSetIterator it = m_object_set.begin(),
@@ -250,24 +240,34 @@ void CollisionQuadTree::LineTrace (
         FloatVector2 p_minus_c = trace_start - entity->GetTranslation();
         Float R = entity->GetRadius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
-        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
-        Float determinant = b * b - 4.0f * a * c;
+        Float determinant = b * b - a * c;
         if (determinant < 0.0f)
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
 
-        Float t0 = (-b - radical_part) / (2.0f * a);
+        Float t0 = (-b - radical_part) / a;
         if (t0 > 1.0f)
             continue;
 
-        Float t1 = (-b + radical_part) / (2.0f * a);
+        Float t1 = (-b + radical_part) / a;
         if (t1 < 0.0f)
             continue;
 
         line_trace_binding_set->insert(LineTraceBinding(Max(0.0f, t0), entity));
     }
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->LineTrace(
+                trace_start,
+                trace_vector,
+                trace_radius,
+                check_nonsolid_collision_entities,
+                line_trace_binding_set);
 }
 
 void CollisionQuadTree::LineTraceWrapped (
@@ -293,9 +293,6 @@ void CollisionQuadTree::LineTraceWrapped (
     {
         FloatVector2 adjusted_center(GetCenter());
 
-        // TODO: think of a way to adjust the quadnode center for this
-        // maybe the length of the trace will have to be limited to 1/2
-        // the object layer side length.
         if (adjusted_center[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
             adjusted_center[Dim::X] -= object_layer_side_length;
         else if (adjusted_center[Dim::X] - trace_center[Dim::X] < -half_object_layer_side_length)
@@ -307,25 +304,13 @@ void CollisionQuadTree::LineTraceWrapped (
             adjusted_center[Dim::Y] += object_layer_side_length;
 
         FloatVector2 p_minus_c = trace_start - adjusted_center;
-        Float R = GetRadius() + trace_radius;
-        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float R = 2.0f * GetRadius() + trace_radius;
+        Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
-        Float determinant = b * b - 4.0f * a * c;
+        Float determinant = b * b - a * c;
         if (determinant < 0.0f)
             return;
     }
-
-    // call this function on the child nodes, if they exist
-    if (GetHasChildren())
-        for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->LineTraceWrapped(
-                trace_start,
-                trace_vector,
-                trace_radius,
-                check_nonsolid_collision_entities,
-                line_trace_binding_set,
-                object_layer_side_length,
-                half_object_layer_side_length);
 
     // check the line against the objects in this node
     for (ObjectSetIterator it = m_object_set.begin(),
@@ -363,24 +348,36 @@ void CollisionQuadTree::LineTraceWrapped (
         FloatVector2 p_minus_c = trace_start - adjusted_entity_translation;
         Float R = entity->GetRadius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
-        Float b = 2.0f * (p_minus_c | trace_vector);
+        Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
-        Float determinant = b * b - 4.0f * a * c;
+        Float determinant = b * b - a * c;
         if (determinant < 0.0f)
             continue;
 
         Float radical_part = Math::Sqrt(determinant);
 
-        Float t0 = (-b - radical_part) / (2.0f * a);
+        Float t0 = (-b - radical_part) / a;
         if (t0 > 1.0f)
             continue;
 
-        Float t1 = (-b + radical_part) / (2.0f * a);
+        Float t1 = (-b + radical_part) / a;
         if (t1 < 0.0f)
             continue;
 
         line_trace_binding_set->insert(LineTraceBinding(Max(0.0f, t0), entity));
     }
+
+    // call this function on the child nodes, if they exist
+    if (GetHasChildren())
+        for (Uint8 i = 0; i < 4; ++i)
+            GetChild<CollisionQuadTree>(i)->LineTraceWrapped(
+                trace_start,
+                trace_vector,
+                trace_radius,
+                check_nonsolid_collision_entities,
+                line_trace_binding_set,
+                object_layer_side_length,
+                half_object_layer_side_length);
 }
 
 void CollisionQuadTree::AreaTrace (

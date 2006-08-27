@@ -53,7 +53,7 @@ Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0
 // FlameThrower properties
 Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
 Float const FlameThrower::ms_min_required_primary_power[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
-Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f }; //{ 10.0f, 15.0f, 22.0f, 35.0f };
+Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const FlameThrower::ms_max_damage_per_fireball[UPGRADE_LEVEL_COUNT] = { 15.0f, 30.0f, 60.0f, 120.0f };
 Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 70.0f, 100.0f };
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
@@ -576,9 +576,6 @@ bool GaussGun::Activate (
 
     LineTraceBindingSetIterator it = line_trace_binding_set.begin();
     LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
-    // don't damage the owner of this weapon
-    if (it != it_end && it->m_entity == GetOwnerShip())
-        ++it;
 
     // decide how much damage to inflict total
     Float damage_left_to_inflict =
@@ -589,16 +586,19 @@ bool GaussGun::Activate (
     // damage the next thing if it exists
     Float furthest_hit_time = 1.0f;
     Float damage_amount_used;
-    while (damage_left_to_inflict > 0.0f &&
+    bool first_hit_registered = false;
+    while ((!first_hit_registered || damage_left_to_inflict > 0.0f) &&
            it != it_end)
     {
-        // we don't want to hit powerups (continue without incrementing
-        // the hit count or updating the furthest hit time)
-        if (it->m_entity->GetIsPowerup())
+        // we don't want to hit the owner of this weapon or powerups
+        // (continue without updating the furthest hit time)
+        if (it->m_entity == GetOwnerShip() || it->m_entity->GetIsPowerup())
         {
             ++it;
             continue;
         }
+
+        first_hit_registered = true;
 
         furthest_hit_time = it->m_time;
         if (it->m_entity->GetIsMortal())
