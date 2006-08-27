@@ -47,7 +47,6 @@ DISASTEROIDS:
 - there seems to be a bug in the aiming in the front weapon of Demi
 - make Shade circle around the player once it has locked on
 - make Shade teleport or fly away if it takes too much damage
-- Interloper shouldn't flip around immediately
 - take out the low-pass filter for ship angle in the enemy ships
 - when a new high score is posted and you're taken back to the title screen,
   the just-added score should be highlighted or blinking somehow

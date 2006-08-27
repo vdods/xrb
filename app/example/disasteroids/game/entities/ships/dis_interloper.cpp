@@ -86,7 +86,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
     // this special handling is done because we don't accumulate force
     // necessarily in the direction the ship is aiming.
     if (!GetVelocity().GetIsZero())
-        SetAngle(Math::Atan(GetVelocity()));
+        AimShipAtCoordinates(GetTranslation() + GetVelocity().GetNormalization(), frame_dt);
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
     if (thrust_direction.GetLengthSquared() < 0.001f)
