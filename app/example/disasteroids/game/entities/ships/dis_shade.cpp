@@ -138,7 +138,7 @@ void Shade::SetTarget (Mortal *const target)
 void Shade::PickWanderDirection (Float const time, Float const frame_dt)
 {
     // update the next time to pick a wander direction
-    m_next_wander_time = time + 6.0f;
+    m_next_whatever_time = time + 6.0f;
     // pick a direction/speed to wander in
     m_wander_angle = Math::RandomAngle();
     m_think_state = THINK_STATE(Wander);
@@ -204,14 +204,14 @@ void Shade::Wander (Float const time, Float const frame_dt)
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
             m_wander_angle = Math::Atan(-perpendicular_velocity);
-        m_next_wander_time = time + 6.0f;
+        m_next_whatever_time = time + 6.0f;
     }
 
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
 
-    if (time >= m_next_wander_time)
+    if (time >= m_next_whatever_time)
         m_think_state = THINK_STATE(PickWanderDirection);
 }
 
@@ -349,7 +349,15 @@ void Shade::Teleport (Float const time, Float const frame_dt)
     SetTranslation(teleport_destination);
     SetVelocity(GetAmbientVelocity(100.0f, this));
 
-    m_think_state = THINK_STATE(MoveToAttackRange);
+    // pause for a 1/2 second
+    m_think_state = THINK_STATE(PauseAfterTeleport);
+    m_next_whatever_time = time + 0.5f;
+}
+
+void Shade::PauseAfterTeleport (Float const time, Float const frame_dt)
+{
+    if (time >= m_next_whatever_time)
+        m_think_state = THINK_STATE(MoveToAttackRange);
 }
 
 void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)

@@ -72,6 +72,7 @@ private:
     void Stalk (Float time, Float frame_dt);
     void MoveToAttackRange (Float time, Float frame_dt);
     void Teleport (Float time, Float frame_dt);
+    void PauseAfterTeleport (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
     void AimWeapon (FloatVector2 const &target_position);
@@ -79,7 +80,7 @@ private:
     typedef void (Shade::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
-    Float m_next_wander_time;
+    Float m_next_whatever_time;
     Float m_wander_angle;
     EntityReference<Ship> m_target;
     Weapon *m_weapon;

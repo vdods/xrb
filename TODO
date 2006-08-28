@@ -37,16 +37,10 @@ OPENGL CONVERSION TASKS:
 
 DISASTEROIDS:
 ** feature-related **
-- add a post-teleport wait period to Shade so it doesn't teleport a
-  bunch of times in a row
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
-- add level-based limits to the minerals spawned by Devourment at death
-- make Demi track the number of enemies it has spawned so it doesn't make too many
-- make Demi spawn more stuff
-- make Demi's deflection tractors have a higher range angle
 - make Demi push away if its taking too much damage and the player is close
 - make Demi spawn a health powerup when killed
 - possibly make Demi have a time-based health-recharge behavior, so you
