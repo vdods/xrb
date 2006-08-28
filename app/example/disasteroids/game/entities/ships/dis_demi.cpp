@@ -43,7 +43,7 @@ Float const Demi::ms_gauss_gun_aim_error_radius[ENEMY_LEVEL_COUNT] = { 25.0f, 20
 Float const Demi::ms_gauss_gun_aim_max_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 Float const Demi::ms_gauss_gun_reticle_scale_factor[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
 Float const Demi::ms_gauss_gun_max_duration[ENEMY_LEVEL_COUNT] = { 7.0f, 7.0f, 7.0f, 7.0f };
-Float const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 3.0f, 3.0f, 3.0f, 3.0f };
+Float const Demi::ms_flame_throw_sweep_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Demi::ms_flame_throw_blast_duration[ENEMY_LEVEL_COUNT] = { 0.15f, 0.15f, 0.15f, 0.15f };
 Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const Demi::ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
@@ -215,7 +215,7 @@ void Demi::Think (Float const time, Float const frame_dt)
 
     EnemyShip::Think(time, frame_dt);
 
-    // NOTE: Devourment can't be disabled -- the
+    // NOTE: Demi can't be disabled -- the
     // disabled code would go here otherwise
 
     // ensure the port tractor beam is allocated (lazy allocation)
@@ -530,45 +530,49 @@ void Demi::Stalk (Float const time, Float const frame_dt)
             GetTranslation()));
     Float target_distance = (target_position - GetTranslation()).GetLength();
 
-//     m_think_state = THINK_STATE(ChargeStart);
+//     m_think_state = THINK_STATE(FlameThrowSweepStart);
 //     return;
 
     static WeightedThinkState const s_transition_near[] =
     {
         {    THINK_STATE(FlameThrowSweepStart), 8 },
-        { THINK_STATE(SpinningInterloperSpawn), 4 }, // level 0
-        {      THINK_STATE(SpinningShadeSpawn), 2 }, // level 1
+        { THINK_STATE(SpinningInterloperSpawn), 5 }, // level 0
+        {      THINK_STATE(SpinningShadeSpawn), 3 }, // level 1
         {      THINK_STATE(MissileLaunchStart), 3 }, // level 2
-        {  THINK_STATE(SpinningRevulsionSpawn), 1 }  // level 3
+        {  THINK_STATE(SpinningRevulsionSpawn), 2 }  // level 3
     };
     static Uint32 const s_transition_near_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
-    static Uint32 const s_transition_near_total_weight[ENEMY_LEVEL_COUNT] = { 12, 14, 17, 18 };
+    static Uint32 const s_transition_near_total_weight[ENEMY_LEVEL_COUNT] = { 13, 16, 19, 21 };
 
     static WeightedThinkState const s_transition_mid[] =
     {
         {    THINK_STATE(TractorTargetCloserStart),  3 },
         {            THINK_STATE(GaussGunStartAim), 10 },
         {        THINK_STATE(FlameThrowBlastStart), 20 },
+        {     THINK_STATE(SpinningInterloperSpawn),  2 },
+        {   THINK_STATE(InterloperSpawnBlastStart),  2 },
+        {        THINK_STATE(ShadeSpawnBlastStart),  1 },
         {          THINK_STATE(SpinningFlameThrow), 10 }, // level 0
-        {       THINK_STATE(SpinningMissileLaunch), 10 },
-        {   THINK_STATE(InterloperSpawnBlastStart),  4 }, // level 1
-        {        THINK_STATE(ShadeSpawnBlastStart),  2 }, // level 2
-        {    THINK_STATE(RevulsionSpawnBlastStart),  1 },
+        {       THINK_STATE(SpinningMissileLaunch), 10 }, // level 1
+        {        THINK_STATE(ShadeSpawnBlastStart),  3 },
+        {          THINK_STATE(SpinningShadeSpawn),  3 }, // level 2
+        {    THINK_STATE(RevulsionSpawnBlastStart),  4 },
+        {      THINK_STATE(SpinningRevulsionSpawn),  3 },
         { THINK_STATE(SpinningGuidedMissileLaunch),  2 }  // level 3
     };
-    static Uint32 const s_transition_mid_count[ENEMY_LEVEL_COUNT] = { 4, 6, 7, 9 };
-    static Uint32 const s_transition_mid_total_weight[ENEMY_LEVEL_COUNT] = { 43, 57, 59, 62 };
+    static Uint32 const s_transition_mid_count[ENEMY_LEVEL_COUNT] = { 7, 8, 10, 13 };
+    static Uint32 const s_transition_mid_total_weight[ENEMY_LEVEL_COUNT] = { 48, 58, 64, 73 };
 
     static WeightedThinkState const s_transition_far[] =
     {
         {               THINK_STATE(ChargeStart), 20 },
         {  THINK_STATE(TractorTargetCloserStart), 10 }, // level 0
-        { THINK_STATE(InterloperSpawnBlastStart),  4 }, // level 1
-        {      THINK_STATE(ShadeSpawnBlastStart),  2 }, // level 2
-        {  THINK_STATE(RevulsionSpawnBlastStart),  1 }  // level 3
+        { THINK_STATE(InterloperSpawnBlastStart),  5 }, // level 1
+        {      THINK_STATE(ShadeSpawnBlastStart),  4 }, // level 2
+        {  THINK_STATE(RevulsionSpawnBlastStart),  3 }  // level 3
     };
     static Uint32 const s_transition_far_count[ENEMY_LEVEL_COUNT] = { 2, 3, 4, 5 };
-    static Uint32 const s_transition_far_total_weight[ENEMY_LEVEL_COUNT] = { 30, 34, 36, 37 };
+    static Uint32 const s_transition_far_total_weight[ENEMY_LEVEL_COUNT] = { 30, 35, 39, 42 };
 
     WeightedThinkState const *transition = NULL;
     Uint32 transition_count = 0;

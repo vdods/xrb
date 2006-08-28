@@ -38,6 +38,8 @@ public:
     static Float const ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT];
+    static Float const ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT];
+    static Float const ms_max_single_mineral_mass[ENEMY_LEVEL_COUNT];
 
     Devourment (Uint8 enemy_level);
     virtual ~Devourment ();
@@ -93,18 +95,20 @@ private:
     void Consume (Float time, Float frame_dt);
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
-    EntityReference<Mortal> ScanAreaForTargets ();
+    EntityReference<Entity> ScanAreaForTargets ();
 
     typedef void (Devourment::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
     Float m_next_whatever_time;
     Float m_wander_angle;
-    EntityReference<Mortal> m_target;
+    EntityReference<Entity> m_target;
 
     EntityReference<HealthTrigger> m_mouth_health_trigger;
     Tractor *m_mouth_tractor;
     EntityReference<TractorBeam> m_mouth_tractor_beam;
+
+    Float m_mineral_inventory[MINERAL_COUNT];
 }; // end of class Devourment
 
 } // end of namespace Dis

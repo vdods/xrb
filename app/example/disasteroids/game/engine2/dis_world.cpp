@@ -271,7 +271,7 @@ static Wave const gs_wave[] =
         {
             {   0,   0,  10,   0 }, // Interloper
             {   0,   0,   0,   0 }, // Shade
-            {   0,   0,  10,   0 }, // Revulsion
+            {   0,   0,   6,   0 }, // Revulsion
             {   1,   2,   1,   0 }, // Devourment
             {   0,   0,   0,   0 }  // Demi
         },

@@ -41,6 +41,8 @@ Float const Devourment::ms_mouth_tractor_range[ENEMY_LEVEL_COUNT] = { 100.0f, 13
 Float const Devourment::ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT] = { 700.0f, 1200.0f, 1800.0f, 2500.0f };
 Float const Devourment::ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Devourment::ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
+Float const Devourment::ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT] = { 80.0f, 160.0f, 210.0f, 250.0f };
+Float const Devourment::ms_max_single_mineral_mass[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 
 Devourment::Devourment (Uint8 const enemy_level)
     :
@@ -58,6 +60,9 @@ Devourment::Devourment (Uint8 const enemy_level)
     m_mouth_tractor->SetMaxForceOverride(ms_mouth_tractor_max_force[GetEnemyLevel()]);
     m_mouth_tractor->SetBeamRadiusOverride(ms_mouth_tractor_beam_radius[GetEnemyLevel()]);
     m_mouth_tractor->Equip(this);
+
+    for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+        m_mineral_inventory[i] = -ms_max_spawn_mineral_mass[GetEnemyLevel()] / static_cast<Float>(MINERAL_COUNT);
 }
 
 Devourment::~Devourment ()
@@ -220,12 +225,62 @@ void Devourment::Die (
     // remove the mouth tractor beam, if it exists
     if (m_mouth_tractor_beam.GetIsValid() && m_mouth_tractor_beam->GetIsInWorld())
         m_mouth_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
+
+    // adjust the minerals so their sum isn't greater than the max spawn mineral mass
+    Float mineral_mass_total = 0.0f;
+    for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+        mineral_mass_total += m_mineral_inventory[i];
+    if (mineral_mass_total > ms_max_spawn_mineral_mass[GetEnemyLevel()])
+        for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
+            m_mineral_inventory[i] = ms_max_spawn_mineral_mass[GetEnemyLevel()] * m_mineral_inventory[i] / mineral_mass_total;
+
+    // spawn the collected minerals (there may be a negative value, which is used
+    // so that the player can't keep killing new Devourments to get minerals.
+    static Float const s_min_mineral_mass = 5.0f;
+    static Float const s_mineral_ejection_speed = 100.0f;
+    for (Uint32 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
+    {
+        // if the value is negative, obviously no minerals will be spawned
+        while (m_mineral_inventory[mineral_index] > s_min_mineral_mass)
+        {
+            Float mass =
+                Math::RandomFloat(
+                    s_min_mineral_mass,
+                    Min(ms_max_single_mineral_mass[GetEnemyLevel()], m_mineral_inventory[mineral_index]));
+            Float scale_factor = Math::Sqrt(mass);
+            Float velocity_angle = Math::RandomAngle();
+            Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+            FloatVector2 velocity = GetVelocity() + s_mineral_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+            SpawnMineral(
+                GetWorld(),
+                GetObjectLayer(),
+                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                scale_factor,
+                mass,
+                velocity,
+                mineral_index);
+
+            m_mineral_inventory[mineral_index] -= mass;
+        }
+    }
 }
 
 bool Devourment::TakePowerup (Powerup *const powerup)
 {
     ASSERT1(powerup != NULL)
+
     // just suck up all powerups, to piss off the player
+
+    // add minerals to the inventory
+    if (powerup->GetItemType() >= IT_MINERAL_LOWEST &&
+        powerup->GetItemType() <= IT_MINERAL_HIGHEST)
+    {
+        ASSERT1(powerup->GetItem() == NULL)
+        Uint32 mineral_index = powerup->GetItemType() - IT_MINERAL_LOWEST;
+        ASSERT1(mineral_index < MINERAL_COUNT)
+        m_mineral_inventory[mineral_index] += powerup->GetFirstMoment();
+    }
+
     delete powerup->GetItem();
     powerup->ClearItem();
     return true;
@@ -279,7 +334,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.GetIsValid() || (m_target->GetIsMortal() && DStaticCast<Mortal *>(*m_target)->GetIsDead()))
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -367,7 +422,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.GetIsValid() || (m_target->GetIsMortal() && DStaticCast<Mortal *>(*m_target)->GetIsDead()))
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -417,9 +472,9 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     }
 }
 
-EntityReference<Mortal> Devourment::ScanAreaForTargets ()
+EntityReference<Entity> Devourment::ScanAreaForTargets ()
 {
-    EntityReference<Mortal> target;
+    EntityReference<Entity> target;
 
     static Float const s_optimal_target_mass = 400.0f;
 
@@ -435,6 +490,8 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
         scan_radius,
         false,
         &area_trace_list);
+
+    static Float const s_powerup_mass_threshold = 15.0f;
     for (AreaTraceListIterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
@@ -442,8 +499,7 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
     {
         Entity *entity = *it;
         ASSERT1(entity != NULL)
-
-        ASSERT1(*entity->GetReference() == entity)
+        ASSERT2(*entity->GetReference() == entity)
 
         // don't try to eat ourselves
         if (entity == this)
@@ -456,22 +512,30 @@ EntityReference<Mortal> Devourment::ScanAreaForTargets ()
             continue;
         }
 
-        // we're only interested in Mortals
-        if (entity->GetIsMortal())
+        // large-enough powerups trump everything else
+        if (entity->GetIsPowerup())
+        {
+            if (!target.GetIsValid() ||
+                !target->GetIsPowerup() ||
+                entity->GetFirstMoment() > s_powerup_mass_threshold &&
+                entity->GetFirstMoment() > target->GetFirstMoment())
+            {
+                target = entity->GetReference();
+            }
+        }
+        else if (entity->GetIsMortal())
         {
             ASSERT1(dynamic_cast<Mortal *>(entity) != NULL)
 
-            // if no target, use the current game object
-            if (!target.GetIsValid())
-                target = entity->GetReference();
-            // only override the current target if the current game object is
+            // if no target, use the current game object,
+            // or override the current target if the current game object is
             // closer to the optimal mass.  the -0.01f bidness is so if there
             // are multiple potential targets of the exact same mass, we don't
             // switch between them really fast between frames.
-            else if (Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
-                     Abs(target->GetFirstMoment() - s_optimal_target_mass) - 0.01f)
+            if (!target.GetIsValid() ||
+                Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
+                Abs(target->GetFirstMoment() - s_optimal_target_mass) - 0.01f)
             {
-                // if so, set target
                 target = entity->GetReference();
             }
         }
