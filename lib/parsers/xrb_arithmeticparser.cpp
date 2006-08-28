@@ -1,4 +1,4 @@
-#include "../../lib/parsers/xrb_arithmeticparser.h"
+#include "xrb_arithmeticparser.h"
 
 #include <cstdio>
 #include <iomanip>
@@ -8,7 +8,7 @@
 #define DEBUG_SPEW_2(x) if (m_debug_spew_level >= 2) std::cerr << x
 
 
-#line 38 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 38 "xrb_arithmeticparser.trison"
 
 #include "xrb_arithmeticscanner.h"
 
@@ -17,17 +17,17 @@
 namespace Xrb
 {
 
-#line 21 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 21 "xrb_arithmeticparser.cpp"
 
 ArithmeticParser::ArithmeticParser ()
 
 {
 
-#line 47 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 47 "xrb_arithmeticparser.trison"
 
     m_scanner = NULL;
 
-#line 31 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 31 "xrb_arithmeticparser.cpp"
     m_debug_spew_level = 0;
     DEBUG_SPEW_2("### number of state transitions = " << ms_state_transition_count << std::endl);
     m_reduction_token = 0.0f;
@@ -36,11 +36,11 @@ ArithmeticParser::ArithmeticParser ()
 ArithmeticParser::~ArithmeticParser ()
 {
 
-#line 51 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 51 "xrb_arithmeticparser.trison"
 
     ASSERT1(m_scanner == NULL)
 
-#line 44 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 44 "xrb_arithmeticparser.cpp"
 }
 
 void ArithmeticParser::CheckStateConsistency ()
@@ -464,9 +464,9 @@ Float ArithmeticParser::ReductionRuleHandler0001 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     Float right = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 99 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 99 "xrb_arithmeticparser.trison"
  return left + right; 
-#line 470 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 470 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -478,9 +478,9 @@ Float ArithmeticParser::ReductionRuleHandler0002 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     Float right = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 101 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 101 "xrb_arithmeticparser.trison"
  return left - right; 
-#line 484 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 484 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -492,9 +492,9 @@ Float ArithmeticParser::ReductionRuleHandler0003 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     Float right = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 103 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 103 "xrb_arithmeticparser.trison"
  return left * right; 
-#line 498 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 498 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -506,9 +506,9 @@ Float ArithmeticParser::ReductionRuleHandler0004 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     Float right = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 105 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 105 "xrb_arithmeticparser.trison"
  return (right == 0.0f) ? Math::Nan() : left / right; 
-#line 512 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 512 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -518,9 +518,9 @@ Float ArithmeticParser::ReductionRuleHandler0005 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     Float exp = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 107 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 107 "xrb_arithmeticparser.trison"
  return exp; 
-#line 524 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 524 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -530,9 +530,9 @@ Float ArithmeticParser::ReductionRuleHandler0006 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     Float exp = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 109 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 109 "xrb_arithmeticparser.trison"
  return -exp; 
-#line 536 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 536 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -544,9 +544,9 @@ Float ArithmeticParser::ReductionRuleHandler0007 ()
     assert(static_cast<unsigned int>(2) < m_reduction_rule_token_count);
     Float right = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 2]);
 
-#line 111 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 111 "xrb_arithmeticparser.trison"
  return Math::Pow(left, right); 
-#line 550 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 550 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -556,9 +556,9 @@ Float ArithmeticParser::ReductionRuleHandler0008 ()
     assert(static_cast<unsigned int>(1) < m_reduction_rule_token_count);
     Float exp = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 1]);
 
-#line 113 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 113 "xrb_arithmeticparser.trison"
  return exp; 
-#line 562 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 562 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -568,9 +568,9 @@ Float ArithmeticParser::ReductionRuleHandler0009 ()
     assert(static_cast<unsigned int>(0) < m_reduction_rule_token_count);
     Float numeric = static_cast< Float >(m_token_stack[m_token_stack.size() - m_reduction_rule_token_count + 0]);
 
-#line 115 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 115 "xrb_arithmeticparser.trison"
  return numeric; 
-#line 574 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 574 "xrb_arithmeticparser.cpp"
     return 0.0f;
 }
 
@@ -848,7 +848,7 @@ unsigned int const ArithmeticParser::ms_state_transition_count =
     sizeof(ArithmeticParser::StateTransition);
 
 
-#line 55 "../../lib/parsers/xrb_arithmeticparser.trison"
+#line 55 "xrb_arithmeticparser.trison"
 
 Float ArithmeticParser::Parse (std::string const &input_string)
 {
@@ -874,5 +874,5 @@ ArithmeticParser::Token::Type ArithmeticParser::Scan ()
 
 } // end of namespace Xrb
 
-#line 878 "../../lib/parsers/xrb_arithmeticparser.cpp"
+#line 878 "xrb_arithmeticparser.cpp"
 

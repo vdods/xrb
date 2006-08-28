@@ -6,7 +6,7 @@
 #include <vector>
 
 
-#line 11 "../../lib/parsers/xrb_datafileparser.trison"
+#line 11 "xrb_datafileparser.trison"
 
 #include "xrb.h"
 
@@ -20,7 +20,7 @@ class DataFileScanner;
 class DataFileStructure;
 class DataFileValue;
 
-#line 24 "../../lib/parsers/xrb_datafileparser.h"
+#line 24 "xrb_datafileparser.h"
 
 class DataFileParser
 
@@ -88,7 +88,7 @@ private:
 public:
 
 
-#line 29 "../../lib/parsers/xrb_datafileparser.trison"
+#line 29 "xrb_datafileparser.trison"
 
     enum ReturnCode
     {
@@ -124,7 +124,7 @@ private:
 
     DataFileScanner *m_scanner;
 
-#line 128 "../../lib/parsers/xrb_datafileparser.h"
+#line 128 "xrb_datafileparser.h"
 
 private:
 
@@ -283,11 +283,11 @@ private:
 std::ostream &operator << (std::ostream &stream, DataFileParser::Token::Type token_type);
 
 
-#line 65 "../../lib/parsers/xrb_datafileparser.trison"
+#line 65 "xrb_datafileparser.trison"
 
 } // end of namespace Xrb
 
-#line 291 "../../lib/parsers/xrb_datafileparser.h"
+#line 291 "xrb_datafileparser.h"
 
 #endif // !defined(_DataFileParser_H_)
 
