@@ -539,6 +539,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\dis_enums.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\dis_enums.h"
 			>
 		</File>
