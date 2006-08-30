@@ -175,6 +175,11 @@ void RadioButton<T, sentinel>::Initialize (
     m_group = group;
 
     m_group->AddButton(this);
+
+    FixSize(
+        ScreenCoordVector2(
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight(),
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight()));
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -70,6 +70,7 @@ DISASTEROIDS:
   few seconds, so the player can't just EMP them to escape).
 - change gauss gun's fire rate to be based on how fast it can be charged back
   up by the power generator
+- split up high scores into difficulty levels
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.

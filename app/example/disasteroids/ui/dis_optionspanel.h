@@ -14,6 +14,7 @@
 #include "xrb_containerwidget.h"
 
 #include "dis_config.h"
+#include "xrb_radiobutton.h"
 #include "xrb_validator.h"
 
 using namespace Xrb;
@@ -38,11 +39,13 @@ public:
 
     ScreenCoordVector2 GetResolution () const;
     bool GetFullscreen () const;
+    DifficultyLevel GetDifficultyLevel () const;
     Key::Code GetInputActionKeyCode (Config::InputAction input_action) const;
 
     void SetResolutionX (ScreenCoord resolution_x);
     void SetResolutionY (ScreenCoord resolution_y);
     void SetFullscreen (bool fullscreen);
+    void SetDifficultyLevel (DifficultyLevel difficulty_level);
     void SetInputActionKeyCode (Config::InputAction input_action, Key::Code key_code);
 
     void ReadValuesFromConfig (Config const &config);
@@ -55,6 +58,7 @@ private:
     ValueEdit<ScreenCoord> *m_resolution_x_edit;
     ValueEdit<ScreenCoord> *m_resolution_y_edit;
     CheckBox *m_fullscreen_checkbox;
+    RadioButtonGroup<DifficultyLevel, DL_COUNT> m_difficulty_level;
     KeySelectorButton *m_input_action_button[Config::IA_COUNT];
 }; // end of class OptionsPanel
 
