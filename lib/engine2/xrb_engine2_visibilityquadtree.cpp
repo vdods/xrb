@@ -171,7 +171,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
         glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.5f);
+        glAlphaFunc(GL_GREATER, 0.0f);
 
         Draw(draw_loop_functor);
     }
@@ -234,7 +234,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
         glEnable(GL_ALPHA_TEST);
-        glAlphaFunc(GL_GREATER, 0.5f);
+        glAlphaFunc(GL_GREATER, 0.0f);
 
         DrawWrapped(draw_loop_functor);
     }

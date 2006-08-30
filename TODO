@@ -64,6 +64,11 @@ DISASTEROIDS:
   sprite to flash red, and healing should cause the sprite to flash green.
 - if super-stoke thing is added, that can be indicated by the ship flashing
   yellow or white
+- collapse the world and object layer params in spawning functions to just
+  using the object layer (the world should be accessible through it).
+- to limit the length of waves, there can be a time limit after which all
+  the enemies are SetTarget'ed against the player (which can happen every
+  few seconds, so the player can't just EMP them to escape).
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.

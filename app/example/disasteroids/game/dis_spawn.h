@@ -165,16 +165,18 @@ Powerup *SpawnPowerup (
     Float scale_factor,
     Float first_moment,
     FloatVector2 const &velocity,
-    Item *item);
+    std::string const &sprite_texture_filename,
+    ItemType item_type);
 
-Powerup *SpawnMineral (
+Powerup *SpawnPowerup (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
     Float first_moment,
     FloatVector2 const &velocity,
-    Uint8 mineral_index);
+    std::string const &sprite_texture_filename,
+    Item *item);
 
 DamageExplosion *SpawnDamageExplosion (
     Engine2::World *world,

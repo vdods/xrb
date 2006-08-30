@@ -28,9 +28,10 @@ public:
         :
         Entity(ET_POWERUP, CT_SOLID_COLLISION)
     {
-        m_delete_upon_next_think = false;
         m_item_type = item_type;
         m_item = NULL;
+        m_effective_coefficient = 1.0f;
+        m_delete_upon_next_think = false;
         m_has_been_picked_up = false;
     }
     Powerup (Item *const item)
@@ -40,6 +41,7 @@ public:
         ASSERT1(item != NULL)
         m_item_type = IT_COUNT;
         m_item = item;
+        m_effective_coefficient = 1.0f;
         m_has_been_picked_up = false;
     }
     virtual ~Powerup ()
@@ -49,7 +51,7 @@ public:
 
     // Entity interface method
     virtual bool GetIsPowerup () const { return true; }
-    
+
     inline ItemType GetItemType () const
     {
         if (m_item != NULL)
@@ -58,6 +60,13 @@ public:
             return m_item_type;
     }
     inline Item *GetItem () const { return m_item; }
+    inline Float GetEffectiveCoefficient () const { return m_effective_coefficient; }
+    inline Float GetEffectiveValue () const { return m_effective_coefficient * GetFirstMoment(); }
+
+    // this sets the effective coefficient directly (and indirectly sets the effective value)
+    void SetEffectiveCoefficient (Float effective_coefficient);
+    // this sets the effective value directly (and indirectly sets the effective coefficient)
+    void SetEffectiveValue (Float effective_value);
 
     inline void ClearItem ()
     {
@@ -76,12 +85,13 @@ public:
 
 private:
 
-    bool m_delete_upon_next_think;
     ItemType m_item_type;
     Item *m_item;
+    Float m_effective_coefficient;
+    bool m_delete_upon_next_think;
     bool m_has_been_picked_up;
 }; // end of class Powerup
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_POWERUP_H_)

@@ -11,11 +11,26 @@
 #include "dis_powerup.h"
 
 #include "dis_ship.h"
+#include "xrb_math.h"
 
 using namespace Xrb;
 
 namespace Dis
 {
+
+void Powerup::SetEffectiveCoefficient (Float const effective_coefficient)
+{
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(effective_coefficient))
+    m_effective_coefficient = effective_coefficient;
+}
+
+void Powerup::SetEffectiveValue (Float const effective_value)
+{
+    ASSERT1(GetOwnerObject() != NULL && "may only use this method on an Entity with an owner Object")
+    ASSERT1(GetFirstMoment() > 0.0f)
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(effective_value))
+    m_effective_coefficient = effective_value / GetFirstMoment();
+}
 
 void Powerup::Think (Float const time, Float const frame_dt)
 {
@@ -46,13 +61,13 @@ void Powerup::Collide (
     if (!collider->GetIsShip())
         return;
 
-    if (DStaticCast<Ship *>(collider)->TakePowerup(this))
+    if (DStaticCast<Ship *>(collider)->TakePowerup(this, time, frame_dt))
     {
         // make sure the ship took the powerup item and cleared it
         ASSERT1(m_item == NULL)
         // this will prevent any other ships from getting the powerup
         m_has_been_picked_up = true;
-        // schedule this for deletion        
+        // schedule this for deletion
         ScheduleForDeletion(0.0f);
     }
 }

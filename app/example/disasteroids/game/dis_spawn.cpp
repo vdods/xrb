@@ -390,14 +390,15 @@ Powerup *SpawnPowerup (
     Float const scale_factor,
     Float const first_moment,
     FloatVector2 const &velocity,
-    Item *const item)
+    std::string const &sprite_texture_filename,
+    ItemType const item_type)
 {
-    ASSERT1(item != NULL)
-    Powerup *powerup = new Powerup(item);
+    ASSERT1(item_type < IT_POWERUP_LIMIT)
+    Powerup *powerup = new Powerup(item_type);
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/powerup.png",
+        sprite_texture_filename,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
@@ -411,21 +412,22 @@ Powerup *SpawnPowerup (
     return powerup;
 }
 
-Powerup *SpawnMineral (
+Powerup *SpawnPowerup (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
     Float const first_moment,
     FloatVector2 const &velocity,
-    Uint8 const mineral_index)
+    std::string const &sprite_texture_filename,
+    Item *const item)
 {
-    ASSERT1(mineral_index < MINERAL_COUNT)
-    Powerup *powerup = new Powerup(static_cast<ItemType>(IT_MINERAL_LOWEST + mineral_index));
+    ASSERT1(item != NULL)
+    Powerup *powerup = new Powerup(item);
     SpawnDynamicSprite(
         world,
         object_layer,
-        Item::GetMineralSpriteFilename(mineral_index),
+        sprite_texture_filename,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,

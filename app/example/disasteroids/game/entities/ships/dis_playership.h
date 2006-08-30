@@ -133,7 +133,7 @@ public:
     // Ship public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool TakePowerup (Powerup *powerup);
+    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
 
 protected:
 

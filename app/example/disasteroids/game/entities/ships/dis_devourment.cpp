@@ -41,8 +41,9 @@ Float const Devourment::ms_mouth_tractor_range[ENEMY_LEVEL_COUNT] = { 100.0f, 13
 Float const Devourment::ms_mouth_tractor_strength[ENEMY_LEVEL_COUNT] = { 700.0f, 1200.0f, 1800.0f, 2500.0f };
 Float const Devourment::ms_mouth_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Devourment::ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
-Float const Devourment::ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT] = { 80.0f, 160.0f, 210.0f, 250.0f };
+Float const Devourment::ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT] = { 100.0f, 180.0f, 250.0f, 400.0f };
 Float const Devourment::ms_max_single_mineral_mass[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
+Float const Devourment::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 8.0f, 10.0f, 12.0f, 15.0f };
 
 Devourment::Devourment (Uint8 const enemy_level)
     :
@@ -62,7 +63,7 @@ Devourment::Devourment (Uint8 const enemy_level)
     m_mouth_tractor->Equip(this);
 
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-        m_mineral_inventory[i] = -ms_max_spawn_mineral_mass[GetEnemyLevel()] / static_cast<Float>(MINERAL_COUNT);
+        m_mineral_inventory[i] = 0.0f;
 }
 
 Devourment::~Devourment ()
@@ -234,38 +235,74 @@ void Devourment::Die (
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory[i] = ms_max_spawn_mineral_mass[GetEnemyLevel()] * m_mineral_inventory[i] / mineral_mass_total;
 
-    // spawn the collected minerals (there may be a negative value, which is used
-    // so that the player can't keep killing new Devourments to get minerals.
-    static Float const s_min_mineral_mass = 5.0f;
-    static Float const s_mineral_ejection_speed = 100.0f;
+    // spawn the collected minerals
+    static Float const s_min_powerup_mass = 5.0f;
+    static Float const s_powerup_ejection_speed = 100.0f;
+
     for (Uint32 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
         // if the value is negative, obviously no minerals will be spawned
-        while (m_mineral_inventory[mineral_index] > s_min_mineral_mass)
+        while (m_mineral_inventory[mineral_index] > s_min_powerup_mass)
         {
             Float mass =
                 Math::RandomFloat(
-                    s_min_mineral_mass,
+                    s_min_powerup_mass,
                     Min(ms_max_single_mineral_mass[GetEnemyLevel()], m_mineral_inventory[mineral_index]));
             Float scale_factor = Math::Sqrt(mass);
             Float velocity_angle = Math::RandomAngle();
             Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
-            FloatVector2 velocity = GetVelocity() + s_mineral_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
-            SpawnMineral(
+            FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+
+            SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
                 GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
-                mineral_index);
+                Item::GetMineralSpriteFilename(mineral_index),
+                static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             m_mineral_inventory[mineral_index] -= mass;
         }
     }
+
+    static Float const s_min_powerup_amount = 1.0f;
+    static Float const s_max_powerup_amount = 3.0f;
+    static Float const s_powerup_coefficient = 0.1f;
+
+    Float health_powerup_amount_left_to_spawn =
+        mineral_mass_total / ms_max_spawn_mineral_mass[GetEnemyLevel()] *
+        ms_health_powerup_amount_to_spawn[GetEnemyLevel()];
+    while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
+    {
+        Float health_powerup_amount =
+            Math::RandomFloat(
+                s_min_powerup_amount,
+                Min(s_max_powerup_amount, health_powerup_amount_left_to_spawn));
+        Float mass = health_powerup_amount / s_powerup_coefficient;
+        Float scale_factor = Math::Sqrt(mass);
+        Float velocity_angle = Math::RandomAngle();
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+
+        Powerup *health_powerup =
+            SpawnPowerup(
+                GetWorld(),
+                GetObjectLayer(),
+                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                scale_factor,
+                mass,
+                velocity,
+                "resources/powerup.png",
+                IT_POWERUP_HEALTH);
+        health_powerup->SetEffectiveValue(health_powerup_amount);
+
+        health_powerup_amount_left_to_spawn -= health_powerup_amount;
+    }
 }
 
-bool Devourment::TakePowerup (Powerup *const powerup)
+bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
 {
     ASSERT1(powerup != NULL)
 
@@ -278,7 +315,22 @@ bool Devourment::TakePowerup (Powerup *const powerup)
         ASSERT1(powerup->GetItem() == NULL)
         Uint32 mineral_index = powerup->GetItemType() - IT_MINERAL_LOWEST;
         ASSERT1(mineral_index < MINERAL_COUNT)
-        m_mineral_inventory[mineral_index] += powerup->GetFirstMoment();
+        m_mineral_inventory[mineral_index] += powerup->GetEffectiveValue();
+    }
+    // health powerups heal
+    else if (powerup->GetItemType() == IT_POWERUP_HEALTH)
+    {
+        ASSERT1(powerup->GetItem() == NULL)
+        Heal(
+            powerup,
+            powerup,
+            powerup->GetEffectiveValue(),
+            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
+                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            0.0f,
+            time,
+            frame_dt);
     }
 
     delete powerup->GetItem();

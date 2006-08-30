@@ -779,7 +779,7 @@ void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
     }
 }
 
-bool PlayerShip::TakePowerup (Powerup *const powerup)
+bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
 {
     ASSERT1(powerup != NULL)
 
@@ -788,7 +788,23 @@ bool PlayerShip::TakePowerup (Powerup *const powerup)
         powerup->GetItemType() <= IT_MINERAL_HIGHEST)
     {
         ASSERT1(powerup->GetItem() == NULL)
-        ChangeMineralInventory(powerup->GetItemType() - IT_MINERAL_LOWEST, powerup->GetFirstMoment());
+        ChangeMineralInventory(powerup->GetItemType() - IT_MINERAL_LOWEST, powerup->GetEffectiveValue());
+        return true;
+    }
+    // check if its a health powerup
+    else if (powerup->GetItemType() == IT_POWERUP_HEALTH)
+    {
+        ASSERT1(powerup->GetItem() == NULL)
+        Heal(
+            powerup,
+            powerup,
+            powerup->GetEffectiveValue(),
+            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
+                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            0.0f,
+            time,
+            frame_dt);
         return true;
     }
     // otherwise try to add the powerup's Item
@@ -801,7 +817,11 @@ bool PlayerShip::TakePowerup (Powerup *const powerup)
             return true;
         }
         else
+        {
+            delete powerup->GetItem();
+            powerup->ClearItem();
             return false;
+        }
     }
 }
 
@@ -994,6 +1014,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         s_powerup_scale_factor,
         s_powerup_scale_factor * s_powerup_scale_factor,
         s_powerup_ejection_speed * ejection_normal,
+        "resources/powerup.png",
         ejectee);
 */
     // remove the item from the inventory

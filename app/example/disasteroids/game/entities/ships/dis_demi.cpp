@@ -14,6 +14,7 @@
 #include "dis_effect.h"
 #include "dis_explosive.h"
 #include "dis_physicshandler.h"
+#include "dis_powerup.h"
 #include "dis_spawn.h"
 #include "dis_weapon.h"
 #include "dis_world.h"
@@ -55,6 +56,7 @@ Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 1
 Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 210.0f, 220.0f, 230.0f };
 Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
 Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
+Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 25.0f, 15.0f, 10.0f, 5.0f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 
@@ -352,6 +354,41 @@ void Demi::Die (
         time,
         frame_dt);
 
+    // spawn health powerups
+    static Float const s_min_powerup_amount = 1.0f;
+    static Float const s_max_powerup_amount = 3.0f;
+    static Float const s_powerup_ejection_speed = 100.0f;
+
+    static Float const s_powerup_coefficient = 0.1f;
+
+    Float health_powerup_amount_left_to_spawn = ms_health_powerup_amount_to_spawn[GetEnemyLevel()];
+    while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
+    {
+        Float health_powerup_amount =
+            Math::RandomFloat(
+                s_min_powerup_amount,
+                Min(s_max_powerup_amount, health_powerup_amount_left_to_spawn));
+        Float mass = health_powerup_amount / s_powerup_coefficient;
+        Float scale_factor = Math::Sqrt(mass);
+        Float velocity_angle = Math::RandomAngle();
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+
+        Powerup *health_powerup =
+            SpawnPowerup(
+                GetWorld(),
+                GetObjectLayer(),
+                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                scale_factor,
+                mass,
+                velocity,
+                "resources/powerup.png",
+                IT_POWERUP_HEALTH);
+        health_powerup->SetEffectiveValue(health_powerup_amount);
+
+        health_powerup_amount_left_to_spawn -= health_powerup_amount;
+    }
+
     // remove the port tractor beam, if it exists
     if (m_port_tractor_beam.GetIsValid() && m_port_tractor_beam->GetIsInWorld())
         m_port_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
@@ -430,6 +467,33 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
         ASSERT1(false && "Unknown weapon")
         return FloatVector2::ms_zero;
     }
+}
+
+bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
+{
+    ASSERT1(powerup != NULL)
+
+    // just suck up all powerups, to piss off the player
+
+    // health powerups heal
+    if (powerup->GetItemType() == IT_POWERUP_HEALTH)
+    {
+        ASSERT1(powerup->GetItem() == NULL)
+        Heal(
+            powerup,
+            powerup,
+            powerup->GetEffectiveValue(),
+            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
+                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            0.0f,
+            time,
+            frame_dt);
+    }
+
+    delete powerup->GetItem();
+    powerup->ClearItem();
+    return true;
 }
 
 void Demi::SetTarget (Mortal *const target)

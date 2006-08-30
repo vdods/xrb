@@ -94,7 +94,7 @@ public:
     virtual Float GetShipScaleFactor () const = 0;
     virtual Float GetShipBaselineFirstMoment () const = 0;
 
-    virtual bool TakePowerup (Powerup *powerup) = 0;
+    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt) = 0;
 
 protected:
 

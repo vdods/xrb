@@ -40,6 +40,7 @@ public:
     static Float const ms_mouth_tractor_beam_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT];
     static Float const ms_max_single_mineral_mass[ENEMY_LEVEL_COUNT];
+    static Float const ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT];
 
     Devourment (Uint8 enemy_level);
     virtual ~Devourment ();
@@ -79,7 +80,7 @@ public:
         return ms_baseline_first_moment[GetEnemyLevel()];
     }
 
-    virtual bool TakePowerup (Powerup *powerup);
+    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // EnemyShip interface methods

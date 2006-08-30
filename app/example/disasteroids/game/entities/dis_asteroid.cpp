@@ -10,6 +10,7 @@
 
 #include "dis_asteroid.h"
 
+#include "dis_item.h"
 #include "dis_spawn.h"
 #include "dis_world.h"
 
@@ -233,14 +234,16 @@ void Asteroid::Die (
             Float velocity_angle = Math::RandomAngle();
             FloatVector2 velocity = GetVelocity() + 10.0f * Math::UnitVector(velocity_angle);
             Float scale_factor = Math::Sqrt(mass);
-            SpawnMineral(
+            Uint8 mineral_index = GetRandomMineral();
+            SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
                 GetTranslation() + scale_factor * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
-                GetRandomMineral());
+                Item::GetMineralSpriteFilename(mineral_index),
+                static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             mineral_mass_to_spawn -= mass;
         }

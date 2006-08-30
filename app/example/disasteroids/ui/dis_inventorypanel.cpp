@@ -62,7 +62,7 @@ InventoryPanel::InventoryPanel (
 
     // weapons layout
     Layout *weapons_layout = new Layout(VERTICAL, penultimate_layout, "weapons layout");
-    l = new Label("WEAPONS", weapons_layout, "weapons layout label");
+    l = new Label("WEAPON", weapons_layout, "weapon layout label");
     l->SetFontHeightRatio(grid_label_font_height_ratio);
     l->SetIsHeightFixedToTextHeight(true);
     Layout *weapons_grid_layout = new Layout(COLUMN, UPGRADE_LEVEL_COUNT, weapons_layout, "weapons grid-layout");

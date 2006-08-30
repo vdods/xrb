@@ -55,7 +55,7 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool TakePowerup (Powerup *powerup)
+    virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt)
     {
         return false;
     }
