@@ -27,6 +27,7 @@ using namespace Xrb;
 namespace Dis
 {
 
+Float const PlayerShip::ms_difficulty_protection_factor[DL_COUNT] = { 3.0f, 2.333f, 1.666f, 1.0f };
 Float const PlayerShip::ms_max_stoke = 4.0f;
 
 PlayerShip::PlayerShip (
@@ -639,7 +640,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
 bool PlayerShip::Damage (
     Entity *const damager,
     Entity *const damage_medium,
-    Float const damage_amount,
+    Float damage_amount,
     Float *const damage_amount_used,
     FloatVector2 const &damage_location,
     FloatVector2 const &damage_normal,
@@ -649,6 +650,10 @@ bool PlayerShip::Damage (
     Float const frame_dt)
 {
     Float temp_damage_taken = 0.0f;
+
+    // scale the damage amount by the protection factor
+    ASSERT1(ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()] > 0.0f)
+    damage_amount /= ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()];
 
     // let the shield take the damage first
     Float unblocked_damage = damage_amount;

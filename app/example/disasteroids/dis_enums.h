@@ -13,6 +13,8 @@
 
 #include "xrb.h"
 
+#include <string>
+
 using namespace Xrb;
 
 namespace Dis
@@ -47,6 +49,21 @@ enum CollisionType
     /// Number of collision types
     CT_COUNT
 }; // end of enum CollisionType
+
+enum DifficultyLevel
+{
+    DL_EASY = 0,
+    DL_MEDIUM,
+    DL_HARD,
+    DL_CRUEL,
+
+    DL_COUNT,
+
+    DL_LOWEST = DL_EASY,
+    DL_HIGHEST = DL_CRUEL
+};
+
+std::string const &GetDifficultyLevelString (DifficultyLevel difficulty_level);
 
 enum EntityType
 {

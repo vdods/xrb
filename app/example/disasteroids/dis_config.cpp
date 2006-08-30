@@ -121,6 +121,7 @@ void Config::ResetToDefaults ()
         m_input_action_key_name[i].clear();
         m_input_action_key_code[i] = Key::INVALID;
     }
+    m_difficulty_level = DL_LOWEST;
 }
 
 void Config::Read (string const &config_filename, bool const reset_to_defaults_before_reading)
@@ -142,7 +143,16 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
         GET_CONFIG_VALUE(m_resolution[Dim::X], Uint32, "|video|resolution_x");
         GET_CONFIG_VALUE(m_resolution[Dim::Y], Uint32, "|video|resolution_y");
         GET_CONFIG_VALUE(m_key_map_name, String, "|key_map_name");
+        GET_CONFIG_VALUE(m_difficulty_level, Uint32, "|game|difficulty_level");
         #undef GET_CONFIG_VALUE
+
+        // validate config values
+        if (m_resolution[Dim::X] == 0)
+            m_resolution[Dim::X] = 1024;
+        if (m_resolution[Dim::Y] == 0)
+            m_resolution[Dim::Y] = 768;
+        if (m_difficulty_level > DL_HIGHEST)
+            m_difficulty_level = DL_HIGHEST;
 
         for (Uint32 i = 0; i < IA_COUNT; ++i)
         {
@@ -168,7 +178,8 @@ void Config::Write (string const &config_filename) const
         root->SetPathElementUint32("|video|resolution_x", m_resolution[Dim::X]);
         root->SetPathElementUint32("|video|resolution_y", m_resolution[Dim::Y]);
         root->SetPathElementString("|key_map_name", m_key_map_name);
-    
+        root->SetPathElementUint32("|game|difficulty_level", m_difficulty_level);
+
         for (Uint32 i = 0; i < IA_COUNT; ++i)
             root->SetPathElementString(
                 ms_input_action_path[i],

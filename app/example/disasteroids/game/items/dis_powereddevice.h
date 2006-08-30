@@ -41,11 +41,12 @@ public:
     virtual bool GetIsPoweredDevice () const { return true; }
 
     inline Ship *GetOwnerShip () { return m_owner_ship; }
+    inline Ship const *GetOwnerShip () const { return m_owner_ship; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public Item interface methods
     // ///////////////////////////////////////////////////////////////////////
-    
+
     virtual void Equip (Ship *owner_ship)
     {
         ASSERT1(owner_ship != NULL)
@@ -58,11 +59,11 @@ public:
         ASSERT1(m_owner_ship != NULL)
         m_owner_ship = NULL;
     }
-    
+
     // ///////////////////////////////////////////////////////////////////////
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
-        
+
     // returns the amount of power that would be used based on the set inputs
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply

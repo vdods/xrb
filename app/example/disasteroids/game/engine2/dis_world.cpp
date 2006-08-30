@@ -452,10 +452,11 @@ World::~World ()
     }
 }
 
-World *World::Create (Uint32 entity_capacity)
+World *World::Create (DifficultyLevel const difficulty_level, Uint32 const entity_capacity)
 {
+    ASSERT1(difficulty_level < DL_COUNT)
     ASSERT1(entity_capacity > 0)
-    return new World(new PhysicsHandler(), entity_capacity);
+    return new World(difficulty_level, new PhysicsHandler(), entity_capacity);
 }
 
 PhysicsHandler *World::GetPhysicsHandler ()
@@ -542,8 +543,9 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 }
 
 World::World (
-    Engine2::PhysicsHandler *physics_handler,
-    Uint32 entity_capacity)
+    DifficultyLevel const difficulty_level,
+    Engine2::PhysicsHandler *const physics_handler,
+    Uint32 const entity_capacity)
     :
     Engine2::World(physics_handler, entity_capacity),
     SignalHandler(),
@@ -560,7 +562,10 @@ World::World (
     m_internal_receiver_end_intro(&World::EndIntro, this),
     m_internal_receiver_end_outro(&World::EndOutro, this)
 {
+    ASSERT1(difficulty_level < DL_COUNT)
+
     m_player_ship = NULL;
+    m_difficulty_level = difficulty_level;
     m_score_required_for_extra_life = 50000;
 
     m_asteroid_count = 0;

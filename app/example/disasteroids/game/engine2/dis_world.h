@@ -61,12 +61,19 @@ public:
 
     virtual ~World ();
 
-    static World *Create (Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
+    static World *Create (
+        DifficultyLevel difficulty_level,
+        Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
     inline SignalSender1<Score const &> const *SenderSubmitScore () { return &m_sender_submit_score; }
     inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
+    inline DifficultyLevel GetDifficultyLevel () const
+    {
+        ASSERT1(m_difficulty_level < DL_COUNT)
+        return m_difficulty_level;
+    }
     PhysicsHandler *GetPhysicsHandler ();
     inline Uint8 GetAsteroidMineralLevel () const { return m_asteroid_mineral_level; }
 
@@ -87,6 +94,7 @@ public:
 protected:
 
     World (
+        DifficultyLevel difficulty_level,
         Engine2::PhysicsHandler *physics_handler,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
@@ -173,6 +181,7 @@ private:
     static Float const ms_asteroid_mineral_content_factor[MINERAL_CONTENT_LEVEL_COUNT];
 
     PlayerShip *m_player_ship;
+    DifficultyLevel m_difficulty_level;
     Uint32 m_score_required_for_extra_life;
 
     Uint32 m_asteroid_count;

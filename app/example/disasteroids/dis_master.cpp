@@ -12,6 +12,7 @@
 
 #include <stdlib.h> // for srand()
 
+#include "dis_config.h"
 #include "dis_events.h"
 #include "dis_gamewidget.h"
 #include "dis_highscorenameentrydialog.h"
@@ -24,6 +25,8 @@
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 
 using namespace Xrb;
+
+extern Dis::Config g_config;
 
 namespace Dis
 {
@@ -338,7 +341,7 @@ void Master::ActivateGame ()
     ASSERT1(m_title_screen_widget == NULL)
 
     // create the game world
-    m_game_world = World::Create();
+    m_game_world = World::Create(g_config.GetDifficultyLevel());
     // create the game widget
     m_game_widget = new GameWidget(m_game_world, m_screen);
     // set it as the main widget

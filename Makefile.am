@@ -388,6 +388,7 @@ disasteroids_CPPFLAGS = \
 disasteroids_SOURCES = \
     app/example/disasteroids/dis_commandlineoptions.cpp \
     app/example/disasteroids/dis_config.cpp \
+    app/example/disasteroids/dis_enums.cpp \
     app/example/disasteroids/dis_main.cpp \
     app/example/disasteroids/dis_master.cpp \
     app/example/disasteroids/dis_resourcecache.cpp \

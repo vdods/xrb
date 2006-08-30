@@ -18,7 +18,6 @@ app/example/disasteroids/game/dis_highscores.cpp
 app/example/disasteroids/game/dis_highscores.h
 app/example/disasteroids/game/dis_item.cpp
 app/example/disasteroids/game/dis_item.h
-app/example/disasteroids/game/dis_powereddevice.h
 app/example/disasteroids/game/dis_spawn.cpp
 app/example/disasteroids/game/dis_spawn.h
 app/example/disasteroids/game/dis_util.cpp
