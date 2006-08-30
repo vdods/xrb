@@ -508,12 +508,12 @@ public:
         DataFileValue()
     { }
 
-    bool SetPathElementBoolean (std::string const &path, bool value);
-    bool SetPathElementSint32 (std::string const &path, Sint32 value);
-    bool SetPathElementUint32 (std::string const &path, Uint32 value);
-    bool SetPathElementFloat (std::string const &path, Float value);
-    bool SetPathElementCharacter (std::string const &path, char value);
-    bool SetPathElementString (std::string const &path, std::string const &value);
+    void SetPathElementBoolean (std::string const &path, bool value) throw(std::string);
+    void SetPathElementSint32 (std::string const &path, Sint32 value) throw(std::string);
+    void SetPathElementUint32 (std::string const &path, Uint32 value) throw(std::string);
+    void SetPathElementFloat (std::string const &path, Float value) throw(std::string);
+    void SetPathElementCharacter (std::string const &path, char value) throw(std::string);
+    void SetPathElementString (std::string const &path, std::string const &value) throw(std::string);
 
 protected:
 
@@ -521,16 +521,15 @@ protected:
     {
         NT_LEAF = 0,
         NT_ARRAY,
-        NT_STRUCTURE,
-        NT_PATH_ERROR
+        NT_STRUCTURE
     }; // end of enum DataFileContainer::NodeType
 
-    NodeType GetParentElementNodeType (std::string const &path, Uint32 start) const;
+    static NodeType GetParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
 
-    virtual bool SetSubpathElement (
+    virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value) = 0;
+        DataFileLeafValue *value) throw(std::string) = 0;
 
     friend class DataFileKeyPair;
     friend class DataFileArray;
@@ -572,10 +571,10 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetSubpathElement (
+    virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value);
+        DataFileLeafValue *value) throw(std::string);
 
 private:
 
@@ -620,10 +619,10 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetSubpathElement (
+    virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value);
+        DataFileLeafValue *value) throw(std::string);
 
 private:
 
@@ -667,10 +666,10 @@ protected:
         std::string const &path,
         Uint32 start) const;
 
-    virtual bool SetSubpathElement (
+    virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value);
+        DataFileLeafValue *value) throw(std::string);
 
 private:
 

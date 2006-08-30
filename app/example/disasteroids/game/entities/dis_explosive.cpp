@@ -115,6 +115,28 @@ Grenade::Grenade (
     SetImmunity(D_COLLISION|D_EXPLOSION);
 }
 
+void Grenade::Collide (
+    Entity *const collider,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal,
+    Float const collision_force,
+    Float const time,
+    Float const frame_dt)
+{
+    // if we hit a grenade of the same owner, don't detonate
+    if (collider->GetEntityType() == ET_GRENADE && DStaticCast<Grenade *>(collider)->m_owner == m_owner)
+        return;
+
+    // call the superclass collide
+    Explosive::Collide(
+        collider,
+        collision_location,
+        collision_normal,
+        collision_force,
+        time,
+        frame_dt);
+}
+
 void Grenade::Die (
     Entity *const killer,
     Entity *const kill_medium,

@@ -163,15 +163,19 @@ void Config::Write (string const &config_filename) const
 
     DataFileStructure *root = new DataFileStructure();
 
-    root->SetPathElementBoolean("|video|fullscreen", m_fullscreen);
-    root->SetPathElementUint32("|video|resolution_x", m_resolution[Dim::X]);
-    root->SetPathElementUint32("|video|resolution_y", m_resolution[Dim::Y]);
-    root->SetPathElementString("|key_map_name", m_key_map_name);
-
-    for (Uint32 i = 0; i < IA_COUNT; ++i)
-        root->SetPathElementString(
-            ms_input_action_path[i],
-            Singletons::Input().GetKeyName(GetInputActionKeyCode(static_cast<InputAction>(i))));
+    try {
+        root->SetPathElementBoolean("|video|fullscreen", m_fullscreen);
+        root->SetPathElementUint32("|video|resolution_x", m_resolution[Dim::X]);
+        root->SetPathElementUint32("|video|resolution_y", m_resolution[Dim::Y]);
+        root->SetPathElementString("|key_map_name", m_key_map_name);
+    
+        for (Uint32 i = 0; i < IA_COUNT; ++i)
+            root->SetPathElementString(
+                ms_input_action_path[i],
+                Singletons::Input().GetKeyName(GetInputActionKeyCode(static_cast<InputAction>(i))));
+    } catch (...) {
+        ASSERT1(false && "this should never happen")
+    }
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);

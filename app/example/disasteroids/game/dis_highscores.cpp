@@ -232,11 +232,15 @@ void HighScores::Write (std::string const &filename)
          it != it_end;
          ++it)
     {
-        root->SetPathElementString("|high_scores|+|name", it->GetName());
-        root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
-        root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
-        root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->GetDate()));
-        root->SetPathElementUint32("|high_scores|$|hash", it->GetHash());
+        try {
+            root->SetPathElementString("|high_scores|+|name", it->GetName());
+            root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
+            root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
+            root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->GetDate()));
+            root->SetPathElementUint32("|high_scores|$|hash", it->GetHash());
+        } catch (...) {
+            ASSERT1(false && "this should never happen")
+        }
     }
 
     IndentFormatter formatter(fptr, "    ");

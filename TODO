@@ -37,6 +37,7 @@ OPENGL CONVERSION TASKS:
 
 DISASTEROIDS:
 ** feature-related **
+- add reset-scores button to options.
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
@@ -59,6 +60,13 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
+- once color biasing is implemented for Objects, damage should cause the
+  sprite to flash red, and healing should cause the sprite to flash green.
+- if super-stoke thing is added, that can be indicated by the ship flashing
+  yellow or white
+** sound-system-related **
+- there should be a drone for the power generator -- max volume at 0%, zero
+  volume at 100%, low frequency at 0%, high frequency at 100%.
 ** bug-related **
 - there seems to be a bug in the aiming in the front weapon of Demi
 - get non-wrapped ObjectLayers back up and running (because they totally

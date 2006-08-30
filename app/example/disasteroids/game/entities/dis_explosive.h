@@ -115,6 +115,13 @@ public:
         m_owner_grenade_launcher = owner_grenade_launcher;
     }
 
+    virtual void Collide (
+        Entity *collider,
+        FloatVector2 const &collision_location,
+        FloatVector2 const &collision_normal,
+        Float collision_force,
+        Float time,
+        Float frame_dt);
     virtual void Die (
         Entity *killer,
         Entity *kill_medium,

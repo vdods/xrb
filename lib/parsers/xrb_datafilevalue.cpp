@@ -199,37 +199,37 @@ void DataFileString::PrintAST (IndentFormatter &formatter) const
 // DataFileContainer
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DataFileContainer::SetPathElementBoolean (std::string const &path, bool const value)
+void DataFileContainer::SetPathElementBoolean (std::string const &path, bool const value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileBoolean(value));
+    SetSubpathElement(path, 0, new DataFileBoolean(value));
 }
 
-bool DataFileContainer::SetPathElementSint32 (std::string const &path, Sint32 const value)
+void DataFileContainer::SetPathElementSint32 (std::string const &path, Sint32 const value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileSint32(value));
+    SetSubpathElement(path, 0, new DataFileSint32(value));
 }
 
-bool DataFileContainer::SetPathElementUint32 (std::string const &path, Uint32 const value)
+void DataFileContainer::SetPathElementUint32 (std::string const &path, Uint32 const value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileUint32(value));
+    SetSubpathElement(path, 0, new DataFileUint32(value));
 }
 
-bool DataFileContainer::SetPathElementFloat (std::string const &path, Float const value)
+void DataFileContainer::SetPathElementFloat (std::string const &path, Float const value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileFloat(value));
+    SetSubpathElement(path, 0, new DataFileFloat(value));
 }
 
-bool DataFileContainer::SetPathElementCharacter (std::string const &path, char const value)
+void DataFileContainer::SetPathElementCharacter (std::string const &path, char const value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileCharacter(value));
+    SetSubpathElement(path, 0, new DataFileCharacter(value));
 }
 
-bool DataFileContainer::SetPathElementString (std::string const &path, std::string const &value)
+void DataFileContainer::SetPathElementString (std::string const &path, std::string const &value) throw(std::string)
 {
-    return SetSubpathElement(path, 0, new DataFileString(value));
+    SetSubpathElement(path, 0, new DataFileString(value));
 }
 
-DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) const
+DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
 {
     ASSERT1(start <= path.length())
 
@@ -237,33 +237,20 @@ DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::st
         return NT_LEAF;
 
     if (path[start] != '|')
-    {
-        fprintf(
-            stderr,
-            "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n",
-            path.c_str(),
-            path.c_str() + start);
-        return NT_PATH_ERROR;
-    }
+        THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
     ++start;
     if (start < path.length())
     {
         if (path[start] == '|')
-            return NT_PATH_ERROR;
+            THROW_STRING("unexpected '|' character starting with subpath \"" << path.c_str() + start << "\"")
         if (path[start] >= '0' && path[start] <= '9')
         {
             do ++start; while (start < path.length() && path[start] >= '0' && path[start] <= '9');
             if (start >= path.length() || path[start] == '|')
                 return NT_ARRAY;
             else
-            {
-                fprintf(
-                    stderr,
-                    "SetPathElement error: in path \"%s\" - invalid array index\n",
-                    path.c_str());
-                return NT_PATH_ERROR;
-            }
+                THROW_STRING("invalid array index starting with subpath \"" << path.c_str() + start << "\"")
         }
         else if ((path[start] == '+' || path[start] == '$') &&
                  (start+1 >= path.length() || path[start+1] == '|'))
@@ -274,13 +261,7 @@ DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::st
             return NT_STRUCTURE;
     }
     else
-    {
-        fprintf(
-            stderr,
-            "SetPathElement error: in path \"%s\" - path can not end with '|' character\n",
-            path.c_str());
-        return NT_PATH_ERROR;
-    }
+        THROW_STRING("path can not end with '|' character")
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -343,10 +324,10 @@ DataFileValue const *DataFileKeyPair::GetSubpathElement (
     return GetValue()->GetSubpathElement(path, start);
 }
 
-bool DataFileKeyPair::SetSubpathElement (
+void DataFileKeyPair::SetSubpathElement (
     std::string const &path,
     Uint32 const start,
-    DataFileLeafValue *const value)
+    DataFileLeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length())
     ASSERT1(value != NULL)
@@ -357,7 +338,7 @@ bool DataFileKeyPair::SetSubpathElement (
             if (m_value != NULL)
                 Delete(m_value);
             m_value = value;
-            return true;
+            return;
 
         case NT_ARRAY:
             // if the key pair's value is an array, call SetSubpathElement on it.
@@ -368,22 +349,19 @@ bool DataFileKeyPair::SetSubpathElement (
             {
                 // create an array to replace m_value
                 DataFileValue *array = new DataFileArray();
-                // only delete and replace m_value if the SetSubpathElement worked
-                if (static_cast<DataFileContainer *>(array)->SetSubpathElement(path, start, value))
-                {
-                    Delete(m_value);
-                    m_value = array;
-                    return true;
-                }
-                // otherwise delete the recently created array
-                else
-                {
+                try {
+                    static_cast<DataFileContainer *>(array)->SetSubpathElement(path, start, value);
+                } catch (std::string const &exception) {
+                    // if the call failed, delete the just-created array.
                     Delete(array);
-                    return false;
+                    throw exception;
                 }
+                // otherwise delete the existing value and replace it
+                // with the just-created array
+                Delete(m_value);
+                m_value = array;
+                return;
             }
-            ASSERT1(false && "this should never happen")
-            return false;
 
         case NT_STRUCTURE:
             // if the key pair's value is an structure, call SetSubpathElement on it.
@@ -394,24 +372,19 @@ bool DataFileKeyPair::SetSubpathElement (
             {
                 // create an structure to replace m_value
                 DataFileValue *structure = new DataFileStructure();
-                // only delete and replace m_value if the SetSubpathElement worked
-                if (static_cast<DataFileContainer *>(structure)->SetSubpathElement(path, start, value))
-                {
-                    Delete(m_value);
-                    m_value = structure;
-                    return true;
-                }
-                // otherwise delete the recently created structure
-                else
-                {
+                try {
+                    static_cast<DataFileContainer *>(structure)->SetSubpathElement(path, start, value);
+                } catch (std::string const &exception) {
+                    // if the call failed, delete the just-created structure
                     Delete(structure);
-                    return false;
+                    throw exception;
                 }
+                // otherwise delete the existing value and replace it
+                // with the just-created structure
+                Delete(m_value);
+                m_value = structure;
+                return;
             }
-            ASSERT1(false && "this should never happen")
-            return false;
-
-        default: return false;
     }
 }
 
@@ -493,9 +466,7 @@ void DataFileArray::AppendValue (DataFileValue *const value)
                     !GetDoesMatchDimensionAndType(
                         DStaticCast<DataFileArray const *>(value),
                         DStaticCast<DataFileArray const *>(first_element_value)))
-        {
-            throw std::string("sibling elements in nested arrays must be of identical dimension and type");
-        }
+            THROW_STRING("sibling elements in nested arrays must be of identical dimension and type")
     }
 
     // add the new value onto the end of the array.
@@ -620,25 +591,19 @@ DataFileValue const *DataFileArray::GetSubpathElement (
     return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
 }
 
-bool DataFileArray::SetSubpathElement (
+void DataFileArray::SetSubpathElement (
     std::string const &path,
     Uint32 start,
-    DataFileLeafValue *const value)
+    DataFileLeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length())
     ASSERT1(value != NULL)
 
     if (start >= path.length())
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - can't assign a value to an array itself\n", path.c_str());
-        return false;
-    }
+        THROW_STRING("can't assign a value to an array itself - subpath \"" << path.c_str() + start << "\"")
 
     if (path[start] != '|')
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
-        return false;
-    }
+        THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
     ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY)
 
@@ -652,22 +617,15 @@ bool DataFileArray::SetSubpathElement (
     if (key_delim-start == 1 && (path[start] == '+' || path[start] == '$'))
     {
         if (path[start] == '+')
-        {
             create_new_element = true;
-        }
         else if (path[start] == '$')
         {
             if (m_element_vector.empty())
-            {
-                fprintf(stderr, "SetPathElement error: in path \"%s\" - $ can not be used on array with no elements\n", path.c_str());
-                return false;
-            }
+                THROW_STRING("$ can not be used on array with no elements - subpath \"" << path.c_str() + start << "\"")
             array_index = m_element_vector.size()-1;
         }
         else
-        {
             ASSERT1(false && "this should never happen")
-        }
     }
     // check for array index
     else
@@ -688,10 +646,7 @@ bool DataFileArray::SetSubpathElement (
             ++i;
         }
         if (c < '0' || c > '9')
-        {
-            fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid array index in subpath \"%s\"\n", path.c_str(), path.c_str()+start);
-            return false;
-        }
+            THROW_STRING("invalid array index in subpath \"" << path.c_str() + start << "\"")
     }
 
     // this is pedantic, but hey.
@@ -708,23 +663,23 @@ bool DataFileArray::SetSubpathElement (
 
             case NT_ARRAY:
                 element = new DataFileArray();
-                if (!static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value))
-                {
+                try {
+                    static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+                } catch (std::string const &exception) {
                     Delete(element);
-                    return false;
+                    throw exception;
                 }
                 break;
 
             case NT_STRUCTURE:
                 element = new DataFileStructure();
-                if (!static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value))
-                {
+                try {
+                    static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+                } catch (std::string const &exception) {
                     Delete(element);
-                    return false;
+                    throw exception;
                 }
                 break;
-
-            default: return false;
         }
 
         // if there are existing elements, check type and dimension
@@ -734,33 +689,34 @@ bool DataFileArray::SetSubpathElement (
             ASSERT1(first_element != NULL)
             if (element->GetElementType() != first_element->GetElementType())
             {
-                fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array element type %s, assignment type %s\n", path.c_str(), GetDataFileElementTypeString(first_element->GetElementType()).c_str(), GetDataFileElementTypeString(element->GetElementType()).c_str());
+                std::ostringstream out;
+                out << "mismatch: array element type " << GetDataFileElementTypeString(first_element->GetElementType())
+                    << ", assignment type " << GetDataFileElementTypeString(element->GetElementType());
                 Delete(element);
-                return false;
+                throw out.str();
             }
             else if (element->GetElementType() == DAT_ARRAY &&
                     (DStaticCast<DataFileArray const *>(first_element)->GetDimensionCount() !=
-                    DStaticCast<DataFileArray const *>(element)->GetDimensionCount()
-                    ||
-                    static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType() !=
-                    static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()))
+                     DStaticCast<DataFileArray const *>(element)->GetDimensionCount()
+                     ||
+                     static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType() !=
+                     static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()))
             {
-                fprintf(
-                    stderr,
-                    "SetPathElement error: in path \"%s\" - mismatch: array depth %u/type %s, assignment depth %u/type %s\n", path.c_str(), static_cast<DataFileArray const *>(first_element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType()).c_str(), static_cast<DataFileArray const *>(element)->GetDimensionCount(), GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()).c_str());
+                std::ostringstream out;
+                out << "mismatch: array depth " << static_cast<DataFileArray const *>(first_element)->GetDimensionCount()
+                    << "/type " << GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType())
+                    << ", assignment depth " << static_cast<DataFileArray const *>(element)->GetDimensionCount()
+                    << "/type " << GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType());
                 Delete(element);
-                return false;
+                throw out.str();
             }
         }
 
         m_element_vector.push_back(element);
-        return true;
+        return;
     }
     else if (array_index >= m_element_vector.size())
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - array index %u out of bounds\n", path.c_str(), array_index);
-        return false;
-    }
+        THROW_STRING("array index " << array_index << " out of bounds in subpath \"" << path.c_str() + start << "\"")
     else
     {
         ASSERT1(element_type == NT_LEAF || element_type == NT_ARRAY || element_type == NT_STRUCTURE)
@@ -783,15 +739,14 @@ bool DataFileArray::SetSubpathElement (
                 assignment_type = DAT_STRUCTURE;
 
             ASSERT1(assignment_type != DAT_NO_TYPE)
-            fprintf(stderr, "SetPathElement error: in path \"%s\" - mismatch: array element type %s, assignment type %s\n", path.c_str(), GetDataFileElementTypeString(element->GetElementType()).c_str(), GetDataFileElementTypeString(assignment_type).c_str());
-            return false;
+            THROW_STRING("mismatch: array element type " << GetDataFileElementTypeString(element->GetElementType()) << ", assignment type " << GetDataFileElementTypeString(assignment_type))
         }
 
         if (element_type == NT_LEAF)
         {
             Delete(element);
             element = value;
-            return true;
+            return;
         }
         else if (element_type == NT_ARRAY || element_type == NT_STRUCTURE)
         {
@@ -800,7 +755,7 @@ bool DataFileArray::SetSubpathElement (
         else
         {
             ASSERT1(false && "this should never happen")
-            return false;
+            return;
         }
     }
 }
@@ -962,25 +917,19 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
     }
 }
 
-bool DataFileStructure::SetSubpathElement (
+void DataFileStructure::SetSubpathElement (
     std::string const &path,
     Uint32 start,
-    DataFileLeafValue *const value)
+    DataFileLeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length())
     ASSERT1(value != NULL)
 
     if (start >= path.length())
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - can't assign a value to a structure itself\n", path.c_str());
-        return false;
-    }
+        THROW_STRING("can't assign a value to a structure itself")
 
     if (path[start] != '|')
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid subpath \"%s\" - expected '|' prefix\n", path.c_str(), path.c_str() + start);
-        return false;
-    }
+        THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
     ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE)
 
@@ -988,39 +937,25 @@ bool DataFileStructure::SetSubpathElement (
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
     ASSERT1(key_delim < UINT32_UPPER_BOUND)
 
-    NodeType element_type = GetParentElementNodeType(path, key_delim);
-    if (element_type == NT_PATH_ERROR)
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - type mismatch before subpath \"%s\"\n", path.c_str(), path.c_str() + start);
-        return false;
-    }
-
     std::string key(path.substr(start, key_delim-start));
     if (!GetIsValidKey(key))
-    {
-        fprintf(stderr, "SetPathElement error: in path \"%s\" - invalid key \"%s\"\n", path.c_str(), key.c_str());
-        return false;
-    }
+        THROW_STRING("invalid key \"" << key << "\"")
 
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
     {
         DataFileKeyPair *key_pair = new DataFileKeyPair(key, NULL);
-        if (static_cast<DataFileContainer *>(key_pair)->SetSubpathElement(path, key_delim, value))
-        {
-            m_member_map[key] = key_pair;
-            return true;
-        }
-        else
-        {
+        try {
+            static_cast<DataFileContainer *>(key_pair)->SetSubpathElement(path, key_delim, value);
+        } catch (std::string const &exception) {
             Delete(key_pair);
-            return false;
+            throw exception;
         }
+        m_member_map[key] = key_pair;
+        return;
     }
     else
-    {
         return static_cast<DataFileContainer *>(it->second)->SetSubpathElement(path, key_delim, value);
-    }
 }
 
 bool DataFileStructure::GetIsValidKey (std::string const &key)
