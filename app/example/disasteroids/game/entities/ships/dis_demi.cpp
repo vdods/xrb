@@ -56,7 +56,7 @@ Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 1
 Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 210.0f, 220.0f, 230.0f };
 Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
 Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
-Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 25.0f, 15.0f, 10.0f, 5.0f };
+Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 20.0f, 15.0f, 10.0f, 5.0f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 

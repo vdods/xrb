@@ -37,7 +37,6 @@ OPENGL CONVERSION TASKS:
 
 DISASTEROIDS:
 ** feature-related **
-- add reset-scores button to options.
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
@@ -69,6 +68,8 @@ DISASTEROIDS:
 - to limit the length of waves, there can be a time limit after which all
   the enemies are SetTarget'ed against the player (which can happen every
   few seconds, so the player can't just EMP them to escape).
+- change gauss gun's fire rate to be based on how fast it can be charged back
+  up by the power generator
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.

@@ -272,7 +272,7 @@ void Devourment::Die (
     static Float const s_powerup_coefficient = 0.1f;
 
     Float health_powerup_amount_left_to_spawn =
-        mineral_mass_total / ms_max_spawn_mineral_mass[GetEnemyLevel()] *
+        Min(mineral_mass_total, ms_max_spawn_mineral_mass[GetEnemyLevel()]) / ms_max_spawn_mineral_mass[GetEnemyLevel()] *
         ms_health_powerup_amount_to_spawn[GetEnemyLevel()];
     while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
     {
