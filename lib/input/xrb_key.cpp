@@ -17,6 +17,8 @@ namespace Xrb
 
 Key *Key::Create (Key::Code const code, std::string const &name)
 {
+    ASSERT1(!name.empty())
+
     Key *retval = new Key();
 
     retval->m_code = code;

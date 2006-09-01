@@ -35,6 +35,7 @@ public:
     enum Code
     {
         INVALID = -1,
+        NONE = -2,
         UNKNOWN = SDLK_UNKNOWN,
         LEFTMOUSE = SDL_BUTTON_LEFT,
         MIDDLEMOUSE = SDL_BUTTON_MIDDLE,

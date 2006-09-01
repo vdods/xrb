@@ -42,7 +42,6 @@ DISASTEROIDS:
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
 - make Demi push away if its taking too much damage and the player is close
-- make Demi spawn a health powerup when killed
 - possibly make Demi have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
 - make smart ballistics not be canceled out by other ballistics
@@ -55,7 +54,8 @@ DISASTEROIDS:
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
 - split the physics and visibility computation up so their frame
-  processing isn't dependent.
+  processing isn't dependent.  this requires addition of some "scale velocity"
+  property on entities.
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
@@ -71,15 +71,29 @@ DISASTEROIDS:
 - change gauss gun's fire rate to be based on how fast it can be charged back
   up by the power generator
 - split up high scores into difficulty levels
+- add a directional shield for the player, activated by shift/semicolon? (and maybe demi)
+- change missiles: they should not be able to flip around at any angle, but
+  only travel in circles (acceleration perpendicular to velocity).  primary
+  fire will fire enemy-seeking missiles, but if you use secondary fire,
+  all your active missiles will home in on your mouse cursor.
+  missiles should be made much heavier, so they're not deflected away by
+  tractors as easily.
+- add validation to Dis::Config modifiers
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.
+- add drone for shields also?  or decide which of shields/power generator
+  should have a drone.  maybe they can both have a drone, at obviously
+  distinct frequencies.
 ** bug-related **
 - there seems to be a bug in the aiming in the front weapon of Demi
 - get non-wrapped ObjectLayers back up and running (because they totally
   don't work in disasteroids)
 
 TODO:
+- add some sort of "MAKE_THIS_ENUM_UNSIGNED = 4000000000U" to all appropriate enums, and check
+  if this works on compilers other than g++.  either that, or change all the asserts
+  to reflect the potential that enums can be negative.
 - rename first moment to mass and second moment to angular mass or rotational mass
 - somehow properly return both drawn opaque and transparent object counts from
   Engine2::ObjectLayer::Draw and make UI labels for them in the debug view.

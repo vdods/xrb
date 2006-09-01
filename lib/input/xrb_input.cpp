@@ -211,6 +211,7 @@ bool Input::HandleEvent (Event const *const e)
 void Input::InitKeyMaps ()
 {
     // NOTE: Key::INVALID is not and should not be mapped.
+    m_keycode_map[Key::NONE] = Key::Create(Key::NONE, "NONE");
     m_keycode_map[Key::UNKNOWN] = Key::Create(Key::UNKNOWN, "UNKNOWN");
     m_keycode_map[Key::LEFTMOUSE] = Key::Create(Key::LEFTMOUSE, "LEFTMOUSE");
     m_keycode_map[Key::MIDDLEMOUSE] = Key::Create(Key::MIDDLEMOUSE, "MIDDLEMOUSE");

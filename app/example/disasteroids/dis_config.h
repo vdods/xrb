@@ -31,44 +31,50 @@ class Config
 {
 public:
 
-    enum InputAction
-    {
-        IA_IN_GAME_INVENTORY_PANEL = 0,
-        IA_MOVE_FORWARD,
-        IA_MOVE_LEFT,
-        IA_MOVE_BACK,
-        IA_MOVE_RIGHT,
-        IA_PRIMARY_FIRE,
-        IA_SECONDARY_FIRE,
-        IA_ENGINE_BRAKE,
-        IA_USE_TRACTOR,
-        IA_EQUIP_PEA_SHOOTER,
-        IA_EQUIP_LASER,
-        IA_EQUIP_FLAME_THROWER,
-        IA_EQUIP_GAUSS_GUN,
-        IA_EQUIP_GRENADE_LAUNCHER,
-        IA_EQUIP_MISSILE_LAUNCHER,
-        IA_EQUIP_EMP_CORE,
-
-        IA_COUNT
-    }; // end of enum Config::InputAction
-
-    static std::string const ms_input_action_name[IA_COUNT];
+    static std::string const ms_input_action_label[KEY_INPUT_ACTION_COUNT];
 
     Config ();
 
-    inline bool GetFullscreen () const { return m_fullscreen; }
-    inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
-    inline std::string const &GetKeyMapName () const { return m_key_map_name; }
-    inline DifficultyLevel GetDifficultyLevel () const { return static_cast<DifficultyLevel>(m_difficulty_level); }
-    Key::Code GetInputActionKeyCode (InputAction input_action) const;
+    // ///////////////////////////////////////////////////////////////////////
+    // general accessors
+    // ///////////////////////////////////////////////////////////////////////
 
-    inline void SetFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
-    inline void SetResolutionX (ScreenCoord resolution_x) { m_resolution[Dim::X] = resolution_x; }
-    inline void SetResolutionY (ScreenCoord resolution_y) { m_resolution[Dim::Y] = resolution_y; }
-    inline void SetKeyMapName (std::string const &key_map_name) { m_key_map_name = key_map_name; }
-    inline void SetDifficultyLevel (DifficultyLevel difficulty_level) { m_difficulty_level = difficulty_level; }
-    void SetInputActionKeyCode (InputAction input_action, Key::Code key_code);
+    inline bool GetBoolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT) return m_boolean_value[key]; }
+    inline Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT) return m_uint32_value[key]; }
+    inline std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT) return m_string_value[key]; }
+    Key::Code GetInputAction (KeyInputAction key) const;
+
+    // ///////////////////////////////////////////////////////////////////////
+    // general modifiers
+    // ///////////////////////////////////////////////////////////////////////
+
+    inline void SetBoolean (KeyBoolean key, bool value) { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT) m_boolean_value[key] = value; }
+    inline void SetUint32 (KeyUint32 key, Uint32 value) { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT) m_uint32_value[key] = value; }
+    inline void SetString (KeyString key, std::string const &value) { ASSERT1(key >= 0 && key < KEY_STRING_COUNT) m_string_value[key] = value; }
+    void SetInputAction (KeyInputAction key, Key::Code value);
+    void SetInputAction (KeyInputAction key, std::string const &value);
+
+    // ///////////////////////////////////////////////////////////////////////
+    // specific accessors (used to avoid lots of casting in the app code)
+    // ///////////////////////////////////////////////////////////////////////
+
+    inline ScreenCoordVector2 GetResolution () const { return ScreenCoordVector2(GetResolutionX(), GetResolutionY()); }
+    inline ScreenCoord GetResolutionX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_X)); }
+    inline ScreenCoord GetResolutionY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_Y)); }
+    inline DifficultyLevel GetDifficultyLevel () const { return static_cast<DifficultyLevel>(GetUint32(GAME__DIFFICULTY_LEVEL)); }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // specific modifiers (used to avoid lots of casting in the app code)
+    // ///////////////////////////////////////////////////////////////////////
+
+    inline void SetResolution (ScreenCoordVector2 const &resolution) { SetResolutionX(resolution[Dim::X]); SetResolutionY(resolution[Dim::Y]); }
+    inline void SetResolutionX (ScreenCoord resolution_x) { SetUint32(VIDEO__RESOLUTION_X, static_cast<Uint32>(resolution_x)); }
+    inline void SetResolutionY (ScreenCoord resolution_y) { SetUint32(VIDEO__RESOLUTION_Y, static_cast<Uint32>(resolution_y)); }
+    inline void SetDifficultyLevel (DifficultyLevel difficulty_level) { SetUint32(GAME__DIFFICULTY_LEVEL, static_cast<Uint32>(difficulty_level)); }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // procedures
+    // ///////////////////////////////////////////////////////////////////////
 
     void ResetToDefaults ();
 
@@ -77,17 +83,25 @@ public:
 
 private:
 
-    bool m_fullscreen;
-    ScreenCoordVector2 m_resolution;
-    std::string m_key_map_name;
-    Uint32 m_difficulty_level;
-    mutable std::string m_input_action_key_name[IA_COUNT];
-    mutable Key::Code m_input_action_key_code[IA_COUNT];
-    static Key::Code const ms_input_action_default_key_code[IA_COUNT];
-    static std::string const ms_input_action_path[IA_COUNT];
+    template <typename ValueType>
+    struct KeySpecification
+    {
+        char const *m_data_file_path;
+        ValueType m_default_value;
+    }; // end of struct Config::KeySpecification<ValueType>
+
+    static KeySpecification<bool> const ms_boolean_key[KEY_BOOLEAN_COUNT];
+    static KeySpecification<Uint32> const ms_uint32_key[KEY_UINT32_COUNT];
+    static KeySpecification<char const *> const ms_string_key[KEY_STRING_COUNT];
+    static KeySpecification<Key::Code> const ms_input_action_key[KEY_INPUT_ACTION_COUNT];
+
+    bool m_boolean_value[KEY_BOOLEAN_COUNT];
+    Uint32 m_uint32_value[KEY_UINT32_COUNT];
+    std::string m_string_value[KEY_STRING_COUNT];
+    mutable std::string m_input_action_name[KEY_INPUT_ACTION_COUNT];
+    mutable Key::Code m_input_action_value[KEY_INPUT_ACTION_COUNT];
 }; // end of class Config
 
 } // end of namespace Dis
 
 #endif // !defined(_DIS_CONFIG_H_)
-

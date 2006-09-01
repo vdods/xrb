@@ -43,9 +43,9 @@ int main (int argc, char **argv)
         // initialize the commandline options with the config values and then
         // parse the commandline into the options object.
         Dis::CommandLineOptions options(argv[0]);
-        options.InitializeFullscreen(g_config.GetFullscreen());
+        options.InitializeFullscreen(g_config.GetBoolean(Dis::VIDEO__FULLSCREEN));
         options.InitializeResolution(g_config.GetResolution());
-        options.InitializeKeyMapName(g_config.GetKeyMapName());
+        options.InitializeKeyMapName(g_config.GetString(Dis::SYSTEM__KEY_MAP_NAME));
         options.Parse(argc, argv);
         if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
         {

@@ -49,14 +49,14 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
         m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 4*m_resolution_x_edit->GetFont()->GetPixelHeight());
+        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->GetPixelHeight());
 
         l = new Label("Vertical Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
         m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 4*m_resolution_y_edit->GetFont()->GetPixelHeight());
+        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->GetPixelHeight());
 
         l = new Label("Fullscreen:", video_options_layout);
         l->SetIsHeightFixedToTextHeight(true);
@@ -109,11 +109,11 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         l->SetIsHeightFixedToTextHeight(true);
         Layout *input_options_layout = new Layout(ROW, 2, right_side_layout);
 
-        for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+        for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         {
-            l = new Label(Config::ms_input_action_name[i], input_options_layout);
+            l = new Label(Config::ms_input_action_label[i], input_options_layout);
             l->SetAlignment(Dim::X, RIGHT);
-            m_input_action_button[i] = new KeySelectorButton( Config::ms_input_action_name[i], Key::INVALID, input_options_layout);
+            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_options_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
         }
     }
@@ -139,9 +139,9 @@ DifficultyLevel OptionsPanel::GetDifficultyLevel () const
     return m_difficulty_level.GetID();
 }
 
-Key::Code OptionsPanel::GetInputActionKeyCode (Config::InputAction const input_action) const
+Key::Code OptionsPanel::GetInputActionKeyCode (KeyInputAction const input_action) const
 {
-    ASSERT1(input_action < Config::IA_COUNT)
+    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT)
     ASSERT1(m_input_action_button[input_action] != NULL)
     return m_input_action_button[input_action]->GetKeyCode();
 }
@@ -172,25 +172,25 @@ void OptionsPanel::SetDifficultyLevel (DifficultyLevel const difficulty_level)
 }
 
 void OptionsPanel::SetInputActionKeyCode (
-    Config::InputAction const input_action,
+    KeyInputAction const input_action,
     Key::Code const key_code)
 {
-    ASSERT1(input_action < Config::IA_COUNT)
+    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT)
     ASSERT1(m_input_action_button[input_action] != NULL)
     m_input_action_button[input_action]->SetKeyCode(key_code);
 }
 
 void OptionsPanel::ReadValuesFromConfig (Config const &config)
 {
-    SetResolutionX(config.GetResolution()[Dim::X]);
-    SetResolutionY(config.GetResolution()[Dim::Y]);
-    SetFullscreen(config.GetFullscreen());
+    SetResolutionX(config.GetResolutionX());
+    SetResolutionY(config.GetResolutionY());
+    SetFullscreen(config.GetBoolean(VIDEO__FULLSCREEN));
     SetDifficultyLevel(config.GetDifficultyLevel());
 
-    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
+    for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         SetInputActionKeyCode(
-            static_cast<Config::InputAction>(i),
-            config.GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
+            static_cast<KeyInputAction>(i),
+            config.GetInputAction(static_cast<KeyInputAction>(i)));
 }
 
 void OptionsPanel::WriteValuesToConfig (Config *const config)
@@ -199,13 +199,13 @@ void OptionsPanel::WriteValuesToConfig (Config *const config)
 
     config->SetResolutionX(GetResolution()[Dim::X]);
     config->SetResolutionY(GetResolution()[Dim::Y]);
-    config->SetFullscreen(GetFullscreen());
+    config->SetBoolean(VIDEO__FULLSCREEN, GetFullscreen());
     config->SetDifficultyLevel(GetDifficultyLevel());
 
-    for (Uint32 i = 0; i < Config::IA_COUNT; ++i)
-        config->SetInputActionKeyCode(
-            static_cast<Config::InputAction>(i),
-            GetInputActionKeyCode(static_cast<Config::InputAction>(i)));
+    for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
+        config->SetInputAction(
+            static_cast<KeyInputAction>(i),
+            GetInputActionKeyCode(static_cast<KeyInputAction>(i)));
 }
 
 } // end of namespace Dis
