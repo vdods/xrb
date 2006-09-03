@@ -20,7 +20,8 @@ bin_PROGRAMS = \
     lesson00 \
     lesson01 \
     lesson02 \
-    lesson03
+    lesson03 \
+    lesson04
 #    mapeditor2 \ # is temporarily out of commission
 #    unittest # is temporarily out of commission
 
@@ -458,6 +459,9 @@ lesson02_SOURCES = app/example/lesson/lesson02/lesson02_main.cpp
 
 lesson03_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson03
 lesson03_SOURCES = app/example/lesson/lesson03/lesson03_main.cpp
+
+lesson04_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson04
+lesson04_SOURCES = app/example/lesson/lesson04/lesson04_main.cpp
 
 ##############################################################################
 # mapeditor2

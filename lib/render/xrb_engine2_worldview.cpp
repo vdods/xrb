@@ -29,9 +29,6 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
 {
     ASSERT1(parent_world_view_widget != NULL)
 
-    m_parent_world_view_widget = parent_world_view_widget;
-    m_world = NULL;
-
     m_grid_line_type = GR_NO_DRAW;
     m_grid_number_base = 4;
     m_current_grid_scale = 1;
@@ -48,6 +45,10 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_is_parallaxed_view_to_world_dirty = true;
     m_is_parallaxed_world_to_screen_dirty = true;
     m_is_parallaxed_screen_to_world_dirty = true;
+
+    m_world = NULL;
+    m_parent_world_view_widget = parent_world_view_widget;
+    m_parent_world_view_widget->SetWorldView(this);
 }
 
 Engine2::WorldView::~WorldView ()

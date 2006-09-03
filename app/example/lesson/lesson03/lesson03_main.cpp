@@ -94,6 +94,9 @@ to the (as of August 2006) calculation-intensive Layout resizing code.
         <li>Execute game-specific code.</li>
             <ul>
             <li>Create application-specific GUI and connect necessary signals.</li>
+                <ul>
+                <li><strong>Create an instance of HeatSimulation and set it as the screen's main widget.</strong></li>
+                </ul>
             <li>Run the game loop</li>
                 <ul>
                 <li><strong>Calculate the SDL_Delay duration necessary to achieve the desired framerate.</strong></li>

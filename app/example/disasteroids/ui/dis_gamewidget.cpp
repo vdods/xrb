@@ -59,12 +59,9 @@ GameWidget::GameWidget (
     ASSERT1(world != NULL)
 
     // the world view goes under the HUD in the game widget stack
-    m_world_view_widget =
-        new Engine2::WorldViewWidget(NULL, this);
-    m_world_view =
-        new WorldView(m_world_view_widget);
+    m_world_view_widget = new Engine2::WorldViewWidget(this);
+    m_world_view = new WorldView(m_world_view_widget);
     world->AttachWorldView(m_world_view);
-    m_world_view_widget->SetWorldView(m_world_view);
 
     // connect the controls [de]activate signal
     SignalHandler::Connect0(

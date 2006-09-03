@@ -48,11 +48,12 @@ Texture *Texture::Create (std::string const &filename)
     {
         fprintf(stderr, "Texture::Create(); error while loading \"%s\"\n", filename.c_str());
         DeleteAndNullify(retval);
+        return NULL;
     }
 
     // TODO: real pixel format coping
     ASSERT1(retval->m_surface->format->BitsPerPixel == 32)
-        
+
     return retval;
 }
 
@@ -70,7 +71,7 @@ Texture *Texture::Create (
         DeleteAndNullify(retval);
     else if (zero_out_the_data)
         memset(retval->GetData(), 0, retval->GetDataLength());
-    
+
     return retval;
 }
 

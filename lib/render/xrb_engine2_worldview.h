@@ -58,7 +58,7 @@ namespace Engine2
             }
         }; // end of struct DrawInfo
 
-        WorldView (WorldViewWidget *parent_virtual_view);
+        WorldView (WorldViewWidget *parent_world_view_widget);
         virtual ~WorldView ();
 
         inline WorldViewWidget *GetParentWorldViewWidget () const { return m_parent_world_view_widget; }
@@ -151,6 +151,9 @@ namespace Engine2
 
         // this is called in SetWorld, after m_world is assigned.
         virtual void HandleAttachedWorld () { }
+
+        // FrameHandler interface method
+        virtual void HandleFrame () { }
 
         void DrawGridLines (RenderContext const &render_context);
         void DrawGridLineSet (

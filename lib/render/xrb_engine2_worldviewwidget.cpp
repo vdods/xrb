@@ -17,7 +17,6 @@ namespace Xrb
 {
 
 Engine2::WorldViewWidget::WorldViewWidget (
-    Engine2::WorldView *const world_view,
     ContainerWidget *const parent,
     std::string const &name)
     :
@@ -31,8 +30,7 @@ Engine2::WorldViewWidget::WorldViewWidget (
     m_draw_focus_frame = true;
     m_accepts_focus = true;
 
-    // attach the view
-    m_world_view = world_view;
+    m_world_view = NULL;
     // make sure the transformation is adjusted according to the new position
     // and size
     ComputeTransform();
@@ -52,6 +50,10 @@ Engine2::WorldViewWidget::~WorldViewWidget ()
 
 void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_view)
 {
+    // if the given world view is already attached, do nothing.
+    if (m_world_view == world_view)
+        return;
+
     if (m_world_view != NULL)
     {
         m_world_view->DetachFromWorld();

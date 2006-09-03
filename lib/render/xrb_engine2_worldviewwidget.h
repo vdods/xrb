@@ -35,7 +35,6 @@ namespace Engine2
     public:
 
         WorldViewWidget (
-            WorldView *world_view,
             ContainerWidget *parent,
             std::string const &name = "Engine2::WorldViewWidget");
         virtual ~WorldViewWidget ();

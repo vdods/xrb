@@ -25,7 +25,7 @@ namespace Xrb
 
 Engine2::World::~World ()
 {
-    ASSERT1(m_world_view_list.empty())
+    ASSERT1(m_world_view_list.empty() && "all WorldView objects must be detached before destroying World")
 
     // delete the Entity/Object pairs (dynamic objects).  this will
     // handle removing them from the physics handler as well.
@@ -121,8 +121,8 @@ void Engine2::World::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 {
     ASSERT1(object_layer != NULL)
     m_object_layer_list.push_back(object_layer);
-    ASSERT1(m_physics_handler != NULL)
-    m_physics_handler->AddObjectLayer(object_layer);
+    if (m_physics_handler != NULL)
+        m_physics_handler->AddObjectLayer(object_layer);
 }
 
 void Engine2::World::SetMainObjectLayer (Engine2::ObjectLayer *main_object_layer)
@@ -130,8 +130,8 @@ void Engine2::World::SetMainObjectLayer (Engine2::ObjectLayer *main_object_layer
     ASSERT1(main_object_layer != NULL)
     ASSERT1(main_object_layer->GetOwnerWorld() == this)
     m_main_object_layer = main_object_layer;
-    ASSERT1(m_physics_handler != NULL)
-    m_physics_handler->SetMainObjectLayer(m_main_object_layer);
+    if (m_physics_handler != NULL)
+        m_physics_handler->SetMainObjectLayer(m_main_object_layer);
 }
 
 void Engine2::World::AddStaticObject (
@@ -177,8 +177,8 @@ void Engine2::World::AddDynamicObject (
 
     // add the entity to the physics handler (must be done after adding
     // it to the object layer)
-    ASSERT1(m_physics_handler != NULL)
-    m_physics_handler->AddEntity(entity);
+    if (m_physics_handler != NULL)
+        m_physics_handler->AddEntity(entity);
 }
 
 void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
@@ -212,8 +212,8 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
         entity);
 
     // remove the entity from the physics handler
-    ASSERT1(m_physics_handler != NULL)
-    m_physics_handler->RemoveEntity(entity);
+    if (m_physics_handler != NULL)
+        m_physics_handler->RemoveEntity(entity);
 }
 
 Engine2::World::World (
@@ -224,11 +224,10 @@ Engine2::World::World (
     FrameHandler(),
     m_physics_handler(physics_handler)
 {
-    ASSERT1(m_physics_handler != NULL)
-
     SetOwnerEventQueue(&m_owner_event_queue);
 
-    m_physics_handler->SetOwnerWorld(this);
+    if (m_physics_handler != NULL)
+        m_physics_handler->SetOwnerWorld(this);
     m_main_object_layer = NULL;
     m_timescale = 1.0f;
     ASSERT1(entity_capacity > 0)
@@ -268,8 +267,8 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
         ASSERT1(object_layer != NULL)
         if (i == index) {
             m_main_object_layer = object_layer;
-            ASSERT1(m_physics_handler != NULL)
-            m_physics_handler->SetMainObjectLayer(m_main_object_layer);
+            if (m_physics_handler != NULL)
+                m_physics_handler->SetMainObjectLayer(m_main_object_layer);
             return;
         }
     }
@@ -322,8 +321,8 @@ bool Engine2::World::HandleEvent (Event const *const e)
 void Engine2::World::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL)
-    ASSERT1(m_physics_handler != NULL)
-    m_physics_handler->ProcessFrame(GetFrameTime());
+    if (m_physics_handler != NULL)
+        m_physics_handler->ProcessFrame(GetFrameTime());
     m_owner_event_queue.ProcessFrame(GetFrameTime());
 }
 
