@@ -91,6 +91,8 @@ DISASTEROIDS:
   don't work in disasteroids)
 
 TODO:
+- have the application automatically change current working directory to
+  the path of the executable (argv[0]).
 - change Engine2::Compound to Engine2::Model ?
 - make ~World detach attached WorldViews?  WorldView would then have to
   detect if m_world is NULL or not.
