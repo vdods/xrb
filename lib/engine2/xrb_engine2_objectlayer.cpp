@@ -222,13 +222,14 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
     ASSERT1(m_quad_tree != NULL)
     ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) == NULL)
 
+    // set the object's layer
+    object->SetObjectLayer(this);
+    // make sure the object behaves within the bounds of the object layer.
     HandleContainmentOrWrapping(object);
     // attempt to add it to the quad tree
     DEBUG1_CODE(bool add_success =)
     m_quad_tree->AddObject(object);
     ASSERT1(add_success)
-    // set the object's layer
-    object->SetObjectLayer(this);
 
     ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL)
 }
@@ -280,6 +281,7 @@ void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
 void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL)
+    ASSERT1(!GetIsWrapped())
 
     FloatVector2 translation(transform->GetTranslation());
     ContainVector2(&translation);
@@ -289,6 +291,7 @@ void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) 
 void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
 {
     ASSERT1(entity != NULL)
+    ASSERT1(!GetIsWrapped())
 
     FloatVector2 translation(entity->GetTranslation());
     bool component_x = false;
@@ -316,7 +319,8 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
         component_y = true;
     }
 
-    entity->SetTranslation(translation);
+    ASSERT1(entity->GetOwnerObject() != NULL)
+    entity->GetOwnerObject()->SetTranslation(translation);
     entity->HandleObjectLayerContainment(component_x, component_y);
 }
 
@@ -341,6 +345,7 @@ void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
 void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL)
+    ASSERT1(GetIsWrapped())
 
     FloatVector2 translation(transform->GetTranslation());
     WrapVector2(&translation);
@@ -350,6 +355,7 @@ void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) con
 void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
 {
     ASSERT1(entity != NULL)
+    ASSERT1(GetIsWrapped())
 
     FloatVector2 previous_translation(entity->GetTranslation());
     WrapTransform2(entity->GetOwnerObject());

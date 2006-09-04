@@ -226,13 +226,10 @@ void Entity::Write (Serializer &serializer) const
 
 void Entity::HandleObjectLayerContainment (bool const component_x, bool const component_y)
 {
-    if (!GetObjectLayer()->GetIsWrapped())
-    {
-        if (component_x)
-            m_velocity[Dim::X] = 0.0f;
-        if (component_y)
-            m_velocity[Dim::Y] = 0.0f;
-    }
+    if (component_x)
+        m_velocity[Dim::X] = 0.0f;
+    if (component_y)
+        m_velocity[Dim::Y] = 0.0f;
 }
 
 Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time) const

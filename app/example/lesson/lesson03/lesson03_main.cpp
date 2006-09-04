@@ -279,7 +279,7 @@ private:
 
     Float m_temperature;
     Float m_ambient_temperature;
-};
+}; // end of class HeatButton
 
 /* @endcode
 Here is the declaration of our other super-awesome custom Widget subclass.
@@ -547,7 +547,7 @@ private:
     SignalReceiver1<Float> m_internal_receiver_set_temperature_retention_rate;
 
     static Float const ms_distribution_function[DISTRIBUTION_FUNCTION_HEIGHT][DISTRIBUTION_FUNCTION_WIDTH];
-};
+}; // end of class HeatSimulation
 
 Float const HeatSimulation::ms_distribution_function[DISTRIBUTION_FUNCTION_HEIGHT][DISTRIBUTION_FUNCTION_WIDTH] =
 {

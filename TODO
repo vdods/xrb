@@ -91,13 +91,15 @@ DISASTEROIDS:
   don't work in disasteroids)
 
 TODO:
+- create consistent way to set z depth for non-transparent stuff so they're
+  actually unique z depth values for each object.  maybe encode some sort
+  of index into the least significant bits of the depth Float.
 - have the application automatically change current working directory to
   the path of the executable (argv[0]).
 - change Engine2::Compound to Engine2::Model ?
 - make ~World detach attached WorldViews?  WorldView would then have to
   detect if m_world is NULL or not.
 - in lesson04, make graphical representation of Engine2 design
-- lesson05 - sprite Z depth and using dynamic objects
 - lesson06 - collision detection and resolution via PhysicsHandler
 - add some sort of "MAKE_THIS_ENUM_UNSIGNED = 4000000000U" to all appropriate enums, and check
   if this works on compilers other than g++.  either that, or change all the asserts

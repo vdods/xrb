@@ -215,9 +215,7 @@ public:
         if (e->GetIsEitherAltKeyPressed())
         {
             if (e->GetButtonCode() == Key::MOUSEWHEELUP)
-            {
                 RotateView(-15.0f); // Rotate 15 degrees clockwise.
-            }
             else
             {
                 ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN)
@@ -229,9 +227,7 @@ public:
         else
         {
             if (e->GetButtonCode() == Key::MOUSEWHEELUP)
-            {
                 ZoomView(1.2f); // Zoom in by a factor of 1.2f
-            }
             else
             {
                 ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN)
@@ -264,7 +260,7 @@ public:
             // Event not used.
             return false;
     }
-};
+}; // end of class AwesomeWorldView
 
 /* @endcode
 This is a helper function which will create our World instance and populate it
@@ -487,6 +483,12 @@ int main (int argc, char **argv)
         random positions and sizes, but form a spiral instead.  Make each
         sprite's scale factor proportional to its distance from the origin,
         and set its angle such that it's facing away from the origin.</li>
+    <li>Instead of creating a WorldViewWidget as the child of screen, make
+        a grid Layout (e.g. row major with major count 2) and create several
+        pairs of WorldViewWidget and WorldView, so that you have a 2x2 grid
+        showing 4 total independent WorldViews.  Remember to delete them
+        at the end of the app-specific code.  You can do this conveniently
+        by deleting the Layout containing them.</li>
     <li>Disable the mouse-based view zooming/rotating/moving and implement
         <tt>virtual void AwesomeWorldView::HandleFrame()</tt> to:
             <ul>
@@ -507,7 +509,7 @@ int main (int argc, char **argv)
             </ul>
         You can use the @ref Xrb::FrameHandler::GetFrameTime method to retrieve
         the current time from inside HandleFrame.  Mess around with the equations
-        and then show your kid brother how much cooler you are than him.
+        and then show your kid brother how much cooler you are than him.</li>
     </ul>
 
 Thus concludes lesson04, you crazy almost-game-programming bastard, you.
