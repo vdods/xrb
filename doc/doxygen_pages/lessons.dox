@@ -13,7 +13,7 @@ The source files can be found in their respective directories under the
     <li>@ref lesson02 "Lesson 02 - SignalHandler, SignalSender and SignalReceiver" - @ref lesson02_main.cpp "source code"</li>
     <li>@ref lesson03 "Lesson 03 - Creating Your Own Customized GUI Widgets" - @ref lesson03_main.cpp "source code"</li>
     <li>@ref lesson04 "Lesson 04 - Creating A Game World With Static Objects" - @ref lesson04_main.cpp "source code"</li>
-    <li>@ref lesson05 "Lesson 05 - Implementing Entity And World For Fun And Profit" - @ref lesson05_main.cpp "source code"</li>
+    <li>@ref lesson05 "Lesson 05 - Dynamic Objects For Fun And Profit" - @ref lesson05_main.cpp "source code"</li>
     </ul>
 
 */

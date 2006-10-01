@@ -10,24 +10,60 @@
 
 
 // ///////////////////////////////////////////////////////////////////////////
-// Lesson 05 - Implementing Entity And World For Fun And Profit
+// Lesson 05 - Dynamic Objects For Fun And Profit
 // ///////////////////////////////////////////////////////////////////////////
 
 
-/** @page lesson05 Lesson 05 - Implementing Entity And World For Fun And Profit
+/** @page lesson05 Lesson 05 - Dynamic Objects For Fun And Profit
 @code *//* @endcode
-This lesson will show you how to make interactive game objects (aka dynamic
-objects).  This will be done by subclassing @ref Xrb::Engine2::Entity and
-providing a game-specific implementation.  We will also have to subclass
-@ref Xrb::Engine2::World to provide the code to control its subordinate
-Entity objects.
+This lesson will show you how to make dynamic objects (game objects which can
+move and interact).  This will be done by subclassing @ref Xrb::Engine2::Entity
+and providing a game-specific implementation.  We will also have to subclass
+@ref Xrb::Engine2::World to provide the code to control its subordinate Entity
+objects.
 
     <ul>
     <li>@ref lesson05_main.cpp "This lesson's source code"</li>
     <li>@ref lessons "Main lesson index"</li>
     </ul>
 
-TODO: detailed description
+In this lesson we will be creating an animated gravitational planet/moon
+system.  This will require us to subclass the pure virtual Engine2::Entity
+class with our own application-specific implementation, and to write code to
+update the positions of the game objects to simulate gravitation.  The latter
+will be in a custom subclass of Engine2::World.
+
+Below, in the documentation for AwesomeWorld::HandleFrame, there is an
+explanation of Euler Integration, which is absolutely central to game
+programming.  Make sure not to skip it.
+
+First, more detail on Object and Entity and their relationship.
+
+As shown in the @ref lesson04 "previous lesson", Object is the physical,
+visible game object which has as its properties: position, scale and angle.
+By itself, it can't move or be interacted with.  Its subclasses implement its
+Draw method -- as of Sept 2006, Sprite and Compound.  Alone, this is referred
+to as a "static object" (as opposed to a "dynamic object"; see
+Xrb::Engine2::Object::GetIsDynamicObject).
+
+Entity (Xrb::Engine2::Entity) can be thought of as "imbuing a soul" upon
+Object.  Entity is a pure virtual class intended to be subclassed to add all
+the application-specific properties and code necessary for an interactive
+game object.  An Object and Entity are both instantiated, and then the Entity
+instance is attached to the Object instance, and which point, the Object
+instance is a "dynamic object".  The Entity baseclass doesn't provide any
+substance besides the bare minimum framework -- the actual form of the "soul"
+is completely up to the application-specific implementation.
+
+In this particular lesson, the application-specific properties we will add
+to our custom subclass of Entity are mass, velocity and accumulated force.
+These values will be used by the gravitation simulation code to update the
+position of each respective dynamic object.
+
+Our custom subclass of World will perform two functions: a one-time generation
+of the game world (a large planet and many orbiting moons), and once-per-frame
+calculations for the simulation of the gravitational system using the
+properties of each dynamic object in the World.
 
 <strong>Procedural Overview</strong> -- Items in bold are additions/changes to the previous lesson.
 
@@ -36,9 +72,13 @@ TODO: detailed description
         <ul>
         <li><strong>Declare subclass of Engine2::Entity specific to this app.</strong></li>
         <li><strong>Declare subclass of Engine2::World specific to this app.</strong></li>
+            <ul>
+            <li><strong>The constructor will populate the game world.</strong></li>
+            <li><strong>Override HandleFrame to do once-per-frame gravitational
+                simulation calculations and to update the velocities and positions
+                of the dynamic objects.</strong></li>
+            </ul>
         <li>Declare subclass of Engine2::WorldView specific to this app.</li>
-        <li>CreateAndPopulateWorld function which will dynamically allocate
-            the World and Object instances which inhabit said World.</li>
         </ul>
     <li>Main function</li>
         <ul>
@@ -95,12 +135,23 @@ well enough, it was probably already explained in
 using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
 
 /* @endcode
-
+There really isn't much to this subclass.  All we're actually doing is adding
+three properties and various accessors/modifiers for them.  The m_mass value is
+a scalar value representing the first moment of inertia as defined by Newtonian
+mechanics (e.g. 28 kilograms); the higher this value is, the heavier the object
+is, and the more gravity it applies to other objects.  The m_velocity value is
+the vector representing the change in position per second (i.e. the derivative
+of the position vector).  Finally, the m_force vector value is used by
+AwesomeWorld during each game loop to calculate the total accumulated force on
+each object; this value isn't actually a property of a body in Newtonian
+mechanics -- it's just a value used by our simulation code.
 @code */
 class AwesomeEntity : public Engine2::Entity
 {
 public:
 
+    // The constructor simply initializes the properties to sane values.  Mass
+    // must be greater than zero to avoid division by zero in some calculations.
     AwesomeEntity ()
         :
         Engine2::Entity(),
@@ -114,7 +165,9 @@ public:
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline FloatVector2 const &GetForce () const { return m_force; }
 
-    // Modifiers for the properties of AwesomeEntity.
+    // Modifiers for the properties of AwesomeEntity.  The ASSERT_NAN_SANITY_CHECK
+    // macro is used in various places in Engine2 code to quickly catch common
+    // bugs in game code which result in NaN values being fed to the snake.
     inline void SetMass (Float mass)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass))
@@ -143,12 +196,13 @@ public:
     }
     void ResetForce () { m_force = FloatVector2::ms_zero; }
 
-    // These are pure virtual methods required by Entity implementations.
-    // Write can be left blank for our purposes.
+    // These are pure virtual methods which have to be implemented in Entity
+    // subclasses.  Write can be left blank for our purposes.
     virtual void Write (Serializer &serializer) const { }
-    // This method is called on entities which have hit the side of the ObjectLayer.
-    // For now we'll just stop the entity's motion along the indicated dimension(s).
-    // This method will only be called on entities in a non-wrapped ObjectLayer.
+    // This method is called on entities which have hit the side of the
+    // ObjectLayer.  For now we'll just stop the entity's motion along the
+    // indicated dimension(s).  This method will only be called on entities
+    // in a non-wrapped ObjectLayer.
     virtual void HandleObjectLayerContainment (bool component_x, bool component_y)
     {
         if (component_x)
@@ -171,17 +225,29 @@ private:
     FloatVector2 m_force;
 }; // end of class AwesomeEntity
 
+/* @endcode
+Our custom subclass of World will do the two things mentioned above: create
+the game world and populate it with objects, and handle per-frame gravitational
+simulation calculations.
+@code */
 class AwesomeWorld : public Engine2::World
 {
 public:
 
     /* @endcode
-
+    The constructor will create the single ObjectLayer to contain all the
+    objects which will be created next.  The dynamic objects which will
+    populate the game world will each be a Sprite instance and AwesomeEntity
+    instance pair.  A large, heavy "planet" and many small, light "moons" will
+    be created.  The moons' positions and velocities will be initialized to
+    put them into circular orbit of the larger planet using Kepler's 3rd law.
+    The scalar member value m_gravitational_constant is the symbol G in the
+    Newtonian equation for gravitational force between two bodies.
     @code */
     AwesomeWorld ()
         :
         World(NULL),
-        m_gravitational_constant(3.0f)
+        m_gravitational_constant(60.0f)
     {
         // At this point, the world is empty.
 
@@ -202,7 +268,7 @@ public:
         Engine2::Sprite *sprite;
         AwesomeEntity *planet;
 
-        // create a planet
+        // create a large, heavy planet
         sprite = Engine2::Sprite::Create("resources/demi3_small.png");
         planet = new AwesomeEntity();
         sprite->SetEntity(planet);
@@ -211,7 +277,7 @@ public:
         planet->SetMass(100.0f * planet->GetScaleFactor() * planet->GetScaleFactor());
         AddDynamicObject(sprite, object_layer);
 
-        // create a bunch of moons
+        // create a bunch of small, light moons
         static Uint32 const s_moon_count = 50;
         for (Uint32 i = 0; i < s_moon_count; ++i)
         {
@@ -221,34 +287,52 @@ public:
             sprite->SetZDepth(-0.1f);
             moon->SetScaleFactor(Math::RandomFloat(10.0f, 20.0f));
             moon->SetMass(0.01f * moon->GetScaleFactor() * moon->GetScaleFactor());
-            Float angle = Math::RandomFloat(0.0f, 360.0f);
+            // pick a distance to orbit the planet at
             Float minimum_orbital_radius = planet->GetScaleFactor() + moon->GetScaleFactor() + 100.0f;
             Float orbital_radius = Math::RandomFloat(minimum_orbital_radius, minimum_orbital_radius + 400.0f);
-            moon->SetTranslation(orbital_radius * Math::UnitVector(angle));
             ASSERT1(orbital_radius > 0.0f)
-            Float gravitational_force = GetGravitationalForce(planet, moon);
-            // equation for acceleration in relation to force and mass
-            // a = f / m
-            // v = sqrt(r * f / m)
-            // use kepler's 3rd law to calculate the speed necessary to stay in circular orbit
-            // a = v^2 / r
-            // v^2 = r * a
-            // v = sqrt(r * a)
-            Float orbital_speed = Math::Sqrt(orbital_radius * gravitational_force / moon->GetMass());
+            // The moon will be placed randomly using polar coordinates.
+            // We've calculated the R value, now we need theta.
+            Float angle = Math::RandomFloat(0.0f, 360.0f);
+            // Initialize the moon's position
+            moon->SetTranslation(orbital_radius * Math::UnitVector(angle));
+            // In order to figure out what speed to use to set the moon into
+            // circular orbit, we need to know the magnitude of the gravitational
+            // force between it and the large planet.
+            Float gravitational_force = CalculateGravitationalForce(planet, moon);
+            /* @endcode
+            We will solve for the necessary orbital speed by using Kepler's Third Law; let \f$v\f$ be scalar orbital velocity (speed), \f$r\f$ be the distance between the centers of the two bodies, and \f$a\f$ be scalar acceleration.
+            \f[ \frac{v^2}{r} = a \f]
+            We must also replace \f$a\f$ by known quantities.  This can be done using Newton's Second Law; let \f$a\f$ be scalar acceleration, \f$f\f$ be scalar force (magnitude of the force vector), and \f$m\f$ be mass (of the orbiting body, so in this case, the small moon).
+            \f[ a = \frac{f}{m} \f]
+            Composing the two, we get
+            \f[ \frac{v^2}{r} = \frac{f}{m} \f]
+            Solve for \f$v\f$:
+            \f[ v^2 = \frac{fr}{m} \f]
+            \f[ v = \sqrt{\frac{fr}{m}} \f]
+            @code */
+            Float orbital_speed = Math::Sqrt(gravitational_force * orbital_radius / moon->GetMass());
+            // The velocity must be perpendicular to the vector joining the
+            // centers of the planet and the moon.
             moon->SetVelocity(orbital_speed * Math::UnitVector(angle+90.0f));
+            // Finally add it to the world.
             AddDynamicObject(sprite, object_layer);
         }
     }
 
 protected:
 
+    /* @endcode
+    In our override of HandleFrame, we put the per-frame calculations necessary
+    for the gravitational simulation.  First, we iterate through all distinct
+    pairs of different entities and apply gravitational forces between them.
+    Then update the velocities (apply the forces accumulated during this frame),
+    and finally update the positions (based on the corresponding velocity values).
+    @code */
     virtual void HandleFrame ()
     {
         Uint32 entity_capacity = GetEntityCapacity();
 
-    /* @endcode
-
-    @code */
         // Apply gravitational forces between each distinct pair of entities.
         for (Uint32 i = 0; i < entity_capacity; ++i)
         {
@@ -264,10 +348,9 @@ protected:
 
                 ASSERT1(entity0 != entity1)
 
-    /* @endcode
-
-    @code */
-                Float gravitational_force = GetGravitationalForce(entity0, entity1);
+                // Use the helper function to calculate the gravitational force
+                // between the two entities.
+                Float gravitational_force = CalculateGravitationalForce(entity0, entity1);
                 ASSERT1(gravitational_force >= 0.0f)
                 // If the force is zero (which can happen when the entities'
                 // centers coincide and the gravitation equation would divide
@@ -283,9 +366,39 @@ protected:
             }
         }
 
-    /* @endcode
+        /* @endcode
+        The calculations for velocity based on acceleration and for position based
+        on velocity are using what's known as Euler Integration (see
+        http://en.wikipedia.org/wiki/Euler_integration and
+        http://en.wikipedia.org/wiki/Numerical_ordinary_differential_equations for
+        technical descriptions).  The general idea is that you have a frequently
+        changing value (e.g. velocity) which will be referred to as the principal,
+        and you have the rate at which the principal changes (e.g. acceleration)
+        which will be referred to as the derivative.  Euler Integration is a method
+        for updating the principal based on the derivative, using the the time-step
+        value (e.g. <tt>GetFrameDT()</tt>).  In the following, the time-step is
+        given by <tt>dt</tt>.
 
-    @code */
+        <tt>principal += derivative * dt</tt>
+
+        In this lesson, there are two integrations to perform: updating velocity
+        (the principal) using acceleration (the derivative), and updating position
+        (the principal) using velocity (the derivative).  It should be noted that
+        both of these values are vector-valued, and that the above and
+        above-referenced descriptions of Euler Integration appear to be
+        scalar-valued.  The derivative of a vector value is defined as a
+        component-wise derivative (the vector containing derivative of the
+        X-component and the derivative of the Y-component).  The time delta is
+        always scalar.
+
+        Believe it or not, by doing this, you're actually computing numeric
+        solutions for differential equations.  Euler Integration is a very simple
+        method for numeric integration, but is relatively inaccurate.  Fortunately
+        for the purposes of games, it works just fine.  For a more accurate method,
+        see http://en.wikipedia.org/wiki/Runge-Kutta_methods -- it is much more
+        complicated and difficult to implement, but if accuracy is a consideration
+        (e.g. in scientific computation) then it's worth it.
+        @code */
         // Update the velocity vector of each entity with the accumulated force
         // and update the position vector using the newly calculated velocity.
         for (Uint32 i = 0; i < entity_capacity; ++i)
@@ -295,8 +408,13 @@ protected:
                 continue;
 
             ASSERT1(entity->GetMass() > 0.0f)
+            // Use Euler Integration to calculate the new velocity, based on
+            // the accumulated force during this frame.
             entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
+            // Reset the accumulated force for next frame.
             entity->ResetForce();
+            // Use Euler Integration again to calculate the new position,
+            // based on the entity's velocity.
             entity->Translate(entity->GetVelocity() * GetFrameDT());
         }
     }
@@ -304,9 +422,18 @@ protected:
 private:
 
     /* @endcode
+    The following function is just a helper, useful in condensing a cluttery
+    equation down into a nice li'l old self-documenting function call.  The
+    returned value is the computed value of Newton's Law Of Universal
+    Gravitation:
 
+    \f[ F = G \frac{m_0 m_1}{r^2} \f]
+
+    See http://en.wikipedia.org/wiki/Gravitation for more info.  In order to
+    prevent a divide by zero, if the entities are too close (overlapping), the
+    return value is zero.
     @code */
-    Float GetGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
+    Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
     {
         ASSERT1(entity0 != NULL && entity1 != NULL)
         FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
@@ -489,7 +616,7 @@ int main (int argc, char **argv)
     <li>Reverse the direction the moon entities orbit the planet.</li>
     <li>Play with the value of m_gravitational_constant and see what the
         effects are (taking note of where it is used in computations).</li>
-    <li>Change the AwesomeWorld constructor so  all the moon entities spawn
+    <li>Change the AwesomeWorld constructor so all the moon entities spawn
         only on either the X or Y axes so they are initially arranged in a
         cross pattern, and see what happens.</li>
     <li>Change the gravitational system to be a binary planet system (i.e.
@@ -501,6 +628,20 @@ int main (int argc, char **argv)
         will experience a drifting effect (the system's center of gravity is
         not stationary). Correct this drifting so that the net momentum of the
         system is zero.</li>
+    <li>Add UI controls to change the world's gravitational constant and
+        the desired framerate.</li>
+    <li>Revert the planetary system back to the default single large planet
+        with many moons.  Change the desired framerate to something low such
+        as 5 frames per second and see what the effect on the numerical
+        integration is.</li>
+    <li><strong>Extra credit:</strong> Implement Runge-Kutta Integration (see
+        http://en.wikipedia.org/wiki/Runge-Kutta_methods for info) in addition
+        to the less accurate Euler Integration in AwesomeWorld::HandleFrame.
+        Make AwesomeWorld configurable as to which integration method should
+        be used, and make the SPACE key toggle the method (you will need to
+        override <tt>virtual bool ProcessKeyEvent (EventKey const *e)</tt> in
+        AwesomeWorldView).  See how the different integration methods perform
+        compared to each other at different framerates, especially low ones.</li>
     </ul>
 
 Thus concludes lesson05, you crazy almost-game-programming bastard, you.

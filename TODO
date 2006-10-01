@@ -100,7 +100,9 @@ TODO:
 - make ~World detach attached WorldViews?  WorldView would then have to
   detect if m_world is NULL or not.
 - in lesson04, make graphical representation of Engine2 design
-- lesson06 - collision detection and resolution via PhysicsHandler
+- lesson06 - moving gravitation code into PhysicsHandler and adding a background starfield
+- lesson07 - collision detection and resolution via PhysicsHandler
+- lesson08 - user input or further subclassing of Entity
 - add some sort of "MAKE_THIS_ENUM_UNSIGNED = 4000000000U" to all appropriate enums, and check
   if this works on compilers other than g++.  either that, or change all the asserts
   to reflect the potential that enums can be negative.
