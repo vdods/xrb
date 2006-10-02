@@ -26,6 +26,7 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>@ref lesson03 "Lesson 03 - Creating Your Own Customized GUI Widgets" - @ref lesson03_main.cpp "source code"</li>
     <li>@ref lesson04 "Lesson 04 - Creating A Game World With Static Objects" - @ref lesson04_main.cpp "source code"</li>
     <li>@ref lesson05 "Lesson 05 - Dynamic Objects For Fun And Profit" - @ref lesson05_main.cpp "source code"</li>
+    <li>@ref lesson06 "Lesson 06 - PhysicsHandler And Additional Object Layers" - @ref lesson06_main.cpp "source code"</li>
     </ul>
 <li>@ref philosophy "Programming Philosophy Pontification"</li>
     <ul>

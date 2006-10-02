@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// lesson05_main.cpp by Victor Dods, created 2006/08/06
+// lesson06_main.cpp by Victor Dods, created 2006/10/01
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -10,73 +10,56 @@
 
 
 // ///////////////////////////////////////////////////////////////////////////
-// Lesson 05 - Dynamic Objects For Fun And Profit
+// Lesson 06 - PhysicsHandler And Additional Object Layers
 // ///////////////////////////////////////////////////////////////////////////
 
 
-/** @page lesson05 Lesson 05 - Dynamic Objects For Fun And Profit
+/** @page lesson06 Lesson 06 - PhysicsHandler And Additional Object Layers
 @code *//* @endcode
-This lesson will show you how to make dynamic objects (game objects which can
-move and interact).  This will be done by subclassing @ref Xrb::Engine2::Entity
-and providing a game-specific implementation.  We will also have to subclass
-@ref Xrb::Engine2::World to provide the code to control its subordinate Entity
-objects.
+This lesson will
 
     <ul>
-    <li>@ref lesson05_main.cpp "This lesson's source code"</li>
+    <li>@ref lesson06_main.cpp "This lesson's source code"</li>
     <li>@ref lessons "Main lesson index"</li>
     </ul>
 
-In this lesson we will be creating an animated gravitational planet/moon
-system.  This will require us to subclass the pure virtual Engine2::Entity
-class with our own application-specific implementation, and to write code to
-update the positions of the game objects to simulate gravitation.  The latter
-will be in a custom subclass of Engine2::World.
+In this lesson, we will build upon the @ref lesson05 "previous lesson" by
+moving our physics code into an implementation of the pure virtual class
+@ref Xrb::Engine2::PhysicsHandler.
 
-Below, in the documentation for AwesomeWorld::HandleFrame, there is an
-explanation of Euler Integration, which is absolutely central to game
-programming.  Make sure not to skip it.
+Except for the very simplest cases (such as in this lesson), physics code gets
+very complicated.  Thus, through PhysicsHandler, it is separated out of the
+World class.  Another possibly more important reason for this separation is to
+provide an interface class by which games can implement their own
+application-specific physics behavior.  This leaves the World implementation
+to handle things like game flow/logic.
 
-First, more detail on Object and Entity and their relationship.
-
-As shown in the @ref lesson04 "previous lesson", Object is the physical,
-visible game object which has as its properties: position, scale and angle.
-By itself, it can't move or be interacted with.  Its subclasses implement its
-Draw method -- as of Sept 2006, Sprite and Compound.  Alone, this is referred
-to as a "static object" (as opposed to a "dynamic object"; see
-Xrb::Engine2::Object::GetIsDynamicObject).
-
-Entity (Xrb::Engine2::Entity) can be thought of as "imbuing a soul" upon
-Object.  Entity is a pure virtual class intended to be subclassed to add all
-the application-specific properties and code necessary for an interactive
-game object.  An Object and Entity are both instantiated, and then the Entity
-instance is attached to the Object instance, and which point, the Object
-instance is a "dynamic object".  The Entity baseclass doesn't provide any
-substance besides the bare minimum framework -- the actual form of the "soul"
-is completely up to the application-specific implementation.
-
-In this particular lesson, the application-specific properties we will add
-to our custom subclass of Entity are mass, velocity and accumulated force.
-These values will be used by the gravitation simulation code to update the
-position of each respective dynamic object.
-
-Our custom subclass of World will perform two functions: a one-time generation
-of the game world (a large planet and many orbiting moons), and once-per-frame
-calculations for the simulation of the gravitational system using the
-properties of each dynamic object in the World.
+We will only slightly build upon the previous lesson.  We will write our own
+custom implementation of PhysicsHandler, into which we will transplant the
+physics code from the previous lesson.  We will also make a simple addition
+of a background ObjectLayer which will contain a starfield, to demonstrate
+the parallaxing effect of WorldView.
 
 <strong>Procedural Overview</strong> -- Items in bold are additions/changes to the previous lesson.
 
     <ul>
     <li>Global declarations</li>
         <ul>
-        <li><strong>Declare subclass of Engine2::Entity specific to this app.</strong></li>
-        <li><strong>Declare subclass of Engine2::World specific to this app.</strong></li>
+        <li>Declare subclass of Engine2::Entity specific to this app.</li>
+        <li><strong>Declare subclass of Engine2::PhysicsHandler specific to this app.</strong></li>
             <ul>
-            <li><strong>The constructor will populate the game world.</strong></li>
+            <li><strong>Implement the pure virtual methods required by the
+                PhysicsHandler interface class.  These are AddObjectLayer,
+                SetMainObjectLayer, AddEntity and RemoveEntity.</strong></li>
             <li><strong>Override HandleFrame to do once-per-frame gravitational
                 simulation calculations and to update the velocities and positions
                 of the dynamic objects.</strong></li>
+            </ul>
+        <li>Declare subclass of Engine2::World specific to this app.</li>
+            <ul>
+            <li><strong>The constructor will instantiate the application-specific
+                PhysicsHandler and pass it to the superclass Engine2::World
+                constructor.</strong></li>
             </ul>
         <li>Declare subclass of Engine2::WorldView specific to this app.</li>
         </ul>
@@ -120,7 +103,10 @@ well enough, it was probably already explained in
 @code */
 #include "xrb.h"                         // Must be included in every source/header file.
 
+#include <set>                           // For use of the std::set template class.
+
 #include "xrb_engine2_objectlayer.h"     // For use of the Engine2::ObjectLayer class.
+#include "xrb_engine2_physicshandler.h"  // For use of the Engine2::PhysicsHandler class.
 #include "xrb_engine2_sprite.h"          // For use of the Engine2::Sprite class.
 #include "xrb_engine2_world.h"           // For use of the Engine2::World class.
 #include "xrb_engine2_worldview.h"       // For use of the Engine2::WorldView class.
@@ -134,18 +120,7 @@ well enough, it was probably already explained in
 
 using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
 
-/* @endcode
-There really isn't much to this subclass.  All we're actually doing is adding
-three properties and various accessors/modifiers for them.  The m_mass value is
-a scalar value representing the first moment of inertia as defined by Newtonian
-mechanics (e.g. 28 kilograms); the higher this value is, the heavier the object
-is, and the more gravity it applies to other objects.  The m_velocity value is
-the vector representing the change in position per second (i.e. the derivative
-of the position vector).  Finally, the m_force vector value is used by
-AwesomeWorld during each game loop to calculate the total accumulated force on
-each object; this value isn't actually a property of a body in Newtonian
-mechanics -- it's just a value used by our simulation code.
-@code */
+// AwesomeEntity remains unchanged relative to the @ref lesson05 "previous lesson".
 class AwesomeEntity : public Engine2::Entity
 {
 public:
@@ -226,46 +201,250 @@ private:
 }; // end of class AwesomeEntity
 
 /* @endcode
-Our custom subclass of World will do the two things mentioned above: create
-the game world and populate it with objects, and handle per-frame gravitational
-simulation calculations.
+PhysicsHandler can be thought of as having a very simple relationship with
+World.  It tracks two things: ObjectLayer and Entity.  Any time an
+ObjectLayer is added to the world, it lets the PhysicsHandler know.  Any time
+an Entity is added or removed from the world, it lets the PhysicsHandler know.
+The only other consideration is that World will call ProcessFrame on the
+PhysicsHandler, so that all physics code has a chance to run once per frame
+in HandleFrame.
+
+The only thing provided by the PhysicsHandler baseclass is a pointer to the
+World which owns it.  The rest is a blank slate on which a programmer can
+implement whatever retarded designs they see fit.
+
+In this lesson, we will yank the physics code out of the previous lesson's
+AwesomeWorld::HandleFrame and dump it, functionally unchanged, into
+AwesomePhysicsHandler::HandleFrame.  The physics behavior as seen by
+the user will not change.
 @code */
+class AwesomePhysicsHandler : public Engine2::PhysicsHandler
+{
+public:
+
+    // The constructor initializes m_gravitational_constant.
+    AwesomePhysicsHandler (Float gravitational_constant)
+        :
+        Engine2::PhysicsHandler(),
+        m_gravitational_constant(gravitational_constant)
+    { }
+    // The destructor will just assert that there are no remaining entities.
+    virtual ~AwesomePhysicsHandler ()
+    {
+        ASSERT1(m_entity_set.empty())
+    }
+
+    // Trivial accessor for m_gravitational_constant.
+    inline Float GetGravitationalConstant () const { return m_gravitational_constant; }
+    // Helper function to calculate Newton's Law Of Universal Gravitation.
+    Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
+    {
+        ASSERT1(entity0 != NULL && entity1 != NULL)
+        FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
+        Float distance = entity_offset.GetLength();
+        // If they're touching, don't apply gravitational force (this
+        // is to avoid a divide by zero if their positions coincide).
+        if (distance < entity0->GetScaleFactor() + entity1->GetScaleFactor())
+            return 0.0f;
+        else
+            return
+                m_gravitational_constant *
+                entity0->GetMass() * entity1->GetMass() /
+                (distance * distance);
+    }
+
+    /* @endcode
+    These two virtual methods are provided to indicate all created ObjectLayers
+    to the PhysicsHandler, so that if desired in a particular implementation,
+    physics calculations can be handled separately for different ObjectLayers.
+    For example, in a game with ground and sky layers, the objects on the
+    ground should not collide with the objects in the sky.  Determining which
+    ObjectLayer an Entity belongs to is done in AddEntity and RemoveEntity
+    (see below).
+
+    In this lesson, we assume that all entities will be in the foreground
+    ObjectLayer, so we will not track ObjectLayers.
+    @code */
+    virtual void AddObjectLayer (Engine2::ObjectLayer *object_layer) { }
+    virtual void SetMainObjectLayer (Engine2::ObjectLayer *object_layer) { }
+
+    /* @endcode
+    This method is called by the World object when a dynamic object is added.
+    This is necessary because because the PhysicsHandler is responsible for
+    tracking entities on its own.
+
+    In this lesson, we are keeping a std::set of all added entities.  The
+    std::set template class was chosen because adding/removing elements is
+    O(log(n)).
+    @code */
+    virtual void AddEntity (Engine2::Entity *entity)
+    {
+        ASSERT1(entity != NULL)
+        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL)
+        m_entity_set.insert(static_cast<AwesomeEntity *>(entity));
+    }
+    /* @endcode
+    The removal analog to AddEntity.  This method is provided so the
+    PhysicsHandler can clean up its own entity-tracking when a dynamic
+    object is removed from the World.
+    @code */
+    virtual void RemoveEntity (Engine2::Entity *entity)
+    {
+        ASSERT1(entity != NULL)
+        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL)
+        ASSERT1(m_entity_set.find(static_cast<AwesomeEntity *>(entity)) != m_entity_set.end())
+        m_entity_set.erase(static_cast<AwesomeEntity *>(entity));
+    }
+
+protected:
+
+    /* @endcode
+    The physics code that was in AwesomeWorld::HandleFrame in the
+    @ref lesson05 "previous lesson" has been moved into this method, with the
+    for-loop iteration changed to accomodate the std::set which stores the
+    entities being tracked by this PhysicsHandler.
+    @code */
+    virtual void HandleFrame ()
+    {
+        EntitySetIterator it_end = m_entity_set.end();
+
+        // Apply gravitational forces between each distinct pair of entities.
+        for (EntitySetIterator it0 = m_entity_set.begin();
+             it0 != it_end;
+             ++it0)
+        {
+            AwesomeEntity *entity0 = *it0;
+            ASSERT1(entity0 != NULL)
+
+            for (EntitySetIterator it1 = it0;
+                 it1 != it_end;
+                 ++it1)
+            {
+                AwesomeEntity *entity1 = *it1;
+                ASSERT1(entity1 != NULL)
+
+                // Skip this calculation if the pair is an entity with itself.
+                if (entity0 == entity1)
+                    continue;
+
+                // Use the helper function to calculate the gravitational force
+                // between the two entities.
+                Float gravitational_force = CalculateGravitationalForce(entity0, entity1);
+                ASSERT1(gravitational_force >= 0.0f)
+                // If the force is zero (which can happen when the entities'
+                // centers coincide and the gravitation equation would divide
+                // by zero), skip this entity pair.
+                if (gravitational_force == 0.0f)
+                    continue;
+
+                // The gravitational force is from entity0 to entity1
+                FloatVector2 force_direction = (entity1->GetTranslation() - entity0->GetTranslation()).GetNormalization();
+                // Apply equal and opposite gravitational force to both entities.
+                entity0->IncrementForce( gravitational_force * force_direction);
+                entity1->IncrementForce(-gravitational_force * force_direction);
+            }
+        }
+
+        // Update the velocity vector of each entity with the accumulated force
+        // and update the position vector using the newly calculated velocity.
+        for (EntitySetIterator it = m_entity_set.begin();
+             it != it_end;
+             ++it)
+        {
+            AwesomeEntity *entity = *it;
+            ASSERT1(entity != NULL)
+
+            ASSERT1(entity->GetMass() > 0.0f)
+            // Use Euler Integration to calculate the new velocity, based on
+            // the accumulated force during this frame.
+            entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
+            // Reset the accumulated force for next frame.
+            entity->ResetForce();
+            // Use Euler Integration again to calculate the new position,
+            // based on the entity's velocity.
+            entity->Translate(entity->GetVelocity() * GetFrameDT());
+        }
+    }
+
+private:
+
+    typedef std::set<AwesomeEntity *> EntitySet;
+    typedef EntitySet::iterator EntitySetIterator;
+
+    EntitySet m_entity_set;
+    Float m_gravitational_constant;
+}; // end of class AwesomePhysicsHandler
+
 class AwesomeWorld : public Engine2::World
 {
 public:
 
     /* @endcode
-    The constructor will create the single ObjectLayer to contain all the
-    objects which will be created next.  The dynamic objects which will
-    populate the game world will each be a Sprite instance and AwesomeEntity
-    instance pair.  A large, heavy "planet" and many small, light "moons" will
-    be created.  The moons' positions and velocities will be initialized to
-    put them into circular orbit of the larger planet using Kepler's 3rd law.
-    The scalar member value m_gravitational_constant is the symbol G in the
-    Newtonian equation for gravitational force between two bodies.
+    The difference in this constructor from the @ref lesson05 "previous lesson"
+    is that a background ObjectLayer, populated with "stars" is created before
+    the foreground ObjectLayer.  The Z depth of the layer is set to a high value
+    so that the parallax effect is noticeable.  The Z depth causes the ObjectLayer
+    to appear close up/far away, so changing the size of the ObjectLayer itself
+    is sometimes necessary to get the effect you want.  In this case, since the
+    layer is far off in the distance, its size has been set to a large value
+    relative to the foreground layer.
+
+    Also notice that the superclass constructor is being passed a new'ed
+    instance of AwesomePhysicsHandler.  This is the PhysicsHandler implementation
+    which will be passed all Entity instances which are added to the world
+    and whose responsibility is to update their application-specific
+    functionality -- not just position/velocity/etc but also any "think"
+    functions which may be implemented through Entity, and other things of
+    that type.
     @code */
     AwesomeWorld ()
         :
-        Engine2::World(NULL),
-        m_gravitational_constant(60.0f)
+        Engine2::World(new AwesomePhysicsHandler(60.0f))
     {
         // At this point, the world is empty.
 
-        // Decide some size for the ObjectLayer (the hardcoded scale factors
-        // and translations below are loosely dependent on this value).
-        static Float const s_object_layer_side_length = 2000.0f;
-        // Create the ObjectLayer which will hold our game objects.
-        Engine2::ObjectLayer *object_layer =
+        Float object_layer_side_length;
+        Engine2::ObjectLayer *object_layer;
+        Engine2::Sprite *sprite;
+
+        // Here we will create an ObjectLayer to contain the starfield
+        // which will constitute the background.
+        object_layer_side_length = 10000.0f;
+        object_layer =
             Engine2::ObjectLayer::Create(
-                this,                       // owner world
-                false,                      // not wrapped
-                s_object_layer_side_length, // side length
-                6,                          // visibility quad tree depth
-                0.0f);                      // z depth
+                this,                     // owner world
+                false,                    // not wrapped
+                object_layer_side_length, // side length
+                6,                        // visibility quad tree depth
+                1000.0f);                 // z depth
+        AddObjectLayer(object_layer);
+
+        // Add a bunch of "star" sprites.
+        static Uint32 const s_star_count = 100;
+        for (Uint32 i = 0; i < s_star_count; ++i)
+        {
+            sprite = Engine2::Sprite::Create("resources/shade0_small.png");
+            sprite->SetScaleFactor(Math::RandomFloat(0.0016f, 0.0024f) * object_layer_side_length);
+            sprite->SetTranslation(
+                object_layer_side_length *
+                FloatVector2(
+                    Math::RandomFloat(-0.5f, 0.5f),
+                    Math::RandomFloat(-0.5f, 0.5f)));
+            AddStaticObject(sprite, object_layer);
+        }
+
+        // Create the ObjectLayer which will hold our game objects.
+        object_layer_side_length = 2000.0f;
+        object_layer =
+            Engine2::ObjectLayer::Create(
+                this,                     // owner world
+                false,                    // not wrapped
+                object_layer_side_length, // side length
+                6,                        // visibility quad tree depth
+                0.0f);                    // z depth
         AddObjectLayer(object_layer);
         SetMainObjectLayer(object_layer);
 
-        Engine2::Sprite *sprite;
         AwesomeEntity *planet;
 
         // Create a large, heavy planet.
@@ -299,18 +478,8 @@ public:
             // In order to figure out what speed to use to set the moon into
             // circular orbit, we need to know the magnitude of the gravitational
             // force between it and the large planet.
-            Float gravitational_force = CalculateGravitationalForce(planet, moon);
-            /* @endcode
-            We will solve for the necessary orbital speed by using Kepler's Third Law; let \f$v\f$ be scalar orbital velocity (speed), \f$r\f$ be the distance between the centers of the two bodies, and \f$a\f$ be scalar acceleration.
-            \f[ \frac{v^2}{r} = a \f]
-            We must also replace \f$a\f$ by known quantities.  This can be done using Newton's Second Law; let \f$a\f$ be scalar acceleration, \f$f\f$ be scalar force (magnitude of the force vector), and \f$m\f$ be mass (of the orbiting body, so in this case, the small moon).
-            \f[ a = \frac{f}{m} \f]
-            Composing the two, we get
-            \f[ \frac{v^2}{r} = \frac{f}{m} \f]
-            Solve for \f$v\f$:
-            \f[ v^2 = \frac{fr}{m} \f]
-            \f[ v = \sqrt{\frac{fr}{m}} \f]
-            @code */
+            Float gravitational_force = GetPhysicsHandler()->CalculateGravitationalForce(planet, moon);
+            // Solve for the necessary orbital speed using Kepler's Third Law.
             Float orbital_speed = Math::Sqrt(gravitational_force * orbital_radius / moon->GetMass());
             // The velocity must be perpendicular to the vector joining the
             // centers of the planet and the moon.
@@ -322,147 +491,28 @@ public:
 
 protected:
 
+    // Trivial accessor to retrieve a pointer to the World's AwesomePhysicsHandler.
+    inline AwesomePhysicsHandler *GetPhysicsHandler () { return dynamic_cast<AwesomePhysicsHandler *>(m_physics_handler); }
+
     /* @endcode
-    In our override of HandleFrame, we put the per-frame calculations necessary
-    for the gravitational simulation.  First, we iterate through all distinct
-    pairs of different entities and apply gravitational forces between them.
-    Then update the velocities (apply the forces accumulated during this frame),
-    and finally update the positions (based on the corresponding velocity values).
+    Since we have moved all the physics code into the HandleFrame method of
+    AwesomePhysicsHandler, we no longer need to do it here.  However, this is
+    where you could put game flow/logic code (e.g. spawning ships, incrementing
+    a player's score, etc).
     @code */
     virtual void HandleFrame ()
     {
-        Uint32 entity_capacity = GetEntityCapacity();
-
-        // Apply gravitational forces between each distinct pair of entities.
-        for (Uint32 i = 0; i < entity_capacity; ++i)
-        {
-            AwesomeEntity *entity0 = dynamic_cast<AwesomeEntity *>(GetEntity(i));
-            if (entity0 == NULL)
-                continue;
-
-            for (Uint32 j = i+1; j < entity_capacity; ++j)
-            {
-                AwesomeEntity *entity1 = dynamic_cast<AwesomeEntity *>(GetEntity(j));
-                if (entity1 == NULL)
-                    continue;
-
-                ASSERT1(entity0 != entity1)
-
-                // Use the helper function to calculate the gravitational force
-                // between the two entities.
-                Float gravitational_force = CalculateGravitationalForce(entity0, entity1);
-                ASSERT1(gravitational_force >= 0.0f)
-                // If the force is zero (which can happen when the entities'
-                // centers coincide and the gravitation equation would divide
-                // by zero), skip this entity pair.
-                if (gravitational_force == 0.0f)
-                    continue;
-
-                // The gravitational force is from entity0 to entity1
-                FloatVector2 force_direction = (entity1->GetTranslation() - entity0->GetTranslation()).GetNormalization();
-                // Apply equal and opposite gravitational force to both entities.
-                entity0->IncrementForce( gravitational_force * force_direction);
-                entity1->IncrementForce(-gravitational_force * force_direction);
-            }
-        }
-
-        /* @endcode
-        The calculations for velocity based on acceleration and for position based
-        on velocity are using what's known as Euler Integration (see
-        http://en.wikipedia.org/wiki/Euler_integration and
-        http://en.wikipedia.org/wiki/Numerical_ordinary_differential_equations for
-        technical descriptions).  The general idea is that you have a frequently
-        changing value (e.g. velocity) which will be referred to as the principal,
-        and you have the rate at which the principal changes (e.g. acceleration)
-        which will be referred to as the derivative.  Euler Integration is a method
-        for updating the principal based on the derivative, using the the time-step
-        value (e.g. <tt>GetFrameDT()</tt>).  In the following, the time-step is
-        given by <tt>dt</tt>.
-
-        <tt>principal += derivative * dt</tt>
-
-        In this lesson, there are two integrations to perform: updating velocity
-        (the principal) using acceleration (the derivative), and updating position
-        (the principal) using velocity (the derivative).  It should be noted that
-        both of these values are vector-valued, and that the above and
-        above-referenced descriptions of Euler Integration appear to be
-        scalar-valued.  The derivative of a vector value is defined as a
-        component-wise derivative (the vector containing derivative of the
-        X-component and the derivative of the Y-component).  The time delta is
-        always scalar.
-
-        Believe it or not, by doing this, you're actually computing numeric
-        solutions for differential equations.  Euler Integration is a very simple
-        method for numeric integration, but is relatively inaccurate.  Fortunately
-        for the purposes of games, it works just fine.  For a more accurate method,
-        see http://en.wikipedia.org/wiki/Runge-Kutta_methods -- it is much more
-        complicated and difficult to implement, but if accuracy is a consideration
-        (e.g. in scientific computation) then it's worth it.
-        @code */
-        // Update the velocity vector of each entity with the accumulated force
-        // and update the position vector using the newly calculated velocity.
-        for (Uint32 i = 0; i < entity_capacity; ++i)
-        {
-            AwesomeEntity *entity = dynamic_cast<AwesomeEntity *>(GetEntity(i));
-            if (entity == NULL)
-                continue;
-
-            ASSERT1(entity->GetMass() > 0.0f)
-            // Use Euler Integration to calculate the new velocity, based on
-            // the accumulated force during this frame.
-            entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
-            // Reset the accumulated force for next frame.
-            entity->ResetForce();
-            // Use Euler Integration again to calculate the new position,
-            // based on the entity's velocity.
-            entity->Translate(entity->GetVelocity() * GetFrameDT());
-        }
-
-        /* @endcode
-        You must always call the superclass' HandleFrame method, as it performs
-        vital processing -- specifically of the EventQueue and PhysicsHandler,
-        which will be covered in a later lesson.
-        @code */
+        // You must always call the superclass' HandleFrame method, as it
+        // performs vital processing -- specifically of the EventQueue and
+        // PhysicsHandler, which will be covered in a later lesson.
         Engine2::World::HandleFrame();
     }
-
-private:
-
-    /* @endcode
-    The following function is just a helper, useful in condensing a cluttery
-    equation down into a nice li'l old self-documenting function call.  The
-    returned value is the computed value of Newton's Law Of Universal
-    Gravitation:
-
-    \f[ F = G \frac{m_0 m_1}{r^2} \f]
-
-    See http://en.wikipedia.org/wiki/Gravitation for more info.  In order to
-    prevent a divide by zero, if the entities are too close (overlapping), the
-    return value is zero.
-    @code */
-    Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
-    {
-        ASSERT1(entity0 != NULL && entity1 != NULL)
-        FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
-        Float distance = entity_offset.GetLength();
-        // If they're touching, don't apply gravitational force (this
-        // is to avoid a divide by zero if their positions coincide).
-        if (distance < entity0->GetScaleFactor() + entity1->GetScaleFactor())
-            return 0.0f;
-        else
-            return
-                m_gravitational_constant *
-                entity0->GetMass() * entity1->GetMass() /
-                (distance * distance);
-    }
-
-    Float m_gravitational_constant;
 }; // end of class AwesomeWorld
 
 /* @endcode
-Here is our totally awesome customized WorldView which is the same as the one
-explained in the @ref lesson04 "previous lesson".
+The rest of the code is identical to the previous lesson.
 @code */
+// AwesomeWorldView is unchanged relative to the previous lesson.
 class AwesomeWorldView : public Engine2::WorldView
 {
 public:
@@ -528,7 +578,7 @@ int main (int argc, char **argv)
 
     // Initialize engine singletons, set window caption and create the Screen.
     Singletons::Initialize("none");
-    SDL_WM_SetCaption("XuqRijBuh Lesson 05", "");
+    SDL_WM_SetCaption("XuqRijBuh Lesson 06", "");
     Screen *screen = Screen::Create(800, 600, 32, 0);
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
@@ -553,9 +603,7 @@ int main (int argc, char **argv)
         world_view->SetZoomFactor(0.002f);
         // Attach the newly created WorldView to the World object.
         world->AttachWorldView(world_view);
-        /* @endcode
-        Below, the game loop remains unchanged relative to the @ref lesson04 "previous lesson".
-        @code */
+
         // These values will be used below in the framerate control code.
         Float current_real_time = 0.0f;
         Float next_real_time = 0.0f;
@@ -613,43 +661,15 @@ int main (int argc, char **argv)
 <strong>Exercises</strong>
 
     <ul>
-    <li>In the AwesomeWorld constructor, double the orbital speed for each
-        moon so they fly out of orbit and smash into the side of the
-        ObjectLayer and see what happens.</li>
-    <li>Make entities which hit the sides of the ObjectLayer bounce back by
-        changing AwesomeEntity::HandleObjectLayerContainment and see what
-        happens.  Change it again so the entities bounce back inelastically
-        (losing velocity after each bounce).</li>
-    <li>Reverse the direction the moon entities orbit the planet.</li>
-    <li>Play with the value of m_gravitational_constant and see what the
-        effects are (taking note of where it is used in computations).</li>
-    <li>Change the AwesomeWorld constructor so all the moon entities spawn
-        only on either the X or Y axes so they are initially arranged in a
-        cross pattern, and see what happens.</li>
-    <li>Change the gravitational system to be a binary planet system (i.e.
-        two heavy planets orbiting one another, with many lighter moons
-        orbiting at a safe distance.</li>
-    <li>In the AwesomeWorld constructor, spawn only a single moon and a single
-        planet, and make the mass of the moon and planet similar to one another.
-        The net momentum of the gravitational system will not be zero, and it
-        will experience a drifting effect (the system's center of gravity is
-        not stationary). Correct this drifting so that the net momentum of the
-        system is zero.</li>
-    <li>Add UI controls to change the world's gravitational constant and
-        the desired framerate.</li>
-    <li>Revert the planetary system back to the default single large planet
-        with many moons.  Change the desired framerate to something low such
-        as 5 frames per second and see what the effect on the numerical
-        integration is.</li>
-    <li><strong>Extra credit:</strong> Implement Runge-Kutta Integration (see
-        http://en.wikipedia.org/wiki/Runge-Kutta_methods for info) in addition
-        to the less accurate Euler Integration in AwesomeWorld::HandleFrame.
-        Make AwesomeWorld configurable as to which integration method should
-        be used, and make the SPACE key toggle the method (you will need to
-        override <tt>virtual bool ProcessKeyEvent (EventKey const *e)</tt> in
-        AwesomeWorldView).  See how the different integration methods perform
-        compared to each other at different framerates, especially low ones.</li>
+    <li>Left-click and drag the view around to see the parallaxing effect
+        between the two ObjectLayers.</li>
+    <li>Add more starfield ObjectLayers at different z depths</li>
+    <li>Using file "resources/explosion1a_small.png" as nebulae, add a
+        foreground nebula field with an ObjectLayer Z depth of a negative
+        value which will put it in front of the main object layer.
+        Move the view around and see the effect.  Now zoom the view in
+        and out and see what the effect is on the nebula layer.</li>
     </ul>
 
-Thus concludes lesson05, you crazy almost-game-programming bastard, you.
+Thus concludes lesson06.  \f$ \displaystyle \sum_{i=0}^{6}lesson_{i}\approx0 \f$
 */
