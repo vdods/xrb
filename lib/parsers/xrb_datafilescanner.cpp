@@ -46,7 +46,6 @@ Uint32 GetHexidecimalDigitValue (char c)
 DataFileScanner::DataFileScanner ()
 {
     m_line_number = 0;
-    m_in_preamble = true;
     m_were_warnings_encountered = false;
     m_were_errors_encountered = false;
 }
@@ -68,7 +67,6 @@ bool DataFileScanner::Open (std::string const &input_filename)
         m_input_filename.clear();
     m_text.clear();
     m_line_number = 1;
-    m_in_preamble = true;
     m_were_warnings_encountered = false;
     m_were_errors_encountered = false;
     return m_input.is_open();

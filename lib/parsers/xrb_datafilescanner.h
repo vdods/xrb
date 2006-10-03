@@ -74,7 +74,6 @@ private:
     std::ifstream m_input;
     std::string m_text;
     Uint32 m_line_number;
-    bool m_in_preamble;
     bool m_were_warnings_encountered;
     bool m_were_errors_encountered;
 }; // end of class DataFileScanner
