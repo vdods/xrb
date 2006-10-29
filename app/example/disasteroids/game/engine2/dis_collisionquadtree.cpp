@@ -591,7 +591,7 @@ void CollisionQuadTree::CollideEntity (
             collision_normal = P.GetNormalization();
         Float collision_force = 0.0f;
 
-        if ((V | P) < 0.0f && // and if they're moving toward each other
+        if ((V | P) < 0.0f && // and if the distance between the two is closing
             entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
             other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
             Entity::GetShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
@@ -689,7 +689,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
         collision_normal = P.GetNormalization();
     Float collision_force = 0.0f;
 
-    if ((V | P) < 0.0f && // and if they're moving toward each other
+    if ((V | P) < 0.0f && // and if the distance between the two is closing
         m_entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
         other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
         Entity::GetShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule

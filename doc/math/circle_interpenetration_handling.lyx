@@ -1,0 +1,321 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+Victor Dods
+\layout Standard
+
+Let 
+\begin_inset Formula $\hat{P}_{0}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{P}_{1}$
+\end_inset 
+
+ be the position vectors of objects 0 and 1 respectively.
+ Let 
+\begin_inset Formula $\hat{V}_{0}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{V}_{1}$
+\end_inset 
+
+ be the velocity vectors of the respective objects.
+ Let 
+\begin_inset Formula $m_{0}$
+\end_inset 
+
+ and 
+\begin_inset Formula $m_{1}$
+\end_inset 
+
+ be the scalar mass values for the objects.
+ Let 
+\begin_inset Formula $\hat{N}$
+\end_inset 
+
+ be the unit-length normalized vector between the centers of the circles
+ (pointing from object 1 towards object 0); 
+\begin_inset Formula $\frac{\hat{P}_{0}-\hat{P}_{1}}{\left\Vert \hat{P}_{0}-\hat{P}_{1}\right\Vert }$
+\end_inset 
+
+ -- this is the collision's 
+\begin_inset Quotes eld
+\end_inset 
+
+normal vector
+\begin_inset Quotes erd
+\end_inset 
+
+.
+ Let 
+\begin_inset Formula $d$
+\end_inset 
+
+ be the timestep over which this collision is to be resolved (i.e.
+ the frame length of the physics simulation).
+ Let 
+\begin_inset Formula $R$
+\end_inset 
+
+ be the sum of the radii of the two circles.
+ Finally, let 
+\begin_inset Formula $f$
+\end_inset 
+
+ be the magnitude of the force on object 0 in the normal direction, 
+\begin_inset Formula $f\hat{N}$
+\end_inset 
+
+, to be applied to resolve the collision (a force of 
+\begin_inset Formula $-f\hat{N}$
+\end_inset 
+
+ should be applied to object 1.
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \left[\hat{P_{0}}+d\left(\hat{V_{0}}+\frac{df\hat{N}}{m_{0}}\right)\right]-\left[\hat{P_{1}}+d\left(\hat{V_{1}}-\frac{df\hat{N}}{m_{1}}\right)\right]\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \left[\hat{P_{0}}+d\hat{V_{0}}+\frac{d^{2}f\hat{N}}{m_{0}}\right]-\left[\hat{P_{1}}+d\hat{V_{1}}-\frac{d^{2}f\hat{N}}{m_{1}}\right]\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{P_{0}}+d\hat{V_{0}}+\frac{d^{2}f\hat{N}}{m_{0}}-\hat{P_{1}}-d\hat{V_{1}}+\frac{d^{2}f\hat{N}}{m_{1}}\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{P_{0}}-\hat{P_{1}}+d\hat{V_{0}}-d\hat{V_{1}}+\frac{d^{2}f\hat{N}}{m_{0}}+\frac{d^{2}f\hat{N}}{m_{1}}\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \left(\hat{P_{0}}-\hat{P_{1}}\right)+d\left(\hat{V_{0}}-\hat{V_{1}}\right)+d^{2}f\hat{N}\left(\frac{1}{m_{0}}+\frac{1}{m_{1}}\right)\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+Let 
+\begin_inset Formula $M=\frac{1}{m_{0}}+\frac{1}{m_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{P}=\hat{P_{0}}-\hat{P_{1}}$
+\end_inset 
+
+ and 
+\begin_inset Formula $\hat{V}=\hat{V_{0}}-\hat{V_{1}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \hat{P}+d\hat{V}+d^{2}fM\hat{N}\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+Solve for 
+\begin_inset Formula $f$
+\end_inset 
+
+ .
+\layout Standard
+
+
+\begin_inset Formula \[
+\left\Vert \left(\hat{P}+d\hat{V}\right)+d^{2}fM\hat{N}\right\Vert =R\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left[\left(\hat{P}+d\hat{V}\right)+d^{2}fM\hat{N}\right]\cdot\left[\left(\hat{P}+d\hat{V}\right)+d^{2}fM\hat{N}\right]=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left(\hat{P}+d\hat{V}\right)\cdot\left(\hat{P}+d\hat{V}\right)+2\left(\hat{P}+d\hat{V}\right)\cdot\left(d^{2}fM\hat{N}\right)+\left(d^{2}fM\hat{N}\right)\cdot\left(d^{2}fM\hat{N}\right)=R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\left[d^{4}M^{2}\left(\hat{N}\cdot\hat{N}\right)\right]f^{2}+\left[2d^{2}M\left(\hat{P}+d\hat{V}\right)\cdot\hat{N}\right]f+\left[\left(\hat{P}+d\hat{V}\right)\cdot\left(\hat{P}+d\hat{V}\right)-R^{2}\right]=0\]
+
+\end_inset 
+
+
+\layout Standard
+
+Use the quadratic equation with:
+\layout Standard
+
+
+\begin_inset Formula \[
+a=d^{4}M^{2}\left(\hat{N}\cdot\hat{N}\right)\qquad b=2d^{2}M\left(\hat{P}+d\hat{V}\right)\cdot\hat{N}\qquad c=\left(\hat{P}+d\hat{V}\right)\cdot\left(\hat{P}+d\hat{V}\right)-R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+f=\frac{-b\pm\sqrt{b^{2}-4ac}}{2a}\]
+
+\end_inset 
+
+
+\layout Standard
+
+The (possibly) least-number-of-computations way to do it:
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{P}=\hat{P}_{0}-\hat{P}_{1}\qquad\hat{V}=\hat{V}_{0}-\hat{V}_{1}\qquad M=\frac{1}{m_{0}}+\frac{1}{m_{1}}\qquad\hat{N}=\frac{\hat{P}}{\sqrt{\hat{P}\cdot\hat{P}}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{Q}=\hat{P}+d\hat{V}\qquad e=d^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a=e^{2}M^{2}\left(\hat{N}\cdot\hat{N}\right)\qquad b=2eM\left(\hat{Q}\cdot\hat{N}\right)\qquad c=\left(\hat{Q}\cdot\hat{Q}\right)-R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Or this might be better:
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{P}=\hat{P}_{0}-\hat{P}_{1}\qquad\hat{V}=\hat{V}_{0}-\hat{V}_{1}\qquad M=\frac{1}{m_{0}}+\frac{1}{m_{1}}\qquad\hat{N}=\frac{\hat{P}}{\sqrt{\hat{P}\cdot\hat{P}}}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+\hat{X}=d^{2}M\hat{N}\qquad\hat{Y}=\hat{P}+d\hat{V}\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula \[
+a=\hat{X}\cdot\hat{X}\qquad b=2\hat{X}\cdot\hat{Y}\qquad c=\hat{Y}\cdot\hat{Y}-R^{2}\]
+
+\end_inset 
+
+
+\layout Standard
+
+Once you have 
+\begin_inset Formula $a$
+\end_inset 
+
+, 
+\begin_inset Formula $b$
+\end_inset 
+
+, and 
+\begin_inset Formula $c$
+\end_inset 
+
+, check the value of 
+\begin_inset Formula $b^{2}-4ac$
+\end_inset 
+
+.
+ If it is less than zero, then don't proceed (it probably means there was
+ no collision in the first place, or something is otherwise wrong).
+ If it is greater or equal to zero, then continue using the quadratic equation
+ to solve for 
+\begin_inset Formula $f$
+\end_inset 
+
+.
+\the_end

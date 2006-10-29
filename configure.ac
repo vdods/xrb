@@ -1,7 +1,6 @@
-AC_INIT(configure.ac)
-
+AC_INIT(XuqRijBuh, 0.1, victor.dods@gmail.com, xuqrijbuh)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(xuqrijbuh, 0.1)
+AM_INIT_AUTOMAKE
 
 # C++ stuff
 AC_LANG_CPLUSPLUS
