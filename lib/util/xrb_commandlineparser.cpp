@@ -30,7 +30,7 @@ void CommandLineParser::Parse (Sint32 argc, char const *const *argv)
         {
             ASSERT1(*argv != NULL)
             char const *arg = *argv;
-            if (*arg == '-')
+            if (*arg == '-' && arg != std::string("-") && arg != std::string("--"))
             {
                 ++arg;
 

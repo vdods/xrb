@@ -36,7 +36,19 @@ OPENGL CONVERSION TASKS:
   glFog
 
 DISASTEROIDS:
+** bugs **
+- when setting fullscreen from the commandline, the options menu 
+  fullscreen checkbox isn't checked.
+- the gauss gun damage location appears to be wrong (on exactly
+  the opposite side of the damagee).
 ** feature-related **
+- secondary fire for EMP -- ambient tractor beam
+- grenade merging -- if 2 grenades (from same owner) touch, they merge
+  into a grenade twice as heavy, and more than twice as powerful.
+- forget the 4x item status screen.  upgrading should be one way,
+  and the inventory should just show what level item it is.
+- limited number of active missiles at any given time
+- add key to dump shields into power cells
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
@@ -91,6 +103,9 @@ DISASTEROIDS:
   don't work in disasteroids)
 
 TODO:
+- in ASSERT macros (and any macro that uses a code block), use
+  "do { ... } while (false)" so it'll work like a normal statement.
+- stop using typedef'd iterators, just use ::iterator and ::const_iterator
 - create consistent way to set z depth for non-transparent stuff so they're
   actually unique z depth values for each object.  maybe encode some sort
   of index into the least significant bits of the depth Float.
