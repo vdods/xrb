@@ -1082,13 +1082,13 @@ subsection{Second Moment Of Inertia Tensor}
 \series bold
 Definition: Second Moment Of Inertia Tensor
 \series default
- is a diagonalizable matrix which defines the relation between angular momentum
- and angular velocity.
- Let 
+ is a symmetric (and thus orthogonally diagonalizable) matrix which defines
+ the relation between angular momentum and angular velocity.
+ Let this matrix be 
 \begin_inset Formula $\mathbf{M}$
 \end_inset
 
- be this matrix, and it will be hereafter referred to as the 
+, and it will be hereafter referred to as the 
 \series bold
 inertia tensor
 \series default
@@ -1107,8 +1107,8 @@ inertia tensor
 \begin_layout Standard
 To develop an intuition for the inertia tensor, it is useful to explore
  some of its properties.
- As mentioned above, the matrix is diagonalizable.
- This means there exists an invertible matrix 
+ As mentioned above, the matrix is orthogonally diagonalizable.
+ This means there exists an orthogonal matrix 
 \begin_inset Formula $\mathbf{T}$
 \end_inset
 
@@ -1116,7 +1116,7 @@ To develop an intuition for the inertia tensor, it is useful to explore
 \begin_inset Formula $\mathbf{D}=\mathbf{T}^{-1}\mathbf{M}\mathbf{T}$
 \end_inset
 
- is a diagonal matrix.
+ is diagonal.
  
 \begin_inset Formula $\mathbf{D}$
 \end_inset
@@ -1244,6 +1244,20 @@ Definition: Rotational Kinetic Energy
 \begin_layout Standard
 \begin_inset Formula \[
 E_{r}=\frac{1}{2}\hat{\omega}\cdot\left(\mathbf{M}\hat{\omega}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+%TODO: prove that E_r is always non-negative
+\end_layout
 
 \end_inset
 
@@ -2103,7 +2117,7 @@ An unknown scalar
 \begin_inset Formula $q_{k}$
 \end_inset
 
- scale a normalized torque vector 
+ scale a torque vector 
 \begin_inset Formula $\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)$
 \end_inset
 
@@ -2291,6 +2305,20 @@ for some
 \end_layout
 
 \begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+%TODO: prove that this assumption is valid
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 The case where 
 \begin_inset Formula $\left(\hat{g_{1}}-\hat{R}\right)$
 \end_inset
@@ -2407,16 +2435,36 @@ subsection{Perfectly Inelastic Case}
 \end_layout
 
 \begin_layout Standard
-Inelastic collisions are ones that result in a loss of kinetic energy (kinetic
- energy is not conserved).
+Inelastic collisions (as opposed to perfectly elastic) are collisions which
+ result in a loss of total system kinetic energy (kinetic energy is not
+ conserved).
  Perfectly inelastic collisions satisfy the minimum requirements for non-interpe
 netration of the involved bodies.
- For example, two lumps of clay hitting each other is an inelastic collision.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+%TODO: prove or cite reference
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For example, two lumps of clay hitting each other is an inelastic collision.
  This example isn't exactly analogous, since the clay lumps aren't rigid
  bodies, so some of the kinetic energy of the clay goes into body deformation,
  sound, heat, etc.
  Inelastic, rigid body collisions are pathological in that sense, because
- the loss of kinetic energy implies the body is deformable.
+ the loss of kinetic energy implies the body is deformable or that some
+ other form of energy dissipation occurs.
  But for the sake of computer simulation (and mathematical interest), it
  is worthwhile to explore.
 \end_layout
@@ -2545,8 +2593,10 @@ Swap the sign of the
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}\right.\\
++\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\\
+\left.-\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -2554,8 +2604,10 @@ Swap the sign of the
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}\right.\\
++\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\times\left(\hat{R}-\hat{g_{2}}\right)\\
+\left.-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -2563,8 +2615,10 @@ Swap the sign of the
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}\right.\\
++c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\times\left(\hat{R}-\hat{g_{2}}\right)\\
+\left.+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -2572,8 +2626,10 @@ Swap the sign of the
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\left(\hat{v_{2}}+\hat{\omega_{2}}\times\left[\hat{R}-\hat{g_{2}}\right]\right)-\left(\hat{v_{1}}+\hat{\omega_{1}}\times\left[\hat{R}-\hat{g_{1}}\right]\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\left(\hat{v_{2}}+\hat{\omega_{2}}\times\left[\hat{R}-\hat{g_{2}}\right]\right)-\left(\hat{v_{1}}+\hat{\omega_{1}}\times\left[\hat{R}-\hat{g_{1}}\right]\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)\right.\\
++c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\times\left(\hat{R}-\hat{g_{2}}\right)\\
+\left.+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -2581,12 +2637,22 @@ Swap the sign of the
 \end_layout
 
 \begin_layout Standard
-Let 
+Make the following substitutions (because all the values in the expression
+ are known).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{T_{k}}=\hat{R}-\hat{g_{k}}\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula \begin{equation}
-\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)\label{eq:sk}\end{equation}
+\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)=\hat{v_{k}}+\hat{\omega_{k}}\times\hat{T}_{k}\label{eq:sk}\end{equation}
 
 \end_inset
 
@@ -2608,7 +2674,7 @@ be the instantaneous linear velocity (before the collision) of the collision
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{N}\cdot\left[\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\hat{N}\cdot\left[\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\times\hat{T_{2}}+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\times\hat{T_{1}}\right]=0\]
 
 \end_inset
 
@@ -2617,7 +2683,7 @@ be the instantaneous linear velocity (before the collision) of the collision
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\cdot\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\hat{N}\cdot\hat{N}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\times\hat{T_{2}}\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\times\hat{T_{1}}\right]=0\]
 
 \end_inset
 
@@ -2638,7 +2704,7 @@ Since
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\times\hat{T_{2}}\right]+c_{1}\hat{N}\cdot\left[\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\times\hat{T_{1}}\right]=0\]
 
 \end_inset
 
@@ -2651,7 +2717,7 @@ Using
 Lemma 1
 \series default
 , the 
-\begin_inset Formula $\hat{N}\cdot\left[\left(\mathbf{M}_{k}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\right]\right)\times\left(\hat{R}-\hat{g_{k}}\right)\right]$
+\begin_inset Formula $\hat{N}\cdot\left[\left(\mathbf{M}_{k}^{-1}\left[\hat{N}\times\hat{T_{k}}\right]\right)\times\hat{T_{k}}\right]$
 \end_inset
 
  terms can be permuted.
@@ -2659,7 +2725,7 @@ Lemma 1
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\left(\hat{R}-\hat{g_{2}}\right)\times\hat{N}\right]+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\left(\hat{R}-\hat{g_{1}}\right)\times\hat{N}\right]=0\]
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\cdot\left[\hat{T_{2}}\times\hat{N}\right]+c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\cdot\left[\hat{T_{1}}\times\hat{N}\right]=0\]
 
 \end_inset
 
@@ -2668,15 +2734,15 @@ Lemma 1
 
 \begin_layout Standard
 Commute the 
-\begin_inset Formula $\left(\hat{R}-\hat{g_{k}}\right)\times\hat{N}$
+\begin_inset Formula $\hat{T_{k}}\times\hat{N}$
 \end_inset
 
- cross products (and switch their sign) .
+ cross products by switching their signs.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)-c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]-c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)-c_{1}\left(\frac{1}{m_{2}}+\frac{1}{m_{1}}\right)-c_{1}\left(\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\cdot\left[\hat{N}\times\hat{T_{2}}\right]-c_{1}\left(\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\cdot\left[\hat{N}\times\hat{T_{1}}\right]=0\]
 
 \end_inset
 
@@ -2689,7 +2755,7 @@ Let
 
 \begin_layout Standard
 \begin_inset Formula \begin{equation}
-\hat{b_{k}}=\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\label{eq:bk}\end{equation}
+\hat{b_{k}}=\hat{N}\times\hat{T_{k}}\label{eq:bk}\end{equation}
 
 \end_inset
 
@@ -2808,8 +2874,10 @@ where the terms are the linear kinetic energy and rotational kinetic energy
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\frac{1}{2}m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\frac{1}{2}\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\frac{1}{2}m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\frac{1}{2}\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=\frac{1}{2}m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\frac{1}{2}\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+\frac{1}{2}m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\frac{1}{2}\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+\frac{1}{2}m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\frac{1}{2}\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\frac{1}{2}m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\frac{1}{2}\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & \frac{1}{2}m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\frac{1}{2}\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +\frac{1}{2}m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\frac{1}{2}\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2825,8 +2893,10 @@ Multiply both sides by
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & m_{1}\hat{V_{1}}\cdot\hat{V_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +m_{2}\hat{V_{2}}\cdot\hat{V_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2847,8 +2917,10 @@ Using equations (
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)\cdot\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)\cdot\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & m_{1}\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)\cdot\left(\hat{v_{1}}+\frac{c_{1}}{m_{1}}\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +m_{2}\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)\cdot\left(\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2856,8 +2928,14 @@ m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\left(\hat{v_{1}}\cdot\hat{v_{1}}+2\frac{c_{1}}{m_{1}}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\left(\hat{v_{2}}\cdot\hat{v_{2}}-2\frac{c_{1}}{m_{2}}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+Expand the dot product terms.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & m_{1}\left(\hat{v_{1}}\cdot\hat{v_{1}}+2\frac{c_{1}}{m_{1}}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +m_{2}\left(\hat{v_{2}}\cdot\hat{v_{2}}-2\frac{c_{1}}{m_{2}}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}^{2}}\hat{N}\cdot\hat{N}\right)+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2865,8 +2943,18 @@ m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}\hat{N}\cdot\hat{N}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}\hat{N}\cdot\hat{N}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+Distribute the 
+\begin_inset Formula $m_{k}$
+\end_inset
+
+ factors.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}\hat{N}\cdot\hat{N}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}\hat{N}\cdot\hat{N}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2886,8 +2974,10 @@ Since
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)+m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++m_{2}\hat{v_{2}}\cdot\hat{v_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & +m_{2}\hat{v_{2}}\cdot\hat{v_{2}}-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2899,12 +2989,14 @@ The
 \begin_inset Formula $m_{k}\hat{v_{k}}\cdot\hat{v_{k}}$
 \end_inset
 
- terms cancel out
+ terms cancel out.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\Omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\Omega_{1}}\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\Omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\Omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2917,12 +3009,22 @@ Using the equations in (
 
 \end_inset
 
-)
+), substituting 
+\begin_inset Formula $-\hat{T_{k}}$
+\end_inset
+
+ for 
+\begin_inset Formula $\hat{g_{k}}-\hat{R}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\right]-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\right]\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times-\hat{T_{1}}\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times-\hat{T_{1}}\right]\right)\right]\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times-\hat{T_{2}}\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times-\hat{T_{2}}\right]\right)\right]\end{eqnarray*}
 
 \end_inset
 
@@ -2930,16 +3032,18 @@ Using the equations in (
 \end_layout
 
 \begin_layout Standard
-Commute the subtraction in all 
-\begin_inset Formula $\hat{N}\times\left(\hat{g_{k}}-\hat{R}\right)$
+Factor 
+\begin_inset Formula $-1$
 \end_inset
 
- and switch their signs.
+ out of each cross product.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\right]-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\right]\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\cdot\left[\mathbf{M}_{1}\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\right]\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\cdot\left[\mathbf{M}_{2}\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\right]\end{eqnarray*}
 
 \end_inset
 
@@ -2947,8 +3051,18 @@ Commute the subtraction in all
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{1}}\right)\right]\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\left[\hat{N}\times\left(\hat{R}-\hat{g_{2}}\right)\right]\right)\]
+Distribute the 
+\begin_inset Formula $\mathbf{M}_{k}$
+\end_inset
+
+ factors.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\left[\hat{N}\times\hat{T_{1}}\right]\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\cdot\left[\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\left[\hat{N}\times\hat{T_{2}}\right]\right)\right]\end{eqnarray*}
 
 \end_inset
 
@@ -2966,7 +3080,7 @@ Use equation (
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\]
+\hat{b_{k}}=\hat{N}\times\hat{T_{k}}\qquad temp\]
 
 \end_inset
 
@@ -2974,8 +3088,10 @@ Use equation (
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\left(\hat{\omega_{2}}+c_{1}\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -2983,8 +3099,29 @@ Use equation (
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\]
+Distribute more dot products.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}+c_{1}\hat{b_{2}}\right)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+More distribution.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
++\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -3000,8 +3137,9 @@ The
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-0=2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\]
+\begin_inset Formula \begin{eqnarray*}
+0 & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\\
+ &  & -2c_{1}\hat{v_{2}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{2}}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -3009,16 +3147,17 @@ The
 \end_layout
 
 \begin_layout Standard
-Combine like terms and factor with respect to 
+Combine like terms with respect to 
 \begin_inset Formula $c_{1}$
 \end_inset
 
-
+.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\frac{c_{1}^{2}}{m_{1}}+\frac{c_{1}^{2}}{m_{2}}+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)+2c_{1}\hat{v_{1}}\cdot\hat{N}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)=0\]
+\begin_inset Formula \begin{eqnarray*}
+0 & = & \frac{c_{1}^{2}}{m_{1}}+\frac{c_{1}^{2}}{m_{2}}+c_{1}^{2}\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+c_{1}^{2}\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\\
+ &  & +2c_{1}\hat{v_{1}}\cdot\hat{N}-c_{1}\hat{\omega_{1}}\cdot\hat{b_{1}}-c_{1}\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2c_{1}\hat{v_{2}}\cdot\hat{N}+c_{1}\hat{\omega_{2}}\cdot\hat{b_{2}}+c_{1}\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -3026,8 +3165,9 @@ Combine like terms and factor with respect to
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-c_{1}^{2}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+c_{1}\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+0 & = & c_{1}^{2}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]\\
+ &  & +c_{1}\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]\end{eqnarray*}
 
 \end_inset
 
@@ -3035,8 +3175,17 @@ c_{1}^{2}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-c_{1}\left(c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]\right)=0\]
+Factor with respect to 
+\begin_inset Formula $c_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+0 & = & c_{1}\left(c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]\right.\\
+ &  & \left.+\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]\right)\end{eqnarray*}
 
 \end_inset
 
@@ -3044,16 +3193,31 @@ c_{1}\left(c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mat
 \end_layout
 
 \begin_layout Standard
-For this equation to be satisfied, either 
+This equation has two roots.
+ The first is 
 \begin_inset Formula $c_{1}=0$
 \end_inset
 
- (trivial case) or
+ which is the trivial case where the bodies do not impart force upon each
+ other.
+ However, this results in the bodies penetrating, which is not what we want.
+ The other root must be the answer.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]+\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+0 & = & c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]\\
+ &  & +\left[2\hat{v_{1}}\cdot\hat{N}-\hat{\omega_{1}}\cdot\hat{b_{1}}-\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)-2\hat{v_{2}}\cdot\hat{N}+\hat{\omega_{2}}\cdot\hat{b_{2}}+\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\right]\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right] & = & -2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
+ &  & +2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\end{eqnarray*}
 
 \end_inset
 
@@ -3062,7 +3226,7 @@ c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^
 
 \begin_layout Standard
 \begin_inset Formula \[
-c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\right]=-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\]
+c_{1}=\frac{-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}{\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
 
 \end_inset
 
@@ -3070,16 +3234,7 @@ c_{1}\left[\frac{1}{m_{1}}+\frac{1}{m_{2}}+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\frac{-2\hat{v_{1}}\cdot\hat{N}+\hat{\omega_{1}}\cdot\hat{b_{1}}+\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+2\hat{v_{2}}\cdot\hat{N}-\hat{\omega_{2}}\cdot\hat{b_{2}}-\left(\mathbf{M}_{2}\hat{\omega_{2}}\right)\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using 
+Because the intertial tensor is symmetric, by 
 \series bold
 Lemma 2
 \series default
@@ -3158,6 +3313,14 @@ c_{1}=\frac{2\left(\hat{N}\cdot\hat{v_{2}}-\hat{N}\cdot\left[\left(\hat{R}-\hat{
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Factor out the 
+\begin_inset Formula $\hat{N}$
+\end_inset
+
+ dot product.
 \end_layout
 
 \begin_layout Standard
@@ -3354,8 +3517,15 @@ Intuitively, this can be shown to be correct by the following examples.
 \end_inset
 
 .
- The lump of clay will have an elasticity of zero, so this example is rationaliz
-ed.
+ Since the billiard ball has elasticity of 
+\begin_inset Formula $1$
+\end_inset
+
+, the lump of clay must have elasticity of 
+\begin_inset Formula $0$
+\end_inset
+
+, so this example is rationalized.
  A third example is of two clay lumps hitting each other.
  In this collision, 
 \begin_inset Formula $E=0$
@@ -3405,61 +3575,12 @@ A more accurate physical study of elasticity factors can be made by studying
 \end_layout
 
 \begin_layout Standard
---------------------------------------------------
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}+\hat{\omega_{2}}\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\hat{\omega_{1}}\times\left(\hat{R}-\hat{g_{1}}\right)\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}+\hat{\omega_{2}}\times\hat{R}-\hat{\omega_{1}}\times\hat{R}-\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)+\hat{N}\cdot\left[\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\times\hat{R}-\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)\right]}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)+\hat{N}\cdot\left[\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\times\hat{R}\right]-\hat{N}\cdot\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{v_{2}}-\hat{v_{1}}\right)-\hat{N}\cdot\left(\hat{\omega_{2}}\times\hat{g_{2}}+\hat{\omega_{1}}\times\hat{g_{1}}\right)+\hat{R}\cdot\left[\hat{N}\times\left(\hat{\omega_{2}}-\hat{\omega_{1}}\right)\right]}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset ERT
 status open
 
 \begin_layout Standard
 
-
+%TODO: 
 \backslash
 section{Friction Resulting From Inelastic Collisions}
 \end_layout
@@ -3467,10 +3588,6 @@ section{Friction Resulting From Inelastic Collisions}
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-blah
 \end_layout
 
 \begin_layout Standard
@@ -3556,7 +3673,7 @@ status open
 
 
 \backslash
-section{Further Topics Which Are Out Of The Scope Of This Paper}
+section{Further Topics Outside The Scope Of This Paper}
 \end_layout
 
 \end_inset
@@ -3565,23 +3682,31 @@ section{Further Topics Which Are Out Of The Scope Of This Paper}
 \end_layout
 
 \begin_layout Standard
-- explain about some more interesting subjects which are worth investigating
-\end_layout
+\begin_inset ERT
+status open
 
 \begin_layout Standard
-- solutions to systems of collisions (3+ touching bodies)
+
+%TODO - write about these
 \end_layout
 
-\begin_layout Standard
-- non-rigid body collisions (deformable bodies)
+\end_inset
+
+
 \end_layout
 
-\begin_layout Standard
-- connected rigid bodies (character skeletons, vehicles)
+\begin_layout Itemize
+Solutions to systems of collisions -- involving 3 or more colliding bodies
+ -- including connected systems of bodies such as human skeleton systems.
 \end_layout
 
-\begin_layout Standard
-- destroyable rigid bodies (splitting apart)
+\begin_layout Itemize
+Non-rigid (deformable) body collisions.
+\end_layout
+
+\begin_layout Itemize
+Destroyable bodies -- collisions which cause the involved bodies to split
+ apart.
 \end_layout
 
 \begin_layout Standard
@@ -3601,8 +3726,8 @@ section{Appendix}
 \end_layout
 
 \begin_layout Standard
-This section has auxilliary topics and lemmas which are used in the main
- text.
+This section contains auxilliary topics and lemmas which are used in the
+ main text.
 \end_layout
 
 \begin_layout Standard
@@ -3625,10 +3750,10 @@ subsection{Lemma 1}
  A certain combination of dot and cross products can be permuted, rearranging
  which operands the dot/cross products apply to.
  Let 
-\begin_inset Formula $\hat{a},\hat{b},\hat{c}$
+\begin_inset Formula $\hat{a},\hat{b},\hat{c}\in\mathbb{R}^{3}$
 \end_inset
 
- be 3-dimensional vectors.
+.
  Let the 
 \begin_inset Formula $\cdot$
 \end_inset
@@ -3721,18 +3846,22 @@ c_{1} & c_{2} & c_{3}\end{array}\right|\]
 \begin_layout Standard
 Because calculating determinants is done by multiplying each element along
  an arbitrary row (multiplied by 
-\begin_inset Formula $\left(-1\right)^{m}$
+\begin_inset Formula $\left(-1\right)^{i+j}$
 \end_inset
 
  where 
-\begin_inset Formula $m$
+\begin_inset Formula $i$
 \end_inset
 
- is the element's manhattan distance from the top-left element) by its cofactor
- matrix, the determinant can be preserved even through certain permutations
- of the rows.
- For the determinant to remain constant, the relative ordering of the rows
- must be constant (accounting for wrapping around).
+ and 
+\begin_inset Formula $j$
+\end_inset
+
+ are the row and column indices respectively) by its cofactor matrix, the
+ determinant can be preserved even through certain permutations of the rows.
+ Specifically, all even permutations (an even number of adjacent pairwise
+ swaps) of the rows or columns preserve the sign of the determinant.
+ All odd permutations negate the determinant's sign.
  Thus
 \end_layout
 
@@ -3783,7 +3912,7 @@ b_{1} & b_{2} & b_{3}\end{array}\right|\]
 
 \begin_layout Standard
 This result is useful when trying to get to a value which is part of a cross
- product and would not otherwise be seperable.
+ product and would not otherwise be separable.
 \end_layout
 
 \begin_layout Standard
@@ -3807,7 +3936,8 @@ If matrix
 \begin_inset Formula $\mathbf{M}$
 \end_inset
 
- is symmetric (and thus diagonalizable) and invertable, and 
+ is symmetric (and thus orthogonally diagonalizable) and invertible, and
+ 
 \begin_inset Formula $\hat{a}$
 \end_inset
 
@@ -3830,199 +3960,12 @@ If matrix
 \begin_layout Standard
 
 \series bold
-Proof: 
-\series default
-Since 
-\begin_inset Formula $\mathbf{M}$
-\end_inset
-
- is diagonalizable and invertible, there exists an orthogonal matrix transformat
-ion 
-\begin_inset Formula $\mathbf{T}$
-\end_inset
-
- such that
+Proof:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula \[
-\mathbf{TM}=\mathbf{D}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- is the diagonalized version of 
-\begin_inset Formula $\mathbf{M}$
-\end_inset
-
-.
- Multiplying by 
-\begin_inset Formula $\mathbf{T}^{-1}$
-\end_inset
-
- (which exists because 
-\begin_inset Formula $\mathbf{T}$
-\end_inset
-
- is orthogonal),
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{T}^{-1}\mathbf{TM}=\mathbf{T}^{-1}\mathbf{D}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{M}=\mathbf{T}^{-1}\mathbf{D}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-And the inverse of which is
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{M}^{-1}=\mathbf{D}^{-1}\mathbf{T}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Thus (
-\begin_inset LatexCommand \ref{eq:lemma2prop}
-
-\end_inset
-
-) becomes
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\mathbf{D}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Since 
-\begin_inset Formula $\mathbf{M}$
-\end_inset
-
- is symmetric,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{M}=\mathbf{T}^{-1}\mathbf{D}=\mathbf{M}^{T}=\left(\mathbf{T}^{-1}\mathbf{D}\right)^{T}=\mathbf{D}^{T}\left(\mathbf{T}^{-1}\right)^{T}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Since 
-\begin_inset Formula $\mathbf{T}$
-\end_inset
-
- is orthogonal (and thus 
-\begin_inset Formula $\mathbf{T}^{-1}$
-\end_inset
-
- is orthogonal), 
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{T}^{T}=\mathbf{T}^{-1}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Taking the transpose of both sides,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{T}=\left(\mathbf{T}^{-1}\right)^{T}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\mathbf{M}$
-\end_inset
-
- is now
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{M}=\mathbf{D}^{T}\mathbf{T}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Because 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- is diagonal (and thus symmetric), 
-\begin_inset Formula $\mathbf{D}^{T}=\mathbf{D}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{M}=\mathbf{DT}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Now (
-\begin_inset LatexCommand \ref{eq:lemma2prop}
-
-\end_inset
-
-) becomes
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \begin{equation}
-\hat{a}\cdot\hat{b}=\left(\mathbf{DT}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\label{eq:TDcommuted}\end{equation}
+\hat{a}\cdot\hat{b}=\hat{a}\cdot\hat{b}\]
 
 \end_inset
 
@@ -4031,101 +3974,19 @@ Now (
 
 \begin_layout Standard
 Let 
-\begin_inset Formula $\lambda_{1},\lambda_{2},\lambda_{3}$
+\begin_inset Formula $\mathbf{T}$
 \end_inset
 
- be the elements along the diagonal of 
-\begin_inset Formula $\mathbf{D}$
+ be an orthogonal matrix such that 
+\begin_inset Formula $\mathbf{D}=\mathbf{T}\mathbf{M}\mathbf{T}^{-1}$
 \end_inset
 
-.
- Therefore the elements along the diagonal of 
-\begin_inset Formula $\mathbf{D}^{-1}$
+ is a diagonal matrix (such a matrix exists because 
+\begin_inset Formula $\mathbf{M}$
 \end_inset
 
- are 
-\begin_inset Formula $\frac{1}{\lambda_{1}},\frac{1}{\lambda_{2}},\frac{1}{\lambda_{3}}$
-\end_inset
-
-.
- Multiplying a vector by a diagonal matrix simply scales each component
- of the vector by the corresponding diagonal element of the matrix.
- Let 
-\begin_inset Formula $\hat{m}=\mathbf{T}\hat{a}=\left[\begin{array}{c}
-m_{1}\\
-m_{2}\\
-m_{3}\end{array}\right]$
-\end_inset
-
- and 
-\begin_inset Formula $\hat{n}=\mathbf{T}\hat{b}=\left[\begin{array}{c}
-n_{1}\\
-n_{2}\\
-n_{3}\end{array}\right]$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\mathbf{D}\hat{m}=\left[\begin{array}{c}
-\lambda_{1}m_{1}\\
-\lambda_{2}m_{2}\\
-\lambda_{3}m_{3}\end{array}\right]\qquad\mathbf{D}^{-1}\hat{n}=\left[\begin{array}{c}
-\frac{1}{\lambda_{1}}n_{1}\\
-\frac{1}{\lambda_{2}}n_{2}\\
-\frac{1}{\lambda_{3}}n_{3}\end{array}\right]\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Taking the dot product,
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=\left[\begin{array}{c}
-\lambda_{1}m_{1}\\
-\lambda_{2}m_{2}\\
-\lambda_{3}m_{3}\end{array}\right]\cdot\left[\begin{array}{c}
-\frac{1}{\lambda_{1}}n_{1}\\
-\frac{1}{\lambda_{2}}n_{2}\\
-\frac{1}{\lambda_{3}}n_{3}\end{array}\right]\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=m_{1}n_{1}+m_{2}n_{2}+m_{3}n_{3}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-\left(\mathbf{D}\hat{m}\right)\cdot\left(\mathbf{D}^{-1}\hat{n}\right)=\hat{m}\cdot\hat{n}\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Using this result in equation (
-\begin_inset LatexCommand \ref{eq:TDcommuted}
-
-\end_inset
-
-),
+ is symmetric and thus orthogonally diagonalizable).
+ Due to Lemma 3,
 \end_layout
 
 \begin_layout Standard
@@ -4138,8 +3999,16 @@ Using this result in equation (
 \end_layout
 
 \begin_layout Standard
+Since 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+ is a diagonal matrix, using Lemma 4 produces
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula \[
-\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta=\left\Vert \mathbf{T}\hat{a}\right\Vert \left\Vert \mathbf{T}\hat{b}\right\Vert \cos\theta_{\mathbf{T}}\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\left(\mathbf{T}\hat{a}\right)\right)\cdot\left(\mathbf{D}\left(\mathbf{T}\hat{b}\right)\right)\]
 
 \end_inset
 
@@ -4147,25 +4016,59 @@ Using this result in equation (
 \end_layout
 
 \begin_layout Standard
-Since 
+But matrix multiplication is associative, so
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Again using Lemma 3, only this time with 
+\begin_inset Formula $\mathbf{T}^{-1}$
+\end_inset
+
+ (also orthogonal, since 
 \begin_inset Formula $\mathbf{T}$
 \end_inset
 
- is an orthogonal matrix, it preserves angles between vectors that it operates
- on.
- Thus 
-\begin_inset Formula $\theta_{\mathbf{T}}=\theta$
+ is orthogonal).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\left(\mathbf{D}\mathbf{T}\hat{a}\right)\right)\cdot\left(\mathbf{T}^{-1}\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\right)\]
+
 \end_inset
 
-.
- Additionally, an orthogonal matrix will preserve the length of vectors
- that it operates on.
- Thus 
-\begin_inset Formula $\left\Vert \mathbf{T}\hat{a}\right\Vert =\left\Vert \hat{a}\right\Vert $
+
+\end_layout
+
+\begin_layout Standard
+Again, matrix multiplication is associative.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\mathbf{D}\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}^{-1}\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
+
 \end_inset
 
- and 
-\begin_inset Formula $\left\Vert \mathbf{T}\hat{b}\right\Vert =\left\Vert \hat{b}\right\Vert $
+
+\end_layout
+
+\begin_layout Standard
+The given constraint for 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+ gives us 
+\begin_inset Formula $\mathbf{D}=\mathbf{T}\mathbf{M}\mathbf{T}^{-1}\Leftrightarrow\mathbf{T}^{-1}\mathbf{D}\mathbf{T}=\mathbf{M}\Leftrightarrow\mathbf{T}^{-1}\mathbf{D}^{-1}\mathbf{T}=\mathbf{M}^{-1}$
 \end_inset
 
 .
@@ -4173,7 +4076,7 @@ Since
 
 \begin_layout Standard
 \begin_inset Formula \[
-\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta=\left\Vert \hat{a}\right\Vert \left\Vert \hat{b}\right\Vert \cos\theta\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{M}\hat{a}\right)\cdot\left(\mathbf{M}^{-1}\hat{b}\right)\]
 
 \end_inset
 
@@ -4181,7 +4084,9 @@ Since
 \end_layout
 
 \begin_layout Standard
-The original equation has been shown to be true.
+
+\series bold
+Q.E.D.
 \end_layout
 
 \begin_layout Standard
@@ -4193,6 +4098,212 @@ status open
 
 \backslash
 subsection{Lemma 3}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Given an orthogonal matrix 
+\begin_inset Formula $\mathbf{T}$
+\end_inset
+
+ and any two vectors 
+\begin_inset Formula $\hat{a}$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{b}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}\hat{b}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+%TODO - prove
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+
+\backslash
+subsection{Lemma 4}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Given a diagonal matrix 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+ and any two vectors 
+\begin_inset Formula $\hat{a}$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{b}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\hat{b}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Proof:
+\series default
+ Let 
+\begin_inset Formula $\lambda_{1},\lambda_{2},\lambda_{3}$
+\end_inset
+
+ be the values on the diagonal of 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+.
+ Thus 
+\begin_inset Formula $\lambda_{1}^{-1},\lambda_{2}^{-1},\lambda_{3}^{-1}$
+\end_inset
+
+ are the values on the diagonal of 
+\begin_inset Formula $\mathbf{D}^{-1}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $a_{1},a_{2},a_{3}$
+\end_inset
+
+ be the components of 
+\begin_inset Formula $\hat{a}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $b_{1},b_{2},b_{3}$
+\end_inset
+
+ be the components of 
+\begin_inset Formula $\hat{b}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\hat{a}\cdot\hat{b}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=a_{1}b_{1}+a_{2}b_{2}+a_{3}b_{3}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\lambda_{1}a_{1}\lambda_{1}^{-1}b_{1}+\lambda_{2}a_{2}\lambda_{2}^{-1}b_{2}+\lambda_{3}a_{3}\lambda_{3}^{-1}b_{3}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left[\begin{array}{c}
+\lambda_{1}a_{1}\\
+\lambda_{2}a_{2}\\
+\lambda_{3}a_{3}\end{array}\right]\cdot\left[\begin{array}{c}
+\lambda_{1}^{-1}b_{1}\\
+\lambda_{2}^{-1}b_{2}\\
+\lambda_{3}^{-1}b_{3}\end{array}\right]\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because 
+\begin_inset Formula $\mathbf{D}$
+\end_inset
+
+ is diagonal, it operates on any given vector by multiplying each component
+ by the corresponding diagonal value.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\hat{b}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Q.E.D.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+
+\backslash
+subsection{Lemma 5}
 \end_layout
 
 \end_inset
@@ -4356,7 +4467,7 @@ status open
 
 
 \backslash
-section{Bibliography}
+section{References}
 \end_layout
 
 \end_inset
@@ -4377,7 +4488,7 @@ Howard Anton,
 \series bold
 Elementary Linear Algebra
 \series default
-, John Wiley & Sons, Inc, 1994
+, John Wiley & Sons, Inc, 1994.
 \end_layout
 
 \begin_layout Standard
