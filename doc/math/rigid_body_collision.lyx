@@ -15,10 +15,10 @@
 \cite_engine basic
 \use_bibtopic false
 \paperorientation portrait
-\leftmargin 0.25in
-\topmargin 0.25in
-\rightmargin 0.25in
-\bottommargin 0.25in
+\leftmargin 0.5in
+\topmargin 0.5in
+\rightmargin 0.5in
+\bottommargin 0.5in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation skip
@@ -70,6 +70,18 @@ The goal of this paper is to develop the necessary building blocks to create
  scope of everyday life, constituting solid objects and their interactions.
  Through these concepts, one should gain a humble understanding of simple
  Newtonian Mechanics.
+\end_layout
+
+\begin_layout Standard
+\align left
+The subject explored hence is collision resolution, and not collision detection
+ (two very different concepts); I've found a lack of substantial papers
+ and articles on the specific details of collision resolution in the general
+ 3d case, and thus decided to explore the subject myself.
+ On the other hand, in my experience, collision detection enjoys a wealth
+ of papers and expositions covering a comprehensive variety of approaches.
+ It is a complex subject which certainly deserves deep exploration in its
+ own right -- but that will not be here.
 \end_layout
 
 \begin_layout Standard
@@ -651,6 +663,20 @@ status open
 
 \backslash
 subsection{Angle, Angular Velocity, Angular Acceleration And Torque}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+%TODO: use quaternions instead.
 \end_layout
 
 \end_inset
@@ -1357,17 +1383,37 @@ section{Conservation Laws}
 \end_layout
 
 \begin_layout Standard
+The laws of physics are what govern the motion of matter, and certain laws
+ regarding conservation of particular properties are what impact this discussion.
+ Generally, conservation laws state that a particular quantitative property
+ of a closed system (e.g.
+ the collision of two bodies) remains constant with respect to time.
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
 \begin_layout Standard
 
-%TODO -- intro to conservation of momentum
+
+\backslash
+subsection{Conservation Of Momentum}
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+There is a conservation law which states that the total momentum for a system
+ remains constant with respect to time.
+ This holds true even through a collision between bodies in the system,
+ for any sort of collision -- elastic, inelastic or otherwise.
+ In particular, total system linear momentum is conserved, and total system
+ angular momentum is conserved.
+ The two are conserved separately, meaning there are two equations.
 \end_layout
 
 \begin_layout Standard
@@ -1438,12 +1484,24 @@ status open
 
 \begin_layout Standard
 
-%TODO - intro conservation of kinetic energy
+
+\backslash
+subsection{Conservation Of Kinetic Energy}
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Another conservation law states that the total kinetic energy for a system
+ remains constant with respect to time.
+ This only holds true in certain interactions -- specifically, perfectly
+ elastic collisions (or when the system's bodies are not interacting).
+ Unlike conservation of momentum, linear and angular kinetic energy are
+ lumped into a single quantity -- total kinetic energy.
+ Thus there is only one equation regarding said conservation.
 \end_layout
 
 \begin_layout Standard
@@ -1738,11 +1796,7 @@ inertial tensor (second moment)
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
-\align center
+ 
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
 <features>
@@ -1753,7 +1807,7 @@ inertial tensor (second moment)
 \begin_inset Text
 
 \begin_layout Standard
-common body properties
+properties common to both bodies
 \end_layout
 
 \end_inset
@@ -2567,8 +2621,9 @@ Plug in values for
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\hat{v_{1}}-\frac{c_{1}}{m_{1}}\hat{N}-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\hat{v_{2}}-\frac{c_{1}}{m_{2}}\hat{N}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\right.\\
+\left.-\hat{v_{1}}-\frac{c_{1}}{m_{1}}\hat{N}-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -2576,8 +2631,10 @@ Plug in values for
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}+\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right]=0\]
+\begin_inset Formula \begin{eqnarray*}
+\hat{N}\cdot\left[\hat{v_{2}}-\hat{v_{1}}-\frac{c_{1}}{m_{2}}\hat{N}-\frac{c_{1}}{m_{1}}\hat{N}\right.\\
++\left(\hat{\omega_{2}}-c_{1}\mathbf{M}_{2}^{-1}\left[\hat{N}\times\left(\hat{g_{2}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{2}}\right)\\
+\left.-\left(\hat{\omega_{1}}+c_{1}\mathbf{M}_{1}^{-1}\left[\hat{N}\times\left(\hat{g_{1}}-\hat{R}\right)\right]\right)\times\left(\hat{R}-\hat{g_{1}}\right)\right] & = & 0\end{eqnarray*}
 
 \end_inset
 
@@ -3079,15 +3136,6 @@ Use equation (
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula \[
-\hat{b_{k}}=\hat{N}\times\hat{T_{k}}\qquad temp\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula \begin{eqnarray*}
 \hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}\right)\\
 +\hat{\omega_{2}}\cdot\left(\mathbf{M}_{2}\hat{\omega_{2}}\right) & = & 2c_{1}\hat{v_{1}}\cdot\hat{N}+\frac{c_{1}^{2}}{m_{1}}+\left(\hat{\omega_{1}}-c_{1}\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)\cdot\left(\mathbf{M}_{1}\hat{\omega_{1}}-c_{1}\hat{b_{1}}\right)\\
@@ -3407,9 +3455,14 @@ subsection{Extrapolation For Partially Elastic Collisions}
 \end_layout
 
 \begin_layout Standard
-The mathematical extrapolation in this section is not known to be accurate
- to real world physics (to the author, at the time of this writing).
- Because the different case solutions for 
+Note: It is unknown to the author (at the time of this writing) wether or
+ not the elasticity model given here is physically accurate.
+ But it does seem to provide believable results when applied in computer
+ simulations.
+\end_layout
+
+\begin_layout Standard
+Because the different case solutions for 
 \begin_inset Formula $c_{1}$
 \end_inset
 
@@ -3566,12 +3619,176 @@ c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{
 \end_layout
 
 \begin_layout Standard
+Recall that the following substitutions were made.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)\qquad\hat{b_{k}}=\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 A more accurate physical study of elasticity factors can be made by studying
  how much kinetic energy is absorbed (or released in the case of super-elastic
  collisions) in the collision by each body, due to deformation, sound, heat,
  etc.
  It is the author's belief that the elasticity factor model given above
  will show to be physically correct.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+
+\backslash
+section{Simplified 2-Dimensional Case}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+All of the above equations hold in 2 dimensions, if proper analogs are used
+ for certain properties.
+ One useful fact to exploit is that 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+ is a subspace of 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+, thus for any vector 
+\begin_inset Formula $\hat{u}\in\mathbb{R}^{2}$
+\end_inset
+
+, there exists a vector 
+\begin_inset Formula $\hat{v}\in\mathbb{R}^{3}$
+\end_inset
+
+ such that its first two components are equal to that of 
+\begin_inset Formula $\hat{u}$
+\end_inset
+
+, while its third component is 0.
+ The ramifications of this with respect to the logistics of the proofs offered
+ in previous sections are as follows.
+\end_layout
+
+\begin_layout Itemize
+The inertial tensor matrix will be restricted to the form BLAH TODO
+\end_layout
+
+\begin_layout Itemize
+Certain vectors will be limited to 
+\begin_inset Formula $\mathbb{R}^{2}$
+\end_inset
+
+ -- specifically, 
+\begin_inset Formula $\hat{v_{k}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{V_{k}}$
+\end_inset
+
+ (pre- and post-collision velocities for body 
+\begin_inset Formula $k$
+\end_inset
+
+), 
+\begin_inset Formula $\hat{g_{k}}$
+\end_inset
+
+ (center of gravity for body 
+\begin_inset Formula $k$
+\end_inset
+
+), 
+\begin_inset Formula $\hat{R}$
+\end_inset
+
+ (point of collision), and 
+\begin_inset Formula $\hat{N}$
+\end_inset
+
+ (normal vector for the collision), as well as 
+\begin_inset Formula $\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)$
+\end_inset
+
+ which will be explained below.
+\end_layout
+
+\begin_layout Itemize
+Certain vectors will be limited to 
+\begin_inset Formula $\mathbb{R}^{3}-\mathbb{R}^{2}$
+\end_inset
+
+ (i.e.
+ 
+\begin_inset Formula $\hat{k}$
+\end_inset
+
+, the 3rd basis vector for 
+\begin_inset Formula $\mathbb{R}^{3}$
+\end_inset
+
+) -- specifically, 
+\begin_inset Formula $\hat{\omega_{k}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\hat{\Omega_{k}}$
+\end_inset
+
+ (pre- and post-collision angular velocities for body 
+\begin_inset Formula $k$
+\end_inset
+
+), and 
+\begin_inset Formula $\hat{b_{k}}=\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Blah
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+c_{1}=\left(1+e_{1}e_{2}\right)\cdot\frac{\hat{N}\cdot\left(\hat{s_{2}}-\hat{s_{1}}\right)}{\left(\frac{1}{m_{1}}+\frac{1}{m_{2}}\right)+\hat{b_{1}}\cdot\left(\mathbf{M}_{1}^{-1}\hat{b_{1}}\right)+\hat{b_{2}}\cdot\left(\mathbf{M}_{2}^{-1}\hat{b_{2}}\right)}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Recall that the following substitutions were made.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{s_{k}}=\hat{v_{k}}+\hat{\omega_{k}}\times\left(\hat{R}-\hat{g_{k}}\right)\qquad\hat{b_{k}}=\hat{N}\times\left(\hat{R}-\hat{g_{k}}\right)\]
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3607,11 +3824,11 @@ section{Conservation Of Angular Momentum Of A Single Body}
 \end_layout
 
 \begin_layout Standard
-The tensor matrix which describes the second moment of inertia transforms
- the angular velocity vector of a body into the corresponding angular momentum
- vector.
+The inertial tensor transforms the angular velocity vector of a body into
+ the corresponding angular momentum vector.
  The resulting angular momentum vector may not necessarily be colinear with
- the angular velocity vector.
+ the angular velocity vector -- this can be checked by calculating the eigenvect
+ors of the inertial tensor.
  However, angular momentum must always be conserved, even when the system
  involves only one body.
  The angular velocity vector of the body must change in such a way so that
@@ -3671,9 +3888,23 @@ status open
 
 \begin_layout Standard
 
+%TODO -- write real stuff
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
 
 \backslash
-section{Further Topics Outside The Scope Of This Paper}
+section{Interesting Topics Outside The Scope Of This Paper}
 \end_layout
 
 \end_inset
@@ -3795,7 +4026,7 @@ c_{3}\end{array}\right]$
 \end_inset
 
 , and 
-\begin_inset Formula $i,j,k$
+\begin_inset Formula $\left\{ \hat{i},\hat{j},\hat{k}\right\} $
 \end_inset
 
  be the standard orthonormal Euclidean basis vectors.
@@ -3804,7 +4035,7 @@ c_{3}\end{array}\right]$
 \begin_layout Standard
 \begin_inset Formula \[
 \hat{b}\times\hat{c}=\left|\begin{array}{ccc}
-i & j & k\\
+\hat{i} & \hat{j} & \hat{k}\\
 b_{1} & b_{2} & b_{3}\\
 c_{1} & c_{2} & c_{3}\end{array}\right|\]
 
@@ -3815,7 +4046,7 @@ c_{1} & c_{2} & c_{3}\end{array}\right|\]
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{b}\times\hat{c}=i\left(b_{2}c_{3}-b_{3}c_{2}\right)-j\left(b_{1}c_{3}-b_{3}c_{1}\right)-k\left(b_{1}c_{2}-b_{2}c_{1}\right)\]
+\hat{b}\times\hat{c}=\hat{i}\left(b_{2}c_{3}-b_{3}c_{2}\right)-\hat{j}\left(b_{1}c_{3}-b_{3}c_{1}\right)-\hat{k}\left(b_{1}c_{2}-b_{2}c_{1}\right)\]
 
 \end_inset
 
@@ -3961,6 +4192,8 @@ If matrix
 
 \series bold
 Proof:
+\series default
+ Starting with the identity,
 \end_layout
 
 \begin_layout Standard
@@ -3974,11 +4207,11 @@ Proof:
 
 \begin_layout Standard
 Let 
-\begin_inset Formula $\mathbf{T}$
+\begin_inset Formula $\mathbf{N}$
 \end_inset
 
  be an orthogonal matrix such that 
-\begin_inset Formula $\mathbf{D}=\mathbf{T}\mathbf{M}\mathbf{T}^{-1}$
+\begin_inset Formula $\mathbf{D}=\mathbf{N}\mathbf{M}\mathbf{N}^{-1}$
 \end_inset
 
  is a diagonal matrix (such a matrix exists because 
@@ -3991,7 +4224,7 @@ Let
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}\hat{b}\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right)\]
 
 \end_inset
 
@@ -4000,7 +4233,7 @@ Let
 
 \begin_layout Standard
 Since 
-\begin_inset Formula $\mathbf{D}$
+\begin_inset Formula $\mathbf{N}$
 \end_inset
 
  is a diagonal matrix, using Lemma 4 produces
@@ -4008,7 +4241,7 @@ Since
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{D}\left(\mathbf{T}\hat{a}\right)\right)\cdot\left(\mathbf{D}\left(\mathbf{T}\hat{b}\right)\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\left(\mathbf{N}\hat{a}\right)\right)\cdot\left(\mathbf{D}\left(\mathbf{N}\hat{b}\right)\right)\]
 
 \end_inset
 
@@ -4021,7 +4254,7 @@ But matrix multiplication is associative, so
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{D}\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{D}\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\mathbf{N}\hat{b}\right)\]
 
 \end_inset
 
@@ -4042,7 +4275,7 @@ Again using Lemma 3, only this time with
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\left(\mathbf{D}\mathbf{T}\hat{a}\right)\right)\cdot\left(\mathbf{T}^{-1}\left(\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{N}^{-1}\left(\mathbf{D}\mathbf{N}\hat{a}\right)\right)\cdot\left(\mathbf{N}^{-1}\left(\mathbf{D}^{-1}\mathbf{N}\hat{b}\right)\right)\]
 
 \end_inset
 
@@ -4055,7 +4288,7 @@ Again, matrix multiplication is associative.
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{T}^{-1}\mathbf{D}\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}^{-1}\mathbf{D}^{-1}\mathbf{T}\hat{b}\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{N}^{-1}\mathbf{D}\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}^{-1}\mathbf{D}^{-1}\mathbf{N}\hat{b}\right)\]
 
 \end_inset
 
@@ -4068,7 +4301,7 @@ The given constraint for
 \end_inset
 
  gives us 
-\begin_inset Formula $\mathbf{D}=\mathbf{T}\mathbf{M}\mathbf{T}^{-1}\Leftrightarrow\mathbf{T}^{-1}\mathbf{D}\mathbf{T}=\mathbf{M}\Leftrightarrow\mathbf{T}^{-1}\mathbf{D}^{-1}\mathbf{T}=\mathbf{M}^{-1}$
+\begin_inset Formula $\mathbf{D}=\mathbf{N}\mathbf{M}\mathbf{N}^{-1}\Leftrightarrow\mathbf{N}^{-1}\mathbf{D}\mathbf{N}=\mathbf{M}\Leftrightarrow\mathbf{N}^{-1}\mathbf{D}^{-1}\mathbf{N}=\mathbf{M}^{-1}$
 \end_inset
 
 .
@@ -4107,7 +4340,7 @@ subsection{Lemma 3}
 
 \begin_layout Standard
 Given an orthogonal matrix 
-\begin_inset Formula $\mathbf{T}$
+\begin_inset Formula $\mathbf{N}$
 \end_inset
 
  and any two vectors 
@@ -4123,7 +4356,7 @@ Given an orthogonal matrix
 
 \begin_layout Standard
 \begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{T}\hat{a}\right)\cdot\left(\mathbf{T}\hat{b}\right)\]
+\hat{a}\cdot\hat{b}=\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right)\]
 
 \end_inset
 
@@ -4131,17 +4364,94 @@ Given an orthogonal matrix
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status open
+
+\series bold
+Proof:
+\series default
+ Starting with the identity,
+\end_layout
 
 \begin_layout Standard
-
-%TODO - prove
-\end_layout
+\begin_inset Formula \[
+\hat{a}^{T}\hat{b}=\hat{a}^{T}\hat{b}\]
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Because 
+\begin_inset Formula $\mathbf{N}$
+\end_inset
+
+ is orthogonal, 
+\begin_inset Formula $\mathbf{N}^{T}\mathbf{N}=\mathbf{I}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}^{T}\mathbf{I}\hat{b}=\hat{a}^{T}\mathbf{N}^{T}\mathbf{N}\hat{b}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because the transpose of a matrix product is the commuted transposes of
+ the operands,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}^{T}\mathbf{I}\hat{b}=\left(\mathbf{N}\hat{a}\right)^{T}\mathbf{N}\hat{b}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The identity matrix can be removed.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}^{T}\hat{b}=\left(\mathbf{N}\hat{a}\right)^{T}\mathbf{N}\hat{b}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An inner product of vectors can be written as the matrix product of the
+ left-hand side vector's transpose with the right-hand side vector, i.e.
+ 
+\begin_inset Formula $\hat{a}\cdot\hat{b}=\hat{a}^{T}\hat{b}$
+\end_inset
+
+.
+ Thus the above becomes
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\hat{a}\cdot\hat{b}=\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Q.E.D.
 \end_layout
 
 \begin_layout Standard
@@ -4303,170 +4613,6 @@ status open
 
 
 \backslash
-subsection{Lemma 5}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The sum of a sine and cosine function which operate on the same value (in
- this case 
-\begin_inset Formula $\theta$
-\end_inset
-
-) can be changed into a single sin function with modified amplitude and
- operand.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\sin\left(\theta+\tan^{-1}\frac{b}{a}\right)\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-
-\series bold
-Proof:
-\series default
- Start with the simplest identity involving the left hand side of the above
- equation.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=a\sin\theta+b\cos\theta\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-For fun, multiply the right hand side by a fancy form of 
-\begin_inset Formula $1$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=\frac{\sqrt{a^{2}+b^{2}}}{\sqrt{a^{2}+b^{2}}}\left(a\sin\theta+b\cos\theta\right)\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Distribute the factor's denominator.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\left(\frac{a}{\sqrt{a^{2}+b^{2}}}\sin\theta+\frac{b}{\sqrt{a^{2}+b^{2}}}\cos\theta\right)\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-** add picture here **
-\end_layout
-
-\begin_layout Standard
-Imagine a right triangle with base 
-\begin_inset Formula $a$
-\end_inset
-
-, side 
-\begin_inset Formula $b$
-\end_inset
-
- and hypotenuse 
-\begin_inset Formula $\sqrt{a^{2}+b^{2}}$
-\end_inset
-
-.
- Let the angle between the base and the hypotenuse be 
-\begin_inset Formula $\phi$
-\end_inset
-
-.
- It is expressed by 
-\begin_inset Formula $\phi=\tan^{-1}\frac{b}{a}$
-\end_inset
-
-.
- 
-\begin_inset Formula $\cos\phi=\frac{a}{\sqrt{a^{2}+b^{2}}}$
-\end_inset
-
- and 
-\begin_inset Formula $\sin\phi=\frac{b}{\sqrt{a^{2}+b^{2}}}$
-\end_inset
-
-.
- Thus 
-\begin_inset Formula $\cos\left(\tan^{-1}\frac{b}{a}\right)=\frac{a}{\sqrt{a^{2}+b^{2}}}$
-\end_inset
-
- and 
-\begin_inset Formula $\sin\left(\tan^{-1}\frac{b}{a}\right)=\frac{b}{\sqrt{a^{2}+b^{2}}}$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\left[\sin\theta\cos\left(\tan^{-1}\frac{b}{a}\right)+\cos\theta\sin\left(\tan^{-1}\frac{b}{a}\right)\right]\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Use the identity 
-\begin_inset Formula $\sin x\cos y+\cos x\sin y=\sin\left(x+y\right)$
-\end_inset
-
- to condense the right hand side.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula \[
-a\sin\theta+b\cos\theta=\sqrt{a^{2}+b^{2}}\sin\left(\theta+\tan^{-1}\frac{b}{a}\right)\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-This is the desired identity.
- 
-\series bold
-Q.E.D.
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Standard
-
-
-\backslash
 section{References}
 \end_layout
 
@@ -4492,7 +4638,19 @@ Elementary Linear Algebra
 \end_layout
 
 \begin_layout Standard
-Daniel Greenhouse,
+http://en.wikipedia.org/wiki/Orthogonal_matrix
+\end_layout
+
+\begin_layout Standard
+Daniel 
+\begin_inset Quotes eld
+\end_inset
+
+Electroman
+\begin_inset Quotes erd
+\end_inset
+
+ Greenhouse,
 \series bold
  
 \series default
