@@ -126,7 +126,7 @@ public:
 
 protected:
 
-    Font::Font (ScreenCoord pixel_height)
+    Font (ScreenCoord pixel_height)
         :
         m_pixel_height(pixel_height)
     { }

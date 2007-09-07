@@ -1237,15 +1237,15 @@ void Layout::Initialize (
 
     DirtyColumnSizePropertyAllocations();
     m_column_count = 0;
-    m_column_size_properties = 0;
-    m_column_width = 0;
-    m_column_is_hidden = 0;
+    m_column_size_properties = NULL;
+    m_column_width = NULL;
+    m_column_is_hidden = NULL;
 
     DirtyRowSizePropertyAllocations();
     m_row_count = 0;
-    m_row_size_properties = 0;
-    m_row_height = 0;
-    m_row_is_hidden = 0;
+    m_row_size_properties = NULL;
+    m_row_height = NULL;
+    m_row_is_hidden = NULL;
 
     m_major_count = major_count;
     m_major_direction = major_direction;

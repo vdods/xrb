@@ -16,11 +16,9 @@ namespace Xrb
 SizeProperties::SizeProperties ()
     :
     m_min_size_enabled(false, false),
-    m_min_size(GetDefaultMinSizeComponent(),
-                GetDefaultMinSizeComponent()),
+    m_min_size(GetDefaultMinSizeComponent(), GetDefaultMinSizeComponent()),
     m_max_size_enabled(false, false),
-    m_max_size(GetDefaultMaxSizeComponent(),
-                GetDefaultMaxSizeComponent())
+    m_max_size(GetDefaultMaxSizeComponent(), GetDefaultMaxSizeComponent())
 {
     m_data = NULL;
 }

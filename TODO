@@ -42,6 +42,7 @@ DISASTEROIDS:
 - the gauss gun damage location appears to be wrong (on exactly
   the opposite side of the damagee).
 ** feature-related **
+- make Devourment weak against mining laser
 - secondary fire for EMP -- ambient tractor beam
 - grenade merging -- if 2 grenades (from same owner) touch, they merge
   into a grenade twice as heavy, and more than twice as powerful.
@@ -81,9 +82,12 @@ DISASTEROIDS:
   the enemies are SetTarget'ed against the player (which can happen every
   few seconds, so the player can't just EMP them to escape).
 - change gauss gun's fire rate to be based on how fast it can be charged back
-  up by the power generator
+  up by the power generator -- also, the fire sequence should start with the
+  gun completely discharged.. holding the fire button down will then charge
+  and fire it, as a reticle homes in on the mouse cursor to indicate when
+  it will fire.  charge should be persistent, so if you let go of the fire
+  button before the weapon discharged, it should save the power it accumulated.
 - split up high scores into difficulty levels
-- add a directional shield for the player, activated by shift/semicolon? (and maybe demi)
 - change missiles: they should not be able to flip around at any angle, but
   only travel in circles (acceleration perpendicular to velocity).  primary
   fire will fire enemy-seeking missiles, but if you use secondary fire,
@@ -91,6 +95,13 @@ DISASTEROIDS:
   missiles should be made much heavier, so they're not deflected away by
   tractors as easily.
 - add validation to Dis::Config modifiers
+- add extra-power-to-the-shields powerup which would drain your power, but
+  strengthen your shields significantly
+- add "sprint" powerup (or maybe have it be built-in) which would make your
+  engines use twice the power, but accelerate 1.5x or 2x or some factor
+  better.
+- make the EMP into a weapon that is activated by a key, instead of having
+  to equip it and fire it.
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.
