@@ -95,6 +95,9 @@ class Grenade : public Explosive
 {
 public:
 
+    static Float const ms_default_mass;
+    static Float const ms_merge_power_boost;
+
     Grenade (
         GrenadeLauncher *owner_grenade_launcher,
         Float damage_to_inflict,
@@ -143,9 +146,9 @@ public:
 private:
 
     GrenadeLauncher *m_owner_grenade_launcher;
-    Float const m_damage_to_inflict;
-    Float const m_damage_radius;
-    Float const m_explosion_radius;
+    Float m_damage_to_inflict;
+    Float m_damage_radius;
+    Float m_explosion_radius;
 }; // end of class Grenade
 
 // ///////////////////////////////////////////////////////////////////////////

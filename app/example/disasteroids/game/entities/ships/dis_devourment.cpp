@@ -51,7 +51,9 @@ Devourment::Devourment (Uint8 const enemy_level)
 {
     m_think_state = THINK_STATE(PickWanderDirection);
 
-    SetStrength(D_MINING_LASER);
+    // Devourment is weak against mining laser (sort of an association between
+    // it and the asteroids' weakness against mining laser).
+    SetWeakness(D_MINING_LASER);
     SetImmunity(D_COLLISION|D_GRINDING);
     SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
 

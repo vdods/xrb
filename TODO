@@ -37,17 +37,15 @@ OPENGL CONVERSION TASKS:
 
 DISASTEROIDS:
 ** bugs **
-- when setting fullscreen from the commandline, the options menu 
+- when setting fullscreen from the commandline, the options menu
   fullscreen checkbox isn't checked.
 - the gauss gun damage location appears to be wrong (on exactly
   the opposite side of the damagee).
 ** feature-related **
-- make Devourment weak against mining laser
 - secondary fire for EMP -- ambient tractor beam
-- grenade merging -- if 2 grenades (from same owner) touch, they merge
-  into a grenade twice as heavy, and more than twice as powerful.
 - forget the 4x item status screen.  upgrading should be one way,
-  and the inventory should just show what level item it is.
+  and the inventory should just show what level item it is.  this also
+  means you can't skip buying a certain level of something.
 - limited number of active missiles at any given time
 - add key to dump shields into power cells
 - make Devourment track who damaged it and how much, so it can retaliate

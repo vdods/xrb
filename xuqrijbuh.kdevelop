@@ -26,6 +26,7 @@
     <description>An OpenGL 2d game engine suite geared toward real-time, sprite/polygon-object-based gameplay. Includes the game engine library, as well as example game implementations. The goal is to provide an intuitive platform for implementing gameplay.
  </description>
     <versioncontrol>kdevsubversion</versioncontrol>
+    <projectname>xuqrijbuh</projectname>
   </general>
   <kdevcustomproject>
     <run>
@@ -197,6 +198,11 @@
       <used>false</used>
       <version>3</version>
       <root>/usr/lib/qt</root>
+      <includestyle>3</includestyle>
+      <designerintegration>EmbeddedKDevDesigner</designerintegration>
+      <qmake></qmake>
+      <designer></designer>
+      <designerpluginpaths/>
     </qt>
   </kdevcppsupport>
   <cppsupportpart>

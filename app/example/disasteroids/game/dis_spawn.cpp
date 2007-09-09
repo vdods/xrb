@@ -235,7 +235,7 @@ Grenade *SpawnGrenade (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        4.0f,
+        Grenade::ms_default_mass,
         velocity,
         Math::RandomFloat(-30.0f, 30.0f),
         0.1f);

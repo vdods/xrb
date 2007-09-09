@@ -59,8 +59,8 @@ public:
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline Float GetSpeed () const { return m_velocity.GetLength(); }
     inline FloatVector2 GetMomentum () const { return m_first_moment * m_velocity; }
-    inline Float GetAngularVelocity () const { return m_angular_velocity; }
     inline FloatVector2 const &GetForce () const { return m_force; }
+    inline Float GetAngularVelocity () const { return m_angular_velocity; }
 
     Dis::World *GetWorld () const;
     Dis::PhysicsHandler const *GetPhysicsHandler () const;
@@ -119,6 +119,12 @@ public:
         ASSERT1(index <= 1)
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value))
         m_velocity[index] = value;
+    }
+    inline void SetMomentum (FloatVector2 const &momentum)
+    {
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::X]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::Y]))
+        m_velocity = momentum / m_first_moment;
     }
     inline void SetForce (FloatVector2 const &force)
     {

@@ -96,6 +96,9 @@ void Explosive::Detonate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
+Float const Grenade::ms_default_mass = 4.0f;
+Float const Grenade::ms_merge_power_boost = 1.1f;
+
 Grenade::Grenade (
     GrenadeLauncher *const owner_grenade_launcher,
     Float const damage_to_inflict,
@@ -123,18 +126,47 @@ void Grenade::Collide (
     Float const time,
     Float const frame_dt)
 {
-    // if we hit a grenade of the same owner, don't detonate
+    // if we hit a grenade of the same owner, don't detonate.  instead, merge together,
     if (collider->GetEntityType() == ET_GRENADE && DStaticCast<Grenade *>(collider)->m_owner == m_owner)
-        return;
+    {
+        Grenade *other_grenade = static_cast<Grenade *>(collider);
+        // because Collide will be called on both grenades, we need a way to ensure the
+        // grenade merging only happens once, and that only one grenade goes away.  thus
+        // we'll only perform merging when the pointer value of this is less than other_grenade.
+        ASSERT1(this != other_grenade) // a grenade can't (shouldn't be able to) collide with itself
+        if (this > other_grenade)
+            return;
 
-    // call the superclass collide
-    Explosive::Collide(
-        collider,
-        collision_location,
-        collision_normal,
-        collision_force,
-        time,
-        frame_dt);
+        // figure out the new damage radius, explosion radius and damage to inflict.
+        Float scale_factor = Math::Sqrt(1.0f + other_grenade->GetFirstMoment() / GetFirstMoment());
+        GetOwnerObject()->Scale(scale_factor);
+        m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
+        m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
+        m_damage_to_inflict += other_grenade->m_damage_to_inflict;
+
+        // figure out the new mass, velocity, and radius.
+        FloatVector2 new_momentum = GetMomentum() + other_grenade->GetMomentum();
+        SetFirstMoment(GetFirstMoment() + other_grenade->GetFirstMoment());
+        SetMomentum(new_momentum); // have to set this after setting the first moment
+
+        // let the other grenade's owner's grenade launcher know that it's going bye-bye
+        if (other_grenade->m_owner_grenade_launcher != NULL)
+            other_grenade->m_owner_grenade_launcher->ActiveGrenadeDestroyed(other_grenade);
+        // make it go bye-bye
+        other_grenade->ScheduleForDeletion(0.0f);
+    }
+    // otherwise, if we did not hit the owner of this grenade, do normal explosive collision handling
+    else if (collider != *m_owner)
+    {
+        // call the superclass collide
+        Explosive::Collide(
+            collider,
+            collision_location,
+            collision_normal,
+            collision_force,
+            time,
+            frame_dt);
+    }
 }
 
 void Grenade::Die (
@@ -189,13 +221,19 @@ void Grenade::Detonate (
     if (GetIsDead())
         return;
 
+    // grenade merging will result in grenades which inflict more damage
+    // than just the sum of their source grenades.  thus we multiply
+    // the amount of damage to inflict by a factor which depends on the
+    // ratio of mass to default mass.
+    Float damage_factor = Math::Pow(ms_merge_power_boost, GetFirstMoment() / ms_default_mass);
+
     // spawn a damage explosion
     SpawnDamageExplosion(
         GetWorld(),
         GetObjectLayer(),
         GetTranslation(),
         GetVelocity(),
-        m_damage_to_inflict,
+        m_damage_to_inflict*damage_factor,
         m_damage_radius,
         m_explosion_radius,
         0.2f,
