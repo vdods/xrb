@@ -22,20 +22,6 @@ namespace Dis
 
 class Ship;
 
-/*
-Weapon design:
-
-Weapon
-+---PeaShooter      - primary: shoots Ballistic         secondary: charge-up weapon
-+---Laser           - primary: trace/LaserBeam          secondary: proximity laser
-+---FlameThrower    - primary: shoots Fireball          secondary: shoots Napalm
-+---GaussGun        - primary: trace/GaussGunTrail      secondary: none
-+---GrenadeLauncher - primary: shoots Grenade           secondary: detonates Grenade
-+---MissileLauncher - primary: shoots Missile           secondary: shoots seeking Missile
-+---EMPBombLayer    - primary: shoots EMPBomb           secondary: detonates EMPBomb
-+---Tractor         - primary: pulls powerups           secondary: pulls anything
-*/
-
 class Weapon : public PoweredDevice
 {
 public:
@@ -170,8 +156,8 @@ private:
 class LaserBeam;
 
 // - lasers
-//   * upgrades will be to the power and range (the lasers will not harm the
-//     player by default)
+//   * upgrades will be to the power and range (the lasers will not (can't)
+//     harm the player by default)
 class Laser : public Weapon // - primary: trace/LaserBeam / secondary: proximity laser
 {
 public:
@@ -235,10 +221,9 @@ private:
     LaserBeam *m_laser_beam;
 }; // end of class Laser
 
-// - flame thrower (will harm the player by default)
-//   * upgrades will be to the power and range to make the fire
-//     not harm you
-class FlameThrower : public Weapon // - primary: shoots Fireball / secondary: shoots Napalm
+// - flame thrower (will not harm the player by default)
+//   * upgrades will be to the power and range
+class FlameThrower : public Weapon // - primary: shoots Fireball / secondary: none (so far)
 {
 public:
 

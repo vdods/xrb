@@ -195,14 +195,13 @@ bool Mortal::Damage (
 {
     ASSERT1(damage_amount >= 0.0f)
 
-    // if the damage_amount_used pointer is valid, initialize it.
-    // (if m_is_invincible is set, then we want to absorb all the damage)
-    if (damage_amount_used != NULL)
-        *damage_amount_used = m_is_invincible ? damage_amount : 0.0f;
-
     // don't take damage if invincible or dead
     if (m_is_invincible || m_current_health <= 0.0f)
+    {
+        if (damage_amount_used != NULL)
+            *damage_amount_used = damage_amount;
         return false;
+    }
 
     // make sure only one bit in the damage type is set
     ASSERT1((damage_type & (damage_type - 1)) == 0)
@@ -217,7 +216,11 @@ bool Mortal::Damage (
     else if (GetIsStrongAgainst(damage_type))
         damage_factor = 0.2f;
     else if (GetIsImmuneAgainst(damage_type))
+    {
+        if (damage_amount_used != NULL)
+            *damage_amount_used = damage_amount;
         return false;
+    }
     else
         damage_factor = 1.0f;
 
@@ -254,23 +257,29 @@ bool Mortal::Damage (
     m_dissipated_damage_accumulator += damage_threshold_to_use;
     ASSERT1(m_dissipated_damage_accumulator <= m_damage_dissipation_rate + 0.001f)
 
+    // calculate the new health, and call Die on this if it went below zero.
+    Float old_health = m_current_health;
+    Float new_health = old_health - adjusted_damage_amount;
+    ASSERT1(new_health <= old_health)
+    bool mortal_died_from_this_damage = old_health > 0.0f && new_health <= 0.0f;
+    SetCurrentHealth(new_health);
+
     // record the amount of damage actually used by this Mortal
     if (damage_amount_used != NULL)
     {
-        *damage_amount_used = Min(m_current_health + damage_threshold_to_use, factored_damage) / damage_factor;
+        // if we were killed from this damage, then a fraction of it was used.
+        if (mortal_died_from_this_damage)
+            *damage_amount_used = damage_amount * (old_health - 0.0f) / (old_health - new_health);
+        // if we were not killed from this damage, then all of the damage was used.
+        else
+            *damage_amount_used = damage_amount;
+
         ASSERT1(*damage_amount_used <= damage_amount)
     }
 
-    // if the adjusted damage amount is below zero, return (no damage should be done)
-    if (adjusted_damage_amount <= 0.0f)
-        return false;
-
     // TODO: debris spawning
 
-    // calculate the new health, and call Die on this if it went below zero.
-    Float new_health = m_current_health - adjusted_damage_amount;
-    bool mortal_died_from_this_damage = new_health <= 0.0f && m_current_health > 0.0f;
-    SetCurrentHealth(new_health);
+    // if this damage caused us to die, call Die().
     if (mortal_died_from_this_damage)
     {
         Die(damager,

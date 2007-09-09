@@ -379,15 +379,13 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
 
     ASSERT1(ms_aim_duration[GetEnemyLevel()] > 0.0f)
     Float aim_time_parameter = Min(1.0f, 0.25f + 0.75f * (time - m_aim_start_time) / ms_aim_duration[GetEnemyLevel()]);
-    SetReticleCoordinates(
-        aim_time_parameter * (target_position + m_aim_delta) +
-        (1.0f - aim_time_parameter) * GetTranslation());
+    SetReticleCoordinates(target_position + m_aim_delta);
 
     // update the reticle's location and scale factor
     ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
     static Float const s_final_reticle_radius = 20.0f;
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
-        GetReticleCoordinates(),
+        aim_time_parameter * GetReticleCoordinates() + (1.0f - aim_time_parameter) * GetTranslation(),
         s_final_reticle_radius * aim_time_parameter);
 
     // if the aim duration has elapsed, transition to FireAtTarget

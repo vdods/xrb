@@ -695,6 +695,10 @@ bool PlayerShip::Damage (
             *damage_amount_used += temp_damage_taken;
     }
 
+    // if damage_amount_used is provided, scale it back up by the protection factor
+    if (damage_amount_used != NULL)
+        *damage_amount_used *= ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()];
+
     return player_ship_died;
 }
 

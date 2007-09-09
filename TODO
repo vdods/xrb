@@ -42,6 +42,10 @@ DISASTEROIDS:
 - the gauss gun damage location appears to be wrong (on exactly
   the opposite side of the damagee).
 ** feature-related **
+- Mortals should flash red when being damaged, flash green while being
+  healed.  When a Mortal is being damaged by something it's strong, weak
+  or immune against, it should make a particular sound to indicate that.
+  this will require rendering support for RGB biasing.
 - secondary fire for EMP -- ambient tractor beam
 - forget the 4x item status screen.  upgrading should be one way,
   and the inventory should just show what level item it is.  this also
@@ -53,9 +57,9 @@ DISASTEROIDS:
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
 - make Demi push away if its taking too much damage and the player is close
-- possibly make Demi have a time-based health-recharge behavior, so you
-  have to do heavy damage to it quickly to kill it.
-- make smart ballistics not be canceled out by other ballistics
+- make smart ballistics not be canceled out by other ballistics (i'm thinking
+  mainly of the pea-shooter shooting a full charge and getting canceled
+  out by some puny other ballistic).
 - make Shade circle around the player once it has locked on
 - make Shade teleport or fly away if it takes too much damage
 - when a new high score is posted and you're taken back to the title screen,
@@ -70,8 +74,6 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- once color biasing is implemented for Objects, damage should cause the
-  sprite to flash red, and healing should cause the sprite to flash green.
 - if super-stoke thing is added, that can be indicated by the ship flashing
   yellow or white
 - collapse the world and object layer params in spawning functions to just
@@ -110,6 +112,10 @@ DISASTEROIDS:
 - there seems to be a bug in the aiming in the front weapon of Demi
 - get non-wrapped ObjectLayers back up and running (because they totally
   don't work in disasteroids)
+- firing a laser or gauss gun while directly facing and touching e.g.
+  an asteroid causes the line trace to fail so the weapon fires through
+  the asteroid.  maybe fix this by starting the line trace slightly
+  inside the firing ship.
 
 TODO:
 - in ASSERT macros (and any macro that uses a code block), use
