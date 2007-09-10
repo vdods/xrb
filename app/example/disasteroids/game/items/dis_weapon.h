@@ -319,7 +319,15 @@ public:
         m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
         ClearImpactDamageOverride();
     }
-    virtual ~GaussGun () { }
+    virtual ~GaussGun ()
+    {
+//         if (m_reticle_effect.GetIsValid())
+//         {
+//             if (m_reticle_effect->GetIsInWorld())
+//                 m_reticle_effect->RemoveFromWorld();
+//             delete m_reticle_effect->GetOwnerObject();
+//         }
+    }
 
     inline bool GetIsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
     inline Float GetImpactDamageOverride () const { return m_impact_damage_override; }
@@ -331,6 +339,7 @@ public:
     }
 
     inline void ClearImpactDamageOverride () { m_impact_damage_override = -1.0f; }
+//     void EnsureReticleEffectIsCleared ();
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
@@ -365,6 +374,7 @@ private:
 
     Float m_time_last_fired;
     Float m_impact_damage_override;
+//     EntityReference<ReticleEffect> m_reticle_effect;
 }; // end of class GaussGun
 
 class Grenade;

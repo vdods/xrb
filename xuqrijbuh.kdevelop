@@ -8,18 +8,23 @@
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
       <part>kdevabbrev</part>
-      <part>kdevbookmarks</part>
+      <part>kdevclassview</part>
       <part>kdevsnippet</part>
       <part>kdevdebugger</part>
+      <part>kdevdocumentation</part>
       <part>kdevdoxygen</part>
       <part>kdevkonsoleview</part>
-      <part>kdevfileselector</part>
+      <part>kdevfilegroups</part>
+      <part>kdevfilelist</part>
+      <part>kdevfileview</part>
       <part>kdevdistpart</part>
       <part>kdevopenwith</part>
+      <part>kdevquickopen</part>
       <part>kdevregexptest</part>
       <part>kdevastyle</part>
       <part>kdevtexttools</part>
       <part>kdevtools</part>
+      <part>kdevvalgrind</part>
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
@@ -185,6 +190,21 @@
       <codeCompletionDelay>2000</codeCompletionDelay>
       <argumentsHintDelay>1000</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
+      <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
+      <completionBoxItemOrder>0</completionBoxItemOrder>
+      <howEvaluationContextMenu>true</howEvaluationContextMenu>
+      <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
+      <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
+      <namespaceAliases>std=_GLIBCXX_STD;__gnu_cxx=std</namespaceAliases>
+      <processPrimaryTypes>true</processPrimaryTypes>
+      <processFunctionArguments>false</processFunctionArguments>
+      <preProcessAllHeaders>false</preProcessAllHeaders>
+      <parseMissingHeaders>false</parseMissingHeaders>
+      <resolveIncludePaths>true</resolveIncludePaths>
+      <alwaysParseInBackground>true</alwaysParseInBackground>
+      <usePermanentCaching>true</usePermanentCaching>
+      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
+      <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
       <prefixGet>Get</prefixGet>

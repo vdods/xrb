@@ -534,6 +534,12 @@ bool FlameThrower::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
+// void GaussGun::EnsureReticleEffectIsCleared ()
+// {
+//     if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+//         m_reticle_effect->RemoveFromWorld();
+// }
+
 Float GaussGun::GetPowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
