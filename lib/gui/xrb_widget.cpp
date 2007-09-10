@@ -82,7 +82,7 @@ Widget::~Widget ()
     // will clean up pointers that may otherwise be left dangling.
     if (m_parent != NULL)
         DetachFromParent();
-    ASSERT1(m_parent == NULL)
+    ASSERT1(m_parent == NULL);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ void Widget::SetSizePropertyEnabled (
     bool const value,
     bool const defer_parent_update)
 {
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
     {
         if (m_size_properties.m_min_size_enabled[component] != value)
@@ -215,8 +215,8 @@ void Widget::SetSizeProperty (
     ScreenCoord const value,
     bool const defer_parent_update)
 {
-    ASSERT1(component <= 1)
-    ASSERT1(value >= 0)
+    ASSERT1(component <= 1);
+    ASSERT1(value >= 0);
     if (property == SizeProperties::MIN)
     {
         if (m_size_properties.m_min_size[component] != value)
@@ -246,8 +246,8 @@ void Widget::SetSizeProperty (
     ScreenCoordVector2 const &value,
     bool const defer_parent_update)
 {
-    ASSERT1(value[Dim::X] >= 0)
-    ASSERT1(value[Dim::Y] >= 0)
+    ASSERT1(value[Dim::X] >= 0);
+    ASSERT1(value[Dim::Y] >= 0);
     if (property == SizeProperties::MIN)
     {
         if (m_size_properties.m_min_size != value)
@@ -313,7 +313,7 @@ void Widget::SetIsModal (bool const is_modal)
         // RemoveModalWidget, or before the call to AddModalWidget
         if (m_is_modal)
         {
-            ASSERT1(!GetIsMouseover())
+            ASSERT1(!GetIsMouseover());
             // remove this widget from the modal stack of the top level parent
             GetTopLevelParent()->RemoveModalWidget(this);
             m_is_modal = false;
@@ -520,7 +520,7 @@ void Widget::CenterOnWidget (Widget const *const widget)
 bool Widget::Focus ()
 {
     // you may not focus a hidden widget.
-    ASSERT1(!GetIsHidden())
+    ASSERT1(!GetIsHidden());
 
     // if already focused, then we don't need to do anything
     if (GetIsFocused())
@@ -539,7 +539,7 @@ bool Widget::Focus ()
 
         // unfocus all widgets from the focused child of the first focused
         // ancestor down
-        ASSERT1(first_focused_ancestor != NULL)
+        ASSERT1(first_focused_ancestor != NULL);
         if (first_focused_ancestor->m_focus != NULL)
             first_focused_ancestor->m_focus->UnfocusWidgetLine();
     }
@@ -547,7 +547,7 @@ bool Widget::Focus ()
     // focus all widgets from this widget on up to the first focused ancestor
     FocusWidgetLine();
     // make sure the parent's m_focus actually points to this widget
-    ASSERT1(GetEffectiveParent() == NULL || GetEffectiveParent()->m_focus == this)
+    ASSERT1(GetEffectiveParent() == NULL || GetEffectiveParent()->m_focus == this);
     // focus was taken, return true
     return true;
 }
@@ -569,15 +569,15 @@ void Widget::GrabMouse ()
     // if this widget already has the mouse grabbed, don't do anything
     if (GetIsMouseGrabbed())
     {
-        ASSERT1(parent == NULL || parent->m_focus_has_mouse_grab)
+        ASSERT1(parent == NULL || parent->m_focus_has_mouse_grab);
         return;
     }
 
     // gotta make sure that this widget has focus
     DEBUG1_CODE(bool was_focused =)
     Focus();
-    ASSERT1(was_focused)
-    ASSERT1(parent == NULL || parent->m_focus == this)
+    ASSERT1(was_focused);
+    ASSERT1(parent == NULL || parent->m_focus == this);
 
     // set the mouse grab on this and up through the parent widgets
     if (parent != NULL)
@@ -587,7 +587,7 @@ void Widget::GrabMouse ()
         // set this widget to mouse grabbing
         parent->m_focus_has_mouse_grab = true;
         // make sure the parent's m_focus actually points to this widget
-        ASSERT1(parent->m_focus == this)
+        ASSERT1(parent->m_focus == this);
         // call the mouse grab handler and emit the mouse grab on signals
         HandleMouseGrabOn();
     }
@@ -600,7 +600,7 @@ void Widget::UnGrabMouse ()
     // if this widget already doesn't have the mouse grabbed, don't do anything
     if (!GetIsMouseGrabbed())
     {
-        ASSERT1(parent == NULL || !parent->m_focus_has_mouse_grab)
+        ASSERT1(parent == NULL || !parent->m_focus_has_mouse_grab);
         return;
     }
 
@@ -620,7 +620,7 @@ void Widget::DetachFromParent ()
 {
     // i put an assert in here to make sure no one behaves badly and tries
     // to detach a top-level widget
-    ASSERT1(m_parent != NULL)
+    ASSERT1(m_parent != NULL);
     m_parent->DetachChild(this);
 }
 
@@ -694,7 +694,7 @@ void Widget::InitializeFromWidgetSkinProperties ()
 
 bool Widget::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     // if this widget is disabled, it rejects all events
     if (!GetIsEnabled())
@@ -847,9 +847,9 @@ void Widget::SizeRangeAdjustment (ScreenCoordRect *const rect) const
 
 void Widget::FocusWidgetLine ()
 {
-    ASSERT1(!GetIsFocused())
+    ASSERT1(!GetIsFocused());
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
-    ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL)
+    ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL);
 
     ContainerWidget *parent = GetEffectiveParent();
 
@@ -868,7 +868,7 @@ void Widget::FocusWidgetLine ()
 
 void Widget::UnfocusWidgetLine ()
 {
-    ASSERT1(GetIsFocused())
+    ASSERT1(GetIsFocused());
 
     ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
 
@@ -922,7 +922,7 @@ bool Widget::MouseoverOn ()
 
         // unfocus all widgets from the mouseover-focused child of the first
         // mouseover-focused ancestor down
-        ASSERT1(first_mouseover_ancestor != NULL)
+        ASSERT1(first_mouseover_ancestor != NULL);
         if (first_mouseover_ancestor->m_mouseover_focus != NULL)
             first_mouseover_ancestor->m_mouseover_focus->MouseoverOffWidgetLine();
     }
@@ -945,13 +945,13 @@ void Widget::MouseoverOff ()
 
     if (!m_accepts_mouseover)
     {
-        ASSERT1(!GetIsMouseover())
+        ASSERT1(!GetIsMouseover());
         return;
     }
 
     if (GetIsHidden())
     {
-        ASSERT1(!GetIsMouseover())
+        ASSERT1(!GetIsMouseover());
         return;
     }
 
@@ -961,9 +961,9 @@ void Widget::MouseoverOff ()
 
 void Widget::MouseoverOnWidgetLine ()
 {
-    ASSERT1(!GetIsMouseover())
+    ASSERT1(!GetIsMouseover());
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
-    ASSERT1(this_container_widget == NULL || this_container_widget->m_mouseover_focus == NULL)
+    ASSERT1(this_container_widget == NULL || this_container_widget->m_mouseover_focus == NULL);
 
     ContainerWidget *parent = GetEffectiveParent();
 
@@ -982,7 +982,7 @@ void Widget::MouseoverOnWidgetLine ()
 
 void Widget::MouseoverOffWidgetLine ()
 {
-    ASSERT1(GetIsMouseover())
+    ASSERT1(GetIsMouseover());
 
     // make sure to mouseover-unfocus child widgets first, so that the
     // mouseover-unfocusing happens from bottom up
@@ -1001,13 +1001,13 @@ void Widget::MouseoverOffWidgetLine ()
 
 bool Widget::InternalProcessKeyEvent (EventKey const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
 }
 
 bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     // give this widget the chance to process the event
     switch (e->GetEventType())
@@ -1033,7 +1033,7 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
             break;
 
         default:
-            ASSERT1(false && "Invalid Event::EventType")
+            ASSERT1(false && "Invalid Event::EventType");
             break;
     }
 
@@ -1042,7 +1042,7 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
 
 bool Widget::InternalProcessJoyEvent (EventJoy const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     return ProcessJoyEvent(DStaticCast<EventJoy const *>(e));
 }
 
@@ -1058,7 +1058,7 @@ bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
 
     // attempt to focus this widget (it better work)
     bool retval = Focus();
-    ASSERT1(retval)
+    ASSERT1(retval);
     return retval;
 }
 

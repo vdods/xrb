@@ -84,15 +84,15 @@ protected:
     template <typename QuadTreeClass>
     inline QuadTreeClass const *GetChild (Uint32 const index) const
     {
-        ASSERT2(index < 4)
-        ASSERT2(m_child[index] != NULL)
+        ASSERT2(index < 4);
+        ASSERT2(m_child[index] != NULL);
         return DStaticCast<QuadTreeClass const *>(m_child[index]);
     }
     template <typename QuadTreeClass>
     inline QuadTreeClass *GetChild (Uint32 const index)
     {
-        ASSERT2(index < 4)
-        ASSERT2(m_child[index] != NULL)
+        ASSERT2(index < 4);
+        ASSERT2(m_child[index] != NULL);
         return DStaticCast<QuadTreeClass *>(m_child[index]);
     }
     // returns true if the given point is inside this quad.
@@ -104,7 +104,7 @@ protected:
         FloatVector2 const &area_center,
         Float const area_radius) const
     {
-        ASSERT1(area_radius > 0.0f)
+        ASSERT1(area_radius > 0.0f);
         Float radius_sum = area_radius + 2.0f * GetRadius();
         return (area_center - m_center).GetLengthSquared() < radius_sum*radius_sum;
     }
@@ -134,8 +134,8 @@ protected:
         Float const half_side_length,
         Uint8 const depth)
     {
-        ASSERT1(half_side_length > 0.0f)
-        ASSERT1(depth != 0)
+        ASSERT1(half_side_length > 0.0f);
+        ASSERT1(depth != 0);
 
         m_parent = NULL;
         m_center = center;

@@ -27,7 +27,7 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     FloatTransform2(FloatTransform2::ms_identity, false),
     FrameHandler()
 {
-    ASSERT1(parent_world_view_widget != NULL)
+    ASSERT1(parent_world_view_widget != NULL);
 
     m_grid_line_type = GR_NO_DRAW;
     m_grid_number_base = 4;
@@ -54,12 +54,12 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
 Engine2::WorldView::~WorldView ()
 {
     // this is to ensure that Engine2::World::DetachWorldView was called
-    ASSERT1(m_world == NULL)
+    ASSERT1(m_world == NULL);
 }
 
 FloatMatrix2 Engine2::WorldView::GetCompoundTransformation () const
 {
-    ASSERT1(m_parent_world_view_widget != NULL)
+    ASSERT1(m_parent_world_view_widget != NULL);
     return m_parent_world_view_widget->GetTransformation() * GetTransformation();
 }
 
@@ -76,7 +76,7 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
     if (object_layer == NULL)
         object_layer = GetWorld()->GetMainObjectLayer();
 
-    ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth())
+    ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth());
 
     FloatMatrix2 world_to_screen(
         GetParentWorldViewWidget()->GetTransformation() *
@@ -100,7 +100,7 @@ FloatMatrix2 Engine2::WorldView::GetParallaxedTransformation (
     if (object_layer == NULL)
         object_layer = GetWorld()->GetMainObjectLayer();
 
-    ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth())
+    ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth());
 
     // compute the view transformation adjusted by the parallax factor
     // and then get the world-to-whatever transformation
@@ -170,7 +170,7 @@ void Engine2::WorldView::SetCenter (FloatVector2 const &position)
 
 void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
 {
-    ASSERT1(zoom_factor > 0.0)
+    ASSERT1(zoom_factor > 0.0);
 
     if (zoom_factor < m_min_zoom_factor)
         zoom_factor = m_min_zoom_factor;
@@ -198,7 +198,7 @@ void Engine2::WorldView::SetAngle (Float const angle)
 
 void Engine2::WorldView::SetMinZoomFactor (Float const min_zoom_factor)
 {
-    ASSERT1(min_zoom_factor >= 0.0f)
+    ASSERT1(min_zoom_factor >= 0.0f);
     // adjust the max zoom factor from the new min zoom factor
     if (m_max_zoom_factor < min_zoom_factor)
         m_max_zoom_factor = min_zoom_factor;
@@ -210,7 +210,7 @@ void Engine2::WorldView::SetMinZoomFactor (Float const min_zoom_factor)
 
 void Engine2::WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
 {
-    ASSERT1(max_zoom_factor > 0.0f)
+    ASSERT1(max_zoom_factor > 0.0f);
     // adjust the min zoom factor from the new max zoom factor
     if (m_min_zoom_factor > max_zoom_factor)
         m_min_zoom_factor = max_zoom_factor;
@@ -241,7 +241,7 @@ void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
 
 void Engine2::WorldView::ZoomView (Float const delta_zoom_factor)
 {
-    ASSERT1(delta_zoom_factor > 0.0)
+    ASSERT1(delta_zoom_factor > 0.0);
     SetZoomFactor(m_zoom_factor * delta_zoom_factor);
 }
 
@@ -257,22 +257,22 @@ void Engine2::WorldView::RotateView (Float const delta_angle)
 
 void Engine2::WorldView::DetachFromWorld ()
 {
-    ASSERT1(m_world != NULL)
+    ASSERT1(m_world != NULL);
     m_world->DetachWorldView(this);
-    ASSERT1(m_world == NULL)
+    ASSERT1(m_world == NULL);
 }
 
 void Engine2::WorldView::Draw (RenderContext const &render_context)
 {
-    ASSERT1(m_parent_world_view_widget != NULL)
-    ASSERT1(m_world != NULL && "You must call Engine2::World::AttachWorldView before anything happens")
+    ASSERT1(m_parent_world_view_widget != NULL);
+    ASSERT1(m_world != NULL && "You must call Engine2::World::AttachWorldView before anything happens");
 
     // constants which control the fading of close-up object layers
     // which are in front of the main object layer
     Float const fade_distance_upper_limit = 1.0;
     Float const fade_distance_lower_limit = 0.25;
     Float distance_fade;
-    ASSERT1(fade_distance_upper_limit > fade_distance_lower_limit)
+    ASSERT1(fade_distance_upper_limit > fade_distance_lower_limit);
 
     // create a RenderContext for the view to apply color masks to
     RenderContext view_render_context(render_context);
@@ -300,7 +300,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
         Float parallaxed_view_radius;
 
         object_layer = *it;
-        ASSERT1(object_layer != NULL)
+        ASSERT1(object_layer != NULL);
 
         // set up the GL projection matrix for drawing this object layer
         PushParallaxedGLProjectionMatrix(render_context, object_layer);
@@ -627,7 +627,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     RenderContext const &render_context,
     Engine2::ObjectLayer const *const object_layer)
 {
-    ASSERT1(!m_is_gl_projection_matrix_in_use)
+    ASSERT1(!m_is_gl_projection_matrix_in_use);
     m_is_gl_projection_matrix_in_use = true;
 
     glMatrixMode(GL_PROJECTION);
@@ -663,15 +663,15 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
         GetParallaxFactor(
             GetViewDepth(NULL),
             object_layer->GetZDepth());
-    ASSERT1(parallax_factor != 0.0f)
+    ASSERT1(parallax_factor != 0.0f);
     glScalef(
         1.0f / parallax_factor,
         1.0f / parallax_factor,
         1.0f);
 
     // perform the world-to-view transformation
-    ASSERT1(GetScaleFactors()[Dim::X] == 1.0f)
-    ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f)
+    ASSERT1(GetScaleFactors()[Dim::X] == 1.0f);
+    ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f);
     glRotatef(FloatTransform2::GetAngle(), 0.0f, 0.0f, 1.0f);
     glTranslatef(
         GetTranslation()[Dim::X],
@@ -681,7 +681,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
 
 void Engine2::WorldView::PopGLProjectionMatrix ()
 {
-    ASSERT1(m_is_gl_projection_matrix_in_use)
+    ASSERT1(m_is_gl_projection_matrix_in_use);
     // restore the projection matrix
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();

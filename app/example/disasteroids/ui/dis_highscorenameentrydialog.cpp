@@ -65,7 +65,7 @@ void HighScoreNameEntryDialog::OKButtonActivated ()
 
 void HighScoreNameEntryDialog::InternalNameSubmitted (std::string const &name)
 {
-    ASSERT1(name == GetName())
+    ASSERT1(name == GetName());
     OKButtonActivated();
 }
 

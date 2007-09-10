@@ -53,34 +53,34 @@ ThisCompileErrorIsActuallyAFailedCompileTimeAssert<static_cast<bool>(x)>::BLAH;
 
 // normal assert macro, should be used generously in non-speed-critical code
 #if XRB_DEBUG_LEVEL >= 1
-    #define ASSERT1(x) { assert(x); }
+    #define ASSERT1(x) do { assert(x); } while (false)
 #else // XRB_DEBUG_LEVEL < 1
-    #define ASSERT1(x) { }
+    #define ASSERT1(x) do { } while (false)
 #endif // XRB_DEBUG_LEVEL < 1
 
 // pedantic assert macro (asserts which are there just for correctness' sake,
 // but are extremely unlikely to fail).  to be used in speed-critical code
 // sections.
 #if XRB_DEBUG_LEVEL >= 2
-    #define ASSERT2(x) { assert(x); }
+    #define ASSERT2(x) do { assert(x); } while (false)
 #else // XRB_DEBUG_LEVEL < 2
-    #define ASSERT2(x) { }
+    #define ASSERT2(x) do { } while (false)
 #endif // XRB_DEBUG_LEVEL < 2
 
 // EXTREMELY pedantic assert macro (asserts which are there just for
 // correctness' sake, but are extremely fucking unlikely to fail).  to be used
 // in the most speed-critical code sections.
 #if XRB_DEBUG_LEVEL >= 3
-    #define ASSERT3(x) { assert(x); }
+    #define ASSERT3(x) do { assert(x); } while (false)
 #else // XRB_DEBUG_LEVEL < 3
-    #define ASSERT3(x) { }
+    #define ASSERT3(x) do { } while (false)
 #endif // XRB_DEBUG_LEVEL < 3
 
 // assert which is used in Engine2::Entity code for debugging NaNs.
 #if defined(XRB_NAN_SANITY_CHECK)
-    #define ASSERT_NAN_SANITY_CHECK(x) { assert(x); }
+    #define ASSERT_NAN_SANITY_CHECK(x) do { assert(x); } while (false)
 #else // !defined(XRB_NAN_SANITY_CHECK)
-    #define ASSERT_NAN_SANITY_CHECK(x) { }
+    #define ASSERT_NAN_SANITY_CHECK(x) do { } while (false)
 #endif // !defined(XRB_NAN_SANITY_CHECK)
 
 #endif // !defined(_XRB_ASSERT_H_)

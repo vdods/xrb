@@ -49,13 +49,13 @@ namespace Xrb
 }
 
 %parser_destructor_actions{
-    ASSERT1(m_scanner == NULL)
+    ASSERT1(m_scanner == NULL);
 }
 
 %parser_implementation_file_bottom%{
 Float ArithmeticParser::Parse (std::string const &input_string)
 {
-    ASSERT1(m_scanner == NULL)
+    ASSERT1(m_scanner == NULL);
 
     Float retval;
 
@@ -71,7 +71,7 @@ Float ArithmeticParser::Parse (std::string const &input_string)
 
 ArithmeticParser::Token::Type ArithmeticParser::Scan ()
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     return m_scanner->Scan(&m_lookahead_token);
 }
 

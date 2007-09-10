@@ -31,10 +31,10 @@ void RadiusDamage (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(physics_handler != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(damage_amount >= 0.0f)
-    ASSERT1(damage_area_radius > 0.0f)
+    ASSERT1(physics_handler != NULL);
+    ASSERT1(object_layer != NULL);
+    ASSERT1(damage_amount >= 0.0f);
+    ASSERT1(damage_area_radius > 0.0f);
     if (damage_amount == 0.0f)
         return;
 
@@ -52,7 +52,7 @@ void RadiusDamage (
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // damage mortals, unless it is the one to ignore.
         if (entity->GetIsMortal() && entity != *ignore_this_mortal)
@@ -64,7 +64,7 @@ void RadiusDamage (
                     (entity->GetTranslation() - damage_area_center).GetLength() -
                      entity->GetScaleFactor());
             Float distance_ratio = distance / damage_area_radius;
-            ASSERT1(distance_ratio >= 0.0f)
+            ASSERT1(distance_ratio >= 0.0f);
             Float damage_to_apply;
             if (distance_ratio >= 1.0f)
                 damage_to_apply = 0.0f;
@@ -97,8 +97,8 @@ void RadiusKnockback (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(knockback_area_radius > 0.0f)
-    ASSERT1(power > 0.0f)
+    ASSERT1(knockback_area_radius > 0.0f);
+    ASSERT1(power > 0.0f);
 
     AreaTraceList area_trace_list;
     physics_handler->AreaTrace(

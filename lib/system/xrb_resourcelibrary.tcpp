@@ -27,12 +27,12 @@ Resource<T> ResourceLibrary::LoadFilename (
     // if it is loaded then return a Resource for it.
     if (it != m_instance_map.end())
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         // make sure the existing data is of the right type
         ASSERT1(
             dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
             "You probably are trying to load a currently loaded "
-            "resource using a different type or method")
+            "resource using a different type or method");
         return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
     }
     // otherwise load up the given filename, stick it in
@@ -77,7 +77,7 @@ Resource<T> ResourceLibrary::LoadFilename (
     Sint32 const load_parameter)
 {
     ASSERT1(load_parameter != UNSPECIFIED_LOAD_PARAMETER &&
-            "You may not use that load parameter (it is reserved)")
+            "You may not use that load parameter (it is reserved)");
 
     Resource<T> invalid_resource;
 
@@ -91,12 +91,12 @@ Resource<T> ResourceLibrary::LoadFilename (
     // if it is loaded then return a Resource for it.
     if (it != m_instance_map.end())
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         // make sure the existing data is of the right type
         ASSERT1(
             dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
             "You probably are trying to load a currently loaded "
-            "resource using a different type or method")
+            "resource using a different type or method");
         return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
     }
     // otherwise load up the given filename, stick it in

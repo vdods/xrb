@@ -167,13 +167,13 @@ InventoryPanel::InventoryPanel (
 
 SignalSender0 const *InventoryPanel::SenderEndGame ()
 {
-    ASSERT1(m_end_button != NULL)
+    ASSERT1(m_end_button != NULL);
     return m_end_button->SenderReleased();
 }
 
 SignalSender0 const *InventoryPanel::SenderQuitGame ()
 {
-    ASSERT1(m_quit_button != NULL)
+    ASSERT1(m_quit_button != NULL);
     return m_quit_button->SenderReleased();
 }
 
@@ -182,8 +182,8 @@ void InventoryPanel::SetItemStatus (
     Uint8 const upgrade_level,
     InventoryButton::Status const status)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     m_inventory_button[item_type][upgrade_level]->SetStatus(status);
 }
@@ -196,7 +196,7 @@ void InventoryPanel::UpdatePanelState ()
         {
             for (Uint32 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
             {
-                ASSERT1(m_inventory_button[item][level] != NULL)
+                ASSERT1(m_inventory_button[item][level] != NULL);
 
                 InventoryButton::Status status;
 
@@ -256,7 +256,7 @@ void InventoryPanel::UpdatePanelState ()
         {
             for (Uint32 j = UPGRADE_LEVEL_COUNT-1; j < UPGRADE_LEVEL_COUNT; --j)
             {
-                ASSERT1(m_inventory_button[i][j] != NULL)
+                ASSERT1(m_inventory_button[i][j] != NULL);
                 m_inventory_button[i][j]->Disable();
                 m_inventory_button[i][j]->SetStatus(InventoryButton::S_NOT_AFFORDABLE);
             }
@@ -280,7 +280,7 @@ bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
 
 void InventoryPanel::CreateInventoryButtonColumn (ItemType item_type, Layout *parent)
 {
-    ASSERT1(parent != NULL)
+    ASSERT1(parent != NULL);
     for (Uint8 level = UPGRADE_LEVEL_COUNT-1; level < UPGRADE_LEVEL_COUNT; --level)
     {
         m_inventory_button[item_type][level] =
@@ -295,7 +295,7 @@ void InventoryPanel::CreateInventoryButtonColumn (ItemType item_type, Layout *pa
 
 void InventoryPanel::ConnectInventoryButton (InventoryButton *const inventory_button)
 {
-    ASSERT1(inventory_button != NULL)
+    ASSERT1(inventory_button != NULL);
     SignalHandler::Connect2(
         inventory_button->SenderAttemptToBuyItem(),
         &m_receiver_attempt_to_buy_item);
@@ -312,8 +312,8 @@ void InventoryPanel::ConnectInventoryButton (InventoryButton *const inventory_bu
 
 void InventoryPanel::AttemptToBuyItem (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     if (m_inventory_owner_ship->BuyItem(item_type, upgrade_level))
         UpdatePanelState();
@@ -321,8 +321,8 @@ void InventoryPanel::AttemptToBuyItem (ItemType const item_type, Uint8 const upg
 
 void InventoryPanel::EquipItem (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     m_inventory_owner_ship->EquipItem(item_type, upgrade_level);
     UpdatePanelState();
@@ -330,9 +330,9 @@ void InventoryPanel::EquipItem (ItemType const item_type, Uint8 const upgrade_le
 
 void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
-    ASSERT1(!m_prices_are_shown)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(!m_prices_are_shown);
 
     m_prices_are_shown = true;
     m_currently_shown_price_item_type = item_type;
@@ -341,8 +341,8 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
     // enable the widgets and set the prices
     for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
-        ASSERT1(!m_mineral_cost_label[mineral_index]->GetIsEnabled())
-        ASSERT1(!m_mineral_icon_label[mineral_index]->GetIsEnabled())
+        ASSERT1(!m_mineral_cost_label[mineral_index]->GetIsEnabled());
+        ASSERT1(!m_mineral_icon_label[mineral_index]->GetIsEnabled());
 
         Uint32 mineral_cost;
         if (m_inventory_owner_ship->GetIsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
@@ -376,19 +376,19 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
 
 void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
-    ASSERT1(m_prices_are_shown)
-    ASSERT1(m_currently_shown_price_item_type == item_type)
-    ASSERT1(m_currently_shown_price_upgrade_level == upgrade_level)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(m_prices_are_shown);
+    ASSERT1(m_currently_shown_price_item_type == item_type);
+    ASSERT1(m_currently_shown_price_upgrade_level == upgrade_level);
 
     // clear all the prices and disable the widgets
     for (Uint8 i = 0; i < MINERAL_COUNT; ++i)
     {
         if (m_mineral_cost_label[i]->GetValue() > 0)
         {
-            ASSERT1(m_mineral_cost_label[i]->GetIsEnabled())
-            ASSERT1(m_mineral_icon_label[i]->GetIsEnabled())
+            ASSERT1(m_mineral_cost_label[i]->GetIsEnabled());
+            ASSERT1(m_mineral_icon_label[i]->GetIsEnabled());
 
             m_mineral_cost_label[i]->SetValue(0);
 
@@ -399,8 +399,8 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
         }
         else
         {
-            ASSERT1(!m_mineral_cost_label[i]->GetIsEnabled())
-            ASSERT1(!m_mineral_icon_label[i]->GetIsEnabled())
+            ASSERT1(!m_mineral_cost_label[i]->GetIsEnabled());
+            ASSERT1(!m_mineral_icon_label[i]->GetIsEnabled());
         }
     }
 
@@ -414,7 +414,7 @@ void InventoryPanel::Deactivate ()
 
 void InventoryPanel::ActivateOptionsDialog ()
 {
-    ASSERT1(m_options_panel == NULL)
+    ASSERT1(m_options_panel == NULL);
     // create the dialog and add a new OptionsPanel to it
     Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
     m_options_panel = new OptionsPanel(options_dialog->GetDialogLayout());
@@ -430,7 +430,7 @@ void InventoryPanel::ActivateOptionsDialog ()
 
 void InventoryPanel::OptionsDialogReturned (Dialog::ButtonID const button_id)
 {
-    ASSERT1(m_options_panel != NULL)
+    ASSERT1(m_options_panel != NULL);
 
     // only save the OptionsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)

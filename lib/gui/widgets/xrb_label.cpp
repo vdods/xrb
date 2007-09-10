@@ -32,8 +32,8 @@ Label::Label (
     m_word_wrap = false;
     m_is_picture_label = false;
     SetIsMinSizeFixedToTextSize(true);
-    ASSERT1(!m_picture.GetIsValid())
-    ASSERT1(!m_render_picture.GetIsValid())
+    ASSERT1(!m_picture.GetIsValid());
+    ASSERT1(!m_render_picture.GetIsValid());
 }
 
 Label::Label (
@@ -75,7 +75,7 @@ void Label::SetAlignment (Uint32 const component, Alignment const alignment)
     if (m_is_picture_label)
         return;
 
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     m_alignment[component] = alignment;
 }
 
@@ -84,7 +84,7 @@ void Label::SetWordWrap (bool const word_wrap)
     if (m_is_picture_label)
         return;
 
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(GetRenderFont().GetIsValid());
 
     if (m_word_wrap != word_wrap)
     {
@@ -99,12 +99,12 @@ void Label::SetPicture (std::string const &picture_name)
     if (!m_is_picture_label)
         return;
 
-    ASSERT1(!picture_name.empty())
+    ASSERT1(!picture_name.empty());
 
     Resource<GLTexture> picture =
         Singletons::ResourceLibrary().
             LoadFilename<GLTexture>(GLTexture::Create, picture_name);
-    ASSERT1(picture.GetIsValid())
+    ASSERT1(picture.GetIsValid());
     if (m_picture != picture)
     {
         m_picture = picture;
@@ -160,8 +160,8 @@ void Label::HandleChangedContentMargins ()
 
 void Label::DrawText (RenderContext const &render_context) const
 {
-    ASSERT1(!m_is_picture_label)
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(!m_is_picture_label);
+    ASSERT1(GetRenderFont().GetIsValid());
 
     ScreenCoordRect contents_rect(GetContentsRect());
     if (contents_rect.GetIsValid())
@@ -169,7 +169,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // give it a chance to update the formatted text if
         // m_text_formatting_update_required is set
         UpdateCachedFormattedText();
-        ASSERT1(!m_text_formatting_update_required)
+        ASSERT1(!m_text_formatting_update_required);
         // generate a render context for the string drawing function
         RenderContext string_render_context(render_context);
         // calculate the clip rect
@@ -179,7 +179,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // set up the GL clip rect
         string_render_context.SetupGLClipRect();
         // draw the text
-        ASSERT1(m_line_format_vector_source != NULL)
+        ASSERT1(m_line_format_vector_source != NULL);
         GetRenderFont()->DrawLineFormattedText(
             string_render_context,
             GetContentsRect(),
@@ -191,7 +191,7 @@ void Label::DrawText (RenderContext const &render_context) const
 
 void Label::DrawPicture (RenderContext const &render_context) const
 {
-    ASSERT1(m_is_picture_label)
+    ASSERT1(m_is_picture_label);
     if (!GetRenderPicture().GetIsValid())
         return;
 
@@ -201,8 +201,8 @@ void Label::DrawPicture (RenderContext const &render_context) const
 
     if (m_picture_keeps_aspect_ratio)
     {
-        ASSERT1(m_picture->GetWidth() > 0)
-        ASSERT1(m_picture->GetHeight() > 0)
+        ASSERT1(m_picture->GetWidth() > 0);
+        ASSERT1(m_picture->GetHeight() > 0);
         // determine if the picture should be fit to the width
         // of the label or the height of the label.
         if (contents_rect.GetHeight() * m_picture->GetWidth() /
@@ -268,8 +268,8 @@ void Label::UpdateRenderPicture ()
 
 ScreenCoordRect Label::GetTextRect () const
 {
-    ASSERT1(!m_is_picture_label)
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(!m_is_picture_label);
+    ASSERT1(GetRenderFont().GetIsValid());
 
     UpdateCachedFormattedText();
     return GetRenderFont()->GetStringRect(m_line_format_vector);
@@ -281,7 +281,7 @@ void Label::UpdateMinAndMaxSizesFromText ()
     if (m_is_picture_label)
         return;
 
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(GetRenderFont().GetIsValid());
 
     // if word-wrapping is enabled, then we can't base the min/max width
     // of this widget off the text, because the width of the widget dictates
@@ -298,8 +298,8 @@ void Label::UpdateMinAndMaxSizesFromText ()
 
 void Label::UpdateCachedFormattedText () const
 {
-    ASSERT1(!m_is_picture_label)
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(!m_is_picture_label);
+    ASSERT1(GetRenderFont().GetIsValid());
 
     // if no update was required, early-out
     if (!m_text_formatting_update_required)

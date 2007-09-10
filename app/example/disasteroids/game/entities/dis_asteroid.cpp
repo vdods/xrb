@@ -108,7 +108,7 @@ void Asteroid::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     Mortal::Collide(
         collider,
@@ -171,8 +171,8 @@ void Asteroid::Die (
         {
             Float velocity_angle = seed_angle;
             seed_angle += 360.0f / static_cast<Float>(ms_number_of_fragments_to_spawn);
-            ASSERT1(GetCurrentHealth() <= 0.0f)
-            ASSERT1(GetMaxHealth() > 0.0f)
+            ASSERT1(GetCurrentHealth() <= 0.0f);
+            ASSERT1(GetMaxHealth() > 0.0f);
             Float health_ratio = GetCurrentHealth() / GetMaxHealth();
             Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / GetFirstMoment();
             if (explosion_speed > 5.0f)
@@ -258,13 +258,13 @@ void Asteroid::Die (
 Uint8 Asteroid::GetRandomMineral () const
 {
     Uint8 mineral_level = DStaticCast<World *>(GetWorld())->GetAsteroidMineralLevel();
-    ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT)
+    ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT);
     Uint16 random_element =
         Math::RandomUint16(0, DISTRIBUTION_LOOKUP_TABLE_SIZE-1);
     DEBUG1_CODE(
         Uint8 mineral_type =
             ms_mineral_distribution_lookup_table[mineral_level][random_element]);
-    ASSERT1(mineral_type < MINERAL_COUNT)
+    ASSERT1(mineral_type < MINERAL_COUNT);
     return ms_mineral_distribution_lookup_table[mineral_level][random_element];
 }
 

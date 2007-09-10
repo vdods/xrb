@@ -77,8 +77,8 @@ bool Engine2::Polygon::GetIsConvex () const
 
 void Engine2::Polygon::Draw () const
 {
-    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW)
-    ASSERT1(GL::GetIsTexture2dOn())
+    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
+    ASSERT1(GL::GetIsTexture2dOn());
 
     glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
 
@@ -98,15 +98,15 @@ void Engine2::Polygon::CloneProperties (
     FloatVector2 *const source_vertex_array,
     FloatVector2 *const destination_vertex_array)
 {
-    ASSERT1(m_vertex_count == 0)
-    ASSERT1(m_vertex_array == NULL)
-    ASSERT1(!m_texture.GetIsValid())
+    ASSERT1(m_vertex_count == 0);
+    ASSERT1(m_vertex_array == NULL);
+    ASSERT1(!m_texture.GetIsValid());
 
-    ASSERT1(source_polygon != NULL)
-    ASSERT1(source_polygon->m_vertex_count >= 3)
+    ASSERT1(source_polygon != NULL);
+    ASSERT1(source_polygon->m_vertex_count >= 3);
 
-    ASSERT1(destination_vertex_array != NULL)
-    ASSERT1(source_vertex_array != NULL)
+    ASSERT1(destination_vertex_array != NULL);
+    ASSERT1(source_vertex_array != NULL);
     
     m_vertex_count = source_polygon->m_vertex_count;
     m_vertex_array = new Vertex[m_vertex_count];
@@ -120,25 +120,25 @@ void Engine2::Polygon::CloneProperties (
     m_texture = source_polygon->m_texture;
     m_area = source_polygon->m_area;
 
-    ASSERT1(GetIsCounterclockwise())
-    ASSERT1(GetIsConvex())
-    ASSERT1(!GetIsDegenerate())
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(GetIsCounterclockwise());
+    ASSERT1(GetIsConvex());
+    ASSERT1(!GetIsDegenerate());
+    ASSERT1(m_texture.GetIsValid());
 }
 
 void Engine2::Polygon::Read (
     Serializer &serializer,
     FloatVector2 *compound_vertex_array)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(compound_vertex_array != NULL)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(compound_vertex_array != NULL);
 
-    ASSERT1(m_vertex_count == 0)
-    ASSERT1(m_vertex_array == NULL)
-    ASSERT1(!m_texture.GetIsValid())
+    ASSERT1(m_vertex_count == 0);
+    ASSERT1(m_vertex_array == NULL);
+    ASSERT1(!m_texture.GetIsValid());
     
     m_vertex_count = serializer.ReadUint32();
-    ASSERT1(m_vertex_count >= 3)
+    ASSERT1(m_vertex_count >= 3);
     m_vertex_array = new Vertex[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
@@ -150,19 +150,19 @@ void Engine2::Polygon::Read (
             LoadFilename<GLTexture>(GLTexture::Create, serializer.ReadStdString());
     m_area = GetArea();
 
-    ASSERT1(GetIsCounterclockwise())
-    ASSERT1(GetIsConvex())
-    ASSERT1(!GetIsDegenerate())
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(GetIsCounterclockwise());
+    ASSERT1(GetIsConvex());
+    ASSERT1(!GetIsDegenerate());
+    ASSERT1(m_texture.GetIsValid());
 }
 
 void Engine2::Polygon::Write (
     Serializer &serializer,
     FloatVector2 const *const compound_vertex_array) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(compound_vertex_array != NULL)
-    ASSERT1(m_vertex_count >= 3)
+    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(compound_vertex_array != NULL);
+    ASSERT1(m_vertex_count >= 3);
 
     serializer.WriteUint32(m_vertex_count);
     for (Uint32 i = 0; i < m_vertex_count; ++i)

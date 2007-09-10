@@ -44,7 +44,7 @@ Master::Master (Screen *const screen)
     SetOwnerEventQueue(&m_master_event_queue);
 
     // stow away the screen
-    ASSERT1(screen != NULL)
+    ASSERT1(screen != NULL);
     m_screen = screen;
     // hook up the screen's quit requested signal
     SignalHandler::Connect0(
@@ -52,7 +52,7 @@ Master::Master (Screen *const screen)
         &m_internal_receiver_quit_game);
     // initialize m_is_quit_requested from m_screen's
     m_is_quit_requested = m_screen->GetIsQuitRequested();
-    ASSERT1(m_screen->GetOwnerEventQueue() != NULL)
+    ASSERT1(m_screen->GetOwnerEventQueue() != NULL);
     m_minimum_framerate = 20.0f;
     m_maximum_framerate = 60.0f;
     m_real_time = 0.0f;
@@ -69,9 +69,9 @@ Master::Master (Screen *const screen)
 
 Master::~Master ()
 {
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
-    ASSERT1(m_title_screen_widget == NULL)
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
+    ASSERT1(m_title_screen_widget == NULL);
 
     m_screen = NULL;
 
@@ -112,7 +112,7 @@ void Master::Run ()
             game_time_delta = m_real_time - previous_real_time;
             if (game_time_delta > 1.0f / m_minimum_framerate)
                 game_time_delta = 1.0f / m_minimum_framerate;
-            ASSERT1(game_time_delta >= 0.0f)
+            ASSERT1(game_time_delta >= 0.0f);
 
             m_game_time += game_time_delta * m_game_world->GetTimescale();
         }
@@ -193,15 +193,15 @@ void Master::Run ()
         }
     }
 
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
-    ASSERT1(m_title_screen_widget == NULL)
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
+    ASSERT1(m_title_screen_widget == NULL);
 }
 
 bool Master::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(e->GetEventType() == Event::CUSTOM)
+    ASSERT1(e != NULL);
+    ASSERT1(e->GetEventType() == Event::CUSTOM);
 
     EventBase const *event = DStaticCast<EventBase const *>(e);
     switch (event->GetCustomType())
@@ -212,7 +212,7 @@ bool Master::HandleEvent (Event const *const e)
         case EventBase::DEACTIVATE_GAME:         DeactivateGame();           return true;
         case EventBase::QUIT_REQUESTED:          m_is_quit_requested = true; return true;
 
-        default: ASSERT1(false && "This event shouldn't be used here")
+        default: ASSERT1(false && "This event shouldn't be used here");
     }
 
     return false;
@@ -220,7 +220,7 @@ bool Master::HandleEvent (Event const *const e)
 
 void Master::AcceptScore (Score const &score)
 {
-    ASSERT1(m_game_world != NULL)
+    ASSERT1(m_game_world != NULL);
 
     if (m_high_scores.GetIsNewHighScore(score))
     {
@@ -241,7 +241,7 @@ void Master::AcceptScore (Score const &score)
 
 void Master::AcceptName (std::string const &name)
 {
-    ASSERT1(m_game_world != NULL)
+    ASSERT1(m_game_world != NULL);
 
     std::string checked_name(name);
     if (checked_name.empty())
@@ -260,9 +260,9 @@ void Master::AcceptName (std::string const &name)
 
 void Master::StartGame ()
 {
-    ASSERT1(m_title_screen_widget != NULL)
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
+    ASSERT1(m_title_screen_widget != NULL);
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
 
     EnqueueEvent(new EventBase(EventBase::DEACTIVATE_TITLE_SCREEN, m_real_time));
     EnqueueEvent(new EventBase(EventBase::ACTIVATE_GAME, m_real_time));
@@ -274,14 +274,14 @@ void Master::QuitGame ()
 
     if (m_game_widget != NULL)
     {
-        ASSERT1(m_game_world != NULL)
-        ASSERT1(m_title_screen_widget == NULL)
+        ASSERT1(m_game_world != NULL);
+        ASSERT1(m_title_screen_widget == NULL);
         EnqueueEvent(new EventBase(EventBase::DEACTIVATE_GAME, m_real_time));
     }
     else
     {
-        ASSERT1(m_game_world == NULL)
-        ASSERT1(m_title_screen_widget != NULL)
+        ASSERT1(m_game_world == NULL);
+        ASSERT1(m_title_screen_widget != NULL);
         EnqueueEvent(new EventBase(EventBase::DEACTIVATE_TITLE_SCREEN, m_real_time));
     }
 
@@ -290,9 +290,9 @@ void Master::QuitGame ()
 
 void Master::EndGame ()
 {
-    ASSERT1(m_title_screen_widget == NULL)
-    ASSERT1(m_game_widget != NULL)
-    ASSERT1(m_game_world != NULL)
+    ASSERT1(m_title_screen_widget == NULL);
+    ASSERT1(m_game_widget != NULL);
+    ASSERT1(m_game_world != NULL);
 
     EnqueueEvent(new EventBase(EventBase::DEACTIVATE_GAME, m_real_time));
     EnqueueEvent(new EventBase(EventBase::ACTIVATE_TITLE_SCREEN, m_real_time));
@@ -300,9 +300,9 @@ void Master::EndGame ()
 
 void Master::ActivateTitleScreen ()
 {
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
-    ASSERT1(m_title_screen_widget == NULL)
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
+    ASSERT1(m_title_screen_widget == NULL);
 
     // create a new title screen and set it as the main widget
     m_title_screen_widget =
@@ -326,9 +326,9 @@ void Master::ActivateTitleScreen ()
 
 void Master::DeactivateTitleScreen ()
 {
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
-    ASSERT1(m_title_screen_widget != NULL)
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
+    ASSERT1(m_title_screen_widget != NULL);
 
     // delete and nullify the title screen
     DeleteAndNullify(m_title_screen_widget);
@@ -336,9 +336,9 @@ void Master::DeactivateTitleScreen ()
 
 void Master::ActivateGame ()
 {
-    ASSERT1(m_game_widget == NULL)
-    ASSERT1(m_game_world == NULL)
-    ASSERT1(m_title_screen_widget == NULL)
+    ASSERT1(m_game_widget == NULL);
+    ASSERT1(m_game_world == NULL);
+    ASSERT1(m_title_screen_widget == NULL);
 
     // create the game world
     m_game_world = World::Create(g_config.GetDifficultyLevel());
@@ -363,9 +363,9 @@ void Master::ActivateGame ()
 
 void Master::DeactivateGame ()
 {
-    ASSERT1(m_game_widget != NULL)
-    ASSERT1(m_game_world != NULL)
-    ASSERT1(m_title_screen_widget == NULL)
+    ASSERT1(m_game_widget != NULL);
+    ASSERT1(m_game_world != NULL);
+    ASSERT1(m_title_screen_widget == NULL);
 
     // delete the game widget and world, in that order and nullify them.
     DeleteAndNullify(m_game_widget);
@@ -374,14 +374,14 @@ void Master::DeactivateGame ()
 
 void Master::ProcessKeyRepeatEvents ()
 {
-    ASSERT1(m_screen != NULL)
+    ASSERT1(m_screen != NULL);
 
     // dequeue and process any key repeat events generated
     while (!m_key_repeater.GetIsEventQueueEmpty())
     {
         // dequeue event
         EventKeyRepeat *event = m_key_repeater.DequeueEvent();
-        ASSERT1(event != NULL)
+        ASSERT1(event != NULL);
         // process event
         m_screen->GetOwnerEventQueue()->EnqueueEvent(m_screen, event);
     }

@@ -113,9 +113,9 @@ private:
             m_half_object_layer_side_length(0.5f*object_layer_side_length),
             m_quad_tree_type(quad_tree_type)
         {
-            ASSERT1(m_entity != NULL)
-            ASSERT1(m_collision_pair_list != NULL)
-            ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+            ASSERT1(m_entity != NULL);
+            ASSERT1(m_collision_pair_list != NULL);
+            ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         }
 
         void operator () (Engine2::Object *object);

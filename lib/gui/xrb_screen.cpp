@@ -26,7 +26,7 @@ Screen::~Screen ()
     // the condemned owner EventQueue via ~EventHandler.
     DeleteAllChildren();
     // now delete the owner EventQueue.
-    ASSERT1(GetOwnerEventQueue() != NULL)
+    ASSERT1(GetOwnerEventQueue() != NULL);
     delete GetOwnerEventQueue();
     SetOwnerEventQueue(NULL);
 }
@@ -38,9 +38,9 @@ Screen *Screen::Create (
     Uint32 const flags)
 {
     // maybe change these to actual code-checks and error handling
-    ASSERT1(width > 0)
-    ASSERT1(height > 0)
-    ASSERT1(bit_depth > 0)
+    ASSERT1(width > 0);
+    ASSERT1(height > 0);
+    ASSERT1(bit_depth > 0);
 
     Screen *retval = NULL;
 
@@ -91,10 +91,10 @@ void Screen::Draw () const
     // NOTE: this method encompasses all drawing.
 
 #if !defined(WIN32)
-    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1)
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1)
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1)
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1)
+    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1);
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1);
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1);
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1);
 #endif // !defined(WIN32)
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -104,8 +104,8 @@ void Screen::Draw () const
     // make sure the screen rect we're constructing the render context
     // with does not extend past the physical screen
     ScreenCoordRect screen_rect(GetScreenRect());
-    ASSERT1(screen_rect.GetLeft() == 0)
-    ASSERT1(screen_rect.GetBottom() == 0)
+    ASSERT1(screen_rect.GetLeft() == 0);
+    ASSERT1(screen_rect.GetBottom() == 0);
     if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
         screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
     if (screen_rect.GetHeight() > m_current_video_resolution[Dim::Y])
@@ -122,10 +122,10 @@ void Screen::Draw () const
     ContainerWidget::Draw(render_context);
 
 #if !defined(WIN32)
-    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere")
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "You forgot to pop a GL_MODELVIEW matrix somewhere")
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "You forgot to pop a GL_PROJECTION matrix somewhere")
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "You forgot to pop a GL_TEXTURE matrix somewhere")
+    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere");
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "You forgot to pop a GL_MODELVIEW matrix somewhere");
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "You forgot to pop a GL_PROJECTION matrix somewhere");
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "You forgot to pop a GL_TEXTURE matrix somewhere");
 #endif // !defined(WIN32)
 
     // all drawing is complete for this frame, so flush it down
@@ -160,7 +160,7 @@ void Screen::HandleFrame ()
 
 bool Screen::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     switch (e->GetEventType())
     {
@@ -234,7 +234,7 @@ bool Screen::HandleEvent (Event const *const e)
              ++it)
         {
             Widget *widget = *it;
-            ASSERT1(widget != NULL)
+            ASSERT1(widget != NULL);
             if (!widget->GetIsHidden())
             {
                 modal_widget = widget;

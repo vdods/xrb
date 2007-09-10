@@ -19,8 +19,8 @@ IndentFormatter::IndentFormatter (
     FILE *const fptr,
     char const *const indent_string)
 {
-    ASSERT1(fptr != NULL)
-    ASSERT1(indent_string != NULL)
+    ASSERT1(fptr != NULL);
+    ASSERT1(indent_string != NULL);
     m_fptr = fptr;
     m_state = FRESH_LINE;
     m_indent_string = indent_string;
@@ -31,7 +31,7 @@ IndentFormatter::IndentFormatter (
 
 void IndentFormatter::PrintLine (char const *const format, ...)
 {
-    ASSERT1(m_state == FRESH_LINE)
+    ASSERT1(m_state == FRESH_LINE);
 
     va_list list;
     va_start(list, format);
@@ -53,7 +53,7 @@ void IndentFormatter::BeginLine (char const *const format, ...)
 
 void IndentFormatter::ContinueLine (char const *const format, ...)
 {
-    ASSERT1(m_state == CONTINUING_LINE)
+    ASSERT1(m_state == CONTINUING_LINE);
 
     va_list list;
     va_start(list, format);
@@ -75,14 +75,14 @@ void IndentFormatter::EndLine (char const *const format, ...)
 
 void IndentFormatter::Indent ()
 {
-    ASSERT1(m_indent_level < UINT32_UPPER_BOUND)
+    ASSERT1(m_indent_level < UINT32_UPPER_BOUND);
     ++m_indent_level;
     UpdateNewlineReplacement();
 }
 
 void IndentFormatter::Unindent ()
 {
-    ASSERT1(m_indent_level > 0)
+    ASSERT1(m_indent_level > 0);
     --m_indent_level;
     UpdateNewlineReplacement();
 }
@@ -105,7 +105,7 @@ void IndentFormatter::InternalPrintf (
     if (append_newline)
         m_reformat += '\n';
 
-    ASSERT1(m_fptr != NULL)
+    ASSERT1(m_fptr != NULL);
     vfprintf(m_fptr, m_reformat.c_str(), list);
 }
 

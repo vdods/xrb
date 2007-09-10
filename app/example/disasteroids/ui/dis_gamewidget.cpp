@@ -38,8 +38,8 @@ namespace Dis
 // into the stoke-o-meter progress value
 Float NormalizeStoke (Float const stoke)
 {
-    ASSERT1(stoke >= 1.0f)
-    ASSERT1(stoke <= PlayerShip::ms_max_stoke)
+    ASSERT1(stoke >= 1.0f);
+    ASSERT1(stoke <= PlayerShip::ms_max_stoke);
     return (stoke - 1.0f) / (PlayerShip::ms_max_stoke - 1.0f);
 }
 
@@ -56,7 +56,7 @@ GameWidget::GameWidget (
     m_internal_receiver_deactivate_inventory_panel(&GameWidget::DeactivateInventoryPanel, this),
     m_receiver_set_mineral_inventory(&GameWidget::SetMineralInventory, this)
 {
-    ASSERT1(world != NULL)
+    ASSERT1(world != NULL);
 
     // the world view goes under the HUD in the game widget stack
     m_world_view_widget = new Engine2::WorldViewWidget(this);
@@ -319,7 +319,7 @@ GameWidget::GameWidget (
 
 SignalSender0 const *GameWidget::SenderQuitGame ()
 {
-    ASSERT1(m_inventory_panel != NULL)
+    ASSERT1(m_inventory_panel != NULL);
     return m_inventory_panel->SenderQuitGame();
 }
 
@@ -415,31 +415,31 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 
 void GameWidget::SetWorldFrameTime (Uint32 const world_frame_time)
 {
-    ASSERT1(m_world_frame_time_label != NULL)
+    ASSERT1(m_world_frame_time_label != NULL);
     m_world_frame_time_label->SetValue(world_frame_time);
 }
 
 void GameWidget::SetGUIFrameTime (Uint32 const gui_frame_time)
 {
-    ASSERT1(m_gui_frame_time_label != NULL)
+    ASSERT1(m_gui_frame_time_label != NULL);
     m_gui_frame_time_label->SetValue(gui_frame_time);
 }
 
 void GameWidget::SetRenderFrameTime (Uint32 const render_frame_time)
 {
-    ASSERT1(m_render_frame_time_label != NULL)
+    ASSERT1(m_render_frame_time_label != NULL);
     m_render_frame_time_label->SetValue(render_frame_time);
 }
 
 void GameWidget::SetEntityCount (Uint32 const entity_count)
 {
-    ASSERT1(m_entity_count_label != NULL)
+    ASSERT1(m_entity_count_label != NULL);
     m_entity_count_label->SetValue(entity_count);
 }
 
 void GameWidget::SetFramerate (Float const framerate)
 {
-    ASSERT1(m_framerate_label != NULL)
+    ASSERT1(m_framerate_label != NULL);
     m_framerate_label->SetValue(framerate);
 }
 
@@ -447,8 +447,8 @@ void GameWidget::SetMineralInventory (
     Uint8 const mineral_index,
     Float const mineral_inventory)
 {
-    ASSERT1(mineral_index < MINERAL_COUNT)
-    ASSERT1(mineral_inventory >= 0.0f)
+    ASSERT1(mineral_index < MINERAL_COUNT);
+    ASSERT1(mineral_inventory >= 0.0f);
     m_mineral_inventory_label[mineral_index]->SetValue(static_cast<Uint32>(mineral_inventory));
 }
 
@@ -467,11 +467,11 @@ void GameWidget::HideControls ()
 
 void GameWidget::ActivateInventoryPanel ()
 {
-    ASSERT1(m_inventory_panel->GetIsModal())
-    ASSERT1(m_inventory_panel->GetIsHidden())
+    ASSERT1(m_inventory_panel->GetIsModal());
+    ASSERT1(m_inventory_panel->GetIsHidden());
 
     // pause the game
-    ASSERT1(m_saved_game_timescale == -1.0f)
+    ASSERT1(m_saved_game_timescale == -1.0f);
     m_saved_game_timescale = m_world_view->GetWorld()->GetTimescale();
     m_world_view->GetWorld()->SetTimescale(0.0f);
 
@@ -487,7 +487,7 @@ void GameWidget::ActivateInventoryPanel ()
 
 void GameWidget::DeactivateInventoryPanel ()
 {
-    ASSERT1(m_inventory_panel->GetIsModal())
+    ASSERT1(m_inventory_panel->GetIsModal());
     if (!m_inventory_panel->GetIsHidden())
     {
 
@@ -497,7 +497,7 @@ void GameWidget::DeactivateInventoryPanel ()
         m_world_view_widget->Focus();
 
         // unpause the game
-        ASSERT1(m_saved_game_timescale >= 0.0f)
+        ASSERT1(m_saved_game_timescale >= 0.0f);
         m_world_view->GetWorld()->SetTimescale(m_saved_game_timescale);
         m_saved_game_timescale = -1.0f;
     }

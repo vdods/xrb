@@ -119,7 +119,7 @@ namespace MapEditor2
         // sets this object's saved EntityGuts
         inline void SetSavedEntityGuts (Engine2::EntityGuts *saved_entity_guts)
         {
-            ASSERT1(m_saved_entity_guts == NULL)
+            ASSERT1(m_saved_entity_guts == NULL);
             m_saved_entity_guts = saved_entity_guts;
         }
 

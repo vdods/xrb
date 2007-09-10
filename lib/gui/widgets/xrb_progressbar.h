@@ -51,7 +51,7 @@ public:
 
     inline void SetProgress (Float const progress)
     {
-        ASSERT1(progress >= 0.0f && progress <= 1.0f)
+        ASSERT1(progress >= 0.0f && progress <= 1.0f);
         m_progress = progress;
     }
     inline void SetColor (Color const &color)

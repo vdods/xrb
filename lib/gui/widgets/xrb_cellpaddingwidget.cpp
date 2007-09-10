@@ -32,14 +32,14 @@ CellPaddingWidget::CellPaddingWidget (
 
 Widget *CellPaddingWidget::GetSingleChildWidget ()
 {
-    ASSERT1(m_child_vector.size() <= 1)
+    ASSERT1(m_child_vector.size() <= 1);
 
     WidgetVectorIterator it = m_child_vector.begin();
     WidgetVectorIterator it_end = m_child_vector.end();
     if (it != it_end)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         return child;
     }
     else
@@ -50,14 +50,14 @@ Widget *CellPaddingWidget::GetSingleChildWidget ()
 
 Widget const *CellPaddingWidget::GetSingleChildWidget () const
 {
-    ASSERT1(m_child_vector.size() <= 1)
+    ASSERT1(m_child_vector.size() <= 1);
 
     WidgetVectorConstIterator it = m_child_vector.begin();
     WidgetVectorConstIterator it_end = m_child_vector.end();
     if (it != it_end)
     {
         Widget const *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         return child;
     }
     else
@@ -94,8 +94,8 @@ void CellPaddingWidget::SetAlignment (
     Uint32 const index,
     Alignment const alignment)
 {
-    ASSERT1(index <= 1)
-    ASSERT1(alignment != SPACED)
+    ASSERT1(index <= 1);
+    ASSERT1(alignment != SPACED);
     if (m_alignment[index] != alignment)
     {
         m_alignment[index] = alignment;
@@ -106,8 +106,8 @@ void CellPaddingWidget::SetAlignment (
 void CellPaddingWidget::SetAlignment (
     Alignment2 const &alignment)
 {
-    ASSERT1(alignment[Dim::X] != SPACED)
-    ASSERT1(alignment[Dim::Y] != SPACED)
+    ASSERT1(alignment[Dim::X] != SPACED);
+    ASSERT1(alignment[Dim::Y] != SPACED);
     if (m_alignment != alignment)
     {
         m_alignment = alignment;
@@ -120,7 +120,7 @@ void CellPaddingWidget::SetSizePropertyEnabled (
     Uint32 const component,
     bool const value)
 {
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
@@ -148,8 +148,8 @@ void CellPaddingWidget::SetSizeProperty (
     Uint32 const component,
     ScreenCoord const value)
 {
-    ASSERT1(component <= 1)
-    ASSERT1(value >= 0)
+    ASSERT1(component <= 1);
+    ASSERT1(value >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size[component] = value;
     else
@@ -163,8 +163,8 @@ void CellPaddingWidget::SetSizeProperty (
     SizeProperties::Property const property,
     ScreenCoordVector2 const &value)
 {
-    ASSERT1(value[Dim::X] >= 0)
-    ASSERT1(value[Dim::Y] >= 0)
+    ASSERT1(value[Dim::X] >= 0);
+    ASSERT1(value[Dim::Y] >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size = value;
     else
@@ -247,7 +247,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
 
 void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
 {
-    ASSERT1(child == GetSingleChildWidget())
+    ASSERT1(child == GetSingleChildWidget());
     // size a child's size properties have changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
@@ -293,11 +293,11 @@ void CellPaddingWidget::PositionSingleChildWidget ()
                 break;
 
             case SPACED:
-                ASSERT1(false && "SPACED is invalid for use in CellPaddingWidget")
+                ASSERT1(false && "SPACED is invalid for use in CellPaddingWidget");
                 break;
 
             default:
-                ASSERT1(false && "Invalid Alignment")
+                ASSERT1(false && "Invalid Alignment");
                 break;
         }
     }
@@ -330,7 +330,7 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
             SizeProperties::GetDefaultMaxSizeComponent());
 
     Widget const *child = GetSingleChildWidget();
-    ASSERT1(child != NULL)
+    ASSERT1(child != NULL);
 
     // skip hidden and modal children
     if (child->GetIsHidden() || child->GetIsModal())

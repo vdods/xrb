@@ -23,11 +23,11 @@ namespace Xrb
 
 MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIsOpen())
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint32 entity_capacity = serializer.ReadUint32();
-    ASSERT1(entity_capacity > 0)
+    ASSERT1(entity_capacity > 0);
     World *retval = new World(entity_capacity);
 
     retval->Read(serializer);
@@ -39,7 +39,7 @@ MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 
 MapEditor2::World *MapEditor2::World::CreateEmpty (Uint32 const entity_capacity)
 {
-    ASSERT1(entity_capacity > 0)
+    ASSERT1(entity_capacity > 0);
     World *retval = new World(entity_capacity);
 
     ObjectLayer *map_editor_object_layer = 
@@ -58,12 +58,12 @@ void MapEditor2::World::IncrementMainObjectLayer ()
             DStaticCast<ObjectLayer *>(m_main_object_layer));
     ObjectLayerListIterator it_end = m_object_layer_list.end();
 
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
 
     --it;
     if (it != it_end) {
         m_main_object_layer = *it;
-        ASSERT1(dynamic_cast<ObjectLayer *>(m_main_object_layer) != NULL)
+        ASSERT1(dynamic_cast<ObjectLayer *>(m_main_object_layer) != NULL);
         m_sender_main_object_layer_changed.Signal();
     }
 }
@@ -75,20 +75,20 @@ void MapEditor2::World::DecrementMainObjectLayer ()
             DStaticCast<ObjectLayer *>(m_main_object_layer));
     ObjectLayerListIterator it_end = m_object_layer_list.end();
 
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
 
     ++it;
     if (it != it_end) {
         m_main_object_layer = *it;
-        ASSERT1(dynamic_cast<ObjectLayer *>(m_main_object_layer) != NULL)
+        ASSERT1(dynamic_cast<ObjectLayer *>(m_main_object_layer) != NULL);
         m_sender_main_object_layer_changed.Signal();
     }
 }
 
 void MapEditor2::World::RemoveObject (MapEditor2::Object *const object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(object->GetHasOwnerQuadTree(Engine2::QTT_VISIBILITY))
+    ASSERT1(object != NULL);
+    ASSERT1(object->GetHasOwnerQuadTree(Engine2::QTT_VISIBILITY));
 
     Entity *entity = dynamic_cast<Entity *>(object);
     if (entity != NULL)
@@ -180,15 +180,15 @@ void MapEditor2::World::ReadEntitiesBelongingToLayer (
     Serializer &serializer,
     MapEditor2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     Uint32 entity_count = serializer.ReadUint32();
     while (entity_count > 0)
     {
         Object *object = Object::Create(serializer);
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
         AddEntity(entity, object_layer);
         --entity_count;
     }

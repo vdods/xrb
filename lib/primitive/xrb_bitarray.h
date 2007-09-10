@@ -56,19 +56,19 @@ public:
 
     inline BitArray ()
     {
-        ASSERT1(bit_count > 0)
+        ASSERT1(bit_count > 0);
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     inline BitArray (BitValue const fill_with)
     {
-        ASSERT1(bit_count > 0)
+        ASSERT1(bit_count > 0);
         SetAllBits((fill_with == ONE) ? true : false);
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     inline BitArray (Uint32 const assign_to_least_significant_word)
     {
-        ASSERT1(bit_count > 0)
+        ASSERT1(bit_count > 0);
         // zero out all but the least significant word
     #if defined(XRB_BITARRAY_USES_MEMSET)
         if (WORD_COUNT > 1)
@@ -83,11 +83,11 @@ public:
         // assign the least significant word
         m_words[0] = assign_to_least_significant_word;
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     inline BitArray (BitArray<bit_count> const &source)
     {
-        ASSERT1(bit_count > 0)
+        ASSERT1(bit_count > 0);
     #if defined(XRB_BITARRAY_USES_MEMCPY)
         memcpy(reinterpret_cast<Uint8 *>(m_words),
                reinterpret_cast<Uint8 const *>(source.m_words),
@@ -96,17 +96,17 @@ public:
         for (Uint32 i = 0; i < WORD_COUNT; ++i)
             m_words[i] = source.m_words[i];
     #endif
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     inline ~BitArray ()
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
 
     inline bool GetBit (Uint32 const bit_index) const
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(bit_index < bit_count)
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(bit_index < bit_count);
 
         Uint32 major_index = bit_index >> 5; // same as / 32
         Uint32 minor_index = bit_index & 31; // same as % 32
@@ -116,14 +116,14 @@ public:
     }
     inline Uint32 GetWord (Uint32 const word_index) const
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(word_index <= HIGHEST_WORD_INDEX)
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(word_index <= HIGHEST_WORD_INDEX);
         return m_words[word_index];
     }
 
     inline void SetBit (Uint32 const bit_index, bool const value)
     {
-        ASSERT1(bit_index < bit_count)
+        ASSERT1(bit_index < bit_count);
 
         Uint32 major_index = bit_index >> 5; // same as / 32
         Uint32 minor_index = bit_index & 31; // same as % 32
@@ -156,14 +156,14 @@ public:
                 m_words[i] = 0x00000000;
         #endif
         }
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     inline void SetWord (Uint32 const word_index, Uint32 const value)
     {
-        ASSERT1(word_index <= HIGHEST_WORD_INDEX)
+        ASSERT1(word_index <= HIGHEST_WORD_INDEX);
         m_words[word_index] = value;
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
 
     inline void Negate ()
@@ -171,7 +171,7 @@ public:
         for (Uint32 i = 0; i < WORD_COUNT; ++i)
             m_words[i] = ~m_words[i];
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
 
     // assignment operator
@@ -191,7 +191,7 @@ public:
         // assign the least significant word
         m_words[0] = right_operand;
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     // assignment operator
     inline void operator = (BitArray<bit_count> const &right_operand)
@@ -204,14 +204,14 @@ public:
         for (Uint32 i = 0; i < WORD_COUNT; ++i)
             m_words[i] = right_operand.m_words[i];
     #endif
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
 
     // equality test operator
     inline bool operator == (BitArray const &right_operand) const
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(right_operand.GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(right_operand.GetAreUnusedBitsZeroed());
     #if defined(XRB_BITARRAY_USES_MEMCMP)
         return 0 == memcmp(reinterpret_cast<Uint8 const *>(m_words),
                            reinterpret_cast<Uint8 const *>(right_operand.m_words),
@@ -226,8 +226,8 @@ public:
     // inequality test operator
     inline bool operator != (BitArray const &right_operand) const
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(right_operand.GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(right_operand.GetAreUnusedBitsZeroed());
     #if defined(XRB_BITARRAY_USES_MEMCMP)
         return 0 != memcmp(reinterpret_cast<Uint8 const *>(m_words),
                            reinterpret_cast<Uint8 const *>(right_operand.m_words),
@@ -243,35 +243,35 @@ public:
     // in-place bitwise inclusive OR
     inline void operator |= (BitArray const &right_operand)
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(right_operand.GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(right_operand.GetAreUnusedBitsZeroed());
         for (Uint32 i = 0; i <= HIGHEST_WORD_INDEX; ++i)
             m_words[i] |= right_operand.m_words[i];
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     // in-place bitwise AND
     inline void operator &= (BitArray const &right_operand)
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(right_operand.GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(right_operand.GetAreUnusedBitsZeroed());
         for (Uint32 i = 0; i <= HIGHEST_WORD_INDEX; ++i)
             m_words[i] &= right_operand.m_words[i];
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     // in-place bitwise exclusive OR
     inline void operator ^= (BitArray const &right_operand)
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
-        ASSERT1(right_operand.GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
+        ASSERT1(right_operand.GetAreUnusedBitsZeroed());
         for (Uint32 i = 0; i <= HIGHEST_WORD_INDEX; ++i)
             m_words[i] ^= right_operand.m_words[i];
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
 
     // in-place shift left operator
     inline void operator <<= (Uint32 const right_operand)
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
         if (right_operand == 0)
             return;
         Uint32 i;
@@ -294,12 +294,12 @@ public:
                 m_words[i] = 0;
         }
         m_words[HIGHEST_WORD_INDEX] &= USED_BIT_MASK;
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     // in-place shift right operator
     inline void operator >>= (Uint32 const right_operand)
     {
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
         if (right_operand == 0)
             return;
         Uint32 i;
@@ -321,7 +321,7 @@ public:
             for (i = HIGHEST_WORD_INDEX - word_delta + 1; i <= HIGHEST_WORD_INDEX; ++i)
                 m_words[i] = 0;
         }
-        ASSERT1(GetAreUnusedBitsZeroed())
+        ASSERT1(GetAreUnusedBitsZeroed());
     }
     // bitwise negation
     inline BitArray<bit_count> operator ~ ()

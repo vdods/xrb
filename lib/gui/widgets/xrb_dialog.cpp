@@ -30,7 +30,7 @@ Dialog::Dialog (
     m_internal_receiver_ok_button_activated(&Dialog::OKButtonActivated, this),
     m_internal_receiver_cancel_button_activated(&Dialog::CancelButtonActivated, this)
 {
-    ASSERT1(parent != NULL && "The top-level widget must be a Screen, not a Dialog")
+    ASSERT1(parent != NULL && "The top-level widget must be a Screen, not a Dialog");
 
     Dialog::UpdateRenderBackground();
 
@@ -73,7 +73,7 @@ Dialog::Dialog (
             &m_internal_receiver_cancel_button_activated);
     }
     new SpacerWidget(m_button_layout);
-    ASSERT1(added_button_count > 0 && "No buttons were added to the Dialog")
+    ASSERT1(added_button_count > 0 && "No buttons were added to the Dialog");
 
     SetMainWidget(m_dialog_layout);
 }
@@ -88,7 +88,7 @@ bool Dialog::GetHasButton (ButtonID const button_id) const
             return GetHasCancelButton();
 
         default:
-            ASSERT1(false && "Invalid button ID")
+            ASSERT1(false && "Invalid button ID");
             return false;
     }
 }

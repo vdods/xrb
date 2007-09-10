@@ -123,7 +123,7 @@ bool Ballistic::CollidePrivate (
     Float const frame_dt,
     bool const was_collision_from_line_trace)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     // we only care about hitting solid things
     if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)

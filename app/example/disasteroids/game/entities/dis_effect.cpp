@@ -85,7 +85,7 @@ void DamageExplosion::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     // can't damage nonsolid objects
     if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
@@ -134,7 +134,7 @@ void EMPExplosion::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
     if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
         return;
 
@@ -157,7 +157,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
 
     // update the sprite's alpha value to reflect the damage left
     Float alpha_value = Max(0.0f, m_current_damage / m_potential_damage);
-    ASSERT1(alpha_value <= 1.0f)
+    ASSERT1(alpha_value <= 1.0f);
     GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
 }
 
@@ -169,7 +169,7 @@ void Fireball::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     // if there is no power left, return (this can happen when a fireball
     // gets used up on one object before all its collisions are computed)
@@ -219,8 +219,8 @@ void Fireball::Collide (
 
 void LaserBeam::SetIntensity (Float const intensity)
 {
-    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
-    ASSERT1(GetIsInWorld())
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
+    ASSERT1(GetIsInWorld());
     GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
@@ -229,7 +229,7 @@ void LaserBeam::SnapToShip (
     FloatVector2 const &hit_location,
     Float const beam_width)
 {
-    ASSERT1(GetIsInWorld())
+    ASSERT1(GetIsInWorld());
     FloatVector2 beam_vector(hit_location - muzzle_location);
     SetTranslation(0.5f * (muzzle_location + hit_location));
     SetScaleFactors(FloatVector2(0.5f * beam_vector.GetLength(), 0.5f * beam_width));
@@ -246,9 +246,9 @@ void TractorBeam::SetParameters (
     Float const pulling_input,
     Float const intensity)
 {
-    ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f)
-    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
-    ASSERT1(GetIsInWorld())
+    ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f);
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
+    ASSERT1(GetIsInWorld());
     if (push_instead_of_pull)
         GetOwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
     else if (pull_everything)
@@ -263,7 +263,7 @@ void TractorBeam::SetParameters (
 
 void ShieldEffect::SetIntensity (Float const intensity)
 {
-    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 

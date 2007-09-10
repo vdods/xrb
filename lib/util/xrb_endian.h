@@ -57,7 +57,7 @@ namespace Endian
       */
     inline void Switch1ByteWord (void *word)
     {
-        ASSERT1(word != NULL)
+        ASSERT1(word != NULL);
         // nothing needs to be done
     }
     /** @brief Switches the endianness of a 2-byte word.
@@ -65,7 +65,7 @@ namespace Endian
       */
     inline void Switch2ByteWord (void *word)
     {
-        ASSERT1(word != NULL)
+        ASSERT1(word != NULL);
         Uint8 *bytes = static_cast<Uint8 *>(word);
 
         Uint8 temp   = *(bytes + 0);
@@ -77,7 +77,7 @@ namespace Endian
       */
     inline void Switch4ByteWord (void *word)
     {
-        ASSERT1(word != NULL)
+        ASSERT1(word != NULL);
         Uint8 *bytes = static_cast<Uint8 *>(word);
 
         Uint8 temp   = *(bytes + 0);
@@ -93,7 +93,7 @@ namespace Endian
       */
     inline void Switch8ByteWord (void *word)
     {
-        ASSERT1(word != NULL)
+        ASSERT1(word != NULL);
         Uint8 *bytes = static_cast<Uint8 *>(word);
 
         Uint8 temp   = *(bytes + 0);

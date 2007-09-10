@@ -27,7 +27,7 @@ namespace Xrb
 
 ScreenCoordRect Font::GetStringRect (char const *const string) const
 {
-    ASSERT1(string != NULL)
+    ASSERT1(string != NULL);
 
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     ScreenCoordVector2 pen_position_span_26_6(pen_position_26_6);
@@ -77,7 +77,7 @@ ScreenCoordRect Font::GetStringRect (char const *const string) const
 
 ScreenCoordRect Font::GetStringRect (LineFormatVector const &line_format_vector) const
 {
-    ASSERT1(!line_format_vector.empty())
+    ASSERT1(!line_format_vector.empty());
 
     ScreenCoord width = 0;
     for (Font::LineFormatVectorConstIterator it = line_format_vector.begin(),
@@ -107,8 +107,8 @@ void Font::GenerateLineFormatVector (
     char const *const source_string,
     LineFormatVector *const dest_line_format_vector) const
 {
-    ASSERT1(source_string != NULL)
-    ASSERT1(dest_line_format_vector != NULL)
+    ASSERT1(source_string != NULL);
+    ASSERT1(dest_line_format_vector != NULL);
 
     dest_line_format_vector->clear();
 
@@ -169,7 +169,7 @@ void Font::DrawLineFormattedText (
     LineFormatVector const &line_format_vector,
     Alignment2 const &alignment) const
 {
-    ASSERT1(line_format_vector.size() > 0)
+    ASSERT1(line_format_vector.size() > 0);
 
     // early out if alignment is (LEFT, TOP)
     if (alignment[Dim::X] == LEFT && alignment[Dim::Y] == TOP)
@@ -280,7 +280,7 @@ void Font::DrawStringPrivate (
     Uint32 remaining_glyph_count,
     ScreenCoord const remaining_space) const
 {
-    ASSERT1(string != NULL)
+    ASSERT1(string != NULL);
 
     ScreenCoordVector2 pen_position_26_6(
         initial_pen_position[Dim::X] << 6,
@@ -314,7 +314,7 @@ void Font::TrackBoundingBox (
     ScreenCoordVector2 *const pen_position_span_26_6,
     ScreenCoordVector2 const &pen_position_26_6) const
 {
-    ASSERT1(pen_position_span_26_6 != NULL)
+    ASSERT1(pen_position_span_26_6 != NULL);
 
     (*pen_position_span_26_6)[Dim::X] = Max((*pen_position_span_26_6)[Dim::X], pen_position_26_6[Dim::X]);
     (*pen_position_span_26_6)[Dim::Y] = Min((*pen_position_span_26_6)[Dim::Y], pen_position_26_6[Dim::Y]);
@@ -387,7 +387,7 @@ Font *AsciiFont::Create (
     FT_FaceRec_ *ft_face = font_face->GetFTFace();
     FT_Error error;
 
-    ASSERT1(ft_face != NULL)
+    ASSERT1(ft_face != NULL);
     error = FT_Set_Pixel_Sizes(ft_face, 0, pixel_height);
     if (error != 0)
         return retval;
@@ -414,11 +414,11 @@ Font *AsciiFont::Create (
     // find the smallest texture size that will fit all the glyphs
     ScreenCoordVector2 smallest_fitting_texture_size =
         retval->FindSmallestFittingTextureSize(sorted_glyph_specification);
-    ASSERT1(smallest_fitting_texture_size != ScreenCoordVector2::ms_zero)
+    ASSERT1(smallest_fitting_texture_size != ScreenCoordVector2::ms_zero);
 
     // generate the texture using the calculated size
     retval->GenerateTexture(smallest_fitting_texture_size);
-    ASSERT1(retval->m_gl_texture != NULL)
+    ASSERT1(retval->m_gl_texture != NULL);
 
     return retval;
 }
@@ -431,8 +431,8 @@ void AsciiFont::MoveThroughGlyph (
     Uint32 *remaining_glyph_count,
     ScreenCoord *major_space_26_6) const
 {
-    ASSERT1(current_glyph != NULL)
-    ASSERT1(*current_glyph != '\0')
+    ASSERT1(current_glyph != NULL);
+    ASSERT1(*current_glyph != '\0');
 
     if (*current_glyph == '\n')
     {
@@ -454,10 +454,10 @@ void AsciiFont::MoveThroughGlyph (
 
         if (remaining_glyph_count != NULL && *remaining_glyph_count > 1)
         {
-            ASSERT1(major_space_26_6 != NULL)
+            ASSERT1(major_space_26_6 != NULL);
             *remaining_glyph_count -= 1;
             ScreenCoord space_to_use_26_6 = *major_space_26_6 / *remaining_glyph_count;
-            ASSERT1(space_to_use_26_6 <= *major_space_26_6)
+            ASSERT1(space_to_use_26_6 <= *major_space_26_6);
             *major_space_26_6 -= space_to_use_26_6;
             (*pen_position_26_6)[Dim::X] += space_to_use_26_6;
         }
@@ -469,7 +469,7 @@ void AsciiFont::GenerateWordWrappedString (
     std::string *const dest_string,
     ScreenCoordVector2 const &text_area_size) const
 {
-    ASSERT1(dest_string != NULL)
+    ASSERT1(dest_string != NULL);
 
     // clear the destination string
     dest_string->clear();
@@ -570,7 +570,7 @@ void AsciiFont::GenerateWordWrappedString (
 
 void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 {
-    ASSERT1(m_gl_texture != NULL)
+    ASSERT1(m_gl_texture != NULL);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_gl_texture->GetHandle());
@@ -600,7 +600,7 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     glEnd();
 
     // pop the texture matrix
-    ASSERT1(GL::GetMatrixMode() == GL_TEXTURE)
+    ASSERT1(GL::GetMatrixMode() == GL_TEXTURE);
     glPopMatrix();
 
     // pop the modelview matrix
@@ -613,8 +613,8 @@ void AsciiFont::DrawGlyph (
     char const *const glyph,
     ScreenCoordVector2 const &pen_position_26_6) const
 {
-    ASSERT1(glyph != NULL)
-    ASSERT1(*glyph != '\0')
+    ASSERT1(glyph != NULL);
+    ASSERT1(*glyph != '\0');
 
     if (*glyph == '\n' || *glyph == '\t')
         return;
@@ -696,7 +696,7 @@ void AsciiFont::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
          ++ascii)
     {
         error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, ascii), FT_LOAD_DEFAULT);
-        ASSERT1(error == 0)
+        ASSERT1(error == 0);
 
         GlyphSpecification &glyph = m_glyph_specification[GetGlyphIndex(ascii)];
 
@@ -735,7 +735,7 @@ ScreenCoordVector2 AsciiFont::FindSmallestFittingTextureSize (
     {
         Uint32 used_area = GetUsedTextureArea(texture_size, sorted_glyph_specification);
         DEBUG1_CODE(Uint32 total_area = texture_size[Dim::X] * texture_size[Dim::Y]);
-        ASSERT1(used_area <= total_area)
+        ASSERT1(used_area <= total_area);
         if (used_area > 0)
             return texture_size;
 
@@ -751,14 +751,14 @@ Uint32 AsciiFont::GetUsedTextureArea (
     ScreenCoordVector2 const &texture_size,
     GlyphSpecification *const *const sorted_glyph_specification)
 {
-    ASSERT1(texture_size[Dim::X] > 0)
-    ASSERT1(texture_size[Dim::Y] > 0)
+    ASSERT1(texture_size[Dim::X] > 0);
+    ASSERT1(texture_size[Dim::Y] > 0);
     // the left hand size of this cryptic expression evaluates to 0
     // for zero or any non-negative integer power of 2 (e.g. 0, 1, 2,
     // 4, 8, 16, 32, 64, etc).
-    ASSERT1((texture_size[Dim::X] & (texture_size[Dim::X] - 1)) == 0)
-    ASSERT1((texture_size[Dim::Y] & (texture_size[Dim::Y] - 1)) == 0)
-    ASSERT1(sorted_glyph_specification != NULL)
+    ASSERT1((texture_size[Dim::X] & (texture_size[Dim::X] - 1)) == 0);
+    ASSERT1((texture_size[Dim::Y] & (texture_size[Dim::Y] - 1)) == 0);
+    ASSERT1(sorted_glyph_specification != NULL);
 
     ScreenCoord packed_width = 0;
     ScreenCoordVector2 current_packing_area = ScreenCoordVector2::ms_zero;
@@ -769,7 +769,7 @@ Uint32 AsciiFont::GetUsedTextureArea (
            index < RENDERED_GLYPH_COUNT)
     {
         GlyphSpecification *glyph = sorted_glyph_specification[index];
-        ASSERT1(glyph != NULL)
+        ASSERT1(glyph != NULL);
 
         // return failure if this single glyph doesn't even fit
         // inside the entire texture.
@@ -796,14 +796,14 @@ Uint32 AsciiFont::GetUsedTextureArea (
             current_packing_area[Dim::Y] += glyph->m_size[Dim::Y];
             ++index;
         }
-        ASSERT1(current_packing_area[Dim::Y] <= texture_size[Dim::Y])
+        ASSERT1(current_packing_area[Dim::Y] <= texture_size[Dim::Y]);
     }
 
     // return with success iff all the glyphs were stored within
     // the bounds of the texture.
     if (packed_width <= texture_size[Dim::X] && index == RENDERED_GLYPH_COUNT)
     {
-        ASSERT1(total_area > 0)
+        ASSERT1(total_area > 0);
         return total_area;
     }
     else
@@ -821,12 +821,12 @@ void AsciiFont::GenerateTexture (ScreenCoordVector2 const &texture_size)
         GlyphSpecification &glyph = m_glyph_specification[i];
 
         error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, glyph.m_ascii), FT_LOAD_RENDER);
-        ASSERT1(error == 0)
-        ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP)
+        ASSERT1(error == 0);
+        ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP);
 
         // copy the bitmap data over
         // TODO: real method which does proper pitch detection
-        ASSERT1(ft_face->glyph->bitmap.pitch == glyph.m_size[Dim::X])
+        ASSERT1(ft_face->glyph->bitmap.pitch == glyph.m_size[Dim::X]);
         Uint8 const *source_pixel_data = ft_face->glyph->bitmap.buffer;
         for (Sint32 y = 0; y < glyph.m_size[Dim::Y]; ++y)
         {
@@ -849,7 +849,7 @@ void AsciiFont::GenerateTexture (ScreenCoordVector2 const &texture_size)
 //     texture->WritePNG("font_rendering.png");
 
     m_gl_texture = GLTexture::Create(texture);
-    ASSERT1(m_gl_texture != NULL)
+    ASSERT1(m_gl_texture != NULL);
     DeleteAndNullify(texture);
 }
 
@@ -867,7 +867,7 @@ AsciiFont::TokenClass AsciiFont::GetTokenClass (char const c)
 
 char const *AsciiFont::GetStartOfNextToken (char const *string)
 {
-    ASSERT1(string != NULL)
+    ASSERT1(string != NULL);
 
     Sint32 token_class = GetTokenClass(*string);
 
@@ -884,7 +884,7 @@ char const *AsciiFont::GetStartOfNextToken (char const *string)
 
 ScreenCoord AsciiFont::GetTokenWidth_26_6 (char const *const string) const
 {
-    ASSERT1(string != NULL)
+    ASSERT1(string != NULL);
 
     char const *current_glyph = string;
     char const *next_glyph;

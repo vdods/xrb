@@ -98,7 +98,7 @@ EventMouse::EventMouse (
     :
     EventInput(time, event_type)
 {
-    ASSERT1(screen != NULL)
+    ASSERT1(screen != NULL);
     m_position = screen->GetScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);
     m_modifiers = modifiers;
 }
@@ -114,7 +114,7 @@ EventMouseButton::EventMouseButton (
     :
     EventMouse(modifiers, screen, e->x, e->y, time, event_type)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -128,7 +128,7 @@ EventMouseMotion::EventMouseMotion (
     :
     EventMouse(modifiers, screen, e->x, e->y, time, MOUSEMOTION)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
     // the y coordinate is multiplied by -1 to get right-handed coords.
     m_delta = ScreenCoordVector2(m_event.xrel, -m_event.yrel);
@@ -142,7 +142,7 @@ EventJoyAxis::EventJoyAxis (
     :
     EventJoy(time, JOYAXIS)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -152,7 +152,7 @@ EventJoyBall::EventJoyBall (
     :
     EventJoy(time, JOYBALL)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -163,7 +163,7 @@ EventJoyButton::EventJoyButton (
     :
     EventJoy(time, event_type)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -173,7 +173,7 @@ EventJoyHat::EventJoyHat (
     :
     EventJoy(time, JOYHAT)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -183,7 +183,7 @@ EventQuit::EventQuit (
     :
     Event(time, QUIT)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 

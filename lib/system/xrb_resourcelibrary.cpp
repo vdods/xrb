@@ -31,20 +31,20 @@ ResourceLibrary::~ResourceLibrary ()
              ++it)
         {
             ResourceInstanceBase *resource_instance_base = it->second;
-            ASSERT1(resource_instance_base != NULL)
+            ASSERT1(resource_instance_base != NULL);
             fprintf(stderr, "ResourceLibrary * UNFREED RESOURCE: ");
             resource_instance_base->Print(stderr);
         }
     }
-    ASSERT1(m_instance_map.empty() && "There are unfreed resources")
+    ASSERT1(m_instance_map.empty() && "There are unfreed resources");
 }
 
 void ResourceLibrary::UnmapKey (
     ResourceLibrary::ResourceInstanceKey const &key)
 {
     InstanceMapIterator it = m_instance_map.find(key);
-    ASSERT1(it != m_instance_map.end())
-    ASSERT1(it->second != NULL)
+    ASSERT1(it != m_instance_map.end());
+    ASSERT1(it->second != NULL);
     m_instance_map.erase(it);
 }
 

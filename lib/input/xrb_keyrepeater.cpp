@@ -23,8 +23,8 @@ KeyRepeater::KeyRepeater (
     FrameHandler(),
     m_current_key_event(0, 0.0)
 {
-    ASSERT1(repeat_delay > 0.0)
-    ASSERT1(repeat_period > 0.0)
+    ASSERT1(repeat_delay > 0.0);
+    ASSERT1(repeat_period > 0.0);
 
     m_repeat_delay = repeat_delay;
     m_repeat_period = repeat_period;
@@ -38,7 +38,7 @@ KeyRepeater::~KeyRepeater ()
 
 EventKeyRepeat *KeyRepeater::DequeueEvent ()
 {
-    ASSERT1(!m_key_event_queue.GetIsEmpty())
+    ASSERT1(!m_key_event_queue.GetIsEmpty());
     return m_key_event_queue.Dequeue();
 }
 

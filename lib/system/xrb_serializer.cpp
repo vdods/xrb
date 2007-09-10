@@ -25,13 +25,13 @@ Serializer::Serializer ()
 
 Serializer::~Serializer ()
 {
-    ASSERT1(!GetIsOpen() && "A Serializer must not be in an open state upon destruction.")
-    ASSERT1(GetIODirection() == IOD_NONE)
+    ASSERT1(!GetIsOpen() && "A Serializer must not be in an open state upon destruction.");
+    ASSERT1(GetIODirection() == IOD_NONE);
 }
 
 Uint32 Serializer::ReadString (char **const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     char buffer[MAX_SUPPORTED_STRING_BUFFER_SIZE];
     Uint32 const read_string_length =
@@ -46,7 +46,7 @@ Uint32 Serializer::ReadString (char **const destination)
 
 Uint32 Serializer::WriteString (char const *const source)
 {
-    ASSERT1(source != NULL)
+    ASSERT1(source != NULL);
 
     Uint32 actual_string_length = static_cast<Uint32>(strlen(source));
     Uint32 written_string_length =
@@ -58,7 +58,7 @@ Uint32 Serializer::WriteString (char const *const source)
 
 void Serializer::ReadStdString (std::string *const destination, Uint32 *const string_length)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     char buffer[MAX_SUPPORTED_STRING_BUFFER_SIZE];
     Uint32 const read_string_length =

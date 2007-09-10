@@ -89,7 +89,7 @@ private:
 
     inline Float GetTargetAimAngle (FloatVector2 const &target_position) const
     {
-        ASSERT1(m_target.GetIsValid())
+        ASSERT1(m_target.GetIsValid());
         FloatVector2 target_delta(GetTranslation() - target_position);
         return Math::Atan(target_delta) - Math::GetCanonicalAngle(m_target->GetAngle());
     }

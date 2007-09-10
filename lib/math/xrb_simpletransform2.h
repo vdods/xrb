@@ -174,7 +174,7 @@ public:
     }
     inline void SetScaleFactor (ScaleFactorComponent component, T scale_factor)
     {
-        ASSERT1(component == R || component == S)
+        ASSERT1(component == R || component == S);
         m_scale_factors[component] = scale_factor;
     }
     inline void SetScaleFactor (T scale_factor)
@@ -193,7 +193,7 @@ public:
     }
     inline void SetTranslation (TranslationComponent component, T translation)
     {
-        ASSERT1(component == X || component == Y)
+        ASSERT1(component == X || component == Y);
         m_translation[component] = translation;
     }
 
@@ -209,8 +209,8 @@ public:
 
     void Fprint (FILE *fptr, char const *component_printf_format) const
     {
-        ASSERT1(fptr != NULL)
-        ASSERT1(component_printf_format != NULL)
+        ASSERT1(fptr != NULL);
+        ASSERT1(component_printf_format != NULL);
 
         // clever way to get zero
         T zero = m_scale_factors[Dim::X] - m_scale_factors[Dim::X];

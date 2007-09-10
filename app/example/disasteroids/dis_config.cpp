@@ -82,7 +82,7 @@ Config::Config ()
 
 Key::Code Config::GetInputAction (KeyInputAction key) const
 {
-    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT)
+    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
 
     if (!m_input_action_name[key].empty())
     {
@@ -98,8 +98,8 @@ Key::Code Config::GetInputAction (KeyInputAction key) const
 
 void Config::SetInputAction (KeyInputAction const key, Key::Code const value)
 {
-    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT)
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(ms_input_action_key[key].m_default_value))
+    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
+    ASSERT1(Singletons::Input().GetIsValidKeyCode(ms_input_action_key[key].m_default_value));
     m_input_action_name[key].clear();
     m_input_action_value[key] =
         Singletons::Input().GetIsValidKeyCode(value) ?
@@ -109,8 +109,8 @@ void Config::SetInputAction (KeyInputAction const key, Key::Code const value)
 
 void Config::SetInputAction (KeyInputAction const key, std::string const &value)
 {
-    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT)
-    ASSERT1(!value.empty())
+    ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
+    ASSERT1(!value.empty());
     m_input_action_name[key] = value;
     Util::MakeUppercase(&m_input_action_name[key]);
 }
@@ -171,13 +171,13 @@ void Config::Write (string const &config_filename) const
 
     // write out the enumerated values
     for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
-        try { root->SetPathElementBoolean(ms_boolean_key[i].m_data_file_path, GetBoolean(static_cast<KeyBoolean>(i))); } catch (...) { ASSERT1(false && "this should never happen") }
+        try { root->SetPathElementBoolean(ms_boolean_key[i].m_data_file_path, GetBoolean(static_cast<KeyBoolean>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_UINT32_COUNT; ++i)
-        try { root->SetPathElementUint32(ms_uint32_key[i].m_data_file_path, GetUint32(static_cast<KeyUint32>(i))); } catch (...) { ASSERT1(false && "this should never happen") }
+        try { root->SetPathElementUint32(ms_uint32_key[i].m_data_file_path, GetUint32(static_cast<KeyUint32>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
-        try { root->SetPathElementString(ms_string_key[i].m_data_file_path, GetString(static_cast<KeyString>(i))); } catch (...) { ASSERT1(false && "this should never happen") }
+        try { root->SetPathElementString(ms_string_key[i].m_data_file_path, GetString(static_cast<KeyString>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
-        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().GetKeyName(GetInputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen") }
+        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().GetKeyName(GetInputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);

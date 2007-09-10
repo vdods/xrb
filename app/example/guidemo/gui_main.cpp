@@ -181,7 +181,7 @@ int main (int argc, char **argv)
                 {
                     // dequeue event
                     EventKeyRepeat *event = key_repeater.DequeueEvent();
-                    ASSERT1(event != NULL)
+                    ASSERT1(event != NULL);
                     // process event
                     screen->GetOwnerEventQueue()->EnqueueEvent(screen, event);
                 }

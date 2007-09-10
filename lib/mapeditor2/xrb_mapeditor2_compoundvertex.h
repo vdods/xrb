@@ -40,7 +40,7 @@ namespace MapEditor2
         
         inline CompoundVertex (Compound *const owner_compound)
         {
-            ASSERT1(owner_compound != NULL)
+            ASSERT1(owner_compound != NULL);
             m_index = UINT32_UPPER_BOUND;
             m_owner_compound = owner_compound;
             m_is_selected = false;

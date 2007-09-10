@@ -87,7 +87,7 @@ void Explosive::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    ASSERT1(!GetHasDetonated());
     m_has_detonated = true;
     ScheduleForDeletion(0.0f);
 }
@@ -113,7 +113,7 @@ Grenade::Grenade (
     m_damage_radius(damage_radius),
     m_explosion_radius(explosion_radius)
 {
-    ASSERT1(m_damage_to_inflict > 0.0f)
+    ASSERT1(m_damage_to_inflict > 0.0f);
     m_owner_grenade_launcher = owner_grenade_launcher;
     SetImmunity(D_COLLISION|D_EXPLOSION);
 }
@@ -133,7 +133,7 @@ void Grenade::Collide (
         // because Collide will be called on both grenades, we need a way to ensure the
         // grenade merging only happens once, and that only one grenade goes away.  thus
         // we'll only perform merging when the pointer value of this is less than other_grenade.
-        ASSERT1(this != other_grenade) // a grenade can't (shouldn't be able to) collide with itself
+        ASSERT1(this != other_grenade); // a grenade can't (shouldn't be able to) collide with itself
         if (this > other_grenade)
             return;
 
@@ -203,9 +203,9 @@ bool Grenade::CheckIfItShouldDetonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
-    ASSERT1(!GetIsDead())
+    ASSERT1(collider != NULL);
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+    ASSERT1(!GetIsDead());
 
     // this grenade is dumb, just detonate
     return true;
@@ -215,7 +215,7 @@ void Grenade::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    ASSERT1(!GetHasDetonated());
 
     // can't detonate if we're already dead
     if (GetIsDead())
@@ -314,10 +314,10 @@ bool Missile::CheckIfItShouldDetonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
-    ASSERT1(!GetHasDetonated())
-    ASSERT1(!GetIsDead())
+    ASSERT1(collider != NULL);
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+    ASSERT1(!GetHasDetonated());
+    ASSERT1(!GetIsDead());
 
     // don't detonate on ourselves
     if (collider == this)
@@ -344,7 +344,7 @@ void Missile::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    ASSERT1(!GetHasDetonated());
 
     // can't detonate if we're dead
     if (GetIsDead())
@@ -430,7 +430,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
 
 void GuidedMissile::Seek (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_target.GetIsValid())
+    ASSERT1(m_target.GetIsValid());
 
     if (m_target->GetIsDead())
     {
@@ -541,7 +541,7 @@ void EMPBomb::Die (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated())
+    ASSERT1(!GetHasDetonated());
 
     // if there is an owner emp_bomb launcher, signal to it that this
     // emp_bomb has been destroyed
@@ -564,9 +564,9 @@ bool EMPBomb::CheckIfItShouldDetonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
-    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION)
-    ASSERT1(!GetIsDead())
+    ASSERT1(collider != NULL);
+    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+    ASSERT1(!GetIsDead());
 
     // the emp_bomb is dumb, just detonate
     return true;
@@ -576,7 +576,7 @@ void EMPBomb::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetIsDead())
+    ASSERT1(!GetIsDead());
 
     if (!GetHasDetonated())
     {

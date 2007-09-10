@@ -52,12 +52,12 @@ struct Polygon
 
     inline FloatVector2 const &GetVertex (Uint32 const index) const
     {
-        ASSERT1(index < m_vertex_count)
+        ASSERT1(index < m_vertex_count);
         return *(m_vertex_array[index].m_model_coordinate);
     }
     inline FloatVector2 const &GetTextureCoordinate (Uint32 const index) const
     {
-        ASSERT1(index < m_vertex_count)
+        ASSERT1(index < m_vertex_count);
         return m_vertex_array[index].m_texture_coordinate;
     }
 

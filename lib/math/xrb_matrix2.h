@@ -69,7 +69,7 @@ public:
     }
     inline Matrix2 (T const *const components)
     {
-        ASSERT1(components != NULL)
+        ASSERT1(components != NULL);
     #if defined(XRB_MATRIX2_USES_MEMCPY)
         memcpy(m, components, sizeof(T) * COMPONENT_COUNT);
     #else
@@ -104,14 +104,14 @@ public:
 
     inline T const &operator [] (Component const component) const
     {
-        ASSERT3(A == 0)
-        ASSERT1(component < COMPONENT_COUNT)
+        ASSERT3(A == 0);
+        ASSERT1(component < COMPONENT_COUNT);
         return m[component];
     }
     inline T &operator [] (Component const component)
     {
-        ASSERT3(A == 0)
-        ASSERT1(component < COMPONENT_COUNT)
+        ASSERT3(A == 0);
+        ASSERT1(component < COMPONENT_COUNT);
         return m[component];
     }
     // multiplying operand on the left side of this matrix
@@ -299,8 +299,8 @@ public:
         FILE *const fptr,
         char const *const component_printf_format) const
     {
-        ASSERT1(fptr != NULL)
-        ASSERT1(component_printf_format != NULL)
+        ASSERT1(fptr != NULL);
+        ASSERT1(component_printf_format != NULL);
 
         fprintf(fptr, "Matrix2:\n\t[");
         fprintf(fptr, component_printf_format, m[A]);

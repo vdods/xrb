@@ -85,7 +85,7 @@ bool GL::GetIsTexture2dOn ()
 
 void GL::SetClipRect (ScreenCoordRect const &clip_rect)
 {
-    ASSERT1(clip_rect.GetIsValid())
+    ASSERT1(clip_rect.GetIsValid());
 
     // set up the GL projection matrix here.
     glMatrixMode(GL_PROJECTION);

@@ -19,7 +19,7 @@ Color MapEditor2::SpriteEntity::ms_selected_metrics_color(0.7f, 1.0f, 0.7f, 1.0f
 MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::CreateSpriteEntityClone (
     Sprite const *const sprite)
 {
-    ASSERT1(sprite != NULL)
+    ASSERT1(sprite != NULL);
     SpriteEntity *retval = new SpriteEntity(sprite->GetTexture());
     retval->Engine2::Object::CloneProperties(sprite);
     retval->Object::CloneProperties(sprite);
@@ -63,7 +63,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (Serializer &serializ
 
 Engine2::Object *MapEditor2::SpriteEntity::CreateClone () const
 {
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(m_texture.GetIsValid());
 
     SpriteEntity *retval = new SpriteEntity(m_texture);
     retval->Engine2::Object::CloneProperties(this);
@@ -93,8 +93,8 @@ void MapEditor2::SpriteEntity::CloneProperties (Object const *const object)
 {
 //     SpriteEntity const *sprite_entity =
 //         dynamic_cast<SpriteEntity const *>(object);
-//     ASSERT1(sprite_entity != NULL)
-    ASSERT1(dynamic_cast<SpriteEntity const *>(object) != NULL)
+//     ASSERT1(sprite_entity != NULL);
+    ASSERT1(dynamic_cast<SpriteEntity const *>(object) != NULL);
 
     // nothing to do (yet)
 }

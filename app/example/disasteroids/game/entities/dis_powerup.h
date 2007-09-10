@@ -38,7 +38,7 @@ public:
         :
         Entity(ET_POWERUP, CT_SOLID_COLLISION)
     {
-        ASSERT1(item != NULL)
+        ASSERT1(item != NULL);
         m_item_type = IT_COUNT;
         m_item = item;
         m_effective_coefficient = 1.0f;

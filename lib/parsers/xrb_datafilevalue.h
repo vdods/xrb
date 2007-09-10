@@ -186,7 +186,7 @@ SetPathElement on structure
 {
     if (at end of path) return ERROR;
     if (at last char of path && last char == '|') return INVALID_PATH;
-    ASSERT(GetParentElementNodeType() == structure)
+    ASSERT(GetParentElementNodeType() == structure);
     get key string
     if (!GetIsValidKey(key)) return INVALID_KEY;
     if (key exists in this structure) return matching_key_pair->SetPathElement(value);
@@ -550,7 +550,7 @@ public:
         m_key(key),
         m_value(value)
     {
-        ASSERT1(m_key.length() > 0)
+        ASSERT1(m_key.length() > 0);
     }
     virtual ~DataFileKeyPair ()
     {

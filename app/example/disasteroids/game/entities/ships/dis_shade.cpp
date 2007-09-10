@@ -51,7 +51,7 @@ Shade::Shade (Uint8 const enemy_level)
 
 Shade::~Shade ()
 {
-    ASSERT1(m_weapon != NULL)
+    ASSERT1(m_weapon != NULL);
     Delete(m_weapon);
 }
 
@@ -94,7 +94,7 @@ void Shade::Think (Float const time, Float const frame_dt)
 
 FloatVector2 Shade::GetMuzzleLocation (Weapon const *weapon) const
 {
-    ASSERT1(weapon != NULL)
+    ASSERT1(weapon != NULL);
 
     if (!m_target.GetIsValid())
         return Ship::GetMuzzleLocation(weapon);
@@ -110,7 +110,7 @@ FloatVector2 Shade::GetMuzzleLocation (Weapon const *weapon) const
 
 FloatVector2 Shade::GetMuzzleDirection (Weapon const *weapon) const
 {
-    ASSERT1(weapon != NULL)
+    ASSERT1(weapon != NULL);
 
     if (!m_target.GetIsValid())
         return Ship::GetMuzzleDirection(weapon);
@@ -166,7 +166,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // ignore ourselves
         if (entity == this)
@@ -199,7 +199,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
-        ASSERT1(!perpendicular_velocity.GetIsZero())
+        ASSERT1(!perpendicular_velocity.GetIsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
@@ -229,8 +229,8 @@ void Shade::Stalk (Float const time, Float const frame_dt)
             m_target->GetTranslation(),
             GetTranslation()));
     Float distance_to_target = (target_position - GetTranslation()).GetLength();
-    ASSERT1(ms_alarm_distance[GetEnemyLevel()] < ms_stalk_minimum_distance[GetEnemyLevel()])
-    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()])
+    ASSERT1(ms_alarm_distance[GetEnemyLevel()] < ms_stalk_minimum_distance[GetEnemyLevel()]);
+    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()]);
     // if we're inside the alarm distance, teleport away
     if (distance_to_target < ms_alarm_distance[GetEnemyLevel()])
     {
@@ -266,7 +266,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
             GetTranslation()));
     FloatVector2 position_delta(target_position - GetTranslation());
     Float distance_to_target = position_delta.GetLength();
-    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()])
+    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()]);
     // if we're inside the alarm distance, teleport away
     if (distance_to_target < ms_alarm_distance[GetEnemyLevel()])
     {
@@ -391,12 +391,12 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
     }
     else
     {
-        ASSERT1(m_weapon != NULL)
+        ASSERT1(m_weapon != NULL);
         FloatVector2 p(target_position - GetTranslation());
         FloatVector2 v(m_target->GetVelocity() - GetVelocity());
         FloatVector2 a;
         Float projectile_speed = SlowBulletGun::ms_muzzle_speed[m_weapon->GetUpgradeLevel()];
-        ASSERT1(projectile_speed > 0.0f)
+        ASSERT1(projectile_speed > 0.0f);
         if (GetEnemyLevel() == 1)
             a = FloatVector2::ms_zero;
         else

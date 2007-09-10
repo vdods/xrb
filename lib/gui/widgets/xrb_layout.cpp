@@ -50,8 +50,8 @@ Widget *Layout::GetGridChild (
     Uint32 const major_index,
     Uint32 const minor_index) const
 {
-    ASSERT1(major_index < GetMinorCount())
-    ASSERT1(minor_index < GetMajorCount())
+    ASSERT1(major_index < GetMinorCount());
+    ASSERT1(minor_index < GetMajorCount());
     Uint32 linear_index = major_index * GetMajorCount() + minor_index;
     if (linear_index < m_child_vector.size())
         return m_child_vector[linear_index];
@@ -63,8 +63,8 @@ Widget *Layout::GetGridChildByColumnAndRow (
     Uint32 const column_index,
     Uint32 const row_index) const
 {
-    ASSERT1(column_index < GetColumnCount())
-    ASSERT1(row_index < GetRowCount())
+    ASSERT1(column_index < GetColumnCount());
+    ASSERT1(row_index < GetRowCount());
     Uint32 linear_index = (m_major_direction == ROW) ?
                           row_index * GetColumnCount() + column_index :
                           column_index * GetRowCount() + row_index;
@@ -89,35 +89,35 @@ Uint32 Layout::GetColumnCount () const
 Bool2 const &Layout::GetColumnMinSizeEnabled (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
-    ASSERT1(index < m_column_count)
+    ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size_enabled;
 }
 
 ScreenCoordVector2 const &Layout::GetColumnMinSize (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
-    ASSERT1(index < m_column_count)
+    ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size;
 }
 
 Bool2 const &Layout::GetColumnMaxSizeEnabled (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
-    ASSERT1(index < m_column_count)
+    ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size_enabled;
 }
 
 ScreenCoordVector2 const &Layout::GetColumnMaxSize (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
-    ASSERT1(index < m_column_count)
+    ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size;
 }
 
 ScreenCoord Layout::GetColumnWidth (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
-    ASSERT1(index < m_column_count)
+    ASSERT1(index < m_column_count);
     return m_column_width[index];
 }
 
@@ -136,35 +136,35 @@ Uint32 Layout::GetRowCount () const
 Bool2 const &Layout::GetRowMinSizeEnabled (Uint32 const index) const
 {
     UpdateRowSizeProperties();
-    ASSERT1(index < m_row_count)
+    ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size_enabled;
 }
 
 ScreenCoordVector2 const &Layout::GetRowMinSize (Uint32 const index) const
 {
     UpdateRowSizeProperties();
-    ASSERT1(index < m_row_count)
+    ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size;
 }
 
 Bool2 const &Layout::GetRowMaxSizeEnabled (Uint32 const index) const
 {
     UpdateRowSizeProperties();
-    ASSERT1(index < m_row_count)
+    ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size_enabled;
 }
 
 ScreenCoordVector2 const &Layout::GetRowMaxSize (Uint32 const index) const
 {
     UpdateRowSizeProperties();
-    ASSERT1(index < m_row_count)
+    ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size;
 }
 
 ScreenCoord Layout::GetRowHeight (Uint32 const index) const
 {
     UpdateRowSizeProperties();
-    ASSERT1(index < m_row_count)
+    ASSERT1(index < m_row_count);
     return m_row_height[index];
 }
 
@@ -212,7 +212,7 @@ void Layout::SetMajorDirection (LineDirection const major_direction)
 
 void Layout::SetMajorCount (Uint32 const major_count)
 {
-    ASSERT1(major_count > 0)
+    ASSERT1(major_count > 0);
 
     if (m_major_count != major_count)
     {
@@ -251,7 +251,7 @@ void Layout::SetSizePropertyEnabled (
     Uint32 const component,
     bool const value)
 {
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
@@ -281,8 +281,8 @@ void Layout::SetSizeProperty (
     Uint32 const component,
     ScreenCoord const value)
 {
-    ASSERT1(component <= 1)
-    ASSERT1(value >= 0)
+    ASSERT1(component <= 1);
+    ASSERT1(value >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size[component] = value;
     else
@@ -297,8 +297,8 @@ void Layout::SetSizeProperty (
     SizeProperties::Property const property,
     ScreenCoordVector2 const &value)
 {
-    ASSERT1(value[Dim::X] >= 0)
-    ASSERT1(value[Dim::Y] >= 0)
+    ASSERT1(value[Dim::X] >= 0);
+    ASSERT1(value[Dim::Y] >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size = value;
     else
@@ -558,12 +558,12 @@ int Layout::SizePropertiesSortingFunction (
     SizeProperties const *const properties_b,
     Uint32 const index)
 {
-    ASSERT1(index <= 1)
-    ASSERT1(properties_a != NULL)
-    ASSERT1(properties_b != NULL)
-    ASSERT1(properties_a->m_data != NULL)
-    ASSERT1(properties_b->m_data != NULL)
-    ASSERT1(properties_a->m_data == properties_b->m_data)
+    ASSERT1(index <= 1);
+    ASSERT1(properties_a != NULL);
+    ASSERT1(properties_b != NULL);
+    ASSERT1(properties_a->m_data != NULL);
+    ASSERT1(properties_b->m_data != NULL);
+    ASSERT1(properties_a->m_data == properties_b->m_data);
     ScreenCoord size_allotment = *properties_a->m_data;
 
     if (properties_a->m_max_size_enabled[index] && properties_a->m_max_size[index] < size_allotment)
@@ -608,8 +608,8 @@ int Layout::ColumnCompareConstraints (void const *a, void const *b)
         *(static_cast<SizeProperties *const *>(a));
     SizeProperties const *column_b =
         *(static_cast<SizeProperties *const *>(b));
-    ASSERT1(dynamic_cast<SizeProperties const *>(column_a) != NULL)
-    ASSERT1(dynamic_cast<SizeProperties const *>(column_b) != NULL)
+    ASSERT1(dynamic_cast<SizeProperties const *>(column_a) != NULL);
+    ASSERT1(dynamic_cast<SizeProperties const *>(column_b) != NULL);
 
     return SizePropertiesSortingFunction(column_a, column_b, Dim::X);
 }
@@ -620,8 +620,8 @@ int Layout::RowCompareConstraints (void const *a, void const *b)
         *(static_cast<SizeProperties const *const *>(a));
     SizeProperties const *row_b =
         *(static_cast<SizeProperties const *const *>(b));
-    ASSERT1(dynamic_cast<SizeProperties const *>(row_a) != NULL)
-    ASSERT1(dynamic_cast<SizeProperties const *>(row_b) != NULL)
+    ASSERT1(dynamic_cast<SizeProperties const *>(row_a) != NULL);
+    ASSERT1(dynamic_cast<SizeProperties const *>(row_b) != NULL);
 
     return SizePropertiesSortingFunction(row_a, row_b, Dim::Y);
 }
@@ -651,9 +651,9 @@ void Layout::DelegateWidthsToColumns ()
         m_column_width[i] = 0;
 
     // must split up the total width among the columns
-    ASSERT1(m_hidden_column_count == GetColumnCount() - unhidden_column_count)
+    ASSERT1(m_hidden_column_count == GetColumnCount() - unhidden_column_count);
     ScreenCoord total_width_left = GetWidth() - GetTotalSpacing()[Dim::X];
-    ASSERT1(total_width_left >= 0)
+    ASSERT1(total_width_left >= 0);
 
     // sort the array unhidden_column_count times (to delegate the same number of widths)
     for (Uint32 i = 0; i < unhidden_column_count; ++i)
@@ -672,7 +672,7 @@ void Layout::DelegateWidthsToColumns ()
 
         // update the remaining width left
         total_width_left -= m_column_width[column_index];
-        ASSERT1(total_width_left >= 0)
+        ASSERT1(total_width_left >= 0);
     }
 
 #if defined(WIN32)
@@ -705,15 +705,15 @@ void Layout::DelegateHeightsToRows ()
         m_row_height[i] = 0;
 
     // must split up the total height among the rows
-    ASSERT1(m_hidden_row_count == GetRowCount() - unhidden_row_count)
+    ASSERT1(m_hidden_row_count == GetRowCount() - unhidden_row_count);
     ScreenCoord total_height_left = GetHeight() - GetTotalSpacing()[Dim::Y];
-    ASSERT1(total_height_left >= 0)
+    ASSERT1(total_height_left >= 0);
 
     // sort the array unhidden_row_count times (to delegate the same number of heights)
     for (Uint32 i = 0; i < unhidden_row_count; ++i)
     {
         m_line_share_of_size[Dim::Y] = total_height_left / (unhidden_row_count - i);
-        ASSERT1(m_line_share_of_size[Dim::Y] >= 0)
+        ASSERT1(m_line_share_of_size[Dim::Y] >= 0);
         // sort the rows starting at element i
         qsort(row_order + i,
               unhidden_row_count - i,
@@ -727,7 +727,7 @@ void Layout::DelegateHeightsToRows ()
 
         // update the remaining height left
         total_height_left -= m_row_height[row_index];
-        ASSERT1(total_height_left >= 0)
+        ASSERT1(total_height_left >= 0);
     }
 
 #if defined(WIN32)
@@ -771,8 +771,8 @@ void Layout::ResizeAndRepositionChildWidgets ()
                 // properly centered on the grid slot.
                 ScreenCoordVector2 extra_space(requested_size - child->GetSize());
 //                 // these asserts seem to fuck things up, so we'll see if they can be taken out
-//                 ASSERT1(extra_space[Dim::X] >= 0)
-//                 ASSERT1(extra_space[Dim::Y] >= 0)
+//                 ASSERT1(extra_space[Dim::X] >= 0);
+//                 ASSERT1(extra_space[Dim::Y] >= 0);
                 // move the child to the tracked current positional offset,
                 // plus half of the extra space, so the child is centered
                 // on the grid slot.
@@ -805,11 +805,11 @@ void Layout::CalculateLineSizeProperties (
     bool *const line_is_hidden) const
 {
     if (line_direction == GetMajorDirection())
-        ASSERT1(line_index < GetMinorCount())
+        ASSERT1(line_index < GetMinorCount());
     else
-        ASSERT1(line_index < GetMajorCount())
-    ASSERT1(size_properties != NULL)
-    ASSERT1(line_is_hidden != NULL)
+        ASSERT1(line_index < GetMajorCount());
+    ASSERT1(size_properties != NULL);
+    ASSERT1(line_is_hidden != NULL);
 
     size_properties->m_min_size_enabled = Bool2(false, false);
     size_properties->m_min_size =
@@ -967,7 +967,7 @@ void Layout::UpdateTotalSpacing () const
         column_spaces = 0;
     else
     {
-        ASSERT1(GetColumnCount() > GetHiddenColumnCount())
+        ASSERT1(GetColumnCount() > GetHiddenColumnCount());
         column_spaces = GetColumnCount() - 1 - GetHiddenColumnCount();
     }
 
@@ -975,7 +975,7 @@ void Layout::UpdateTotalSpacing () const
         row_spaces = 0;
     else
     {
-        ASSERT1(GetRowCount() > GetHiddenRowCount())
+        ASSERT1(GetRowCount() > GetHiddenRowCount());
         row_spaces = GetRowCount() - 1 - GetHiddenRowCount();
     }
 
@@ -993,7 +993,7 @@ void Layout::UpdateColumnSizePropertyAllocation () const
         return;
 
     m_column_size_property_arrays_need_reallocation = false;
-    ASSERT1(m_column_size_properties_need_update)
+    ASSERT1(m_column_size_properties_need_update);
 
     // figure out how many columns there should be
     Uint32 column_count =
@@ -1003,9 +1003,9 @@ void Layout::UpdateColumnSizePropertyAllocation () const
 
     if (m_column_count > 0)
     {
-        ASSERT1(m_column_size_properties != NULL)
-        ASSERT1(m_column_width != NULL)
-        ASSERT1(m_column_is_hidden != NULL)
+        ASSERT1(m_column_size_properties != NULL);
+        ASSERT1(m_column_width != NULL);
+        ASSERT1(m_column_is_hidden != NULL);
     }
 
     // don't do anything if the number of columns is the same
@@ -1014,9 +1014,9 @@ void Layout::UpdateColumnSizePropertyAllocation () const
 
     DeleteColumnSizePropertyArrays();
 
-    ASSERT1(m_column_size_properties == NULL)
-    ASSERT1(m_column_width == NULL)
-    ASSERT1(m_column_is_hidden == NULL)
+    ASSERT1(m_column_size_properties == NULL);
+    ASSERT1(m_column_width == NULL);
+    ASSERT1(m_column_is_hidden == NULL);
 
     m_column_count = column_count;
     if (m_column_count > 0)
@@ -1059,7 +1059,7 @@ void Layout::UpdateRowSizePropertyAllocation () const
         return;
 
     m_row_size_property_arrays_need_reallocation = false;
-    ASSERT1(m_row_size_properties_need_update)
+    ASSERT1(m_row_size_properties_need_update);
 
     // figure out how many rows there should be
     Uint32 row_count = (GetMajorDirection() == ROW) ?
@@ -1068,9 +1068,9 @@ void Layout::UpdateRowSizePropertyAllocation () const
 
     if (m_row_count > 0)
     {
-        ASSERT1(m_row_size_properties != NULL)
-        ASSERT1(m_row_height != NULL)
-        ASSERT1(m_row_is_hidden != NULL)
+        ASSERT1(m_row_size_properties != NULL);
+        ASSERT1(m_row_height != NULL);
+        ASSERT1(m_row_is_hidden != NULL);
     }
 
     // don't do anything if the number of rows is the same
@@ -1079,9 +1079,9 @@ void Layout::UpdateRowSizePropertyAllocation () const
 
     DeleteRowSizePropertyArrays();
 
-    ASSERT1(m_row_size_properties == NULL)
-    ASSERT1(m_row_height == NULL)
-    ASSERT1(m_row_is_hidden == NULL)
+    ASSERT1(m_row_size_properties == NULL);
+    ASSERT1(m_row_height == NULL);
+    ASSERT1(m_row_is_hidden == NULL);
 
     m_row_count = row_count;
     if (m_row_count > 0)
@@ -1204,8 +1204,8 @@ void Layout::DeleteColumnSizePropertyArrays () const
     }
     else
     {
-        ASSERT1(m_column_width == NULL)
-        ASSERT1(m_column_is_hidden == NULL)
+        ASSERT1(m_column_width == NULL);
+        ASSERT1(m_column_is_hidden == NULL);
     }
 }
 
@@ -1219,8 +1219,8 @@ void Layout::DeleteRowSizePropertyArrays () const
     }
     else
     {
-        ASSERT1(m_row_height == NULL)
-        ASSERT1(m_row_is_hidden == NULL)
+        ASSERT1(m_row_height == NULL);
+        ASSERT1(m_row_is_hidden == NULL);
     }
 }
 
@@ -1231,7 +1231,7 @@ void Layout::Initialize (
     // doesn't independently accept focus
     m_accepts_focus = false;
 
-    ASSERT1(major_count > 0)
+    ASSERT1(major_count > 0);
 
     DirtyTotalSpacing();
 

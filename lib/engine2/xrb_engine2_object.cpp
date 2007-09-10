@@ -59,7 +59,7 @@ Engine2::Object::DrawLoopFunctor::DrawLoopFunctor (
 
 void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *object)
 {
-    ASSERT3(m_transparent_object_vector != NULL)
+    ASSERT3(m_transparent_object_vector != NULL);
 
     // calculate the object's pixel radius on screen
     Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_quad_tree_type) / m_view_radius;
@@ -70,8 +70,8 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
         Float distance_fade;
         if (m_is_collect_transparent_object_pass)
         {
-            ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f)
-            ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f)
+            ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f);
+            ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f);
             // if it's a transparent object and the transparent object vector
             // exists, add it to the transparent object vector.
             if (object->GetIsTransparent() ||
@@ -109,7 +109,7 @@ Float Engine2::Object::DrawLoopFunctor::CalculateDistanceFade (Float const objec
         (object_radius > ms_radius_limit_upper) ?
         1.0f :
         (ms_distance_fade_slope * object_radius + ms_distance_fade_intercept);
-    ASSERT1(distance_fade <= 1.0f)
+    ASSERT1(distance_fade <= 1.0f);
     return distance_fade;
 }
 
@@ -121,8 +121,8 @@ Engine2::Object::~Object ()
 {
     if (m_entity != NULL)
     {
-        ASSERT1(m_entity->m_owner_object == this)
-        ASSERT1(!m_entity->GetIsInWorld())
+        ASSERT1(m_entity->m_owner_object == this);
+        ASSERT1(!m_entity->GetIsInWorld());
         m_entity->m_owner_object = NULL;
         Delete(m_entity);
     }
@@ -132,7 +132,7 @@ Engine2::Object *Engine2::Object::Create (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Object *retval = NULL;
     switch (ReadObjectType(serializer))
@@ -159,9 +159,9 @@ Engine2::Object *Engine2::Object::Create (
     // if there is an Entity attached to this object, read it
     if (serializer.ReadBool())
     {
-        ASSERT1(CreateEntity != NULL)
+        ASSERT1(CreateEntity != NULL);
         retval->m_entity = CreateEntity(serializer);
-        ASSERT1(retval->m_entity != NULL)
+        ASSERT1(retval->m_entity != NULL);
     }
 
     return retval;
@@ -182,8 +182,8 @@ void Engine2::Object::Write (Serializer &serializer) const
 
 Engine2::World *Engine2::Object::GetWorld () const
 {
-    ASSERT1(m_object_layer != NULL)
-    ASSERT1(m_object_layer->GetOwnerWorld() != NULL)
+    ASSERT1(m_object_layer != NULL);
+    ASSERT1(m_object_layer->GetOwnerWorld() != NULL);
     return m_object_layer->GetOwnerWorld();
 }
 
@@ -191,7 +191,7 @@ void Engine2::Object::SetEntity (Entity *const entity)
 {
     if (m_entity != NULL)
     {
-        ASSERT1(m_entity->m_owner_object == this)
+        ASSERT1(m_entity->m_owner_object == this);
         m_entity->m_owner_object = NULL;
     }
 
@@ -210,7 +210,7 @@ Engine2::Object::Object (ObjectType object_type)
     m_object_type(object_type),
     m_color_mask(1.0f, 1.0f, 1.0f, 1.0f)
 {
-    ASSERT1(m_object_type < OT_COUNT)
+    ASSERT1(m_object_type < OT_COUNT);
     m_z_depth = 0.0f;
     m_object_layer = NULL;
     for (Uint32 i = 0; i < QTT_COUNT; ++i)
@@ -247,7 +247,7 @@ void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 
 void Engine2::Object::CloneProperties (Object const *const object)
 {
-    ASSERT1(object != NULL)
+    ASSERT1(object != NULL);
 
     SetTranslation(object->GetTranslation());
     SetScaleFactors(object->GetScaleFactors());

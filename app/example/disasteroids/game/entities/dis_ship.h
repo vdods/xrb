@@ -40,12 +40,12 @@ public:
     void SetReticleCoordinates (FloatVector2 const &reticle_coordinates);
     inline void SetEngineRightLeftInput (Sint8 const engine_right_left_input)
     {
-        ASSERT1(engine_right_left_input >= -SINT8_UPPER_BOUND)
+        ASSERT1(engine_right_left_input >= -SINT8_UPPER_BOUND);
         m_engine_right_left_input = engine_right_left_input;
     }
     inline void SetEngineUpDownInput (Sint8 const engine_up_down_input)
     {
-        ASSERT1(engine_up_down_input >= -SINT8_UPPER_BOUND)
+        ASSERT1(engine_up_down_input >= -SINT8_UPPER_BOUND);
         m_engine_up_down_input = engine_up_down_input;
     }
     inline void SetWeaponPrimaryInput (Uint8 const weapon_primary_input)
@@ -59,7 +59,7 @@ public:
 
     inline void AccumulateDisableTime (Float const disable_time)
     {
-        ASSERT1(disable_time > 0.0f)
+        ASSERT1(disable_time > 0.0f);
         m_disable_time += disable_time;
     }
 
@@ -78,14 +78,14 @@ public:
 
     virtual FloatVector2 GetMuzzleLocation (Weapon const *weapon) const
     {
-        ASSERT1(weapon != NULL)
+        ASSERT1(weapon != NULL);
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
         return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle());
     }
     virtual FloatVector2 GetMuzzleDirection (Weapon const *weapon) const
     {
-        ASSERT1(weapon != NULL)
+        ASSERT1(weapon != NULL);
         // by default, just return the direction the ship is facing,
         // (so that not all ships have to override this method)
         return Math::UnitVector(GetAngle());
@@ -104,13 +104,13 @@ protected:
     }
     inline Float GetNormalizedEngineRightLeftInput () const
     {
-        ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND)
+        ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_right_left_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }
     inline Float GetNormalizedEngineUpDownInput () const
     {
-        ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND)
+        ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_up_down_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }

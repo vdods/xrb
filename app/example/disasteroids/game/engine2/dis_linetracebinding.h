@@ -40,7 +40,7 @@ struct OrderLineTraceBindingsByTime
         LineTraceBinding const &binding0,
         LineTraceBinding const &binding1)
     {
-        ASSERT1(binding0.m_entity != binding1.m_entity)
+        ASSERT1(binding0.m_entity != binding1.m_entity);
         return binding0.m_time < binding1.m_time;        
     }
 }; // end of struct OrderEntitiesByTraceTime

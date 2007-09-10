@@ -229,8 +229,8 @@ private:
 
     inline void SetPortReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
         m_port_reticle_coordinates = reticle_coordinates;
     }
     inline void SetPortWeaponPrimaryInput (Uint8 const port_weapon_primary_input)
@@ -243,8 +243,8 @@ private:
     }
     inline void SetStarboardReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
-        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
+        ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
         m_starboard_reticle_coordinates = reticle_coordinates;
     }
     inline void SetStarboardWeaponPrimaryInput (Uint8 const starboard_weapon_primary_input)

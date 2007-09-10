@@ -105,7 +105,7 @@ public:
     }
     inline T GetScaleFactor () const
     {
-        ASSERT1(m_scale_factors[Dim::X] == m_scale_factors[Dim::Y])
+        ASSERT1(m_scale_factors[Dim::X] == m_scale_factors[Dim::Y]);
         return m_scale_factors[Dim::X];
     }
     inline T GetAngle () const
@@ -120,13 +120,13 @@ public:
     inline Matrix2<T> const &GetTransformation () const
     {
         RecalculateTransformIfNecessary();
-        ASSERT1(!m_cached_transform_is_dirty)
+        ASSERT1(!m_cached_transform_is_dirty);
         return m_cached_transform;
     }
     inline Matrix2<T> GetTransformationInverse () const
     {
         RecalculateTransformIfNecessary();
-        ASSERT1(!m_cached_transform_is_dirty)
+        ASSERT1(!m_cached_transform_is_dirty);
         return m_cached_transform.GetInverse();
     }
 
@@ -151,27 +151,27 @@ public:
 
     inline void SetTranslation (Vector<T, 2> const &translation)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]));
         m_translation = translation;
         m_cached_transform_is_dirty = true;
     }
     inline void SetScaleFactors (Vector<T, 2> const &scale_factors)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]));
         m_scale_factors = scale_factors;
         Dirtify();
     }
     inline void SetScaleFactor (T scale_factor)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor));
         m_scale_factors.FillWith(scale_factor);
         Dirtify();
     }
     inline void SetAngle (T angle)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle));
         m_angle = angle;
         Dirtify();
     }
@@ -183,27 +183,27 @@ public:
 
     inline void Translate (Vector<T, 2> const &translation)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(translation[Dim::Y]));
         m_translation += translation;
         m_cached_transform_is_dirty = true;
     }
     inline void Scale (Vector<T, 2> const &scale_factors)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factors[Dim::Y]));
         m_scale_factors *= scale_factors;
         Dirtify();
     }
     inline void Scale (T scale_factor)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(scale_factor));
         m_scale_factors *= scale_factor;
         Dirtify();
     }
     inline void Rotate (T angle)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angle));
         m_angle += angle;
         Dirtify();
     }
@@ -239,8 +239,8 @@ public:
         char const *component_printf_format,
         bool add_newline = true) const
     {
-        ASSERT1(fptr != NULL)
-        ASSERT1(component_printf_format != NULL)
+        ASSERT1(fptr != NULL);
+        ASSERT1(component_printf_format != NULL);
 
         if (m_post_translate)
         {
@@ -278,7 +278,7 @@ public:
         {
             if (m_cached_scaling_and_rotation_is_dirty)
                 RecalculateScalingAndRotation();
-            ASSERT1(!m_cached_scaling_and_rotation_is_dirty)
+            ASSERT1(!m_cached_scaling_and_rotation_is_dirty);
 
             if (m_post_translate)
             {
@@ -297,10 +297,10 @@ public:
     }
     inline void RecalculateTransform () const
     {
-        ASSERT1(m_cached_transform_is_dirty)
+        ASSERT1(m_cached_transform_is_dirty);
         if (m_cached_scaling_and_rotation_is_dirty)
             RecalculateScalingAndRotation();
-        ASSERT1(!m_cached_scaling_and_rotation_is_dirty)
+        ASSERT1(!m_cached_scaling_and_rotation_is_dirty);
 
         if (m_post_translate)
         {
@@ -318,8 +318,8 @@ public:
     }
     inline void RecalculateTransformWithoutScalingAndRotation () const
     {
-        ASSERT1(m_cached_transform_is_dirty)
-        ASSERT1(!m_cached_scaling_and_rotation_is_dirty)
+        ASSERT1(m_cached_transform_is_dirty);
+        ASSERT1(!m_cached_scaling_and_rotation_is_dirty);
     
         if (m_post_translate)
         {
@@ -352,7 +352,7 @@ private:
     }
     void RecalculateScalingAndRotation () const
     {
-        ASSERT1(m_cached_scaling_and_rotation_is_dirty)
+        ASSERT1(m_cached_scaling_and_rotation_is_dirty);
         
         // scaling happens first
         m_cached_scaling_and_rotation = Matrix2<T>::ms_identity;

@@ -39,18 +39,18 @@ public:
     // general accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline bool GetBoolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT) return m_boolean_value[key]; }
-    inline Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT) return m_uint32_value[key]; }
-    inline std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT) return m_string_value[key]; }
+    inline bool GetBoolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); return m_boolean_value[key]; }
+    inline Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); return m_uint32_value[key]; }
+    inline std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); return m_string_value[key]; }
     Key::Code GetInputAction (KeyInputAction key) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // general modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void SetBoolean (KeyBoolean key, bool value) { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT) m_boolean_value[key] = value; }
-    inline void SetUint32 (KeyUint32 key, Uint32 value) { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT) m_uint32_value[key] = value; }
-    inline void SetString (KeyString key, std::string const &value) { ASSERT1(key >= 0 && key < KEY_STRING_COUNT) m_string_value[key] = value; }
+    inline void SetBoolean (KeyBoolean key, bool value) { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); m_boolean_value[key] = value; }
+    inline void SetUint32 (KeyUint32 key, Uint32 value) { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); m_uint32_value[key] = value; }
+    inline void SetString (KeyString key, std::string const &value) { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); m_string_value[key] = value; }
     void SetInputAction (KeyInputAction key, Key::Code value);
     void SetInputAction (KeyInputAction key, std::string const &value);
 

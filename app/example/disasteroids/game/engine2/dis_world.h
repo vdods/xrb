@@ -71,7 +71,7 @@ public:
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
     inline DifficultyLevel GetDifficultyLevel () const
     {
-        ASSERT1(m_difficulty_level < DL_COUNT)
+        ASSERT1(m_difficulty_level < DL_COUNT);
         return m_difficulty_level;
     }
     PhysicsHandler *GetPhysicsHandler ();

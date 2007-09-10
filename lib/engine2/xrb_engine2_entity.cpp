@@ -28,7 +28,7 @@ Engine2::Sprite *Engine2::Entity::GetOwnerSprite () const
     if (m_owner_object == NULL)
         return NULL;
 
-    ASSERT1(m_owner_object->GetObjectType() == OT_SPRITE)
+    ASSERT1(m_owner_object->GetObjectType() == OT_SPRITE);
     return static_cast<Sprite *>(m_owner_object);
 }
 
@@ -37,43 +37,43 @@ Engine2::Compound *Engine2::Entity::GetOwnerCompound () const
     if (m_owner_object == NULL)
         return NULL;
 
-    ASSERT1(m_owner_object->GetObjectType() == OT_COMPOUND)
+    ASSERT1(m_owner_object->GetObjectType() == OT_COMPOUND);
     return static_cast<Compound *>(m_owner_object);
 }
 
 void Engine2::Entity::SetWrappedOffset (FloatVector2 const &wrapped_offset)
 {
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset[Dim::Y]));
     m_wrapped_offset = wrapped_offset;
 }
 
 void Engine2::Entity::AccumulateWrappedOffset (FloatVector2 const &wrapped_offset_delta)
 {
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(wrapped_offset_delta[Dim::Y]));
     m_wrapped_offset += wrapped_offset_delta;
 }
 
 void Engine2::Entity::RemoveFromWorld ()
 {
-    ASSERT1(GetIsInWorld())
-    ASSERT1(GetOwnerObject()->GetWorld() != NULL)
-    ASSERT1(GetObjectLayer() != NULL)
+    ASSERT1(GetIsInWorld());
+    ASSERT1(GetOwnerObject()->GetWorld() != NULL);
+    ASSERT1(GetObjectLayer() != NULL);
     GetOwnerObject()->GetWorld()->RemoveDynamicObject(GetOwnerObject());
 }
 
 void Engine2::Entity::AddBackIntoWorld ()
 {
-    ASSERT1(!GetIsInWorld())
-    ASSERT1(GetOwnerObject()->GetWorld() != NULL)
-    ASSERT1(GetObjectLayer() != NULL)
+    ASSERT1(!GetIsInWorld());
+    ASSERT1(GetOwnerObject()->GetWorld() != NULL);
+    ASSERT1(GetObjectLayer() != NULL);
     GetOwnerObject()->GetWorld()->AddDynamicObject(GetOwnerObject(), GetObjectLayer());
 }
 
 void Engine2::Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
 {
-    ASSERT1(m_owner_object != NULL)
+    ASSERT1(m_owner_object != NULL);
     if (GetOwnerQuadTree(quad_tree_type) != NULL)
     {
         GetObjectLayer()->HandleContainmentOrWrapping(m_owner_object);
@@ -83,7 +83,7 @@ void Engine2::Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
 
 void Engine2::Entity::ScheduleForDeletion (Float time_delay)
 {
-    ASSERT1(GetIsInWorld())
+    ASSERT1(GetIsInWorld());
 
     if (time_delay < 0.0f)
         time_delay = 0.0f;
@@ -97,7 +97,7 @@ void Engine2::Entity::ScheduleForDeletion (Float time_delay)
 
 void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
 {
-    ASSERT1(GetIsInWorld())
+    ASSERT1(GetIsInWorld());
 
     if (time_delay < 0.0f)
         time_delay = 0.0f;
@@ -111,23 +111,23 @@ void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
 
 void Engine2::Entity::CloneProperties (Engine2::Entity const *const entity)
 {
-    ASSERT1(entity != NULL)
+    ASSERT1(entity != NULL);
     m_wrapped_offset = entity->m_wrapped_offset;
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
 }
 
 void Engine2::Entity::ReadClassSpecific (Serializer &serializer)
 {
     serializer.ReadFloatVector2(&m_wrapped_offset);
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
 }
 
 void Engine2::Entity::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
     serializer.WriteFloatVector2(m_wrapped_offset);
 }
 

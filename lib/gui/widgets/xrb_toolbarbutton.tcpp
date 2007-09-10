@@ -24,7 +24,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
     :
     RadioButton<T, sentinel>(picture, id, group, parent, name)
 {
-    ASSERT1(this->GetPicture().GetIsValid())
+    ASSERT1(this->GetPicture().GetIsValid());
     ToolbarButton<T, sentinel>::UpdateRenderBackground();
     ToolbarButton<T, sentinel>::UpdateRenderPicture();
 }
@@ -32,7 +32,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
 template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::HandleMouseoverOn ()
 {
-    ASSERT1(this->GetIsMouseover())
+    ASSERT1(this->GetIsMouseover());
     Button::HandleMouseoverOn();
     UpdateRenderBackground();
 }
@@ -40,7 +40,7 @@ void ToolbarButton<T, sentinel>::HandleMouseoverOn ()
 template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::HandleMouseoverOff ()
 {
-    ASSERT1(!this->GetIsMouseover())
+    ASSERT1(!this->GetIsMouseover());
     Button::HandleMouseoverOff();
     UpdateRenderBackground();
 }

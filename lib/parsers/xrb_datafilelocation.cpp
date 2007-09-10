@@ -26,7 +26,7 @@ std::string DataFileLocation::GetText () const
 
 std::ostream &operator << (std::ostream &stream, DataFileLocation const &file_location)
 {
-    ASSERT1(file_location.GetIsValid())
+    ASSERT1(file_location.GetIsValid());
     return stream << file_location.GetText();
 }
 

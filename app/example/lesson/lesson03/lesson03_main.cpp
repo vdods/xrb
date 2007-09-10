@@ -253,8 +253,8 @@ protected:
     @code */
     virtual void HandleFrame ()
     {
-        ASSERT1(g_temperature_retention_rate > 0.0f)
-        ASSERT1(g_temperature_retention_rate < 1.0f)
+        ASSERT1(g_temperature_retention_rate > 0.0f);
+        ASSERT1(g_temperature_retention_rate < 1.0f);
         // Calculate heat transfer.  The amount is proportional to the
         // difference between m_temperature and m_ambient_temperature -- the
         // fancy looking exponential factor is used to correctly scale the
@@ -520,7 +520,7 @@ private:
     @code */
     void SetDesiredFramerate (Uint32 desired_framerate)
     {
-        ASSERT1(desired_framerate > 0)
+        ASSERT1(desired_framerate > 0);
         g_desired_framerate = static_cast<Float>(desired_framerate);
     }
     /* @endcode
@@ -531,8 +531,8 @@ private:
     @code */
     void SetTemperatureRetentionRate (Float temperature_retention_rate)
     {
-        ASSERT1(temperature_retention_rate > 0.0f)
-        ASSERT1(temperature_retention_rate < 1.0f)
+        ASSERT1(temperature_retention_rate > 0.0f);
+        ASSERT1(temperature_retention_rate < 1.0f);
         g_temperature_retention_rate = temperature_retention_rate;
     }
 

@@ -75,7 +75,7 @@ namespace Engine2
             Float const view_depth,
             Float const layer_depth) const
         {
-            ASSERT1(view_depth < layer_depth)
+            ASSERT1(view_depth < layer_depth);
             return layer_depth - view_depth;
         }
         Float GetParallaxedViewRadius (ObjectLayer const *object_layer) const;

@@ -37,7 +37,7 @@ void HealthTrigger::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     if (collider->GetIsMortal() && collider != *m_ignore_this_mortal)
     {

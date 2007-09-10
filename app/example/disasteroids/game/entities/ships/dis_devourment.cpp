@@ -167,7 +167,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ResetInputs();
 
     // set the translation and velocity of the mouth health trigger
-    ASSERT1(m_mouth_health_trigger.GetIsValid())
+    ASSERT1(m_mouth_health_trigger.GetIsValid());
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->GetNormalizedCoordinates(
             GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(GetAngle())));
@@ -192,7 +192,7 @@ void Devourment::Collide (
         time,
         frame_dt);
 
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
     if (collider->GetIsMortal() &&
         collider->GetEntityType() != ET_DEVOURMENT &&
         collider->GetEntityType() != ET_DEMI &&
@@ -306,7 +306,7 @@ void Devourment::Die (
 
 bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
 {
-    ASSERT1(powerup != NULL)
+    ASSERT1(powerup != NULL);
 
     // just suck up all powerups, to piss off the player
 
@@ -314,15 +314,15 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
     if (powerup->GetItemType() >= IT_MINERAL_LOWEST &&
         powerup->GetItemType() <= IT_MINERAL_HIGHEST)
     {
-        ASSERT1(powerup->GetItem() == NULL)
+        ASSERT1(powerup->GetItem() == NULL);
         Uint32 mineral_index = powerup->GetItemType() - IT_MINERAL_LOWEST;
-        ASSERT1(mineral_index < MINERAL_COUNT)
+        ASSERT1(mineral_index < MINERAL_COUNT);
         m_mineral_inventory[mineral_index] += powerup->GetEffectiveValue();
     }
     // health powerups heal
     else if (powerup->GetItemType() == IT_POWERUP_HEALTH)
     {
-        ASSERT1(powerup->GetItem() == NULL)
+        ASSERT1(powerup->GetItem() == NULL);
         Heal(
             powerup,
             powerup,
@@ -552,8 +552,8 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
-        ASSERT2(*entity->GetReference() == entity)
+        ASSERT1(entity != NULL);
+        ASSERT2(*entity->GetReference() == entity);
 
         // don't try to eat ourselves
         if (entity == this)
@@ -579,7 +579,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         }
         else if (entity->GetIsMortal())
         {
-            ASSERT1(dynamic_cast<Mortal *>(entity) != NULL)
+            ASSERT1(dynamic_cast<Mortal *>(entity) != NULL);
 
             // if no target, use the current game object,
             // or override the current target if the current game object is

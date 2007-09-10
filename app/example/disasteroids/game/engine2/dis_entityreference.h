@@ -28,13 +28,13 @@ private:
 
     inline EntityInstance (Entity *entity)
     {
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
         m_entity = entity;
         m_reference_count = 0;
     }
     inline ~EntityInstance ()
     {
-        ASSERT1(m_reference_count == 0)
+        ASSERT1(m_reference_count == 0);
     }
 
     inline Entity const *operator * () const { return m_entity; }
@@ -46,7 +46,7 @@ private:
     // these should be called only by EntityReference
     inline void NullifyEntity ()
     {
-        ASSERT1(m_entity != NULL)
+        ASSERT1(m_entity != NULL);
         m_entity = NULL;
     }
     inline void IncrementReferenceCount ()
@@ -55,7 +55,7 @@ private:
     }
     inline void DecrementReferenceCount ()
     {
-        ASSERT1(m_reference_count > 0)
+        ASSERT1(m_reference_count > 0);
         --m_reference_count;
     }
 
@@ -84,7 +84,7 @@ public:
         // is NULL, or the template type cast is valid.
         ASSERT1(entity_reference.m_entity_instance == NULL ||
                 !entity_reference.m_entity_instance->GetIsValid() ||
-                dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL)
+                dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL);
         // copy the entity_instance
         m_entity_instance = entity_reference.m_entity_instance;
         if (m_entity_instance != NULL)
@@ -122,7 +122,7 @@ public:
         // is NULL, or the template type cast is valid.
         ASSERT1(entity_reference.m_entity_instance == NULL ||
                 !entity_reference.m_entity_instance->GetIsValid() ||
-                dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL)
+                dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL);
 
         // decrement the old instance's ref count (if it exists)
         if (m_entity_instance != NULL)
@@ -164,14 +164,14 @@ public:
     }
     inline EntitySubclass const *operator -> () const
     {
-        ASSERT1(m_entity_instance != NULL)
-        ASSERT1(m_entity_instance->GetIsValid())
+        ASSERT1(m_entity_instance != NULL);
+        ASSERT1(m_entity_instance->GetIsValid());
         return static_cast<EntitySubclass const *>(**m_entity_instance);
     }
     inline EntitySubclass *operator -> ()
     {
-        ASSERT1(m_entity_instance != NULL)
-        ASSERT1(m_entity_instance->GetIsValid())
+        ASSERT1(m_entity_instance != NULL);
+        ASSERT1(m_entity_instance->GetIsValid());
         return static_cast<EntitySubclass *>(**m_entity_instance);
     }
 
@@ -182,7 +182,7 @@ public:
 
     inline void SetInstance (EntityInstance *entity_instance)
     {
-        ASSERT1(entity_instance != NULL)
+        ASSERT1(entity_instance != NULL);
 
         // decrement the old instance's ref count (if it exists)
         if (m_entity_instance != NULL)
@@ -208,7 +208,7 @@ private:
     // this should only be called by ~Entity    
     inline void NullifyEntity ()
     {
-        ASSERT1(m_entity_instance != NULL)
+        ASSERT1(m_entity_instance != NULL);
         m_entity_instance->NullifyEntity();
     }
 

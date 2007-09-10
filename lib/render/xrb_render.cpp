@@ -74,7 +74,7 @@ void Render::DrawPolygon (
     Uint32 const vertex_count)
 {
     // a polygon with less than 3 vertices is degenerate
-    ASSERT1(vertex_count >= 3)
+    ASSERT1(vertex_count >= 3);
 
     Color masked_color(render_context.GetMaskedColor(color));
     // return if the line is completely transparent
@@ -144,7 +144,7 @@ void Render::DrawCircle (
                 tesselation_limit_lower * (1.0f - x));
     }
 
-    ASSERT1(facet_count >= 6)
+    ASSERT1(facet_count >= 6);
 
     glDisable(GL_TEXTURE_2D);
 
@@ -211,7 +211,7 @@ void Render::DrawCircle (
                 tesselation_limit_lower * (1.0f - x));
     }
 
-    ASSERT1(facet_count >= 6)
+    ASSERT1(facet_count >= 6);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -266,7 +266,7 @@ void Render::DrawCircularArc (
         start_angle = end_angle;
         end_angle = temp;
     }
-    ASSERT1(end_angle > start_angle)
+    ASSERT1(end_angle > start_angle);
 
     // find out how large the radius is in pixels
     Float pixel_radius =

@@ -454,8 +454,8 @@ World::~World ()
 
 World *World::Create (DifficultyLevel const difficulty_level, Uint32 const entity_capacity)
 {
-    ASSERT1(difficulty_level < DL_COUNT)
-    ASSERT1(entity_capacity > 0)
+    ASSERT1(difficulty_level < DL_COUNT);
+    ASSERT1(entity_capacity > 0);
     return new World(difficulty_level, new PhysicsHandler(), entity_capacity);
 }
 
@@ -471,8 +471,8 @@ void World::SubmitScoreDone ()
 
 void World::RecordDestroyedPlayerShip (PlayerShip const *const player_ship)
 {
-    ASSERT1(player_ship != NULL)
-    ASSERT1(m_player_ship == player_ship)
+    ASSERT1(player_ship != NULL);
+    ASSERT1(m_player_ship == player_ship);
     ScheduleStateMachineInput(IN_PLAYER_SHIP_DIED, 0.0f);
 }
 
@@ -480,30 +480,30 @@ void World::RecordCreatedAsteroids (
     Uint32 const created_asteroid_count,
     Float const created_asteroids_mass)
 {
-    ASSERT1(created_asteroid_count > 0)
-    ASSERT1(created_asteroids_mass > 0.0f)
+    ASSERT1(created_asteroid_count > 0);
+    ASSERT1(created_asteroids_mass > 0.0f);
     m_asteroid_count += created_asteroid_count;
     m_asteroid_mass += created_asteroids_mass;
 }
 
 void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
 {
-    ASSERT1(asteroid != NULL)
-    ASSERT1(m_asteroid_count > 0)
-    ASSERT1(m_asteroid_mass >= asteroid->GetFirstMoment())
+    ASSERT1(asteroid != NULL);
+    ASSERT1(m_asteroid_count > 0);
+    ASSERT1(m_asteroid_mass >= asteroid->GetFirstMoment());
     --m_asteroid_count;
     m_asteroid_mass -= asteroid->GetFirstMoment();
 }
 
 void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
 {
-    ASSERT1(enemy_ship != NULL)
+    ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
-    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
+    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
     ASSERT1(m_is_demi_wave
             ||
             m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] <
-            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->GetEnemyLevel()])
+            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->GetEnemyLevel()]);
 
     ++m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
@@ -513,17 +513,17 @@ void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
     }
     else
     {
-        ASSERT1(m_devourment_count < m_devourment_max)
+        ASSERT1(m_devourment_count < m_devourment_max);
         ++m_devourment_count;
     }
 }
 
 void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 {
-    ASSERT1(enemy_ship != NULL)
+    ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
-    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
-    ASSERT1(m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
+    ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
+    ASSERT1(m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0);
 
     --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
@@ -537,7 +537,7 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     }
     else
     {
-        ASSERT1(m_devourment_count > 0)
+        ASSERT1(m_devourment_count > 0);
         --m_devourment_count;
     }
 }
@@ -562,7 +562,7 @@ World::World (
     m_internal_receiver_end_intro(&World::EndIntro, this),
     m_internal_receiver_end_outro(&World::EndOutro, this)
 {
-    ASSERT1(difficulty_level < DL_COUNT)
+    ASSERT1(difficulty_level < DL_COUNT);
 
     m_player_ship = NULL;
     m_difficulty_level = difficulty_level;
@@ -589,7 +589,7 @@ World::World (
     CreateAndPopulateBackgroundObjectLayers();
     CreateAndPopulateForegroundObjectLayer();
 
-    ASSERT1(m_player_ship != NULL)
+    ASSERT1(m_player_ship != NULL);
 
     // don't initialize the state machine just yet.  wait until
     // HandleFrame, so that the WorldViews will be active
@@ -597,7 +597,7 @@ World::World (
 
 bool World::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     if (e->GetEventType() == Event::STATE_MACHINE_INPUT)
     {
@@ -706,10 +706,10 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
     switch (input)
     {
         case IN_PROCESS_FRAME:
-            ASSERT1(m_player_ship != NULL)
-            ASSERT1(!m_player_ship->GetIsInWorld())
-            ASSERT1(m_player_ship->GetIsDead())
-            ASSERT1(m_player_ship->GetLivesRemaining() > 0)
+            ASSERT1(m_player_ship != NULL);
+            ASSERT1(!m_player_ship->GetIsInWorld());
+            ASSERT1(m_player_ship->GetIsDead());
+            ASSERT1(m_player_ship->GetLivesRemaining() > 0);
             m_player_ship->Revive(GetFrameTime(), GetFrameDT());
             m_player_ship->SetVelocity(FloatVector2::ms_zero);
             // TODO place the player ship so it doesn't intersect anything
@@ -747,7 +747,7 @@ bool World::StateWaveInitialize (StateMachineInput const input)
                             Min(m_enemy_ship_count[enemy_ship_index][enemy_level],
                                 gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]);
                         ASSERT1(m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level] <=
-                                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level])
+                                gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_level]);
                         m_enemy_ship_wave_total += m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_level];
                     }
                     else
@@ -790,7 +790,7 @@ bool World::StateWaveGameplay (StateMachineInput const input)
 
         case IN_PROCESS_FRAME:
             ProcessWaveGameplayLogic();
-            ASSERT1(gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f)
+            ASSERT1(gs_wave[m_current_wave_index].m_enemy_ship_threshold >= 0.0f);
             if (m_enemy_ship_wave_left <= gs_wave[m_current_wave_index].m_enemy_ship_threshold * m_enemy_ship_wave_total)
             {
                 ScheduleStateMachineInput(IN_END_WAVE, 0.0f);
@@ -818,7 +818,7 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(gs_wave[m_current_wave_index].m_wave_intermission_duration >= 0.0f)
+            ASSERT1(gs_wave[m_current_wave_index].m_wave_intermission_duration >= 0.0f);
             ScheduleStateMachineInput(IN_END_WAVE_INTERMISSION, gs_wave[m_current_wave_index].m_wave_intermission_duration);
             if (m_current_wave_index < gs_wave_count-1)
                 ++m_current_wave_index;
@@ -849,7 +849,7 @@ bool World::StateCheckLivesRemaining (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(m_player_ship != NULL)
+            ASSERT1(m_player_ship != NULL);
             if (m_player_ship->GetLivesRemaining() > 0)
                 TRANSITION_TO(StateWaitAfterPlayerDeath);
             else
@@ -1046,7 +1046,7 @@ void World::ProcessWaveGameplayLogic ()
 
     {
         Uint8 enemy_ship_index = ET_DEVOURMENT - ET_ENEMY_SHIP_LOWEST;
-        ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT)
+        ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
         for (Uint8 enemy_level = EnemyShip::ENEMY_LEVEL_COUNT-1; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; --enemy_level)
         {
             if (m_enemy_ship_count[enemy_ship_index][enemy_level] <
@@ -1186,9 +1186,9 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     EntityType const enemy_ship_type,
     Uint8 const enemy_level)
 {
-    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST)
-    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST)
-    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST);
+    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
 
     Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
     FloatVector2 translation;
@@ -1258,7 +1258,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
             break;
 
         default:
-            ASSERT1(false && "Invalid EntityType")
+            ASSERT1(false && "Invalid EntityType");
             spawned_ship = NULL;
             break;
     }
@@ -1277,11 +1277,11 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 {
     Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
     Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-    ASSERT1(translation[Dim::X] >= -0.5f * object_layer_side_length)
-    ASSERT1(translation[Dim::X] <=  0.5f * object_layer_side_length)
-    ASSERT1(translation[Dim::Y] >= -0.5f * object_layer_side_length)
-    ASSERT1(translation[Dim::Y] <=  0.5f * object_layer_side_length)
-    ASSERT1(scale_factor > 0.0f)
+    ASSERT1(translation[Dim::X] >= -0.5f * object_layer_side_length);
+    ASSERT1(translation[Dim::X] <=  0.5f * object_layer_side_length);
+    ASSERT1(translation[Dim::Y] >= -0.5f * object_layer_side_length);
+    ASSERT1(translation[Dim::Y] <=  0.5f * object_layer_side_length);
+    ASSERT1(scale_factor > 0.0f);
 
     // check that the area is not in view of any attached WorldView
     for (WorldViewListIterator it = m_world_view_list.begin(),
@@ -1290,7 +1290,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
          ++it)
     {
         WorldView *world_view = DStaticCast<WorldView *>(*it);
-        ASSERT1(world_view != NULL)
+        ASSERT1(world_view != NULL);
         FloatVector2 world_view_center(world_view->GetCenter());
 
         // temp hack until real wrapped view coordinates are done
@@ -1355,13 +1355,13 @@ void World::CreateAndPopulateForegroundObjectLayer ()
     {
         bool add_succeeded;
         add_succeeded = m_player_ship->AddItem(new PeaShooter(0));
-        ASSERT1(add_succeeded)
+        ASSERT1(add_succeeded);
         add_succeeded = m_player_ship->AddItem(new Engine(0));
-        ASSERT1(add_succeeded)
+        ASSERT1(add_succeeded);
         add_succeeded = m_player_ship->AddItem(new Armor(0));
-        ASSERT1(add_succeeded)
+        ASSERT1(add_succeeded);
         add_succeeded = m_player_ship->AddItem(new PowerGenerator(0));
-        ASSERT1(add_succeeded)
+        ASSERT1(add_succeeded);
     }
 }
 

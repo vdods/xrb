@@ -19,7 +19,7 @@ namespace Xrb
 
 SignalSenderBase::SignalSenderBase (SignalHandler *const owner)
 {
-    ASSERT1(owner != NULL)
+    ASSERT1(owner != NULL);
     m_owner = owner;
     m_owner->AddSender(this);
     m_is_blocking = false;
@@ -45,7 +45,7 @@ void SignalSender0::Signal ()
         Attachment<SignalReceiver0, TransformationSet0 > const &attachment =
             GetIteratorAttachment();
             
-        ASSERT1(attachment.m_receiver != NULL)
+        ASSERT1(attachment.m_receiver != NULL);
         // only proceed with the callback if this sender's owner isn't
         // blocking senders and this sender isn't blocking itself.
         // this code can't be above this for-loop because the blocking
@@ -74,7 +74,7 @@ void SignalSender0::Signal ()
 
 SignalReceiverBase::SignalReceiverBase (SignalHandler *const owner)
 {
-    ASSERT1(owner != NULL)
+    ASSERT1(owner != NULL);
     m_owner = owner;
     m_owner->AddReceiver(this);
     m_is_blocking = false;
@@ -104,7 +104,7 @@ void SignalHandler::DetachAll ()
          ++it)
     {
         SignalSenderBase const *sender = *it;
-        ASSERT1(sender != NULL)
+        ASSERT1(sender != NULL);
         sender->DetachAll();
     }
 
@@ -114,7 +114,7 @@ void SignalHandler::DetachAll ()
          ++it)
     {
         SignalReceiverBase const *receiver = *it;
-        ASSERT1(receiver != NULL)
+        ASSERT1(receiver != NULL);
         receiver->DetachAll();
     }
 }

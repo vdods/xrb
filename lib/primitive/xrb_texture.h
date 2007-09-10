@@ -81,27 +81,27 @@ public:
 
     inline ScreenCoordVector2 GetSize () const
     {
-        ASSERT1(m_surface != NULL)
+        ASSERT1(m_surface != NULL);
         return ScreenCoordVector2(m_surface->w, m_surface->h);
     }
     inline ScreenCoord GetWidth () const
     {
-        ASSERT1(m_surface != NULL)
+        ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->w);
     }
     inline ScreenCoord GetHeight () const
     {
-        ASSERT1(m_surface != NULL)
+        ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->h);
     }
     inline Uint32 GetDataLength () const
     {
-        ASSERT1(m_surface != NULL)
+        ASSERT1(m_surface != NULL);
         return static_cast<Uint32>(m_surface->pitch) * static_cast<Uint32>(m_surface->h);
     }
     inline Uint8 *GetData () const
     {
-        ASSERT1(m_surface != NULL)
+        ASSERT1(m_surface != NULL);
         return static_cast<Uint8 *>(m_surface->pixels);
     }
 

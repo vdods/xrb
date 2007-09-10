@@ -98,7 +98,7 @@ public:
       */
     inline Event (Float time, EventType event_type)
     {
-        ASSERT1(time >= 0.0)
+        ASSERT1(time >= 0.0);
         m_time = time;
         m_event_type = event_type;
         m_id = 0;

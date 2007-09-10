@@ -41,7 +41,7 @@ public:
     }
     inline ~Instance ()
     {
-        ASSERT1(m_reference_count == 0)
+        ASSERT1(m_reference_count == 0);
     }
 
     inline void operator = (Instance<T> const &operand)
@@ -73,12 +73,12 @@ public:
 
     inline void IncrementReferenceCount ()
     {
-        ASSERT1(m_reference_count < 0xFFFFFFFF)
+        ASSERT1(m_reference_count < 0xFFFFFFFF);
         ++m_reference_count;
     }
     inline void DecrementReferenceCount ()
     {
-        ASSERT1(m_reference_count > 0)
+        ASSERT1(m_reference_count > 0);
         --m_reference_count;
     }
 
@@ -103,7 +103,7 @@ public:
     }
     inline Reference (Instance<T> *const instance)
     {
-        ASSERT1(instance != NULL)
+        ASSERT1(instance != NULL);
         m_instance = instance;
         m_instance->IncrementReferenceCount();
     }
@@ -124,7 +124,7 @@ public:
         if (m_instance != NULL)
             m_instance->DecrementReferenceCount();
 
-        ASSERT1(instance != NULL)
+        ASSERT1(instance != NULL);
         m_instance = instance;
         if (m_instance != NULL)
             m_instance->IncrementReferenceCount();
@@ -141,25 +141,25 @@ public:
 
     inline T const &operator * () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         Instance<T> const *instance = m_instance;
         return **instance;
     }
     inline T &operator * ()
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return **m_instance;
     }
 
     inline T const *operator -> () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         Instance<T> const *instance = m_instance;
         return &**instance;
     }
     inline T *operator -> ()
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return &**m_instance;
     }
 

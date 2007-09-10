@@ -22,7 +22,7 @@ CompressionSerializer::CompressionSerializer (Huffman const *huffman)
 
 CompressionSerializer::~CompressionSerializer ()
 {
-    ASSERT1(GetAttachedSerializer() == NULL && "You must detach the serializer before the CompressionSerializer is destroyed")
+    ASSERT1(GetAttachedSerializer() == NULL && "You must detach the serializer before the CompressionSerializer is destroyed");
 }
 
 bool CompressionSerializer::GetIsAtEnd () const
@@ -37,11 +37,11 @@ bool CompressionSerializer::GetHasFewerThan8BitsLeft () const
 
 void CompressionSerializer::AttachSerializer (Serializer *serializer)
 {
-    ASSERT1(serializer != NULL)
-    ASSERT1(serializer->GetIsOpen())
+    ASSERT1(serializer != NULL);
+    ASSERT1(serializer->GetIsOpen());
     ASSERT1(serializer->GetIODirection() == IOD_READ ||
-            serializer->GetIODirection() == IOD_WRITE)
-    ASSERT1(!GetIsOpen())
+            serializer->GetIODirection() == IOD_WRITE);
+    ASSERT1(!GetIsOpen());
 
     m_cache.AttachSerializer(serializer);
     SetIsOpen(true);
@@ -51,7 +51,7 @@ void CompressionSerializer::AttachSerializer (Serializer *serializer)
 
 void CompressionSerializer::DetachSerializer ()
 {
-    ASSERT1(GetIsOpen())
+    ASSERT1(GetIsOpen());
 
     m_cache.DetachSerializer();
     SetIsOpen(false);

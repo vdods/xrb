@@ -28,7 +28,7 @@ namespace MapEditor2
     
         virtual ~Entity ()
         {
-            ASSERT1(m_saved_entity_guts == NULL)
+            ASSERT1(m_saved_entity_guts == NULL);
         }
 
         // ///////////////////////////////////////////////////////////////////

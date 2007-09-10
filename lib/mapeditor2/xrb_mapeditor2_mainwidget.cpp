@@ -291,7 +291,7 @@ MapEditor2::WorldView *MapEditor2::MainWidget::GetMapEditorWorldView () const
 
 void MapEditor2::MainWidget::SaveWorldToFile (std::string const &filename)
 {
-    ASSERT1(!filename.empty())
+    ASSERT1(!filename.empty());
 
     // early out if there is no view (and consequently no world)
     if (!GetMapEditorWorldView())
@@ -305,7 +305,7 @@ void MapEditor2::MainWidget::SaveWorldToFile (std::string const &filename)
 
 void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &filename)
 {
-    ASSERT1(!filename.empty())
+    ASSERT1(!filename.empty());
 
     BinaryFileSerializer serializer;
     serializer.Open(filename.c_str(), "rb");

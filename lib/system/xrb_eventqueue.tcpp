@@ -22,7 +22,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
          ++it)
     {
         Event const *event = it->GetEvent();
-        ASSERT1(event != NULL)
+        ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
         if (!event->GetIsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
@@ -44,7 +44,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
          ++it)
     {
         Event const *event = it->GetEvent();
-        ASSERT1(event != NULL)
+        ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
         if (!event->GetIsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion

@@ -17,7 +17,7 @@ namespace Xrb
 
 Key *Key::Create (Key::Code const code, std::string const &name)
 {
-    ASSERT1(!name.empty())
+    ASSERT1(!name.empty());
 
     Key *retval = new Key();
 
@@ -94,36 +94,36 @@ Key::Key ()
 
 bool Key::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     switch (e->GetEventType())
     {
         case Event::KEYDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyDown const *const>(e)->GetKeyCode() == m_code)
+            ASSERT1(static_cast<EventKeyDown const *const>(e)->GetKeyCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::KEYUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyUp const *const>(e)->GetKeyCode() == m_code)
+            ASSERT1(static_cast<EventKeyUp const *const>(e)->GetKeyCode() == m_code);
             m_is_pressed = false;
             break;
 
         case Event::MOUSEBUTTONDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonDown const *const>(e)->GetButtonCode() == m_code)
+            ASSERT1(static_cast<EventMouseButtonDown const *const>(e)->GetButtonCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::MOUSEBUTTONUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonUp const *const>(e)->GetButtonCode() == m_code)
+            ASSERT1(static_cast<EventMouseButtonUp const *const>(e)->GetButtonCode() == m_code);
             m_is_pressed = false;
             break;
 
         default:
-            ASSERT1(false && "Events which are not of type KEYDOWN, KEYUP, MOUSEBUTTONDOWN, or MOUSEBUTTONUP should not be passed to Key::HandleEvent()")
+            ASSERT1(false && "Events which are not of type KEYDOWN, KEYUP, MOUSEBUTTONDOWN, or MOUSEBUTTONUP should not be passed to Key::HandleEvent()");
             break;
     }
 

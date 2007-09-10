@@ -49,7 +49,7 @@ ArithmeticParser::Token::Type ArithmeticScanner::Scan (Float *const scanned_toke
         ASSERT1(end != NULL);
         while (&*m_it != end)
         {
-            ASSERT1(m_it != m_it_end)
+            ASSERT1(m_it != m_it_end);
             ++m_it;
         }
         return ArithmeticParser::Token::NUMERIC;

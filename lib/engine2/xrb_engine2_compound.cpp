@@ -96,18 +96,18 @@ Engine2::Compound::Compound ()
 
 void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(m_vertex_count == 0)
-    ASSERT1(m_vertex_array == NULL)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(m_vertex_count == 0);
+    ASSERT1(m_vertex_array == NULL);
 
     m_vertex_count = serializer.ReadUint32();
-    ASSERT1(m_vertex_count > 0)
+    ASSERT1(m_vertex_count > 0);
     m_vertex_array = new FloatVector2[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
         serializer.ReadFloatVector2(&m_vertex_array[i]);
 
     m_polygon_count = serializer.ReadUint32();
-    ASSERT1(m_polygon_count > 0)
+    ASSERT1(m_polygon_count > 0);
     m_polygon_array = new Polygon[m_polygon_count];
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].Read(serializer, m_vertex_array);
@@ -115,11 +115,11 @@ void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
 
 void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(m_vertex_count > 0)
-    ASSERT1(m_vertex_array != NULL)
-    ASSERT1(m_polygon_count > 0)
-    ASSERT1(m_polygon_array != NULL)
+    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(m_vertex_count > 0);
+    ASSERT1(m_vertex_array != NULL);
+    ASSERT1(m_polygon_count > 0);
+    ASSERT1(m_polygon_array != NULL);
 
     serializer.WriteUint32(m_vertex_count);
     for (Uint32 i = 0; i < m_vertex_count; ++i)
@@ -132,7 +132,7 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
 
 void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
 {
-    ASSERT1(QTT_COUNT == 2)
+    ASSERT1(quad_tree_type == QTT_VISIBILITY || quad_tree_type == QTT_PHYSICS_HANDLER);
     // TODO: real code that checks for collision-only polygons - for now
     // just calculate the radius the same way for visible and physical
 
@@ -149,12 +149,12 @@ void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
 
 void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
 {
-    ASSERT1(object->GetObjectType() == OT_COMPOUND)
+    ASSERT1(object->GetObjectType() == OT_COMPOUND);
     Compound const *compound = DStaticCast<Compound const *>(object);
-    ASSERT1(compound != NULL)
+    ASSERT1(compound != NULL);
 
-    ASSERT1(m_vertex_count == 0)
-    ASSERT1(m_vertex_array == NULL)
+    ASSERT1(m_vertex_count == 0);
+    ASSERT1(m_vertex_array == NULL);
 
     m_vertex_count = compound->m_vertex_count;
     m_vertex_array = new FloatVector2[m_vertex_count];

@@ -64,13 +64,13 @@ Engine2::Sprite *SpawnDynamicSprite (
     Float const angular_velocity,
     Float const elasticity)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(!sprite_texture_filename.empty())
-    ASSERT1(entity != NULL)
-    ASSERT1(scale_factor >= 0.0f)
-    ASSERT1(first_moment > 0.0f)
-    ASSERT1(elasticity >= 0.0f)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
+    ASSERT1(!sprite_texture_filename.empty());
+    ASSERT1(entity != NULL);
+    ASSERT1(scale_factor >= 0.0f);
+    ASSERT1(first_moment > 0.0f);
+    ASSERT1(elasticity >= 0.0f);
 
     entity->SetElasticity(elasticity);
     entity->SetFirstMoment(first_moment);
@@ -393,7 +393,7 @@ Powerup *SpawnPowerup (
     std::string const &sprite_texture_filename,
     ItemType const item_type)
 {
-    ASSERT1(item_type < IT_POWERUP_LIMIT)
+    ASSERT1(item_type < IT_POWERUP_LIMIT);
     Powerup *powerup = new Powerup(item_type);
     SpawnDynamicSprite(
         world,
@@ -422,7 +422,7 @@ Powerup *SpawnPowerup (
     std::string const &sprite_texture_filename,
     Item *const item)
 {
-    ASSERT1(item != NULL)
+    ASSERT1(item != NULL);
     Powerup *powerup = new Powerup(item);
     SpawnDynamicSprite(
         world,
@@ -575,8 +575,8 @@ LaserBeam *SpawnLaserBeam (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
     // setting the scale factor this large helps with speed in adding it to
@@ -604,10 +604,10 @@ GaussGunTrail *SpawnGaussGunTrail (
     Float const time_to_live,
     Float const time_at_birth)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(trail_width > 0.0f)
-    ASSERT1(time_to_live > 0.0f)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
+    ASSERT1(trail_width > 0.0f);
+    ASSERT1(time_to_live > 0.0f);
 
     FloatVector2 trail_center = trail_start + 0.5f * trail_vector;
 
@@ -631,8 +631,8 @@ TractorBeam *SpawnTractorBeam (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/tractor_beam.png");
     sprite->SetZDepth(Z_DEPTH_TRACTOR_BEAM);
@@ -654,8 +654,8 @@ ShieldEffect *SpawnShieldEffect (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/shield_effect_small.png");
@@ -681,8 +681,8 @@ ReticleEffect *SpawnReticleEffect (
     Engine2::ObjectLayer *const object_layer,
     Color const &color_mask)
 {
-    ASSERT1(world != NULL)
-    ASSERT1(object_layer != NULL)
+    ASSERT1(world != NULL);
+    ASSERT1(object_layer != NULL);
 
     Engine2::Sprite *sprite =
         Engine2::Sprite::Create("resources/reticle1.png");
@@ -912,7 +912,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
         "resources/grinder3_small.png"
     };
 
-    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
 
     HealthTrigger *health_trigger =
         new HealthTrigger(

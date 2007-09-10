@@ -67,7 +67,7 @@ protected:
       */
     inline Float GetFrameTime () const
     {
-        ASSERT1(m_lock > 0)
+        ASSERT1(m_lock > 0);
         return m_most_recent_time;
     }
     /** Only valid inside HandleFrame.  If this method is called
@@ -76,7 +76,7 @@ protected:
       */
     inline Float GetFrameDT () const
     {
-        ASSERT1(m_lock > 0)
+        ASSERT1(m_lock > 0);
         return m_frame_dt;
     }
 

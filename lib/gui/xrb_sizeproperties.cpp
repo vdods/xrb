@@ -27,7 +27,7 @@ ScreenCoord SizeProperties::GetAdjustedSizeComponent (
     Uint32 const index,
     ScreenCoord component) const
 {
-    ASSERT1(index <= 1)
+    ASSERT1(index <= 1);
     if (m_max_size_enabled.m[index] && component > m_max_size.m[index])
         component = m_max_size.m[index];
     // check min size second, because it takes precedence over max
@@ -48,8 +48,8 @@ void SizeProperties::AdjustSizeComponent (
     Uint32 const index,
     ScreenCoord *const component) const
 {
-    ASSERT1(index <= 1)
-    ASSERT1(component != NULL)
+    ASSERT1(index <= 1);
+    ASSERT1(component != NULL);
     if (m_max_size_enabled[index] && *component > m_max_size[index])
         *component = m_max_size[index];
     // check min size second, because it takes precedence over max
@@ -59,7 +59,7 @@ void SizeProperties::AdjustSizeComponent (
 
 void SizeProperties::AdjustSize (ScreenCoordVector2 *const size) const
 {
-    ASSERT1(size != NULL)
+    ASSERT1(size != NULL);
     AdjustSizeComponent(Dim::X, &size->m[Dim::X]);
     AdjustSizeComponent(Dim::Y, &size->m[Dim::Y]);
 }

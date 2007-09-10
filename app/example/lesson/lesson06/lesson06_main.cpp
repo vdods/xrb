@@ -145,28 +145,28 @@ public:
     // bugs in game code which result in NaN values being fed to the snake.
     inline void SetMass (Float mass)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass))
-        ASSERT1(mass > 0.0f)
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass));
+        ASSERT1(mass > 0.0f);
         m_mass = mass;
     }
     inline void SetVelocity (FloatVector2 const &velocity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity = velocity;
     }
 
     // Procedures which will be used by the gravity calculations in AwesomeWorld.
     void IncrementVelocity (FloatVector2 const &velocity_delta)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity_delta[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity_delta[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity_delta[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity_delta[Dim::Y]));
         m_velocity += velocity_delta;
     }
     void IncrementForce (FloatVector2 const &force_delta)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force_delta[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force_delta[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force_delta[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force_delta[Dim::Y]));
         m_force += force_delta;
     }
     void ResetForce () { m_force = FloatVector2::ms_zero; }
@@ -231,7 +231,7 @@ public:
     // The destructor will just assert that there are no remaining entities.
     virtual ~AwesomePhysicsHandler ()
     {
-        ASSERT1(m_entity_set.empty())
+        ASSERT1(m_entity_set.empty());
     }
 
     // Trivial accessor for m_gravitational_constant.
@@ -239,7 +239,7 @@ public:
     // Helper function to calculate Newton's Law Of Universal Gravitation.
     Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
     {
-        ASSERT1(entity0 != NULL && entity1 != NULL)
+        ASSERT1(entity0 != NULL && entity1 != NULL);
         FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
         Float distance = entity_offset.GetLength();
         // If they're touching, don't apply gravitational force (this
@@ -279,8 +279,8 @@ public:
     @code */
     virtual void AddEntity (Engine2::Entity *entity)
     {
-        ASSERT1(entity != NULL)
-        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL)
+        ASSERT1(entity != NULL);
+        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL);
         m_entity_set.insert(static_cast<AwesomeEntity *>(entity));
     }
     /* @endcode
@@ -290,9 +290,9 @@ public:
     @code */
     virtual void RemoveEntity (Engine2::Entity *entity)
     {
-        ASSERT1(entity != NULL)
-        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL)
-        ASSERT1(m_entity_set.find(static_cast<AwesomeEntity *>(entity)) != m_entity_set.end())
+        ASSERT1(entity != NULL);
+        ASSERT1(dynamic_cast<AwesomeEntity *>(entity) != NULL);
+        ASSERT1(m_entity_set.find(static_cast<AwesomeEntity *>(entity)) != m_entity_set.end());
         m_entity_set.erase(static_cast<AwesomeEntity *>(entity));
     }
 
@@ -314,14 +314,14 @@ protected:
              ++it0)
         {
             AwesomeEntity *entity0 = *it0;
-            ASSERT1(entity0 != NULL)
+            ASSERT1(entity0 != NULL);
 
             for (EntitySetIterator it1 = it0;
                  it1 != it_end;
                  ++it1)
             {
                 AwesomeEntity *entity1 = *it1;
-                ASSERT1(entity1 != NULL)
+                ASSERT1(entity1 != NULL);
 
                 // Skip this calculation if the pair is an entity with itself.
                 if (entity0 == entity1)
@@ -330,7 +330,7 @@ protected:
                 // Use the helper function to calculate the gravitational force
                 // between the two entities.
                 Float gravitational_force = CalculateGravitationalForce(entity0, entity1);
-                ASSERT1(gravitational_force >= 0.0f)
+                ASSERT1(gravitational_force >= 0.0f);
                 // If the force is zero (which can happen when the entities'
                 // centers coincide and the gravitation equation would divide
                 // by zero), skip this entity pair.
@@ -352,9 +352,9 @@ protected:
              ++it)
         {
             AwesomeEntity *entity = *it;
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
 
-            ASSERT1(entity->GetMass() > 0.0f)
+            ASSERT1(entity->GetMass() > 0.0f);
             // Use Euler Integration to calculate the new velocity, based on
             // the accumulated force during this frame.
             entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
@@ -469,7 +469,7 @@ public:
             // Pick a distance to orbit the moon at.
             Float minimum_orbital_radius = planet->GetScaleFactor() + moon->GetScaleFactor() + 100.0f;
             Float orbital_radius = Math::RandomFloat(minimum_orbital_radius, minimum_orbital_radius + 400.0f);
-            ASSERT1(orbital_radius > 0.0f)
+            ASSERT1(orbital_radius > 0.0f);
             // The moon will be placed randomly using polar coordinates.
             // We've calculated the R value, now we need theta.
             Float angle = Math::RandomFloat(0.0f, 360.0f);

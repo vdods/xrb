@@ -30,9 +30,9 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
     Uint32 const tree_depth,
     Float const z_depth)
 {
-    ASSERT1(owner_world != NULL)
-    ASSERT1(side_length > 0.0)
-    ASSERT1(tree_depth > 0)
+    ASSERT1(owner_world != NULL);
+    ASSERT1(side_length > 0.0);
+    ASSERT1(tree_depth > 0);
 
     ObjectLayer *retval =
         new ObjectLayer(
@@ -54,7 +54,7 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
     Serializer &serializer,
     Engine2::World *const owner_world)
 {
-    ASSERT1(owner_world != NULL)
+    ASSERT1(owner_world != NULL);
 
     Float side_length;
     Float z_depth;
@@ -86,7 +86,7 @@ bool Engine2::ObjectLayer::GetDoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
     Float const area_radius) const
 {
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(m_quad_tree != NULL);
     if (GetIsWrapped())
         return m_quad_tree->GetDoesAreaOverlapAnyObjectWrapped(
             area_center,
@@ -135,36 +135,36 @@ FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
     FloatVector2 const &coordinates,
     FloatVector2 const &reference_coordinates) const
 {
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::Y]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::X]))
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::Y]))
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::Y]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::Y]));
 
     if (GetIsWrapped())
     {
         Float const half_object_layer_side_length = 0.5f * GetSideLength();
         FloatVector2 adjusted_coordinates(coordinates);
 
-        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length)
-        ASSERT1(reference_coordinates[Dim::X] <=  half_object_layer_side_length)
-        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length)
-        ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length)
+        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length);
+        ASSERT1(reference_coordinates[Dim::X] <=  half_object_layer_side_length);
+        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length);
+        ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
             adjusted_coordinates[Dim::X] += GetSideLength();
-        ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length)
+        ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
             adjusted_coordinates[Dim::X] -= GetSideLength();
-        ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length)
+        ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
             adjusted_coordinates[Dim::Y] += GetSideLength();
-        ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length)
+        ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
             adjusted_coordinates[Dim::Y] -= GetSideLength();
-        ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length)
+        ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length);
 
         return adjusted_coordinates;
     }
@@ -179,13 +179,13 @@ void Engine2::ObjectLayer::Write (Serializer &serializer) const
     serializer.WriteFloat(m_z_depth);
     serializer.WriteBool(m_is_wrapped);
 
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(m_quad_tree != NULL);
     // write the quad tree structure
     m_quad_tree->WriteStructure(serializer);
     // write the objects the quadtree contains
     DEBUG1_CODE(Uint32 written_static_object_count =)
     m_quad_tree->WriteObjects(serializer);
-    ASSERT1(written_static_object_count == m_quad_tree->GetSubordinateStaticObjectCount())
+    ASSERT1(written_static_object_count == m_quad_tree->GetSubordinateStaticObjectCount());
 }
 
 Uint32 Engine2::ObjectLayer::Draw (
@@ -196,7 +196,7 @@ Uint32 Engine2::ObjectLayer::Draw (
     Float const &view_radius,
     TransparentObjectVector *const transparent_object_vector)
 {
-    ASSERT2(view_radius > 0.0)
+    ASSERT2(view_radius > 0.0);
 
     if (m_is_wrapped)
         return m_quad_tree->DrawWrapped(
@@ -218,9 +218,9 @@ Uint32 Engine2::ObjectLayer::Draw (
 
 void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(m_quad_tree != NULL)
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) == NULL)
+    ASSERT1(object != NULL);
+    ASSERT1(m_quad_tree != NULL);
+    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) == NULL);
 
     // set the object's layer
     object->SetObjectLayer(this);
@@ -229,23 +229,23 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
     // attempt to add it to the quad tree
     DEBUG1_CODE(bool add_success =)
     m_quad_tree->AddObject(object);
-    ASSERT1(add_success)
+    ASSERT1(add_success);
 
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL)
+    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL);
 }
 
 void Engine2::ObjectLayer::RemoveObject (Engine2::Object *const object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(object->GetObjectLayer() == this)
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL)
+    ASSERT1(object != NULL);
+    ASSERT1(object->GetObjectLayer() == this);
+    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL);
     object->GetOwnerQuadTree(QTT_VISIBILITY)->RemoveObject(object);
 }
 
 void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(object != NULL);
+    ASSERT1(m_quad_tree != NULL);
 
     // make sure that it's inside the layer's bounds first
     Entity *entity = object->GetEntity();
@@ -267,7 +267,7 @@ void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
 
 void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
 {
-    ASSERT1(vector != NULL)
+    ASSERT1(vector != NULL);
 
     for (Uint32 i = 0; i <= 1; ++i)
     {
@@ -280,8 +280,8 @@ void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
 
 void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) const
 {
-    ASSERT1(transform != NULL)
-    ASSERT1(!GetIsWrapped())
+    ASSERT1(transform != NULL);
+    ASSERT1(!GetIsWrapped());
 
     FloatVector2 translation(transform->GetTranslation());
     ContainVector2(&translation);
@@ -290,8 +290,8 @@ void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) 
 
 void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
 {
-    ASSERT1(entity != NULL)
-    ASSERT1(!GetIsWrapped())
+    ASSERT1(entity != NULL);
+    ASSERT1(!GetIsWrapped());
 
     FloatVector2 translation(entity->GetTranslation());
     bool component_x = false;
@@ -319,14 +319,14 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
         component_y = true;
     }
 
-    ASSERT1(entity->GetOwnerObject() != NULL)
+    ASSERT1(entity->GetOwnerObject() != NULL);
     entity->GetOwnerObject()->SetTranslation(translation);
     entity->HandleObjectLayerContainment(component_x, component_y);
 }
 
 void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
 {
-    ASSERT1(vector != NULL)
+    ASSERT1(vector != NULL);
 
     for (Uint32 i = 0; i <= 1; ++i)
     {
@@ -344,8 +344,8 @@ void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
 
 void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) const
 {
-    ASSERT1(transform != NULL)
-    ASSERT1(GetIsWrapped())
+    ASSERT1(transform != NULL);
+    ASSERT1(GetIsWrapped());
 
     FloatVector2 translation(transform->GetTranslation());
     WrapVector2(&translation);
@@ -354,8 +354,8 @@ void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) con
 
 void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
 {
-    ASSERT1(entity != NULL)
-    ASSERT1(GetIsWrapped())
+    ASSERT1(entity != NULL);
+    ASSERT1(GetIsWrapped());
 
     FloatVector2 previous_translation(entity->GetTranslation());
     WrapTransform2(entity->GetOwnerObject());
@@ -368,9 +368,9 @@ Engine2::ObjectLayer::ObjectLayer (
     Float const side_length,
     Float const z_depth)
 {
-    ASSERT1(owner_world != NULL)
-    ASSERT1(side_length > 0.0f)
-    ASSERT1(z_depth >= 0.0f)
+    ASSERT1(owner_world != NULL);
+    ASSERT1(side_length > 0.0f);
+    ASSERT1(z_depth >= 0.0f);
 
     m_owner_world = owner_world;
     m_is_wrapped = is_wrapped;

@@ -43,7 +43,7 @@ SerializerUnitTest::SerializerUnitTest ()
 
 SerializerUnitTest::~SerializerUnitTest ()
 {
-    ASSERT1(m_currently_opened_serializer == NULL)
+    ASSERT1(m_currently_opened_serializer == NULL);
 }
 
 void SerializerUnitTest::Initialize ()
@@ -55,7 +55,7 @@ void SerializerUnitTest::AtomEndOfFile ()
 {
     Serializer *serializer;
 
-    ASSERT1(m_atom_end_of_file_current_implementation <= HIGHEST_IMPLEMENTATION)
+    ASSERT1(m_atom_end_of_file_current_implementation <= HIGHEST_IMPLEMENTATION);
 
     // write a 4-byte-long file
 
@@ -102,14 +102,14 @@ void SerializerUnitTest::AtomEndOfFile ()
 
 char const *SerializerUnitTest::GetImplementationString (Implementation implementation)
 {
-    ASSERT1(LOWEST_IMPLEMENTATION == 0)
+    ASSERT1(LOWEST_IMPLEMENTATION == 0);
     static char const *implementation_string[NUM_IMPLEMENTATIONS];
 
     implementation_string[BINARYFILE] = "BinaryFileSerializer";
     implementation_string[COMPRESSION] = "CompressionSerializer";
 
     ASSERT1(implementation >= LOWEST_IMPLEMENTATION &&
-            implementation <= HIGHEST_IMPLEMENTATION)
+            implementation <= HIGHEST_IMPLEMENTATION);
 
     return implementation_string[implementation];
 }
@@ -118,7 +118,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
     Implementation implementation)
 {
     ASSERT1(m_currently_opened_serializer == NULL &&
-            "You must not already have a serializer open")
+            "You must not already have a serializer open");
 
     m_currently_opened_implementation = implementation;
     switch (m_currently_opened_implementation)
@@ -149,7 +149,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
                          subordinate_serializer->GetErrorString(),
                          GetIOErrorString(IOE_NONE));
 
-            ASSERT1(m_huffman != NULL)
+            ASSERT1(m_huffman != NULL);
             CompressionSerializer *serializer = new CompressionSerializer(m_huffman);
 
             serializer->AttachSerializer(subordinate_serializer);
@@ -177,7 +177,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
 Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
 {
     ASSERT1(m_currently_opened_serializer != NULL &&
-            "This must be called after OpenASerializerForWriting()")
+            "This must be called after OpenASerializerForWriting()");
 
     switch (m_currently_opened_implementation)
     {
@@ -185,7 +185,7 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
         {
             BinaryFileSerializer *serializer =
                 dynamic_cast<BinaryFileSerializer *>(m_currently_opened_serializer);
-            ASSERT1(serializer != NULL)
+            ASSERT1(serializer != NULL);
 
             serializer->Close();
             Test(serializer->GetError() == IOE_NONE,
@@ -206,10 +206,10 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
         {
             CompressionSerializer *serializer =
                 dynamic_cast<CompressionSerializer *>(m_currently_opened_serializer);
-            ASSERT1(serializer != NULL)
+            ASSERT1(serializer != NULL);
             BinaryFileSerializer *subordinate_serializer =
                 dynamic_cast<BinaryFileSerializer *>(serializer->GetAttachedSerializer());
-            ASSERT1(subordinate_serializer != NULL)
+            ASSERT1(subordinate_serializer != NULL);
 
             serializer->DetachSerializer();
             TestCritical(serializer->GetError() == IOE_NONE,
@@ -255,7 +255,7 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
 void SerializerUnitTest::CloseSerializer ()
 {
     ASSERT1(m_currently_opened_serializer != NULL &&
-            "This must be called after OpenASerializerForWriting()")
+            "This must be called after OpenASerializerForWriting()");
 
     switch (m_currently_opened_implementation)
     {
@@ -263,7 +263,7 @@ void SerializerUnitTest::CloseSerializer ()
         {
             BinaryFileSerializer *serializer =
                 dynamic_cast<BinaryFileSerializer *>(m_currently_opened_serializer);
-            ASSERT1(serializer != NULL)
+            ASSERT1(serializer != NULL);
 
             serializer->Close();
             Test(serializer->GetError() == IOE_NONE,
@@ -279,10 +279,10 @@ void SerializerUnitTest::CloseSerializer ()
         {
             CompressionSerializer *serializer =
                 dynamic_cast<CompressionSerializer *>(m_currently_opened_serializer);
-            ASSERT1(serializer != NULL)
+            ASSERT1(serializer != NULL);
             BinaryFileSerializer *subordinate_serializer =
                 dynamic_cast<BinaryFileSerializer *>(serializer->GetAttachedSerializer());
-            ASSERT1(subordinate_serializer != NULL)
+            ASSERT1(subordinate_serializer != NULL);
 
             serializer->DetachSerializer();
             TestCritical(serializer->GetError() == IOE_NONE,

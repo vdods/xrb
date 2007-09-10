@@ -64,7 +64,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
-            ASSERT2(m_child[i] != NULL)
+            ASSERT2(m_child[i] != NULL);
             smallest_candidate =
                 DStaticCast<MapEditor2::VisibilityQuadTree *>(m_child[i])->
                     GetSmallestMapEditorPolygonTouchingPoint(
@@ -84,7 +84,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Compound *compound = dynamic_cast<Compound *>(object);
         if (compound == NULL)
             continue;
@@ -117,9 +117,9 @@ void MapEditor2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
-            ASSERT1(m_child[i] == NULL)
+            ASSERT1(m_child[i] == NULL);
             VisibilityQuadTree *child = new VisibilityQuadTree(this);
-            ASSERT1(child != NULL)
+            ASSERT1(child != NULL);
             child->ReadStructure(serializer);
             m_child[i] = child;
         }
@@ -130,13 +130,13 @@ void MapEditor2::VisibilityQuadTree::ReadObjects (
     Serializer &serializer,
     MapEditor2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     fprintf(stderr, "MapEditor2::VisibilityQuadTree::ReadObjects();\n");
     Uint32 non_entity_count = serializer.ReadUint32();
     while (non_entity_count > 0) {
         Object *object = Object::Create(serializer);
-        ASSERT1(dynamic_cast<Entity *>(object) == NULL)
+        ASSERT1(dynamic_cast<Entity *>(object) == NULL);
         object_layer->AddObject(object);
         --non_entity_count;
     }
@@ -211,8 +211,8 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
         bool object_is_in_operand_set;
         Float object_distance;
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // check if the object meets the selection criteria
         object_distance =
@@ -251,7 +251,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllObjects (bool const toggle_selecti
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         if (toggle_selection)
             object->ToggleIsSelected();
         else
@@ -285,8 +285,8 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // skip Objects that are not Compounds, because only
         // Compounds can have vertices.
@@ -323,8 +323,8 @@ void MapEditor2::VisibilityQuadTree::SelectAllVertices (
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // skip Objects that are not Compounds, because only
         // Compounds can have vertices.
@@ -352,9 +352,9 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertex (
     MapEditor2::Compound **const compound_containing_nearest,
     MapEditor2::CompoundVertex **const nearest_vertex)
 {
-    ASSERT1(radius > 0.0f)
-    ASSERT1(compound_containing_nearest != NULL)
-    ASSERT1(nearest_vertex != NULL)
+    ASSERT1(radius > 0.0f);
+    ASSERT1(compound_containing_nearest != NULL);
+    ASSERT1(nearest_vertex != NULL);
 
     *compound_containing_nearest = NULL;
     *nearest_vertex = NULL;
@@ -380,8 +380,8 @@ void MapEditor2::VisibilityQuadTree::SelectAllPolygons (
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // skip Objects that are not Compounds, because only
         // Compounds can have vertices.
@@ -413,8 +413,8 @@ void MapEditor2::VisibilityQuadTree::SetVertexSelectionStateFromSelectionOwnerPo
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // skip Objects that are not Compounds, because only
         // Compounds can have vertices.
@@ -441,14 +441,14 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f)
-    ASSERT2(draw_data.GetViewRadius() > 0.0f)
+    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f);
+    ASSERT2(draw_data.GetViewRadius() > 0.0f);
 
     // constants which control the thresholds at which objects use
     // alpha fading to fade away, when they become small enough.
     Float const radius_limit_upper = 3.0f;
     Float const radius_limit_lower = 0.8f;
-    ASSERT1(radius_limit_upper > radius_limit_lower)
+    ASSERT1(radius_limit_upper > radius_limit_lower);
     Float const distance_fade_slope =
         1.0f /
         (radius_limit_upper - radius_limit_lower);
@@ -482,8 +482,8 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
         // calculate the object's pixel radius on screen
         object_radius =
             draw_data.GetPixelsInViewRadius() * object->GetVisibleRadius() /
@@ -524,9 +524,9 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0)
-    ASSERT2(draw_data.GetViewRadius() > 0.0)
-    ASSERT2(m_half_side_length > 0.0)
+    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0);
+    ASSERT2(draw_data.GetViewRadius() > 0.0);
+    ASSERT2(m_half_side_length > 0.0);
 
     Float side_length = GetSideLength();
     Float radius_sum = 2.0f*GetRadius() + draw_data.GetViewRadius();
@@ -562,10 +562,10 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
     MapEditor2::CompoundVertex **const nearest_vertex,
     Float *const nearest_distance)
 {
-    ASSERT1(radius > 0.0f)
-    ASSERT1(compound_containing_nearest != NULL)
-    ASSERT1(nearest_vertex != NULL)
-    ASSERT1(nearest_distance != NULL)
+    ASSERT1(radius > 0.0f);
+    ASSERT1(compound_containing_nearest != NULL);
+    ASSERT1(nearest_vertex != NULL);
+    ASSERT1(nearest_distance != NULL);
 
     // check that this quad node meets the requirements of its
     // objects touching the given circle
@@ -583,8 +583,8 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
          ++it)
     {
         Object *object = dynamic_cast<Object *>(*it);
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerMapEditorQuadTree() == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerMapEditorQuadTree() == this);
 
         // skip Objects that are not Compounds, because only
         // Compounds can have vertices.

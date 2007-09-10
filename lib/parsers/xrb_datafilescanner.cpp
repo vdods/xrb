@@ -33,7 +33,7 @@ inline bool IsHexidecimalDigit (char c) { return c >= '0' && c <= '9' || c >= 'A
 
 Uint32 GetHexidecimalDigitValue (char c)
 {
-    ASSERT1(IsHexidecimalDigit(c))
+    ASSERT1(IsHexidecimalDigit(c));
     if (c >= '0' && c <= '9')
         return c - '0';
     if (c >= 'a' && c <= 'f')
@@ -83,41 +83,41 @@ void DataFileScanner::Close ()
 
 void DataFileScanner::EmitWarning (std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty())
-    ASSERT1(m_input.is_open())
+    ASSERT1(!m_input_filename.empty());
+    ASSERT1(m_input.is_open());
     std::cerr << m_input_filename << ": warning: " << message << std::endl;
     m_were_warnings_encountered = true;
 }
 
 void DataFileScanner::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty())
-    ASSERT1(m_input.is_open())
+    ASSERT1(!m_input_filename.empty());
+    ASSERT1(m_input.is_open());
     std::cerr << file_location << ": warning: " << message << std::endl;
     m_were_warnings_encountered = true;
 }
 
 void DataFileScanner::EmitError (std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty())
-    ASSERT1(m_input.is_open())
+    ASSERT1(!m_input_filename.empty());
+    ASSERT1(m_input.is_open());
     std::cerr << m_input_filename << ": error: " << message << std::endl;
     m_were_errors_encountered = true;
 }
 
 void DataFileScanner::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty())
-    ASSERT1(m_input.is_open())
+    ASSERT1(!m_input_filename.empty());
+    ASSERT1(m_input.is_open());
     std::cerr << file_location << ": error: " << message << std::endl;
     m_were_errors_encountered = true;
 }
 
 DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned_token)
 {
-    ASSERT1(!m_input_filename.empty())
-    ASSERT1(m_input.is_open())
-    ASSERT1(m_line_number > 0)
+    ASSERT1(!m_input_filename.empty());
+    ASSERT1(m_input.is_open());
+    ASSERT1(m_line_number > 0);
 
     ASSERT1(scanned_token != NULL);
     ASSERT1(*scanned_token == NULL);
@@ -214,7 +214,7 @@ DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const 
 
     char c = m_text[0];
 
-    ASSERT1(IsDecimalDigit(c) || c == '+' || c == '-')
+    ASSERT1(IsDecimalDigit(c) || c == '+' || c == '-');
 
     bool is_signed = false;
     bool is_positive = true;
@@ -225,7 +225,7 @@ DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const 
 
         if (IsNextCharEOF(&c) || !IsDecimalDigit(c))
         {
-            ASSERT1(m_text.length() == 1)
+            ASSERT1(m_text.length() == 1);
             if (m_text[0] == '+')
                 return static_cast<DataFileParser::Token::Type>('+');
 
@@ -277,9 +277,9 @@ DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (
     bool const is_signed,
     bool const is_positive)
 {
-    ASSERT1(scanned_token != NULL)
-    ASSERT1(*scanned_token == NULL)
-    ASSERT1(!m_input.eof())
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
     bool actually_read_digits = false;
@@ -337,13 +337,13 @@ DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (
     bool const is_positive,
     char const first_char)
 {
-    ASSERT1(scanned_token != NULL)
-    ASSERT1(*scanned_token == NULL)
-    ASSERT1(!m_input.eof())
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
     bool overflow = false;
-    ASSERT1(first_char >= '0')
+    ASSERT1(first_char >= '0');
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsOctalDigit(c))
     {
@@ -390,13 +390,13 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (
     bool const is_positive,
     char const first_char)
 {
-    ASSERT1(scanned_token != NULL)
-    ASSERT1(*scanned_token == NULL)
-    ASSERT1(!m_input.eof())
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
     bool overflow = false;
-    ASSERT1(first_char >= '0')
+    ASSERT1(first_char >= '0');
     Uint32 value = first_char - '0';
     while (!IsNextCharEOF(&c) && IsDecimalDigit(c))
     {
@@ -451,9 +451,9 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
     bool const is_signed,
     bool const is_positive)
 {
-    ASSERT1(scanned_token != NULL)
-    ASSERT1(*scanned_token == NULL)
-    ASSERT1(!m_input.eof())
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c;
     bool actually_read_digits = false;
@@ -505,12 +505,12 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
 
 DataFileParser::Token::Type DataFileScanner::ScanFloatingPointNumeric (DataFileValue **const scanned_token)
 {
-    ASSERT1(scanned_token != NULL)
-    ASSERT1(*scanned_token == NULL)
-    ASSERT1(!m_input.eof())
+    ASSERT1(scanned_token != NULL);
+    ASSERT1(*scanned_token == NULL);
+    ASSERT1(!m_input.eof());
 
     char c = *m_text.rbegin();
-    ASSERT1(c == '.' || c == 'e' || c == 'E')
+    ASSERT1(c == '.' || c == 'e' || c == 'E');
 
     if (c == '.')
     {

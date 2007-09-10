@@ -109,7 +109,7 @@ void Interloper::Collide (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(collider != NULL)
+    ASSERT1(collider != NULL);
 
     // TODO: add the extra damage "weapon" for the front of the ship
 
@@ -145,7 +145,7 @@ void Interloper::SetTarget (Mortal *const target)
 
 void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid())
+    ASSERT1(!m_closest_flock_member.GetIsValid());
 
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
@@ -157,7 +157,7 @@ void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 
 void Interloper::Wander (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid())
+    ASSERT1(!m_closest_flock_member.GetIsValid());
 
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
@@ -180,7 +180,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // ignore ourselves
         if (entity == this)
@@ -227,7 +227,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
-        ASSERT1(!perpendicular_velocity.GetIsZero())
+        ASSERT1(!perpendicular_velocity.GetIsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
@@ -287,7 +287,7 @@ void Interloper::Flock (Float time, Float frame_dt)
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // ignore ourselves
         if (entity == this)
@@ -365,7 +365,7 @@ void Interloper::Flock (Float time, Float frame_dt)
 
 void Interloper::Charge (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid())
+    ASSERT1(!m_closest_flock_member.GetIsValid());
 
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
@@ -449,7 +449,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
 
 void Interloper::Retreat (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid())
+    ASSERT1(!m_closest_flock_member.GetIsValid());
 
     static Float const s_retreat_time = 1.0f;
 

@@ -41,7 +41,7 @@ public:
         m_owner(owner),
         m_weapon_level(weapon_level)
     {
-        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT)
+        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT);
         SetWeakness(D_BALLISTIC);
         SetDamageDissipationRate(1.0f);
         m_has_detonated = false;
@@ -177,13 +177,13 @@ public:
         m_damage_radius(damage_radius),
         m_explosion_radius(explosion_radius)
     {
-        ASSERT1(m_time_to_live > 0.0f)
-        ASSERT1(m_damage_to_inflict > 0.0f)
-        ASSERT1(m_explosion_radius > 0.0f)
+        ASSERT1(m_time_to_live > 0.0f);
+        ASSERT1(m_damage_to_inflict > 0.0f);
+        ASSERT1(m_explosion_radius > 0.0f);
         ASSERT1(entity_type == ET_MISSILE ||
                 entity_type == ET_GUIDED_MISSILE ||
                 entity_type == ET_ENEMY_MISSILE ||
-                entity_type == ET_GUIDED_ENEMY_MISSILE)
+                entity_type == ET_GUIDED_ENEMY_MISSILE);
         m_first_think = true;
         SetImmunity(D_COLLISION|D_EXPLOSION);
     }
@@ -246,7 +246,7 @@ public:
             entity_type)
     {
         ASSERT1(entity_type == ET_GUIDED_MISSILE ||
-                entity_type == ET_GUIDED_ENEMY_MISSILE)
+                entity_type == ET_GUIDED_ENEMY_MISSILE);
         m_next_search_time = -1.0f;
     }
     virtual ~GuidedMissile () { }
@@ -326,8 +326,8 @@ public:
         m_blast_radius(blast_radius),
         m_weapon_level(weapon_level)
     {
-        ASSERT1(m_disable_time_factor > 1.0f)
-        ASSERT1(m_blast_radius > 0.0f)
+        ASSERT1(m_disable_time_factor > 1.0f);
+        ASSERT1(m_blast_radius > 0.0f);
         m_owner_emp_bomb_launcher = owner_emp_bomb_launcher;
         SetImmunity(D_COLLISION);
     }

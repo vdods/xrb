@@ -107,7 +107,7 @@ public:
         :
         Event(time, DELETE_CHILD_WIDGET)
     {
-        ASSERT1(child_to_delete != NULL)
+        ASSERT1(child_to_delete != NULL);
         m_child_to_delete = child_to_delete;
     }
     /** @brief Destructor.

@@ -134,14 +134,14 @@ Float PeaShooter::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
     // secondary fire (charge-up) overrides primary fire
     if (GetSecondaryInput() > 0.0f)
     {
-        ASSERT1(ms_charge_up_time[GetUpgradeLevel()] > 0.0f)
+        ASSERT1(ms_charge_up_time[GetUpgradeLevel()] > 0.0f);
         return GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
                ms_charge_up_time[GetUpgradeLevel()];
     }
@@ -158,15 +158,15 @@ bool PeaShooter::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
     // determine if the secondary fire was released, indicating the
     // charge-up weapon should fire.
     if (GetSecondaryInput() == 0.0f && m_charge_up_ratio > 0.0f)
     {
-        ASSERT1(m_charge_up_ratio >= 0.0f)
-        ASSERT1(m_charge_up_ratio <= 1.0f)
+        ASSERT1(m_charge_up_ratio >= 0.0f);
+        ASSERT1(m_charge_up_ratio <= 1.0f);
 
         // calculate the ballistic size and impact damage
         Float ballistic_size =
@@ -202,7 +202,7 @@ bool PeaShooter::Activate (
     {
         ASSERT1(power <=
                 GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
-                ms_charge_up_time[GetUpgradeLevel()])
+                ms_charge_up_time[GetUpgradeLevel()]);
 
         // if completely charged up, don't use up the power
         if (m_charge_up_ratio == 1.0f)
@@ -219,13 +219,13 @@ bool PeaShooter::Activate (
     // primary fire
     else
     {
-        ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+        ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
         // can't fire if not enough power was supplied
         if (power < ms_required_primary_power[GetUpgradeLevel()])
             return false;
 
-        ASSERT1(GetPrimaryInput() > 0.0f)
+        ASSERT1(GetPrimaryInput() > 0.0f);
 
         // fire the weapon -- create a Pea and set its position and velocity
         ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
@@ -257,8 +257,8 @@ Float Laser::GetPowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
-    ASSERT1(GetPrimaryInput() <= 1.0f)
-    ASSERT1(GetSecondaryInput() <= 1.0f)
+    ASSERT1(GetPrimaryInput() <= 1.0f);
+    ASSERT1(GetSecondaryInput() <= 1.0f);
 
     if (GetPrimaryInput() > 0.0f)
         return GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
@@ -271,11 +271,11 @@ bool Laser::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(m_laser_beam != NULL)
-    ASSERT1(m_laser_beam->GetIsInWorld())
+    ASSERT1(m_laser_beam != NULL);
+    ASSERT1(m_laser_beam->GetIsInWorld());
 
     // secondary fire can happen in parallel with primary
-    ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (GetSecondaryInput() > 0.0f &&
         time >= m_time_last_fired + 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()])
     {
@@ -295,7 +295,7 @@ bool Laser::Activate (
              ++it)
         {
             Entity *entity = *it;
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
 
             // we don't want to shoot ourselves
             if (entity == GetOwnerShip())
@@ -390,7 +390,7 @@ bool Laser::Activate (
     // primary constant beam firing mode
     if (GetPrimaryInput() > 0.0f && power > 0.0f)
     {
-        ASSERT1(power <= GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()])
+        ASSERT1(power <= GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
 
         LineTraceBindingSet line_trace_binding_set;
         GetOwnerShip()->GetPhysicsHandler()->LineTrace(
@@ -438,7 +438,7 @@ bool Laser::Activate (
         // place the laser beam effect
         static Float const s_laser_beam_width = 2.0f;
         Float intensity = power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
-        ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+        ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
         m_laser_beam->SetIntensity(intensity);
         m_laser_beam->SnapToShip(
             GetMuzzleLocation() + frame_dt * GetOwnerShip()->GetVelocity(),
@@ -466,7 +466,7 @@ Float FlameThrower::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -484,10 +484,10 @@ bool FlameThrower::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_max_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_max_required_primary_power[GetUpgradeLevel()]);
 
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return false;
 
@@ -495,20 +495,20 @@ bool FlameThrower::Activate (
     if (power < ms_min_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(power >= 0.0f)
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(power >= 0.0f);
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     Float max_damage_per_fireball =
         GetIsMaxDamagePerFireballOverridden() ?
         m_max_damage_per_fireball_override :
         ms_max_damage_per_fireball[GetUpgradeLevel()];
-    ASSERT1(max_damage_per_fireball > 0.0f)
+    ASSERT1(max_damage_per_fireball > 0.0f);
 
     Float final_fireball_size =
         GetIsFinalFireballSizeOverridden() ?
         m_final_fireball_size_override :
         ms_final_fireball_size[GetUpgradeLevel()];
-    ASSERT1(final_fireball_size > 0.0f)
+    ASSERT1(final_fireball_size > 0.0f);
 
     // fire the weapon
     SpawnFireball(
@@ -545,7 +545,7 @@ Float GaussGun::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -558,17 +558,17 @@ bool GaussGun::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // can't fire if not enough power was supplied
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     // fire the weapon -- do a trace and spawn the GaussGunTrail
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
     // do a line trace
     LineTraceBindingSet line_trace_binding_set;
@@ -621,7 +621,7 @@ bool GaussGun::Activate (
                 time,
                 frame_dt);
 
-            ASSERT1(damage_amount_used <= damage_left_to_inflict)
+            ASSERT1(damage_amount_used <= damage_left_to_inflict);
             damage_left_to_inflict -= damage_amount_used;
         }
 
@@ -670,14 +670,14 @@ GrenadeLauncher::~GrenadeLauncher ()
 
 void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
 {
-    ASSERT1(active_grenade != NULL)
-    ASSERT1(active_grenade->GetOwnerGrenadeLauncher() == this)
-    ASSERT1(GetActiveGrenadeCount() > 0)
+    ASSERT1(active_grenade != NULL);
+    ASSERT1(active_grenade->GetOwnerGrenadeLauncher() == this);
+    ASSERT1(GetActiveGrenadeCount() > 0);
 
     // delete the active grenade from the active grenade set
     ActiveGrenadeSetIterator it = m_active_grenade_set.find(active_grenade);
     ActiveGrenadeSetIterator it_end = m_active_grenade_set.end();
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
     m_active_grenade_set.erase(it);
 
     active_grenade->SetOwnerGrenadeLauncher(NULL);
@@ -692,7 +692,7 @@ Float GrenadeLauncher::GetPowerToBeUsedBasedOnInputs (
         return false;
 
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -705,7 +705,7 @@ bool GrenadeLauncher::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
     if (GetPrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
@@ -720,10 +720,10 @@ bool GrenadeLauncher::Activate (
         while (!m_active_grenade_set.empty())
         {
             Grenade *active_grenade = *m_active_grenade_set.begin();
-            ASSERT1(active_grenade != NULL)
+            ASSERT1(active_grenade != NULL);
             DEBUG1_CODE(Uint32 active_grenade_set_size = m_active_grenade_set.size());
             active_grenade->Detonate(time, frame_dt);
-            ASSERT1(m_active_grenade_set.size() == active_grenade_set_size - 1)
+            ASSERT1(m_active_grenade_set.size() == active_grenade_set_size - 1);
         }
     }
 
@@ -731,11 +731,11 @@ bool GrenadeLauncher::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn a Grenade
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
     Float const grenade_scale_factor = 4.0f;
     Grenade *grenade = SpawnGrenade(
@@ -753,7 +753,7 @@ bool GrenadeLauncher::Activate (
         ms_grenade_health[GetUpgradeLevel()]);
 
     // add the grenade to the active grenade set
-    ASSERT1(grenade != NULL)
+    ASSERT1(grenade != NULL);
     m_active_grenade_set.insert(grenade);
 
     // update the last time fired
@@ -772,7 +772,7 @@ Float MissileLauncher::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -794,15 +794,15 @@ bool MissileLauncher::Activate (
         power
         <=
         Max(ms_required_primary_power[GetUpgradeLevel()],
-            ms_required_secondary_power[GetUpgradeLevel()]))
+            ms_required_secondary_power[GetUpgradeLevel()]));
 
     // primary takes precedence over secondary fire
     if (GetPrimaryInput() > 0.0f &&
         power >= ms_required_primary_power[GetUpgradeLevel()])
     {
         // fire the weapon -- spawn a Missile
-        ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+        ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
         Float const missile_scale_factor = 10.0f;
         SpawnMissile(
@@ -831,8 +831,8 @@ bool MissileLauncher::Activate (
              power == ms_required_secondary_power[GetUpgradeLevel()])
     {
         // fire the weapon -- spawn a GuidedMissile
-        ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+        ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+        ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
         Float const missile_scale_factor = 10.0f;
         SpawnGuidedMissile(
@@ -871,7 +871,7 @@ Float EMPCore::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -884,12 +884,12 @@ bool EMPCore::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // if not firing, return false
     if (GetPrimaryInput() == 0.0f)
     {
-        ASSERT1(power == 0.0f)
+        ASSERT1(power == 0.0f);
         return false;
     }
 
@@ -898,8 +898,8 @@ bool EMPCore::Activate (
         return false;
 
     // fire the weapon -- spawn an EMPExplosion
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
     SpawnEMPExplosion(
         GetOwnerShip()->GetWorld(),
@@ -935,14 +935,14 @@ EMPBombLayer::~EMPBombLayer ()
 
 void EMPBombLayer::ActiveEMPBombDestroyed (EMPBomb *const active_emp_bomb)
 {
-    ASSERT1(active_emp_bomb != NULL)
-    ASSERT1(active_emp_bomb->GetOwnerEMPBombLayer() == this)
-    ASSERT1(GetActiveEMPBombCount() > 0)
+    ASSERT1(active_emp_bomb != NULL);
+    ASSERT1(active_emp_bomb->GetOwnerEMPBombLayer() == this);
+    ASSERT1(GetActiveEMPBombCount() > 0);
 
     // delete the active emp_bomb from the active emp_bomb set
     ActiveEMPBombSetIterator it = m_active_emp_bomb_set.find(active_emp_bomb);
     ActiveEMPBombSetIterator it_end = m_active_emp_bomb_set.end();
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
     m_active_emp_bomb_set.erase(it);
 
     active_emp_bomb->SetOwnerEMPBombLayer(NULL);
@@ -957,7 +957,7 @@ Float EMPBombLayer::GetPowerToBeUsedBasedOnInputs (
         return false;
 
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -970,7 +970,7 @@ bool EMPBombLayer::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
     if (GetPrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
@@ -985,10 +985,10 @@ bool EMPBombLayer::Activate (
         while (!m_active_emp_bomb_set.empty())
         {
             EMPBomb *active_emp_bomb = *m_active_emp_bomb_set.begin();
-            ASSERT1(active_emp_bomb != NULL)
+            ASSERT1(active_emp_bomb != NULL);
             DEBUG1_CODE(Uint32 active_emp_bomb_set_size = m_active_emp_bomb_set.size());
             active_emp_bomb->Detonate(time, frame_dt);
-            ASSERT1(m_active_emp_bomb_set.size() == active_emp_bomb_set_size - 1)
+            ASSERT1(m_active_emp_bomb_set.size() == active_emp_bomb_set_size - 1);
         }
     }
 
@@ -996,11 +996,11 @@ bool EMPBombLayer::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn a EMPBomb
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
 
     Float const emp_bomb_scale_factor = 4.0f;
     EMPBomb *emp_bomb = SpawnEMPBomb(
@@ -1017,7 +1017,7 @@ bool EMPBombLayer::Activate (
         ms_emp_bomb_health[GetUpgradeLevel()]);
 
     // add the emp_bomb to the active emp_bomb set
-    ASSERT1(emp_bomb != NULL)
+    ASSERT1(emp_bomb != NULL);
     m_active_emp_bomb_set.insert(emp_bomb);
 
     // update the last time fired
@@ -1049,9 +1049,9 @@ bool Tractor::Activate (
 {
     // the epsilon is because floating point arithmetic isn't exact
     // and the first condition was sometimes failing.
-    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f)
-    ASSERT1(m_tractor_beam != NULL)
-    ASSERT1(m_tractor_beam->GetIsInWorld())
+    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
+    ASSERT1(m_tractor_beam != NULL);
+    ASSERT1(m_tractor_beam->GetIsInWorld());
 
     // don't do anything if no power was supplied
     if (power == 0.0f)
@@ -1060,7 +1060,7 @@ bool Tractor::Activate (
         return false;
     }
 
-    ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f);
     // the secondary tractor mode pulls everything, not just powerups
     bool pull_everything = GetSecondaryInput() > 0.0f;
     bool push_instead_of_pull = GetPrimaryInput() == 0.0f;
@@ -1090,7 +1090,7 @@ bool Tractor::Activate (
         (reticle_coordinates - GetOwnerShip()->GetTranslation()).GetLength();
     if (reticle_distance > range)
     {
-        ASSERT1(reticle_distance > 0.0f)
+        ASSERT1(reticle_distance > 0.0f);
         reticle_coordinates =
             range / reticle_distance *
             (reticle_coordinates - GetMuzzleLocation()) +
@@ -1117,7 +1117,7 @@ bool Tractor::Activate (
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // we don't want to pull ourselves (it would cancel out anyway)
         if (entity == GetOwnerShip())
@@ -1142,7 +1142,7 @@ bool Tractor::Activate (
     m_tractor_beam->SetTranslation(reticle_coordinates + frame_dt * GetOwnerShip()->GetVelocity());
     // set its pulling input and intensity
     Float intensity = power / (frame_dt * ms_max_power_output_rate[GetUpgradeLevel()]);
-    ASSERT1(intensity >= 0.0f && intensity <= 1.0f)
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     m_tractor_beam->SetParameters(pull_everything, push_instead_of_pull, GetPrimaryInput(), intensity);
 
     return true;
@@ -1157,7 +1157,7 @@ Float SlowBulletGun::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
-    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f)
+    ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[GetUpgradeLevel()])
         return 0.0f;
 
@@ -1170,17 +1170,17 @@ bool SlowBulletGun::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // can't fire if not enough power was supplied
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     // fire the weapon -- create a Pea and set its position and velocity
-    ASSERT1(GetOwnerShip()->GetWorld() != NULL)
-    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL)
+    ASSERT1(GetOwnerShip()->GetWorld() != NULL);
+    ASSERT1(GetOwnerShip()->GetObjectLayer() != NULL);
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
     static Float const s_bullet_size = 3.0f;
     SpawnDumbBallistic(
@@ -1216,7 +1216,7 @@ Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
         ms_fire_rate[GetUpgradeLevel()];
 
     // can't fire faster that the weapon's cycle time
-    ASSERT1(fire_rate)
+    ASSERT1(fire_rate);
     if (time < m_time_last_fired + 1.0f / fire_rate)
         return 0.0f;
 
@@ -1229,13 +1229,13 @@ bool EnemySpawner::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()])
+    ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // can't fire if not enough power was supplied
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f)
+    ASSERT1(GetPrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn the specified type/level of enemy
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
@@ -1280,7 +1280,7 @@ bool EnemySpawner::Activate (
             break;
     }
 
-    ASSERT1(enemy_ship != NULL)
+    ASSERT1(enemy_ship != NULL);
     enemy_ship->SetTranslation(GetMuzzleLocation() + enemy_ship->GetScaleFactor() * GetMuzzleDirection());
     enemy_ship->SetAngle(Math::Atan(GetMuzzleDirection()));
 

@@ -26,7 +26,7 @@ FontFace::FontFace ()
 
 FontFace::~FontFace ()
 {
-    ASSERT1(m_face != NULL)
+    ASSERT1(m_face != NULL);
     FT_Done_Face(m_face);
     m_face = NULL;
 }
@@ -45,7 +45,7 @@ FontFace *FontFace::Create (std::string const &filename)
     if (error != 0)
         return retval;
 
-    ASSERT1(face != NULL)
+    ASSERT1(face != NULL);
 
     // check if there is a metrics file associated with this font file.
     // (this is sort of a hacky way to check for type1 fonts, but i don't

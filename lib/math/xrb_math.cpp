@@ -44,7 +44,7 @@ Float Math::PowInt (Float const base, Uint32 const exponent)
 
 Float Math::RandomFloat (Float const lower_bound, Float const upper_bound)
 {
-    ASSERT1(lower_bound <= upper_bound)
+    ASSERT1(lower_bound <= upper_bound);
     static Float const s_rand_max = static_cast<Float>(RAND_MAX);
     return
         (upper_bound - lower_bound) *
@@ -58,9 +58,9 @@ Uint16 Math::RandomUint16 (Uint16 const lower_bound, Uint16 const upper_bound)
 {
     // WIN32's RAND_MAX is 65535.  TODO: implement a mersenne twister
 #if !defined(WIN32)
-    ASSERT1(RAND_MAX >= 65536) // TODO: somehow turn this into a compile time check or something
+    ASSERT1(RAND_MAX >= 65536); // TODO: somehow turn this into a compile time check or something
 #endif
-    ASSERT1(lower_bound <= upper_bound)
+    ASSERT1(lower_bound <= upper_bound);
     Uint16 range = upper_bound + 1 - lower_bound;
     if (range == 0)
         return static_cast<Uint16>(rand());

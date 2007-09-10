@@ -22,7 +22,7 @@ Engine2::WorldViewWidget::WorldViewWidget (
     :
     Widget(parent, name)
 {
-    ASSERT1(parent != NULL)
+    ASSERT1(parent != NULL);
 
     m_transform = FloatSimpleTransform2::ms_identity;
     m_is_transform_scaling_based_upon_widget_radius = false;
@@ -43,7 +43,7 @@ Engine2::WorldViewWidget::~WorldViewWidget ()
     if (m_world_view != NULL)
     {
         m_world_view->DetachFromWorld();
-        ASSERT1(m_world_view->GetWorld() == NULL)
+        ASSERT1(m_world_view->GetWorld() == NULL);
     }
     Delete(m_world_view);
 }
@@ -57,7 +57,7 @@ void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_vie
     if (m_world_view != NULL)
     {
         m_world_view->DetachFromWorld();
-        ASSERT1(m_world_view->GetWorld() == NULL)
+        ASSERT1(m_world_view->GetWorld() == NULL);
     }
     Delete(m_world_view);
     m_world_view = world_view;

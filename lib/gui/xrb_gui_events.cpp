@@ -21,13 +21,13 @@ EventActive::EventActive (
     :
     Event(time, ACTIVE)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
 void EventDeleteChildWidget::DeleteChildWidget () const
 {
-    ASSERT1(m_child_to_delete != NULL)
+    ASSERT1(m_child_to_delete != NULL);
     DeleteAndNullify(m_child_to_delete);
 }
 
@@ -37,7 +37,7 @@ EventResize::EventResize (
     :
     Event(time, RESIZE)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -47,7 +47,7 @@ EventExpose::EventExpose (
     :
     Event(time, EXPOSE)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 
@@ -57,7 +57,7 @@ EventSysWM::EventSysWM (
     :
     Event(time, SYSWM)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_event = *e;
 }
 

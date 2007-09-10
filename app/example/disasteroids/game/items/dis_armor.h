@@ -33,12 +33,12 @@ public:
 
     inline Float GetDamageDissipationRate () const
     {
-        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
+        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_damage_dissipation_rate[GetUpgradeLevel()];
     }
     inline Float GetFirstMoment () const
     {
-        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
+        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_first_moment[GetUpgradeLevel()];        
     }
     

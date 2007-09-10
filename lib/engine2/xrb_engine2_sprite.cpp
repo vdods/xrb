@@ -113,8 +113,8 @@ void Engine2::Sprite::Draw (
 
 void Engine2::Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
 {
-    ASSERT1(physical_size_ratios[Dim::X] > 0.0f)
-    ASSERT1(physical_size_ratios[Dim::Y] > 0.0f)
+    ASSERT1(physical_size_ratios[Dim::X] > 0.0f);
+    ASSERT1(physical_size_ratios[Dim::Y] > 0.0f);
     m_physical_size_ratios = physical_size_ratios;
     IndicateRadiiNeedToBeRecalculated();
 }
@@ -145,12 +145,12 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
     serializer.ReadFloatVector2(&m_physical_size_ratios);
     IndicateRadiiNeedToBeRecalculated();
 
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(m_texture.GetIsValid());
 }
 
 void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(m_texture.GetIsValid());
 
     // write out the guts
     serializer.WriteStdString(m_texture.GetFilename());
@@ -160,30 +160,35 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
 
 void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
 {
-    ASSERT1(QTT_COUNT == 2)
-    if (quad_tree_type == QTT_VISIBILITY)
+    switch (quad_tree_type)
     {
-        if (m_is_round)
-            m_radius[quad_tree_type] = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
-        else
-            m_radius[quad_tree_type] = GetScaleFactors().GetLength();
-    }
-    else
-    {
-        if (m_is_round)
-            m_radius[quad_tree_type] =
-                Max(GetScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
-                    GetScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
-        else
-            m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).GetLength();
+        case QTT_VISIBILITY:
+            if (m_is_round)
+                m_radius[quad_tree_type] = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
+            else
+                m_radius[quad_tree_type] = GetScaleFactors().GetLength();
+            break;
+            
+        case QTT_PHYSICS_HANDLER:
+            if (m_is_round)
+                m_radius[quad_tree_type] =
+                    Max(GetScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
+                        GetScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
+            else
+                m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).GetLength();
+            break;
+            
+        default:
+            ASSERT0(false && "Invalid QuadTreeType");
+            break;
     }
 }
 
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
 {
-    ASSERT1(object->GetObjectType() == OT_SPRITE)
+    ASSERT1(object->GetObjectType() == OT_SPRITE);
     Sprite const *sprite = DStaticCast<Sprite const *>(object);
-    ASSERT1(sprite != NULL)
+    ASSERT1(sprite != NULL);
 
     m_texture = sprite->m_texture;
     m_is_round = sprite->m_is_round;

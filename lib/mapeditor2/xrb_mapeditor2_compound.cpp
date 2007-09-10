@@ -49,7 +49,7 @@ MapEditor2::Compound::~Compound ()
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         Delete(polygon);
     }
 
@@ -60,7 +60,7 @@ MapEditor2::Compound::~Compound ()
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         Delete(vertex_instance);
     }
 }
@@ -68,7 +68,7 @@ MapEditor2::Compound::~Compound ()
 MapEditor2::Compound *MapEditor2::Compound::CreateCompoundNonEntityClone (
     CompoundEntity const *const compound_entity)
 {
-    ASSERT1(compound_entity != NULL)
+    ASSERT1(compound_entity != NULL);
     Compound *retval = new Compound();
     retval->Engine2::Object::CloneProperties(compound_entity);
     retval->Object::CloneProperties(compound_entity);
@@ -156,7 +156,7 @@ void MapEditor2::Compound::Draw (
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         polygon->Draw();
     }
 
@@ -203,7 +203,7 @@ void MapEditor2::Compound::DrawMetrics (
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         if (!polygon->m_is_selected || metric_mode == Object::MM_POLYGONS)
         {
@@ -218,7 +218,7 @@ void MapEditor2::Compound::DrawMetrics (
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         if (polygon->m_is_selected && metric_mode == Object::MM_POLYGONS)
         {
@@ -243,7 +243,7 @@ void MapEditor2::Compound::DrawMetrics (
              ++it)
         {
             Instance<CompoundVertex> *vertex_instance = *it;
-            ASSERT1(vertex_instance != NULL)
+            ASSERT1(vertex_instance != NULL);
             CompoundVertex const &vertex = **vertex_instance;
     
             glVertex2fv(vertex.m_coordinate.m);
@@ -259,7 +259,7 @@ void MapEditor2::Compound::DrawMetrics (
              ++it)
         {
             Instance<CompoundVertex> *vertex_instance = *it;
-            ASSERT1(vertex_instance != NULL)
+            ASSERT1(vertex_instance != NULL);
             CompoundVertex const &vertex = **vertex_instance;
     
             if (!vertex.m_is_selected)
@@ -274,7 +274,7 @@ void MapEditor2::Compound::DrawMetrics (
              ++it)
         {
             Instance<CompoundVertex> *vertex_instance = *it;
-            ASSERT1(vertex_instance != NULL)
+            ASSERT1(vertex_instance != NULL);
             CompoundVertex const &vertex = **vertex_instance;
     
             if (vertex.m_is_selected)
@@ -297,7 +297,7 @@ Uint32 MapEditor2::Compound::GetSelectedPolygonCount () const
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         if (polygon->m_is_selected)
             ++selected_polygon_count;
     }
@@ -315,9 +315,9 @@ Instance<MapEditor2::CompoundVertex> *MapEditor2::Compound::GetVertexInstance (
         --index;
         ++it;
     }
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
     Instance<CompoundVertex> *vertex_instance = *it;
-    ASSERT1(vertex_instance != NULL)
+    ASSERT1(vertex_instance != NULL);
     return vertex_instance;
 }
 
@@ -337,7 +337,7 @@ MapEditor2::Polygon *MapEditor2::Compound::GetSmallestPolygonTouchingPoint (
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         // skip polygons that don't contain the point
         if (!polygon->GetIsPointInside(model_space_point))
@@ -371,10 +371,10 @@ void MapEditor2::Compound::ComputeNearestVertex (
     MapEditor2::CompoundVertex **const nearest_vertex,
     Float *const nearest_distance)
 {
-    ASSERT1(radius > 0.0f)
-    ASSERT1(compound_containing_nearest != NULL)
-    ASSERT1(nearest_vertex != NULL)
-    ASSERT1(nearest_distance != NULL)
+    ASSERT1(radius > 0.0f);
+    ASSERT1(compound_containing_nearest != NULL);
+    ASSERT1(nearest_vertex != NULL);
+    ASSERT1(nearest_distance != NULL);
 
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
@@ -390,7 +390,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex &compound_vertex = **vertex_instance;
 
         Float distance = ((GetTransformation() * compound_vertex.m_coordinate) - center).GetLength();
@@ -407,7 +407,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
 MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertices ()
 {
     ObjectLayer *const object_layer = GetMapEditorObjectLayer();
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     // first check that no polygon has more than n-2 vertices
     // selected, because that would result in it becoming degenerate.
@@ -424,7 +424,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         if (polygon->GetSelectedVertexCount() > polygon->GetVertexCount() - 2)
             return W_WOULD_CAUSE_DEGENERATION;
@@ -446,7 +446,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex const &vertex = **vertex_instance;
         if (vertex.m_is_selected)
         {
@@ -472,7 +472,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         polygon->WeldSelectedVertices(welded_vertex_instance);
     }
     
@@ -486,7 +486,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
          /* the iterator incrementing is handled by hand, below */)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex &vertex = **vertex_instance;
         if (vertex.m_is_selected)
         {
@@ -519,8 +519,8 @@ void MapEditor2::Compound::UnweldSelectedVertices ()
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
-        ASSERT1(vertex_instance->GetReferenceCount() > 0)
+        ASSERT1(vertex_instance != NULL);
+        ASSERT1(vertex_instance->GetReferenceCount() > 0);
         CompoundVertex const &vertex = **vertex_instance;
 
         if (vertex.m_is_selected)
@@ -553,8 +553,8 @@ void MapEditor2::Compound::AddDrawnPolygon (
     Uint32 const vertex_count,
     Resource<GLTexture> const &texture)
 {
-    ASSERT1(vertex_count >= 3)
-    ASSERT1(texture.GetIsValid())
+    ASSERT1(vertex_count >= 3);
+    ASSERT1(texture.GetIsValid());
 
     Instance<CompoundVertex> *vertex_instance;
 
@@ -599,12 +599,12 @@ void MapEditor2::Compound::UnweldSelectedPolygons ()
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex const &vertex = **vertex_instance;
 
         if (vertex.m_is_selected)
         {
-            ASSERT1(vertex.m_selected_owner_polygon_count > 0)
+            ASSERT1(vertex.m_selected_owner_polygon_count > 0);
             // if the selected owner polygon count is less than the
             // vertex instance's reference count, at least one unselected
             // polygon refers to it, and therefore this vertex must be
@@ -635,7 +635,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
 {
     // we don't want to allow deleting all the polygons, leaving
     // an empty and inaccessable object.
-    ASSERT1(GetSelectedPolygonCount() < GetPolygonCount())
+    ASSERT1(GetSelectedPolygonCount() < GetPolygonCount());
 
     // iterate through the polygon list and delete selected polygons.
     for (PolygonListIterator it = m_polygon_list.begin(),
@@ -644,7 +644,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
          /* the iterator incrementing is handled by hand, below */)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
 
         // delete selected polygons (this will automatically
         // decrement their vertices' reference counts)
@@ -670,7 +670,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
          /* the iterator incrementing is handled by hand, below */)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         if (vertex_instance->GetReferenceCount() == 0)
         {
             Delete(vertex_instance);
@@ -708,7 +708,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex &vertex = **vertex_instance;
 
         // determine if the current vertex is inside the selection circle
@@ -724,7 +724,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
                 case SO_MINUS:  vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
                 case SO_XOR:    vertex.ToggleIsSelected(GetMapEditorObjectLayer());     break;
                 case SO_AND:                                                            break;
-                default:        ASSERT1(false && "Invalid selection operation")         break;
+                default:        ASSERT1(false && "Invalid selection operation");        break;
             }
         }
         else
@@ -736,7 +736,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
                 case SO_MINUS:                                                          break;
                 case SO_XOR:                                                            break;
                 case SO_AND:    vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
-                default:        ASSERT1(false && "Invalid selection operation")         break;
+                default:        ASSERT1(false && "Invalid selection operation");        break;
             }
         }
     }
@@ -746,7 +746,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
     MapEditor2::CompoundVertex *const vertex_to_select,
     MapEditor2::Object::SelectionOperation const selection_operation)
 {
-    ASSERT1(vertex_to_select != NULL)
+    ASSERT1(vertex_to_select != NULL);
 
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
@@ -762,7 +762,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex &vertex = **vertex_instance;
 
         if (vertex_to_select != &vertex)
@@ -775,7 +775,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
             case SO_MINUS:  vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
             case SO_XOR:    vertex.ToggleIsSelected(GetMapEditorObjectLayer());     break;
             case SO_AND:                                                            break;
-            default:        ASSERT1(false && "Invalid selection operation")         break;
+            default:        ASSERT1(false && "Invalid selection operation");        break;
         }
 
         // only one vertex can be selected, so once it is, quit.
@@ -786,7 +786,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
 void MapEditor2::Compound::SelectAllVertices (bool const toggle_selection)
 {
     ObjectLayer *const object_layer = GetMapEditorObjectLayer();
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
@@ -794,7 +794,7 @@ void MapEditor2::Compound::SelectAllVertices (bool const toggle_selection)
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex &vertex = **vertex_instance;
 
         if (toggle_selection)
@@ -808,8 +808,8 @@ void MapEditor2::Compound::TranslateVertex (
     MapEditor2::CompoundVertex *const vertex,
     FloatVector2 const &translation_delta)
 {
-    ASSERT1(vertex != NULL)
-    ASSERT1(vertex->m_owner_compound == this)
+    ASSERT1(vertex != NULL);
+    ASSERT1(vertex->m_owner_compound == this);
 
     // this vector is where the vertex should end up in world-space
     FloatVector2 resulting_coordinate = GetTransformation() * vertex->m_coordinate + translation_delta;
@@ -827,8 +827,8 @@ void MapEditor2::Compound::ScaleVertex (
     Float const scale_factor_delta,
     FloatVector2 const &transformation_origin)
 {
-    ASSERT1(vertex != NULL)
-    ASSERT1(vertex->m_owner_compound == this)
+    ASSERT1(vertex != NULL);
+    ASSERT1(vertex->m_owner_compound == this);
 
     // this vector is where the vertex should end up in world-space
     FloatVector2 resulting_coordinate =
@@ -849,8 +849,8 @@ void MapEditor2::Compound::RotateVertex (
     FloatMatrix2 const &rotation_transformation,
     FloatVector2 const &transformation_origin)
 {
-    ASSERT1(vertex != NULL)
-    ASSERT1(vertex->m_owner_compound == this)
+    ASSERT1(vertex != NULL);
+    ASSERT1(vertex->m_owner_compound == this);
 
     // this vector is where the vertex should end up in world-space
     FloatVector2 resulting_coordinate =
@@ -867,7 +867,7 @@ void MapEditor2::Compound::RotateVertex (
 void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
 {
     ObjectLayer *const object_layer = GetMapEditorObjectLayer();
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     for (PolygonListIterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
@@ -875,7 +875,7 @@ void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         if (toggle_selection)
             polygon->ToggleIsSelected(object_layer);
@@ -887,7 +887,7 @@ void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
 void MapEditor2::Compound::SetVertexSelectionStateFromSelectionOwnerPolygonCount ()
 {
     ObjectLayer *const object_layer = GetMapEditorObjectLayer();
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     for (PolygonListIterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
@@ -895,7 +895,7 @@ void MapEditor2::Compound::SetVertexSelectionStateFromSelectionOwnerPolygonCount
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         polygon->SetVertexSelectionStateFromSelectionOwnerPolygonCount(object_layer);
     }
@@ -911,12 +911,12 @@ MapEditor2::Compound::Compound ()
 
 void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(m_vertex_list.empty())
-    ASSERT1(m_polygon_list.empty())
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(m_vertex_list.empty());
+    ASSERT1(m_polygon_list.empty());
 
     Uint32 vertex_count = serializer.ReadUint32();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         Instance<CompoundVertex> *vertex_instance =
@@ -926,7 +926,7 @@ void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
     }
 
     Uint32 polygon_count = serializer.ReadUint32();
-    ASSERT1(polygon_count > 0)
+    ASSERT1(polygon_count > 0);
     for (Uint32 i = 0; i < polygon_count; ++i)
     {
         Polygon *polygon = new Polygon(this);
@@ -937,14 +937,14 @@ void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
 
 void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(!m_vertex_list.empty())
-    ASSERT1(!m_polygon_list.empty())
+    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(!m_vertex_list.empty());
+    ASSERT1(!m_polygon_list.empty());
 
     AssignIndicesToVertices();
 
     Uint32 vertex_count = m_vertex_list.size();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
     serializer.WriteUint32(vertex_count);
     for (VertexListConstIterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
@@ -952,14 +952,14 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         serializer.WriteFloatVector2((*vertex_instance)->m_coordinate);
-        ASSERT1(vertex_count-- > 0)
+        ASSERT1(vertex_count-- > 0);
     }
-    ASSERT1(vertex_count == 0)
+    ASSERT1(vertex_count == 0);
 
     Uint32 polygon_count = m_polygon_list.size();
-    ASSERT1(polygon_count > 0)
+    ASSERT1(polygon_count > 0);
     serializer.WriteUint32(polygon_count);
     for (PolygonListConstIterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
@@ -967,7 +967,7 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
          ++it)
     {
         Polygon const *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         polygon->Write(serializer);
     }
 
@@ -991,7 +991,7 @@ void MapEditor2::Compound::CalculateVisibleRadius () const
 void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
 {
     Compound const *compound = dynamic_cast<Compound const *>(object);
-    ASSERT1(compound != NULL)
+    ASSERT1(compound != NULL);
 
     // make sure the vertices of compound are assigned
     compound->AssignIndicesToVertices();
@@ -1003,7 +1003,7 @@ void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex const &source_vertex = **vertex_instance;
         // copy every important property of the source vertex to the new one
         CompoundVertex cloned_vertex(this);
@@ -1019,9 +1019,9 @@ void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         Polygon *cloned_polygon = polygon->CreateClone();
-        ASSERT1(cloned_polygon != NULL)
+        ASSERT1(cloned_polygon != NULL);
 
         // at this point, the compound vertices referenced by the
         // cloned polygon refer to the vertices in compound (the one
@@ -1054,9 +1054,9 @@ void MapEditor2::Compound::AssignIndicesToVertices () const
          ++it, ++index)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex const &vertex = **vertex_instance;
-        ASSERT1(vertex.m_owner_compound == this)
+        ASSERT1(vertex.m_owner_compound == this);
         vertex.m_index = index;
     }
 }
@@ -1069,9 +1069,9 @@ void MapEditor2::Compound::ResetVertexIndices () const
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
-        ASSERT1(vertex_instance != NULL)
+        ASSERT1(vertex_instance != NULL);
         CompoundVertex const &vertex = **vertex_instance;
-        ASSERT1(vertex.m_owner_compound == this)
+        ASSERT1(vertex.m_owner_compound == this);
         vertex.m_index = UINT32_UPPER_BOUND;
     }
 }
@@ -1081,8 +1081,8 @@ void MapEditor2::Compound::ReplaceVertexWithNewVertex (
     Instance<CompoundVertex> *const vertex_to_replace_with,
     bool const use_unwelding_behavior)
 {
-    ASSERT1(vertex_to_replace != NULL)
-    ASSERT1(vertex_to_replace_with != NULL)
+    ASSERT1(vertex_to_replace != NULL);
+    ASSERT1(vertex_to_replace_with != NULL);
 
     for (PolygonListIterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
@@ -1090,7 +1090,7 @@ void MapEditor2::Compound::ReplaceVertexWithNewVertex (
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
+        ASSERT1(polygon != NULL);
         
         if (use_unwelding_behavior)
         {
@@ -1103,7 +1103,7 @@ void MapEditor2::Compound::ReplaceVertexWithNewVertex (
                 if (polygon->m_is_selected)
                     (*vertex_to_replace_with)->m_selected_owner_polygon_count = 1;
                 else
-                    ASSERT1((*vertex_to_replace_with)->m_selected_owner_polygon_count == 0)
+                    ASSERT1((*vertex_to_replace_with)->m_selected_owner_polygon_count == 0);
                 return;
             }
         }

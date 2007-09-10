@@ -43,9 +43,9 @@ public:
 
     inline Float GetIntensity () const
     {
-        ASSERT1(m_charged_power >= 0.0f)
-        ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()])
-        ASSERT1(ms_max_charged_power[GetUpgradeLevel()] > 0.0f)
+        ASSERT1(m_charged_power >= 0.0f);
+        ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
+        ASSERT1(ms_max_charged_power[GetUpgradeLevel()] > 0.0f);
         return Math::Sqrt(m_charged_power / ms_max_charged_power[GetUpgradeLevel()]);
     }
 

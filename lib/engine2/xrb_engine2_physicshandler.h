@@ -58,7 +58,7 @@ protected:
 
     inline void SetOwnerWorld (World *const owner_world)
     {
-        ASSERT1(owner_world != NULL)
+        ASSERT1(owner_world != NULL);
         m_owner_world = owner_world;
     }
 

@@ -27,8 +27,8 @@ void PowerGenerator::PowerDevices (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(powered_device != NULL)
-    ASSERT1(power_allocator != NULL)
+    ASSERT1(powered_device != NULL);
+    ASSERT1(power_allocator != NULL);
 
     Float total_required_power = 0.0f;
     for (Uint32 i = 0; i < powered_device_count; ++i)
@@ -49,7 +49,7 @@ void PowerGenerator::PowerDevices (
         Float available_power_ratio = Min(m_stored_power, total_required_power) / total_required_power;
         // we never want to supply too much power to devices (or many many
         // asserts will be triggered)
-        ASSERT1(available_power_ratio <= 1.0f)
+        ASSERT1(available_power_ratio <= 1.0f);
         for (Uint32 i = 0; i < powered_device_count; ++i)
             power_allocator[i] *= available_power_ratio;
     }
@@ -67,7 +67,7 @@ void PowerGenerator::PowerDevices (
     // isn't exact and the assert was sometimes failing.  even though we
     // limit the stored power to >= 0, the assert is to check that the
     // amounts of power actually used were valid.
-    ASSERT1(m_stored_power >= -0.001f)
+    ASSERT1(m_stored_power >= -0.001f);
     if (m_stored_power < 0.0f)
         m_stored_power = 0.0f;
 }

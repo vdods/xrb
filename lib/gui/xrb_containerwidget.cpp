@@ -41,7 +41,7 @@ ContainerWidget::~ContainerWidget ()
 {
 //     fprintf(stderr, "ContainerWidget::~ContainerWidget(%s);\n", m_name.c_str());
 
-    ASSERT1(m_child_resize_blocker_count == 0 && "you must not delete a ChildResizeBlocker'ed ContainerWidget")
+    ASSERT1(m_child_resize_blocker_count == 0 && "you must not delete a ChildResizeBlocker'ed ContainerWidget");
 
     // delete all child widgets
     DeleteAllChildren();
@@ -83,7 +83,7 @@ void ContainerWidget::SetSizePropertyEnabled (
     bool const defer_parent_update)
 {
     // update the preferred size properties
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
@@ -184,8 +184,8 @@ void ContainerWidget::SetSizeProperty (
     bool const defer_parent_update)
 {
     // update the preferred size properties
-    ASSERT1(component <= 1)
-    ASSERT1(value >= 0)
+    ASSERT1(component <= 1);
+    ASSERT1(value >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size[component] = value;
     else
@@ -205,7 +205,7 @@ void ContainerWidget::SetSizeProperty (
     }
     else
     {
-        ASSERT1(component <= 1)
+        ASSERT1(component <= 1);
         if (property == SizeProperties::MIN)
         {
             if (m_size_properties.m_min_size[component] != value)
@@ -237,8 +237,8 @@ void ContainerWidget::SetSizeProperty (
     bool const defer_parent_update)
 {
     // update the preferred size properties
-    ASSERT1(value[Dim::X] >= 0)
-    ASSERT1(value[Dim::Y] >= 0)
+    ASSERT1(value[Dim::X] >= 0);
+    ASSERT1(value[Dim::Y] >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size = value;
     else
@@ -288,7 +288,7 @@ void ContainerWidget::SetMainWidget (Widget *const main_widget)
     if (m_main_widget != NULL)
     {
         ASSERT0(!m_main_widget->GetIsModal() && "You can't use a modal widget as a main widget");
-        ASSERT1(m_main_widget->GetParent() == this)
+        ASSERT1(m_main_widget->GetParent() == this);
         m_main_widget->Resize(GetSize());
         m_main_widget->MoveTo(GetPosition());
         ParentChildSizePropertiesUpdate(false);
@@ -314,7 +314,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
          ++it)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
 
         // skip hidden and modal children (modal widgets are drawn
         // by the top-level widget.
@@ -347,7 +347,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // if there are modal widgets, draw them
     if (!m_modal_widget_stack.empty())
     {
-        ASSERT1(GetIsTopLevelParent())
+        ASSERT1(GetIsTopLevelParent());
 
         // draw all the modal widgets, from the bottom of the stack, up.
         for (WidgetListConstIterator it = m_modal_widget_stack.begin(),
@@ -356,7 +356,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
              ++it)
         {
             Widget *modal_widget = *it;
-            ASSERT1(modal_widget != NULL)
+            ASSERT1(modal_widget != NULL);
 
             // skip hidden modal widgets
             if (modal_widget->GetIsHidden())
@@ -373,7 +373,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 // set the color mask
                 child_render_context.SetColorMask(
                     render_context.GetMaskedColor(modal_widget->GetColorMask()));
-                ASSERT1(modal_widget->GetIsEnabled())
+                ASSERT1(modal_widget->GetIsEnabled());
                 // set up the clip rect for the child
                 child_render_context.SetupGLClipRect();
                 // do the actual draw call
@@ -400,7 +400,7 @@ void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)
          ++it)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         child->MoveBy(delta);
     }
 }
@@ -436,8 +436,8 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 
 void ContainerWidget::AttachChild (Widget *const child)
 {
-    ASSERT1(child != NULL)
-    ASSERT1(child->m_parent == NULL)
+    ASSERT1(child != NULL);
+    ASSERT1(child->m_parent == NULL);
     // add the child at the end of the section of the list of child widgets
     // which have the same stack priority.  first find the appropriate place
     // to put the child
@@ -449,7 +449,7 @@ void ContainerWidget::AttachChild (Widget *const child)
          ++it)
     {
         Widget *widget = *it;
-        ASSERT1(widget != NULL)
+        ASSERT1(widget != NULL);
         if (widget->GetStackPriority() > child->GetStackPriority())
             break;
     }
@@ -461,16 +461,16 @@ void ContainerWidget::AttachChild (Widget *const child)
     // without forcing the inheritance
     child->m_widget_skin = m_widget_skin;
     // sanity check -- Screen should be the top-level parent widget
-    ASSERT1(dynamic_cast<Screen *>(GetTopLevelParent()) != NULL)
+    ASSERT1(dynamic_cast<Screen *>(GetTopLevelParent()) != NULL);
 }
 
 void ContainerWidget::DetachChild (Widget *const child)
 {
-    ASSERT1(child != NULL)
-    ASSERT1(child->GetParent() == this)
+    ASSERT1(child != NULL);
+    ASSERT1(child->GetParent() == this);
     // check that its actually a child
     WidgetVectorIterator it = FindChildWidget(child);
-    ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget")
+    ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget");
     // make sure to unfocus it
     child->Unfocus();
     // make sure mouseover-off it
@@ -489,7 +489,7 @@ void ContainerWidget::MoveChildDown (Widget *const child)
     // check that its actually a child
     WidgetVectorIterator it = FindChildWidget(child);
     WidgetVectorIterator it_end = m_child_vector.end();
-    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget")
+    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget");
     if (it != m_child_vector.begin())
     {
         // get the widget below this one
@@ -511,7 +511,7 @@ void ContainerWidget::MoveChildUp (Widget *const child)
     // check that its actually a child
     WidgetVectorIterator it = FindChildWidget(child);
     WidgetVectorIterator it_end = m_child_vector.end();
-    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget")
+    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget");
     // get the widget above this one
     WidgetVectorIterator next = it;
     ++next;
@@ -532,7 +532,7 @@ void ContainerWidget::MoveChildToBottom (Widget *const child)
     WidgetVectorIterator it_begin = m_child_vector.begin();
     WidgetVectorIterator it = FindChildWidget(child);
     WidgetVectorIterator it_end = m_child_vector.end();
-    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget")
+    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget");
     // find the appropriate place to move the child to (within the section
     // of the child vector of the same stack priority)
     WidgetVectorIterator dest_it = it;
@@ -560,7 +560,7 @@ void ContainerWidget::MoveChildToTop (Widget *const child)
     // check that its actually a child
     WidgetVectorIterator it = FindChildWidget(child);
     WidgetVectorIterator it_end = m_child_vector.end();
-    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget")
+    ASSERT1((*it)->GetParent() == this && it != it_end && "not a child of this widget");
     // find the appropriate place to move the child to (within the section
     // of the child vector of the same stack priority)
     WidgetVectorIterator dest_it = it;
@@ -591,7 +591,7 @@ void ContainerWidget::DeleteAllChildren ()
     while (m_child_vector.size() > 0)
     {
         Widget *child = m_child_vector.back();
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         // this will detach the child from the parent and remove its
         // element from m_child_vector -- hence the backwards traversal.
         Delete(child);
@@ -612,33 +612,33 @@ Uint32 ContainerWidget::GetWidgetSkinHandlerChildCount () const
 
 WidgetSkinHandler *ContainerWidget::GetWidgetSkinHandlerChild (Uint32 const index)
 {
-    ASSERT1(index < m_child_vector.size())
+    ASSERT1(index < m_child_vector.size());
     Widget *child = m_child_vector[index];
-    ASSERT1(child != NULL)
+    ASSERT1(child != NULL);
     return static_cast<WidgetSkinHandler *>(child);
 }
 
 Bool2 ContainerWidget::GetContentsMinSizeEnabled () const
 {
-    ASSERT1(m_main_widget != NULL)
+    ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMinSizeEnabled();
 }
 
 ScreenCoordVector2 ContainerWidget::GetContentsMinSize () const
 {
-    ASSERT1(m_main_widget != NULL)
+    ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMinSize();
 }
 
 Bool2 ContainerWidget::GetContentsMaxSizeEnabled () const
 {
-    ASSERT1(m_main_widget != NULL)
+    ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMaxSizeEnabled();
 }
 
 ScreenCoordVector2 ContainerWidget::GetContentsMaxSize () const
 {
-    ASSERT1(m_main_widget != NULL)
+    ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMaxSize();
 }
 
@@ -651,24 +651,24 @@ void ContainerWidget::HandleFrame ()
          ++it)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         child->ProcessFrame(GetFrameTime());
     }
 }
 
 bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
 {
-    ASSERT1(e->GetChildToDelete() != this && "a widget must not delete itself")
+    ASSERT1(e->GetChildToDelete() != this && "a widget must not delete itself");
     e->DeleteChildWidget();
     return true;
 }
 
 void ContainerWidget::AddModalWidget (Widget *const modal_widget)
 {
-    ASSERT1(modal_widget != NULL)
-    ASSERT1(modal_widget->GetIsModal())
-    ASSERT1(modal_widget->GetIsEnabled())
-    ASSERT1(!modal_widget->GetIsTopLevelParent())
+    ASSERT1(modal_widget != NULL);
+    ASSERT1(modal_widget->GetIsModal());
+    ASSERT1(modal_widget->GetIsEnabled());
+    ASSERT1(!modal_widget->GetIsTopLevelParent());
 
     // if this is a top level widget, then add the modal widget to the
     // modal widget stack.  otherwise, pass it up to the parent
@@ -691,9 +691,9 @@ void ContainerWidget::AddModalWidget (Widget *const modal_widget)
 
 void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
 {
-    ASSERT1(modal_widget != NULL)
-    ASSERT1(modal_widget->GetIsModal())
-    ASSERT1(modal_widget->GetIsEnabled())
+    ASSERT1(modal_widget != NULL);
+    ASSERT1(modal_widget->GetIsModal());
+    ASSERT1(modal_widget->GetIsEnabled());
 
     // if this is a top level widget, then remove the modal widget from the
     // modal widget stack.  otherwise, pass it up to the parent
@@ -701,7 +701,7 @@ void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
     {
         modal_widget->Unfocus();
         WidgetListIterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
-        ASSERT1(it != m_modal_widget_stack.end())
+        ASSERT1(it != m_modal_widget_stack.end());
         m_modal_widget_stack.erase(it);
     }
     else
@@ -774,8 +774,8 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
 
 void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
 {
-    ASSERT1(child != NULL)
-    ASSERT1(child->GetParent() == this)
+    ASSERT1(child != NULL);
+    ASSERT1(child->GetParent() == this);
 
     if (child == m_main_widget)
     {
@@ -795,9 +795,9 @@ void ContainerWidget::ChildStackPriorityChanged (
     Widget *const child,
     StackPriority const previous_stack_priority)
 {
-    ASSERT1(child != NULL)
-    ASSERT1(child->GetParent() == this)
-    ASSERT1(child->GetStackPriority() != previous_stack_priority)
+    ASSERT1(child != NULL);
+    ASSERT1(child->GetParent() == this);
+    ASSERT1(child->GetStackPriority() != previous_stack_priority);
 
     WidgetVectorIterator it_begin = m_child_vector.begin();
     WidgetVectorIterator it = FindChildWidget(child);
@@ -806,7 +806,7 @@ void ContainerWidget::ChildStackPriorityChanged (
 
     // check if the widget should be moved up or down
     if (it == it_end)
-        ASSERT1(false && "Given child is somehow not in the child vector")
+        ASSERT1(false && "Given child is somehow not in the child vector");
 
     // we can derive the direction to move it from the previous stack priority
     if (child->GetStackPriority() < previous_stack_priority)
@@ -880,7 +880,7 @@ ContainerWidget::WidgetVectorIterator ContainerWidget::FindChildWidget (Widget c
 
 bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     if (m_children_get_input_events_first)
     {
@@ -902,7 +902,7 @@ bool ContainerWidget::InternalProcessKeyEvent (EventKey const *const e)
 
 bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     if (m_children_get_input_events_first)
     {
@@ -926,7 +926,7 @@ bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
 
 bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     if (m_children_get_input_events_first)
     {
@@ -966,7 +966,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
          ++it)
     {
         Widget *widget = *it;
-        ASSERT1(widget != NULL)
+        ASSERT1(widget != NULL);
         if (!widget->GetIsHidden())
         {
             modal_widget = widget;
@@ -992,7 +992,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
              ++it)
         {
             Widget *child = *it;
-            ASSERT1(child != NULL)
+            ASSERT1(child != NULL);
             if (!child->GetIsHidden() &&
                 child->GetScreenRect().GetIsPointInside(e->GetPosition()) &&
                 child->InternalProcessFocusEvent(e))
@@ -1019,7 +1019,7 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const
          ++it)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         if (child->GetScreenRect().GetIsPointInside(e->GetPosition()))
             if (child->InternalProcessMouseoverEvent(e))
                 return true;
@@ -1040,7 +1040,7 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
          ++it)
     {
         Widget *child = *it;
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
         // only send the event to widgets that are not hidden
         // AND if the mouse event position is inside the widget's rect
         if (!child->GetIsHidden() &&
@@ -1054,13 +1054,13 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
 
 void ContainerWidget::IncrementResizeBlockerCount ()
 {
-    ASSERT1(m_child_resize_blocker_count < UINT32_UPPER_BOUND)
+    ASSERT1(m_child_resize_blocker_count < UINT32_UPPER_BOUND);
     ++m_child_resize_blocker_count;
 }
 
 void ContainerWidget::DecrementResizeBlockerCount ()
 {
-    ASSERT1(m_child_resize_blocker_count > 0)
+    ASSERT1(m_child_resize_blocker_count > 0);
     --m_child_resize_blocker_count;
     if (m_child_resize_blocker_count == 0)
         Resize(GetSize());

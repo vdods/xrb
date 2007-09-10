@@ -41,7 +41,7 @@ void BinaryFileSerializer::Open (
     char const *const mode)
 {
     ASSERT1(strchr(mode, 't') == NULL &&
-            "You cannot specify mode 't' for a binary file")
+            "You cannot specify mode 't' for a binary file");
 
     // make sure that mode contains a 'b'
     std::string modified_mode(mode);
@@ -64,8 +64,8 @@ void BinaryFileSerializer::Close ()
 
 void BinaryFileSerializer::FlushWriteCache ()
 {
-    ASSERT1(GetIsOpen())
-    ASSERT1(GetIODirection() == IOD_WRITE)
+    ASSERT1(GetIsOpen());
+    ASSERT1(GetIODirection() == IOD_WRITE);
     m_cache.FlushWriteCache();
     SetError(m_cache.GetError());
 }
@@ -241,7 +241,7 @@ inline Uint32 BinaryFileSerializer::WriteBufferString (
 
 void BinaryFileSerializer::ReadColor (Color *const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     BinaryFileSerializer::ReadFloat(&(*destination)[Dim::R]);
     if (GetError() != IOE_NONE)
@@ -277,7 +277,7 @@ void BinaryFileSerializer::WriteColor (Color const &value)
 
 void BinaryFileSerializer::ReadFloatVector2 (FloatVector2 *const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     BinaryFileSerializer::ReadFloat(&(*destination)[Dim::X]);
     if (GetError() != IOE_NONE)
@@ -298,7 +298,7 @@ void BinaryFileSerializer::WriteFloatVector2 (FloatVector2 const &value)
 void BinaryFileSerializer::ReadFloatSimpleTransform2 (
     FloatSimpleTransform2 *const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     BinaryFileSerializer::ReadFloat(&(*destination).m_scale_factors[Dim::X]);
     if (GetError() != IOE_NONE)
@@ -335,7 +335,7 @@ void BinaryFileSerializer::WriteFloatSimpleTransform2 (
 
 void BinaryFileSerializer::ReadFloatMatrix2 (FloatMatrix2 *const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::A]);
     if (GetError() != IOE_NONE)
@@ -388,7 +388,7 @@ void BinaryFileSerializer::WriteFloatMatrix2 (FloatMatrix2 const &value)
 void BinaryFileSerializer::ReadFloatTransform2 (
     FloatTransform2 *const destination)
 {
-    ASSERT1(destination != NULL)
+    ASSERT1(destination != NULL);
 
     {
         FloatVector2 translation;

@@ -57,14 +57,14 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
          ++it)
     {
         Engine2::Object const *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
         if ((object->GetTranslation() - area_center).GetLength()
             <
             (object->GetRadius(GetQuadTreeType()) + area_radius))
         {
             Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
             if (entity->GetCollisionType() == CT_SOLID_COLLISION)
                 return true;
             else if (check_nonsolid_collision_entities &&
@@ -125,8 +125,8 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
          ++it)
     {
         Engine2::Object const *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         FloatVector2 object_translation(object->GetTranslation());
         FloatVector2 adjusted_area_center(area_center);
@@ -146,7 +146,7 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
             (object->GetRadius(GetQuadTreeType()) + area_radius))
         {
             Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
             if (entity->GetCollisionType() == CT_SOLID_COLLISION)
                 return true;
             else if (check_nonsolid_collision_entities &&
@@ -196,9 +196,9 @@ void CollisionQuadTree::LineTrace (
     bool const check_nonsolid_collision_entities,
     LineTraceBindingSet *const line_trace_binding_set)
 {
-    ASSERT1(!trace_vector.GetIsZero())
-    ASSERT1(trace_radius >= 0.0f)
-    ASSERT1(line_trace_binding_set != NULL)
+    ASSERT1(!trace_vector.GetIsZero());
+    ASSERT1(trace_radius >= 0.0f);
+    ASSERT1(line_trace_binding_set != NULL);
 
     // if this quad node has no subordinates, return
     if (GetSubordinateObjectCount() == 0)
@@ -223,15 +223,15 @@ void CollisionQuadTree::LineTrace (
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
@@ -279,9 +279,9 @@ void CollisionQuadTree::LineTraceWrapped (
     Float const object_layer_side_length,
     Float const half_object_layer_side_length)
 {
-    ASSERT1(!trace_vector.GetIsZero())
-    ASSERT1(trace_radius >= 0.0f)
-    ASSERT1(line_trace_binding_set != NULL)
+    ASSERT1(!trace_vector.GetIsZero());
+    ASSERT1(trace_radius >= 0.0f);
+    ASSERT1(line_trace_binding_set != NULL);
 
     // if this quad node has no subordinates, return
     if (GetSubordinateObjectCount() == 0)
@@ -319,15 +319,15 @@ void CollisionQuadTree::LineTraceWrapped (
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
@@ -386,8 +386,8 @@ void CollisionQuadTree::AreaTrace (
     bool const check_nonsolid_collision_entities,
     AreaTraceList *const area_trace_list)
 {
-    ASSERT1(trace_area_radius > 0.0f)
-    ASSERT1(area_trace_list != NULL)
+    ASSERT1(trace_area_radius > 0.0f);
+    ASSERT1(area_trace_list != NULL);
 
     // if this quad node has no subordinates, return
     if (GetSubordinateObjectCount() == 0)
@@ -413,15 +413,15 @@ void CollisionQuadTree::AreaTrace (
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
@@ -443,8 +443,8 @@ void CollisionQuadTree::AreaTraceWrapped (
     Float const object_layer_side_length,
     Float const half_object_layer_side_length)
 {
-    ASSERT1(trace_area_radius > 0.0f)
-    ASSERT1(area_trace_list != NULL)
+    ASSERT1(trace_area_radius > 0.0f);
+    ASSERT1(area_trace_list != NULL);
 
     // if this quad node has no subordinates, return
     if (GetSubordinateObjectCount() == 0)
@@ -476,15 +476,15 @@ void CollisionQuadTree::AreaTraceWrapped (
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
+        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
@@ -515,9 +515,9 @@ void CollisionQuadTree::CollideEntity (
     Float const frame_dt,
     CollisionPairList *const collision_pair_list)
 {
-    ASSERT1(entity != NULL)
-    ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION)
-    ASSERT1(collision_pair_list != NULL)
+    ASSERT1(entity != NULL);
+    ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
+    ASSERT1(collision_pair_list != NULL);
 
     Float const adjusted_dt = frame_dt;//1.0f/40.0f;
     Float const dt_squared = adjusted_dt * adjusted_dt;
@@ -553,8 +553,8 @@ void CollisionQuadTree::CollideEntity (
          ++it)
     {
         Engine2::Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this)
+        ASSERT1(object != NULL);
+        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         // don't collide the entity with itself
         if (object == entity->GetOwnerObject())
@@ -575,7 +575,7 @@ void CollisionQuadTree::CollideEntity (
             continue;
 
         Entity *other_entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(other_entity != NULL)
+        ASSERT1(other_entity != NULL);
 
         // calculate the collision
 
@@ -673,7 +673,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
         return;
 
     Entity *other_entity = DStaticCast<Entity *>(object->GetEntity());
-    ASSERT1(other_entity != NULL)
+    ASSERT1(other_entity != NULL);
 
     // calculate the collision
 

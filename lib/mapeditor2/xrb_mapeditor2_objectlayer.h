@@ -70,7 +70,7 @@ namespace MapEditor2
 
         inline Uint32 GetSelectedNonEntityCount () const
         {
-            ASSERT1(m_selected_entity_count <= m_selected_object_count)
+            ASSERT1(m_selected_entity_count <= m_selected_object_count);
             return m_selected_object_count - m_selected_entity_count;
         }
         Object *GetSingleSelectedNonEntity ();

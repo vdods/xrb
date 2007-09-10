@@ -287,7 +287,7 @@ public:
     }
     inline void SetSize (Uint32 component, T size)
     {
-        ASSERT1(component < 2)
+        ASSERT1(component < 2);
         m_top_right[component] = m_bottom_left[component] + size;
     }
     inline void SetWidth (T const width)

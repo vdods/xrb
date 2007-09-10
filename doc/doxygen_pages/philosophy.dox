@@ -480,7 +480,7 @@ void SomeFunction ()
     Vector non_const_vector(3.45f, 67.8f);
     Vector const const_vector(12.34f, 56.78f);
 
-    non_const_vector.Normalize();;
+    non_const_vector.Normalize();
     non_const_vector.Print();
 
     const_vector.Normalize();

@@ -25,7 +25,7 @@ ProgressBar::ProgressBar (
     Widget(parent, name),
     m_receiver_set_progress(&ProgressBar::SetProgress, this)
 {
-    ASSERT1(grow_orientation < GO_COUNT)
+    ASSERT1(grow_orientation < GO_COUNT);
     m_grow_orientation = grow_orientation;
     m_progress = 0.0f;
     m_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
@@ -37,7 +37,7 @@ ProgressBar::~ProgressBar ()
 
 void ProgressBar::Draw (RenderContext const &render_context) const
 {
-    ASSERT1(m_progress >= 0.0f && m_progress <= 1.0f)
+    ASSERT1(m_progress >= 0.0f && m_progress <= 1.0f);
     
     // this handles drawing of the background
     Widget::Draw(render_context);
@@ -66,10 +66,10 @@ void ProgressBar::Draw (RenderContext const &render_context) const
                 remaining_progress *
                 static_cast<Float>(progress_rect.GetHeight()));
     else
-        ASSERT1(false && "Invalid ProgressBar::GrowOrientation")
+        ASSERT1(false && "Invalid ProgressBar::GrowOrientation");
 
-    ASSERT1(progress_rect.GetWidth() >= 0)
-    ASSERT1(progress_rect.GetHeight() >= 0)
+    ASSERT1(progress_rect.GetWidth() >= 0);
+    ASSERT1(progress_rect.GetHeight() >= 0);
     Render::DrawScreenRect(
         render_context,
         m_color,

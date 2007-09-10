@@ -229,7 +229,7 @@ private:
         }
         else
         {
-            ASSERT1(m_widget_skin != NULL)
+            ASSERT1(m_widget_skin != NULL);
             // set the property on the widget skin
             (m_widget_skin->*SetWidgetSkinProperty)(property, data);
             // send property change notification down the widget hierarchy.
@@ -252,7 +252,7 @@ private:
         for (Uint32 i = 0; i < GetWidgetSkinHandlerChildCount(); ++i)
         {
             WidgetSkinHandler *child = GetWidgetSkinHandlerChild(i);
-            ASSERT1(child != NULL)
+            ASSERT1(child != NULL);
             child->PropagateChangedProperty<PropertyType>(
                 property,
                 HandleChangedProperty);

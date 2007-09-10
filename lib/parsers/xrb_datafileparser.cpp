@@ -43,7 +43,7 @@ DataFileParser::~DataFileParser ()
 
 #line 87 "xrb_datafileparser.trison"
 
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     Delete(m_scanner);
     delete StealAcceptedStructure();
 
@@ -499,7 +499,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0001 ()
 
 #line 185 "xrb_datafileparser.trison"
 
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
         return element_list;
     
 #line 506 "xrb_datafileparser.cpp"
@@ -529,7 +529,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0003 ()
 
 #line 200 "xrb_datafileparser.trison"
 
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
 
         if (element != NULL)
         {
@@ -571,7 +571,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
 
 #line 226 "xrb_datafileparser.trison"
 
-        ASSERT1(key != NULL)
+        ASSERT1(key != NULL);
         if (value == NULL)
         {
             Delete(key);
@@ -594,7 +594,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0006 ()
 
 #line 240 "xrb_datafileparser.trison"
 
-        ASSERT1(key != NULL)
+        ASSERT1(key != NULL);
         std::ostringstream out;
         out << "syntax error in element with key \"" << key->GetValue() << "\"";
         EmitError(FL, out.str());
@@ -626,7 +626,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0008 ()
 
 #line 259 "xrb_datafileparser.trison"
 
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
         return element_list;
     
 #line 633 "xrb_datafileparser.cpp"
@@ -654,7 +654,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0010 ()
 
 #line 274 "xrb_datafileparser.trison"
 
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         return value_list;
     
 #line 661 "xrb_datafileparser.cpp"
@@ -669,7 +669,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0011 ()
 
 #line 280 "xrb_datafileparser.trison"
 
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         return value_list;
     
 #line 676 "xrb_datafileparser.cpp"
@@ -711,7 +711,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0014 ()
 
 #line 300 "xrb_datafileparser.trison"
 
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         if (value != NULL)
         {
             try
@@ -747,7 +747,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0015 ()
             }
             catch (std::string const &)
             {
-                ASSERT1(false && "this should never happen")
+                ASSERT1(false && "this should never happen");
                 Delete(value);
             }
         }
@@ -879,8 +879,8 @@ DataFileValue * DataFileParser::ReductionRuleHandler0024 ()
 
 #line 390 "xrb_datafileparser.trison"
 
-        ASSERT1(string != NULL)
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string != NULL);
+        ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->GetValue());
         Delete(string_fragment);
         return string;
@@ -897,7 +897,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0025 ()
 
 #line 399 "xrb_datafileparser.trison"
 
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string_fragment != NULL);
         return string_fragment;
     
 #line 904 "xrb_datafileparser.cpp"
@@ -914,8 +914,8 @@ DataFileValue * DataFileParser::ReductionRuleHandler0026 ()
 
 #line 405 "xrb_datafileparser.trison"
 
-        ASSERT1(string != NULL)
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string != NULL);
+        ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->GetValue());
         Delete(string_fragment);
         EmitError(FL, "use + to concatenate strings (or did you forget a comma?)");
@@ -1351,8 +1351,8 @@ unsigned int const DataFileParser::ms_state_transition_count =
 
 DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
 {
-    ASSERT1(m_scanner != NULL)
-    ASSERT1(!m_scanner->GetIsOpen())
+    ASSERT1(m_scanner != NULL);
+    ASSERT1(!m_scanner->GetIsOpen());
     // if there are any pipe characters in the filename, return failure
     if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
         return RC_INVALID_FILENAME;
@@ -1375,31 +1375,31 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filen
 
 DataFileParser::Token::Type DataFileParser::Scan ()
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     return m_scanner->Scan(&m_lookahead_token);
 }
 
 void DataFileParser::EmitWarning (std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(message);
 }
 
 void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(file_location, message);
 }
 
 void DataFileParser::EmitError (std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(message);
 }
 
 void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(file_location, message);
 }
 

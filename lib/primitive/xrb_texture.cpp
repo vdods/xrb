@@ -52,7 +52,7 @@ Texture *Texture::Create (std::string const &filename)
     }
 
     // TODO: real pixel format coping
-    ASSERT1(retval->m_surface->format->BitsPerPixel == 32)
+    ASSERT1(retval->m_surface->format->BitsPerPixel == 32);
 
     return retval;
 }
@@ -63,7 +63,7 @@ Texture *Texture::Create (
 {
     Texture *retval = NULL;
 
-    ASSERT1(size[Dim::X] > 0 && size[Dim::Y] > 0)
+    ASSERT1(size[Dim::X] > 0 && size[Dim::Y] > 0);
 
     retval = new Texture();
     retval->m_surface = SDL_CreateRGBSurface(0, size[Dim::X], size[Dim::Y], 32, SDL_RMASK, SDL_GMASK, SDL_BMASK, SDL_AMASK);

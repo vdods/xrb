@@ -34,7 +34,7 @@ public:
         m_upgrade_level(upgrade_level),
         m_item_type(item_type)
     {
-        ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT)
+        ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT);
     }
     virtual ~Item () { }
 

@@ -41,9 +41,9 @@ bool PhysicsHandler::GetDoesAreaOverlapAnyEntityInObjectLayer (
     Float const area_radius,
     bool const check_nonsolid_collision_entities) const
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(object_layer == m_main_object_layer)
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer == m_main_object_layer);
+    ASSERT1(m_quad_tree != NULL);
     if (m_main_object_layer->GetIsWrapped())
         return m_quad_tree->GetDoesAreaOverlapAnyEntityWrapped(
             area_center,
@@ -66,14 +66,14 @@ void PhysicsHandler::LineTrace (
     bool const check_nonsolid_collision_entities,
     LineTraceBindingSet *const line_trace_binding_set) const
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(object_layer == m_main_object_layer)
-    ASSERT1(trace_radius >= 0.0f)
-    ASSERT1(line_trace_binding_set != NULL)
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer == m_main_object_layer);
+    ASSERT1(trace_radius >= 0.0f);
+    ASSERT1(line_trace_binding_set != NULL);
 
     if (m_main_object_layer->GetIsWrapped())
     {
-        ASSERT1(trace_vector.GetLength() <= 0.5f * m_main_object_layer->GetSideLength())
+        ASSERT1(trace_vector.GetLength() <= 0.5f * m_main_object_layer->GetSideLength());
         m_quad_tree->LineTraceWrapped(
             trace_start,
             trace_vector,
@@ -99,10 +99,10 @@ void PhysicsHandler::AreaTrace (
     bool const check_nonsolid_collision_entities,
     AreaTraceList *const area_trace_list) const
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(object_layer == m_main_object_layer)
-    ASSERT1(trace_area_radius > 0.0f)
-    ASSERT1(area_trace_list != NULL)
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer == m_main_object_layer);
+    ASSERT1(trace_area_radius > 0.0f);
+    ASSERT1(area_trace_list != NULL);
 
     if (m_main_object_layer->GetIsWrapped())
     {
@@ -137,13 +137,13 @@ void PhysicsHandler::AreaTrace (
 
 void PhysicsHandler::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 }
 
 void PhysicsHandler::SetMainObjectLayer (Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(m_main_object_layer == NULL && "Only set the main object layer once")
+    ASSERT1(object_layer != NULL);
+    ASSERT1(m_main_object_layer == NULL && "Only set the main object layer once");
 
     // store a pointer to the main object layer
     m_main_object_layer = object_layer;
@@ -155,7 +155,7 @@ void PhysicsHandler::SetMainObjectLayer (Engine2::ObjectLayer *const object_laye
 void PhysicsHandler::AddEntity (
     Engine2::Entity *const entity)
 {
-    ASSERT1(entity != NULL)
+    ASSERT1(entity != NULL);
     Entity *dis_entity = DStaticCast<Entity *>(entity);
 
     // add it to the master entity set
@@ -163,19 +163,19 @@ void PhysicsHandler::AddEntity (
 
     // if it's not CT_NO_COLLISION, add its
     // owner object into the collision quadtree
-    ASSERT1(m_main_object_layer != NULL)
+    ASSERT1(m_main_object_layer != NULL);
     if (dis_entity->GetCollisionType() != CT_NO_COLLISION)
     {
         DEBUG1_CODE(bool add_was_successful =)
         m_quad_tree->AddObject(dis_entity->GetOwnerObject());
-        ASSERT1(add_was_successful)
+        ASSERT1(add_was_successful);
     }
 }
 
 void PhysicsHandler::RemoveEntity (
     Engine2::Entity *const entity)
 {
-    ASSERT1(entity != NULL)
+    ASSERT1(entity != NULL);
     Entity *dis_entity = DStaticCast<Entity *>(entity);
 
     // remove it from the master entity set
@@ -189,8 +189,8 @@ void PhysicsHandler::RemoveEntity (
 
 void PhysicsHandler::HandleFrame ()
 {
-    ASSERT1(m_main_object_layer != NULL)
-    ASSERT1(GetFrameDT() >= 0.0f)
+    ASSERT1(m_main_object_layer != NULL);
+    ASSERT1(GetFrameDT() >= 0.0f);
 
     // if the frame time delta is zero (e.g. the game is paused), return.
     if (GetFrameDT() == 0.0f)
@@ -211,7 +211,7 @@ void PhysicsHandler::HandleFrame ()
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         DEBUG1_CODE(Uint32 entity_set_size = m_entity_set.size());
 
@@ -220,7 +220,7 @@ void PhysicsHandler::HandleFrame ()
 
         ASSERT1(m_entity_set.size() >= entity_set_size &&
                 "You must not remove entities during the Think loop -- "
-                "use ScheduleForRemovalFromWorld(0.0f) instead")
+                "use ScheduleForRemovalFromWorld(0.0f) instead");
     }
 
     // apply the accumulated forces and torques
@@ -269,13 +269,13 @@ void PhysicsHandler::UpdateVelocities ()
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         if (!entity->GetForce().GetIsZero())
         {
-            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]))
-            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]))
-            ASSERT1(entity->GetFirstMoment() > 0.0f)
+            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]));
+            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]));
+            ASSERT1(entity->GetFirstMoment() > 0.0f);
             entity->AccumulateVelocity(
                 GetFrameDT() * entity->GetForce() /
                 entity->GetFirstMoment());
@@ -329,11 +329,11 @@ void PhysicsHandler::UpdatePositions ()
         if (!entity->GetVelocity().GetIsZero())
         {
             entity->Translate(GetFrameDT() * entity->GetVelocity());
-            ASSERT1(entity->GetObjectLayer() != NULL)
+            ASSERT1(entity->GetObjectLayer() != NULL);
             entity->ReAddToQuadTree(Engine2::QTT_VISIBILITY);
             if (entity->GetCollisionType() != CT_NO_COLLISION)
             {
-                ASSERT1(entity->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) != NULL)
+                ASSERT1(entity->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) != NULL);
                 entity->ReAddToQuadTree(Engine2::QTT_PHYSICS_HANDLER);
             }
         }
@@ -345,7 +345,7 @@ void PhysicsHandler::UpdatePositions ()
 
 void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
 {
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 
     for (EntitySetIterator it = m_entity_set.begin(),
@@ -354,7 +354,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't attempt to collide no-collision entities
         if (entity->GetCollisionType() == CT_NO_COLLISION)
@@ -367,8 +367,8 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
 
 void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
 {
-    ASSERT1(m_main_object_layer->GetIsWrapped())
-    ASSERT1(m_quad_tree != NULL)
+    ASSERT1(m_main_object_layer->GetIsWrapped());
+    ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 
     for (EntitySetIterator it = m_entity_set.begin(),
@@ -377,7 +377,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // don't attempt to collide no-collision entities
         if (entity->GetCollisionType() == CT_NO_COLLISION)

@@ -21,14 +21,14 @@ CommandLineParser::~CommandLineParser () { }
 
 void CommandLineParser::Parse (Sint32 argc, char const *const *argv)
 {
-    ASSERT1(argc >= 1)
-    ASSERT1(argv != NULL)
+    ASSERT1(argc >= 1);
+    ASSERT1(argv != NULL);
 
     try
     {
         while (++argv, --argc > 0)
         {
-            ASSERT1(*argv != NULL)
+            ASSERT1(*argv != NULL);
             char const *arg = *argv;
             if (*arg == '-' && arg != std::string("-") && arg != std::string("--"))
             {
@@ -84,7 +84,7 @@ void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
         }
         else
         {
-            ASSERT1(option->m_short_name != '\0' || !option->m_long_name.empty())
+            ASSERT1(option->m_short_name != '\0' || !option->m_long_name.empty());
 
             if (option->m_short_name == '\0')
                 stream << "   ";
@@ -193,7 +193,7 @@ bool CommandLineParser::HandleShortNameOption (
     char const *arg,
     char const *const next_arg)
 {
-    ASSERT1(arg != NULL)
+    ASSERT1(arg != NULL);
     // next_arg may be NULL
 
     if (*arg == '\0')
@@ -211,8 +211,8 @@ bool CommandLineParser::HandleShortNameOption (
         // method with the argument.
         if (option->m_requires_an_argument)
         {
-            ASSERT1(option->m_handler_method_with_argument != NULL)
-            ASSERT1(option->m_handler_method_without_argument == NULL)
+            ASSERT1(option->m_handler_method_with_argument != NULL);
+            ASSERT1(option->m_handler_method_without_argument == NULL);
             (this->*(option->m_handler_method_with_argument))(std::string(arg));
         }
         // otherwise this argument is a concatenated string of short options
@@ -223,8 +223,8 @@ bool CommandLineParser::HandleShortNameOption (
             while (true)
             {
                 // call the option handler method with an empty argument
-                ASSERT1(option->m_handler_method_with_argument == NULL)
-                ASSERT1(option->m_handler_method_without_argument != NULL)
+                ASSERT1(option->m_handler_method_with_argument == NULL);
+                ASSERT1(option->m_handler_method_without_argument != NULL);
                 (this->*(option->m_handler_method_without_argument))();
 
                 if (*arg == '\0')
@@ -250,8 +250,8 @@ bool CommandLineParser::HandleShortNameOption (
                 throw std::string("error: option -") + option->m_short_name + " requires an argument";
 
             // call the option handler method with the argument
-            ASSERT1(option->m_handler_method_with_argument != NULL)
-            ASSERT1(option->m_handler_method_without_argument == NULL)
+            ASSERT1(option->m_handler_method_with_argument != NULL);
+            ASSERT1(option->m_handler_method_without_argument == NULL);
             (this->*(option->m_handler_method_with_argument))(std::string(next_arg));
 
             return true;
@@ -259,8 +259,8 @@ bool CommandLineParser::HandleShortNameOption (
         else
         {
             // call the option handler method with an empty argument
-            ASSERT1(option->m_handler_method_with_argument == NULL)
-            ASSERT1(option->m_handler_method_without_argument != NULL)
+            ASSERT1(option->m_handler_method_with_argument == NULL);
+            ASSERT1(option->m_handler_method_without_argument != NULL);
             (this->*(option->m_handler_method_without_argument))();
 
             return false;
@@ -272,7 +272,7 @@ bool CommandLineParser::HandleLongNameOption (
     char const *arg,
     char const *const next_arg)
 {
-    ASSERT1(arg != NULL)
+    ASSERT1(arg != NULL);
     // next_arg may be NULL
 
     if (*arg == '\0')
@@ -289,12 +289,12 @@ bool CommandLineParser::HandleLongNameOption (
         if (!option->m_requires_an_argument)
             throw std::string("error: option --") + option->m_long_name + " does not take an argument";
 
-        ASSERT1(*arg == '=')
+        ASSERT1(*arg == '=');
         ++arg;
 
         // call the option handler method with the argument
-        ASSERT1(option->m_handler_method_with_argument != NULL)
-        ASSERT1(option->m_handler_method_without_argument == NULL)
+        ASSERT1(option->m_handler_method_with_argument != NULL);
+        ASSERT1(option->m_handler_method_without_argument == NULL);
         (this->*(option->m_handler_method_with_argument))(std::string(arg));
 
         return false;
@@ -307,8 +307,8 @@ bool CommandLineParser::HandleLongNameOption (
                 throw std::string("error: option --") + option->m_long_name + " requires an argument";
 
             // call the option handler method with the argument
-            ASSERT1(option->m_handler_method_with_argument != NULL)
-            ASSERT1(option->m_handler_method_without_argument == NULL)
+            ASSERT1(option->m_handler_method_with_argument != NULL);
+            ASSERT1(option->m_handler_method_without_argument == NULL);
             (this->*(option->m_handler_method_with_argument))(std::string(next_arg));
 
             return true;
@@ -316,8 +316,8 @@ bool CommandLineParser::HandleLongNameOption (
         else
         {
             // call the option handler method with an empty argument
-            ASSERT1(option->m_handler_method_with_argument == NULL)
-            ASSERT1(option->m_handler_method_without_argument != NULL)
+            ASSERT1(option->m_handler_method_with_argument == NULL);
+            ASSERT1(option->m_handler_method_without_argument != NULL);
             (this->*(option->m_handler_method_without_argument))();
 
             return false;
@@ -327,7 +327,7 @@ bool CommandLineParser::HandleLongNameOption (
 
 CommandLineOption const *CommandLineParser::FindOptionByShortName (char const short_name) const
 {
-    ASSERT1(short_name != '\0')
+    ASSERT1(short_name != '\0');
 
     for (CommandLineOption const *option = m_option,
                                  *option_end = m_option + m_option_count;
@@ -343,8 +343,8 @@ CommandLineOption const *CommandLineParser::FindOptionByShortName (char const sh
 
 CommandLineOption const *CommandLineParser::FindOptionByLongName (char const *const long_name) const
 {
-    ASSERT1(long_name != NULL)
-    ASSERT1(*long_name != '\0')
+    ASSERT1(long_name != NULL);
+    ASSERT1(*long_name != '\0');
 
     std::string option_name = long_name;
     if (option_name.find_first_of('=') >= 0)

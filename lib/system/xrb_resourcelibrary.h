@@ -171,12 +171,12 @@ private:
 
         inline void IncrementReferenceCount ()
         {
-            ASSERT1(m_reference_count < UINT32_UPPER_BOUND)
+            ASSERT1(m_reference_count < UINT32_UPPER_BOUND);
             ++m_reference_count;
         }
         inline bool DecrementReferenceCount ()
         {
-            ASSERT1(m_reference_count > 0)
+            ASSERT1(m_reference_count > 0);
             --m_reference_count;
             if (m_reference_count == 0)
             {
@@ -207,7 +207,7 @@ private:
             :
             m_key(key)
         {
-            ASSERT1(!key.m_filename.empty())
+            ASSERT1(!key.m_filename.empty());
             m_library = library;
             m_reference_count = 0;
         }
@@ -233,12 +233,12 @@ private:
             :
             ResourceInstanceBase(library, key)
         {
-            ASSERT1(data != NULL)
+            ASSERT1(data != NULL);
             m_data = data;
         }
         ~ResourceInstance ()
         {
-            ASSERT1(m_data == NULL)
+            ASSERT1(m_data == NULL);
         }
 
         inline T *GetData () const
@@ -323,7 +323,7 @@ public:
       */
     inline Resource (ResourceLibrary::ResourceInstance<T> *const instance)
     {
-        ASSERT1(instance != NULL)
+        ASSERT1(instance != NULL);
         m_instance = instance;
         m_instance->IncrementReferenceCount();
     }
@@ -385,7 +385,7 @@ public:
       */
     inline T const *operator * () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return m_instance->GetData();
     }
     /** Provides -> dereferencing syntax for the resourced data, e.g.
@@ -394,7 +394,7 @@ public:
       */
     inline T const *operator -> () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return m_instance->GetData();
     }
 
@@ -411,7 +411,7 @@ public:
       */
     inline std::string const &GetFilename () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return m_instance->GetFilename();
     }
     /** If this resource was loaded without a load parameter, then
@@ -425,7 +425,7 @@ public:
       */
     inline Sint32 GetLoadParameter () const
     {
-        ASSERT1(m_instance != NULL)
+        ASSERT1(m_instance != NULL);
         return m_instance->GetLoadParameter();
     }
 

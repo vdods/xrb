@@ -44,7 +44,7 @@ namespace MapEditor2
             Engine2::Object *object = GetSmallestObjectTouchingPoint(point);
             Object *retval =
                 dynamic_cast<Object *>(object);
-            ASSERT1(object == NULL || retval != NULL)
+            ASSERT1(object == NULL || retval != NULL);
             return retval;
         }
         Polygon *GetSmallestMapEditorPolygonTouchingPoint (

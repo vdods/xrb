@@ -32,9 +32,9 @@ Float Shield::Damage (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(damage_amount >= 0.0f)
-    ASSERT1(m_charged_power >= 0.0f)
-    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()])
+    ASSERT1(damage_amount >= 0.0f);
+    ASSERT1(m_charged_power >= 0.0f);
+    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
 
     Float available_damage_dissipation = GetAvailableDamageDissipation();
     // if there is no dissipation available, just return the full amount
@@ -56,13 +56,13 @@ Float Shield::Damage (
     // amount of power to use
     Float damage_actually_blocked =
         Min(damage_amount, available_damage_dissipation) * power_to_use / power_required;
-    ASSERT1(damage_actually_blocked >= 0.0f)
-    ASSERT1(damage_actually_blocked <= damage_amount)
+    ASSERT1(damage_actually_blocked >= 0.0f);
+    ASSERT1(damage_actually_blocked <= damage_amount);
     // calculate the amount of damage the ship should take
     Float adjusted_damage_amount = damage_amount - damage_actually_blocked;
     // subtract the power to use from the charged power
     m_charged_power -= power_to_use;
-    ASSERT1(m_charged_power >= 0.0f)
+    ASSERT1(m_charged_power >= 0.0f);
 
     if (damage_amount_used != NULL)
         *damage_amount_used = damage_actually_blocked;   
@@ -89,11 +89,11 @@ bool Shield::Activate (
     Float time,
     Float frame_dt)
 {
-    ASSERT1(power >= 0.0f)
-    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f)
+    ASSERT1(power >= 0.0f);
+    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
     ASSERT1(power <= ms_max_charged_power[GetUpgradeLevel()] /
                      ms_recharge_interval[GetUpgradeLevel()] +
-                     frame_dt * ms_power_consumption_rate[GetUpgradeLevel()])
+                     frame_dt * ms_power_consumption_rate[GetUpgradeLevel()]);
 
     power -= frame_dt * ms_power_consumption_rate[GetUpgradeLevel()];
     m_charged_power += power;
@@ -102,7 +102,7 @@ bool Shield::Activate (
     // doesn't drop below 0.
     if (m_charged_power < 0.0f)
         m_charged_power = 0.0;
-    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()])
+    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
 
     return true;
 }

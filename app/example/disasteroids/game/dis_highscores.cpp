@@ -70,16 +70,16 @@ void HighScores::operator = (HighScores const &high_scores)
 
 bool HighScores::GetIsNewHighScore (Score const &score)
 {
-    ASSERT1(!m_best_points_score_set.empty())
-    ASSERT1(!m_best_wave_count_score_set.empty())
+    ASSERT1(!m_best_points_score_set.empty());
+    ASSERT1(!m_best_wave_count_score_set.empty());
 
     ScoreOrderByPoints score_order_by_points;
     ScoreOrderByWaveCount score_order_by_wave_count;
 
     // make sure it doesn't exactly match any existing high score (this is
     // valid because of the date member of Score).
-    ASSERT1(m_best_points_score_set.find(score) == m_best_points_score_set.end())
-    ASSERT1(m_best_wave_count_score_set.find(score) == m_best_wave_count_score_set.end())
+    ASSERT1(m_best_points_score_set.find(score) == m_best_points_score_set.end());
+    ASSERT1(m_best_wave_count_score_set.find(score) == m_best_wave_count_score_set.end());
 
     // if the score surpasses the worst best-points, it's a new high score
     if (m_best_points_score_set.empty() ||
@@ -125,8 +125,8 @@ Score const &HighScores::GetBestWaveCountScore (Uint32 index) const
 
 bool HighScores::AddScore (Score const &score)
 {
-    ASSERT1(!score.GetName().empty())
-    ASSERT1(GetIsNewHighScore(score))
+    ASSERT1(!score.GetName().empty());
+    ASSERT1(GetIsNewHighScore(score));
 
     ScoreOrderByPoints score_order_by_points;
     ScoreOrderByWaveCount score_order_by_wave_count;
@@ -239,7 +239,7 @@ void HighScores::Write (std::string const &filename)
             root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->GetDate()));
             root->SetPathElementUint32("|high_scores|$|hash", it->GetHash());
         } catch (...) {
-            ASSERT1(false && "this should never happen")
+            ASSERT1(false && "this should never happen");
         }
     }
 

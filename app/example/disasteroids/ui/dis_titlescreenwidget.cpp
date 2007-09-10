@@ -108,13 +108,13 @@ TitleScreenWidget::~TitleScreenWidget ()
 
 SignalSender0 const *TitleScreenWidget::SenderStartGame ()
 {
-    ASSERT1(m_start_button != NULL)
+    ASSERT1(m_start_button != NULL);
     return m_start_button->SenderReleased();
 }
 
 SignalSender0 const *TitleScreenWidget::SenderQuitGame ()
 {
-    ASSERT1(m_quit_button != NULL)
+    ASSERT1(m_quit_button != NULL);
     return m_quit_button->SenderReleased();
 }
 
@@ -131,14 +131,14 @@ void TitleScreenWidget::HandleFrame ()
 
 bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput const *e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     m_state_machine.RunCurrentState(e->GetInput());
     return true;
 }
 
 void TitleScreenWidget::ActivateOptionsDialog ()
 {
-    ASSERT1(m_options_panel == NULL)
+    ASSERT1(m_options_panel == NULL);
 
     // create the dialog and add a new OptionsPanel to it
     Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
@@ -155,7 +155,7 @@ void TitleScreenWidget::ActivateOptionsDialog ()
 
 void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
 {
-    ASSERT1(m_options_panel != NULL)
+    ASSERT1(m_options_panel != NULL);
 
     // only save the OptionsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)
@@ -181,7 +181,7 @@ void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
 bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
 {
     STATE_MACHINE_STATUS("StateGameDemo")
-    ASSERT1(m_high_scores_widget->GetIsHidden())
+    ASSERT1(m_high_scores_widget->GetIsHidden());
     switch (input)
     {
         case SM_ENTER:
@@ -201,7 +201,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(m_high_scores_widget->GetIsHidden())
+            ASSERT1(m_high_scores_widget->GetIsHidden());
             m_high_scores_widget->Update(
                 m_high_scores,
                 m_show_best_points_high_scores_first ?
@@ -212,7 +212,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
             return true;
 
         case IN_TIME_OUT:
-            ASSERT1(!m_high_scores_widget->GetIsHidden())
+            ASSERT1(!m_high_scores_widget->GetIsHidden());
             m_high_scores_widget->Hide();
             TRANSITION_TO(StatePauseBetweenHighScores);
             return true;
@@ -223,7 +223,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
 bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const input)
 {
     STATE_MACHINE_STATUS("StatePauseBetweenHighScores")
-    ASSERT1(m_high_scores_widget->GetIsHidden())
+    ASSERT1(m_high_scores_widget->GetIsHidden());
     switch (input)
     {
         case SM_ENTER:
@@ -243,7 +243,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(m_high_scores_widget->GetIsHidden())
+            ASSERT1(m_high_scores_widget->GetIsHidden());
             m_high_scores_widget->Update(
                 m_high_scores,
                 m_show_best_points_high_scores_first ?
@@ -254,7 +254,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
             return true;
 
         case IN_TIME_OUT:
-            ASSERT1(!m_high_scores_widget->GetIsHidden())
+            ASSERT1(!m_high_scores_widget->GetIsHidden());
             m_high_scores_widget->Hide();
             TRANSITION_TO(StateGameDemo);
             return true;

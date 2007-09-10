@@ -17,9 +17,9 @@ void BitCachedFile::Open (
     char const *const filename,
     char const *const mode)
 {
-    ASSERT1(filename != NULL)
-    ASSERT1(mode != NULL)
-    ASSERT1(!GetIsOpen())
+    ASSERT1(filename != NULL);
+    ASSERT1(mode != NULL);
+    ASSERT1(!GetIsOpen());
 
     if (strlen(filename) == 0)
     {
@@ -65,12 +65,12 @@ void BitCachedFile::Open (
 
 void BitCachedFile::Close ()
 {
-    ASSERT1(GetIsOpen())
+    ASSERT1(GetIsOpen());
 
     BitCache::Close();
 
     if (fclose(m_file_handle) != 0)
-        ASSERT1(false && "fclose() failed.")
+        ASSERT1(false && "fclose() failed.");
 
     m_file_handle = NULL;
     m_filename.clear();
@@ -81,11 +81,11 @@ Uint32 BitCachedFile::FlushBytes (
     Uint8 const *const bytes_to_flush,
     Uint32 const number_of_bytes_to_flush) const
 {
-    ASSERT1(bytes_to_flush != NULL)
-    ASSERT1(number_of_bytes_to_flush > 0)
-    ASSERT1(GetIsOpen())
-    ASSERT1(GetIODirection() == IOD_WRITE)
-    ASSERT1(m_file_handle != NULL)
+    ASSERT1(bytes_to_flush != NULL);
+    ASSERT1(number_of_bytes_to_flush > 0);
+    ASSERT1(GetIsOpen());
+    ASSERT1(GetIODirection() == IOD_WRITE);
+    ASSERT1(m_file_handle != NULL);
     Uint32 bytes_written =
         fwrite(
             bytes_to_flush,
@@ -100,11 +100,11 @@ Uint32 BitCachedFile::RenewBytes (
     Uint8 *const bytes_to_renew,
     Uint32 const number_of_bytes_to_renew) const
 {
-    ASSERT1(bytes_to_renew != NULL)
-    ASSERT1(number_of_bytes_to_renew > 0)
-    ASSERT1(GetIsOpen())
-    ASSERT1(GetIODirection() == IOD_READ)
-    ASSERT1(m_file_handle != NULL)
+    ASSERT1(bytes_to_renew != NULL);
+    ASSERT1(number_of_bytes_to_renew > 0);
+    ASSERT1(GetIsOpen());
+    ASSERT1(GetIODirection() == IOD_READ);
+    ASSERT1(m_file_handle != NULL);
     Uint32 bytes_read =
         fread(
             bytes_to_renew,

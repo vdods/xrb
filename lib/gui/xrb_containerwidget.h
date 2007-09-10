@@ -34,13 +34,13 @@ public:
 
         ChildResizeBlocker (ContainerWidget *container_widget)
         {
-            ASSERT1(container_widget != NULL)
+            ASSERT1(container_widget != NULL);
             m_container_widget = container_widget;
             m_container_widget->IncrementResizeBlockerCount();
         }
         ~ChildResizeBlocker ()
         {
-            ASSERT1(m_container_widget != NULL)
+            ASSERT1(m_container_widget != NULL);
             m_container_widget->DecrementResizeBlockerCount();
             m_container_widget = NULL;
         }

@@ -30,8 +30,8 @@ public:
         :
         Entity(entity_type, collision_type)
     {
-        ASSERT1(time_to_live != 0.0f)
-        ASSERT1(time_at_birth >= 0.0f)
+        ASSERT1(time_to_live != 0.0f);
+        ASSERT1(time_at_birth >= 0.0f);
         m_time_to_live = time_to_live;
         m_time_at_birth = time_at_birth;
     }
@@ -51,7 +51,7 @@ protected:
     }
     inline Float GetLifetimeRatio (Float const current_time) const
     {
-        ASSERT1(current_time >= m_time_at_birth)
+        ASSERT1(current_time >= m_time_at_birth);
         if (m_time_to_live < 0.0f)
             return 0.0f;
         else
@@ -85,7 +85,7 @@ public:
         :
         Effect(time_to_live, time_at_birth, entity_type, collision_type)
     {
-        ASSERT1(final_size > 0.0f)
+        ASSERT1(final_size > 0.0f);
         m_final_size = final_size;
     }
 
@@ -119,7 +119,7 @@ public:
         m_damage_radius(damage_radius),
         m_owner(owner)
     {
-        ASSERT1(m_damage_amount > 0.0f)
+        ASSERT1(m_damage_amount > 0.0f);
         m_has_done_impact = false;
     }
 
@@ -176,7 +176,7 @@ public:
         m_disable_time_factor(disable_time_factor),
         m_owner(owner)
     {
-        ASSERT1(m_disable_time_factor > 1.0f)
+        ASSERT1(m_disable_time_factor > 1.0f);
     }
 
     virtual void Collide (
@@ -213,8 +213,8 @@ public:
         m_potential_damage(potential_damage),
         m_owner(owner)
     {
-        ASSERT1(starting_damage >= 0.0f)
-        ASSERT1(m_potential_damage > 0.0f)
+        ASSERT1(starting_damage >= 0.0f);
+        ASSERT1(m_potential_damage > 0.0f);
         m_current_damage = starting_damage;
     }
     virtual ~Fireball () { }

@@ -32,7 +32,7 @@ public:
         :
         Event(time, event_type)
     {
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
         m_entity = entity;
     }
     virtual ~EventEntity () { }
@@ -41,7 +41,7 @@ public:
 
     inline void NullifyEntity () const
     {
-        ASSERT1(m_entity != NULL)
+        ASSERT1(m_entity != NULL);
         m_entity = NULL;
     }
 

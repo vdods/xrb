@@ -38,7 +38,7 @@ std::string const &GetDataFileElementTypeString (DataFileElementType data_file_e
         "DAT_NO_TYPE"
     };
 
-    ASSERT1(data_file_element_type < DAT_COUNT)
+    ASSERT1(data_file_element_type < DAT_COUNT);
     return s_data_file_element_type_string[data_file_element_type];
 }
 
@@ -120,7 +120,7 @@ DataFileValue const *DataFileLeafValue::GetSubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
-    ASSERT1(start <= path.length())
+    ASSERT1(start <= path.length());
 
     if (start < path.length())
         THROW_STRING("error: in path \"" << path << "\" - element type " <<
@@ -162,7 +162,7 @@ void DataFileUint32::PrintAST (IndentFormatter &formatter) const
 
 void DataFileFloat::Sign (NumericSign const sign)
 {
-    ASSERT1(sign == NEGATIVE || sign == POSITIVE)
+    ASSERT1(sign == NEGATIVE || sign == POSITIVE);
     if (sign == NEGATIVE)
         m_value = -m_value;
 }
@@ -231,7 +231,7 @@ void DataFileContainer::SetPathElementString (std::string const &path, std::stri
 
 DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
 {
-    ASSERT1(start <= path.length())
+    ASSERT1(start <= path.length());
 
     if (start >= path.length())
         return NT_LEAF;
@@ -270,7 +270,7 @@ DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::st
 
 void DataFileKeyPair::Print (IndentFormatter &formatter) const
 {
-    ASSERT1(m_value != NULL)
+    ASSERT1(m_value != NULL);
     if (m_value->GetElementType() == DAT_STRUCTURE)
     {
         formatter.PrintLine("%s\n{", m_key.c_str());
@@ -282,7 +282,7 @@ void DataFileKeyPair::Print (IndentFormatter &formatter) const
     else if (m_value->GetElementType() == DAT_ARRAY)
     {
         DataFileArray const *array = DStaticCast<DataFileArray const *>(m_value);
-        ASSERT1(array != NULL)
+        ASSERT1(array != NULL);
         if (array->GetShouldBeFormattedInline())
             formatter.BeginLine("%s ", m_key.c_str());
         else
@@ -302,7 +302,7 @@ void DataFileKeyPair::PrintAST (IndentFormatter &formatter) const
     formatter.Indent();
     formatter.EndLine("key  : %s", m_key.c_str());
     formatter.BeginLine("value: ");
-    ASSERT1(m_value != NULL)
+    ASSERT1(m_value != NULL);
     m_value->PrintAST(formatter);
     formatter.Unindent();
 }
@@ -311,7 +311,7 @@ DataFileValue const *DataFileKeyPair::GetSubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
-    ASSERT1(start <= path.length())
+    ASSERT1(start <= path.length());
 
 //     fprintf(stderr, "DataFileKeyPair::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
@@ -329,8 +329,8 @@ void DataFileKeyPair::SetSubpathElement (
     Uint32 const start,
     DataFileLeafValue *const value) throw(std::string)
 {
-    ASSERT1(start <= path.length())
-    ASSERT1(value != NULL)
+    ASSERT1(start <= path.length());
+    ASSERT1(value != NULL);
 
     switch (GetParentElementNodeType(path, start))
     {
@@ -400,7 +400,7 @@ DataFileArray::~DataFileArray ()
          ++it)
     {
         DataFileValue const *value = *it;
-        ASSERT1(value != NULL)
+        ASSERT1(value != NULL);
         Delete(value);
     }
 }
@@ -413,8 +413,8 @@ bool DataFileArray::GetShouldBeFormattedInline () const
     if (it != m_element_vector.end())
     {
         DataFileValue const *value = *it;
-        ASSERT1(value != NULL)
-        ASSERT1(value->GetElementType() != DAT_KEY_PAIR)
+        ASSERT1(value != NULL);
+        ASSERT1(value->GetElementType() != DAT_KEY_PAIR);
         return value->GetElementType() != DAT_ARRAY && value->GetElementType() != DAT_STRUCTURE;
     }
     else
@@ -448,7 +448,7 @@ Uint32 DataFileArray::GetDimensionCount () const
 
 void DataFileArray::AppendValue (DataFileValue *const value)
 {
-    ASSERT1(value != NULL)
+    ASSERT1(value != NULL);
 
     // make sure that the value being appended is the same type
     // as the first value in the array, or the array is empty.
@@ -456,7 +456,7 @@ void DataFileArray::AppendValue (DataFileValue *const value)
     if (it != m_element_vector.end())
     {
         DataFileValue const *first_element_value = *it;
-        ASSERT1(first_element_value != NULL)
+        ASSERT1(first_element_value != NULL);
         if (value->GetElementType() != first_element_value->GetElementType())
             THROW_STRING("cannot add a " <<
                          GetDataFileElementTypeString(value->GetElementType()) <<
@@ -492,12 +492,12 @@ void DataFileArray::Print (IndentFormatter &formatter) const
          ++it)
     {
         DataFileValue const *value = *it;
-        ASSERT1(value != NULL)
-        ASSERT1(value->GetElementType() != DAT_KEY_PAIR)
+        ASSERT1(value != NULL);
+        ASSERT1(value->GetElementType() != DAT_KEY_PAIR);
 
         if (value->GetElementType() == DAT_STRUCTURE)
         {
-            ASSERT1(!inlined_array)
+            ASSERT1(!inlined_array);
             formatter.PrintLine("{");
             formatter.Indent();
         }
@@ -506,7 +506,7 @@ void DataFileArray::Print (IndentFormatter &formatter) const
 
         if (value->GetElementType() == DAT_STRUCTURE)
         {
-            ASSERT1(!inlined_array)
+            ASSERT1(!inlined_array);
             formatter.Unindent();
             formatter.BeginLine("}");
         }
@@ -549,7 +549,7 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
     for (Uint32 i = 0; i < m_element_vector.size(); ++i)
     {
         formatter.BeginLine("[%3u]: ", i);
-        ASSERT1(m_element_vector[i] != NULL)
+        ASSERT1(m_element_vector[i] != NULL);
         m_element_vector[i]->PrintAST(formatter);
     }
     formatter.Unindent();
@@ -559,7 +559,7 @@ DataFileValue const *DataFileArray::GetSubpathElement (
     std::string const &path,
     Uint32 start) const
 {
-    ASSERT1(start <= path.length())
+    ASSERT1(start <= path.length());
 
 //     fprintf(stderr, "DataFileArray::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
@@ -587,7 +587,7 @@ DataFileValue const *DataFileArray::GetSubpathElement (
     if (array_index >= m_element_vector.size())
         THROW_STRING("out of bounds array index \"" << path.substr(start, key_delim-start) << "\"")
 
-    ASSERT1(key_delim < UINT32_UPPER_BOUND)
+    ASSERT1(key_delim < UINT32_UPPER_BOUND);
     return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
 }
 
@@ -596,8 +596,8 @@ void DataFileArray::SetSubpathElement (
     Uint32 start,
     DataFileLeafValue *const value) throw(std::string)
 {
-    ASSERT1(start <= path.length())
-    ASSERT1(value != NULL)
+    ASSERT1(start <= path.length());
+    ASSERT1(value != NULL);
 
     if (start >= path.length())
         THROW_STRING("can't assign a value to an array itself - subpath \"" << path.c_str() + start << "\"")
@@ -605,7 +605,7 @@ void DataFileArray::SetSubpathElement (
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
-    ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY)
+    ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY);
 
     ++start;
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
@@ -625,7 +625,7 @@ void DataFileArray::SetSubpathElement (
             array_index = m_element_vector.size()-1;
         }
         else
-            ASSERT1(false && "this should never happen")
+            ASSERT1(false && "this should never happen");
     }
     // check for array index
     else
@@ -650,7 +650,7 @@ void DataFileArray::SetSubpathElement (
     }
 
     // this is pedantic, but hey.
-    ASSERT1(m_element_vector.size() < UINT32_UPPER_BOUND)
+    ASSERT1(m_element_vector.size() < UINT32_UPPER_BOUND);
 
     if (create_new_element)
     {
@@ -686,7 +686,7 @@ void DataFileArray::SetSubpathElement (
         if (!m_element_vector.empty())
         {
             DataFileValue const *first_element = m_element_vector[0];
-            ASSERT1(first_element != NULL)
+            ASSERT1(first_element != NULL);
             if (element->GetElementType() != first_element->GetElementType())
             {
                 std::ostringstream out;
@@ -719,9 +719,9 @@ void DataFileArray::SetSubpathElement (
         THROW_STRING("array index " << array_index << " out of bounds in subpath \"" << path.c_str() + start << "\"")
     else
     {
-        ASSERT1(element_type == NT_LEAF || element_type == NT_ARRAY || element_type == NT_STRUCTURE)
-        ASSERT1(!m_element_vector.empty())
-        ASSERT1(m_element_vector[array_index] != NULL)
+        ASSERT1(element_type == NT_LEAF || element_type == NT_ARRAY || element_type == NT_STRUCTURE);
+        ASSERT1(!m_element_vector.empty());
+        ASSERT1(m_element_vector[array_index] != NULL);
         DataFileValue *&element = m_element_vector[array_index];
 
         if (element_type == NT_LEAF && value->GetElementType() != element->GetElementType()
@@ -738,7 +738,7 @@ void DataFileArray::SetSubpathElement (
             else if (element_type == NT_STRUCTURE)
                 assignment_type = DAT_STRUCTURE;
 
-            ASSERT1(assignment_type != DAT_NO_TYPE)
+            ASSERT1(assignment_type != DAT_NO_TYPE);
             THROW_STRING("mismatch: array element type " << GetDataFileElementTypeString(element->GetElementType()) << ", assignment type " << GetDataFileElementTypeString(assignment_type))
         }
 
@@ -754,7 +754,7 @@ void DataFileArray::SetSubpathElement (
         }
         else
         {
-            ASSERT1(false && "this should never happen")
+            ASSERT1(false && "this should never happen");
             return;
         }
     }
@@ -783,8 +783,8 @@ bool DataFileArray::GetDoesMatchDimensionAndType (
     DataFileArray const *const array0,
     DataFileArray const *const array1)
 {
-    ASSERT1(array0 != NULL)
-    ASSERT1(array1 != NULL)
+    ASSERT1(array0 != NULL);
+    ASSERT1(array1 != NULL);
 
     if (array0->m_element_vector.size() != array1->m_element_vector.size())
         return false;
@@ -816,14 +816,14 @@ DataFileStructure::~DataFileStructure ()
          ++it)
     {
         DataFileKeyPair const *key_pair = it->second;
-        ASSERT1(key_pair != NULL)
+        ASSERT1(key_pair != NULL);
         Delete(key_pair);
     }
 }
 
 DataFileValue const *DataFileStructure::GetValue (std::string const &key) const
 {
-    ASSERT1(key.length() > 0)
+    ASSERT1(key.length() > 0);
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
         return NULL;
@@ -833,8 +833,8 @@ DataFileValue const *DataFileStructure::GetValue (std::string const &key) const
 
 void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value)
 {
-    ASSERT1(!key.empty())
-    ASSERT1(value != NULL)
+    ASSERT1(!key.empty());
+    ASSERT1(value != NULL);
 
     if (!GetIsValidKey(key))
         THROW_STRING("key \"" << key << "\" contains invalid characters")
@@ -847,9 +847,9 @@ void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value
 
 void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
 {
-    ASSERT1(key_pair != NULL)
-    ASSERT1(!key_pair->GetKey().empty())
-    ASSERT1(key_pair->GetValue() != NULL)
+    ASSERT1(key_pair != NULL);
+    ASSERT1(!key_pair->GetKey().empty());
+    ASSERT1(key_pair->GetValue() != NULL);
 
     if (!GetIsValidKey(key_pair->GetKey()))
         THROW_STRING("key \"" << key_pair->GetKey() << "\" contains invalid characters")
@@ -868,7 +868,7 @@ void DataFileStructure::Print (IndentFormatter &formatter) const
          ++it)
     {
         DataFileKeyPair const *key_pair = it->second;
-        ASSERT1(key_pair != NULL)
+        ASSERT1(key_pair != NULL);
         key_pair->Print(formatter);
         formatter.EndLine(";");
     }
@@ -884,7 +884,7 @@ void DataFileStructure::PrintAST (IndentFormatter &formatter) const
          ++it)
     {
         DataFileKeyPair const *key_pair = it->second;
-        ASSERT1(key_pair != NULL)
+        ASSERT1(key_pair != NULL);
         key_pair->PrintAST(formatter);
     }
     formatter.Unindent();
@@ -894,7 +894,7 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
     std::string const &path,
     Uint32 start) const
 {
-    ASSERT1(start <= path.length())
+    ASSERT1(start <= path.length());
 
 //     fprintf(stderr, "DataFileStructure::GetSubpathElement(\"%s\");\n", path.c_str()+start);
 
@@ -912,7 +912,7 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
         THROW_STRING("unmatched element \"" << key << "\"")
     else
     {
-        ASSERT1(key_delim < UINT32_UPPER_BOUND)
+        ASSERT1(key_delim < UINT32_UPPER_BOUND);
         return it->second->GetValue()->GetSubpathElement(path, key_delim);
     }
 }
@@ -922,8 +922,8 @@ void DataFileStructure::SetSubpathElement (
     Uint32 start,
     DataFileLeafValue *const value) throw(std::string)
 {
-    ASSERT1(start <= path.length())
-    ASSERT1(value != NULL)
+    ASSERT1(start <= path.length());
+    ASSERT1(value != NULL);
 
     if (start >= path.length())
         THROW_STRING("can't assign a value to a structure itself")
@@ -931,11 +931,11 @@ void DataFileStructure::SetSubpathElement (
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
-    ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE)
+    ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE);
 
     ++start;
     Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
-    ASSERT1(key_delim < UINT32_UPPER_BOUND)
+    ASSERT1(key_delim < UINT32_UPPER_BOUND);
 
     std::string key(path.substr(start, key_delim-start));
     if (!GetIsValidKey(key))

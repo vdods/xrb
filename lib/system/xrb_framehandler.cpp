@@ -24,7 +24,7 @@ FrameHandler::FrameHandler ()
 
 FrameHandler::~FrameHandler ()
 {
-    ASSERT1(m_lock == 0 && "Do not delete a FrameHandler while processing a frame")
+    ASSERT1(m_lock == 0 && "Do not delete a FrameHandler while processing a frame");
 }
 
 void FrameHandler::ProcessFrame (Float const time)
@@ -39,8 +39,8 @@ void FrameHandler::ProcessFrame (Float const time)
 
 void FrameHandler::StartFrame (Float const time)
 {
-    ASSERT1(time >= 0.0f)
-    ASSERT1(time >= m_most_recent_time)
+    ASSERT1(time >= 0.0f);
+    ASSERT1(time >= m_most_recent_time);
 
     // only start the frame if the lock is unused
     if (m_lock == 0)
@@ -58,7 +58,7 @@ void FrameHandler::StartFrame (Float const time)
         }
 
         // calculate dt
-        ASSERT1(time >= m_most_recent_time)
+        ASSERT1(time >= m_most_recent_time);
         m_frame_dt = time - m_most_recent_time;
 
         // store the most recent time
@@ -66,14 +66,14 @@ void FrameHandler::StartFrame (Float const time)
     }
 
     // assert if there will be overflow
-    ASSERT1(m_lock < UINT32_UPPER_BOUND)
+    ASSERT1(m_lock < UINT32_UPPER_BOUND);
     // increment the lock's usage
     ++m_lock;
 }
 
 void FrameHandler::EndFrame ()
 {
-    ASSERT1(m_lock > 0)
+    ASSERT1(m_lock > 0);
     // decrement the lock's usage
     --m_lock;
 

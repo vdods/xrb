@@ -50,7 +50,7 @@ char CharacterFilter::GetFilteredCharacter (char const c) const
             return c;
 
         default:
-            ASSERT1(false && "Invalid character filter type")
+            ASSERT1(false && "Invalid character filter type");
             return '\0';
     }
 }

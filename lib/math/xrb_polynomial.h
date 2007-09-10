@@ -31,21 +31,21 @@ public:
     {
         m.resize(1);
         m[0] = 0.0f;
-        ASSERT1(GetIsHighestCoefficientNonZero())
+        ASSERT1(GetIsHighestCoefficientNonZero());
     }
     inline Polynomial (Float root)
     {
         m.resize(2);
         m[0] = -root;
         m[1] = 1.0f;
-        ASSERT1(GetIsHighestCoefficientNonZero())
+        ASSERT1(GetIsHighestCoefficientNonZero());
     }
     Polynomial (Polynomial const &polynomial);
     ~Polynomial () { }
 
     inline Uint32 GetOrder () const
     {
-        ASSERT1(m.size() > 0)
+        ASSERT1(m.size() > 0);
         return m.size() - 1;
     }
     inline Float Get (Uint32 power) const
@@ -73,11 +73,11 @@ public:
             m.resize(power + 1);
         m[power] = coefficient;
         Minimize();
-        ASSERT1(GetIsHighestCoefficientNonZero())
+        ASSERT1(GetIsHighestCoefficientNonZero());
     }
     inline Float operator [] (Uint32 power) const
     {
-        ASSERT1(power < m.size())
+        ASSERT1(power < m.size());
         return m[power];
     }
 

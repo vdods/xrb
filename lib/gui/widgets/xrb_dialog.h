@@ -106,7 +106,7 @@ public:
       */
     inline SignalSender0 const *SenderDialogReturnedOK ()
     {
-        ASSERT1(GetHasOKButton())
+        ASSERT1(GetHasOKButton());
         return &m_sender_dialog_returned_ok;
     }
     /** @brief Accessor for the SignalSender which signals that the Cancel
@@ -114,7 +114,7 @@ public:
       */
     inline SignalSender0 const *SenderDialogReturnedCancel ()
     {
-        ASSERT1(GetHasCancelButton())
+        ASSERT1(GetHasCancelButton());
         return &m_sender_dialog_returned_cancel;
     }
 

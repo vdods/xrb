@@ -92,14 +92,14 @@ std::string const &Ship::GetShipSpriteFilename (
     };
 
     Uint32 ship_index = ship_type - ET_SHIP_LOWEST;
-    ASSERT1(ship_index < ET_SHIP_COUNT)
-    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    ASSERT1(ship_index < ET_SHIP_COUNT);
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
     return s_ship_sprite_filename[ship_index][enemy_level];
 }
 
 Float Ship::GetShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)
 {
-    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
     switch (ship_type)
     {
         case ET_SOLITARY:   return Solitary::ms_scale_factor;
@@ -108,14 +108,14 @@ Float Ship::GetShipScaleFactor (EntityType const ship_type, Uint8 const enemy_le
         case ET_REVULSION:  return Revulsion::ms_scale_factor[enemy_level];
         case ET_DEVOURMENT: return Devourment::ms_scale_factor[enemy_level];
         case ET_DEMI:       return Demi::ms_scale_factor[enemy_level];
-        default: ASSERT1(false && "Invalid enemy ship type") return 1.0f;
+        default: ASSERT1(false && "Invalid enemy ship type"); return 1.0f;
     }
 }
 
 void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
 {
-    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]))
-    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]))
+    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
+    ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
     m_reticle_coordinates = GetObjectLayer()->GetAdjustedCoordinates(reticle_coordinates, GetTranslation());
 }
 

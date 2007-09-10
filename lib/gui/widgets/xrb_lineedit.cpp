@@ -44,8 +44,8 @@ LineEdit::LineEdit (
     m_character_filter = CharacterFilter(CharacterFilter::DENY, "");
     m_is_read_only = false;
 
-    ASSERT1(m_text.empty())
-    ASSERT1(m_last_text_update.empty())
+    ASSERT1(m_text.empty());
+    ASSERT1(m_last_text_update.empty());
 
     SetIsHeightFixedToTextHeight(true);
 
@@ -54,7 +54,7 @@ LineEdit::LineEdit (
 
 void LineEdit::SetText (std::string const &text)
 {
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(GetRenderFont().GetIsValid());
 
     // only do stuff if the text is different
     if (m_text != text)
@@ -69,13 +69,13 @@ void LineEdit::SetText (std::string const &text)
 
 void LineEdit::SetAlignment (Alignment const alignment)
 {
-    ASSERT1(alignment == LEFT || alignment == CENTER || alignment == RIGHT)
+    ASSERT1(alignment == LEFT || alignment == CENTER || alignment == RIGHT);
     m_alignment = alignment;
 }
 
 void LineEdit::Draw (RenderContext const &render_context) const
 {
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(GetRenderFont().GetIsValid());
 
     // call the superclass Draw (for the background and such)
     Widget::Draw(render_context);
@@ -293,7 +293,7 @@ ScreenCoord LineEdit::GetInitialPenPositionX () const
                 0;
             break;
         default:
-            ASSERT1(false && "Invalid Alignment")
+            ASSERT1(false && "Invalid Alignment");
             initial_pen_position_x = 0;
             break;
     }
@@ -304,7 +304,7 @@ ScreenCoord LineEdit::GetInitialPenPositionX () const
 
 ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
 {
-    ASSERT1(GetRenderFont().GetIsValid())
+    ASSERT1(GetRenderFont().GetIsValid());
 
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
 
@@ -394,7 +394,7 @@ void LineEdit::TypeCharacter (char const c)
     if (c == '\0' || c == '\n')
         return;
 
-    ASSERT1(m_cursor_position <= m_text.length())
+    ASSERT1(m_cursor_position <= m_text.length());
 
     if (m_does_cursor_overwrite)
     {
@@ -429,8 +429,8 @@ void LineEdit::TypeCharacter (char const c)
 
 bool LineEdit::ShiftText (Uint32 const position, Sint32 const offset)
 {
-    ASSERT1(offset != 0)
-    ASSERT1(position <= m_text.length())
+    ASSERT1(offset != 0);
+    ASSERT1(position <= m_text.length());
 
     if (m_text.length() + offset > m_character_limit)
         return false;

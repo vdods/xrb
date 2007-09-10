@@ -18,15 +18,15 @@ namespace Xrb
 void MapEditor2::CompoundVertex::SetSelectionStateFromSelectionOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     SetIsSelected(m_selected_owner_polygon_count > 0, object_layer);
 }
 
 void MapEditor2::CompoundVertex::IncrementSelectedOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(m_selected_owner_polygon_count < UINT32_UPPER_BOUND)
+    ASSERT1(object_layer != NULL);
+    ASSERT1(m_selected_owner_polygon_count < UINT32_UPPER_BOUND);
     if (m_selected_owner_polygon_count == 0)
         SetIsSelected(true, object_layer);
     ++m_selected_owner_polygon_count;
@@ -35,11 +35,11 @@ void MapEditor2::CompoundVertex::IncrementSelectedOwnerPolygonCount (
 void MapEditor2::CompoundVertex::DecrementSelectedOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     ASSERT1(
         m_selected_owner_polygon_count > 0 &&
         "If this assert failed while welding vertices, it's likely "
-        "that the polygon selection set wasn't cleared beforehand.")
+        "that the polygon selection set wasn't cleared beforehand.");
     if (m_selected_owner_polygon_count == 1)
         SetIsSelected(false, object_layer);
     --m_selected_owner_polygon_count;
@@ -55,7 +55,7 @@ void MapEditor2::CompoundVertex::SetIsSelected (
             AddToVertexSelectionSet(object_layer);
         else
             RemoveFromVertexSelectionSet(object_layer);
-        ASSERT1(m_is_selected == is_selected)
+        ASSERT1(m_is_selected == is_selected);
     }
 }
 
@@ -67,20 +67,20 @@ void MapEditor2::CompoundVertex::ToggleIsSelected (
         RemoveFromVertexSelectionSet(object_layer);
     else
         AddToVertexSelectionSet(object_layer);
-    ASSERT1(m_is_selected != old_is_selected)
+    ASSERT1(m_is_selected != old_is_selected);
 }
 
 void MapEditor2::CompoundVertex::AddToVertexSelectionSet (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     object_layer->AddVertexToVertexSelectionSet(this);
 }
 
 void MapEditor2::CompoundVertex::RemoveFromVertexSelectionSet (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     object_layer->RemoveVertexFromVertexSelectionSet(this);
 }
 

@@ -50,7 +50,7 @@ std::string const &Event::GetName (EventType const event_type)
         "CUSTOM"
     };
     DEBUG1_CODE(static Uint32 const s_event_type_name_count = sizeof(s_event_type_name) / sizeof(std::string));
-    ASSERT1(static_cast<Uint32>(event_type) < s_event_type_name_count)
+    ASSERT1(static_cast<Uint32>(event_type) < s_event_type_name_count);
     return s_event_type_name[static_cast<Uint32>(event_type)];
 }
 
@@ -59,9 +59,9 @@ Event *Event::CreateEventFromSDLEvent (
     Screen const *const screen,
     Float const time)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(screen != NULL)
-    ASSERT1(time >= 0.0)
+    ASSERT1(e != NULL);
+    ASSERT1(screen != NULL);
+    ASSERT1(time >= 0.0);
 
     Event *retval = NULL;
 
@@ -197,11 +197,11 @@ Event *Event::CreateEventFromSDLEvent (
             ASSERT1(false &&
                     "Bad! BAD human! you shouldn't be making "
                     "SDL_USEREVENTs.  Create a subclass "
-                    "of EventCustom instead.")
+                    "of EventCustom instead.");
             break;
 
         default:
-            ASSERT1(false && "Unknown event type")
+            ASSERT1(false && "Unknown event type");
             break;
     }
 
@@ -216,14 +216,14 @@ EventCustom::~EventCustom () { }
 
 bool MatchEventType (Event const *event, Event::EventType const event_type)
 {
-    ASSERT1(event != NULL)
+    ASSERT1(event != NULL);
 
     return event->GetEventType() == event_type;
 }
 
 bool MatchCustomType (Event const *event, EventCustom::CustomType const custom_type)
 {
-    ASSERT1(event != NULL)
+    ASSERT1(event != NULL);
 
     return dynamic_cast<EventCustom const *>(event) != NULL &&
            static_cast<EventCustom const *>(event)->GetCustomType() == custom_type;

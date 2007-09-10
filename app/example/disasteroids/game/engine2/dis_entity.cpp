@@ -26,8 +26,8 @@ Entity::Entity (EntityType const entity_type, CollisionType const collision_type
     m_entity_type(entity_type),
     m_collision_type(collision_type)
 {
-    ASSERT1(m_entity_type < ET_COUNT)
-    ASSERT1(m_collision_type < CT_COUNT)
+    ASSERT1(m_entity_type < ET_COUNT);
+    ASSERT1(m_collision_type < CT_COUNT);
     m_next_time_to_think = 0.0f;
     m_elasticity = 1.0f;
     m_first_moment = 1.0f;
@@ -103,10 +103,10 @@ void Entity::ApplyInterceptCourseAcceleration (
     bool const reverse_thrust,
     Polynomial::SolutionSet *const solution_set)
 {
-    ASSERT1(target != NULL)
-    ASSERT1(maximum_thrust_force > 0.0f)
-    ASSERT1(solution_set != NULL)
-    ASSERT1(solution_set->empty())
+    ASSERT1(target != NULL);
+    ASSERT1(maximum_thrust_force > 0.0f);
+    ASSERT1(solution_set != NULL);
+    ASSERT1(solution_set->empty());
 
     FloatVector2 p1(
         target->GetObjectLayer()->GetAdjustedCoordinates(
@@ -186,7 +186,7 @@ Engine2::Entity *Entity::Create (Serializer &serializer)
 {
     return NULL; // TEMP
     /*
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Engine2::Entity *retval;
     EntityType entity_type = ReadEntityType(serializer);
@@ -268,15 +268,15 @@ Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time
 
 EntityType Entity::ReadEntityType (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(ET_COUNT < 0x100)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(ET_COUNT < 0x100);
     return static_cast<EntityType>(serializer.ReadUint8());
 }
 
 void Entity::WriteEntityType (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(ET_COUNT < 0x100)
+    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(ET_COUNT < 0x100);
     serializer.WriteUint8(static_cast<Uint8>(m_entity_type));
 }
 

@@ -86,7 +86,7 @@ public:
       */
     inline Float GetEventTime () const
     {
-        ASSERT1(m_event_dt >= 0.0)
+        ASSERT1(m_event_dt >= 0.0);
         return m_current_event_time;
     }
     /** This function may only be called from within HandleEvent,
@@ -96,7 +96,7 @@ public:
       */
     inline Float GetEventDT () const
     {
-        ASSERT1(m_event_dt >= 0.0)
+        ASSERT1(m_event_dt >= 0.0);
         return m_event_dt;
     }
 

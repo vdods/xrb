@@ -159,11 +159,11 @@ Demi::Demi (Uint8 const enemy_level)
 Demi::~Demi ()
 {
     // delete the main weapons
-    ASSERT1(m_gauss_gun != NULL)
+    ASSERT1(m_gauss_gun != NULL);
     Delete(m_gauss_gun);
-    ASSERT1(m_flame_thrower != NULL)
+    ASSERT1(m_flame_thrower != NULL);
     Delete(m_flame_thrower);
-    ASSERT1(m_missile_launcher != NULL)
+    ASSERT1(m_missile_launcher != NULL);
     Delete(m_missile_launcher);
     if (m_reticle_effect.GetIsValid())
     {
@@ -173,11 +173,11 @@ Demi::~Demi ()
     }
 
     // delete the port weapons
-    ASSERT1(m_port_tractor != NULL)
+    ASSERT1(m_port_tractor != NULL);
     Delete(m_port_tractor);
-    ASSERT1(m_port_flame_thrower != NULL)
+    ASSERT1(m_port_flame_thrower != NULL);
     Delete(m_port_flame_thrower);
-    ASSERT1(m_port_missile_launcher != NULL)
+    ASSERT1(m_port_missile_launcher != NULL);
     Delete(m_port_missile_launcher);
     if (m_port_tractor_beam.GetIsValid())
     {
@@ -187,11 +187,11 @@ Demi::~Demi ()
     }
 
     // delete the starboard weapons
-    ASSERT1(m_starboard_tractor != NULL)
+    ASSERT1(m_starboard_tractor != NULL);
     Delete(m_starboard_tractor);
-    ASSERT1(m_starboard_flame_thrower != NULL)
+    ASSERT1(m_starboard_flame_thrower != NULL);
     Delete(m_starboard_flame_thrower);
-    ASSERT1(m_starboard_missile_launcher != NULL)
+    ASSERT1(m_starboard_missile_launcher != NULL);
     Delete(m_starboard_missile_launcher);
     if (m_starboard_tractor_beam.GetIsValid())
     {
@@ -201,11 +201,11 @@ Demi::~Demi ()
     }
 
     // delete the aft weapons
-    ASSERT1(m_aft_enemy_spawner != NULL)
+    ASSERT1(m_aft_enemy_spawner != NULL);
     Delete(m_aft_enemy_spawner);
-    ASSERT1(m_aft_flame_thrower != NULL)
+    ASSERT1(m_aft_flame_thrower != NULL);
     Delete(m_aft_flame_thrower);
-    ASSERT1(m_aft_missile_launcher != NULL)
+    ASSERT1(m_aft_missile_launcher != NULL);
     Delete(m_aft_missile_launcher);
 }
 
@@ -400,7 +400,7 @@ void Demi::Die (
 
 FloatVector2 Demi::GetMuzzleLocation (Weapon const *weapon) const
 {
-    ASSERT1(weapon != NULL)
+    ASSERT1(weapon != NULL);
     if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher)
     {
         return EnemyShip::GetMuzzleLocation(weapon);
@@ -419,7 +419,7 @@ FloatVector2 Demi::GetMuzzleLocation (Weapon const *weapon) const
     }
     else
     {
-        ASSERT1(false && "Unknown weapon")
+        ASSERT1(false && "Unknown weapon");
         return FloatVector2::ms_zero;
     }
 }
@@ -464,21 +464,21 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
     }
     else
     {
-        ASSERT1(false && "Unknown weapon")
+        ASSERT1(false && "Unknown weapon");
         return FloatVector2::ms_zero;
     }
 }
 
 bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
 {
-    ASSERT1(powerup != NULL)
+    ASSERT1(powerup != NULL);
 
     // just suck up all powerups, to piss off the player
 
     // health powerups heal
     if (powerup->GetItemType() == IT_POWERUP_HEALTH)
     {
-        ASSERT1(powerup->GetItem() == NULL)
+        ASSERT1(powerup->GetItem() == NULL);
         Heal(
             powerup,
             powerup,
@@ -520,7 +520,7 @@ void Demi::ResetInputs ()
 
 void Demi::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_target.GetIsValid())
+    ASSERT1(!m_target.GetIsValid());
 
     m_main_weapon = NULL;
     m_port_weapon = NULL;
@@ -540,7 +540,7 @@ void Demi::PickWanderDirection (Float const time, Float const frame_dt)
 
 void Demi::Wander (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_target.GetIsValid())
+    ASSERT1(!m_target.GetIsValid());
 
     static Float const s_scan_radius = 400.0f;
 
@@ -559,7 +559,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // if this entity is a solitary, set m_target and transition
         // to GaussGunStartAim
@@ -661,22 +661,22 @@ void Demi::Stalk (Float const time, Float const frame_dt)
         transition_total_weight = s_transition_far_total_weight[GetEnemyLevel()];
     }
 
-    ASSERT1(transition != NULL)
-    ASSERT1(transition_count > 0)
-    ASSERT1(transition_total_weight > 0)
+    ASSERT1(transition != NULL);
+    ASSERT1(transition_count > 0);
+    ASSERT1(transition_total_weight > 0);
 
     Uint32 seed = Math::RandomUint16() % transition_total_weight;
     Uint32 i;
     for (i = 0; i < transition_count; seed -= transition[i].m_weight, ++i)
     {
-        ASSERT1(seed < transition_total_weight)
+        ASSERT1(seed < transition_total_weight);
         if (seed < transition[i].m_weight)
         {
             m_think_state = transition[i].m_think_state;
             break;
         }
     }
-    ASSERT1(i < transition_count)
+    ASSERT1(i < transition_count);
 }
 
 void Demi::PauseStart (Float const time, Float const frame_dt)
@@ -711,7 +711,7 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
             m_target->GetTranslation(),
             GetTranslation()));
     m_charge_velocity = target_position - GetTranslation();
-    ASSERT1(!m_charge_velocity.GetIsZero())
+    ASSERT1(!m_charge_velocity.GetIsZero());
     m_charge_velocity.Normalize();
     m_charge_velocity *= 300.0f;
 
@@ -782,7 +782,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     // record the time we picked where to aim
     m_start_time = time;
 
-    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld())
+    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld());
     // ensure the reticle effect is allocated (lazy allocation)
     if (!m_reticle_effect.GetIsValid())
         m_reticle_effect =
@@ -793,7 +793,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     // if the reticle effect is already allocated but not in the world, re-add it.
     else if (!m_reticle_effect->GetIsInWorld())
         m_reticle_effect->AddBackIntoWorld();
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
 
     // initialize the reticle coordinates
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
@@ -808,12 +808,12 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
 
 void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
-    ASSERT1(m_main_weapon == m_gauss_gun)
+    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_main_weapon == m_gauss_gun);
 
     if (!m_target.GetIsValid() || m_target->GetIsDead())
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -844,7 +844,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
         time > m_start_time + ms_gauss_gun_max_duration[GetEnemyLevel()])
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_think_state = THINK_STATE(PauseStart);
         return;
@@ -855,7 +855,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()] *
         (1.0f - 0.5f * distance_parameter));
 
-    ASSERT1(ms_gauss_gun_aim_error_radius[GetEnemyLevel()] > 0.0f)
+    ASSERT1(ms_gauss_gun_aim_error_radius[GetEnemyLevel()] > 0.0f);
     if (reticle_target_distance <= ms_gauss_gun_aim_error_radius[GetEnemyLevel()])
     {
         m_think_state = THINK_STATE(GaussGunFire);
@@ -872,7 +872,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
 
 void Demi::GaussGunFire (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
     m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 
     if (!m_target.GetIsValid() || m_target->GetIsDead())
@@ -1133,9 +1133,9 @@ void Demi::SpinningInterloperSpawn (Float const time, Float const frame_dt)
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
     m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
-    ASSERT1(v > 0.0f)
+    ASSERT1(v > 0.0f);
     m_spin_duration = (360.0f - 2.0f * m_spin_accelerate_through_angle) / v;
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
@@ -1153,9 +1153,9 @@ void Demi::SpinningShadeSpawn (Float const time, Float const frame_dt)
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
     m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
-    ASSERT1(v > 0.0f)
+    ASSERT1(v > 0.0f);
     m_spin_duration = (360.0f - 2.0f * m_spin_accelerate_through_angle) / v;
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
@@ -1173,9 +1173,9 @@ void Demi::SpinningRevulsionSpawn (Float const time, Float const frame_dt)
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
     m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
-    ASSERT1(v > 0.0f)
+    ASSERT1(v > 0.0f);
     m_spin_duration = (360.0f - 2.0f * m_spin_accelerate_through_angle) / v;
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
@@ -1201,7 +1201,7 @@ void Demi::SpinningAttackStart (Float const time, Float const frame_dt)
 void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
 {
     // if we're done accelerating the spin, transition to SpinningAttackFire
-    ASSERT1(m_spin_acceleration_duration >= 0.0f)
+    ASSERT1(m_spin_acceleration_duration >= 0.0f);
     if (time >= m_start_time + m_spin_acceleration_duration)
     {
         m_start_time = time;
@@ -1212,8 +1212,8 @@ void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
     // calculate the angular acceleration (we want to accelerate
     // through one whole revolution up to the spinning speed).
     // accel = 2*angle/T^2
-    ASSERT1(m_spin_accelerate_through_angle > 0.0f)
-    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    ASSERT1(m_spin_accelerate_through_angle > 0.0f);
+    ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float const angular_acceleration =
         m_spin_direction * 2.0f * m_spin_accelerate_through_angle /
         (m_spin_acceleration_duration * m_spin_acceleration_duration);
@@ -1224,7 +1224,7 @@ void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
 void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
 {
     // if we're done firing, start decelerating
-    ASSERT1(m_spin_duration >= 0.0f)
+    ASSERT1(m_spin_duration >= 0.0f);
     if (time >= m_start_time + m_spin_duration)
     {
         m_start_time = time;
@@ -1252,7 +1252,7 @@ void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
 void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
 {
     // if we're done decelerating the spin, we're done with this attack
-    ASSERT1(m_spin_acceleration_duration >= 0.0f)
+    ASSERT1(m_spin_acceleration_duration >= 0.0f);
     if (time >= m_start_time + m_spin_acceleration_duration)
     {
         SetAngularVelocity(0.0f);
@@ -1265,8 +1265,8 @@ void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
 
     // calculate the angular deceleration (we want to decelerate
     // through one whole revolution down to 0 angular speed).
-    ASSERT1(m_spin_accelerate_through_angle > 0.0f)
-    ASSERT1(m_spin_acceleration_duration > 0.0f)
+    ASSERT1(m_spin_accelerate_through_angle > 0.0f);
+    ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float const angular_acceleration =
         -m_spin_direction * 2.0f * m_spin_accelerate_through_angle /
         (m_spin_acceleration_duration * m_spin_acceleration_duration);
@@ -1447,7 +1447,7 @@ Entity *Demi::FindTractorDeflectTarget (
          ++it)
     {
         Entity *entity = *it;
-        ASSERT1(entity != NULL)
+        ASSERT1(entity != NULL);
 
         // we don't want to deflect ourselves (it would cancel out anyway)
         if (entity == this)

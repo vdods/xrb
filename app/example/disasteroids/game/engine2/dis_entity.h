@@ -48,8 +48,8 @@ public:
         if (!m_reference.GetIsValid())
         {
             m_reference.SetInstance(new EntityInstance(this));
-            ASSERT1(m_reference.GetIsValid())
-            ASSERT1(*m_reference == this)
+            ASSERT1(m_reference.GetIsValid());
+            ASSERT1(*m_reference == this);
         }
         return m_reference;
     }
@@ -99,42 +99,42 @@ public:
     }
     inline void SetElasticity (Float const elasticity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity));
         m_elasticity = (elasticity >= 0.0f) ? elasticity : 0.0f;
     }
     inline void SetFirstMoment (Float const first_moment)
     {
-        ASSERT1(first_moment > 0.0f)
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(first_moment))
+        ASSERT1(first_moment > 0.0f);
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(first_moment));
         m_first_moment = first_moment;
     }
     inline void SetVelocity (FloatVector2 const &velocity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity = velocity;
     }
     inline void SetVelocityComponent (Uint32 const index, Float const value)
     {
-        ASSERT1(index <= 1)
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value))
+        ASSERT1(index <= 1);
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value));
         m_velocity[index] = value;
     }
     inline void SetMomentum (FloatVector2 const &momentum)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::Y]));
         m_velocity = momentum / m_first_moment;
     }
     inline void SetForce (FloatVector2 const &force)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]));
         m_force = force;
     }
     inline void SetAngularVelocity (Float const angular_velocity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity));
         m_angular_velocity = angular_velocity;
     }
 
@@ -145,22 +145,22 @@ public:
     // adds the given vector to the velocity
     inline void AccumulateVelocity (FloatVector2 const &velocity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity += velocity;
     }
     // accumulates velocity, given a momentum impulse
     inline void AccumulateMomentum (FloatVector2 const &momentum_impulse)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::Y]));
         m_velocity += momentum_impulse / m_first_moment;
     }
     // adds the given vector to the accumulating force vector for this frame
     inline void AccumulateForce (FloatVector2 const &force)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]))
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]));
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]));
         m_force += force;
     }
     // resets the force vector to zero
@@ -171,7 +171,7 @@ public:
     // adds the given value to the angular velocity
     inline void AccumulateAngularVelocity (Float const angular_velocity)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity));
         m_angular_velocity += angular_velocity;
     }
 

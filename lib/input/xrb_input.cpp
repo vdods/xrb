@@ -48,7 +48,7 @@ Key const *Input::GetKey (Key::Code const code) const
         return NULL;
     else
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         return it->second;
     }
 }
@@ -60,7 +60,7 @@ Key const *Input::GetKey (std::string const &name) const
         return NULL;
     else
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         return it->second;
     }
 }
@@ -82,7 +82,7 @@ Key::Code Input::GetKeyCode (std::string const &name) const
         return Key::INVALID;
     else
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         return it->second->GetCode();
     }
 }
@@ -94,7 +94,7 @@ std::string const &Input::GetKeyName (Key::Code const code) const
         return g_empty_string;
     else
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         return it->second->GetName();
     }
 }
@@ -157,14 +157,14 @@ void Input::ResetPressed ()
          it != it_end;
          ++it)
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         it->second->ResetPressed();
     }
 }
 
 bool Input::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     Key::Code code;
     switch (e->GetEventType())
@@ -200,7 +200,7 @@ bool Input::HandleEvent (Event const *const e)
     KeyCodeMapConstIterator it = m_keycode_map.find(code);
     if (it != m_keycode_map.end())
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         return it->second->ProcessEvent(e);
     }
     // unknown key/mousebutton (this should never happen but it does)
@@ -440,7 +440,7 @@ void Input::InitKeyMaps ()
          it != it_end;
          ++it)
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         m_keyname_map[it->second->GetName()] = it->second;
     }
 }

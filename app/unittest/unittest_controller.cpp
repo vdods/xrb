@@ -35,8 +35,8 @@ UnitTestController::~UnitTestController ()
 
 void UnitTestController::RegisterUnitTest (UnitTest *unit_test)
 {
-    ASSERT1(unit_test != NULL)
-    ASSERT1(!m_command_line_options_generated && "You must not call GenerateCommandLineOptions() before any call to RegisterUnitTest()")
+    ASSERT1(unit_test != NULL);
+    ASSERT1(!m_command_line_options_generated && "You must not call GenerateCommandLineOptions() before any call to RegisterUnitTest()");
 
     UnitTestMapIterator it = m_unit_test_map.find(unit_test->GetName());
     UnitTestMapIterator it_end = m_unit_test_map.end();
@@ -56,7 +56,7 @@ void UnitTestController::PrintHelpMessage (char const *executable_name)
 
 void UnitTestController::RunTests (int argc, char **argv)
 {
-    ASSERT1(m_command_line_options_generated && "You must call GenerateCommandLineOptions() before any call to RunTests()")
+    ASSERT1(m_command_line_options_generated && "You must call GenerateCommandLineOptions() before any call to RunTests()");
 
     m_failure_count = 0;
 
@@ -66,7 +66,7 @@ void UnitTestController::RunTests (int argc, char **argv)
          ++it)
     {
         UnitTest *unit_test = it->second;
-        ASSERT1(unit_test != NULL)
+        ASSERT1(unit_test != NULL);
         printf("//////////////////////////////////////////////////////////////////////////////\n");
         printf("// Running test \"%s\"\n", unit_test->GetName().c_str());
         printf("//////////////////////////////////////////////////////////////////////////////\n\n");

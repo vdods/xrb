@@ -121,53 +121,53 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
 
 ScreenCoordVector2 OptionsPanel::GetResolution () const
 {
-    ASSERT1(m_resolution_x_edit != NULL)
-    ASSERT1(m_resolution_y_edit != NULL)
+    ASSERT1(m_resolution_x_edit != NULL);
+    ASSERT1(m_resolution_y_edit != NULL);
     return ScreenCoordVector2(m_resolution_x_edit->GetValue(), m_resolution_y_edit->GetValue());
 }
 
 bool OptionsPanel::GetFullscreen () const
 {
-    ASSERT1(m_fullscreen_checkbox != NULL)
+    ASSERT1(m_fullscreen_checkbox != NULL);
     return m_fullscreen_checkbox->GetIsChecked();
 }
 
 DifficultyLevel OptionsPanel::GetDifficultyLevel () const
 {
-    ASSERT1(m_difficulty_level.GetID() >= DL_LOWEST)
-    ASSERT1(m_difficulty_level.GetID() <= DL_HIGHEST)
+    ASSERT1(m_difficulty_level.GetID() >= DL_LOWEST);
+    ASSERT1(m_difficulty_level.GetID() <= DL_HIGHEST);
     return m_difficulty_level.GetID();
 }
 
 Key::Code OptionsPanel::GetInputActionKeyCode (KeyInputAction const input_action) const
 {
-    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT)
-    ASSERT1(m_input_action_button[input_action] != NULL)
+    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
+    ASSERT1(m_input_action_button[input_action] != NULL);
     return m_input_action_button[input_action]->GetKeyCode();
 }
 
 void OptionsPanel::SetResolutionX (ScreenCoord const resolution_x)
 {
-    ASSERT1(m_resolution_x_edit != NULL)
+    ASSERT1(m_resolution_x_edit != NULL);
     m_resolution_x_edit->SetValue(resolution_x);
 }
 
 void OptionsPanel::SetResolutionY (ScreenCoord const resolution_y)
 {
-    ASSERT1(m_resolution_y_edit != NULL)
+    ASSERT1(m_resolution_y_edit != NULL);
     m_resolution_y_edit->SetValue(resolution_y);
 }
 
 void OptionsPanel::SetFullscreen (bool const fullscreen)
 {
-    ASSERT1(m_fullscreen_checkbox != NULL)
+    ASSERT1(m_fullscreen_checkbox != NULL);
     m_fullscreen_checkbox->SetIsChecked(fullscreen);
 }
 
 void OptionsPanel::SetDifficultyLevel (DifficultyLevel const difficulty_level)
 {
-    ASSERT1(difficulty_level >= DL_LOWEST)
-    ASSERT1(difficulty_level <= DL_HIGHEST)
+    ASSERT1(difficulty_level >= DL_LOWEST);
+    ASSERT1(difficulty_level <= DL_HIGHEST);
     m_difficulty_level.SetID(difficulty_level);
 }
 
@@ -175,8 +175,8 @@ void OptionsPanel::SetInputActionKeyCode (
     KeyInputAction const input_action,
     Key::Code const key_code)
 {
-    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT)
-    ASSERT1(m_input_action_button[input_action] != NULL)
+    ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
+    ASSERT1(m_input_action_button[input_action] != NULL);
     m_input_action_button[input_action]->SetKeyCode(key_code);
 }
 
@@ -195,7 +195,7 @@ void OptionsPanel::ReadValuesFromConfig (Config const &config)
 
 void OptionsPanel::WriteValuesToConfig (Config *const config)
 {
-    ASSERT1(config != NULL)
+    ASSERT1(config != NULL);
 
     config->SetResolutionX(GetResolution()[Dim::X]);
     config->SetResolutionY(GetResolution()[Dim::Y]);

@@ -119,17 +119,17 @@ protected:
 
     inline void IncrementCacheByteIndex (Uint32 requested_byte_count)
     {
-        ASSERT1(GetIsCacheBitIndexOnByteBoundary())
+        ASSERT1(GetIsCacheBitIndexOnByteBoundary());
         ASSERT1(GetCacheByteIndex() + requested_byte_count
                 <=
-                m_next_available_cache_byte_index)
+                m_next_available_cache_byte_index);
         m_cache_bit_index += requested_byte_count << 3;
     }
     inline void IncrementCacheBitIndex (Uint32 requested_bit_count)
     {
         ASSERT1(m_cache_bit_index + requested_bit_count
                 <=
-                GetNextAvailableCacheBitIndex())
+                GetNextAvailableCacheBitIndex());
         m_cache_bit_index += requested_bit_count;
     }
 

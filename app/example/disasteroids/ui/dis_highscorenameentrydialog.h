@@ -35,7 +35,7 @@ public:
 
     inline std::string const &GetName () const
     {
-        ASSERT1(m_name_edit != NULL)
+        ASSERT1(m_name_edit != NULL);
         return m_name_edit->GetText();
     }
 

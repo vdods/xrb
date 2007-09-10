@@ -204,7 +204,7 @@ bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
 
 bool WorldView::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
 
     if (e->GetEventType() == Event::STATE_MACHINE_INPUT)
     {
@@ -274,7 +274,7 @@ void WorldView::HandleFrame ()
 
             if (m_is_view_recovering && m_recover_parameter < 1.0f)
             {
-                ASSERT1(m_recover_parameter >= 0.0f)
+                ASSERT1(m_recover_parameter >= 0.0f);
                 SetCenter(
                     m_calculated_view_center * (1.0f - m_recover_parameter) +
                     traveling_at * m_recover_parameter);
@@ -527,7 +527,7 @@ void WorldView::BeginOutro ()
 
 void WorldView::InitiateZoom (Float const target_zoom_factor, Float const zoom_duration, bool const signal_alert_zoom_done)
 {
-    ASSERT1(target_zoom_factor > 0.0f)
+    ASSERT1(target_zoom_factor > 0.0f);
     m_zoom_factor_begin = GetZoomFactor();
     m_zoom_factor_end = target_zoom_factor;
     m_zoom_time_total = zoom_duration;
@@ -537,8 +537,8 @@ void WorldView::InitiateZoom (Float const target_zoom_factor, Float const zoom_d
 
 void WorldView::ProcessZoom (Float const frame_dt)
 {
-    ASSERT1(m_zoom_factor_begin > 0.0f)
-    ASSERT1(m_zoom_factor_end > 0.0f)
+    ASSERT1(m_zoom_factor_begin > 0.0f);
+    ASSERT1(m_zoom_factor_end > 0.0f);
 
     // don't adjust the zoom while in debug mode
     if (m_is_debug_mode_enabled)
@@ -558,8 +558,8 @@ void WorldView::ProcessZoom (Float const frame_dt)
     }
     else
     {
-        ASSERT1(m_zoom_time_total > 0.0f)
-        ASSERT1(m_zoom_time_left <= m_zoom_time_total)
+        ASSERT1(m_zoom_time_total > 0.0f);
+        ASSERT1(m_zoom_time_left <= m_zoom_time_total);
         Float parameter = 1.0f - m_zoom_time_left / m_zoom_time_total;
         SetZoomFactor(m_zoom_factor_begin * (1.0f - parameter) + m_zoom_factor_end * parameter);
         m_zoom_time_left -= frame_dt;
@@ -582,8 +582,8 @@ void WorldView::ProcessSpin (Float const frame_dt)
     if (m_spin_time_left == 0.0f)
         m_spin_time_total = 1.0f;
 
-    ASSERT1(m_spin_time_total > 0.0f)
-    ASSERT1(m_spin_time_left <= m_spin_time_total)
+    ASSERT1(m_spin_time_total > 0.0f);
+    ASSERT1(m_spin_time_left <= m_spin_time_total);
     Float parameter = 1.0f - m_spin_time_left / m_spin_time_total;
     RotateView(frame_dt * (m_spin_rate_begin * (1.0f - parameter) + m_spin_rate_end * parameter));
     m_spin_time_left -= frame_dt;
@@ -605,8 +605,8 @@ void WorldView::ProcessFade (Float const frame_dt)
     if (m_fade_time_left == 0.0f)
         m_fade_time_total = 1.0f;
 
-    ASSERT1(m_fade_time_total > 0.0f)
-    ASSERT1(m_fade_time_left <= m_fade_time_total)
+    ASSERT1(m_fade_time_total > 0.0f);
+    ASSERT1(m_fade_time_left <= m_fade_time_total);
     Float parameter = 1.0f - m_fade_time_left / m_fade_time_total;
     Float alpha = m_fade_alpha_begin * (1.0f - parameter) + m_fade_alpha_end * parameter;
     GetParentWorldViewWidget()->SetColorMask(Color(alpha, alpha, alpha, 1.0f));

@@ -38,8 +38,8 @@ EventHandler::~EventHandler ()
 
 bool EventHandler::ProcessEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(!e->GetIsScheduledForDeletion())
+    ASSERT1(e != NULL);
+    ASSERT1(!e->GetIsScheduledForDeletion());
 
     // make sure that events show up "in order", even if their times
     // aren't actually completely correct.
@@ -77,7 +77,7 @@ bool EventHandler::ProcessEvent (Event const *const e)
 
 void EventHandler::EnqueueEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     ASSERT0(m_owner_event_queue != NULL);
     m_owner_event_queue->EnqueueEvent(this, e);
 }

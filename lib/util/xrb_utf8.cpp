@@ -35,7 +35,7 @@ F4          80-8F       80-BF       80-BF
 
 char const *UTF8::GetNextCharacter (char const *current)
 {
-    ASSERT1(current != NULL)
+    ASSERT1(current != NULL);
 
     Uint8 const *bytes = reinterpret_cast<Uint8 const *>(current);
     if (*bytes == 0x00)
@@ -60,7 +60,7 @@ bool UTF8::GetAreCharactersEqual (char const *const c0, char const *const c1)
 
 Uint32 UTF8::GetUnicode (char const *sequence)
 {
-    ASSERT1(sequence != NULL)
+    ASSERT1(sequence != NULL);
 
     Uint8 const *bytes = reinterpret_cast<Uint8 const *>(sequence);
     // quickly dispatch regular ASCII (one-byte sequences).
@@ -160,7 +160,7 @@ Uint32 UTF8::GetUnicode (char const *sequence)
 
 void UTF8::AppendSequence (std::string *const dest, Uint32 const unicode)
 {
-    ASSERT1(dest != NULL)
+    ASSERT1(dest != NULL);
 
     if (unicode < 0x80)
     {

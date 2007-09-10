@@ -37,7 +37,7 @@ MapEditor2::Object *MapEditor2::Object::Create (Serializer &serializer)
     switch (sub_type)
     {
         case ST_OBJECT:
-            ASSERT1(false && "Invalid object type -- Object is abstract")
+            ASSERT1(false && "Invalid object type -- Object is abstract");
             retval = NULL;
             break;
 
@@ -58,7 +58,7 @@ MapEditor2::Object *MapEditor2::Object::Create (Serializer &serializer)
             break;
 
         default:
-            ASSERT1(false && "Invalid object type")
+            ASSERT1(false && "Invalid object type");
             retval = NULL;
             break;
     }
@@ -69,14 +69,14 @@ MapEditor2::Object *MapEditor2::Object::Create (Serializer &serializer)
 MapEditor2::ObjectLayer *MapEditor2::Object::GetMapEditorObjectLayer () const
 {
     if (GetObjectLayer() != NULL)
-        ASSERT1(dynamic_cast<ObjectLayer *>(GetObjectLayer()) != NULL)
+        ASSERT1(dynamic_cast<ObjectLayer *>(GetObjectLayer()) != NULL);
     return static_cast<ObjectLayer *>(GetObjectLayer());
 }
 
 MapEditor2::VisibilityQuadTree *MapEditor2::Object::GetOwnerMapEditorQuadTree () const
 {
     if (GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL)
-        ASSERT1(dynamic_cast<VisibilityQuadTree *>(GetOwnerQuadTree(Engine2::QTT_VISIBILITY)) != NULL)
+        ASSERT1(dynamic_cast<VisibilityQuadTree *>(GetOwnerQuadTree(Engine2::QTT_VISIBILITY)) != NULL);
     return static_cast<VisibilityQuadTree *>(GetOwnerQuadTree(Engine2::QTT_VISIBILITY));
 }
 
@@ -247,7 +247,7 @@ void MapEditor2::Object::ObjectSelectionSetRotate (
 void MapEditor2::Object::ReAddMapEditorObjectToQuadTree (
     Engine2::QuadTreeType const quad_tree_type)
 {
-    ASSERT1(GetOwnerQuadTree(quad_tree_type) != NULL)
+    ASSERT1(GetOwnerQuadTree(quad_tree_type) != NULL);
     GetObjectLayer()->HandleContainmentOrWrapping(this);
     GetOwnerQuadTree(quad_tree_type)->ReAddObject(this);
 }
@@ -273,27 +273,27 @@ MapEditor2::Object::Object ()
 
 void MapEditor2::Object::AddToObjectSelectionSet ()
 {
-    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL)
-    ASSERT1(GetObjectLayer() != NULL)
-    ASSERT1(!m_is_selected)
+    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
+    ASSERT1(GetObjectLayer() != NULL);
+    ASSERT1(!m_is_selected);
     ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
-    ASSERT1(map_editor_object_layer != NULL)
+    ASSERT1(map_editor_object_layer != NULL);
     DEBUG1_CODE(bool add_success =)
     map_editor_object_layer->AddObjectToObjectSelectionSet(this);
-    ASSERT1(add_success)
+    ASSERT1(add_success);
     m_is_selected = true;
 }
 
 void MapEditor2::Object::RemoveFromObjectSelectionSet ()
 {
-    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL)
-    ASSERT1(GetObjectLayer() != NULL)
-    ASSERT1(m_is_selected)
+    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
+    ASSERT1(GetObjectLayer() != NULL);
+    ASSERT1(m_is_selected);
     ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
-    ASSERT1(map_editor_object_layer != NULL)
+    ASSERT1(map_editor_object_layer != NULL);
     DEBUG1_CODE(bool remove_success =)
     map_editor_object_layer->RemoveObjectFromObjectSelectionSet(this);
-    ASSERT1(remove_success)
+    ASSERT1(remove_success);
     m_is_selected = false;
 }
 

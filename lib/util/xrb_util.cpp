@@ -21,8 +21,8 @@ void Util::ReplaceAllInString (
     std::string const &string_to_replace,
     std::string const &string_to_replace_with)
 {
-    ASSERT1(string != NULL)
-    ASSERT1(string_to_replace.length() > 0)
+    ASSERT1(string != NULL);
+    ASSERT1(string_to_replace.length() > 0);
     Uint32 offset = 0;
     while (1)
     {
@@ -36,7 +36,7 @@ void Util::ReplaceAllInString (
 
 std::string Util::StringPrintf (char const *format, ...)
 {
-    ASSERT1(format != NULL)
+    ASSERT1(format != NULL);
 
     // temp buffer stuff until i figure out a better way
     char buffer[0x1000];
@@ -51,8 +51,8 @@ std::string Util::StringPrintf (char const *format, ...)
 
 void StringPrintf (std::string *const string, char const *const format, ...)
 {
-    ASSERT1(string != NULL)
-    ASSERT1(format != NULL)
+    ASSERT1(string != NULL);
+    ASSERT1(format != NULL);
 
     // temp buffer stuff until i figure out a better way
     char buffer[0x1000];
@@ -67,8 +67,8 @@ void StringPrintf (std::string *const string, char const *const format, ...)
 /*
 void Util::StringCopy (char *destination, char const *source, Uint32 destination_size)
 {
-    ASSERT1(destination != NULL)
-    ASSERT1(source != NULL)
+    ASSERT1(destination != NULL);
+    ASSERT1(source != NULL);
 
     strncpy(destination, source, destination_size);
     destination[destination_size-1] = '\0';
@@ -76,12 +76,12 @@ void Util::StringCopy (char *destination, char const *source, Uint32 destination
 */
 char *Util::StringDuplicate (char const *string_to_duplicate)
 {
-    ASSERT1(string_to_duplicate != NULL)
+    ASSERT1(string_to_duplicate != NULL);
 
     Uint32 length = strlen(string_to_duplicate);
     char *duplicated_string = new char[length + 1];
     memcpy(duplicated_string, string_to_duplicate, length + 1);
-    ASSERT1(duplicated_string[length] == '\0')
+    ASSERT1(duplicated_string[length] == '\0');
 
     return duplicated_string;
 }
@@ -104,7 +104,7 @@ char Util::Uppercase (char c)
 
 void Util::MakeLowercase (std::string *const str)
 {
-    ASSERT1(str != NULL)
+    ASSERT1(str != NULL);
     for (Uint32 i = 0; i < str->length(); ++i)
         if ((*str)[i] >= 'A' && (*str)[i] <= 'Z')
             (*str)[i] += 'a' - 'A';
@@ -112,7 +112,7 @@ void Util::MakeLowercase (std::string *const str)
 
 void Util::MakeUppercase (std::string *const str)
 {
-    ASSERT1(str != NULL)
+    ASSERT1(str != NULL);
     for (Uint32 i = 0; i < str->length(); ++i)
         if ((*str)[i] >= 'a' && (*str)[i] <= 'z')
             (*str)[i] += 'A' - 'a';
@@ -237,7 +237,7 @@ char const *Util::GetIOErrorString (IOError error)
         STRINGIFY(IOE_INVALID_FILE_OPEN_MODE)
     };
 
-    ASSERT1(error >= IOE_LOWEST_ERROR && error <= IOE_HIGHEST_ERROR)
+    ASSERT1(error >= IOE_LOWEST_ERROR && error <= IOE_HIGHEST_ERROR);
 
     return error_string[error];
 }

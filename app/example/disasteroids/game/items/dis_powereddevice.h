@@ -49,14 +49,14 @@ public:
 
     virtual void Equip (Ship *owner_ship)
     {
-        ASSERT1(owner_ship != NULL)
-        ASSERT1(m_owner_ship == NULL)
+        ASSERT1(owner_ship != NULL);
+        ASSERT1(m_owner_ship == NULL);
         m_owner_ship = owner_ship;
     }
     virtual void Unequip (Ship *owner_ship)
     {
-        ASSERT1(owner_ship == m_owner_ship)
-        ASSERT1(m_owner_ship != NULL)
+        ASSERT1(owner_ship == m_owner_ship);
+        ASSERT1(m_owner_ship != NULL);
         m_owner_ship = NULL;
     }
 

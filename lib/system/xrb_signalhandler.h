@@ -155,7 +155,7 @@ public:
 
     inline Attachment<ReceiverAnalog, TransformationSet> const &GetIteratorAttachment () const
     {
-        ASSERT1(m_iterator != m_iterator_end)
+        ASSERT1(m_iterator != m_iterator_end);
         return *m_iterator;
     }
     inline bool GetIsIteratorAttachmentValid () const
@@ -169,7 +169,7 @@ public:
     }
     inline void FetchNextIteratorAttachment () const
     {
-        ASSERT1(m_iterator != m_iterator_end)
+        ASSERT1(m_iterator != m_iterator_end);
         ++m_iterator;
     }
 
@@ -185,7 +185,7 @@ public:
              it != it_end;
              ++it)
         {
-            ASSERT1(it->m_receiver != NULL)
+            ASSERT1(it->m_receiver != NULL);
             it->m_receiver->DetachPrivate(this, false);
         }
         m_attachment_list.clear();
@@ -213,7 +213,7 @@ private:
         SignalReceiver<SenderAnalog> const *receiver,
         bool reciprocate) const
     {
-        ASSERT1(receiver != NULL)
+        ASSERT1(receiver != NULL);
         // upcast to the real type of ReceiverAnalog (technically invalid,
         // yes, but on the other hand, shut the hell up!)
         ReceiverAnalog const *real_receiver =
@@ -224,7 +224,7 @@ private:
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
                 real_receiver);
-        ASSERT1(it == m_attachment_list.end() && "receiver is already attached")
+        ASSERT1(it == m_attachment_list.end() && "receiver is already attached");
         // add it to the attachment list (this const_cast ugliness
         // is limited to this line only).
         m_attachment_list.push_back(
@@ -241,7 +241,7 @@ private:
         SignalReceiver<SenderAnalog> const *receiver,
         bool reciprocate) const
     {
-        ASSERT1(receiver != NULL)
+        ASSERT1(receiver != NULL);
         // upcast to the real type of ReceiverAnalog (technically invalid,
         // yes, but on the other hand, shut the hell up!)
         ReceiverAnalog const *real_receiver =
@@ -252,7 +252,7 @@ private:
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
                 real_receiver);
-        ASSERT1(it != m_attachment_list.end() && "non-existent receiver")
+        ASSERT1(it != m_attachment_list.end() && "non-existent receiver");
         // remove it from the attachment list
         m_attachment_list.erase(it);
         // if necessary, have the receiver reciprocate the detachment
@@ -346,7 +346,7 @@ public:
             Attachment<SignalReceiver1<T>, TransformationSet1<T> > const &attachment =
                 this->GetIteratorAttachment();
 
-            ASSERT1(attachment.m_receiver != NULL)
+            ASSERT1(attachment.m_receiver != NULL);
             // only proceed with the callback if this sender's owner isn't
             // blocking senders and this sender isn't blocking itself.
             // this code can't be above this for-loop because the blocking
@@ -427,7 +427,7 @@ public:
             Attachment<SignalReceiver2<T, U>, TransformationSet2<T, U> > const &attachment =
                 this->GetIteratorAttachment();
 
-            ASSERT1(attachment.m_receiver != NULL)
+            ASSERT1(attachment.m_receiver != NULL);
             // only proceed with the callback if this sender's owner isn't
             // blocking senders and this sender isn't blocking itself.
             // this code can't be above this for-loop because the blocking
@@ -565,7 +565,7 @@ public:
              ++it)
         {
             SenderAnalog const *sender = *it;
-            ASSERT1(sender != NULL)
+            ASSERT1(sender != NULL);
             sender->DetachPrivate(this, false);
         }
         m_attachment_list.clear();
@@ -584,7 +584,7 @@ private:
     void AttachPrivate (
         SignalSender<ReceiverAnalog, TransformationSet> const *sender) const
     {
-        ASSERT1(sender != NULL)
+        ASSERT1(sender != NULL);
         // upcast to the real type of SenderAnalog (technically invalid,
         // yes, but on the other hand, shut the hell up!)
         SenderAnalog const *real_sender =
@@ -595,7 +595,7 @@ private:
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
                 real_sender);
-        ASSERT1(it == m_attachment_list.end() && "sender is already attached")
+        ASSERT1(it == m_attachment_list.end() && "sender is already attached");
         // add it to the attachment list
         m_attachment_list.push_back(real_sender);
     }
@@ -605,7 +605,7 @@ private:
         SignalSender<ReceiverAnalog, TransformationSet> const *sender,
         bool reciprocate) const
     {
-        ASSERT1(sender != NULL)
+        ASSERT1(sender != NULL);
         // upcast to the real type of SenderAnalog (technically invalid,
         // yes, but on the other hand, shut the hell up!)
         SenderAnalog const *real_sender =
@@ -616,7 +616,7 @@ private:
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
                 real_sender);
-        ASSERT1(it != m_attachment_list.end() && "non-existent sender")
+        ASSERT1(it != m_attachment_list.end() && "non-existent sender");
         // remove it from the attachment list
         m_attachment_list.erase(it);
         // if necessary, have the sender reciprocate the detachment
@@ -645,7 +645,7 @@ public:
         :
         SignalReceiver<SignalSender0>(owner)
     {
-        ASSERT1(callback != NULL)
+        ASSERT1(callback != NULL);
         m_callback = static_cast<CallbackType>(callback);
     }
 
@@ -671,7 +671,7 @@ public:
         :
         SignalReceiver<SignalSender1<T> >(owner)
     {
-        ASSERT1(callback != NULL)
+        ASSERT1(callback != NULL);
         m_callback = static_cast<CallbackType>(callback);
     }
 
@@ -697,7 +697,7 @@ public:
         :
         SignalReceiver<SignalSender2<T, U> >(owner)
     {
-        ASSERT1(callback != NULL)
+        ASSERT1(callback != NULL);
         m_callback = static_cast<CallbackType>(callback);
     }
 
@@ -792,8 +792,8 @@ public:
         SignalSender0 const *sender,
         SignalReceiver0 const *receiver)
     {
-        ASSERT1(sender != NULL)
-        ASSERT1(receiver != NULL)
+        ASSERT1(sender != NULL);
+        ASSERT1(receiver != NULL);
         sender->Attach(TransformationSet0(), receiver);
     }
 
@@ -807,8 +807,8 @@ public:
         SignalSender1<T> const *sender,
         SignalReceiver1<T> const *receiver)
     {
-        ASSERT1(sender != NULL)
-        ASSERT1(receiver != NULL)
+        ASSERT1(sender != NULL);
+        ASSERT1(receiver != NULL);
         sender->Attach(TransformationSet1<T>(NULL), receiver);
     }
     /** @brief The official way to connect a SignalSender1<T> to a
@@ -826,8 +826,8 @@ public:
         T (*transformation_function)(T),
         SignalReceiver1<T> const *receiver)
     {
-        ASSERT1(sender != NULL)
-        ASSERT1(receiver != NULL)
+        ASSERT1(sender != NULL);
+        ASSERT1(receiver != NULL);
         sender->Attach(TransformationSet1<T>(transformation_function), receiver);
     }
 
@@ -841,8 +841,8 @@ public:
         SignalSender2<T, U> const *sender,
         SignalReceiver2<T, U> const *receiver)
     {
-        ASSERT1(sender != NULL)
-        ASSERT1(receiver != NULL)
+        ASSERT1(sender != NULL);
+        ASSERT1(receiver != NULL);
         sender->Attach(
             TransformationSet2<T, U>(NULL, NULL),
             receiver);
@@ -867,8 +867,8 @@ public:
         U (*transformation_function_2)(U),
         SignalReceiver2<T, U> const *receiver)
     {
-        ASSERT1(sender != NULL)
-        ASSERT1(receiver != NULL)
+        ASSERT1(sender != NULL);
+        ASSERT1(receiver != NULL);
         sender->Attach(
             TransformationSet2<T, U>(transformation_function_1, transformation_function_2),
             receiver);

@@ -55,7 +55,7 @@ namespace MapEditor2
         inline void SetSavedMainObjectLayer (
             ObjectLayer *const saved_main_object_layer)
         {
-            ASSERT1(saved_main_object_layer != NULL)
+            ASSERT1(saved_main_object_layer != NULL);
             m_saved_main_object_layer = saved_main_object_layer;
         }
     

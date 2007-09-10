@@ -219,14 +219,14 @@ MapEditor2::World *MapEditor2::WorldView::GetMapEditorWorld () const
 
 std::string MapEditor2::WorldView::GetCurrentGridScaleText () const
 {
-    ASSERT1(m_grid_number_base != 0)
+    ASSERT1(m_grid_number_base != 0);
     Float numerator = 0.5f * GetMainObjectLayer()->GetSideLength();
     Float denominator = 
         Math::Pow(
             static_cast<Float>(m_grid_number_base), 
             static_cast<Float>(m_current_grid_scale + 1));
-    ASSERT1(numerator != 0.0f)
-    ASSERT1(denominator != 0.0f)
+    ASSERT1(numerator != 0.0f);
+    ASSERT1(denominator != 0.0f);
     if (numerator >= denominator)
     {
         numerator /= denominator;
@@ -241,7 +241,7 @@ std::string MapEditor2::WorldView::GetCurrentGridScaleText () const
 
 std::string MapEditor2::WorldView::GetPolygonTesselationText () const
 {
-    ASSERT1(m_polygon_tesselation >= 3)
+    ASSERT1(m_polygon_tesselation >= 3);
     return Util::StringPrintf("%u", m_polygon_tesselation);
 }
 
@@ -300,7 +300,7 @@ void MapEditor2::WorldView::SetTransformationMode (
                 break;
 
             default:
-                ASSERT1(false && "Invalid Object::TransformationMode")
+                ASSERT1(false && "Invalid Object::TransformationMode");
                 m_transformation_mode_text = "Invalid Mode";
                 break;
         }
@@ -344,7 +344,7 @@ void MapEditor2::WorldView::SetMetricEditingMode (
                 break;
                 
             default:
-                ASSERT1(false && "Invalid Object::MetricMode")
+                ASSERT1(false && "Invalid Object::MetricMode");
                 m_metric_editing_mode_text = "Invalid Mode";
                 break;
         }
@@ -402,7 +402,7 @@ void MapEditor2::WorldView::SetEditingSubMode (
                 break;
                 
             default:
-                ASSERT1(false && "Invalid EditingSubMode")
+                ASSERT1(false && "Invalid EditingSubMode");
                 break;
         }
     }
@@ -607,8 +607,8 @@ void MapEditor2::WorldView::SetPerEntityReactsToGravity (bool const reacts_to_gr
 
 void MapEditor2::WorldView::SetObjectSelectionSetFirstMoment (Float const first_moment)
 {
-    ASSERT1(first_moment > 0.0f)
-    ASSERT1(m_object_selection_set_first_moment > 0.0f)
+    ASSERT1(first_moment > 0.0f);
+    ASSERT1(m_object_selection_set_first_moment > 0.0f);
     Float first_moment_scale_factor =
         first_moment / m_object_selection_set_first_moment;
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetFirstMoment(%g); first_moment_scale_factor = %g\n", first_moment, first_moment_scale_factor);
@@ -746,7 +746,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         m_lmouse_dragged)
     {
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1)
+                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
     
         FloatVector2 bounding_circle_ray(transformed_mouse_position);
         bounding_circle_ray -= m_lmouse_pressed_world_position;
@@ -976,7 +976,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                             break;
 
                         default:
-                            ASSERT1(false && "Invalid Object::MetricMode")
+                            ASSERT1(false && "Invalid Object::MetricMode");
                             break;
                     }
                 }
@@ -1030,7 +1030,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         break;
 
                     default:
-                        ASSERT1(false && "Invalid Object::MetricMode")
+                        ASSERT1(false && "Invalid Object::MetricMode");
                         break;
                 }
                 return true;
@@ -1041,7 +1041,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     // clone the single selected non-entity as an entity
                     Object *object = GetMainMapEditorObjectLayer()->GetSingleSelectedNonEntity();
                     Entity *entity = object->CreateEntityClone();
-                    ASSERT1(entity != NULL)
+                    ASSERT1(entity != NULL);
                     // move the object's saved entity guts over to the entity
                     entity->SetEntityGuts(object->GetSavedEntityGuts());
                     object->SetSavedEntityGuts(NULL);
@@ -1091,7 +1091,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         break;
 
                     default:
-                        ASSERT1(false && "Invalid Object::MetricMode")
+                        ASSERT1(false && "Invalid Object::MetricMode");
                         break;
                 }
                 return true;
@@ -1122,7 +1122,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                             break;
     
                         default:
-                            ASSERT1(false && "Invalid Object::MetricMode")
+                            ASSERT1(false && "Invalid Object::MetricMode");
                             break;
                     }
                 }
@@ -1134,7 +1134,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     // clone the single selected entity as a non-entity
                     Entity *entity = GetMainMapEditorObjectLayer()->GetSingleSelectedEntity();
                     Object *object = entity->CreateNonEntityClone();
-                    ASSERT1(object != NULL)
+                    ASSERT1(object != NULL);
                     // move the entity's guts over to the non-entity's saved guts
                     object->SetSavedEntityGuts(entity->GetEntityGuts());
                     entity->SetEntityGuts(NULL);
@@ -1165,7 +1165,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 {
                     Compound *compound =
                         GetMainMapEditorObjectLayer()->GetSingleSelectedCompound();
-                    ASSERT1(compound != NULL)
+                    ASSERT1(compound != NULL);
                     Compound::WeldReturnStatus status = compound->WeldSelectedVertices();
                     switch (status)
                     {
@@ -1187,7 +1187,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                             break;
                             
                         default:
-                            ASSERT1(false && "Invalid Compound::WeldReturnStatus")
+                            ASSERT1(false && "Invalid Compound::WeldReturnStatus");
                             break;
                     }
                 }
@@ -1223,7 +1223,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         break;
 
                     default:
-                        ASSERT1(false && "Invalid Object::MetricMode")
+                        ASSERT1(false && "Invalid Object::MetricMode");
                         break;
                 }
                 return true;
@@ -1398,7 +1398,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 break;
 
             default:
-                ASSERT1(false && "Invalid Object::MetricMode")
+                ASSERT1(false && "Invalid Object::MetricMode");
                 break;
         }
     }
@@ -1408,10 +1408,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         e->GetIsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
-        ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS)
+        ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS);
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1)
-        ASSERT1(m_saved_metric_editing_mode != Object::MM_COUNT)
+                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
+        ASSERT1(m_saved_metric_editing_mode != Object::MM_COUNT);
     
         // create the polygon that has been dragged out
         FloatVector2 bounding_circle_ray(transformed_mouse_event_position);
@@ -1444,7 +1444,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
             fprintf(stderr, "Drawing polygon into existing selected compound\n");
             Compound *compound =
                 GetMainMapEditorObjectLayer()->GetSingleSelectedCompound();
-            ASSERT1(compound != NULL)
+            ASSERT1(compound != NULL);
             compound->AddDrawnPolygon(
                 m_lmouse_pressed_world_position,
                 bounding_circle_ray.GetLength(),
@@ -1466,7 +1466,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         e->GetIsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
-        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
+        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
         // set the global origin cursor's position
         m_origin_cursor_position = transformed_mouse_event_position;
@@ -1479,7 +1479,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         e->GetIsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
-        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT)
+        ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
         GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
         
@@ -2390,8 +2390,8 @@ void MapEditor2::WorldView::SignalEditDeltaText ()
 {
     if (m_is_translation_edit_in_progress)
     {
-        ASSERT1(!m_is_scale_edit_in_progress)
-        ASSERT1(!m_is_angle_edit_in_progress)
+        ASSERT1(!m_is_scale_edit_in_progress);
+        ASSERT1(!m_is_angle_edit_in_progress);
         m_sender_status_bar_message_text_changed.Signal(
             Util::StringPrintf(
                 "dp = (%f, %f)",

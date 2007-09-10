@@ -39,7 +39,7 @@ EventQueue::~EventQueue ()
          ++it)
     {
         Event const *event = it->GetEvent();
-        ASSERT1(event != NULL)
+        ASSERT1(event != NULL);
         Delete(event);
     }
 
@@ -51,9 +51,9 @@ void EventQueue::EnqueueEvent (
     EventHandler *const event_handler,
     Event const *const event)
 {
-    ASSERT1(event_handler != NULL)
-    ASSERT1(event != NULL)
-    ASSERT1(event_handler->GetMostRecentEventTime() <= event->GetTime())
+    ASSERT1(event_handler != NULL);
+    ASSERT1(event != NULL);
+    ASSERT1(event_handler->GetMostRecentEventTime() <= event->GetTime());
 
     // this call makes sure that we don't overflow the IDs, which is essential
     // for proper ordering of events inside the queue.
@@ -71,7 +71,7 @@ void EventQueue::EnqueueEvent (
 void EventQueue::DeleteEventsBelongingToHandler (
     EventHandler *const event_handler)
 {
-    ASSERT1(event_handler != NULL)
+    ASSERT1(event_handler != NULL);
 
     for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
@@ -94,7 +94,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
          ++it)
     {
         Event const *event = it->GetEvent();
-        ASSERT1(event != NULL)
+        ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
         if (!event->GetIsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
@@ -126,8 +126,8 @@ void EventQueue::HandleFrame ()
              it != it_end;
              ++it)
         {
-            ASSERT1(it->GetEventHandler() != NULL)
-            ASSERT1(it->GetEvent() != NULL)
+            ASSERT1(it->GetEventHandler() != NULL);
+            ASSERT1(it->GetEvent() != NULL);
             // don't process the event if it's already scheduled for deletion
             if (!it->GetEvent()->GetIsScheduledForDeletion())
             {
@@ -147,7 +147,7 @@ void EventQueue::HandleFrame ()
              it != it_end;
              ++it)
         {
-            ASSERT1(it->GetEvent()->GetIsScheduledForDeletion())
+            ASSERT1(it->GetEvent()->GetIsScheduledForDeletion());
             delete it->GetEvent();            
         }
         
@@ -189,7 +189,7 @@ void EventQueue::CompactEventIDs ()
             // set the event's ID
             it->GetEvent()->SetID(m_current_event_id++);
             // just make sure there are enough IDs to identify all events
-            ASSERT1(m_current_event_id != GetMaxEventID())
+            ASSERT1(m_current_event_id != GetMaxEventID());
         }
     }
 }

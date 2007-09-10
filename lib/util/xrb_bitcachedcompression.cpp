@@ -23,7 +23,7 @@ BitCachedCompression::BitCachedCompression (
     :
     BitCache(cache_size_in_bytes, endianness)
 {
-    ASSERT1(huffman != NULL)
+    ASSERT1(huffman != NULL);
     m_huffman = huffman;
 }
 
@@ -34,11 +34,11 @@ BitCachedCompression::~BitCachedCompression ()
 
 void BitCachedCompression::AttachSerializer (Serializer *serializer)
 {
-    ASSERT1(!GetIsOpen())
-    ASSERT1(serializer != NULL)
-    ASSERT1(serializer->GetIsOpen())
+    ASSERT1(!GetIsOpen());
+    ASSERT1(serializer != NULL);
+    ASSERT1(serializer->GetIsOpen());
     ASSERT1(serializer->GetIODirection() == IOD_READ ||
-            serializer->GetIODirection() == IOD_WRITE)
+            serializer->GetIODirection() == IOD_WRITE);
 
     m_serializer = serializer;
 
@@ -50,11 +50,11 @@ void BitCachedCompression::AttachSerializer (Serializer *serializer)
 
 void BitCachedCompression::DetachSerializer ()
 {
-    ASSERT1(GetIsOpen())
-    ASSERT1(m_serializer != NULL)
-    ASSERT1(m_serializer->GetIsOpen())
+    ASSERT1(GetIsOpen());
+    ASSERT1(m_serializer != NULL);
+    ASSERT1(m_serializer->GetIsOpen());
     ASSERT1(m_serializer->GetIODirection() == IOD_READ ||
-            m_serializer->GetIODirection() == IOD_WRITE)
+            m_serializer->GetIODirection() == IOD_WRITE);
 
     BitCache::Close();
 
@@ -65,11 +65,11 @@ Uint32 BitCachedCompression::FlushBytes (
     Uint8 const *bytes_to_flush,
     Uint32 number_of_bytes_to_flush) const
 {
-    ASSERT1(bytes_to_flush != NULL)
-    ASSERT1(number_of_bytes_to_flush > 0)
-    ASSERT1(GetIsOpen())
-    ASSERT1(GetIODirection() == IOD_WRITE)
-    ASSERT1(m_serializer != NULL)
+    ASSERT1(bytes_to_flush != NULL);
+    ASSERT1(number_of_bytes_to_flush > 0);
+    ASSERT1(GetIsOpen());
+    ASSERT1(GetIODirection() == IOD_WRITE);
+    ASSERT1(m_serializer != NULL);
 
     Uint32 retval = m_huffman->EncodeBytes(bytes_to_flush,
                                            number_of_bytes_to_flush,
@@ -82,11 +82,11 @@ Uint32 BitCachedCompression::RenewBytes (
     Uint8 *bytes_to_renew,
     Uint32 number_of_bytes_to_renew) const
 {
-    ASSERT1(bytes_to_renew != NULL)
-    ASSERT1(number_of_bytes_to_renew > 0)
-    ASSERT1(GetIsOpen())
-    ASSERT1(GetIODirection() == IOD_READ)
-    ASSERT1(m_serializer != NULL)
+    ASSERT1(bytes_to_renew != NULL);
+    ASSERT1(number_of_bytes_to_renew > 0);
+    ASSERT1(GetIsOpen());
+    ASSERT1(GetIODirection() == IOD_READ);
+    ASSERT1(m_serializer != NULL);
 
     Uint32 retval = m_huffman->DecodeBytes(bytes_to_renew,
                                            number_of_bytes_to_renew,

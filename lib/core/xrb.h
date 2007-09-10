@@ -87,7 +87,7 @@ inline bool Epsilon (T const x, T const y, T const epsilon)
 template <typename CastToType, typename CastFromType>
 inline CastToType DStaticCast (CastFromType cast_from)
 {
-    ASSERT1(cast_from == NULL || dynamic_cast<CastToType>(cast_from) != NULL)
+    ASSERT1(cast_from == NULL || dynamic_cast<CastToType>(cast_from) != NULL);
     return static_cast<CastToType>(cast_from);
 }
 
@@ -100,7 +100,7 @@ inline CastToType DStaticCast (CastFromType cast_from)
 template <typename ContainerType>
 inline void StlContainerEraseRBegin (ContainerType &container)
 {
-    ASSERT1(!container.empty())
+    ASSERT1(!container.empty());
     container.erase(typename ContainerType::iterator((++container.rbegin()).base()));
 }
 

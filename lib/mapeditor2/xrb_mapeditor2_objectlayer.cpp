@@ -27,9 +27,9 @@ MapEditor2::ObjectLayer *MapEditor2::ObjectLayer::Create (
     Uint32 const tree_depth,
     Float const z_depth)
 {
-    ASSERT1(owner_world != NULL)
-    ASSERT1(side_length > 0.0f)
-    ASSERT1(tree_depth > 0)
+    ASSERT1(owner_world != NULL);
+    ASSERT1(side_length > 0.0f);
+    ASSERT1(tree_depth > 0);
 
     ObjectLayer *retval =
         new ObjectLayer(
@@ -51,7 +51,7 @@ MapEditor2::ObjectLayer *MapEditor2::ObjectLayer::Create (
     Serializer &serializer,
     MapEditor2::World *const owner_world)
 {
-    ASSERT1(owner_world != NULL)
+    ASSERT1(owner_world != NULL);
 
     Float side_length;
     Float z_depth;
@@ -82,28 +82,28 @@ MapEditor2::ObjectLayer *MapEditor2::ObjectLayer::Create (
 MapEditor2::World *MapEditor2::ObjectLayer::GetOwnerMapEditorWorld () const
 {
     World *retval = dynamic_cast<World *>(GetOwnerWorld());
-    ASSERT1(GetOwnerWorld() == NULL || retval != NULL)
+    ASSERT1(GetOwnerWorld() == NULL || retval != NULL);
     return retval;
 }
 
 MapEditor2::Object *MapEditor2::ObjectLayer::GetSingleSelectedObject ()
 {
-    ASSERT1(GetSelectedObjectCount() == 1)
-    ASSERT1(GetSelectedObjectCount() == m_object_selection_set.size())
+    ASSERT1(GetSelectedObjectCount() == 1);
+    ASSERT1(GetSelectedObjectCount() == m_object_selection_set.size());
     return DStaticCast<Object *>(*m_object_selection_set.begin());
 }
 
 MapEditor2::Object *MapEditor2::ObjectLayer::GetSingleSelectedNonEntity ()
 {
-    ASSERT1(GetSelectedNonEntityCount() == 1)
-    ASSERT1(GetSelectedNonEntityCount() == m_object_selection_set.size())
-    ASSERT1(dynamic_cast<Entity *>(*m_object_selection_set.begin()) == NULL)
+    ASSERT1(GetSelectedNonEntityCount() == 1);
+    ASSERT1(GetSelectedNonEntityCount() == m_object_selection_set.size());
+    ASSERT1(dynamic_cast<Entity *>(*m_object_selection_set.begin()) == NULL);
     return DStaticCast<Object *>(*m_object_selection_set.begin());
 }
 
 MapEditor2::Entity *MapEditor2::ObjectLayer::GetSingleSelectedEntity ()
 {
-    ASSERT1(GetSelectedEntityCount() == 1)
+    ASSERT1(GetSelectedEntityCount() == 1);
     for (ObjectSetIterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
@@ -114,13 +114,13 @@ MapEditor2::Entity *MapEditor2::ObjectLayer::GetSingleSelectedEntity ()
         if (entity != NULL)
             return entity;
     }
-    ASSERT1(false && "Counted number of selected entities does not match reality")
+    ASSERT1(false && "Counted number of selected entities does not match reality");
     return NULL;
 }
 
 MapEditor2::Compound *MapEditor2::ObjectLayer::GetSingleSelectedCompound ()
 {
-    ASSERT1(GetSelectedCompoundCount() == 1)
+    ASSERT1(GetSelectedCompoundCount() == 1);
     for (ObjectSetIterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
@@ -131,7 +131,7 @@ MapEditor2::Compound *MapEditor2::ObjectLayer::GetSingleSelectedCompound ()
         if (compound != NULL)
             return compound;
     }
-    ASSERT1(false && "Counted number of selected compounds does not match reality")
+    ASSERT1(false && "Counted number of selected compounds does not match reality");
     return NULL;
 }
 
@@ -179,7 +179,7 @@ MapEditor2::ObjectLayer::ObjectLayer (
 MapEditor2::VisibilityQuadTree *MapEditor2::ObjectLayer::GetMapEditorQuadTree () const
 {
     VisibilityQuadTree *retval = dynamic_cast<VisibilityQuadTree *>(GetQuadTree());
-    ASSERT1(GetQuadTree() == NULL || retval != NULL)
+    ASSERT1(GetQuadTree() == NULL || retval != NULL);
     return retval;
 }
 
@@ -191,8 +191,8 @@ void MapEditor2::ObjectLayer::DrawMetrics (
     Float const view_radius,
     MapEditor2::Object::MetricMode const metric_mode)
 {
-    ASSERT2(pixels_in_view_radius > 0.0)
-    ASSERT2(view_radius > 0.0)
+    ASSERT2(pixels_in_view_radius > 0.0);
+    ASSERT2(view_radius > 0.0);
 
     if (GetIsWrapped())
         GetMapEditorQuadTree()->DrawMetricsWrapped(
@@ -268,8 +268,8 @@ void MapEditor2::ObjectLayer::ClearObjectSelectionSet ()
     while (it != it_end)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT1(object->GetIsSelected())
+        ASSERT1(object != NULL);
+        ASSERT1(object->GetIsSelected());
         ++it;
         object->SetIsSelected(false);
     }
@@ -298,16 +298,16 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT1(number_of_objects_to_clone < set_size)
+        ASSERT1(object != NULL);
+        ASSERT1(number_of_objects_to_clone < set_size);
         Engine2::Object *cloned_object = object->CreateClone();
         objects_to_clone[number_of_objects_to_clone] =
             dynamic_cast<Object *>(cloned_object);
-        ASSERT1(objects_to_clone[number_of_objects_to_clone] != NULL)
+        ASSERT1(objects_to_clone[number_of_objects_to_clone] != NULL);
         objects_to_clone[number_of_objects_to_clone]->Translate(position_offset);
         ++number_of_objects_to_clone;
     }
-    ASSERT1(number_of_objects_to_clone == set_size)
+    ASSERT1(number_of_objects_to_clone == set_size);
 
     // clear the current object selection set
     ClearObjectSelectionSet();
@@ -350,12 +350,12 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
-        ASSERT1(number_of_objects_to_delete < set_size)
+        ASSERT1(object != NULL);
+        ASSERT1(number_of_objects_to_delete < set_size);
         objects_to_delete[number_of_objects_to_delete] = object;
         ++number_of_objects_to_delete;
     }
-    ASSERT1(number_of_objects_to_delete == set_size)
+    ASSERT1(number_of_objects_to_delete == set_size);
 
     // clear the current object selection set
     ClearObjectSelectionSet();
@@ -385,7 +385,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetTranslate (FloatVector2 const &t
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->Translate(translation_delta);
         object->ReAddMapEditorObjectToQuadTree(Engine2::QTT_VISIBILITY);
     }
@@ -398,7 +398,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScale (
     FloatVector2 const &transformation_origin,
     MapEditor2::Object::TransformationMode const transformation_mode)
 {
-    ASSERT1(scale_factor_delta > 0.0)
+    ASSERT1(scale_factor_delta > 0.0);
 
     if (scale_factor_delta == 1.0)
         return;
@@ -409,7 +409,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScale (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->ObjectSelectionSetScale(
             scale_factor_delta,
             transformation_origin,
@@ -437,7 +437,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetRotate (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->ObjectSelectionSetRotate(
             angle_delta,
             transformation_origin,
@@ -461,8 +461,8 @@ void MapEditor2::ObjectLayer::VertexSelectionSetTranslate (
          ++it)
     {
         CompoundVertex *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_owner_compound != NULL)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_owner_compound != NULL);
         vertex->m_owner_compound->TranslateVertex(vertex, translation_delta);
     }
 }
@@ -481,8 +481,8 @@ void MapEditor2::ObjectLayer::VertexSelectionSetScale (
          ++it)
     {
         CompoundVertex *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_owner_compound != NULL)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_owner_compound != NULL);
         vertex->m_owner_compound->ScaleVertex(
             vertex,
             scale_factor_delta,
@@ -509,8 +509,8 @@ void MapEditor2::ObjectLayer::VertexSelectionSetRotate (
          ++it)
     {
         CompoundVertex  *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_owner_compound != NULL)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_owner_compound != NULL);
         vertex->m_owner_compound->RotateVertex(
             vertex,
             rotation_transformation,
@@ -528,7 +528,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationX (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         translation = object->GetTranslation();
         translation[Dim::X] = translation_x;
         object->SetTranslation(translation);
@@ -547,7 +547,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationY (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         translation = object->GetTranslation();
         translation[Dim::Y] = translation_y;
         object->SetTranslation(translation);
@@ -565,7 +565,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslation (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->SetTranslation(translation);
     }
 
@@ -580,7 +580,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectScale (Float cons
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->SetScaleFactor(scale_factor);
     }
 
@@ -595,7 +595,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectRotation (Float c
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         object->SetAngle(angle);
     }
 }
@@ -609,7 +609,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityFirstMoment (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetFirstMoment(first_moment);
@@ -627,7 +627,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocity(velocity);
@@ -645,7 +645,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityX (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocityComponent(Dim::X, velocity_x);
@@ -663,7 +663,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityY (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocityComponent(Dim::Y, velocity_y);
@@ -681,7 +681,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL && !entity->GetVelocity().GetIsZero())
             entity->SetVelocity(speed * entity->GetVelocity().GetNormalization());
@@ -699,7 +699,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityAngle (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocity(
@@ -721,7 +721,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySecondMoment (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetSecondMoment(second_moment);
@@ -739,7 +739,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAngularVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetAngularVelocity(angular_velocity);
@@ -757,7 +757,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityElasticity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetElasticity(elasticity);
@@ -775,7 +775,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
 
         // temp hack for now (until real area computation is done
@@ -802,7 +802,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAppliesGravity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
         {
@@ -822,7 +822,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityReactsToGravity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
         {
@@ -836,7 +836,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityReactsToGravity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetScaleFirstMoment (
     Float const first_moment_scale_factor)
 {
-    ASSERT1(first_moment_scale_factor > 0.0f)
+    ASSERT1(first_moment_scale_factor > 0.0f);
 
     for (ObjectSetIterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
@@ -844,7 +844,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleFirstMoment (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
 
         if (entity != NULL)
@@ -867,7 +867,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetTranslateVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->AccumulateVelocity(translation_delta);
@@ -888,7 +888,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->ObjectSelectionSetScaleVelocity(
@@ -915,7 +915,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetRotateVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->ObjectSelectionSetRotateVelocity(
@@ -938,7 +938,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAccumulateAngularVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->AccumulateAngularVelocity(angle_delta);
@@ -957,7 +957,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleAngularVelocity (
          ++it)
     {
         Object *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetAngularVelocity(
@@ -1039,13 +1039,13 @@ void MapEditor2::ObjectLayer::ClearVertexSelectionSet ()
          ++it)
     {
         CompoundVertex *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_is_selected)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_is_selected);
         vertex->m_is_selected = false;
         --m_selected_vertex_count;
     }
     m_vertex_selection_set.clear();
-    ASSERT1(m_selected_vertex_count == 0)
+    ASSERT1(m_selected_vertex_count == 0);
 }
 
 void MapEditor2::ObjectLayer::MaskSelectedVerticesByObjectSelectionSet ()
@@ -1056,9 +1056,9 @@ void MapEditor2::ObjectLayer::MaskSelectedVerticesByObjectSelectionSet ()
          ++it)
     {
         CompoundVertex *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_is_selected)
-        ASSERT1(vertex->m_owner_compound != NULL)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_is_selected);
+        ASSERT1(vertex->m_owner_compound != NULL);
         if (!vertex->m_owner_compound->GetIsSelected())
             RemoveVertexFromVertexSelectionSet(vertex);
     }
@@ -1080,8 +1080,8 @@ void MapEditor2::ObjectLayer::UnweldSelectedVertices ()
          ++it)
     {
         CompoundVertex *vertex = *it;
-        ASSERT1(vertex != NULL)
-        ASSERT1(vertex->m_owner_compound != NULL)
+        ASSERT1(vertex != NULL);
+        ASSERT1(vertex->m_owner_compound != NULL);
         std::set<Compound *>::iterator compounds_set_iterator =
             compounds_with_selected_vertices_set.find(vertex->m_owner_compound);
         if (compounds_set_iterator == compounds_set_iterator_end)
@@ -1094,7 +1094,7 @@ void MapEditor2::ObjectLayer::UnweldSelectedVertices ()
          ++it)
     {
         Compound *compound = *it;
-        ASSERT1(compound != NULL)
+        ASSERT1(compound != NULL);
         compound->UnweldSelectedVertices();
     }
 }
@@ -1122,7 +1122,7 @@ void MapEditor2::ObjectLayer::SelectSmallestPolygonTouchingPoint (
             case Object::SO_MINUS:  polygon->SetIsSelected(false, this);                   break;
             case Object::SO_XOR:    polygon->SetIsSelected(!polygon->m_is_selected, this); break;
             case Object::SO_AND:                                                           break;
-            default:        ASSERT1(false && "Invalid selection operation")                break;
+            default:        ASSERT1(false && "Invalid selection operation");               break;
         }
     }
 }
@@ -1146,14 +1146,14 @@ void MapEditor2::ObjectLayer::ClearPolygonSelectionSet ()
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
-        ASSERT1(polygon->m_is_selected)
+        ASSERT1(polygon != NULL);
+        ASSERT1(polygon->m_is_selected);
         polygon->m_is_selected = false;
         polygon->DecrementSelectedOwnerPolygonCount(this);
         --m_selected_polygon_count;
     }
     m_polygon_selection_set.clear();
-    ASSERT1(m_selected_polygon_count == 0)
+    ASSERT1(m_selected_polygon_count == 0);
 }
 
 void MapEditor2::ObjectLayer::MaskSelectedPolygonsByObjectSelectionSet ()
@@ -1164,9 +1164,9 @@ void MapEditor2::ObjectLayer::MaskSelectedPolygonsByObjectSelectionSet ()
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
-        ASSERT1(polygon->m_is_selected)
-        ASSERT1(polygon->m_owner_compound != NULL)
+        ASSERT1(polygon != NULL);
+        ASSERT1(polygon->m_is_selected);
+        ASSERT1(polygon->m_owner_compound != NULL);
         if (!polygon->m_owner_compound->GetIsSelected())
             RemovePolygonFromPolygonSelectionSet(polygon);
     }
@@ -1193,8 +1193,8 @@ void MapEditor2::ObjectLayer::UnweldSelectedPolygons ()
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
-        ASSERT1(polygon->m_owner_compound != NULL)
+        ASSERT1(polygon != NULL);
+        ASSERT1(polygon->m_owner_compound != NULL);
         std::set<Compound *>::iterator compounds_set_iterator =
             compounds_with_selected_polygons_set.find(polygon->m_owner_compound);
         if (compounds_set_iterator == compounds_set_iterator_end)
@@ -1207,7 +1207,7 @@ void MapEditor2::ObjectLayer::UnweldSelectedPolygons ()
          ++it)
     {
         Compound *compound = *it;
-        ASSERT1(compound != NULL)
+        ASSERT1(compound != NULL);
         compound->UnweldSelectedPolygons();
     }
 }
@@ -1228,8 +1228,8 @@ void MapEditor2::ObjectLayer::DeleteSelectedPolygons ()
          ++it)
     {
         Polygon *polygon = *it;
-        ASSERT1(polygon != NULL)
-        ASSERT1(polygon->m_owner_compound != NULL)
+        ASSERT1(polygon != NULL);
+        ASSERT1(polygon->m_owner_compound != NULL);
         std::set<Compound *>::iterator compounds_set_iterator =
             compounds_with_selected_polygons_set.find(polygon->m_owner_compound);
         if (compounds_set_iterator == compounds_set_iterator_end)
@@ -1244,9 +1244,9 @@ void MapEditor2::ObjectLayer::DeleteSelectedPolygons ()
          ++it)
     {
         Compound *compound = *it;
-        ASSERT1(compound != NULL)
+        ASSERT1(compound != NULL);
 
-        ASSERT1(compound->GetSelectedPolygonCount() <= compound->GetPolygonCount())
+        ASSERT1(compound->GetSelectedPolygonCount() <= compound->GetPolygonCount());
         if (compound->GetSelectedPolygonCount() == compound->GetPolygonCount())
             return;
     }
@@ -1257,14 +1257,14 @@ void MapEditor2::ObjectLayer::DeleteSelectedPolygons ()
          ++it)
     {
         Compound *compound = *it;
-        ASSERT1(compound != NULL)
+        ASSERT1(compound != NULL);
         
         compound->DeleteSelectedPolygons();
     }
 
     // the selected polygons will have removed themselves from the
     // polygon selection set.
-    ASSERT1(GetSelectedPolygonCount() == 0)
+    ASSERT1(GetSelectedPolygonCount() == 0);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -1323,10 +1323,10 @@ void MapEditor2::ObjectLayer::SetObjectSelectionSetCenterOfGravity (
 
 bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object *const object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree())
-    ASSERT1(object->GetObjectLayer() == this)
-    ASSERT1(!object->GetIsSelected())
+    ASSERT1(object != NULL);
+    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->GetObjectLayer() == this);
+    ASSERT1(!object->GetIsSelected());
 
     // put the object in the object selection set
     m_object_selection_set.insert(object);
@@ -1385,10 +1385,10 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
 
 bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Object *const object)
 {
-    ASSERT1(object != NULL)
-    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree())
-    ASSERT1(object->GetObjectLayer() == this)
-    ASSERT1(object->GetIsSelected())
+    ASSERT1(object != NULL);
+    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->GetObjectLayer() == this);
+    ASSERT1(object->GetIsSelected());
 
     // find the object
     ObjectSetIterator it = m_object_selection_set.find(object);
@@ -1487,7 +1487,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
              ++it)
         {
             Object *object = *it;
-            ASSERT1(object != NULL)
+            ASSERT1(object != NULL);
 
             object_selection_set_origin += object->GetTranslation();
             ++selected_object_count;
@@ -1510,7 +1510,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
         object_selection_set_origin /= static_cast<Float>(selected_object_count);
         if (selected_entity_count > 0)
         {
-            ASSERT1(object_selection_set_first_moment > 0.0f)
+            ASSERT1(object_selection_set_first_moment > 0.0f);
             object_selection_set_center_of_gravity /= object_selection_set_first_moment;
         }
     }
@@ -1644,25 +1644,25 @@ void MapEditor2::ObjectLayer::SetSelectedVertexCount (
 void MapEditor2::ObjectLayer::AddVertexToVertexSelectionSet (
     MapEditor2::CompoundVertex *const vertex)
 {
-    ASSERT1(vertex != NULL)
-    ASSERT1(!vertex->m_is_selected)
-    ASSERT1(m_vertex_selection_set.find(vertex) == m_vertex_selection_set.end())
+    ASSERT1(vertex != NULL);
+    ASSERT1(!vertex->m_is_selected);
+    ASSERT1(m_vertex_selection_set.find(vertex) == m_vertex_selection_set.end());
     vertex->m_is_selected = true;
     m_vertex_selection_set.insert(vertex);
-    ASSERT1(m_selected_vertex_count < UINT32_UPPER_BOUND)
+    ASSERT1(m_selected_vertex_count < UINT32_UPPER_BOUND);
     SetSelectedVertexCount(m_selected_vertex_count + 1);
 }
 
 void MapEditor2::ObjectLayer::RemoveVertexFromVertexSelectionSet (
     MapEditor2::CompoundVertex *const vertex)
 {
-    ASSERT1(vertex != NULL)
-    ASSERT1(vertex->m_is_selected)
+    ASSERT1(vertex != NULL);
+    ASSERT1(vertex->m_is_selected);
     VertexSetIterator it = m_vertex_selection_set.find(vertex);
-    ASSERT1(it != m_vertex_selection_set.end())
+    ASSERT1(it != m_vertex_selection_set.end());
     m_vertex_selection_set.erase(it);
     vertex->m_is_selected = false;
-    ASSERT1(m_selected_vertex_count > 0)
+    ASSERT1(m_selected_vertex_count > 0);
     SetSelectedVertexCount(m_selected_vertex_count - 1);
 }
 
@@ -1683,27 +1683,27 @@ void MapEditor2::ObjectLayer::SetSelectedPolygonCount (
 void MapEditor2::ObjectLayer::AddPolygonToPolygonSelectionSet (
     MapEditor2::Polygon *const polygon)
 {
-    ASSERT1(polygon != NULL)
-    ASSERT1(!polygon->m_is_selected)
-    ASSERT1(m_polygon_selection_set.find(polygon) == m_polygon_selection_set.end())
+    ASSERT1(polygon != NULL);
+    ASSERT1(!polygon->m_is_selected);
+    ASSERT1(m_polygon_selection_set.find(polygon) == m_polygon_selection_set.end());
     polygon->m_is_selected = true;
     polygon->IncrementSelectedOwnerPolygonCount(this);
     m_polygon_selection_set.insert(polygon);
-    ASSERT1(m_selected_polygon_count < UINT32_UPPER_BOUND)
+    ASSERT1(m_selected_polygon_count < UINT32_UPPER_BOUND);
     SetSelectedPolygonCount(m_selected_polygon_count + 1);
 }
 
 void MapEditor2::ObjectLayer::RemovePolygonFromPolygonSelectionSet (
     MapEditor2::Polygon *const polygon)
 {
-    ASSERT1(polygon != NULL)
-    ASSERT1(polygon->m_is_selected)
+    ASSERT1(polygon != NULL);
+    ASSERT1(polygon->m_is_selected);
     PolygonSetIterator it = m_polygon_selection_set.find(polygon);
-    ASSERT1(it != m_polygon_selection_set.end())
+    ASSERT1(it != m_polygon_selection_set.end());
     m_polygon_selection_set.erase(it);
     polygon->m_is_selected = false;
     polygon->DecrementSelectedOwnerPolygonCount(this);
-    ASSERT1(m_selected_polygon_count > 0)
+    ASSERT1(m_selected_polygon_count > 0);
     SetSelectedPolygonCount(m_selected_polygon_count - 1);
 }
 

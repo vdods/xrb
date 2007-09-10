@@ -32,7 +32,7 @@ public:
         Ship(max_health, entity_type),
         m_enemy_level(enemy_level)
     {
-        ASSERT1(enemy_level < ENEMY_LEVEL_COUNT)
+        ASSERT1(enemy_level < ENEMY_LEVEL_COUNT);
     }
     virtual ~EnemyShip () { }
 

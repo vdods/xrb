@@ -19,7 +19,7 @@ namespace Xrb
 MapEditor2::Sprite *MapEditor2::Sprite::CreateSpriteNonEntityClone (
     SpriteEntity const *const sprite_entity)
 {
-    ASSERT1(sprite_entity != NULL)
+    ASSERT1(sprite_entity != NULL);
     Sprite *retval = new Sprite(sprite_entity->GetTexture());
     retval->Engine2::Object::CloneProperties(sprite_entity);
     retval->Object::CloneProperties(sprite_entity);
@@ -61,7 +61,7 @@ MapEditor2::Sprite *MapEditor2::Sprite::Create (Serializer &serializer)
 
 Engine2::Object *MapEditor2::Sprite::CreateClone () const
 {
-    ASSERT1(m_texture.GetIsValid())
+    ASSERT1(m_texture.GetIsValid());
 
     Sprite *retval = new Sprite(m_texture);
     retval->Engine2::Object::CloneProperties(this);

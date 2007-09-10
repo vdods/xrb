@@ -61,7 +61,7 @@ public:
     Float GetWeaponStatus () const;
     inline Float GetMineralInventory (Uint8 mineral_type) const
     {
-        ASSERT1(mineral_type < MINERAL_COUNT)
+        ASSERT1(mineral_type < MINERAL_COUNT);
         return m_mineral_inventory[mineral_type];
     }
     bool GetIsItemEquipped (ItemType item_type, Uint8 upgrade_level) const;

@@ -28,9 +28,9 @@ void Engine::SetInputs (
     Float const up_down_input,
     Float const auxiliary_input)
 {
-    ASSERT1(right_left_input >= -1.0f && right_left_input <= 1.0f)
-    ASSERT1(up_down_input >= -1.0f && up_down_input <= 1.0f)
-    ASSERT1(auxiliary_input >= 0.0f && auxiliary_input <= 1.0f)
+    ASSERT1(right_left_input >= -1.0f && right_left_input <= 1.0f);
+    ASSERT1(up_down_input >= -1.0f && up_down_input <= 1.0f);
+    ASSERT1(auxiliary_input >= 0.0f && auxiliary_input <= 1.0f);
 
     m_right_left_input = right_left_input;
     m_up_down_input = up_down_input;
@@ -49,7 +49,7 @@ Float Engine::GetPowerToBeUsedBasedOnInputs (
         
     FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
     Float input_vector_angle = Math::Atan(input_vector);
-    ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f)
+    ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
     
     Float input_vector_max_length;
     if (input_vector_angle >= -180.0f && input_vector_angle <= -135.0f)
@@ -74,7 +74,7 @@ bool Engine::Activate (
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
     {
-        ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[GetUpgradeLevel()] * m_auxiliary_input + 0.001f)
+        ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[GetUpgradeLevel()] * m_auxiliary_input + 0.001f);
     
         static Float const s_survey_area_radius = 100.0f;
         Float const max_thrust_force = ms_max_thrust_force[GetUpgradeLevel()] * m_auxiliary_input;
@@ -103,7 +103,7 @@ bool Engine::Activate (
 
         FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
         Float input_vector_angle = Math::Atan(input_vector);
-        ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f)
+        ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
         
         Float input_vector_max_length;
         if (input_vector_angle >= -180.0f && input_vector_angle <= -135.0f)
@@ -117,7 +117,7 @@ bool Engine::Activate (
         else
             input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
 
-        ASSERT1(power <= frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector_max_length + 0.001f)
+        ASSERT1(power <= frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector_max_length + 0.001f);
             
         Float output_ratio = power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
         Float thrust_force =

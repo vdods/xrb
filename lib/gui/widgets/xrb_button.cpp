@@ -71,7 +71,7 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
         {
             ASSERT1(false &&
                     "GetIsMouseButtonDownEvent() and GetIsMouseButtonUpEvent() "
-                    "both failed.  Something's wacky.")
+                    "both failed.  Something's wacky.");
         }
 
         // update the render properties
@@ -83,13 +83,13 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
 
 void Button::HandleMouseoverOn ()
 {
-    ASSERT1(GetIsMouseover())
+    ASSERT1(GetIsMouseover());
     UpdateRenderBackground();
 }
 
 void Button::HandleMouseoverOff ()
 {
-    ASSERT1(!GetIsMouseover())
+    ASSERT1(!GetIsMouseover());
     m_is_pressed = false;
     UpdateRenderBackground();
 }

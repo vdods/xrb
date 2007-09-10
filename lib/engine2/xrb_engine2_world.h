@@ -75,10 +75,10 @@ public:
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
-    inline Uint32 GetEntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()) return m_entity_vector.size(); }
+    inline Uint32 GetEntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()); return m_entity_vector.size(); }
     inline Uint32 GetEntityCount () const { return m_entity_count; }
-    inline Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()) return m_entity_vector[index]; }
-    inline Entity *GetEntity (Uint32 index) { ASSERT1(index < m_entity_vector.size()) return m_entity_vector[index]; }
+    inline Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
+    inline Entity *GetEntity (Uint32 index) { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
     inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
     virtual ObjectLayer const *GetMainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *GetMainObjectLayer () { return m_main_object_layer; }
@@ -86,7 +86,7 @@ public:
 
     inline void SetTimescale (Float timescale)
     {
-        ASSERT1(timescale >= 0.0f)
+        ASSERT1(timescale >= 0.0f);
         m_timescale = timescale;
     }
 

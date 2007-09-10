@@ -23,7 +23,7 @@ std::string const &GetDifficultyLevelString (DifficultyLevel difficulty_level)
         "CRUEL"
     };
 
-    ASSERT1(difficulty_level < DL_COUNT)
+    ASSERT1(difficulty_level < DL_COUNT);
     return s_difficulty_level_string[difficulty_level];
 }
 

@@ -35,8 +35,8 @@ public:
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);
-        ASSERT1(time_at_birth >= 0.0f)
-        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT)
+        ASSERT1(time_at_birth >= 0.0f);
+        ASSERT1(m_weapon_level < UPGRADE_LEVEL_COUNT);
         m_first_think = true;
         m_impact_damage = impact_damage;
         m_time_to_live = time_to_live;

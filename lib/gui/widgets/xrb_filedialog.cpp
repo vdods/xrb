@@ -49,7 +49,7 @@ void FileDialog::OKButtonActivated ()
 
 void FileDialog::InternalFilenameSubmitted (std::string const &filename)
 {
-    ASSERT1(filename == GetFilename())
+    ASSERT1(filename == GetFilename());
     OKButtonActivated();
 }
 

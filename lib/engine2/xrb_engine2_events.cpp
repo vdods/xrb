@@ -17,8 +17,8 @@ bool Engine2::MatchEntity (
     Event const *const event,
     Entity *const entity_to_match)
 {
-    ASSERT1(event != NULL)
-    ASSERT1(entity_to_match != NULL)
+    ASSERT1(event != NULL);
+    ASSERT1(entity_to_match != NULL);
 
     return dynamic_cast<EventEntity const *>(event) != NULL &&
            static_cast<EventEntity const *>(event)->GetEntity() == entity_to_match;

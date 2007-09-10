@@ -38,7 +38,7 @@ ArithmeticParser::~ArithmeticParser ()
 
 #line 51 "xrb_arithmeticparser.trison"
 
-    ASSERT1(m_scanner == NULL)
+    ASSERT1(m_scanner == NULL);
 
 #line 44 "xrb_arithmeticparser.cpp"
 }
@@ -852,7 +852,7 @@ unsigned int const ArithmeticParser::ms_state_transition_count =
 
 Float ArithmeticParser::Parse (std::string const &input_string)
 {
-    ASSERT1(m_scanner == NULL)
+    ASSERT1(m_scanner == NULL);
 
     Float retval;
 
@@ -868,7 +868,7 @@ Float ArithmeticParser::Parse (std::string const &input_string)
 
 ArithmeticParser::Token::Type ArithmeticParser::Scan ()
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     return m_scanner->Scan(&m_lookahead_token);
 }
 

@@ -44,7 +44,7 @@ void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 
 void KeySelectorButton::HandleReleased ()
 {
-    ASSERT1(m_key_selector_dialog == NULL)
+    ASSERT1(m_key_selector_dialog == NULL);
     m_key_selector_dialog =
         new KeySelectorDialog(
             "Press new key/button for \"" + m_input_action_name + "\"",
@@ -57,7 +57,7 @@ void KeySelectorButton::HandleReleased ()
 
 void KeySelectorButton::DialogReturned (Dialog::ButtonID const button_id)
 {
-    ASSERT1(m_key_selector_dialog != NULL)
+    ASSERT1(m_key_selector_dialog != NULL);
     if (button_id == Dialog::ID_OK)
         SetKeyCode(m_key_selector_dialog->GetKeyCode());
     m_key_selector_dialog = NULL;
@@ -89,8 +89,8 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
 
 bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *const e)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetKeyCode()))
+    ASSERT1(e != NULL);
+    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetKeyCode()));
     m_key_code = e->GetKeyCode();
     OKButtonActivated();
     return true;
@@ -98,8 +98,8 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
 
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()))
+    ASSERT1(e != NULL);
+    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()));
     m_key_code = e->GetButtonCode();
     OKButtonActivated();
     return true;
@@ -107,8 +107,8 @@ bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseBu
 
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
-    ASSERT1(e != NULL)
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()))
+    ASSERT1(e != NULL);
+    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()));
     m_key_code = e->GetButtonCode();
     OKButtonActivated();
     return true;

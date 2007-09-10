@@ -34,8 +34,8 @@ InventoryButton::InventoryButton (
     m_sender_show_price(this),
     m_sender_hide_price(this)
 {
-    ASSERT1(m_item_type < IT_COUNT)
-    ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(m_item_type < IT_COUNT);
+    ASSERT1(m_upgrade_level < UPGRADE_LEVEL_COUNT);
 
     // this is intentionally close to, but above 0.0f
     m_current_size_parameter = 0.01f;
@@ -49,8 +49,8 @@ Resource<GLTexture> InventoryButton::GetButtonTexture (
     ItemType const item_type,
     Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     static std::string const s_button_texture_filename[IT_COUNT][UPGRADE_LEVEL_COUNT] =
     {
@@ -145,7 +145,7 @@ Resource<GLTexture> InventoryButton::GetButtonTexture (
 
 void InventoryButton::SetStatus (Status const status)
 {
-    ASSERT1(status < S_COUNT)
+    ASSERT1(status < S_COUNT);
     m_status = status;
     switch (m_status)
     {
@@ -170,7 +170,7 @@ void InventoryButton::SetStatus (Status const status)
             break;
 
         default:
-            ASSERT1(false && "Invalid InventoryButton::Status")
+            ASSERT1(false && "Invalid InventoryButton::Status");
             break;
     }
 
@@ -232,8 +232,8 @@ void InventoryButton::UpdateRenderBackground ()
 
 void InventoryButton::SetCurrentSizeParameter (Float const current_size_parameter)
 {
-    ASSERT1(current_size_parameter >= 0.0f)
-    ASSERT1(current_size_parameter <= 1.0f)
+    ASSERT1(current_size_parameter >= 0.0f);
+    ASSERT1(current_size_parameter <= 1.0f);
     if (m_current_size_parameter != current_size_parameter)
     {
         m_current_size_parameter = current_size_parameter;

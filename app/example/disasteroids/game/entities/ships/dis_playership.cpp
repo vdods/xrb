@@ -134,8 +134,8 @@ bool PlayerShip::GetIsItemEquipped (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
         return GetMainWeapon() != NULL &&
@@ -165,7 +165,7 @@ bool PlayerShip::GetIsItemEquipped (
                    GetPowerGenerator()->GetUpgradeLevel() == upgrade_level;
 
         default:
-            ASSERT1(false && "Invalid ItemType")
+            ASSERT1(false && "Invalid ItemType");
             return false;
     }
 }
@@ -174,8 +174,8 @@ bool PlayerShip::GetIsItemInInventory (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     return m_item_inventory[item_type][upgrade_level] != NULL;
 }
@@ -184,8 +184,8 @@ bool PlayerShip::GetIsItemAffordable (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
     {
@@ -334,9 +334,9 @@ void PlayerShip::CreditEnemyKill (EntityType const enemy_ship_type, Uint8 const 
         { 1000, 1500, 2200, 3000 }  // Devourment
     };
 
-    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST)
-    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST)
-    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT)
+    ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST);
+    ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
+    ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
 
     Uint32 enemy_ship_index = enemy_ship_type - ET_ENEMY_SHIP_LOWEST;
     IncrementScore(static_cast<Uint32>(m_stoke * s_baseline_score[enemy_ship_index][enemy_level]));
@@ -353,9 +353,9 @@ void PlayerShip::GiveLotsOfMinerals ()
 
 bool PlayerShip::AddItem (Item *item)
 {
-    ASSERT1(item != NULL)
-    ASSERT1(item->GetItemType() < IT_COUNT)
-    ASSERT1(item->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item != NULL);
+    ASSERT1(item->GetItemType() < IT_COUNT);
+    ASSERT1(item->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
 
     if (m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] != NULL)
         return false;
@@ -442,7 +442,7 @@ bool PlayerShip::AddItem (Item *item)
         }
 
         default:
-            ASSERT1(false && "Invalid ItemType")
+            ASSERT1(false && "Invalid ItemType");
             break;
     }
 
@@ -451,9 +451,9 @@ bool PlayerShip::AddItem (Item *item)
 
 void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
-    ASSERT1(m_item_inventory[item_type][upgrade_level] != NULL)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(m_item_inventory[item_type][upgrade_level] != NULL);
 
     if (item_type >= IT_WEAPON_LOWEST &&
         item_type <= IT_WEAPON_HIGHEST)
@@ -484,7 +484,7 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
                 break;
 
             default:
-                ASSERT1(false && "Invalid ItemType")
+                ASSERT1(false && "Invalid ItemType");
                 break;
         }
     }
@@ -507,7 +507,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         if (m_shield != NULL)
             m_shield->Drain();
         // drain the power generator
-        ASSERT1(m_power_generator != NULL)
+        ASSERT1(m_power_generator != NULL);
         m_power_generator->Drain();
 
         // remove all the effects
@@ -598,7 +598,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         m_devices_to_power[DTP_WEAPON] = current_weapon;
         m_devices_to_power[DTP_ENGINE] = m_engine;
         m_devices_to_power[DTP_SHIELD] = m_shield;
-        ASSERT1(m_power_generator != NULL)
+        ASSERT1(m_power_generator != NULL);
         m_power_generator->PowerDevices(
             m_devices_to_power,
             m_power_allocator,
@@ -652,7 +652,7 @@ bool PlayerShip::Damage (
     Float temp_damage_taken = 0.0f;
 
     // scale the damage amount by the protection factor
-    ASSERT1(ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()] > 0.0f)
+    ASSERT1(ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()] > 0.0f);
     damage_amount /= ms_difficulty_protection_factor[GetWorld()->GetDifficultyLevel()];
 
     // let the shield take the damage first
@@ -755,14 +755,14 @@ void PlayerShip::Die (
     EjectPowerup(m_power_generator, 300.0f);
 
     // make sure we have at least the bare minimum equipped inventory
-    ASSERT1(m_main_weapon != NULL)
-    ASSERT1(m_engine != NULL)
-    ASSERT1(m_power_generator != NULL)
+    ASSERT1(m_main_weapon != NULL);
+    ASSERT1(m_engine != NULL);
+    ASSERT1(m_power_generator != NULL);
 }
 
 void PlayerShip::SetMainWeaponType (ItemType const main_weapon_type)
 {
-    ASSERT1(main_weapon_type >= IT_WEAPON_LOWEST && main_weapon_type <= IT_WEAPON_HIGHEST)
+    ASSERT1(main_weapon_type >= IT_WEAPON_LOWEST && main_weapon_type <= IT_WEAPON_HIGHEST);
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
     {
         Weapon *weapon = GetInventoryWeapon(main_weapon_type, i);
@@ -776,7 +776,7 @@ void PlayerShip::SetMainWeaponType (ItemType const main_weapon_type)
 
 void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
 {
-    ASSERT1(auxiliary_weapon_type >= IT_WEAPON_LOWEST && auxiliary_weapon_type <= IT_WEAPON_HIGHEST)
+    ASSERT1(auxiliary_weapon_type >= IT_WEAPON_LOWEST && auxiliary_weapon_type <= IT_WEAPON_HIGHEST);
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
     {
         Weapon *weapon = GetInventoryWeapon(auxiliary_weapon_type, i);
@@ -790,20 +790,20 @@ void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
 
 bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
 {
-    ASSERT1(powerup != NULL)
+    ASSERT1(powerup != NULL);
 
     // check if its a mineral
     if (powerup->GetItemType() >= IT_MINERAL_LOWEST &&
         powerup->GetItemType() <= IT_MINERAL_HIGHEST)
     {
-        ASSERT1(powerup->GetItem() == NULL)
+        ASSERT1(powerup->GetItem() == NULL);
         ChangeMineralInventory(powerup->GetItemType() - IT_MINERAL_LOWEST, powerup->GetEffectiveValue());
         return true;
     }
     // check if its a health powerup
     else if (powerup->GetItemType() == IT_POWERUP_HEALTH)
     {
-        ASSERT1(powerup->GetItem() == NULL)
+        ASSERT1(powerup->GetItem() == NULL);
         Heal(
             powerup,
             powerup,
@@ -819,7 +819,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
     // otherwise try to add the powerup's Item
     else
     {
-        ASSERT1(powerup->GetItem() != NULL)
+        ASSERT1(powerup->GetItem() != NULL);
         if (AddItem(powerup->GetItem()))
         {
             powerup->ClearItem();
@@ -836,8 +836,8 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
 
 bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     // check if we have enough minerals
     for (Uint32 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
@@ -915,50 +915,50 @@ Weapon *PlayerShip::GetInventoryWeapon (
     ItemType const weapon_type,
     Uint8 const upgrade_level)
 {
-    ASSERT1(weapon_type < IT_COUNT)
-    ASSERT1(weapon_type >= IT_WEAPON_LOWEST)
-    ASSERT1(weapon_type <= IT_WEAPON_HIGHEST)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(weapon_type < IT_COUNT);
+    ASSERT1(weapon_type >= IT_WEAPON_LOWEST);
+    ASSERT1(weapon_type <= IT_WEAPON_HIGHEST);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[weapon_type][upgrade_level] == NULL ||
-            dynamic_cast<Weapon *>(m_item_inventory[weapon_type][upgrade_level]) != NULL)
+            dynamic_cast<Weapon *>(m_item_inventory[weapon_type][upgrade_level]) != NULL);
     return static_cast<Weapon *>(m_item_inventory[weapon_type][upgrade_level]);
 }
 
 Engine *PlayerShip::GetInventoryEngine (Uint8 const upgrade_level)
 {
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_ENGINE][upgrade_level] == NULL ||
-            dynamic_cast<Engine *>(m_item_inventory[IT_ENGINE][upgrade_level]) != NULL)
+            dynamic_cast<Engine *>(m_item_inventory[IT_ENGINE][upgrade_level]) != NULL);
     return static_cast<Engine *>(m_item_inventory[IT_ENGINE][upgrade_level]);
 }
 
 Armor *PlayerShip::GetInventoryArmor (Uint8 const upgrade_level)
 {
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_ARMOR][upgrade_level] == NULL ||
-            dynamic_cast<Armor *>(m_item_inventory[IT_ARMOR][upgrade_level]) != NULL)
+            dynamic_cast<Armor *>(m_item_inventory[IT_ARMOR][upgrade_level]) != NULL);
     return static_cast<Armor *>(m_item_inventory[IT_ARMOR][upgrade_level]);
 }
 
 Shield *PlayerShip::GetInventoryShield (Uint8 const upgrade_level)
 {
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_SHIELD][upgrade_level] == NULL ||
-            dynamic_cast<Shield *>(m_item_inventory[IT_SHIELD][upgrade_level]) != NULL)
+            dynamic_cast<Shield *>(m_item_inventory[IT_SHIELD][upgrade_level]) != NULL);
     return static_cast<Shield *>(m_item_inventory[IT_SHIELD][upgrade_level]);
 }
 
 PowerGenerator *PlayerShip::GetInventoryPowerGenerator (Uint8 const upgrade_level)
 {
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_POWER_GENERATOR][upgrade_level] == NULL ||
-            dynamic_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]) != NULL)
+            dynamic_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]) != NULL);
     return static_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]);
 }
 
 bool PlayerShip::GetIsInStartingInventory (Item *const item)
 {
-    ASSERT1(item != NULL)
+    ASSERT1(item != NULL);
 
     return item->GetUpgradeLevel() == 0 &&
            (item->GetItemType() == IT_WEAPON_PEA_SHOOTER ||
@@ -969,7 +969,7 @@ bool PlayerShip::GetIsInStartingInventory (Item *const item)
 
 void PlayerShip::SetArmorStatus (Float const armor_status)
 {
-    ASSERT1(armor_status >= 0.0f && armor_status <= 1.0f)
+    ASSERT1(armor_status >= 0.0f && armor_status <= 1.0f);
     if (m_armor_status != armor_status)
     {
         m_armor_status = armor_status;
@@ -979,7 +979,7 @@ void PlayerShip::SetArmorStatus (Float const armor_status)
 
 void PlayerShip::SetShieldStatus (Float const shield_status)
 {
-    ASSERT1(shield_status >= 0.0f && shield_status <= 1.0f)
+    ASSERT1(shield_status >= 0.0f && shield_status <= 1.0f);
     if (m_shield_status != shield_status)
     {
         m_shield_status = shield_status;
@@ -989,7 +989,7 @@ void PlayerShip::SetShieldStatus (Float const shield_status)
 
 void PlayerShip::SetPowerStatus (Float const power_status)
 {
-    ASSERT1(power_status >= 0.0f && power_status <= 1.0f)
+    ASSERT1(power_status >= 0.0f && power_status <= 1.0f);
     if (m_power_status != power_status)
     {
         m_power_status = power_status;
@@ -999,7 +999,7 @@ void PlayerShip::SetPowerStatus (Float const power_status)
 
 void PlayerShip::SetWeaponStatus (Float const weapon_status)
 {
-    ASSERT1(weapon_status >= 0.0f && weapon_status <= 1.0f)
+    ASSERT1(weapon_status >= 0.0f && weapon_status <= 1.0f);
     if (m_weapon_status != weapon_status)
     {
         m_weapon_status = weapon_status;
@@ -1028,8 +1028,8 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 */
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(ejectee->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(ejectee->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
     m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
 
     // figure out what item to equip it its place
@@ -1070,7 +1070,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
         {
             for (Uint8 i = UPGRADE_LEVEL_COUNT-1; i < UPGRADE_LEVEL_COUNT; --i)
             {
-                ASSERT1(s_weapon_priority[priority] < IT_COUNT)
+                ASSERT1(s_weapon_priority[priority] < IT_COUNT);
                 if (m_item_inventory[s_weapon_priority[priority]][i] != NULL)
                 {
                     item_to_equip = m_item_inventory[s_weapon_priority[priority]][i];
@@ -1118,13 +1118,13 @@ void PlayerShip::ChangeMineralInventory (
     Uint8 const mineral_type,
     Float const mineral_delta)
 {
-    ASSERT1(mineral_type < MINERAL_COUNT)
+    ASSERT1(mineral_type < MINERAL_COUNT);
 
     if (mineral_delta == 0.0f)
         return;
 
     ASSERT1(mineral_delta >= 0.0f ||
-            mineral_delta + m_mineral_inventory[mineral_type] >= 0.0f)
+            mineral_delta + m_mineral_inventory[mineral_type] >= 0.0f);
     m_mineral_inventory[mineral_type] += mineral_delta;
     m_sender_mineral_inventory_changed.Signal(mineral_type, m_mineral_inventory[mineral_type]);
 }

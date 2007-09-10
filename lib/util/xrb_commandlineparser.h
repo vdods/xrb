@@ -48,7 +48,7 @@ public:
         ASSERT0(m_non_option_argument_handler_method != NULL);
         ASSERT0(m_option != NULL);
         ASSERT0(m_option_count > 0);
-        ASSERT1(!m_executable_filename.empty())
+        ASSERT1(!m_executable_filename.empty());
 
         PerformOptionConsistencyCheck();
     }

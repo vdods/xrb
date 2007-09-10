@@ -85,7 +85,7 @@ namespace Xrb
 }
 
 %parser_destructor_actions{
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     Delete(m_scanner);
     delete StealAcceptedStructure();
 }
@@ -105,8 +105,8 @@ namespace Xrb
 %parser_implementation_file_bottom%{
 DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
 {
-    ASSERT1(m_scanner != NULL)
-    ASSERT1(!m_scanner->GetIsOpen())
+    ASSERT1(m_scanner != NULL);
+    ASSERT1(!m_scanner->GetIsOpen());
     // if there are any pipe characters in the filename, return failure
     if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
         return RC_INVALID_FILENAME;
@@ -129,31 +129,31 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filen
 
 DataFileParser::Token::Type DataFileParser::Scan ()
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     return m_scanner->Scan(&m_lookahead_token);
 }
 
 void DataFileParser::EmitWarning (std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(message);
 }
 
 void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(file_location, message);
 }
 
 void DataFileParser::EmitError (std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(message);
 }
 
 void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(m_scanner != NULL)
+    ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(file_location, message);
 }
 
@@ -183,7 +183,7 @@ data_file %type "DataFileStructure *"
 :
     element_list:element_list
     {
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
         return element_list;
     }
 |
@@ -198,7 +198,7 @@ element_list %type "DataFileStructure *"
 :
     element_list:element_list element:element
     {
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
 
         if (element != NULL)
         {
@@ -224,7 +224,7 @@ element %type "DataFileKeyPair *"
 :
     IDENTIFIER:key value:value ';'
     {
-        ASSERT1(key != NULL)
+        ASSERT1(key != NULL);
         if (value == NULL)
         {
             Delete(key);
@@ -238,7 +238,7 @@ element %type "DataFileKeyPair *"
 |
     IDENTIFIER:key %error ';'
     {
-        ASSERT1(key != NULL)
+        ASSERT1(key != NULL);
         std::ostringstream out;
         out << "syntax error in element with key \"" << key->GetValue() << "\"";
         EmitError(FL, out.str());
@@ -257,7 +257,7 @@ structure %type "DataFileStructure *"
 :
     '{' element_list:element_list '}'
     {
-        ASSERT1(element_list != NULL)
+        ASSERT1(element_list != NULL);
         return element_list;
     }
 |
@@ -272,13 +272,13 @@ array %type "DataFileArray *"
 :
     '[' value_list:value_list ']'
     {
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         return value_list;
     }
 |
     '[' value_list:value_list ',' ']'
     {
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         return value_list;
     }
 |
@@ -298,7 +298,7 @@ value_list %type "DataFileArray *"
 :
     value_list:value_list ',' value:value
     {
-        ASSERT1(value_list != NULL)
+        ASSERT1(value_list != NULL);
         if (value != NULL)
         {
             try
@@ -325,7 +325,7 @@ value_list %type "DataFileArray *"
             }
             catch (std::string const &)
             {
-                ASSERT1(false && "this should never happen")
+                ASSERT1(false && "this should never happen");
                 Delete(value);
             }
         }
@@ -388,8 +388,8 @@ string %type "DataFileString *"
 :
     string:string '+' STRING_FRAGMENT:string_fragment
     {
-        ASSERT1(string != NULL)
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string != NULL);
+        ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->GetValue());
         Delete(string_fragment);
         return string;
@@ -397,14 +397,14 @@ string %type "DataFileString *"
 |
     STRING_FRAGMENT:string_fragment
     {
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string_fragment != NULL);
         return string_fragment;
     }
 |
     string:string STRING_FRAGMENT:string_fragment
     {
-        ASSERT1(string != NULL)
-        ASSERT1(string_fragment != NULL)
+        ASSERT1(string != NULL);
+        ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->GetValue());
         Delete(string_fragment);
         EmitError(FL, "use + to concatenate strings (or did you forget a comma?)");

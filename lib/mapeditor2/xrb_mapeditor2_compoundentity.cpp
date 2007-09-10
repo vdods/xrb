@@ -19,7 +19,7 @@ Color MapEditor2::CompoundEntity::ms_selected_metrics_color(0.7f, 1.0f, 0.7f, 1.
 MapEditor2::CompoundEntity *MapEditor2::CompoundEntity::CreateCompoundEntityClone (
     Compound const *const compound) 
 {
-    ASSERT1(compound != NULL)
+    ASSERT1(compound != NULL);
     CompoundEntity *retval = new CompoundEntity();
     retval->Engine2::Object::CloneProperties(compound);
     retval->Object::CloneProperties(compound);
@@ -76,8 +76,8 @@ void MapEditor2::CompoundEntity::CloneProperties (Object const *const object)
 {
 //     CompoundEntity const *compound_entity =
 //         dynamic_cast<CompoundEntity const *>(object);
-//     ASSERT1(compound_entity != NULL)
-    ASSERT1(dynamic_cast<CompoundEntity const *>(object) != NULL)
+//     ASSERT1(compound_entity != NULL);
+    ASSERT1(dynamic_cast<CompoundEntity const *>(object) != NULL);
 
     // nothing to do (yet)
 }

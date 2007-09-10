@@ -77,7 +77,7 @@ FilePanel::FilePanel (
 
 std::string const &FilePanel::GetFilename () const
 {
-    ASSERT1(m_filename_edit != NULL)
+    ASSERT1(m_filename_edit != NULL);
     return m_filename_edit->GetText();
 }
 

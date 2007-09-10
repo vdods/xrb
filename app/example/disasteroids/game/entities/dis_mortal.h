@@ -48,8 +48,8 @@ public:
         :
         Entity(entity_type, collision_type)
     {
-        ASSERT1(current_health > 0.0f)
-        ASSERT1(max_health > 0.0f)
+        ASSERT1(current_health > 0.0f);
+        ASSERT1(max_health > 0.0f);
 
         m_current_health = current_health;
         m_max_health = max_health;
@@ -74,19 +74,19 @@ public:
     inline bool GetIsWeakAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
-        ASSERT1((damage_type & (damage_type - 1)) == 0)
+        ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_weakness) != 0;
     }
     inline bool GetIsStrongAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
-        ASSERT1((damage_type & (damage_type - 1)) == 0)
+        ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_strength) != 0;
     }
     inline bool GetIsImmuneAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
-        ASSERT1((damage_type & (damage_type - 1)) == 0)
+        ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_immunity) != 0;
     }
     virtual bool GetIsMortal () const { return true; }

@@ -24,8 +24,8 @@ namespace Dis
 
 Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
 {
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     switch (item_type)
     {
@@ -45,7 +45,7 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
         case IT_POWER_GENERATOR:              return new PowerGenerator(upgrade_level);
 
         default:
-            ASSERT1(false && "Invalid ItemType")
+            ASSERT1(false && "Invalid ItemType");
             return NULL;
     }
 }
@@ -60,7 +60,7 @@ std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_index)
         "resources/mineral_3.png",
     };
 
-    ASSERT1(mineral_index < MINERAL_COUNT)
+    ASSERT1(mineral_index < MINERAL_COUNT);
     return s_mineral_sprite_filename[mineral_index];
 }
 
@@ -145,9 +145,9 @@ Uint32 Item::GetItemPrice (
         }
     };
 
-    ASSERT1(item_type < IT_COUNT)
-    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT)
-    ASSERT1(mineral_index < MINERAL_COUNT)
+    ASSERT1(item_type < IT_COUNT);
+    ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
+    ASSERT1(mineral_index < MINERAL_COUNT);
 
     return s_item_price[item_type][upgrade_level][mineral_index];
 }

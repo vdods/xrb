@@ -148,7 +148,7 @@ void RadioButton<T, sentinel>::AttachToGroup (
     if (m_group != NULL)
         m_group->RemoveButton(this);
 
-    ASSERT1(group != NULL)
+    ASSERT1(group != NULL);
     m_group = group;
 }
 
@@ -156,7 +156,7 @@ template <typename T, T sentinel>
 void RadioButton<T, sentinel>::DetachFromGroup (
     RadioButtonGroup<T, sentinel> *const group)
 {
-    ASSERT1(m_group == group)
+    ASSERT1(m_group == group);
     m_group = NULL;
 }
 
@@ -165,7 +165,7 @@ void RadioButton<T, sentinel>::Initialize (
     T id,
     RadioButtonGroup<T, sentinel> *const group)
 {
-    ASSERT1(group != NULL)
+    ASSERT1(group != NULL);
 
     m_is_checked = false;
     RadioButton<T, sentinel>::UpdateRenderBackground();
@@ -209,7 +209,7 @@ RadioButtonGroup<T, sentinel>::~RadioButtonGroup ()
          ++it)
     {
         RadioButton<T, sentinel> *radio_button = it->second;
-        ASSERT1(radio_button != NULL)
+        ASSERT1(radio_button != NULL);
         radio_button->DetachFromGroup(this);
     }
 
@@ -237,7 +237,7 @@ void RadioButtonGroup<T, sentinel>::SetID (T id)
         if (it == m_button_map.end())
             return;
 
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         new_checked_button = it->second;
     }
 
@@ -259,7 +259,7 @@ template <typename T, T sentinel>
 void RadioButtonGroup<T, sentinel>::AddButton (
     RadioButton<T, sentinel> *const button)
 {
-    ASSERT1(button != NULL)
+    ASSERT1(button != NULL);
     // make sure the incoming button is not checked
     button->Uncheck();
 
@@ -268,7 +268,7 @@ void RadioButtonGroup<T, sentinel>::AddButton (
     RadioButtonMapIterator it = m_button_map.find(button->GetID());
     // only if there was no match will we add the button
     ASSERT1(it == m_button_map.end() &&
-            "You tried to add two RadioButtons with the same ID")
+            "You tried to add two RadioButtons with the same ID");
     m_button_map[button->GetID()] = button;
     // if there were no buttons in this group, set the new one checked
     if (no_buttons_in_group)
@@ -279,14 +279,14 @@ template <typename T, T sentinel>
 void RadioButtonGroup<T, sentinel>::RemoveButton (
     RadioButton<T, sentinel> *const button)
 {
-    ASSERT1(button != NULL)
+    ASSERT1(button != NULL);
 
     // make sure there's no button with the same ID already in there
     RadioButtonMapIterator it = m_button_map.find(button->GetID());
     // only if there was a match will we remove the button
     if (it != m_button_map.end())
     {
-        ASSERT1(it->second != NULL)
+        ASSERT1(it->second != NULL);
         it->second->DetachFromGroup(this);
         m_button_map.erase(it);
     }

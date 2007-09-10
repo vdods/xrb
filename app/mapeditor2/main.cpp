@@ -169,9 +169,9 @@ void ProcessKeyRepeatEvents (
     Screen *const screen,
     EventQueue *const event_queue)
 {
-    ASSERT1(key_repeater != NULL)
-    ASSERT1(screen != NULL)
-    ASSERT1(event_queue != NULL)
+    ASSERT1(key_repeater != NULL);
+    ASSERT1(screen != NULL);
+    ASSERT1(event_queue != NULL);
 
     EventKeyRepeat *e;
 
@@ -180,7 +180,7 @@ void ProcessKeyRepeatEvents (
     {
         // dequeue event
         e = key_repeater->DequeueEvent();
-        ASSERT1(e != NULL)
+        ASSERT1(e != NULL);
         // process event
         event_queue->EnqueueEvent(screen, e);
     }

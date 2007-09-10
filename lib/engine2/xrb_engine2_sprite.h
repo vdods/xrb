@@ -72,8 +72,7 @@ public:
     // see @c GetPhysicalSizeRatios
     inline Float GetPhysicalSizeRatio () const
     {
-        ASSERT1(m_physical_size_ratios[Dim::X] ==
-                m_physical_size_ratios[Dim::Y])
+        ASSERT1(m_physical_size_ratios[Dim::X] == m_physical_size_ratios[Dim::Y]);
         return m_physical_size_ratios[Dim::X];
     }
     // returns the calculated scale factors for the physical geometry,

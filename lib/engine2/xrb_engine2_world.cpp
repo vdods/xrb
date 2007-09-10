@@ -25,7 +25,7 @@ namespace Xrb
 
 Engine2::World::~World ()
 {
-    ASSERT1(m_world_view_list.empty() && "all WorldView objects must be detached before destroying World")
+    ASSERT1(m_world_view_list.empty() && "all WorldView objects must be detached before destroying World");
 
     // delete the Entity/Object pairs (dynamic objects).  this will
     // handle removing them from the physics handler as well.
@@ -40,7 +40,7 @@ Engine2::World::~World ()
             delete entity->GetOwnerObject();
         }
     }
-    ASSERT1(m_entity_count == 0)
+    ASSERT1(m_entity_count == 0);
 
     // all entities have been removed, we can now delete the physics handler
     delete m_physics_handler;
@@ -52,7 +52,7 @@ Engine2::World::~World ()
          ++it)
     {
         ObjectLayer *object_layer = *it;
-        ASSERT1(object_layer != NULL)
+        ASSERT1(object_layer != NULL);
         Delete(object_layer);
     }
     m_object_layer_list.clear();
@@ -68,8 +68,8 @@ Engine2::World *Engine2::World::Create (
     CreateEntityFunction CreateEntity,
     PhysicsHandler *const physics_handler)
 {
-    ASSERT1(serializer.GetIsOpen())
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint16 entity_capacity = serializer.ReadUint32();
     World *retval = new World(physics_handler, entity_capacity);
@@ -95,11 +95,11 @@ void Engine2::World::Write (Serializer &serializer) const
 
 void Engine2::World::AttachWorldView (WorldView *const world_view)
 {
-    ASSERT1(world_view != NULL)
-    ASSERT1(world_view->GetWorld() == NULL)
+    ASSERT1(world_view != NULL);
+    ASSERT1(world_view->GetWorld() == NULL);
     ASSERT1(std::find(m_world_view_list.begin(), m_world_view_list.end(), world_view)
             ==
-            m_world_view_list.end())
+            m_world_view_list.end());
     world_view->SetWorld(this);
     m_world_view_list.push_back(world_view);
     HandleAttachWorldView(world_view);
@@ -107,19 +107,19 @@ void Engine2::World::AttachWorldView (WorldView *const world_view)
 
 void Engine2::World::DetachWorldView (WorldView *const world_view)
 {
-    ASSERT1(world_view != NULL)
-    ASSERT1(world_view->GetWorld() == this)
+    ASSERT1(world_view != NULL);
+    ASSERT1(world_view->GetWorld() == this);
     HandleDetachWorldView(world_view);
     WorldViewListIterator it =
         std::find(m_world_view_list.begin(), m_world_view_list.end(), world_view);
-    ASSERT1(it != m_world_view_list.end())
+    ASSERT1(it != m_world_view_list.end());
     m_world_view_list.erase(it);
     world_view->SetWorld(NULL);
 }
 
 void Engine2::World::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     m_object_layer_list.push_back(object_layer);
     if (m_physics_handler != NULL)
         m_physics_handler->AddObjectLayer(object_layer);
@@ -127,8 +127,8 @@ void Engine2::World::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 
 void Engine2::World::SetMainObjectLayer (Engine2::ObjectLayer *main_object_layer)
 {
-    ASSERT1(main_object_layer != NULL)
-    ASSERT1(main_object_layer->GetOwnerWorld() == this)
+    ASSERT1(main_object_layer != NULL);
+    ASSERT1(main_object_layer->GetOwnerWorld() == this);
     m_main_object_layer = main_object_layer;
     if (m_physics_handler != NULL)
         m_physics_handler->SetMainObjectLayer(m_main_object_layer);
@@ -138,9 +138,9 @@ void Engine2::World::AddStaticObject (
     Engine2::Object *const static_object,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(static_object != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(!static_object->GetIsDynamic())
+    ASSERT1(static_object != NULL);
+    ASSERT1(object_layer != NULL);
+    ASSERT1(!static_object->GetIsDynamic());
     // add the object to the layer
     object_layer->AddObject(static_object);
 }
@@ -149,12 +149,12 @@ void Engine2::World::AddDynamicObject (
     Engine2::Object *const dynamic_object,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(dynamic_object != NULL)
-    ASSERT1(object_layer != NULL)
-    ASSERT1(dynamic_object->GetIsDynamic())
+    ASSERT1(dynamic_object != NULL);
+    ASSERT1(object_layer != NULL);
+    ASSERT1(dynamic_object->GetIsDynamic());
     Entity *entity = dynamic_object->GetEntity();
-    ASSERT1(entity != NULL)
-    ASSERT1(!entity->GetIsInWorld())
+    ASSERT1(entity != NULL);
+    ASSERT1(!entity->GetIsInWorld());
 
     if (m_lowest_available_entity_index == static_cast<EntityWorldIndex>(m_entity_vector.size()))
     {
@@ -172,7 +172,7 @@ void Engine2::World::AddDynamicObject (
     // increment the lowest entnum
     IncrementLowestAvailableEntityIndex();
     // increment the entity count
-    ASSERT1(m_entity_count < UINT32_UPPER_BOUND)
+    ASSERT1(m_entity_count < UINT32_UPPER_BOUND);
     ++m_entity_count;
 
     // add the entity to the physics handler (must be done after adding
@@ -183,14 +183,14 @@ void Engine2::World::AddDynamicObject (
 
 void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
 {
-    ASSERT1(dynamic_object != NULL)
-    ASSERT1(dynamic_object->GetIsDynamic())
+    ASSERT1(dynamic_object != NULL);
+    ASSERT1(dynamic_object->GetIsDynamic());
     Entity *entity = dynamic_object->GetEntity();
-    ASSERT1(entity != NULL)
-    ASSERT1(entity->GetIsInWorld())
+    ASSERT1(entity != NULL);
+    ASSERT1(entity->GetIsInWorld());
     EntityWorldIndex entity_index = entity->GetWorldIndex();
-    ASSERT1(entity_index < static_cast<EntityWorldIndex>(m_entity_vector.size()))
-    ASSERT1(m_entity_vector[entity_index] == entity)
+    ASSERT1(entity_index < static_cast<EntityWorldIndex>(m_entity_vector.size()));
+    ASSERT1(m_entity_vector[entity_index] == entity);
 
     // remove the dynamic object from its object layer
     dynamic_object->GetObjectLayer()->RemoveObject(dynamic_object);
@@ -203,7 +203,7 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
     // set the entnum to the sentinel 'not in array' number
     entity->ResetWorldIndex();
     // decrement the entity count
-    ASSERT1(m_entity_count > 0)
+    ASSERT1(m_entity_count > 0);
     --m_entity_count;
 
     // schedule the entity's events to be deleted.
@@ -230,7 +230,7 @@ Engine2::World::World (
         m_physics_handler->SetOwnerWorld(this);
     m_main_object_layer = NULL;
     m_timescale = 1.0f;
-    ASSERT1(entity_capacity > 0)
+    ASSERT1(entity_capacity > 0);
     m_entity_vector.resize(Min(entity_capacity, static_cast<EntityWorldIndex>(MAXIMUM_ENTITY_CAPACITY)));
     std::fill(m_entity_vector.begin(), m_entity_vector.end(), static_cast<Entity *>(NULL));
     m_lowest_available_entity_index = 0;
@@ -246,7 +246,7 @@ Uint32 Engine2::World::GetMainObjectLayerIndex () const
          ++it)
     {
         ObjectLayer *object_layer = *it;
-        ASSERT1(object_layer != NULL)
+        ASSERT1(object_layer != NULL);
         if (object_layer == GetMainObjectLayer())
             return index;
     }
@@ -264,7 +264,7 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
          ++it)
     {
         ObjectLayer *object_layer = *it;
-        ASSERT1(object_layer != NULL)
+        ASSERT1(object_layer != NULL);
         if (i == index) {
             m_main_object_layer = object_layer;
             if (m_physics_handler != NULL)
@@ -278,7 +278,7 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
 
 bool Engine2::World::HandleEvent (Event const *const e)
 {
-    ASSERT1(e != NULL)
+    ASSERT1(e != NULL);
     switch (e->GetEventType())
     {
         case Event::ENGINE2_DELETE_ENTITY:
@@ -286,11 +286,11 @@ bool Engine2::World::HandleEvent (Event const *const e)
             EventEntity const *event_entity =
                 DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
             ASSERT1(entity->GetIsInWorld() &&
                     "You shouldn't schedule removed entities "
-                    "for deletion -- just delete them")
-            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
+                    "for deletion -- just delete them");
+            ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
             RemoveDynamicObject(entity->GetOwnerObject());
             delete entity->GetOwnerObject();
             event_entity->NullifyEntity();
@@ -302,10 +302,10 @@ bool Engine2::World::HandleEvent (Event const *const e)
             EventEntity const *event_entity =
                 DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
-            ASSERT1(entity != NULL)
+            ASSERT1(entity != NULL);
             ASSERT1(entity->GetIsInWorld() &&
-                    "You can only remove entities already in the world")
-            ASSERT1(entity->GetOwnerObject()->GetWorld() == this)
+                    "You can only remove entities already in the world");
+            ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
             RemoveDynamicObject(entity->GetOwnerObject());
             event_entity->NullifyEntity();
             break;
@@ -320,7 +320,7 @@ bool Engine2::World::HandleEvent (Event const *const e)
 
 void Engine2::World::HandleFrame ()
 {
-    ASSERT1(m_main_object_layer != NULL)
+    ASSERT1(m_main_object_layer != NULL);
     if (m_physics_handler != NULL)
         m_physics_handler->ProcessFrame(GetFrameTime());
     m_owner_event_queue.ProcessFrame(GetFrameTime());
@@ -345,7 +345,7 @@ void Engine2::World::UpdateLowestAvailableEntityIndex (
 
 void Engine2::World::Read (Serializer &serializer, CreateEntityFunction CreateEntity)
 {
-    ASSERT1(m_object_layer_list.empty())
+    ASSERT1(m_object_layer_list.empty());
 
     Uint32 main_object_layer_index = serializer.ReadUint32();
     ReadObjectLayers(serializer, CreateEntity);
@@ -371,14 +371,14 @@ void Engine2::World::ReadDynamicObjectsBelongingToLayer (
     Engine2::ObjectLayer *const object_layer,
     CreateEntityFunction CreateEntity)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     Uint32 dynamic_object_count = serializer.ReadUint32();
     while (dynamic_object_count > 0)
     {
         Object *dynamic_object = Object::Create(serializer, CreateEntity);
-        ASSERT1(dynamic_object != NULL)
-        ASSERT1(dynamic_object->GetIsDynamic())
+        ASSERT1(dynamic_object != NULL);
+        ASSERT1(dynamic_object->GetIsDynamic());
         AddDynamicObject(dynamic_object, object_layer);
         --dynamic_object_count;
     }
@@ -393,7 +393,7 @@ void Engine2::World::WriteObjectLayers (Serializer &serializer) const
          ++it)
     {
         ObjectLayer const *object_layer = *it;
-        ASSERT1(object_layer != NULL)
+        ASSERT1(object_layer != NULL);
         object_layer->Write(serializer);
         WriteDynamicObjectsBelongingToLayer(serializer, object_layer);
     }
@@ -403,7 +403,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
     Serializer &serializer,
     Engine2::ObjectLayer const *const object_layer) const
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     // first we have to count how many there actually are
     Uint32 dynamic_object_count = 0;
@@ -415,8 +415,8 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
         Entity const *entity = *it;
         if (entity != NULL)
         {
-            ASSERT1(entity->GetObjectLayer() != NULL)
-            ASSERT1(entity->GetIsInWorld())
+            ASSERT1(entity->GetObjectLayer() != NULL);
+            ASSERT1(entity->GetIsInWorld());
 
             // if the entity belongs to the given layer, count it
             if (entity->GetObjectLayer() == object_layer)
@@ -438,8 +438,8 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
         Entity const *entity = *it;
         if (entity != NULL)
         {
-            ASSERT1(entity->GetObjectLayer() != NULL)
-            ASSERT1(entity->GetIsInWorld())
+            ASSERT1(entity->GetObjectLayer() != NULL);
+            ASSERT1(entity->GetIsInWorld());
 
             // if the entity belongs to the given layer, write it out
             if (entity->GetObjectLayer() == object_layer)
@@ -449,7 +449,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
             }
         }
     }
-    ASSERT1(dynamic_object_count == 0)
+    ASSERT1(dynamic_object_count == 0);
 }
 
 } // end of namespace Xrb

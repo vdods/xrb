@@ -60,7 +60,7 @@ void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
-            ASSERT1(m_child[i] == NULL)
+            ASSERT1(m_child[i] == NULL);
             m_child[i] = new VisibilityQuadTree(this);
             GetChild<VisibilityQuadTree>(i)->ReadStructure(serializer);
         }
@@ -84,7 +84,7 @@ void Engine2::VisibilityQuadTree::ReadObjects (
     Serializer &serializer,
     Engine2::ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
 
     fprintf(stderr, "Engine2::VisibilityQuadTree::ReadObjects();\n");
     Uint32 static_object_count = serializer.ReadUint32();
@@ -93,7 +93,7 @@ void Engine2::VisibilityQuadTree::ReadObjects (
         // it's ok to pass NULL as CreateEntity because it won't be used,
         // because these are all static objects (or at least better be)
         Object *object = Object::Create(serializer, NULL);
-        ASSERT1(!object->GetIsDynamic())
+        ASSERT1(!object->GetIsDynamic());
         object_layer->AddObject(object);
         --static_object_count;
     }
@@ -116,7 +116,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
          ++it)
     {
         Object const *object = *it;
-        ASSERT1(object != NULL)
+        ASSERT1(object != NULL);
         if (!object->GetIsDynamic())
         {
             object->Write(serializer);
@@ -129,7 +129,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
-            ASSERT1(m_child[i]->GetParent() == this)
+            ASSERT1(m_child[i]->GetParent() == this);
             retval += GetChild<VisibilityQuadTree>(i)->WriteObjects(serializer);
         }
     }
@@ -145,8 +145,8 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     Float const view_radius,
     TransparentObjectVector *const transparent_object_vector)
 {
-    ASSERT1(transparent_object_vector != NULL)
-    ASSERT1(m_parent == NULL)
+    ASSERT1(transparent_object_vector != NULL);
+    ASSERT1(m_parent == NULL);
 
     // clear the transparent object vector and create the draw loop functor
     transparent_object_vector->clear();
@@ -208,8 +208,8 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     Float const view_radius,
     TransparentObjectVector *const transparent_object_vector)
 {
-    ASSERT1(transparent_object_vector != NULL)
-    ASSERT1(m_parent == NULL)
+    ASSERT1(transparent_object_vector != NULL);
+    ASSERT1(m_parent == NULL);
 
     // clear the transparent object vector and create the draw loop functor
     transparent_object_vector->clear();
@@ -328,8 +328,8 @@ void Engine2::VisibilityQuadTree::Draw (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f)
-    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f)
+    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f);
+    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
 
     // don't draw quadtrees whose radii are lower than the
     // gs_radius_limit_lower threshold -- a form of distance culling,
@@ -363,10 +363,10 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT1(GetParent() == NULL)
-    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f)
-    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f)
-    ASSERT2(m_half_side_length > 0.0f)
+    ASSERT1(GetParent() == NULL);
+    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f);
+    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
+    ASSERT2(m_half_side_length > 0.0f);
 
     Float side_length = GetSideLength();
     Float radius_sum = 2.0f*GetRadius() + draw_loop_functor.GetViewRadius();

@@ -53,7 +53,7 @@ void GLTexture::GenerateTexture (
     Texture *texture,
     bool const delete_original_texture)
 {
-    ASSERT1(texture != NULL)
+    ASSERT1(texture != NULL);
 
     m_size = texture->GetSize();
 
@@ -104,7 +104,7 @@ void GLTexture::GenerateTexture (
 
 void GLTexture::DeleteTexture ()
 {
-    ASSERT1(m_handle > 0)
+    ASSERT1(m_handle > 0);
     glDeleteTextures(1, &m_handle);
 }
 

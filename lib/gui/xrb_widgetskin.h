@@ -135,7 +135,7 @@ public:
     inline WidgetBackground const *GetWidgetBackground (
         WidgetBackgroundType const widget_background_type) const
     {
-        ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT)
+        ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
         return m_widget_background[widget_background_type];
     }
     /** @brief Returns the const resourced Font object of the requested type.
@@ -143,7 +143,7 @@ public:
       */
     inline Resource<Font> const &GetFont (FontType const font_type) const
     {
-        ASSERT1(font_type < FONT_TYPE_COUNT)
+        ASSERT1(font_type < FONT_TYPE_COUNT);
         return m_font_specification[font_type].m_font;
     }
     /** @brief Returns the const resourced GLTexture object of the requested
@@ -153,7 +153,7 @@ public:
     inline Resource<GLTexture> const &GetTexture (
         TextureType const texture_type) const
     {
-        ASSERT1(texture_type < TEXTURE_TYPE_COUNT)
+        ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
         return m_texture[texture_type];
     }
     /** @brief Returns a screen coordinate vector containing the requested
@@ -162,7 +162,7 @@ public:
       */
     inline ScreenCoordVector2 const &GetMargins (MarginsType const margins_type) const
     {
-        ASSERT1(margins_type < MARGINS_TYPE_COUNT)
+        ASSERT1(margins_type < MARGINS_TYPE_COUNT);
         return m_margins_specification[margins_type].m_margins;
     }
 

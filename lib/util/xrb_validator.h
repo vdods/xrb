@@ -160,7 +160,7 @@ struct RangeInclusiveValidator : public Validator<ValueType>
         m_lower_bound(lower_bound),
         m_upper_bound(upper_bound)
     {
-        ASSERT1(lower_bound <= upper_bound)
+        ASSERT1(lower_bound <= upper_bound);
     }
 
     virtual bool GetIsValid (ValueType value) const
@@ -202,9 +202,9 @@ struct RangeExclusiveValidator : public Validator<ValueType>
         m_highest_valid_value(highest_valid_value),
         m_upper_bound(upper_bound)
     {
-        ASSERT1(lower_bound < lowest_valid_value)
-        ASSERT1(lowest_valid_value < highest_valid_value)
-        ASSERT1(highest_valid_value < upper_bound)
+        ASSERT1(lower_bound < lowest_valid_value);
+        ASSERT1(lowest_valid_value < highest_valid_value);
+        ASSERT1(highest_valid_value < upper_bound);
     }
 
     virtual bool GetIsValid (ValueType value) const

@@ -177,8 +177,8 @@ public:
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &GetColorMask () const { return m_color_mask; }
     inline bool GetIsTransparent () const { return m_is_transparent; }
-    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]; }
-    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT) CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
+    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
+    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
     inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
     inline Float GetPhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
@@ -190,13 +190,13 @@ public:
     // returns true if this object has an owner quadtree
     inline bool GetHasOwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
-        ASSERT3(quad_tree_type <= QTT_COUNT)
+        ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type] != NULL;
     }
     // returns the owner of this entity
     inline QuadTree *GetOwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
-        ASSERT3(quad_tree_type <= QTT_COUNT)
+        ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type];
     }
 
@@ -205,7 +205,7 @@ public:
     // on top of things with higher z-depth values).
     inline void SetZDepth (Float z_depth)
     {
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(z_depth))
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(z_depth));
         m_z_depth = z_depth;
     }
     // imbues this object with a soul
@@ -224,7 +224,7 @@ public:
         QuadTreeType const quad_tree_type,
         QuadTree *const owner_quad_tree)
     {
-        ASSERT3(quad_tree_type <= QTT_COUNT)
+        ASSERT3(quad_tree_type <= QTT_COUNT);
         m_owner_quad_tree[quad_tree_type] = owner_quad_tree;
     }
 

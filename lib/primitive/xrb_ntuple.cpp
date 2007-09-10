@@ -45,7 +45,7 @@ void Fprint (
         case BOTTOM: stringified0 = STRINGIFY(BOTTOM); break;
         case RIGHT:  stringified0 = STRINGIFY(RIGHT);  break;
         case SPACED: stringified0 = STRINGIFY(SPACED); break;
-        default: ASSERT1(false && "Invalid Alignment") return;
+        default: ASSERT1(false && "Invalid Alignment"); return;
     }
     switch (ntuple[1])
     {
@@ -55,7 +55,7 @@ void Fprint (
         case BOTTOM: stringified1 = STRINGIFY(BOTTOM); break;
         case RIGHT:  stringified1 = STRINGIFY(RIGHT);  break;
         case SPACED: stringified1 = STRINGIFY(SPACED); break;
-        default: ASSERT1(false && "Invalid Alignment") return;
+        default: ASSERT1(false && "Invalid Alignment"); return;
     }
 
     fprintf(

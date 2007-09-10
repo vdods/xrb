@@ -44,7 +44,7 @@ void WidgetStack::SetSizePropertyEnabled (
     Uint32 const component,
     bool const value)
 {
-    ASSERT1(component <= 1)
+    ASSERT1(component <= 1);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size_enabled[component] = value;
     else
@@ -72,8 +72,8 @@ void WidgetStack::SetSizeProperty (
     Uint32 const component,
     ScreenCoord const value)
 {
-    ASSERT1(component <= 1)
-    ASSERT1(value >= 0)
+    ASSERT1(component <= 1);
+    ASSERT1(value >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size[component] = value;
     else
@@ -87,8 +87,8 @@ void WidgetStack::SetSizeProperty (
     SizeProperties::Property const property,
     ScreenCoordVector2 const &value)
 {
-    ASSERT1(value[Dim::X] >= 0)
-    ASSERT1(value[Dim::Y] >= 0)
+    ASSERT1(value[Dim::X] >= 0);
+    ASSERT1(value[Dim::Y] >= 0);
     if (property == SizeProperties::MIN)
         m_preferred_size_properties.m_min_size = value;
     else
@@ -186,7 +186,7 @@ void WidgetStack::ResizeAndRepositionChildWidgets ()
     for (Uint32 i = 0; i < m_child_vector.size(); ++i)
     {
         Widget *child = m_child_vector[i];
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
 
         // skip hidden children
         if (child->GetIsHidden())
@@ -203,7 +203,7 @@ void WidgetStack::ResizeAndRepositionChildWidgets ()
         // properly centered on the grid slot.
         ScreenCoordVector2 extra_space(GetSize() - child->GetSize());
         ASSERT1(extra_space[Dim::X] >= 0 &&
-                extra_space[Dim::Y] >= 0)
+                extra_space[Dim::Y] >= 0);
         // move the child to the tracked current positional offset,
         // plus half of the extra space, so the child is centered
         // on the grid slot.
@@ -239,7 +239,7 @@ void WidgetStack::UpdateContentsSizeProperties () const
     for (Uint32 i = 0; i < m_child_vector.size(); ++i)
     {
         Widget const *child = m_child_vector[i];
-        ASSERT1(child != NULL)
+        ASSERT1(child != NULL);
 
         // skip hidden children
         if (child->GetIsHidden())

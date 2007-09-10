@@ -35,7 +35,7 @@ inline void Delete (T *&pointer)
 {
     ASSERT1(
         pointer != reinterpret_cast<T *>(0xFBADFACE) &&
-        "This pointer has already been deleted")
+        "This pointer has already been deleted");
     delete pointer;
 #if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T *>(0xFBADFACE);
@@ -55,7 +55,7 @@ inline void Delete (T const *&pointer)
 {
     ASSERT1(
         pointer != reinterpret_cast<T const *>(0xFBADFACE) &&
-        "This pointer has already been deleted")
+        "This pointer has already been deleted");
     delete pointer;
 #if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T const *>(0xFBADFACE);
@@ -75,7 +75,7 @@ inline void DeleteArray (T *&pointer)
 {
     ASSERT1(
         pointer != reinterpret_cast<T *>(0xFBADFACE) &&
-        "This pointer has already been deleted")
+        "This pointer has already been deleted");
     delete[] pointer;
 #if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T *>(0xFBADFACE);
@@ -95,7 +95,7 @@ inline void DeleteArray (T const *&pointer)
 {
     ASSERT1(
         pointer != reinterpret_cast<T const *>(0xFBADFACE) &&
-        "This pointer has already been deleted")
+        "This pointer has already been deleted");
     delete[] pointer;
 #if XRB_DEBUG_LEVEL > 0
     pointer = reinterpret_cast<T const *>(0xFBADFACE);

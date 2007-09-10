@@ -19,7 +19,7 @@ namespace Xrb
 
 WidgetSkin::WidgetSkin (Screen const *screen)
 {
-    ASSERT1(screen != NULL)
+    ASSERT1(screen != NULL);
     m_screen = screen;
 
     // ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ WidgetSkin *WidgetSkin::CreateClone () const
 {
     WidgetSkin *retval = new WidgetSkin;
 
-    ASSERT1(m_screen != NULL)
+    ASSERT1(m_screen != NULL);
     retval->m_screen = m_screen;
 
     for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
@@ -111,23 +111,23 @@ WidgetSkin *WidgetSkin::CreateClone () const
 
 Float WidgetSkin::GetRatioFromScreenCoord (ScreenCoord const screen_coord) const
 {
-    ASSERT1(m_screen != NULL)
-    ASSERT1(m_screen->GetSizeRatioBasis() > 0)
+    ASSERT1(m_screen != NULL);
+    ASSERT1(m_screen->GetSizeRatioBasis() > 0);
     return static_cast<Float>(screen_coord) / m_screen->GetSizeRatioBasis();
 }
 
 ScreenCoord WidgetSkin::GetScreenCoordFromRatio (Float const ratio) const
 {
-    ASSERT1(m_screen != NULL)
-    ASSERT1(m_screen->GetSizeRatioBasis() > 0)
+    ASSERT1(m_screen != NULL);
+    ASSERT1(m_screen->GetSizeRatioBasis() > 0);
     return static_cast<ScreenCoord>(ratio * m_screen->GetSizeRatioBasis());
 }
 
 FloatVector2 WidgetSkin::GetRatiosFromScreenCoords (
     ScreenCoordVector2 const &screen_coords) const
 {
-    ASSERT1(m_screen != NULL)
-    ASSERT1(m_screen->GetSizeRatioBasis() > 0)
+    ASSERT1(m_screen != NULL);
+    ASSERT1(m_screen->GetSizeRatioBasis() > 0);
     return screen_coords.StaticCast<Float>() /
            static_cast<Float>(m_screen->GetSizeRatioBasis());
 }
@@ -135,8 +135,8 @@ FloatVector2 WidgetSkin::GetRatiosFromScreenCoords (
 ScreenCoordVector2 WidgetSkin::GetScreenCoordsFromRatios (
     FloatVector2 const &ratios) const
 {
-    ASSERT1(m_screen != NULL)
-    ASSERT1(m_screen->GetSizeRatioBasis() > 0)
+    ASSERT1(m_screen != NULL);
+    ASSERT1(m_screen->GetSizeRatioBasis() > 0);
     return (ratios *
             static_cast<Float>(m_screen->GetSizeRatioBasis())
            ).StaticCast<ScreenCoord>();
@@ -146,7 +146,7 @@ void WidgetSkin::SetWidgetBackground (
     WidgetBackgroundType const widget_background_type,
     WidgetBackground const *const widget_background)
 {
-    ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT)
+    ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
     delete m_widget_background[widget_background_type];
     m_widget_background[widget_background_type] = widget_background;
 }
@@ -155,8 +155,8 @@ void WidgetSkin::SetFont (
     FontType const font_type,
     Resource<Font> const &font)
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT)
-    ASSERT1(font.GetIsValid())
+    ASSERT1(font_type < FONT_TYPE_COUNT);
+    ASSERT1(font.GetIsValid());
     m_font_specification[font_type].m_font = font;
     m_font_specification[font_type].m_font_height = font->GetPixelHeight();
     m_font_specification[font_type].m_font_height_ratio =
@@ -167,7 +167,7 @@ void WidgetSkin::SetFontFaceFilename (
     FontType const font_type,
     std::string const &font_face_filename)
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT)
+    ASSERT1(font_type < FONT_TYPE_COUNT);
     m_font_specification[font_type].m_font_height =
         GetScreenCoordFromRatio(
             m_font_specification[font_type].m_font_height_ratio);
@@ -176,7 +176,7 @@ void WidgetSkin::SetFontFaceFilename (
             AsciiFont::Create,
             font_face_filename,
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
+    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
 }
 
 
@@ -184,8 +184,8 @@ void WidgetSkin::SetFontHeightRatio (
     FontType const font_type,
     Float const font_height_ratio)
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT)
-    ASSERT1(font_height_ratio > 0.0f)
+    ASSERT1(font_type < FONT_TYPE_COUNT);
+    ASSERT1(font_height_ratio > 0.0f);
     m_font_specification[font_type].m_font_height_ratio = font_height_ratio;
     m_font_specification[font_type].m_font_height =
         GetScreenCoordFromRatio(font_height_ratio);
@@ -194,15 +194,15 @@ void WidgetSkin::SetFontHeightRatio (
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
+    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
 }
 
 void WidgetSkin::SetFontHeight (
     FontType const font_type,
     ScreenCoord const font_height)
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT)
-    ASSERT1(font_height > 0)
+    ASSERT1(font_type < FONT_TYPE_COUNT);
+    ASSERT1(font_height > 0);
     m_font_specification[font_type].m_font_height = font_height;
     m_font_specification[font_type].m_font_height_ratio =
         GetRatioFromScreenCoord(font_height);
@@ -211,14 +211,14 @@ void WidgetSkin::SetFontHeight (
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid())
+    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
 }
 
 void WidgetSkin::SetTexture (
     TextureType const texture_type,
     Resource<GLTexture> const &texture)
 {
-    ASSERT1(texture_type < TEXTURE_TYPE_COUNT)
+    ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] = texture;
 }
 
@@ -226,7 +226,7 @@ void WidgetSkin::SetTextureFilename (
     TextureType const texture_type,
     std::string const &texture_filename)
 {
-    ASSERT1(texture_type < TEXTURE_TYPE_COUNT)
+    ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] =
         Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
@@ -237,9 +237,9 @@ void WidgetSkin::SetMarginRatios (
     MarginsType const margins_type,
     FloatVector2 const &margin_ratios)
 {
-    ASSERT1(margins_type < MARGINS_TYPE_COUNT)
-    ASSERT1(margin_ratios[Dim::X] >= static_cast<Float>(0))
-    ASSERT1(margin_ratios[Dim::Y] >= static_cast<Float>(0))
+    ASSERT1(margins_type < MARGINS_TYPE_COUNT);
+    ASSERT1(margin_ratios[Dim::X] >= static_cast<Float>(0));
+    ASSERT1(margin_ratios[Dim::Y] >= static_cast<Float>(0));
     m_margins_specification[margins_type].m_margin_ratios = margin_ratios;
     m_margins_specification[margins_type].m_margins =
         GetScreenCoordsFromRatios(margin_ratios);
@@ -249,9 +249,9 @@ void WidgetSkin::SetMargins (
     MarginsType const margins_type,
     ScreenCoordVector2 const &margins)
 {
-    ASSERT1(margins_type < MARGINS_TYPE_COUNT)
-    ASSERT1(margins[Dim::X] >= 0)
-    ASSERT1(margins[Dim::Y] >= 0)
+    ASSERT1(margins_type < MARGINS_TYPE_COUNT);
+    ASSERT1(margins[Dim::X] >= 0);
+    ASSERT1(margins[Dim::Y] >= 0);
     m_margins_specification[margins_type].m_margins = margins;
     m_margins_specification[margins_type].m_margin_ratios =
         GetRatiosFromScreenCoords(margins);
@@ -259,7 +259,7 @@ void WidgetSkin::SetMargins (
 
 void WidgetSkin::UpdateFontHeight (FontType const font_type)
 {
-    ASSERT1(font_type < FONT_TYPE_COUNT)
+    ASSERT1(font_type < FONT_TYPE_COUNT);
     m_font_specification[font_type].m_font_height =
         GetScreenCoordFromRatio(
             m_font_specification[font_type].m_font_height_ratio);
@@ -267,7 +267,7 @@ void WidgetSkin::UpdateFontHeight (FontType const font_type)
 
 void WidgetSkin::UpdateMargins (MarginsType const margins_type)
 {
-    ASSERT1(margins_type < MARGINS_TYPE_COUNT)
+    ASSERT1(margins_type < MARGINS_TYPE_COUNT);
     m_margins_specification[margins_type].m_margins =
         GetScreenCoordsFromRatios(
             m_margins_specification[margins_type].m_margin_ratios);

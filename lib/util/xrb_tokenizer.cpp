@@ -19,8 +19,8 @@ Tokenizer::Tokenizer (
     char *const string_to_tokenize,
     char const *const delimiters)
 {
-    ASSERT1(string_to_tokenize != NULL)
-    ASSERT1(delimiters != NULL)
+    ASSERT1(string_to_tokenize != NULL);
+    ASSERT1(delimiters != NULL);
 
     m_string_to_tokenize = string_to_tokenize;
     m_string_to_tokenize_requires_deletion = false;
@@ -32,8 +32,8 @@ Tokenizer::Tokenizer (
     const char *const string_to_tokenize,
     char const *const delimiters)
 {
-    ASSERT1(string_to_tokenize != NULL)
-    ASSERT1(delimiters != NULL)
+    ASSERT1(string_to_tokenize != NULL);
+    ASSERT1(delimiters != NULL);
 
     m_string_to_tokenize = Util::StringDuplicate(string_to_tokenize);
     m_string_to_tokenize_requires_deletion = false;
@@ -63,7 +63,7 @@ char const *Tokenizer::GetToken () const
     // otherwise it indicates that we're starting at the beginning.
     else
     {
-        ASSERT1(m_replaced_delimiter == '\0')
+        ASSERT1(m_replaced_delimiter == '\0');
         m_end_of_token = m_string_to_tokenize;
     }
 
@@ -111,7 +111,7 @@ char const *Tokenizer::GetToken () const
     // at this point, m_end_of_token is pointing to the non-null char
     // delimiter at the end of the requested token.  replace it with
     // a null char, saving off the delimiter that was replaced.
-    ASSERT1(GetIsCharADelimiter(*m_end_of_token))
+    ASSERT1(GetIsCharADelimiter(*m_end_of_token));
     m_replaced_delimiter = *m_end_of_token;
     *m_end_of_token = 0;
 
@@ -121,7 +121,7 @@ char const *Tokenizer::GetToken () const
 
 bool Tokenizer::GetIsCharADelimiter (char const c) const
 {
-    ASSERT1(m_delimiters != NULL)
+    ASSERT1(m_delimiters != NULL);
 
     char const *delimiter = m_delimiters;
     while (*delimiter)

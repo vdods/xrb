@@ -218,7 +218,7 @@ public:
                 RotateView(-15.0f); // Rotate 15 degrees clockwise.
             else
             {
-                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN);
                 RotateView(15.0f); // Rotate 15 degrees counterclockwise.
             }
         }
@@ -230,7 +230,7 @@ public:
                 ZoomView(1.2f); // Zoom in by a factor of 1.2f
             else
             {
-                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN);
                 ZoomView(1.0f / 1.2f); // Zoom out by a factor of 1.2f
             }
         }

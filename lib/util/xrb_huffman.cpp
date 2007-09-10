@@ -74,8 +74,8 @@ int HuffmanTreeNode::QsortCompare (void const *a, void const *b)
     HuffmanTreeNode const *node_a = *static_cast<HuffmanTreeNode const *const *>(a);
     HuffmanTreeNode const *node_b = *static_cast<HuffmanTreeNode const *const *>(b);
 
-    ASSERT1(node_a != NULL)
-    ASSERT1(node_b != NULL)
+    ASSERT1(node_a != NULL);
+    ASSERT1(node_b != NULL);
 
     if (node_a->m_weight < node_b->m_weight)
         return -1;
@@ -88,7 +88,7 @@ int HuffmanTreeNode::QsortCompare (void const *a, void const *b)
 void HuffmanTreeNode::TraverseAndBuildCodes (
     Huffman::Code *const codes) const
 {
-    ASSERT1(codes != NULL)
+    ASSERT1(codes != NULL);
 
     Huffman::Code current_code;
     TraverseAndBuildCodesPrivate(codes, &current_code);
@@ -98,19 +98,19 @@ void HuffmanTreeNode::TraverseAndBuildCodesPrivate (
     Huffman::Code *const codes,
     Huffman::Code *const current_code) const
 {
-    ASSERT2(codes != NULL)
-    ASSERT1(current_code != NULL)
+    ASSERT2(codes != NULL);
+    ASSERT1(current_code != NULL);
 
     if (GetIsLeafNode())
     {
-        ASSERT1(m_data < 256)
+        ASSERT1(m_data < 256);
         codes[m_data] = *current_code;
         codes[m_data].m_sequence >>= 256 - current_code->m_length;
     }
     else
     {
         // it should never get deeper than 255 without hitting a leaf
-        ASSERT1(current_code->m_length < 255)
+        ASSERT1(current_code->m_length < 255);
 
         current_code->m_sequence.SetBit(255 - current_code->m_length, 1);
         ++current_code->m_length;
@@ -128,7 +128,7 @@ void HuffmanTreeNode::TraverseAndBuildCodesPrivate (
         // are actually all zero
         ASSERT1((current_code->m_sequence << current_code->m_length)
                 ==
-                BitArray256::ms_zero)
+                BitArray256::ms_zero);
     }
 }
 
@@ -137,7 +137,7 @@ void HuffmanTreeNode::Fprint (FILE *fptr, Uint32 const indent_level) const
     if (m_child[0] != NULL)
     {
         m_child[0]->Fprint(fptr, indent_level + 1);
-        ASSERT1(m_child[1] != NULL)
+        ASSERT1(m_child[1] != NULL);
     }
 
     for (Uint32 i = 0; i < indent_level; ++i)
@@ -149,7 +149,7 @@ void HuffmanTreeNode::Fprint (FILE *fptr, Uint32 const indent_level) const
     if (m_child[1] != NULL)
     {
         m_child[1]->Fprint(fptr, indent_level + 1);
-        ASSERT1(m_child[0] != NULL)
+        ASSERT1(m_child[0] != NULL);
     }
 }
 
@@ -173,9 +173,9 @@ Uint32 Huffman::EncodeBytes (
     Uint32 source_size,
     Serializer &serializer) const
 {
-    ASSERT1(source != NULL)
-    ASSERT1(source_size > 0)
-    ASSERT1(serializer.GetIsOpen())
+    ASSERT1(source != NULL);
+    ASSERT1(source_size > 0);
+    ASSERT1(serializer.GetIsOpen());
     ASSERT1(serializer.GetIODirection() == IOD_WRITE);
 
     for (Uint32 i = 0; i < source_size; ++i)
@@ -195,10 +195,10 @@ Uint32 Huffman::DecodeBytes (
     Uint32 destination_size,
     Serializer &serializer) const
 {
-    ASSERT1(destination != NULL)
-    ASSERT1(destination_size > 0)
-    ASSERT1(serializer.GetIsOpen())
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
+    ASSERT1(destination != NULL);
+    ASSERT1(destination_size > 0);
+    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint32 bytes_read;
     HuffmanTreeNode const *node;
@@ -206,18 +206,18 @@ Uint32 Huffman::DecodeBytes (
     for (bytes_read = 0; bytes_read < destination_size; ++bytes_read)
     {
         node = m_tree;
-        ASSERT1(node != NULL)
+        ASSERT1(node != NULL);
         while (!node->GetIsLeafNode())
         {
             bit = serializer.ReadBool();
             if (serializer.GetError() != IOE_NONE)
                 break;
             node = node->m_child[bit ? 1 : 0];
-            ASSERT1(node != NULL)
+            ASSERT1(node != NULL);
         }
         if (serializer.GetError() != IOE_NONE)
             break;
-        ASSERT1(node->m_data < 256)
+        ASSERT1(node->m_data < 256);
         *destination = node->m_data;
         ++destination;
     }
@@ -245,7 +245,7 @@ void Huffman::ConstructTree (Uint32 const *byte_weights)
     {
         nodes[i] = new HuffmanTreeNode;
 
-        ASSERT1(byte_weights[i] < HuffmanTreeNode::PARENTED_NODE_WEIGHT)
+        ASSERT1(byte_weights[i] < HuffmanTreeNode::PARENTED_NODE_WEIGHT);
         nodes[i]->m_weight = byte_weights[i];
         nodes[i]->m_data = i;
     }
@@ -269,7 +269,7 @@ void Huffman::ConstructTree (Uint32 const *byte_weights)
         // make sure the supposed branch node actually is one
         ASSERT1(nodes[branch_node_index]->m_weight
                 ==
-                HuffmanTreeNode::AVAILABLE_BRANCH_NODE_WEIGHT)
+                HuffmanTreeNode::AVAILABLE_BRANCH_NODE_WEIGHT);
         // add the lowest-weight nodes to an available branch node
         // and sum their weights to make the combined weight for
         // the branch node.
@@ -280,12 +280,12 @@ void Huffman::ConstructTree (Uint32 const *byte_weights)
         ASSERT1(nodes[branch_node_index]->m_child[0]->m_weight +
                 nodes[branch_node_index]->m_child[1]->m_weight
                 <
-                HuffmanTreeNode::PARENTED_NODE_WEIGHT)
+                HuffmanTreeNode::PARENTED_NODE_WEIGHT);
         // also make sure the sum of weights didn't wrap around.
         ASSERT1(nodes[branch_node_index]->m_child[0]->m_weight +
                 nodes[branch_node_index]->m_child[1]->m_weight
                 >=
-                nodes[branch_node_index]->m_child[0]->m_weight)
+                nodes[branch_node_index]->m_child[0]->m_weight);
         // sum the weights of the children to form the weight of the parent
         nodes[branch_node_index]->m_weight =
             nodes[branch_node_index]->m_child[0]->m_weight +
@@ -301,7 +301,7 @@ void Huffman::ConstructTree (Uint32 const *byte_weights)
     }
 
     m_tree = nodes[branch_node_index];
-    ASSERT1(branch_node_index == TOTAL_NODE_COUNT - 1)
+    ASSERT1(branch_node_index == TOTAL_NODE_COUNT - 1);
     ASSERT1(m_tree->m_weight != HuffmanTreeNode::AVAILABLE_BRANCH_NODE_WEIGHT);
 }
 

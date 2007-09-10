@@ -20,14 +20,14 @@ namespace Xrb
 
 MapEditor2::Polygon::Polygon (Compound *const owner_compound)
 {
-    ASSERT1(owner_compound != NULL)
+    ASSERT1(owner_compound != NULL);
     m_is_selected = false;
     m_owner_compound = owner_compound;
 }
 
 MapEditor2::Polygon *MapEditor2::Polygon::CreateClone () const
 {
-    ASSERT1(m_owner_compound != NULL)
+    ASSERT1(m_owner_compound != NULL);
     Polygon *retval = new Polygon(m_owner_compound);
 
     for (VertexListConstIterator it = m_vertex_list.begin(),
@@ -69,7 +69,7 @@ FloatVector2 const &MapEditor2::Polygon::GetVertex (Uint32 index) const
         --index;
         ++it;
     }
-    ASSERT1(it != it_end)
+    ASSERT1(it != it_end);
     return it->m_compound_vertex->m_coordinate;
 }
 
@@ -77,7 +77,7 @@ Float MapEditor2::Polygon::GetArea () const
 {
     Float area = 0.0f;
     Uint32 vertex_count = GetVertexCount();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
 
     if (vertex_count < 3)
         return area;
@@ -91,14 +91,14 @@ Float MapEditor2::Polygon::GetArea () const
 bool MapEditor2::Polygon::GetIsPointInside (FloatVector2 const &point) const
 {
     Uint32 vertex_count = GetVertexCount();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
     
     // trivially false (no area to land a point inside)
     if (vertex_count == 1)
         return false;
 
-    ASSERT1(GetIsCounterclockwise())
-    ASSERT1(GetIsConvex())
+    ASSERT1(GetIsCounterclockwise());
+    ASSERT1(GetIsConvex());
 
     // test the point being inside the angle made by
     // each corner of the polygon.
@@ -124,7 +124,7 @@ bool MapEditor2::Polygon::GetIsPointInside (FloatVector2 const &point) const
 bool MapEditor2::Polygon::GetIsCounterclockwise () const
 {
     Uint32 vertex_count = GetVertexCount();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
 
     // trivially true
     if (vertex_count < 3)
@@ -147,7 +147,7 @@ bool MapEditor2::Polygon::GetIsCounterclockwise () const
 bool MapEditor2::Polygon::GetIsConvex () const
 {
     Uint32 vertex_count = GetVertexCount();
-    ASSERT1(vertex_count > 0)
+    ASSERT1(vertex_count > 0);
 
     // trivially true
     if (vertex_count <= 3)
@@ -197,8 +197,8 @@ bool MapEditor2::Polygon::GetAreSelectedVerticesContiguous () const
 void MapEditor2::Polygon::WeldSelectedVertices (
     Instance<CompoundVertex> *const welded_vertex_instance)
 {
-    ASSERT1(welded_vertex_instance != NULL)
-    ASSERT2(GetAreSelectedVerticesContiguous())
+    ASSERT1(welded_vertex_instance != NULL);
+    ASSERT2(GetAreSelectedVerticesContiguous());
 
     bool welded_vertex_is_added_in = false;
     for (VertexListIterator it = m_vertex_list.begin(),
@@ -235,8 +235,8 @@ void MapEditor2::Polygon::WeldSelectedVertices (
 
 void MapEditor2::Polygon::Draw () const
 {
-    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW)
-    ASSERT1(GL::GetIsTexture2dOn())
+    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
+    ASSERT1(GL::GetIsTexture2dOn());
 
     if (!m_texture.GetIsValid())
         return;
@@ -260,8 +260,8 @@ void MapEditor2::Polygon::Draw () const
 
 void MapEditor2::Polygon::DrawMetrics () const
 {
-    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW)
-    ASSERT1(!GL::GetIsTexture2dOn())
+    ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
+    ASSERT1(!GL::GetIsTexture2dOn());
 
     glBegin(GL_LINE_LOOP);
 
@@ -281,8 +281,8 @@ void MapEditor2::Polygon::DrawMetrics () const
 void MapEditor2::Polygon::ReassignVertices (
     Compound const *const owner_compound)
 {
-    ASSERT1(owner_compound != NULL)
-    ASSERT1(!m_vertex_list.empty())
+    ASSERT1(owner_compound != NULL);
+    ASSERT1(!m_vertex_list.empty());
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
@@ -300,8 +300,8 @@ bool MapEditor2::Polygon::ReplaceVertexWithNewVertex (
     Instance<CompoundVertex> *const vertex_to_replace,
     Instance<CompoundVertex> *const vertex_to_replace_with)
 {
-    ASSERT1(vertex_to_replace != NULL)
-    ASSERT1(vertex_to_replace_with != NULL)
+    ASSERT1(vertex_to_replace != NULL);
+    ASSERT1(vertex_to_replace_with != NULL);
 
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
@@ -322,8 +322,8 @@ bool MapEditor2::Polygon::ReplaceVertexWithNewVertex (
 void MapEditor2::Polygon::SetVertexSelectionStateFromSelectionOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(!m_vertex_list.empty())
+    ASSERT1(object_layer != NULL);
+    ASSERT1(!m_vertex_list.empty());
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
@@ -337,8 +337,8 @@ void MapEditor2::Polygon::SetVertexSelectionStateFromSelectionOwnerPolygonCount 
 void MapEditor2::Polygon::IncrementSelectedOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(!m_vertex_list.empty())
+    ASSERT1(object_layer != NULL);
+    ASSERT1(!m_vertex_list.empty());
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
@@ -352,8 +352,8 @@ void MapEditor2::Polygon::IncrementSelectedOwnerPolygonCount (
 void MapEditor2::Polygon::DecrementSelectedOwnerPolygonCount (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
-    ASSERT1(!m_vertex_list.empty())
+    ASSERT1(object_layer != NULL);
+    ASSERT1(!m_vertex_list.empty());
     for (VertexListIterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
@@ -374,7 +374,7 @@ void MapEditor2::Polygon::SetIsSelected (
             AddToPolygonSelectionSet(object_layer);
         else
             RemoveFromPolygonSelectionSet(object_layer);
-        ASSERT1(m_is_selected == is_selected)
+        ASSERT1(m_is_selected == is_selected);
     }
 }
 
@@ -386,32 +386,32 @@ void MapEditor2::Polygon::ToggleIsSelected (
         RemoveFromPolygonSelectionSet(object_layer);
     else
         AddToPolygonSelectionSet(object_layer);
-    ASSERT1(m_is_selected != old_is_selected)
+    ASSERT1(m_is_selected != old_is_selected);
 }
 
 void MapEditor2::Polygon::AddToPolygonSelectionSet (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     object_layer->AddPolygonToPolygonSelectionSet(this);
 }
 
 void MapEditor2::Polygon::RemoveFromPolygonSelectionSet (
     ObjectLayer *const object_layer)
 {
-    ASSERT1(object_layer != NULL)
+    ASSERT1(object_layer != NULL);
     object_layer->RemovePolygonFromPolygonSelectionSet(this);
 }
 
 void MapEditor2::Polygon::Read (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ)
-    ASSERT1(m_vertex_list.empty())
-    ASSERT1(!m_texture.GetIsValid())
-    ASSERT1(m_owner_compound != NULL)
+    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(m_vertex_list.empty());
+    ASSERT1(!m_texture.GetIsValid());
+    ASSERT1(m_owner_compound != NULL);
 
     Uint32 vertex_count = serializer.ReadUint32();
-    ASSERT1(vertex_count >= 3)
+    ASSERT1(vertex_count >= 3);
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         Vertex vertex;
@@ -426,20 +426,20 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
                 GLTexture::Create,
                 serializer.ReadStdString());
 
-    ASSERT1(GetIsCounterclockwise())
-    ASSERT1(GetIsConvex())
-    ASSERT1(!GetIsDegenerate())
+    ASSERT1(GetIsCounterclockwise());
+    ASSERT1(GetIsConvex());
+    ASSERT1(!GetIsDegenerate());
 }
 
 void MapEditor2::Polygon::Write (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE)
-    ASSERT1(!m_vertex_list.empty())
-    ASSERT1(m_texture.GetIsValid())
-    ASSERT1(m_owner_compound != NULL)
+    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(!m_vertex_list.empty());
+    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_owner_compound != NULL);
 
     Uint32 vertex_count = m_vertex_list.size();
-    ASSERT1(vertex_count >= 3)
+    ASSERT1(vertex_count >= 3);
     serializer.WriteUint32(vertex_count);
     for (VertexListConstIterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
@@ -447,7 +447,7 @@ void MapEditor2::Polygon::Write (Serializer &serializer) const
          ++it)
     {
         Vertex const &vertex = *it;
-        ASSERT1(vertex.m_compound_vertex->m_index != UINT32_UPPER_BOUND)
+        ASSERT1(vertex.m_compound_vertex->m_index != UINT32_UPPER_BOUND);
         serializer.WriteUint32(vertex.m_compound_vertex->m_index);
         serializer.WriteFloatVector2(vertex.m_texture_coordinate);
     }

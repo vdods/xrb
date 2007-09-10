@@ -66,7 +66,7 @@ private:
     }
     inline Uint8 GetMineralContentByte (Float const mineral_content)
     {
-        ASSERT1(mineral_content >= 0.0f && mineral_content <= 1.0f)
+        ASSERT1(mineral_content >= 0.0f && mineral_content <= 1.0f);
         return static_cast<Uint8>(255.0f * mineral_content);
     }
 

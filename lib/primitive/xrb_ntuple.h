@@ -67,7 +67,7 @@ public:
         T const component0,
         T const component1)
     {
-        ASSERT1(size == 2)
+        ASSERT1(size == 2);
         m[0] = component0;
         m[1] = component1;
     }
@@ -84,7 +84,7 @@ public:
         T const component1,
         T const component2)
     {
-        ASSERT1(size == 3)
+        ASSERT1(size == 3);
         m[0] = component0;
         m[1] = component1;
         m[2] = component2;
@@ -104,7 +104,7 @@ public:
         T const component2,
         T const component3)
     {
-        ASSERT1(size == 4)
+        ASSERT1(size == 4);
         m[0] = component0;
         m[1] = component1;
         m[2] = component2;
@@ -117,7 +117,7 @@ public:
       */
     inline NTuple (T const *const components)
     {
-        ASSERT1(components != NULL)
+        ASSERT1(components != NULL);
     #if defined(XRB_NTUPLE_USES_MEMCPY)
         memcpy(m, components, sizeof(T) * size);
     #else
