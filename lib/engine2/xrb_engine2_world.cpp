@@ -158,7 +158,7 @@ void Engine2::World::AddDynamicObject (
 
     if (m_lowest_available_entity_index == static_cast<EntityWorldIndex>(m_entity_vector.size()))
     {
-        ASSERT0(false && "World::AddDynamicObject(); dynamic object array full")
+        ASSERT0(false && "World::AddDynamicObject(); dynamic object array full");
         return;
     }
 
@@ -251,7 +251,7 @@ Uint32 Engine2::World::GetMainObjectLayerIndex () const
             return index;
     }
 
-    ASSERT0(false && "No main object layer")
+    ASSERT0(false && "No main object layer");
     return UINT32_UPPER_BOUND;
 }
 
@@ -273,7 +273,7 @@ void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
         }
     }
 
-    ASSERT0(false && "Invalid index (higher than the highest object layer index)")
+    ASSERT0(false && "Invalid index (higher than the highest object layer index)");
 }
 
 bool Engine2::World::HandleEvent (Event const *const e)

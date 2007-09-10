@@ -160,7 +160,7 @@ void MapEditor2::Object::DrawMetrics (
             break;
             
         default:
-            ASSERT0(false && "Invalid metric mode")
+            ASSERT0(false && "Invalid metric mode");
             break;
     }
 }
@@ -187,7 +187,7 @@ void MapEditor2::Object::ApplyObjectSelectionOperation (
             case SO_XOR:    ToggleIsSelected();   break;
             case SO_AND:                          break;
             default:
-                ASSERT0(false && "Invalid selection operation")
+                ASSERT0(false && "Invalid selection operation");
                 break;
         }
     }
@@ -201,7 +201,7 @@ void MapEditor2::Object::ApplyObjectSelectionOperation (
             case SO_XOR:                          break;
             case SO_AND:    SetIsSelected(false); break;
             default:
-                ASSERT0(false && "Invalid selection operation")
+                ASSERT0(false && "Invalid selection operation");
                 break;
         }
     }

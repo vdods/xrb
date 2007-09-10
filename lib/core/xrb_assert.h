@@ -49,7 +49,7 @@ ThisCompileErrorIsActuallyAFailedCompileTimeAssert<static_cast<bool>(x)>::BLAH;
 // ///////////////////////////////////////////////////////////////////////////
 
 // assert macro which is ALWAYS compiled in
-#define ASSERT0(x) { assert(x); }
+#define ASSERT0(x) do { assert(x); } while (false)
 
 // normal assert macro, should be used generously in non-speed-critical code
 #if XRB_DEBUG_LEVEL >= 1

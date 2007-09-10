@@ -202,7 +202,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
 {
     // make sure there's not already a child widget, because
     // this widget can have only zero or one.
-    ASSERT0(GetSingleChildWidget() == NULL)
+    ASSERT0(GetSingleChildWidget() == NULL);
     // call the superclass to actually attach the child
     ContainerWidget::AttachChild(child);
     // size a child's size properties have potentially changed, the
@@ -225,7 +225,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
 void CellPaddingWidget::DetachChild (Widget *const child)
 {
     // make sure there is already a single child widget
-    ASSERT0(GetSingleChildWidget() != NULL)
+    ASSERT0(GetSingleChildWidget() != NULL);
     // call the superclass to actually detach the child
     ContainerWidget::DetachChild(child);
     // size a child's size properties have potentially changed, the

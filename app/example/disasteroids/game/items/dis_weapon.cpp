@@ -1276,7 +1276,7 @@ bool EnemySpawner::Activate (
             break;
 
         default:
-            ASSERT0(false && "You shouldn't be spawning this type")
+            ASSERT0(false && "You shouldn't be spawning this type");
             break;
     }
 

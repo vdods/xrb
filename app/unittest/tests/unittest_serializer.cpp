@@ -165,7 +165,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
 
         default:
         {
-            ASSERT0(false && "Invalid Implementation")
+            ASSERT0(false && "Invalid Implementation");
             m_currently_opened_serializer = NULL;
             break;
         }
@@ -243,7 +243,7 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
 
         default:
         {
-            ASSERT0(false && "Invalid implementation")
+            ASSERT0(false && "Invalid implementation");
             m_currently_opened_serializer = NULL;
             break;
         }
@@ -305,7 +305,7 @@ void SerializerUnitTest::CloseSerializer ()
 
         default:
         {
-            ASSERT0(false && "Invalid implementation")
+            ASSERT0(false && "Invalid implementation");
             break;
         }
     }

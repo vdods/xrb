@@ -58,7 +58,7 @@ public:
 
     virtual void SetMainWidget (Widget *main_widget)
     {
-        ASSERT0(false && "Setting a main widget in a CellPaddingWidget is pointless")
+        ASSERT0(false && "Setting a main widget in a CellPaddingWidget is pointless");
     }
 
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);

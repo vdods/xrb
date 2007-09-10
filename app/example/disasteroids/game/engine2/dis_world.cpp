@@ -869,7 +869,7 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
             return true;
 
         case IN_WAIT_AFTER_PLAYER_DEATH_DONE:
-            ASSERT0(false) // TODO: stuff later
+            ASSERT0(false); // TODO: stuff later
 //             TRANSITION_TO(StateSpawnPlayerShip);
             return true;
 

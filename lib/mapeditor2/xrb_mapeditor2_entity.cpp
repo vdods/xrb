@@ -96,7 +96,7 @@ void MapEditor2::Entity::DrawMetrics (
             break;
             
         default:
-            ASSERT0(false && "Invalid metric mode")
+            ASSERT0(false && "Invalid metric mode");
             break;
     }
 }

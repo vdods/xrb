@@ -151,7 +151,7 @@ Engine2::Object *Engine2::Object::Create (
             break;
 
         default:
-            ASSERT0(false && "Invalid object type")
+            ASSERT0(false && "Invalid object type");
             retval = NULL;
             break;
     }

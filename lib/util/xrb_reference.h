@@ -37,7 +37,7 @@ public:
     }
     inline Instance (Instance<T> const &source)
     {
-        ASSERT0(false && "Don't use Instance<T> this way")
+        ASSERT0(false && "Don't use Instance<T> this way");
     }
     inline ~Instance ()
     {
@@ -46,7 +46,7 @@ public:
 
     inline void operator = (Instance<T> const &operand)
     {
-        ASSERT0(false && "Don't use Instance<T> this way")
+        ASSERT0(false && "Don't use Instance<T> this way");
     }
 
     inline T const &operator * () const

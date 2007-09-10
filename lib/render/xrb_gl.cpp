@@ -57,7 +57,7 @@ GLint GL::GetMatrixStackDepth (GLenum const matrix_mode)
         case GL_MODELVIEW:  glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &stack_depth); break;
         case GL_PROJECTION: glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &stack_depth); break;
         case GL_TEXTURE:    glGetIntegerv(GL_TEXTURE_STACK_DEPTH, &stack_depth); break;
-        default: ASSERT0(false && "Invalid matrix mode") break;
+        default: ASSERT0(false && "Invalid matrix mode"); break;
     }
     return stack_depth;
 }
@@ -71,7 +71,7 @@ GLint GL::GetMaxMatrixStackDepth (GLenum const matrix_mode)
         case GL_MODELVIEW:  glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &max_stack_depth); break;
         case GL_PROJECTION: glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &max_stack_depth); break;
         case GL_TEXTURE:    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &max_stack_depth); break;
-        default: ASSERT0(false && "Invalid matrix mode") break;
+        default: ASSERT0(false && "Invalid matrix mode"); break;
     }
     return max_stack_depth;
 }

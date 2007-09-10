@@ -146,27 +146,27 @@ void CommandLineParser::PerformOptionConsistencyCheck () const
     {
         if (GetIsAControlOption(*option))
         {
-            ASSERT0(option->m_long_name.empty() && "must not supply a long name for a control option")
-            ASSERT0(option->m_handler_method_with_argument == NULL && "must not supply a handler method for a control option")
-            ASSERT0(option->m_handler_method_without_argument == NULL && "must not supply a handler method for a control option")
+            ASSERT0(option->m_long_name.empty() && "must not supply a long name for a control option");
+            ASSERT0(option->m_handler_method_with_argument == NULL && "must not supply a handler method for a control option");
+            ASSERT0(option->m_handler_method_without_argument == NULL && "must not supply a handler method for a control option");
         }
         else
         {
             if (option->m_short_name != '\0')
-                ASSERT0(option->m_short_name != ' ' && option->m_short_name != '\t' && option->m_short_name != '\n' && "must not use whitespace in option short names")
+                ASSERT0(option->m_short_name != ' ' && option->m_short_name != '\t' && option->m_short_name != '\n' && "must not use whitespace in option short names");
 
             if (!option->m_long_name.empty())
-                ASSERT0(option->m_long_name.find_first_of(" \t\n") == std::string::npos && "must not use whitespace in option long names")
+                ASSERT0(option->m_long_name.find_first_of(" \t\n") == std::string::npos && "must not use whitespace in option long names");
 
             if (option->m_requires_an_argument)
             {
-                ASSERT0(option->m_handler_method_with_argument != NULL && "must specify an argument-accepting handler method for a normal argument-accepting option")
-                ASSERT0(option->m_handler_method_without_argument == NULL && "must not specify a no-argument handler method for a normal argument-accepting option")
+                ASSERT0(option->m_handler_method_with_argument != NULL && "must specify an argument-accepting handler method for a normal argument-accepting option");
+                ASSERT0(option->m_handler_method_without_argument == NULL && "must not specify a no-argument handler method for a normal argument-accepting option");
             }
             else
             {
-                ASSERT0(option->m_handler_method_with_argument == NULL && "must not specify an argument-accepting handler method for a normal no-argument option")
-                ASSERT0(option->m_handler_method_without_argument != NULL && "must specify a no-argument handler method for a normal no-argument option")
+                ASSERT0(option->m_handler_method_with_argument == NULL && "must not specify an argument-accepting handler method for a normal no-argument option");
+                ASSERT0(option->m_handler_method_without_argument != NULL && "must specify a no-argument handler method for a normal no-argument option");
             }
         }
     }
@@ -183,8 +183,8 @@ void CommandLineParser::PerformOptionConsistencyCheck () const
              option_1 != option_end_0;
              ++option_1)
         {
-            ASSERT0(!GetIsAShortNameCollision(*option_0, *option_1) && "option short-name collision")
-            ASSERT0(!GetIsALongNameCollision(*option_0, *option_1) && "option long-name collision")
+            ASSERT0(!GetIsAShortNameCollision(*option_0, *option_1) && "option short-name collision");
+            ASSERT0(!GetIsALongNameCollision(*option_0, *option_1) && "option long-name collision");
         }
     }
 }

@@ -128,7 +128,7 @@ Uint32 MapEditor2::World::GetMainObjectLayerIndex () const
         ++index;
     }
 
-    ASSERT0(false && "No main object layer")
+    ASSERT0(false && "No main object layer");
     return UINT32_UPPER_BOUND;
 }
 
@@ -154,7 +154,7 @@ void MapEditor2::World::SetMainObjectLayerIndex (Uint32 const index)
         ++i;
     }
 
-    ASSERT0(false && "Invalid index (higher than the highest object layer index)")
+    ASSERT0(false && "Invalid index (higher than the highest object layer index)");
 }
 
 void MapEditor2::World::HandleFrame ()

@@ -117,7 +117,7 @@ public:
     virtual void SetMainWidget (Widget *main_widget)
     {
         // disallowed
-        ASSERT0(false && "You can't set a main widget in a Layout")
+        ASSERT0(false && "You can't set a main widget in a Layout");
     }
 
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);

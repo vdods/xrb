@@ -13,7 +13,7 @@
 template <typename T, Uint32 queue_size>
 CircularQueue<T, queue_size>::CircularQueue ()
 {
-    ASSERT1(queue_size > 0)
+    ASSERT1(queue_size > 0);
     m_head = 0;
     m_tail = 0;
     m_entry_count = 0;
@@ -37,7 +37,7 @@ T const &CircularQueue<T, queue_size>::GetEntry (Uint32 const index) const
 template <typename T, Uint32 queue_size>
 void CircularQueue<T, queue_size>::Enqueue (T const &entry)
 {
-    ASSERT0(!GetIsFull())
+    ASSERT0(!GetIsFull());
 
     // add the entry
     m_queue[m_tail] = entry;
@@ -50,7 +50,7 @@ void CircularQueue<T, queue_size>::Enqueue (T const &entry)
 template <typename T, Uint32 queue_size>
 T CircularQueue<T, queue_size>::Dequeue ()
 {
-    ASSERT0(!GetIsEmpty())
+    ASSERT0(!GetIsEmpty());
 
     // save off the current head index so we know what to return
     Uint32 retval_index = m_head;

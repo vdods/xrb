@@ -78,7 +78,7 @@ bool EventHandler::ProcessEvent (Event const *const e)
 void EventHandler::EnqueueEvent (Event const *const e)
 {
     ASSERT1(e != NULL)
-    ASSERT0(m_owner_event_queue != NULL)
+    ASSERT0(m_owner_event_queue != NULL);
     m_owner_event_queue->EnqueueEvent(this, e);
 }
 

@@ -67,7 +67,7 @@ bool BitCache::GetIsAtEnd () const
             return GetError() == IOE_IS_AT_END;
 
         default:
-            ASSERT0(false && "Invalid IODirection")
+            ASSERT0(false && "Invalid IODirection");
             return false;
     }
 }
@@ -87,7 +87,7 @@ bool BitCache::GetHasFewerThan8BitsLeft () const
                    GetError() == IOE_INSUFFICIENT_STORAGE;
 
         default:
-            ASSERT0(false && "Invalid IODirection")
+            ASSERT0(false && "Invalid IODirection");
             return false;
     }
 }

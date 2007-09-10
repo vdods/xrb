@@ -299,8 +299,8 @@ void Widget::SetIsModal (bool const is_modal)
 {
     if (is_modal)
     {
-        ASSERT0(!GetIsTopLevelParent() && "You can't make the top level widget modal!")
-        ASSERT0(GetIsEnabled() && "You can't make a disabled widget modal!")
+        ASSERT0(!GetIsTopLevelParent() && "You can't make the top level widget modal!");
+        ASSERT0(GetIsEnabled() && "You can't make a disabled widget modal!");
     }
 
     // only do stuff if the value is changing
@@ -628,8 +628,8 @@ void Widget::SetIsEnabled (bool const is_enabled)
 {
     if (!is_enabled)
     {
-        ASSERT0(!GetIsModal() && "You can't disable a modal widget!")
-        ASSERT0(!GetIsTopLevelParent() && "You can't disable a top level widget!")
+        ASSERT0(!GetIsModal() && "You can't disable a modal widget!");
+        ASSERT0(!GetIsTopLevelParent() && "You can't disable a top level widget!");
     }
 
     if (m_is_enabled != is_enabled)
@@ -654,7 +654,7 @@ void Widget::SetIsEnabled (bool const is_enabled)
 
 void Widget::ToggleIsHidden ()
 {
-    ASSERT0(m_parent != NULL && "You can't show or hide a top-level widget!")
+    ASSERT0(m_parent != NULL && "You can't show or hide a top-level widget!");
 
     // if the widget is being hidden, then it should be
     // unfocused and mouseover-off'ed
@@ -743,14 +743,14 @@ bool Widget::HandleEvent (Event const *const e)
             return ProcessCustomEvent(DStaticCast<EventCustom const *>(e));
 
         default:
-            ASSERT0(false && "Invalid Event::EventType")
+            ASSERT0(false && "Invalid Event::EventType");
             return false;
     }
 }
 
 bool Widget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
 {
-    ASSERT0(false && "this should never be called")
+    ASSERT0(false && "this should never be called");
     return false;
 }
 

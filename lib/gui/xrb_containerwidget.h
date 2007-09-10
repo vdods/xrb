@@ -47,10 +47,10 @@ public:
 
     private:
 
-        void *operator new (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack") return NULL; }
-        void *operator new[] (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack") return NULL; }
-        void operator delete (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack") }
-        void operator delete[] (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack") }
+        void *operator new (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack"); return NULL; }
+        void *operator new[] (size_t) throw() { ASSERT0(false && "this class should always be instantiated on the stack"); return NULL; }
+        void operator delete (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack"); }
+        void operator delete[] (void *) throw() { ASSERT0(false && "this class should always be instantiated on the stack"); }
 
         ContainerWidget *m_container_widget;
     }; // end of class ContainerWidget::ChildResizeBlocker

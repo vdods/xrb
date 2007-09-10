@@ -125,6 +125,8 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- ASSERT0 should probably change into Abort() call or something, to indicate
+  that it's always compiled in.
 - in ASSERT macros (and any macro that uses a code block), use
   "do { ... } while (false)" so it'll work like a normal statement.
 - stop using typedef'd iterators, just use ::iterator and ::const_iterator

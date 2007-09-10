@@ -54,7 +54,7 @@ public:
     virtual void SetMainWidget (Widget *main_widget)
     {
         // disallowed
-        ASSERT0(false && "You can't set a main widget in a WidgetStack")
+        ASSERT0(false && "You can't set a main widget in a WidgetStack");
     }
 
     virtual ScreenCoordVector2 Resize (ScreenCoordVector2 const &size);

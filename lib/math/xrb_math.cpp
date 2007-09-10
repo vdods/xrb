@@ -103,67 +103,67 @@ Uint32 Math::HighestBitIndex (Uint32 const x)
 
 Float Math::FastSin (Float const angle)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Sin(angle);
 }
 
 Float Math::FastAsin (Float const value)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Asin(value);
 }
 
 Float Math::FastCos (Float const angle)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Cos(angle);
 }
 
 Float Math::FastAcos (Float const value)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Acos(value);
 }
 
 Float Math::FastTan (Float const angle)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Tan(angle);
 }
 
 Float Math::FastAtan (Float const value)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Atan(value);
 }
 
 Float Math::FastAtan (FloatVector2 const &vector)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Atan(vector);
 }
 
 Float Math::FastAtan2 (Float const y, Float const x)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Atan2(y, x);
 }
 
 FloatVector2 Math::FastUnitVector (Float angle)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return UnitVector(angle);
 }
 
 Float Math::FastSqrt (Float const x)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Sqrt(x);
 }
 
 Float Math::FastPow (Float const base, Float const exponent)
 {
-    ASSERT0(false && "Not implemented yet")
+    ASSERT0(false && "Not implemented yet");
     return Pow(base, exponent);
 }
 

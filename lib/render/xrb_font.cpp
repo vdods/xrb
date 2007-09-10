@@ -210,7 +210,7 @@ void Font::DrawLineFormattedText (
                 total_spacing[Dim::Y] = 0;
             break;
 
-        default: ASSERT0(false && "Invalid Alignment") break;
+        default: ASSERT0(false && "Invalid Alignment"); break;
     }
 
     // this is for any pre-rendering setup DrawGlyph needs to do
@@ -246,7 +246,7 @@ void Font::DrawLineFormattedText (
                 break;
 
             default:
-                ASSERT0(false && "Invalid Alignment")
+                ASSERT0(false && "Invalid Alignment");
                 break;
         }
 
@@ -743,7 +743,7 @@ ScreenCoordVector2 AsciiFont::FindSmallestFittingTextureSize (
         increase = (increase == Dim::X) ? Dim::Y : Dim::X;
     }
     // TODO: proper handling -- scale the face down and try again
-    ASSERT0(false && "No texture big enough to hold all glyphs")
+    ASSERT0(false && "No texture big enough to hold all glyphs");
     return ScreenCoordVector2::ms_zero;
 }
 

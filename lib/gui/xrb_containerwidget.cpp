@@ -287,8 +287,7 @@ void ContainerWidget::SetMainWidget (Widget *const main_widget)
     m_main_widget = main_widget;
     if (m_main_widget != NULL)
     {
-        ASSERT0(!m_main_widget->GetIsModal() &&
-                "You can't use a modal widget as a main widget")
+        ASSERT0(!m_main_widget->GetIsModal() && "You can't use a modal widget as a main widget");
         ASSERT1(m_main_widget->GetParent() == this)
         m_main_widget->Resize(GetSize());
         m_main_widget->MoveTo(GetPosition());

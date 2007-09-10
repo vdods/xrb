@@ -259,7 +259,7 @@ FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
             return GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
 
         default:
-            ASSERT0(false && "Invalid transformation type")
+            ASSERT0(false && "Invalid transformation type");
             return m_origin_cursor_position;
     }
 }
@@ -1577,7 +1577,7 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
             m_rotation_accumulator += m_rotation_increment;
         }
         else
-            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)")
+            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)");
     }
     else
     {
@@ -1596,7 +1596,7 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
             m_zoom_accumulator -= 1.0;
         }
         else
-            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)")
+            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)");
     }
 
     return true;
@@ -1675,7 +1675,7 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
                 break;
                 
             default:
-                ASSERT0(false && "Invalid metric mode")
+                ASSERT0(false && "Invalid metric mode");
                 break;
         }
     }

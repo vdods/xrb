@@ -170,7 +170,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
             m_rotation_accumulator += m_rotation_increment;
         }
         else
-            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)")
+            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)");
     }
     else
     */
@@ -191,7 +191,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
             m_zoom_accumulator -= 1.0f;
         }
         else
-            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)")
+            ASSERT0(false && "Invalid mouse wheel event (button code not recognized)");
     }
 
     return true;

@@ -85,7 +85,7 @@ void Singletons::Initialize (char const *const key_map_name)
 
     g_ft_library = NULL;
     FT_Error error = FT_Init_FreeType(&g_ft_library);
-    ASSERT0(error == 0 && "The FreeType library failed to initialize")
+    ASSERT0(error == 0 && "The FreeType library failed to initialize");
 
     g_is_initialized = true;
 }
