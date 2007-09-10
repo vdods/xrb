@@ -621,7 +621,7 @@ bool GaussGun::Activate (
                 time,
                 frame_dt);
 
-            ASSERT1(damage_amount_used <= damage_left_to_inflict);
+            ASSERT1(damage_amount_used <= damage_left_to_inflict + 0.0001f);
             damage_left_to_inflict -= damage_amount_used;
         }
 

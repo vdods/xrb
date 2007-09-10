@@ -161,6 +161,15 @@ protected:
     virtual void SetCurrentHealth (Float current_health)
     {
         m_current_health = current_health;
+        // can't go above max health
+        m_current_health = Min(m_current_health, m_max_health);
+    }
+    virtual void SetMaxHealth (Float max_health)
+    {
+        ASSERT1(max_health >= 0.0f);
+        m_max_health = max_health;
+        // current health can't go above max health
+        m_current_health = Min(m_current_health, m_max_health);
     }
 
 private:

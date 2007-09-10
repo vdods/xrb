@@ -39,10 +39,6 @@ DISASTEROIDS:
 ** feature-related **
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
-- merged grenades should have more health than normal (probably proportional
-  to their mass).
-- when merging grenades, use the larger grenade so the visual effect isn't
-  as choppy.
 - Mortals should flash red when being damaged, flash green while being
   healed.  When a Mortal is being damaged by something it's strong, weak
   or immune against, it should make a particular sound to indicate that.

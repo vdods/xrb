@@ -132,10 +132,16 @@ void Grenade::Collide (
         Grenade *other_grenade = static_cast<Grenade *>(collider);
         // because Collide will be called on both grenades, we need a way to ensure the
         // grenade merging only happens once, and that only one grenade goes away.  thus
-        // we'll only perform merging when the pointer value of this is less than other_grenade.
-        ASSERT1(this != other_grenade); // a grenade can't (shouldn't be able to) collide with itself
-        if (this > other_grenade)
+        // we'll merge the smaller grenade into the larger one, or if they're the same
+        // size, we'll use the lower pointer value grenade.
+        ASSERT1(this != other_grenade); // a grenade should never collide with itself
+        if (GetFirstMoment() < other_grenade->GetFirstMoment()
+            ||
+            GetFirstMoment() == other_grenade->GetFirstMoment() &&
+            this > other_grenade)
+        {
             return;
+        }
 
         // figure out the new damage radius, explosion radius and damage to inflict.
         Float scale_factor = Math::Sqrt(1.0f + other_grenade->GetFirstMoment() / GetFirstMoment());
@@ -143,6 +149,11 @@ void Grenade::Collide (
         m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
         m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
         m_damage_to_inflict += other_grenade->m_damage_to_inflict;
+
+        // set the new max health for the new grenade is the sum of the source grenades' 
+        // max healths.  the current health for the new grenade is also the sum.
+        SetMaxHealth(GetMaxHealth() + other_grenade->GetMaxHealth());
+        SetCurrentHealth(GetCurrentHealth() + other_grenade->GetCurrentHealth());
 
         // figure out the new mass, velocity, and radius.
         FloatVector2 new_momentum = GetMomentum() + other_grenade->GetMomentum();
@@ -158,6 +169,10 @@ void Grenade::Collide (
     // otherwise, if we did not hit the owner of this grenade, do normal explosive collision handling
     else if (collider != *m_owner)
     {
+        // TODO only call the superclass collide if the collision registers as above
+        // the threshold for detonation -- i.e. a large merged grenade won't detonate
+        // on some tiny asteroid, but a normal sized grenade will detonate on anything.
+    
         // call the superclass collide
         Explosive::Collide(
             collider,
