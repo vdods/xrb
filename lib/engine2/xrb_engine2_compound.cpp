@@ -72,11 +72,23 @@ void Engine2::Compound::Draw (
     // set the color mask
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;
-    glColor4fv(color_mask.m);
 
-    // enable texture mapping (because the polygon drawing
-    // function requires it)
+    // enable texture mapping and bind the sprite texture to texture unit 0,
+    // and set the bias color as that unit's texture env color.
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
+    // the texture will be bound later during Polygon::Draw()
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GetColorBias().m);
+
+    // enable texture mapping and bind the white texture to texture unit 1,
+    // and set the mask color as that unit's texture env color.
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glEnable(GL_TEXTURE_2D);
+    // TODO -- assert that the all-white texture is bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m);
+
+    // switch back to texture unit 0 for Polygon's texture binding
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].Draw();

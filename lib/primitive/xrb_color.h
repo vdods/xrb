@@ -21,7 +21,33 @@ namespace Xrb
 {
 
 typedef Float ColorCoord;
-typedef NTuple<ColorCoord, 4> Color;
+class Color : public NTuple<ColorCoord, 4>
+{
+public:
+
+    static Color const ms_white;
+    static Color const ms_black;
+    static Color const ms_transparent;
+
+    // efficient no-init constructor
+    Color () { }
+    // constructs an opaque RGB color (fully opaque alpha channel)
+    Color (ColorCoord r, ColorCoord g, ColorCoord b)
+        :
+        NTuple<ColorCoord, 4>(r, g, b, 1.0f)
+    { }
+    // constructs an RGBA color
+    Color (ColorCoord r, ColorCoord g, ColorCoord b, ColorCoord a)
+        :
+        NTuple<ColorCoord, 4>(r, g, b, a)
+    { }
+    // copy constructor
+    Color (NTuple<ColorCoord, 4> const &c)
+        :
+        NTuple<ColorCoord, 4>(c)
+    { }
+}; // end of class Color
+// typedef NTuple<ColorCoord, 4> Color;
 
 } // end of namespace Xrb
 

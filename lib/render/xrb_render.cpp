@@ -26,7 +26,13 @@ void Render::DrawLine (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(masked_color.m);
 
     glBegin(GL_LINES);
@@ -50,7 +56,13 @@ void Render::DrawArrow (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(render_context.GetMaskedColor(color).m);
 
     glBegin(GL_LINE_STRIP);
@@ -83,16 +95,21 @@ void Render::DrawPolygon (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(masked_color.m);
 
     // convert the angle which is in degrees, into radians for
     // computation in cos/sin's native units.
     angle = Math::Radians(angle);
-    
+
     // draw each line
-    FloatVector2 vertex =
-        center + radius * FloatVector2(cos(angle), sin(angle));
+    FloatVector2 vertex = center + radius * FloatVector2(cos(angle), sin(angle));
     Float const angle_delta = 2.0f * static_cast<Float>(M_PI) / static_cast<Float>(vertex_count);
 
     glBegin(GL_LINE_LOOP);
@@ -101,16 +118,13 @@ void Render::DrawPolygon (
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         angle += angle_delta;
-        
-        vertex =
-            center + radius * FloatVector2(cos(angle), sin(angle));
-
+        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
         glVertex2fv(vertex.m);
     }
 
     glEnd();
 }
-    
+
 void Render::DrawCircle (
     FloatMatrix2 const &transformation,
     FloatVector2 const &center,
@@ -135,10 +149,10 @@ void Render::DrawCircle (
         facet_count = static_cast<Uint32>(tesselation_limit_upper);
     else
     {
-        Float x = 
+        Float x =
             (pixel_radius - radius_limit_lower) /
             (radius_limit_upper - radius_limit_lower);
-        facet_count = 
+        facet_count =
             static_cast<Uint32>(
                 tesselation_limit_upper * x +
                 tesselation_limit_lower * (1.0f - x));
@@ -146,6 +160,10 @@ void Render::DrawCircle (
 
     ASSERT1(facet_count >= 6);
 
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glDisable(GL_TEXTURE_2D);
 
     // draw each line
@@ -159,12 +177,8 @@ void Render::DrawCircle (
 
     for (Uint32 i = 0; i < facet_count; ++i)
     {
-        vertex =
-            center +
-            radius * FloatVector2(cos(angle), sin(angle));
-
+        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
         glVertex2fv(vertex.m);
-
         angle += angle_delta;
     }
 
@@ -202,10 +216,10 @@ void Render::DrawCircle (
         facet_count = static_cast<Uint32>(tesselation_limit_upper);
     else
     {
-        Float x = 
+        Float x =
             (pixel_radius - radius_limit_lower) /
             (radius_limit_upper - radius_limit_lower);
-        facet_count = 
+        facet_count =
             static_cast<Uint32>(
                 tesselation_limit_upper * x +
                 tesselation_limit_lower * (1.0f - x));
@@ -215,7 +229,13 @@ void Render::DrawCircle (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(masked_color.m);
 
     // draw each line
@@ -229,12 +249,8 @@ void Render::DrawCircle (
 
     for (Uint32 i = 0; i < facet_count; ++i)
     {
-        vertex =
-            center +
-            radius * FloatVector2(cos(angle), sin(angle));
-
+        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
         glVertex2fv(vertex.m);
-
         angle += angle_delta;
     }
 
@@ -303,14 +319,18 @@ void Render::DrawCircularArc (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(masked_color.m);
 
     // draw each line
     FloatVector2 vertex;
-    vertex =
-        center +
-        radius * FloatVector2(Math::Cos(start_angle), Math::Sin(start_angle));
+    vertex = center + radius * FloatVector2(Math::Cos(start_angle), Math::Sin(start_angle));
     Float const angle_delta = (end_angle - start_angle) / facet_count;
     Float angle = start_angle + angle_delta;
 
@@ -319,12 +339,8 @@ void Render::DrawCircularArc (
 
     for (Uint32 i = 0; i < facet_count; ++i)
     {
-        vertex =
-            center +
-            radius * FloatVector2(Math::Cos(angle), Math::Sin(angle));
-
+        vertex = center + radius * FloatVector2(Math::Cos(angle), Math::Sin(angle));
         glVertex2fv(vertex.m);
-
         angle += angle_delta;
     }
 
@@ -343,7 +359,13 @@ void Render::DrawScreenRect (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glDisable(GL_TEXTURE_2D);
+
     glColor4fv(masked_color.m);
 
     glBegin(GL_QUADS);
@@ -366,9 +388,16 @@ void Render::DrawScreenRectTexture (
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, gl_texture->GetHandle());
-    glColor4fv(render_context.GetColorMask().m);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, Color::ms_transparent.m);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glEnable(GL_TEXTURE_2D);
+    // TODO -- assert that the all-white texture is bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, render_context.GetColorMask().m);
 
     glBegin(GL_QUADS);
         glTexCoord2fv((transformation * FloatVector2(0.0f, 0.0f)).m);

@@ -26,15 +26,6 @@ MAJOR TASKS:
   they could be compiled without others (i.e. core+engine could be
   used without gui or render, etc) -- make dependency chart
 
-OPENGL CONVERSION TASKS:
-- look into applying HSV color to opengl textures (i.e. making
-  stuff's color converge towards a particular color -- turning
-  up/down the saturation).
-  ***
-  glPixelTransfer -- GL_RED_BIAS, GL_RED_SCALE, GL_GREEN_BIAS,
-                     GL_GREEN_SCALE, GL_BLUE_BIAS, GL_BLUE_SCALE, etc.
-  glFog
-
 DISASTEROIDS:
 ** feature-related **
 - merged grenades should have a higher threshold of detonation.  i.e.
@@ -127,6 +118,13 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- add color bias into RenderContext, as well as Widget, so that it behaves like the
+  analogous color mask in both.
+- add checks in GL::Initialize for certain extensions and texture unit counts and stuff
+- make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
+- move GLTexture into render
+- rename Singletons into Singleton and xrb_singletons.* to xrb_singleton.*
+- rename .h files properly to .hpp
 - ASSERT0 should probably change into Abort() call or something, to indicate
   that it's always compiled in.
 - stop using typedef'd iterators, just use ::iterator and ::const_iterator
@@ -141,9 +139,7 @@ TODO:
 - in lesson04, make graphical representation of Engine2 design
 - lesson07 - collision detection and resolution via PhysicsHandler
 - lesson08 - user input or further subclassing of Entity
-- add some sort of "MAKE_THIS_ENUM_UNSIGNED = 4000000000U" to all appropriate enums, and check
-  if this works on compilers other than g++.  either that, or change all the asserts
-  to reflect the potential that enums can be negative.
+- bring livid stuff over and use its stuff (e.g. Sequence instead of dumb enums)
 - rename first moment to mass and second moment to angular mass or rotational mass
 - somehow properly return both drawn opaque and transparent object counts from
   Engine2::ObjectLayer::Draw and make UI labels for them in the debug view.

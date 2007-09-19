@@ -30,7 +30,6 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description>An OpenGL 2d game engine suite geared toward real-time, sprite/polygon-object-based gameplay. Includes the game engine library, as well as example game implementations. The goal is to provide an intuitive platform for implementing gameplay.
  </description>
-    <versioncontrol>kdevsubversion</versioncontrol>
     <projectname>xuqrijbuh</projectname>
   </general>
   <kdevcustomproject>

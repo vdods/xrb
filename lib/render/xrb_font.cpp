@@ -572,12 +572,21 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 {
     ASSERT1(m_gl_texture != NULL);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_gl_texture->GetHandle());
-
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_gl_texture->GetHandle());
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, Color::ms_transparent.m);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glEnable(GL_TEXTURE_2D);
+    // the all-white texture should already be bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, render_context.GetColorMask().m);
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
 
     glMatrixMode(GL_TEXTURE);
     glPushMatrix();
@@ -586,9 +595,6 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
         1.0f / m_gl_texture->GetWidth(),
         1.0f / m_gl_texture->GetHeight(),
         1.0f);
-
-    // set up the rendering color
-    glColor4fv(render_context.GetColorMask().m);
 
     // start rendering one quad for each glyph
     glBegin(GL_QUADS);

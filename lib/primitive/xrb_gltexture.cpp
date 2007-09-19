@@ -57,6 +57,7 @@ void GLTexture::GenerateTexture (
 
     m_size = texture->GetSize();
 
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &m_handle);
     glBindTexture(GL_TEXTURE_2D, m_handle);
@@ -96,7 +97,7 @@ void GLTexture::GenerateTexture (
 
     // the texture data has now been loaded into GL texture memory, so
     // the original texture can now optionally be deleted.
-    
+
     // if it was indicated to delete the original texture, delete it.
     if (delete_original_texture)
         Delete(texture);

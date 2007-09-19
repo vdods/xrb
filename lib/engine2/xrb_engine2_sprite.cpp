@@ -77,11 +77,20 @@ void Engine2::Sprite::Draw (
     // set the color mask
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;
-    glColor4fv(color_mask.m);
 
-    // enable texture mapping and bind the sprite texture
+    // enable texture mapping and bind the sprite texture to texture unit 0,
+    // and set the bias color as that unit's texture env color.
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GetColorBias().m);
+
+    // enable texture mapping and bind the white texture to texture unit 1,
+    // and set the mask color as that unit's texture env color.
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glEnable(GL_TEXTURE_2D);
+    // TODO: -- assert that the all-white texture is bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m);
 
     static FloatVector2 const s_tex_coord0(0.0f, 0.0f);
     static FloatVector2 const s_tex_coord1(0.0f, 1.0f);
@@ -168,7 +177,7 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
             else
                 m_radius[quad_tree_type] = GetScaleFactors().GetLength();
             break;
-            
+
         case QTT_PHYSICS_HANDLER:
             if (m_is_round)
                 m_radius[quad_tree_type] =
@@ -177,7 +186,7 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
             else
                 m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).GetLength();
             break;
-            
+
         default:
             ASSERT0(false && "Invalid QuadTreeType");
             break;
