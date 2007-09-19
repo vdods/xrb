@@ -16,23 +16,47 @@
 namespace Xrb
 {
 
-namespace {
-    static GLTexture *g_gltexture_white = NULL;
+namespace
+{
+
+static GLTexture *g_gltexture_white = NULL;
+
+void CheckForExtension (char const *extension_name)
+{
+    fprintf(stderr, "        %s: ", extension_name);
+    if (strstr(reinterpret_cast<char const *>(glGetString(GL_EXTENSIONS)), extension_name) == NULL)
+    {
+        fprintf(stderr, "NOT SUPPORTED -- aborting.\n");
+        ASSERT0(false);
+    }
+    else
+        fprintf(stderr, "supported.\n");
 }
+
+} // end of anonymous namespace
 
 void GL::Initialize ()
 {
-    GLint temp;
-
+    // print some useful info
     fprintf(stderr, "GL::Initialize();\n");
     fprintf(stderr, "    GL_VENDOR = \"%s\"\n", glGetString(GL_VENDOR));
     fprintf(stderr, "    GL_RENDERER = \"%s\"\n", glGetString(GL_RENDERER));
     fprintf(stderr, "    GL_VERSION = \"%s\"\n", glGetString(GL_VERSION));
-    fprintf(stderr, "    GL_EXTENSIONS = \"%s\"\n", glGetString(GL_EXTENSIONS));
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &temp);
-    fprintf(stderr, "    GL_MAX_TEXTURE_UNITS_ARB = %d\n", temp);
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
-    fprintf(stderr, "    GL_MAX_TEXTURE_SIZE = %d\n", temp);
+
+    // check for certain extensions and values
+    {
+        GLint temp;
+        fprintf(stderr, "    Checking for OpenGL extensions.\n");
+        CheckForExtension("GL_ARB_multitexture");
+        CheckForExtension("GL_ARB_texture_env_combine");
+
+        fprintf(stderr, "    Checking GL_MAX_TEXTURE_UNITS_ARB (must be at least 2): ");
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &temp);
+        if (temp < 2)
+            fprintf(stderr, "%d -- aborting.\n", temp);
+        else
+            fprintf(stderr, "%d\n", temp);
+    }
 
     // stuff related to texture byte order and alignment.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

@@ -120,7 +120,6 @@ DISASTEROIDS:
 TODO:
 - add color bias into RenderContext, as well as Widget, so that it behaves like the
   analogous color mask in both.
-- add checks in GL::Initialize for certain extensions and texture unit counts and stuff
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
 - move GLTexture into render
 - rename Singletons into Singleton and xrb_singletons.* to xrb_singleton.*
