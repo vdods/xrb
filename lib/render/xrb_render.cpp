@@ -10,6 +10,7 @@
 
 #include "xrb_render.h"
 
+#include "xrb_gl.h"
 #include "xrb_gltexture.h"
 #include "xrb_math.h"
 
@@ -22,18 +23,16 @@ void Render::DrawLine (
     FloatVector2 const &to,
     Color const &color)
 {
-    Color masked_color(render_context.GetMaskedColor(color));
-
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
+        return;
+        
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(masked_color.m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     glBegin(GL_LINES);
         glVertex2fv(from.m);
@@ -47,6 +46,9 @@ void Render::DrawArrow (
     FloatVector2 const &to,
     Color const &color)
 {
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
+        return;
+        
     // don't draw anything if the length is 0
     if (to == from)
         return;
@@ -57,13 +59,10 @@ void Render::DrawArrow (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(render_context.GetMaskedColor(color).m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     glBegin(GL_LINE_STRIP);
         glVertex2fv(from.m);
@@ -88,21 +87,16 @@ void Render::DrawPolygon (
     // a polygon with less than 3 vertices is degenerate
     ASSERT1(vertex_count >= 3);
 
-    Color masked_color(render_context.GetMaskedColor(color));
-    // return if the line is completely transparent
-    if (masked_color[Dim::A] == 0.0f)
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(masked_color.m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     // convert the angle which is in degrees, into radians for
     // computation in cos/sin's native units.
@@ -126,75 +120,13 @@ void Render::DrawPolygon (
 }
 
 void Render::DrawCircle (
-    FloatMatrix2 const &transformation,
-    FloatVector2 const &center,
-    Float const radius)
-{
-    // find out how large the radius is in pixels
-    Float pixel_radius =
-        Max((transformation * FloatVector2(radius, 0.0f) -
-             transformation * FloatVector2::ms_zero).GetLength(),
-            (transformation * FloatVector2(0.0f, radius) -
-             transformation * FloatVector2::ms_zero).GetLength());
-    // figure out how many lines there should be
-    Float const radius_limit_upper = 100.0f;
-    Float const radius_limit_lower = 2.0f;
-    Float const tesselation_limit_upper = 30.0f;
-    Float const tesselation_limit_lower = 6.0f;
-
-    Uint32 facet_count;
-    if (pixel_radius <= radius_limit_lower)
-        facet_count = static_cast<Uint32>(tesselation_limit_lower);
-    else if (pixel_radius >= radius_limit_upper)
-        facet_count = static_cast<Uint32>(tesselation_limit_upper);
-    else
-    {
-        Float x =
-            (pixel_radius - radius_limit_lower) /
-            (radius_limit_upper - radius_limit_lower);
-        facet_count =
-            static_cast<Uint32>(
-                tesselation_limit_upper * x +
-                tesselation_limit_lower * (1.0f - x));
-    }
-
-    ASSERT1(facet_count >= 6);
-
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    // draw each line
-    FloatVector2 vertex;
-    vertex = center + FloatVector2(radius, 0.0f);
-    Float const angle_delta = 2.0f * static_cast<Float>(M_PI) / facet_count;
-    Float angle = angle_delta;
-
-    glBegin(GL_LINE_LOOP);
-    glVertex2fv(vertex.m);
-
-    for (Uint32 i = 0; i < facet_count; ++i)
-    {
-        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
-        glVertex2fv(vertex.m);
-        angle += angle_delta;
-    }
-
-    glEnd();
-}
-
-void Render::DrawCircle (
     RenderContext const &render_context,
     FloatMatrix2 const &transformation,
     FloatVector2 const &center,
     Float const radius,
     Color const &color)
 {
-    Color masked_color(render_context.GetMaskedColor(color));
-    // return if the line is completely transparent
-    if (masked_color[Dim::A] == 0.0f)
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
 
     // find out how large the radius is in pixels
@@ -230,13 +162,10 @@ void Render::DrawCircle (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(masked_color.m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     // draw each line
     FloatVector2 vertex;
@@ -266,9 +195,7 @@ void Render::DrawCircularArc (
     Float end_angle,
     Color const &color)
 {
-    Color masked_color(render_context.GetMaskedColor(color));
-    // return if the line is completely transparent
-    if (masked_color[Dim::A] == 0.0f)
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
 
     // don't draw anything if the arc is 0 radians
@@ -320,13 +247,10 @@ void Render::DrawCircularArc (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(masked_color.m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     // draw each line
     FloatVector2 vertex;
@@ -352,21 +276,16 @@ void Render::DrawScreenRect (
     Color const &color,
     ScreenCoordRect const &screen_rect)
 {
-    Color masked_color(render_context.GetMaskedColor(color));
-    // return if the line is completely transparent
-    if (masked_color[Dim::A] == 0.0f)
+    if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glDisable(GL_TEXTURE_2D);
-
-    glColor4fv(masked_color.m);
+    SetupTextureUnits(
+        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        render_context.GetMaskedColor(color), 
+        render_context.GetBiasColor());
 
     glBegin(GL_QUADS);
         glVertex2iv(screen_rect.GetTopLeft().m);
@@ -382,22 +301,16 @@ void Render::DrawScreenRectTexture (
     ScreenCoordRect const &screen_rect,
     FloatSimpleTransform2 const &transformation)
 {
-    // return if the line is completely transparent
-    if (render_context.GetColorMask()[Dim::A] == 0.0f)
+    if (render_context.MaskAndBiasWouldResultInNoOp())
         return;
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, gl_texture->GetHandle());
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, Color::ms_transparent.m);
-
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_2D);
-    // TODO -- assert that the all-white texture is bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, render_context.GetColorMask().m);
+    SetupTextureUnits(
+        gl_texture->GetHandle(), 
+        render_context.GetColorMask(), 
+        render_context.GetBiasColor());
 
     glBegin(GL_QUADS);
         glTexCoord2fv((transformation * FloatVector2(0.0f, 0.0f)).m);
@@ -412,6 +325,22 @@ void Render::DrawScreenRectTexture (
         glTexCoord2fv((transformation * FloatVector2(1.0f, 0.0f)).m);
         glVertex2iv(screen_rect.GetTopRight().m);
     glEnd();
+}
+
+void Render::SetupTextureUnits (
+    GLuint gltexture_handle, 
+    Color const &mask_color,
+    Color const &bias_color)
+{
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, gltexture_handle);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mask_color.m);
+
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glEnable(GL_TEXTURE_2D);
+    // TODO -- assert that the all-white texture is bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
 }
 
 } // end of namespace Xrb

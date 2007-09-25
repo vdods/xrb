@@ -47,7 +47,8 @@ Widget::Widget (ContainerWidget *const parent, std::string const &name)
     m_is_hidden = false;
     m_screen_rect = ScreenCoordRect(0, 0, 500, 500); // arbitrary
     m_last_mouse_position = ScreenCoordVector2::ms_zero; // arbitrary
-    m_color_mask = Color(1.0, 1.0, 1.0, 1.0);
+    m_bias_color = Color::ms_identity_bias_color;
+    m_color_mask = Color::ms_identity_mask_color;
     m_is_modal = false;
     m_stack_priority = SP_NEUTRAL;
     m_background = NULL;

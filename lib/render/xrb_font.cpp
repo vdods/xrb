@@ -14,6 +14,7 @@
 #include FT_FREETYPE_H
 #include "xrb_gl.h"
 #include "xrb_math.h"
+#include "xrb_render.h"
 #include "xrb_rendercontext.h"
 #include "xrb_texture.h"
 #include "xrb_utf8.h"
@@ -572,20 +573,20 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 {
     ASSERT1(m_gl_texture != NULL);
 
+    if (render_context.MaskAndBiasWouldResultInNoOp())
+        return;
+        
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_gl_texture->GetHandle());
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, Color::ms_transparent.m);
+    Render::SetupTextureUnits(
+        m_gl_texture->GetHandle(), 
+        render_context.GetColorMask(), 
+        render_context.GetBiasColor());
 
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_2D);
-    // the all-white texture should already be bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, render_context.GetColorMask().m);
-
+    // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv
+    // in DrawGlyph (and the matrix operations below) operate on the correct texture unit.
     glActiveTextureARB(GL_TEXTURE0_ARB);
 
     glMatrixMode(GL_TEXTURE);

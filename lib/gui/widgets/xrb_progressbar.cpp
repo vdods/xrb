@@ -70,10 +70,7 @@ void ProgressBar::Draw (RenderContext const &render_context) const
 
     ASSERT1(progress_rect.GetWidth() >= 0);
     ASSERT1(progress_rect.GetHeight() >= 0);
-    Render::DrawScreenRect(
-        render_context,
-        m_color,
-        progress_rect);
+    Render::DrawScreenRect(render_context, m_color, progress_rect);
 }
 
 } // end of namespace Xrb

@@ -51,6 +51,9 @@ void Engine2::Sprite::Draw (
     Engine2::Object::DrawData const &draw_data,
     Float const alpha_mask) const
 {
+    if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
+        return;
+        
     // don't do anything if there's no texture
     if (!m_texture.GetIsValid())
         return;
@@ -74,23 +77,13 @@ void Engine2::Sprite::Draw (
         GetScaleFactors()[Dim::Y],
         1.0f);
 
-    // set the color mask
+    // calculate the bias color
+    Color bias_color(draw_data.GetRenderContext().GetBiasedColor(GetBiasColor()));
+    // calculate the color mask
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    // enable texture mapping and bind the sprite texture to texture unit 0,
-    // and set the bias color as that unit's texture env color.
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GetColorBias().m);
-
-    // enable texture mapping and bind the white texture to texture unit 1,
-    // and set the mask color as that unit's texture env color.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_2D);
-    // TODO: -- assert that the all-white texture is bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m);
+    Render::SetupTextureUnits(m_texture->GetHandle(), color_mask, bias_color);
 
     static FloatVector2 const s_tex_coord0(0.0f, 0.0f);
     static FloatVector2 const s_tex_coord1(0.0f, 1.0f);

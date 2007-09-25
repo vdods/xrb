@@ -97,8 +97,22 @@ void Screen::Draw () const
     ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1);
 #endif // !defined(WIN32)
 
+    // clear the color buffer to the Screen's bias color (because that's
+    // what you'd get if you applied the bias to all-black).
+    glClearColor(
+        GetBiasColor()[Dim::R]*GetBiasColor()[Dim::A], 
+        GetBiasColor()[Dim::G]*GetBiasColor()[Dim::A], 
+        GetBiasColor()[Dim::B]*GetBiasColor()[Dim::A], 
+        0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    // reset all matrices
+    glMatrixMode(GL_COLOR);
+    glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
 
     // make sure the screen rect we're constructing the render context
@@ -113,7 +127,11 @@ void Screen::Draw () const
 
     // create the render context.  we must do it manually because the
     // top-level widget (Screen) has no parent to do it automatically.
-    RenderContext render_context(screen_rect, Color(1.0, 1.0, 1.0, 1.0));
+    // the default bias color is transparent black, which is the identity
+    // for the blending function composition operation.  the default 
+    // color mask is opaque white, which is the identity for the color 
+    // masking operation.
+    RenderContext render_context(screen_rect, GetBiasColor(), GetColorMask());
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     render_context.SetupGLClipRect();

@@ -328,14 +328,15 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // clip rect is invalid (0 area)
             if (child_render_context.GetClipRect().GetIsValid())
             {
-                // set the color mask
-                child_render_context.SetColorMask(
-                    render_context.GetMaskedColor(child->GetColorMask()));
+                // set the bias color and color mask
+                child_render_context.SetBiasColor(render_context.GetBiasColor());
+                child_render_context.ApplyBiasColor(child->GetBiasColor());
+                child_render_context.SetColorMask(render_context.GetColorMask());
+                child_render_context.ApplyColorMask(child->GetColorMask());
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
                 if (!child->GetIsEnabled() && GetIsEnabled())
-                    child_render_context.ApplyAlphaMaskToColorMask(
-                        disabled_widget_alpha_mask);
+                    child_render_context.ApplyAlphaMaskToColorMask(disabled_widget_alpha_mask);
                 // set up the GL clip rect for the child
                 child_render_context.SetupGLClipRect();
                 // do the actual draw call
@@ -370,9 +371,12 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // clip rect is invalid (0 area)
             if (child_render_context.GetClipRect().GetIsValid())
             {
-                // set the color mask
-                child_render_context.SetColorMask(
-                    render_context.GetMaskedColor(modal_widget->GetColorMask()));
+                // set the bias color and color mask
+                child_render_context.SetBiasColor(render_context.GetBiasColor());
+                child_render_context.ApplyBiasColor(modal_widget->GetBiasColor());
+                child_render_context.SetColorMask(render_context.GetColorMask());
+                child_render_context.ApplyColorMask(modal_widget->GetColorMask());
+                
                 ASSERT1(modal_widget->GetIsEnabled());
                 // set up the clip rect for the child
                 child_render_context.SetupGLClipRect();

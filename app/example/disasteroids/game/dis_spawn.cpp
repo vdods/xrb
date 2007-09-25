@@ -666,7 +666,7 @@ ShieldEffect *SpawnShieldEffect (
     // later for real.
     sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
     // default the shield effect to transparent
-    sprite->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
+    sprite->SetColorMask(Color::ms_transparent_black);
 
     ShieldEffect *shield_effect = new ShieldEffect();
 
@@ -734,7 +734,7 @@ HealthTrigger *SpawnHealthTrigger (
             0.0f,
             0.3f);
     // make the sprite invisible
-    sprite->SetColorMask(Color(1.0f, 1.0f, 1.0f, 0.0f));
+    sprite->SetColorMask(Color::ms_transparent_black);
     return health_trigger;
 }
 

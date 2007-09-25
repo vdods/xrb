@@ -208,8 +208,8 @@ Engine2::Object::Object (ObjectType object_type)
     :
     FloatTransform2(FloatTransform2::ms_identity, true),
     m_object_type(object_type),
-    m_color_bias(1.0f, 1.0f, 1.0f, 0.0f),
-    m_color_mask(1.0f, 1.0f, 1.0f, 1.0f)
+    m_bias_color(Color::ms_identity_bias_color),
+    m_color_mask(Color::ms_identity_mask_color)
 {
     ASSERT1(m_object_type < OT_COUNT);
     m_z_depth = 0.0f;
@@ -237,14 +237,14 @@ void Engine2::Object::WriteObjectType (Serializer &serializer) const
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
     serializer.ReadFloatTransform2(this);
-    serializer.ReadColor(&m_color_bias);
+    serializer.ReadColor(&m_bias_color);
     serializer.ReadColor(&m_color_mask);
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 {
     serializer.WriteFloatTransform2(*static_cast<FloatTransform2 const *>(this));
-    serializer.WriteColor(m_color_bias);
+    serializer.WriteColor(m_bias_color);
     serializer.WriteColor(m_color_mask);
 }
 
@@ -255,7 +255,7 @@ void Engine2::Object::CloneProperties (Object const *const object)
     SetTranslation(object->GetTranslation());
     SetScaleFactors(object->GetScaleFactors());
     SetAngle(object->GetAngle());
-    m_color_bias = object->m_color_bias;
+    m_bias_color = object->m_bias_color;
     m_color_mask = object->m_color_mask;
 }
 

@@ -19,7 +19,7 @@ namespace Xrb
 namespace
 {
 
-static GLTexture *g_gltexture_white = NULL;
+static GLTexture *g_gltexture_opaque_white = NULL;
 
 void CheckForExtension (char const *extension_name)
 {
@@ -34,6 +34,12 @@ void CheckForExtension (char const *extension_name)
 }
 
 } // end of anonymous namespace
+
+GLTexture const &GL::GLTexture_OpaqueWhite ()
+{
+    ASSERT1(g_gltexture_opaque_white != NULL && "You must call GL::Initialize before this function");
+    return *g_gltexture_opaque_white;
+}
 
 void GL::Initialize ()
 {
@@ -65,12 +71,12 @@ void GL::Initialize ()
 
     // initialize the singleton helper texture(s)
     {
-        Texture *white = Texture::Create(ScreenCoordVector2(1, 1), true);
-        white->GetData()[0] = 255;
-        white->GetData()[1] = 255;
-        white->GetData()[2] = 255;
-        white->GetData()[3] = 255;
-        g_gltexture_white = GLTexture::Create(white);
+        Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), true);
+        opaque_white->GetData()[0] = 255;
+        opaque_white->GetData()[1] = 255;
+        opaque_white->GetData()[2] = 255;
+        opaque_white->GetData()[3] = 255;
+        g_gltexture_opaque_white = GLTexture::Create(opaque_white);
     }
 
     // general initialization and mode setup
@@ -81,7 +87,6 @@ void GL::Initialize ()
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
-    glClearColor(0, 0, 0, 0);
     glShadeModel(GL_SMOOTH);
 
     // set up the blending function for correct alpha blending
@@ -111,14 +116,14 @@ void GL::Initialize ()
     //
     // GL_TEXTURE_ENV_COLOR = (0.000000, 0.000000, 0.000000, 0.000000)
 
-    // set up texture unit 0 -- texturing and color bias
+    // set up texture unit 0 -- texturing and color masking
     {
         glActiveTextureARB(GL_TEXTURE0_ARB);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_INTERPOLATE_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_MODULATE);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, GL_SRC_COLOR);
@@ -127,21 +132,21 @@ void GL::Initialize ()
 
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_CONSTANT_ARB);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_PREVIOUS_ARB);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_CONSTANT_ARB);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_ARB, GL_SRC_ALPHA);
-
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB_ARB, GL_ONE_MINUS_SRC_ALPHA);
+        
+        // SOURCE2_RGB and OPERAND2_RGB are not used for GL_MODULATE
+        // SOURCE2_ALPHA and OPERAND2_ALPHA are not used for GL_MODULATE
     }
 
-    // set up texture unit 1 -- color masking
+    // set up texture unit 1 -- color biasing
     {
         glActiveTextureARB(GL_TEXTURE1_ARB);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_MODULATE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_INTERPOLATE_ARB);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE);
 
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_PREVIOUS_ARB);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, GL_SRC_COLOR);
@@ -150,12 +155,17 @@ void GL::Initialize ()
 
         glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_CONSTANT_ARB);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_ARB, GL_SRC_ALPHA);
+        // SOURCE1_ALPHA and OPERAND1_ALPHA are not used for GL_REPLACE
 
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB_ARB, GL_CONSTANT_ARB);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB_ARB, GL_ONE_MINUS_SRC_ALPHA);
+        // SOURCE2_ALPHA and OPERAND2_ALPHA are not used for GL_REPLACE
+        
         // might as well bind the all-white texture to texture unit 1
-        // right now since that's all it will ever use.
-        glBindTexture(GL_TEXTURE_2D, g_gltexture_white->GetHandle());
+        // right now since that's all it will ever use.  this will
+        // have no effect on the above texture unit operation, but is
+        // required for the texture unit to activate.
+        glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().GetHandle());
     }
 
     glActiveTextureARB(GL_TEXTURE0_ARB);

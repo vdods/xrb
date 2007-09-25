@@ -28,6 +28,7 @@ MAJOR TASKS:
 
 DISASTEROIDS:
 ** feature-related **
+- make Demi spawn a random mix of enemies when it explodes
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - Mortals should flash red when being damaged, flash green while being
@@ -49,7 +50,10 @@ DISASTEROIDS:
   mainly of the pea-shooter shooting a full charge and getting canceled
   out by some puny other ballistic).
 - make Shade circle around the player once it has locked on
+- make Shade respond as a charged particle in a magnetic field if it's
+  touching a tractor beam
 - make Shade teleport or fly away if it takes too much damage
+- add advanced behaviors for higher level enemies (like escaping Devourments)
 - when a new high score is posted and you're taken back to the title screen,
   the just-added score should be highlighted or blinking somehow
 - add collision_location and collision_normal to LineTrace
@@ -59,8 +63,8 @@ DISASTEROIDS:
 - split the physics and visibility computation up so their frame
   processing isn't dependent.  this requires addition of some "scale velocity"
   property on entities.  there will also be a problem with code that
-  sets the position of entities directly (this is a no-no in a
-  linear-interpolation world).
+  sets the position of entities (or sets any value) directly (this is a no-no 
+  in a linear-interpolation world).
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
@@ -118,8 +122,8 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
-- add color bias into RenderContext, as well as Widget, so that it behaves like the
-  analogous color mask in both.
+- get rid of all "enabled" stuff in SizeProperties
+- rename "color mask" to "mask color"
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
 - move GLTexture into render
 - rename Singletons into Singleton and xrb_singletons.* to xrb_singleton.*

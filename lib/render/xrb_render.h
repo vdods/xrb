@@ -116,28 +116,6 @@ namespace Render
       * lines will be used to draw it.  No more than 30 lines and no
       * less than 6 lines will be used to draw the circle.
       *
-      * This particular version of DrawCircle does not take a RenderContext
-      * and is intended for careful use within other drawing functions.
-      *
-      * Uses the current modelview matrix and does not change it.
-      *
-      * @brief Draws a circle with the given center and radius, in the
-      *        color currently set up in OpenGL.
-      * @param transformation The world-to-screen transformation matrix
-      *                       which is used to calculate the necessary number
-      *                       of lines to use to draw the circle.
-      * @param center The center of the circle, in modelspace.
-      * @param radius The radius of the circle, in modelspace.
-      */
-    void DrawCircle (
-        FloatMatrix2 const &transformation,
-        FloatVector2 const &center,
-        Float radius);
-    /** The number of lines used to draw the circle is dependent on
-      * @c transformation.  The larger the circle appears, the more
-      * lines will be used to draw it.  No more than 30 lines and no
-      * less than 6 lines will be used to draw the circle.
-      *
       * Obliterates the modelview matrix.
       *
       * @brief Draws a circle with the given center and radius, in the
@@ -222,6 +200,26 @@ namespace Render
         ScreenCoordRect const &screen_rect,
         FloatSimpleTransform2 const &transformation =
             FloatSimpleTransform2::ms_identity);
+            
+    // ///////////////////////////////////////////////////////////////////////
+    // Render helper functions
+    // ///////////////////////////////////////////////////////////////////////
+    
+    /** This setup is done in so many places that it was deemed 
+      * function-worthy, eliminating possible copy/paste errors.
+      * @brief Sets up texture units 0 and 1 for texturing, color masking
+      *        and color biasing.
+      * @param gltexture_handle The OpenGL texture handle to bind to texture
+      *                         unit 0.
+      * @param mask_color The masking color modulate the bound texture with.
+      * @param bias_color The bias color to interpolate the results of
+      *                   texture unit 0 with.
+      * @note When this function returns, texture unit 1 will be active.
+      */
+    void SetupTextureUnits (
+        GLuint gltexture_handle,
+        Color const &mask_color,
+        Color const &bias_color); 
 } // end of namespace Render
 
 } // end of namespace Xrb

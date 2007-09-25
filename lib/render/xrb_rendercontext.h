@@ -47,29 +47,47 @@ public:
       */
     inline RenderContext (
         ScreenCoordRect const &clip_rect,
+        Color const &bias_color,
         Color const &color_mask)
-    {
-        m_clip_rect = clip_rect;
-        m_color_mask = color_mask;
-    }
+        :
+        m_clip_rect(clip_rect),
+        m_bias_color(bias_color),
+        m_color_mask(color_mask)
+    { }
     /** Simply copies the values of the source RenderContext.
       * @brief Copy constructor.
       */
-    inline RenderContext (
-        RenderContext const &source)
-    {
-        m_clip_rect = source.m_clip_rect;
-        m_color_mask = source.m_color_mask;
-    }
+    inline RenderContext (RenderContext const &source)
+        :
+        m_clip_rect(source.m_clip_rect),
+        m_bias_color(source.m_bias_color),
+        m_color_mask(source.m_color_mask)
+    { }
     /** @brief Destructor.  Does nothing.
       */
     inline ~RenderContext () { }
 
+    /** Simply copies the properties of the source.
+      * @brief Assignment operator.
+      */
+    inline void operator = (RenderContext const &source)
+    {
+        m_clip_rect = source.m_clip_rect;
+        m_bias_color = source.m_bias_color;
+        m_color_mask = source.m_color_mask;
+    }
+    
     /** @brief Returns the clipping rectangle.
       */
     inline ScreenCoordRect const &GetClipRect () const
     {
         return m_clip_rect;
+    }
+    /** @brief Returns the bias color.
+      */
+    inline Color const &GetBiasColor () const
+    {
+        return m_bias_color;
     }
     /** @brief Returns the color mask.
       */
@@ -85,6 +103,20 @@ public:
     {
         return m_clip_rect & rect;
     }
+    /** The channels of the returned value are
+      * R = color[R]*(1-bias[A]) + bias[R]*bias[A]
+      * G = color[G]*(1-bias[A]) + bias[G]*bias[A]
+      * B = color[B]*(1-bias[A]) + bias[B]*bias[A]
+      * A = color[A]
+      * @brief Returns the color biased value of the given color.
+      */
+    inline Color GetBiasedColor (Color color) const
+    {
+        color[Dim::R] = color[Dim::R]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::R]*m_bias_color[Dim::A];
+        color[Dim::G] = color[Dim::G]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::G]*m_bias_color[Dim::A];
+        color[Dim::B] = color[Dim::B]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::B]*m_bias_color[Dim::A];
+        return color;
+    }
     /** Performs component-wise multiplication of the color and color mask,
       * @brief Returns the masked version of the given color.
       */
@@ -92,12 +124,29 @@ public:
     {
         return m_color_mask * color;
     }
+    /** @brief Returns true iff the color mask and bias color would force
+      *        any rendering operation to be a no op (i.e. completely transparent).
+      */
+    bool MaskAndBiasWouldResultInNoOp () const;
+    /** @brief Returns true iff the color mask, bias color and drawing color
+      *        alpha channel value would force any rendering operation to be 
+      *        a no op (i.e. completely transparent).
+      * @param color_alpha_channel_value The alpha channel value of the 
+      *        drawing color, analogous to a texture fragment alpha value.
+      */
+    bool MaskAndBiasWouldResultInNoOp (ColorCoord color_alpha_channel_value) const;
 
     /** @brief Sets the value of the clipping rectangle using the given rect.
       */
     inline void SetClipRect (ScreenCoordRect const &clip_rect)
     {
         m_clip_rect = clip_rect;
+    }
+    /** @brief Sets the value of the bias color using the given color.
+      */
+    inline void SetBiasColor (Color const &bias_color)
+    {
+        m_bias_color = bias_color;
     }
     /** @brief Sets the value of the color mask using the given color.
       */
@@ -111,6 +160,12 @@ public:
     inline void ApplyClipRect (ScreenCoordRect const &clip_rect)
     {
         m_clip_rect &= clip_rect;
+    }
+    /** @brief Blends the current bias color with the given color (right-multiplication).
+      */
+    inline void ApplyBiasColor (Color const &bias_color)
+    {
+        m_bias_color.Blend(bias_color);
     }
     /** @brief Masks the color mask using the given color.
       */
@@ -128,18 +183,10 @@ public:
       */
     void SetupGLClipRect () const;
 
-    /** Simply copies the properties of the source.
-      * @brief Assignment operator.
-      */
-    inline void operator = (RenderContext const &source)
-    {
-        m_clip_rect = source.m_clip_rect;
-        m_color_mask = source.m_color_mask;
-    }
-
 private:
 
     ScreenCoordRect m_clip_rect;
+    Color m_bias_color;
     Color m_color_mask;
 }; // end of class RenderContext
 

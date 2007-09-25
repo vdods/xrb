@@ -18,10 +18,14 @@
 namespace Xrb
 {
 
+class GLTexture;
+
 /** @brief Provides convenience functions for interacting with the OpenGL API.
   */
 namespace GL
 {
+    GLTexture const &GLTexture_OpaqueWhite ();
+
     /** Screen calls this in @ref Xrb::Screen::Create -- you shouldn't need
       * to call it directly.
       * @brief Sets up a bunch of rendering parameters and so forth.

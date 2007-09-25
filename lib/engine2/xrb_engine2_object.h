@@ -175,7 +175,7 @@ public:
     inline Float GetZDepth () const { return m_z_depth; }
     inline bool GetIsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
-    inline Color const &GetColorBias () const { return m_color_bias; }
+    inline Color const &GetBiasColor () const { return m_bias_color; }
     inline Color const &GetColorMask () const { return m_color_mask; }
     inline bool GetIsTransparent () const { return m_is_transparent; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
@@ -212,7 +212,7 @@ public:
     // imbues this object with a soul
     void SetEntity (Entity *entity);
     // sets the color bias
-    inline void SetColorBias (Color const &color_bias) { m_color_bias = color_bias; }
+    inline void SetBiasColor (Color const &bias_color) { m_bias_color = bias_color; }
     // sets the color mask
     inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
     // sets the is-transparent property
@@ -294,7 +294,7 @@ private:
     // object with a soul".
     Entity *m_entity;
     // color bias -- its alpha channel indicates the bias towards its RGB
-    Color m_color_bias;
+    Color m_bias_color;
     // color mask
     Color m_color_mask;
     // indicates that the contents of the object have changed and the

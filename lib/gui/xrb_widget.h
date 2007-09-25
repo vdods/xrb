@@ -298,6 +298,10 @@ public:
     {
         return GetScreenRect().GetGrown(-(GetFrameMargins() + GetContentMargins()));
     }
+    /** @brief Returns this widget's bias color (the bias color is applied to
+      * everything drawn by the widget, BEFORE the color mask).
+      */
+    inline Color const &GetBiasColor () const { return m_bias_color; }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
@@ -437,6 +441,9 @@ public:
         FloatVector2 const &ratios,
         bool defer_parent_update = false);
 
+    /** @brief Sets the bias color of this widget.
+      */
+    void SetBiasColor (Color const &bias_color) { m_bias_color = bias_color; }
     /** @brief Sets the color mask of this widget.
       */
     void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
@@ -822,7 +829,14 @@ protected:
       * @brief Indicates if this widget accepts the mouseover flag on its own.
       */
     bool m_accepts_mouseover;
-    /** This mask is applied by its parent for the call to @c Draw.
+    /** The bias color represents a blending function which is applied to
+      * each drawing operation at or below this widget in the widget hierarchy.
+      * @brief The bias color of the widget.
+      */
+    Color m_bias_color;
+    /** The color mask represents a modulation function (simple multiplication)
+      * which is applied to each drawing operation at or below this widget in 
+      * the widget hierarchy.
       * @brief The color mask of the widget.
       */
     Color m_color_mask;

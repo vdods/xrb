@@ -11,6 +11,8 @@
 #include "xrb_engine2_compound.h"
 
 #include "xrb_engine2_polygon.h"
+#include "xrb_gl.h"
+#include "xrb_render.h"
 #include "xrb_rendercontext.h"
 
 namespace Xrb
@@ -50,6 +52,9 @@ void Engine2::Compound::Draw (
     DrawData const &draw_data,
     Float const alpha_mask) const
 {
+    if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
+        return;
+
     // set up the gl modelview matrix
     glMatrixMode(GL_MODELVIEW);
     // we have to push the matrix here (instead of loading the
@@ -69,23 +74,14 @@ void Engine2::Compound::Draw (
         GetScaleFactors()[Dim::Y],
         1.0f);
 
-    // set the color mask
+    // calculate the bias color
+    Color bias_color(draw_data.GetRenderContext().GetBiasedColor(GetBiasColor()));
+    // calculate the color mask
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    // enable texture mapping and bind the sprite texture to texture unit 0,
-    // and set the bias color as that unit's texture env color.
-    glActiveTextureARB(GL_TEXTURE0_ARB);
-    glEnable(GL_TEXTURE_2D);
-    // the texture will be bound later during Polygon::Draw()
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, GetColorBias().m);
-
-    // enable texture mapping and bind the white texture to texture unit 1,
-    // and set the mask color as that unit's texture env color.
-    glActiveTextureARB(GL_TEXTURE1_ARB);
-    glEnable(GL_TEXTURE_2D);
-    // TODO -- assert that the all-white texture is bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m);
+    // the opaque white texture is just a dummy.  the real texture will be bound later
+    Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().GetHandle(), color_mask, bias_color);
 
     // switch back to texture unit 0 for Polygon's texture binding
     glActiveTextureARB(GL_TEXTURE0_ARB);
