@@ -76,7 +76,7 @@ public:
         m_bias_color = source.m_bias_color;
         m_color_mask = source.m_color_mask;
     }
-    
+
     /** @brief Returns the clipping rectangle.
       */
     inline ScreenCoordRect const &GetClipRect () const
@@ -103,19 +103,14 @@ public:
     {
         return m_clip_rect & rect;
     }
-    /** The channels of the returned value are
-      * R = color[R]*(1-bias[A]) + bias[R]*bias[A]
-      * G = color[G]*(1-bias[A]) + bias[G]*bias[A]
-      * B = color[B]*(1-bias[A]) + bias[B]*bias[A]
-      * A = color[A]
-      * @brief Returns the color biased value of the given color.
+    /** @brief Returns the given bias color blended (on the right/inside) with this
+      *        render context's bias color (i.e. blending function composition).
       */
-    inline Color GetBiasedColor (Color color) const
+    inline Color GetBlendedBiasColor (Color const &bias_color) const
     {
-        color[Dim::R] = color[Dim::R]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::R]*m_bias_color[Dim::A];
-        color[Dim::G] = color[Dim::G]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::G]*m_bias_color[Dim::A];
-        color[Dim::B] = color[Dim::B]*(1.0f - m_bias_color[Dim::A]) + m_bias_color[Dim::B]*m_bias_color[Dim::A];
-        return color;
+        Color blended_bias_color(m_bias_color);
+        blended_bias_color.Blend(bias_color);
+        return blended_bias_color;
     }
     /** Performs component-wise multiplication of the color and color mask,
       * @brief Returns the masked version of the given color.
@@ -129,9 +124,9 @@ public:
       */
     bool MaskAndBiasWouldResultInNoOp () const;
     /** @brief Returns true iff the color mask, bias color and drawing color
-      *        alpha channel value would force any rendering operation to be 
+      *        alpha channel value would force any rendering operation to be
       *        a no op (i.e. completely transparent).
-      * @param color_alpha_channel_value The alpha channel value of the 
+      * @param color_alpha_channel_value The alpha channel value of the
       *        drawing color, analogous to a texture fragment alpha value.
       */
     bool MaskAndBiasWouldResultInNoOp (ColorCoord color_alpha_channel_value) const;

@@ -104,8 +104,6 @@ DISASTEROIDS:
   should have a drone.  maybe they can both have a drone, at obviously
   distinct frequencies.
 ** bugs **
-- the fade in/out uses the color mask of the world view widget, but it
-  should use the bias color.
 - when setting fullscreen from the commandline, the options menu
   fullscreen checkbox isn't checked.
 - the gauss gun damage location appears to be wrong (on exactly

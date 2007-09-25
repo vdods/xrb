@@ -77,8 +77,8 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
 
     m_fade_time_total = 0.0f;
     m_fade_time_left = 0.0f;
-    m_fade_alpha_begin = 0.0f;
-    m_fade_alpha_end = 0.0f;
+    m_fade_coefficient_begin = 0.0f;
+    m_fade_coefficient_end = 0.0f;
 
     m_player_ship = NULL;
 
@@ -500,9 +500,9 @@ void WorldView::EndGame ()
 void WorldView::SetIsAlertWave (bool const is_alert_wave)
 {
     if (is_alert_wave)
-        InitiateZoom(ms_zoom_factor_alert_wave, ms_alert_wave_zoom_duration, true);
+        InitiateZoom(GetZoomFactor(), ms_zoom_factor_alert_wave, ms_alert_wave_zoom_duration, true);
     else
-        InitiateZoom(ms_zoom_factor_non_alert_wave, ms_non_alert_wave_zoom_duration, true);
+        InitiateZoom(GetZoomFactor(), ms_zoom_factor_non_alert_wave, ms_non_alert_wave_zoom_duration, true);
 }
 
 void WorldView::BeginIntro ()
@@ -525,11 +525,15 @@ void WorldView::BeginOutro ()
     ScheduleStateMachineInput(IN_BEGIN_OUTRO, 0.0f);
 }
 
-void WorldView::InitiateZoom (Float const target_zoom_factor, Float const zoom_duration, bool const signal_alert_zoom_done)
+void WorldView::InitiateZoom (
+    Float const starting_zoom_factor,
+    Float const ending_zoom_factor,
+    Float const zoom_duration,
+    bool const signal_alert_zoom_done)
 {
-    ASSERT1(target_zoom_factor > 0.0f);
-    m_zoom_factor_begin = GetZoomFactor();
-    m_zoom_factor_end = target_zoom_factor;
+    ASSERT1(ending_zoom_factor > 0.0f);
+    m_zoom_factor_begin = starting_zoom_factor;
+    m_zoom_factor_end = ending_zoom_factor;
     m_zoom_time_total = zoom_duration;
     m_zoom_time_left = zoom_duration;
     m_signal_alert_zoom_done = signal_alert_zoom_done;
@@ -566,10 +570,10 @@ void WorldView::ProcessZoom (Float const frame_dt)
     }
 }
 
-void WorldView::InitiateSpin (Float const target_spin_rate, Float const spin_duration)
+void WorldView::InitiateSpin (Float const starting_spin_rate, Float const ending_spin_rate, Float const spin_duration)
 {
-    m_spin_rate_begin = m_spin_rate_end;
-    m_spin_rate_end = target_spin_rate;
+    m_spin_rate_begin = starting_spin_rate;
+    m_spin_rate_end = ending_spin_rate;
     m_spin_time_total = spin_duration;
     m_spin_time_left = spin_duration;
 }
@@ -589,10 +593,10 @@ void WorldView::ProcessSpin (Float const frame_dt)
     m_spin_time_left -= frame_dt;
 }
 
-void WorldView::InitiateFade (Float const target_fade_alpha, Float const fade_duration)
+void WorldView::InitiateFade (Float const starting_fade_coefficient, Float const ending_fade_coefficient, Float const fade_duration)
 {
-    m_fade_alpha_begin = m_fade_alpha_end;
-    m_fade_alpha_end = target_fade_alpha;
+    m_fade_coefficient_begin = starting_fade_coefficient;
+    m_fade_coefficient_end = ending_fade_coefficient;
     m_fade_time_total = fade_duration;
     m_fade_time_left = fade_duration;
 }
@@ -608,8 +612,8 @@ void WorldView::ProcessFade (Float const frame_dt)
     ASSERT1(m_fade_time_total > 0.0f);
     ASSERT1(m_fade_time_left <= m_fade_time_total);
     Float parameter = 1.0f - m_fade_time_left / m_fade_time_total;
-    Float alpha = m_fade_alpha_begin * (1.0f - parameter) + m_fade_alpha_end * parameter;
-    GetParentWorldViewWidget()->SetColorMask(Color(alpha, alpha, alpha, 1.0f));
+    Float fade_coefficient = m_fade_coefficient_begin * (1.0f - parameter) + m_fade_coefficient_end * parameter;
+    GetParentWorldViewWidget()->SetBiasColor(Color(0.0f, 0.0f, 0.0f, 1.0f-fade_coefficient));
     m_fade_time_left -= frame_dt;
 }
 
@@ -649,11 +653,9 @@ bool WorldView::StateIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(ms_zoom_factor_non_alert_wave, ms_intro_duration, false);
-            m_spin_rate_end = 180.0f; // this will be used as the starting spin rate
-            InitiateSpin(0.0f, ms_intro_duration);
-            m_fade_alpha_end = 0.0f; // this will be used as the starting alpha
-            InitiateFade(1.0f, ms_intro_duration);
+            InitiateZoom(GetZoomFactor(), ms_zoom_factor_non_alert_wave, ms_intro_duration, false);
+            InitiateSpin(360.0f, 0.0f, ms_intro_duration);
+            InitiateFade(0.0f, 1.0f, ms_intro_duration);
             ScheduleStateMachineInput(IN_END_INTRO, ms_intro_duration);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();
@@ -750,9 +752,9 @@ bool WorldView::StateOutro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(ms_zoom_factor_outro_end, ms_outro_duration, false);
-            InitiateSpin(180.0f, ms_outro_duration);
-            InitiateFade(0.0f, ms_outro_duration);
+            InitiateZoom(GetZoomFactor(), ms_zoom_factor_outro_end, ms_outro_duration, false);
+            InitiateSpin(0.0f, 360.0f, ms_outro_duration);
+            InitiateFade(1.0f, 0.0f, ms_outro_duration);
             ScheduleStateMachineInput(IN_END_OUTRO, ms_outro_duration);
             // hide the GameWidget's controls
             m_sender_hide_controls.Signal();

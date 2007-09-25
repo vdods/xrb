@@ -84,13 +84,14 @@ private:
     void BeginGameOver ();
     void BeginOutro ();
 
-    void InitiateZoom (Float target_zoom_factor, Float zoom_duration, bool signal_alert_zoom_done);
+    void InitiateZoom (Float starting_zoom_factor, Float ending_zoom_factor, Float zoom_duration, bool signal_alert_zoom_done);
     void ProcessZoom (Float frame_dt);
 
-    void InitiateSpin (Float target_spin_rate, Float spin_duration);
+    void InitiateSpin (Float starting_spin_rate, Float ending_spin_rate, Float spin_duration);
     void ProcessSpin (Float frame_dt);
 
-    void InitiateFade (Float target_fade_alpha, Float fade_duration);
+    // a fade coefficient of 0 is faded to black, while 1 is not faded.
+    void InitiateFade (Float starting_fade_coefficient, Float ending_fade_coefficient, Float fade_duration);
     void ProcessFade (Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
@@ -153,8 +154,9 @@ private:
 
     Float m_fade_time_total;
     Float m_fade_time_left;
-    Float m_fade_alpha_begin;
-    Float m_fade_alpha_end;
+    // a fade coefficient of 0 is faded to black, while 1 is not faded.
+    Float m_fade_coefficient_begin;
+    Float m_fade_coefficient_end;
 
     // ///////////////////////////////////////////////////////////////////////
     // the player's ship

@@ -376,7 +376,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 child_render_context.ApplyBiasColor(modal_widget->GetBiasColor());
                 child_render_context.SetColorMask(render_context.GetColorMask());
                 child_render_context.ApplyColorMask(modal_widget->GetColorMask());
-                
+
                 ASSERT1(modal_widget->GetIsEnabled());
                 // set up the clip rect for the child
                 child_render_context.SetupGLClipRect();
