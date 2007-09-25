@@ -147,40 +147,6 @@ void Mortal::Kill (
         frame_dt);
 }
 
-void Mortal::Collide (
-    Entity *collider,
-    FloatVector2 const &collision_location,
-    FloatVector2 const &collision_normal,
-    Float collision_force,
-    Float time,
-    Float frame_dt)
-{
-    ASSERT1(collider != NULL);
-    ASSERT1(collision_force >= 0.0f);
-
-    static Float const s_collision_damage_coefficient = 0.0005f;
-
-    // ships should not take damage from powerups
-    if (GetIsShip() && collider->GetIsPowerup())
-        return;
-
-    if (collision_force > 0.0f)
-    {
-        ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
-        Damage(
-            collider,
-            collider,
-            s_collision_damage_coefficient * collision_force / GetFirstMoment(),
-            NULL,
-            collision_location,
-            collision_normal,
-            collision_force,
-            D_COLLISION,
-            time,
-            frame_dt);
-    }
-}
-
 bool Mortal::Damage (
     Entity *const damager,
     Entity *const damage_medium,
@@ -311,6 +277,69 @@ void Mortal::Heal (
     // can only heal a live Mortal
     if (m_current_health > 0.0f)
         SetCurrentHealth(Min(m_current_health + heal_amount, m_max_health));
+}
+
+void Mortal::Think (Float time, Float frame_dt)
+{
+    // set the red/green flashing due to recent changes in health
+    static Float const s_full_flash_intensity_alpha = 0.5f;
+    // clamp m_recent_change_in_health to between -m_full_flash_intensity_health
+    // and m_full_flash_intensity_health.
+    m_recent_change_in_health = Min(m_recent_change_in_health, m_full_flash_intensity_health);
+    m_recent_change_in_health = Max(m_recent_change_in_health, -m_full_flash_intensity_health);
+    // full flash intensity (1.0 or -1.0) is achieved when the recent change
+    // in health meets m_full_flash_intensity_health by a factor of 1.0 or -1.0
+    Float flash_intensity = m_recent_change_in_health / m_full_flash_intensity_health;
+    // because of the above clamping, flash_intensity should be in the range [-1, 1]
+    // positive flash intensity indicates a positive recent change in health
+    // which indicates the Mortal was recently healed, so flash green.
+    Color flash_color;
+    if (flash_intensity > 0.0f)
+        flash_color = Color(0.0f, 1.0f, 0.0f, flash_intensity*s_full_flash_intensity_alpha);
+    // negative flash intensity indicates a positive recent change in health
+    // which indicates the Mortal was recently healed, so flash green.
+    else
+        flash_color = Color(1.0f, 0.0f, 0.0f, -flash_intensity*s_full_flash_intensity_alpha);
+    GetOwnerObject()->SetBiasColor(flash_color);
+
+    // decay the recent change in health
+    static Float const s_recent_change_in_health_halflife = 0.05f;
+    static Float const s_recent_change_in_health_decay_base = Math::Pow(0.5f, 1.0f / s_recent_change_in_health_halflife);
+    m_recent_change_in_health *= Math::Pow(s_recent_change_in_health_decay_base, frame_dt);
+}
+
+void Mortal::Collide (
+    Entity *collider,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal,
+    Float collision_force,
+    Float time,
+    Float frame_dt)
+{
+    ASSERT1(collider != NULL);
+    ASSERT1(collision_force >= 0.0f);
+
+    static Float const s_collision_damage_coefficient = 0.0005f;
+
+    // ships should not take damage from powerups
+    if (GetIsShip() && collider->GetIsPowerup())
+        return;
+
+    if (collision_force > 0.0f)
+    {
+        ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+        Damage(
+            collider,
+            collider,
+            s_collision_damage_coefficient * collision_force / GetFirstMoment(),
+            NULL,
+            collision_location,
+            collision_normal,
+            collision_force,
+            D_COLLISION,
+            time,
+            frame_dt);
+    }
 }
 
 } // end of namespace Dis

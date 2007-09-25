@@ -66,6 +66,11 @@ Demi::Demi (Uint8 const enemy_level)
     m_port_reticle_coordinates(FloatVector2::ms_zero),
     m_starboard_reticle_coordinates(FloatVector2::ms_zero)
 {
+    // PlayerShip needs to be more sensitive to damage with respect
+    // to damage/healing flashes.  the default is 0.2, but we need
+    // something much lower.
+    SetFullFlashIntensityHealthRatio(0.01f);
+
     m_think_state = THINK_STATE(PickWanderDirection);
     m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
     m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);

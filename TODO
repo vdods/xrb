@@ -31,10 +31,8 @@ DISASTEROIDS:
 - make Demi spawn a random mix of enemies when it explodes
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
-- Mortals should flash red when being damaged, flash green while being
-  healed.  When a Mortal is being damaged by something it's strong, weak
+- When a Mortal is being damaged by something it's strong, weak
   or immune against, it should make a particular sound to indicate that.
-  this will require rendering support for RGB biasing.
 - secondary fire for EMP -- ambient tractor beam
 - forget the 4x item status screen.  upgrading should be one way,
   and the inventory should just show what level item it is.  this also
@@ -63,7 +61,7 @@ DISASTEROIDS:
 - split the physics and visibility computation up so their frame
   processing isn't dependent.  this requires addition of some "scale velocity"
   property on entities.  there will also be a problem with code that
-  sets the position of entities (or sets any value) directly (this is a no-no 
+  sets the position of entities (or sets any value) directly (this is a no-no
   in a linear-interpolation world).
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
@@ -106,6 +104,8 @@ DISASTEROIDS:
   should have a drone.  maybe they can both have a drone, at obviously
   distinct frequencies.
 ** bugs **
+- the fade in/out uses the color mask of the world view widget, but it
+  should use the bias color.
 - when setting fullscreen from the commandline, the options menu
   fullscreen checkbox isn't checked.
 - the gauss gun damage location appears to be wrong (on exactly
@@ -116,7 +116,7 @@ DISASTEROIDS:
 - firing a laser or gauss gun while directly facing and touching e.g.
   an asteroid causes the line trace to fail so the weapon fires through
   the asteroid.  maybe fix this by starting the line trace slightly
-  inside the firing ship.
+  inside the firing ship (and ignoring if it hits the firing ship)
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();

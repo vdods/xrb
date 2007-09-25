@@ -54,6 +54,10 @@ public:
         m_current_health = current_health;
         m_max_health = max_health;
         m_is_invincible = false;
+        m_recent_change_in_health = 0.0f;
+        // 1/5 of fatal damage (or opposite in healing) will produce full
+        // damage/healing flashing by default.
+        m_full_flash_intensity_health = 0.2f * m_max_health;
         m_damage_dissipation_rate = 0.0f;
         m_dissipated_damage_accumulator = 0.0f;
         m_time_last_damaged = -1.0f;
@@ -116,14 +120,6 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-
-    virtual void Collide (
-        Entity *collider,
-        FloatVector2 const &collision_location,
-        FloatVector2 const &collision_normal,
-        Float collision_force,
-        Float time,
-        Float frame_dt);
     // the return value is true iff the Mortal died due to this damage.
     virtual bool Damage (
         Entity *damager,
@@ -156,20 +152,46 @@ public:
         Float frame_dt)
     { }
 
+    virtual void Think (Float time, Float frame_dt);
+    virtual void Collide (
+        Entity *collider,
+        FloatVector2 const &collision_location,
+        FloatVector2 const &collision_normal,
+        Float collision_force,
+        Float time,
+        Float frame_dt);
+
 protected:
 
     virtual void SetCurrentHealth (Float current_health)
     {
+        // add the health delta to m_recent_change_in_health
+        m_recent_change_in_health += current_health - m_current_health;
+        // set the current health
         m_current_health = current_health;
         // can't go above max health
         m_current_health = Min(m_current_health, m_max_health);
     }
     virtual void SetMaxHealth (Float max_health)
     {
-        ASSERT1(max_health >= 0.0f);
+        ASSERT1(max_health > 0.0f);
+        // save off the full flash intensity health ratio for later updating
+        Float factor_of_max_health = m_full_flash_intensity_health / m_max_health;
+        // set the max health
         m_max_health = max_health;
+        // update m_full_flash_intensity_health
+        m_full_flash_intensity_health = factor_of_max_health * m_max_health;
         // current health can't go above max health
         m_current_health = Min(m_current_health, m_max_health);
+    }
+    void ResetRecentChangeInHealth ()
+    {
+        m_recent_change_in_health = 0.0f;
+    }
+    void SetFullFlashIntensityHealthRatio (Float factor_of_max_health)
+    {
+        ASSERT1(factor_of_max_health >= 0.0f && factor_of_max_health <= 1.0f);
+        m_full_flash_intensity_health = factor_of_max_health * m_max_health;
     }
 
 private:
@@ -177,6 +199,8 @@ private:
     Float m_current_health;
     Float m_max_health;
     bool m_is_invincible;
+    Float m_recent_change_in_health;
+    Float m_full_flash_intensity_health;
     Float m_damage_dissipation_rate;
     Float m_dissipated_damage_accumulator;
     Float m_time_last_damaged;

@@ -46,6 +46,11 @@ PlayerShip::PlayerShip (
     m_sender_weapon_status_changed(this),
     m_sender_mineral_inventory_changed(this)
 {
+    // PlayerShip needs to be more sensitive to damage with respect
+    // to damage/healing flashes.  the default is 0.2, but we need
+    // something much lower.
+    SetFullFlashIntensityHealthRatio(0.003f);
+
     m_score = 0;
     m_stoke = 1.0f;
     m_wave_count = 0;

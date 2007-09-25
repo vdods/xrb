@@ -78,6 +78,9 @@ Asteroid::Asteroid (
 
 void Asteroid::Think (Float const time, Float const frame_dt)
 {
+    // we don't bother calling Mortal::Think here because the think time is so
+    // high, and we don't want to change it so all asteroids Think every frame.
+
     // if this asteroid shouldn't decay, then defer the think for a long time
     if (!m_is_a_secondary_asteroid || GetScaleFactor() > ms_decay_scale_factor)
     {

@@ -49,6 +49,11 @@ Devourment::Devourment (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_DEVOURMENT)
 {
+    // Devourment needs to be more sensitive to damage with respect
+    // to damage/healing flashes.  the default is 0.2, but we need
+    // something much lower.
+    SetFullFlashIntensityHealthRatio(0.01f);
+
     m_think_state = THINK_STATE(PickWanderDirection);
 
     // Devourment is weak against mining laser (sort of an association between

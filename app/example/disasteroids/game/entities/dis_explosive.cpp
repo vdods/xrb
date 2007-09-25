@@ -150,10 +150,11 @@ void Grenade::Collide (
         m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
         m_damage_to_inflict += other_grenade->m_damage_to_inflict;
 
-        // set the new max health for the new grenade is the sum of the source grenades' 
+        // set the new max health for the new grenade is the sum of the source grenades'
         // max healths.  the current health for the new grenade is also the sum.
         SetMaxHealth(GetMaxHealth() + other_grenade->GetMaxHealth());
         SetCurrentHealth(GetCurrentHealth() + other_grenade->GetCurrentHealth());
+        ResetRecentChangeInHealth();
 
         // figure out the new mass, velocity, and radius.
         FloatVector2 new_momentum = GetMomentum() + other_grenade->GetMomentum();
@@ -172,7 +173,7 @@ void Grenade::Collide (
         // TODO only call the superclass collide if the collision registers as above
         // the threshold for detonation -- i.e. a large merged grenade won't detonate
         // on some tiny asteroid, but a normal sized grenade will detonate on anything.
-    
+
         // call the superclass collide
         Explosive::Collide(
             collider,
@@ -271,6 +272,9 @@ void Missile::Think (
     Float const time,
     Float const frame_dt)
 {
+    // call the superclass' Think
+    Explosive::Think(time, frame_dt);
+
     // if we're dead or have detonated, don't bother thinking
     if (GetIsDead() || GetHasDetonated())
         return;
@@ -278,7 +282,8 @@ void Missile::Think (
     AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(GetAngle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
-    if (m_first_think)
+    // (if the owner even still exists)
+    if (m_first_think && m_owner.GetIsValid())
     {
         m_initial_velocity = m_owner->GetVelocity();
         m_first_think = false;
@@ -396,6 +401,7 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
         Seek(time, frame_dt);
     }
 
+    // call the superclass' Think
     Missile::Think(time, frame_dt);
 }
 

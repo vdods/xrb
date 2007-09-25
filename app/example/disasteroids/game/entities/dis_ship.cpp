@@ -127,6 +127,9 @@ void Ship::HandleNewOwnerObject ()
 
 void Ship::Think (Float const time, Float const frame_dt)
 {
+    // call the superclass' Think
+    Mortal::Think(time, frame_dt);
+
     // nothing can happen when the ship is disabled.
     m_disable_time = Max(0.0f, m_disable_time - frame_dt);
 }
