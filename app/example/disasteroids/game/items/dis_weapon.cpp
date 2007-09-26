@@ -1244,46 +1244,16 @@ bool EnemySpawner::Activate (
         GetOwnerShip()->GetVelocity());
 
     Uint8 spawn_enemy_level = Math::RandomUint16(0, GetUpgradeLevel());
-
-    EnemyShip *enemy_ship = NULL;
-    switch (GetEnemySpawnType())
-    {
-        case ET_INTERLOPER:
-            enemy_ship = SpawnInterloper(
-                GetOwnerShip()->GetWorld(),
-                GetOwnerShip()->GetObjectLayer(),
-                FloatVector2::ms_zero,
-                muzzle_velocity,
-                spawn_enemy_level);
-            break;
-
-        case ET_SHADE:
-            enemy_ship = SpawnShade(
-                GetOwnerShip()->GetWorld(),
-                GetOwnerShip()->GetObjectLayer(),
-                FloatVector2::ms_zero,
-                muzzle_velocity,
-                spawn_enemy_level);
-            break;
-
-        case ET_REVULSION:
-            enemy_ship = SpawnRevulsion(
-                GetOwnerShip()->GetWorld(),
-                GetOwnerShip()->GetObjectLayer(),
-                FloatVector2::ms_zero,
-                muzzle_velocity,
-                spawn_enemy_level);
-            break;
-
-        default:
-            ASSERT0(false && "You shouldn't be spawning this type");
-            break;
-    }
-
-    ASSERT1(enemy_ship != NULL);
+    EnemyShip *enemy_ship = 
+        SpawnEnemyShip(
+            GetOwnerShip()->GetWorld(),
+            GetOwnerShip()->GetObjectLayer(),
+            FloatVector2::ms_zero,
+            muzzle_velocity,
+            GetEnemySpawnType(),
+            spawn_enemy_level);
     enemy_ship->SetTranslation(GetMuzzleLocation() + enemy_ship->GetScaleFactor() * GetMuzzleDirection());
-    enemy_ship->SetAngle(Math::Atan(GetMuzzleDirection()));
-
+    
     // update the last time fired
     m_time_last_fired = time;
 

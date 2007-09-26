@@ -39,6 +39,7 @@ class Demi;
 class Devourment;
 // class EMPBomb;
 // class EMPBombLayer;
+class EnemyShip;
 class Entity;
 class EMPExplosion;
 class Fireball;
@@ -299,6 +300,14 @@ Demi *SpawnDemi (
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
+    Uint8 enemy_level);
+
+EnemyShip *SpawnEnemyShip (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    EntityType enemy_type,
     Uint8 enemy_level);
 
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (

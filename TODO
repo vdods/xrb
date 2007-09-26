@@ -28,7 +28,6 @@ MAJOR TASKS:
 
 DISASTEROIDS:
 ** feature-related **
-- make Demi spawn a random mix of enemies when it explodes
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak

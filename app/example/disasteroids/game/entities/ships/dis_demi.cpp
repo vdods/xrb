@@ -393,6 +393,22 @@ void Demi::Die (
 
         health_powerup_amount_left_to_spawn -= health_powerup_amount;
     }
+    
+    static Uint32 const s_death_enemies_to_spawn_count = 10;
+    for (Uint32 i = 0; i < s_death_enemies_to_spawn_count; ++i)
+    {
+        Float velocity_angle = Math::RandomAngle();
+        Float velocity_ratio = Math::RandomFloat(0.0, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+
+        SpawnEnemyShip(
+            GetWorld(),
+            GetObjectLayer(),
+            GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+            velocity,
+            EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
+            Math::RandomUint16(0, GetEnemyLevel()));                     // ET_REVULSION being sequential enums
+    }
 
     // remove the port tractor beam, if it exists
     if (m_port_tractor_beam.GetIsValid() && m_port_tractor_beam->GetIsInWorld())

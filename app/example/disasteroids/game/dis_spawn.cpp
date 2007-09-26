@@ -892,6 +892,60 @@ Demi *SpawnDemi (
     return demi;
 }
 
+EnemyShip *SpawnEnemyShip (
+    Engine2::World *world,
+    Engine2::ObjectLayer *object_layer,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    EntityType enemy_type,
+    Uint8 enemy_level)
+{
+    EnemyShip *enemy_ship = NULL;
+    switch (enemy_type)
+    {
+        case ET_INTERLOPER:
+            enemy_ship = SpawnInterloper(
+                world,
+                object_layer,
+                translation,
+                velocity,
+                enemy_level);
+            break;
+
+        case ET_SHADE:
+            enemy_ship = SpawnShade(
+                world,
+                object_layer,
+                translation,
+                velocity,
+                enemy_level);
+            break;
+
+        case ET_REVULSION:
+            enemy_ship = SpawnRevulsion(
+                world,
+                object_layer,
+                translation,
+                velocity,
+                enemy_level);
+            break;
+
+        default:
+            ASSERT0(false && "You shouldn't be spawning this type");
+            break;
+    }
+    ASSERT1(enemy_ship != NULL);
+    
+    Float angle;
+    if (velocity.GetIsZero())
+        angle = Math::RandomAngle();
+    else
+        angle = Math::Atan(velocity);
+    enemy_ship->SetAngle(angle);
+    
+    return enemy_ship;
+}
+    
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
