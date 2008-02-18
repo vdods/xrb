@@ -1,0 +1,777 @@
+< make up a game title and put it here >
+
+//////////////////////////////////////////////////////////////////////////////
+// Overview
+//////////////////////////////////////////////////////////////////////////////
+
+1. Game world scopes
+2. Social status and interactions
+3. Economy and resources
+4. Spaceships
+5. Space stations and other buildings
+6. Items and equipment
+7. Environmental features
+8. NPCs (non-player characters)
+9. Game fiction/background
+
+//////////////////////////////////////////////////////////////////////////////
+// 1. Game world scopes
+//////////////////////////////////////////////////////////////////////////////
+
+Environment scopes
+A. Galaxy
+B. Star system
+C. Planet
+
+Interaction scopes
+D. Challenge
+E. Encounter
+F. Docking
+
+Battle scopes
+G. RTS
+H. Tactical
+I. Melee
+J. Boarding party
+
+//////////////////////////////////////////////////////////////////////////////
+
+Scope state transition diagram:
+
+    +------------------------+--------------------+--------+-----------------+
+    |                        |                    |        |                 |
+    V                        V                    V        |                 |
++------------+     +-----------------+     +------------+  |                 |
+| (A) Galaxy |---->| (B) Star system |---->| (C) Planet |  |   Environment   |
++------------+     +-----------------+     +------------+  |   Scopes        |
+    |                        |                    |        |                 |
+    +----------+-------------+--------------------+        |                 |
+               |                                           |                 |
+    +----------+----------------------------+    +---------+                 |
+    |                                       |    |             Interaction   |
+    V                                       V    |             Scopes        |
++---------------+                      +---------------+     +-------------+ |
+| (D) Challenge |<---------------------| (E) Encounter |---->| (F) Docking | |
++---------------+                      +---------------+     +-------------+ |
+      |                                    A A   |   A         |  |          |
+   +--+-------------+--------------+       | |   |   |         |  |          |
+   |                |              |       | |   |   +---------+  |          |
+   V                V              V       | |   V                V          |
++---------+ +--------------+ +-----------+ | | +--------------------+        |
+| (G) RTS | | (H) Tactical | | (I) Melee | | | | (J) Boarding party | Battle |
++---------+ +--------------+ +-----------+ | | +--------------------+ Scopes |
+   |                |              |       | |           |                   |
+   +----------------+--------------+-------+ +-----------+                   |
+                                           |                                 |
+                                           +---------------------------------+
+
+Environment scopes
+A. Galaxy -- No-gravity physics world
+   This is the top-level large world in which the players exist and explore.
+   It contains a multitude of stars which allow players to enter the
+   (B) Star system environment scope.  Players can see each other traveling
+   in the galaxy, and can interact with each other by entering the
+   (D) Challenge and (E) Encounter interaction scopes.  No battle of any
+   kind takes place in the Galaxy environment scope.
+B. Star system -- With-gravity physics world
+   Similar to the (A) Galaxy environment scope -- spaceships can see each
+   other traveling, and can enter interaction scopes (D) and (E) with one
+   another.  Also, like the Galaxy environment scope, no battle actually
+   takes place here.  The Star system contains a star (or binary star, etc)
+   and usually will have its own set of planets.  Spaceships cannot crash
+   into the planet(s) -- they can pass over them, and optionally land on
+   them, which will cause them to enter the (C) Planet environment scope.
+   The spaceships cannot crash into the star(s) either, but the star(s) will
+   heat up anything in their proximity.  The players can exit the Star
+   system environment scope and return to the (A) Galaxy environment scope.
+C. Planet -- No-gravity physics world
+   stuff - materials mining, resource collection, etc, + battle and trading
+
+Interaction scopes
+D. Challenge -- Menu display
+   This interaction scope is engaged when a player wants to commit hostile
+   action upon another player.  The victim player can't block this action,
+   and both involved players are given a choice of which of the 3 battle
+   types is to be used in the battle.  The players then enter the actual
+   battle scope, (G) (H) or (I), depending on what choice is agreed upon.
+   A Challenge indicator icon is created in the Environment scope in which
+   the Challenge was initiated, so that other players can see it as well
+   as enter the battle.
+E. Encounter -- Surrounding-dependent-gravity physics world
+   The encounter interaction scope is an transitional scope which allows
+   spaceships to dock with each other or attempt to launch an attack.  When
+   2 players enter this scope, an Encounter indicator is created in the
+   Environment scope in which the Encounter was initiated, so that other
+   players can see and enter it.  If players bring their spaceships together
+   they can engage docking mode for trading or boarding attacks.  Players
+   can leave this interaction scope and go back to the previous scope.  A
+   spaceship can also engage a Challenge with another, entering the
+   (D) Challenge battle scope, or they can attempt to board another
+   ship and enter the (J) Boarding party battle scope.
+F. Docking -- Menu display
+   This is where players can trade materials and other game objects with
+   one another.  From this interaction scope, a player can engage the
+   (J) Boarding party battle scope.
+
+Battle scopes
+G. RTS (real time strategy) -- Surrounding-dependent-gravity physics world
+   This battle mode doesn't involve much of the actual spaceships, but
+   rather involves battle units which are deployed by the spaceships.  This
+   battle mode involves resource management -- resources provided by
+   the surrounding environmental elements (e.g. asteroids, mines, solar
+   power, water, etc), or supplied by what is being carried on the
+   spaceship.  This battle mode is slower and more strategic than
+   (H) Tactical or (I) Melee battle scopes.
+   There is a notion of friends, foes and neutral relationships.
+   This scope is left either by a spaceship warping
+   out, which returns it to the Environment scope from which it came.  If
+   its or
+   ** think of the condition in which battle ends and it transitions back
+   to (E) Encounter.
+H. Tactical -- Surrounding-dependent-gravity physics world
+   This battle mode is like (I) Melee battle scope, except at a slower
+   pace, and more weapons are available.  Spaceships can be tuned in
+   detail during battle (e.g. delegating more power from shields and less
+   to engines).  Limited auxilliary battle units can be deployed.
+   This scope is left either by a spaceship warping
+   out, which returns it to the Environment scope from which it came, or
+   ** think of the condition in which battle ends and it transitions back
+   to (E) Encounter.
+I. Melee -- Surrounding-dependent-gravity physics world
+   Battle mode similar to Star Control 2's melee battle mode.  Players
+   can only use the primary weapons and defenses on their ships in a fast-
+   paced, realtime battle.  Only a few major ship parameters can be
+   tuned during battle.  This scope is left either by a spaceship warping
+   out, which returns it to the Environment scope from which it came, or
+   ** think of the condition in which battle ends and it transitions back
+   to (E) Encounter.
+J. Boarding party -- In-doors physics world
+   This battle mode is used to raid spaceships in order to steal cargo,
+   items, etc, and to sabotage the enemy ship.  It is just like the
+   (G) RTS battle scope except the environment is the interior of both
+   ships.  The ships will be equipped with boarding party battle units
+   with which to defend and attack.  This battle mode will heavily involve
+   environmental use (i.e. opening/closing blast doors, erecting
+   forcefields, encrypting computer interfaces, etc).
+   ** think of the condition in which battle ends and it transitions back
+   to (E) Encounter.
+
+//////////////////////////////////////////////////////////////////////////////
+// 2. Social status and interactions
+//////////////////////////////////////////////////////////////////////////////
+
+The 'social status' of each player is important as it effects how/who they
+interact with.  Like Tradewars, there is a spectrum of 'character' which
+ranges from evil on one side, to good on the other.  In the center of the
+spectrum, there is a small band of 'neutral' character in which new players
+start out.  A player's character rating dictates who they can ally with,
+who they can make an enemy, who they have to ally with, who they have
+to make an enemy, etc.
+
+Character points rating spectrum (N = 1000):
+
+Evil (-inf, -N)             Neutral [-N, N]             Good (N, +inf)
+----------------------------+------+------+----------------------------
+-inf                       -N      0      N                        +inf
+----------------------------+------+------+----------------------------
+Very               Somewhat |   Neutral   | Somewhat               Very
+evil                   evil |             | good                   good
+
+A new player will start out with 0 character points, right in the middle
+of the neutral spectrum.
+
+Here is a chart which describes the character levels which can ally, be
+neutral and make enemies with one another.  You'll notice the graph is
+symmetric.
+
+Legend:
+A = can ally with
+N = can be neutral with
+E = can make enemies with
+        | Good    | Neutral | Evil
+--------+---------+---------+----------
+Good    | A N     | A N E   | E
+--------+---------+---------+----------
+Neutral | A N E   | A N E   | A N E
+--------+---------+---------+----------
+Evil    | E       | A N E   | A N E
+
+The idea is that Good cannot become enemies with one another.  Evil must be
+opposed to Good, and Evil can ally, be neutral, or make enemies with one
+another, because they have allegiance to no one.  Neutral can make any sort
+of relationship with anyone.
+
+This permission graph dictates the flow of battles, because the condition
+under which battles end (transition from Battle scope to (E) Encounter
+interaction scope) is when all relationships which involve 2 players that
+are enemies with one another are resolved by at least one of the involved
+players being disabled.
+
+Meaning of allying with, being neutral with, and making enemies with:
+- Becoming allies with a player during battle means that you cannot damage
+  each other even when you make direct hits with your weapons.
+- Becoming neutral with a player means that you can fire upon one another
+  with full damage.  It has no ramifications in terms of conclusion of battles
+  or attempting escape.
+- Becoming an enemy with a player means that you can fire upon one another
+  with full damage, and that in order for the battle to conclude, one of
+  you must be disabled or escape the battle.
+
+Players change their character by earning/losing 'character points' by
+battling other ships.  Here is a chart which describes the gain/loss incurred
+by players of different character firing on/disabling one another (the
+character type on the left fires on/disables the one in the top.
+
+Legend:
+A = the character points of the attacker
+V = the character points of the victim
+
+Firing on:
+        | Good    | Neutral | Evil
+--------+---------+---------+----------
+Good    | -A/512  | -V/2048 | -V/512
+--------+---------+---------+----------
+Neutral | -V/512  | -V/512  | -V/512
+--------+---------+---------+----------
+Evil    | -V/512  | -V/2048 | (V-A)/512
+
+Disabling (power system or subphotonic engines):
+        | Good    | Neutral | Evil
+--------+---------+---------+----------
+Good    | -A/64   | -V/256  | -V/64
+--------+---------+---------+----------
+Neutral | -V/64   | -V/64   | -V/64
+--------+---------+---------+----------
+Evil    | -V/64   | -V/256  | (V-A)/64
+
+The constants are more or less arbitrary for now, subject to play-tested
+tuning.
+
+//////////////////////////////////////////////////////////////////////////////
+// 3. Economy and resources
+//////////////////////////////////////////////////////////////////////////////
+
+Everything in the game is heavily based on resource management and economy.
+There are several different forms of wealth in which to trade.
+
+A. Money
+B. Raw materials
+C. Processed materials
+D. Manufactured goods
+E. Means of making money
+
+All trading is unrestricted (i.e. you can trade anything for anything, or even
+give resources away for free if you see fit).  The goal is to create a self-
+balancing pure capitalistic economy.
+
+A. Money
+   Money is the universal form of currency which is accepted by most anyone,
+   and can be deposited in banks.  It may be more favorable than (B) (C) or
+   (D) resources because it is general-purpose money.
+
+B. Raw materials
+   These are harvested and mined in various places throughout the galaxy and
+   are necessary to produce items such as spaceships, spaceship systems,
+   space stations, etc.  Examples are water, ammonia, silicates, uranium ore,
+   coal, etc.
+
+C. Processed materials
+   These are raw materials that have been processed to form more purified
+   forms of their raw counterparts, or alloys of several types of raw
+   materials, or even further refined versions of processed materials.
+   Examples are enriched uranium, pure silicon, plastics, carbon fiber alloy,
+   etc.  Raw materials + energy are required to produce processed materials.
+
+D. Manufactured goods
+   This is a very large set of items which comprise the directly useful
+   objects such as engines, spaceships, weapons, scanners, space stations,
+   and special items such as tractor beams, cloaking devices, etc.  A
+   combination of raw materials, processed materials and energy are required
+   to produce manufactured goods, and consequently are very expensive.
+   This also includes player-written computer control programs.
+
+E. Means of making money
+   Players will use the simple game mechanics to perform jobs.  For example
+   - Programmer (writing computer control programs and selling them -- the
+                 program would be "distributed" in some non-source code form
+                 and others would not be able to resell or copy it).
+   - Mercenary (getting money to kill people on others' behalf, or maybe
+                escorting cargo ships or something)
+   - Resource miner (selling to processing plants)
+   - Cargo ship (moving property for a coin or 2)
+   - Processing plant owner (buying raw resources, selling the processed
+     product)
+   - Factory owner (buying various resources to produce devices and items)
+   - Pirate (directly killing people and stealing their shit)
+   - Police ship (protecting "good territory")
+   - Professional sports (get money for winning battles in a FF3 coliseum
+                          type situation)
+   - Guy who runs the FF3 type coliseum.
+   - Trader (buying low, selling high)
+   - Owner of a store on a space station
+   - etc
+   
+//////////////////////////////////////////////////////////////////////////////
+// 4. Spaceships
+//////////////////////////////////////////////////////////////////////////////
+
+Spaceships are the embodiment of players.  Each player has one spaceship in
+which they travel around the galaxy.  Spaceships are indestructible, but can
+be damaged and disabled in battles.  A disabled spaceship is susceptible to
+being boarded.
+
+There is a large set of different spaceship models players can buy, as well
+as a large set of equipment to upgrade spaceships.  Certain spaceships are
+only available to players within a certain character point range (as in
+Tradewars).
+
+There are several different systems in each ship, which players control in
+order to fine-tune the operation of their ship:
+
+A. Power generators
+B. Subphotonic engines
+C. Superphotonic engines
+D. Attitude thrusters
+E. Armaments
+F. Defense shields
+G. Armor plating
+H. Audible sensors
+I. Long-range scanners
+J. Navigation
+K. Communication
+L. Computers
+
+Some systems have a minimal level of functionality which they can never be
+damaged beyond (i.e. Attitude thrusters will have significantly reduced
+effectiveness when that system is disabled), while others will be totally
+disabled (i.e. Above-lightspeed engines will not allow escape from battle
+or travel through interstellar space while disabled).  All systems can be
+autonomously repaired, given enough time and power.  Players can tune the
+delegation of power to each system to effect their performance, and the
+speed at which repairs are completed.  Players can also use their
+communication system to make distress calls for help from other spaceships
+(player spaceships and NPCs).
+
+Description of spaceship systems:
+
+A. Power generators
+   This system is the primary system upon which all others depend.  Spaceships
+   can delegate different amounts of power to each of the other systems to
+   tune their performance.  The amount of stored/available power will
+   generate at a speed which depends on the type of power system(s) you have.
+   Power systems can never be totally disabled -- they always produce at
+   least a small amount of power.
+
+B. Subphotonic engines
+   These engines provide the main forward thrust during battles and while
+   navigating in star systems and on planets.  The amount of power channeled
+   into them will dictate the amount of thrust they give.  They can be damaged
+   to some extent so as to limit their thrust output.
+
+C. Superphotonic engines
+   These engines provide the ability to travel in interstellar space, and to
+   escape battle situations.  Depending on their level of damage, they are
+   either fully operational or inoperative, which is dictated by a certain
+   threshold of damage at which they become inoperative.  While traveling
+   in interstellar space, more power can be channeled to them to increase
+   their effectiveness to some extent.  When they are used to make an escape
+   from battle, they suck up a certain fixed amount of power all at once
+   (which means that a prerequisite for escaping from a battle is having at
+   least that amount of power).
+
+D. Attitude thrusters
+   The attitude thrusters are what allows a spaceship to rotate, strafe
+   and accelerate backwards.  They can be damaged but not made fully
+   inoperative.  They can have varying amounts of power routed to them to
+   increase/decrease their effective thrust.
+
+E. Armaments
+   Typically a spaceship will be armed with more than one type of offensive
+   armament.  Examples are missiles, death rays, etc.  Each individual
+   armament can be damaged and disabled separately.  Certain armaments
+   (e.g. death rays) which are directly powered by the power systems can be
+   tuned for varying levels of destructive effectiveness.  Some weapons
+   (e.g. missiles) can be fired with no need for any power, and thus can't
+   be disabled.
+
+F. Defense shields
+   These defensive systems convert power into force fields, magnetic fields
+   and other forms of deflection and absorbtion, which lessen the amount of
+   damage taken in an attack.  There are a few forms of passive defensive
+   shields which don't use any power.  Non-passive defense shields can be
+   totally disabled, while passive ones can't.  Cloaking shields can't be
+   used at the same time as other conventional shields.
+
+G. Armor plating
+   This is a passive defense mechanism which slows damage done to spaceships,
+   although certain types of armor plating can have power routed through them
+   to increase their effectiveness.
+
+H. Audible sensors
+   These systems are an extension to a player's hearing.  They detect
+   different types of energy, heat, gravitation, etc and convert it into
+   audible waveforms which the player can use to detect objects (visible
+   and invisible).  They are either fully operational or fully inoperative.
+
+I. Long-range scanners
+   These scanners are used in the (A) Galaxy, (B) Star system and (C) Planet
+   environment scopes to perform long-range scanning on a variety of
+   environmental and social objects (e.g. stars, planets, spaceships, etc).
+   They give a menu-driven visual display of information about the object
+   being scanned.  They are either fully operational or fully inoperative.
+   When operational, they do automatic identification of nearby spaceships
+   and space stations.  When disabled, spaceships and space stations remain
+   unidentified.
+
+J. Navigation
+   These systems are only used when traveling in the (A) Galaxy and
+   (B) Star system environment scopes.  They can be knocked out just like
+   the Audible sensors and Long-range scanners, once they're damaged above a
+   certain threshold.  The Navigation systems provide identification of star
+   systems and planets while traveling in the (A) Galaxy and (B) Star system
+   environment scopes.  They also provide the spaceship's current coordinates
+   in space.  When disabled, spaceships can't identify star systems or
+   planets, or calculate their coordinates in space.
+
+K. Communication
+   These systems are what allows players to communicate with each other and
+   with NPCs.  This allows players to chat with other players, emit distress
+   signals, etc.  These are either fully or not operational.
+
+L. Computers
+   Spaceships can run simple programs which abstract the low-level commands
+   to make more efficient use of their spaceships.  Computers are what run
+   these programs, and if a spaceship's computer system is disabled, the
+   programs can't run, forcing the player to use the primitive controls and
+   interface to control the spaceship.
+
+M. Auxilliary devices
+   Devices such as tractor beams, parabolic dishes, etc.  Each device has its
+   own conditions/scopes of use.
+
+N. Batteries
+   Can store power for purposes of backup power or otherwise.
+
+//////////////////////////////////////////////////////////////////////////////
+// 5. Space stations and other buildings
+//////////////////////////////////////////////////////////////////////////////
+
+uhh.. words
+
+//////////////////////////////////////////////////////////////////////////////
+// 6. Items and equipment
+//////////////////////////////////////////////////////////////////////////////
+
+The motivation for having many different types of each item is so that
+different items have slightly different behaviors (e.g. a "better" engine
+doesn't just go faster, it has different characteristics and must be used
+differently).
+
+A. Power generators (in ascending order of power output capacity)
+   - solar (requires proximity to light-emitting stellar bodies)
+   - fission (requires a small amount of radioactive fuel)
+   - fusion (requires a very small amount of certain isotopes as fuel)
+   - cold fusion (requires a very small amount of certain isotopes as fuel)
+   - zero point (requires proximity to gravitational sources)
+   - antimatter (requires antimatter as fuel)
+
+B. Subphotonic engines (in ascending order of thrust output capacity)
+   - ion (propels charged particles to provide thrust)
+   - photon (propels EM photons to provide thrust)
+   - tachyon (propels faster-than-light tachyon particles to provide thrust)
+   - magnetic differential (creates a false magnetic source in front of the
+     ship)
+
+C. Superphotonic engines (in ascending order of top speed)
+   - inertial reduction (lowers the ship's inertia so that it requires less
+     energy to move)
+   - spatial geodesic ('cuts corners' through tiny unseen folds in space)
+   - soliton wave (progressively generates a wave which builds up behind the
+     ship for slow but eventually large acceleration)
+   - dimensional folding (alters the metric of space itself)
+
+D. Attitude thrusters (in order of thrust output capacity)
+   - ion
+   - photon
+   - tachyon
+   - gyroscope
+   - inertia-less
+
+E. Armaments (in no particular order)
+   - x ray laser cannon
+   - gamma ray laser cannon
+   - antimatter stream cannon
+   - missile launcher (for various types of missiles)
+   - gauss gun (high power sniper rifle type weapon)
+   - black hole generator (slowly builds up a black hole which does tidal
+                           damage)
+   - magnetic resonator (screws up electrical systems)
+   - plasma gun (automatic rapid fire)
+   - plasma vulcan (semi automatic charge weapon)
+   - mine layer (for various types of mines)
+   - tesla coil (sends out very large lightning bolts pulses)
+
+F. Defense shields
+   - force field (absorbs energy attacks)
+   - magnetic induction (causes projectiles to alter trajectory)
+   - antigravity (causes projectiles to alter trajectory)
+   - gravity well (causes energy and projectile attacks to curve around the
+                   ship)
+   - energy sink (actually uses energy attacks to absorb energy)
+   - inertia sink (converts projectile inertia into energy which it absorbs,
+                   which slows the projectile)
+   - cloaking shields (makes the player invisible, though other indicators are
+                       made, such as tachyons and small gravitational waves)
+
+G. Armor plating
+   - titanium
+   - ceramic
+   - depleted uranium
+   - time differential (slows attacks down right before impact)
+   - buckminsterfullerene composite
+   - buckminster nanotube composite
+   - energy matrix (can draw power from the ship to become more effective)
+
+H. Audible sensors
+   - electromagnetic (converts EM waves into sound)
+   - electromagnetic flux (converts EM flux into sound)
+   - gravitational (converts gravitational waves into sound)
+   - gravitational flux (converts gravitational flux into sound)
+   - tachyon
+   - tachyon flux
+   - EM active proximity (sends out EM signals which bounce off stuff -
+                          includes electromagnetic sensor)
+   - spatial metric (detects the curvature of space due to gravity or other
+                     artificial spatial folding mechanisms)
+
+I. Long-range scanners
+   - mass detection
+   - energy output detection
+   - audible sensor tunnel (allows certain audible sensors to work long range)
+   - life form sensor (don't even ask how this works)
+   - matter spectroscopy (for detecting concentrations of materials)
+
+J. Navigation
+   - pulsar triangulation (updates infrequently)
+   - EM spectroscopy (works in real time but can't identify all star systems)
+   - gravitational signatures (always works perfectly and in real time)
+
+K. Communication
+   - unencrypted transmitter (sends messages anyone can hear - players have
+                              this by default - the chatting mechanism)
+   - encrypted transmitter (sends messages that only the intended recipient
+                            can hear - players have this by default - private
+                            chatting mechanism)
+   - EM distress beacon (audible by the EM audible sensors)
+   - tachyon distress beacon (carries very far through interstellar space)
+   - syntactical translator (translates alien languages into a permuted form
+                             of english, e.g. whatever "hello" is in alien-speak
+                             -> "cbggx")
+   - lexographical translator (translates alien languages into phonetic english
+                               using the international phonetic alphabet)
+   - GCC version 2309.0 (translates alien languages into normal english)
+
+L. Computers (in ascending order of processing power and storage)
+   - 486
+   - HAL-9000
+   - quantum computer
+
+M. Auxilliary devices
+   - tractor beam (various levels)
+   - deflector dish (various levels)
+   - drilling equipment (various levels)
+   - spatial manifold generator (for creating a separate bubble in space
+                                 for safety - only works in (A) Galaxy
+                                 environment scope)
+   - cloaking device
+   - gas collector (for harvesting gasses from nebulae and accretion disks)
+
+N. Batteries
+   - super-high capacitance capacitor
+   - electrochemical potential battery
+   - ultra-saturated silicon matrix battery
+   -
+
+//////////////////////////////////////////////////////////////////////////////
+// 7. Environmental features
+//////////////////////////////////////////////////////////////////////////////
+
+These are the astronomical objects which make up the tangible universe
+
+A. Stars
+B. Neutron stars
+C. Pulsars
+D. Wormholes
+E. Black holes
+F. Nebulae and accretion disks
+G. Planets
+H. Inter-stellar planets
+I. Asteroid belts and clusters
+J. Dyson's spheres
+K. Matrioshka brains
+
+A. Stars
+   The many different sequence stars, which show up in the (A) Galaxy
+   environment scope as a location you can enter (transitioning to the
+   (B) Star system environment scope).  Once a star system is entered,
+   the game map will be comprised of that star's solar system.
+
+B. Neutron stars
+   Same as stars, except they are much smaller, denser, hotter, and have
+   much higher gravity near the surface.
+
+C. Pulsars
+   Same as pulsars, except they're spinning, sending out distinctive
+   pulses of radiation.
+
+D. Wormholes
+   Reside in the (A) Galaxy environment scope, represented in the same way
+   as a star.  Wormholes are very rare throughout the galaxy, but can be very
+   useful as they can instantly transport spaceships across far distances.
+   Since they curve space, very large objects (such as space stations)
+   attempting to come near or enter the wormhole will experience shearing
+   tidal forces and will be damaged.
+
+E. Black holes
+   Found in the (B) Star system environment scope (though they constitute a
+   'star' in a star system as represented in the (A) Galaxy environment scope).
+   These will be found in certain places throughout the galaxy, and as the
+   main super-massive black hole at the center of the galaxy.  They have
+   immense gravity and will induce shearing tidal forces on all objects.
+   Objects that pass inside its event horizon will be destroyed (maybe
+   instead of being destroyed, the machine race will somehow reconstitute
+   the objects in some 'safe' black hole system).
+
+F. Nebulae and accretion disks
+   Found in the (B) Star system environment scope, nebulae are very rarefied
+   volumes of gasses, which can be harvested in the form of raw materials.
+   Accretion disks are more dense bodies of gas which orbit black holes and
+   other high-gravity sources.  They contain heavier elements and are more
+   dense than nebulae.
+
+G. Planets
+   Planets circling stars in the (B) Star system environment scope.
+
+H. Inter-stellar planets
+   Practically invisible to the players in the (A) Galaxy environment scope.
+   inter-stellar planets could be hidden locations which require special
+   sensors to locate and land upon.
+
+H. Asteroid belts and clusters
+   Found in the (B) Star system environment scope, they contain different
+   amounts of assorted raw materials, and can be mined to harvest the
+   raw materials.  They also provide physical obstacles in battle situations.
+
+I. Dyson's spheres
+   Constructed in a very small number of star systems and around some black
+   holes, designed to be habitats for KT-II civilizations.  The Dyson's
+   sphere captures the entire energy output of a star, and its external
+   emitions are almost entirely in the infrared range, rendering them
+   invisible without the appropriate sensors.
+
+J. Matrioshka brains
+   Similar in appearance to Dyson's spheres in size and shape, and that they
+   emit mainly infra-red light.  Matrioshka brains are solar-system-sized
+   computers which contain superintelligences.  The stars they surround are
+   long-lived, small stars with lifespans of 100+ billion years (never large,
+   short-lived stars).  The structures consist of many layers of concentric
+   spheres, each hotter than the one containing it.  The emitted radiation
+   is of higher frequency for each sphere closer to the central star.
+   
+//////////////////////////////////////////////////////////////////////////////
+// 8. NPCs (non-player characters)
+//////////////////////////////////////////////////////////////////////////////
+
+- cargo ships
+- mercenaries
+- police vessels
+- tow vessels
+- maybe full alien combatants
+- non-sentient, organic, space-dwelling lifeforms
+- civilian non-combatants
+
+//////////////////////////////////////////////////////////////////////////////
+// 9. Game fiction/background
+//////////////////////////////////////////////////////////////////////////////
+
+- Kardashev Type II civilization - acts as bankers and storers of information.
+  they remain strictly neutral.  they live at the center of the galaxy and
+  have learned how to use black holes to store and retreive information.  they
+  are extremely ancient and have technology far beyond everyone else, so they
+  remain effectively impervious to attack.  they are still anthropomorphic
+  enough for the player(s) to interact with.
+- Kardashev Type III civilization - composed of matrioshka brains spread
+  throughout the galaxy.  the MBs will be invisible at first (because they
+  emit only infrared radiation), but will eventually be discovered, though
+  it will remain a mystery what the huge structures actually are for a long
+  time.  mentors to the KT-II civilization mentioned above.  they are "too
+  strange" (not anthropomorphic enough) for the players to interact with
+  immediately -- that will require a long time to elapse, and lots of special
+  knowledge and items and such.  at some later point in the game (after the
+  player learns of the KT-III civ and interacts with them, they could discover
+  a higher level of existence, and ascend to that level, disappearing
+  completely, and very mysteriously.
+- 1984 party/prole split race - the small minority has asserted control over
+  the vast majority, keeping the majority un-unified and uneducated.  the
+  powerful minority also controls a powerful crime syndicate.
+- non-sentient space-bourne organisms that share internal organs -- they
+  dock/consume them, and then detach/eject them later, for others to use.
+  they pick up the very specific EM wave signatures of the organs to detect
+  them.  players' ships could attempt to imitate this signature to get sucked
+  up.  getting sucked up should cause tons of damage which requires a bunch
+  of specific stuff to mitigate.  these organisms can be easily influenced
+  to do things, as they are highly instinctive and display herd-like
+  behavior.  player(s) can influence them to use them as pawns for whatever
+  purpose.  maybe eventually be able to farm/domesticate them.
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// other random shit/notes
+//////////////////////////////////////////////////////////////////////////////
+
+in order to go faster than light (enter the galaxy environment scope), one
+must engage the faster than light engines, which use some sort of field
+that must be tailored to the shape, mass, configuration, etc of the ship.
+there should be equations which control this field, and more powerful
+computers should be able to exercise better (more complicated) approximations
+of the ideal equations -- the ideal equation will render 100% efficiency from
+the engines, so the better the equations, the closer to the top speed you
+can achieve.
+
+certain ship shapes will be easier to optimize the field equations for (e.g.
+a perfectly circular ship could have its ideal equations easily, while a
+perfectly square ship would essentially require some sort of infinite series
+equation to approach the ideal equation).
+
+defense shields and cloaking shields should work in a similar way.
+
+there should be tuning parameters for practically every device in the game.
+
+perhaps in order to save the game (or ship's state), a player could go to
+one of the machine race's black hole space stations and request to have
+the game/state saved.  the machines would then oblige the player by throwing
+his/her ship into the black hole (scaring the shit out of them the first time)
+but then if the user wishes to continue, the machines will immediately recall
+the saved information from the black hole to reconstitute the ship.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

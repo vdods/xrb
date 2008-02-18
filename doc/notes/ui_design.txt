@@ -1,0 +1,69 @@
+//////////////////////////////////////////////////////////////////////////////
+// UI design
+//////////////////////////////////////////////////////////////////////////////
+
+Goal: to have a robust UI system which provides similar layout functionality
+to QT.
+
+Necessary components:
+x a widget base-class
+x horizontal/vertical layout widget
+- grid layout widget
+- splitter layout widgets (same as layout but you can drag the splitter bars)
+x text label (maybe make one general text/picture/label/button)
+x picture label (maybe make one general text/picture/label/button)
+x text button (maybe make one general text/picture/label/button)
+x picture button (maybe make one general text/picture/label/button)
+- check boxes
+- radio buttons
+- line edit box for editing single-line text
+- number edit box with spinner/up/down buttons
+- number sliders
+- progress bar
+- pop-up menus
+- dialog boxes
+
+//////////////////////////////////////////////////////////////////////////////
+// Design
+//////////////////////////////////////////////////////////////////////////////
+
+Widget base-class:
+
+- widget name (for titlebars of dialog boxes, views, etc)
+- list of child widgets
+- pointer to parent widget
+- enabled flag (disabled would be like greyed out controls)
+- DoDraw function
+- resize handler
+- move handler
+- actual size and position
+- min size (and flag for if there is a min size)
+- max size (and flag for if there is a max size)
+- event handler (key presses, mouse clicks, mouse movement, custom events)
+- DoFrame function
+- attach function (attach as child of another widget)
+- detach function (detach from current parent)
+
+When the widget is destructed, it will delete all of its child widgets.
+
+In the resize function, it will do a check with the min/max/preferred sizes
+and calculate the closest allowable size to the requested size.  It will
+set itself to that calculated size and return it as a sort of feedback
+mechanism for the layout widgets.
+
+The event handler will be a generic function to receive events, so that
+the subclassed widgets can optionally handle all events there, or switch
+to delegate control to a bunch of specialized handler functions.
+
+The attach function will accept a child widget to stick in the list of
+child widgets.  If the child's parent pointer is not NULL, it will call
+detach upon it first.
+
+The detach function will detach this widget from its parent, leaving it
+as a dangling pointer.
+
+DoDraw will do widget-specific drawing, and then call draw on all its
+child widgets.
+
+DoFrame will do widget-specific frame-wise computation, and then call DoFrame
+on all its child widgets.

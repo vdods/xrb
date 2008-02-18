@@ -1,0 +1,84 @@
+//////////////////////////////////////////////////////////////////////////////
+// WidgetSkin design doc
+//////////////////////////////////////////////////////////////////////////////
+
+The goal is to have a unified set of visual properties which are applied to
+an entire hierarchy of UI widgets, so that changing a font, for example, at
+the top level widget would propogate that change to all child (and grandchild,
+greatgrandchild, etc) widgets.  This will eliminate the need for redundant
+and numerous calls to set up the visual styles of widgets.
+
+//////////////////////////////////////////////////////////////////////////////
+// Required properties
+//////////////////////////////////////////////////////////////////////////////
+
+Bitmap properties:
+
+- (Main) font
+- Widget background
+- Dialog box background
+- Button widget backgrounds (these shall apply to ToolbarButtons as well)
+  1. Normal (not pressed or mouseover)
+  2. Mouseover
+  3. Pressed
+- LineEdit background
+- CheckBox background
+- RadioButton widget background (does not apply to ToolbarButton)
+- CheckBox check
+- RadioButton check
+
+Size properties:
+
+- Frame margins
+- Content margins
+- Layout spacing margins
+- CheckBox fixed size (derived from font height)
+- RadioButton fixed size (derived from font height)
+- ToolbarButton fixed size (derived from font height)
+
+//////////////////////////////////////////////////////////////////////////////
+// Behavior
+//////////////////////////////////////////////////////////////////////////////
+
+- The top-level widget (the virtual screen) will "own" the WidgetSkin object.
+- In the Widget class, there will be two pointers to WidgetSkin objects:
+  1. `WidgetSkin *` which is non-null iff this widget actually owns the
+     WidgetSkin object.  Only this widget can change it.
+  2. `WidgetSkin const *` which is in all child widgets, which points to the
+     parent's WidgetSkin object.  This can be used in a read-only manner, and
+     not changed.
+- There are a set of function which handle changes to each property.
+- A child widget will inherit the parent's WidgetSkin when it is attached,
+  unless it owns its own WidgetSkin object (is which case the inheritance
+  will stop there, and not propagate to the child's children).  All of the
+  change-handling functions will be called when this happens.
+- If a widget which does not "own" its WidgetSkin object attempts to make a
+  change to the WidgetSkin object, a clone of the WidgetSkin will be created
+  which the widget will "own".  This clone will then be inherited by all of
+  the widget's children.
+- There are two types of WidgetSkin inheritance:
+  1. Normal inheritance, where if a child widget owns its own WidgetSkin
+     object, it will not inherit the new WidgetSkin (nor will its children).
+  2. Forced inheritance, where the child widget inherits the WidgetSkin
+     object regardless of if it owns its own WidgetSkin.
+- If a child widget owns its own WidgetSkin object and is forced to inherit
+  a new one, the old one will be deleted.
+- When deleting a widget which owns its own WidgetSkin object, the WidgetSkin
+  object will be deleted.
+- When a property of the WidgetSkin is changed, the following will happen:
+  If the widget owns its own WidgetSkin object, then that object's
+     respective property will be changed and then a notification will be
+     sent down the child hierarchy about the change.
+  Else the widget doesn't own its own WidgetSkin, its inherited WidgetSkin
+       will be cloned, and then the change requested will be made on the newly
+       cloned WidgetSkin object.  The children of the widget will inherit the
+       newly cloned WidgetSkin object (not forced).
+  Then if the inheritance method for the set-property function was set to
+       force, then all the child widgets will be forced to inherit the changed
+       property in their individual WidgetSkin objects.
+- Inheriting a property behaves as follows:
+  If the widget doesn't own its own WidgetSkin object, it recursively calls
+     the respective property inheriting function on all its children, using
+     the given inheritance method flag.
+  Else the widget owns its own WidgetSkin object, so it calls the set-property
+       function on itself, using the given inheritance method flag.

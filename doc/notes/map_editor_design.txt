@@ -1,0 +1,424 @@
+//////////////////////////////////////////////////////////////////////////////
+// map editor design doc
+//////////////////////////////////////////////////////////////////////////////
+
+= TODO/IDEAS:
+  * generating near-optimal quadtrees from their contents
+
+NOTE: sprites/entities will be referred to as objects
+
+= STRUCTURE OF A MAP
+  * the map is made up of at least one "layer" which can contain objects.
+  * layers are square.
+  * there is a notion of a "main layer" which will effectively be the
+    focus of the view when in-game.  pressing the keypad ENTER key will
+    set the current layer to be the main layer.
+  * layers can be hidden/shown as the user pleases, to reduce visual clutter.
+  * the layers are ordered, and each have a "Z depth" assigned to them.
+    the purpose of the order and the Z depth is to provide a parallaxing
+    visual effect when moving the view around the map.
+  * the notion of "parallaxing" describes moving the layers at different
+    speeds as the view moves around the map to give a visual depth effect.
+    this means that layers with a higher Z depth value will be scaled down
+    to appear further away.
+  * parallaxing can be disabled.
+  * there is a notion of "wrapped space" which is the property of the map
+    to loop back on itself; if you try to go off the edge of the map, you
+    will be looped back onto the other side of the map.  this it to provide
+    a less-confined feeling to the gameplay.
+  * wrapped space can be disabled.
+  * if wrapped space is enabled and parallaxing is enabled, all layer sizes
+    must be positive-integer multiples of the size of the smallest layer.
+  * if wrapped space is enabled and parralaxing is disabled, all layer sizes
+    must be equal.
+
+= MOVING THE VIEW AROUND THE MAP
+  * the viewport can be moved around inside the map editor with the arrow
+    keys, to move up, down, left and right.
+  * the mouse wheel zooms the view in (mouse wheel up) and out (mouse wheel
+    down).  the keypad PAGE-UP and PAGE-DOWN keys will also provide these
+    functions respectively.
+  * the view can be rotated counterclockwise and clockwise by using the
+    mousewheel while holding down the ALT key.  the keypad SLASH and
+    ASTERISK will also provide these functions respectively.
+  * the view can be moved up/down/left/right by right mouse clicking and
+    dragging while no meta keys are held.
+  * the current editable layer can be changed by holding the ALT key down
+    and pressing the keypad PLUS and MINUS keys.  PLUS goes one deeper into
+    the set of layers, while MINUS goes the other way.
+
+= GRAPHING
+  * an array of grid lines will be used to measure/display the space in which
+    the map editor works.  the grid lines which give the nearest scale to the
+    current zoom will be used, and the grid lines of the scale below the
+    current scale will be faded in/out as you move the current zoom
+    closer/further from that scales.  the grid lines will be drawn on top
+    of everything else to make them visible at all times.
+  * the current grid scale will be referred to as the "major" grid scale,
+    while the grid scale below the major scale will be referred to as the
+    "minor" grid scale.
+  * the number base of the grid scale will be configurable.
+    1. for instance, a number base of 10 will have 9 equally-spaced,
+       intermediate minor grid lines between each pair of adjacent major
+       grid lines.  the change in size between each adjacent grid scale
+       is a by a factor of 10.
+    2. another example is for a number base of 2; it will have 1 minor
+       grid line bisecting each pair of major grid lines.  the change in
+       size between each adjacent grid scale is by a factor of 2.
+  * the current grid scale can be changed as desired.
+    1. using the PAGE UP key, the scale will be changed to the scale
+       one smaller than the current scale.
+    2. using the PAGE DOWN key, the scale will be changed to the scale
+       one larger than the current scale.
+  * there is a notion of "maximum" grid scale for a particular view zoom,
+    which will act as an upper limit on which grid scale the user may
+    select.  as the view zooms in, the current grid scale is adjusted so
+    as not to violate this maximum grid scale limit.  the user may change
+    the scale to be smaller up to a limit to be determined later.
+  * the major grid lines will be drawn in light gray, while the minor
+    grid lines will be drawn in dark grey, using a transparency based on
+    the current zoom.  the further away from the current zoom level the
+    minor grid scale is, the more transparent the lines will be.
+  * to indicate the edge of the object layer, red lines will be drawn
+    around the borders.
+
+= OBJECTS
+  * there are 2 types of objects:
+    1. immovable, non-physics enabled, non-scripting-enabled sprites which
+       are known as "static sprites".  a static sprite has properties of:
+       A. position
+       B. scale
+       C. rotation
+       D. sprite bitmap
+       E. bounding radius
+    2. movable, physics-enabled, scripting-enabled sprites and entities
+       which are known as "entities".  a "dynamic sprite" is a subset of
+       entity which is drawn with a bitmap, and is more or less tangible,
+       while a pure entity is invisible.  an entity has properties of:
+       A. position
+       B. scale
+       C. rotation angle
+       D. bounding radius
+       E. first moment of inertia (mass)
+       F. second moment of inertia ("rotational mass")
+       G. velocity (a vector value)
+       H. angular velocity (a scalar value)
+       I. gravitate property (acts on other entities with gravity)
+       J. gravitatable property (responds to gravitational forces)
+       K. textual name
+  * because the space in each layer is finite, it is important to place
+    all objects inside the layer's space.  objects will be allowed to be
+    moved outside of the layer's space, and be saved into the map file, but
+    will not be loaded into the actual game when the map is loaded.  this
+    is to allow users to keep 'works in progress' in the margins of the
+    map.
+
+= ADDING OBJECTS
+  * objects can only be added when there are no objects currently selected.
+  * with no objects currently selected, press SPACEBAR to add an entity or
+    a number of entities (a dialog will pop up with the entity's properties
+    and such).
+  * with no objects currently selected, press SPACEBAR while holding ALT to
+    add a static sprite or a number of static sprites (a dialog will pop up
+    with the static sprite's properties and such).
+
+= CLONING OBJECTS
+  * objects can be cloned only when there is at least one one object currently
+    selected.
+  * with at least one object currently selected, press SPACEBAR to clone all
+    selected objects.  the cloned objects will appear slightly offset from
+    their respective original.  the originals will be deselected, and the
+    clones will be selected.
+
+= DELETING OBJECTS
+  * pressing BACKSPACE will delete all selected objects
+
+= OBJECT DRAWING/HIGHLIGHTING
+  * sprites will be drawn as normal (with their bitmaps being drawn with
+    the correct position/rotation/scaling), with the bounding circles drawn
+    over all bitmaps.
+  * there will be a mode which makes all sprites 1/2 way (or an arbitrary
+    fraction) transparent, so that the background is visible as well.
+  * objects should have their bounding circles drawn for visibility
+    and so the user can select them.
+    1. static sprite bounding circles should be yellow.
+    2. entity bounding circles should be red.
+    3. dynamic sprite bounding circles should be green.
+    selected objects' bounding circles should be drawn in the aforementioned
+    colors but either with a thicker line and/or a white tint.  there shall
+    be a small vertical line drawn through the origin of the object to clarify
+    where the origin actually is.
+  * angular properties (angle and angular velocity) will be visualized in
+    the following manner:
+    two lines of about 1.5 times the radius of the object, coming from
+    the center of the entity, separated by the applicable angle.  one
+    of the lines shall be at 0 radians.  there will be a line arc drawn
+    between the lines at a radius halfway between the radius of the entity
+    and the length of the lines.  angles of higher than 2 PI will potentially
+    be drawn as an arc which spirals outward so that all loops of the arc are
+    visible.  there will be a small circle at the tip of the 2nd line which
+    will be used when grabbing the line for editing modes.
+  * the linear velocity (vector value) will be visualized by an arrow vector
+    coming from the origin of the entity.  it will be drawn in the same color
+    as the entity's bounding circle, regardless of if it's selected.  there
+    will be a small circle at the tip of the arrow which will be used in
+    applicable editing modes.  this vector shall only be visible while in
+    applicable editing modes.
+
+= SELECTING OBJECTS
+  * there is a notion of a set of selected objects, on which editing can
+    be carried out.  non-selected objects cannot be edited.  a selection
+    set is a subset of an object layer's object set (in other words,
+    selections can't span multiple object layers).
+  * selection actions operate only on a single object layer's selection
+    set.  operations on one object layer's selection set do not affect
+    the selection sets of other object layers.
+  * selection state toggle of objects, one-at-a-time using a stationary
+    right mouse click with the SHIFT key held, should occur by the
+    following method:
+    1. find all objects whose bounding circle was clicked upon
+    2. sort the list from smallest bounding circle to largest
+    3. select the first (smallest) object in the list
+    this is to facilitate selection of small objects which are
+    behind larger ones, where selecting them would otherwise be difficult.
+  * single selection of objects will effectively clear the selection
+    beforehand, so that afterwards, the single selected object is
+    the only thing selected.
+  * selecting multiple objects is done the following way:
+    holding and dragging the right mouse button with the SHIFT key held
+    will create a circle, with center at the initial mouse click, and
+    whose radius is the distance from the center to the current mouse
+    position, in which all objects touching it will be selected.
+  * there are 2 modes in which selecting multiple objects occurs.
+    1. all objects touching the drawn out circle will be selected.
+    2. all objects contained completely inside the drawn out circle
+       will be selected.
+    this selection mode can be toggled with the T key.
+  * there are 4 modes which selection operates under, which are specified
+    by holding different combinations of meta keys.
+    1. set selection                    : SHIFT
+    2. add to selection                 : SHIFT+CONTROL
+    3. subtract from selection          : SHIFT+ALT
+    4. toggle selection                 : SHIFT+CONTROL+ALT
+  * performing any selection action when the CONTROL key is held down
+    will toggle the effected objects' selection state.
+  * all objects in the current layer can be selected by pressing the A key.
+  * the current selection can be inverted by pressing the I key.
+  * the selection set can be cleared by pressing the N key.
+
+= OBJECT EDITING MODES
+  * there are 3 modes to editing the physical properties of objects:
+    1. transformation (position, scaling, rotation)
+    2. linear velocity (vector value)
+    3. angular velocity (scalar value)
+  * you can change editing mode by using the 1, 2, and 3 keys while
+    holding the CONTROL key, to switch to the respective mode.
+  * there is a notion of an "origin cursor" which is an origin in space
+    which the user can reposition, which can be used as the origin for
+    transformations and other calculations.  it will behave exactly like
+    an entity object, except that it will use a bright blue bounding circle,
+    and it will have a crosshairs for more accurate visualization of its
+    center.  it will always be drawn the same size, no matter what the
+    zoom factor is.  an option will be given which can disable selecting
+    the origin cursor.
+  * the origin cursor can be "attached" to an object, so that if the object
+    is moved, the origin cursor stays on the origin of the object it is
+    attached to.
+  * transformation modes (which will be described in the scaling and
+    rotation editing sections) can be changed to using the 1, 2 and 3
+    keys respectively, while holding the ALT key.
+  * basis vectors (more on this later).
+
+= POSITION (TRANSLATION) EDITING - MODE 1
+  * the position of selected objects can be changed in this mode.
+  * holding and dragging the left mouse button with no meta buttons held
+    will move (translate) all selected objects.
+  * moving objects with the keyboard
+
+= SCALE EDITING - MODE 1
+  * the scale of selected objects can be changed in this mode.
+  * holding and dragging the left mouse button while only the SHIFT key is
+    held down will scale all selected objects using the current transformation
+    method.
+  * transformation methods:
+    1. scale all selected objects' positions and scales using the origin
+       cursor.  this method will also alter the positions of objects as
+       they're scaled away/toward the origin cursor.
+    2. scale all selected objects' positions and scales using the selection
+       set's local origin (the average of all their positions).
+    3. using each selected objects' respective origins.  the positions of
+       each object will remain fixed.  only the scales of each object
+       change.
+
+= ROTATION EDITING - MODE 1
+  * the angle of selected objects can be changed in this mode.
+  * holding and dragging the left mouse button while only the CONTROL key
+    is held down will rotate all selected objects using the current
+    tranformation method.
+  * transformation methods:
+    1. using the origin cursor for all selected objects.  the selected
+       objects themselves rotate, and the positions of the objects are
+       rotated around the origin cursor.
+    2. rotate all selected objects' positions and scales using the selection
+       set's local origin (the average of all their positions).
+    3. using each selected objects' respective origin.  the positions
+       of the selected objects do not change.
+
+= LINEAR VELOCITY EDITING - MODE 2
+  * there are 3 modes of editing the linear velocity of an entity.
+    1. holding and dragging the left mouse button with no meta buttons held
+       will move the tip of the arrow vector around.  this will allow the
+       user to change the velocity vector to anything (albeit imprecise).
+       this method can only be used on a single entity at a time.
+    2. holding and dragging the left mouse button with the SHIFT key is held
+       down will scale the velocity vectors of all selected entities without
+       changing their directions, using the origin cursor as the reference
+       point.
+    3. holding and dragging the left mouse button with the CONTROL key is held
+       down will rotate the velocity vectors of all selected entities,
+       without changing their lengths.
+
+= ANGULAR VELOCITY EDITING - MODE 3
+  * there are 2 modes for editing the angular velocity of an entity.
+    1. holding and dragging the left mouse button with no meta buttons held
+       will wind up/down the angular velocity arc in the direction that
+       the mouse is dragged around the origin cursor.
+    2. holding and dragging the left mouse button with the SHIFT key is held
+       down will scale the angular velocity value for all selected entities,
+       using the origin cursor as a reference point.
+
+= EDITING USING SNAP-TO-GRID AND OTHER QUANTIZING MODES
+  * there is a notion of "quanta" which is a positive real scalar value
+    which is used to quantize other scalar values.  if Q is the quanta
+    value, then quantizing another value using Q will give a value of
+    k*Q where k is an integer, thus k*Q is the "quantized value".
+  * there will be a "quantize positions" command which snaps all selected
+    objects to the closest grid point using the current grid scale.
+  * there will be a toggleable "quantize movements" editing mode which
+    quantizes movement deltas to the current grid scale, without snapping the
+    actual origins of the objects to the grid points.  this mode effects
+    object positioning only.
+  * there will be a "quantize scales" command which quantizes the scale
+    factors of all selected objects.
+  * there will be a toggleable "quantize scale changes" editing mode which
+    quantizes the amounts by which the user can scale objects.
+  * there will be a "quantize angles" command which quantizes the rotation
+    angles of all selected objects.
+  * there will be a toggleable "quantize angle changes" editing mode which
+    quantizes the amounts by which the user can rotate objects.
+  * there will be a "quantize velocity magnitudes" command which quantizes
+    the velocity vector lengths of all selected objects.
+  * there will be a toggleable "quantize velocity magnitude changes" editing
+    mode which quantizes the amounts by which the user can change the lengths
+    of the velocity vectors.
+  * there will be a "quantize velocity angles" command which quantizes the
+    angles of the velocity vectors of all selected objects.
+  * there will be a toggleable "quantize velocity angle changes" editing mode
+    which quantizes the amounts by which the user can change the velocity
+    vector angles.
+  * there will be a "quantize angular velocities" command which quantizes
+    the angular velocity values of all selected objects.
+  * there will be a toggleable "quantize angular velocity changes" editing
+    mode which quantizes the amounts by which the user can change the
+    angular velocity values.
+
+= DISPLAY PANELS
+  * there will be a control panel to the side of the main map view panel which
+    displays the properties of the selected objects/entities.  there will be 3
+    sub-panels in this control panel:
+    1. object properties
+    2. entity properties
+    3. selection set properties
+    these will be described in the next 3 sections.
+  * when there are no objects selected, both panels will be hidden (or
+    possibly disabled).
+
+= OBJECT PROPERTIES PANEL
+  * the objects properties panel displays the properties of Objects (and
+    subclasses of Object such as Entity).  the properties are:
+    1. origin/position - there are 2 different
+    2. scale - there are 2 different modes this works in
+       A. if there is only one selected object, then it will show the object's
+          scale factor plainly.
+       B. if there are multiple objects selected, it will show the scale
+          of the selection set -- the scale will be reset to 1.0 every time
+          an object is
+
+= TEST-RUNNING THE MAP
+  * the F12 key will temporarily disengage editing mode and start the map
+    running; the objects will move and rotate as specified by their preset
+    initial conditions.
+  * press F12 while in test-run mode to stop the test-run and go back
+    to edit mode (resetting all the objects to the way they were before the
+    test run).
+  * state-saving-to-mapfile
+
+= QUADTREES
+  * though this is an engine-specific detail that i would like to keep out
+    of sight from this scope of the project, it may be useful to be able
+    to define custom quadtrees which are tailored to the map's specifics.
+  * tesselating quadtree nodes.
+  * detesselating quadtree nodes.
+  * more on this later.
+
+//////////////////////////////////////////////////////////////////////////////
+// keyboard/mouse legend
+//////////////////////////////////////////////////////////////////////////////
+
+EM = edit mode
+
+button/action / meta keys    / EM / function
+//////////////////////////////////////////////////////////////////////////////
+rmouse drag     NONE           ALL  move the view around the map.
+
+rmouse click    SHIFT          ALL  select the smallest object under the
+                                    mouse, clearing the previous selection
+rmouse click    SHIFT+CTRL     ALL  select the smallest object under the
+                                    mouse, adding to the previous selection
+rmouse click    SHIFT+ALT      ALL  select the smallest object under the
+                                    mouse, subtracting from the previous
+                                    selection.
+rmouse click    SHIFT+CTRL+ALT ALL  select the smallest object under the
+                                    mouse, toggling the selection state
+                                    of said object.
+rmouse drag     SHIFT          ALL  draw circles out with which to select
+                                    objects, clearing the previous selection.
+rmouse drag     SHIFT+CTRL     ALL  draw circles out with which to select
+                                    objects, adding to the previous selection.
+rmouse drag     SHIFT+ALT      ALL  draw circles out with which to select
+                                    objects, subtracting from the previous
+                                    selection.
+rmouse drag     SHIFT+CTRL+ALT ALL  draw circles out with which to select
+                                    objects, toggling the state of effected
+                                    objects.
+
+lmouse click    NONE           ALL  place the cursor origin at the clicked-
+                                    upon position.
+
+lmouse drag     NONE           1    move (translate) selected objects.
+lmouse drag     SHIFT          1    scale the selected objects using the
+                                    current transformation mode.
+lmouse drag     CTRL           1    rotate the selected objects using the
+                                    current transformation mode.
+lmouse drag     SHIFT+CTRL     1    scale and rotate the selected objects
+                                    using the current transformation mode.
+
+lmouse drag     NONE           2    move the tips of the linear velocity
+                                    vectors of the selected objects.
+lmouse drag     SHIFT          2    scale the tips of the selected objects'
+                                    linear velocity vectors using the current
+                                    transformation mode.
+lmouse drag     CTRL           2    rotate the tips of the selected objects'
+                                    linear velocity vectors using the current
+                                    transformation mode.
+lmouse drag     SHIFT+CTRL     2    scale and rotate the tips of the selected
+                                    objects' linear velocity vectors using
+                                    the current transformation mode.
+
+lmouse drag     NONE           3    move the tip of the angular velocity
+                                    angle line of a single selected object.
+                                    this only works with one selected
+                                    object.
+lmouse drag     SHIFT          3    scale the angular velocities of all
+                                    selected objects.
+

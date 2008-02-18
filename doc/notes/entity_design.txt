@@ -1,0 +1,261 @@
+//////////////////////////////////////////////////////////////////////////////
+// entity design doc
+//////////////////////////////////////////////////////////////////////////////
+
+NOTE: all references to "polygon" in this document mean "convex polygon".
+
+= GOALS
+  * to detail the elements necessary to create Objects and Entities of all
+    conceivable types.  the elements are:
+    1. non-solid, immovable Objects which are made up of one or more sprites
+       and or textured polygons.
+    2. Entities which are solid or non-solid, can be movable or immovable,
+       visible or invisible, and are made up of one or more sprites and or
+       polygons.  they may specify collision geometry by either using some
+       or all of their textured polygons, or specifying invisible collision
+       polygons.
+    3. Entities may be fixed to one another, in a hierarchical manner, so
+       that effectively the subordinate Entity becomes part of its superior.
+    4. Entities may be attached to each other with springs, which only
+       affects physical forces upon them.
+
+= PRIMITIVES
+  * sprite
+  * textured polygon
+  * invisible collision polygon
+  * textured collision polygon
+
+= PREFABS
+  * there is a notion of a "prefab/prefabrication" which is a file containing
+    the elements forming a pre-made Object or Entity.
+
+= OBJECTS
+  * are made up of only groups of one or more sprites and or textured
+    polygons.
+  * Objects are specified by:
+    1. the filename of an image which will be interpreted as its sole sprite
+    2. the filename of a texture which will be used as the polygon texture
+       for its sole textured polygon.
+    3. the filename of a prefab detailing its contents.
+    4. explicitly in map file
+
+= ENTITIES
+  * are made up of groups of one or more sprites, textured polygons,
+    textured collision polygons, and or invisible collision polygons.
+  * Entities are specified by:
+    1. the filename of an image which will be interpreted as its sole sprite
+    2. the filename of a texture which will be used as the polygon texture
+       for its sole textured polygon.
+    3. the filename of a prefab detailing its contents.
+    4. explicitly in map file
+
+= POLYGONS AND POLYGON EDITING
+  * An Object/Entity contains a set of vertices which is shared between its
+    polygons.
+  * in-use vertices will be circled with a box (for visual indication) in
+    the normal color of the Object/Entity metrics.
+  * unused vertices will be circles with a box (for visual indication) in
+    an altered color, to indicate they're not in use and could be deleted
+    without changing the polygon's effective shape.
+  * vertices can be added to the Entity's set of vertices at any time.
+  * vertices can be removed from the set of vertices only when they are
+    not being used by any polygon.
+  * vertices can be translated/scaled/rotated at any time, in a fashion
+    like that of transforming the centers of Objects.
+  * vertices can be selected in arbitrary sets and operated on as
+    described above.
+  * polygons consist of a set of vertices which are strictly counterclockwise
+    ordered -- degenerate or concave polygons will be marked as "invalid".
+  * polygons can be initially created by specifying an ordered set of vertices
+    which constitute the ordered winding of the polygon.
+  * vertices can be added to a particular edge of a polygon, which will
+    cause the added vertex to be inserted in the vertex ordering between
+    the two edge vertices.
+  * any vertex can be removed from a polygon.
+  * the outline of the polygon will be drawn in the appropriate
+    color (Object/Entity metrics color).  if the polygon is degenerate
+    or concave then the convex hull will be drawn in some indicative color.
+    degenerate polygons will be ignored or somehow otherwise handled by
+    the game engine itself.
+
+= SPRITES AND SPRITE EDITING
+  * sprites are placed on an existing vertex.
+  * sprites may be translated/scaled/rotated in a fashion like that
+    of transforming Objects as a whole.
+
+= VERTEX TRANSFORMATIONS
+  * uses the same concepts of translation, scaling and rotation as those
+    of transforming the centers of Objects.
+  * the origin cursors are:
+    1. global (placeable) origin cursor
+    2. Object's (vertex) selection set origin
+    3. Entity's center of gravity
+
+= SELECTING COMPOUNDS TO OPERATE UPON
+  * the object selection set in the normal object editing mode will
+    translate into compound-editing mode as the set of compounds that
+    can be operated upon.
+  * once in compound-editing mode, the vertices of all unselected
+    objects/compounds will not be visible -- only the vertices of the
+    selected compounds will be visible.  this is to make it clear
+    that only they will be able to be changed while in this mode.
+
+= VERTEX SELECTION
+  * vertices may only be selected while in compound-editing mode,
+    and only from vertices of the selected compounds (which will be
+    indicated by their visible metrics).
+    
+= VERTEX ADDING/DELETING
+  * if there is a single selected compound, and no selected vertices,
+    pressing spacebar will create a new vertex at the center of the view,
+    and add the vertex to the single selected compound.
+  * if the number of selected compounds is not equal to one, and there
+    are no vertices selected, then pressing spacebar will do nothing.
+  * if there is more than one selected vertex, then pressing spacebar
+    will clone the selected vertices, the clones belonging to the
+    compound that their source vertices belong to.
+  * deleting the selected vertices is done by hitting the backspace key,
+    but only works when all the selected vertices are not being used
+    by any polygon (unused vertices are indicated by a different color).
+
+= POLYGON SELECTION
+  * in compound-editing mode, a single polygon (at a time) can be selected
+    from the set of currently selected compounds.  this is done by holding
+    the shift button and right clicking on the desired polygon (without
+    dragging the mouse).  the single selected polygon will then show up
+    in the same color as selected vertices.
+  * whenever there is a selected polygon, the edge closest to the mouse
+    pointer will be somehow highlighted/blinking to indicate that will
+    be the edge to add vertices to.
+  * when there is a single selected compound, the currently selected
+    polygon can be cycled (to the next polygon in the compound) by pressing
+    _SOME_KEY_COMBO_.
+    
+= POLYGON MODIFICATION
+  * polygons can be modified trivially by moving their component
+    vertices.  this can be done without having to select them.
+  * adding the selected vertices to the highlighted/blinking edge
+    of the polygon is done by hitting _SOME_KEY_COMBO_.  the selected
+    vertices will be inserted into the highlighted/blinking edge
+    of the polygon in the order in which they're wound around the
+    center of the highlighted/blinking edge.
+  * removing the selected vertices from the selected polygon can
+    be done by hitting _SOME_KEY_COMBO_.  the selected
+    vertices will be removed from the selected polygon (any vertices
+    that aren't in the selected polygon will be ignored), and the polygon
+    will retain the winding of the remaining vertices.
+  * if vertices are deleted from a polygon, leaving it with fewer
+    than 2 vertices, then it will be automatically deleted.
+
+= CREATING/DELETING POLYGONS
+  * a polygon can only be created when a single compound is selected.
+    it is created based on the selected vertices.  the vertices are
+    wound around the arithmetic mean of the set of selected vertices.
+    this is done by _SOME_KEY_COMBO_
+  * the selected polygon can be deleted by hitting _SOME_KEY_COMBO_
+
+    
+notes:
+
+Object: contains the transformation (translation, scaling, rotation)
+Sprite: is just a single immovable sprite
+Entity: contains the physical attributes (first/second moments, velocity, etc)
+Compound: contains the set of vertices and lists of sprites and textured
+          polygons -- immovable
+SpriteEntity: a single movable sprite
+CompoundEntity: contains lists of collision polygons and textured collision
+                polygons -- movable
+
+collision polygons should have a flag indicating solid or non-solid, so that
+"trigger" collision areas can be made which cause events when "triggered" by
+a collision or interpenetration.
+
+object hierarchy:
+
+                 Object
+                   |
+     +-------------+---------------+
+     |             |               |
+  Sprite         Entity        Compound
+     |            | |              |
+     +----+-------+ +--------+-----+
+          |                  |
+    SpriteEntity      CompoundEntity
+
+
+//////////////////////////////////////////////////////////////////////////////
+
+stuff
+
+x need to be able to drag out regular polygons to create new compounds that
+  contain only that newly created polygon.  this will be done by dragging
+  out a circle, and the vertices of the regular polygon (of preset
+  tesselation) will lie on the edge of the circle.  one corner of the polygon
+  will be fixed at the position of the mouse as it drags out the circle,
+  so that its orientation can be set at the same time as its size and
+  position.
+- need to be able to merge the contents of 2+ compounds into one.
+- need to be able to separate polygons from compounds (opposite of merging).
+x need to be able to delete the selected polygons.
+x need to be able to drag single vertices around without having to select them
+  beforehand.
+x need to be able to select multiple vertices to transform them.
+x need to be able to select multiple polygons to transform them.
+- need to be able to select multiple polygons to clone them.
+x need to be able to "weld" vertices together.
+x need to be able to "unweld" polygons -- vertices that are shared between
+  more than one polygon, belonging to the polygon-to-be-unwelded will be
+  duplicated.
+x need to be able to "unweld" vertices (if it is shared by more than one
+  polygon, it will be cloned so that each polygon has its own copy of it).
+
+2 compound editing modes:
+  * polygon mode
+    - selecting polygons
+    - transforming polygons
+    - creating polygons
+    - deleting polygons
+    - separating polygons from their compound
+  * vertex mode
+    - dragging single vertices
+    - selecting vertices
+    - transforming vertices
+    - welding vertices
+    - unwelding vertices
+    
+--------------------------------
+
+Entity data object
+
+Entity will have a pointer to an object of type EntityGuts, which is an
+abstract interface class which requires implementation of the following
+methods:
+
+void Read (Serializer &serializer);
+void Write (Serializer &serializer);
+void Think (TimeType time);
+
+The Read and Write methods should just read and write its data (and that
+of its subclasses if applicable) to/from the given serializer.  The Think
+method is provided to do any per-game-loop-frame computation for the entity.
+
+EntityGuts will have a pointer to the Entity it belongs to (Entity and
+EntityGuts have a 1 to 1 correspondence).  Entity will have accessors for
+the EntityGuts (returning a reference), and modifiers to replace the
+EntityGuts pointer with a new one (say you have bicycle and motorcycle
+subclasses of EntityGuts, and you want to upgrade the bicycle to a
+motorcycle).
+
+----------------------------
+
+* more map editor requirements
+
+key - function
+P   - create a polygon (for a compound)
+S   - create a new (non-entity) sprite
+E   - convert a non-entity into an entity
+O   - convert an entity into a non-entity
+F   - save the single selected compound as a preFab
+
+
+

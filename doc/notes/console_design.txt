@@ -1,0 +1,79 @@
+//////////////////////////////////////////////////////////////////////////////
+// console design
+//////////////////////////////////////////////////////////////////////////////
+
+the console is similar to quake3's console -- a multiline text box pops up
+with a command prompt to allow the user to enter commands and change
+variables.  the variables can be used by any system (graphics, game logic,
+sound, etc).
+
+//////////////////////////////////////////////////////////////////////////////
+// cvars
+//////////////////////////////////////////////////////////////////////////////
+
+the cvars will be similar to quake3, except they will be arranged in
+namespaces (from the perspective of the user of the console -- the actual
+scope of the cvar objects in the C++ code may not reflect this).  example:
+
+render::resolution_x
+render::resolution_y
+render::max_framerate
+game::player::starting_health
+game::enemy_ship::interloper::starting_health
+game::weapon::pea_shooter::damage
+game::weapon::laser::damage_per_second
+engine::framerate
+
+// const-ness
+
+certain cvars will be read-only (e.g. game::map_name), and may only be changed
+by C++ code and non-user-defined functions (e.g. LoadMap).
+
+// declaration
+
+Vector2<Float>, Vector3<Sint32>, etc), and will have to be declared (though
+the game engine itself will be able to declare them itself, in C++ code).
+declaration examples:
+
+String game::player::name // declares game::player::name as an empty string
+String game::something_else = "blah" // declares game::something_else as a
+                                     // string containing "blah"
+Uint16 render::resolution_x = 640
+Uint16 render::resolution_y = 480
+Vector2<Float> game::gravity_direction
+
+
+// internal cvar storage (C++ considerations)
+
+decide between nice object-oriented subclasses for each type, or one class
+which houses a union of each of the possible types (which will require
+consideration of how to deal with the string inside that union).
+
+//////////////////////////////////////////////////////////////////////////////
+// user-defined cvars
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// functions
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// user-defined functions
+//////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////
+// interface
+//////////////////////////////////////////////////////////////////////////////
+
+again, like quake3, the tilde button (` or ~) will show the console, above
+all other UI elements.  the command prompt will be focused so the user can
+immediately enter commands without having to click anything with the mouse.
+
+if the user presses the TAB key, the current command will attempt to auto-
+complete.  if the completion is ambiguous, only the characters that are
+common (the greatest unambiguous completion) will be appended to the command
+prompt text.  if the user presses TAB twice in a row (when there is no
+unambiguous completion available), the list of possible completions will
+be displayed (possibly asking wether or not to show them if there are more
+than will fit in on the screen).  if a namespace was completed, two colons
+will be appended to the command prompt text

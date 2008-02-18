@@ -1,0 +1,64 @@
+//////////////////////////////////////////////////////////////////////////////
+// Object/Entity redesign
+//////////////////////////////////////////////////////////////////////////////
+
+// Object hierarchy
+
+Avoid complex and unnecessary (multiple virtual) inheritance.  Object will
+be the sole base for physical items.  The specializations of Object are
+Sprite (a simple single circle/square) and Compound (one or more polygons).
+
+                                 Object
+                                /      \
+                          Sprite        Compound
+    
+Object can now be "imbued with a soul" by means of giving it a pointer to
+an Entity (which is no longer part of the Object class hierarchy).  Entity
+is now analogous to what EntityGuts was (an interface for the game-specific
+data for each game object).  Each game will subclass the Entity interface
+to specify its own game-specific data.
+
+// World considerations
+
+World will still accept adding Objects or Entities, but they will be kept
+strictly separate.  An Object must not be imbued with an Entity while it is
+owned by World (the Entity must be added before the Object is added to the
+World).
+
+// MapEditor2 classes
+
+Instead of an ultra multiple-virtual inherited class hierarchy, a single
+interface class will be used to provide the necessary functionality for
+the map editor.  The object hierarchy is:
+
+                                 Object
+                                /      \
+    MapEditor2::Object    Sprite        Compound    MapEditor2::Object
+                      \  /                      \  /
+               MapEditor2::Sprite       MapEditor2::Compound
+
+// Specifying MapEditor2 GUI controls for Entity subclasses.
+
+The goal here is to allow the map editor to edit Entity subclass data in a
+robust and intuitive way (like how the built-in Object editing works).
+
+The obvious type of controls will be Buttons, CheckBoxes, ValueEdits
+and such, but there will also be primitives for controlling values via the
+mapeditor's world itself (e.g. dragging tangible vector arrows around, etc).
+Control primitives:
+
+- Object-center-based vector (arrow)
+- World coordinate position vector (something like the global origin cursor)
+- Angle (like the Object editing mode's angle display)
+- Scale (like the Object editing mode's scale display)
+
+Only one of these tangible controls will be visible/controllable at a time,
+and the active one will be set by picking one of the enumerated IDs that will
+be attached to each specified control.
+
+*** Think about how object selection set value editing should work (and if
+the Entity controls should provide that)
+
+
+
+

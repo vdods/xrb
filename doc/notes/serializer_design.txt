@@ -1,0 +1,81 @@
+//////////////////////////////////////////////////////////////////////////////
+// Serializer class design doc
+//////////////////////////////////////////////////////////////////////////////
+
+goal:
+- modularized and comprehensive serialization classes for file i/o, memory
+  buffer i/o, bitstream i/o, and compression stream i/o.
+
+//////////////////////////////////////////////////////////////////////////////
+
+requirements:
+
+interface:
+- "GetIsOpen" function to check if the stream is currently ready for
+  reading/writing.
+- "GetIODirection" function which indicates if the stream is
+  writing or reading currently.
+- "GetIsReadyForIO" function which returns true iff
+  (it is a read stream and there is more data to read
+   or
+   it is a write stream and there is space left to write to, if applicable).
+- "GetIsAtEnd" function which returns true iff
+  it is a read stream and it has reached the end of the data to read.
+- ability to read/write in an arbitrary endianness:
+  * bit-packed arbitrary bit-length signed integers (up to 32 bits)
+  * bit-packed arbitrary bit-length unsigned integers (up to 32 bits)
+??* bit-packed BitArrays ???
+  * bit-packed booleans (alias for writing a single bit)
+  * byte-aligned signed integers of 1, 2 and 4 bytes
+  * byte-aligned unsigned integers of 1, 2 and 4 bytes
+  * byte-aligned IEEE single precision floats
+  * byte-aligned IEEE double precision floats
+  * byte-aligned arbitrary-length byte arrays
+  * byte-aligned null-terminated strings
+  * byte-aligned vectors
+  * byte-aligned colors
+  * byte-aligned simple matrices
+  * byte-aligned matrices
+  * byte-aligned transformations
+- if a bit-packed data is written which does not end on a byte boundary,
+  a byte-aligned write will snap to the next byte boundary, leaving the
+  leftover bits unused.
+- other primitives such as vectors, colors, matrices, etc. will have
+  their "serialize me" functions (e.g. global or global operator overloads)
+- "flush" function which causes any cached data to be written out (in the
+  case of serializers that are writing data)
+
+file i/o:
+- buffered i/o
+- the ability to do reads across buffered block boundaries
+- endian-independent storage (always store in one endianness
+  on every platform).
+- ideally get the buffered i/o functionality by using another serializer
+  object as appropriate, as well as for endian-independent.
+
+memory buffer i/o:
+- contiguous memory for the buffer
+- fixed size byte buffer
+- growing byte buffer
+
+compression stream i/o:
+- will use the bitstream i/o along with a provided huffman encoder
+  to huffman encode/decode the i/o.
+
+memory pipe:
+- producer/consumer style circular memory buffer
+- semaphore-driven pipe (producer/consumer with semaphore)
+
+//////////////////////////////////////////////////////////////////////////////
+
+PRIMITIVE SERIALIZER TYPES (operate directly on files/memory/hardware/etc):
+- file
+- memory
+
+AUGMENTED SERIALIZER TYPES (which use the primitive types):
+- compression
+
+//////////////////////////////////////////////////////////////////////////////
+
+
+
