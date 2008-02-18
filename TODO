@@ -119,6 +119,8 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- get rid of widget min/max size enabled flags, and just use the 
+  sizes (no min size = 0, no max size = (uint)-1)
 - get rid of all "enabled" stuff in SizeProperties
 - rename "color mask" to "mask color"
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
