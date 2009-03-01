@@ -31,7 +31,7 @@ AC_ARG_WITH(
     [arch],
     AC_HELP_STRING(
         [--with-arch=type],
-        [compile for a specific architecture type (e.g. i686, athlon, pentium4)]),
+        [compile for a specific architecture type (e.g. native, i686, athlon, pentium4)]),
     [ARCH_TYPE=$withval],
     [ARCH_TYPE=])
 
@@ -47,9 +47,9 @@ AC_ARG_WITH(
     [debug-level],
     AC_HELP_STRING(
         [--with-debug-level=N],
-        [sets assert level -- 0 for fewest asserts, up to 3 for all asserts -- default is 3]),
+        [sets assert level -- 0 for fewest asserts, up to 3 for all asserts -- default is 0]),
     [DEBUG_LEVEL_VAL=$withval],
-    [DEBUG_LEVEL_VAL=3])
+    [DEBUG_LEVEL_VAL=0])
 
 AC_ARG_ENABLE(
     [warnings-as-errors],
@@ -146,13 +146,13 @@ AC_ARG_ENABLE(
 if test "x${ARCH_TYPE}" = "x"; then
     ARCH_OPTION_STRING=
 else
-    ARCH_OPTION_STRING="-march=${ARCH_TYPE}"
+    ARCH_OPTION_STRING="-mtune=${ARCH_TYPE}"
 fi
 
 if test "${DEBUG_ENABLED}" = "yes"; then
     CXXFLAGS="${CXXFLAGS} -g3 -O0 ${ARCH_OPTION_STRING}"
 else
-    CXXFLAGS="${CXXFLAGS} -O2"
+    CXXFLAGS="${CXXFLAGS} -g0 -O2"
     # the gprof option -pg is incompatible with -fomit-frame-pointer
     # so only add it if gprof is not enabled.
     if test "${GPROF_ENABLED}" != "yes"; then

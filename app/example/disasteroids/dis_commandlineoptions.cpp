@@ -70,7 +70,7 @@ CommandLineOptions::CommandLineOptions (std::string const &executable_filename)
 
 void CommandLineOptions::SetFullscreen (string const &arg)
 {
-    if (arg.length() != 1 || arg[0] != '0' && arg[0] != '1')
+    if (arg.length() != 1 || (arg[0] != '0' && arg[0] != '1'))
         throw string("error: invalid argument to --fullscreen - \"") + arg + "\"";
     else
         m_fullscreen = arg[0] == '1';

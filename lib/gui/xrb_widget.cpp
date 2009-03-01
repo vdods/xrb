@@ -135,7 +135,7 @@ bool Widget::GetIsMouseover () const
 bool Widget::GetIsMouseGrabbed () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
-    return parent == NULL || parent->m_focus == this && parent->m_focus_has_mouse_grab;
+    return parent == NULL || (parent->m_focus == this && parent->m_focus_has_mouse_grab);
 }
 
 ScreenCoordVector2 Widget::GetAdjustedSize (ScreenCoordVector2 const &size) const

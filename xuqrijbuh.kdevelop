@@ -31,41 +31,92 @@
     <description>An OpenGL 2d game engine suite geared toward real-time, sprite/polygon-object-based gameplay. Includes the game engine library, as well as example game implementations. The goal is to provide an intuitive platform for implementing gameplay.
  </description>
     <projectname>xuqrijbuh</projectname>
-    <defaultencoding/>
-    <versioncontrol/>
+    <defaultencoding></defaultencoding>
+    <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>/home/vdods/files/projects/xuqrijbuh/trunk</mainprogram>
+      <mainprogram>/home/vdods/files/sf/xuqrijbuh/trunk</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
-      <globaldebugarguments/>
-      <globalcwd>/home/vdods/files/projects/xuqrijbuh/trunk</globalcwd>
+      <globaldebugarguments></globaldebugarguments>
+      <globalcwd>/home/vdods/files/sf/xuqrijbuh/trunk</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir/>
+      <builddir></builddir>
     </build>
     <make>
       <abortonerror>false</abortonerror>
       <numberofjobs>2</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
-      <makebin/>
-      <defaulttarget/>
-      <makeoptions/>
+      <makebin></makebin>
+      <defaulttarget></defaulttarget>
+      <makeoptions></makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
       </environments>
     </make>
+    <filetypes>
+      <filetype>*.java</filetype>
+      <filetype>*.h</filetype>
+      <filetype>*.H</filetype>
+      <filetype>*.hh</filetype>
+      <filetype>*.hxx</filetype>
+      <filetype>*.hpp</filetype>
+      <filetype>*.c</filetype>
+      <filetype>*.C</filetype>
+      <filetype>*.cc</filetype>
+      <filetype>*.cpp</filetype>
+      <filetype>*.c++</filetype>
+      <filetype>*.cxx</filetype>
+      <filetype>Makefile</filetype>
+      <filetype>CMakeLists.txt</filetype>
+    </filetypes>
+    <blacklist>
+      <path>debug/config.h</path>
+      <path>debug/Makefile</path>
+      <path>desources</path>
+      <path>desources/xrb_games_quine</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_2a.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_2b.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_2.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_2c.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3a.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3b.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3c.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3d2.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3d.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3e.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3f.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_3g.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine.c</path>
+      <path>desources/xrb_games_quine/xrb_games_quine_template.c</path>
+      <path>lib/parsers/xrb_arithmeticparser.cpp</path>
+      <path>lib/parsers/xrb_arithmeticparser.h</path>
+      <path>lib/parsers/xrb_datafileparser.cpp</path>
+      <path>lib/parsers/xrb_datafileparser.h</path>
+    </blacklist>
+    <other>
+      <prio>0</prio>
+      <otherbin></otherbin>
+      <defaulttarget></defaulttarget>
+      <otheroptions></otheroptions>
+      <selectedenvironment>default</selectedenvironment>
+      <environments>
+        <default/>
+      </environments>
+    </other>
   </kdevcustomproject>
   <kdevdebugger>
     <general>
@@ -190,27 +241,29 @@
       <includeTypes>true</includeTypes>
       <includeEnums>true</includeEnums>
       <includeTypedefs>true</includeTypedefs>
-      <automaticCodeCompletion>false</automaticCodeCompletion>
+      <automaticCodeCompletion>true</automaticCodeCompletion>
       <automaticArgumentsHint>true</automaticArgumentsHint>
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
-      <codeCompletionDelay>2000</codeCompletionDelay>
-      <argumentsHintDelay>1000</argumentsHintDelay>
+      <codeCompletionDelay>250</codeCompletionDelay>
+      <argumentsHintDelay>400</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
       <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
       <completionBoxItemOrder>0</completionBoxItemOrder>
       <howEvaluationContextMenu>true</howEvaluationContextMenu>
       <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
-      <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
+      <statusBarTypeEvaluation>true</statusBarTypeEvaluation>
       <namespaceAliases>std=_GLIBCXX_STD;__gnu_cxx=std</namespaceAliases>
       <processPrimaryTypes>true</processPrimaryTypes>
-      <processFunctionArguments>false</processFunctionArguments>
+      <processFunctionArguments>true</processFunctionArguments>
       <preProcessAllHeaders>false</preProcessAllHeaders>
       <parseMissingHeaders>false</parseMissingHeaders>
       <resolveIncludePaths>true</resolveIncludePaths>
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
-      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
+      <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
       <includePaths>.;</includePaths>
+      <parseMissingHeadersExperimental>false</parseMissingHeadersExperimental>
+      <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>
     </codecompletion>
     <creategettersetter>
       <prefixGet>Get</prefixGet>
@@ -233,7 +286,7 @@
     <splitheadersource>
       <enabled>false</enabled>
       <synchronize>true</synchronize>
-      <orientation>Vertical</orientation>
+      <orientation>Horizontal</orientation>
     </splitheadersource>
   </kdevcppsupport>
   <cppsupportpart>
@@ -260,6 +313,7 @@
   </kdevdocumentation>
   <ctagspart>
     <customArguments/>
-    <customTagfilePath/>
+    <customTagfilePath>/home/vdods/files/sf/xuqrijbuh/trunk/tags</customTagfilePath>
+    <activeTagsFiles/>
   </ctagspart>
 </kdevelop>

@@ -143,13 +143,13 @@ bool PlayerShip::GetIsItemEquipped (
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
-        return GetMainWeapon() != NULL &&
-               GetMainWeapon()->GetItemType() == item_type &&
-               GetMainWeapon()->GetUpgradeLevel() == upgrade_level
+        return (GetMainWeapon() != NULL &&
+                GetMainWeapon()->GetItemType() == item_type &&
+                GetMainWeapon()->GetUpgradeLevel() == upgrade_level)
                ||
-               GetAuxiliaryWeapon() != NULL &&
-               GetAuxiliaryWeapon()->GetItemType() == item_type &&
-               GetAuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level;
+               (GetAuxiliaryWeapon() != NULL &&
+                GetAuxiliaryWeapon()->GetItemType() == item_type &&
+                GetAuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level);
 
     switch (item_type)
     {

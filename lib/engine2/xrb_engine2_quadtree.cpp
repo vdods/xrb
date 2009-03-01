@@ -65,8 +65,8 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
             ASSERT2(m_child[i] != NULL);
             smallest_candidate = m_child[i]->GetSmallestObjectTouchingPoint(point);
             if (retval == NULL ||
-                smallest_candidate != NULL &&
-                smallest_candidate->GetRadius(GetQuadTreeType()) < retval->GetRadius(GetQuadTreeType()))
+                (smallest_candidate != NULL &&
+                 smallest_candidate->GetRadius(GetQuadTreeType()) < retval->GetRadius(GetQuadTreeType())))
                 retval = smallest_candidate;
         }
     }

@@ -137,8 +137,8 @@ void Grenade::Collide (
         ASSERT1(this != other_grenade); // a grenade should never collide with itself
         if (GetFirstMoment() < other_grenade->GetFirstMoment()
             ||
-            GetFirstMoment() == other_grenade->GetFirstMoment() &&
-            this > other_grenade)
+            (GetFirstMoment() == other_grenade->GetFirstMoment() &&
+             this > other_grenade))
         {
             return;
         }

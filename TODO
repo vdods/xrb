@@ -112,8 +112,8 @@ DISASTEROIDS:
   don't work in disasteroids)
 - firing a laser or gauss gun while directly facing and touching e.g.
   an asteroid causes the line trace to fail so the weapon fires through
-  the asteroid.  maybe fix this by starting the line trace slightly
-  inside the firing ship (and ignoring if it hits the firing ship)
+  the asteroid.  fix this by recording hits when the line starts inside
+  objects
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();

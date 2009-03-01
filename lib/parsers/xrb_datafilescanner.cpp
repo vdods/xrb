@@ -25,11 +25,11 @@ namespace Xrb
 
 inline bool IsWhitespace (char c) { return c == ' ' || c == '\t'; }
 inline bool IsOperator (char c) { return c == '{' || c == '}' || c == '[' || c == ']' || c == ';' || c == ','; }
-inline bool IsAlpha (char c) { return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'; }
+inline bool IsAlpha (char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 inline bool IsBinaryDigit (char c) { return c == '0' || c == '1'; }
 inline bool IsOctalDigit (char c) { return c >= '0' && c <= '7'; }
 inline bool IsDecimalDigit (char c) { return c >= '0' && c <= '9'; }
-inline bool IsHexidecimalDigit (char c) { return c >= '0' && c <= '9' || c >= 'A' && c <= 'F' || c >= 'a' && c <= 'f'; }
+inline bool IsHexidecimalDigit (char c) { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }
 
 Uint32 GetHexidecimalDigitValue (char c)
 {
@@ -240,7 +240,7 @@ DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const 
     if (c == '0')
     {
         // check if it's a standalone 0
-        if (IsNextCharEOF(&c) || c != 'b' && !IsDecimalDigit(c) && c != 'x' && c != '.' && c != 'e' && c != 'E')
+        if (IsNextCharEOF(&c) || (c != 'b' && !IsDecimalDigit(c) && c != 'x' && c != '.' && c != 'e' && c != 'E'))
         {
             if (is_signed)
             {
@@ -305,9 +305,9 @@ DataFileParser::Token::Type DataFileScanner::ScanBinaryNumeric (
 
     // if signed, check for signed overflow
     if (is_signed &&
-        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+        ((is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND))
          ||
-         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+         (!is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1)))
     {
         overflow = true;
     }
@@ -358,9 +358,9 @@ DataFileParser::Token::Type DataFileScanner::ScanOctalNumeric (
 
     // if signed, check for signed overflow
     if (is_signed &&
-        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+        ((is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND))
          ||
-         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+         (!is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1)))
     {
         overflow = true;
     }
@@ -406,7 +406,7 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (
         // by 10 does not overflow, or if the value is said maximum
         // and a value which would overflow the value is about to
         // be added, set the overflow flag.
-        if (value > 429496729 || value == 429496729 && c > '5')
+        if (value > 429496729 || (value == 429496729 && c > '5'))
             overflow = true;
         value = 10 * value + (c - '0');
     }
@@ -420,9 +420,9 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (
 
     // if signed, check for signed overflow
     if (is_signed &&
-        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+        ((is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND))
          ||
-         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+         (!is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1)))
     {
         overflow = true;
     }
@@ -477,9 +477,9 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
 
     // if signed, check for signed overflow
     if (is_signed &&
-        (is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)
+        ((is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND))
          ||
-         !is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1))
+         (!is_positive && value > static_cast<Uint32>(SINT32_UPPER_BOUND)+1)))
     {
         overflow = true;
     }

@@ -578,10 +578,12 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         // large-enough powerups trump everything else
         if (entity->GetIsPowerup())
         {
-            if (!target.GetIsValid() ||
-                !target->GetIsPowerup() ||
-                entity->GetFirstMoment() > s_powerup_mass_threshold &&
-                entity->GetFirstMoment() > target->GetFirstMoment())
+            if (!target.GetIsValid()
+                ||
+                !target->GetIsPowerup()
+                ||
+                (entity->GetFirstMoment() > s_powerup_mass_threshold &&
+                 entity->GetFirstMoment() > target->GetFirstMoment()))
             {
                 target = entity->GetReference();
             }

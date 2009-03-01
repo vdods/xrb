@@ -31,11 +31,29 @@ public:
 
     typedef ValueType (*TextToValueFunctionType)(char const *);
 
-    ValueEdit (
+/*    ValueEdit (
         std::string const &printf_format,
         typename ValueEdit<ValueType>::TextToValueFunctionType text_to_value_function,
         ContainerWidget *parent,
-        std::string const &name = "ValueEdit");
+        std::string const &name = "ValueEdit");*/
+    ValueEdit (
+        std::string const &printf_format,
+        TextToValueFunctionType text_to_value_function,
+        ContainerWidget *const parent,
+        std::string const &name = "ValueEdit")
+        :
+        LineEdit(20, parent, name),
+        m_sender_value_updated(this),
+        m_sender_value_set_by_enter_key(this),
+        m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
+    {
+        // set up the printf format string
+        SetPrintfFormat(printf_format);
+
+        // default is to not have any validation.
+        m_validator = NULL;
+        m_text_to_value_function = text_to_value_function;
+    }
     virtual ~ValueEdit () { }
 
     inline ValueType GetValue () const

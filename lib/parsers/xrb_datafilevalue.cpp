@@ -570,7 +570,7 @@ DataFileValue const *DataFileArray::GetSubpathElement (
         THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
     ++start;
-    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
 
     if (start == key_delim)
         THROW_STRING("missing array index")
@@ -608,7 +608,7 @@ void DataFileArray::SetSubpathElement (
     ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY);
 
     ++start;
-    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
     NodeType element_type = GetParentElementNodeType(path, key_delim);
 
     // determine what array index is being referenced
@@ -636,7 +636,7 @@ void DataFileArray::SetSubpathElement (
         while (i < key_delim && (c = path[i], c >= '0' && c <= '9'))
         {
             // check for overflow
-            if (array_index > 429496729 || array_index == 429496729 && c > '5')
+            if (array_index > 429496729 || (array_index == 429496729 && c > '5'))
             {
                 array_index = UINT32_UPPER_BOUND;
                 break;
@@ -724,11 +724,11 @@ void DataFileArray::SetSubpathElement (
         ASSERT1(m_element_vector[array_index] != NULL);
         DataFileValue *&element = m_element_vector[array_index];
 
-        if (element_type == NT_LEAF && value->GetElementType() != element->GetElementType()
+        if ((element_type == NT_LEAF && value->GetElementType() != element->GetElementType())
             ||
-            element_type == NT_ARRAY && element->GetElementType() != DAT_ARRAY
+            (element_type == NT_ARRAY && element->GetElementType() != DAT_ARRAY)
             ||
-            element_type == NT_STRUCTURE && element->GetElementType() != DAT_STRUCTURE)
+            (element_type == NT_STRUCTURE && element->GetElementType() != DAT_STRUCTURE))
         {
             DataFileElementType assignment_type = DAT_NO_TYPE;
             if (element_type == NT_LEAF)
@@ -905,7 +905,7 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
         THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
     ++start;
-    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
     std::string key(path.substr(start, key_delim-start));
     MemberMapConstIterator it = m_member_map.find(key);
     if (it == m_member_map.end())
@@ -934,7 +934,7 @@ void DataFileStructure::SetSubpathElement (
     ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE);
 
     ++start;
-    Uint32 key_delim = Min(path.length(), static_cast<Uint32>(path.find_first_of("|", start)));
+    Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
     ASSERT1(key_delim < UINT32_UPPER_BOUND);
 
     std::string key(path.substr(start, key_delim-start));

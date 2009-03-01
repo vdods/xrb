@@ -649,8 +649,8 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     // the same collision pair twice
     if (object->GetRadius(m_quad_tree_type) > m_entity->GetRadius(m_quad_tree_type)
         ||
-        object->GetRadius(m_quad_tree_type) == m_entity->GetRadius(m_quad_tree_type) &&
-        object > m_entity->GetOwnerObject())
+        (object->GetRadius(m_quad_tree_type) == m_entity->GetRadius(m_quad_tree_type) &&
+         object > m_entity->GetOwnerObject()))
         return;
 
     FloatVector2 ce0_translation(m_entity->GetTranslation());

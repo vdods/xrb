@@ -413,7 +413,7 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 {
     ScreenCoordVector2 adjusted_size(m_size_properties.GetAdjustedSize(size));
 
-    if (m_screen_rect.GetSize() != adjusted_size || GetChildResizeBlockerCount() == 0 && GetChildResizeWasBlocked())
+    if (m_screen_rect.GetSize() != adjusted_size || (GetChildResizeBlockerCount() == 0 && GetChildResizeWasBlocked()))
     {
         m_screen_rect.SetSize(adjusted_size);
 

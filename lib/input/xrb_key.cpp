@@ -30,19 +30,19 @@ Key *Key::Create (Key::Code const code, std::string const &name)
 bool Key::GetIsKeyRepeatable (Key::Code const code)
 {
     // repeatable keys:
-    if (code >= Key::SPACE && code <= Key::DELETE       // ASCII char keys
+    if ((code >= Key::SPACE && code <= Key::DELETE)         // ASCII char keys
         ||
-        code == Key::BACKSPACE                          // backspace
+        code == Key::BACKSPACE                              // backspace
         ||
-        code >= Key::KP0 && code <= Key::KP_PLUS        // keypad keys
+        (code >= Key::KP0 && code <= Key::KP_PLUS)          // keypad keys
         ||
-        code >= Key::UP && code <= Key::LEFT            // arrow keys
+        (code >= Key::UP && code <= Key::LEFT)              // arrow keys
         ||
-        code == Key::PAGEUP                             // page up
+        code == Key::PAGEUP                                 // page up
         ||
-        code == Key::PAGEDOWN                           // page down
+        code == Key::PAGEDOWN                               // page down
         ||
-        code >= Key::WORLD_0 && code <= Key::WORLD_95)  // world keys
+        (code >= Key::WORLD_0 && code <= Key::WORLD_95))    // world keys
         return true;
 
     // anything else is not repeatable
@@ -51,7 +51,7 @@ bool Key::GetIsKeyRepeatable (Key::Code const code)
 
 bool Key::GetIsKeyAscii (Key::Code const code)
 {
-    if (code >= ZERO && code <= NINE || code >= A && code <= Z)
+    if ((code >= ZERO && code <= NINE) || (code >= A && code <= Z))
         return true;
 
     switch (code)

@@ -10,25 +10,25 @@
 
 // this file is included in xrb_valueedit.h inside the namespace Xrb
 
-template <typename ValueType>
-ValueEdit<ValueType>::ValueEdit (
-    std::string const &printf_format,
-    TextToValueFunctionType text_to_value_function,
-    ContainerWidget *const parent,
-    std::string const &name)
-    :
-    LineEdit(20, parent, name),
-    m_sender_value_updated(this),
-    m_sender_value_set_by_enter_key(this),
-    m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
-{
-    // set up the printf format string
-    SetPrintfFormat(printf_format);
-
-    // default is to not have any validation.
-    m_validator = NULL;
-    m_text_to_value_function = text_to_value_function;
-}
+// template <typename ValueType>
+// ValueEdit<ValueType>::ValueEdit (
+//     std::string const &printf_format,
+//     TextToValueFunctionType text_to_value_function,
+//     ContainerWidget *const parent,
+//     std::string const &name)
+//     :
+//     LineEdit(20, parent, name),
+//     m_sender_value_updated(this),
+//     m_sender_value_set_by_enter_key(this),
+//     m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
+// {
+//     // set up the printf format string
+//     SetPrintfFormat(printf_format);
+// 
+//     // default is to not have any validation.
+//     m_validator = NULL;
+//     m_text_to_value_function = text_to_value_function;
+// }
 
 template <typename ValueType>
 void ValueEdit<ValueType>::SetText (std::string const &text)

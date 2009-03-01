@@ -76,7 +76,7 @@ public:
         {
             return t0->GetZDepth() > t1->GetZDepth()
                    ||
-                   t0->GetZDepth() == t1->GetZDepth() && t0 < t1;
+                   (t0->GetZDepth() == t1->GetZDepth() && t0 < t1);
         }
     }; // end of struct Engine2::Object::TransparentObjectOrder
 
