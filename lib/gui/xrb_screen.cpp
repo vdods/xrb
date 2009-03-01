@@ -91,10 +91,16 @@ void Screen::Draw () const
     // NOTE: this method encompasses all drawing.
 
 #if !defined(WIN32)
-    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1);
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1);
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1);
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1);
+//     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    /*
+    GLint color_matrix_stack_depth = GL::GetMatrixStackDepth(GL_COLOR);
+    GLint modelview_matrix_stack_depth = GL::GetMatrixStackDepth(GL_MODELVIEW);
+    GLint projection_matrix_stack_depth = GL::GetMatrixStackDepth(GL_PROJECTION);
+    GLint texture_matrix_stack_depth = GL::GetMatrixStackDepth(GL_TEXTURE);
+    */
 #endif // !defined(WIN32)
 
     // clear the color buffer to the Screen's bias color (because that's
@@ -106,8 +112,8 @@ void Screen::Draw () const
         0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     // reset all matrices
-    glMatrixMode(GL_COLOR);
-    glLoadIdentity();
+//     glMatrixMode(GL_COLOR);
+//     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMatrixMode(GL_PROJECTION);
@@ -140,10 +146,16 @@ void Screen::Draw () const
     ContainerWidget::Draw(render_context);
 
 #if !defined(WIN32)
-    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "You forgot to pop a GL_COLOR matrix somewhere");
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "You forgot to pop a GL_MODELVIEW matrix somewhere");
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "You forgot to pop a GL_PROJECTION matrix somewhere");
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "You forgot to pop a GL_TEXTURE matrix somewhere");
+//     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    /*
+    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == color_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == modelview_matrix_stack_depth && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == projection_matrix_stack_depth && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == texture_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
+    */
 #endif // !defined(WIN32)
 
     // all drawing is complete for this frame, so flush it down
