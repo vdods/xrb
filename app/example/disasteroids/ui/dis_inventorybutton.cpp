@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_inventorybutton.h"
+#include "dis_inventorybutton.hpp"
 
-#include "xrb_render.h"
+#include "xrb_render.hpp"
 
 using namespace Xrb;
 

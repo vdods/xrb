@@ -8,14 +8,14 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_datafilescanner.h"
+#include "xrb_datafilescanner.hpp"
 
 #include <iostream>
 
-#include "xrb_datafilelocation.h"
-#include "xrb_datafilevalue.h"
-#include "xrb_math.h"
-#include "xrb_util.h"
+#include "xrb_datafilelocation.hpp"
+#include "xrb_datafilevalue.hpp"
+#include "xrb_math.hpp"
+#include "xrb_util.hpp"
 
 #undef FL
 #define FL DataFileLocation(m_input_filename, m_line_number)

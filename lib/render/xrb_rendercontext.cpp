@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_rendercontext.h"
+#include "xrb_rendercontext.hpp"
 
-#include "xrb_gl.h"
+#include "xrb_gl.hpp"
 
 namespace Xrb
 {

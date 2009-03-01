@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "../defines.h"
+#include "../defines.hpp"
 
-#include "unittestcontroller.h"
+#include "unittestcontroller.hpp"
 
-#include "matrix2unittest.h"
-#include "serializerunittest.h"
-#include "simpletransform2unittest.h"
-#include "transform2unittest.h"
-#include "vectorunittest.h"
+#include "matrix2unittest.hpp"
+#include "serializerunittest.hpp"
+#include "simpletransform2unittest.hpp"
+#include "transform2unittest.hpp"
+#include "vectorunittest.hpp"
 
 int main (int argc, char **argv)
 {

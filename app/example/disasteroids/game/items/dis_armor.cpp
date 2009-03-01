@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_armor.h"
+#include "dis_armor.hpp"
 
 using namespace Xrb;
 

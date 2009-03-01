@@ -126,7 +126,6 @@ TODO:
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
 - move GLTexture into render
 - rename Singletons into Singleton and xrb_singletons.* to xrb_singleton.*
-- rename .h files properly to .hpp
 - ASSERT0 should probably change into Abort() call or something, to indicate
   that it's always compiled in.
 - stop using typedef'd iterators, just use ::iterator and ::const_iterator

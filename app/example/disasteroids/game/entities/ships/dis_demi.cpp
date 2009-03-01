@@ -8,17 +8,17 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_demi.h"
+#include "dis_demi.hpp"
 
-#include "dis_ballistic.h"
-#include "dis_effect.h"
-#include "dis_explosive.h"
-#include "dis_physicshandler.h"
-#include "dis_powerup.h"
-#include "dis_spawn.h"
-#include "dis_weapon.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
+#include "dis_ballistic.hpp"
+#include "dis_effect.hpp"
+#include "dis_explosive.hpp"
+#include "dis_physicshandler.hpp"
+#include "dis_powerup.hpp"
+#include "dis_spawn.hpp"
+#include "dis_weapon.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
 

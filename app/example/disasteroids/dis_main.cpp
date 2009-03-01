@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb.h"
+#include "xrb.hpp"
 
-#include "dis_commandlineoptions.h"
-#include "dis_config.h"
-#include "dis_master.h"
-#include "xrb_screen.h"
+#include "dis_commandlineoptions.hpp"
+#include "dis_config.hpp"
+#include "dis_master.hpp"
+#include "xrb_screen.hpp"
 
 using namespace std;
 using namespace Xrb;

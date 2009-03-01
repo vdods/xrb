@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_layout.h"
+#include "xrb_layout.hpp"
 
-#include "xrb_screen.h"
+#include "xrb_screen.hpp"
 
 namespace Xrb
 {

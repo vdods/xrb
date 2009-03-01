@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_keyrepeater.h"
+#include "xrb_keyrepeater.hpp"
 
-#include "xrb_eventqueue.h"
+#include "xrb_eventqueue.hpp"
 
 namespace Xrb
 {

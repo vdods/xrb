@@ -8,7 +8,7 @@
 
 #line 11 "xrb_datafileparser.trison"
 
-#include "xrb.h"
+#include "xrb.hpp"
 
 #include <string>
 

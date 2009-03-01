@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_simpletransform2.h"
+#include "xrb_simpletransform2.hpp"
 
 /** @file xrb_simpletransform2.cpp
   * Contains instances of ms_identity for each instantiation of

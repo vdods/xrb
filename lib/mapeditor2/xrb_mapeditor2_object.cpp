@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_object.h"
+#include "xrb_mapeditor2_object.hpp"
 
-#include "xrb_engine2_entityguts.h"
-#include "xrb_mapeditor2_compound.h"
-#include "xrb_mapeditor2_objectlayer.h"
-#include "xrb_mapeditor2_sprite.h"
-#include "xrb_mapeditor2_spriteentity.h"
-#include "xrb_mapeditor2_visibilityquadtree.h"
-#include "xrb_render.h"
+#include "xrb_engine2_entityguts.hpp"
+#include "xrb_mapeditor2_compound.hpp"
+#include "xrb_mapeditor2_objectlayer.hpp"
+#include "xrb_mapeditor2_sprite.hpp"
+#include "xrb_mapeditor2_spriteentity.hpp"
+#include "xrb_mapeditor2_visibilityquadtree.hpp"
+#include "xrb_render.hpp"
 
 namespace Xrb
 {

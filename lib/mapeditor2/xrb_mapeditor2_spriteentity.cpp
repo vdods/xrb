@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_spriteentity.h"
+#include "xrb_mapeditor2_spriteentity.hpp"
 
 namespace Xrb
 {

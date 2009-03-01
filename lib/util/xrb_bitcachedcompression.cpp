@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_bitcachedcompression.h"
+#include "xrb_bitcachedcompression.hpp"
 
-#include "xrb_huffman.h"
-#include "xrb_serializer.h"
+#include "xrb_huffman.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

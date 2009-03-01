@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_framehandler.h"
+#include "xrb_framehandler.hpp"
 
 namespace Xrb
 {

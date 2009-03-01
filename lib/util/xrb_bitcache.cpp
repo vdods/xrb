@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_bitcache.h"
+#include "xrb_bitcache.hpp"
 
 #include <string.h>
 

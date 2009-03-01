@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_spacerwidget.h"
+#include "xrb_spacerwidget.hpp"
 
 namespace Xrb
 {

@@ -8,14 +8,14 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_object.h"
+#include "xrb_engine2_object.hpp"
 
-#include "xrb_engine2_compound.h"
-#include "xrb_engine2_entity.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_sprite.h"
-#include "xrb_rendercontext.h"
-#include "xrb_serializer.h"
+#include "xrb_engine2_compound.hpp"
+#include "xrb_engine2_entity.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_sprite.hpp"
+#include "xrb_rendercontext.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

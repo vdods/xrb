@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_world.h"
+#include "xrb_mapeditor2_world.hpp"
 
-#include "xrb_eventqueue.h"
-#include "xrb_mapeditor2_entity.h"
-#include "xrb_mapeditor2_object.h"
-#include "xrb_mapeditor2_objectlayer.h"
-#include "xrb_mapeditor2_compound.h" // temp
-#include "xrb_serializer.h" // temp
-#include "xrb_engine2_planetaryphysicshandler.h" // temp
+#include "xrb_eventqueue.hpp"
+#include "xrb_mapeditor2_entity.hpp"
+#include "xrb_mapeditor2_object.hpp"
+#include "xrb_mapeditor2_objectlayer.hpp"
+#include "xrb_mapeditor2_compound.hpp" // temp
+#include "xrb_serializer.hpp" // temp
+#include "xrb_engine2_planetaryphysicshandler.hpp" // temp
 
 namespace Xrb
 {

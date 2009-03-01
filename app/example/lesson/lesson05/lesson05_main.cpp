@@ -118,19 +118,19 @@ well enough, it was probably already explained in
 <strong>Code Diving!</strong>
 
 @code */
-#include "xrb.h"                         // Must be included in every source/header file.
+#include "xrb.hpp"                         // Must be included in every source/header file.
 
-#include "xrb_engine2_objectlayer.h"     // For use of the Engine2::ObjectLayer class.
-#include "xrb_engine2_sprite.h"          // For use of the Engine2::Sprite class.
-#include "xrb_engine2_world.h"           // For use of the Engine2::World class.
-#include "xrb_engine2_worldview.h"       // For use of the Engine2::WorldView class.
-#include "xrb_engine2_worldviewwidget.h" // For use of the Engine2::WorldViewWidget class.
-#include "xrb_event.h"                   // For use of the Event classes.
-#include "xrb_eventqueue.h"              // For use of the EventQueue class.
-#include "xrb_input.h"                   // For use of the Input class (via Singletons::).
-#include "xrb_input_events.h"            // For use of the EventMouseWheel class.
-#include "xrb_math.h"                    // For use of the functions in the Math namespace.
-#include "xrb_screen.h"                  // For use of the necessary Screen widget class.
+#include "xrb_engine2_objectlayer.hpp"     // For use of the Engine2::ObjectLayer class.
+#include "xrb_engine2_sprite.hpp"          // For use of the Engine2::Sprite class.
+#include "xrb_engine2_world.hpp"           // For use of the Engine2::World class.
+#include "xrb_engine2_worldview.hpp"       // For use of the Engine2::WorldView class.
+#include "xrb_engine2_worldviewwidget.hpp" // For use of the Engine2::WorldViewWidget class.
+#include "xrb_event.hpp"                   // For use of the Event classes.
+#include "xrb_eventqueue.hpp"              // For use of the EventQueue class.
+#include "xrb_input.hpp"                   // For use of the Input class (via Singletons::).
+#include "xrb_input_events.hpp"            // For use of the EventMouseWheel class.
+#include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
+#include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
 
 using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
 

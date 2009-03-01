@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_enemyship.h"
+#include "dis_enemyship.hpp"
 
-#include "dis_playership.h"
-#include "dis_world.h"
+#include "dis_playership.hpp"
+#include "dis_world.hpp"
 
 using namespace Xrb;
 

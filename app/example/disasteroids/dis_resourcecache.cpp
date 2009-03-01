@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_resourcecache.h"
+#include "dis_resourcecache.hpp"
 
 using namespace Xrb;
 

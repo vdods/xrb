@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_revulsion.h"
+#include "dis_revulsion.hpp"
 
-#include "dis_effect.h"
-#include "dis_physicshandler.h"
-#include "dis_spawn.h"
-#include "dis_weapon.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_polynomial.h"
+#include "dis_effect.hpp"
+#include "dis_physicshandler.hpp"
+#include "dis_spawn.hpp"
+#include "dis_weapon.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_polynomial.hpp"
 
 using namespace Xrb;
 

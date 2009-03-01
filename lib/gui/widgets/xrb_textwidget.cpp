@@ -8,13 +8,13 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_textwidget.h"
+#include "xrb_textwidget.hpp"
 
 #include <stdarg.h>
 
-#include "xrb_gl.h"
-#include "xrb_render.h"
-#include "xrb_screen.h"
+#include "xrb_gl.hpp"
+#include "xrb_render.hpp"
+#include "xrb_screen.hpp"
 
 namespace Xrb
 {

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_datafilevalue.h"
+#include "xrb_datafilevalue.hpp"
 
 #include <sstream>
 

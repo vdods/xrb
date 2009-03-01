@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_vector.h"
+#include "xrb_vector.hpp"
 
 /** @file xrb_vector.cpp
   * Contains instances of ms_zero for each instantiation of Vector, as

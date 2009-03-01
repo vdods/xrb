@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_signalhandler.h"
+#include "xrb_signalhandler.hpp"
 
 namespace Xrb
 {

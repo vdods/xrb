@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_gltexture.h"
+#include "xrb_gltexture.hpp"
 
-#include "xrb_texture.h"
+#include "xrb_texture.hpp"
 
 namespace Xrb
 {

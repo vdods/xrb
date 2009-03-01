@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "unittestcontroller.h"
+#include "unittestcontroller.hpp"
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 UnitTestController::UnitTestController ()
     :

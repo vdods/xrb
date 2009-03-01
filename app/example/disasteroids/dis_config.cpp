@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_config.h"
+#include "dis_config.hpp"
 
 #include "xrb_datafileparser.h"
-#include "xrb_datafilevalue.h"
-#include "xrb_input.h"
-#include "xrb_util.h"
+#include "xrb_datafilevalue.hpp"
+#include "xrb_input.hpp"
+#include "xrb_util.hpp"
 
 using namespace std;
 using namespace Xrb;

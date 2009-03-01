@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_ballistic.h"
+#include "dis_ballistic.hpp"
 
-#include "dis_mortal.h"
-#include "dis_physicshandler.h"
+#include "dis_mortal.hpp"
+#include "dis_physicshandler.hpp"
 
 using namespace Xrb;
 

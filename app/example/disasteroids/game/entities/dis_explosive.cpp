@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_explosive.h"
+#include "dis_explosive.hpp"
 
-#include "dis_physicshandler.h"
-#include "dis_ship.h"
-#include "dis_spawn.h"
-#include "dis_util.h"
-#include "dis_weapon.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
+#include "dis_physicshandler.hpp"
+#include "dis_ship.hpp"
+#include "dis_spawn.hpp"
+#include "dis_util.hpp"
+#include "dis_weapon.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
 

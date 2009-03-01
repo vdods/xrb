@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_utf8.h"
+#include "xrb_utf8.hpp"
 
 namespace Xrb
 {

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_shield.h"
+#include "dis_shield.hpp"
 
 using namespace Xrb;
 

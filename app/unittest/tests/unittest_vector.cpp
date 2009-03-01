@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "vectorunittest.h"
+#include "vectorunittest.hpp"
 
 #include <math.h>
 

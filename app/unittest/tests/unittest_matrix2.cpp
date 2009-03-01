@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "matrix2unittest.h"
+#include "matrix2unittest.hpp"
 
-#include "../util.h"
+#include "../util.hpp"
 
 Matrix2UnitTest::Matrix2UnitTest ()
     :

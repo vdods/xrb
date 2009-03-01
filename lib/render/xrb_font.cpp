@@ -8,16 +8,16 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_font.h"
+#include "xrb_font.hpp"
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#include "xrb_gl.h"
-#include "xrb_math.h"
-#include "xrb_render.h"
-#include "xrb_rendercontext.h"
-#include "xrb_texture.h"
-#include "xrb_utf8.h"
+#include "xrb_gl.hpp"
+#include "xrb_math.hpp"
+#include "xrb_render.hpp"
+#include "xrb_rendercontext.hpp"
+#include "xrb_texture.hpp"
+#include "xrb_utf8.hpp"
 
 namespace Xrb
 {

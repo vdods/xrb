@@ -8,14 +8,14 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_visibilityquadtree.h"
+#include "xrb_mapeditor2_visibilityquadtree.hpp"
 
-#include "xrb_mapeditor2_compound.h"
-#include "xrb_mapeditor2_entity.h"
-#include "xrb_mapeditor2_objectlayer.h"
-#include "xrb_mapeditor2_polygon.h"
-#include "xrb_screen.h"
-#include "xrb_serializer.h"
+#include "xrb_mapeditor2_compound.hpp"
+#include "xrb_mapeditor2_entity.hpp"
+#include "xrb_mapeditor2_objectlayer.hpp"
+#include "xrb_mapeditor2_polygon.hpp"
+#include "xrb_screen.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

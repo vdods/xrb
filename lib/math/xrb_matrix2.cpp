@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_matrix2.h"
+#include "xrb_matrix2.hpp"
 
 /** @file xrb_matrix2.cpp
   * Contains instances of ms_identity for each instantiation of Matrix2, as

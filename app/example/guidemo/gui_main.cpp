@@ -8,17 +8,17 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb.h"
+#include "xrb.hpp"
 
-#include "gui_masterwidget.h"
-#include "xrb_eventqueue.h"
-#include "xrb_input.h"
-#include "xrb_keyrepeater.h"
-#include "xrb_screen.h"
+#include "gui_masterwidget.hpp"
+#include "xrb_eventqueue.hpp"
+#include "xrb_input.hpp"
+#include "xrb_keyrepeater.hpp"
+#include "xrb_screen.hpp"
 
 // TEMP
 #include "xrb_arithmeticparser.h"
-#include "xrb_math.h"
+#include "xrb_math.hpp"
 // TEMP
 
 using namespace Xrb;

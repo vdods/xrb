@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_lineedit.h"
+#include "xrb_lineedit.hpp"
 
-#include "xrb_input_events.h"
-#include "xrb_render.h"
-#include "xrb_screen.h"
-#include "xrb_utf8.h"
+#include "xrb_input_events.hpp"
+#include "xrb_render.hpp"
+#include "xrb_screen.hpp"
+#include "xrb_utf8.hpp"
 
 namespace Xrb
 {

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_rect.h"
+#include "xrb_rect.hpp"
 
 namespace Xrb
 {

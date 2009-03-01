@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_frameratecalculator.h"
+#include "xrb_frameratecalculator.hpp"
 
 namespace Xrb
 {

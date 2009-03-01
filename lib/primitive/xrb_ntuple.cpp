@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_ntuple.h"
+#include "xrb_ntuple.hpp"
 
 namespace Xrb
 {

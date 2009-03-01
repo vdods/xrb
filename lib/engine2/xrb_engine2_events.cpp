@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_events.h"
+#include "xrb_engine2_events.hpp"
 
 namespace Xrb
 {

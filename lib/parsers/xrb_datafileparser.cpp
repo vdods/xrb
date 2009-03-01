@@ -12,9 +12,9 @@
 
 #include <sstream>
 
-#include "xrb_datafilelocation.h"
-#include "xrb_datafilescanner.h"
-#include "xrb_datafilevalue.h"
+#include "xrb_datafilelocation.hpp"
+#include "xrb_datafilescanner.hpp"
+#include "xrb_datafilevalue.hpp"
 
 #undef FL
 #define FL DataFileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())

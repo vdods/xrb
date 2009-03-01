@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_enums.h"
+#include "dis_enums.hpp"
 
 namespace Dis
 {

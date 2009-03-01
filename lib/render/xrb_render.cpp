@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_render.h"
+#include "xrb_render.hpp"
 
-#include "xrb_gl.h"
-#include "xrb_gltexture.h"
-#include "xrb_math.h"
+#include "xrb_gl.hpp"
+#include "xrb_gltexture.hpp"
+#include "xrb_math.hpp"
 
 namespace Xrb
 {

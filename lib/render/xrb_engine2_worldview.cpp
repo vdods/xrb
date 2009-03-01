@@ -8,16 +8,16 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_worldview.h"
+#include "xrb_engine2_worldview.hpp"
 
-#include "xrb_engine2_entity.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_sprite.h"
-#include "xrb_engine2_world.h"
-#include "xrb_engine2_worldviewwidget.h"
-#include "xrb_math.h"
-#include "xrb_render.h"
-#include "xrb_screen.h"
+#include "xrb_engine2_entity.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_sprite.hpp"
+#include "xrb_engine2_world.hpp"
+#include "xrb_engine2_worldviewwidget.hpp"
+#include "xrb_math.hpp"
+#include "xrb_render.hpp"
+#include "xrb_screen.hpp"
 
 namespace Xrb
 {

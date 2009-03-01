@@ -8,16 +8,16 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_singletons.h"
+#include "xrb_singletons.hpp"
 
-#include "xrb.h"
+#include "xrb.hpp"
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#include "xrb_input.h"
-#include "xrb_key.h"
-#include "xrb_keymap.h"
-#include "xrb_resourcelibrary.h"
+#include "xrb_input.hpp"
+#include "xrb_key.hpp"
+#include "xrb_keymap.hpp"
+#include "xrb_resourcelibrary.hpp"
 
 namespace Xrb
 {

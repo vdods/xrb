@@ -8,19 +8,19 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_titlescreenwidget.h"
+#include "dis_titlescreenwidget.hpp"
 
-#include "dis_config.h"
-#include "dis_highscoreswidget.h"
-#include "dis_optionspanel.h"
-#include "xrb_button.h"
-#include "xrb_cellpaddingwidget.h"
-#include "xrb_dialog.h"
-#include "xrb_eventqueue.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_widgetbackground.h" // TEMP
-#include "xrb_widgetstack.h"
+#include "dis_config.hpp"
+#include "dis_highscoreswidget.hpp"
+#include "dis_optionspanel.hpp"
+#include "xrb_button.hpp"
+#include "xrb_cellpaddingwidget.hpp"
+#include "xrb_dialog.hpp"
+#include "xrb_eventqueue.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_widgetbackground.hpp" // TEMP
+#include "xrb_widgetstack.hpp"
 
 using namespace Xrb;
 

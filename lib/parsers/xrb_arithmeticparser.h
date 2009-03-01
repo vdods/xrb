@@ -8,7 +8,7 @@
 
 #line 11 "xrb_arithmeticparser.trison"
 
-#include "xrb.h"
+#include "xrb.hpp"
 
 namespace Xrb
 {

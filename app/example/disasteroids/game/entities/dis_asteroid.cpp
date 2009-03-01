@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_asteroid.h"
+#include "dis_asteroid.hpp"
 
-#include "dis_item.h"
-#include "dis_spawn.h"
-#include "dis_world.h"
+#include "dis_item.hpp"
+#include "dis_spawn.hpp"
+#include "dis_world.hpp"
 
 using namespace Xrb;
 

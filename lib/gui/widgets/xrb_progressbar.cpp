@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_progressbar.h"
+#include "xrb_progressbar.hpp"
 
-#include "xrb_render.h"
+#include "xrb_render.hpp"
 
 using namespace Xrb;
 

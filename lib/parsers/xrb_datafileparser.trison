@@ -9,7 +9,7 @@
 // ///////////////////////////////////////////////////////////////////////////
 
 %parser_header_file_top%{
-#include "xrb.h"
+#include "xrb.hpp"
 
 #include <string>
 
@@ -69,9 +69,9 @@ private:
 %parser_implementation_file_top%{
 #include <sstream>
 
-#include "xrb_datafilelocation.h"
-#include "xrb_datafilescanner.h"
-#include "xrb_datafilevalue.h"
+#include "xrb_datafilelocation.hpp"
+#include "xrb_datafilescanner.hpp"
+#include "xrb_datafilevalue.hpp"
 
 #undef FL
 #define FL DataFileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())

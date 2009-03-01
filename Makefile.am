@@ -209,153 +209,153 @@ lib_libxrb_la_SOURCES = \
 ##############################################################################
 
 include_HEADERS = \
-    lib/core/xrb.h \
-    lib/core/xrb_assert.h \
-    lib/core/xrb_debug.h \
-    lib/core/xrb_delete.h \
-    lib/core/xrb_types.h \
+    lib/core/xrb.hpp \
+    lib/core/xrb_assert.hpp \
+    lib/core/xrb_debug.hpp \
+    lib/core/xrb_delete.hpp \
+    lib/core/xrb_types.hpp \
     \
-    lib/engine2/xrb_engine2_compound.h \
-    lib/engine2/xrb_engine2_entity.h \
-    lib/engine2/xrb_engine2_enums.h \
-    lib/engine2/xrb_engine2_events.h \
-    lib/engine2/xrb_engine2_object.h \
-    lib/engine2/xrb_engine2_objectlayer.h \
-    lib/engine2/xrb_engine2_physicshandler.h \
-    lib/engine2/xrb_engine2_polygon.h \
-    lib/engine2/xrb_engine2_quadtree.h \
-    lib/engine2/xrb_engine2_sprite.h \
-    lib/engine2/xrb_engine2_types.h \
-    lib/engine2/xrb_engine2_visibilityquadtree.h \
-    lib/engine2/xrb_engine2_world.h \
+    lib/engine2/xrb_engine2_compound.hpp \
+    lib/engine2/xrb_engine2_entity.hpp \
+    lib/engine2/xrb_engine2_enums.hpp \
+    lib/engine2/xrb_engine2_events.hpp \
+    lib/engine2/xrb_engine2_object.hpp \
+    lib/engine2/xrb_engine2_objectlayer.hpp \
+    lib/engine2/xrb_engine2_physicshandler.hpp \
+    lib/engine2/xrb_engine2_polygon.hpp \
+    lib/engine2/xrb_engine2_quadtree.hpp \
+    lib/engine2/xrb_engine2_sprite.hpp \
+    lib/engine2/xrb_engine2_types.hpp \
+    lib/engine2/xrb_engine2_visibilityquadtree.hpp \
+    lib/engine2/xrb_engine2_world.hpp \
     \
-    lib/gui/xrb_containerwidget.h \
-    lib/gui/xrb_gui_events.h \
-    lib/gui/xrb_screen.h \
-    lib/gui/xrb_screencoord.h \
-    lib/gui/xrb_sizeproperties.h \
-    lib/gui/xrb_widget.h \
-    lib/gui/xrb_widgetbackground.h \
-    lib/gui/xrb_widgetskin.h \
-    lib/gui/xrb_widgetskinhandler.h \
+    lib/gui/xrb_containerwidget.hpp \
+    lib/gui/xrb_gui_events.hpp \
+    lib/gui/xrb_screen.hpp \
+    lib/gui/xrb_screencoord.hpp \
+    lib/gui/xrb_sizeproperties.hpp \
+    lib/gui/xrb_widget.hpp \
+    lib/gui/xrb_widgetbackground.hpp \
+    lib/gui/xrb_widgetskin.hpp \
+    lib/gui/xrb_widgetskinhandler.hpp \
     \
-    lib/gui/widgets/xrb_button.h \
-    lib/gui/widgets/xrb_cellpaddingwidget.h \
-    lib/gui/widgets/xrb_checkbox.h \
-    lib/gui/widgets/xrb_dialog.h \
-    lib/gui/widgets/xrb_filedialog.h \
-    lib/gui/widgets/xrb_filepanel.h \
-    lib/gui/widgets/xrb_keyselectorbutton.h \
-    lib/gui/widgets/xrb_label.h \
-    lib/gui/widgets/xrb_layout.h \
-    lib/gui/widgets/xrb_lineedit.h \
-    lib/gui/widgets/xrb_modalwidget.h \
-    lib/gui/widgets/xrb_progressbar.h \
-    lib/gui/widgets/xrb_radiobutton.h \
+    lib/gui/widgets/xrb_button.hpp \
+    lib/gui/widgets/xrb_cellpaddingwidget.hpp \
+    lib/gui/widgets/xrb_checkbox.hpp \
+    lib/gui/widgets/xrb_dialog.hpp \
+    lib/gui/widgets/xrb_filedialog.hpp \
+    lib/gui/widgets/xrb_filepanel.hpp \
+    lib/gui/widgets/xrb_keyselectorbutton.hpp \
+    lib/gui/widgets/xrb_label.hpp \
+    lib/gui/widgets/xrb_layout.hpp \
+    lib/gui/widgets/xrb_lineedit.hpp \
+    lib/gui/widgets/xrb_modalwidget.hpp \
+    lib/gui/widgets/xrb_progressbar.hpp \
+    lib/gui/widgets/xrb_radiobutton.hpp \
     lib/gui/widgets/xrb_radiobutton.tcpp \
-    lib/gui/widgets/xrb_spacerwidget.h \
-    lib/gui/widgets/xrb_textwidget.h \
-    lib/gui/widgets/xrb_toolbarbutton.h \
+    lib/gui/widgets/xrb_spacerwidget.hpp \
+    lib/gui/widgets/xrb_textwidget.hpp \
+    lib/gui/widgets/xrb_toolbarbutton.hpp \
     lib/gui/widgets/xrb_toolbarbutton.tcpp \
-    lib/gui/widgets/xrb_valueedit.h \
+    lib/gui/widgets/xrb_valueedit.hpp \
     lib/gui/widgets/xrb_valueedit.tcpp \
-    lib/gui/widgets/xrb_valuelabel.h \
+    lib/gui/widgets/xrb_valuelabel.hpp \
     lib/gui/widgets/xrb_valuelabel.tcpp \
-    lib/gui/widgets/xrb_widgetstack.h \
+    lib/gui/widgets/xrb_widgetstack.hpp \
     \
-    lib/input/xrb_input.h \
-    lib/input/xrb_input_events.h \
-    lib/input/xrb_key.h \
-    lib/input/xrb_keymap.h \
-    lib/input/xrb_keyrepeater.h \
+    lib/input/xrb_input.hpp \
+    lib/input/xrb_input_events.hpp \
+    lib/input/xrb_key.hpp \
+    lib/input/xrb_keymap.hpp \
+    lib/input/xrb_keyrepeater.hpp \
     \
-    lib/math/xrb_math.h \
-    lib/math/xrb_matrix2.h \
-    lib/math/xrb_polynomial.h \
-    lib/math/xrb_simpletransform2.h \
-    lib/math/xrb_transform2.h \
-    lib/math/xrb_vector.h \
+    lib/math/xrb_math.hpp \
+    lib/math/xrb_matrix2.hpp \
+    lib/math/xrb_polynomial.hpp \
+    lib/math/xrb_simpletransform2.hpp \
+    lib/math/xrb_transform2.hpp \
+    lib/math/xrb_vector.hpp \
     \
-    lib/parsers/xrb_datafilelocation.h \
+    lib/parsers/xrb_datafilelocation.hpp \
     lib/parsers/xrb_datafileparser.h \
-    lib/parsers/xrb_datafilescanner.h \
-    lib/parsers/xrb_datafilevalue.h \
+    lib/parsers/xrb_datafilescanner.hpp \
+    lib/parsers/xrb_datafilevalue.hpp \
     lib/parsers/xrb_arithmeticparser.h \
-    lib/parsers/xrb_arithmeticscanner.h \
+    lib/parsers/xrb_arithmeticscanner.hpp \
     \
-    lib/primitive/xrb_bitarray.h \
+    lib/primitive/xrb_bitarray.hpp \
     lib/primitive/xrb_bitarray.tcpp \
-    lib/primitive/xrb_circularqueue.h \
+    lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_circularqueue.tcpp \
-    lib/primitive/xrb_color.h \
-    lib/primitive/xrb_gltexture.h \
-    lib/primitive/xrb_ntuple.h \
-    lib/primitive/xrb_rect.h \
-    lib/primitive/xrb_texture.h \
+    lib/primitive/xrb_color.hpp \
+    lib/primitive/xrb_gltexture.hpp \
+    lib/primitive/xrb_ntuple.hpp \
+    lib/primitive/xrb_rect.hpp \
+    lib/primitive/xrb_texture.hpp \
     \
-    lib/render/xrb_engine2_worldview.h \
-    lib/render/xrb_engine2_worldviewwidget.h \
-    lib/render/xrb_font.h \
-    lib/render/xrb_fontface.h \
-    lib/render/xrb_gl.h \
-    lib/render/xrb_render.h \
-    lib/render/xrb_rendercontext.h \
+    lib/render/xrb_engine2_worldview.hpp \
+    lib/render/xrb_engine2_worldviewwidget.hpp \
+    lib/render/xrb_font.hpp \
+    lib/render/xrb_fontface.hpp \
+    lib/render/xrb_gl.hpp \
+    lib/render/xrb_render.hpp \
+    lib/render/xrb_rendercontext.hpp \
     \
-    lib/system/xrb_enums.h \
-    lib/system/xrb_event.h \
-    lib/system/xrb_eventhandler.h \
-    lib/system/xrb_eventqueue.h \
+    lib/system/xrb_enums.hpp \
+    lib/system/xrb_event.hpp \
+    lib/system/xrb_eventhandler.hpp \
+    lib/system/xrb_eventqueue.hpp \
     lib/system/xrb_eventqueue.tcpp \
-    lib/system/xrb_framehandler.h \
-    lib/system/xrb_resourcelibrary.h \
+    lib/system/xrb_framehandler.hpp \
+    lib/system/xrb_resourcelibrary.hpp \
     lib/system/xrb_resourcelibrary.tcpp \
-    lib/system/xrb_serializer.h \
+    lib/system/xrb_serializer.hpp \
     lib/system/xrb_serializer.tcpp \
-    lib/system/xrb_signalhandler.h \
-    lib/system/xrb_singletons.h \
-    lib/system/xrb_statemachine.h \
+    lib/system/xrb_signalhandler.hpp \
+    lib/system/xrb_singletons.hpp \
+    lib/system/xrb_statemachine.hpp \
     lib/system/xrb_statemachine.tcpp \
     \
-    lib/system/serializers/xrb_binaryfileserializer.h \
+    lib/system/serializers/xrb_binaryfileserializer.hpp \
     \
-    lib/util/xrb_bitcache.h \
-    lib/util/xrb_bitcachedfile.h \
-    lib/util/xrb_characterfilter.h \
-    lib/util/xrb_commandlineparser.h \
-    lib/util/xrb_emptystring.h \
-    lib/util/xrb_endian.h \
-    lib/util/xrb_frameratecalculator.h \
-    lib/util/xrb_indentformatter.h \
-    lib/util/xrb_reference.h \
-    lib/util/xrb_tokenizer.h \
-    lib/util/xrb_transformation.h \
-    lib/util/xrb_utf8.h \
-    lib/util/xrb_util.h \
-    lib/util/xrb_validator.h
+    lib/util/xrb_bitcache.hpp \
+    lib/util/xrb_bitcachedfile.hpp \
+    lib/util/xrb_characterfilter.hpp \
+    lib/util/xrb_commandlineparser.hpp \
+    lib/util/xrb_emptystring.hpp \
+    lib/util/xrb_endian.hpp \
+    lib/util/xrb_frameratecalculator.hpp \
+    lib/util/xrb_indentformatter.hpp \
+    lib/util/xrb_reference.hpp \
+    lib/util/xrb_tokenizer.hpp \
+    lib/util/xrb_transformation.hpp \
+    lib/util/xrb_utf8.hpp \
+    lib/util/xrb_util.hpp \
+    lib/util/xrb_validator.hpp
 
 # the compression stuff is temporarily out of service
-#    lib/core/serializers/xrb_compressionserializer.h \
-#    lib/util/xrb_bitcachedcompression.h \
-#    lib/util/xrb_huffman.h \
+#    lib/core/serializers/xrb_compressionserializer.hpp \
+#    lib/util/xrb_bitcachedcompression.hpp \
+#    lib/util/xrb_huffman.hpp \
 #
 
 # the mapeditor is temporarily out of service
-#    lib/mapeditor2/xrb_mapeditor2_compound.h \
-#    lib/mapeditor2/xrb_mapeditor2_compoundentity.h \
-#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.h \
-#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.h \
-#    lib/mapeditor2/xrb_mapeditor2_entity.h \
-#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.h \
-#    lib/mapeditor2/xrb_mapeditor2_mainwidget.h \
-#    lib/mapeditor2/xrb_mapeditor2_object.h \
-#    lib/mapeditor2/xrb_mapeditor2_objectlayer.h \
-#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.h \
-#    lib/mapeditor2/xrb_mapeditor2_polygon.h \
-#    lib/mapeditor2/xrb_mapeditor2_sprite.h \
-#    lib/mapeditor2/xrb_mapeditor2_spriteentity.h \
-#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.h \
-#    lib/mapeditor2/xrb_mapeditor2_world.h \
-#    lib/mapeditor2/xrb_mapeditor2_worldview.h \
+#    lib/mapeditor2/xrb_mapeditor2_compound.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_compoundentity.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_entity.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_mainwidget.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_object.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_objectlayer.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_polygon.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_sprite.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_spriteentity.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_world.hpp \
+#    lib/mapeditor2/xrb_mapeditor2_worldview.hpp \
 #    \
 #
 
@@ -509,62 +509,62 @@ lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
 ##############################################################################
 
 noinst_HEADERS = \
-    app/example/disasteroids/dis_commandlineoptions.h \
-    app/example/disasteroids/dis_config.h \
-    app/example/disasteroids/dis_enums.h \
-    app/example/disasteroids/dis_events.h \
-    app/example/disasteroids/dis_master.h \
-    app/example/disasteroids/dis_resourcecache.h \
-    app/example/disasteroids/game/dis_highscores.h \
-    app/example/disasteroids/game/dis_item.h \
-    app/example/disasteroids/game/dis_spawn.h \
-    app/example/disasteroids/game/dis_util.h \
-    app/example/disasteroids/game/engine2/dis_areatracelist.h \
-    app/example/disasteroids/game/engine2/dis_collisionpair.h \
-    app/example/disasteroids/game/engine2/dis_collisionquadtree.h \
-    app/example/disasteroids/game/engine2/dis_entity.h \
-    app/example/disasteroids/game/engine2/dis_entityreference.h \
-    app/example/disasteroids/game/engine2/dis_linetracebinding.h \
-    app/example/disasteroids/game/engine2/dis_physicshandler.h \
-    app/example/disasteroids/game/engine2/dis_world.h \
-    app/example/disasteroids/game/entities/dis_asteroid.h \
-    app/example/disasteroids/game/entities/dis_ballistic.h \
-    app/example/disasteroids/game/entities/dis_effect.h \
-    app/example/disasteroids/game/entities/dis_explosive.h \
-    app/example/disasteroids/game/entities/dis_healthtrigger.h \
-    app/example/disasteroids/game/entities/dis_mortal.h \
-    app/example/disasteroids/game/entities/dis_powerup.h \
-    app/example/disasteroids/game/entities/dis_ship.h \
-    app/example/disasteroids/game/entities/ships/dis_demi.h \
-    app/example/disasteroids/game/entities/ships/dis_devourment.h \
-    app/example/disasteroids/game/entities/ships/dis_enemyship.h \
-    app/example/disasteroids/game/entities/ships/dis_interloper.h \
-    app/example/disasteroids/game/entities/ships/dis_playership.h \
-    app/example/disasteroids/game/entities/ships/dis_revulsion.h \
-    app/example/disasteroids/game/entities/ships/dis_shade.h \
-    app/example/disasteroids/game/entities/ships/dis_solitary.h \
-    app/example/disasteroids/game/items/dis_armor.h \
-    app/example/disasteroids/game/items/dis_engine.h \
-    app/example/disasteroids/game/items/dis_powereddevice.h \
-    app/example/disasteroids/game/items/dis_powergenerator.h \
-    app/example/disasteroids/game/items/dis_shield.h \
-    app/example/disasteroids/game/items/dis_weapon.h \
-    app/example/disasteroids/ui/dis_gamewidget.h \
-    app/example/disasteroids/ui/dis_highscorenameentrydialog.h \
-    app/example/disasteroids/ui/dis_highscoreswidget.h \
-    app/example/disasteroids/ui/dis_inventorybutton.h \
-    app/example/disasteroids/ui/dis_inventorypanel.h \
-    app/example/disasteroids/ui/dis_optionspanel.h \
-    app/example/disasteroids/ui/dis_titlescreenwidget.h \
-    app/example/disasteroids/ui/dis_worldview.h \
+    app/example/disasteroids/dis_commandlineoptions.hpp \
+    app/example/disasteroids/dis_config.hpp \
+    app/example/disasteroids/dis_enums.hpp \
+    app/example/disasteroids/dis_events.hpp \
+    app/example/disasteroids/dis_master.hpp \
+    app/example/disasteroids/dis_resourcecache.hpp \
+    app/example/disasteroids/game/dis_highscores.hpp \
+    app/example/disasteroids/game/dis_item.hpp \
+    app/example/disasteroids/game/dis_spawn.hpp \
+    app/example/disasteroids/game/dis_util.hpp \
+    app/example/disasteroids/game/engine2/dis_areatracelist.hpp \
+    app/example/disasteroids/game/engine2/dis_collisionpair.hpp \
+    app/example/disasteroids/game/engine2/dis_collisionquadtree.hpp \
+    app/example/disasteroids/game/engine2/dis_entity.hpp \
+    app/example/disasteroids/game/engine2/dis_entityreference.hpp \
+    app/example/disasteroids/game/engine2/dis_linetracebinding.hpp \
+    app/example/disasteroids/game/engine2/dis_physicshandler.hpp \
+    app/example/disasteroids/game/engine2/dis_world.hpp \
+    app/example/disasteroids/game/entities/dis_asteroid.hpp \
+    app/example/disasteroids/game/entities/dis_ballistic.hpp \
+    app/example/disasteroids/game/entities/dis_effect.hpp \
+    app/example/disasteroids/game/entities/dis_explosive.hpp \
+    app/example/disasteroids/game/entities/dis_healthtrigger.hpp \
+    app/example/disasteroids/game/entities/dis_mortal.hpp \
+    app/example/disasteroids/game/entities/dis_powerup.hpp \
+    app/example/disasteroids/game/entities/dis_ship.hpp \
+    app/example/disasteroids/game/entities/ships/dis_demi.hpp \
+    app/example/disasteroids/game/entities/ships/dis_devourment.hpp \
+    app/example/disasteroids/game/entities/ships/dis_enemyship.hpp \
+    app/example/disasteroids/game/entities/ships/dis_interloper.hpp \
+    app/example/disasteroids/game/entities/ships/dis_playership.hpp \
+    app/example/disasteroids/game/entities/ships/dis_revulsion.hpp \
+    app/example/disasteroids/game/entities/ships/dis_shade.hpp \
+    app/example/disasteroids/game/entities/ships/dis_solitary.hpp \
+    app/example/disasteroids/game/items/dis_armor.hpp \
+    app/example/disasteroids/game/items/dis_engine.hpp \
+    app/example/disasteroids/game/items/dis_powereddevice.hpp \
+    app/example/disasteroids/game/items/dis_powergenerator.hpp \
+    app/example/disasteroids/game/items/dis_shield.hpp \
+    app/example/disasteroids/game/items/dis_weapon.hpp \
+    app/example/disasteroids/ui/dis_gamewidget.hpp \
+    app/example/disasteroids/ui/dis_highscorenameentrydialog.hpp \
+    app/example/disasteroids/ui/dis_highscoreswidget.hpp \
+    app/example/disasteroids/ui/dis_inventorybutton.hpp \
+    app/example/disasteroids/ui/dis_inventorypanel.hpp \
+    app/example/disasteroids/ui/dis_optionspanel.hpp \
+    app/example/disasteroids/ui/dis_titlescreenwidget.hpp \
+    app/example/disasteroids/ui/dis_worldview.hpp \
 	\
-	app/example/guidemo/gui_masterwidget.h \
+	app/example/guidemo/gui_masterwidget.hpp \
 	\
-    app/unittest/unittest_base.h \
-    app/unittest/unittest_controller.h \
+    app/unittest/unittest_base.hpp \
+    app/unittest/unittest_controller.hpp \
     \
-    app/unittest/tests/unittest_matrix2.h \
-    app/unittest/tests/unittest_serializer.h \
-    app/unittest/tests/unittest_simpletransform2.h \
-    app/unittest/tests/unittest_transform2.h \
-    app/unittest/tests/unittest_vector.h
+    app/unittest/tests/unittest_matrix2.hpp \
+    app/unittest/tests/unittest_serializer.hpp \
+    app/unittest/tests/unittest_simpletransform2.hpp \
+    app/unittest/tests/unittest_transform2.hpp \
+    app/unittest/tests/unittest_vector.hpp

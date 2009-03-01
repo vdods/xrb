@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_huffman.h"
+#include "xrb_huffman.hpp"
 
 #include <stdlib.h>
 
-#include "xrb_serializer.h"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

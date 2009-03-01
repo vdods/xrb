@@ -8,26 +8,26 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_worldview.h"
+#include "xrb_mapeditor2_worldview.hpp"
 
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_physicshandler.h" // temp
-#include "xrb_engine2_world.h"
-#include "xrb_engine2_worldviewwidget.h"
-#include "xrb_filedialog.h"
-#include "xrb_input_events.h"
-#include "xrb_input.h"
-#include "xrb_mapeditor2_compound.h"
-#include "xrb_mapeditor2_objectlayer.h"
-#include "xrb_mapeditor2_sprite.h"
-#include "xrb_mapeditor2_spriteentity.h"
-#include "xrb_mapeditor2_world.h"
-#include "xrb_math.h"
-#include "xrb_render.h"
-#include "xrb_serializer.h" // temp
-#include "xrb_screen.h"
-#include "xrb_util.h"
-#include "xrb_widgetbackground.h"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_physicshandler.hpp" // temp
+#include "xrb_engine2_world.hpp"
+#include "xrb_engine2_worldviewwidget.hpp"
+#include "xrb_filedialog.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_input.hpp"
+#include "xrb_mapeditor2_compound.hpp"
+#include "xrb_mapeditor2_objectlayer.hpp"
+#include "xrb_mapeditor2_sprite.hpp"
+#include "xrb_mapeditor2_spriteentity.hpp"
+#include "xrb_mapeditor2_world.hpp"
+#include "xrb_math.hpp"
+#include "xrb_render.hpp"
+#include "xrb_serializer.hpp" // temp
+#include "xrb_screen.hpp"
+#include "xrb_util.hpp"
+#include "xrb_widgetbackground.hpp"
 
 namespace Xrb
 {

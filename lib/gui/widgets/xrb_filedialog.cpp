@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_filedialog.h"
+#include "xrb_filedialog.hpp"
 
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h"
-#include "xrb_widgetbackground.h"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp"
+#include "xrb_widgetbackground.hpp"
 
 namespace Xrb
 {

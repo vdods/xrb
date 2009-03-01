@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_util.h"
+#include "xrb_util.hpp"
 
 #include <stdarg.h>
 #include <string.h>

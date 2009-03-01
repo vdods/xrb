@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_util.h"
+#include "dis_util.hpp"
 
-#include "dis_entity.h"
-#include "dis_physicshandler.h"
+#include "dis_entity.hpp"
+#include "dis_physicshandler.hpp"
 
 using namespace Xrb;
 

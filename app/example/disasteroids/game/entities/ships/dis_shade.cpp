@@ -8,14 +8,14 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_shade.h"
+#include "dis_shade.hpp"
 
-#include "dis_engine.h"
-#include "dis_physicshandler.h"
-#include "dis_powergenerator.h"
-#include "dis_weapon.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_polynomial.h"
+#include "dis_engine.hpp"
+#include "dis_physicshandler.hpp"
+#include "dis_powergenerator.hpp"
+#include "dis_weapon.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_polynomial.hpp"
 
 using namespace Xrb;
 

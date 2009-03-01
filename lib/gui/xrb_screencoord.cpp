@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_screencoord.h"
+#include "xrb_screencoord.hpp"
 
 namespace Xrb
 {

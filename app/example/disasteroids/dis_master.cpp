@@ -8,19 +8,19 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_master.h"
+#include "dis_master.hpp"
 
 #include <stdlib.h> // for srand()
 
-#include "dis_config.h"
-#include "dis_events.h"
-#include "dis_gamewidget.h"
-#include "dis_highscorenameentrydialog.h"
-#include "dis_resourcecache.h"
-#include "dis_titlescreenwidget.h"
-#include "dis_world.h"
-#include "xrb_input.h"
-#include "xrb_screen.h"
+#include "dis_config.hpp"
+#include "dis_events.hpp"
+#include "dis_gamewidget.hpp"
+#include "dis_highscorenameentrydialog.hpp"
+#include "dis_resourcecache.hpp"
+#include "dis_titlescreenwidget.hpp"
+#include "dis_world.hpp"
+#include "xrb_input.hpp"
+#include "xrb_screen.hpp"
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 

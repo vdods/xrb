@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_visibilityquadtree.h"
+#include "xrb_engine2_visibilityquadtree.hpp"
 
 #include <algorithm>
 
-#include "xrb_engine2_entity.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_render.h"
-#include "xrb_rendercontext.h"
-#include "xrb_serializer.h"
+#include "xrb_engine2_entity.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_render.hpp"
+#include "xrb_rendercontext.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

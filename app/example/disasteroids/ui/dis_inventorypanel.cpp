@@ -8,17 +8,17 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_inventorypanel.h"
+#include "dis_inventorypanel.hpp"
 
-#include "dis_optionspanel.h"
-#include "dis_playership.h"
-#include "xrb_input_events.h"
-#include "xrb_layout.h"
-#include "xrb_math.h"
-#include "xrb_screen.h"
-#include "xrb_spacerwidget.h"
-#include "xrb_valuelabel.h"
-#include "xrb_widgetbackground.h"
+#include "dis_optionspanel.hpp"
+#include "dis_playership.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_math.hpp"
+#include "xrb_screen.hpp"
+#include "xrb_spacerwidget.hpp"
+#include "xrb_valuelabel.hpp"
+#include "xrb_widgetbackground.hpp"
 
 using namespace Xrb;
 

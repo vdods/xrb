@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_compoundvertex.h"
+#include "xrb_mapeditor2_compoundvertex.hpp"
 
-#include "xrb_mapeditor2_objectlayer.h"
+#include "xrb_mapeditor2_objectlayer.hpp"
 
 namespace Xrb
 {

@@ -8,16 +8,16 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_objectpropertiespanel.h"
+#include "xrb_mapeditor2_objectpropertiespanel.hpp"
 
-#include "xrb_button.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h"
-#include "xrb_math.h"
-#include "xrb_spacerwidget.h"
-#include "xrb_util.h"
-#include "xrb_valueedit.h"
+#include "xrb_button.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp"
+#include "xrb_math.hpp"
+#include "xrb_spacerwidget.hpp"
+#include "xrb_util.hpp"
+#include "xrb_valueedit.hpp"
 
 namespace Xrb
 {

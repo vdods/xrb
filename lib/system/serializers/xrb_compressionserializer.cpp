@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_compressionserializer.h"
+#include "xrb_compressionserializer.hpp"
 
 namespace Xrb
 {

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_characterfilter.h"
+#include "xrb_characterfilter.hpp"
 
 namespace Xrb
 {

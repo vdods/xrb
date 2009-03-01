@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_entity.h"
+#include "dis_entity.hpp"
 
-#include "dis_physicshandler.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_serializer.h"
+#include "dis_physicshandler.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_serializer.hpp"
 
 using namespace Xrb;
 

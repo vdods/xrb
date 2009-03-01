@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_event.h"
+#include "xrb_event.hpp"
 
-#include "xrb_gui_events.h"
-#include "xrb_input_events.h"
-#include "xrb_input.h"
+#include "xrb_gui_events.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_input.hpp"
 
 namespace Xrb
 {

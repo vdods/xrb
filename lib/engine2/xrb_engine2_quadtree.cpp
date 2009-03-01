@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_quadtree.h"
+#include "xrb_engine2_quadtree.hpp"
 
-#include "xrb_engine2_entity.h"
+#include "xrb_engine2_entity.hpp"
 
 namespace Xrb
 {

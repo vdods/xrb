@@ -8,17 +8,17 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_world.h"
+#include "xrb_engine2_world.hpp"
 
 #include <algorithm>
 
-#include "xrb_engine2_events.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_physicshandler.h"
-#include "xrb_engine2_visibilityquadtree.h"
-#include "xrb_engine2_worldview.h"
-#include "xrb_eventqueue.h"
-#include "xrb_serializer.h"
+#include "xrb_engine2_events.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_physicshandler.hpp"
+#include "xrb_engine2_visibilityquadtree.hpp"
+#include "xrb_engine2_worldview.hpp"
+#include "xrb_eventqueue.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {

@@ -8,16 +8,16 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_optionspanel.h"
+#include "dis_optionspanel.hpp"
 
-#include "dis_config.h"
-#include "xrb_cellpaddingwidget.h"
-#include "xrb_checkbox.h"
-#include "xrb_keyselectorbutton.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_spacerwidget.h"
-#include "xrb_valueedit.h"
+#include "dis_config.hpp"
+#include "xrb_cellpaddingwidget.hpp"
+#include "xrb_checkbox.hpp"
+#include "xrb_keyselectorbutton.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_spacerwidget.hpp"
+#include "xrb_valueedit.hpp"
 
 using namespace Xrb;
 

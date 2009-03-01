@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_polynomial.h"
+#include "xrb_polynomial.hpp"
 
-#include "xrb_math.h"
+#include "xrb_math.hpp"
 
 namespace Xrb
 {

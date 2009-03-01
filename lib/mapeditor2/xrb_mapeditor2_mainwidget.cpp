@@ -8,27 +8,27 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_mainwidget.h"
+#include "xrb_mapeditor2_mainwidget.hpp"
 
-#include "xrb_binaryfileserializer.h"
-#include "xrb_engine2_worldviewwidget.h"
-#include "xrb_event.h" // TEMP
-#include "xrb_filedialog.h"
-#include "xrb_input.h" // temp
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h" // TEMP
-#include "xrb_mapeditor2_entitypropertiespanel.h"
-#include "xrb_mapeditor2_objectpropertiespanel.h"
-#include "xrb_mapeditor2_world.h"
-#include "xrb_mapeditor2_worldview.h"
-#include "xrb_resourcelibrary.h"
-#include "xrb_screen.h"
-#include "xrb_spacerwidget.h"
-#include "xrb_toolbarbutton.h"
-#include "xrb_valueedit.h"
-#include "xrb_valuelabel.h"
-#include "xrb_widgetbackground.h" // TEMP
+#include "xrb_binaryfileserializer.hpp"
+#include "xrb_engine2_worldviewwidget.hpp"
+#include "xrb_event.hpp" // TEMP
+#include "xrb_filedialog.hpp"
+#include "xrb_input.hpp" // temp
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp" // TEMP
+#include "xrb_mapeditor2_entitypropertiespanel.hpp"
+#include "xrb_mapeditor2_objectpropertiespanel.hpp"
+#include "xrb_mapeditor2_world.hpp"
+#include "xrb_mapeditor2_worldview.hpp"
+#include "xrb_resourcelibrary.hpp"
+#include "xrb_screen.hpp"
+#include "xrb_spacerwidget.hpp"
+#include "xrb_toolbarbutton.hpp"
+#include "xrb_valueedit.hpp"
+#include "xrb_valuelabel.hpp"
+#include "xrb_widgetbackground.hpp" // TEMP
 
 namespace Xrb
 {

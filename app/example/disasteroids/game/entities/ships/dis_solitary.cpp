@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_solitary.h"
+#include "dis_solitary.hpp"
 
-#include "dis_armor.h"
-#include "dis_engine.h"
-#include "dis_powergenerator.h"
-#include "dis_powerup.h"
-#include "dis_shield.h"
-#include "dis_spawn.h"
-#include "dis_weapon.h"
+#include "dis_armor.hpp"
+#include "dis_engine.hpp"
+#include "dis_powergenerator.hpp"
+#include "dis_powerup.hpp"
+#include "dis_shield.hpp"
+#include "dis_spawn.hpp"
+#include "dis_weapon.hpp"
 
 using namespace Xrb;
 

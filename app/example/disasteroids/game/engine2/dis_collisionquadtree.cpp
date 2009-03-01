@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_collisionquadtree.h"
+#include "dis_collisionquadtree.hpp"
 
 #include <algorithm>
 
-#include "dis_entity.h"
+#include "dis_entity.hpp"
 
 using namespace Xrb;
 

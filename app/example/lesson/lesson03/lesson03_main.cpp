@@ -117,20 +117,20 @@ well enough, it was probably already explained in
 <strong>Code Diving!</strong>
 
 @code */
-#include "xrb.h"                    // Must be included in every source/header file.
+#include "xrb.hpp"                    // Must be included in every source/header file.
 
-#include "xrb_containerwidget.h"    // For use of the ContainerWidget class.
-#include "xrb_event.h"              // For use of the Event classes.
-#include "xrb_eventqueue.h"         // For use of the EventQueue class.
-#include "xrb_input.h"              // For use of the Input class (via Singletons::).
-#include "xrb_label.h"              // For use of the Label class.
-#include "xrb_layout.h"             // For use of the Layout widget class.
-#include "xrb_render.h"             // For use of the Render namespace functions.
-#include "xrb_screen.h"             // For use of the necessary Screen widget class.
-#include "xrb_validator.h"          // For use of various Validator subclasses.
-#include "xrb_valueedit.h"          // For use of the ValueEdit<T> template class.
-#include "xrb_valuelabel.h"         // For use of the ValueLabel<T> template class.
-#include "xrb_widget.h"             // For use of the Widget class.
+#include "xrb_containerwidget.hpp"    // For use of the ContainerWidget class.
+#include "xrb_event.hpp"              // For use of the Event classes.
+#include "xrb_eventqueue.hpp"         // For use of the EventQueue class.
+#include "xrb_input.hpp"              // For use of the Input class (via Singletons::).
+#include "xrb_label.hpp"              // For use of the Label class.
+#include "xrb_layout.hpp"             // For use of the Layout widget class.
+#include "xrb_render.hpp"             // For use of the Render namespace functions.
+#include "xrb_screen.hpp"             // For use of the necessary Screen widget class.
+#include "xrb_validator.hpp"          // For use of various Validator subclasses.
+#include "xrb_valueedit.hpp"          // For use of the ValueEdit<T> template class.
+#include "xrb_valuelabel.hpp"         // For use of the ValueLabel<T> template class.
+#include "xrb_widget.hpp"             // For use of the Widget class.
 
 using namespace Xrb;                // To avoid having to use Xrb:: everywhere.
 

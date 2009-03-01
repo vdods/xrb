@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_worldviewwidget.h"
+#include "xrb_engine2_worldviewwidget.hpp"
 
-#include "xrb_engine2_world.h"
-#include "xrb_engine2_worldview.h"
+#include "xrb_engine2_world.hpp"
+#include "xrb_engine2_worldview.hpp"
 
 namespace Xrb
 {

@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_transformation.h"
+#include "xrb_transformation.hpp"
 
-#include "xrb_util.h"
+#include "xrb_util.hpp"
 
 namespace Xrb
 {

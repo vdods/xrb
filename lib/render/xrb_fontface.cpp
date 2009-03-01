@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_fontface.h"
+#include "xrb_fontface.hpp"
 
 #include "ft2build.h"
 #include FT_FREETYPE_H

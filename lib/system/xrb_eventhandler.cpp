@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_eventhandler.h"
+#include "xrb_eventhandler.hpp"
 
-#include "xrb_event.h"
-#include "xrb_eventqueue.h"
+#include "xrb_event.hpp"
+#include "xrb_eventqueue.hpp"
 
 namespace Xrb
 {

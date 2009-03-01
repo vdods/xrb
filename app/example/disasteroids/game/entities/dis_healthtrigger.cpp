@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_healthtrigger.h"
+#include "dis_healthtrigger.hpp"
 
 using namespace Xrb;
 

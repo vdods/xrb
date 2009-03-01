@@ -8,18 +8,18 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_entitypropertiespanel.h"
+#include "xrb_mapeditor2_entitypropertiespanel.hpp"
 
-#include "xrb_button.h"
-#include "xrb_cellpaddingwidget.h"
-#include "xrb_checkbox.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h"
-#include "xrb_math.h"
-#include "xrb_spacerwidget.h"
-#include "xrb_valueedit.h"
-// #include "xrb_widgetbackground.h" // temp
+#include "xrb_button.hpp"
+#include "xrb_cellpaddingwidget.hpp"
+#include "xrb_checkbox.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp"
+#include "xrb_math.hpp"
+#include "xrb_spacerwidget.hpp"
+#include "xrb_valueedit.hpp"
+// #include "xrb_widgetbackground.hpp" // temp
 
 namespace Xrb
 {

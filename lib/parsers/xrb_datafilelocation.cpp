@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_datafilelocation.h"
+#include "xrb_datafilelocation.hpp"
 
 #include <sstream>
 

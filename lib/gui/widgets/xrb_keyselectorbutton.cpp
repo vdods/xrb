@@ -8,13 +8,13 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_keyselectorbutton.h"
+#include "xrb_keyselectorbutton.hpp"
 
-#include "xrb_input.h"
-#include "xrb_input_events.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_screen.h"
+#include "xrb_input.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_screen.hpp"
 
 namespace Xrb
 {

@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_checkbox.h"
+#include "xrb_checkbox.hpp"
 
-#include "xrb_input_events.h"
+#include "xrb_input_events.hpp"
 
 namespace Xrb
 {

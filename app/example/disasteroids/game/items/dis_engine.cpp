@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_engine.h"
+#include "dis_engine.hpp"
 
-#include "dis_entity.h"
-#include "dis_ship.h"
-#include "xrb_math.h"
+#include "dis_entity.hpp"
+#include "dis_ship.hpp"
+#include "xrb_math.hpp"
 
 using namespace Xrb;
 

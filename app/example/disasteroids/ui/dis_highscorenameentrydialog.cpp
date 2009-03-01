@@ -8,13 +8,13 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_highscorenameentrydialog.h"
+#include "dis_highscorenameentrydialog.hpp"
 
-#include "dis_util.h"
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h"
-#include "xrb_util.h"
+#include "dis_util.hpp"
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp"
+#include "xrb_util.hpp"
 
 using namespace Xrb;
 

@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_keymap.h"
+#include "xrb_keymap.hpp"
 
-#include "xrb_util.h"
+#include "xrb_util.hpp"
 
 namespace Xrb
 {

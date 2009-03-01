@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_arithmeticscanner.h"
+#include "xrb_arithmeticscanner.hpp"
 
-#include "xrb_util.h"
+#include "xrb_util.hpp"
 
 namespace Xrb
 {

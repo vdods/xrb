@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_modalwidget.h"
+#include "xrb_modalwidget.hpp"
 
-#include "xrb_gui_events.h"
+#include "xrb_gui_events.hpp"
 
 namespace Xrb
 {

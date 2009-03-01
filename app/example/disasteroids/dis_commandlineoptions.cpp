@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_commandlineoptions.h"
+#include "dis_commandlineoptions.hpp"
 
 #include <sstream>
 

@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_mortal.h"
+#include "dis_mortal.hpp"
 
-#include "dis_enemyship.h"
-#include "dis_explosive.h"
+#include "dis_enemyship.hpp"
+#include "dis_explosive.hpp"
 
 using namespace Xrb;
 

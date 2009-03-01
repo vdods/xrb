@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_physicshandler.h"
+#include "dis_physicshandler.hpp"
 
-#include "dis_collisionquadtree.h"
-#include "dis_entity.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_world.h"
+#include "dis_collisionquadtree.hpp"
+#include "dis_entity.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_world.hpp"
 
 using namespace Xrb;
 

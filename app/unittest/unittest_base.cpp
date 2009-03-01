@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "unittest.h"
+#include "unittest.hpp"
 
 #include <stdarg.h>
 

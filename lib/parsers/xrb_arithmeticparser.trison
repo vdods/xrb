@@ -9,7 +9,7 @@
 // ///////////////////////////////////////////////////////////////////////////
 
 %parser_header_file_top%{
-#include "xrb.h"
+#include "xrb.hpp"
 
 namespace Xrb
 {
@@ -36,9 +36,9 @@ private:
 %} // end of %parser_header_file_bottom
 
 %parser_implementation_file_top%{
-#include "xrb_arithmeticscanner.h"
+#include "xrb_arithmeticscanner.hpp"
 
-#include "xrb_math.h"
+#include "xrb_math.hpp"
 
 namespace Xrb
 {

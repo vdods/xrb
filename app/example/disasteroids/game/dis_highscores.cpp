@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_highscores.h"
+#include "dis_highscores.hpp"
 
-#include "dis_util.h"
+#include "dis_util.hpp"
 #include "xrb_datafileparser.h"
-#include "xrb_datafilevalue.h"
+#include "xrb_datafilevalue.hpp"
 
 using namespace Xrb;
 

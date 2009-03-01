@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_emptystring.h"
+#include "xrb_emptystring.hpp"
 
 namespace Xrb
 {

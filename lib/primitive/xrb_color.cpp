@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_color.h"
+#include "xrb_color.hpp"
 
 namespace Xrb
 {

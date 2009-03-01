@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_math.h"
+#include "xrb_math.hpp"
 
 #include <stdlib.h>
 

@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "serializerunittest.h"
+#include "serializerunittest.hpp"
 
-#include "../binaryfileserializer.h"
-#include "../compressionserializer.h"
-#include "../huffman.h"
+#include "../binaryfileserializer.hpp"
+#include "../compressionserializer.hpp"
+#include "../huffman.hpp"
 
 using namespace Blah;
 

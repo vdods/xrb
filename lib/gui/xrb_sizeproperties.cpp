@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_sizeproperties.h"
+#include "xrb_sizeproperties.hpp"
 
 namespace Xrb
 {

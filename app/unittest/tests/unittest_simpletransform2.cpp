@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "simpletransform2unittest.h"
+#include "simpletransform2unittest.hpp"
 
 SimpleTransform2UnitTest::SimpleTransform2UnitTest ()
     :

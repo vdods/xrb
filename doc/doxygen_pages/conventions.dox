@@ -204,7 +204,7 @@ Examples:
 @code
 #define BOOL_TO_STRING(x) ((x) ? "true" : "false")
 #define BUFFER_SIZE 1000
-#define _STUPIDFILE10_H_
+#define _STUPIDFILE10_HPP_
 @endcode
 
 @section conventions_const_correctness Const Correctness

@@ -8,24 +8,24 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_ship.h"
+#include "dis_ship.hpp"
 
-#include "dis_armor.h"
-#include "dis_demi.h"
-#include "dis_devourment.h"
-#include "dis_effect.h"
-#include "dis_enemyship.h"
-#include "dis_engine.h"
-#include "dis_interloper.h"
-#include "dis_powergenerator.h"
-#include "dis_revulsion.h"
-#include "dis_shade.h"
-#include "dis_shield.h"
-#include "dis_solitary.h"
-#include "dis_spawn.h"
-#include "dis_weapon.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
+#include "dis_armor.hpp"
+#include "dis_demi.hpp"
+#include "dis_devourment.hpp"
+#include "dis_effect.hpp"
+#include "dis_enemyship.hpp"
+#include "dis_engine.hpp"
+#include "dis_interloper.hpp"
+#include "dis_powergenerator.hpp"
+#include "dis_revulsion.hpp"
+#include "dis_shade.hpp"
+#include "dis_shield.hpp"
+#include "dis_solitary.hpp"
+#include "dis_spawn.hpp"
+#include "dis_weapon.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
 

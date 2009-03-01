@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_dialog.h"
+#include "xrb_dialog.hpp"
 
-#include "xrb_button.h"
-#include "xrb_input_events.h"
-#include "xrb_layout.h"
-#include "xrb_spacerwidget.h"
+#include "xrb_button.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_spacerwidget.hpp"
 
 namespace Xrb
 {

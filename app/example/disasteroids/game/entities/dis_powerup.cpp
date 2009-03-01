@@ -8,10 +8,10 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_powerup.h"
+#include "dis_powerup.hpp"
 
-#include "dis_ship.h"
-#include "xrb_math.h"
+#include "dis_ship.hpp"
+#include "xrb_math.hpp"
 
 using namespace Xrb;
 

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_transform2.h"
+#include "xrb_transform2.hpp"
 
 /** @file xrb_transform2.cpp
   * Contains instances of ms_identity, ms_zero and ms_one for each

@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_bitcachedfile.h"
+#include "xrb_bitcachedfile.hpp"
 
 namespace Xrb
 {

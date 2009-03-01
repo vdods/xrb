@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_widgetskinhandler.h"
+#include "xrb_widgetskinhandler.hpp"
 
 namespace Xrb
 {

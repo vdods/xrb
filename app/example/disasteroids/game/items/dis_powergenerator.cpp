@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_powergenerator.h"
+#include "dis_powergenerator.hpp"
 
-#include "dis_powereddevice.h"
+#include "dis_powereddevice.hpp"
 
 using namespace Xrb;
 

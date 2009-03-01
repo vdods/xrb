@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "gui_masterwidget.h"
+#include "gui_masterwidget.hpp"
 
-#include "xrb_label.h"
-#include "xrb_layout.h"
-#include "xrb_lineedit.h"
-#include "xrb_widgetbackground.h" // temp?
+#include "xrb_label.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_lineedit.hpp"
+#include "xrb_widgetbackground.hpp" // temp?
 
 using namespace Xrb;
 

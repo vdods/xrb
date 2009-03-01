@@ -8,13 +8,13 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_effect.h"
+#include "dis_effect.hpp"
 
-#include "dis_mortal.h"
-#include "dis_physicshandler.h"
-#include "dis_ship.h"
-#include "dis_util.h"
-#include "xrb_engine2_sprite.h"
+#include "dis_mortal.hpp"
+#include "dis_physicshandler.hpp"
+#include "dis_ship.hpp"
+#include "dis_util.hpp"
+#include "xrb_engine2_sprite.hpp"
 
 using namespace Xrb;
 

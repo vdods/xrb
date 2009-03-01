@@ -8,19 +8,19 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_devourment.h"
+#include "dis_devourment.hpp"
 
-#include "dis_effect.h"
-#include "dis_engine.h"
-#include "dis_healthtrigger.h"
-#include "dis_physicshandler.h"
-#include "dis_powergenerator.h"
-#include "dis_powerup.h"
-#include "dis_spawn.h"
-#include "dis_weapon.h"
-#include "dis_world.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_polynomial.h"
+#include "dis_effect.hpp"
+#include "dis_engine.hpp"
+#include "dis_healthtrigger.hpp"
+#include "dis_physicshandler.hpp"
+#include "dis_powergenerator.hpp"
+#include "dis_powerup.hpp"
+#include "dis_spawn.hpp"
+#include "dis_weapon.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_polynomial.hpp"
 
 using namespace Xrb;
 

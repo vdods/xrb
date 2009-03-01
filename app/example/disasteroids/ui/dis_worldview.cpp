@@ -8,18 +8,18 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_worldview.h"
+#include "dis_worldview.hpp"
 
-#include "dis_config.h"
-#include "dis_entity.h"
-#include "dis_playership.h"
-#include "dis_world.h"
-#include "xrb_engine2_entity.h"
-#include "xrb_engine2_objectlayer.h"
-#include "xrb_engine2_worldviewwidget.h"
-#include "xrb_eventqueue.h"
-#include "xrb_input_events.h"
-#include "xrb_input.h"
+#include "dis_config.hpp"
+#include "dis_entity.hpp"
+#include "dis_playership.hpp"
+#include "dis_world.hpp"
+#include "xrb_engine2_entity.hpp"
+#include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_worldviewwidget.hpp"
+#include "xrb_eventqueue.hpp"
+#include "xrb_input_events.hpp"
+#include "xrb_input.hpp"
 
 using namespace Xrb;
 

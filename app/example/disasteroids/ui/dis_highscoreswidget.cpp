@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_highscoreswidget.h"
+#include "dis_highscoreswidget.hpp"
 
-#include "dis_util.h"
-#include "xrb_layout.h"
-#include "xrb_util.h"
+#include "dis_util.hpp"
+#include "xrb_layout.hpp"
+#include "xrb_util.hpp"
 
 using namespace Xrb;
 

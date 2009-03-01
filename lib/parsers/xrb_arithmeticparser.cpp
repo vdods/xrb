@@ -10,9 +10,9 @@
 
 #line 38 "xrb_arithmeticparser.trison"
 
-#include "xrb_arithmeticscanner.h"
+#include "xrb_arithmeticscanner.hpp"
 
-#include "xrb_math.h"
+#include "xrb_math.hpp"
 
 namespace Xrb
 {

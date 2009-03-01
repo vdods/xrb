@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_texture.h"
+#include "xrb_texture.hpp"
 
 #include <string.h>
 

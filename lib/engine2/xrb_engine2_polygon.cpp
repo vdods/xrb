@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_polygon.h"
+#include "xrb_engine2_polygon.hpp"
 
-#include "xrb_gl.h"
+#include "xrb_gl.hpp"
 
 namespace Xrb
 {

@@ -44,13 +44,13 @@ comment.
 
 <strong>Code Diving!</strong>
 
-To start off, the <tt>"xrb.h"</tt> header MUST be included in every source and
+To start off, the <tt>"xrb.hpp"</tt> header MUST be included in every source and
 header file, as it contains definitions necessary for the correct usage and
 operation of the game engine.
 @code */
-#include "xrb.h"
+#include "xrb.hpp"
 
-#include "xrb_screen.h" // For use of the necessary Screen widget class
+#include "xrb_screen.hpp" // For use of the necessary Screen widget class
 
 /* @endcode
 Every declaration in the game engine library is within the <tt>Xrb</tt>

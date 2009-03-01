@@ -8,9 +8,9 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_entity.h"
+#include "xrb_mapeditor2_entity.hpp"
 
-#include "xrb_render.h"
+#include "xrb_render.hpp"
 
 namespace Xrb
 {

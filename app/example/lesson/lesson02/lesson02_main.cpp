@@ -89,17 +89,17 @@ well enough, it was probably already explained in
 
 @code */
 // This header MUST be included in every source/header file.
-#include "xrb.h"
+#include "xrb.hpp"
 
-#include "xrb_button.h"         // For use of the Button widget class
-#include "xrb_event.h"          // For use of the Event classes
-#include "xrb_eventqueue.h"     // For use of the EventQueue class
-#include "xrb_input.h"          // For use of the Input class (via Singletons::)
-#include "xrb_label.h"          // For use of the Label widget class
-#include "xrb_layout.h"         // For use of the Layout widget class
-#include "xrb_lineedit.h"       // For use of the LineEdit widget class
-#include "xrb_screen.h"         // For use of the necessary Screen widget class
-#include "xrb_transformation.h" // For use of Transformation::Lowercase and Uppercase
+#include "xrb_button.hpp"         // For use of the Button widget class
+#include "xrb_event.hpp"          // For use of the Event classes
+#include "xrb_eventqueue.hpp"     // For use of the EventQueue class
+#include "xrb_input.hpp"          // For use of the Input class (via Singletons::)
+#include "xrb_label.hpp"          // For use of the Label widget class
+#include "xrb_layout.hpp"         // For use of the Layout widget class
+#include "xrb_lineedit.hpp"       // For use of the LineEdit widget class
+#include "xrb_screen.hpp"         // For use of the necessary Screen widget class
+#include "xrb_transformation.hpp" // For use of Transformation::Lowercase and Uppercase
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;

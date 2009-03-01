@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_engine2_compound.h"
+#include "xrb_engine2_compound.hpp"
 
-#include "xrb_engine2_polygon.h"
-#include "xrb_gl.h"
-#include "xrb_render.h"
-#include "xrb_rendercontext.h"
+#include "xrb_engine2_polygon.hpp"
+#include "xrb_gl.hpp"
+#include "xrb_render.hpp"
+#include "xrb_rendercontext.hpp"
 
 namespace Xrb
 {

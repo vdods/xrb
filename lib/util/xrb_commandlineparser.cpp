@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_commandlineparser.h"
+#include "xrb_commandlineparser.hpp"
 
 namespace Xrb
 {

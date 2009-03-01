@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_mapeditor2_compoundentity.h"
+#include "xrb_mapeditor2_compoundentity.hpp"
 
 namespace Xrb
 {

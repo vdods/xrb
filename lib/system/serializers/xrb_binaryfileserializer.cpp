@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_binaryfileserializer.h"
+#include "xrb_binaryfileserializer.hpp"
 
 #include <string.h>
 
