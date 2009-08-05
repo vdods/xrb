@@ -30,7 +30,7 @@ Entity::Entity (EntityType const entity_type, CollisionType const collision_type
     ASSERT1(m_collision_type < CT_COUNT);
     m_next_time_to_think = 0.0f;
     m_elasticity = 1.0f;
-    m_first_moment = 1.0f;
+    m_mass = 1.0f;
     m_velocity = FloatVector2::ms_zero;
     m_force = FloatVector2::ms_zero;
     m_angular_velocity = 0.0f;
@@ -84,7 +84,7 @@ FloatVector2 Entity::AmbientVelocity (
             continue;
 
         total_momentum += entity->GetMomentum();
-        total_mass += entity->GetFirstMoment();
+        total_mass += entity->GetMass();
     }
 
     // if no objects were encountered, then the ambient velocity
@@ -114,9 +114,9 @@ void Entity::ApplyInterceptCourseAcceleration (
             target->GetTranslation()));
     FloatVector2 p(target->GetTranslation() - p1);
     FloatVector2 v(target->GetVelocity() - GetVelocity());
-    FloatVector2 a(target->GetForce() / target->GetFirstMoment());
+    FloatVector2 a(target->GetForce() / target->GetMass());
     Float interceptor_acceleration =
-        maximum_thrust_force / GetFirstMoment();
+        maximum_thrust_force / GetMass();
 
     Polynomial poly;
     if (apply_force_on_target_also)
@@ -165,10 +165,10 @@ void Entity::ApplyInterceptCourseAcceleration (
     FloatVector2 force_vector;
     if (apply_force_on_target_also)
         // this one is for when the force is applied between the tractoree and tractoror
-        force_vector = (p + v*T + 0.5f*a*T*T) / (T*T) * GetFirstMoment();
+        force_vector = (p + v*T + 0.5f*a*T*T) / (T*T) * GetMass();
     else
         // this one is for when the force is only on the tractoree and not the tractoror
-        force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * GetFirstMoment();
+        force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * GetMass();
 
     // if we want reverse thrust (push instead of pull), negate the force vector
     if (reverse_thrust)

@@ -31,7 +31,7 @@ Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
 Float const Demi::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
 Float const Demi::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };
-Float const Demi::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18500.0f, 24000.0f };
+Float const Demi::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18500.0f, 24000.0f };
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 4.0f, 8.0f, 12.0f, 16.0f };
 Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const Demi::ms_weapon_fov[ENEMY_LEVEL_COUNT] = { 60.0f, 60.0f, 60.0f, 60.0f };
@@ -504,8 +504,8 @@ bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const fr
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
-                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetMass()*powerup->GetTranslation() + powerup->GetMass()*GetTranslation()) /
+                (GetMass() + powerup->GetMass()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
             0.0f,
             time,
@@ -1430,8 +1430,8 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
         if (max_thrust < 0.0f)
@@ -1492,7 +1492,7 @@ Entity *Demi::FindTractorDeflectTarget (
             }
             else if (entity->GetEntityType() == ET_ASTEROID)
             {
-                Float target_weight = Min(entity->GetFirstMoment(), 2000.0f) - 1000.0f;
+                Float target_weight = Min(entity->GetMass(), 2000.0f) - 1000.0f;
                 target_weight *= target_weight;
                 target_weight /= -1000000.0f;
                 target_weight += 1.0;

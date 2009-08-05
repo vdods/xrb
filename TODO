@@ -141,7 +141,6 @@ TODO:
 - lesson07 - collision detection and resolution via PhysicsHandler
 - lesson08 - user input or further subclassing of Entity
 - bring livid stuff over and use its stuff (e.g. Sequence instead of dumb enums)
-- rename first moment to mass and second moment to angular mass or rotational mass
 - somehow properly return both drawn opaque and transparent object counts from
   Engine2::ObjectLayer::Draw and make UI labels for them in the debug view.
 - have SetPathElement... check for whitespace in the path

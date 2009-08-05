@@ -58,13 +58,13 @@ Float const Asteroid::ms_decay_time = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
 
 Asteroid::Asteroid (
-    Float const first_moment,
+    Float const mass,
     Float const mineral_content,
     bool const is_a_secondary_asteroid)
     :
     Mortal(
-        ms_health_factor * first_moment,
-        ms_health_factor * first_moment,
+        ms_health_factor * mass,
+        ms_health_factor * mass,
         ET_ASTEROID,
         CT_SOLID_COLLISION)
 {
@@ -157,18 +157,18 @@ void Asteroid::Die (
 
     // if it's big enough, spawn some smaller asteroids, to simulate
     // this asteroid breaking up
-    if (GetFirstMoment() > ms_minimum_breakup_mass)
+    if (GetMass() > ms_minimum_breakup_mass)
     {
-        converted_mass = GetProportionToConvertToMinerals() * GetFirstMoment();
-        Float first_moment =
-            GetFirstMoment() / static_cast<Float>(ms_number_of_fragments_to_spawn);
+        converted_mass = GetProportionToConvertToMinerals() * GetMass();
+        Float mass =
+            GetMass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
         FloatVector2 source_velocity = GetVelocity();
         Float seed_angle = Math::Atan(kill_location - GetTranslation());
 
         // let the world more asteroids are being created.  the added asteroid
         // mass is exactly equal to the destroyed asteroid's mass.
         DStaticCast<World *>(GetWorld())->
-            RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, GetFirstMoment());
+            RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, GetMass());
 
         for (Uint8 i = 0; i < ms_number_of_fragments_to_spawn; ++i)
         {
@@ -177,13 +177,13 @@ void Asteroid::Die (
             ASSERT1(CurrentHealth() <= 0.0f);
             ASSERT1(GetMaxHealth() > 0.0f);
             Float health_ratio = CurrentHealth() / GetMaxHealth();
-            Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / GetFirstMoment();
+            Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / GetMass();
             if (explosion_speed > 5.0f)
                 explosion_speed = 5.0f;
             FloatVector2 velocity =
                 source_velocity +
                 explosion_speed * Math::UnitVector(velocity_angle);
-            Float scale_factor = Math::Sqrt(first_moment);
+            Float scale_factor = Math::Sqrt(mass);
             FloatVector2 translation(
                 GetTranslation() +
                 1.7f * scale_factor * Math::UnitVector(velocity_angle));
@@ -201,12 +201,12 @@ void Asteroid::Die (
                     GetObjectLayer(),
                     translation,
                     scale_factor,
-                    first_moment,
+                    mass,
                     velocity,
                     mineral_content,
                     true);
             // this makes the explosion way awesomer
-            if (i == 0 && first_moment > ms_minimum_breakup_mass)
+            if (i == 0 && mass > ms_minimum_breakup_mass)
                 new_asteroid->Kill(
                     NULL, // no killer
                     NULL, // no kill medium
@@ -219,7 +219,7 @@ void Asteroid::Die (
         }
     }
     else
-        converted_mass = GetFirstMoment();
+        converted_mass = GetMass();
 
     // of the destroyed mass, spawn minerals according to the mineral content
     // and mineral weights of this asteroid.
@@ -281,10 +281,10 @@ Float Asteroid::GetProportionToConvertToMinerals () const
     static Float const s_offset = (s_M * s_n - s_N * s_m) / (s_n - s_m);
 
     Float proportion_to_convert;
-    if (GetFirstMoment() > s_n)
+    if (GetMass() > s_n)
         proportion_to_convert = s_N;
     else
-        proportion_to_convert = s_slope * GetFirstMoment() + s_offset;
+        proportion_to_convert = s_slope * GetMass() + s_offset;
 
     return proportion_to_convert * proportion_to_convert;
 }

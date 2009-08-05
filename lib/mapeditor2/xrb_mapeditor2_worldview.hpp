@@ -85,9 +85,9 @@ namespace MapEditor2
         }
     
         bool AreNoEntitiesSelected () const;
-        inline Float GetObjectSelectionSetFirstMoment () const
+        inline Float GetObjectSelectionSetMass () const
         {
-            return m_object_selection_set_first_moment;
+            return m_object_selection_set_mass;
         }
     
         void SetTransformationMode (
@@ -115,7 +115,7 @@ namespace MapEditor2
     
         inline SignalSender1<bool> const *SenderNoEntitiesAreSelected () { return &m_sender_no_entities_are_selected; }
         inline SignalSender1<Uint32> const *SenderSelectedEntityCountChanged () { return &m_sender_selected_entity_count_changed; }
-        inline SignalSender1<Float> const *SenderObjectSelectionSetFirstMomentChanged () { return &m_sender_object_selection_set_first_moment_changed; }
+        inline SignalSender1<Float> const *SenderObjectSelectionSetMassChanged () { return &m_sender_object_selection_set_mass_changed; }
         inline SignalSender1<FloatVector2 const &> const *SenderObjectSelectionSetVelocityChanged () { return &m_sender_object_selection_set_velocity_changed; }
         inline SignalSender1<Float> const *SenderObjectSelectionSetSecondMomentChanged () { return &m_sender_object_selection_set_second_moment_changed; }
         inline SignalSender1<Float> const *SenderObjectSelectionSetAngularVelocityChanged () { return &m_sender_object_selection_set_angular_velocity_changed; }
@@ -142,7 +142,7 @@ namespace MapEditor2
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetScale () { return &m_receiver_set_object_selection_set_scale; }
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetAngle () { return &m_receiver_set_object_selection_set_angle; }
     
-        inline SignalReceiver1<Float> const *ReceiverSetPerEntityFirstMoment () { return &m_receiver_set_per_entity_first_moment; }
+        inline SignalReceiver1<Float> const *ReceiverSetPerEntityMass () { return &m_receiver_set_per_entity_mass; }
         inline SignalReceiver1<Float> const *ReceiverSetPerEntityVelocityX () { return &m_receiver_set_per_entity_velocity_x; }
         inline SignalReceiver1<Float> const *ReceiverSetPerEntityVelocityY () { return &m_receiver_set_per_entity_velocity_y; }
         inline SignalReceiver1<Float> const *ReceiverSetPerEntitySpeed () { return &m_receiver_set_per_entity_speed; }
@@ -154,7 +154,7 @@ namespace MapEditor2
         inline SignalReceiver1<bool> const *ReceiverSetPerEntityAppliesGravity () { return &m_receiver_set_per_entity_applies_gravity; }
         inline SignalReceiver1<bool> const *ReceiverSetPerEntityReactsToGravity () { return &m_receiver_set_per_entity_reacts_to_gravity; }
     
-        inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetFirstMoment () { return &m_receiver_set_object_selection_set_first_moment; }
+        inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetMass () { return &m_receiver_set_object_selection_set_mass; }
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetVelocityX () { return &m_receiver_set_object_selection_set_velocity_x; }
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetVelocityY () { return &m_receiver_set_object_selection_set_velocity_y; }
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetSpeed () { return &m_receiver_set_object_selection_set_speed; }
@@ -180,7 +180,7 @@ namespace MapEditor2
         void SetObjectSelectionSetScale (Float scale);
         void SetObjectSelectionSetAngle (Float angle);
     
-        void SetPerEntityFirstMoment (Float first_moment);
+        void SetPerEntityMass (Float mass);
         void SetPerEntityVelocityX (Float velocity_x);
         void SetPerEntityVelocityY (Float velocity_y);
         void SetPerEntitySpeed (Float speed);
@@ -192,7 +192,7 @@ namespace MapEditor2
         void SetPerEntityAppliesGravity (bool applies_gravity);
         void SetPerEntityReactsToGravity (bool reacts_to_gravity);
     
-        void SetObjectSelectionSetFirstMoment (Float first_moment);
+        void SetObjectSelectionSetMass (Float mass);
         void SetObjectSelectionSetVelocityX (Float velocity_x);
         void SetObjectSelectionSetVelocityY (Float velocity_y);
         void SetObjectSelectionSetSpeed (Float speed);
@@ -236,7 +236,7 @@ namespace MapEditor2
         void UpdateObjectSelectionSetAngle (Float object_selection_set_angle);
     
         void SetSelectedEntityCount (Uint32 selected_entity_count);
-        void UpdateObjectSelectionSetFirstMoment (Float object_selection_set_first_moment);
+        void UpdateObjectSelectionSetMass (Float object_selection_set_mass);
         void UpdateObjectSelectionSetVelocity (FloatVector2 const &object_selection_set_velocity);
         void UpdateObjectSelectionSetSecondMoment (Float object_selection_set_second_moment);
         void UpdateObjectSelectionSetAngularVelocity (Float object_selection_set_angular_velocity);
@@ -394,7 +394,7 @@ namespace MapEditor2
         Uint32 m_selected_entity_count;
         // the object selection set first moment (total mass of the entities in
         // the object selection set)
-        Float m_object_selection_set_first_moment;
+        Float m_object_selection_set_mass;
         // the object selection set first moment (velocity of the single selected entity)
         FloatVector2 m_object_selection_set_velocity;
         // the object selection set second moment (second moment of the single
@@ -472,7 +472,7 @@ namespace MapEditor2
     
         SignalSender1<bool> m_sender_no_entities_are_selected;
         SignalSender1<Uint32> m_sender_selected_entity_count_changed;
-        SignalSender1<Float> m_sender_object_selection_set_first_moment_changed;
+        SignalSender1<Float> m_sender_object_selection_set_mass_changed;
         SignalSender1<FloatVector2 const &> m_sender_object_selection_set_velocity_changed;
         SignalSender1<Float> m_sender_object_selection_set_second_moment_changed;
         SignalSender1<Float> m_sender_object_selection_set_angular_velocity_changed;
@@ -499,7 +499,7 @@ namespace MapEditor2
         SignalReceiver1<Float> m_receiver_set_object_selection_set_scale;
         SignalReceiver1<Float> m_receiver_set_object_selection_set_angle;
     
-        SignalReceiver1<Float> m_receiver_set_per_entity_first_moment;
+        SignalReceiver1<Float> m_receiver_set_per_entity_mass;
         SignalReceiver1<Float> m_receiver_set_per_entity_velocity_x;
         SignalReceiver1<Float> m_receiver_set_per_entity_velocity_y;
         SignalReceiver1<Float> m_receiver_set_per_entity_speed;
@@ -511,7 +511,7 @@ namespace MapEditor2
         SignalReceiver1<bool> m_receiver_set_per_entity_applies_gravity;
         SignalReceiver1<bool> m_receiver_set_per_entity_reacts_to_gravity;
     
-        SignalReceiver1<Float> m_receiver_set_object_selection_set_first_moment;
+        SignalReceiver1<Float> m_receiver_set_object_selection_set_mass;
         SignalReceiver1<Float> m_receiver_set_object_selection_set_velocity_x;
         SignalReceiver1<Float> m_receiver_set_object_selection_set_velocity_y;
         SignalReceiver1<Float> m_receiver_set_object_selection_set_speed;
@@ -528,7 +528,7 @@ namespace MapEditor2
         SignalReceiver1<FloatVector2 const &> m_internal_receiver_update_object_selection_set_origin;
     
         SignalReceiver1<Uint32> m_internal_receiver_set_selected_entity_count;
-        SignalReceiver1<Float> m_internal_receiver_update_object_selection_set_first_moment;
+        SignalReceiver1<Float> m_internal_receiver_update_object_selection_set_mass;
         SignalReceiver1<FloatVector2 const &> m_internal_receiver_update_object_selection_set_velocity;
         SignalReceiver1<Float> m_internal_receiver_update_object_selection_set_second_moment;
         SignalReceiver1<Float> m_internal_receiver_update_object_selection_set_angular_velocity;

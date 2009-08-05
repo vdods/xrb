@@ -135,16 +135,16 @@ void Grenade::Collide (
         // we'll merge the smaller grenade into the larger one, or if they're the same
         // size, we'll use the lower pointer value grenade.
         ASSERT1(this != other_grenade); // a grenade should never collide with itself
-        if (GetFirstMoment() < other_grenade->GetFirstMoment()
+        if (GetMass() < other_grenade->GetMass()
             ||
-            (GetFirstMoment() == other_grenade->GetFirstMoment() &&
+            (GetMass() == other_grenade->GetMass() &&
              this > other_grenade))
         {
             return;
         }
 
         // figure out the new damage radius, explosion radius and damage to inflict.
-        Float scale_factor = Math::Sqrt(1.0f + other_grenade->GetFirstMoment() / GetFirstMoment());
+        Float scale_factor = Math::Sqrt(1.0f + other_grenade->GetMass() / GetMass());
         GetOwnerObject()->Scale(scale_factor);
         m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
         m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
@@ -158,7 +158,7 @@ void Grenade::Collide (
 
         // figure out the new mass, velocity, and radius.
         FloatVector2 new_momentum = GetMomentum() + other_grenade->GetMomentum();
-        SetFirstMoment(GetFirstMoment() + other_grenade->GetFirstMoment());
+        SetMass(GetMass() + other_grenade->GetMass());
         SetMomentum(new_momentum); // have to set this after setting the first moment
 
         // let the other grenade's owner's grenade launcher know that it's going bye-bye
@@ -241,7 +241,7 @@ void Grenade::Detonate (
     // than just the sum of their source grenades.  thus we multiply
     // the amount of damage to inflict by a factor which depends on the
     // ratio of mass to default mass.
-    Float damage_factor = Math::Pow(ms_merge_power_boost, GetFirstMoment() / ms_default_mass);
+    Float damage_factor = Math::Pow(ms_merge_power_boost, GetMass() / ms_default_mass);
 
     // spawn a damage explosion
     SpawnDamageExplosion(
@@ -279,7 +279,7 @@ void Missile::Think (
     if (IsDead() || GetHasDetonated())
         return;
 
-    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(Angle()));
+    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetMass() * Math::UnitVector(Angle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
@@ -468,7 +468,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->GetForce() / m_target->GetFirstMoment());
+    FloatVector2 a(m_target->GetForce() / m_target->GetMass());
 
     Polynomial poly;
     poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);

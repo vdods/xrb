@@ -29,7 +29,7 @@ Float const Revulsion::ms_max_health[ENEMY_LEVEL_COUNT] = { 15.0f, 60.0f, 240.0f
 Float const Revulsion::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 14000.0f, 32000.0f, 72000.0f };
 Float const Revulsion::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 360.0f, 360.0f, 360.0f, 360.0f };
 Float const Revulsion::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
-Float const Revulsion::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
+Float const Revulsion::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Revulsion::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Revulsion::ms_weapon_impact_damage[ENEMY_LEVEL_COUNT] = { 8.0f, 16.0f, 28.0f, 50.0f };
 Float const Revulsion::ms_target_aim_angle_flee_limit[ENEMY_LEVEL_COUNT] = { 60.0f, 50.0f, 40.0f, 30.0f };
@@ -278,10 +278,10 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     // otherwise, plot an intercept course with the preferred location
 
     Float interceptor_acceleration =
-        ms_engine_thrust[EnemyLevel()] / GetFirstMoment();
+        ms_engine_thrust[EnemyLevel()] / GetMass();
     FloatVector2 p(preferred_location - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->GetForce() / m_target->GetFirstMoment());
+    FloatVector2 a(m_target->GetForce() / m_target->GetMass());
 
     Polynomial poly;
     poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
@@ -450,8 +450,8 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (thrust_vector.GetLengthSquared() > 0.001f)
     {
         Float thrust_force = thrust_vector.GetLength();

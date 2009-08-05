@@ -331,7 +331,7 @@ void Mortal::Collide (
         Damage(
             collider,
             collider,
-            s_collision_damage_coefficient * collision_force / GetFirstMoment(),
+            s_collision_damage_coefficient * collision_force / GetMass(),
             NULL,
             collision_location,
             collision_normal,

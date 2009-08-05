@@ -447,18 +447,18 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
             m_entity_properties_panel->ReceiverSetSelectedEntityCount());
 
         // entity properties panel value - init
-        m_entity_properties_panel->SetObjectSelectionSetFirstMoment(
-            GetMapEditorWorldView()->GetObjectSelectionSetFirstMoment());
+        m_entity_properties_panel->SetObjectSelectionSetMass(
+            GetMapEditorWorldView()->GetObjectSelectionSetMass());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetFirstMomentChanged(),
-            m_entity_properties_panel->ReceiverSetObjectSelectionSetFirstMoment());
+            GetMapEditorWorldView()->SenderObjectSelectionSetMassChanged(),
+            m_entity_properties_panel->ReceiverSetObjectSelectionSetMass());
         SignalHandler::Connect1(
-            m_entity_properties_panel->SenderObjectSelectionSetFirstMomentChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetFirstMoment());
+            m_entity_properties_panel->SenderObjectSelectionSetMassChanged(),
+            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetMass());
         SignalHandler::Connect1(
-            m_entity_properties_panel->SenderPerEntityFirstMomentAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityFirstMoment());
+            m_entity_properties_panel->SenderPerEntityMassAssigned(),
+            GetMapEditorWorldView()->ReceiverSetPerEntityMass());
 
         SignalHandler::Connect1(
             GetMapEditorWorldView()->SenderObjectSelectionSetVelocityChanged(),

@@ -29,7 +29,7 @@ public:
         MAX_MINERAL_LEVEL = 3
     };
 
-    Asteroid (Float first_moment, Float mineral_content, bool is_a_secondary_asteroid);
+    Asteroid (Float mass, Float mineral_content, bool is_a_secondary_asteroid);
     virtual ~Asteroid () { }
 
     virtual void Think (Float time, Float frame_dt);

@@ -596,7 +596,7 @@ void CollisionQuadTree::CollideEntity (
             other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
             Entity::GetShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
         {
-            Float M = 1.0f / entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
+            Float M = 1.0f / entity->GetMass() + 1.0f / other_entity->GetMass();
             FloatVector2 Q(P + adjusted_dt*V);
             FloatVector2 A(dt_squared*M*collision_normal);
 
@@ -694,7 +694,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
         other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
         Entity::GetShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule
     {
-        Float M = 1.0f / m_entity->GetFirstMoment() + 1.0f / other_entity->GetFirstMoment();
+        Float M = 1.0f / m_entity->GetMass() + 1.0f / other_entity->GetMass();
         FloatVector2 Q(P + m_frame_dt*V);
         FloatVector2 A(m_frame_dt_squared*M*collision_normal);
 

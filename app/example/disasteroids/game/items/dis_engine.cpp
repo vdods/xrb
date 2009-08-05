@@ -85,8 +85,8 @@ bool Engine::Activate (
         FloatVector2 velocity_differential =
             ambient_velocity -
             (GetOwnerShip()->GetVelocity() +
-            frame_dt / GetOwnerShip()->GetFirstMoment() * GetOwnerShip()->GetForce());
-        FloatVector2 thrust_vector = GetOwnerShip()->GetFirstMoment() * velocity_differential / frame_dt;
+            frame_dt / GetOwnerShip()->GetMass() * GetOwnerShip()->GetForce());
+        FloatVector2 thrust_vector = GetOwnerShip()->GetMass() * velocity_differential / frame_dt;
         // if the thrust isn't zero, cap it to the max thrust, and accumulate
         if (!thrust_vector.IsZero())
         {

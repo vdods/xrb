@@ -28,7 +28,7 @@ Float const Shade::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 80.0f, 320.0f, 12
 Float const Shade::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
 Float const Shade::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 720.0f, 720.0f, 720.0f, 720.0f };
 Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15.0f };
-Float const Shade::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
+Float const Shade::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Shade::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Shade::ms_alarm_distance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 125.0f };
 Float const Shade::ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT] = { 100.0f, 150.0f, 175.0f, 200.0f };
@@ -278,7 +278,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
         FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
-        FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetFirstMoment());
+        FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetMass());
         if (thrust_vector.GetLength() > ms_engine_thrust[EnemyLevel()])
         {
             thrust_vector.Normalize();
@@ -298,7 +298,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
         FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
-        FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetFirstMoment());
+        FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetMass());
         if (thrust_vector.GetLength() > ms_engine_thrust[EnemyLevel()])
         {
             thrust_vector.Normalize();
@@ -364,8 +364,8 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
@@ -400,7 +400,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         if (EnemyLevel() == 1)
             a = FloatVector2::ms_zero;
         else
-            a = m_target->GetForce() / m_target->GetFirstMoment();
+            a = m_target->GetForce() / m_target->GetMass();
 
         Polynomial poly;
         poly.Set(4, 0.25f * (a | a));

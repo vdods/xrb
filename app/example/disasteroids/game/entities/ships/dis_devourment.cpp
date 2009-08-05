@@ -34,7 +34,7 @@ Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
 Float const Devourment::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
 Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
-Float const Devourment::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 1600.0f, 2000.0f, 2400.0f, 2800.0f };
+Float const Devourment::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 1600.0f, 2000.0f, 2400.0f, 2800.0f };
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Devourment::ms_mouth_damage_rate[ENEMY_LEVEL_COUNT] = { 10.0f, 25.0f, 50.0f, 80.0f };
 Float const Devourment::ms_mouth_tractor_range[ENEMY_LEVEL_COUNT] = { 100.0f, 133.0f, 166.0f, 200.0f };
@@ -336,8 +336,8 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
-                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetMass()*powerup->GetTranslation() + powerup->GetMass()*GetTranslation()) /
+                (GetMass() + powerup->GetMass()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
             0.0f,
             time,
@@ -436,10 +436,10 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     // TODO: expensive polynomial solving shouldn't happen every single frame
 
     Float interceptor_acceleration =
-        ms_engine_thrust[EnemyLevel()] / GetFirstMoment();
+        ms_engine_thrust[EnemyLevel()] / GetMass();
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->GetForce() / m_target->GetFirstMoment());
+    FloatVector2 a(m_target->GetForce() / m_target->GetMass());
 
     Polynomial poly;
     poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
@@ -476,7 +476,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         // accelerate towards the target
         FloatVector2 calculated_acceleration((2.0f*p + 2.0f*v*T + a*T*T) / (T*T));
-        AccumulateForce(calculated_acceleration * GetFirstMoment());
+        AccumulateForce(calculated_acceleration * GetMass());
     }
 }
 
@@ -522,8 +522,8 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
@@ -582,8 +582,8 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
                 ||
                 !target->IsPowerup()
                 ||
-                (entity->GetFirstMoment() > s_powerup_mass_threshold &&
-                 entity->GetFirstMoment() > target->GetFirstMoment()))
+                (entity->GetMass() > s_powerup_mass_threshold &&
+                 entity->GetMass() > target->GetMass()))
             {
                 target = entity->GetReference();
             }
@@ -598,8 +598,8 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
             // are multiple potential targets of the exact same mass, we don't
             // switch between them really fast between frames.
             if (!target.IsValid() ||
-                Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
-                Abs(target->GetFirstMoment() - s_optimal_target_mass) - 0.01f)
+                Abs(entity->GetMass() - s_optimal_target_mass) <
+                Abs(target->GetMass() - s_optimal_target_mass) - 0.01f)
             {
                 target = entity->GetReference();
             }

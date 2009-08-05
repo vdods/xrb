@@ -27,7 +27,7 @@ Float const Interloper::ms_max_health[ENEMY_LEVEL_COUNT] = { 10.0f, 40.0f, 160.0
 Float const Interloper::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 7300.0f, 18000.0f, 40000.0f, 88000.0f };
 Float const Interloper::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 360.0f, 360.0f, 360.0f, 360.0f };
 Float const Interloper::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 10.0f, 12.0f, 15.0f, 18.0f };
-Float const Interloper::ms_baseline_first_moment[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
+Float const Interloper::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 40.0f, 80.0f, 160.0f, 320.0f };
 Float const Interloper::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Interloper::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 150.0f, 150.0f, 150.0f, 150.0f };
 
@@ -323,8 +323,8 @@ void Interloper::Flock (Float time, Float frame_dt)
                 closest_flock_member_distance = interloper_distance;
             }
 
-            flock_center_of_gravity += interloper->GetFirstMoment() * interloper_position;
-            flock_mass += interloper->GetFirstMoment();
+            flock_center_of_gravity += interloper->GetMass() * interloper_position;
+            flock_mass += interloper->GetMass();
             ++flock_member_count;
         }
         // TODO: decide if there should be collision avoidance
@@ -390,7 +390,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     else
     {
         Float interceptor_acceleration =
-            ms_engine_thrust[EnemyLevel()] / GetFirstMoment();
+            ms_engine_thrust[EnemyLevel()] / GetMass();
         FloatVector2 p(target_position - GetTranslation());
         FloatVector2 v;
         FloatVector2 a;
@@ -407,7 +407,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         else
         {
             v = m_target->GetVelocity() - GetVelocity();
-            a = m_target->GetForce() / m_target->GetFirstMoment();
+            a = m_target->GetForce() / m_target->GetMass();
         }
 
         Polynomial poly;
@@ -479,8 +479,8 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
-    FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (thrust_vector.GetLength() > 0.01f)
     {
         Float thrust_force = thrust_vector.GetLength();

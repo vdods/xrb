@@ -27,9 +27,9 @@ void Powerup::SetEffectiveCoefficient (Float const effective_coefficient)
 void Powerup::SetEffectiveValue (Float const effective_value)
 {
     ASSERT1(GetOwnerObject() != NULL && "may only use this method on an Entity with an owner Object");
-    ASSERT1(GetFirstMoment() > 0.0f);
+    ASSERT1(GetMass() > 0.0f);
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(effective_value));
-    m_effective_coefficient = effective_value / GetFirstMoment();
+    m_effective_coefficient = effective_value / GetMass();
 }
 
 void Powerup::Think (Float const time, Float const frame_dt)

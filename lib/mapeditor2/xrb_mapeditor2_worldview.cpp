@@ -48,7 +48,7 @@ MapEditor2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_view_wi
     m_sender_object_selection_set_angle_changed(this),
     m_sender_no_entities_are_selected(this),
     m_sender_selected_entity_count_changed(this),
-    m_sender_object_selection_set_first_moment_changed(this),
+    m_sender_object_selection_set_mass_changed(this),
     m_sender_object_selection_set_velocity_changed(this),
     m_sender_object_selection_set_second_moment_changed(this),
     m_sender_object_selection_set_angular_velocity_changed(this),
@@ -80,8 +80,8 @@ MapEditor2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_view_wi
         &MapEditor2::WorldView::SetObjectSelectionSetScale, this),
     m_receiver_set_object_selection_set_angle(
         &MapEditor2::WorldView::SetObjectSelectionSetAngle, this),
-    m_receiver_set_per_entity_first_moment(
-        &MapEditor2::WorldView::SetPerEntityFirstMoment, this),
+    m_receiver_set_per_entity_mass(
+        &MapEditor2::WorldView::SetPerEntityMass, this),
     m_receiver_set_per_entity_velocity_x(
         &MapEditor2::WorldView::SetPerEntityVelocityX, this),
     m_receiver_set_per_entity_velocity_y(
@@ -102,8 +102,8 @@ MapEditor2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_view_wi
         &MapEditor2::WorldView::SetPerEntityAppliesGravity, this),
     m_receiver_set_per_entity_reacts_to_gravity(
         &MapEditor2::WorldView::SetPerEntityReactsToGravity, this),
-    m_receiver_set_object_selection_set_first_moment(
-        &MapEditor2::WorldView::SetObjectSelectionSetFirstMoment, this),
+    m_receiver_set_object_selection_set_mass(
+        &MapEditor2::WorldView::SetObjectSelectionSetMass, this),
     m_receiver_set_object_selection_set_velocity_x(
         &MapEditor2::WorldView::SetObjectSelectionSetVelocityX, this),
     m_receiver_set_object_selection_set_velocity_y(
@@ -130,8 +130,8 @@ MapEditor2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_view_wi
         &MapEditor2::WorldView::UpdateObjectSelectionSetOrigin, this),
     m_internal_receiver_set_selected_entity_count(
         &MapEditor2::WorldView::SetSelectedEntityCount, this),
-    m_internal_receiver_update_object_selection_set_first_moment(
-        &MapEditor2::WorldView::UpdateObjectSelectionSetFirstMoment, this),
+    m_internal_receiver_update_object_selection_set_mass(
+        &MapEditor2::WorldView::UpdateObjectSelectionSetMass, this),
     m_internal_receiver_update_object_selection_set_velocity(
         &MapEditor2::WorldView::UpdateObjectSelectionSetVelocity, this),
     m_internal_receiver_update_object_selection_set_second_moment(
@@ -528,11 +528,11 @@ void MapEditor2::WorldView::SetObjectSelectionSetAngle (Float const angle)
     UpdateObjectSelectionSetAngle(angle);
 }
 
-void MapEditor2::WorldView::SetPerEntityFirstMoment (Float const first_moment)
+void MapEditor2::WorldView::SetPerEntityMass (Float const mass)
 {
-    fprintf(stderr, "MapEditor2::WorldView::SetPerEntityFirstMoment(%g);\n", first_moment);
+    fprintf(stderr, "MapEditor2::WorldView::SetPerEntityMass(%g);\n", mass);
     GetMainMapEditorObjectLayer()->
-        ObjectSelectionSetAssignPerEntityFirstMoment(first_moment);
+        ObjectSelectionSetAssignPerEntityMass(mass);
 }
 
 void MapEditor2::WorldView::SetPerEntityVelocityX (Float const velocity_x)
@@ -605,15 +605,15 @@ void MapEditor2::WorldView::SetPerEntityReactsToGravity (bool const reacts_to_gr
         ObjectSelectionSetAssignPerEntityReactsToGravity(reacts_to_gravity);
 }
 
-void MapEditor2::WorldView::SetObjectSelectionSetFirstMoment (Float const first_moment)
+void MapEditor2::WorldView::SetObjectSelectionSetMass (Float const mass)
 {
-    ASSERT1(first_moment > 0.0f);
-    ASSERT1(m_object_selection_set_first_moment > 0.0f);
-    Float first_moment_scale_factor =
-        first_moment / m_object_selection_set_first_moment;
-    fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetFirstMoment(%g); first_moment_scale_factor = %g\n", first_moment, first_moment_scale_factor);
+    ASSERT1(mass > 0.0f);
+    ASSERT1(m_object_selection_set_mass > 0.0f);
+    Float mass_scale_factor =
+        mass / m_object_selection_set_mass;
+    fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetMass(%g); mass_scale_factor = %g\n", mass, mass_scale_factor);
     GetMainMapEditorObjectLayer()->
-        ObjectSelectionSetScaleFirstMoment(first_moment_scale_factor);
+        ObjectSelectionSetScaleMass(mass_scale_factor);
 }
 
 void MapEditor2::WorldView::SetObjectSelectionSetVelocityX (Float const velocity_x)
@@ -1839,14 +1839,14 @@ void MapEditor2::WorldView::SetSelectedEntityCount (
     }
 }
 
-void MapEditor2::WorldView::UpdateObjectSelectionSetFirstMoment (
-    Float const object_selection_set_first_moment)
+void MapEditor2::WorldView::UpdateObjectSelectionSetMass (
+    Float const object_selection_set_mass)
 {
-    if (m_object_selection_set_first_moment != object_selection_set_first_moment)
+    if (m_object_selection_set_mass != object_selection_set_mass)
     {
-        m_object_selection_set_first_moment = object_selection_set_first_moment;
-        m_sender_object_selection_set_first_moment_changed.Signal(
-            m_object_selection_set_first_moment);
+        m_object_selection_set_mass = object_selection_set_mass;
+        m_sender_object_selection_set_mass_changed.Signal(
+            m_object_selection_set_mass);
     }
 }
 
@@ -1940,8 +1940,8 @@ void MapEditor2::WorldView::UpdateMainObjectLayerConnections ()
         GetMainMapEditorObjectLayer()->SenderSelectedEntityCountChanged(),
         &m_internal_receiver_set_selected_entity_count);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetFirstMomentChanged(),
-        &m_internal_receiver_update_object_selection_set_first_moment);
+        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetMassChanged(),
+        &m_internal_receiver_update_object_selection_set_mass);
     SignalHandler::Connect1(
         GetMainMapEditorObjectLayer()->SenderObjectSelectionSetVelocityChanged(),
         &m_internal_receiver_update_object_selection_set_velocity);
@@ -1970,8 +1970,8 @@ void MapEditor2::WorldView::UpdateMainObjectLayerConnections ()
 
     SetSelectedEntityCount(
         GetMainMapEditorObjectLayer()->GetSelectedEntityCount());
-    UpdateObjectSelectionSetFirstMoment(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetFirstMoment());
+    UpdateObjectSelectionSetMass(
+        GetMainMapEditorObjectLayer()->GetObjectSelectionSetMass());
     UpdateObjectSelectionSetVelocity(
         GetMainMapEditorObjectLayer()->GetObjectSelectionSetVelocity());
     UpdateObjectSelectionSetSecondMoment(

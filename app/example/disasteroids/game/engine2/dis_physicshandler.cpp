@@ -275,10 +275,10 @@ void PhysicsHandler::UpdateVelocities ()
         {
             ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]));
             ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]));
-            ASSERT1(entity->GetFirstMoment() > 0.0f);
+            ASSERT1(entity->GetMass() > 0.0f);
             entity->AccumulateVelocity(
                 GetFrameDT() * entity->GetForce() /
-                entity->GetFirstMoment());
+                entity->GetMass());
             entity->ResetForce();
         }
 

@@ -55,10 +55,10 @@ public:
     }
     inline CollisionType GetCollisionType () const { return m_collision_type; }
     inline Float Elasticity () const { return m_elasticity; }
-    inline Float GetFirstMoment () const { return m_first_moment; }
+    inline Float GetMass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline Float GetSpeed () const { return m_velocity.GetLength(); }
-    inline FloatVector2 GetMomentum () const { return m_first_moment * m_velocity; }
+    inline FloatVector2 GetMomentum () const { return m_mass * m_velocity; }
     inline FloatVector2 const &GetForce () const { return m_force; }
     inline Float AngularVelocity () const { return m_angular_velocity; }
 
@@ -102,11 +102,11 @@ public:
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity));
         m_elasticity = (elasticity >= 0.0f) ? elasticity : 0.0f;
     }
-    inline void SetFirstMoment (Float const first_moment)
+    inline void SetMass (Float const mass)
     {
-        ASSERT1(first_moment > 0.0f);
-        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(first_moment));
-        m_first_moment = first_moment;
+        ASSERT1(mass > 0.0f);
+        ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass));
+        m_mass = mass;
     }
     inline void SetVelocity (FloatVector2 const &velocity)
     {
@@ -124,7 +124,7 @@ public:
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::Y]));
-        m_velocity = momentum / m_first_moment;
+        m_velocity = momentum / m_mass;
     }
     inline void SetForce (FloatVector2 const &force)
     {
@@ -154,7 +154,7 @@ public:
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::Y]));
-        m_velocity += momentum_impulse / m_first_moment;
+        m_velocity += momentum_impulse / m_mass;
     }
     // adds the given vector to the accumulating force vector for this frame
     inline void AccumulateForce (FloatVector2 const &force)
@@ -260,7 +260,7 @@ private:
     // elasticity factor (nominally between 0.0 and 1.0)
     Float m_elasticity;
     // entity's first moment of inertia (mass)
-    Float m_first_moment;
+    Float m_mass;
     // velocity of the entity
     FloatVector2 m_velocity;
     // temporary storage of force applied to the entity for usage in calculations

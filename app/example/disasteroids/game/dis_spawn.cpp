@@ -59,7 +59,7 @@ Engine2::Sprite *SpawnDynamicSprite (
     FloatVector2 const &translation,
     Float const scale_factor,
     Float const angle,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     Float const angular_velocity,
     Float const elasticity)
@@ -69,11 +69,11 @@ Engine2::Sprite *SpawnDynamicSprite (
     ASSERT1(!sprite_texture_filename.empty());
     ASSERT1(entity != NULL);
     ASSERT1(scale_factor >= 0.0f);
-    ASSERT1(first_moment > 0.0f);
+    ASSERT1(mass > 0.0f);
     ASSERT1(elasticity >= 0.0f);
 
     entity->SetElasticity(elasticity);
-    entity->SetFirstMoment(first_moment);
+    entity->SetMass(mass);
     entity->SetVelocity(velocity);
     entity->SetAngularVelocity(angular_velocity);
 
@@ -95,14 +95,14 @@ Asteroid *SpawnAsteroid (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     Float const mineral_content,
     bool const is_a_secondary_asteroid)
 {
     Asteroid *asteroid =
         new Asteroid(
-            first_moment,
+            mass,
             mineral_content,
             is_a_secondary_asteroid);
     SpawnDynamicSprite(
@@ -115,7 +115,7 @@ Asteroid *SpawnAsteroid (
         translation,
         scale_factor,
         Math::RandomAngle(),
-        first_moment,
+        mass,
         velocity,
         Math::RandomFloat(-90.0f, 90.0f),
         0.2f);
@@ -127,7 +127,7 @@ Ballistic *SpawnSmartBallistic (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     Float const impact_damage,
     Float const time_to_live,
@@ -154,7 +154,7 @@ Ballistic *SpawnSmartBallistic (
             translation,
             scale_factor,
             Math::Atan(velocity),
-            first_moment,
+            mass,
             velocity,
             0.0f,
             0.0f);
@@ -169,7 +169,7 @@ Ballistic *SpawnDumbBallistic (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     Float const impact_damage,
     Float const time_to_live,
@@ -195,7 +195,7 @@ Ballistic *SpawnDumbBallistic (
         translation,
         scale_factor,
         Math::Atan(velocity),
-        first_moment,
+        mass,
         velocity,
         0.0f,
         0.0f);
@@ -388,7 +388,7 @@ Powerup *SpawnPowerup (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     std::string const &sprite_texture_filename,
     ItemType const item_type)
@@ -405,7 +405,7 @@ Powerup *SpawnPowerup (
         translation,
         scale_factor,
         Math::RandomAngle(),
-        first_moment,
+        mass,
         velocity,
         Math::RandomFloat(-90.0f, 90.0f),
         0.1f);
@@ -417,7 +417,7 @@ Powerup *SpawnPowerup (
     Engine2::ObjectLayer *const object_layer,
     FloatVector2 const &translation,
     Float const scale_factor,
-    Float const first_moment,
+    Float const mass,
     FloatVector2 const &velocity,
     std::string const &sprite_texture_filename,
     Item *const item)
@@ -434,7 +434,7 @@ Powerup *SpawnPowerup (
         translation,
         scale_factor,
         Math::RandomAngle(),
-        first_moment,
+        mass,
         velocity,
         Math::RandomFloat(-90.0f, 90.0f),
         0.1f);

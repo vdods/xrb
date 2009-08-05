@@ -121,7 +121,7 @@ public:
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
     static Float const ms_max_angular_velocity[ENEMY_LEVEL_COUNT];
     static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
-    static Float const ms_baseline_first_moment[ENEMY_LEVEL_COUNT];
+    static Float const ms_baseline_mass[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_weapon_fov[ENEMY_LEVEL_COUNT];
@@ -176,9 +176,9 @@ public:
     {
         return ms_scale_factor[EnemyLevel()];
     }
-    virtual Float GetShipBaselineFirstMoment () const
+    virtual Float GetShipBaselineMass () const
     {
-        return ms_baseline_first_moment[EnemyLevel()];
+        return ms_baseline_mass[EnemyLevel()];
     }
 
     virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);

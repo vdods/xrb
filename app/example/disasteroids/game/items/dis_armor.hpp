@@ -36,16 +36,16 @@ public:
         ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_damage_dissipation_rate[GetUpgradeLevel()];
     }
-    inline Float GetFirstMoment () const
+    inline Float GetMass () const
     {
         ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
-        return ms_first_moment[GetUpgradeLevel()];        
+        return ms_mass[GetUpgradeLevel()];        
     }
     
 private:
 
     static Float const ms_damage_dissipation_rate[UPGRADE_LEVEL_COUNT];
-    static Float const ms_first_moment[UPGRADE_LEVEL_COUNT];
+    static Float const ms_mass[UPGRADE_LEVEL_COUNT];
 }; // end of class Armor
 
 } // end of namespace Dis

@@ -80,9 +80,9 @@ namespace MapEditor2
             return m_selected_entity_count;
         }
         Entity *GetSingleSelectedEntity ();
-        inline Float GetObjectSelectionSetFirstMoment () const
+        inline Float GetObjectSelectionSetMass () const
         {
-            return m_object_selection_set_first_moment;
+            return m_object_selection_set_mass;
         }
         inline FloatVector2 const &GetObjectSelectionSetVelocity () const
         {
@@ -90,7 +90,7 @@ namespace MapEditor2
         }
         inline Float GetObjectSelectionSetSecondMoment () const
         {
-            return m_object_selection_set_first_moment;
+            return m_object_selection_set_mass;
         }
         inline Float GetObjectSelectionSetAngularVelocity () const
         {
@@ -126,7 +126,7 @@ namespace MapEditor2
         inline SignalSender1<FloatVector2 const &> const *SenderObjectSelectionSetOriginChanged () { return &m_sender_object_selection_set_origin_changed; }
     
         inline SignalSender1<Uint32> const *SenderSelectedEntityCountChanged () { return &m_sender_selected_entity_count_changed; }
-        inline SignalSender1<Float> const *SenderObjectSelectionSetFirstMomentChanged () { return &m_sender_object_selection_set_first_moment_changed; }
+        inline SignalSender1<Float> const *SenderObjectSelectionSetMassChanged () { return &m_sender_object_selection_set_mass_changed; }
         inline SignalSender1<FloatVector2 const &> const *SenderObjectSelectionSetCenterOfGravityChanged () { return &m_sender_object_selection_set_center_of_gravity_changed; }
         inline SignalSender1<FloatVector2 const &> const *SenderObjectSelectionSetVelocityChanged () { return &m_sender_object_selection_set_velocity_changed; }
         inline SignalSender1<Float> const *SenderObjectSelectionSetSecondMomentChanged () { return &m_sender_object_selection_set_second_moment_changed; }
@@ -203,7 +203,7 @@ namespace MapEditor2
         void ObjectSelectionSetAssignPerObjectScale (Float scale_factor);
         void ObjectSelectionSetAssignPerObjectRotation (Float angle);
     
-        void ObjectSelectionSetAssignPerEntityFirstMoment (Float first_moment);
+        void ObjectSelectionSetAssignPerEntityMass (Float mass);
         void ObjectSelectionSetAssignPerEntityVelocity (FloatVector2 const &velocity);
         void ObjectSelectionSetAssignPerEntityVelocityX (Float velocity_x);
         void ObjectSelectionSetAssignPerEntityVelocityY (Float velocity_y);
@@ -216,7 +216,7 @@ namespace MapEditor2
         void ObjectSelectionSetAssignPerEntityAppliesGravity (bool applies_gravity);
         void ObjectSelectionSetAssignPerEntityReactsToGravity (bool reacts_to_gravity);
     
-        void ObjectSelectionSetScaleFirstMoment (Float first_moment_scale_factor);
+        void ObjectSelectionSetScaleMass (Float mass_scale_factor);
     
         void ObjectSelectionSetTranslateVelocity (FloatVector2 const &translation_delta);
         void ObjectSelectionSetScaleVelocity (
@@ -314,7 +314,7 @@ namespace MapEditor2
         void SetObjectSelectionSetOrigin (FloatVector2 const &object_selection_set_origin);
     
         void SetSelectedEntityCount (Uint32 selected_entity_count);
-        void SetObjectSelectionSetFirstMoment (Float object_selection_set_first_moment);
+        void SetObjectSelectionSetMass (Float object_selection_set_mass);
         void SetObjectSelectionSetCenterOfGravity (
             FloatVector2 const &object_selection_set_center_of_gravity);
     
@@ -380,7 +380,7 @@ namespace MapEditor2
         // number of selected entities
         Uint32 m_selected_entity_count;
         // object selection set first moment
-        Float m_object_selection_set_first_moment;
+        Float m_object_selection_set_mass;
         // object selection set center of gravity
         FloatVector2 m_object_selection_set_center_of_gravity;
         // object selection set velocity
@@ -413,7 +413,7 @@ namespace MapEditor2
         SignalSender1<Uint32> m_sender_selected_object_count_changed;
         SignalSender1<FloatVector2 const &> m_sender_object_selection_set_origin_changed;
         SignalSender1<Uint32> m_sender_selected_entity_count_changed;
-        SignalSender1<Float> m_sender_object_selection_set_first_moment_changed;
+        SignalSender1<Float> m_sender_object_selection_set_mass_changed;
         SignalSender1<FloatVector2 const &> m_sender_object_selection_set_center_of_gravity_changed;
         SignalSender1<FloatVector2 const &> m_sender_object_selection_set_velocity_changed;
         SignalSender1<Float> m_sender_object_selection_set_second_moment_changed;

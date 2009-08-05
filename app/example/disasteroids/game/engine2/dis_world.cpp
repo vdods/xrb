@@ -490,9 +490,9 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
 {
     ASSERT1(asteroid != NULL);
     ASSERT1(m_asteroid_count > 0);
-    ASSERT1(m_asteroid_mass >= asteroid->GetFirstMoment());
+    ASSERT1(m_asteroid_mass >= asteroid->GetMass());
     --m_asteroid_count;
-    m_asteroid_mass -= asteroid->GetFirstMoment();
+    m_asteroid_mass -= asteroid->GetMass();
 }
 
 void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
@@ -1163,20 +1163,20 @@ Asteroid *World::SpawnAsteroidOutOfView ()
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, scale_factor));
 
-    Float first_moment = scale_factor * scale_factor;
+    Float mass = scale_factor * scale_factor;
     FloatVector2 velocity(
         Math::RandomFloat(75.0f, 1500.0f) /
-        Math::Sqrt(first_moment) *
+        Math::Sqrt(mass) *
         Math::UnitVector(Math::RandomAngle()));
 
     ++m_asteroid_count;
-    m_asteroid_mass += first_moment;
+    m_asteroid_mass += mass;
     return SpawnAsteroid(
         this,
         GetMainObjectLayer(),
         translation,
         scale_factor,
-        first_moment,
+        mass,
         velocity,
         Math::RandomFloat(0.5f, 1.0f) * ms_asteroid_mineral_content_factor[m_asteroid_mineral_content_level],
         false);

@@ -146,7 +146,7 @@ MapEditor2::ObjectLayer::ObjectLayer (
     m_sender_selected_object_count_changed(this),
     m_sender_object_selection_set_origin_changed(this),
     m_sender_selected_entity_count_changed(this),
-    m_sender_object_selection_set_first_moment_changed(this),
+    m_sender_object_selection_set_mass_changed(this),
     m_sender_object_selection_set_center_of_gravity_changed(this),
     m_sender_object_selection_set_velocity_changed(this),
     m_sender_object_selection_set_second_moment_changed(this),
@@ -161,7 +161,7 @@ MapEditor2::ObjectLayer::ObjectLayer (
     m_object_selection_set_origin = FloatVector2::ms_zero;
     
     m_selected_entity_count = 0;
-    m_object_selection_set_first_moment = 0.0f;
+    m_object_selection_set_mass = 0.0f;
     m_object_selection_set_center_of_gravity = FloatVector2::ms_zero;
     m_object_selection_set_velocity = FloatVector2::ms_zero;
     m_object_selection_set_second_moment = 0.0f;
@@ -600,8 +600,8 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectRotation (Float c
     }
 }
 
-void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityFirstMoment (
-    Float const first_moment)
+void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityMass (
+    Float const mass)
 {
     for (ObjectSetIterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
@@ -612,7 +612,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityFirstMoment (
         ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
-            entity->SetFirstMoment(first_moment);
+            entity->SetMass(mass);
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -786,7 +786,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
         // temp hack for now (until real area computation is done
 
         if (entity != NULL)
-            entity->SetFirstMoment(
+            entity->SetMass(
                 density * static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius());
     }
 
@@ -833,10 +833,10 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityReactsToGravity (
     }
 }
 
-void MapEditor2::ObjectLayer::ObjectSelectionSetScaleFirstMoment (
-    Float const first_moment_scale_factor)
+void MapEditor2::ObjectLayer::ObjectSelectionSetScaleMass (
+    Float const mass_scale_factor)
 {
-    ASSERT1(first_moment_scale_factor > 0.0f);
+    ASSERT1(mass_scale_factor > 0.0f);
 
     for (ObjectSetIterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
@@ -848,8 +848,8 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleFirstMoment (
         Entity *entity = dynamic_cast<Entity *>(object);
 
         if (entity != NULL)
-            entity->SetFirstMoment(
-                first_moment_scale_factor * entity->GetFirstMoment());
+            entity->SetMass(
+                mass_scale_factor * entity->GetMass());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -971,8 +971,8 @@ void MapEditor2::ObjectLayer::ForceObjectSelectionSetSignals ()
 
     m_sender_object_selection_set_origin_changed.Signal(
         m_object_selection_set_origin);
-    m_sender_object_selection_set_first_moment_changed.Signal(
-        m_object_selection_set_first_moment);
+    m_sender_object_selection_set_mass_changed.Signal(
+        m_object_selection_set_mass);
     m_sender_object_selection_set_velocity_changed.Signal(
         m_object_selection_set_velocity);
     m_sender_object_selection_set_second_moment_changed.Signal(
@@ -1301,13 +1301,13 @@ void MapEditor2::ObjectLayer::SetSelectedEntityCount (
     }
 }
 
-void MapEditor2::ObjectLayer::SetObjectSelectionSetFirstMoment (
-    Float const object_selection_set_first_moment)
+void MapEditor2::ObjectLayer::SetObjectSelectionSetMass (
+    Float const object_selection_set_mass)
 {
-    if (m_object_selection_set_first_moment != object_selection_set_first_moment)
+    if (m_object_selection_set_mass != object_selection_set_mass)
     {
-        m_object_selection_set_first_moment = object_selection_set_first_moment;
-        m_sender_object_selection_set_first_moment_changed.Signal(m_object_selection_set_first_moment);
+        m_object_selection_set_mass = object_selection_set_mass;
+        m_sender_object_selection_set_mass_changed.Signal(m_object_selection_set_mass);
     }
 }
 
@@ -1337,7 +1337,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     FloatVector2 object_selection_set_center_of_gravity(m_object_selection_set_center_of_gravity);
 
     Uint32 selected_entity_count = m_selected_entity_count;
-    Float object_selection_set_first_moment = m_object_selection_set_first_moment;
+    Float object_selection_set_mass = m_object_selection_set_mass;
 
     Uint32 selected_compound_count = m_selected_compound_count;
     
@@ -1350,13 +1350,13 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     if (entity != NULL)
     {
         object_selection_set_center_of_gravity =
-            (m_object_selection_set_center_of_gravity * object_selection_set_first_moment +
-             entity->GetTranslation() * entity->GetFirstMoment())
+            (m_object_selection_set_center_of_gravity * object_selection_set_mass +
+             entity->GetTranslation() * entity->GetMass())
             /
-            (object_selection_set_first_moment + entity->GetFirstMoment());
+            (object_selection_set_mass + entity->GetMass());
 
         ++selected_entity_count;
-        object_selection_set_first_moment += entity->GetFirstMoment();
+        object_selection_set_mass += entity->GetMass();
     }
 
     Compound *compound = dynamic_cast<Compound *>(object);
@@ -1368,7 +1368,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     SetObjectSelectionSetOrigin(object_selection_set_origin);
 
     SetSelectedEntityCount(selected_entity_count);
-    SetObjectSelectionSetFirstMoment(object_selection_set_first_moment);
+    SetObjectSelectionSetMass(object_selection_set_mass);
     SetObjectSelectionSetCenterOfGravity(object_selection_set_center_of_gravity);
 
     SetSelectedCompoundCount(selected_compound_count);
@@ -1405,7 +1405,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
     FloatVector2 object_selection_set_center_of_gravity(m_object_selection_set_center_of_gravity);
 
     Uint32 selected_entity_count = m_selected_entity_count;
-    Float object_selection_set_first_moment = m_object_selection_set_first_moment;
+    Float object_selection_set_mass = m_object_selection_set_mass;
 
     Uint32 selected_compound_count = m_selected_compound_count;
 
@@ -1421,13 +1421,13 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
         if (entity != NULL)
         {
             object_selection_set_center_of_gravity =
-                (m_object_selection_set_center_of_gravity * object_selection_set_first_moment -
-                entity->GetTranslation() * entity->GetFirstMoment())
+                (m_object_selection_set_center_of_gravity * object_selection_set_mass -
+                entity->GetTranslation() * entity->GetMass())
                 /
-                (object_selection_set_first_moment + entity->GetFirstMoment());
+                (object_selection_set_mass + entity->GetMass());
 
             --selected_entity_count;
-            object_selection_set_first_moment -= entity->GetFirstMoment();
+            object_selection_set_mass -= entity->GetMass();
         }
 
         Compound *compound = dynamic_cast<Compound *>(object);
@@ -1440,7 +1440,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
         object_selection_set_origin = FloatVector2::ms_zero;
 
         selected_entity_count = 0;
-        object_selection_set_first_moment = 0.0;
+        object_selection_set_mass = 0.0;
         object_selection_set_center_of_gravity = FloatVector2::ms_zero;
 
         selected_compound_count = 0;
@@ -1451,7 +1451,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
     SetObjectSelectionSetOrigin(object_selection_set_origin);
 
     SetSelectedEntityCount(selected_entity_count);
-    SetObjectSelectionSetFirstMoment(object_selection_set_first_moment);
+    SetObjectSelectionSetMass(object_selection_set_mass);
     SetObjectSelectionSetCenterOfGravity(object_selection_set_center_of_gravity);
 
     SetSelectedCompoundCount(selected_compound_count);
@@ -1472,7 +1472,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
     FloatVector2 object_selection_set_origin(FloatVector2::ms_zero);
 
     Uint32 selected_entity_count = 0;
-    Float object_selection_set_first_moment = 0.0;
+    Float object_selection_set_mass = 0.0;
     FloatVector2 object_selection_set_center_of_gravity = FloatVector2::ms_zero;
 
     Uint32 selected_compound_count = 0;
@@ -1496,10 +1496,10 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
             if (entity != NULL)
             {
                 object_selection_set_center_of_gravity +=
-                    entity->GetTranslation() * entity->GetFirstMoment();
+                    entity->GetTranslation() * entity->GetMass();
 
                 ++selected_entity_count;
-                object_selection_set_first_moment += entity->GetFirstMoment();
+                object_selection_set_mass += entity->GetMass();
             }
 
             Compound *compound = dynamic_cast<Compound *>(object);
@@ -1510,8 +1510,8 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
         object_selection_set_origin /= static_cast<Float>(selected_object_count);
         if (selected_entity_count > 0)
         {
-            ASSERT1(object_selection_set_first_moment > 0.0f);
-            object_selection_set_center_of_gravity /= object_selection_set_first_moment;
+            ASSERT1(object_selection_set_mass > 0.0f);
+            object_selection_set_center_of_gravity /= object_selection_set_mass;
         }
     }
 
@@ -1519,7 +1519,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
     SetObjectSelectionSetOrigin(object_selection_set_origin);
 
     SetSelectedEntityCount(selected_entity_count);
-    SetObjectSelectionSetFirstMoment(object_selection_set_first_moment);
+    SetObjectSelectionSetMass(object_selection_set_mass);
     SetObjectSelectionSetCenterOfGravity(object_selection_set_center_of_gravity);
 
     SetSelectedCompoundCount(selected_compound_count);
@@ -1604,7 +1604,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetDensity ()
 
     Entity *entity = GetSingleSelectedEntity();
     Float object_selection_set_density =
-        entity->GetFirstMoment() /
+        entity->GetMass() /
         static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius();
     if (m_object_selection_set_density != object_selection_set_density)
     {

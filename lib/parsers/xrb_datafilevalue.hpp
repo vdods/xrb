@@ -29,7 +29,7 @@ temp DataFileValue notes - turn into real doxygen docs later
 
 data types:
     boolean        - true, false
-    [un]signed int - binary, octal, decimal or hexidecimal
+    [un]signed int - binary, octal, decimal or hexadecimal
     floating point - IEEE floating point (of the type given by Float)
     character      - ascii character
     string         - string of ascii characters

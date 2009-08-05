@@ -122,7 +122,7 @@ void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
 void Ship::HandleNewOwnerObject ()
 {
     SetScaleFactor(GetShipScaleFactor());
-    SetFirstMoment(GetShipBaselineFirstMoment());
+    SetMass(GetShipBaselineMass());
 }
 
 void Ship::Think (Float const time, Float const frame_dt)

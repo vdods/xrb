@@ -29,11 +29,11 @@ inline bool IsAlpha (char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <
 inline bool IsBinaryDigit (char c) { return c == '0' || c == '1'; }
 inline bool IsOctalDigit (char c) { return c >= '0' && c <= '7'; }
 inline bool IsDecimalDigit (char c) { return c >= '0' && c <= '9'; }
-inline bool IsHexidecimalDigit (char c) { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }
+inline bool IsHexadecimalDigit (char c) { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }
 
-Uint32 GetHexidecimalDigitValue (char c)
+Uint32 GetHexadecimalDigitValue (char c)
 {
-    ASSERT1(IsHexidecimalDigit(c));
+    ASSERT1(IsHexadecimalDigit(c));
     if (c >= '0' && c <= '9')
         return c - '0';
     if (c >= 'a' && c <= 'f')
@@ -262,7 +262,7 @@ DataFileParser::Token::Type DataFileScanner::ScanNumeric (DataFileValue **const 
         else if (IsOctalDigit(c))
             return ScanOctalNumeric(scanned_token, is_signed, is_positive, c);
         else if (c == 'x')
-            return ScanHexidecimalNumeric(scanned_token, is_signed, is_positive);
+            return ScanHexadecimalNumeric(scanned_token, is_signed, is_positive);
         else if (c == '.' || c == 'e' || c == 'E')
             return ScanFloatingPointNumeric(scanned_token);
         else
@@ -446,7 +446,7 @@ DataFileParser::Token::Type DataFileScanner::ScanDecimalNumeric (
     }
 }
 
-DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
+DataFileParser::Token::Type DataFileScanner::ScanHexadecimalNumeric (
     DataFileValue **const scanned_token,
     bool const is_signed,
     bool const is_positive)
@@ -459,14 +459,14 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
     bool actually_read_digits = false;
     bool overflow = false;
     Uint32 value = 0;
-    while (!IsNextCharEOF(&c) && IsHexidecimalDigit(c))
+    while (!IsNextCharEOF(&c) && IsHexadecimalDigit(c))
     {
         actually_read_digits = true;
         m_input >> c;
         m_text += c;
         if ((value&0xF0000000) != 0)
             overflow = true;
-        value = (value << 4) + GetHexidecimalDigitValue(c);
+        value = (value << 4) + GetHexadecimalDigitValue(c);
     }
 
     if (!actually_read_digits)
@@ -489,7 +489,7 @@ DataFileParser::Token::Type DataFileScanner::ScanHexidecimalNumeric (
         return DataFileParser::Token::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " hexidecimal value " + m_text);
+        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " hexadecimal value " + m_text);
 
     if (is_signed)
     {

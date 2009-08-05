@@ -29,7 +29,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     std::string const &name)
     :
     Widget(parent, name),
-    m_sender_per_entity_first_moment_assigned(this),
+    m_sender_per_entity_mass_assigned(this),
     m_sender_per_entity_velocity_x_assigned(this),
     m_sender_per_entity_velocity_y_assigned(this),
     m_sender_per_entity_speed_assigned(this),
@@ -41,7 +41,7 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     m_sender_per_entity_applies_gravity_assigned(this),
     m_sender_per_entity_reacts_to_gravity_assigned(this),
 
-    m_sender_object_selection_set_first_moment_changed(this),
+    m_sender_object_selection_set_mass_changed(this),
     m_sender_object_selection_set_velocity_x_changed(this),
     m_sender_object_selection_set_velocity_y_changed(this),
     m_sender_object_selection_set_speed_changed(this),
@@ -59,8 +59,8 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     m_receiver_set_per_entity_reacts_to_gravity(
         &EntityPropertiesPanel::SetPerEntityReactsToGravity, this),
 
-    m_receiver_set_object_selection_set_first_moment(
-        &EntityPropertiesPanel::SetObjectSelectionSetFirstMoment, this),
+    m_receiver_set_object_selection_set_mass(
+        &EntityPropertiesPanel::SetObjectSelectionSetMass, this),
     m_receiver_set_object_selection_set_velocity(
         &EntityPropertiesPanel::SetObjectSelectionSetVelocity, this),
     m_receiver_set_object_selection_set_second_moment(
@@ -72,8 +72,8 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     m_receiver_set_object_selection_set_density(
         &EntityPropertiesPanel::SetObjectSelectionSetDensity, this),
 
-    m_internal_receiver_set_per_entity_first_moment(
-        &EntityPropertiesPanel::InternalSetPerEntityFirstMoment, this),
+    m_internal_receiver_set_per_entity_mass(
+        &EntityPropertiesPanel::InternalSetPerEntityMass, this),
     m_internal_receiver_set_per_entity_velocity_x(
         &EntityPropertiesPanel::InternalSetPerEntityVelocityX, this),
     m_internal_receiver_set_per_entity_velocity_y(
@@ -95,8 +95,8 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     m_internal_receiver_set_per_entity_reacts_to_gravity(
         &EntityPropertiesPanel::InternalSetPerEntityReactsToGravity, this),
 
-    m_internal_receiver_set_object_selection_set_first_moment(
-        &EntityPropertiesPanel::InternalSetObjectSelectionSetFirstMoment, this),
+    m_internal_receiver_set_object_selection_set_mass(
+        &EntityPropertiesPanel::InternalSetObjectSelectionSetMass, this),
     m_internal_receiver_set_object_selection_set_velocity_x(
         &EntityPropertiesPanel::InternalSetObjectSelectionSetVelocityX, this),
     m_internal_receiver_set_object_selection_set_velocity_y(
@@ -159,12 +159,12 @@ MapEditor2::EntityPropertiesPanel::EntityPropertiesPanel (
     // first moment row
     new Label("First Moment", control_layout, "first moment label");
 
-    le = m_per_entity_first_moment_edit =
+    le = m_per_entity_mass_edit =
         new LineEdit(20, control_layout, "per-entity first moment edit");
     le->GetCharacterFilter().SetFilterType(DECIMAL_NOTATION_CHARACTER_FILTER_TYPE);
     le->GetCharacterFilter().SetFilter(DECIMAL_NOTATION_CHARACTER_FILTER);
 
-    vef = m_object_selection_set_first_moment_edit =
+    vef = m_object_selection_set_mass_edit =
         new ValueEdit<Float>(
             DECIMAL_NOTATION_PRINTF_FORMAT,
             Util::TextToFloat,
@@ -393,10 +393,10 @@ void MapEditor2::EntityPropertiesPanel::SetPerEntityReactsToGravity (
     m_per_entity_reacts_to_gravity_checkbox->SetIsChecked(reacts_to_gravity);
 }
 
-void MapEditor2::EntityPropertiesPanel::SetObjectSelectionSetFirstMoment (
-    Float const first_moment)
+void MapEditor2::EntityPropertiesPanel::SetObjectSelectionSetMass (
+    Float const mass)
 {
-    m_object_selection_set_first_moment_edit->SetValue(first_moment);
+    m_object_selection_set_mass_edit->SetValue(mass);
 }
 
 void MapEditor2::EntityPropertiesPanel::SetObjectSelectionSetVelocity (
@@ -459,8 +459,8 @@ void MapEditor2::EntityPropertiesPanel::ConnectSignals ()
 {
     // hook up the internal per-entity signals
     SignalHandler::Connect1(
-        m_per_entity_first_moment_edit->SenderTextSetByEnterKey(),
-        &m_internal_receiver_set_per_entity_first_moment);
+        m_per_entity_mass_edit->SenderTextSetByEnterKey(),
+        &m_internal_receiver_set_per_entity_mass);
     SignalHandler::Connect1(
         m_per_entity_velocity_x_edit->SenderTextSetByEnterKey(),
         &m_internal_receiver_set_per_entity_velocity_x);
@@ -494,8 +494,8 @@ void MapEditor2::EntityPropertiesPanel::ConnectSignals ()
 
     // hook up the internal object selection set signals
     SignalHandler::Connect1(
-        m_object_selection_set_first_moment_edit->SenderValueSetByEnterKey(),
-        &m_internal_receiver_set_object_selection_set_first_moment);
+        m_object_selection_set_mass_edit->SenderValueSetByEnterKey(),
+        &m_internal_receiver_set_object_selection_set_mass);
     SignalHandler::Connect1(
         m_object_selection_set_velocity_x_edit->SenderValueSetByEnterKey(),
         &m_internal_receiver_set_object_selection_set_velocity_x);
@@ -535,16 +535,16 @@ void MapEditor2::EntityPropertiesPanel::ConnectSignals ()
         &m_internal_receiver_object_selection_set_reacts_to_gravity_off);
 }
 
-void MapEditor2::EntityPropertiesPanel::InternalSetPerEntityFirstMoment (
-    std::string const &first_moment)
+void MapEditor2::EntityPropertiesPanel::InternalSetPerEntityMass (
+    std::string const &mass)
 {
     // don't do anything if the string is empty
-    if (first_moment.empty())
+    if (mass.empty())
         return;
-    m_sender_per_entity_first_moment_assigned.Signal(
+    m_sender_per_entity_mass_assigned.Signal(
         m_validator_greater_than_zero.Validate(
-            Util::TextToFloat(first_moment.c_str())));
-    m_per_entity_first_moment_edit->SetText("");
+            Util::TextToFloat(mass.c_str())));
+    m_per_entity_mass_edit->SetText("");
 }
 
 void MapEditor2::EntityPropertiesPanel::InternalSetPerEntityVelocityX (
@@ -645,10 +645,10 @@ void MapEditor2::EntityPropertiesPanel::InternalSetPerEntityReactsToGravity (
     m_sender_per_entity_reacts_to_gravity_assigned.Signal(reacts_to_gravity);
 }
 
-void MapEditor2::EntityPropertiesPanel::InternalSetObjectSelectionSetFirstMoment (
-    Float const first_moment)
+void MapEditor2::EntityPropertiesPanel::InternalSetObjectSelectionSetMass (
+    Float const mass)
 {
-    m_sender_object_selection_set_first_moment_changed.Signal(first_moment);
+    m_sender_object_selection_set_mass_changed.Signal(mass);
 }
 
 void MapEditor2::EntityPropertiesPanel::InternalSetObjectSelectionSetVelocityX (

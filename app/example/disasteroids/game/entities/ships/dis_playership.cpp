@@ -265,9 +265,9 @@ void PlayerShip::SetArmor (Armor *const armor)
     // checking the owner entity pointer is necessary because it will be
     // NULL when deleting (and this function is called in ~PlayerShip)
     if (GetOwnerObject() != NULL)
-        SetFirstMoment(
-            GetShipBaselineFirstMoment() +
-            ((armor != NULL) ? armor->GetFirstMoment() : 0.0f));
+        SetMass(
+            GetShipBaselineMass() +
+            ((armor != NULL) ? armor->GetMass() : 0.0f));
     SetDamageDissipationRate(
         ((armor != NULL) ? armor->DamageDissipationRate() : 0.0f));
 
@@ -813,8 +813,8 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
-                (GetFirstMoment() + powerup->GetFirstMoment()),
+            (GetMass()*powerup->GetTranslation() + powerup->GetMass()*GetTranslation()) /
+                (GetMass() + powerup->GetMass()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
             0.0f,
             time,

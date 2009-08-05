@@ -25,7 +25,7 @@ namespace Dis
 
 Float const Solitary::ms_max_angular_velocity = 720.0f;
 Float const Solitary::ms_scale_factor = 11.0f;
-Float const Solitary::ms_baseline_first_moment = 100.0f;
+Float const Solitary::ms_baseline_mass = 100.0f;
 
 void Solitary::Die (
     Entity *const killer,

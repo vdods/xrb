@@ -24,7 +24,7 @@ public:
 
     static Float const ms_max_angular_velocity;
     static Float const ms_scale_factor;
-    static Float const ms_baseline_first_moment;
+    static Float const ms_baseline_mass;
 
     Solitary () : PlayerShip(100.0f, ET_SOLITARY) { }
     virtual ~Solitary () { }
@@ -51,9 +51,9 @@ public:
     {
         return ms_scale_factor;
     }
-    virtual Float GetShipBaselineFirstMoment () const
+    virtual Float GetShipBaselineMass () const
     {
-        return ms_baseline_first_moment;
+        return ms_baseline_mass;
     }
 }; // end of class Solitary
 
