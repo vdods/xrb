@@ -175,7 +175,7 @@ void MapEditor2::ObjectPropertiesPanel::SetObjectSelectionSetScale (Float const 
 
 void MapEditor2::ObjectPropertiesPanel::SetObjectSelectionSetAngle (Float const angle)
 {
-    m_object_selection_set_angle_edit->SetValue(Math::GetCanonicalAngle(angle));
+    m_object_selection_set_angle_edit->SetValue(Math::CanonicalAngle(angle));
 }
 
 void MapEditor2::ObjectPropertiesPanel::ConnectSignals ()

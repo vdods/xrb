@@ -263,7 +263,7 @@ public:
 
     static Key *Create (Key::Code key, std::string const &name);
 
-    static inline Key::Code GetCodeFromSDLKey (SDLKey const key) { return (Key::Code)key; }
+    static inline Key::Code CodeFromSDLKey (SDLKey const key) { return (Key::Code)key; }
     static bool IsKeyRepeatable (Key::Code code);
     static bool IsKeyAscii (Key::Code code);
     inline Key::Code GetCode () const { return m_code; }

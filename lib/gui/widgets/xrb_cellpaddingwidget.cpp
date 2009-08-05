@@ -66,25 +66,25 @@ Widget const *CellPaddingWidget::GetSingleChildWidget () const
     }
 }
 
-Bool2 CellPaddingWidget::GetContentsMinSizeEnabled () const
+Bool2 CellPaddingWidget::ContentsMinSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size_enabled;
 }
 
-ScreenCoordVector2 CellPaddingWidget::GetContentsMinSize () const
+ScreenCoordVector2 CellPaddingWidget::ContentsMinSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size;
 }
 
-Bool2 CellPaddingWidget::GetContentsMaxSizeEnabled () const
+Bool2 CellPaddingWidget::ContentsMaxSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size_enabled;
 }
 
-ScreenCoordVector2 CellPaddingWidget::GetContentsMaxSize () const
+ScreenCoordVector2 CellPaddingWidget::ContentsMaxSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size;
@@ -184,7 +184,7 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
     if (child != NULL)
     {
         // only update size stuff if not blocked
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
         {
             // attempt to resize the child to the current size
             child->Resize(size);
@@ -209,7 +209,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -232,7 +232,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -252,7 +252,7 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();

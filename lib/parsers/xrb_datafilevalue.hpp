@@ -453,7 +453,7 @@ public:
 
     virtual void Print (IndentFormatter &formatter) const
     {
-        formatter.BeginLine("%s", Util::GetCharacterLiteral(m_value).c_str());
+        formatter.BeginLine("%s", Util::CharacterLiteral(m_value).c_str());
     }
     virtual void PrintAST (IndentFormatter &formatter) const;
 

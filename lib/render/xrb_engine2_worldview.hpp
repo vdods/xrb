@@ -65,11 +65,11 @@ namespace Engine2
         inline World *GetWorld () const { return m_world; }
         inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
         inline Float GetZoomFactor () const { return m_zoom_factor; }
-        inline FloatVector2 GetCenter () const { return -GetTranslation(); }
+        inline FloatVector2 Center () const { return -GetTranslation(); }
         inline Float Angle () const { return -FloatTransform2::Angle(); }
         inline bool IsViewLocked () const { return m_is_view_locked; }
         inline bool GetDrawBorderGridLines () const { return m_draw_border_grid_lines; }
-        FloatMatrix2 GetCompoundTransformation () const;
+        FloatMatrix2 CompoundTransformation () const;
         Float GetViewDepth (ObjectLayer const *object_layer) const;
         inline Float GetParallaxFactor (
             Float const view_depth,
@@ -85,7 +85,7 @@ namespace Engine2
             ObjectLayer const *object_layer) const;
         Float GetMinorAxisRadius () const;
         Float GetMajorAxisRadius () const;
-        Float GetCornerRadius () const;
+        Float CornerRadius () const;
         inline bool IsTransformScalingBasedUponWidgetRadius () const
         {
             return m_is_transform_scaling_based_upon_widget_radius;

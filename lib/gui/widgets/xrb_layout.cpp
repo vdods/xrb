@@ -63,10 +63,10 @@ Widget *Layout::GetGridChildByColumnAndRow (
     Uint32 const column_index,
     Uint32 const row_index) const
 {
-    ASSERT1(column_index < GetColumnCount());
+    ASSERT1(column_index < ColumnCount());
     ASSERT1(row_index < GetRowCount());
     Uint32 linear_index = (m_major_direction == ROW) ?
-                          row_index * GetColumnCount() + column_index :
+                          row_index * ColumnCount() + column_index :
                           column_index * GetRowCount() + row_index;
     if (linear_index < m_child_vector.size())
         return m_child_vector[linear_index];
@@ -80,41 +80,41 @@ ScreenCoordVector2 const &Layout::GetTotalSpacing () const
     return m_total_spacing;
 }
 
-Uint32 Layout::GetColumnCount () const
+Uint32 Layout::ColumnCount () const
 {
     UpdateColumnSizeProperties();
     return m_column_count;
 }
 
-Bool2 const &Layout::GetColumnMinSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::ColumnMinSizeEnabled (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::GetColumnMinSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::ColumnMinSize (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_min_size;
 }
 
-Bool2 const &Layout::GetColumnMaxSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::ColumnMaxSizeEnabled (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::GetColumnMaxSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::ColumnMaxSize (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
     return m_column_size_properties[index].m_max_size;
 }
 
-ScreenCoord Layout::GetColumnWidth (Uint32 const index) const
+ScreenCoord Layout::ColumnWidth (Uint32 const index) const
 {
     UpdateColumnSizeProperties();
     ASSERT1(index < m_column_count);
@@ -174,25 +174,25 @@ Uint32 Layout::GetHiddenRowCount () const
     return m_hidden_row_count;
 }
 
-Bool2 Layout::GetContentsMinSizeEnabled () const
+Bool2 Layout::ContentsMinSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size_enabled;
 }
 
-ScreenCoordVector2 Layout::GetContentsMinSize () const
+ScreenCoordVector2 Layout::ContentsMinSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size;
 }
 
-Bool2 Layout::GetContentsMaxSizeEnabled () const
+Bool2 Layout::ContentsMaxSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size_enabled;
 }
 
-ScreenCoordVector2 Layout::GetContentsMaxSize () const
+ScreenCoordVector2 Layout::ContentsMaxSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size;
@@ -314,7 +314,7 @@ ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
     ContainerWidget::Resize(size);
 
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         DelegateWidthsToColumns();
         DelegateHeightsToRows();
@@ -336,7 +336,7 @@ void Layout::AttachChild (Widget *const child)
     DirtyColumnSizePropertyAllocations();
     DirtyRowSizePropertyAllocations();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -359,7 +359,7 @@ void Layout::DetachChild (Widget *const child)
     DirtyColumnSizePropertyAllocations();
     DirtyRowSizePropertyAllocations();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -383,7 +383,7 @@ void Layout::MoveChildDown (Widget *const child)
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -407,7 +407,7 @@ void Layout::MoveChildUp (Widget *const child)
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -431,7 +431,7 @@ void Layout::MoveChildToBottom (Widget *const child)
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -455,7 +455,7 @@ void Layout::MoveChildToTop (Widget *const child)
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -483,7 +483,7 @@ void Layout::HandleChangedLayoutFrameMargins ()
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         CalculateMinAndMaxSizePropertiesFromContents();
 //         ParentChildSizePropertiesUpdate(false);
@@ -498,7 +498,7 @@ void Layout::HandleChangedLayoutSpacingMargins ()
     DirtyContentsSizeProperties();
     ConstrainPreferredSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         CalculateMinAndMaxSizePropertiesFromContents();
 //         ParentChildSizePropertiesUpdate(false);
@@ -515,7 +515,7 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -540,7 +540,7 @@ void Layout::ChildStackPriorityChanged (
     DirtyColumnSizeProperties();
     DirtyRowSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -629,7 +629,7 @@ int Layout::RowCompareConstraints (void const *a, void const *b)
 void Layout::DelegateWidthsToColumns ()
 {
     // if there are no columns or no rows, we don't need to do anything
-    if (GetColumnCount() == 0 || GetRowCount() == 0)
+    if (ColumnCount() == 0 || GetRowCount() == 0)
         return;
 
     // number of columns we're actually going to deal with
@@ -651,7 +651,7 @@ void Layout::DelegateWidthsToColumns ()
         m_column_width[i] = 0;
 
     // must split up the total width among the columns
-    ASSERT1(m_hidden_column_count == GetColumnCount() - unhidden_column_count);
+    ASSERT1(m_hidden_column_count == ColumnCount() - unhidden_column_count);
     ScreenCoord total_width_left = GetWidth() - GetTotalSpacing()[Dim::X];
     ASSERT1(total_width_left >= 0);
 
@@ -683,7 +683,7 @@ void Layout::DelegateWidthsToColumns ()
 void Layout::DelegateHeightsToRows ()
 {
     // if there are no columns or no rows, we don't need to do anything
-    if (GetColumnCount() == 0 || GetRowCount() == 0)
+    if (ColumnCount() == 0 || GetRowCount() == 0)
         return;
 
     // number of rows we're actually going to deal with
@@ -963,12 +963,12 @@ void Layout::UpdateTotalSpacing () const
     Uint32 column_spaces;
     Uint32 row_spaces;
 
-    if (GetColumnCount() == 0 || GetColumnCount() == GetHiddenColumnCount())
+    if (ColumnCount() == 0 || ColumnCount() == GetHiddenColumnCount())
         column_spaces = 0;
     else
     {
-        ASSERT1(GetColumnCount() > GetHiddenColumnCount());
-        column_spaces = GetColumnCount() - 1 - GetHiddenColumnCount();
+        ASSERT1(ColumnCount() > GetHiddenColumnCount());
+        column_spaces = ColumnCount() - 1 - GetHiddenColumnCount();
     }
 
     if (GetRowCount() == 0 || GetRowCount() == GetHiddenRowCount())
@@ -1133,12 +1133,12 @@ void Layout::UpdateContentsSizeProperties () const
 
     // initialize the max size properties, considering the total spacing
     m_contents_size_properties.m_max_size_enabled =
-        Bool2(GetColumnCount() - m_hidden_column_count > 0,
+        Bool2(ColumnCount() - m_hidden_column_count > 0,
               GetRowCount() - m_hidden_row_count > 0);
     m_contents_size_properties.m_max_size = GetTotalSpacing();
 
     // horizontal using columns
-    for (Uint32 i = 0; i < GetColumnCount(); ++i)
+    for (Uint32 i = 0; i < ColumnCount(); ++i)
     {
         // don't process hidden columns
         if (m_column_is_hidden[i])
@@ -1148,21 +1148,21 @@ void Layout::UpdateContentsSizeProperties () const
         // have a min size (true value overcomes false value)
         m_contents_size_properties.m_min_size_enabled[Dim::X] =
             m_contents_size_properties.m_min_size_enabled[Dim::X] ||
-            GetColumnMinSizeEnabled(i)[Dim::X];
+            ColumnMinSizeEnabled(i)[Dim::X];
         // add up the min sizes if the min size applies
-        if (GetColumnMinSizeEnabled(i)[Dim::X])
+        if (ColumnMinSizeEnabled(i)[Dim::X])
             m_contents_size_properties.m_min_size[Dim::X] +=
-                GetColumnMinSize(i)[Dim::X];
+                ColumnMinSize(i)[Dim::X];
 
         // if one column doesn't have a max size, then the contents as a whole
         // don't have a max size (false value overcomes true value)
         m_contents_size_properties.m_max_size_enabled[Dim::X] =
             m_contents_size_properties.m_max_size_enabled[Dim::X] &&
-            GetColumnMaxSizeEnabled(i)[Dim::X];
+            ColumnMaxSizeEnabled(i)[Dim::X];
         // add up the max sizes if the max size applies
-        if (GetColumnMaxSizeEnabled(i)[Dim::X])
+        if (ColumnMaxSizeEnabled(i)[Dim::X])
             m_contents_size_properties.m_max_size[Dim::X] +=
-                GetColumnMaxSize(i)[Dim::X];
+                ColumnMaxSize(i)[Dim::X];
     }
 
     // vertical using rows

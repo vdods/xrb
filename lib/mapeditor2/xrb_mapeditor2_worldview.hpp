@@ -66,7 +66,7 @@ namespace MapEditor2
             return m_metric_editing_mode_text;
         }
         // returns the current grid scale text
-        std::string GetCurrentGridScaleText () const;
+        std::string CurrentGridScaleText () const;
         // returns the curretn polygon tesselation text
         std::string GetPolygonTesselationText () const;
     

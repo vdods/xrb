@@ -53,7 +53,7 @@ namespace Math
     /** This should only be used on positional angles, not velocity angles.
       * @brief Returns an equivalent angle in the range [-180, 180].
       */
-    Float GetCanonicalAngle (Float angle);
+    Float CanonicalAngle (Float angle);
 
     /** @brief Returns the sine of the given angle.
       */

@@ -69,12 +69,12 @@ public:
 
     ScreenCoordVector2 const &GetTotalSpacing () const;
 
-    Uint32 GetColumnCount () const;
-    Bool2 const &GetColumnMinSizeEnabled (Uint32 index) const;
-    ScreenCoordVector2 const &GetColumnMinSize (Uint32 index) const;
-    Bool2 const &GetColumnMaxSizeEnabled (Uint32 index) const;
-    ScreenCoordVector2 const &GetColumnMaxSize (Uint32 index) const;
-    ScreenCoord GetColumnWidth (Uint32 index) const;
+    Uint32 ColumnCount () const;
+    Bool2 const &ColumnMinSizeEnabled (Uint32 index) const;
+    ScreenCoordVector2 const &ColumnMinSize (Uint32 index) const;
+    Bool2 const &ColumnMaxSizeEnabled (Uint32 index) const;
+    ScreenCoordVector2 const &ColumnMaxSize (Uint32 index) const;
+    ScreenCoord ColumnWidth (Uint32 index) const;
     Uint32 GetHiddenColumnCount () const;
 
     Uint32 GetRowCount () const;
@@ -85,10 +85,10 @@ public:
     ScreenCoord GetRowHeight (Uint32 index) const;
     Uint32 GetHiddenRowCount () const;
 
-    virtual Bool2 GetContentsMinSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMinSize () const;
-    virtual Bool2 GetContentsMaxSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMaxSize () const;
+    virtual Bool2 ContentsMinSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMinSize () const;
+    virtual Bool2 ContentsMaxSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMaxSize () const;
 
     void SetMajorDirection (LineDirection major_direction);
     void SetMajorCount (Uint32 major_count);

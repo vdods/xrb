@@ -139,7 +139,7 @@ void MapEditor2::Object::DrawMetrics (
                 GetTranslation(),
                 1.25f*GetVisibleRadius(),
                 0.0f,
-                Math::GetCanonicalAngle(Angle()),
+                Math::CanonicalAngle(Angle()),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(

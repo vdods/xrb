@@ -70,14 +70,14 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
         Float distance_fade;
         if (m_is_collect_transparent_object_pass)
         {
-            ASSERT3(m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] <= 1.0f);
-            ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f);
+            ASSERT3(m_object_draw_data.GetRenderContext().ColorMask()[Dim::A] <= 1.0f);
+            ASSERT3(object->ColorMask()[Dim::A] <= 1.0f);
             // if it's a transparent object and the transparent object vector
             // exists, add it to the transparent object vector.
             if (object->IsTransparent() ||
-                object->GetColorMask()[Dim::A] < 1.0f ||
+                object->ColorMask()[Dim::A] < 1.0f ||
                 (distance_fade = CalculateDistanceFade(object_radius)) < 1.0f ||
-                m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] < 1.0f)
+                m_object_draw_data.GetRenderContext().ColorMask()[Dim::A] < 1.0f)
             {
                 m_transparent_object_vector->push_back(object);
                 // no need to do anything else, so return

@@ -1109,7 +1109,7 @@ void World::ProcessCommonGameplayLogic ()
 
 void World::BeginWave ()
 {
-    if (m_state_machine.GetCurrentState() == &World::StateWaveInitialize)
+    if (m_state_machine.CurrentState() == &World::StateWaveInitialize)
         ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
 }
 
@@ -1122,7 +1122,7 @@ void World::EndIntro ()
 {
     // ignore this signal unless we're in the intro state (because i don't
     // want to have to ignore the state machine input in each event).
-    if (m_state_machine.GetCurrentState() == &World::StateIntro)
+    if (m_state_machine.CurrentState() == &World::StateIntro)
         ScheduleStateMachineInput(IN_END_INTRO, 0.0f);
 }
 
@@ -1130,7 +1130,7 @@ void World::EndOutro ()
 {
     // ignore this signal unless we're in the intro state (because i don't
     // want to have to ignore the state machine input in each event).
-    if (m_state_machine.GetCurrentState() == &World::StateOutro)
+    if (m_state_machine.CurrentState() == &World::StateOutro)
         ScheduleStateMachineInput(IN_END_OUTRO, 0.0f);
 }
 
@@ -1291,7 +1291,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     {
         WorldView *world_view = DStaticCast<WorldView *>(*it);
         ASSERT1(world_view != NULL);
-        FloatVector2 world_view_center(world_view->GetCenter());
+        FloatVector2 world_view_center(world_view->Center());
 
         // temp hack until real wrapped view coordinates are done
         {

@@ -38,7 +38,7 @@ public:
     ~StateMachine ();
 
     bool IsInitialized () const { return m_current_state != NULL; }
-    State GetCurrentState () const { return m_current_state; }
+    State CurrentState () const { return m_current_state; }
     
     void Initialize (State initial_state);
     void RunCurrentState (StateMachineInput input);

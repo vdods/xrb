@@ -62,7 +62,7 @@ void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
         {
             ASSERT1(m_child[i] == NULL);
             m_child[i] = new VisibilityQuadTree(this);
-            GetChild<VisibilityQuadTree>(i)->ReadStructure(serializer);
+            Child<VisibilityQuadTree>(i)->ReadStructure(serializer);
         }
     }
 }
@@ -77,7 +77,7 @@ void Engine2::VisibilityQuadTree::WriteStructure (Serializer &serializer) const
     // if there are children, recursively call this function on them
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<VisibilityQuadTree>(i)->WriteStructure(serializer);
+            Child<VisibilityQuadTree>(i)->WriteStructure(serializer);
 }
 
 void Engine2::VisibilityQuadTree::ReadObjects (
@@ -130,7 +130,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
         for (Uint8 i = 0; i < 4; ++i)
         {
             ASSERT1(m_child[i]->GetParent() == this);
-            retval += GetChild<VisibilityQuadTree>(i)->WriteObjects(serializer);
+            retval += Child<VisibilityQuadTree>(i)->WriteObjects(serializer);
         }
     }
 
@@ -318,7 +318,7 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
 
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
+            Child<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
 }
 
 void Engine2::VisibilityQuadTree::Draw (
@@ -353,7 +353,7 @@ void Engine2::VisibilityQuadTree::Draw (
     // if there are child nodes, call Draw on each
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
+            Child<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
 }
 
 void Engine2::VisibilityQuadTree::DrawWrapped (

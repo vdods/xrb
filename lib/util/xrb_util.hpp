@@ -72,7 +72,7 @@ namespace Util
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a C-style character literal.
       */
-    bool GetCharacterLiteralCharNeedsEscaping (char c);
+    bool CharacterLiteralCharNeedsEscaping (char c);
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a C-style string literal.
       */
@@ -98,12 +98,12 @@ namespace Util
       */
     char GetEscapedChar (char c);
 
-    /** For example, GetCharacterLiteral('\n') returns std::string("'\\n'"),
-      * while GetCharacterLiteral('j') returns std::string("'j'").
+    /** For example, CharacterLiteral('\n') returns std::string("'\\n'"),
+      * while CharacterLiteral('j') returns std::string("'j'").
       * @brief Returns the single-quote-surrounded C-style character literal
                for the given character in the form of a std::string.
       */
-    std::string GetCharacterLiteral (char c);
+    std::string CharacterLiteral (char c);
     /** For example, GetStringLiteral("eat shit\t\"and die\".")
       * returns std::string("\"eat shit\\t\\\"and die\\\".\"").
       * @brief Returns the double-quote-surrounded C-style string literal

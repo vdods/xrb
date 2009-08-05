@@ -142,7 +142,7 @@ void MapEditor2::Compound::Draw (
         1.0f);
 
     // set the color mask
-    Color color_mask(draw_data.GetRenderContext().GetColorMask());
+    Color color_mask(draw_data.GetRenderContext().ColorMask());
     color_mask[Dim::A] *= alpha_mask;
     glColor4fv(color_mask.m);
 

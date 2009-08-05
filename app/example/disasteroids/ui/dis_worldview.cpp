@@ -248,7 +248,7 @@ void WorldView::HandleFrame ()
             Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->GetSpeed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
 
-            FloatVector2 view_center_delta(traveling_at - (GetCenter() + m_view_velocity * GetFrameDT()));
+            FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * GetFrameDT()));
             bool is_view_recovering_this_frame;
             Float const max_view_center_delta = 2.4f / GetZoomFactor();
             static Float const s_time_to_recover = 0.5f;
@@ -266,7 +266,7 @@ void WorldView::HandleFrame ()
             if (!m_is_view_recovering && is_view_recovering_this_frame)
             {
                 m_is_view_recovering = true;
-                m_calculated_view_center = GetCenter() + m_view_velocity * GetFrameDT();
+                m_calculated_view_center = Center() + m_view_velocity * GetFrameDT();
                 m_recover_parameter = 0.0f;
             }
             else if (m_is_view_recovering && !is_view_recovering_this_frame)
@@ -289,7 +289,7 @@ void WorldView::HandleFrame ()
         /*
         { // view dragging
             Float minor_axis_radius = GetMinorAxisRadius();
-            FloatVector2 view_to_ship = GetCenter() - m_player_ship->GetUnwrappedTranslation();
+            FloatVector2 view_to_ship = Center() - m_player_ship->GetUnwrappedTranslation();
             Float view_to_ship_ratio = view_to_ship.GetLength() / (0.5f * minor_axis_radius);
             Float dragging_factor;
             if (view_to_ship_ratio >= 1.0f)
@@ -299,7 +299,7 @@ void WorldView::HandleFrame ()
             dragging_factor *= GetFrameDT();
 
             SetCenter(
-                GetCenter() * (1.0f - dragging_factor)
+                Center() * (1.0f - dragging_factor)
                 +
                 m_player_ship->GetUnwrappedTranslation() * dragging_factor);
             m_view_velocity = m_player_ship->GetVelocity();
@@ -308,7 +308,7 @@ void WorldView::HandleFrame ()
     }
     else
     {
-        SetCenter(GetCenter() + m_view_velocity * GetFrameDT());
+        SetCenter(Center() + m_view_velocity * GetFrameDT());
     }
 }
 
@@ -317,7 +317,7 @@ void WorldView::HandleInput (Key::Code const input)
     if (input == g_config.GetInputAction(INPUT__IN_GAME_INVENTORY_PANEL))
     {
         // only allowed to use the inventory panel during normal gameplay
-        if (m_state_machine.GetCurrentState() == &WorldView::StateNormalGameplay)
+        if (m_state_machine.CurrentState() == &WorldView::StateNormalGameplay)
             m_sender_activate_inventory_panel.Signal();
     }
     else if (input == g_config.GetInputAction(INPUT__EQUIP_PEA_SHOOTER))

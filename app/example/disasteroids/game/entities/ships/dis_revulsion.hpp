@@ -91,7 +91,7 @@ private:
     {
         ASSERT1(m_target.IsValid());
         FloatVector2 target_delta(GetTranslation() - target_position);
-        return Math::Atan(target_delta) - Math::GetCanonicalAngle(m_target->Angle());
+        return Math::Atan(target_delta) - Math::CanonicalAngle(m_target->Angle());
     }
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);

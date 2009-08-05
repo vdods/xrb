@@ -582,7 +582,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 
     Render::SetupTextureUnits(
         m_gl_texture->GetHandle(), 
-        render_context.GetColorMask(), 
+        render_context.ColorMask(), 
         render_context.BiasColor());
 
     // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv

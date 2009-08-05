@@ -238,7 +238,7 @@ protected:
 
     // does the calculation to see if/when the given entity will collide
     // with this one.
-    Float GetCollisionTime (Entity *entity, Float lookahead_time) const;
+    Float CollisionTime (Entity *entity, Float lookahead_time) const;
 
     static EntityType ReadEntityType (Serializer &serializer);
     void WriteEntityType (Serializer &serializer) const;

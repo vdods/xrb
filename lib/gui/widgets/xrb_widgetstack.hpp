@@ -30,10 +30,10 @@ public:
     }
     virtual ~WidgetStack () { }
 
-    virtual Bool2 GetContentsMinSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMinSize () const;
-    virtual Bool2 GetContentsMaxSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMaxSize () const;
+    virtual Bool2 ContentsMinSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMinSize () const;
+    virtual Bool2 ContentsMaxSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMaxSize () const;
 
     virtual void SetSizePropertyEnabled (
         SizeProperties::Property property,

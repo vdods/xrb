@@ -121,7 +121,7 @@ private:
 
     /** @brief Returns a pointer to the child widget to delete.
       */
-    inline Widget *GetChildToDelete () const { return m_child_to_delete; }
+    inline Widget *ChildToDelete () const { return m_child_to_delete; }
 
     /** @brief Deletes and nullifies the child to delete widget pointer.
       */

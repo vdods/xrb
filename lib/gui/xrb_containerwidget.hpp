@@ -337,13 +337,13 @@ protected:
 
     // TODO document
     // these are interfaces for container widgets
-    virtual Bool2 GetContentsMinSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMinSize () const;
-    virtual Bool2 GetContentsMaxSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMaxSize () const;
+    virtual Bool2 ContentsMinSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMinSize () const;
+    virtual Bool2 ContentsMaxSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMaxSize () const;
 
-    inline Uint32 GetChildResizeBlockerCount () const { return m_child_resize_blocker_count; }
-    inline bool GetChildResizeWasBlocked () const { return m_child_resize_was_blocked; }
+    inline Uint32 ChildResizeBlockerCount () const { return m_child_resize_blocker_count; }
+    inline bool ChildResizeWasBlocked () const { return m_child_resize_was_blocked; }
 
     inline void IndicateChildResizeWasBlocked () { m_child_resize_was_blocked = true; }
 

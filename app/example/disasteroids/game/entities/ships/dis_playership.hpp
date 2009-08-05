@@ -179,8 +179,8 @@ protected:
 
 private:
 
-    Weapon const *GetCurrentWeapon () const;
-    Weapon *GetCurrentWeapon ();
+    Weapon const *CurrentWeapon () const;
+    Weapon *CurrentWeapon ();
 
     Weapon *GetInventoryWeapon (ItemType weapon_type, Uint8 upgrade_level);
     Engine *GetInventoryEngine (Uint8 upgrade_level);

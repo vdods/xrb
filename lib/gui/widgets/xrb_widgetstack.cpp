@@ -15,25 +15,25 @@
 namespace Xrb
 {
 
-Bool2 WidgetStack::GetContentsMinSizeEnabled () const
+Bool2 WidgetStack::ContentsMinSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size_enabled;
 }
 
-ScreenCoordVector2 WidgetStack::GetContentsMinSize () const
+ScreenCoordVector2 WidgetStack::ContentsMinSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_min_size;
 }
 
-Bool2 WidgetStack::GetContentsMaxSizeEnabled () const
+Bool2 WidgetStack::ContentsMaxSizeEnabled () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size_enabled;
 }
 
-ScreenCoordVector2 WidgetStack::GetContentsMaxSize () const
+ScreenCoordVector2 WidgetStack::ContentsMaxSize () const
 {
     UpdateContentsSizeProperties();
     return m_contents_size_properties.m_max_size;
@@ -103,7 +103,7 @@ ScreenCoordVector2 WidgetStack::Resize (ScreenCoordVector2 const &size)
     ContainerWidget::Resize(size);
 
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         ResizeAndRepositionChildWidgets();
     }
@@ -121,7 +121,7 @@ void WidgetStack::AttachChild (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -142,7 +142,7 @@ void WidgetStack::DetachChild (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
@@ -161,7 +161,7 @@ void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
     // only update size stuff if not blocked
-    if (GetChildResizeBlockerCount() == 0)
+    if (ChildResizeBlockerCount() == 0)
     {
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();

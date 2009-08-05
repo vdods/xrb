@@ -176,7 +176,7 @@ public:
     inline bool IsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &BiasColor () const { return m_bias_color; }
-    inline Color const &GetColorMask () const { return m_color_mask; }
+    inline Color const &ColorMask () const { return m_color_mask; }
     inline bool IsTransparent () const { return m_is_transparent; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }

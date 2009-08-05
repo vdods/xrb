@@ -30,7 +30,7 @@ public:
     virtual ~LineEdit () { }
 
     inline Alignment GetAlignment () const { return m_alignment; }
-    inline Uint32 GetCharacterLimit () const { return m_character_limit; }
+    inline Uint32 CharacterLimit () const { return m_character_limit; }
     inline CharacterFilter &GetCharacterFilter () { return m_character_filter; }
     inline bool IsReadOnly () const { return m_is_read_only; }
 
@@ -75,8 +75,8 @@ protected:
 private:
 
     ScreenCoord GetInitialPenPositionX () const;
-    ScreenCoord GetCursorOffset (Uint32 cursor_position) const;
-    ScreenCoord GetCursorWidth (Uint32 cursor_position) const;
+    ScreenCoord CursorOffset (Uint32 cursor_position) const;
+    ScreenCoord CursorWidth (Uint32 cursor_position) const;
 
     // sets the cursor position and takes care of making sure the
     // line edit scrolls properly

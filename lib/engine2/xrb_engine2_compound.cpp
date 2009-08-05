@@ -77,7 +77,7 @@ void Engine2::Compound::Draw (
     // calculate the bias color
     Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
     // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
+    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
     // the opaque white texture is just a dummy.  the real texture will be bound later

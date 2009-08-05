@@ -175,7 +175,7 @@ void Engine2::WorldViewWidget::ComputeTransform ()
         m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), GetHeight())));
     // translate so the origin of the view is at the center of the
     // WorldViewWidget widget
-    m_transform.Translate(GetScreenRect().GetCenter().StaticCast<Float>());
+    m_transform.Translate(GetScreenRect().Center().StaticCast<Float>());
 }
 
 } // end of namespace Xrb

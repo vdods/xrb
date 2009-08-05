@@ -232,7 +232,7 @@ void Entity::HandleObjectLayerContainment (bool const component_x, bool const co
         m_velocity[Dim::Y] = 0.0f;
 }
 
-Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
+Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) const
 {
     FloatVector2 adjusted_entity_translation(
         GetObjectLayer()->AdjustedCoordinates(

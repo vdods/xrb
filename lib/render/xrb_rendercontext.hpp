@@ -79,7 +79,7 @@ public:
 
     /** @brief Returns the clipping rectangle.
       */
-    inline ScreenCoordRect const &GetClipRect () const
+    inline ScreenCoordRect const &ClipRect () const
     {
         return m_clip_rect;
     }
@@ -91,7 +91,7 @@ public:
     }
     /** @brief Returns the color mask.
       */
-    inline Color const &GetColorMask () const
+    inline Color const &ColorMask () const
     {
         return m_color_mask;
     }
@@ -99,7 +99,7 @@ public:
       * against the clipping rectangle.
       * @brief Returns the intersection of the clipping rect and the given.
       */
-    inline ScreenCoordRect GetClippedRect (ScreenCoordRect const &rect) const
+    inline ScreenCoordRect ClippedRect (ScreenCoordRect const &rect) const
     {
         return m_clip_rect & rect;
     }

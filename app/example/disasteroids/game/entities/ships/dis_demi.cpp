@@ -462,7 +462,7 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
         if (reticle_offset.GetLength() < 0.01f)
             return Math::UnitVector(Angle());
 
-        Float reticle_angle = Math::GetCanonicalAngle(Math::Atan(reticle_offset) - Angle());
+        Float reticle_angle = Math::CanonicalAngle(Math::Atan(reticle_offset) - Angle());
         if (reticle_angle < -ms_weapon_fov[GetEnemyLevel()])
             reticle_angle = -ms_weapon_fov[GetEnemyLevel()];
         else if (reticle_angle > ms_weapon_fov[GetEnemyLevel()])
@@ -1477,7 +1477,7 @@ Entity *Demi::FindTractorDeflectTarget (
         Sint32 potential_target_priority = -1;
 
         // only target stuff that's about to collide with us (TODO: verify this works)
-        Float collision_time = GetCollisionTime(entity, 2.0f);
+        Float collision_time = CollisionTime(entity, 2.0f);
         if (collision_time >= 0.0f)
         {
             if (entity->IsExplosive() &&

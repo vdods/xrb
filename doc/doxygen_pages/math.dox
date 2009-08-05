@@ -27,7 +27,7 @@ Mathematical functions residing in @ref Xrb::Math
     <ul>
     <li>@ref Xrb::Math::Radians </li>
     <li>@ref Xrb::Math::Degrees </li>
-    <li>@ref Xrb::Math::GetCanonicalAngle </li>
+    <li>@ref Xrb::Math::CanonicalAngle </li>
     <li>@ref Xrb::Math::Sin </li>
     <li>@ref Xrb::Math::Asin </li>
     <li>@ref Xrb::Math::Cos </li>

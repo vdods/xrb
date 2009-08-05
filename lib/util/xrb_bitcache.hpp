@@ -120,7 +120,7 @@ protected:
     inline void IncrementCacheByteIndex (Uint32 requested_byte_count)
     {
         ASSERT1(IsCacheBitIndexOnByteBoundary());
-        ASSERT1(GetCacheByteIndex() + requested_byte_count
+        ASSERT1(CacheByteIndex() + requested_byte_count
                 <=
                 m_next_available_cache_byte_index);
         m_cache_bit_index += requested_byte_count << 3;
@@ -177,7 +177,7 @@ private:
     {
         return (m_cache_bit_index + 7) >> 3;
     }
-    inline Uint32 GetCacheByteIndex () const
+    inline Uint32 CacheByteIndex () const
     {
         return m_cache_bit_index >> 3;
     }

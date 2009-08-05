@@ -182,7 +182,7 @@ public:
         return m_top_right[Dim::X];
     }
 
-    inline Vector<T, 2> GetCenter () const
+    inline Vector<T, 2> Center () const
     {
         return (m_bottom_left + m_top_right) / static_cast<T>(2);
     }
@@ -277,7 +277,7 @@ public:
 
     inline void SetCenter (Vector<T, 2> const &center)
     {
-        operator-=(GetCenter());
+        operator-=(Center());
         operator+=(center);
     }
 

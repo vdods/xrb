@@ -163,7 +163,7 @@ void Label::DrawText (RenderContext const &render_context) const
     ASSERT1(!m_is_picture_label);
     ASSERT1(GetRenderFont().IsValid());
 
-    ScreenCoordRect contents_rect(GetContentsRect());
+    ScreenCoordRect contents_rect(ContentsRect());
     if (contents_rect.IsValid())
     {
         // give it a chance to update the formatted text if
@@ -182,7 +182,7 @@ void Label::DrawText (RenderContext const &render_context) const
         ASSERT1(m_line_format_vector_source != NULL);
         GetRenderFont()->DrawLineFormattedText(
             string_render_context,
-            GetContentsRect(),
+            ContentsRect(),
             m_line_format_vector_source->c_str(),
             m_line_format_vector,
             m_alignment);
@@ -197,7 +197,7 @@ void Label::DrawPicture (RenderContext const &render_context) const
 
     // this is the rectangle which will be used to render the picture.
     ScreenCoordRect picture_rect;
-    ScreenCoordRect contents_rect(GetContentsRect());
+    ScreenCoordRect contents_rect(ContentsRect());
 
     if (m_picture_keeps_aspect_ratio)
     {
@@ -315,7 +315,7 @@ void Label::UpdateCachedFormattedText () const
         GetRenderFont()->GenerateWordWrappedString(
             m_text,
             &m_cached_formatted_text,
-            GetContentsRect().GetSize());
+            ContentsRect().GetSize());
         m_line_format_vector_source = &m_cached_formatted_text;
     }
     // otherwise use m_text directly

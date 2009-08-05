@@ -217,7 +217,7 @@ MapEditor2::World *MapEditor2::WorldView::GetMapEditorWorld () const
     return DStaticCast<World *>(m_world);
 }
 
-std::string MapEditor2::WorldView::GetCurrentGridScaleText () const
+std::string MapEditor2::WorldView::CurrentGridScaleText () const
 {
     ASSERT1(m_grid_number_base != 0);
     Float numerator = 0.5f * GetMainObjectLayer()->GetSideLength();
@@ -447,7 +447,7 @@ void MapEditor2::WorldView::SetCurrentGridScale (Uint32 const current_grid_scale
     if (m_current_grid_scale != current_grid_scale)
     {
         m_current_grid_scale = current_grid_scale;
-        m_sender_grid_scale_text_changed.Signal(GetCurrentGridScaleText());
+        m_sender_grid_scale_text_changed.Signal(CurrentGridScaleText());
     }
 }
 
@@ -703,7 +703,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         
     // calculate the number of pixels in the view radius
     Float pixels_in_view_radius =
-        0.5f * render_context.GetClipRect().GetSize().StaticCast<Float>().GetLength();
+        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
     // get the parallaxed view radius for the main object layer
     Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
 
@@ -715,7 +715,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
             render_context,
             GetParallaxedWorldToScreen(),
             pixels_in_view_radius,
-            GetCenter(),
+            Center(),
             parallaxed_view_radius,
             m_metric_editing_mode);
     }
@@ -1818,7 +1818,7 @@ void MapEditor2::WorldView::UpdateObjectSelectionSetScale (
 void MapEditor2::WorldView::UpdateObjectSelectionSetAngle (
     Float const object_selection_set_angle)
 {
-    Float canonical_angle = Math::GetCanonicalAngle(object_selection_set_angle);
+    Float canonical_angle = Math::CanonicalAngle(object_selection_set_angle);
     if (m_object_selection_set_angle != canonical_angle)
     {
         m_object_selection_set_angle = canonical_angle;
@@ -2462,7 +2462,7 @@ void MapEditor2::WorldView::AccumulateAngleEditDelta (Float const angle_delta)
     m_angle_delta += angle_delta;
     // constrain the angle if appropriate
     if (m_metric_editing_mode != Object::MM_ANGULAR_VELOCITY)
-        m_angle_delta = Math::GetCanonicalAngle(m_angle_delta);
+        m_angle_delta = Math::CanonicalAngle(m_angle_delta);
 }
 
 void MapEditor2::WorldView::AccumulateScaleAndAngleEditDeltas (
@@ -2479,7 +2479,7 @@ void MapEditor2::WorldView::AccumulateScaleAndAngleEditDeltas (
     m_angle_delta += angle_delta;
     // constrain the angle if appropriate
     if (m_metric_editing_mode != Object::MM_ANGULAR_VELOCITY)
-        m_angle_delta = Math::GetCanonicalAngle(m_angle_delta);
+        m_angle_delta = Math::CanonicalAngle(m_angle_delta);
 }
 
 void MapEditor2::WorldView::ResetObjectSelectionSetScale ()

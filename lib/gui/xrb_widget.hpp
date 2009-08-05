@@ -242,7 +242,7 @@ public:
       * the point that they totally cancel the frame margins).
       * @brief Returns the content margins for this widget.
       */
-    inline ScreenCoordVector2 const &GetContentMargins () const { return m_content_margins; }
+    inline ScreenCoordVector2 const &ContentMargins () const { return m_content_margins; }
     /** @brief Returns the last known mouse position (derived from the most
       *        recent mouse motion event received by this widget).
       */
@@ -294,9 +294,9 @@ public:
       * negative, up to the negative of the frame margins.
       * @brief Returns the rectangle representing the content area.
       */
-    inline ScreenCoordRect GetContentsRect () const
+    inline ScreenCoordRect ContentsRect () const
     {
-        return GetScreenRect().GetGrown(-(GetFrameMargins() + GetContentMargins()));
+        return GetScreenRect().GetGrown(-(GetFrameMargins() + ContentMargins()));
     }
     /** @brief Returns this widget's bias color (the bias color is applied to
       * everything drawn by the widget, BEFORE the color mask).
@@ -305,7 +305,7 @@ public:
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
-    inline Color const &GetColorMask () const { return m_color_mask; }
+    inline Color const &ColorMask () const { return m_color_mask; }
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers

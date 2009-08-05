@@ -15,7 +15,7 @@
 namespace Xrb
 {
 
-Float Math::GetCanonicalAngle (Float const angle)
+Float Math::CanonicalAngle (Float const angle)
 {
     Float retval = angle;
 

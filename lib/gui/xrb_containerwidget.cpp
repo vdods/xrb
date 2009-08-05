@@ -92,7 +92,7 @@ void ContainerWidget::SetSizePropertyEnabled (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
             m_main_widget->SetSizePropertyEnabled(
                 property,
                 component,
@@ -142,7 +142,7 @@ void ContainerWidget::SetSizePropertyEnabled (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
             m_main_widget->SetSizePropertyEnabled(
                 property,
                 value,
@@ -194,7 +194,7 @@ void ContainerWidget::SetSizeProperty (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
             m_main_widget->SetSizeProperty(
                 property,
                 component,
@@ -247,7 +247,7 @@ void ContainerWidget::SetSizeProperty (
     // if there is a main widget, pass this call down to it
     if (m_main_widget != NULL)
     {
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
             m_main_widget->SetSizeProperty(
                 property,
                 value,
@@ -323,16 +323,16 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
             child_render_context.SetClipRect(
-                render_context.GetClippedRect(child->GetScreenRect()));
+                render_context.ClippedRect(child->GetScreenRect()));
             // don't even bother drawing a child widget if this resulting
             // clip rect is invalid (0 area)
-            if (child_render_context.GetClipRect().IsValid())
+            if (child_render_context.ClipRect().IsValid())
             {
                 // set the bias color and color mask
                 child_render_context.SetBiasColor(render_context.BiasColor());
                 child_render_context.ApplyBiasColor(child->BiasColor());
-                child_render_context.SetColorMask(render_context.GetColorMask());
-                child_render_context.ApplyColorMask(child->GetColorMask());
+                child_render_context.SetColorMask(render_context.ColorMask());
+                child_render_context.ApplyColorMask(child->ColorMask());
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
                 if (!child->IsEnabled() && IsEnabled())
@@ -366,16 +366,16 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
             child_render_context.SetClipRect(
-                render_context.GetClippedRect(modal_widget->GetScreenRect()));
+                render_context.ClippedRect(modal_widget->GetScreenRect()));
             // don't even bother drawing a modal widget if this resulting
             // clip rect is invalid (0 area)
-            if (child_render_context.GetClipRect().IsValid())
+            if (child_render_context.ClipRect().IsValid())
             {
                 // set the bias color and color mask
                 child_render_context.SetBiasColor(render_context.BiasColor());
                 child_render_context.ApplyBiasColor(modal_widget->BiasColor());
-                child_render_context.SetColorMask(render_context.GetColorMask());
-                child_render_context.ApplyColorMask(modal_widget->GetColorMask());
+                child_render_context.SetColorMask(render_context.ColorMask());
+                child_render_context.ApplyColorMask(modal_widget->ColorMask());
 
                 ASSERT1(modal_widget->IsEnabled());
                 // set up the clip rect for the child
@@ -413,12 +413,12 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 {
     ScreenCoordVector2 adjusted_size(m_size_properties.AdjustedSize(size));
 
-    if (m_screen_rect.GetSize() != adjusted_size || (GetChildResizeBlockerCount() == 0 && GetChildResizeWasBlocked()))
+    if (m_screen_rect.GetSize() != adjusted_size || (ChildResizeBlockerCount() == 0 && ChildResizeWasBlocked()))
     {
         m_screen_rect.SetSize(adjusted_size);
 
         // only update size stuff if not blocked
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
         {
             m_child_resize_was_blocked = false;
             // if there is a main widget, resize it to match this one
@@ -622,25 +622,25 @@ WidgetSkinHandler *ContainerWidget::GetWidgetSkinHandlerChild (Uint32 const inde
     return static_cast<WidgetSkinHandler *>(child);
 }
 
-Bool2 ContainerWidget::GetContentsMinSizeEnabled () const
+Bool2 ContainerWidget::ContentsMinSizeEnabled () const
 {
     ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMinSizeEnabled();
 }
 
-ScreenCoordVector2 ContainerWidget::GetContentsMinSize () const
+ScreenCoordVector2 ContainerWidget::ContentsMinSize () const
 {
     ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMinSize();
 }
 
-Bool2 ContainerWidget::GetContentsMaxSizeEnabled () const
+Bool2 ContainerWidget::ContentsMaxSizeEnabled () const
 {
     ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMaxSizeEnabled();
 }
 
-ScreenCoordVector2 ContainerWidget::GetContentsMaxSize () const
+ScreenCoordVector2 ContainerWidget::ContentsMaxSize () const
 {
     ASSERT1(m_main_widget != NULL);
     return m_main_widget->GetMaxSize();
@@ -662,7 +662,7 @@ void ContainerWidget::HandleFrame ()
 
 bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget const *const e)
 {
-    ASSERT1(e->GetChildToDelete() != this && "a widget must not delete itself");
+    ASSERT1(e->ChildToDelete() != this && "a widget must not delete itself");
     e->DeleteChildWidget();
     return true;
 }
@@ -718,7 +718,7 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
     for (Uint8 d = 0; d < 2; ++d)
     {
         {
-            bool contents_min_size_enabled = GetContentsMinSizeEnabled()[d];
+            bool contents_min_size_enabled = ContentsMinSizeEnabled()[d];
             // calculate the min size enabled property
             m_size_properties.m_min_size_enabled[d] =
                 contents_min_size_enabled ||
@@ -728,10 +728,10 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
             {
                 if (m_preferred_size_properties.m_min_size_enabled[d])
                     m_size_properties.m_min_size[d] =
-                        Max(GetContentsMinSize()[d],
+                        Max(ContentsMinSize()[d],
                             m_preferred_size_properties.m_min_size[d]);
                 else
-                    m_size_properties.m_min_size[d] = GetContentsMinSize()[d];
+                    m_size_properties.m_min_size[d] = ContentsMinSize()[d];
             }
             else
             {
@@ -745,7 +745,7 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
         }
 
         {
-            bool contents_max_size_enabled = GetContentsMaxSizeEnabled()[d];
+            bool contents_max_size_enabled = ContentsMaxSizeEnabled()[d];
             // calculate the max size enabled property
             m_size_properties.m_max_size_enabled[d] =
                 contents_max_size_enabled ||
@@ -755,10 +755,10 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
             {
                 if (m_preferred_size_properties.m_max_size_enabled[d])
                     m_size_properties.m_max_size[d] =
-                        Min(GetContentsMaxSize()[d],
+                        Min(ContentsMaxSize()[d],
                             m_preferred_size_properties.m_max_size[d]);
                 else
-                    m_size_properties.m_max_size[d] = GetContentsMaxSize()[d];
+                    m_size_properties.m_max_size[d] = ContentsMaxSize()[d];
             }
             else
             {
@@ -783,7 +783,7 @@ void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
 
     if (child == m_main_widget)
     {
-        if (GetChildResizeBlockerCount() == 0)
+        if (ChildResizeBlockerCount() == 0)
         {
             // adjust the size properties based on the contents (the main widget)
             CalculateMinAndMaxSizePropertiesFromContents();

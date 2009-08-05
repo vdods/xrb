@@ -174,9 +174,9 @@ void Asteroid::Die (
         {
             Float velocity_angle = seed_angle;
             seed_angle += 360.0f / static_cast<Float>(ms_number_of_fragments_to_spawn);
-            ASSERT1(GetCurrentHealth() <= 0.0f);
+            ASSERT1(CurrentHealth() <= 0.0f);
             ASSERT1(GetMaxHealth() > 0.0f);
-            Float health_ratio = GetCurrentHealth() / GetMaxHealth();
+            Float health_ratio = CurrentHealth() / GetMaxHealth();
             Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / GetFirstMoment();
             if (explosion_speed > 5.0f)
                 explosion_speed = 5.0f;

@@ -153,7 +153,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
         FloatVector2 target_direction(GetReticleCoordinates() - GetTranslation());
         if (!target_direction.IsZero())
         {
-            Float angle_delta = Math::GetCanonicalAngle(Math::Atan(target_direction) - Angle());
+            Float angle_delta = Math::CanonicalAngle(Math::Atan(target_direction) - Angle());
             if (Abs(angle_delta) > s_max_tractor_angle)
             {
                 SetWeaponPrimaryInput(0);

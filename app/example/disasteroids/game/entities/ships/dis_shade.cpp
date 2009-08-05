@@ -184,7 +184,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
         // while, perform collision avoidance calculations
         else
         {
-            Float potential_collision_time = GetCollisionTime(entity, s_collision_lookahead_time);
+            Float potential_collision_time = CollisionTime(entity, s_collision_lookahead_time);
             if (potential_collision_time >= 0.0f &&
                 (collision_entity == NULL || potential_collision_time < collision_time))
             {

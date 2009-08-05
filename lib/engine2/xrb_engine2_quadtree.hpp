@@ -44,7 +44,7 @@ public:
     inline bool GetHasChildren () const { return m_child[0] != NULL; }
     // returns the root node (top level parent) of this quadtree node
     QuadTree const *GetRootNode () const;
-    inline FloatVector2 const &GetCenter () const { return m_center; }
+    inline FloatVector2 const &Center () const { return m_center; }
     inline Float GetSideLength () const { return 2.0f * m_half_side_length; }
     inline Float GetHalfSideLength () const { return m_half_side_length; }
     inline Float GetRadius () const { return m_radius; }
@@ -82,14 +82,14 @@ protected:
     QuadTree (QuadTree *parent);
 
     template <typename QuadTreeClass>
-    inline QuadTreeClass const *GetChild (Uint32 const index) const
+    inline QuadTreeClass const *Child (Uint32 const index) const
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);
         return DStaticCast<QuadTreeClass const *>(m_child[index]);
     }
     template <typename QuadTreeClass>
-    inline QuadTreeClass *GetChild (Uint32 const index)
+    inline QuadTreeClass *Child (Uint32 const index)
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);

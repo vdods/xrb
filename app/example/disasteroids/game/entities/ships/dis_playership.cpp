@@ -101,7 +101,7 @@ PlayerShip::~PlayerShip ()
 
 Float PlayerShip::ArmorStatus () const
 {
-    return Max(0.0f, GetCurrentHealth() / GetMaxHealth());
+    return Max(0.0f, CurrentHealth() / GetMaxHealth());
 }
 
 Float PlayerShip::GetShieldStatus () const
@@ -127,11 +127,11 @@ Float PlayerShip::GetWeaponStatus () const
     if (IsDead())
         return 0.0f;
 
-    Weapon const *current_weapon = GetCurrentWeapon();
+    Weapon const *current_weapon = CurrentWeapon();
     // getting the time from the world in this manner
     // is slightly ugly, but its the easiest way to do it.
     return (current_weapon != NULL) ?
-           GetCurrentWeapon()->GetReadinessStatus(GetWorld()->GetMostRecentFrameTime()) :
+           CurrentWeapon()->GetReadinessStatus(GetWorld()->GetMostRecentFrameTime()) :
            0.0f;
 }
 
@@ -532,7 +532,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         SetStoke(Max(1.0f, m_stoke * Math::Pow(0.5f, frame_dt / s_stoke_halflife)));
 
         // figure out which weapon to use.
-        Weapon *current_weapon = GetCurrentWeapon();
+        Weapon *current_weapon = CurrentWeapon();
 
         // figure out what to do with the LaserBeam/TractorBeam
         if (current_weapon != NULL)
@@ -900,7 +900,7 @@ void PlayerShip::SetCurrentHealth (Float const current_health)
     SetShieldStatus(GetShieldStatus());
 }
 
-Weapon const *PlayerShip::GetCurrentWeapon () const
+Weapon const *PlayerShip::CurrentWeapon () const
 {
     if (m_is_using_auxiliary_weapon && m_auxiliary_weapon != NULL)
         return m_auxiliary_weapon;
@@ -908,7 +908,7 @@ Weapon const *PlayerShip::GetCurrentWeapon () const
         return m_main_weapon;
 }
 
-Weapon *PlayerShip::GetCurrentWeapon ()
+Weapon *PlayerShip::CurrentWeapon ()
 {
     if (m_is_using_auxiliary_weapon && m_auxiliary_weapon != NULL)
         return m_auxiliary_weapon;

@@ -137,7 +137,7 @@ void Screen::Draw () const
     // for the blending function composition operation.  the default 
     // color mask is opaque white, which is the identity for the color 
     // masking operation.
-    RenderContext render_context(screen_rect, BiasColor(), GetColorMask());
+    RenderContext render_context(screen_rect, BiasColor(), ColorMask());
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     render_context.SetupGLClipRect();

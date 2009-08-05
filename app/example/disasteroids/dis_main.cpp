@@ -481,7 +481,7 @@ required interfaces for Weapon:
 - GetReloadTime -- (0 for always ready)
 - GetTimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
 - GetRequiresAmmo
-- GetCurrentAmmo
+- CurrentAmmo
 - GetMaxAmmo
 - AddAmmo
 - RemoveAmmo

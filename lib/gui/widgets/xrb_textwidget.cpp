@@ -263,7 +263,7 @@ void TextWidget::UpdateMinAndMaxSizesFromText ()
     if (!GetRenderFont().IsValid())
         return;
 
-    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (GetFrameMargins() + GetContentMargins()));
+    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (GetFrameMargins() + ContentMargins()));
 
     if (m_is_min_width_fixed_to_text_width)
         SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);

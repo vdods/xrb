@@ -67,7 +67,7 @@ public:
     }
     virtual ~Mortal () { }
 
-    inline Float GetCurrentHealth () const { return m_current_health; }
+    inline Float CurrentHealth () const { return m_current_health; }
     inline Float GetMaxHealth () const { return m_max_health; }
     inline bool IsDead () const { return m_current_health <= 0.0f; }
     inline bool IsInvincible () const { return m_is_invincible; }

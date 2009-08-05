@@ -309,7 +309,7 @@ void Render::DrawScreenRectTexture (
 
     SetupTextureUnits(
         gl_texture->GetHandle(), 
-        render_context.GetColorMask(), 
+        render_context.ColorMask(), 
         render_context.BiasColor());
 
     glBegin(GL_QUADS);

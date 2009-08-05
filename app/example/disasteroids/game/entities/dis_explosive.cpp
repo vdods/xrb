@@ -153,7 +153,7 @@ void Grenade::Collide (
         // set the new max health for the new grenade is the sum of the source grenades'
         // max healths.  the current health for the new grenade is also the sum.
         SetMaxHealth(GetMaxHealth() + other_grenade->GetMaxHealth());
-        SetCurrentHealth(GetCurrentHealth() + other_grenade->GetCurrentHealth());
+        SetCurrentHealth(CurrentHealth() + other_grenade->CurrentHealth());
         ResetRecentChangeInHealth();
 
         // figure out the new mass, velocity, and radius.

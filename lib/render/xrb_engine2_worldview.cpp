@@ -57,7 +57,7 @@ Engine2::WorldView::~WorldView ()
     ASSERT1(m_world == NULL);
 }
 
-FloatMatrix2 Engine2::WorldView::GetCompoundTransformation () const
+FloatMatrix2 Engine2::WorldView::CompoundTransformation () const
 {
     ASSERT1(m_parent_world_view_widget != NULL);
     return m_parent_world_view_widget->GetTransformation() * GetTransformation();
@@ -85,7 +85,7 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
         CalculateViewRadius(
             world_to_screen.GetInverse(),
             GetParentWorldViewWidget()->GetScreenRect(),
-            GetCenter())
+            Center())
         *
         GetParallaxFactor(
             GetViewDepth(GetMainObjectLayer()),
@@ -148,7 +148,7 @@ Float Engine2::WorldView::GetMajorAxisRadius () const
          GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
 }
 
-Float Engine2::WorldView::GetCornerRadius () const
+Float Engine2::WorldView::CornerRadius () const
 {
     FloatVector2 corner_vector(
         0.5f * static_cast<Float>(m_parent_world_view_widget->GetWidth()),
@@ -282,7 +282,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     m_draw_info.Reset();
 
     Float pixels_in_view_radius =
-        0.5f * render_context.GetClipRect().GetSize().StaticCast<Float>().GetLength();
+        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
 
     // vars which are used in the while loop which should only be
     // initialized once, before the loop.
@@ -323,7 +323,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                 distance_fade = 1.0f;
             }
             // apply the distance fade transparency to the color mask
-            view_render_context.SetColorMask(render_context.GetColorMask());
+            view_render_context.SetColorMask(render_context.ColorMask());
             view_render_context.ApplyAlphaMaskToColorMask(
                 Min(Max(distance_fade, 0.0f), 1.0f));
 
@@ -359,7 +359,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                     view_render_context,
                     parallaxed_world_to_screen,
                     pixels_in_view_radius,
-                    GetCenter(),
+                    Center(),
                     parallaxed_view_radius,
                     &m_transparent_object_vector);
 
@@ -390,7 +390,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             0,
             true,
             GetMainObjectLayer()->IsWrapped(),
-            GetCenter(),
+            Center(),
             parallaxed_view_radius,
             Color(1.0f, 1.0f, 0.0f, 1.0f));
 
@@ -497,7 +497,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         m_current_grid_scale+1,
         false,
         is_wrapped,
-        GetCenter(),
+        Center(),
         view_radius,
         Color(0.4f, 0.4f, 0.4f, 1.0f));
     // draw the major grid
@@ -506,7 +506,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         m_current_grid_scale,
         false,
         is_wrapped,
-        GetCenter(),
+        Center(),
         view_radius,
         Color(0.7f, 0.7f, 0.7f, 1.0f));
 }
@@ -640,21 +640,21 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // the place of the view-to-screen transform.
     if (m_is_transform_scaling_based_upon_widget_radius)
     {
-        Float viewport_radius = render_context.GetClipRect().GetSize().StaticCast<Float>().GetLength();
+        Float viewport_radius = render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
         glScalef(
-            viewport_radius / render_context.GetClipRect().GetSize()[Dim::X],
-            viewport_radius / render_context.GetClipRect().GetSize()[Dim::Y],
+            viewport_radius / render_context.ClipRect().GetSize()[Dim::X],
+            viewport_radius / render_context.ClipRect().GetSize()[Dim::Y],
             1.0f);
     }
     else
     {
         Float min_viewport_size =
             static_cast<Float>(
-                Min(render_context.GetClipRect().GetSize()[Dim::X],
-                    render_context.GetClipRect().GetSize()[Dim::Y]));
+                Min(render_context.ClipRect().GetSize()[Dim::X],
+                    render_context.ClipRect().GetSize()[Dim::Y]));
         glScalef(
-            min_viewport_size / render_context.GetClipRect().GetSize()[Dim::X],
-            min_viewport_size / render_context.GetClipRect().GetSize()[Dim::Y],
+            min_viewport_size / render_context.ClipRect().GetSize()[Dim::X],
+            min_viewport_size / render_context.ClipRect().GetSize()[Dim::Y],
             1.0f);
     }
 

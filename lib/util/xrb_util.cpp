@@ -143,7 +143,7 @@ char Util::GetShiftedAscii (char const c)
     return (c >= 0) ? ascii_to_shifted_ascii[(Uint32)c] : '\0';
 }
 
-bool Util::GetCharacterLiteralCharNeedsEscaping (char const c)
+bool Util::CharacterLiteralCharNeedsEscaping (char const c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -195,10 +195,10 @@ char Util::GetEscapedChar (char const c)
     }
 }
 
-std::string Util::GetCharacterLiteral (char const c)
+std::string Util::CharacterLiteral (char const c)
 {
     std::string retval("'");
-    if (GetCharacterLiteralCharNeedsEscaping(c))
+    if (CharacterLiteralCharNeedsEscaping(c))
         retval += '\\', retval += GetEscapeCode(c);
     else
         retval += c;

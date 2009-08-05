@@ -343,7 +343,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
             m_message_label->ReceiverSetText());
 
         // grid scale label
-        m_grid_scale_label->SetText(GetMapEditorWorldView()->GetCurrentGridScaleText());
+        m_grid_scale_label->SetText(GetMapEditorWorldView()->CurrentGridScaleText());
         SignalHandler::Connect1(
             GetMapEditorWorldView()->SenderGridScaleTextChanged(),
             m_grid_scale_label->ReceiverSetText());

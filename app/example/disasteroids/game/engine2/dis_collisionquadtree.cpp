@@ -76,22 +76,22 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            GetChild<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            GetChild<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            GetChild<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            GetChild<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities);
@@ -158,28 +158,28 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            GetChild<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            GetChild<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            GetChild<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            GetChild<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
@@ -207,7 +207,7 @@ void CollisionQuadTree::LineTrace (
     // if this quad node doesn't intersect the line, return
     Float a = trace_vector | trace_vector;
     {
-        FloatVector2 p_minus_c = trace_start - GetCenter();
+        FloatVector2 p_minus_c = trace_start - Center();
         Float R = GetRadius() + trace_radius;
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
@@ -262,7 +262,7 @@ void CollisionQuadTree::LineTrace (
     // call this function on the child nodes, if they exist
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->LineTrace(
+            Child<CollisionQuadTree>(i)->LineTrace(
                 trace_start,
                 trace_vector,
                 trace_radius,
@@ -291,7 +291,7 @@ void CollisionQuadTree::LineTraceWrapped (
     Float a = trace_vector | trace_vector;
     FloatVector2 trace_center(trace_start + 0.5f * trace_vector);
     {
-        FloatVector2 adjusted_center(GetCenter());
+        FloatVector2 adjusted_center(Center());
 
         if (adjusted_center[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
             adjusted_center[Dim::X] -= object_layer_side_length;
@@ -370,7 +370,7 @@ void CollisionQuadTree::LineTraceWrapped (
     // call this function on the child nodes, if they exist
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->LineTraceWrapped(
+            Child<CollisionQuadTree>(i)->LineTraceWrapped(
                 trace_start,
                 trace_vector,
                 trace_radius,
@@ -400,7 +400,7 @@ void CollisionQuadTree::AreaTrace (
     // call this function on the child nodes, if they exist
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->AreaTrace(
+            Child<CollisionQuadTree>(i)->AreaTrace(
                 trace_area_center,
                 trace_area_radius,
                 check_nonsolid_collision_entities,
@@ -461,7 +461,7 @@ void CollisionQuadTree::AreaTraceWrapped (
     // call this function on the child nodes, if they exist
     if (GetHasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->AreaTraceWrapped(
+            Child<CollisionQuadTree>(i)->AreaTraceWrapped(
                 trace_area_center,
                 trace_area_radius,
                 check_nonsolid_collision_entities,
@@ -534,7 +534,7 @@ void CollisionQuadTree::CollideEntity (
     if (GetHasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->CollideEntity(
+            Child<CollisionQuadTree>(i)->CollideEntity(
                 entity,
                 frame_dt,
                 collision_pair_list);
@@ -770,7 +770,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
     if (GetHasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
-            GetChild<CollisionQuadTree>(i)->CollideEntityWrapped(functor);
+            Child<CollisionQuadTree>(i)->CollideEntityWrapped(functor);
 
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects

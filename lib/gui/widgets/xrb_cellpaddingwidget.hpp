@@ -32,10 +32,10 @@ public:
     Widget *GetSingleChildWidget ();
     Widget const *GetSingleChildWidget () const;
 
-    virtual Bool2 GetContentsMinSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMinSize () const;
-    virtual Bool2 GetContentsMaxSizeEnabled () const;
-    virtual ScreenCoordVector2 GetContentsMaxSize () const;
+    virtual Bool2 ContentsMinSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMinSize () const;
+    virtual Bool2 ContentsMaxSizeEnabled () const;
+    virtual ScreenCoordVector2 ContentsMaxSize () const;
 
     void SetAlignment (Uint32 const index, Alignment const alignment);
     void SetAlignment (Alignment2 const &alignment);

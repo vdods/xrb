@@ -118,7 +118,7 @@ public:
     ~RadioButtonGroup ();
 
     // returns a pointer to the currently checked button
-    inline RadioButton<T, sentinel> *GetCheckedButton () const
+    inline RadioButton<T, sentinel> *CheckedButton () const
     {
         return m_checked_button;
     }
