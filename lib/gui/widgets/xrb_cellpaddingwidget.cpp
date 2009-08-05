@@ -333,7 +333,7 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
     ASSERT1(child != NULL);
 
     // skip hidden and modal children
-    if (child->GetIsHidden() || child->GetIsModal())
+    if (child->IsHidden() || child->IsModal())
     {
         m_contents_size_properties = m_preferred_size_properties;
         return;

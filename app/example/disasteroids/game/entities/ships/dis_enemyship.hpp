@@ -37,7 +37,7 @@ public:
     virtual ~EnemyShip () { }
 
     // Entity interface method
-    virtual bool GetIsEnemyShip () const { return true; }
+    virtual bool IsEnemyShip () const { return true; }
 
     inline Uint8 GetEnemyLevel () const { return m_enemy_level; }
 

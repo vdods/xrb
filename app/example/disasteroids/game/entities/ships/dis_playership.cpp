@@ -89,13 +89,13 @@ PlayerShip::~PlayerShip ()
         for (Uint32 j = 0; j < UPGRADE_LEVEL_COUNT; ++j)
             Delete(m_item_inventory[i][j]);
 
-    if (m_laser_beam.GetIsValid() && !m_laser_beam->GetIsInWorld())
+    if (m_laser_beam.IsValid() && !m_laser_beam->IsInWorld())
         delete m_laser_beam->GetOwnerObject();
 
-    if (m_tractor_beam.GetIsValid() && !m_tractor_beam->GetIsInWorld())
+    if (m_tractor_beam.IsValid() && !m_tractor_beam->IsInWorld())
         delete m_tractor_beam->GetOwnerObject();
 
-    if (m_shield_effect.GetIsValid() && !m_shield_effect->GetIsInWorld())
+    if (m_shield_effect.IsValid() && !m_shield_effect->IsInWorld())
         delete m_shield_effect->GetOwnerObject();
 }
 
@@ -106,7 +106,7 @@ Float PlayerShip::GetArmorStatus () const
 
 Float PlayerShip::GetShieldStatus () const
 {
-    if (GetIsDead())
+    if (IsDead())
         return 0.0f;
 
     return (GetShield() != NULL) ? GetShield()->GetIntensity() : 0.0f;
@@ -114,7 +114,7 @@ Float PlayerShip::GetShieldStatus () const
 
 Float PlayerShip::GetPowerStatus () const
 {
-    if (GetIsDead())
+    if (IsDead())
         return 0.0f;
 
     return (GetPowerGenerator() != NULL) ?
@@ -124,7 +124,7 @@ Float PlayerShip::GetPowerStatus () const
 
 Float PlayerShip::GetWeaponStatus () const
 {
-    if (GetIsDead())
+    if (IsDead())
         return 0.0f;
 
     Weapon const *current_weapon = GetCurrentWeapon();
@@ -135,7 +135,7 @@ Float PlayerShip::GetWeaponStatus () const
            0.0f;
 }
 
-bool PlayerShip::GetIsItemEquipped (
+bool PlayerShip::IsItemEquipped (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
@@ -175,7 +175,7 @@ bool PlayerShip::GetIsItemEquipped (
     }
 }
 
-bool PlayerShip::GetIsItemInInventory (
+bool PlayerShip::IsItemInInventory (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
@@ -185,7 +185,7 @@ bool PlayerShip::GetIsItemInInventory (
     return m_item_inventory[item_type][upgrade_level] != NULL;
 }
 
-bool PlayerShip::GetIsItemAffordable (
+bool PlayerShip::IsItemAffordable (
     ItemType const item_type,
     Uint8 const upgrade_level) const
 {
@@ -498,10 +498,10 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
 void PlayerShip::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
-    bool is_disabled = GetIsDisabled();
+    bool is_disabled = IsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
@@ -516,11 +516,11 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         m_power_generator->Drain();
 
         // remove all the effects
-        if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
+        if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
             m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
-        if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
+        if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
             m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
-        if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
+        if (m_shield_effect.IsValid() && m_shield_effect->IsInWorld())
             m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
     }
     else
@@ -542,17 +542,17 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             if (current_weapon->GetItemType() == IT_WEAPON_LASER)
             {
                 // ensure the laser beam is allocated (lazy allocation)
-                if (!m_laser_beam.GetIsValid())
+                if (!m_laser_beam.IsValid())
                     m_laser_beam = SpawnLaserBeam(GetWorld(), GetObjectLayer())->GetReference();
                 // if the laser beam is already allocated but not in the world, re-add it.
-                else if (!m_laser_beam->GetIsInWorld())
+                else if (!m_laser_beam->IsInWorld())
                     m_laser_beam->AddBackIntoWorld();
                 // set the laser beam effect in the Laser weapon
                 DStaticCast<Laser *>(current_weapon)->SetLaserBeam(*m_laser_beam);
             }
             // if there is no Laser equipped and the laser beam is allocated
             // AND in the world, remove it from the world.
-            else if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
+            else if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
                 m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
 
             // special treatment for Tractors (because the TractorBeam is effectively
@@ -560,25 +560,25 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             if (current_weapon->GetItemType() == IT_WEAPON_TRACTOR)
             {
                 // ensure the tractor beam is allocated (lazy allocation)
-                if (!m_tractor_beam.GetIsValid())
+                if (!m_tractor_beam.IsValid())
                     m_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
                 // if the tractor beam is already allocated but not in the world, re-add it.
-                else if (!m_tractor_beam->GetIsInWorld())
+                else if (!m_tractor_beam->IsInWorld())
                     m_tractor_beam->AddBackIntoWorld();
                 // set the tractor beam effect in the Tractor weapon
                 DStaticCast<Tractor *>(current_weapon)->SetTractorBeam(*m_tractor_beam);
             }
             // if there is no Tractor equipped and the tractor beam is allocated
             // AND in the world, remove it from the world.
-            else if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
+            else if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
                 m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         }
         else
         {
-            if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
+            if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
                 m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
 
-            if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
+            if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
                 m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         }
 
@@ -615,13 +615,13 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         m_power_generator->Think(time, frame_dt);
 
         // update the shield effect position and intensity
-        if (m_shield != NULL && !GetIsDead())
+        if (m_shield != NULL && !IsDead())
         {
             // ensure the shield effect is allocated (lazy allocation)
-            if (!m_shield_effect.GetIsValid())
+            if (!m_shield_effect.IsValid())
                 m_shield_effect = SpawnShieldEffect(GetWorld(), GetObjectLayer())->GetReference();
             // if the shield effect is already allocated but not in the world, re-add it.
-            else if (!m_shield_effect->GetIsInWorld())
+            else if (!m_shield_effect->IsInWorld())
                 m_shield_effect->AddBackIntoWorld();
             // update the shield's intensity and position
             m_shield_effect->SetIntensity(m_shield->GetIntensity());
@@ -630,7 +630,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         }
         // if there is no shield equipped and the shield effect is
         // allocated AND in the world, remove it from the world.
-        else if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
+        else if (m_shield_effect.IsValid() && m_shield_effect->IsInWorld())
             m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
     }
 
@@ -740,13 +740,13 @@ void PlayerShip::Die (
     // the player's ship is not deleted
     ScheduleForRemovalFromWorld(0.0f);
     // remove the laser beam, if it exists
-    if (m_laser_beam.GetIsValid() && m_laser_beam->GetIsInWorld())
+    if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
         m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
     // remove the tractor beam, if it exists
-    if (m_tractor_beam.GetIsValid() && m_tractor_beam->GetIsInWorld())
+    if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
         m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
     // remove the shield effect, if it exists
-    if (m_shield_effect.GetIsValid() && m_shield_effect->GetIsInWorld())
+    if (m_shield_effect.IsValid() && m_shield_effect->IsInWorld())
         m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
 
     // eject the currently equipped inventory as powerups (with the exception
@@ -873,7 +873,7 @@ bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
 
 void PlayerShip::SetStoke (Float stoke)
 {
-    if (GetIsDead())
+    if (IsDead())
         stoke = 1.0f;
 
     if (stoke > ms_max_stoke)
@@ -961,7 +961,7 @@ PowerGenerator *PlayerShip::GetInventoryPowerGenerator (Uint8 const upgrade_leve
     return static_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]);
 }
 
-bool PlayerShip::GetIsInStartingInventory (Item *const item)
+bool PlayerShip::IsInStartingInventory (Item *const item)
 {
     ASSERT1(item != NULL);
 
@@ -1014,7 +1014,7 @@ void PlayerShip::SetWeaponStatus (Float const weapon_status)
 
 void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 {
-    if (ejectee == NULL || GetIsInStartingInventory(ejectee))
+    if (ejectee == NULL || IsInStartingInventory(ejectee))
         return;
 /*
     static Float const s_powerup_scale_factor = 5.0f;

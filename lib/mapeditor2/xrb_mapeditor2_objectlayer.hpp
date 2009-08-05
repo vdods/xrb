@@ -53,7 +53,7 @@ namespace MapEditor2
             World *owner_world);
     
         World *GetOwnerMapEditorWorld () const;
-        inline bool GetIsObjectSelectionSetEmpty () const
+        inline bool IsObjectSelectionSetEmpty () const
         {
             return m_object_selection_set.empty();
         }

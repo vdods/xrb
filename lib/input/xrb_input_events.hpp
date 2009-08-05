@@ -31,10 +31,10 @@ public:
     /// Pure virtual destructor so you may not instantiate this class.
     virtual ~EventInput () = 0;
 
-    /** @brief Override of Event::GetIsInputEvent to indicate that this is,
+    /** @brief Override of Event::IsInputEvent to indicate that this is,
       *        indeed, an input event.
       */
-    virtual bool GetIsInputEvent () const { return true; }
+    virtual bool IsInputEvent () const { return true; }
 };
 
 /** Provides accessors for checking if any of the key modifiers (shift,
@@ -55,10 +55,10 @@ public:
       */
     virtual ~EventKey () = 0;
 
-    /** @brief Override of Event::GetIsKeyEvent to indicate that this is,
+    /** @brief Override of Event::IsKeyEvent to indicate that this is,
       *        indeed, a key event.
       */
-    virtual bool GetIsKeyEvent () const { return true; }
+    virtual bool IsKeyEvent () const { return true; }
     /** @brief Returns the SDL_KeyboardEvent used to create this event.
       */
     SDL_KeyboardEvent const &GetSDLEvent () const { return m_event; }
@@ -68,21 +68,21 @@ public:
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherAltKeyPressed () const
+    inline bool IsEitherAltKeyPressed () const
     {
         return (m_event.keysym.mod & KMOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherControlKeyPressed () const
+    inline bool IsEitherControlKeyPressed () const
     {
         return (m_event.keysym.mod & KMOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or right shift keys were pressed
       *        when this key event was generated.
       */
-    inline bool GetIsEitherShiftKeyPressed () const
+    inline bool IsEitherShiftKeyPressed () const
     {
         return (m_event.keysym.mod & KMOD_SHIFT) != 0;
     }
@@ -94,17 +94,17 @@ public:
       * are a key down event.
       * @brief Returns true iff this is a key down event.
       */
-    virtual bool GetIsKeyDownEvent () const { return false; }
+    virtual bool IsKeyDownEvent () const { return false; }
     /** Virtual method for subclasses to override to indicate if they
       * are a key up event.
       * @brief Returns true iff this is a key up event.
       */
-    virtual bool GetIsKeyUpEvent () const { return false; }
+    virtual bool IsKeyUpEvent () const { return false; }
     /** Virtual method for subclasses to override to indicate if they
       * are a key repeat event.
       * @brief Returns true iff this is a key repeat event.
       */
-    virtual bool GetIsKeyRepeatEvent () const { return false; }
+    virtual bool IsKeyRepeatEvent () const { return false; }
 
 private:
 
@@ -135,10 +135,10 @@ public:
       */
     virtual ~EventKeyDown () { }
 
-    /** @brief Override of @ref Xrb::EventKey::GetIsKeyDownEvent to indicate
+    /** @brief Override of @ref Xrb::EventKey::IsKeyDownEvent to indicate
       *        that this is, indeed, a key down event.
       */
-    virtual bool GetIsKeyDownEvent () const { return true; }
+    virtual bool IsKeyDownEvent () const { return true; }
 }; // end of class EventKeyDown
 
 /** This event indicates a keyboard key was released.  This event indicates
@@ -162,10 +162,10 @@ public:
       */
     virtual ~EventKeyUp () { }
 
-    /** @brief Override of @ref Xrb::EventKey::GetIsKeyUpEvent to indicate
+    /** @brief Override of @ref Xrb::EventKey::IsKeyUpEvent to indicate
       *        that this is, indeed, a key up event.
       */
-    virtual bool GetIsKeyUpEvent () const { return true; }
+    virtual bool IsKeyUpEvent () const { return true; }
 }; // end of class EventKeyUp
 
 /** This event indicates a keyboard key has been depressed and is now
@@ -191,10 +191,10 @@ public:
       */
     virtual ~EventKeyRepeat () { }
 
-    /** @brief Override of @ref Xrb::EventKey::GetIsKeyRepeatEvent to indicate
+    /** @brief Override of @ref Xrb::EventKey::IsKeyRepeatEvent to indicate
       *        that this is, indeed, a key repeat event.
       */
-    virtual bool GetIsKeyRepeatEvent () const { return true; }
+    virtual bool IsKeyRepeatEvent () const { return true; }
 }; // end of class EventKeyRepeat
 
 /** EventMouse is an abstract baseclass for the specific mouse events.
@@ -225,45 +225,45 @@ public:
       */
     virtual ~EventMouse () = 0;
 
-    /** @brief Override of Event::GetIsMouseEvent to indicate that this is,
+    /** @brief Override of Event::IsMouseEvent to indicate that this is,
       *        indeed, a mouse event.
       */
-    virtual bool GetIsMouseEvent () const { return true; }
+    virtual bool IsMouseEvent () const { return true; }
     /** @brief Returns the screen coordinate position of this mouse event.
       */
     ScreenCoordVector2 const &GetPosition () const { return m_position; }
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherAltKeyPressed () const
+    inline bool IsEitherAltKeyPressed () const
     {
         return (m_modifiers & KMOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherControlKeyPressed () const
+    inline bool IsEitherControlKeyPressed () const
     {
         return (m_modifiers & KMOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or shift alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool GetIsEitherShiftKeyPressed () const
+    inline bool IsEitherShiftKeyPressed () const
     {
         return (m_modifiers & KMOD_SHIFT) != 0;
     }
     /** @brief Returns true iff capslock was active when this event
       *        was generated.
       */
-    inline bool GetIsCapsLockOn () const
+    inline bool IsCapsLockOn () const
     {
         return (m_modifiers & KMOD_CAPS) != 0;
     }
     /** @brief Returns true iff numlock was active when this event
       *        was generated.
       */
-    inline bool GetIsNumLockOn () const
+    inline bool IsNumLockOn () const
     {
         return (m_modifiers & KMOD_NUM) != 0;
     }
@@ -307,20 +307,20 @@ public:
     /** @brief Returns the event's button code (see @ref Xrb::Key::Code).
       */
     Key::Code GetButtonCode () const { return (Key::Code)m_event.button; }
-    /** @brief Override of Event::GetIsMouseButtonEvent to indicate that
+    /** @brief Override of Event::IsMouseButtonEvent to indicate that
       *        this is, indeed, a mouse button event.
       */
-    virtual bool GetIsMouseButtonEvent () const { return true; }
+    virtual bool IsMouseButtonEvent () const { return true; }
     /** Virtual method for subclasses to override to indicate if they
       * are a mouse button down event.
       * @brief Returns true iff this is a mouse button down event.
       */
-    virtual bool GetIsMouseButtonDownEvent () const { return false; }
+    virtual bool IsMouseButtonDownEvent () const { return false; }
     /** Virtual method for subclasses to override to indicate if they
       * are a mouse button up event.
       * @brief Returns true iff this is a mouse button up event.
       */
-    virtual bool GetIsMouseButtonUpEvent () const { return false; }
+    virtual bool IsMouseButtonUpEvent () const { return false; }
 
 private:
 
@@ -352,10 +352,10 @@ public:
       */
     virtual ~EventMouseButtonDown () { }
 
-    /** @brief Override of @ref Xrb::EventMouseButton::GetIsMouseButtonDownEvent to
+    /** @brief Override of @ref Xrb::EventMouseButton::IsMouseButtonDownEvent to
       *        indicate that this is, indeed, a mouse button down event.
       */
-    virtual bool GetIsMouseButtonDownEvent () const { return true; }
+    virtual bool IsMouseButtonDownEvent () const { return true; }
 }; // end of class EventMouseButtonDown
 
 /** This event indicates a mouse button was released.  This event indicates
@@ -382,10 +382,10 @@ public:
       */
     virtual ~EventMouseButtonUp () { }
 
-    /** @brief Override of @ref Xrb::EventMouseButton::GetIsMouseButtonUpEvent to
+    /** @brief Override of @ref Xrb::EventMouseButton::IsMouseButtonUpEvent to
       *        indicate that this is, indeed, a mouse button up event.
       */
-    virtual bool GetIsMouseButtonUpEvent () const { return true; }
+    virtual bool IsMouseButtonUpEvent () const { return true; }
 }; // end of class EventMouseButtonUp
 
 /** This event indicates the mouse wheel has been scrolled.  One of
@@ -435,10 +435,10 @@ public:
         Float time);
     virtual ~EventMouseMotion () { }
 
-    /** @brief Override of Event::GetIsMouseMotionEvent to indicate that
+    /** @brief Override of Event::IsMouseMotionEvent to indicate that
       *        this is, indeed, a mouse motion event.
       */
-    virtual bool GetIsMouseMotionEvent () const { return true; }
+    virtual bool IsMouseMotionEvent () const { return true; }
     /** @brief Returns the SDL_MouseMotionEvent used to create this event.
       */
     inline SDL_MouseMotionEvent const &GetSDLEvent () const { return m_event; }
@@ -448,21 +448,21 @@ public:
     /** @brief Returns true iff the left mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsLeftMouseButtonPressed () const
+    inline bool IsLeftMouseButtonPressed () const
     {
         return (m_event.state & SDL_BUTTON_LMASK) != 0;
     }
     /** @brief Returns true iff the middle mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsMiddleMouseButtonPressed () const
+    inline bool IsMiddleMouseButtonPressed () const
     {
         return (m_event.state & SDL_BUTTON_MMASK) != 0;
     }
     /** @brief Returns true iff the right mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool GetIsRightMouseButtonPressed () const
+    inline bool IsRightMouseButtonPressed () const
     {
         return (m_event.state & SDL_BUTTON_RMASK) != 0;
     }
@@ -489,10 +489,10 @@ public:
       */
     virtual ~EventJoy () = 0;
 
-    /** @brief Override of Event::GetIsJoyEvent to indicate that this is,
+    /** @brief Override of Event::IsJoyEvent to indicate that this is,
       *        indeed, a joy event.
       */
-    virtual bool GetIsJoyEvent () const { return true; }
+    virtual bool IsJoyEvent () const { return true; }
 }; // end of class EventJoy
 
 /** See the man page for SDL_JoyAxisEvent for more details.

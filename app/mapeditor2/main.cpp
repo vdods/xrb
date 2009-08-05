@@ -120,7 +120,7 @@ int main (int argc, char **argv)
         screen->ProcessFrame(time);
 
         // quit condition
-        if (screen->GetIsQuitRequested())
+        if (screen->IsQuitRequested())
             break;
 
         // actually draw the shit
@@ -137,7 +137,7 @@ int main (int argc, char **argv)
                 continue;
 
             // make sure to process key events through the key binds first
-            if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+            if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                 Singletons::Input().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
@@ -176,7 +176,7 @@ void ProcessKeyRepeatEvents (
     EventKeyRepeat *e;
 
     // dequeue and process any key repeat events generated
-    while (!key_repeater->GetIsEventQueueEmpty())
+    while (!key_repeater->IsEventQueueEmpty())
     {
         // dequeue event
         e = key_repeater->DequeueEvent();

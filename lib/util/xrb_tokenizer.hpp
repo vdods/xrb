@@ -37,7 +37,7 @@ private:
 
     // helper function which returns true iff the given character is
     // in the set of delimiters.
-    bool GetIsCharADelimiter (char c) const;
+    bool IsCharADelimiter (char c) const;
 
     // the string which will be tokenized.  must point to non-const
     // chars, because null chars are inserted and removed to delimit

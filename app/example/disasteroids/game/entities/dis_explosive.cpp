@@ -38,11 +38,11 @@ void Explosive::Collide (
     Float const frame_dt)
 {
     // we don't want to detonate on powerups
-    if (collider->GetIsPowerup())
+    if (collider->IsPowerup())
         return;
 
     // if it's a solid collision object, potentially detonate
-    if (collider->GetCollisionType() == CT_SOLID_COLLISION && !GetIsDead())
+    if (collider->GetCollisionType() == CT_SOLID_COLLISION && !IsDead())
         if (!GetHasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
 
@@ -221,7 +221,7 @@ bool Grenade::CheckIfItShouldDetonate (
 {
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
-    ASSERT1(!GetIsDead());
+    ASSERT1(!IsDead());
 
     // this grenade is dumb, just detonate
     return true;
@@ -234,7 +234,7 @@ void Grenade::Detonate (
     ASSERT1(!GetHasDetonated());
 
     // can't detonate if we're already dead
-    if (GetIsDead())
+    if (IsDead())
         return;
 
     // grenade merging will result in grenades which inflict more damage
@@ -276,14 +276,14 @@ void Missile::Think (
     Explosive::Think(time, frame_dt);
 
     // if we're dead or have detonated, don't bother thinking
-    if (GetIsDead() || GetHasDetonated())
+    if (IsDead() || GetHasDetonated())
         return;
 
     AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(GetAngle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
-    if (m_first_think && m_owner.GetIsValid())
+    if (m_first_think && m_owner.IsValid())
     {
         m_initial_velocity = m_owner->GetVelocity();
         m_first_think = false;
@@ -292,7 +292,7 @@ void Missile::Think (
     // update the angle to reflect the direction of motion
     {
         FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
-        if (!velocity_delta.GetIsZero())
+        if (!velocity_delta.IsZero())
             SetAngle(Math::Atan(velocity_delta));
     }
 
@@ -337,19 +337,19 @@ bool Missile::CheckIfItShouldDetonate (
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
     ASSERT1(!GetHasDetonated());
-    ASSERT1(!GetIsDead());
+    ASSERT1(!IsDead());
 
     // don't detonate on ourselves
     if (collider == this)
         return false;
 
     // don't detonate on powerups
-    if (collider->GetIsPowerup())
+    if (collider->IsPowerup())
         return false;
 
     // don't detonate on ballistics (because then it would make it
     // pointless to try to shoot missiles down with ballistic weapons)
-    if (collider->GetIsBallistic())
+    if (collider->IsBallistic())
         return false;
 
     // don't detonate on the entity that fired this missile
@@ -367,7 +367,7 @@ void Missile::Detonate (
     ASSERT1(!GetHasDetonated());
 
     // can't detonate if we're dead
-    if (GetIsDead())
+    if (IsDead())
         return;
 
     // spawn a damage explosion
@@ -394,7 +394,7 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
 {
     if (time >= m_next_search_time)
         Search(time, frame_dt);
-    else if (m_target.GetIsValid())
+    else if (m_target.IsValid())
     {
         // if the missile is actively seeking a target, let it live longer
         m_time_to_live += 0.75f * frame_dt;
@@ -412,7 +412,7 @@ EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan
          it != it_end;
          ++it)
     {
-        if (it->m_entity->GetIsShip() && it->m_entity != *m_owner)
+        if (it->m_entity->IsShip() && it->m_entity != *m_owner)
             return it->m_entity->GetReference();
     }
     // if no target found, return an invalid reference
@@ -422,7 +422,7 @@ EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan
 void GuidedMissile::Search (Float const time, Float const frame_dt)
 {
     // don't search if there is a living target
-    if (m_target.GetIsValid() && !m_target->GetIsDead())
+    if (m_target.IsValid() && !m_target->IsDead())
     {
         m_next_search_time = time + 0.25f;
         return;
@@ -451,9 +451,9 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
 
 void GuidedMissile::Seek (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_target.GetIsValid());
+    ASSERT1(m_target.IsValid());
 
-    if (m_target->GetIsDead())
+    if (m_target->IsDead())
     {
         m_target.Release();
         return;
@@ -587,7 +587,7 @@ bool EMPBomb::CheckIfItShouldDetonate (
 {
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
-    ASSERT1(!GetIsDead());
+    ASSERT1(!IsDead());
 
     // the emp_bomb is dumb, just detonate
     return true;
@@ -597,7 +597,7 @@ void EMPBomb::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetIsDead());
+    ASSERT1(!IsDead());
 
     if (!GetHasDetonated())
     {

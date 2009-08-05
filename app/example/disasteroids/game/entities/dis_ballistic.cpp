@@ -36,7 +36,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
             // update the angle to reflect the direction of motion
             {
                 FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
-                if (!velocity_delta.GetIsZero())
+                if (!velocity_delta.IsZero())
                     SetAngle(Math::Atan(velocity_delta));
             }
 
@@ -130,7 +130,7 @@ bool Ballistic::CollidePrivate (
         return false;
 
     // also, don't hit powerups
-    if (collider->GetIsPowerup())
+    if (collider->IsPowerup())
         return false;
 
     // if this is a smart ballistic (m_perform_line_trace_for_accuracy
@@ -150,7 +150,7 @@ bool Ballistic::CollidePrivate (
             frame_dt);
 
     // if we hit a mortal, damage it.
-    if (collider->GetIsMortal())
+    if (collider->IsMortal())
     {
         Mortal *mortal = DStaticCast<Mortal *>(collider);
         mortal->Damage(

@@ -19,7 +19,7 @@ void BitCachedFile::Open (
 {
     ASSERT1(filename != NULL);
     ASSERT1(mode != NULL);
-    ASSERT1(!GetIsOpen());
+    ASSERT1(!IsOpen());
 
     if (strlen(filename) == 0)
     {
@@ -65,7 +65,7 @@ void BitCachedFile::Open (
 
 void BitCachedFile::Close ()
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
 
     BitCache::Close();
 
@@ -83,7 +83,7 @@ Uint32 BitCachedFile::FlushBytes (
 {
     ASSERT1(bytes_to_flush != NULL);
     ASSERT1(number_of_bytes_to_flush > 0);
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(m_file_handle != NULL);
     Uint32 bytes_written =
@@ -102,7 +102,7 @@ Uint32 BitCachedFile::RenewBytes (
 {
     ASSERT1(bytes_to_renew != NULL);
     ASSERT1(number_of_bytes_to_renew > 0);
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(m_file_handle != NULL);
     Uint32 bytes_read =

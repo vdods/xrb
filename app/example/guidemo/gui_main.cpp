@@ -161,7 +161,7 @@ int main (int argc, char **argv)
                     continue;
 
                 // make sure to process key events through the key binds first
-                if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
 
                 // also let the key repeater have a crack at it.
@@ -177,7 +177,7 @@ int main (int argc, char **argv)
             // dequeue and process any key repeat events generated
             {
                 // dequeue and process any key repeat events generated
-                while (!key_repeater.GetIsEventQueueEmpty())
+                while (!key_repeater.IsEventQueueEmpty())
                 {
                     // dequeue event
                     EventKeyRepeat *event = key_repeater.DequeueEvent();
@@ -211,7 +211,7 @@ int main (int argc, char **argv)
             }
 
             // check if we should quit
-            is_quit_requested = screen->GetIsQuitRequested();
+            is_quit_requested = screen->IsQuitRequested();
         }
     }
 

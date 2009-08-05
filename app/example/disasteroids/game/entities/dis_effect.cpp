@@ -108,7 +108,7 @@ void DamageExplosion::Collide (
         distance_factor = 1.0f / Math::Sqrt(distance);
 
     // if it's a Mortal, damage it (unless it's the owner)
-    if (collider->GetIsMortal() && collider != *m_owner)
+    if (collider->IsMortal() && collider != *m_owner)
         DStaticCast<Mortal *>(collider)->Damage(
             *m_owner,
             this,
@@ -139,7 +139,7 @@ void EMPExplosion::Collide (
         return;
 
     // only affect ships that aren't the owner
-    if (collider->GetIsShip() && collider != *m_owner)
+    if (collider->IsShip() && collider != *m_owner)
         DStaticCast<Ship *>(collider)->AccumulateDisableTime(
             m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
 }
@@ -188,7 +188,7 @@ void Fireball::Collide (
 
     static Float const s_damage_dissipation_rate = 2.0f;
 
-    if (collider->GetIsMortal())
+    if (collider->IsMortal())
     {
         Mortal *mortal = DStaticCast<Mortal *>(collider);
         Float damage_to_inflict =
@@ -220,7 +220,7 @@ void Fireball::Collide (
 void LaserBeam::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    ASSERT1(GetIsInWorld());
+    ASSERT1(IsInWorld());
     GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
@@ -229,7 +229,7 @@ void LaserBeam::SnapToShip (
     FloatVector2 const &hit_location,
     Float const beam_width)
 {
-    ASSERT1(GetIsInWorld());
+    ASSERT1(IsInWorld());
     FloatVector2 beam_vector(hit_location - muzzle_location);
     SetTranslation(0.5f * (muzzle_location + hit_location));
     SetScaleFactors(FloatVector2(0.5f * beam_vector.GetLength(), 0.5f * beam_width));
@@ -248,7 +248,7 @@ void TractorBeam::SetParameters (
 {
     ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    ASSERT1(GetIsInWorld());
+    ASSERT1(IsInWorld());
     if (push_instead_of_pull)
         GetOwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
     else if (pull_everything)

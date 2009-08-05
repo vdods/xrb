@@ -25,7 +25,7 @@ Serializer::Serializer ()
 
 Serializer::~Serializer ()
 {
-    ASSERT1(!GetIsOpen() && "A Serializer must not be in an open state upon destruction.");
+    ASSERT1(!IsOpen() && "A Serializer must not be in an open state upon destruction.");
     ASSERT1(GetIODirection() == IOD_NONE);
 }
 

@@ -30,14 +30,14 @@ public:
       * @param huffman The Huffman object which contains the codes for the
       *                specific type of en/decoding that should be done.
       *                May not be null.
-      * @post @c GetIsOpen() will return false.  You must use
+      * @post @c IsOpen() will return false.  You must use
       *       @c AttachSerializer() to attach the serializer which will do
       *       the actual reading/writing.
       */
     CompressionSerializer (Huffman const *huffman);
     virtual ~CompressionSerializer ();
 
-    virtual bool GetIsAtEnd () const;
+    virtual bool IsAtEnd () const;
     virtual bool GetHasFewerThan8BitsLeft () const;
 
     /** @brief Attached serializer accessor.
@@ -61,7 +61,7 @@ public:
       *                   CompressionSerializer.
       * @pre There must not currently be a serializer attached (i.e.
       *      @c GetAttachedSerializer() must return null), and @c serializer
-      *      must be open (its GetIsOpen() method must return true).
+      *      must be open (its IsOpen() method must return true).
       * @post The error state is set to indicate the status of the operation.
       *       This does not cause the newly attached serializer to
       *       @c FlushWriteCache().
@@ -70,7 +70,7 @@ public:
     /** @brief Detaches the currently attached serializer from this object.
       * @pre There must currently be a serializer attached (i.e.
       *      @c GetAttachedSerializer() must return null), and the attached
-      *      serializer must be open (its GetIsOpen() method must return true).
+      *      serializer must be open (its IsOpen() method must return true).
       * @post The error state is set to indicate the status of the operation.
       *       This does not cause the previously attached serializer to
       *       @c FlushWriteCache().
@@ -139,8 +139,8 @@ protected:
       * @brief Causes any uncommitted writes to be committed (e.g. writing
       *        a memory buffer to disk, or writing a bit-packing buffer
       *        to a byte-aligned buffer).
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void FlushWriteCache ();

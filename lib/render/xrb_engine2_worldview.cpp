@@ -160,7 +160,7 @@ Float Engine2::WorldView::GetCornerRadius () const
 
 void Engine2::WorldView::SetCenter (FloatVector2 const &position)
 {
-    if (!GetIsViewLocked())
+    if (!IsViewLocked())
     {
         SetTranslation(-position);
         // set the appropriate dirty bits
@@ -178,7 +178,7 @@ void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
     if (zoom_factor > m_max_zoom_factor)
         zoom_factor = m_max_zoom_factor;
 
-    if (!GetIsViewLocked())
+    if (!IsViewLocked())
     {
         m_zoom_factor = zoom_factor;
         // set the appropriate dirty bits
@@ -188,7 +188,7 @@ void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
 
 void Engine2::WorldView::SetAngle (Float const angle)
 {
-    if (!GetIsViewLocked())
+    if (!IsViewLocked())
     {
         FloatTransform2::SetAngle(-angle);
         // set the appropriate dirty bits
@@ -231,7 +231,7 @@ void Engine2::WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const 
 
 void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
 {
-    if (!GetIsViewLocked())
+    if (!IsViewLocked())
     {
         Translate(-delta_position);
         // set the appropriate dirty bits
@@ -247,7 +247,7 @@ void Engine2::WorldView::ZoomView (Float const delta_zoom_factor)
 
 void Engine2::WorldView::RotateView (Float const delta_angle)
 {
-    if (!GetIsViewLocked())
+    if (!IsViewLocked())
     {
         Rotate(-delta_angle);
         // set the appropriate dirty bits
@@ -389,7 +389,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             render_context,
             0,
             true,
-            GetMainObjectLayer()->GetIsWrapped(),
+            GetMainObjectLayer()->IsWrapped(),
             GetCenter(),
             parallaxed_view_radius,
             Color(1.0f, 1.0f, 0.0f, 1.0f));
@@ -488,7 +488,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
     if (m_grid_line_type == GR_NO_DRAW)
         return;
 
-    bool is_wrapped = GetMainObjectLayer()->GetIsWrapped();
+    bool is_wrapped = GetMainObjectLayer()->IsWrapped();
     Float view_radius = GetParallaxedViewRadius(NULL);
 
     // draw the minor grid

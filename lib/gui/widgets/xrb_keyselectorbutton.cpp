@@ -35,7 +35,7 @@ KeySelectorButton::KeySelectorButton (
 
 void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 {
-    if (Singletons::Input().GetIsValidKeyCode(key_code))
+    if (Singletons::Input().IsValidKeyCode(key_code))
         m_key_code = key_code;
     else
         m_key_code = Key::INVALID;
@@ -90,7 +90,7 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
 bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetKeyCode()));
+    ASSERT1(Singletons::Input().IsValidKeyCode(e->GetKeyCode()));
     m_key_code = e->GetKeyCode();
     OKButtonActivated();
     return true;
@@ -99,7 +99,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()));
+    ASSERT1(Singletons::Input().IsValidKeyCode(e->GetButtonCode()));
     m_key_code = e->GetButtonCode();
     OKButtonActivated();
     return true;
@@ -108,7 +108,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseBu
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(e->GetButtonCode()));
+    ASSERT1(Singletons::Input().IsValidKeyCode(e->GetButtonCode()));
     m_key_code = e->GetButtonCode();
     OKButtonActivated();
     return true;

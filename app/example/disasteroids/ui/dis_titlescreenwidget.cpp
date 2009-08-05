@@ -122,7 +122,7 @@ void TitleScreenWidget::HandleFrame ()
 {
     ContainerWidget::HandleFrame();
 
-    if (!m_state_machine.GetIsInitialized())
+    if (!m_state_machine.IsInitialized())
         m_state_machine.Initialize(
             m_immediately_show_high_scores ?
             &TitleScreenWidget::StateDisplayFirstHighScores :
@@ -181,7 +181,7 @@ void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
 bool TitleScreenWidget::StateGameDemo (StateMachineInput const input)
 {
     STATE_MACHINE_STATUS("StateGameDemo")
-    ASSERT1(m_high_scores_widget->GetIsHidden());
+    ASSERT1(m_high_scores_widget->IsHidden());
     switch (input)
     {
         case SM_ENTER:
@@ -201,7 +201,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(m_high_scores_widget->GetIsHidden());
+            ASSERT1(m_high_scores_widget->IsHidden());
             m_high_scores_widget->Update(
                 m_high_scores,
                 m_show_best_points_high_scores_first ?
@@ -212,7 +212,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
             return true;
 
         case IN_TIME_OUT:
-            ASSERT1(!m_high_scores_widget->GetIsHidden());
+            ASSERT1(!m_high_scores_widget->IsHidden());
             m_high_scores_widget->Hide();
             TRANSITION_TO(StatePauseBetweenHighScores);
             return true;
@@ -223,7 +223,7 @@ bool TitleScreenWidget::StateDisplayFirstHighScores (StateMachineInput const inp
 bool TitleScreenWidget::StatePauseBetweenHighScores (StateMachineInput const input)
 {
     STATE_MACHINE_STATUS("StatePauseBetweenHighScores")
-    ASSERT1(m_high_scores_widget->GetIsHidden());
+    ASSERT1(m_high_scores_widget->IsHidden());
     switch (input)
     {
         case SM_ENTER:
@@ -243,7 +243,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
     switch (input)
     {
         case SM_ENTER:
-            ASSERT1(m_high_scores_widget->GetIsHidden());
+            ASSERT1(m_high_scores_widget->IsHidden());
             m_high_scores_widget->Update(
                 m_high_scores,
                 m_show_best_points_high_scores_first ?
@@ -254,7 +254,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
             return true;
 
         case IN_TIME_OUT:
-            ASSERT1(!m_high_scores_widget->GetIsHidden());
+            ASSERT1(!m_high_scores_widget->IsHidden());
             m_high_scores_widget->Hide();
             TRANSITION_TO(StateGameDemo);
             return true;

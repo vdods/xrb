@@ -189,11 +189,11 @@ void WidgetStack::ResizeAndRepositionChildWidgets ()
         ASSERT1(child != NULL);
 
         // skip hidden children
-        if (child->GetIsHidden())
+        if (child->IsHidden())
             continue;
 
         // skip modal children
-        if (child->GetIsModal())
+        if (child->IsModal())
             continue;
 
         // resize the child using the corresponding column and row sizes
@@ -242,11 +242,11 @@ void WidgetStack::UpdateContentsSizeProperties () const
         ASSERT1(child != NULL);
 
         // skip hidden children
-        if (child->GetIsHidden())
+        if (child->IsHidden())
             continue;
 
         // skip modal children
-        if (child->GetIsModal())
+        if (child->IsModal())
             continue;
 
         // iterate over X and Y dimensions

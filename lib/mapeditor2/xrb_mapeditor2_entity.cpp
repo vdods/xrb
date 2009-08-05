@@ -23,7 +23,7 @@ void MapEditor2::Entity::DrawMetrics (
     Float const alpha_mask,
     MetricMode const metric_mode)
 {
-    Color color(GetIsSelected() ?
+    Color color(IsSelected() ?
                 GetSelectedMetricsColor() :
                 GetUnselectedMetricsColor());
     color[Dim::A] *= alpha_mask;

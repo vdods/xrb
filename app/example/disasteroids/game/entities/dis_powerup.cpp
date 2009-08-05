@@ -58,7 +58,7 @@ void Powerup::Collide (
         return;
 
     // early-out if the collider is not a ship
-    if (!collider->GetIsShip())
+    if (!collider->IsShip())
         return;
 
     if (DStaticCast<Ship *>(collider)->TakePowerup(this, time, frame_dt))

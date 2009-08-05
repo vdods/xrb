@@ -51,7 +51,7 @@ Master::Master (Screen *const screen)
         m_screen->SenderQuitRequested(),
         &m_internal_receiver_quit_game);
     // initialize m_is_quit_requested from m_screen's
-    m_is_quit_requested = m_screen->GetIsQuitRequested();
+    m_is_quit_requested = m_screen->IsQuitRequested();
     ASSERT1(m_screen->GetOwnerEventQueue() != NULL);
     m_minimum_framerate = 20.0f;
     m_maximum_framerate = 60.0f;
@@ -135,7 +135,7 @@ void Master::Run ()
                 continue;
 
             // make sure to process key events through the key binds first
-            if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+            if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                 Singletons::Input().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
@@ -222,7 +222,7 @@ void Master::AcceptScore (Score const &score)
 {
     ASSERT1(m_game_world != NULL);
 
-    if (m_high_scores.GetIsNewHighScore(score))
+    if (m_high_scores.IsNewHighScore(score))
     {
         // create a HighScoreNameEntryDialog
         HighScoreNameEntryDialog *dialog =
@@ -377,7 +377,7 @@ void Master::ProcessKeyRepeatEvents ()
     ASSERT1(m_screen != NULL);
 
     // dequeue and process any key repeat events generated
-    while (!m_key_repeater.GetIsEventQueueEmpty())
+    while (!m_key_repeater.IsEventQueueEmpty())
     {
         // dequeue event
         EventKeyRepeat *event = m_key_repeater.DequeueEvent();

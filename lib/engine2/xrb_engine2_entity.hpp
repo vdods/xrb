@@ -67,7 +67,7 @@ public:
 
     // index in World's Entity array
     inline EntityWorldIndex GetWorldIndex () const { return m_world_index; }
-    inline bool GetIsInWorld () const { return m_world_index != ENTITY_IS_NOT_IN_WORLD; }
+    inline bool IsInWorld () const { return m_world_index != ENTITY_IS_NOT_IN_WORLD; }
     inline FloatVector2 const &GetWrappedOffset () const { return m_wrapped_offset; }
     inline FloatVector2 GetUnwrappedTranslation () const { return GetTranslation() + m_wrapped_offset; }
     // the Object which this Entity is attached to

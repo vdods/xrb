@@ -34,8 +34,8 @@ public:
     static std::string const &GetShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
     static Float GetShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
 
-    virtual bool GetIsShip () const { return true; }
-    bool GetIsDisabled () const { return m_disable_time > 0.0f; }
+    virtual bool IsShip () const { return true; }
+    bool IsDisabled () const { return m_disable_time > 0.0f; }
 
     void SetReticleCoordinates (FloatVector2 const &reticle_coordinates);
     inline void SetEngineRightLeftInput (Sint8 const engine_right_left_input)

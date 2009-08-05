@@ -87,7 +87,7 @@ bool Engine2::ObjectLayer::GetDoesAreaOverlapAnyObject (
     Float const area_radius) const
 {
     ASSERT1(m_quad_tree != NULL);
-    if (GetIsWrapped())
+    if (IsWrapped())
         return m_quad_tree->GetDoesAreaOverlapAnyObjectWrapped(
             area_center,
             area_radius,
@@ -103,7 +103,7 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
     FloatVector2 normalized_coordinates(coordinates);
 
     Float const half_object_layer_side_length = 0.5f * GetSideLength();
-    if (GetIsWrapped())
+    if (IsWrapped())
     {
         while (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
             normalized_coordinates[Dim::X] += GetSideLength();
@@ -140,7 +140,7 @@ FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::X]));
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::Y]));
 
-    if (GetIsWrapped())
+    if (IsWrapped())
     {
         Float const half_object_layer_side_length = 0.5f * GetSideLength();
         FloatVector2 adjusted_coordinates(coordinates);
@@ -281,7 +281,7 @@ void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
 void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL);
-    ASSERT1(!GetIsWrapped());
+    ASSERT1(!IsWrapped());
 
     FloatVector2 translation(transform->GetTranslation());
     ContainVector2(&translation);
@@ -291,7 +291,7 @@ void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) 
 void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
 {
     ASSERT1(entity != NULL);
-    ASSERT1(!GetIsWrapped());
+    ASSERT1(!IsWrapped());
 
     FloatVector2 translation(entity->GetTranslation());
     bool component_x = false;
@@ -345,7 +345,7 @@ void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
 void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL);
-    ASSERT1(GetIsWrapped());
+    ASSERT1(IsWrapped());
 
     FloatVector2 translation(transform->GetTranslation());
     WrapVector2(&translation);
@@ -355,7 +355,7 @@ void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) con
 void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
 {
     ASSERT1(entity != NULL);
-    ASSERT1(GetIsWrapped());
+    ASSERT1(IsWrapped());
 
     FloatVector2 previous_translation(entity->GetTranslation());
     WrapTransform2(entity->GetOwnerObject());

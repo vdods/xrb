@@ -233,7 +233,7 @@ bool Screen::HandleEvent (Event const *const e)
 
     // special handling for the top-level parent widget (Screen)
     {
-        if (e->GetIsMouseMotionEvent())
+        if (e->IsMouseMotionEvent())
         {
             EventMouseMotion const *mouse_motion_event =
                 DStaticCast<EventMouseMotion const *>(e);
@@ -265,7 +265,7 @@ bool Screen::HandleEvent (Event const *const e)
         {
             Widget *widget = *it;
             ASSERT1(widget != NULL);
-            if (!widget->GetIsHidden())
+            if (!widget->IsHidden())
             {
                 modal_widget = widget;
                 break;
@@ -276,13 +276,13 @@ bool Screen::HandleEvent (Event const *const e)
         if (modal_widget != NULL)
         {
             // if the modal widget has mouse grab, send all input events to it
-            if (modal_widget->GetIsMouseGrabbed() && e->GetIsInputEvent())
+            if (modal_widget->IsMouseGrabbed() && e->IsInputEvent())
                 return modal_widget->ProcessEvent(e);
 
             // check if this is a mouse event and it doesn't fall inside the
             // top modal widget.  if so, throw the event out.
-            if (e->GetIsMouseEvent())
-                if (!modal_widget->GetScreenRect().GetIsPointInside(DStaticCast<EventMouse const *>(e)->GetPosition()))
+            if (e->IsMouseEvent())
+                if (!modal_widget->GetScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->GetPosition()))
                     return false;
 
             return modal_widget->ProcessEvent(e);

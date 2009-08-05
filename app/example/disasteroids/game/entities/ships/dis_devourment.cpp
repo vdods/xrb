@@ -75,9 +75,9 @@ Devourment::Devourment (Uint8 const enemy_level)
 
 Devourment::~Devourment ()
 {
-    if (m_mouth_health_trigger.GetIsValid())
+    if (m_mouth_health_trigger.IsValid())
     {
-        if (m_mouth_health_trigger->GetIsInWorld())
+        if (m_mouth_health_trigger->IsInWorld())
             m_mouth_health_trigger->RemoveFromWorld();
         delete m_mouth_health_trigger->GetOwnerObject();
     }
@@ -85,9 +85,9 @@ Devourment::~Devourment ()
     ASSERT1(m_mouth_tractor != NULL);
     Delete(m_mouth_tractor);
 
-    if (m_mouth_tractor_beam.GetIsValid())
+    if (m_mouth_tractor_beam.IsValid())
     {
-        if (m_mouth_tractor_beam->GetIsInWorld())
+        if (m_mouth_tractor_beam->IsInWorld())
             m_mouth_tractor_beam->RemoveFromWorld();
         delete m_mouth_tractor_beam->GetOwnerObject();
     }
@@ -96,7 +96,7 @@ Devourment::~Devourment ()
 void Devourment::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
     Ship::Think(time, frame_dt);
@@ -105,7 +105,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // disabled code would go here otherwise
 
     // if the mouth health trigger has not yet been created, create it.
-    if (!m_mouth_health_trigger.GetIsValid())
+    if (!m_mouth_health_trigger.IsValid())
     {
         HealthTrigger *health_trigger =
             SpawnDevourmentMouthHealthTrigger(
@@ -129,10 +129,10 @@ void Devourment::Think (Float const time, Float const frame_dt)
     m_mouth_health_trigger->GetOwnerObject()->SetBiasColor(GetOwnerObject()->GetBiasColor());
 
     // ensure the tractor beam is allocated (lazy allocation)
-    if (!m_mouth_tractor_beam.GetIsValid())
+    if (!m_mouth_tractor_beam.IsValid())
         m_mouth_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
     // if the tractor beam is already allocated but not in the world, re-add it.
-    else if (!m_mouth_tractor_beam->GetIsInWorld())
+    else if (!m_mouth_tractor_beam->IsInWorld())
         m_mouth_tractor_beam->AddBackIntoWorld();
     // set the tractor beam effect in the Tractor weapon
     m_mouth_tractor->SetTractorBeam(*m_mouth_tractor_beam);
@@ -151,7 +151,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
         static Float const s_max_tractor_angle = 15.0f;
 
         FloatVector2 target_direction(GetReticleCoordinates() - GetTranslation());
-        if (!target_direction.GetIsZero())
+        if (!target_direction.IsZero())
         {
             Float angle_delta = Math::GetCanonicalAngle(Math::Atan(target_direction) - GetAngle());
             if (Abs(angle_delta) > s_max_tractor_angle)
@@ -176,7 +176,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ResetInputs();
 
     // set the translation and velocity of the mouth health trigger
-    ASSERT1(m_mouth_health_trigger.GetIsValid());
+    ASSERT1(m_mouth_health_trigger.IsValid());
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->GetNormalizedCoordinates(
             GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(GetAngle())));
@@ -202,7 +202,7 @@ void Devourment::Collide (
         frame_dt);
 
     ASSERT1(collider != NULL);
-    if (collider->GetIsMortal() &&
+    if (collider->IsMortal() &&
         collider->GetEntityType() != ET_DEVOURMENT &&
         collider->GetEntityType() != ET_DEMI &&
         m_think_state == THINK_STATE(PickWanderDirection))
@@ -235,7 +235,7 @@ void Devourment::Die (
         frame_dt);
 
     // remove the mouth tractor beam, if it exists
-    if (m_mouth_tractor_beam.GetIsValid() && m_mouth_tractor_beam->GetIsInWorld())
+    if (m_mouth_tractor_beam.IsValid() && m_mouth_tractor_beam->IsInWorld())
         m_mouth_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
 
     // adjust the minerals so their sum isn't greater than the max spawn mineral mass
@@ -375,7 +375,7 @@ void Devourment::Wander (Float const time, Float const frame_dt)
     m_target = ScanAreaForTargets();
 
     // if we acquired a target, transition to Pursue
-    if (m_target.GetIsValid())
+    if (m_target.IsValid())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -397,7 +397,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
 
-    if (!m_target.GetIsValid() || (m_target->GetIsMortal() && DStaticCast<Mortal *>(*m_target)->GetIsDead()))
+    if (!m_target.IsValid() || (m_target->IsMortal() && DStaticCast<Mortal *>(*m_target)->IsDead()))
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -485,7 +485,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
 
-    if (!m_target.GetIsValid() || (m_target->GetIsMortal() && DStaticCast<Mortal *>(*m_target)->GetIsDead()))
+    if (!m_target.IsValid() || (m_target->IsMortal() && DStaticCast<Mortal *>(*m_target)->IsDead()))
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -511,7 +511,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
     // we want drag the target to a stop, otherwise there will
     // be Devourments flying all over the joint
-    if (!GetVelocity().GetIsZero())
+    if (!GetVelocity().IsZero())
     {
         FloatVector2 braking_thrust(-ms_engine_thrust[GetEnemyLevel()] * GetVelocity().GetNormalization());
         AccumulateForce(braking_thrust);
@@ -524,7 +524,7 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
+    if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
@@ -576,11 +576,11 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         }
 
         // large-enough powerups trump everything else
-        if (entity->GetIsPowerup())
+        if (entity->IsPowerup())
         {
-            if (!target.GetIsValid()
+            if (!target.IsValid()
                 ||
-                !target->GetIsPowerup()
+                !target->IsPowerup()
                 ||
                 (entity->GetFirstMoment() > s_powerup_mass_threshold &&
                  entity->GetFirstMoment() > target->GetFirstMoment()))
@@ -588,7 +588,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
                 target = entity->GetReference();
             }
         }
-        else if (entity->GetIsMortal())
+        else if (entity->IsMortal())
         {
             ASSERT1(dynamic_cast<Mortal *>(entity) != NULL);
 
@@ -597,7 +597,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
             // closer to the optimal mass.  the -0.01f bidness is so if there
             // are multiple potential targets of the exact same mass, we don't
             // switch between them really fast between frames.
-            if (!target.GetIsValid() ||
+            if (!target.IsValid() ||
                 Abs(entity->GetFirstMoment() - s_optimal_target_mass) <
                 Abs(target->GetFirstMoment() - s_optimal_target_mass) - 0.01f)
             {

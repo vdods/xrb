@@ -59,7 +59,7 @@ public:
     inline Resource<GLTexture> const &GetTexture () const { return m_texture; }
     // returns true iff this is a "round" sprite (see comment
     // above m_is_round).
-    inline bool GetIsRound () const { return m_is_round; }
+    inline bool IsRound () const { return m_is_round; }
     // returns the relative physical sizes (component-wise ratios of the
     // physical geometry scale factors over the visible geometry scale
     // factors).

@@ -188,7 +188,7 @@ SetPathElement on structure
     if (at last char of path && last char == '|') return INVALID_PATH;
     ASSERT(GetParentElementNodeType() == structure);
     get key string
-    if (!GetIsValidKey(key)) return INVALID_KEY;
+    if (!IsValidKey(key)) return INVALID_KEY;
     if (key exists in this structure) return matching_key_pair->SetPathElement(value);
     temp_key_pair = new keypair();
     retval = temp_key_pair->SetPathElement(value);
@@ -673,7 +673,7 @@ protected:
 
 private:
 
-    static bool GetIsValidKey (std::string const &key);
+    static bool IsValidKey (std::string const &key);
 
     typedef std::map<std::string, DataFileKeyPair *> MemberMap;
     typedef MemberMap::iterator MemberMapIterator;

@@ -51,7 +51,7 @@ Interloper::~Interloper ()
 void Interloper::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
     // decay the flock leader weight
@@ -64,7 +64,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
             m_flock_leader_weight = -1000.0f;
     }
 
-    bool is_disabled = GetIsDisabled();
+    bool is_disabled = IsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
@@ -85,7 +85,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
 
     // this special handling is done because we don't accumulate force
     // necessarily in the direction the ship is aiming.
-    if (!GetVelocity().GetIsZero())
+    if (!GetVelocity().IsZero())
         AimShipAtCoordinates(GetTranslation() + GetVelocity().GetNormalization(), frame_dt);
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
@@ -113,7 +113,7 @@ void Interloper::Collide (
 
     // TODO: add the extra damage "weapon" for the front of the ship
 
-    if (m_target.GetIsValid() && collider->GetEntityType() == ET_SOLITARY)
+    if (m_target.IsValid() && collider->GetEntityType() == ET_SOLITARY)
     {
         // if the enemy level is ___, do extra damage and spawn effects
 
@@ -145,7 +145,7 @@ void Interloper::SetTarget (Mortal *const target)
 
 void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid());
+    ASSERT1(!m_closest_flock_member.IsValid());
 
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
@@ -157,7 +157,7 @@ void Interloper::PickWanderDirection (Float const time, Float const frame_dt)
 
 void Interloper::Wander (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid());
+    ASSERT1(!m_closest_flock_member.IsValid());
 
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
@@ -196,7 +196,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         }
         // otherwise if this entity is an interloper, transition to Flock
         else if (entity->GetEntityType() == ET_INTERLOPER &&
-                 !GetIsFlockLeader())
+                 !IsFlockLeader())
         {
             found_flock = true;
         }
@@ -227,7 +227,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
-        ASSERT1(!perpendicular_velocity.GetIsZero());
+        ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
@@ -251,7 +251,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
 
 void Interloper::Flock (Float time, Float frame_dt)
 {
-    if (GetIsFlockLeader())
+    if (IsFlockLeader())
     {
         m_think_state = THINK_STATE(Wander);
         m_next_wander_time = time + 6.0f;
@@ -340,7 +340,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     }
 
     m_closest_flock_member = closest_flock_member->GetReference();
-    if (!GetIsFlockLeader())
+    if (!IsFlockLeader())
     {
         m_flock_leader_weight -= static_cast<Float>(flock_member_count) * frame_dt;
         AddFlockLeaderWeight(frame_dt);
@@ -365,9 +365,9 @@ void Interloper::Flock (Float time, Float frame_dt)
 
 void Interloper::Charge (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid());
+    ASSERT1(!m_closest_flock_member.IsValid());
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -449,11 +449,11 @@ void Interloper::Charge (Float const time, Float const frame_dt)
 
 void Interloper::Retreat (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_closest_flock_member.GetIsValid());
+    ASSERT1(!m_closest_flock_member.IsValid());
 
     static Float const s_retreat_time = 1.0f;
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);

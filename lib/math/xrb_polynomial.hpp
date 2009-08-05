@@ -31,14 +31,14 @@ public:
     {
         m.resize(1);
         m[0] = 0.0f;
-        ASSERT1(GetIsHighestCoefficientNonZero());
+        ASSERT1(IsHighestCoefficientNonZero());
     }
     inline Polynomial (Float root)
     {
         m.resize(2);
         m[0] = -root;
         m[1] = 1.0f;
-        ASSERT1(GetIsHighestCoefficientNonZero());
+        ASSERT1(IsHighestCoefficientNonZero());
     }
     Polynomial (Polynomial const &polynomial);
     ~Polynomial () { }
@@ -73,7 +73,7 @@ public:
             m.resize(power + 1);
         m[power] = coefficient;
         Minimize();
-        ASSERT1(GetIsHighestCoefficientNonZero());
+        ASSERT1(IsHighestCoefficientNonZero());
     }
     inline Float operator [] (Uint32 power) const
     {
@@ -108,7 +108,7 @@ public:
         
 private:
 
-    inline bool GetIsHighestCoefficientNonZero () const
+    inline bool IsHighestCoefficientNonZero () const
     {
         if (m.size() == 1)
             return true;

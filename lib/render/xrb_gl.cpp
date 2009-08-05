@@ -206,7 +206,7 @@ GLint GL::GetMaxMatrixStackDepth (GLenum const matrix_mode)
     return max_stack_depth;
 }
 
-bool GL::GetIsTexture2dOn ()
+bool GL::IsTexture2dOn ()
 {
     GLboolean is_texture_2d_on;
     glGetBooleanv(GL_TEXTURE_2D, &is_texture_2d_on);
@@ -215,7 +215,7 @@ bool GL::GetIsTexture2dOn ()
 
 void GL::SetClipRect (ScreenCoordRect const &clip_rect)
 {
-    ASSERT1(clip_rect.GetIsValid());
+    ASSERT1(clip_rect.IsValid());
 
     // set up the GL projection matrix here.
     glMatrixMode(GL_PROJECTION);

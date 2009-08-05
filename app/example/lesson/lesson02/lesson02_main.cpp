@@ -384,7 +384,7 @@ int main (int argc, char **argv)
         of SignalHandler code very much fire-and-forget.
         @code */
         // Run the game loop until the Screen feels like committing seppuku.
-        while (!screen->GetIsQuitRequested())
+        while (!screen->IsQuitRequested())
         {
             // Sleep for 33 milliseconds to limit the framerate and avoid
             // hogging up too much CPU just for this crappy little GUI app.
@@ -401,7 +401,7 @@ int main (int argc, char **argv)
                 if (event == NULL)
                     continue;
                 // Let the Input singleton "have a go" at keyboard/mouse events.
-                if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
                 // Hand the event to the top of the GUI hierarchy for
                 // delegatory (is that a real word?) processing.

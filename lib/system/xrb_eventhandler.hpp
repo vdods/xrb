@@ -68,7 +68,7 @@ public:
       * immediately upon being called.
       * @brief Returns true iff this EventHandler is blocking all events.
       */
-    inline bool GetIsBlockingEvents () const
+    inline bool IsBlockingEvents () const
     {
         return m_is_blocking_events;
     }

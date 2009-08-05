@@ -200,11 +200,11 @@ void InventoryPanel::UpdatePanelState ()
 
                 InventoryButton::Status status;
 
-                if (m_inventory_owner_ship->GetIsItemEquipped(static_cast<ItemType>(item), level))
+                if (m_inventory_owner_ship->IsItemEquipped(static_cast<ItemType>(item), level))
                     status = InventoryButton::S_EQUIPPED;
-                else if (m_inventory_owner_ship->GetIsItemInInventory(static_cast<ItemType>(item), level))
+                else if (m_inventory_owner_ship->IsItemInInventory(static_cast<ItemType>(item), level))
                     status = InventoryButton::S_OWNED;
-                else if (m_inventory_owner_ship->GetIsItemAffordable(static_cast<ItemType>(item), level))
+                else if (m_inventory_owner_ship->IsItemAffordable(static_cast<ItemType>(item), level))
                     status = InventoryButton::S_AFFORDABLE;
                 else
                     status = InventoryButton::S_NOT_AFFORDABLE;
@@ -219,7 +219,7 @@ void InventoryPanel::UpdatePanelState ()
             for (Uint32 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
             {
                 Uint32 mineral_cost;
-                if (m_inventory_owner_ship->GetIsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
+                if (m_inventory_owner_ship->IsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
                     mineral_cost = 0;
                 else
                     mineral_cost = Item::GetItemPrice(
@@ -269,7 +269,7 @@ void InventoryPanel::UpdatePanelState ()
 
 bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
 {
-    if (e->GetIsKeyDownEvent() && e->GetKeyCode() == Key::ESCAPE)
+    if (e->IsKeyDownEvent() && e->GetKeyCode() == Key::ESCAPE)
     {
         Deactivate();
         return true;
@@ -341,11 +341,11 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
     // enable the widgets and set the prices
     for (Uint8 mineral_index = 0; mineral_index < MINERAL_COUNT; ++mineral_index)
     {
-        ASSERT1(!m_mineral_cost_label[mineral_index]->GetIsEnabled());
-        ASSERT1(!m_mineral_icon_label[mineral_index]->GetIsEnabled());
+        ASSERT1(!m_mineral_cost_label[mineral_index]->IsEnabled());
+        ASSERT1(!m_mineral_icon_label[mineral_index]->IsEnabled());
 
         Uint32 mineral_cost;
-        if (m_inventory_owner_ship->GetIsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
+        if (m_inventory_owner_ship->IsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
             mineral_cost = 0;
         else
             mineral_cost = Item::GetItemPrice(
@@ -387,8 +387,8 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
     {
         if (m_mineral_cost_label[i]->GetValue() > 0)
         {
-            ASSERT1(m_mineral_cost_label[i]->GetIsEnabled());
-            ASSERT1(m_mineral_icon_label[i]->GetIsEnabled());
+            ASSERT1(m_mineral_cost_label[i]->IsEnabled());
+            ASSERT1(m_mineral_icon_label[i]->IsEnabled());
 
             m_mineral_cost_label[i]->SetValue(0);
 
@@ -399,8 +399,8 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
         }
         else
         {
-            ASSERT1(!m_mineral_cost_label[i]->GetIsEnabled());
-            ASSERT1(!m_mineral_icon_label[i]->GetIsEnabled());
+            ASSERT1(!m_mineral_cost_label[i]->IsEnabled());
+            ASSERT1(!m_mineral_icon_label[i]->IsEnabled());
         }
     }
 

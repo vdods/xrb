@@ -39,7 +39,7 @@ namespace MapEditor2
         void IncrementMainObjectLayer ();
         void DecrementMainObjectLayer ();
     
-        inline bool GetIsRunning () const
+        inline bool IsRunning () const
         {
             return m_is_running;
         }

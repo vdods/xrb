@@ -156,7 +156,7 @@ void WidgetSkin::SetFont (
     Resource<Font> const &font)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
-    ASSERT1(font.GetIsValid());
+    ASSERT1(font.IsValid());
     m_font_specification[font_type].m_font = font;
     m_font_specification[font_type].m_font_height = font->GetPixelHeight();
     m_font_specification[font_type].m_font_height_ratio =
@@ -176,7 +176,7 @@ void WidgetSkin::SetFontFaceFilename (
             AsciiFont::Create,
             font_face_filename,
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
+    ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
 
@@ -194,7 +194,7 @@ void WidgetSkin::SetFontHeightRatio (
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
+    ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
 void WidgetSkin::SetFontHeight (
@@ -211,7 +211,7 @@ void WidgetSkin::SetFontHeight (
             AsciiFont::Create,
             m_font_specification[font_type].m_font.GetFilename(),
             m_font_specification[font_type].m_font_height);
-    ASSERT1(m_font_specification[font_type].m_font.GetIsValid());
+    ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
 void WidgetSkin::SetTexture (

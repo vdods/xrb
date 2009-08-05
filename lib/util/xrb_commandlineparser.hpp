@@ -61,9 +61,9 @@ public:
 
 private:
 
-    static bool GetIsAControlOption (CommandLineOption const &option);
-    static bool GetIsAShortNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
-    static bool GetIsALongNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
+    static bool IsAControlOption (CommandLineOption const &option);
+    static bool IsAShortNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
+    static bool IsALongNameCollision (CommandLineOption const &option_0, CommandLineOption const &option_1);
 
     void PerformOptionConsistencyCheck () const;
 

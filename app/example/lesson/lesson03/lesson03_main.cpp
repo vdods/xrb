@@ -180,7 +180,7 @@ public:
     Note how we set <tt>m_accepts_mouseover</tt> to <tt>true</tt> here.
     <tt>m_accepts_mouseover</tt> is a protected member of Widget which
     indicates if mouseover events will be caught and processed by this widget.
-    If we want to use the Widget::GetIsMouseover accessor, this must be set to
+    If we want to use the Widget::IsMouseover accessor, this must be set to
     <tt>true</tt>.  If <tt>m_accepts_mouseover</tt> remains the default value
     of <tt>false</tt>, this widget will allow mouseover events to fall through
     to the widget(s) behind it, including its parent widget, which may be
@@ -271,7 +271,7 @@ protected:
         // to manually heat up grid cells.  Note that this isn't the primary
         // method of facilitating mouse input -- Xrb::Event based mouse input
         // will be covered later.
-        if (GetIsMouseover() && Singletons::Input().GetIsKeyPressed(Key::LEFTMOUSE))
+        if (IsMouseover() && Singletons::Input().IsKeyPressed(Key::LEFTMOUSE))
             m_temperature += g_mouse_temperature_change_rate * GetFrameDT();
     }
 
@@ -601,7 +601,7 @@ int main (int argc, char **argv)
         Float current_real_time = 0.0f;
         Float next_real_time = 0.0f;
         // Run the game loop until the Screen no longer has the will to live.
-        while (!screen->GetIsQuitRequested())
+        while (!screen->IsQuitRequested())
         {
             /* @endcode
             Here is the newly added framerate control code.  We keep track of
@@ -629,7 +629,7 @@ int main (int argc, char **argv)
                 if (event == NULL)
                     continue;
                 // Let the Input singleton "have a go" at keyboard/mouse events.
-                if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
                 screen->ProcessEvent(event);

@@ -53,7 +53,7 @@ public:
     inline SignalReceiver0 const *ReceiverBeginOutro () { return &m_receiver_begin_outro; }
 
     inline PlayerShip *GetPlayerShip () { return m_player_ship; }
-    inline bool GetIsDebugInfoEnabled () const { return m_is_debug_mode_enabled; }
+    inline bool IsDebugInfoEnabled () const { return m_is_debug_mode_enabled; }
 
     void SetPlayerShip (PlayerShip *player_ship);
     void SetIsDebugModeEnabled (bool is_debug_mode_enabled);

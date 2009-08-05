@@ -39,7 +39,7 @@ EventHandler::~EventHandler ()
 bool EventHandler::ProcessEvent (Event const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(!e->GetIsScheduledForDeletion());
+    ASSERT1(!e->IsScheduledForDeletion());
 
     // make sure that events show up "in order", even if their times
     // aren't actually completely correct.
@@ -48,7 +48,7 @@ bool EventHandler::ProcessEvent (Event const *const e)
         event_time = m_most_recent_event_time;
 
     // if this event handler is blocking events, return that the event was unused
-    if (GetIsBlockingEvents())
+    if (IsBlockingEvents())
         return false;
 
     // set the current event time

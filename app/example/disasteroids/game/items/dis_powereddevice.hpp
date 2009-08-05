@@ -38,7 +38,7 @@ public:
     virtual ~PoweredDevice () { }
 
     // Item interface method
-    virtual bool GetIsPoweredDevice () const { return true; }
+    virtual bool IsPoweredDevice () const { return true; }
 
     inline Ship *GetOwnerShip () { return m_owner_ship; }
     inline Ship const *GetOwnerShip () const { return m_owner_ship; }

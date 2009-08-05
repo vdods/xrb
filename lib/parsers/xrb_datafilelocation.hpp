@@ -30,21 +30,21 @@ public:
         m_filename(filename),
         m_line(line)
     {
-        assert(GetIsValid());
+        assert(IsValid());
     }
 
-    inline bool GetIsValid () const
+    inline bool IsValid () const
     {
         return !m_filename.empty() && m_line > 0;
     }
     inline std::string const &GetFilename () const
     {
-        assert(GetIsValid() && "can't use DataFileLocation::ms_invalid in this manner");
+        assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_filename;
     }
     inline Uint32 GetLine () const
     {
-        assert(GetIsValid() && "can't use DataFileLocation::ms_invalid in this manner");
+        assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_line;
     }
     std::string GetText () const;

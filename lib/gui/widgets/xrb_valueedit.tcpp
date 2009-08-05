@@ -65,7 +65,7 @@ void ValueEdit<ValueType>::SetTextToValueFunction (
 template <typename ValueType>
 bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *const e)
 {
-    if (e->GetIsKeyDownEvent() || e->GetIsKeyRepeatEvent())
+    if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
     {
         switch (e->GetKeyCode())
         {

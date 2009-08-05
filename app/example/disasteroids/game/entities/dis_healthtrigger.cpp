@@ -39,7 +39,7 @@ void HealthTrigger::Collide (
 {
     ASSERT1(collider != NULL);
 
-    if (collider->GetIsMortal() && collider != *m_ignore_this_mortal)
+    if (collider->IsMortal() && collider != *m_ignore_this_mortal)
     {
         if (m_health_delta_rate > 0.0f)
         {

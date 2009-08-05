@@ -64,7 +64,7 @@ public:
       * @return True iff the stream is open for input/output.
       * @note Will not change the error value.
       */
-    inline bool GetIsOpen () const
+    inline bool IsOpen () const
     {
         return m_is_open;
     }
@@ -82,8 +82,8 @@ public:
       * @return True iff the stream is at the end (e.g. end of file)
       * @note Will not change the error value.
       */
-    virtual bool GetIsAtEnd () const = 0;
-    /** This is necessary because GetIsAtEnd() doesn't work when a set
+    virtual bool IsAtEnd () const = 0;
+    /** This is necessary because IsAtEnd() doesn't work when a set
       * of data doesn't end exactly on a byte boundary.
       * @brief Get the less-than-one-byte-left-in-in-the-stream condition.
       * @return True iff the stream has fewer than 8 bits left.
@@ -120,8 +120,8 @@ public:
       * @note You must be careful to use enough bits when reading/writing
       *       bits from/to a signed integer value; the extra "sign bit"
       *       must be considered when deciding how many bits to use.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Sint32 ReadSignedBits (Uint32 bit_count) = 0;
@@ -132,8 +132,8 @@ public:
       * @note You must be careful to use enough bits when reading/writing
       *       bits from/to a signed integer value; the extra "sign bit"
       *       must be considered when deciding how many bits to use.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteSignedBits (Sint32 value, Uint32 bit_count) = 0;
@@ -142,8 +142,8 @@ public:
       * @param bit_count The number of bits (up to 32) to read.
       * @return The bits read in from the stream, positioned in the least
       *         significant @c bit_count bits of the return value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 ReadUnsignedBits (Uint32 bit_count) = 0;
@@ -151,23 +151,23 @@ public:
       *        of the unsigned integer, @c value, to the stream.
       * @param value The value from which the lowest @c bit_count bits will
       *              used to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteUnsignedBits (Uint32 value, Uint32 bit_count) = 0;
 
     /** @brief Read a boolean value from the stream.
       * @return The boolean value true or false.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual bool ReadBool () = 0;
     /** @brief Write a boolean value to the stream.
       * @param value The boolean value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteBool (bool value) = 0;
@@ -177,8 +177,8 @@ public:
       * @brief Reads a BitArray<bit_count> object from the stream.
       * @returns A BitArray<bit_count> object with the read-in bits
       *          in the least-significant position.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     template <Uint32 bit_count>
@@ -186,8 +186,8 @@ public:
     /** The @c bit_count of the BitArray template instance must not be
       * above @code MAX_SUPPORTED_STRING_BUFFER_SIZE * 8 @endcode.
       * @brief Writes a BitArray<bit_count> object to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     template <Uint32 bit_count>
@@ -203,8 +203,8 @@ public:
       *                     @c bit_count.
       * @returns A BitArray<bit_count> object with the read-in bits
       *          in the least-significant position.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     template <Uint32 bit_count>
@@ -218,8 +218,8 @@ public:
       *                      from the BitArray object.  This value must be
       *                      greater than 0 and less than or equal to
       *                      @c bit_count.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     template <Uint32 bit_count>
@@ -227,90 +227,90 @@ public:
 
     /** @brief Read a signed, 8-bit integer value from the stream.
       * @return A signed, 8-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Sint8 ReadSint8 () = 0;
     /** @brief Write a signed, 8-bit integer value to the stream.
       * @param value The signed, 8-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteSint8 (Sint8 value) = 0;
 
     /** @brief Read an unsigned, 8-bit integer value from the stream.
       * @return An unsigned, 8-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint8 ReadUint8 () = 0;
     /** @brief Write an unsigned, 8-bit integer value to the stream.
       * @param value The unsigned, 8-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteUint8 (Uint8 value) = 0;
 
     /** @brief Read a signed, 16-bit integer value from the stream.
       * @return A signed, 16-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Sint16 ReadSint16 () = 0;
     /** @brief Write a signed, 16-bit integer value to the stream.
       * @param value The signed, 16-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteSint16 (Sint16 value) = 0;
 
     /** @brief Read an unsigned, 16-bit integer value from the stream.
       * @return An unsigned, 16-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint16 ReadUint16 () = 0;
     /** @brief Write an unsigned, 16-bit integer value to the stream.
       * @param value The unsigned, 16-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteUint16 (Uint16 value) = 0;
 
     /** @brief Read a signed, 32-bit integer value from the stream.
       * @return A signed, 32-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Sint32 ReadSint32 () = 0;
     /** @brief Write a signed, 32-bit integer value to the stream.
       * @param value The signed, 32-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteSint32 (Sint32 value) = 0;
 
     /** @brief Read an unsigned, 32-bit integer value from the stream.
       * @return An unsigned, 32-bit integer value.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 ReadUint32 () = 0;
     /** @brief Write an unsigned, 32-bit integer value to the stream.
       * @param value The unsigned, 32-bit integer value to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteUint32 (Uint32 value) = 0;
@@ -320,8 +320,8 @@ public:
       * @param destination A pointer to the IEEE single-precision
       *                    floating point value to be set to the value
       *                    read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloat (float *destination) = 0;
@@ -329,8 +329,8 @@ public:
       *        the stream.
       * @param value The IEEE single-precision floating point value to
       *              write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloat (float value) = 0;
@@ -340,8 +340,8 @@ public:
       * @param destination A pointer to the IEEE double-precision
       *                    floating point value to be set to the value
       *                    read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloat (double *destination) = 0;
@@ -349,8 +349,8 @@ public:
       *        the stream.
       * @param value The IEEE double-precision floating point value to
       *              write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloat (double value) = 0;
@@ -377,8 +377,8 @@ public:
       *         the null-terminating character.
       * @note Must guarantee that strings up to 65536 characters long,
       *       including the null-terminating character, are supported.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 ReadBufferString (char *destination, Uint32 destination_size) = 0;
@@ -405,8 +405,8 @@ public:
       *       longer than 65536 characters, including the null-terminating
       *       character, only 65536 characters will be written, including
       *       the null-terminating character.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 WriteBufferString (char const *source, Uint32 source_size) = 0;
@@ -423,8 +423,8 @@ public:
       *                    will be made.  This parameter must not be null.
       * @return The length of the read-in string.
       * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 ReadString (char **destination);
@@ -432,8 +432,8 @@ public:
       * @param source The null-terminated string to write to the stream.
       * @note This is more or less an alias for the pure-virtual WriteString().
       * @return The length of the written string.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual Uint32 WriteString (char const *source);
@@ -445,8 +445,8 @@ public:
       *                      null-terminating character.
       * @return A std::string character string read in from the stream.
       * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline std::string ReadStdString (Uint32 *string_length = NULL)
@@ -463,8 +463,8 @@ public:
       *                      null-terminating character.
       * @return A std::string character string read in from the stream.
       * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     void ReadStdString (std::string *destination, Uint32 *string_length = NULL);
@@ -475,16 +475,16 @@ public:
       *                      read-in string, not including the
       *                      null-terminating character.
       * @note This is more or less an alias for the pure-virtual WriteString().
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     void WriteStdString (std::string const &source, Uint32 *string_length = NULL);
 
     /** @brief Reads a Color from the stream.
       * @return A Color read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline Color ReadColor ()
@@ -495,23 +495,23 @@ public:
     }
     /** @brief Reads a Color from the stream.
       * @param destination A pointer to the Color object to read into.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadColor (Color *destination) = 0;
     /** @brief Writes the given std::string character string to the stream.
       * @param source The std::string character string to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteColor (Color const &value) = 0;
 
     /** @brief Reads a FloatVector2 from the stream.
       * @return A FloatVector2 read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline FloatVector2 ReadFloatVector2 ()
@@ -522,23 +522,23 @@ public:
     }
     /** @brief Reads a FloatVector2 from the stream.
       * @param destination A pointer to the FloatVector2 object to read into.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloatVector2 (FloatVector2 *destination) = 0;
     /** @brief Writes the given FloatVector2 to the stream.
       * @param source The FloatVector2 to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloatVector2 (FloatVector2 const &value) = 0;
 
     /** @brief Reads a FloatSimpleTransform2 from the stream.
       * @return A FloatSimpleTransform2 read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline FloatSimpleTransform2 ReadFloatSimpleTransform2 ()
@@ -550,23 +550,23 @@ public:
     /** @brief Reads a FloatSimpleTransform2 from the stream.
       * @param destination A pointer to the FloatSimpleTransform2 object to
       *        read into.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloatSimpleTransform2 (FloatSimpleTransform2 *destination) = 0;
     /** @brief Writes the given FloatSimpleTransform2 to the stream.
       * @param source The FloatSimpleTransform2 to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloatSimpleTransform2 (FloatSimpleTransform2 const &value) = 0;
 
     /** @brief Reads a FloatMatrix2 from the stream.
       * @return A FloatMatrix2 read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline FloatMatrix2 ReadFloatMatrix2 ()
@@ -577,23 +577,23 @@ public:
     }
     /** @brief Reads a FloatMatrix2 from the stream.
       * @param destination A pointer to the FloatMatrix2 object to read into.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloatMatrix2 (FloatMatrix2 *destination) = 0;
     /** @brief Writes the given FloatMatrix2 to the stream.
       * @param source The FloatMatrix2 to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloatMatrix2 (FloatMatrix2 const &value) = 0;
 
     /** @brief Reads a FloatTransform2 from the stream.
       * @return A FloatTransform2 read in from the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     inline FloatTransform2 ReadFloatTransform2 ()
@@ -605,15 +605,15 @@ public:
     /** @brief Reads a FloatTransform2 from the stream.
       * @param destination A pointer to the FloatTransform2 object to read
       *        into.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void ReadFloatTransform2 (FloatTransform2 *destination) = 0;
     /** @brief Writes the given FloatTransform2 to the stream.
       * @param source The FloatTransform2 to write to the stream.
-      * @pre @c GetIsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c GetIsAtEnd() must return false.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void WriteFloatTransform2 (FloatTransform2 const &value) = 0;
@@ -655,7 +655,7 @@ protected:
     /** @brief Causes any uncommitted writes to be committed (e.g. writing
       *        a memory buffer to disk, or writing a bit-packing buffer
       *        to a byte-aligned buffer).
-      * @pre @c GetIsOpen() must return true, and @c GetIODirection() must
+      * @pre @c IsOpen() must return true, and @c GetIODirection() must
       *      return IOD_WRITE.
       * @post The error state is set to indicate the status of the operation.
       */

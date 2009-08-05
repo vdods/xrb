@@ -43,7 +43,7 @@ public:
       * @return True iff the BitCache is open for input/output.
       * @note Will not change the error value.
       */
-    inline bool GetIsOpen () const
+    inline bool IsOpen () const
     {
         return m_is_open;
     }
@@ -61,8 +61,8 @@ public:
       * @return True iff the cache is at the end (e.g. end of file)
       * @note Will not change the error value.
       */
-    bool GetIsAtEnd () const;
-    /** This is necessary because GetIsAtEnd() doesn't work when a set
+    bool IsAtEnd () const;
+    /** This is necessary because IsAtEnd() doesn't work when a set
       * of data doesn't end exactly on a byte boundary.
       * @brief Get the less-than-one-byte-left-in-in-the-cache condition.
       * @return True iff the cache has fewer than 8 bits left.
@@ -119,7 +119,7 @@ protected:
 
     inline void IncrementCacheByteIndex (Uint32 requested_byte_count)
     {
-        ASSERT1(GetIsCacheBitIndexOnByteBoundary());
+        ASSERT1(IsCacheBitIndexOnByteBoundary());
         ASSERT1(GetCacheByteIndex() + requested_byte_count
                 <=
                 m_next_available_cache_byte_index);
@@ -164,11 +164,11 @@ private:
     // private accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline bool GetIsCacheEmpty () const
+    inline bool IsCacheEmpty () const
     {
         return m_cache_bit_index == 0;
     }
-    inline bool GetIsCacheBitIndexOnByteBoundary () const
+    inline bool IsCacheBitIndexOnByteBoundary () const
     {
         return (m_cache_bit_index & 7) == 0;
     }

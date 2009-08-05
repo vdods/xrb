@@ -50,7 +50,7 @@ public:
 
     inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
     inline bool GetHasDetonated () const { return m_has_detonated; }
-    virtual bool GetIsExplosive () const { return true; }
+    virtual bool IsExplosive () const { return true; }
 
     virtual void Collide (
         Entity *collider,

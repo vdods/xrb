@@ -93,7 +93,7 @@ void Engine2::VisibilityQuadTree::ReadObjects (
         // it's ok to pass NULL as CreateEntity because it won't be used,
         // because these are all static objects (or at least better be)
         Object *object = Object::Create(serializer, NULL);
-        ASSERT1(!object->GetIsDynamic());
+        ASSERT1(!object->IsDynamic());
         object_layer->AddObject(object);
         --static_object_count;
     }
@@ -117,7 +117,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     {
         Object const *object = *it;
         ASSERT1(object != NULL);
-        if (!object->GetIsDynamic())
+        if (!object->IsDynamic())
         {
             object->Write(serializer);
             ++retval;
@@ -396,7 +396,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
                     view_offset[Dim::Y],
                     0.0f);
 
-                if (draw_loop_functor.GetIsCollectTransparentObjectPass())
+                if (draw_loop_functor.IsCollectTransparentObjectPass())
                     Draw(draw_loop_functor);
                 else
                     std::for_each(

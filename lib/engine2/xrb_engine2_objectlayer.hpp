@@ -52,7 +52,7 @@ public:
 
     inline std::string const &GetName () const { return m_name; }
     inline World *GetOwnerWorld () const { return m_owner_world; }
-    inline bool GetIsWrapped () const { return m_is_wrapped; }
+    inline bool IsWrapped () const { return m_is_wrapped; }
     inline Float GetSideLength () const { return m_side_length; }
     inline Float GetZDepth () const { return m_z_depth; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point) const;

@@ -69,14 +69,14 @@ void TextWidget::SetFont (Resource<Font> const &font)
 void TextWidget::SetFontFaceFilename (std::string const &font_face_filename)
 {
     ASSERT1(!font_face_filename.empty());
-    ASSERT1(m_font.GetIsValid());
+    ASSERT1(m_font.IsValid());
 
     Resource<Font> font =
         Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             font_face_filename,
             m_font->GetPixelHeight());
-    ASSERT1(font.GetIsValid());
+    ASSERT1(font.IsValid());
 
     if (m_font != font)
     {
@@ -88,7 +88,7 @@ void TextWidget::SetFontFaceFilename (std::string const &font_face_filename)
 void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
 {
     ASSERT1(font_height_ratio > 0.0f);
-    ASSERT1(m_font.GetIsValid());
+    ASSERT1(m_font.IsValid());
 
     ScreenCoord font_height =
         GetWidgetSkin()->GetScreenCoordFromRatio(font_height_ratio);
@@ -100,7 +100,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
                 AsciiFont::Create,
                 m_font.GetFilename(),
                 font_height);
-        ASSERT1(m_font.GetIsValid());
+        ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }
 }
@@ -108,7 +108,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
 void TextWidget::SetFontHeight (ScreenCoord const font_height)
 {
     ASSERT1(font_height > 0);
-    ASSERT1(m_font.GetIsValid());
+    ASSERT1(m_font.IsValid());
 
     if (m_font->GetPixelHeight() != font_height)
     {
@@ -117,7 +117,7 @@ void TextWidget::SetFontHeight (ScreenCoord const font_height)
                 AsciiFont::Create,
                 m_font.GetFilename(),
                 font_height);
-        ASSERT1(m_font.GetIsValid());
+        ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }
 }
@@ -260,7 +260,7 @@ ScreenCoordRect TextWidget::GetTextRect () const
 
 void TextWidget::UpdateMinAndMaxSizesFromText ()
 {
-    if (!GetRenderFont().GetIsValid())
+    if (!GetRenderFont().IsValid())
         return;
 
     ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (GetFrameMargins() + GetContentMargins()));

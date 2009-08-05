@@ -44,7 +44,7 @@ bool PhysicsHandler::GetDoesAreaOverlapAnyEntityInObjectLayer (
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(m_quad_tree != NULL);
-    if (m_main_object_layer->GetIsWrapped())
+    if (m_main_object_layer->IsWrapped())
         return m_quad_tree->GetDoesAreaOverlapAnyEntityWrapped(
             area_center,
             area_radius,
@@ -71,7 +71,7 @@ void PhysicsHandler::LineTrace (
     ASSERT1(trace_radius >= 0.0f);
     ASSERT1(line_trace_binding_set != NULL);
 
-    if (m_main_object_layer->GetIsWrapped())
+    if (m_main_object_layer->IsWrapped())
     {
         ASSERT1(trace_vector.GetLength() <= 0.5f * m_main_object_layer->GetSideLength());
         m_quad_tree->LineTraceWrapped(
@@ -104,7 +104,7 @@ void PhysicsHandler::AreaTrace (
     ASSERT1(trace_area_radius > 0.0f);
     ASSERT1(area_trace_list != NULL);
 
-    if (m_main_object_layer->GetIsWrapped())
+    if (m_main_object_layer->IsWrapped())
     {
         Float object_layer_side_length = m_main_object_layer->GetSideLength();
         Float half_object_layer_side_length = 0.5f * object_layer_side_length;
@@ -197,7 +197,7 @@ void PhysicsHandler::HandleFrame ()
         return;
 
     // resolve interpenetrations / calculate collisions
-    if (m_main_object_layer->GetIsWrapped())
+    if (m_main_object_layer->IsWrapped())
         HandleInterpenetrationsUsingCollisionQuadTreeWrapped();
     else
         HandleInterpenetrationsUsingCollisionQuadTree();
@@ -271,7 +271,7 @@ void PhysicsHandler::UpdateVelocities ()
         Entity *entity = *it;
         ASSERT1(entity != NULL);
 
-        if (!entity->GetForce().GetIsZero())
+        if (!entity->GetForce().IsZero())
         {
             ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]));
             ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]));
@@ -326,7 +326,7 @@ void PhysicsHandler::UpdatePositions ()
         Entity *entity = *it;
         ASSERT1(entity != NULL);
 
-        if (!entity->GetVelocity().GetIsZero())
+        if (!entity->GetVelocity().IsZero())
         {
             entity->Translate(GetFrameDT() * entity->GetVelocity());
             ASSERT1(entity->GetObjectLayer() != NULL);
@@ -367,7 +367,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
 
 void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
 {
-    ASSERT1(m_main_object_layer->GetIsWrapped());
+    ASSERT1(m_main_object_layer->IsWrapped());
     ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 

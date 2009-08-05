@@ -27,7 +27,7 @@ Key *Key::Create (Key::Code const code, std::string const &name)
     return retval;
 }
 
-bool Key::GetIsKeyRepeatable (Key::Code const code)
+bool Key::IsKeyRepeatable (Key::Code const code)
 {
     // repeatable keys:
     if ((code >= Key::SPACE && code <= Key::DELETE)         // ASCII char keys
@@ -49,7 +49,7 @@ bool Key::GetIsKeyRepeatable (Key::Code const code)
     return false;
 }
 
-bool Key::GetIsKeyAscii (Key::Code const code)
+bool Key::IsKeyAscii (Key::Code const code)
 {
     if ((code >= ZERO && code <= NINE) || (code >= A && code <= Z))
         return true;

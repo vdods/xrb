@@ -70,14 +70,14 @@ void SerializerUnitTest::AtomEndOfFile ()
                  serializer->GetErrorString(),
                  GetIOErrorString(IOE_NONE));
 
-    // read the same file back, testing the GetIsAtEnd() and other end conditions
+    // read the same file back, testing the IsAtEnd() and other end conditions
     serializer = CloseSerializerAndOpenSameForReading();
 
     Test(!serializer->GetHasFewerThan8BitsLeft(),
          "the stream should have more than 8 bits left to read");
 
     Uint32 read_value = serializer->ReadUint32();
-    Test(serializer->GetIsAtEnd(),
+    Test(serializer->IsAtEnd(),
          "read a Uint32.  serializer should be exactly at the end.");
 
     Test(read_value == 0xDEADBEEF,

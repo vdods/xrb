@@ -55,7 +55,7 @@ void RadiusDamage (
         ASSERT1(entity != NULL);
 
         // damage mortals, unless it is the one to ignore.
-        if (entity->GetIsMortal() && entity != *ignore_this_mortal)
+        if (entity->IsMortal() && entity != *ignore_this_mortal)
         {
             // the damage tapers off with distance, so calculate how much
             // damage to apply (taking into account the size of the mortal)
@@ -134,7 +134,7 @@ void RadiusKnockback (
             distance_factor = 1.0f / distance;
     
         // knockback forces
-        if (!center_to_center.GetIsZero())
+        if (!center_to_center.IsZero())
         {
             static Float const s_knockback_factor = 20.0f;
             Float knockback_momentum = s_knockback_factor * power * distance_factor;

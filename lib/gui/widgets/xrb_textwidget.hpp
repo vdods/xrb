@@ -54,25 +54,25 @@ public:
       * @brief Returns true iff the label's minimum width is fixed to the
       *        width of its text.
       */
-    inline bool GetIsMinWidthFixedToTextWidth () const { return m_is_min_width_fixed_to_text_width; }
+    inline bool IsMinWidthFixedToTextWidth () const { return m_is_min_width_fixed_to_text_width; }
     /** If true, when the text's width changes, the maximum width of this
       * widget will change, and the widget may be resized.
       * @brief Returns true iff the label's maximum width is fixed to the
       *        width of its text.
       */
-    inline bool GetIsMaxWidthFixedToTextWidth () const { return m_is_max_width_fixed_to_text_width; }
+    inline bool IsMaxWidthFixedToTextWidth () const { return m_is_max_width_fixed_to_text_width; }
     /** If true, when the text's height changes, the minimum height of this
       * widget will change, and the widget may be resized.
       * @brief Returns true iff the label's minimum height is fixed to the
       *        height of its text.
       */
-    inline bool GetIsMinHeightFixedToTextHeight () const { return m_is_min_height_fixed_to_text_height; }
+    inline bool IsMinHeightFixedToTextHeight () const { return m_is_min_height_fixed_to_text_height; }
     /** If true, when the text's height changes, the maximum height of this
       * widget will change, and the widget may be resized.
       * @brief Returns true iff the label's maximum height is fixed to the
       *        height of its text.
       */
-    inline bool GetIsMaxHeightFixedToTextHeight () const { return m_is_max_height_fixed_to_text_height; }
+    inline bool IsMaxHeightFixedToTextHeight () const { return m_is_max_height_fixed_to_text_height; }
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceiver accessors

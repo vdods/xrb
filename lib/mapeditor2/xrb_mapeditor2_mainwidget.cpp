@@ -557,7 +557,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 // temp (put this into the menu commands later)
 bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
 {
-    if (e->GetIsKeyDownEvent())
+    if (e->IsKeyDownEvent())
     {
         /*
         if (e->GetKeyCode() == Key::F1)
@@ -567,7 +567,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
         }
         */
 
-        if (e->GetKeyCode() == Key::N && e->GetIsEitherControlKeyPressed())
+        if (e->GetKeyCode() == Key::N && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 
@@ -579,7 +579,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::O && e->GetIsEitherControlKeyPressed())
+        if (e->GetKeyCode() == Key::O && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 
@@ -596,7 +596,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::S && e->GetIsEitherControlKeyPressed())
+        if (e->GetKeyCode() == Key::S && e->IsEitherControlKeyPressed())
         {
             // early out if there is no view (and consequently no world)
             if (!GetMapEditorWorldView())
@@ -615,7 +615,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::W && e->GetIsEitherControlKeyPressed())
+        if (e->GetKeyCode() == Key::W && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 

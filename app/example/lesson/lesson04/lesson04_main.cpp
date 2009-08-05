@@ -212,7 +212,7 @@ public:
         @code */
         // If either ALT key is pressed, we will rotate the view depending
         // on which of mouse-wheel-up or mouse-wheel-down this event indicates.
-        if (e->GetIsEitherAltKeyPressed())
+        if (e->IsEitherAltKeyPressed())
         {
             if (e->GetButtonCode() == Key::MOUSEWHEELUP)
                 RotateView(-15.0f); // Rotate 15 degrees clockwise.
@@ -241,7 +241,7 @@ public:
     virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e)
     {
         // Only do stuff if the left mouse button was pressed for this event.
-        if (e->GetIsLeftMouseButtonPressed())
+        if (e->IsLeftMouseButtonPressed())
         {
             // This transforms the screen-coordinate movement delta of the
             // mouse motion event into world-coordinates.
@@ -393,7 +393,7 @@ int main (int argc, char **argv)
         Float next_real_time = 0.0f;
         Float desired_framerate = 30.0f;
         // Run the game loop until the Screen no longer has the will to live.
-        while (!screen->GetIsQuitRequested())
+        while (!screen->IsQuitRequested())
         {
             // Get the current real time and figure out how long to sleep, then sleep.
             current_real_time = 0.001f * SDL_GetTicks();
@@ -411,7 +411,7 @@ int main (int argc, char **argv)
                 if (event == NULL)
                     continue;
                 // Let the Input singleton "have a go" at keyboard/mouse events.
-                if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
                 screen->ProcessEvent(event);

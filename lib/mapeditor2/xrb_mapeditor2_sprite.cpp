@@ -34,7 +34,7 @@ MapEditor2::Sprite *MapEditor2::Sprite::Create (std::string const &texture_filen
         Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
-    if (!texture.GetIsValid())
+    if (!texture.IsValid())
         return NULL;
 
     return new Sprite(texture);
@@ -42,7 +42,7 @@ MapEditor2::Sprite *MapEditor2::Sprite::Create (std::string const &texture_filen
 
 MapEditor2::Sprite *MapEditor2::Sprite::Create (Resource<GLTexture> const &texture)
 {
-    if (!texture.GetIsValid())
+    if (!texture.IsValid())
         return NULL;
 
     return new Sprite(texture);
@@ -61,7 +61,7 @@ MapEditor2::Sprite *MapEditor2::Sprite::Create (Serializer &serializer)
 
 Engine2::Object *MapEditor2::Sprite::CreateClone () const
 {
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_texture.IsValid());
 
     Sprite *retval = new Sprite(m_texture);
     retval->Engine2::Object::CloneProperties(this);

@@ -74,7 +74,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
     // check if the current object is smaller than the minimum allowable size.
     // if it is, return it, because no objects owned by this node will be
     // smaller than it
-    if (retval != NULL && !GetIsAllowableObjectRadius(retval))
+    if (retval != NULL && !IsAllowableObjectRadius(retval))
         return retval;
 
     // check against all the objects owned by this node
@@ -250,19 +250,19 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     ASSERT1(object->GetRadius(GetQuadTreeType()) <= m_radius);
 
     // return if the object's center is not inside this node
-    if (!GetIsPointInsideQuad(object->GetTranslation()))
+    if (!IsPointInsideQuad(object->GetTranslation()))
         return false;
 
     // check if the object should be added to this node:
     // add to the object list if the object's radius is within the nominal size
     // for this quadtree's radius or if there are no child quadtree nodes.
-    if (GetIsAllowableObjectRadius(object) || !GetHasChildren())
+    if (IsAllowableObjectRadius(object) || !GetHasChildren())
     {
         // add to this node
         object->SetOwnerQuadTree(m_quad_tree_type, this);
         m_object_set.insert(object);
         ++m_subordinate_object_count;
-        if (!object->GetIsDynamic())
+        if (!object->IsDynamic())
             ++m_subordinate_static_object_count;
     }
     else
@@ -281,7 +281,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
         ASSERT1(add_succeeded);
 
         ++m_subordinate_object_count;
-        if (!object->GetIsDynamic())
+        if (!object->IsDynamic())
             ++m_subordinate_static_object_count;
     }
     return true;
@@ -302,7 +302,7 @@ bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
         // decrement subordinate object count
         DecrementSubordinateObjectCount();
         // decrement the subordinate static object count if appropriate
-        if (!object->GetIsDynamic())
+        if (!object->IsDynamic())
             DecrementSubordinateStaticObjectCount();
         // success
         return true;
@@ -322,7 +322,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
     bool object_was_added = false;
 
     // if the object's position is inside current quadnode
-    if (GetIsPointInsideQuad(object->GetTranslation()))
+    if (IsPointInsideQuad(object->GetTranslation()))
     {
         Float object_radius_over_quad_radius = object->GetRadius(GetQuadTreeType()) / m_radius;
         // if the object is too big for current quadnode
@@ -351,12 +351,12 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
                 {
                     if (object_translation[Dim::Y] >= m_center[Dim::Y])
                     {
-                        ASSERT1(m_child[0]->GetIsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[0]->IsPointInsideQuad(object->GetTranslation()));
                         object_was_added = m_child[0]->ReAddObject(object);
                     }
                     else
                     {
-                        ASSERT1(m_child[3]->GetIsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[3]->IsPointInsideQuad(object->GetTranslation()));
                         object_was_added = m_child[3]->ReAddObject(object);
                     }
                 }
@@ -364,12 +364,12 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
                 {
                     if (object_translation[Dim::Y] >= m_center[Dim::Y])
                     {
-                        ASSERT1(m_child[1]->GetIsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[1]->IsPointInsideQuad(object->GetTranslation()));
                         object_was_added = m_child[1]->ReAddObject(object);
                     }
                     else
                     {
-                        ASSERT1(m_child[2]->GetIsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[2]->IsPointInsideQuad(object->GetTranslation()));
                         object_was_added = m_child[2]->ReAddObject(object);
                     }
                 }
@@ -423,7 +423,7 @@ Engine2::QuadTree::QuadTree (QuadTree *const parent)
     m_quad_tree_type = QTT_COUNT;
 }
 
-bool Engine2::QuadTree::GetIsPointInsideQuad (FloatVector2 const &point) const
+bool Engine2::QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
 {
     ASSERT1(m_half_side_length > 0.0);
 
@@ -526,17 +526,17 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
     if (object->GetRadius(GetQuadTreeType()) > m_radius)
         object->SetScaleFactor(m_radius);
 
-    ASSERT1(GetIsPointInsideQuad(object->GetTranslation()));
+    ASSERT1(IsPointInsideQuad(object->GetTranslation()));
 
     // check that the object should be added to this node:
     // assert that the object's radius is within the nominal size
     // for this quadtree's radius or that there are no child quadtree nodes.
-    ASSERT1(GetIsAllowableObjectRadius(object) || !GetHasChildren());
+    ASSERT1(IsAllowableObjectRadius(object) || !GetHasChildren());
     // add to this node
     object->SetOwnerQuadTree(m_quad_tree_type, this);
     m_object_set.insert(object);
     IncrementSubordinateObjectCount();
-    if (!object->GetIsDynamic())
+    if (!object->IsDynamic())
         IncrementSubordinateStaticObjectCount();
 }
 

@@ -25,7 +25,7 @@ FramerateCalculator::FramerateCalculator (Float const time_unit_conversion_ratio
 void FramerateCalculator::AddFrameTime (Float const frame_time)
 {
     // make sure not to overflow the queue
-    if (m_frame_queue.GetIsFull())
+    if (m_frame_queue.IsFull())
         m_frame_queue.Dequeue();
 
     // add the frame

@@ -45,7 +45,7 @@ Button::Button (
 void Button::SetIsEnabled (bool const is_enabled)
 {
     Widget::SetIsEnabled(is_enabled);
-    if (!GetIsEnabled())
+    if (!IsEnabled())
         m_is_pressed = false;
     UpdateRenderBackground();
 }
@@ -54,12 +54,12 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     if (e->GetButtonCode() == Key::LEFTMOUSE)
     {
-        if (e->GetIsMouseButtonDownEvent())
+        if (e->IsMouseButtonDownEvent())
         {
             m_is_pressed = true;
             HandlePressed();
         }
-        else if (e->GetIsMouseButtonUpEvent())
+        else if (e->IsMouseButtonUpEvent())
         {
             if (m_is_pressed)
             {
@@ -70,7 +70,7 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
         else
         {
             ASSERT1(false &&
-                    "GetIsMouseButtonDownEvent() and GetIsMouseButtonUpEvent() "
+                    "IsMouseButtonDownEvent() and IsMouseButtonUpEvent() "
                     "both failed.  Something's wacky.");
         }
 
@@ -83,13 +83,13 @@ bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
 
 void Button::HandleMouseoverOn ()
 {
-    ASSERT1(GetIsMouseover());
+    ASSERT1(IsMouseover());
     UpdateRenderBackground();
 }
 
 void Button::HandleMouseoverOff ()
 {
-    ASSERT1(!GetIsMouseover());
+    ASSERT1(!IsMouseover());
     m_is_pressed = false;
     UpdateRenderBackground();
 }
@@ -109,13 +109,13 @@ void Button::HandleReleased ()
 void Button::UpdateRenderBackground ()
 {
     // state priority: disabled, pressed, mouseover, default
-    if (!GetIsEnabled())
+    if (!IsEnabled())
         SetRenderBackground(
             GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
-    else if (GetIsPressed())
+    else if (IsPressed())
         SetRenderBackground(
             GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
-    else if (GetIsMouseover() && GetAcceptsMouseover())
+    else if (IsMouseover() && GetAcceptsMouseover())
         SetRenderBackground(
             GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
     else

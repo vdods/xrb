@@ -38,7 +38,7 @@ BitCache::BitCache (
 
 BitCache::~BitCache ()
 {
-    ASSERT1(!GetIsOpen() && "You must close a previously opened BitCache before it is destroyed.");
+    ASSERT1(!IsOpen() && "You must close a previously opened BitCache before it is destroyed.");
     ASSERT1(GetIODirection() == IOD_NONE);
     ASSERT1(m_cache != NULL);
     ASSERT1(m_working_cache_size_in_bytes > 0);
@@ -51,7 +51,7 @@ BitCache::~BitCache ()
     m_next_available_cache_byte_index = 0;
 }
 
-bool BitCache::GetIsAtEnd () const
+bool BitCache::IsAtEnd () const
 {
     if (GetCacheByteIndex() < m_next_available_cache_byte_index)
         return false;
@@ -94,7 +94,7 @@ bool BitCache::GetHasFewerThan8BitsLeft () const
 
 Uint32 BitCache::ReadUnsignedBits (Uint32 const bit_count)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(bit_count <= 32);
 
@@ -136,7 +136,7 @@ Uint32 BitCache::ReadUnsignedBits (Uint32 const bit_count)
 
 void BitCache::WriteUnsignedBits (Uint32 const value, Uint32 const bit_count)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(bit_count <= 32);
 
@@ -199,7 +199,7 @@ void BitCache::WriteSignedBits (Sint32 const value, Uint32 const bit_count)
 
 bool BitCache::ReadBool ()
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
 
     EnsureReadCacheHasEnoughBitsAvailable(1);
@@ -217,7 +217,7 @@ bool BitCache::ReadBool ()
 
 void BitCache::WriteBool (bool const value)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
 
     EnsureWriteCacheHasEnoughBitsAvailable(1);
@@ -237,7 +237,7 @@ void BitCache::WriteBool (bool const value)
 
 void BitCache::Read1ByteWordFromCache (void *const destination)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(destination != NULL);
     Uint32 const byte_count = 1;
@@ -260,7 +260,7 @@ void BitCache::Read1ByteWordFromCache (void *const destination)
 
 void BitCache::Write1ByteWordToCache (void *const source)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(source != NULL);
     Uint32 const byte_count = 1;
@@ -283,7 +283,7 @@ void BitCache::Write1ByteWordToCache (void *const source)
 
 void BitCache::Read2ByteWordFromCache (void *const destination)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(destination != NULL);
     Uint32 const byte_count = 2;
@@ -306,7 +306,7 @@ void BitCache::Read2ByteWordFromCache (void *const destination)
 
 void BitCache::Write2ByteWordToCache (void *const source)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(source != NULL);
     Uint32 const byte_count = 2;
@@ -329,7 +329,7 @@ void BitCache::Write2ByteWordToCache (void *const source)
 
 void BitCache::Read4ByteWordFromCache (void *const destination)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(destination != NULL);
     Uint32 const byte_count = 4;
@@ -352,7 +352,7 @@ void BitCache::Read4ByteWordFromCache (void *const destination)
 
 void BitCache::Write4ByteWordToCache (void *const source)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(source != NULL);
     Uint32 const byte_count = 4;
@@ -375,7 +375,7 @@ void BitCache::Write4ByteWordToCache (void *const source)
 
 void BitCache::Read8ByteWordFromCache (void *const destination)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(destination != NULL);
     Uint32 const byte_count = 8;
@@ -398,7 +398,7 @@ void BitCache::Read8ByteWordFromCache (void *const destination)
 
 void BitCache::Write8ByteWordToCache (void *const source)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(source != NULL);
     Uint32 const byte_count = 8;
@@ -459,7 +459,7 @@ Uint32 BitCache::ReadBufferString (
     char *const destination,
     Uint32 const destination_length)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ);
     ASSERT1(destination != NULL);
     ASSERT1(destination_length > 0);
@@ -516,7 +516,7 @@ Uint32 BitCache::WriteBufferString (
     char const *const source,
     Uint32 const source_length)
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     ASSERT1(source_length > 0);
     ASSERT1(source_length <= m_working_cache_size_in_bytes);
@@ -619,7 +619,7 @@ void BitCache::EnsureReadCacheHasEnoughBitsAvailable (
 void BitCache::EnsureReadCacheHasEnoughBytesAvailable (
     Uint32 const requested_byte_count) const
 {
-    ASSERT1(GetIsCacheBitIndexOnByteBoundary());
+    ASSERT1(IsCacheBitIndexOnByteBoundary());
     EnsureReadCacheHasEnoughBitsAvailable(requested_byte_count << 3);
 }
 
@@ -653,13 +653,13 @@ void BitCache::EnsureWriteCacheHasEnoughBitsAvailable (
 void BitCache::EnsureWriteCacheHasEnoughBytesAvailable (
     Uint32 const requested_byte_count) const
 {
-    ASSERT1(GetIsCacheBitIndexOnByteBoundary());
+    ASSERT1(IsCacheBitIndexOnByteBoundary());
     EnsureWriteCacheHasEnoughBitsAvailable(requested_byte_count << 3);
 }
 
 void BitCache::OpenForReading ()
 {
-    ASSERT1(!GetIsOpen());
+    ASSERT1(!IsOpen());
     ASSERT1(GetIODirection() == IOD_NONE);
 
     m_cache_bit_index = 0;
@@ -671,7 +671,7 @@ void BitCache::OpenForReading ()
 
 void BitCache::OpenForWriting ()
 {
-    ASSERT1(!GetIsOpen());
+    ASSERT1(!IsOpen());
     ASSERT1(GetIODirection() == IOD_NONE);
 
     m_cache_bit_index = 0;
@@ -686,7 +686,7 @@ void BitCache::OpenForWriting ()
 
 void BitCache::Close ()
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_READ ||
             GetIODirection() == IOD_WRITE);
 

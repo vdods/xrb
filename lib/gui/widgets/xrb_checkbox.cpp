@@ -69,7 +69,7 @@ bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
     Button::ProcessMouseButtonEvent(e);
 
     // if the left mouse button was clicked and released, toggle m_is_checked
-    if (e->GetButtonCode() == Key::LEFTMOUSE && e->GetIsMouseButtonUpEvent())
+    if (e->GetButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonUpEvent())
         ToggleIsChecked();
 
     return true;
@@ -83,7 +83,7 @@ void CheckBox::UpdateRenderBackground ()
 
 void CheckBox::UpdateRenderPicture ()
 {
-    if (GetIsChecked())
+    if (IsChecked())
         SetRenderPicture(GetWidgetSkinTexture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
     else
         SetRenderPicture(Resource<GLTexture>());

@@ -194,7 +194,7 @@ void MapEditor2::ObjectLayer::DrawMetrics (
     ASSERT2(pixels_in_view_radius > 0.0);
     ASSERT2(view_radius > 0.0);
 
-    if (GetIsWrapped())
+    if (IsWrapped())
         GetMapEditorQuadTree()->DrawMetricsWrapped(
             render_context,
             world_to_screen,
@@ -269,7 +269,7 @@ void MapEditor2::ObjectLayer::ClearObjectSelectionSet ()
     {
         Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT1(object->GetIsSelected());
+        ASSERT1(object->IsSelected());
         ++it;
         object->SetIsSelected(false);
     }
@@ -376,7 +376,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetTranslate (FloatVector2 const &translation_delta)
 {
-    if (translation_delta.GetIsZero())
+    if (translation_delta.IsZero())
         return;
 
     for (ObjectSetIterator it = m_object_selection_set.begin(),
@@ -452,7 +452,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetRotate (
 void MapEditor2::ObjectLayer::VertexSelectionSetTranslate (
     FloatVector2 const &translation_delta)
 {
-    if (translation_delta.GetIsZero())
+    if (translation_delta.IsZero())
         return;
 
     for (VertexSetIterator it = m_vertex_selection_set.begin(),
@@ -683,7 +683,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
         Object *object = *it;
         ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
-        if (entity != NULL && !entity->GetVelocity().GetIsZero())
+        if (entity != NULL && !entity->GetVelocity().IsZero())
             entity->SetVelocity(speed * entity->GetVelocity().GetNormalization());
     }
 
@@ -858,7 +858,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleFirstMoment (
 void MapEditor2::ObjectLayer::ObjectSelectionSetTranslateVelocity (
     FloatVector2 const &translation_delta)
 {
-    if (translation_delta.GetIsZero())
+    if (translation_delta.IsZero())
         return;
 
     for (ObjectSetIterator it = m_object_selection_set.begin(),
@@ -1059,7 +1059,7 @@ void MapEditor2::ObjectLayer::MaskSelectedVerticesByObjectSelectionSet ()
         ASSERT1(vertex != NULL);
         ASSERT1(vertex->m_is_selected);
         ASSERT1(vertex->m_owner_compound != NULL);
-        if (!vertex->m_owner_compound->GetIsSelected())
+        if (!vertex->m_owner_compound->IsSelected())
             RemoveVertexFromVertexSelectionSet(vertex);
     }
 }
@@ -1167,7 +1167,7 @@ void MapEditor2::ObjectLayer::MaskSelectedPolygonsByObjectSelectionSet ()
         ASSERT1(polygon != NULL);
         ASSERT1(polygon->m_is_selected);
         ASSERT1(polygon->m_owner_compound != NULL);
-        if (!polygon->m_owner_compound->GetIsSelected())
+        if (!polygon->m_owner_compound->IsSelected())
             RemovePolygonFromPolygonSelectionSet(polygon);
     }
 }
@@ -1326,7 +1326,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     ASSERT1(object != NULL);
     ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
-    ASSERT1(!object->GetIsSelected());
+    ASSERT1(!object->IsSelected());
 
     // put the object in the object selection set
     m_object_selection_set.insert(object);
@@ -1388,7 +1388,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
     ASSERT1(object != NULL);
     ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
-    ASSERT1(object->GetIsSelected());
+    ASSERT1(object->IsSelected());
 
     // find the object
     ObjectSetIterator it = m_object_selection_set.find(object);
@@ -1477,7 +1477,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
 
     Uint32 selected_compound_count = 0;
 
-    if (!GetIsObjectSelectionSetEmpty())
+    if (!IsObjectSelectionSetEmpty())
     {
         // return the algebraic average of all the selected
         // objects' origins

@@ -59,9 +59,9 @@ Revulsion::~Revulsion ()
     ASSERT1(m_weapon != NULL);
     Delete(m_weapon);
 
-    if (m_reticle_effect.GetIsValid())
+    if (m_reticle_effect.IsValid())
     {
-        if (m_reticle_effect->GetIsInWorld())
+        if (m_reticle_effect->IsInWorld())
             m_reticle_effect->RemoveFromWorld();
         delete m_reticle_effect->GetOwnerObject();
     }
@@ -70,14 +70,14 @@ Revulsion::~Revulsion ()
 void Revulsion::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
-    bool is_disabled = GetIsDisabled();
+    bool is_disabled = IsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
-        if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+        if (m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld())
             m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 
         // if disabled, then reset the think state to PickWanderDirection (a way out for
@@ -134,7 +134,7 @@ void Revulsion::Die (
         frame_dt);
 
     // remove the reticle effect, if it exists
-    if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+    if (m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld())
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 }
 
@@ -214,7 +214,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
-        ASSERT1(!perpendicular_velocity.GetIsZero());
+        ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
@@ -237,9 +237,9 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
 
 void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld());
+    ASSERT1(!m_reticle_effect.IsValid() || !m_reticle_effect->IsInWorld());
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -321,7 +321,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 
 void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -337,14 +337,14 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
         Math::Sqrt(Math::RandomFloat(0.0f, 1.0f)) *
         Math::UnitVector(Math::RandomAngle());
 
-    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld());
+    ASSERT1(!m_reticle_effect.IsValid() || !m_reticle_effect->IsInWorld());
     // ensure the reticle effect is allocated (lazy allocation)
-    if (!m_reticle_effect.GetIsValid())
+    if (!m_reticle_effect.IsValid())
         m_reticle_effect = SpawnReticleEffect(GetWorld(), GetObjectLayer(), Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
-    else if (!m_reticle_effect->GetIsInWorld())
+    else if (!m_reticle_effect->IsInWorld())
         m_reticle_effect->AddBackIntoWorld();
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
 
     // transition to and call ContinueAimAtTarget
     m_think_state = THINK_STATE(ContinueAimAtTarget);
@@ -353,9 +353,9 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
 
 void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+        ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -371,7 +371,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     if (target_aim_angle >= -ms_target_aim_angle_flee_limit[GetEnemyLevel()] &&
         target_aim_angle <=  ms_target_aim_angle_flee_limit[GetEnemyLevel()])
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+        ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_think_state = THINK_STATE(FleeTarget);
         return;
@@ -382,7 +382,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     SetReticleCoordinates(target_position + m_aim_delta);
 
     // update the reticle's location and scale factor
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     static Float const s_final_reticle_radius = 20.0f;
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
         aim_time_parameter * GetReticleCoordinates() + (1.0f - aim_time_parameter) * GetTranslation(),
@@ -395,10 +395,10 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
 
 void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -419,7 +419,7 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
 
 void Revulsion::FleeTarget (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);

@@ -83,7 +83,7 @@ bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (
     Button::ProcessMouseButtonEvent(e);
 
     // if the left mouse button was clicked and released, attempt to check it.
-    if (e->GetButtonCode() == Key::LEFTMOUSE && e->GetIsMouseButtonDownEvent())
+    if (e->GetButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonDownEvent())
         Check();
 
     return true;
@@ -99,9 +99,9 @@ void RadioButton<T, sentinel>::UpdateRenderBackground ()
 template <typename T, T sentinel>
 void RadioButton<T, sentinel>::UpdateRenderPicture ()
 {
-    if (GetIsChecked())
+    if (IsChecked())
     {
-        if (GetPicture().GetIsValid())
+        if (GetPicture().IsValid())
             SetRenderPicture(GetPicture());
         else
             SetRenderPicture(

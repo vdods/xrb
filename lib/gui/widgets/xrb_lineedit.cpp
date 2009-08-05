@@ -54,7 +54,7 @@ LineEdit::LineEdit (
 
 void LineEdit::SetText (std::string const &text)
 {
-    ASSERT1(GetRenderFont().GetIsValid());
+    ASSERT1(GetRenderFont().IsValid());
 
     // only do stuff if the text is different
     if (m_text != text)
@@ -75,7 +75,7 @@ void LineEdit::SetAlignment (Alignment const alignment)
 
 void LineEdit::Draw (RenderContext const &render_context) const
 {
-    ASSERT1(GetRenderFont().GetIsValid());
+    ASSERT1(GetRenderFont().IsValid());
 
     // call the superclass Draw (for the background and such)
     Widget::Draw(render_context);
@@ -85,7 +85,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
 
     // draw the text
     {
-        if (contents_rect.GetIsValid())
+        if (contents_rect.IsValid())
         {
             // generate a render context for the string drawing function
             RenderContext string_render_context(render_context);
@@ -104,7 +104,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
     }
 
     // draw the cursor (if it's visible and the widget is not read-only)
-    if (m_is_cursor_visible && !GetIsReadOnly())
+    if (m_is_cursor_visible && !IsReadOnly())
     {
         initial_pen_position[Dim::Y] = contents_rect.GetBottom();
         // calculate the cursor rectangle
@@ -148,7 +148,7 @@ void LineEdit::HandleChangedWidgetSkinWidgetBackground (
 void LineEdit::HandleFrame ()
 {
     // blink the cursor if it's time
-    if (GetIsFocused() && GetFrameTime() >= m_next_cursor_blink_time)
+    if (IsFocused() && GetFrameTime() >= m_next_cursor_blink_time)
     {
         m_is_cursor_visible = !m_is_cursor_visible;
         m_next_cursor_blink_time = GetFrameTime() + 0.5f * m_cursor_blink_period;
@@ -158,10 +158,10 @@ void LineEdit::HandleFrame ()
 bool LineEdit::ProcessKeyEvent (EventKey const *const e)
 {
     // read only LineEdits don't allow input
-    if (GetIsReadOnly())
+    if (IsReadOnly())
         return false;
 
-    if (e->GetIsKeyDownEvent() || e->GetIsKeyRepeatEvent())
+    if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
     {
         switch (e->GetKeyCode())
         {
@@ -238,7 +238,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
 
 bool LineEdit::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
-    return e->GetIsMouseButtonDownEvent() && !GetIsReadOnly();
+    return e->IsMouseButtonDownEvent() && !IsReadOnly();
 }
 
 void LineEdit::HandleFocus ()
@@ -304,7 +304,7 @@ ScreenCoord LineEdit::GetInitialPenPositionX () const
 
 ScreenCoord LineEdit::GetCursorOffset (Uint32 cursor_position) const
 {
-    ASSERT1(GetRenderFont().GetIsValid());
+    ASSERT1(GetRenderFont().IsValid());
 
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
 

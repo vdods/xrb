@@ -47,7 +47,7 @@ int main (int argc, char **argv)
         options.InitializeResolution(g_config.GetResolution());
         options.InitializeKeyMapName(g_config.GetString(Dis::SYSTEM__KEY_MAP_NAME));
         options.Parse(argc, argv);
-        if (!options.GetParseSucceeded() || options.GetIsHelpRequested())
+        if (!options.GetParseSucceeded() || options.IsHelpRequested())
         {
             options.PrintHelpMessage(cerr);
             return options.GetParseSucceeded() ? 0 : 1;

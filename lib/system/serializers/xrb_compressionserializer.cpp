@@ -25,9 +25,9 @@ CompressionSerializer::~CompressionSerializer ()
     ASSERT1(GetAttachedSerializer() == NULL && "You must detach the serializer before the CompressionSerializer is destroyed");
 }
 
-bool CompressionSerializer::GetIsAtEnd () const
+bool CompressionSerializer::IsAtEnd () const
 {
-    return m_cache.GetIsAtEnd();
+    return m_cache.IsAtEnd();
 }
 
 bool CompressionSerializer::GetHasFewerThan8BitsLeft () const
@@ -38,10 +38,10 @@ bool CompressionSerializer::GetHasFewerThan8BitsLeft () const
 void CompressionSerializer::AttachSerializer (Serializer *serializer)
 {
     ASSERT1(serializer != NULL);
-    ASSERT1(serializer->GetIsOpen());
+    ASSERT1(serializer->IsOpen());
     ASSERT1(serializer->GetIODirection() == IOD_READ ||
             serializer->GetIODirection() == IOD_WRITE);
-    ASSERT1(!GetIsOpen());
+    ASSERT1(!IsOpen());
 
     m_cache.AttachSerializer(serializer);
     SetIsOpen(true);
@@ -51,7 +51,7 @@ void CompressionSerializer::AttachSerializer (Serializer *serializer)
 
 void CompressionSerializer::DetachSerializer ()
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
 
     m_cache.DetachSerializer();
     SetIsOpen(false);

@@ -41,7 +41,7 @@ public:
     virtual ~PlayerShip ();
 
     // Entity interface method
-    virtual bool GetIsPlayerShip () const { return true; }
+    virtual bool IsPlayerShip () const { return true; }
 
     inline Uint32 GetScore () const { return m_score; }
     inline Float GetStoke () const { return m_stoke; }
@@ -64,9 +64,9 @@ public:
         ASSERT1(mineral_type < MINERAL_COUNT);
         return m_mineral_inventory[mineral_type];
     }
-    bool GetIsItemEquipped (ItemType item_type, Uint8 upgrade_level) const;
-    bool GetIsItemInInventory (ItemType item_type, Uint8 upgrade_level) const;
-    bool GetIsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;
+    bool IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const;
+    bool IsItemInInventory (ItemType item_type, Uint8 upgrade_level) const;
+    bool IsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;
 
     void SetMainWeaponType (ItemType main_weapon_type);
     void SetAuxiliaryWeaponType (ItemType auxiliary_weapon_type);
@@ -143,7 +143,7 @@ protected:
         return static_cast<Float>(m_engine_auxiliary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline bool GetIsUsingAuxiliaryWeapon () const
+    inline bool IsUsingAuxiliaryWeapon () const
     {
         return m_is_using_auxiliary_weapon;
     }
@@ -188,7 +188,7 @@ private:
     Shield *GetInventoryShield (Uint8 upgrade_level);
     PowerGenerator *GetInventoryPowerGenerator (Uint8 upgrade_level);
 
-    bool GetIsInStartingInventory (Item *item);
+    bool IsInStartingInventory (Item *item);
 
     void SetArmorStatus (Float armor_status);
     void SetShieldStatus (Float shield_status);

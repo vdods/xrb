@@ -32,7 +32,7 @@ public:
         std::string const &name = "Button");
     virtual ~Button () { }
 
-    inline bool GetIsPressed () const
+    inline bool IsPressed () const
     {
         return m_is_pressed;
     }

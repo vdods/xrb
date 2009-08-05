@@ -40,7 +40,7 @@ public:
     HuffmanTreeNode ();
     ~HuffmanTreeNode ();
 
-    bool GetIsLeafNode () const { return m_data != BRANCH_NODE_DATA_VALUE; }
+    bool IsLeafNode () const { return m_data != BRANCH_NODE_DATA_VALUE; }
 
     static int QsortCompare (void const *a, void const *b);
 
@@ -101,7 +101,7 @@ void HuffmanTreeNode::TraverseAndBuildCodesPrivate (
     ASSERT2(codes != NULL);
     ASSERT1(current_code != NULL);
 
-    if (GetIsLeafNode())
+    if (IsLeafNode())
     {
         ASSERT1(m_data < 256);
         codes[m_data] = *current_code;
@@ -175,7 +175,7 @@ Uint32 Huffman::EncodeBytes (
 {
     ASSERT1(source != NULL);
     ASSERT1(source_size > 0);
-    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.IsOpen());
     ASSERT1(serializer.GetIODirection() == IOD_WRITE);
 
     for (Uint32 i = 0; i < source_size; ++i)
@@ -197,7 +197,7 @@ Uint32 Huffman::DecodeBytes (
 {
     ASSERT1(destination != NULL);
     ASSERT1(destination_size > 0);
-    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.IsOpen());
     ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint32 bytes_read;
@@ -207,7 +207,7 @@ Uint32 Huffman::DecodeBytes (
     {
         node = m_tree;
         ASSERT1(node != NULL);
-        while (!node->GetIsLeafNode())
+        while (!node->IsLeafNode())
         {
             bit = serializer.ReadBool();
             if (serializer.GetError() != IOE_NONE)

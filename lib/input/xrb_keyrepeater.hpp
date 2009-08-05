@@ -56,9 +56,9 @@ public:
       * this HandleFrame.
       * @brief Returns true iff the key repeat event queue is full.
       */
-    inline bool GetIsEventQueueFull () const
+    inline bool IsEventQueueFull () const
     {
-        return m_key_event_queue.GetIsFull();
+        return m_key_event_queue.IsFull();
     }
     /** HandleFrame generates the key repeat events and queues them
       * so they can be later removed and put in the main EventQueue.  This
@@ -66,9 +66,9 @@ public:
       * putting them into the main EventQueue.
       * @brief Returns true iff the key repeat event queue is empty.
       */
-    inline bool GetIsEventQueueEmpty () const
+    inline bool IsEventQueueEmpty () const
     {
-        return m_key_event_queue.GetIsEmpty();
+        return m_key_event_queue.IsEmpty();
     }
 
     /** The dequeued events should be enqueued into the main EventQueue.

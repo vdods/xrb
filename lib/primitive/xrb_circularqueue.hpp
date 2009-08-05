@@ -51,10 +51,10 @@ public:
     inline Uint32 GetEntryCount () const { return m_entry_count; }
     /** @brief Returns true iff the queue is empty.
       */
-    inline bool GetIsEmpty () const { return m_entry_count == 0; }
+    inline bool IsEmpty () const { return m_entry_count == 0; }
     /** @brief Returns true iff the queue is at maximum capacity.
       */
-    inline bool GetIsFull () const { return m_entry_count == queue_size; }
+    inline bool IsFull () const { return m_entry_count == queue_size; }
 
     /** Will assert if the queue is currently full.
       * @brief Enqueues the given entry at the end of the queue.

@@ -128,14 +128,14 @@ void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
 
 bool WorldView::ProcessKeyEvent (EventKey const *const e)
 {
-    if (e->GetIsKeyDownEvent())
+    if (e->IsKeyDownEvent())
         HandleInput(e->GetKeyCode());
     return true;
 }
 
 bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
-    if (e->GetIsMouseButtonDownEvent())
+    if (e->IsMouseButtonDownEvent())
         HandleInput(e->GetButtonCode());
     return true;
 }
@@ -143,13 +143,13 @@ bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // don't allow mouse wheel input while the widget is not focused
-    if (!GetParentWorldViewWidget()->GetIsFocused())
+    if (!GetParentWorldViewWidget()->IsFocused())
         return false;
 
     HandleInput(e->GetButtonCode());
 
 /*
-    if (e->GetIsEitherAltKeyPressed())
+    if (e->IsEitherAltKeyPressed())
     {
         // when the alt key is held down, change the view's rotation
 
@@ -220,7 +220,7 @@ void WorldView::HandleFrame ()
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 
     // don't do anything if this view is hidden
-    if (GetParentWorldViewWidget()->GetIsHidden())
+    if (GetParentWorldViewWidget()->IsHidden())
         return;
 
     ProcessZoom(GetFrameDT());
@@ -241,7 +241,7 @@ void WorldView::HandleFrame ()
         {
             Float minor_axis_radius = GetMinorAxisRadius();
             FloatVector2 ship_velocity_direction;
-            if (m_player_ship->GetVelocity().GetIsZero())
+            if (m_player_ship->GetVelocity().IsZero())
                 ship_velocity_direction = FloatVector2::ms_zero;
             else
                 ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
@@ -387,7 +387,7 @@ void WorldView::HandleInput (Key::Code const input)
             break;
 */
         case Key::F1:
-            SetIsDebugModeEnabled(!GetIsDebugInfoEnabled());
+            SetIsDebugModeEnabled(!IsDebugInfoEnabled());
             break;
 
         case Key::F2:
@@ -402,11 +402,11 @@ void WorldView::HandleInput (Key::Code const input)
 
         case Key::F4:
             if (m_player_ship != NULL)
-                m_player_ship->SetIsInvincible(!m_player_ship->GetIsInvincible());
+                m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
             break;
 
         case Key::F5:
-            if (m_player_ship != NULL && !m_player_ship->GetIsDead())
+            if (m_player_ship != NULL && !m_player_ship->IsDead())
                 m_player_ship->Kill(
                     NULL,
                     NULL,
@@ -456,24 +456,24 @@ void WorldView::ProcessPlayerInput ()
     }
 
     // handle player ship input (movement, shooting and reticle coordinates)
-    if (GetParentWorldViewWidget()->GetIsFocused())
+    if (GetParentWorldViewWidget()->IsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().GetIsKeyPressed(g_config.GetInputAction(INPUT__USE_TRACTOR));
+            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

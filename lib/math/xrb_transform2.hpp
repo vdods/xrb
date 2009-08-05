@@ -136,7 +136,7 @@ public:
         return m_cached_scaling_and_rotation.GetDeterminant();
     }
 
-    inline bool GetIsDirty () const
+    inline bool IsDirty () const
     {
         return m_cached_transform_is_dirty;
     }

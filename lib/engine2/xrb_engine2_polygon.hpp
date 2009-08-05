@@ -62,9 +62,9 @@ struct Polygon
     }
 
     Float GetArea () const;
-    bool GetIsCounterclockwise () const;
-    bool GetIsConvex () const;
-    inline bool GetIsDegenerate () const
+    bool IsCounterclockwise () const;
+    bool IsConvex () const;
+    inline bool IsDegenerate () const
     {
         return m_area == 0.0f;
     }

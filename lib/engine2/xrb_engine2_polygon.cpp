@@ -28,7 +28,7 @@ Float Engine2::Polygon::GetArea () const
     return 0.5f * area;
 }
 
-bool Engine2::Polygon::GetIsCounterclockwise () const
+bool Engine2::Polygon::IsCounterclockwise () const
 {
     // trivially true
     if (m_vertex_count < 3)
@@ -48,7 +48,7 @@ bool Engine2::Polygon::GetIsCounterclockwise () const
     return true;
 }
 
-bool Engine2::Polygon::GetIsConvex () const
+bool Engine2::Polygon::IsConvex () const
 {
     // trivially true
     if (m_vertex_count <= 3)
@@ -78,7 +78,7 @@ bool Engine2::Polygon::GetIsConvex () const
 void Engine2::Polygon::Draw () const
 {
     ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
-    ASSERT1(GL::GetIsTexture2dOn());
+    ASSERT1(GL::IsTexture2dOn());
 
     glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
 
@@ -100,7 +100,7 @@ void Engine2::Polygon::CloneProperties (
 {
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
-    ASSERT1(!m_texture.GetIsValid());
+    ASSERT1(!m_texture.IsValid());
 
     ASSERT1(source_polygon != NULL);
     ASSERT1(source_polygon->m_vertex_count >= 3);
@@ -120,10 +120,10 @@ void Engine2::Polygon::CloneProperties (
     m_texture = source_polygon->m_texture;
     m_area = source_polygon->m_area;
 
-    ASSERT1(GetIsCounterclockwise());
-    ASSERT1(GetIsConvex());
-    ASSERT1(!GetIsDegenerate());
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(IsCounterclockwise());
+    ASSERT1(IsConvex());
+    ASSERT1(!IsDegenerate());
+    ASSERT1(m_texture.IsValid());
 }
 
 void Engine2::Polygon::Read (
@@ -135,7 +135,7 @@ void Engine2::Polygon::Read (
 
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
-    ASSERT1(!m_texture.GetIsValid());
+    ASSERT1(!m_texture.IsValid());
     
     m_vertex_count = serializer.ReadUint32();
     ASSERT1(m_vertex_count >= 3);
@@ -150,10 +150,10 @@ void Engine2::Polygon::Read (
             LoadFilename<GLTexture>(GLTexture::Create, serializer.ReadStdString());
     m_area = GetArea();
 
-    ASSERT1(GetIsCounterclockwise());
-    ASSERT1(GetIsConvex());
-    ASSERT1(!GetIsDegenerate());
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(IsCounterclockwise());
+    ASSERT1(IsConvex());
+    ASSERT1(!IsDegenerate());
+    ASSERT1(m_texture.IsValid());
 }
 
 void Engine2::Polygon::Write (

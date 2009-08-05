@@ -122,7 +122,7 @@ void Mortal::RemoveImmunity (DamageType immunity)
 
 void Mortal::Revive (Float time, Float frame_dt)
 {
-    ASSERT1(GetIsDead());
+    ASSERT1(IsDead());
     SetCurrentHealth(m_max_health);
 }
 
@@ -177,11 +177,11 @@ bool Mortal::Damage (
     ASSERT1((m_strength & m_immunity) == 0 && "Can't be strong and immune against the same thing");
 
     Float damage_factor;
-    if (GetIsWeakAgainst(damage_type))
+    if (IsWeakAgainst(damage_type))
         damage_factor = 1.5f;
-    else if (GetIsStrongAgainst(damage_type))
+    else if (IsStrongAgainst(damage_type))
         damage_factor = 0.2f;
-    else if (GetIsImmuneAgainst(damage_type))
+    else if (IsImmuneAgainst(damage_type))
     {
         if (damage_amount_used != NULL)
             *damage_amount_used = damage_amount;
@@ -322,7 +322,7 @@ void Mortal::Collide (
     static Float const s_collision_damage_coefficient = 0.0005f;
 
     // ships should not take damage from powerups
-    if (GetIsShip() && collider->GetIsPowerup())
+    if (IsShip() && collider->IsPowerup())
         return;
 
     if (collision_force > 0.0f)

@@ -61,7 +61,7 @@ void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_vie
     }
     Delete(m_world_view);
     m_world_view = world_view;
-    SetIsTransformScalingBasedUponWidgetRadius(m_world_view->GetIsTransformScalingBasedUponWidgetRadius());
+    SetIsTransformScalingBasedUponWidgetRadius(m_world_view->IsTransformScalingBasedUponWidgetRadius());
 }
 
 void Engine2::WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)

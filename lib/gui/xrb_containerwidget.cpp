@@ -287,7 +287,7 @@ void ContainerWidget::SetMainWidget (Widget *const main_widget)
     m_main_widget = main_widget;
     if (m_main_widget != NULL)
     {
-        ASSERT0(!m_main_widget->GetIsModal() && "You can't use a modal widget as a main widget");
+        ASSERT0(!m_main_widget->IsModal() && "You can't use a modal widget as a main widget");
         ASSERT1(m_main_widget->GetParent() == this);
         m_main_widget->Resize(GetSize());
         m_main_widget->MoveTo(GetPosition());
@@ -318,7 +318,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
 
         // skip hidden and modal children (modal widgets are drawn
         // by the top-level widget.
-        if (!child->GetIsHidden() && !child->GetIsModal())
+        if (!child->IsHidden() && !child->IsModal())
         {
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
@@ -326,7 +326,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 render_context.GetClippedRect(child->GetScreenRect()));
             // don't even bother drawing a child widget if this resulting
             // clip rect is invalid (0 area)
-            if (child_render_context.GetClipRect().GetIsValid())
+            if (child_render_context.GetClipRect().IsValid())
             {
                 // set the bias color and color mask
                 child_render_context.SetBiasColor(render_context.GetBiasColor());
@@ -335,7 +335,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 child_render_context.ApplyColorMask(child->GetColorMask());
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
-                if (!child->GetIsEnabled() && GetIsEnabled())
+                if (!child->IsEnabled() && IsEnabled())
                     child_render_context.ApplyAlphaMaskToColorMask(disabled_widget_alpha_mask);
                 // set up the GL clip rect for the child
                 child_render_context.SetupGLClipRect();
@@ -348,7 +348,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // if there are modal widgets, draw them
     if (!m_modal_widget_stack.empty())
     {
-        ASSERT1(GetIsTopLevelParent());
+        ASSERT1(IsTopLevelParent());
 
         // draw all the modal widgets, from the bottom of the stack, up.
         for (WidgetListConstIterator it = m_modal_widget_stack.begin(),
@@ -360,7 +360,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             ASSERT1(modal_widget != NULL);
 
             // skip hidden modal widgets
-            if (modal_widget->GetIsHidden())
+            if (modal_widget->IsHidden())
                 continue;
 
             // calculate the drawing clip rect from this widget's clip rect
@@ -369,7 +369,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 render_context.GetClippedRect(modal_widget->GetScreenRect()));
             // don't even bother drawing a modal widget if this resulting
             // clip rect is invalid (0 area)
-            if (child_render_context.GetClipRect().GetIsValid())
+            if (child_render_context.GetClipRect().IsValid())
             {
                 // set the bias color and color mask
                 child_render_context.SetBiasColor(render_context.GetBiasColor());
@@ -377,7 +377,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 child_render_context.SetColorMask(render_context.GetColorMask());
                 child_render_context.ApplyColorMask(modal_widget->GetColorMask());
 
-                ASSERT1(modal_widget->GetIsEnabled());
+                ASSERT1(modal_widget->IsEnabled());
                 // set up the clip rect for the child
                 child_render_context.SetupGLClipRect();
                 // do the actual draw call
@@ -670,13 +670,13 @@ bool ContainerWidget::ProcessDeleteChildWidgetEvent (EventDeleteChildWidget cons
 void ContainerWidget::AddModalWidget (Widget *const modal_widget)
 {
     ASSERT1(modal_widget != NULL);
-    ASSERT1(modal_widget->GetIsModal());
-    ASSERT1(modal_widget->GetIsEnabled());
-    ASSERT1(!modal_widget->GetIsTopLevelParent());
+    ASSERT1(modal_widget->IsModal());
+    ASSERT1(modal_widget->IsEnabled());
+    ASSERT1(!modal_widget->IsTopLevelParent());
 
     // if this is a top level widget, then add the modal widget to the
     // modal widget stack.  otherwise, pass it up to the parent
-    if (GetIsTopLevelParent())
+    if (IsTopLevelParent())
     {
         // turn off mouseover on this top level widget and all subordinate
         // widgets that have mouseover focus
@@ -696,12 +696,12 @@ void ContainerWidget::AddModalWidget (Widget *const modal_widget)
 void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
 {
     ASSERT1(modal_widget != NULL);
-    ASSERT1(modal_widget->GetIsModal());
-    ASSERT1(modal_widget->GetIsEnabled());
+    ASSERT1(modal_widget->IsModal());
+    ASSERT1(modal_widget->IsEnabled());
 
     // if this is a top level widget, then remove the modal widget from the
     // modal widget stack.  otherwise, pass it up to the parent
-    if (GetIsTopLevelParent())
+    if (IsTopLevelParent())
     {
         modal_widget->Unfocus();
         WidgetListIterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
@@ -953,7 +953,7 @@ bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
 bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 {
     // hidden widgets can't be focused
-    if (GetIsHidden())
+    if (IsHidden())
         return false;
 
     // widgets that don't accept focus and have no children (which
@@ -971,7 +971,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
     {
         Widget *widget = *it;
         ASSERT1(widget != NULL);
-        if (!widget->GetIsHidden())
+        if (!widget->IsHidden())
         {
             modal_widget = widget;
             break;
@@ -980,7 +980,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 
     if (modal_widget != NULL)
     {
-        if (modal_widget->GetScreenRect().GetIsPointInside(e->GetPosition()))
+        if (modal_widget->GetScreenRect().IsPointInside(e->GetPosition()))
             return modal_widget->InternalProcessFocusEvent(e);
         else
             return false;
@@ -997,8 +997,8 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
         {
             Widget *child = *it;
             ASSERT1(child != NULL);
-            if (!child->GetIsHidden() &&
-                child->GetScreenRect().GetIsPointInside(e->GetPosition()) &&
+            if (!child->IsHidden() &&
+                child->GetScreenRect().IsPointInside(e->GetPosition()) &&
                 child->InternalProcessFocusEvent(e))
                 return true;
         }
@@ -1011,7 +1011,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const e)
 {
     // hidden widgets can't be moused over
-    if (GetIsHidden())
+    if (IsHidden())
         return false;
 
     // loop through all the child widgets (from top to bottom)
@@ -1024,7 +1024,7 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const
     {
         Widget *child = *it;
         ASSERT1(child != NULL);
-        if (child->GetScreenRect().GetIsPointInside(e->GetPosition()))
+        if (child->GetScreenRect().IsPointInside(e->GetPosition()))
             if (child->InternalProcessMouseoverEvent(e))
                 return true;
     }
@@ -1047,8 +1047,8 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
         ASSERT1(child != NULL);
         // only send the event to widgets that are not hidden
         // AND if the mouse event position is inside the widget's rect
-        if (!child->GetIsHidden() &&
-            child->GetScreenRect().GetIsPointInside(e->GetPosition()))
+        if (!child->IsHidden() &&
+            child->GetScreenRect().IsPointInside(e->GetPosition()))
             if (child->ProcessEvent(e))
                 return true;
     }

@@ -382,7 +382,7 @@ Font *AsciiFont::Create (
 {
     AsciiFont *retval = NULL;
 
-    if (!font_face.GetIsValid())
+    if (!font_face.IsValid())
         return retval;
 
     FT_FaceRec_ *ft_face = font_face->GetFTFace();
@@ -669,7 +669,7 @@ ScreenCoord AsciiFont::GetKerningPixelAdvance_26_6 (char const left, char const 
     if (!m_has_kerning)
         return 0;
 
-    ASSERT1(m_font_face.GetIsValid());
+    ASSERT1(m_font_face.IsValid());
 
     // TODO: somehow cache the kern pairs, so we don't have to call
     // FT_Set_Pixel_Sizes and FT_Get_Kerning here (thus making this

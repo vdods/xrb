@@ -65,12 +65,12 @@ Key const *Input::GetKey (std::string const &name) const
     }
 }
 
-bool Input::GetIsValidKeyCode (Key::Code const code) const
+bool Input::IsValidKeyCode (Key::Code const code) const
 {
     return m_keycode_map.find(code) != m_keycode_map.end();
 }
 
-bool Input::GetIsValidKeyName (std::string const &name) const
+bool Input::IsValidKeyName (std::string const &name) const
 {
     return m_keyname_map.find(name) != m_keyname_map.end();
 }
@@ -99,55 +99,55 @@ std::string const &Input::GetKeyName (Key::Code const code) const
     }
 }
 
-bool Input::GetIsKeyPressed (Key::Code const code) const
+bool Input::IsKeyPressed (Key::Code const code) const
 {
     Key const *key = GetKey(code);
     if (key != NULL)
-        return key->GetIsPressed();
+        return key->IsPressed();
     else
         return false;
 }
 
-bool Input::GetIsKeyPressed (std::string const &name) const
+bool Input::IsKeyPressed (std::string const &name) const
 {
     Key const *key = GetKey(name);
     if (key != NULL)
-        return key->GetIsPressed();
+        return key->IsPressed();
     else
         return false;
 }
 
-bool Input::GetIsEitherAltKeyPressed () const
+bool Input::IsEitherAltKeyPressed () const
 {
-    return GetKey(Key::LALT)->GetIsPressed() ||
-           GetKey(Key::RALT)->GetIsPressed();
+    return GetKey(Key::LALT)->IsPressed() ||
+           GetKey(Key::RALT)->IsPressed();
 }
 
-bool Input::GetIsEitherControlKeyPressed () const
+bool Input::IsEitherControlKeyPressed () const
 {
-    return GetKey(Key::LCTRL)->GetIsPressed() ||
-           GetKey(Key::RCTRL)->GetIsPressed();
+    return GetKey(Key::LCTRL)->IsPressed() ||
+           GetKey(Key::RCTRL)->IsPressed();
 }
 
-bool Input::GetIsEitherShiftKeyPressed () const
+bool Input::IsEitherShiftKeyPressed () const
 {
-    return GetKey(Key::LSHIFT)->GetIsPressed() ||
-           GetKey(Key::RSHIFT)->GetIsPressed();
+    return GetKey(Key::LSHIFT)->IsPressed() ||
+           GetKey(Key::RSHIFT)->IsPressed();
 }
 
 SDLMod Input::GetModifiers () const
 {
     return (SDLMod)(
-        (GetIsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
-        (GetIsKeyPressed(Key::RALT)     ? KMOD_RALT   : 0) |
-        (GetIsKeyPressed(Key::LCTRL)    ? KMOD_LCTRL  : 0) |
-        (GetIsKeyPressed(Key::RCTRL)    ? KMOD_RCTRL  : 0) |
-        (GetIsKeyPressed(Key::LSHIFT)   ? KMOD_LSHIFT : 0) |
-        (GetIsKeyPressed(Key::RSHIFT)   ? KMOD_RSHIFT : 0) |
-        (GetIsKeyPressed(Key::LMETA)    ? KMOD_LMETA  : 0) |
-        (GetIsKeyPressed(Key::RMETA)    ? KMOD_RMETA  : 0) |
-        (GetIsKeyPressed(Key::NUMLOCK)  ? KMOD_NUM    : 0) |
-        (GetIsKeyPressed(Key::CAPSLOCK) ? KMOD_CAPS   : 0));
+        (IsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
+        (IsKeyPressed(Key::RALT)     ? KMOD_RALT   : 0) |
+        (IsKeyPressed(Key::LCTRL)    ? KMOD_LCTRL  : 0) |
+        (IsKeyPressed(Key::RCTRL)    ? KMOD_RCTRL  : 0) |
+        (IsKeyPressed(Key::LSHIFT)   ? KMOD_LSHIFT : 0) |
+        (IsKeyPressed(Key::RSHIFT)   ? KMOD_RSHIFT : 0) |
+        (IsKeyPressed(Key::LMETA)    ? KMOD_LMETA  : 0) |
+        (IsKeyPressed(Key::RMETA)    ? KMOD_RMETA  : 0) |
+        (IsKeyPressed(Key::NUMLOCK)  ? KMOD_NUM    : 0) |
+        (IsKeyPressed(Key::CAPSLOCK) ? KMOD_CAPS   : 0));
 }
 
 void Input::ResetPressed ()

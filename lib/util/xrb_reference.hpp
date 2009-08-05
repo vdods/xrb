@@ -168,7 +168,7 @@ public:
         return m_instance == instance;
     }
 
-    inline bool GetIsValid () const
+    inline bool IsValid () const
     {
         return m_instance != NULL;
     }

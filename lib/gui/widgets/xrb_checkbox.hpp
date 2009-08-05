@@ -26,7 +26,7 @@ public:
         std::string const &name = "CheckBox");
     virtual ~CheckBox () { }
 
-    inline bool GetIsChecked () const { return m_is_checked; }
+    inline bool IsChecked () const { return m_is_checked; }
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors

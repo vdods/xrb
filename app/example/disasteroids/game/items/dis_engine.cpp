@@ -88,7 +88,7 @@ bool Engine::Activate (
             frame_dt / GetOwnerShip()->GetFirstMoment() * GetOwnerShip()->GetForce());
         FloatVector2 thrust_vector = GetOwnerShip()->GetFirstMoment() * velocity_differential / frame_dt;
         // if the thrust isn't zero, cap it to the max thrust, and accumulate
-        if (!thrust_vector.GetIsZero())
+        if (!thrust_vector.IsZero())
         {
             Float thrust_force = thrust_vector.GetLength();
             if (thrust_force > max_thrust_force)

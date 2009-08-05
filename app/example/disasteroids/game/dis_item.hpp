@@ -49,7 +49,7 @@ public:
     inline Uint8 GetUpgradeLevel () const { return m_upgrade_level; }
     inline ItemType GetItemType () const { return m_item_type; }
 
-    virtual bool GetIsPoweredDevice () const { return false; }
+    virtual bool IsPoweredDevice () const { return false; }
 
     virtual void Equip (Ship *owner_ship) { }
     virtual void Unequip (Ship *owner_ship) { }

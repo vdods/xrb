@@ -92,14 +92,14 @@ Widget::~Widget ()
 
 ContainerWidget const *Widget::GetEffectiveParent () const
 {
-    return GetIsModal() ?
+    return IsModal() ?
            DStaticCast<ContainerWidget const *>(GetTopLevelParent()) :
            m_parent;
 }
 
 ContainerWidget *Widget::GetEffectiveParent ()
 {
-    return GetIsModal() ?
+    return IsModal() ?
            DStaticCast<ContainerWidget *>(GetTopLevelParent()) :
            m_parent;
 }
@@ -120,19 +120,19 @@ Screen *Widget::GetTopLevelParent ()
         return DStaticCast<Screen *>(this);
 }
 
-bool Widget::GetIsFocused () const
+bool Widget::IsFocused () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
     return parent == NULL || parent->m_focus == this;
 }
 
-bool Widget::GetIsMouseover () const
+bool Widget::IsMouseover () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
     return parent == NULL || parent->m_mouseover_focus == this;
 }
 
-bool Widget::GetIsMouseGrabbed () const
+bool Widget::IsMouseGrabbed () const
 {
     ContainerWidget const *parent = GetEffectiveParent();
     return parent == NULL || (parent->m_focus == this && parent->m_focus_has_mouse_grab);
@@ -300,8 +300,8 @@ void Widget::SetIsModal (bool const is_modal)
 {
     if (is_modal)
     {
-        ASSERT0(!GetIsTopLevelParent() && "You can't make the top level widget modal!");
-        ASSERT0(GetIsEnabled() && "You can't make a disabled widget modal!");
+        ASSERT0(!IsTopLevelParent() && "You can't make the top level widget modal!");
+        ASSERT0(IsEnabled() && "You can't make a disabled widget modal!");
     }
 
     // only do stuff if the value is changing
@@ -314,7 +314,7 @@ void Widget::SetIsModal (bool const is_modal)
         // RemoveModalWidget, or before the call to AddModalWidget
         if (m_is_modal)
         {
-            ASSERT1(!GetIsMouseover());
+            ASSERT1(!IsMouseover());
             // remove this widget from the modal stack of the top level parent
             GetTopLevelParent()->RemoveModalWidget(this);
             m_is_modal = false;
@@ -521,19 +521,19 @@ void Widget::CenterOnWidget (Widget const *const widget)
 bool Widget::Focus ()
 {
     // you may not focus a hidden widget.
-    ASSERT1(!GetIsHidden());
+    ASSERT1(!IsHidden());
 
     // if already focused, then we don't need to do anything
-    if (GetIsFocused())
+    if (IsFocused())
         return true;
 
     // if this is not a top level widget, proceed normally
-    if (!GetIsTopLevelParent())
+    if (!IsTopLevelParent())
     {
         // find the first ancestor of this widget that is focused
         ContainerWidget *first_focused_ancestor = GetEffectiveParent();
         while (first_focused_ancestor->GetEffectiveParent() != NULL &&
-               !first_focused_ancestor->GetIsFocused())
+               !first_focused_ancestor->IsFocused())
         {
             first_focused_ancestor = first_focused_ancestor->GetEffectiveParent();
         }
@@ -556,7 +556,7 @@ bool Widget::Focus ()
 void Widget::Unfocus ()
 {
     // if not focused, then we don't need to do anything
-    if (!GetIsFocused())
+    if (!IsFocused())
         return;
 
     // unfocus this widget and all its children (from bottom up)
@@ -568,7 +568,7 @@ void Widget::GrabMouse ()
     ContainerWidget *parent = GetEffectiveParent();
 
     // if this widget already has the mouse grabbed, don't do anything
-    if (GetIsMouseGrabbed())
+    if (IsMouseGrabbed())
     {
         ASSERT1(parent == NULL || parent->m_focus_has_mouse_grab);
         return;
@@ -599,7 +599,7 @@ void Widget::UnGrabMouse ()
     ContainerWidget *parent = GetEffectiveParent();
 
     // if this widget already doesn't have the mouse grabbed, don't do anything
-    if (!GetIsMouseGrabbed())
+    if (!IsMouseGrabbed())
     {
         ASSERT1(parent == NULL || !parent->m_focus_has_mouse_grab);
         return;
@@ -629,8 +629,8 @@ void Widget::SetIsEnabled (bool const is_enabled)
 {
     if (!is_enabled)
     {
-        ASSERT0(!GetIsModal() && "You can't disable a modal widget!");
-        ASSERT0(!GetIsTopLevelParent() && "You can't disable a top level widget!");
+        ASSERT0(!IsModal() && "You can't disable a modal widget!");
+        ASSERT0(!IsTopLevelParent() && "You can't disable a top level widget!");
     }
 
     if (m_is_enabled != is_enabled)
@@ -640,7 +640,7 @@ void Widget::SetIsEnabled (bool const is_enabled)
         if (!m_is_enabled)
         {
             Unfocus();
-            m_enabled_sender_blocking_state = GetIsBlockingSenders();
+            m_enabled_sender_blocking_state = IsBlockingSenders();
             SetIsBlockingSenders(true);
         }
         // otherwise restore the saved sender blocking state
@@ -667,7 +667,7 @@ void Widget::ToggleIsHidden ()
 
     m_is_hidden = !m_is_hidden;
 
-    if (!GetIsModal())
+    if (!IsModal())
         ParentChildSizePropertiesUpdate(false);
 }
 
@@ -698,7 +698,7 @@ bool Widget::HandleEvent (Event const *const e)
     ASSERT1(e != NULL);
 
     // if this widget is disabled, it rejects all events
-    if (!GetIsEnabled())
+    if (!IsEnabled())
         return false;
 
     switch (e->GetEventType())
@@ -767,7 +767,7 @@ void Widget::UpdateRenderBackground ()
 
 void Widget::ParentChildSizePropertiesUpdate (bool const defer_parent_update)
 {
-    if (!defer_parent_update && m_parent != NULL/* && !GetIsHidden() && !GetIsModal()*/) // TODO: enable and test this
+    if (!defer_parent_update && m_parent != NULL/* && !IsHidden() && !IsModal()*/) // TODO: enable and test this
         m_parent->ChildSizePropertiesChanged(this);
 }
 
@@ -848,7 +848,7 @@ void Widget::SizeRangeAdjustment (ScreenCoordRect *const rect) const
 
 void Widget::FocusWidgetLine ()
 {
-    ASSERT1(!GetIsFocused());
+    ASSERT1(!IsFocused());
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL);
 
@@ -856,7 +856,7 @@ void Widget::FocusWidgetLine ()
 
     // make sure to focus parent widgets first, so that the focusing
     // happens from top down
-    if (parent != NULL && !parent->GetIsFocused())
+    if (parent != NULL && !parent->IsFocused())
         parent->FocusWidgetLine();
 
     // make this widget focused
@@ -869,7 +869,7 @@ void Widget::FocusWidgetLine ()
 
 void Widget::UnfocusWidgetLine ()
 {
-    ASSERT1(GetIsFocused());
+    ASSERT1(IsFocused());
 
     ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
 
@@ -894,12 +894,12 @@ bool Widget::MouseoverOn ()
         return false;
 
     // if this widget is hidden, then it can't be moused-over
-    if (GetIsHidden())
+    if (IsHidden())
         return false;
 
     // if already mouseover-focused, then make sure there are no child
     // widgets that have mouseover, and then return true.
-    if (GetIsMouseover())
+    if (IsMouseover())
     {
         ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this);
 
@@ -916,7 +916,7 @@ bool Widget::MouseoverOn ()
         // find the first ancestor of this widget that is mouseover-focused
         ContainerWidget *first_mouseover_ancestor = parent;
         while (first_mouseover_ancestor->GetEffectiveParent() != NULL &&
-               !first_mouseover_ancestor->GetIsMouseover())
+               !first_mouseover_ancestor->IsMouseover())
         {
             first_mouseover_ancestor = first_mouseover_ancestor->GetEffectiveParent();
         }
@@ -938,7 +938,7 @@ bool Widget::MouseoverOn ()
 
 void Widget::MouseoverOff ()
 {
-    if (GetIsTopLevelParent())
+    if (IsTopLevelParent())
     {
         MouseoverOffWidgetLine();
         return;
@@ -946,23 +946,23 @@ void Widget::MouseoverOff ()
 
     if (!m_accepts_mouseover)
     {
-        ASSERT1(!GetIsMouseover());
+        ASSERT1(!IsMouseover());
         return;
     }
 
-    if (GetIsHidden())
+    if (IsHidden())
     {
-        ASSERT1(!GetIsMouseover());
+        ASSERT1(!IsMouseover());
         return;
     }
 
-    if (GetIsMouseover())
+    if (IsMouseover())
         MouseoverOffWidgetLine();
 }
 
 void Widget::MouseoverOnWidgetLine ()
 {
-    ASSERT1(!GetIsMouseover());
+    ASSERT1(!IsMouseover());
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_mouseover_focus == NULL);
 
@@ -970,7 +970,7 @@ void Widget::MouseoverOnWidgetLine ()
 
     // make sure to mouseover-focus parent widgets first, so that
     // the mouseover-focusing happens from top down
-    if (parent != NULL && !parent->GetIsMouseover())
+    if (parent != NULL && !parent->IsMouseover())
         parent->MouseoverOnWidgetLine();
 
     // make this widget mouseover-focus state
@@ -983,7 +983,7 @@ void Widget::MouseoverOnWidgetLine ()
 
 void Widget::MouseoverOffWidgetLine ()
 {
-    ASSERT1(GetIsMouseover());
+    ASSERT1(IsMouseover());
 
     // make sure to mouseover-unfocus child widgets first, so that the
     // mouseover-unfocusing happens from bottom up
@@ -1050,7 +1050,7 @@ bool Widget::InternalProcessJoyEvent (EventJoy const *const e)
 bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
 {
     // hidden widgets can't be focused
-    if (GetIsHidden())
+    if (IsHidden())
         return false;
 
     // can't accept focus if we don't accept focus
@@ -1066,7 +1066,7 @@ bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
 bool Widget::InternalProcessMouseoverEvent (EventMouseover const *const e)
 {
     // hidden widgets can't be moused over
-    if (GetIsHidden())
+    if (IsHidden())
         return false;
 
     // widgets that don't accept mouseover-focus return false

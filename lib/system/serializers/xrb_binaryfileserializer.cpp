@@ -26,9 +26,9 @@ BinaryFileSerializer::~BinaryFileSerializer ()
 {
 }
 
-bool BinaryFileSerializer::GetIsAtEnd () const
+bool BinaryFileSerializer::IsAtEnd () const
 {
-    return m_cache.GetIsAtEnd();
+    return m_cache.IsAtEnd();
 }
 
 bool BinaryFileSerializer::GetHasFewerThan8BitsLeft () const
@@ -64,7 +64,7 @@ void BinaryFileSerializer::Close ()
 
 void BinaryFileSerializer::FlushWriteCache ()
 {
-    ASSERT1(GetIsOpen());
+    ASSERT1(IsOpen());
     ASSERT1(GetIODirection() == IOD_WRITE);
     m_cache.FlushWriteCache();
     SetError(m_cache.GetError());

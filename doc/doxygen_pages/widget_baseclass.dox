@@ -429,7 +429,7 @@ contain any children).
 
 Relevant methods include
 @ref Xrb::Widget::GetFocus "Widget::GetFocus" ,
-@ref Xrb::Widget::GetIsFocused "Widget::GetIsFocused" , and
+@ref Xrb::Widget::IsFocused "Widget::IsFocused" , and
 @ref Xrb::Widget::GetAcceptsFocus "Widget::GetAcceptsFocus" .
 
 @section section_widget_mouseover Mouseover And Mouseover Focus
@@ -455,7 +455,7 @@ customize behavior when receiving or losing mouseover status.  These are
 
 Relevant methods include
 @ref Xrb::Widget::GetMouseoverFocus "Widget::GetMouseoverFocus" and
-@ref Xrb::Widget::GetIsMouseover "Widget::GetIsMouseover" .
+@ref Xrb::Widget::IsMouseover "Widget::IsMouseover" .
 
 @section section_widget_mouse_grab Mouse Grab
 Mouse grab is a state that the focus line can be in which directs all
@@ -475,7 +475,7 @@ customize behavior when mouse grab is turned on or off.  These are
 @ref Xrb::Widget::HandleMouseGrabOff "Widget::HandleMouseGrabOff" .
 
 Other relevant methods include
-@ref Xrb::Widget::GetIsMouseGrabbed "Widget::GetIsMouseGrabbed" and
+@ref Xrb::Widget::IsMouseGrabbed "Widget::IsMouseGrabbed" and
 @ref Xrb::Widget::GetFocusHasMouseGrab "Widget::GetFocusHasMouseGrab" .
 
 @section section_widget_enabled_state Enabled State
@@ -497,7 +497,7 @@ Widgets can be enabled and disabled using the following methods:
 @ref Xrb::Widget::Disable "Widget::Disable" .
 
 Other relevant methods include
-@ref Xrb::Widget::GetIsEnabled "Widget::GetIsEnabled" .
+@ref Xrb::Widget::IsEnabled "Widget::IsEnabled" .
 
 @section section_widget_hidden_state Hidden State
 Widgets can be hidden from view.  This is controlled by the
@@ -521,7 +521,7 @@ Widgets are hidden and shown using the following methods:
 @ref Xrb::Widget::Hide "Widget::Hide" , and
 @ref Xrb::Widget::Show "Widget::Show" .
 
-Relevant methods include @ref Xrb::Widget::GetIsHidden "Widget::GetIsHidden" .
+Relevant methods include @ref Xrb::Widget::IsHidden "Widget::IsHidden" .
 
 @section section_widget_min_max_size Minimum And Maximum Size Properties
 Constraints on the minimum and maximum size of a widget may be made, each

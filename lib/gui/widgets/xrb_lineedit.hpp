@@ -32,7 +32,7 @@ public:
     inline Alignment GetAlignment () const { return m_alignment; }
     inline Uint32 GetCharacterLimit () const { return m_character_limit; }
     inline CharacterFilter &GetCharacterFilter () { return m_character_filter; }
-    inline bool GetIsReadOnly () const { return m_is_read_only; }
+    inline bool IsReadOnly () const { return m_is_read_only; }
 
     virtual void SetText (std::string const &text);
     void SetAlignment (Alignment alignment);

@@ -24,7 +24,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
     :
     RadioButton<T, sentinel>(picture, id, group, parent, name)
 {
-    ASSERT1(this->GetPicture().GetIsValid());
+    ASSERT1(this->GetPicture().IsValid());
     ToolbarButton<T, sentinel>::UpdateRenderBackground();
     ToolbarButton<T, sentinel>::UpdateRenderPicture();
 }
@@ -32,7 +32,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
 template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::HandleMouseoverOn ()
 {
-    ASSERT1(this->GetIsMouseover());
+    ASSERT1(this->IsMouseover());
     Button::HandleMouseoverOn();
     UpdateRenderBackground();
 }
@@ -40,7 +40,7 @@ void ToolbarButton<T, sentinel>::HandleMouseoverOn ()
 template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::HandleMouseoverOff ()
 {
-    ASSERT1(!this->GetIsMouseover());
+    ASSERT1(!this->IsMouseover());
     Button::HandleMouseoverOff();
     UpdateRenderBackground();
 }
@@ -49,19 +49,19 @@ template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
 {
     // state priority: disabled, pressed, mouseover, checked, default
-    if (!this->GetIsEnabled())
+    if (!this->IsEnabled())
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
-    else if (this->GetIsPressed())
+    else if (this->IsPressed())
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
-    else if (this->GetIsMouseover() && this->GetAcceptsMouseover())
+    else if (this->IsMouseover() && this->GetAcceptsMouseover())
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));
-    else if (this->GetIsChecked())
+    else if (this->IsChecked())
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_CHECKED_BACKGROUND));

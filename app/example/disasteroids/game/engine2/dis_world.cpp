@@ -446,7 +446,7 @@ World::~World ()
     // if the ship exists and has been removed from the world, add
     // it back in, so it gets deleted properly.
     // TODO: think of a better way to handle this
-    if (m_player_ship != NULL && !m_player_ship->GetIsInWorld())
+    if (m_player_ship != NULL && !m_player_ship->IsInWorld())
     {
         m_player_ship->AddBackIntoWorld();
     }
@@ -612,7 +612,7 @@ void World::HandleFrame ()
 {
     Engine2::World::HandleFrame();
 
-    if (!m_state_machine.GetIsInitialized())
+    if (!m_state_machine.IsInitialized())
         m_state_machine.Initialize(&World::StateIntro);
 
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
@@ -707,8 +707,8 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
     {
         case IN_PROCESS_FRAME:
             ASSERT1(m_player_ship != NULL);
-            ASSERT1(!m_player_ship->GetIsInWorld());
-            ASSERT1(m_player_ship->GetIsDead());
+            ASSERT1(!m_player_ship->IsInWorld());
+            ASSERT1(m_player_ship->IsDead());
             ASSERT1(m_player_ship->GetLivesRemaining() > 0);
             m_player_ship->Revive(GetFrameTime(), GetFrameDT());
             m_player_ship->SetVelocity(FloatVector2::ms_zero);

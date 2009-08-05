@@ -25,7 +25,7 @@ struct Validator
 {
     virtual ~Validator () { }
 
-    virtual bool GetIsValid (ValueType value) const = 0;
+    virtual bool IsValid (ValueType value) const = 0;
     virtual ValueType Validate (ValueType value) const = 0;
 }; // end of struct Validator<ValueType>
 
@@ -47,7 +47,7 @@ struct GreaterThanValidator : public Validator<ValueType>
         m_lowest_valid_value(lowest_valid_value)
     { }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return value > m_lower_bound;
     }
@@ -74,7 +74,7 @@ struct GreaterOrEqualValidator : public Validator<ValueType>
         m_lower_bound(lower_bound)
     { }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return value >= m_lower_bound;
     }
@@ -104,7 +104,7 @@ struct LessThanValidator : public Validator<ValueType>
         m_highest_valid_value(highest_valid_value)
     { }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return value < m_upper_bound;
     }
@@ -131,7 +131,7 @@ struct LessOrEqualValidator : public Validator<ValueType>
         m_upper_bound(upper_bound)
     { }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return value <= m_upper_bound;
     }
@@ -163,7 +163,7 @@ struct RangeInclusiveValidator : public Validator<ValueType>
         ASSERT1(lower_bound <= upper_bound);
     }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return m_lower_bound <= value &&
                value <= m_upper_bound;
@@ -207,7 +207,7 @@ struct RangeExclusiveValidator : public Validator<ValueType>
         ASSERT1(highest_valid_value < upper_bound);
     }
 
-    virtual bool GetIsValid (ValueType value) const
+    virtual bool IsValid (ValueType value) const
     {
         return m_lower_bound <= value &&
                value <= m_upper_bound;

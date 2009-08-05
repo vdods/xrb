@@ -467,8 +467,8 @@ void GameWidget::HideControls ()
 
 void GameWidget::ActivateInventoryPanel ()
 {
-    ASSERT1(m_inventory_panel->GetIsModal());
-    ASSERT1(m_inventory_panel->GetIsHidden());
+    ASSERT1(m_inventory_panel->IsModal());
+    ASSERT1(m_inventory_panel->IsHidden());
 
     // pause the game
     ASSERT1(m_saved_game_timescale == -1.0f);
@@ -487,8 +487,8 @@ void GameWidget::ActivateInventoryPanel ()
 
 void GameWidget::DeactivateInventoryPanel ()
 {
-    ASSERT1(m_inventory_panel->GetIsModal());
-    if (!m_inventory_panel->GetIsHidden())
+    ASSERT1(m_inventory_panel->IsModal());
+    if (!m_inventory_panel->IsHidden())
     {
 
         // hide the inventory panel

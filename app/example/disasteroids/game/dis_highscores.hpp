@@ -99,7 +99,7 @@ public:
 
     void operator = (HighScores const &high_scores);
 
-    bool GetIsNewHighScore (Score const &score);
+    bool IsNewHighScore (Score const &score);
     Score const &GetBestPointsScore (Uint32 index) const;
     Score const &GetBestWaveCountScore (Uint32 index) const;
 

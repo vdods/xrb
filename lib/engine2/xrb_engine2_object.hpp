@@ -114,7 +114,7 @@ public:
         inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
         inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
         inline Float GetViewRadius () const { return m_view_radius; }
-        inline bool GetIsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
+        inline bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
         inline TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
         inline Uint32 GetDrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
         inline Uint32 GetDrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
@@ -173,11 +173,11 @@ public:
 
     inline ObjectType GetObjectType () const { return m_object_type; }
     inline Float GetZDepth () const { return m_z_depth; }
-    inline bool GetIsDynamic () const { return m_entity != NULL; }
+    inline bool IsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &GetBiasColor () const { return m_bias_color; }
     inline Color const &GetColorMask () const { return m_color_mask; }
-    inline bool GetIsTransparent () const { return m_is_transparent; }
+    inline bool IsTransparent () const { return m_is_transparent; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }

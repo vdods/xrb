@@ -67,7 +67,7 @@ public:
 
 private:
 
-    inline bool GetIsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
+    inline bool IsFlockLeader () const { return m_flock_leader_weight > 0.25f; }
 
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);

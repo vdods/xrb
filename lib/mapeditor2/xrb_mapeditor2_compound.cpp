@@ -186,7 +186,7 @@ void MapEditor2::Compound::DrawMetrics (
         GetScaleFactors()[Dim::Y],
         1.0f);
 
-//     Color color(GetIsSelected() ?
+//     Color color(IsSelected() ?
 //                 GetSelectedMetricsColor() :
 //                 GetUnselectedMetricsColor());
 //     color[Dim::A] *= alpha_mask;
@@ -230,7 +230,7 @@ void MapEditor2::Compound::DrawMetrics (
     // if the metric mode is vertices, draw the vertices
     bool vertices_can_be_selected =
         GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-        GetIsSelected();
+        IsSelected();
     if (metric_mode == Object::MM_VERTICES && vertices_can_be_selected)
     {
         // draw the black outline for the vertices
@@ -340,7 +340,7 @@ MapEditor2::Polygon *MapEditor2::Compound::GetSmallestPolygonTouchingPoint (
         ASSERT1(polygon != NULL);
         
         // skip polygons that don't contain the point
-        if (!polygon->GetIsPointInside(model_space_point))
+        if (!polygon->IsPointInside(model_space_point))
             continue;
             
         // if this is the first one, set the smallest to this one
@@ -380,7 +380,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
         GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-        GetIsSelected();
+        IsSelected();
     if (!vertices_can_be_selected)
         return;
     
@@ -554,7 +554,7 @@ void MapEditor2::Compound::AddDrawnPolygon (
     Resource<GLTexture> const &texture)
 {
     ASSERT1(vertex_count >= 3);
-    ASSERT1(texture.GetIsValid());
+    ASSERT1(texture.IsValid());
 
     Instance<CompoundVertex> *vertex_instance;
 
@@ -698,7 +698,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
         GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-        GetIsSelected();
+        IsSelected();
     if (!vertices_can_be_selected)
         return;
 
@@ -752,7 +752,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
         GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-        GetIsSelected();
+        IsSelected();
     if (!vertices_can_be_selected)
         return;
 

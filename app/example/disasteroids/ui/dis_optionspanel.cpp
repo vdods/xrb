@@ -129,7 +129,7 @@ ScreenCoordVector2 OptionsPanel::GetResolution () const
 bool OptionsPanel::GetFullscreen () const
 {
     ASSERT1(m_fullscreen_checkbox != NULL);
-    return m_fullscreen_checkbox->GetIsChecked();
+    return m_fullscreen_checkbox->IsChecked();
 }
 
 DifficultyLevel OptionsPanel::GetDifficultyLevel () const

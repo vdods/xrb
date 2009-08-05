@@ -42,7 +42,7 @@ public:
         std::string const &name = "RadioButton");
     virtual ~RadioButton ();
 
-    inline bool GetIsChecked () const { return m_is_checked; }
+    inline bool IsChecked () const { return m_is_checked; }
     inline T GetID () const { return m_id; }
 
     //////////////////////////////////////////////////////////////////////////

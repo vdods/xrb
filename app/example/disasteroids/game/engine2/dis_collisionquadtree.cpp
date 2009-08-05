@@ -196,7 +196,7 @@ void CollisionQuadTree::LineTrace (
     bool const check_nonsolid_collision_entities,
     LineTraceBindingSet *const line_trace_binding_set)
 {
-    ASSERT1(!trace_vector.GetIsZero());
+    ASSERT1(!trace_vector.IsZero());
     ASSERT1(trace_radius >= 0.0f);
     ASSERT1(line_trace_binding_set != NULL);
 
@@ -279,7 +279,7 @@ void CollisionQuadTree::LineTraceWrapped (
     Float const object_layer_side_length,
     Float const half_object_layer_side_length)
 {
-    ASSERT1(!trace_vector.GetIsZero());
+    ASSERT1(!trace_vector.IsZero());
     ASSERT1(trace_radius >= 0.0f);
     ASSERT1(line_trace_binding_set != NULL);
 
@@ -542,7 +542,7 @@ void CollisionQuadTree::CollideEntity (
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!GetIsAllowableObjectRadius(entity->GetOwnerObject()))
+        if (!IsAllowableObjectRadius(entity->GetOwnerObject()))
             return;
     }
 
@@ -585,7 +585,7 @@ void CollisionQuadTree::CollideEntity (
             /
             (entity->GetScaleFactor() + other_entity->GetScaleFactor()));
         FloatVector2 collision_normal;
-        if (P.GetIsZero())
+        if (P.IsZero())
             collision_normal = FloatVector2(1.0f, 0.0f);
         else
             collision_normal = P.GetNormalization();
@@ -683,7 +683,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
         /
         (m_entity->GetScaleFactor() + other_entity->GetScaleFactor()));
     FloatVector2 collision_normal;
-    if (P.GetIsZero())
+    if (P.IsZero())
         collision_normal = FloatVector2(1.0f, 0.0f);
     else
         collision_normal = P.GetNormalization();
@@ -775,7 +775,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!GetIsAllowableObjectRadius(functor.GetEntity()->GetOwnerObject()))
+        if (!IsAllowableObjectRadius(functor.GetEntity()->GetOwnerObject()))
             return;
     }
 

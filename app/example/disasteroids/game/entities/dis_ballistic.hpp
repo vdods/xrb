@@ -44,7 +44,7 @@ public:
         m_perform_line_trace_for_accuracy = perform_line_trace_for_accuracy;
     }
 
-    virtual bool GetIsBallistic () const { return true; }
+    virtual bool IsBallistic () const { return true; }
 
     inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
 

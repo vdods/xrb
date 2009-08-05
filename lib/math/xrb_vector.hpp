@@ -339,7 +339,7 @@ public:
       * @return True iff each component of the zero vector is equal to the
       *         corresponding component of this vector.
       */
-    inline bool GetIsZero () const
+    inline bool IsZero () const
     {
     #if defined(XRB_VECTOR_USES_MEMCMP)
         return memcmp(m, ms_zero.m, sizeof(T) * dimension) == 0;

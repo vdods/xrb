@@ -68,7 +68,7 @@ Engine2::World *Engine2::World::Create (
     CreateEntityFunction CreateEntity,
     PhysicsHandler *const physics_handler)
 {
-    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.IsOpen());
     ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint16 entity_capacity = serializer.ReadUint32();
@@ -140,7 +140,7 @@ void Engine2::World::AddStaticObject (
 {
     ASSERT1(static_object != NULL);
     ASSERT1(object_layer != NULL);
-    ASSERT1(!static_object->GetIsDynamic());
+    ASSERT1(!static_object->IsDynamic());
     // add the object to the layer
     object_layer->AddObject(static_object);
 }
@@ -151,10 +151,10 @@ void Engine2::World::AddDynamicObject (
 {
     ASSERT1(dynamic_object != NULL);
     ASSERT1(object_layer != NULL);
-    ASSERT1(dynamic_object->GetIsDynamic());
+    ASSERT1(dynamic_object->IsDynamic());
     Entity *entity = dynamic_object->GetEntity();
     ASSERT1(entity != NULL);
-    ASSERT1(!entity->GetIsInWorld());
+    ASSERT1(!entity->IsInWorld());
 
     if (m_lowest_available_entity_index == static_cast<EntityWorldIndex>(m_entity_vector.size()))
     {
@@ -184,10 +184,10 @@ void Engine2::World::AddDynamicObject (
 void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
 {
     ASSERT1(dynamic_object != NULL);
-    ASSERT1(dynamic_object->GetIsDynamic());
+    ASSERT1(dynamic_object->IsDynamic());
     Entity *entity = dynamic_object->GetEntity();
     ASSERT1(entity != NULL);
-    ASSERT1(entity->GetIsInWorld());
+    ASSERT1(entity->IsInWorld());
     EntityWorldIndex entity_index = entity->GetWorldIndex();
     ASSERT1(entity_index < static_cast<EntityWorldIndex>(m_entity_vector.size()));
     ASSERT1(m_entity_vector[entity_index] == entity);
@@ -287,7 +287,7 @@ bool Engine2::World::HandleEvent (Event const *const e)
                 DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
             ASSERT1(entity != NULL);
-            ASSERT1(entity->GetIsInWorld() &&
+            ASSERT1(entity->IsInWorld() &&
                     "You shouldn't schedule removed entities "
                     "for deletion -- just delete them");
             ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
@@ -303,7 +303,7 @@ bool Engine2::World::HandleEvent (Event const *const e)
                 DStaticCast<EventEntity const *>(e);
             Entity *entity = event_entity->GetEntity();
             ASSERT1(entity != NULL);
-            ASSERT1(entity->GetIsInWorld() &&
+            ASSERT1(entity->IsInWorld() &&
                     "You can only remove entities already in the world");
             ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
             RemoveDynamicObject(entity->GetOwnerObject());
@@ -378,7 +378,7 @@ void Engine2::World::ReadDynamicObjectsBelongingToLayer (
     {
         Object *dynamic_object = Object::Create(serializer, CreateEntity);
         ASSERT1(dynamic_object != NULL);
-        ASSERT1(dynamic_object->GetIsDynamic());
+        ASSERT1(dynamic_object->IsDynamic());
         AddDynamicObject(dynamic_object, object_layer);
         --dynamic_object_count;
     }
@@ -416,7 +416,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
         if (entity != NULL)
         {
             ASSERT1(entity->GetObjectLayer() != NULL);
-            ASSERT1(entity->GetIsInWorld());
+            ASSERT1(entity->IsInWorld());
 
             // if the entity belongs to the given layer, count it
             if (entity->GetObjectLayer() == object_layer)
@@ -439,7 +439,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
         if (entity != NULL)
         {
             ASSERT1(entity->GetObjectLayer() != NULL);
-            ASSERT1(entity->GetIsInWorld());
+            ASSERT1(entity->IsInWorld());
 
             // if the entity belongs to the given layer, write it out
             if (entity->GetObjectLayer() == object_layer)

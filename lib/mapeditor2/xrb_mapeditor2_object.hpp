@@ -101,7 +101,7 @@ namespace MapEditor2
         ObjectLayer *GetMapEditorObjectLayer () const;
         VisibilityQuadTree *GetOwnerMapEditorQuadTree () const;
         // returns the object's selection status
-        inline bool GetIsSelected () const
+        inline bool IsSelected () const
         {
             return m_is_selected;
         }

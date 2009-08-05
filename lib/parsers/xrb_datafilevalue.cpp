@@ -836,7 +836,7 @@ void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value
     ASSERT1(!key.empty());
     ASSERT1(value != NULL);
 
-    if (!GetIsValidKey(key))
+    if (!IsValidKey(key))
         THROW_STRING("key \"" << key << "\" contains invalid characters")
 
     if (m_member_map.find(key) == m_member_map.end())
@@ -851,7 +851,7 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
     ASSERT1(!key_pair->GetKey().empty());
     ASSERT1(key_pair->GetValue() != NULL);
 
-    if (!GetIsValidKey(key_pair->GetKey()))
+    if (!IsValidKey(key_pair->GetKey()))
         THROW_STRING("key \"" << key_pair->GetKey() << "\" contains invalid characters")
 
     if (m_member_map.find(key_pair->GetKey()) == m_member_map.end())
@@ -938,7 +938,7 @@ void DataFileStructure::SetSubpathElement (
     ASSERT1(key_delim < UINT32_UPPER_BOUND);
 
     std::string key(path.substr(start, key_delim-start));
-    if (!GetIsValidKey(key))
+    if (!IsValidKey(key))
         THROW_STRING("invalid key \"" << key << "\"")
 
     MemberMapConstIterator it = m_member_map.find(key);
@@ -958,7 +958,7 @@ void DataFileStructure::SetSubpathElement (
         return static_cast<DataFileContainer *>(it->second)->SetSubpathElement(path, key_delim, value);
 }
 
-bool DataFileStructure::GetIsValidKey (std::string const &key)
+bool DataFileStructure::IsValidKey (std::string const &key)
 {
     char c = key[0];
     if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_')

@@ -272,7 +272,7 @@ bool Laser::Activate (
     Float const frame_dt)
 {
     ASSERT1(m_laser_beam != NULL);
-    ASSERT1(m_laser_beam->GetIsInWorld());
+    ASSERT1(m_laser_beam->IsInWorld());
 
     // secondary fire can happen in parallel with primary
     ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f);
@@ -302,7 +302,7 @@ bool Laser::Activate (
                 continue;
 
             // only target enemy ships or explosives
-            if (entity->GetIsEnemyShip() || entity->GetIsExplosive())
+            if (entity->IsEnemyShip() || entity->IsExplosive())
             {
                 Mortal *potential_target = DStaticCast<Mortal *>(entity);
                 Sint32 potential_target_priority = potential_target->GetTargetPriority();
@@ -349,15 +349,15 @@ bool Laser::Activate (
             LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
             // don't damage the owner of this weapon or powerups
             while (it != it_end &&
-                   (it->m_entity->GetIsPowerup() ||
-                    it->m_entity->GetIsBallistic() ||
+                   (it->m_entity->IsPowerup() ||
+                    it->m_entity->IsBallistic() ||
                     it->m_entity == GetOwnerShip()))
             {
                 ++it;
             }
 
             // only fire at ships and explosives
-            if (it != it_end && (it->m_entity->GetIsShip() || it->m_entity->GetIsExplosive()))
+            if (it != it_end && (it->m_entity->IsShip() || it->m_entity->IsExplosive()))
             {
                 // damage the mortal
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
@@ -411,7 +411,7 @@ bool Laser::Activate (
             GetMuzzleLocation() + ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection());
 
         // we don't want to hit powerups or ballistics, just skip them.
-        while (it != it_end && (it->m_entity->GetIsPowerup() || it->m_entity->GetIsBallistic()))
+        while (it != it_end && (it->m_entity->IsPowerup() || it->m_entity->IsBallistic()))
             ++it;
 
         // damage the next thing if it exists
@@ -421,7 +421,7 @@ bool Laser::Activate (
                 power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
             laser_beam_hit_location =
                 GetMuzzleLocation() + it->m_time * ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection();
-            if (it->m_entity->GetIsMortal())
+            if (it->m_entity->IsMortal())
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
                     GetOwnerShip(),
                     NULL, // laser does not have a Entity medium
@@ -499,13 +499,13 @@ bool FlameThrower::Activate (
     ASSERT1(GetPrimaryInput() > 0.0f);
 
     Float max_damage_per_fireball =
-        GetIsMaxDamagePerFireballOverridden() ?
+        IsMaxDamagePerFireballOverridden() ?
         m_max_damage_per_fireball_override :
         ms_max_damage_per_fireball[GetUpgradeLevel()];
     ASSERT1(max_damage_per_fireball > 0.0f);
 
     Float final_fireball_size =
-        GetIsFinalFireballSizeOverridden() ?
+        IsFinalFireballSizeOverridden() ?
         m_final_fireball_size_override :
         ms_final_fireball_size[GetUpgradeLevel()];
     ASSERT1(final_fireball_size > 0.0f);
@@ -536,7 +536,7 @@ bool FlameThrower::Activate (
 
 // void GaussGun::EnsureReticleEffectIsCleared ()
 // {
-//     if (m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld())
+//     if (m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld())
 //         m_reticle_effect->RemoveFromWorld();
 // }
 
@@ -585,7 +585,7 @@ bool GaussGun::Activate (
 
     // decide how much damage to inflict total
     Float damage_left_to_inflict =
-        GetIsImpactDamageOverridden() ?
+        IsImpactDamageOverridden() ?
         GetImpactDamageOverride() :
         ms_impact_damage[GetUpgradeLevel()];
 
@@ -598,7 +598,7 @@ bool GaussGun::Activate (
     {
         // we don't want to hit the owner of this weapon or powerups
         // (continue without updating the furthest hit time)
-        if (it->m_entity == GetOwnerShip() || it->m_entity->GetIsPowerup())
+        if (it->m_entity == GetOwnerShip() || it->m_entity->IsPowerup())
         {
             ++it;
             continue;
@@ -607,7 +607,7 @@ bool GaussGun::Activate (
         first_hit_registered = true;
 
         furthest_hit_time = it->m_time;
-        if (it->m_entity->GetIsMortal())
+        if (it->m_entity->IsMortal())
         {
             DStaticCast<Mortal *>(it->m_entity)->Damage(
                 GetOwnerShip(),
@@ -1051,7 +1051,7 @@ bool Tractor::Activate (
     // and the first condition was sometimes failing.
     ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
     ASSERT1(m_tractor_beam != NULL);
-    ASSERT1(m_tractor_beam->GetIsInWorld());
+    ASSERT1(m_tractor_beam->IsInWorld());
 
     // don't do anything if no power was supplied
     if (power == 0.0f)
@@ -1067,19 +1067,19 @@ bool Tractor::Activate (
     Float input = pull_everything ? GetSecondaryInput() : GetPrimaryInput();
 
     Float range =
-        GetIsRangeOverridden() ?
+        IsRangeOverridden() ?
         GetRangeOverride() :
         ms_range[GetUpgradeLevel()];
     Float strength =
-        GetIsStrengthOverridden() ?
+        IsStrengthOverridden() ?
         GetStrengthOverride() :
         ms_strength[GetUpgradeLevel()];
     Float max_force =
-        GetIsMaxForceOverridden() ?
+        IsMaxForceOverridden() ?
         GetMaxForceOverride() :
         ms_max_force[GetUpgradeLevel()];
     Float beam_radius =
-        GetIsBeamRadiusOverridden() ?
+        IsBeamRadiusOverridden() ?
         GetBeamRadiusOverride() :
         ms_beam_radius[GetUpgradeLevel()];
 
@@ -1211,7 +1211,7 @@ Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     Float const fire_rate =
-        GetIsFireRateOverridden() ?
+        IsFireRateOverridden() ?
         GetFireRateOverride() :
         ms_fire_rate[GetUpgradeLevel()];
 

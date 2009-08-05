@@ -43,7 +43,7 @@ public:
     SignalReceiver0 const *ReceiverRequestQuit () { return &m_receiver_request_quit; }
 
     // returns true if the quit condition has been hit
-    bool GetIsQuitRequested () const { return m_is_quit_requested; }
+    bool IsQuitRequested () const { return m_is_quit_requested; }
     inline ScreenCoord GetSizeRatioBasis () const
     {
         return Min(GetWidth(), GetHeight());

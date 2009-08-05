@@ -24,7 +24,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
         Event const *event = it->GetEvent();
         ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
-        if (!event->GetIsScheduledForDeletion())
+        if (!event->IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event, parameter))
                 event->ScheduleForDeletion();
@@ -46,7 +46,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
         Event const *event = it->GetEvent();
         ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
-        if (!event->GetIsScheduledForDeletion())
+        if (!event->IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event, parameter1, parameter2))
                 event->ScheduleForDeletion();

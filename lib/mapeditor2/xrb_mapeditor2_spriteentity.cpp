@@ -35,7 +35,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
         Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
-    if (!texture.GetIsValid())
+    if (!texture.IsValid())
         return NULL;
 
     return new SpriteEntity(texture);
@@ -44,7 +44,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
 MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
     Resource<GLTexture> const &texture)
 {
-    if (!texture.GetIsValid())
+    if (!texture.IsValid())
         return NULL;
 
     return new SpriteEntity(texture);
@@ -63,7 +63,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (Serializer &serializ
 
 Engine2::Object *MapEditor2::SpriteEntity::CreateClone () const
 {
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_texture.IsValid());
 
     SpriteEntity *retval = new SpriteEntity(m_texture);
     retval->Engine2::Object::CloneProperties(this);

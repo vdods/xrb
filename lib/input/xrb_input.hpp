@@ -37,18 +37,18 @@ public:
 
     Key const *GetKey (Key::Code code) const;
     Key const *GetKey (std::string const &name) const;
-    bool GetIsValidKeyCode (Key::Code code) const;
-    bool GetIsValidKeyName (std::string const &name) const;
+    bool IsValidKeyCode (Key::Code code) const;
+    bool IsValidKeyName (std::string const &name) const;
     Key::Code GetKeyCode (std::string const &name) const;
     std::string const &GetKeyName (Key::Code code) const;
-    bool GetIsKeyPressed (Key::Code const code) const;
-    bool GetIsKeyPressed (std::string const &name) const;
-    bool GetIsEitherAltKeyPressed () const;
-    bool GetIsEitherControlKeyPressed () const;
-    bool GetIsEitherShiftKeyPressed () const;
-    inline bool GetIsCapsLockOn () const { return m_is_caps_lock_on; }
-    inline bool GetIsNumLockOn () const { return m_is_num_lock_on; }
-    inline bool GetIsScrollLockOn () const { return m_is_scroll_lock_on; }
+    bool IsKeyPressed (Key::Code const code) const;
+    bool IsKeyPressed (std::string const &name) const;
+    bool IsEitherAltKeyPressed () const;
+    bool IsEitherControlKeyPressed () const;
+    bool IsEitherShiftKeyPressed () const;
+    inline bool IsCapsLockOn () const { return m_is_caps_lock_on; }
+    inline bool IsNumLockOn () const { return m_is_num_lock_on; }
+    inline bool IsScrollLockOn () const { return m_is_scroll_lock_on; }
     SDLMod GetModifiers () const;
 
     // calls ResetPressed on all the keys

@@ -721,8 +721,8 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     }
 
     // draw the selection circle (if appropriate)
-    if (Singletons::Input().GetIsKeyPressed(Key::RIGHTMOUSE) &&
-        Singletons::Input().GetIsEitherShiftKeyPressed() &&
+    if (Singletons::Input().IsKeyPressed(Key::RIGHTMOUSE) &&
+        Singletons::Input().IsEitherShiftKeyPressed() &&
         m_rmouse_dragged &&
         m_editing_sub_mode == ESM_DEFAULT)
     {
@@ -742,7 +742,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 
     // draw the polygon-creating circle/polygon (if appropriate)
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
-        Singletons::Input().GetIsKeyPressed(Key::LEFTMOUSE) &&
+        Singletons::Input().IsKeyPressed(Key::LEFTMOUSE) &&
         m_lmouse_dragged)
     {
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
@@ -770,10 +770,10 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     PopGLProjectionMatrix();
 
     // draw the origin cursors
-    if (!GetMapEditorWorld()->GetIsRunning())
+    if (!GetMapEditorWorld()->IsRunning())
     {
         // draw the object selection set origin cursor
-        if (!GetMainMapEditorObjectLayer()->GetIsObjectSelectionSetEmpty())
+        if (!GetMainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
             DrawOriginCursor(
                 render_context,
                 GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin(),
@@ -792,7 +792,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 {
     // handle all the editing-sub-mode-independent keys here
-    if (e->GetIsKeyDownEvent())
+    if (e->IsKeyDownEvent())
     {
         switch (e->GetKeyCode())
         {
@@ -805,7 +805,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
             
             case Key::PAGEUP:
-                if (e->GetIsEitherAltKeyPressed())
+                if (e->IsEitherAltKeyPressed())
                     GetMapEditorWorld()->IncrementMainObjectLayer();
                 else
                     if (m_current_grid_scale < UINT32_UPPER_BOUND)
@@ -813,7 +813,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::PAGEDOWN:
-                if (e->GetIsEitherAltKeyPressed())
+                if (e->IsEitherAltKeyPressed())
                     GetMapEditorWorld()->DecrementMainObjectLayer();
                 else
                     if (m_current_grid_scale > UINT32_LOWER_BOUND)
@@ -856,17 +856,17 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
                 
             case Key::ONE:
-                if (e->GetIsEitherAltKeyPressed())
+                if (e->IsEitherAltKeyPressed())
                     SetTransformationMode(Object::TM_GLOBAL_ORIGIN_CURSOR);
                 return true;
 
             case Key::TWO:
-                if (e->GetIsEitherAltKeyPressed())
+                if (e->IsEitherAltKeyPressed())
                     SetTransformationMode(Object::TM_SELECTION_SET_ORIGIN);
                 return true;
 
             case Key::THREE:
-                if (e->GetIsEitherAltKeyPressed())
+                if (e->IsEitherAltKeyPressed())
                     SetTransformationMode(Object::TM_EACH_SELECTED_OBJECT_ORIGIN);
                 return true;
 
@@ -894,13 +894,13 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     }
 
     // handle all the ESM_DEFAULT keys here
-    if (e->GetIsKeyDownEvent() && m_editing_sub_mode == ESM_DEFAULT)
+    if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_DEFAULT)
     {
         switch (e->GetKeyCode())
         {
             case Key::F12:
             {
-                bool new_running_state = !GetMapEditorWorld()->GetIsRunning();
+                bool new_running_state = !GetMapEditorWorld()->IsRunning();
                 // make sure to skip the time 'burp' to avoid physics unpleasantness
                 if (new_running_state)
                     GetMapEditorWorld()->GetPhysicsHandler()->SetSkipTime(true);
@@ -912,9 +912,9 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 
             case Key::SPACE:
                 // TODO: make polygon version of this (cloning)
-                if (GetMapEditorWorld()->GetIsRunning())
+                if (GetMapEditorWorld()->IsRunning())
                     return true;
-                if (!GetMainMapEditorObjectLayer()->GetIsObjectSelectionSetEmpty())
+                if (!GetMainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
                 {
                     FloatVector2 position_offset =
                         GetParallaxedScreenToWorld() * FloatVector2(0.1f, 0.1f) -
@@ -926,7 +926,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 else
                 {
                     FileDialog *dialog;
-                    if (e->GetIsEitherAltKeyPressed())
+                    if (e->IsEitherAltKeyPressed())
                     {
                         dialog = new FileDialog(
                             "Load image as static sprite",
@@ -957,7 +957,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::BACKSPACE:
-                if (!GetMapEditorWorld()->GetIsRunning())
+                if (!GetMapEditorWorld()->IsRunning())
                 {
                     switch (m_metric_editing_mode)
                     {
@@ -1097,7 +1097,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::N:
-                if (e->GetIsEitherShiftKeyPressed())
+                if (e->IsEitherShiftKeyPressed())
                 {
                     GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
                     GetMainMapEditorObjectLayer()->ClearPolygonSelectionSet();
@@ -1233,7 +1233,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
         }
     }
     // handle all the ESM_DRAW_POLYGON keys here
-    else if (e->GetIsKeyDownEvent() && m_editing_sub_mode == ESM_DRAW_POLYGON)
+    else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_DRAW_POLYGON)
     {
         // currently no keys
 //         switch (e->GetKeyCode())
@@ -1243,7 +1243,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 //         }
     }
     // handle all the ESM_POSITION_GLOBAL_ORIGIN_CURSOR keys here
-    else if (e->GetIsKeyDownEvent() && m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR)
+    else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR)
     {
         // currently no keys
 //         switch (e->GetKeyCode())
@@ -1253,7 +1253,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 //         }
     }
     // handle all the ESM_ADD_SPRITE keys here
-    else if (e->GetIsKeyDownEvent() && m_editing_sub_mode == ESM_ADD_SPRITE)
+    else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_ADD_SPRITE)
     {
         // currently no keys
 //         switch (e->GetKeyCode())
@@ -1273,7 +1273,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     // track the lmouse/rmouse pressed positions, resetting the dragged
     // properties if appropriate
-    if (e->GetIsMouseButtonDownEvent())
+    if (e->IsMouseButtonDownEvent())
     {
         if (e->GetButtonCode() == Key::LEFTMOUSE)
         {
@@ -1314,9 +1314,9 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     }
     
     // right mouse button up event + shift key is held down
-    if (e->GetIsMouseButtonUpEvent() &&
+    if (e->IsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::RIGHTMOUSE &&
-        e->GetIsEitherShiftKeyPressed())
+        e->IsEitherShiftKeyPressed())
     {
         Object::SelectionOperation selection_operation = GetSelectionOperation(e);
 
@@ -1405,7 +1405,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
         m_lmouse_dragged &&
-        e->GetIsMouseButtonUpEvent() &&
+        e->IsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS);
@@ -1435,7 +1435,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                             "resources/texture1.png"));
             
             GetWorld()->AddObject(compound, GetMainObjectLayer());
-            if (e->GetIsEitherShiftKeyPressed())
+            if (e->IsEitherShiftKeyPressed())
                 compound->SetIsSelected(true);
         }
         // otherwise, add it to the single selected compound
@@ -1463,20 +1463,20 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     }
 
     if (m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR &&
-        e->GetIsMouseButtonUpEvent() &&
+        e->IsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
         // set the global origin cursor's position
         m_origin_cursor_position = transformed_mouse_event_position;
-        if (e->GetIsEitherShiftKeyPressed())
+        if (e->IsEitherShiftKeyPressed())
             SetTransformationMode(Object::TM_GLOBAL_ORIGIN_CURSOR);
         SetEditingSubMode(ESM_DEFAULT);
     }
 
     if (m_editing_sub_mode == ESM_ADD_SPRITE &&
-        e->GetIsMouseButtonUpEvent() &&
+        e->IsMouseButtonUpEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
@@ -1502,10 +1502,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         &&
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 &&
-        e->GetIsMouseButtonDownEvent() &&
+        e->IsMouseButtonDownEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE &&
-        !e->GetIsEitherAltKeyPressed() &&
-        !e->GetIsEitherControlKeyPressed())
+        !e->IsEitherAltKeyPressed() &&
+        !e->IsEitherControlKeyPressed())
     {
         // select the smallest object that is under the mouse cursor.
         GetMainMapEditorObjectLayer()->SelectSmallestObjectTouchingPoint(
@@ -1517,10 +1517,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_metric_editing_mode == Object::MM_POLYGONS &&
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedPolygonCount() == 0 &&
-        e->GetIsMouseButtonDownEvent() &&
+        e->IsMouseButtonDownEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE &&
-        !e->GetIsEitherAltKeyPressed() &&
-        !e->GetIsEitherControlKeyPressed())
+        !e->IsEitherAltKeyPressed() &&
+        !e->IsEitherControlKeyPressed())
     {
         // select the smallest polygon under the cursor
         GetMainMapEditorObjectLayer()->
@@ -1533,10 +1533,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_metric_editing_mode == Object::MM_VERTICES &&
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedVertexCount() == 0 &&
-        e->GetIsMouseButtonDownEvent() &&
+        e->IsMouseButtonDownEvent() &&
         e->GetButtonCode() == Key::LEFTMOUSE &&
-        !e->GetIsEitherAltKeyPressed() &&
-        !e->GetIsEitherControlKeyPressed())
+        !e->IsEitherAltKeyPressed() &&
+        !e->IsEitherControlKeyPressed())
     {
         // select the closest vertex that's within 2% of the radius of the view
         Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
@@ -1553,10 +1553,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // don't allow mouse wheel input while the widget is not focused
-    if (!GetParentWorldViewWidget()->GetIsFocused())
+    if (!GetParentWorldViewWidget()->IsFocused())
         return false;
 
-    if (e->GetIsEitherAltKeyPressed())
+    if (e->IsEitherAltKeyPressed())
     {
         // when the alt key is held down, change the view's rotation
 
@@ -1605,9 +1605,9 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
 bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
 {
     // track the lmouse/rmouse dragged properties
-    if (e->GetIsLeftMouseButtonPressed())
+    if (e->IsLeftMouseButtonPressed())
         m_lmouse_dragged = true;
-    if (e->GetIsRightMouseButtonPressed())
+    if (e->IsRightMouseButtonPressed())
         m_rmouse_dragged = true;
 
     // get the mouse movement's delta, in world coordinates
@@ -1621,8 +1621,8 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
         GetParallaxedScreenToWorld() * e->GetPosition().StaticCast<Float>());
 
     // the right mouse is being held and neither shift key is pressed, drag the view
-    if (e->GetIsRightMouseButtonPressed() &&
-        !e->GetIsEitherShiftKeyPressed())
+    if (e->IsRightMouseButtonPressed() &&
+        !e->IsEitherShiftKeyPressed())
     {
         // translate the view by the transformed delta
         MoveView(position_delta);
@@ -1630,10 +1630,10 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
 
     // left mouse dragging is for editing object properties
     // (the alt key can not be held down during this)
-    if (!GetMapEditorWorld()->GetIsRunning() &&
+    if (!GetMapEditorWorld()->IsRunning() &&
         m_editing_sub_mode == ESM_DEFAULT &&
-        e->GetIsLeftMouseButtonPressed() &&
-        !e->GetIsEitherAltKeyPressed())
+        e->IsLeftMouseButtonPressed() &&
+        !e->IsEitherAltKeyPressed())
     {
         // the delta is reversed from the direction we want, negate it.
         position_delta = -position_delta;
@@ -1705,7 +1705,7 @@ void MapEditor2::WorldView::HandleAttachedWorld ()
 void MapEditor2::WorldView::HandleFrame ()
 {
     // don't do anything if this view is hidden
-    if (GetParentWorldViewWidget()->GetIsHidden())
+    if (GetParentWorldViewWidget()->IsHidden())
         return;
 
     // handle view zooming (from accumulated mouse wheel events)
@@ -1741,7 +1741,7 @@ void MapEditor2::WorldView::HandleFrame ()
     }
 
     // handle view movement (from the arrow keys)
-    if (GetParentWorldViewWidget()->GetIsFocused())
+    if (GetParentWorldViewWidget()->IsFocused())
     {
         // movement basis vectors
         FloatVector2 origin(
@@ -1752,11 +1752,11 @@ void MapEditor2::WorldView::HandleFrame ()
             GetParallaxedWorldViewToWorld() * FloatVector2(0.0, 1.0) - origin);
 
         Sint8 left_right_input =
-            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::RIGHT)) -
-            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::LEFT));
+            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::RIGHT)) -
+            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::LEFT));
         Sint8 up_down_input =
-            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::UP)) -
-            static_cast<Sint8>(Singletons::Input().GetIsKeyPressed(Key::DOWN));
+            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::UP)) -
+            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::DOWN));
 
         right *= (Float)left_right_input;
         up *= (Float)up_down_input;
@@ -1777,8 +1777,8 @@ MapEditor2::ObjectLayer *MapEditor2::WorldView::GetMainMapEditorObjectLayer () c
 MapEditor2::Object::SelectionOperation MapEditor2::WorldView::GetSelectionOperation (
     EventMouseButton const *const e) const
 {
-    Sint8 lookup_index = (e->GetIsEitherControlKeyPressed() ? 2 : 0) +
-                         (e->GetIsEitherAltKeyPressed() ? 1 : 0);
+    Sint8 lookup_index = (e->IsEitherControlKeyPressed() ? 2 : 0) +
+                         (e->IsEitherAltKeyPressed() ? 1 : 0);
     return m_selection_operation_lookup[lookup_index];
 }
 
@@ -2114,9 +2114,9 @@ void MapEditor2::WorldView::TransformationEdit (
         0.0f;
 
     // check for each combination of shift and control keys
-    if (e->GetIsEitherShiftKeyPressed())
+    if (e->IsEitherShiftKeyPressed())
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the object selection set
             GetMainMapEditorObjectLayer()->ObjectSelectionSetScale(
@@ -2148,7 +2148,7 @@ void MapEditor2::WorldView::TransformationEdit (
     }
     else
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // rotate the object selection set
             GetMainMapEditorObjectLayer()->ObjectSelectionSetRotate(
@@ -2191,9 +2191,9 @@ void MapEditor2::WorldView::LinearVelocityEdit (
         0.0f;
 
     // check for each combination of shift and control keys
-    if (e->GetIsEitherShiftKeyPressed())
+    if (e->IsEitherShiftKeyPressed())
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the object selection set
             GetMainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
@@ -2220,7 +2220,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
     }
     else
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // rotate the object selection set
             GetMainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
@@ -2261,9 +2261,9 @@ void MapEditor2::WorldView::AngularVelocityEdit (
         0.0f;
 
     // check for each combination of shift and control keys
-    if (e->GetIsEitherShiftKeyPressed())
+    if (e->IsEitherShiftKeyPressed())
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // do nothing (for now)
         }
@@ -2278,7 +2278,7 @@ void MapEditor2::WorldView::AngularVelocityEdit (
     }
     else
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // do nothing (for now)
         }
@@ -2314,9 +2314,9 @@ void MapEditor2::WorldView::VerticesEdit (
         0.0f;
 
     // check for each combination of shift and control keys
-    if (e->GetIsEitherShiftKeyPressed())
+    if (e->IsEitherShiftKeyPressed())
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the vertex selection set
             GetMainMapEditorObjectLayer()->VertexSelectionSetScale(
@@ -2352,7 +2352,7 @@ void MapEditor2::WorldView::VerticesEdit (
     }
     else
     {
-        if (e->GetIsEitherControlKeyPressed())
+        if (e->IsEitherControlKeyPressed())
         {
             // rotate the vertex selection set
             GetMainMapEditorObjectLayer()->VertexSelectionSetRotate(

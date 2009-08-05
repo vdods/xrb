@@ -88,7 +88,7 @@ Float MapEditor2::Polygon::GetArea () const
     return 0.5f * area;
 }
 
-bool MapEditor2::Polygon::GetIsPointInside (FloatVector2 const &point) const
+bool MapEditor2::Polygon::IsPointInside (FloatVector2 const &point) const
 {
     Uint32 vertex_count = GetVertexCount();
     ASSERT1(vertex_count > 0);
@@ -97,8 +97,8 @@ bool MapEditor2::Polygon::GetIsPointInside (FloatVector2 const &point) const
     if (vertex_count == 1)
         return false;
 
-    ASSERT1(GetIsCounterclockwise());
-    ASSERT1(GetIsConvex());
+    ASSERT1(IsCounterclockwise());
+    ASSERT1(IsConvex());
 
     // test the point being inside the angle made by
     // each corner of the polygon.
@@ -121,7 +121,7 @@ bool MapEditor2::Polygon::GetIsPointInside (FloatVector2 const &point) const
     return true;   
 }
 
-bool MapEditor2::Polygon::GetIsCounterclockwise () const
+bool MapEditor2::Polygon::IsCounterclockwise () const
 {
     Uint32 vertex_count = GetVertexCount();
     ASSERT1(vertex_count > 0);
@@ -144,7 +144,7 @@ bool MapEditor2::Polygon::GetIsCounterclockwise () const
     return true;
 }
 
-bool MapEditor2::Polygon::GetIsConvex () const
+bool MapEditor2::Polygon::IsConvex () const
 {
     Uint32 vertex_count = GetVertexCount();
     ASSERT1(vertex_count > 0);
@@ -236,9 +236,9 @@ void MapEditor2::Polygon::WeldSelectedVertices (
 void MapEditor2::Polygon::Draw () const
 {
     ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
-    ASSERT1(GL::GetIsTexture2dOn());
+    ASSERT1(GL::IsTexture2dOn());
 
-    if (!m_texture.GetIsValid())
+    if (!m_texture.IsValid())
         return;
 
     glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
@@ -261,7 +261,7 @@ void MapEditor2::Polygon::Draw () const
 void MapEditor2::Polygon::DrawMetrics () const
 {
     ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
-    ASSERT1(!GL::GetIsTexture2dOn());
+    ASSERT1(!GL::IsTexture2dOn());
 
     glBegin(GL_LINE_LOOP);
 
@@ -407,7 +407,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
 {
     ASSERT1(serializer.GetIODirection() == IOD_READ);
     ASSERT1(m_vertex_list.empty());
-    ASSERT1(!m_texture.GetIsValid());
+    ASSERT1(!m_texture.IsValid());
     ASSERT1(m_owner_compound != NULL);
 
     Uint32 vertex_count = serializer.ReadUint32();
@@ -426,16 +426,16 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
                 GLTexture::Create,
                 serializer.ReadStdString());
 
-    ASSERT1(GetIsCounterclockwise());
-    ASSERT1(GetIsConvex());
-    ASSERT1(!GetIsDegenerate());
+    ASSERT1(IsCounterclockwise());
+    ASSERT1(IsConvex());
+    ASSERT1(!IsDegenerate());
 }
 
 void MapEditor2::Polygon::Write (Serializer &serializer) const
 {
     ASSERT1(serializer.GetIODirection() == IOD_WRITE);
     ASSERT1(!m_vertex_list.empty());
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_texture.IsValid());
     ASSERT1(m_owner_compound != NULL);
 
     Uint32 vertex_count = m_vertex_list.size();

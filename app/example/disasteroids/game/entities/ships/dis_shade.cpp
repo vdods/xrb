@@ -58,10 +58,10 @@ Shade::~Shade ()
 void Shade::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
-    bool is_disabled = GetIsDisabled();
+    bool is_disabled = IsDisabled();
     Ship::Think(time, frame_dt);
     if (is_disabled)
     {
@@ -96,7 +96,7 @@ FloatVector2 Shade::GetMuzzleLocation (Weapon const *weapon) const
 {
     ASSERT1(weapon != NULL);
 
-    if (!m_target.GetIsValid())
+    if (!m_target.IsValid())
         return Ship::GetMuzzleLocation(weapon);
 
     FloatVector2 target_offset(
@@ -112,7 +112,7 @@ FloatVector2 Shade::GetMuzzleDirection (Weapon const *weapon) const
 {
     ASSERT1(weapon != NULL);
 
-    if (!m_target.GetIsValid())
+    if (!m_target.IsValid())
         return Ship::GetMuzzleDirection(weapon);
 
     FloatVector2 target_offset(
@@ -199,7 +199,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
         FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
-        ASSERT1(!perpendicular_velocity.GetIsZero());
+        ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
@@ -217,7 +217,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
 
 void Shade::Stalk (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -253,7 +253,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
 
 void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -366,7 +366,7 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
+    if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
@@ -378,7 +378,7 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 
 void Shade::AimWeapon (FloatVector2 const &target_position)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);

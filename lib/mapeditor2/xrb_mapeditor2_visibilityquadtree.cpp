@@ -89,7 +89,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
         if (compound == NULL)
             continue;
 
-        if (mask_by_object_selection_set && !compound->GetIsSelected())
+        if (mask_by_object_selection_set && !compound->IsSelected())
             continue;
             
         smallest_candidate = compound->GetSmallestPolygonTouchingPoint(point);
@@ -333,7 +333,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllVertices (
             continue;
         
         // perform the requested selection operation on the compound
-        if (!mask_by_object_selection_set || compound->GetIsSelected())
+        if (!mask_by_object_selection_set || compound->IsSelected())
             compound->SelectAllVertices(toggle_selection);
     }
 
@@ -390,7 +390,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllPolygons (
             continue;
         
         // perform the requested selection operation on the compound
-        if (!mask_by_object_selection_set || compound->GetIsSelected())
+        if (!mask_by_object_selection_set || compound->IsSelected())
             compound->SelectAllPolygons(toggle_selection);
     }
 

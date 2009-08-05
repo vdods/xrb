@@ -99,10 +99,10 @@ Key::Code Config::GetInputAction (KeyInputAction key) const
 void Config::SetInputAction (KeyInputAction const key, Key::Code const value)
 {
     ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
-    ASSERT1(Singletons::Input().GetIsValidKeyCode(ms_input_action_key[key].m_default_value));
+    ASSERT1(Singletons::Input().IsValidKeyCode(ms_input_action_key[key].m_default_value));
     m_input_action_name[key].clear();
     m_input_action_value[key] =
-        Singletons::Input().GetIsValidKeyCode(value) ?
+        Singletons::Input().IsValidKeyCode(value) ?
         value :
         ms_input_action_key[key].m_default_value;
 }

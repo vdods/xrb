@@ -52,7 +52,7 @@ public:
     inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
-    inline bool GetIsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetQuadTreeType()) / m_radius > 0.5f; }
+    inline bool IsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetQuadTreeType()) / m_radius > 0.5f; }
 
     bool GetDoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
@@ -96,7 +96,7 @@ protected:
         return DStaticCast<QuadTreeClass *>(m_child[index]);
     }
     // returns true if the given point is inside this quad.
-    bool GetIsPointInsideQuad (FloatVector2 const &point) const;
+    bool IsPointInsideQuad (FloatVector2 const &point) const;
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the
     // specified circle)

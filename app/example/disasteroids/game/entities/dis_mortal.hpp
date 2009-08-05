@@ -69,31 +69,31 @@ public:
 
     inline Float GetCurrentHealth () const { return m_current_health; }
     inline Float GetMaxHealth () const { return m_max_health; }
-    inline bool GetIsDead () const { return m_current_health <= 0.0f; }
-    inline bool GetIsInvincible () const { return m_is_invincible; }
+    inline bool IsDead () const { return m_current_health <= 0.0f; }
+    inline bool IsInvincible () const { return m_is_invincible; }
     inline Float GetDamageDissipationRate () const { return m_damage_dissipation_rate; }
     inline DamageType GetWeakness () const { return m_weakness; }
     inline DamageType GetStrength () const { return m_strength; }
     inline DamageType GetImmunity () const { return m_immunity; }
-    inline bool GetIsWeakAgainst (DamageType const damage_type) const
+    inline bool IsWeakAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_weakness) != 0;
     }
-    inline bool GetIsStrongAgainst (DamageType const damage_type) const
+    inline bool IsStrongAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_strength) != 0;
     }
-    inline bool GetIsImmuneAgainst (DamageType const damage_type) const
+    inline bool IsImmuneAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_immunity) != 0;
     }
-    virtual bool GetIsMortal () const { return true; }
+    virtual bool IsMortal () const { return true; }
     Sint32 GetTargetPriority () const;
 
     inline void SetIsInvincible (bool is_invincible) { m_is_invincible = is_invincible; }

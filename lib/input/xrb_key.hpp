@@ -264,11 +264,11 @@ public:
     static Key *Create (Key::Code key, std::string const &name);
 
     static inline Key::Code GetCodeFromSDLKey (SDLKey const key) { return (Key::Code)key; }
-    static bool GetIsKeyRepeatable (Key::Code code);
-    static bool GetIsKeyAscii (Key::Code code);
+    static bool IsKeyRepeatable (Key::Code code);
+    static bool IsKeyAscii (Key::Code code);
     inline Key::Code GetCode () const { return m_code; }
     inline std::string const &GetName () const { return m_name; }
-    inline bool GetIsPressed () const { return m_is_pressed; }
+    inline bool IsPressed () const { return m_is_pressed; }
 
     // resets the m_is_pressed state to false
     void ResetPressed ();

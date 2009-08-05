@@ -937,7 +937,7 @@ EnemyShip *SpawnEnemyShip (
     ASSERT1(enemy_ship != NULL);
     
     Float angle;
-    if (velocity.GetIsZero())
+    if (velocity.IsZero())
         angle = Math::RandomAngle();
     else
         angle = Math::Atan(velocity);

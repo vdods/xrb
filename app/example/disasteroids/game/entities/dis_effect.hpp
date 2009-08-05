@@ -57,7 +57,7 @@ protected:
         else
             return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
     }
-    virtual bool GetIsEffect () const { return true; }
+    virtual bool IsEffect () const { return true; }
 
 private:
 

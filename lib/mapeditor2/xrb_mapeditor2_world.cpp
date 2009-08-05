@@ -23,7 +23,7 @@ namespace Xrb
 
 MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIsOpen());
+    ASSERT1(serializer.IsOpen());
     ASSERT1(serializer.GetIODirection() == IOD_READ);
 
     Uint32 entity_capacity = serializer.ReadUint32();
@@ -159,7 +159,7 @@ void MapEditor2::World::SetMainObjectLayerIndex (Uint32 const index)
 
 void MapEditor2::World::HandleFrame ()
 {
-    if (GetIsRunning())
+    if (IsRunning())
         Engine2::World::HandleFrame();
 }
 

@@ -283,7 +283,7 @@ private:
   * as it is in scope.
   *
   * A Resource object which has not been assigned an actual resource will be
-  * "invalid" and references to its data will cause an assert.  GetIsValid
+  * "invalid" and references to its data will cause an assert.  IsValid
   * queries the validity of a Resource object.  Resources can be made "valid"
   * simply by assigning to them the value of another Resource object or by
   * assigning to them the return value of a call to 
@@ -402,7 +402,7 @@ public:
       * filename or load parameter.
       * @brief Returns true iff this Resource is referencing data.
       */
-    inline bool GetIsValid () const
+    inline bool IsValid () const
     {
         return m_instance != NULL;
     }

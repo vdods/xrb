@@ -22,7 +22,7 @@ Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_filename)
         Singletons::ResourceLibrary().LoadFilename<GLTexture>(
             GLTexture::Create,
             texture_filename);
-    if (!texture.GetIsValid())
+    if (!texture.IsValid())
         return NULL;
 
     return new Sprite(texture);
@@ -55,7 +55,7 @@ void Engine2::Sprite::Draw (
         return;
 
     // don't do anything if there's no texture
-    if (!m_texture.GetIsValid())
+    if (!m_texture.IsValid())
         return;
 
     // set up the gl modelview matrix
@@ -147,12 +147,12 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
     serializer.ReadFloatVector2(&m_physical_size_ratios);
     IndicateRadiiNeedToBeRecalculated();
 
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_texture.IsValid());
 }
 
 void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(m_texture.GetIsValid());
+    ASSERT1(m_texture.IsValid());
 
     // write out the guts
     serializer.WriteStdString(m_texture.GetFilename());

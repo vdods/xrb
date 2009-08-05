@@ -170,9 +170,9 @@ Demi::~Demi ()
     Delete(m_flame_thrower);
     ASSERT1(m_missile_launcher != NULL);
     Delete(m_missile_launcher);
-    if (m_reticle_effect.GetIsValid())
+    if (m_reticle_effect.IsValid())
     {
-        if (m_reticle_effect->GetIsInWorld())
+        if (m_reticle_effect->IsInWorld())
             m_reticle_effect->RemoveFromWorld();
         delete m_reticle_effect->GetOwnerObject();
     }
@@ -184,9 +184,9 @@ Demi::~Demi ()
     Delete(m_port_flame_thrower);
     ASSERT1(m_port_missile_launcher != NULL);
     Delete(m_port_missile_launcher);
-    if (m_port_tractor_beam.GetIsValid())
+    if (m_port_tractor_beam.IsValid())
     {
-        if (m_port_tractor_beam->GetIsInWorld())
+        if (m_port_tractor_beam->IsInWorld())
             m_port_tractor_beam->RemoveFromWorld();
         delete m_port_tractor_beam->GetOwnerObject();
     }
@@ -198,9 +198,9 @@ Demi::~Demi ()
     Delete(m_starboard_flame_thrower);
     ASSERT1(m_starboard_missile_launcher != NULL);
     Delete(m_starboard_missile_launcher);
-    if (m_starboard_tractor_beam.GetIsValid())
+    if (m_starboard_tractor_beam.IsValid())
     {
-        if (m_starboard_tractor_beam->GetIsInWorld())
+        if (m_starboard_tractor_beam->IsInWorld())
             m_starboard_tractor_beam->RemoveFromWorld();
         delete m_starboard_tractor_beam->GetOwnerObject();
     }
@@ -217,7 +217,7 @@ Demi::~Demi ()
 void Demi::Think (Float const time, Float const frame_dt)
 {
     // can't think if we're dead.
-    if (GetIsDead())
+    if (IsDead())
         return;
 
     EnemyShip::Think(time, frame_dt);
@@ -226,19 +226,19 @@ void Demi::Think (Float const time, Float const frame_dt)
     // disabled code would go here otherwise
 
     // ensure the port tractor beam is allocated (lazy allocation)
-    if (!m_port_tractor_beam.GetIsValid())
+    if (!m_port_tractor_beam.IsValid())
         m_port_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
     // if the port tractor beam is already allocated but not in the world, re-add it.
-    else if (!m_port_tractor_beam->GetIsInWorld())
+    else if (!m_port_tractor_beam->IsInWorld())
         m_port_tractor_beam->AddBackIntoWorld();
     // set the port tractor beam effect in the Tractor weapon
     m_port_tractor->SetTractorBeam(*m_port_tractor_beam);
 
     // ensure the starboard tractor beam is allocated (lazy allocation)
-    if (!m_starboard_tractor_beam.GetIsValid())
+    if (!m_starboard_tractor_beam.IsValid())
         m_starboard_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
     // if the starboard tractor beam is already allocated but not in the world, re-add it.
-    else if (!m_starboard_tractor_beam->GetIsInWorld())
+    else if (!m_starboard_tractor_beam->IsInWorld())
         m_starboard_tractor_beam->AddBackIntoWorld();
     // set the starboard tractor beam effect in the Tractor weapon
     m_starboard_tractor->SetTractorBeam(*m_starboard_tractor_beam);
@@ -256,7 +256,7 @@ void Demi::Think (Float const time, Float const frame_dt)
 
     if (GetAngularVelocity() == 0.0f)
     {
-        if (m_target.GetIsValid())
+        if (m_target.IsValid())
             AimShipAtCoordinates(m_target->GetTranslation(), frame_dt);
         else if (GetVelocity().GetLengthSquared() > 0.001f)
             AimShipAtCoordinates(GetTranslation() + GetVelocity(), frame_dt);
@@ -293,8 +293,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     }
     // remove the port tractor beam from the world if necessary
     if (m_port_weapon != m_port_tractor &&
-        m_port_tractor_beam.GetIsValid() &&
-        m_port_tractor_beam->GetIsInWorld())
+        m_port_tractor_beam.IsValid() &&
+        m_port_tractor_beam->IsInWorld())
     {
         m_port_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
     }
@@ -315,8 +315,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     }
     // remove the starboard tractor beam from the world if necessary
     if (m_starboard_weapon != m_starboard_tractor &&
-        m_starboard_tractor_beam.GetIsValid() &&
-        m_starboard_tractor_beam->GetIsInWorld())
+        m_starboard_tractor_beam.IsValid() &&
+        m_starboard_tractor_beam->IsInWorld())
     {
         m_starboard_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
     }
@@ -411,11 +411,11 @@ void Demi::Die (
     }
 
     // remove the port tractor beam, if it exists
-    if (m_port_tractor_beam.GetIsValid() && m_port_tractor_beam->GetIsInWorld())
+    if (m_port_tractor_beam.IsValid() && m_port_tractor_beam->IsInWorld())
         m_port_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
 
     // remove the starboard tractor beam, if it exists
-    if (m_starboard_tractor_beam.GetIsValid() && m_starboard_tractor_beam->GetIsInWorld())
+    if (m_starboard_tractor_beam.IsValid() && m_starboard_tractor_beam->IsInWorld())
         m_starboard_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
 }
 
@@ -541,7 +541,7 @@ void Demi::ResetInputs ()
 
 void Demi::PickWanderDirection (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_target.GetIsValid());
+    ASSERT1(!m_target.IsValid());
 
     m_main_weapon = NULL;
     m_port_weapon = NULL;
@@ -561,7 +561,7 @@ void Demi::PickWanderDirection (Float const time, Float const frame_dt)
 
 void Demi::Wander (Float const time, Float const frame_dt)
 {
-    ASSERT1(!m_target.GetIsValid());
+    ASSERT1(!m_target.IsValid());
 
     static Float const s_scan_radius = 400.0f;
 
@@ -602,7 +602,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
 
 void Demi::Stalk (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -717,7 +717,7 @@ void Demi::PauseContinue (Float const time, Float const frame_dt)
 
 void Demi::ChargeStart (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -732,7 +732,7 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
             m_target->GetTranslation(),
             GetTranslation()));
     m_charge_velocity = target_position - GetTranslation();
-    ASSERT1(!m_charge_velocity.GetIsZero());
+    ASSERT1(!m_charge_velocity.IsZero());
     m_charge_velocity.Normalize();
     m_charge_velocity *= 300.0f;
 
@@ -760,7 +760,7 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
         m_start_time = time;
         m_think_state = THINK_STATE(ChargeDecelerate);
     }
-    else if (m_target.GetIsValid() && !m_target->GetIsDead())
+    else if (m_target.IsValid() && !m_target->IsDead())
     {
         FloatVector2 target_position(
             GetObjectLayer()->GetAdjustedCoordinates(
@@ -791,7 +791,7 @@ void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
 
 void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -803,18 +803,18 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     // record the time we picked where to aim
     m_start_time = time;
 
-    ASSERT1(!m_reticle_effect.GetIsValid() || !m_reticle_effect->GetIsInWorld());
+    ASSERT1(!m_reticle_effect.IsValid() || !m_reticle_effect->IsInWorld());
     // ensure the reticle effect is allocated (lazy allocation)
-    if (!m_reticle_effect.GetIsValid())
+    if (!m_reticle_effect.IsValid())
         m_reticle_effect =
             SpawnReticleEffect(
                 GetWorld(),
                 GetObjectLayer(),
                 Color(1.0f, 0.0f, 0.0f, 0.65f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
-    else if (!m_reticle_effect->GetIsInWorld())
+    else if (!m_reticle_effect->IsInWorld())
         m_reticle_effect->AddBackIntoWorld();
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
 
     // initialize the reticle coordinates
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
@@ -829,12 +829,12 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
 
 void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     ASSERT1(m_main_weapon == m_gauss_gun);
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+        ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -865,7 +865,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
         time > m_start_time + ms_gauss_gun_max_duration[GetEnemyLevel()])
     {
-        ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+        ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
         m_think_state = THINK_STATE(PauseStart);
         return;
@@ -893,10 +893,10 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
 
 void Demi::GaussGunFire (Float const time, Float const frame_dt)
 {
-    ASSERT1(m_reticle_effect.GetIsValid() && m_reticle_effect->GetIsInWorld());
+    ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
 
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -982,7 +982,7 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
 
 void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -1309,7 +1309,7 @@ void Demi::TractorTargetCloserStart (Float const time, Float const frame_dt)
 
 void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
@@ -1386,7 +1386,7 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
 
 void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
         return;
 
     m_port_weapon = m_port_tractor;
@@ -1407,7 +1407,7 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
 
 void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame_dt)
 {
-    if (!m_target.GetIsValid() || m_target->GetIsDead())
+    if (!m_target.IsValid() || m_target->IsDead())
         return;
 
     m_starboard_weapon = m_starboard_tractor;
@@ -1432,7 +1432,7 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
     FloatVector2 velocity_differential =
         velocity - (GetVelocity() + frame_dt * GetForce() / GetFirstMoment());
     FloatVector2 thrust_vector = GetFirstMoment() * velocity_differential / frame_dt;
-    if (!thrust_vector.GetIsZero())
+    if (!thrust_vector.IsZero())
     {
         if (max_thrust < 0.0f)
             max_thrust = ms_engine_thrust[GetEnemyLevel()];
@@ -1480,13 +1480,13 @@ Entity *Demi::FindTractorDeflectTarget (
         Float collision_time = GetCollisionTime(entity, 2.0f);
         if (collision_time >= 0.0f)
         {
-            if (entity->GetIsExplosive() &&
+            if (entity->IsExplosive() &&
                 entity->GetEntityType() != ET_ENEMY_MISSILE &&
                 entity->GetEntityType() != ET_GUIDED_ENEMY_MISSILE)
             {
                 potential_target_priority = 30 + DStaticCast<Explosive *>(entity)->GetWeaponLevel();
             }
-            else if (entity->GetIsBallistic())
+            else if (entity->IsBallistic())
             {
                 potential_target_priority = 20 + DStaticCast<Ballistic *>(entity)->GetWeaponLevel();
             }

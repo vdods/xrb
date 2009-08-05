@@ -74,7 +74,7 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
             ASSERT3(object->GetColorMask()[Dim::A] <= 1.0f);
             // if it's a transparent object and the transparent object vector
             // exists, add it to the transparent object vector.
-            if (object->GetIsTransparent() ||
+            if (object->IsTransparent() ||
                 object->GetColorMask()[Dim::A] < 1.0f ||
                 (distance_fade = CalculateDistanceFade(object_radius)) < 1.0f ||
                 m_object_draw_data.GetRenderContext().GetColorMask()[Dim::A] < 1.0f)
@@ -122,7 +122,7 @@ Engine2::Object::~Object ()
     if (m_entity != NULL)
     {
         ASSERT1(m_entity->m_owner_object == this);
-        ASSERT1(!m_entity->GetIsInWorld());
+        ASSERT1(!m_entity->IsInWorld());
         m_entity->m_owner_object = NULL;
         Delete(m_entity);
     }
@@ -264,7 +264,7 @@ void Engine2::Object::CalculateTransform () const
     /*
     // original function code (kept around because this version does the
     // same thing but is much easier to read)
-    if (GetIsDirty() || m_radii_need_to_be_recalculated)
+    if (IsDirty() || m_radii_need_to_be_recalculated)
     {
         RecalculateTransformIfNecessary();
         // recalculate all radii
@@ -275,7 +275,7 @@ void Engine2::Object::CalculateTransform () const
     */
 
     // optimized function code:
-    if (GetIsDirty())
+    if (IsDirty())
     {
         if (GetScalingAndRotationIsDirty())
         {

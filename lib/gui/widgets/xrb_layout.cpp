@@ -757,8 +757,8 @@ void Layout::ResizeAndRepositionChildWidgets ()
 
             // only resize and reposition non-NULL, unhidden and non-modal widgets
             if (child != NULL &&
-                !child->GetIsHidden() &&
-                !child->GetIsModal())
+                !child->IsHidden() &&
+                !child->IsModal())
             {
                 ScreenCoordVector2 requested_size(
                     m_column_width[column],
@@ -849,8 +849,8 @@ void Layout::CalculateLineSizeProperties (
 
         // skip empty grid slots
         if (child == NULL || // empty slot counts as hidden
-            child->GetIsHidden() || // actually hidden
-            child->GetIsModal()) // modal widgets are reparented to the Screen
+            child->IsHidden() || // actually hidden
+            child->IsModal()) // modal widgets are reparented to the Screen
         {
             ++hidden_child_widget_count;
             continue;

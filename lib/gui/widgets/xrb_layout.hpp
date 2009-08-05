@@ -51,11 +51,11 @@ public:
         return (m_child_vector.size() + m_major_count - 1) / m_major_count;
     }
 
-    inline bool GetIsUsingZeroedFrameMargins () const
+    inline bool IsUsingZeroedFrameMargins () const
     {
         return m_is_using_zeroed_frame_margins;
     }
-    inline bool GetIsUsingZeroedLayoutSpacingMargins () const
+    inline bool IsUsingZeroedLayoutSpacingMargins () const
     {
         return m_is_using_zeroed_layout_spacing_margins;
     }
@@ -133,13 +133,13 @@ protected:
 
     inline ScreenCoordVector2 const &CalculateLayoutFrameMargins () const
     {
-        return GetIsUsingZeroedFrameMargins() ?
+        return IsUsingZeroedFrameMargins() ?
                ScreenCoordVector2::ms_zero :
                GetWidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
     }
     inline ScreenCoordVector2 const &CalculateLayoutSpacingMargins () const
     {
-        return GetIsUsingZeroedLayoutSpacingMargins() ?
+        return IsUsingZeroedLayoutSpacingMargins() ?
                ScreenCoordVector2::ms_zero :
                GetWidgetSkinMargins(WidgetSkin::LAYOUT_SPACING_MARGINS);
     }

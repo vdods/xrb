@@ -51,7 +51,7 @@ namespace Engine2
         {
             return m_transform;
         }
-        inline bool GetIsTransformScalingBasedUponWidgetRadius () const
+        inline bool IsTransformScalingBasedUponWidgetRadius () const
         {
             return m_is_transform_scaling_based_upon_widget_radius;
         }

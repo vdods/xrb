@@ -239,8 +239,8 @@ public:
     }
     virtual ~FlameThrower () { }
 
-    inline bool GetIsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
-    inline bool GetIsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
+    inline bool IsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
+    inline bool IsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
     inline Float GetMaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
     inline Float GetFinalFireballSizeOverride () const { return m_final_fireball_size_override; }
 
@@ -322,15 +322,15 @@ public:
     }
     virtual ~GaussGun ()
     {
-//         if (m_reticle_effect.GetIsValid())
+//         if (m_reticle_effect.IsValid())
 //         {
-//             if (m_reticle_effect->GetIsInWorld())
+//             if (m_reticle_effect->IsInWorld())
 //                 m_reticle_effect->RemoveFromWorld();
 //             delete m_reticle_effect->GetOwnerObject();
 //         }
     }
 
-    inline bool GetIsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
+    inline bool IsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
     inline Float GetImpactDamageOverride () const { return m_impact_damage_override; }
 
     inline void SetImpactDamageOverride (Float impact_damage_override)
@@ -674,16 +674,16 @@ public:
     }
     virtual ~Tractor () { }
 
-    inline bool GetIsRangeOverridden () const { return m_range_override >= 0.0f; }
+    inline bool IsRangeOverridden () const { return m_range_override >= 0.0f; }
     inline Float GetRangeOverride () const { return m_range_override; }
 
-    inline bool GetIsStrengthOverridden () const { return m_strength_override >= 0.0f; }
+    inline bool IsStrengthOverridden () const { return m_strength_override >= 0.0f; }
     inline Float GetStrengthOverride () const { return m_strength_override; }
 
-    inline bool GetIsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
+    inline bool IsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
     inline Float GetMaxForceOverride () const { return m_max_force_override; }
 
-    inline bool GetIsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
+    inline bool IsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
     inline Float GetBeamRadiusOverride () const { return m_beam_radius_override; }
 
     inline void SetRangeOverride (Float range_override)
@@ -832,7 +832,7 @@ public:
     virtual ~EnemySpawner () { }
 
     inline EntityType GetEnemySpawnType () const { return m_enemy_spawn_type; }
-    inline bool GetIsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
+    inline bool IsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
     inline Float GetFireRateOverride () const { return m_fire_rate_override; }
 
     inline void SetEnemySpawnType (EntityType enemy_spawn_type)
@@ -856,7 +856,7 @@ public:
     virtual Float GetReadinessStatus (Float time) const
     {
         Float const fire_rate =
-            GetIsFireRateOverridden() ?
+            IsFireRateOverridden() ?
             GetFireRateOverride() :
             ms_fire_rate[GetUpgradeLevel()];
         Float const cycle_time = 1.0f / fire_rate;

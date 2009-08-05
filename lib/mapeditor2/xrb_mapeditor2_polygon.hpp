@@ -72,10 +72,10 @@ namespace MapEditor2
         Uint32 GetSelectedVertexCount () const;
         FloatVector2 const &GetVertex (Uint32 index) const;
         Float GetArea () const;    
-        bool GetIsPointInside (FloatVector2 const &point) const;
-        bool GetIsCounterclockwise () const;
-        bool GetIsConvex () const;
-        inline bool GetIsDegenerate () const
+        bool IsPointInside (FloatVector2 const &point) const;
+        bool IsCounterclockwise () const;
+        bool IsConvex () const;
+        inline bool IsDegenerate () const
         {
             return GetArea() == 0.0f;
         }

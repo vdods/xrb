@@ -540,17 +540,17 @@ void VectorUnitTest::AtomZeroComparison ()
 {
     FloatVector2 non_zero_vector(1.0f, 2.0f);
 
-    PrintSubsectionHeader("Checking GetIsZero()");
-    Test(FloatVector2::ms_zero.GetIsZero(),
-         "ms_zero.GetIsZero()");
-    Test(!(non_zero_vector.GetIsZero()),
-         "!(non_zero_vector.GetIsZero())");
+    PrintSubsectionHeader("Checking IsZero()");
+    Test(FloatVector2::ms_zero.IsZero(),
+         "ms_zero.IsZero()");
+    Test(!(non_zero_vector.IsZero()),
+         "!(non_zero_vector.IsZero())");
 
-    PrintSubsectionHeader("Checking GetIsNonZero()");
-    Test(!(FloatVector2::ms_zero.GetIsNonZero()),
-         "!(ms_zero.GetIsNonZero())");
-    Test(non_zero_vector.GetIsNonZero(),
-         "non_zero_vector.GetIsNonZero()");
+    PrintSubsectionHeader("Checking IsNonZero()");
+    Test(!(FloatVector2::ms_zero.IsNonZero()),
+         "!(ms_zero.IsNonZero())");
+    Test(non_zero_vector.IsNonZero(),
+         "non_zero_vector.IsNonZero()");
 }
 
 void VectorUnitTest::AtomFillWith ()

@@ -78,7 +78,7 @@ void EventQueue::DeleteEventsBelongingToHandler (
          it != it_end;
          ++it)
     {
-        if (!it->GetEvent()->GetIsScheduledForDeletion())
+        if (!it->GetEvent()->IsScheduledForDeletion())
             if (it->GetEventHandler() == event_handler)
                 it->GetEvent()->ScheduleForDeletion();
     }
@@ -96,7 +96,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
         Event const *event = it->GetEvent();
         ASSERT1(event != NULL);
         // only check events that aren't already scheduled for deletion
-        if (!event->GetIsScheduledForDeletion())
+        if (!event->IsScheduledForDeletion())
             // if the function indicates a match, schedule the event for deletion
             if (EventMatchingFunction(event))
                 event->ScheduleForDeletion();
@@ -129,7 +129,7 @@ void EventQueue::HandleFrame ()
             ASSERT1(it->GetEventHandler() != NULL);
             ASSERT1(it->GetEvent() != NULL);
             // don't process the event if it's already scheduled for deletion
-            if (!it->GetEvent()->GetIsScheduledForDeletion())
+            if (!it->GetEvent()->IsScheduledForDeletion())
             {
                 // schedule the event for deletion first, so if it ever checks
                 // for scheduled-to-be-deleted events during its processing,
@@ -147,7 +147,7 @@ void EventQueue::HandleFrame ()
              it != it_end;
              ++it)
         {
-            ASSERT1(it->GetEvent()->GetIsScheduledForDeletion());
+            ASSERT1(it->GetEvent()->IsScheduledForDeletion());
             delete it->GetEvent();            
         }
         

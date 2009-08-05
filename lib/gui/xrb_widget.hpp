@@ -190,11 +190,11 @@ public:
     /** @brief Returns true iff this is a top-level widget (i.e. it has
       *        no parent).
       */
-    inline bool GetIsTopLevelParent () const { return m_parent == NULL; }
+    inline bool IsTopLevelParent () const { return m_parent == NULL; }
     /** @brief Returns true iff this widget is focused.  If this is a
       *        top-level widget, then it has focus by default.
       */
-    bool GetIsFocused () const;
+    bool IsFocused () const;
     /** The member variable @c m_accepts_focus should be set in Widget
       * derivative classes to indicate if they will accept focus.  The
       * default value set by the constructor of Widget is false.
@@ -205,7 +205,7 @@ public:
       *        (i.e. its parent has this widget as its m_mouseover_focus
       *        value).
       */
-    bool GetIsMouseover () const;
+    bool IsMouseover () const;
     /** The member variable @c m_accepts_mouseover should be set in Widget
       * derivative classes to indicate if they will accept mouseover focus.
       * The default value set by the constructor of Widget is true.
@@ -216,16 +216,16 @@ public:
       *        all mouse events will go to/through it even if the mouse is not
       *        directly over it).
       */
-    bool GetIsMouseGrabbed () const;
+    bool IsMouseGrabbed () const;
     /** @brief Returns true iff this widget is enabled.
       */
-    inline bool GetIsEnabled () const { return m_is_enabled; }
+    inline bool IsEnabled () const { return m_is_enabled; }
     /** @brief Returns true iff this widget is hidden.
       */
-    inline bool GetIsHidden () const { return m_is_hidden; }
+    inline bool IsHidden () const { return m_is_hidden; }
     /** @brief Returns true iff this widget is currently modal.
       */
-    inline bool GetIsModal () const { return m_is_modal; }
+    inline bool IsModal () const { return m_is_modal; }
     /** @brief Returns the widget stack priority of this widget.
       * @see StackPriority
       */

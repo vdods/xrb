@@ -68,7 +68,7 @@ void HighScores::operator = (HighScores const &high_scores)
     m_score_list = high_scores.m_score_list;
 }
 
-bool HighScores::GetIsNewHighScore (Score const &score)
+bool HighScores::IsNewHighScore (Score const &score)
 {
     ASSERT1(!m_best_points_score_set.empty());
     ASSERT1(!m_best_wave_count_score_set.empty());
@@ -126,7 +126,7 @@ Score const &HighScores::GetBestWaveCountScore (Uint32 index) const
 bool HighScores::AddScore (Score const &score)
 {
     ASSERT1(!score.GetName().empty());
-    ASSERT1(GetIsNewHighScore(score));
+    ASSERT1(IsNewHighScore(score));
 
     ScoreOrderByPoints score_order_by_points;
     ScoreOrderByWaveCount score_order_by_wave_count;

@@ -67,7 +67,7 @@ public:
     inline bool GetWordWrap () const { return m_word_wrap; }
     /** @brief Returns true if this is a picture label, false for text label.
       */
-    inline bool GetIsPictureLabel () const { return m_is_picture_label; }
+    inline bool IsPictureLabel () const { return m_is_picture_label; }
     /** If this is a text label, the returned resource will be invalid.
       * @brief Returns the resourced GLTexture picture for this label.
       */

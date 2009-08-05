@@ -50,7 +50,7 @@ public:
     }
 
     // Entity interface method
-    virtual bool GetIsPowerup () const { return true; }
+    virtual bool IsPowerup () const { return true; }
 
     inline ItemType GetItemType () const
     {

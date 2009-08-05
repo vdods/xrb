@@ -129,34 +129,34 @@ public:
       * @brief Returns true iff the EventQueue has scheduled this event to
       * be deleted.
       */
-    inline bool GetIsScheduledForDeletion () const { return m_is_scheduled_for_deletion; }
+    inline bool IsScheduledForDeletion () const { return m_is_scheduled_for_deletion; }
     /** Input event subclasses (key/mouse/joy) will override this function to
       * return true.
       * @brief Returns true iff this is an input event (key/mouse/joy).
       */
-    virtual bool GetIsInputEvent () const { return false; }
+    virtual bool IsInputEvent () const { return false; }
     /** Keyboard event subclasses will override this function to return true.
       * @brief Returns true iff this is a keyboard event.
       */
-    virtual bool GetIsKeyEvent () const { return false; }
+    virtual bool IsKeyEvent () const { return false; }
     /** Mouse event subclasses will override this function to return true.
       * @brief Returns true iff this is a mouse event.
       */
-    virtual bool GetIsMouseEvent () const { return false; }
+    virtual bool IsMouseEvent () const { return false; }
     /** Mouse button event subclasses will override this function to return
       * true.
       * @brief Returns true iff this is a mouse button event.
       */
-    virtual bool GetIsMouseButtonEvent () const { return false; }
+    virtual bool IsMouseButtonEvent () const { return false; }
     /** Mouse motion event subclasses will override this function to return
       * true.
       * @brief Returns true iff this is a mouse motion event.
       */
-    virtual bool GetIsMouseMotionEvent () const { return false; }
+    virtual bool IsMouseMotionEvent () const { return false; }
     /** Joy event subclasses will override this function to return true.
       * @brief Returns true iff this is a joy event.
       */
-    virtual bool GetIsJoyEvent () const { return false; }
+    virtual bool IsJoyEvent () const { return false; }
 
     /** The SDL_Event itself will be saved in the Event, and the created
       * event will be populated with the necessary class-specific information.

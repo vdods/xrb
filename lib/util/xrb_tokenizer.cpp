@@ -71,7 +71,7 @@ char const *Tokenizer::GetToken () const
     // until a non-delimiter is found (but don't go past the end of
     // the string of course).
     while (*m_end_of_token != '\0' &&
-           GetIsCharADelimiter(*m_end_of_token))
+           IsCharADelimiter(*m_end_of_token))
     {
         ++m_end_of_token;
     }
@@ -94,7 +94,7 @@ char const *Tokenizer::GetToken () const
     // which will be the end of the token, and the char to replace
     // with a null (but don't go past the end of the string of course).
     while (*m_end_of_token != '\0' &&
-           !GetIsCharADelimiter(*m_end_of_token))
+           !IsCharADelimiter(*m_end_of_token))
     {
         ++m_end_of_token;
     }
@@ -111,7 +111,7 @@ char const *Tokenizer::GetToken () const
     // at this point, m_end_of_token is pointing to the non-null char
     // delimiter at the end of the requested token.  replace it with
     // a null char, saving off the delimiter that was replaced.
-    ASSERT1(GetIsCharADelimiter(*m_end_of_token));
+    ASSERT1(IsCharADelimiter(*m_end_of_token));
     m_replaced_delimiter = *m_end_of_token;
     *m_end_of_token = 0;
 
@@ -119,7 +119,7 @@ char const *Tokenizer::GetToken () const
     return token_to_return;
 }
 
-bool Tokenizer::GetIsCharADelimiter (char const c) const
+bool Tokenizer::IsCharADelimiter (char const c) const
 {
     ASSERT1(m_delimiters != NULL);
 

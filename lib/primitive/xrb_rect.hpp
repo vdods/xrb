@@ -208,7 +208,7 @@ public:
         return retval;
     }
 
-    inline bool GetIsValid () const
+    inline bool IsValid () const
     {
         return m_bottom_left[Dim::X] <= m_top_right[Dim::X] &&
                m_bottom_left[Dim::Y] <= m_top_right[Dim::Y];
@@ -218,7 +218,7 @@ public:
         return m_bottom_left[Dim::X] < m_top_right[Dim::X] &&
                m_bottom_left[Dim::Y] < m_top_right[Dim::Y];
     }
-    inline bool GetIsPointInside (Vector<T, 2> const &point) const
+    inline bool IsPointInside (Vector<T, 2> const &point) const
     {
         return m_bottom_left[Dim::X] <= point[Dim::X] &&
                point[Dim::X] < m_top_right[Dim::X] &&

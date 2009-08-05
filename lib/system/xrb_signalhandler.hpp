@@ -67,7 +67,7 @@ public:
     /** @brief Signal/callback blocking state accessor.
       * @return True iff this SignalSender* is disallowing outgoing signals.
       */
-    inline bool GetIsBlocking () const
+    inline bool IsBlocking () const
     {
         return m_is_blocking;
     }
@@ -158,7 +158,7 @@ public:
         ASSERT1(m_iterator != m_iterator_end);
         return *m_iterator;
     }
-    inline bool GetIsIteratorAttachmentValid () const
+    inline bool IsIteratorAttachmentValid () const
     {
         return m_iterator != m_iterator_end;
     }
@@ -335,13 +335,13 @@ public:
         // we can early out if the sender is blocked (since it can't
         // cause any receiver callbacks, there's no way for it to become
         // unblocked during this call to Signal().
-        if (this->GetOwner()->GetIsBlockingSenders() || this->GetIsBlocking())
+        if (this->GetOwner()->IsBlockingSenders() || this->IsBlocking())
             return;
 
         // iterate through all attached ports and call their
         // callbacks, if outgoing signals aren't blocked
         this->FetchFirstIteratorAttachment();
-        while (this->GetIsIteratorAttachmentValid())
+        while (this->IsIteratorAttachmentValid())
         {
             Attachment<SignalReceiver1<T>, TransformationSet1<T> > const &attachment =
                 this->GetIteratorAttachment();
@@ -351,12 +351,12 @@ public:
             // blocking senders and this sender isn't blocking itself.
             // this code can't be above this for-loop because the blocking
             // status might change during one of the callbacks.
-            if (!this->GetOwner()->GetIsBlockingSenders() && !this->GetIsBlocking())
+            if (!this->GetOwner()->IsBlockingSenders() && !this->IsBlocking())
             {
                 // only call the callback if the receiver's owner isn't blocking
                 // all receivers and if the receiver isn't blocking itself
-                if (!attachment.m_receiver->GetOwner()->GetIsBlockingReceivers() &&
-                    !attachment.m_receiver->GetIsBlocking())
+                if (!attachment.m_receiver->GetOwner()->IsBlockingReceivers() &&
+                    !attachment.m_receiver->IsBlocking())
                 {
                     (attachment.m_receiver->GetOwner()->*attachment.m_receiver->m_callback)(
                         (attachment.m_transformation_set.m_transformation_function != NULL) ?
@@ -416,13 +416,13 @@ public:
         // we can early out if the sender is blocked (since it can't
         // cause any receiver callbacks, there's no way for it to become
         // unblocked during this call to Signal().
-        if (this->GetOwner()->GetIsBlockingSenders() || this->GetIsBlocking())
+        if (this->GetOwner()->IsBlockingSenders() || this->IsBlocking())
             return;
 
         // iterate through all attached ports and call their
         // callbacks, if outgoing signals aren't blocked
         this->FetchFirstIteratorAttachment();
-        while (this->GetIsIteratorAttachmentValid())
+        while (this->IsIteratorAttachmentValid())
         {
             Attachment<SignalReceiver2<T, U>, TransformationSet2<T, U> > const &attachment =
                 this->GetIteratorAttachment();
@@ -432,12 +432,12 @@ public:
             // blocking senders and this sender isn't blocking itself.
             // this code can't be above this for-loop because the blocking
             // status might change during one of the callbacks.
-            if (!this->GetOwner()->GetIsBlockingSenders() && !this->GetIsBlocking())
+            if (!this->GetOwner()->IsBlockingSenders() && !this->IsBlocking())
             {
                 // only call the callback if the receiver's owner isn't blocking
                 // all receivers and if the receiver isn't blocking itself
-                if (!attachment.m_receiver->GetOwner()->GetIsBlockingReceivers() &&
-                    !attachment.m_receiver->GetIsBlocking())
+                if (!attachment.m_receiver->GetOwner()->IsBlockingReceivers() &&
+                    !attachment.m_receiver->IsBlocking())
                 {
                     (attachment.m_receiver->GetOwner()->*attachment.m_receiver->m_callback)(
                         (attachment.m_transformation_set.m_transformation_function_1 != NULL) ?
@@ -491,7 +491,7 @@ public:
       * @return True iff this SignalReceiver* is disallowing its
       *         callback to be called.
       */
-    inline bool GetIsBlocking () const
+    inline bool IsBlocking () const
     {
         return m_is_blocking;
     }
@@ -747,7 +747,7 @@ public:
       *          by this SignalHandler (has no connection to the individual
       *          SignalSender*'s blocking state).
       */
-    bool GetIsBlockingSenders () const
+    bool IsBlockingSenders () const
     {
         return m_is_blocking_senders;
     }
@@ -756,7 +756,7 @@ public:
       *          by this SignalHandler (has no connection to the individual
       *          SignalReceiver*'s blocking state).
       */
-    bool GetIsBlockingReceivers () const
+    bool IsBlockingReceivers () const
     {
         return m_is_blocking_receivers;
     }
@@ -880,14 +880,14 @@ private:
       * SignalSenderBase.
       * @brief Adds a SignalSender* to be owned by this SignalHandler.
       * @param sender A SignalSender* object to add to this SignalHandler.
-      *               @code sender->GetIsSender() @endcode must return true.
+      *               @code sender->IsSender() @endcode must return true.
       */
     void AddSender (SignalSenderBase const *sender);
     /** This function is and should only be used by the constructor of
       * SignalReceiverBase.
       * @brief Adds a SignalReceiver* to be owned by this SignalHandler.
       * @param receiver A SignalReceiver* object to add to this SignalHandler.
-      *                 @code receiver->GetIsReceiver() @endcode must return
+      *                 @code receiver->IsReceiver() @endcode must return
       *                 true.
       */
     void AddReceiver (SignalReceiverBase const *receiver);

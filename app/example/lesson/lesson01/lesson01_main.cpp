@@ -295,7 +295,7 @@ int main (int argc, char **argv)
         or clicking the little X in the corner of the window pane).  We want
         to loop until the user requests to quit the app.
         @code */
-        while (!screen->GetIsQuitRequested())
+        while (!screen->IsQuitRequested())
         {
             /* @endcode
             Sleep for 33 milliseconds so we don't suck up too much CPU time.
@@ -344,7 +344,7 @@ int main (int argc, char **argv)
                 singleton process it.  This step is necessary so that the
                 state of said user-input devices is updated.
                 @code */
-                if (event->GetIsKeyEvent() || event->GetIsMouseButtonEvent())
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singletons::Input().ProcessEvent(event);
                 /* @endcode
                 All events are delegated to the proper widgets via the top of

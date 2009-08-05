@@ -17,12 +17,12 @@ namespace Xrb
 
 Polynomial::Polynomial (Polynomial const &polynomial)
 {
-    ASSERT1(polynomial.GetIsHighestCoefficientNonZero());
+    ASSERT1(polynomial.IsHighestCoefficientNonZero());
     
     m.resize(polynomial.m.size());
     copy(polynomial.m.begin(), polynomial.m.end(), m.begin());
 
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 Float Polynomial::Evaluate (Float const x) const
@@ -49,7 +49,7 @@ Float Polynomial::Evaluate (Float const x) const
 
 void Polynomial::Derive (Uint32 const order)
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
     
     // TODO: more efficient non-iterative version
     for (Uint32 d = 0; d < order; ++d)
@@ -69,12 +69,12 @@ void Polynomial::Derive (Uint32 const order)
         m.resize(m.size() - 1);
     }
     
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 void Polynomial::Integrate (Uint32 const order)
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 
     // TODO: more efficient non-iterative version
     for (Uint32 d = 0; d < order; ++d)
@@ -89,7 +89,7 @@ void Polynomial::Integrate (Uint32 const order)
     }
     
     Minimize();
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 void Polynomial::Solve (SolutionSet *const solution_set, Float const tolerance) const
@@ -162,19 +162,19 @@ void Polynomial::Solve (SolutionSet *const solution_set, Float const tolerance) 
 
 void Polynomial::operator = (Polynomial const &operand)
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
-    ASSERT1(operand.GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
+    ASSERT1(operand.IsHighestCoefficientNonZero());
     
     m.resize(operand.m.size());
     copy(operand.m.begin(), operand.m.end(), m.begin());
 
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 Polynomial Polynomial::operator * (Polynomial const &operand) const
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
-    ASSERT1(operand.GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
+    ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Polynomial retval;
     if (GetOrder() == 0 && m[0] == 0.0f)
@@ -202,14 +202,14 @@ Polynomial Polynomial::operator * (Polynomial const &operand) const
         }
     }
     
-    ASSERT1(retval.GetIsHighestCoefficientNonZero());
+    ASSERT1(retval.IsHighestCoefficientNonZero());
     return retval;
 }
 
 void Polynomial::operator += (Polynomial const &operand) 
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
-    ASSERT1(operand.GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
+    ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Uint32 size = Max(m.size(), operand.m.size());
     m.resize(size);
@@ -217,13 +217,13 @@ void Polynomial::operator += (Polynomial const &operand)
         m[i] += operand.Get(i);
 
     Minimize();
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 void Polynomial::operator -= (Polynomial const &operand) 
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
-    ASSERT1(operand.GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
+    ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Uint32 size = Max(m.size(), operand.m.size());
     m.resize(size);
@@ -231,13 +231,13 @@ void Polynomial::operator -= (Polynomial const &operand)
         m[i] -= operand.Get(i);
 
     Minimize();
-    ASSERT1(GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
 }
 
 void Polynomial::operator *= (Polynomial const &operand)
 {
-    ASSERT1(GetIsHighestCoefficientNonZero());
-    ASSERT1(operand.GetIsHighestCoefficientNonZero());
+    ASSERT1(IsHighestCoefficientNonZero());
+    ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Polynomial result;
     if (GetOrder() > 0 || m[0] != 0.0f)
@@ -265,7 +265,7 @@ void Polynomial::operator *= (Polynomial const &operand)
         }
     }
     
-    ASSERT1(result.GetIsHighestCoefficientNonZero());
+    ASSERT1(result.IsHighestCoefficientNonZero());
     operator=(result);    
 }
 

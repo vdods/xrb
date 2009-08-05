@@ -38,7 +38,7 @@ KeyRepeater::~KeyRepeater ()
 
 EventKeyRepeat *KeyRepeater::DequeueEvent ()
 {
-    ASSERT1(!m_key_event_queue.GetIsEmpty());
+    ASSERT1(!m_key_event_queue.IsEmpty());
     return m_key_event_queue.Dequeue();
 }
 
@@ -50,14 +50,14 @@ void KeyRepeater::HandleFrame ()
 
 bool KeyRepeater::HandleEvent (Event const *const e)
 {
-    if (e->GetIsKeyEvent())
+    if (e->IsKeyEvent())
     {
         // generate key events from the current state
         GenerateKeyEvents(e->GetTime());
 
         EventKey const *key_event = static_cast<EventKey const *>(e);
-        if (key_event->GetIsKeyDownEvent() &&
-            Key::GetIsKeyRepeatable(key_event->GetKeyCode()))
+        if (key_event->IsKeyDownEvent() &&
+            Key::IsKeyRepeatable(key_event->GetKeyCode()))
         {
 
             EventKeyDown const *key_down_event = static_cast<EventKeyDown const *>(e);
@@ -69,8 +69,8 @@ bool KeyRepeater::HandleEvent (Event const *const e)
             // the event was used
             return true;
         }
-        else if (key_event->GetIsKeyUpEvent() &&
-                 Key::GetIsKeyRepeatable(key_event->GetKeyCode()))
+        else if (key_event->IsKeyUpEvent() &&
+                 Key::IsKeyRepeatable(key_event->GetKeyCode()))
         {
             // if the key up event matches the current key event, then
             // deactivate the current key event.
@@ -94,7 +94,7 @@ void KeyRepeater::GenerateKeyEvents (Float const time)
         return;
 
     // loop to generate events until they are no more to be made
-    while (m_next_repeat_time <= time && !m_key_event_queue.GetIsFull())
+    while (m_next_repeat_time <= time && !m_key_event_queue.IsFull())
     {
         // generate the event
         EventKeyRepeat *key_repeat_event =
@@ -106,7 +106,7 @@ void KeyRepeater::GenerateKeyEvents (Float const time)
     }
 
     // if the buffer filled up, skip the next repeat time to the current time
-    if (m_key_event_queue.GetIsFull())
+    if (m_key_event_queue.IsFull())
         m_next_repeat_time = time;
 }
 

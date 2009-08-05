@@ -50,7 +50,7 @@ namespace GL
     GLint GetMaxMatrixStackDepth (GLenum matrix_mode);
     /** @brief Returns true if GL_TEXTURE_2D is enabled
       */
-    bool GetIsTexture2dOn ();
+    bool IsTexture2dOn ();
 
     /** Widget calls during @ref Xrb::Widget::Draw -- you shouldn't need to
       * call it directly.

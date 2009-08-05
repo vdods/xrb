@@ -1352,7 +1352,7 @@ unsigned int const DataFileParser::ms_state_transition_count =
 DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
 {
     ASSERT1(m_scanner != NULL);
-    ASSERT1(!m_scanner->GetIsOpen());
+    ASSERT1(!m_scanner->IsOpen());
     // if there are any pipe characters in the filename, return failure
     if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
         return RC_INVALID_FILENAME;

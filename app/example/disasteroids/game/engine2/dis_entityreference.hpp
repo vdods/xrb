@@ -40,7 +40,7 @@ private:
     inline Entity const *operator * () const { return m_entity; }
     inline Entity *operator * () { return m_entity; }
 
-    inline bool GetIsValid () const { return m_entity != NULL; }
+    inline bool IsValid () const { return m_entity != NULL; }
     inline Uint32 GetReferenceCount () const { return m_reference_count; }
 
     // these should be called only by EntityReference
@@ -83,7 +83,7 @@ public:
         // check that either the entity_instance is NULL, the game object
         // is NULL, or the template type cast is valid.
         ASSERT1(entity_reference.m_entity_instance == NULL ||
-                !entity_reference.m_entity_instance->GetIsValid() ||
+                !entity_reference.m_entity_instance->IsValid() ||
                 dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL);
         // copy the entity_instance
         m_entity_instance = entity_reference.m_entity_instance;
@@ -121,7 +121,7 @@ public:
         // check that either the entity_instance is NULL, the game object
         // is NULL, or the template type cast is valid.
         ASSERT1(entity_reference.m_entity_instance == NULL ||
-                !entity_reference.m_entity_instance->GetIsValid() ||
+                !entity_reference.m_entity_instance->IsValid() ||
                 dynamic_cast<EntitySubclass *>(**entity_reference.m_entity_instance) != NULL);
 
         // decrement the old instance's ref count (if it exists)
@@ -150,14 +150,14 @@ public:
 
     inline EntitySubclass const *operator * () const
     {
-        if (m_entity_instance != NULL && m_entity_instance->GetIsValid())
+        if (m_entity_instance != NULL && m_entity_instance->IsValid())
             return static_cast<EntitySubclass const *>(**m_entity_instance);
         else
             return NULL;
     }
     inline EntitySubclass *operator * ()
     {
-        if (m_entity_instance != NULL && m_entity_instance->GetIsValid())
+        if (m_entity_instance != NULL && m_entity_instance->IsValid())
             return static_cast<EntitySubclass *>(**m_entity_instance);
         else
             return NULL;
@@ -165,19 +165,19 @@ public:
     inline EntitySubclass const *operator -> () const
     {
         ASSERT1(m_entity_instance != NULL);
-        ASSERT1(m_entity_instance->GetIsValid());
+        ASSERT1(m_entity_instance->IsValid());
         return static_cast<EntitySubclass const *>(**m_entity_instance);
     }
     inline EntitySubclass *operator -> ()
     {
         ASSERT1(m_entity_instance != NULL);
-        ASSERT1(m_entity_instance->GetIsValid());
+        ASSERT1(m_entity_instance->IsValid());
         return static_cast<EntitySubclass *>(**m_entity_instance);
     }
 
-    inline bool GetIsValid () const
+    inline bool IsValid () const
     {
-        return m_entity_instance != NULL && m_entity_instance->GetIsValid();
+        return m_entity_instance != NULL && m_entity_instance->IsValid();
     }
 
     inline void SetInstance (EntityInstance *entity_instance)

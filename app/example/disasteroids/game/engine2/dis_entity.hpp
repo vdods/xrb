@@ -33,7 +33,7 @@ public:
     Entity (EntityType entity_type, CollisionType collision_type);
     virtual ~Entity ()
     {
-        if (m_reference.GetIsValid())
+        if (m_reference.IsValid())
             m_reference.NullifyEntity();
     }
 
@@ -45,10 +45,10 @@ public:
     inline Float GetNextTimeToThink () const { return m_next_time_to_think; }
     inline EntityReference<Entity> const &GetReference ()
     {
-        if (!m_reference.GetIsValid())
+        if (!m_reference.IsValid())
         {
             m_reference.SetInstance(new EntityInstance(this));
-            ASSERT1(m_reference.GetIsValid());
+            ASSERT1(m_reference.IsValid());
             ASSERT1(*m_reference == this);
         }
         return m_reference;
@@ -76,13 +76,13 @@ public:
         if (entity1 == NULL || entity2 == NULL)
             return true;
 
-        if (entity2->GetIsPowerup() &&
-            (entity1->GetIsPlayerShip() ||
+        if (entity2->IsPowerup() &&
+            (entity1->IsPlayerShip() ||
              entity1->GetEntityType() == ET_BALLISTIC))
             return false;
 
-        if (entity1->GetIsPowerup() &&
-            (entity2->GetIsPlayerShip() ||
+        if (entity1->IsPowerup() &&
+            (entity2->IsPlayerShip() ||
              entity2->GetEntityType() == ET_BALLISTIC))
             return false;
 
@@ -200,14 +200,14 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual bool GetIsMortal () const { return false; }
-    virtual bool GetIsShip () const { return false; }
-    virtual bool GetIsPlayerShip () const { return false; }
-    virtual bool GetIsEnemyShip () const { return false; }
-    virtual bool GetIsExplosive () const { return false; }
-    virtual bool GetIsPowerup () const { return false; }
-    virtual bool GetIsEffect () const { return false; }
-    virtual bool GetIsBallistic () const { return false; }
+    virtual bool IsMortal () const { return false; }
+    virtual bool IsShip () const { return false; }
+    virtual bool IsPlayerShip () const { return false; }
+    virtual bool IsEnemyShip () const { return false; }
+    virtual bool IsExplosive () const { return false; }
+    virtual bool IsPowerup () const { return false; }
+    virtual bool IsEffect () const { return false; }
+    virtual bool IsBallistic () const { return false; }
 
     virtual void Think (Float time, Float frame_dt)
     {
