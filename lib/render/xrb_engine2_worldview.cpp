@@ -609,13 +609,13 @@ Float Engine2::WorldView::CalculateViewRadius (
         retval = distance_squared;
 
     distance_squared =
-        (screen_to_world * cast_view_rect.GetBottomLeft() -
+        (screen_to_world * cast_view_rect.BottomLeft() -
         view_center).GetLengthSquared();
     if (distance_squared > retval)
         retval = distance_squared;
 
     distance_squared =
-        (screen_to_world * cast_view_rect.GetBottomRight() -
+        (screen_to_world * cast_view_rect.BottomRight() -
         view_center).GetLengthSquared();
     if (distance_squared > retval)
         retval = distance_squared;

@@ -106,7 +106,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
     // draw the cursor (if it's visible and the widget is not read-only)
     if (m_is_cursor_visible && !IsReadOnly())
     {
-        initial_pen_position[Dim::Y] = contents_rect.GetBottom();
+        initial_pen_position[Dim::Y] = contents_rect.Bottom();
         // calculate the cursor rectangle
         ScreenCoordRect cursor_rect(
             ScreenCoordVector2(

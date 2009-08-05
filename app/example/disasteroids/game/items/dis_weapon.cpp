@@ -1080,7 +1080,7 @@ bool Tractor::Activate (
         ms_max_force[GetUpgradeLevel()];
     Float beam_radius =
         IsBeamRadiusOverridden() ?
-        GetBeamRadiusOverride() :
+        BeamRadiusOverride() :
         ms_beam_radius[GetUpgradeLevel()];
 
     // use the reticle coordinates for the area the tractor pulls/pushes,

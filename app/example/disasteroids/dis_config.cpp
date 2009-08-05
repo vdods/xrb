@@ -171,7 +171,7 @@ void Config::Write (string const &config_filename) const
 
     // write out the enumerated values
     for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
-        try { root->SetPathElementBoolean(ms_boolean_key[i].m_data_file_path, GetBoolean(static_cast<KeyBoolean>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
+        try { root->SetPathElementBoolean(ms_boolean_key[i].m_data_file_path, Boolean(static_cast<KeyBoolean>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_UINT32_COUNT; ++i)
         try { root->SetPathElementUint32(ms_uint32_key[i].m_data_file_path, GetUint32(static_cast<KeyUint32>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)

@@ -78,7 +78,7 @@ void Engine2::Sprite::Draw (
         1.0f);
 
     // calculate the bias color
-    Color bias_color(draw_data.GetRenderContext().GetBlendedBiasColor(GetBiasColor()));
+    Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
     // calculate the color mask
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(GetColorMask()));
     color_mask[Dim::A] *= alpha_mask;

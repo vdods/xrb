@@ -106,9 +106,9 @@ void Screen::Draw () const
     // clear the color buffer to the Screen's bias color (because that's
     // what you'd get if you applied the bias to all-black).
     glClearColor(
-        GetBiasColor()[Dim::R]*GetBiasColor()[Dim::A], 
-        GetBiasColor()[Dim::G]*GetBiasColor()[Dim::A], 
-        GetBiasColor()[Dim::B]*GetBiasColor()[Dim::A], 
+        BiasColor()[Dim::R]*BiasColor()[Dim::A], 
+        BiasColor()[Dim::G]*BiasColor()[Dim::A], 
+        BiasColor()[Dim::B]*BiasColor()[Dim::A], 
         0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     // reset all matrices
@@ -125,7 +125,7 @@ void Screen::Draw () const
     // with does not extend past the physical screen
     ScreenCoordRect screen_rect(GetScreenRect());
     ASSERT1(screen_rect.GetLeft() == 0);
-    ASSERT1(screen_rect.GetBottom() == 0);
+    ASSERT1(screen_rect.Bottom() == 0);
     if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
         screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
     if (screen_rect.GetHeight() > m_current_video_resolution[Dim::Y])
@@ -137,7 +137,7 @@ void Screen::Draw () const
     // for the blending function composition operation.  the default 
     // color mask is opaque white, which is the identity for the color 
     // masking operation.
-    RenderContext render_context(screen_rect, GetBiasColor(), GetColorMask());
+    RenderContext render_context(screen_rect, BiasColor(), GetColorMask());
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     render_context.SetupGLClipRect();

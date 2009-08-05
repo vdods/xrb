@@ -100,8 +100,8 @@ public:
     void operator = (HighScores const &high_scores);
 
     bool IsNewHighScore (Score const &score);
-    Score const &GetBestPointsScore (Uint32 index) const;
-    Score const &GetBestWaveCountScore (Uint32 index) const;
+    Score const &BestPointsScore (Uint32 index) const;
+    Score const &BestWaveCountScore (Uint32 index) const;
 
     // the return value is true iff the points rank was
     // equal to or better than the wave count rank

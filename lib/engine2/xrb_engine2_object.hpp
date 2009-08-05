@@ -175,7 +175,7 @@ public:
     inline Float GetZDepth () const { return m_z_depth; }
     inline bool IsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
-    inline Color const &GetBiasColor () const { return m_bias_color; }
+    inline Color const &BiasColor () const { return m_bias_color; }
     inline Color const &GetColorMask () const { return m_color_mask; }
     inline bool IsTransparent () const { return m_is_transparent; }
     inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }

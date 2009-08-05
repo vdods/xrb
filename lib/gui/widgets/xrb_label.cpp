@@ -226,7 +226,7 @@ void Label::DrawPicture (RenderContext const &render_context) const
             picture_rect = picture_size;
             picture_rect += ScreenCoordVector2(0, (contents_rect.GetHeight() - picture_rect.GetHeight()) / 2);
         }
-        picture_rect += contents_rect.GetBottomLeft();
+        picture_rect += contents_rect.BottomLeft();
     }
     else
     {

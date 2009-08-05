@@ -99,7 +99,7 @@ bool HighScores::IsNewHighScore (Score const &score)
     return false;
 }
 
-Score const &HighScores::GetBestPointsScore (Uint32 index) const
+Score const &HighScores::BestPointsScore (Uint32 index) const
 {
     BestPointsScoreSetConstIterator it = m_best_points_score_set.begin();
     while (index > 0)
@@ -111,7 +111,7 @@ Score const &HighScores::GetBestPointsScore (Uint32 index) const
     return *it;
 }
 
-Score const &HighScores::GetBestWaveCountScore (Uint32 index) const
+Score const &HighScores::BestWaveCountScore (Uint32 index) const
 {
     BestWaveCountScoreSetConstIterator it = m_best_wave_count_score_set.begin();
     while (index > 0)

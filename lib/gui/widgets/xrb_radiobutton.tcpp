@@ -83,7 +83,7 @@ bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (
     Button::ProcessMouseButtonEvent(e);
 
     // if the left mouse button was clicked and released, attempt to check it.
-    if (e->GetButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonDownEvent())
+    if (e->ButtonCode() == Key::LEFTMOUSE && e->IsMouseButtonDownEvent())
         Check();
 
     return true;

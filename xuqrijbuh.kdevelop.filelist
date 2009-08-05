@@ -139,6 +139,7 @@ doc/doxygen_pages/setup_macosx.dox
 doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
+lib
 lib/core/xrb.hpp
 lib/core/xrb_assert.hpp
 lib/core/xrb_compiletimeasserts.cpp
@@ -276,11 +277,16 @@ lib/math/xrb_transform2.cpp
 lib/math/xrb_transform2.hpp
 lib/math/xrb_vector.cpp
 lib/math/xrb_vector.hpp
+lib/parsers
+lib/parsers/xrb_arithmeticparser.cpp
+lib/parsers/xrb_arithmeticparser.h
 lib/parsers/xrb_arithmeticparser.trison
 lib/parsers/xrb_arithmeticscanner.cpp
 lib/parsers/xrb_arithmeticscanner.hpp
 lib/parsers/xrb_datafilelocation.cpp
 lib/parsers/xrb_datafilelocation.hpp
+lib/parsers/xrb_datafileparser.cpp
+lib/parsers/xrb_datafileparser.h
 lib/parsers/xrb_datafileparser.trison
 lib/parsers/xrb_datafilescanner.cpp
 lib/parsers/xrb_datafilescanner.hpp

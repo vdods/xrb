@@ -233,7 +233,7 @@ public:
     /** @brief Returns the basic background for this widget.
       * @see WidgetBackground
       */
-    inline WidgetBackground *GetBackground () const { return m_background; }
+    inline WidgetBackground *Background () const { return m_background; }
     /** @brief Returns the frame margins for this widget.
       */
     inline ScreenCoordVector2 const &GetFrameMargins () const { return m_frame_margins; }
@@ -250,7 +250,7 @@ public:
     /** @brief Returns the current position of the lower-left corner of
       *        this widget.
       */
-    inline ScreenCoordVector2 GetPosition () const { return m_screen_rect.GetBottomLeft(); }
+    inline ScreenCoordVector2 GetPosition () const { return m_screen_rect.BottomLeft(); }
     /** @brief Returns the current size of this widget.
       */
     inline ScreenCoordVector2 GetSize () const { return m_screen_rect.GetSize(); }
@@ -301,7 +301,7 @@ public:
     /** @brief Returns this widget's bias color (the bias color is applied to
       * everything drawn by the widget, BEFORE the color mask).
       */
-    inline Color const &GetBiasColor () const { return m_bias_color; }
+    inline Color const &BiasColor () const { return m_bias_color; }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */

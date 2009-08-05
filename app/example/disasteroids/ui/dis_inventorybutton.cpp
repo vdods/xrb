@@ -26,7 +26,7 @@ InventoryButton::InventoryButton (
     ContainerWidget *const parent,
     std::string const &name)
     :
-    Button(GetButtonTexture(item_type, upgrade_level), parent, name),
+    Button(ButtonTexture(item_type, upgrade_level), parent, name),
     m_item_type(item_type),
     m_upgrade_level(upgrade_level),
     m_sender_attempt_to_buy_item(this),
@@ -45,7 +45,7 @@ InventoryButton::InventoryButton (
     UpdateRenderBackground();
 }
 
-Resource<GLTexture> InventoryButton::GetButtonTexture (
+Resource<GLTexture> InventoryButton::ButtonTexture (
     ItemType const item_type,
     Uint8 const upgrade_level)
 {

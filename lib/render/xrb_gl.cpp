@@ -222,7 +222,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glLoadIdentity();
     glOrtho(
         clip_rect.GetLeft(), clip_rect.GetRight(),
-        clip_rect.GetBottom(), clip_rect.GetTop(),
+        clip_rect.Bottom(), clip_rect.GetTop(),
         -1.0, 1.0); // these values (-1, 1) are arbitrary
 
     // set up the viewport which is the rectangle on screen which
@@ -230,7 +230,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     // planes.
     glViewport(
         clip_rect.GetLeft(),
-        clip_rect.GetBottom(),
+        clip_rect.Bottom(),
         clip_rect.GetWidth(),
         clip_rect.GetHeight());
 }

@@ -729,7 +729,7 @@ allows a subclass to specify how the background should be set.  Refer to
 @ref Xrb::Button::HandleChangedWidgetSkinWidgetBackground for example usage.
 
 Other relevant methods include
-@ref Xrb::Widget::GetBackground ,
+@ref Xrb::Widget::Background ,
 @ref Xrb::Widget::SetBackground , and
 @ref Xrb::Widget::GetRenderBackground .
 

@@ -279,7 +279,7 @@ private:
 /** Ties together the common functionality of the button down and button
   * up events.
   *
-  * The code of the relevant mousebutton is returned by GetButtonCode.
+  * The code of the relevant mousebutton is returned by ButtonCode.
   *
   * @brief Baseclass for EventMouseButtonDown and EventMouseButtonUp.
   */
@@ -306,7 +306,7 @@ public:
     SDL_MouseButtonEvent const &GetSDLEvent () const { return m_event; }
     /** @brief Returns the event's button code (see @ref Xrb::Key::Code).
       */
-    Key::Code GetButtonCode () const { return (Key::Code)m_event.button; }
+    Key::Code ButtonCode () const { return (Key::Code)m_event.button; }
     /** @brief Override of Event::IsMouseButtonEvent to indicate that
       *        this is, indeed, a mouse button event.
       */

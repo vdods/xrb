@@ -32,7 +32,7 @@ void Render::DrawLine (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     glBegin(GL_LINES);
         glVertex2fv(from.m);
@@ -62,7 +62,7 @@ void Render::DrawArrow (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     glBegin(GL_LINE_STRIP);
         glVertex2fv(from.m);
@@ -96,7 +96,7 @@ void Render::DrawPolygon (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     // convert the angle which is in degrees, into radians for
     // computation in cos/sin's native units.
@@ -165,7 +165,7 @@ void Render::DrawCircle (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     // draw each line
     FloatVector2 vertex;
@@ -250,7 +250,7 @@ void Render::DrawCircularArc (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     // draw each line
     FloatVector2 vertex;
@@ -285,12 +285,12 @@ void Render::DrawScreenRect (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().GetHandle(), 
         render_context.GetMaskedColor(color), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     glBegin(GL_QUADS);
         glVertex2iv(screen_rect.GetTopLeft().m);
-        glVertex2iv(screen_rect.GetBottomLeft().m);
-        glVertex2iv(screen_rect.GetBottomRight().m);
+        glVertex2iv(screen_rect.BottomLeft().m);
+        glVertex2iv(screen_rect.BottomRight().m);
         glVertex2iv(screen_rect.GetTopRight().m);
     glEnd();
 }
@@ -310,17 +310,17 @@ void Render::DrawScreenRectTexture (
     SetupTextureUnits(
         gl_texture->GetHandle(), 
         render_context.GetColorMask(), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     glBegin(GL_QUADS);
         glTexCoord2fv((transformation * FloatVector2(0.0f, 0.0f)).m);
         glVertex2iv(screen_rect.GetTopLeft().m);
 
         glTexCoord2fv((transformation * FloatVector2(0.0f, 1.0f)).m);
-        glVertex2iv(screen_rect.GetBottomLeft().m);
+        glVertex2iv(screen_rect.BottomLeft().m);
 
         glTexCoord2fv((transformation * FloatVector2(1.0f, 1.0f)).m);
-        glVertex2iv(screen_rect.GetBottomRight().m);
+        glVertex2iv(screen_rect.BottomRight().m);
 
         glTexCoord2fv((transformation * FloatVector2(1.0f, 0.0f)).m);
         glVertex2iv(screen_rect.GetTopRight().m);

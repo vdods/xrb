@@ -112,7 +112,7 @@ public:
     inline void operator |= (Rect<T> const &operand)
     {
         EncompassPoint(operand.GetTopLeft());
-        EncompassPoint(operand.GetBottomRight());
+        EncompassPoint(operand.BottomRight());
     }
     inline void operator &= (Rect<T> const &operand)
     {
@@ -156,11 +156,11 @@ public:
     {
         return m_top_right;
     }
-    inline Vector<T, 2> const &GetBottomLeft () const
+    inline Vector<T, 2> const &BottomLeft () const
     {
         return m_bottom_left;
     }
-    inline Vector<T, 2> GetBottomRight () const
+    inline Vector<T, 2> BottomRight () const
     {
         return Vector<T, 2>(m_top_right[Dim::X], m_bottom_left[Dim::Y]);
     }
@@ -173,7 +173,7 @@ public:
     {
         return m_bottom_left[Dim::X];
     }
-    inline T GetBottom () const
+    inline T Bottom () const
     {
         return m_bottom_left[Dim::Y];
     }
@@ -197,7 +197,7 @@ public:
     }
     inline T GetHeight () const
     {
-        return GetTop() - GetBottom();
+        return GetTop() - Bottom();
     }
 
     Rect<T> GetGrown (Vector<T, 2> const &vector_to_grow_by) const
@@ -302,7 +302,7 @@ public:
     template <typename U>
     inline void StaticCastAssign (Rect<U> const &source)
     {
-        m_bottom_left = source.GetBottomLeft().StaticCast<T>();
+        m_bottom_left = source.BottomLeft().StaticCast<T>();
         m_top_right = source.GetTopRight().StaticCast<T>();
     }
 
@@ -350,9 +350,9 @@ public:
                  bool const add_newline = true) const
     {
         fprintf(fptr, "Rect : left/bottom = (");
-        fprintf(fptr, component_printf_format, GetBottomLeft()[Dim::X]);
+        fprintf(fptr, component_printf_format, BottomLeft()[Dim::X]);
         fprintf(fptr, ", ");
-        fprintf(fptr, component_printf_format, GetBottomLeft()[Dim::Y]);
+        fprintf(fptr, component_printf_format, BottomLeft()[Dim::Y]);
         fprintf(fptr,
                 "), %s/%s = (",
                 show_size_instead_of_top_right ? "width" : "right",

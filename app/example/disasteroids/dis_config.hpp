@@ -39,7 +39,7 @@ public:
     // general accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline bool GetBoolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); return m_boolean_value[key]; }
+    inline bool Boolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); return m_boolean_value[key]; }
     inline Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); return m_uint32_value[key]; }
     inline std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); return m_string_value[key]; }
     Key::Code GetInputAction (KeyInputAction key) const;

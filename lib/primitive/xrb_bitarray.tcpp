@@ -25,7 +25,7 @@ void BitArray<bit_count>::Fprint (
     fprintf(fptr, "BitArray (%u) = (", bit_count);
     for (Uint32 i = HIGHEST_BIT_INDEX; i <= HIGHEST_BIT_INDEX; --i)
     {
-        fputc(GetBit(i) ? '1' : '0', fptr);
+        fputc(Bit(i) ? '1' : '0', fptr);
         if (i != 0 &&
             chunk_size != 0 &&
             i % chunk_size == 0)

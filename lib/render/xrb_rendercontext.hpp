@@ -85,7 +85,7 @@ public:
     }
     /** @brief Returns the bias color.
       */
-    inline Color const &GetBiasColor () const
+    inline Color const &BiasColor () const
     {
         return m_bias_color;
     }
@@ -106,7 +106,7 @@ public:
     /** @brief Returns the given bias color blended (on the right/inside) with this
       *        render context's bias color (i.e. blending function composition).
       */
-    inline Color GetBlendedBiasColor (Color const &bias_color) const
+    inline Color BlendedBiasColor (Color const &bias_color) const
     {
         Color blended_bias_color(m_bias_color);
         blended_bias_color.Blend(bias_color);

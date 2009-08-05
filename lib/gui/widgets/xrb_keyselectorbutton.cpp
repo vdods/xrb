@@ -99,8 +99,8 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().IsValidKeyCode(e->GetButtonCode()));
-    m_key_code = e->GetButtonCode();
+    ASSERT1(Singletons::Input().IsValidKeyCode(e->ButtonCode()));
+    m_key_code = e->ButtonCode();
     OKButtonActivated();
     return true;
 }
@@ -108,8 +108,8 @@ bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseBu
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().IsValidKeyCode(e->GetButtonCode()));
-    m_key_code = e->GetButtonCode();
+    ASSERT1(Singletons::Input().IsValidKeyCode(e->ButtonCode()));
+    m_key_code = e->ButtonCode();
     OKButtonActivated();
     return true;
 }

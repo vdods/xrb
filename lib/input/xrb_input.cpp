@@ -186,11 +186,11 @@ bool Input::HandleEvent (Event const *const e)
             break;
 
         case Event::MOUSEBUTTONDOWN:
-            code = static_cast<EventMouseButtonDown const *const>(e)->GetButtonCode();
+            code = static_cast<EventMouseButtonDown const *const>(e)->ButtonCode();
             break;
 
         case Event::MOUSEBUTTONUP:
-            code = static_cast<EventMouseButtonUp const *const>(e)->GetButtonCode();
+            code = static_cast<EventMouseButtonUp const *const>(e)->ButtonCode();
             break;
 
         default:

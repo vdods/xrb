@@ -103,7 +103,7 @@ public:
         ASSERT1(AreUnusedBitsZeroed());
     }
 
-    inline bool GetBit (Uint32 const bit_index) const
+    inline bool Bit (Uint32 const bit_index) const
     {
         ASSERT1(AreUnusedBitsZeroed());
         ASSERT1(bit_index < bit_count);

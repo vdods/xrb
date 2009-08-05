@@ -684,7 +684,7 @@ public:
     inline Float GetMaxForceOverride () const { return m_max_force_override; }
 
     inline bool IsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
-    inline Float GetBeamRadiusOverride () const { return m_beam_radius_override; }
+    inline Float BeamRadiusOverride () const { return m_beam_radius_override; }
 
     inline void SetRangeOverride (Float range_override)
     {

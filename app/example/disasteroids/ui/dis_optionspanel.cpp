@@ -184,7 +184,7 @@ void OptionsPanel::ReadValuesFromConfig (Config const &config)
 {
     SetResolutionX(config.GetResolutionX());
     SetResolutionY(config.GetResolutionY());
-    SetFullscreen(config.GetBoolean(VIDEO__FULLSCREEN));
+    SetFullscreen(config.Boolean(VIDEO__FULLSCREEN));
     SetDifficultyLevel(config.GetDifficultyLevel());
 
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)

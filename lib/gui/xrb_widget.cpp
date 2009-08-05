@@ -509,7 +509,7 @@ ScreenCoordVector2 Widget::ResizeByRatios (FloatVector2 const &ratios)
 
 ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
 {
-    MoveTo(screen_rect.GetBottomLeft());
+    MoveTo(screen_rect.BottomLeft());
     return Resize(screen_rect.GetSize());
 }
 
@@ -762,7 +762,7 @@ void Widget::HandleChangedBackground ()
 
 void Widget::UpdateRenderBackground ()
 {
-    SetRenderBackground(GetBackground());
+    SetRenderBackground(Background());
 }
 
 void Widget::ParentChildSizePropertiesUpdate (bool const defer_parent_update)

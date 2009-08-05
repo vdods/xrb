@@ -112,13 +112,13 @@ bool Key::HandleEvent (Event const *const e)
 
         case Event::MOUSEBUTTONDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonDown const *const>(e)->GetButtonCode() == m_code);
+            ASSERT1(static_cast<EventMouseButtonDown const *const>(e)->ButtonCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::MOUSEBUTTONUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventMouseButtonUp const *const>(e)->GetButtonCode() == m_code);
+            ASSERT1(static_cast<EventMouseButtonUp const *const>(e)->ButtonCode() == m_code);
             m_is_pressed = false;
             break;
 

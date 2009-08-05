@@ -1275,13 +1275,13 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     // properties if appropriate
     if (e->IsMouseButtonDownEvent())
     {
-        if (e->GetButtonCode() == Key::LEFTMOUSE)
+        if (e->ButtonCode() == Key::LEFTMOUSE)
         {
             m_lmouse_pressed_position = e->GetPosition().StaticCast<Float>();
             m_lmouse_pressed_world_position = transformed_mouse_event_position;
             m_lmouse_dragged = false;
         }
-        else if (e->GetButtonCode() == Key::RIGHTMOUSE)
+        else if (e->ButtonCode() == Key::RIGHTMOUSE)
         {
             m_rmouse_pressed_position = e->GetPosition().StaticCast<Float>();
             m_rmouse_pressed_world_position = transformed_mouse_event_position;
@@ -1315,7 +1315,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     
     // right mouse button up event + shift key is held down
     if (e->IsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::RIGHTMOUSE &&
+        e->ButtonCode() == Key::RIGHTMOUSE &&
         e->IsEitherShiftKeyPressed())
     {
         Object::SelectionOperation selection_operation = GetSelectionOperation(e);
@@ -1406,7 +1406,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
         m_lmouse_dragged &&
         e->IsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE)
+        e->ButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS);
         ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
@@ -1464,7 +1464,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     if (m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR &&
         e->IsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE)
+        e->ButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
@@ -1477,7 +1477,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
     if (m_editing_sub_mode == ESM_ADD_SPRITE &&
         e->IsMouseButtonUpEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE)
+        e->ButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
@@ -1503,7 +1503,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE &&
+        e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
         !e->IsEitherControlKeyPressed())
     {
@@ -1518,7 +1518,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedPolygonCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE &&
+        e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
         !e->IsEitherControlKeyPressed())
     {
@@ -1534,7 +1534,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         m_editing_sub_mode == ESM_DEFAULT &&
         GetMainMapEditorObjectLayer()->GetSelectedVertexCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
-        e->GetButtonCode() == Key::LEFTMOUSE &&
+        e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
         !e->IsEitherControlKeyPressed())
     {
@@ -1560,7 +1560,7 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
     {
         // when the alt key is held down, change the view's rotation
 
-        if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+        if (e->ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_rotation_accumulator > 0.0)
                 m_rotation_accumulator -=
@@ -1568,7 +1568,7 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
                     (Sint32)(m_rotation_accumulator / m_rotation_increment);
             m_rotation_accumulator -= m_rotation_increment;
         }
-        else if (e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_rotation_accumulator < 0.0)
                 m_rotation_accumulator -=
@@ -1583,13 +1583,13 @@ bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const
     {
         // otherwise, change the view's zoom
 
-        if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+        if (e->ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_zoom_accumulator < 0.0)
                 m_zoom_accumulator -= (Sint32)m_zoom_accumulator;
             m_zoom_accumulator += 1.0;
         }
-        else if (e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_zoom_accumulator > 0.0)
                 m_zoom_accumulator -= (Sint32)m_zoom_accumulator;

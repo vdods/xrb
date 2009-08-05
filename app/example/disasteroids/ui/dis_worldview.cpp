@@ -136,7 +136,7 @@ bool WorldView::ProcessKeyEvent (EventKey const *const e)
 bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     if (e->IsMouseButtonDownEvent())
-        HandleInput(e->GetButtonCode());
+        HandleInput(e->ButtonCode());
     return true;
 }
 
@@ -146,14 +146,14 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     if (!GetParentWorldViewWidget()->IsFocused())
         return false;
 
-    HandleInput(e->GetButtonCode());
+    HandleInput(e->ButtonCode());
 
 /*
     if (e->IsEitherAltKeyPressed())
     {
         // when the alt key is held down, change the view's rotation
 
-        if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+        if (e->ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_rotation_accumulator > 0.0f)
                 m_rotation_accumulator -=
@@ -161,7 +161,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
                     static_cast<Sint32>(m_rotation_accumulator / m_rotation_increment);
             m_rotation_accumulator -= m_rotation_increment;
         }
-        else if (e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_rotation_accumulator < 0.0f)
                 m_rotation_accumulator -=
@@ -178,13 +178,13 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     {
         // otherwise, change the view's zoom
 
-        if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+        if (e->ButtonCode() == Key::MOUSEWHEELUP)
         {
             if (m_zoom_accumulator < 0.0f)
                 m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);
             m_zoom_accumulator += 1.0f;
         }
-        else if (e->GetButtonCode() == Key::MOUSEWHEELDOWN)
+        else if (e->ButtonCode() == Key::MOUSEWHEELDOWN)
         {
             if (m_zoom_accumulator > 0.0f)
                 m_zoom_accumulator -= static_cast<Sint32>(m_zoom_accumulator);

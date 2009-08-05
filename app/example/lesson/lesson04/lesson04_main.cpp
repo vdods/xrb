@@ -214,11 +214,11 @@ public:
         // on which of mouse-wheel-up or mouse-wheel-down this event indicates.
         if (e->IsEitherAltKeyPressed())
         {
-            if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+            if (e->ButtonCode() == Key::MOUSEWHEELUP)
                 RotateView(-15.0f); // Rotate 15 degrees clockwise.
             else
             {
-                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN);
+                ASSERT1(e->ButtonCode() == Key::MOUSEWHEELDOWN);
                 RotateView(15.0f); // Rotate 15 degrees counterclockwise.
             }
         }
@@ -226,11 +226,11 @@ public:
         // mouse-wheel-up or mouse-wheel-down this event indicates.
         else
         {
-            if (e->GetButtonCode() == Key::MOUSEWHEELUP)
+            if (e->ButtonCode() == Key::MOUSEWHEELUP)
                 ZoomView(1.2f); // Zoom in by a factor of 1.2f
             else
             {
-                ASSERT1(e->GetButtonCode() == Key::MOUSEWHEELDOWN);
+                ASSERT1(e->ButtonCode() == Key::MOUSEWHEELDOWN);
                 ZoomView(1.0f / 1.2f); // Zoom out by a factor of 1.2f
             }
         }

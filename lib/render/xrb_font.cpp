@@ -583,7 +583,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     Render::SetupTextureUnits(
         m_gl_texture->GetHandle(), 
         render_context.GetColorMask(), 
-        render_context.GetBiasColor());
+        render_context.BiasColor());
 
     // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv
     // in DrawGlyph (and the matrix operations below) operate on the correct texture unit.
@@ -651,16 +651,16 @@ void AsciiFont::DrawGlyph (
     // is because the texture coordinates use a left-handed coordinate
     // system.
 
-    glTexCoord2iv(glyph_texture_coordinates.GetBottomLeft().m);
+    glTexCoord2iv(glyph_texture_coordinates.BottomLeft().m);
     glVertex2iv(glyph_vertex_coordinates.GetTopLeft().m);
 
     glTexCoord2iv(glyph_texture_coordinates.GetTopLeft().m);
-    glVertex2iv(glyph_vertex_coordinates.GetBottomLeft().m);
+    glVertex2iv(glyph_vertex_coordinates.BottomLeft().m);
 
     glTexCoord2iv(glyph_texture_coordinates.GetTopRight().m);
-    glVertex2iv(glyph_vertex_coordinates.GetBottomRight().m);
+    glVertex2iv(glyph_vertex_coordinates.BottomRight().m);
 
-    glTexCoord2iv(glyph_texture_coordinates.GetBottomRight().m);
+    glTexCoord2iv(glyph_texture_coordinates.BottomRight().m);
     glVertex2iv(glyph_vertex_coordinates.GetTopRight().m);
 }
 

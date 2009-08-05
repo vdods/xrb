@@ -478,10 +478,10 @@ public:
     {
         // Rotate the view on ALT+mouse-wheel-up/down.
         if (e->IsEitherAltKeyPressed())
-            RotateView((e->GetButtonCode() == Key::MOUSEWHEELUP) ? -15.0f : 15.0f);
+            RotateView((e->ButtonCode() == Key::MOUSEWHEELUP) ? -15.0f : 15.0f);
         // Otherwise, we will zoom the view on mouse-wheel-up/down.
         else
-            ZoomView((e->GetButtonCode() == Key::MOUSEWHEELUP) ? 1.2f : 1.0f / 1.2f);
+            ZoomView((e->ButtonCode() == Key::MOUSEWHEELUP) ? 1.2f : 1.0f / 1.2f);
         // Indicates that the event was used by this method.
         return true;
     }

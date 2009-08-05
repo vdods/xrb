@@ -52,7 +52,7 @@ void Button::SetIsEnabled (bool const is_enabled)
 
 bool Button::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
-    if (e->GetButtonCode() == Key::LEFTMOUSE)
+    if (e->ButtonCode() == Key::LEFTMOUSE)
     {
         if (e->IsMouseButtonDownEvent())
         {
