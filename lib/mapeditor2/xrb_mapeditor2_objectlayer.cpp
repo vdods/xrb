@@ -1578,7 +1578,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetElasticity ()
     if (GetSelectedEntityCount() != 1)
         return;
 
-    Float object_selection_set_elasticity = GetSingleSelectedEntity()->GetElasticity();
+    Float object_selection_set_elasticity = GetSingleSelectedEntity()->Elasticity();
     if (m_object_selection_set_elasticity != object_selection_set_elasticity)
     {
         m_object_selection_set_elasticity = object_selection_set_elasticity;

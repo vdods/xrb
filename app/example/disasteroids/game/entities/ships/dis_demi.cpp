@@ -87,12 +87,12 @@ Demi::Demi (Uint8 const enemy_level)
         // the gauss gun weapon level is only used to indicate
         // weapon range and fire rate
         m_gauss_gun = new GaussGun(3);
-        m_gauss_gun->SetImpactDamageOverride(ms_gauss_gun_impact_damage[GetEnemyLevel()]);
+        m_gauss_gun->SetImpactDamageOverride(ms_gauss_gun_impact_damage[EnemyLevel()]);
         m_gauss_gun->Equip(this);
 
         m_flame_thrower = new FlameThrower(3);
-        m_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
-        m_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
+        m_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[EnemyLevel()]);
+        m_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[EnemyLevel()]);
         m_flame_thrower->Equip(this);
 
         // TODO: overrides for missile launcher damage/etc
@@ -104,15 +104,15 @@ Demi::Demi (Uint8 const enemy_level)
     // port-side weapon setup
     {
         m_port_tractor = new Tractor(3);
-        m_port_tractor->SetRangeOverride(ms_tractor_range[GetEnemyLevel()]);
-        m_port_tractor->SetStrengthOverride(ms_tractor_strength[GetEnemyLevel()]);
-        m_port_tractor->SetMaxForceOverride(ms_tractor_max_force[GetEnemyLevel()]);
-        m_port_tractor->SetBeamRadiusOverride(ms_tractor_beam_radius[GetEnemyLevel()]);
+        m_port_tractor->SetRangeOverride(ms_tractor_range[EnemyLevel()]);
+        m_port_tractor->SetStrengthOverride(ms_tractor_strength[EnemyLevel()]);
+        m_port_tractor->SetMaxForceOverride(ms_tractor_max_force[EnemyLevel()]);
+        m_port_tractor->SetBeamRadiusOverride(ms_tractor_beam_radius[EnemyLevel()]);
         m_port_tractor->Equip(this);
 
         m_port_flame_thrower = new FlameThrower(3);
-        m_port_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
-        m_port_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
+        m_port_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[EnemyLevel()]);
+        m_port_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[EnemyLevel()]);
         m_port_flame_thrower->Equip(this);
 
         m_port_missile_launcher = new MissileLauncher(0);
@@ -123,15 +123,15 @@ Demi::Demi (Uint8 const enemy_level)
     // starboard-side weapon setup
     {
         m_starboard_tractor = new Tractor(3);
-        m_starboard_tractor->SetRangeOverride(ms_tractor_range[GetEnemyLevel()]);
-        m_starboard_tractor->SetStrengthOverride(ms_tractor_strength[GetEnemyLevel()]);
-        m_starboard_tractor->SetMaxForceOverride(ms_tractor_max_force[GetEnemyLevel()]);
-        m_starboard_tractor->SetBeamRadiusOverride(ms_tractor_beam_radius[GetEnemyLevel()]);
+        m_starboard_tractor->SetRangeOverride(ms_tractor_range[EnemyLevel()]);
+        m_starboard_tractor->SetStrengthOverride(ms_tractor_strength[EnemyLevel()]);
+        m_starboard_tractor->SetMaxForceOverride(ms_tractor_max_force[EnemyLevel()]);
+        m_starboard_tractor->SetBeamRadiusOverride(ms_tractor_beam_radius[EnemyLevel()]);
         m_starboard_tractor->Equip(this);
 
         m_starboard_flame_thrower = new FlameThrower(3);
-        m_starboard_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
-        m_starboard_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
+        m_starboard_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[EnemyLevel()]);
+        m_starboard_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[EnemyLevel()]);
         m_starboard_flame_thrower->Equip(this);
 
         m_starboard_missile_launcher = new MissileLauncher(0);
@@ -141,12 +141,12 @@ Demi::Demi (Uint8 const enemy_level)
 
     // aft-port weapon setup
     {
-        m_aft_enemy_spawner = new EnemySpawner(GetEnemyLevel());
+        m_aft_enemy_spawner = new EnemySpawner(EnemyLevel());
         m_aft_enemy_spawner->Equip(this);
 
         m_aft_flame_thrower = new FlameThrower(3);
-        m_aft_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[GetEnemyLevel()]);
-        m_aft_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[GetEnemyLevel()]);
+        m_aft_flame_thrower->SetMaxDamagePerFireballOverride(ms_flame_thrower_max_damage_per_fireball[EnemyLevel()]);
+        m_aft_flame_thrower->SetFinalFireballSizeOverride(ms_flame_thrower_final_fireball_size[EnemyLevel()]);
         m_aft_flame_thrower->Equip(this);
 
         m_aft_missile_launcher = new MissileLauncher(0);
@@ -156,7 +156,7 @@ Demi::Demi (Uint8 const enemy_level)
 
     SetStrength(D_MINING_LASER);
     SetImmunity(D_COLLISION);
-    SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
+    SetDamageDissipationRate(ms_damage_dissipation_rate[EnemyLevel()]);
 
     Demi::ResetInputs();
 }
@@ -366,7 +366,7 @@ void Demi::Die (
 
     static Float const s_powerup_coefficient = 0.1f;
 
-    Float health_powerup_amount_left_to_spawn = ms_health_powerup_amount_to_spawn[GetEnemyLevel()];
+    Float health_powerup_amount_left_to_spawn = ms_health_powerup_amount_to_spawn[EnemyLevel()];
     while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
     {
         Float health_powerup_amount =
@@ -407,7 +407,7 @@ void Demi::Die (
             GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
-            Math::RandomUint16(0, GetEnemyLevel()));                     // ET_REVULSION being sequential enums
+            Math::RandomUint16(0, EnemyLevel()));                     // ET_REVULSION being sequential enums
     }
 
     // remove the port tractor beam, if it exists
@@ -463,10 +463,10 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
             return Math::UnitVector(Angle());
 
         Float reticle_angle = Math::CanonicalAngle(Math::Atan(reticle_offset) - Angle());
-        if (reticle_angle < -ms_weapon_fov[GetEnemyLevel()])
-            reticle_angle = -ms_weapon_fov[GetEnemyLevel()];
-        else if (reticle_angle > ms_weapon_fov[GetEnemyLevel()])
-            reticle_angle = ms_weapon_fov[GetEnemyLevel()];
+        if (reticle_angle < -ms_weapon_fov[EnemyLevel()])
+            reticle_angle = -ms_weapon_fov[EnemyLevel()];
+        else if (reticle_angle > ms_weapon_fov[EnemyLevel()])
+            reticle_angle = ms_weapon_fov[EnemyLevel()];
         reticle_angle += Angle();
 
         return Math::UnitVector(reticle_angle);
@@ -503,7 +503,7 @@ bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const fr
         Heal(
             powerup,
             powerup,
-            powerup->GetEffectiveValue(),
+            powerup->EffectiveValue(),
             (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
                 (GetFirstMoment() + powerup->GetFirstMoment()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
@@ -593,7 +593,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
     }
 
     // incrementally accelerate up to the wander direction/speed
-    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    FloatVector2 wander_velocity(ms_wander_speed[EnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
 
     if (time >= m_next_wander_time)
@@ -663,23 +663,23 @@ void Demi::Stalk (Float const time, Float const frame_dt)
     Uint32 transition_count = 0;
     Uint32 transition_total_weight = 0;
 
-    if (target_distance < ms_target_near_range_distance[GetEnemyLevel()])
+    if (target_distance < ms_target_near_range_distance[EnemyLevel()])
     {
         transition = s_transition_near;
-        transition_count = s_transition_near_count[GetEnemyLevel()];
-        transition_total_weight = s_transition_near_total_weight[GetEnemyLevel()];
+        transition_count = s_transition_near_count[EnemyLevel()];
+        transition_total_weight = s_transition_near_total_weight[EnemyLevel()];
     }
-    else if (target_distance < ms_target_mid_range_distance[GetEnemyLevel()])
+    else if (target_distance < ms_target_mid_range_distance[EnemyLevel()])
     {
         transition = s_transition_mid;
-        transition_count = s_transition_mid_count[GetEnemyLevel()];
-        transition_total_weight = s_transition_mid_total_weight[GetEnemyLevel()];
+        transition_count = s_transition_mid_count[EnemyLevel()];
+        transition_total_weight = s_transition_mid_total_weight[EnemyLevel()];
     }
     else
     {
         transition = s_transition_far;
-        transition_count = s_transition_far_count[GetEnemyLevel()];
-        transition_total_weight = s_transition_far_total_weight[GetEnemyLevel()];
+        transition_count = s_transition_far_count[EnemyLevel()];
+        transition_total_weight = s_transition_far_total_weight[EnemyLevel()];
     }
 
     ASSERT1(transition != NULL);
@@ -708,7 +708,7 @@ void Demi::PauseStart (Float const time, Float const frame_dt)
 
 void Demi::PauseContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_pause_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_pause_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(Stalk);
         return;
@@ -750,7 +750,7 @@ void Demi::ChargeAccelerate (Float const time, Float const frame_dt)
         return;
     }
 
-    MatchVelocity(m_charge_velocity, frame_dt, 10.0f * ms_engine_thrust[GetEnemyLevel()]);
+    MatchVelocity(m_charge_velocity, frame_dt, 10.0f * ms_engine_thrust[EnemyLevel()]);
 }
 
 void Demi::ChargeCoast (Float const time, Float const frame_dt)
@@ -786,7 +786,7 @@ void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
         return;
     }
 
-    MatchVelocity(FloatVector2::ms_zero, frame_dt, 10.0f * ms_engine_thrust[GetEnemyLevel()]);
+    MatchVelocity(FloatVector2::ms_zero, frame_dt, 10.0f * ms_engine_thrust[EnemyLevel()]);
 }
 
 void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
@@ -819,7 +819,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     // initialize the reticle coordinates
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
         GetMuzzleLocation(m_gauss_gun),
-        ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()]);
+        ms_gauss_gun_reticle_scale_factor[EnemyLevel()]);
     SetReticleCoordinates(m_reticle_effect->GetTranslation());
 
     // transition to and call GaussGunContinueAim
@@ -863,7 +863,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     // if the target went out of range, or if we're wasting time
     // transition back to sum'm
     if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
-        time > m_start_time + ms_gauss_gun_max_duration[GetEnemyLevel()])
+        time > m_start_time + ms_gauss_gun_max_duration[EnemyLevel()])
     {
         ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
         m_reticle_effect->ScheduleForRemovalFromWorld(0.0f);
@@ -873,11 +873,11 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
 
     SetReticleCoordinates(m_reticle_effect->GetTranslation());
     m_reticle_effect->SetScaleFactor(
-        ms_gauss_gun_reticle_scale_factor[GetEnemyLevel()] *
+        ms_gauss_gun_reticle_scale_factor[EnemyLevel()] *
         (1.0f - 0.5f * distance_parameter));
 
-    ASSERT1(ms_gauss_gun_aim_error_radius[GetEnemyLevel()] > 0.0f);
-    if (reticle_target_distance <= ms_gauss_gun_aim_error_radius[GetEnemyLevel()])
+    ASSERT1(ms_gauss_gun_aim_error_radius[EnemyLevel()] > 0.0f);
+    if (reticle_target_distance <= ms_gauss_gun_aim_error_radius[EnemyLevel()])
     {
         m_think_state = THINK_STATE(GaussGunFire);
         return;
@@ -886,7 +886,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     {
         aim_direction.Normalize();
         m_reticle_effect->SetVelocity(
-            ms_gauss_gun_aim_max_speed[GetEnemyLevel()] * aim_direction +
+            ms_gauss_gun_aim_max_speed[EnemyLevel()] * aim_direction +
             GetVelocity());
     }
 }
@@ -927,7 +927,7 @@ void Demi::FlameThrowSweepStart (Float const time, Float const frame_dt)
 
 void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_flame_throw_sweep_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_flame_throw_sweep_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
         // restore the tractor think functions
@@ -938,7 +938,7 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
 
     // aim (the constant coefficient is the left/right sweeping speed)
     Float aim_parameter = 180.0f * (time - m_start_time);
-    Float aim_angle = ms_weapon_fov[GetEnemyLevel()] * Math::Cos(aim_parameter) + Angle();
+    Float aim_angle = ms_weapon_fov[EnemyLevel()] * Math::Cos(aim_parameter) + Angle();
     // and fire
     SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(aim_angle));
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
@@ -964,7 +964,7 @@ void Demi::FlameThrowBlastStart (Float const time, Float const frame_dt)
 
 void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_flame_throw_blast_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_flame_throw_blast_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
         // restore the tractor think functions
@@ -1004,7 +1004,7 @@ void Demi::MissileLaunchStart (Float const time, Float const frame_dt)
 
 void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_missile_launch_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_missile_launch_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
         // restore the tractor think functions
@@ -1038,7 +1038,7 @@ void Demi::InterloperSpawnBlastStart (Float const time, Float const frame_dt)
 
 void Demi::InterloperSpawnBlastContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
         m_aft_enemy_spawner->ClearFireRateOverride();
         m_think_state = THINK_STATE(PauseStart);
@@ -1062,7 +1062,7 @@ void Demi::ShadeSpawnBlastStart (Float const time, Float const frame_dt)
 
 void Demi::ShadeSpawnBlastContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
         m_aft_enemy_spawner->ClearFireRateOverride();
         m_think_state = THINK_STATE(PauseStart);
@@ -1086,7 +1086,7 @@ void Demi::RevulsionSpawnBlastStart (Float const time, Float const frame_dt)
 
 void Demi::RevulsionSpawnBlastContinue (Float const time, Float const frame_dt)
 {
-    if (time >= m_start_time + ms_enemy_spawn_blast_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_enemy_spawn_blast_duration[EnemyLevel()])
     {
         m_aft_enemy_spawner->ClearFireRateOverride();
         m_think_state = THINK_STATE(PauseStart);
@@ -1104,8 +1104,8 @@ void Demi::SpinningFlameThrow (Float const time, Float const frame_dt)
     m_starboard_weapon = m_starboard_flame_thrower;
     m_aft_weapon = m_aft_flame_thrower;
     m_spin_accelerate_through_angle = 360.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    m_spin_duration = ms_spinning_attack_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
+    m_spin_duration = ms_spinning_attack_duration[EnemyLevel()];
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
@@ -1120,8 +1120,8 @@ void Demi::SpinningMissileLaunch (Float const time, Float const frame_dt)
     m_starboard_weapon = m_starboard_missile_launcher;
     m_aft_weapon = m_aft_missile_launcher;
     m_spin_accelerate_through_angle = 360.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    m_spin_duration = ms_spinning_attack_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
+    m_spin_duration = ms_spinning_attack_duration[EnemyLevel()];
     m_spinning_attack_uses_secondary_fire = false;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
@@ -1136,8 +1136,8 @@ void Demi::SpinningGuidedMissileLaunch (Float const time, Float const frame_dt)
     m_starboard_weapon = m_starboard_missile_launcher;
     m_aft_weapon = m_aft_missile_launcher;
     m_spin_accelerate_through_angle = 360.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
-    m_spin_duration = ms_spinning_attack_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
+    m_spin_duration = ms_spinning_attack_duration[EnemyLevel()];
     m_spinning_attack_uses_secondary_fire = true;
     // transition to and call SpinningAttackStart
     m_think_state = THINK_STATE(SpinningAttackStart);
@@ -1153,7 +1153,7 @@ void Demi::SpinningInterloperSpawn (Float const time, Float const frame_dt)
     m_aft_enemy_spawner->SetEnemySpawnType(ET_INTERLOPER);
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
     ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
     ASSERT1(v > 0.0f);
@@ -1173,7 +1173,7 @@ void Demi::SpinningShadeSpawn (Float const time, Float const frame_dt)
     m_aft_enemy_spawner->SetEnemySpawnType(ET_SHADE);
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
     ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
     ASSERT1(v > 0.0f);
@@ -1193,7 +1193,7 @@ void Demi::SpinningRevulsionSpawn (Float const time, Float const frame_dt)
     m_aft_enemy_spawner->SetEnemySpawnType(ET_REVULSION);
     m_aft_weapon = m_aft_enemy_spawner;
     m_spin_accelerate_through_angle = 90.0f;
-    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[GetEnemyLevel()];
+    m_spin_acceleration_duration = ms_spinning_attack_acceleration_duration[EnemyLevel()];
     ASSERT1(m_spin_acceleration_duration > 0.0f);
     Float v = 2.0f * m_spin_accelerate_through_angle / m_spin_acceleration_duration;
     ASSERT1(v > 0.0f);
@@ -1319,7 +1319,7 @@ void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
         return;
     }
 
-    if (time >= m_start_time + ms_tractor_target_closer_duration[GetEnemyLevel()])
+    if (time >= m_start_time + ms_tractor_target_closer_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(FlameThrowSweepStart);
         m_port_tractor_think_state = NULL;
@@ -1435,7 +1435,7 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
     if (!thrust_vector.IsZero())
     {
         if (max_thrust < 0.0f)
-            max_thrust = ms_engine_thrust[GetEnemyLevel()];
+            max_thrust = ms_engine_thrust[EnemyLevel()];
 
         Float thrust_force = thrust_vector.GetLength();
         if (thrust_force > max_thrust)
@@ -1451,7 +1451,7 @@ Entity *Demi::FindTractorDeflectTarget (
     Float const time,
     Float const frame_dt)
 {
-    Float scan_radius = 0.5f * (ms_tractor_beam_radius[GetEnemyLevel()] + GetScaleFactor());
+    Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + GetScaleFactor());
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),

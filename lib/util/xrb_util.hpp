@@ -77,26 +77,26 @@ namespace Util
       *        properly represented in a C-style string literal.
       */
     bool GetStringLiteralCharNeedsEscaping (char c);
-    /** For example, GetEscapeCode('\0') returns '0'.
+    /** For example, EscapeCode('\0') returns '0'.
       *
       * This function returns the given character if it is not an
-      * escapable character (e.g. GetEscapeCode('j') returns 'j'.
+      * escapable character (e.g. EscapeCode('j') returns 'j'.
       *
-      * GetEscapedChar(GetEscapeCode(c)) should return c.
+      * EscapedChar(EscapeCode(c)) should return c.
       *
       * @brief Returns the escape character code for escaped characters.
       */
-    char GetEscapeCode (char c);
-    /** For example, GetEscapedChar('0') returns '\0'.
+    char EscapeCode (char c);
+    /** For example, EscapedChar('0') returns '\0'.
       *
       * This function returns the given character if it is not an
-      * escapable character (e.g. GetEscapedChar('h') returns 'h'.
+      * escapable character (e.g. EscapedChar('h') returns 'h'.
       *
-      * GetEscapeCode(GetEscapedChar(c)) should return c.
+      * EscapeCode(EscapedChar(c)) should return c.
       *
       * @brief Returns the escaped character for the given escape code.
       */
-    char GetEscapedChar (char c);
+    char EscapedChar (char c);
 
     /** For example, CharacterLiteral('\n') returns std::string("'\\n'"),
       * while CharacterLiteral('j') returns std::string("'j'").

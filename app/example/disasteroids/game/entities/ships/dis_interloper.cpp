@@ -39,7 +39,7 @@ Interloper::Interloper (Uint8 const enemy_level)
 
     SetStrength(D_MINING_LASER);
     SetImmunity(D_COLLISION);
-    SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
+    SetDamageDissipationRate(ms_damage_dissipation_rate[EnemyLevel()]);
 
     m_flock_leader_weight = 0.0f;
 }
@@ -95,7 +95,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
         thrust_direction.Normalize();
     AccumulateForce(
         GetNormalizedEngineUpDownInput() *
-        ms_engine_thrust[GetEnemyLevel()] *
+        ms_engine_thrust[EnemyLevel()] *
         thrust_direction);
 
     ResetInputs();
@@ -236,7 +236,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     }
 
     // incrementally accelerate up to the wander direction/speed
-    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    FloatVector2 wander_velocity(ms_wander_speed[EnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
     SetReticleCoordinates(GetTranslation() + Math::UnitVector(m_wander_angle));
 
@@ -356,7 +356,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     {
         // TODO: keep X distance away from closest flock member
         FloatVector2 flock_center_direction(flock_center_offset.GetNormalization());
-        MatchVelocity(ms_wander_speed[GetEnemyLevel()] * flock_center_direction, frame_dt);
+        MatchVelocity(ms_wander_speed[EnemyLevel()] * flock_center_direction, frame_dt);
         SetReticleCoordinates(GetTranslation() + flock_center_direction);
     }
     else
@@ -380,7 +380,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     // setting method for each enemy level).
 
     // level 0 aims directly at the target
-    if (GetEnemyLevel() == 0)
+    if (EnemyLevel() == 0)
     {
         SetReticleCoordinates(target_position);
     }
@@ -390,16 +390,16 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     else
     {
         Float interceptor_acceleration =
-            ms_engine_thrust[GetEnemyLevel()] / GetFirstMoment();
+            ms_engine_thrust[EnemyLevel()] / GetFirstMoment();
         FloatVector2 p(target_position - GetTranslation());
         FloatVector2 v;
         FloatVector2 a;
-        if (GetEnemyLevel() == 1)
+        if (EnemyLevel() == 1)
         {
             v = 0.5f * (m_target->GetVelocity() - GetVelocity());
             a = FloatVector2::ms_zero;
         }
-        else if (GetEnemyLevel() == 2)
+        else if (EnemyLevel() == 2)
         {
             v = m_target->GetVelocity() - GetVelocity();
             a = FloatVector2::ms_zero;
@@ -484,8 +484,8 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     if (thrust_vector.GetLength() > 0.01f)
     {
         Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+        if (thrust_force > ms_engine_thrust[EnemyLevel()])
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
 
         AccumulateForce(thrust_vector);
     }

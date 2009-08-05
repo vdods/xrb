@@ -169,7 +169,7 @@ public:
       *        widget -- if this is a modal widget, the top-level parent is
       *        returned, otherwise its direct parent.
       */
-    ContainerWidget const *GetEffectiveParent () const;
+    ContainerWidget const *EffectiveParent () const;
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
       * is the top-level parent (see @c Screen), which does some special
@@ -178,7 +178,7 @@ public:
       *        widget -- if this is a modal widget, the top-level parent is
       *        returned, otherwise its direct parent.
       */
-    ContainerWidget *GetEffectiveParent ();
+    ContainerWidget *EffectiveParent ();
     /** @brief Returns a pointer to the top-level parent (const) of this
       *        widget hierarchy (a @c Screen).
       */

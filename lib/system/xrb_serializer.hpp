@@ -102,7 +102,7 @@ public:
       * @return The null-terminated string describing the current error state.
       * @note Will not change the error value.
       */
-    inline char const *GetErrorString () const
+    inline char const *ErrorString () const
     {
         return Util::GetIOErrorString(GetError());
     }

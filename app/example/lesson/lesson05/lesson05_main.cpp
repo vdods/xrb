@@ -331,7 +331,7 @@ protected:
     @code */
     virtual void HandleFrame ()
     {
-        Uint32 entity_capacity = GetEntityCapacity();
+        Uint32 entity_capacity = EntityCapacity();
 
         // Apply gravitational forces between each distinct pair of entities.
         for (Uint32 i = 0; i < entity_capacity; ++i)

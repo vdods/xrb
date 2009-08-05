@@ -54,7 +54,7 @@ public:
         return m_reference;
     }
     inline CollisionType GetCollisionType () const { return m_collision_type; }
-    inline Float GetElasticity () const { return m_elasticity; }
+    inline Float Elasticity () const { return m_elasticity; }
     inline Float GetFirstMoment () const { return m_first_moment; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline Float GetSpeed () const { return m_velocity.GetLength(); }

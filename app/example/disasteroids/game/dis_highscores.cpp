@@ -199,9 +199,9 @@ void HighScores::Read (std::string const &filename)
         try { high_scores = root->GetPathElementArray("|high_scores"); }
         catch (...) { /* if no high scores, quit. */ return; }
 
-        for (Uint32 i = 0; i < high_scores->GetElementCount(); ++i)
+        for (Uint32 i = 0; i < high_scores->ElementCount(); ++i)
         {
-            DataFileValue const *high_score = high_scores->GetElement(i);
+            DataFileValue const *high_score = high_scores->Element(i);
             try
             {
                 Score score(

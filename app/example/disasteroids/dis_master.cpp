@@ -189,7 +189,7 @@ void Master::Run ()
             m_game_widget->SetWorldFrameTime(world_frame_time);
             m_game_widget->SetGUIFrameTime(gui_frame_time);
             m_game_widget->SetRenderFrameTime(render_frame_time);
-            m_game_widget->SetEntityCount(m_game_world->GetEntityCount());
+            m_game_widget->SetEntityCount(m_game_world->EntityCount());
         }
     }
 

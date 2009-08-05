@@ -28,9 +28,9 @@ CircularQueue<T, queue_size>::~CircularQueue ()
 }
 
 template <typename T, Uint32 queue_size>
-T const &CircularQueue<T, queue_size>::GetEntry (Uint32 const index) const
+T const &CircularQueue<T, queue_size>::Entry (Uint32 const index) const
 {
-    ASSERT1(index < GetEntryCount());
+    ASSERT1(index < EntryCount());
     return m_queue[(m_head + index) % queue_size];
 }
 

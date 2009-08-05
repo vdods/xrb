@@ -30,23 +30,23 @@ Sint32 Mortal::GetTargetPriority () const
             minor = DStaticCast<Missile const *>(this)->GetWeaponLevel();
             break;
         case ET_INTERLOPER:
-            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();
             minor = 10;
             break;
         case ET_SHADE:
-            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();
             minor = 20;
             break;
         case ET_REVULSION:
-            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();
             minor = 30;
             break;
         case ET_DEVOURMENT:
-            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();
             minor = 1;
             break;
         case ET_DEMI:
-            major = DStaticCast<EnemyShip const *>(this)->GetEnemyLevel();
+            major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();
             minor = 5;
             break;
         default:

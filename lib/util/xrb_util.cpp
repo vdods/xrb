@@ -159,7 +159,7 @@ bool Util::GetStringLiteralCharNeedsEscaping (char const c)
     return (c >= '\a' && c <= '\r') || c == '\0' || c == '\n' || c == '\\' || c == '\"';
 }
 
-char Util::GetEscapeCode (char const c)
+char Util::EscapeCode (char const c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -177,7 +177,7 @@ char Util::GetEscapeCode (char const c)
     }
 }
 
-char Util::GetEscapedChar (char const c)
+char Util::EscapedChar (char const c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -199,7 +199,7 @@ std::string Util::CharacterLiteral (char const c)
 {
     std::string retval("'");
     if (CharacterLiteralCharNeedsEscaping(c))
-        retval += '\\', retval += GetEscapeCode(c);
+        retval += '\\', retval += EscapeCode(c);
     else
         retval += c;
     retval += '\'';
@@ -215,7 +215,7 @@ std::string Util::GetStringLiteral (std::string const &text)
          ++it)
     {
         if (GetStringLiteralCharNeedsEscaping(*it))
-            retval += '\\', retval += GetEscapeCode(*it);
+            retval += '\\', retval += EscapeCode(*it);
         else
             retval += *it;
     }

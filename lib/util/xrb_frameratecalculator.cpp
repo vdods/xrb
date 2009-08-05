@@ -39,14 +39,14 @@ Float FramerateCalculator::GetFramerate () const
     Float total = 0.0f;
 
     // total up the queued frame times
-    for (Uint32 i = 0; i < m_frame_queue.GetEntryCount(); ++i)
-        total += m_frame_queue.GetEntry(i);
+    for (Uint32 i = 0; i < m_frame_queue.EntryCount(); ++i)
+        total += m_frame_queue.Entry(i);
 
     // avoid a divide by zero
     if (total == 0.0f)
         total = 1.0f;
 
-    return m_time_unit_conversion_ratio * m_frame_queue.GetEntryCount() / total;
+    return m_time_unit_conversion_ratio * m_frame_queue.EntryCount() / total;
 }
 
 } // end of namespace Xrb

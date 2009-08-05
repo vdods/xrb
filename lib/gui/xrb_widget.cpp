@@ -90,14 +90,14 @@ Widget::~Widget ()
 // accessors
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget const *Widget::GetEffectiveParent () const
+ContainerWidget const *Widget::EffectiveParent () const
 {
     return IsModal() ?
            DStaticCast<ContainerWidget const *>(GetTopLevelParent()) :
            m_parent;
 }
 
-ContainerWidget *Widget::GetEffectiveParent ()
+ContainerWidget *Widget::EffectiveParent ()
 {
     return IsModal() ?
            DStaticCast<ContainerWidget *>(GetTopLevelParent()) :
@@ -122,19 +122,19 @@ Screen *Widget::GetTopLevelParent ()
 
 bool Widget::IsFocused () const
 {
-    ContainerWidget const *parent = GetEffectiveParent();
+    ContainerWidget const *parent = EffectiveParent();
     return parent == NULL || parent->m_focus == this;
 }
 
 bool Widget::IsMouseover () const
 {
-    ContainerWidget const *parent = GetEffectiveParent();
+    ContainerWidget const *parent = EffectiveParent();
     return parent == NULL || parent->m_mouseover_focus == this;
 }
 
 bool Widget::IsMouseGrabbed () const
 {
-    ContainerWidget const *parent = GetEffectiveParent();
+    ContainerWidget const *parent = EffectiveParent();
     return parent == NULL || (parent->m_focus == this && parent->m_focus_has_mouse_grab);
 }
 
@@ -531,11 +531,11 @@ bool Widget::Focus ()
     if (!IsTopLevelParent())
     {
         // find the first ancestor of this widget that is focused
-        ContainerWidget *first_focused_ancestor = GetEffectiveParent();
-        while (first_focused_ancestor->GetEffectiveParent() != NULL &&
+        ContainerWidget *first_focused_ancestor = EffectiveParent();
+        while (first_focused_ancestor->EffectiveParent() != NULL &&
                !first_focused_ancestor->IsFocused())
         {
-            first_focused_ancestor = first_focused_ancestor->GetEffectiveParent();
+            first_focused_ancestor = first_focused_ancestor->EffectiveParent();
         }
 
         // unfocus all widgets from the focused child of the first focused
@@ -548,7 +548,7 @@ bool Widget::Focus ()
     // focus all widgets from this widget on up to the first focused ancestor
     FocusWidgetLine();
     // make sure the parent's m_focus actually points to this widget
-    ASSERT1(GetEffectiveParent() == NULL || GetEffectiveParent()->m_focus == this);
+    ASSERT1(EffectiveParent() == NULL || EffectiveParent()->m_focus == this);
     // focus was taken, return true
     return true;
 }
@@ -565,7 +565,7 @@ void Widget::Unfocus ()
 
 void Widget::GrabMouse ()
 {
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
 
     // if this widget already has the mouse grabbed, don't do anything
     if (IsMouseGrabbed())
@@ -596,7 +596,7 @@ void Widget::GrabMouse ()
 
 void Widget::UnGrabMouse ()
 {
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
 
     // if this widget already doesn't have the mouse grabbed, don't do anything
     if (!IsMouseGrabbed())
@@ -852,7 +852,7 @@ void Widget::FocusWidgetLine ()
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_focus == NULL);
 
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
 
     // make sure to focus parent widgets first, so that the focusing
     // happens from top down
@@ -878,7 +878,7 @@ void Widget::UnfocusWidgetLine ()
     if (this_container_widget != NULL && this_container_widget->m_focus != NULL)
         this_container_widget->m_focus->UnfocusWidgetLine();
 
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
     // set the focus state
     if (parent != NULL)
         parent->m_focus = NULL;
@@ -908,17 +908,17 @@ bool Widget::MouseoverOn ()
         return true;
     }
 
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
 
     // if this is not a top level widget, proceed normally
     if (parent != NULL)
     {
         // find the first ancestor of this widget that is mouseover-focused
         ContainerWidget *first_mouseover_ancestor = parent;
-        while (first_mouseover_ancestor->GetEffectiveParent() != NULL &&
+        while (first_mouseover_ancestor->EffectiveParent() != NULL &&
                !first_mouseover_ancestor->IsMouseover())
         {
-            first_mouseover_ancestor = first_mouseover_ancestor->GetEffectiveParent();
+            first_mouseover_ancestor = first_mouseover_ancestor->EffectiveParent();
         }
 
         // unfocus all widgets from the mouseover-focused child of the first
@@ -966,7 +966,7 @@ void Widget::MouseoverOnWidgetLine ()
     DEBUG1_CODE(ContainerWidget *this_container_widget = dynamic_cast<ContainerWidget *>(this));
     ASSERT1(this_container_widget == NULL || this_container_widget->m_mouseover_focus == NULL);
 
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
 
     // make sure to mouseover-focus parent widgets first, so that
     // the mouseover-focusing happens from top down
@@ -992,7 +992,7 @@ void Widget::MouseoverOffWidgetLine ()
         this_container_widget->m_mouseover_focus->MouseoverOffWidgetLine();
 
     // set the mouseover-focus state
-    ContainerWidget *parent = GetEffectiveParent();
+    ContainerWidget *parent = EffectiveParent();
     if (parent != NULL)
         parent->m_mouseover_focus = NULL;
 

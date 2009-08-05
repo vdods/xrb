@@ -621,7 +621,7 @@ void CollisionQuadTree::CollideEntity (
                 else
                     collision_force = 0.0f;
 
-                collision_force *= (1.0f + entity->GetElasticity() * other_entity->GetElasticity());
+                collision_force *= (1.0f + entity->Elasticity() * other_entity->Elasticity());
 
                 entity->AccumulateForce(collision_force*collision_normal);
                 other_entity->AccumulateForce(-collision_force*collision_normal);
@@ -719,7 +719,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
             else
                 collision_force = 0.0f;
 
-            collision_force *= (1.0f + m_entity->GetElasticity() * other_entity->GetElasticity());
+            collision_force *= (1.0f + m_entity->Elasticity() * other_entity->Elasticity());
 
             m_entity->AccumulateForce(collision_force*collision_normal);
             other_entity->AccumulateForce(-collision_force*collision_normal);

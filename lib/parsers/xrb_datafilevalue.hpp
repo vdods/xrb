@@ -271,7 +271,7 @@ public:
 
     virtual ~DataFileValue () { }
 
-    virtual DataFileElementType GetElementType () const = 0;
+    virtual DataFileElementType ElementType () const = 0;
     inline DataFileValue const *GetPathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
@@ -337,7 +337,7 @@ public:
 
     inline bool GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_BOOLEAN; }
+    virtual DataFileElementType ElementType () const { return DAT_BOOLEAN; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -366,7 +366,7 @@ public:
 
     inline Sint32 GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_SINT32; }
+    virtual DataFileElementType ElementType () const { return DAT_SINT32; }
 
     virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%+d", m_value); }
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -392,7 +392,7 @@ public:
 
     inline Uint32 GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_UINT32; }
+    virtual DataFileElementType ElementType () const { return DAT_UINT32; }
 
     virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%u", m_value); }
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -418,7 +418,7 @@ public:
 
     inline Float GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_FLOAT; }
+    virtual DataFileElementType ElementType () const { return DAT_FLOAT; }
 
     void Sign (NumericSign sign);
 
@@ -449,7 +449,7 @@ public:
 
     inline char GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_CHARACTER; }
+    virtual DataFileElementType ElementType () const { return DAT_CHARACTER; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -485,7 +485,7 @@ public:
     inline void AppendString (std::string const &string) { m_value += string; }
     inline void AppendCharacter (char const character) { m_value += character; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_STRING; }
+    virtual DataFileElementType ElementType () const { return DAT_STRING; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -560,7 +560,7 @@ public:
     inline std::string const &GetKey () const { return m_key; }
     inline DataFileValue *GetValue () const { return m_value; }
 
-    virtual DataFileElementType GetElementType () const { return DAT_KEY_PAIR; }
+    virtual DataFileElementType ElementType () const { return DAT_KEY_PAIR; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -600,15 +600,15 @@ public:
     DataFileElementType ArrayElementType () const;
     DataFileElementType GetUltimateArrayElementType () const;
     Uint32 DimensionCount () const;
-    inline Uint32 GetElementCount () const { return m_element_vector.size(); }
-    inline DataFileValue *GetElement (Uint32 index) const
+    inline Uint32 ElementCount () const { return m_element_vector.size(); }
+    inline DataFileValue *Element (Uint32 index) const
     {
         return index < m_element_vector.size() ? m_element_vector[index] : NULL;
     }
 
     void AppendValue (DataFileValue *value);
 
-    virtual DataFileElementType GetElementType () const { return DAT_ARRAY; }
+    virtual DataFileElementType ElementType () const { return DAT_ARRAY; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -655,7 +655,7 @@ public:
     void AddKeyPair (std::string const &key, DataFileValue *value);
     void AddKeyPair (DataFileKeyPair *key_value_pair);
 
-    virtual DataFileElementType GetElementType () const { return DAT_STRUCTURE; }
+    virtual DataFileElementType ElementType () const { return DAT_STRUCTURE; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;

@@ -831,7 +831,7 @@ public:
     }
     virtual ~EnemySpawner () { }
 
-    inline EntityType GetEnemySpawnType () const { return m_enemy_spawn_type; }
+    inline EntityType EnemySpawnType () const { return m_enemy_spawn_type; }
     inline bool IsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
     inline Float GetFireRateOverride () const { return m_fire_rate_override; }
 

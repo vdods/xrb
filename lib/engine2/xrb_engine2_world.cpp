@@ -88,7 +88,7 @@ Engine2::World *Engine2::World::CreateEmpty (
 
 void Engine2::World::Write (Serializer &serializer) const
 {
-    serializer.WriteUint32(GetEntityCapacity());
+    serializer.WriteUint32(EntityCapacity());
     serializer.WriteUint32(GetMainObjectLayerIndex());
     WriteObjectLayers(serializer);
 }

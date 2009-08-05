@@ -60,15 +60,15 @@ public:
 
     virtual Float GetMaxAngularVelocity () const
     {
-        return ms_max_angular_velocity[GetEnemyLevel()];
+        return ms_max_angular_velocity[EnemyLevel()];
     }
     virtual Float GetShipScaleFactor () const
     {
-        return ms_scale_factor[GetEnemyLevel()];
+        return ms_scale_factor[EnemyLevel()];
     }
     virtual Float GetShipBaselineFirstMoment () const
     {
-        return ms_baseline_first_moment[GetEnemyLevel()];
+        return ms_baseline_first_moment[EnemyLevel()];
     }
 
     // ///////////////////////////////////////////////////////////////////////

@@ -502,14 +502,14 @@ void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
     ASSERT1(m_is_demi_wave
             ||
-            m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] <
-            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->GetEnemyLevel()]);
+            m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()] <
+            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->EnemyLevel()]);
 
-    ++m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    ++m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
     {
-        if (m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
-            --m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+        if (m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->EnemyLevel()] > 0)
+            --m_enemy_ship_left_to_spawn[enemy_ship_index][enemy_ship->EnemyLevel()];
     }
     else
     {
@@ -523,14 +523,14 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
     ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
-    ASSERT1(m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0);
+    ASSERT1(m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()] > 0);
 
-    --m_enemy_ship_count[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+    --m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)
     {
-        if (m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()] > 0)
+        if (m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->EnemyLevel()] > 0)
         {
-            --m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->GetEnemyLevel()];
+            --m_enemy_ship_left_to_destroy[enemy_ship_index][enemy_ship->EnemyLevel()];
             if (m_enemy_ship_wave_left > 0)
                 --m_enemy_ship_wave_left;
         }

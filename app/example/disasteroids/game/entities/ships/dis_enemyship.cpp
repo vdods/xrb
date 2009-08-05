@@ -40,7 +40,7 @@ void EnemyShip::Die (
 
     // handle scoring
     if (killer != NULL && killer->IsPlayerShip())
-        static_cast<PlayerShip *>(killer)->CreditEnemyKill(GetEntityType(), GetEnemyLevel());
+        static_cast<PlayerShip *>(killer)->CreditEnemyKill(GetEntityType(), EnemyLevel());
 
     // notify the world that this enemyship is going bye-bye
     DStaticCast<World *>(GetWorld())->RecordDestroyedEnemyShip(this);

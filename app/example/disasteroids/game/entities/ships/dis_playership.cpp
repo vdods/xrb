@@ -802,7 +802,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
         powerup->GetItemType() <= IT_MINERAL_HIGHEST)
     {
         ASSERT1(powerup->GetItem() == NULL);
-        ChangeMineralInventory(powerup->GetItemType() - IT_MINERAL_LOWEST, powerup->GetEffectiveValue());
+        ChangeMineralInventory(powerup->GetItemType() - IT_MINERAL_LOWEST, powerup->EffectiveValue());
         return true;
     }
     // check if its a health powerup
@@ -812,7 +812,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
         Heal(
             powerup,
             powerup,
-            powerup->GetEffectiveValue(),
+            powerup->EffectiveValue(),
             (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
                 (GetFirstMoment() + powerup->GetFirstMoment()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),

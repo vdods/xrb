@@ -67,7 +67,7 @@ void SerializerUnitTest::AtomEndOfFile ()
     serializer->WriteUint32(0xDEADBEEF);
     TestCritical(serializer->GetError() == IOE_NONE,
                  "wrote a Uint32.  GetError() is %s and should be %s",
-                 serializer->GetErrorString(),
+                 serializer->ErrorString(),
                  GetIOErrorString(IOE_NONE));
 
     // read the same file back, testing the IsAtEnd() and other end conditions
@@ -92,7 +92,7 @@ void SerializerUnitTest::AtomEndOfFile ()
     serializer->ReadUint8();
     Test(serializer->GetError() == IOE_IS_AT_END,
          "read an additional Uint8.  GetError() is %s and should be %s",
-         serializer->GetErrorString(),
+         serializer->ErrorString(),
          GetIOErrorString(IOE_IS_AT_END));
 
     CloseSerializer();
@@ -131,7 +131,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
             TestCritical(serializer->GetError() == IOE_NONE,
                          "opened BinaryFileSerializer for writing.  GetError() "
                          "is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             m_currently_opened_serializer = serializer;
@@ -146,7 +146,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
             TestCritical(subordinate_serializer->GetError() == IOE_NONE,
                          "opened BinaryFileSerializer for use in "
                          "CompressionSerializer.  GetError() is %s and should be %s",
-                         subordinate_serializer->GetErrorString(),
+                         subordinate_serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             ASSERT1(m_huffman != NULL);
@@ -156,7 +156,7 @@ Serializer *SerializerUnitTest::OpenASerializerForWriting (
             TestCritical(serializer->GetError() == IOE_NONE,
                          "attached BinaryFileSerializer to CompressionSerializer. "
                          "GetError() is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             m_currently_opened_serializer = serializer;
@@ -190,14 +190,14 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
             serializer->Close();
             Test(serializer->GetError() == IOE_NONE,
                  "closed BinaryFileSerializer.  GetError() is %s and should be %s",
-                 serializer->GetErrorString(),
+                 serializer->ErrorString(),
                  GetIOErrorString(IOE_NONE));
 
             serializer->Open(BINARYFILESERIALIZER_DATA_FILENAME, "r");
             TestCritical(serializer->GetError() == IOE_NONE,
                          "opened BinaryFileSerializer for writing.  GetError() "
                          "is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
             break;
         }
@@ -215,28 +215,28 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
             TestCritical(serializer->GetError() == IOE_NONE,
                          "detached BinaryFileSerializer from CompressionSerializer.  "
                          "GetError() is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             subordinate_serializer->Close();
             Test(subordinate_serializer->GetError() == IOE_NONE,
                  "closing BinaryFileSerializer that is attached to "
                  "CompressionSerializer.  GetError() is %s and should be %s",
-                 subordinate_serializer->GetErrorString(),
+                 subordinate_serializer->ErrorString(),
                  GetIOErrorString(IOE_NONE));
 
             subordinate_serializer->Open(COMPRESSIONSERIALIZER_DATA_FILENAME, "r");
             TestCritical(subordinate_serializer->GetError() == IOE_NONE,
                          "opening BinaryFileSerializer for use in "
                          "CompressionSerializer.  GetError() is %s and should be %s",
-                         subordinate_serializer->GetErrorString(),
+                         subordinate_serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             serializer->AttachSerializer(subordinate_serializer);
             TestCritical(serializer->GetError() == IOE_NONE,
                          "attached BinaryFileSerializer to CompressionSerializer. "
                          "GetError() is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
             break;
         }
@@ -268,7 +268,7 @@ void SerializerUnitTest::CloseSerializer ()
             serializer->Close();
             Test(serializer->GetError() == IOE_NONE,
                  "closing BinaryFileSerializer.  GetError() is %s and should be %s",
-                 serializer->GetErrorString(),
+                 serializer->ErrorString(),
                  GetIOErrorString(IOE_NONE));
 
             delete serializer;
@@ -288,14 +288,14 @@ void SerializerUnitTest::CloseSerializer ()
             TestCritical(serializer->GetError() == IOE_NONE,
                          "detached BinaryFileSerializer from CompressionSerializer.  "
                          "GetError() is %s and should be %s",
-                         serializer->GetErrorString(),
+                         serializer->ErrorString(),
                          GetIOErrorString(IOE_NONE));
 
             subordinate_serializer->Close();
             Test(subordinate_serializer->GetError() == IOE_NONE,
                  "closing BinaryFileSerializer that is attached to "
                  "CompressionSerializer.  GetError() is %s and should be %s",
-                 subordinate_serializer->GetErrorString(),
+                 subordinate_serializer->ErrorString(),
                  GetIOErrorString(IOE_NONE));
 
             delete subordinate_serializer;

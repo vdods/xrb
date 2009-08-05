@@ -1250,7 +1250,7 @@ bool EnemySpawner::Activate (
             GetOwnerShip()->GetObjectLayer(),
             FloatVector2::ms_zero,
             muzzle_velocity,
-            GetEnemySpawnType(),
+            EnemySpawnType(),
             spawn_enemy_level);
     enemy_ship->SetTranslation(GetMuzzleLocation() + enemy_ship->GetScaleFactor() * GetMuzzleDirection());
     

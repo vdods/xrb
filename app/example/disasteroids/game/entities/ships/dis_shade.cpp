@@ -42,11 +42,11 @@ Shade::Shade (Uint8 const enemy_level)
 {
     m_think_state = THINK_STATE(PickWanderDirection);
 
-    m_weapon = new SlowBulletGun(GetEnemyLevel());
+    m_weapon = new SlowBulletGun(EnemyLevel());
     m_weapon->Equip(this);
 
     SetStrength(D_MINING_LASER|D_COLLISION);
-    SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
+    SetDamageDissipationRate(ms_damage_dissipation_rate[EnemyLevel()]);
 }
 
 Shade::~Shade ()
@@ -208,7 +208,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
     }
 
     // incrementally accelerate up to the wander direction/speed
-    FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+    FloatVector2 wander_velocity(ms_wander_speed[EnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
 
     if (time >= m_next_whatever_time)
@@ -229,17 +229,17 @@ void Shade::Stalk (Float const time, Float const frame_dt)
             m_target->GetTranslation(),
             GetTranslation()));
     Float distance_to_target = (target_position - GetTranslation()).GetLength();
-    ASSERT1(ms_alarm_distance[GetEnemyLevel()] < ms_stalk_minimum_distance[GetEnemyLevel()]);
-    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()]);
+    ASSERT1(ms_alarm_distance[EnemyLevel()] < ms_stalk_minimum_distance[EnemyLevel()]);
+    ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
     // if we're inside the alarm distance, teleport away
-    if (distance_to_target < ms_alarm_distance[GetEnemyLevel()])
+    if (distance_to_target < ms_alarm_distance[EnemyLevel()])
     {
         m_think_state = THINK_STATE(Teleport);
         return;
     }
     // if we're not within the stalk donut, move to attack range
-    else if (distance_to_target < ms_stalk_minimum_distance[GetEnemyLevel()] ||
-             distance_to_target > ms_stalk_maximum_distance[GetEnemyLevel()])
+    else if (distance_to_target < ms_stalk_minimum_distance[EnemyLevel()] ||
+             distance_to_target > ms_stalk_maximum_distance[EnemyLevel()])
     {
         m_think_state = THINK_STATE(MoveToAttackRange);
         return;
@@ -266,49 +266,49 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
             GetTranslation()));
     FloatVector2 position_delta(target_position - GetTranslation());
     Float distance_to_target = position_delta.GetLength();
-    ASSERT1(ms_stalk_minimum_distance[GetEnemyLevel()] < ms_stalk_maximum_distance[GetEnemyLevel()]);
+    ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
     // if we're inside the alarm distance, teleport away
-    if (distance_to_target < ms_alarm_distance[GetEnemyLevel()])
+    if (distance_to_target < ms_alarm_distance[EnemyLevel()])
     {
         m_think_state = THINK_STATE(Teleport);
         return;
     }
     // check if we want to move away from the target
-    else if (distance_to_target <= 0.75f * ms_stalk_minimum_distance[GetEnemyLevel()] + 0.25f * ms_stalk_maximum_distance[GetEnemyLevel()])
+    else if (distance_to_target <= 0.75f * ms_stalk_minimum_distance[EnemyLevel()] + 0.25f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
-        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[GetEnemyLevel()] * position_delta.GetNormalization());
+        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetFirstMoment());
-        if (thrust_vector.GetLength() > ms_engine_thrust[GetEnemyLevel()])
+        if (thrust_vector.GetLength() > ms_engine_thrust[EnemyLevel()])
         {
             thrust_vector.Normalize();
-            thrust_vector *= ms_engine_thrust[GetEnemyLevel()];
+            thrust_vector *= ms_engine_thrust[EnemyLevel()];
         }
         AccumulateForce(thrust_vector);
 
         AimWeapon(target_position);
-        if (distance_to_target >= ms_stalk_minimum_distance[GetEnemyLevel()] &&
-            distance_to_target <= ms_stalk_maximum_distance[GetEnemyLevel()])
+        if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
+            distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {
             SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
         }
     }
     // check if we want to move away from the target
-    else if (distance_to_target >= 0.25f * ms_stalk_minimum_distance[GetEnemyLevel()] + 0.75f * ms_stalk_maximum_distance[GetEnemyLevel()])
+    else if (distance_to_target >= 0.25f * ms_stalk_minimum_distance[EnemyLevel()] + 0.75f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
-        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[GetEnemyLevel()] * position_delta.GetNormalization());
+        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * GetFirstMoment());
-        if (thrust_vector.GetLength() > ms_engine_thrust[GetEnemyLevel()])
+        if (thrust_vector.GetLength() > ms_engine_thrust[EnemyLevel()])
         {
             thrust_vector.Normalize();
-            thrust_vector *= ms_engine_thrust[GetEnemyLevel()];
+            thrust_vector *= ms_engine_thrust[EnemyLevel()];
         }
         AccumulateForce(thrust_vector);
 
         AimWeapon(target_position);
-        if (distance_to_target >= ms_stalk_minimum_distance[GetEnemyLevel()] &&
-            distance_to_target <= ms_stalk_maximum_distance[GetEnemyLevel()])
+        if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
+            distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {
             SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
         }
@@ -335,7 +335,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
         ++placement_attempt_count;
 
         teleport_destination =
-            ms_stalk_maximum_distance[GetEnemyLevel()] *
+            ms_stalk_maximum_distance[EnemyLevel()] *
             Math::UnitVector(Math::RandomAngle());
     }
     while (GetPhysicsHandler()->
@@ -369,8 +369,8 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
     if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+        if (thrust_force > ms_engine_thrust[EnemyLevel()])
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
 
         AccumulateForce(thrust_vector);
     }
@@ -385,7 +385,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         return;
     }
 
-    if (GetEnemyLevel() == 0)
+    if (EnemyLevel() == 0)
     {
         SetReticleCoordinates(target_position);
     }
@@ -397,7 +397,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         FloatVector2 a;
         Float projectile_speed = SlowBulletGun::ms_muzzle_speed[m_weapon->GetUpgradeLevel()];
         ASSERT1(projectile_speed > 0.0f);
-        if (GetEnemyLevel() == 1)
+        if (EnemyLevel() == 1)
             a = FloatVector2::ms_zero;
         else
             a = m_target->GetForce() / m_target->GetFirstMoment();

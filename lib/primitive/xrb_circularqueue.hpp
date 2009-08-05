@@ -44,11 +44,11 @@ public:
     /** The head of the queue always has index 0.
       * @brief Returns the entry in the relative position given by @c index.
       */
-    T const &GetEntry (Uint32 const index) const;
+    T const &Entry (Uint32 const index) const;
     /** The size of the queue will always be <= @c queue_size.
       * @brief Returns the number of entries in this queue.
       */
-    inline Uint32 GetEntryCount () const { return m_entry_count; }
+    inline Uint32 EntryCount () const { return m_entry_count; }
     /** @brief Returns true iff the queue is empty.
       */
     inline bool IsEmpty () const { return m_entry_count == 0; }

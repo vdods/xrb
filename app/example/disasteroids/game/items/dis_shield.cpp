@@ -57,7 +57,8 @@ Float Shield::Damage (
     Float damage_actually_blocked =
         Min(damage_amount, available_damage_dissipation) * power_to_use / power_required;
     ASSERT1(damage_actually_blocked >= 0.0f);
-    ASSERT1(damage_actually_blocked <= damage_amount);
+    // +0.001f due to floating point inaccuracies (this assert was being triggered because of it)
+    ASSERT1(damage_actually_blocked <= damage_amount + 0.001f); 
     // calculate the amount of damage the ship should take
     Float adjusted_damage_amount = damage_amount - damage_actually_blocked;
     // subtract the power to use from the charged power

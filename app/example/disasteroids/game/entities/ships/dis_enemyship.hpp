@@ -39,7 +39,7 @@ public:
     // Entity interface method
     virtual bool IsEnemyShip () const { return true; }
 
-    inline Uint8 GetEnemyLevel () const { return m_enemy_level; }
+    inline Uint8 EnemyLevel () const { return m_enemy_level; }
 
     virtual void Die (
         Entity *killer,

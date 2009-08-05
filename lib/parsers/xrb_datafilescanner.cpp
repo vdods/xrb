@@ -644,7 +644,7 @@ DataFileParser::Token::Type DataFileScanner::ScanCharacterLiteral (DataFileValue
             return DataFileParser::Token::BAD_TOKEN;
 
         if (escaped_char)
-            *scanned_token = new DataFileCharacter(Util::GetEscapedChar(m_text[m_text.length()-2]));
+            *scanned_token = new DataFileCharacter(Util::EscapedChar(m_text[m_text.length()-2]));
         else
             *scanned_token = new DataFileCharacter(m_text[m_text.length()-2]);
         return DataFileParser::Token::CHARACTER;
@@ -687,7 +687,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
             else
             {
                 m_input >> c;
-                m_text += Util::GetEscapedChar(c);
+                m_text += Util::EscapedChar(c);
             }
         }
         else

@@ -84,7 +84,7 @@ public:
       * will cause an assert.
       * @brief Returns time of the event currently being processed.
       */
-    inline Float GetEventTime () const
+    inline Float EventTime () const
     {
         ASSERT1(m_event_dt >= 0.0);
         return m_current_event_time;
@@ -94,7 +94,7 @@ public:
       * will cause an assert.
       * @brief Returns the time delta since the most recently processed event.
       */
-    inline Float GetEventDT () const
+    inline Float EventDT () const
     {
         ASSERT1(m_event_dt >= 0.0);
         return m_event_dt;

@@ -60,13 +60,13 @@ Devourment::Devourment (Uint8 const enemy_level)
     // it and the asteroids' weakness against mining laser).
     SetWeakness(D_MINING_LASER);
     SetImmunity(D_COLLISION|D_GRINDING);
-    SetDamageDissipationRate(ms_damage_dissipation_rate[GetEnemyLevel()]);
+    SetDamageDissipationRate(ms_damage_dissipation_rate[EnemyLevel()]);
 
     m_mouth_tractor = new Tractor(0);
-    m_mouth_tractor->SetRangeOverride(ms_mouth_tractor_range[GetEnemyLevel()]);
-    m_mouth_tractor->SetStrengthOverride(ms_mouth_tractor_strength[GetEnemyLevel()]);
-    m_mouth_tractor->SetMaxForceOverride(ms_mouth_tractor_max_force[GetEnemyLevel()]);
-    m_mouth_tractor->SetBeamRadiusOverride(ms_mouth_tractor_beam_radius[GetEnemyLevel()]);
+    m_mouth_tractor->SetRangeOverride(ms_mouth_tractor_range[EnemyLevel()]);
+    m_mouth_tractor->SetStrengthOverride(ms_mouth_tractor_strength[EnemyLevel()]);
+    m_mouth_tractor->SetMaxForceOverride(ms_mouth_tractor_max_force[EnemyLevel()]);
+    m_mouth_tractor->SetBeamRadiusOverride(ms_mouth_tractor_beam_radius[EnemyLevel()]);
     m_mouth_tractor->Equip(this);
 
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
@@ -114,14 +114,14 @@ void Devourment::Think (Float const time, Float const frame_dt)
                 GetTranslation(),
                 0.72f * GetScaleFactor(),
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
-                -ms_mouth_damage_rate[GetEnemyLevel()],
+                -ms_mouth_damage_rate[EnemyLevel()],
                 Mortal::D_GRINDING,
                 GetReference(),
                 GetReference(),
-                GetEnemyLevel());
+                EnemyLevel());
         m_mouth_health_trigger = health_trigger->GetReference();
         // set the mouth damage rate
-        m_mouth_health_trigger->SetHealthDeltaRate(-ms_mouth_damage_rate[GetEnemyLevel()]);
+        m_mouth_health_trigger->SetHealthDeltaRate(-ms_mouth_damage_rate[EnemyLevel()]);
     }
 
     // the grinder sprite's color bias (i.e. damage/healing flashing)
@@ -242,9 +242,9 @@ void Devourment::Die (
     Float mineral_mass_total = 0.0f;
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         mineral_mass_total += m_mineral_inventory[i];
-    if (mineral_mass_total > ms_max_spawn_mineral_mass[GetEnemyLevel()])
+    if (mineral_mass_total > ms_max_spawn_mineral_mass[EnemyLevel()])
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-            m_mineral_inventory[i] = ms_max_spawn_mineral_mass[GetEnemyLevel()] * m_mineral_inventory[i] / mineral_mass_total;
+            m_mineral_inventory[i] = ms_max_spawn_mineral_mass[EnemyLevel()] * m_mineral_inventory[i] / mineral_mass_total;
 
     // spawn the collected minerals
     static Float const s_min_powerup_mass = 5.0f;
@@ -258,7 +258,7 @@ void Devourment::Die (
             Float mass =
                 Math::RandomFloat(
                     s_min_powerup_mass,
-                    Min(ms_max_single_mineral_mass[GetEnemyLevel()], m_mineral_inventory[mineral_index]));
+                    Min(ms_max_single_mineral_mass[EnemyLevel()], m_mineral_inventory[mineral_index]));
             Float scale_factor = Math::Sqrt(mass);
             Float velocity_angle = Math::RandomAngle();
             Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
@@ -283,8 +283,8 @@ void Devourment::Die (
     static Float const s_powerup_coefficient = 0.1f;
 
     Float health_powerup_amount_left_to_spawn =
-        Min(mineral_mass_total, ms_max_spawn_mineral_mass[GetEnemyLevel()]) / ms_max_spawn_mineral_mass[GetEnemyLevel()] *
-        ms_health_powerup_amount_to_spawn[GetEnemyLevel()];
+        Min(mineral_mass_total, ms_max_spawn_mineral_mass[EnemyLevel()]) / ms_max_spawn_mineral_mass[EnemyLevel()] *
+        ms_health_powerup_amount_to_spawn[EnemyLevel()];
     while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
     {
         Float health_powerup_amount =
@@ -326,7 +326,7 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
         ASSERT1(powerup->GetItem() == NULL);
         Uint32 mineral_index = powerup->GetItemType() - IT_MINERAL_LOWEST;
         ASSERT1(mineral_index < MINERAL_COUNT);
-        m_mineral_inventory[mineral_index] += powerup->GetEffectiveValue();
+        m_mineral_inventory[mineral_index] += powerup->EffectiveValue();
     }
     // health powerups heal
     else if (powerup->GetItemType() == IT_POWERUP_HEALTH)
@@ -335,7 +335,7 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
         Heal(
             powerup,
             powerup,
-            powerup->GetEffectiveValue(),
+            powerup->EffectiveValue(),
             (GetFirstMoment()*powerup->GetTranslation() + powerup->GetFirstMoment()*GetTranslation()) /
                 (GetFirstMoment() + powerup->GetFirstMoment()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
@@ -384,7 +384,7 @@ void Devourment::Wander (Float const time, Float const frame_dt)
     // otherwise handle wandering
     else
     {
-        FloatVector2 wander_velocity(ms_wander_speed[GetEnemyLevel()] * Math::UnitVector(m_wander_angle));
+        FloatVector2 wander_velocity(ms_wander_speed[EnemyLevel()] * Math::UnitVector(m_wander_angle));
         MatchVelocity(wander_velocity, frame_dt);
 
         if (time >= m_next_whatever_time)
@@ -412,8 +412,8 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
     Float const give_up_distance =
-        ms_mouth_tractor_range[GetEnemyLevel()] +
-        0.5f * ms_mouth_tractor_beam_radius[GetEnemyLevel()] +
+        ms_mouth_tractor_range[EnemyLevel()] +
+        0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
         GetScaleFactor();
 
     Float target_distance = (target_position - GetTranslation()).GetLength();
@@ -436,7 +436,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     // TODO: expensive polynomial solving shouldn't happen every single frame
 
     Float interceptor_acceleration =
-        ms_engine_thrust[GetEnemyLevel()] / GetFirstMoment();
+        ms_engine_thrust[EnemyLevel()] / GetFirstMoment();
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
     FloatVector2 a(m_target->GetForce() / m_target->GetFirstMoment());
@@ -470,7 +470,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (T <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
-        AccumulateForce(ms_engine_thrust[GetEnemyLevel()] * (target_position - GetTranslation()).GetNormalization());
+        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - GetTranslation()).GetNormalization());
     }
     else
     {
@@ -513,7 +513,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     // be Devourments flying all over the joint
     if (!GetVelocity().IsZero())
     {
-        FloatVector2 braking_thrust(-ms_engine_thrust[GetEnemyLevel()] * GetVelocity().GetNormalization());
+        FloatVector2 braking_thrust(-ms_engine_thrust[EnemyLevel()] * GetVelocity().GetNormalization());
         AccumulateForce(braking_thrust);
     }
 }
@@ -527,8 +527,8 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     if (!thrust_vector.IsZero())
     {
         Float thrust_force = thrust_vector.GetLength();
-        if (thrust_force > ms_engine_thrust[GetEnemyLevel()])
-            thrust_vector = ms_engine_thrust[GetEnemyLevel()] * thrust_vector.GetNormalization();
+        if (thrust_force > ms_engine_thrust[EnemyLevel()])
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
 
         SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
         AccumulateForce(thrust_vector);
@@ -542,7 +542,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
     static Float const s_optimal_target_mass = 400.0f;
 
     Float scan_radius =
-        ms_mouth_tractor_range[GetEnemyLevel()] +
+        ms_mouth_tractor_range[EnemyLevel()] +
         GetScaleFactor();
 
     // scan area for targets
