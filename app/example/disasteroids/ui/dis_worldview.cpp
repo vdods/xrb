@@ -223,9 +223,9 @@ void WorldView::HandleFrame ()
     if (GetParentWorldViewWidget()->IsHidden())
         return;
 
-    ProcessZoom(GetFrameDT());
-    ProcessSpin(GetFrameDT());
-    ProcessFade(GetFrameDT());
+    ProcessZoom(FrameDT());
+    ProcessSpin(FrameDT());
+    ProcessFade(FrameDT());
 
     // update the view position
     if (m_player_ship != NULL)
@@ -237,7 +237,7 @@ void WorldView::HandleFrame ()
         }
         */
         // lookahead
-        if (GetFrameDT() > 0.0f)
+        if (FrameDT() > 0.0f)
         {
             Float minor_axis_radius = GetMinorAxisRadius();
             FloatVector2 ship_velocity_direction;
@@ -248,13 +248,13 @@ void WorldView::HandleFrame ()
             Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->GetSpeed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
 
-            FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * GetFrameDT()));
+            FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * FrameDT()));
             bool is_view_recovering_this_frame;
             Float const max_view_center_delta = 2.4f / GetZoomFactor();
             static Float const s_time_to_recover = 0.5f;
-            if (view_center_delta.GetLength() > max_view_center_delta * GetFrameDT())
+            if (view_center_delta.GetLength() > max_view_center_delta * FrameDT())
             {
-                m_view_velocity += view_center_delta.GetNormalization() * max_view_center_delta * GetFrameDT();
+                m_view_velocity += view_center_delta.GetNormalization() * max_view_center_delta * FrameDT();
                 is_view_recovering_this_frame = true;
             }
             else
@@ -266,11 +266,11 @@ void WorldView::HandleFrame ()
             if (!m_is_view_recovering && is_view_recovering_this_frame)
             {
                 m_is_view_recovering = true;
-                m_calculated_view_center = Center() + m_view_velocity * GetFrameDT();
+                m_calculated_view_center = Center() + m_view_velocity * FrameDT();
                 m_recover_parameter = 0.0f;
             }
             else if (m_is_view_recovering && !is_view_recovering_this_frame)
-                m_calculated_view_center = m_calculated_view_center + m_view_velocity * GetFrameDT();
+                m_calculated_view_center = m_calculated_view_center + m_view_velocity * FrameDT();
 
             if (m_is_view_recovering && m_recover_parameter < 1.0f)
             {
@@ -278,7 +278,7 @@ void WorldView::HandleFrame ()
                 SetCenter(
                     m_calculated_view_center * (1.0f - m_recover_parameter) +
                     traveling_at * m_recover_parameter);
-                m_recover_parameter += GetFrameDT() / s_time_to_recover;
+                m_recover_parameter += FrameDT() / s_time_to_recover;
             }
             else
             {
@@ -296,7 +296,7 @@ void WorldView::HandleFrame ()
                 dragging_factor = m_dragging_factor * view_to_ship_ratio;
             else
                 dragging_factor = m_dragging_factor;
-            dragging_factor *= GetFrameDT();
+            dragging_factor *= FrameDT();
 
             SetCenter(
                 Center() * (1.0f - dragging_factor)
@@ -308,7 +308,7 @@ void WorldView::HandleFrame ()
     }
     else
     {
-        SetCenter(Center() + m_view_velocity * GetFrameDT());
+        SetCenter(Center() + m_view_velocity * FrameDT());
     }
 }
 
@@ -430,9 +430,9 @@ void WorldView::ProcessPlayerInput ()
         Float zoom_by_power;
 
         if (m_zoom_accumulator > 0)
-            zoom_by_power = Min(m_zoom_accumulator, m_zoom_speed*GetFrameDT());
+            zoom_by_power = Min(m_zoom_accumulator, m_zoom_speed*FrameDT());
         else if (m_zoom_accumulator < 0)
-            zoom_by_power = Max(m_zoom_accumulator, -m_zoom_speed*GetFrameDT());
+            zoom_by_power = Max(m_zoom_accumulator, -m_zoom_speed*FrameDT());
         else
             zoom_by_power = 0.0f;
 
@@ -445,9 +445,9 @@ void WorldView::ProcessPlayerInput ()
         Float rotate_by_angle;
 
         if (m_rotation_accumulator > 0)
-            rotate_by_angle = Min(m_rotation_accumulator, m_rotation_speed*GetFrameDT());
+            rotate_by_angle = Min(m_rotation_accumulator, m_rotation_speed*FrameDT());
         else if (m_rotation_accumulator < 0)
-            rotate_by_angle = Max(m_rotation_accumulator, -m_rotation_speed*GetFrameDT());
+            rotate_by_angle = Max(m_rotation_accumulator, -m_rotation_speed*FrameDT());
         else
             rotate_by_angle = 0.0f;
 

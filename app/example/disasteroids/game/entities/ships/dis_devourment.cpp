@@ -439,7 +439,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
         ms_engine_thrust[EnemyLevel()] / GetMass();
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->GetForce() / m_target->GetMass());
+    FloatVector2 a(m_target->Force() / m_target->GetMass());
 
     Polynomial poly;
     poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
@@ -522,7 +522,7 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
     FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {

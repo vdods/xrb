@@ -364,7 +364,7 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
     FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
@@ -400,7 +400,7 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         if (EnemyLevel() == 1)
             a = FloatVector2::ms_zero;
         else
-            a = m_target->GetForce() / m_target->GetMass();
+            a = m_target->Force() / m_target->GetMass();
 
         Polynomial poly;
         poly.Set(4, 0.25f * (a | a));

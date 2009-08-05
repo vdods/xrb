@@ -146,7 +146,7 @@ void RadiusKnockback (
     }
 }
 
-std::string GetFormattedTimeString (Float const time)
+std::string FormattedTimeString (Float const time)
 {
     Uint32 game_time_seconds = static_cast<Uint32>(time);
     Uint32 minutes = game_time_seconds / 60;

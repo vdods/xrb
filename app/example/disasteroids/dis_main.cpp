@@ -74,7 +74,7 @@ int main (int argc, char **argv)
             options.GetResolution()[Dim::X],
             options.GetResolution()[Dim::Y],
             32,
-            (options.GetFullscreen() ? SDL_FULLSCREEN : 0));
+            (options.Fullscreen() ? SDL_FULLSCREEN : 0));
         if (screen == NULL)
         {
             fprintf(stderr, "unable to initialize video mode\n");

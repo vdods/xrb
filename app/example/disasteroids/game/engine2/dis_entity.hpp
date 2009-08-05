@@ -59,7 +59,7 @@ public:
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline Float GetSpeed () const { return m_velocity.GetLength(); }
     inline FloatVector2 GetMomentum () const { return m_mass * m_velocity; }
-    inline FloatVector2 const &GetForce () const { return m_force; }
+    inline FloatVector2 const &Force () const { return m_force; }
     inline Float AngularVelocity () const { return m_angular_velocity; }
 
     Dis::World *GetWorld () const;

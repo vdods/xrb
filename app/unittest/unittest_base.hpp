@@ -32,7 +32,7 @@ public:
     virtual ~UnitTest () { }
 
     inline std::string const &GetName () const { return m_name; }
-    inline Uint32 GetFailureCount () const { return m_failure_count; }
+    inline Uint32 FailureCount () const { return m_failure_count; }
 
     virtual void Initialize () = 0;
     void InitializeScaffold ();

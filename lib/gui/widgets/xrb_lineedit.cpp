@@ -148,10 +148,10 @@ void LineEdit::HandleChangedWidgetSkinWidgetBackground (
 void LineEdit::HandleFrame ()
 {
     // blink the cursor if it's time
-    if (IsFocused() && GetFrameTime() >= m_next_cursor_blink_time)
+    if (IsFocused() && FrameTime() >= m_next_cursor_blink_time)
     {
         m_is_cursor_visible = !m_is_cursor_visible;
-        m_next_cursor_blink_time = GetFrameTime() + 0.5f * m_cursor_blink_period;
+        m_next_cursor_blink_time = FrameTime() + 0.5f * m_cursor_blink_period;
     }
 }
 
@@ -221,7 +221,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
                 // handle inserting/overwriting
                 char c =
                     GetCharacterFilter().
-                        GetFilteredCharacter(
+                        FilteredCharacter(
                             e->GetModifiedAscii());
                 if (c != '\0')
                 {
@@ -340,8 +340,8 @@ ScreenCoord LineEdit::CursorWidth (Uint32 cursor_position) const
         return Max(1, GetRenderFont()->GetPixelHeight()/6);
     else
         return (cursor_position == m_text.length()) ?
-               GetRenderFont()->GetGlyphWidth("n") :
-               GetRenderFont()->GetGlyphWidth(m_text.c_str()+cursor_position);
+               GetRenderFont()->GlyphWidth("n") :
+               GetRenderFont()->GlyphWidth(m_text.c_str()+cursor_position);
 }
 
 void LineEdit::SetCursorPosition (Uint32 cursor_position)
@@ -451,7 +451,7 @@ void LineEdit::AssignFilteredString (std::string const &string)
     m_text.clear();
     while (string_index < string.length() && text_size < m_character_limit)
     {
-        char filtered_char = GetCharacterFilter().GetFilteredCharacter(string[string_index]);
+        char filtered_char = GetCharacterFilter().FilteredCharacter(string[string_index]);
 
         if (filtered_char != '\0' && filtered_char != '\n')
             m_text += filtered_char;

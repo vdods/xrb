@@ -49,7 +49,7 @@ public:
     /** The structure is necessary for FreeType font rendering calls.
       * @brief Returns the FreeType font face structure.
       */
-    inline FT_FaceRec_ *GetFTFace () const
+    inline FT_FaceRec_ *FTFace () const
     {
         return m_face;
     }

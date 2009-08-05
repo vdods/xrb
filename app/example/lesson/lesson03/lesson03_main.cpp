@@ -246,7 +246,7 @@ protected:
     <tt>m_ambient_temperature</tt> and to modify <tt>m_temperature</tt> based on mouse
     input.  The HandleFrame method originally comes from FrameHandler
     (which is inherited by Widget) and there are a few notable provided methods:
-    FrameHandler::GetFrameTime and FrameHandler::GetFrameDT which are only
+    FrameHandler::FrameTime and FrameHandler::FrameDT which are only
     available during the execution of HandleFrame (or in a function
     called by it), and FrameHandler::GetMostRecentFrameTime which is available
     at any time.
@@ -264,7 +264,7 @@ protected:
         // while a low value causes heat to spread quickly.
         m_temperature +=
             (m_ambient_temperature - m_temperature) *
-            (1.0f - Math::Pow(g_temperature_retention_rate, GetFrameDT()));
+            (1.0f - Math::Pow(g_temperature_retention_rate, FrameDT()));
 
         // If the mouse cursor is currently over this widget and the left mouse
         // button is pressed, increase the temperature.  This allows the user
@@ -272,7 +272,7 @@ protected:
         // method of facilitating mouse input -- Xrb::Event based mouse input
         // will be covered later.
         if (IsMouseover() && Singletons::Input().IsKeyPressed(Key::LEFTMOUSE))
-            m_temperature += g_mouse_temperature_change_rate * GetFrameDT();
+            m_temperature += g_mouse_temperature_change_rate * FrameDT();
     }
 
 private:
@@ -475,9 +475,9 @@ protected:
         ContainerWidget::HandleFrame();
 
         // Keep track of the framerate and update the "Actual Framerate" label.
-        m_framerate_calculator.AddFrameTime(GetFrameTime());
+        m_framerate_calculator.AddFrameTime(FrameTime());
         m_actual_framerate_label->SetValue(
-            static_cast<Uint32>(Math::Round(m_framerate_calculator.GetFramerate())));
+            static_cast<Uint32>(Math::Round(m_framerate_calculator.Framerate())));
 
         // Compute and set the ambient temperature for each grid cell,
         // using the distribution function.

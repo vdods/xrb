@@ -242,7 +242,7 @@ public:
     inline bool IsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
     inline bool IsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
     inline Float GetMaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
-    inline Float GetFinalFireballSizeOverride () const { return m_final_fireball_size_override; }
+    inline Float FinalFireballSizeOverride () const { return m_final_fireball_size_override; }
 
     inline void SetMaxDamagePerFireballOverride (Float max_damage_per_fireball_override)
     {
@@ -833,7 +833,7 @@ public:
 
     inline EntityType EnemySpawnType () const { return m_enemy_spawn_type; }
     inline bool IsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
-    inline Float GetFireRateOverride () const { return m_fire_rate_override; }
+    inline Float FireRateOverride () const { return m_fire_rate_override; }
 
     inline void SetEnemySpawnType (EntityType enemy_spawn_type)
     {
@@ -857,7 +857,7 @@ public:
     {
         Float const fire_rate =
             IsFireRateOverridden() ?
-            GetFireRateOverride() :
+            FireRateOverride() :
             ms_fire_rate[GetUpgradeLevel()];
         Float const cycle_time = 1.0f / fire_rate;
         Float const time_since_last_fire = time - m_time_last_fired;

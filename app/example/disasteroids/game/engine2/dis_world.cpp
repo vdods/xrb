@@ -710,7 +710,7 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
             ASSERT1(!m_player_ship->IsInWorld());
             ASSERT1(m_player_ship->IsDead());
             ASSERT1(m_player_ship->GetLivesRemaining() > 0);
-            m_player_ship->Revive(GetFrameTime(), GetFrameDT());
+            m_player_ship->Revive(FrameTime(), FrameDT());
             m_player_ship->SetVelocity(FloatVector2::ms_zero);
             // TODO place the player ship so it doesn't intersect anything
             m_player_ship->AddBackIntoWorld();
@@ -1081,18 +1081,18 @@ void World::ProcessCommonGameplayLogic ()
 
     // update the asteroid mineral level
     if (m_asteroid_mineral_level < Asteroid::MAX_MINERAL_LEVEL &&
-        m_next_asteroid_mineral_level_time <= GetFrameTime())
+        m_next_asteroid_mineral_level_time <= FrameTime())
     {
         ++m_asteroid_mineral_level;
-        m_next_asteroid_mineral_level_time = GetFrameTime() + 60.0f;
+        m_next_asteroid_mineral_level_time = FrameTime() + 60.0f;
     }
 
     // update the asteroid mineral content level
     if (m_asteroid_mineral_level < World::MINERAL_CONTENT_LEVEL_COUNT - 1 &&
-        m_next_asteroid_mineral_content_level_time <= GetFrameTime())
+        m_next_asteroid_mineral_content_level_time <= FrameTime())
     {
         ++m_asteroid_mineral_content_level;
-        m_next_asteroid_mineral_content_level_time = GetFrameTime() + 60.0f;
+        m_next_asteroid_mineral_content_level_time = FrameTime() + 60.0f;
     }
 
 /*

@@ -43,13 +43,13 @@ FileDialog::FileDialog (
 void FileDialog::OKButtonActivated ()
 {
     Dialog::OKButtonActivated();
-    m_sender_submit_filename.Signal(GetFilename());
-    m_sender_submit_filename_v.Signal(GetFilename());
+    m_sender_submit_filename.Signal(Filename());
+    m_sender_submit_filename_v.Signal(Filename());
 }
 
 void FileDialog::InternalFilenameSubmitted (std::string const &filename)
 {
-    ASSERT1(filename == GetFilename());
+    ASSERT1(filename == Filename());
     OKButtonActivated();
 }
 

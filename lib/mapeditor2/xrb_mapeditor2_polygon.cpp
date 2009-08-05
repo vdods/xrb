@@ -451,7 +451,7 @@ void MapEditor2::Polygon::Write (Serializer &serializer) const
         serializer.WriteUint32(vertex.m_compound_vertex->m_index);
         serializer.WriteFloatVector2(vertex.m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.GetFilename());
+    serializer.WriteStdString(m_texture.Filename());
 }
 
 } // end of namespace Xrb

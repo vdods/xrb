@@ -46,7 +46,7 @@ Layout::~Layout ()
     DeleteRowSizePropertyArrays();
 }
 
-Widget *Layout::GetGridChild (
+Widget *Layout::GridChild (
     Uint32 const major_index,
     Uint32 const minor_index) const
 {
@@ -59,7 +59,7 @@ Widget *Layout::GetGridChild (
         return 0;
 }
 
-Widget *Layout::GetGridChildByColumnAndRow (
+Widget *Layout::GridChildByColumnAndRow (
     Uint32 const column_index,
     Uint32 const row_index) const
 {
@@ -753,7 +753,7 @@ void Layout::ResizeAndRepositionChildWidgets ()
             if (m_column_is_hidden[column])
                 continue;
 
-            Widget *child = GetGridChildByColumnAndRow(column, row);
+            Widget *child = GridChildByColumnAndRow(column, row);
 
             // only resize and reposition non-NULL, unhidden and non-modal widgets
             if (child != NULL &&
@@ -843,9 +843,9 @@ void Layout::CalculateLineSizeProperties (
     {
         Widget const *child;
         if (line_direction == GetMajorDirection())
-            child = GetGridChild(line_index, i);
+            child = GridChild(line_index, i);
         else
-            child = GetGridChild(i, line_index);
+            child = GridChild(i, line_index);
 
         // skip empty grid slots
         if (child == NULL || // empty slot counts as hidden

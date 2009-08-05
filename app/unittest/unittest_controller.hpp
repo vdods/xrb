@@ -25,7 +25,7 @@ public:
     UnitTestController ();
     ~UnitTestController ();
 
-    inline Uint32 GetFailureCount () const { return m_failure_count; }
+    inline Uint32 FailureCount () const { return m_failure_count; }
 
     // this must be called before GenerateCommandLineOptions(),
     // PrintHelpMessage() or Test() are called

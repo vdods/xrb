@@ -236,7 +236,7 @@ public:
     inline WidgetBackground *Background () const { return m_background; }
     /** @brief Returns the frame margins for this widget.
       */
-    inline ScreenCoordVector2 const &GetFrameMargins () const { return m_frame_margins; }
+    inline ScreenCoordVector2 const &FrameMargins () const { return m_frame_margins; }
     /** The content margins are added to the frame margins to indicate the
       * content area of the label.  The content margins can be negative (up to
       * the point that they totally cancel the frame margins).
@@ -296,7 +296,7 @@ public:
       */
     inline ScreenCoordRect ContentsRect () const
     {
-        return GetScreenRect().GetGrown(-(GetFrameMargins() + ContentMargins()));
+        return GetScreenRect().Grown(-(FrameMargins() + ContentMargins()));
     }
     /** @brief Returns this widget's bias color (the bias color is applied to
       * everything drawn by the widget, BEFORE the color mask).

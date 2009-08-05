@@ -28,7 +28,7 @@ class FramerateCalculator
 public:
 
     /** The time unit conversion ratio is simply multiplied into the
-      * calculated framerate before returning it, in GetFramerate.
+      * calculated framerate before returning it, in Framerate.
       * @brief Constructs a framerate calculator with the given time
       *        unit conversion ratio.
       */
@@ -44,7 +44,7 @@ public:
     /** @brief Calculates and returns the current framerate, multiplied by
       *        the time unit conversion ratio.
       */
-    Float GetFramerate () const;
+    Float Framerate () const;
 
 private:
 

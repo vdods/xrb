@@ -142,7 +142,7 @@ namespace Engine2
     protected:
 
         ObjectLayer *GetMainObjectLayer () const;
-        Float GetGridScaleUnit (Uint32 grid_scale) const;
+        Float GridScaleUnit (Uint32 grid_scale) const;
         // parallaxed transformation/view-and-object-layer-property accessors
         FloatMatrix2 const &GetParallaxedWorldToWorldView () const;
         FloatMatrix2 const &GetParallaxedWorldViewToWorld () const;

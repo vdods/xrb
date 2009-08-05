@@ -55,7 +55,7 @@ public:
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
     inline ScreenCoord GetPixelHeight () const { return m_pixel_height; }
-    inline ScreenCoord GetGlyphWidth (char const *glyph) const
+    inline ScreenCoord GlyphWidth (char const *glyph) const
     {
         ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
         MoveThroughGlyph(&pen_position_26_6, ScreenCoordVector2::ms_zero, glyph, NULL);
@@ -285,7 +285,7 @@ private:
       */
     ScreenCoord GetKerningPixelAdvance_26_6 (char left, char right) const;
 
-    inline Uint32 GetGlyphIndex (char const ascii) const
+    inline Uint32 GlyphIndex (char const ascii) const
     {
         if (ascii >= RENDERED_GLYPH_LOWEST && ascii <= RENDERED_GLYPH_HIGHEST)
             return ascii - RENDERED_GLYPH_LOWEST;

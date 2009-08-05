@@ -423,7 +423,7 @@ Engine2::ObjectLayer *Engine2::WorldView::GetMainObjectLayer () const
     return GetWorld()->GetMainObjectLayer();
 }
 
-Float Engine2::WorldView::GetGridScaleUnit (Uint32 const grid_scale) const
+Float Engine2::WorldView::GridScaleUnit (Uint32 const grid_scale) const
 {
     return 0.5f * GetMainObjectLayer()->GetSideLength() /
            Math::Pow(static_cast<Float>(m_grid_number_base), static_cast<Float>(grid_scale));
@@ -524,7 +524,7 @@ void Engine2::WorldView::DrawGridLineSet (
     Float const fade_scale_upper_limit = 20.0;
     Float const fade_scale_lower_limit = 3.0;
 
-    Float grid_scale_unit = GetGridScaleUnit(grid_scale);
+    Float grid_scale_unit = GridScaleUnit(grid_scale);
 
     // calculate the fading as the grid becomes too small to be useful
     Float transformed_grid_scale_unit =

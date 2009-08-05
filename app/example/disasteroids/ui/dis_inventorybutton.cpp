@@ -40,7 +40,7 @@ InventoryButton::InventoryButton (
     // this is intentionally close to, but above 0.0f
     m_current_size_parameter = 0.01f;
     SetStatus(S_NOT_AFFORDABLE);
-    SetContentMargins(-GetFrameMargins());
+    SetContentMargins(-FrameMargins());
 
     UpdateRenderBackground();
 }
@@ -184,7 +184,7 @@ void InventoryButton::HandleFrame ()
     // if the item is equipped, cause the button to flash
     if (m_status == S_EQUIPPED)
     {
-        Float brightness = 0.875f + 0.125f * Math::Sin(360.0f * GetFrameTime());
+        Float brightness = 0.875f + 0.125f * Math::Sin(360.0f * FrameTime());
         SetColorMask(Color(brightness, brightness, brightness, 1.0f));
     }
 
@@ -194,7 +194,7 @@ void InventoryButton::HandleFrame ()
         SetCurrentSizeParameter(
             m_current_size_parameter +
             Min(size_parameter_delta,
-                ms_size_parameter_change_rate * GetFrameDT()));
+                ms_size_parameter_change_rate * FrameDT()));
     }
     else if (m_current_size_parameter > m_target_size_parameter)
     {
@@ -202,7 +202,7 @@ void InventoryButton::HandleFrame ()
         SetCurrentSizeParameter(
             m_current_size_parameter +
             Max(size_parameter_delta,
-                -ms_size_parameter_change_rate * GetFrameDT()));
+                -ms_size_parameter_change_rate * FrameDT()));
     }
 }
 
@@ -244,7 +244,7 @@ void InventoryButton::SetCurrentSizeParameter (Float const current_size_paramete
             m_current_size_parameter * equipped_size +
             (1.0f - m_current_size_parameter) * unequipped_size);
 
-        SetContentMargins((GetSize() - current_size.StaticCast<ScreenCoord>()) / 2 - GetFrameMargins());
+        SetContentMargins((GetSize() - current_size.StaticCast<ScreenCoord>()) / 2 - FrameMargins());
     }
 }
 

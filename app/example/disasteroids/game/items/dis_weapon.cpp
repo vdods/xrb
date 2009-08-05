@@ -1212,7 +1212,7 @@ Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
 {
     Float const fire_rate =
         IsFireRateOverridden() ?
-        GetFireRateOverride() :
+        FireRateOverride() :
         ms_fire_rate[GetUpgradeLevel()];
 
     // can't fire faster that the weapon's cycle time

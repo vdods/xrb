@@ -322,8 +322,8 @@ void Engine2::World::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL);
     if (m_physics_handler != NULL)
-        m_physics_handler->ProcessFrame(GetFrameTime());
-    m_owner_event_queue.ProcessFrame(GetFrameTime());
+        m_physics_handler->ProcessFrame(FrameTime());
+    m_owner_event_queue.ProcessFrame(FrameTime());
 }
 
 void Engine2::World::IncrementLowestAvailableEntityIndex ()

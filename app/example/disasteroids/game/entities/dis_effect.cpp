@@ -54,7 +54,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
             GetPhysicsHandler(),
             GetObjectLayer(),
             GetTranslation(),
-            GetFinalSize(),
+            FinalSize(),
             m_damage_amount,
             time,
             frame_dt);

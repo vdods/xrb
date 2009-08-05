@@ -469,7 +469,7 @@ void Widget::Draw (RenderContext const &render_context) const
 {
     // if the background exists, draw it
     if (GetRenderBackground())
-        GetRenderBackground()->Draw(render_context, GetScreenRect(), GetFrameMargins());
+        GetRenderBackground()->Draw(render_context, GetScreenRect(), FrameMargins());
 }
 
 void Widget::MoveTo (ScreenCoordVector2 const &position)

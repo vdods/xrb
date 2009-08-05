@@ -98,7 +98,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
         m_font =
             Singletons::ResourceLibrary().LoadFilename<Font>(
                 AsciiFont::Create,
-                m_font.GetFilename(),
+                m_font.Filename(),
                 font_height);
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
@@ -115,7 +115,7 @@ void TextWidget::SetFontHeight (ScreenCoord const font_height)
         m_font =
             Singletons::ResourceLibrary().LoadFilename<Font>(
                 AsciiFont::Create,
-                m_font.GetFilename(),
+                m_font.Filename(),
                 font_height);
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
@@ -263,7 +263,7 @@ void TextWidget::UpdateMinAndMaxSizesFromText ()
     if (!GetRenderFont().IsValid())
         return;
 
-    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (GetFrameMargins() + ContentMargins()));
+    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (FrameMargins() + ContentMargins()));
 
     if (m_is_min_width_fixed_to_text_width)
         SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);

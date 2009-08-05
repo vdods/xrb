@@ -60,10 +60,10 @@ public:
         return m_is_using_zeroed_layout_spacing_margins;
     }
 
-    Widget *GetGridChild (
+    Widget *GridChild (
         Uint32 major_index,
         Uint32 minor_index) const;
-    Widget *GetGridChildByColumnAndRow (
+    Widget *GridChildByColumnAndRow (
         Uint32 column_index,
         Uint32 row_index) const;
 

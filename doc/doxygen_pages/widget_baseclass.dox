@@ -428,7 +428,7 @@ are @ref Xrb::Label "Label" (which does not accept user input and does not
 contain any children).
 
 Relevant methods include
-@ref Xrb::Widget::GetFocus "Widget::GetFocus" ,
+@ref Xrb::Widget::Focus "Widget::Focus" ,
 @ref Xrb::Widget::IsFocused "Widget::IsFocused" , and
 @ref Xrb::Widget::AcceptsFocus "Widget::AcceptsFocus" .
 
@@ -476,7 +476,7 @@ customize behavior when mouse grab is turned on or off.  These are
 
 Other relevant methods include
 @ref Xrb::Widget::IsMouseGrabbed "Widget::IsMouseGrabbed" and
-@ref Xrb::Widget::GetFocusHasMouseGrab "Widget::GetFocusHasMouseGrab" .
+@ref Xrb::Widget::FocusHasMouseGrab "Widget::FocusHasMouseGrab" .
 
 @section section_widget_enabled_state Enabled State
 Widgets have an "enabled" property which simply indicates that they currently
@@ -705,7 +705,7 @@ to indicate the size of various sections of the background.
 *** picture of StylizedBackground ***
 
 Relevant methods include
-@ref Xrb::Widget::GetFrameMargins ,
+@ref Xrb::Widget::FrameMargins ,
 @ref Xrb::Widget::SetFrameMargins ,
 @ref Xrb::Widget::SetFrameMarginRatios , and
 @ref Xrb::Widget::HandleChangedFrameMargins .

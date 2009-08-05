@@ -468,7 +468,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->GetForce() / m_target->GetMass());
+    FloatVector2 a(m_target->Force() / m_target->GetMass());
 
     Polynomial poly;
     poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);

@@ -155,7 +155,7 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(m_texture.IsValid());
 
     // write out the guts
-    serializer.WriteStdString(m_texture.GetFilename());
+    serializer.WriteStdString(m_texture.Filename());
     serializer.WriteBool(m_is_round);
     serializer.WriteFloatVector2(m_physical_size_ratios);
 }

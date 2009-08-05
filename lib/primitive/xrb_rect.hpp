@@ -200,7 +200,7 @@ public:
         return GetTop() - Bottom();
     }
 
-    Rect<T> GetGrown (Vector<T, 2> const &vector_to_grow_by) const
+    Rect<T> Grown (Vector<T, 2> const &vector_to_grow_by) const
     {
         Rect<T> retval;
         retval.m_bottom_left = m_bottom_left - vector_to_grow_by;

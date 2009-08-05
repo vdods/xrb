@@ -163,7 +163,7 @@ public:
     // Trivial accessors for the properties of AwesomeEntity.
     inline Float GetMass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
-    inline FloatVector2 const &GetForce () const { return m_force; }
+    inline FloatVector2 const &Force () const { return m_force; }
 
     // Modifiers for the properties of AwesomeEntity.  The ASSERT_NAN_SANITY_CHECK
     // macro is used in various places in Engine2 code to quickly catch common
@@ -376,7 +376,7 @@ protected:
         and you have the rate at which the principal changes (e.g. acceleration)
         which will be referred to as the derivative.  Euler Integration is a method
         for updating the principal based on the derivative, using the the time-step
-        value (e.g. <tt>GetFrameDT()</tt>).  In the following, the time-step is
+        value (e.g. <tt>FrameDT()</tt>).  In the following, the time-step is
         given by <tt>dt</tt>.
 
         <tt>principal += derivative * dt</tt>
@@ -410,12 +410,12 @@ protected:
             ASSERT1(entity->GetMass() > 0.0f);
             // Use Euler Integration to calculate the new velocity, based on
             // the accumulated force during this frame.
-            entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
+            entity->IncrementVelocity(entity->Force() / entity->GetMass() * FrameDT());
             // Reset the accumulated force for next frame.
             entity->ResetForce();
             // Use Euler Integration again to calculate the new position,
             // based on the entity's velocity.
-            entity->Translate(entity->GetVelocity() * GetFrameDT());
+            entity->Translate(entity->GetVelocity() * FrameDT());
         }
 
         /* @endcode

@@ -37,5 +37,5 @@ int main (int argc, char **argv)
     unit_test_controller.GenerateCommandLineOptions();
     unit_test_controller.RunTests(argc, argv);
 
-    return unit_test_controller.GetFailureCount() == 0 ? 0 : -1;
+    return unit_test_controller.FailureCount() == 0 ? 0 : -1;
 }

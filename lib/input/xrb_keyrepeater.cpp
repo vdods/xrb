@@ -45,7 +45,7 @@ EventKeyRepeat *KeyRepeater::DequeueEvent ()
 void KeyRepeater::HandleFrame ()
 {
     // generate key events from the current state
-    GenerateKeyEvents(GetFrameTime());
+    GenerateKeyEvents(FrameTime());
 }
 
 bool KeyRepeater::HandleEvent (Event const *const e)

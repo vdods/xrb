@@ -126,7 +126,7 @@ ScreenCoordVector2 OptionsPanel::GetResolution () const
     return ScreenCoordVector2(m_resolution_x_edit->GetValue(), m_resolution_y_edit->GetValue());
 }
 
-bool OptionsPanel::GetFullscreen () const
+bool OptionsPanel::Fullscreen () const
 {
     ASSERT1(m_fullscreen_checkbox != NULL);
     return m_fullscreen_checkbox->IsChecked();
@@ -199,7 +199,7 @@ void OptionsPanel::WriteValuesToConfig (Config *const config)
 
     config->SetResolutionX(GetResolution()[Dim::X]);
     config->SetResolutionY(GetResolution()[Dim::Y]);
-    config->SetBoolean(VIDEO__FULLSCREEN, GetFullscreen());
+    config->SetBoolean(VIDEO__FULLSCREEN, Fullscreen());
     config->SetDifficultyLevel(GetDifficultyLevel());
 
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)

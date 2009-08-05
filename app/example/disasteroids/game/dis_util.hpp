@@ -56,7 +56,7 @@ void RadiusKnockback (
     Float time,
     Float frame_dt);
 
-std::string GetFormattedTimeString (Float time);
+std::string FormattedTimeString (Float time);
         
 } // end of namespace Dis
 

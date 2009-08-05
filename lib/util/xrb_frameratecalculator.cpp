@@ -34,7 +34,7 @@ void FramerateCalculator::AddFrameTime (Float const frame_time)
     m_last_frame_time = frame_time;
 }
 
-Float FramerateCalculator::GetFramerate () const
+Float FramerateCalculator::Framerate () const
 {
     Float total = 0.0f;
 

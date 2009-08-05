@@ -43,7 +43,7 @@ public:
     /** The frame count is incremented once per call to ProcessFrame.
       * @brief Returns the accumulated frame count.
       */
-    inline Uint32 GetFrameCount () const { return m_frame_count; }
+    inline Uint32 FrameCount () const { return m_frame_count; }
 
     // this function will skip time so that the next call to ProcessFrame
     // incurs a time delta of 0.
@@ -65,7 +65,7 @@ protected:
       * HandleFrame, it will assert.
       * @brief Returns the current frame time.
       */
-    inline Float GetFrameTime () const
+    inline Float FrameTime () const
     {
         ASSERT1(m_lock > 0);
         return m_most_recent_time;
@@ -74,14 +74,14 @@ protected:
       * from outside of HandleFrame, it will assert.
       * @brief Returns the time delta from the most recently processed frame.
       */
-    inline Float GetFrameDT () const
+    inline Float FrameDT () const
     {
         ASSERT1(m_lock > 0);
         return m_frame_dt;
     }
 
     /** This is called by ProcessFrame after a bit of preparation.
-      * GetFrameTime and GetFrameDT can be used inside this method.
+      * FrameTime and FrameDT can be used inside this method.
       * @brief Overridable method for the actual computation required
       *        by subclasses.
       */

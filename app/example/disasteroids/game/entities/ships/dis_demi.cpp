@@ -1430,7 +1430,7 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
     FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {

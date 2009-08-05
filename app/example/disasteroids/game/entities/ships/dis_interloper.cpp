@@ -407,7 +407,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         else
         {
             v = m_target->GetVelocity() - GetVelocity();
-            a = m_target->GetForce() / m_target->GetMass();
+            a = m_target->Force() / m_target->GetMass();
         }
 
         Polynomial poly;
@@ -479,7 +479,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * GetForce() / GetMass());
+        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
     FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
     if (thrust_vector.GetLength() > 0.01f)
     {

@@ -20,7 +20,7 @@ namespace Xrb
 
 /** The filtering functionality operates by allowing or denying characters
   * on a character-by-character basis.  If a character is allowed, its
-  * value is returned unchanged by GetFilteredCharacter.  If it is denied,
+  * value is returned unchanged by FilteredCharacter.  If it is denied,
   * then '\0' is returned.
   *
   * There are two types of operation for the filter; allow-only-chars and
@@ -74,7 +74,7 @@ public:
     }
     /** @brief Returns the string containing the filter characters.
       */
-    inline std::string const &GetFilter () const
+    inline std::string const &Filter () const
     {
         return m_filter;
     }
@@ -82,7 +82,7 @@ public:
       * @brief Returns the filtered version of the given character.
       * @param c The character to filter.
       */
-    char GetFilteredCharacter (char c) const;
+    char FilteredCharacter (char c) const;
 
     /** @brief Sets the filter type.
       * @brief param filter_type The filter type to use.

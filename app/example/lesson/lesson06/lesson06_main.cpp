@@ -138,7 +138,7 @@ public:
     // Trivial accessors for the properties of AwesomeEntity.
     inline Float GetMass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
-    inline FloatVector2 const &GetForce () const { return m_force; }
+    inline FloatVector2 const &Force () const { return m_force; }
 
     // Modifiers for the properties of AwesomeEntity.  The ASSERT_NAN_SANITY_CHECK
     // macro is used in various places in Engine2 code to quickly catch common
@@ -235,7 +235,7 @@ public:
     }
 
     // Trivial accessor for m_gravitational_constant.
-    inline Float GetGravitationalConstant () const { return m_gravitational_constant; }
+    inline Float GravitationalConstant () const { return m_gravitational_constant; }
     // Helper function to calculate Newton's Law Of Universal Gravitation.
     Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
     {
@@ -357,12 +357,12 @@ protected:
             ASSERT1(entity->GetMass() > 0.0f);
             // Use Euler Integration to calculate the new velocity, based on
             // the accumulated force during this frame.
-            entity->IncrementVelocity(entity->GetForce() / entity->GetMass() * GetFrameDT());
+            entity->IncrementVelocity(entity->Force() / entity->GetMass() * FrameDT());
             // Reset the accumulated force for next frame.
             entity->ResetForce();
             // Use Euler Integration again to calculate the new position,
             // based on the entity's velocity.
-            entity->Translate(entity->GetVelocity() * GetFrameDT());
+            entity->Translate(entity->GetVelocity() * FrameDT());
         }
     }
 

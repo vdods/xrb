@@ -38,7 +38,7 @@ public:
     virtual ~OptionsPanel () { }
 
     ScreenCoordVector2 GetResolution () const;
-    bool GetFullscreen () const;
+    bool Fullscreen () const;
     DifficultyLevel GetDifficultyLevel () const;
     Key::Code GetInputActionKeyCode (KeyInputAction input_action) const;
 

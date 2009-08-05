@@ -385,7 +385,7 @@ Font *AsciiFont::Create (
     if (!font_face.IsValid())
         return retval;
 
-    FT_FaceRec_ *ft_face = font_face->GetFTFace();
+    FT_FaceRec_ *ft_face = font_face->FTFace();
     FT_Error error;
 
     ASSERT1(ft_face != NULL);
@@ -444,11 +444,11 @@ void AsciiFont::MoveThroughGlyph (
     {
         if (*current_glyph == '\t')
         {
-            (*pen_position_26_6)[Dim::X] += TAB_SIZE * m_glyph_specification[GetGlyphIndex(' ')].m_advance_26_6;
+            (*pen_position_26_6)[Dim::X] += TAB_SIZE * m_glyph_specification[GlyphIndex(' ')].m_advance_26_6;
         }
         else
         {
-            (*pen_position_26_6)[Dim::X] += m_glyph_specification[GetGlyphIndex(*current_glyph)].m_advance_26_6;
+            (*pen_position_26_6)[Dim::X] += m_glyph_specification[GlyphIndex(*current_glyph)].m_advance_26_6;
             if (next_glyph != NULL)
                 (*pen_position_26_6)[Dim::X] += GetKerningPixelAdvance_26_6(*current_glyph, *next_glyph);
         }
@@ -626,7 +626,7 @@ void AsciiFont::DrawGlyph (
     if (*glyph == '\n' || *glyph == '\t')
         return;
 
-    Uint32 glyph_index = GetGlyphIndex(*glyph);
+    Uint32 glyph_index = GlyphIndex(*glyph);
 
     ScreenCoordRect glyph_texture_coordinates(m_glyph_specification[glyph_index].m_size);
     glyph_texture_coordinates += m_glyph_specification[glyph_index].m_texture_coordinates;
@@ -675,15 +675,15 @@ ScreenCoord AsciiFont::GetKerningPixelAdvance_26_6 (char const left, char const 
     // FT_Set_Pixel_Sizes and FT_Get_Kerning here (thus making this
     // method non-reentrant)
 
-    FT_Error error = FT_Set_Pixel_Sizes(m_font_face->GetFTFace(), 0, m_pixel_height);
+    FT_Error error = FT_Set_Pixel_Sizes(m_font_face->FTFace(), 0, m_pixel_height);
     if (error != 0)
         return 0;
 
     FT_Vector delta;
     FT_Get_Kerning(
-        m_font_face->GetFTFace(),
-        FT_Get_Char_Index(m_font_face->GetFTFace(), left),
-        FT_Get_Char_Index(m_font_face->GetFTFace(), right),
+        m_font_face->FTFace(),
+        FT_Get_Char_Index(m_font_face->FTFace(), left),
+        FT_Get_Char_Index(m_font_face->FTFace(), right),
         FT_KERNING_UNFITTED,
         &delta);
 
@@ -694,7 +694,7 @@ ScreenCoord AsciiFont::GetKerningPixelAdvance_26_6 (char const left, char const 
 void AsciiFont::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
 {
     FT_Error error;
-    FT_FaceRec_ *ft_face = font_face->GetFTFace();
+    FT_FaceRec_ *ft_face = font_face->FTFace();
     ScreenCoord tallest_glyph_height = -1;
     ScreenCoord tallest_glyph_bearing_y = -1;
 
@@ -705,7 +705,7 @@ void AsciiFont::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
         error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, ascii), FT_LOAD_DEFAULT);
         ASSERT1(error == 0);
 
-        GlyphSpecification &glyph = m_glyph_specification[GetGlyphIndex(ascii)];
+        GlyphSpecification &glyph = m_glyph_specification[GlyphIndex(ascii)];
 
         glyph.m_ascii = ascii;
         glyph.m_size.SetComponents(
@@ -822,7 +822,7 @@ void AsciiFont::GenerateTexture (ScreenCoordVector2 const &texture_size)
     Texture *texture = Texture::Create(texture_size, false);
 
     FT_Error error;
-    FT_FaceRec_ *ft_face = m_font_face->GetFTFace();
+    FT_FaceRec_ *ft_face = m_font_face->FTFace();
     for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
     {
         GlyphSpecification &glyph = m_glyph_specification[i];

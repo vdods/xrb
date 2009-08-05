@@ -457,11 +457,11 @@ int main (int argc, char **argv)
     <ul>
     <li>Add code to AwesomeWorldView to smooth the zooming.  You'll need
         to implement <tt>virtual void AwesomeWorldView::HandleFrame()</tt>
-        for this.  You can use the @ref Xrb::FrameHandler::GetFrameTime
+        for this.  You can use the @ref Xrb::FrameHandler::FrameTime
         method to retrieve the current time from inside HandleFrame.</li>
     <li>Add code to AwesomeWorldView to smooth the rotation.  You'll need
         to implement <tt>virtual void AwesomeWorldView::HandleFrame()</tt>
-        for this.  You can use the @ref Xrb::FrameHandler::GetFrameTime
+        for this.  You can use the @ref Xrb::FrameHandler::FrameTime
         method to retrieve the current time from inside HandleFrame.</li>
     <li>Change the zooming code so that the zooming in 4 times in a row
         will result in an overall zoom-in of a factor of 2.  Hint: the
@@ -507,7 +507,7 @@ int main (int argc, char **argv)
                 You'll need to use the @ref Xrb::Engine2::WorldView::SetCenter
                 method.</li>
             </ul>
-        You can use the @ref Xrb::FrameHandler::GetFrameTime method to retrieve
+        You can use the @ref Xrb::FrameHandler::FrameTime method to retrieve
         the current time from inside HandleFrame.  Mess around with the equations
         and then show your kid brother how much cooler you are than him.</li>
     </ul>

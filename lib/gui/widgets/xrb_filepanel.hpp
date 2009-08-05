@@ -38,8 +38,8 @@ public:
         std::string const &name = "FilePanel");
     virtual ~FilePanel () { }
 
-    inline Operation GetFileOperation () const { return m_file_operation; }
-    std::string const &GetFilename () const;
+    inline Operation FileOperation () const { return m_file_operation; }
+    std::string const &Filename () const;
 
     inline SignalSender1<std::string const &> const *SenderSubmitFilename () { return &m_sender_submit_filename; }
     inline SignalSender1<std::string> const *SenderSubmitFilenameV () { return &m_sender_submit_filename_v; }

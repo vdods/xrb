@@ -109,7 +109,7 @@ void EventQueue::HandleFrame ()
     EnqueueBufferedEvents();
 
     // this event is used to get the last event which should be processed
-    EventDummy event_limit(GetFrameTime());
+    EventDummy event_limit(FrameTime());
     event_limit.SetID(GetMaxEventID());
     EventBinding binding_limit(NULL, &event_limit);
 

@@ -170,7 +170,7 @@ void Engine2::Polygon::Write (
         serializer.WriteUint32(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
         serializer.WriteFloatVector2(m_vertex_array[i].m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.GetFilename());
+    serializer.WriteStdString(m_texture.Filename());
 }
 
 } // end of namespace Xrb

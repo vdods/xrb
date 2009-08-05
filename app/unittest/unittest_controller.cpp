@@ -72,11 +72,11 @@ void UnitTestController::RunTests (int argc, char **argv)
         printf("//////////////////////////////////////////////////////////////////////////////\n\n");
         unit_test->InitializeScaffold();
         unit_test->Run();
-        m_failure_count += unit_test->GetFailureCount();
-        if (unit_test->GetFailureCount() > 0)
+        m_failure_count += unit_test->FailureCount();
+        if (unit_test->FailureCount() > 0)
             printf("\nTest \"%s\" completed with %u failures.\n\n\n",
                    unit_test->GetName().c_str(),
-                   unit_test->GetFailureCount());
+                   unit_test->FailureCount());
         else
             printf("\nTest \"%s\" passed all tests.\n\n\n",
                    unit_test->GetName().c_str());

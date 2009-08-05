@@ -37,7 +37,7 @@ public:
     {
         return !m_filename.empty() && m_line > 0;
     }
-    inline std::string const &GetFilename () const
+    inline std::string const &Filename () const
     {
         assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_filename;

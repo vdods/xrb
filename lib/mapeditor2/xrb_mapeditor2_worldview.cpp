@@ -1713,9 +1713,9 @@ void MapEditor2::WorldView::HandleFrame ()
         Float zoom_by_power;
 
         if (m_zoom_accumulator > 0)
-            zoom_by_power = Min(m_zoom_accumulator, m_zoom_speed*GetFrameDT());
+            zoom_by_power = Min(m_zoom_accumulator, m_zoom_speed*FrameDT());
         else if (m_zoom_accumulator < 0)
-            zoom_by_power = Max(m_zoom_accumulator, -m_zoom_speed*GetFrameDT());
+            zoom_by_power = Max(m_zoom_accumulator, -m_zoom_speed*FrameDT());
         else
             zoom_by_power = 0.0;
 
@@ -1729,10 +1729,10 @@ void MapEditor2::WorldView::HandleFrame ()
 
         if (m_rotation_accumulator > 0)
             rotate_by_angle = Min(m_rotation_accumulator,
-                                  m_rotation_speed*GetFrameDT());
+                                  m_rotation_speed*FrameDT());
         else if (m_rotation_accumulator < 0)
             rotate_by_angle = Max(m_rotation_accumulator,
-                                  -m_rotation_speed*GetFrameDT());
+                                  -m_rotation_speed*FrameDT());
         else
             rotate_by_angle = 0.0;
 
@@ -1761,12 +1761,12 @@ void MapEditor2::WorldView::HandleFrame ()
         right *= (Float)left_right_input;
         up *= (Float)up_down_input;
 
-        MoveView(GetFrameDT() * m_key_movement_speed_factor * (right + up));
+        MoveView(FrameDT() * m_key_movement_speed_factor * (right + up));
     }
 
     // WorldView owns the world it views, so it's in charge
     // of calling the world's ProcessFrame.
-    GetMapEditorWorld()->ProcessFrame(GetFrameTime());
+    GetMapEditorWorld()->ProcessFrame(FrameTime());
 }
 
 MapEditor2::ObjectLayer *MapEditor2::WorldView::GetMainMapEditorObjectLayer () const

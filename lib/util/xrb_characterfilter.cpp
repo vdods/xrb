@@ -13,9 +13,9 @@
 namespace Xrb
 {
 
-char CharacterFilter::GetFilteredCharacter (char const c) const
+char CharacterFilter::FilteredCharacter (char const c) const
 {
-    char const *filter = GetFilter().c_str();
+    char const *filter = Filter().c_str();
 
     // filter the character according to if the filter
     // specifies allowed/disallowed

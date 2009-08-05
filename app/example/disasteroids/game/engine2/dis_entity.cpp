@@ -114,7 +114,7 @@ void Entity::ApplyInterceptCourseAcceleration (
             target->GetTranslation()));
     FloatVector2 p(target->GetTranslation() - p1);
     FloatVector2 v(target->GetVelocity() - GetVelocity());
-    FloatVector2 a(target->GetForce() / target->GetMass());
+    FloatVector2 a(target->Force() / target->GetMass());
     Float interceptor_acceleration =
         maximum_thrust_force / GetMass();
 

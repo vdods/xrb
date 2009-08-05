@@ -56,9 +56,9 @@ public:
             static_cast<ScreenCoord>(x),
             GetScreenRect().GetHeight() - static_cast<ScreenCoord>(y));
     }
-    inline Float GetFramerate () const
+    inline Float Framerate () const
     {
-        return m_framerate_calculator.GetFramerate();
+        return m_framerate_calculator.Framerate();
     }
 
     // if the is-quit-requested flag is false, sets it to true and signals.

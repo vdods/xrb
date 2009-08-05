@@ -190,10 +190,10 @@ void PhysicsHandler::RemoveEntity (
 void PhysicsHandler::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL);
-    ASSERT1(GetFrameDT() >= 0.0f);
+    ASSERT1(FrameDT() >= 0.0f);
 
     // if the frame time delta is zero (e.g. the game is paused), return.
-    if (GetFrameDT() == 0.0f)
+    if (FrameDT() == 0.0f)
         return;
 
     // resolve interpenetrations / calculate collisions
@@ -215,8 +215,8 @@ void PhysicsHandler::HandleFrame ()
 
         DEBUG1_CODE(Uint32 entity_set_size = m_entity_set.size());
 
-        if (GetFrameTime() >= entity->GetNextTimeToThink())
-            entity->Think(GetFrameTime(), GetFrameDT());
+        if (FrameTime() >= entity->GetNextTimeToThink())
+            entity->Think(FrameTime(), FrameDT());
 
         ASSERT1(m_entity_set.size() >= entity_set_size &&
                 "You must not remove entities during the Think loop -- "
@@ -245,15 +245,15 @@ void PhysicsHandler::HandleFrame ()
             collision_pair.m_collision_location,
             collision_pair.m_collision_normal,
             collision_pair.m_collision_force,
-            GetFrameTime(),
-            GetFrameDT());
+            FrameTime(),
+            FrameDT());
         collision_pair.m_entity1->Collide(
             collision_pair.m_entity0,
             collision_pair.m_collision_location,
             -collision_pair.m_collision_normal,
             collision_pair.m_collision_force,
-            GetFrameTime(),
-            GetFrameDT());
+            FrameTime(),
+            FrameDT());
     }
     // clear the collision pair list
     m_collision_pair_list.clear();
@@ -271,13 +271,13 @@ void PhysicsHandler::UpdateVelocities ()
         Entity *entity = *it;
         ASSERT1(entity != NULL);
 
-        if (!entity->GetForce().IsZero())
+        if (!entity->Force().IsZero())
         {
-            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::X]));
-            ASSERT1(Math::IsFinite(entity->GetForce()[Dim::Y]));
+            ASSERT1(Math::IsFinite(entity->Force()[Dim::X]));
+            ASSERT1(Math::IsFinite(entity->Force()[Dim::Y]));
             ASSERT1(entity->GetMass() > 0.0f);
             entity->AccumulateVelocity(
-                GetFrameDT() * entity->GetForce() /
+                FrameDT() * entity->Force() /
                 entity->GetMass());
             entity->ResetForce();
         }
@@ -328,7 +328,7 @@ void PhysicsHandler::UpdatePositions ()
 
         if (!entity->GetVelocity().IsZero())
         {
-            entity->Translate(GetFrameDT() * entity->GetVelocity());
+            entity->Translate(FrameDT() * entity->GetVelocity());
             ASSERT1(entity->GetObjectLayer() != NULL);
             entity->ReAddToQuadTree(Engine2::QTT_VISIBILITY);
             if (entity->GetCollisionType() != CT_NO_COLLISION)
@@ -339,7 +339,7 @@ void PhysicsHandler::UpdatePositions ()
         }
 
         if (entity->AngularVelocity() != 0.0)
-            entity->Rotate(GetFrameDT() * entity->AngularVelocity());
+            entity->Rotate(FrameDT() * entity->AngularVelocity());
     }
 }
 
@@ -361,7 +361,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
             continue;
 
         // traverse the collision quad tree and calculate collision pairs
-        m_quad_tree->CollideEntity(entity, GetFrameDT(), &m_collision_pair_list);
+        m_quad_tree->CollideEntity(entity, FrameDT(), &m_collision_pair_list);
     }
 }
 
@@ -386,7 +386,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
         // traverse the collision quad tree and calculate collision pairs
         m_quad_tree->CollideEntityWrapped(
             entity,
-            GetFrameDT(),
+            FrameDT(),
             &m_collision_pair_list,
             m_main_object_layer->GetSideLength());
     }

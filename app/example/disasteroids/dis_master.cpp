@@ -122,7 +122,7 @@ void Master::Run ()
         // framerate calculation
         m_framerate_calculator.AddFrameTime(m_real_time);
         if (m_game_widget != NULL)
-            m_game_widget->SetFramerate(m_framerate_calculator.GetFramerate());
+            m_game_widget->SetFramerate(m_framerate_calculator.Framerate());
 
         // process SDL events
         SDL_Event sdl_event;

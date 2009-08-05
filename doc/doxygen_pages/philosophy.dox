@@ -187,7 +187,7 @@ It's entirely possible to read the code to figure out exactly what its
 return value is, and what the function arguments mean, but that takes time.
 There are two levels of identifier naming present here.  The most obvious
 one is the function name.  If it were named something like
-@c GetFurthestQuadrantPointFromOrigin , a programmer who is writing code
+@c FurthestQuadrantPointFromOrigin , a programmer who is writing code
 elsewhere and may want to use this function would instantly knew what the
 function did, and would not need to carefully read the code to find out.  The
 second level is for a programmer that has to read the code for purposes of
@@ -207,7 +207,7 @@ plurality).  For example, "he is an asshole" or "they are assholes".
 The above function in a self-documenting form follows.
 
 @code
-Vector2 GetFurthestQuadrantPointFromOrigin (
+Vector2 FurthestQuadrantPointFromOrigin (
     unsigned int const vector_array_length,
     Vector2 const *vector_array,
     int quadrant_index)
@@ -272,7 +272,7 @@ expressions also helps, as the compiler will either optimize them out,
 or have their values in registers anyway.
 
 @code
-Vector2 GetFurthestQuadrantPointFromOrigin (
+Vector2 FurthestQuadrantPointFromOrigin (
     unsigned int const vector_array_length,
     Vector2 const *vector_array,
     int quadrant_index)

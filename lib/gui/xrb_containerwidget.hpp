@@ -82,14 +82,14 @@ public:
     /** @brief Returns a pointer to the focused child widget, or NULL if
       *        no child widget is currently focused.
       */
-    inline Widget *GetFocus () const { return m_focus; }
+    inline Widget *Focus () const { return m_focus; }
     /** @brief Returns the currently mouseover-focused child widget,
       *        or NULL if none.
       */
     inline Widget *GetMouseoverFocus () const { return m_mouseover_focus; }
     /** @brief Returns true iff the focused child widget has mouse grab on.
       */
-    inline bool GetFocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
+    inline bool FocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
     /** @brief Returns the "main widget" child, or NULL if there is
       *        none currently.
       */

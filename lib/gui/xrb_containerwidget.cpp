@@ -656,7 +656,7 @@ void ContainerWidget::HandleFrame ()
     {
         Widget *child = *it;
         ASSERT1(child != NULL);
-        child->ProcessFrame(GetFrameTime());
+        child->ProcessFrame(FrameTime());
     }
 }
 

@@ -160,7 +160,7 @@ private:
     {
     public:
 
-        inline std::string const &GetFilename () const
+        inline std::string const &Filename () const
         {
             return m_key.m_filename;
         }
@@ -409,10 +409,10 @@ public:
     /** Asserts if this Resource is invalid.
       * @brief Returns the filename that the resourced data was loaded from.
       */
-    inline std::string const &GetFilename () const
+    inline std::string const &Filename () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->GetFilename();
+        return m_instance->Filename();
     }
     /** If this resource was loaded without a load parameter, then
       * @ref Xrb::ResourceLibrary::UNSPECIFIED_LOAD_PARAMETER will be
