@@ -232,8 +232,8 @@ void WidgetStack::UpdateContentsSizeProperties () const
     m_contents_size_properties.m_max_size_enabled = Bool2(false, false);
     m_contents_size_properties.m_max_size =
         ScreenCoordVector2(
-            SizeProperties::GetDefaultMaxSizeComponent(),
-            SizeProperties::GetDefaultMaxSizeComponent());
+            SizeProperties::DefaultMaxSizeComponent(),
+            SizeProperties::DefaultMaxSizeComponent());
 
     // iterate over the child widgets
     for (Uint32 i = 0; i < m_child_vector.size(); ++i)

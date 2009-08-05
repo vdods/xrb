@@ -269,7 +269,7 @@ void PlayerShip::SetArmor (Armor *const armor)
             GetShipBaselineFirstMoment() +
             ((armor != NULL) ? armor->GetFirstMoment() : 0.0f));
     SetDamageDissipationRate(
-        ((armor != NULL) ? armor->GetDamageDissipationRate() : 0.0f));
+        ((armor != NULL) ? armor->DamageDissipationRate() : 0.0f));
 
     // TODO: add the strength/immunity/weakness that the armor provides
 }

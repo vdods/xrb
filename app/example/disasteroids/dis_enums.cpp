@@ -13,7 +13,7 @@
 namespace Dis
 {
 
-std::string const &GetDifficultyLevelString (DifficultyLevel difficulty_level)
+std::string const &DifficultyLevelString (DifficultyLevel difficulty_level)
 {
     static std::string const s_difficulty_level_string[DL_COUNT] =
     {

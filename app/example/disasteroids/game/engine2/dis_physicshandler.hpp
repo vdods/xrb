@@ -40,7 +40,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     // this does wrapped object layer checking
-    bool GetDoesAreaOverlapAnyEntityInObjectLayer (
+    bool DoesAreaOverlapAnyEntityInObjectLayer (
         Engine2::ObjectLayer const *object_layer,
         FloatVector2 const &area_center,
         Float area_radius,

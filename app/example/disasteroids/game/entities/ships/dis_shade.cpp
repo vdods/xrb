@@ -339,7 +339,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
             Math::UnitVector(Math::RandomAngle());
     }
     while (GetPhysicsHandler()->
-            GetDoesAreaOverlapAnyEntityInObjectLayer(
+            DoesAreaOverlapAnyEntityInObjectLayer(
                 GetObjectLayer(),
                 teleport_destination,
                 1.5f * GetVisibleRadius(),

@@ -37,7 +37,7 @@ CollisionQuadTree *CollisionQuadTree::Create (
     return new CollisionQuadTree(FloatVector2::ms_zero, half_side_length, depth);
 }
 
-bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
+bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
     FloatVector2 const &area_center,
     Float const area_radius,
     bool const check_nonsolid_collision_entities) const
@@ -47,7 +47,7 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(area_center, area_radius))
+    if (!DoesAreaOverlapQuadBounds(area_center, area_radius))
         return false;
 
     // check if the area overlaps any object in this node's list.
@@ -76,22 +76,22 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            Child<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(0)->DoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            Child<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(1)->DoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            Child<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(2)->DoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities)
             ||
-            Child<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntity(
+            Child<CollisionQuadTree>(3)->DoesAreaOverlapAnyEntity(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities);
@@ -99,7 +99,7 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntity (
         return false;
 }
 
-bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
+bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
     FloatVector2 const &area_center,
     Float const area_radius,
     bool const check_nonsolid_collision_entities,
@@ -111,7 +111,7 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBoundsWrapped(
             area_center,
             area_radius,
             object_layer_side_length,
@@ -158,28 +158,28 @@ bool CollisionQuadTree::GetDoesAreaOverlapAnyEntityWrapped (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            Child<CollisionQuadTree>(0)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(0)->DoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            Child<CollisionQuadTree>(1)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(1)->DoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            Child<CollisionQuadTree>(2)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(2)->DoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            Child<CollisionQuadTree>(3)->GetDoesAreaOverlapAnyEntityWrapped(
+            Child<CollisionQuadTree>(3)->DoesAreaOverlapAnyEntityWrapped(
                 area_center,
                 area_radius,
                 check_nonsolid_collision_entities,
@@ -394,7 +394,7 @@ void CollisionQuadTree::AreaTrace (
         return;
 
     // if this quad node doesn't intersect the line, return
-    if (!GetDoesAreaOverlapQuadBounds(trace_area_center, trace_area_radius))
+    if (!DoesAreaOverlapQuadBounds(trace_area_center, trace_area_radius))
         return;
 
     // call this function on the child nodes, if they exist
@@ -451,7 +451,7 @@ void CollisionQuadTree::AreaTraceWrapped (
         return;
 
     // if this quad node doesn't intersect the line, return
-    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBoundsWrapped(
             trace_area_center,
             trace_area_radius,
             object_layer_side_length,
@@ -527,7 +527,7 @@ void CollisionQuadTree::CollideEntity (
         return;
 
     // return if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(entity->GetTranslation(), entity->GetRadius(GetQuadTreeType())))
+    if (!DoesAreaOverlapQuadBounds(entity->GetTranslation(), entity->GetRadius(GetQuadTreeType())))
         return;
 
     // if there are child nodes, call CollideEntity on each
@@ -759,7 +759,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
         return;
 
     // return if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBoundsWrapped(
             functor.GetEntity()->GetTranslation(),
             functor.GetEntity()->GetRadius(GetQuadTreeType()),
             functor.GetObjectLayerSideLength(),

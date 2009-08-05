@@ -83,7 +83,7 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
 
     m_key_code = Key::INVALID;
 
-    Label *l = new Label(message, GetDialogLayout());
+    Label *l = new Label(message, DialogLayout());
     l->SetIsHeightFixedToTextHeight(true);
 }
 

@@ -84,7 +84,7 @@ void GLTexture::GenerateTexture (
         1,
         GL_RGBA,
         GL_UNSIGNED_BYTE,
-        texture->GetData());
+        texture->Data());
 */
     gluBuild2DMipmaps(
         GL_TEXTURE_2D,
@@ -93,7 +93,7 @@ void GLTexture::GenerateTexture (
         texture->GetHeight(),
         GL_RGBA,
         GL_UNSIGNED_BYTE,
-        texture->GetData());
+        texture->Data());
 
     // the texture data has now been loaded into GL texture memory, so
     // the original texture can now optionally be deleted.

@@ -21,7 +21,7 @@ namespace
     inline bool IsWhitespace (char c) { return c == ' ' || c == '\t' || c == '\n'; }
     inline bool IsOperator (char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '(' || c == ')'; }
     inline bool IsDecimalDigit (char c) { return c >= '0' && c <= '9'; }
-    inline Float GetDecimalDigitValue (char c) { return static_cast<Float>(c - '0'); }
+    inline Float DecimalDigitValue (char c) { return static_cast<Float>(c - '0'); }
 }
 
 ArithmeticScanner::ArithmeticScanner (std::string const &input_string)

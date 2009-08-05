@@ -241,7 +241,7 @@ private:
             ASSERT1(m_data == NULL);
         }
 
-        inline T *GetData () const
+        inline T *Data () const
         {
             return m_data;
         }
@@ -386,7 +386,7 @@ public:
     inline T const *operator * () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->GetData();
+        return m_instance->Data();
     }
     /** Provides -> dereferencing syntax for the resourced data, e.g.
       * @c font_resource->GetPixelHeight() .
@@ -395,7 +395,7 @@ public:
     inline T const *operator -> () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->GetData();
+        return m_instance->Data();
     }
 
     /** An invalid Resource can't be dereferenced or accessed for its

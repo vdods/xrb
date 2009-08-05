@@ -86,7 +86,7 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
 
         for (Uint32 i = 0; i < DL_COUNT; ++i)
         {
-            l = new Label(GetDifficultyLevelString(static_cast<DifficultyLevel>(i)), game_difficulty_layout);
+            l = new Label(DifficultyLevelString(static_cast<DifficultyLevel>(i)), game_difficulty_layout);
             l->SetIsHeightFixedToTextHeight(true);
             l->SetAlignment(Dim::X, RIGHT);
 

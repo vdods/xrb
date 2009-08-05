@@ -33,7 +33,7 @@ FileDialog::FileDialog (
         new FilePanel(
             title_text,
             file_operation,
-            GetDialogLayout());
+            DialogLayout());
 
     SignalHandler::Connect1(
         m_file_panel->SenderSubmitFilename(),

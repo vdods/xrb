@@ -66,8 +66,8 @@ public:
     ScreenCoord const *m_data;
 
     /** Sets the min/max size enabled flags to false, and the min/max
-      * sizes to their neutral defaults (see GetDefaultMinSizeComponent
-      * and GetDefaultMaxSizeComponent).
+      * sizes to their neutral defaults (see DefaultMinSizeComponent
+      * and DefaultMaxSizeComponent).
       * @brief Default constructor.
       */
     SizeProperties ();
@@ -79,14 +79,14 @@ public:
     /** This is used more extensively in Layout for optimal area allocation.
       * @brief Returns the smallest valid minimum size component.
       */
-    static inline ScreenCoord GetDefaultMinSizeComponent ()
+    static inline ScreenCoord DefaultMinSizeComponent ()
     {
         return 0;
     }
     /** This is used more extensively in Layout for optimal area allocation.
       * @brief Returns the largest valid maximum size component.
       */
-    static inline ScreenCoord GetDefaultMaxSizeComponent ()
+    static inline ScreenCoord DefaultMaxSizeComponent ()
     {
         return SINT32_UPPER_BOUND;
     }

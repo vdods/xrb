@@ -82,19 +82,19 @@ Engine2::Object *Engine2::ObjectLayer::GetSmallestObjectTouchingPoint (
     return m_quad_tree->GetSmallestObjectTouchingPoint(point);
 }
 
-bool Engine2::ObjectLayer::GetDoesAreaOverlapAnyObject (
+bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
     Float const area_radius) const
 {
     ASSERT1(m_quad_tree != NULL);
     if (IsWrapped())
-        return m_quad_tree->GetDoesAreaOverlapAnyObjectWrapped(
+        return m_quad_tree->DoesAreaOverlapAnyObjectWrapped(
             area_center,
             area_radius,
             GetSideLength(),
             0.5f * GetSideLength());
     else
-        return m_quad_tree->GetDoesAreaOverlapAnyObject(area_center, area_radius);
+        return m_quad_tree->DoesAreaOverlapAnyObject(area_center, area_radius);
 }
 
 FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (

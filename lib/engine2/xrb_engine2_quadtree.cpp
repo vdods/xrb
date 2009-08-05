@@ -99,7 +99,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
     return retval;
 }
 
-bool Engine2::QuadTree::GetDoesAreaOverlapAnyObject (
+bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
     Float const area_radius) const
 {
@@ -108,7 +108,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObject (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(area_center, area_radius))
+    if (!DoesAreaOverlapQuadBounds(area_center, area_radius))
         return false;
 
     // check if the area overlaps any object in this node's list.
@@ -129,26 +129,26 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObject (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            m_child[0]->GetDoesAreaOverlapAnyObject(
+            m_child[0]->DoesAreaOverlapAnyObject(
                 area_center,
                 area_radius)
             ||
-            m_child[1]->GetDoesAreaOverlapAnyObject(
+            m_child[1]->DoesAreaOverlapAnyObject(
                 area_center,
                 area_radius)
             ||
-            m_child[2]->GetDoesAreaOverlapAnyObject(
+            m_child[2]->DoesAreaOverlapAnyObject(
                 area_center,
                 area_radius)
             ||
-            m_child[3]->GetDoesAreaOverlapAnyObject(
+            m_child[3]->DoesAreaOverlapAnyObject(
                 area_center,
                 area_radius);
     else
         return false;
 }
 
-bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
+bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
     FloatVector2 const &area_center,
     Float const area_radius,
     Float const object_layer_side_length,
@@ -159,7 +159,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBoundsWrapped(
             area_center,
             area_radius,
             object_layer_side_length,
@@ -198,25 +198,25 @@ bool Engine2::QuadTree::GetDoesAreaOverlapAnyObjectWrapped (
     // if there are child nodes, call this method on each until one returns true
     if (GetHasChildren())
         return
-            m_child[0]->GetDoesAreaOverlapAnyObjectWrapped(
+            m_child[0]->DoesAreaOverlapAnyObjectWrapped(
                 area_center,
                 area_radius,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            m_child[1]->GetDoesAreaOverlapAnyObjectWrapped(
+            m_child[1]->DoesAreaOverlapAnyObjectWrapped(
                 area_center,
                 area_radius,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            m_child[2]->GetDoesAreaOverlapAnyObjectWrapped(
+            m_child[2]->DoesAreaOverlapAnyObjectWrapped(
                 area_center,
                 area_radius,
                 object_layer_side_length,
                 half_object_layer_side_length)
             ||
-            m_child[3]->GetDoesAreaOverlapAnyObjectWrapped(
+            m_child[3]->DoesAreaOverlapAnyObjectWrapped(
                 area_center,
                 area_radius,
                 object_layer_side_length,
@@ -439,7 +439,7 @@ bool Engine2::QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
         return true;
 }
 
-bool Engine2::QuadTree::GetDoesAreaOverlapQuadBoundsWrapped (
+bool Engine2::QuadTree::DoesAreaOverlapQuadBoundsWrapped (
     FloatVector2 area_center,
     Float const area_radius,
     Float const object_layer_side_length,
@@ -460,7 +460,7 @@ bool Engine2::QuadTree::GetDoesAreaOverlapQuadBoundsWrapped (
     else if (area_center[Dim::Y] > m_center[Dim::Y] + half_object_layer_side_length)
         area_center[Dim::Y] -= object_layer_side_length;
 
-    return GetDoesAreaOverlapQuadBounds(area_center, area_radius);
+    return DoesAreaOverlapQuadBounds(area_center, area_radius);
 }
 
 void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)

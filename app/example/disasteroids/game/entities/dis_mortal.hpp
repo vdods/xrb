@@ -71,7 +71,7 @@ public:
     inline Float GetMaxHealth () const { return m_max_health; }
     inline bool IsDead () const { return m_current_health <= 0.0f; }
     inline bool IsInvincible () const { return m_is_invincible; }
-    inline Float GetDamageDissipationRate () const { return m_damage_dissipation_rate; }
+    inline Float DamageDissipationRate () const { return m_damage_dissipation_rate; }
     inline DamageType GetWeakness () const { return m_weakness; }
     inline DamageType GetStrength () const { return m_strength; }
     inline DamageType GetImmunity () const { return m_immunity; }

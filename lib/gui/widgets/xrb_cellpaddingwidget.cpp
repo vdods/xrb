@@ -326,8 +326,8 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
     m_contents_size_properties.m_max_size_enabled = Bool2(false, false);
     m_contents_size_properties.m_max_size =
         ScreenCoordVector2(
-            SizeProperties::GetDefaultMaxSizeComponent(),
-            SizeProperties::GetDefaultMaxSizeComponent());
+            SizeProperties::DefaultMaxSizeComponent(),
+            SizeProperties::DefaultMaxSizeComponent());
 
     Widget const *child = GetSingleChildWidget();
     ASSERT1(child != NULL);

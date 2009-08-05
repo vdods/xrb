@@ -70,7 +70,7 @@ Texture *Texture::Create (
     if (retval->m_surface == NULL)
         DeleteAndNullify(retval);
     else if (zero_out_the_data)
-        memset(retval->GetData(), 0, retval->GetDataLength());
+        memset(retval->Data(), 0, retval->DataLength());
 
     return retval;
 }

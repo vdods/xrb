@@ -35,11 +35,11 @@ public:
 
     static CollisionQuadTree *Create (Float half_side_length, Uint8 depth);
 
-    bool GetDoesAreaOverlapAnyEntity (
+    bool DoesAreaOverlapAnyEntity (
         FloatVector2 const &area_center,
         Float area_radius,
         bool check_nonsolid_collision_entities) const;
-    bool GetDoesAreaOverlapAnyEntityWrapped (
+    bool DoesAreaOverlapAnyEntityWrapped (
         FloatVector2 const &area_center,
         Float area_radius,
         bool check_nonsolid_collision_entities,

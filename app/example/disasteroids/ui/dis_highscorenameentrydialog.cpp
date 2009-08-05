@@ -30,7 +30,7 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (
     m_sender_submit_name(this),
     m_internal_receiver_name_submitted(&HighScoreNameEntryDialog::InternalNameSubmitted, this)
 {
-    Layout *main_layout = new Layout(VERTICAL, GetDialogLayout());
+    Layout *main_layout = new Layout(VERTICAL, DialogLayout());
     {
         new Label("NEW HIGH SCORE", main_layout);
 

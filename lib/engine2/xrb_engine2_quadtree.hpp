@@ -54,10 +54,10 @@ public:
     // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
     inline bool IsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetQuadTreeType()) / m_radius > 0.5f; }
 
-    bool GetDoesAreaOverlapAnyObject (
+    bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius) const;
-    bool GetDoesAreaOverlapAnyObjectWrapped (
+    bool DoesAreaOverlapAnyObjectWrapped (
         FloatVector2 const &area_center,
         Float area_radius,
         Float object_layer_side_length,
@@ -100,7 +100,7 @@ protected:
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the
     // specified circle)
-    inline bool GetDoesAreaOverlapQuadBounds (
+    inline bool DoesAreaOverlapQuadBounds (
         FloatVector2 const &area_center,
         Float const area_radius) const
     {
@@ -111,7 +111,7 @@ protected:
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the
     // specified circle), for wrapped spaces
-    bool GetDoesAreaOverlapQuadBoundsWrapped (
+    bool DoesAreaOverlapQuadBoundsWrapped (
         FloatVector2 area_center,
         Float area_radius,
         Float object_layer_side_length,

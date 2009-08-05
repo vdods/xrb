@@ -814,8 +814,8 @@ void Layout::CalculateLineSizeProperties (
     size_properties->m_min_size_enabled = Bool2(false, false);
     size_properties->m_min_size =
         ScreenCoordVector2(
-            SizeProperties::GetDefaultMinSizeComponent(),
-            SizeProperties::GetDefaultMinSizeComponent());
+            SizeProperties::DefaultMinSizeComponent(),
+            SizeProperties::DefaultMinSizeComponent());
 
     Uint32 is_horizontal = (line_direction == ROW) ? 1 : 0;
     // figure out which dimension is along this line
@@ -830,7 +830,7 @@ void Layout::CalculateLineSizeProperties (
     // initialize the max size
     size_properties->m_max_size[along] = 0;
     size_properties->m_max_size[across] =
-        SizeProperties::GetDefaultMaxSizeComponent();
+        SizeProperties::DefaultMaxSizeComponent();
 
     // loop through all the child widgets
     Uint32 line_widget_count =

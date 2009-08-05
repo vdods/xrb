@@ -250,7 +250,7 @@ void Master::AcceptName (std::string const &name)
         checked_name,
         m_saved_score.GetPoints(),
         m_saved_score.GetWaveCount(),
-        m_saved_score.GetDate());
+        m_saved_score.Date());
     m_show_best_points_high_scores_first = m_high_scores.AddScore(named_score);
     m_high_scores.Write(HIGH_SCORES_FILENAME);
     m_game_world->SubmitScoreDone();

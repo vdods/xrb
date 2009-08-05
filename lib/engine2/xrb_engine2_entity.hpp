@@ -132,7 +132,7 @@ public:
     inline Float Angle () const { ASSERT3(m_owner_object != NULL); return m_owner_object->Angle(); }
     inline FloatMatrix2 const &GetTransformation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTransformation(); }
     inline FloatMatrix2 GetTransformationInverse () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTransformationInverse(); }
-    inline Float GetDeterminant () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetDeterminant(); }
+    inline Float Determinant () const { ASSERT3(m_owner_object != NULL); return m_owner_object->Determinant(); }
     inline void SetTranslation (FloatVector2 const &translation) { ASSERT3(m_owner_object != NULL); m_owner_object->SetTranslation(translation); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void SetScaleFactors (FloatVector2 const &scale_factors) { ASSERT3(m_owner_object != NULL); m_owner_object->SetScaleFactors(scale_factors); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }
     inline void SetScaleFactor (Float scale_factor) { ASSERT3(m_owner_object != NULL); m_owner_object->SetScaleFactor(scale_factor); ReAddToQuadTree(QTT_VISIBILITY); ReAddToQuadTree(QTT_PHYSICS_HANDLER); }

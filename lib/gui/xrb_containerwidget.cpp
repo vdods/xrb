@@ -740,7 +740,7 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
                         m_preferred_size_properties.m_min_size[d];
                 else
                     m_size_properties.m_min_size[d] =
-                        SizeProperties::GetDefaultMinSizeComponent();
+                        SizeProperties::DefaultMinSizeComponent();
             }
         }
 
@@ -767,7 +767,7 @@ void ContainerWidget::CalculateMinAndMaxSizePropertiesFromContents ()
                         m_preferred_size_properties.m_max_size[d];
                 else
                     m_size_properties.m_max_size[d] =
-                        SizeProperties::GetDefaultMaxSizeComponent();
+                        SizeProperties::DefaultMaxSizeComponent();
             }
         }
     }

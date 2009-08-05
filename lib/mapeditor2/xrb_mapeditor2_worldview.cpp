@@ -1613,7 +1613,7 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
     // get the mouse movement's delta, in world coordinates
     FloatVector2 position_delta(
         GetParallaxedScreenToWorld() * FloatVector2::ms_zero -
-        GetParallaxedScreenToWorld() * e->GetDelta().StaticCast<Float>());
+        GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
     FloatVector2 last_mouse_position(
         GetParallaxedScreenToWorld() *
         GetParentWorldViewWidget()->GetLastMousePosition().StaticCast<Float>());

@@ -63,7 +63,7 @@ enum DifficultyLevel
     DL_HIGHEST = DL_CRUEL
 };
 
-std::string const &GetDifficultyLevelString (DifficultyLevel difficulty_level);
+std::string const &DifficultyLevelString (DifficultyLevel difficulty_level);
 
 enum EntityType
 {

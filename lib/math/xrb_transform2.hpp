@@ -130,10 +130,10 @@ public:
         return m_cached_transform.GetInverse();
     }
 
-    inline T GetDeterminant () const
+    inline T Determinant () const
     {
         RecalculateScalingAndRotationIfNecessary();
-        return m_cached_scaling_and_rotation.GetDeterminant();
+        return m_cached_scaling_and_rotation.Determinant();
     }
 
     inline bool IsDirty () const

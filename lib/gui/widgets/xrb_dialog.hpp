@@ -79,7 +79,7 @@ public:
       * parent widget, not the dialog itself.
       * @brief Returns the Layout for the dialog's controls.
       */
-    inline Layout *GetDialogLayout () const { return m_dialog_layout; }
+    inline Layout *DialogLayout () const { return m_dialog_layout; }
     /** @brief Returns true iff the specified button exists in this dialog.
       * @param button_id The button type to check for existence.
       */

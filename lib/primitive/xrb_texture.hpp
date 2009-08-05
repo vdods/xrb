@@ -33,7 +33,7 @@ namespace Xrb
   *
   * File I/O is done using the PNG file format.
   *
-  * The raw texture data can be accessed directly through GetData.
+  * The raw texture data can be accessed directly through Data.
   *
   * (not yet implemented:) The texture data can be stored/read/written
   * in several bit-depth formats, given by @ref Xrb::Texture::Format.
@@ -94,12 +94,12 @@ public:
         ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->h);
     }
-    inline Uint32 GetDataLength () const
+    inline Uint32 DataLength () const
     {
         ASSERT1(m_surface != NULL);
         return static_cast<Uint32>(m_surface->pitch) * static_cast<Uint32>(m_surface->h);
     }
-    inline Uint8 *GetData () const
+    inline Uint8 *Data () const
     {
         ASSERT1(m_surface != NULL);
         return static_cast<Uint8 *>(m_surface->pixels);

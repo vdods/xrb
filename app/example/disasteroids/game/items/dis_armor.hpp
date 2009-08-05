@@ -31,7 +31,7 @@ public:
     { }
     virtual ~Armor () { }
 
-    inline Float GetDamageDissipationRate () const
+    inline Float DamageDissipationRate () const
     {
         ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_damage_dissipation_rate[GetUpgradeLevel()];

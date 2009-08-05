@@ -1317,7 +1317,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     }
 
     // fail if the area overlaps any entity
-    if (GetPhysicsHandler()->GetDoesAreaOverlapAnyEntityInObjectLayer(
+    if (GetPhysicsHandler()->DoesAreaOverlapAnyEntityInObjectLayer(
             GetMainObjectLayer(),
             translation,
             scale_factor,
@@ -1520,7 +1520,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
                 ++retry_count;
             }
-            while (retry_count < 50 && object_layer->GetDoesAreaOverlapAnyObject(translation, 1.2f * scale_factor));
+            while (retry_count < 50 && object_layer->DoesAreaOverlapAnyObject(translation, 1.2f * scale_factor));
             if (retry_count >= 50)
                 break;
 

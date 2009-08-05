@@ -838,7 +838,7 @@ void AsciiFont::GenerateTexture (ScreenCoordVector2 const &texture_size)
         for (Sint32 y = 0; y < glyph.m_size[Dim::Y]; ++y)
         {
             Uint8 *dest_pixel_data =
-                texture->GetData() +
+                texture->Data() +
                 (glyph.m_texture_coordinates[Dim::Y] + y) * texture_size[Dim::X] * 4 +
                 glyph.m_texture_coordinates[Dim::X] * 4;
 

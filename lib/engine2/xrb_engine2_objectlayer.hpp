@@ -56,7 +56,7 @@ public:
     inline Float GetSideLength () const { return m_side_length; }
     inline Float GetZDepth () const { return m_z_depth; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point) const;
-    bool GetDoesAreaOverlapAnyObject (
+    bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius) const;
     FloatVector2 GetNormalizedCoordinates (FloatVector2 const &coordinates) const;

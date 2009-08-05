@@ -102,7 +102,7 @@ DataFileParser::ParserReturnCode DataFileParser::Parse ()
     return return_code;
 }
 
-bool DataFileParser::GetDoesStateAcceptErrorToken (DataFileParser::StateNumber state_number) const
+bool DataFileParser::DoesStateAcceptErrorToken (DataFileParser::StateNumber state_number) const
 {
     assert(state_number < ms_state_count);
     State const &state = ms_state[state_number];
@@ -219,7 +219,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
 
                 // if an error was encountered, and this state accepts the %error
                 // token, then we don't need to pop states
-                if (GetDoesStateAcceptErrorToken(current_state_number))
+                if (DoesStateAcceptErrorToken(current_state_number))
                 {
                     // if an error token was previously accepted, then throw
                     // away the lookahead token, because whatever the lookahead
@@ -267,7 +267,7 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
                         m_token_stack.pop_back();
                         current_state_number = m_state_stack.back();
                     }
-                    while (!GetDoesStateAcceptErrorToken(current_state_number));
+                    while (!DoesStateAcceptErrorToken(current_state_number));
                 }
 
                 DEBUG_SPEW_1("!!! error recovery: found state which accepts %error token" << std::endl);

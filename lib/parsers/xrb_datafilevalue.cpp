@@ -22,7 +22,7 @@
 namespace Xrb
 {
 
-std::string const &GetDataFileElementTypeString (DataFileElementType data_file_element_type)
+std::string const &DataFileElementTypeString (DataFileElementType data_file_element_type)
 {
     static std::string const s_data_file_element_type_string[DAT_COUNT] =
     {
@@ -124,7 +124,7 @@ DataFileValue const *DataFileLeafValue::GetSubpathElement (
 
     if (start < path.length())
         THROW_STRING("error: in path \"" << path << "\" - element type " <<
-                     GetDataFileElementTypeString(GetElementType()) <<
+                     DataFileElementTypeString(GetElementType()) <<
                      " can not have subelements (subpath \"" << &path[start] << "\")")
     return this;
 }
@@ -438,10 +438,10 @@ DataFileElementType DataFileArray::GetUltimateArrayElementType () const
     return m_element_vector[0]->GetElementType();
 }
 
-Uint32 DataFileArray::GetDimensionCount () const
+Uint32 DataFileArray::DimensionCount () const
 {
     if (ArrayElementType() == DAT_ARRAY)
-        return 1 + DStaticCast<DataFileArray const *>(m_element_vector[0])->GetDimensionCount();
+        return 1 + DStaticCast<DataFileArray const *>(m_element_vector[0])->DimensionCount();
     else
         return 1;
 }
@@ -459,11 +459,11 @@ void DataFileArray::AppendValue (DataFileValue *const value)
         ASSERT1(first_element_value != NULL);
         if (value->GetElementType() != first_element_value->GetElementType())
             THROW_STRING("cannot add a " <<
-                         GetDataFileElementTypeString(value->GetElementType()) <<
+                         DataFileElementTypeString(value->GetElementType()) <<
                          " to an array with element type " <<
-                         GetDataFileElementTypeString(first_element_value->GetElementType()))
+                         DataFileElementTypeString(first_element_value->GetElementType()))
         else if (value->GetElementType() == DAT_ARRAY &&
-                    !GetDoesMatchDimensionAndType(
+                    !DoesMatchDimensionAndType(
                         DStaticCast<DataFileArray const *>(value),
                         DStaticCast<DataFileArray const *>(first_element_value)))
             THROW_STRING("sibling elements in nested arrays must be of identical dimension and type")
@@ -542,9 +542,9 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
 {
     formatter.EndLine(
         "DAT_ARRAY - %u dimensions - %u element(s) of type %s",
-        GetDimensionCount(),
+        DimensionCount(),
         m_element_vector.size(),
-        GetDataFileElementTypeString(ArrayElementType()).c_str());
+        DataFileElementTypeString(ArrayElementType()).c_str());
     formatter.Indent();
     for (Uint32 i = 0; i < m_element_vector.size(); ++i)
     {
@@ -690,23 +690,23 @@ void DataFileArray::SetSubpathElement (
             if (element->GetElementType() != first_element->GetElementType())
             {
                 std::ostringstream out;
-                out << "mismatch: array element type " << GetDataFileElementTypeString(first_element->GetElementType())
-                    << ", assignment type " << GetDataFileElementTypeString(element->GetElementType());
+                out << "mismatch: array element type " << DataFileElementTypeString(first_element->GetElementType())
+                    << ", assignment type " << DataFileElementTypeString(element->GetElementType());
                 Delete(element);
                 throw out.str();
             }
             else if (element->GetElementType() == DAT_ARRAY &&
-                    (DStaticCast<DataFileArray const *>(first_element)->GetDimensionCount() !=
-                     DStaticCast<DataFileArray const *>(element)->GetDimensionCount()
+                    (DStaticCast<DataFileArray const *>(first_element)->DimensionCount() !=
+                     DStaticCast<DataFileArray const *>(element)->DimensionCount()
                      ||
                      static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType() !=
                      static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType()))
             {
                 std::ostringstream out;
-                out << "mismatch: array depth " << static_cast<DataFileArray const *>(first_element)->GetDimensionCount()
-                    << "/type " << GetDataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType())
-                    << ", assignment depth " << static_cast<DataFileArray const *>(element)->GetDimensionCount()
-                    << "/type " << GetDataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType());
+                out << "mismatch: array depth " << static_cast<DataFileArray const *>(first_element)->DimensionCount()
+                    << "/type " << DataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->GetUltimateArrayElementType())
+                    << ", assignment depth " << static_cast<DataFileArray const *>(element)->DimensionCount()
+                    << "/type " << DataFileElementTypeString(static_cast<DataFileArray const *>(element)->GetUltimateArrayElementType());
                 Delete(element);
                 throw out.str();
             }
@@ -739,7 +739,7 @@ void DataFileArray::SetSubpathElement (
                 assignment_type = DAT_STRUCTURE;
 
             ASSERT1(assignment_type != DAT_NO_TYPE);
-            THROW_STRING("mismatch: array element type " << GetDataFileElementTypeString(element->GetElementType()) << ", assignment type " << GetDataFileElementTypeString(assignment_type))
+            THROW_STRING("mismatch: array element type " << DataFileElementTypeString(element->GetElementType()) << ", assignment type " << DataFileElementTypeString(assignment_type))
         }
 
         if (element_type == NT_LEAF)
@@ -760,11 +760,11 @@ void DataFileArray::SetSubpathElement (
     }
 }
 
-std::string DataFileArray::GetDimensionAndTypeString () const
+std::string DataFileArray::DimensionAndTypeString () const
 {
     std::ostringstream out;
 
-    out << GetDataFileElementTypeString(GetUltimateArrayElementType());
+    out << DataFileElementTypeString(GetUltimateArrayElementType());
 
     DataFileValue const *value = this;
     while (value != NULL && value->GetElementType() == DAT_ARRAY)
@@ -779,7 +779,7 @@ std::string DataFileArray::GetDimensionAndTypeString () const
     return out.str();
 }
 
-bool DataFileArray::GetDoesMatchDimensionAndType (
+bool DataFileArray::DoesMatchDimensionAndType (
     DataFileArray const *const array0,
     DataFileArray const *const array1)
 {
@@ -797,7 +797,7 @@ bool DataFileArray::GetDoesMatchDimensionAndType (
 
     if (array0->m_element_vector[0]->GetElementType() == DAT_ARRAY)
         return
-            GetDoesMatchDimensionAndType(
+            DoesMatchDimensionAndType(
                 DStaticCast<DataFileArray const *>(array0->m_element_vector[0]),
                 DStaticCast<DataFileArray const *>(array1->m_element_vector[0]));
 

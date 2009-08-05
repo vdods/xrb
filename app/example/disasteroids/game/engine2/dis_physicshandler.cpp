@@ -35,7 +35,7 @@ PhysicsHandler::~PhysicsHandler ()
     Delete(m_quad_tree);
 }
 
-bool PhysicsHandler::GetDoesAreaOverlapAnyEntityInObjectLayer (
+bool PhysicsHandler::DoesAreaOverlapAnyEntityInObjectLayer (
     Engine2::ObjectLayer const *const object_layer,
     FloatVector2 const &area_center,
     Float const area_radius,
@@ -45,14 +45,14 @@ bool PhysicsHandler::GetDoesAreaOverlapAnyEntityInObjectLayer (
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(m_quad_tree != NULL);
     if (m_main_object_layer->IsWrapped())
-        return m_quad_tree->GetDoesAreaOverlapAnyEntityWrapped(
+        return m_quad_tree->DoesAreaOverlapAnyEntityWrapped(
             area_center,
             area_radius,
             check_nonsolid_collision_entities,
             m_main_object_layer->GetSideLength(),
             0.5f * m_main_object_layer->GetSideLength());
     else
-        return m_quad_tree->GetDoesAreaOverlapAnyEntity(
+        return m_quad_tree->DoesAreaOverlapAnyEntity(
             area_center,
             area_radius,
             check_nonsolid_collision_entities);

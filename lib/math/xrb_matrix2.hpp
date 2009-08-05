@@ -162,7 +162,7 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline T GetDeterminant () const
+    inline T Determinant () const
     {
         return m[A] * m[D] - m[B] * m[C];
     }

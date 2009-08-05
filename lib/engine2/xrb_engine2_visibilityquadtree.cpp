@@ -197,7 +197,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     // restore the GL state
     glDisable(GL_DEPTH_TEST);
 
-    return draw_loop_functor.GetDrawnOpaqueObjectCount();
+    return draw_loop_functor.DrawnOpaqueObjectCount();
 }
 
 Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
@@ -274,7 +274,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     // restore the GL state
     glDisable(GL_DEPTH_TEST);
 
-    return draw_loop_functor.GetDrawnOpaqueObjectCount();
+    return draw_loop_functor.DrawnOpaqueObjectCount();
 }
 
 void Engine2::VisibilityQuadTree::DrawBounds (
@@ -343,7 +343,7 @@ void Engine2::VisibilityQuadTree::Draw (
     }
 
     // return if the view doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(draw_loop_functor.GetViewCenter(), draw_loop_functor.GetViewRadius()))
+    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.GetViewCenter(), draw_loop_functor.GetViewRadius()))
         return;
 
 //     DrawBounds(draw_loop_functor.GetObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));

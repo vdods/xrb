@@ -469,7 +469,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     }
 
     // return if the view doesn't intersect this node
-    if (!GetDoesAreaOverlapQuadBounds(draw_data.GetViewCenter(), draw_data.GetViewRadius()))
+    if (!DoesAreaOverlapQuadBounds(draw_data.GetViewCenter(), draw_data.GetViewRadius()))
         return;
 
     // draw all the objects' bounding circles in this node's list

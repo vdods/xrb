@@ -55,7 +55,7 @@ public:
         else
             return 0.0f;
     }
-    inline Polynomial GetDerivative (Uint32 order = 1) const
+    inline Polynomial Derivative (Uint32 order = 1) const
     {
         Polynomial retval(*this);
         retval.Derive(order);

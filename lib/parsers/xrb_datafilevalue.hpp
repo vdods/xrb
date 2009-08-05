@@ -228,7 +228,7 @@ enum NumericSign
     POSITIVE = 1
 }; // end of enum NumericSign
 
-std::string const &GetDataFileElementTypeString (DataFileElementType data_file_element_type);
+std::string const &DataFileElementTypeString (DataFileElementType data_file_element_type);
 
 /** A data file is a human-readable text file which functions as a generalized
   * storage medium.  The file is organized up into sets of potentially nested
@@ -599,7 +599,7 @@ public:
     bool GetShouldBeFormattedInline () const;
     DataFileElementType ArrayElementType () const;
     DataFileElementType GetUltimateArrayElementType () const;
-    Uint32 GetDimensionCount () const;
+    Uint32 DimensionCount () const;
     inline Uint32 GetElementCount () const { return m_element_vector.size(); }
     inline DataFileValue *GetElement (Uint32 index) const
     {
@@ -626,8 +626,8 @@ protected:
 
 private:
 
-    std::string GetDimensionAndTypeString () const;
-    static bool GetDoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
+    std::string DimensionAndTypeString () const;
+    static bool DoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
 
     typedef std::vector<DataFileValue *> ElementVector;
     typedef ElementVector::iterator ElementVectorIterator;

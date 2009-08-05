@@ -68,7 +68,7 @@ namespace Engine2
         inline FloatVector2 Center () const { return -GetTranslation(); }
         inline Float Angle () const { return -FloatTransform2::Angle(); }
         inline bool IsViewLocked () const { return m_is_view_locked; }
-        inline bool GetDrawBorderGridLines () const { return m_draw_border_grid_lines; }
+        inline bool DrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 CompoundTransformation () const;
         Float GetViewDepth (ObjectLayer const *object_layer) const;
         inline Float GetParallaxFactor (

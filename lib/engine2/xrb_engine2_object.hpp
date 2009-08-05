@@ -116,8 +116,8 @@ public:
         inline Float GetViewRadius () const { return m_view_radius; }
         inline bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
         inline TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
-        inline Uint32 GetDrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
-        inline Uint32 GetDrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
+        inline Uint32 DrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
+        inline Uint32 DrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
 
         inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
         inline void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }

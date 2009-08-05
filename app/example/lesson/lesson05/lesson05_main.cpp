@@ -496,7 +496,7 @@ public:
             // by WorldView.
             MoveView(
                 GetParallaxedScreenToWorld() * FloatVector2::ms_zero -
-                GetParallaxedScreenToWorld() * e->GetDelta().StaticCast<Float>());
+                GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
             // Indicates that the event was used by this method.
             return true;
         }

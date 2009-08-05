@@ -72,10 +72,10 @@ void GL::Initialize ()
     // initialize the singleton helper texture(s)
     {
         Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), true);
-        opaque_white->GetData()[0] = 255;
-        opaque_white->GetData()[1] = 255;
-        opaque_white->GetData()[2] = 255;
-        opaque_white->GetData()[3] = 255;
+        opaque_white->Data()[0] = 255;
+        opaque_white->Data()[1] = 255;
+        opaque_white->Data()[2] = 255;
+        opaque_white->Data()[3] = 255;
         g_gltexture_opaque_white = GLTexture::Create(opaque_white);
     }
 

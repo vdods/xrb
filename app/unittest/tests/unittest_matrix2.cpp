@@ -357,22 +357,22 @@ void Matrix2UnitTest::AtomClassOperatorAssignmentSimpleTransform2 ()
 
 void Matrix2UnitTest::AtomDeterminant ()
 {
-    PrintSubsectionHeader("Checking GetDeterminant()");
+    PrintSubsectionHeader("Checking Determinant()");
 
     TestEquality(
-        FloatMatrix2::ms_identity.GetDeterminant(),
+        FloatMatrix2::ms_identity.Determinant(),
         "determinant of the identity",
         1.0f,
         "one",
         "%f");
     TestEquality(
-        m_matrix0.GetDeterminant(),
+        m_matrix0.Determinant(),
         "calculated determinant of m0",
         m_matrix0_determinant,
         "precomputed determinant",
         "%f");
     TestEquality(
-        m_matrix1.GetDeterminant(),
+        m_matrix1.Determinant(),
         "calculated determinant of m1",
         m_matrix1_determinant,
         "precomputed determinant",

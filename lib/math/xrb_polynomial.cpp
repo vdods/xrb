@@ -123,7 +123,7 @@ void Polynomial::Solve (SolutionSet *const solution_set, Float const tolerance) 
     else
     {
         // take the derivative for this polynomial's local max/minima
-        Polynomial derivative(GetDerivative());
+        Polynomial derivative(Derivative());
         std::set<Float> derivative_solution_set;
         derivative.Solve(&derivative_solution_set, tolerance);
     

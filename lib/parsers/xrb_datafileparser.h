@@ -70,7 +70,7 @@ public:
     inline DataFileValue * const &GetAcceptedToken () const { return m_reduction_token; }
     inline void ClearAcceptedToken () { m_reduction_token = NULL; }
 
-    inline unsigned int GetDebugSpewLevel () const { return m_debug_spew_level; }
+    inline unsigned int DebugSpewLevel () const { return m_debug_spew_level; }
     inline void SetDebugSpewLevel (unsigned int debug_spew_level) { m_debug_spew_level = debug_spew_level; }
 
     static void CheckStateConsistency ();
@@ -202,7 +202,7 @@ private:
         GetNewLookaheadToken();
         return m_lookahead_token;
     }
-    bool GetDoesStateAcceptErrorToken (StateNumber state_number) const;
+    bool DoesStateAcceptErrorToken (StateNumber state_number) const;
 
     ParserReturnCode PrivateParse ();
 
