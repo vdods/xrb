@@ -72,7 +72,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
                         mask_by_object_selection_set);
             if (retval == NULL ||
                 smallest_candidate != NULL &&
-                smallest_candidate->GetArea() < retval->GetArea())
+                smallest_candidate->Area() < retval->Area())
                 retval = smallest_candidate;
         }
     }
@@ -97,7 +97,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
         if (smallest_candidate != NULL)
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
-                smallest_candidate->GetArea() < retval->GetArea())
+                smallest_candidate->Area() < retval->Area())
                 // assign it as the smallest
                 retval = smallest_candidate;
     }

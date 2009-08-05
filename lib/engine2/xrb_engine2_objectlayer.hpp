@@ -60,7 +60,7 @@ public:
         FloatVector2 const &area_center,
         Float area_radius) const;
     FloatVector2 GetNormalizedCoordinates (FloatVector2 const &coordinates) const;
-    FloatVector2 GetAdjustedCoordinates (
+    FloatVector2 AdjustedCoordinates (
         FloatVector2 const &coordinates,
         FloatVector2 const &reference_coordinates) const;
 

@@ -100,7 +100,7 @@ FloatVector2 Shade::GetMuzzleLocation (Weapon const *weapon) const
         return Ship::GetMuzzleLocation(weapon);
 
     FloatVector2 target_offset(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation())
         -
@@ -116,7 +116,7 @@ FloatVector2 Shade::GetMuzzleDirection (Weapon const *weapon) const
         return Ship::GetMuzzleDirection(weapon);
 
     FloatVector2 target_offset(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation())
         -
@@ -225,7 +225,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     Float distance_to_target = (target_position - GetTranslation()).GetLength();
@@ -261,7 +261,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     FloatVector2 position_delta(target_position - GetTranslation());
@@ -347,7 +347,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
 
     // TODO: spawn some teleport effect at the old location and at the new
     SetTranslation(teleport_destination);
-    SetVelocity(GetAmbientVelocity(100.0f, this));
+    SetVelocity(AmbientVelocity(100.0f, this));
 
     // pause for a 1/2 second
     m_think_state = THINK_STATE(PauseAfterTeleport);

@@ -138,7 +138,7 @@ bool Widget::IsMouseGrabbed () const
     return parent == NULL || (parent->m_focus == this && parent->m_focus_has_mouse_grab);
 }
 
-ScreenCoordVector2 Widget::GetAdjustedSize (ScreenCoordVector2 const &size) const
+ScreenCoordVector2 Widget::AdjustedSize (ScreenCoordVector2 const &size) const
 {
     ScreenCoordRect rect(size);
     AdjustFromMinSize(&rect);
@@ -485,7 +485,7 @@ void Widget::MoveBy (ScreenCoordVector2 const &delta)
 
 ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 {
-    ScreenCoordVector2 adjusted_size(m_size_properties.GetAdjustedSize(size));
+    ScreenCoordVector2 adjusted_size(m_size_properties.AdjustedSize(size));
 
     if (m_screen_rect.GetSize() != adjusted_size)
     {

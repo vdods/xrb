@@ -99,13 +99,13 @@ public:
         RC_ERRORS_ENCOUNTERED
     }; // end of enum ReturnCode
 
-    inline DataFileStructure *GetAcceptedStructure () const
+    inline DataFileStructure *AcceptedStructure () const
     {
         return DStaticCast<DataFileStructure *>(GetAcceptedToken());
     }
     inline DataFileStructure *StealAcceptedStructure ()
     {
-        DataFileStructure *accepted_structure = GetAcceptedStructure();
+        DataFileStructure *accepted_structure = AcceptedStructure();
         ClearAcceptedToken();
         return accepted_structure;
     }

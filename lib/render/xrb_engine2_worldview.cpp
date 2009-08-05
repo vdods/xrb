@@ -672,7 +672,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // perform the world-to-view transformation
     ASSERT1(GetScaleFactors()[Dim::X] == 1.0f);
     ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f);
-    glRotatef(FloatTransform2::GetAngle(), 0.0f, 0.0f, 1.0f);
+    glRotatef(FloatTransform2::Angle(), 0.0f, 0.0f, 1.0f);
     glTranslatef(
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],

@@ -132,7 +132,7 @@ public:
                m_main_widget->GetMaxSize() :
                m_size_properties.m_max_size;
     }
-    virtual ScreenCoordVector2 GetAdjustedSize (ScreenCoordVector2 const &size) const;
+    virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers

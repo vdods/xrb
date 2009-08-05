@@ -95,22 +95,22 @@ public:
       * @param index Indicates which dimension the component value applies to.
       * @param component The screen coordinate to adjust.
       */
-    ScreenCoord GetAdjustedSizeComponent (
+    ScreenCoord AdjustedSizeComponent (
         Uint32 index,
         ScreenCoord component) const;
     /** @brief Returns the given size vector, adjusted by the constraints of
       *        this SizeProperties object.
       * @param size The size vector to adjust.
       */
-    ScreenCoordVector2 GetAdjustedSize (
+    ScreenCoordVector2 AdjustedSize (
         ScreenCoordVector2 const &size) const;
 
-    /** @brief In-place version of GetAdjustedSizeComponent.
+    /** @brief In-place version of AdjustedSizeComponent.
       * @param index Indicates which dimension the component value applies to.
       * @param component A pointer to the screen coordinate to adjust.
       */
     void AdjustSizeComponent (Uint32 index, ScreenCoord *component) const;
-    /** @brief In-place version of GetAdjustedSize.
+    /** @brief In-place version of AdjustedSize.
       * @param size A pointer to the size vector to adjust.
       */
     void AdjustSize (ScreenCoordVector2 *size) const;

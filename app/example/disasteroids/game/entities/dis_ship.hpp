@@ -81,14 +81,14 @@ public:
         ASSERT1(weapon != NULL);
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle());
+        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle());
     }
     virtual FloatVector2 GetMuzzleDirection (Weapon const *weapon) const
     {
         ASSERT1(weapon != NULL);
         // by default, just return the direction the ship is facing,
         // (so that not all ships have to override this method)
-        return Math::UnitVector(GetAngle());
+        return Math::UnitVector(Angle());
     }
     virtual Float GetMaxAngularVelocity () const = 0;
     virtual Float GetShipScaleFactor () const = 0;

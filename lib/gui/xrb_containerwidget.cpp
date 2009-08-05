@@ -56,7 +56,7 @@ ContainerWidget::~ContainerWidget ()
 // accessors
 // ///////////////////////////////////////////////////////////////////////////
 
-ScreenCoordVector2 ContainerWidget::GetAdjustedSize (ScreenCoordVector2 const &size) const
+ScreenCoordVector2 ContainerWidget::AdjustedSize (ScreenCoordVector2 const &size) const
 {
     ScreenCoordRect rect(size);
     if (m_main_widget != NULL)
@@ -411,7 +411,7 @@ void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)
 
 ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 {
-    ScreenCoordVector2 adjusted_size(m_size_properties.GetAdjustedSize(size));
+    ScreenCoordVector2 adjusted_size(m_size_properties.AdjustedSize(size));
 
     if (m_screen_rect.GetSize() != adjusted_size || (GetChildResizeBlockerCount() == 0 && GetChildResizeWasBlocked()))
     {

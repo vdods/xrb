@@ -338,8 +338,8 @@ void PhysicsHandler::UpdatePositions ()
             }
         }
 
-        if (entity->GetAngularVelocity() != 0.0)
-            entity->Rotate(GetFrameDT() * entity->GetAngularVelocity());
+        if (entity->AngularVelocity() != 0.0)
+            entity->Rotate(GetFrameDT() * entity->AngularVelocity());
     }
 }
 

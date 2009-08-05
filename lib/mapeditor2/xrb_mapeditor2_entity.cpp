@@ -70,8 +70,8 @@ void MapEditor2::Entity::DrawMetrics (
                 GetTranslation(),
                 GetTranslation() +
                 1.5f*GetVisibleRadius()*FloatVector2(
-                    Math::Cos(GetAngularVelocity()),
-                    Math::Sin(GetAngularVelocity())),
+                    Math::Cos(AngularVelocity()),
+                    Math::Sin(AngularVelocity())),
                 color);
             // draw the arc connecting the two
             Render::DrawCircularArc(
@@ -80,7 +80,7 @@ void MapEditor2::Entity::DrawMetrics (
                 GetTranslation(),
                 1.25f*GetVisibleRadius(),
                 0.0f,
-                GetAngularVelocity(),
+                AngularVelocity(),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(

@@ -49,13 +49,13 @@ public:
     inline Uint32 GetLivesRemaining () const { return m_lives_remaining; }
 
     inline Weapon const *GetMainWeapon () const { return m_main_weapon; }
-    inline Weapon const *GetAuxiliaryWeapon () const { return m_auxiliary_weapon; }
+    inline Weapon const *AuxiliaryWeapon () const { return m_auxiliary_weapon; }
     inline Engine const *GetEngine () const { return m_engine; }
     inline Armor const *GetArmor () const { return m_armor; }
     inline Shield const *GetShield () const { return m_shield; }
     inline PowerGenerator const *GetPowerGenerator () const { return m_power_generator; }
 
-    Float GetArmorStatus () const;
+    Float ArmorStatus () const;
     Float GetShieldStatus () const;
     Float GetPowerStatus () const;
     Float GetWeaponStatus () const;
@@ -151,7 +151,7 @@ protected:
     {
         return m_main_weapon;
     }
-    inline Weapon *GetAuxiliaryWeapon ()
+    inline Weapon *AuxiliaryWeapon ()
     {
         return m_auxiliary_weapon;
     }

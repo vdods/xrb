@@ -61,7 +61,7 @@ struct Polygon
         return m_vertex_array[index].m_texture_coordinate;
     }
 
-    Float GetArea () const;
+    Float Area () const;
     bool IsCounterclockwise () const;
     bool IsConvex () const;
     inline bool IsDegenerate () const

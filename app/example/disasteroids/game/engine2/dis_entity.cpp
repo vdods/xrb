@@ -51,7 +51,7 @@ Dis::PhysicsHandler *Entity::GetPhysicsHandler ()
     return GetWorld()->GetPhysicsHandler();
 }
 
-FloatVector2 Entity::GetAmbientVelocity (
+FloatVector2 Entity::AmbientVelocity (
     Float const scan_area_radius,
     Entity const *const ignore_me) const
 {
@@ -109,7 +109,7 @@ void Entity::ApplyInterceptCourseAcceleration (
     ASSERT1(solution_set->empty());
 
     FloatVector2 p1(
-        target->GetObjectLayer()->GetAdjustedCoordinates(
+        target->GetObjectLayer()->AdjustedCoordinates(
             GetTranslation(),
             target->GetTranslation()));
     FloatVector2 p(target->GetTranslation() - p1);
@@ -235,7 +235,7 @@ void Entity::HandleObjectLayerContainment (bool const component_x, bool const co
 Float Entity::GetCollisionTime (Entity *const entity, Float const lookahead_time) const
 {
     FloatVector2 adjusted_entity_translation(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             entity->GetTranslation(),
             GetTranslation()));
 

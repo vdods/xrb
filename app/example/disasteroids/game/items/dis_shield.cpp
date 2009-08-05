@@ -36,7 +36,7 @@ Float Shield::Damage (
     ASSERT1(m_charged_power >= 0.0f);
     ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
 
-    Float available_damage_dissipation = GetAvailableDamageDissipation();
+    Float available_damage_dissipation = AvailableDamageDissipation();
     // if there is no dissipation available, just return the full amount
     // of damage
     if (available_damage_dissipation == 0.0f || damage_amount == 0.0f)

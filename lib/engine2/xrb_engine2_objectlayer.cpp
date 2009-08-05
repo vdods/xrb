@@ -131,7 +131,7 @@ FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
     return normalized_coordinates;
 }
 
-FloatVector2 Engine2::ObjectLayer::GetAdjustedCoordinates (
+FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
     FloatVector2 const &coordinates,
     FloatVector2 const &reference_coordinates) const
 {

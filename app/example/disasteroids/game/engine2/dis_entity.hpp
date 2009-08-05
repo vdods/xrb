@@ -60,13 +60,13 @@ public:
     inline Float GetSpeed () const { return m_velocity.GetLength(); }
     inline FloatVector2 GetMomentum () const { return m_first_moment * m_velocity; }
     inline FloatVector2 const &GetForce () const { return m_force; }
-    inline Float GetAngularVelocity () const { return m_angular_velocity; }
+    inline Float AngularVelocity () const { return m_angular_velocity; }
 
     Dis::World *GetWorld () const;
     Dis::PhysicsHandler const *GetPhysicsHandler () const;
     Dis::PhysicsHandler *GetPhysicsHandler ();
 
-    FloatVector2 GetAmbientVelocity (
+    FloatVector2 AmbientVelocity (
         Float scan_area_radius,
         Entity const *ignore_me) const;
     static inline bool GetShouldApplyCollisionForces (

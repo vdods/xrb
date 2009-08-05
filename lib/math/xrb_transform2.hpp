@@ -108,7 +108,7 @@ public:
         ASSERT1(m_scale_factors[Dim::X] == m_scale_factors[Dim::Y]);
         return m_scale_factors[Dim::X];
     }
-    inline T GetAngle () const
+    inline T Angle () const
     {
         return m_angle;
     }

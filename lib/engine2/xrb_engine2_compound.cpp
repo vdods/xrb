@@ -68,7 +68,7 @@ void Engine2::Compound::Draw (
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],
         GetZDepth());
-    glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
+    glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
         GetScaleFactors()[Dim::X],
         GetScaleFactors()[Dim::Y],

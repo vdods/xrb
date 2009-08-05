@@ -73,7 +73,7 @@ FloatVector2 const &MapEditor2::Polygon::GetVertex (Uint32 index) const
     return it->m_compound_vertex->m_coordinate;
 }
 
-Float MapEditor2::Polygon::GetArea () const
+Float MapEditor2::Polygon::Area () const
 {
     Float area = 0.0f;
     Uint32 vertex_count = GetVertexCount();
@@ -174,7 +174,7 @@ bool MapEditor2::Polygon::IsConvex () const
     return true;
 }
 
-bool MapEditor2::Polygon::GetAreSelectedVerticesContiguous () const
+bool MapEditor2::Polygon::AreSelectedVerticesContiguous () const
 {
     // count the number of transitions.  if it is <= 2, then the
     // selected vertices are in a contiguous segment.
@@ -198,7 +198,7 @@ void MapEditor2::Polygon::WeldSelectedVertices (
     Instance<CompoundVertex> *const welded_vertex_instance)
 {
     ASSERT1(welded_vertex_instance != NULL);
-    ASSERT2(GetAreSelectedVerticesContiguous());
+    ASSERT2(AreSelectedVerticesContiguous());
 
     bool welded_vertex_is_added_in = false;
     for (VertexListIterator it = m_vertex_list.begin(),

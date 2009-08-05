@@ -668,7 +668,7 @@ void Layout::DelegateWidthsToColumns ()
         // use the first element from the sorted list and delegate a width to it
         Uint32 column_index = column_order[i] - m_column_size_properties;
         m_column_width[column_index] =
-            column_order[i]->GetAdjustedSizeComponent(Dim::X, m_line_share_of_size[Dim::X]);
+            column_order[i]->AdjustedSizeComponent(Dim::X, m_line_share_of_size[Dim::X]);
 
         // update the remaining width left
         total_width_left -= m_column_width[column_index];
@@ -723,7 +723,7 @@ void Layout::DelegateHeightsToRows ()
         // use the first element from the sorted list and delegate a height to it
         Uint32 row_index = row_order[i] - m_row_size_properties;
         m_row_height[row_index] =
-            row_order[i]->GetAdjustedSizeComponent(Dim::Y, m_line_share_of_size[Dim::Y]);
+            row_order[i]->AdjustedSizeComponent(Dim::Y, m_line_share_of_size[Dim::Y]);
 
         // update the remaining height left
         total_height_left -= m_row_height[row_index];
@@ -910,7 +910,7 @@ void Layout::CalculateLineSizeProperties (
     // make sure that the max sizes are not smaller
     // than the min sizes (if enabled)
     size_properties->m_max_size =
-        size_properties->GetAdjustedSize(size_properties->m_max_size);
+        size_properties->AdjustedSize(size_properties->m_max_size);
 
     // if all child widgets are hidden, then this line is hidden
     *line_is_hidden = (hidden_child_widget_count == line_widget_count);

@@ -597,7 +597,7 @@ public:
     virtual ~DataFileArray ();
 
     bool GetShouldBeFormattedInline () const;
-    DataFileElementType GetArrayElementType () const;
+    DataFileElementType ArrayElementType () const;
     DataFileElementType GetUltimateArrayElementType () const;
     Uint32 GetDimensionCount () const;
     inline Uint32 GetElementCount () const { return m_element_vector.size(); }

@@ -66,7 +66,7 @@ namespace Engine2
         inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
         inline Float GetZoomFactor () const { return m_zoom_factor; }
         inline FloatVector2 GetCenter () const { return -GetTranslation(); }
-        inline Float GetAngle () const { return -FloatTransform2::GetAngle(); }
+        inline Float Angle () const { return -FloatTransform2::Angle(); }
         inline bool IsViewLocked () const { return m_is_view_locked; }
         inline bool GetDrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 GetCompoundTransformation () const;

@@ -254,7 +254,7 @@ void Demi::Think (Float const time, Float const frame_dt)
     // since enemy ships do not use the PlayerShip device code, engines
     // weapons, etc must be activated/simulated manually here.
 
-    if (GetAngularVelocity() == 0.0f)
+    if (AngularVelocity() == 0.0f)
     {
         if (m_target.IsValid())
             AimShipAtCoordinates(m_target->GetTranslation(), frame_dt);
@@ -428,15 +428,15 @@ FloatVector2 Demi::GetMuzzleLocation (Weapon const *weapon) const
     }
     else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle() + ms_side_port_angle);
+        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
     }
     else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(GetAngle() - ms_side_port_angle);
+        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
     }
     else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
-        return GetTranslation() - GetScaleFactor() * Math::UnitVector(GetAngle());
+        return GetTranslation() - GetScaleFactor() * Math::UnitVector(Angle());
     }
     else
     {
@@ -450,38 +450,38 @@ FloatVector2 Demi::GetMuzzleDirection (Weapon const *weapon) const
     if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher)
     {
         FloatVector2 muzzle_location(
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 GetMuzzleLocation(weapon),
                 FloatVector2::ms_zero));
         FloatVector2 reticle_offset(
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 GetReticleCoordinates(),
                 muzzle_location)
             -
             muzzle_location);
         if (reticle_offset.GetLength() < 0.01f)
-            return Math::UnitVector(GetAngle());
+            return Math::UnitVector(Angle());
 
-        Float reticle_angle = Math::GetCanonicalAngle(Math::Atan(reticle_offset) - GetAngle());
+        Float reticle_angle = Math::GetCanonicalAngle(Math::Atan(reticle_offset) - Angle());
         if (reticle_angle < -ms_weapon_fov[GetEnemyLevel()])
             reticle_angle = -ms_weapon_fov[GetEnemyLevel()];
         else if (reticle_angle > ms_weapon_fov[GetEnemyLevel()])
             reticle_angle = ms_weapon_fov[GetEnemyLevel()];
-        reticle_angle += GetAngle();
+        reticle_angle += Angle();
 
         return Math::UnitVector(reticle_angle);
     }
     else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
-        return Math::UnitVector(GetAngle() + ms_side_port_angle);
+        return Math::UnitVector(Angle() + ms_side_port_angle);
     }
     else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
-        return Math::UnitVector(GetAngle() - ms_side_port_angle);
+        return Math::UnitVector(Angle() - ms_side_port_angle);
     }
     else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
-        return Math::UnitVector(GetAngle() + 180.0f);
+        return Math::UnitVector(Angle() + 180.0f);
     }
     else
     {
@@ -610,7 +610,7 @@ void Demi::Stalk (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     Float target_distance = (target_position - GetTranslation()).GetLength();
@@ -728,7 +728,7 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
     m_start_time = time;
     // record the direction to charge in
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     m_charge_velocity = target_position - GetTranslation();
@@ -763,7 +763,7 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
     else if (m_target.IsValid() && !m_target->IsDead())
     {
         FloatVector2 target_position(
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 m_target->GetTranslation(),
                 GetTranslation()));
         Float target_distance = (target_position - GetTranslation()).GetLength();
@@ -842,15 +842,15 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
     }
 
     FloatVector2 muzzle_location(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             GetMuzzleLocation(m_gauss_gun),
             FloatVector2::ms_zero));
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             muzzle_location));
     FloatVector2 reticle_target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             m_reticle_effect->GetTranslation()));
     FloatVector2 aim_direction(reticle_target_position - m_reticle_effect->GetTranslation());
@@ -938,7 +938,7 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
 
     // aim (the constant coefficient is the left/right sweeping speed)
     Float aim_parameter = 180.0f * (time - m_start_time);
-    Float aim_angle = ms_weapon_fov[GetEnemyLevel()] * Math::Cos(aim_parameter) + GetAngle();
+    Float aim_angle = ms_weapon_fov[GetEnemyLevel()] * Math::Cos(aim_parameter) + Angle();
     // and fire
     SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(aim_angle));
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
@@ -973,7 +973,7 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(GetAngle()));
+    SetReticleCoordinates(GetMuzzleLocation(m_main_weapon) + Math::UnitVector(Angle()));
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
@@ -1014,7 +1014,7 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
 
@@ -1239,7 +1239,7 @@ void Demi::SpinningAttackAccelerate (Float const time, Float const frame_dt)
         m_spin_direction * 2.0f * m_spin_accelerate_through_angle /
         (m_spin_acceleration_duration * m_spin_acceleration_duration);
     // accelerate the spin
-    SetAngularVelocity(GetAngularVelocity() + angular_acceleration * frame_dt);
+    SetAngularVelocity(AngularVelocity() + angular_acceleration * frame_dt);
 }
 
 void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
@@ -1253,7 +1253,7 @@ void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates((1.0f + GetScaleFactor()) * Math::UnitVector(GetAngle()));
+    SetReticleCoordinates((1.0f + GetScaleFactor()) * Math::UnitVector(Angle()));
     if (m_spinning_attack_uses_secondary_fire)
     {
         SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
@@ -1292,7 +1292,7 @@ void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
         -m_spin_direction * 2.0f * m_spin_accelerate_through_angle /
         (m_spin_acceleration_duration * m_spin_acceleration_duration);
     // accelerate the spin
-    SetAngularVelocity(GetAngularVelocity() + angular_acceleration * frame_dt);
+    SetAngularVelocity(AngularVelocity() + angular_acceleration * frame_dt);
 }
 
 void Demi::TractorTargetCloserStart (Float const time, Float const frame_dt)
@@ -1343,11 +1343,11 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
     if (best_target != NULL)
     {
         muzzle_location =
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 muzzle_location,
                 FloatVector2::ms_zero);
         FloatVector2 target_position(
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 best_target->GetTranslation(),
                 muzzle_location));
         // aim the tractor and set it to push
@@ -1371,11 +1371,11 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
     if (best_target != NULL)
     {
         muzzle_location =
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 muzzle_location,
                 FloatVector2::ms_zero);
         FloatVector2 target_position(
-            GetObjectLayer()->GetAdjustedCoordinates(
+            GetObjectLayer()->AdjustedCoordinates(
                 best_target->GetTranslation(),
                 muzzle_location));
         // aim the tractor and set it to push
@@ -1392,11 +1392,11 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
     m_port_weapon = m_port_tractor;
 
     FloatVector2 muzzle_location(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             GetMuzzleLocation(m_port_tractor),
             FloatVector2::ms_zero));
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             muzzle_location));
     // aim the tractor and set it to pull
@@ -1413,11 +1413,11 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
     m_starboard_weapon = m_starboard_tractor;
 
     FloatVector2 muzzle_location(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             GetMuzzleLocation(m_starboard_tractor),
             FloatVector2::ms_zero));
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             muzzle_location));
     // aim the tractor and set it to pull

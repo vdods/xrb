@@ -61,7 +61,7 @@ Float ArithmeticParser::Parse (std::string const &input_string)
 
     m_scanner = new ArithmeticScanner(input_string);
     if (Parse() == PRC_SUCCESS)
-        retval = GetAcceptedToken();
+        retval = AcceptedToken();
     else
         retval = Math::Nan();
     DeleteAndNullify(m_scanner);

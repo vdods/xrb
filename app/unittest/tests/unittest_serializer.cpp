@@ -208,7 +208,7 @@ Serializer *SerializerUnitTest::CloseSerializerAndOpenSameForReading ()
                 dynamic_cast<CompressionSerializer *>(m_currently_opened_serializer);
             ASSERT1(serializer != NULL);
             BinaryFileSerializer *subordinate_serializer =
-                dynamic_cast<BinaryFileSerializer *>(serializer->GetAttachedSerializer());
+                dynamic_cast<BinaryFileSerializer *>(serializer->AttachedSerializer());
             ASSERT1(subordinate_serializer != NULL);
 
             serializer->DetachSerializer();
@@ -281,7 +281,7 @@ void SerializerUnitTest::CloseSerializer ()
                 dynamic_cast<CompressionSerializer *>(m_currently_opened_serializer);
             ASSERT1(serializer != NULL);
             BinaryFileSerializer *subordinate_serializer =
-                dynamic_cast<BinaryFileSerializer *>(serializer->GetAttachedSerializer());
+                dynamic_cast<BinaryFileSerializer *>(serializer->AttachedSerializer());
             ASSERT1(subordinate_serializer != NULL);
 
             serializer->DetachSerializer();

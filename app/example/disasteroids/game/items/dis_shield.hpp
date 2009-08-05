@@ -85,7 +85,7 @@ public:
 
 private:
 
-    inline Float GetAvailableDamageDissipation () const
+    inline Float AvailableDamageDissipation () const
     {
         return
             ms_max_damage_dissipation[GetUpgradeLevel()] *

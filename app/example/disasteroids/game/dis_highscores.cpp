@@ -185,7 +185,7 @@ void HighScores::Read (std::string const &filename)
     DataFileParser parser;
     if (parser.Parse(filename) == DataFileParser::RC_SUCCESS)
     {
-        DataFileStructure const *root = parser.GetAcceptedStructure();
+        DataFileStructure const *root = parser.AcceptedStructure();
 
         // we're looking for a structure called high_scores, which is an
         // array of structures each with elements

@@ -38,7 +38,7 @@ namespace UTF8
     /** If either @c c0 or @c c1 are NULL or ill-formed, return false.
       * @brief Returns true if the given UTF8-encoded characters are equal.
       */
-    bool GetAreCharactersEqual (char const *c0, char const *c1);
+    bool AreCharactersEqual (char const *c0, char const *c1);
     /** @brief Returns the 32-bit unicode for the given UTF8-encoded character.
       * @param sequence A pointer to the character to be decoded.  May not be NULL.
       * @note Returns 0xFFFFFFFF if the character is not well-formed.

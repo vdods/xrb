@@ -90,7 +90,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
     if (thrust_direction.GetLengthSquared() < 0.001f)
-        thrust_direction = Math::UnitVector(GetAngle());
+        thrust_direction = Math::UnitVector(Angle());
     else
         thrust_direction.Normalize();
     AccumulateForce(
@@ -262,7 +262,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     // the reach of this scan shouldn't allow entities of more
     // than 1/2 of the ObjectLayer size to be scanned, otherwise
     // the center of gravity calculations will fail (because
-    // ObjectLayer::GetAdjustedCoordinates() must be called on
+    // ObjectLayer::AdjustedCoordinates() must be called on
     // each entity's translation).
     static Float const s_lookahead_scan_distance = 220.0f;
     static Float const s_scan_radius = 200.0f;
@@ -271,7 +271,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation() + s_lookahead_scan_distance * Math::UnitVector(GetAngle()),
+        GetTranslation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
         s_scan_radius,
         false,
         &area_trace_list);
@@ -311,7 +311,7 @@ void Interloper::Flock (Float time, Float frame_dt)
             Interloper *interloper = DStaticCast<Interloper *>(entity);
 
             FloatVector2 interloper_position(
-                GetObjectLayer()->GetAdjustedCoordinates(
+                GetObjectLayer()->AdjustedCoordinates(
                     interloper->GetTranslation(),
                     GetTranslation()));
             Float interloper_distance = (interloper_position - GetTranslation()).GetLength();
@@ -360,7 +360,7 @@ void Interloper::Flock (Float time, Float frame_dt)
         SetReticleCoordinates(GetTranslation() + flock_center_direction);
     }
     else
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
 }
 
 void Interloper::Charge (Float const time, Float const frame_dt)
@@ -374,7 +374,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
 
     // adjust our course to hit the target (use a different course-
     // setting method for each enemy level).
@@ -468,7 +468,7 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     }
 
     // set a course parallel to and slightly away from the target
-    FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
     SetReticleCoordinates(GetTranslation() + (GetTranslation() - target_position).GetNormalization());
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }

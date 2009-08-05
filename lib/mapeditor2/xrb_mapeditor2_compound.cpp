@@ -135,7 +135,7 @@ void MapEditor2::Compound::Draw (
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],
         0.0f);
-    glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
+    glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
         GetScaleFactors()[Dim::X],
         GetScaleFactors()[Dim::Y],
@@ -180,7 +180,7 @@ void MapEditor2::Compound::DrawMetrics (
         GetTranslation()[Dim::X],
         GetTranslation()[Dim::Y],
         0.0f);
-    glRotatef(GetAngle(), 0.0f, 0.0f, 1.0f);
+    glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
         GetScaleFactors()[Dim::X],
         GetScaleFactors()[Dim::Y],
@@ -347,12 +347,12 @@ MapEditor2::Polygon *MapEditor2::Compound::GetSmallestPolygonTouchingPoint (
         if (smallest == NULL)
         {
             smallest = polygon;
-            smallest_area = smallest->GetArea();
+            smallest_area = smallest->Area();
         }
         // otherwise only take a polygon with a smaller area
         else
         {
-            Float area = polygon->GetArea();
+            Float area = polygon->Area();
             if (area < smallest_area)
             {
                 smallest = polygon;
@@ -429,7 +429,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
         if (polygon->GetSelectedVertexCount() > polygon->GetVertexCount() - 2)
             return W_WOULD_CAUSE_DEGENERATION;
 
-        if (!polygon->GetAreSelectedVerticesContiguous())
+        if (!polygon->AreSelectedVerticesContiguous())
             return W_WOULD_CAUSE_PINCH;
 
         if (polygon->m_is_selected && polygon->GetSelectedVertexCount() > 0)

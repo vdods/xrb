@@ -45,9 +45,9 @@ public:
       *         is attached currently.
       * @note Will not change the error value.
       */
-    inline Serializer *GetAttachedSerializer () const
+    inline Serializer *AttachedSerializer () const
     {
-        return m_cache.GetAttachedSerializer();
+        return m_cache.AttachedSerializer();
     }
 
     /** Once a serializer is attached in this manner, it must not itself
@@ -60,7 +60,7 @@ public:
       *                   serializer must be open.  It must not be a
       *                   CompressionSerializer.
       * @pre There must not currently be a serializer attached (i.e.
-      *      @c GetAttachedSerializer() must return null), and @c serializer
+      *      @c AttachedSerializer() must return null), and @c serializer
       *      must be open (its IsOpen() method must return true).
       * @post The error state is set to indicate the status of the operation.
       *       This does not cause the newly attached serializer to
@@ -69,7 +69,7 @@ public:
     void AttachSerializer (Serializer *serializer);
     /** @brief Detaches the currently attached serializer from this object.
       * @pre There must currently be a serializer attached (i.e.
-      *      @c GetAttachedSerializer() must return null), and the attached
+      *      @c AttachedSerializer() must return null), and the attached
       *      serializer must be open (its IsOpen() method must return true).
       * @post The error state is set to indicate the status of the operation.
       *       This does not cause the previously attached serializer to
@@ -134,8 +134,8 @@ public:
 
 protected:
 
-    /** This will call @code GetAttachedSerializer()->FlushWriteCache() @endcode
-      * if @c GetAttachedSerializer() is not null.
+    /** This will call @code AttachedSerializer()->FlushWriteCache() @endcode
+      * if @c AttachedSerializer() is not null.
       * @brief Causes any uncommitted writes to be committed (e.g. writing
       *        a memory buffer to disk, or writing a bit-packing buffer
       *        to a byte-aligned buffer).

@@ -292,7 +292,7 @@ void Font::DrawStringPrivate (
     char const *next_glyph;
     // loop until a NULL char (or the string_terminator, if specified) is hit.
     while (*current_glyph != '\0' &&
-           !UTF8::GetAreCharactersEqual(current_glyph, string_terminator))
+           !UTF8::AreCharactersEqual(current_glyph, string_terminator))
     {
         // get the glyph after the current one
         next_glyph = UTF8::GetNextCharacter(current_glyph);

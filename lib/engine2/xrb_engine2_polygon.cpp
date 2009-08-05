@@ -15,7 +15,7 @@
 namespace Xrb
 {
 
-Float Engine2::Polygon::GetArea () const
+Float Engine2::Polygon::Area () const
 {
     Float area = 0.0f;
 
@@ -148,7 +148,7 @@ void Engine2::Polygon::Read (
     m_texture =
         Singletons::ResourceLibrary().
             LoadFilename<GLTexture>(GLTexture::Create, serializer.ReadStdString());
-    m_area = GetArea();
+    m_area = Area();
 
     ASSERT1(IsCounterclockwise());
     ASSERT1(IsConvex());

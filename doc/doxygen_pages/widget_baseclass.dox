@@ -430,7 +430,7 @@ contain any children).
 Relevant methods include
 @ref Xrb::Widget::GetFocus "Widget::GetFocus" ,
 @ref Xrb::Widget::IsFocused "Widget::IsFocused" , and
-@ref Xrb::Widget::GetAcceptsFocus "Widget::GetAcceptsFocus" .
+@ref Xrb::Widget::AcceptsFocus "Widget::AcceptsFocus" .
 
 @section section_widget_mouseover Mouseover And Mouseover Focus
 When mouse motion events are handled by
@@ -562,7 +562,7 @@ Other relevant methods include
 @ref Xrb::Widget::GetMinSize "Widget::GetMinSize" ,
 @ref Xrb::Widget::GetMaxSizeEnabled "Widget::GetMaxSizeEnabled" ,
 @ref Xrb::Widget::GetMaxSize "Widget::GetMaxSize" , and
-@ref Xrb::Widget::GetAdjustedSize "Widget::GetAdjustedSize" .
+@ref Xrb::Widget::AdjustedSize "Widget::AdjustedSize" .
 
 See @ref Xrb::Layout "Layout" for extensive examples of controlling and
 interacting with resizing size-constrained widgets.  See also

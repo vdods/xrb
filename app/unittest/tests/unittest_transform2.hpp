@@ -155,16 +155,16 @@ private:
             "%%s of %%s (%s) == %%s of %%s (%s)",
             component_printf_format,
             component_printf_format);
-        Test(Epsilon(transform0.GetAngle(),
-                     transform1.GetAngle(),
+        Test(Epsilon(transform0.Angle(),
+                     transform1.Angle(),
                      epsilon),
              printf_format_buffer,
              "angle",
              transform0_name,
-             transform0.GetAngle(),
+             transform0.Angle(),
              "angle",
              transform1_name,
-             transform1.GetAngle());
+             transform1.Angle());
         Test(transform0.GetPostTranslate() == transform1.GetPostTranslate(),
              "%s of %s (%s) == %s of %s (%s)",
              "post-translate",

@@ -319,7 +319,7 @@ bool Laser::Activate (
         if (best_target != NULL)
         {
             FloatVector2 fire_vector(
-                GetOwnerShip()->GetObjectLayer()->GetAdjustedCoordinates(
+                GetOwnerShip()->GetObjectLayer()->AdjustedCoordinates(
                     best_target->GetTranslation(),
                     GetOwnerShip()->GetTranslation())
                 -
@@ -672,7 +672,7 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
 {
     ASSERT1(active_grenade != NULL);
     ASSERT1(active_grenade->GetOwnerGrenadeLauncher() == this);
-    ASSERT1(GetActiveGrenadeCount() > 0);
+    ASSERT1(ActiveGrenadeCount() > 0);
 
     // delete the active grenade from the active grenade set
     ActiveGrenadeSetIterator it = m_active_grenade_set.find(active_grenade);
@@ -688,7 +688,7 @@ Float GrenadeLauncher::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire if the maximum number of active grenades has been reached
-    if (GetActiveGrenadeCount() >= ms_max_active_grenade_count[GetUpgradeLevel()])
+    if (ActiveGrenadeCount() >= ms_max_active_grenade_count[GetUpgradeLevel()])
         return false;
 
     // can't fire faster that the weapon's cycle time
@@ -713,7 +713,7 @@ bool GrenadeLauncher::Activate (
 
     // you can fire secondary at any time, it doesn't use any power
     // and doesn't inhibit the primary fire at all.
-    if (GetSecondaryInput() > 0.0f && GetActiveGrenadeCount() > 0)
+    if (GetSecondaryInput() > 0.0f && ActiveGrenadeCount() > 0)
     {
         // detonate all the grenades (this isn't a for loop because detonating
         // the grenades will erase iterators from this set).
@@ -937,7 +937,7 @@ void EMPBombLayer::ActiveEMPBombDestroyed (EMPBomb *const active_emp_bomb)
 {
     ASSERT1(active_emp_bomb != NULL);
     ASSERT1(active_emp_bomb->GetOwnerEMPBombLayer() == this);
-    ASSERT1(GetActiveEMPBombCount() > 0);
+    ASSERT1(ActiveEMPBombCount() > 0);
 
     // delete the active emp_bomb from the active emp_bomb set
     ActiveEMPBombSetIterator it = m_active_emp_bomb_set.find(active_emp_bomb);
@@ -953,7 +953,7 @@ Float EMPBombLayer::GetPowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     // can't fire if the maximum number of active emp_bombs has been reached
-    if (GetActiveEMPBombCount() >= ms_max_active_emp_bomb_count[GetUpgradeLevel()])
+    if (ActiveEMPBombCount() >= ms_max_active_emp_bomb_count[GetUpgradeLevel()])
         return false;
 
     // can't fire faster that the weapon's cycle time
@@ -978,7 +978,7 @@ bool EMPBombLayer::Activate (
 
     // you can fire secondary at any time, it doesn't use any power
     // and doesn't inhibit the primary fire at all.
-    if (GetSecondaryInput() > 0.0f && GetActiveEMPBombCount() > 0)
+    if (GetSecondaryInput() > 0.0f && ActiveEMPBombCount() > 0)
     {
         // detonate all the emp_bombs (this isn't a for loop because detonating
         // the emp_bombs will erase iterators from this set).
@@ -1098,7 +1098,7 @@ bool Tractor::Activate (
     }
     // ensure the reticle coordinates are inside the object layer
     reticle_coordinates =
-        GetOwnerShip()->GetObjectLayer()->GetAdjustedCoordinates(
+        GetOwnerShip()->GetObjectLayer()->AdjustedCoordinates(
             reticle_coordinates,
             FloatVector2::ms_zero);
 

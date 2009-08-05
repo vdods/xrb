@@ -80,7 +80,7 @@ bool Engine::Activate (
         Float const max_thrust_force = ms_max_thrust_force[GetUpgradeLevel()] * m_auxiliary_input;
 
         // store the ambient velocity, ignoring the presence of the owner ship
-        FloatVector2 ambient_velocity = GetOwnerShip()->GetAmbientVelocity(s_survey_area_radius, NULL);
+        FloatVector2 ambient_velocity = GetOwnerShip()->AmbientVelocity(s_survey_area_radius, NULL);
         // calculate what thrust is required to match the ambient velocity
         FloatVector2 velocity_differential =
             ambient_velocity -
@@ -123,7 +123,7 @@ bool Engine::Activate (
         Float thrust_force =
             output_ratio * ms_max_thrust_force[GetUpgradeLevel()] *
             input_vector.GetLength() / input_vector_max_length;
-        FloatVector2 thrust_vector(thrust_force * Math::UnitVector(input_vector_angle + GetOwnerShip()->GetAngle()));
+        FloatVector2 thrust_vector(thrust_force * Math::UnitVector(input_vector_angle + GetOwnerShip()->Angle()));
 
         GetOwnerShip()->AccumulateForce(thrust_vector);
     }

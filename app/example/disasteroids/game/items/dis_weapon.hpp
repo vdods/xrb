@@ -396,7 +396,7 @@ public:
     }
     virtual ~GrenadeLauncher ();
 
-    inline Uint32 GetActiveGrenadeCount () const
+    inline Uint32 ActiveGrenadeCount () const
     {
         return m_active_grenade_set.size();
     }
@@ -600,7 +600,7 @@ public:
     }
     virtual ~EMPBombLayer ();
 
-    inline Uint32 GetActiveEMPBombCount () const
+    inline Uint32 ActiveEMPBombCount () const
     {
         return m_active_emp_bomb_set.size();
     }

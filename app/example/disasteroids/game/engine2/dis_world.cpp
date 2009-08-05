@@ -1309,7 +1309,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
         }
 
         Float distance_from_world_view =
-            (GetMainObjectLayer()->GetAdjustedCoordinates(translation, world_view_center) -
+            (GetMainObjectLayer()->AdjustedCoordinates(translation, world_view_center) -
              world_view_center).GetLength();
         // fail if the area is in sight
         if (distance_from_world_view < world_view->GetParallaxedViewRadius(NULL) + scale_factor)

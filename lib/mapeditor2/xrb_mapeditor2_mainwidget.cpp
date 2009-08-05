@@ -383,7 +383,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 
         // object properties panel hiding - init
         m_object_properties_panel->SetIsHidden(
-            GetMapEditorWorldView()->GetAreNoObjectsSelected());
+            GetMapEditorWorldView()->AreNoObjectsSelected());
         // signal connections
         SignalHandler::Connect1(
             GetMapEditorWorldView()->SenderNoObjectsAreSelected(),
@@ -437,7 +437,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 
         // entity properties panel hiding - init
         m_entity_properties_panel->SetIsHidden(
-            GetMapEditorWorldView()->GetAreNoEntitiesSelected());
+            GetMapEditorWorldView()->AreNoEntitiesSelected());
         // signal connections
         SignalHandler::Connect1(
             GetMapEditorWorldView()->SenderNoEntitiesAreSelected(),

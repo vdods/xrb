@@ -57,7 +57,7 @@ void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
-    else if (this->IsMouseover() && this->GetAcceptsMouseover())
+    else if (this->IsMouseover() && this->AcceptsMouseover())
         SetRenderBackground(
             this->GetWidgetSkinWidgetBackground(
                 WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));

@@ -961,7 +961,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleAngularVelocity (
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetAngularVelocity(
-                scale_factor_delta * entity->GetAngularVelocity());
+                scale_factor_delta * entity->AngularVelocity());
     }
 }
 
@@ -1565,7 +1565,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetAngularVelocity ()
     if (GetSelectedEntityCount() != 1)
         return;
 
-    Float object_selection_set_angular_velocity = GetSingleSelectedEntity()->GetAngularVelocity();
+    Float object_selection_set_angular_velocity = GetSingleSelectedEntity()->AngularVelocity();
     if (m_object_selection_set_angular_velocity != object_selection_set_angular_velocity)
     {
         m_object_selection_set_angular_velocity = object_selection_set_angular_velocity;

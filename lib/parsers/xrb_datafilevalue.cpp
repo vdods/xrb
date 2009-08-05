@@ -422,7 +422,7 @@ bool DataFileArray::GetShouldBeFormattedInline () const
         return true;
 }
 
-DataFileElementType DataFileArray::GetArrayElementType () const
+DataFileElementType DataFileArray::ArrayElementType () const
 {
     return m_element_vector.empty() ? DAT_NO_TYPE : m_element_vector[0]->GetElementType();
 }
@@ -440,7 +440,7 @@ DataFileElementType DataFileArray::GetUltimateArrayElementType () const
 
 Uint32 DataFileArray::GetDimensionCount () const
 {
-    if (GetArrayElementType() == DAT_ARRAY)
+    if (ArrayElementType() == DAT_ARRAY)
         return 1 + DStaticCast<DataFileArray const *>(m_element_vector[0])->GetDimensionCount();
     else
         return 1;
@@ -544,7 +544,7 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
         "DAT_ARRAY - %u dimensions - %u element(s) of type %s",
         GetDimensionCount(),
         m_element_vector.size(),
-        GetDataFileElementTypeString(GetArrayElementType()).c_str());
+        GetDataFileElementTypeString(ArrayElementType()).c_str());
     formatter.Indent();
     for (Uint32 i = 0; i < m_element_vector.size(); ++i)
     {

@@ -69,9 +69,9 @@ void Transform2UnitTest::AtomConstructors ()
             "%f",
             0.0f);
         TestEquality(
-            constructed.GetAngle(),
+            constructed.Angle(),
             "constructed transform angle",
-            FloatTransform2::ms_identity.GetAngle(),
+            FloatTransform2::ms_identity.Angle(),
             "identity angle",
             "%f",
             0.0f);
@@ -106,7 +106,7 @@ void Transform2UnitTest::AtomConstructors ()
             "%f",
             0.0f);
         TestEquality(
-            constructed.GetAngle(),
+            constructed.Angle(),
             "constructed transform angle",
             angle,
             "precomputed angle",
@@ -147,7 +147,7 @@ void Transform2UnitTest::AtomConstructors ()
             "%f",
             0.0f);
         TestEquality(
-            constructed.GetAngle(),
+            constructed.Angle(),
             "constructed transform angle",
             angle,
             "precomputed angle",

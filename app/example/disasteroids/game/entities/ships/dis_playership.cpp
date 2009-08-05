@@ -99,7 +99,7 @@ PlayerShip::~PlayerShip ()
         delete m_shield_effect->GetOwnerObject();
 }
 
-Float PlayerShip::GetArmorStatus () const
+Float PlayerShip::ArmorStatus () const
 {
     return Max(0.0f, GetCurrentHealth() / GetMaxHealth());
 }
@@ -147,9 +147,9 @@ bool PlayerShip::IsItemEquipped (
                 GetMainWeapon()->GetItemType() == item_type &&
                 GetMainWeapon()->GetUpgradeLevel() == upgrade_level)
                ||
-               (GetAuxiliaryWeapon() != NULL &&
-                GetAuxiliaryWeapon()->GetItemType() == item_type &&
-                GetAuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level);
+               (AuxiliaryWeapon() != NULL &&
+                AuxiliaryWeapon()->GetItemType() == item_type &&
+                AuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level);
 
     switch (item_type)
     {
@@ -374,8 +374,8 @@ bool PlayerShip::AddItem (Item *item)
 
         if (item->GetItemType() == IT_WEAPON_TRACTOR)
         {
-            if (GetAuxiliaryWeapon() == NULL ||
-                weapon->GetUpgradeLevel() > GetAuxiliaryWeapon()->GetUpgradeLevel())
+            if (AuxiliaryWeapon() == NULL ||
+                weapon->GetUpgradeLevel() > AuxiliaryWeapon()->GetUpgradeLevel())
             {
                 SetAuxiliaryWeapon(weapon);
             }
@@ -896,7 +896,7 @@ void PlayerShip::SetCurrentHealth (Float const current_health)
 {
     Mortal::SetCurrentHealth(current_health);
 
-    SetArmorStatus(GetArmorStatus());
+    SetArmorStatus(ArmorStatus());
     SetShieldStatus(GetShieldStatus());
 }
 
@@ -1020,7 +1020,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     static Float const s_powerup_scale_factor = 5.0f;
     static Float const s_powerup_ejection_speed = 50.0f;
 
-    FloatVector2 ejection_normal(Math::UnitVector(GetAngle() + ejection_angle));
+    FloatVector2 ejection_normal(Math::UnitVector(Angle() + ejection_angle));
     SpawnPowerup(
         GetWorld(),
         GetObjectLayer(),

@@ -137,7 +137,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // set the tractor beam effect in the Tractor weapon
     m_mouth_tractor->SetTractorBeam(*m_mouth_tractor_beam);
 
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+    SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
 
     // call the think state function (which will set the inputs)
     (this->*m_think_state)(time, frame_dt);
@@ -153,7 +153,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
         FloatVector2 target_direction(GetReticleCoordinates() - GetTranslation());
         if (!target_direction.IsZero())
         {
-            Float angle_delta = Math::GetCanonicalAngle(Math::Atan(target_direction) - GetAngle());
+            Float angle_delta = Math::GetCanonicalAngle(Math::Atan(target_direction) - Angle());
             if (Abs(angle_delta) > s_max_tractor_angle)
             {
                 SetWeaponPrimaryInput(0);
@@ -179,9 +179,9 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ASSERT1(m_mouth_health_trigger.IsValid());
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->GetNormalizedCoordinates(
-            GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(GetAngle())));
+            GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(Angle())));
     m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
-    m_mouth_health_trigger->SetAngle(GetAngle());
+    m_mouth_health_trigger->SetAngle(Angle());
     m_mouth_health_trigger->SetVelocity(GetVelocity());
 }
 
@@ -401,13 +401,13 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
         return;
     }
 
     SetReticleCoordinates(m_target->GetTranslation());
 
-    FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
 
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
@@ -427,7 +427,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
         return;
     }
 
@@ -489,11 +489,11 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(GetAngle()));
+        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->GetAdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
 
     // set the reticle coordinates and aim the mouth tractor
     SetReticleCoordinates(m_target->GetTranslation());

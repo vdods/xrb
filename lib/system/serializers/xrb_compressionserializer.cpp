@@ -22,7 +22,7 @@ CompressionSerializer::CompressionSerializer (Huffman const *huffman)
 
 CompressionSerializer::~CompressionSerializer ()
 {
-    ASSERT1(GetAttachedSerializer() == NULL && "You must detach the serializer before the CompressionSerializer is destroyed");
+    ASSERT1(AttachedSerializer() == NULL && "You must detach the serializer before the CompressionSerializer is destroyed");
 }
 
 bool CompressionSerializer::IsAtEnd () const
@@ -412,7 +412,7 @@ void CompressionSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteFloat(value.GetAngle());
+    CompressionSerializer::WriteFloat(value.Angle());
     if (GetError() != IOE_NONE)
         return;
 

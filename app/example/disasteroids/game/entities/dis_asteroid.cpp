@@ -260,7 +260,7 @@ void Asteroid::Die (
 
 Uint8 Asteroid::GetRandomMineral () const
 {
-    Uint8 mineral_level = DStaticCast<World *>(GetWorld())->GetAsteroidMineralLevel();
+    Uint8 mineral_level = DStaticCast<World *>(GetWorld())->AsteroidMineralLevel();
     ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT);
     Uint16 random_element =
         Math::RandomUint16(0, DISTRIBUTION_LOOKUP_TABLE_SIZE-1);

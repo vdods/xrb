@@ -31,7 +31,7 @@ public:
         Endian::Endianness endianness);
     virtual ~BitCachedCompression ();
 
-    inline Serializer *GetAttachedSerializer () const { return m_serializer; }
+    inline Serializer *AttachedSerializer () const { return m_serializer; }
 
     void AttachSerializer (Serializer *serializer);
     void DetachSerializer ();

@@ -97,7 +97,7 @@ void Revulsion::Think (Float const time, Float const frame_dt)
     AccumulateForce(
         GetNormalizedEngineUpDownInput() *
         ms_engine_thrust[GetEnemyLevel()] *
-        Math::UnitVector(GetAngle()));
+        Math::UnitVector(Angle()));
     // set the weapon inputs and activate
     m_weapon->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
@@ -247,7 +247,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);
@@ -261,8 +261,8 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 
     // figure out where to go to get behind the target
     FloatVector2 preferred_location(
-        GetObjectLayer()->GetAdjustedCoordinates(
-            -0.5f * GaussGun::ms_range[m_weapon->GetUpgradeLevel()] * Math::UnitVector(m_target->GetAngle()) + m_target->GetTranslation(),
+        GetObjectLayer()->AdjustedCoordinates(
+            -0.5f * GaussGun::ms_range[m_weapon->GetUpgradeLevel()] * Math::UnitVector(m_target->Angle()) + m_target->GetTranslation(),
             GetTranslation()));
 
     // if we're close enough to the spot behind the target (and we're
@@ -363,7 +363,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);
@@ -406,7 +406,7 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
 
@@ -427,7 +427,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
     Float target_aim_angle = GetTargetAimAngle(target_position);

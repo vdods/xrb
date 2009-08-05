@@ -279,7 +279,7 @@ void Missile::Think (
     if (IsDead() || GetHasDetonated())
         return;
 
-    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(GetAngle()));
+    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetFirstMoment() * Math::UnitVector(Angle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
@@ -440,7 +440,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
             GetTranslation(),
-            s_search_distance * Math::UnitVector(GetAngle()),
+            s_search_distance * Math::UnitVector(Angle()),
             s_search_radius,
             false,
             &line_trace_binding_set);
@@ -460,7 +460,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     }
 
     FloatVector2 target_position(
-        GetObjectLayer()->GetAdjustedCoordinates(
+        GetObjectLayer()->AdjustedCoordinates(
             m_target->GetTranslation(),
             GetTranslation()));
 

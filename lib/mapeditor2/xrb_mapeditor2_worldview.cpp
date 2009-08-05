@@ -264,7 +264,7 @@ FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
     }
 }
 
-bool MapEditor2::WorldView::GetAreNoObjectsSelected () const
+bool MapEditor2::WorldView::AreNoObjectsSelected () const
 {
     return GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0;
 }
@@ -274,7 +274,7 @@ FloatVector2 const &MapEditor2::WorldView::GetObjectSelectionSetOrigin () const
     return GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
 }
 
-bool MapEditor2::WorldView::GetAreNoEntitiesSelected () const
+bool MapEditor2::WorldView::AreNoEntitiesSelected () const
 {
     return GetMainMapEditorObjectLayer()->GetSelectedEntityCount() == 0;
 }
@@ -2001,7 +2001,7 @@ void MapEditor2::WorldView::ChangeSelectionObjects ()
             GetMainMapEditorObjectLayer()->GetSingleSelectedObject();
         // the scale and angle will be the single selected object's
         UpdateObjectSelectionSetScale(object->GetScaleFactors().m[0]); // TODO: x/y scale
-        UpdateObjectSelectionSetAngle(object->GetAngle());
+        UpdateObjectSelectionSetAngle(object->Angle());
     }
     else
     {
@@ -2018,7 +2018,7 @@ void MapEditor2::WorldView::ChangeSelectionEntities ()
         Entity *entity =
             GetMainMapEditorObjectLayer()->GetSingleSelectedEntity();
         m_sender_per_entity_applies_gravity_assigned.Signal(
-            entity->GetAppliesGravity());
+            entity->AppliesGravity());
         m_sender_per_entity_reacts_to_gravity_assigned.Signal(
             entity->GetReactsToGravity());
     }

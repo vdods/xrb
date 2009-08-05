@@ -75,7 +75,7 @@ public:
         return m_difficulty_level;
     }
     PhysicsHandler *GetPhysicsHandler ();
-    inline Uint8 GetAsteroidMineralLevel () const { return m_asteroid_mineral_level; }
+    inline Uint8 AsteroidMineralLevel () const { return m_asteroid_mineral_level; }
 
     // for use by Master to indicate that the high score processing is done
     // and the world can now transition to StateOutro

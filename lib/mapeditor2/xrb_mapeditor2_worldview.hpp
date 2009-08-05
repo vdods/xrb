@@ -73,7 +73,7 @@ namespace MapEditor2
         // returns the currently active origin cursor
         FloatVector2 const &GetOriginCursor () const;
     
-        bool GetAreNoObjectsSelected () const;
+        bool AreNoObjectsSelected () const;
         FloatVector2 const &GetObjectSelectionSetOrigin () const;
         inline Float GetObjectSelectionSetScale () const
         {
@@ -84,7 +84,7 @@ namespace MapEditor2
             return m_object_selection_set_angle;
         }
     
-        bool GetAreNoEntitiesSelected () const;
+        bool AreNoEntitiesSelected () const;
         inline Float GetObjectSelectionSetFirstMoment () const
         {
             return m_object_selection_set_first_moment;

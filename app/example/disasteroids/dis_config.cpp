@@ -139,7 +139,7 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
     // if the parse didn't work for whatever reason, don't change the values.
     if (parser.Parse(config_filename) == DataFileParser::RC_SUCCESS)
     {
-        DataFileStructure const *root = parser.GetAcceptedStructure();
+        DataFileStructure const *root = parser.AcceptedStructure();
 
         // read in and set the enumerated values
         for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)

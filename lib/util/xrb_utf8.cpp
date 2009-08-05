@@ -53,7 +53,7 @@ char const *UTF8::GetNextCharacter (char const *current)
     return current;
 }
 
-bool UTF8::GetAreCharactersEqual (char const *const c0, char const *const c1)
+bool UTF8::AreCharactersEqual (char const *const c0, char const *const c1)
 {
     return c0 != NULL && c1 != NULL && GetUnicode(c0) == GetUnicode(c1);
 }

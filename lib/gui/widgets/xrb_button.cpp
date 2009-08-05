@@ -115,7 +115,7 @@ void Button::UpdateRenderBackground ()
     else if (IsPressed())
         SetRenderBackground(
             GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
-    else if (IsMouseover() && GetAcceptsMouseover())
+    else if (IsMouseover() && AcceptsMouseover())
         SetRenderBackground(
             GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
     else

@@ -23,7 +23,7 @@ SizeProperties::SizeProperties ()
     m_data = NULL;
 }
 
-ScreenCoord SizeProperties::GetAdjustedSizeComponent (
+ScreenCoord SizeProperties::AdjustedSizeComponent (
     Uint32 const index,
     ScreenCoord component) const
 {
@@ -36,12 +36,12 @@ ScreenCoord SizeProperties::GetAdjustedSizeComponent (
     return component;
 }
 
-ScreenCoordVector2 SizeProperties::GetAdjustedSize (
+ScreenCoordVector2 SizeProperties::AdjustedSize (
     ScreenCoordVector2 const &size) const
 {
     return ScreenCoordVector2(
-        GetAdjustedSizeComponent(Dim::X, size[Dim::X]),
-        GetAdjustedSizeComponent(Dim::Y, size[Dim::Y]));
+        AdjustedSizeComponent(Dim::X, size[Dim::X]),
+        AdjustedSizeComponent(Dim::Y, size[Dim::Y]));
 }
 
 void SizeProperties::AdjustSizeComponent (

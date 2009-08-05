@@ -387,7 +387,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 //         m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_score_label->SetValue(player_ship->GetScore());
-        m_armor_status->SetProgress(player_ship->GetArmorStatus());
+        m_armor_status->SetProgress(player_ship->ArmorStatus());
         m_shield_status->SetProgress(player_ship->GetShieldStatus());
         m_power_status->SetProgress(player_ship->GetPowerStatus());
         m_weapon_status->SetProgress(player_ship->GetWeaponStatus());

@@ -432,7 +432,7 @@ void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    BinaryFileSerializer::WriteFloat(value.GetAngle());
+    BinaryFileSerializer::WriteFloat(value.Angle());
     if (GetError() != IOE_NONE)
         return;
 

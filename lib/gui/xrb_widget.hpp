@@ -200,7 +200,7 @@ public:
       * default value set by the constructor of Widget is false.
       * @brief Returns true iff this widget even accepts focus.
       */
-    inline bool GetAcceptsFocus () const { return m_accepts_focus; }
+    inline bool AcceptsFocus () const { return m_accepts_focus; }
     /** @brief Returns true iff this widget currently has mouseover focus
       *        (i.e. its parent has this widget as its m_mouseover_focus
       *        value).
@@ -211,7 +211,7 @@ public:
       * The default value set by the constructor of Widget is true.
       * @brief Returns true iff this widget accepts mouseover focus.
       */
-    inline bool GetAcceptsMouseover () const { return m_accepts_mouseover; }
+    inline bool AcceptsMouseover () const { return m_accepts_mouseover; }
     /** @brief Returns true iff this widget has mouse grab focus (meaning that
       *        all mouse events will go to/through it even if the mouse is not
       *        directly over it).
@@ -285,7 +285,7 @@ public:
       * @brief Returns the adjusted value of the given size vector.
       * @param size The size vector to adjust.
       */
-    virtual ScreenCoordVector2 GetAdjustedSize (ScreenCoordVector2 const &size) const;
+    virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
     /** @brief Returns this widget's screen coordinate rectangle.
       */
     inline ScreenCoordRect const &GetScreenRect () const { return m_screen_rect; }
