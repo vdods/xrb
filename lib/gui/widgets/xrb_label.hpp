@@ -64,7 +64,7 @@ public:
     inline Alignment2 const &GetAlignment () const { return m_alignment; }
     /** @brief Returns true iff word-wrapping is enabled.
       */
-    inline bool GetWordWrap () const { return m_word_wrap; }
+    inline bool WordWrap () const { return m_word_wrap; }
     /** @brief Returns true if this is a picture label, false for text label.
       */
     inline bool IsPictureLabel () const { return m_is_picture_label; }

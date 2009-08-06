@@ -84,7 +84,7 @@ public:
         ASSERT1(m_surface != NULL);
         return ScreenCoordVector2(m_surface->w, m_surface->h);
     }
-    inline ScreenCoord GetWidth () const
+    inline ScreenCoord Width () const
     {
         ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->w);

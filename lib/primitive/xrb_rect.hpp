@@ -191,7 +191,7 @@ public:
     {
         return m_top_right - m_bottom_left;
     }
-    inline T GetWidth () const
+    inline T Width () const
     {
         return Right() - Left();
     }

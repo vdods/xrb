@@ -111,16 +111,16 @@ void Button::UpdateRenderBackground ()
     // state priority: disabled, pressed, mouseover, default
     if (!IsEnabled())
         SetRenderBackground(
-            GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
+            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
     else if (IsPressed())
         SetRenderBackground(
-            GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
+            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_PRESSED_BACKGROUND));
     else if (IsMouseover() && AcceptsMouseover())
         SetRenderBackground(
-            GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
+            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND));
     else
         SetRenderBackground(
-            GetWidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
+            WidgetSkinWidgetBackground(WidgetSkin::BUTTON_BACKGROUND));
 }
 
 void Button::HandleChangedWidgetSkinWidgetBackground (

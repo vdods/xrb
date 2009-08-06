@@ -135,7 +135,7 @@ void LineEdit::SetRenderFont (Resource<Font> const &render_font)
 void LineEdit::UpdateRenderBackground ()
 {
     SetRenderBackground(
-        GetWidgetSkinWidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
+        WidgetSkinWidgetBackground(WidgetSkin::LINE_EDIT_BACKGROUND));
 }
 
 void LineEdit::HandleChangedWidgetSkinWidgetBackground (
@@ -282,13 +282,13 @@ ScreenCoord LineEdit::InitialPenPositionX () const
             break;
         case CENTER:
             initial_pen_position_x =
-                m_text_width < contents_rect.GetWidth() ?
+                m_text_width < contents_rect.Width() ?
                 (contents_rect.Right()-contents_rect.Left()-m_text_width)/2 :
                 0;
             break;
         case RIGHT:
             initial_pen_position_x =
-                m_text_width < contents_rect.GetWidth() ?
+                m_text_width < contents_rect.Width() ?
                 contents_rect.Right()-contents_rect.Left()-m_text_width :
                 0;
             break;
@@ -357,8 +357,8 @@ void LineEdit::SetCursorPosition (Uint32 cursor_position)
 
     if (desired_cursor_offset + m_text_offset[Dim::X] < 0)
         m_text_offset[Dim::X] = -desired_cursor_offset;
-    else if (desired_cursor_offset + m_text_offset[Dim::X] > contents_rect.GetWidth() - cursor_width)
-        m_text_offset[Dim::X] = -desired_cursor_offset + contents_rect.GetWidth() - cursor_width;
+    else if (desired_cursor_offset + m_text_offset[Dim::X] > contents_rect.Width() - cursor_width)
+        m_text_offset[Dim::X] = -desired_cursor_offset + contents_rect.Width() - cursor_width;
 
     m_cursor_position = cursor_position;
 }
@@ -366,8 +366,8 @@ void LineEdit::SetCursorPosition (Uint32 cursor_position)
 void LineEdit::UpdateTextWidth ()
 {
     ScreenCoordRect contents_rect(ContentsRect());
-    m_text_width = RenderFont()->StringRect(m_text.c_str()).GetWidth();
-    if (m_text_width <= contents_rect.GetWidth())
+    m_text_width = RenderFont()->StringRect(m_text.c_str()).Width();
+    if (m_text_width <= contents_rect.Width())
         m_text_offset = 0;
 }
 

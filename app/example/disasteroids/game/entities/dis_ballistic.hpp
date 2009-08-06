@@ -46,7 +46,7 @@ public:
 
     virtual bool IsBallistic () const { return true; }
 
-    inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
+    inline Uint8 WeaponLevel () const { return m_weapon_level; }
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (

@@ -68,7 +68,7 @@ Float Engine2::WorldView::ViewDepth (Engine2::ObjectLayer const *object_layer) c
     if (object_layer == NULL)
         object_layer = GetWorld()->MainObjectLayer();
 
-    return object_layer->GetZDepth() - 1.0f / GetZoomFactor();
+    return object_layer->ZDepth() - 1.0f / ZoomFactor();
 }
 
 Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *object_layer) const
@@ -76,7 +76,7 @@ Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *obje
     if (object_layer == NULL)
         object_layer = GetWorld()->MainObjectLayer();
 
-    ASSERT1(ViewDepth(object_layer) != object_layer->GetZDepth());
+    ASSERT1(ViewDepth(object_layer) != object_layer->ZDepth());
 
     FloatMatrix2 world_to_screen(
         ParentWorldViewWidget()->Transformation() *
@@ -89,7 +89,7 @@ Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *obje
         *
         ParallaxFactor(
             ViewDepth(MainObjectLayer()),
-            object_layer->GetZDepth());
+            object_layer->ZDepth());
 }
 
 FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
@@ -100,13 +100,13 @@ FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
     if (object_layer == NULL)
         object_layer = GetWorld()->MainObjectLayer();
 
-    ASSERT1(ViewDepth(object_layer) != object_layer->GetZDepth());
+    ASSERT1(ViewDepth(object_layer) != object_layer->ZDepth());
 
     // compute the view transformation adjusted by the parallax factor
     // and then get the world-to-whatever transformation
     FloatMatrix2 world_to_whatever(world_to_view);
     world_to_whatever.Scale(
-        1.0f / ParallaxFactor(ViewDepth(NULL), object_layer->GetZDepth()));
+        1.0f / ParallaxFactor(ViewDepth(NULL), object_layer->ZDepth()));
     world_to_whatever *= view_to_whatever;
 
     return world_to_whatever;
@@ -115,10 +115,10 @@ FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
 Float Engine2::WorldView::MinorAxisRadius () const
 {
     FloatVector2 minor_axis;
-    if (m_parent_world_view_widget->GetWidth() < m_parent_world_view_widget->Height())
+    if (m_parent_world_view_widget->Width() < m_parent_world_view_widget->Height())
         minor_axis =
             0.5f * FloatVector2(
-                static_cast<Float>(m_parent_world_view_widget->GetWidth()),
+                static_cast<Float>(m_parent_world_view_widget->Width()),
                 0.0f);
     else
         minor_axis =
@@ -133,10 +133,10 @@ Float Engine2::WorldView::MinorAxisRadius () const
 Float Engine2::WorldView::MajorAxisRadius () const
 {
     FloatVector2 major_axis;
-    if (m_parent_world_view_widget->GetWidth() > m_parent_world_view_widget->Height())
+    if (m_parent_world_view_widget->Width() > m_parent_world_view_widget->Height())
         major_axis =
             0.5f * FloatVector2(
-                static_cast<Float>(m_parent_world_view_widget->GetWidth()),
+                static_cast<Float>(m_parent_world_view_widget->Width()),
                 0.0f);
     else
         major_axis =
@@ -151,7 +151,7 @@ Float Engine2::WorldView::MajorAxisRadius () const
 Float Engine2::WorldView::CornerRadius () const
 {
     FloatVector2 corner_vector(
-        0.5f * static_cast<Float>(m_parent_world_view_widget->GetWidth()),
+        0.5f * static_cast<Float>(m_parent_world_view_widget->Width()),
         0.5f * static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (ParallaxedScreenToWorld() * corner_vector -
@@ -305,7 +305,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
         // set up the GL projection matrix for drawing this object layer
         PushParallaxedGLProjectionMatrix(render_context, object_layer);
 
-        layer_offset = object_layer->GetZDepth() - ViewDepth(NULL);
+        layer_offset = object_layer->ZDepth() - ViewDepth(NULL);
         // only draw layers which are in front of the view
         if (layer_offset > 0.0f)
         {
@@ -662,7 +662,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     Float parallax_factor =
         ParallaxFactor(
             ViewDepth(NULL),
-            object_layer->GetZDepth());
+            object_layer->ZDepth());
     ASSERT1(parallax_factor != 0.0f);
     glScalef(
         1.0f / parallax_factor,

@@ -58,7 +58,7 @@ public:
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetWidgetBackground .
       * @param widget_background_type The background type to retrieve.
       */
-    inline WidgetBackground const *GetWidgetSkinWidgetBackground (
+    inline WidgetBackground const *WidgetSkinWidgetBackground (
         WidgetSkin::WidgetBackgroundType const widget_background_type) const
     {
         return m_widget_skin->GetWidgetBackground(widget_background_type);
@@ -66,7 +66,7 @@ public:
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetFont .
       * @param font_type The font type to retrieve.
       */
-    inline Resource<Font> const &GetWidgetSkinFont (
+    inline Resource<Font> const &WidgetSkinFont (
         WidgetSkin::FontType const font_type) const
     {
         return m_widget_skin->GetFont(font_type);
@@ -74,7 +74,7 @@ public:
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetTexture .
       * @param texture_type The texture type to retrieve.
       */
-    inline Resource<GLTexture> const &GetWidgetSkinTexture (
+    inline Resource<GLTexture> const &WidgetSkinTexture (
         WidgetSkin::TextureType const texture_type) const
     {
         return m_widget_skin->GetTexture(texture_type);
@@ -82,7 +82,7 @@ public:
     /** @brief Frontend for @ref Xrb::WidgetSkin::Margins .
       * @param margins_type The margins type to retrieve.
       */
-    inline ScreenCoordVector2 const &GetWidgetSkinMargins (
+    inline ScreenCoordVector2 const &WidgetSkinMargins (
         WidgetSkin::MarginsType const margins_type) const
     {
         return m_widget_skin->Margins(margins_type);
@@ -148,16 +148,16 @@ protected:
       * @brief Returns the number of child WidgetSkinHandler objects this
       *        object owns.
       */
-    virtual Uint32 GetWidgetSkinHandlerChildCount () const = 0;
+    virtual Uint32 WidgetSkinHandlerChildCount () const = 0;
     /** This method must be implemented by baseclasses (Widget).
       * @brief Returns the indexed child WidgetSkinHandler.
       * @param index The index of the child to return.
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerChild (Uint32 index) = 0;
+    virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index) = 0;
     /** This method must be implemented by baseclasses (Widget).
       * @brief Returns the parent WidgetSkinHandler of this object.
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerParent () = 0;
+    virtual WidgetSkinHandler *WidgetSkinHandlerParent () = 0;
 
     // ///////////////////////////////////////////////////////////////////////
     // WidgetSkin property change handlers
@@ -219,9 +219,9 @@ private:
     {
         // make sure we go up to the top level parent before setting
         // the property and propagating the changes.
-        if (GetWidgetSkinHandlerParent() != NULL)
+        if (WidgetSkinHandlerParent() != NULL)
         {
-            GetWidgetSkinHandlerParent()->SetProperty<PropertyType, DataType>(
+            WidgetSkinHandlerParent()->SetProperty<PropertyType, DataType>(
                 property,
                 data,
                 SetWidgetSkinProperty,
@@ -249,9 +249,9 @@ private:
         // call HandleChangedProperty on this WidgetSkinHandler
         (this->*HandleChangedProperty)(property);
         // call PropagateProperty on all child WidgetSkinHandlers
-        for (Uint32 i = 0; i < GetWidgetSkinHandlerChildCount(); ++i)
+        for (Uint32 i = 0; i < WidgetSkinHandlerChildCount(); ++i)
         {
-            WidgetSkinHandler *child = GetWidgetSkinHandlerChild(i);
+            WidgetSkinHandler *child = WidgetSkinHandlerChild(i);
             ASSERT1(child != NULL);
             child->PropagateChangedProperty<PropertyType>(
                 property,

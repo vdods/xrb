@@ -32,8 +32,8 @@ CheckBox::CheckBox (
 
     FixSize(
         ScreenCoordVector2(
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
 
     CheckBox::UpdateRenderBackground();
     CheckBox::UpdateRenderPicture();
@@ -78,13 +78,13 @@ bool CheckBox::ProcessMouseButtonEvent (EventMouseButton const *const e)
 void CheckBox::UpdateRenderBackground ()
 {
     SetRenderBackground(
-        GetWidgetSkinWidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
+        WidgetSkinWidgetBackground(WidgetSkin::CHECK_BOX_BACKGROUND));
 }
 
 void CheckBox::UpdateRenderPicture ()
 {
     if (IsChecked())
-        SetRenderPicture(GetWidgetSkinTexture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
+        SetRenderPicture(WidgetSkinTexture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
     else
         SetRenderPicture(Resource<GLTexture>());
 }

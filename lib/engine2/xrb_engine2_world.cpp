@@ -188,7 +188,7 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
     Entity *entity = dynamic_object->GetEntity();
     ASSERT1(entity != NULL);
     ASSERT1(entity->IsInWorld());
-    EntityWorldIndex entity_index = entity->GetWorldIndex();
+    EntityWorldIndex entity_index = entity->WorldIndex();
     ASSERT1(entity_index < static_cast<EntityWorldIndex>(m_entity_vector.size()));
     ASSERT1(m_entity_vector[entity_index] == entity);
 

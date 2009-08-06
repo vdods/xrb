@@ -1484,11 +1484,11 @@ Entity *Demi::FindTractorDeflectTarget (
                 entity->GetEntityType() != ET_ENEMY_MISSILE &&
                 entity->GetEntityType() != ET_GUIDED_ENEMY_MISSILE)
             {
-                potential_target_priority = 30 + DStaticCast<Explosive *>(entity)->GetWeaponLevel();
+                potential_target_priority = 30 + DStaticCast<Explosive *>(entity)->WeaponLevel();
             }
             else if (entity->IsBallistic())
             {
-                potential_target_priority = 20 + DStaticCast<Ballistic *>(entity)->GetWeaponLevel();
+                potential_target_priority = 20 + DStaticCast<Ballistic *>(entity)->WeaponLevel();
             }
             else if (entity->GetEntityType() == ET_ASTEROID)
             {

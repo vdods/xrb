@@ -1366,7 +1366,7 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filen
         return RC_PARSE_ERROR;
 
     // if any errors were encountered, return parse error
-    if (m_scanner->GetWereErrorsEncountered())
+    if (m_scanner->WereErrorsEncountered())
         return RC_ERRORS_ENCOUNTERED;
 
     // otherwise return success

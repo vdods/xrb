@@ -122,7 +122,7 @@ Float PlayerShip::PowerStatus () const
            0.0f;
 }
 
-Float PlayerShip::GetWeaponStatus () const
+Float PlayerShip::WeaponStatus () const
 {
     if (IsDead())
         return 0.0f;
@@ -207,7 +207,7 @@ bool PlayerShip::IsItemAffordable (
 void PlayerShip::SetIsUsingAuxiliaryWeapon (bool const is_using_auxiliary_weapon)
 {
     m_is_using_auxiliary_weapon = is_using_auxiliary_weapon;
-    SetWeaponStatus(GetWeaponStatus());
+    SetWeaponStatus(WeaponStatus());
 }
 
 void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
@@ -221,7 +221,7 @@ void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
         main_weapon->Equip(this);
 
     m_main_weapon = main_weapon;
-    SetWeaponStatus(GetWeaponStatus());
+    SetWeaponStatus(WeaponStatus());
 }
 
 void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
@@ -235,7 +235,7 @@ void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
         auxiliary_weapon->Equip(this);
 
     m_auxiliary_weapon = auxiliary_weapon;
-    SetWeaponStatus(GetWeaponStatus());
+    SetWeaponStatus(WeaponStatus());
 }
 
 void PlayerShip::SetEngine (Engine *const engine)

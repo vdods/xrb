@@ -652,7 +652,7 @@ void Layout::DelegateWidthsToColumns ()
 
     // must split up the total width among the columns
     ASSERT1(m_hidden_column_count == ColumnCount() - unhidden_column_count);
-    ScreenCoord total_width_left = GetWidth() - TotalSpacing()[Dim::X];
+    ScreenCoord total_width_left = Width() - TotalSpacing()[Dim::X];
     ASSERT1(total_width_left >= 0);
 
     // sort the array unhidden_column_count times (to delegate the same number of widths)

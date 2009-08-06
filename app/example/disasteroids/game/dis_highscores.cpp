@@ -235,7 +235,7 @@ void HighScores::Write (std::string const &filename)
         try {
             root->SetPathElementString("|high_scores|+|name", it->Name());
             root->SetPathElementUint32("|high_scores|$|points", it->Points());
-            root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
+            root->SetPathElementUint32("|high_scores|$|wave_count", it->WaveCount());
             root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->Date()));
             root->SetPathElementUint32("|high_scores|$|hash", it->Hash());
         } catch (...) {

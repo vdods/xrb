@@ -256,7 +256,7 @@ public:
     inline ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }
     /** @brief Returns the widget of this widget.
       */
-    inline ScreenCoord GetWidth () const { return m_screen_rect.GetWidth(); }
+    inline ScreenCoord Width () const { return m_screen_rect.Width(); }
     /** @brief Returns the height of this widget.
       */
     inline ScreenCoord Height () const { return m_screen_rect.Height(); }
@@ -647,17 +647,17 @@ public:
 protected:
 
     /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::GetWidgetSkinHandlerChildCount
+      * @see WidgetSkinHandler::WidgetSkinHandlerChildCount
       */
-    virtual Uint32 GetWidgetSkinHandlerChildCount () const { return 0; }
+    virtual Uint32 WidgetSkinHandlerChildCount () const { return 0; }
     /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::GetWidgetSkinHandlerChild
+      * @see WidgetSkinHandler::WidgetSkinHandlerChild
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerChild (Uint32 index) { return NULL; }
+    virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index) { return NULL; }
     /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::GetWidgetSkinHandlerParent
+      * @see WidgetSkinHandler::WidgetSkinHandlerParent
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerParent ();
+    virtual WidgetSkinHandler *WidgetSkinHandlerParent ();
 
     /** @brief Returns the a pointer to the background object which is
       *        rendered in @a Widget::Draw.

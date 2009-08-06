@@ -64,7 +64,7 @@ namespace Engine2
         inline WorldViewWidget *ParentWorldViewWidget () const { return m_parent_world_view_widget; }
         inline World *GetWorld () const { return m_world; }
         inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
-        inline Float GetZoomFactor () const { return m_zoom_factor; }
+        inline Float ZoomFactor () const { return m_zoom_factor; }
         inline FloatVector2 Center () const { return -Translation(); }
         inline Float Angle () const { return -FloatTransform2::Angle(); }
         inline bool IsViewLocked () const { return m_is_view_locked; }

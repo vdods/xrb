@@ -27,7 +27,7 @@ Sint32 Mortal::TargetPriority () const
         case ET_ENEMY_MISSILE:
         case ET_GUIDED_ENEMY_MISSILE:
             major = 40;
-            minor = DStaticCast<Missile const *>(this)->GetWeaponLevel();
+            minor = DStaticCast<Missile const *>(this)->WeaponLevel();
             break;
         case ET_INTERLOPER:
             major = DStaticCast<EnemyShip const *>(this)->EnemyLevel();

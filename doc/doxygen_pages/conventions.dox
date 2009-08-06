@@ -136,7 +136,7 @@ Class methods fall under three different categories:
     <li>Accessors: Return a value which depends on the class' members
         (could be thought of as returning a "property" of the class).
         Usually trivial functions which directly return a member's
-        value, though can include computation.  For example, GetWidth
+        value, though can include computation.  For example, Width
         for a rectangle object.</li>
     <li>Modifiers: Set a property of the class.  Usually trivial functions
         which directly assign a value to a member, though often also include

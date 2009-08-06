@@ -609,12 +609,12 @@ void ContainerWidget::DeleteAllChildren ()
 // protected functions
 // ///////////////////////////////////////////////////////////////////////////
 
-Uint32 ContainerWidget::GetWidgetSkinHandlerChildCount () const
+Uint32 ContainerWidget::WidgetSkinHandlerChildCount () const
 {
     return m_child_vector.size();
 }
 
-WidgetSkinHandler *ContainerWidget::GetWidgetSkinHandlerChild (Uint32 const index)
+WidgetSkinHandler *ContainerWidget::WidgetSkinHandlerChild (Uint32 const index)
 {
     ASSERT1(index < m_child_vector.size());
     Widget *child = m_child_vector[index];

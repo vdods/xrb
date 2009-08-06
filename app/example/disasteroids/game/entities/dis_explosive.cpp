@@ -279,7 +279,7 @@ void Missile::Think (
     if (IsDead() || HasDetonated())
         return;
 
-    AccumulateForce(ms_acceleration[GetWeaponLevel()] * Mass() * Math::UnitVector(Angle()));
+    AccumulateForce(ms_acceleration[WeaponLevel()] * Mass() * Math::UnitVector(Angle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
@@ -465,7 +465,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
             Translation()));
 
     // adjust our course to hit the target -- plot intercept course
-    Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
+    Float interceptor_acceleration = ms_acceleration[WeaponLevel()];
     FloatVector2 p(target_position - Translation());
     FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());

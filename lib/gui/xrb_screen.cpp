@@ -126,7 +126,7 @@ void Screen::Draw () const
     ScreenCoordRect screen_rect(ScreenRect());
     ASSERT1(screen_rect.Left() == 0);
     ASSERT1(screen_rect.Bottom() == 0);
-    if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
+    if (screen_rect.Width() > m_current_video_resolution[Dim::X])
         screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
     if (screen_rect.Height() > m_current_video_resolution[Dim::Y])
         screen_rect.SetHeight(m_current_video_resolution[Dim::Y]);

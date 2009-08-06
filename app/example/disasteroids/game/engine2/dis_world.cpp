@@ -932,7 +932,7 @@ bool World::StateSubmitScore (StateMachineInput const input)
                 Score(
                     "",
                     m_player_ship->GetScore(),
-                    m_player_ship->GetWaveCount(),
+                    m_player_ship->WaveCount(),
                     time(NULL)));
             TRANSITION_TO(StateWaitingForSubmitScoreResponse);
             return true;

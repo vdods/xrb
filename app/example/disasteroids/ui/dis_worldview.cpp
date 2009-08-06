@@ -250,7 +250,7 @@ void WorldView::HandleFrame ()
 
             FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * FrameDT()));
             bool is_view_recovering_this_frame;
-            Float const max_view_center_delta = 2.4f / GetZoomFactor();
+            Float const max_view_center_delta = 2.4f / ZoomFactor();
             static Float const s_time_to_recover = 0.5f;
             if (view_center_delta.Length() > max_view_center_delta * FrameDT())
             {
@@ -481,7 +481,7 @@ void WorldView::ProcessPlayerInput ()
                 ParallaxedScreenToWorld() *
                 ParentWorldViewWidget()->LastMousePosition().StaticCast<Float>()
                 -
-                m_player_ship->GetWrappedOffset());
+                m_player_ship->WrappedOffset());
             m_player_ship->SetEngineRightLeftInput(engine_right_left_input);
             m_player_ship->SetEngineUpDownInput(engine_up_down_input);
             m_player_ship->SetEngineAuxiliaryInput(engine_auxiliary_input);
@@ -500,9 +500,9 @@ void WorldView::EndGame ()
 void WorldView::SetIsAlertWave (bool const is_alert_wave)
 {
     if (is_alert_wave)
-        InitiateZoom(GetZoomFactor(), ms_zoom_factor_alert_wave, ms_alert_wave_zoom_duration, true);
+        InitiateZoom(ZoomFactor(), ms_zoom_factor_alert_wave, ms_alert_wave_zoom_duration, true);
     else
-        InitiateZoom(GetZoomFactor(), ms_zoom_factor_non_alert_wave, ms_non_alert_wave_zoom_duration, true);
+        InitiateZoom(ZoomFactor(), ms_zoom_factor_non_alert_wave, ms_non_alert_wave_zoom_duration, true);
 }
 
 void WorldView::BeginIntro ()
@@ -653,7 +653,7 @@ bool WorldView::StateIntro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(GetZoomFactor(), ms_zoom_factor_non_alert_wave, ms_intro_duration, false);
+            InitiateZoom(ZoomFactor(), ms_zoom_factor_non_alert_wave, ms_intro_duration, false);
             InitiateSpin(360.0f, 0.0f, ms_intro_duration);
             InitiateFade(0.0f, 1.0f, ms_intro_duration);
             ScheduleStateMachineInput(IN_END_INTRO, ms_intro_duration);
@@ -752,7 +752,7 @@ bool WorldView::StateOutro (StateMachineInput const input)
     switch (input)
     {
         case SM_ENTER:
-            InitiateZoom(GetZoomFactor(), ms_zoom_factor_outro_end, ms_outro_duration, false);
+            InitiateZoom(ZoomFactor(), ms_zoom_factor_outro_end, ms_outro_duration, false);
             InitiateSpin(0.0f, 360.0f, ms_outro_duration);
             InitiateFade(1.0f, 0.0f, ms_outro_duration);
             ScheduleStateMachineInput(IN_END_OUTRO, ms_outro_duration);

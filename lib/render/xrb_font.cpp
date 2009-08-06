@@ -228,16 +228,16 @@ void Font::DrawLineFormattedText (
                 break;
 
             case CENTER:
-                pen_position[Dim::X] = initial_pen_position[Dim::X] + (draw_rect.GetWidth() - line_format_vector[line].m_width) / 2;
+                pen_position[Dim::X] = initial_pen_position[Dim::X] + (draw_rect.Width() - line_format_vector[line].m_width) / 2;
                 break;
 
             case RIGHT:
-                pen_position[Dim::X] = initial_pen_position[Dim::X] + draw_rect.GetWidth() - line_format_vector[line].m_width;
+                pen_position[Dim::X] = initial_pen_position[Dim::X] + draw_rect.Width() - line_format_vector[line].m_width;
                 break;
 
             case SPACED:
                 pen_position[Dim::X] = initial_pen_position[Dim::X];
-                total_spacing[Dim::X] = draw_rect.GetWidth() - line_format_vector[line].m_width;
+                total_spacing[Dim::X] = draw_rect.Width() - line_format_vector[line].m_width;
                 // if the line isn't long enough, don't space it out
                 if (total_spacing[Dim::X] > 4 * m_pixel_height)
                     total_spacing[Dim::X] = 0;
@@ -593,7 +593,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glPushMatrix();
     glLoadIdentity();
     glScalef(
-        1.0f / m_gl_texture->GetWidth(),
+        1.0f / m_gl_texture->Width(),
         1.0f / m_gl_texture->Height(),
         1.0f);
 

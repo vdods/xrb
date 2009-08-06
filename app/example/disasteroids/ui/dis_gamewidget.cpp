@@ -382,7 +382,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_weapon_status->Enable();
 
         // initialize the UI elements
-        m_wave_count = player_ship->GetWaveCount();
+        m_wave_count = player_ship->WaveCount();
         UpdateWaveCountLabel();
 //         m_lives_remaining_label->SetValue(player_ship->LivesRemaining());
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->Stoke()));
@@ -390,7 +390,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_armor_status->SetProgress(player_ship->ArmorStatus());
         m_shield_status->SetProgress(player_ship->ShieldStatus());
         m_power_status->SetProgress(player_ship->PowerStatus());
-        m_weapon_status->SetProgress(player_ship->GetWeaponStatus());
+        m_weapon_status->SetProgress(player_ship->WeaponStatus());
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->SetValue(static_cast<Uint32>(player_ship->MineralInventory(i)));
 

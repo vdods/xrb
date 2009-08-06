@@ -135,13 +135,13 @@ protected:
     {
         return IsUsingZeroedFrameMargins() ?
                ScreenCoordVector2::ms_zero :
-               GetWidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
+               WidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
     }
     inline ScreenCoordVector2 const &CalculateLayoutSpacingMargins () const
     {
         return IsUsingZeroedLayoutSpacingMargins() ?
                ScreenCoordVector2::ms_zero :
-               GetWidgetSkinMargins(WidgetSkin::LAYOUT_SPACING_MARGINS);
+               WidgetSkinMargins(WidgetSkin::LAYOUT_SPACING_MARGINS);
     }
 
     // WidgetSkinHandler overrides

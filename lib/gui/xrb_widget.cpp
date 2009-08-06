@@ -681,7 +681,7 @@ void Widget::SetIsHidden (bool const is_hidden)
 // protected functions
 // ///////////////////////////////////////////////////////////////////////////
 
-WidgetSkinHandler *Widget::GetWidgetSkinHandlerParent ()
+WidgetSkinHandler *Widget::WidgetSkinHandlerParent ()
 {
     return static_cast<WidgetSkinHandler *>(m_parent);
 }
@@ -689,8 +689,8 @@ WidgetSkinHandler *Widget::GetWidgetSkinHandlerParent ()
 void Widget::InitializeFromWidgetSkinProperties ()
 {
     UpdateRenderBackground();
-    SetFrameMargins(GetWidgetSkinMargins(WidgetSkin::DEFAULT_FRAME_MARGINS));
-    SetContentMargins(GetWidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
+    SetFrameMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_FRAME_MARGINS));
+    SetContentMargins(WidgetSkinMargins(WidgetSkin::DEFAULT_CONTENT_MARGINS));
 }
 
 bool Widget::HandleEvent (Event const *const e)

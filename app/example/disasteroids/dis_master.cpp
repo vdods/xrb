@@ -226,7 +226,7 @@ void Master::AcceptScore (Score const &score)
     {
         // create a HighScoreNameEntryDialog
         HighScoreNameEntryDialog *dialog =
-            new HighScoreNameEntryDialog(score.Points(), score.GetWaveCount(), m_screen);
+            new HighScoreNameEntryDialog(score.Points(), score.WaveCount(), m_screen);
         dialog->CenterOnWidget(m_screen);
         // hook up the OK/cancel button signals
         SignalHandler::Connect1(
@@ -249,7 +249,7 @@ void Master::AcceptName (std::string const &name)
     Score named_score(
         checked_name,
         m_saved_score.Points(),
-        m_saved_score.GetWaveCount(),
+        m_saved_score.WaveCount(),
         m_saved_score.Date());
     m_show_best_points_high_scores_first = m_high_scores.AddScore(named_score);
     m_high_scores.Write(HIGH_SCORES_FILENAME);

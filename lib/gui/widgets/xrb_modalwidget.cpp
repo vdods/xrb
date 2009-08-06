@@ -42,7 +42,7 @@ void ModalWidget::Shutdown ()
 void ModalWidget::UpdateRenderBackground ()
 {
     SetRenderBackground(
-        GetWidgetSkinWidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
+        WidgetSkinWidgetBackground(WidgetSkin::MODAL_WIDGET_BACKGROUND));
 }
 
 void ModalWidget::HandleChangedModalWidgetBackground ()

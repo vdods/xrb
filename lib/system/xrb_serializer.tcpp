@@ -55,7 +55,7 @@ void Serializer::WriteBitArray (BitArray<bit_count> const &value)
             bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
 
         WriteUnsignedBits(
-            value.GetWord(current_word),
+            value.Word(current_word),
             bits_to_write_for_current_word);
         if (GetError() != IOE_NONE)
             return;
@@ -124,7 +124,7 @@ void Serializer::WriteBitArray (
             bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
 
         WriteUnsignedBits(
-            value.GetWord(current_word),
+            value.Word(current_word),
             bits_to_write_for_current_word);
         if (GetError() != IOE_NONE)
             return;

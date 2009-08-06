@@ -231,7 +231,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glViewport(
         clip_rect.Left(),
         clip_rect.Bottom(),
-        clip_rect.GetWidth(),
+        clip_rect.Width(),
         clip_rect.Height());
 }
 

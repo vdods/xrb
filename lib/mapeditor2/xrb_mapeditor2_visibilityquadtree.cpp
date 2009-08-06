@@ -535,7 +535,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
     Float left = ceil((draw_data.ViewCenter().m[0]-radius_sum)/side_length);
     Float right = floor((draw_data.ViewCenter().m[0]+radius_sum)/side_length);
     FloatMatrix2 new_world_to_screen;
-    FloatMatrix2 old_world_to_screen(draw_data.GetWorldToScreen());
+    FloatMatrix2 old_world_to_screen(draw_data.WorldToScreen());
     FloatVector2 view_offset;
 
     for (Float x = left; x <= right; x += 1.0f)

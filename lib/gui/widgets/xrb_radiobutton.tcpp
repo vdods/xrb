@@ -93,7 +93,7 @@ template <typename T, T sentinel>
 void RadioButton<T, sentinel>::UpdateRenderBackground ()
 {
     SetRenderBackground(
-        GetWidgetSkinWidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
+        WidgetSkinWidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
 }
 
 template <typename T, T sentinel>
@@ -105,7 +105,7 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
             SetRenderPicture(Picture());
         else
             SetRenderPicture(
-                GetWidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
+                WidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
     }
     else
         SetRenderPicture(Resource<GLTexture>());
@@ -178,8 +178,8 @@ void RadioButton<T, sentinel>::Initialize (
 
     FixSize(
         ScreenCoordVector2(
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
 }
 
 // ///////////////////////////////////////////////////////////////////////////

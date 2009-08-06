@@ -45,7 +45,7 @@ public:
 
     inline Uint32 GetScore () const { return m_score; }
     inline Float Stoke () const { return m_stoke; }
-    inline Uint32 GetWaveCount () const { return m_wave_count; }
+    inline Uint32 WaveCount () const { return m_wave_count; }
     inline Uint32 LivesRemaining () const { return m_lives_remaining; }
 
     inline Weapon const *MainWeapon () const { return m_main_weapon; }
@@ -58,7 +58,7 @@ public:
     Float ArmorStatus () const;
     Float ShieldStatus () const;
     Float PowerStatus () const;
-    Float GetWeaponStatus () const;
+    Float WeaponStatus () const;
     inline Float MineralInventory (Uint8 mineral_type) const
     {
         ASSERT1(mineral_type < MINERAL_COUNT);

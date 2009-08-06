@@ -73,7 +73,7 @@ public:
     }
     /** @brief Returns the width of the texture.
       */
-    inline ScreenCoord GetWidth () const
+    inline ScreenCoord Width () const
     {
         return m_size[Dim::X];
     }

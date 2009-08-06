@@ -34,7 +34,7 @@ TextWidget::TextWidget (
 
     m_text_color = Color(1.0, 1.0, 1.0, 1.0);
     SetRenderTextColor(m_text_color);
-    m_font = GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT);
+    m_font = WidgetSkinFont(WidgetSkin::DEFAULT_FONT);
     m_is_min_width_fixed_to_text_width = false;
     m_is_max_width_fixed_to_text_width = false;
     m_is_min_height_fixed_to_text_height = false;

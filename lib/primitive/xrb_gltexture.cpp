@@ -79,7 +79,7 @@ void GLTexture::GenerateTexture (
         GL_TEXTURE_2D,
         0,
         GL_RGBA,
-        texture->GetWidth(),
+        texture->Width(),
         texture->Height(),
         1,
         GL_RGBA,
@@ -89,7 +89,7 @@ void GLTexture::GenerateTexture (
     gluBuild2DMipmaps(
         GL_TEXTURE_2D,
         GL_RGBA,
-        texture->GetWidth(),
+        texture->Width(),
         texture->Height(),
         GL_RGBA,
         GL_UNSIGNED_BYTE,

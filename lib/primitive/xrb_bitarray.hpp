@@ -114,7 +114,7 @@ public:
         Uint32 bit_mask = 1 << minor_index;
         return (m_words[major_index] & bit_mask) != 0;
     }
-    inline Uint32 GetWord (Uint32 const word_index) const
+    inline Uint32 Word (Uint32 const word_index) const
     {
         ASSERT1(AreUnusedBitsZeroed());
         ASSERT1(word_index <= HIGHEST_WORD_INDEX);

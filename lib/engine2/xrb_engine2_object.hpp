@@ -74,9 +74,9 @@ public:
     {
         bool operator () (Object const *t0, Object const *t1)
         {
-            return t0->GetZDepth() > t1->GetZDepth()
+            return t0->ZDepth() > t1->ZDepth()
                    ||
-                   (t0->GetZDepth() == t1->GetZDepth() && t0 < t1);
+                   (t0->ZDepth() == t1->ZDepth() && t0 < t1);
         }
     }; // end of struct Engine2::Object::TransparentObjectOrder
 
@@ -110,7 +110,7 @@ public:
         ~DrawLoopFunctor () { }
 
         inline Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
-        inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.Transformation(); }
+        inline FloatMatrix2 const &WorldToScreen () const { return m_object_draw_data.Transformation(); }
         inline Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
         inline FloatVector2 const &ViewCenter () const { return m_view_center; }
         inline Float ViewRadius () const { return m_view_radius; }
@@ -172,7 +172,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     inline ObjectType GetObjectType () const { return m_object_type; }
-    inline Float GetZDepth () const { return m_z_depth; }
+    inline Float ZDepth () const { return m_z_depth; }
     inline bool IsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &BiasColor () const { return m_bias_color; }

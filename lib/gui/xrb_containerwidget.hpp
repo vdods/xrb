@@ -327,13 +327,13 @@ public:
 protected:
 
     /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::GetWidgetSkinHandlerChildCount
+      * @see WidgetSkinHandler::WidgetSkinHandlerChildCount
       */
-    virtual Uint32 GetWidgetSkinHandlerChildCount () const;
+    virtual Uint32 WidgetSkinHandlerChildCount () const;
     /** @brief This implementation was required by @c WidgetSkinHandler.
-      * @see WidgetSkinHandler::GetWidgetSkinHandlerChild
+      * @see WidgetSkinHandler::WidgetSkinHandlerChild
       */
-    virtual WidgetSkinHandler *GetWidgetSkinHandlerChild (Uint32 index);
+    virtual WidgetSkinHandler *WidgetSkinHandlerChild (Uint32 index);
 
     // TODO document
     // these are interfaces for container widgets

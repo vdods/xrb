@@ -46,7 +46,7 @@ public:
     bool IsQuitRequested () const { return m_is_quit_requested; }
     inline ScreenCoord SizeRatioBasis () const
     {
-        return Min(GetWidth(), Height());
+        return Min(Width(), Height());
     }
     inline ScreenCoordVector2 ScreenCoordsFromSDLCoords (
         Sint32 x,

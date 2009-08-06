@@ -48,7 +48,7 @@ public:
     }
     virtual ~Explosive () { }
 
-    inline Uint8 GetWeaponLevel () const { return m_weapon_level; }
+    inline Uint8 WeaponLevel () const { return m_weapon_level; }
     inline bool HasDetonated () const { return m_has_detonated; }
     virtual bool IsExplosive () const { return true; }
 
