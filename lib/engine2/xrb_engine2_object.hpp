@@ -189,7 +189,7 @@ public:
     // returns the world this object resides in
     World *GetWorld () const;
     // returns true if this object has an owner quadtree
-    inline bool GetHasOwnerQuadTree (QuadTreeType const quad_tree_type) const
+    inline bool HasOwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
         ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type] != NULL;

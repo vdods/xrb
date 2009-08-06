@@ -68,7 +68,7 @@ public:
     ScreenCoordRect GetStringRect (LineFormatVector const &line_format_vector) const;
 
     // draw the given string, starting at the given position.  the position's
-    // meaning is indicated by the return value of GetInitialPenOrientation().
+    // meaning is indicated by the return value of InitialPenOrientation().
     void DrawString (
         RenderContext const &render_context,
         ScreenCoordVector2 const &initial_pen_position,
@@ -140,7 +140,7 @@ protected:
     // this is called once by DrawString after any calls to DrawGlyph are made
     virtual void DrawGlyphShutdown (RenderContext const &render_context) const = 0;
     // draw the given glyph, starting at the given position.  the position's
-    // meaning is indicated by the return value of GetInitialPenOrientation().
+    // meaning is indicated by the return value of InitialPenOrientation().
     virtual void DrawGlyph (
         RenderContext const &render_context,
         char const *glyph,

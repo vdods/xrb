@@ -223,7 +223,7 @@ std::string Util::GetStringLiteral (std::string const &text)
     return retval;
 }
 
-char const *Util::GetIOErrorString (IOError error)
+char const *Util::IOErrorString (IOError error)
 {
     static char const *error_string[IOE_COUNT] =
     {

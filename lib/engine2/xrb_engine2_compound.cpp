@@ -81,7 +81,7 @@ void Engine2::Compound::Draw (
     color_mask[Dim::A] *= alpha_mask;
 
     // the opaque white texture is just a dummy.  the real texture will be bound later
-    Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().GetHandle(), color_mask, bias_color);
+    Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().Handle(), color_mask, bias_color);
 
     // switch back to texture unit 0 for Polygon's texture binding
     glActiveTextureARB(GL_TEXTURE0_ARB);

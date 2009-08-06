@@ -38,7 +38,7 @@ public:
     virtual ~CompressionSerializer ();
 
     virtual bool IsAtEnd () const;
-    virtual bool GetHasFewerThan8BitsLeft () const;
+    virtual bool HasFewerThan8BitsLeft () const;
 
     /** @brief Attached serializer accessor.
       * @return The currently attached serializer, or null if none

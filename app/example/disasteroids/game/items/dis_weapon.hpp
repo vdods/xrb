@@ -331,7 +331,7 @@ public:
     }
 
     inline bool IsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
-    inline Float GetImpactDamageOverride () const { return m_impact_damage_override; }
+    inline Float ImpactDamageOverride () const { return m_impact_damage_override; }
 
     inline void SetImpactDamageOverride (Float impact_damage_override)
     {

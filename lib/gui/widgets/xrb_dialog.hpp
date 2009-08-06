@@ -83,16 +83,16 @@ public:
     /** @brief Returns true iff the specified button exists in this dialog.
       * @param button_id The button type to check for existence.
       */
-    bool GetHasButton (ButtonID const button_id) const;
+    bool HasButton (ButtonID const button_id) const;
     /** @brief Explicitly checks for an OK button.
       */
-    inline bool GetHasOKButton () const
+    inline bool HasOKButton () const
     {
         return (m_dialog_type & BUTTON_OK) != 0;
     }
     /** @brief Explicitly checks for a Cancel button.
       */
-    inline bool GetHasCancelButton () const
+    inline bool HasCancelButton () const
     {
         return (m_dialog_type & BUTTON_CANCEL) != 0;
     }
@@ -106,7 +106,7 @@ public:
       */
     inline SignalSender0 const *SenderDialogReturnedOK ()
     {
-        ASSERT1(GetHasOKButton());
+        ASSERT1(HasOKButton());
         return &m_sender_dialog_returned_ok;
     }
     /** @brief Accessor for the SignalSender which signals that the Cancel
@@ -114,7 +114,7 @@ public:
       */
     inline SignalSender0 const *SenderDialogReturnedCancel ()
     {
-        ASSERT1(GetHasCancelButton());
+        ASSERT1(HasCancelButton());
         return &m_sender_dialog_returned_cancel;
     }
 

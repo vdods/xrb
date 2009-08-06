@@ -30,9 +30,9 @@ bool CompressionSerializer::IsAtEnd () const
     return m_cache.IsAtEnd();
 }
 
-bool CompressionSerializer::GetHasFewerThan8BitsLeft () const
+bool CompressionSerializer::HasFewerThan8BitsLeft () const
 {
-    return m_cache.GetHasFewerThan8BitsLeft();
+    return m_cache.HasFewerThan8BitsLeft();
 }
 
 void CompressionSerializer::AttachSerializer (Serializer *serializer)

@@ -83,7 +83,7 @@ void Engine2::Sprite::Draw (
     Color color_mask(draw_data.GetRenderContext().GetMaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    Render::SetupTextureUnits(m_texture->GetHandle(), color_mask, bias_color);
+    Render::SetupTextureUnits(m_texture->Handle(), color_mask, bias_color);
 
     static FloatVector2 const s_tex_coord0(0.0f, 0.0f);
     static FloatVector2 const s_tex_coord1(0.0f, 1.0f);

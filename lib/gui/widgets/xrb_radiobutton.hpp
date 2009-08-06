@@ -43,7 +43,7 @@ public:
     virtual ~RadioButton ();
 
     inline bool IsChecked () const { return m_is_checked; }
-    inline T GetID () const { return m_id; }
+    inline T ID () const { return m_id; }
 
     //////////////////////////////////////////////////////////////////////////
     // SignalSender accessors
@@ -123,7 +123,7 @@ public:
         return m_checked_button;
     }
     // returns the ID of the currently checked button
-    inline T GetID () const
+    inline T ID () const
     {
         return m_id;
     }

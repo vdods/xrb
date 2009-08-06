@@ -88,7 +88,7 @@ void MapEditor2::World::DecrementMainObjectLayer ()
 void MapEditor2::World::RemoveObject (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL);
-    ASSERT1(object->GetHasOwnerQuadTree(Engine2::QTT_VISIBILITY));
+    ASSERT1(object->HasOwnerQuadTree(Engine2::QTT_VISIBILITY));
 
     Entity *entity = dynamic_cast<Entity *>(object);
     if (entity != NULL)
@@ -173,7 +173,7 @@ void MapEditor2::World::ReadObjectLayers (Serializer &serializer)
         AddObjectLayer(map_editor_object_layer);
         ReadEntitiesBelongingToLayer(serializer, map_editor_object_layer);
     }
-    ASSERT1(serializer.GetHasFewerThan8BitsLeft());
+    ASSERT1(serializer.HasFewerThan8BitsLeft());
 }
 
 void MapEditor2::World::ReadEntitiesBelongingToLayer (

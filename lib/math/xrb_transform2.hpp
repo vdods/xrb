@@ -127,7 +127,7 @@ public:
     {
         RecalculateTransformIfNecessary();
         ASSERT1(!m_cached_transform_is_dirty);
-        return m_cached_transform.GetInverse();
+        return m_cached_transform.Inverse();
     }
 
     inline T Determinant () const

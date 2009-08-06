@@ -68,7 +68,7 @@ public:
       * @return True iff the cache has fewer than 8 bits left.
       * @note Will not change the error value.
       */
-    bool GetHasFewerThan8BitsLeft () const;
+    bool HasFewerThan8BitsLeft () const;
     /** @brief Get the error state of the most recently called procedure.
       * @return The most recent error state value.
       * @note Will not change the error value.

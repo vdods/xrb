@@ -17,7 +17,7 @@
 #include "xrb_datafilevalue.hpp"
 
 #undef FL
-#define FL DataFileLocation(m_scanner->GetInputFilename(), m_scanner->GetLineNumber())
+#define FL DataFileLocation(m_scanner->InputFilename(), m_scanner->GetLineNumber())
 
 namespace Xrb
 {

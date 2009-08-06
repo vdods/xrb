@@ -72,7 +72,7 @@ bool BitCache::IsAtEnd () const
     }
 }
 
-bool BitCache::GetHasFewerThan8BitsLeft () const
+bool BitCache::HasFewerThan8BitsLeft () const
 {
     switch (GetIODirection())
     {

@@ -166,7 +166,7 @@ public:
     {
         return m[A] * m[D] - m[B] * m[C];
     }
-    inline Matrix2<T> GetInverse () const
+    inline Matrix2<T> Inverse () const
     {
         Matrix2<T> retval;
         T determinant = m[A] * m[D] - m[B] * m[C];

@@ -306,7 +306,7 @@ Example:
 
 @code
     FunctionWithVeryLongDeclarationLine(
-        GetIterationCount(data_array_length + 20),
+        IterationCount(data_array_length + 20),
         10000.0f,
         data_array_length,
         data_array);

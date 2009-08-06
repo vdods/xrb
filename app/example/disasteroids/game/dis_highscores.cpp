@@ -212,7 +212,7 @@ void HighScores::Read (std::string const &filename)
                 Uint32 hash = high_score->GetPathElementUint32("|hash");
                 // this check is to prevent people from editing the high scores
                 // file to add fake high scores
-                if (hash == score.GetHash())
+                if (hash == score.Hash())
                     AddScore(score);
             }
             catch (...) { /* ignore malformed high scores */ }
@@ -237,7 +237,7 @@ void HighScores::Write (std::string const &filename)
             root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
             root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
             root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->Date()));
-            root->SetPathElementUint32("|high_scores|$|hash", it->GetHash());
+            root->SetPathElementUint32("|high_scores|$|hash", it->Hash());
         } catch (...) {
             ASSERT1(false && "this should never happen");
         }

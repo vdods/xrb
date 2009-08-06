@@ -122,7 +122,7 @@ private:
 
         inline Entity *GetEntity () { return m_entity; }
         inline Float GetObjectLayerSideLength () { return m_object_layer_side_length; }
-        inline Float GetHalfObjectLayerSideLength () { return m_half_object_layer_side_length; }
+        inline Float HalfObjectLayerSideLength () { return m_half_object_layer_side_length; }
                 
     private:
     

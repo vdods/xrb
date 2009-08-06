@@ -205,7 +205,7 @@ bool EventQueue::OrderEventBindingsByEventTime::operator () (
     if (left_operand.GetEvent()->GetTime() < right_operand.GetEvent()->GetTime())
         return true;
     else if (left_operand.GetEvent()->GetTime() == right_operand.GetEvent()->GetTime())
-        return left_operand.GetEvent()->GetID() < right_operand.GetEvent()->GetID();
+        return left_operand.GetEvent()->ID() < right_operand.GetEvent()->ID();
     else
         return false;
 }

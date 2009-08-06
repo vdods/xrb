@@ -363,7 +363,7 @@ void Engine2::World::ReadObjectLayers (
         AddObjectLayer(object_layer);
         ReadDynamicObjectsBelongingToLayer(serializer, object_layer, CreateEntity);
     }
-    ASSERT1(serializer.GetHasFewerThan8BitsLeft());
+    ASSERT1(serializer.HasFewerThan8BitsLeft());
 }
 
 void Engine2::World::ReadDynamicObjectsBelongingToLayer (

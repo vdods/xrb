@@ -134,12 +134,12 @@ bool OptionsPanel::Fullscreen () const
 
 DifficultyLevel OptionsPanel::GetDifficultyLevel () const
 {
-    ASSERT1(m_difficulty_level.GetID() >= DL_LOWEST);
-    ASSERT1(m_difficulty_level.GetID() <= DL_HIGHEST);
-    return m_difficulty_level.GetID();
+    ASSERT1(m_difficulty_level.ID() >= DL_LOWEST);
+    ASSERT1(m_difficulty_level.ID() <= DL_HIGHEST);
+    return m_difficulty_level.ID();
 }
 
-Key::Code OptionsPanel::GetInputActionKeyCode (KeyInputAction const input_action) const
+Key::Code OptionsPanel::InputActionKeyCode (KeyInputAction const input_action) const
 {
     ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
     ASSERT1(m_input_action_button[input_action] != NULL);
@@ -190,7 +190,7 @@ void OptionsPanel::ReadValuesFromConfig (Config const &config)
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         SetInputActionKeyCode(
             static_cast<KeyInputAction>(i),
-            config.GetInputAction(static_cast<KeyInputAction>(i)));
+            config.InputAction(static_cast<KeyInputAction>(i)));
 }
 
 void OptionsPanel::WriteValuesToConfig (Config *const config)
@@ -205,7 +205,7 @@ void OptionsPanel::WriteValuesToConfig (Config *const config)
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         config->SetInputAction(
             static_cast<KeyInputAction>(i),
-            GetInputActionKeyCode(static_cast<KeyInputAction>(i)));
+            InputActionKeyCode(static_cast<KeyInputAction>(i)));
 }
 
 } // end of namespace Dis

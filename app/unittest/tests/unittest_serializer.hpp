@@ -51,7 +51,7 @@ private:
         implementation = static_cast<Implementation>(static_cast<int>(implementation) + 1);
     }
 
-    static char const *GetImplementationString (Implementation implementation);
+    static char const *ImplementationString (Implementation implementation);
 
     Implementation m_atom_end_of_file_current_implementation;
 

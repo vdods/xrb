@@ -74,7 +74,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
     }
 
     // if there are child nodes, call this method on each until one returns true
-    if (GetHasChildren())
+    if (HasChildren())
         return
             Child<CollisionQuadTree>(0)->DoesAreaOverlapAnyEntity(
                 area_center,
@@ -156,7 +156,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
     }
 
     // if there are child nodes, call this method on each until one returns true
-    if (GetHasChildren())
+    if (HasChildren())
         return
             Child<CollisionQuadTree>(0)->DoesAreaOverlapAnyEntityWrapped(
                 area_center,
@@ -260,7 +260,7 @@ void CollisionQuadTree::LineTrace (
     }
 
     // call this function on the child nodes, if they exist
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->LineTrace(
                 trace_start,
@@ -368,7 +368,7 @@ void CollisionQuadTree::LineTraceWrapped (
     }
 
     // call this function on the child nodes, if they exist
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->LineTraceWrapped(
                 trace_start,
@@ -398,7 +398,7 @@ void CollisionQuadTree::AreaTrace (
         return;
 
     // call this function on the child nodes, if they exist
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->AreaTrace(
                 trace_area_center,
@@ -459,7 +459,7 @@ void CollisionQuadTree::AreaTraceWrapped (
         return;
 
     // call this function on the child nodes, if they exist
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->AreaTraceWrapped(
                 trace_area_center,
@@ -531,7 +531,7 @@ void CollisionQuadTree::CollideEntity (
         return;
 
     // if there are child nodes, call CollideEntity on each
-    if (GetHasChildren())
+    if (HasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->CollideEntity(
@@ -763,11 +763,11 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
             functor.GetEntity()->GetTranslation(),
             functor.GetEntity()->GetRadius(GetQuadTreeType()),
             functor.GetObjectLayerSideLength(),
-            functor.GetHalfObjectLayerSideLength()))
+            functor.HalfObjectLayerSideLength()))
         return;
 
     // if there are child nodes, call CollideEntityWrapped on each
-    if (GetHasChildren())
+    if (HasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->CollideEntityWrapped(functor);

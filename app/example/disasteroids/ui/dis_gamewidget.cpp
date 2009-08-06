@@ -195,8 +195,8 @@ GameWidget::GameWidget (
                             GLTexture::Create,
                             "resources/solitary_small.png"),
                     m_stats_and_inventory_layout);
-            lives_remaining_icon_label->FixWidth(m_lives_remaining_label->GetHeight());
-            lives_remaining_icon_label->FixHeight(m_lives_remaining_label->GetHeight());
+            lives_remaining_icon_label->FixWidth(m_lives_remaining_label->Height());
+            lives_remaining_icon_label->FixHeight(m_lives_remaining_label->Height());
         }
 */
 
@@ -217,8 +217,8 @@ GameWidget::GameWidget (
                             GLTexture::Create,
                             Item::GetMineralSpriteFilename(mineral_index)),
                     m_stats_and_inventory_layout);
-            mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->GetHeight());
-            mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->GetHeight());
+            mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());
+            mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->Height());
         }
         // a spacer to make things look even
         new SpacerWidget(m_stats_and_inventory_layout);
@@ -263,7 +263,7 @@ GameWidget::GameWidget (
                 ProgressBar::GO_RIGHT,
                 armor_and_shield_stack,
                 "armor status");
-        m_armor_status->FixHeight(m_score_label->GetHeight()/2);
+        m_armor_status->FixHeight(m_score_label->Height()/2);
         m_armor_status->SetColor(Color(0.5f, 1.0f, 0.5f, 0.5f));
 
         m_shield_status =
@@ -271,7 +271,7 @@ GameWidget::GameWidget (
                 ProgressBar::GO_RIGHT,
                 armor_and_shield_stack,
                 "shield status");
-        m_shield_status->FixHeight(m_score_label->GetHeight()/2);
+        m_shield_status->FixHeight(m_score_label->Height()/2);
         m_shield_status->SetColor(Color(0.5f, 0.5f, 1.0f, 0.5f));
 
         m_power_status =
@@ -279,7 +279,7 @@ GameWidget::GameWidget (
                 ProgressBar::GO_RIGHT,
                 m_ship_status_layout,
                 "power status");
-        m_power_status->FixHeight(m_score_label->GetHeight()/2);
+        m_power_status->FixHeight(m_score_label->Height()/2);
         m_power_status->SetColor(Color(1.0f, 1.0f, 0.5f, 0.5f));
 
         m_weapon_status =
@@ -287,7 +287,7 @@ GameWidget::GameWidget (
                 ProgressBar::GO_RIGHT,
                 m_ship_status_layout,
                 "weapon status");
-        m_weapon_status->FixHeight(m_score_label->GetHeight()/2);
+        m_weapon_status->FixHeight(m_score_label->Height()/2);
         m_weapon_status->SetColor(Color(1.0f, 0.5f, 0.5f, 0.5f));
     }
 

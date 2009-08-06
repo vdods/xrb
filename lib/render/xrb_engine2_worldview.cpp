@@ -83,7 +83,7 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
         GetTransformation());
     return
         CalculateViewRadius(
-            world_to_screen.GetInverse(),
+            world_to_screen.Inverse(),
             GetParentWorldViewWidget()->GetScreenRect(),
             Center())
         *
@@ -115,7 +115,7 @@ FloatMatrix2 Engine2::WorldView::GetParallaxedTransformation (
 Float Engine2::WorldView::GetMinorAxisRadius () const
 {
     FloatVector2 minor_axis;
-    if (m_parent_world_view_widget->GetWidth() < m_parent_world_view_widget->GetHeight())
+    if (m_parent_world_view_widget->GetWidth() < m_parent_world_view_widget->Height())
         minor_axis =
             0.5f * FloatVector2(
                 static_cast<Float>(m_parent_world_view_widget->GetWidth()),
@@ -124,7 +124,7 @@ Float Engine2::WorldView::GetMinorAxisRadius () const
         minor_axis =
             0.5f * FloatVector2(
                 0.0f,
-                static_cast<Float>(m_parent_world_view_widget->GetHeight()));
+                static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * minor_axis -
          GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
@@ -133,7 +133,7 @@ Float Engine2::WorldView::GetMinorAxisRadius () const
 Float Engine2::WorldView::GetMajorAxisRadius () const
 {
     FloatVector2 major_axis;
-    if (m_parent_world_view_widget->GetWidth() > m_parent_world_view_widget->GetHeight())
+    if (m_parent_world_view_widget->GetWidth() > m_parent_world_view_widget->Height())
         major_axis =
             0.5f * FloatVector2(
                 static_cast<Float>(m_parent_world_view_widget->GetWidth()),
@@ -142,7 +142,7 @@ Float Engine2::WorldView::GetMajorAxisRadius () const
         major_axis =
             0.5f * FloatVector2(
                 0.0f,
-                static_cast<Float>(m_parent_world_view_widget->GetHeight()));
+                static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * major_axis -
          GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
@@ -152,7 +152,7 @@ Float Engine2::WorldView::CornerRadius () const
 {
     FloatVector2 corner_vector(
         0.5f * static_cast<Float>(m_parent_world_view_widget->GetWidth()),
-        0.5f * static_cast<Float>(m_parent_world_view_widget->GetHeight()));
+        0.5f * static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * corner_vector -
          GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
@@ -448,7 +448,7 @@ FloatMatrix2 const &Engine2::WorldView::GetParallaxedWorldViewToWorld () const
 {
     if (m_is_parallaxed_view_to_world_dirty)
     {
-        m_parallaxed_view_to_world = GetParallaxedWorldToWorldView().GetInverse();
+        m_parallaxed_view_to_world = GetParallaxedWorldToWorldView().Inverse();
         m_is_parallaxed_view_to_world_dirty = false;
     }
 
@@ -475,7 +475,7 @@ FloatMatrix2 const &Engine2::WorldView::GetParallaxedScreenToWorld () const
     if (m_is_parallaxed_screen_to_world_dirty)
     {
         m_parallaxed_screen_to_world =
-            GetParallaxedWorldToScreen().GetInverse();
+            GetParallaxedWorldToScreen().Inverse();
         m_is_parallaxed_screen_to_world_dirty = false;
     }
 

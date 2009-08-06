@@ -186,7 +186,7 @@ Engine2::Entity *Entity::Create (Serializer &serializer)
 {
     return NULL; // TEMP
     /*
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.IODirection() == IOD_READ);
 
     Engine2::Entity *retval;
     EntityType entity_type = ReadEntityType(serializer);

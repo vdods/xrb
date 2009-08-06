@@ -43,7 +43,7 @@ void Explosive::Collide (
 
     // if it's a solid collision object, potentially detonate
     if (collider->GetCollisionType() == CT_SOLID_COLLISION && !IsDead())
-        if (!GetHasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
+        if (!HasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
 
     // call the superclass collide
@@ -87,7 +87,7 @@ void Explosive::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated());
+    ASSERT1(!HasDetonated());
     m_has_detonated = true;
     ScheduleForDeletion(0.0f);
 }
@@ -195,7 +195,7 @@ void Grenade::Die (
     Float const time,
     Float const frame_dt)
 {
-    if (GetHasDetonated())
+    if (HasDetonated())
         return;
 
     // if there is an owner grenade launcher, signal to it that this
@@ -231,7 +231,7 @@ void Grenade::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated());
+    ASSERT1(!HasDetonated());
 
     // can't detonate if we're already dead
     if (IsDead())
@@ -276,7 +276,7 @@ void Missile::Think (
     Explosive::Think(time, frame_dt);
 
     // if we're dead or have detonated, don't bother thinking
-    if (IsDead() || GetHasDetonated())
+    if (IsDead() || HasDetonated())
         return;
 
     AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetMass() * Math::UnitVector(Angle()));
@@ -336,7 +336,7 @@ bool Missile::CheckIfItShouldDetonate (
 {
     ASSERT1(collider != NULL);
     ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
-    ASSERT1(!GetHasDetonated());
+    ASSERT1(!HasDetonated());
     ASSERT1(!IsDead());
 
     // don't detonate on ourselves
@@ -364,7 +364,7 @@ void Missile::Detonate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated());
+    ASSERT1(!HasDetonated());
 
     // can't detonate if we're dead
     if (IsDead())
@@ -562,7 +562,7 @@ void EMPBomb::Die (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(!GetHasDetonated());
+    ASSERT1(!HasDetonated());
 
     // if there is an owner emp_bomb launcher, signal to it that this
     // emp_bomb has been destroyed
@@ -599,7 +599,7 @@ void EMPBomb::Detonate (
 {
     ASSERT1(!IsDead());
 
-    if (!GetHasDetonated())
+    if (!HasDetonated())
     {
         // TODO: EMP explosion
         // spawn a damage explosion

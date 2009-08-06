@@ -112,7 +112,7 @@ public:
         return *this;
     }
 
-    SimpleTransform2<T> GetInverse () const
+    SimpleTransform2<T> Inverse () const
     {
         SimpleTransform2<T> retval;
         T determinant = m_scale_factors[Dim::X] * m_scale_factors[Dim::Y];

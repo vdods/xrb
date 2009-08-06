@@ -30,7 +30,7 @@ void Render::DrawLine (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -60,7 +60,7 @@ void Render::DrawArrow (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -94,7 +94,7 @@ void Render::DrawPolygon (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -163,7 +163,7 @@ void Render::DrawCircle (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -248,7 +248,7 @@ void Render::DrawCircularArc (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -283,7 +283,7 @@ void Render::DrawScreenRect (
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().GetHandle(), 
+        GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.GetMaskedColor(color), 
         render_context.BiasColor());
 
@@ -308,7 +308,7 @@ void Render::DrawScreenRectTexture (
     glLoadIdentity();
 
     SetupTextureUnits(
-        gl_texture->GetHandle(), 
+        gl_texture->Handle(), 
         render_context.ColorMask(), 
         render_context.BiasColor());
 

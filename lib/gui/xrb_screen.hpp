@@ -46,7 +46,7 @@ public:
     bool IsQuitRequested () const { return m_is_quit_requested; }
     inline ScreenCoord GetSizeRatioBasis () const
     {
-        return Min(GetWidth(), GetHeight());
+        return Min(GetWidth(), Height());
     }
     inline ScreenCoordVector2 GetScreenCoordsFromSDLCoords (
         Sint32 x,
@@ -54,7 +54,7 @@ public:
     {
         return ScreenCoordVector2(
             static_cast<ScreenCoord>(x),
-            GetScreenRect().GetHeight() - static_cast<ScreenCoord>(y));
+            GetScreenRect().Height() - static_cast<ScreenCoord>(y));
     }
     inline Float Framerate () const
     {

@@ -314,43 +314,43 @@ void WorldView::HandleFrame ()
 
 void WorldView::HandleInput (Key::Code const input)
 {
-    if (input == g_config.GetInputAction(INPUT__IN_GAME_INVENTORY_PANEL))
+    if (input == g_config.InputAction(INPUT__IN_GAME_INVENTORY_PANEL))
     {
         // only allowed to use the inventory panel during normal gameplay
         if (m_state_machine.CurrentState() == &WorldView::StateNormalGameplay)
             m_sender_activate_inventory_panel.Signal();
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_PEA_SHOOTER))
+    else if (input == g_config.InputAction(INPUT__EQUIP_PEA_SHOOTER))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_PEA_SHOOTER);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_LASER))
+    else if (input == g_config.InputAction(INPUT__EQUIP_LASER))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_LASER);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_FLAME_THROWER))
+    else if (input == g_config.InputAction(INPUT__EQUIP_FLAME_THROWER))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_FLAME_THROWER);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_GAUSS_GUN))
+    else if (input == g_config.InputAction(INPUT__EQUIP_GAUSS_GUN))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_GAUSS_GUN);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_GRENADE_LAUNCHER))
+    else if (input == g_config.InputAction(INPUT__EQUIP_GRENADE_LAUNCHER))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_GRENADE_LAUNCHER);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_MISSILE_LAUNCHER))
+    else if (input == g_config.InputAction(INPUT__EQUIP_MISSILE_LAUNCHER))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_MISSILE_LAUNCHER);
     }
-    else if (input == g_config.GetInputAction(INPUT__EQUIP_EMP_CORE))
+    else if (input == g_config.InputAction(INPUT__EQUIP_EMP_CORE))
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_EMP_CORE);
@@ -459,21 +459,21 @@ void WorldView::ProcessPlayerInput ()
     if (GetParentWorldViewWidget()->IsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
+            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
+            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().IsKeyPressed(g_config.GetInputAction(INPUT__USE_TRACTOR));
+            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

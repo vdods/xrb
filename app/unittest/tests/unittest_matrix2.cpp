@@ -381,9 +381,9 @@ void Matrix2UnitTest::AtomDeterminant ()
 
 void Matrix2UnitTest::AtomInverse ()
 {
-    PrintSubsectionHeader("Checking GetInverse()");
+    PrintSubsectionHeader("Checking Inverse()");
     {
-        FloatMatrix2 inverted_identity(FloatMatrix2::ms_identity.GetInverse());
+        FloatMatrix2 inverted_identity(FloatMatrix2::ms_identity.Inverse());
         TestMatrix2Equality(
             inverted_identity,
             "inverted identity",
@@ -392,8 +392,8 @@ void Matrix2UnitTest::AtomInverse ()
             "%f",
             0.0f);
 
-        PrintSubsectionHeader("Checking additional GetInverse()");
-        FloatMatrix2 inverted_matrix0(m_matrix0.GetInverse());
+        PrintSubsectionHeader("Checking additional Inverse()");
+        FloatMatrix2 inverted_matrix0(m_matrix0.Inverse());
         TestMatrix2Equality(
             inverted_matrix0,
             "inverted m0",
@@ -402,8 +402,8 @@ void Matrix2UnitTest::AtomInverse ()
             "%f",
             0.0f);
 
-        PrintSubsectionHeader("Checking additional GetInverse()");
-        FloatMatrix2 inverted_matrix1(m_matrix1.GetInverse());
+        PrintSubsectionHeader("Checking additional Inverse()");
+        FloatMatrix2 inverted_matrix1(m_matrix1.Inverse());
         TestMatrix2Equality(
             inverted_matrix1,
             "inverted m1",

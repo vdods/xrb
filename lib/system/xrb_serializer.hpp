@@ -89,7 +89,7 @@ public:
       * @return True iff the stream has fewer than 8 bits left.
       * @note Will not change the error value.
       */
-    virtual bool GetHasFewerThan8BitsLeft () const = 0;
+    virtual bool HasFewerThan8BitsLeft () const = 0;
     /** @brief Get the error state of the most recently called procedure.
       * @return The most recent error state value.
       * @note Will not change the error value.
@@ -104,7 +104,7 @@ public:
       */
     inline char const *ErrorString () const
     {
-        return Util::GetIOErrorString(GetError());
+        return Util::IOErrorString(GetError());
     }
 
     // ///////////////////////////////////////////////////////////////////////

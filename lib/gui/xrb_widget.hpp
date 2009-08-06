@@ -259,7 +259,7 @@ public:
     inline ScreenCoord GetWidth () const { return m_screen_rect.GetWidth(); }
     /** @brief Returns the height of this widget.
       */
-    inline ScreenCoord GetHeight () const { return m_screen_rect.GetHeight(); }
+    inline ScreenCoord Height () const { return m_screen_rect.Height(); }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.

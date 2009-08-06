@@ -61,7 +61,7 @@ public:
         retval.Derive(order);
         return retval;
     }
-    inline Polynomial GetIntegral (Uint32 order = 1) const
+    inline Polynomial Integral (Uint32 order = 1) const
     {
         Polynomial retval(*this);
         retval.Integrate(order);

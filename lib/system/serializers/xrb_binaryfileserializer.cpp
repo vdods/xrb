@@ -31,9 +31,9 @@ bool BinaryFileSerializer::IsAtEnd () const
     return m_cache.IsAtEnd();
 }
 
-bool BinaryFileSerializer::GetHasFewerThan8BitsLeft () const
+bool BinaryFileSerializer::HasFewerThan8BitsLeft () const
 {
-    return m_cache.GetHasFewerThan8BitsLeft();
+    return m_cache.HasFewerThan8BitsLeft();
 }
 
 void BinaryFileSerializer::Open (

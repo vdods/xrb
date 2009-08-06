@@ -42,7 +42,7 @@ void CircularQueue<T, queue_size>::Enqueue (T const &entry)
     // add the entry
     m_queue[m_tail] = entry;
     // increment the tail index
-    m_tail = GetIncrementedIndex(m_tail);
+    m_tail = IncrementedIndex(m_tail);
     // increment the number of entries
     ++m_entry_count;
 }
@@ -55,7 +55,7 @@ T CircularQueue<T, queue_size>::Dequeue ()
     // save off the current head index so we know what to return
     Uint32 retval_index = m_head;
     // increment the head index
-    m_head = GetIncrementedIndex(m_head);
+    m_head = IncrementedIndex(m_head);
     // decrement the number of entries
     --m_entry_count;
 

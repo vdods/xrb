@@ -45,7 +45,7 @@ public:
     inline Uint32 GetPoints () const { return m_points; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline time_t Date () const { return m_date; }
-    inline Uint32 GetHash () const { return m_hash; }
+    inline Uint32 Hash () const { return m_hash; }
 
 private:
 

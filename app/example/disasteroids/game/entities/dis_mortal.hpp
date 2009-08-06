@@ -74,7 +74,7 @@ public:
     inline Float DamageDissipationRate () const { return m_damage_dissipation_rate; }
     inline DamageType GetWeakness () const { return m_weakness; }
     inline DamageType GetStrength () const { return m_strength; }
-    inline DamageType GetImmunity () const { return m_immunity; }
+    inline DamageType Immunity () const { return m_immunity; }
     inline bool IsWeakAgainst (DamageType const damage_type) const
     {
         // make sure only one bit in the damage type is set

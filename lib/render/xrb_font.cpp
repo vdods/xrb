@@ -190,22 +190,22 @@ void Font::DrawLineFormattedText (
         case TOP: break; // pen_position and total_spacing are correct already
 
         case CENTER:
-            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height) / 2;
+            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.Height() - text_height) / 2;
             // total spacing is already set up correctly
             break;
 
         case BOTTOM:
-            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height);
+            pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.Height() - text_height);
             // total spacing is already set up correctly
             break;
 
         case SPACED:
             if (line_format_vector.size() == 1)
-                pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.GetHeight() - text_height) / 2;
+                pen_position[Dim::Y] = initial_pen_position[Dim::Y] - (draw_rect.Height() - text_height) / 2;
                 // total spacing is set up correctly
             else
                 // current position is set up correctly
-                total_spacing[Dim::Y] = draw_rect.GetHeight() - text_height;
+                total_spacing[Dim::Y] = draw_rect.Height() - text_height;
             // range checking
             if (total_spacing[Dim::Y] < 0)
                 total_spacing[Dim::Y] = 0;
@@ -581,7 +581,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glLoadIdentity();
 
     Render::SetupTextureUnits(
-        m_gl_texture->GetHandle(), 
+        m_gl_texture->Handle(), 
         render_context.ColorMask(), 
         render_context.BiasColor());
 
@@ -594,7 +594,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glLoadIdentity();
     glScalef(
         1.0f / m_gl_texture->GetWidth(),
-        1.0f / m_gl_texture->GetHeight(),
+        1.0f / m_gl_texture->Height(),
         1.0f);
 
     // start rendering one quad for each glyph

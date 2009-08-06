@@ -153,7 +153,7 @@ public:
         SignalSender<ReceiverAnalog, TransformationSet>::DetachAll();
     }
 
-    inline Attachment<ReceiverAnalog, TransformationSet> const &GetIteratorAttachment () const
+    inline Attachment<ReceiverAnalog, TransformationSet> const &IteratorAttachment () const
     {
         ASSERT1(m_iterator != m_iterator_end);
         return *m_iterator;
@@ -344,7 +344,7 @@ public:
         while (this->IsIteratorAttachmentValid())
         {
             Attachment<SignalReceiver1<T>, TransformationSet1<T> > const &attachment =
-                this->GetIteratorAttachment();
+                this->IteratorAttachment();
 
             ASSERT1(attachment.m_receiver != NULL);
             // only proceed with the callback if this sender's owner isn't
@@ -425,7 +425,7 @@ public:
         while (this->IsIteratorAttachmentValid())
         {
             Attachment<SignalReceiver2<T, U>, TransformationSet2<T, U> > const &attachment =
-                this->GetIteratorAttachment();
+                this->IteratorAttachment();
 
             ASSERT1(attachment.m_receiver != NULL);
             // only proceed with the callback if this sender's owner isn't

@@ -241,7 +241,7 @@ void MapEditor2::Polygon::Draw () const
     if (!m_texture.IsValid())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
+    glBindTexture(GL_TEXTURE_2D, m_texture->Handle());
 
     glBegin(GL_POLYGON);
 

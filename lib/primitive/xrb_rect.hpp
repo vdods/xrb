@@ -195,7 +195,7 @@ public:
     {
         return GetRight() - GetLeft();
     }
-    inline T GetHeight () const
+    inline T Height () const
     {
         return GetTop() - Bottom();
     }
@@ -213,7 +213,7 @@ public:
         return m_bottom_left[Dim::X] <= m_top_right[Dim::X] &&
                m_bottom_left[Dim::Y] <= m_top_right[Dim::Y];
     }
-    inline bool GetHasPositiveArea () const
+    inline bool HasPositiveArea () const
     {
         return m_bottom_left[Dim::X] < m_top_right[Dim::X] &&
                m_bottom_left[Dim::Y] < m_top_right[Dim::Y];

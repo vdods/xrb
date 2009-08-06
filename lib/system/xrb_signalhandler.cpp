@@ -43,7 +43,7 @@ void SignalSender0::Signal ()
     while (IsIteratorAttachmentValid())
     {
         Attachment<SignalReceiver0, TransformationSet0 > const &attachment =
-            GetIteratorAttachment();
+            IteratorAttachment();
             
         ASSERT1(attachment.m_receiver != NULL);
         // only proceed with the callback if this sender's owner isn't

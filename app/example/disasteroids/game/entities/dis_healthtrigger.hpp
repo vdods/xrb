@@ -38,7 +38,7 @@ public:
         Float time,
         Float frame_dt);
 
-    inline Float GetHealthDeltaRate () const { return m_health_delta_rate; }
+    inline Float HealthDeltaRate () const { return m_health_delta_rate; }
 
     inline void SetHealthDeltaRate (Float health_delta_rate) { m_health_delta_rate = health_delta_rate; }
             

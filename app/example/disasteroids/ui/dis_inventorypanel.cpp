@@ -132,8 +132,8 @@ InventoryPanel::InventoryPanel (
                         GLTexture::Create,
                         Item::GetMineralSpriteFilename(mineral_index)),
                 price_layout);
-        m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->GetHeight());
-        m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->GetHeight());
+        m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->Height());
+        m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->Height());
         m_mineral_icon_label[mineral_index]->Disable();
     }
     // a spacer to make things look even
@@ -222,7 +222,7 @@ void InventoryPanel::UpdatePanelState ()
                 if (m_inventory_owner_ship->IsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
                     mineral_cost = 0;
                 else
-                    mineral_cost = Item::GetItemPrice(
+                    mineral_cost = Item::ItemPrice(
                         m_currently_shown_price_item_type,
                         m_currently_shown_price_upgrade_level,
                         mineral_index);
@@ -348,7 +348,7 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
         if (m_inventory_owner_ship->IsItemInInventory(m_currently_shown_price_item_type, m_currently_shown_price_upgrade_level))
             mineral_cost = 0;
         else
-            mineral_cost = Item::GetItemPrice(
+            mineral_cost = Item::ItemPrice(
                 m_currently_shown_price_item_type,
                 m_currently_shown_price_upgrade_level,
                 mineral_index);

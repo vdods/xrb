@@ -50,7 +50,7 @@ Dialog::Dialog (
     m_dialog_type = dialog_type;
     m_ok_button = 0;
     m_cancel_button = 0;
-    if (GetHasOKButton())
+    if (HasOKButton())
     {
         new SpacerWidget(m_button_layout);
         m_ok_button = new Button("OK", m_button_layout, "OK button");
@@ -61,7 +61,7 @@ Dialog::Dialog (
             m_ok_button->SenderReleased(),
             &m_internal_receiver_ok_button_activated);
     }
-    if (GetHasCancelButton())
+    if (HasCancelButton())
     {
         new SpacerWidget(m_button_layout);
         m_cancel_button = new Button("Cancel", m_button_layout, "Cancel button");
@@ -78,14 +78,14 @@ Dialog::Dialog (
     SetMainWidget(m_dialog_layout);
 }
 
-bool Dialog::GetHasButton (ButtonID const button_id) const
+bool Dialog::HasButton (ButtonID const button_id) const
 {
     switch (button_id) {
         case ID_OK:
-            return GetHasOKButton();
+            return HasOKButton();
 
         case ID_CANCEL:
-            return GetHasCancelButton();
+            return HasCancelButton();
 
         default:
             ASSERT1(false && "Invalid button ID");
@@ -100,7 +100,7 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
         switch (e->GetKeyCode())
         {
             case Key::RETURN:
-                if (GetHasOKButton() && e->IsEitherControlKeyPressed())
+                if (HasOKButton() && e->IsEitherControlKeyPressed())
                 {
                     OKButtonActivated();
                     return true;
@@ -109,7 +109,7 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
                     return false;
 
             case Key::ESCAPE:
-                if (GetHasCancelButton())
+                if (HasCancelButton())
                     CancelButtonActivated();
                 return true;
 

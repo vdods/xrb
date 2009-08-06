@@ -41,12 +41,12 @@ public:
 
     inline QuadTreeType GetQuadTreeType () const { return m_quad_tree_type; }
     inline QuadTree *GetParent () const { return m_parent; }
-    inline bool GetHasChildren () const { return m_child[0] != NULL; }
+    inline bool HasChildren () const { return m_child[0] != NULL; }
     // returns the root node (top level parent) of this quadtree node
     QuadTree const *GetRootNode () const;
     inline FloatVector2 const &Center () const { return m_center; }
     inline Float GetSideLength () const { return 2.0f * m_half_side_length; }
-    inline Float GetHalfSideLength () const { return m_half_side_length; }
+    inline Float HalfSideLength () const { return m_half_side_length; }
     inline Float GetRadius () const { return m_radius; }
     inline Uint32 GetSubordinateObjectCount () const { return m_subordinate_object_count; }
     inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }

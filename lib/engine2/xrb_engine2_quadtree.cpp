@@ -29,7 +29,7 @@ Engine2::QuadTree::~QuadTree ()
     }
     m_object_set.clear();
 
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Delete(m_child[i]);
 }
@@ -127,7 +127,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
     }
 
     // if there are child nodes, call this method on each until one returns true
-    if (GetHasChildren())
+    if (HasChildren())
         return
             m_child[0]->DoesAreaOverlapAnyObject(
                 area_center,
@@ -196,7 +196,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
     }
 
     // if there are child nodes, call this method on each until one returns true
-    if (GetHasChildren())
+    if (HasChildren())
         return
             m_child[0]->DoesAreaOverlapAnyObjectWrapped(
                 area_center,
@@ -230,7 +230,7 @@ void Engine2::QuadTree::Clear ()
     // clear the object list
     m_object_set.clear();
     // if there are children, clear the children
-    if (GetHasChildren())
+    if (HasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
@@ -256,7 +256,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     // check if the object should be added to this node:
     // add to the object list if the object's radius is within the nominal size
     // for this quadtree's radius or if there are no child quadtree nodes.
-    if (IsAllowableObjectRadius(object) || !GetHasChildren())
+    if (IsAllowableObjectRadius(object) || !HasChildren())
     {
         // add to this node
         object->SetOwnerQuadTree(m_quad_tree_type, this);
@@ -344,7 +344,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
         // otherwise if the object is too small for current quadnode
         else if (object_radius_over_quad_radius <= 0.5f)
         {
-            if (GetHasChildren())
+            if (HasChildren())
             {
                 FloatVector2 object_translation(object->GetTranslation());
                 if (object_translation[Dim::X] >= m_center[Dim::X])
@@ -467,7 +467,7 @@ void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
 {
     ASSERT1(quad_tree_type < QTT_COUNT);
     m_quad_tree_type = quad_tree_type;
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             m_child[i]->SetQuadTreeType(m_quad_tree_type);
 }
@@ -531,7 +531,7 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
     // check that the object should be added to this node:
     // assert that the object's radius is within the nominal size
     // for this quadtree's radius or that there are no child quadtree nodes.
-    ASSERT1(IsAllowableObjectRadius(object) || !GetHasChildren());
+    ASSERT1(IsAllowableObjectRadius(object) || !HasChildren());
     // add to this node
     object->SetOwnerQuadTree(m_quad_tree_type, this);
     m_object_set.insert(object);

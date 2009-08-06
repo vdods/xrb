@@ -80,7 +80,7 @@ Config::Config ()
     ResetToDefaults();
 }
 
-Key::Code Config::GetInputAction (KeyInputAction key) const
+Key::Code Config::InputAction (KeyInputAction key) const
 {
     ASSERT1(key >= 0 && key < KEY_INPUT_ACTION_COUNT);
 
@@ -177,7 +177,7 @@ void Config::Write (string const &config_filename) const
     for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
         try { root->SetPathElementString(ms_string_key[i].m_data_file_path, GetString(static_cast<KeyString>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
-        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().GetKeyName(GetInputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
+        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().GetKeyName(InputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);

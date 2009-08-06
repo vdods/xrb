@@ -80,7 +80,7 @@ void Engine2::Polygon::Draw () const
     ASSERT1(GL::GetMatrixMode() == GL_MODELVIEW);
     ASSERT1(GL::IsTexture2dOn());
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->GetHandle());
+    glBindTexture(GL_TEXTURE_2D, m_texture->Handle());
 
     glBegin(GL_POLYGON);
 

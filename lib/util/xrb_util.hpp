@@ -151,7 +151,7 @@ namespace Util
 
     /** @brief Returns textual representations of the IOError enums.
       */
-    char const *GetIOErrorString (IOError error);
+    char const *IOErrorString (IOError error);
 } // end of namespace Util
 
 } // end of namespace Xrb

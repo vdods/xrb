@@ -121,7 +121,7 @@ ScreenCoord Layout::ColumnWidth (Uint32 const index) const
     return m_column_width[index];
 }
 
-Uint32 Layout::GetHiddenColumnCount () const
+Uint32 Layout::HiddenColumnCount () const
 {
     UpdateColumnSizeProperties();
     return m_hidden_column_count;
@@ -168,7 +168,7 @@ ScreenCoord Layout::GetRowHeight (Uint32 const index) const
     return m_row_height[index];
 }
 
-Uint32 Layout::GetHiddenRowCount () const
+Uint32 Layout::HiddenRowCount () const
 {
     UpdateRowSizeProperties();
     return m_hidden_row_count;
@@ -706,7 +706,7 @@ void Layout::DelegateHeightsToRows ()
 
     // must split up the total height among the rows
     ASSERT1(m_hidden_row_count == GetRowCount() - unhidden_row_count);
-    ScreenCoord total_height_left = GetHeight() - GetTotalSpacing()[Dim::Y];
+    ScreenCoord total_height_left = Height() - GetTotalSpacing()[Dim::Y];
     ASSERT1(total_height_left >= 0);
 
     // sort the array unhidden_row_count times (to delegate the same number of heights)
@@ -963,20 +963,20 @@ void Layout::UpdateTotalSpacing () const
     Uint32 column_spaces;
     Uint32 row_spaces;
 
-    if (ColumnCount() == 0 || ColumnCount() == GetHiddenColumnCount())
+    if (ColumnCount() == 0 || ColumnCount() == HiddenColumnCount())
         column_spaces = 0;
     else
     {
-        ASSERT1(ColumnCount() > GetHiddenColumnCount());
-        column_spaces = ColumnCount() - 1 - GetHiddenColumnCount();
+        ASSERT1(ColumnCount() > HiddenColumnCount());
+        column_spaces = ColumnCount() - 1 - HiddenColumnCount();
     }
 
-    if (GetRowCount() == 0 || GetRowCount() == GetHiddenRowCount())
+    if (GetRowCount() == 0 || GetRowCount() == HiddenRowCount())
         row_spaces = 0;
     else
     {
-        ASSERT1(GetRowCount() > GetHiddenRowCount());
-        row_spaces = GetRowCount() - 1 - GetHiddenRowCount();
+        ASSERT1(GetRowCount() > HiddenRowCount());
+        row_spaces = GetRowCount() - 1 - HiddenRowCount();
     }
 
     m_total_spacing =

@@ -81,7 +81,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
     Widget::Draw(render_context);
 
     ScreenCoordRect contents_rect(ContentsRect());
-    ScreenCoordVector2 initial_pen_position(GetInitialPenPositionX(), contents_rect.GetTop());
+    ScreenCoordVector2 initial_pen_position(InitialPenPositionX(), contents_rect.GetTop());
 
     // draw the text
     {
@@ -271,7 +271,7 @@ void LineEdit::UpdateMinAndMaxSizesFromText ()
     TextWidget::UpdateMinAndMaxSizesFromText();
 }
 
-ScreenCoord LineEdit::GetInitialPenPositionX () const
+ScreenCoord LineEdit::InitialPenPositionX () const
 {
     ScreenCoordRect contents_rect(ContentsRect());
     ScreenCoord initial_pen_position_x;

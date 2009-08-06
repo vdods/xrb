@@ -76,7 +76,7 @@ public:
 
 private:
 
-    inline Uint32 GetIncrementedIndex (Uint32 const index)
+    inline Uint32 IncrementedIndex (Uint32 const index)
     {
         return (index + 1) % queue_size;
     }

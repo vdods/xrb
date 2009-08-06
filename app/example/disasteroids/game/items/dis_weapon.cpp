@@ -586,7 +586,7 @@ bool GaussGun::Activate (
     // decide how much damage to inflict total
     Float damage_left_to_inflict =
         IsImpactDamageOverridden() ?
-        GetImpactDamageOverride() :
+        ImpactDamageOverride() :
         ms_impact_damage[GetUpgradeLevel()];
 
     // damage the next thing if it exists

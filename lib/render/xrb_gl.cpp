@@ -165,7 +165,7 @@ void GL::Initialize ()
         // right now since that's all it will ever use.  this will
         // have no effect on the above texture unit operation, but is
         // required for the texture unit to activate.
-        glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().GetHandle());
+        glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().Handle());
     }
 
     glActiveTextureARB(GL_TEXTURE0_ARB);
@@ -232,7 +232,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
         clip_rect.GetLeft(),
         clip_rect.Bottom(),
         clip_rect.GetWidth(),
-        clip_rect.GetHeight());
+        clip_rect.Height());
 }
 
 } // end of namespace Xrb

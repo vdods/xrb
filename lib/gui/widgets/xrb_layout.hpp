@@ -75,7 +75,7 @@ public:
     Bool2 const &ColumnMaxSizeEnabled (Uint32 index) const;
     ScreenCoordVector2 const &ColumnMaxSize (Uint32 index) const;
     ScreenCoord ColumnWidth (Uint32 index) const;
-    Uint32 GetHiddenColumnCount () const;
+    Uint32 HiddenColumnCount () const;
 
     Uint32 GetRowCount () const;
     Bool2 const &GetRowMinSizeEnabled (Uint32 index) const;
@@ -83,7 +83,7 @@ public:
     Bool2 const &GetRowMaxSizeEnabled (Uint32 index) const;
     ScreenCoordVector2 const &GetRowMaxSize (Uint32 index) const;
     ScreenCoord GetRowHeight (Uint32 index) const;
-    Uint32 GetHiddenRowCount () const;
+    Uint32 HiddenRowCount () const;
 
     virtual Bool2 ContentsMinSizeEnabled () const;
     virtual ScreenCoordVector2 ContentsMinSize () const;

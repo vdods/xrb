@@ -80,7 +80,7 @@ void GLTexture::GenerateTexture (
         0,
         GL_RGBA,
         texture->GetWidth(),
-        texture->GetHeight(),
+        texture->Height(),
         1,
         GL_RGBA,
         GL_UNSIGNED_BYTE,
@@ -90,7 +90,7 @@ void GLTexture::GenerateTexture (
         GL_TEXTURE_2D,
         GL_RGBA,
         texture->GetWidth(),
-        texture->GetHeight(),
+        texture->Height(),
         GL_RGBA,
         GL_UNSIGNED_BYTE,
         texture->Data());

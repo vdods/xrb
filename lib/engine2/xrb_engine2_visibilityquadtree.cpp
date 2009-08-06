@@ -73,9 +73,9 @@ void Engine2::VisibilityQuadTree::WriteStructure (Serializer &serializer) const
     serializer.WriteFloatVector2(m_center);
     serializer.WriteFloat(m_half_side_length);
     serializer.WriteFloat(m_radius);
-    serializer.WriteBool(GetHasChildren());
+    serializer.WriteBool(HasChildren());
     // if there are children, recursively call this function on them
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->WriteStructure(serializer);
 }
@@ -125,7 +125,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     }
 
     // if there are children, recursively call this function on them
-    if (GetHasChildren())
+    if (HasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
@@ -316,7 +316,7 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
     Render::DrawLine(render_context, top, bottom, color);
     Render::DrawLine(render_context, left, right, color);
 
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
 }
@@ -351,7 +351,7 @@ void Engine2::VisibilityQuadTree::Draw (
     std::for_each(m_object_set.begin(), m_object_set.end(), draw_loop_functor);
 
     // if there are child nodes, call Draw on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
 }

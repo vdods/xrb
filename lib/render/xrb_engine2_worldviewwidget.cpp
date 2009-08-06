@@ -172,7 +172,7 @@ void Engine2::WorldViewWidget::ComputeTransform ()
     if (m_is_transform_scaling_based_upon_widget_radius)
         m_transform.Scale(0.5f * GetSize().StaticCast<Float>().GetLength());
     else
-        m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), GetHeight())));
+        m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), Height())));
     // translate so the origin of the view is at the center of the
     // WorldViewWidget widget
     m_transform.Translate(GetScreenRect().Center().StaticCast<Float>());

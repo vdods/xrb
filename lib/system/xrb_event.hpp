@@ -123,7 +123,7 @@ public:
     /** This is used by EventQueue.  You should not need to use it.
       * @brief Returns the ID of the event.
       */
-    inline Uint32 GetID () const { return m_id; }
+    inline Uint32 ID () const { return m_id; }
     /** Events that have been scheduled to be deleted should never be
       * processed.
       * @brief Returns true iff the EventQueue has scheduled this event to

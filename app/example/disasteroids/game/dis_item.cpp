@@ -64,7 +64,7 @@ std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_index)
     return s_mineral_sprite_filename[mineral_index];
 }
 
-Uint32 Item::GetItemPrice (
+Uint32 Item::ItemPrice (
     ItemType const item_type,
     Uint8 const upgrade_level,
     Uint8 const mineral_index)

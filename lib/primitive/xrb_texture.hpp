@@ -89,7 +89,7 @@ public:
         ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->w);
     }
-    inline ScreenCoord GetHeight () const
+    inline ScreenCoord Height () const
     {
         ASSERT1(m_surface != NULL);
         return static_cast<ScreenCoord>(m_surface->h);

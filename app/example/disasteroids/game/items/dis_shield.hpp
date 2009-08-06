@@ -41,7 +41,7 @@ public:
     }
     virtual ~Shield () { }
 
-    inline Float GetIntensity () const
+    inline Float Intensity () const
     {
         ASSERT1(m_charged_power >= 0.0f);
         ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);

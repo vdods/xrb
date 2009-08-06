@@ -29,7 +29,7 @@ public:
     virtual ~BinaryFileSerializer ();
 
     virtual bool IsAtEnd () const;
-    virtual bool GetHasFewerThan8BitsLeft () const;
+    virtual bool HasFewerThan8BitsLeft () const;
 
     void Open (char const *filename, char const *mode);
     void Close ();

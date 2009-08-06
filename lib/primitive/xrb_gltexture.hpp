@@ -61,7 +61,7 @@ public:
       * to bind to GL_TEXTURE_2D when rendering textures.
       * @brief Returns the OpenGL texture handle for this texture.
       */
-    inline GLuint GetHandle () const
+    inline GLuint Handle () const
     {
         return m_handle;
     }
@@ -79,7 +79,7 @@ public:
     }
     /** @brief Returns the height of the texture.
       */
-    inline ScreenCoord GetHeight () const
+    inline ScreenCoord Height () const
     {
         return m_size[Dim::Y];
     }

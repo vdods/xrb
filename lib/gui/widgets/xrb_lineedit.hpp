@@ -74,7 +74,7 @@ protected:
 
 private:
 
-    ScreenCoord GetInitialPenPositionX () const;
+    ScreenCoord InitialPenPositionX () const;
     ScreenCoord CursorOffset (Uint32 cursor_position) const;
     ScreenCoord CursorWidth (Uint32 cursor_position) const;
 

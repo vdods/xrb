@@ -182,11 +182,11 @@ private:
     Weapon const *CurrentWeapon () const;
     Weapon *CurrentWeapon ();
 
-    Weapon *GetInventoryWeapon (ItemType weapon_type, Uint8 upgrade_level);
-    Engine *GetInventoryEngine (Uint8 upgrade_level);
-    Armor *GetInventoryArmor (Uint8 upgrade_level);
-    Shield *GetInventoryShield (Uint8 upgrade_level);
-    PowerGenerator *GetInventoryPowerGenerator (Uint8 upgrade_level);
+    Weapon *InventoryWeapon (ItemType weapon_type, Uint8 upgrade_level);
+    Engine *InventoryEngine (Uint8 upgrade_level);
+    Armor *InventoryArmor (Uint8 upgrade_level);
+    Shield *InventoryShield (Uint8 upgrade_level);
+    PowerGenerator *InventoryPowerGenerator (Uint8 upgrade_level);
 
     bool IsInStartingInventory (Item *item);
 

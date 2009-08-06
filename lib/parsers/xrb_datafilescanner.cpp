@@ -31,7 +31,7 @@ inline bool IsOctalDigit (char c) { return c >= '0' && c <= '7'; }
 inline bool IsDecimalDigit (char c) { return c >= '0' && c <= '9'; }
 inline bool IsHexadecimalDigit (char c) { return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'); }
 
-Uint32 GetHexadecimalDigitValue (char c)
+Uint32 HexadecimalDigitValue (char c)
 {
     ASSERT1(IsHexadecimalDigit(c));
     if (c >= '0' && c <= '9')
@@ -466,7 +466,7 @@ DataFileParser::Token::Type DataFileScanner::ScanHexadecimalNumeric (
         m_text += c;
         if ((value&0xF0000000) != 0)
             overflow = true;
-        value = (value << 4) + GetHexadecimalDigitValue(c);
+        value = (value << 4) + HexadecimalDigitValue(c);
     }
 
     if (!actually_read_digits)

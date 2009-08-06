@@ -231,7 +231,7 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
     }
 
     // if there are child nodes, call SelectAllObjects on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 SelectObjectsByCircle(
@@ -259,7 +259,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllObjects (bool const toggle_selecti
     }
 
     // if there are child nodes, call SelectAllObjects on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->SelectAllObjects(toggle_selection);
 }
@@ -302,7 +302,7 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
     }
 
     // if there are child nodes, call SelectVerticesByCircle on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 SelectVerticesByCircle(
@@ -338,7 +338,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllVertices (
     }
 
     // if there are child nodes, call SelectAllVertices on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 SelectAllVertices(
@@ -395,7 +395,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllPolygons (
     }
 
     // if there are child nodes, call SelectAllPolygons on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 SelectAllPolygons(
@@ -427,7 +427,7 @@ void MapEditor2::VisibilityQuadTree::SetVertexSelectionStateFromSelectionOwnerPo
     }
 
     // if there are child nodes, call SetVertexSelectionStateFromSelectionOwnerPolygonCount on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 SetVertexSelectionStateFromSelectionOwnerPolygonCount();
@@ -511,7 +511,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     }
 
     // if there are child nodes, call draw on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->DrawMetrics(draw_data, metric_mode);
 }
@@ -602,7 +602,7 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
     }
 
     // if there are child nodes, call ComputeNearestVertexPrivate on each
-    if (GetHasChildren())
+    if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
             Child<VisibilityQuadTree>(i)->
                 ComputeNearestVertexPrivate(

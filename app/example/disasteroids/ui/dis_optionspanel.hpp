@@ -40,7 +40,7 @@ public:
     ScreenCoordVector2 GetResolution () const;
     bool Fullscreen () const;
     DifficultyLevel GetDifficultyLevel () const;
-    Key::Code GetInputActionKeyCode (KeyInputAction input_action) const;
+    Key::Code InputActionKeyCode (KeyInputAction input_action) const;
 
     void SetResolutionX (ScreenCoord resolution_x);
     void SetResolutionY (ScreenCoord resolution_y);

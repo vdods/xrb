@@ -128,7 +128,7 @@ void Screen::Draw () const
     ASSERT1(screen_rect.Bottom() == 0);
     if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
         screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
-    if (screen_rect.GetHeight() > m_current_video_resolution[Dim::Y])
+    if (screen_rect.Height() > m_current_video_resolution[Dim::Y])
         screen_rect.SetHeight(m_current_video_resolution[Dim::Y]);
 
     // create the render context.  we must do it manually because the

@@ -236,9 +236,9 @@ void SimpleTransform2UnitTest::AtomMultiplyVector2 ()
 void SimpleTransform2UnitTest::AtomInverse ()
 {
     {
-        PrintSubsectionHeader("Checking GetInverse()");
+        PrintSubsectionHeader("Checking Inverse()");
 
-        FloatSimpleTransform2 transform0_inverse(m_transform0.GetInverse());
+        FloatSimpleTransform2 transform0_inverse(m_transform0.Inverse());
         TestSimpleTransform2Equality(
             transform0_inverse,
             "calculated t0 inverse",
@@ -248,7 +248,7 @@ void SimpleTransform2UnitTest::AtomInverse ()
             0.0f);
 
         PrintSubsectionHeader("Checking additional inverse");
-        FloatSimpleTransform2 transform1_inverse(m_transform1.GetInverse());
+        FloatSimpleTransform2 transform1_inverse(m_transform1.Inverse());
         TestSimpleTransform2Equality(
             transform1_inverse,
             "calculated t0 inverse",

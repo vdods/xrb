@@ -123,7 +123,7 @@ public:
     inline Float GetPhysicalRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetPhysicalRadius(); }
     inline Float GetPhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetPhysicalRadiusSquared(); }
     inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectLayer(); }
-    inline bool GetHasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetHasOwnerQuadTree(quad_tree_type); }
+    inline bool HasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->HasOwnerQuadTree(quad_tree_type); }
     inline QuadTree *GetOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetOwnerQuadTree(quad_tree_type); }
 
     inline FloatVector2 const &GetTranslation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTranslation(); }

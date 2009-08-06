@@ -202,18 +202,18 @@ void Label::DrawPicture (RenderContext const &render_context) const
     if (m_picture_keeps_aspect_ratio)
     {
         ASSERT1(m_picture->GetWidth() > 0);
-        ASSERT1(m_picture->GetHeight() > 0);
+        ASSERT1(m_picture->Height() > 0);
         // determine if the picture should be fit to the width
         // of the label or the height of the label.
-        if (contents_rect.GetHeight() * m_picture->GetWidth() /
-            m_picture->GetHeight()
+        if (contents_rect.Height() * m_picture->GetWidth() /
+            m_picture->Height()
             <=
             contents_rect.GetWidth())
         {
             // the picture must fit to the label's height
             ScreenCoordVector2 picture_size(
-                contents_rect.GetHeight() * m_picture->GetWidth() / m_picture->GetHeight(),
-                contents_rect.GetHeight());
+                contents_rect.Height() * m_picture->GetWidth() / m_picture->Height(),
+                contents_rect.Height());
             picture_rect = picture_size;
             picture_rect += ScreenCoordVector2((contents_rect.GetWidth() - picture_rect.GetWidth()) / 2, 0);
         }
@@ -222,9 +222,9 @@ void Label::DrawPicture (RenderContext const &render_context) const
             // the picture must fit to the label's width
             ScreenCoordVector2 picture_size(
                 contents_rect.GetWidth(),
-                contents_rect.GetWidth() * m_picture->GetHeight() / m_picture->GetWidth());
+                contents_rect.GetWidth() * m_picture->Height() / m_picture->GetWidth());
             picture_rect = picture_size;
-            picture_rect += ScreenCoordVector2(0, (contents_rect.GetHeight() - picture_rect.GetHeight()) / 2);
+            picture_rect += ScreenCoordVector2(0, (contents_rect.Height() - picture_rect.Height()) / 2);
         }
         picture_rect += contents_rect.BottomLeft();
     }

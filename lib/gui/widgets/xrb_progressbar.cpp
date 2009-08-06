@@ -59,17 +59,17 @@ void ProgressBar::Draw (RenderContext const &render_context) const
         progress_rect.m_top_right[Dim::Y] -=
             static_cast<ScreenCoord>(
                 remaining_progress * 
-                static_cast<Float>(progress_rect.GetHeight()));
+                static_cast<Float>(progress_rect.Height()));
     else if (m_grow_orientation == GO_DOWN)
         progress_rect.m_bottom_left[Dim::Y] +=
             static_cast<ScreenCoord>(
                 remaining_progress *
-                static_cast<Float>(progress_rect.GetHeight()));
+                static_cast<Float>(progress_rect.Height()));
     else
         ASSERT1(false && "Invalid ProgressBar::GrowOrientation");
 
     ASSERT1(progress_rect.GetWidth() >= 0);
-    ASSERT1(progress_rect.GetHeight() >= 0);
+    ASSERT1(progress_rect.Height() >= 0);
     Render::DrawScreenRect(render_context, m_color, progress_rect);
 }
 
