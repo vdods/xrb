@@ -129,7 +129,7 @@ void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
 bool WorldView::ProcessKeyEvent (EventKey const *const e)
 {
     if (e->IsKeyDownEvent())
-        HandleInput(e->GetKeyCode());
+        HandleInput(e->KeyCode());
     return true;
 }
 
@@ -239,7 +239,7 @@ void WorldView::HandleFrame ()
         // lookahead
         if (FrameDT() > 0.0f)
         {
-            Float minor_axis_radius = GetMinorAxisRadius();
+            Float minor_axis_radius = MinorAxisRadius();
             FloatVector2 ship_velocity_direction;
             if (m_player_ship->GetVelocity().IsZero())
                 ship_velocity_direction = FloatVector2::ms_zero;
@@ -252,7 +252,7 @@ void WorldView::HandleFrame ()
             bool is_view_recovering_this_frame;
             Float const max_view_center_delta = 2.4f / GetZoomFactor();
             static Float const s_time_to_recover = 0.5f;
-            if (view_center_delta.GetLength() > max_view_center_delta * FrameDT())
+            if (view_center_delta.Length() > max_view_center_delta * FrameDT())
             {
                 m_view_velocity += view_center_delta.GetNormalization() * max_view_center_delta * FrameDT();
                 is_view_recovering_this_frame = true;
@@ -288,9 +288,9 @@ void WorldView::HandleFrame ()
         }
         /*
         { // view dragging
-            Float minor_axis_radius = GetMinorAxisRadius();
+            Float minor_axis_radius = MinorAxisRadius();
             FloatVector2 view_to_ship = Center() - m_player_ship->GetUnwrappedTranslation();
-            Float view_to_ship_ratio = view_to_ship.GetLength() / (0.5f * minor_axis_radius);
+            Float view_to_ship_ratio = view_to_ship.Length() / (0.5f * minor_axis_radius);
             Float dragging_factor;
             if (view_to_ship_ratio >= 1.0f)
                 dragging_factor = m_dragging_factor * view_to_ship_ratio;
@@ -414,7 +414,7 @@ void WorldView::HandleInput (Key::Code const input)
                     FloatVector2::ms_zero,
                     0.0f,
                     Mortal::D_NONE,
-                    m_player_ship->GetWorld()->GetMostRecentFrameTime(),
+                    m_player_ship->GetWorld()->MostRecentFrameTime(),
                     0.0f);
             break;
 
@@ -479,7 +479,7 @@ void WorldView::ProcessPlayerInput ()
         {
             m_player_ship->SetReticleCoordinates(
                 GetParallaxedScreenToWorld() *
-                GetParentWorldViewWidget()->GetLastMousePosition().StaticCast<Float>()
+                GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>()
                 -
                 m_player_ship->GetWrappedOffset());
             m_player_ship->SetEngineRightLeftInput(engine_right_left_input);
@@ -786,7 +786,7 @@ bool WorldView::StatePostOutro (StateMachineInput const input)
 void WorldView::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
-    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+    EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));
 }
 
 void WorldView::CancelScheduledStateMachineInput ()

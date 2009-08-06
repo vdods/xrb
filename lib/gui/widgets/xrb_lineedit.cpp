@@ -163,7 +163,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
 
     if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
     {
-        switch (e->GetKeyCode())
+        switch (e->KeyCode())
         {
             case Key::LEFT:
                 MoveCursorLeft();
@@ -222,7 +222,7 @@ bool LineEdit::ProcessKeyEvent (EventKey const *const e)
                 char c =
                     GetCharacterFilter().
                         FilteredCharacter(
-                            e->GetModifiedAscii());
+                            e->ModifiedAscii());
                 if (c != '\0')
                 {
                     TypeCharacter(c);
@@ -283,13 +283,13 @@ ScreenCoord LineEdit::InitialPenPositionX () const
         case CENTER:
             initial_pen_position_x =
                 m_text_width < contents_rect.GetWidth() ?
-                (contents_rect.GetRight()-contents_rect.GetLeft()-m_text_width)/2 :
+                (contents_rect.GetRight()-contents_rect.Left()-m_text_width)/2 :
                 0;
             break;
         case RIGHT:
             initial_pen_position_x =
                 m_text_width < contents_rect.GetWidth() ?
-                contents_rect.GetRight()-contents_rect.GetLeft()-m_text_width :
+                contents_rect.GetRight()-contents_rect.Left()-m_text_width :
                 0;
             break;
         default:
@@ -297,7 +297,7 @@ ScreenCoord LineEdit::InitialPenPositionX () const
             initial_pen_position_x = 0;
             break;
     }
-    initial_pen_position_x += contents_rect.GetLeft();
+    initial_pen_position_x += contents_rect.Left();
     initial_pen_position_x += m_text_offset[Dim::X];
     return initial_pen_position_x;
 }
@@ -374,7 +374,7 @@ void LineEdit::UpdateTextWidth ()
 void LineEdit::MakeCursorVisible ()
 {
     m_is_cursor_visible = true;
-    m_next_cursor_blink_time = GetMostRecentFrameTime() + 0.5f * m_cursor_blink_period;
+    m_next_cursor_blink_time = MostRecentFrameTime() + 0.5f * m_cursor_blink_period;
 }
 
 void LineEdit::MoveCursorLeft ()

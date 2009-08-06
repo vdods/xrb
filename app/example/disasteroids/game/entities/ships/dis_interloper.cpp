@@ -89,7 +89,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
         AimShipAtCoordinates(GetTranslation() + GetVelocity().GetNormalization(), frame_dt);
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
-    if (thrust_direction.GetLengthSquared() < 0.001f)
+    if (thrust_direction.LengthSquared() < 0.001f)
         thrust_direction = Math::UnitVector(Angle());
     else
         thrust_direction.Normalize();
@@ -314,7 +314,7 @@ void Interloper::Flock (Float time, Float frame_dt)
                 GetObjectLayer()->AdjustedCoordinates(
                     interloper->GetTranslation(),
                     GetTranslation()));
-            Float interloper_distance = (interloper_position - GetTranslation()).GetLength();
+            Float interloper_distance = (interloper_position - GetTranslation()).Length();
 
             if (closest_flock_member == NULL ||
                 interloper_distance < closest_flock_member_distance)
@@ -323,8 +323,8 @@ void Interloper::Flock (Float time, Float frame_dt)
                 closest_flock_member_distance = interloper_distance;
             }
 
-            flock_center_of_gravity += interloper->GetMass() * interloper_position;
-            flock_mass += interloper->GetMass();
+            flock_center_of_gravity += interloper->Mass() * interloper_position;
+            flock_mass += interloper->Mass();
             ++flock_member_count;
         }
         // TODO: decide if there should be collision avoidance
@@ -352,7 +352,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     // the goal is to travel at the same velocity as the flock, while
     // maintaining a position relative to the closest flock member.
     FloatVector2 flock_center_offset(flock_center_of_gravity - GetTranslation());
-    if (flock_center_offset.GetLength() >= 0.5f)
+    if (flock_center_offset.Length() >= 0.5f)
     {
         // TODO: keep X distance away from closest flock member
         FloatVector2 flock_center_direction(flock_center_offset.GetNormalization());
@@ -390,7 +390,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     else
     {
         Float interceptor_acceleration =
-            ms_engine_thrust[EnemyLevel()] / GetMass();
+            ms_engine_thrust[EnemyLevel()] / Mass();
         FloatVector2 p(target_position - GetTranslation());
         FloatVector2 v;
         FloatVector2 a;
@@ -407,11 +407,11 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         else
         {
             v = m_target->GetVelocity() - GetVelocity();
-            a = m_target->Force() / m_target->GetMass();
+            a = m_target->Force() / m_target->Mass();
         }
 
         Polynomial poly;
-        poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+        poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
         poly.Set(3, 4.0f * (a | v));
         poly.Set(2, 4.0f * ((a | p) + (v | v)));
         poly.Set(1, 8.0f * (p | v));
@@ -479,11 +479,11 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
-    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
-    if (thrust_vector.GetLength() > 0.01f)
+        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+    FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
+    if (thrust_vector.Length() > 0.01f)
     {
-        Float thrust_force = thrust_vector.GetLength();
+        Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
             thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
 

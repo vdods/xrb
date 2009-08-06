@@ -58,7 +58,7 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetMaxAngularVelocity () const
+    virtual Float MaxAngularVelocity () const
     {
         return ms_max_angular_velocity[EnemyLevel()];
     }

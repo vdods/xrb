@@ -53,7 +53,7 @@ void EventQueue::EnqueueEvent (
 {
     ASSERT1(event_handler != NULL);
     ASSERT1(event != NULL);
-    ASSERT1(event_handler->GetMostRecentEventTime() <= event->GetTime());
+    ASSERT1(event_handler->MostRecentEventTime() <= event->GetTime());
 
     // this call makes sure that we don't overflow the IDs, which is essential
     // for proper ordering of events inside the queue.
@@ -110,7 +110,7 @@ void EventQueue::HandleFrame ()
 
     // this event is used to get the last event which should be processed
     EventDummy event_limit(FrameTime());
-    event_limit.SetID(GetMaxEventID());
+    event_limit.SetID(MaxEventID());
     EventBinding binding_limit(NULL, &event_limit);
 
     // get the range of events to be processed, and loop through,
@@ -171,7 +171,7 @@ void EventQueue::CompactEventIDs ()
 {
     // only perform compaction (which is infrequent but slow) if
     // the current ID is at the maximum number
-    if (m_current_event_id == GetMaxEventID())
+    if (m_current_event_id == MaxEventID())
     {
         // make sure the buffered events are added to the main queue
         EnqueueBufferedEvents();
@@ -189,7 +189,7 @@ void EventQueue::CompactEventIDs ()
             // set the event's ID
             it->GetEvent()->SetID(m_current_event_id++);
             // just make sure there are enough IDs to identify all events
-            ASSERT1(m_current_event_id != GetMaxEventID());
+            ASSERT1(m_current_event_id != MaxEventID());
         }
     }
 }

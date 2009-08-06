@@ -450,7 +450,7 @@ void AsciiFont::MoveThroughGlyph (
         {
             (*pen_position_26_6)[Dim::X] += m_glyph_specification[GlyphIndex(*current_glyph)].m_advance_26_6;
             if (next_glyph != NULL)
-                (*pen_position_26_6)[Dim::X] += GetKerningPixelAdvance_26_6(*current_glyph, *next_glyph);
+                (*pen_position_26_6)[Dim::X] += KerningPixelAdvance_26_6(*current_glyph, *next_glyph);
         }
 
         if (remaining_glyph_count != NULL && *remaining_glyph_count > 1)
@@ -607,7 +607,7 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     glEnd();
 
     // pop the texture matrix
-    ASSERT1(GL::GetMatrixMode() == GL_TEXTURE);
+    ASSERT1(GL::MatrixMode() == GL_TEXTURE);
     glPopMatrix();
 
     // pop the modelview matrix
@@ -664,7 +664,7 @@ void AsciiFont::DrawGlyph (
     glVertex2iv(glyph_vertex_coordinates.GetTopRight().m);
 }
 
-ScreenCoord AsciiFont::GetKerningPixelAdvance_26_6 (char const left, char const right) const
+ScreenCoord AsciiFont::KerningPixelAdvance_26_6 (char const left, char const right) const
 {
     if (!m_has_kerning)
         return 0;

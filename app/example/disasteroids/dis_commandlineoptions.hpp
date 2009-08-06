@@ -32,7 +32,7 @@ public:
 
     inline bool Fullscreen () const { return m_fullscreen; }
     inline ScreenCoordVector2 const &GetResolution () const { return m_resolution; }
-    inline std::string const &GetKeyMapName () const { return m_key_map_name; }
+    inline std::string const &KeyMapName () const { return m_key_map_name; }
     inline bool IsHelpRequested () const { return m_is_help_requested; }
 
 private:

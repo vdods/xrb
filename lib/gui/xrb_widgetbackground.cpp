@@ -168,8 +168,8 @@ void WidgetBackgroundStylized::Draw (
     // set up the measurements for the rectangles
     ScreenCoord horizontal[4] =
     {
-        widget_screen_rect.GetLeft(),
-        widget_screen_rect.GetLeft() + frame_margins[Dim::X],
+        widget_screen_rect.Left(),
+        widget_screen_rect.Left() + frame_margins[Dim::X],
         widget_screen_rect.GetRight() - frame_margins[Dim::X],
         widget_screen_rect.GetRight()
     };

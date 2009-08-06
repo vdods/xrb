@@ -212,7 +212,7 @@ MapEditor2::ObjectLayer *MapEditor2::WorldView::GetSavedMainObjectLayer () const
     return DStaticCast<World *>(m_world)->GetSavedMainObjectLayer();
 }
 
-MapEditor2::World *MapEditor2::WorldView::GetMapEditorWorld () const
+MapEditor2::World *MapEditor2::WorldView::MapEditorWorld () const
 {
     return DStaticCast<World *>(m_world);
 }
@@ -220,7 +220,7 @@ MapEditor2::World *MapEditor2::WorldView::GetMapEditorWorld () const
 std::string MapEditor2::WorldView::CurrentGridScaleText () const
 {
     ASSERT1(m_grid_number_base != 0);
-    Float numerator = 0.5f * GetMainObjectLayer()->GetSideLength();
+    Float numerator = 0.5f * MainObjectLayer()->GetSideLength();
     Float denominator = 
         Math::Pow(
             static_cast<Float>(m_grid_number_base), 
@@ -253,10 +253,10 @@ FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
             return m_origin_cursor_position;
 
         case Object::TM_SELECTION_SET_ORIGIN:
-            return GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+            return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
 
         case Object::TM_EACH_SELECTED_OBJECT_ORIGIN:
-            return GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+            return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
 
         default:
             ASSERT0(false && "Invalid transformation type");
@@ -266,17 +266,17 @@ FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
 
 bool MapEditor2::WorldView::AreNoObjectsSelected () const
 {
-    return GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0;
+    return MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0;
 }
 
 FloatVector2 const &MapEditor2::WorldView::GetObjectSelectionSetOrigin () const
 {
-    return GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+    return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
 }
 
 bool MapEditor2::WorldView::AreNoEntitiesSelected () const
 {
-    return GetMainMapEditorObjectLayer()->GetSelectedEntityCount() == 0;
+    return MainMapEditorObjectLayer()->GetSelectedEntityCount() == 0;
 }
 
 void MapEditor2::WorldView::SetTransformationMode (
@@ -331,15 +331,15 @@ void MapEditor2::WorldView::SetMetricEditingMode (
                 break;
 
             case Object::MM_POLYGONS:
-                if (GetMainMapEditorObjectLayer()->GetSelectedObjectCount() > 0)
-                    GetMainMapEditorObjectLayer()->MaskSelectedPolygonsByObjectSelectionSet();
-                GetMainMapEditorObjectLayer()->SetVertexSelectionStateFromSelectionOwnerPolygonCount();
+                if (MainMapEditorObjectLayer()->GetSelectedObjectCount() > 0)
+                    MainMapEditorObjectLayer()->MaskSelectedPolygonsByObjectSelectionSet();
+                MainMapEditorObjectLayer()->SetVertexSelectionStateFromSelectionOwnerPolygonCount();
                 m_metric_editing_mode_text = "Polygons";
                 break;
                 
             case Object::MM_VERTICES:
-                if (GetMainMapEditorObjectLayer()->GetSelectedObjectCount() > 0)
-                    GetMainMapEditorObjectLayer()->MaskSelectedVerticesByObjectSelectionSet();
+                if (MainMapEditorObjectLayer()->GetSelectedObjectCount() > 0)
+                    MainMapEditorObjectLayer()->MaskSelectedVerticesByObjectSelectionSet();
                 m_metric_editing_mode_text = "Vertices";
                 break;
                 
@@ -369,8 +369,8 @@ void MapEditor2::WorldView::SetEditingSubMode (
             case ESM_DRAW_POLYGON:
                 fprintf(stderr, "setting ESM_DRAW_POLYGON\n");
                 // must have exactly 0 Objects or 1 Compound selected
-                if (GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-                    GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1)
+                if (MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+                    MainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1)
                 {
                     m_saved_metric_editing_mode = m_metric_editing_mode;
                     SetMetricEditingMode(Object::MM_POLYGONS);
@@ -421,7 +421,7 @@ void MapEditor2::WorldView::CreateStaticSprite (std::string const &filename)
     // add the sprite to the world in the current object layer
     fprintf(stderr, "MapEditor2::WorldView::CreateStaticSprite(); creating a static sprite from filename \"%s\" at ", filename.c_str());
     Fprint(stderr, position);
-    GetWorld()->AddObject(sprite, GetMainObjectLayer());
+    GetWorld()->AddObject(sprite, MainObjectLayer());
     sprite->SetIsSelected(true);
 }
 
@@ -438,7 +438,7 @@ void MapEditor2::WorldView::CreateSpriteEntity (std::string const &filename)
     // add the sprite to the world in the current object layer
     fprintf(stderr, "MapEditor2::WorldView::CreateSpriteEntity(); creating a sprite entity from filename \"%s\" at ", filename.c_str());
     Fprint(stderr, position);
-    GetWorld()->AddEntity(sprite, GetMainObjectLayer());
+    GetWorld()->AddEntity(sprite, MainObjectLayer());
     sprite->SetIsSelected(true);
 }
 
@@ -466,26 +466,26 @@ void MapEditor2::WorldView::SetPolygonTesselation (Uint32 polygon_tesselation)
 void MapEditor2::WorldView::SetPerObjectOriginX (Float const origin_x)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerObjectOriginX(%g);\n", origin_x);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectTranslationX(origin_x);
+    MainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectTranslationX(origin_x);
 }
 
 void MapEditor2::WorldView::SetPerObjectOriginY (Float const origin_y)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerObjectOriginY(%g);\n", origin_y);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectTranslationY(origin_y);
+    MainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectTranslationY(origin_y);
 }
 
 void MapEditor2::WorldView::SetPerObjectScale (Float const scale)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerObjectScale(%g);\n", scale);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectScale(scale);
+    MainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectScale(scale);
     UpdateObjectSelectionSetScale(scale);
 }
 
 void MapEditor2::WorldView::SetPerObjectAngle (Float const angle)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerObjectAngle(%g);\n", angle);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectRotation(angle);
+    MainMapEditorObjectLayer()->ObjectSelectionSetAssignPerObjectRotation(angle);
     UpdateObjectSelectionSetAngle(angle);
 }
 
@@ -494,7 +494,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetOriginX (Float const origin_x)
     FloatVector2 origin_delta =
         FloatVector2(origin_x - m_object_selection_set_origin[Dim::X], 0.0f);
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetOriginX(%g); origin_x_delta = %g\n", origin_x, origin_delta[Dim::X]);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetTranslate(origin_delta);
+    MainMapEditorObjectLayer()->ObjectSelectionSetTranslate(origin_delta);
 }
 
 void MapEditor2::WorldView::SetObjectSelectionSetOriginY (Float const origin_y)
@@ -502,7 +502,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetOriginY (Float const origin_y)
     FloatVector2 origin_delta =
         FloatVector2(0.0f, origin_y - m_object_selection_set_origin[Dim::Y]);
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetOriginY(%g); origin_y_delta = %g\n", origin_y, origin_delta[Dim::Y]);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetTranslate(origin_delta);
+    MainMapEditorObjectLayer()->ObjectSelectionSetTranslate(origin_delta);
 }
 
 void MapEditor2::WorldView::SetObjectSelectionSetScale (Float const scale)
@@ -510,7 +510,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetScale (Float const scale)
     Float scale_factor = scale / m_object_selection_set_scale;
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetScale(%g); scale_factor = %g\n", scale, scale_factor);
     // scale and rotate the object selection set
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetScale(
+    MainMapEditorObjectLayer()->ObjectSelectionSetScale(
         scale_factor,
         GetOriginCursor(),
         GetTransformationMode());
@@ -521,7 +521,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetAngle (Float const angle)
 {
     Float angle_delta = angle - m_object_selection_set_angle;
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetAngle(%g); angle_delta = %g\n", angle, angle_delta);
-    GetMainMapEditorObjectLayer()->ObjectSelectionSetRotate(
+    MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
         angle_delta,
         GetOriginCursor(),
         GetTransformationMode());
@@ -531,77 +531,77 @@ void MapEditor2::WorldView::SetObjectSelectionSetAngle (Float const angle)
 void MapEditor2::WorldView::SetPerEntityMass (Float const mass)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityMass(%g);\n", mass);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityMass(mass);
 }
 
 void MapEditor2::WorldView::SetPerEntityVelocityX (Float const velocity_x)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityVelocityX(%g);\n", velocity_x);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityX(velocity_x);
 }
 
 void MapEditor2::WorldView::SetPerEntityVelocityY (Float const velocity_y)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityVelocityY(%g);\n", velocity_y);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityY(velocity_y);
 }
 
 void MapEditor2::WorldView::SetPerEntitySpeed (Float const speed)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntitySpeed(%g);\n", speed);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntitySpeed(speed);
 }
 
 void MapEditor2::WorldView::SetPerEntityVelocityAngle (Float const velocity_angle)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityVelocityAngle(%g);\n", velocity_angle);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityAngle(velocity_angle);
 }
 
 void MapEditor2::WorldView::SetPerEntitySecondMoment (Float const second_moment)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntitySecondMoment(%g);\n", second_moment);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntitySecondMoment(second_moment);
 }
 
 void MapEditor2::WorldView::SetPerEntityAngularVelocity (Float const angular_velocity)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityAngularVelocity(%g);\n", angular_velocity);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityAngularVelocity(angular_velocity);
 }
 
 void MapEditor2::WorldView::SetPerEntityElasticity (Float const elasticity)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityElasticity(%g);\n", elasticity);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityElasticity(elasticity);
 }
 
 void MapEditor2::WorldView::SetPerEntityDensity (Float const density)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityDensity(%g);\n", density);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityDensity(density);
 }
 
 void MapEditor2::WorldView::SetPerEntityAppliesGravity (bool const applies_gravity)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityAppliesGravity(%s);\n", BOOL_TO_STRING(applies_gravity));
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityAppliesGravity(applies_gravity);
 }
 
 void MapEditor2::WorldView::SetPerEntityReactsToGravity (bool const reacts_to_gravity)
 {
     fprintf(stderr, "MapEditor2::WorldView::SetPerEntityReactsToGravity(%s);\n", BOOL_TO_STRING(reacts_to_gravity));
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityReactsToGravity(reacts_to_gravity);
 }
 
@@ -612,7 +612,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetMass (Float const mass)
     Float mass_scale_factor =
         mass / m_object_selection_set_mass;
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetMass(%g); mass_scale_factor = %g\n", mass, mass_scale_factor);
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetScaleMass(mass_scale_factor);
 }
 
@@ -621,7 +621,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetVelocityX (Float const velocity
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetVelocityX(%g);\n", velocity_x);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityX(velocity_x);
 }
 
@@ -630,7 +630,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetVelocityY (Float const velocity
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetVelocityY(%g);\n", velocity_y);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityY(velocity_y);
 }
 
@@ -639,7 +639,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetSpeed (Float const speed)
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetSpeed(%g);\n", speed);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntitySpeed(speed);
 }
 
@@ -648,7 +648,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetVelocityAngle (Float const velo
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetVelocityAngle(%g);\n", velocity_angle);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityVelocityAngle(velocity_angle);
 }
 
@@ -657,7 +657,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetSecondMoment (Float const secon
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetSecondMoment(%g);\n", second_moment);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntitySecondMoment(second_moment);
 }
 
@@ -666,7 +666,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetAngularVelocity (Float const an
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetAngularVelocity(%g);\n", angular_velocity);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityAngularVelocity(angular_velocity);
 }
 
@@ -675,7 +675,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetElasticity (Float const elastic
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetElasticity(%g);\n", elasticity);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityElasticity(elasticity);
 }
 
@@ -684,7 +684,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetDensity (Float const density)
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetDensity(%g);\n", density);
     // this action applies only to the single selected entity,
     // so it's the same as the corresponding per-entity function
-    GetMainMapEditorObjectLayer()->
+    MainMapEditorObjectLayer()->
         ObjectSelectionSetAssignPerEntityDensity(density);
 }
 
@@ -695,15 +695,15 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 
     PushParallaxedGLProjectionMatrix(
         render_context,
-        GetMainMapEditorObjectLayer());
+        MainMapEditorObjectLayer());
 
     FloatVector2 const transformed_mouse_position(
         GetParallaxedScreenToWorld() *
-        GetParentWorldViewWidget()->GetLastMousePosition().StaticCast<Float>());
+        GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
         
     // calculate the number of pixels in the view radius
     Float pixels_in_view_radius =
-        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
+        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().Length();
     // get the parallaxed view radius for the main object layer
     Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
 
@@ -711,7 +711,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     if (m_draw_object_metrics)
     {
         // draw the object bounding circles in the correct colors
-        GetMainMapEditorObjectLayer()->DrawMetrics(
+        MainMapEditorObjectLayer()->DrawMetrics(
             render_context,
             GetParallaxedWorldToScreen(),
             pixels_in_view_radius,
@@ -728,7 +728,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     {
         Float selection_circle_radius =
             (transformed_mouse_position -
-             m_rmouse_pressed_world_position).GetLength();
+             m_rmouse_pressed_world_position).Length();
         Color selection_circle_color(0.5, 0.5, 1.0, 1.0);
 
         // draw the selection circle
@@ -745,12 +745,12 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         Singletons::Input().IsKeyPressed(Key::LEFTMOUSE) &&
         m_lmouse_dragged)
     {
-        ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
+        ASSERT1(MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+                MainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
     
         FloatVector2 bounding_circle_ray(transformed_mouse_position);
         bounding_circle_ray -= m_lmouse_pressed_world_position;
-        Float selection_circle_radius = bounding_circle_ray.GetLength();
+        Float selection_circle_radius = bounding_circle_ray.Length();
         Color selection_circle_color(1.0f, 0.5f, 0.7f, 1.0f);
 
         // draw the selection circle
@@ -770,13 +770,13 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     PopGLProjectionMatrix();
 
     // draw the origin cursors
-    if (!GetMapEditorWorld()->IsRunning())
+    if (!MapEditorWorld()->IsRunning())
     {
         // draw the object selection set origin cursor
-        if (!GetMainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
+        if (!MainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
             DrawOriginCursor(
                 render_context,
-                GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin(),
+                MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin(),
                 Object::TM_SELECTION_SET_ORIGIN);
         // draw the global origin cursor
         DrawOriginCursor(
@@ -794,7 +794,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     // handle all the editing-sub-mode-independent keys here
     if (e->IsKeyDownEvent())
     {
-        switch (e->GetKeyCode())
+        switch (e->KeyCode())
         {
             case Key::HOME:
                 SetPolygonTesselation(m_polygon_tesselation + 1);
@@ -806,7 +806,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
             
             case Key::PAGEUP:
                 if (e->IsEitherAltKeyPressed())
-                    GetMapEditorWorld()->IncrementMainObjectLayer();
+                    MapEditorWorld()->IncrementMainObjectLayer();
                 else
                     if (m_current_grid_scale < UINT32_UPPER_BOUND)
                         SetCurrentGridScale(m_current_grid_scale + 1);
@@ -814,7 +814,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 
             case Key::PAGEDOWN:
                 if (e->IsEitherAltKeyPressed())
-                    GetMapEditorWorld()->DecrementMainObjectLayer();
+                    MapEditorWorld()->DecrementMainObjectLayer();
                 else
                     if (m_current_grid_scale > UINT32_LOWER_BOUND)
                         SetCurrentGridScale(m_current_grid_scale - 1);
@@ -885,7 +885,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::KP_ENTER:
-                GetMapEditorWorld()->SetSavedMainObjectLayer(GetMainMapEditorObjectLayer());
+                MapEditorWorld()->SetSavedMainObjectLayer(MainMapEditorObjectLayer());
                 return true;
 
             default:
@@ -896,30 +896,30 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     // handle all the ESM_DEFAULT keys here
     if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_DEFAULT)
     {
-        switch (e->GetKeyCode())
+        switch (e->KeyCode())
         {
             case Key::F12:
             {
-                bool new_running_state = !GetMapEditorWorld()->IsRunning();
+                bool new_running_state = !MapEditorWorld()->IsRunning();
                 // make sure to skip the time 'burp' to avoid physics unpleasantness
                 if (new_running_state)
-                    GetMapEditorWorld()->GetPhysicsHandler()->SetSkipTime(true);
+                    MapEditorWorld()->GetPhysicsHandler()->SetSkipTime(true);
                 else
-                    GetMainMapEditorObjectLayer()->ForceObjectSelectionSetSignals();
-                GetMapEditorWorld()->SetIsRunning(new_running_state);
+                    MainMapEditorObjectLayer()->ForceObjectSelectionSetSignals();
+                MapEditorWorld()->SetIsRunning(new_running_state);
                 return true;
             }
 
             case Key::SPACE:
                 // TODO: make polygon version of this (cloning)
-                if (GetMapEditorWorld()->IsRunning())
+                if (MapEditorWorld()->IsRunning())
                     return true;
-                if (!GetMainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
+                if (!MainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
                 {
                     FloatVector2 position_offset =
                         GetParallaxedScreenToWorld() * FloatVector2(0.1f, 0.1f) -
                         GetParallaxedScreenToWorld() * FloatVector2::ms_zero;
-                    GetMainMapEditorObjectLayer()->ObjectSelectionSetClone(
+                    MainMapEditorObjectLayer()->ObjectSelectionSetClone(
                         position_offset);
                 }
                 /*
@@ -957,18 +957,18 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::BACKSPACE:
-                if (!GetMapEditorWorld()->IsRunning())
+                if (!MapEditorWorld()->IsRunning())
                 {
                     switch (m_metric_editing_mode)
                     {
                         case Object::MM_TRANSFORMATION:
                         case Object::MM_LINEAR_VELOCITY:
                         case Object::MM_ANGULAR_VELOCITY:
-                            GetMainMapEditorObjectLayer()->ObjectSelectionSetDelete();
+                            MainMapEditorObjectLayer()->ObjectSelectionSetDelete();
                             break;
 
                         case Object::MM_POLYGONS:
-                            GetMainMapEditorObjectLayer()->DeleteSelectedPolygons();
+                            MainMapEditorObjectLayer()->DeleteSelectedPolygons();
                             break;
 
                         case Object::MM_VERTICES:
@@ -1008,14 +1008,14 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     case Object::MM_TRANSFORMATION:
                     case Object::MM_LINEAR_VELOCITY:
                     case Object::MM_ANGULAR_VELOCITY:
-                        GetMainMapEditorObjectLayer()->SelectAllObjects();
+                        MainMapEditorObjectLayer()->SelectAllObjects();
                         break;
 
                     case Object::MM_POLYGONS:
                         {
                             bool mask_by_object_selection_set =
-                                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
-                            GetMainMapEditorObjectLayer()->SelectAllPolygons(
+                                MainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
+                            MainMapEditorObjectLayer()->SelectAllPolygons(
                                 mask_by_object_selection_set);
                         }
                         break;
@@ -1023,8 +1023,8 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     case Object::MM_VERTICES:
                         {
                             bool mask_by_object_selection_set =
-                                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
-                            GetMainMapEditorObjectLayer()->SelectAllVertices(
+                                MainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
+                            MainMapEditorObjectLayer()->SelectAllVertices(
                                 mask_by_object_selection_set);
                         }
                         break;
@@ -1036,18 +1036,18 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::E:
-                if (GetMainMapEditorObjectLayer()->GetSelectedNonEntityCount() == 1)
+                if (MainMapEditorObjectLayer()->GetSelectedNonEntityCount() == 1)
                 {
                     // clone the single selected non-entity as an entity
-                    Object *object = GetMainMapEditorObjectLayer()->GetSingleSelectedNonEntity();
+                    Object *object = MainMapEditorObjectLayer()->GetSingleSelectedNonEntity();
                     Entity *entity = object->CreateEntityClone();
                     ASSERT1(entity != NULL);
                     // move the object's saved entity guts over to the entity
                     entity->SetEntityGuts(object->GetSavedEntityGuts());
                     object->SetSavedEntityGuts(NULL);
                     // delete the old non-entity and add the entity to the world                    
-                    GetMainMapEditorObjectLayer()->ObjectSelectionSetDelete();
-                    GetWorld()->AddObject(entity, GetMainObjectLayer());
+                    MainMapEditorObjectLayer()->ObjectSelectionSetDelete();
+                    GetWorld()->AddObject(entity, MainObjectLayer());
                     entity->SetIsSelected(true);
                     m_sender_status_bar_message_text_changed.Signal(
                         "Object converted into entity.");
@@ -1069,14 +1069,14 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     case Object::MM_TRANSFORMATION:
                     case Object::MM_LINEAR_VELOCITY:
                     case Object::MM_ANGULAR_VELOCITY:
-                        GetMainMapEditorObjectLayer()->InvertObjectSelectionSet();
+                        MainMapEditorObjectLayer()->InvertObjectSelectionSet();
                         break;
 
                     case Object::MM_POLYGONS:
                         {
                             bool mask_by_object_selection_set =
-                                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
-                            GetMainMapEditorObjectLayer()->InvertPolygonSelectionSet(
+                                MainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
+                            MainMapEditorObjectLayer()->InvertPolygonSelectionSet(
                                 mask_by_object_selection_set);
                         }
                         break;
@@ -1084,8 +1084,8 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                     case Object::MM_VERTICES:
                         {
                             bool mask_by_object_selection_set =
-                                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
-                            GetMainMapEditorObjectLayer()->InvertVertexSelectionSet(
+                                MainMapEditorObjectLayer()->GetSelectedCompoundCount() > 0;
+                            MainMapEditorObjectLayer()->InvertVertexSelectionSet(
                                 mask_by_object_selection_set);
                         }
                         break;
@@ -1099,9 +1099,9 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
             case Key::N:
                 if (e->IsEitherShiftKeyPressed())
                 {
-                    GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
-                    GetMainMapEditorObjectLayer()->ClearPolygonSelectionSet();
-                    GetMainMapEditorObjectLayer()->ClearVertexSelectionSet();
+                    MainMapEditorObjectLayer()->ClearObjectSelectionSet();
+                    MainMapEditorObjectLayer()->ClearPolygonSelectionSet();
+                    MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                 }
                 else
                 {
@@ -1110,15 +1110,15 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         case Object::MM_TRANSFORMATION:
                         case Object::MM_LINEAR_VELOCITY:
                         case Object::MM_ANGULAR_VELOCITY:
-                            GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
+                            MainMapEditorObjectLayer()->ClearObjectSelectionSet();
                             break;
                             
                         case Object::MM_POLYGONS:
-                            GetMainMapEditorObjectLayer()->ClearPolygonSelectionSet();
+                            MainMapEditorObjectLayer()->ClearPolygonSelectionSet();
                             break;
     
                         case Object::MM_VERTICES:
-                            GetMainMapEditorObjectLayer()->ClearVertexSelectionSet();
+                            MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                             break;
     
                         default:
@@ -1129,18 +1129,18 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
 
             case Key::O:
-                if (GetMainMapEditorObjectLayer()->GetSelectedEntityCount() == 1)
+                if (MainMapEditorObjectLayer()->GetSelectedEntityCount() == 1)
                 {
                     // clone the single selected entity as a non-entity
-                    Entity *entity = GetMainMapEditorObjectLayer()->GetSingleSelectedEntity();
+                    Entity *entity = MainMapEditorObjectLayer()->GetSingleSelectedEntity();
                     Object *object = entity->CreateNonEntityClone();
                     ASSERT1(object != NULL);
                     // move the entity's guts over to the non-entity's saved guts
                     object->SetSavedEntityGuts(entity->GetEntityGuts());
                     entity->SetEntityGuts(NULL);
                     // delete the old entity and add the non-entity to the world
-                    GetMainMapEditorObjectLayer()->ObjectSelectionSetDelete();
-                    GetWorld()->AddObject(object, GetMainObjectLayer());
+                    MainMapEditorObjectLayer()->ObjectSelectionSetDelete();
+                    GetWorld()->AddObject(object, MainObjectLayer());
                     object->SetIsSelected(true);
                     m_sender_status_bar_message_text_changed.Signal(
                         "Entity converted into object.");
@@ -1160,11 +1160,11 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 return true;
                 
             case Key::W:
-                if (GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1 &&
-                    GetMainMapEditorObjectLayer()->GetSelectedVertexCount() >= 2)
+                if (MainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1 &&
+                    MainMapEditorObjectLayer()->GetSelectedVertexCount() >= 2)
                 {
                     Compound *compound =
-                        GetMainMapEditorObjectLayer()->GetSingleSelectedCompound();
+                        MainMapEditorObjectLayer()->GetSingleSelectedCompound();
                     ASSERT1(compound != NULL);
                     Compound::WeldReturnStatus status = compound->WeldSelectedVertices();
                     switch (status)
@@ -1210,14 +1210,14 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 
                     case Object::MM_POLYGONS:
                         // unweld the vertices of the selected polygons
-                        GetMainMapEditorObjectLayer()->UnweldSelectedPolygons();
+                        MainMapEditorObjectLayer()->UnweldSelectedPolygons();
                         m_sender_status_bar_message_text_changed.Signal(
                             "Unwelded Selected Polygons.");
                         break;
 
                     case Object::MM_VERTICES:
                         // unweld the selected vertices
-                        GetMainMapEditorObjectLayer()->UnweldSelectedVertices();
+                        MainMapEditorObjectLayer()->UnweldSelectedVertices();
                         m_sender_status_bar_message_text_changed.Signal(
                             "Unwelded Selected Vertices.");
                         break;
@@ -1236,7 +1236,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_DRAW_POLYGON)
     {
         // currently no keys
-//         switch (e->GetKeyCode())
+//         switch (e->KeyCode())
 //         {
 //             default:
 //                 break;
@@ -1246,7 +1246,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_POSITION_GLOBAL_ORIGIN_CURSOR)
     {
         // currently no keys
-//         switch (e->GetKeyCode())
+//         switch (e->KeyCode())
 //         {
 //             default:
 //                 break;
@@ -1256,7 +1256,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
     else if (e->IsKeyDownEvent() && m_editing_sub_mode == ESM_ADD_SPRITE)
     {
         // currently no keys
-//         switch (e->GetKeyCode())
+//         switch (e->KeyCode())
 //         {
 //             default:
 //                 break;
@@ -1294,7 +1294,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_clear_object_selection_upon_mouse_button_up)
     {
         m_clear_object_selection_upon_mouse_button_up = false;
-        GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
+        MainMapEditorObjectLayer()->ClearObjectSelectionSet();
     }
     
     // if m_clear_polygon_selection_upon_mouse_button_up is set, clear it
@@ -1302,7 +1302,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_clear_polygon_selection_upon_mouse_button_up)
     {
         m_clear_polygon_selection_upon_mouse_button_up = false;
-        GetMainMapEditorObjectLayer()->ClearPolygonSelectionSet();
+        MainMapEditorObjectLayer()->ClearPolygonSelectionSet();
     }
     
     // if m_clear_vertex_selection_upon_mouse_button_up is set, clear it
@@ -1310,7 +1310,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     if (m_clear_vertex_selection_upon_mouse_button_up)
     {
         m_clear_vertex_selection_upon_mouse_button_up = false;
-        GetMainMapEditorObjectLayer()->ClearVertexSelectionSet();
+        MainMapEditorObjectLayer()->ClearVertexSelectionSet();
     }
     
     // right mouse button up event + shift key is held down
@@ -1327,16 +1327,16 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
             case Object::MM_ANGULAR_VELOCITY:
                 // clear the object selection set if we're using 'equals' selection
                 if (selection_operation == Object::SO_EQUALS)
-                    GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
+                    MainMapEditorObjectLayer()->ClearObjectSelectionSet();
         
                 if (m_rmouse_dragged)
                 {
                     // circle selection
                     Float selection_circle_radius =
                         (transformed_mouse_event_position -
-                         m_rmouse_pressed_world_position).GetLength();
+                         m_rmouse_pressed_world_position).Length();
         
-                    GetMainMapEditorObjectLayer()->SelectObjectsByCircle(
+                    MainMapEditorObjectLayer()->SelectObjectsByCircle(
                         m_rmouse_pressed_world_position,
                         selection_circle_radius,
                         selection_operation,
@@ -1347,7 +1347,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     // single object selection
         
                     // apply the operation to the object at the point, if it exists.
-                    GetMainMapEditorObjectLayer()->SelectSmallestObjectTouchingPoint(
+                    MainMapEditorObjectLayer()->SelectSmallestObjectTouchingPoint(
                         transformed_mouse_event_position,
                         selection_operation);
                 }                
@@ -1358,9 +1358,9 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 if (!m_rmouse_dragged)
                 {
                     if (selection_operation == Object::SO_EQUALS)
-                        GetMainMapEditorObjectLayer()->ClearPolygonSelectionSet();
+                        MainMapEditorObjectLayer()->ClearPolygonSelectionSet();
                         
-                    GetMainMapEditorObjectLayer()->
+                    MainMapEditorObjectLayer()->
                         SelectSmallestPolygonTouchingPoint(
                             m_rmouse_pressed_world_position,
                             selection_operation);
@@ -1372,13 +1372,13 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 {
                     // select vertices by drawn out circles
                     if (selection_operation == Object::SO_EQUALS)
-                        GetMainMapEditorObjectLayer()->ClearVertexSelectionSet();
+                        MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                     
                     Float selection_circle_radius =
                         (transformed_mouse_event_position -
-                         m_rmouse_pressed_world_position).GetLength();
+                         m_rmouse_pressed_world_position).Length();
         
-                    GetMainMapEditorObjectLayer()->SelectVerticesByCircle(
+                    MainMapEditorObjectLayer()->SelectVerticesByCircle(
                         m_rmouse_pressed_world_position,
                         selection_circle_radius,
                         selection_operation);                
@@ -1387,10 +1387,10 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 {
                     // select nearest vertex
                     if (selection_operation == Object::SO_EQUALS)
-                        GetMainMapEditorObjectLayer()->ClearVertexSelectionSet();
+                        MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                     
                     Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
-                    GetMainMapEditorObjectLayer()->SelectNearestVertex(
+                    MainMapEditorObjectLayer()->SelectNearestVertex(
                         transformed_mouse_event_position,
                         0.02f * parallaxed_view_radius,
                         selection_operation);
@@ -1409,8 +1409,8 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         e->ButtonCode() == Key::LEFTMOUSE)
     {
         ASSERT1(m_metric_editing_mode == Object::MM_POLYGONS);
-        ASSERT1(GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
-                GetMainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
+        ASSERT1(MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+                MainMapEditorObjectLayer()->GetSelectedCompoundCount() == 1);
         ASSERT1(m_saved_metric_editing_mode != Object::MM_COUNT);
     
         // create the polygon that has been dragged out
@@ -1420,13 +1420,13 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 
         // if there are no selected Compounds, create a new compound from
         // the drawn out polygon and add it to the object layer
-        if (GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0)
+        if (MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0)
         {
             fprintf(stderr, "Drawing polygon into new compound\n");
             Compound *compound =
                 new Compound(
                     m_lmouse_pressed_world_position,
-                    bounding_circle_ray.GetLength(),
+                    bounding_circle_ray.Length(),
                     polygon_angle,
                     m_polygon_tesselation,
                     Singletons::ResourceLibrary().
@@ -1434,7 +1434,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                             GLTexture::Create,
                             "resources/texture1.png"));
             
-            GetWorld()->AddObject(compound, GetMainObjectLayer());
+            GetWorld()->AddObject(compound, MainObjectLayer());
             if (e->IsEitherShiftKeyPressed())
                 compound->SetIsSelected(true);
         }
@@ -1443,11 +1443,11 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         {
             fprintf(stderr, "Drawing polygon into existing selected compound\n");
             Compound *compound =
-                GetMainMapEditorObjectLayer()->GetSingleSelectedCompound();
+                MainMapEditorObjectLayer()->GetSingleSelectedCompound();
             ASSERT1(compound != NULL);
             compound->AddDrawnPolygon(
                 m_lmouse_pressed_world_position,
-                bounding_circle_ray.GetLength(),
+                bounding_circle_ray.Length(),
                 polygon_angle,
                 m_polygon_tesselation,
                 Singletons::ResourceLibrary().
@@ -1481,7 +1481,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     {
         ASSERT1(m_saved_metric_editing_mode == Object::MM_COUNT);
 
-        GetMainMapEditorObjectLayer()->ClearObjectSelectionSet();
+        MainMapEditorObjectLayer()->ClearObjectSelectionSet();
         
         // create the sprite
         Sprite *sprite = Sprite::Create("resources/mars.png");
@@ -1490,7 +1490,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         // TODO: set the scale to be proportionate to the view area?
 
         // add the sprite to the world in the current object layer
-        GetWorld()->AddObject(sprite, GetMainObjectLayer());
+        GetWorld()->AddObject(sprite, MainObjectLayer());
         sprite->SetIsSelected(true);
         
         SetEditingSubMode(ESM_DEFAULT);
@@ -1501,14 +1501,14 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
          m_metric_editing_mode == Object::MM_ANGULAR_VELOCITY)
         &&
         m_editing_sub_mode == ESM_DEFAULT &&
-        GetMainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 &&
+        MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
         e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
         !e->IsEitherControlKeyPressed())
     {
         // select the smallest object that is under the mouse cursor.
-        GetMainMapEditorObjectLayer()->SelectSmallestObjectTouchingPoint(
+        MainMapEditorObjectLayer()->SelectSmallestObjectTouchingPoint(
             transformed_mouse_event_position,
             Object::SO_EQUALS);
         m_clear_object_selection_upon_mouse_button_up = true;
@@ -1516,14 +1516,14 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         
     if (m_metric_editing_mode == Object::MM_POLYGONS &&
         m_editing_sub_mode == ESM_DEFAULT &&
-        GetMainMapEditorObjectLayer()->GetSelectedPolygonCount() == 0 &&
+        MainMapEditorObjectLayer()->GetSelectedPolygonCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
         e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
         !e->IsEitherControlKeyPressed())
     {
         // select the smallest polygon under the cursor
-        GetMainMapEditorObjectLayer()->
+        MainMapEditorObjectLayer()->
             SelectSmallestPolygonTouchingPoint(
                 transformed_mouse_event_position,
                 Object::SO_EQUALS);
@@ -1532,7 +1532,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         
     if (m_metric_editing_mode == Object::MM_VERTICES &&
         m_editing_sub_mode == ESM_DEFAULT &&
-        GetMainMapEditorObjectLayer()->GetSelectedVertexCount() == 0 &&
+        MainMapEditorObjectLayer()->GetSelectedVertexCount() == 0 &&
         e->IsMouseButtonDownEvent() &&
         e->ButtonCode() == Key::LEFTMOUSE &&
         !e->IsEitherAltKeyPressed() &&
@@ -1540,7 +1540,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     {
         // select the closest vertex that's within 2% of the radius of the view
         Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
-        GetMainMapEditorObjectLayer()->SelectNearestVertex(
+        MainMapEditorObjectLayer()->SelectNearestVertex(
             transformed_mouse_event_position,
             0.02f * parallaxed_view_radius,
             Object::SO_EQUALS);
@@ -1616,7 +1616,7 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
         GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
     FloatVector2 last_mouse_position(
         GetParallaxedScreenToWorld() *
-        GetParentWorldViewWidget()->GetLastMousePosition().StaticCast<Float>());
+        GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
     FloatVector2 current_mouse_position(
         GetParallaxedScreenToWorld() * e->GetPosition().StaticCast<Float>());
 
@@ -1630,7 +1630,7 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
 
     // left mouse dragging is for editing object properties
     // (the alt key can not be held down during this)
-    if (!GetMapEditorWorld()->IsRunning() &&
+    if (!MapEditorWorld()->IsRunning() &&
         m_editing_sub_mode == ESM_DEFAULT &&
         e->IsLeftMouseButtonPressed() &&
         !e->IsEitherAltKeyPressed())
@@ -1766,12 +1766,12 @@ void MapEditor2::WorldView::HandleFrame ()
 
     // WorldView owns the world it views, so it's in charge
     // of calling the world's ProcessFrame.
-    GetMapEditorWorld()->ProcessFrame(FrameTime());
+    MapEditorWorld()->ProcessFrame(FrameTime());
 }
 
-MapEditor2::ObjectLayer *MapEditor2::WorldView::GetMainMapEditorObjectLayer () const
+MapEditor2::ObjectLayer *MapEditor2::WorldView::MainMapEditorObjectLayer () const
 {
-    return DStaticCast<ObjectLayer *>(GetMainObjectLayer());
+    return DStaticCast<ObjectLayer *>(MainObjectLayer());
 }
 
 MapEditor2::Object::SelectionOperation MapEditor2::WorldView::GetSelectionOperation (
@@ -1926,65 +1926,65 @@ void MapEditor2::WorldView::UpdateMainObjectLayerConnections ()
 
     // connect the new main object layer's signals
     SignalHandler::Connect0(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetChanged(),
         &m_internal_receiver_change_object_selection_set);
 
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderSelectedObjectCountChanged(),
+        MainMapEditorObjectLayer()->SenderSelectedObjectCountChanged(),
         &m_internal_receiver_set_selected_object_count);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetOriginChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetOriginChanged(),
         &m_internal_receiver_update_object_selection_set_origin);
 
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderSelectedEntityCountChanged(),
+        MainMapEditorObjectLayer()->SenderSelectedEntityCountChanged(),
         &m_internal_receiver_set_selected_entity_count);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetMassChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetMassChanged(),
         &m_internal_receiver_update_object_selection_set_mass);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetVelocityChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetVelocityChanged(),
         &m_internal_receiver_update_object_selection_set_velocity);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetSecondMomentChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetSecondMomentChanged(),
         &m_internal_receiver_update_object_selection_set_second_moment);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetAngularVelocityChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetAngularVelocityChanged(),
         &m_internal_receiver_update_object_selection_set_angular_velocity);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetElasticityChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetElasticityChanged(),
         &m_internal_receiver_update_object_selection_set_elasticity);
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderObjectSelectionSetDensityChanged(),
+        MainMapEditorObjectLayer()->SenderObjectSelectionSetDensityChanged(),
         &m_internal_receiver_update_object_selection_set_density);
 
     SignalHandler::Connect1(
-        GetMainMapEditorObjectLayer()->SenderSelectedCompoundCountChanged(),
+        MainMapEditorObjectLayer()->SenderSelectedCompoundCountChanged(),
         &m_internal_receiver_set_selected_compound_count);
         
     // initialize the values it deals with
     SetSelectedObjectCount(
-        GetMainMapEditorObjectLayer()->GetSelectedObjectCount());
+        MainMapEditorObjectLayer()->GetSelectedObjectCount());
     UpdateObjectSelectionSetOrigin(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetOrigin());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin());
 
     SetSelectedEntityCount(
-        GetMainMapEditorObjectLayer()->GetSelectedEntityCount());
+        MainMapEditorObjectLayer()->GetSelectedEntityCount());
     UpdateObjectSelectionSetMass(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetMass());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetMass());
     UpdateObjectSelectionSetVelocity(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetVelocity());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetVelocity());
     UpdateObjectSelectionSetSecondMoment(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetSecondMoment());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetSecondMoment());
     UpdateObjectSelectionSetAngularVelocity(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetAngularVelocity());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetAngularVelocity());
     UpdateObjectSelectionSetElasticity(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetElasticity());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetElasticity());
     UpdateObjectSelectionSetDensity(
-        GetMainMapEditorObjectLayer()->GetObjectSelectionSetDensity());
+        MainMapEditorObjectLayer()->GetObjectSelectionSetDensity());
 
     SetSelectedCompoundCount(
-        GetMainMapEditorObjectLayer()->GetSelectedCompoundCount());
+        MainMapEditorObjectLayer()->GetSelectedCompoundCount());
 }
 
 void MapEditor2::WorldView::ChangeObjectSelectionSet ()
@@ -1998,7 +1998,7 @@ void MapEditor2::WorldView::ChangeSelectionObjects ()
     if (m_selected_object_count == 1)
     {
         Object *object =
-            GetMainMapEditorObjectLayer()->GetSingleSelectedObject();
+            MainMapEditorObjectLayer()->GetSingleSelectedObject();
         // the scale and angle will be the single selected object's
         UpdateObjectSelectionSetScale(object->GetScaleFactors().m[0]); // TODO: x/y scale
         UpdateObjectSelectionSetAngle(object->Angle());
@@ -2016,7 +2016,7 @@ void MapEditor2::WorldView::ChangeSelectionEntities ()
     if (m_selected_entity_count == 1)
     {
         Entity *entity =
-            GetMainMapEditorObjectLayer()->GetSingleSelectedEntity();
+            MainMapEditorObjectLayer()->GetSingleSelectedEntity();
         m_sender_per_entity_applies_gravity_assigned.Signal(
             entity->AppliesGravity());
         m_sender_per_entity_reacts_to_gravity_assigned.Signal(
@@ -2101,8 +2101,8 @@ void MapEditor2::WorldView::TransformationEdit (
 {
     FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
     FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
-    Float old_vector_length = old_vector.GetLength();
-    Float new_vector_length = new_vector.GetLength();
+    Float old_vector_length = old_vector.Length();
+    Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
     Float scale_factor =
         old_vector_length != 0.0f ?
@@ -2119,11 +2119,11 @@ void MapEditor2::WorldView::TransformationEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetScale(
+            MainMapEditorObjectLayer()->ObjectSelectionSetScale(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetRotate(
+            MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2136,7 +2136,7 @@ void MapEditor2::WorldView::TransformationEdit (
         else
         {
             // scale the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetScale(
+            MainMapEditorObjectLayer()->ObjectSelectionSetScale(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2151,7 +2151,7 @@ void MapEditor2::WorldView::TransformationEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // rotate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetRotate(
+            MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2163,7 +2163,7 @@ void MapEditor2::WorldView::TransformationEdit (
         else
         {
             // translate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetTranslate(position_delta);
+            MainMapEditorObjectLayer()->ObjectSelectionSetTranslate(position_delta);
             // update the edit deltas
             AccumulateTranslationEditDelta(position_delta);
         }
@@ -2178,8 +2178,8 @@ void MapEditor2::WorldView::LinearVelocityEdit (
 {
     FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
     FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
-    Float old_vector_length = old_vector.GetLength();
-    Float new_vector_length = new_vector.GetLength();
+    Float old_vector_length = old_vector.Length();
+    Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
     Float scale_factor =
         old_vector_length != 0.0f ?
@@ -2196,11 +2196,11 @@ void MapEditor2::WorldView::LinearVelocityEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2210,7 +2210,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
         else
         {
             // scale the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2223,7 +2223,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // rotate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2233,7 +2233,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
         else
         {
             // translate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetTranslateVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetTranslateVelocity(
                 position_delta);
             // update the edit deltas
             AccumulateTranslationEditDelta(position_delta);
@@ -2248,8 +2248,8 @@ void MapEditor2::WorldView::AngularVelocityEdit (
 {
     FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
     FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
-    Float old_vector_length = old_vector.GetLength();
-    Float new_vector_length = new_vector.GetLength();
+    Float old_vector_length = old_vector.Length();
+    Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
     Float scale_factor =
         old_vector_length != 0.0f ?
@@ -2270,7 +2270,7 @@ void MapEditor2::WorldView::AngularVelocityEdit (
         else
         {
             // scale the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetScaleAngularVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetScaleAngularVelocity(
                 scale_factor);
             // update the edit deltas
             AccumulateScaleEditDelta(scale_factor);
@@ -2285,7 +2285,7 @@ void MapEditor2::WorldView::AngularVelocityEdit (
         else
         {
             // angle-accumulate the object selection set
-            GetMainMapEditorObjectLayer()->ObjectSelectionSetAccumulateAngularVelocity(
+            MainMapEditorObjectLayer()->ObjectSelectionSetAccumulateAngularVelocity(
                 angle_delta);
             // update the edit deltas
             AccumulateAngleEditDelta(angle_delta);
@@ -2301,8 +2301,8 @@ void MapEditor2::WorldView::VerticesEdit (
 {
     FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
     FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
-    Float old_vector_length = old_vector.GetLength();
-    Float new_vector_length = new_vector.GetLength();
+    Float old_vector_length = old_vector.Length();
+    Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
     Float scale_factor =
         old_vector_length != 0.0f ?
@@ -2319,11 +2319,11 @@ void MapEditor2::WorldView::VerticesEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // scale and rotate the vertex selection set
-            GetMainMapEditorObjectLayer()->VertexSelectionSetScale(
+            MainMapEditorObjectLayer()->VertexSelectionSetScale(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
-            GetMainMapEditorObjectLayer()->VertexSelectionSetRotate(
+            MainMapEditorObjectLayer()->VertexSelectionSetRotate(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2338,7 +2338,7 @@ void MapEditor2::WorldView::VerticesEdit (
         else
         {
             // scale the vertex selection set
-            GetMainMapEditorObjectLayer()->VertexSelectionSetScale(
+            MainMapEditorObjectLayer()->VertexSelectionSetScale(
                 scale_factor,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2355,7 +2355,7 @@ void MapEditor2::WorldView::VerticesEdit (
         if (e->IsEitherControlKeyPressed())
         {
             // rotate the vertex selection set
-            GetMainMapEditorObjectLayer()->VertexSelectionSetRotate(
+            MainMapEditorObjectLayer()->VertexSelectionSetRotate(
                 angle_delta,
                 GetOriginCursor(),
                 GetTransformationMode());
@@ -2369,7 +2369,7 @@ void MapEditor2::WorldView::VerticesEdit (
         else
         {
             // translate the vertex selection set
-            GetMainMapEditorObjectLayer()->VertexSelectionSetTranslate(position_delta);
+            MainMapEditorObjectLayer()->VertexSelectionSetTranslate(position_delta);
             // update the edit deltas
             AccumulateTranslationEditDelta(position_delta);
         }
@@ -2515,7 +2515,7 @@ void MapEditor2::WorldView::AccumulateObjectSelectionSetAngle (Float const angle
 void MapEditor2::WorldView::ConnectSignals ()
 {
     SignalHandler::Connect0(
-        GetMapEditorWorld()->SenderMainObjectLayerChanged(),
+        MapEditorWorld()->SenderMainObjectLayerChanged(),
         &m_internal_receiver_update_main_object_layer_connections);
     UpdateMainObjectLayerConnections();
 }

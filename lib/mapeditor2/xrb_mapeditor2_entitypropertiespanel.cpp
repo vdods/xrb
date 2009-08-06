@@ -404,7 +404,7 @@ void MapEditor2::EntityPropertiesPanel::SetObjectSelectionSetVelocity (
 {
     m_object_selection_set_velocity_x_edit->SetValue(velocity[Dim::X]);
     m_object_selection_set_velocity_y_edit->SetValue(velocity[Dim::Y]);
-    m_object_selection_set_speed_edit->SetValue(velocity.GetLength());
+    m_object_selection_set_speed_edit->SetValue(velocity.Length());
     m_object_selection_set_velocity_angle_edit->SetValue(
         Math::Atan2(velocity[Dim::Y], velocity[Dim::X]));
 }

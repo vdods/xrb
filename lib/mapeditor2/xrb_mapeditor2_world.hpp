@@ -70,7 +70,7 @@ namespace MapEditor2
 
         World (Uint32 entity_capacity);
         
-        virtual Uint32 GetMainObjectLayerIndex () const;
+        virtual Uint32 MainObjectLayerIndex () const;
     
         virtual void SetMainObjectLayerIndex (Uint32 index);
     

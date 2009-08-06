@@ -34,20 +34,20 @@ namespace GL
 
     /** @brief Returns the current GL matrix mode.
       */
-    GLint GetMatrixMode ();
-    /** This function is not to be confused with @a GetMaxMatrixStackDepth
+    GLint MatrixMode ();
+    /** This function is not to be confused with @a MaxMatrixStackDepth
       * @brief Returns the current matrix stack depth of the given matrix mode.
       * @param matrix_mode The matrix mode of the desired stack depth.  Valid
       *                    values are GL_COLOR_MATRIX, GL_MODELVIEW,
       *                    GL_PROJECTION, and GL_TEXTURE.
       */
-    GLint GetMatrixStackDepth (GLenum matrix_mode);
+    GLint MatrixStackDepth (GLenum matrix_mode);
     /** @brief Returns the maximum matrix stack depth of the given matrix mode.
       * @param matrix_mode The matrix mode of the desired max stack depth.
       *                    Valid values are GL_COLOR_MATRIX, GL_MODELVIEW,
       *                    GL_PROJECTION, and GL_TEXTURE.
       */
-    GLint GetMaxMatrixStackDepth (GLenum matrix_mode);
+    GLint MaxMatrixStackDepth (GLenum matrix_mode);
     /** @brief Returns true if GL_TEXTURE_2D is enabled
       */
     bool IsTexture2dOn ();

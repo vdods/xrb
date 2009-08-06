@@ -130,7 +130,7 @@ InventoryPanel::InventoryPanel (
                 Singletons::ResourceLibrary().
                     LoadFilename<GLTexture>(
                         GLTexture::Create,
-                        Item::GetMineralSpriteFilename(mineral_index)),
+                        Item::MineralSpriteFilename(mineral_index)),
                 price_layout);
         m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->Height());
         m_mineral_icon_label[mineral_index]->FixHeight(m_mineral_cost_label[mineral_index]->Height());
@@ -241,7 +241,7 @@ void InventoryPanel::UpdatePanelState ()
 
                 Uint32 player_ship_minerals =
                     static_cast<Uint32>(
-                        m_inventory_owner_ship->GetMineralInventory(mineral_index));
+                        m_inventory_owner_ship->MineralInventory(mineral_index));
                 Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
                 if (player_ship_minerals < item_cost_minerals)
                     m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
@@ -269,7 +269,7 @@ void InventoryPanel::UpdatePanelState ()
 
 bool InventoryPanel::ProcessKeyEvent (EventKey const *const e)
 {
-    if (e->IsKeyDownEvent() && e->GetKeyCode() == Key::ESCAPE)
+    if (e->IsKeyDownEvent() && e->KeyCode() == Key::ESCAPE)
     {
         Deactivate();
         return true;
@@ -362,7 +362,7 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
 
             Uint32 player_ship_minerals =
                 static_cast<Uint32>(
-                    m_inventory_owner_ship->GetMineralInventory(mineral_index));
+                    m_inventory_owner_ship->MineralInventory(mineral_index));
             Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
             if (player_ship_minerals < item_cost_minerals)
                 m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);

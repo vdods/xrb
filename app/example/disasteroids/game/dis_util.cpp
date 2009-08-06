@@ -61,7 +61,7 @@ void RadiusDamage (
             // damage to apply (taking into account the size of the mortal)
             Float distance =
                 Max(0.0f,
-                    (entity->GetTranslation() - damage_area_center).GetLength() -
+                    (entity->GetTranslation() - damage_area_center).Length() -
                      entity->GetScaleFactor());
             Float distance_ratio = distance / damage_area_radius;
             ASSERT1(distance_ratio >= 0.0f);
@@ -124,7 +124,7 @@ void RadiusKnockback (
     
         // center_to_center points towards the collider
         FloatVector2 center_to_center = entity->GetTranslation() - knockback_area_center;
-        Float distance = center_to_center.GetLength() - entity->GetScaleFactor();
+        Float distance = center_to_center.Length() - entity->GetScaleFactor();
         if (distance < 0.0f)
             distance = 0.0f;
         Float distance_factor;

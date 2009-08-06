@@ -83,8 +83,8 @@ FloatVector2 Entity::AmbientVelocity (
         else if (entity == ignore_me)
             continue;
 
-        total_momentum += entity->GetMomentum();
-        total_mass += entity->GetMass();
+        total_momentum += entity->Momentum();
+        total_mass += entity->Mass();
     }
 
     // if no objects were encountered, then the ambient velocity
@@ -114,15 +114,15 @@ void Entity::ApplyInterceptCourseAcceleration (
             target->GetTranslation()));
     FloatVector2 p(target->GetTranslation() - p1);
     FloatVector2 v(target->GetVelocity() - GetVelocity());
-    FloatVector2 a(target->Force() / target->GetMass());
+    FloatVector2 a(target->Force() / target->Mass());
     Float interceptor_acceleration =
-        maximum_thrust_force / GetMass();
+        maximum_thrust_force / Mass();
 
     Polynomial poly;
     if (apply_force_on_target_also)
     {
         // this one is for when the force is applied between the tractoree and tractoror
-        poly.Set(4, 0.25f * a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+        poly.Set(4, 0.25f * a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
         poly.Set(3, (a | v));
         poly.Set(2, ((a | p) + (v | v)));
         poly.Set(1, 2.0f * (p | v));
@@ -131,7 +131,7 @@ void Entity::ApplyInterceptCourseAcceleration (
     else
     {
         // this one is for when the force is only on the tractoree and not the tractoror
-        poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+        poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
         poly.Set(3, 4.0f * (a | v));
         poly.Set(2, 4.0f * ((a | p) + (v | v)));
         poly.Set(1, 8.0f * (p | v));
@@ -165,10 +165,10 @@ void Entity::ApplyInterceptCourseAcceleration (
     FloatVector2 force_vector;
     if (apply_force_on_target_also)
         // this one is for when the force is applied between the tractoree and tractoror
-        force_vector = (p + v*T + 0.5f*a*T*T) / (T*T) * GetMass();
+        force_vector = (p + v*T + 0.5f*a*T*T) / (T*T) * Mass();
     else
         // this one is for when the force is only on the tractoree and not the tractoror
-        force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * GetMass();
+        force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * Mass();
 
     // if we want reverse thrust (push instead of pull), negate the force vector
     if (reverse_thrust)

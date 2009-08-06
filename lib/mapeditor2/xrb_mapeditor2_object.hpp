@@ -98,7 +98,7 @@ namespace MapEditor2
         // public accessors and modifiers
         // ///////////////////////////////////////////////////////////////////
     
-        ObjectLayer *GetMapEditorObjectLayer () const;
+        ObjectLayer *MapEditorObjectLayer () const;
         VisibilityQuadTree *GetOwnerMapEditorQuadTree () const;
         // returns the object's selection status
         inline bool IsSelected () const

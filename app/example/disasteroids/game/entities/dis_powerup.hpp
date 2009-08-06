@@ -61,7 +61,7 @@ public:
     }
     inline Item *GetItem () const { return m_item; }
     inline Float EffectiveCoefficient () const { return m_effective_coefficient; }
-    inline Float EffectiveValue () const { return m_effective_coefficient * GetMass(); }
+    inline Float EffectiveValue () const { return m_effective_coefficient * Mass(); }
 
     // this sets the effective coefficient directly (and indirectly sets the effective value)
     void SetEffectiveCoefficient (Float effective_coefficient);

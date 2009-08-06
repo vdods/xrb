@@ -310,7 +310,7 @@ public:
       * @brief Returns the length of this vector.
       * @return The length of this vector.
       */
-    inline T GetLength () const
+    inline T Length () const
     {
         return Math::Sqrt(*this | *this);
     }
@@ -319,7 +319,7 @@ public:
       * @brief Returns the square of the length of this vector.
       * @return The square of the length of this vector.
       */
-    inline T GetLengthSquared () const
+    inline T LengthSquared () const
     {
         return *this | *this;
     }

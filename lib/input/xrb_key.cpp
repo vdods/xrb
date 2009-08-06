@@ -100,13 +100,13 @@ bool Key::HandleEvent (Event const *const e)
     {
         case Event::KEYDOWN:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyDown const *const>(e)->GetKeyCode() == m_code);
+            ASSERT1(static_cast<EventKeyDown const *const>(e)->KeyCode() == m_code);
             m_is_pressed = true;
             break;
 
         case Event::KEYUP:
             // assert so that we don't pass the event to the wrong key
-            ASSERT1(static_cast<EventKeyUp const *const>(e)->GetKeyCode() == m_code);
+            ASSERT1(static_cast<EventKeyUp const *const>(e)->KeyCode() == m_code);
             m_is_pressed = false;
             break;
 

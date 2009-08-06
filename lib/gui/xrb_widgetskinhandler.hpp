@@ -79,13 +79,13 @@ public:
     {
         return m_widget_skin->GetTexture(texture_type);
     }
-    /** @brief Frontend for @ref Xrb::WidgetSkin::GetMargins .
+    /** @brief Frontend for @ref Xrb::WidgetSkin::Margins .
       * @param margins_type The margins type to retrieve.
       */
     inline ScreenCoordVector2 const &GetWidgetSkinMargins (
         WidgetSkin::MarginsType const margins_type) const
     {
-        return m_widget_skin->GetMargins(margins_type);
+        return m_widget_skin->Margins(margins_type);
     }
 
     // ///////////////////////////////////////////////////////////////////////

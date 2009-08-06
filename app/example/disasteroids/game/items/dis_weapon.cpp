@@ -179,10 +179,10 @@ bool PeaShooter::Activate (
         SpawnSmartBallistic(
             GetOwnerShip()->GetWorld(),
             GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation() + ballistic_size * GetMuzzleDirection(),
+            MuzzleLocation() + ballistic_size * MuzzleDirection(),
             ballistic_size,
             1.0f,
-            1.5f * ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            1.5f * ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
             impact_damage,
             ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
             time,
@@ -232,10 +232,10 @@ bool PeaShooter::Activate (
         SpawnSmartBallistic(
             GetOwnerShip()->GetWorld(),
             GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation() + ms_ballistic_size[GetUpgradeLevel()] * GetMuzzleDirection(),
+            MuzzleLocation() + ms_ballistic_size[GetUpgradeLevel()] * MuzzleDirection(),
             ms_ballistic_size[GetUpgradeLevel()],
             1.0f,
-            ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
             ms_primary_impact_damage[GetUpgradeLevel()],
             ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
             time,
@@ -329,7 +329,7 @@ bool Laser::Activate (
                     GetOwnerShip()->GetScaleFactor() *
                     fire_vector.GetNormalization());
 
-            if (fire_vector.GetLength() > ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor())
+            if (fire_vector.Length() > ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor())
             {
                 fire_vector.Normalize();
                 fire_vector *= ms_secondary_range[GetUpgradeLevel()] + GetOwnerShip()->GetScaleFactor();
@@ -366,7 +366,7 @@ bool Laser::Activate (
                     ms_secondary_impact_damage[GetUpgradeLevel()],
                     NULL,
                     fire_location + it->m_time * fire_vector,
-                    GetMuzzleDirection(),
+                    MuzzleDirection(),
                     0.0f,
                     Mortal::D_COMBAT_LASER,
                     time,
@@ -395,8 +395,8 @@ bool Laser::Activate (
         LineTraceBindingSet line_trace_binding_set;
         GetOwnerShip()->GetPhysicsHandler()->LineTrace(
             GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation(),
-            ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection(),
+            MuzzleLocation(),
+            ms_primary_range[GetUpgradeLevel()] * MuzzleDirection(),
             ms_beam_radius[GetUpgradeLevel()],
             false,
             &line_trace_binding_set);
@@ -408,7 +408,7 @@ bool Laser::Activate (
             ++it;
 
         FloatVector2 laser_beam_hit_location(
-            GetMuzzleLocation() + ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection());
+            MuzzleLocation() + ms_primary_range[GetUpgradeLevel()] * MuzzleDirection());
 
         // we don't want to hit powerups or ballistics, just skip them.
         while (it != it_end && (it->m_entity->IsPowerup() || it->m_entity->IsBallistic()))
@@ -420,7 +420,7 @@ bool Laser::Activate (
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
             laser_beam_hit_location =
-                GetMuzzleLocation() + it->m_time * ms_primary_range[GetUpgradeLevel()] * GetMuzzleDirection();
+                MuzzleLocation() + it->m_time * ms_primary_range[GetUpgradeLevel()] * MuzzleDirection();
             if (it->m_entity->IsMortal())
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
                     GetOwnerShip(),
@@ -428,7 +428,7 @@ bool Laser::Activate (
                     ms_damage_rate[GetUpgradeLevel()] * ratio_of_max_power_output * frame_dt,
                     NULL, // we don't care how much damage was taken
                     laser_beam_hit_location,
-                    GetMuzzleDirection(),
+                    MuzzleDirection(),
                     0.0f,
                     Mortal::D_MINING_LASER,
                     time,
@@ -441,7 +441,7 @@ bool Laser::Activate (
         ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
         m_laser_beam->SetIntensity(intensity);
         m_laser_beam->SnapToShip(
-            GetMuzzleLocation() + frame_dt * GetOwnerShip()->GetVelocity(),
+            MuzzleLocation() + frame_dt * GetOwnerShip()->GetVelocity(),
             laser_beam_hit_location + frame_dt * GetOwnerShip()->GetVelocity(),
             s_laser_beam_width);
 
@@ -514,8 +514,8 @@ bool FlameThrower::Activate (
     SpawnFireball(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation() + 2.0f * GetMuzzleDirection(), // the extra is just so we don't fry ourselves
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+        MuzzleLocation() + 2.0f * MuzzleDirection(), // the extra is just so we don't fry ourselves
+        ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
         power / ms_max_required_primary_power[GetUpgradeLevel()] * max_damage_per_fireball,
         max_damage_per_fireball,
         final_fireball_size,
@@ -574,8 +574,8 @@ bool GaussGun::Activate (
     LineTraceBindingSet line_trace_binding_set;
     GetOwnerShip()->GetPhysicsHandler()->LineTrace(
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation(),
-        ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
+        MuzzleLocation(),
+        ms_range[GetUpgradeLevel()] * MuzzleDirection(),
         0.0f,
         false,
         &line_trace_binding_set);
@@ -614,8 +614,8 @@ bool GaussGun::Activate (
                 NULL, // gauss gun does not have a Entity medium
                 damage_left_to_inflict,
                 &damage_amount_used,
-                GetMuzzleLocation() + it->m_time * ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
-                GetMuzzleDirection(),
+                MuzzleLocation() + it->m_time * ms_range[GetUpgradeLevel()] * MuzzleDirection(),
+                MuzzleDirection(),
                 0.0f,
                 Mortal::D_BALLISTIC,
                 time,
@@ -637,8 +637,8 @@ bool GaussGun::Activate (
     SpawnGaussGunTrail(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation(),
-        furthest_hit_time * ms_range[GetUpgradeLevel()] * GetMuzzleDirection(),
+        MuzzleLocation(),
+        furthest_hit_time * ms_range[GetUpgradeLevel()] * MuzzleDirection(),
         GetOwnerShip()->GetVelocity(),
         2.0f,
         1.0f,
@@ -741,9 +741,9 @@ bool GrenadeLauncher::Activate (
     Grenade *grenade = SpawnGrenade(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation() + grenade_scale_factor * GetMuzzleDirection(),
+        MuzzleLocation() + grenade_scale_factor * MuzzleDirection(),
         grenade_scale_factor,
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+        ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
         this,
         ms_grenade_damage_to_inflict[GetUpgradeLevel()],
         ms_grenade_damage_radius[GetUpgradeLevel()],
@@ -808,10 +808,10 @@ bool MissileLauncher::Activate (
         SpawnMissile(
             GetOwnerShip()->GetWorld(),
             GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation() + missile_scale_factor * GetMuzzleDirection(),
+            MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
             missile_scale_factor,
-            Math::Atan(GetMuzzleDirection()),
-            ms_primary_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            Math::Atan(MuzzleDirection()),
+            ms_primary_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
             ms_primary_missile_time_to_live[GetUpgradeLevel()],
             time,
             ms_missile_damage_amount[GetUpgradeLevel()],
@@ -838,10 +838,10 @@ bool MissileLauncher::Activate (
         SpawnGuidedMissile(
             GetOwnerShip()->GetWorld(),
             GetOwnerShip()->GetObjectLayer(),
-            GetMuzzleLocation() + missile_scale_factor * GetMuzzleDirection(),
+            MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
             missile_scale_factor,
-            Math::Atan(GetMuzzleDirection()),
-            ms_secondary_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+            Math::Atan(MuzzleDirection()),
+            ms_secondary_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
             ms_secondary_missile_time_to_live[GetUpgradeLevel()],
             time,
             ms_missile_damage_amount[GetUpgradeLevel()],
@@ -1006,9 +1006,9 @@ bool EMPBombLayer::Activate (
     EMPBomb *emp_bomb = SpawnEMPBomb(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation() + emp_bomb_scale_factor * GetMuzzleDirection(),
+        MuzzleLocation() + emp_bomb_scale_factor * MuzzleDirection(),
         emp_bomb_scale_factor,
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+        ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
         this,
         ms_emp_bomb_disable_time_factor[GetUpgradeLevel()],
         ms_emp_bomb_blast_radius[GetUpgradeLevel()],
@@ -1076,7 +1076,7 @@ bool Tractor::Activate (
         ms_strength[GetUpgradeLevel()];
     Float max_force =
         IsMaxForceOverridden() ?
-        GetMaxForceOverride() :
+        MaxForceOverride() :
         ms_max_force[GetUpgradeLevel()];
     Float beam_radius =
         IsBeamRadiusOverridden() ?
@@ -1087,14 +1087,14 @@ bool Tractor::Activate (
     // but make sure it's inside the maximum range.
     FloatVector2 reticle_coordinates(GetReticleCoordinates());
     Float reticle_distance =
-        (reticle_coordinates - GetOwnerShip()->GetTranslation()).GetLength();
+        (reticle_coordinates - GetOwnerShip()->GetTranslation()).Length();
     if (reticle_distance > range)
     {
         ASSERT1(reticle_distance > 0.0f);
         reticle_coordinates =
             range / reticle_distance *
-            (reticle_coordinates - GetMuzzleLocation()) +
-            GetMuzzleLocation();
+            (reticle_coordinates - MuzzleLocation()) +
+            MuzzleLocation();
     }
     // ensure the reticle coordinates are inside the object layer
     reticle_coordinates =
@@ -1186,10 +1186,10 @@ bool SlowBulletGun::Activate (
     SpawnDumbBallistic(
         GetOwnerShip()->GetWorld(),
         GetOwnerShip()->GetObjectLayer(),
-        GetMuzzleLocation() + s_bullet_size * GetMuzzleDirection(),
+        MuzzleLocation() + s_bullet_size * MuzzleDirection(),
         s_bullet_size,
         3.0f,
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() + GetOwnerShip()->GetVelocity(),
+        ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() + GetOwnerShip()->GetVelocity(),
         ms_impact_damage[GetUpgradeLevel()],
         ms_range[GetUpgradeLevel()] / ms_muzzle_speed[GetUpgradeLevel()],
         time,
@@ -1240,7 +1240,7 @@ bool EnemySpawner::Activate (
     // fire the weapon -- spawn the specified type/level of enemy
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
     FloatVector2 muzzle_velocity(
-        ms_muzzle_speed[GetUpgradeLevel()] * GetMuzzleDirection() +
+        ms_muzzle_speed[GetUpgradeLevel()] * MuzzleDirection() +
         GetOwnerShip()->GetVelocity());
 
     Uint8 spawn_enemy_level = Math::RandomUint16(0, GetUpgradeLevel());
@@ -1252,7 +1252,7 @@ bool EnemySpawner::Activate (
             muzzle_velocity,
             EnemySpawnType(),
             spawn_enemy_level);
-    enemy_ship->SetTranslation(GetMuzzleLocation() + enemy_ship->GetScaleFactor() * GetMuzzleDirection());
+    enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->GetScaleFactor() * MuzzleDirection());
     
     // update the last time fired
     m_time_last_fired = time;

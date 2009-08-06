@@ -102,8 +102,8 @@ void Revulsion::Think (Float const time, Float const frame_dt)
     m_weapon->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
         GetNormalizedWeaponSecondaryInput(),
-        GetMuzzleLocation(m_weapon),
-        GetMuzzleDirection(m_weapon),
+        MuzzleLocation(m_weapon),
+        MuzzleDirection(m_weapon),
         GetReticleCoordinates());
     m_weapon->Activate(
         m_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
@@ -267,7 +267,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 
     // if we're close enough to the spot behind the target (and we're
     // ready to fire), transition to fire
-    Float distance_to_preferred_location = (preferred_location - GetTranslation()).GetLength();
+    Float distance_to_preferred_location = (preferred_location - GetTranslation()).Length();
     if (distance_to_preferred_location <= ms_preferred_location_distance_tolerance[EnemyLevel()] &&
         m_weapon->GetReadinessStatus(time) == 1.0f)
     {
@@ -278,13 +278,13 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     // otherwise, plot an intercept course with the preferred location
 
     Float interceptor_acceleration =
-        ms_engine_thrust[EnemyLevel()] / GetMass();
+        ms_engine_thrust[EnemyLevel()] / Mass();
     FloatVector2 p(preferred_location - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->Force() / m_target->GetMass());
+    FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
-    poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+    poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
     poly.Set(3, 4.0f * (a | v));
     poly.Set(2, 4.0f * ((a | p) + (v | v)));
     poly.Set(1, 8.0f * (p | v));
@@ -450,14 +450,14 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
-    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
-    if (thrust_vector.GetLengthSquared() > 0.001f)
+        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+    FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
+    if (thrust_vector.LengthSquared() > 0.001f)
     {
-        Float thrust_force = thrust_vector.GetLength();
+        Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
             thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
-        thrust_force = thrust_vector.GetLength();
+        thrust_force = thrust_vector.Length();
 
         SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
         SetEngineUpDownInput(

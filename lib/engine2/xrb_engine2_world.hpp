@@ -80,8 +80,8 @@ public:
     inline Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
     inline Entity *GetEntity (Uint32 index) { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
     inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
-    virtual ObjectLayer const *GetMainObjectLayer () const { return m_main_object_layer; }
-    virtual ObjectLayer *GetMainObjectLayer () { return m_main_object_layer; }
+    virtual ObjectLayer const *MainObjectLayer () const { return m_main_object_layer; }
+    virtual ObjectLayer *MainObjectLayer () { return m_main_object_layer; }
     inline Float GetTimescale () { return m_timescale; }
 
     inline void SetTimescale (Float timescale)
@@ -116,7 +116,7 @@ protected:
         PhysicsHandler *physics_handler,
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    virtual Uint32 GetMainObjectLayerIndex () const;
+    virtual Uint32 MainObjectLayerIndex () const;
 
     virtual void SetMainObjectLayerIndex (Uint32 index);
 

@@ -215,7 +215,7 @@ GameWidget::GameWidget (
                     Singletons::ResourceLibrary().
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
-                            Item::GetMineralSpriteFilename(mineral_index)),
+                            Item::MineralSpriteFilename(mineral_index)),
                     m_stats_and_inventory_layout);
             mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());
             mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->Height());
@@ -384,7 +384,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         // initialize the UI elements
         m_wave_count = player_ship->GetWaveCount();
         UpdateWaveCountLabel();
-//         m_lives_remaining_label->SetValue(player_ship->GetLivesRemaining());
+//         m_lives_remaining_label->SetValue(player_ship->LivesRemaining());
         m_stoke_o_meter->SetProgress(NormalizeStoke(player_ship->GetStoke()));
         m_score_label->SetValue(player_ship->GetScore());
         m_armor_status->SetProgress(player_ship->ArmorStatus());
@@ -392,7 +392,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_power_status->SetProgress(player_ship->GetPowerStatus());
         m_weapon_status->SetProgress(player_ship->GetWeaponStatus());
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-            m_mineral_inventory_label[i]->SetValue(static_cast<Uint32>(player_ship->GetMineralInventory(i)));
+            m_mineral_inventory_label[i]->SetValue(static_cast<Uint32>(player_ship->MineralInventory(i)));
 
         m_inventory_panel->SetInventoryOwnerShip(player_ship);
     }

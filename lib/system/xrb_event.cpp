@@ -94,7 +94,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseWheel(
                     mouse_button_event,
-                    Singletons::Input().GetModifiers(),
+                    Singletons::Input().Modifiers(),
                     screen,
                     time);
             }
@@ -102,7 +102,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonDown(
                     mouse_button_event,
-                    Singletons::Input().GetModifiers(),
+                    Singletons::Input().Modifiers(),
                     screen,
                     time);
             }
@@ -124,7 +124,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonUp(
                     mouse_button_event,
-                    Singletons::Input().GetModifiers(),
+                    Singletons::Input().Modifiers(),
                     screen,
                     time);
             }
@@ -134,7 +134,7 @@ Event *Event::CreateEventFromSDLEvent (
         case SDL_MOUSEMOTION:
             retval = new EventMouseMotion(
                 reinterpret_cast<SDL_MouseMotionEvent const *>(e),
-                Singletons::Input().GetModifiers(),
+                Singletons::Input().Modifiers(),
                 screen,
                 time);
             break;

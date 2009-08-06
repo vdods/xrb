@@ -75,7 +75,7 @@ public:
     /** Returns 0 if no event has been processed.
       * @brief Returns the time of the most-recently processed Event.
       */
-    inline Float GetMostRecentEventTime () const
+    inline Float MostRecentEventTime () const
     {
         return Max(m_most_recent_event_time, 0.0f);
     }

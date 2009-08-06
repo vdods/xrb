@@ -73,7 +73,7 @@ void PhysicsHandler::LineTrace (
 
     if (m_main_object_layer->IsWrapped())
     {
-        ASSERT1(trace_vector.GetLength() <= 0.5f * m_main_object_layer->GetSideLength());
+        ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->GetSideLength());
         m_quad_tree->LineTraceWrapped(
             trace_start,
             trace_vector,
@@ -275,10 +275,10 @@ void PhysicsHandler::UpdateVelocities ()
         {
             ASSERT1(Math::IsFinite(entity->Force()[Dim::X]));
             ASSERT1(Math::IsFinite(entity->Force()[Dim::Y]));
-            ASSERT1(entity->GetMass() > 0.0f);
+            ASSERT1(entity->Mass() > 0.0f);
             entity->AccumulateVelocity(
                 FrameDT() * entity->Force() /
-                entity->GetMass());
+                entity->Mass());
             entity->ResetForce();
         }
 
@@ -295,7 +295,7 @@ void PhysicsHandler::UpdateVelocities ()
                 static Float const s_max_solid_speed = 350.0f;
                 static Float const s_max_solid_speed_squared = s_max_solid_speed * s_max_solid_speed;
 
-                Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
+                Float entity_speed_squared = entity->GetVelocity().LengthSquared();
                 if (entity_speed_squared > s_max_solid_speed_squared)
                     entity->SetVelocity(s_max_solid_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
             }
@@ -306,7 +306,7 @@ void PhysicsHandler::UpdateVelocities ()
                 static Float const s_max_nonsolid_speed = 800.0f;
                 static Float const s_max_nonsolid_speed_squared = s_max_nonsolid_speed * s_max_nonsolid_speed;
 
-                Float entity_speed_squared = entity->GetVelocity().GetLengthSquared();
+                Float entity_speed_squared = entity->GetVelocity().LengthSquared();
                 if (entity_speed_squared > s_max_nonsolid_speed_squared)
                     entity->SetVelocity(s_max_nonsolid_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
             }

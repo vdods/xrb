@@ -45,7 +45,7 @@ public:
     static KeyMap const *Create (std::string name);
 
     virtual std::string GetName () const = 0;
-    virtual Key::Code GetMappedKey (Key::Code code) const = 0;
+    virtual Key::Code MappedKey (Key::Code code) const = 0;
 }; // end of class KeyMap
 
 class KeyMapIdentity : public KeyMap
@@ -53,7 +53,7 @@ class KeyMapIdentity : public KeyMap
 public:
 
     virtual std::string GetName () const { return "none"; }
-    virtual Key::Code GetMappedKey (Key::Code code) const { return code; }
+    virtual Key::Code MappedKey (Key::Code code) const { return code; }
 }; // end of KeyMapIdentity
 
 class KeyMapDvorak : public KeyMap
@@ -63,7 +63,7 @@ public:
     KeyMapDvorak ();
 
     virtual std::string GetName () const { return "dvorak"; }
-    virtual Key::Code GetMappedKey (Key::Code code) const;
+    virtual Key::Code MappedKey (Key::Code code) const;
 
 private:
 

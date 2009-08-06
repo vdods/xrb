@@ -343,19 +343,19 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
     for (Uint8 d = 0; d < 2; ++d)
     {
         m_contents_size_properties.m_min_size_enabled[d] =
-            child->GetMinSizeEnabled()[d] ||
+            child->MinSizeEnabled()[d] ||
             m_preferred_size_properties.m_min_size_enabled[d];
-        if (child->GetMinSizeEnabled()[d])
+        if (child->MinSizeEnabled()[d])
         {
             if (m_preferred_size_properties.m_min_size_enabled[d])
             {
                 m_contents_size_properties.m_min_size[d] =
-                    Max(child->GetMinSize()[d],
+                    Max(child->MinSize()[d],
                         m_preferred_size_properties.m_min_size[d]);
             }
             else
             {
-                m_contents_size_properties.m_min_size[d] = child->GetMinSize()[d];
+                m_contents_size_properties.m_min_size[d] = child->MinSize()[d];
             }
         }
         else
@@ -374,10 +374,10 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
             m_preferred_size_properties.m_max_size_enabled[d];
         if (m_preferred_size_properties.m_max_size_enabled[d])
         {
-            if (child->GetMaxSizeEnabled()[d])
+            if (child->MaxSizeEnabled()[d])
             {
                 m_contents_size_properties.m_max_size[d] =
-                    Max(child->GetMaxSize()[d],
+                    Max(child->MaxSize()[d],
                         m_preferred_size_properties.m_max_size[d]);
             }
             else

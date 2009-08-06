@@ -54,7 +54,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
         return retval;
 
     // if the point is outside the reaches of this quad node, early out
-    if ((point - m_center).GetLengthSquared() > 4.0*m_radius*m_radius)
+    if ((point - m_center).LengthSquared() > 4.0*m_radius*m_radius)
         return retval;
 
     Polygon *smallest_candidate;
@@ -190,14 +190,14 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
     {
         // if the circle is not touching the reach of this quadnode,
         // do an early out.
-        if ((center - Center()).GetLength() > radius + 2.0f*GetRadius())
+        if ((center - Center()).Length() > radius + 2.0f*GetRadius())
             return;
     }
     else
     {
         // if the circle is not touching the exact bounding circle
         // of this quad node, early out
-        if ((center - Center()).GetLength() > radius + GetRadius())
+        if ((center - Center()).Length() > radius + GetRadius())
             return;
     }
 
@@ -216,7 +216,7 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
 
         // check if the object meets the selection criteria
         object_distance =
-            (center - object->GetTranslation()).GetLength();
+            (center - object->GetTranslation()).Length();
         if (select_touching)
             object_is_in_operand_set =
                 object_distance <= radius + object->GetVisibleRadius();
@@ -274,7 +274,7 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - Center()).GetLength() > radius + 2.0f*GetRadius())
+    if ((center - Center()).Length() > radius + 2.0f*GetRadius())
         return;
 
     // iterate through all objects at this node and perform the
@@ -543,7 +543,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
         for (Float y = bottom; y <= top; y += 1.0f)
         {
             view_offset.SetComponents(side_length*x, side_length*y);
-            if (view_offset.GetLengthSquared() < radius_sum*radius_sum)
+            if (view_offset.LengthSquared() < radius_sum*radius_sum)
             {
                 new_world_to_screen.SetComponents(1.0f, 0.0f, view_offset.m[0],
                                                   0.0f, 1.0f, view_offset.m[1]);
@@ -572,7 +572,7 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - Center()).GetLength() > radius + 2.0f*GetRadius())
+    if ((center - Center()).Length() > radius + 2.0f*GetRadius())
         return;
 
     // iterate through all objects at this node and perform the

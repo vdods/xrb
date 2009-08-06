@@ -176,7 +176,7 @@ MapEditor2::ObjectLayer::ObjectLayer (
     m_selected_polygon_count = 0;
 }
 
-MapEditor2::VisibilityQuadTree *MapEditor2::ObjectLayer::GetMapEditorQuadTree () const
+MapEditor2::VisibilityQuadTree *MapEditor2::ObjectLayer::MapEditorQuadTree () const
 {
     VisibilityQuadTree *retval = dynamic_cast<VisibilityQuadTree *>(GetQuadTree());
     ASSERT1(GetQuadTree() == NULL || retval != NULL);
@@ -195,7 +195,7 @@ void MapEditor2::ObjectLayer::DrawMetrics (
     ASSERT2(view_radius > 0.0);
 
     if (IsWrapped())
-        GetMapEditorQuadTree()->DrawMetricsWrapped(
+        MapEditorQuadTree()->DrawMetricsWrapped(
             render_context,
             world_to_screen,
             pixels_in_view_radius,
@@ -203,7 +203,7 @@ void MapEditor2::ObjectLayer::DrawMetrics (
             view_radius,
             metric_mode);
     else
-        GetMapEditorQuadTree()->DrawMetrics(
+        MapEditorQuadTree()->DrawMetrics(
             render_context,
             world_to_screen,
             pixels_in_view_radius,
@@ -221,7 +221,7 @@ void MapEditor2::ObjectLayer::SelectSmallestObjectTouchingPoint (
     MapEditor2::Object::SelectionOperation const selection_operation)
 {
     Object *object =
-        GetMapEditorQuadTree()->GetSmallestMapEditorObjectTouchingPoint(point);
+        MapEditorQuadTree()->GetSmallestMapEditorObjectTouchingPoint(point);
     if (object != NULL)
         object->ApplyObjectSelectionOperation(selection_operation, true);
 
@@ -234,7 +234,7 @@ void MapEditor2::ObjectLayer::SelectObjectsByCircle (
     MapEditor2::Object::SelectionOperation const selection_operation,
     bool const select_touching)
 {
-    GetMapEditorQuadTree()->SelectObjectsByCircle(
+    MapEditorQuadTree()->SelectObjectsByCircle(
         center,
         radius,
         selection_operation,
@@ -246,7 +246,7 @@ void MapEditor2::ObjectLayer::SelectObjectsByCircle (
 
 void MapEditor2::ObjectLayer::SelectAllObjects ()
 {
-    GetMapEditorQuadTree()->SelectAllObjects(false);
+    MapEditorQuadTree()->SelectAllObjects(false);
 
     UpdateObjectsAndEntitiesProperties();
     m_sender_object_selection_set_changed.Signal();
@@ -254,7 +254,7 @@ void MapEditor2::ObjectLayer::SelectAllObjects ()
 
 void MapEditor2::ObjectLayer::InvertObjectSelectionSet ()
 {
-    GetMapEditorQuadTree()->SelectAllObjects(true);
+    MapEditorQuadTree()->SelectAllObjects(true);
 
     UpdateObjectsAndEntitiesProperties();
     m_sender_object_selection_set_changed.Signal();
@@ -703,7 +703,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityAngle (
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocity(
-                entity->GetVelocity().GetLength() *
+                entity->GetVelocity().Length() *
                 FloatVector2(
                     Math::Cos(velocity_angle),
                     Math::Sin(velocity_angle)));
@@ -849,7 +849,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleMass (
 
         if (entity != NULL)
             entity->SetMass(
-                mass_scale_factor * entity->GetMass());
+                mass_scale_factor * entity->Mass());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -994,7 +994,7 @@ void MapEditor2::ObjectLayer::SelectVerticesByCircle (
     Float const radius,
     MapEditor2::Object::SelectionOperation const selection_operation)
 {
-    GetMapEditorQuadTree()->SelectVerticesByCircle(
+    MapEditorQuadTree()->SelectVerticesByCircle(
         center,
         radius,
         selection_operation);
@@ -1007,7 +1007,7 @@ void MapEditor2::ObjectLayer::SelectNearestVertex (
 {
     Compound *compound_containing_nearest;
     CompoundVertex *nearest_vertex;
-    GetMapEditorQuadTree()->
+    MapEditorQuadTree()->
         ComputeNearestVertex(
             center,
             radius,
@@ -1022,12 +1022,12 @@ void MapEditor2::ObjectLayer::SelectNearestVertex (
 
 void MapEditor2::ObjectLayer::SelectAllVertices (bool const mask_by_object_selection_set)
 {
-    GetMapEditorQuadTree()->SelectAllVertices(false, mask_by_object_selection_set);
+    MapEditorQuadTree()->SelectAllVertices(false, mask_by_object_selection_set);
 }
 
 void MapEditor2::ObjectLayer::InvertVertexSelectionSet (bool const mask_by_object_selection_set)
 {
-    GetMapEditorQuadTree()->SelectAllVertices(true, mask_by_object_selection_set);
+    MapEditorQuadTree()->SelectAllVertices(true, mask_by_object_selection_set);
 }
 
 void MapEditor2::ObjectLayer::ClearVertexSelectionSet ()
@@ -1109,7 +1109,7 @@ void MapEditor2::ObjectLayer::SelectSmallestPolygonTouchingPoint (
 {
     bool mask_by_object_selection_set = GetSelectedObjectCount() > 0;
     Polygon *polygon =
-        GetMapEditorQuadTree()->
+        MapEditorQuadTree()->
             GetSmallestMapEditorPolygonTouchingPoint(
                 point,
                 mask_by_object_selection_set);
@@ -1129,12 +1129,12 @@ void MapEditor2::ObjectLayer::SelectSmallestPolygonTouchingPoint (
 
 void MapEditor2::ObjectLayer::SelectAllPolygons (bool const mask_by_object_selection_set)
 {
-    GetMapEditorQuadTree()->SelectAllPolygons(false, mask_by_object_selection_set);
+    MapEditorQuadTree()->SelectAllPolygons(false, mask_by_object_selection_set);
 }
 
 void MapEditor2::ObjectLayer::InvertPolygonSelectionSet (bool const mask_by_object_selection_set)
 {
-    GetMapEditorQuadTree()->SelectAllPolygons(true, mask_by_object_selection_set);
+    MapEditorQuadTree()->SelectAllPolygons(true, mask_by_object_selection_set);
 }
 
 void MapEditor2::ObjectLayer::ClearPolygonSelectionSet ()
@@ -1174,7 +1174,7 @@ void MapEditor2::ObjectLayer::MaskSelectedPolygonsByObjectSelectionSet ()
 
 void MapEditor2::ObjectLayer::SetVertexSelectionStateFromSelectionOwnerPolygonCount ()
 {
-    GetMapEditorQuadTree()->SetVertexSelectionStateFromSelectionOwnerPolygonCount();
+    MapEditorQuadTree()->SetVertexSelectionStateFromSelectionOwnerPolygonCount();
 }
 
 void MapEditor2::ObjectLayer::UnweldSelectedPolygons ()
@@ -1351,12 +1351,12 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     {
         object_selection_set_center_of_gravity =
             (m_object_selection_set_center_of_gravity * object_selection_set_mass +
-             entity->GetTranslation() * entity->GetMass())
+             entity->GetTranslation() * entity->Mass())
             /
-            (object_selection_set_mass + entity->GetMass());
+            (object_selection_set_mass + entity->Mass());
 
         ++selected_entity_count;
-        object_selection_set_mass += entity->GetMass();
+        object_selection_set_mass += entity->Mass();
     }
 
     Compound *compound = dynamic_cast<Compound *>(object);
@@ -1422,12 +1422,12 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
         {
             object_selection_set_center_of_gravity =
                 (m_object_selection_set_center_of_gravity * object_selection_set_mass -
-                entity->GetTranslation() * entity->GetMass())
+                entity->GetTranslation() * entity->Mass())
                 /
-                (object_selection_set_mass + entity->GetMass());
+                (object_selection_set_mass + entity->Mass());
 
             --selected_entity_count;
-            object_selection_set_mass -= entity->GetMass();
+            object_selection_set_mass -= entity->Mass();
         }
 
         Compound *compound = dynamic_cast<Compound *>(object);
@@ -1496,10 +1496,10 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
             if (entity != NULL)
             {
                 object_selection_set_center_of_gravity +=
-                    entity->GetTranslation() * entity->GetMass();
+                    entity->GetTranslation() * entity->Mass();
 
                 ++selected_entity_count;
-                object_selection_set_mass += entity->GetMass();
+                object_selection_set_mass += entity->Mass();
             }
 
             Compound *compound = dynamic_cast<Compound *>(object);
@@ -1604,7 +1604,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetDensity ()
 
     Entity *entity = GetSingleSelectedEntity();
     Float object_selection_set_density =
-        entity->GetMass() /
+        entity->Mass() /
         static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius();
     if (m_object_selection_set_density != object_selection_set_density)
     {

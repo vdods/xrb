@@ -86,7 +86,7 @@ Key::Code Config::InputAction (KeyInputAction key) const
 
     if (!m_input_action_name[key].empty())
     {
-        m_input_action_value[key] = Singletons::Input().GetKeyCode(m_input_action_name[key]);
+        m_input_action_value[key] = Singletons::Input().KeyCode(m_input_action_name[key]);
         m_input_action_name[key].clear();
     }
 
@@ -177,7 +177,7 @@ void Config::Write (string const &config_filename) const
     for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
         try { root->SetPathElementString(ms_string_key[i].m_data_file_path, GetString(static_cast<KeyString>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
-        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().GetKeyName(InputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
+        try { root->SetPathElementString(ms_input_action_key[i].m_data_file_path, Singletons::Input().KeyName(InputAction(static_cast<KeyInputAction>(i)))); } catch (...) { ASSERT1(false && "this should never happen"); }
 
     IndentFormatter formatter(fptr, "    ");
     root->Print(formatter);

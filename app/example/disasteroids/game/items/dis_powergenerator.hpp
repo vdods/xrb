@@ -38,7 +38,7 @@ public:
     {
         return m_stored_power;
     }
-    inline Float GetMaxPower () const
+    inline Float MaxPower () const
     {
         return ms_max_power_storage_capacity[GetUpgradeLevel()];
     }

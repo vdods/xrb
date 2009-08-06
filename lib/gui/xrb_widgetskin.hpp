@@ -160,7 +160,7 @@ public:
       *        margins type.
       * @param margins_type The specific type of margins to return.
       */
-    inline ScreenCoordVector2 const &GetMargins (MarginsType const margins_type) const
+    inline ScreenCoordVector2 const &Margins (MarginsType const margins_type) const
     {
         ASSERT1(margins_type < MARGINS_TYPE_COUNT);
         return m_margins_specification[margins_type].m_margins;

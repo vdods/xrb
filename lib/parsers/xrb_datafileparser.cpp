@@ -17,7 +17,7 @@
 #include "xrb_datafilevalue.hpp"
 
 #undef FL
-#define FL DataFileLocation(m_scanner->InputFilename(), m_scanner->GetLineNumber())
+#define FL DataFileLocation(m_scanner->InputFilename(), m_scanner->LineNumber())
 
 namespace Xrb
 {
@@ -166,11 +166,11 @@ DataFileParser::ParserReturnCode DataFileParser::PrivateParse ()
             state_transition_number = current_state.m_lookahead_transition_offset;
             state_transition_count = current_state.m_lookahead_transition_count;
             default_action_state_transition_number = current_state.m_default_action_offset;
-            // GetLookaheadTokenType may cause Scan to be called, which may
+            // LookaheadTokenType may cause Scan to be called, which may
             // block execution.  only scan a token if necessary.
             if (state_transition_count != 0)
             {
-                state_transition_token_type = GetLookaheadTokenType();
+                state_transition_token_type = LookaheadTokenType();
                 DEBUG_SPEW_1("*** lookahead token type: " << state_transition_token_type << std::endl);
             }
         }

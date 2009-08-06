@@ -283,7 +283,7 @@ private:
       * @param left The ascii value of the (visually) left glyph.
       * @param right The ascii value of the (visually) right glyph.
       */
-    ScreenCoord GetKerningPixelAdvance_26_6 (char left, char right) const;
+    ScreenCoord KerningPixelAdvance_26_6 (char left, char right) const;
 
     inline Uint32 GlyphIndex (char const ascii) const
     {

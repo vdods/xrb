@@ -60,11 +60,11 @@ private:
 
     Uint8 GetRandomMineral () const;
     Float GetProportionToConvertToMinerals () const;
-    inline Float GetMineralContent () const
+    inline Float MineralContent () const
     {
         return static_cast<Float>(m_mineral_content_byte) / 255.0f;
     }
-    inline Uint8 GetMineralContentByte (Float const mineral_content)
+    inline Uint8 MineralContentByte (Float const mineral_content)
     {
         ASSERT1(mineral_content >= 0.0f && mineral_content <= 1.0f);
         return static_cast<Uint8>(255.0f * mineral_content);

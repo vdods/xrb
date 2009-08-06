@@ -284,7 +284,7 @@ MapEditor2::MainWidget::~MainWidget ()
     m_world_view_widget->SetWorldView(NULL);
 }
 
-MapEditor2::WorldView *MapEditor2::MainWidget::GetMapEditorWorldView () const
+MapEditor2::WorldView *MapEditor2::MainWidget::MapEditorWorldView () const
 {
     return DStaticCast<WorldView *>(m_world_view_widget->GetWorldView());
 }
@@ -294,12 +294,12 @@ void MapEditor2::MainWidget::SaveWorldToFile (std::string const &filename)
     ASSERT1(!filename.empty());
 
     // early out if there is no view (and consequently no world)
-    if (!GetMapEditorWorldView())
+    if (!MapEditorWorldView())
         return;
 
     BinaryFileSerializer serializer;
     serializer.Open(filename.c_str(), "wb");
-    GetMapEditorWorldView()->GetWorld()->Write(serializer);
+    MapEditorWorldView()->GetWorld()->Write(serializer);
     serializer.Close();
 }
 
@@ -322,7 +322,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 {
     GetWorldViewWidget()->SetWorldView(map_editor_world_view);
 
-    if (GetMapEditorWorldView() != NULL)
+    if (MapEditorWorldView() != NULL)
     {
         m_toolbar_layout->Enable();
         m_status_bar_layout->Enable();
@@ -330,217 +330,217 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
         // initialize the toolbar button groups for transformation
         // and metric editing modes
         m_transformation_mode_group.SetID(
-            GetMapEditorWorldView()->GetTransformationMode());
+            MapEditorWorldView()->GetTransformationMode());
         m_metric_editing_mode_group.SetID(
-            GetMapEditorWorldView()->GetMetricEditingMode());
+            MapEditorWorldView()->MetricEditingMode());
 
         // hook up the signals
 
         // WorldView message text label
         m_message_label->SetText("");
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderStatusBarMessageTextChanged(),
+            MapEditorWorldView()->SenderStatusBarMessageTextChanged(),
             m_message_label->ReceiverSetText());
 
         // grid scale label
-        m_grid_scale_label->SetText(GetMapEditorWorldView()->CurrentGridScaleText());
+        m_grid_scale_label->SetText(MapEditorWorldView()->CurrentGridScaleText());
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderGridScaleTextChanged(),
+            MapEditorWorldView()->SenderGridScaleTextChanged(),
             m_grid_scale_label->ReceiverSetText());
         // polygon tesselation label
-        m_polygon_tesselation_label->SetText(GetMapEditorWorldView()->GetPolygonTesselationText());
+        m_polygon_tesselation_label->SetText(MapEditorWorldView()->GetPolygonTesselationText());
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderPolygonTesselationTextChanged(),
+            MapEditorWorldView()->SenderPolygonTesselationTextChanged(),
             m_polygon_tesselation_label->ReceiverSetText());
 
         // transformation mode toolbar buttons and text display - init
         m_transformation_mode_label->SetText(
-            GetMapEditorWorldView()->GetTransformationModeText());
+            MapEditorWorldView()->GetTransformationModeText());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderTransformationModeChanged(),
+            MapEditorWorldView()->SenderTransformationModeChanged(),
             m_transformation_mode_group.ReceiverSetID());
         SignalHandler::Connect1(
             m_transformation_mode_group.SenderIDChanged(),
-            GetMapEditorWorldView()->ReceiverSetTransformationMode());
+            MapEditorWorldView()->ReceiverSetTransformationMode());
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderTransformationModeTextChanged(),
+            MapEditorWorldView()->SenderTransformationModeTextChanged(),
             m_transformation_mode_label->ReceiverSetText());
 
         // metric editing mode toolbar buttons and text display - init
         m_metric_editing_mode_label->SetText(
-            GetMapEditorWorldView()->GetMetricEditingModeText());
+            MapEditorWorldView()->MetricEditingModeText());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderMetricEditingModeChanged(),
+            MapEditorWorldView()->SenderMetricEditingModeChanged(),
             m_metric_editing_mode_group.ReceiverSetID());
         SignalHandler::Connect1(
             m_metric_editing_mode_group.SenderIDChanged(),
-            GetMapEditorWorldView()->ReceiverSetMetricEditingMode());
+            MapEditorWorldView()->ReceiverSetMetricEditingMode());
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderMetricEditingModeTextChanged(),
+            MapEditorWorldView()->SenderMetricEditingModeTextChanged(),
             m_metric_editing_mode_label->ReceiverSetText());
 
         // object properties panel hiding - init
         m_object_properties_panel->SetIsHidden(
-            GetMapEditorWorldView()->AreNoObjectsSelected());
+            MapEditorWorldView()->AreNoObjectsSelected());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderNoObjectsAreSelected(),
+            MapEditorWorldView()->SenderNoObjectsAreSelected(),
             m_object_properties_panel->ReceiverSetIsHidden());
 
         // object properties panel values - init
         m_object_properties_panel->SetObjectSelectionSetOrigin(
-            GetMapEditorWorldView()->GetObjectSelectionSetOrigin());
+            MapEditorWorldView()->GetObjectSelectionSetOrigin());
         m_object_properties_panel->SetObjectSelectionSetScale(
-            GetMapEditorWorldView()->GetObjectSelectionSetScale());
+            MapEditorWorldView()->GetObjectSelectionSetScale());
         m_object_properties_panel->SetObjectSelectionSetAngle(
-            GetMapEditorWorldView()->GetObjectSelectionSetAngle());
+            MapEditorWorldView()->GetObjectSelectionSetAngle());
         // signal connections
         SignalHandler::Connect1(
             m_object_properties_panel->SenderPerObjectOriginXAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerObjectOriginX());
+            MapEditorWorldView()->ReceiverSetPerObjectOriginX());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderObjectSelectionSetOriginXChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetOriginX());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetOriginX());
 
         SignalHandler::Connect1(
             m_object_properties_panel->SenderPerObjectOriginYAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerObjectOriginY());
+            MapEditorWorldView()->ReceiverSetPerObjectOriginY());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderObjectSelectionSetOriginYChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetOriginY());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetOriginY());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetOriginChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetOriginChanged(),
             m_object_properties_panel->ReceiverSetObjectSelectionSetOrigin());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetScaleChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetScaleChanged(),
             m_object_properties_panel->ReceiverSetObjectSelectionSetScale());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderPerObjectScaleAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerObjectScale());
+            MapEditorWorldView()->ReceiverSetPerObjectScale());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderObjectSelectionSetScaleChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetScale());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetScale());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetAngleChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetAngleChanged(),
             m_object_properties_panel->ReceiverSetObjectSelectionSetAngle());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderPerObjectAngleAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerObjectAngle());
+            MapEditorWorldView()->ReceiverSetPerObjectAngle());
         SignalHandler::Connect1(
             m_object_properties_panel->SenderObjectSelectionSetAngleChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetAngle());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetAngle());
 
         // entity properties panel hiding - init
         m_entity_properties_panel->SetIsHidden(
-            GetMapEditorWorldView()->AreNoEntitiesSelected());
+            MapEditorWorldView()->AreNoEntitiesSelected());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderNoEntitiesAreSelected(),
+            MapEditorWorldView()->SenderNoEntitiesAreSelected(),
             m_entity_properties_panel->ReceiverSetIsHidden());
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderSelectedEntityCountChanged(),
+            MapEditorWorldView()->SenderSelectedEntityCountChanged(),
             m_entity_properties_panel->ReceiverSetSelectedEntityCount());
 
         // entity properties panel value - init
         m_entity_properties_panel->SetObjectSelectionSetMass(
-            GetMapEditorWorldView()->GetObjectSelectionSetMass());
+            MapEditorWorldView()->GetObjectSelectionSetMass());
         // signal connections
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetMassChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetMassChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetMass());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetMassChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetMass());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetMass());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityMassAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityMass());
+            MapEditorWorldView()->ReceiverSetPerEntityMass());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetVelocityChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetVelocityChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetVelocity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetVelocityXChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityX());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityX());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityVelocityXAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityVelocityX());
+            MapEditorWorldView()->ReceiverSetPerEntityVelocityX());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetVelocityYChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityY());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityY());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityVelocityYAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityVelocityY());
+            MapEditorWorldView()->ReceiverSetPerEntityVelocityY());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetSpeedChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetSpeed());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetSpeed());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntitySpeedAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntitySpeed());
+            MapEditorWorldView()->ReceiverSetPerEntitySpeed());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetVelocityAngleChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityAngle());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetVelocityAngle());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityVelocityAngleAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityVelocityAngle());
+            MapEditorWorldView()->ReceiverSetPerEntityVelocityAngle());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetSecondMomentChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetSecondMomentChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetSecondMoment());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetSecondMomentChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetSecondMoment());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetSecondMoment());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntitySecondMomentAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntitySecondMoment());
+            MapEditorWorldView()->ReceiverSetPerEntitySecondMoment());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetAngularVelocityChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetAngularVelocityChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetAngularVelocity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetAngularVelocityChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetAngularVelocity());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetAngularVelocity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityAngularVelocityAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityAngularVelocity());
+            MapEditorWorldView()->ReceiverSetPerEntityAngularVelocity());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetElasticityChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetElasticityChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetElasticity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetElasticityChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetElasticity());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetElasticity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityElasticityAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityElasticity());
+            MapEditorWorldView()->ReceiverSetPerEntityElasticity());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderObjectSelectionSetDensityChanged(),
+            MapEditorWorldView()->SenderObjectSelectionSetDensityChanged(),
             m_entity_properties_panel->ReceiverSetObjectSelectionSetDensity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderObjectSelectionSetDensityChanged(),
-            GetMapEditorWorldView()->ReceiverSetObjectSelectionSetDensity());
+            MapEditorWorldView()->ReceiverSetObjectSelectionSetDensity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityDensityAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityDensity());
+            MapEditorWorldView()->ReceiverSetPerEntityDensity());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderPerEntityAppliesGravityAssigned(),
+            MapEditorWorldView()->SenderPerEntityAppliesGravityAssigned(),
             m_entity_properties_panel->ReceiverSetPerEntityAppliesGravity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityAppliesGravityAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityAppliesGravity());
+            MapEditorWorldView()->ReceiverSetPerEntityAppliesGravity());
 
         SignalHandler::Connect1(
-            GetMapEditorWorldView()->SenderPerEntityReactsToGravityAssigned(),
+            MapEditorWorldView()->SenderPerEntityReactsToGravityAssigned(),
             m_entity_properties_panel->ReceiverSetPerEntityReactsToGravity());
         SignalHandler::Connect1(
             m_entity_properties_panel->SenderPerEntityReactsToGravityAssigned(),
-            GetMapEditorWorldView()->ReceiverSetPerEntityReactsToGravity());
+            MapEditorWorldView()->ReceiverSetPerEntityReactsToGravity());
     }
     else
     {
@@ -560,14 +560,14 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
     if (e->IsKeyDownEvent())
     {
         /*
-        if (e->GetKeyCode() == Key::F1)
+        if (e->KeyCode() == Key::F1)
         {
             m_control_panel_layout->ToggleIsHidden();
             return true;
         }
         */
 
-        if (e->GetKeyCode() == Key::N && e->IsEitherControlKeyPressed())
+        if (e->KeyCode() == Key::N && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 
@@ -579,7 +579,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::O && e->IsEitherControlKeyPressed())
+        if (e->KeyCode() == Key::O && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 
@@ -596,10 +596,10 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::S && e->IsEitherControlKeyPressed())
+        if (e->KeyCode() == Key::S && e->IsEitherControlKeyPressed())
         {
             // early out if there is no view (and consequently no world)
-            if (!GetMapEditorWorldView())
+            if (!MapEditorWorldView())
                 return false;
 
             FileDialog *dialog =
@@ -615,7 +615,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             return true;
         }
 
-        if (e->GetKeyCode() == Key::W && e->IsEitherControlKeyPressed())
+        if (e->KeyCode() == Key::W && e->IsEitherControlKeyPressed())
         {
             fprintf(stderr, "MapEditor2::MainWidget::ProcessKeyEvent(); add in file-saving checking stuff\n");
 

@@ -101,7 +101,7 @@ PlayerShip::~PlayerShip ()
 
 Float PlayerShip::ArmorStatus () const
 {
-    return Max(0.0f, CurrentHealth() / GetMaxHealth());
+    return Max(0.0f, CurrentHealth() / MaxHealth());
 }
 
 Float PlayerShip::GetShieldStatus () const
@@ -118,7 +118,7 @@ Float PlayerShip::GetPowerStatus () const
         return 0.0f;
 
     return (GetPowerGenerator() != NULL) ?
-           GetPowerGenerator()->GetStoredPower() / GetPowerGenerator()->GetMaxPower() :
+           GetPowerGenerator()->GetStoredPower() / GetPowerGenerator()->MaxPower() :
            0.0f;
 }
 
@@ -131,7 +131,7 @@ Float PlayerShip::GetWeaponStatus () const
     // getting the time from the world in this manner
     // is slightly ugly, but its the easiest way to do it.
     return (current_weapon != NULL) ?
-           CurrentWeapon()->GetReadinessStatus(GetWorld()->GetMostRecentFrameTime()) :
+           CurrentWeapon()->GetReadinessStatus(GetWorld()->MostRecentFrameTime()) :
            0.0f;
 }
 
@@ -143,9 +143,9 @@ bool PlayerShip::IsItemEquipped (
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
-        return (GetMainWeapon() != NULL &&
-                GetMainWeapon()->GetItemType() == item_type &&
-                GetMainWeapon()->GetUpgradeLevel() == upgrade_level)
+        return (MainWeapon() != NULL &&
+                MainWeapon()->GetItemType() == item_type &&
+                MainWeapon()->GetUpgradeLevel() == upgrade_level)
                ||
                (AuxiliaryWeapon() != NULL &&
                 AuxiliaryWeapon()->GetItemType() == item_type &&
@@ -267,7 +267,7 @@ void PlayerShip::SetArmor (Armor *const armor)
     if (GetOwnerObject() != NULL)
         SetMass(
             GetShipBaselineMass() +
-            ((armor != NULL) ? armor->GetMass() : 0.0f));
+            ((armor != NULL) ? armor->Mass() : 0.0f));
     SetDamageDissipationRate(
         ((armor != NULL) ? armor->DamageDissipationRate() : 0.0f));
 
@@ -382,8 +382,8 @@ bool PlayerShip::AddItem (Item *item)
         }
         else
         {
-            if (GetMainWeapon() == NULL ||
-                weapon->GetUpgradeLevel() > GetMainWeapon()->GetUpgradeLevel())
+            if (MainWeapon() == NULL ||
+                weapon->GetUpgradeLevel() > MainWeapon()->GetUpgradeLevel())
             {
                 SetMainWeapon(weapon);
             }
@@ -588,8 +588,8 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             current_weapon->SetInputs(
                 GetNormalizedWeaponPrimaryInput(),
                 GetNormalizedWeaponSecondaryInput(),
-                GetMuzzleLocation(GetMainWeapon()),
-                GetMuzzleDirection(GetMainWeapon()),
+                MuzzleLocation(MainWeapon()),
+                MuzzleDirection(MainWeapon()),
                 GetReticleCoordinates());
 
         if (m_engine != NULL)
@@ -813,8 +813,8 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (GetMass()*powerup->GetTranslation() + powerup->GetMass()*GetTranslation()) /
-                (GetMass() + powerup->GetMass()),
+            (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
+                (Mass() + powerup->Mass()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
             0.0f,
             time,

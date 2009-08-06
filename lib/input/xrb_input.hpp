@@ -39,8 +39,8 @@ public:
     Key const *GetKey (std::string const &name) const;
     bool IsValidKeyCode (Key::Code code) const;
     bool IsValidKeyName (std::string const &name) const;
-    Key::Code GetKeyCode (std::string const &name) const;
-    std::string const &GetKeyName (Key::Code code) const;
+    Key::Code KeyCode (std::string const &name) const;
+    std::string const &KeyName (Key::Code code) const;
     bool IsKeyPressed (Key::Code const code) const;
     bool IsKeyPressed (std::string const &name) const;
     bool IsEitherAltKeyPressed () const;
@@ -49,7 +49,7 @@ public:
     inline bool IsCapsLockOn () const { return m_is_caps_lock_on; }
     inline bool IsNumLockOn () const { return m_is_num_lock_on; }
     inline bool IsScrollLockOn () const { return m_is_scroll_lock_on; }
-    SDLMod GetModifiers () const;
+    SDLMod Modifiers () const;
 
     // calls ResetPressed on all the keys
     void ResetPressed ();

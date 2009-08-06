@@ -46,7 +46,7 @@ struct CollisionPair
     {
         ASSERT2(m_entity0 != NULL);
         ASSERT2(m_entity1 != NULL);
-        ASSERT2(Epsilon(m_collision_normal.GetLength(), 1.0f, 0.0001f));
+        ASSERT2(Epsilon(m_collision_normal.Length(), 1.0f, 0.0001f));
     }
 }; // end of struct CollisionPair
 

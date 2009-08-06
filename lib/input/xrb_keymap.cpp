@@ -74,7 +74,7 @@ KeyMapDvorak::KeyMapDvorak ()
     m_map[Key::SLASH] = Key::Z;
 }
 
-Key::Code KeyMapDvorak::GetMappedKey (Key::Code const code) const
+Key::Code KeyMapDvorak::MappedKey (Key::Code const code) const
 {
     QwertyToDvorakMapConstIterator it = m_map.find(code);
     if (it == m_map.end())

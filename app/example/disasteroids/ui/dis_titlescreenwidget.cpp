@@ -265,7 +265,7 @@ bool TitleScreenWidget::StateDisplaySecondHighScores (StateMachineInput const in
 void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
-    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+    EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));
 }
 
 void TitleScreenWidget::CancelScheduledStateMachineInput ()

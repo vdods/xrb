@@ -60,7 +60,7 @@ int main (int argc, char **argv)
             return 2;
         }
 
-        Singletons::Initialize(options.GetKeyMapName().c_str());
+        Singletons::Initialize(options.KeyMapName().c_str());
 
         // register on-exit function. SDL_Quit takes care of deleting the
         // screen.  the function registered with atexit will be called
@@ -482,7 +482,7 @@ required interfaces for Weapon:
 - GetTimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
 - GetRequiresAmmo
 - CurrentAmmo
-- GetMaxAmmo
+- MaxAmmo
 - AddAmmo
 - RemoveAmmo
 - SetAmmo

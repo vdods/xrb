@@ -42,7 +42,7 @@ public:
         assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_filename;
     }
-    inline Uint32 GetLine () const
+    inline Uint32 Line () const
     {
         assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_line;

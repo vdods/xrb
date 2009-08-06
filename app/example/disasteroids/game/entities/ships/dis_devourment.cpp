@@ -165,8 +165,8 @@ void Devourment::Think (Float const time, Float const frame_dt)
     m_mouth_tractor->SetInputs(
         GetNormalizedWeaponPrimaryInput(),
         GetNormalizedWeaponSecondaryInput(),
-        GetMuzzleLocation(m_mouth_tractor),
-        GetMuzzleDirection(m_mouth_tractor),
+        MuzzleLocation(m_mouth_tractor),
+        MuzzleDirection(m_mouth_tractor),
         GetReticleCoordinates());
     m_mouth_tractor->Activate(
         m_mouth_tractor->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
@@ -271,7 +271,7 @@ void Devourment::Die (
                 scale_factor,
                 mass,
                 velocity,
-                Item::GetMineralSpriteFilename(mineral_index),
+                Item::MineralSpriteFilename(mineral_index),
                 static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             m_mineral_inventory[mineral_index] -= mass;
@@ -336,8 +336,8 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (GetMass()*powerup->GetTranslation() + powerup->GetMass()*GetTranslation()) /
-                (GetMass() + powerup->GetMass()),
+            (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
+                (Mass() + powerup->Mass()),
             (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
             0.0f,
             time,
@@ -416,7 +416,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
         0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
         GetScaleFactor();
 
-    Float target_distance = (target_position - GetTranslation()).GetLength();
+    Float target_distance = (target_position - GetTranslation()).Length();
     if (target_distance <= s_consume_distance + GetScaleFactor() + m_target->GetScaleFactor())
     {
         m_think_state = THINK_STATE(Consume);
@@ -436,13 +436,13 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     // TODO: expensive polynomial solving shouldn't happen every single frame
 
     Float interceptor_acceleration =
-        ms_engine_thrust[EnemyLevel()] / GetMass();
+        ms_engine_thrust[EnemyLevel()] / Mass();
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->Force() / m_target->GetMass());
+    FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
-    poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+    poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
     poly.Set(3, 4.0f * (a | v));
     poly.Set(2, 4.0f * ((a | p) + (v | v)));
     poly.Set(1, 8.0f * (p | v));
@@ -476,7 +476,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         // accelerate towards the target
         FloatVector2 calculated_acceleration((2.0f*p + 2.0f*v*T + a*T*T) / (T*T));
-        AccumulateForce(calculated_acceleration * GetMass());
+        AccumulateForce(calculated_acceleration * Mass());
     }
 }
 
@@ -502,7 +502,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
     // if we're no longer close enough to the target, transition to Pursue
     Float const pursue_distance = 40.0f + GetScaleFactor();
-    if ((target_position - GetTranslation()).GetLength() > pursue_distance + m_target->GetScaleFactor())
+    if ((target_position - GetTranslation()).Length() > pursue_distance + m_target->GetScaleFactor())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -522,11 +522,11 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / GetMass());
-    FloatVector2 thrust_vector = GetMass() * velocity_differential / frame_dt;
+        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+    FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
-        Float thrust_force = thrust_vector.GetLength();
+        Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
             thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
 
@@ -582,8 +582,8 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
                 ||
                 !target->IsPowerup()
                 ||
-                (entity->GetMass() > s_powerup_mass_threshold &&
-                 entity->GetMass() > target->GetMass()))
+                (entity->Mass() > s_powerup_mass_threshold &&
+                 entity->Mass() > target->Mass()))
             {
                 target = entity->GetReference();
             }
@@ -598,8 +598,8 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
             // are multiple potential targets of the exact same mass, we don't
             // switch between them really fast between frames.
             if (!target.IsValid() ||
-                Abs(entity->GetMass() - s_optimal_target_mass) <
-                Abs(target->GetMass() - s_optimal_target_mass) - 0.01f)
+                Abs(entity->Mass() - s_optimal_target_mass) <
+                Abs(target->Mass() - s_optimal_target_mass) - 0.01f)
             {
                 target = entity->GetReference();
             }

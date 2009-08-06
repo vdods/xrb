@@ -91,7 +91,7 @@ void Engine2::Entity::ScheduleForDeletion (Float time_delay)
     GetOwnerObject()->GetWorld()->EnqueueEvent(
         new EventEntity(
             this,
-            GetOwnerObject()->GetWorld()->GetMostRecentFrameTime() + time_delay,
+            GetOwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
             Event::ENGINE2_DELETE_ENTITY));
 }
 
@@ -105,7 +105,7 @@ void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
     GetOwnerObject()->GetWorld()->EnqueueEvent(
         new EventEntity(
             this,
-            GetOwnerObject()->GetWorld()->GetMostRecentFrameTime() + time_delay,
+            GetOwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
             Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
 }
 

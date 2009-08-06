@@ -64,7 +64,7 @@ public:
     SDL_KeyboardEvent const &GetSDLEvent () const { return m_event; }
     /** @brief Returns the @ref Xrb::Key::Code enum for this key event.
       */
-    Key::Code GetKeyCode () const { return (Key::Code)m_event.keysym.sym; }
+    Key::Code KeyCode () const { return (Key::Code)m_event.keysym.sym; }
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this key event was generated.
       */
@@ -89,7 +89,7 @@ public:
     /** @brief Returns the ascii code of the key event, modified by capslock,
       *        numlock, and shift key modifiers.
       */
-    char GetModifiedAscii () const { return m_modified_ascii; }
+    char ModifiedAscii () const { return m_modified_ascii; }
     /** Virtual method for subclasses to override to indicate if they
       * are a key down event.
       * @brief Returns true iff this is a key down event.

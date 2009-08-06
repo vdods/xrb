@@ -115,7 +115,7 @@ public:
     /** Performs component-wise multiplication of the color and color mask,
       * @brief Returns the masked version of the given color.
       */
-    inline Color GetMaskedColor (Color const &color) const
+    inline Color MaskedColor (Color const &color) const
     {
         return m_color_mask * color;
     }

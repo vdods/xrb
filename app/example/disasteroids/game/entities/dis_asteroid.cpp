@@ -71,7 +71,7 @@ Asteroid::Asteroid (
     m_is_a_secondary_asteroid = is_a_secondary_asteroid;
     m_delete_upon_next_think = false;
     m_time_at_decay_start = -1.0f;
-    m_mineral_content_byte = GetMineralContentByte(mineral_content);
+    m_mineral_content_byte = MineralContentByte(mineral_content);
     SetStrength(D_EXPLOSION);
     SetImmunity(D_FIRE|D_EMP);
 }
@@ -157,27 +157,27 @@ void Asteroid::Die (
 
     // if it's big enough, spawn some smaller asteroids, to simulate
     // this asteroid breaking up
-    if (GetMass() > ms_minimum_breakup_mass)
+    if (Mass() > ms_minimum_breakup_mass)
     {
-        converted_mass = GetProportionToConvertToMinerals() * GetMass();
+        converted_mass = GetProportionToConvertToMinerals() * Mass();
         Float mass =
-            GetMass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
+            Mass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
         FloatVector2 source_velocity = GetVelocity();
         Float seed_angle = Math::Atan(kill_location - GetTranslation());
 
         // let the world more asteroids are being created.  the added asteroid
         // mass is exactly equal to the destroyed asteroid's mass.
         DStaticCast<World *>(GetWorld())->
-            RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, GetMass());
+            RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, Mass());
 
         for (Uint8 i = 0; i < ms_number_of_fragments_to_spawn; ++i)
         {
             Float velocity_angle = seed_angle;
             seed_angle += 360.0f / static_cast<Float>(ms_number_of_fragments_to_spawn);
             ASSERT1(CurrentHealth() <= 0.0f);
-            ASSERT1(GetMaxHealth() > 0.0f);
-            Float health_ratio = CurrentHealth() / GetMaxHealth();
-            Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / GetMass();
+            ASSERT1(MaxHealth() > 0.0f);
+            Float health_ratio = CurrentHealth() / MaxHealth();
+            Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / Mass();
             if (explosion_speed > 5.0f)
                 explosion_speed = 5.0f;
             FloatVector2 velocity =
@@ -192,7 +192,7 @@ void Asteroid::Die (
             proportion_of_mineral_content_to_allocate =
                 Math::RandomFloat(0.0f, 1.0f / (ms_number_of_fragments_to_spawn - i));
             Float mineral_content =
-                    GetMineralContent() *
+                    MineralContent() *
                     (1.0f - proportion_of_mineral_content_to_allocate);
 
             Asteroid *new_asteroid =
@@ -219,7 +219,7 @@ void Asteroid::Die (
         }
     }
     else
-        converted_mass = GetMass();
+        converted_mass = Mass();
 
     // of the destroyed mass, spawn minerals according to the mineral content
     // and mineral weights of this asteroid.
@@ -227,7 +227,7 @@ void Asteroid::Die (
         static Float const s_min_mineral_mass = 5.0f;
         static Float const s_max_mineral_mass = 30.0f;
 
-        Float mineral_mass_to_spawn = converted_mass * GetMineralContent();
+        Float mineral_mass_to_spawn = converted_mass * MineralContent();
         while (mineral_mass_to_spawn > s_min_mineral_mass)
         {
             Float mass =
@@ -245,7 +245,7 @@ void Asteroid::Die (
                 scale_factor,
                 mass,
                 velocity,
-                Item::GetMineralSpriteFilename(mineral_index),
+                Item::MineralSpriteFilename(mineral_index),
                 static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             mineral_mass_to_spawn -= mass;
@@ -281,10 +281,10 @@ Float Asteroid::GetProportionToConvertToMinerals () const
     static Float const s_offset = (s_M * s_n - s_N * s_m) / (s_n - s_m);
 
     Float proportion_to_convert;
-    if (GetMass() > s_n)
+    if (Mass() > s_n)
         proportion_to_convert = s_N;
     else
-        proportion_to_convert = s_slope * GetMass() + s_offset;
+        proportion_to_convert = s_slope * Mass() + s_offset;
 
     return proportion_to_convert * proportion_to_convert;
 }

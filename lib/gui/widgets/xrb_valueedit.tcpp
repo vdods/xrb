@@ -67,7 +67,7 @@ bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *const e)
 {
     if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
     {
-        switch (e->GetKeyCode())
+        switch (e->KeyCode())
         {
             case Key::RETURN:
             case Key::KP_ENTER:

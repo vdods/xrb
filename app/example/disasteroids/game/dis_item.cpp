@@ -50,7 +50,7 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
     }
 }
 
-std::string const &Item::GetMineralSpriteFilename (Uint8 const mineral_index)
+std::string const &Item::MineralSpriteFilename (Uint8 const mineral_index)
 {
     static std::string const s_mineral_sprite_filename[MINERAL_COUNT] =
     {

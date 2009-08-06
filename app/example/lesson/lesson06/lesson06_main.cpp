@@ -136,7 +136,7 @@ public:
     { }
 
     // Trivial accessors for the properties of AwesomeEntity.
-    inline Float GetMass () const { return m_mass; }
+    inline Float Mass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
     inline FloatVector2 const &Force () const { return m_force; }
 
@@ -241,7 +241,7 @@ public:
     {
         ASSERT1(entity0 != NULL && entity1 != NULL);
         FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
-        Float distance = entity_offset.GetLength();
+        Float distance = entity_offset.Length();
         // If they're touching, don't apply gravitational force (this
         // is to avoid a divide by zero if their positions coincide).
         if (distance < entity0->GetScaleFactor() + entity1->GetScaleFactor())
@@ -249,7 +249,7 @@ public:
         else
             return
                 m_gravitational_constant *
-                entity0->GetMass() * entity1->GetMass() /
+                entity0->Mass() * entity1->Mass() /
                 (distance * distance);
     }
 
@@ -354,10 +354,10 @@ protected:
             AwesomeEntity *entity = *it;
             ASSERT1(entity != NULL);
 
-            ASSERT1(entity->GetMass() > 0.0f);
+            ASSERT1(entity->Mass() > 0.0f);
             // Use Euler Integration to calculate the new velocity, based on
             // the accumulated force during this frame.
-            entity->IncrementVelocity(entity->Force() / entity->GetMass() * FrameDT());
+            entity->IncrementVelocity(entity->Force() / entity->Mass() * FrameDT());
             // Reset the accumulated force for next frame.
             entity->ResetForce();
             // Use Euler Integration again to calculate the new position,
@@ -480,7 +480,7 @@ public:
             // force between it and the large planet.
             Float gravitational_force = GetPhysicsHandler()->CalculateGravitationalForce(planet, moon);
             // Solve for the necessary orbital speed using Kepler's Third Law.
-            Float orbital_speed = Math::Sqrt(gravitational_force * orbital_radius / moon->GetMass());
+            Float orbital_speed = Math::Sqrt(gravitational_force * orbital_radius / moon->Mass());
             // The velocity must be perpendicular to the vector joining the
             // centers of the planet and the moon.
             moon->SetVelocity(orbital_speed * Math::UnitVector(angle+90.0f));

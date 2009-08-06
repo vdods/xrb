@@ -135,16 +135,16 @@ void Grenade::Collide (
         // we'll merge the smaller grenade into the larger one, or if they're the same
         // size, we'll use the lower pointer value grenade.
         ASSERT1(this != other_grenade); // a grenade should never collide with itself
-        if (GetMass() < other_grenade->GetMass()
+        if (Mass() < other_grenade->Mass()
             ||
-            (GetMass() == other_grenade->GetMass() &&
+            (Mass() == other_grenade->Mass() &&
              this > other_grenade))
         {
             return;
         }
 
         // figure out the new damage radius, explosion radius and damage to inflict.
-        Float scale_factor = Math::Sqrt(1.0f + other_grenade->GetMass() / GetMass());
+        Float scale_factor = Math::Sqrt(1.0f + other_grenade->Mass() / Mass());
         GetOwnerObject()->Scale(scale_factor);
         m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
         m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
@@ -152,13 +152,13 @@ void Grenade::Collide (
 
         // set the new max health for the new grenade is the sum of the source grenades'
         // max healths.  the current health for the new grenade is also the sum.
-        SetMaxHealth(GetMaxHealth() + other_grenade->GetMaxHealth());
+        SetMaxHealth(MaxHealth() + other_grenade->MaxHealth());
         SetCurrentHealth(CurrentHealth() + other_grenade->CurrentHealth());
         ResetRecentChangeInHealth();
 
         // figure out the new mass, velocity, and radius.
-        FloatVector2 new_momentum = GetMomentum() + other_grenade->GetMomentum();
-        SetMass(GetMass() + other_grenade->GetMass());
+        FloatVector2 new_momentum = Momentum() + other_grenade->Momentum();
+        SetMass(Mass() + other_grenade->Mass());
         SetMomentum(new_momentum); // have to set this after setting the first moment
 
         // let the other grenade's owner's grenade launcher know that it's going bye-bye
@@ -241,7 +241,7 @@ void Grenade::Detonate (
     // than just the sum of their source grenades.  thus we multiply
     // the amount of damage to inflict by a factor which depends on the
     // ratio of mass to default mass.
-    Float damage_factor = Math::Pow(ms_merge_power_boost, GetMass() / ms_default_mass);
+    Float damage_factor = Math::Pow(ms_merge_power_boost, Mass() / ms_default_mass);
 
     // spawn a damage explosion
     SpawnDamageExplosion(
@@ -279,7 +279,7 @@ void Missile::Think (
     if (IsDead() || HasDetonated())
         return;
 
-    AccumulateForce(ms_acceleration[GetWeaponLevel()] * GetMass() * Math::UnitVector(Angle()));
+    AccumulateForce(ms_acceleration[GetWeaponLevel()] * Mass() * Math::UnitVector(Angle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
@@ -429,7 +429,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
     }
 
     // do a line trace in front of the missile to find a target
-    if (GetVelocity().GetLengthSquared() >= 0.001f)
+    if (GetVelocity().LengthSquared() >= 0.001f)
     {
         m_next_search_time = time + 0.25f;
 
@@ -468,10 +468,10 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
     FloatVector2 p(target_position - GetTranslation());
     FloatVector2 v(m_target->GetVelocity() - GetVelocity());
-    FloatVector2 a(m_target->Force() / m_target->GetMass());
+    FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
-    poly.Set(4, a.GetLengthSquared() - interceptor_acceleration*interceptor_acceleration);
+    poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
     poly.Set(3, 4.0f * (a | v));
     poly.Set(2, 4.0f * ((a | p) + (v | v)));
     poly.Set(1, 8.0f * (p | v));
@@ -508,7 +508,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
 void GuidedMissile::AimAt (FloatVector2 const &position)
 {
     FloatVector2 delta(position - GetTranslation());
-    if (delta.GetLengthSquared() >= 0.001f)
+    if (delta.LengthSquared() >= 0.001f)
         SetAngle(Math::Atan(delta));
 }
 

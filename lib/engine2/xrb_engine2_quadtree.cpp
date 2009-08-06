@@ -52,7 +52,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
         return retval;
 
     // if the point is outside the reaches of this quad node, early out
-    if ((point - m_center).GetLengthSquared() > 4.0*m_radius*m_radius)
+    if ((point - m_center).LengthSquared() > 4.0*m_radius*m_radius)
         return retval;
 
     Object *smallest_candidate;
@@ -87,7 +87,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
         ASSERT1(smallest_candidate != NULL);
 
         // if the point is touching the object
-        if ((point - smallest_candidate->GetTranslation()).GetLengthSquared() <=
+        if ((point - smallest_candidate->GetTranslation()).LengthSquared() <=
             smallest_candidate->GetRadiusSquared(GetQuadTreeType()))
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
@@ -120,7 +120,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
         Object const *object = *it;
         ASSERT1(object != NULL);
         ASSERT1(object->GetOwnerQuadTree(m_quad_tree_type) == this);
-        if ((object->GetTranslation() - area_center).GetLength()
+        if ((object->GetTranslation() - area_center).Length()
             <
             (object->GetRadius(GetQuadTreeType()) + area_radius))
             return true;
@@ -189,7 +189,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
         while (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
             adjusted_area_center[Dim::Y] -= object_layer_side_length;
 
-        if ((object_translation - adjusted_area_center).GetLength()
+        if ((object_translation - adjusted_area_center).Length()
             <
             (object->GetRadius(GetQuadTreeType()) + area_radius))
             return true;

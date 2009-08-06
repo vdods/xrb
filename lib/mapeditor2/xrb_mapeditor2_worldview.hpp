@@ -44,7 +44,7 @@ namespace MapEditor2
         virtual ~WorldView ();
     
         ObjectLayer *GetSavedMainObjectLayer () const;
-        World *GetMapEditorWorld () const;
+        World *MapEditorWorld () const;
         // returns the transformation mode
         inline Object::TransformationMode GetTransformationMode () const
         {
@@ -56,12 +56,12 @@ namespace MapEditor2
             return m_transformation_mode_text;
         }
         // returns the metric editing mode
-        inline Object::MetricMode GetMetricEditingMode () const
+        inline Object::MetricMode MetricEditingMode () const
         {
             return m_metric_editing_mode;
         }
         // returns the metric editing mode text
-        inline std::string const &GetMetricEditingModeText () const
+        inline std::string const &MetricEditingModeText () const
         {
             return m_metric_editing_mode_text;
         }
@@ -223,7 +223,7 @@ namespace MapEditor2
                         
         virtual void HandleFrame ();
 
-        ObjectLayer *GetMainMapEditorObjectLayer () const;
+        ObjectLayer *MainMapEditorObjectLayer () const;
         
     private:
     

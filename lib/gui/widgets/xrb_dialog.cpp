@@ -97,7 +97,7 @@ bool Dialog::ProcessKeyEvent (EventKey const *const e)
 {
     if (e->IsKeyDownEvent())
     {
-        switch (e->GetKeyCode())
+        switch (e->KeyCode())
         {
             case Key::RETURN:
                 if (HasOKButton() && e->IsEitherControlKeyPressed())

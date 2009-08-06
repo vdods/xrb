@@ -490,9 +490,9 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
 {
     ASSERT1(asteroid != NULL);
     ASSERT1(m_asteroid_count > 0);
-    ASSERT1(m_asteroid_mass >= asteroid->GetMass());
+    ASSERT1(m_asteroid_mass >= asteroid->Mass());
     --m_asteroid_count;
-    m_asteroid_mass -= asteroid->GetMass();
+    m_asteroid_mass -= asteroid->Mass();
 }
 
 void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
@@ -709,7 +709,7 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
             ASSERT1(m_player_ship != NULL);
             ASSERT1(!m_player_ship->IsInWorld());
             ASSERT1(m_player_ship->IsDead());
-            ASSERT1(m_player_ship->GetLivesRemaining() > 0);
+            ASSERT1(m_player_ship->LivesRemaining() > 0);
             m_player_ship->Revive(FrameTime(), FrameDT());
             m_player_ship->SetVelocity(FloatVector2::ms_zero);
             // TODO place the player ship so it doesn't intersect anything
@@ -850,7 +850,7 @@ bool World::StateCheckLivesRemaining (StateMachineInput const input)
     {
         case SM_ENTER:
             ASSERT1(m_player_ship != NULL);
-            if (m_player_ship->GetLivesRemaining() > 0)
+            if (m_player_ship->LivesRemaining() > 0)
                 TRANSITION_TO(StateWaitAfterPlayerDeath);
             else
                 TRANSITION_TO(StateDeathRattle);
@@ -1005,7 +1005,7 @@ bool World::StateEndGame (StateMachineInput const input)
 void World::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
 {
     CancelScheduledStateMachineInput();
-    EnqueueEvent(new EventStateMachineInput(input, GetMostRecentFrameTime() + time_delay));
+    EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));
 }
 
 void World::CancelScheduledStateMachineInput ()
@@ -1141,7 +1141,7 @@ void World::SetIsAlertWave (bool const is_alert_wave)
 
 Asteroid *World::SpawnAsteroidOutOfView ()
 {
-    Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
     FloatVector2 translation;
     Float scale_factor;
     Uint32 placement_attempts = 0;
@@ -1173,7 +1173,7 @@ Asteroid *World::SpawnAsteroidOutOfView ()
     m_asteroid_mass += mass;
     return SpawnAsteroid(
         this,
-        GetMainObjectLayer(),
+        MainObjectLayer(),
         translation,
         scale_factor,
         mass,
@@ -1190,7 +1190,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
 
-    Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
     FloatVector2 translation;
     Float personal_space_radius = Ship::GetShipScaleFactor(enemy_ship_type, enemy_level);
 
@@ -1215,7 +1215,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_INTERLOPER:
             spawned_ship = SpawnInterloper(
                 this,
-                GetMainObjectLayer(),
+                MainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1224,7 +1224,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_SHADE:
             spawned_ship = SpawnShade(
                 this,
-                GetMainObjectLayer(),
+                MainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1233,7 +1233,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_REVULSION:
             spawned_ship = SpawnRevulsion(
                 this,
-                GetMainObjectLayer(),
+                MainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1242,7 +1242,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_DEVOURMENT:
             spawned_ship = SpawnDevourment(
                 this,
-                GetMainObjectLayer(),
+                MainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1251,7 +1251,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_DEMI:
             spawned_ship = SpawnDemi(
                 this,
-                GetMainObjectLayer(),
+                MainObjectLayer(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1275,7 +1275,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     FloatVector2 const &translation,
     Float const scale_factor)
 {
-    Float object_layer_side_length = GetMainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
     Float half_object_layer_side_length = 0.5f * object_layer_side_length;
     ASSERT1(translation[Dim::X] >= -0.5f * object_layer_side_length);
     ASSERT1(translation[Dim::X] <=  0.5f * object_layer_side_length);
@@ -1309,8 +1309,8 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
         }
 
         Float distance_from_world_view =
-            (GetMainObjectLayer()->AdjustedCoordinates(translation, world_view_center) -
-             world_view_center).GetLength();
+            (MainObjectLayer()->AdjustedCoordinates(translation, world_view_center) -
+             world_view_center).Length();
         // fail if the area is in sight
         if (distance_from_world_view < world_view->GetParallaxedViewRadius(NULL) + scale_factor)
             return false;
@@ -1318,7 +1318,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 
     // fail if the area overlaps any entity
     if (GetPhysicsHandler()->DoesAreaOverlapAnyEntityInObjectLayer(
-            GetMainObjectLayer(),
+            MainObjectLayer(),
             translation,
             scale_factor,
             false))

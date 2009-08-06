@@ -148,12 +148,12 @@ private:
                 ScanANewLookaheadToken();
         }
     }
-    inline Token::Type GetLookaheadTokenType ()
+    inline Token::Type LookaheadTokenType ()
     {
         GetNewLookaheadToken();
         return m_lookahead_token_type;
     }
-    inline Float const &GetLookaheadToken ()
+    inline Float const &LookaheadToken ()
     {
         GetNewLookaheadToken();
         return m_lookahead_token;

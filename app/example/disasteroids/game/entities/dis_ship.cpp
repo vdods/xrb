@@ -167,7 +167,7 @@ void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Float const fr
     if (!aim_direction.IsZero())
     {
         Float angle_delta = Math::CanonicalAngle(Math::Atan(aim_direction) - Angle());
-        Float max_angle_delta = GetMaxAngularVelocity() * frame_dt;
+        Float max_angle_delta = MaxAngularVelocity() * frame_dt;
         if (angle_delta > max_angle_delta)
             angle_delta = max_angle_delta;
         else if (angle_delta < -max_angle_delta)

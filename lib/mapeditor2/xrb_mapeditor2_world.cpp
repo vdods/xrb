@@ -32,7 +32,7 @@ MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 
     retval->Read(serializer);
     retval->m_saved_main_object_layer =
-        DStaticCast<ObjectLayer *>(retval->GetMainObjectLayer());
+        DStaticCast<ObjectLayer *>(retval->MainObjectLayer());
 
     return retval;
 }
@@ -111,7 +111,7 @@ MapEditor2::World::World (Uint32 const entity_capacity)
     m_saved_main_object_layer = NULL;
 }
 
-Uint32 MapEditor2::World::GetMainObjectLayerIndex () const
+Uint32 MapEditor2::World::MainObjectLayerIndex () const
 {
     Uint32 index = 0;
     for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),

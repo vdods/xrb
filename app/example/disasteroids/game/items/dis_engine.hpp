@@ -30,7 +30,7 @@ public:
     { }
     virtual ~Engine () { }
 
-    inline Float GetMaxThrustForce () const
+    inline Float MaxThrustForce () const
     {
         return ms_max_thrust_force[GetUpgradeLevel()];
     }

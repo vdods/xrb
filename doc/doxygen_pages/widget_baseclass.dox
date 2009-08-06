@@ -454,7 +454,7 @@ customize behavior when receiving or losing mouseover status.  These are
 @ref Xrb::Widget::HandleMouseoverOff "Widget::HandleMouseoverOff" respectively.
 
 Relevant methods include
-@ref Xrb::Widget::GetMouseoverFocus "Widget::GetMouseoverFocus" and
+@ref Xrb::Widget::MouseoverFocus "Widget::MouseoverFocus" and
 @ref Xrb::Widget::IsMouseover "Widget::IsMouseover" .
 
 @section section_widget_mouse_grab Mouse Grab
@@ -558,10 +558,10 @@ using a variety of methods:
 @ref Xrb::Widget::UnfixHeight "Widget::UnfixHeight" .
 
 Other relevant methods include
-@ref Xrb::Widget::GetMinSizeEnabled "Widget::GetMinSizeEnabled" ,
-@ref Xrb::Widget::GetMinSize "Widget::GetMinSize" ,
-@ref Xrb::Widget::GetMaxSizeEnabled "Widget::GetMaxSizeEnabled" ,
-@ref Xrb::Widget::GetMaxSize "Widget::GetMaxSize" , and
+@ref Xrb::Widget::MinSizeEnabled "Widget::MinSizeEnabled" ,
+@ref Xrb::Widget::MinSize "Widget::MinSize" ,
+@ref Xrb::Widget::MaxSizeEnabled "Widget::MaxSizeEnabled" ,
+@ref Xrb::Widget::MaxSize "Widget::MaxSize" , and
 @ref Xrb::Widget::AdjustedSize "Widget::AdjustedSize" .
 
 See @ref Xrb::Layout "Layout" for extensive examples of controlling and

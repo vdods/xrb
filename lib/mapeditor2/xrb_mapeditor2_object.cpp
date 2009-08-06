@@ -66,7 +66,7 @@ MapEditor2::Object *MapEditor2::Object::Create (Serializer &serializer)
     return retval;
 }
 
-MapEditor2::ObjectLayer *MapEditor2::Object::GetMapEditorObjectLayer () const
+MapEditor2::ObjectLayer *MapEditor2::Object::MapEditorObjectLayer () const
 {
     if (GetObjectLayer() != NULL)
         ASSERT1(dynamic_cast<ObjectLayer *>(GetObjectLayer()) != NULL);
@@ -276,7 +276,7 @@ void MapEditor2::Object::AddToObjectSelectionSet ()
     ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
     ASSERT1(GetObjectLayer() != NULL);
     ASSERT1(!m_is_selected);
-    ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *map_editor_object_layer = MapEditorObjectLayer();
     ASSERT1(map_editor_object_layer != NULL);
     DEBUG1_CODE(bool add_success =)
     map_editor_object_layer->AddObjectToObjectSelectionSet(this);
@@ -289,7 +289,7 @@ void MapEditor2::Object::RemoveFromObjectSelectionSet ()
     ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
     ASSERT1(GetObjectLayer() != NULL);
     ASSERT1(m_is_selected);
-    ObjectLayer *map_editor_object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *map_editor_object_layer = MapEditorObjectLayer();
     ASSERT1(map_editor_object_layer != NULL);
     DEBUG1_CODE(bool remove_success =)
     map_editor_object_layer->RemoveObjectFromObjectSelectionSet(this);

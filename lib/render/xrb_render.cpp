@@ -31,7 +31,7 @@ void Render::DrawLine (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     glBegin(GL_LINES);
@@ -61,7 +61,7 @@ void Render::DrawArrow (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     glBegin(GL_LINE_STRIP);
@@ -95,7 +95,7 @@ void Render::DrawPolygon (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     // convert the angle which is in degrees, into radians for
@@ -132,9 +132,9 @@ void Render::DrawCircle (
     // find out how large the radius is in pixels
     Float pixel_radius =
         Max((transformation * FloatVector2(radius, 0.0f) -
-             transformation * FloatVector2::ms_zero).GetLength(),
+             transformation * FloatVector2::ms_zero).Length(),
             (transformation * FloatVector2(0.0f, radius) -
-             transformation * FloatVector2::ms_zero).GetLength());
+             transformation * FloatVector2::ms_zero).Length());
     // figure out how many lines there should be
     Float const radius_limit_upper = 100.0f;
     Float const radius_limit_lower = 2.0f;
@@ -164,7 +164,7 @@ void Render::DrawCircle (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     // draw each line
@@ -214,7 +214,7 @@ void Render::DrawCircularArc (
     // find out how large the radius is in pixels
     Float pixel_radius =
         (transformation * FloatVector2(radius, 0.0f) -
-         transformation * FloatVector2::ms_zero).GetLength();
+         transformation * FloatVector2::ms_zero).Length();
     // figure out the portion of a full circle this angle is
     Float arc_portion = (end_angle - start_angle) / (2.0f * static_cast<Float>(M_PI));
     // figure out how many lines there should be
@@ -249,7 +249,7 @@ void Render::DrawCircularArc (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     // draw each line
@@ -284,7 +284,7 @@ void Render::DrawScreenRect (
 
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.GetMaskedColor(color), 
+        render_context.MaskedColor(color), 
         render_context.BiasColor());
 
     glBegin(GL_QUADS);

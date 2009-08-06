@@ -57,7 +57,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
 
         EventKey const *key_event = static_cast<EventKey const *>(e);
         if (key_event->IsKeyDownEvent() &&
-            Key::IsKeyRepeatable(key_event->GetKeyCode()))
+            Key::IsKeyRepeatable(key_event->KeyCode()))
         {
 
             EventKeyDown const *key_down_event = static_cast<EventKeyDown const *>(e);
@@ -70,7 +70,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
             return true;
         }
         else if (key_event->IsKeyUpEvent() &&
-                 Key::IsKeyRepeatable(key_event->GetKeyCode()))
+                 Key::IsKeyRepeatable(key_event->KeyCode()))
         {
             // if the key up event matches the current key event, then
             // deactivate the current key event.

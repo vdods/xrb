@@ -91,15 +91,15 @@ void Screen::Draw () const
     // NOTE: this method encompasses all drawing.
 
 #if !defined(WIN32)
-//     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+//     ASSERT1(GL::MatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
     /*
-    GLint color_matrix_stack_depth = GL::GetMatrixStackDepth(GL_COLOR);
-    GLint modelview_matrix_stack_depth = GL::GetMatrixStackDepth(GL_MODELVIEW);
-    GLint projection_matrix_stack_depth = GL::GetMatrixStackDepth(GL_PROJECTION);
-    GLint texture_matrix_stack_depth = GL::GetMatrixStackDepth(GL_TEXTURE);
+    GLint color_matrix_stack_depth = GL::MatrixStackDepth(GL_COLOR);
+    GLint modelview_matrix_stack_depth = GL::MatrixStackDepth(GL_MODELVIEW);
+    GLint projection_matrix_stack_depth = GL::MatrixStackDepth(GL_PROJECTION);
+    GLint texture_matrix_stack_depth = GL::MatrixStackDepth(GL_TEXTURE);
     */
 #endif // !defined(WIN32)
 
@@ -124,7 +124,7 @@ void Screen::Draw () const
     // make sure the screen rect we're constructing the render context
     // with does not extend past the physical screen
     ScreenCoordRect screen_rect(GetScreenRect());
-    ASSERT1(screen_rect.GetLeft() == 0);
+    ASSERT1(screen_rect.Left() == 0);
     ASSERT1(screen_rect.Bottom() == 0);
     if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
         screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
@@ -146,15 +146,15 @@ void Screen::Draw () const
     ContainerWidget::Draw(render_context);
 
 #if !defined(WIN32)
-//     ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+//     ASSERT1(GL::MatrixStackDepth(GL_COLOR) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_MODELVIEW) == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_PROJECTION) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_TEXTURE) == 1 && "mismatched push/pop for GL_COLOR matrix stack");
     /*
-    ASSERT1(GL::GetMatrixStackDepth(GL_COLOR) == color_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_MODELVIEW) == modelview_matrix_stack_depth && "mismatched push/pop for GL_MODELVIEW matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_PROJECTION) == projection_matrix_stack_depth && "mismatched push/pop for GL_PROJECTION matrix stack");
-    ASSERT1(GL::GetMatrixStackDepth(GL_TEXTURE) == texture_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_COLOR) == color_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_MODELVIEW) == modelview_matrix_stack_depth && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_PROJECTION) == projection_matrix_stack_depth && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(GL::MatrixStackDepth(GL_TEXTURE) == texture_matrix_stack_depth && "mismatched push/pop for GL_COLOR matrix stack");
     */
 #endif // !defined(WIN32)
 
@@ -164,7 +164,7 @@ void Screen::Draw () const
     SDL_GL_SwapBuffers();
 
     // record this frame in the framerate calculator
-    m_framerate_calculator.AddFrameTime(GetMostRecentFrameTime());
+    m_framerate_calculator.AddFrameTime(MostRecentFrameTime());
 }
 
 Screen::Screen ()
@@ -200,7 +200,7 @@ bool Screen::HandleEvent (Event const *const e)
 
         case Event::KEYDOWN:
             /*
-            switch (static_cast<EventKey const *const>(e)->GetKeyCode())
+            switch (static_cast<EventKey const *const>(e)->KeyCode())
             {
 //                 case Key::PRINT:
 //                     fprintf(stderr,

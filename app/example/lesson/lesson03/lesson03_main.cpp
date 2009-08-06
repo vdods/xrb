@@ -248,7 +248,7 @@ protected:
     (which is inherited by Widget) and there are a few notable provided methods:
     FrameHandler::FrameTime and FrameHandler::FrameDT which are only
     available during the execution of HandleFrame (or in a function
-    called by it), and FrameHandler::GetMostRecentFrameTime which is available
+    called by it), and FrameHandler::MostRecentFrameTime which is available
     at any time.
     @code */
     virtual void HandleFrame ()

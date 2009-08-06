@@ -49,7 +49,7 @@ protected:
     {
         return m_time_at_birth;
     }
-    inline Float GetLifetimeRatio (Float const current_time) const
+    inline Float LifetimeRatio (Float const current_time) const
     {
         ASSERT1(current_time >= m_time_at_birth);
         if (m_time_to_live < 0.0f)

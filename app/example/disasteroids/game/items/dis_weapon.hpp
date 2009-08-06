@@ -63,8 +63,8 @@ protected:
 
     inline Float GetPrimaryInput () const { return m_primary_input; }
     inline Float GetSecondaryInput () const { return m_secondary_input; }
-    inline FloatVector2 const &GetMuzzleLocation () const { return m_muzzle_location; }
-    inline FloatVector2 const &GetMuzzleDirection () const { return m_muzzle_direction; }
+    inline FloatVector2 const &MuzzleLocation () const { return m_muzzle_location; }
+    inline FloatVector2 const &MuzzleDirection () const { return m_muzzle_direction; }
     inline FloatVector2 const &GetReticleCoordinates () const { return m_reticle_coordinates; }
 
 private:
@@ -241,7 +241,7 @@ public:
 
     inline bool IsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
     inline bool IsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
-    inline Float GetMaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
+    inline Float MaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
     inline Float FinalFireballSizeOverride () const { return m_final_fireball_size_override; }
 
     inline void SetMaxDamagePerFireballOverride (Float max_damage_per_fireball_override)
@@ -681,7 +681,7 @@ public:
     inline Float GetStrengthOverride () const { return m_strength_override; }
 
     inline bool IsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
-    inline Float GetMaxForceOverride () const { return m_max_force_override; }
+    inline Float MaxForceOverride () const { return m_max_force_override; }
 
     inline bool IsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
     inline Float BeamRadiusOverride () const { return m_beam_radius_override; }

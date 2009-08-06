@@ -302,7 +302,7 @@ namespace MapEditor2
             Float side_length,
             Float z_depth);
     
-        VisibilityQuadTree *GetMapEditorQuadTree () const;
+        VisibilityQuadTree *MapEditorQuadTree () const;
     
     private:
 

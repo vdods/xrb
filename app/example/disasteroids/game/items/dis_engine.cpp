@@ -63,7 +63,7 @@ Float Engine::GetPowerToBeUsedBasedOnInputs (
     else
         input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
 
-    return frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector.GetLength() / input_vector_max_length;
+    return frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector.Length() / input_vector_max_length;
 }
 
 bool Engine::Activate (
@@ -85,12 +85,12 @@ bool Engine::Activate (
         FloatVector2 velocity_differential =
             ambient_velocity -
             (GetOwnerShip()->GetVelocity() +
-            frame_dt / GetOwnerShip()->GetMass() * GetOwnerShip()->Force());
-        FloatVector2 thrust_vector = GetOwnerShip()->GetMass() * velocity_differential / frame_dt;
+            frame_dt / GetOwnerShip()->Mass() * GetOwnerShip()->Force());
+        FloatVector2 thrust_vector = GetOwnerShip()->Mass() * velocity_differential / frame_dt;
         // if the thrust isn't zero, cap it to the max thrust, and accumulate
         if (!thrust_vector.IsZero())
         {
-            Float thrust_force = thrust_vector.GetLength();
+            Float thrust_force = thrust_vector.Length();
             if (thrust_force > max_thrust_force)
                 thrust_vector = max_thrust_force * thrust_vector.GetNormalization();
     
@@ -122,7 +122,7 @@ bool Engine::Activate (
         Float output_ratio = power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
         Float thrust_force =
             output_ratio * ms_max_thrust_force[GetUpgradeLevel()] *
-            input_vector.GetLength() / input_vector_max_length;
+            input_vector.Length() / input_vector_max_length;
         FloatVector2 thrust_vector(thrust_force * Math::UnitVector(input_vector_angle + GetOwnerShip()->Angle()));
 
         GetOwnerShip()->AccumulateForce(thrust_vector);

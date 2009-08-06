@@ -106,7 +106,7 @@ protected:
     {
         ASSERT1(area_radius > 0.0f);
         Float radius_sum = area_radius + 2.0f * GetRadius();
-        return (area_center - m_center).GetLengthSquared() < radius_sum*radius_sum;
+        return (area_center - m_center).LengthSquared() < radius_sum*radius_sum;
     }
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the

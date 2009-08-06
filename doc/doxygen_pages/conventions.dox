@@ -126,7 +126,7 @@ of what the function does.  Examples:
 
 @code
 void ParseUserOptionsFile (char const *options_filename);
-int GetManhattanDistanceBetween (int *point1, int *point2);
+int ManhattanDistanceBetween (int *point1, int *point2);
 bool IsEscapableCharacter (char c);
 @endcode
 
@@ -317,7 +317,7 @@ Sometimes the best place to put a newline is after a pointer dereference.
 Example:
 
 @code
-    GetLibrarySingleton()->
+    LibrarySingleton()->
         LoadFilenameUsingDefaultValues(
             "some_stupid_resource.data",
             33);

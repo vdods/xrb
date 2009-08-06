@@ -80,7 +80,7 @@ void Engine2::Sprite::Draw (
     // calculate the bias color
     Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
     // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(ColorMask()));
+    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
     Render::SetupTextureUnits(m_texture->Handle(), color_mask, bias_color);
@@ -168,7 +168,7 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
             if (m_is_round)
                 m_radius[quad_tree_type] = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
             else
-                m_radius[quad_tree_type] = GetScaleFactors().GetLength();
+                m_radius[quad_tree_type] = GetScaleFactors().Length();
             break;
 
         case QTT_PHYSICS_HANDLER:
@@ -177,7 +177,7 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
                     Max(GetScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
                         GetScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
             else
-                m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).GetLength();
+                m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).Length();
             break;
 
         default:

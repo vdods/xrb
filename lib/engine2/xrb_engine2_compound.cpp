@@ -77,7 +77,7 @@ void Engine2::Compound::Draw (
     // calculate the bias color
     Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
     // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().GetMaskedColor(ColorMask()));
+    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
     // the opaque white texture is just a dummy.  the real texture will be bound later
@@ -151,7 +151,7 @@ void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
         m_radius[quad_tree_type] = Max(
             m_radius[quad_tree_type],
             (GetTransformation() * m_vertex_array[i] -
-             GetTransformation() * FloatVector2::ms_zero).GetLength());
+             GetTransformation() * FloatVector2::ms_zero).Length());
     }
 }
 

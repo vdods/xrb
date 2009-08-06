@@ -49,7 +49,7 @@ namespace MapEditor2
         {
             return m_world_view_widget;
         }
-        WorldView *GetMapEditorWorldView () const;
+        WorldView *MapEditorWorldView () const;
     
         inline SignalReceiver1<std::string const &> const *ReceiverSaveWorldToFile ()
         {

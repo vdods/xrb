@@ -192,12 +192,12 @@ private:
                 ScanANewLookaheadToken();
         }
     }
-    inline Token::Type GetLookaheadTokenType ()
+    inline Token::Type LookaheadTokenType ()
     {
         GetNewLookaheadToken();
         return m_lookahead_token_type;
     }
-    inline DataFileValue * const &GetLookaheadToken ()
+    inline DataFileValue * const &LookaheadToken ()
     {
         GetNewLookaheadToken();
         return m_lookahead_token;

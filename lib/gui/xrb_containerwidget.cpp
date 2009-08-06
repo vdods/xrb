@@ -625,25 +625,25 @@ WidgetSkinHandler *ContainerWidget::GetWidgetSkinHandlerChild (Uint32 const inde
 Bool2 ContainerWidget::ContentsMinSizeEnabled () const
 {
     ASSERT1(m_main_widget != NULL);
-    return m_main_widget->GetMinSizeEnabled();
+    return m_main_widget->MinSizeEnabled();
 }
 
 ScreenCoordVector2 ContainerWidget::ContentsMinSize () const
 {
     ASSERT1(m_main_widget != NULL);
-    return m_main_widget->GetMinSize();
+    return m_main_widget->MinSize();
 }
 
 Bool2 ContainerWidget::ContentsMaxSizeEnabled () const
 {
     ASSERT1(m_main_widget != NULL);
-    return m_main_widget->GetMaxSizeEnabled();
+    return m_main_widget->MaxSizeEnabled();
 }
 
 ScreenCoordVector2 ContainerWidget::ContentsMaxSize () const
 {
     ASSERT1(m_main_widget != NULL);
-    return m_main_widget->GetMaxSize();
+    return m_main_widget->MaxSize();
 }
 
 void ContainerWidget::HandleFrame ()

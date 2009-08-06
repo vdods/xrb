@@ -50,9 +50,9 @@ Widget *Layout::GridChild (
     Uint32 const major_index,
     Uint32 const minor_index) const
 {
-    ASSERT1(major_index < GetMinorCount());
-    ASSERT1(minor_index < GetMajorCount());
-    Uint32 linear_index = major_index * GetMajorCount() + minor_index;
+    ASSERT1(major_index < MinorCount());
+    ASSERT1(minor_index < MajorCount());
+    Uint32 linear_index = major_index * MajorCount() + minor_index;
     if (linear_index < m_child_vector.size())
         return m_child_vector[linear_index];
     else
@@ -804,10 +804,10 @@ void Layout::CalculateLineSizeProperties (
     SizeProperties *const size_properties,
     bool *const line_is_hidden) const
 {
-    if (line_direction == GetMajorDirection())
-        ASSERT1(line_index < GetMinorCount());
+    if (line_direction == MajorDirection())
+        ASSERT1(line_index < MinorCount());
     else
-        ASSERT1(line_index < GetMajorCount());
+        ASSERT1(line_index < MajorCount());
     ASSERT1(size_properties != NULL);
     ASSERT1(line_is_hidden != NULL);
 
@@ -834,15 +834,15 @@ void Layout::CalculateLineSizeProperties (
 
     // loop through all the child widgets
     Uint32 line_widget_count =
-        (line_direction == GetMajorDirection()) ?
-        GetMajorCount() :
-        GetMinorCount();
+        (line_direction == MajorDirection()) ?
+        MajorCount() :
+        MinorCount();
     // the total number of hidden child widgets
     Uint32 hidden_child_widget_count = 0;
     for (Uint32 i = 0; i < line_widget_count; ++i)
     {
         Widget const *child;
-        if (line_direction == GetMajorDirection())
+        if (line_direction == MajorDirection())
             child = GridChild(line_index, i);
         else
             child = GridChild(i, line_index);
@@ -860,51 +860,51 @@ void Layout::CalculateLineSizeProperties (
         // then this layout has minsize enabled in the along direction.
         size_properties->m_min_size_enabled[along] =
             size_properties->m_min_size_enabled[along] ||
-            child->GetMinSizeEnabled()[along];
+            child->MinSizeEnabled()[along];
         // if at least one child has minsize enabled in the across direction,
         // then this layout has minsize enabled in the across direction.
         size_properties->m_min_size_enabled[across] =
             size_properties->m_min_size_enabled[across] ||
-            child->GetMinSizeEnabled()[across];
+            child->MinSizeEnabled()[across];
 
         // check if there's a min measurement for the 'along' dimension
-        if (child->GetMinSizeEnabled()[along])
+        if (child->MinSizeEnabled()[along])
             // if there is, then add it to the total
-            size_properties->m_min_size[along] += child->GetMinSize()[along];
+            size_properties->m_min_size[along] += child->MinSize()[along];
 
         // check if there's a min measurement for the 'across' dimension
-        if (child->GetMinSizeEnabled()[across])
+        if (child->MinSizeEnabled()[across])
             // if there is, then check it against the current across min
             if (size_properties->m_min_size[across] <
-                child->GetMinSize()[across])
+                child->MinSize()[across])
                 // assign it only if it's the new largest min size
                 size_properties->m_min_size[across] =
-                    child->GetMinSize()[across];
+                    child->MinSize()[across];
 
         // if all child widgets have maxsize enabled in the along direction,
         // then this line has maxsize enabled in the along direction.
         size_properties->m_max_size_enabled[along] =
             size_properties->m_max_size_enabled[along] &&
-            child->GetMaxSizeEnabled()[along];
+            child->MaxSizeEnabled()[along];
         // if at least one child has maxsize enabled in the across direction,
         // then this line has maxsize enabled in the across direction.
         size_properties->m_max_size_enabled[across] =
             size_properties->m_max_size_enabled[across] ||
-            child->GetMaxSizeEnabled()[across];
+            child->MaxSizeEnabled()[across];
 
         // check if there's a max measurement for the 'along' dimension
-        if (child->GetMaxSizeEnabled()[along])
+        if (child->MaxSizeEnabled()[along])
             // if there is, add it to the total
-            size_properties->m_max_size[along] += child->GetMaxSize()[along];
+            size_properties->m_max_size[along] += child->MaxSize()[along];
 
         // check if there's a max measurement for the 'across' dimension
-        if (child->GetMaxSizeEnabled()[across])
+        if (child->MaxSizeEnabled()[across])
             // if there is, then check it against the current across max
             if (size_properties->m_max_size[across] >
-                child->GetMaxSize()[across])
+                child->MaxSize()[across])
                 // assign it only if its the new smallest max size
                 size_properties->m_max_size[across] =
-                    child->GetMaxSize()[across];
+                    child->MaxSize()[across];
     }
 
     // make sure that the max sizes are not smaller
@@ -997,9 +997,9 @@ void Layout::UpdateColumnSizePropertyAllocation () const
 
     // figure out how many columns there should be
     Uint32 column_count =
-        (GetMajorDirection() == COLUMN) ?
-        GetMinorCount() :
-        GetMajorCount();
+        (MajorDirection() == COLUMN) ?
+        MinorCount() :
+        MajorCount();
 
     if (m_column_count > 0)
     {
@@ -1062,9 +1062,9 @@ void Layout::UpdateRowSizePropertyAllocation () const
     ASSERT1(m_row_size_properties_need_update);
 
     // figure out how many rows there should be
-    Uint32 row_count = (GetMajorDirection() == ROW) ?
-                       GetMinorCount() :
-                       GetMajorCount();
+    Uint32 row_count = (MajorDirection() == ROW) ?
+                       MinorCount() :
+                       MajorCount();
 
     if (m_row_count > 0)
     {

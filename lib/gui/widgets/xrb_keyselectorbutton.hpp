@@ -30,7 +30,7 @@ public:
         ContainerWidget *parent,
         std::string const &name = "KeySelectorButton");
 
-    inline Key::Code GetKeyCode () const { return m_key_code; }
+    inline Key::Code KeyCode () const { return m_key_code; }
     void SetKeyCode (Key::Code key_code);
 
 protected:
@@ -50,7 +50,7 @@ private:
             ContainerWidget *parent,
             std::string const &name = "KeySelectorDialog");
 
-        inline Key::Code GetKeyCode () const { return m_key_code; }
+        inline Key::Code KeyCode () const { return m_key_code; }
 
     protected:
 

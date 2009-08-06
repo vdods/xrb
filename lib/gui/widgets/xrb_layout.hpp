@@ -34,19 +34,19 @@ public:
         std::string const &name = "Layout");
     virtual ~Layout ();
 
-    inline LineDirection GetMajorDirection () const
+    inline LineDirection MajorDirection () const
     {
         return m_major_direction;
     }
-    inline LineDirection GetMinorDirection () const
+    inline LineDirection MinorDirection () const
     {
         return (m_major_direction == ROW) ? COLUMN : ROW;
     }
-    inline Uint32 GetMajorCount () const
+    inline Uint32 MajorCount () const
     {
         return m_major_count;
     }
-    Uint32 GetMinorCount () const
+    Uint32 MinorCount () const
     {
         return (m_child_vector.size() + m_major_count - 1) / m_major_count;
     }

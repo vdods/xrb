@@ -39,7 +39,7 @@ public:
     /** Returns 0 if no frame has been processed yet.
       * @brief Returns the time of the most recent frame.
       */
-    inline Float GetMostRecentFrameTime () const { return Max(m_most_recent_time, 0.0f); }
+    inline Float MostRecentFrameTime () const { return Max(m_most_recent_time, 0.0f); }
     /** The frame count is incremented once per call to ProcessFrame.
       * @brief Returns the accumulated frame count.
       */
@@ -60,7 +60,7 @@ public:
 
 protected:
 
-    /** Only valid inside HandleFrame -- use GetMostRecentFrameTime
+    /** Only valid inside HandleFrame -- use MostRecentFrameTime
       * otherwise.  If this method is called from outside of
       * HandleFrame, it will assert.
       * @brief Returns the current frame time.

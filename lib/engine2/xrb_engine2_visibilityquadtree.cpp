@@ -386,7 +386,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
             view_offset.SetComponents(side_length*x, side_length*y);
             // this IF statement culls quadtree nodes that are outside of the
             // circular view radius from the square grid of nodes to be drawn
-            if ((old_view_center - view_offset).GetLengthSquared() < radius_sum*radius_sum)
+            if ((old_view_center - view_offset).LengthSquared() < radius_sum*radius_sum)
             {
                 draw_loop_functor.SetViewCenter(old_view_center - view_offset);
 

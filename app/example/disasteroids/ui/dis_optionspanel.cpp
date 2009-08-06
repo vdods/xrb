@@ -143,7 +143,7 @@ Key::Code OptionsPanel::InputActionKeyCode (KeyInputAction const input_action) c
 {
     ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
     ASSERT1(m_input_action_button[input_action] != NULL);
-    return m_input_action_button[input_action]->GetKeyCode();
+    return m_input_action_button[input_action]->KeyCode();
 }
 
 void OptionsPanel::SetResolutionX (ScreenCoord const resolution_x)

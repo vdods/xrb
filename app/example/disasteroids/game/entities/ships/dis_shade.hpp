@@ -43,10 +43,10 @@ public:
     // Ship interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual FloatVector2 GetMuzzleLocation (Weapon const *weapon) const;
-    virtual FloatVector2 GetMuzzleDirection (Weapon const *weapon) const;
+    virtual FloatVector2 MuzzleLocation (Weapon const *weapon) const;
+    virtual FloatVector2 MuzzleDirection (Weapon const *weapon) const;
 
-    virtual Float GetMaxAngularVelocity () const
+    virtual Float MaxAngularVelocity () const
     {
         return ms_max_angular_velocity[EnemyLevel()];
     }

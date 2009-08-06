@@ -615,7 +615,7 @@ GaussGunTrail *SpawnGaussGunTrail (
     sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
     sprite->SetIsTransparent(true);
     sprite->SetTranslation(trail_center);
-    sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.GetLength(), 0.5f * trail_width));
+    sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.Length(), 0.5f * trail_width));
     sprite->SetAngle(Math::Atan(trail_vector));
 
     GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);

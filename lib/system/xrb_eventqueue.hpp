@@ -114,7 +114,7 @@ protected:
 private:
 
     // the maximum ID number
-    static inline Uint32 GetMaxEventID ()
+    static inline Uint32 MaxEventID ()
     {
         return UINT32_UPPER_BOUND;
     }

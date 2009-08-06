@@ -55,10 +55,10 @@ public:
     }
     inline CollisionType GetCollisionType () const { return m_collision_type; }
     inline Float Elasticity () const { return m_elasticity; }
-    inline Float GetMass () const { return m_mass; }
+    inline Float Mass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
-    inline Float GetSpeed () const { return m_velocity.GetLength(); }
-    inline FloatVector2 GetMomentum () const { return m_mass * m_velocity; }
+    inline Float GetSpeed () const { return m_velocity.Length(); }
+    inline FloatVector2 Momentum () const { return m_mass * m_velocity; }
     inline FloatVector2 const &Force () const { return m_force; }
     inline Float AngularVelocity () const { return m_angular_velocity; }
 

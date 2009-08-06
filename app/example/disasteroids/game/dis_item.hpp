@@ -40,7 +40,7 @@ public:
 
     static Item *Create (ItemType item_type, Uint8 upgrade_level);
     
-    static std::string const &GetMineralSpriteFilename (Uint8 mineral_index);
+    static std::string const &MineralSpriteFilename (Uint8 mineral_index);
     static Uint32 ItemPrice (
         ItemType item_type,
         Uint8 upgrade_level,

@@ -23,7 +23,7 @@ namespace Dis
 
 void Effect::Think (Float const time, Float const frame_dt)
 {
-    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - GetLifetimeRatio(time)));
+    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - LifetimeRatio(time)));
 
     if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
         ScheduleForDeletion(0.0f);
@@ -35,7 +35,7 @@ void Effect::Think (Float const time, Float const frame_dt)
 
 void Explosion::Think (Float const time, Float const frame_dt)
 {
-    SetScaleFactor(m_final_size * Math::Sqrt(GetLifetimeRatio(time)) + 0.1f);
+    SetScaleFactor(m_final_size * Math::Sqrt(LifetimeRatio(time)) + 0.1f);
 
     Effect::Think(time, frame_dt);
 }
@@ -92,13 +92,13 @@ void DamageExplosion::Collide (
         return;
 
     // return if nothing would actually be done
-    Float reverse_lifetime_ratio = 1.0f - GetLifetimeRatio(time);
+    Float reverse_lifetime_ratio = 1.0f - LifetimeRatio(time);
     if (reverse_lifetime_ratio < 0.0f)
         return;
 
     // center_to_center points towards the collider
     FloatVector2 center_to_center = collider->GetTranslation() - GetTranslation();
-    Float distance = center_to_center.GetLength() - collider->GetScaleFactor();
+    Float distance = center_to_center.Length() - collider->GetScaleFactor();
     if (distance < 0.0f)
         distance = 0.0f;
     Float distance_factor;
@@ -232,7 +232,7 @@ void LaserBeam::SnapToShip (
     ASSERT1(IsInWorld());
     FloatVector2 beam_vector(hit_location - muzzle_location);
     SetTranslation(0.5f * (muzzle_location + hit_location));
-    SetScaleFactors(FloatVector2(0.5f * beam_vector.GetLength(), 0.5f * beam_width));
+    SetScaleFactors(FloatVector2(0.5f * beam_vector.Length(), 0.5f * beam_width));
     SetAngle(Math::Atan(beam_vector));
 }
 

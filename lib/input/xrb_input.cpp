@@ -75,7 +75,7 @@ bool Input::IsValidKeyName (std::string const &name) const
     return m_keyname_map.find(name) != m_keyname_map.end();
 }
 
-Key::Code Input::GetKeyCode (std::string const &name) const
+Key::Code Input::KeyCode (std::string const &name) const
 {
     KeyNameMapConstIterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
@@ -87,7 +87,7 @@ Key::Code Input::GetKeyCode (std::string const &name) const
     }
 }
 
-std::string const &Input::GetKeyName (Key::Code const code) const
+std::string const &Input::KeyName (Key::Code const code) const
 {
     KeyCodeMapConstIterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -135,7 +135,7 @@ bool Input::IsEitherShiftKeyPressed () const
            GetKey(Key::RSHIFT)->IsPressed();
 }
 
-SDLMod Input::GetModifiers () const
+SDLMod Input::Modifiers () const
 {
     return (SDLMod)(
         (IsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
@@ -170,7 +170,7 @@ bool Input::HandleEvent (Event const *const e)
     switch (e->GetEventType())
     {
         case Event::KEYDOWN:
-            code = static_cast<EventKeyDown const *const>(e)->GetKeyCode();
+            code = static_cast<EventKeyDown const *const>(e)->KeyCode();
 
             // do caps/num/scroll lock updating
             if (code == Key::CAPSLOCK)
@@ -182,7 +182,7 @@ bool Input::HandleEvent (Event const *const e)
             break;
 
         case Event::KEYUP:
-            code = static_cast<EventKeyUp const *const>(e)->GetKeyCode();
+            code = static_cast<EventKeyUp const *const>(e)->KeyCode();
             break;
 
         case Event::MOUSEBUTTONDOWN:

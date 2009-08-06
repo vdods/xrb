@@ -89,7 +89,7 @@ Engine2::World *Engine2::World::CreateEmpty (
 void Engine2::World::Write (Serializer &serializer) const
 {
     serializer.WriteUint32(EntityCapacity());
-    serializer.WriteUint32(GetMainObjectLayerIndex());
+    serializer.WriteUint32(MainObjectLayerIndex());
     WriteObjectLayers(serializer);
 }
 
@@ -237,7 +237,7 @@ Engine2::World::World (
     m_entity_count = 0;
 }
 
-Uint32 Engine2::World::GetMainObjectLayerIndex () const
+Uint32 Engine2::World::MainObjectLayerIndex () const
 {
     Uint32 index = 0;
     for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),
@@ -247,7 +247,7 @@ Uint32 Engine2::World::GetMainObjectLayerIndex () const
     {
         ObjectLayer *object_layer = *it;
         ASSERT1(object_layer != NULL);
-        if (object_layer == GetMainObjectLayer())
+        if (object_layer == MainObjectLayer())
             return index;
     }
 

@@ -66,7 +66,7 @@ FloatMatrix2 Engine2::WorldView::CompoundTransformation () const
 Float Engine2::WorldView::GetViewDepth (Engine2::ObjectLayer const *object_layer) const
 {
     if (object_layer == NULL)
-        object_layer = GetWorld()->GetMainObjectLayer();
+        object_layer = GetWorld()->MainObjectLayer();
 
     return object_layer->GetZDepth() - 1.0f / GetZoomFactor();
 }
@@ -74,7 +74,7 @@ Float Engine2::WorldView::GetViewDepth (Engine2::ObjectLayer const *object_layer
 Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *object_layer) const
 {
     if (object_layer == NULL)
-        object_layer = GetWorld()->GetMainObjectLayer();
+        object_layer = GetWorld()->MainObjectLayer();
 
     ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth());
 
@@ -88,7 +88,7 @@ Float Engine2::WorldView::GetParallaxedViewRadius (Engine2::ObjectLayer const *o
             Center())
         *
         GetParallaxFactor(
-            GetViewDepth(GetMainObjectLayer()),
+            GetViewDepth(MainObjectLayer()),
             object_layer->GetZDepth());
 }
 
@@ -98,7 +98,7 @@ FloatMatrix2 Engine2::WorldView::GetParallaxedTransformation (
     Engine2::ObjectLayer const *object_layer) const
 {
     if (object_layer == NULL)
-        object_layer = GetWorld()->GetMainObjectLayer();
+        object_layer = GetWorld()->MainObjectLayer();
 
     ASSERT1(GetViewDepth(object_layer) != object_layer->GetZDepth());
 
@@ -112,7 +112,7 @@ FloatMatrix2 Engine2::WorldView::GetParallaxedTransformation (
     return world_to_whatever;
 }
 
-Float Engine2::WorldView::GetMinorAxisRadius () const
+Float Engine2::WorldView::MinorAxisRadius () const
 {
     FloatVector2 minor_axis;
     if (m_parent_world_view_widget->GetWidth() < m_parent_world_view_widget->Height())
@@ -127,10 +127,10 @@ Float Engine2::WorldView::GetMinorAxisRadius () const
                 static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * minor_axis -
-         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
+         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
-Float Engine2::WorldView::GetMajorAxisRadius () const
+Float Engine2::WorldView::MajorAxisRadius () const
 {
     FloatVector2 major_axis;
     if (m_parent_world_view_widget->GetWidth() > m_parent_world_view_widget->Height())
@@ -145,7 +145,7 @@ Float Engine2::WorldView::GetMajorAxisRadius () const
                 static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * major_axis -
-         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
+         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
 Float Engine2::WorldView::CornerRadius () const
@@ -155,7 +155,7 @@ Float Engine2::WorldView::CornerRadius () const
         0.5f * static_cast<Float>(m_parent_world_view_widget->Height()));
     return
         (GetParallaxedScreenToWorld() * corner_vector -
-         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).GetLength();
+         GetParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
 void Engine2::WorldView::SetCenter (FloatVector2 const &position)
@@ -282,7 +282,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     m_draw_info.Reset();
 
     Float pixels_in_view_radius =
-        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
+        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().Length();
 
     // vars which are used in the while loop which should only be
     // initialized once, before the loop.
@@ -328,7 +328,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                 Min(Max(distance_fade, 0.0f), 1.0f));
 
             // if this is the main layer
-            if (object_layer == GetWorld()->GetMainObjectLayer())
+            if (object_layer == GetWorld()->MainObjectLayer())
             {
                 // set the drawn flag
                 main_object_layer_has_been_drawn = true;
@@ -364,7 +364,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                     &m_transparent_object_vector);
 
             // if indicated, draw the grid lines after the main layer
-            if (object_layer == GetWorld()->GetMainObjectLayer() &&
+            if (object_layer == GetWorld()->MainObjectLayer() &&
                 m_grid_line_type == GR_ABOVE_MAIN_LAYER)
             {
                 DrawGridLines(view_render_context);
@@ -380,7 +380,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     {
         PushParallaxedGLProjectionMatrix(
             render_context,
-            GetMainObjectLayer());
+            MainObjectLayer());
 
         // get the parallaxed view radius for the main object layer
         Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
@@ -389,7 +389,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             render_context,
             0,
             true,
-            GetMainObjectLayer()->IsWrapped(),
+            MainObjectLayer()->IsWrapped(),
             Center(),
             parallaxed_view_radius,
             Color(1.0f, 1.0f, 0.0f, 1.0f));
@@ -418,14 +418,14 @@ bool Engine2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const 
     return false;
 }
 
-Engine2::ObjectLayer *Engine2::WorldView::GetMainObjectLayer () const
+Engine2::ObjectLayer *Engine2::WorldView::MainObjectLayer () const
 {
-    return GetWorld()->GetMainObjectLayer();
+    return GetWorld()->MainObjectLayer();
 }
 
 Float Engine2::WorldView::GridScaleUnit (Uint32 const grid_scale) const
 {
-    return 0.5f * GetMainObjectLayer()->GetSideLength() /
+    return 0.5f * MainObjectLayer()->GetSideLength() /
            Math::Pow(static_cast<Float>(m_grid_number_base), static_cast<Float>(grid_scale));
 }
 
@@ -488,7 +488,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
     if (m_grid_line_type == GR_NO_DRAW)
         return;
 
-    bool is_wrapped = GetMainObjectLayer()->IsWrapped();
+    bool is_wrapped = MainObjectLayer()->IsWrapped();
     Float view_radius = GetParallaxedViewRadius(NULL);
 
     // draw the minor grid
@@ -529,7 +529,7 @@ void Engine2::WorldView::DrawGridLineSet (
     // calculate the fading as the grid becomes too small to be useful
     Float transformed_grid_scale_unit =
         ((GetParallaxedWorldToScreen() * FloatVector2(grid_scale_unit, 0.0)) -
-         (GetParallaxedWorldToScreen() * FloatVector2::ms_zero)).GetLength();
+         (GetParallaxedWorldToScreen() * FloatVector2::ms_zero)).Length();
     Float distance_fade =
         (transformed_grid_scale_unit - fade_scale_lower_limit) /
         (fade_scale_upper_limit - fade_scale_lower_limit);
@@ -544,7 +544,7 @@ void Engine2::WorldView::DrawGridLineSet (
     Sint32 y_start;
     Sint32 y_stop;
     Float view_limit;
-    Float half_side_length = 0.5f * GetMainObjectLayer()->GetSideLength();
+    Float half_side_length = 0.5f * MainObjectLayer()->GetSideLength();
 
     view_limit = view_center[Dim::X] - view_radius;
     if (!is_wrapped && view_limit < -half_side_length)
@@ -599,24 +599,24 @@ Float Engine2::WorldView::CalculateViewRadius (
     // calculate the radius of the view rect
     distance_squared =
         (screen_to_world * cast_view_rect.GetTopLeft() -
-        view_center).GetLengthSquared();
+        view_center).LengthSquared();
     retval = distance_squared;
 
     distance_squared =
         (screen_to_world * cast_view_rect.GetTopRight() -
-        view_center).GetLengthSquared();
+        view_center).LengthSquared();
     if (distance_squared > retval)
         retval = distance_squared;
 
     distance_squared =
         (screen_to_world * cast_view_rect.BottomLeft() -
-        view_center).GetLengthSquared();
+        view_center).LengthSquared();
     if (distance_squared > retval)
         retval = distance_squared;
 
     distance_squared =
         (screen_to_world * cast_view_rect.BottomRight() -
-        view_center).GetLengthSquared();
+        view_center).LengthSquared();
     if (distance_squared > retval)
         retval = distance_squared;
 
@@ -640,7 +640,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // the place of the view-to-screen transform.
     if (m_is_transform_scaling_based_upon_widget_radius)
     {
-        Float viewport_radius = render_context.ClipRect().GetSize().StaticCast<Float>().GetLength();
+        Float viewport_radius = render_context.ClipRect().GetSize().StaticCast<Float>().Length();
         glScalef(
             viewport_radius / render_context.ClipRect().GetSize()[Dim::X],
             viewport_radius / render_context.ClipRect().GetSize()[Dim::Y],

@@ -170,7 +170,7 @@ void Engine2::WorldViewWidget::ComputeTransform ()
     // the 0.5f factor is because normally the viewport maps to the rect
     // (-1, -1) to (1, 1)
     if (m_is_transform_scaling_based_upon_widget_radius)
-        m_transform.Scale(0.5f * GetSize().StaticCast<Float>().GetLength());
+        m_transform.Scale(0.5f * GetSize().StaticCast<Float>().Length());
     else
         m_transform.Scale(0.5f * static_cast<Float>(Min(GetWidth(), Height())));
     // translate so the origin of the view is at the center of the

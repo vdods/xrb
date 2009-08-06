@@ -254,21 +254,21 @@ void WidgetStack::UpdateContentsSizeProperties () const
         {
             // if the child has a min size, then the contents as a whole
             // have a min size
-            if (child->GetMinSizeEnabled()[d])
+            if (child->MinSizeEnabled()[d])
             {
                 m_contents_size_properties.m_min_size_enabled[d] = true;
                 m_contents_size_properties.m_min_size[d] =
-                    Max(child->GetMinSize()[d],
+                    Max(child->MinSize()[d],
                         m_contents_size_properties.m_min_size[d]);
             }
 
             // if the child has a max size, then the contents as a whole
             // have a max size
-            if (child->GetMaxSizeEnabled()[d])
+            if (child->MaxSizeEnabled()[d])
             {
                 m_contents_size_properties.m_max_size_enabled[d] = true;
                 m_contents_size_properties.m_max_size[d] =
-                    Min(child->GetMaxSize()[d],
+                    Min(child->MaxSize()[d],
                         m_contents_size_properties.m_max_size[d]);
             }
         }

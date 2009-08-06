@@ -229,7 +229,7 @@ void MapEditor2::Compound::DrawMetrics (
 
     // if the metric mode is vertices, draw the vertices
     bool vertices_can_be_selected =
-        GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
         IsSelected();
     if (metric_mode == Object::MM_VERTICES && vertices_can_be_selected)
     {
@@ -379,7 +379,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;
@@ -393,7 +393,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
         ASSERT1(vertex_instance != NULL);
         CompoundVertex &compound_vertex = **vertex_instance;
 
-        Float distance = ((GetTransformation() * compound_vertex.m_coordinate) - center).GetLength();
+        Float distance = ((GetTransformation() * compound_vertex.m_coordinate) - center).Length();
         if (distance <= radius &&
             (distance < *nearest_distance || *nearest_distance < 0.0f))
         {
@@ -406,7 +406,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
 
 MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertices ()
 {
-    ObjectLayer *const object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
     // first check that no polygon has more than n-2 vertices
@@ -650,7 +650,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
         // decrement their vertices' reference counts)
         if (polygon->m_is_selected)
         {
-            polygon->RemoveFromPolygonSelectionSet(GetMapEditorObjectLayer());
+            polygon->RemoveFromPolygonSelectionSet(MapEditorObjectLayer());
             Delete(polygon);
             PolygonListIterator remove_it = it;
             ++it;
@@ -697,7 +697,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;
@@ -712,17 +712,17 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
         CompoundVertex &vertex = **vertex_instance;
 
         // determine if the current vertex is inside the selection circle
-        Float vertex_distance = (center - GetTransformation() * vertex.m_coordinate).GetLength();
+        Float vertex_distance = (center - GetTransformation() * vertex.m_coordinate).Length();
         bool vertex_is_in_operand_set = vertex_distance <= radius;
         
         if (vertex_is_in_operand_set)
         {
             switch (selection_operation)
             {
-                case SO_EQUALS: vertex.SetIsSelected(true, GetMapEditorObjectLayer());  break;
-                case SO_IOR:    vertex.SetIsSelected(true, GetMapEditorObjectLayer());  break;
-                case SO_MINUS:  vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
-                case SO_XOR:    vertex.ToggleIsSelected(GetMapEditorObjectLayer());     break;
+                case SO_EQUALS: vertex.SetIsSelected(true, MapEditorObjectLayer());  break;
+                case SO_IOR:    vertex.SetIsSelected(true, MapEditorObjectLayer());  break;
+                case SO_MINUS:  vertex.SetIsSelected(false, MapEditorObjectLayer()); break;
+                case SO_XOR:    vertex.ToggleIsSelected(MapEditorObjectLayer());     break;
                 case SO_AND:                                                            break;
                 default:        ASSERT1(false && "Invalid selection operation");        break;
             }
@@ -731,11 +731,11 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
         {
             switch (selection_operation)
             {
-                case SO_EQUALS: vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
+                case SO_EQUALS: vertex.SetIsSelected(false, MapEditorObjectLayer()); break;
                 case SO_IOR:                                                            break;
                 case SO_MINUS:                                                          break;
                 case SO_XOR:                                                            break;
-                case SO_AND:    vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
+                case SO_AND:    vertex.SetIsSelected(false, MapEditorObjectLayer()); break;
                 default:        ASSERT1(false && "Invalid selection operation");        break;
             }
         }
@@ -751,7 +751,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        GetMapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;
@@ -770,10 +770,10 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
 
         switch (selection_operation)
         {
-            case SO_EQUALS: vertex.SetIsSelected(true, GetMapEditorObjectLayer());  break;
-            case SO_IOR:    vertex.SetIsSelected(true, GetMapEditorObjectLayer());  break;
-            case SO_MINUS:  vertex.SetIsSelected(false, GetMapEditorObjectLayer()); break;
-            case SO_XOR:    vertex.ToggleIsSelected(GetMapEditorObjectLayer());     break;
+            case SO_EQUALS: vertex.SetIsSelected(true, MapEditorObjectLayer());  break;
+            case SO_IOR:    vertex.SetIsSelected(true, MapEditorObjectLayer());  break;
+            case SO_MINUS:  vertex.SetIsSelected(false, MapEditorObjectLayer()); break;
+            case SO_XOR:    vertex.ToggleIsSelected(MapEditorObjectLayer());     break;
             case SO_AND:                                                            break;
             default:        ASSERT1(false && "Invalid selection operation");        break;
         }
@@ -785,7 +785,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
 
 void MapEditor2::Compound::SelectAllVertices (bool const toggle_selection)
 {
-    ObjectLayer *const object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
     for (VertexListIterator it = m_vertex_list.begin(),
@@ -866,7 +866,7 @@ void MapEditor2::Compound::RotateVertex (
 
 void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
 {
-    ObjectLayer *const object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
     for (PolygonListIterator it = m_polygon_list.begin(),
@@ -886,7 +886,7 @@ void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
 
 void MapEditor2::Compound::SetVertexSelectionStateFromSelectionOwnerPolygonCount ()
 {
-    ObjectLayer *const object_layer = GetMapEditorObjectLayer();
+    ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
     for (PolygonListIterator it = m_polygon_list.begin(),
@@ -984,7 +984,7 @@ void MapEditor2::Compound::CalculateVisibleRadius () const
         m_radius =
             Max(m_radius,
                 (GetTransformation() * GetVertex(i) -
-                 GetTransformation() * FloatVector2::ms_zero).GetLength());
+                 GetTransformation() * FloatVector2::ms_zero).Length());
     }
 }
 

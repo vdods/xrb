@@ -46,9 +46,9 @@ public:
     inline Uint32 GetScore () const { return m_score; }
     inline Float GetStoke () const { return m_stoke; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
-    inline Uint32 GetLivesRemaining () const { return m_lives_remaining; }
+    inline Uint32 LivesRemaining () const { return m_lives_remaining; }
 
-    inline Weapon const *GetMainWeapon () const { return m_main_weapon; }
+    inline Weapon const *MainWeapon () const { return m_main_weapon; }
     inline Weapon const *AuxiliaryWeapon () const { return m_auxiliary_weapon; }
     inline Engine const *GetEngine () const { return m_engine; }
     inline Armor const *GetArmor () const { return m_armor; }
@@ -59,7 +59,7 @@ public:
     Float GetShieldStatus () const;
     Float GetPowerStatus () const;
     Float GetWeaponStatus () const;
-    inline Float GetMineralInventory (Uint8 mineral_type) const
+    inline Float MineralInventory (Uint8 mineral_type) const
     {
         ASSERT1(mineral_type < MINERAL_COUNT);
         return m_mineral_inventory[mineral_type];
@@ -147,7 +147,7 @@ protected:
     {
         return m_is_using_auxiliary_weapon;
     }
-    inline Weapon *GetMainWeapon ()
+    inline Weapon *MainWeapon ()
     {
         return m_main_weapon;
     }

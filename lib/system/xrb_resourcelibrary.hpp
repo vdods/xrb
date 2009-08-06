@@ -164,7 +164,7 @@ private:
         {
             return m_key.m_filename;
         }
-        inline Sint32 GetLoadParameter () const
+        inline Sint32 LoadParameter () const
         {
             return m_key.m_load_parameter;
         }
@@ -423,10 +423,10 @@ public:
       * @brief Returns the load parameter that was used when loading the
       *        resourced data.
       */
-    inline Sint32 GetLoadParameter () const
+    inline Sint32 LoadParameter () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->GetLoadParameter();
+        return m_instance->LoadParameter();
     }
 
     /** @brief Explicitly causes the reference count to decrement, causing

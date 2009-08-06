@@ -246,7 +246,7 @@ public:
     /** @brief Returns the last known mouse position (derived from the most
       *        recent mouse motion event received by this widget).
       */
-    inline ScreenCoordVector2 const &GetLastMousePosition () const { return m_last_mouse_position; }
+    inline ScreenCoordVector2 const &LastMousePosition () const { return m_last_mouse_position; }
     /** @brief Returns the current position of the lower-left corner of
       *        this widget.
       */
@@ -264,20 +264,20 @@ public:
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
       */
-    virtual Bool2 const &GetMinSizeEnabled () const { return m_size_properties.m_min_size_enabled; }
+    virtual Bool2 const &MinSizeEnabled () const { return m_size_properties.m_min_size_enabled; }
     /** @brief Returns the screen-coordinate vector containing the minimum
       *        width and height in the X and Y components respectively.
       */
-    virtual ScreenCoordVector2 const &GetMinSize () const { return m_size_properties.m_min_size; }
+    virtual ScreenCoordVector2 const &MinSize () const { return m_size_properties.m_min_size; }
     /** @brief Returns the boolean vector containing the
       *        is-maximum-size-enabled values for width and height in the
       *        X and Y components respectively.
       */
-    virtual Bool2 const &GetMaxSizeEnabled () const { return m_size_properties.m_max_size_enabled; }
+    virtual Bool2 const &MaxSizeEnabled () const { return m_size_properties.m_max_size_enabled; }
     /** @brief Returns the screen-coordinate vector containing the maximum
       *        width and height in the X and Y components respectively.
       */
-    virtual ScreenCoordVector2 const &GetMaxSize () const { return m_size_properties.m_max_size; }
+    virtual ScreenCoordVector2 const &MaxSize () const { return m_size_properties.m_max_size; }
     /** Adjusts the size vector to satisfy the minimum size properties
       * of this widget.  Then adjusts the resulting value to satisfy
       * the maximum size properties of this widget.  If there is a

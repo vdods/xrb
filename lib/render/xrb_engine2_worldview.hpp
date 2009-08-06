@@ -83,8 +83,8 @@ namespace Engine2
             FloatMatrix2 const &world_to_view,
             FloatMatrix2 const &view_to_whatever,
             ObjectLayer const *object_layer) const;
-        Float GetMinorAxisRadius () const;
-        Float GetMajorAxisRadius () const;
+        Float MinorAxisRadius () const;
+        Float MajorAxisRadius () const;
         Float CornerRadius () const;
         inline bool IsTransformScalingBasedUponWidgetRadius () const
         {
@@ -141,7 +141,7 @@ namespace Engine2
 
     protected:
 
-        ObjectLayer *GetMainObjectLayer () const;
+        ObjectLayer *MainObjectLayer () const;
         Float GridScaleUnit (Uint32 grid_scale) const;
         // parallaxed transformation/view-and-object-layer-property accessors
         FloatMatrix2 const &GetParallaxedWorldToWorldView () const;

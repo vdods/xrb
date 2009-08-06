@@ -86,7 +86,7 @@ public:
     /** @brief Returns the currently mouseover-focused child widget,
       *        or NULL if none.
       */
-    inline Widget *GetMouseoverFocus () const { return m_mouseover_focus; }
+    inline Widget *MouseoverFocus () const { return m_mouseover_focus; }
     /** @brief Returns true iff the focused child widget has mouse grab on.
       */
     inline bool FocusHasMouseGrab () const { return m_focus_has_mouse_grab; }
@@ -98,38 +98,38 @@ public:
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
       */
-    virtual Bool2 const &GetMinSizeEnabled () const
+    virtual Bool2 const &MinSizeEnabled () const
     {
         return m_main_widget ?
-               m_main_widget->GetMinSizeEnabled() :
+               m_main_widget->MinSizeEnabled() :
                m_size_properties.m_min_size_enabled;
     }
     /** @brief Returns the screen-coordinate vector containing the minimum
       *        width and height in the X and Y components respectively.
       */
-    virtual ScreenCoordVector2 const &GetMinSize () const
+    virtual ScreenCoordVector2 const &MinSize () const
     {
         return m_main_widget ?
-               m_main_widget->GetMinSize() :
+               m_main_widget->MinSize() :
                m_size_properties.m_min_size;
     }
     /** @brief Returns the boolean vector containing the
       *        is-maximum-size-enabled values for width and height in the
       *        X and Y components respectively.
       */
-    virtual Bool2 const &GetMaxSizeEnabled () const
+    virtual Bool2 const &MaxSizeEnabled () const
     {
         return m_main_widget ?
-               m_main_widget->GetMaxSizeEnabled() :
+               m_main_widget->MaxSizeEnabled() :
                m_size_properties.m_max_size_enabled;
     }
     /** @brief Returns the screen-coordinate vector containing the maximum
       *        width and height in the X and Y components respectively.
       */
-    virtual ScreenCoordVector2 const &GetMaxSize () const
+    virtual ScreenCoordVector2 const &MaxSize () const
     {
         return m_main_widget ?
-               m_main_widget->GetMaxSize() :
+               m_main_widget->MaxSize() :
                m_size_properties.m_max_size;
     }
     virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;

@@ -36,7 +36,7 @@ public:
         ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_damage_dissipation_rate[GetUpgradeLevel()];
     }
-    inline Float GetMass () const
+    inline Float Mass () const
     {
         ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
         return ms_mass[GetUpgradeLevel()];        

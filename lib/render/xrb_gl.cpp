@@ -171,14 +171,14 @@ void GL::Initialize ()
     glActiveTextureARB(GL_TEXTURE0_ARB);
 }
 
-GLint GL::GetMatrixMode ()
+GLint GL::MatrixMode ()
 {
     GLint matrix_mode;
     glGetIntegerv(GL_MATRIX_MODE, &matrix_mode);
     return matrix_mode;
 }
 
-GLint GL::GetMatrixStackDepth (GLenum const matrix_mode)
+GLint GL::MatrixStackDepth (GLenum const matrix_mode)
 {
     GLint stack_depth;
     switch (matrix_mode)
@@ -192,7 +192,7 @@ GLint GL::GetMatrixStackDepth (GLenum const matrix_mode)
     return stack_depth;
 }
 
-GLint GL::GetMaxMatrixStackDepth (GLenum const matrix_mode)
+GLint GL::MaxMatrixStackDepth (GLenum const matrix_mode)
 {
     GLint max_stack_depth;
     switch (matrix_mode)
@@ -221,7 +221,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(
-        clip_rect.GetLeft(), clip_rect.GetRight(),
+        clip_rect.Left(), clip_rect.GetRight(),
         clip_rect.Bottom(), clip_rect.GetTop(),
         -1.0, 1.0); // these values (-1, 1) are arbitrary
 
@@ -229,7 +229,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     // will be rendered to.  this also properly sets up the clipping
     // planes.
     glViewport(
-        clip_rect.GetLeft(),
+        clip_rect.Left(),
         clip_rect.Bottom(),
         clip_rect.GetWidth(),
         clip_rect.Height());
