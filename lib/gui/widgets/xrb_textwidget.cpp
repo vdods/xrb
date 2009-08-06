@@ -91,7 +91,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
     ASSERT1(m_font.IsValid());
 
     ScreenCoord font_height =
-        GetWidgetSkin()->GetScreenCoordFromRatio(font_height_ratio);
+        GetWidgetSkin()->ScreenCoordFromRatio(font_height_ratio);
 
     if (m_font->PixelHeight() != font_height)
     {
@@ -255,7 +255,7 @@ void TextWidget::UpdateRenderFont ()
 
 ScreenCoordRect TextWidget::GetTextRect () const
 {
-    return RenderFont()->GetStringRect(GetText().c_str());
+    return RenderFont()->StringRect(GetText().c_str());
 }
 
 void TextWidget::UpdateMinAndMaxSizesFromText ()
@@ -263,7 +263,7 @@ void TextWidget::UpdateMinAndMaxSizesFromText ()
     if (!RenderFont().IsValid())
         return;
 
-    ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (FrameMargins() + ContentMargins()));
+    ScreenCoordVector2 size(GetTextRect().Size() + 2 * (FrameMargins() + ContentMargins()));
 
     if (m_is_min_width_fixed_to_text_width)
         SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);

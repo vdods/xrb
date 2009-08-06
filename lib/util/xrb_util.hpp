@@ -67,7 +67,7 @@ namespace Util
     /** @brief Returns the ASCII code of the given character as it would be
       *        interpreted with the SHIFT key held down.
       */
-    char GetShiftedAscii (char c);
+    char ShiftedAscii (char c);
 
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a C-style character literal.
@@ -76,7 +76,7 @@ namespace Util
     /** @brief Returns true iff the given character needs to be escaped to be
       *        properly represented in a C-style string literal.
       */
-    bool GetStringLiteralCharNeedsEscaping (char c);
+    bool StringLiteralCharNeedsEscaping (char c);
     /** For example, EscapeCode('\0') returns '0'.
       *
       * This function returns the given character if it is not an
@@ -104,12 +104,12 @@ namespace Util
                for the given character in the form of a std::string.
       */
     std::string CharacterLiteral (char c);
-    /** For example, GetStringLiteral("eat shit\t\"and die\".")
+    /** For example, StringLiteral("eat shit\t\"and die\".")
       * returns std::string("\"eat shit\\t\\\"and die\\\".\"").
       * @brief Returns the double-quote-surrounded C-style string literal
       *        for the given text in the form of a std::string.
       */
-    std::string GetStringLiteral (std::string const &text);
+    std::string StringLiteral (std::string const &text);
 
     /** @brief Returns the signed, base 10 integer value parsed from the
       *        given text.

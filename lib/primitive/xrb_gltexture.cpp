@@ -55,7 +55,7 @@ void GLTexture::GenerateTexture (
 {
     ASSERT1(texture != NULL);
 
-    m_size = texture->GetSize();
+    m_size = texture->Size();
 
     glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);

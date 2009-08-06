@@ -52,7 +52,7 @@ EventKey::EventKey (
 
     // shift key modification
     if ((m_event.keysym.mod&(KMOD_LSHIFT|KMOD_RSHIFT)) != 0)
-        m_modified_ascii = Util::GetShiftedAscii(m_modified_ascii);
+        m_modified_ascii = Util::ShiftedAscii(m_modified_ascii);
 
     // num lock modification
     if ((m_event.keysym.mod&KMOD_NUM) != 0)
@@ -99,7 +99,7 @@ EventMouse::EventMouse (
     EventInput(time, event_type)
 {
     ASSERT1(screen != NULL);
-    m_position = screen->GetScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);
+    m_position = screen->ScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);
     m_modifiers = modifiers;
 }
 

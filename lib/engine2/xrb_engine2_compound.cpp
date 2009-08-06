@@ -70,8 +70,8 @@ void Engine2::Compound::Draw (
         GetZDepth());
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
-        GetScaleFactors()[Dim::X],
-        GetScaleFactors()[Dim::Y],
+        ScaleFactors()[Dim::X],
+        ScaleFactors()[Dim::Y],
         1.0f);
 
     // calculate the bias color

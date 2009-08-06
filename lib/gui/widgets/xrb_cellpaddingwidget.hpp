@@ -29,8 +29,8 @@ public:
     virtual ~CellPaddingWidget () { }
 
     inline Alignment2 const &GetAlignment () const { return m_alignment; }
-    Widget *GetSingleChildWidget ();
-    Widget const *GetSingleChildWidget () const;
+    Widget *SingleChildWidget ();
+    Widget const *SingleChildWidget () const;
 
     virtual Bool2 ContentsMinSizeEnabled () const;
     virtual ScreenCoordVector2 ContentsMinSize () const;

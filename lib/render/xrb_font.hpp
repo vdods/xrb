@@ -64,8 +64,8 @@ public:
 
     // returns the rectangle containing the given string as rendered in
     // this font.  the rectangle's lower left corner is at (0, 0).
-    ScreenCoordRect GetStringRect (char const *string) const;
-    ScreenCoordRect GetStringRect (LineFormatVector const &line_format_vector) const;
+    ScreenCoordRect StringRect (char const *string) const;
+    ScreenCoordRect StringRect (LineFormatVector const &line_format_vector) const;
 
     // draw the given string, starting at the given position.  the position's
     // meaning is indicated by the return value of InitialPenOrientation().
@@ -315,7 +315,7 @@ private:
     }; // end of enum TokenClass
 
     static TokenClass GetTokenClass (char const c);
-    static char const *GetStartOfNextToken (char const *string);
+    static char const *StartOfNextToken (char const *string);
     ScreenCoord GetTokenWidth_26_6 (char const *string) const;
 
     // ///////////////////////////////////////////////////////////////////////

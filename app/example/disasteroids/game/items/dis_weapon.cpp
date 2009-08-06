@@ -139,10 +139,10 @@ Float PeaShooter::PowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // secondary fire (charge-up) overrides primary fire
-    if (GetSecondaryInput() > 0.0f)
+    if (SecondaryInput() > 0.0f)
     {
         ASSERT1(ms_charge_up_time[GetUpgradeLevel()] > 0.0f);
-        return GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
+        return SecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
                ms_charge_up_time[GetUpgradeLevel()];
     }
     // otherwise if primary fire is on at all, return full power
@@ -163,7 +163,7 @@ bool PeaShooter::Activate (
 
     // determine if the secondary fire was released, indicating the
     // charge-up weapon should fire.
-    if (GetSecondaryInput() == 0.0f && m_charge_up_ratio > 0.0f)
+    if (SecondaryInput() == 0.0f && m_charge_up_ratio > 0.0f)
     {
         ASSERT1(m_charge_up_ratio >= 0.0f);
         ASSERT1(m_charge_up_ratio <= 1.0f);
@@ -198,10 +198,10 @@ bool PeaShooter::Activate (
         return false;
     }
     // secondary fire (charge-up) overrides primary fire
-    else if (GetSecondaryInput() > 0.0f && power > 0.0f)
+    else if (SecondaryInput() > 0.0f && power > 0.0f)
     {
         ASSERT1(power <=
-                GetSecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
+                SecondaryInput() * ms_max_secondary_power_rate[GetUpgradeLevel()] * frame_dt /
                 ms_charge_up_time[GetUpgradeLevel()]);
 
         // if completely charged up, don't use up the power
@@ -258,7 +258,7 @@ Float Laser::PowerToBeUsedBasedOnInputs (
     Float const frame_dt) const
 {
     ASSERT1(PrimaryInput() <= 1.0f);
-    ASSERT1(GetSecondaryInput() <= 1.0f);
+    ASSERT1(SecondaryInput() <= 1.0f);
 
     if (PrimaryInput() > 0.0f)
         return PrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
@@ -276,14 +276,14 @@ bool Laser::Activate (
 
     // secondary fire can happen in parallel with primary
     ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f);
-    if (GetSecondaryInput() > 0.0f &&
+    if (SecondaryInput() > 0.0f &&
         time >= m_time_last_fired + 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()])
     {
         AreaTraceList area_trace_list;
         OwnerShip()->GetPhysicsHandler()->AreaTrace(
             OwnerShip()->GetObjectLayer(),
             OwnerShip()->GetTranslation(),
-            ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->GetScaleFactor(),
+            ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->ScaleFactor(),
             false,
             &area_trace_list);
 
@@ -326,13 +326,13 @@ bool Laser::Activate (
                 OwnerShip()->GetTranslation());
             FloatVector2 fire_location(
                 OwnerShip()->GetTranslation() +
-                    OwnerShip()->GetScaleFactor() *
+                    OwnerShip()->ScaleFactor() *
                     fire_vector.Normalization());
 
-            if (fire_vector.Length() > ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->GetScaleFactor())
+            if (fire_vector.Length() > ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->ScaleFactor())
             {
                 fire_vector.Normalize();
-                fire_vector *= ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->GetScaleFactor();
+                fire_vector *= ms_secondary_range[GetUpgradeLevel()] + OwnerShip()->ScaleFactor();
             }
 
             // do a line trace
@@ -708,12 +708,12 @@ bool GrenadeLauncher::Activate (
     ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
-    if (PrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
+    if (PrimaryInput() == 0.0f && SecondaryInput() == 0.0f)
         return false;
 
     // you can fire secondary at any time, it doesn't use any power
     // and doesn't inhibit the primary fire at all.
-    if (GetSecondaryInput() > 0.0f && ActiveGrenadeCount() > 0)
+    if (SecondaryInput() > 0.0f && ActiveGrenadeCount() > 0)
     {
         // detonate all the grenades (this isn't a for loop because detonating
         // the grenades will erase iterators from this set).
@@ -779,7 +779,7 @@ Float MissileLauncher::PowerToBeUsedBasedOnInputs (
     // primary fire overrides secondary fire.
     if (PrimaryInput() > 0.0f)
         return ms_required_primary_power[GetUpgradeLevel()];
-    else if (GetSecondaryInput() > 0.0f)
+    else if (SecondaryInput() > 0.0f)
         return ms_required_secondary_power[GetUpgradeLevel()];
     else
         return 0.0f;
@@ -827,7 +827,7 @@ bool MissileLauncher::Activate (
         // the weapon fired successfully
         return true;
     }
-    else if (GetSecondaryInput() > 0.0f &&
+    else if (SecondaryInput() > 0.0f &&
              power == ms_required_secondary_power[GetUpgradeLevel()])
     {
         // fire the weapon -- spawn a GuidedMissile
@@ -973,12 +973,12 @@ bool EMPBombLayer::Activate (
     ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
-    if (PrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
+    if (PrimaryInput() == 0.0f && SecondaryInput() == 0.0f)
         return false;
 
     // you can fire secondary at any time, it doesn't use any power
     // and doesn't inhibit the primary fire at all.
-    if (GetSecondaryInput() > 0.0f && ActiveEMPBombCount() > 0)
+    if (SecondaryInput() > 0.0f && ActiveEMPBombCount() > 0)
     {
         // detonate all the emp_bombs (this isn't a for loop because detonating
         // the emp_bombs will erase iterators from this set).
@@ -1036,8 +1036,8 @@ Float Tractor::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
-    if (GetSecondaryInput() > 0.0f)
-        return GetSecondaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
+    if (SecondaryInput() > 0.0f)
+        return SecondaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
     else
         return PrimaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
 }
@@ -1060,11 +1060,11 @@ bool Tractor::Activate (
         return false;
     }
 
-    ASSERT1(PrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f || SecondaryInput() > 0.0f);
     // the secondary tractor mode pulls everything, not just powerups
-    bool pull_everything = GetSecondaryInput() > 0.0f;
+    bool pull_everything = SecondaryInput() > 0.0f;
     bool push_instead_of_pull = PrimaryInput() == 0.0f;
-    Float input = pull_everything ? GetSecondaryInput() : PrimaryInput();
+    Float input = pull_everything ? SecondaryInput() : PrimaryInput();
 
     Float range =
         IsRangeOverridden() ?
@@ -1072,7 +1072,7 @@ bool Tractor::Activate (
         ms_range[GetUpgradeLevel()];
     Float strength =
         IsStrengthOverridden() ?
-        GetStrengthOverride() :
+        StrengthOverride() :
         ms_strength[GetUpgradeLevel()];
     Float max_force =
         IsMaxForceOverridden() ?
@@ -1128,7 +1128,7 @@ bool Tractor::Activate (
         if (!pull_everything && entity->GetEntityType() != ET_POWERUP)
             continue;
 
-        Float force = Min(input * strength * entity->GetScaleFactor(), max_force);
+        Float force = Min(input * strength * entity->ScaleFactor(), max_force);
         entity->ApplyInterceptCourseAcceleration(
             OwnerShip(),
             force,
@@ -1252,7 +1252,7 @@ bool EnemySpawner::Activate (
             muzzle_velocity,
             EnemySpawnType(),
             spawn_enemy_level);
-    enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->GetScaleFactor() * MuzzleDirection());
+    enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->ScaleFactor() * MuzzleDirection());
     
     // update the last time fired
     m_time_last_fired = time;

@@ -245,7 +245,7 @@ void WorldView::HandleFrame ()
                 ship_velocity_direction = FloatVector2::ms_zero;
             else
                 ship_velocity_direction = m_player_ship->GetVelocity().Normalization();
-            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->GetSpeed()) / 90.0f;
+            Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->Speed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
 
             FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * FrameDT()));

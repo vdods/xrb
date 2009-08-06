@@ -234,7 +234,7 @@ public:
             1.0f);                  // alpha component (completely opaque)
         // Draw a rectangle which fills this widget's screen rect using the
         // calculated color.
-        Render::DrawScreenRect(render_context, button_color, GetScreenRect());
+        Render::DrawScreenRect(render_context, button_color, ScreenRect());
     }
 
 protected:

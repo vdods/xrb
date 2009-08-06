@@ -42,7 +42,7 @@ void ProgressBar::Draw (RenderContext const &render_context) const
     // this handles drawing of the background
     Widget::Draw(render_context);
 
-    ScreenCoordRect progress_rect(GetScreenRect());
+    ScreenCoordRect progress_rect(ScreenRect());
     Float const remaining_progress = 1.0f - m_progress;
         
     if (m_grow_orientation == GO_RIGHT)

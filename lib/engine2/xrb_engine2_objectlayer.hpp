@@ -53,9 +53,9 @@ public:
     inline std::string const &Name () const { return m_name; }
     inline World *OwnerWorld () const { return m_owner_world; }
     inline bool IsWrapped () const { return m_is_wrapped; }
-    inline Float GetSideLength () const { return m_side_length; }
+    inline Float SideLength () const { return m_side_length; }
     inline Float GetZDepth () const { return m_z_depth; }
-    Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point) const;
+    Object *SmallestObjectTouchingPoint (FloatVector2 const &point) const;
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius) const;

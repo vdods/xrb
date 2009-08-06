@@ -110,7 +110,7 @@ ScreenCoordVector2 WidgetStack::Resize (ScreenCoordVector2 const &size)
     else
         IndicateChildResizeWasBlocked();
 
-    return GetSize();
+    return Size();
 }
 
 void WidgetStack::AttachChild (Widget *const child)
@@ -126,7 +126,7 @@ void WidgetStack::AttachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -147,7 +147,7 @@ void WidgetStack::DetachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -166,7 +166,7 @@ void WidgetStack::ChildSizePropertiesChanged (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -197,11 +197,11 @@ void WidgetStack::ResizeAndRepositionChildWidgets ()
             continue;
 
         // resize the child using the corresponding column and row sizes
-        child->Resize(GetSize());
+        child->Resize(Size());
         // if the child didn't use up all the space, then calculate
         // how much extra space there is so that the child can be
         // properly centered on the grid slot.
-        ScreenCoordVector2 extra_space(GetSize() - child->GetSize());
+        ScreenCoordVector2 extra_space(Size() - child->Size());
         ASSERT1(extra_space[Dim::X] >= 0 &&
                 extra_space[Dim::Y] >= 0);
         // move the child to the tracked current positional offset,

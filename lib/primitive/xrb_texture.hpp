@@ -79,7 +79,7 @@ public:
     static Texture *Create (ScreenCoordVector2 const &size, bool zero_out_the_data);
     //TODO void Write (std::string const &filename);
 
-    inline ScreenCoordVector2 GetSize () const
+    inline ScreenCoordVector2 Size () const
     {
         ASSERT1(m_surface != NULL);
         return ScreenCoordVector2(m_surface->w, m_surface->h);

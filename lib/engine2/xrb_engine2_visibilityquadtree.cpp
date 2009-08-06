@@ -104,7 +104,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     // if this is the top level node, write out the number of
     // subordinate non-entities
     if (Parent() == NULL)
-        serializer.WriteUint32(GetSubordinateStaticObjectCount());
+        serializer.WriteUint32(SubordinateStaticObjectCount());
 
     // the number of non-entities written
     Uint32 retval = 0;
@@ -325,7 +325,7 @@ void Engine2::VisibilityQuadTree::Draw (
     Engine2::Object::DrawLoopFunctor const &draw_loop_functor)
 {
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
@@ -360,7 +360,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     Engine2::Object::DrawLoopFunctor draw_loop_functor)
 {
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     ASSERT1(Parent() == NULL);
@@ -368,7 +368,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
     ASSERT2(m_half_side_length > 0.0f);
 
-    Float side_length = GetSideLength();
+    Float side_length = SideLength();
     Float radius_sum = 2.0f*Radius() + draw_loop_functor.GetViewRadius();
     Float top = floor((draw_loop_functor.GetViewCenter().m[1]+radius_sum)/side_length);
     Float bottom = ceil((draw_loop_functor.GetViewCenter().m[1]-radius_sum)/side_length);

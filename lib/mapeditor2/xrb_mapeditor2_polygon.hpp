@@ -69,7 +69,7 @@ namespace MapEditor2
         {
             return m_vertex_list.size();
         }
-        Uint32 GetSelectedVertexCount () const;
+        Uint32 SelectedVertexCount () const;
         FloatVector2 const &GetVertex (Uint32 index) const;
         Float Area () const;    
         bool IsPointInside (FloatVector2 const &point) const;

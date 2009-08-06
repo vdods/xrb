@@ -34,7 +34,7 @@ public:
     }
     virtual ~PowerGenerator () { }
 
-    inline Float GetStoredPower () const
+    inline Float StoredPower () const
     {
         return m_stored_power;
     }

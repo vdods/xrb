@@ -43,14 +43,14 @@ MapEditor2::VisibilityQuadTree *MapEditor2::VisibilityQuadTree::Create (Serializ
     return retval;
 }
 
-MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygonTouchingPoint (
+MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::SmallestMapEditorPolygonTouchingPoint (
     FloatVector2 const &point,
     bool const mask_by_object_selection_set)
 {
     Polygon *retval = NULL;
 
     // if this node contains no objects, early out
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return retval;
 
     // if the point is outside the reaches of this quad node, early out
@@ -67,7 +67,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
             ASSERT2(m_child[i] != NULL);
             smallest_candidate =
                 DStaticCast<MapEditor2::VisibilityQuadTree *>(m_child[i])->
-                    GetSmallestMapEditorPolygonTouchingPoint(
+                    SmallestMapEditorPolygonTouchingPoint(
                         point,
                         mask_by_object_selection_set);
             if (retval == NULL ||
@@ -92,7 +92,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::GetSmallestMapEditorPolygon
         if (mask_by_object_selection_set && !compound->IsSelected())
             continue;
             
-        smallest_candidate = compound->GetSmallestPolygonTouchingPoint(point);
+        smallest_candidate = compound->SmallestPolygonTouchingPoint(point);
         // if the compound returned a polygon,
         if (smallest_candidate != NULL)
             // and either retval is null, or smallest_candidate is smaller
@@ -438,7 +438,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     Object::MetricMode const metric_mode)
 {
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     ASSERT2(draw_data.PixelsInViewRadius() > 0.0f);
@@ -521,14 +521,14 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
     Object::MetricMode const metric_mode)
 {
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     ASSERT2(draw_data.PixelsInViewRadius() > 0.0);
     ASSERT2(draw_data.GetViewRadius() > 0.0);
     ASSERT2(m_half_side_length > 0.0);
 
-    Float side_length = GetSideLength();
+    Float side_length = SideLength();
     Float radius_sum = 2.0f*Radius() + draw_data.GetViewRadius();
     Float top = floor((draw_data.GetViewCenter().m[1]+radius_sum)/side_length);
     Float bottom = ceil((draw_data.GetViewCenter().m[1]-radius_sum)/side_length);

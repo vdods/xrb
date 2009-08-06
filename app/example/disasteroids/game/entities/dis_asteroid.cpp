@@ -82,7 +82,7 @@ void Asteroid::Think (Float const time, Float const frame_dt)
     // high, and we don't want to change it so all asteroids Think every frame.
 
     // if this asteroid shouldn't decay, then defer the think for a long time
-    if (!m_is_a_secondary_asteroid || GetScaleFactor() > ms_decay_scale_factor)
+    if (!m_is_a_secondary_asteroid || ScaleFactor() > ms_decay_scale_factor)
     {
         SetNextTimeToThink(time + 10000.0f);
         return;
@@ -147,7 +147,7 @@ void Asteroid::Die (
         GetObjectLayer(),
         GetTranslation(),
         GetVelocity(),
-        7.0f * GetScaleFactor(),
+        7.0f * ScaleFactor(),
         1.0f,
         time);
 
@@ -177,7 +177,7 @@ void Asteroid::Die (
             ASSERT1(CurrentHealth() <= 0.0f);
             ASSERT1(MaxHealth() > 0.0f);
             Float health_ratio = CurrentHealth() / MaxHealth();
-            Float explosion_speed = GetScaleFactor() * health_ratio * health_ratio / Mass();
+            Float explosion_speed = ScaleFactor() * health_ratio * health_ratio / Mass();
             if (explosion_speed > 5.0f)
                 explosion_speed = 5.0f;
             FloatVector2 velocity =

@@ -105,7 +105,7 @@ FloatVector2 Shade::MuzzleLocation (Weapon const *weapon) const
             GetTranslation())
         -
         GetTranslation());
-    return GetTranslation() + GetScaleFactor() * target_offset.Normalization();
+    return GetTranslation() + ScaleFactor() * target_offset.Normalization();
 }
 
 FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const

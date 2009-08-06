@@ -85,7 +85,7 @@ Color const &MapEditor2::Object::GetUnselectedMetricsColor () const
     return Object::ms_unselected_metrics_color;
 }
 
-Color const &MapEditor2::Object::GetSelectedMetricsColor () const
+Color const &MapEditor2::Object::SelectedMetricsColor () const
 {
     return Object::ms_selected_metrics_color;
 }
@@ -96,7 +96,7 @@ void MapEditor2::Object::DrawMetrics (
     MetricMode const metric_mode)
 {
     Color color(IsSelected() ?
-                GetSelectedMetricsColor() :
+                SelectedMetricsColor() :
                 GetUnselectedMetricsColor());
     color[Dim::A] *= alpha_mask;
 

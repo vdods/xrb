@@ -99,9 +99,9 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
 
         inline Uint32 PolygonCount () const { return m_polygon_list.size(); }
-        Uint32 GetSelectedPolygonCount () const;
+        Uint32 SelectedPolygonCount () const;
         Instance<CompoundVertex> *GetVertexInstance (Uint32 index) const;
-        Polygon *GetSmallestPolygonTouchingPoint (
+        Polygon *SmallestPolygonTouchingPoint (
             FloatVector2 const &point) const;
 
         // ///////////////////////////////////////////////////////////////////

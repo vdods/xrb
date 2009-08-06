@@ -187,7 +187,7 @@ public:
         return (m_bottom_left + m_top_right) / static_cast<T>(2);
     }
 
-    inline Vector<T, 2> GetSize () const
+    inline Vector<T, 2> Size () const
     {
         return m_top_right - m_bottom_left;
     }
@@ -360,13 +360,13 @@ public:
         fprintf(fptr,
                 component_printf_format,
                 show_size_instead_of_top_right ?
-                    GetSize()[Dim::X] :
+                    Size()[Dim::X] :
                     GetTopRight()[Dim::X]);
         fprintf(fptr, ", ");
         fprintf(fptr,
                 component_printf_format,
                 show_size_instead_of_top_right ?
-                    GetSize()[Dim::Y] :
+                    Size()[Dim::Y] :
                     GetTopRight()[Dim::Y]);
         fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
     }

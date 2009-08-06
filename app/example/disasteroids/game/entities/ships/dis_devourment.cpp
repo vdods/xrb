@@ -112,7 +112,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
                 GetWorld(),
                 GetObjectLayer(),
                 GetTranslation(),
-                0.72f * GetScaleFactor(),
+                0.72f * ScaleFactor(),
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
                 -ms_mouth_damage_rate[EnemyLevel()],
                 Mortal::D_GRINDING,
@@ -179,7 +179,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ASSERT1(m_mouth_health_trigger.IsValid());
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->NormalizedCoordinates(
-            GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(Angle())));
+            GetTranslation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle())));
     m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
     m_mouth_health_trigger->SetAngle(Angle());
     m_mouth_health_trigger->SetVelocity(GetVelocity());
@@ -261,13 +261,13 @@ void Devourment::Die (
                     Min(ms_max_single_mineral_mass[EnemyLevel()], m_mineral_inventory[mineral_index]));
             Float scale_factor = Math::Sqrt(mass);
             Float velocity_angle = Math::RandomAngle();
-            Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+            Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
             FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -294,14 +294,14 @@ void Devourment::Die (
         Float mass = health_powerup_amount / s_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
         FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -414,10 +414,10 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     Float const give_up_distance =
         ms_mouth_tractor_range[EnemyLevel()] +
         0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
-        GetScaleFactor();
+        ScaleFactor();
 
     Float target_distance = (target_position - GetTranslation()).Length();
-    if (target_distance <= s_consume_distance + GetScaleFactor() + m_target->GetScaleFactor())
+    if (target_distance <= s_consume_distance + ScaleFactor() + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Consume);
         m_next_whatever_time = time + 3.0f;
@@ -501,8 +501,8 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
 
     // if we're no longer close enough to the target, transition to Pursue
-    Float const pursue_distance = 40.0f + GetScaleFactor();
-    if ((target_position - GetTranslation()).Length() > pursue_distance + m_target->GetScaleFactor())
+    Float const pursue_distance = 40.0f + ScaleFactor();
+    if ((target_position - GetTranslation()).Length() > pursue_distance + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -543,7 +543,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
 
     Float scan_radius =
         ms_mouth_tractor_range[EnemyLevel()] +
-        GetScaleFactor();
+        ScaleFactor();
 
     // scan area for targets
     AreaTraceList area_trace_list;

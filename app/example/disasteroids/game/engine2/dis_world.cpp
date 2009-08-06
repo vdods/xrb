@@ -1141,7 +1141,7 @@ void World::SetIsAlertWave (bool const is_alert_wave)
 
 Asteroid *World::SpawnAsteroidOutOfView ()
 {
-    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->SideLength();
     FloatVector2 translation;
     Float scale_factor;
     Uint32 placement_attempts = 0;
@@ -1190,9 +1190,9 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
     ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
 
-    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->SideLength();
     FloatVector2 translation;
-    Float personal_space_radius = Ship::GetShipScaleFactor(enemy_ship_type, enemy_level);
+    Float personal_space_radius = Ship::ShipScaleFactor(enemy_ship_type, enemy_level);
 
     Uint32 placement_attempts = 0;
     do
@@ -1275,7 +1275,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     FloatVector2 const &translation,
     Float const scale_factor)
 {
-    Float object_layer_side_length = MainObjectLayer()->GetSideLength();
+    Float object_layer_side_length = MainObjectLayer()->SideLength();
     Float half_object_layer_side_length = 0.5f * object_layer_side_length;
     ASSERT1(translation[Dim::X] >= -0.5f * object_layer_side_length);
     ASSERT1(translation[Dim::X] <=  0.5f * object_layer_side_length);

@@ -49,8 +49,8 @@ bool PhysicsHandler::DoesAreaOverlapAnyEntityInObjectLayer (
             area_center,
             area_radius,
             check_nonsolid_collision_entities,
-            m_main_object_layer->GetSideLength(),
-            0.5f * m_main_object_layer->GetSideLength());
+            m_main_object_layer->SideLength(),
+            0.5f * m_main_object_layer->SideLength());
     else
         return m_quad_tree->DoesAreaOverlapAnyEntity(
             area_center,
@@ -73,15 +73,15 @@ void PhysicsHandler::LineTrace (
 
     if (m_main_object_layer->IsWrapped())
     {
-        ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->GetSideLength());
+        ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->SideLength());
         m_quad_tree->LineTraceWrapped(
             trace_start,
             trace_vector,
             trace_radius,
             check_nonsolid_collision_entities,
             line_trace_binding_set,
-            m_main_object_layer->GetSideLength(),
-            0.5f * m_main_object_layer->GetSideLength());
+            m_main_object_layer->SideLength(),
+            0.5f * m_main_object_layer->SideLength());
     }
     else
         m_quad_tree->LineTrace(
@@ -106,7 +106,7 @@ void PhysicsHandler::AreaTrace (
 
     if (m_main_object_layer->IsWrapped())
     {
-        Float object_layer_side_length = m_main_object_layer->GetSideLength();
+        Float object_layer_side_length = m_main_object_layer->SideLength();
         Float half_object_layer_side_length = 0.5f * object_layer_side_length;
 
         if (trace_area_center[Dim::X] < -half_object_layer_side_length)
@@ -124,8 +124,8 @@ void PhysicsHandler::AreaTrace (
             trace_area_radius,
             check_nonsolid_collision_entities,
             area_trace_list,
-            m_main_object_layer->GetSideLength(),
-            0.5f * m_main_object_layer->GetSideLength());
+            m_main_object_layer->SideLength(),
+            0.5f * m_main_object_layer->SideLength());
     }
     else
         m_quad_tree->AreaTrace(
@@ -149,7 +149,7 @@ void PhysicsHandler::SetMainObjectLayer (Engine2::ObjectLayer *const object_laye
     m_main_object_layer = object_layer;
     // now that the main object layer is set, we can create a
     // collision quadtree to match it.
-    m_quad_tree = CollisionQuadTree::Create(0.5f * m_main_object_layer->GetSideLength(), 5);
+    m_quad_tree = CollisionQuadTree::Create(0.5f * m_main_object_layer->SideLength(), 5);
 }
 
 void PhysicsHandler::AddEntity (
@@ -388,7 +388,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
             entity,
             FrameDT(),
             &m_collision_pair_list,
-            m_main_object_layer->GetSideLength());
+            m_main_object_layer->SideLength());
     }
 }
 

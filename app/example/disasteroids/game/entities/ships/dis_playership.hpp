@@ -44,7 +44,7 @@ public:
     virtual bool IsPlayerShip () const { return true; }
 
     inline Uint32 GetScore () const { return m_score; }
-    inline Float GetStoke () const { return m_stoke; }
+    inline Float Stoke () const { return m_stoke; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline Uint32 LivesRemaining () const { return m_lives_remaining; }
 
@@ -56,7 +56,7 @@ public:
     inline PowerGenerator const *GetPowerGenerator () const { return m_power_generator; }
 
     Float ArmorStatus () const;
-    Float GetShieldStatus () const;
+    Float ShieldStatus () const;
     Float PowerStatus () const;
     Float GetWeaponStatus () const;
     inline Float MineralInventory (Uint8 mineral_type) const

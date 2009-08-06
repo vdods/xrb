@@ -104,7 +104,7 @@ Float PlayerShip::ArmorStatus () const
     return Max(0.0f, CurrentHealth() / MaxHealth());
 }
 
-Float PlayerShip::GetShieldStatus () const
+Float PlayerShip::ShieldStatus () const
 {
     if (IsDead())
         return 0.0f;
@@ -118,7 +118,7 @@ Float PlayerShip::PowerStatus () const
         return 0.0f;
 
     return (GetPowerGenerator() != NULL) ?
-           GetPowerGenerator()->GetStoredPower() / GetPowerGenerator()->MaxPower() :
+           GetPowerGenerator()->StoredPower() / GetPowerGenerator()->MaxPower() :
            0.0f;
 }
 
@@ -266,7 +266,7 @@ void PlayerShip::SetArmor (Armor *const armor)
     // NULL when deleting (and this function is called in ~PlayerShip)
     if (OwnerObject() != NULL)
         SetMass(
-            GetShipBaselineMass() +
+            ShipBaselineMass() +
             ((armor != NULL) ? armor->Mass() : 0.0f));
     SetDamageDissipationRate(
         ((armor != NULL) ? armor->DamageDissipationRate() : 0.0f));
@@ -288,7 +288,7 @@ void PlayerShip::SetShield (Shield *shield)
 
     // TODO: add the strength/immunity/weakness that the shield provides
 
-    SetShieldStatus(GetShieldStatus());
+    SetShieldStatus(ShieldStatus());
 }
 
 void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
@@ -626,7 +626,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             // update the shield's intensity and position
             m_shield_effect->SetIntensity(m_shield->Intensity());
             // TODO: real entity attachment -- temp hack
-            m_shield_effect->SnapToShip(GetTranslation() + frame_dt * GetVelocity(), GetScaleFactor());
+            m_shield_effect->SnapToShip(GetTranslation() + frame_dt * GetVelocity(), ScaleFactor());
         }
         // if there is no shield equipped and the shield effect is
         // allocated AND in the world, remove it from the world.
@@ -637,7 +637,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
     ResetInputs();
 
     // update the shield status
-    SetShieldStatus(GetShieldStatus());
+    SetShieldStatus(ShieldStatus());
     // update the power status
     SetPowerStatus(PowerStatus());
 }
@@ -733,7 +733,7 @@ void PlayerShip::Die (
         GetObjectLayer(),
         GetTranslation(),
         GetVelocity(),
-        20.0f * GetScaleFactor(),
+        20.0f * ScaleFactor(),
         2.0f,
         time);
 
@@ -897,7 +897,7 @@ void PlayerShip::SetCurrentHealth (Float const current_health)
     Mortal::SetCurrentHealth(current_health);
 
     SetArmorStatus(ArmorStatus());
-    SetShieldStatus(GetShieldStatus());
+    SetShieldStatus(ShieldStatus());
 }
 
 Weapon const *PlayerShip::CurrentWeapon () const

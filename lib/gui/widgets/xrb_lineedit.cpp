@@ -366,7 +366,7 @@ void LineEdit::SetCursorPosition (Uint32 cursor_position)
 void LineEdit::UpdateTextWidth ()
 {
     ScreenCoordRect contents_rect(ContentsRect());
-    m_text_width = RenderFont()->GetStringRect(m_text.c_str()).GetWidth();
+    m_text_width = RenderFont()->StringRect(m_text.c_str()).GetWidth();
     if (m_text_width <= contents_rect.GetWidth())
         m_text_offset = 0;
 }

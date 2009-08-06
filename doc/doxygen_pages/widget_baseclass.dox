@@ -78,7 +78,7 @@ may use while rendering itself.
 The way this independence is achieved is through basing sizes of on-screen
 entities as ratios of a particular measurement of the pixel-based screen
 size.  This measurement is referred to as the screen's size-ratio-basis
-(see @ref Xrb::Screen::GetSizeRatioBasis "Screen::GetSizeRatioBasis" ).
+(see @ref Xrb::Screen::SizeRatioBasis "Screen::SizeRatioBasis" ).
 Fractions are given to specify sizes (derived by multiplying the given
 fraction by the size-ratio-basis to attain pixel size), rather than hard
 pixel values, so that the relative size of on-screen entities stays the

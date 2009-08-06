@@ -376,14 +376,14 @@ void Demi::Die (
         Float mass = health_powerup_amount / s_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
         FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -398,13 +398,13 @@ void Demi::Die (
     for (Uint32 i = 0; i < s_death_enemies_to_spawn_count; ++i)
     {
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(0.0, 0.5f * GetScaleFactor()) / (0.5f * GetScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(0.0, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
         FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         SpawnEnemyShip(
             GetWorld(),
             GetObjectLayer(),
-            GetTranslation() + 0.5f * GetScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+            GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
             Math::RandomUint16(0, EnemyLevel()));                     // ET_REVULSION being sequential enums
@@ -428,15 +428,15 @@ FloatVector2 Demi::MuzzleLocation (Weapon const *weapon) const
     }
     else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
+        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
     }
     else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
+        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
     }
     else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
-        return GetTranslation() - GetScaleFactor() * Math::UnitVector(Angle());
+        return GetTranslation() - ScaleFactor() * Math::UnitVector(Angle());
     }
     else
     {
@@ -779,7 +779,7 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
 
 void Demi::ChargeDecelerate (Float const time, Float const frame_dt)
 {
-    if (GetSpeed() < 10.0f)
+    if (Speed() < 10.0f)
     {
         m_start_time = time;
         m_think_state = THINK_STATE(PauseStart);
@@ -1253,7 +1253,7 @@ void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates((1.0f + GetScaleFactor()) * Math::UnitVector(Angle()));
+    SetReticleCoordinates((1.0f + ScaleFactor()) * Math::UnitVector(Angle()));
     if (m_spinning_attack_uses_secondary_fire)
     {
         SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
@@ -1451,7 +1451,7 @@ Entity *Demi::FindTractorDeflectTarget (
     Float const time,
     Float const frame_dt)
 {
-    Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + GetScaleFactor());
+    Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + ScaleFactor());
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),

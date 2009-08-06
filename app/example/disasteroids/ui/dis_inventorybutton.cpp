@@ -238,13 +238,13 @@ void InventoryButton::SetCurrentSizeParameter (Float const current_size_paramete
     {
         m_current_size_parameter = current_size_parameter;
 
-        FloatVector2 equipped_size(GetSize().StaticCast<Float>());
+        FloatVector2 equipped_size(Size().StaticCast<Float>());
         FloatVector2 unequipped_size(ms_unequipped_size_ratio * equipped_size);
         FloatVector2 current_size(
             m_current_size_parameter * equipped_size +
             (1.0f - m_current_size_parameter) * unequipped_size);
 
-        SetContentMargins((GetSize() - current_size.StaticCast<ScreenCoord>()) / 2 - FrameMargins());
+        SetContentMargins((Size() - current_size.StaticCast<ScreenCoord>()) / 2 - FrameMargins());
     }
 }
 

@@ -73,7 +73,7 @@ public:
     inline bool IsInvincible () const { return m_is_invincible; }
     inline Float DamageDissipationRate () const { return m_damage_dissipation_rate; }
     inline DamageType GetWeakness () const { return m_weakness; }
-    inline DamageType GetStrength () const { return m_strength; }
+    inline DamageType Strength () const { return m_strength; }
     inline DamageType Immunity () const { return m_immunity; }
     inline bool IsWeakAgainst (DamageType const damage_type) const
     {

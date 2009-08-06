@@ -99,11 +99,11 @@ public:
     {
         return m_translation;
     }
-    inline Vector<T, 2> const &GetScaleFactors () const
+    inline Vector<T, 2> const &ScaleFactors () const
     {
         return m_scale_factors;
     }
-    inline T GetScaleFactor () const
+    inline T ScaleFactor () const
     {
         ASSERT1(m_scale_factors[Dim::X] == m_scale_factors[Dim::Y]);
         return m_scale_factors[Dim::X];
@@ -140,7 +140,7 @@ public:
     {
         return m_cached_transform_is_dirty;
     }
-    inline bool GetScalingAndRotationIsDirty () const
+    inline bool ScalingAndRotationIsDirty () const
     {
         return m_cached_scaling_and_rotation_is_dirty;
     }

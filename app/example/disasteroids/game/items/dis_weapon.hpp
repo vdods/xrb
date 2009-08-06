@@ -62,7 +62,7 @@ public:
 protected:
 
     inline Float PrimaryInput () const { return m_primary_input; }
-    inline Float GetSecondaryInput () const { return m_secondary_input; }
+    inline Float SecondaryInput () const { return m_secondary_input; }
     inline FloatVector2 const &MuzzleLocation () const { return m_muzzle_location; }
     inline FloatVector2 const &MuzzleDirection () const { return m_muzzle_direction; }
     inline FloatVector2 const &ReticleCoordinates () const { return m_reticle_coordinates; }
@@ -468,7 +468,7 @@ public:
     }
     virtual ~MissileLauncher () { }
 
-    inline bool GetSpawnEnemyMissiles () const { return m_spawn_enemy_missiles; }
+    inline bool SpawnEnemyMissiles () const { return m_spawn_enemy_missiles; }
 
     inline void SetSpawnEnemyMissiles (bool spawn_enemy_missiles)
     {
@@ -678,7 +678,7 @@ public:
     inline Float RangeOverride () const { return m_range_override; }
 
     inline bool IsStrengthOverridden () const { return m_strength_override >= 0.0f; }
-    inline Float GetStrengthOverride () const { return m_strength_override; }
+    inline Float StrengthOverride () const { return m_strength_override; }
 
     inline bool IsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
     inline Float MaxForceOverride () const { return m_max_force_override; }

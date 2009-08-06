@@ -38,16 +38,16 @@ namespace MapEditor2
     
         static VisibilityQuadTree *Create (Serializer &serializer);
     
-        inline Object *GetSmallestMapEditorObjectTouchingPoint (
+        inline Object *SmallestMapEditorObjectTouchingPoint (
             FloatVector2 const &point)
         {
-            Engine2::Object *object = GetSmallestObjectTouchingPoint(point);
+            Engine2::Object *object = SmallestObjectTouchingPoint(point);
             Object *retval =
                 dynamic_cast<Object *>(object);
             ASSERT1(object == NULL || retval != NULL);
             return retval;
         }
-        Polygon *GetSmallestMapEditorPolygonTouchingPoint (
+        Polygon *SmallestMapEditorPolygonTouchingPoint (
             FloatVector2 const &point,
             bool mask_by_object_selection_set);
     

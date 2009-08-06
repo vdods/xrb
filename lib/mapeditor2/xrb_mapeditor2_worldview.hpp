@@ -43,7 +43,7 @@ namespace MapEditor2
         WorldView (Engine2::WorldViewWidget *parent_world_view_widget);
         virtual ~WorldView ();
     
-        ObjectLayer *GetSavedMainObjectLayer () const;
+        ObjectLayer *SavedMainObjectLayer () const;
         World *MapEditorWorld () const;
         // returns the transformation mode
         inline Object::TransformationMode GetTransformationMode () const

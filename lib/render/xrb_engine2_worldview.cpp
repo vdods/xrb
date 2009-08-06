@@ -84,7 +84,7 @@ Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *obje
     return
         CalculateViewRadius(
             world_to_screen.Inverse(),
-            ParentWorldViewWidget()->GetScreenRect(),
+            ParentWorldViewWidget()->ScreenRect(),
             Center())
         *
         ParallaxFactor(
@@ -282,7 +282,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     m_draw_info.Reset();
 
     Float pixels_in_view_radius =
-        0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().Length();
+        0.5f * render_context.ClipRect().Size().StaticCast<Float>().Length();
 
     // vars which are used in the while loop which should only be
     // initialized once, before the loop.
@@ -425,7 +425,7 @@ Engine2::ObjectLayer *Engine2::WorldView::MainObjectLayer () const
 
 Float Engine2::WorldView::GridScaleUnit (Uint32 const grid_scale) const
 {
-    return 0.5f * MainObjectLayer()->GetSideLength() /
+    return 0.5f * MainObjectLayer()->SideLength() /
            Math::Pow(static_cast<Float>(m_grid_number_base), static_cast<Float>(grid_scale));
 }
 
@@ -544,7 +544,7 @@ void Engine2::WorldView::DrawGridLineSet (
     Sint32 y_start;
     Sint32 y_stop;
     Float view_limit;
-    Float half_side_length = 0.5f * MainObjectLayer()->GetSideLength();
+    Float half_side_length = 0.5f * MainObjectLayer()->SideLength();
 
     view_limit = view_center[Dim::X] - view_radius;
     if (!is_wrapped && view_limit < -half_side_length)
@@ -640,21 +640,21 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // the place of the view-to-screen transform.
     if (m_is_transform_scaling_based_upon_widget_radius)
     {
-        Float viewport_radius = render_context.ClipRect().GetSize().StaticCast<Float>().Length();
+        Float viewport_radius = render_context.ClipRect().Size().StaticCast<Float>().Length();
         glScalef(
-            viewport_radius / render_context.ClipRect().GetSize()[Dim::X],
-            viewport_radius / render_context.ClipRect().GetSize()[Dim::Y],
+            viewport_radius / render_context.ClipRect().Size()[Dim::X],
+            viewport_radius / render_context.ClipRect().Size()[Dim::Y],
             1.0f);
     }
     else
     {
         Float min_viewport_size =
             static_cast<Float>(
-                Min(render_context.ClipRect().GetSize()[Dim::X],
-                    render_context.ClipRect().GetSize()[Dim::Y]));
+                Min(render_context.ClipRect().Size()[Dim::X],
+                    render_context.ClipRect().Size()[Dim::Y]));
         glScalef(
-            min_viewport_size / render_context.ClipRect().GetSize()[Dim::X],
-            min_viewport_size / render_context.ClipRect().GetSize()[Dim::Y],
+            min_viewport_size / render_context.ClipRect().Size()[Dim::X],
+            min_viewport_size / render_context.ClipRect().Size()[Dim::Y],
             1.0f);
     }
 
@@ -670,8 +670,8 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
         1.0f);
 
     // perform the world-to-view transformation
-    ASSERT1(GetScaleFactors()[Dim::X] == 1.0f);
-    ASSERT1(GetScaleFactors()[Dim::Y] == 1.0f);
+    ASSERT1(ScaleFactors()[Dim::X] == 1.0f);
+    ASSERT1(ScaleFactors()[Dim::Y] == 1.0f);
     glRotatef(FloatTransform2::Angle(), 0.0f, 0.0f, 1.0f);
     glTranslatef(
         GetTranslation()[Dim::X],

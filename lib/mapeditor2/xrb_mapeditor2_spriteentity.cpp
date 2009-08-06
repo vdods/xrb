@@ -84,7 +84,7 @@ Color const &MapEditor2::SpriteEntity::GetUnselectedMetricsColor () const
     return MapEditor2::SpriteEntity::ms_unselected_metrics_color;
 }
 
-Color const &MapEditor2::SpriteEntity::GetSelectedMetricsColor () const
+Color const &MapEditor2::SpriteEntity::SelectedMetricsColor () const
 {
     return MapEditor2::SpriteEntity::ms_selected_metrics_color;
 }

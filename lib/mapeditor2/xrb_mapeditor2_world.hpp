@@ -43,7 +43,7 @@ namespace MapEditor2
         {
             return m_is_running;
         }
-        inline ObjectLayer *GetSavedMainObjectLayer () const
+        inline ObjectLayer *SavedMainObjectLayer () const
         {
             return m_saved_main_object_layer;
         }

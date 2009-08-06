@@ -112,7 +112,7 @@ public:
       *        size, using the Screen object associated with this WidgetSkin.
       * @param ratio The ratio to convert.
       */
-    ScreenCoord GetScreenCoordFromRatio (Float ratio) const;
+    ScreenCoord ScreenCoordFromRatio (Float ratio) const;
     /** @brief Converts a vector of screen coordinate sizes into a vector of
       *        size-ratio-basis ratios, using the Screen object associated
       *        with this WidgetSkin.
@@ -125,7 +125,7 @@ public:
       *        with this WidgetSkin.
       * @param ratios The ratio vector to convert.
       */
-    ScreenCoordVector2 GetScreenCoordsFromRatios (
+    ScreenCoordVector2 ScreenCoordsFromRatios (
         FloatVector2 const &ratios) const;
 
     /** @brief Returns a pointer to the const WidgetBackground object of the

@@ -139,11 +139,11 @@ void Label::Draw (RenderContext const &render_context) const
 
 ScreenCoordVector2 Label::Resize (ScreenCoordVector2 const &size)
 {
-    if (!m_is_picture_label && m_word_wrap && GetSize()[Dim::X] != size[Dim::X])
+    if (!m_is_picture_label && m_word_wrap && Size()[Dim::X] != size[Dim::X])
         DirtyTextFormatting();
     Widget::Resize(size);
     UpdateMinAndMaxSizesFromText();
-    return GetSize();
+    return Size();
 }
 
 void Label::HandleChangedFrameMargins ()
@@ -272,7 +272,7 @@ ScreenCoordRect Label::GetTextRect () const
     ASSERT1(RenderFont().IsValid());
 
     UpdateCachedFormattedText();
-    return RenderFont()->GetStringRect(m_line_format_vector);
+    return RenderFont()->StringRect(m_line_format_vector);
 }
 
 void Label::UpdateMinAndMaxSizesFromText ()
@@ -315,7 +315,7 @@ void Label::UpdateCachedFormattedText () const
         RenderFont()->GenerateWordWrappedString(
             m_text,
             &m_cached_formatted_text,
-            ContentsRect().GetSize());
+            ContentsRect().Size());
         m_line_format_vector_source = &m_cached_formatted_text;
     }
     // otherwise use m_text directly

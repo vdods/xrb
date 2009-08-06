@@ -118,7 +118,7 @@ void Util::MakeUppercase (std::string *const str)
             (*str)[i] += 'A' - 'a';
 }
 
-char Util::GetShiftedAscii (char const c)
+char Util::ShiftedAscii (char const c)
 {
     static char const ascii_to_shifted_ascii[128] =
     {
@@ -151,7 +151,7 @@ bool Util::CharacterLiteralCharNeedsEscaping (char const c)
     return (c >= '\a' && c <= '\r') || c == '\0' || c == '\n' || c == '\\' || c == '\'';
 }
 
-bool Util::GetStringLiteralCharNeedsEscaping (char const c)
+bool Util::StringLiteralCharNeedsEscaping (char const c)
 {
     // TODO: make lookup table? (decide what to do for non-ascii chars)
 
@@ -206,7 +206,7 @@ std::string Util::CharacterLiteral (char const c)
     return retval;
 }
 
-std::string Util::GetStringLiteral (std::string const &text)
+std::string Util::StringLiteral (std::string const &text)
 {
     std::string retval("\"");
     for (std::string::const_iterator it = text.begin(),
@@ -214,7 +214,7 @@ std::string Util::GetStringLiteral (std::string const &text)
          it != it_end;
          ++it)
     {
-        if (GetStringLiteralCharNeedsEscaping(*it))
+        if (StringLiteralCharNeedsEscaping(*it))
             retval += '\\', retval += EscapeCode(*it);
         else
             retval += *it;

@@ -260,7 +260,7 @@ protected:
     // recalculates the radii (visible, physical) of the object.
     // this should be called if/when the object's transformation matrix
     // changes, setting m_radius[quad_tree_type] to the calculated value.
-    virtual void CalculateRadius (QuadTreeType quad_tree_type) const { m_radius[quad_tree_type] = GetScaleFactor(); }
+    virtual void CalculateRadius (QuadTreeType quad_tree_type) const { m_radius[quad_tree_type] = ScaleFactor(); }
 
     // ///////////////////////////////////////////////////////////////////
 

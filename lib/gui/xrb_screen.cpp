@@ -123,7 +123,7 @@ void Screen::Draw () const
 
     // make sure the screen rect we're constructing the render context
     // with does not extend past the physical screen
-    ScreenCoordRect screen_rect(GetScreenRect());
+    ScreenCoordRect screen_rect(ScreenRect());
     ASSERT1(screen_rect.Left() == 0);
     ASSERT1(screen_rect.Bottom() == 0);
     if (screen_rect.GetWidth() > m_current_video_resolution[Dim::X])
@@ -282,7 +282,7 @@ bool Screen::HandleEvent (Event const *const e)
             // check if this is a mouse event and it doesn't fall inside the
             // top modal widget.  if so, throw the event out.
             if (e->IsMouseEvent())
-                if (!modal_widget->GetScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->Position()))
+                if (!modal_widget->ScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->Position()))
                     return false;
 
             return modal_widget->ProcessEvent(e);

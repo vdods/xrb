@@ -127,8 +127,8 @@ public:
     inline QuadTree *OwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->OwnerQuadTree(quad_tree_type); }
 
     inline FloatVector2 const &GetTranslation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTranslation(); }
-    inline FloatVector2 const &GetScaleFactors () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetScaleFactors(); }
-    inline Float GetScaleFactor () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetScaleFactor(); }
+    inline FloatVector2 const &ScaleFactors () const { ASSERT3(m_owner_object != NULL); return m_owner_object->ScaleFactors(); }
+    inline Float ScaleFactor () const { ASSERT3(m_owner_object != NULL); return m_owner_object->ScaleFactor(); }
     inline Float Angle () const { ASSERT3(m_owner_object != NULL); return m_owner_object->Angle(); }
     inline FloatMatrix2 const &GetTransformation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTransformation(); }
     inline FloatMatrix2 GetTransformationInverse () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTransformationInverse(); }

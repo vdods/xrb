@@ -30,7 +30,7 @@ CellPaddingWidget::CellPaddingWidget (
     DirtyContentsSizeProperties();
 }
 
-Widget *CellPaddingWidget::GetSingleChildWidget ()
+Widget *CellPaddingWidget::SingleChildWidget ()
 {
     ASSERT1(m_child_vector.size() <= 1);
 
@@ -48,7 +48,7 @@ Widget *CellPaddingWidget::GetSingleChildWidget ()
     }
 }
 
-Widget const *CellPaddingWidget::GetSingleChildWidget () const
+Widget const *CellPaddingWidget::SingleChildWidget () const
 {
     ASSERT1(m_child_vector.size() <= 1);
 
@@ -180,7 +180,7 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
     ContainerWidget::Resize(size);
 
     // place the single child widget if it exists
-    Widget *child = GetSingleChildWidget();
+    Widget *child = SingleChildWidget();
     if (child != NULL)
     {
         // only update size stuff if not blocked
@@ -195,14 +195,14 @@ ScreenCoordVector2 CellPaddingWidget::Resize (
             IndicateChildResizeWasBlocked();
     }
 
-    return GetSize();
+    return Size();
 }
 
 void CellPaddingWidget::AttachChild (Widget *const child)
 {
     // make sure there's not already a child widget, because
     // this widget can have only zero or one.
-    ASSERT0(GetSingleChildWidget() == NULL);
+    ASSERT0(SingleChildWidget() == NULL);
     // call the superclass to actually attach the child
     ContainerWidget::AttachChild(child);
     // size a child's size properties have potentially changed, the
@@ -214,7 +214,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -225,7 +225,7 @@ void CellPaddingWidget::AttachChild (Widget *const child)
 void CellPaddingWidget::DetachChild (Widget *const child)
 {
     // make sure there is already a single child widget
-    ASSERT0(GetSingleChildWidget() != NULL);
+    ASSERT0(SingleChildWidget() != NULL);
     // call the superclass to actually detach the child
     ContainerWidget::DetachChild(child);
     // size a child's size properties have potentially changed, the
@@ -237,7 +237,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -247,7 +247,7 @@ void CellPaddingWidget::DetachChild (Widget *const child)
 
 void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
 {
-    ASSERT1(child == GetSingleChildWidget());
+    ASSERT1(child == SingleChildWidget());
     // size a child's size properties have changed, the
     // contents size properties need to be recalculated.
     DirtyContentsSizeProperties();
@@ -257,7 +257,7 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the call up to this widget's parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -266,12 +266,12 @@ void CellPaddingWidget::ChildSizePropertiesChanged (Widget *const child)
 
 void CellPaddingWidget::PositionSingleChildWidget ()
 {
-    Widget *child = GetSingleChildWidget();
+    Widget *child = SingleChildWidget();
     if (child == NULL)
         return;
 
     // get the amount of space left over
-    ScreenCoordVector2 extra_space(GetSize() - child->GetSize());
+    ScreenCoordVector2 extra_space(Size() - child->Size());
     // calculate the child's offset from the parent, given its alignment
     ScreenCoordVector2 child_position_offset;
     for (Uint8 i = 0; i < 2; ++i)
@@ -329,7 +329,7 @@ void CellPaddingWidget::UpdateContentsSizeProperties () const
             SizeProperties::DefaultMaxSizeComponent(),
             SizeProperties::DefaultMaxSizeComponent());
 
-    Widget const *child = GetSingleChildWidget();
+    Widget const *child = SingleChildWidget();
     ASSERT1(child != NULL);
 
     // skip hidden and modal children

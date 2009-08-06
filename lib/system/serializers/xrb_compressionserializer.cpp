@@ -408,7 +408,7 @@ void CompressionSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteFloatVector2(value.GetScaleFactors());
+    CompressionSerializer::WriteFloatVector2(value.ScaleFactors());
     if (GetError() != IOE_NONE)
         return;
 
@@ -595,7 +595,7 @@ void CompressionSerializer::WriteTransform2 (Transform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteVector2(value.GetScale());
+    CompressionSerializer::WriteVector2(value.Scale());
     if (GetError() != IOE_NONE)
         return;
 

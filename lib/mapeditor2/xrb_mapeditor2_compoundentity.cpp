@@ -67,7 +67,7 @@ Color const &MapEditor2::CompoundEntity::GetUnselectedMetricsColor () const
     return MapEditor2::CompoundEntity::ms_unselected_metrics_color;
 }
 
-Color const &MapEditor2::CompoundEntity::GetSelectedMetricsColor () const
+Color const &MapEditor2::CompoundEntity::SelectedMetricsColor () const
 {
     return MapEditor2::CompoundEntity::ms_selected_metrics_color;
 }

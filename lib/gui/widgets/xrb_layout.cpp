@@ -323,7 +323,7 @@ ScreenCoordVector2 Layout::Resize (ScreenCoordVector2 const &size)
     else
         IndicateChildResizeWasBlocked();
 
-    return GetSize();
+    return Size();
 }
 
 void Layout::AttachChild (Widget *const child)
@@ -341,7 +341,7 @@ void Layout::AttachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -364,7 +364,7 @@ void Layout::DetachChild (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -388,7 +388,7 @@ void Layout::MoveChildDown (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -412,7 +412,7 @@ void Layout::MoveChildUp (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -436,7 +436,7 @@ void Layout::MoveChildToBottom (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -460,7 +460,7 @@ void Layout::MoveChildToTop (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -520,7 +520,7 @@ void Layout::ChildSizePropertiesChanged (Widget *const child)
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -545,7 +545,7 @@ void Layout::ChildStackPriorityChanged (
         // make sure that the min/max sizes are consistent with the contents
         CalculateMinAndMaxSizePropertiesFromContents();
         // attempt to resize the widget to the current size
-        Resize(GetSize());
+        Resize(Size());
 //         // propagate the changes up to the parent
 //         ParentChildSizePropertiesUpdate(false);
     }
@@ -769,7 +769,7 @@ void Layout::ResizeAndRepositionChildWidgets ()
                 // if the child didn't use up all the space, then calculate
                 // how much extra space there is so that the child can be
                 // properly centered on the grid slot.
-                ScreenCoordVector2 extra_space(requested_size - child->GetSize());
+                ScreenCoordVector2 extra_space(requested_size - child->Size());
 //                 // these asserts seem to fuck things up, so we'll see if they can be taken out
 //                 ASSERT1(extra_space[Dim::X] >= 0);
 //                 ASSERT1(extra_space[Dim::Y] >= 0);

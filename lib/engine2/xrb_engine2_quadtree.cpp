@@ -42,13 +42,13 @@ Engine2::QuadTree const *Engine2::QuadTree::RootNode () const
     return quad_node;
 }
 
-Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
+Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
     FloatVector2 const &point)
 {
     Object *retval = NULL;
 
     // if this node contains no objects, early out
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return retval;
 
     // if the point is outside the reaches of this quad node, early out
@@ -63,7 +63,7 @@ Engine2::Object *Engine2::QuadTree::GetSmallestObjectTouchingPoint (
         for (Uint8 i = 0; i < 4; ++i)
         {
             ASSERT2(m_child[i] != NULL);
-            smallest_candidate = m_child[i]->GetSmallestObjectTouchingPoint(point);
+            smallest_candidate = m_child[i]->SmallestObjectTouchingPoint(point);
             if (retval == NULL ||
                 (smallest_candidate != NULL &&
                  smallest_candidate->Radius(GetQuadTreeType()) < retval->Radius(GetQuadTreeType())))
@@ -104,7 +104,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
     Float const area_radius) const
 {
     // if there are no objects here or below, just return false
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return false;
 
     // return false if the area doesn't intersect this node
@@ -155,7 +155,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
     Float const half_object_layer_side_length) const
 {
     // if there are no objects here or below, just return false
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return false;
 
     // return false if the area doesn't intersect this node

@@ -45,13 +45,13 @@ public:
     // returns the root node (top level parent) of this quadtree node
     QuadTree const *RootNode () const;
     inline FloatVector2 const &Center () const { return m_center; }
-    inline Float GetSideLength () const { return 2.0f * m_half_side_length; }
+    inline Float SideLength () const { return 2.0f * m_half_side_length; }
     inline Float HalfSideLength () const { return m_half_side_length; }
     inline Float Radius () const { return m_radius; }
-    inline Uint32 GetSubordinateObjectCount () const { return m_subordinate_object_count; }
-    inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
-    Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point);
-    // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
+    inline Uint32 SubordinateObjectCount () const { return m_subordinate_object_count; }
+    inline Uint32 SubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
+    Object *SmallestObjectTouchingPoint (FloatVector2 const &point);
+    // TODO: write a wrapped version of SmallestObjectTouchingPoint
     inline bool IsAllowableObjectRadius (Object const *object) const { return object->Radius(GetQuadTreeType()) / m_radius > 0.5f; }
 
     bool DoesAreaOverlapAnyObject (

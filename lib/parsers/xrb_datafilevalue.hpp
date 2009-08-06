@@ -272,7 +272,7 @@ public:
     virtual ~DataFileValue () { }
 
     virtual DataFileElementType ElementType () const = 0;
-    inline DataFileValue const *PathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
+    inline DataFileValue const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
     bool PathElementBoolean (std::string const &path) const throw (std::string);
@@ -289,11 +289,11 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetSubpathElement (
+    virtual DataFileValue const *SubpathElement (
         std::string const &path,
         Uint32 start) const = 0;
 
-    // sort of a kludgey way for these to call GetSubpathElement
+    // sort of a kludgey way for these to call SubpathElement
     // on other objects, but then again, fuck it.
     friend class DataFileKeyPair;
     friend class DataFileArray;
@@ -316,7 +316,7 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetSubpathElement (
+    virtual DataFileValue const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 }; // end of class DataFileLeafValue
@@ -567,7 +567,7 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetSubpathElement (
+    virtual DataFileValue const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 
@@ -596,7 +596,7 @@ public:
     { }
     virtual ~DataFileArray ();
 
-    bool GetShouldBeFormattedInline () const;
+    bool ShouldBeFormattedInline () const;
     DataFileElementType ArrayElementType () const;
     DataFileElementType GetUltimateArrayElementType () const;
     Uint32 DimensionCount () const;
@@ -615,7 +615,7 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetSubpathElement (
+    virtual DataFileValue const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 
@@ -662,7 +662,7 @@ public:
 
 protected:
 
-    virtual DataFileValue const *GetSubpathElement (
+    virtual DataFileValue const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 

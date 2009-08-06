@@ -43,7 +43,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
     bool const check_nonsolid_collision_entities) const
 {
     // if there are no objects here or below, just return false
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return false;
 
     // return false if the area doesn't intersect this node
@@ -107,7 +107,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
     Float const half_object_layer_side_length) const
 {
     // if there are no objects here or below, just return false
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return false;
 
     // return false if the area doesn't intersect this node
@@ -201,7 +201,7 @@ void CollisionQuadTree::LineTrace (
     ASSERT1(line_trace_binding_set != NULL);
 
     // if this quad node has no subordinates, return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // if this quad node doesn't intersect the line, return
@@ -284,7 +284,7 @@ void CollisionQuadTree::LineTraceWrapped (
     ASSERT1(line_trace_binding_set != NULL);
 
     // if this quad node has no subordinates, return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // if this quad node doesn't intersect the line, return
@@ -390,7 +390,7 @@ void CollisionQuadTree::AreaTrace (
     ASSERT1(area_trace_list != NULL);
 
     // if this quad node has no subordinates, return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // if this quad node doesn't intersect the line, return
@@ -447,7 +447,7 @@ void CollisionQuadTree::AreaTraceWrapped (
     ASSERT1(area_trace_list != NULL);
 
     // if this quad node has no subordinates, return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // if this quad node doesn't intersect the line, return
@@ -523,7 +523,7 @@ void CollisionQuadTree::CollideEntity (
     Float const dt_squared = adjusted_dt * adjusted_dt;
 
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // return if the area doesn't intersect this node
@@ -581,9 +581,9 @@ void CollisionQuadTree::CollideEntity (
 
         FloatVector2 V = entity->GetVelocity() - other_entity->GetVelocity();
         FloatVector2 collision_location(
-            (other_entity->GetScaleFactor() * entity->GetTranslation() + entity->GetScaleFactor() * other_entity->GetTranslation())
+            (other_entity->ScaleFactor() * entity->GetTranslation() + entity->ScaleFactor() * other_entity->GetTranslation())
             /
-            (entity->GetScaleFactor() + other_entity->GetScaleFactor()));
+            (entity->ScaleFactor() + other_entity->ScaleFactor()));
         FloatVector2 collision_normal;
         if (P.IsZero())
             collision_normal = FloatVector2(1.0f, 0.0f);
@@ -594,7 +594,7 @@ void CollisionQuadTree::CollideEntity (
         if ((V | P) < 0.0f && // and if the distance between the two is closing
             entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
             other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
-            Entity::GetShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
+            Entity::ShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
         {
             Float M = 1.0f / entity->Mass() + 1.0f / other_entity->Mass();
             FloatVector2 Q(P + adjusted_dt*V);
@@ -679,9 +679,9 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
 
     FloatVector2 V = m_entity->GetVelocity() - other_entity->GetVelocity();
     FloatVector2 collision_location(
-        (other_entity->GetScaleFactor() * ce0_translation + m_entity->GetScaleFactor() * ce1_translation)
+        (other_entity->ScaleFactor() * ce0_translation + m_entity->ScaleFactor() * ce1_translation)
         /
-        (m_entity->GetScaleFactor() + other_entity->GetScaleFactor()));
+        (m_entity->ScaleFactor() + other_entity->ScaleFactor()));
     FloatVector2 collision_normal;
     if (P.IsZero())
         collision_normal = FloatVector2(1.0f, 0.0f);
@@ -692,7 +692,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     if ((V | P) < 0.0f && // and if the distance between the two is closing
         m_entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
         other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
-        Entity::GetShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule
+        Entity::ShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule
     {
         Float M = 1.0f / m_entity->Mass() + 1.0f / other_entity->Mass();
         FloatVector2 Q(P + m_frame_dt*V);
@@ -755,7 +755,7 @@ void CollisionQuadTree::CollideEntityWrapped (
 void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWrappedLoopFunctor &functor)
 {
     // if there are no objects here or below, just return
-    if (GetSubordinateObjectCount() == 0)
+    if (SubordinateObjectCount() == 0)
         return;
 
     // return if the area doesn't intersect this node

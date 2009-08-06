@@ -98,7 +98,7 @@ void DamageExplosion::Collide (
 
     // center_to_center points towards the collider
     FloatVector2 center_to_center = collider->GetTranslation() - GetTranslation();
-    Float distance = center_to_center.Length() - collider->GetScaleFactor();
+    Float distance = center_to_center.Length() - collider->ScaleFactor();
     if (distance < 0.0f)
         distance = 0.0f;
     Float distance_factor;

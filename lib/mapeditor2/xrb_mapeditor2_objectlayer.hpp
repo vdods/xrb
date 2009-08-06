@@ -58,28 +58,28 @@ namespace MapEditor2
             return m_object_selection_set.empty();
         }
     
-        inline Uint32 GetSelectedObjectCount () const
+        inline Uint32 SelectedObjectCount () const
         {
             return m_selected_object_count;
         }
-        Object *GetSingleSelectedObject ();
+        Object *SingleSelectedObject ();
         inline FloatVector2 const &ObjectSelectionSetOrigin () const
         {
             return m_object_selection_set_origin;
         }
 
-        inline Uint32 GetSelectedNonEntityCount () const
+        inline Uint32 SelectedNonEntityCount () const
         {
             ASSERT1(m_selected_entity_count <= m_selected_object_count);
             return m_selected_object_count - m_selected_entity_count;
         }
-        Object *GetSingleSelectedNonEntity ();
+        Object *SingleSelectedNonEntity ();
             
-        inline Uint32 GetSelectedEntityCount () const
+        inline Uint32 SelectedEntityCount () const
         {
             return m_selected_entity_count;
         }
-        Entity *GetSingleSelectedEntity ();
+        Entity *SingleSelectedEntity ();
         inline Float ObjectSelectionSetMass () const
         {
             return m_object_selection_set_mass;
@@ -105,18 +105,18 @@ namespace MapEditor2
             return m_object_selection_set_density;
         }
 
-        inline Uint32 GetSelectedCompoundCount () const
+        inline Uint32 SelectedCompoundCount () const
         {
             return m_selected_compound_count;
         }
-        Compound *GetSingleSelectedCompound ();
+        Compound *SingleSelectedCompound ();
             
-        inline Uint32 GetSelectedVertexCount () const
+        inline Uint32 SelectedVertexCount () const
         {
             return m_selected_vertex_count;
         }
             
-        inline Uint32 GetSelectedPolygonCount () const
+        inline Uint32 SelectedPolygonCount () const
         {
             return m_selected_polygon_count;
         }

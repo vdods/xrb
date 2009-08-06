@@ -116,7 +116,7 @@ DataFileStructure const *DataFileValue::PathElementStructure (std::string const 
 
 DataFileLeafValue::~DataFileLeafValue () { }
 
-DataFileValue const *DataFileLeafValue::GetSubpathElement (
+DataFileValue const *DataFileLeafValue::SubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
@@ -187,12 +187,12 @@ void DataFileCharacter::PrintAST (IndentFormatter &formatter) const
 
 void DataFileString::Print (IndentFormatter &formatter) const
 {
-    formatter.ContinueLine("%s", Util::GetStringLiteral(m_value).c_str());
+    formatter.ContinueLine("%s", Util::StringLiteral(m_value).c_str());
 }
 
 void DataFileString::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_STRING - %s", Util::GetStringLiteral(m_value).c_str());
+    formatter.EndLine("DAT_STRING - %s", Util::StringLiteral(m_value).c_str());
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ void DataFileKeyPair::Print (IndentFormatter &formatter) const
     {
         DataFileArray const *array = DStaticCast<DataFileArray const *>(m_value);
         ASSERT1(array != NULL);
-        if (array->GetShouldBeFormattedInline())
+        if (array->ShouldBeFormattedInline())
             formatter.BeginLine("%s ", m_key.c_str());
         else
             formatter.PrintLine("%s", m_key.c_str());
@@ -307,13 +307,13 @@ void DataFileKeyPair::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileKeyPair::GetSubpathElement (
+DataFileValue const *DataFileKeyPair::SubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileKeyPair::GetSubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileKeyPair::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return GetValue();
@@ -321,7 +321,7 @@ DataFileValue const *DataFileKeyPair::GetSubpathElement (
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
-    return GetValue()->GetSubpathElement(path, start);
+    return GetValue()->SubpathElement(path, start);
 }
 
 void DataFileKeyPair::SetSubpathElement (
@@ -405,7 +405,7 @@ DataFileArray::~DataFileArray ()
     }
 }
 
-bool DataFileArray::GetShouldBeFormattedInline () const
+bool DataFileArray::ShouldBeFormattedInline () const
 {
     ElementVectorConstIterator it = m_element_vector.begin();
     // arrays with elements that aren't arrays or structures
@@ -475,7 +475,7 @@ void DataFileArray::AppendValue (DataFileValue *const value)
 
 void DataFileArray::Print (IndentFormatter &formatter) const
 {
-    bool inlined_array = GetShouldBeFormattedInline();
+    bool inlined_array = ShouldBeFormattedInline();
 
     if (inlined_array)
         formatter.BeginLine("[ ");
@@ -555,13 +555,13 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileArray::GetSubpathElement (
+DataFileValue const *DataFileArray::SubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileArray::GetSubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileArray::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
@@ -588,7 +588,7 @@ DataFileValue const *DataFileArray::GetSubpathElement (
         THROW_STRING("out of bounds array index \"" << path.substr(start, key_delim-start) << "\"")
 
     ASSERT1(key_delim < UINT32_UPPER_BOUND);
-    return m_element_vector[array_index]->GetSubpathElement(path, key_delim);
+    return m_element_vector[array_index]->SubpathElement(path, key_delim);
 }
 
 void DataFileArray::SetSubpathElement (
@@ -890,13 +890,13 @@ void DataFileStructure::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileStructure::GetSubpathElement (
+DataFileValue const *DataFileStructure::SubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileStructure::GetSubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "DataFileStructure::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
@@ -913,7 +913,7 @@ DataFileValue const *DataFileStructure::GetSubpathElement (
     else
     {
         ASSERT1(key_delim < UINT32_UPPER_BOUND);
-        return it->second->GetValue()->GetSubpathElement(path, key_delim);
+        return it->second->GetValue()->SubpathElement(path, key_delim);
     }
 }
 

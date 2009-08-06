@@ -122,7 +122,7 @@ Uint32 MapEditor2::World::MainObjectLayerIndex () const
         ObjectLayer *map_editor_object_layer =
             DStaticCast<ObjectLayer *>(*it);
 
-        if (map_editor_object_layer == GetSavedMainObjectLayer())
+        if (map_editor_object_layer == SavedMainObjectLayer())
             return index;
 
         ++index;

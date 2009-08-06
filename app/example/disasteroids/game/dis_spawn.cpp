@@ -584,7 +584,7 @@ LaserBeam *SpawnLaserBeam (
     // it for real later.
     sprite->SetZDepth(Z_DEPTH_LASER_BEAM);
     sprite->SetIsTransparent(true);
-    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
 
     LaserBeam *laser_beam = new LaserBeam();
 
@@ -640,7 +640,7 @@ TractorBeam *SpawnTractorBeam (
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Tractor will place
     // it for real later.
-    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
 
     TractorBeam *tractor_beam = new TractorBeam();
 
@@ -664,7 +664,7 @@ ShieldEffect *SpawnShieldEffect (
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
-    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
     // default the shield effect to transparent
     sprite->SetColorMask(Color::ms_transparent_black);
 
@@ -690,7 +690,7 @@ ReticleEffect *SpawnReticleEffect (
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
-    sprite->SetScaleFactor(0.5f * object_layer->GetSideLength());
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
     sprite->SetColorMask(color_mask);
 
     ReticleEffect *reticle_effect = new ReticleEffect();
@@ -748,7 +748,7 @@ Solitary *SpawnSolitary (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_SOLITARY, 0),
+        Ship::ShipSpriteFilename(ET_SOLITARY, 0),
         Z_DEPTH_SOLID,
         false, // is transparent
         solitary,
@@ -773,7 +773,7 @@ Interloper *SpawnInterloper (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_INTERLOPER, enemy_level),
+        Ship::ShipSpriteFilename(ET_INTERLOPER, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         interloper,
@@ -799,7 +799,7 @@ Shade *SpawnShade (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_SHADE, enemy_level),
+        Ship::ShipSpriteFilename(ET_SHADE, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         shade,
@@ -825,7 +825,7 @@ Revulsion *SpawnRevulsion (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_REVULSION, enemy_level),
+        Ship::ShipSpriteFilename(ET_REVULSION, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         revulsion,
@@ -851,7 +851,7 @@ Devourment *SpawnDevourment (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_DEVOURMENT, enemy_level),
+        Ship::ShipSpriteFilename(ET_DEVOURMENT, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         devourment,
@@ -877,7 +877,7 @@ Demi *SpawnDemi (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::GetShipSpriteFilename(ET_DEMI, enemy_level),
+        Ship::ShipSpriteFilename(ET_DEMI, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         demi,

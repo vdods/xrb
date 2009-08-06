@@ -428,7 +428,7 @@ void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    BinaryFileSerializer::WriteFloatVector2(value.GetScaleFactors());
+    BinaryFileSerializer::WriteFloatVector2(value.ScaleFactors());
     if (GetError() != IOE_NONE)
         return;
 

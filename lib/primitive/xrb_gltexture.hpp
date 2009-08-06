@@ -67,7 +67,7 @@ public:
     }
     /** @brief Returns the size vector of the texture.
       */
-    inline ScreenCoordVector2 const &GetSize () const
+    inline ScreenCoordVector2 const &Size () const
     {
         return m_size;
     }

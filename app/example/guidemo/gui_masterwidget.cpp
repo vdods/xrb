@@ -50,7 +50,7 @@ MasterWidget::MasterWidget (ContainerWidget *const parent)
         }
     }
 
-    Fprint(stderr, main_layout->GetScreenRect());
+    Fprint(stderr, main_layout->ScreenRect());
 
     {
         LineEdit *line_edit;

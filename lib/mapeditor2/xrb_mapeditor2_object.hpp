@@ -106,13 +106,13 @@ namespace MapEditor2
             return m_is_selected;
         }
         // returns the object's saved EntityGuts
-        inline Engine2::EntityGuts *GetSavedEntityGuts () const
+        inline Engine2::EntityGuts *SavedEntityGuts () const
         {
             return m_saved_entity_guts;
         }
     
         virtual Color const &GetUnselectedMetricsColor () const;
-        virtual Color const &GetSelectedMetricsColor () const;
+        virtual Color const &SelectedMetricsColor () const;
     
         // sets the selection status for this object
         void SetIsSelected (bool const is_selected);

@@ -57,7 +57,7 @@ public:
     inline Float Elasticity () const { return m_elasticity; }
     inline Float Mass () const { return m_mass; }
     inline FloatVector2 const &GetVelocity () const { return m_velocity; }
-    inline Float GetSpeed () const { return m_velocity.Length(); }
+    inline Float Speed () const { return m_velocity.Length(); }
     inline FloatVector2 Momentum () const { return m_mass * m_velocity; }
     inline FloatVector2 const &Force () const { return m_force; }
     inline Float AngularVelocity () const { return m_angular_velocity; }
@@ -69,7 +69,7 @@ public:
     FloatVector2 AmbientVelocity (
         Float scan_area_radius,
         Entity const *ignore_me) const;
-    static inline bool GetShouldApplyCollisionForces (
+    static inline bool ShouldApplyCollisionForces (
         Entity const *entity1,
         Entity const *entity2)
     {

@@ -44,17 +44,17 @@ public:
 
     // returns true if the quit condition has been hit
     bool IsQuitRequested () const { return m_is_quit_requested; }
-    inline ScreenCoord GetSizeRatioBasis () const
+    inline ScreenCoord SizeRatioBasis () const
     {
         return Min(GetWidth(), Height());
     }
-    inline ScreenCoordVector2 GetScreenCoordsFromSDLCoords (
+    inline ScreenCoordVector2 ScreenCoordsFromSDLCoords (
         Sint32 x,
         Sint32 y) const
     {
         return ScreenCoordVector2(
             static_cast<ScreenCoord>(x),
-            GetScreenRect().Height() - static_cast<ScreenCoord>(y));
+            ScreenRect().Height() - static_cast<ScreenCoord>(y));
     }
     inline Float Framerate () const
     {

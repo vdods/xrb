@@ -69,7 +69,7 @@ ScreenCoordVector2 ContainerWidget::AdjustedSize (ScreenCoordVector2 const &size
         AdjustFromMinSize(&rect);
         AdjustFromMaxSize(&rect);
     }
-    return rect.GetSize();
+    return rect.Size();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ void ContainerWidget::SetSizePropertyEnabled (
                 m_size_properties.m_min_size_enabled[component] = value;
                 MinSizeUpdated();
                 if (AdjustFromMinSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -121,7 +121,7 @@ void ContainerWidget::SetSizePropertyEnabled (
                 m_size_properties.m_max_size_enabled[component] = value;
                 MaxSizeUpdated();
                 if (AdjustFromMaxSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -159,7 +159,7 @@ void ContainerWidget::SetSizePropertyEnabled (
                 m_size_properties.m_min_size_enabled = value;
                 MinSizeUpdated();
                 if (AdjustFromMinSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -170,7 +170,7 @@ void ContainerWidget::SetSizePropertyEnabled (
                 m_size_properties.m_max_size_enabled = value;
                 MaxSizeUpdated();
                 if (AdjustFromMaxSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -213,7 +213,7 @@ void ContainerWidget::SetSizeProperty (
                 m_size_properties.m_min_size[component] = value;
                 MinSizeUpdated();
                 if (AdjustFromMinSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -224,7 +224,7 @@ void ContainerWidget::SetSizeProperty (
                 m_size_properties.m_max_size[component] = value;
                 MaxSizeUpdated();
                 if (AdjustFromMaxSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -264,7 +264,7 @@ void ContainerWidget::SetSizeProperty (
                 m_size_properties.m_min_size = value;
                 MinSizeUpdated();
                 if (AdjustFromMinSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -275,7 +275,7 @@ void ContainerWidget::SetSizeProperty (
                 m_size_properties.m_max_size = value;
                 MaxSizeUpdated();
                 if (AdjustFromMaxSize(&m_screen_rect))
-                    Resize(m_screen_rect.GetSize());
+                    Resize(m_screen_rect.Size());
                 ParentChildSizePropertiesUpdate(defer_parent_update);
             }
         }
@@ -289,7 +289,7 @@ void ContainerWidget::SetMainWidget (Widget *const main_widget)
     {
         ASSERT0(!m_main_widget->IsModal() && "You can't use a modal widget as a main widget");
         ASSERT1(m_main_widget->Parent() == this);
-        m_main_widget->Resize(GetSize());
+        m_main_widget->Resize(Size());
         m_main_widget->MoveTo(Position());
         ParentChildSizePropertiesUpdate(false);
     }
@@ -323,7 +323,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
             child_render_context.SetClipRect(
-                render_context.ClippedRect(child->GetScreenRect()));
+                render_context.ClippedRect(child->ScreenRect()));
             // don't even bother drawing a child widget if this resulting
             // clip rect is invalid (0 area)
             if (child_render_context.ClipRect().IsValid())
@@ -366,7 +366,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             // calculate the drawing clip rect from this widget's clip rect
             // and the child widget's virtual rect.
             child_render_context.SetClipRect(
-                render_context.ClippedRect(modal_widget->GetScreenRect()));
+                render_context.ClippedRect(modal_widget->ScreenRect()));
             // don't even bother drawing a modal widget if this resulting
             // clip rect is invalid (0 area)
             if (child_render_context.ClipRect().IsValid())
@@ -413,7 +413,7 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
 {
     ScreenCoordVector2 adjusted_size(m_size_properties.AdjustedSize(size));
 
-    if (m_screen_rect.GetSize() != adjusted_size || (ChildResizeBlockerCount() == 0 && ChildResizeWasBlocked()))
+    if (m_screen_rect.Size() != adjusted_size || (ChildResizeBlockerCount() == 0 && ChildResizeWasBlocked()))
     {
         m_screen_rect.SetSize(adjusted_size);
 
@@ -423,7 +423,7 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
             m_child_resize_was_blocked = false;
             // if there is a main widget, resize it to match this one
             if (m_main_widget != NULL)
-                m_main_widget->Resize(m_screen_rect.GetSize());
+                m_main_widget->Resize(m_screen_rect.Size());
         }
         else
             IndicateChildResizeWasBlocked();
@@ -435,7 +435,7 @@ ScreenCoordVector2 ContainerWidget::Resize (ScreenCoordVector2 const &size)
     }
 
     // return what the actual size is now
-    return m_screen_rect.GetSize();
+    return m_screen_rect.Size();
 }
 
 void ContainerWidget::AttachChild (Widget *const child)
@@ -788,7 +788,7 @@ void ContainerWidget::ChildSizePropertiesChanged (Widget *const child)
             // adjust the size properties based on the contents (the main widget)
             CalculateMinAndMaxSizePropertiesFromContents();
             // attempt to resize the widget to the current size
-            Resize(m_main_widget->GetSize());
+            Resize(m_main_widget->Size());
         }
         else
             IndicateChildResizeWasBlocked();
@@ -980,7 +980,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
 
     if (modal_widget != NULL)
     {
-        if (modal_widget->GetScreenRect().IsPointInside(e->Position()))
+        if (modal_widget->ScreenRect().IsPointInside(e->Position()))
             return modal_widget->InternalProcessFocusEvent(e);
         else
             return false;
@@ -998,7 +998,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
             Widget *child = *it;
             ASSERT1(child != NULL);
             if (!child->IsHidden() &&
-                child->GetScreenRect().IsPointInside(e->Position()) &&
+                child->ScreenRect().IsPointInside(e->Position()) &&
                 child->InternalProcessFocusEvent(e))
                 return true;
         }
@@ -1024,7 +1024,7 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const
     {
         Widget *child = *it;
         ASSERT1(child != NULL);
-        if (child->GetScreenRect().IsPointInside(e->Position()))
+        if (child->ScreenRect().IsPointInside(e->Position()))
             if (child->InternalProcessMouseoverEvent(e))
                 return true;
     }
@@ -1048,7 +1048,7 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
         // only send the event to widgets that are not hidden
         // AND if the mouse event position is inside the widget's rect
         if (!child->IsHidden() &&
-            child->GetScreenRect().IsPointInside(e->Position()))
+            child->ScreenRect().IsPointInside(e->Position()))
             if (child->ProcessEvent(e))
                 return true;
     }
@@ -1067,7 +1067,7 @@ void ContainerWidget::DecrementResizeBlockerCount ()
     ASSERT1(m_child_resize_blocker_count > 0);
     --m_child_resize_blocker_count;
     if (m_child_resize_blocker_count == 0)
-        Resize(GetSize());
+        Resize(Size());
     m_child_resize_was_blocked = false;
 }
 

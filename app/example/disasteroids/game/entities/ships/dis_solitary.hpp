@@ -47,11 +47,11 @@ public:
     {
         return ms_max_angular_velocity;
     }
-    virtual Float GetShipScaleFactor () const
+    virtual Float ShipScaleFactor () const
     {
         return ms_scale_factor;
     }
-    virtual Float GetShipBaselineMass () const
+    virtual Float ShipBaselineMass () const
     {
         return ms_baseline_mass;
     }

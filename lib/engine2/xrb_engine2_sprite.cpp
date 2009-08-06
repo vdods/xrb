@@ -73,8 +73,8 @@ void Engine2::Sprite::Draw (
         GetZDepth());
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
-        GetScaleFactors()[Dim::X],
-        GetScaleFactors()[Dim::Y],
+        ScaleFactors()[Dim::X],
+        ScaleFactors()[Dim::Y],
         1.0f);
 
     // calculate the bias color
@@ -166,18 +166,18 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
     {
         case QTT_VISIBILITY:
             if (m_is_round)
-                m_radius[quad_tree_type] = Max(GetScaleFactors()[Dim::X], GetScaleFactors()[Dim::Y]);
+                m_radius[quad_tree_type] = Max(ScaleFactors()[Dim::X], ScaleFactors()[Dim::Y]);
             else
-                m_radius[quad_tree_type] = GetScaleFactors().Length();
+                m_radius[quad_tree_type] = ScaleFactors().Length();
             break;
 
         case QTT_PHYSICS_HANDLER:
             if (m_is_round)
                 m_radius[quad_tree_type] =
-                    Max(GetScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
-                        GetScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
+                    Max(ScaleFactors()[Dim::X] * m_physical_size_ratios[Dim::X],
+                        ScaleFactors()[Dim::Y] * m_physical_size_ratios[Dim::Y]);
             else
-                m_radius[quad_tree_type] = (GetScaleFactors() * m_physical_size_ratios).Length();
+                m_radius[quad_tree_type] = (ScaleFactors() * m_physical_size_ratios).Length();
             break;
 
         default:

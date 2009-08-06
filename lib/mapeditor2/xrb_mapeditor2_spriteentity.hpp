@@ -97,7 +97,7 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
     
         virtual Color const &GetUnselectedMetricsColor () const;
-        virtual Color const &GetSelectedMetricsColor () const;
+        virtual Color const &SelectedMetricsColor () const;
     
     protected:
     

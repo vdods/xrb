@@ -26,7 +26,7 @@ namespace Xrb
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
-ScreenCoordRect Font::GetStringRect (char const *const string) const
+ScreenCoordRect Font::StringRect (char const *const string) const
 {
     ASSERT1(string != NULL);
 
@@ -76,7 +76,7 @@ ScreenCoordRect Font::GetStringRect (char const *const string) const
         Max(pen_position_span_26_6[Dim::Y]>>6, 0));
 }
 
-ScreenCoordRect Font::GetStringRect (LineFormatVector const &line_format_vector) const
+ScreenCoordRect Font::StringRect (LineFormatVector const &line_format_vector) const
 {
     ASSERT1(!line_format_vector.empty());
 
@@ -496,7 +496,7 @@ void AsciiFont::GenerateWordWrappedString (
             if (forced_newline)
                 *dest_string += '\n';
             while (GetTokenClass(*current_token) == WHITESPACE)
-                current_token = GetStartOfNextToken(current_token);
+                current_token = StartOfNextToken(current_token);
             line_start = false;
             forced_newline = false;
         }
@@ -506,7 +506,7 @@ void AsciiFont::GenerateWordWrappedString (
             case WHITESPACE:
                 // check if the token after this is a newline, a nullchar
                 // or a word that won't fit:
-                next_token = GetStartOfNextToken(current_token);
+                next_token = StartOfNextToken(current_token);
                 next_token_class = GetTokenClass(*next_token);
                 token_width_26_6 = GetTokenWidth_26_6(" ") + GetTokenWidth_26_6(next_token);
                 if (next_token_class == NULLCHAR)
@@ -534,7 +534,7 @@ void AsciiFont::GenerateWordWrappedString (
                 *dest_string += '\n';
                 forced_newline = true;
                 line_start = true;
-                current_token = GetStartOfNextToken(current_token);
+                current_token = StartOfNextToken(current_token);
                 break;
 
             case NULLCHAR:
@@ -542,7 +542,7 @@ void AsciiFont::GenerateWordWrappedString (
 
             case WORD:
                 token_width_26_6 = GetTokenWidth_26_6(current_token);
-                next_token = GetStartOfNextToken(current_token);
+                next_token = StartOfNextToken(current_token);
                 forced_newline = false;
                 if (token_width_26_6 > wrap_width_26_6)
                 {
@@ -872,7 +872,7 @@ AsciiFont::TokenClass AsciiFont::GetTokenClass (char const c)
     }
 }
 
-char const *AsciiFont::GetStartOfNextToken (char const *string)
+char const *AsciiFont::StartOfNextToken (char const *string)
 {
     ASSERT1(string != NULL);
 
@@ -895,7 +895,7 @@ ScreenCoord AsciiFont::GetTokenWidth_26_6 (char const *const string) const
 
     char const *current_glyph = string;
     char const *next_glyph;
-    char const *const end_glyph = GetStartOfNextToken(current_glyph);
+    char const *const end_glyph = StartOfNextToken(current_glyph);
     ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
     while (current_glyph != end_glyph)
     {

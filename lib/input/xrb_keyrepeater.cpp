@@ -74,8 +74,8 @@ bool KeyRepeater::HandleEvent (Event const *const e)
         {
             // if the key up event matches the current key event, then
             // deactivate the current key event.
-            if (m_current_key_event.GetSDLEvent().keysym.sym ==
-                key_event->GetSDLEvent().keysym.sym)
+            if (m_current_key_event.SDLEvent().keysym.sym ==
+                key_event->SDLEvent().keysym.sym)
                 m_is_current_key_event_active = false;
 
             // the event was used
@@ -98,7 +98,7 @@ void KeyRepeater::GenerateKeyEvents (Float const time)
     {
         // generate the event
         EventKeyRepeat *key_repeat_event =
-            new EventKeyRepeat(&m_current_key_event.GetSDLEvent(), time);
+            new EventKeyRepeat(&m_current_key_event.SDLEvent(), time);
         // enqueue the event
         m_key_event_queue.Enqueue(key_repeat_event);
         // schedule the next repeat time

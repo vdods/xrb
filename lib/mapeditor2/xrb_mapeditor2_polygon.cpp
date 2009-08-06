@@ -45,7 +45,7 @@ MapEditor2::Polygon *MapEditor2::Polygon::CreateClone () const
     return retval;
 }
 
-Uint32 MapEditor2::Polygon::GetSelectedVertexCount () const
+Uint32 MapEditor2::Polygon::SelectedVertexCount () const
 {
     Uint32 selected_vertex_count = 0;
     for (VertexListConstIterator it = m_vertex_list.begin(),

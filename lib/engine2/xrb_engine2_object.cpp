@@ -253,7 +253,7 @@ void Engine2::Object::CloneProperties (Object const *const object)
     ASSERT1(object != NULL);
 
     SetTranslation(object->GetTranslation());
-    SetScaleFactors(object->GetScaleFactors());
+    SetScaleFactors(object->ScaleFactors());
     SetAngle(object->Angle());
     m_bias_color = object->m_bias_color;
     m_color_mask = object->m_color_mask;
@@ -277,7 +277,7 @@ void Engine2::Object::CalculateTransform () const
     // optimized function code:
     if (IsDirty())
     {
-        if (GetScalingAndRotationIsDirty())
+        if (ScalingAndRotationIsDirty())
         {
             RecalculateTransform();
             // recalculate all radii

@@ -62,11 +62,11 @@ public:
     {
         return ms_max_angular_velocity[EnemyLevel()];
     }
-    virtual Float GetShipScaleFactor () const
+    virtual Float ShipScaleFactor () const
     {
         return ms_scale_factor[EnemyLevel()];
     }
-    virtual Float GetShipBaselineMass () const
+    virtual Float ShipBaselineMass () const
     {
         return ms_baseline_mass[EnemyLevel()];
     }

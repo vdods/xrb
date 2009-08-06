@@ -31,8 +31,8 @@ public:
     Ship (Float max_health, EntityType entity_type);
     virtual ~Ship ();
 
-    static std::string const &GetShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
-    static Float GetShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
+    static std::string const &ShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
+    static Float ShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
 
     virtual bool IsShip () const { return true; }
     bool IsDisabled () const { return m_disable_time > 0.0f; }
@@ -81,7 +81,7 @@ public:
         ASSERT1(weapon != NULL);
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
-        return GetTranslation() + GetScaleFactor() * Math::UnitVector(Angle());
+        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle());
     }
     virtual FloatVector2 MuzzleDirection (Weapon const *weapon) const
     {
@@ -91,8 +91,8 @@ public:
         return Math::UnitVector(Angle());
     }
     virtual Float MaxAngularVelocity () const = 0;
-    virtual Float GetShipScaleFactor () const = 0;
-    virtual Float GetShipBaselineMass () const = 0;
+    virtual Float ShipScaleFactor () const = 0;
+    virtual Float ShipBaselineMass () const = 0;
 
     virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt) = 0;
 

@@ -77,10 +77,10 @@ public:
     }
     // returns the calculated scale factors for the physical geometry,
     // based upon the object's scale factors, and the physical size ratios.
-    inline FloatVector2 PhysicalScaleFactors () const { return m_physical_size_ratios * GetScaleFactors(); }
+    inline FloatVector2 PhysicalScaleFactors () const { return m_physical_size_ratios * ScaleFactors(); }
     // returns the calculated scale factor for the physical geometry,
     // based upon the object's scale factor, and the physical size ratio.
-    inline Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * GetScaleFactor(); }
+    inline Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * ScaleFactor(); }
 
     // sets the physical size ratios
     void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);

@@ -149,7 +149,7 @@ public:
 
     /** @brief Returns the SDL_ActiveEvent used to create this event.
       */
-    SDL_ActiveEvent const &GetSDLEvent () const { return m_event; }
+    SDL_ActiveEvent const &SDLEvent () const { return m_event; }
 
 private:
 
@@ -167,7 +167,7 @@ public:
     EventResize (SDL_ResizeEvent const *const e, Float const time);
     virtual ~EventResize () { }
 
-    SDL_ResizeEvent const &GetSDLEvent () const { return m_event; }
+    SDL_ResizeEvent const &SDLEvent () const { return m_event; }
 
 private:
 
@@ -185,7 +185,7 @@ public:
     EventExpose (SDL_ExposeEvent const *const e, Float const time);
     virtual ~EventExpose () { }
 
-    SDL_ExposeEvent const &GetSDLEvent () const { return m_event; }
+    SDL_ExposeEvent const &SDLEvent () const { return m_event; }
 
 private:
 
@@ -203,7 +203,7 @@ public:
     EventSysWM (SDL_SysWMEvent const *const e, Float const time);
     virtual ~EventSysWM () { }
 
-    SDL_SysWMEvent const &GetSDLEvent () const { return m_event; }
+    SDL_SysWMEvent const &SDLEvent () const { return m_event; }
 
 private:
 

@@ -253,7 +253,7 @@ public:
     inline ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
     /** @brief Returns the current size of this widget.
       */
-    inline ScreenCoordVector2 GetSize () const { return m_screen_rect.GetSize(); }
+    inline ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }
     /** @brief Returns the widget of this widget.
       */
     inline ScreenCoord GetWidth () const { return m_screen_rect.GetWidth(); }
@@ -288,7 +288,7 @@ public:
     virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
     /** @brief Returns this widget's screen coordinate rectangle.
       */
-    inline ScreenCoordRect const &GetScreenRect () const { return m_screen_rect; }
+    inline ScreenCoordRect const &ScreenRect () const { return m_screen_rect; }
     /** The content area is the area within the sum of the frame margins
       * and the content margins.  Note that the content margins can be
       * negative, up to the negative of the frame margins.
@@ -296,7 +296,7 @@ public:
       */
     inline ScreenCoordRect ContentsRect () const
     {
-        return GetScreenRect().Grown(-(FrameMargins() + ContentMargins()));
+        return ScreenRect().Grown(-(FrameMargins() + ContentMargins()));
     }
     /** @brief Returns this widget's bias color (the bias color is applied to
       * everything drawn by the widget, BEFORE the color mask).
@@ -471,7 +471,7 @@ public:
     /** Actually just calls @a SetFrameMargins with the product of the given
       * ratios and the screen basis.
       * @brief Sets the frame margins for this widget via screen-basis ratios.
-      * @see Screen::GetSizeRatioBasis
+      * @see Screen::SizeRatioBasis
       */
     void SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios);
     /** @brief Sets the content margins for this widget (in direct screen coordinates).
@@ -480,7 +480,7 @@ public:
     /** Actually just calls @a SetContentMargins with the product of the given
       * ratios and the screen basis.
       * @brief Sets the content margins for this widget via screen-basis ratios.
-      * @see Screen::GetSizeRatioBasis
+      * @see Screen::SizeRatioBasis
       */
     void SetContentMarginRatios (FloatVector2 const &content_margin_ratios);
 

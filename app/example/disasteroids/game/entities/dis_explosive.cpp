@@ -74,7 +74,7 @@ void Explosive::Die (
             GetObjectLayer(),
             GetTranslation(),
             GetVelocity(),
-            GetScaleFactor(),
+            ScaleFactor(),
             1.0f,
             time);
 

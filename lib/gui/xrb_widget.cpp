@@ -143,7 +143,7 @@ ScreenCoordVector2 Widget::AdjustedSize (ScreenCoordVector2 const &size) const
     ScreenCoordRect rect(size);
     AdjustFromMinSize(&rect);
     AdjustFromMaxSize(&rect);
-    return rect.GetSize();
+    return rect.Size();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -164,7 +164,7 @@ void Widget::SetSizePropertyEnabled (
             m_size_properties.m_min_size_enabled[component] = value;
             MinSizeUpdated();
             if (AdjustFromMinSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -175,7 +175,7 @@ void Widget::SetSizePropertyEnabled (
             m_size_properties.m_max_size_enabled[component] = value;
             MaxSizeUpdated();
             if (AdjustFromMaxSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -193,7 +193,7 @@ void Widget::SetSizePropertyEnabled (
             m_size_properties.m_min_size_enabled = value;
             MinSizeUpdated();
             if (AdjustFromMinSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -204,7 +204,7 @@ void Widget::SetSizePropertyEnabled (
             m_size_properties.m_max_size_enabled = value;
             MaxSizeUpdated();
             if (AdjustFromMaxSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -225,7 +225,7 @@ void Widget::SetSizeProperty (
             m_size_properties.m_min_size[component] = value;
             MinSizeUpdated();
             if (AdjustFromMinSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -236,7 +236,7 @@ void Widget::SetSizeProperty (
             m_size_properties.m_max_size[component] = value;
             MaxSizeUpdated();
             if (AdjustFromMaxSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -256,7 +256,7 @@ void Widget::SetSizeProperty (
             m_size_properties.m_min_size = value;
             MinSizeUpdated();
             if (AdjustFromMinSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -267,7 +267,7 @@ void Widget::SetSizeProperty (
             m_size_properties.m_max_size = value;
             MaxSizeUpdated();
             if (AdjustFromMaxSize(&m_screen_rect))
-                Resize(m_screen_rect.GetSize());
+                Resize(m_screen_rect.Size());
             ParentChildSizePropertiesUpdate(defer_parent_update);
         }
     }
@@ -279,7 +279,7 @@ void Widget::SetSizePropertyRatio (
     Float const ratio,
     bool const defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
+    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
     ScreenCoord calculated_value =
         static_cast<ScreenCoord>(size_ratio_basis * ratio);
     SetSizeProperty(property, component, calculated_value, defer_parent_update);
@@ -290,7 +290,7 @@ void Widget::SetSizePropertyRatios (
     FloatVector2 const &ratios,
     bool const defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
+    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_value =
         (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
     SetSizeProperty(property, calculated_value, defer_parent_update);
@@ -358,7 +358,7 @@ void Widget::SetFrameMargins (ScreenCoordVector2 const &frame_margins)
 
 void Widget::SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
+    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_frame_margins =
         (static_cast<Float>(size_ratio_basis) *
          frame_margin_ratios).StaticCast<ScreenCoord>();
@@ -379,7 +379,7 @@ void Widget::SetContentMargins (ScreenCoordVector2 const &content_margins)
 
 void Widget::SetContentMarginRatios (FloatVector2 const &content_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->GetSizeRatioBasis();
+    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_content_margins =
         (static_cast<Float>(size_ratio_basis) *
          content_margin_ratios).StaticCast<ScreenCoord>();
@@ -469,7 +469,7 @@ void Widget::Draw (RenderContext const &render_context) const
 {
     // if the background exists, draw it
     if (RenderBackground())
-        RenderBackground()->Draw(render_context, GetScreenRect(), FrameMargins());
+        RenderBackground()->Draw(render_context, ScreenRect(), FrameMargins());
 }
 
 void Widget::MoveTo (ScreenCoordVector2 const &position)
@@ -487,7 +487,7 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 {
     ScreenCoordVector2 adjusted_size(m_size_properties.AdjustedSize(size));
 
-    if (m_screen_rect.GetSize() != adjusted_size)
+    if (m_screen_rect.Size() != adjusted_size)
     {
         m_screen_rect.SetSize(adjusted_size);
         // range checking
@@ -497,25 +497,25 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
     }
 
     // return what the actual size is now
-    return m_screen_rect.GetSize();
+    return m_screen_rect.Size();
 }
 
 ScreenCoordVector2 Widget::ResizeByRatios (FloatVector2 const &ratios)
 {
     return Resize(
-        (static_cast<Float>(GetTopLevelParent()->GetSizeRatioBasis()) *
+        (static_cast<Float>(GetTopLevelParent()->SizeRatioBasis()) *
          ratios).StaticCast<ScreenCoord>());
 }
 
 ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
 {
     MoveTo(screen_rect.BottomLeft());
-    return Resize(screen_rect.GetSize());
+    return Resize(screen_rect.Size());
 }
 
 void Widget::CenterOnWidget (Widget const *const widget)
 {
-    MoveTo(widget->Position() + (widget->GetSize() - GetSize()) / 2);
+    MoveTo(widget->Position() + (widget->Size() - Size()) / 2);
 }
 
 bool Widget::Focus ()
@@ -780,7 +780,7 @@ bool Widget::AdjustFromMinSize (ScreenCoordRect *const screen_rect) const
     for (Uint32 i = Dim::X; i <= Dim::Y; ++i)
     {
         if (m_size_properties.m_min_size_enabled[i] &&
-            screen_rect->GetSize()[i] < m_size_properties.m_min_size[i])
+            screen_rect->Size()[i] < m_size_properties.m_min_size[i])
         {
             screen_rect->SetSize(i, m_size_properties.m_min_size[i]);
             adjusted = true;
@@ -798,7 +798,7 @@ bool Widget::AdjustFromMaxSize (ScreenCoordRect *const screen_rect) const
     for (Uint32 i = Dim::X; i <= Dim::Y; ++i)
     {
         if (m_size_properties.m_max_size_enabled[i] &&
-            screen_rect->GetSize()[i] > m_size_properties.m_max_size[i])
+            screen_rect->Size()[i] > m_size_properties.m_max_size[i])
         {
             screen_rect->SetSize(i, m_size_properties.m_max_size[i]);
             adjusted = true;
@@ -813,11 +813,11 @@ void Widget::MinSizeUpdated ()
     // make sure the size is non-negative
     temp = m_size_properties.m_min_size;
     SizeRangeAdjustment(&temp);
-    m_size_properties.m_min_size = temp.GetSize();
+    m_size_properties.m_min_size = temp.Size();
     // make sure that min/max have the correct relationship
     temp = m_size_properties.m_max_size;
     AdjustFromMinSize(&temp);
-    m_size_properties.m_max_size = temp.GetSize();
+    m_size_properties.m_max_size = temp.Size();
 }
 
 void Widget::MaxSizeUpdated ()
@@ -826,19 +826,19 @@ void Widget::MaxSizeUpdated ()
     // make sure the size is non-negative
     temp = m_size_properties.m_max_size;
     SizeRangeAdjustment(&temp);
-    m_size_properties.m_max_size = temp.GetSize();
+    m_size_properties.m_max_size = temp.Size();
     // make sure that min/max have the correct relationship
     temp = m_size_properties.m_min_size;
     AdjustFromMaxSize(&temp);
-    m_size_properties.m_min_size = temp.GetSize();
+    m_size_properties.m_min_size = temp.Size();
 }
 
 void Widget::SizeRangeAdjustment (ScreenCoordRect *const rect) const
 {
     // make sure the size is non-negative
-    if (rect->GetSize()[Dim::X] < 0)
+    if (rect->Size()[Dim::X] < 0)
         rect->SetSize(Dim::X, 0);
-    if (rect->GetSize()[Dim::Y] < 0)
+    if (rect->Size()[Dim::Y] < 0)
         rect->SetSize(Dim::Y, 0);
 }
 

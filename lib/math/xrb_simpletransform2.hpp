@@ -98,7 +98,7 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    Vector<T, 2> const &GetScaleFactors () const
+    Vector<T, 2> const &ScaleFactors () const
     {
         return m_scale_factors;
     }

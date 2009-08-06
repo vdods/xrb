@@ -47,7 +47,7 @@ Ship::~Ship ()
 {
 }
 
-std::string const &Ship::GetShipSpriteFilename (
+std::string const &Ship::ShipSpriteFilename (
     EntityType const ship_type,
     Uint8 const enemy_level)
 {
@@ -97,7 +97,7 @@ std::string const &Ship::GetShipSpriteFilename (
     return s_ship_sprite_filename[ship_index][enemy_level];
 }
 
-Float Ship::GetShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)
+Float Ship::ShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)
 {
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
     switch (ship_type)
@@ -121,8 +121,8 @@ void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
 
 void Ship::HandleNewOwnerObject ()
 {
-    SetScaleFactor(GetShipScaleFactor());
-    SetMass(GetShipBaselineMass());
+    SetScaleFactor(ShipScaleFactor());
+    SetMass(ShipBaselineMass());
 }
 
 void Ship::Think (Float const time, Float const frame_dt)
@@ -149,7 +149,7 @@ void Ship::Die (
         GetObjectLayer(),
         GetTranslation(),
         GetVelocity(),
-        5.0f * GetScaleFactor(),
+        5.0f * ScaleFactor(),
         2.0f,
         time);
 

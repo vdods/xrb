@@ -137,8 +137,8 @@ void MapEditor2::Compound::Draw (
         0.0f);
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
-        GetScaleFactors()[Dim::X],
-        GetScaleFactors()[Dim::Y],
+        ScaleFactors()[Dim::X],
+        ScaleFactors()[Dim::Y],
         1.0f);
 
     // set the color mask
@@ -182,12 +182,12 @@ void MapEditor2::Compound::DrawMetrics (
         0.0f);
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
-        GetScaleFactors()[Dim::X],
-        GetScaleFactors()[Dim::Y],
+        ScaleFactors()[Dim::X],
+        ScaleFactors()[Dim::Y],
         1.0f);
 
 //     Color color(IsSelected() ?
-//                 GetSelectedMetricsColor() :
+//                 SelectedMetricsColor() :
 //                 GetUnselectedMetricsColor());
 //     color[Dim::A] *= alpha_mask;
 
@@ -229,7 +229,7 @@ void MapEditor2::Compound::DrawMetrics (
 
     // if the metric mode is vertices, draw the vertices
     bool vertices_can_be_selected =
-        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->SelectedObjectCount() == 0 ||
         IsSelected();
     if (metric_mode == Object::MM_VERTICES && vertices_can_be_selected)
     {
@@ -287,7 +287,7 @@ void MapEditor2::Compound::DrawMetrics (
     }
 }
 
-Uint32 MapEditor2::Compound::GetSelectedPolygonCount () const
+Uint32 MapEditor2::Compound::SelectedPolygonCount () const
 {
     Uint32 selected_polygon_count = 0;
 
@@ -321,7 +321,7 @@ Instance<MapEditor2::CompoundVertex> *MapEditor2::Compound::GetVertexInstance (
     return vertex_instance;
 }
 
-MapEditor2::Polygon *MapEditor2::Compound::GetSmallestPolygonTouchingPoint (
+MapEditor2::Polygon *MapEditor2::Compound::SmallestPolygonTouchingPoint (
     FloatVector2 const &point) const
 {
     Polygon *smallest = NULL;
@@ -379,7 +379,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->SelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;
@@ -426,13 +426,13 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
         Polygon *polygon = *it;
         ASSERT1(polygon != NULL);
         
-        if (polygon->GetSelectedVertexCount() > polygon->GetVertexCount() - 2)
+        if (polygon->SelectedVertexCount() > polygon->GetVertexCount() - 2)
             return W_WOULD_CAUSE_DEGENERATION;
 
         if (!polygon->AreSelectedVerticesContiguous())
             return W_WOULD_CAUSE_PINCH;
 
-        if (polygon->m_is_selected && polygon->GetSelectedVertexCount() > 0)
+        if (polygon->m_is_selected && polygon->SelectedVertexCount() > 0)
             ++polygons_with_selected_vertices_count;
     }
     
@@ -635,7 +635,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
 {
     // we don't want to allow deleting all the polygons, leaving
     // an empty and inaccessable object.
-    ASSERT1(GetSelectedPolygonCount() < PolygonCount());
+    ASSERT1(SelectedPolygonCount() < PolygonCount());
 
     // iterate through the polygon list and delete selected polygons.
     for (PolygonListIterator it = m_polygon_list.begin(),
@@ -697,7 +697,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->SelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;
@@ -751,7 +751,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
     // vertices can only be selected if there are no selected objects,
     // or if there are, they are from the object selection set.
     bool vertices_can_be_selected =
-        MapEditorObjectLayer()->GetSelectedObjectCount() == 0 ||
+        MapEditorObjectLayer()->SelectedObjectCount() == 0 ||
         IsSelected();
     if (!vertices_can_be_selected)
         return;

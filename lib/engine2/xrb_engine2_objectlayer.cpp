@@ -76,10 +76,10 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
     return retval;
 }
 
-Engine2::Object *Engine2::ObjectLayer::GetSmallestObjectTouchingPoint (
+Engine2::Object *Engine2::ObjectLayer::SmallestObjectTouchingPoint (
     FloatVector2 const &point) const
 {
-    return m_quad_tree->GetSmallestObjectTouchingPoint(point);
+    return m_quad_tree->SmallestObjectTouchingPoint(point);
 }
 
 bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
@@ -91,8 +91,8 @@ bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
         return m_quad_tree->DoesAreaOverlapAnyObjectWrapped(
             area_center,
             area_radius,
-            GetSideLength(),
-            0.5f * GetSideLength());
+            SideLength(),
+            0.5f * SideLength());
     else
         return m_quad_tree->DoesAreaOverlapAnyObject(area_center, area_radius);
 }
@@ -102,18 +102,18 @@ FloatVector2 Engine2::ObjectLayer::NormalizedCoordinates (
 {
     FloatVector2 normalized_coordinates(coordinates);
 
-    Float const half_object_layer_side_length = 0.5f * GetSideLength();
+    Float const half_object_layer_side_length = 0.5f * SideLength();
     if (IsWrapped())
     {
         while (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::X] += GetSideLength();
+            normalized_coordinates[Dim::X] += SideLength();
         while (normalized_coordinates[Dim::X] > half_object_layer_side_length)
-            normalized_coordinates[Dim::X] -= GetSideLength();
+            normalized_coordinates[Dim::X] -= SideLength();
 
         while (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] += GetSideLength();
+            normalized_coordinates[Dim::Y] += SideLength();
         while (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] -= GetSideLength();
+            normalized_coordinates[Dim::Y] -= SideLength();
     }
     else
     {
@@ -142,7 +142,7 @@ FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
 
     if (IsWrapped())
     {
-        Float const half_object_layer_side_length = 0.5f * GetSideLength();
+        Float const half_object_layer_side_length = 0.5f * SideLength();
         FloatVector2 adjusted_coordinates(coordinates);
 
         ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length);
@@ -151,19 +151,19 @@ FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
         ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
-            adjusted_coordinates[Dim::X] += GetSideLength();
+            adjusted_coordinates[Dim::X] += SideLength();
         ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
-            adjusted_coordinates[Dim::X] -= GetSideLength();
+            adjusted_coordinates[Dim::X] -= SideLength();
         ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
-            adjusted_coordinates[Dim::Y] += GetSideLength();
+            adjusted_coordinates[Dim::Y] += SideLength();
         ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length);
 
         while (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
-            adjusted_coordinates[Dim::Y] -= GetSideLength();
+            adjusted_coordinates[Dim::Y] -= SideLength();
         ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length);
 
         return adjusted_coordinates;
@@ -185,7 +185,7 @@ void Engine2::ObjectLayer::Write (Serializer &serializer) const
     // write the objects the quadtree contains
     DEBUG1_CODE(Uint32 written_static_object_count =)
     m_quad_tree->WriteObjects(serializer);
-    ASSERT1(written_static_object_count == m_quad_tree->GetSubordinateStaticObjectCount());
+    ASSERT1(written_static_object_count == m_quad_tree->SubordinateStaticObjectCount());
 }
 
 Uint32 Engine2::ObjectLayer::Draw (
