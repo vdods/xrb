@@ -35,7 +35,7 @@ void PowerGenerator::PowerDevices (
     {
         if (powered_device[i] != NULL)
         {
-            power_allocator[i] = powered_device[i]->GetPowerToBeUsedBasedOnInputs(time, frame_dt);
+            power_allocator[i] = powered_device[i]->PowerToBeUsedBasedOnInputs(time, frame_dt);
             total_required_power += power_allocator[i];
         }
         else

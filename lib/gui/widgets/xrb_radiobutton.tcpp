@@ -101,8 +101,8 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
 {
     if (IsChecked())
     {
-        if (GetPicture().IsValid())
-            SetRenderPicture(GetPicture());
+        if (Picture().IsValid())
+            SetRenderPicture(Picture());
         else
             SetRenderPicture(
                 GetWidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
@@ -178,8 +178,8 @@ void RadioButton<T, sentinel>::Initialize (
 
     FixSize(
         ScreenCoordVector2(
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight(),
-            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->GetPixelHeight()));
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
+            GetWidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
 }
 
 // ///////////////////////////////////////////////////////////////////////////

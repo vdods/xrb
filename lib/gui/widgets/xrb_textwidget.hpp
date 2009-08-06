@@ -105,8 +105,8 @@ public:
 
 protected:
 
-    inline Color const &GetRenderTextColor () const { return m_render_text_color; }
-    inline Resource<Font> const &GetRenderFont () const { return m_render_font; }
+    inline Color const &RenderTextColor () const { return m_render_text_color; }
+    inline Resource<Font> const &RenderFont () const { return m_render_font; }
 
     inline void SetRenderTextColor (Color const &render_text_color) { m_render_text_color = render_text_color; }
     virtual void SetRenderFont (Resource<Font> const &render_font);

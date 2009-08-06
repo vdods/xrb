@@ -44,13 +44,13 @@ int main (int argc, char **argv)
         // parse the commandline into the options object.
         Dis::CommandLineOptions options(argv[0]);
         options.InitializeFullscreen(g_config.Boolean(Dis::VIDEO__FULLSCREEN));
-        options.InitializeResolution(g_config.GetResolution());
+        options.InitializeResolution(g_config.Resolution());
         options.InitializeKeyMapName(g_config.GetString(Dis::SYSTEM__KEY_MAP_NAME));
         options.Parse(argc, argv);
-        if (!options.GetParseSucceeded() || options.IsHelpRequested())
+        if (!options.ParseSucceeded() || options.IsHelpRequested())
         {
             options.PrintHelpMessage(cerr);
-            return options.GetParseSucceeded() ? 0 : 1;
+            return options.ParseSucceeded() ? 0 : 1;
         }
 
         // initialize video (no parachute so we get core dumps)
@@ -71,8 +71,8 @@ int main (int argc, char **argv)
 
         // init the screen
         Screen *screen = Screen::Create(
-            options.GetResolution()[Dim::X],
-            options.GetResolution()[Dim::Y],
+            options.Resolution()[Dim::X],
+            options.Resolution()[Dim::Y],
             32,
             (options.Fullscreen() ? SDL_FULLSCREEN : 0));
         if (screen == NULL)
@@ -478,9 +478,9 @@ required interfaces for Weapon:
 
 - PrimaryFire (the basic firing method.  shooting peas and flames and such)
 - SecondaryFire (optional additional firing method.  detonating grenades and such)
-- GetReloadTime -- (0 for always ready)
+- ReloadTime -- (0 for always ready)
 - GetTimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
-- GetRequiresAmmo
+- RequiresAmmo
 - CurrentAmmo
 - MaxAmmo
 - AddAmmo

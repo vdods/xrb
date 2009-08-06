@@ -150,7 +150,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     {
         static Float const s_max_tractor_angle = 15.0f;
 
-        FloatVector2 target_direction(GetReticleCoordinates() - GetTranslation());
+        FloatVector2 target_direction(ReticleCoordinates() - GetTranslation());
         if (!target_direction.IsZero())
         {
             Float angle_delta = Math::CanonicalAngle(Math::Atan(target_direction) - Angle());
@@ -167,9 +167,9 @@ void Devourment::Think (Float const time, Float const frame_dt)
         NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_mouth_tractor),
         MuzzleDirection(m_mouth_tractor),
-        GetReticleCoordinates());
+        ReticleCoordinates());
     m_mouth_tractor->Activate(
-        m_mouth_tractor->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_mouth_tractor->PowerToBeUsedBasedOnInputs(time, frame_dt),
         time,
         frame_dt);
 

@@ -41,7 +41,7 @@ private:
     inline Entity *operator * () { return m_entity; }
 
     inline bool IsValid () const { return m_entity != NULL; }
-    inline Uint32 GetReferenceCount () const { return m_reference_count; }
+    inline Uint32 ReferenceCount () const { return m_reference_count; }
 
     // these should be called only by EntityReference
     inline void NullifyEntity ()
@@ -197,7 +197,7 @@ public:
         if (m_entity_instance != NULL)
         {
             m_entity_instance->DecrementReferenceCount();
-            if (m_entity_instance->GetReferenceCount() == 0)
+            if (m_entity_instance->ReferenceCount() == 0)
                 delete m_entity_instance;
             m_entity_instance = NULL;
         }

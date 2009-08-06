@@ -64,7 +64,7 @@ public:
     {
         return m_validator;
     }
-    inline std::string const &GetPrintfFormat () const
+    inline std::string const &PrintfFormat () const
     {
         return m_printf_format;
     }

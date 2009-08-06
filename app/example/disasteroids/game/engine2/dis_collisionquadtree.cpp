@@ -61,7 +61,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
         ASSERT1(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
         if ((object->GetTranslation() - area_center).Length()
             <
-            (object->GetRadius(GetQuadTreeType()) + area_radius))
+            (object->Radius(GetQuadTreeType()) + area_radius))
         {
             Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
             ASSERT1(entity != NULL);
@@ -143,7 +143,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
 
         if ((object_translation - adjusted_area_center).Length()
             <
-            (object->GetRadius(GetQuadTreeType()) + area_radius))
+            (object->Radius(GetQuadTreeType()) + area_radius))
         {
             Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
             ASSERT1(entity != NULL);
@@ -208,7 +208,7 @@ void CollisionQuadTree::LineTrace (
     Float a = trace_vector | trace_vector;
     {
         FloatVector2 p_minus_c = trace_start - Center();
-        Float R = GetRadius() + trace_radius;
+        Float R = Radius() + trace_radius;
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
         Float determinant = b * b - a * c;
@@ -238,7 +238,7 @@ void CollisionQuadTree::LineTrace (
 
         // check the trace line against the object
         FloatVector2 p_minus_c = trace_start - entity->GetTranslation();
-        Float R = entity->GetRadius(GetQuadTreeType()) + trace_radius;
+        Float R = entity->Radius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
@@ -304,7 +304,7 @@ void CollisionQuadTree::LineTraceWrapped (
             adjusted_center[Dim::Y] += object_layer_side_length;
 
         FloatVector2 p_minus_c = trace_start - adjusted_center;
-        Float R = 2.0f * GetRadius() + trace_radius;
+        Float R = 2.0f * Radius() + trace_radius;
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
         Float determinant = b * b - a * c;
@@ -346,7 +346,7 @@ void CollisionQuadTree::LineTraceWrapped (
 
         // check the trace line against the object
         FloatVector2 p_minus_c = trace_start - adjusted_entity_translation;
-        Float R = entity->GetRadius(GetQuadTreeType()) + trace_radius;
+        Float R = entity->Radius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
@@ -428,7 +428,7 @@ void CollisionQuadTree::AreaTrace (
 
         // don't add it if the entity isn't touching the trace area
         FloatVector2 center_to_center(entity->GetTranslation() - trace_area_center);
-        if (center_to_center.Length() >= entity->GetRadius(GetQuadTreeType()) + trace_area_radius)
+        if (center_to_center.Length() >= entity->Radius(GetQuadTreeType()) + trace_area_radius)
             continue;
 
         area_trace_list->push_back(entity);
@@ -503,7 +503,7 @@ void CollisionQuadTree::AreaTraceWrapped (
 
         // don't add it if the entity isn't touching the trace area
         FloatVector2 center_to_center(adjusted_entity_translation - trace_area_center);
-        if (center_to_center.Length() >= entity->GetRadius(GetQuadTreeType()) + trace_area_radius)
+        if (center_to_center.Length() >= entity->Radius(GetQuadTreeType()) + trace_area_radius)
             continue;
 
         area_trace_list->push_back(entity);
@@ -527,7 +527,7 @@ void CollisionQuadTree::CollideEntity (
         return;
 
     // return if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(entity->GetTranslation(), entity->GetRadius(GetQuadTreeType())))
+    if (!DoesAreaOverlapQuadBounds(entity->GetTranslation(), entity->Radius(GetQuadTreeType())))
         return;
 
     // if there are child nodes, call CollideEntity on each
@@ -562,13 +562,13 @@ void CollisionQuadTree::CollideEntity (
 
         // this is a quick and easy way to avoid calculating
         // the same collision pair twice
-        if (object->GetRadius(GetQuadTreeType()) > entity->GetRadius(GetQuadTreeType()))
+        if (object->Radius(GetQuadTreeType()) > entity->Radius(GetQuadTreeType()))
             continue;
-        else if (object->GetRadius(GetQuadTreeType()) == entity->GetRadius(GetQuadTreeType()) &&
+        else if (object->Radius(GetQuadTreeType()) == entity->Radius(GetQuadTreeType()) &&
                  object > entity->OwnerObject())
             continue;
 
-        Float r = entity->GetRadius(GetQuadTreeType()) + object->GetRadius(GetQuadTreeType());
+        Float r = entity->Radius(GetQuadTreeType()) + object->Radius(GetQuadTreeType());
         FloatVector2 P = entity->GetTranslation() - object->GetTranslation();
 
         if (P.Length() >= r)
@@ -647,9 +647,9 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
 
     // this is a quick and easy way to avoid calculating
     // the same collision pair twice
-    if (object->GetRadius(m_quad_tree_type) > m_entity->GetRadius(m_quad_tree_type)
+    if (object->Radius(m_quad_tree_type) > m_entity->Radius(m_quad_tree_type)
         ||
-        (object->GetRadius(m_quad_tree_type) == m_entity->GetRadius(m_quad_tree_type) &&
+        (object->Radius(m_quad_tree_type) == m_entity->Radius(m_quad_tree_type) &&
          object > m_entity->OwnerObject()))
         return;
 
@@ -666,7 +666,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -m_half_object_layer_side_length)
         ce1_translation[Dim::Y] += m_object_layer_side_length;
 
-    Float r = m_entity->GetRadius(m_quad_tree_type) + object->GetRadius(m_quad_tree_type);
+    Float r = m_entity->Radius(m_quad_tree_type) + object->Radius(m_quad_tree_type);
     FloatVector2 P = ce0_translation - ce1_translation;
 
     if (P.Length() >= r)
@@ -761,7 +761,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
     // return if the area doesn't intersect this node
     if (!DoesAreaOverlapQuadBoundsWrapped(
             functor.GetEntity()->GetTranslation(),
-            functor.GetEntity()->GetRadius(GetQuadTreeType()),
+            functor.GetEntity()->Radius(GetQuadTreeType()),
             functor.ObjectLayerSideLength(),
             functor.HalfObjectLayerSideLength()))
         return;

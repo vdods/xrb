@@ -46,65 +46,65 @@ std::string const &DataFileElementTypeString (DataFileElementType data_file_elem
 // DataFileValue
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DataFileValue::GetPathElementBoolean (std::string const &path) const throw (std::string)
+bool DataFileValue::PathElementBoolean (std::string const &path) const throw (std::string)
 {
-    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(GetPathElement(path));
+    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Boolean")
     return value->GetValue();
 }
 
-Sint32 DataFileValue::GetPathElementSint32 (std::string const &path) const throw (std::string)
+Sint32 DataFileValue::PathElementSint32 (std::string const &path) const throw (std::string)
 {
-    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(GetPathElement(path));
+    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Sint32")
     return value->GetValue();
 }
 
-Uint32 DataFileValue::GetPathElementUint32 (std::string const &path) const throw (std::string)
+Uint32 DataFileValue::PathElementUint32 (std::string const &path) const throw (std::string)
 {
-    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(GetPathElement(path));
+    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Uint32")
     return value->GetValue();
 }
 
-Float DataFileValue::GetPathElementFloat (std::string const &path) const throw (std::string)
+Float DataFileValue::PathElementFloat (std::string const &path) const throw (std::string)
 {
-    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(GetPathElement(path));
+    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Float")
     return value->GetValue();
 }
 
-char DataFileValue::GetPathElementCharacter (std::string const &path) const throw (std::string)
+char DataFileValue::PathElementCharacter (std::string const &path) const throw (std::string)
 {
-    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(GetPathElement(path));
+    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Character")
     return value->GetValue();
 }
 
-std::string const &DataFileValue::GetPathElementString (std::string const &path) const throw (std::string)
+std::string const &DataFileValue::PathElementString (std::string const &path) const throw (std::string)
 {
-    DataFileString const *value = dynamic_cast<DataFileString const *>(GetPathElement(path));
+    DataFileString const *value = dynamic_cast<DataFileString const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a String")
     return value->GetValue();
 }
 
-DataFileArray const *DataFileValue::GetPathElementArray (std::string const &path) const throw (std::string)
+DataFileArray const *DataFileValue::PathElementArray (std::string const &path) const throw (std::string)
 {
-    DataFileArray const *value = dynamic_cast<DataFileArray const *>(GetPathElement(path));
+    DataFileArray const *value = dynamic_cast<DataFileArray const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not an Array")
     return value;
 }
 
-DataFileStructure const *DataFileValue::GetPathElementStructure (std::string const &path) const throw (std::string)
+DataFileStructure const *DataFileValue::PathElementStructure (std::string const &path) const throw (std::string)
 {
-    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(GetPathElement(path));
+    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Structure")
     return value;
@@ -229,7 +229,7 @@ void DataFileContainer::SetPathElementString (std::string const &path, std::stri
     SetSubpathElement(path, 0, new DataFileString(value));
 }
 
-DataFileContainer::NodeType DataFileContainer::GetParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
+DataFileContainer::NodeType DataFileContainer::ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
 {
     ASSERT1(start <= path.length());
 
@@ -332,7 +332,7 @@ void DataFileKeyPair::SetSubpathElement (
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
 
-    switch (GetParentElementNodeType(path, start))
+    switch (ParentElementNodeType(path, start))
     {
         case NT_LEAF:
             if (m_value != NULL)
@@ -605,11 +605,11 @@ void DataFileArray::SetSubpathElement (
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
-    ASSERT1(GetParentElementNodeType(path, start) == NT_ARRAY);
+    ASSERT1(ParentElementNodeType(path, start) == NT_ARRAY);
 
     ++start;
     Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
-    NodeType element_type = GetParentElementNodeType(path, key_delim);
+    NodeType element_type = ParentElementNodeType(path, key_delim);
 
     // determine what array index is being referenced
     Uint32 array_index = UINT32_UPPER_BOUND;
@@ -931,7 +931,7 @@ void DataFileStructure::SetSubpathElement (
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << path.c_str() + start << "\" - expected '|' prefix")
 
-    ASSERT1(GetParentElementNodeType(path, start) == NT_STRUCTURE);
+    ASSERT1(ParentElementNodeType(path, start) == NT_STRUCTURE);
 
     ++start;
     Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));

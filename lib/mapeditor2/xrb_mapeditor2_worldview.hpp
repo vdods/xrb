@@ -68,7 +68,7 @@ namespace MapEditor2
         // returns the current grid scale text
         std::string CurrentGridScaleText () const;
         // returns the curretn polygon tesselation text
-        std::string GetPolygonTesselationText () const;
+        std::string PolygonTesselationText () const;
     
         // returns the currently active origin cursor
         FloatVector2 const &OriginCursor () const;

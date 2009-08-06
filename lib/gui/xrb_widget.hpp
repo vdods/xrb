@@ -157,10 +157,10 @@ public:
     inline std::string const &Name () const { return m_name; }
     /** @brief Returns a pointer to the parent (const) of this widget.
       */
-    inline ContainerWidget const *GetParent () const { return m_parent; }
+    inline ContainerWidget const *Parent () const { return m_parent; }
     /** @brief Returns a pointer to the parent (non-const) of this widget.
       */
-    inline ContainerWidget *GetParent () { return m_parent; }
+    inline ContainerWidget *Parent () { return m_parent; }
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
       * is the top-level parent (see @c Screen), which does some special
@@ -250,7 +250,7 @@ public:
     /** @brief Returns the current position of the lower-left corner of
       *        this widget.
       */
-    inline ScreenCoordVector2 GetPosition () const { return m_screen_rect.BottomLeft(); }
+    inline ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
     /** @brief Returns the current size of this widget.
       */
     inline ScreenCoordVector2 GetSize () const { return m_screen_rect.GetSize(); }
@@ -662,7 +662,7 @@ protected:
     /** @brief Returns the a pointer to the background object which is
       *        rendered in @a Widget::Draw.
       */
-    inline WidgetBackground const *GetRenderBackground () const { return m_render_background; }
+    inline WidgetBackground const *RenderBackground () const { return m_render_background; }
 
     /** @brief Sets the background to use in @a Widget::Draw.
       */

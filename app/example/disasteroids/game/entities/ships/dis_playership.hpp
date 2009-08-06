@@ -57,7 +57,7 @@ public:
 
     Float ArmorStatus () const;
     Float GetShieldStatus () const;
-    Float GetPowerStatus () const;
+    Float PowerStatus () const;
     Float GetWeaponStatus () const;
     inline Float MineralInventory (Uint8 mineral_type) const
     {

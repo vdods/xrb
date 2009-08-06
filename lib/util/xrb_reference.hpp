@@ -66,7 +66,7 @@ public:
         return &m_content;
     }
 
-    inline Uint32 GetReferenceCount () const
+    inline Uint32 ReferenceCount () const
     {
         return m_reference_count;
     }
@@ -172,10 +172,10 @@ public:
     {
         return m_instance != NULL;
     }
-    inline Uint32 GetReferenceCount () const
+    inline Uint32 ReferenceCount () const
     {
         if (m_instance != NULL)
-            return m_instance->GetReferenceCount();
+            return m_instance->ReferenceCount();
         else
             return 0;
     }

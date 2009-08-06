@@ -42,7 +42,7 @@ public:
     { }
 
     inline std::string const &Name () const { return m_name; }
-    inline Uint32 GetPoints () const { return m_points; }
+    inline Uint32 Points () const { return m_points; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline time_t Date () const { return m_date; }
     inline Uint32 Hash () const { return m_hash; }
@@ -63,9 +63,9 @@ struct ScoreOrderByPoints
 {
     bool operator () (Score const &s0, Score const &s1) const
     {
-        return s0.GetPoints() > s1.GetPoints()
+        return s0.Points() > s1.Points()
                ||
-               (s0.GetPoints() == s1.GetPoints() && s0.GetWaveCount() > s1.GetWaveCount())
+               (s0.Points() == s1.Points() && s0.GetWaveCount() > s1.GetWaveCount())
                ||
                (s0.GetWaveCount() == s1.GetWaveCount() && s0.Date() < s1.Date());
     }
@@ -78,9 +78,9 @@ struct ScoreOrderByWaveCount
     {
         return s0.GetWaveCount() > s1.GetWaveCount()
                ||
-               (s0.GetWaveCount() == s1.GetWaveCount() && s0.GetPoints() > s1.GetPoints())
+               (s0.GetWaveCount() == s1.GetWaveCount() && s0.Points() > s1.Points())
                ||
-               (s0.GetPoints() == s1.GetPoints() && s0.Date() < s1.Date());
+               (s0.Points() == s1.Points() && s0.Date() < s1.Date());
     }
 }; // end of struct ScoreOrderByWaveCount
 

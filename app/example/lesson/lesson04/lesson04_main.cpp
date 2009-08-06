@@ -246,8 +246,8 @@ public:
             // This transforms the screen-coordinate movement delta of the
             // mouse motion event into world-coordinates.
             FloatVector2 position_delta(
-                GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>() -
-                GetParallaxedScreenToWorld() * FloatVector2::ms_zero);
+                ParallaxedScreenToWorld() * e->Delta().StaticCast<Float>() -
+                ParallaxedScreenToWorld() * FloatVector2::ms_zero);
             // Move the view using the calculated world-coordinate delta.  We
             // negate the delta because by dragging the view down, the view
             // should move up; while dragging, the mouse cursor should always

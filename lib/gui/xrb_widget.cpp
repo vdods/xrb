@@ -468,13 +468,13 @@ void Widget::UnfixHeight ()
 void Widget::Draw (RenderContext const &render_context) const
 {
     // if the background exists, draw it
-    if (GetRenderBackground())
-        GetRenderBackground()->Draw(render_context, GetScreenRect(), FrameMargins());
+    if (RenderBackground())
+        RenderBackground()->Draw(render_context, GetScreenRect(), FrameMargins());
 }
 
 void Widget::MoveTo (ScreenCoordVector2 const &position)
 {
-    MoveBy(position - GetPosition());
+    MoveBy(position - Position());
 }
 
 void Widget::MoveBy (ScreenCoordVector2 const &delta)
@@ -515,7 +515,7 @@ ScreenCoordVector2 Widget::MoveToAndResize (ScreenCoordRect const &screen_rect)
 
 void Widget::CenterOnWidget (Widget const *const widget)
 {
-    MoveTo(widget->GetPosition() + (widget->GetSize() - GetSize()) / 2);
+    MoveTo(widget->Position() + (widget->GetSize() - GetSize()) / 2);
 }
 
 bool Widget::Focus ()
@@ -1027,7 +1027,7 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
 
         case Event::MOUSEMOTION:
             // record the mouse position over this widget
-            m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->GetPosition();
+            m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->Position();
             // let this widget have an opportunity at the event
             if (ProcessMouseMotionEvent(DStaticCast<EventMouseMotion const *>(e)))
                 return true;

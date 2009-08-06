@@ -75,7 +75,7 @@ void TextWidget::SetFontFaceFilename (std::string const &font_face_filename)
         Singletons::ResourceLibrary().LoadFilename<Font>(
             AsciiFont::Create,
             font_face_filename,
-            m_font->GetPixelHeight());
+            m_font->PixelHeight());
     ASSERT1(font.IsValid());
 
     if (m_font != font)
@@ -93,7 +93,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
     ScreenCoord font_height =
         GetWidgetSkin()->GetScreenCoordFromRatio(font_height_ratio);
 
-    if (m_font->GetPixelHeight() != font_height)
+    if (m_font->PixelHeight() != font_height)
     {
         m_font =
             Singletons::ResourceLibrary().LoadFilename<Font>(
@@ -110,7 +110,7 @@ void TextWidget::SetFontHeight (ScreenCoord const font_height)
     ASSERT1(font_height > 0);
     ASSERT1(m_font.IsValid());
 
-    if (m_font->GetPixelHeight() != font_height)
+    if (m_font->PixelHeight() != font_height)
     {
         m_font =
             Singletons::ResourceLibrary().LoadFilename<Font>(
@@ -255,12 +255,12 @@ void TextWidget::UpdateRenderFont ()
 
 ScreenCoordRect TextWidget::GetTextRect () const
 {
-    return GetRenderFont()->GetStringRect(GetText().c_str());
+    return RenderFont()->GetStringRect(GetText().c_str());
 }
 
 void TextWidget::UpdateMinAndMaxSizesFromText ()
 {
-    if (!GetRenderFont().IsValid())
+    if (!RenderFont().IsValid())
         return;
 
     ScreenCoordVector2 size(GetTextRect().GetSize() + 2 * (FrameMargins() + ContentMargins()));

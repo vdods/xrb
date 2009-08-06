@@ -196,7 +196,7 @@ void HighScores::Read (std::string const &filename)
         // hash (unsigned integer)
 
         DataFileArray const *high_scores;
-        try { high_scores = root->GetPathElementArray("|high_scores"); }
+        try { high_scores = root->PathElementArray("|high_scores"); }
         catch (...) { /* if no high scores, quit. */ return; }
 
         for (Uint32 i = 0; i < high_scores->ElementCount(); ++i)
@@ -205,11 +205,11 @@ void HighScores::Read (std::string const &filename)
             try
             {
                 Score score(
-                    high_score->GetPathElementString("|name"),
-                    high_score->GetPathElementUint32("|points"),
-                    high_score->GetPathElementUint32("|wave_count"),
-                    high_score->GetPathElementUint32("|date"));
-                Uint32 hash = high_score->GetPathElementUint32("|hash");
+                    high_score->PathElementString("|name"),
+                    high_score->PathElementUint32("|points"),
+                    high_score->PathElementUint32("|wave_count"),
+                    high_score->PathElementUint32("|date"));
+                Uint32 hash = high_score->PathElementUint32("|hash");
                 // this check is to prevent people from editing the high scores
                 // file to add fake high scores
                 if (hash == score.Hash())
@@ -234,7 +234,7 @@ void HighScores::Write (std::string const &filename)
     {
         try {
             root->SetPathElementString("|high_scores|+|name", it->Name());
-            root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
+            root->SetPathElementUint32("|high_scores|$|points", it->Points());
             root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
             root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->Date()));
             root->SetPathElementUint32("|high_scores|$|hash", it->Hash());

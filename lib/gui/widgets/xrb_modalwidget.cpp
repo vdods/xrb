@@ -28,10 +28,10 @@ ModalWidget::ModalWidget (
 void ModalWidget::Shutdown ()
 {
     // tell the parent to delete this widget
-    ASSERT1(GetParent() != NULL);
+    ASSERT1(Parent() != NULL);
     EventDeleteChildWidget *delete_child_widget_event =
-        new EventDeleteChildWidget(this, GetParent()->MostRecentFrameTime());
-    GetParent()->EnqueueEvent(delete_child_widget_event);
+        new EventDeleteChildWidget(this, Parent()->MostRecentFrameTime());
+    Parent()->EnqueueEvent(delete_child_widget_event);
 
     // make this widget un-modal
     SetIsModal(false);

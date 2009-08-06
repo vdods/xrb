@@ -49,14 +49,14 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
         m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
         m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->GetPixelHeight());
+        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->PixelHeight());
 
         l = new Label("Vertical Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
         m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->GetPixelHeight());
+        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->PixelHeight());
 
         l = new Label("Fullscreen:", video_options_layout);
         l->SetIsHeightFixedToTextHeight(true);
@@ -119,7 +119,7 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     }
 }
 
-ScreenCoordVector2 OptionsPanel::GetResolution () const
+ScreenCoordVector2 OptionsPanel::Resolution () const
 {
     ASSERT1(m_resolution_x_edit != NULL);
     ASSERT1(m_resolution_y_edit != NULL);
@@ -182,8 +182,8 @@ void OptionsPanel::SetInputActionKeyCode (
 
 void OptionsPanel::ReadValuesFromConfig (Config const &config)
 {
-    SetResolutionX(config.GetResolutionX());
-    SetResolutionY(config.GetResolutionY());
+    SetResolutionX(config.ResolutionX());
+    SetResolutionY(config.ResolutionY());
     SetFullscreen(config.Boolean(VIDEO__FULLSCREEN));
     SetDifficultyLevel(config.GetDifficultyLevel());
 
@@ -197,8 +197,8 @@ void OptionsPanel::WriteValuesToConfig (Config *const config)
 {
     ASSERT1(config != NULL);
 
-    config->SetResolutionX(GetResolution()[Dim::X]);
-    config->SetResolutionY(GetResolution()[Dim::Y]);
+    config->SetResolutionX(Resolution()[Dim::X]);
+    config->SetResolutionY(Resolution()[Dim::Y]);
     config->SetBoolean(VIDEO__FULLSCREEN, Fullscreen());
     config->SetDifficultyLevel(GetDifficultyLevel());
 

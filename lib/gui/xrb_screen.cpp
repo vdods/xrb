@@ -240,7 +240,7 @@ bool Screen::HandleEvent (Event const *const e)
 
             // generate a mouseover event from the mouse motion event
             EventMouseover mouseover_event(
-                mouse_motion_event->GetPosition(),
+                mouse_motion_event->Position(),
                 mouse_motion_event->GetTime());
             ProcessEvent(&mouseover_event);
         }
@@ -249,7 +249,7 @@ bool Screen::HandleEvent (Event const *const e)
         {
             // create a focus event
             EventFocus focus_event(
-                DStaticCast<EventMouseButton const *>(e)->GetPosition(),
+                DStaticCast<EventMouseButton const *>(e)->Position(),
                 e->GetTime());
             // send it to the event processor
             ProcessEvent(&focus_event);
@@ -282,7 +282,7 @@ bool Screen::HandleEvent (Event const *const e)
             // check if this is a mouse event and it doesn't fall inside the
             // top modal widget.  if so, throw the event out.
             if (e->IsMouseEvent())
-                if (!modal_widget->GetScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->GetPosition()))
+                if (!modal_widget->GetScreenRect().IsPointInside(DStaticCast<EventMouse const *>(e)->Position()))
                     return false;
 
             return modal_widget->ProcessEvent(e);

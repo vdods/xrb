@@ -111,7 +111,7 @@ public:
 
         inline Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
         inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
-        inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
+        inline Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
         inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
         inline Float GetViewRadius () const { return m_view_radius; }
         inline bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
@@ -178,12 +178,12 @@ public:
     inline Color const &BiasColor () const { return m_bias_color; }
     inline Color const &ColorMask () const { return m_color_mask; }
     inline bool IsTransparent () const { return m_is_transparent; }
-    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
-    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
+    inline Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
+    inline Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
     inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
-    inline Float GetPhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
-    inline Float GetPhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
+    inline Float PhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
+    inline Float PhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
     // returns the object_layer of this entity
     inline ObjectLayer *GetObjectLayer () const { return m_object_layer; }
     // returns the world this object resides in

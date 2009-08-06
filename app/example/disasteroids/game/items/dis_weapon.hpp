@@ -57,15 +57,15 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const = 0;
+    virtual Float ReadinessStatus (Float time) const = 0;
 
 protected:
 
-    inline Float GetPrimaryInput () const { return m_primary_input; }
+    inline Float PrimaryInput () const { return m_primary_input; }
     inline Float GetSecondaryInput () const { return m_secondary_input; }
     inline FloatVector2 const &MuzzleLocation () const { return m_muzzle_location; }
     inline FloatVector2 const &MuzzleDirection () const { return m_muzzle_direction; }
-    inline FloatVector2 const &GetReticleCoordinates () const { return m_reticle_coordinates; }
+    inline FloatVector2 const &ReticleCoordinates () const { return m_reticle_coordinates; }
 
 private:
 
@@ -98,7 +98,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -120,7 +120,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -183,7 +183,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -199,7 +199,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -262,7 +262,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -278,7 +278,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -346,7 +346,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -362,7 +362,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -407,7 +407,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -423,7 +423,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -479,7 +479,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -495,7 +495,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -543,7 +543,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -559,7 +559,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -611,7 +611,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -627,7 +627,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -675,7 +675,7 @@ public:
     virtual ~Tractor () { }
 
     inline bool IsRangeOverridden () const { return m_range_override >= 0.0f; }
-    inline Float GetRangeOverride () const { return m_range_override; }
+    inline Float RangeOverride () const { return m_range_override; }
 
     inline bool IsStrengthOverridden () const { return m_strength_override >= 0.0f; }
     inline Float GetStrengthOverride () const { return m_strength_override; }
@@ -722,7 +722,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         return 1.0f;
     }
@@ -731,7 +731,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -782,7 +782,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
@@ -798,7 +798,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 
@@ -853,7 +853,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (Float time) const
     {
         Float const fire_rate =
             IsFireRateOverridden() ?
@@ -873,7 +873,7 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 

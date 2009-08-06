@@ -103,7 +103,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 {
     // if this is the top level node, write out the number of
     // subordinate non-entities
-    if (GetParent() == NULL)
+    if (Parent() == NULL)
         serializer.WriteUint32(GetSubordinateStaticObjectCount());
 
     // the number of non-entities written
@@ -129,7 +129,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     {
         for (Uint8 i = 0; i < 4; ++i)
         {
-            ASSERT1(m_child[i]->GetParent() == this);
+            ASSERT1(m_child[i]->Parent() == this);
             retval += Child<VisibilityQuadTree>(i)->WriteObjects(serializer);
         }
     }
@@ -328,14 +328,14 @@ void Engine2::VisibilityQuadTree::Draw (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f);
+    ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
     ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
 
     // don't draw quadtrees whose radii are lower than the
     // gs_radius_limit_lower threshold -- a form of distance culling,
     // which gives a huge speedup and allows zooming to any level
     // maintain a consistent framerate.
-    if (draw_loop_functor.GetPixelsInViewRadius() * GetRadius()
+    if (draw_loop_functor.PixelsInViewRadius() * Radius()
         <
         draw_loop_functor.GetViewRadius() * Object::DrawLoopFunctor::ms_radius_limit_lower)
     {
@@ -363,13 +363,13 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT1(GetParent() == NULL);
-    ASSERT2(draw_loop_functor.GetPixelsInViewRadius() > 0.0f);
+    ASSERT1(Parent() == NULL);
+    ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
     ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
     ASSERT2(m_half_side_length > 0.0f);
 
     Float side_length = GetSideLength();
-    Float radius_sum = 2.0f*GetRadius() + draw_loop_functor.GetViewRadius();
+    Float radius_sum = 2.0f*Radius() + draw_loop_functor.GetViewRadius();
     Float top = floor((draw_loop_functor.GetViewCenter().m[1]+radius_sum)/side_length);
     Float bottom = ceil((draw_loop_functor.GetViewCenter().m[1]-radius_sum)/side_length);
     Float left = ceil((draw_loop_functor.GetViewCenter().m[0]-radius_sum)/side_length);

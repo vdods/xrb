@@ -72,7 +72,7 @@ public:
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply
     // to each device it has equipped, based on how much each would draw.
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 

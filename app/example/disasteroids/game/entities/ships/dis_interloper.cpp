@@ -88,7 +88,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
     if (!GetVelocity().IsZero())
         AimShipAtCoordinates(GetTranslation() + GetVelocity().Normalization(), frame_dt);
     // apply ship thrust in the appropriate direction
-    FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
+    FloatVector2 thrust_direction(ReticleCoordinates() - GetTranslation());
     if (thrust_direction.LengthSquared() < 0.001f)
         thrust_direction = Math::UnitVector(Angle());
     else
@@ -226,7 +226,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     if (collision_entity != NULL)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
-        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);

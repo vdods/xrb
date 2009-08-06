@@ -436,7 +436,7 @@ void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    BinaryFileSerializer::WriteBool(value.GetPostTranslate());
+    BinaryFileSerializer::WriteBool(value.PostTranslate());
 }
 
 } // end of namespace Xrb

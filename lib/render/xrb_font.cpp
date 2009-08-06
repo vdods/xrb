@@ -88,7 +88,7 @@ ScreenCoordRect Font::GetStringRect (LineFormatVector const &line_format_vector)
     {
         width = Max(width, it->m_width);
     }
-    return ScreenCoordRect(ScreenCoordVector2(width, line_format_vector.size() * GetPixelHeight()));
+    return ScreenCoordRect(ScreenCoordVector2(width, line_format_vector.size() * PixelHeight()));
 }
 
 void Font::DrawString (
@@ -180,7 +180,7 @@ void Font::DrawLineFormattedText (
     }
 
     ScreenCoord text_height =
-        line_format_vector.size() * GetPixelHeight();
+        line_format_vector.size() * PixelHeight();
     ScreenCoordVector2 total_spacing = ScreenCoordVector2::ms_zero;
     ScreenCoordVector2 initial_pen_position(draw_rect.GetTopLeft());
     ScreenCoordVector2 pen_position(initial_pen_position);
@@ -259,7 +259,7 @@ void Font::DrawLineFormattedText (
             line_format_vector[line].m_glyph_count,
             total_spacing[Dim::X]);
         // move the pen position down a line
-        pen_position[Dim::Y] -= GetPixelHeight();
+        pen_position[Dim::Y] -= PixelHeight();
 
         if (spacing_lines_left > 0)
         {
@@ -438,7 +438,7 @@ void AsciiFont::MoveThroughGlyph (
     if (*current_glyph == '\n')
     {
         (*pen_position_26_6)[Dim::X] = initial_pen_position[Dim::X] << 6;
-        (*pen_position_26_6)[Dim::Y] -= GetPixelHeight() << 6;
+        (*pen_position_26_6)[Dim::Y] -= PixelHeight() << 6;
     }
     else
     {

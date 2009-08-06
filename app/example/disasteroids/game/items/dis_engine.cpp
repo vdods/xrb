@@ -37,7 +37,7 @@ void Engine::SetInputs (
     m_auxiliary_input = auxiliary_input;
 }
 
-Float Engine::GetPowerToBeUsedBasedOnInputs (
+Float Engine::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {

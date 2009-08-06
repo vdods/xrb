@@ -84,7 +84,7 @@ void Label::SetWordWrap (bool const word_wrap)
     if (m_is_picture_label)
         return;
 
-    ASSERT1(GetRenderFont().IsValid());
+    ASSERT1(RenderFont().IsValid());
 
     if (m_word_wrap != word_wrap)
     {
@@ -161,7 +161,7 @@ void Label::HandleChangedContentMargins ()
 void Label::DrawText (RenderContext const &render_context) const
 {
     ASSERT1(!m_is_picture_label);
-    ASSERT1(GetRenderFont().IsValid());
+    ASSERT1(RenderFont().IsValid());
 
     ScreenCoordRect contents_rect(ContentsRect());
     if (contents_rect.IsValid())
@@ -175,12 +175,12 @@ void Label::DrawText (RenderContext const &render_context) const
         // calculate the clip rect
         string_render_context.ApplyClipRect(contents_rect);
         // calculate the color mask
-        string_render_context.ApplyColorMask(GetRenderTextColor());
+        string_render_context.ApplyColorMask(RenderTextColor());
         // set up the GL clip rect
         string_render_context.SetupGLClipRect();
         // draw the text
         ASSERT1(m_line_format_vector_source != NULL);
-        GetRenderFont()->DrawLineFormattedText(
+        RenderFont()->DrawLineFormattedText(
             string_render_context,
             ContentsRect(),
             m_line_format_vector_source->c_str(),
@@ -192,7 +192,7 @@ void Label::DrawText (RenderContext const &render_context) const
 void Label::DrawPicture (RenderContext const &render_context) const
 {
     ASSERT1(m_is_picture_label);
-    if (!GetRenderPicture().IsValid())
+    if (!RenderPicture().IsValid())
         return;
 
     // this is the rectangle which will be used to render the picture.
@@ -233,7 +233,7 @@ void Label::DrawPicture (RenderContext const &render_context) const
         picture_rect = contents_rect;
     }
 
-    Render::DrawScreenRectTexture(render_context, *GetRenderPicture(), picture_rect);
+    Render::DrawScreenRectTexture(render_context, *RenderPicture(), picture_rect);
 }
 
 void Label::SetRenderFont (Resource<Font> const &render_font)
@@ -263,16 +263,16 @@ void Label::UpdateRenderFont ()
 
 void Label::UpdateRenderPicture ()
 {
-    SetRenderPicture(GetPicture());
+    SetRenderPicture(Picture());
 }
 
 ScreenCoordRect Label::GetTextRect () const
 {
     ASSERT1(!m_is_picture_label);
-    ASSERT1(GetRenderFont().IsValid());
+    ASSERT1(RenderFont().IsValid());
 
     UpdateCachedFormattedText();
-    return GetRenderFont()->GetStringRect(m_line_format_vector);
+    return RenderFont()->GetStringRect(m_line_format_vector);
 }
 
 void Label::UpdateMinAndMaxSizesFromText ()
@@ -281,7 +281,7 @@ void Label::UpdateMinAndMaxSizesFromText ()
     if (m_is_picture_label)
         return;
 
-    ASSERT1(GetRenderFont().IsValid());
+    ASSERT1(RenderFont().IsValid());
 
     // if word-wrapping is enabled, then we can't base the min/max width
     // of this widget off the text, because the width of the widget dictates
@@ -299,7 +299,7 @@ void Label::UpdateMinAndMaxSizesFromText ()
 void Label::UpdateCachedFormattedText () const
 {
     ASSERT1(!m_is_picture_label);
-    ASSERT1(GetRenderFont().IsValid());
+    ASSERT1(RenderFont().IsValid());
 
     // if no update was required, early-out
     if (!m_text_formatting_update_required)
@@ -312,7 +312,7 @@ void Label::UpdateCachedFormattedText () const
     if (m_word_wrap)
     {
         // generate the word-wrapped string
-        GetRenderFont()->GenerateWordWrappedString(
+        RenderFont()->GenerateWordWrappedString(
             m_text,
             &m_cached_formatted_text,
             ContentsRect().GetSize());
@@ -325,7 +325,7 @@ void Label::UpdateCachedFormattedText () const
     }
 
     // create the line format vector from whatever text was chosen above
-    GetRenderFont()->GenerateLineFormatVector(m_line_format_vector_source->c_str(), &m_line_format_vector);
+    RenderFont()->GenerateLineFormatVector(m_line_format_vector_source->c_str(), &m_line_format_vector);
 }
 
 } // end of namespace Xrb

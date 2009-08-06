@@ -159,7 +159,7 @@ void Asteroid::Die (
     // this asteroid breaking up
     if (Mass() > ms_minimum_breakup_mass)
     {
-        converted_mass = GetProportionToConvertToMinerals() * Mass();
+        converted_mass = ProportionToConvertToMinerals() * Mass();
         Float mass =
             Mass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
         FloatVector2 source_velocity = GetVelocity();
@@ -237,7 +237,7 @@ void Asteroid::Die (
             Float velocity_angle = Math::RandomAngle();
             FloatVector2 velocity = GetVelocity() + 10.0f * Math::UnitVector(velocity_angle);
             Float scale_factor = Math::Sqrt(mass);
-            Uint8 mineral_index = GetRandomMineral();
+            Uint8 mineral_index = RandomMineral();
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
@@ -258,7 +258,7 @@ void Asteroid::Die (
     ScheduleForDeletion(0.0f);
 }
 
-Uint8 Asteroid::GetRandomMineral () const
+Uint8 Asteroid::RandomMineral () const
 {
     Uint8 mineral_level = DStaticCast<World *>(GetWorld())->AsteroidMineralLevel();
     ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT);
@@ -271,7 +271,7 @@ Uint8 Asteroid::GetRandomMineral () const
     return ms_mineral_distribution_lookup_table[mineral_level][random_element];
 }
 
-Float Asteroid::GetProportionToConvertToMinerals () const
+Float Asteroid::ProportionToConvertToMinerals () const
 {
     static Float const s_n = 400.0f;
     static Float const s_N = Math::Sqrt(1.0f / 50.0f);

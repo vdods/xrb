@@ -495,8 +495,8 @@ public:
             // the screen coordinates of the event to world coordinates as used
             // by WorldView.
             MoveView(
-                GetParallaxedScreenToWorld() * FloatVector2::ms_zero -
-                GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
+                ParallaxedScreenToWorld() * FloatVector2::ms_zero -
+                ParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
             // Indicates that the event was used by this method.
             return true;
         }

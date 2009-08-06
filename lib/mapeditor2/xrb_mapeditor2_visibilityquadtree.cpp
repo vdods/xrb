@@ -190,14 +190,14 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
     {
         // if the circle is not touching the reach of this quadnode,
         // do an early out.
-        if ((center - Center()).Length() > radius + 2.0f*GetRadius())
+        if ((center - Center()).Length() > radius + 2.0f*Radius())
             return;
     }
     else
     {
         // if the circle is not touching the exact bounding circle
         // of this quad node, early out
-        if ((center - Center()).Length() > radius + GetRadius())
+        if ((center - Center()).Length() > radius + Radius())
             return;
     }
 
@@ -274,7 +274,7 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - Center()).Length() > radius + 2.0f*GetRadius())
+    if ((center - Center()).Length() > radius + 2.0f*Radius())
         return;
 
     // iterate through all objects at this node and perform the
@@ -441,7 +441,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0f);
+    ASSERT2(draw_data.PixelsInViewRadius() > 0.0f);
     ASSERT2(draw_data.GetViewRadius() > 0.0f);
 
     // constants which control the thresholds at which objects use
@@ -460,7 +460,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     // radius_limit_lower threshold -- a form of distance culling,
     // which gives a huge speedup and allows zooming to any level
     // maintain a consistent framerate.
-    if (draw_data.GetPixelsInViewRadius() * GetRadius() /
+    if (draw_data.PixelsInViewRadius() * Radius() /
         draw_data.GetViewRadius()
         <
         radius_limit_lower)
@@ -486,7 +486,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
         ASSERT1(object->OwnerMapEditorQuadTree() == this);
         // calculate the object's pixel radius on screen
         object_radius =
-            draw_data.GetPixelsInViewRadius() * object->GetVisibleRadius() /
+            draw_data.PixelsInViewRadius() * object->GetVisibleRadius() /
             draw_data.GetViewRadius();
         // distance culling - don't draw objects that are below the
         // radius_limit_lower threshold
@@ -524,12 +524,12 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
     if (GetSubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_data.GetPixelsInViewRadius() > 0.0);
+    ASSERT2(draw_data.PixelsInViewRadius() > 0.0);
     ASSERT2(draw_data.GetViewRadius() > 0.0);
     ASSERT2(m_half_side_length > 0.0);
 
     Float side_length = GetSideLength();
-    Float radius_sum = 2.0f*GetRadius() + draw_data.GetViewRadius();
+    Float radius_sum = 2.0f*Radius() + draw_data.GetViewRadius();
     Float top = floor((draw_data.GetViewCenter().m[1]+radius_sum)/side_length);
     Float bottom = ceil((draw_data.GetViewCenter().m[1]-radius_sum)/side_length);
     Float left = ceil((draw_data.GetViewCenter().m[0]-radius_sum)/side_length);
@@ -572,7 +572,7 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
     
     // if the circle is not touching the reach of this quadnode,
     // do an early out.
-    if ((center - Center()).Length() > radius + 2.0f*GetRadius())
+    if ((center - Center()).Length() > radius + 2.0f*Radius())
         return;
 
     // iterate through all objects at this node and perform the

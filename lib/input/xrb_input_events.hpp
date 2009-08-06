@@ -231,7 +231,7 @@ public:
     virtual bool IsMouseEvent () const { return true; }
     /** @brief Returns the screen coordinate position of this mouse event.
       */
-    ScreenCoordVector2 const &GetPosition () const { return m_position; }
+    ScreenCoordVector2 const &Position () const { return m_position; }
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this mouse event was generated.
       */

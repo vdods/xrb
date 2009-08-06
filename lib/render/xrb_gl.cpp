@@ -221,7 +221,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(
-        clip_rect.Left(), clip_rect.GetRight(),
+        clip_rect.Left(), clip_rect.Right(),
         clip_rect.Bottom(), clip_rect.GetTop(),
         -1.0, 1.0); // these values (-1, 1) are arbitrary
 

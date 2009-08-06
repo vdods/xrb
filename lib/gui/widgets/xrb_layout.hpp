@@ -77,12 +77,12 @@ public:
     ScreenCoord ColumnWidth (Uint32 index) const;
     Uint32 HiddenColumnCount () const;
 
-    Uint32 GetRowCount () const;
-    Bool2 const &GetRowMinSizeEnabled (Uint32 index) const;
-    ScreenCoordVector2 const &GetRowMinSize (Uint32 index) const;
-    Bool2 const &GetRowMaxSizeEnabled (Uint32 index) const;
-    ScreenCoordVector2 const &GetRowMaxSize (Uint32 index) const;
-    ScreenCoord GetRowHeight (Uint32 index) const;
+    Uint32 RowCount () const;
+    Bool2 const &RowMinSizeEnabled (Uint32 index) const;
+    ScreenCoordVector2 const &RowMinSize (Uint32 index) const;
+    Bool2 const &RowMaxSizeEnabled (Uint32 index) const;
+    ScreenCoordVector2 const &RowMaxSize (Uint32 index) const;
+    ScreenCoord RowHeight (Uint32 index) const;
     Uint32 HiddenRowCount () const;
 
     virtual Bool2 ContentsMinSizeEnabled () const;

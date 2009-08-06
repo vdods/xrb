@@ -302,7 +302,7 @@ void CellPaddingWidget::PositionSingleChildWidget ()
         }
     }
     // move the child into position
-    child->MoveTo(GetPosition() + child_position_offset);
+    child->MoveTo(Position() + child_position_offset);
 }
 
 void CellPaddingWidget::DirtyContentsSizeProperties ()

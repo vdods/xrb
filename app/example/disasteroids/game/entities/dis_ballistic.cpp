@@ -50,7 +50,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     GetObjectLayer(),
                     trace_start,
                     trace_vector,
-                    GetPhysicalRadius(),
+                    PhysicalRadius(),
                     false,
                     &line_trace_binding_set);
 

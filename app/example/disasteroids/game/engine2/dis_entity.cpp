@@ -241,7 +241,7 @@ Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) c
 
     FloatVector2 p(GetTranslation() - adjusted_entity_translation);
     FloatVector2 v(GetVelocity() - entity->GetVelocity());
-    Float R = GetRadius(Engine2::QTT_PHYSICS_HANDLER) + entity->GetRadius(Engine2::QTT_PHYSICS_HANDLER);
+    Float R = Radius(Engine2::QTT_PHYSICS_HANDLER) + entity->Radius(Engine2::QTT_PHYSICS_HANDLER);
 
     Polynomial poly;
     poly.Set(2, v | v);

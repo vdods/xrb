@@ -58,8 +58,8 @@ private:
         DISTRIBUTION_LOOKUP_TABLE_SIZE = 50
     };
 
-    Uint8 GetRandomMineral () const;
-    Float GetProportionToConvertToMinerals () const;
+    Uint8 RandomMineral () const;
+    Float ProportionToConvertToMinerals () const;
     inline Float MineralContent () const
     {
         return static_cast<Float>(m_mineral_content_byte) / 255.0f;

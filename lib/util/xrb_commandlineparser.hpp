@@ -54,7 +54,7 @@ public:
     }
     virtual ~CommandLineParser () = 0;
 
-    inline bool GetParseSucceeded () const { return m_parse_succeeded; }
+    inline bool ParseSucceeded () const { return m_parse_succeeded; }
 
     void Parse (Sint32 argc, char const *const *argv);
     void PrintHelpMessage (std::ostream &stream) const;

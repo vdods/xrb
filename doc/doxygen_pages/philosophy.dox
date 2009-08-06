@@ -288,7 +288,7 @@ Vector2 FurthestQuadrantPointFromOrigin (
     {
         Vector2 const &current_vector = vector_array[i];
 
-        if (current_vector.GetQuadrantIndex() != quadrant_index)
+        if (current_vector.QuadrantIndex() != quadrant_index)
             continue;
 
         float current_vector_distance = current_vector.Length();

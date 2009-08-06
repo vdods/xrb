@@ -40,7 +40,7 @@ public:
         std::string const &name = "ProgressBar");
     virtual ~ProgressBar ();
 
-    inline Float GetProgress () const
+    inline Float Progress () const
     {
         return m_progress;
     }

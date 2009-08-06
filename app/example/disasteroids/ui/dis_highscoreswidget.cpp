@@ -69,7 +69,7 @@ void HighScoresWidget::Update (
 
         m_name_label[row]->SetText(score.Name());
         m_wave_count_label[row]->SetValue(score.GetWaveCount());
-        m_points_label[row]->SetValue(score.GetPoints());
+        m_points_label[row]->SetValue(score.Points());
     }
 }
 

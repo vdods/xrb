@@ -47,7 +47,7 @@ public:
 
     /** @brief Returns the position used to construct this event.
       */
-    ScreenCoordVector2 const &GetPosition () const { return m_position; }
+    ScreenCoordVector2 const &Position () const { return m_position; }
 
 private:
 
@@ -81,7 +81,7 @@ public:
 
     /** @brief Returns the position used to construct this event.
       */
-    ScreenCoordVector2 const &GetPosition () const { return m_position; }
+    ScreenCoordVector2 const &Position () const { return m_position; }
 
 private:
 

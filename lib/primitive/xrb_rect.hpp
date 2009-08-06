@@ -177,7 +177,7 @@ public:
     {
         return m_bottom_left[Dim::Y];
     }
-    inline T GetRight () const
+    inline T Right () const
     {
         return m_top_right[Dim::X];
     }
@@ -193,7 +193,7 @@ public:
     }
     inline T GetWidth () const
     {
-        return GetRight() - Left();
+        return Right() - Left();
     }
     inline T Height () const
     {

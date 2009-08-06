@@ -24,7 +24,7 @@ ToolbarButton<T, sentinel>::ToolbarButton (
     :
     RadioButton<T, sentinel>(picture, id, group, parent, name)
 {
-    ASSERT1(this->GetPicture().IsValid());
+    ASSERT1(this->Picture().IsValid());
     ToolbarButton<T, sentinel>::UpdateRenderBackground();
     ToolbarButton<T, sentinel>::UpdateRenderPicture();
 }
@@ -74,7 +74,7 @@ void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
 template <typename T, T sentinel>
 void ToolbarButton<T, sentinel>::UpdateRenderPicture ()
 {
-    SetRenderPicture(this->GetPicture());
+    SetRenderPicture(this->Picture());
 }
 
 template <typename T, T sentinel>

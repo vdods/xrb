@@ -711,11 +711,11 @@ inline Vector<T, 3> operator & (
   * @brief Returns a 2D vector which is rotated 90 degrees counterclockwise.
   * @param source The vector to base the rotation from.
   * @return A 2D vector which is perpendicular to source such that
-  *         @code source & GetPerpendicularVector2<T>(source) @endcode is
+  *         @code source & PerpendicularVector2<T>(source) @endcode is
   *         positive.
   */
 template <typename T>
-inline Vector<T, 2> GetPerpendicularVector2 (Vector<T, 2> const &source)
+inline Vector<T, 2> PerpendicularVector2 (Vector<T, 2> const &source)
 {
     return Vector<T, 2>(-source[1], source[0]);
 }

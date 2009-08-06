@@ -61,7 +61,7 @@ namespace Engine2
         WorldView (WorldViewWidget *parent_world_view_widget);
         virtual ~WorldView ();
 
-        inline WorldViewWidget *GetParentWorldViewWidget () const { return m_parent_world_view_widget; }
+        inline WorldViewWidget *ParentWorldViewWidget () const { return m_parent_world_view_widget; }
         inline World *GetWorld () const { return m_world; }
         inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
         inline Float GetZoomFactor () const { return m_zoom_factor; }
@@ -71,15 +71,15 @@ namespace Engine2
         inline bool DrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 CompoundTransformation () const;
         Float GetViewDepth (ObjectLayer const *object_layer) const;
-        inline Float GetParallaxFactor (
+        inline Float ParallaxFactor (
             Float const view_depth,
             Float const layer_depth) const
         {
             ASSERT1(view_depth < layer_depth);
             return layer_depth - view_depth;
         }
-        Float GetParallaxedViewRadius (ObjectLayer const *object_layer) const;
-        FloatMatrix2 GetParallaxedTransformation (
+        Float ParallaxedViewRadius (ObjectLayer const *object_layer) const;
+        FloatMatrix2 ParallaxedTransformation (
             FloatMatrix2 const &world_to_view,
             FloatMatrix2 const &view_to_whatever,
             ObjectLayer const *object_layer) const;
@@ -144,10 +144,10 @@ namespace Engine2
         ObjectLayer *MainObjectLayer () const;
         Float GridScaleUnit (Uint32 grid_scale) const;
         // parallaxed transformation/view-and-object-layer-property accessors
-        FloatMatrix2 const &GetParallaxedWorldToWorldView () const;
-        FloatMatrix2 const &GetParallaxedWorldViewToWorld () const;
-        FloatMatrix2 const &GetParallaxedWorldToScreen () const;
-        FloatMatrix2 const &GetParallaxedScreenToWorld () const;
+        FloatMatrix2 const &ParallaxedWorldToWorldView () const;
+        FloatMatrix2 const &ParallaxedWorldViewToWorld () const;
+        FloatMatrix2 const &ParallaxedWorldToScreen () const;
+        FloatMatrix2 const &ParallaxedScreenToWorld () const;
 
         // this is called in SetWorld, after m_world is assigned.
         virtual void HandleAttachedWorld () { }

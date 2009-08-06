@@ -40,19 +40,19 @@ public:
     virtual ~QuadTree () = 0;
 
     inline QuadTreeType GetQuadTreeType () const { return m_quad_tree_type; }
-    inline QuadTree *GetParent () const { return m_parent; }
+    inline QuadTree *Parent () const { return m_parent; }
     inline bool HasChildren () const { return m_child[0] != NULL; }
     // returns the root node (top level parent) of this quadtree node
-    QuadTree const *GetRootNode () const;
+    QuadTree const *RootNode () const;
     inline FloatVector2 const &Center () const { return m_center; }
     inline Float GetSideLength () const { return 2.0f * m_half_side_length; }
     inline Float HalfSideLength () const { return m_half_side_length; }
-    inline Float GetRadius () const { return m_radius; }
+    inline Float Radius () const { return m_radius; }
     inline Uint32 GetSubordinateObjectCount () const { return m_subordinate_object_count; }
     inline Uint32 GetSubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *GetSmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of GetSmallestObjectTouchingPoint
-    inline bool IsAllowableObjectRadius (Object const *object) const { return object->GetRadius(GetQuadTreeType()) / m_radius > 0.5f; }
+    inline bool IsAllowableObjectRadius (Object const *object) const { return object->Radius(GetQuadTreeType()) / m_radius > 0.5f; }
 
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
@@ -105,7 +105,7 @@ protected:
         Float const area_radius) const
     {
         ASSERT1(area_radius > 0.0f);
-        Float radius_sum = area_radius + 2.0f * GetRadius();
+        Float radius_sum = area_radius + 2.0f * Radius();
         return (area_center - m_center).LengthSquared() < radius_sum*radius_sum;
     }
     // returns true if this quad's bounding circle is intersecting the given

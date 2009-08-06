@@ -129,7 +129,7 @@ Float const EnemySpawner::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float PeaShooter::GetPowerToBeUsedBasedOnInputs (
+Float PeaShooter::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -146,7 +146,7 @@ Float PeaShooter::GetPowerToBeUsedBasedOnInputs (
                ms_charge_up_time[GetUpgradeLevel()];
     }
     // otherwise if primary fire is on at all, return full power
-    else if (GetPrimaryInput() > 0.0f)
+    else if (PrimaryInput() > 0.0f)
         return ms_required_primary_power[GetUpgradeLevel()];
     // otherwise return 0.
     else
@@ -225,7 +225,7 @@ bool PeaShooter::Activate (
         if (power < ms_required_primary_power[GetUpgradeLevel()])
             return false;
 
-        ASSERT1(GetPrimaryInput() > 0.0f);
+        ASSERT1(PrimaryInput() > 0.0f);
 
         // fire the weapon -- create a Pea and set its position and velocity
         ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);
@@ -253,15 +253,15 @@ bool PeaShooter::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Laser::GetPowerToBeUsedBasedOnInputs (
+Float Laser::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
-    ASSERT1(GetPrimaryInput() <= 1.0f);
+    ASSERT1(PrimaryInput() <= 1.0f);
     ASSERT1(GetSecondaryInput() <= 1.0f);
 
-    if (GetPrimaryInput() > 0.0f)
-        return GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
+    if (PrimaryInput() > 0.0f)
+        return PrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()];
     else
         return 0.0f;
 }
@@ -388,9 +388,9 @@ bool Laser::Activate (
     }
 
     // primary constant beam firing mode
-    if (GetPrimaryInput() > 0.0f && power > 0.0f)
+    if (PrimaryInput() > 0.0f && power > 0.0f)
     {
-        ASSERT1(power <= GetPrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
+        ASSERT1(power <= PrimaryInput() * frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
 
         LineTraceBindingSet line_trace_binding_set;
         OwnerShip()->GetPhysicsHandler()->LineTrace(
@@ -461,7 +461,7 @@ bool Laser::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float FlameThrower::GetPowerToBeUsedBasedOnInputs (
+Float FlameThrower::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -472,7 +472,7 @@ Float FlameThrower::GetPowerToBeUsedBasedOnInputs (
 
     // return a power proportional to the primary input required power,
     // or 0 if its less than the minimum required power
-    Float scaled_power = GetPrimaryInput() * ms_max_required_primary_power[GetUpgradeLevel()];
+    Float scaled_power = PrimaryInput() * ms_max_required_primary_power[GetUpgradeLevel()];
     if (scaled_power < ms_min_required_primary_power[GetUpgradeLevel()])
         return 0.0f;
     else
@@ -496,7 +496,7 @@ bool FlameThrower::Activate (
         return false;
 
     ASSERT1(power >= 0.0f);
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     Float max_damage_per_fireball =
         IsMaxDamagePerFireballOverridden() ?
@@ -540,7 +540,7 @@ bool FlameThrower::Activate (
 //         m_reticle_effect->RemoveFromWorld();
 // }
 
-Float GaussGun::GetPowerToBeUsedBasedOnInputs (
+Float GaussGun::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -550,7 +550,7 @@ Float GaussGun::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool GaussGun::Activate (
@@ -564,7 +564,7 @@ bool GaussGun::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     // fire the weapon -- do a trace and spawn the GaussGunTrail
     ASSERT1(OwnerShip()->GetWorld() != NULL);
@@ -683,7 +683,7 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
     active_grenade->SetOwnerGrenadeLauncher(NULL);
 }
 
-Float GrenadeLauncher::GetPowerToBeUsedBasedOnInputs (
+Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -697,7 +697,7 @@ Float GrenadeLauncher::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool GrenadeLauncher::Activate (
@@ -708,7 +708,7 @@ bool GrenadeLauncher::Activate (
     ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
-    if (GetPrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
+    if (PrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
         return false;
 
     // you can fire secondary at any time, it doesn't use any power
@@ -731,7 +731,7 @@ bool GrenadeLauncher::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn a Grenade
     ASSERT1(OwnerShip()->GetWorld() != NULL);
@@ -767,7 +767,7 @@ bool GrenadeLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float MissileLauncher::GetPowerToBeUsedBasedOnInputs (
+Float MissileLauncher::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -777,7 +777,7 @@ Float MissileLauncher::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // primary fire overrides secondary fire.
-    if (GetPrimaryInput() > 0.0f)
+    if (PrimaryInput() > 0.0f)
         return ms_required_primary_power[GetUpgradeLevel()];
     else if (GetSecondaryInput() > 0.0f)
         return ms_required_secondary_power[GetUpgradeLevel()];
@@ -797,7 +797,7 @@ bool MissileLauncher::Activate (
             ms_required_secondary_power[GetUpgradeLevel()]));
 
     // primary takes precedence over secondary fire
-    if (GetPrimaryInput() > 0.0f &&
+    if (PrimaryInput() > 0.0f &&
         power >= ms_required_primary_power[GetUpgradeLevel()])
     {
         // fire the weapon -- spawn a Missile
@@ -866,7 +866,7 @@ bool MissileLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float EMPCore::GetPowerToBeUsedBasedOnInputs (
+Float EMPCore::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -876,7 +876,7 @@ Float EMPCore::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool EMPCore::Activate (
@@ -887,7 +887,7 @@ bool EMPCore::Activate (
     ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // if not firing, return false
-    if (GetPrimaryInput() == 0.0f)
+    if (PrimaryInput() == 0.0f)
     {
         ASSERT1(power == 0.0f);
         return false;
@@ -948,7 +948,7 @@ void EMPBombLayer::ActiveEMPBombDestroyed (EMPBomb *const active_emp_bomb)
     active_emp_bomb->SetOwnerEMPBombLayer(NULL);
 }
 
-Float EMPBombLayer::GetPowerToBeUsedBasedOnInputs (
+Float EMPBombLayer::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -962,7 +962,7 @@ Float EMPBombLayer::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool EMPBombLayer::Activate (
@@ -973,7 +973,7 @@ bool EMPBombLayer::Activate (
     ASSERT1(power <= ms_required_primary_power[GetUpgradeLevel()]);
 
     // since the secondary fire takes no power, we have to check the inputs
-    if (GetPrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
+    if (PrimaryInput() == 0.0f && GetSecondaryInput() == 0.0f)
         return false;
 
     // you can fire secondary at any time, it doesn't use any power
@@ -996,7 +996,7 @@ bool EMPBombLayer::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn a EMPBomb
     ASSERT1(OwnerShip()->GetWorld() != NULL);
@@ -1032,14 +1032,14 @@ bool EMPBombLayer::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Tractor::GetPowerToBeUsedBasedOnInputs (
+Float Tractor::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
     if (GetSecondaryInput() > 0.0f)
         return GetSecondaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
     else
-        return GetPrimaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
+        return PrimaryInput() * frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
 }
 
 bool Tractor::Activate (
@@ -1049,7 +1049,7 @@ bool Tractor::Activate (
 {
     // the epsilon is because floating point arithmetic isn't exact
     // and the first condition was sometimes failing.
-    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
+    ASSERT1(power <= PowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
     ASSERT1(m_tractor_beam != NULL);
     ASSERT1(m_tractor_beam->IsInWorld());
 
@@ -1060,15 +1060,15 @@ bool Tractor::Activate (
         return false;
     }
 
-    ASSERT1(GetPrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f || GetSecondaryInput() > 0.0f);
     // the secondary tractor mode pulls everything, not just powerups
     bool pull_everything = GetSecondaryInput() > 0.0f;
-    bool push_instead_of_pull = GetPrimaryInput() == 0.0f;
-    Float input = pull_everything ? GetSecondaryInput() : GetPrimaryInput();
+    bool push_instead_of_pull = PrimaryInput() == 0.0f;
+    Float input = pull_everything ? GetSecondaryInput() : PrimaryInput();
 
     Float range =
         IsRangeOverridden() ?
-        GetRangeOverride() :
+        RangeOverride() :
         ms_range[GetUpgradeLevel()];
     Float strength =
         IsStrengthOverridden() ?
@@ -1085,7 +1085,7 @@ bool Tractor::Activate (
 
     // use the reticle coordinates for the area the tractor pulls/pushes,
     // but make sure it's inside the maximum range.
-    FloatVector2 reticle_coordinates(GetReticleCoordinates());
+    FloatVector2 reticle_coordinates(ReticleCoordinates());
     Float reticle_distance =
         (reticle_coordinates - OwnerShip()->GetTranslation()).Length();
     if (reticle_distance > range)
@@ -1143,7 +1143,7 @@ bool Tractor::Activate (
     // set its pulling input and intensity
     Float intensity = power / (frame_dt * ms_max_power_output_rate[GetUpgradeLevel()]);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    m_tractor_beam->SetParameters(pull_everything, push_instead_of_pull, GetPrimaryInput(), intensity);
+    m_tractor_beam->SetParameters(pull_everything, push_instead_of_pull, PrimaryInput(), intensity);
 
     return true;
 }
@@ -1152,7 +1152,7 @@ bool Tractor::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float SlowBulletGun::GetPowerToBeUsedBasedOnInputs (
+Float SlowBulletGun::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -1162,7 +1162,7 @@ Float SlowBulletGun::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool SlowBulletGun::Activate (
@@ -1176,7 +1176,7 @@ bool SlowBulletGun::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     // fire the weapon -- create a Pea and set its position and velocity
     ASSERT1(OwnerShip()->GetWorld() != NULL);
@@ -1206,7 +1206,7 @@ bool SlowBulletGun::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
+Float EnemySpawner::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
@@ -1221,7 +1221,7 @@ Float EnemySpawner::GetPowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // if the primary input is on at all, return the full primary power
-    return (GetPrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
+    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[GetUpgradeLevel()] : 0.0f;
 }
 
 bool EnemySpawner::Activate (
@@ -1235,7 +1235,7 @@ bool EnemySpawner::Activate (
     if (power < ms_required_primary_power[GetUpgradeLevel()])
         return false;
 
-    ASSERT1(GetPrimaryInput() > 0.0f);
+    ASSERT1(PrimaryInput() > 0.0f);
 
     // fire the weapon -- spawn the specified type/level of enemy
     ASSERT1(ms_muzzle_speed[GetUpgradeLevel()] > 0.0f);

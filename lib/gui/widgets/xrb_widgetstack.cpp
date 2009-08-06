@@ -207,7 +207,7 @@ void WidgetStack::ResizeAndRepositionChildWidgets ()
         // move the child to the tracked current positional offset,
         // plus half of the extra space, so the child is centered
         // on the grid slot.
-        child->MoveTo(GetPosition() + extra_space / 2);
+        child->MoveTo(Position() + extra_space / 2);
     }
 }
 

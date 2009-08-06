@@ -239,7 +239,7 @@ std::string MapEditor2::WorldView::CurrentGridScaleText () const
     }
 }
 
-std::string MapEditor2::WorldView::GetPolygonTesselationText () const
+std::string MapEditor2::WorldView::PolygonTesselationText () const
 {
     ASSERT1(m_polygon_tesselation >= 3);
     return Util::StringPrintf("%u", m_polygon_tesselation);
@@ -411,7 +411,7 @@ void MapEditor2::WorldView::SetEditingSubMode (
 void MapEditor2::WorldView::CreateStaticSprite (std::string const &filename)
 {
     // calculate the position to stick the new sprite
-    FloatVector2 position(GetParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
+    FloatVector2 position(ParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
     // create the sprite
     Sprite *sprite = Sprite::Create(filename);
     // position the sprite
@@ -428,7 +428,7 @@ void MapEditor2::WorldView::CreateStaticSprite (std::string const &filename)
 void MapEditor2::WorldView::CreateSpriteEntity (std::string const &filename)
 {
     // calculate the position to stick the new sprite
-    FloatVector2 position(GetParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
+    FloatVector2 position(ParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
     // create the sprite
     SpriteEntity *sprite = SpriteEntity::Create(filename);
     // position the sprite
@@ -459,7 +459,7 @@ void MapEditor2::WorldView::SetPolygonTesselation (Uint32 polygon_tesselation)
     if (m_polygon_tesselation != polygon_tesselation)
     {
         m_polygon_tesselation = polygon_tesselation;
-        m_sender_polygon_tesselation_text_changed.Signal(GetPolygonTesselationText());
+        m_sender_polygon_tesselation_text_changed.Signal(PolygonTesselationText());
     }
 }
 
@@ -698,14 +698,14 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         MainMapEditorObjectLayer());
 
     FloatVector2 const transformed_mouse_position(
-        GetParallaxedScreenToWorld() *
-        GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
+        ParallaxedScreenToWorld() *
+        ParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
         
     // calculate the number of pixels in the view radius
     Float pixels_in_view_radius =
         0.5f * render_context.ClipRect().GetSize().StaticCast<Float>().Length();
     // get the parallaxed view radius for the main object layer
-    Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
+    Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
 
     // draw the bounding circles for the objects
     if (m_draw_object_metrics)
@@ -713,7 +713,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         // draw the object bounding circles in the correct colors
         MainMapEditorObjectLayer()->DrawMetrics(
             render_context,
-            GetParallaxedWorldToScreen(),
+            ParallaxedWorldToScreen(),
             pixels_in_view_radius,
             Center(),
             parallaxed_view_radius,
@@ -734,7 +734,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         // draw the selection circle
         Render::DrawCircle(
             render_context,
-            GetParallaxedWorldToScreen(),
+            ParallaxedWorldToScreen(),
             m_rmouse_pressed_world_position,
             selection_circle_radius,
             selection_circle_color);
@@ -903,7 +903,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 bool new_running_state = !MapEditorWorld()->IsRunning();
                 // make sure to skip the time 'burp' to avoid physics unpleasantness
                 if (new_running_state)
-                    MapEditorWorld()->GetPhysicsHandler()->SetSkipTime(true);
+                    MapEditorWorld()->PhysicsHandler()->SetSkipTime(true);
                 else
                     MainMapEditorObjectLayer()->ForceObjectSelectionSetSignals();
                 MapEditorWorld()->SetIsRunning(new_running_state);
@@ -917,8 +917,8 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                 if (!MainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
                 {
                     FloatVector2 position_offset =
-                        GetParallaxedScreenToWorld() * FloatVector2(0.1f, 0.1f) -
-                        GetParallaxedScreenToWorld() * FloatVector2::ms_zero;
+                        ParallaxedScreenToWorld() * FloatVector2(0.1f, 0.1f) -
+                        ParallaxedScreenToWorld() * FloatVector2::ms_zero;
                     MainMapEditorObjectLayer()->ObjectSelectionSetClone(
                         position_offset);
                 }
@@ -931,10 +931,10 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         dialog = new FileDialog(
                             "Load image as static sprite",
                             FilePanel::OP_OPEN,
-                            GetParentWorldViewWidget(),
+                            ParentWorldViewWidget(),
                             "static sprite creation dialog");
-                        dialog->Resize(dialog->GetParent()->GetSize() * 4 / 5);
-                        dialog->CenterOnWidget(dialog->GetParent());
+                        dialog->Resize(dialog->Parent()->GetSize() * 4 / 5);
+                        dialog->CenterOnWidget(dialog->Parent());
                         SignalHandler::Connect1(
                             dialog->SenderSubmitFilename(),
                             ReceiverCreateStaticSprite());
@@ -944,10 +944,10 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         dialog = new FileDialog(
                             "Load image as sprite entity",
                             FilePanel::OP_OPEN,
-                            GetParentWorldViewWidget(),
+                            ParentWorldViewWidget(),
                             "sprite entity creation dialog");
-                        dialog->Resize(dialog->GetParent()->GetSize() * 4 / 5);
-                        dialog->CenterOnWidget(dialog->GetParent());
+                        dialog->Resize(dialog->Parent()->GetSize() * 4 / 5);
+                        dialog->CenterOnWidget(dialog->Parent());
                         SignalHandler::Connect1(
                             dialog->SenderSubmitFilename(),
                             ReceiverCreateSpriteEntity());
@@ -1269,7 +1269,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
 bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     FloatVector2 const transformed_mouse_event_position(
-        GetParallaxedScreenToWorld() * e->GetPosition().StaticCast<Float>());
+        ParallaxedScreenToWorld() * e->Position().StaticCast<Float>());
 
     // track the lmouse/rmouse pressed positions, resetting the dragged
     // properties if appropriate
@@ -1277,13 +1277,13 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
     {
         if (e->ButtonCode() == Key::LEFTMOUSE)
         {
-            m_lmouse_pressed_position = e->GetPosition().StaticCast<Float>();
+            m_lmouse_pressed_position = e->Position().StaticCast<Float>();
             m_lmouse_pressed_world_position = transformed_mouse_event_position;
             m_lmouse_dragged = false;
         }
         else if (e->ButtonCode() == Key::RIGHTMOUSE)
         {
-            m_rmouse_pressed_position = e->GetPosition().StaticCast<Float>();
+            m_rmouse_pressed_position = e->Position().StaticCast<Float>();
             m_rmouse_pressed_world_position = transformed_mouse_event_position;
             m_rmouse_dragged = false;
         }
@@ -1389,7 +1389,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     if (selection_operation == Object::SO_EQUALS)
                         MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                     
-                    Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
+                    Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
                     MainMapEditorObjectLayer()->SelectNearestVertex(
                         transformed_mouse_event_position,
                         0.02f * parallaxed_view_radius,
@@ -1539,7 +1539,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         !e->IsEitherControlKeyPressed())
     {
         // select the closest vertex that's within 2% of the radius of the view
-        Float parallaxed_view_radius = GetParallaxedViewRadius(NULL);
+        Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
         MainMapEditorObjectLayer()->SelectNearestVertex(
             transformed_mouse_event_position,
             0.02f * parallaxed_view_radius,
@@ -1553,7 +1553,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
 bool MapEditor2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // don't allow mouse wheel input while the widget is not focused
-    if (!GetParentWorldViewWidget()->IsFocused())
+    if (!ParentWorldViewWidget()->IsFocused())
         return false;
 
     if (e->IsEitherAltKeyPressed())
@@ -1612,13 +1612,13 @@ bool MapEditor2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *con
 
     // get the mouse movement's delta, in world coordinates
     FloatVector2 position_delta(
-        GetParallaxedScreenToWorld() * FloatVector2::ms_zero -
-        GetParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
+        ParallaxedScreenToWorld() * FloatVector2::ms_zero -
+        ParallaxedScreenToWorld() * e->Delta().StaticCast<Float>());
     FloatVector2 last_mouse_position(
-        GetParallaxedScreenToWorld() *
-        GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
+        ParallaxedScreenToWorld() *
+        ParentWorldViewWidget()->LastMousePosition().StaticCast<Float>());
     FloatVector2 current_mouse_position(
-        GetParallaxedScreenToWorld() * e->GetPosition().StaticCast<Float>());
+        ParallaxedScreenToWorld() * e->Position().StaticCast<Float>());
 
     // the right mouse is being held and neither shift key is pressed, drag the view
     if (e->IsRightMouseButtonPressed() &&
@@ -1705,7 +1705,7 @@ void MapEditor2::WorldView::HandleAttachedWorld ()
 void MapEditor2::WorldView::HandleFrame ()
 {
     // don't do anything if this view is hidden
-    if (GetParentWorldViewWidget()->IsHidden())
+    if (ParentWorldViewWidget()->IsHidden())
         return;
 
     // handle view zooming (from accumulated mouse wheel events)
@@ -1741,15 +1741,15 @@ void MapEditor2::WorldView::HandleFrame ()
     }
 
     // handle view movement (from the arrow keys)
-    if (GetParentWorldViewWidget()->IsFocused())
+    if (ParentWorldViewWidget()->IsFocused())
     {
         // movement basis vectors
         FloatVector2 origin(
-            GetParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
+            ParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
         FloatVector2 right(
-            GetParallaxedWorldViewToWorld() * FloatVector2(1.0, 0.0) - origin);
+            ParallaxedWorldViewToWorld() * FloatVector2(1.0, 0.0) - origin);
         FloatVector2 up(
-            GetParallaxedWorldViewToWorld() * FloatVector2(0.0, 1.0) - origin);
+            ParallaxedWorldViewToWorld() * FloatVector2(0.0, 1.0) - origin);
 
         Sint8 left_right_input =
             static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::RIGHT)) -
@@ -2020,7 +2020,7 @@ void MapEditor2::WorldView::ChangeSelectionEntities ()
         m_sender_per_entity_applies_gravity_assigned.Signal(
             entity->AppliesGravity());
         m_sender_per_entity_reacts_to_gravity_assigned.Signal(
-            entity->GetReactsToGravity());
+            entity->ReactsToGravity());
     }
     else
     {
@@ -2034,7 +2034,7 @@ void MapEditor2::WorldView::DrawOriginCursor (
     MapEditor2::Object::TransformationMode const transformation_mode)
 {
     FloatVector2 screen_origin_cursor_position(
-        GetParallaxedWorldToScreen() * origin);
+        ParallaxedWorldToScreen() * origin);
 
     Float radius;
     Color color;
@@ -2062,7 +2062,7 @@ void MapEditor2::WorldView::DrawOriginCursor (
         color = m_active_origin_cursor_color;
     }
 
-    radius *= GetParentWorldViewWidget()->GetTopLevelParent()->GetSizeRatioBasis();
+    radius *= ParentWorldViewWidget()->GetTopLevelParent()->GetSizeRatioBasis();
 
     FloatMatrix2 draw_circle_transform = FloatMatrix2::ms_identity;
     draw_circle_transform.Scale(2.0f);

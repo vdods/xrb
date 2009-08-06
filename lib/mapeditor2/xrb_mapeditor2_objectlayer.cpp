@@ -1246,8 +1246,8 @@ void MapEditor2::ObjectLayer::DeleteSelectedPolygons ()
         Compound *compound = *it;
         ASSERT1(compound != NULL);
 
-        ASSERT1(compound->GetSelectedPolygonCount() <= compound->GetPolygonCount());
-        if (compound->GetSelectedPolygonCount() == compound->GetPolygonCount())
+        ASSERT1(compound->GetSelectedPolygonCount() <= compound->PolygonCount());
+        if (compound->GetSelectedPolygonCount() == compound->PolygonCount())
             return;
     }
 
@@ -1324,7 +1324,7 @@ void MapEditor2::ObjectLayer::SetObjectSelectionSetCenterOfGravity (
 bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL);
-    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->RootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
     ASSERT1(!object->IsSelected());
 
@@ -1386,7 +1386,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
 bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL);
-    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->RootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
     ASSERT1(object->IsSelected());
 

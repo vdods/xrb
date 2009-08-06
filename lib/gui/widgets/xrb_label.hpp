@@ -71,13 +71,13 @@ public:
     /** If this is a text label, the returned resource will be invalid.
       * @brief Returns the resourced GLTexture picture for this label.
       */
-    inline Resource<GLTexture> const &GetPicture () const { return m_picture; }
+    inline Resource<GLTexture> const &Picture () const { return m_picture; }
     /** Applies only when this is a picture label.  When the picture doesn't
       * fill up the entire content area, it will be centered appropriately.
       * @brief Iff true, indicates that the picture will be resized just small
       *        enough to preserve its aspect ratio.
       */
-    inline bool GetPictureKeepsAspectRatio () const { return m_picture_keeps_aspect_ratio; }
+    inline bool PictureKeepsAspectRatio () const { return m_picture_keeps_aspect_ratio; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public modifiers
@@ -99,7 +99,7 @@ protected:
     void DrawText (RenderContext const &render_context) const;
     void DrawPicture (RenderContext const &render_context) const;
 
-    inline Resource<GLTexture> const &GetRenderPicture () const { return m_render_picture; }
+    inline Resource<GLTexture> const &RenderPicture () const { return m_render_picture; }
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
     void SetRenderPicture (Resource<GLTexture> const &render_picture);

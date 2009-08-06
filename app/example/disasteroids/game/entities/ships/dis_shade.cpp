@@ -83,9 +83,9 @@ void Shade::Think (Float const time, Float const frame_dt)
         NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_weapon),
         MuzzleDirection(m_weapon),
-        GetReticleCoordinates());
+        ReticleCoordinates());
     m_weapon->Activate(
-        m_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
         time,
         frame_dt);
 
@@ -198,7 +198,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
     if (collision_entity != NULL)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
-        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);

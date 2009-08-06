@@ -143,7 +143,7 @@ bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     // don't allow mouse wheel input while the widget is not focused
-    if (!GetParentWorldViewWidget()->IsFocused())
+    if (!ParentWorldViewWidget()->IsFocused())
         return false;
 
     HandleInput(e->ButtonCode());
@@ -220,7 +220,7 @@ void WorldView::HandleFrame ()
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 
     // don't do anything if this view is hidden
-    if (GetParentWorldViewWidget()->IsHidden())
+    if (ParentWorldViewWidget()->IsHidden())
         return;
 
     ProcessZoom(FrameDT());
@@ -456,7 +456,7 @@ void WorldView::ProcessPlayerInput ()
     }
 
     // handle player ship input (movement, shooting and reticle coordinates)
-    if (GetParentWorldViewWidget()->IsFocused())
+    if (ParentWorldViewWidget()->IsFocused())
     {
         Sint8 engine_right_left_input =
             (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
@@ -478,8 +478,8 @@ void WorldView::ProcessPlayerInput ()
         if (m_player_ship != NULL)
         {
             m_player_ship->SetReticleCoordinates(
-                GetParallaxedScreenToWorld() *
-                GetParentWorldViewWidget()->LastMousePosition().StaticCast<Float>()
+                ParallaxedScreenToWorld() *
+                ParentWorldViewWidget()->LastMousePosition().StaticCast<Float>()
                 -
                 m_player_ship->GetWrappedOffset());
             m_player_ship->SetEngineRightLeftInput(engine_right_left_input);
@@ -613,7 +613,7 @@ void WorldView::ProcessFade (Float const frame_dt)
     ASSERT1(m_fade_time_left <= m_fade_time_total);
     Float parameter = 1.0f - m_fade_time_left / m_fade_time_total;
     Float fade_coefficient = m_fade_coefficient_begin * (1.0f - parameter) + m_fade_coefficient_end * parameter;
-    GetParentWorldViewWidget()->SetBiasColor(Color(0.0f, 0.0f, 0.0f, 1.0f-fade_coefficient));
+    ParentWorldViewWidget()->SetBiasColor(Color(0.0f, 0.0f, 0.0f, 1.0f-fade_coefficient));
     m_fade_time_left -= frame_dt;
 }
 

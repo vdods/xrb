@@ -520,12 +520,12 @@ void MapEditor2::Compound::UnweldSelectedVertices ()
     {
         Instance<CompoundVertex> *vertex_instance = *it;
         ASSERT1(vertex_instance != NULL);
-        ASSERT1(vertex_instance->GetReferenceCount() > 0);
+        ASSERT1(vertex_instance->ReferenceCount() > 0);
         CompoundVertex const &vertex = **vertex_instance;
 
         if (vertex.m_is_selected)
         {
-            while (vertex_instance->GetReferenceCount() > 1)
+            while (vertex_instance->ReferenceCount() > 1)
             {
                 // create the instanced vertex and insert it in front of
                 // the current vertex list iterator (so we don't iterate
@@ -610,7 +610,7 @@ void MapEditor2::Compound::UnweldSelectedPolygons ()
             // polygon refers to it, and therefore this vertex must be
             // unwelded (duplicated for the unselected polygon(s)).
             if (vertex.m_selected_owner_polygon_count <
-                (*vertex_instance).GetReferenceCount())
+                (*vertex_instance).ReferenceCount())
             {
                 // create the instanced vertex and insert it in front of
                 // the current vertex list iterator (so we don't iterate
@@ -635,7 +635,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
 {
     // we don't want to allow deleting all the polygons, leaving
     // an empty and inaccessable object.
-    ASSERT1(GetSelectedPolygonCount() < GetPolygonCount());
+    ASSERT1(GetSelectedPolygonCount() < PolygonCount());
 
     // iterate through the polygon list and delete selected polygons.
     for (PolygonListIterator it = m_polygon_list.begin(),
@@ -671,7 +671,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
     {
         Instance<CompoundVertex> *vertex_instance = *it;
         ASSERT1(vertex_instance != NULL);
-        if (vertex_instance->GetReferenceCount() == 0)
+        if (vertex_instance->ReferenceCount() == 0)
         {
             Delete(vertex_instance);
             VertexListIterator remove_it = it;

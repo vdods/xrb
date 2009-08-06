@@ -64,10 +64,10 @@ Widget *Layout::GridChildByColumnAndRow (
     Uint32 const row_index) const
 {
     ASSERT1(column_index < ColumnCount());
-    ASSERT1(row_index < GetRowCount());
+    ASSERT1(row_index < RowCount());
     Uint32 linear_index = (m_major_direction == ROW) ?
                           row_index * ColumnCount() + column_index :
-                          column_index * GetRowCount() + row_index;
+                          column_index * RowCount() + row_index;
     if (linear_index < m_child_vector.size())
         return m_child_vector[linear_index];
     else
@@ -127,41 +127,41 @@ Uint32 Layout::HiddenColumnCount () const
     return m_hidden_column_count;
 }
 
-Uint32 Layout::GetRowCount () const
+Uint32 Layout::RowCount () const
 {
     UpdateRowSizeProperties();
     return m_row_count;
 }
 
-Bool2 const &Layout::GetRowMinSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::RowMinSizeEnabled (Uint32 const index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::GetRowMinSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::RowMinSize (Uint32 const index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_min_size;
 }
 
-Bool2 const &Layout::GetRowMaxSizeEnabled (Uint32 const index) const
+Bool2 const &Layout::RowMaxSizeEnabled (Uint32 const index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size_enabled;
 }
 
-ScreenCoordVector2 const &Layout::GetRowMaxSize (Uint32 const index) const
+ScreenCoordVector2 const &Layout::RowMaxSize (Uint32 const index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
     return m_row_size_properties[index].m_max_size;
 }
 
-ScreenCoord Layout::GetRowHeight (Uint32 const index) const
+ScreenCoord Layout::RowHeight (Uint32 const index) const
 {
     UpdateRowSizeProperties();
     ASSERT1(index < m_row_count);
@@ -629,7 +629,7 @@ int Layout::RowCompareConstraints (void const *a, void const *b)
 void Layout::DelegateWidthsToColumns ()
 {
     // if there are no columns or no rows, we don't need to do anything
-    if (ColumnCount() == 0 || GetRowCount() == 0)
+    if (ColumnCount() == 0 || RowCount() == 0)
         return;
 
     // number of columns we're actually going to deal with
@@ -683,7 +683,7 @@ void Layout::DelegateWidthsToColumns ()
 void Layout::DelegateHeightsToRows ()
 {
     // if there are no columns or no rows, we don't need to do anything
-    if (ColumnCount() == 0 || GetRowCount() == 0)
+    if (ColumnCount() == 0 || RowCount() == 0)
         return;
 
     // number of rows we're actually going to deal with
@@ -705,7 +705,7 @@ void Layout::DelegateHeightsToRows ()
         m_row_height[i] = 0;
 
     // must split up the total height among the rows
-    ASSERT1(m_hidden_row_count == GetRowCount() - unhidden_row_count);
+    ASSERT1(m_hidden_row_count == RowCount() - unhidden_row_count);
     ScreenCoord total_height_left = Height() - GetTotalSpacing()[Dim::Y];
     ASSERT1(total_height_left >= 0);
 
@@ -741,13 +741,13 @@ void Layout::ResizeAndRepositionChildWidgets ()
     ScreenCoordVector2 layout_frame_margins(CalculateLayoutFrameMargins());
     ScreenCoordVector2 layout_spacing_margins(CalculateLayoutSpacingMargins());
 
-    positional_offset[Dim::Y] = GetPosition()[Dim::Y] + layout_frame_margins[Dim::Y];
+    positional_offset[Dim::Y] = Position()[Dim::Y] + layout_frame_margins[Dim::Y];
     for (Uint32 row = m_row_count - 1; row < m_row_count; --row)
     {
         if (m_row_is_hidden[row])
             continue;
 
-        positional_offset[Dim::X] = GetPosition()[Dim::X] + layout_frame_margins[Dim::X];
+        positional_offset[Dim::X] = Position()[Dim::X] + layout_frame_margins[Dim::X];
         for (Uint32 column = 0; column < m_column_count; ++column)
         {
             if (m_column_is_hidden[column])
@@ -971,12 +971,12 @@ void Layout::UpdateTotalSpacing () const
         column_spaces = ColumnCount() - 1 - HiddenColumnCount();
     }
 
-    if (GetRowCount() == 0 || GetRowCount() == HiddenRowCount())
+    if (RowCount() == 0 || RowCount() == HiddenRowCount())
         row_spaces = 0;
     else
     {
-        ASSERT1(GetRowCount() > HiddenRowCount());
-        row_spaces = GetRowCount() - 1 - HiddenRowCount();
+        ASSERT1(RowCount() > HiddenRowCount());
+        row_spaces = RowCount() - 1 - HiddenRowCount();
     }
 
     m_total_spacing =
@@ -1134,7 +1134,7 @@ void Layout::UpdateContentsSizeProperties () const
     // initialize the max size properties, considering the total spacing
     m_contents_size_properties.m_max_size_enabled =
         Bool2(ColumnCount() - m_hidden_column_count > 0,
-              GetRowCount() - m_hidden_row_count > 0);
+              RowCount() - m_hidden_row_count > 0);
     m_contents_size_properties.m_max_size = GetTotalSpacing();
 
     // horizontal using columns
@@ -1166,7 +1166,7 @@ void Layout::UpdateContentsSizeProperties () const
     }
 
     // vertical using rows
-    for (Uint32 i = 0; i < GetRowCount(); ++i)
+    for (Uint32 i = 0; i < RowCount(); ++i)
     {
         // don't process hidden rows
         if (m_row_is_hidden[i])
@@ -1176,21 +1176,21 @@ void Layout::UpdateContentsSizeProperties () const
         // have a min size (true value overcomes false value)
         m_contents_size_properties.m_min_size_enabled[Dim::Y] =
             m_contents_size_properties.m_min_size_enabled[Dim::Y] ||
-            GetRowMinSizeEnabled(i)[Dim::Y];
+            RowMinSizeEnabled(i)[Dim::Y];
         // add up the min sizes if the min size applies
-        if (GetRowMinSizeEnabled(i)[Dim::Y])
+        if (RowMinSizeEnabled(i)[Dim::Y])
             m_contents_size_properties.m_min_size[Dim::Y] +=
-                GetRowMinSize(i)[Dim::Y];
+                RowMinSize(i)[Dim::Y];
 
         // if one row doesn't have a max size, then the contents as a whole
         // don't have a max size (false value overcomes true value)
         m_contents_size_properties.m_max_size_enabled[Dim::Y] =
             m_contents_size_properties.m_max_size_enabled[Dim::Y] &&
-            GetRowMaxSizeEnabled(i)[Dim::Y];
+            RowMaxSizeEnabled(i)[Dim::Y];
         // add up the max sizes if the max size applies
-        if (GetRowMaxSizeEnabled(i)[Dim::Y])
+        if (RowMaxSizeEnabled(i)[Dim::Y])
             m_contents_size_properties.m_max_size[Dim::Y] +=
-                GetRowMaxSize(i)[Dim::Y];
+                RowMaxSize(i)[Dim::Y];
     }
 }
 

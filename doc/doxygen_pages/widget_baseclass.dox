@@ -731,7 +731,7 @@ allows a subclass to specify how the background should be set.  Refer to
 Other relevant methods include
 @ref Xrb::Widget::Background ,
 @ref Xrb::Widget::SetBackground , and
-@ref Xrb::Widget::GetRenderBackground .
+@ref Xrb::Widget::RenderBackground .
 
 See also @ref section_widget_skinning "Widget Skinning" for more details.
 

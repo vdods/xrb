@@ -186,7 +186,7 @@ SetPathElement on structure
 {
     if (at end of path) return ERROR;
     if (at last char of path && last char == '|') return INVALID_PATH;
-    ASSERT(GetParentElementNodeType() == structure);
+    ASSERT(ParentElementNodeType() == structure);
     get key string
     if (!IsValidKey(key)) return INVALID_KEY;
     if (key exists in this structure) return matching_key_pair->SetPathElement(value);
@@ -272,17 +272,17 @@ public:
     virtual ~DataFileValue () { }
 
     virtual DataFileElementType ElementType () const = 0;
-    inline DataFileValue const *GetPathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
+    inline DataFileValue const *PathElement (std::string const &path) const { return GetSubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
-    bool GetPathElementBoolean (std::string const &path) const throw (std::string);
-    Sint32 GetPathElementSint32 (std::string const &path) const throw (std::string);
-    Uint32 GetPathElementUint32 (std::string const &path) const throw (std::string);
-    Float GetPathElementFloat (std::string const &path) const throw (std::string);
-    char GetPathElementCharacter (std::string const &path) const throw (std::string);
-    std::string const &GetPathElementString (std::string const &path) const throw (std::string);
-    DataFileArray const *GetPathElementArray (std::string const &path) const throw (std::string);
-    DataFileStructure const *GetPathElementStructure (std::string const &path) const throw (std::string);
+    bool PathElementBoolean (std::string const &path) const throw (std::string);
+    Sint32 PathElementSint32 (std::string const &path) const throw (std::string);
+    Uint32 PathElementUint32 (std::string const &path) const throw (std::string);
+    Float PathElementFloat (std::string const &path) const throw (std::string);
+    char PathElementCharacter (std::string const &path) const throw (std::string);
+    std::string const &PathElementString (std::string const &path) const throw (std::string);
+    DataFileArray const *PathElementArray (std::string const &path) const throw (std::string);
+    DataFileStructure const *PathElementStructure (std::string const &path) const throw (std::string);
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;
@@ -524,7 +524,7 @@ protected:
         NT_STRUCTURE
     }; // end of enum DataFileContainer::NodeType
 
-    static NodeType GetParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
+    static NodeType ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
 
     virtual void SetSubpathElement (
         std::string const &path,

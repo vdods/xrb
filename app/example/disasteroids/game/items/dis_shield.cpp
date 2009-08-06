@@ -71,7 +71,7 @@ Float Shield::Damage (
     return adjusted_damage_amount;
 }
 
-Float Shield::GetPowerToBeUsedBasedOnInputs (
+Float Shield::PowerToBeUsedBasedOnInputs (
     Float time,
     Float frame_dt) const
 {
@@ -91,7 +91,7 @@ bool Shield::Activate (
     Float frame_dt)
 {
     ASSERT1(power >= 0.0f);
-    ASSERT1(power <= GetPowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
+    ASSERT1(power <= PowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
     ASSERT1(power <= ms_max_charged_power[GetUpgradeLevel()] /
                      ms_recharge_interval[GetUpgradeLevel()] +
                      frame_dt * ms_power_consumption_rate[GetUpgradeLevel()]);

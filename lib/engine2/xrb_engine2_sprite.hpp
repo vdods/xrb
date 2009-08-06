@@ -63,24 +63,24 @@ public:
     // returns the relative physical sizes (component-wise ratios of the
     // physical geometry scale factors over the visible geometry scale
     // factors).
-    inline FloatVector2 const &GetPhysicalSizeRatios () const
+    inline FloatVector2 const &PhysicalSizeRatios () const
     {
         return m_physical_size_ratios;
     }
     // returns the relative physical size -- only valid when both
     // components of the size ratios are equal.
-    // see @c GetPhysicalSizeRatios
-    inline Float GetPhysicalSizeRatio () const
+    // see @c PhysicalSizeRatios
+    inline Float PhysicalSizeRatio () const
     {
         ASSERT1(m_physical_size_ratios[Dim::X] == m_physical_size_ratios[Dim::Y]);
         return m_physical_size_ratios[Dim::X];
     }
     // returns the calculated scale factors for the physical geometry,
     // based upon the object's scale factors, and the physical size ratios.
-    inline FloatVector2 GetPhysicalScaleFactors () const { return m_physical_size_ratios * GetScaleFactors(); }
+    inline FloatVector2 PhysicalScaleFactors () const { return m_physical_size_ratios * GetScaleFactors(); }
     // returns the calculated scale factor for the physical geometry,
     // based upon the object's scale factor, and the physical size ratio.
-    inline Float GetPhysicalScaleFactor () const { return GetPhysicalSizeRatio() * GetScaleFactor(); }
+    inline Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * GetScaleFactor(); }
 
     // sets the physical size ratios
     void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);

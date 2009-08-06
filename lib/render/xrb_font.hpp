@@ -54,7 +54,7 @@ public:
 
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
-    inline ScreenCoord GetPixelHeight () const { return m_pixel_height; }
+    inline ScreenCoord PixelHeight () const { return m_pixel_height; }
     inline ScreenCoord GlyphWidth (char const *glyph) const
     {
         ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);

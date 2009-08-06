@@ -348,7 +348,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
             MapEditorWorldView()->SenderGridScaleTextChanged(),
             m_grid_scale_label->ReceiverSetText());
         // polygon tesselation label
-        m_polygon_tesselation_label->SetText(MapEditorWorldView()->GetPolygonTesselationText());
+        m_polygon_tesselation_label->SetText(MapEditorWorldView()->PolygonTesselationText());
         SignalHandler::Connect1(
             MapEditorWorldView()->SenderPolygonTesselationTextChanged(),
             m_polygon_tesselation_label->ReceiverSetText());

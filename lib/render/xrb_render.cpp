@@ -54,7 +54,7 @@ void Render::DrawArrow (
         return;
 
     FloatVector2 basis_x(to - from);
-    FloatVector2 basis_y(GetPerpendicularVector2(basis_x));
+    FloatVector2 basis_y(PerpendicularVector2(basis_x));
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();

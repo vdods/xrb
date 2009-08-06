@@ -299,7 +299,7 @@ private:
   * to the const resource data.  The -> operator is used intuitively as if
   * the resource object was the data pointer itself.  You can call methods
   * and reference members directly using the -> operator ( e.g.
-  * @c font_resource->GetPixelHeight() ).  Dereferencing the Resource will
+  * @c font_resource->PixelHeight() ).  Dereferencing the Resource will
   * assert if it is invalid.
   *
   * @brief Reference-counting container for resourced data.
@@ -389,7 +389,7 @@ public:
         return m_instance->Data();
     }
     /** Provides -> dereferencing syntax for the resourced data, e.g.
-      * @c font_resource->GetPixelHeight() .
+      * @c font_resource->PixelHeight() .
       * @brief Pointer dereferencing.
       */
     inline T const *operator -> () const

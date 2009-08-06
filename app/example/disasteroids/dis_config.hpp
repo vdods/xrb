@@ -58,9 +58,9 @@ public:
     // specific accessors (used to avoid lots of casting in the app code)
     // ///////////////////////////////////////////////////////////////////////
 
-    inline ScreenCoordVector2 GetResolution () const { return ScreenCoordVector2(GetResolutionX(), GetResolutionY()); }
-    inline ScreenCoord GetResolutionX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_X)); }
-    inline ScreenCoord GetResolutionY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_Y)); }
+    inline ScreenCoordVector2 Resolution () const { return ScreenCoordVector2(ResolutionX(), ResolutionY()); }
+    inline ScreenCoord ResolutionX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_X)); }
+    inline ScreenCoord ResolutionY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_Y)); }
     inline DifficultyLevel GetDifficultyLevel () const { return static_cast<DifficultyLevel>(GetUint32(GAME__DIFFICULTY_LEVEL)); }
 
     // ///////////////////////////////////////////////////////////////////////

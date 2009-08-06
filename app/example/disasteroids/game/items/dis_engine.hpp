@@ -44,7 +44,7 @@ public:
     // PoweredDevice virtual method overrides
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float GetPowerToBeUsedBasedOnInputs (
+    virtual Float PowerToBeUsedBasedOnInputs (
         Float time,
         Float frame_dt) const;
 

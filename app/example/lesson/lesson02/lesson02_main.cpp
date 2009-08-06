@@ -200,7 +200,7 @@ int main (int argc, char **argv)
         We'll also double the font size to make it look "HELLA TUFF."
         @code */
         Button *quit_button = new Button("Press and release this button to QUIT", main_layout, "quit button");
-        quit_button->SetFontHeight(2 * quit_button->GetFont()->GetPixelHeight());
+        quit_button->SetFontHeight(2 * quit_button->GetFont()->PixelHeight());
         /* @endcode
         Create another grid Layout for another set of demo widgets.
         @code */

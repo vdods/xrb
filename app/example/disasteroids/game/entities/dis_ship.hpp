@@ -98,7 +98,7 @@ public:
 
 protected:
 
-    inline FloatVector2 const &GetReticleCoordinates () const
+    inline FloatVector2 const &ReticleCoordinates () const
     {
         return m_reticle_coordinates;
     }

@@ -389,7 +389,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_score_label->SetValue(player_ship->GetScore());
         m_armor_status->SetProgress(player_ship->ArmorStatus());
         m_shield_status->SetProgress(player_ship->GetShieldStatus());
-        m_power_status->SetProgress(player_ship->GetPowerStatus());
+        m_power_status->SetProgress(player_ship->PowerStatus());
         m_weapon_status->SetProgress(player_ship->GetWeaponStatus());
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->SetValue(static_cast<Uint32>(player_ship->MineralInventory(i)));

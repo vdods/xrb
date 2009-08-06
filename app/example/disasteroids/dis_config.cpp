@@ -143,13 +143,13 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
 
         // read in and set the enumerated values
         for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
-            try { SetBoolean(static_cast<KeyBoolean>(i), root->GetPathElementBoolean(ms_boolean_key[i].m_data_file_path)); } catch (...) { }
+            try { SetBoolean(static_cast<KeyBoolean>(i), root->PathElementBoolean(ms_boolean_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_UINT32_COUNT; ++i)
-            try { SetUint32(static_cast<KeyUint32>(i), root->GetPathElementUint32(ms_uint32_key[i].m_data_file_path)); } catch (...) { }
+            try { SetUint32(static_cast<KeyUint32>(i), root->PathElementUint32(ms_uint32_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
-            try { SetString(static_cast<KeyString>(i), root->GetPathElementString(ms_string_key[i].m_data_file_path)); } catch (...) { }
+            try { SetString(static_cast<KeyString>(i), root->PathElementString(ms_string_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
-            try { SetInputAction(static_cast<KeyInputAction>(i), root->GetPathElementString(ms_input_action_key[i].m_data_file_path)); } catch (...) { }
+            try { SetInputAction(static_cast<KeyInputAction>(i), root->PathElementString(ms_input_action_key[i].m_data_file_path)); } catch (...) { }
 
         // validate config values
         if (GetUint32(GAME__DIFFICULTY_LEVEL) <= 0)

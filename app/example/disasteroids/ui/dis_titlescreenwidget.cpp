@@ -143,8 +143,8 @@ void TitleScreenWidget::ActivateOptionsDialog ()
     // create the dialog and add a new OptionsPanel to it
     Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
     m_options_panel = new OptionsPanel(options_dialog->DialogLayout());
-    options_dialog->Resize(options_dialog->GetParent()->GetSize() * 4 / 5);
-    options_dialog->CenterOnWidget(options_dialog->GetParent());
+    options_dialog->Resize(options_dialog->Parent()->GetSize() * 4 / 5);
+    options_dialog->CenterOnWidget(options_dialog->Parent());
     // initialize the OptionsPanel with the Config values
     m_options_panel->ReadValuesFromConfig(g_config);
     // connect up the dialog OK button to OptionsDialogReturnedOK

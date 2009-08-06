@@ -170,8 +170,8 @@ void WidgetBackgroundStylized::Draw (
     {
         widget_screen_rect.Left(),
         widget_screen_rect.Left() + frame_margins[Dim::X],
-        widget_screen_rect.GetRight() - frame_margins[Dim::X],
-        widget_screen_rect.GetRight()
+        widget_screen_rect.Right() - frame_margins[Dim::X],
+        widget_screen_rect.Right()
     };
     ScreenCoord vertical[4] =
     {

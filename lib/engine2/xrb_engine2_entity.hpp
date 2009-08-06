@@ -116,12 +116,12 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     inline ObjectType GetObjectType () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectType(); }
-    inline Float GetRadius (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetRadius(quad_tree_type); }
-    inline Float GetRadiusSquared (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetRadiusSquared(quad_tree_type); }
+    inline Float Radius (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->Radius(quad_tree_type); }
+    inline Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->RadiusSquared(quad_tree_type); }
     inline Float GetVisibleRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetVisibleRadius(); }
     inline Float GetVisibleRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetVisibleRadiusSquared(); }
-    inline Float GetPhysicalRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetPhysicalRadius(); }
-    inline Float GetPhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetPhysicalRadiusSquared(); }
+    inline Float PhysicalRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalRadius(); }
+    inline Float PhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalRadiusSquared(); }
     inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectLayer(); }
     inline bool HasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->HasOwnerQuadTree(quad_tree_type); }
     inline QuadTree *OwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->OwnerQuadTree(quad_tree_type); }

@@ -104,9 +104,9 @@ void Revulsion::Think (Float const time, Float const frame_dt)
         NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_weapon),
         MuzzleDirection(m_weapon),
-        GetReticleCoordinates());
+        ReticleCoordinates());
     m_weapon->Activate(
-        m_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
         time,
         frame_dt);
 
@@ -213,7 +213,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     if (collision_entity != NULL)
     {
         FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
-        FloatVector2 perpendicular_velocity(GetPerpendicularVector2(delta_velocity));
+        FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
@@ -269,7 +269,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     // ready to fire), transition to fire
     Float distance_to_preferred_location = (preferred_location - GetTranslation()).Length();
     if (distance_to_preferred_location <= ms_preferred_location_distance_tolerance[EnemyLevel()] &&
-        m_weapon->GetReadinessStatus(time) == 1.0f)
+        m_weapon->ReadinessStatus(time) == 1.0f)
     {
         m_think_state = THINK_STATE(StartAimAtTarget);
         return;
@@ -385,7 +385,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     static Float const s_final_reticle_radius = 20.0f;
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
-        aim_time_parameter * GetReticleCoordinates() + (1.0f - aim_time_parameter) * GetTranslation(),
+        aim_time_parameter * ReticleCoordinates() + (1.0f - aim_time_parameter) * GetTranslation(),
         s_final_reticle_radius * aim_time_parameter);
 
     // if the aim duration has elapsed, transition to FireAtTarget
@@ -442,7 +442,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     FloatVector2 position_delta(GetTranslation() - target_position);
     FloatVector2 desired_velocity(
         ms_flee_speed[EnemyLevel()] *
-        GetPerpendicularVector2(position_delta).Normalization());
+        PerpendicularVector2(position_delta).Normalization());
     MatchVelocity(desired_velocity, frame_dt);
 }
 

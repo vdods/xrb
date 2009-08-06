@@ -38,7 +38,7 @@ template <typename ValueType>
 void ValueLabel<ValueType>::SetValue (ValueType const value)
 {
     m_value = value;
-    Label::SetText(Util::StringPrintf(GetPrintfFormat().c_str(), m_value));
+    Label::SetText(Util::StringPrintf(PrintfFormat().c_str(), m_value));
 }
 
 template <typename ValueType>

@@ -112,7 +112,7 @@ public:
     {
         return m_angle;
     }
-    inline bool GetPostTranslate () const
+    inline bool PostTranslate () const
     {
         return m_post_translate;
     }

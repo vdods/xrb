@@ -270,9 +270,9 @@ void Demi::Think (Float const time, Float const frame_dt)
             NormalizedWeaponSecondaryInput(),
             MuzzleLocation(m_main_weapon),
             MuzzleDirection(m_main_weapon),
-            GetReticleCoordinates());
+            ReticleCoordinates());
         m_main_weapon->Activate(
-            m_main_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+            m_main_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
             time,
             frame_dt);
     }
@@ -287,7 +287,7 @@ void Demi::Think (Float const time, Float const frame_dt)
             MuzzleDirection(m_port_weapon),
             m_port_reticle_coordinates);
         m_port_weapon->Activate(
-            m_port_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+            m_port_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
             time,
             frame_dt);
     }
@@ -309,7 +309,7 @@ void Demi::Think (Float const time, Float const frame_dt)
             MuzzleDirection(m_starboard_weapon),
             m_starboard_reticle_coordinates);
         m_starboard_weapon->Activate(
-            m_starboard_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+            m_starboard_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
             time,
             frame_dt);
     }
@@ -331,7 +331,7 @@ void Demi::Think (Float const time, Float const frame_dt)
             MuzzleDirection(m_aft_weapon),
             FloatVector2::ms_zero); // reticle coords don't matter here
         m_aft_weapon->Activate(
-            m_aft_weapon->GetPowerToBeUsedBasedOnInputs(time, frame_dt),
+            m_aft_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
             time,
             frame_dt);
     }
@@ -455,7 +455,7 @@ FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
                 FloatVector2::ms_zero));
         FloatVector2 reticle_offset(
             GetObjectLayer()->AdjustedCoordinates(
-                GetReticleCoordinates(),
+                ReticleCoordinates(),
                 muzzle_location)
             -
             muzzle_location);

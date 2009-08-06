@@ -112,7 +112,7 @@ Float PlayerShip::GetShieldStatus () const
     return (GetShield() != NULL) ? GetShield()->Intensity() : 0.0f;
 }
 
-Float PlayerShip::GetPowerStatus () const
+Float PlayerShip::PowerStatus () const
 {
     if (IsDead())
         return 0.0f;
@@ -131,7 +131,7 @@ Float PlayerShip::GetWeaponStatus () const
     // getting the time from the world in this manner
     // is slightly ugly, but its the easiest way to do it.
     return (current_weapon != NULL) ?
-           CurrentWeapon()->GetReadinessStatus(GetWorld()->MostRecentFrameTime()) :
+           CurrentWeapon()->ReadinessStatus(GetWorld()->MostRecentFrameTime()) :
            0.0f;
 }
 
@@ -302,7 +302,7 @@ void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
         power_generator->Equip(this);
 
     m_power_generator = power_generator;
-    SetPowerStatus(GetPowerStatus());
+    SetPowerStatus(PowerStatus());
 }
 
 void PlayerShip::IncrementWaveCount ()
@@ -590,7 +590,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
                 NormalizedWeaponSecondaryInput(),
                 MuzzleLocation(MainWeapon()),
                 MuzzleDirection(MainWeapon()),
-                GetReticleCoordinates());
+                ReticleCoordinates());
 
         if (m_engine != NULL)
             m_engine->SetInputs(
@@ -639,7 +639,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
     // update the shield status
     SetShieldStatus(GetShieldStatus());
     // update the power status
-    SetPowerStatus(GetPowerStatus());
+    SetPowerStatus(PowerStatus());
 }
 
 bool PlayerShip::Damage (

@@ -37,7 +37,7 @@ public:
     OptionsPanel (ContainerWidget *parent);
     virtual ~OptionsPanel () { }
 
-    ScreenCoordVector2 GetResolution () const;
+    ScreenCoordVector2 Resolution () const;
     bool Fullscreen () const;
     DifficultyLevel GetDifficultyLevel () const;
     Key::Code InputActionKeyCode (KeyInputAction input_action) const;

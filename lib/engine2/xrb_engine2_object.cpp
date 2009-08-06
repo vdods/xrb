@@ -62,7 +62,7 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
     ASSERT3(m_transparent_object_vector != NULL);
 
     // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->GetRadius(m_quad_tree_type) / m_view_radius;
+    Float object_radius = m_pixels_in_view_radius * object->Radius(m_quad_tree_type) / m_view_radius;
     // distance culling - don't draw objects that are below the
     // gs_radius_limit_lower threshold
     if (object_radius >= ms_radius_limit_lower)

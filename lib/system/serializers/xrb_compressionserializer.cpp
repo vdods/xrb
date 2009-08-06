@@ -416,7 +416,7 @@ void CompressionSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteBool(value.GetPostTranslate());
+    CompressionSerializer::WriteBool(value.PostTranslate());
 }
 /*
 Color CompressionSerializer::ReadColor ()
@@ -599,11 +599,11 @@ void CompressionSerializer::WriteTransform2 (Transform2 const &value)
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteFloat(value.GetRotation());
+    CompressionSerializer::WriteFloat(value.Rotation());
     if (GetError() != IOE_NONE)
         return;
 
-    CompressionSerializer::WriteBool(value.GetPostTranslate());
+    CompressionSerializer::WriteBool(value.PostTranslate());
 }
 */
 void CompressionSerializer::FlushWriteCache ()
