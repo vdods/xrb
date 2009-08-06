@@ -25,7 +25,6 @@ bin_PROGRAMS = \
     lesson05 \
     lesson06
 #    mapeditor2 \ # is temporarily out of commission
-#    unittest # is temporarily out of commission
 
 EXTRA_DIST = \
 	configure.ac \
@@ -484,27 +483,6 @@ lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
 #    app/mapeditor2/main.cpp
 
 ##############################################################################
-# unittest
-##############################################################################
-
-#unittest_CPPFLAGS = \
-#	$(AM_CPPFLAGS) \
-#    \
-#    -I$(top_srcdir)/app/unittest \
-#    -I$(top_srcdir)/app/unittest/tests
-#
-#unittest_SOURCES = \
-#    app/unittest/main.cpp \
-#    app/unittest/unittest_base.cpp \
-#    app/unittest/unittest_controller.cpp \
-#    \
-#    app/unittest/tests/unittest_matrix2.cpp \
-#    app/unittest/tests/unittest_serializer.cpp \
-#    app/unittest/tests/unittest_simpletransform2.cpp \
-#    app/unittest/tests/unittest_transform2.cpp \
-#    app/unittest/tests/unittest_vector.cpp
-
-##############################################################################
 # all the no-install header files for the examples
 ##############################################################################
 
@@ -558,13 +536,4 @@ noinst_HEADERS = \
     app/example/disasteroids/ui/dis_titlescreenwidget.hpp \
     app/example/disasteroids/ui/dis_worldview.hpp \
 	\
-	app/example/guidemo/gui_masterwidget.hpp \
-	\
-    app/unittest/unittest_base.hpp \
-    app/unittest/unittest_controller.hpp \
-    \
-    app/unittest/tests/unittest_matrix2.hpp \
-    app/unittest/tests/unittest_serializer.hpp \
-    app/unittest/tests/unittest_simpletransform2.hpp \
-    app/unittest/tests/unittest_transform2.hpp \
-    app/unittest/tests/unittest_vector.hpp
+	app/example/guidemo/gui_masterwidget.hpp
