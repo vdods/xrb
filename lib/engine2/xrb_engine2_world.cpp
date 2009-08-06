@@ -36,8 +36,8 @@ Engine2::World::~World ()
         Entity *entity = m_entity_vector[i];
         if (entity != NULL)
         {
-            RemoveDynamicObject(entity->GetOwnerObject());
-            delete entity->GetOwnerObject();
+            RemoveDynamicObject(entity->OwnerObject());
+            delete entity->OwnerObject();
         }
     }
     ASSERT1(m_entity_count == 0);
@@ -128,7 +128,7 @@ void Engine2::World::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 void Engine2::World::SetMainObjectLayer (Engine2::ObjectLayer *main_object_layer)
 {
     ASSERT1(main_object_layer != NULL);
-    ASSERT1(main_object_layer->GetOwnerWorld() == this);
+    ASSERT1(main_object_layer->OwnerWorld() == this);
     m_main_object_layer = main_object_layer;
     if (m_physics_handler != NULL)
         m_physics_handler->SetMainObjectLayer(m_main_object_layer);
@@ -207,7 +207,7 @@ void Engine2::World::RemoveDynamicObject (Engine2::Object *const dynamic_object)
     --m_entity_count;
 
     // schedule the entity's events to be deleted.
-    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         Engine2::MatchEntity,
         entity);
 
@@ -290,9 +290,9 @@ bool Engine2::World::HandleEvent (Event const *const e)
             ASSERT1(entity->IsInWorld() &&
                     "You shouldn't schedule removed entities "
                     "for deletion -- just delete them");
-            ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
-            RemoveDynamicObject(entity->GetOwnerObject());
-            delete entity->GetOwnerObject();
+            ASSERT1(entity->OwnerObject()->GetWorld() == this);
+            RemoveDynamicObject(entity->OwnerObject());
+            delete entity->OwnerObject();
             event_entity->NullifyEntity();
             break;
         }
@@ -305,8 +305,8 @@ bool Engine2::World::HandleEvent (Event const *const e)
             ASSERT1(entity != NULL);
             ASSERT1(entity->IsInWorld() &&
                     "You can only remove entities already in the world");
-            ASSERT1(entity->GetOwnerObject()->GetWorld() == this);
-            RemoveDynamicObject(entity->GetOwnerObject());
+            ASSERT1(entity->OwnerObject()->GetWorld() == this);
+            RemoveDynamicObject(entity->OwnerObject());
             event_entity->NullifyEntity();
             break;
         }
@@ -444,7 +444,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
             // if the entity belongs to the given layer, write it out
             if (entity->GetObjectLayer() == object_layer)
             {
-                entity->GetOwnerObject()->Write(serializer);
+                entity->OwnerObject()->Write(serializer);
                 --dynamic_object_count;
             }
         }

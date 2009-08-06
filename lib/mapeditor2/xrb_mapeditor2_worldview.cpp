@@ -245,7 +245,7 @@ std::string MapEditor2::WorldView::GetPolygonTesselationText () const
     return Util::StringPrintf("%u", m_polygon_tesselation);
 }
 
-FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
+FloatVector2 const &MapEditor2::WorldView::OriginCursor () const
 {
     switch (m_transformation_mode)
     {
@@ -253,10 +253,10 @@ FloatVector2 const &MapEditor2::WorldView::GetOriginCursor () const
             return m_origin_cursor_position;
 
         case Object::TM_SELECTION_SET_ORIGIN:
-            return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+            return MainMapEditorObjectLayer()->ObjectSelectionSetOrigin();
 
         case Object::TM_EACH_SELECTED_OBJECT_ORIGIN:
-            return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+            return MainMapEditorObjectLayer()->ObjectSelectionSetOrigin();
 
         default:
             ASSERT0(false && "Invalid transformation type");
@@ -269,9 +269,9 @@ bool MapEditor2::WorldView::AreNoObjectsSelected () const
     return MainMapEditorObjectLayer()->GetSelectedObjectCount() == 0;
 }
 
-FloatVector2 const &MapEditor2::WorldView::GetObjectSelectionSetOrigin () const
+FloatVector2 const &MapEditor2::WorldView::ObjectSelectionSetOrigin () const
 {
-    return MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin();
+    return MainMapEditorObjectLayer()->ObjectSelectionSetOrigin();
 }
 
 bool MapEditor2::WorldView::AreNoEntitiesSelected () const
@@ -512,7 +512,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetScale (Float const scale)
     // scale and rotate the object selection set
     MainMapEditorObjectLayer()->ObjectSelectionSetScale(
         scale_factor,
-        GetOriginCursor(),
+        OriginCursor(),
         GetTransformationMode());
     UpdateObjectSelectionSetScale(scale);
 }
@@ -523,7 +523,7 @@ void MapEditor2::WorldView::SetObjectSelectionSetAngle (Float const angle)
     fprintf(stderr, "MapEditor2::WorldView::SetObjectSelectionSetAngle(%g); angle_delta = %g\n", angle, angle_delta);
     MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
         angle_delta,
-        GetOriginCursor(),
+        OriginCursor(),
         GetTransformationMode());
     UpdateObjectSelectionSetAngle(angle);
 }
@@ -776,7 +776,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
         if (!MainMapEditorObjectLayer()->IsObjectSelectionSetEmpty())
             DrawOriginCursor(
                 render_context,
-                MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin(),
+                MainMapEditorObjectLayer()->ObjectSelectionSetOrigin(),
                 Object::TM_SELECTION_SET_ORIGIN);
         // draw the global origin cursor
         DrawOriginCursor(
@@ -1966,22 +1966,22 @@ void MapEditor2::WorldView::UpdateMainObjectLayerConnections ()
     SetSelectedObjectCount(
         MainMapEditorObjectLayer()->GetSelectedObjectCount());
     UpdateObjectSelectionSetOrigin(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetOrigin());
+        MainMapEditorObjectLayer()->ObjectSelectionSetOrigin());
 
     SetSelectedEntityCount(
         MainMapEditorObjectLayer()->GetSelectedEntityCount());
     UpdateObjectSelectionSetMass(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetMass());
+        MainMapEditorObjectLayer()->ObjectSelectionSetMass());
     UpdateObjectSelectionSetVelocity(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetVelocity());
+        MainMapEditorObjectLayer()->ObjectSelectionSetVelocity());
     UpdateObjectSelectionSetSecondMoment(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetSecondMoment());
+        MainMapEditorObjectLayer()->ObjectSelectionSetSecondMoment());
     UpdateObjectSelectionSetAngularVelocity(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetAngularVelocity());
+        MainMapEditorObjectLayer()->ObjectSelectionSetAngularVelocity());
     UpdateObjectSelectionSetElasticity(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetElasticity());
+        MainMapEditorObjectLayer()->ObjectSelectionSetElasticity());
     UpdateObjectSelectionSetDensity(
-        MainMapEditorObjectLayer()->GetObjectSelectionSetDensity());
+        MainMapEditorObjectLayer()->ObjectSelectionSetDensity());
 
     SetSelectedCompoundCount(
         MainMapEditorObjectLayer()->GetSelectedCompoundCount());
@@ -2099,8 +2099,8 @@ void MapEditor2::WorldView::TransformationEdit (
     FloatVector2 const &position_delta,
     EventMouseMotion const *const e)
 {
-    FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
-    FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
+    FloatVector2 old_vector = last_mouse_position - OriginCursor();
+    FloatVector2 new_vector = current_mouse_position - OriginCursor();
     Float old_vector_length = old_vector.Length();
     Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
@@ -2121,11 +2121,11 @@ void MapEditor2::WorldView::TransformationEdit (
             // scale and rotate the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetScale(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleAndAngleEditDeltas(scale_factor, angle_delta);
@@ -2138,7 +2138,7 @@ void MapEditor2::WorldView::TransformationEdit (
             // scale the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetScale(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleEditDelta(scale_factor);
@@ -2153,7 +2153,7 @@ void MapEditor2::WorldView::TransformationEdit (
             // rotate the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetRotate(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateAngleEditDelta(angle_delta);
@@ -2176,8 +2176,8 @@ void MapEditor2::WorldView::LinearVelocityEdit (
     FloatVector2 const &position_delta,
     EventMouseMotion const *const e)
 {
-    FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
-    FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
+    FloatVector2 old_vector = last_mouse_position - OriginCursor();
+    FloatVector2 new_vector = current_mouse_position - OriginCursor();
     Float old_vector_length = old_vector.Length();
     Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
@@ -2198,11 +2198,11 @@ void MapEditor2::WorldView::LinearVelocityEdit (
             // scale and rotate the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             MainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleAndAngleEditDeltas(scale_factor, angle_delta);
@@ -2212,7 +2212,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
             // scale the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetScaleVelocity(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleEditDelta(scale_factor);
@@ -2225,7 +2225,7 @@ void MapEditor2::WorldView::LinearVelocityEdit (
             // rotate the object selection set
             MainMapEditorObjectLayer()->ObjectSelectionSetRotateVelocity(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateAngleEditDelta(angle_delta);
@@ -2246,8 +2246,8 @@ void MapEditor2::WorldView::AngularVelocityEdit (
     FloatVector2 const &current_mouse_position,
     EventMouseMotion const *const e)
 {
-    FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
-    FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
+    FloatVector2 old_vector = last_mouse_position - OriginCursor();
+    FloatVector2 new_vector = current_mouse_position - OriginCursor();
     Float old_vector_length = old_vector.Length();
     Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
@@ -2299,8 +2299,8 @@ void MapEditor2::WorldView::VerticesEdit (
     FloatVector2 const &position_delta,
     EventMouseMotion const *const e)
 {
-    FloatVector2 old_vector = last_mouse_position - GetOriginCursor();
-    FloatVector2 new_vector = current_mouse_position - GetOriginCursor();
+    FloatVector2 old_vector = last_mouse_position - OriginCursor();
+    FloatVector2 new_vector = current_mouse_position - OriginCursor();
     Float old_vector_length = old_vector.Length();
     Float new_vector_length = new_vector.Length();
     Float vector_length_product = old_vector_length * new_vector_length;
@@ -2321,11 +2321,11 @@ void MapEditor2::WorldView::VerticesEdit (
             // scale and rotate the vertex selection set
             MainMapEditorObjectLayer()->VertexSelectionSetScale(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             MainMapEditorObjectLayer()->VertexSelectionSetRotate(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleAndAngleEditDeltas(scale_factor, angle_delta);
@@ -2340,7 +2340,7 @@ void MapEditor2::WorldView::VerticesEdit (
             // scale the vertex selection set
             MainMapEditorObjectLayer()->VertexSelectionSetScale(
                 scale_factor,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateScaleEditDelta(scale_factor);
@@ -2357,7 +2357,7 @@ void MapEditor2::WorldView::VerticesEdit (
             // rotate the vertex selection set
             MainMapEditorObjectLayer()->VertexSelectionSetRotate(
                 angle_delta,
-                GetOriginCursor(),
+                OriginCursor(),
                 GetTransformationMode());
             // update the edit deltas
             AccumulateAngleEditDelta(angle_delta);

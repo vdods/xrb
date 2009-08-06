@@ -196,32 +196,32 @@ protected:
 private:
 
 
-    inline Float GetNormalizedPortWeaponPrimaryInput () const
+    inline Float NormalizedPortWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_port_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedPortWeaponSecondaryInput () const
+    inline Float NormalizedPortWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_port_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedStarboardWeaponPrimaryInput () const
+    inline Float NormalizedStarboardWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_starboard_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedStarboardWeaponSecondaryInput () const
+    inline Float NormalizedStarboardWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_starboard_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedAftWeaponPrimaryInput () const
+    inline Float NormalizedAftWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_aft_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedAftWeaponSecondaryInput () const
+    inline Float NormalizedAftWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_aft_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);

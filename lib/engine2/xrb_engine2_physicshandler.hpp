@@ -41,7 +41,7 @@ public:
         m_owner_world = NULL;
     }
 
-    inline World *GetOwnerWorld () const
+    inline World *OwnerWorld () const
     {
         return m_owner_world;
     }

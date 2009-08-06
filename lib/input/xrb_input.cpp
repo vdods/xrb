@@ -95,7 +95,7 @@ std::string const &Input::KeyName (Key::Code const code) const
     else
     {
         ASSERT1(it->second != NULL);
-        return it->second->GetName();
+        return it->second->Name();
     }
 }
 
@@ -441,7 +441,7 @@ void Input::InitKeyMaps ()
          ++it)
     {
         ASSERT1(it->second != NULL);
-        m_keyname_map[it->second->GetName()] = it->second;
+        m_keyname_map[it->second->Name()] = it->second;
     }
 }
 

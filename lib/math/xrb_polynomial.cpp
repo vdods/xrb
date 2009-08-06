@@ -27,7 +27,7 @@ Polynomial::Polynomial (Polynomial const &polynomial)
 
 Float Polynomial::Evaluate (Float const x) const
 {
-    Uint32 order = GetOrder();
+    Uint32 order = Order();
     Float retval = m[0];
     if (order > 0)
     {   
@@ -54,7 +54,7 @@ void Polynomial::Derive (Uint32 const order)
     // TODO: more efficient non-iterative version
     for (Uint32 d = 0; d < order; ++d)
     {
-        if (GetOrder() == 0)
+        if (Order() == 0)
         {
             m[0] = 0.0f;
             break;
@@ -80,7 +80,7 @@ void Polynomial::Integrate (Uint32 const order)
     for (Uint32 d = 0; d < order; ++d)
     {    
         m.resize(m.size() + 1);
-        Uint32 high_order = GetOrder();
+        Uint32 high_order = Order();
         for (Uint32 i = high_order; i > 0; --i)
         {
             m[i] = m[i-1] / static_cast<Float>(i);
@@ -98,16 +98,16 @@ void Polynomial::Solve (SolutionSet *const solution_set, Float const tolerance) 
     ASSERT1(solution_set != NULL);
     ASSERT1(solution_set->empty());
     
-    if (GetOrder() == 0 && m[0] == 0.0f)
+    if (Order() == 0 && m[0] == 0.0f)
     {
         // do nothing
     }
-    else if (GetOrder() == 1)
+    else if (Order() == 1)
     {
         // solve the simple linear equation
         solution_set->insert(-m[0] / m[1]);
     }
-    else if (GetOrder() == 2)
+    else if (Order() == 2)
     {
         // solve the quadratic equation
         Float determinant = m[1] * m[1] - 4.0f * m[2] * m[0];
@@ -177,11 +177,11 @@ Polynomial Polynomial::operator * (Polynomial const &operand) const
     ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Polynomial retval;
-    if (GetOrder() == 0 && m[0] == 0.0f)
+    if (Order() == 0 && m[0] == 0.0f)
         return retval;    
     
-    Uint32 left_operand_order = GetOrder();
-    Uint32 right_operand_order = operand.GetOrder();
+    Uint32 left_operand_order = Order();
+    Uint32 right_operand_order = operand.Order();
     Uint32 order = left_operand_order + right_operand_order;
     retval.m.resize(order + 1);
     
@@ -240,10 +240,10 @@ void Polynomial::operator *= (Polynomial const &operand)
     ASSERT1(operand.IsHighestCoefficientNonZero());
     
     Polynomial result;
-    if (GetOrder() > 0 || m[0] != 0.0f)
+    if (Order() > 0 || m[0] != 0.0f)
     {    
-        Uint32 left_operand_order = GetOrder();
-        Uint32 right_operand_order = operand.GetOrder();
+        Uint32 left_operand_order = Order();
+        Uint32 right_operand_order = operand.Order();
         Uint32 order = left_operand_order + right_operand_order;
         result.m.resize(order + 1);
         
@@ -326,7 +326,7 @@ void Polynomial::Minimize () const
 
 std::ostream &operator << (std::ostream &stream, Polynomial const &polynomial)
 {
-    Uint32 order = polynomial.GetOrder();
+    Uint32 order = polynomial.Order();
     for (Uint32 i = 0; i <= order; ++i)
     {
         if (polynomial[i] != 0.0f)

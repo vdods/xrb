@@ -50,8 +50,8 @@ public:
         Serializer &serializer,
         World *owner_world);
 
-    inline std::string const &GetName () const { return m_name; }
-    inline World *GetOwnerWorld () const { return m_owner_world; }
+    inline std::string const &Name () const { return m_name; }
+    inline World *OwnerWorld () const { return m_owner_world; }
     inline bool IsWrapped () const { return m_is_wrapped; }
     inline Float GetSideLength () const { return m_side_length; }
     inline Float GetZDepth () const { return m_z_depth; }
@@ -59,7 +59,7 @@ public:
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius) const;
-    FloatVector2 GetNormalizedCoordinates (FloatVector2 const &coordinates) const;
+    FloatVector2 NormalizedCoordinates (FloatVector2 const &coordinates) const;
     FloatVector2 AdjustedCoordinates (
         FloatVector2 const &coordinates,
         FloatVector2 const &reference_coordinates) const;

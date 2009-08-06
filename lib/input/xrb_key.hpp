@@ -267,7 +267,7 @@ public:
     static bool IsKeyRepeatable (Key::Code code);
     static bool IsKeyAscii (Key::Code code);
     inline Key::Code GetCode () const { return m_code; }
-    inline std::string const &GetName () const { return m_name; }
+    inline std::string const &Name () const { return m_name; }
     inline bool IsPressed () const { return m_is_pressed; }
 
     // resets the m_is_pressed state to false

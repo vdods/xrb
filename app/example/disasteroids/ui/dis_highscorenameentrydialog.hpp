@@ -33,7 +33,7 @@ public:
         return &m_sender_submit_name;
     }
 
-    inline std::string const &GetName () const
+    inline std::string const &Name () const
     {
         ASSERT1(m_name_edit != NULL);
         return m_name_edit->GetText();

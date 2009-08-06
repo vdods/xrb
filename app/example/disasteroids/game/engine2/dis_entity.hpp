@@ -42,7 +42,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     inline EntityType GetEntityType () const { return m_entity_type; }
-    inline Float GetNextTimeToThink () const { return m_next_time_to_think; }
+    inline Float NextTimeToThink () const { return m_next_time_to_think; }
     inline EntityReference<Entity> const &GetReference ()
     {
         if (!m_reference.IsValid())

@@ -370,7 +370,7 @@ int main (int argc, char **argv)
             will be discussed later), and so processing them on a time-basis
             must be done each game loop iteration.
             @code */
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->OwnerEventQueue()->ProcessFrame(time);
             /* @endcode
             This call is where all the off-screen (strictly non-rendering)
             computation for the widget hierarchy takes place.  Widget
@@ -385,7 +385,7 @@ int main (int argc, char **argv)
             new events enqueued during the previous call, and we want to handle
             these delayed events at the earliest possible time.
             @code */
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->OwnerEventQueue()->ProcessFrame(time);
             /* @endcode
             Here is where the visual magic happens.  All the visible widgets
             in this hierarchy are drawn in this call.  If a widget is invisible

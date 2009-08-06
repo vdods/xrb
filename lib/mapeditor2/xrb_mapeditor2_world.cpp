@@ -54,7 +54,7 @@ MapEditor2::World *MapEditor2::World::CreateEmpty (Uint32 const entity_capacity)
 void MapEditor2::World::IncrementMainObjectLayer ()
 {
     ObjectLayerListIterator it =
-        GetObjectLayerIterator(
+        ObjectLayerIterator(
             DStaticCast<ObjectLayer *>(m_main_object_layer));
     ObjectLayerListIterator it_end = m_object_layer_list.end();
 
@@ -71,7 +71,7 @@ void MapEditor2::World::IncrementMainObjectLayer ()
 void MapEditor2::World::DecrementMainObjectLayer ()
 {
     ObjectLayerListIterator it =
-        GetObjectLayerIterator(
+        ObjectLayerIterator(
             DStaticCast<ObjectLayer *>(m_main_object_layer));
     ObjectLayerListIterator it_end = m_object_layer_list.end();
 
@@ -194,7 +194,7 @@ void MapEditor2::World::ReadEntitiesBelongingToLayer (
     }
 }
 
-Engine2::World::ObjectLayerListIterator MapEditor2::World::GetObjectLayerIterator (
+Engine2::World::ObjectLayerListIterator MapEditor2::World::ObjectLayerIterator (
     MapEditor2::ObjectLayer *object_layer)
 {
     ObjectLayerListIterator it;

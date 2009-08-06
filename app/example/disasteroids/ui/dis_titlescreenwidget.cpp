@@ -270,7 +270,7 @@ void TitleScreenWidget::ScheduleStateMachineInput (StateMachineInput const input
 
 void TitleScreenWidget::CancelScheduledStateMachineInput ()
 {
-    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         MatchEventType,
         Event::STATE_MACHINE_INPUT);
 }

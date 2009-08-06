@@ -73,11 +73,11 @@ MapEditor2::ObjectLayer *MapEditor2::Object::MapEditorObjectLayer () const
     return static_cast<ObjectLayer *>(GetObjectLayer());
 }
 
-MapEditor2::VisibilityQuadTree *MapEditor2::Object::GetOwnerMapEditorQuadTree () const
+MapEditor2::VisibilityQuadTree *MapEditor2::Object::OwnerMapEditorQuadTree () const
 {
-    if (GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL)
-        ASSERT1(dynamic_cast<VisibilityQuadTree *>(GetOwnerQuadTree(Engine2::QTT_VISIBILITY)) != NULL);
-    return static_cast<VisibilityQuadTree *>(GetOwnerQuadTree(Engine2::QTT_VISIBILITY));
+    if (OwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL)
+        ASSERT1(dynamic_cast<VisibilityQuadTree *>(OwnerQuadTree(Engine2::QTT_VISIBILITY)) != NULL);
+    return static_cast<VisibilityQuadTree *>(OwnerQuadTree(Engine2::QTT_VISIBILITY));
 }
 
 Color const &MapEditor2::Object::GetUnselectedMetricsColor () const
@@ -247,9 +247,9 @@ void MapEditor2::Object::ObjectSelectionSetRotate (
 void MapEditor2::Object::ReAddMapEditorObjectToQuadTree (
     Engine2::QuadTreeType const quad_tree_type)
 {
-    ASSERT1(GetOwnerQuadTree(quad_tree_type) != NULL);
+    ASSERT1(OwnerQuadTree(quad_tree_type) != NULL);
     GetObjectLayer()->HandleContainmentOrWrapping(this);
-    GetOwnerQuadTree(quad_tree_type)->ReAddObject(this);
+    OwnerQuadTree(quad_tree_type)->ReAddObject(this);
 }
 
 void MapEditor2::Object::SetIsSelected (bool const is_selected)
@@ -273,7 +273,7 @@ MapEditor2::Object::Object ()
 
 void MapEditor2::Object::AddToObjectSelectionSet ()
 {
-    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
+    ASSERT1(OwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
     ASSERT1(GetObjectLayer() != NULL);
     ASSERT1(!m_is_selected);
     ObjectLayer *map_editor_object_layer = MapEditorObjectLayer();
@@ -286,7 +286,7 @@ void MapEditor2::Object::AddToObjectSelectionSet ()
 
 void MapEditor2::Object::RemoveFromObjectSelectionSet ()
 {
-    ASSERT1(GetOwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
+    ASSERT1(OwnerQuadTree(Engine2::QTT_VISIBILITY) != NULL);
     ASSERT1(GetObjectLayer() != NULL);
     ASSERT1(m_is_selected);
     ObjectLayer *map_editor_object_layer = MapEditorObjectLayer();

@@ -102,24 +102,24 @@ protected:
     {
         return m_reticle_coordinates;
     }
-    inline Float GetNormalizedEngineRightLeftInput () const
+    inline Float NormalizedEngineRightLeftInput () const
     {
         ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_right_left_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedEngineUpDownInput () const
+    inline Float NormalizedEngineUpDownInput () const
     {
         ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_up_down_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedWeaponPrimaryInput () const
+    inline Float NormalizedWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float GetNormalizedWeaponSecondaryInput () const
+    inline Float NormalizedWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);

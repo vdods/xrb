@@ -359,7 +359,7 @@ protected:
                     continue;
 
                 // The gravitational force is from entity0 to entity1
-                FloatVector2 force_direction = (entity1->GetTranslation() - entity0->GetTranslation()).GetNormalization();
+                FloatVector2 force_direction = (entity1->GetTranslation() - entity0->GetTranslation()).Normalization();
                 // Apply equal and opposite gravitational force to both entities.
                 entity0->IncrementForce( gravitational_force * force_direction);
                 entity1->IncrementForce(-gravitational_force * force_direction);
@@ -591,9 +591,9 @@ int main (int argc, char **argv)
 
             // Turn the EventQueue crank, Perform off-screen GUI processing,
             // turn the EventQueue crank again, and then draw everything.
-            screen->GetOwnerEventQueue()->ProcessFrame(current_real_time);
+            screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->ProcessFrame(current_real_time);
-            screen->GetOwnerEventQueue()->ProcessFrame(current_real_time);
+            screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->Draw();
         }
 

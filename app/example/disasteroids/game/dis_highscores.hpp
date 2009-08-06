@@ -41,7 +41,7 @@ public:
         m_hash(ComputeHash(name, points, wave_count, date))
     { }
 
-    inline std::string const &GetName () const { return m_name; }
+    inline std::string const &Name () const { return m_name; }
     inline Uint32 GetPoints () const { return m_points; }
     inline Uint32 GetWaveCount () const { return m_wave_count; }
     inline time_t Date () const { return m_date; }

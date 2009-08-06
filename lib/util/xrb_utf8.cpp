@@ -33,7 +33,7 @@ F1-F3       80-BF       80-BF       80-BF
 F4          80-8F       80-BF       80-BF
 */
 
-char const *UTF8::GetNextCharacter (char const *current)
+char const *UTF8::NextCharacter (char const *current)
 {
     ASSERT1(current != NULL);
 

@@ -26,8 +26,8 @@ Screen::~Screen ()
     // the condemned owner EventQueue via ~EventHandler.
     DeleteAllChildren();
     // now delete the owner EventQueue.
-    ASSERT1(GetOwnerEventQueue() != NULL);
-    delete GetOwnerEventQueue();
+    ASSERT1(OwnerEventQueue() != NULL);
+    delete OwnerEventQueue();
     SetOwnerEventQueue(NULL);
 }
 

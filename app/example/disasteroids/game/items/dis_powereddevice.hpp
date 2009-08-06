@@ -40,8 +40,8 @@ public:
     // Item interface method
     virtual bool IsPoweredDevice () const { return true; }
 
-    inline Ship *GetOwnerShip () { return m_owner_ship; }
-    inline Ship const *GetOwnerShip () const { return m_owner_ship; }
+    inline Ship *OwnerShip () { return m_owner_ship; }
+    inline Ship const *OwnerShip () const { return m_owner_ship; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public Item interface methods

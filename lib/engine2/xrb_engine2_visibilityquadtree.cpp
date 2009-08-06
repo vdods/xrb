@@ -346,7 +346,7 @@ void Engine2::VisibilityQuadTree::Draw (
     if (!DoesAreaOverlapQuadBounds(draw_loop_functor.GetViewCenter(), draw_loop_functor.GetViewRadius()))
         return;
 
-//     DrawBounds(draw_loop_functor.GetObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
+//     DrawBounds(draw_loop_functor.ObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
 
     std::for_each(m_object_set.begin(), m_object_set.end(), draw_loop_functor);
 

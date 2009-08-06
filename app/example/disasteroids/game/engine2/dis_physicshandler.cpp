@@ -167,7 +167,7 @@ void PhysicsHandler::AddEntity (
     if (dis_entity->GetCollisionType() != CT_NO_COLLISION)
     {
         DEBUG1_CODE(bool add_was_successful =)
-        m_quad_tree->AddObject(dis_entity->GetOwnerObject());
+        m_quad_tree->AddObject(dis_entity->OwnerObject());
         ASSERT1(add_was_successful);
     }
 }
@@ -184,7 +184,7 @@ void PhysicsHandler::RemoveEntity (
     // if it's not CT_NO_COLLISION, remove its
     // owner object from the collision quadtree
     if (dis_entity->GetCollisionType() != CT_NO_COLLISION)
-        dis_entity->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER)->RemoveObject(dis_entity->GetOwnerObject());
+        dis_entity->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER)->RemoveObject(dis_entity->OwnerObject());
 }
 
 void PhysicsHandler::HandleFrame ()
@@ -215,7 +215,7 @@ void PhysicsHandler::HandleFrame ()
 
         DEBUG1_CODE(Uint32 entity_set_size = m_entity_set.size());
 
-        if (FrameTime() >= entity->GetNextTimeToThink())
+        if (FrameTime() >= entity->NextTimeToThink())
             entity->Think(FrameTime(), FrameDT());
 
         ASSERT1(m_entity_set.size() >= entity_set_size &&
@@ -333,7 +333,7 @@ void PhysicsHandler::UpdatePositions ()
             entity->ReAddToQuadTree(Engine2::QTT_VISIBILITY);
             if (entity->GetCollisionType() != CT_NO_COLLISION)
             {
-                ASSERT1(entity->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) != NULL);
+                ASSERT1(entity->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) != NULL);
                 entity->ReAddToQuadTree(Engine2::QTT_PHYSICS_HANDLER);
             }
         }

@@ -108,11 +108,11 @@ bool MapEditor2::Polygon::IsPointInside (FloatVector2 const &point) const
         FloatVector2 const &vertex1 = GetVertex((i + 1) % vertex_count);
         FloatVector2 const &vertex2 = GetVertex((i + 2) % vertex_count);
         Float corner_dot_product =
-            (vertex0 - vertex1).GetNormalization() |
-            (vertex2 - vertex1).GetNormalization();
+            (vertex0 - vertex1).Normalization() |
+            (vertex2 - vertex1).Normalization();
         Float point_dot_product  =
-            (vertex0 - vertex1).GetNormalization() |
-            (point   - vertex1).GetNormalization();
+            (vertex0 - vertex1).Normalization() |
+            (point   - vertex1).Normalization();
         if (point_dot_product < corner_dot_product)
             return false;
     }

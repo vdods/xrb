@@ -39,7 +39,7 @@ ScreenCoordRect Font::GetStringRect (char const *const string) const
     while (*current_glyph != '\0')
     {
         // get the glyph after the current one
-        next_glyph = UTF8::GetNextCharacter(current_glyph);
+        next_glyph = UTF8::NextCharacter(current_glyph);
         // move through all the normal glyphs (do no spacing)
         MoveThroughGlyph(
             &pen_position_26_6,
@@ -124,7 +124,7 @@ void Font::GenerateLineFormatVector (
     while (*current_glyph != '\0')
     {
         // get the glyph after the current one
-        next_glyph = UTF8::GetNextCharacter(current_glyph);
+        next_glyph = UTF8::NextCharacter(current_glyph);
 
         // if this is a new line, re-init the format values and line_start
         if (line_start)
@@ -295,7 +295,7 @@ void Font::DrawStringPrivate (
            !UTF8::AreCharactersEqual(current_glyph, string_terminator))
     {
         // get the glyph after the current one
-        next_glyph = UTF8::GetNextCharacter(current_glyph);
+        next_glyph = UTF8::NextCharacter(current_glyph);
         // draw the glyph
         DrawGlyph(render_context, current_glyph, pen_position_26_6);
         // advance the pen

@@ -43,7 +43,7 @@ public:
     Polynomial (Polynomial const &polynomial);
     ~Polynomial () { }
 
-    inline Uint32 GetOrder () const
+    inline Uint32 Order () const
     {
         ASSERT1(m.size() > 0);
         return m.size() - 1;

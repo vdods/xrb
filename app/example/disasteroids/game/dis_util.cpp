@@ -140,7 +140,7 @@ void RadiusKnockback (
             Float knockback_momentum = s_knockback_factor * power * distance_factor;
             entity->AccumulateMomentum(
                 knockback_momentum *
-                center_to_center.GetNormalization() *
+                center_to_center.Normalization() *
                 Math::Sqrt(entity->GetScaleFactor()));
         }
     }

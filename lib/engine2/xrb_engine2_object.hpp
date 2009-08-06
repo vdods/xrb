@@ -109,7 +109,7 @@ public:
             QuadTreeType quad_tree_type);
         ~DrawLoopFunctor () { }
 
-        inline Object::DrawData const &GetObjectDrawData () const { return m_object_draw_data; }
+        inline Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
         inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
         inline Float GetPixelsInViewRadius () const { return m_pixels_in_view_radius; }
         inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
@@ -195,7 +195,7 @@ public:
         return m_owner_quad_tree[quad_tree_type] != NULL;
     }
     // returns the owner of this entity
-    inline QuadTree *GetOwnerQuadTree (QuadTreeType const quad_tree_type) const
+    inline QuadTree *OwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
         ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type];

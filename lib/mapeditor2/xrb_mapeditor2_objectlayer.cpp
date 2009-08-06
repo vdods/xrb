@@ -79,10 +79,10 @@ MapEditor2::ObjectLayer *MapEditor2::ObjectLayer::Create (
     return retval;
 }
 
-MapEditor2::World *MapEditor2::ObjectLayer::GetOwnerMapEditorWorld () const
+MapEditor2::World *MapEditor2::ObjectLayer::OwnerMapEditorWorld () const
 {
-    World *retval = dynamic_cast<World *>(GetOwnerWorld());
-    ASSERT1(GetOwnerWorld() == NULL || retval != NULL);
+    World *retval = dynamic_cast<World *>(OwnerWorld());
+    ASSERT1(OwnerWorld() == NULL || retval != NULL);
     return retval;
 }
 
@@ -314,7 +314,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
 
     // add the cloned objects into the layer and select each
     for (Uint32 i = 0; i < number_of_objects_to_clone; ++i) {
-        GetOwnerMapEditorWorld()->AddObject(objects_to_clone[i], this);
+        OwnerMapEditorWorld()->AddObject(objects_to_clone[i], this);
         objects_to_clone[i]->SetIsSelected(true);
     }
 
@@ -362,7 +362,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
 
     // delete the collected objects
     for (Uint32 i = 0; i < number_of_objects_to_delete; ++i) {
-        GetOwnerMapEditorWorld()->RemoveObject(objects_to_delete[i]);
+        OwnerMapEditorWorld()->RemoveObject(objects_to_delete[i]);
         Delete(objects_to_delete[i]);
     }
 
@@ -684,7 +684,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
         ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL && !entity->GetVelocity().IsZero())
-            entity->SetVelocity(speed * entity->GetVelocity().GetNormalization());
+            entity->SetVelocity(speed * entity->GetVelocity().Normalization());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -806,9 +806,9 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAppliesGravity (
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
         {
-            GetOwnerMapEditorWorld()->RemoveEntity(entity);
+            OwnerMapEditorWorld()->RemoveEntity(entity);
             entity->SetAppliesGravity(applies_gravity);
-            GetOwnerMapEditorWorld()->AddEntity(entity, this);
+            OwnerMapEditorWorld()->AddEntity(entity, this);
         }
     }
 }
@@ -826,9 +826,9 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityReactsToGravity (
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
         {
-            GetOwnerMapEditorWorld()->RemoveEntity(entity);
+            OwnerMapEditorWorld()->RemoveEntity(entity);
             entity->SetReactsToGravity(reacts_to_gravity);
-            GetOwnerMapEditorWorld()->AddEntity(entity, this);
+            OwnerMapEditorWorld()->AddEntity(entity, this);
         }
     }
 }
@@ -1324,7 +1324,7 @@ void MapEditor2::ObjectLayer::SetObjectSelectionSetCenterOfGravity (
 bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL);
-    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
     ASSERT1(!object->IsSelected());
 
@@ -1386,7 +1386,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
 bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Object *const object)
 {
     ASSERT1(object != NULL);
-    ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
+    ASSERT1(object->OwnerQuadTree(Engine2::QTT_VISIBILITY)->GetRootNode() == GetQuadTree());
     ASSERT1(object->GetObjectLayer() == this);
     ASSERT1(object->IsSelected());
 

@@ -63,7 +63,7 @@ Revulsion::~Revulsion ()
     {
         if (m_reticle_effect->IsInWorld())
             m_reticle_effect->RemoveFromWorld();
-        delete m_reticle_effect->GetOwnerObject();
+        delete m_reticle_effect->OwnerObject();
     }
 }
 
@@ -95,13 +95,13 @@ void Revulsion::Think (Float const time, Float const frame_dt)
     AimShipAtReticleCoordinates(frame_dt);
     // apply ship thrust in the appropriate direction
     AccumulateForce(
-        GetNormalizedEngineUpDownInput() *
+        NormalizedEngineUpDownInput() *
         ms_engine_thrust[EnemyLevel()] *
         Math::UnitVector(Angle()));
     // set the weapon inputs and activate
     m_weapon->SetInputs(
-        GetNormalizedWeaponPrimaryInput(),
-        GetNormalizedWeaponSecondaryInput(),
+        NormalizedWeaponPrimaryInput(),
+        NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_weapon),
         MuzzleDirection(m_weapon),
         GetReticleCoordinates());
@@ -442,7 +442,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
     FloatVector2 position_delta(GetTranslation() - target_position);
     FloatVector2 desired_velocity(
         ms_flee_speed[EnemyLevel()] *
-        GetPerpendicularVector2(position_delta).GetNormalization());
+        GetPerpendicularVector2(position_delta).Normalization());
     MatchVelocity(desired_velocity, frame_dt);
 }
 
@@ -456,10 +456,10 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
     {
         Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
-            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
         thrust_force = thrust_vector.Length();
 
-        SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
+        SetReticleCoordinates(GetTranslation() + thrust_vector.Normalization());
         SetEngineUpDownInput(
             static_cast<Sint8>(
                 SINT8_UPPER_BOUND * thrust_force /

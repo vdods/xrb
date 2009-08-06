@@ -52,7 +52,7 @@ Master::Master (Screen *const screen)
         &m_internal_receiver_quit_game);
     // initialize m_is_quit_requested from m_screen's
     m_is_quit_requested = m_screen->IsQuitRequested();
-    ASSERT1(m_screen->GetOwnerEventQueue() != NULL);
+    ASSERT1(m_screen->OwnerEventQueue() != NULL);
     m_minimum_framerate = 20.0f;
     m_maximum_framerate = 60.0f;
     m_real_time = 0.0f;
@@ -168,11 +168,11 @@ void Master::Run ()
         {
             Uint32 gui_frame_start_time = SDL_GetTicks();
             // process events from the gui event queue
-            m_screen->GetOwnerEventQueue()->ProcessFrame(m_real_time);
+            m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
             // frame computations for the UI/view system
             m_screen->ProcessFrame(m_real_time);
             // process events from the gui event queue again
-            m_screen->GetOwnerEventQueue()->ProcessFrame(m_real_time);
+            m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
             gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
         }
 
@@ -383,7 +383,7 @@ void Master::ProcessKeyRepeatEvents ()
         EventKeyRepeat *event = m_key_repeater.DequeueEvent();
         ASSERT1(event != NULL);
         // process event
-        m_screen->GetOwnerEventQueue()->EnqueueEvent(m_screen, event);
+        m_screen->OwnerEventQueue()->EnqueueEvent(m_screen, event);
     }
 }
 

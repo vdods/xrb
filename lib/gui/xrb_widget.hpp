@@ -154,7 +154,7 @@ public:
 
     /** @brief Returns the name of this widget
       */
-    inline std::string const &GetName () const { return m_name; }
+    inline std::string const &Name () const { return m_name; }
     /** @brief Returns a pointer to the parent (const) of this widget.
       */
     inline ContainerWidget const *GetParent () const { return m_parent; }

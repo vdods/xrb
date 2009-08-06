@@ -79,8 +79,8 @@ void Shade::Think (Float const time, Float const frame_dt)
 
     // we don't aim the ship, because it stays at the same angle all the time
     m_weapon->SetInputs(
-        GetNormalizedWeaponPrimaryInput(),
-        GetNormalizedWeaponSecondaryInput(),
+        NormalizedWeaponPrimaryInput(),
+        NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_weapon),
         MuzzleDirection(m_weapon),
         GetReticleCoordinates());
@@ -105,7 +105,7 @@ FloatVector2 Shade::MuzzleLocation (Weapon const *weapon) const
             GetTranslation())
         -
         GetTranslation());
-    return GetTranslation() + GetScaleFactor() * target_offset.GetNormalization();
+    return GetTranslation() + GetScaleFactor() * target_offset.Normalization();
 }
 
 FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
@@ -121,7 +121,7 @@ FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
             GetTranslation())
         -
         GetTranslation());
-    return target_offset.GetNormalization();
+    return target_offset.Normalization();
 }
 
 void Shade::SetTarget (Mortal *const target)
@@ -277,7 +277,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     else if (distance_to_target <= 0.75f * ms_stalk_minimum_distance[EnemyLevel()] + 0.25f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
-        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
+        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * position_delta.Normalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * Mass());
         if (thrust_vector.Length() > ms_engine_thrust[EnemyLevel()])
         {
@@ -297,7 +297,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     else if (distance_to_target >= 0.25f * ms_stalk_minimum_distance[EnemyLevel()] + 0.75f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(GetVelocity() - m_target->GetVelocity());
-        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * position_delta.GetNormalization());
+        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * position_delta.Normalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * Mass());
         if (thrust_vector.Length() > ms_engine_thrust[EnemyLevel()])
         {
@@ -370,7 +370,7 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
     {
         Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
-            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
 
         AccumulateForce(thrust_vector);
     }

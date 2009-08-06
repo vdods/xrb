@@ -52,7 +52,7 @@ namespace MapEditor2
             Serializer &serializer,
             World *owner_world);
     
-        World *GetOwnerMapEditorWorld () const;
+        World *OwnerMapEditorWorld () const;
         inline bool IsObjectSelectionSetEmpty () const
         {
             return m_object_selection_set.empty();
@@ -63,7 +63,7 @@ namespace MapEditor2
             return m_selected_object_count;
         }
         Object *GetSingleSelectedObject ();
-        inline FloatVector2 const &GetObjectSelectionSetOrigin () const
+        inline FloatVector2 const &ObjectSelectionSetOrigin () const
         {
             return m_object_selection_set_origin;
         }
@@ -80,27 +80,27 @@ namespace MapEditor2
             return m_selected_entity_count;
         }
         Entity *GetSingleSelectedEntity ();
-        inline Float GetObjectSelectionSetMass () const
+        inline Float ObjectSelectionSetMass () const
         {
             return m_object_selection_set_mass;
         }
-        inline FloatVector2 const &GetObjectSelectionSetVelocity () const
+        inline FloatVector2 const &ObjectSelectionSetVelocity () const
         {
             return m_object_selection_set_velocity;
         }
-        inline Float GetObjectSelectionSetSecondMoment () const
+        inline Float ObjectSelectionSetSecondMoment () const
         {
             return m_object_selection_set_mass;
         }
-        inline Float GetObjectSelectionSetAngularVelocity () const
+        inline Float ObjectSelectionSetAngularVelocity () const
         {
             return m_object_selection_set_angular_velocity;
         }
-        inline Float GetObjectSelectionSetElasticity () const
+        inline Float ObjectSelectionSetElasticity () const
         {
             return m_object_selection_set_elasticity;
         }
-        inline Float GetObjectSelectionSetDensity () const
+        inline Float ObjectSelectionSetDensity () const
         {
             return m_object_selection_set_density;
         }

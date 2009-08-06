@@ -121,7 +121,7 @@ private:
         void operator () (Engine2::Object *object);
 
         inline Entity *GetEntity () { return m_entity; }
-        inline Float GetObjectLayerSideLength () { return m_object_layer_side_length; }
+        inline Float ObjectLayerSideLength () { return m_object_layer_side_length; }
         inline Float HalfObjectLayerSideLength () { return m_half_object_layer_side_length; }
                 
     private:

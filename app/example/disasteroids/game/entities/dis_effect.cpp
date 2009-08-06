@@ -23,7 +23,7 @@ namespace Dis
 
 void Effect::Think (Float const time, Float const frame_dt)
 {
-    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - LifetimeRatio(time)));
+    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - LifetimeRatio(time)));
 
     if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
         ScheduleForDeletion(0.0f);
@@ -158,7 +158,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
     // update the sprite's alpha value to reflect the damage left
     Float alpha_value = Max(0.0f, m_current_damage / m_potential_damage);
     ASSERT1(alpha_value <= 1.0f);
-    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
+    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
 }
 
 void Fireball::Collide (
@@ -221,7 +221,7 @@ void LaserBeam::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
-    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
 void LaserBeam::SnapToShip (
@@ -250,11 +250,11 @@ void TractorBeam::SetParameters (
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
     if (push_instead_of_pull)
-        GetOwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
     else if (pull_everything)
-        GetOwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
     else
-        GetOwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -264,7 +264,7 @@ void TractorBeam::SetParameters (
 void ShieldEffect::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    GetOwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
 }
 
 void ShieldEffect::SnapToShip (

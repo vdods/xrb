@@ -19,7 +19,7 @@ namespace Xrb
 
 Event::~Event () { }
 
-std::string const &Event::GetName (EventType const event_type)
+std::string const &Event::Name (EventType const event_type)
 {
     static std::string const s_event_type_name[] =
     {

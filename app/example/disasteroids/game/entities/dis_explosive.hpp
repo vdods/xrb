@@ -108,7 +108,7 @@ public:
         Float max_health);
     virtual ~Grenade () { }
 
-    inline GrenadeLauncher *GetOwnerGrenadeLauncher ()
+    inline GrenadeLauncher *OwnerGrenadeLauncher ()
     {
         return m_owner_grenade_launcher;
     }
@@ -333,7 +333,7 @@ public:
     }
     virtual ~EMPBomb () { }
 
-    inline EMPBombLayer *GetOwnerEMPBombLayer ()
+    inline EMPBombLayer *OwnerEMPBombLayer ()
     {
         return m_owner_emp_bomb_launcher;
     }

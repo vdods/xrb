@@ -183,8 +183,8 @@ void Engine2::Object::Write (Serializer &serializer) const
 Engine2::World *Engine2::Object::GetWorld () const
 {
     ASSERT1(m_object_layer != NULL);
-    ASSERT1(m_object_layer->GetOwnerWorld() != NULL);
-    return m_object_layer->GetOwnerWorld();
+    ASSERT1(m_object_layer->OwnerWorld() != NULL);
+    return m_object_layer->OwnerWorld();
 }
 
 void Engine2::Object::SetEntity (Entity *const entity)

@@ -1010,7 +1010,7 @@ void World::ScheduleStateMachineInput (StateMachineInput const input, Float cons
 
 void World::CancelScheduledStateMachineInput ()
 {
-    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         MatchEventType,
         Event::STATE_MACHINE_INPUT);
 }

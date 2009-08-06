@@ -79,7 +79,7 @@ Devourment::~Devourment ()
     {
         if (m_mouth_health_trigger->IsInWorld())
             m_mouth_health_trigger->RemoveFromWorld();
-        delete m_mouth_health_trigger->GetOwnerObject();
+        delete m_mouth_health_trigger->OwnerObject();
     }
 
     ASSERT1(m_mouth_tractor != NULL);
@@ -89,7 +89,7 @@ Devourment::~Devourment ()
     {
         if (m_mouth_tractor_beam->IsInWorld())
             m_mouth_tractor_beam->RemoveFromWorld();
-        delete m_mouth_tractor_beam->GetOwnerObject();
+        delete m_mouth_tractor_beam->OwnerObject();
     }
 }
 
@@ -126,7 +126,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
 
     // the grinder sprite's color bias (i.e. damage/healing flashing)
     // must be matched here, since it was updated above in Ship::Think().
-    m_mouth_health_trigger->GetOwnerObject()->SetBiasColor(GetOwnerObject()->BiasColor());
+    m_mouth_health_trigger->OwnerObject()->SetBiasColor(OwnerObject()->BiasColor());
 
     // ensure the tractor beam is allocated (lazy allocation)
     if (!m_mouth_tractor_beam.IsValid())
@@ -163,8 +163,8 @@ void Devourment::Think (Float const time, Float const frame_dt)
     }
     // set the weapon inputs and activate
     m_mouth_tractor->SetInputs(
-        GetNormalizedWeaponPrimaryInput(),
-        GetNormalizedWeaponSecondaryInput(),
+        NormalizedWeaponPrimaryInput(),
+        NormalizedWeaponSecondaryInput(),
         MuzzleLocation(m_mouth_tractor),
         MuzzleDirection(m_mouth_tractor),
         GetReticleCoordinates());
@@ -178,7 +178,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // set the translation and velocity of the mouth health trigger
     ASSERT1(m_mouth_health_trigger.IsValid());
     FloatVector2 mouth_health_trigger_translation(
-        GetObjectLayer()->GetNormalizedCoordinates(
+        GetObjectLayer()->NormalizedCoordinates(
             GetTranslation() + 0.48f * GetScaleFactor() * Math::UnitVector(Angle())));
     m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
     m_mouth_health_trigger->SetAngle(Angle());
@@ -338,7 +338,7 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup->EffectiveValue(),
             (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            (GetTranslation() - powerup->GetTranslation()).Normalization(),
             0.0f,
             time,
             frame_dt);
@@ -470,7 +470,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (T <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
-        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - GetTranslation()).GetNormalization());
+        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - GetTranslation()).Normalization());
     }
     else
     {
@@ -513,7 +513,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     // be Devourments flying all over the joint
     if (!GetVelocity().IsZero())
     {
-        FloatVector2 braking_thrust(-ms_engine_thrust[EnemyLevel()] * GetVelocity().GetNormalization());
+        FloatVector2 braking_thrust(-ms_engine_thrust[EnemyLevel()] * GetVelocity().Normalization());
         AccumulateForce(braking_thrust);
     }
 }
@@ -528,9 +528,9 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     {
         Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
-            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
 
-        SetReticleCoordinates(GetTranslation() + thrust_vector.GetNormalization());
+        SetReticleCoordinates(GetTranslation() + thrust_vector.Normalization());
         AccumulateForce(thrust_vector);
     }
 }

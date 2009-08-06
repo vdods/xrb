@@ -138,7 +138,7 @@ public:
 
 protected:
 
-    inline Float GetNormalizedEngineAuxiliaryInput () const
+    inline Float NormalizedEngineAuxiliaryInput () const
     {
         return static_cast<Float>(m_engine_auxiliary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);

@@ -58,7 +58,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
     {
         Engine2::Object const *object = *it;
         ASSERT1(object != NULL);
-        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
         if ((object->GetTranslation() - area_center).Length()
             <
             (object->GetRadius(GetQuadTreeType()) + area_radius))
@@ -126,7 +126,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
     {
         Engine2::Object const *object = *it;
         ASSERT1(object != NULL);
-        ASSERT1(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         FloatVector2 object_translation(object->GetTranslation());
         FloatVector2 adjusted_area_center(area_center);
@@ -224,7 +224,7 @@ void CollisionQuadTree::LineTrace (
     {
         Engine2::Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
@@ -320,7 +320,7 @@ void CollisionQuadTree::LineTraceWrapped (
     {
         Engine2::Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
@@ -414,7 +414,7 @@ void CollisionQuadTree::AreaTrace (
     {
         Engine2::Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
@@ -477,7 +477,7 @@ void CollisionQuadTree::AreaTraceWrapped (
     {
         Engine2::Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
@@ -542,7 +542,7 @@ void CollisionQuadTree::CollideEntity (
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!IsAllowableObjectRadius(entity->GetOwnerObject()))
+        if (!IsAllowableObjectRadius(entity->OwnerObject()))
             return;
     }
 
@@ -554,10 +554,10 @@ void CollisionQuadTree::CollideEntity (
     {
         Engine2::Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->GetOwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
 
         // don't collide the entity with itself
-        if (object == entity->GetOwnerObject())
+        if (object == entity->OwnerObject())
             continue;
 
         // this is a quick and easy way to avoid calculating
@@ -565,7 +565,7 @@ void CollisionQuadTree::CollideEntity (
         if (object->GetRadius(GetQuadTreeType()) > entity->GetRadius(GetQuadTreeType()))
             continue;
         else if (object->GetRadius(GetQuadTreeType()) == entity->GetRadius(GetQuadTreeType()) &&
-                 object > entity->GetOwnerObject())
+                 object > entity->OwnerObject())
             continue;
 
         Float r = entity->GetRadius(GetQuadTreeType()) + object->GetRadius(GetQuadTreeType());
@@ -588,7 +588,7 @@ void CollisionQuadTree::CollideEntity (
         if (P.IsZero())
             collision_normal = FloatVector2(1.0f, 0.0f);
         else
-            collision_normal = P.GetNormalization();
+            collision_normal = P.Normalization();
         Float collision_force = 0.0f;
 
         if ((V | P) < 0.0f && // and if the distance between the two is closing
@@ -642,7 +642,7 @@ void CollisionQuadTree::CollideEntity (
 void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::Object *const object)
 {
     // don't collide the entity with itself
-    if (object == m_entity->GetOwnerObject())
+    if (object == m_entity->OwnerObject())
         return;
 
     // this is a quick and easy way to avoid calculating
@@ -650,7 +650,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     if (object->GetRadius(m_quad_tree_type) > m_entity->GetRadius(m_quad_tree_type)
         ||
         (object->GetRadius(m_quad_tree_type) == m_entity->GetRadius(m_quad_tree_type) &&
-         object > m_entity->GetOwnerObject()))
+         object > m_entity->OwnerObject()))
         return;
 
     FloatVector2 ce0_translation(m_entity->GetTranslation());
@@ -686,7 +686,7 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     if (P.IsZero())
         collision_normal = FloatVector2(1.0f, 0.0f);
     else
-        collision_normal = P.GetNormalization();
+        collision_normal = P.Normalization();
     Float collision_force = 0.0f;
 
     if ((V | P) < 0.0f && // and if the distance between the two is closing
@@ -762,7 +762,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
     if (!DoesAreaOverlapQuadBoundsWrapped(
             functor.GetEntity()->GetTranslation(),
             functor.GetEntity()->GetRadius(GetQuadTreeType()),
-            functor.GetObjectLayerSideLength(),
+            functor.ObjectLayerSideLength(),
             functor.HalfObjectLayerSideLength()))
         return;
 
@@ -775,7 +775,7 @@ void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWr
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!IsAllowableObjectRadius(functor.GetEntity()->GetOwnerObject()))
+        if (!IsAllowableObjectRadius(functor.GetEntity()->OwnerObject()))
             return;
     }
 

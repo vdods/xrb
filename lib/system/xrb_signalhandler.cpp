@@ -34,7 +34,7 @@ void SignalSender0::Signal ()
     // we can early out if the sender is blocked (since it can't
     // cause any receiver callbacks, there's no way for it to become
     // unblocked during this call to Signal().
-    if (GetOwner()->IsBlockingSenders() || IsBlocking())
+    if (Owner()->IsBlockingSenders() || IsBlocking())
         return;
 
     // iterate through all attached ports and call their
@@ -50,14 +50,14 @@ void SignalSender0::Signal ()
         // blocking senders and this sender isn't blocking itself.
         // this code can't be above this for-loop because the blocking
         // status might change during one of the callbacks.
-        if (!GetOwner()->IsBlockingSenders() && !IsBlocking())
+        if (!Owner()->IsBlockingSenders() && !IsBlocking())
         {
             // only call the callback if the receiver's owner isn't blocking
             // all receivers and if the receiver isn't blocking itself
-            if (!attachment.m_receiver->GetOwner()->IsBlockingReceivers() &&
+            if (!attachment.m_receiver->Owner()->IsBlockingReceivers() &&
                 !attachment.m_receiver->IsBlocking())
             {
-                (attachment.m_receiver->GetOwner()->*attachment.m_receiver->m_callback)();
+                (attachment.m_receiver->Owner()->*attachment.m_receiver->m_callback)();
             }
         }
         // we can early out if this sender becomes blocked.

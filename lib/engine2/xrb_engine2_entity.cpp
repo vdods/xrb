@@ -23,7 +23,7 @@
 namespace Xrb
 {
 
-Engine2::Sprite *Engine2::Entity::GetOwnerSprite () const
+Engine2::Sprite *Engine2::Entity::OwnerSprite () const
 {
     if (m_owner_object == NULL)
         return NULL;
@@ -32,7 +32,7 @@ Engine2::Sprite *Engine2::Entity::GetOwnerSprite () const
     return static_cast<Sprite *>(m_owner_object);
 }
 
-Engine2::Compound *Engine2::Entity::GetOwnerCompound () const
+Engine2::Compound *Engine2::Entity::OwnerCompound () const
 {
     if (m_owner_object == NULL)
         return NULL;
@@ -58,26 +58,26 @@ void Engine2::Entity::AccumulateWrappedOffset (FloatVector2 const &wrapped_offse
 void Engine2::Entity::RemoveFromWorld ()
 {
     ASSERT1(IsInWorld());
-    ASSERT1(GetOwnerObject()->GetWorld() != NULL);
+    ASSERT1(OwnerObject()->GetWorld() != NULL);
     ASSERT1(GetObjectLayer() != NULL);
-    GetOwnerObject()->GetWorld()->RemoveDynamicObject(GetOwnerObject());
+    OwnerObject()->GetWorld()->RemoveDynamicObject(OwnerObject());
 }
 
 void Engine2::Entity::AddBackIntoWorld ()
 {
     ASSERT1(!IsInWorld());
-    ASSERT1(GetOwnerObject()->GetWorld() != NULL);
+    ASSERT1(OwnerObject()->GetWorld() != NULL);
     ASSERT1(GetObjectLayer() != NULL);
-    GetOwnerObject()->GetWorld()->AddDynamicObject(GetOwnerObject(), GetObjectLayer());
+    OwnerObject()->GetWorld()->AddDynamicObject(OwnerObject(), GetObjectLayer());
 }
 
 void Engine2::Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
 {
     ASSERT1(m_owner_object != NULL);
-    if (GetOwnerQuadTree(quad_tree_type) != NULL)
+    if (OwnerQuadTree(quad_tree_type) != NULL)
     {
         GetObjectLayer()->HandleContainmentOrWrapping(m_owner_object);
-        GetOwnerQuadTree(quad_tree_type)->ReAddObject(m_owner_object);
+        OwnerQuadTree(quad_tree_type)->ReAddObject(m_owner_object);
     }
 }
 
@@ -88,10 +88,10 @@ void Engine2::Entity::ScheduleForDeletion (Float time_delay)
     if (time_delay < 0.0f)
         time_delay = 0.0f;
 
-    GetOwnerObject()->GetWorld()->EnqueueEvent(
+    OwnerObject()->GetWorld()->EnqueueEvent(
         new EventEntity(
             this,
-            GetOwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
+            OwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
             Event::ENGINE2_DELETE_ENTITY));
 }
 
@@ -102,10 +102,10 @@ void Engine2::Entity::ScheduleForRemovalFromWorld (Float time_delay)
     if (time_delay < 0.0f)
         time_delay = 0.0f;
 
-    GetOwnerObject()->GetWorld()->EnqueueEvent(
+    OwnerObject()->GetWorld()->EnqueueEvent(
         new EventEntity(
             this,
-            GetOwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
+            OwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
             Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
 }
 

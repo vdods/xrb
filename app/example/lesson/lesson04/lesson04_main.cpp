@@ -427,9 +427,9 @@ int main (int argc, char **argv)
 
             // Turn the EventQueue crank, Perform off-screen GUI processing,
             // turn the EventQueue crank again, and then draw everything.
-            screen->GetOwnerEventQueue()->ProcessFrame(current_real_time);
+            screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->ProcessFrame(current_real_time);
-            screen->GetOwnerEventQueue()->ProcessFrame(current_real_time);
+            screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->Draw();
         }
 

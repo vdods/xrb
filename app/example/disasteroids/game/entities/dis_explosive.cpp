@@ -145,7 +145,7 @@ void Grenade::Collide (
 
         // figure out the new damage radius, explosion radius and damage to inflict.
         Float scale_factor = Math::Sqrt(1.0f + other_grenade->Mass() / Mass());
-        GetOwnerObject()->Scale(scale_factor);
+        OwnerObject()->Scale(scale_factor);
         m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
         m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
         m_damage_to_inflict += other_grenade->m_damage_to_inflict;
@@ -314,7 +314,7 @@ void Missile::Think (
             false,
             &line_trace_binding_set);
 
-        FloatVector2 collision_normal(trace_vector.GetNormalization());
+        FloatVector2 collision_normal(trace_vector.Normalization());
         for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
                                          it_end = line_trace_binding_set.end();
              it != it_end;

@@ -391,11 +391,11 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 
         // object properties panel values - init
         m_object_properties_panel->SetObjectSelectionSetOrigin(
-            MapEditorWorldView()->GetObjectSelectionSetOrigin());
+            MapEditorWorldView()->ObjectSelectionSetOrigin());
         m_object_properties_panel->SetObjectSelectionSetScale(
-            MapEditorWorldView()->GetObjectSelectionSetScale());
+            MapEditorWorldView()->ObjectSelectionSetScale());
         m_object_properties_panel->SetObjectSelectionSetAngle(
-            MapEditorWorldView()->GetObjectSelectionSetAngle());
+            MapEditorWorldView()->ObjectSelectionSetAngle());
         // signal connections
         SignalHandler::Connect1(
             m_object_properties_panel->SenderPerObjectOriginXAssigned(),
@@ -448,7 +448,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 
         // entity properties panel value - init
         m_entity_properties_panel->SetObjectSelectionSetMass(
-            MapEditorWorldView()->GetObjectSelectionSetMass());
+            MapEditorWorldView()->ObjectSelectionSetMass());
         // signal connections
         SignalHandler::Connect1(
             MapEditorWorldView()->SenderObjectSelectionSetMassChanged(),

@@ -67,7 +67,7 @@ void HighScoresWidget::Update (
             high_scores.BestPointsScore(row) :
             high_scores.BestWaveCountScore(row);
 
-        m_name_label[row]->SetText(score.GetName());
+        m_name_label[row]->SetText(score.Name());
         m_wave_count_label[row]->SetValue(score.GetWaveCount());
         m_points_label[row]->SetValue(score.GetPoints());
     }

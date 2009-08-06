@@ -125,7 +125,7 @@ Score const &HighScores::BestWaveCountScore (Uint32 index) const
 
 bool HighScores::AddScore (Score const &score)
 {
-    ASSERT1(!score.GetName().empty());
+    ASSERT1(!score.Name().empty());
     ASSERT1(IsNewHighScore(score));
 
     ScoreOrderByPoints score_order_by_points;
@@ -233,7 +233,7 @@ void HighScores::Write (std::string const &filename)
          ++it)
     {
         try {
-            root->SetPathElementString("|high_scores|+|name", it->GetName());
+            root->SetPathElementString("|high_scores|+|name", it->Name());
             root->SetPathElementUint32("|high_scores|$|points", it->GetPoints());
             root->SetPathElementUint32("|high_scores|$|wave_count", it->GetWaveCount());
             root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->Date()));

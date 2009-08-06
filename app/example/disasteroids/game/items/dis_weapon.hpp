@@ -326,7 +326,7 @@ public:
 //         {
 //             if (m_reticle_effect->IsInWorld())
 //                 m_reticle_effect->RemoveFromWorld();
-//             delete m_reticle_effect->GetOwnerObject();
+//             delete m_reticle_effect->OwnerObject();
 //         }
     }
 

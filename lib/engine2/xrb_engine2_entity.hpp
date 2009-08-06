@@ -71,13 +71,13 @@ public:
     inline FloatVector2 const &GetWrappedOffset () const { return m_wrapped_offset; }
     inline FloatVector2 GetUnwrappedTranslation () const { return GetTranslation() + m_wrapped_offset; }
     // the Object which this Entity is attached to
-    inline Object *GetOwnerObject () const { return m_owner_object; }
+    inline Object *OwnerObject () const { return m_owner_object; }
     // returns the owner object cast to a Sprite (but it asserts that
     // the owner object is actually a sprite).
-    Sprite *GetOwnerSprite () const;
+    Sprite *OwnerSprite () const;
     // returns the owner object cast to a Compound (but it asserts that
     // the owner object is actually a compound).
-    Compound *GetOwnerCompound () const;
+    Compound *OwnerCompound () const;
 
     // ///////////////////////////////////////////////////////////////////
     // modifiers
@@ -124,7 +124,7 @@ public:
     inline Float GetPhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetPhysicalRadiusSquared(); }
     inline ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectLayer(); }
     inline bool HasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->HasOwnerQuadTree(quad_tree_type); }
-    inline QuadTree *GetOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetOwnerQuadTree(quad_tree_type); }
+    inline QuadTree *OwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->OwnerQuadTree(quad_tree_type); }
 
     inline FloatVector2 const &GetTranslation () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetTranslation(); }
     inline FloatVector2 const &GetScaleFactors () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetScaleFactors(); }

@@ -38,7 +38,7 @@ Entity::Entity (EntityType const entity_type, CollisionType const collision_type
 
 Dis::World *Entity::GetWorld () const
 {
-    return DStaticCast<Dis::World *>(GetOwnerObject()->GetWorld());
+    return DStaticCast<Dis::World *>(OwnerObject()->GetWorld());
 }
 
 Dis::PhysicsHandler const *Entity::GetPhysicsHandler () const

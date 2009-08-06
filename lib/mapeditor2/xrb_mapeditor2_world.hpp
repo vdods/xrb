@@ -84,7 +84,7 @@ namespace MapEditor2
     
     private:
     
-        ObjectLayerListIterator GetObjectLayerIterator (ObjectLayer *object_layer);
+        ObjectLayerListIterator ObjectLayerIterator (ObjectLayer *object_layer);
     
         // indicates if the world is running a simulation
         bool m_is_running;

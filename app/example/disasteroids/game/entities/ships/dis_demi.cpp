@@ -174,7 +174,7 @@ Demi::~Demi ()
     {
         if (m_reticle_effect->IsInWorld())
             m_reticle_effect->RemoveFromWorld();
-        delete m_reticle_effect->GetOwnerObject();
+        delete m_reticle_effect->OwnerObject();
     }
 
     // delete the port weapons
@@ -188,7 +188,7 @@ Demi::~Demi ()
     {
         if (m_port_tractor_beam->IsInWorld())
             m_port_tractor_beam->RemoveFromWorld();
-        delete m_port_tractor_beam->GetOwnerObject();
+        delete m_port_tractor_beam->OwnerObject();
     }
 
     // delete the starboard weapons
@@ -202,7 +202,7 @@ Demi::~Demi ()
     {
         if (m_starboard_tractor_beam->IsInWorld())
             m_starboard_tractor_beam->RemoveFromWorld();
-        delete m_starboard_tractor_beam->GetOwnerObject();
+        delete m_starboard_tractor_beam->OwnerObject();
     }
 
     // delete the aft weapons
@@ -266,8 +266,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (m_main_weapon != NULL)
     {
         m_main_weapon->SetInputs(
-            GetNormalizedWeaponPrimaryInput(),
-            GetNormalizedWeaponSecondaryInput(),
+            NormalizedWeaponPrimaryInput(),
+            NormalizedWeaponSecondaryInput(),
             MuzzleLocation(m_main_weapon),
             MuzzleDirection(m_main_weapon),
             GetReticleCoordinates());
@@ -281,8 +281,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (m_port_weapon != NULL)
     {
         m_port_weapon->SetInputs(
-            GetNormalizedPortWeaponPrimaryInput(),
-            GetNormalizedPortWeaponSecondaryInput(),
+            NormalizedPortWeaponPrimaryInput(),
+            NormalizedPortWeaponSecondaryInput(),
             MuzzleLocation(m_port_weapon),
             MuzzleDirection(m_port_weapon),
             m_port_reticle_coordinates);
@@ -303,8 +303,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (m_starboard_weapon != NULL)
     {
         m_starboard_weapon->SetInputs(
-            GetNormalizedStarboardWeaponPrimaryInput(),
-            GetNormalizedStarboardWeaponSecondaryInput(),
+            NormalizedStarboardWeaponPrimaryInput(),
+            NormalizedStarboardWeaponSecondaryInput(),
             MuzzleLocation(m_starboard_weapon),
             MuzzleDirection(m_starboard_weapon),
             m_starboard_reticle_coordinates);
@@ -325,8 +325,8 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (m_aft_weapon != NULL)
     {
         m_aft_weapon->SetInputs(
-            GetNormalizedAftWeaponPrimaryInput(),
-            GetNormalizedAftWeaponSecondaryInput(),
+            NormalizedAftWeaponPrimaryInput(),
+            NormalizedAftWeaponSecondaryInput(),
             MuzzleLocation(m_aft_weapon),
             MuzzleDirection(m_aft_weapon),
             FloatVector2::ms_zero); // reticle coords don't matter here
@@ -506,7 +506,7 @@ bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const fr
             powerup->EffectiveValue(),
             (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            (GetTranslation() - powerup->GetTranslation()).Normalization(),
             0.0f,
             time,
             frame_dt);
@@ -1439,7 +1439,7 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
 
         Float thrust_force = thrust_vector.Length();
         if (thrust_force > max_thrust)
-            thrust_vector = max_thrust * thrust_vector.GetNormalization();
+            thrust_vector = max_thrust * thrust_vector.Normalization();
 
         AccumulateForce(thrust_vector);
     }
@@ -1455,7 +1455,7 @@ Entity *Demi::FindTractorDeflectTarget (
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        muzzle_location + scan_radius * muzzle_direction.GetNormalization(),
+        muzzle_location + scan_radius * muzzle_direction.Normalization(),
         scan_radius,
         false,
         &area_trace_list);

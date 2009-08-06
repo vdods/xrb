@@ -60,7 +60,7 @@ Widget::Widget (ContainerWidget *const parent, std::string const &name)
     // add this to the given parent
     if (parent != NULL)
     {
-        SetOwnerEventQueue(parent->GetOwnerEventQueue());
+        SetOwnerEventQueue(parent->OwnerEventQueue());
         // m_parent will be set in this function call.
         parent->AttachChild(this);
         // this Widget has a WidgetSkin now, so do the proper initialization

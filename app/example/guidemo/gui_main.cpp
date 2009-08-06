@@ -183,7 +183,7 @@ int main (int argc, char **argv)
                     EventKeyRepeat *event = key_repeater.DequeueEvent();
                     ASSERT1(event != NULL);
                     // process event
-                    screen->GetOwnerEventQueue()->EnqueueEvent(screen, event);
+                    screen->OwnerEventQueue()->EnqueueEvent(screen, event);
                 }
             }
 
@@ -195,11 +195,11 @@ int main (int argc, char **argv)
             {
                 Uint32 gui_frame_start_time = SDL_GetTicks();
                 // process events from the gui event queue
-                screen->GetOwnerEventQueue()->ProcessFrame(real_time);
+                screen->OwnerEventQueue()->ProcessFrame(real_time);
                 // frame computations for the UI/view system
                 screen->ProcessFrame(real_time);
                 // process events from the gui event queue again
-                screen->GetOwnerEventQueue()->ProcessFrame(real_time);
+                screen->OwnerEventQueue()->ProcessFrame(real_time);
                 gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
             }
 

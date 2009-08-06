@@ -60,7 +60,7 @@ public:
       * @brief Returns m_owner_event_queue -- the EventQueue which controls
       *        asynchronous event handling for this EventHandler.
       */
-    inline EventQueue *GetOwnerEventQueue () const
+    inline EventQueue *OwnerEventQueue () const
     {
         return m_owner_event_queue;
     }

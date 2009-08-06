@@ -90,13 +90,13 @@ PlayerShip::~PlayerShip ()
             Delete(m_item_inventory[i][j]);
 
     if (m_laser_beam.IsValid() && !m_laser_beam->IsInWorld())
-        delete m_laser_beam->GetOwnerObject();
+        delete m_laser_beam->OwnerObject();
 
     if (m_tractor_beam.IsValid() && !m_tractor_beam->IsInWorld())
-        delete m_tractor_beam->GetOwnerObject();
+        delete m_tractor_beam->OwnerObject();
 
     if (m_shield_effect.IsValid() && !m_shield_effect->IsInWorld())
-        delete m_shield_effect->GetOwnerObject();
+        delete m_shield_effect->OwnerObject();
 }
 
 Float PlayerShip::ArmorStatus () const
@@ -264,7 +264,7 @@ void PlayerShip::SetArmor (Armor *const armor)
     m_armor = armor;
     // checking the owner entity pointer is necessary because it will be
     // NULL when deleting (and this function is called in ~PlayerShip)
-    if (GetOwnerObject() != NULL)
+    if (OwnerObject() != NULL)
         SetMass(
             GetShipBaselineMass() +
             ((armor != NULL) ? armor->Mass() : 0.0f));
@@ -586,17 +586,17 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
 
         if (current_weapon != NULL)
             current_weapon->SetInputs(
-                GetNormalizedWeaponPrimaryInput(),
-                GetNormalizedWeaponSecondaryInput(),
+                NormalizedWeaponPrimaryInput(),
+                NormalizedWeaponSecondaryInput(),
                 MuzzleLocation(MainWeapon()),
                 MuzzleDirection(MainWeapon()),
                 GetReticleCoordinates());
 
         if (m_engine != NULL)
             m_engine->SetInputs(
-                GetNormalizedEngineRightLeftInput(),
-                GetNormalizedEngineUpDownInput(),
-                GetNormalizedEngineAuxiliaryInput());
+                NormalizedEngineRightLeftInput(),
+                NormalizedEngineUpDownInput(),
+                NormalizedEngineAuxiliaryInput());
 
         // apply power to the devices
 
@@ -815,7 +815,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup->EffectiveValue(),
             (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).GetNormalization(),
+            (GetTranslation() - powerup->GetTranslation()).Normalization(),
             0.0f,
             time,
             frame_dt);

@@ -71,21 +71,21 @@ namespace MapEditor2
         std::string GetPolygonTesselationText () const;
     
         // returns the currently active origin cursor
-        FloatVector2 const &GetOriginCursor () const;
+        FloatVector2 const &OriginCursor () const;
     
         bool AreNoObjectsSelected () const;
-        FloatVector2 const &GetObjectSelectionSetOrigin () const;
-        inline Float GetObjectSelectionSetScale () const
+        FloatVector2 const &ObjectSelectionSetOrigin () const;
+        inline Float ObjectSelectionSetScale () const
         {
             return m_object_selection_set_scale;
         }
-        inline Float GetObjectSelectionSetAngle () const
+        inline Float ObjectSelectionSetAngle () const
         {
             return m_object_selection_set_angle;
         }
     
         bool AreNoEntitiesSelected () const;
-        inline Float GetObjectSelectionSetMass () const
+        inline Float ObjectSelectionSetMass () const
         {
             return m_object_selection_set_mass;
         }

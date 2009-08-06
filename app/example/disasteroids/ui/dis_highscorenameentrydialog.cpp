@@ -60,12 +60,12 @@ HighScoreNameEntryDialog::HighScoreNameEntryDialog (
 void HighScoreNameEntryDialog::OKButtonActivated ()
 {
     Dialog::OKButtonActivated();
-    m_sender_submit_name.Signal(GetName());
+    m_sender_submit_name.Signal(Name());
 }
 
 void HighScoreNameEntryDialog::InternalNameSubmitted (std::string const &name)
 {
-    ASSERT1(name == GetName());
+    ASSERT1(name == Name());
     OKButtonActivated();
 }
 

@@ -129,7 +129,7 @@ protected:
     {
         ASSERT1(m_cache_bit_index + requested_bit_count
                 <=
-                GetNextAvailableCacheBitIndex());
+                NextAvailableCacheBitIndex());
         m_cache_bit_index += requested_bit_count;
     }
 
@@ -181,7 +181,7 @@ private:
     {
         return m_cache_bit_index >> 3;
     }
-    inline Uint32 GetNextAvailableCacheBitIndex () const
+    inline Uint32 NextAvailableCacheBitIndex () const
     {
         return m_next_available_cache_byte_index << 3;
     }

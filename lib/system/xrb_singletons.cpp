@@ -79,7 +79,7 @@ void Singletons::Initialize (char const *const key_map_name)
 
 //     fprintf(stderr, "\tattempting to use KeyMap \"%s\" ... ", key_map_name);
     g_key_map = Xrb::KeyMap::Create(key_map_name);
-//     fprintf(stderr, "got \"%s\"\n", g_key_map->GetName().c_str());
+//     fprintf(stderr, "got \"%s\"\n", g_key_map->Name().c_str());
 
     g_resource_library = new Xrb::ResourceLibrary();
 

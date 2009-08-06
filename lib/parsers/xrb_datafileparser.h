@@ -178,7 +178,7 @@ private:
         unsigned int m_non_terminal_transition_count;
     };
 
-    inline void GetNewLookaheadToken ()
+    inline void NewLookaheadToken ()
     {
         if (m_is_new_lookahead_token_required)
         {
@@ -194,12 +194,12 @@ private:
     }
     inline Token::Type LookaheadTokenType ()
     {
-        GetNewLookaheadToken();
+        NewLookaheadToken();
         return m_lookahead_token_type;
     }
     inline DataFileValue * const &LookaheadToken ()
     {
-        GetNewLookaheadToken();
+        NewLookaheadToken();
         return m_lookahead_token;
     }
     bool DoesStateAcceptErrorToken (StateNumber state_number) const;

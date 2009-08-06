@@ -97,7 +97,7 @@ bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
         return m_quad_tree->DoesAreaOverlapAnyObject(area_center, area_radius);
 }
 
-FloatVector2 Engine2::ObjectLayer::GetNormalizedCoordinates (
+FloatVector2 Engine2::ObjectLayer::NormalizedCoordinates (
     FloatVector2 const &coordinates) const
 {
     FloatVector2 normalized_coordinates(coordinates);
@@ -220,7 +220,7 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(m_quad_tree != NULL);
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) == NULL);
+    ASSERT1(object->OwnerQuadTree(QTT_VISIBILITY) == NULL);
 
     // set the object's layer
     object->SetObjectLayer(this);
@@ -231,15 +231,15 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
     m_quad_tree->AddObject(object);
     ASSERT1(add_success);
 
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL);
+    ASSERT1(object->OwnerQuadTree(QTT_VISIBILITY) != NULL);
 }
 
 void Engine2::ObjectLayer::RemoveObject (Engine2::Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->GetObjectLayer() == this);
-    ASSERT1(object->GetOwnerQuadTree(QTT_VISIBILITY) != NULL);
-    object->GetOwnerQuadTree(QTT_VISIBILITY)->RemoveObject(object);
+    ASSERT1(object->OwnerQuadTree(QTT_VISIBILITY) != NULL);
+    object->OwnerQuadTree(QTT_VISIBILITY)->RemoveObject(object);
 }
 
 void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
@@ -319,8 +319,8 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
         component_y = true;
     }
 
-    ASSERT1(entity->GetOwnerObject() != NULL);
-    entity->GetOwnerObject()->SetTranslation(translation);
+    ASSERT1(entity->OwnerObject() != NULL);
+    entity->OwnerObject()->SetTranslation(translation);
     entity->HandleObjectLayerContainment(component_x, component_y);
 }
 
@@ -358,7 +358,7 @@ void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
     ASSERT1(IsWrapped());
 
     FloatVector2 previous_translation(entity->GetTranslation());
-    WrapTransform2(entity->GetOwnerObject());
+    WrapTransform2(entity->OwnerObject());
     entity->AccumulateWrappedOffset(previous_translation - entity->GetTranslation());
 }
 

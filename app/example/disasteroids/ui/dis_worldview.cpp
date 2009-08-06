@@ -41,7 +41,7 @@ Float const WorldView::ms_outro_duration = 2.0f;
 WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     :
     Engine2::WorldView(parent_world_view_widget),
-    EventHandler(parent_world_view_widget->GetOwnerEventQueue()),
+    EventHandler(parent_world_view_widget->OwnerEventQueue()),
     SignalHandler(),
     m_state_machine(this),
     m_sender_player_ship_changed(this),
@@ -244,7 +244,7 @@ void WorldView::HandleFrame ()
             if (m_player_ship->GetVelocity().IsZero())
                 ship_velocity_direction = FloatVector2::ms_zero;
             else
-                ship_velocity_direction = m_player_ship->GetVelocity().GetNormalization();
+                ship_velocity_direction = m_player_ship->GetVelocity().Normalization();
             Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->GetSpeed()) / 90.0f;
             FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
 
@@ -254,7 +254,7 @@ void WorldView::HandleFrame ()
             static Float const s_time_to_recover = 0.5f;
             if (view_center_delta.Length() > max_view_center_delta * FrameDT())
             {
-                m_view_velocity += view_center_delta.GetNormalization() * max_view_center_delta * FrameDT();
+                m_view_velocity += view_center_delta.Normalization() * max_view_center_delta * FrameDT();
                 is_view_recovering_this_frame = true;
             }
             else
@@ -791,7 +791,7 @@ void WorldView::ScheduleStateMachineInput (StateMachineInput const input, Float 
 
 void WorldView::CancelScheduledStateMachineInput ()
 {
-    GetOwnerEventQueue()->ScheduleMatchingEventsForDeletion(
+    OwnerEventQueue()->ScheduleMatchingEventsForDeletion(
         MatchEventType,
         Event::STATE_MACHINE_INPUT);
 }

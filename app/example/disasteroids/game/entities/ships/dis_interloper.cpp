@@ -86,7 +86,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
     // this special handling is done because we don't accumulate force
     // necessarily in the direction the ship is aiming.
     if (!GetVelocity().IsZero())
-        AimShipAtCoordinates(GetTranslation() + GetVelocity().GetNormalization(), frame_dt);
+        AimShipAtCoordinates(GetTranslation() + GetVelocity().Normalization(), frame_dt);
     // apply ship thrust in the appropriate direction
     FloatVector2 thrust_direction(GetReticleCoordinates() - GetTranslation());
     if (thrust_direction.LengthSquared() < 0.001f)
@@ -94,7 +94,7 @@ void Interloper::Think (Float const time, Float const frame_dt)
     else
         thrust_direction.Normalize();
     AccumulateForce(
-        GetNormalizedEngineUpDownInput() *
+        NormalizedEngineUpDownInput() *
         ms_engine_thrust[EnemyLevel()] *
         thrust_direction);
 
@@ -355,7 +355,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     if (flock_center_offset.Length() >= 0.5f)
     {
         // TODO: keep X distance away from closest flock member
-        FloatVector2 flock_center_direction(flock_center_offset.GetNormalization());
+        FloatVector2 flock_center_direction(flock_center_offset.Normalization());
         MatchVelocity(ms_wander_speed[EnemyLevel()] * flock_center_direction, frame_dt);
         SetReticleCoordinates(GetTranslation() + flock_center_direction);
     }
@@ -469,7 +469,7 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
 
     // set a course parallel to and slightly away from the target
     FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
-    SetReticleCoordinates(GetTranslation() + (GetTranslation() - target_position).GetNormalization());
+    SetReticleCoordinates(GetTranslation() + (GetTranslation() - target_position).Normalization());
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 
@@ -485,7 +485,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
     {
         Float thrust_force = thrust_vector.Length();
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
-            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.GetNormalization();
+            thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
 
         AccumulateForce(thrust_vector);
     }

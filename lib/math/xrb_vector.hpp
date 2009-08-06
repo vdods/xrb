@@ -329,7 +329,7 @@ public:
       * @brief Returns the normalized version of this vector.
       * @return The normalized version of this vector.
       */
-    inline Vector<T, dimension> GetNormalization () const
+    inline Vector<T, dimension> Normalization () const
     {
         Vector<T, dimension> retval(*this);
         retval.Normalize();

@@ -411,11 +411,11 @@ int main (int argc, char **argv)
             }
 
             // Turn the crank on the EventQueue.
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->OwnerEventQueue()->ProcessFrame(time);
             // Perform all off-screen GUI hierarchy processing.
             screen->ProcessFrame(time);
             // Turn the crank on the EventQueue again.
-            screen->GetOwnerEventQueue()->ProcessFrame(time);
+            screen->OwnerEventQueue()->ProcessFrame(time);
             // Draw the whole mu'erfucking thing.
             screen->Draw();
         }

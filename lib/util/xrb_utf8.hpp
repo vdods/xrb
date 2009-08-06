@@ -34,7 +34,7 @@ namespace UTF8
       * @note Returns @c current if the first byte of the sequence is
       *       not well-formed (does not do full well-formedness checking).
       */
-    char const *GetNextCharacter (char const *current);
+    char const *NextCharacter (char const *current);
     /** If either @c c0 or @c c1 are NULL or ill-formed, return false.
       * @brief Returns true if the given UTF8-encoded characters are equal.
       */
