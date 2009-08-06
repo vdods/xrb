@@ -30,7 +30,7 @@ public:
         :
         Item(upgrade_level, IT_POWER_GENERATOR)
     {
-        m_stored_power = ms_max_power_storage_capacity[GetUpgradeLevel()];
+        m_stored_power = ms_max_power_storage_capacity[UpgradeLevel()];
     }
     virtual ~PowerGenerator () { }
 
@@ -40,7 +40,7 @@ public:
     }
     inline Float MaxPower () const
     {
-        return ms_max_power_storage_capacity[GetUpgradeLevel()];
+        return ms_max_power_storage_capacity[UpgradeLevel()];
     }
 
     inline void Drain ()

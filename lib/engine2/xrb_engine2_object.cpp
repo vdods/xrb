@@ -252,7 +252,7 @@ void Engine2::Object::CloneProperties (Object const *const object)
 {
     ASSERT1(object != NULL);
 
-    SetTranslation(object->GetTranslation());
+    SetTranslation(object->Translation());
     SetScaleFactors(object->ScaleFactors());
     SetAngle(object->Angle());
     m_bias_color = object->m_bias_color;

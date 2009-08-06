@@ -288,10 +288,10 @@ void Render::DrawScreenRect (
         render_context.BiasColor());
 
     glBegin(GL_QUADS);
-        glVertex2iv(screen_rect.GetTopLeft().m);
+        glVertex2iv(screen_rect.TopLeft().m);
         glVertex2iv(screen_rect.BottomLeft().m);
         glVertex2iv(screen_rect.BottomRight().m);
-        glVertex2iv(screen_rect.GetTopRight().m);
+        glVertex2iv(screen_rect.TopRight().m);
     glEnd();
 }
 
@@ -314,7 +314,7 @@ void Render::DrawScreenRectTexture (
 
     glBegin(GL_QUADS);
         glTexCoord2fv((transformation * FloatVector2(0.0f, 0.0f)).m);
-        glVertex2iv(screen_rect.GetTopLeft().m);
+        glVertex2iv(screen_rect.TopLeft().m);
 
         glTexCoord2fv((transformation * FloatVector2(0.0f, 1.0f)).m);
         glVertex2iv(screen_rect.BottomLeft().m);
@@ -323,7 +323,7 @@ void Render::DrawScreenRectTexture (
         glVertex2iv(screen_rect.BottomRight().m);
 
         glTexCoord2fv((transformation * FloatVector2(1.0f, 0.0f)).m);
-        glVertex2iv(screen_rect.GetTopRight().m);
+        glVertex2iv(screen_rect.TopRight().m);
     glEnd();
 }
 

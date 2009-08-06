@@ -44,9 +44,9 @@ public:
     inline Float Intensity () const
     {
         ASSERT1(m_charged_power >= 0.0f);
-        ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
-        ASSERT1(ms_max_charged_power[GetUpgradeLevel()] > 0.0f);
-        return Math::Sqrt(m_charged_power / ms_max_charged_power[GetUpgradeLevel()]);
+        ASSERT1(m_charged_power <= ms_max_charged_power[UpgradeLevel()]);
+        ASSERT1(ms_max_charged_power[UpgradeLevel()] > 0.0f);
+        return Math::Sqrt(m_charged_power / ms_max_charged_power[UpgradeLevel()]);
     }
 
     // takes damage for the ship, using power, and returns the amount of
@@ -88,9 +88,9 @@ private:
     inline Float AvailableDamageDissipation () const
     {
         return
-            ms_max_damage_dissipation[GetUpgradeLevel()] *
+            ms_max_damage_dissipation[UpgradeLevel()] *
             m_charged_power /
-            ms_max_charged_power[GetUpgradeLevel()];
+            ms_max_charged_power[UpgradeLevel()];
     }
 
     static Float const ms_power_consumption_rate[UPGRADE_LEVEL_COUNT];

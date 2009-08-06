@@ -47,7 +47,7 @@ namespace Engine2
         {
             return m_world_view;
         }
-        inline FloatSimpleTransform2 const &GetTransformation () const
+        inline FloatSimpleTransform2 const &Transformation () const
         {
             return m_transform;
         }

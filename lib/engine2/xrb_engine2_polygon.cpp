@@ -86,7 +86,7 @@ void Engine2::Polygon::Draw () const
 
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
-        glTexCoord2fv(GetTextureCoordinate(i).m);
+        glTexCoord2fv(TextureCoordinate(i).m);
         glVertex2fv(GetVertex(i).m);
     }
 

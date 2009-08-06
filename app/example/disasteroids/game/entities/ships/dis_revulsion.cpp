@@ -168,7 +168,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation(),
+        Translation(),
         s_scan_radius,
         false,
         &area_trace_list);
@@ -212,10 +212,10 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
-        FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
+        FloatVector2 delta_velocity(collision_entity->Velocity() - Velocity());
         FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
-        if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
+        if ((perpendicular_velocity | Velocity()) > -(perpendicular_velocity | Velocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
             m_wander_angle = Math::Atan(-perpendicular_velocity);
@@ -248,9 +248,9 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
-    Float target_aim_angle = GetTargetAimAngle(target_position);
+            m_target->Translation(),
+            Translation()));
+    Float target_aim_angle = TargetAimAngle(target_position);
     // if we're too close to the target's line of fire, transition to FleeTarget
     if (target_aim_angle >= -ms_target_aim_angle_flee_limit[EnemyLevel()] &&
         target_aim_angle <=  ms_target_aim_angle_flee_limit[EnemyLevel()])
@@ -262,12 +262,12 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     // figure out where to go to get behind the target
     FloatVector2 preferred_location(
         GetObjectLayer()->AdjustedCoordinates(
-            -0.5f * GaussGun::ms_range[m_weapon->GetUpgradeLevel()] * Math::UnitVector(m_target->Angle()) + m_target->GetTranslation(),
-            GetTranslation()));
+            -0.5f * GaussGun::ms_range[m_weapon->UpgradeLevel()] * Math::UnitVector(m_target->Angle()) + m_target->Translation(),
+            Translation()));
 
     // if we're close enough to the spot behind the target (and we're
     // ready to fire), transition to fire
-    Float distance_to_preferred_location = (preferred_location - GetTranslation()).Length();
+    Float distance_to_preferred_location = (preferred_location - Translation()).Length();
     if (distance_to_preferred_location <= ms_preferred_location_distance_tolerance[EnemyLevel()] &&
         m_weapon->ReadinessStatus(time) == 1.0f)
     {
@@ -279,8 +279,8 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
 
     Float interceptor_acceleration =
         ms_engine_thrust[EnemyLevel()] / Mass();
-    FloatVector2 p(preferred_location - GetTranslation());
-    FloatVector2 v(m_target->GetVelocity() - GetVelocity());
+    FloatVector2 p(preferred_location - Translation());
+    FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
@@ -314,7 +314,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     else
     {
         FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
-        SetReticleCoordinates(GetTranslation() + real_approach_direction);
+        SetReticleCoordinates(Translation() + real_approach_direction);
     }
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
@@ -364,9 +364,9 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
-    Float target_aim_angle = GetTargetAimAngle(target_position);
+            m_target->Translation(),
+            Translation()));
+    Float target_aim_angle = TargetAimAngle(target_position);
     // if we're too close to the target's line of fire, transition to FleeTarget
     if (target_aim_angle >= -ms_target_aim_angle_flee_limit[EnemyLevel()] &&
         target_aim_angle <=  ms_target_aim_angle_flee_limit[EnemyLevel()])
@@ -385,7 +385,7 @@ void Revulsion::ContinueAimAtTarget (Float time, Float frame_dt)
     ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
     static Float const s_final_reticle_radius = 20.0f;
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
-        aim_time_parameter * ReticleCoordinates() + (1.0f - aim_time_parameter) * GetTranslation(),
+        aim_time_parameter * ReticleCoordinates() + (1.0f - aim_time_parameter) * Translation(),
         s_final_reticle_radius * aim_time_parameter);
 
     // if the aim duration has elapsed, transition to FireAtTarget
@@ -407,8 +407,8 @@ void Revulsion::FireAtTarget (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
+            m_target->Translation(),
+            Translation()));
 
     SetReticleCoordinates(target_position + m_aim_delta);
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
@@ -428,9 +428,9 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
-    Float target_aim_angle = GetTargetAimAngle(target_position);
+            m_target->Translation(),
+            Translation()));
+    Float target_aim_angle = TargetAimAngle(target_position);
     // if we're far enough behind the target, transition to TrailTarget
     if (target_aim_angle <= -ms_target_aim_angle_trail_limit[EnemyLevel()] ||
         target_aim_angle >=  ms_target_aim_angle_trail_limit[EnemyLevel()])
@@ -439,7 +439,7 @@ void Revulsion::FleeTarget (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 position_delta(GetTranslation() - target_position);
+    FloatVector2 position_delta(Translation() - target_position);
     FloatVector2 desired_velocity(
         ms_flee_speed[EnemyLevel()] *
         PerpendicularVector2(position_delta).Normalization());
@@ -450,7 +450,7 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+        velocity - (Velocity() + frame_dt * Force() / Mass());
     FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
     if (thrust_vector.LengthSquared() > 0.001f)
     {
@@ -459,7 +459,7 @@ void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_d
             thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
         thrust_force = thrust_vector.Length();
 
-        SetReticleCoordinates(GetTranslation() + thrust_vector.Normalization());
+        SetReticleCoordinates(Translation() + thrust_vector.Normalization());
         SetEngineUpDownInput(
             static_cast<Sint8>(
                 SINT8_UPPER_BOUND * thrust_force /

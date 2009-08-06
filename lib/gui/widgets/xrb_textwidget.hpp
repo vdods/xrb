@@ -39,13 +39,13 @@ public:
 
     /** @brief Returns the string containing the text of this label.
       */
-    inline std::string const &GetText () const { return m_text; }
+    inline std::string const &Text () const { return m_text; }
     /** This color isn't necessarily what will be used to render the text.
       * The render text color will be used to render the text, and this color
       * may be used to set the render text color.
       * @brief Returns the normal color of the text.
       */
-    inline Color const &GetTextColor () const { return m_text_color; }
+    inline Color const &TextColor () const { return m_text_color; }
     /** @brief Returns the resourced normal Font for this label.
       */
     inline Resource<Font> const &GetFont () const { return m_font; }
@@ -121,7 +121,7 @@ protected:
 
     // if you need to specify a custom text bounding box accessor,
     // do it with an override of this.
-    virtual ScreenCoordRect GetTextRect () const;
+    virtual ScreenCoordRect TextRect () const;
     // if you want to clamp m_is_min_width_fixed_to_text_width and all
     // that to certain values, do it in an override of this.
     virtual void UpdateMinAndMaxSizesFromText ();

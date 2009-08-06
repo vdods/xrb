@@ -47,7 +47,7 @@ public:
         assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
         return m_line;
     }
-    std::string GetText () const;
+    std::string Text () const;
 
 private:
 

@@ -329,7 +329,7 @@ void Engine2::VisibilityQuadTree::Draw (
         return;
 
     ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
-    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
+    ASSERT2(draw_loop_functor.ViewRadius() > 0.0f);
 
     // don't draw quadtrees whose radii are lower than the
     // gs_radius_limit_lower threshold -- a form of distance culling,
@@ -337,13 +337,13 @@ void Engine2::VisibilityQuadTree::Draw (
     // maintain a consistent framerate.
     if (draw_loop_functor.PixelsInViewRadius() * Radius()
         <
-        draw_loop_functor.GetViewRadius() * Object::DrawLoopFunctor::ms_radius_limit_lower)
+        draw_loop_functor.ViewRadius() * Object::DrawLoopFunctor::ms_radius_limit_lower)
     {
         return;
     }
 
     // return if the view doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.GetViewCenter(), draw_loop_functor.GetViewRadius()))
+    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.ViewCenter(), draw_loop_functor.ViewRadius()))
         return;
 
 //     DrawBounds(draw_loop_functor.ObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
@@ -365,16 +365,16 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
 
     ASSERT1(Parent() == NULL);
     ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
-    ASSERT2(draw_loop_functor.GetViewRadius() > 0.0f);
+    ASSERT2(draw_loop_functor.ViewRadius() > 0.0f);
     ASSERT2(m_half_side_length > 0.0f);
 
     Float side_length = SideLength();
-    Float radius_sum = 2.0f*Radius() + draw_loop_functor.GetViewRadius();
-    Float top = floor((draw_loop_functor.GetViewCenter().m[1]+radius_sum)/side_length);
-    Float bottom = ceil((draw_loop_functor.GetViewCenter().m[1]-radius_sum)/side_length);
-    Float left = ceil((draw_loop_functor.GetViewCenter().m[0]-radius_sum)/side_length);
-    Float right = floor((draw_loop_functor.GetViewCenter().m[0]+radius_sum)/side_length);
-    FloatVector2 old_view_center(draw_loop_functor.GetViewCenter());
+    Float radius_sum = 2.0f*Radius() + draw_loop_functor.ViewRadius();
+    Float top = floor((draw_loop_functor.ViewCenter().m[1]+radius_sum)/side_length);
+    Float bottom = ceil((draw_loop_functor.ViewCenter().m[1]-radius_sum)/side_length);
+    Float left = ceil((draw_loop_functor.ViewCenter().m[0]-radius_sum)/side_length);
+    Float right = floor((draw_loop_functor.ViewCenter().m[0]+radius_sum)/side_length);
+    FloatVector2 old_view_center(draw_loop_functor.ViewCenter());
     FloatVector2 view_offset;
 
     glMatrixMode(GL_MODELVIEW);

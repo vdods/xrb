@@ -245,7 +245,7 @@ void TextWidget::HandleChangedContentMargins ()
 
 void TextWidget::UpdateRenderTextColor ()
 {
-    SetRenderTextColor(GetTextColor());
+    SetRenderTextColor(TextColor());
 }
 
 void TextWidget::UpdateRenderFont ()
@@ -253,9 +253,9 @@ void TextWidget::UpdateRenderFont ()
     SetRenderFont(GetFont());
 }
 
-ScreenCoordRect TextWidget::GetTextRect () const
+ScreenCoordRect TextWidget::TextRect () const
 {
-    return RenderFont()->StringRect(GetText().c_str());
+    return RenderFont()->StringRect(Text().c_str());
 }
 
 void TextWidget::UpdateMinAndMaxSizesFromText ()
@@ -263,7 +263,7 @@ void TextWidget::UpdateMinAndMaxSizesFromText ()
     if (!RenderFont().IsValid())
         return;
 
-    ScreenCoordVector2 size(GetTextRect().Size() + 2 * (FrameMargins() + ContentMargins()));
+    ScreenCoordVector2 size(TextRect().Size() + 2 * (FrameMargins() + ContentMargins()));
 
     if (m_is_min_width_fixed_to_text_width)
         SetSizeProperty(SizeProperties::MIN, Dim::X, size[Dim::X]);

@@ -111,7 +111,7 @@ namespace MapEditor2
             return m_saved_entity_guts;
         }
     
-        virtual Color const &GetUnselectedMetricsColor () const;
+        virtual Color const &UnselectedMetricsColor () const;
         virtual Color const &SelectedMetricsColor () const;
     
         // sets the selection status for this object

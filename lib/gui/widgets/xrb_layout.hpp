@@ -67,7 +67,7 @@ public:
         Uint32 column_index,
         Uint32 row_index) const;
 
-    ScreenCoordVector2 const &GetTotalSpacing () const;
+    ScreenCoordVector2 const &TotalSpacing () const;
 
     Uint32 ColumnCount () const;
     Bool2 const &ColumnMinSizeEnabled (Uint32 index) const;

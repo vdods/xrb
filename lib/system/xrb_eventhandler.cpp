@@ -43,7 +43,7 @@ bool EventHandler::ProcessEvent (Event const *const e)
 
     // make sure that events show up "in order", even if their times
     // aren't actually completely correct.
-    Float event_time = e->GetTime();
+    Float event_time = e->Time();
     if (event_time < m_most_recent_event_time)
         event_time = m_most_recent_event_time;
 

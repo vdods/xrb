@@ -51,7 +51,7 @@ namespace MapEditor2
             return m_transformation_mode;
         }
         // returns the transformation mode text
-        inline std::string const &GetTransformationModeText () const
+        inline std::string const &TransformationModeText () const
         {
             return m_transformation_mode_text;
         }

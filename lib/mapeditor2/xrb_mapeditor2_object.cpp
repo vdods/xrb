@@ -80,7 +80,7 @@ MapEditor2::VisibilityQuadTree *MapEditor2::Object::OwnerMapEditorQuadTree () co
     return static_cast<VisibilityQuadTree *>(OwnerQuadTree(Engine2::QTT_VISIBILITY));
 }
 
-Color const &MapEditor2::Object::GetUnselectedMetricsColor () const
+Color const &MapEditor2::Object::UnselectedMetricsColor () const
 {
     return Object::ms_unselected_metrics_color;
 }
@@ -97,7 +97,7 @@ void MapEditor2::Object::DrawMetrics (
 {
     Color color(IsSelected() ?
                 SelectedMetricsColor() :
-                GetUnselectedMetricsColor());
+                UnselectedMetricsColor());
     color[Dim::A] *= alpha_mask;
 
     // draw the bounding circle
@@ -107,9 +107,9 @@ void MapEditor2::Object::DrawMetrics (
     {
         Render::DrawCircle(
             draw_data.GetRenderContext(),
-            draw_data.GetTransformation(),
-            GetTranslation(),
-            GetVisibleRadius(),
+            draw_data.Transformation(),
+            Translation(),
+            VisibleRadius(),
             color);
     }
 
@@ -119,15 +119,15 @@ void MapEditor2::Object::DrawMetrics (
             // draw the two angle limit lines
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation(),
-                GetTranslation() +
-                1.25f * GetVisibleRadius() * FloatVector2(1.0f, 0.0f),
+                Translation(),
+                Translation() +
+                1.25f * VisibleRadius() * FloatVector2(1.0f, 0.0f),
                 color);
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation(),
-                GetTranslation() +
-                1.25f * GetVisibleRadius() *
+                Translation(),
+                Translation() +
+                1.25f * VisibleRadius() *
                 FloatVector2(
                     Math::Cos(Angle()),
                     Math::Sin(Angle())),
@@ -135,17 +135,17 @@ void MapEditor2::Object::DrawMetrics (
             // draw the arc connecting the two
             Render::DrawCircularArc(
                 draw_data.GetRenderContext(),
-                draw_data.GetTransformation(),
-                GetTranslation(),
-                1.25f*GetVisibleRadius(),
+                draw_data.Transformation(),
+                Translation(),
+                1.25f*VisibleRadius(),
                 0.0f,
                 Math::CanonicalAngle(Angle()),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                Translation() + FloatVector2(0.0f, 0.125f*VisibleRadius()),
+                Translation() - FloatVector2(0.0f, 0.125f*VisibleRadius()),
                 color);
             break;
 
@@ -213,14 +213,14 @@ void MapEditor2::Object::ObjectSelectionSetScale (
     TransformationMode const transformation_mode)
 {
     if (transformation_mode == TM_EACH_SELECTED_OBJECT_ORIGIN)
-        transformation_origin = GetTranslation();
+        transformation_origin = Translation();
 
     // translate this object to the origin
     Translate(-transformation_origin);
     // scale this object on its own origin
     Scale(scale_factor);
     // scale the object's origin relative to the absolute origin
-    SetTranslation(scale_factor * GetTranslation());
+    SetTranslation(scale_factor * Translation());
     // translate this object back to the original position
     Translate(transformation_origin);
 }
@@ -232,14 +232,14 @@ void MapEditor2::Object::ObjectSelectionSetRotate (
     FloatMatrix2 const &rotation_transformation)
 {
     if (transformation_mode == TM_EACH_SELECTED_OBJECT_ORIGIN)
-        transformation_origin = GetTranslation();
+        transformation_origin = Translation();
 
     // translate this object to the origin
     Translate(-transformation_origin);
     // rotate this object on its own origin
     Rotate(angle_delta);
     // rotate this object around the absolute origin
-    SetTranslation(rotation_transformation * GetTranslation());
+    SetTranslation(rotation_transformation * Translation());
     // translate this object back to the original position
     Translate(transformation_origin);
 }

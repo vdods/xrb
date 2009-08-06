@@ -145,8 +145,8 @@ void Asteroid::Die (
     SpawnNoDamageExplosion(
         GetWorld(),
         GetObjectLayer(),
-        GetTranslation(),
-        GetVelocity(),
+        Translation(),
+        Velocity(),
         7.0f * ScaleFactor(),
         1.0f,
         time);
@@ -162,8 +162,8 @@ void Asteroid::Die (
         converted_mass = ProportionToConvertToMinerals() * Mass();
         Float mass =
             Mass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
-        FloatVector2 source_velocity = GetVelocity();
-        Float seed_angle = Math::Atan(kill_location - GetTranslation());
+        FloatVector2 source_velocity = Velocity();
+        Float seed_angle = Math::Atan(kill_location - Translation());
 
         // let the world more asteroids are being created.  the added asteroid
         // mass is exactly equal to the destroyed asteroid's mass.
@@ -185,7 +185,7 @@ void Asteroid::Die (
                 explosion_speed * Math::UnitVector(velocity_angle);
             Float scale_factor = Math::Sqrt(mass);
             FloatVector2 translation(
-                GetTranslation() +
+                Translation() +
                 1.7f * scale_factor * Math::UnitVector(velocity_angle));
 
             Float proportion_of_mineral_content_to_allocate;
@@ -235,13 +235,13 @@ void Asteroid::Die (
                     s_min_mineral_mass,
                     Min(s_max_mineral_mass, mineral_mass_to_spawn));
             Float velocity_angle = Math::RandomAngle();
-            FloatVector2 velocity = GetVelocity() + 10.0f * Math::UnitVector(velocity_angle);
+            FloatVector2 velocity = Velocity() + 10.0f * Math::UnitVector(velocity_angle);
             Float scale_factor = Math::Sqrt(mass);
             Uint8 mineral_index = RandomMineral();
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + scale_factor * Math::UnitVector(velocity_angle),
+                Translation() + scale_factor * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,

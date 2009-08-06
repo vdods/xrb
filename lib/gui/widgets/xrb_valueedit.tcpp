@@ -59,7 +59,7 @@ void ValueEdit<ValueType>::SetTextToValueFunction (
     TextToValueFunctionType text_to_value_function)
 {
     m_text_to_value_function = text_to_value_function;
-    SetText(GetText());
+    SetText(Text());
 }
 
 template <typename ValueType>
@@ -72,10 +72,10 @@ bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *const e)
             case Key::RETURN:
             case Key::KP_ENTER:
                 // only set and signal the value if there is text
-                if (LineEdit::GetText()[0] != '\0')
+                if (LineEdit::Text()[0] != '\0')
                 {
                     SetValueFromText();
-                    m_sender_value_set_by_enter_key.Signal(GetValue());
+                    m_sender_value_set_by_enter_key.Signal(Value());
                 }
                 break;
 
@@ -97,7 +97,7 @@ void ValueEdit<ValueType>::HandleUnfocus ()
 template <typename ValueType>
 void ValueEdit<ValueType>::SignalTextUpdated ()
 {
-    SetValue(m_text_to_value_function(LineEdit::GetText().c_str()));
+    SetValue(m_text_to_value_function(LineEdit::Text().c_str()));
     LineEdit::SignalTextUpdated();
     SignalValueUpdated();
 }
@@ -105,7 +105,7 @@ void ValueEdit<ValueType>::SignalTextUpdated ()
 template <typename ValueType>
 void ValueEdit<ValueType>::SetValueFromText ()
 {
-    ValueType value = m_text_to_value_function(LineEdit::GetText().c_str());
+    ValueType value = m_text_to_value_function(LineEdit::Text().c_str());
     if (m_validator != NULL)
         value = m_validator->Validate(value);
     if (m_value != value)
@@ -118,9 +118,9 @@ void ValueEdit<ValueType>::SetValueFromText ()
 template <typename ValueType>
 void ValueEdit<ValueType>::SignalValueUpdated ()
 {
-    if (m_last_value_update != GetValue())
+    if (m_last_value_update != Value())
     {
-        m_last_value_update = GetValue();
+        m_last_value_update = Value();
         m_sender_value_updated.Signal(m_last_value_update);
     }
 }

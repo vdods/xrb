@@ -145,29 +145,29 @@ bool PlayerShip::IsItemEquipped (
     if (item_type >= IT_WEAPON_LOWEST && item_type <= IT_WEAPON_HIGHEST)
         return (MainWeapon() != NULL &&
                 MainWeapon()->GetItemType() == item_type &&
-                MainWeapon()->GetUpgradeLevel() == upgrade_level)
+                MainWeapon()->UpgradeLevel() == upgrade_level)
                ||
                (AuxiliaryWeapon() != NULL &&
                 AuxiliaryWeapon()->GetItemType() == item_type &&
-                AuxiliaryWeapon()->GetUpgradeLevel() == upgrade_level);
+                AuxiliaryWeapon()->UpgradeLevel() == upgrade_level);
 
     switch (item_type)
     {
         case IT_ENGINE:
             return GetEngine() != NULL &&
-                   GetEngine()->GetUpgradeLevel() == upgrade_level;
+                   GetEngine()->UpgradeLevel() == upgrade_level;
 
         case IT_ARMOR:
             return GetArmor() != NULL &&
-                   GetArmor()->GetUpgradeLevel() == upgrade_level;
+                   GetArmor()->UpgradeLevel() == upgrade_level;
 
         case IT_SHIELD:
             return GetShield() != NULL &&
-                   GetShield()->GetUpgradeLevel() == upgrade_level;
+                   GetShield()->UpgradeLevel() == upgrade_level;
 
         case IT_POWER_GENERATOR:
             return GetPowerGenerator() != NULL &&
-                   GetPowerGenerator()->GetUpgradeLevel() == upgrade_level;
+                   GetPowerGenerator()->UpgradeLevel() == upgrade_level;
 
         default:
             ASSERT1(false && "Invalid ItemType");
@@ -360,12 +360,12 @@ bool PlayerShip::AddItem (Item *item)
 {
     ASSERT1(item != NULL);
     ASSERT1(item->GetItemType() < IT_COUNT);
-    ASSERT1(item->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
+    ASSERT1(item->UpgradeLevel() < UPGRADE_LEVEL_COUNT);
 
-    if (m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] != NULL)
+    if (m_item_inventory[item->GetItemType()][item->UpgradeLevel()] != NULL)
         return false;
 
-    m_item_inventory[item->GetItemType()][item->GetUpgradeLevel()] = item;
+    m_item_inventory[item->GetItemType()][item->UpgradeLevel()] = item;
 
     if (item->GetItemType() >= IT_WEAPON_LOWEST &&
         item->GetItemType() <= IT_WEAPON_HIGHEST)
@@ -375,7 +375,7 @@ bool PlayerShip::AddItem (Item *item)
         if (item->GetItemType() == IT_WEAPON_TRACTOR)
         {
             if (AuxiliaryWeapon() == NULL ||
-                weapon->GetUpgradeLevel() > AuxiliaryWeapon()->GetUpgradeLevel())
+                weapon->UpgradeLevel() > AuxiliaryWeapon()->UpgradeLevel())
             {
                 SetAuxiliaryWeapon(weapon);
             }
@@ -383,7 +383,7 @@ bool PlayerShip::AddItem (Item *item)
         else
         {
             if (MainWeapon() == NULL ||
-                weapon->GetUpgradeLevel() > MainWeapon()->GetUpgradeLevel())
+                weapon->UpgradeLevel() > MainWeapon()->UpgradeLevel())
             {
                 SetMainWeapon(weapon);
             }
@@ -399,7 +399,7 @@ bool PlayerShip::AddItem (Item *item)
             Engine *engine = DStaticCast<Engine *>(item);
 
             if (GetEngine() == NULL ||
-                engine->GetUpgradeLevel() > GetEngine()->GetUpgradeLevel())
+                engine->UpgradeLevel() > GetEngine()->UpgradeLevel())
             {
                 SetEngine(engine);
             }
@@ -412,7 +412,7 @@ bool PlayerShip::AddItem (Item *item)
             Armor *armor = DStaticCast<Armor *>(item);
 
             if (GetArmor() == NULL ||
-                armor->GetUpgradeLevel() > GetArmor()->GetUpgradeLevel())
+                armor->UpgradeLevel() > GetArmor()->UpgradeLevel())
             {
                 SetArmor(armor);
             }
@@ -425,7 +425,7 @@ bool PlayerShip::AddItem (Item *item)
             Shield *shield = DStaticCast<Shield *>(item);
 
             if (GetShield() == NULL ||
-                shield->GetUpgradeLevel() > GetShield()->GetUpgradeLevel())
+                shield->UpgradeLevel() > GetShield()->UpgradeLevel())
             {
                 SetShield(shield);
             }
@@ -438,7 +438,7 @@ bool PlayerShip::AddItem (Item *item)
             PowerGenerator *power_generator = DStaticCast<PowerGenerator *>(item);
 
             if (GetPowerGenerator() == NULL ||
-                power_generator->GetUpgradeLevel() > GetPowerGenerator()->GetUpgradeLevel())
+                power_generator->UpgradeLevel() > GetPowerGenerator()->UpgradeLevel())
             {
                 SetPowerGenerator(power_generator);
             }
@@ -626,7 +626,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             // update the shield's intensity and position
             m_shield_effect->SetIntensity(m_shield->Intensity());
             // TODO: real entity attachment -- temp hack
-            m_shield_effect->SnapToShip(GetTranslation() + frame_dt * GetVelocity(), ScaleFactor());
+            m_shield_effect->SnapToShip(Translation() + frame_dt * Velocity(), ScaleFactor());
         }
         // if there is no shield equipped and the shield effect is
         // allocated AND in the world, remove it from the world.
@@ -731,8 +731,8 @@ void PlayerShip::Die (
     SpawnNoDamageExplosion(
         GetWorld(),
         GetObjectLayer(),
-        GetTranslation(),
-        GetVelocity(),
+        Translation(),
+        Velocity(),
         20.0f * ScaleFactor(),
         2.0f,
         time);
@@ -813,9 +813,9 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
+            (Mass()*powerup->Translation() + powerup->Mass()*Translation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).Normalization(),
+            (Translation() - powerup->Translation()).Normalization(),
             0.0f,
             time,
             frame_dt);
@@ -965,7 +965,7 @@ bool PlayerShip::IsInStartingInventory (Item *const item)
 {
     ASSERT1(item != NULL);
 
-    return item->GetUpgradeLevel() == 0 &&
+    return item->UpgradeLevel() == 0 &&
            (item->GetItemType() == IT_WEAPON_PEA_SHOOTER ||
             item->GetItemType() == IT_ENGINE ||
             item->GetItemType() == IT_ARMOR ||
@@ -1024,7 +1024,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     SpawnPowerup(
         GetWorld(),
         GetObjectLayer(),
-        s_powerup_scale_factor * ejection_normal + GetTranslation(),
+        s_powerup_scale_factor * ejection_normal + Translation(),
         s_powerup_scale_factor,
         s_powerup_scale_factor * s_powerup_scale_factor,
         s_powerup_ejection_speed * ejection_normal,
@@ -1034,8 +1034,8 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     // remove the item from the inventory
     ItemType item_type = ejectee->GetItemType();
     ASSERT1(item_type < IT_COUNT);
-    ASSERT1(ejectee->GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
-    m_item_inventory[item_type][ejectee->GetUpgradeLevel()] = NULL;
+    ASSERT1(ejectee->UpgradeLevel() < UPGRADE_LEVEL_COUNT);
+    m_item_inventory[item_type][ejectee->UpgradeLevel()] = NULL;
 
     // figure out what item to equip it its place
     Item *item_to_equip = NULL;

@@ -242,7 +242,7 @@ void InventoryPanel::UpdatePanelState ()
                 Uint32 player_ship_minerals =
                     static_cast<Uint32>(
                         m_inventory_owner_ship->MineralInventory(mineral_index));
-                Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
+                Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->Value();
                 if (player_ship_minerals < item_cost_minerals)
                     m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
                 else
@@ -363,7 +363,7 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
             Uint32 player_ship_minerals =
                 static_cast<Uint32>(
                     m_inventory_owner_ship->MineralInventory(mineral_index));
-            Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->GetValue();
+            Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->Value();
             if (player_ship_minerals < item_cost_minerals)
                 m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
             else
@@ -385,7 +385,7 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
     // clear all the prices and disable the widgets
     for (Uint8 i = 0; i < MINERAL_COUNT; ++i)
     {
-        if (m_mineral_cost_label[i]->GetValue() > 0)
+        if (m_mineral_cost_label[i]->Value() > 0)
         {
             ASSERT1(m_mineral_cost_label[i]->IsEnabled());
             ASSERT1(m_mineral_icon_label[i]->IsEnabled());

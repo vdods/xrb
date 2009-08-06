@@ -72,8 +72,8 @@ void Explosive::Die (
         SpawnNoDamageExplosion(
             GetWorld(),
             GetObjectLayer(),
-            GetTranslation(),
-            GetVelocity(),
+            Translation(),
+            Velocity(),
             ScaleFactor(),
             1.0f,
             time);
@@ -247,8 +247,8 @@ void Grenade::Detonate (
     SpawnDamageExplosion(
         GetWorld(),
         GetObjectLayer(),
-        GetTranslation(),
-        GetVelocity(),
+        Translation(),
+        Velocity(),
         m_damage_to_inflict*damage_factor,
         m_damage_radius,
         m_explosion_radius,
@@ -285,13 +285,13 @@ void Missile::Think (
     // (if the owner even still exists)
     if (m_first_think && m_owner.IsValid())
     {
-        m_initial_velocity = m_owner->GetVelocity();
+        m_initial_velocity = m_owner->Velocity();
         m_first_think = false;
     }
 
     // update the angle to reflect the direction of motion
     {
-        FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
+        FloatVector2 velocity_delta(Velocity() - m_initial_velocity);
         if (!velocity_delta.IsZero())
             SetAngle(Math::Atan(velocity_delta));
     }
@@ -303,8 +303,8 @@ void Missile::Think (
     // worth of velocity in front and behind this missile
     else
     {
-        FloatVector2 trace_vector(frame_dt * GetVelocity());
-        FloatVector2 trace_start(GetTranslation() - 0.5f * trace_vector);
+        FloatVector2 trace_vector(frame_dt * Velocity());
+        FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
         LineTraceBindingSet line_trace_binding_set;
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
@@ -374,8 +374,8 @@ void Missile::Detonate (
     SpawnDamageExplosion(
         GetWorld(),
         GetObjectLayer(),
-        GetTranslation(),
-        GetVelocity(),
+        Translation(),
+        Velocity(),
         m_damage_to_inflict,
         m_damage_radius,
         m_explosion_radius,
@@ -429,7 +429,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
     }
 
     // do a line trace in front of the missile to find a target
-    if (GetVelocity().LengthSquared() >= 0.001f)
+    if (Velocity().LengthSquared() >= 0.001f)
     {
         m_next_search_time = time + 0.25f;
 
@@ -439,7 +439,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
         LineTraceBindingSet line_trace_binding_set;
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
-            GetTranslation(),
+            Translation(),
             s_search_distance * Math::UnitVector(Angle()),
             s_search_radius,
             false,
@@ -461,13 +461,13 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
+            m_target->Translation(),
+            Translation()));
 
     // adjust our course to hit the target -- plot intercept course
     Float interceptor_acceleration = ms_acceleration[GetWeaponLevel()];
-    FloatVector2 p(target_position - GetTranslation());
-    FloatVector2 v(m_target->GetVelocity() - GetVelocity());
+    FloatVector2 p(target_position - Translation());
+    FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
@@ -501,13 +501,13 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     else
     {
         FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
-        AimAt(GetTranslation() + real_approach_direction);
+        AimAt(Translation() + real_approach_direction);
     }
 }
 
 void GuidedMissile::AimAt (FloatVector2 const &position)
 {
-    FloatVector2 delta(position - GetTranslation());
+    FloatVector2 delta(position - Translation());
     if (delta.LengthSquared() >= 0.001f)
         SetAngle(Math::Atan(delta));
 }
@@ -606,8 +606,8 @@ void EMPBomb::Detonate (
         SpawnEMPExplosion(
             GetWorld(),
             GetObjectLayer(),
-            GetTranslation(),
-            GetVelocity(),
+            Translation(),
+            Velocity(),
             m_disable_time_factor,
             m_blast_radius,
             1.0f,

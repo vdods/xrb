@@ -87,7 +87,7 @@ Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
         ASSERT1(smallest_candidate != NULL);
 
         // if the point is touching the object
-        if ((point - smallest_candidate->GetTranslation()).LengthSquared() <=
+        if ((point - smallest_candidate->Translation()).LengthSquared() <=
             smallest_candidate->RadiusSquared(GetQuadTreeType()))
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
@@ -120,7 +120,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
         Object const *object = *it;
         ASSERT1(object != NULL);
         ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == this);
-        if ((object->GetTranslation() - area_center).Length()
+        if ((object->Translation() - area_center).Length()
             <
             (object->Radius(GetQuadTreeType()) + area_radius))
             return true;
@@ -176,7 +176,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
         ASSERT1(object != NULL);
         ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == this);
 
-        FloatVector2 object_translation(object->GetTranslation());
+        FloatVector2 object_translation(object->Translation());
         FloatVector2 adjusted_area_center(area_center);
 
         while (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
@@ -250,7 +250,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     ASSERT1(object->Radius(GetQuadTreeType()) <= m_radius);
 
     // return if the object's center is not inside this node
-    if (!IsPointInsideQuad(object->GetTranslation()))
+    if (!IsPointInsideQuad(object->Translation()))
         return false;
 
     // check if the object should be added to this node:
@@ -322,7 +322,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
     bool object_was_added = false;
 
     // if the object's position is inside current quadnode
-    if (IsPointInsideQuad(object->GetTranslation()))
+    if (IsPointInsideQuad(object->Translation()))
     {
         Float object_radius_over_quad_radius = object->Radius(GetQuadTreeType()) / m_radius;
         // if the object is too big for current quadnode
@@ -346,17 +346,17 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
         {
             if (HasChildren())
             {
-                FloatVector2 object_translation(object->GetTranslation());
+                FloatVector2 object_translation(object->Translation());
                 if (object_translation[Dim::X] >= m_center[Dim::X])
                 {
                     if (object_translation[Dim::Y] >= m_center[Dim::Y])
                     {
-                        ASSERT1(m_child[0]->IsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[0]->IsPointInsideQuad(object->Translation()));
                         object_was_added = m_child[0]->ReAddObject(object);
                     }
                     else
                     {
-                        ASSERT1(m_child[3]->IsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[3]->IsPointInsideQuad(object->Translation()));
                         object_was_added = m_child[3]->ReAddObject(object);
                     }
                 }
@@ -364,12 +364,12 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
                 {
                     if (object_translation[Dim::Y] >= m_center[Dim::Y])
                     {
-                        ASSERT1(m_child[1]->IsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[1]->IsPointInsideQuad(object->Translation()));
                         object_was_added = m_child[1]->ReAddObject(object);
                     }
                     else
                     {
-                        ASSERT1(m_child[2]->IsPointInsideQuad(object->GetTranslation()));
+                        ASSERT1(m_child[2]->IsPointInsideQuad(object->Translation()));
                         object_was_added = m_child[2]->ReAddObject(object);
                     }
                 }
@@ -401,7 +401,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
         else
         {
             ASSERT1(object_was_added == false);
-            Fprint(stderr, object->GetTranslation());
+            Fprint(stderr, object->Translation());
             ASSERT1(false);
             // error - nowhere to go
         }
@@ -526,7 +526,7 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
     if (object->Radius(GetQuadTreeType()) > m_radius)
         object->SetScaleFactor(m_radius);
 
-    ASSERT1(IsPointInsideQuad(object->GetTranslation()));
+    ASSERT1(IsPointInsideQuad(object->Translation()));
 
     // check that the object should be added to this node:
     // assert that the object's radius is within the nominal size

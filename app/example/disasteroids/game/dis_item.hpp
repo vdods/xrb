@@ -46,7 +46,7 @@ public:
         Uint8 upgrade_level,
         Uint8 mineral_index);
     
-    inline Uint8 GetUpgradeLevel () const { return m_upgrade_level; }
+    inline Uint8 UpgradeLevel () const { return m_upgrade_level; }
     inline ItemType GetItemType () const { return m_item_type; }
 
     virtual bool IsPoweredDevice () const { return false; }

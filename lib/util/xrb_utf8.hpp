@@ -43,7 +43,7 @@ namespace UTF8
       * @param sequence A pointer to the character to be decoded.  May not be NULL.
       * @note Returns 0xFFFFFFFF if the character is not well-formed.
       */
-    Uint32 GetUnicode (char const *sequence);
+    Uint32 Unicode (char const *sequence);
     /** If @c unicode is not a valid Unicode scalar, nothing will be appended
       * to @c *dest .
       * @brief UTF8-encodes the given unicode character to @c dest (by appending).

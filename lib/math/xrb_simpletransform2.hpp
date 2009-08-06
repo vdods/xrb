@@ -102,12 +102,12 @@ public:
     {
         return m_scale_factors;
     }
-    Vector<T, 2> const &GetTranslation () const
+    Vector<T, 2> const &Translation () const
     {
         return m_translation;
     }
 
-    SimpleTransform2<T> const &GetTransformation () const
+    SimpleTransform2<T> const &Transformation () const
     {
         return *this;
     }

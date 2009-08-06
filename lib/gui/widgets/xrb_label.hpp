@@ -110,7 +110,7 @@ protected:
     virtual void UpdateRenderFont ();
     virtual void UpdateRenderPicture ();
 
-    virtual ScreenCoordRect GetTextRect () const;
+    virtual ScreenCoordRect TextRect () const;
     virtual void UpdateMinAndMaxSizesFromText ();
 
     inline void DirtyTextFormatting () { m_text_formatting_update_required = true; }

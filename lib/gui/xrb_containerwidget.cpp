@@ -465,7 +465,7 @@ void ContainerWidget::AttachChild (Widget *const child)
     // without forcing the inheritance
     child->m_widget_skin = m_widget_skin;
     // sanity check -- Screen should be the top-level parent widget
-    ASSERT1(dynamic_cast<Screen *>(GetTopLevelParent()) != NULL);
+    ASSERT1(dynamic_cast<Screen *>(TopLevelParent()) != NULL);
 }
 
 void ContainerWidget::DetachChild (Widget *const child)

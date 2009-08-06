@@ -81,7 +81,7 @@ public:
         ASSERT1(weapon != NULL);
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
-        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle());
+        return Translation() + ScaleFactor() * Math::UnitVector(Angle());
     }
     virtual FloatVector2 MuzzleDirection (Weapon const *weapon) const
     {

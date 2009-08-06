@@ -116,7 +116,7 @@ public:
     static std::string const &Name (EventType event_type);
     /** @brief Returns the event's timestamp.
       */
-    inline Float GetTime () const { return m_time; }
+    inline Float Time () const { return m_time; }
     /** @brief Returns the event's type.
       */
     inline EventType GetEventType () const { return m_event_type; }

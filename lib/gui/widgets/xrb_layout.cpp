@@ -74,7 +74,7 @@ Widget *Layout::GridChildByColumnAndRow (
         return 0;
 }
 
-ScreenCoordVector2 const &Layout::GetTotalSpacing () const
+ScreenCoordVector2 const &Layout::TotalSpacing () const
 {
     UpdateTotalSpacing();
     return m_total_spacing;
@@ -652,7 +652,7 @@ void Layout::DelegateWidthsToColumns ()
 
     // must split up the total width among the columns
     ASSERT1(m_hidden_column_count == ColumnCount() - unhidden_column_count);
-    ScreenCoord total_width_left = GetWidth() - GetTotalSpacing()[Dim::X];
+    ScreenCoord total_width_left = GetWidth() - TotalSpacing()[Dim::X];
     ASSERT1(total_width_left >= 0);
 
     // sort the array unhidden_column_count times (to delegate the same number of widths)
@@ -706,7 +706,7 @@ void Layout::DelegateHeightsToRows ()
 
     // must split up the total height among the rows
     ASSERT1(m_hidden_row_count == RowCount() - unhidden_row_count);
-    ScreenCoord total_height_left = Height() - GetTotalSpacing()[Dim::Y];
+    ScreenCoord total_height_left = Height() - TotalSpacing()[Dim::Y];
     ASSERT1(total_height_left >= 0);
 
     // sort the array unhidden_row_count times (to delegate the same number of heights)
@@ -790,11 +790,11 @@ void Layout::ConstrainPreferredSizeProperties ()
 {
     for (Uint8 i = 0; i < 2; ++i)
     {
-        if (m_preferred_size_properties.m_min_size[i] < GetTotalSpacing()[i])
-            m_preferred_size_properties.m_min_size[i] = GetTotalSpacing()[i];
+        if (m_preferred_size_properties.m_min_size[i] < TotalSpacing()[i])
+            m_preferred_size_properties.m_min_size[i] = TotalSpacing()[i];
 
-        if (m_preferred_size_properties.m_max_size[i] < GetTotalSpacing()[i])
-            m_preferred_size_properties.m_max_size[i] = GetTotalSpacing()[i];
+        if (m_preferred_size_properties.m_max_size[i] < TotalSpacing()[i])
+            m_preferred_size_properties.m_max_size[i] = TotalSpacing()[i];
     }
 }
 
@@ -1127,15 +1127,15 @@ void Layout::UpdateContentsSizeProperties () const
 
     // initialize the min size properties, considering the total spacing
     m_contents_size_properties.m_min_size_enabled =
-        Bool2(GetTotalSpacing()[Dim::X] > 0,
-              GetTotalSpacing()[Dim::Y] > 0);
-    m_contents_size_properties.m_min_size = GetTotalSpacing();
+        Bool2(TotalSpacing()[Dim::X] > 0,
+              TotalSpacing()[Dim::Y] > 0);
+    m_contents_size_properties.m_min_size = TotalSpacing();
 
     // initialize the max size properties, considering the total spacing
     m_contents_size_properties.m_max_size_enabled =
         Bool2(ColumnCount() - m_hidden_column_count > 0,
               RowCount() - m_hidden_row_count > 0);
-    m_contents_size_properties.m_max_size = GetTotalSpacing();
+    m_contents_size_properties.m_max_size = TotalSpacing();
 
     // horizontal using columns
     for (Uint32 i = 0; i < ColumnCount(); ++i)

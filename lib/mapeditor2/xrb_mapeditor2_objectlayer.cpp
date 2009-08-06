@@ -529,7 +529,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationX (
     {
         Object *object = *it;
         ASSERT1(object != NULL);
-        translation = object->GetTranslation();
+        translation = object->Translation();
         translation[Dim::X] = translation_x;
         object->SetTranslation(translation);
     }
@@ -548,7 +548,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationY (
     {
         Object *object = *it;
         ASSERT1(object != NULL);
-        translation = object->GetTranslation();
+        translation = object->Translation();
         translation[Dim::Y] = translation_y;
         object->SetTranslation(translation);
     }
@@ -683,8 +683,8 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
         Object *object = *it;
         ASSERT1(object != NULL);
         Entity *entity = dynamic_cast<Entity *>(object);
-        if (entity != NULL && !entity->GetVelocity().IsZero())
-            entity->SetVelocity(speed * entity->GetVelocity().Normalization());
+        if (entity != NULL && !entity->Velocity().IsZero())
+            entity->SetVelocity(speed * entity->Velocity().Normalization());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -703,7 +703,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityAngle (
         Entity *entity = dynamic_cast<Entity *>(object);
         if (entity != NULL)
             entity->SetVelocity(
-                entity->GetVelocity().Length() *
+                entity->Velocity().Length() *
                 FloatVector2(
                     Math::Cos(velocity_angle),
                     Math::Sin(velocity_angle)));
@@ -787,7 +787,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
 
         if (entity != NULL)
             entity->SetMass(
-                density * static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius());
+                density * static_cast<Float>(M_PI) * entity->VisibleRadius() * entity->VisibleRadius());
     }
 
     UpdateObjectsAndEntitiesProperties();
@@ -1342,7 +1342,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     Uint32 selected_compound_count = m_selected_compound_count;
     
     object_selection_set_origin *= (Float)selected_object_count;
-    object_selection_set_origin += object->GetTranslation();
+    object_selection_set_origin += object->Translation();
     ++selected_object_count;
     object_selection_set_origin /= (Float)selected_object_count;
 
@@ -1351,7 +1351,7 @@ bool MapEditor2::ObjectLayer::AddObjectToObjectSelectionSet (MapEditor2::Object 
     {
         object_selection_set_center_of_gravity =
             (m_object_selection_set_center_of_gravity * object_selection_set_mass +
-             entity->GetTranslation() * entity->Mass())
+             entity->Translation() * entity->Mass())
             /
             (object_selection_set_mass + entity->Mass());
 
@@ -1413,7 +1413,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
     if (selected_object_count > 1)
     {
         object_selection_set_origin *= (Float)selected_object_count;
-        object_selection_set_origin -= object->GetTranslation();
+        object_selection_set_origin -= object->Translation();
         --selected_object_count;
         object_selection_set_origin /= (Float)selected_object_count;
 
@@ -1422,7 +1422,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
         {
             object_selection_set_center_of_gravity =
                 (m_object_selection_set_center_of_gravity * object_selection_set_mass -
-                entity->GetTranslation() * entity->Mass())
+                entity->Translation() * entity->Mass())
                 /
                 (object_selection_set_mass + entity->Mass());
 
@@ -1489,14 +1489,14 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
             Object *object = *it;
             ASSERT1(object != NULL);
 
-            object_selection_set_origin += object->GetTranslation();
+            object_selection_set_origin += object->Translation();
             ++selected_object_count;
 
             Entity *entity = dynamic_cast<Entity *>(object);
             if (entity != NULL)
             {
                 object_selection_set_center_of_gravity +=
-                    entity->GetTranslation() * entity->Mass();
+                    entity->Translation() * entity->Mass();
 
                 ++selected_entity_count;
                 object_selection_set_mass += entity->Mass();
@@ -1536,7 +1536,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetVelocity ()
     if (SelectedEntityCount() != 1)
         return;
 
-    FloatVector2 object_selection_set_velocity = SingleSelectedEntity()->GetVelocity();
+    FloatVector2 object_selection_set_velocity = SingleSelectedEntity()->Velocity();
     if (m_object_selection_set_velocity != object_selection_set_velocity)
     {
         m_object_selection_set_velocity = object_selection_set_velocity;
@@ -1605,7 +1605,7 @@ void MapEditor2::ObjectLayer::UpdateObjectSelectionSetDensity ()
     Entity *entity = SingleSelectedEntity();
     Float object_selection_set_density =
         entity->Mass() /
-        static_cast<Float>(M_PI) * entity->GetVisibleRadius() * entity->GetVisibleRadius();
+        static_cast<Float>(M_PI) * entity->VisibleRadius() * entity->VisibleRadius();
     if (m_object_selection_set_density != object_selection_set_density)
     {
         m_object_selection_set_density = object_selection_set_density;

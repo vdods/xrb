@@ -100,7 +100,7 @@ namespace MapEditor2
 
         inline Uint32 PolygonCount () const { return m_polygon_list.size(); }
         Uint32 SelectedPolygonCount () const;
-        Instance<CompoundVertex> *GetVertexInstance (Uint32 index) const;
+        Instance<CompoundVertex> *VertexInstance (Uint32 index) const;
         Polygon *SmallestPolygonTouchingPoint (
             FloatVector2 const &point) const;
 
@@ -179,7 +179,7 @@ namespace MapEditor2
     
     private:
     
-        inline Uint32 GetVertexCount () const
+        inline Uint32 VertexCount () const
         {
             return m_vertex_list.size();
         }

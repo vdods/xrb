@@ -68,8 +68,8 @@ void Engine2::Sprite::Draw (
     // model-to-world transformation (this seems backwards,
     // but for some reason it's correct).
     glTranslatef(
-        GetTranslation()[Dim::X],
-        GetTranslation()[Dim::Y],
+        Translation()[Dim::X],
+        Translation()[Dim::Y],
         GetZDepth());
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(

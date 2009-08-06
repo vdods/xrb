@@ -241,7 +241,7 @@ bool Screen::HandleEvent (Event const *const e)
             // generate a mouseover event from the mouse motion event
             EventMouseover mouseover_event(
                 mouse_motion_event->Position(),
-                mouse_motion_event->GetTime());
+                mouse_motion_event->Time());
             ProcessEvent(&mouseover_event);
         }
 
@@ -250,7 +250,7 @@ bool Screen::HandleEvent (Event const *const e)
             // create a focus event
             EventFocus focus_event(
                 DStaticCast<EventMouseButton const *>(e)->Position(),
-                e->GetTime());
+                e->Time());
             // send it to the event processor
             ProcessEvent(&focus_event);
         }

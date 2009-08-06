@@ -60,7 +60,7 @@ public:
         ~DrawData () { }
 
         inline RenderContext const &GetRenderContext () const { return m_render_context; }
-        inline FloatMatrix2 const &GetTransformation () const { return m_transformation; }
+        inline FloatMatrix2 const &Transformation () const { return m_transformation; }
 
         inline void SetTransformation (FloatMatrix2 const &transformation) { m_transformation = transformation; }
 
@@ -110,10 +110,10 @@ public:
         ~DrawLoopFunctor () { }
 
         inline Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
-        inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.GetTransformation(); }
+        inline FloatMatrix2 const &GetWorldToScreen () const { return m_object_draw_data.Transformation(); }
         inline Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
-        inline FloatVector2 const &GetViewCenter () const { return m_view_center; }
-        inline Float GetViewRadius () const { return m_view_radius; }
+        inline FloatVector2 const &ViewCenter () const { return m_view_center; }
+        inline Float ViewRadius () const { return m_view_radius; }
         inline bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
         inline TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
         inline Uint32 DrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
@@ -180,8 +180,8 @@ public:
     inline bool IsTransparent () const { return m_is_transparent; }
     inline Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
-    inline Float GetVisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
-    inline Float GetVisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
+    inline Float VisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
+    inline Float VisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
     inline Float PhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
     inline Float PhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
     // returns the object_layer of this entity

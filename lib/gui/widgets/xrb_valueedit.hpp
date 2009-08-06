@@ -56,7 +56,7 @@ public:
     }
     virtual ~ValueEdit () { }
 
-    inline ValueType GetValue () const
+    inline ValueType Value () const
     {
         return m_value;
     }
@@ -68,7 +68,7 @@ public:
     {
         return m_printf_format;
     }
-    inline TextToValueFunctionType GetTextToValueFunction () const
+    inline TextToValueFunctionType TextToValueFunction () const
     {
         return m_text_to_value_function;
     }

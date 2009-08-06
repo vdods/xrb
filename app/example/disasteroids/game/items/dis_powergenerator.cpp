@@ -74,9 +74,9 @@ void PowerGenerator::PowerDevices (
 
 void PowerGenerator::Think (Float const time, Float const frame_dt)
 {
-    m_stored_power += frame_dt * ms_max_power_output_rate[GetUpgradeLevel()];
-    if (m_stored_power > ms_max_power_storage_capacity[GetUpgradeLevel()])
-        m_stored_power = ms_max_power_storage_capacity[GetUpgradeLevel()];
+    m_stored_power += frame_dt * ms_max_power_output_rate[UpgradeLevel()];
+    if (m_stored_power > ms_max_power_storage_capacity[UpgradeLevel()])
+        m_stored_power = ms_max_power_storage_capacity[UpgradeLevel()];
 }
 
 } // end of namespace Dis

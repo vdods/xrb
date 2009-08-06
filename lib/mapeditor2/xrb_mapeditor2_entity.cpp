@@ -25,7 +25,7 @@ void MapEditor2::Entity::DrawMetrics (
 {
     Color color(IsSelected() ?
                 SelectedMetricsColor() :
-                GetUnselectedMetricsColor());
+                UnselectedMetricsColor());
     color[Dim::A] *= alpha_mask;
 
     // call Object's metric drawing function for the common stuff
@@ -41,20 +41,20 @@ void MapEditor2::Entity::DrawMetrics (
             // draw the linear velocity vector as an arrow
             Render::DrawArrow(
                 draw_data.GetRenderContext(),
-                GetTranslation(),
-                GetTranslation() + GetVelocity(),
+                Translation(),
+                Translation() + Velocity(),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                Translation() + FloatVector2(0.0f, 0.125f*VisibleRadius()),
+                Translation() - FloatVector2(0.0f, 0.125f*VisibleRadius()),
                 color);
             // draw the little horizontal bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.125f*GetVisibleRadius(), 0.0f),
-                GetTranslation() - FloatVector2(0.125f*GetVisibleRadius(), 0.0f),
+                Translation() + FloatVector2(0.125f*VisibleRadius(), 0.0f),
+                Translation() - FloatVector2(0.125f*VisibleRadius(), 0.0f),
                 color);
             break;
 
@@ -62,31 +62,31 @@ void MapEditor2::Entity::DrawMetrics (
             // draw the two angle limit lines
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation(),
-                GetTranslation() + 1.5f*GetVisibleRadius()*FloatVector2(1.0f, 0.0f),
+                Translation(),
+                Translation() + 1.5f*VisibleRadius()*FloatVector2(1.0f, 0.0f),
                 color);
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation(),
-                GetTranslation() +
-                1.5f*GetVisibleRadius()*FloatVector2(
+                Translation(),
+                Translation() +
+                1.5f*VisibleRadius()*FloatVector2(
                     Math::Cos(AngularVelocity()),
                     Math::Sin(AngularVelocity())),
                 color);
             // draw the arc connecting the two
             Render::DrawCircularArc(
                 draw_data.GetRenderContext(),
-                draw_data.GetTransformation(),
-                GetTranslation(),
-                1.25f*GetVisibleRadius(),
+                draw_data.Transformation(),
+                Translation(),
+                1.25f*VisibleRadius(),
                 0.0f,
                 AngularVelocity(),
                 color);
             // draw the little vertical bar across the origin
             Render::DrawLine(
                 draw_data.GetRenderContext(),
-                GetTranslation() + FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
-                GetTranslation() - FloatVector2(0.0f, 0.125f*GetVisibleRadius()),
+                Translation() + FloatVector2(0.0f, 0.125f*VisibleRadius()),
+                Translation() - FloatVector2(0.0f, 0.125f*VisibleRadius()),
                 color);
             break;
 
@@ -101,7 +101,7 @@ void MapEditor2::Entity::DrawMetrics (
     }
 }
 
-Color const &MapEditor2::Entity::GetUnselectedMetricsColor () const
+Color const &MapEditor2::Entity::UnselectedMetricsColor () const
 {
     return Entity::ms_unselected_metrics_color;
 }
@@ -117,14 +117,14 @@ void MapEditor2::Entity::ObjectSelectionSetScaleVelocity (
     TransformationMode const transformation_mode)
 {
     if (transformation_mode == TM_EACH_SELECTED_OBJECT_ORIGIN)
-        transformation_origin = GetTranslation();
+        transformation_origin = Translation();
 
     // get the vector based on the given origin
-    m_velocity -= transformation_origin - GetTranslation();
+    m_velocity -= transformation_origin - Translation();
     // scale it
     m_velocity *= scale_factor;
     // translate it back by the origin
-    m_velocity += transformation_origin - GetTranslation();
+    m_velocity += transformation_origin - Translation();
 }
 
 void MapEditor2::Entity::ObjectSelectionSetRotateVelocity (
@@ -134,14 +134,14 @@ void MapEditor2::Entity::ObjectSelectionSetRotateVelocity (
     FloatMatrix2 const &rotation_transformation)
 {
     if (transformation_mode == TM_EACH_SELECTED_OBJECT_ORIGIN)
-        transformation_origin = GetTranslation();
+        transformation_origin = Translation();
 
     // get the vector based on the given origin
-    m_velocity -= transformation_origin - GetTranslation();
+    m_velocity -= transformation_origin - Translation();
     // rotate it
     m_velocity *= rotation_transformation;
     // translate it back by the origin
-    m_velocity += transformation_origin - GetTranslation();
+    m_velocity += transformation_origin - Translation();
 }
 
 } // end of namespace Xrb

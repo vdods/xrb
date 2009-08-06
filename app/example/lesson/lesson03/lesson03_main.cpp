@@ -197,7 +197,7 @@ public:
     }
 
     // Accessor for temperature -- used in HeatSimulation::HandleFrame.
-    inline Float GetTemperature () const { return m_temperature; }
+    inline Float Temperature () const { return m_temperature; }
     // Modifier for ambient temperature -- also used in HeatSimulation::HandleFrame.
     inline void SetAmbientTemperature (Float ambient_temperature)
     {
@@ -408,7 +408,7 @@ public:
         sub_layout->SetIsUsingZeroedFrameMargins(false);
 
         // ValueLabel<T> is a templatized subclass of Label which contains a
-        // value instead of a string.  It has GetValue and SetValue methods,
+        // value instead of a string.  It has Value and SetValue methods,
         // and corresponding SignalSenders and SignalReceivers.  It is very
         // flexible, due to its value-to-text-printf-format and
         // text-to-value-function constructor parameters.
@@ -496,7 +496,7 @@ protected:
                             ambient_temperature +=
                                 ms_distribution_function[dy+DISTRIBUTION_FUNCTION_HEIGHT/2][dx+DISTRIBUTION_FUNCTION_WIDTH/2] /
                                 m_distribution_normalization *
-                                m_button_grid[gy+dy][gx+dx]->GetTemperature();
+                                m_button_grid[gy+dy][gx+dx]->Temperature();
                 m_button_grid[gy][gx]->SetAmbientTemperature(ambient_temperature);
             }
     }

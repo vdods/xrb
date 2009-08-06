@@ -404,7 +404,7 @@ FloatTransform2 CompressionSerializer::ReadFloatTransform2 ()
 
 void CompressionSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
 {
-    CompressionSerializer::WriteFloatVector2(value.GetTranslation());
+    CompressionSerializer::WriteFloatVector2(value.Translation());
     if (GetError() != IOE_NONE)
         return;
 
@@ -591,7 +591,7 @@ Transform2 CompressionSerializer::ReadTransform2 ()
 
 void CompressionSerializer::WriteTransform2 (Transform2 const &value)
 {
-    CompressionSerializer::WriteVector2(value.GetTranslation());
+    CompressionSerializer::WriteVector2(value.Translation());
     if (GetError() != IOE_NONE)
         return;
 

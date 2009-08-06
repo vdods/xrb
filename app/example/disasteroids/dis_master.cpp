@@ -114,7 +114,7 @@ void Master::Run ()
                 game_time_delta = 1.0f / m_minimum_framerate;
             ASSERT1(game_time_delta >= 0.0f);
 
-            m_game_time += game_time_delta * m_game_world->GetTimescale();
+            m_game_time += game_time_delta * m_game_world->Timescale();
         }
 
         previous_real_time = m_real_time;

@@ -152,7 +152,7 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
             try { SetInputAction(static_cast<KeyInputAction>(i), root->PathElementString(ms_input_action_key[i].m_data_file_path)); } catch (...) { }
 
         // validate config values
-        if (GetUint32(GAME__DIFFICULTY_LEVEL) <= 0)
+        if (Uint32(GAME__DIFFICULTY_LEVEL) <= 0)
             SetUint32(GAME__DIFFICULTY_LEVEL, ms_uint32_key[GAME__DIFFICULTY_LEVEL].m_default_value);
         if (GetUint32(VIDEO__RESOLUTION_X) == 0)
             SetUint32(VIDEO__RESOLUTION_X, ms_uint32_key[VIDEO__RESOLUTION_X].m_default_value);

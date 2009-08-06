@@ -53,7 +53,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
     if (e->IsKeyEvent())
     {
         // generate key events from the current state
-        GenerateKeyEvents(e->GetTime());
+        GenerateKeyEvents(e->Time());
 
         EventKey const *key_event = static_cast<EventKey const *>(e);
         if (key_event->IsKeyDownEvent() &&
@@ -64,7 +64,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
             // use this key as the current key event
             m_current_key_event = *key_down_event;
             m_is_current_key_event_active = true;
-            m_next_repeat_time = key_down_event->GetTime() + m_repeat_delay;
+            m_next_repeat_time = key_down_event->Time() + m_repeat_delay;
 
             // the event was used
             return true;

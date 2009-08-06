@@ -62,7 +62,7 @@ MapEditor2::Object *MapEditor2::CompoundEntity::CreateNonEntityClone () const
     return static_cast<Object *>(Compound::CreateCompoundNonEntityClone(this));
 }
 
-Color const &MapEditor2::CompoundEntity::GetUnselectedMetricsColor () const
+Color const &MapEditor2::CompoundEntity::UnselectedMetricsColor () const
 {
     return MapEditor2::CompoundEntity::ms_unselected_metrics_color;
 }

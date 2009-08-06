@@ -59,7 +59,7 @@ FloatVector2 Entity::AmbientVelocity (
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation(),
+        Translation(),
         scan_area_radius,
         false,
         &area_trace_list);
@@ -90,7 +90,7 @@ FloatVector2 Entity::AmbientVelocity (
     // if no objects were encountered, then the ambient velocity
     // should just be the velocity of this game object.
     if (total_mass == 0.0f)
-        return GetVelocity();
+        return Velocity();
     // otherwise, divide the total momentum by the total mass to get velocity
     else
         return total_momentum / total_mass;
@@ -110,10 +110,10 @@ void Entity::ApplyInterceptCourseAcceleration (
 
     FloatVector2 p1(
         target->GetObjectLayer()->AdjustedCoordinates(
-            GetTranslation(),
-            target->GetTranslation()));
-    FloatVector2 p(target->GetTranslation() - p1);
-    FloatVector2 v(target->GetVelocity() - GetVelocity());
+            Translation(),
+            target->Translation()));
+    FloatVector2 p(target->Translation() - p1);
+    FloatVector2 v(target->Velocity() - Velocity());
     FloatVector2 a(target->Force() / target->Mass());
     Float interceptor_acceleration =
         maximum_thrust_force / Mass();
@@ -236,11 +236,11 @@ Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) c
 {
     FloatVector2 adjusted_entity_translation(
         GetObjectLayer()->AdjustedCoordinates(
-            entity->GetTranslation(),
-            GetTranslation()));
+            entity->Translation(),
+            Translation()));
 
-    FloatVector2 p(GetTranslation() - adjusted_entity_translation);
-    FloatVector2 v(GetVelocity() - entity->GetVelocity());
+    FloatVector2 p(Translation() - adjusted_entity_translation);
+    FloatVector2 v(Velocity() - entity->Velocity());
     Float R = Radius(Engine2::QTT_PHYSICS_HANDLER) + entity->Radius(Engine2::QTT_PHYSICS_HANDLER);
 
     Polynomial poly;

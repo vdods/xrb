@@ -177,8 +177,8 @@ void WidgetBackgroundStylized::Draw (
     {
         widget_screen_rect.Bottom(),
         widget_screen_rect.Bottom() + frame_margins[Dim::Y],
-        widget_screen_rect.GetTop() - frame_margins[Dim::Y],
-        widget_screen_rect.GetTop()
+        widget_screen_rect.Top() - frame_margins[Dim::Y],
+        widget_screen_rect.Top()
     };
 
     // set up the rectangles

@@ -111,7 +111,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
             SpawnDevourmentMouthHealthTrigger(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation(),
+                Translation(),
                 0.72f * ScaleFactor(),
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
                 -ms_mouth_damage_rate[EnemyLevel()],
@@ -137,7 +137,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     // set the tractor beam effect in the Tractor weapon
     m_mouth_tractor->SetTractorBeam(*m_mouth_tractor_beam);
 
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
+    SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
 
     // call the think state function (which will set the inputs)
     (this->*m_think_state)(time, frame_dt);
@@ -150,7 +150,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
     {
         static Float const s_max_tractor_angle = 15.0f;
 
-        FloatVector2 target_direction(ReticleCoordinates() - GetTranslation());
+        FloatVector2 target_direction(ReticleCoordinates() - Translation());
         if (!target_direction.IsZero())
         {
             Float angle_delta = Math::CanonicalAngle(Math::Atan(target_direction) - Angle());
@@ -179,10 +179,10 @@ void Devourment::Think (Float const time, Float const frame_dt)
     ASSERT1(m_mouth_health_trigger.IsValid());
     FloatVector2 mouth_health_trigger_translation(
         GetObjectLayer()->NormalizedCoordinates(
-            GetTranslation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle())));
+            Translation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle())));
     m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
     m_mouth_health_trigger->SetAngle(Angle());
-    m_mouth_health_trigger->SetVelocity(GetVelocity());
+    m_mouth_health_trigger->SetVelocity(Velocity());
 }
 
 void Devourment::Collide (
@@ -210,7 +210,7 @@ void Devourment::Collide (
         m_target = collider->GetReference();
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
-        SetReticleCoordinates(m_target->GetTranslation());
+        SetReticleCoordinates(m_target->Translation());
     }
 }
 
@@ -262,12 +262,12 @@ void Devourment::Die (
             Float scale_factor = Math::Sqrt(mass);
             Float velocity_angle = Math::RandomAngle();
             Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
-            FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+            FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -295,13 +295,13 @@ void Devourment::Die (
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
         Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
-        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+        FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -336,9 +336,9 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
+            (Mass()*powerup->Translation() + powerup->Mass()*Translation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).Normalization(),
+            (Translation() - powerup->Translation()).Normalization(),
             0.0f,
             time,
             frame_dt);
@@ -379,7 +379,7 @@ void Devourment::Wander (Float const time, Float const frame_dt)
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
-        SetReticleCoordinates(m_target->GetTranslation());
+        SetReticleCoordinates(m_target->Translation());
     }
     // otherwise handle wandering
     else
@@ -401,13 +401,13 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
+        SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
         return;
     }
 
-    SetReticleCoordinates(m_target->GetTranslation());
+    SetReticleCoordinates(m_target->Translation());
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
 
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
@@ -416,7 +416,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
         0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
         ScaleFactor();
 
-    Float target_distance = (target_position - GetTranslation()).Length();
+    Float target_distance = (target_position - Translation()).Length();
     if (target_distance <= s_consume_distance + ScaleFactor() + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Consume);
@@ -427,7 +427,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
+        SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
         return;
     }
 
@@ -437,8 +437,8 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
 
     Float interceptor_acceleration =
         ms_engine_thrust[EnemyLevel()] / Mass();
-    FloatVector2 p(target_position - GetTranslation());
-    FloatVector2 v(m_target->GetVelocity() - GetVelocity());
+    FloatVector2 p(target_position - Translation());
+    FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());
 
     Polynomial poly;
@@ -470,7 +470,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (T <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
-        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - GetTranslation()).Normalization());
+        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - Translation()).Normalization());
     }
     else
     {
@@ -489,20 +489,20 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
+        SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
 
     // set the reticle coordinates and aim the mouth tractor
-    SetReticleCoordinates(m_target->GetTranslation());
+    SetReticleCoordinates(m_target->Translation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
 
     // if we're no longer close enough to the target, transition to Pursue
     Float const pursue_distance = 40.0f + ScaleFactor();
-    if ((target_position - GetTranslation()).Length() > pursue_distance + m_target->ScaleFactor())
+    if ((target_position - Translation()).Length() > pursue_distance + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -511,9 +511,9 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
     // we want drag the target to a stop, otherwise there will
     // be Devourments flying all over the joint
-    if (!GetVelocity().IsZero())
+    if (!Velocity().IsZero())
     {
-        FloatVector2 braking_thrust(-ms_engine_thrust[EnemyLevel()] * GetVelocity().Normalization());
+        FloatVector2 braking_thrust(-ms_engine_thrust[EnemyLevel()] * Velocity().Normalization());
         AccumulateForce(braking_thrust);
     }
 }
@@ -522,7 +522,7 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+        velocity - (Velocity() + frame_dt * Force() / Mass());
     FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {
@@ -530,7 +530,7 @@ void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_
         if (thrust_force > ms_engine_thrust[EnemyLevel()])
             thrust_vector = ms_engine_thrust[EnemyLevel()] * thrust_vector.Normalization();
 
-        SetReticleCoordinates(GetTranslation() + thrust_vector.Normalization());
+        SetReticleCoordinates(Translation() + thrust_vector.Normalization());
         AccumulateForce(thrust_vector);
     }
 }
@@ -549,7 +549,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation(),
+        Translation(),
         scan_radius,
         false,
         &area_trace_list);

@@ -32,7 +32,7 @@ public:
 
     inline Float MaxThrustForce () const
     {
-        return ms_max_thrust_force[GetUpgradeLevel()];
+        return ms_max_thrust_force[UpgradeLevel()];
     }
     
     void SetInputs (

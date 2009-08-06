@@ -355,7 +355,7 @@ void MapEditor2::MainWidget::SetMapEditorWorldView (MapEditor2::WorldView *const
 
         // transformation mode toolbar buttons and text display - init
         m_transformation_mode_label->SetText(
-            MapEditorWorldView()->GetTransformationModeText());
+            MapEditorWorldView()->TransformationModeText());
         // signal connections
         SignalHandler::Connect1(
             MapEditorWorldView()->SenderTransformationModeChanged(),
@@ -589,7 +589,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
                     FilePanel::OP_OPEN,
                     this);
             dialog->ResizeByRatios(FloatVector2(0.8f, 0.8f));
-            dialog->CenterOnWidget(dialog->GetTopLevelParent());
+            dialog->CenterOnWidget(dialog->TopLevelParent());
             SignalHandler::Connect1(
                 dialog->SenderSubmitFilename(),
                 &m_receiver_open_world_from_file);
@@ -608,7 +608,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
                     FilePanel::OP_SAVE,
                     this);
             dialog->ResizeByRatios(FloatVector2(0.8f, 0.8f));
-            dialog->CenterOnWidget(dialog->GetTopLevelParent());
+            dialog->CenterOnWidget(dialog->TopLevelParent());
             SignalHandler::Connect1(
                 dialog->SenderSubmitFilename(),
                 &m_receiver_save_world_to_file);

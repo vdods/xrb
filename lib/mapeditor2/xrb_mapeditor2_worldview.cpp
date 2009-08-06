@@ -2062,7 +2062,7 @@ void MapEditor2::WorldView::DrawOriginCursor (
         color = m_active_origin_cursor_color;
     }
 
-    radius *= ParentWorldViewWidget()->GetTopLevelParent()->SizeRatioBasis();
+    radius *= ParentWorldViewWidget()->TopLevelParent()->SizeRatioBasis();
 
     FloatMatrix2 draw_circle_transform = FloatMatrix2::ms_identity;
     draw_circle_transform.Scale(2.0f);

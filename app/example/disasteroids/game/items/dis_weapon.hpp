@@ -88,8 +88,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_PEA_SHOOTER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         m_charge_up_ratio = 0.0f;
     }
     virtual ~PeaShooter () { }
@@ -100,7 +100,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -167,8 +167,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_LASER)
     {
-        ASSERT1(ms_secondary_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_secondary_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_secondary_fire_rate[UpgradeLevel()];
         m_laser_beam = NULL;
     }
     virtual ~Laser () { }
@@ -185,7 +185,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_secondary_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_secondary_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -232,8 +232,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_FLAME_THROWER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         m_max_damage_per_fireball_override = -1.0f;
         m_final_fireball_size_override = -1.0f;
     }
@@ -264,7 +264,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -316,8 +316,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_GAUSS_GUN)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         ClearImpactDamageOverride();
     }
     virtual ~GaussGun ()
@@ -348,7 +348,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -391,8 +391,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_GRENADE_LAUNCHER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
     }
     virtual ~GrenadeLauncher ();
 
@@ -409,7 +409,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -462,8 +462,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_MISSILE_LAUNCHER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         m_spawn_enemy_missiles = false;
     }
     virtual ~MissileLauncher () { }
@@ -481,7 +481,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -534,8 +534,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_EMP_CORE)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
     }
     virtual ~EMPCore () { }
 
@@ -545,7 +545,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -595,8 +595,8 @@ public:
         :
         Weapon(upgrade_level, IT_WEAPON_EMP_BOMB_LAYER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
     }
     virtual ~EMPBombLayer ();
 
@@ -613,7 +613,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -773,8 +773,8 @@ public:
         :
         Weapon(upgrade_level, IT_ENEMY_WEAPON_SLOW_BULLET_GUN)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
     }
     virtual ~SlowBulletGun () { }
 
@@ -784,7 +784,7 @@ public:
 
     virtual Float ReadinessStatus (Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[GetUpgradeLevel()];
+        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
@@ -824,8 +824,8 @@ public:
         :
         Weapon(upgrade_level, IT_ENEMY_WEAPON_ENEMY_SPAWNER)
     {
-        ASSERT1(ms_fire_rate[GetUpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[GetUpgradeLevel()];
+        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
+        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         SetEnemySpawnType(ET_INTERLOPER);
         ClearFireRateOverride();
     }
@@ -858,7 +858,7 @@ public:
         Float const fire_rate =
             IsFireRateOverridden() ?
             FireRateOverride() :
-            ms_fire_rate[GetUpgradeLevel()];
+            ms_fire_rate[UpgradeLevel()];
         Float const cycle_time = 1.0f / fire_rate;
         Float const time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);

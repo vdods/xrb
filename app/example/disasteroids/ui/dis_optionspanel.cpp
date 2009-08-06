@@ -123,7 +123,7 @@ ScreenCoordVector2 OptionsPanel::Resolution () const
 {
     ASSERT1(m_resolution_x_edit != NULL);
     ASSERT1(m_resolution_y_edit != NULL);
-    return ScreenCoordVector2(m_resolution_x_edit->GetValue(), m_resolution_y_edit->GetValue());
+    return ScreenCoordVector2(m_resolution_x_edit->Value(), m_resolution_y_edit->Value());
 }
 
 bool OptionsPanel::Fullscreen () const

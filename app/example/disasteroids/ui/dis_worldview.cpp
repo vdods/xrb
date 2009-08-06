@@ -232,8 +232,8 @@ void WorldView::HandleFrame ()
     {
         /*
         { // simple dead-on follow
-            SetCenter(m_player_ship->GetUnwrappedTranslation());
-            m_view_velocity = m_player_ship->GetVelocity();
+            SetCenter(m_player_ship->UnwrappedTranslation());
+            m_view_velocity = m_player_ship->Velocity();
         }
         */
         // lookahead
@@ -241,12 +241,12 @@ void WorldView::HandleFrame ()
         {
             Float minor_axis_radius = MinorAxisRadius();
             FloatVector2 ship_velocity_direction;
-            if (m_player_ship->GetVelocity().IsZero())
+            if (m_player_ship->Velocity().IsZero())
                 ship_velocity_direction = FloatVector2::ms_zero;
             else
-                ship_velocity_direction = m_player_ship->GetVelocity().Normalization();
+                ship_velocity_direction = m_player_ship->Velocity().Normalization();
             Float view_distance = 0.8f * minor_axis_radius * Math::Atan(ms_zoom_factor_alert_wave * m_player_ship->Speed()) / 90.0f;
-            FloatVector2 traveling_at(m_player_ship->GetUnwrappedTranslation() + view_distance * ship_velocity_direction);
+            FloatVector2 traveling_at(m_player_ship->UnwrappedTranslation() + view_distance * ship_velocity_direction);
 
             FloatVector2 view_center_delta(traveling_at - (Center() + m_view_velocity * FrameDT()));
             bool is_view_recovering_this_frame;
@@ -259,7 +259,7 @@ void WorldView::HandleFrame ()
             }
             else
             {
-                m_view_velocity = m_player_ship->GetVelocity();
+                m_view_velocity = m_player_ship->Velocity();
                 is_view_recovering_this_frame = false;
             }
 
@@ -289,7 +289,7 @@ void WorldView::HandleFrame ()
         /*
         { // view dragging
             Float minor_axis_radius = MinorAxisRadius();
-            FloatVector2 view_to_ship = Center() - m_player_ship->GetUnwrappedTranslation();
+            FloatVector2 view_to_ship = Center() - m_player_ship->UnwrappedTranslation();
             Float view_to_ship_ratio = view_to_ship.Length() / (0.5f * minor_axis_radius);
             Float dragging_factor;
             if (view_to_ship_ratio >= 1.0f)
@@ -301,8 +301,8 @@ void WorldView::HandleFrame ()
             SetCenter(
                 Center() * (1.0f - dragging_factor)
                 +
-                m_player_ship->GetUnwrappedTranslation() * dragging_factor);
-            m_view_velocity = m_player_ship->GetVelocity();
+                m_player_ship->UnwrappedTranslation() * dragging_factor);
+            m_view_velocity = m_player_ship->Velocity();
         }
         */
     }

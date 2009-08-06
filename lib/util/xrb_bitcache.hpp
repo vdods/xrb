@@ -173,7 +173,7 @@ private:
         return (m_cache_bit_index & 7) == 0;
     }
     // this is m_cache_bit_index divided by 8, rounded up.
-    inline Uint32 GetUsedCacheByteCount () const
+    inline Uint32 UsedCacheByteCount () const
     {
         return (m_cache_bit_index + 7) >> 3;
     }

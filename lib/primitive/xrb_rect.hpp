@@ -111,7 +111,7 @@ public:
 
     inline void operator |= (Rect<T> const &operand)
     {
-        EncompassPoint(operand.GetTopLeft());
+        EncompassPoint(operand.TopLeft());
         EncompassPoint(operand.BottomRight());
     }
     inline void operator &= (Rect<T> const &operand)
@@ -148,11 +148,11 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline Vector<T, 2> GetTopLeft () const
+    inline Vector<T, 2> TopLeft () const
     {
         return Vector<T, 2>(m_bottom_left[Dim::X], m_top_right[Dim::Y]);
     }
-    inline Vector<T, 2> const &GetTopRight () const
+    inline Vector<T, 2> const &TopRight () const
     {
         return m_top_right;
     }
@@ -165,7 +165,7 @@ public:
         return Vector<T, 2>(m_top_right[Dim::X], m_bottom_left[Dim::Y]);
     }
 
-    inline T GetTop () const
+    inline T Top () const
     {
         return m_top_right[Dim::Y];
     }
@@ -197,7 +197,7 @@ public:
     }
     inline T Height () const
     {
-        return GetTop() - Bottom();
+        return Top() - Bottom();
     }
 
     Rect<T> Grown (Vector<T, 2> const &vector_to_grow_by) const
@@ -303,7 +303,7 @@ public:
     inline void StaticCastAssign (Rect<U> const &source)
     {
         m_bottom_left = source.BottomLeft().StaticCast<T>();
-        m_top_right = source.GetTopRight().StaticCast<T>();
+        m_top_right = source.TopRight().StaticCast<T>();
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -361,13 +361,13 @@ public:
                 component_printf_format,
                 show_size_instead_of_top_right ?
                     Size()[Dim::X] :
-                    GetTopRight()[Dim::X]);
+                    TopRight()[Dim::X]);
         fprintf(fptr, ", ");
         fprintf(fptr,
                 component_printf_format,
                 show_size_instead_of_top_right ?
                     Size()[Dim::Y] :
-                    GetTopRight()[Dim::Y]);
+                    TopRight()[Dim::Y]);
         fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
     }
 

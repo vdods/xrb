@@ -95,7 +95,7 @@ public:
     // accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline Vector<T, 2> const &GetTranslation () const
+    inline Vector<T, 2> const &Translation () const
     {
         return m_translation;
     }
@@ -117,13 +117,13 @@ public:
         return m_post_translate;
     }
 
-    inline Matrix2<T> const &GetTransformation () const
+    inline Matrix2<T> const &Transformation () const
     {
         RecalculateTransformIfNecessary();
         ASSERT1(!m_cached_transform_is_dirty);
         return m_cached_transform;
     }
-    inline Matrix2<T> GetTransformationInverse () const
+    inline Matrix2<T> TransformationInverse () const
     {
         RecalculateTransformIfNecessary();
         ASSERT1(!m_cached_transform_is_dirty);

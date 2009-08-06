@@ -87,10 +87,10 @@ private:
     void FireAtTarget (Float time, Float frame_dt);
     void FleeTarget (Float time, Float frame_dt);
 
-    inline Float GetTargetAimAngle (FloatVector2 const &target_position) const
+    inline Float TargetAimAngle (FloatVector2 const &target_position) const
     {
         ASSERT1(m_target.IsValid());
-        FloatVector2 target_delta(GetTranslation() - target_position);
+        FloatVector2 target_delta(Translation() - target_position);
         return Math::Atan(target_delta) - Math::CanonicalAngle(m_target->Angle());
     }
 

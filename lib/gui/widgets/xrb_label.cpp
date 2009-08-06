@@ -266,7 +266,7 @@ void Label::UpdateRenderPicture ()
     SetRenderPicture(Picture());
 }
 
-ScreenCoordRect Label::GetTextRect () const
+ScreenCoordRect Label::TextRect () const
 {
     ASSERT1(!m_is_picture_label);
     ASSERT1(RenderFont().IsValid());

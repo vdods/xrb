@@ -479,7 +479,7 @@ required interfaces for Weapon:
 - PrimaryFire (the basic firing method.  shooting peas and flames and such)
 - SecondaryFire (optional additional firing method.  detonating grenades and such)
 - ReloadTime -- (0 for always ready)
-- GetTimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
+- TimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
 - RequiresAmmo
 - CurrentAmmo
 - MaxAmmo

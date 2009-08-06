@@ -82,7 +82,7 @@ public:
     inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
     virtual ObjectLayer const *MainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *MainObjectLayer () { return m_main_object_layer; }
-    inline Float GetTimescale () { return m_timescale; }
+    inline Float Timescale () { return m_timescale; }
 
     inline void SetTimescale (Float timescale)
     {

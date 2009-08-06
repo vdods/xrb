@@ -41,11 +41,11 @@ public:
 
 protected:
 
-    inline Float GetTimeToLive () const
+    inline Float TimeToLive () const
     {
         return m_time_to_live;
     }
-    inline Float GetTimeAtBirth () const
+    inline Float TimeAtBirth () const
     {
         return m_time_at_birth;
     }

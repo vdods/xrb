@@ -31,7 +31,7 @@ ValueLabel<ValueType>::ValueLabel (
 template <typename ValueType>
 void ValueLabel<ValueType>::SetText (std::string const &text)
 {
-    SetValue(GetTextToValueFunction()(text.c_str()));
+    SetValue(TextToValueFunction()(text.c_str()));
 }
 
 template <typename ValueType>
@@ -46,5 +46,5 @@ void ValueLabel<ValueType>::SetTextToValueFunction (
     TextToValueFunctionType text_to_value_function)
 {
     m_text_to_value_function = text_to_value_function;
-    SetText(GetText());
+    SetText(Text());
 }

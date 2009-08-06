@@ -65,8 +65,8 @@ void Engine2::Compound::Draw (
     // model-to-world transformation (this seems backwards,
     // but for some reason it's correct).
     glTranslatef(
-        GetTranslation()[Dim::X],
-        GetTranslation()[Dim::Y],
+        Translation()[Dim::X],
+        Translation()[Dim::Y],
         GetZDepth());
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
@@ -150,8 +150,8 @@ void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
     {
         m_radius[quad_tree_type] = Max(
             m_radius[quad_tree_type],
-            (GetTransformation() * m_vertex_array[i] -
-             GetTransformation() * FloatVector2::ms_zero).Length());
+            (Transformation() * m_vertex_array[i] -
+             Transformation() * FloatVector2::ms_zero).Length());
     }
 }
 

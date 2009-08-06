@@ -78,7 +78,7 @@ FilePanel::FilePanel (
 std::string const &FilePanel::Filename () const
 {
     ASSERT1(m_filename_edit != NULL);
-    return m_filename_edit->GetText();
+    return m_filename_edit->Text();
 }
 
 void FilePanel::UpdateRenderBackground ()

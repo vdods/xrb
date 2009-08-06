@@ -472,7 +472,7 @@ void GameWidget::ActivateInventoryPanel ()
 
     // pause the game
     ASSERT1(m_saved_game_timescale == -1.0f);
-    m_saved_game_timescale = m_world_view->GetWorld()->GetTimescale();
+    m_saved_game_timescale = m_world_view->GetWorld()->Timescale();
     m_world_view->GetWorld()->SetTimescale(0.0f);
 
     // update the owned inventory items
@@ -481,7 +481,7 @@ void GameWidget::ActivateInventoryPanel ()
     // show the inventory panel and resize appropriately
     m_inventory_panel->Show();
     m_inventory_panel->ResizeByRatios(FloatVector2(0.8f, 0.8f));
-    m_inventory_panel->CenterOnWidget(GetTopLevelParent());
+    m_inventory_panel->CenterOnWidget(TopLevelParent());
     m_inventory_panel->Focus();
 }
 

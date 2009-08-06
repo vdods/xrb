@@ -283,7 +283,7 @@ void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) 
     ASSERT1(transform != NULL);
     ASSERT1(!IsWrapped());
 
-    FloatVector2 translation(transform->GetTranslation());
+    FloatVector2 translation(transform->Translation());
     ContainVector2(&translation);
     transform->SetTranslation(translation);
 }
@@ -293,7 +293,7 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
     ASSERT1(entity != NULL);
     ASSERT1(!IsWrapped());
 
-    FloatVector2 translation(entity->GetTranslation());
+    FloatVector2 translation(entity->Translation());
     bool component_x = false;
     bool component_y = false;
 
@@ -347,7 +347,7 @@ void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) con
     ASSERT1(transform != NULL);
     ASSERT1(IsWrapped());
 
-    FloatVector2 translation(transform->GetTranslation());
+    FloatVector2 translation(transform->Translation());
     WrapVector2(&translation);
     transform->SetTranslation(translation);
 }
@@ -357,9 +357,9 @@ void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
     ASSERT1(entity != NULL);
     ASSERT1(IsWrapped());
 
-    FloatVector2 previous_translation(entity->GetTranslation());
+    FloatVector2 previous_translation(entity->Translation());
     WrapTransform2(entity->OwnerObject());
-    entity->AccumulateWrappedOffset(previous_translation - entity->GetTranslation());
+    entity->AccumulateWrappedOffset(previous_translation - entity->Translation());
 }
 
 Engine2::ObjectLayer::ObjectLayer (

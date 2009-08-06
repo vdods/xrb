@@ -578,7 +578,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0005 ()
             return NULL;
         }
 
-        DataFileKeyPair *key_pair = new DataFileKeyPair(key->GetValue(), value);
+        DataFileKeyPair *key_pair = new DataFileKeyPair(key->Value(), value);
         Delete(key);
         return key_pair;
     
@@ -596,7 +596,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0006 ()
 
         ASSERT1(key != NULL);
         std::ostringstream out;
-        out << "syntax error in element with key \"" << key->GetValue() << "\"";
+        out << "syntax error in element with key \"" << key->Value() << "\"";
         EmitError(FL, out.str());
         Delete(key);
         return NULL;
@@ -881,7 +881,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0024 ()
 
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->GetValue());
+        string->AppendString(string_fragment->Value());
         Delete(string_fragment);
         return string;
     
@@ -916,7 +916,7 @@ DataFileValue * DataFileParser::ReductionRuleHandler0026 ()
 
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->GetValue());
+        string->AppendString(string_fragment->Value());
         Delete(string_fragment);
         EmitError(FL, "use + to concatenate strings (or did you forget a comma?)");
         return string;

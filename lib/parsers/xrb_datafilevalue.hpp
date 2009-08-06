@@ -335,7 +335,7 @@ public:
         m_value(value)
     { }
 
-    inline bool GetValue () const { return m_value; }
+    inline bool Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_BOOLEAN; }
 
@@ -364,7 +364,7 @@ public:
         m_value(value)
     { }
 
-    inline Sint32 GetValue () const { return m_value; }
+    inline Sint32 Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_SINT32; }
 
@@ -390,7 +390,7 @@ public:
         m_value(value)
     { }
 
-    inline Uint32 GetValue () const { return m_value; }
+    inline Uint32 Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_UINT32; }
 
@@ -416,7 +416,7 @@ public:
         m_value(value)
     { }
 
-    inline Float GetValue () const { return m_value; }
+    inline Float Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_FLOAT; }
 
@@ -447,7 +447,7 @@ public:
         m_value(value)
     { }
 
-    inline char GetValue () const { return m_value; }
+    inline char Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_CHARACTER; }
 
@@ -480,7 +480,7 @@ public:
         m_value(value)
     { }
 
-    inline std::string const &GetValue () const { return m_value; }
+    inline std::string const &Value () const { return m_value; }
 
     inline void AppendString (std::string const &string) { m_value += string; }
     inline void AppendCharacter (char const character) { m_value += character; }
@@ -558,7 +558,7 @@ public:
     }
 
     inline std::string const &GetKey () const { return m_key; }
-    inline DataFileValue *GetValue () const { return m_value; }
+    inline DataFileValue *Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_KEY_PAIR; }
 
@@ -598,7 +598,7 @@ public:
 
     bool ShouldBeFormattedInline () const;
     DataFileElementType ArrayElementType () const;
-    DataFileElementType GetUltimateArrayElementType () const;
+    DataFileElementType UltimateArrayElementType () const;
     Uint32 DimensionCount () const;
     inline Uint32 ElementCount () const { return m_element_vector.size(); }
     inline DataFileValue *Element (Uint32 index) const
@@ -650,7 +650,7 @@ public:
     { }
     virtual ~DataFileStructure ();
 
-    DataFileValue const *GetValue (std::string const &key) const;
+    DataFileValue const *Value (std::string const &key) const;
 
     void AddKeyPair (std::string const &key, DataFileValue *value);
     void AddKeyPair (DataFileKeyPair *key_value_pair);

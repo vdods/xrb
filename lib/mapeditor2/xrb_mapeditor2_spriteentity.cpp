@@ -79,7 +79,7 @@ MapEditor2::Object *MapEditor2::SpriteEntity::CreateNonEntityClone () const
     return static_cast<Object *>(Sprite::CreateSpriteNonEntityClone(this));
 }
 
-Color const &MapEditor2::SpriteEntity::GetUnselectedMetricsColor () const
+Color const &MapEditor2::SpriteEntity::UnselectedMetricsColor () const
 {
     return MapEditor2::SpriteEntity::ms_unselected_metrics_color;
 }

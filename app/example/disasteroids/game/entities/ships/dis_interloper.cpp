@@ -85,10 +85,10 @@ void Interloper::Think (Float const time, Float const frame_dt)
 
     // this special handling is done because we don't accumulate force
     // necessarily in the direction the ship is aiming.
-    if (!GetVelocity().IsZero())
-        AimShipAtCoordinates(GetTranslation() + GetVelocity().Normalization(), frame_dt);
+    if (!Velocity().IsZero())
+        AimShipAtCoordinates(Translation() + Velocity().Normalization(), frame_dt);
     // apply ship thrust in the appropriate direction
-    FloatVector2 thrust_direction(ReticleCoordinates() - GetTranslation());
+    FloatVector2 thrust_direction(ReticleCoordinates() - Translation());
     if (thrust_direction.LengthSquared() < 0.001f)
         thrust_direction = Math::UnitVector(Angle());
     else
@@ -166,7 +166,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation(),
+        Translation(),
         s_scan_radius,
         false,
         &area_trace_list);
@@ -225,10 +225,10 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     // if there is an imminent collision, pick a new direction to avoid it
     if (collision_entity != NULL)
     {
-        FloatVector2 delta_velocity(collision_entity->GetVelocity() - GetVelocity());
+        FloatVector2 delta_velocity(collision_entity->Velocity() - Velocity());
         FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
-        if ((perpendicular_velocity | GetVelocity()) > -(perpendicular_velocity | GetVelocity()))
+        if ((perpendicular_velocity | Velocity()) > -(perpendicular_velocity | Velocity()))
             m_wander_angle = Math::Atan(perpendicular_velocity);
         else
             m_wander_angle = Math::Atan(-perpendicular_velocity);
@@ -238,7 +238,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     // incrementally accelerate up to the wander direction/speed
     FloatVector2 wander_velocity(ms_wander_speed[EnemyLevel()] * Math::UnitVector(m_wander_angle));
     MatchVelocity(wander_velocity, frame_dt);
-    SetReticleCoordinates(GetTranslation() + Math::UnitVector(m_wander_angle));
+    SetReticleCoordinates(Translation() + Math::UnitVector(m_wander_angle));
 
     m_wander_angle += m_wander_angle_derivative * frame_dt;
 
@@ -271,7 +271,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
+        Translation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
         s_scan_radius,
         false,
         &area_trace_list);
@@ -312,9 +312,9 @@ void Interloper::Flock (Float time, Float frame_dt)
 
             FloatVector2 interloper_position(
                 GetObjectLayer()->AdjustedCoordinates(
-                    interloper->GetTranslation(),
-                    GetTranslation()));
-            Float interloper_distance = (interloper_position - GetTranslation()).Length();
+                    interloper->Translation(),
+                    Translation()));
+            Float interloper_distance = (interloper_position - Translation()).Length();
 
             if (closest_flock_member == NULL ||
                 interloper_distance < closest_flock_member_distance)
@@ -351,16 +351,16 @@ void Interloper::Flock (Float time, Float frame_dt)
 
     // the goal is to travel at the same velocity as the flock, while
     // maintaining a position relative to the closest flock member.
-    FloatVector2 flock_center_offset(flock_center_of_gravity - GetTranslation());
+    FloatVector2 flock_center_offset(flock_center_of_gravity - Translation());
     if (flock_center_offset.Length() >= 0.5f)
     {
         // TODO: keep X distance away from closest flock member
         FloatVector2 flock_center_direction(flock_center_offset.Normalization());
         MatchVelocity(ms_wander_speed[EnemyLevel()] * flock_center_direction, frame_dt);
-        SetReticleCoordinates(GetTranslation() + flock_center_direction);
+        SetReticleCoordinates(Translation() + flock_center_direction);
     }
     else
-        SetReticleCoordinates(GetTranslation() + Math::UnitVector(Angle()));
+        SetReticleCoordinates(Translation() + Math::UnitVector(Angle()));
 }
 
 void Interloper::Charge (Float const time, Float const frame_dt)
@@ -374,7 +374,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
 
     // adjust our course to hit the target (use a different course-
     // setting method for each enemy level).
@@ -391,22 +391,22 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     {
         Float interceptor_acceleration =
             ms_engine_thrust[EnemyLevel()] / Mass();
-        FloatVector2 p(target_position - GetTranslation());
+        FloatVector2 p(target_position - Translation());
         FloatVector2 v;
         FloatVector2 a;
         if (EnemyLevel() == 1)
         {
-            v = 0.5f * (m_target->GetVelocity() - GetVelocity());
+            v = 0.5f * (m_target->Velocity() - Velocity());
             a = FloatVector2::ms_zero;
         }
         else if (EnemyLevel() == 2)
         {
-            v = m_target->GetVelocity() - GetVelocity();
+            v = m_target->Velocity() - Velocity();
             a = FloatVector2::ms_zero;
         }
         else
         {
-            v = m_target->GetVelocity() - GetVelocity();
+            v = m_target->Velocity() - Velocity();
             a = m_target->Force() / m_target->Mass();
         }
 
@@ -441,7 +441,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         else
         {
             FloatVector2 real_approach_direction((2.0f*p + 2.0f*v*T + a*T*T) / (interceptor_acceleration*T*T));
-            SetReticleCoordinates(GetTranslation() + real_approach_direction);
+            SetReticleCoordinates(Translation() + real_approach_direction);
         }
     }
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
@@ -468,8 +468,8 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     }
 
     // set a course parallel to and slightly away from the target
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->GetTranslation(), GetTranslation()));
-    SetReticleCoordinates(GetTranslation() + (GetTranslation() - target_position).Normalization());
+    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
+    SetReticleCoordinates(Translation() + (Translation() - target_position).Normalization());
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 
@@ -479,7 +479,7 @@ void Interloper::MatchVelocity (FloatVector2 const &velocity, Float const frame_
 
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+        velocity - (Velocity() + frame_dt * Force() / Mass());
     FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
     if (thrust_vector.Length() > 0.01f)
     {

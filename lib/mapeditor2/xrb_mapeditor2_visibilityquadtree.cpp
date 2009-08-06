@@ -216,13 +216,13 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
 
         // check if the object meets the selection criteria
         object_distance =
-            (center - object->GetTranslation()).Length();
+            (center - object->Translation()).Length();
         if (select_touching)
             object_is_in_operand_set =
-                object_distance <= radius + object->GetVisibleRadius();
+                object_distance <= radius + object->VisibleRadius();
         else
             object_is_in_operand_set =
-                object_distance <= radius - object->GetVisibleRadius();
+                object_distance <= radius - object->VisibleRadius();
 
         // perform the requested selection operation on the object
         object->ApplyObjectSelectionOperation(
@@ -442,7 +442,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
         return;
 
     ASSERT2(draw_data.PixelsInViewRadius() > 0.0f);
-    ASSERT2(draw_data.GetViewRadius() > 0.0f);
+    ASSERT2(draw_data.ViewRadius() > 0.0f);
 
     // constants which control the thresholds at which objects use
     // alpha fading to fade away, when they become small enough.
@@ -461,7 +461,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     // which gives a huge speedup and allows zooming to any level
     // maintain a consistent framerate.
     if (draw_data.PixelsInViewRadius() * Radius() /
-        draw_data.GetViewRadius()
+        draw_data.ViewRadius()
         <
         radius_limit_lower)
     {
@@ -469,7 +469,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     }
 
     // return if the view doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(draw_data.GetViewCenter(), draw_data.GetViewRadius()))
+    if (!DoesAreaOverlapQuadBounds(draw_data.ViewCenter(), draw_data.ViewRadius()))
         return;
 
     // draw all the objects' bounding circles in this node's list
@@ -486,8 +486,8 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
         ASSERT1(object->OwnerMapEditorQuadTree() == this);
         // calculate the object's pixel radius on screen
         object_radius =
-            draw_data.PixelsInViewRadius() * object->GetVisibleRadius() /
-            draw_data.GetViewRadius();
+            draw_data.PixelsInViewRadius() * object->VisibleRadius() /
+            draw_data.ViewRadius();
         // distance culling - don't draw objects that are below the
         // radius_limit_lower threshold
         if (object_radius >= radius_limit_lower)
@@ -525,15 +525,15 @@ void MapEditor2::VisibilityQuadTree::DrawMetricsWrapped (
         return;
 
     ASSERT2(draw_data.PixelsInViewRadius() > 0.0);
-    ASSERT2(draw_data.GetViewRadius() > 0.0);
+    ASSERT2(draw_data.ViewRadius() > 0.0);
     ASSERT2(m_half_side_length > 0.0);
 
     Float side_length = SideLength();
-    Float radius_sum = 2.0f*Radius() + draw_data.GetViewRadius();
-    Float top = floor((draw_data.GetViewCenter().m[1]+radius_sum)/side_length);
-    Float bottom = ceil((draw_data.GetViewCenter().m[1]-radius_sum)/side_length);
-    Float left = ceil((draw_data.GetViewCenter().m[0]-radius_sum)/side_length);
-    Float right = floor((draw_data.GetViewCenter().m[0]+radius_sum)/side_length);
+    Float radius_sum = 2.0f*Radius() + draw_data.ViewRadius();
+    Float top = floor((draw_data.ViewCenter().m[1]+radius_sum)/side_length);
+    Float bottom = ceil((draw_data.ViewCenter().m[1]-radius_sum)/side_length);
+    Float left = ceil((draw_data.ViewCenter().m[0]-radius_sum)/side_length);
+    Float right = floor((draw_data.ViewCenter().m[0]+radius_sum)/side_length);
     FloatMatrix2 new_world_to_screen;
     FloatMatrix2 old_world_to_screen(draw_data.GetWorldToScreen());
     FloatVector2 view_offset;

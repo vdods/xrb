@@ -29,13 +29,13 @@ void Ballistic::Think (Float const time, Float const frame_dt)
             // lazily initialize m_initial_velocity with the owner's velocity
             if (m_first_think)
             {
-                m_initial_velocity = m_owner->GetVelocity();
+                m_initial_velocity = m_owner->Velocity();
                 m_first_think = false;
             }
 
             // update the angle to reflect the direction of motion
             {
-                FloatVector2 velocity_delta(GetVelocity() - m_initial_velocity);
+                FloatVector2 velocity_delta(Velocity() - m_initial_velocity);
                 if (!velocity_delta.IsZero())
                     SetAngle(Math::Atan(velocity_delta));
             }
@@ -43,8 +43,8 @@ void Ballistic::Think (Float const time, Float const frame_dt)
             // peform a line trace for frame_dt/2 time's worth
             // of velocity in front and behind this ballistic
             {
-                FloatVector2 trace_vector(frame_dt * GetVelocity());
-                FloatVector2 trace_start(GetTranslation() - 0.5f * trace_vector);
+                FloatVector2 trace_vector(frame_dt * Velocity());
+                FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
                 LineTraceBindingSet line_trace_binding_set;
                 GetPhysicsHandler()->LineTrace(
                     GetObjectLayer(),

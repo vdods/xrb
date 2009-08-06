@@ -222,7 +222,7 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
     glLoadIdentity();
     glOrtho(
         clip_rect.Left(), clip_rect.Right(),
-        clip_rect.Bottom(), clip_rect.GetTop(),
+        clip_rect.Bottom(), clip_rect.Top(),
         -1.0, 1.0); // these values (-1, 1) are arbitrary
 
     // set up the viewport which is the rectangle on screen which

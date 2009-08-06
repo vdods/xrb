@@ -208,7 +208,7 @@ uses a @c Transform2 with a @c m_post_translation value of false ( see
 @ref Xrb::Engine2::WorldView::m_transform ).
 
 The method that is used to calculate and return the composite @c Matrix2
-is @ref Xrb::Transform2::GetTransformation .
+is @ref Xrb::Transform2::Transformation .
 
 @section section_simpletransform2 SimpleTransform2
 @ref Xrb::SimpleTransform2 performs a function similar to @ref Xrb::Transform2

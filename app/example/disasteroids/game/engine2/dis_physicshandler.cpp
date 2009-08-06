@@ -295,9 +295,9 @@ void PhysicsHandler::UpdateVelocities ()
                 static Float const s_max_solid_speed = 350.0f;
                 static Float const s_max_solid_speed_squared = s_max_solid_speed * s_max_solid_speed;
 
-                Float entity_speed_squared = entity->GetVelocity().LengthSquared();
+                Float entity_speed_squared = entity->Velocity().LengthSquared();
                 if (entity_speed_squared > s_max_solid_speed_squared)
-                    entity->SetVelocity(s_max_solid_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+                    entity->SetVelocity(s_max_solid_speed / Math::Sqrt(entity_speed_squared) * entity->Velocity());
             }
             // limit the speed for nonsolid objects and those excepted above
             // to some higher, but still finite amount.
@@ -306,9 +306,9 @@ void PhysicsHandler::UpdateVelocities ()
                 static Float const s_max_nonsolid_speed = 800.0f;
                 static Float const s_max_nonsolid_speed_squared = s_max_nonsolid_speed * s_max_nonsolid_speed;
 
-                Float entity_speed_squared = entity->GetVelocity().LengthSquared();
+                Float entity_speed_squared = entity->Velocity().LengthSquared();
                 if (entity_speed_squared > s_max_nonsolid_speed_squared)
-                    entity->SetVelocity(s_max_nonsolid_speed / Math::Sqrt(entity_speed_squared) * entity->GetVelocity());
+                    entity->SetVelocity(s_max_nonsolid_speed / Math::Sqrt(entity_speed_squared) * entity->Velocity());
             }
         }
     }
@@ -326,9 +326,9 @@ void PhysicsHandler::UpdatePositions ()
         Entity *entity = *it;
         ASSERT1(entity != NULL);
 
-        if (!entity->GetVelocity().IsZero())
+        if (!entity->Velocity().IsZero())
         {
-            entity->Translate(FrameDT() * entity->GetVelocity());
+            entity->Translate(FrameDT() * entity->Velocity());
             ASSERT1(entity->GetObjectLayer() != NULL);
             entity->ReAddToQuadTree(Engine2::QTT_VISIBILITY);
             if (entity->GetCollisionType() != CT_NO_COLLISION)

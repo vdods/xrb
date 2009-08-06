@@ -257,9 +257,9 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (AngularVelocity() == 0.0f)
     {
         if (m_target.IsValid())
-            AimShipAtCoordinates(m_target->GetTranslation(), frame_dt);
-        else if (GetVelocity().LengthSquared() > 0.001f)
-            AimShipAtCoordinates(GetTranslation() + GetVelocity(), frame_dt);
+            AimShipAtCoordinates(m_target->Translation(), frame_dt);
+        else if (Velocity().LengthSquared() > 0.001f)
+            AimShipAtCoordinates(Translation() + Velocity(), frame_dt);
     }
 
     // set the main weapon inputs and activate
@@ -377,13 +377,13 @@ void Demi::Die (
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
         Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
-        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+        FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
             SpawnPowerup(
                 GetWorld(),
                 GetObjectLayer(),
-                GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -399,12 +399,12 @@ void Demi::Die (
     {
         Float velocity_angle = Math::RandomAngle();
         Float velocity_ratio = Math::RandomFloat(0.0, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
-        FloatVector2 velocity = GetVelocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+        FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         SpawnEnemyShip(
             GetWorld(),
             GetObjectLayer(),
-            GetTranslation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+            Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
             Math::RandomUint16(0, EnemyLevel()));                     // ET_REVULSION being sequential enums
@@ -428,15 +428,15 @@ FloatVector2 Demi::MuzzleLocation (Weapon const *weapon) const
     }
     else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
-        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
+        return Translation() + ScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
     }
     else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
-        return GetTranslation() + ScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
+        return Translation() + ScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
     }
     else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
-        return GetTranslation() - ScaleFactor() * Math::UnitVector(Angle());
+        return Translation() - ScaleFactor() * Math::UnitVector(Angle());
     }
     else
     {
@@ -504,9 +504,9 @@ bool Demi::TakePowerup (Powerup *const powerup, Float const time, Float const fr
             powerup,
             powerup,
             powerup->EffectiveValue(),
-            (Mass()*powerup->GetTranslation() + powerup->Mass()*GetTranslation()) /
+            (Mass()*powerup->Translation() + powerup->Mass()*Translation()) /
                 (Mass() + powerup->Mass()),
-            (GetTranslation() - powerup->GetTranslation()).Normalization(),
+            (Translation() - powerup->Translation()).Normalization(),
             0.0f,
             time,
             frame_dt);
@@ -569,7 +569,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
     AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
-        GetTranslation(),
+        Translation(),
         s_scan_radius,
         false,
         &area_trace_list);
@@ -611,9 +611,9 @@ void Demi::Stalk (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
-    Float target_distance = (target_position - GetTranslation()).Length();
+            m_target->Translation(),
+            Translation()));
+    Float target_distance = (target_position - Translation()).Length();
 
 //     m_think_state = THINK_STATE(FlameThrowSweepStart);
 //     return;
@@ -729,9 +729,9 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
     // record the direction to charge in
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
-    m_charge_velocity = target_position - GetTranslation();
+            m_target->Translation(),
+            Translation()));
+    m_charge_velocity = target_position - Translation();
     ASSERT1(!m_charge_velocity.IsZero());
     m_charge_velocity.Normalize();
     m_charge_velocity *= 300.0f;
@@ -764,9 +764,9 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
     {
         FloatVector2 target_position(
             GetObjectLayer()->AdjustedCoordinates(
-                m_target->GetTranslation(),
-                GetTranslation()));
-        Float target_distance = (target_position - GetTranslation()).Length();
+                m_target->Translation(),
+                Translation()));
+        Float target_distance = (target_position - Translation()).Length();
 
         static Float const s_threshold_distance = 200.0f;
         if (target_distance <= s_threshold_distance)
@@ -820,7 +820,7 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     m_reticle_effect->SnapToLocationAndSetScaleFactor(
         MuzzleLocation(m_gauss_gun),
         ms_gauss_gun_reticle_scale_factor[EnemyLevel()]);
-    SetReticleCoordinates(m_reticle_effect->GetTranslation());
+    SetReticleCoordinates(m_reticle_effect->Translation());
 
     // transition to and call GaussGunContinueAim
     m_think_state = THINK_STATE(GaussGunContinueAim);
@@ -847,22 +847,22 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
             FloatVector2::ms_zero));
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
+            m_target->Translation(),
             muzzle_location));
     FloatVector2 reticle_target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            m_reticle_effect->GetTranslation()));
-    FloatVector2 aim_direction(reticle_target_position - m_reticle_effect->GetTranslation());
+            m_target->Translation(),
+            m_reticle_effect->Translation()));
+    FloatVector2 aim_direction(reticle_target_position - m_reticle_effect->Translation());
     Float target_distance = (target_position - muzzle_location).Length();
     Float reticle_target_distance = aim_direction.Length();
     Float distance_parameter =
         reticle_target_distance /
-        GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()];
+        GaussGun::ms_range[m_gauss_gun->UpgradeLevel()];
 
     // if the target went out of range, or if we're wasting time
     // transition back to sum'm
-    if (target_distance > GaussGun::ms_range[m_gauss_gun->GetUpgradeLevel()] ||
+    if (target_distance > GaussGun::ms_range[m_gauss_gun->UpgradeLevel()] ||
         time > m_start_time + ms_gauss_gun_max_duration[EnemyLevel()])
     {
         ASSERT1(m_reticle_effect.IsValid() && m_reticle_effect->IsInWorld());
@@ -871,7 +871,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates(m_reticle_effect->GetTranslation());
+    SetReticleCoordinates(m_reticle_effect->Translation());
     m_reticle_effect->SetScaleFactor(
         ms_gauss_gun_reticle_scale_factor[EnemyLevel()] *
         (1.0f - 0.5f * distance_parameter));
@@ -887,7 +887,7 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         aim_direction.Normalize();
         m_reticle_effect->SetVelocity(
             ms_gauss_gun_aim_max_speed[EnemyLevel()] * aim_direction +
-            GetVelocity());
+            Velocity());
     }
 }
 
@@ -903,7 +903,7 @@ void Demi::GaussGunFire (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates(m_reticle_effect->GetTranslation());
+    SetReticleCoordinates(m_reticle_effect->Translation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 
     m_think_state = THINK_STATE(PauseStart);
@@ -1015,8 +1015,8 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
 
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
-            GetTranslation()));
+            m_target->Translation(),
+            Translation()));
 
     // TODO: more accurate aiming for higher enemy levels
 
@@ -1348,7 +1348,7 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
                 FloatVector2::ms_zero);
         FloatVector2 target_position(
             GetObjectLayer()->AdjustedCoordinates(
-                best_target->GetTranslation(),
+                best_target->Translation(),
                 muzzle_location));
         // aim the tractor and set it to push
         SetPortReticleCoordinates(target_position);
@@ -1376,7 +1376,7 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
                 FloatVector2::ms_zero);
         FloatVector2 target_position(
             GetObjectLayer()->AdjustedCoordinates(
-                best_target->GetTranslation(),
+                best_target->Translation(),
                 muzzle_location));
         // aim the tractor and set it to push
         SetStarboardReticleCoordinates(target_position);
@@ -1397,7 +1397,7 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
             FloatVector2::ms_zero));
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
+            m_target->Translation(),
             muzzle_location));
     // aim the tractor and set it to pull
     SetPortReticleCoordinates(target_position);
@@ -1418,7 +1418,7 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
             FloatVector2::ms_zero));
     FloatVector2 target_position(
         GetObjectLayer()->AdjustedCoordinates(
-            m_target->GetTranslation(),
+            m_target->Translation(),
             muzzle_location));
     // aim the tractor and set it to pull
     SetStarboardReticleCoordinates(target_position);
@@ -1430,7 +1430,7 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
-        velocity - (GetVelocity() + frame_dt * Force() / Mass());
+        velocity - (Velocity() + frame_dt * Force() / Mass());
     FloatVector2 thrust_vector = Mass() * velocity_differential / frame_dt;
     if (!thrust_vector.IsZero())
     {

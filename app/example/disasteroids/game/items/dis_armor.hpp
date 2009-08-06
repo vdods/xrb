@@ -33,13 +33,13 @@ public:
 
     inline Float DamageDissipationRate () const
     {
-        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
-        return ms_damage_dissipation_rate[GetUpgradeLevel()];
+        ASSERT1(UpgradeLevel() < UPGRADE_LEVEL_COUNT);
+        return ms_damage_dissipation_rate[UpgradeLevel()];
     }
     inline Float Mass () const
     {
-        ASSERT1(GetUpgradeLevel() < UPGRADE_LEVEL_COUNT);
-        return ms_mass[GetUpgradeLevel()];        
+        ASSERT1(UpgradeLevel() < UPGRADE_LEVEL_COUNT);
+        return ms_mass[UpgradeLevel()];        
     }
     
 private:

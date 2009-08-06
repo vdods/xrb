@@ -93,29 +93,29 @@ Widget::~Widget ()
 ContainerWidget const *Widget::EffectiveParent () const
 {
     return IsModal() ?
-           DStaticCast<ContainerWidget const *>(GetTopLevelParent()) :
+           DStaticCast<ContainerWidget const *>(TopLevelParent()) :
            m_parent;
 }
 
 ContainerWidget *Widget::EffectiveParent ()
 {
     return IsModal() ?
-           DStaticCast<ContainerWidget *>(GetTopLevelParent()) :
+           DStaticCast<ContainerWidget *>(TopLevelParent()) :
            m_parent;
 }
 
-Screen const *Widget::GetTopLevelParent () const
+Screen const *Widget::TopLevelParent () const
 {
     if (m_parent != NULL)
-        return m_parent->GetTopLevelParent();
+        return m_parent->TopLevelParent();
     else
         return DStaticCast<Screen const *>(this);
 }
 
-Screen *Widget::GetTopLevelParent ()
+Screen *Widget::TopLevelParent ()
 {
     if (m_parent != NULL)
-        return m_parent->GetTopLevelParent();
+        return m_parent->TopLevelParent();
     else
         return DStaticCast<Screen *>(this);
 }
@@ -279,7 +279,7 @@ void Widget::SetSizePropertyRatio (
     Float const ratio,
     bool const defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
+    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
     ScreenCoord calculated_value =
         static_cast<ScreenCoord>(size_ratio_basis * ratio);
     SetSizeProperty(property, component, calculated_value, defer_parent_update);
@@ -290,7 +290,7 @@ void Widget::SetSizePropertyRatios (
     FloatVector2 const &ratios,
     bool const defer_parent_update)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
+    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_value =
         (static_cast<Float>(size_ratio_basis) * ratios).StaticCast<ScreenCoord>();
     SetSizeProperty(property, calculated_value, defer_parent_update);
@@ -316,13 +316,13 @@ void Widget::SetIsModal (bool const is_modal)
         {
             ASSERT1(!IsMouseover());
             // remove this widget from the modal stack of the top level parent
-            GetTopLevelParent()->RemoveModalWidget(this);
+            TopLevelParent()->RemoveModalWidget(this);
             m_is_modal = false;
         }
         else
         {
             m_is_modal = true;
-            GetTopLevelParent()->AddModalWidget(this);
+            TopLevelParent()->AddModalWidget(this);
         }
 
         ParentChildSizePropertiesUpdate(false);
@@ -358,7 +358,7 @@ void Widget::SetFrameMargins (ScreenCoordVector2 const &frame_margins)
 
 void Widget::SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
+    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_frame_margins =
         (static_cast<Float>(size_ratio_basis) *
          frame_margin_ratios).StaticCast<ScreenCoord>();
@@ -379,7 +379,7 @@ void Widget::SetContentMargins (ScreenCoordVector2 const &content_margins)
 
 void Widget::SetContentMarginRatios (FloatVector2 const &content_margin_ratios)
 {
-    ScreenCoord size_ratio_basis = GetTopLevelParent()->SizeRatioBasis();
+    ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
     ScreenCoordVector2 calculated_content_margins =
         (static_cast<Float>(size_ratio_basis) *
          content_margin_ratios).StaticCast<ScreenCoord>();
@@ -503,7 +503,7 @@ ScreenCoordVector2 Widget::Resize (ScreenCoordVector2 const &size)
 ScreenCoordVector2 Widget::ResizeByRatios (FloatVector2 const &ratios)
 {
     return Resize(
-        (static_cast<Float>(GetTopLevelParent()->SizeRatioBasis()) *
+        (static_cast<Float>(TopLevelParent()->SizeRatioBasis()) *
          ratios).StaticCast<ScreenCoord>());
 }
 

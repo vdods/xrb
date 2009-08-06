@@ -18,7 +18,7 @@ using namespace Xrb;
 namespace Dis
 {
 
-Sint32 Mortal::GetTargetPriority () const
+Sint32 Mortal::TargetPriority () const
 {
     Sint32 major = -1;
     Sint32 minor = -1;

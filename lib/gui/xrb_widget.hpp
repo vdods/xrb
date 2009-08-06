@@ -182,11 +182,11 @@ public:
     /** @brief Returns a pointer to the top-level parent (const) of this
       *        widget hierarchy (a @c Screen).
       */
-    Screen const *GetTopLevelParent () const;
+    Screen const *TopLevelParent () const;
     /** @brief Returns a pointer to the top-level parent (non-const) of this
       *        widget hierarchy (a @c Screen).
       */
-    Screen *GetTopLevelParent ();
+    Screen *TopLevelParent ();
     /** @brief Returns true iff this is a top-level widget (i.e. it has
       *        no parent).
       */

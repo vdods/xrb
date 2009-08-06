@@ -55,10 +55,10 @@ char const *UTF8::NextCharacter (char const *current)
 
 bool UTF8::AreCharactersEqual (char const *const c0, char const *const c1)
 {
-    return c0 != NULL && c1 != NULL && GetUnicode(c0) == GetUnicode(c1);
+    return c0 != NULL && c1 != NULL && Unicode(c0) == Unicode(c1);
 }
 
-Uint32 UTF8::GetUnicode (char const *sequence)
+Uint32 UTF8::Unicode (char const *sequence)
 {
     ASSERT1(sequence != NULL);
 

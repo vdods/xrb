@@ -424,7 +424,7 @@ void BinaryFileSerializer::ReadFloatTransform2 (
 
 void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
 {
-    BinaryFileSerializer::WriteFloatVector2(value.GetTranslation());
+    BinaryFileSerializer::WriteFloatVector2(value.Translation());
     if (GetError() != IOE_NONE)
         return;
 

@@ -43,7 +43,7 @@ Float Engine::PowerToBeUsedBasedOnInputs (
 {
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
-        return frame_dt * ms_max_auxiliary_power_output_rate[GetUpgradeLevel()] * m_auxiliary_input;
+        return frame_dt * ms_max_auxiliary_power_output_rate[UpgradeLevel()] * m_auxiliary_input;
 
     // normalize from the square input domain of [-1, 1] [-1, 1] to a circle
         
@@ -63,7 +63,7 @@ Float Engine::PowerToBeUsedBasedOnInputs (
     else
         input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
 
-    return frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector.Length() / input_vector_max_length;
+    return frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()] * input_vector.Length() / input_vector_max_length;
 }
 
 bool Engine::Activate (
@@ -74,17 +74,17 @@ bool Engine::Activate (
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
     {
-        ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[GetUpgradeLevel()] * m_auxiliary_input + 0.001f);
+        ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[UpgradeLevel()] * m_auxiliary_input + 0.001f);
     
         static Float const s_survey_area_radius = 100.0f;
-        Float const max_thrust_force = ms_max_thrust_force[GetUpgradeLevel()] * m_auxiliary_input;
+        Float const max_thrust_force = ms_max_thrust_force[UpgradeLevel()] * m_auxiliary_input;
 
         // store the ambient velocity, ignoring the presence of the owner ship
         FloatVector2 ambient_velocity = OwnerShip()->AmbientVelocity(s_survey_area_radius, NULL);
         // calculate what thrust is required to match the ambient velocity
         FloatVector2 velocity_differential =
             ambient_velocity -
-            (OwnerShip()->GetVelocity() +
+            (OwnerShip()->Velocity() +
             frame_dt / OwnerShip()->Mass() * OwnerShip()->Force());
         FloatVector2 thrust_vector = OwnerShip()->Mass() * velocity_differential / frame_dt;
         // if the thrust isn't zero, cap it to the max thrust, and accumulate
@@ -117,11 +117,11 @@ bool Engine::Activate (
         else
             input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
 
-        ASSERT1(power <= frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()] * input_vector_max_length + 0.001f);
+        ASSERT1(power <= frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()] * input_vector_max_length + 0.001f);
             
-        Float output_ratio = power / (frame_dt * ms_max_primary_power_output_rate[GetUpgradeLevel()]);
+        Float output_ratio = power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
         Float thrust_force =
-            output_ratio * ms_max_thrust_force[GetUpgradeLevel()] *
+            output_ratio * ms_max_thrust_force[UpgradeLevel()] *
             input_vector.Length() / input_vector_max_length;
         FloatVector2 thrust_vector(thrust_force * Math::UnitVector(input_vector_angle + OwnerShip()->Angle()));
 

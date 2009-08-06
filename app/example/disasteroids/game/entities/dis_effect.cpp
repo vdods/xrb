@@ -53,7 +53,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
         RadiusKnockback(
             GetPhysicsHandler(),
             GetObjectLayer(),
-            GetTranslation(),
+            Translation(),
             FinalSize(),
             m_damage_amount,
             time,
@@ -66,7 +66,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
                 *m_owner,
                 this,
                 m_damage_amount,
-                GetTranslation(),
+                Translation(),
                 m_damage_radius,
                 Mortal::D_EXPLOSION,
                 m_owner, // do not damage the owner
@@ -97,7 +97,7 @@ void DamageExplosion::Collide (
         return;
 
     // center_to_center points towards the collider
-    FloatVector2 center_to_center = collider->GetTranslation() - GetTranslation();
+    FloatVector2 center_to_center = collider->Translation() - Translation();
     Float distance = center_to_center.Length() - collider->ScaleFactor();
     if (distance < 0.0f)
         distance = 0.0f;
@@ -151,7 +151,7 @@ void EMPExplosion::Collide (
 void Fireball::Think (Float const time, Float const frame_dt)
 {
     // the power decays as time goes on
-    m_current_damage -= m_potential_damage * frame_dt / GetTimeToLive();
+    m_current_damage -= m_potential_damage * frame_dt / TimeToLive();
 
     Explosion::Think(time, frame_dt);
 

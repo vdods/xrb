@@ -76,7 +76,7 @@ FloatVector2 const &MapEditor2::Polygon::GetVertex (Uint32 index) const
 Float MapEditor2::Polygon::Area () const
 {
     Float area = 0.0f;
-    Uint32 vertex_count = GetVertexCount();
+    Uint32 vertex_count = VertexCount();
     ASSERT1(vertex_count > 0);
 
     if (vertex_count < 3)
@@ -90,7 +90,7 @@ Float MapEditor2::Polygon::Area () const
 
 bool MapEditor2::Polygon::IsPointInside (FloatVector2 const &point) const
 {
-    Uint32 vertex_count = GetVertexCount();
+    Uint32 vertex_count = VertexCount();
     ASSERT1(vertex_count > 0);
     
     // trivially false (no area to land a point inside)
@@ -123,7 +123,7 @@ bool MapEditor2::Polygon::IsPointInside (FloatVector2 const &point) const
 
 bool MapEditor2::Polygon::IsCounterclockwise () const
 {
-    Uint32 vertex_count = GetVertexCount();
+    Uint32 vertex_count = VertexCount();
     ASSERT1(vertex_count > 0);
 
     // trivially true
@@ -146,7 +146,7 @@ bool MapEditor2::Polygon::IsCounterclockwise () const
 
 bool MapEditor2::Polygon::IsConvex () const
 {
-    Uint32 vertex_count = GetVertexCount();
+    Uint32 vertex_count = VertexCount();
     ASSERT1(vertex_count > 0);
 
     // trivially true
@@ -292,7 +292,7 @@ void MapEditor2::Polygon::ReassignVertices (
         // switch the compound vertex reference to point to the corresponding
         // indexed vertex of owner_compound.
         vertex.m_compound_vertex =
-            owner_compound->GetVertexInstance(vertex.m_compound_vertex->m_index);
+            owner_compound->VertexInstance(vertex.m_compound_vertex->m_index);
     }    
 }
 
@@ -416,7 +416,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
     {
         Vertex vertex;
         vertex.m_compound_vertex =
-            m_owner_compound->GetVertexInstance(serializer.ReadUint32());
+            m_owner_compound->VertexInstance(serializer.ReadUint32());
         serializer.ReadFloatVector2(&vertex.m_texture_coordinate);
         m_vertex_list.push_back(vertex);
     }

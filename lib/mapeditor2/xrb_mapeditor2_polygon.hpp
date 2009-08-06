@@ -65,7 +65,7 @@ namespace MapEditor2
         
         Polygon *CreateClone () const;
 
-        inline Uint32 GetVertexCount () const
+        inline Uint32 VertexCount () const
         {
             return m_vertex_list.size();
         }

@@ -132,8 +132,8 @@ void MapEditor2::Compound::Draw (
     // model-to-world transformation (this seems backwards,
     // but for some reason it's correct).
     glTranslatef(
-        GetTranslation()[Dim::X],
-        GetTranslation()[Dim::Y],
+        Translation()[Dim::X],
+        Translation()[Dim::Y],
         0.0f);
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
@@ -177,8 +177,8 @@ void MapEditor2::Compound::DrawMetrics (
     // model-to-world transformation (this seems backwards,
     // but for some reason it's correct).
     glTranslatef(
-        GetTranslation()[Dim::X],
-        GetTranslation()[Dim::Y],
+        Translation()[Dim::X],
+        Translation()[Dim::Y],
         0.0f);
     glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
     glScalef(
@@ -188,7 +188,7 @@ void MapEditor2::Compound::DrawMetrics (
 
 //     Color color(IsSelected() ?
 //                 SelectedMetricsColor() :
-//                 GetUnselectedMetricsColor());
+//                 UnselectedMetricsColor());
 //     color[Dim::A] *= alpha_mask;
 
 //     glColor4fv(color.m);
@@ -207,7 +207,7 @@ void MapEditor2::Compound::DrawMetrics (
         
         if (!polygon->m_is_selected || metric_mode == Object::MM_POLYGONS)
         {
-            glColor4fv(GetUnselectedMetricsColor().m);
+            glColor4fv(UnselectedMetricsColor().m);
             polygon->DrawMetrics();
         }
     }
@@ -264,7 +264,7 @@ void MapEditor2::Compound::DrawMetrics (
     
             if (!vertex.m_is_selected)
             {
-                glColor4fv(GetUnselectedMetricsColor().m);
+                glColor4fv(UnselectedMetricsColor().m);
                 glVertex2fv(vertex.m_coordinate.m);
             }
         }
@@ -305,7 +305,7 @@ Uint32 MapEditor2::Compound::SelectedPolygonCount () const
     return selected_polygon_count;
 }
 
-Instance<MapEditor2::CompoundVertex> *MapEditor2::Compound::GetVertexInstance (
+Instance<MapEditor2::CompoundVertex> *MapEditor2::Compound::VertexInstance (
     Uint32 index) const
 {
     VertexListConstIterator it = m_vertex_list.begin();
@@ -329,7 +329,7 @@ MapEditor2::Polygon *MapEditor2::Compound::SmallestPolygonTouchingPoint (
 
     // calculate what the point is in model-space
     FloatVector2 model_space_point(point);
-    model_space_point *= GetTransformationInverse();
+    model_space_point *= TransformationInverse();
 
     for (PolygonListConstIterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
@@ -393,7 +393,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
         ASSERT1(vertex_instance != NULL);
         CompoundVertex &compound_vertex = **vertex_instance;
 
-        Float distance = ((GetTransformation() * compound_vertex.m_coordinate) - center).Length();
+        Float distance = ((Transformation() * compound_vertex.m_coordinate) - center).Length();
         if (distance <= radius &&
             (distance < *nearest_distance || *nearest_distance < 0.0f))
         {
@@ -426,7 +426,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
         Polygon *polygon = *it;
         ASSERT1(polygon != NULL);
         
-        if (polygon->SelectedVertexCount() > polygon->GetVertexCount() - 2)
+        if (polygon->SelectedVertexCount() > polygon->VertexCount() - 2)
             return W_WOULD_CAUSE_DEGENERATION;
 
         if (!polygon->AreSelectedVerticesContiguous())
@@ -572,7 +572,7 @@ void MapEditor2::Compound::AddDrawnPolygon (
         vertex =
             polygon_center +
             polygon_radius * Math::UnitVector(polygon_angle);
-        vertex *= GetTransformationInverse();
+        vertex *= TransformationInverse();
 
         // create the instanced vertex
         vertex_instance = new Instance<CompoundVertex>(CompoundVertex(this));
@@ -712,7 +712,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
         CompoundVertex &vertex = **vertex_instance;
 
         // determine if the current vertex is inside the selection circle
-        Float vertex_distance = (center - GetTransformation() * vertex.m_coordinate).Length();
+        Float vertex_distance = (center - Transformation() * vertex.m_coordinate).Length();
         bool vertex_is_in_operand_set = vertex_distance <= radius;
         
         if (vertex_is_in_operand_set)
@@ -812,10 +812,10 @@ void MapEditor2::Compound::TranslateVertex (
     ASSERT1(vertex->m_owner_compound == this);
 
     // this vector is where the vertex should end up in world-space
-    FloatVector2 resulting_coordinate = GetTransformation() * vertex->m_coordinate + translation_delta;
+    FloatVector2 resulting_coordinate = Transformation() * vertex->m_coordinate + translation_delta;
     // set the vertex coordinate (in model-space) to the model-space
     // pre-image of the resulting coordinate.
-    vertex->m_coordinate = GetTransformationInverse() * resulting_coordinate;
+    vertex->m_coordinate = TransformationInverse() * resulting_coordinate;
     
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
@@ -833,11 +833,11 @@ void MapEditor2::Compound::ScaleVertex (
     // this vector is where the vertex should end up in world-space
     FloatVector2 resulting_coordinate =
         scale_factor_delta *
-        (GetTransformation() * vertex->m_coordinate - transformation_origin) +
+        (Transformation() * vertex->m_coordinate - transformation_origin) +
         transformation_origin;
     // set the vertex coordinate (in model-space) to the model-space
     // pre-image of the resulting coordinate.
-    vertex->m_coordinate = GetTransformationInverse() * resulting_coordinate;
+    vertex->m_coordinate = TransformationInverse() * resulting_coordinate;
         
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
@@ -854,10 +854,10 @@ void MapEditor2::Compound::RotateVertex (
 
     // this vector is where the vertex should end up in world-space
     FloatVector2 resulting_coordinate =
-        rotation_transformation * (GetTransformation() * vertex->m_coordinate);
+        rotation_transformation * (Transformation() * vertex->m_coordinate);
     // set the vertex coordinate (in model-space) to the model-space
     // pre-image of the resulting coordinate.
-    vertex->m_coordinate = GetTransformationInverse() * resulting_coordinate;
+    vertex->m_coordinate = TransformationInverse() * resulting_coordinate;
     
     // the contents of the compound have changed, so its radius
     // will have to be recalculated
@@ -977,14 +977,14 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
 void MapEditor2::Compound::CalculateVisibleRadius () const
 {
     m_radius = 0.0f;
-    Uint32 vertex_count = GetVertexCount();
+    Uint32 vertex_count = VertexCount();
 
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         m_radius =
             Max(m_radius,
-                (GetTransformation() * GetVertex(i) -
-                 GetTransformation() * FloatVector2::ms_zero).Length());
+                (Transformation() * GetVertex(i) -
+                 Transformation() * FloatVector2::ms_zero).Length());
     }
 }
 
@@ -1040,7 +1040,7 @@ void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
 
 FloatVector2 const &MapEditor2::Compound::GetVertex (Uint32 const index) const
 {
-    Instance<CompoundVertex> *vertex_instance = GetVertexInstance(index);
+    Instance<CompoundVertex> *vertex_instance = VertexInstance(index);
     CompoundVertex const &vertex = **vertex_instance;
     return vertex.m_coordinate;
 }

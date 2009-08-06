@@ -175,14 +175,14 @@ void Font::DrawLineFormattedText (
     // early out if alignment is (LEFT, TOP)
     if (alignment[Dim::X] == LEFT && alignment[Dim::Y] == TOP)
     {
-        DrawString(render_context, draw_rect.GetTopLeft(), source_string);
+        DrawString(render_context, draw_rect.TopLeft(), source_string);
         return;
     }
 
     ScreenCoord text_height =
         line_format_vector.size() * PixelHeight();
     ScreenCoordVector2 total_spacing = ScreenCoordVector2::ms_zero;
-    ScreenCoordVector2 initial_pen_position(draw_rect.GetTopLeft());
+    ScreenCoordVector2 initial_pen_position(draw_rect.TopLeft());
     ScreenCoordVector2 pen_position(initial_pen_position);
 
     switch (alignment[Dim::Y])
@@ -508,7 +508,7 @@ void AsciiFont::GenerateWordWrappedString (
                 // or a word that won't fit:
                 next_token = StartOfNextToken(current_token);
                 next_token_class = GetTokenClass(*next_token);
-                token_width_26_6 = GetTokenWidth_26_6(" ") + GetTokenWidth_26_6(next_token);
+                token_width_26_6 = TokenWidth_26_6(" ") + TokenWidth_26_6(next_token);
                 if (next_token_class == NULLCHAR)
                 {
                 }
@@ -525,7 +525,7 @@ void AsciiFont::GenerateWordWrappedString (
                 {
                     // only if all of the above criteria fail we add in a space
                     *dest_string += ' ';
-                    current_pos_26_6 += GetTokenWidth_26_6(" ");
+                    current_pos_26_6 += TokenWidth_26_6(" ");
                 }
                 current_token = next_token;
                 break;
@@ -541,7 +541,7 @@ void AsciiFont::GenerateWordWrappedString (
                 break;
 
             case WORD:
-                token_width_26_6 = GetTokenWidth_26_6(current_token);
+                token_width_26_6 = TokenWidth_26_6(current_token);
                 next_token = StartOfNextToken(current_token);
                 forced_newline = false;
                 if (token_width_26_6 > wrap_width_26_6)
@@ -652,16 +652,16 @@ void AsciiFont::DrawGlyph (
     // system.
 
     glTexCoord2iv(glyph_texture_coordinates.BottomLeft().m);
-    glVertex2iv(glyph_vertex_coordinates.GetTopLeft().m);
+    glVertex2iv(glyph_vertex_coordinates.TopLeft().m);
 
-    glTexCoord2iv(glyph_texture_coordinates.GetTopLeft().m);
+    glTexCoord2iv(glyph_texture_coordinates.TopLeft().m);
     glVertex2iv(glyph_vertex_coordinates.BottomLeft().m);
 
-    glTexCoord2iv(glyph_texture_coordinates.GetTopRight().m);
+    glTexCoord2iv(glyph_texture_coordinates.TopRight().m);
     glVertex2iv(glyph_vertex_coordinates.BottomRight().m);
 
     glTexCoord2iv(glyph_texture_coordinates.BottomRight().m);
-    glVertex2iv(glyph_vertex_coordinates.GetTopRight().m);
+    glVertex2iv(glyph_vertex_coordinates.TopRight().m);
 }
 
 ScreenCoord AsciiFont::KerningPixelAdvance_26_6 (char const left, char const right) const
@@ -740,7 +740,7 @@ ScreenCoordVector2 AsciiFont::FindSmallestFittingTextureSize (
     while(texture_size[Dim::X] <= static_cast<ScreenCoord>(max_texture_size) &&
           texture_size[Dim::Y] <= static_cast<ScreenCoord>(max_texture_size))
     {
-        Uint32 used_area = GetUsedTextureArea(texture_size, sorted_glyph_specification);
+        Uint32 used_area = UsedTextureArea(texture_size, sorted_glyph_specification);
         DEBUG1_CODE(Uint32 total_area = texture_size[Dim::X] * texture_size[Dim::Y]);
         ASSERT1(used_area <= total_area);
         if (used_area > 0)
@@ -754,7 +754,7 @@ ScreenCoordVector2 AsciiFont::FindSmallestFittingTextureSize (
     return ScreenCoordVector2::ms_zero;
 }
 
-Uint32 AsciiFont::GetUsedTextureArea (
+Uint32 AsciiFont::UsedTextureArea (
     ScreenCoordVector2 const &texture_size,
     GlyphSpecification *const *const sorted_glyph_specification)
 {
@@ -889,7 +889,7 @@ char const *AsciiFont::StartOfNextToken (char const *string)
     return string;
 }
 
-ScreenCoord AsciiFont::GetTokenWidth_26_6 (char const *const string) const
+ScreenCoord AsciiFont::TokenWidth_26_6 (char const *const string) const
 {
     ASSERT1(string != NULL);
 

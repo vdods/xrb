@@ -34,7 +34,7 @@ Float Shield::Damage (
 {
     ASSERT1(damage_amount >= 0.0f);
     ASSERT1(m_charged_power >= 0.0f);
-    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
+    ASSERT1(m_charged_power <= ms_max_charged_power[UpgradeLevel()]);
 
     Float available_damage_dissipation = AvailableDamageDissipation();
     // if there is no dissipation available, just return the full amount
@@ -47,9 +47,9 @@ Float Shield::Damage (
     }
     // calculate how much power to use to block this amount of damage
     Float power_required =
-        ms_max_charged_power[GetUpgradeLevel()] *
+        ms_max_charged_power[UpgradeLevel()] *
         Min(damage_amount, available_damage_dissipation) /
-        ms_max_damage_dissipation[GetUpgradeLevel()];
+        ms_max_damage_dissipation[UpgradeLevel()];
     // check against the available power
     Float power_to_use = Min(power_required, m_charged_power);
     // calculate the amount of damage that was actually blocked given the
@@ -76,13 +76,13 @@ Float Shield::PowerToBeUsedBasedOnInputs (
     Float frame_dt) const
 {
     Float max_power_that_can_be_recharged =
-        frame_dt * ms_max_charged_power[GetUpgradeLevel()] /
-        ms_recharge_interval[GetUpgradeLevel()];
+        frame_dt * ms_max_charged_power[UpgradeLevel()] /
+        ms_recharge_interval[UpgradeLevel()];
     Float power_remaining_to_recharge =
-        ms_max_charged_power[GetUpgradeLevel()] - m_charged_power;
+        ms_max_charged_power[UpgradeLevel()] - m_charged_power;
     return
         Min(max_power_that_can_be_recharged, power_remaining_to_recharge) +
-        frame_dt * ms_power_consumption_rate[GetUpgradeLevel()];
+        frame_dt * ms_power_consumption_rate[UpgradeLevel()];
 }
 
 bool Shield::Activate (
@@ -92,18 +92,18 @@ bool Shield::Activate (
 {
     ASSERT1(power >= 0.0f);
     ASSERT1(power <= PowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
-    ASSERT1(power <= ms_max_charged_power[GetUpgradeLevel()] /
-                     ms_recharge_interval[GetUpgradeLevel()] +
-                     frame_dt * ms_power_consumption_rate[GetUpgradeLevel()]);
+    ASSERT1(power <= ms_max_charged_power[UpgradeLevel()] /
+                     ms_recharge_interval[UpgradeLevel()] +
+                     frame_dt * ms_power_consumption_rate[UpgradeLevel()]);
 
-    power -= frame_dt * ms_power_consumption_rate[GetUpgradeLevel()];
+    power -= frame_dt * ms_power_consumption_rate[UpgradeLevel()];
     m_charged_power += power;
     // because the shield takes power to keep it on, m_charged_power can
     // decrease by not receiving enough power.  make sure that m_charged_power
     // doesn't drop below 0.
     if (m_charged_power < 0.0f)
         m_charged_power = 0.0;
-    ASSERT1(m_charged_power <= ms_max_charged_power[GetUpgradeLevel()]);
+    ASSERT1(m_charged_power <= ms_max_charged_power[UpgradeLevel()]);
 
     return true;
 }

@@ -162,7 +162,7 @@ public:
 
     // Trivial accessors for the properties of AwesomeEntity.
     inline Float Mass () const { return m_mass; }
-    inline FloatVector2 const &GetVelocity () const { return m_velocity; }
+    inline FloatVector2 const &Velocity () const { return m_velocity; }
     inline FloatVector2 const &Force () const { return m_force; }
 
     // Modifiers for the properties of AwesomeEntity.  The ASSERT_NAN_SANITY_CHECK
@@ -359,7 +359,7 @@ protected:
                     continue;
 
                 // The gravitational force is from entity0 to entity1
-                FloatVector2 force_direction = (entity1->GetTranslation() - entity0->GetTranslation()).Normalization();
+                FloatVector2 force_direction = (entity1->Translation() - entity0->Translation()).Normalization();
                 // Apply equal and opposite gravitational force to both entities.
                 entity0->IncrementForce( gravitational_force * force_direction);
                 entity1->IncrementForce(-gravitational_force * force_direction);
@@ -415,7 +415,7 @@ protected:
             entity->ResetForce();
             // Use Euler Integration again to calculate the new position,
             // based on the entity's velocity.
-            entity->Translate(entity->GetVelocity() * FrameDT());
+            entity->Translate(entity->Velocity() * FrameDT());
         }
 
         /* @endcode
@@ -443,7 +443,7 @@ private:
     Float CalculateGravitationalForce (AwesomeEntity *entity0, AwesomeEntity *entity1) const
     {
         ASSERT1(entity0 != NULL && entity1 != NULL);
-        FloatVector2 entity_offset(entity1->GetTranslation() - entity0->GetTranslation());
+        FloatVector2 entity_offset(entity1->Translation() - entity0->Translation());
         Float distance = entity_offset.Length();
         // If they're touching, don't apply gravitational force (this
         // is to avoid a divide by zero if their positions coincide).

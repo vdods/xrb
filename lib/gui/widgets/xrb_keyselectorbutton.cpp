@@ -48,8 +48,8 @@ void KeySelectorButton::HandleReleased ()
     m_key_selector_dialog =
         new KeySelectorDialog(
             "Press new key/button for \"" + m_input_action_name + "\"",
-            GetTopLevelParent());
-    m_key_selector_dialog->CenterOnWidget(GetTopLevelParent());
+            TopLevelParent());
+    m_key_selector_dialog->CenterOnWidget(TopLevelParent());
     SignalHandler::Connect1(
         m_key_selector_dialog->SenderDialogReturned(),
         &m_internal_receiver_dialog_returned);

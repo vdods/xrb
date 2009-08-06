@@ -297,7 +297,7 @@ private:
     void PopulateGlyphSpecification (Resource<FontFace> const &font_face);
     ScreenCoordVector2 FindSmallestFittingTextureSize (
         GlyphSpecification *const *sorted_glyph_specification);
-    Uint32 GetUsedTextureArea (
+    Uint32 UsedTextureArea (
         ScreenCoordVector2 const &texture_size,
         GlyphSpecification *const *sorted_glyph_specification);
     void GenerateTexture (ScreenCoordVector2 const &texture_size);
@@ -316,7 +316,7 @@ private:
 
     static TokenClass GetTokenClass (char const c);
     static char const *StartOfNextToken (char const *string);
-    ScreenCoord GetTokenWidth_26_6 (char const *string) const;
+    ScreenCoord TokenWidth_26_6 (char const *string) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // member vars
