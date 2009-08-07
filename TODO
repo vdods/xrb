@@ -117,11 +117,10 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- replace drawing the sprite quad with a display list
 - get rid of widget min/max size enabled flags, and just use the 
   sizes (no min size = 0, no max size = (uint)-1)
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
-- ASSERT0 should probably change into Abort() call or something, to indicate
-  that it's always compiled in.
 - create consistent way to set z depth for non-transparent stuff so they're
   actually unique z depth values for each object.  maybe encode some sort
   of unique index into the least significant bits of the depth Float.
@@ -231,7 +230,6 @@ TODO:
   achieved.
 - GL singleton should have checks to see if it's been initialized
   so when gl calls fail mysteriously, it's obvious what happened.
-- replace drawing the sprite quad with a display list
 - hide the defer-parent-update SetSizeProperty* versions and make public
   versions of each without that parameter.
 - change the IOE_IS_AT_END checking for how many bytes/bits are left

@@ -13,6 +13,7 @@
 
 // don't include xrb.h here, because xrb.h includes this file.
 
+// NDEBUG is UNdefined in this header, so the assert macro is available.
 #include "xrb_debug.hpp"
 
 #include <assert.h>
