@@ -178,12 +178,6 @@ lib_libxrb_la_SOURCES = \
     lib/util/xrb_utf8.cpp \
     lib/util/xrb_util.cpp
 
-# the compression stuff is temporarily out of service
-#    lib/core/serializers/xrb_compressionserializer.cpp \
-#    lib/util/xrb_bitcachedcompression.cpp \
-#    lib/util/xrb_huffman.cpp \
-#
-
 # the mapeditor is temporarily out of service
 #    lib/mapeditor2/xrb_mapeditor2_compound.cpp \
 #    lib/mapeditor2/xrb_mapeditor2_compoundentity.cpp \
@@ -331,12 +325,6 @@ include_HEADERS = \
     lib/util/xrb_utf8.hpp \
     lib/util/xrb_util.hpp \
     lib/util/xrb_validator.hpp
-
-# the compression stuff is temporarily out of service
-#    lib/core/serializers/xrb_compressionserializer.hpp \
-#    lib/util/xrb_bitcachedcompression.hpp \
-#    lib/util/xrb_huffman.hpp \
-#
 
 # the mapeditor is temporarily out of service
 #    lib/mapeditor2/xrb_mapeditor2_compound.hpp \

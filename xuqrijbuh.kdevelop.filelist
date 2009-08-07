@@ -283,8 +283,6 @@ lib/primitive/xrb_circularqueue.hpp
 lib/primitive/xrb_circularqueue.tcpp
 lib/primitive/xrb_color.cpp
 lib/primitive/xrb_color.hpp
-lib/primitive/xrb_gltexture.cpp
-lib/primitive/xrb_gltexture.hpp
 lib/primitive/xrb_ntuple.cpp
 lib/primitive/xrb_ntuple.hpp
 lib/primitive/xrb_rect.cpp
@@ -308,8 +306,6 @@ lib/render/xrb_rendercontext.hpp
 lib/system
 lib/system/serializers/xrb_binaryfileserializer.cpp
 lib/system/serializers/xrb_binaryfileserializer.hpp
-lib/system/serializers/xrb_compressionserializer.cpp
-lib/system/serializers/xrb_compressionserializer.hpp
 lib/system/xrb_enums.hpp
 lib/system/xrb_event.cpp
 lib/system/xrb_event.hpp
@@ -334,8 +330,6 @@ lib/system/xrb_statemachine.hpp
 lib/system/xrb_statemachine.tcpp
 lib/util/xrb_bitcache.cpp
 lib/util/xrb_bitcache.hpp
-lib/util/xrb_bitcachedcompression.cpp
-lib/util/xrb_bitcachedcompression.hpp
 lib/util/xrb_bitcachedfile.cpp
 lib/util/xrb_bitcachedfile.hpp
 lib/util/xrb_characterfilter.cpp
@@ -347,8 +341,6 @@ lib/util/xrb_emptystring.hpp
 lib/util/xrb_endian.hpp
 lib/util/xrb_frameratecalculator.cpp
 lib/util/xrb_frameratecalculator.hpp
-lib/util/xrb_huffman.cpp
-lib/util/xrb_huffman.hpp
 lib/util/xrb_indentformatter.cpp
 lib/util/xrb_indentformatter.hpp
 lib/util/xrb_reference.hpp
