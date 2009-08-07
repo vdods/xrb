@@ -76,8 +76,44 @@ private:
     SignalReceiver1<ValueType> m_receiver_set_value;
 }; // end of class ValueLabel
 
-// function definitions for ValueLabel
-#include "xrb_valuelabel.tcpp"
+template <typename ValueType>
+ValueLabel<ValueType>::ValueLabel (
+    std::string const &printf_format,
+    TextToValueFunctionType text_to_value_function,
+    ContainerWidget *const parent,
+    std::string const &name)
+    :
+    Label("", parent, name),
+    m_receiver_set_value(&ValueLabel<ValueType>::SetValue, this)
+{
+    // set up the printf format string
+    SetPrintfFormat(printf_format);
+
+    m_text_to_value_function = text_to_value_function;
+
+    SetIsHeightFixedToTextHeight(true);
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetText (std::string const &text)
+{
+    SetValue(TextToValueFunction()(text.c_str()));
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetValue (ValueType const value)
+{
+    m_value = value;
+    Label::SetText(Util::StringPrintf(PrintfFormat().c_str(), m_value));
+}
+
+template <typename ValueType>
+void ValueLabel<ValueType>::SetTextToValueFunction (
+    TextToValueFunctionType text_to_value_function)
+{
+    m_text_to_value_function = text_to_value_function;
+    SetText(Text());
+}
 
 // convenience defines for printf formats
 #define SIGNED_INTEGER_PRINTF_FORMAT      "%d"

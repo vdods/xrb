@@ -91,8 +91,69 @@ private:
     Uint32 m_entry_count;
 }; // end of class CircularQueue
 
-// the implementation for CircularQueue
-#include "xrb_circularqueue.tcpp"
+template <typename T, Uint32 queue_size>
+CircularQueue<T, queue_size>::CircularQueue ()
+{
+    ASSERT1(queue_size > 0);
+    m_head = 0;
+    m_tail = 0;
+    m_entry_count = 0;
+}
+
+template <typename T, Uint32 queue_size>
+CircularQueue<T, queue_size>::~CircularQueue ()
+{
+    m_head = 0;
+    m_tail = 0;
+    m_entry_count = 0;
+}
+
+template <typename T, Uint32 queue_size>
+T const &CircularQueue<T, queue_size>::Entry (Uint32 const index) const
+{
+    ASSERT1(index < EntryCount());
+    return m_queue[(m_head + index) % queue_size];
+}
+
+template <typename T, Uint32 queue_size>
+void CircularQueue<T, queue_size>::Enqueue (T const &entry)
+{
+    ASSERT0(!IsFull());
+
+    // add the entry
+    m_queue[m_tail] = entry;
+    // increment the tail index
+    m_tail = IncrementedIndex(m_tail);
+    // increment the number of entries
+    ++m_entry_count;
+}
+
+template <typename T, Uint32 queue_size>
+T CircularQueue<T, queue_size>::Dequeue ()
+{
+    ASSERT0(!IsEmpty());
+
+    // save off the current head index so we know what to return
+    Uint32 retval_index = m_head;
+    // increment the head index
+    m_head = IncrementedIndex(m_head);
+    // decrement the number of entries
+    --m_entry_count;
+
+    // return the entry at the saved off index
+    return m_queue[retval_index];
+}
+
+template <typename T, Uint32 queue_size>
+void CircularQueue<T, queue_size>::Clear ()
+{
+    // reset the head index
+    m_head = 0;
+    // reset the tail index
+    m_tail = 0;
+    // reset the entry count
+    m_entry_count = 0;
+}
 
 } // end of namespace Xrb
 

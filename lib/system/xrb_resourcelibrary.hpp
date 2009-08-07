@@ -445,7 +445,131 @@ private:
     ResourceLibrary::ResourceInstance<T> *m_instance;
 }; // end of class Resource<T>
 
-#include "xrb_resourcelibrary.tcpp"
+template <typename T>
+Resource<T> ResourceLibrary::LoadFilename (
+    T *(*LoadFunction)(std::string const &),
+    std::string const &filename)
+{
+    Resource<T> invalid_resource;
+
+    if (filename.empty())
+        return invalid_resource;
+
+    ResourceInstanceKey const key(filename, UNSPECIFIED_LOAD_PARAMETER);
+
+    // check if the file is already loaded
+    InstanceMap::iterator it = m_instance_map.find(key);
+    // if it is loaded then return a Resource for it.
+    if (it != m_instance_map.end())
+    {
+        ASSERT1(it->second != NULL);
+        // make sure the existing data is of the right type
+        ASSERT1(
+            dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
+            "You probably are trying to load a currently loaded "
+            "resource using a different type or method");
+        return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
+    }
+    // otherwise load up the given filename, stick it in
+    // the map and return a Resource for it.
+    else
+    {
+        // attempt to load the filename
+        T *data = LoadFunction(filename);
+
+        // if successful, stick the data into a ResourceInstance to
+        // be kept by this ResourceLibrary, otherwise return null.
+        if (data != NULL)
+        {
+//             fprintf(
+//                 stderr,
+//                 "ResourceLibrary * loading \"%s\", "
+//                 "no load parameter\n",
+//                 filename.c_str());
+
+            ResourceInstance<T> *instance =
+                new ResourceInstance<T>(this, key, data);
+            m_instance_map[key] = instance;
+            return Resource<T>(instance);
+        }
+        else
+        {
+            fprintf(
+                stderr,
+                "ResourceLibrary * FAILURE while "
+                "loading \"%s\", no load parameter\n",
+                filename.c_str());
+            // do some error handling
+            return invalid_resource;
+        }
+    }
+}
+
+template <typename T>
+Resource<T> ResourceLibrary::LoadFilename (
+    T *(*LoadFunction)(std::string const &, Sint32),
+    std::string const &filename,
+    Sint32 const load_parameter)
+{
+    ASSERT1(load_parameter != UNSPECIFIED_LOAD_PARAMETER &&
+            "You may not use that load parameter (it is reserved)");
+
+    Resource<T> invalid_resource;
+
+    if (filename.empty())
+        return invalid_resource;
+
+    ResourceInstanceKey const key(filename, load_parameter);
+
+    // check if the file is already loaded
+    InstanceMap::iterator it = m_instance_map.find(key);
+    // if it is loaded then return a Resource for it.
+    if (it != m_instance_map.end())
+    {
+        ASSERT1(it->second != NULL);
+        // make sure the existing data is of the right type
+        ASSERT1(
+            dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
+            "You probably are trying to load a currently loaded "
+            "resource using a different type or method");
+        return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
+    }
+    // otherwise load up the given filename, stick it in
+    // the map and return a Resource for it.
+    else
+    {
+        // attempt to load the filename
+        T *data = LoadFunction(filename, load_parameter);
+
+        // if successful, stick the data into a ResourceInstance to
+        // be kept by this ResourceLibrary, otherwise return null.
+        if (data != NULL)
+        {
+//             fprintf(
+//                 stderr,
+//                 "ResourceLibrary * loading \"%s\", "
+//                 "load parameter = %d\n",
+//                 filename.c_str(),
+//                 load_parameter);
+
+            ResourceInstance<T> *instance =
+                new ResourceInstance<T>(this, key, data);
+            m_instance_map[key] = instance;
+            return Resource<T>(instance);
+        }
+        else
+        {
+            fprintf(
+                stderr,
+                "ResourceLibrary * FAILURE while "
+                "loading \"%s\", load parameter = %d\n",
+                filename.c_str(),
+                load_parameter);
+            // do some error handling
+            return invalid_resource;
+        }
+    }
+}
 
 } // end of namespace Xrb
 

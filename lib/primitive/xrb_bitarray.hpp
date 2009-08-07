@@ -367,8 +367,46 @@ private:
     Uint32 m_words[WORD_COUNT];
 }; // end of class BitArray
 
-// function definitions for BitArray
-#include "xrb_bitarray.tcpp"
+template <Uint32 bit_count>
+BitArray<bit_count> const BitArray<bit_count>::ms_zero(ZERO);
+
+template <Uint32 bit_count>
+BitArray<bit_count> const BitArray<bit_count>::ms_one(ONE);
+
+template <Uint32 bit_count>
+void BitArray<bit_count>::Fprint (
+    FILE *const fptr,
+    Uint32 const chunk_size,
+    bool const add_newline) const
+{
+    fprintf(fptr, "BitArray (%u) = (", bit_count);
+    for (Uint32 i = HIGHEST_BIT_INDEX; i <= HIGHEST_BIT_INDEX; --i)
+    {
+        fputc(Bit(i) ? '1' : '0', fptr);
+        if (i != 0 &&
+            chunk_size != 0 &&
+            i % chunk_size == 0)
+        {
+            fputc(' ', fptr);
+        }
+    }
+    fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
+}
+
+template <Uint32 bit_count>
+void BitArray<bit_count>::FprintAsWords (
+    FILE *const fptr,
+    bool const add_newline) const
+{
+    fprintf(fptr, "BitArray (%u) words = (", bit_count);
+    for (Uint32 i = HIGHEST_WORD_INDEX; i <= HIGHEST_WORD_INDEX; --i)
+    {
+        fprintf(fptr, "%08X", Word(i));
+        if (i > 0)
+            fputc(' ', fptr);
+    }
+    fprintf(fptr, ")%c", add_newline ? '\n' : '\0');
+}
 
 template <Uint32 bit_count>
 inline BitArray<bit_count> operator | (

@@ -44,8 +44,80 @@ protected:
         WidgetSkin::WidgetBackgroundType widget_background_type);
 }; // end of class ToolbarButton
 
-// function definitions for ToolbarButton
-#include "xrb_toolbarbutton.tcpp"
+// NOTE: the seemingly redundant "this->" is necessary because the C++
+// standard specifies non-intuitive behavior for template definitions.
+// see http://gcc.gnu.org/onlinedocs/gcc/Name-lookup.html for more info.
+
+template <typename T, T sentinel>
+ToolbarButton<T, sentinel>::ToolbarButton (
+    Resource<GLTexture> const &picture,
+    T const id,
+    RadioButtonGroup<T, sentinel> *const group,
+    ContainerWidget *const parent,
+    std::string const &name)
+    :
+    RadioButton<T, sentinel>(picture, id, group, parent, name)
+{
+    ASSERT1(this->Picture().IsValid());
+    ToolbarButton<T, sentinel>::UpdateRenderBackground();
+    ToolbarButton<T, sentinel>::UpdateRenderPicture();
+}
+
+template <typename T, T sentinel>
+void ToolbarButton<T, sentinel>::HandleMouseoverOn ()
+{
+    ASSERT1(this->IsMouseover());
+    Button::HandleMouseoverOn();
+    UpdateRenderBackground();
+}
+
+template <typename T, T sentinel>
+void ToolbarButton<T, sentinel>::HandleMouseoverOff ()
+{
+    ASSERT1(!this->IsMouseover());
+    Button::HandleMouseoverOff();
+    UpdateRenderBackground();
+}
+
+template <typename T, T sentinel>
+void ToolbarButton<T, sentinel>::UpdateRenderBackground ()
+{
+    // state priority: disabled, pressed, mouseover, checked, default
+    if (!this->IsEnabled())
+        SetRenderBackground(
+            this->WidgetSkinWidgetBackground(
+                WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+    else if (this->IsPressed())
+        SetRenderBackground(
+            this->WidgetSkinWidgetBackground(
+                WidgetSkin::TOOLBAR_BUTTON_PRESSED_BACKGROUND));
+    else if (this->IsMouseover() && this->AcceptsMouseover())
+        SetRenderBackground(
+            this->WidgetSkinWidgetBackground(
+                WidgetSkin::TOOLBAR_BUTTON_MOUSEOVER_BACKGROUND));
+    else if (this->IsChecked())
+        SetRenderBackground(
+            this->WidgetSkinWidgetBackground(
+                WidgetSkin::TOOLBAR_BUTTON_CHECKED_BACKGROUND));
+    else
+        SetRenderBackground(
+            this->WidgetSkinWidgetBackground(
+                WidgetSkin::TOOLBAR_BUTTON_BACKGROUND));
+}
+
+template <typename T, T sentinel>
+void ToolbarButton<T, sentinel>::UpdateRenderPicture ()
+{
+    SetRenderPicture(this->Picture());
+}
+
+template <typename T, T sentinel>
+void ToolbarButton<T, sentinel>::HandleChangedWidgetSkinWidgetBackground (
+    WidgetSkin::WidgetBackgroundType const widget_background_type)
+{
+    // don't worry about the type, just update the background regardless.
+    UpdateRenderBackground();
+}
 
 } // end of namespace Xrb
 

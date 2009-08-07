@@ -669,8 +669,126 @@ protected:
     mutable IOError m_error;
 }; // end of class Serializer
 
-// template function definitions for Serializer
-#include "xrb_serializer.tcpp"
+template <Uint32 bit_count>
+BitArray<bit_count> Serializer::ReadBitArray ()
+{
+    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
+
+    BitArray<bit_count> retval;
+
+    for (Uint32 current_word = BitArray<bit_count>::HIGHEST_WORD_INDEX;
+         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
+         --current_word)
+    {
+        Uint32 bits_to_read_for_current_word =
+            current_word == BitArray<bit_count>::HIGHEST_WORD_INDEX ?
+            bit_count % BitArray<bit_count>::WORD_SIZE_IN_BITS :
+            BitArray<bit_count>::WORD_SIZE_IN_BITS;
+        if (bits_to_read_for_current_word == 0)
+            bits_to_read_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+        retval.SetWord(
+            current_word,
+            ReadUnsignedBits(bits_to_read_for_current_word));
+        if (GetError() != IOE_NONE)
+            return retval;
+    }
+
+    return retval;
+}
+
+template <Uint32 bit_count>
+void Serializer::WriteBitArray (BitArray<bit_count> const &value)
+{
+    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
+
+    for (Uint32 current_word = BitArray<bit_count>::HIGHEST_WORD_INDEX;
+         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
+         --current_word)
+    {
+        Uint32 bits_to_write_for_current_word =
+            current_word == BitArray<bit_count>::HIGHEST_WORD_INDEX ?
+            bit_count % BitArray<bit_count>::WORD_SIZE_IN_BITS :
+            BitArray<bit_count>::WORD_SIZE_IN_BITS;
+        if (bits_to_write_for_current_word == 0)
+            bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+        WriteUnsignedBits(
+            value.Word(current_word),
+            bits_to_write_for_current_word);
+        if (GetError() != IOE_NONE)
+            return;
+    }
+}
+
+template <Uint32 bit_count>
+BitArray<bit_count> Serializer::ReadBitArray (Uint32 const bits_to_read)
+{
+    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
+    ASSERT1(bits_to_read > 0);
+    ASSERT1(bits_to_read <= bit_count);
+
+    BitArray<bit_count> retval;
+    Uint32 highest_word_to_read = bits_to_read / BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+    for (Uint32 current_word = highest_word_to_read;
+         current_word <= highest_word_to_read; // trick to do > 0 for unsigned
+         --current_word)
+    {
+        Uint32 bits_to_read_for_current_word =
+            current_word == highest_word_to_read ?
+            bits_to_read % BitArray<bit_count>::WORD_SIZE_IN_BITS :
+            BitArray<bit_count>::WORD_SIZE_IN_BITS;
+        if (bits_to_read_for_current_word == 0)
+            bits_to_read_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+        retval.SetWord(
+            current_word,
+            ReadUnsignedBits(bits_to_read_for_current_word));
+        if (GetError() != IOE_NONE)
+            return retval;
+    }
+
+    // there may be uninitialized words above highest_word_to_read
+    for (Uint32 current_word = highest_word_to_read + 1;
+         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
+         ++current_word)
+    {
+        retval.SetWord(current_word, 0);
+    }
+
+    return retval;
+}
+
+template <Uint32 bit_count>
+void Serializer::WriteBitArray (
+    BitArray<bit_count> const &value,
+    Uint32 const bits_to_write)
+{
+    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
+    ASSERT1(bits_to_write > 0);
+    ASSERT1(bits_to_write <= bit_count);
+
+    Uint32 highest_word_to_write = bits_to_write / BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+    for (Uint32 current_word = highest_word_to_write;
+         current_word <= highest_word_to_write; // trick to do > 0 for unsigned
+         --current_word)
+    {
+        Uint32 bits_to_write_for_current_word =
+            current_word == highest_word_to_write ?
+            bits_to_write % BitArray<bit_count>::WORD_SIZE_IN_BITS :
+            BitArray<bit_count>::WORD_SIZE_IN_BITS;
+        if (bits_to_write_for_current_word == 0)
+            bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
+
+        WriteUnsignedBits(
+            value.Word(current_word),
+            bits_to_write_for_current_word);
+        if (GetError() != IOE_NONE)
+            return;
+    }
+}
 
 } // end of namespace Xrb
 

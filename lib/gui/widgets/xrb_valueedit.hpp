@@ -131,8 +131,120 @@ private:
     SignalReceiver1<ValueType> m_receiver_set_value;
 }; // end of class ValueEdit
 
-// function definitions for ValueEdit
-#include "xrb_valueedit.tcpp"
+// template <typename ValueType>
+// ValueEdit<ValueType>::ValueEdit (
+//     std::string const &printf_format,
+//     TextToValueFunctionType text_to_value_function,
+//     ContainerWidget *const parent,
+//     std::string const &name)
+//     :
+//     LineEdit(20, parent, name),
+//     m_sender_value_updated(this),
+//     m_sender_value_set_by_enter_key(this),
+//     m_receiver_set_value(&ValueEdit<ValueType>::SetValue, this)
+// {
+//     // set up the printf format string
+//     SetPrintfFormat(printf_format);
+// 
+//     // default is to not have any validation.
+//     m_validator = NULL;
+//     m_text_to_value_function = text_to_value_function;
+// }
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SetText (std::string const &text)
+{
+    SetValue(m_text_to_value_function(text.c_str()));
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SetValue (ValueType const value)
+{
+    m_value = m_validator != NULL ?
+              m_validator->Validate(value) :
+              value;
+    LineEdit::SetText(Util::StringPrintf(m_printf_format.c_str(), m_value));
+    SignalValueUpdated();
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SetValidator (
+    Validator<ValueType> const *const validator)
+{
+    m_validator = validator;
+    SetValue(m_value);
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SetTextToValueFunction (
+    TextToValueFunctionType text_to_value_function)
+{
+    m_text_to_value_function = text_to_value_function;
+    SetText(Text());
+}
+
+template <typename ValueType>
+bool ValueEdit<ValueType>::ProcessKeyEvent (EventKey const *const e)
+{
+    if (e->IsKeyDownEvent() || e->IsKeyRepeatEvent())
+    {
+        switch (e->KeyCode())
+        {
+            case Key::RETURN:
+            case Key::KP_ENTER:
+                // only set and signal the value if there is text
+                if (LineEdit::Text()[0] != '\0')
+                {
+                    SetValueFromText();
+                    m_sender_value_set_by_enter_key.Signal(Value());
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    return LineEdit::ProcessKeyEvent(e);
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::HandleUnfocus ()
+{
+    SignalValueUpdated();
+    LineEdit::HandleUnfocus();
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SignalTextUpdated ()
+{
+    SetValue(m_text_to_value_function(LineEdit::Text().c_str()));
+    LineEdit::SignalTextUpdated();
+    SignalValueUpdated();
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SetValueFromText ()
+{
+    ValueType value = m_text_to_value_function(LineEdit::Text().c_str());
+    if (m_validator != NULL)
+        value = m_validator->Validate(value);
+    if (m_value != value)
+    {
+        m_value = value;
+        SignalValueUpdated();
+    }
+}
+
+template <typename ValueType>
+void ValueEdit<ValueType>::SignalValueUpdated ()
+{
+    if (m_last_value_update != Value())
+    {
+        m_last_value_update = Value();
+        m_sender_value_updated.Signal(m_last_value_update);
+    }
+}
 
 // convenience defines for printf formats
 #define SIGNED_INTEGER_PRINTF_FORMAT      "%d"

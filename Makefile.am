@@ -245,15 +245,11 @@ include_HEADERS = \
     lib/gui/widgets/xrb_modalwidget.hpp \
     lib/gui/widgets/xrb_progressbar.hpp \
     lib/gui/widgets/xrb_radiobutton.hpp \
-    lib/gui/widgets/xrb_radiobutton.tcpp \
     lib/gui/widgets/xrb_spacerwidget.hpp \
     lib/gui/widgets/xrb_textwidget.hpp \
     lib/gui/widgets/xrb_toolbarbutton.hpp \
-    lib/gui/widgets/xrb_toolbarbutton.tcpp \
     lib/gui/widgets/xrb_valueedit.hpp \
-    lib/gui/widgets/xrb_valueedit.tcpp \
     lib/gui/widgets/xrb_valuelabel.hpp \
-    lib/gui/widgets/xrb_valuelabel.tcpp \
     lib/gui/widgets/xrb_widgetstack.hpp \
     \
     lib/input/xrb_input.hpp \
@@ -277,9 +273,7 @@ include_HEADERS = \
     lib/parsers/xrb_arithmeticscanner.hpp \
     \
     lib/primitive/xrb_bitarray.hpp \
-    lib/primitive/xrb_bitarray.tcpp \
     lib/primitive/xrb_circularqueue.hpp \
-    lib/primitive/xrb_circularqueue.tcpp \
     lib/primitive/xrb_color.hpp \
     lib/primitive/xrb_ntuple.hpp \
     lib/primitive/xrb_rect.hpp \
@@ -298,16 +292,12 @@ include_HEADERS = \
     lib/system/xrb_event.hpp \
     lib/system/xrb_eventhandler.hpp \
     lib/system/xrb_eventqueue.hpp \
-    lib/system/xrb_eventqueue.tcpp \
     lib/system/xrb_framehandler.hpp \
     lib/system/xrb_resourcelibrary.hpp \
-    lib/system/xrb_resourcelibrary.tcpp \
     lib/system/xrb_serializer.hpp \
-    lib/system/xrb_serializer.tcpp \
     lib/system/xrb_signalhandler.hpp \
     lib/system/xrb_singleton.hpp \
     lib/system/xrb_statemachine.hpp \
-    lib/system/xrb_statemachine.tcpp \
     \
     lib/system/serializers/xrb_binaryfileserializer.hpp \
     \

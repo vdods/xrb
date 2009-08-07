@@ -179,8 +179,48 @@ private:
 
 }; // end of class EventQueue
 
-// template function definitions for EventQueue
-#include "xrb_eventqueue.tcpp"
+template <typename ParameterType>
+void EventQueue::ScheduleMatchingEventsForDeletion (
+    bool (*EventMatchingFunction)(Event const *, ParameterType),
+    ParameterType parameter)
+{
+    // check all enqueued events against the given event-matching function.
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
+                                            it_end = m_time_ordered_event_queue.end();
+         it != it_end;
+         ++it)
+    {
+        Event const *event = it->GetEvent();
+        ASSERT1(event != NULL);
+        // only check events that aren't already scheduled for deletion
+        if (!event->IsScheduledForDeletion())
+            // if the function indicates a match, schedule the event for deletion
+            if (EventMatchingFunction(event, parameter))
+                event->ScheduleForDeletion();
+    }
+}
+
+template <typename Parameter1Type, typename Parameter2Type>
+void EventQueue::ScheduleMatchingEventsForDeletion (
+    bool (*EventMatchingFunction)(Event const *, Parameter1Type, Parameter2Type),
+    Parameter1Type parameter1,
+    Parameter2Type parameter2)
+{
+    // check all enqueued events against the given event-matching function.
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
+                                            it_end = m_time_ordered_event_queue.end();
+         it != it_end;
+         ++it)
+    {
+        Event const *event = it->GetEvent();
+        ASSERT1(event != NULL);
+        // only check events that aren't already scheduled for deletion
+        if (!event->IsScheduledForDeletion())
+            // if the function indicates a match, schedule the event for deletion
+            if (EventMatchingFunction(event, parameter1, parameter2))
+                event->ScheduleForDeletion();
+    }
+}
 
 } // end of namespace Xrb
 
