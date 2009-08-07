@@ -435,7 +435,6 @@ public:
 private:
 
     typedef std::set<Grenade *> ActiveGrenadeSet;
-    typedef ActiveGrenadeSet::iterator ActiveGrenadeSetIterator;
 
     static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
@@ -639,7 +638,6 @@ public:
 private:
 
     typedef std::set<EMPBomb *> ActiveEMPBombSet;
-    typedef ActiveEMPBombSet::iterator ActiveEMPBombSetIterator;
 
     static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];

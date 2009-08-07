@@ -51,7 +51,6 @@ struct CollisionPair
 }; // end of struct CollisionPair
 
 typedef std::vector<CollisionPair> CollisionPairList;
-typedef CollisionPairList::iterator CollisionPairListIterator;
 
 } // end of namespace Dis
 

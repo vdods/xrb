@@ -23,8 +23,7 @@ namespace Dis
 class Entity;
 
 typedef std::list<Entity *> AreaTraceList;
-typedef AreaTraceList::iterator AreaTraceListIterator;
-     
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_AREATRACELIST_HPP_)

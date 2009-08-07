@@ -140,7 +140,7 @@ Resource<GLTexture> InventoryButton::ButtonTexture (
         }
     };
 
-    return Singletons::ResourceLibrary().LoadFilename<GLTexture>(GLTexture::Create, s_button_texture_filename[item_type][upgrade_level]);
+    return Singleton::ResourceLibrary().LoadFilename<GLTexture>(GLTexture::Create, s_button_texture_filename[item_type][upgrade_level]);
 }
 
 void InventoryButton::SetStatus (Status const status)

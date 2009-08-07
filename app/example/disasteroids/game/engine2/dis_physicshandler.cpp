@@ -205,7 +205,7 @@ void PhysicsHandler::HandleFrame ()
     // call Think on all entity guts.  no entities must be left
     // removed during this loop.  removing and re-adding is ok --
     // see ShieldEffect::SnapToShip().
-    for (EntitySetIterator it = m_entity_set.begin(),
+    for (EntitySet::iterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
          ++it)
@@ -234,7 +234,7 @@ void PhysicsHandler::HandleFrame ()
     // positions are updated because the updated velocities/positions are
     // required for some computations (e.g. setting the velocity for an
     // explosion resulting from an asteroid impacting another).
-    for (CollisionPairListIterator it = m_collision_pair_list.begin(),
+    for (CollisionPairList::iterator it = m_collision_pair_list.begin(),
                                    it_end = m_collision_pair_list.end();
          it != it_end;
          ++it)
@@ -263,7 +263,7 @@ void PhysicsHandler::UpdateVelocities ()
 {
     // apply the accumulated forces to the entities,
     // and then reset their accelerations.
-    for (EntitySetIterator it = m_entity_set.begin(),
+    for (EntitySet::iterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
          ++it)
@@ -318,7 +318,7 @@ void PhysicsHandler::UpdatePositions ()
 {
     // apply the velocities to the entities,
     // and then reset them in the object layers.
-    for (EntitySetIterator it = m_entity_set.begin(),
+    for (EntitySet::iterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
          ++it)
@@ -348,7 +348,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
     ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 
-    for (EntitySetIterator it = m_entity_set.begin(),
+    for (EntitySet::iterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
          ++it)
@@ -371,7 +371,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
     ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 
-    for (EntitySetIterator it = m_entity_set.begin(),
+    for (EntitySet::iterator it = m_entity_set.begin(),
                            it_end = m_entity_set.end();
          it != it_end;
          ++it)

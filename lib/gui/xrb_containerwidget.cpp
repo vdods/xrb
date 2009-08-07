@@ -308,7 +308,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // create a render context for the child widgets
     RenderContext child_render_context(render_context);
     // call Draw on all the child widgets with the appropriate clipping
-    for (WidgetVectorConstIterator it = m_child_vector.begin(),
+    for (WidgetVector::const_iterator it = m_child_vector.begin(),
                                    it_end = m_child_vector.end();
          it != it_end;
          ++it)
@@ -351,7 +351,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
         ASSERT1(IsTopLevelParent());
 
         // draw all the modal widgets, from the bottom of the stack, up.
-        for (WidgetListConstIterator it = m_modal_widget_stack.begin(),
+        for (WidgetList::const_iterator it = m_modal_widget_stack.begin(),
                                      it_end = m_modal_widget_stack.end();
              it != it_end;
              ++it)
@@ -398,7 +398,7 @@ void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)
     Widget::MoveBy(delta);
 
     // move all child widgets by the same delta
-    for (WidgetVectorIterator it = m_child_vector.begin(),
+    for (WidgetVector::iterator it = m_child_vector.begin(),
                               it_end = m_child_vector.end();
          it != it_end;
          ++it)
@@ -445,8 +445,8 @@ void ContainerWidget::AttachChild (Widget *const child)
     // add the child at the end of the section of the list of child widgets
     // which have the same stack priority.  first find the appropriate place
     // to put the child
-    WidgetVectorIterator it;
-    WidgetVectorIterator it_end;
+    WidgetVector::iterator it;
+    WidgetVector::iterator it_end;
     for (it = m_child_vector.begin(),
          it_end = m_child_vector.end();
          it != it_end;
@@ -473,7 +473,7 @@ void ContainerWidget::DetachChild (Widget *const child)
     ASSERT1(child != NULL);
     ASSERT1(child->Parent() == this);
     // check that its actually a child
-    WidgetVectorIterator it = FindChildWidget(child);
+    WidgetVector::iterator it = FindChildWidget(child);
     ASSERT1(it != m_child_vector.end() && *it == child && "not a child of this widget");
     // make sure to unfocus it
     child->Unfocus();
@@ -491,13 +491,13 @@ void ContainerWidget::DetachChild (Widget *const child)
 void ContainerWidget::MoveChildDown (Widget *const child)
 {
     // check that its actually a child
-    WidgetVectorIterator it = FindChildWidget(child);
-    WidgetVectorIterator it_end = m_child_vector.end();
+    WidgetVector::iterator it = FindChildWidget(child);
+    WidgetVector::iterator it_end = m_child_vector.end();
     ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
     if (it != m_child_vector.begin())
     {
         // get the widget below this one
-        WidgetVectorIterator prev = it;
+        WidgetVector::iterator prev = it;
         --prev;
         // do a value swap of the 2 elements, if they're of the same
         // stack priority
@@ -513,11 +513,11 @@ void ContainerWidget::MoveChildDown (Widget *const child)
 void ContainerWidget::MoveChildUp (Widget *const child)
 {
     // check that its actually a child
-    WidgetVectorIterator it = FindChildWidget(child);
-    WidgetVectorIterator it_end = m_child_vector.end();
+    WidgetVector::iterator it = FindChildWidget(child);
+    WidgetVector::iterator it_end = m_child_vector.end();
     ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
     // get the widget above this one
-    WidgetVectorIterator next = it;
+    WidgetVector::iterator next = it;
     ++next;
     // do a value swap of the 2 elements, if they're of the same
     // stack priority
@@ -533,13 +533,13 @@ void ContainerWidget::MoveChildUp (Widget *const child)
 void ContainerWidget::MoveChildToBottom (Widget *const child)
 {
     // check that its actually a child
-    WidgetVectorIterator it_begin = m_child_vector.begin();
-    WidgetVectorIterator it = FindChildWidget(child);
-    WidgetVectorIterator it_end = m_child_vector.end();
+    WidgetVector::iterator it_begin = m_child_vector.begin();
+    WidgetVector::iterator it = FindChildWidget(child);
+    WidgetVector::iterator it_end = m_child_vector.end();
     ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
     // find the appropriate place to move the child to (within the section
     // of the child vector of the same stack priority)
-    WidgetVectorIterator dest_it = it;
+    WidgetVector::iterator dest_it = it;
     while (dest_it != it_begin &&
            (*dest_it)->GetStackPriority() == child->GetStackPriority())
     {
@@ -562,12 +562,12 @@ void ContainerWidget::MoveChildToBottom (Widget *const child)
 void ContainerWidget::MoveChildToTop (Widget *const child)
 {
     // check that its actually a child
-    WidgetVectorIterator it = FindChildWidget(child);
-    WidgetVectorIterator it_end = m_child_vector.end();
+    WidgetVector::iterator it = FindChildWidget(child);
+    WidgetVector::iterator it_end = m_child_vector.end();
     ASSERT1((*it)->Parent() == this && it != it_end && "not a child of this widget");
     // find the appropriate place to move the child to (within the section
     // of the child vector of the same stack priority)
-    WidgetVectorIterator dest_it = it;
+    WidgetVector::iterator dest_it = it;
     while (dest_it != it_end &&
            (*dest_it)->GetStackPriority() == child->GetStackPriority())
     {
@@ -649,7 +649,7 @@ ScreenCoordVector2 ContainerWidget::ContentsMaxSize () const
 void ContainerWidget::HandleFrame ()
 {
     // call ProcessFrame on all the child widgets
-    for (WidgetVectorIterator it = m_child_vector.begin(),
+    for (WidgetVector::iterator it = m_child_vector.begin(),
                               it_end = m_child_vector.end();
          it != it_end;
          ++it)
@@ -704,7 +704,7 @@ void ContainerWidget::RemoveModalWidget (Widget *const modal_widget)
     if (IsTopLevelParent())
     {
         modal_widget->Unfocus();
-        WidgetListIterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
+        WidgetList::iterator it = std::find(m_modal_widget_stack.begin(), m_modal_widget_stack.end(), modal_widget);
         ASSERT1(it != m_modal_widget_stack.end());
         m_modal_widget_stack.erase(it);
     }
@@ -803,10 +803,10 @@ void ContainerWidget::ChildStackPriorityChanged (
     ASSERT1(child->Parent() == this);
     ASSERT1(child->GetStackPriority() != previous_stack_priority);
 
-    WidgetVectorIterator it_begin = m_child_vector.begin();
-    WidgetVectorIterator it = FindChildWidget(child);
-    WidgetVectorIterator it_end = m_child_vector.end();
-    WidgetVectorIterator dest_it = it;
+    WidgetVector::iterator it_begin = m_child_vector.begin();
+    WidgetVector::iterator it = FindChildWidget(child);
+    WidgetVector::iterator it_end = m_child_vector.end();
+    WidgetVector::iterator dest_it = it;
 
     // check if the widget should be moved up or down
     if (it == it_end)
@@ -867,10 +867,10 @@ void ContainerWidget::ChildStackPriorityChanged (
 // private functions
 // ///////////////////////////////////////////////////////////////////////////
 
-ContainerWidget::WidgetVectorIterator ContainerWidget::FindChildWidget (Widget const *const child)
+ContainerWidget::WidgetVector::iterator ContainerWidget::FindChildWidget (Widget const *const child)
 {
-    WidgetVectorIterator it;
-    WidgetVectorIterator it_end;
+    WidgetVector::iterator it;
+    WidgetVector::iterator it_end;
     for (it = m_child_vector.begin(),
          it_end = m_child_vector.end();
          it != it_end;
@@ -964,7 +964,7 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
     // if there are any modal widgets, then focus can only go the top
     // unhidden modal widget.
     Widget *modal_widget = NULL;
-    for (WidgetListReverseIterator it = m_modal_widget_stack.rbegin(),
+    for (WidgetList::reverse_iterator it = m_modal_widget_stack.rbegin(),
                                    it_end = m_modal_widget_stack.rend();
          it != it_end;
          ++it)
@@ -988,8 +988,8 @@ bool ContainerWidget::InternalProcessFocusEvent (EventFocus const *const e)
     // otherwise, loop through all the child widgets (from top to bottom)
     else
     {
-        WidgetVectorReverseIterator it;
-        WidgetVectorReverseIterator it_end;
+        WidgetVector::reverse_iterator it;
+        WidgetVector::reverse_iterator it_end;
         for (it = m_child_vector.rbegin(),
              it_end = m_child_vector.rend();
              it != it_end;
@@ -1015,8 +1015,8 @@ bool ContainerWidget::InternalProcessMouseoverEvent (EventMouseover const *const
         return false;
 
     // loop through all the child widgets (from top to bottom)
-    WidgetVectorReverseIterator it;
-    WidgetVectorReverseIterator it_end;
+    WidgetVector::reverse_iterator it;
+    WidgetVector::reverse_iterator it_end;
     for (it = m_child_vector.rbegin(),
          it_end = m_child_vector.rend();
          it != it_end;
@@ -1038,7 +1038,7 @@ bool ContainerWidget::SendMouseEventToChild (EventMouse const *const e)
     // attempt to send the mouse event to the widget that is below
     // the mouse cursor, traversing the child vector from top to
     // bottom.
-    for (WidgetVectorReverseIterator it = m_child_vector.rbegin(),
+    for (WidgetVector::reverse_iterator it = m_child_vector.rbegin(),
                                      it_end = m_child_vector.rend();
          it != it_end;
          ++it)

@@ -67,7 +67,7 @@ FloatVector2 Entity::AmbientVelocity (
     // calculate the ambient velocity
     FloatVector2 total_momentum(FloatVector2::ms_zero);
     Float total_mass = 0.0f;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -145,7 +145,7 @@ void Entity::ApplyInterceptCourseAcceleration (
         return;
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set->begin(),
+    for (Polynomial::SolutionSet::iterator it = solution_set->begin(),
                                          it_end = solution_set->end();
          it != it_end;
          ++it)
@@ -251,7 +251,7 @@ Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) c
     poly.Solve(&solution_set, 0.0001f);
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                          it_end = solution_set.end();
          it != it_end;
          ++it)

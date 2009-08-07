@@ -113,13 +113,8 @@ public:
 private:
 
     typedef std::set<Score, ScoreOrderByPoints> BestPointsScoreSet;
-    typedef BestPointsScoreSet::const_iterator BestPointsScoreSetConstIterator;
-
     typedef std::set<Score, ScoreOrderByWaveCount> BestWaveCountScoreSet;
-    typedef BestWaveCountScoreSet::const_iterator BestWaveCountScoreSetConstIterator;
-
     typedef std::list<Score> ScoreList;
-    typedef ScoreList::const_iterator ScoreListConstIterator;
 
     BestPointsScoreSet m_best_points_score_set;
     BestWaveCountScoreSet m_best_wave_count_score_set;

@@ -16,7 +16,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
     ParameterType parameter)
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
@@ -38,7 +38,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
     Parameter2Type parameter2)
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)

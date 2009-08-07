@@ -78,7 +78,7 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::SmallestMapEditorPolygonTou
     }
 
     // check against all the objects owned by this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -203,7 +203,7 @@ void MapEditor2::VisibilityQuadTree::SelectObjectsByCircle (
 
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -245,7 +245,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllObjects (bool const toggle_selecti
 {
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -279,7 +279,7 @@ void MapEditor2::VisibilityQuadTree::SelectVerticesByCircle (
 
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -317,7 +317,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllVertices (
 {
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -374,7 +374,7 @@ void MapEditor2::VisibilityQuadTree::SelectAllPolygons (
 {
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -407,7 +407,7 @@ void MapEditor2::VisibilityQuadTree::SetVertexSelectionStateFromSelectionOwnerPo
 {
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -476,7 +476,7 @@ void MapEditor2::VisibilityQuadTree::DrawMetrics (
     Object::DrawData object_draw_data = draw_data.ObjectDrawData();
     Float object_radius;
     Float distance_fade;
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -577,7 +577,7 @@ void MapEditor2::VisibilityQuadTree::ComputeNearestVertexPrivate (
 
     // iterate through all objects at this node and perform the
     // requested selection action upon each.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)

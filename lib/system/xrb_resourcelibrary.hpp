@@ -57,8 +57,8 @@ template <typename T> class Resource;
   * @c UNSPECIFIED_LOAD_PARAMETER ) is reserved and should not be used by the
   * given load function.
   *
-  * ResourceLibrary is a singleton object provided by @ref Xrb::Singletons.
-  * It can be accessed using @ref Xrb::Singletons::ResourceLibrary.
+  * ResourceLibrary is a singleton object provided by @ref Xrb::Singleton.
+  * It can be accessed using @ref Xrb::Singleton::ResourceLibrary.
   *
   * @brief Controls loading, storage, and unloading of resources.
   */
@@ -262,7 +262,6 @@ private:
         ResourceInstanceKey,
         ResourceInstanceBase *,
         ResourceInstanceKey::LessThan> InstanceMap;
-    typedef InstanceMap::iterator InstanceMapIterator;
 
     InstanceMap m_instance_map;
 

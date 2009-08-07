@@ -98,7 +98,7 @@ SignalHandler::~SignalHandler ()
 
 void SignalHandler::DetachAll ()
 {
-    for (SignalSenderListIterator it = m_sender_list.begin(),
+    for (SignalSenderList::iterator it = m_sender_list.begin(),
                                   it_end = m_sender_list.end();
          it != it_end;
          ++it)
@@ -108,7 +108,7 @@ void SignalHandler::DetachAll ()
         sender->DetachAll();
     }
 
-    for (SignalReceiverListIterator it = m_receiver_list.begin(),
+    for (SignalReceiverList::iterator it = m_receiver_list.begin(),
                                     it_end = m_receiver_list.end();
          it != it_end;
          ++it)

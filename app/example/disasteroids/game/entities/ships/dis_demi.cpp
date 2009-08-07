@@ -574,7 +574,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
         false,
         &area_trace_list);
     // check the area trace list for targets
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -1462,7 +1462,7 @@ Entity *Demi::FindTractorDeflectTarget (
 
     Entity *best_target = NULL;
     Sint32 best_target_priority = 0;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)

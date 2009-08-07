@@ -25,7 +25,6 @@ class Polynomial
 public:
 
     typedef std::set<Float> SolutionSet;
-    typedef SolutionSet::iterator SolutionSetIterator;
 
     inline Polynomial ()
     {

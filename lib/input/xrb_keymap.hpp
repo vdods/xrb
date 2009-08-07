@@ -68,7 +68,6 @@ public:
 private:
 
     typedef std::map<Key::Code, Key::Code> QwertyToDvorakMap;
-    typedef QwertyToDvorakMap::const_iterator QwertyToDvorakMapConstIterator;
 
     QwertyToDvorakMap m_map;
 }; // end of class KeyMapDvorak

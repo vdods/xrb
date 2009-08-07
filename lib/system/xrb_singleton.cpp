@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_singletons.cpp by Victor Dods, created 2005/02/10
+// xrb_singleton.cpp by Victor Dods, created 2005/02/10
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_singletons.hpp"
+#include "xrb_singleton.hpp"
 
 #include "xrb.hpp"
 
@@ -35,45 +35,45 @@ namespace
     // this pointer type should be equivalent to type FT_Library.
     FT_LibraryRec_ *g_ft_library = NULL;
 
-    // indicates if Singletons::Initialize has been called
+    // indicates if Singleton::Initialize has been called
     bool g_is_initialized = false;
 } // end of namespace
 
-Input &Singletons::Input ()
+Input &Singleton::Input ()
 {
-    ASSERT1(g_is_initialized && "can't use Singletons::Input() before Singletons::Initialize()");
+    ASSERT1(g_is_initialized && "can't use Singleton::Input() before Singleton::Initialize()");
     ASSERT1(g_input != NULL);
     return *g_input;
 }
 
-KeyMap const &Singletons::KeyMap ()
+KeyMap const &Singleton::KeyMap ()
 {
-    ASSERT1(g_is_initialized && "can't use Singletons::KeyMap() before Singletons::Initialize()");
+    ASSERT1(g_is_initialized && "can't use Singleton::KeyMap() before Singleton::Initialize()");
     ASSERT1(g_key_map != NULL);
     return *g_key_map;
 }
 
-ResourceLibrary &Singletons::ResourceLibrary ()
+ResourceLibrary &Singleton::ResourceLibrary ()
 {
-    ASSERT1(g_is_initialized && "can't use Singletons::ResourceLibrary() before Singletons::Initialize()");
+    ASSERT1(g_is_initialized && "can't use Singleton::ResourceLibrary() before Singleton::Initialize()");
     ASSERT1(g_resource_library != NULL);
     return *g_resource_library;
 }
 
-FT_LibraryRec_ *const Singletons::FTLibrary ()
+FT_LibraryRec_ *const Singleton::FTLibrary ()
 {
-    ASSERT1(g_is_initialized && "can't use Singletons::FTLibrary() before Singletons::Initialize()");
+    ASSERT1(g_is_initialized && "can't use Singleton::FTLibrary() before Singleton::Initialize()");
     ASSERT1(g_ft_library != NULL);
     return g_ft_library;
 }
 
-void Singletons::Initialize (char const *const key_map_name)
+void Singleton::Initialize (char const *const key_map_name)
 {
     ASSERT1(key_map_name != NULL);
 
     ASSERT1(!g_is_initialized);
 
-    fprintf(stderr, "Singletons::Initialize();\n");
+    fprintf(stderr, "Singleton::Initialize();\n");
 
     g_input = new Xrb::Input();
 
@@ -90,7 +90,7 @@ void Singletons::Initialize (char const *const key_map_name)
     g_is_initialized = true;
 }
 
-void Singletons::Shutdown ()
+void Singleton::Shutdown ()
 {
     ASSERT1(g_is_initialized);
     ASSERT1(g_input != NULL);
@@ -98,7 +98,7 @@ void Singletons::Shutdown ()
     ASSERT1(g_resource_library != NULL);
     ASSERT1(g_ft_library != NULL);
 
-    fprintf(stderr, "Singletons::Shutdown();\n");
+    fprintf(stderr, "Singleton::Shutdown();\n");
 
     DeleteAndNullify(g_input);
     DeleteAndNullify(g_resource_library);

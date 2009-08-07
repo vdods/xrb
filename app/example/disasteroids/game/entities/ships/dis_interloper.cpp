@@ -174,7 +174,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;
     bool found_flock = false;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -281,7 +281,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     Float closest_flock_member_distance = -1.0f;
     Float flock_mass = 0.0f;
     Uint32 flock_member_count = 0;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -421,7 +421,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         poly.Solve(&solution_set, 0.001f);
 
         Float T = -1.0f;
-        for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+        for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                              it_end = solution_set.end();
              it != it_end;
              ++it)

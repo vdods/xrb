@@ -1284,7 +1284,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     ASSERT1(scale_factor > 0.0f);
 
     // check that the area is not in view of any attached WorldView
-    for (WorldViewListIterator it = m_world_view_list.begin(),
+    for (WorldViewList::iterator it = m_world_view_list.begin(),
                                it_end = m_world_view_list.end();
          it != it_end;
          ++it)

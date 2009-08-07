@@ -31,7 +31,7 @@
     <description>An OpenGL 2d game engine suite geared toward real-time, sprite/polygon-object-based gameplay. Includes the game engine library, as well as example game implementations. The goal is to provide an intuitive platform for implementing gameplay.
  </description>
     <projectname>xuqrijbuh</projectname>
-    <defaultencoding/>
+    <defaultencoding></defaultencoding>
     <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevcustomproject>
@@ -39,11 +39,11 @@
       <mainprogram>/home/vdods/files/sf/xuqrijbuh/trunk</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
-      <globaldebugarguments/>
+      <globaldebugarguments></globaldebugarguments>
       <globalcwd>/home/vdods/files/sf/xuqrijbuh/trunk</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
@@ -51,16 +51,16 @@
     </run>
     <build>
       <buildtool>make</buildtool>
-      <builddir/>
+      <builddir></builddir>
     </build>
     <make>
       <abortonerror>false</abortonerror>
       <numberofjobs>2</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
-      <makebin/>
-      <defaulttarget/>
-      <makeoptions/>
+      <makebin></makebin>
+      <defaulttarget></defaulttarget>
+      <makeoptions></makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -102,19 +102,15 @@
       <path>desources/xrb_games_quine/xrb_games_quine_3g.c</path>
       <path>desources/xrb_games_quine/xrb_games_quine.c</path>
       <path>desources/xrb_games_quine/xrb_games_quine_template.c</path>
-      <path>lib/parsers/xrb_arithmeticparser.cpp</path>
-      <path>lib/parsers/xrb_arithmeticparser.h</path>
-      <path>lib/parsers/xrb_datafileparser.cpp</path>
-      <path>lib/parsers/xrb_datafileparser.h</path>
       <path>release</path>
       <path>release/config.h</path>
       <path>release/Makefile</path>
     </blacklist>
     <other>
       <prio>0</prio>
-      <otherbin/>
-      <defaulttarget/>
-      <otheroptions/>
+      <otherbin></otherbin>
+      <defaulttarget></defaulttarget>
+      <otheroptions></otheroptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -244,26 +240,26 @@
       <includeTypes>true</includeTypes>
       <includeEnums>true</includeEnums>
       <includeTypedefs>true</includeTypedefs>
-      <automaticCodeCompletion>true</automaticCodeCompletion>
-      <automaticArgumentsHint>true</automaticArgumentsHint>
+      <automaticCodeCompletion>false</automaticCodeCompletion>
+      <automaticArgumentsHint>false</automaticArgumentsHint>
       <automaticHeaderCompletion>true</automaticHeaderCompletion>
       <codeCompletionDelay>250</codeCompletionDelay>
       <argumentsHintDelay>400</argumentsHintDelay>
       <headerCompletionDelay>250</headerCompletionDelay>
       <showOnlyAccessibleItems>false</showOnlyAccessibleItems>
       <completionBoxItemOrder>0</completionBoxItemOrder>
-      <howEvaluationContextMenu>true</howEvaluationContextMenu>
-      <showCommentWithArgumentHint>true</showCommentWithArgumentHint>
-      <statusBarTypeEvaluation>true</statusBarTypeEvaluation>
+      <howEvaluationContextMenu>false</howEvaluationContextMenu>
+      <showCommentWithArgumentHint>false</showCommentWithArgumentHint>
+      <statusBarTypeEvaluation>false</statusBarTypeEvaluation>
       <namespaceAliases>std=_GLIBCXX_STD;__gnu_cxx=std</namespaceAliases>
-      <processPrimaryTypes>true</processPrimaryTypes>
-      <processFunctionArguments>true</processFunctionArguments>
+      <processPrimaryTypes>false</processPrimaryTypes>
+      <processFunctionArguments>false</processFunctionArguments>
       <preProcessAllHeaders>false</preProcessAllHeaders>
       <parseMissingHeaders>false</parseMissingHeaders>
       <resolveIncludePaths>true</resolveIncludePaths>
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
-      <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
+      <alwaysIncludeNamespaces>false</alwaysIncludeNamespaces>
       <includePaths>.;</includePaths>
       <parseMissingHeadersExperimental>false</parseMissingHeadersExperimental>
       <resolveIncludePathsUsingMakeExperimental>false</resolveIncludePathsUsingMakeExperimental>

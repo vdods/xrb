@@ -148,7 +148,6 @@ public:
 private:
 
     typedef std::map<T, RadioButton<T, sentinel> *> RadioButtonMap;
-    typedef typename RadioButtonMap::iterator RadioButtonMapIterator;
 
     // the map of RadioButtons belonging to this RadioButtonGroup
     RadioButtonMap m_button_map;

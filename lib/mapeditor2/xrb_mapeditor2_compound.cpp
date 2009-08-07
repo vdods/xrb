@@ -43,7 +43,7 @@ MapEditor2::Compound::~Compound ()
 {
     // must delete the polygons first, because they refer to
     // the compound's instanced vertices.
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -54,7 +54,7 @@ MapEditor2::Compound::~Compound ()
     }
 
     // the reference counts on all the vertices must be 0 upon deletion.
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -150,7 +150,7 @@ void MapEditor2::Compound::Draw (
     // functions require it.
     glEnable(GL_TEXTURE_2D);
 
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -197,7 +197,7 @@ void MapEditor2::Compound::DrawMetrics (
 
     // draw the polygon lines (unselected first, then selected).
 
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -212,7 +212,7 @@ void MapEditor2::Compound::DrawMetrics (
         }
     }
 
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                     it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -237,7 +237,7 @@ void MapEditor2::Compound::DrawMetrics (
         glPointSize(6.0f);
         glBegin(GL_POINTS);
         glColor4f(0.0, 0.0, 0.0, 1.0);
-        for (VertexListIterator it = m_vertex_list.begin(),
+        for (VertexList::iterator it = m_vertex_list.begin(),
                                 it_end = m_vertex_list.end();
              it != it_end;
              ++it)
@@ -253,7 +253,7 @@ void MapEditor2::Compound::DrawMetrics (
         // draw the colored vertex (unselected first, then selected).
         glPointSize(4.0f);
         glBegin(GL_POINTS);
-        for (VertexListIterator it = m_vertex_list.begin(),
+        for (VertexList::iterator it = m_vertex_list.begin(),
                                 it_end = m_vertex_list.end();
              it != it_end;
              ++it)
@@ -268,7 +268,7 @@ void MapEditor2::Compound::DrawMetrics (
                 glVertex2fv(vertex.m_coordinate.m);
             }
         }
-        for (VertexListIterator it = m_vertex_list.begin(),
+        for (VertexList::iterator it = m_vertex_list.begin(),
                                 it_end = m_vertex_list.end();
              it != it_end;
              ++it)
@@ -291,7 +291,7 @@ Uint32 MapEditor2::Compound::SelectedPolygonCount () const
 {
     Uint32 selected_polygon_count = 0;
 
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -308,8 +308,8 @@ Uint32 MapEditor2::Compound::SelectedPolygonCount () const
 Instance<MapEditor2::CompoundVertex> *MapEditor2::Compound::VertexInstance (
     Uint32 index) const
 {
-    VertexListConstIterator it = m_vertex_list.begin();
-    VertexListConstIterator it_end = m_vertex_list.end();
+    VertexList::const_iterator it = m_vertex_list.begin();
+    VertexList::const_iterator it_end = m_vertex_list.end();
     while (index != 0 && it != it_end)
     {
         --index;
@@ -331,7 +331,7 @@ MapEditor2::Polygon *MapEditor2::Compound::SmallestPolygonTouchingPoint (
     FloatVector2 model_space_point(point);
     model_space_point *= TransformationInverse();
 
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -384,7 +384,7 @@ void MapEditor2::Compound::ComputeNearestVertex (
     if (!vertices_can_be_selected)
         return;
     
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -418,7 +418,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
     // that have selected vertices, so that the selected owner polygon
     // count can be calculated for the new vertex.
     Uint32 polygons_with_selected_vertices_count = 0;
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -440,7 +440,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
     // be the resulting, single welded vertex.
     Uint32 selected_vertex_count = 0;
     FloatVector2 selected_vertex_mean(FloatVector2::ms_zero);
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -466,7 +466,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
 
     // replace the selected vertices in the polygons with the newly
     // created welded vertex.
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -480,7 +480,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
     // reference count of 0.
 
     // unselect and delete the selected vertices
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          /* the iterator incrementing is handled by hand, below */)
@@ -491,7 +491,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
         if (vertex.m_is_selected)
         {
             vertex.RemoveFromVertexSelectionSet(object_layer);
-            VertexListIterator remove_it = it;
+            VertexList::iterator remove_it = it;
             ++it;
             // delete the vertex instance itself
             Delete(vertex_instance);
@@ -513,7 +513,7 @@ MapEditor2::Compound::WeldReturnStatus MapEditor2::Compound::WeldSelectedVertice
 
 void MapEditor2::Compound::UnweldSelectedVertices ()
 {
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -593,7 +593,7 @@ void MapEditor2::Compound::AddDrawnPolygon (
 
 void MapEditor2::Compound::UnweldSelectedPolygons ()
 {
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -638,7 +638,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
     ASSERT1(SelectedPolygonCount() < PolygonCount());
 
     // iterate through the polygon list and delete selected polygons.
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          /* the iterator incrementing is handled by hand, below */)
@@ -652,7 +652,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
         {
             polygon->RemoveFromPolygonSelectionSet(MapEditorObjectLayer());
             Delete(polygon);
-            PolygonListIterator remove_it = it;
+            PolygonList::iterator remove_it = it;
             ++it;
             m_polygon_list.erase(remove_it);
         }
@@ -664,7 +664,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
 
     // go through the vertex list and delete any vertices that have a
     // reference count of zero.
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          /* the iterator incrementing is handled by hand, below */)
@@ -674,7 +674,7 @@ void MapEditor2::Compound::DeleteSelectedPolygons ()
         if (vertex_instance->ReferenceCount() == 0)
         {
             Delete(vertex_instance);
-            VertexListIterator remove_it = it;
+            VertexList::iterator remove_it = it;
             ++it;
             m_vertex_list.erase(remove_it);
         }
@@ -702,7 +702,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation(
     if (!vertices_can_be_selected)
         return;
 
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -756,7 +756,7 @@ void MapEditor2::Compound::ApplyVertexSelectionOperation (
     if (!vertices_can_be_selected)
         return;
 
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -788,7 +788,7 @@ void MapEditor2::Compound::SelectAllVertices (bool const toggle_selection)
     ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -869,7 +869,7 @@ void MapEditor2::Compound::SelectAllPolygons (bool const toggle_selection)
     ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -889,7 +889,7 @@ void MapEditor2::Compound::SetVertexSelectionStateFromSelectionOwnerPolygonCount
     ObjectLayer *const object_layer = MapEditorObjectLayer();
     ASSERT1(object_layer != NULL);
 
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -946,7 +946,7 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
     Uint32 vertex_count = m_vertex_list.size();
     ASSERT1(vertex_count > 0);
     serializer.WriteUint32(vertex_count);
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -961,7 +961,7 @@ void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
     Uint32 polygon_count = m_polygon_list.size();
     ASSERT1(polygon_count > 0);
     serializer.WriteUint32(polygon_count);
-    for (PolygonListConstIterator it = m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;
          ++it)
@@ -997,7 +997,7 @@ void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
     compound->AssignIndicesToVertices();
     
     // clone the vertices
-    for (VertexListConstIterator it = compound->m_vertex_list.begin(),
+    for (VertexList::const_iterator it = compound->m_vertex_list.begin(),
                                  it_end = compound->m_vertex_list.end();
          it != it_end;
          ++it)
@@ -1013,7 +1013,7 @@ void MapEditor2::Compound::CloneProperties (Engine2::Object const *const object)
     }
 
     // clone the polygons
-    for (PolygonListConstIterator it = compound->m_polygon_list.begin(),
+    for (PolygonList::const_iterator it = compound->m_polygon_list.begin(),
                                   it_end = compound->m_polygon_list.end();
          it != it_end;
          ++it)
@@ -1048,7 +1048,7 @@ FloatVector2 const &MapEditor2::Compound::GetVertex (Uint32 const index) const
 void MapEditor2::Compound::AssignIndicesToVertices () const
 {
     Uint32 index = 0;
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it, ++index)
@@ -1063,7 +1063,7 @@ void MapEditor2::Compound::AssignIndicesToVertices () const
 
 void MapEditor2::Compound::ResetVertexIndices () const
 {
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -1084,7 +1084,7 @@ void MapEditor2::Compound::ReplaceVertexWithNewVertex (
     ASSERT1(vertex_to_replace != NULL);
     ASSERT1(vertex_to_replace_with != NULL);
 
-    for (PolygonListIterator it = m_polygon_list.begin(),
+    for (PolygonList::iterator it = m_polygon_list.begin(),
                              it_end = m_polygon_list.end();
          it != it_end;
          ++it)

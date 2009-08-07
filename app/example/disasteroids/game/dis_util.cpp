@@ -46,7 +46,7 @@ void RadiusDamage (
         false,
         &area_trace_list);
         
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -109,7 +109,7 @@ void RadiusKnockback (
         &area_trace_list);
 
     // iterate through the trace set and apply forces
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)

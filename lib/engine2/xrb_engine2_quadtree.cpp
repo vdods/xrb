@@ -18,7 +18,7 @@ namespace Xrb
 Engine2::QuadTree::~QuadTree ()
 {
     // delete all the objects in this node's list
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -78,7 +78,7 @@ Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
         return retval;
 
     // check against all the objects owned by this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -112,7 +112,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
         return false;
 
     // check if the area overlaps any object in this node's list.
-    for (ObjectSetConstIterator it = m_object_set.begin(),
+    for (ObjectSet::const_iterator it = m_object_set.begin(),
                                 it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -167,7 +167,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
         return false;
 
     // check if the area overlaps any object in this node's list.
-    for (ObjectSetConstIterator it = m_object_set.begin(),
+    for (ObjectSet::const_iterator it = m_object_set.begin(),
                                 it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -292,7 +292,7 @@ bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == this);
 
-    ObjectSetIterator it = m_object_set.find(object);
+    ObjectSet::iterator it = m_object_set.find(object);
     if (it != m_object_set.end())
     {
         // remove the object from the object set of its owner

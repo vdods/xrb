@@ -315,7 +315,7 @@ void Missile::Think (
             &line_trace_binding_set);
 
         FloatVector2 collision_normal(trace_vector.Normalization());
-        for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
+        for (LineTraceBindingSet::iterator it = line_trace_binding_set.begin(),
                                          it_end = line_trace_binding_set.end();
              it != it_end;
              ++it)
@@ -407,7 +407,7 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
 
 EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSetConstIterator it = scan_set.begin(),
+    for (LineTraceBindingSet::const_iterator it = scan_set.begin(),
                                           it_end = scan_set.end();
          it != it_end;
          ++it)
@@ -481,7 +481,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     poly.Solve(&solution_set, 0.001f);
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                          it_end = solution_set.end();
          it != it_end;
          ++it)
@@ -518,7 +518,7 @@ void GuidedMissile::AimAt (FloatVector2 const &position)
 
 EntityReference<Ship> GuidedEnemyMissile::FindTarget (LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSetConstIterator it = scan_set.begin(),
+    for (LineTraceBindingSet::const_iterator it = scan_set.begin(),
                                           it_end = scan_set.end();
          it != it_end;
          ++it)

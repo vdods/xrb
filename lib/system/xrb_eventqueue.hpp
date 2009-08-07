@@ -162,7 +162,6 @@ private:
     };
 
     typedef std::multiset<EventBinding, OrderEventBindingsByEventTime> TimeOrderedEventBindingSet;
-    typedef TimeOrderedEventBindingSet::iterator TimeOrderedEventBindingSetIterator;
 
     // the time-ordered queue of events (ordered by time and then ID)
     TimeOrderedEventBindingSet m_time_ordered_event_queue;

@@ -23,7 +23,7 @@ Resource<T> ResourceLibrary::LoadFilename (
     ResourceInstanceKey const key(filename, UNSPECIFIED_LOAD_PARAMETER);
 
     // check if the file is already loaded
-    InstanceMapIterator it = m_instance_map.find(key);
+    InstanceMap::iterator it = m_instance_map.find(key);
     // if it is loaded then return a Resource for it.
     if (it != m_instance_map.end())
     {
@@ -87,7 +87,7 @@ Resource<T> ResourceLibrary::LoadFilename (
     ResourceInstanceKey const key(filename, load_parameter);
 
     // check if the file is already loaded
-    InstanceMapIterator it = m_instance_map.find(key);
+    InstanceMap::iterator it = m_instance_map.find(key);
     // if it is loaded then return a Resource for it.
     if (it != m_instance_map.end())
     {

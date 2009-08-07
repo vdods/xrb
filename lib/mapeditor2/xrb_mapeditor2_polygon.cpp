@@ -30,7 +30,7 @@ MapEditor2::Polygon *MapEditor2::Polygon::CreateClone () const
     ASSERT1(m_owner_compound != NULL);
     Polygon *retval = new Polygon(m_owner_compound);
 
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -48,7 +48,7 @@ MapEditor2::Polygon *MapEditor2::Polygon::CreateClone () const
 Uint32 MapEditor2::Polygon::SelectedVertexCount () const
 {
     Uint32 selected_vertex_count = 0;
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -62,8 +62,8 @@ Uint32 MapEditor2::Polygon::SelectedVertexCount () const
 
 FloatVector2 const &MapEditor2::Polygon::GetVertex (Uint32 index) const
 {
-    VertexListConstIterator it = m_vertex_list.begin();
-    VertexListConstIterator it_end = m_vertex_list.end();
+    VertexList::const_iterator it = m_vertex_list.begin();
+    VertexList::const_iterator it_end = m_vertex_list.end();
     while (index != 0 && it != it_end)
     {
         --index;
@@ -181,7 +181,7 @@ bool MapEditor2::Polygon::AreSelectedVerticesContiguous () const
     Uint32 selected_vertex_transitions = 0;
     bool previous_selected_state =
         (*m_vertex_list.begin()).m_compound_vertex->m_is_selected;
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -201,7 +201,7 @@ void MapEditor2::Polygon::WeldSelectedVertices (
     ASSERT2(AreSelectedVerticesContiguous());
 
     bool welded_vertex_is_added_in = false;
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          /* the iterator incrementing is handled by hand, below */)
@@ -222,7 +222,7 @@ void MapEditor2::Polygon::WeldSelectedVertices (
             }
 
             // remove the selected vertex.
-            VertexListIterator remove_it = it;
+            VertexList::iterator remove_it = it;
             ++it;
             m_vertex_list.erase(remove_it);
         }
@@ -245,7 +245,7 @@ void MapEditor2::Polygon::Draw () const
 
     glBegin(GL_POLYGON);
 
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -265,7 +265,7 @@ void MapEditor2::Polygon::DrawMetrics () const
 
     glBegin(GL_LINE_LOOP);
 
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -283,7 +283,7 @@ void MapEditor2::Polygon::ReassignVertices (
 {
     ASSERT1(owner_compound != NULL);
     ASSERT1(!m_vertex_list.empty());
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -303,7 +303,7 @@ bool MapEditor2::Polygon::ReplaceVertexWithNewVertex (
     ASSERT1(vertex_to_replace != NULL);
     ASSERT1(vertex_to_replace_with != NULL);
 
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -324,7 +324,7 @@ void MapEditor2::Polygon::SetVertexSelectionStateFromSelectionOwnerPolygonCount 
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(!m_vertex_list.empty());
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -339,7 +339,7 @@ void MapEditor2::Polygon::IncrementSelectedOwnerPolygonCount (
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(!m_vertex_list.empty());
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -354,7 +354,7 @@ void MapEditor2::Polygon::DecrementSelectedOwnerPolygonCount (
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(!m_vertex_list.empty());
-    for (VertexListIterator it = m_vertex_list.begin(),
+    for (VertexList::iterator it = m_vertex_list.begin(),
                             it_end = m_vertex_list.end();
          it != it_end;
          ++it)
@@ -421,7 +421,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
         m_vertex_list.push_back(vertex);
     }
     m_texture =
-        Singletons::ResourceLibrary().
+        Singleton::ResourceLibrary().
             LoadFilename<GLTexture>(
                 GLTexture::Create,
                 serializer.ReadStdString());
@@ -441,7 +441,7 @@ void MapEditor2::Polygon::Write (Serializer &serializer) const
     Uint32 vertex_count = m_vertex_list.size();
     ASSERT1(vertex_count >= 3);
     serializer.WriteUint32(vertex_count);
-    for (VertexListConstIterator it = m_vertex_list.begin(),
+    for (VertexList::const_iterator it = m_vertex_list.begin(),
                                  it_end = m_vertex_list.end();
          it != it_end;
          ++it)

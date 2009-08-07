@@ -34,8 +34,8 @@ Widget *CellPaddingWidget::SingleChildWidget ()
 {
     ASSERT1(m_child_vector.size() <= 1);
 
-    WidgetVectorIterator it = m_child_vector.begin();
-    WidgetVectorIterator it_end = m_child_vector.end();
+    WidgetVector::iterator it = m_child_vector.begin();
+    WidgetVector::iterator it_end = m_child_vector.end();
     if (it != it_end)
     {
         Widget *child = *it;
@@ -52,8 +52,8 @@ Widget const *CellPaddingWidget::SingleChildWidget () const
 {
     ASSERT1(m_child_vector.size() <= 1);
 
-    WidgetVectorConstIterator it = m_child_vector.begin();
-    WidgetVectorConstIterator it_end = m_child_vector.end();
+    WidgetVector::const_iterator it = m_child_vector.begin();
+    WidgetVector::const_iterator it_end = m_child_vector.end();
     if (it != it_end)
     {
         Widget const *child = *it;

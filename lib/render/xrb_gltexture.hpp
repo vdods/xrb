@@ -89,7 +89,7 @@ private:
     // private constructor so you must use Create()
     GLTexture ();
 
-    void GenerateTexture (Texture *texture, bool delete_original_texture);
+    void GenerateTexture (Texture *texture);
     void DeleteTexture ();
 
     GLuint m_handle;

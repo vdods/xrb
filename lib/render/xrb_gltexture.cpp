@@ -34,7 +34,8 @@ GLTexture *GLTexture::Create (std::string const &filename)
         return retval;
 
     retval = new GLTexture();
-    retval->GenerateTexture(texture, true);
+    retval->GenerateTexture(texture);
+    delete texture;
 
     return retval;
 }
@@ -44,14 +45,12 @@ GLTexture *GLTexture::Create (Texture *texture)
     GLTexture *retval = NULL;
 
     retval = new GLTexture();
-    retval->GenerateTexture(texture, false);
+    retval->GenerateTexture(texture);
 
     return retval;
 }
 
-void GLTexture::GenerateTexture (
-    Texture *texture,
-    bool const delete_original_texture)
+void GLTexture::GenerateTexture (Texture *texture)
 {
     ASSERT1(texture != NULL);
 
@@ -97,10 +96,6 @@ void GLTexture::GenerateTexture (
 
     // the texture data has now been loaded into GL texture memory, so
     // the original texture can now optionally be deleted.
-
-    // if it was indicated to delete the original texture, delete it.
-    if (delete_original_texture)
-        Delete(texture);
 }
 
 void GLTexture::DeleteTexture ()

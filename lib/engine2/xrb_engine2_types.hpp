@@ -35,7 +35,6 @@ enum
 };
 
 typedef std::vector<Object const *> TransparentObjectVector;
-typedef TransparentObjectVector::iterator TransparentObjectVectorIterator;
 
 } // end of namespace Engine2
 

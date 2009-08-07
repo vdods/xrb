@@ -219,10 +219,7 @@ private:
     void ThrowAwayTokenStack ();
 
     typedef std::vector<StateNumber> StateStack;
-    typedef StateStack::const_iterator StateStackConstIterator;
-
-    typedef std::vector< DataFileValue * > TokenStack;
-    typedef TokenStack::const_iterator TokenStackConstIterator;
+    typedef std::vector<DataFileValue *> TokenStack;
 
     unsigned int m_debug_spew_level;
 

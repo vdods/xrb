@@ -371,7 +371,7 @@ void ArithmeticParser::PopStates (unsigned int number_of_states_to_pop, bool pri
 void ArithmeticParser::PrintStateStack () const
 {
     DEBUG_SPEW_2("*** state stack: ");
-    for (StateStackConstIterator it = m_state_stack.begin(),
+    for (StateStack::const_iterator it = m_state_stack.begin(),
                                  it_end = m_state_stack.end();
          it != it_end;
          ++it)

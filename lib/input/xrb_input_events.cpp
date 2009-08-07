@@ -37,7 +37,7 @@ EventKey::EventKey (
     // perform key mapping using the KeyMap singleton, and store the
     // mapped value back into m_event.
     Key::Code code = static_cast<Key::Code>(m_event.keysym.sym);
-    code = Singletons::KeyMap().MappedKey(code);
+    code = Singleton::KeyMap().MappedKey(code);
     m_event.keysym.sym = static_cast<SDLKey>(code);
 
     // set the raw ascii code (SDLKey maps to ascii)

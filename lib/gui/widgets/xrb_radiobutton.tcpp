@@ -203,8 +203,9 @@ RadioButtonGroup<T, sentinel>::~RadioButtonGroup ()
     m_checked_button = NULL;
 
     // detach this group from all its children
-    for (RadioButtonMapIterator it = m_button_map.begin(),
-                                it_end = m_button_map.end();
+    for (typename RadioButtonMap::iterator
+            it = m_button_map.begin(),
+            it_end = m_button_map.end();
          it != it_end;
          ++it)
     {
@@ -233,7 +234,7 @@ void RadioButtonGroup<T, sentinel>::SetID (T id)
     else
     {
         // make sure the ID is valid, early out if not
-        RadioButtonMapIterator it = m_button_map.find(id);
+        typename RadioButtonMap::iterator it = m_button_map.find(id);
         if (it == m_button_map.end())
             return;
 
@@ -265,7 +266,7 @@ void RadioButtonGroup<T, sentinel>::AddButton (
 
     bool no_buttons_in_group = m_button_map.size() == 0;
     // make sure there's no button with the same ID already in there
-    RadioButtonMapIterator it = m_button_map.find(button->ID());
+    typename RadioButtonMap::iterator it = m_button_map.find(button->ID());
     // only if there was no match will we add the button
     ASSERT1(it == m_button_map.end() &&
             "You tried to add two RadioButtons with the same ID");
@@ -282,7 +283,7 @@ void RadioButtonGroup<T, sentinel>::RemoveButton (
     ASSERT1(button != NULL);
 
     // make sure there's no button with the same ID already in there
-    RadioButtonMapIterator it = m_button_map.find(button->ID());
+    typename RadioButtonMap::iterator it = m_button_map.find(button->ID());
     // only if there was a match will we remove the button
     if (it != m_button_map.end())
     {

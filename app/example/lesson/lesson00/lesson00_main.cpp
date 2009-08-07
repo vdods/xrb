@@ -17,7 +17,7 @@
 /** @page lesson00 Lesson 00 - Initializing And Shutting Down The Engine
 @code *//* @endcode
 This lesson will show you how to initialize the basic systems needed by
-XuqRijBuh -- initializing video mode and Singletons and shutting down.  If
+XuqRijBuh -- initializing video mode and Singleton and shutting down.  If
 you're reading the source file directly, instead of the doxygen-generated
 document, then pay no attention to the "code" and "endcode" tags in each
 comment.
@@ -68,7 +68,7 @@ void CleanUp ()
 
     // Shutdown the game engine singletons.  This is necessary for the
     // game engine to shutdown cleanly.
-    Singletons::Shutdown();
+    Singleton::Shutdown();
     // Make sure the application doesn't still have the mouse grabbed,
     // or you'll have a hard time pointy-clickying at stuff.
     SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -111,7 +111,7 @@ int main (int argc, char **argv)
             rendering facilities.  you shouldn't need to worry about it.</li>
         </ul>
     @code */
-    Singletons::Initialize("none");
+    Singleton::Initialize("none");
 
     /* @endcode
     Set the caption for the application's window.  Although documented as

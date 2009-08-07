@@ -289,7 +289,7 @@ bool Laser::Activate (
 
         Mortal *best_target = NULL;
         Sint32 best_target_priority = 0;
-        for (AreaTraceListIterator it = area_trace_list.begin(),
+        for (AreaTraceList::iterator it = area_trace_list.begin(),
                                    it_end = area_trace_list.end();
              it != it_end;
              ++it)
@@ -345,8 +345,8 @@ bool Laser::Activate (
                 false,
                 &line_trace_binding_set);
 
-            LineTraceBindingSetIterator it = line_trace_binding_set.begin();
-            LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
+            LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+            LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
             // don't damage the owner of this weapon or powerups
             while (it != it_end &&
                    (it->m_entity->IsPowerup() ||
@@ -401,8 +401,8 @@ bool Laser::Activate (
             false,
             &line_trace_binding_set);
 
-        LineTraceBindingSetIterator it = line_trace_binding_set.begin();
-        LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
+        LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+        LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
         // don't damage the owner of this weapon
         if (it != it_end && it->m_entity == OwnerShip())
             ++it;
@@ -580,8 +580,8 @@ bool GaussGun::Activate (
         false,
         &line_trace_binding_set);
 
-    LineTraceBindingSetIterator it = line_trace_binding_set.begin();
-    LineTraceBindingSetIterator it_end = line_trace_binding_set.end();
+    LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+    LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
 
     // decide how much damage to inflict total
     Float damage_left_to_inflict =
@@ -657,7 +657,7 @@ bool GaussGun::Activate (
 
 GrenadeLauncher::~GrenadeLauncher ()
 {
-    for (ActiveGrenadeSetIterator it = m_active_grenade_set.begin(),
+    for (ActiveGrenadeSet::iterator it = m_active_grenade_set.begin(),
                                   it_end = m_active_grenade_set.end();
          it != it_end;
          ++it)
@@ -675,8 +675,8 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
     ASSERT1(ActiveGrenadeCount() > 0);
 
     // delete the active grenade from the active grenade set
-    ActiveGrenadeSetIterator it = m_active_grenade_set.find(active_grenade);
-    ActiveGrenadeSetIterator it_end = m_active_grenade_set.end();
+    ActiveGrenadeSet::iterator it = m_active_grenade_set.find(active_grenade);
+    ActiveGrenadeSet::iterator it_end = m_active_grenade_set.end();
     ASSERT1(it != it_end);
     m_active_grenade_set.erase(it);
 
@@ -922,7 +922,7 @@ bool EMPCore::Activate (
 /*
 EMPBombLayer::~EMPBombLayer ()
 {
-    for (ActiveEMPBombSetIterator it = m_active_emp_bomb_set.begin(),
+    for (ActiveEMPBombSet::iterator it = m_active_emp_bomb_set.begin(),
                                   it_end = m_active_emp_bomb_set.end();
          it != it_end;
          ++it)
@@ -940,8 +940,8 @@ void EMPBombLayer::ActiveEMPBombDestroyed (EMPBomb *const active_emp_bomb)
     ASSERT1(ActiveEMPBombCount() > 0);
 
     // delete the active emp_bomb from the active emp_bomb set
-    ActiveEMPBombSetIterator it = m_active_emp_bomb_set.find(active_emp_bomb);
-    ActiveEMPBombSetIterator it_end = m_active_emp_bomb_set.end();
+    ActiveEMPBombSet::iterator it = m_active_emp_bomb_set.find(active_emp_bomb);
+    ActiveEMPBombSet::iterator it_end = m_active_emp_bomb_set.end();
     ASSERT1(it != it_end);
     m_active_emp_bomb_set.erase(it);
 
@@ -1111,7 +1111,7 @@ bool Tractor::Activate (
         &area_trace_list);
 
     Polynomial::SolutionSet solution_set;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)

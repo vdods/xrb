@@ -60,7 +60,7 @@ well enough, it was probably already explained in
 #include "xrb_button.hpp"     // For use of the Button widget class
 #include "xrb_event.hpp"      // For use of the Event classes
 #include "xrb_eventqueue.hpp" // For use of the EventQueue class
-#include "xrb_input.hpp"      // For use of the Input class (via Singletons::)
+#include "xrb_input.hpp"      // For use of the Input class (via Singleton::)
 #include "xrb_label.hpp"      // For use of the Label widget class
 #include "xrb_layout.hpp"     // For use of the Layout widget class
 #include "xrb_lineedit.hpp"   // For use of the LineEdit widget class
@@ -76,7 +76,7 @@ void CleanUp ()
 
     // Shutdown the game engine singletons.  This is necessary for the
     // game engine to shutdown cleanly.
-    Singletons::Shutdown();
+    Singleton::Shutdown();
     // Make sure the application doesn't still have the mouse grabbed,
     // or you'll have a hard time pointy-clickying at stuff.
     SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -97,7 +97,7 @@ int main (int argc, char **argv)
     }
 
     // Initialize the game engine singleton facilities.
-    Singletons::Initialize("none");
+    Singleton::Initialize("none");
 
     // Set the caption for the application's window.
     SDL_WM_SetCaption("XuqRijBuh Lesson 01", "");
@@ -345,7 +345,7 @@ int main (int argc, char **argv)
                 state of said user-input devices is updated.
                 @code */
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singletons::Input().ProcessEvent(event);
+                    Singleton::Input().ProcessEvent(event);
                 /* @endcode
                 All events are delegated to the proper widgets via the top of
                 the widget hierarchy (the Screen object).  Events must go

@@ -46,7 +46,7 @@ Engine2::World::~World ()
     delete m_physics_handler;
 
     // delete the ObjectLayers, which will delete the static objects directly.
-    for (ObjectLayerListIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::iterator it = m_object_layer_list.begin(),
                                  it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -110,7 +110,7 @@ void Engine2::World::DetachWorldView (WorldView *const world_view)
     ASSERT1(world_view != NULL);
     ASSERT1(world_view->GetWorld() == this);
     HandleDetachWorldView(world_view);
-    WorldViewListIterator it =
+    WorldViewList::iterator it =
         std::find(m_world_view_list.begin(), m_world_view_list.end(), world_view);
     ASSERT1(it != m_world_view_list.end());
     m_world_view_list.erase(it);
@@ -240,7 +240,7 @@ Engine2::World::World (
 Uint32 Engine2::World::MainObjectLayerIndex () const
 {
     Uint32 index = 0;
-    for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
                                       it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -258,7 +258,7 @@ Uint32 Engine2::World::MainObjectLayerIndex () const
 void Engine2::World::SetMainObjectLayerIndex (Uint32 const index)
 {
     Uint32 i = 0;
-    for (ObjectLayerListIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::iterator it = m_object_layer_list.begin(),
                                  it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -387,7 +387,7 @@ void Engine2::World::ReadDynamicObjectsBelongingToLayer (
 void Engine2::World::WriteObjectLayers (Serializer &serializer) const
 {
     serializer.WriteUint32(m_object_layer_list.size());
-    for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
                                       it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -407,7 +407,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
 
     // first we have to count how many there actually are
     Uint32 dynamic_object_count = 0;
-    for (EntityVectorConstIterator it = m_entity_vector.begin(),
+    for (EntityVector::const_iterator it = m_entity_vector.begin(),
                                    it_end = m_entity_vector.end();
          it != it_end;
          ++it)
@@ -430,7 +430,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
     if (dynamic_object_count == 0)
         return;
 
-    for (EntityVectorConstIterator it = m_entity_vector.begin(),
+    for (EntityVector::const_iterator it = m_entity_vector.begin(),
                                    it_end = m_entity_vector.end();
          it != it_end;
          ++it)

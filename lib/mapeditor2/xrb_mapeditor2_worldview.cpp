@@ -721,8 +721,8 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     }
 
     // draw the selection circle (if appropriate)
-    if (Singletons::Input().IsKeyPressed(Key::RIGHTMOUSE) &&
-        Singletons::Input().IsEitherShiftKeyPressed() &&
+    if (Singleton::Input().IsKeyPressed(Key::RIGHTMOUSE) &&
+        Singleton::Input().IsEitherShiftKeyPressed() &&
         m_rmouse_dragged &&
         m_editing_sub_mode == ESM_DEFAULT)
     {
@@ -742,7 +742,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
 
     // draw the polygon-creating circle/polygon (if appropriate)
     if (m_editing_sub_mode == ESM_DRAW_POLYGON &&
-        Singletons::Input().IsKeyPressed(Key::LEFTMOUSE) &&
+        Singleton::Input().IsKeyPressed(Key::LEFTMOUSE) &&
         m_lmouse_dragged)
     {
         ASSERT1(MainMapEditorObjectLayer()->SelectedObjectCount() == 0 ||
@@ -1429,7 +1429,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     bounding_circle_ray.Length(),
                     polygon_angle,
                     m_polygon_tesselation,
-                    Singletons::ResourceLibrary().
+                    Singleton::ResourceLibrary().
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             "resources/texture1.png"));
@@ -1450,7 +1450,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 bounding_circle_ray.Length(),
                 polygon_angle,
                 m_polygon_tesselation,
-                Singletons::ResourceLibrary().
+                Singleton::ResourceLibrary().
                     LoadFilename<GLTexture>(
                         GLTexture::Create,
                         "resources/texture1.png"));
@@ -1752,11 +1752,11 @@ void MapEditor2::WorldView::HandleFrame ()
             ParallaxedWorldViewToWorld() * FloatVector2(0.0, 1.0) - origin);
 
         Sint8 left_right_input =
-            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::RIGHT)) -
-            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::LEFT));
+            static_cast<Sint8>(Singleton::Input().IsKeyPressed(Key::RIGHT)) -
+            static_cast<Sint8>(Singleton::Input().IsKeyPressed(Key::LEFT));
         Sint8 up_down_input =
-            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::UP)) -
-            static_cast<Sint8>(Singletons::Input().IsKeyPressed(Key::DOWN));
+            static_cast<Sint8>(Singleton::Input().IsKeyPressed(Key::UP)) -
+            static_cast<Sint8>(Singleton::Input().IsKeyPressed(Key::DOWN));
 
         right *= (Float)left_right_input;
         up *= (Float)up_down_input;

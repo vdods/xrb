@@ -81,7 +81,7 @@ ScreenCoordRect Font::StringRect (LineFormatVector const &line_format_vector) co
     ASSERT1(!line_format_vector.empty());
 
     ScreenCoord width = 0;
-    for (Font::LineFormatVectorConstIterator it = line_format_vector.begin(),
+    for (Font::LineFormatVector::const_iterator it = line_format_vector.begin(),
                                              it_end = line_format_vector.end();
          it != it_end;
          ++it)
@@ -370,7 +370,7 @@ Font *AsciiFont::Create (
     ScreenCoord const pixel_height)
 {
     Resource<FontFace> font_face =
-        Singletons::ResourceLibrary().LoadFilename<FontFace>(
+        Singleton::ResourceLibrary().LoadFilename<FontFace>(
             FontFace::Create,
             font_face_filename);
     return Create(font_face, pixel_height);

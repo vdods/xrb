@@ -30,7 +30,7 @@ Input::Input ()
 Input::~Input ()
 {
     // shut down the key maps and delete the Key objects
-    for (KeyCodeMapIterator it = m_keycode_map.begin(),
+    for (KeyCodeMap::iterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
          it != it_end;
          ++it)
@@ -43,7 +43,7 @@ Input::~Input ()
 
 Key const *Input::GetKey (Key::Code const code) const
 {
-    KeyCodeMapConstIterator it = m_keycode_map.find(code);
+    KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
         return NULL;
     else
@@ -55,7 +55,7 @@ Key const *Input::GetKey (Key::Code const code) const
 
 Key const *Input::GetKey (std::string const &name) const
 {
-    KeyNameMapConstIterator it = m_keyname_map.find(name);
+    KeyNameMap::const_iterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
         return NULL;
     else
@@ -77,7 +77,7 @@ bool Input::IsValidKeyName (std::string const &name) const
 
 Key::Code Input::KeyCode (std::string const &name) const
 {
-    KeyNameMapConstIterator it = m_keyname_map.find(name);
+    KeyNameMap::const_iterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
         return Key::INVALID;
     else
@@ -89,7 +89,7 @@ Key::Code Input::KeyCode (std::string const &name) const
 
 std::string const &Input::KeyName (Key::Code const code) const
 {
-    KeyCodeMapConstIterator it = m_keycode_map.find(code);
+    KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
         return g_empty_string;
     else
@@ -152,7 +152,7 @@ SDLMod Input::Modifiers () const
 
 void Input::ResetPressed ()
 {
-    for (KeyCodeMapConstIterator it = m_keycode_map.begin(),
+    for (KeyCodeMap::const_iterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
          it != it_end;
          ++it)
@@ -197,7 +197,7 @@ bool Input::HandleEvent (Event const *const e)
             return false;
     }
 
-    KeyCodeMapConstIterator it = m_keycode_map.find(code);
+    KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it != m_keycode_map.end())
     {
         ASSERT1(it->second != NULL);
@@ -435,7 +435,7 @@ void Input::InitKeyMaps ()
     m_keycode_map[Key::UNDO] = Key::Create(Key::UNDO, "UNDO");
 
     // now create the name-key binding
-    for (KeyCodeMapConstIterator it = m_keycode_map.begin(),
+    for (KeyCodeMap::const_iterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
          it != it_end;
          ++it)

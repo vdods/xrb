@@ -452,7 +452,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     poly.Solve(&solution_set, 0.001f);
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                          it_end = solution_set.end();
          it != it_end;
          ++it)
@@ -555,7 +555,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         &area_trace_list);
 
     static Float const s_powerup_mass_threshold = 15.0f;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)

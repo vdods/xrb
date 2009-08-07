@@ -180,8 +180,9 @@ public:
 
     virtual void DetachAll () const
     {
-        for (AttachmentListIterator it = m_attachment_list.begin(),
-                                    it_end = m_attachment_list.end();
+        for (typename AttachmentList::iterator
+                it = m_attachment_list.begin(),
+                it_end = m_attachment_list.end();
              it != it_end;
              ++it)
         {
@@ -219,7 +220,7 @@ private:
         ReceiverAnalog const *real_receiver =
             static_cast<ReceiverAnalog const *>(receiver);
         // make sure that this receiver is not already in the attachment list.
-        AttachmentListIterator it =
+        typename AttachmentList::iterator it =
             std::find(
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
@@ -247,7 +248,7 @@ private:
         ReceiverAnalog const *real_receiver =
             static_cast<ReceiverAnalog const *>(receiver);
         // find which attachment matches the given receiver.
-        AttachmentListIterator it =
+        typename AttachmentList::iterator it =
             std::find(
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
@@ -261,10 +262,9 @@ private:
     }
 
     typedef std::list<Attachment<ReceiverAnalog, TransformationSet> > AttachmentList;
-    typedef typename AttachmentList::iterator AttachmentListIterator;
 
-    mutable AttachmentListIterator m_iterator;
-    mutable AttachmentListIterator m_iterator_end;
+    mutable typename AttachmentList::iterator m_iterator;
+    mutable typename AttachmentList::iterator m_iterator_end;
     mutable AttachmentList m_attachment_list;
 
     template <typename SenderAnalog> friend class SignalReceiver;
@@ -559,8 +559,9 @@ public:
 
     virtual void DetachAll () const
     {
-        for (AttachmentListIterator it = m_attachment_list.begin(),
-                                    it_end = m_attachment_list.end();
+        for (typename AttachmentList::iterator
+                it = m_attachment_list.begin(),
+                it_end = m_attachment_list.end();
              it != it_end;
              ++it)
         {
@@ -590,7 +591,7 @@ private:
         SenderAnalog const *real_sender =
             static_cast<SenderAnalog const *>(sender);
         // make sure that this sender is not already in the attachment list
-        AttachmentListIterator it =
+        typename AttachmentList::iterator it =
             std::find(
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
@@ -611,7 +612,7 @@ private:
         SenderAnalog const *real_sender =
             static_cast<SenderAnalog const *>(sender);
         // find which attachment matches the given sender.
-        AttachmentListIterator it =
+        typename AttachmentList::iterator it =
             std::find(
                 m_attachment_list.begin(),
                 m_attachment_list.end(),
@@ -625,7 +626,6 @@ private:
     }
 
     typedef std::list<SenderAnalog const *> AttachmentList;
-    typedef typename AttachmentList::iterator AttachmentListIterator;
 
     mutable AttachmentList m_attachment_list;
 
@@ -897,16 +897,12 @@ private:
       * @brief A typedef for a list to store added SignalSender*s.
       */
     typedef std::list<SignalSenderBase const *> SignalSenderList;
-    /// Iterator typedef for @c SignalSenderList.
-    typedef SignalSenderList::iterator SignalSenderListIterator;
 
     /** A list of all added SignalReceiver*s is kept so that a call to
       * DetachAll() will work as expected.
       * @brief A typedef for a list to store added SignalReceiver*s.
       */
     typedef std::list<SignalReceiverBase const *> SignalReceiverList;
-    /// Iterator typedef for @c SignalReceiverList.
-    typedef SignalReceiverList::iterator SignalReceiverListIterator;
 
     /** @brief Indicates if all SignalSender*s owned by this SignalHandler are
       *        blocked from signalling.

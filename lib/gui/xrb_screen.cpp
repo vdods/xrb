@@ -257,7 +257,7 @@ bool Screen::HandleEvent (Event const *const e)
 
         // get the top of the modal widget stack
         Widget *modal_widget = NULL;
-        for (ContainerWidget::WidgetListReverseIterator
+        for (ContainerWidget::WidgetList::reverse_iterator
                  it = m_modal_widget_stack.rbegin(),
                  it_end = m_modal_widget_stack.rend();
              it != it_end;

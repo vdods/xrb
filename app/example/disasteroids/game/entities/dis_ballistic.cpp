@@ -55,7 +55,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     &line_trace_binding_set);
 
                 FloatVector2 collision_normal(trace_vector.Normalization());
-                for (LineTraceBindingSetIterator it = line_trace_binding_set.begin(),
+                for (LineTraceBindingSet::iterator it = line_trace_binding_set.begin(),
                                                  it_end = line_trace_binding_set.end();
                      it != it_end;
                      ++it)

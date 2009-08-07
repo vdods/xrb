@@ -175,8 +175,6 @@ protected:
     }
 
     typedef std::set<Object *> ObjectSet;
-    typedef ObjectSet::iterator ObjectSetIterator;
-    typedef ObjectSet::const_iterator ObjectSetConstIterator;
 
     // list of objects for this node
     ObjectSet m_object_set;

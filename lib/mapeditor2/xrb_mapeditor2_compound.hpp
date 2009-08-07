@@ -193,12 +193,7 @@ namespace MapEditor2
             bool use_unwelding_behavior);
     
         typedef std::list<Instance<CompoundVertex> *> VertexList;
-        typedef VertexList::iterator VertexListIterator;
-        typedef VertexList::const_iterator VertexListConstIterator;
-    
         typedef std::list<Polygon *> PolygonList;
-        typedef PolygonList::iterator PolygonListIterator;
-        typedef PolygonList::const_iterator PolygonListConstIterator;
 
         VertexList m_vertex_list;
         PolygonList m_polygon_list;

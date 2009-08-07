@@ -33,7 +33,7 @@ EventQueue::~EventQueue ()
     EnqueueBufferedEvents();
 
     // delete all unprocessed events
-    for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
@@ -73,7 +73,7 @@ void EventQueue::DeleteEventsBelongingToHandler (
 {
     ASSERT1(event_handler != NULL);
 
-    for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
@@ -88,7 +88,7 @@ void EventQueue::ScheduleMatchingEventsForDeletion (
     bool (*EventMatchingFunction)(Event const *))
 {
     // check all enqueued events against the given event-matching function.
-    for (TimeOrderedEventBindingSetIterator it = m_time_ordered_event_queue.begin(),
+    for (TimeOrderedEventBindingSet::iterator it = m_time_ordered_event_queue.begin(),
                                             it_end = m_time_ordered_event_queue.end();
          it != it_end;
          ++it)
@@ -116,13 +116,13 @@ void EventQueue::HandleFrame ()
     // get the range of events to be processed, and loop through,
     // processing them and scheduling each for deletion
     {
-        TimeOrderedEventBindingSetIterator it_begin =
+        TimeOrderedEventBindingSet::iterator it_begin =
             m_time_ordered_event_queue.begin();
-        TimeOrderedEventBindingSetIterator it_end =
+        TimeOrderedEventBindingSet::iterator it_end =
             m_time_ordered_event_queue.upper_bound(binding_limit);
 
         // process each event and schedule it for deletion.
-        for (TimeOrderedEventBindingSetIterator it = it_begin;
+        for (TimeOrderedEventBindingSet::iterator it = it_begin;
              it != it_end;
              ++it)
         {
@@ -143,7 +143,7 @@ void EventQueue::HandleFrame ()
         // for-loop, otherwise calls to ScheduleMatchingEventsForDeletion
         // during processing of each event will potentially make invalid reads
         // to the deleted events.
-        for (TimeOrderedEventBindingSetIterator it = it_begin;
+        for (TimeOrderedEventBindingSet::iterator it = it_begin;
              it != it_end;
              ++it)
         {
@@ -180,7 +180,7 @@ void EventQueue::CompactEventIDs ()
         // events in order and the queue's ordering won't change.  set
         // the current ID to zero and start assigning
         m_current_event_id = 0;
-        for (TimeOrderedEventBindingSetIterator
+        for (TimeOrderedEventBindingSet::iterator
              it = m_time_ordered_event_queue.begin(),
              it_end = m_time_ordered_event_queue.end();
              it != it_end;

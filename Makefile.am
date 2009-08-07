@@ -142,7 +142,6 @@ lib_libxrb_la_SOURCES = \
     lib/parsers/xrb_arithmeticscanner.cpp \
     \
     lib/primitive/xrb_color.cpp \
-    lib/primitive/xrb_gltexture.cpp \
     lib/primitive/xrb_ntuple.cpp \
     lib/primitive/xrb_rect.cpp \
     lib/primitive/xrb_texture.cpp \
@@ -152,6 +151,7 @@ lib_libxrb_la_SOURCES = \
     lib/render/xrb_font.cpp \
     lib/render/xrb_fontface.cpp \
     lib/render/xrb_gl.cpp \
+    lib/render/xrb_gltexture.cpp \
     lib/render/xrb_render.cpp \
     lib/render/xrb_rendercontext.cpp \
     \
@@ -162,7 +162,7 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_resourcelibrary.cpp \
     lib/system/xrb_serializer.cpp \
     lib/system/xrb_signalhandler.cpp \
-    lib/system/xrb_singletons.cpp \
+    lib/system/xrb_singleton.cpp \
     \
     lib/system/serializers/xrb_binaryfileserializer.cpp \
     \
@@ -287,7 +287,6 @@ include_HEADERS = \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_circularqueue.tcpp \
     lib/primitive/xrb_color.hpp \
-    lib/primitive/xrb_gltexture.hpp \
     lib/primitive/xrb_ntuple.hpp \
     lib/primitive/xrb_rect.hpp \
     lib/primitive/xrb_texture.hpp \
@@ -297,6 +296,7 @@ include_HEADERS = \
     lib/render/xrb_font.hpp \
     lib/render/xrb_fontface.hpp \
     lib/render/xrb_gl.hpp \
+    lib/render/xrb_gltexture.hpp \
     lib/render/xrb_render.hpp \
     lib/render/xrb_rendercontext.hpp \
     \
@@ -311,7 +311,7 @@ include_HEADERS = \
     lib/system/xrb_serializer.hpp \
     lib/system/xrb_serializer.tcpp \
     lib/system/xrb_signalhandler.hpp \
-    lib/system/xrb_singletons.hpp \
+    lib/system/xrb_singleton.hpp \
     lib/system/xrb_statemachine.hpp \
     lib/system/xrb_statemachine.tcpp \
     \

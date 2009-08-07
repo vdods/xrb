@@ -104,7 +104,7 @@ int main (int argc, char **argv)
 
     return 0;
 /*
-    Singletons::Initialize();
+    Singleton::Initialize();
 
     // initialize video (no parachute so we get core dumps)
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -162,7 +162,7 @@ int main (int argc, char **argv)
 
                 // make sure to process key events through the key binds first
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singletons::Input().ProcessEvent(event);
+                    Singleton::Input().ProcessEvent(event);
 
                 // also let the key repeater have a crack at it.
                 key_repeater.ProcessEvent(event);
@@ -217,7 +217,7 @@ int main (int argc, char **argv)
 
     Delete(screen);
 
-    Singletons::Shutdown();
+    Singleton::Shutdown();
 
     // return with no error condition
     exit(0);

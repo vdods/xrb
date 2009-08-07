@@ -25,7 +25,7 @@ Dis::Config g_config;
 // cleans up the singletons and shuts down SDL.
 void CleanUp ()
 {
-    Singletons::Shutdown();
+    Singleton::Shutdown();
     // make sure input isn't grabbed
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     // call SDL's cleanup func
@@ -60,7 +60,7 @@ int main (int argc, char **argv)
             return 2;
         }
 
-        Singletons::Initialize(options.KeyMapName().c_str());
+        Singleton::Initialize(options.KeyMapName().c_str());
 
         // register on-exit function. SDL_Quit takes care of deleting the
         // screen.  the function registered with atexit will be called

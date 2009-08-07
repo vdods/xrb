@@ -289,7 +289,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     bool main_object_layer_has_been_drawn = false;
     FloatMatrix2 parallaxed_world_to_screen;
     // iterate through and draw all object layers from back to front
-    for (World::ObjectLayerListIterator
+    for (World::ObjectLayerList::iterator
              it = GetWorld()->GetObjectLayerList().begin(),
              it_end = GetWorld()->GetObjectLayerList().end();
          it != it_end;

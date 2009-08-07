@@ -38,7 +38,7 @@ FontFace *FontFace::Create (std::string const &filename)
     FT_FaceRec_ *face;
 
     error = FT_New_Face(
-        Singletons::FTLibrary(),
+        Singleton::FTLibrary(),
         filename.c_str(),
         0,
         &face);

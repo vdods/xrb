@@ -25,7 +25,7 @@ ResourceLibrary::~ResourceLibrary ()
 {
     if (!m_instance_map.empty())
     {
-        for (InstanceMapIterator it = m_instance_map.begin(),
+        for (InstanceMap::iterator it = m_instance_map.begin(),
                                  it_end = m_instance_map.end();
              it != it_end;
              ++it)
@@ -42,7 +42,7 @@ ResourceLibrary::~ResourceLibrary ()
 void ResourceLibrary::UnmapKey (
     ResourceLibrary::ResourceInstanceKey const &key)
 {
-    InstanceMapIterator it = m_instance_map.find(key);
+    InstanceMap::iterator it = m_instance_map.find(key);
     ASSERT1(it != m_instance_map.end());
     ASSERT1(it->second != NULL);
     m_instance_map.erase(it);

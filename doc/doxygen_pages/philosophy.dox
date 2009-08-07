@@ -846,7 +846,7 @@ humans can only comprehend a limited amount of conceptual information at
 any given time.  Limiting the expanse of parallel concepts will simplify
 understanding of the program's systems.  In other words, simple is better.
 
-@section philosophy_reentrancy_and_singletons Reentrancy And Singletons
+@section philosophy_reentrancy_and_singletons Reentrancy And Singleton
 Using global variables for non-singleton type values is the perfect way to
 write non-reentrant code.  The perfect example is in a single-player game,
 keeping a global pointer to the "player" object -- call it <tt>g_player</tt>.
@@ -864,7 +864,7 @@ it.
 
 In my awesome opinion, there are only two reasons to ever use global variables.
 
-<strong>Singleton objects such as device-accessing facilities (see Xrb::Singletons)</strong>
+<strong>Singleton objects such as device-accessing facilities (see Xrb::Singleton)</strong>
 
 Some variables and objects only make sense to be global singletons.  Things
 such as the keyboard state, the current video settings, a global resource

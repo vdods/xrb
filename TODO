@@ -14,8 +14,6 @@ MAJOR TASKS:
 / comment/document the code with doxygen
 - exceptions for user errors
 / x/y independent scaling (the physics portion of that is tough)
-/ bracket indenting style and 80-column conformance.  change
-  long function parameter lists to be vertical.
 / document the behavior of Widget, Layout, the Rendering stack,
   and all the other complicated systems.
 - UI demonstration - every UI feature demonstrated in a series
@@ -121,17 +119,12 @@ DISASTEROIDS:
 TODO:
 - get rid of widget min/max size enabled flags, and just use the 
   sizes (no min size = 0, no max size = (uint)-1)
-- get rid of all "enabled" stuff in SizeProperties
-- rename "color mask" to "mask color"
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
-- move GLTexture into render
-- rename Singletons into Singleton and xrb_singletons.* to xrb_singleton.*
 - ASSERT0 should probably change into Abort() call or something, to indicate
   that it's always compiled in.
-- stop using typedef'd iterators, just use ::iterator and ::const_iterator
 - create consistent way to set z depth for non-transparent stuff so they're
   actually unique z depth values for each object.  maybe encode some sort
-  of index into the least significant bits of the depth Float.
+  of unique index into the least significant bits of the depth Float.
 - have the application automatically change current working directory to
   the path of the executable (argv[0]).
 - change Engine2::Compound to Engine2::Model ?

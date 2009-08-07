@@ -459,21 +459,21 @@ void WorldView::ProcessPlayerInput ()
     if (ParentWorldViewWidget()->IsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
+            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
-            (Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
+            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
+            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
+            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
+            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singletons::Input().IsKeyPressed(g_config.InputAction(INPUT__USE_TRACTOR));
+            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

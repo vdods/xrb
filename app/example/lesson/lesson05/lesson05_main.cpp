@@ -127,7 +127,7 @@ well enough, it was probably already explained in
 #include "xrb_engine2_worldviewwidget.hpp" // For use of the Engine2::WorldViewWidget class.
 #include "xrb_event.hpp"                   // For use of the Event classes.
 #include "xrb_eventqueue.hpp"              // For use of the EventQueue class.
-#include "xrb_input.hpp"                   // For use of the Input class (via Singletons::).
+#include "xrb_input.hpp"                   // For use of the Input class (via Singleton::).
 #include "xrb_input_events.hpp"            // For use of the EventMouseWheel class.
 #include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
 #include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
@@ -510,7 +510,7 @@ void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
     // shutdown engine singletons, ungrab the mouse, and shutdown SDL.
-    Singletons::Shutdown();
+    Singleton::Shutdown();
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     SDL_Quit();
 }
@@ -527,7 +527,7 @@ int main (int argc, char **argv)
     }
 
     // Initialize engine singletons, set window caption and create the Screen.
-    Singletons::Initialize("none");
+    Singleton::Initialize("none");
     SDL_WM_SetCaption("XuqRijBuh Lesson 05", "");
     Screen *screen = Screen::Create(800, 600, 32, 0);
     // If the Screen failed to initialize, print an error message and quit.
@@ -580,7 +580,7 @@ int main (int argc, char **argv)
                     continue;
                 // Let the Input singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singletons::Input().ProcessEvent(event);
+                    Singleton::Input().ProcessEvent(event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
                 screen->ProcessEvent(event);
                 Delete(event);

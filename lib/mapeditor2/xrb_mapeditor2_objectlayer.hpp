@@ -362,13 +362,8 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////////
     
         typedef std::set<Object *> ObjectSet;
-        typedef ObjectSet::iterator ObjectSetIterator;
-
         typedef std::set<CompoundVertex *> VertexSet;
-        typedef VertexSet::iterator VertexSetIterator;
-
         typedef std::set<Polygon *> PolygonSet;
-        typedef PolygonSet::iterator PolygonSetIterator;
             
         // the set of selection objects
         ObjectSet m_object_selection_set;    

@@ -38,7 +38,7 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>@ref philosophy_making_the_compiler_force_correctness "Making The Compiler Force Correctness"</li>
     <li>@ref philosophy_programming_language_as_syntactic_sugarcoating "Programming Language As Syntactic Sugarcoating"</li>
     <li>@ref philosophy_code_reuse_and_abstraction "Code Reuse And Abstraction"</li>
-    <li>@ref philosophy_reentrancy_and_singletons "Reentrancy And Singletons"</li>
+    <li>@ref philosophy_reentrancy_and_singletons "Reentrancy And Singleton"</li>
     </ul>
 <li>@ref conventions "Programming Conventions"</li>
     <ul>

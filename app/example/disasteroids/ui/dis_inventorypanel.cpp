@@ -127,7 +127,7 @@ InventoryPanel::InventoryPanel (
 
         m_mineral_icon_label[mineral_index] =
             new Label(
-                Singletons::ResourceLibrary().
+                Singleton::ResourceLibrary().
                     LoadFilename<GLTexture>(
                         GLTexture::Create,
                         Item::MineralSpriteFilename(mineral_index)),

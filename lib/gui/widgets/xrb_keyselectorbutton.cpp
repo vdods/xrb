@@ -25,7 +25,7 @@ KeySelectorButton::KeySelectorButton (
     ContainerWidget *const parent,
     std::string const &name)
     :
-    Button(Singletons::Input().KeyName(key_code), parent, name),
+    Button(Singleton::Input().KeyName(key_code), parent, name),
     m_input_action_name(input_action_name),
     m_internal_receiver_dialog_returned(&KeySelectorButton::DialogReturned, this)
 {
@@ -35,11 +35,11 @@ KeySelectorButton::KeySelectorButton (
 
 void KeySelectorButton::SetKeyCode (Key::Code const key_code)
 {
-    if (Singletons::Input().IsValidKeyCode(key_code))
+    if (Singleton::Input().IsValidKeyCode(key_code))
         m_key_code = key_code;
     else
         m_key_code = Key::INVALID;
-    SetText(Singletons::Input().KeyName(m_key_code));
+    SetText(Singleton::Input().KeyName(m_key_code));
 }
 
 void KeySelectorButton::HandleReleased ()
@@ -90,7 +90,7 @@ KeySelectorButton::KeySelectorDialog::KeySelectorDialog (
 bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().IsValidKeyCode(e->KeyCode()));
+    ASSERT1(Singleton::Input().IsValidKeyCode(e->KeyCode()));
     m_key_code = e->KeyCode();
     OKButtonActivated();
     return true;
@@ -99,7 +99,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessKeyEvent (EventKey const *cons
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().IsValidKeyCode(e->ButtonCode()));
+    ASSERT1(Singleton::Input().IsValidKeyCode(e->ButtonCode()));
     m_key_code = e->ButtonCode();
     OKButtonActivated();
     return true;
@@ -108,7 +108,7 @@ bool KeySelectorButton::KeySelectorDialog::ProcessMouseButtonEvent (EventMouseBu
 bool KeySelectorButton::KeySelectorDialog::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     ASSERT1(e != NULL);
-    ASSERT1(Singletons::Input().IsValidKeyCode(e->ButtonCode()));
+    ASSERT1(Singleton::Input().IsValidKeyCode(e->ButtonCode()));
     m_key_code = e->ButtonCode();
     OKButtonActivated();
     return true;

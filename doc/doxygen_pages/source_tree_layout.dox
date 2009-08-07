@@ -182,7 +182,7 @@ Contents
     <li>@ref Xrb::SignalReceiver1 </li>
     <li>@ref Xrb::SignalReceiver2 </li>
     <li>@ref Xrb::SignalHandler </li>
-    <li>@ref Xrb::Singletons </li>
+    <li>@ref Xrb::Singleton </li>
     </ul>
 
 @section section_lib_core_serializers /lib/core/serializers/

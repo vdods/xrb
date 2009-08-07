@@ -60,9 +60,6 @@ public:
     };
 
     typedef std::list<ObjectLayer *> ObjectLayerList;
-    typedef ObjectLayerList::iterator ObjectLayerListIterator;
-    typedef ObjectLayerList::const_iterator ObjectLayerListConstIterator;
-    typedef ObjectLayerList::reverse_iterator ObjectLayerListReverseIterator;
 
     virtual ~World ();
 
@@ -146,7 +143,6 @@ protected:
         CreateEntityFunction CreateEntity);
 
     typedef std::list<WorldView *> WorldViewList;
-    typedef WorldViewList::iterator WorldViewListIterator;
 
     // list of WorldViews
     WorldViewList m_world_view_list;
@@ -167,8 +163,6 @@ private:
         ObjectLayer const *object_layer) const;
 
     typedef std::vector<Entity *> EntityVector;
-    typedef EntityVector::iterator EntityVectorIterator;
-    typedef EntityVector::const_iterator EntityVectorConstIterator;
 
     // array of dynamic objects (Object with attached Entity)
     EntityVector m_entity_vector;

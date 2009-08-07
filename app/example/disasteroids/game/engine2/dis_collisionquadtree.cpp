@@ -51,7 +51,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
         return false;
 
     // check if the area overlaps any object in this node's list.
-    for (ObjectSetConstIterator it = m_object_set.begin(),
+    for (ObjectSet::const_iterator it = m_object_set.begin(),
                                 it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -119,7 +119,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
         return false;
 
     // check if the area overlaps any object in this node's list.
-    for (ObjectSetConstIterator it = m_object_set.begin(),
+    for (ObjectSet::const_iterator it = m_object_set.begin(),
                                 it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -217,7 +217,7 @@ void CollisionQuadTree::LineTrace (
     }
 
     // check the line against the objects in this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -313,7 +313,7 @@ void CollisionQuadTree::LineTraceWrapped (
     }
 
     // check the line against the objects in this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -407,7 +407,7 @@ void CollisionQuadTree::AreaTrace (
                 area_trace_list);
 
     // check the line against the objects in this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -470,7 +470,7 @@ void CollisionQuadTree::AreaTraceWrapped (
                 half_object_layer_side_length);
 
     // check the line against the objects in this node
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)
@@ -547,7 +547,7 @@ void CollisionQuadTree::CollideEntity (
     }
 
     // check if the entity overlaps any object in this node's list.
-    for (ObjectSetIterator it = m_object_set.begin(),
+    for (ObjectSet::iterator it = m_object_set.begin(),
                            it_end = m_object_set.end();
          it != it_end;
          ++it)

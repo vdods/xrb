@@ -64,15 +64,8 @@ private:
 
     // mapping Key::Code to Key objects, so SDL_Event codes can access
     typedef std::map<Key::Code, Key *> KeyCodeMap;
-    typedef KeyCodeMap::iterator KeyCodeMapIterator;
-    typedef KeyCodeMap::const_iterator KeyCodeMapConstIterator;
-
     // mapping std::string names to Key objects, so there is human-readable access
     typedef std::map<std::string, Key *> KeyNameMap;
-    typedef KeyNameMap::iterator KeyNameMapIterator;
-    typedef KeyNameMap::const_iterator KeyNameMapConstIterator;
-
-    mutable
 
     /** Stores the command-bind for each, each entry mapped to an Key::Code.
       * @brief The keycode-to-key map.

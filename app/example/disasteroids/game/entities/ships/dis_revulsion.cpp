@@ -175,7 +175,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     // check the area trace list for targets and collisions
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;
-    for (AreaTraceListIterator it = area_trace_list.begin(),
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
                                it_end = area_trace_list.end();
          it != it_end;
          ++it)
@@ -294,7 +294,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     poly.Solve(&solution_set, 0.001f);
 
     Float T = -1.0f;
-    for (Polynomial::SolutionSetIterator it = solution_set.begin(),
+    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
                                          it_end = solution_set.end();
          it != it_end;
          ++it)

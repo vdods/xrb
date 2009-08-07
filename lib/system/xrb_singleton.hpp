@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_singletons.hpp by Victor Dods, created 2005/02/10
+// xrb_singleton.hpp by Victor Dods, created 2005/02/10
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_SINGLETONS_HPP_)
-#define _XRB_SINGLETONS_HPP_
+#if !defined(_XRB_SINGLETON_HPP_)
+#define _XRB_SINGLETON_HPP_
 
 // this header is included by xrb.h
 
@@ -32,7 +32,7 @@ class ResourceLibrary;
   * then be accessed via calls to the respective accessor functions.
   * @brief Controls the singleton objects which can be thought of as devices.
   */
-namespace Singletons
+namespace Singleton
 {
     /** @brief Returns a reference to the Input singleton object.
       */
@@ -68,9 +68,9 @@ namespace Singletons
       * @brief Shuts down the singleton objects.
       */
     void Shutdown ();
-} // end of namespace Singletons
+} // end of namespace Singleton
 
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_SINGLETONS_HPP_)
+#endif // !defined(_XRB_SINGLETON_HPP_)
 

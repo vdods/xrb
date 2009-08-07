@@ -53,10 +53,10 @@ MapEditor2::World *MapEditor2::World::CreateEmpty (Uint32 const entity_capacity)
 
 void MapEditor2::World::IncrementMainObjectLayer ()
 {
-    ObjectLayerListIterator it =
-        ObjectLayerIterator(
+    ObjectLayerList::iterator it =
+        ObjectLayer::iterator(
             DStaticCast<ObjectLayer *>(m_main_object_layer));
-    ObjectLayerListIterator it_end = m_object_layer_list.end();
+    ObjectLayerList::iterator it_end = m_object_layer_list.end();
 
     ASSERT1(it != it_end);
 
@@ -70,10 +70,10 @@ void MapEditor2::World::IncrementMainObjectLayer ()
 
 void MapEditor2::World::DecrementMainObjectLayer ()
 {
-    ObjectLayerListIterator it =
-        ObjectLayerIterator(
+    ObjectLayerList::iterator it =
+        ObjectLayer::iterator(
             DStaticCast<ObjectLayer *>(m_main_object_layer));
-    ObjectLayerListIterator it_end = m_object_layer_list.end();
+    ObjectLayerList::iterator it_end = m_object_layer_list.end();
 
     ASSERT1(it != it_end);
 
@@ -114,7 +114,7 @@ MapEditor2::World::World (Uint32 const entity_capacity)
 Uint32 MapEditor2::World::MainObjectLayerIndex () const
 {
     Uint32 index = 0;
-    for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
                                       it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -135,7 +135,7 @@ Uint32 MapEditor2::World::MainObjectLayerIndex () const
 void MapEditor2::World::SetMainObjectLayerIndex (Uint32 const index)
 {
     Uint32 i = 0;
-    for (ObjectLayerListConstIterator it = m_object_layer_list.begin(),
+    for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
                                       it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
@@ -194,11 +194,11 @@ void MapEditor2::World::ReadEntitiesBelongingToLayer (
     }
 }
 
-Engine2::World::ObjectLayerListIterator MapEditor2::World::ObjectLayerIterator (
+Engine2::World::ObjectLayerList::iterator MapEditor2::World::ObjectLayer::iterator (
     MapEditor2::ObjectLayer *object_layer)
 {
-    ObjectLayerListIterator it;
-    ObjectLayerListIterator it_end;
+    ObjectLayerList::iterator it;
+    ObjectLayerList::iterator it_end;
     for (it = m_object_layer_list.begin(),
          it_end = m_object_layer_list.end();
          it != it_end;

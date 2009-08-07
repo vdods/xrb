@@ -48,7 +48,6 @@ public:
     }; // end of struct Font::LineFormat
 
     typedef std::vector<LineFormat> LineFormatVector;
-    typedef LineFormatVector::const_iterator LineFormatVectorConstIterator;
 
     virtual ~Font () { }
 

@@ -76,7 +76,6 @@ protected:
 private:
 
     typedef std::set<Entity *> EntitySet;
-    typedef EntitySet::iterator EntitySetIterator;
 
     void UpdateVelocities ();
     void UpdatePositions ();

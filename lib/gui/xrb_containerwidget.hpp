@@ -401,9 +401,6 @@ protected:
         StackPriority previous_stack_priority);
 
     typedef std::vector<Widget *> WidgetVector;
-    typedef WidgetVector::iterator WidgetVectorIterator;
-    typedef WidgetVector::const_iterator WidgetVectorConstIterator;
-    typedef WidgetVector::reverse_iterator WidgetVectorReverseIterator;
 
     /** Stored in back-to-front drawing order (back-most having index 0).
       * @brief Ordered container of child widgets.
@@ -430,14 +427,11 @@ protected:
 private:
 
     typedef std::list<Widget *> WidgetList;
-    typedef WidgetList::iterator WidgetListIterator;
-    typedef WidgetList::const_iterator WidgetListConstIterator;
-    typedef WidgetList::reverse_iterator WidgetListReverseIterator;
 
-    /** @brief Returns a WidgetVectorIterator which matches the given
+    /** @brief Returns a WidgetVector::iterator which matches the given
       *        child in m_child_vector.
       */
-    WidgetVectorIterator FindChildWidget (Widget const *child);
+    WidgetVector::iterator FindChildWidget (Widget const *child);
     /** @brief Performs some necessary event processing on key
       *        events before the key event handler gets them.
       */

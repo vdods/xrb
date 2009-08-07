@@ -136,7 +136,7 @@ void Master::Run ()
 
             // make sure to process key events through the key binds first
             if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                Singletons::Input().ProcessEvent(event);
+                Singleton::Input().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
             m_key_repeater.ProcessEvent(event);

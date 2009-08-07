@@ -190,7 +190,7 @@ GameWidget::GameWidget (
 
             Label *lives_remaining_icon_label =
                 new Label(
-                    Singletons::ResourceLibrary().
+                    Singleton::ResourceLibrary().
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             "resources/solitary_small.png"),
@@ -212,7 +212,7 @@ GameWidget::GameWidget (
 
             Label *mineral_icon_label =
                 new Label(
-                    Singletons::ResourceLibrary().
+                    Singleton::ResourceLibrary().
                         LoadFilename<GLTexture>(
                             GLTexture::Create,
                             Item::MineralSpriteFilename(mineral_index)),

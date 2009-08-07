@@ -630,8 +630,6 @@ private:
     static bool DoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
 
     typedef std::vector<DataFileValue *> ElementVector;
-    typedef ElementVector::iterator ElementVectorIterator;
-    typedef ElementVector::const_iterator ElementVectorConstIterator;
 
     ElementVector m_element_vector;
 }; // end of class DataFileArray
@@ -676,8 +674,6 @@ private:
     static bool IsValidKey (std::string const &key);
 
     typedef std::map<std::string, DataFileKeyPair *> MemberMap;
-    typedef MemberMap::iterator MemberMapIterator;
-    typedef MemberMap::const_iterator MemberMapConstIterator;
 
     MemberMap m_member_map;
 }; // end of class DataFileStructure

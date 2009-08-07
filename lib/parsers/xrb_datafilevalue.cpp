@@ -394,7 +394,7 @@ void DataFileKeyPair::SetSubpathElement (
 
 DataFileArray::~DataFileArray ()
 {
-    for (ElementVectorIterator it = m_element_vector.begin(),
+    for (ElementVector::iterator it = m_element_vector.begin(),
                                it_end = m_element_vector.end();
          it != it_end;
          ++it)
@@ -407,7 +407,7 @@ DataFileArray::~DataFileArray ()
 
 bool DataFileArray::ShouldBeFormattedInline () const
 {
-    ElementVectorConstIterator it = m_element_vector.begin();
+    ElementVector::const_iterator it = m_element_vector.begin();
     // arrays with elements that aren't arrays or structures
     // should not be inlined
     if (it != m_element_vector.end())
@@ -452,7 +452,7 @@ void DataFileArray::AppendValue (DataFileValue *const value)
 
     // make sure that the value being appended is the same type
     // as the first value in the array, or the array is empty.
-    ElementVectorIterator it = m_element_vector.begin();
+    ElementVector::iterator it = m_element_vector.begin();
     if (it != m_element_vector.end())
     {
         DataFileValue const *first_element_value = *it;
@@ -485,8 +485,8 @@ void DataFileArray::Print (IndentFormatter &formatter) const
         formatter.Indent();
     }
 
-    ElementVectorConstIterator it_test;
-    for (ElementVectorConstIterator it = m_element_vector.begin(),
+    ElementVector::const_iterator it_test;
+    for (ElementVector::const_iterator it = m_element_vector.begin(),
                                   it_end = m_element_vector.end();
          it != it_end;
          ++it)
@@ -810,7 +810,7 @@ bool DataFileArray::DoesMatchDimensionAndType (
 
 DataFileStructure::~DataFileStructure ()
 {
-    for (MemberMapIterator it = m_member_map.begin(),
+    for (MemberMap::iterator it = m_member_map.begin(),
                            it_end = m_member_map.end();
          it != it_end;
          ++it)
@@ -824,7 +824,7 @@ DataFileStructure::~DataFileStructure ()
 DataFileValue const *DataFileStructure::Value (std::string const &key) const
 {
     ASSERT1(key.length() > 0);
-    MemberMapConstIterator it = m_member_map.find(key);
+    MemberMap::const_iterator it = m_member_map.find(key);
     if (it == m_member_map.end())
         return NULL;
     else
@@ -862,7 +862,7 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
 
 void DataFileStructure::Print (IndentFormatter &formatter) const
 {
-    for (MemberMapConstIterator it = m_member_map.begin(),
+    for (MemberMap::const_iterator it = m_member_map.begin(),
                                 it_end = m_member_map.end();
          it != it_end;
          ++it)
@@ -878,7 +878,7 @@ void DataFileStructure::PrintAST (IndentFormatter &formatter) const
 {
     formatter.EndLine("DAT_STRUCTURE - %u element(s)", m_member_map.size());
     formatter.Indent();
-    for (MemberMapConstIterator it = m_member_map.begin(),
+    for (MemberMap::const_iterator it = m_member_map.begin(),
                                 it_end = m_member_map.end();
          it != it_end;
          ++it)
@@ -907,7 +907,7 @@ DataFileValue const *DataFileStructure::SubpathElement (
     ++start;
     Uint32 key_delim = Min(path.length(), path.find_first_of("|", start));
     std::string key(path.substr(start, key_delim-start));
-    MemberMapConstIterator it = m_member_map.find(key);
+    MemberMap::const_iterator it = m_member_map.find(key);
     if (it == m_member_map.end())
         THROW_STRING("unmatched element \"" << key << "\"")
     else
@@ -941,7 +941,7 @@ void DataFileStructure::SetSubpathElement (
     if (!IsValidKey(key))
         THROW_STRING("invalid key \"" << key << "\"")
 
-    MemberMapConstIterator it = m_member_map.find(key);
+    MemberMap::const_iterator it = m_member_map.find(key);
     if (it == m_member_map.end())
     {
         DataFileKeyPair *key_pair = new DataFileKeyPair(key, NULL);

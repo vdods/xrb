@@ -104,7 +104,7 @@ MapEditor2::Object *MapEditor2::ObjectLayer::SingleSelectedNonEntity ()
 MapEditor2::Entity *MapEditor2::ObjectLayer::SingleSelectedEntity ()
 {
     ASSERT1(SelectedEntityCount() == 1);
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -121,7 +121,7 @@ MapEditor2::Entity *MapEditor2::ObjectLayer::SingleSelectedEntity ()
 MapEditor2::Compound *MapEditor2::ObjectLayer::SingleSelectedCompound ()
 {
     ASSERT1(SelectedCompoundCount() == 1);
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -263,8 +263,8 @@ void MapEditor2::ObjectLayer::InvertObjectSelectionSet ()
 void MapEditor2::ObjectLayer::ClearObjectSelectionSet ()
 {
     // deselect all objects in the object selection set
-    ObjectSetIterator it = m_object_selection_set.begin();
-    ObjectSetIterator it_end = m_object_selection_set.end();
+    ObjectSet::iterator it = m_object_selection_set.begin();
+    ObjectSet::iterator it_end = m_object_selection_set.end();
     while (it != it_end)
     {
         Object *object = *it;
@@ -292,7 +292,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
 #endif
     Uint32 number_of_objects_to_clone = 0;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -344,7 +344,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
 #endif
     Uint32 number_of_objects_to_delete = 0;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -379,7 +379,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetTranslate (FloatVector2 const &t
     if (translation_delta.IsZero())
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -403,7 +403,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScale (
     if (scale_factor_delta == 1.0)
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -431,7 +431,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetRotate (
     FloatMatrix2 rotation_transformation(FloatMatrix2::ms_identity);
     rotation_transformation.Rotate(angle_delta);
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -455,7 +455,7 @@ void MapEditor2::ObjectLayer::VertexSelectionSetTranslate (
     if (translation_delta.IsZero())
         return;
 
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -475,7 +475,7 @@ void MapEditor2::ObjectLayer::VertexSelectionSetScale (
     if (scale_factor_delta == static_cast<Float>(1))
         return;
 
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -503,7 +503,7 @@ void MapEditor2::ObjectLayer::VertexSelectionSetRotate (
     rotation_transformation.Rotate(angle_delta);
     rotation_transformation.Translate(transformation_origin);
         
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -522,7 +522,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationX (
     Float const translation_x)
 {
     FloatVector2 translation;
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -541,7 +541,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationY (
     Float const translation_y)
 {
     FloatVector2 translation;
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -559,7 +559,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslationY (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslation (
     FloatVector2 const &translation)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -574,7 +574,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectTranslation (
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectScale (Float const scale_factor)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -589,7 +589,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectScale (Float cons
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectRotation (Float const angle)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -603,7 +603,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerObjectRotation (Float c
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityMass (
     Float const mass)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -621,7 +621,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityMass (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocity (
     FloatVector2 const &velocity)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -639,7 +639,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityX (
     Float const velocity_x)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -657,7 +657,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityX (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityY (
     Float const velocity_y)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -675,7 +675,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityY (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
     Float const speed)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -693,7 +693,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySpeed (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityAngle (
     Float const velocity_angle)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -715,7 +715,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityVelocityAngle (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySecondMoment (
     Float const second_moment)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -733,7 +733,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntitySecondMoment (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAngularVelocity (
     Float const angular_velocity)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -751,7 +751,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAngularVelocity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityElasticity (
     Float const elasticity)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -769,7 +769,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityElasticity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
     Float const density)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -796,7 +796,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityDensity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAppliesGravity (
     bool const applies_gravity)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -816,7 +816,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityAppliesGravity (
 void MapEditor2::ObjectLayer::ObjectSelectionSetAssignPerEntityReactsToGravity (
     bool const reacts_to_gravity)
 {
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -838,7 +838,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleMass (
 {
     ASSERT1(mass_scale_factor > 0.0f);
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -861,7 +861,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetTranslateVelocity (
     if (translation_delta.IsZero())
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -882,7 +882,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleVelocity (
     if (scale_factor_delta == 1.0)
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -909,7 +909,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetRotateVelocity (
     FloatMatrix2 rotation_transformation(FloatMatrix2::ms_identity);
     rotation_transformation.Rotate(angle_delta);
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -932,7 +932,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetAccumulateAngularVelocity (
     if (angle_delta == 0.0)
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -951,7 +951,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetScaleAngularVelocity (
     if (scale_factor_delta == 1.0)
         return;
 
-    for (ObjectSetIterator it = m_object_selection_set.begin(),
+    for (ObjectSet::iterator it = m_object_selection_set.begin(),
                            it_end = m_object_selection_set.end();
          it != it_end;
          ++it)
@@ -1033,7 +1033,7 @@ void MapEditor2::ObjectLayer::InvertVertexSelectionSet (bool const mask_by_objec
 void MapEditor2::ObjectLayer::ClearVertexSelectionSet ()
 {
     // deselect all vertices in the vertex selection set
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -1050,7 +1050,7 @@ void MapEditor2::ObjectLayer::ClearVertexSelectionSet ()
 
 void MapEditor2::ObjectLayer::MaskSelectedVerticesByObjectSelectionSet ()
 {
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -1074,7 +1074,7 @@ void MapEditor2::ObjectLayer::UnweldSelectedVertices ()
     std::set<Compound *>::iterator compounds_set_iterator_end =
         compounds_with_selected_vertices_set.end();
     
-    for (VertexSetIterator it = m_vertex_selection_set.begin(),
+    for (VertexSet::iterator it = m_vertex_selection_set.begin(),
                            it_end = m_vertex_selection_set.end();
          it != it_end;
          ++it)
@@ -1140,7 +1140,7 @@ void MapEditor2::ObjectLayer::InvertPolygonSelectionSet (bool const mask_by_obje
 void MapEditor2::ObjectLayer::ClearPolygonSelectionSet ()
 {
     // deselect all polygons in the polygon selection set
-    for (PolygonSetIterator it = m_polygon_selection_set.begin(),
+    for (PolygonSet::iterator it = m_polygon_selection_set.begin(),
                             it_end = m_polygon_selection_set.end();
          it != it_end;
          ++it)
@@ -1158,7 +1158,7 @@ void MapEditor2::ObjectLayer::ClearPolygonSelectionSet ()
 
 void MapEditor2::ObjectLayer::MaskSelectedPolygonsByObjectSelectionSet ()
 {
-    for (PolygonSetIterator it = m_polygon_selection_set.begin(),
+    for (PolygonSet::iterator it = m_polygon_selection_set.begin(),
                             it_end = m_polygon_selection_set.end();
          it != it_end;
          ++it)
@@ -1187,7 +1187,7 @@ void MapEditor2::ObjectLayer::UnweldSelectedPolygons ()
     std::set<Compound *>::iterator compounds_set_iterator_end =
         compounds_with_selected_polygons_set.end();
     
-    for (PolygonSetIterator it = m_polygon_selection_set.begin(),
+    for (PolygonSet::iterator it = m_polygon_selection_set.begin(),
                             it_end = m_polygon_selection_set.end();
          it != it_end;
          ++it)
@@ -1222,7 +1222,7 @@ void MapEditor2::ObjectLayer::DeleteSelectedPolygons ()
     std::set<Compound *>::iterator compounds_set_iterator_end =
         compounds_with_selected_polygons_set.end();
     
-    for (PolygonSetIterator it = m_polygon_selection_set.begin(),
+    for (PolygonSet::iterator it = m_polygon_selection_set.begin(),
                             it_end = m_polygon_selection_set.end();
          it != it_end;
          ++it)
@@ -1391,7 +1391,7 @@ bool MapEditor2::ObjectLayer::RemoveObjectFromObjectSelectionSet (MapEditor2::Ob
     ASSERT1(object->IsSelected());
 
     // find the object
-    ObjectSetIterator it = m_object_selection_set.find(object);
+    ObjectSet::iterator it = m_object_selection_set.find(object);
     // if it wasn't found, return with failure
     if (it == m_object_selection_set.end())
         return false;
@@ -1481,7 +1481,7 @@ void MapEditor2::ObjectLayer::UpdateObjectsAndEntitiesProperties ()
     {
         // return the algebraic average of all the selected
         // objects' origins
-        for (ObjectSetIterator it = m_object_selection_set.begin(),
+        for (ObjectSet::iterator it = m_object_selection_set.begin(),
                                it_end = m_object_selection_set.end();
              it != it_end;
              ++it)
@@ -1658,7 +1658,7 @@ void MapEditor2::ObjectLayer::RemoveVertexFromVertexSelectionSet (
 {
     ASSERT1(vertex != NULL);
     ASSERT1(vertex->m_is_selected);
-    VertexSetIterator it = m_vertex_selection_set.find(vertex);
+    VertexSet::iterator it = m_vertex_selection_set.find(vertex);
     ASSERT1(it != m_vertex_selection_set.end());
     m_vertex_selection_set.erase(it);
     vertex->m_is_selected = false;
@@ -1698,7 +1698,7 @@ void MapEditor2::ObjectLayer::RemovePolygonFromPolygonSelectionSet (
 {
     ASSERT1(polygon != NULL);
     ASSERT1(polygon->m_is_selected);
-    PolygonSetIterator it = m_polygon_selection_set.find(polygon);
+    PolygonSet::iterator it = m_polygon_selection_set.find(polygon);
     ASSERT1(it != m_polygon_selection_set.end());
     m_polygon_selection_set.erase(it);
     polygon->m_is_selected = false;

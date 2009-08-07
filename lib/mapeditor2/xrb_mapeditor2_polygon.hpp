@@ -40,8 +40,6 @@ namespace MapEditor2
         }; // end of struct MapEditor2::Polygon::Vertex
     
         typedef std::list<Vertex> VertexList;
-        typedef VertexList::iterator VertexListIterator;
-        typedef VertexList::const_iterator VertexListConstIterator;
     
         // list of vertices of the polygon (ordered counterclockwise)
         VertexList m_vertex_list;

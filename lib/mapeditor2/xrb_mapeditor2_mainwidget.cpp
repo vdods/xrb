@@ -81,7 +81,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -96,7 +96,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -111,7 +111,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_tm =
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -137,7 +137,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -151,7 +151,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -165,7 +165,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -179,7 +179,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
@@ -193,7 +193,7 @@ MapEditor2::MainWidget::MainWidget (
     radio_button_mm =
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
-            Singletons::ResourceLibrary().
+            Singleton::ResourceLibrary().
                 LoadFilename<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
