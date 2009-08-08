@@ -84,7 +84,7 @@ void Engine2::Compound::Draw (
     Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().Handle(), color_mask, bias_color);
 
     // switch back to texture unit 0 for Polygon's texture binding
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
 
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].Draw();

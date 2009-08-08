@@ -587,7 +587,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 
     // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv
     // in DrawGlyph (and the matrix operations below) operate on the correct texture unit.
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
 
     glMatrixMode(GL_TEXTURE);
     glPushMatrix();

@@ -332,12 +332,12 @@ void Render::SetupTextureUnits (
     Color const &mask_color,
     Color const &bias_color)
 {
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, gltexture_handle);
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mask_color.m);
 
-    glActiveTextureARB(GL_TEXTURE1_ARB);
+    glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
     // TODO -- assert that the all-white texture is bound
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);

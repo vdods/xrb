@@ -53,11 +53,12 @@ void GL::Initialize ()
     {
         GLint temp;
         fprintf(stderr, "    Checking for OpenGL extensions.\n");
+        // these ARB checks might be unnecessary now (maybe replace with some version check)
         CheckForExtension("GL_ARB_multitexture");
         CheckForExtension("GL_ARB_texture_env_combine");
 
-        fprintf(stderr, "    Checking GL_MAX_TEXTURE_UNITS_ARB (must be at least 2): ");
-        glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &temp);
+        fprintf(stderr, "    Checking GL_MAX_TEXTURE_UNITS (must be at least 2): ");
+        glGetIntegerv(GL_MAX_TEXTURE_UNITS, &temp);
         if (temp < 2)
             fprintf(stderr, "%d -- aborting.\n", temp);
         else
@@ -94,46 +95,46 @@ void GL::Initialize ()
     glDepthFunc(GL_LEQUAL);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
-    // GL_COMBINE_ARB texture env default values
+    // GL_COMBINE texture env default values
     //
-    // GL_COMBINE_RGB_ARB = GL_MODULATE
-    // GL_COMBINE_ALPHA_ARB = GL_MODULATE
+    // GL_COMBINE_RGB = GL_MODULATE
+    // GL_COMBINE_ALPHA = GL_MODULATE
     //
-    // GL_SOURCE0_RGB_ARB = GL_TEXTURE
-    // GL_OPERAND0_RGB_ARB = GL_SRC_COLOR
-    // GL_SOURCE0_ALPHA_ARB = GL_TEXTURE
-    // GL_OPERAND0_ALPHA_ARB = GL_SRC_ALPHA
+    // GL_SOURCE0_RGB = GL_TEXTURE
+    // GL_OPERAND0_RGB = GL_SRC_COLOR
+    // GL_SOURCE0_ALPHA = GL_TEXTURE
+    // GL_OPERAND0_ALPHA = GL_SRC_ALPHA
     //
-    // GL_SOURCE1_RGB_ARB = GL_PREVIOUS_ARB
-    // GL_OPERAND1_RGB_ARB = GL_SRC_COLOR
-    // GL_SOURCE1_ALPHA_ARB = GL_PREVIOUS_ARB
-    // GL_OPERAND1_ALPHA_ARB = GL_SRC_ALPHA
+    // GL_SOURCE1_RGB = GL_PREVIOUS
+    // GL_OPERAND1_RGB = GL_SRC_COLOR
+    // GL_SOURCE1_ALPHA = GL_PREVIOUS
+    // GL_OPERAND1_ALPHA = GL_SRC_ALPHA
     //
-    // GL_SOURCE2_RGB_ARB = GL_CONSTANT_ARB
-    // GL_OPERAND2_RGB_ARB = GL_SRC_ALPHA
-    // GL_SOURCE2_ALPHA_ARB = GL_CONSTANT_ARB
-    // GL_OPERAND2_ALPHA_ARB = GL_SRC_ALPHA
+    // GL_SOURCE2_RGB = GL_CONSTANT
+    // GL_OPERAND2_RGB = GL_SRC_ALPHA
+    // GL_SOURCE2_ALPHA = GL_CONSTANT
+    // GL_OPERAND2_ALPHA = GL_SRC_ALPHA
     //
     // GL_TEXTURE_ENV_COLOR = (0.000000, 0.000000, 0.000000, 0.000000)
 
     // set up texture unit 0 -- texturing and color masking
     {
-        glActiveTextureARB(GL_TEXTURE0_ARB);
+        glActiveTexture(GL_TEXTURE0);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_MODULATE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_TEXTURE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_ARB, GL_SRC_ALPHA);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA_ARB, GL_SRC_ALPHA);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_CONSTANT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_CONSTANT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
         
         // SOURCE2_RGB and OPERAND2_RGB are not used for GL_MODULATE
         // SOURCE2_ALPHA and OPERAND2_ALPHA are not used for GL_MODULATE
@@ -141,24 +142,24 @@ void GL::Initialize ()
 
     // set up texture unit 1 -- color biasing
     {
-        glActiveTextureARB(GL_TEXTURE1_ARB);
+        glActiveTexture(GL_TEXTURE1);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE_ARB);
+        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB_ARB, GL_INTERPOLATE_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA_ARB, GL_REPLACE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB_ARB, GL_PREVIOUS_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB_ARB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA_ARB, GL_PREVIOUS_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_ARB, GL_SRC_ALPHA);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PREVIOUS);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PREVIOUS);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB_ARB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_CONSTANT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
         // SOURCE1_ALPHA and OPERAND1_ALPHA are not used for GL_REPLACE
 
-        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB_ARB, GL_CONSTANT_ARB);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB_ARB, GL_ONE_MINUS_SRC_ALPHA);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB, GL_CONSTANT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_ONE_MINUS_SRC_ALPHA);
         // SOURCE2_ALPHA and OPERAND2_ALPHA are not used for GL_REPLACE
         
         // might as well bind the all-white texture to texture unit 1
@@ -168,7 +169,7 @@ void GL::Initialize ()
         glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().Handle());
     }
 
-    glActiveTextureARB(GL_TEXTURE0_ARB);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 GLint GL::MatrixMode ()
