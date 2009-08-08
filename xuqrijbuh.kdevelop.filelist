@@ -283,6 +283,7 @@ lib/primitive/xrb_rect.cpp
 lib/primitive/xrb_rect.hpp
 lib/primitive/xrb_texture.cpp
 lib/primitive/xrb_texture.hpp
+lib/render
 lib/render/xrb_engine2_worldview.cpp
 lib/render/xrb_engine2_worldview.hpp
 lib/render/xrb_engine2_worldviewwidget.cpp
@@ -293,6 +294,8 @@ lib/render/xrb_fontface.cpp
 lib/render/xrb_fontface.hpp
 lib/render/xrb_gl.cpp
 lib/render/xrb_gl.hpp
+lib/render/xrb_gltexture.cpp
+lib/render/xrb_gltexture.hpp
 lib/render/xrb_render.cpp
 lib/render/xrb_render.hpp
 lib/render/xrb_rendercontext.cpp
