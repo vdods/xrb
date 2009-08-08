@@ -65,6 +65,9 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/system \
     -I$(top_srcdir)/lib/util
 
+#    `$(LIBPNG_CONFIG) --cflags` \
+#
+
 # the map editor is temporarily out of service
 #    -I$(top_srcdir)/lib/mapeditor2 \
 #
@@ -72,6 +75,8 @@ AM_CPPFLAGS = \
 AM_LDFLAGS = \
     `$(FREETYPE_CONFIG) --libtool` \
     `$(SDL_CONFIG) --libs`
+
+#    `$(LIBPNG_CONFIG) --libs`
 
 LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 
