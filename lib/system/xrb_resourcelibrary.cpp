@@ -26,7 +26,7 @@ ResourceLibrary::~ResourceLibrary ()
     if (!m_instance_map.empty())
     {
         for (InstanceMap::iterator it = m_instance_map.begin(),
-                                 it_end = m_instance_map.end();
+                                   it_end = m_instance_map.end();
              it != it_end;
              ++it)
         {
@@ -36,7 +36,6 @@ ResourceLibrary::~ResourceLibrary ()
             resource_instance_base->Print(stderr);
         }
     }
-    ASSERT1(m_instance_map.empty() && "There are unfreed resources");
 }
 
 void ResourceLibrary::UnmapKey (
@@ -60,7 +59,7 @@ bool ResourceLibrary::ResourceInstanceKey::LessThan::operator () (
         left_operand.m_load_parameter < right_operand.m_load_parameter
         ||
         (left_operand.m_load_parameter == right_operand.m_load_parameter &&
-         left_operand.m_filename.compare(right_operand.m_filename) == -1);
+         left_operand.m_filename.compare(right_operand.m_filename) < 0);
 }
 
 } // end of namespace Xrb
