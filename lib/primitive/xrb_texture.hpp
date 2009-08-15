@@ -110,6 +110,8 @@ private:
     // private constructor so you must use Create()
     Texture ();
 
+//     static SDL_Surface *LoadPNG (std::string const &filename);
+
     SDL_Surface *m_surface;
 }; // end of class Texture
 
