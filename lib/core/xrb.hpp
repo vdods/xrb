@@ -19,6 +19,9 @@
     #include "config.h"
 #endif // defined(HAVE_CONFIG_H)
 
+// this is necessary so that glext.h actually does stuff
+#define GL_GLEXT_PROTOTYPES
+
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "xrb_assert.hpp"
