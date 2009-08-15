@@ -10,7 +10,6 @@
 
 #include "xrb_engine2_sprite.hpp"
 
-#include "xrb_gl.hpp"
 #include "xrb_render.hpp"
 #include "xrb_serializer.hpp"
 
@@ -86,57 +85,16 @@ void Engine2::Sprite::Draw (
 
     Render::SetupTextureUnits(m_texture->Handle(), color_mask, bias_color);
 
-    // this is the fastest for some reason.
-#if 0
+    // draw the sprite with a triangle strip using glDrawArrays
     {
-        static FloatVector2 const s_tex_coord[4] =
+        static FloatVector2 const s_texture_coord_array[4] =
         {
             FloatVector2(0.0f, 1.0f),
             FloatVector2(1.0f, 1.0f),
             FloatVector2(0.0f, 0.0f),
             FloatVector2(1.0f, 0.0f)
         };
-        static FloatVector2 const s_vertex[4] =
-        {
-            FloatVector2(-1.0f, -1.0f),
-            FloatVector2( 1.0f, -1.0f),
-            FloatVector2(-1.0f,  1.0f),
-            FloatVector2( 1.0f,  1.0f)
-        };
-
-        // draw the sprite triangle strip
-        glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2fv(s_tex_coord[0].m);
-            glVertex2fv(s_vertex[0].m);
-
-            glTexCoord2fv(s_tex_coord[1].m);
-            glVertex2fv(s_vertex[1].m);
-
-            glTexCoord2fv(s_tex_coord[2].m);
-            glVertex2fv(s_vertex[2].m);
-
-            glTexCoord2fv(s_tex_coord[3].m);
-            glVertex2fv(s_vertex[3].m);
-        glEnd();
-    }
-#endif
-
-#if 0
-    // using a display list (which uses glDrawArrays)
-    glCallList(GL::SpriteDisplayListIndex());
-#endif
-
-#if 1
-    // using glDrawArrays
-    {
-        static FloatVector2 const s_tex_coord[4] =
-        {
-            FloatVector2(0.0f, 1.0f),
-            FloatVector2(1.0f, 1.0f),
-            FloatVector2(0.0f, 0.0f),
-            FloatVector2(1.0f, 0.0f)
-        };
-        static FloatVector2 const s_vertex[4] =
+        static FloatVector2 const s_vertex_array[4] =
         {
             FloatVector2(-1.0f, -1.0f),
             FloatVector2( 1.0f, -1.0f),
@@ -145,82 +103,21 @@ void Engine2::Sprite::Draw (
         };
 
         glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_FLOAT, 0, s_vertex);
-
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glVertexPointer(2, GL_FLOAT, 0, s_vertex_array);
+
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_FLOAT, 0, s_tex_coord);
+        glTexCoordPointer(2, GL_FLOAT, 0, s_texture_coord_array);
         glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_FLOAT, 0, s_tex_coord);
+        glTexCoordPointer(2, GL_FLOAT, 0, s_texture_coord_array);
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
+        // this seems to be unnecessary, but there's probably a good reason for it.
         glDisableClientState(GL_VERTEX_ARRAY); 
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-#endif
-
-#if 0
-    // this should be faster than the glBegin stuff, but isn't.  but it's faster than
-    // the VBOs for some reason.
-    {
-        struct VBOData
-        {
-            FloatVector2 m_vertex;
-            FloatVector2 m_tex_coord;
-
-            VBOData (FloatVector2 const &vertex, FloatVector2 const &tex_coord)
-                :
-                m_vertex(vertex),
-                m_tex_coord(tex_coord)
-            { }
-        }; // end of struct VBOData
-        static VBOData const vbo_data[4] =
-        {
-            VBOData(FloatVector2(-1.0f, -1.0f), FloatVector2(0.0f, 1.0f)),
-            VBOData(FloatVector2( 1.0f, -1.0f), FloatVector2(1.0f, 1.0f)),
-            VBOData(FloatVector2(-1.0f,  1.0f), FloatVector2(0.0f, 0.0f)),
-            VBOData(FloatVector2( 1.0f,  1.0f), FloatVector2(1.0f, 0.0f))
-        };
-        static GLubyte index[4] = { 0, 1, 2, 3 };
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        // 0 is the offset of VBOData::m_vertex
-        glVertexPointer(2, GL_FLOAT, sizeof(VBOData), &vbo_data[0].m_vertex);
-
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glClientActiveTexture(GL_TEXTURE0);
-        // sizeof(FloatVector2) is the offset of VBOData::m_tex_coord
-        glTexCoordPointer(2, GL_FLOAT, sizeof(VBOData), &vbo_data[0].m_tex_coord);
-
-        glClientActiveTexture(GL_TEXTURE1);
-        // sizeof(FloatVector2) is the offset of VBOData::m_tex_coord
-        glTexCoordPointer(2, GL_FLOAT, sizeof(VBOData), &vbo_data[0].m_tex_coord);
-
-        glDrawElements(GL_TRIANGLE_STRIP, sizeof(index)/sizeof(GLubyte), GL_UNSIGNED_BYTE, index);
-
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-#endif
-
-#if 0
-    // VBOs should be the fastest, but is by far the slowest (because this
-    // is faster only for sufficiently large models)
-    {
-//         glBindBuffer(GL_ARRAY_BUFFER, GL::VertexBuffer());
-//         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL::IndexBuffer());
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_BYTE, NULL); // 4 indices
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-//         glBindBuffer(GL_ARRAY_BUFFER, 0);
-//         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-#endif
 
     glPopMatrix();
 }

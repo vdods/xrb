@@ -25,19 +25,23 @@ void Render::DrawLine (
 {
     if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
-        
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
+        GL::GLTexture_OpaqueWhite().Handle(),
+        render_context.MaskedColor(color),
         render_context.BiasColor());
 
-    glBegin(GL_LINES);
-        glVertex2fv(from.m);
-        glVertex2fv(to.m);
-    glEnd();
+    {
+        FloatVector2 vertex_array[2] = { from, to };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+        glDrawArrays(GL_LINES, 0, 2);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
 }
 
 void Render::DrawArrow (
@@ -48,7 +52,7 @@ void Render::DrawArrow (
 {
     if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
-        
+
     // don't draw anything if the length is 0
     if (to == from)
         return;
@@ -64,16 +68,23 @@ void Render::DrawArrow (
         render_context.MaskedColor(color), 
         render_context.BiasColor());
 
-    glBegin(GL_LINE_STRIP);
-        glVertex2fv(from.m);
-        glVertex2fv(to.m);
-        glVertex2fv((to+0.25f*(basis_y-basis_x)).m);
-    glEnd();
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-    glBegin(GL_LINE_STRIP);
-        glVertex2fv((to-0.25f*(basis_y+basis_x)).m);
-        glVertex2fv(to.m);
-    glEnd();
+    {
+        FloatVector2 vertex_array[3] = { from, to, to+0.25f*(basis_y-basis_x) };
+
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+        glDrawArrays(GL_LINE_STRIP, 0, 3);
+    }
+
+    {
+        FloatVector2 vertex_array[2] = { to-0.25f*(basis_y+basis_x), to };
+
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+        glDrawArrays(GL_LINE_STRIP, 0, 2);
+    }
+
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void Render::DrawPolygon (
@@ -98,7 +109,7 @@ void Render::DrawPolygon (
         render_context.MaskedColor(color), 
         render_context.BiasColor());
 
-    // convert the angle which is in degrees, into radians for
+    // convert the angle, which is in degrees, into radians for
     // computation in cos/sin's native units.
     angle = Math::Radians(angle);
 
@@ -106,17 +117,20 @@ void Render::DrawPolygon (
     FloatVector2 vertex = center + radius * FloatVector2(cos(angle), sin(angle));
     Float const angle_delta = 2.0f * static_cast<Float>(M_PI) / static_cast<Float>(vertex_count);
 
-    glBegin(GL_LINE_LOOP);
-    glVertex2fv(vertex.m);
-
-    for (Uint32 i = 0; i < vertex_count; ++i)
+    // TODO: limit vertex_count to 32 (or so) and use a static array instead of new'ing.
+    // or we could use a small static array and just call glDrawArrays multiple times.
     {
-        angle += angle_delta;
-        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
-        glVertex2fv(vertex.m);
-    }
+        FloatVector2 *vertex_array = new FloatVector2[vertex_count];
+        for (Uint32 i = 0; i < vertex_count; ++i, angle += angle_delta)
+            vertex_array[i] = center + radius * FloatVector2(cos(angle), sin(angle));
 
-    glEnd();
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+        glDrawArrays(GL_LINE_LOOP, 0, vertex_count);
+        glDisableClientState(GL_VERTEX_ARRAY);
+
+        delete[] vertex_array;
+    }
 }
 
 void Render::DrawCircle (
@@ -158,32 +172,9 @@ void Render::DrawCircle (
     }
 
     ASSERT1(facet_count >= 6);
+    ASSERT2(facet_count <= 30);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
-        render_context.BiasColor());
-
-    // draw each line
-    FloatVector2 vertex;
-    vertex = center + FloatVector2(radius, 0.0);
-    Float const angle_delta = 2.0f * static_cast<Float>(M_PI) / facet_count;
-    Float angle = angle_delta;
-
-    glBegin(GL_LINE_LOOP);
-    glVertex2fv(vertex.m);
-
-    for (Uint32 i = 0; i < facet_count; ++i)
-    {
-        vertex = center + radius * FloatVector2(cos(angle), sin(angle));
-        glVertex2fv(vertex.m);
-        angle += angle_delta;
-    }
-
-    glEnd();
+    DrawPolygon(render_context, center, radius, 0.0f, color, facet_count);
 }
 
 void Render::DrawCircularArc (
@@ -201,6 +192,11 @@ void Render::DrawCircularArc (
     // don't draw anything if the arc is 0 radians
     if (start_angle == end_angle)
         return;
+
+    // convert the angles, which are in degrees, into radians for
+    // computation in cos/sin's native units.
+    start_angle = Math::Radians(start_angle);
+    end_angle = Math::Radians(end_angle);
 
     // make sure the start_angle is lower than the end_angle
     if (start_angle > end_angle)
@@ -252,23 +248,26 @@ void Render::DrawCircularArc (
         render_context.MaskedColor(color), 
         render_context.BiasColor());
 
-    // draw each line
-    FloatVector2 vertex;
-    vertex = center + radius * FloatVector2(Math::Cos(start_angle), Math::Sin(start_angle));
-    Float const angle_delta = (end_angle - start_angle) / facet_count;
-    Float angle = start_angle + angle_delta;
-
-    glBegin(GL_LINE_STRIP);
-    glVertex2fv(vertex.m);
-
-    for (Uint32 i = 0; i < facet_count; ++i)
+    // TODO: is it possible to bound facet_count and use a static array?  (maybe not,
+    // since the arc can be through a really high angle).  or we could use a small static
+    // array and just call glDrawArrays multiple times.
     {
-        vertex = center + radius * FloatVector2(Math::Cos(angle), Math::Sin(angle));
-        glVertex2fv(vertex.m);
-        angle += angle_delta;
-    }
+        Float const angle_delta = (end_angle - start_angle) / facet_count;
+        Float angle = start_angle + angle_delta;
 
-    glEnd();
+        FloatVector2 *vertex_array = new FloatVector2[facet_count+1];
+        for (Uint32 i = 0; i < facet_count; ++i, angle += angle_delta)
+            vertex_array[i] = center + radius * FloatVector2(cos(angle), sin(angle));
+        // one more (there is 1 more vertex than facet)
+        vertex_array[facet_count] = center + radius * FloatVector2(cos(angle), sin(angle));
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+        glDrawArrays(GL_LINE_STRIP, 0, facet_count+1);
+        glDisableClientState(GL_VERTEX_ARRAY);
+
+        delete[] vertex_array;
+    }
 }
 
 void Render::DrawScreenRect (
@@ -287,12 +286,20 @@ void Render::DrawScreenRect (
         render_context.MaskedColor(color), 
         render_context.BiasColor());
 
-    glBegin(GL_QUADS);
-        glVertex2iv(screen_rect.TopLeft().m);
-        glVertex2iv(screen_rect.BottomLeft().m);
-        glVertex2iv(screen_rect.BottomRight().m);
-        glVertex2iv(screen_rect.TopRight().m);
-    glEnd();
+    {
+        ScreenCoordVector2 vertex_coordinate_array[4] =
+        {
+            ScreenCoordVector2(screen_rect.BottomLeft().m),
+            ScreenCoordVector2(screen_rect.BottomRight().m),
+            ScreenCoordVector2(screen_rect.TopLeft().m),
+            ScreenCoordVector2(screen_rect.TopRight().m)
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
 }
 
 void Render::DrawScreenRectTexture (
@@ -312,19 +319,33 @@ void Render::DrawScreenRectTexture (
         render_context.ColorMask(), 
         render_context.BiasColor());
 
-    glBegin(GL_QUADS);
-        glTexCoord2fv((transformation * FloatVector2(0.0f, 0.0f)).m);
-        glVertex2iv(screen_rect.TopLeft().m);
+    {
+        FloatVector2 texture_coordinate_array[4] =
+        {
+            FloatVector2((transformation * FloatVector2(0.0f, 1.0f)).m),
+            FloatVector2((transformation * FloatVector2(1.0f, 1.0f)).m),
+            FloatVector2((transformation * FloatVector2(0.0f, 0.0f)).m),
+            FloatVector2((transformation * FloatVector2(1.0f, 0.0f)).m)
+        };
+        ScreenCoordVector2 vertex_coordinate_array[4] =
+        {
+            ScreenCoordVector2(screen_rect.BottomLeft().m),
+            ScreenCoordVector2(screen_rect.BottomRight().m),
+            ScreenCoordVector2(screen_rect.TopLeft().m),
+            ScreenCoordVector2(screen_rect.TopRight().m)
+        };
 
-        glTexCoord2fv((transformation * FloatVector2(0.0f, 1.0f)).m);
-        glVertex2iv(screen_rect.BottomLeft().m);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glTexCoord2fv((transformation * FloatVector2(1.0f, 1.0f)).m);
-        glVertex2iv(screen_rect.BottomRight().m);
+        glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
+        glClientActiveTexture(GL_TEXTURE0);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_array);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        glTexCoord2fv((transformation * FloatVector2(1.0f, 0.0f)).m);
-        glVertex2iv(screen_rect.TopRight().m);
-    glEnd();
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 }
 
 void Render::SetupTextureUnits (
@@ -339,7 +360,7 @@ void Render::SetupTextureUnits (
 
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
-    // TODO -- assert that the all-white texture is bound
+    // TODO -- assert that the opaque white texture is bound
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
 }
 

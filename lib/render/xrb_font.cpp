@@ -597,14 +597,18 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
         1.0f / m_gl_texture->Height(),
         1.0f);
 
-    // start rendering one quad for each glyph
-    glBegin(GL_QUADS);
+    // enable vertex and texture coord arrays so we can draw with glDrawArrays
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
 {
-    // stop rendering glyph quads
-    glEnd();
+    // disable vertex and texture coord arrays since we're done drawing with
+    // glDrawArrays (this seems to be unnecessary, but there's probably a good
+    // reason for it.)
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // pop the texture matrix
     ASSERT1(GL::MatrixMode() == GL_TEXTURE);
@@ -650,18 +654,29 @@ void AsciiFont::DrawGlyph (
     // the reason the texture coordinates look backwards (bottom on top)
     // is because the texture coordinates use a left-handed coordinate
     // system.
+    {
+        ScreenCoordVector2 glyph_texture_coordinate_array[4] =
+        {
+            ScreenCoordVector2(glyph_texture_coordinates.TopLeft().m),
+            ScreenCoordVector2(glyph_texture_coordinates.TopRight().m),
+            ScreenCoordVector2(glyph_texture_coordinates.BottomLeft().m),
+            ScreenCoordVector2(glyph_texture_coordinates.BottomRight().m)
+        };
+        ScreenCoordVector2 glyph_vertex_coordinate_array[4] =
+        {
+            ScreenCoordVector2(glyph_vertex_coordinates.BottomLeft().m),
+            ScreenCoordVector2(glyph_vertex_coordinates.BottomRight().m),
+            ScreenCoordVector2(glyph_vertex_coordinates.TopLeft().m),
+            ScreenCoordVector2(glyph_vertex_coordinates.TopRight().m)
+        };
 
-    glTexCoord2iv(glyph_texture_coordinates.BottomLeft().m);
-    glVertex2iv(glyph_vertex_coordinates.TopLeft().m);
+        glVertexPointer(2, GL_INT, 0, glyph_vertex_coordinate_array);
 
-    glTexCoord2iv(glyph_texture_coordinates.TopLeft().m);
-    glVertex2iv(glyph_vertex_coordinates.BottomLeft().m);
+        glClientActiveTexture(GL_TEXTURE0);
+        glTexCoordPointer(2, GL_INT, 0, glyph_texture_coordinate_array);
 
-    glTexCoord2iv(glyph_texture_coordinates.TopRight().m);
-    glVertex2iv(glyph_vertex_coordinates.BottomRight().m);
-
-    glTexCoord2iv(glyph_texture_coordinates.BottomRight().m);
-    glVertex2iv(glyph_vertex_coordinates.TopRight().m);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
 }
 
 ScreenCoord AsciiFont::KerningPixelAdvance_26_6 (char const left, char const right) const

@@ -24,11 +24,6 @@ class GLTexture;
   */
 namespace GL
 {
-    // TEMP
-    GLuint VertexBuffer ();
-    GLuint IndexBuffer ();
-    GLuint SpriteDisplayListIndex ();
-
     GLTexture const &GLTexture_OpaqueWhite ();
 
     /** Screen calls this in @ref Xrb::Screen::Create -- you shouldn't need

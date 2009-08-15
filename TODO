@@ -122,7 +122,7 @@ TODO:
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
-- replace drawing the sprite quad with a display list
+- change ScreenCoord to use Sint16 instead of Sint32?
 - get rid of widget min/max size enabled flags, and just use the 
   sizes (no min size = 0, no max size = (uint)-1)
 - make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API

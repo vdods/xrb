@@ -82,15 +82,34 @@ void Engine2::Polygon::Draw () const
 
     glBindTexture(GL_TEXTURE_2D, m_texture->Handle());
 
-    glBegin(GL_POLYGON);
-
-    for (Uint32 i = 0; i < m_vertex_count; ++i)
+    // TODO: use small static array instead of new'ing
     {
-        glTexCoord2fv(TextureCoordinate(i).m);
-        glVertex2fv(GetVertex(i).m);
-    }
+        FloatVector2 *vertex_array = new FloatVector2[m_vertex_count];
+        FloatVector2 *texture_coord_array = new FloatVector2[m_vertex_count];
 
-    glEnd();
+        for (Uint32 i = 0; i < m_vertex_count; ++i)
+        {
+            texture_coord_array[i] = TextureCoordinate(i);
+            vertex_array[i] = GetVertex(i);
+        }
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+
+        glClientActiveTexture(GL_TEXTURE0);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array);
+        glClientActiveTexture(GL_TEXTURE1);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array);
+
+        glDrawArrays(GL_POLYGON, 0, m_vertex_count);
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        delete[] vertex_array;
+    }
 }
 
 void Engine2::Polygon::CloneProperties (

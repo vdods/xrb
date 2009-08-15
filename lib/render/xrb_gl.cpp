@@ -19,9 +19,6 @@ namespace Xrb
 namespace
 {
 
-GLuint g_vertex_buffer;
-GLuint g_index_buffer;
-GLuint g_sprite_display_list_index;
 GLTexture *g_gltexture_opaque_white = NULL;
 
 void CheckForExtension (char const *extension_name)
@@ -37,10 +34,6 @@ void CheckForExtension (char const *extension_name)
 }
 
 } // end of anonymous namespace
-
-GLuint GL::VertexBuffer () { return g_vertex_buffer; }
-GLuint GL::IndexBuffer () { return g_index_buffer; }
-GLuint GL::SpriteDisplayListIndex () { return g_sprite_display_list_index; }
 
 GLTexture const &GL::GLTexture_OpaqueWhite ()
 {
@@ -175,95 +168,6 @@ void GL::Initialize ()
     }
 
     glActiveTexture(GL_TEXTURE0);
-
-#if 0
-    // set up the vertex buffer objects
-    {
-        struct VBOData
-        {
-            FloatVector2 m_vertex;
-            FloatVector2 m_tex_coord;
-
-            VBOData (FloatVector2 const &vertex, FloatVector2 const &tex_coord)
-                :
-                m_vertex(vertex),
-                m_tex_coord(tex_coord)
-            { }
-        }; // end of struct VBOData
-
-        VBOData const vbo_data[4] =
-        {
-            VBOData(FloatVector2(-1.0f, -1.0f), FloatVector2(0.0f, 1.0f)),
-            VBOData(FloatVector2( 1.0f, -1.0f), FloatVector2(1.0f, 1.0f)),
-            VBOData(FloatVector2(-1.0f,  1.0f), FloatVector2(0.0f, 0.0f)),
-            VBOData(FloatVector2( 1.0f,  1.0f), FloatVector2(1.0f, 0.0f))
-        };
-        GLubyte index[4] = { 0, 1, 2, 3 };
-
-        glGenBuffers(1, &g_vertex_buffer);
-        glGenBuffers(1, &g_index_buffer);
-
-        glBindBuffer(GL_ARRAY_BUFFER, g_vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vbo_data), vbo_data, GL_STATIC_DRAW);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        // 0 is the offset of VBOData::m_vertex
-        glVertexPointer(2, GL_FLOAT, sizeof(VBOData), reinterpret_cast<void *>(0));
-        glDisableClientState(GL_VERTEX_ARRAY);
-        
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glClientActiveTexture(GL_TEXTURE0);
-        // sizeof(FloatVector2) is the offset of VBOData::m_tex_coord
-        glTexCoordPointer(2, GL_FLOAT, sizeof(VBOData), reinterpret_cast<void *>(sizeof(FloatVector2)));
-        glClientActiveTexture(GL_TEXTURE1);
-        // sizeof(FloatVector2) is the offset of VBOData::m_tex_coord
-        glTexCoordPointer(2, GL_FLOAT, sizeof(VBOData), reinterpret_cast<void *>(sizeof(FloatVector2)));
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g_index_buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
-    }
-#endif
-
-#if 0
-    // set up the display lists
-    {
-        static FloatVector2 const s_tex_coord[4] =
-        {
-            FloatVector2(0.0f, 1.0f),
-            FloatVector2(1.0f, 1.0f),
-            FloatVector2(0.0f, 0.0f),
-            FloatVector2(1.0f, 0.0f)
-        };
-        static FloatVector2 const s_vertex[4] =
-        {
-            FloatVector2(-1.0f, -1.0f),
-            FloatVector2( 1.0f, -1.0f),
-            FloatVector2(-1.0f,  1.0f),
-            FloatVector2( 1.0f,  1.0f)
-        };
-
-        g_sprite_display_list_index = glGenLists(1);
-        ASSERT0(g_sprite_display_list_index != 0 && "error generating GL display list");
-
-        glNewList(g_sprite_display_list_index, GL_COMPILE);
-
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glClientActiveTexture(GL_TEXTURE0);
-            glTexCoordPointer(2, GL_FLOAT, 0, s_tex_coord);
-            glClientActiveTexture(GL_TEXTURE1);
-            glTexCoordPointer(2, GL_FLOAT, 0, s_tex_coord);
-
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(2, GL_FLOAT, 0, s_vertex);
-
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-            glDisableClientState(GL_VERTEX_ARRAY);
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glEndList();
-    }
-#endif
 }
 
 GLint GL::MatrixMode ()
