@@ -152,11 +152,11 @@
 			Name="core"
 			>
 			<File
-				RelativePath=".\core\xrb.h"
+				RelativePath=".\core\xrb.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_assert.h"
+				RelativePath=".\core\xrb_assert.hpp"
 				>
 			</File>
 			<File
@@ -164,15 +164,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_debug.h"
+				RelativePath=".\core\xrb_debug.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_delete.h"
+				RelativePath=".\core\xrb_delete.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\core\xrb_types.h"
+				RelativePath=".\core\xrb_types.hpp"
 				>
 			</File>
 		</Filter>
@@ -184,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_compound.h"
+				RelativePath=".\engine2\xrb_engine2_compound.hpp"
 				>
 			</File>
 			<File
@@ -192,11 +192,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_entity.h"
+				RelativePath=".\engine2\xrb_engine2_entity.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_enums.h"
+				RelativePath=".\engine2\xrb_engine2_enums.hpp"
 				>
 			</File>
 			<File
@@ -204,7 +204,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_events.h"
+				RelativePath=".\engine2\xrb_engine2_events.hpp"
 				>
 			</File>
 			<File
@@ -212,7 +212,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_object.h"
+				RelativePath=".\engine2\xrb_engine2_object.hpp"
 				>
 			</File>
 			<File
@@ -220,11 +220,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_objectlayer.h"
+				RelativePath=".\engine2\xrb_engine2_objectlayer.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_physicshandler.h"
+				RelativePath=".\engine2\xrb_engine2_physicshandler.hpp"
 				>
 			</File>
 			<File
@@ -232,7 +232,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_polygon.h"
+				RelativePath=".\engine2\xrb_engine2_polygon.hpp"
 				>
 			</File>
 			<File
@@ -240,7 +240,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_quadtree.h"
+				RelativePath=".\engine2\xrb_engine2_quadtree.hpp"
 				>
 			</File>
 			<File
@@ -248,7 +248,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_sprite.h"
+				RelativePath=".\engine2\xrb_engine2_sprite.hpp"
 				>
 			</File>
 			<File
@@ -256,7 +256,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_visibilityquadtree.h"
+				RelativePath=".\engine2\xrb_engine2_visibilityquadtree.hpp"
 				>
 			</File>
 			<File
@@ -264,7 +264,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\engine2\xrb_engine2_world.h"
+				RelativePath=".\engine2\xrb_engine2_world.hpp"
 				>
 			</File>
 		</Filter>
@@ -276,7 +276,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_containerwidget.h"
+				RelativePath=".\gui\xrb_containerwidget.hpp"
 				>
 			</File>
 			<File
@@ -284,7 +284,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_gui_events.h"
+				RelativePath=".\gui\xrb_gui_events.hpp"
 				>
 			</File>
 			<File
@@ -310,7 +310,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_screen.h"
+				RelativePath=".\gui\xrb_screen.hpp"
 				>
 			</File>
 			<File
@@ -336,7 +336,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_screencoord.h"
+				RelativePath=".\gui\xrb_screencoord.hpp"
 				>
 			</File>
 			<File
@@ -344,7 +344,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_sizeproperties.h"
+				RelativePath=".\gui\xrb_sizeproperties.hpp"
 				>
 			</File>
 			<File
@@ -352,7 +352,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_widget.h"
+				RelativePath=".\gui\xrb_widget.hpp"
 				>
 			</File>
 			<File
@@ -360,7 +360,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_widgetbackground.h"
+				RelativePath=".\gui\xrb_widgetbackground.hpp"
 				>
 			</File>
 			<File
@@ -368,7 +368,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_widgetskin.h"
+				RelativePath=".\gui\xrb_widgetskin.hpp"
 				>
 			</File>
 			<File
@@ -376,7 +376,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\gui\xrb_widgetskinhandler.h"
+				RelativePath=".\gui\xrb_widgetskinhandler.hpp"
 				>
 			</File>
 			<Filter
@@ -387,7 +387,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_button.h"
+					RelativePath=".\gui\widgets\xrb_button.hpp"
 					>
 				</File>
 				<File
@@ -395,7 +395,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_cellpaddingwidget.h"
+					RelativePath=".\gui\widgets\xrb_cellpaddingwidget.hpp"
 					>
 				</File>
 				<File
@@ -403,7 +403,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_checkbox.h"
+					RelativePath=".\gui\widgets\xrb_checkbox.hpp"
 					>
 				</File>
 				<File
@@ -411,7 +411,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_dialog.h"
+					RelativePath=".\gui\widgets\xrb_dialog.hpp"
 					>
 				</File>
 				<File
@@ -419,7 +419,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_filedialog.h"
+					RelativePath=".\gui\widgets\xrb_filedialog.hpp"
 					>
 				</File>
 				<File
@@ -427,7 +427,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_filepanel.h"
+					RelativePath=".\gui\widgets\xrb_filepanel.hpp"
 					>
 				</File>
 				<File
@@ -435,7 +435,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_keyselectorbutton.h"
+					RelativePath=".\gui\widgets\xrb_keyselectorbutton.hpp"
 					>
 				</File>
 				<File
@@ -443,7 +443,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_label.h"
+					RelativePath=".\gui\widgets\xrb_label.hpp"
 					>
 				</File>
 				<File
@@ -451,7 +451,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_layout.h"
+					RelativePath=".\gui\widgets\xrb_layout.hpp"
 					>
 				</File>
 				<File
@@ -459,7 +459,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_lineedit.h"
+					RelativePath=".\gui\widgets\xrb_lineedit.hpp"
 					>
 				</File>
 				<File
@@ -467,7 +467,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_modalwidget.h"
+					RelativePath=".\gui\widgets\xrb_modalwidget.hpp"
 					>
 				</File>
 				<File
@@ -475,15 +475,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_progressbar.h"
+					RelativePath=".\gui\widgets\xrb_progressbar.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_radiobutton.h"
-					>
-				</File>
-				<File
-					RelativePath=".\gui\widgets\xrb_radiobutton.tcpp"
+					RelativePath=".\gui\widgets\xrb_radiobutton.hpp"
 					>
 				</File>
 				<File
@@ -491,7 +487,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_spacerwidget.h"
+					RelativePath=".\gui\widgets\xrb_spacerwidget.hpp"
 					>
 				</File>
 				<File
@@ -499,31 +495,19 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_textwidget.h"
+					RelativePath=".\gui\widgets\xrb_textwidget.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_toolbarbutton.h"
+					RelativePath=".\gui\widgets\xrb_toolbarbutton.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_toolbarbutton.tcpp"
+					RelativePath=".\gui\widgets\xrb_valueedit.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_valueedit.h"
-					>
-				</File>
-				<File
-					RelativePath=".\gui\widgets\xrb_valueedit.tcpp"
-					>
-				</File>
-				<File
-					RelativePath=".\gui\widgets\xrb_valuelabel.h"
-					>
-				</File>
-				<File
-					RelativePath=".\gui\widgets\xrb_valuelabel.tcpp"
+					RelativePath=".\gui\widgets\xrb_valuelabel.hpp"
 					>
 				</File>
 				<File
@@ -531,7 +515,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\gui\widgets\xrb_widgetstack.h"
+					RelativePath=".\gui\widgets\xrb_widgetstack.hpp"
 					>
 				</File>
 			</Filter>
@@ -544,7 +528,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_inputstate.h"
+				RelativePath=".\input\xrb_inputstate.hpp"
 				>
 			</File>
 			<File
@@ -552,7 +536,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_input_events.h"
+				RelativePath=".\input\xrb_input_events.hpp"
 				>
 			</File>
 			<File
@@ -560,7 +544,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_key.h"
+				RelativePath=".\input\xrb_key.hpp"
 				>
 			</File>
 			<File
@@ -568,7 +552,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_keymap.h"
+				RelativePath=".\input\xrb_keymap.hpp"
 				>
 			</File>
 			<File
@@ -576,7 +560,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_keyrepeater.h"
+				RelativePath=".\input\xrb_keyrepeater.hpp"
 				>
 			</File>
 		</Filter>
@@ -588,7 +572,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_math.h"
+				RelativePath=".\math\xrb_math.hpp"
 				>
 			</File>
 			<File
@@ -596,7 +580,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_matrix2.h"
+				RelativePath=".\math\xrb_matrix2.hpp"
 				>
 			</File>
 			<File
@@ -604,7 +588,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_polynomial.h"
+				RelativePath=".\math\xrb_polynomial.hpp"
 				>
 			</File>
 			<File
@@ -612,7 +596,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_simpletransform2.h"
+				RelativePath=".\math\xrb_simpletransform2.hpp"
 				>
 			</File>
 			<File
@@ -620,7 +604,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_transform2.h"
+				RelativePath=".\math\xrb_transform2.hpp"
 				>
 			</File>
 			<File
@@ -628,7 +612,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\math\xrb_vector.h"
+				RelativePath=".\math\xrb_vector.hpp"
 				>
 			</File>
 		</Filter>
@@ -648,7 +632,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\parsers\xrb_arithmeticscanner.h"
+				RelativePath=".\parsers\xrb_arithmeticscanner.hpp"
 				>
 			</File>
 			<File
@@ -656,7 +640,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\parsers\xrb_datafilelocation.h"
+				RelativePath=".\parsers\xrb_datafilelocation.hpp"
 				>
 			</File>
 			<File
@@ -672,7 +656,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\parsers\xrb_datafilescanner.h"
+				RelativePath=".\parsers\xrb_datafilescanner.hpp"
 				>
 			</File>
 			<File
@@ -680,7 +664,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\parsers\xrb_datafilevalue.h"
+				RelativePath=".\parsers\xrb_datafilevalue.hpp"
 				>
 			</File>
 		</Filter>
@@ -688,19 +672,11 @@
 			Name="primitive"
 			>
 			<File
-				RelativePath=".\primitive\xrb_bitarray.h"
+				RelativePath=".\primitive\xrb_bitarray.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\primitive\xrb_bitarray.tcpp"
-				>
-			</File>
-			<File
-				RelativePath=".\primitive\xrb_circularqueue.h"
-				>
-			</File>
-			<File
-				RelativePath=".\primitive\xrb_circularqueue.tcpp"
+				RelativePath=".\primitive\xrb_circularqueue.hpp"
 				>
 			</File>
 			<File
@@ -708,15 +684,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\primitive\xrb_color.h"
-				>
-			</File>
-			<File
-				RelativePath=".\primitive\xrb_gltexture.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\primitive\xrb_gltexture.h"
+				RelativePath=".\primitive\xrb_color.hpp"
 				>
 			</File>
 			<File
@@ -724,7 +692,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\primitive\xrb_ntuple.h"
+				RelativePath=".\primitive\xrb_ntuple.hpp"
 				>
 			</File>
 			<File
@@ -732,7 +700,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\primitive\xrb_rect.h"
+				RelativePath=".\primitive\xrb_rect.hpp"
 				>
 			</File>
 			<File
@@ -740,7 +708,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\primitive\xrb_texture.h"
+				RelativePath=".\primitive\xrb_texture.hpp"
 				>
 			</File>
 		</Filter>
@@ -752,7 +720,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_engine2_worldview.h"
+				RelativePath=".\render\xrb_engine2_worldview.hpp"
 				>
 			</File>
 			<File
@@ -760,7 +728,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_engine2_worldviewwidget.h"
+				RelativePath=".\render\xrb_engine2_worldviewwidget.hpp"
 				>
 			</File>
 			<File
@@ -768,7 +736,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_font.h"
+				RelativePath=".\render\xrb_font.hpp"
 				>
 			</File>
 			<File
@@ -776,7 +744,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_fontface.h"
+				RelativePath=".\render\xrb_fontface.hpp"
 				>
 			</File>
 			<File
@@ -784,15 +752,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_gl.h"
+				RelativePath=".\render\xrb_gl.hpp"
 				>
 			</File>
+            <File
+                RelativePath=".\render\xrb_gltexture.cpp"
+                >
+            </File>
+            <File
+                RelativePath=".\render\xrb_gltexture.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\render\xrb_render.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_render.h"
+				RelativePath=".\render\xrb_render.hpp"
 				>
 			</File>
 			<File
@@ -800,7 +776,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\render\xrb_rendercontext.h"
+				RelativePath=".\render\xrb_rendercontext.hpp"
 				>
 			</File>
 		</Filter>
@@ -816,7 +792,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_bitcache.h"
+				RelativePath=".\util\xrb_bitcache.hpp"
 				>
 			</File>
 			<File
@@ -824,7 +800,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_bitcachedfile.h"
+				RelativePath=".\util\xrb_bitcachedfile.hpp"
 				>
 			</File>
 			<File
@@ -832,7 +808,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_characterfilter.h"
+				RelativePath=".\util\xrb_characterfilter.hpp"
 				>
 			</File>
 			<File
@@ -840,7 +816,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_commandlineparser.h"
+				RelativePath=".\util\xrb_commandlineparser.hpp"
 				>
 			</File>
 			<File
@@ -848,7 +824,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_emptystring.h"
+				RelativePath=".\util\xrb_emptystring.hpp"
 				>
 			</File>
 			<File
@@ -856,7 +832,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_frameratecalculator.h"
+				RelativePath=".\util\xrb_frameratecalculator.hpp"
 				>
 			</File>
 			<File
@@ -864,11 +840,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_indentformatter.h"
+				RelativePath=".\util\xrb_indentformatter.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_reference.h"
+				RelativePath=".\util\xrb_reference.hpp"
 				>
 			</File>
 			<File
@@ -876,7 +852,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_tokenizer.h"
+				RelativePath=".\util\xrb_tokenizer.hpp"
 				>
 			</File>
 			<File
@@ -884,7 +860,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_transformation.h"
+				RelativePath=".\util\xrb_transformation.hpp"
 				>
 			</File>
 			<File
@@ -892,7 +868,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_utf8.h"
+				RelativePath=".\util\xrb_utf8.hpp"
 				>
 			</File>
 			<File
@@ -900,11 +876,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_util.h"
+				RelativePath=".\util\xrb_util.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\util\xrb_validator.h"
+				RelativePath=".\util\xrb_validator.hpp"
 				>
 			</File>
 		</Filter>
@@ -912,7 +888,7 @@
 			Name="system"
 			>
 			<File
-				RelativePath=".\system\xrb_enums.h"
+				RelativePath=".\system\xrb_enums.hpp"
 				>
 			</File>
 			<File
@@ -920,7 +896,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_event.h"
+				RelativePath=".\system\xrb_event.hpp"
 				>
 			</File>
 			<File
@@ -928,7 +904,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_eventhandler.h"
+				RelativePath=".\system\xrb_eventhandler.hpp"
 				>
 			</File>
 			<File
@@ -936,11 +912,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_eventqueue.h"
-				>
-			</File>
-			<File
-				RelativePath=".\system\xrb_eventqueue.tcpp"
+				RelativePath=".\system\xrb_eventqueue.hpp"
 				>
 			</File>
 			<File
@@ -948,7 +920,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_framehandler.h"
+				RelativePath=".\system\xrb_framehandler.hpp"
 				>
 			</File>
 			<File
@@ -956,11 +928,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_resourcelibrary.h"
-				>
-			</File>
-			<File
-				RelativePath=".\system\xrb_resourcelibrary.tcpp"
+				RelativePath=".\system\xrb_resourcelibrary.hpp"
 				>
 			</File>
 			<File
@@ -968,11 +936,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_serializer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\system\xrb_serializer.tcpp"
+				RelativePath=".\system\xrb_serializer.hpp"
 				>
 			</File>
 			<File
@@ -980,7 +944,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_signalhandler.h"
+				RelativePath=".\system\xrb_signalhandler.hpp"
 				>
 			</File>
 			<File
@@ -988,15 +952,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_singletons.h"
+				RelativePath=".\system\xrb_singletons.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\system\xrb_statemachine.h"
-				>
-			</File>
-			<File
-				RelativePath=".\system\xrb_statemachine.tcpp"
+				RelativePath=".\system\xrb_statemachine.hpp"
 				>
 			</File>
 			<Filter
@@ -1007,15 +967,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\system\serializers\xrb_binaryfileserializer.h"
-					>
-				</File>
-				<File
-					RelativePath=".\system\serializers\xrb_compressionserializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\system\serializers\xrb_compressionserializer.h"
+					RelativePath=".\system\serializers\xrb_binaryfileserializer.hpp"
 					>
 				</File>
 			</Filter>

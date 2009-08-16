@@ -190,7 +190,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game\dis_highscores.h"
+				RelativePath=".\game\dis_highscores.hpp"
 				>
 			</File>
 			<File
@@ -198,7 +198,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game\dis_item.h"
+				RelativePath=".\game\dis_item.hpp"
 				>
 			</File>
 			<File
@@ -206,7 +206,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game\dis_spawn.h"
+				RelativePath=".\game\dis_spawn.hpp"
 				>
 			</File>
 			<File
@@ -214,7 +214,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\game\dis_util.h"
+				RelativePath=".\game\dis_util.hpp"
 				>
 			</File>
 			<Filter
@@ -225,7 +225,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_asteroid.h"
+					RelativePath=".\game\entities\dis_asteroid.hpp"
 					>
 				</File>
 				<File
@@ -233,7 +233,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_ballistic.h"
+					RelativePath=".\game\entities\dis_ballistic.hpp"
 					>
 				</File>
 				<File
@@ -241,7 +241,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_effect.h"
+					RelativePath=".\game\entities\dis_effect.hpp"
 					>
 				</File>
 				<File
@@ -249,7 +249,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_explosive.h"
+					RelativePath=".\game\entities\dis_explosive.hpp"
 					>
 				</File>
 				<File
@@ -257,7 +257,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_healthtrigger.h"
+					RelativePath=".\game\entities\dis_healthtrigger.hpp"
 					>
 				</File>
 				<File
@@ -265,7 +265,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_mortal.h"
+					RelativePath=".\game\entities\dis_mortal.hpp"
 					>
 				</File>
 				<File
@@ -273,7 +273,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_powerup.h"
+					RelativePath=".\game\entities\dis_powerup.hpp"
 					>
 				</File>
 				<File
@@ -281,7 +281,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\entities\dis_ship.h"
+					RelativePath=".\game\entities\dis_ship.hpp"
 					>
 				</File>
 				<Filter
@@ -292,7 +292,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_demi.h"
+						RelativePath=".\game\entities\ships\dis_demi.hpp"
 						>
 					</File>
 					<File
@@ -300,7 +300,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_devourment.h"
+						RelativePath=".\game\entities\ships\dis_devourment.hpp"
 						>
 					</File>
 					<File
@@ -308,7 +308,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_enemyship.h"
+						RelativePath=".\game\entities\ships\dis_enemyship.hpp"
 						>
 					</File>
 					<File
@@ -316,7 +316,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_interloper.h"
+						RelativePath=".\game\entities\ships\dis_interloper.hpp"
 						>
 					</File>
 					<File
@@ -324,7 +324,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_playership.h"
+						RelativePath=".\game\entities\ships\dis_playership.hpp"
 						>
 					</File>
 					<File
@@ -332,7 +332,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_revulsion.h"
+						RelativePath=".\game\entities\ships\dis_revulsion.hpp"
 						>
 					</File>
 					<File
@@ -340,7 +340,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_shade.h"
+						RelativePath=".\game\entities\ships\dis_shade.hpp"
 						>
 					</File>
 					<File
@@ -348,7 +348,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\game\entities\ships\dis_solitary.h"
+						RelativePath=".\game\entities\ships\dis_solitary.hpp"
 						>
 					</File>
 				</Filter>
@@ -361,7 +361,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_armor.h"
+					RelativePath=".\game\items\dis_armor.hpp"
 					>
 				</File>
 				<File
@@ -369,11 +369,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_engine.h"
+					RelativePath=".\game\items\dis_engine.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_powereddevice.h"
+					RelativePath=".\game\items\dis_powereddevice.hpp"
 					>
 				</File>
 				<File
@@ -381,7 +381,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_powergenerator.h"
+					RelativePath=".\game\items\dis_powergenerator.hpp"
 					>
 				</File>
 				<File
@@ -389,7 +389,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_shield.h"
+					RelativePath=".\game\items\dis_shield.hpp"
 					>
 				</File>
 				<File
@@ -397,7 +397,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\items\dis_weapon.h"
+					RelativePath=".\game\items\dis_weapon.hpp"
 					>
 				</File>
 			</Filter>
@@ -405,11 +405,11 @@
 				Name="engine2"
 				>
 				<File
-					RelativePath=".\game\engine2\dis_areatracelist.h"
+					RelativePath=".\game\engine2\dis_areatracelist.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_collisionpair.h"
+					RelativePath=".\game\engine2\dis_collisionpair.hpp"
 					>
 				</File>
 				<File
@@ -417,7 +417,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_collisionquadtree.h"
+					RelativePath=".\game\engine2\dis_collisionquadtree.hpp"
 					>
 				</File>
 				<File
@@ -425,15 +425,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_entity.h"
+					RelativePath=".\game\engine2\dis_entity.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_entityreference.h"
+					RelativePath=".\game\engine2\dis_entityreference.hpp"
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_linetracebinding.h"
+					RelativePath=".\game\engine2\dis_linetracebinding.hpp"
 					>
 				</File>
 				<File
@@ -441,7 +441,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_physicshandler.h"
+					RelativePath=".\game\engine2\dis_physicshandler.hpp"
 					>
 				</File>
 				<File
@@ -449,7 +449,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\game\engine2\dis_world.h"
+					RelativePath=".\game\engine2\dis_world.hpp"
 					>
 				</File>
 			</Filter>
@@ -462,7 +462,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_gamewidget.h"
+				RelativePath=".\ui\dis_gamewidget.hpp"
 				>
 			</File>
 			<File
@@ -470,7 +470,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_highscorenameentrydialog.h"
+				RelativePath=".\ui\dis_highscorenameentrydialog.hpp"
 				>
 			</File>
 			<File
@@ -478,7 +478,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_highscoreswidget.h"
+				RelativePath=".\ui\dis_highscoreswidget.hpp"
 				>
 			</File>
 			<File
@@ -486,7 +486,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_inventorybutton.h"
+				RelativePath=".\ui\dis_inventorybutton.hpp"
 				>
 			</File>
 			<File
@@ -494,7 +494,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_inventorypanel.h"
+				RelativePath=".\ui\dis_inventorypanel.hpp"
 				>
 			</File>
 			<File
@@ -502,7 +502,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_optionspanel.h"
+				RelativePath=".\ui\dis_optionspanel.hpp"
 				>
 			</File>
 			<File
@@ -510,7 +510,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_titlescreenwidget.h"
+				RelativePath=".\ui\dis_titlescreenwidget.hpp"
 				>
 			</File>
 			<File
@@ -518,7 +518,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\ui\dis_worldview.h"
+				RelativePath=".\ui\dis_worldview.hpp"
 				>
 			</File>
 		</Filter>
@@ -527,7 +527,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\dis_commandlineoptions.h"
+			RelativePath=".\dis_commandlineoptions.hpp"
 			>
 		</File>
 		<File
@@ -535,7 +535,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\dis_config.h"
+			RelativePath=".\dis_config.hpp"
 			>
 		</File>
 		<File
@@ -543,11 +543,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\dis_enums.h"
+			RelativePath=".\dis_enums.hpp"
 			>
 		</File>
 		<File
-			RelativePath=".\dis_events.h"
+			RelativePath=".\dis_events.hpp"
 			>
 		</File>
 		<File
@@ -559,7 +559,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\dis_master.h"
+			RelativePath=".\dis_master.hpp"
 			>
 		</File>
 		<File
@@ -567,7 +567,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\dis_resourcecache.h"
+			RelativePath=".\dis_resourcecache.hpp"
 			>
 		</File>
 	</Files>

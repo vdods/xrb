@@ -6,6 +6,7 @@ TODO
 app
 app/example
 app/example/disasteroids
+app/example/disasteroids/disasteroids.vcproj
 app/example/disasteroids/dis_commandlineoptions.cpp
 app/example/disasteroids/dis_commandlineoptions.hpp
 app/example/disasteroids/dis_config.cpp
@@ -125,6 +126,7 @@ doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
 lib
+lib/libxrb.vcproj
 lib/core/xrb.hpp
 lib/core/xrb_assert.hpp
 lib/core/xrb_compiletimeasserts.cpp
