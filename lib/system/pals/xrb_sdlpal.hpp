@@ -34,14 +34,13 @@ public:
 
     virtual void FinishFrame ();
 
-    virtual Event *PollEvent ();
+    virtual Event *PollEvent (Screen const *screen, Float time);
 
     virtual Texture *LoadImage (char const *image_path);
     virtual Status SaveImage (char const *image_path, Texture const &texture);
 
-private:
-
-    
+    // TEMP
+    static Event *PollEvent__ (Screen const *screen, Float time);
 }; // end of class SDLPal
 
 } // end of namespace Xrb

@@ -17,6 +17,7 @@ namespace Xrb
 {
 
 class Event;
+class Screen;
 class Texture;
 
 // Platform Abstraction Layer interface.  at most one instance of this
@@ -51,7 +52,7 @@ public:
     // return the next queued (input) event.  should return NULL if no
     // events are available, otherwise should new-up and return the
     // appropriate Xrb::Event (it will be deleted by XRB).
-    virtual Event *PollEvent () = 0;
+    virtual Event *PollEvent (Screen const *screen, Float time) = 0;
 
     // should return NULL if the load failed
     virtual Texture *LoadImage (char const *image_path) = 0;

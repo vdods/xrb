@@ -75,8 +75,8 @@ Event *Event::CreateEventFromSDLEvent (
         {
             SDL_MouseButtonEvent const *mouse_button_event =
                 reinterpret_cast<SDL_MouseButtonEvent const *>(e);
-            if (mouse_button_event->button == Key::MOUSEWHEELUP || // TODO: change to SDL code 4
-                mouse_button_event->button == Key::MOUSEWHEELDOWN) // TODO: change to SDL code 5
+            if (mouse_button_event->button == SDL_BUTTON_WHEELUP ||
+                mouse_button_event->button == SDL_BUTTON_WHEELDOWN)
             {
                 retval = new EventMouseWheel(
                     Key::Code(mouse_button_event->button),
@@ -103,8 +103,8 @@ Event *Event::CreateEventFromSDLEvent (
         {
             SDL_MouseButtonEvent const *mouse_button_event =
                 reinterpret_cast<SDL_MouseButtonEvent const *>(e);
-            if (mouse_button_event->button == Key::MOUSEWHEELUP || // TODO: change to SDL code 4
-                mouse_button_event->button == Key::MOUSEWHEELDOWN) // TODO: change to SDL code 5
+            if (mouse_button_event->button == SDL_BUTTON_WHEELUP ||
+                mouse_button_event->button == SDL_BUTTON_WHEELDOWN)
             {
                 // yes, virginia, there IS a reason this
                 // function returns null sometimes.

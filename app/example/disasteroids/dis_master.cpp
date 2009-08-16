@@ -22,6 +22,8 @@
 #include "xrb_inputstate.hpp"
 #include "xrb_screen.hpp"
 
+#include "xrb_sdlpal.hpp" // TEMP
+
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 
 using namespace Xrb;
@@ -124,16 +126,11 @@ void Master::Run ()
         if (m_game_widget != NULL)
             m_game_widget->SetFramerate(m_framerate_calculator.Framerate());
 
-        // process SDL events
-        SDL_Event sdl_event;
-        while (SDL_PollEvent(&sdl_event))
+        // process events
+        Event *event = NULL;
+        // NOTE: temp usage of SDLPal directly
+        while ((event = SDLPal::PollEvent__(m_screen, m_real_time)) != NULL)
         {
-            Event *event = Event::CreateEventFromSDLEvent(&sdl_event, m_screen, m_real_time);
-
-            // if it was a dud, skip this loop
-            if (event == NULL)
-                continue;
-
             // process key events through the InputState singleton first
             if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                 Singleton::InputState().ProcessEvent(event);

@@ -52,7 +52,6 @@ AM_CPPFLAGS = \
     `$(SDL_CONFIG) --cflags` \
     \
     -I$(top_srcdir)/lib/core \
-    -I$(top_srcdir)/lib/core/serializers \
     -I$(top_srcdir)/lib/engine2 \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
@@ -63,6 +62,8 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/render \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/system \
+    -I$(top_srcdir)/lib/system/pals \
+    -I$(top_srcdir)/lib/system/serializers \
     -I$(top_srcdir)/lib/util
 
 #    `$(LIBPNG_CONFIG) --cflags` \

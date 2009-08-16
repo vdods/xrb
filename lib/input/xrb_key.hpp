@@ -41,8 +41,8 @@ public:
         LEFTMOUSE = SDL_BUTTON_LEFT,
         MIDDLEMOUSE = SDL_BUTTON_MIDDLE,
         RIGHTMOUSE = SDL_BUTTON_RIGHT,
-        MOUSEWHEELUP = 4,   // for some reason this isn't in my version of SDL_mouse.h
-        MOUSEWHEELDOWN = 5, // for some reason this isn't in my version of SDL_mouse.h
+        MOUSEWHEELUP = SDL_BUTTON_WHEELUP,
+        MOUSEWHEELDOWN = SDL_BUTTON_WHEELDOWN,
         BACKSPACE = SDLK_BACKSPACE,
         TAB = SDLK_TAB,                     // ascii 0x09 '\t'
         CLEAR = SDLK_CLEAR,
