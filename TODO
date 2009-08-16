@@ -122,6 +122,7 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- it might be useful to re-implement SDL_ActiveEvent
 - high framerates cause the impact damage to be too high in disasteroids
 - change MatrixMode, MatrixStackDepth, MaxMatrixStackDepth into just a generic GetGLInt or something
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)

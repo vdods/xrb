@@ -730,11 +730,7 @@ bool Widget::HandleEvent (Event const *const e)
         case Event::DELETE_CHILD_WIDGET:
             return ProcessDeleteChildWidgetEvent(DStaticCast<EventDeleteChildWidget const *>(e));
 
-        case Event::ACTIVE:
-        case Event::RESIZE:
-        case Event::EXPOSE:
         case Event::QUIT:
-        case Event::SYSWM:
             return false;
 
         case Event::STATE_MACHINE_INPUT:

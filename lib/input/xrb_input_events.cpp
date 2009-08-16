@@ -22,7 +22,7 @@ EventInput::~EventInput () { }
 EventKey::EventKey (
     Key::Code code,
     Key::Modifier modifier,
-    Float const time,
+    Float time,
     EventType event_type)
     :
     EventInput(time, event_type)
@@ -81,102 +81,54 @@ EventKey::EventKey (
 EventKey::~EventKey () { }
 
 EventMouse::EventMouse (
-    SDLMod const modifiers,
-    Screen const *const screen,
-    Uint16 const sdl_event_x,
-    Uint16 const sdl_event_y,
-    Float const time,
-    EventType const event_type)
+    Uint16 event_x,
+    Uint16 event_y,
+    Key::Modifier modifier,
+    Screen const *screen,
+    Float time,
+    EventType event_type)
     :
     EventInput(time, event_type)
 {
     ASSERT1(screen != NULL);
-    m_position = screen->ScreenCoordsFromSDLCoords(sdl_event_x, sdl_event_y);
-    m_modifiers = modifiers;
+    m_position = screen->ScreenCoordsFromSDLCoords(event_x, event_y);
+    m_modifier = modifier;
 }
 
 EventMouse::~EventMouse () { }
 
 EventMouseButton::EventMouseButton (
-    SDL_MouseButtonEvent const *const e,
-    SDLMod const modifiers,
-    Screen const *const screen,
-    Float const time,
+    Key::Code button_code,
+    Uint16 event_x,
+    Uint16 event_y,
+    Key::Modifier modifier,
+    Screen const *screen,
+    Float time,
     EventType event_type)
     :
-    EventMouse(modifiers, screen, e->x, e->y, time, event_type)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
+    EventMouse(event_x, event_y, modifier, screen, time, event_type),
+    m_button_code(button_code)
+{ }
 
 EventMouseButton::~EventMouseButton () { }
 
 EventMouseMotion::EventMouseMotion (
-    SDL_MouseMotionEvent const *const e,
-    SDLMod const modifiers,
-    Screen const *const screen,
-    Float const time)
+    bool is_left_mouse_button_pressed,
+    bool is_middle_mouse_button_pressed,
+    bool is_right_mouse_button_pressed,
+    Uint16 event_x,
+    Uint16 event_y,
+    Sint16 event_dx,
+    Sint16 event_dy,
+    Key::Modifier modifier,
+    Screen const *screen,
+    Float time)
     :
-    EventMouse(modifiers, screen, e->x, e->y, time, MOUSEMOTION)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-    // the y coordinate is multiplied by -1 to get right-handed coords.
-    m_delta = ScreenCoordVector2(m_event.xrel, -m_event.yrel);
-}
-
-EventJoy::~EventJoy () { }
-
-EventJoyAxis::EventJoyAxis (
-    SDL_JoyAxisEvent const *const e,
-    Float const time)
-    :
-    EventJoy(time, JOYAXIS)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventJoyBall::EventJoyBall (
-    SDL_JoyBallEvent const *const e,
-    Float const time)
-    :
-    EventJoy(time, JOYBALL)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventJoyButton::EventJoyButton (
-    SDL_JoyButtonEvent const *const e,
-    Float const time,
-    EventType const event_type)
-    :
-    EventJoy(time, event_type)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventJoyHat::EventJoyHat (
-    SDL_JoyHatEvent const *const e,
-    Float const time)
-    :
-    EventJoy(time, JOYHAT)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventQuit::EventQuit (
-    SDL_QuitEvent const *const e,
-    Float const time)
-    :
-    Event(time, QUIT)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
+    EventMouse(event_x, event_y, modifier, screen, time, MOUSEMOTION),
+    m_is_left_mouse_button_pressed(is_left_mouse_button_pressed),
+    m_is_middle_mouse_button_pressed(is_middle_mouse_button_pressed),
+    m_is_right_mouse_button_pressed(is_right_mouse_button_pressed),
+    m_delta(event_dx, event_dy)
+{ }
 
 } // end of namespace Xrb

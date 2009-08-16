@@ -39,11 +39,7 @@ std::string const &Event::Name (EventType const event_type)
         "FOCUS",
         "MOUSEOVER",
         "DELETE_CHILD_WIDGET",
-        "ACTIVE",
-        "RESIZE",
-        "EXPOSE",
         "QUIT",
-        "SYSWM",
         "STATE_MACHINE_INPUT",
         "ENGINE2_DELETE_ENTITY",
         "ENGINE2_REMOVE_ENTITY_FROM_WORLD"
@@ -67,12 +63,6 @@ Event *Event::CreateEventFromSDLEvent (
 
     switch (e->type)
     {
-        case SDL_ACTIVEEVENT:
-            retval = new EventActive(
-                reinterpret_cast<SDL_ActiveEvent const *>(e),
-                time);
-            break;
-
         case SDL_KEYDOWN:
             retval = new EventKeyDown(Key::Code(e->key.keysym.sym), Key::Modifier(e->key.keysym.mod), time);
             break;
@@ -85,20 +75,24 @@ Event *Event::CreateEventFromSDLEvent (
         {
             SDL_MouseButtonEvent const *mouse_button_event =
                 reinterpret_cast<SDL_MouseButtonEvent const *>(e);
-            if (mouse_button_event->button == Key::MOUSEWHEELUP ||
-                mouse_button_event->button == Key::MOUSEWHEELDOWN)
+            if (mouse_button_event->button == Key::MOUSEWHEELUP || // TODO: change to SDL code 4
+                mouse_button_event->button == Key::MOUSEWHEELDOWN) // TODO: change to SDL code 5
             {
                 retval = new EventMouseWheel(
-                    mouse_button_event,
-                    Singleton::InputState().Modifiers(),
+                    Key::Code(mouse_button_event->button),
+                    mouse_button_event->x,
+                    mouse_button_event->y,
+                    Singleton::InputState().Modifier(),
                     screen,
                     time);
             }
             else
             {
                 retval = new EventMouseButtonDown(
-                    mouse_button_event,
-                    Singleton::InputState().Modifiers(),
+                    Key::Code(mouse_button_event->button),
+                    mouse_button_event->x,
+                    mouse_button_event->y,
+                    Singleton::InputState().Modifier(),
                     screen,
                     time);
             }
@@ -109,8 +103,8 @@ Event *Event::CreateEventFromSDLEvent (
         {
             SDL_MouseButtonEvent const *mouse_button_event =
                 reinterpret_cast<SDL_MouseButtonEvent const *>(e);
-            if (mouse_button_event->button == Key::MOUSEWHEELUP ||
-                mouse_button_event->button == Key::MOUSEWHEELDOWN)
+            if (mouse_button_event->button == Key::MOUSEWHEELUP || // TODO: change to SDL code 4
+                mouse_button_event->button == Key::MOUSEWHEELDOWN) // TODO: change to SDL code 5
             {
                 // yes, virginia, there IS a reason this
                 // function returns null sometimes.
@@ -119,8 +113,10 @@ Event *Event::CreateEventFromSDLEvent (
             else
             {
                 retval = new EventMouseButtonUp(
-                    mouse_button_event,
-                    Singleton::InputState().Modifiers(),
+                    Key::Code(mouse_button_event->button),
+                    mouse_button_event->x,
+                    mouse_button_event->y,
+                    Singleton::InputState().Modifier(),
                     screen,
                     time);
             }
@@ -128,65 +124,40 @@ Event *Event::CreateEventFromSDLEvent (
         }
 
         case SDL_MOUSEMOTION:
+        {
+            SDL_MouseMotionEvent const *mouse_motion_event =
+                reinterpret_cast<SDL_MouseMotionEvent const *>(e);
             retval = new EventMouseMotion(
-                reinterpret_cast<SDL_MouseMotionEvent const *>(e),
-                Singleton::InputState().Modifiers(),
+                Singleton::InputState().IsKeyPressed(Key::LEFTMOUSE),
+                Singleton::InputState().IsKeyPressed(Key::MIDDLEMOUSE),
+                Singleton::InputState().IsKeyPressed(Key::RIGHTMOUSE),
+                mouse_motion_event->x,
+                mouse_motion_event->y,
+                mouse_motion_event->xrel,
+                -mouse_motion_event->yrel, // yrel coord is negative to get right-handed coords
+                Singleton::InputState().Modifier(),
                 screen,
                 time);
             break;
+        }
 
         case SDL_JOYAXISMOTION:
-            retval = new EventJoyAxis(
-                reinterpret_cast<SDL_JoyAxisEvent const *>(e),
-                time);
-            break;
-
         case SDL_JOYBALLMOTION:
-            retval = new EventJoyBall(
-                reinterpret_cast<SDL_JoyBallEvent const *>(e),
-                time);
-            break;
-
         case SDL_JOYBUTTONDOWN:
-            retval = new EventJoyButtonDown(
-                reinterpret_cast<SDL_JoyButtonEvent const *>(e),
-                time);
-            break;
-
         case SDL_JOYBUTTONUP:
-            retval = new EventJoyButtonUp(
-                reinterpret_cast<SDL_JoyButtonEvent const *>(e),
-                time);
-            break;
-
         case SDL_JOYHATMOTION:
-            retval = new EventJoyHat(
-                reinterpret_cast<SDL_JoyHatEvent const *>(e),
-                time);
+            // forget it for now
             break;
 
         case SDL_QUIT:
-            retval = new EventQuit(
-                reinterpret_cast<SDL_QuitEvent const *>(e),
-                time);
+            retval = new EventQuit(time);
             break;
 
+        case SDL_ACTIVEEVENT:
         case SDL_SYSWMEVENT:
-            retval = new EventSysWM(
-                reinterpret_cast<SDL_SysWMEvent const *>(e),
-                time);
-            break;
-
         case SDL_VIDEORESIZE:
-            retval = new EventResize(
-                reinterpret_cast<SDL_ResizeEvent const *>(e),
-                time);
-            break;
-
         case SDL_VIDEOEXPOSE:
-            retval = new EventExpose(
-                reinterpret_cast<SDL_ExposeEvent const *>(e),
-                time);
+            // ignore these events
             break;
 
         case SDL_USEREVENT:

@@ -135,25 +135,25 @@ bool InputState::IsEitherShiftKeyPressed () const
            GetKey(Key::RSHIFT)->IsPressed();
 }
 
-SDLMod InputState::Modifiers () const
+Key::Modifier InputState::Modifier () const
 {
-    return (SDLMod)(
-        (IsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
-        (IsKeyPressed(Key::RALT)     ? KMOD_RALT   : 0) |
-        (IsKeyPressed(Key::LCTRL)    ? KMOD_LCTRL  : 0) |
-        (IsKeyPressed(Key::RCTRL)    ? KMOD_RCTRL  : 0) |
-        (IsKeyPressed(Key::LSHIFT)   ? KMOD_LSHIFT : 0) |
-        (IsKeyPressed(Key::RSHIFT)   ? KMOD_RSHIFT : 0) |
-        (IsKeyPressed(Key::LMETA)    ? KMOD_LMETA  : 0) |
-        (IsKeyPressed(Key::RMETA)    ? KMOD_RMETA  : 0) |
-        (IsKeyPressed(Key::NUMLOCK)  ? KMOD_NUM    : 0) |
-        (IsKeyPressed(Key::CAPSLOCK) ? KMOD_CAPS   : 0));
+    return Key::Modifier(
+        (IsKeyPressed(Key::LALT)     ? Key::MOD_LALT   : 0) |
+        (IsKeyPressed(Key::RALT)     ? Key::MOD_RALT   : 0) |
+        (IsKeyPressed(Key::LCTRL)    ? Key::MOD_LCTRL  : 0) |
+        (IsKeyPressed(Key::RCTRL)    ? Key::MOD_RCTRL  : 0) |
+        (IsKeyPressed(Key::LSHIFT)   ? Key::MOD_LSHIFT : 0) |
+        (IsKeyPressed(Key::RSHIFT)   ? Key::MOD_RSHIFT : 0) |
+        (IsKeyPressed(Key::LMETA)    ? Key::MOD_LMETA  : 0) |
+        (IsKeyPressed(Key::RMETA)    ? Key::MOD_RMETA  : 0) |
+        (IsKeyPressed(Key::NUMLOCK)  ? Key::MOD_NUM    : 0) |
+        (IsKeyPressed(Key::CAPSLOCK) ? Key::MOD_CAPS   : 0));
 }
 
 void InputState::ResetPressed ()
 {
     for (KeyCodeMap::const_iterator it = m_keycode_map.begin(),
-                            it_end = m_keycode_map.end();
+                                    it_end = m_keycode_map.end();
          it != it_end;
          ++it)
     {

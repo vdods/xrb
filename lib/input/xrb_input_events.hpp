@@ -220,10 +220,10 @@ public:
       *        and mouse event position.
       */
     EventMouse (
-        SDLMod modifiers,
+        Uint16 event_x,
+        Uint16 event_y,
+        Key::Modifier modifier,
         Screen const *screen,
-        Uint16 sdl_event_x,
-        Uint16 sdl_event_y,
         Float time,
         EventType event_type);
     /** @brief Pure virtual destructor.
@@ -242,43 +242,43 @@ public:
       */
     inline bool IsEitherAltKeyPressed () const
     {
-        return (m_modifiers & KMOD_ALT) != 0;
+        return (m_modifier & Key::MOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this mouse event was generated.
       */
     inline bool IsEitherControlKeyPressed () const
     {
-        return (m_modifiers & KMOD_CTRL) != 0;
+        return (m_modifier & Key::MOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or shift alt keys were pressed
       *        when this mouse event was generated.
       */
     inline bool IsEitherShiftKeyPressed () const
     {
-        return (m_modifiers & KMOD_SHIFT) != 0;
+        return (m_modifier & Key::MOD_SHIFT) != 0;
     }
     /** @brief Returns true iff capslock was active when this event
       *        was generated.
       */
     inline bool IsCapsLockOn () const
     {
-        return (m_modifiers & KMOD_CAPS) != 0;
+        return (m_modifier & Key::MOD_CAPS) != 0;
     }
     /** @brief Returns true iff numlock was active when this event
       *        was generated.
       */
     inline bool IsNumLockOn () const
     {
-        return (m_modifiers & KMOD_NUM) != 0;
+        return (m_modifier & Key::MOD_NUM) != 0;
     }
 
 private:
 
     // the mouse button position in virtual screen coordinates
     ScreenCoordVector2 m_position;
-    // the metakey modifiers for this event
-    SDLMod m_modifiers;
+    // the metakey modifier flags for this event
+    Key::Modifier m_modifier;
 }; // end of class EventMouse
 
 /** Ties together the common functionality of the button down and button
@@ -296,8 +296,10 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButton (
-        SDL_MouseButtonEvent const *e,
-        SDLMod modifiers,
+        Key::Code button_code,
+        Uint16 event_x,
+        Uint16 event_y,
+        Key::Modifier modifier,
         Screen const *screen,
         Float time,
         EventType event_type);
@@ -305,13 +307,9 @@ public:
       */
     virtual ~EventMouseButton () = 0;
 
-    /** @brief Returns the SDL_MouseButtonEvent that was used to create this
-      *        event.
-      */
-    SDL_MouseButtonEvent const &SDLEvent () const { return m_event; }
     /** @brief Returns the event's button code (see @ref Xrb::Key::Code).
       */
-    Key::Code ButtonCode () const { return (Key::Code)m_event.button; }
+    Key::Code ButtonCode () const { return m_button_code; }
     /** @brief Override of Event::IsMouseButtonEvent to indicate that
       *        this is, indeed, a mouse button event.
       */
@@ -329,8 +327,7 @@ public:
 
 private:
 
-    // the SDL_MouseButtonEvent used to create this event.
-    SDL_MouseButtonEvent m_event;
+    Key::Code m_button_code;
 }; // end of class EventMouseButton
 
 /** This event indicates a mouse button was depressed.  This event indicates
@@ -346,12 +343,14 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButtonDown (
-        SDL_MouseButtonEvent const *e,
-        SDLMod modifiers,
+        Key::Code button_code,
+        Uint16 event_x,
+        Uint16 event_y,
+        Key::Modifier modifier,
         Screen const *screen,
         Float time)
         :
-        EventMouseButton(e, modifiers, screen, time, MOUSEBUTTONDOWN)
+        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEBUTTONDOWN)
     { }
     /** @brief Choose.  Choose the form of the destructor!
       */
@@ -376,12 +375,14 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseButtonUp (
-        SDL_MouseButtonEvent const *e,
-        SDLMod modifiers,
+        Key::Code button_code,
+        Uint16 event_x,
+        Uint16 event_y,
+        Key::Modifier modifier,
         Screen const *screen,
         Float time)
         :
-        EventMouseButton(e, modifiers, screen, time, MOUSEBUTTONUP)
+        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEBUTTONUP)
     { }
     /** @brief Destructor.
       */
@@ -406,12 +407,14 @@ public:
       * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
       */
     EventMouseWheel (
-        SDL_MouseButtonEvent const *e,
-        SDLMod modifiers,
+        Key::Code button_code,
+        Uint16 event_x,
+        Uint16 event_y,
+        Key::Modifier modifier,
         Screen const *screen,
         Float time)
         :
-        EventMouseButton(e, modifiers, screen, time, MOUSEWHEEL)
+        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEWHEEL)
     { }
     /** @brief Destructor.
       */
@@ -431,11 +434,17 @@ class EventMouseMotion : public EventMouse
 public:
 
     /** @brief Constructs an EventMouseButton from the given
-      * SDL_MouseMotionEvent, keyboard modifiers, and Screen.
+      * button states, position, keyboard modifiers, and Screen.
       */
     EventMouseMotion (
-        SDL_MouseMotionEvent const *e,
-        SDLMod modifiers,
+        bool is_left_mouse_button_pressed,
+        bool is_middle_mouse_button_pressed,
+        bool is_right_mouse_button_pressed,
+        Uint16 event_x,
+        Uint16 event_y,
+        Sint16 event_dx,
+        Sint16 event_dy,
+        Key::Modifier modifier,
         Screen const *screen,
         Float time);
     virtual ~EventMouseMotion () { }
@@ -444,43 +453,32 @@ public:
       *        this is, indeed, a mouse motion event.
       */
     virtual bool IsMouseMotionEvent () const { return true; }
-    /** @brief Returns the SDL_MouseMotionEvent used to create this event.
-      */
-    inline SDL_MouseMotionEvent const &SDLEvent () const { return m_event; }
     /** @brief Returns the mouse's position delta generated by this event.
       */
-    inline ScreenCoordVector2 const &Delta () const { return m_delta; }
+    ScreenCoordVector2 const &Delta () const { return m_delta; }
     /** @brief Returns true iff the left mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool IsLeftMouseButtonPressed () const
-    {
-        return (m_event.state & SDL_BUTTON_LMASK) != 0;
-    }
+    bool IsLeftMouseButtonPressed () const { return m_is_left_mouse_button_pressed; }
     /** @brief Returns true iff the middle mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool IsMiddleMouseButtonPressed () const
-    {
-        return (m_event.state & SDL_BUTTON_MMASK) != 0;
-    }
+    bool IsMiddleMouseButtonPressed () const { return m_is_middle_mouse_button_pressed; }
     /** @brief Returns true iff the right mouse button was depressed at
       *        the time this event was generated.
       */
-    inline bool IsRightMouseButtonPressed () const
-    {
-        return (m_event.state & SDL_BUTTON_RMASK) != 0;
-    }
+    bool IsRightMouseButtonPressed () const { return m_is_right_mouse_button_pressed; }
 
 private:
 
-    SDL_MouseMotionEvent m_event;
+    bool m_is_left_mouse_button_pressed;
+    bool m_is_middle_mouse_button_pressed;
+    bool m_is_right_mouse_button_pressed;
     // the mouse motion delta in virtual screen coordinates
     ScreenCoordVector2 m_delta;
 }; // end of class EventMouseMotion
 
-/** No special properties of the joystick events are articulated; the events
-  * simply supply the SDL events via accessors.
+/** TODO: articulate joystick events
   * @brief Abstract baseclass for all joystick events.
   */
 class EventJoy : public EventInput
@@ -500,134 +498,13 @@ public:
     virtual bool IsJoyEvent () const { return true; }
 }; // end of class EventJoy
 
-/** See the man page for SDL_JoyAxisEvent for more details.
-  * @brief Joystick axis event.
-  */
-class EventJoyAxis : public EventJoy
-{
-public:
-
-    // constructs this type of event from the given SDL_Event
-    EventJoyAxis (SDL_JoyAxisEvent const *const e, Float const time);
-    virtual ~EventJoyAxis () { }
-
-    SDL_JoyAxisEvent const &SDLEvent () const { return m_event; }
-
-private:
-
-    SDL_JoyAxisEvent m_event;
-}; // end of class EventJoyAxis
-
-/** See the man page for SDL_JoyBallEvent for more details.
-  * @brief Joystick ball event.
-  */
-class EventJoyBall : public EventJoy
-{
-public:
-
-    // constructs this type of event from the given SDL_Event
-    EventJoyBall (SDL_JoyBallEvent const *const e, Float const time);
-    virtual ~EventJoyBall () { }
-
-    SDL_JoyBallEvent const &SDLEvent () const { return m_event; }
-
-private:
-
-    SDL_JoyBallEvent m_event;
-}; // end of class EventJoyBall
-
-/** See the man page for SDL_JoyButtonEvent for more details.
-  * @brief Joystick button event.
-  */
-class EventJoyButton : public EventJoy
-{
-public:
-
-    EventJoyButton (SDL_JoyButtonEvent const *const e,
-                    Float const time,
-                    EventType const event_type);
-    virtual ~EventJoyButton () { }
-
-    SDL_JoyButtonEvent const &SDLEvent () const { return m_event; }
-
-private:
-
-    SDL_JoyButtonEvent m_event;
-}; // end of class EventJoyButton
-
-/** See the man page for SDL_JoyButtonEvent for more details.
-  * @brief Joystick button down event.
-  */
-class EventJoyButtonDown : public EventJoyButton
-{
-public:
-
-    // constructs this type of event from the given SDL_Event
-    EventJoyButtonDown (
-        SDL_JoyButtonEvent const *const e,
-        Float const time)
-        :
-        EventJoyButton(e, time, JOYBUTTONDOWN)
-    { }
-    virtual ~EventJoyButtonDown () { }
-}; // end of class EventJoyButtonDown
-
-/** See the man page for SDL_JoyButtonEvent for more details.
-  * @brief Joystick button up event.
-  */
-class EventJoyButtonUp : public EventJoyButton
-{
-public:
-
-    // constructs this type of event from the given SDL_Event
-    EventJoyButtonUp (
-        SDL_JoyButtonEvent const *const e,
-        Float const time)
-        :
-        EventJoyButton(e, time, JOYBUTTONUP)
-    { }
-    virtual ~EventJoyButtonUp () { }
-}; // end of class EventJoyButtonUp
-
-/** See the man page for SDL_JoyHatEvent for more details.
-  * @brief Joystick hat event.
-  */
-class EventJoyHat : public EventJoy
-{
-public:
-
-    // constructs this type of event from the given SDL_Event
-    EventJoyHat (SDL_JoyHatEvent const *const e, Float const time);
-    virtual ~EventJoyHat () { }
-
-    SDL_JoyHatEvent const &SDLEvent () const { return m_event; }
-
-private:
-
-    SDL_JoyHatEvent m_event;
-}; // end of class EventJoyHat
-
-/** See the manpage for SDL_QuitEvent for more details.
-  * @brief Event generated by SDL when the user quits the program.
+/** @brief Event signaling that the program has requested to quit.
   */
 class EventQuit : public Event
 {
 public:
 
-    /** @brief Constructs an EventQuit from the given SDL_QuitEvent.
-      */
-    EventQuit (SDL_QuitEvent const *const e, Float const time);
-    /** @brief Boring destructor.
-      */
-    virtual ~EventQuit () { }
-
-    /** @brief Returns the SDL_QuitEvent used to create this event.
-      */
-    SDL_QuitEvent const &SDLEvent () const { return m_event; }
-
-private:
-
-    SDL_QuitEvent m_event;
+    EventQuit (Float time) : Event(time, QUIT) { }
 }; // end of class EventQuit
 
 } // end of namespace Xrb

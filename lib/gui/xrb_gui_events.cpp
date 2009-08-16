@@ -15,50 +15,10 @@
 namespace Xrb
 {
 
-EventActive::EventActive (
-    SDL_ActiveEvent const *const e,
-    Float const time)
-    :
-    Event(time, ACTIVE)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
 void EventDeleteChildWidget::DeleteChildWidget () const
 {
     ASSERT1(m_child_to_delete != NULL);
     DeleteAndNullify(m_child_to_delete);
-}
-
-EventResize::EventResize (
-    SDL_ResizeEvent const *const e,
-    Float const time)
-    :
-    Event(time, RESIZE)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventExpose::EventExpose (
-    SDL_ExposeEvent const *const e,
-    Float const time)
-    :
-    Event(time, EXPOSE)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
-}
-
-EventSysWM::EventSysWM (
-    SDL_SysWMEvent const *const e,
-    Float const time)
-    :
-    Event(time, SYSWM)
-{
-    ASSERT1(e != NULL);
-    m_event = *e;
 }
 
 } // end of namespace Xrb

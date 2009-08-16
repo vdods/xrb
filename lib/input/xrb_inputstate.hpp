@@ -49,7 +49,7 @@ public:
     inline bool IsCapsLockOn () const { return m_is_caps_lock_on; }
     inline bool IsNumLockOn () const { return m_is_num_lock_on; }
     inline bool IsScrollLockOn () const { return m_is_scroll_lock_on; }
-    SDLMod Modifiers () const;
+    Key::Modifier Modifier () const;
 
     // calls ResetPressed on all the keys
     void ResetPressed ();
