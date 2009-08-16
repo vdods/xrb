@@ -14,6 +14,7 @@
 #include "dis_config.hpp"
 #include "dis_master.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_sdlpal.hpp"
 
 using namespace std;
 using namespace Xrb;
@@ -53,7 +54,7 @@ int main (int argc, char **argv)
             return options.ParseSucceeded() ? 0 : 1;
         }
 
-        Singleton::Initialize(options.KeyMapName().c_str());
+        Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
 
         // initialize video (no parachute so we get core dumps)
         if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)

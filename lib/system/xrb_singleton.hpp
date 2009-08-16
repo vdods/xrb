@@ -24,7 +24,10 @@ namespace Xrb
 
 class InputState;
 class KeyMap;
+class Pal;
 class ResourceLibrary;
+
+typedef Pal *(*PalFactory)();
 
 /** Contains functions Initialize and Shutdown which should be the first and
   * last things done, respectively, by the @c main function.  The singleton
@@ -40,6 +43,10 @@ namespace Singleton
     /** @brief Returns a const reference to the KeyMap singleton object.
       */
     KeyMap const &KeyMap ();
+    /** @brief Returns a reference to the Platform-specific singleton instance
+      *        of the Pal interface.
+      */
+    Pal &Pal ();
     /** @brief Returns a reference to the ResourceLibrary singleton object.
       */
     ResourceLibrary &ResourceLibrary ();
@@ -58,11 +65,14 @@ namespace Singleton
       * if it is necessary for Mac OS).
       *
       * @brief Initializes the singleton objects.
+      * @param CreatePal Specifies the platform-specific factory function
+      *                  for creating an instance of Pal.  The returned
+      *                  object will be deleted during Shutdown.
       * @param key_map_name Specifies the name of the KeyMap to use.  Must
       *                     not be @c NULL.  See @ref KeyMap::Create for valid
       *                     arguments.
       */
-    void Initialize (char const *key_map_name);
+    void Initialize (PalFactory CreatePal, char const *key_map_name);
     /** This should be the last thing done, so that proper cleanup is
       * performed for the singleton objects.
       * @brief Shuts down the singleton objects.

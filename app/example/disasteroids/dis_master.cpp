@@ -20,9 +20,8 @@
 #include "dis_titlescreenwidget.hpp"
 #include "dis_world.hpp"
 #include "xrb_inputstate.hpp"
+#include "xrb_pal.hpp"
 #include "xrb_screen.hpp"
-
-#include "xrb_sdlpal.hpp" // TEMP
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 
@@ -100,9 +99,9 @@ void Master::Run ()
     while (!m_is_quit_requested)
     {
         // figure out how much time to sleep before processing the next frame
-        m_real_time = 0.001f * SDL_GetTicks();
+        m_real_time = 0.001f * Singleton::Pal().CurrentTime();
         Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - m_real_time)));
-        SDL_Delay(milliseconds_to_sleep);
+        Singleton::Pal().Sleep(milliseconds_to_sleep);
         next_real_time += 1.0f / m_maximum_framerate;
 
         // process the Master event queue
@@ -127,20 +126,21 @@ void Master::Run ()
             m_game_widget->SetFramerate(m_framerate_calculator.Framerate());
 
         // process events
-        Event *event = NULL;
-        // NOTE: temp usage of SDLPal directly
-        while ((event = SDLPal::PollEvent__(m_screen, m_real_time)) != NULL)
         {
-            // process key events through the InputState singleton first
-            if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                Singleton::InputState().ProcessEvent(event);
+            Event *event = NULL;
+            while ((event = Singleton::Pal().PollEvent(m_screen, m_real_time)) != NULL)
+            {
+                // process key events through the InputState singleton first
+                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
+                    Singleton::InputState().ProcessEvent(event);
 
-            // also let the key repeater have a crack at it.
-            m_key_repeater.ProcessEvent(event);
+                // also let the key repeater have a crack at it.
+                m_key_repeater.ProcessEvent(event);
 
-            // let the screen (and the entire UI/view system) have the event
-            m_screen->ProcessEvent(event);
-            Delete(event);
+                // let the screen (and the entire UI/view system) have the event
+                m_screen->ProcessEvent(event);
+                Delete(event);
+            }
         }
 
         // key repeater frame computations
@@ -156,28 +156,28 @@ void Master::Run ()
         // world frame
         if (m_game_world != NULL)
         {
-            Uint32 world_frame_start_time = SDL_GetTicks();
+            Uint32 world_frame_start_time = Singleton::Pal().CurrentTime();
             m_game_world->ProcessFrame(m_game_time);
-            world_frame_time = SDL_GetTicks() - world_frame_start_time;
+            world_frame_time = Singleton::Pal().CurrentTime() - world_frame_start_time;
         }
 
         // gui frame
         {
-            Uint32 gui_frame_start_time = SDL_GetTicks();
+            Uint32 gui_frame_start_time = Singleton::Pal().CurrentTime();
             // process events from the gui event queue
             m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
             // frame computations for the UI/view system
             m_screen->ProcessFrame(m_real_time);
             // process events from the gui event queue again
             m_screen->OwnerEventQueue()->ProcessFrame(m_real_time);
-            gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
+            gui_frame_time = Singleton::Pal().CurrentTime() - gui_frame_start_time;
         }
 
         // rendering
         {
-            Uint32 render_frame_start_time = SDL_GetTicks();
+            Uint32 render_frame_start_time = Singleton::Pal().CurrentTime();
             m_screen->Draw();
-            render_frame_time = SDL_GetTicks() - render_frame_start_time;
+            render_frame_time = Singleton::Pal().CurrentTime() - render_frame_start_time;
         }
 
         // set the (previous) game loop's process durations

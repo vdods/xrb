@@ -91,15 +91,16 @@ well enough, it was probably already explained in
 // This header MUST be included in every source/header file.
 #include "xrb.hpp"
 
-#include "xrb_button.hpp"         // For use of the Button widget class
-#include "xrb_event.hpp"          // For use of the Event classes
-#include "xrb_eventqueue.hpp"     // For use of the EventQueue class
-#include "xrb_inputstate.hpp"     // For use of the InputState class (via Singleton::)
-#include "xrb_label.hpp"          // For use of the Label widget class
-#include "xrb_layout.hpp"         // For use of the Layout widget class
-#include "xrb_lineedit.hpp"       // For use of the LineEdit widget class
-#include "xrb_screen.hpp"         // For use of the necessary Screen widget class
-#include "xrb_transformation.hpp" // For use of Transformation::Lowercase and Uppercase
+#include "xrb_button.hpp"         // For use of the Button widget class.
+#include "xrb_event.hpp"          // For use of the Event classes.
+#include "xrb_eventqueue.hpp"     // For use of the EventQueue class.
+#include "xrb_inputstate.hpp"     // For use of the InputState class (via Singleton::).
+#include "xrb_label.hpp"          // For use of the Label widget class.
+#include "xrb_layout.hpp"         // For use of the Layout widget class.
+#include "xrb_lineedit.hpp"       // For use of the LineEdit widget class.
+#include "xrb_screen.hpp"         // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp"         // For use of the SDLPal platform abstraction layer.
+#include "xrb_transformation.hpp" // For use of Transformation::Lowercase and Uppercase.
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
@@ -122,7 +123,7 @@ int main (int argc, char **argv)
     fprintf(stderr, "main();\n");
 
     // Initialize the game engine singleton facilities.
-    Singleton::Initialize("none");
+    Singleton::Initialize(SDLPal::Create, "none");
 
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -389,18 +390,13 @@ int main (int argc, char **argv)
         {
             // Sleep for 33 milliseconds to limit the framerate and avoid
             // hogging up too much CPU just for this crappy little GUI app.
-            SDL_Delay(33);
+            Singleton::Pal().Sleep(33);
             // Retrieve the current time in seconds as a Float.
-            Float time = 0.001f * SDL_GetTicks();
-            // Process SDL events until there are no more.
-            SDL_Event sdl_event;
-            while (SDL_PollEvent(&sdl_event))
+            Float time = 0.001f * Singleton::Pal().CurrentTime();
+            // Process events until there are no more.
+            Event *event = NULL;
+            while ((event = Singleton::Pal().PollEvent(screen, time)) != NULL)
             {
-                // Repackage SDL_Event into Xrb::Event subclasses.
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, time);
-                // If it was a dud, skip this event-handling loop.
-                if (event == NULL)
-                    continue;
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singleton::InputState().ProcessEvent(event);

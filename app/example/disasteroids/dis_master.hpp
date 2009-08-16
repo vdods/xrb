@@ -107,7 +107,7 @@ private:
     // than this, the game will be artificially slowed)
     Float m_minimum_framerate;
     // maximum allowed framerate (if the actual framerate is higher
-    // than this, SDL_Delay will be used to sleep the process).
+    // than this, Singleton::Pal().Sleep will be used to sleep the process).
     Float m_maximum_framerate;
     // current real time
     Float m_real_time;

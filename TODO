@@ -123,7 +123,7 @@ DISASTEROIDS:
 
 TODO:
 - it might be useful to re-implement SDL_ActiveEvent
-- high framerates cause the impact damage to be too high in disasteroids
+- high framerates cause the impact damage to be too high in disasteroids (or maybe the impact damage is too low in low framerates)
 - change MatrixMode, MatrixStackDepth, MaxMatrixStackDepth into just a generic GetGLInt or something
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,

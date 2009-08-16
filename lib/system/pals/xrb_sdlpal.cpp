@@ -18,6 +18,11 @@
 namespace Xrb
 {
 
+Pal *SDLPal::Create ()
+{
+    return new SDLPal();
+}
+
 Pal::Status SDLPal::Initialize ()
 {
     // initialize video (no parachute so we get core dumps)
@@ -67,12 +72,12 @@ void SDLPal::ShutdownVideo ()
     // nothing needs to be done here for SDL
 }
 
-Uint32 SDLPal::CurrentTimeInMilliseconds ()
+Uint32 SDLPal::CurrentTime ()
 {
     return SDL_GetTicks();
 }
 
-void SDLPal::SleepForMilliseconds (Uint32 milliseconds_to_sleep)
+void SDLPal::Sleep (Uint32 milliseconds_to_sleep)
 {
     SDL_Delay(milliseconds_to_sleep);
 }
@@ -83,11 +88,6 @@ void SDLPal::FinishFrame ()
 }
 
 Event *SDLPal::PollEvent (Screen const *screen, Float time)
-{
-    return PollEvent__(screen, time);
-}
-
-Event *SDLPal::PollEvent__ (Screen const *screen, Float time)
 {
     ASSERT1(screen != NULL);
     ASSERT1(time >= 0.0);

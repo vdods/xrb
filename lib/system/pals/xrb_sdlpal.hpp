@@ -22,15 +22,18 @@ class SDLPal : public Pal
 {
 public:
 
+    // returns an instance of SDLPal.  to be used in Singleton::Initialize()
+    static Pal *Create ();
+
     virtual Status Initialize ();
     virtual void Shutdown ();
 
     virtual Status InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen);
     virtual void ShutdownVideo ();
 
-    virtual Uint32 CurrentTimeInMilliseconds ();
+    virtual Uint32 CurrentTime ();
 
-    virtual void SleepForMilliseconds (Uint32 milliseconds_to_sleep);
+    virtual void Sleep (Uint32 milliseconds_to_sleep);
 
     virtual void FinishFrame ();
 
@@ -38,9 +41,6 @@ public:
 
     virtual Texture *LoadImage (char const *image_path);
     virtual Status SaveImage (char const *image_path, Texture const &texture);
-
-    // TEMP
-    static Event *PollEvent__ (Screen const *screen, Float time);
 }; // end of class SDLPal
 
 } // end of namespace Xrb

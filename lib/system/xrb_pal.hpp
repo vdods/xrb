@@ -39,11 +39,11 @@ public:
     // returns the number of milliseconds since the Pal instance was
     // initialized.  due to the size of a 32-bit int, this value will
     // wrap about every 49 days
-    virtual Uint32 CurrentTimeInMilliseconds () = 0;
+    virtual Uint32 CurrentTime () = 0;
 
     // block the the process for at least the specified number of
     // milliseconds, but possibly longer due to OS process scheduling.
-    virtual void SleepForMilliseconds (Uint32 milliseconds_to_sleep) = 0;
+    virtual void Sleep (Uint32 milliseconds_to_sleep) = 0;
 
     // called once, immediately after the game loop is done rendering
     // (could be used for video buffer swapping for example).

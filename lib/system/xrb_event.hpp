@@ -154,19 +154,6 @@ public:
       */
     virtual bool IsJoyEvent () const { return false; }
 
-    /** The SDL_Event itself will be saved in the Event, and the created
-      * event will be populated with the necessary class-specific information.
-      *
-      * You are responsible for deleting the returned event.
-      *
-      * @brief Creates a new event of the appropriate type from the given
-      *        SDL_Event.
-      */
-    static Event *CreateEventFromSDLEvent (
-        SDL_Event const *e,
-        Screen const *screen,
-        Float time);
-
 private:
 
     inline void SetID (Uint32 id) const { m_id = id; }

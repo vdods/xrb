@@ -57,14 +57,15 @@ well enough, it was probably already explained in
 // This header MUST be included in every source/header file.
 #include "xrb.hpp"
 
-#include "xrb_button.hpp"     // For use of the Button widget class
-#include "xrb_event.hpp"      // For use of the Event classes
-#include "xrb_eventqueue.hpp" // For use of the EventQueue class
-#include "xrb_inputstate.hpp" // For use of the InputState class (via Singleton::)
-#include "xrb_label.hpp"      // For use of the Label widget class
-#include "xrb_layout.hpp"     // For use of the Layout widget class
-#include "xrb_lineedit.hpp"   // For use of the LineEdit widget class
-#include "xrb_screen.hpp"     // For use of the necessary Screen widget class
+#include "xrb_button.hpp"     // For use of the Button widget class.
+#include "xrb_event.hpp"      // For use of the Event classes.
+#include "xrb_eventqueue.hpp" // For use of the EventQueue class.
+#include "xrb_inputstate.hpp" // For use of the InputState class (via Singleton::).
+#include "xrb_label.hpp"      // For use of the Label widget class.
+#include "xrb_layout.hpp"     // For use of the Layout widget class.
+#include "xrb_lineedit.hpp"   // For use of the LineEdit widget class.
+#include "xrb_screen.hpp"     // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp"     // For use of the SDLPal platform abstraction layer.
 
 // Used so we don't need to qualify every library type/class/etc with Xrb::
 using namespace Xrb;
@@ -89,7 +90,7 @@ int main (int argc, char **argv)
     fprintf(stderr, "main();\n");
 
     // Initialize the game engine singleton facilities.
-    Singleton::Initialize("none");
+    Singleton::Initialize(SDLPal::Create, "none");
 
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -303,42 +304,25 @@ int main (int argc, char **argv)
             frames per second (because there is one screen-rendering per game
             loop iteration).
             @code */
-            SDL_Delay(33);
+            Singleton::Pal().Sleep(33);
             /* @endcode
             Certain facilities of the game engine require the current time.
             This value should be represented as a Float (notice the
             capitalization), and should measure the number of seconds since
-            the application started.  SDL_GetTicks() returns the number of
+            the application started.  Singleton::Pal().CurrentTime() returns the number of
             milliseconds since the app started, so take one thousandth of that.
             @code */
-            Float time = 0.001f * SDL_GetTicks();
+            Float time = 0.001f * Singleton::Pal().CurrentTime();
             /* @endcode
-            SDL is an abstraction layer on top of the operating system to
-            homogenize various facilities a game may need to use (specifically,
-            here, we're interested in keyboard and mouse events).  This loop
-            sucks up all pending events, produces Xrb::Event objects out of
-            them, and craps them onto the top of the widget hierarchy (the
-            Screen object).  SDL_Event is the structure provided by SDL to
-            house event data.  SDL_PollEvent will return true while there are
-            still events in the queue to process.  It will place the event
-            data in the SDL_Event pointer passed to it.  We will loop until
-            there are no more events left.
+            This loop sucks up all pending events, produces Xrb::Event objects
+            out of them, and craps them onto the top of the widget hierarchy (the
+            Screen object).  Singleton::Pal().PollEvent will return non-NULL while
+            there are still events to process.  We will loop until there are no
+            more events left.
             @code */
-            SDL_Event sdl_event;
-            while (SDL_PollEvent(&sdl_event))
+            Event *event = NULL;
+            while ((event = Singleton::Pal().PollEvent(screen, time)) != NULL)
             {
-                /* @endcode
-                Here is where we repackage the SDL_Event into a (subclass of)
-                Xrb::Event, for use by the Screen.  Events require the current
-                time (this will be discussed later for EventQueue).
-                @code */
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, time);
-
-                // Event::CreateEventFromSDLEvent may in certain cases return
-                // NULL. If it was a dud, skip this event-handling loop.
-                if (event == NULL)
-                    continue;
-
                 /* @endcode
                 If the event is of the keyboard or mouse, let the InputState
                 singleton process it.  This step is necessary so that the
@@ -414,7 +398,7 @@ int main (int argc, char **argv)
         pane's X button will be unavailable.  Fullscreen-able apps must
         provide their own facilities for detecting the user's desire to quit
         (such as a quit button, or a certain keypress).</li>
-    <li>Change the value of the @c SDL_Delay call in the game loop, and see
+    <li>Change the value of the @c Singleton::Pal().Sleep call in the game loop, and see
         what effect it has on the responsiveness of the Button and
         LineEdit.</li>
     <li>Add more text Label widgets to @c main_layout after the do-nothing

@@ -146,30 +146,26 @@ int main (int argc, char **argv)
         {
             // figure out how much time to sleep before processing the next frame
             Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - real_time)));
-            SDL_Delay(milliseconds_to_sleep);
-            real_time = 0.001f * SDL_GetTicks();
+            Singleton::Pal().Sleep(milliseconds_to_sleep);
+            real_time = 0.001f * Singleton::Pal().CurrentTime();
             next_real_time += 1.0f / maximum_framerate;
 
-            // process SDL events
-            SDL_Event sdl_event;
-            while (SDL_PollEvent(&sdl_event))
+            // process events
             {
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, real_time);
+                Event *event = NULL;
+                while ((event = Singleton::Pal().PollEvent(screen, real_time)) != NULL)
+                {
+                    // process key events through the InputState singleton first
+                    if (event->IsKeyEvent() || event->IsMouseButtonEvent())
+                        Singleton::InputState().ProcessEvent(event);
 
-                // if it was a dud, skip this loop
-                if (event == NULL)
-                    continue;
+                    // also let the key repeater have a crack at it.
+                    key_repeater.ProcessEvent(event);
 
-                // process key events through the InputState singleton first
-                if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::InputState().ProcessEvent(event);
-
-                // also let the key repeater have a crack at it.
-                key_repeater.ProcessEvent(event);
-
-                // let the screen (and the entire UI/view system) have the event
-                screen->ProcessEvent(event);
-                Delete(event);
+                    // let the screen (and the entire UI/view system) have the event
+                    screen->ProcessEvent(event);
+                    Delete(event);
+                }
             }
 
             // key repeater frame computations
@@ -193,21 +189,21 @@ int main (int argc, char **argv)
 
             // gui frame
             {
-                Uint32 gui_frame_start_time = SDL_GetTicks();
+                Uint32 gui_frame_start_time = Singleton::Pal().CurrentTime();
                 // process events from the gui event queue
                 screen->OwnerEventQueue()->ProcessFrame(real_time);
                 // frame computations for the UI/view system
                 screen->ProcessFrame(real_time);
                 // process events from the gui event queue again
                 screen->OwnerEventQueue()->ProcessFrame(real_time);
-                gui_frame_time = SDL_GetTicks() - gui_frame_start_time;
+                gui_frame_time = Singleton::Pal().CurrentTime() - gui_frame_start_time;
             }
 
             // rendering
             {
-                Uint32 render_frame_start_time = SDL_GetTicks();
+                Uint32 render_frame_start_time = Singleton::Pal().CurrentTime();
                 screen->Draw();
-                render_frame_time = SDL_GetTicks() - render_frame_start_time;
+                render_frame_time = Singleton::Pal().CurrentTime() - render_frame_start_time;
             }
 
             // check if we should quit

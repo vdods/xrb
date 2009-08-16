@@ -94,7 +94,7 @@ int main (int argc, char **argv)
     {
         do
         {
-            time = 0.001 * SDL_GetTicks();
+            time = 0.001 * Singleton::Pal().CurrentTime();
         }
         while (time < next_time);
         next_time = time + 1.0 / max_fps;
@@ -126,16 +126,10 @@ int main (int argc, char **argv)
         // actually draw the shit
         screen->Draw();
 
-        // process events
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
+        // process events until there are no more.
+        Event *event = NULL;
+        while ((event = Singleton::Pal().PollEvent(m_screen, m_real_time)) != NULL)
         {
-            event = Event::CreateEventFromSDLEvent(&e, screen, time);
-
-            // if it was a dud, skip this loop
-            if (event == NULL)
-                continue;
-
             // process key events through the InputState singleton first
             if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                 Singleton::InputState().ProcessEvent(event);

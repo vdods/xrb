@@ -17,6 +17,7 @@
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_keymap.hpp"
+#include "xrb_pal.hpp"
 #include "xrb_resourcelibrary.hpp"
 
 namespace Xrb
@@ -29,6 +30,8 @@ namespace
     // KeyMap singleton -- for alternate keyboard layouts in WIN32 (necessary
     // due to WIN32 SDL's lack of support for alternate keyboard layouts).
     KeyMap const *g_key_map = NULL;
+    // Platform-specific instantiation of the Pal interface.
+    Pal *g_pal = NULL;
     // ResourceLibrary singleton -- loads and manages reference counted assets
     ResourceLibrary *g_resource_library = NULL;
     // FreeType library singleton -- handles rendering font glyphs.
@@ -53,6 +56,13 @@ KeyMap const &Singleton::KeyMap ()
     return *g_key_map;
 }
 
+Pal &Singleton::Pal ()
+{
+    ASSERT1(g_is_initialized && "can't use Singleton::Pal() before Singleton::Initialize()");
+    ASSERT1(g_pal != NULL);
+    return *g_pal;
+}
+
 ResourceLibrary &Singleton::ResourceLibrary ()
 {
     ASSERT1(g_is_initialized && "can't use Singleton::ResourceLibrary() before Singleton::Initialize()");
@@ -67,13 +77,16 @@ FT_LibraryRec_ *const Singleton::FTLibrary ()
     return g_ft_library;
 }
 
-void Singleton::Initialize (char const *const key_map_name)
+void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name)
 {
     ASSERT1(key_map_name != NULL);
 
     ASSERT1(!g_is_initialized);
 
     fprintf(stderr, "Singleton::Initialize();\n");
+
+    g_pal = CreatePal();
+    ASSERT0(g_pal != NULL && "CreatePalInstance() returned NULL");
 
     g_inputstate = new Xrb::InputState();
 
@@ -100,11 +113,18 @@ void Singleton::Shutdown ()
 
     fprintf(stderr, "Singleton::Shutdown();\n");
 
+    // shutdown in reverse order as init
+
     DeleteAndNullify(g_inputstate);
+
     DeleteAndNullify(g_resource_library);
+
     DeleteAndNullify(g_key_map);
+
     FT_Done_FreeType(g_ft_library);
     g_ft_library = NULL;
+
+    DeleteAndNullify(g_pal);
 
     g_is_initialized = false;
 }

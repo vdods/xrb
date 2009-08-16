@@ -50,7 +50,8 @@ operation of the game engine.
 @code */
 #include "xrb.hpp"
 
-#include "xrb_screen.hpp" // For use of the necessary Screen widget class
+#include "xrb_screen.hpp" // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp" // For use of the SDLPal platform abstraction layer.
 
 /* @endcode
 Every declaration in the game engine library is within the <tt>Xrb</tt>
@@ -97,7 +98,7 @@ int main (int argc, char **argv)
             rendering facilities.  you shouldn't need to worry about it.</li>
         </ul>
     @code */
-    Singleton::Initialize("none");
+    Singleton::Initialize(SDLPal::Create, "none");
 
     /* @endcode
     Attempt to initialize SDL.  Currently this just initializes the
@@ -153,7 +154,7 @@ int main (int argc, char **argv)
     @code */
     {
         fprintf(stderr, "pausing for 5000 milliseconds...\n");
-        SDL_Delay(5000);
+        Singleton::Pal().Sleep(5000);
     }
 
     /* @endcode

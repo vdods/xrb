@@ -136,7 +136,7 @@ rotation and movement.
                 </ul>
             <li>Run the game loop</li>
                 <ul>
-                <li>Calculate the SDL_Delay duration necessary to achieve the desired framerate.</li>
+                <li>Calculate the Singleton::Pal().Sleep duration necessary to achieve the desired framerate.</li>
                 <li>Handle events (user and system-generated).</li>
                 <li>Perform off-screen processing, <strong>including game world processing.</strong></li>
                 <li>Draw the Screen object's entire widget hierarchy.</li>
@@ -172,6 +172,7 @@ well enough, it was probably already explained in
 #include "xrb_input_events.hpp"            // For use of the EventMouseWheel class.
 #include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
 #include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp"                  // For use of the SDLPal platform abstraction layer.
 
 using namespace Xrb;                     // To avoid having to use Xrb:: everywhere.
 
@@ -345,7 +346,7 @@ int main (int argc, char **argv)
     fprintf(stderr, "main();\n");
 
     // Initialize engine singletons.
-    Singleton::Initialize("none");
+    Singleton::Initialize(SDLPal::Create, "none");
 
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -398,20 +399,16 @@ int main (int argc, char **argv)
         while (!screen->IsQuitRequested())
         {
             // Get the current real time and figure out how long to sleep, then sleep.
-            current_real_time = 0.001f * SDL_GetTicks();
+            current_real_time = 0.001f * Singleton::Pal().CurrentTime();
             Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - current_real_time)));
-            SDL_Delay(milliseconds_to_sleep);
+            Singleton::Pal().Sleep(milliseconds_to_sleep);
             // Calculate the desired next game loop time
             next_real_time = Max(current_real_time, next_real_time + 1.0f / desired_framerate);
 
-            // Process SDL events until there are no more.
-            SDL_Event sdl_event;
-            while (SDL_PollEvent(&sdl_event))
+            // Process events until there are no more.
+            Event *event = NULL;
+            while ((event = Singleton::Pal().PollEvent(screen, current_real_time)) != NULL)
             {
-                // Repackage SDL_Event into Xrb::Event subclasses, skipping NULLs
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, current_real_time);
-                if (event == NULL)
-                    continue;
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singleton::InputState().ProcessEvent(event);

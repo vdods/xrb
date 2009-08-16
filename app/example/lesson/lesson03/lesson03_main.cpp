@@ -99,7 +99,7 @@ to the (as of August 2006) calculation-intensive Layout resizing code.
                 </ul>
             <li>Run the game loop</li>
                 <ul>
-                <li><strong>Calculate the SDL_Delay duration necessary to achieve the desired framerate.</strong></li>
+                <li><strong>Calculate the Singleton::Pal().Sleep duration necessary to achieve the desired framerate.</strong></li>
                 <li>Handle events (user and system-generated).</li>
                 <li>Perform off-screen processing.</li>
                 <li>Draw the Screen object's entire widget hierarchy.</li>
@@ -127,6 +127,7 @@ well enough, it was probably already explained in
 #include "xrb_layout.hpp"             // For use of the Layout widget class.
 #include "xrb_render.hpp"             // For use of the Render namespace functions.
 #include "xrb_screen.hpp"             // For use of the necessary Screen widget class.
+#include "xrb_sdlpal.hpp"             // For use of the SDLPal platform abstraction layer.
 #include "xrb_validator.hpp"          // For use of various Validator subclasses.
 #include "xrb_valueedit.hpp"          // For use of the ValueEdit<T> template class.
 #include "xrb_valuelabel.hpp"         // For use of the ValueLabel<T> template class.
@@ -316,7 +317,7 @@ public:
     templatized for your convenience.
 
     In the game loop, the calculations to determine the value to pass to
-    SDL_Delay involves dividing by <tt>g_desired_framerate</tt>, and therefore we must
+    Singleton::Pal().Sleep involves dividing by <tt>g_desired_framerate</tt>, and therefore we must
     avoid setting <tt>g_desired_framerate</tt> to zero.
     <tt>m_desired_framerate_validator</tt> is an instance of
     GreaterOrEqualValidator<Uint32> -- we will limit the desired framerate to
@@ -572,7 +573,7 @@ int main (int argc, char **argv)
     fprintf(stderr, "main();\n");
 
     // Initialize engine singletons.
-    Singleton::Initialize("none");
+    Singleton::Initialize(SDLPal::Create, "none");
 
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -608,28 +609,23 @@ int main (int argc, char **argv)
             /* @endcode
             Here is the newly added framerate control code.  We keep track of
             the desired next frame time, and use it in combination with the
-            real time as returned by <tt>SDL_GetTicks</tt> to calculate how
+            real time as returned by <tt>Singleton::Pal().CurrentTime</tt> to calculate how
             long to sleep to attempt to achieve the exact desired framerate.
             @code */
             // Retrieve the current real time in seconds as a Float.
-            current_real_time = 0.001f * SDL_GetTicks();
+            current_real_time = 0.001f * Singleton::Pal().CurrentTime();
             // figure out how much time to sleep before processing the next frame
             Sint32 milliseconds_to_sleep = Max(0, static_cast<Sint32>(1000.0f * (next_real_time - current_real_time)));
             // Delay for the calculated number of milliseconds.
-            SDL_Delay(milliseconds_to_sleep);
+            Singleton::Pal().Sleep(milliseconds_to_sleep);
             // Calculate the desired next game loop time (which should never
             // fall below current_real_time.
             next_real_time = Max(current_real_time, next_real_time + 1.0f / g_desired_framerate);
 
-            // Process SDL events until there are no more.
-            SDL_Event sdl_event;
-            while (SDL_PollEvent(&sdl_event))
+            // Process events until there are no more.
+            Event *event = NULL;
+            while ((event = Singleton::Pal().PollEvent(screen, current_real_time)) != NULL)
             {
-                // Repackage SDL_Event into Xrb::Event subclasses, skipping it
-                // if it was a dud.
-                Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, current_real_time);
-                if (event == NULL)
-                    continue;
                 // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
                     Singleton::InputState().ProcessEvent(event);
