@@ -60,7 +60,7 @@ well enough, it was probably already explained in
 #include "xrb_button.hpp"     // For use of the Button widget class
 #include "xrb_event.hpp"      // For use of the Event classes
 #include "xrb_eventqueue.hpp" // For use of the EventQueue class
-#include "xrb_input.hpp"      // For use of the Input class (via Singleton::)
+#include "xrb_inputstate.hpp" // For use of the InputState class (via Singleton::)
 #include "xrb_label.hpp"      // For use of the Label widget class
 #include "xrb_layout.hpp"     // For use of the Layout widget class
 #include "xrb_lineedit.hpp"   // For use of the LineEdit widget class
@@ -88,6 +88,9 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "main();\n");
 
+    // Initialize the game engine singleton facilities.
+    Singleton::Initialize("none");
+
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
@@ -95,9 +98,6 @@ int main (int argc, char **argv)
         // return with an error value.
         return 1;
     }
-
-    // Initialize the game engine singleton facilities.
-    Singleton::Initialize("none");
 
     // Set the caption for the application's window.
     SDL_WM_SetCaption("XuqRijBuh Lesson 01", "");
@@ -340,12 +340,12 @@ int main (int argc, char **argv)
                     continue;
 
                 /* @endcode
-                If the event is of the keyboard or mouse, let the Input
+                If the event is of the keyboard or mouse, let the InputState
                 singleton process it.  This step is necessary so that the
                 state of said user-input devices is updated.
                 @code */
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::Input().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(event);
                 /* @endcode
                 All events are delegated to the proper widgets via the top of
                 the widget hierarchy (the Screen object).  Events must go

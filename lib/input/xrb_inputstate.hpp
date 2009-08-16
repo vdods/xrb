@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_keybinds.hpp by Victor Dods, created 2004/06/08
+// xrb_inputstate.hpp by Victor Dods, created 2004/06/08
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_KEYBINDS_HPP_)
-#define _XRB_KEYBINDS_HPP_
+#if !defined(_XRB_INPUTSTATE_HPP_)
+#define _XRB_INPUTSTATE_HPP_
 
 #include "xrb.hpp"
 
@@ -23,17 +23,17 @@
 namespace Xrb
 {
 
-/** The Input class will process events, and store the state of the
+/** The InputState class will process events, and store the state of the
   * keyboard and mouse buttons in a map (which indicates if any key is pressed
   * or not).  Key modifiers are also tracked and stored.
   * @brief Stores the current state of the keyboard and mouse buttons.
   */
-class Input : public EventHandler
+class InputState : public EventHandler
 {
 public:
 
-    Input ();
-    ~Input ();
+    InputState ();
+    ~InputState ();
 
     Key const *GetKey (Key::Code code) const;
     Key const *GetKey (std::string const &name) const;
@@ -85,9 +85,9 @@ private:
     /** @brief Indicates if the scroll lock is engaged.
       */
     bool m_is_scroll_lock_on;
-}; // end of class Input
+}; // end of class InputState
 
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_KEYBINDS_HPP_)
+#endif // !defined(_XRB_INPUTSTATE_HPP_)
 

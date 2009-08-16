@@ -14,7 +14,7 @@
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
-#include "xrb_input.hpp"
+#include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_keymap.hpp"
 #include "xrb_resourcelibrary.hpp"
@@ -25,7 +25,7 @@ namespace Xrb
 namespace
 {
     // KeyBind singleton -- this handles keyboard input (and mouse buttons too)
-    Input *g_input = NULL;
+    InputState *g_inputstate = NULL;
     // KeyMap singleton -- for alternate keyboard layouts in WIN32 (necessary
     // due to WIN32 SDL's lack of support for alternate keyboard layouts).
     KeyMap const *g_key_map = NULL;
@@ -39,11 +39,11 @@ namespace
     bool g_is_initialized = false;
 } // end of namespace
 
-Input &Singleton::Input ()
+InputState &Singleton::InputState ()
 {
-    ASSERT1(g_is_initialized && "can't use Singleton::Input() before Singleton::Initialize()");
-    ASSERT1(g_input != NULL);
-    return *g_input;
+    ASSERT1(g_is_initialized && "can't use Singleton::InputState() before Singleton::Initialize()");
+    ASSERT1(g_inputstate != NULL);
+    return *g_inputstate;
 }
 
 KeyMap const &Singleton::KeyMap ()
@@ -75,7 +75,7 @@ void Singleton::Initialize (char const *const key_map_name)
 
     fprintf(stderr, "Singleton::Initialize();\n");
 
-    g_input = new Xrb::Input();
+    g_inputstate = new Xrb::InputState();
 
 //     fprintf(stderr, "\tattempting to use KeyMap \"%s\" ... ", key_map_name);
     g_key_map = Xrb::KeyMap::Create(key_map_name);
@@ -93,14 +93,14 @@ void Singleton::Initialize (char const *const key_map_name)
 void Singleton::Shutdown ()
 {
     ASSERT1(g_is_initialized);
-    ASSERT1(g_input != NULL);
+    ASSERT1(g_inputstate != NULL);
     ASSERT1(g_key_map != NULL);
     ASSERT1(g_resource_library != NULL);
     ASSERT1(g_ft_library != NULL);
 
     fprintf(stderr, "Singleton::Shutdown();\n");
 
-    DeleteAndNullify(g_input);
+    DeleteAndNullify(g_inputstate);
     DeleteAndNullify(g_resource_library);
     DeleteAndNullify(g_key_map);
     FT_Done_FreeType(g_ft_library);

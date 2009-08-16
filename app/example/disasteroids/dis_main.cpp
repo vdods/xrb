@@ -53,14 +53,14 @@ int main (int argc, char **argv)
             return options.ParseSucceeded() ? 0 : 1;
         }
 
+        Singleton::Initialize(options.KeyMapName().c_str());
+
         // initialize video (no parachute so we get core dumps)
         if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
         {
             fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
             return 2;
         }
-
-        Singleton::Initialize(options.KeyMapName().c_str());
 
         // register on-exit function. SDL_Quit takes care of deleting the
         // screen.  the function registered with atexit will be called

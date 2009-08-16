@@ -22,7 +22,7 @@ struct FT_LibraryRec_;
 namespace Xrb
 {
 
-class Input;
+class InputState;
 class KeyMap;
 class ResourceLibrary;
 
@@ -34,9 +34,9 @@ class ResourceLibrary;
   */
 namespace Singleton
 {
-    /** @brief Returns a reference to the Input singleton object.
+    /** @brief Returns a reference to the InputState singleton object.
       */
-    Input &Input ();
+    InputState &InputState ();
     /** @brief Returns a const reference to the KeyMap singleton object.
       */
     KeyMap const &KeyMap ();

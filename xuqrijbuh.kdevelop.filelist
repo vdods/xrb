@@ -206,10 +206,11 @@ lib/gui/xrb_widgetskin.cpp
 lib/gui/xrb_widgetskin.hpp
 lib/gui/xrb_widgetskinhandler.cpp
 lib/gui/xrb_widgetskinhandler.hpp
-lib/input/xrb_input.cpp
-lib/input/xrb_input.hpp
+lib/input
 lib/input/xrb_input_events.cpp
 lib/input/xrb_input_events.hpp
+lib/input/xrb_inputstate.cpp
+lib/input/xrb_inputstate.hpp
 lib/input/xrb_key.cpp
 lib/input/xrb_key.hpp
 lib/input/xrb_keymap.cpp

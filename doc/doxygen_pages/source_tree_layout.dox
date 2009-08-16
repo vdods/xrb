@@ -269,7 +269,7 @@ Code that is exclusively designed to process user input is stored here.
 
 Contents
     <ul>
-    <li>@ref Xrb::Input </li>
+    <li>@ref Xrb::InputState </li>
     <li>@ref Xrb::Key </li>
     <li>@ref Xrb::KeyRepeater </li>
     </ul>

@@ -19,7 +19,7 @@
 #include "dis_resourcecache.hpp"
 #include "dis_titlescreenwidget.hpp"
 #include "dis_world.hpp"
-#include "xrb_input.hpp"
+#include "xrb_inputstate.hpp"
 #include "xrb_screen.hpp"
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
@@ -134,9 +134,9 @@ void Master::Run ()
             if (event == NULL)
                 continue;
 
-            // make sure to process key events through the key binds first
+            // process key events through the InputState singleton first
             if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                Singleton::Input().ProcessEvent(event);
+                Singleton::InputState().ProcessEvent(event);
 
             // also let the key repeater have a crack at it.
             m_key_repeater.ProcessEvent(event);

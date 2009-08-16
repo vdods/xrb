@@ -81,26 +81,12 @@ int main (int argc, char **argv)
     fprintf(stderr, "main();\n");
 
     /* @endcode
-    First, attempt to initialize SDL.  Currently this just initializes the
-    video, but will later initialize sound, once sound code is actually
-    written.  The <tt>SDL_INIT_NOPARACHUTE</tt> flag is used because we want
-    crashes that will be useful in debug mode; the debugger will be able to
-    catch it (or if you're in Unix, you get a nice, warm, smelly core dump).
-    @code */
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        // return with an error value.
-        return 1;
-    }
-
-    /* @endcode
     This call initializes the game engine singleton facilities.  This must
     be done, or the engine will just not work.  The singletons include:
         <ul>
         <li>ResourceLibrary ensures that we only load one copy of certain
             resources (textures, fonts, sounds, etc) into memory.</li>
-        <li>Input provides accessors for the immediate state of the keyboard
+        <li>InputState provides accessors for the immediate state of the keyboard
             and mouse (and eventually joysticks, etc).  This is not the
             primary or only means for user input, but we'll get to that
             later.</li>
@@ -112,6 +98,20 @@ int main (int argc, char **argv)
         </ul>
     @code */
     Singleton::Initialize("none");
+
+    /* @endcode
+    Attempt to initialize SDL.  Currently this just initializes the
+    video, but will later initialize sound, once sound code is actually
+    written.  The <tt>SDL_INIT_NOPARACHUTE</tt> flag is used because we want
+    crashes that will be useful in debug mode; the debugger will be able to
+    catch it (or if you're in Unix, you get a nice, warm, smelly core dump).
+    @code */
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
+    {
+        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
+        // return with an error value.
+        return 1;
+    }
 
     /* @endcode
     Set the caption for the application's window.  Although documented as

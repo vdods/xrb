@@ -26,6 +26,8 @@ MAJOR TASKS:
 
 DISASTEROIDS:
 ** feature-related **
+- make the 7 button just activate the EMP core, there's no reason to have
+  to equip it and then fire
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak
@@ -34,12 +36,14 @@ DISASTEROIDS:
 - forget the 4x item status screen.  upgrading should be one way,
   and the inventory should just show what level item it is.  this also
   means you can't skip buying a certain level of something.
+  furthermore, make higher upgrade levels, so the madness can continue
 - limited number of active missiles at any given time
 - add key to dump shields into power cells
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
+  after the timer expires, have it pulse green to indicate it's healed
 - make Demi push away if its taking too much damage and the player is close
 - make smart ballistics not be canceled out by other ballistics (i'm thinking
   mainly of the pea-shooter shooting a full charge and getting canceled
@@ -63,8 +67,9 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
+- make enemies flash red or yellow when their health is low
 - if super-stoke thing is added, that can be indicated by the ship flashing
-  yellow or white
+  yellow or white or blue or something
 - collapse the world and object layer params in spawning functions to just
   using the object layer (the world should be accessible through it).
 - to limit the length of waves, there can be a time limit after which all

@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_keybinds.cpp by Victor Dods, created 2004/06/09
+// xrb_inputstate.cpp by Victor Dods, created 2004/06/09
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_input.hpp"
+#include "xrb_inputstate.hpp"
 
 #include "xrb_emptystring.hpp"
 #include "xrb_input_events.hpp"
@@ -16,7 +16,7 @@
 namespace Xrb
 {
 
-Input::Input ()
+InputState::InputState ()
     :
     EventHandler(NULL)
 {
@@ -27,7 +27,7 @@ Input::Input ()
     InitKeyMaps();
 }
 
-Input::~Input ()
+InputState::~InputState ()
 {
     // shut down the key maps and delete the Key objects
     for (KeyCodeMap::iterator it = m_keycode_map.begin(),
@@ -41,7 +41,7 @@ Input::~Input ()
     m_keyname_map.clear();
 }
 
-Key const *Input::GetKey (Key::Code const code) const
+Key const *InputState::GetKey (Key::Code const code) const
 {
     KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -53,7 +53,7 @@ Key const *Input::GetKey (Key::Code const code) const
     }
 }
 
-Key const *Input::GetKey (std::string const &name) const
+Key const *InputState::GetKey (std::string const &name) const
 {
     KeyNameMap::const_iterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
@@ -65,17 +65,17 @@ Key const *Input::GetKey (std::string const &name) const
     }
 }
 
-bool Input::IsValidKeyCode (Key::Code const code) const
+bool InputState::IsValidKeyCode (Key::Code const code) const
 {
     return m_keycode_map.find(code) != m_keycode_map.end();
 }
 
-bool Input::IsValidKeyName (std::string const &name) const
+bool InputState::IsValidKeyName (std::string const &name) const
 {
     return m_keyname_map.find(name) != m_keyname_map.end();
 }
 
-Key::Code Input::KeyCode (std::string const &name) const
+Key::Code InputState::KeyCode (std::string const &name) const
 {
     KeyNameMap::const_iterator it = m_keyname_map.find(name);
     if (it == m_keyname_map.end())
@@ -87,7 +87,7 @@ Key::Code Input::KeyCode (std::string const &name) const
     }
 }
 
-std::string const &Input::KeyName (Key::Code const code) const
+std::string const &InputState::KeyName (Key::Code const code) const
 {
     KeyCodeMap::const_iterator it = m_keycode_map.find(code);
     if (it == m_keycode_map.end())
@@ -99,7 +99,7 @@ std::string const &Input::KeyName (Key::Code const code) const
     }
 }
 
-bool Input::IsKeyPressed (Key::Code const code) const
+bool InputState::IsKeyPressed (Key::Code const code) const
 {
     Key const *key = GetKey(code);
     if (key != NULL)
@@ -108,7 +108,7 @@ bool Input::IsKeyPressed (Key::Code const code) const
         return false;
 }
 
-bool Input::IsKeyPressed (std::string const &name) const
+bool InputState::IsKeyPressed (std::string const &name) const
 {
     Key const *key = GetKey(name);
     if (key != NULL)
@@ -117,25 +117,25 @@ bool Input::IsKeyPressed (std::string const &name) const
         return false;
 }
 
-bool Input::IsEitherAltKeyPressed () const
+bool InputState::IsEitherAltKeyPressed () const
 {
     return GetKey(Key::LALT)->IsPressed() ||
            GetKey(Key::RALT)->IsPressed();
 }
 
-bool Input::IsEitherControlKeyPressed () const
+bool InputState::IsEitherControlKeyPressed () const
 {
     return GetKey(Key::LCTRL)->IsPressed() ||
            GetKey(Key::RCTRL)->IsPressed();
 }
 
-bool Input::IsEitherShiftKeyPressed () const
+bool InputState::IsEitherShiftKeyPressed () const
 {
     return GetKey(Key::LSHIFT)->IsPressed() ||
            GetKey(Key::RSHIFT)->IsPressed();
 }
 
-SDLMod Input::Modifiers () const
+SDLMod InputState::Modifiers () const
 {
     return (SDLMod)(
         (IsKeyPressed(Key::LALT)     ? KMOD_LALT   : 0) |
@@ -150,7 +150,7 @@ SDLMod Input::Modifiers () const
         (IsKeyPressed(Key::CAPSLOCK) ? KMOD_CAPS   : 0));
 }
 
-void Input::ResetPressed ()
+void InputState::ResetPressed ()
 {
     for (KeyCodeMap::const_iterator it = m_keycode_map.begin(),
                             it_end = m_keycode_map.end();
@@ -162,7 +162,7 @@ void Input::ResetPressed ()
     }
 }
 
-bool Input::HandleEvent (Event const *const e)
+bool InputState::HandleEvent (Event const *const e)
 {
     ASSERT1(e != NULL);
 
@@ -208,7 +208,7 @@ bool Input::HandleEvent (Event const *const e)
         return false;
 }
 
-void Input::InitKeyMaps ()
+void InputState::InitKeyMaps ()
 {
     // NOTE: Key::INVALID is not and should not be mapped.
     m_keycode_map[Key::NONE] = Key::Create(Key::NONE, "NONE");

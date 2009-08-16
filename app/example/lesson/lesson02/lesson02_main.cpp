@@ -94,7 +94,7 @@ well enough, it was probably already explained in
 #include "xrb_button.hpp"         // For use of the Button widget class
 #include "xrb_event.hpp"          // For use of the Event classes
 #include "xrb_eventqueue.hpp"     // For use of the EventQueue class
-#include "xrb_input.hpp"          // For use of the Input class (via Singleton::)
+#include "xrb_inputstate.hpp"     // For use of the InputState class (via Singleton::)
 #include "xrb_label.hpp"          // For use of the Label widget class
 #include "xrb_layout.hpp"         // For use of the Layout widget class
 #include "xrb_lineedit.hpp"       // For use of the LineEdit widget class
@@ -121,6 +121,9 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "main();\n");
 
+    // Initialize the game engine singleton facilities.
+    Singleton::Initialize("none");
+
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
@@ -128,8 +131,6 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    // Initialize the game engine singleton facilities.
-    Singleton::Initialize("none");
     // Set the caption for the application's window.
     SDL_WM_SetCaption("XuqRijBuh Lesson 02", "");
     // Create Screen object and initialize given video mode.
@@ -400,9 +401,9 @@ int main (int argc, char **argv)
                 // If it was a dud, skip this event-handling loop.
                 if (event == NULL)
                     continue;
-                // Let the Input singleton "have a go" at keyboard/mouse events.
+                // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::Input().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(event);
                 // Hand the event to the top of the GUI hierarchy for
                 // delegatory (is that a real word?) processing.
                 screen->ProcessEvent(event);

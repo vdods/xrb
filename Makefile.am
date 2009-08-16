@@ -124,7 +124,7 @@ lib_libxrb_la_SOURCES = \
     lib/gui/widgets/xrb_textwidget.cpp \
     lib/gui/widgets/xrb_widgetstack.cpp \
     \
-    lib/input/xrb_input.cpp \
+    lib/input/xrb_inputstate.cpp \
     lib/input/xrb_input_events.cpp \
     lib/input/xrb_key.cpp \
     lib/input/xrb_keymap.cpp \
@@ -257,7 +257,7 @@ include_HEADERS = \
     lib/gui/widgets/xrb_valuelabel.hpp \
     lib/gui/widgets/xrb_widgetstack.hpp \
     \
-    lib/input/xrb_input.hpp \
+    lib/input/xrb_inputstate.hpp \
     lib/input/xrb_input_events.hpp \
     lib/input/xrb_key.hpp \
     lib/input/xrb_keymap.hpp \

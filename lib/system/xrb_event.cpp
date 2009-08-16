@@ -12,7 +12,7 @@
 
 #include "xrb_gui_events.hpp"
 #include "xrb_input_events.hpp"
-#include "xrb_input.hpp"
+#include "xrb_inputstate.hpp"
 
 namespace Xrb
 {
@@ -94,7 +94,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseWheel(
                     mouse_button_event,
-                    Singleton::Input().Modifiers(),
+                    Singleton::InputState().Modifiers(),
                     screen,
                     time);
             }
@@ -102,7 +102,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonDown(
                     mouse_button_event,
-                    Singleton::Input().Modifiers(),
+                    Singleton::InputState().Modifiers(),
                     screen,
                     time);
             }
@@ -124,7 +124,7 @@ Event *Event::CreateEventFromSDLEvent (
             {
                 retval = new EventMouseButtonUp(
                     mouse_button_event,
-                    Singleton::Input().Modifiers(),
+                    Singleton::InputState().Modifiers(),
                     screen,
                     time);
             }
@@ -134,7 +134,7 @@ Event *Event::CreateEventFromSDLEvent (
         case SDL_MOUSEMOTION:
             retval = new EventMouseMotion(
                 reinterpret_cast<SDL_MouseMotionEvent const *>(e),
-                Singleton::Input().Modifiers(),
+                Singleton::InputState().Modifiers(),
                 screen,
                 time);
             break;

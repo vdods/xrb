@@ -14,7 +14,7 @@
 #include "xrb_engine2_worldviewwidget.hpp"
 #include "xrb_event.hpp" // TEMP
 #include "xrb_filedialog.hpp"
-#include "xrb_input.hpp" // temp
+#include "xrb_inputstate.hpp" // temp
 #include "xrb_label.hpp"
 #include "xrb_layout.hpp"
 #include "xrb_lineedit.hpp" // TEMP

@@ -540,11 +540,11 @@
 			Name="input"
 			>
 			<File
-				RelativePath=".\input\xrb_input.cpp"
+				RelativePath=".\input\xrb_inputstate.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\input\xrb_input.h"
+				RelativePath=".\input\xrb_inputstate.h"
 				>
 			</File>
 			<File

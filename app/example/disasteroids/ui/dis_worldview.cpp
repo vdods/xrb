@@ -19,7 +19,7 @@
 #include "xrb_engine2_worldviewwidget.hpp"
 #include "xrb_eventqueue.hpp"
 #include "xrb_input_events.hpp"
-#include "xrb_input.hpp"
+#include "xrb_inputstate.hpp"
 
 using namespace Xrb;
 
@@ -459,21 +459,21 @@ void WorldView::ProcessPlayerInput ()
     if (ParentWorldViewWidget()->IsFocused())
     {
         Sint8 engine_right_left_input =
-            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
-            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
+            (Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__MOVE_RIGHT))    ?  SINT8_UPPER_BOUND : 0) +
+            (Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__MOVE_LEFT))     ? -SINT8_UPPER_BOUND : 0);
         Sint8 engine_up_down_input =
-            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
-            (Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
+            (Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__MOVE_FORWARD))  ?  SINT8_UPPER_BOUND : 0) +
+            (Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__MOVE_BACK))     ? -SINT8_UPPER_BOUND : 0);
         Uint8 engine_auxiliary_input =
-            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
+            Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__ENGINE_BRAKE))   ?  UINT8_UPPER_BOUND : 0;
 
         Uint8 weapon_primary_input =
-            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
+            Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__PRIMARY_FIRE))   ? UINT8_UPPER_BOUND : 0;
         Uint8 weapon_secondary_input =
-            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
+            Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__SECONDARY_FIRE)) ? UINT8_UPPER_BOUND : 0;
 
         bool is_using_auxiliary_weapon =
-            Singleton::Input().IsKeyPressed(g_config.InputAction(INPUT__USE_TRACTOR));
+            Singleton::InputState().IsKeyPressed(g_config.InputAction(INPUT__USE_TRACTOR));
 
         if (m_player_ship != NULL)
         {

@@ -127,7 +127,7 @@ well enough, it was probably already explained in
 #include "xrb_engine2_worldviewwidget.hpp" // For use of the Engine2::WorldViewWidget class.
 #include "xrb_event.hpp"                   // For use of the Event classes.
 #include "xrb_eventqueue.hpp"              // For use of the EventQueue class.
-#include "xrb_input.hpp"                   // For use of the Input class (via Singleton::).
+#include "xrb_inputstate.hpp"              // For use of the InputState class (via Singleton::).
 #include "xrb_input_events.hpp"            // For use of the EventMouseWheel class.
 #include "xrb_math.hpp"                    // For use of the functions in the Math namespace.
 #include "xrb_screen.hpp"                  // For use of the necessary Screen widget class.
@@ -519,6 +519,9 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "main();\n");
 
+    // Initialize engine singletons.
+    Singleton::Initialize("none");
+
     // Attempt to initialize SDL.
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
@@ -526,8 +529,7 @@ int main (int argc, char **argv)
         return 1;
     }
 
-    // Initialize engine singletons, set window caption and create the Screen.
-    Singleton::Initialize("none");
+    // Set window caption and create the Screen.
     SDL_WM_SetCaption("XuqRijBuh Lesson 05", "");
     Screen *screen = Screen::Create(800, 600, 32, 0);
     // If the Screen failed to initialize, print an error message and quit.
@@ -578,9 +580,9 @@ int main (int argc, char **argv)
                 Event *event = Event::CreateEventFromSDLEvent(&sdl_event, screen, current_real_time);
                 if (event == NULL)
                     continue;
-                // Let the Input singleton "have a go" at keyboard/mouse events.
+                // Let the InputState singleton "have a go" at keyboard/mouse events.
                 if (event->IsKeyEvent() || event->IsMouseButtonEvent())
-                    Singleton::Input().ProcessEvent(event);
+                    Singleton::InputState().ProcessEvent(event);
                 // Give the GUI hierarchy a chance at the event and then delete it.
                 screen->ProcessEvent(event);
                 Delete(event);
