@@ -919,10 +919,14 @@
 				RelativePath=".\system\xrb_framehandler.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\system\xrb_framehandler.hpp"
-				>
-			</File>
+            <File
+                RelativePath=".\system\xrb_framehandler.hpp"
+                >
+            </File>
+            <File
+                RelativePath=".\system\xrb_pal.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\system\xrb_resourcelibrary.cpp"
 				>
@@ -959,18 +963,30 @@
 				RelativePath=".\system\xrb_statemachine.hpp"
 				>
 			</File>
-			<Filter
-				Name="serializers"
-				>
-				<File
-					RelativePath=".\system\serializers\xrb_binaryfileserializer.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\system\serializers\xrb_binaryfileserializer.hpp"
-					>
-				</File>
-			</Filter>
+            <Filter
+                Name="pals"
+                >
+                <File
+                    RelativePath=".\system\pals\xrb_sdlpal.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath=".\system\pals\xrb_sdlpal.hpp"
+                    >
+                </File>
+            </Filter>
+            <Filter
+                Name="serializers"
+                >
+                <File
+                    RelativePath=".\system\serializers\xrb_binaryfileserializer.cpp"
+                    >
+                </File>
+                <File
+                    RelativePath=".\system\serializers\xrb_binaryfileserializer.hpp"
+                    >
+                </File>
+            </Filter>
 		</Filter>
 	</Files>
 	<Globals>

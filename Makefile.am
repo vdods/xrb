@@ -169,6 +169,8 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_signalhandler.cpp \
     lib/system/xrb_singleton.cpp \
     \
+    lib/system/pals/xrb_sdlpal.cpp \
+    \
     lib/system/serializers/xrb_binaryfileserializer.cpp \
     \
     lib/util/xrb_bitcache.cpp \
@@ -298,11 +300,14 @@ include_HEADERS = \
     lib/system/xrb_eventhandler.hpp \
     lib/system/xrb_eventqueue.hpp \
     lib/system/xrb_framehandler.hpp \
+    lib/system/xrb_pal.hpp \
     lib/system/xrb_resourcelibrary.hpp \
     lib/system/xrb_serializer.hpp \
     lib/system/xrb_signalhandler.hpp \
     lib/system/xrb_singleton.hpp \
     lib/system/xrb_statemachine.hpp \
+    \
+    lib/system/pals/xrb_sdlpal.hpp \
     \
     lib/system/serializers/xrb_binaryfileserializer.hpp \
     \

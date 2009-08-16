@@ -49,7 +49,7 @@ public:
 
     /** @brief Constructs an EventKey from the given SDL_KeyboardEvent.
       */
-    EventKey (SDL_KeyboardEvent const *e, Float time, EventType event_type);
+    EventKey (Key::Code code, Key::Modifier modifier, Float time, EventType event_type);
     /** EventKey is an abstract baseclass.
       * @brief Pure virtual destructor.
       */
@@ -59,32 +59,32 @@ public:
       *        indeed, a key event.
       */
     virtual bool IsKeyEvent () const { return true; }
-    /** @brief Returns the SDL_KeyboardEvent used to create this event.
-      */
-    SDL_KeyboardEvent const &SDLEvent () const { return m_event; }
     /** @brief Returns the @ref Xrb::Key::Code enum for this key event.
       */
-    Key::Code KeyCode () const { return (Key::Code)m_event.keysym.sym; }
+    Key::Code KeyCode () const { return m_code; }
+    /** @brief Returns the @ref Xrb::Key::Modifier flags for this key event.
+      */
+    Key::Modifier KeyModifier () const { return m_modifier; }
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this key event was generated.
       */
     inline bool IsEitherAltKeyPressed () const
     {
-        return (m_event.keysym.mod & KMOD_ALT) != 0;
+        return (m_modifier & Key::MOD_ALT) != 0;
     }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this key event was generated.
       */
     inline bool IsEitherControlKeyPressed () const
     {
-        return (m_event.keysym.mod & KMOD_CTRL) != 0;
+        return (m_modifier & Key::MOD_CTRL) != 0;
     }
     /** @brief Returns true iff either left or right shift keys were pressed
       *        when this key event was generated.
       */
     inline bool IsEitherShiftKeyPressed () const
     {
-        return (m_event.keysym.mod & KMOD_SHIFT) != 0;
+        return (m_modifier & Key::MOD_SHIFT) != 0;
     }
     /** @brief Returns the ascii code of the key event, modified by capslock,
       *        numlock, and shift key modifiers.
@@ -108,8 +108,10 @@ public:
 
 private:
 
-    // the raw SDL keyboard event
-    SDL_KeyboardEvent m_event;
+    // the keycode (e.g. A, NUMLOCK, CTRL)
+    Key::Code m_code;
+    // the key modifier (e.g. left-alt)
+    Key::Modifier m_modifier;
     // the ascii code of the keypress modified by caps and num lock
     char m_modified_ascii;
 }; // end of class EventKey
@@ -126,10 +128,11 @@ public:
     /** @brief Constructs an EventKeyDown from the given SDL_KeyboardEvent.
       */
     EventKeyDown (
-        SDL_KeyboardEvent const *const e,
-        Float const time)
+        Key::Code code,
+        Key::Modifier modifier,
+        Float time)
         :
-        EventKey(e, time, KEYDOWN)
+        EventKey(code, modifier, time, KEYDOWN)
     { }
     /** @brief Boring, empty virtual destructor.
       */
@@ -153,10 +156,11 @@ public:
     /** @brief Constructs an EventKeyUp from the given SDL_KeyboardEvent.
       */
     EventKeyUp (
-        SDL_KeyboardEvent const *const e,
-        Float const time)
+        Key::Code code,
+        Key::Modifier modifier,
+        Float time)
         :
-        EventKey(e, time, KEYUP)
+        EventKey(code, modifier, time, KEYUP)
     { }
     /** @brief Boring, empty virtual destructor.
       */
@@ -182,10 +186,11 @@ public:
     /** @brief Constructs an EventKeyRepeat from the given SDL_KeyboardEvent.
       */
     EventKeyRepeat (
-        SDL_KeyboardEvent const *const e,
+        Key::Code code,
+        Key::Modifier modifier,
         Float const time)
         :
-        EventKey(e, time, KEYREPEAT)
+        EventKey(code, modifier, time, KEYREPEAT)
     { }
     /** @brief Boring, empty virtual destructor.
       */

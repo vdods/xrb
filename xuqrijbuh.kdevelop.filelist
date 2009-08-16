@@ -6,7 +6,6 @@ TODO
 app
 app/example
 app/example/disasteroids
-app/example/disasteroids/disasteroids.vcproj
 app/example/disasteroids/dis_commandlineoptions.cpp
 app/example/disasteroids/dis_commandlineoptions.hpp
 app/example/disasteroids/dis_config.cpp
@@ -19,6 +18,7 @@ app/example/disasteroids/dis_master.cpp
 app/example/disasteroids/dis_master.hpp
 app/example/disasteroids/dis_resourcecache.cpp
 app/example/disasteroids/dis_resourcecache.hpp
+app/example/disasteroids/disasteroids.vcproj
 app/example/disasteroids/game/dis_highscores.cpp
 app/example/disasteroids/game/dis_highscores.hpp
 app/example/disasteroids/game/dis_item.cpp
@@ -126,7 +126,6 @@ doc/doxygen_pages/setup_msvc.dox
 doc/doxygen_pages/source_tree_layout.dox
 doc/doxygen_pages/widget_baseclass.dox
 lib
-lib/libxrb.vcproj
 lib/core/xrb.hpp
 lib/core/xrb_assert.hpp
 lib/core/xrb_compiletimeasserts.cpp
@@ -219,6 +218,7 @@ lib/input/xrb_keymap.cpp
 lib/input/xrb_keymap.hpp
 lib/input/xrb_keyrepeater.cpp
 lib/input/xrb_keyrepeater.hpp
+lib/libxrb.vcproj
 lib/mapeditor2/xrb_mapeditor2_compound.cpp
 lib/mapeditor2/xrb_mapeditor2_compound.hpp
 lib/mapeditor2/xrb_mapeditor2_compoundentity.cpp
@@ -304,6 +304,9 @@ lib/render/xrb_render.hpp
 lib/render/xrb_rendercontext.cpp
 lib/render/xrb_rendercontext.hpp
 lib/system
+lib/system/pals
+lib/system/pals/xrb_sdlpal.cpp
+lib/system/pals/xrb_sdlpal.hpp
 lib/system/serializers/xrb_binaryfileserializer.cpp
 lib/system/serializers/xrb_binaryfileserializer.hpp
 lib/system/xrb_enums.hpp
@@ -315,6 +318,7 @@ lib/system/xrb_eventqueue.cpp
 lib/system/xrb_eventqueue.hpp
 lib/system/xrb_framehandler.cpp
 lib/system/xrb_framehandler.hpp
+lib/system/xrb_pal.hpp
 lib/system/xrb_resourcelibrary.cpp
 lib/system/xrb_resourcelibrary.hpp
 lib/system/xrb_serializer.cpp

@@ -20,42 +20,34 @@ namespace Xrb
 EventInput::~EventInput () { }
 
 EventKey::EventKey (
-    SDL_KeyboardEvent const *const e,
+    Key::Code code,
+    Key::Modifier modifier,
     Float const time,
     EventType event_type)
     :
     EventInput(time, event_type)
 {
-    // this is not an ASSERT just because KeyRepeater needs be able to
-    // construct an EventKeyDown with no SDL key event.
-    if (e == NULL)
-        return;
+    // store the code, performing key mapping using the KeyMap singleton
+    m_code = Singleton::KeyMap().MappedKey(code);
+    // store the modifier
+    m_modifier = modifier;
 
-    // store the SDL_KeyboardEvent away
-    m_event = *e;
-
-    // perform key mapping using the KeyMap singleton, and store the
-    // mapped value back into m_event.
-    Key::Code code = static_cast<Key::Code>(m_event.keysym.sym);
-    code = Singleton::KeyMap().MappedKey(code);
-    m_event.keysym.sym = static_cast<SDLKey>(code);
-
-    // set the raw ascii code (SDLKey maps to ascii)
+    // set the raw ascii code
     if (code >= Key::SPACE && code < Key::DELETE)
-        m_modified_ascii = (char)code;
+        m_modified_ascii = char(code);
     else
         m_modified_ascii = '\0';
 
     // caps lock modification
-    if ((m_event.keysym.mod&KMOD_CAPS) != 0)
+    if ((m_modifier&Key::MOD_CAPS) != 0)
         m_modified_ascii = toupper(m_modified_ascii);
 
     // shift key modification
-    if ((m_event.keysym.mod&(KMOD_LSHIFT|KMOD_RSHIFT)) != 0)
+    if ((m_modifier&(Key::MOD_LSHIFT|Key::MOD_RSHIFT)) != 0)
         m_modified_ascii = Util::ShiftedAscii(m_modified_ascii);
 
     // num lock modification
-    if ((m_event.keysym.mod&KMOD_NUM) != 0)
+    if ((m_modifier&Key::MOD_NUM) != 0)
     {
         switch (code)
         {

@@ -21,7 +21,7 @@ KeyRepeater::KeyRepeater (
     :
     EventHandler(NULL),
     FrameHandler(),
-    m_current_key_event(0, 0.0)
+    m_current_key_event(Key::NONE, Key::MOD_NONE, 0.0f)
 {
     ASSERT1(repeat_delay > 0.0);
     ASSERT1(repeat_period > 0.0);
@@ -59,7 +59,6 @@ bool KeyRepeater::HandleEvent (Event const *const e)
         if (key_event->IsKeyDownEvent() &&
             Key::IsKeyRepeatable(key_event->KeyCode()))
         {
-
             EventKeyDown const *key_down_event = static_cast<EventKeyDown const *>(e);
             // use this key as the current key event
             m_current_key_event = *key_down_event;
@@ -74,8 +73,7 @@ bool KeyRepeater::HandleEvent (Event const *const e)
         {
             // if the key up event matches the current key event, then
             // deactivate the current key event.
-            if (m_current_key_event.SDLEvent().keysym.sym ==
-                key_event->SDLEvent().keysym.sym)
+            if (m_current_key_event.KeyCode() == key_event->KeyCode())
                 m_is_current_key_event_active = false;
 
             // the event was used
@@ -98,7 +96,7 @@ void KeyRepeater::GenerateKeyEvents (Float const time)
     {
         // generate the event
         EventKeyRepeat *key_repeat_event =
-            new EventKeyRepeat(&m_current_key_event.SDLEvent(), time);
+            new EventKeyRepeat(m_current_key_event.KeyCode(), m_current_key_event.KeyModifier(), time);
         // enqueue the event
         m_key_event_queue.Enqueue(key_repeat_event);
         // schedule the next repeat time

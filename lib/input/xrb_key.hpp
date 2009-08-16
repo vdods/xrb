@@ -34,6 +34,7 @@ public:
       */
     enum Code
     {
+        // TODO: when separating SDL, make sure the ASCII codes are preserved
         INVALID = -1,
         NONE = -2,
         UNKNOWN = SDLK_UNKNOWN,
@@ -258,6 +259,31 @@ public:
         EURO = SDLK_EURO,
         UNDO = SDLK_UNDO
     }; // end of enum Code
+
+    /** This enum isn't actually used in an instance of Key.  Key is just
+      * being used for namespace scoping/organization.
+      * @brief Flags for key modifiers such as left-alt, caps lock, etc.
+      */
+    enum Modifier
+    {
+        MOD_NONE   = 0x0000,
+        MOD_LSHIFT = 0x0001,
+        MOD_RSHIFT = 0x0002,
+        MOD_LCTRL  = 0x0040,
+        MOD_RCTRL  = 0x0080,
+        MOD_LALT   = 0x0100,
+        MOD_RALT   = 0x0200,
+        MOD_LMETA  = 0x0400,
+        MOD_RMETA  = 0x0800,
+        MOD_NUM    = 0x1000,
+        MOD_CAPS   = 0x2000,
+        MOD_MODE   = 0x4000,
+
+        // convenience flags
+        MOD_SHIFT  = MOD_LSHIFT|MOD_RSHIFT,
+        MOD_ALT    = MOD_LALT|MOD_RALT,
+        MOD_CTRL   = MOD_LCTRL|MOD_RCTRL
+    }; // end of enum Modifier
 
     ~Key () { }
 

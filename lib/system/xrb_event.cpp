@@ -74,15 +74,11 @@ Event *Event::CreateEventFromSDLEvent (
             break;
 
         case SDL_KEYDOWN:
-            retval = new EventKeyDown(
-                reinterpret_cast<SDL_KeyboardEvent const *>(e),
-                time);
+            retval = new EventKeyDown(Key::Code(e->key.keysym.sym), Key::Modifier(e->key.keysym.mod), time);
             break;
 
         case SDL_KEYUP:
-            retval = new EventKeyUp(
-                reinterpret_cast<SDL_KeyboardEvent const *>(e),
-                time);
+            retval = new EventKeyUp(Key::Code(e->key.keysym.sym), Key::Modifier(e->key.keysym.mod), time);
             break;
 
         case SDL_MOUSEBUTTONDOWN:
