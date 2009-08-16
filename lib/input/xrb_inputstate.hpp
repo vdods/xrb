@@ -62,7 +62,7 @@ protected:
 
 private:
 
-    // mapping Key::Code to Key objects, so SDL_Event codes can access
+    // mapping Key::Code to Key objects, so key codes can access
     typedef std::map<Key::Code, Key *> KeyCodeMap;
     // mapping std::string names to Key objects, so there is human-readable access
     typedef std::map<std::string, Key *> KeyNameMap;

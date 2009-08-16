@@ -48,14 +48,6 @@ public:
     {
         return Min(Width(), Height());
     }
-    inline ScreenCoordVector2 ScreenCoordsFromSDLCoords (
-        Sint32 x,
-        Sint32 y) const
-    {
-        return ScreenCoordVector2(
-            static_cast<ScreenCoord>(x),
-            ScreenRect().Height() - static_cast<ScreenCoord>(y));
-    }
     inline Float Framerate () const
     {
         return m_framerate_calculator.Framerate();

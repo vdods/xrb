@@ -160,12 +160,8 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////
 
-    // draw this object on the SDL_Surface 'target', using the
-    // specified transformation.
-    virtual void Draw (
-        DrawData const &draw_data,
-        Float alpha_mask) const
-    { }
+    // draw this object using the given alpha mask
+    virtual void Draw (DrawData const &draw_data, Float alpha_mask) const { }
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers

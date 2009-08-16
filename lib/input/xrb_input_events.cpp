@@ -81,32 +81,26 @@ EventKey::EventKey (
 EventKey::~EventKey () { }
 
 EventMouse::EventMouse (
-    Uint16 event_x,
-    Uint16 event_y,
+    ScreenCoordVector2 const &position,
     Key::Modifier modifier,
-    Screen const *screen,
     Float time,
     EventType event_type)
     :
-    EventInput(time, event_type)
-{
-    ASSERT1(screen != NULL);
-    m_position = screen->ScreenCoordsFromSDLCoords(event_x, event_y);
-    m_modifier = modifier;
-}
+    EventInput(time, event_type),
+    m_position(position),
+    m_modifier(modifier)
+{ }
 
 EventMouse::~EventMouse () { }
 
 EventMouseButton::EventMouseButton (
     Key::Code button_code,
-    Uint16 event_x,
-    Uint16 event_y,
+    ScreenCoordVector2 const &position,
     Key::Modifier modifier,
-    Screen const *screen,
     Float time,
     EventType event_type)
     :
-    EventMouse(event_x, event_y, modifier, screen, time, event_type),
+    EventMouse(position, modifier, time, event_type),
     m_button_code(button_code)
 { }
 
@@ -116,19 +110,16 @@ EventMouseMotion::EventMouseMotion (
     bool is_left_mouse_button_pressed,
     bool is_middle_mouse_button_pressed,
     bool is_right_mouse_button_pressed,
-    Uint16 event_x,
-    Uint16 event_y,
-    Sint16 event_dx,
-    Sint16 event_dy,
+    ScreenCoordVector2 const &position,
+    ScreenCoordVector2 const &delta,
     Key::Modifier modifier,
-    Screen const *screen,
     Float time)
     :
-    EventMouse(event_x, event_y, modifier, screen, time, MOUSEMOTION),
+    EventMouse(position, modifier, time, MOUSEMOTION),
     m_is_left_mouse_button_pressed(is_left_mouse_button_pressed),
     m_is_middle_mouse_button_pressed(is_middle_mouse_button_pressed),
     m_is_right_mouse_button_pressed(is_right_mouse_button_pressed),
-    m_delta(event_dx, event_dy)
+    m_delta(delta)
 { }
 
 } // end of namespace Xrb

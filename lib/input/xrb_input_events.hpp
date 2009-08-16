@@ -47,7 +47,7 @@ class EventKey : public EventInput
 {
 public:
 
-    /** @brief Constructs an EventKey from the given SDL_KeyboardEvent.
+    /** @brief Constructs an EventKey with the given parameters.
       */
     EventKey (Key::Code code, Key::Modifier modifier, Float time, EventType event_type);
     /** EventKey is an abstract baseclass.
@@ -125,7 +125,7 @@ class EventKeyDown : public EventKey
 {
 public:
 
-    /** @brief Constructs an EventKeyDown from the given SDL_KeyboardEvent.
+    /** @brief Constructs an EventKeyDown with the given parameters.
       */
     EventKeyDown (
         Key::Code code,
@@ -153,7 +153,7 @@ class EventKeyUp : public EventKey
 {
 public:
 
-    /** @brief Constructs an EventKeyUp from the given SDL_KeyboardEvent.
+    /** @brief Constructs an EventKeyUp with the given parameters.
       */
     EventKeyUp (
         Key::Code code,
@@ -183,7 +183,7 @@ class EventKeyRepeat : public EventKey
 {
 public:
 
-    /** @brief Constructs an EventKeyRepeat from the given SDL_KeyboardEvent.
+    /** @brief Constructs an EventKeyRepeat with the given parameters.
       */
     EventKeyRepeat (
         Key::Code code,
@@ -204,10 +204,6 @@ public:
 
 /** EventMouse is an abstract baseclass for the specific mouse events.
   *
-  * Mouse events all pertain to a position on a Screen.  The position given
-  * from the SDL_Mouse*Event is transformed into the equivalent screen
-  * coordinate on the given Screen object.
-  *
   * Provides accessors for checking if any of the key modifiers (shift,
   * control, alt, capslock, numlock) were active during this event.
   * @brief Baseclass for all mouse events.
@@ -216,14 +212,11 @@ class EventMouse : public EventInput
 {
 public:
 
-    /** @brief Constructs a mouse event from the given key modifiers, Screen,
-      *        and mouse event position.
+    /** @brief Constructs a mouse event from the given parameters.
       */
     EventMouse (
-        Uint16 event_x,
-        Uint16 event_y,
+        ScreenCoordVector2 const &position,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time,
         EventType event_type);
     /** @brief Pure virtual destructor.
@@ -275,7 +268,7 @@ public:
 
 private:
 
-    // the mouse button position in virtual screen coordinates
+    // the mouse button position in screen coordinates
     ScreenCoordVector2 m_position;
     // the metakey modifier flags for this event
     Key::Modifier m_modifier;
@@ -292,15 +285,12 @@ class EventMouseButton : public EventMouse
 {
 public:
 
-    /** @brief Constructs an EventMouseButton from the given
-      * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
+    /** @brief Constructs an EventMouseButton with the given parameters.
       */
     EventMouseButton (
         Key::Code button_code,
-        Uint16 event_x,
-        Uint16 event_y,
+        ScreenCoordVector2 const &position,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time,
         EventType event_type);
     /** @brief Pure virtual destructor.
@@ -339,18 +329,15 @@ class EventMouseButtonDown : public EventMouseButton
 {
 public:
 
-    /** @brief Constructs an EventMouseButton from the given
-      * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
+    /** @brief Constructs an EventMouseButton with the given parameters.
       */
     EventMouseButtonDown (
         Key::Code button_code,
-        Uint16 event_x,
-        Uint16 event_y,
+        ScreenCoordVector2 const &position,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time)
         :
-        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEBUTTONDOWN)
+        EventMouseButton(button_code, position, modifier, time, MOUSEBUTTONDOWN)
     { }
     /** @brief Choose.  Choose the form of the destructor!
       */
@@ -371,18 +358,15 @@ class EventMouseButtonUp : public EventMouseButton
 {
 public:
 
-    /** @brief Constructs an EventMouseButton from the given
-      * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
+    /** @brief Constructs an EventMouseButton with the given parameters.
       */
     EventMouseButtonUp (
         Key::Code button_code,
-        Uint16 event_x,
-        Uint16 event_y,
+        ScreenCoordVector2 const &position,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time)
         :
-        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEBUTTONUP)
+        EventMouseButton(button_code, position, modifier, time, MOUSEBUTTONUP)
     { }
     /** @brief Destructor.
       */
@@ -403,18 +387,15 @@ class EventMouseWheel : public EventMouseButton
 {
 public:
 
-    /** @brief Constructs an EventMouseButton from the given
-      * SDL_MouseButtonEvent, keyboard modifiers, and Screen.
+    /** @brief Constructs an EventMouseButton with the given parameters.
       */
     EventMouseWheel (
         Key::Code button_code,
-        Uint16 event_x,
-        Uint16 event_y,
+        ScreenCoordVector2 const &position,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time)
         :
-        EventMouseButton(button_code, event_x, event_y, modifier, screen, time, MOUSEWHEEL)
+        EventMouseButton(button_code, position, modifier, time, MOUSEWHEEL)
     { }
     /** @brief Destructor.
       */
@@ -433,19 +414,15 @@ class EventMouseMotion : public EventMouse
 {
 public:
 
-    /** @brief Constructs an EventMouseButton from the given
-      * button states, position, keyboard modifiers, and Screen.
+    /** @brief Constructs an EventMouseButton from the given parameters.
       */
     EventMouseMotion (
         bool is_left_mouse_button_pressed,
         bool is_middle_mouse_button_pressed,
         bool is_right_mouse_button_pressed,
-        Uint16 event_x,
-        Uint16 event_y,
-        Sint16 event_dx,
-        Sint16 event_dy,
+        ScreenCoordVector2 const &position,
+        ScreenCoordVector2 const &delta,
         Key::Modifier modifier,
-        Screen const *screen,
         Float time);
     virtual ~EventMouseMotion () { }
 
@@ -474,7 +451,7 @@ private:
     bool m_is_left_mouse_button_pressed;
     bool m_is_middle_mouse_button_pressed;
     bool m_is_right_mouse_button_pressed;
-    // the mouse motion delta in virtual screen coordinates
+    // the mouse motion delta in screen coordinates
     ScreenCoordVector2 m_delta;
 }; // end of class EventMouseMotion
 

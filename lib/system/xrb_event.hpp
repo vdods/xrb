@@ -19,8 +19,6 @@
 namespace Xrb
 {
 
-class Screen;
-
 /** Events are generated to indicate when certain events have happened,
   * such as a key stroke, mouse motion, etc.  The Event object itself
   * carries all the information about the event as well.  Events are processed

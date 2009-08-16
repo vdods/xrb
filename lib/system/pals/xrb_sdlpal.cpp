@@ -14,6 +14,7 @@
 #include "xrb_event.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
+#include "xrb_screen.hpp"
 
 namespace Xrb
 {
@@ -114,25 +115,24 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEBUTTONDOWN:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
+                ScreenCoordVector2 event_position(
+                    static_cast<ScreenCoord>(mouse_button_event.x),
+                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
                     retval = new EventMouseWheel(
                         Key::Code(mouse_button_event.button),
-                        mouse_button_event.x,
-                        mouse_button_event.y,
+                        event_position,
                         Singleton::InputState().Modifier(),
-                        screen,
                         time);
                 }
                 else
                 {
                     retval = new EventMouseButtonDown(
                         Key::Code(mouse_button_event.button),
-                        mouse_button_event.x,
-                        mouse_button_event.y,
+                        event_position,
                         Singleton::InputState().Modifier(),
-                        screen,
                         time);
                 }
                 break;
@@ -141,6 +141,9 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEBUTTONUP:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
+                ScreenCoordVector2 event_position(
+                    static_cast<ScreenCoord>(mouse_button_event.x),
+                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
@@ -151,10 +154,8 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
                 {
                     retval = new EventMouseButtonUp(
                         Key::Code(mouse_button_event.button),
-                        mouse_button_event.x,
-                        mouse_button_event.y,
+                        event_position,
                         Singleton::InputState().Modifier(),
-                        screen,
                         time);
                 }
                 break;
@@ -163,16 +164,21 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEMOTION:
             {
                 SDL_MouseMotionEvent const &mouse_motion_event = e.motion;
+                ScreenCoordVector2 event_position(
+                    static_cast<ScreenCoord>(mouse_motion_event.x),
+                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_motion_event.y));
+                // SDL provides right-handed coords, so yrel coord is negated
+                // to get left-handed coords (used by Screen)
+                ScreenCoordVector2 event_delta(
+                    mouse_motion_event.xrel,
+                    -mouse_motion_event.yrel); 
                 retval = new EventMouseMotion(
                     Singleton::InputState().IsKeyPressed(Key::LEFTMOUSE),
                     Singleton::InputState().IsKeyPressed(Key::MIDDLEMOUSE),
                     Singleton::InputState().IsKeyPressed(Key::RIGHTMOUSE),
-                    mouse_motion_event.x,
-                    mouse_motion_event.y,
-                    mouse_motion_event.xrel,
-                    -mouse_motion_event.yrel, // yrel coord is negative to get right-handed coords
+                    event_position,
+                    event_delta,
                     Singleton::InputState().Modifier(),
-                    screen,
                     time);
                 break;
             }
