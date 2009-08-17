@@ -103,7 +103,7 @@ void Engine2::Polygon::Draw () const
         glClientActiveTexture(GL_TEXTURE1);
         glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array);
 
-        glDrawArrays(GL_POLYGON, 0, m_vertex_count);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
 
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);

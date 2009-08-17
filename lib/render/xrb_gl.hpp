@@ -13,6 +13,11 @@
 
 #include "xrb.hpp"
 
+// ///////////////////////////////////////////////////////////////////////////
+// a bunch of platform-specific defines and whatnot necessary to include the
+// correct openGL headers.  reference: SDL.
+// ///////////////////////////////////////////////////////////////////////////
+
 #ifdef __WIN32__
     // don't include a bunch of useless winblows crap.
     #define WIN32_LEAN_AND_MEAN
@@ -23,17 +28,35 @@
     #include <windows.h>
 #endif
 
-// include different headers based on the platform (reference: SDL)
+#if defined(__APPLE__)
+    // lets us know what version of Mac OS X we're compiling on
+    #include "AvailabilityMacros.h"
+    #ifdef MAC_OS_X_VERSION_10_3
+        #include "targetconditionals.h"
+        #if TARGET_OS_IPHONE
+            #undef __IPHONEOS__
+            #define __IPHONEOS__ 1
+            #undef __MACOSX__
+        #else
+            #undef __MACOSX__
+            #define __MACOSX__  1
+        #endif
+    #else
+        #undef __MACOSX__
+        #define __MACOSX__  1
+    #endif
+#endif
+
+// headers for openGL
 #if defined(__MACOSX__)
     #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-#elif defined(__MACOS__)
-    #include <gl.h>
-    #include <glu.h>
 #else
     #include <GL/gl.h>
-    #include <GL/glu.h>
 #endif
+
+// ///////////////////////////////////////////////////////////////////////////
+// end of ugliness
+// ///////////////////////////////////////////////////////////////////////////
 
 #include "xrb_screencoord.hpp"
 

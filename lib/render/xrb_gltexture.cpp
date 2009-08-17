@@ -73,26 +73,19 @@ void GLTexture::GenerateTexture (Texture *texture)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-/*
+    // this causes mipmaps to be generated whenever the base (level 0) texture is changed
+    glTexParameterf(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    // set the base (level 0) texture
     glTexImage2D(
-        GL_TEXTURE_2D,
-        0,
-        GL_RGBA,
-        texture->Width(),
-        texture->Height(),
-        1,
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        texture->Data());
-*/
-    gluBuild2DMipmaps(
-        GL_TEXTURE_2D,
-        GL_RGBA,
-        texture->Width(),
-        texture->Height(),
-        GL_RGBA,
-        GL_UNSIGNED_BYTE,
-        texture->Data());
+        GL_TEXTURE_2D,      // target
+        0,                  // level
+        GL_RGBA,            // internal format
+        texture->Width(),   // width
+        texture->Height(),  // height
+        0,                  // width of the border (must be 0 or 1)
+        GL_RGBA,            // format of the input pixel data
+        GL_UNSIGNED_BYTE,   // data type of the input pixel data
+        texture->Data());   // input pixel data
 
     // the texture data has now been loaded into GL texture memory, so
     // the original texture can now optionally be deleted.

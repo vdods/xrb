@@ -122,6 +122,7 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 
 TODO:
+- use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent
 - high framerates cause the impact damage to be too high in disasteroids (or maybe the impact damage is too low in low framerates)
 - change MatrixMode, MatrixStackDepth, MaxMatrixStackDepth into just a generic GetGLInt or something

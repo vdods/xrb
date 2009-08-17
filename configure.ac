@@ -304,9 +304,6 @@ AC_CHECK_LIB(m, sin)
 # check for OpenGL library (this seems not exactly necessary)
 AC_CHECK_LIB(GL, glBegin)
 
-# check for OpenGL Utilities library (this seems not exactly necessary)
-AC_CHECK_LIB(GLU, gluBuild2DMipmaps)
-
 # check for SDL_image library
 AC_CHECK_LIB(SDL_image, IMG_Load)
 
