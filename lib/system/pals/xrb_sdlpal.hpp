@@ -15,37 +15,32 @@
 
 #include "xrb_pal.hpp"
 
-namespace Xrb
-{
-
-class SDLPal : public Pal
+class SDLPal : public Xrb::Pal
 {
 public:
 
     // returns an instance of SDLPal.  to be used in Singleton::Initialize()
-    static Pal *Create ();
+    static Xrb::Pal *Create ();
 
     virtual Status Initialize ();
     virtual void Shutdown ();
 
-    virtual Status InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen);
+    virtual Status InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen);
     virtual void ShutdownVideo ();
 
     virtual void SetWindowCaption (char const *window_caption);
 
-    virtual Uint32 CurrentTime ();
+    virtual Xrb::Uint32 CurrentTime ();
 
-    virtual void Sleep (Uint32 milliseconds_to_sleep);
+    virtual void Sleep (Xrb::Uint32 milliseconds_to_sleep);
 
     virtual void FinishFrame ();
 
-    virtual Event *PollEvent (Screen const *screen, Float time);
+    virtual Xrb::Event *PollEvent (Xrb::Screen const *screen, Xrb::Float time);
 
-    virtual Texture *LoadImage (char const *image_path);
-    virtual Status SaveImage (char const *image_path, Texture const &texture);
+    virtual Xrb::Texture *LoadImage (char const *image_path);
+    virtual Status SaveImage (char const *image_path, Xrb::Texture const &texture);
 }; // end of class SDLPal
-
-} // end of namespace Xrb
 
 #endif // !defined(_XRB_SDLPAL_HPP_)
 

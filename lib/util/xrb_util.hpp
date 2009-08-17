@@ -13,6 +13,7 @@
 
 #include "xrb.hpp"
 
+#include <stdlib.h>
 #include <string>
 
 #include "xrb_enums.hpp"

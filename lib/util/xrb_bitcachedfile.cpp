@@ -10,6 +10,8 @@
 
 #include "xrb_bitcachedfile.hpp"
 
+#include <string.h>
+
 namespace Xrb
 {
 

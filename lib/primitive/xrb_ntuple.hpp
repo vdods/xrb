@@ -13,6 +13,8 @@
 
 #include "xrb.hpp"
 
+#include <stdio.h>
+
 #include "xrb_enums.hpp"
 
 /** @file xrb_ntuple.h

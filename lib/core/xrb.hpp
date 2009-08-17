@@ -19,10 +19,14 @@
     #include "config.h"
 #endif // defined(HAVE_CONFIG_H)
 
+// this is the only acceptable way to define NULL in C++
+#if !defined(NULL)
+#define NULL 0
+#endif
+
 // this is necessary so that glext.h actually does stuff
 #define GL_GLEXT_PROTOTYPES
 
-#include "SDL.h"
 #include "xrb_assert.hpp"
 #include "xrb_debug.hpp"
 #include "xrb_delete.hpp"

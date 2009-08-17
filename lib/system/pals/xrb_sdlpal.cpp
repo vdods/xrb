@@ -34,276 +34,273 @@
 #endif // !defined(WORDS_BIGENDIAN)
 */
 
-namespace Xrb
-{
-
 namespace {
 
-Key::Code TranslateSDLKey (SDLKey sdl_key)
+Xrb::Key::Code TranslateSDLKey (SDLKey sdl_key)
 {
-    static Key::Code s_key_lookup[SDLK_LAST];
+    static Xrb::Key::Code s_key_lookup[SDLK_LAST];
     static bool s_key_lookup_is_initialized = false;
     if (!s_key_lookup_is_initialized)
     {
-        for (Sint32 i = 0; i < SDLK_LAST; ++i)
-            s_key_lookup[i] = Key::INVALID;
+        for (Xrb::Sint32 i = 0; i < SDLK_LAST; ++i)
+            s_key_lookup[i] = Xrb::Key::INVALID;
 
-        s_key_lookup[SDLK_UNKNOWN] = Key::UNKNOWN;
-        s_key_lookup[SDL_BUTTON_LEFT] = Key::LEFTMOUSE;
-        s_key_lookup[SDL_BUTTON_MIDDLE] = Key::MIDDLEMOUSE;
-        s_key_lookup[SDL_BUTTON_RIGHT] = Key::RIGHTMOUSE;
-        s_key_lookup[SDL_BUTTON_WHEELUP] = Key::MOUSEWHEELUP;
-        s_key_lookup[SDL_BUTTON_WHEELDOWN] = Key::MOUSEWHEELDOWN;
-        s_key_lookup[SDLK_BACKSPACE] = Key::BACKSPACE;
-        s_key_lookup[SDLK_TAB] = Key::TAB;
-        s_key_lookup[SDLK_CLEAR] = Key::CLEAR;
-        s_key_lookup[SDLK_RETURN] = Key::RETURN;
-        s_key_lookup[SDLK_PAUSE] = Key::PAUSE;
-        s_key_lookup[SDLK_ESCAPE] = Key::ESCAPE;
-        s_key_lookup[SDLK_SPACE] = Key::SPACE;
-        s_key_lookup[SDLK_QUOTE] = Key::QUOTE;
-        s_key_lookup[SDLK_COMMA] = Key::COMMA;
-        s_key_lookup[SDLK_MINUS] = Key::MINUS;
-        s_key_lookup[SDLK_PERIOD] = Key::PERIOD;
-        s_key_lookup[SDLK_SLASH] = Key::SLASH;
-        s_key_lookup[SDLK_0] = Key::ZERO;
-        s_key_lookup[SDLK_1] = Key::ONE;
-        s_key_lookup[SDLK_2] = Key::TWO;
-        s_key_lookup[SDLK_3] = Key::THREE;
-        s_key_lookup[SDLK_4] = Key::FOUR;
-        s_key_lookup[SDLK_5] = Key::FIVE;
-        s_key_lookup[SDLK_6] = Key::SIX;
-        s_key_lookup[SDLK_7] = Key::SEVEN;
-        s_key_lookup[SDLK_8] = Key::EIGHT;
-        s_key_lookup[SDLK_9] = Key::NINE;
-        s_key_lookup[SDLK_SEMICOLON] = Key::SEMICOLON;
-        s_key_lookup[SDLK_EQUALS] = Key::EQUALS;
-        s_key_lookup[SDLK_LEFTBRACKET] = Key::LEFTBRACKET;
-        s_key_lookup[SDLK_BACKSLASH] = Key::BACKSLASH;
-        s_key_lookup[SDLK_RIGHTBRACKET] = Key::RIGHTBRACKET;
-        s_key_lookup[SDLK_BACKQUOTE] = Key::BACKQUOTE;
-        s_key_lookup[SDLK_a] = Key::A;
-        s_key_lookup[SDLK_b] = Key::B;
-        s_key_lookup[SDLK_c] = Key::C;
-        s_key_lookup[SDLK_d] = Key::D;
-        s_key_lookup[SDLK_e] = Key::E;
-        s_key_lookup[SDLK_f] = Key::F;
-        s_key_lookup[SDLK_g] = Key::G;
-        s_key_lookup[SDLK_h] = Key::H;
-        s_key_lookup[SDLK_i] = Key::I;
-        s_key_lookup[SDLK_j] = Key::J;
-        s_key_lookup[SDLK_k] = Key::K;
-        s_key_lookup[SDLK_l] = Key::L;
-        s_key_lookup[SDLK_m] = Key::M;
-        s_key_lookup[SDLK_n] = Key::N;
-        s_key_lookup[SDLK_o] = Key::O;
-        s_key_lookup[SDLK_p] = Key::P;
-        s_key_lookup[SDLK_q] = Key::Q;
-        s_key_lookup[SDLK_r] = Key::R;
-        s_key_lookup[SDLK_s] = Key::S;
-        s_key_lookup[SDLK_t] = Key::T;
-        s_key_lookup[SDLK_u] = Key::U;
-        s_key_lookup[SDLK_v] = Key::V;
-        s_key_lookup[SDLK_w] = Key::W;
-        s_key_lookup[SDLK_x] = Key::X;
-        s_key_lookup[SDLK_y] = Key::Y;
-        s_key_lookup[SDLK_z] = Key::Z;
-        s_key_lookup[SDLK_DELETE] = Key::DELETE;
-        s_key_lookup[SDLK_WORLD_0] = Key::WORLD_0;
-        s_key_lookup[SDLK_WORLD_1] = Key::WORLD_1;
-        s_key_lookup[SDLK_WORLD_2] = Key::WORLD_2;
-        s_key_lookup[SDLK_WORLD_3] = Key::WORLD_3;
-        s_key_lookup[SDLK_WORLD_4] = Key::WORLD_4;
-        s_key_lookup[SDLK_WORLD_5] = Key::WORLD_5;
-        s_key_lookup[SDLK_WORLD_6] = Key::WORLD_6;
-        s_key_lookup[SDLK_WORLD_7] = Key::WORLD_7;
-        s_key_lookup[SDLK_WORLD_8] = Key::WORLD_8;
-        s_key_lookup[SDLK_WORLD_9] = Key::WORLD_9;
-        s_key_lookup[SDLK_WORLD_10] = Key::WORLD_10;
-        s_key_lookup[SDLK_WORLD_11] = Key::WORLD_11;
-        s_key_lookup[SDLK_WORLD_12] = Key::WORLD_12;
-        s_key_lookup[SDLK_WORLD_13] = Key::WORLD_13;
-        s_key_lookup[SDLK_WORLD_14] = Key::WORLD_14;
-        s_key_lookup[SDLK_WORLD_15] = Key::WORLD_15;
-        s_key_lookup[SDLK_WORLD_16] = Key::WORLD_16;
-        s_key_lookup[SDLK_WORLD_17] = Key::WORLD_17;
-        s_key_lookup[SDLK_WORLD_18] = Key::WORLD_18;
-        s_key_lookup[SDLK_WORLD_19] = Key::WORLD_19;
-        s_key_lookup[SDLK_WORLD_20] = Key::WORLD_20;
-        s_key_lookup[SDLK_WORLD_21] = Key::WORLD_21;
-        s_key_lookup[SDLK_WORLD_22] = Key::WORLD_22;
-        s_key_lookup[SDLK_WORLD_23] = Key::WORLD_23;
-        s_key_lookup[SDLK_WORLD_24] = Key::WORLD_24;
-        s_key_lookup[SDLK_WORLD_25] = Key::WORLD_25;
-        s_key_lookup[SDLK_WORLD_26] = Key::WORLD_26;
-        s_key_lookup[SDLK_WORLD_27] = Key::WORLD_27;
-        s_key_lookup[SDLK_WORLD_28] = Key::WORLD_28;
-        s_key_lookup[SDLK_WORLD_29] = Key::WORLD_29;
-        s_key_lookup[SDLK_WORLD_30] = Key::WORLD_30;
-        s_key_lookup[SDLK_WORLD_31] = Key::WORLD_31;
-        s_key_lookup[SDLK_WORLD_32] = Key::WORLD_32;
-        s_key_lookup[SDLK_WORLD_33] = Key::WORLD_33;
-        s_key_lookup[SDLK_WORLD_34] = Key::WORLD_34;
-        s_key_lookup[SDLK_WORLD_35] = Key::WORLD_35;
-        s_key_lookup[SDLK_WORLD_36] = Key::WORLD_36;
-        s_key_lookup[SDLK_WORLD_37] = Key::WORLD_37;
-        s_key_lookup[SDLK_WORLD_38] = Key::WORLD_38;
-        s_key_lookup[SDLK_WORLD_39] = Key::WORLD_39;
-        s_key_lookup[SDLK_WORLD_40] = Key::WORLD_40;
-        s_key_lookup[SDLK_WORLD_41] = Key::WORLD_41;
-        s_key_lookup[SDLK_WORLD_42] = Key::WORLD_42;
-        s_key_lookup[SDLK_WORLD_43] = Key::WORLD_43;
-        s_key_lookup[SDLK_WORLD_44] = Key::WORLD_44;
-        s_key_lookup[SDLK_WORLD_45] = Key::WORLD_45;
-        s_key_lookup[SDLK_WORLD_46] = Key::WORLD_46;
-        s_key_lookup[SDLK_WORLD_47] = Key::WORLD_47;
-        s_key_lookup[SDLK_WORLD_48] = Key::WORLD_48;
-        s_key_lookup[SDLK_WORLD_49] = Key::WORLD_49;
-        s_key_lookup[SDLK_WORLD_50] = Key::WORLD_50;
-        s_key_lookup[SDLK_WORLD_51] = Key::WORLD_51;
-        s_key_lookup[SDLK_WORLD_52] = Key::WORLD_52;
-        s_key_lookup[SDLK_WORLD_53] = Key::WORLD_53;
-        s_key_lookup[SDLK_WORLD_54] = Key::WORLD_54;
-        s_key_lookup[SDLK_WORLD_55] = Key::WORLD_55;
-        s_key_lookup[SDLK_WORLD_56] = Key::WORLD_56;
-        s_key_lookup[SDLK_WORLD_57] = Key::WORLD_57;
-        s_key_lookup[SDLK_WORLD_58] = Key::WORLD_58;
-        s_key_lookup[SDLK_WORLD_59] = Key::WORLD_59;
-        s_key_lookup[SDLK_WORLD_60] = Key::WORLD_60;
-        s_key_lookup[SDLK_WORLD_61] = Key::WORLD_61;
-        s_key_lookup[SDLK_WORLD_62] = Key::WORLD_62;
-        s_key_lookup[SDLK_WORLD_63] = Key::WORLD_63;
-        s_key_lookup[SDLK_WORLD_64] = Key::WORLD_64;
-        s_key_lookup[SDLK_WORLD_65] = Key::WORLD_65;
-        s_key_lookup[SDLK_WORLD_66] = Key::WORLD_66;
-        s_key_lookup[SDLK_WORLD_67] = Key::WORLD_67;
-        s_key_lookup[SDLK_WORLD_68] = Key::WORLD_68;
-        s_key_lookup[SDLK_WORLD_69] = Key::WORLD_69;
-        s_key_lookup[SDLK_WORLD_70] = Key::WORLD_70;
-        s_key_lookup[SDLK_WORLD_71] = Key::WORLD_71;
-        s_key_lookup[SDLK_WORLD_72] = Key::WORLD_72;
-        s_key_lookup[SDLK_WORLD_73] = Key::WORLD_73;
-        s_key_lookup[SDLK_WORLD_74] = Key::WORLD_74;
-        s_key_lookup[SDLK_WORLD_75] = Key::WORLD_75;
-        s_key_lookup[SDLK_WORLD_76] = Key::WORLD_76;
-        s_key_lookup[SDLK_WORLD_77] = Key::WORLD_77;
-        s_key_lookup[SDLK_WORLD_78] = Key::WORLD_78;
-        s_key_lookup[SDLK_WORLD_79] = Key::WORLD_79;
-        s_key_lookup[SDLK_WORLD_80] = Key::WORLD_80;
-        s_key_lookup[SDLK_WORLD_81] = Key::WORLD_81;
-        s_key_lookup[SDLK_WORLD_82] = Key::WORLD_82;
-        s_key_lookup[SDLK_WORLD_83] = Key::WORLD_83;
-        s_key_lookup[SDLK_WORLD_84] = Key::WORLD_84;
-        s_key_lookup[SDLK_WORLD_85] = Key::WORLD_85;
-        s_key_lookup[SDLK_WORLD_86] = Key::WORLD_86;
-        s_key_lookup[SDLK_WORLD_87] = Key::WORLD_87;
-        s_key_lookup[SDLK_WORLD_88] = Key::WORLD_88;
-        s_key_lookup[SDLK_WORLD_89] = Key::WORLD_89;
-        s_key_lookup[SDLK_WORLD_90] = Key::WORLD_90;
-        s_key_lookup[SDLK_WORLD_91] = Key::WORLD_91;
-        s_key_lookup[SDLK_WORLD_92] = Key::WORLD_92;
-        s_key_lookup[SDLK_WORLD_93] = Key::WORLD_93;
-        s_key_lookup[SDLK_WORLD_94] = Key::WORLD_94;
-        s_key_lookup[SDLK_WORLD_95] = Key::WORLD_95;
-        s_key_lookup[SDLK_KP0] = Key::KP0;
-        s_key_lookup[SDLK_KP1] = Key::KP1;
-        s_key_lookup[SDLK_KP2] = Key::KP2;
-        s_key_lookup[SDLK_KP3] = Key::KP3;
-        s_key_lookup[SDLK_KP4] = Key::KP4;
-        s_key_lookup[SDLK_KP5] = Key::KP5;
-        s_key_lookup[SDLK_KP6] = Key::KP6;
-        s_key_lookup[SDLK_KP7] = Key::KP7;
-        s_key_lookup[SDLK_KP8] = Key::KP8;
-        s_key_lookup[SDLK_KP9] = Key::KP9;
-        s_key_lookup[SDLK_KP_PERIOD] = Key::KP_PERIOD;
-        s_key_lookup[SDLK_KP_DIVIDE] = Key::KP_DIVIDE;
-        s_key_lookup[SDLK_KP_MULTIPLY] = Key::KP_MULTIPLY;
-        s_key_lookup[SDLK_KP_MINUS] = Key::KP_MINUS;
-        s_key_lookup[SDLK_KP_PLUS] = Key::KP_PLUS;
-        s_key_lookup[SDLK_KP_ENTER] = Key::KP_ENTER;
-        s_key_lookup[SDLK_KP_EQUALS] = Key::KP_EQUALS;
-        s_key_lookup[SDLK_UP] = Key::UP;
-        s_key_lookup[SDLK_DOWN] = Key::DOWN;
-        s_key_lookup[SDLK_RIGHT] = Key::RIGHT;
-        s_key_lookup[SDLK_LEFT] = Key::LEFT;
-        s_key_lookup[SDLK_INSERT] = Key::INSERT;
-        s_key_lookup[SDLK_HOME] = Key::HOME;
-        s_key_lookup[SDLK_END] = Key::END;
-        s_key_lookup[SDLK_PAGEUP] = Key::PAGEUP;
-        s_key_lookup[SDLK_PAGEDOWN] = Key::PAGEDOWN;
-        s_key_lookup[SDLK_F1] = Key::F1;
-        s_key_lookup[SDLK_F2] = Key::F2;
-        s_key_lookup[SDLK_F3] = Key::F3;
-        s_key_lookup[SDLK_F4] = Key::F4;
-        s_key_lookup[SDLK_F5] = Key::F5;
-        s_key_lookup[SDLK_F6] = Key::F6;
-        s_key_lookup[SDLK_F7] = Key::F7;
-        s_key_lookup[SDLK_F8] = Key::F8;
-        s_key_lookup[SDLK_F9] = Key::F9;
-        s_key_lookup[SDLK_F10] = Key::F10;
-        s_key_lookup[SDLK_F11] = Key::F11;
-        s_key_lookup[SDLK_F12] = Key::F12;
-        s_key_lookup[SDLK_F13] = Key::F13;
-        s_key_lookup[SDLK_F14] = Key::F14;
-        s_key_lookup[SDLK_F15] = Key::F15;
-        s_key_lookup[SDLK_NUMLOCK] = Key::NUMLOCK;
-        s_key_lookup[SDLK_CAPSLOCK] = Key::CAPSLOCK;
-        s_key_lookup[SDLK_SCROLLOCK] = Key::SCROLLLOCK;
-        s_key_lookup[SDLK_RSHIFT] = Key::RSHIFT;
-        s_key_lookup[SDLK_LSHIFT] = Key::LSHIFT;
-        s_key_lookup[SDLK_RCTRL] = Key::RCTRL;
-        s_key_lookup[SDLK_LCTRL] = Key::LCTRL;
-        s_key_lookup[SDLK_RALT] = Key::RALT;
-        s_key_lookup[SDLK_LALT] = Key::LALT;
-        s_key_lookup[SDLK_RMETA] = Key::RMETA;
-        s_key_lookup[SDLK_LMETA] = Key::LMETA;
-        s_key_lookup[SDLK_LSUPER] = Key::LWINBLOWS;
-        s_key_lookup[SDLK_RSUPER] = Key::RWINBLOWS;
-        s_key_lookup[SDLK_MODE] = Key::MODE;
-        s_key_lookup[SDLK_COMPOSE] = Key::COMPOSE;
-        s_key_lookup[SDLK_HELP] = Key::HELP;
-        s_key_lookup[SDLK_PRINT] = Key::PRINT;
-        s_key_lookup[SDLK_SYSREQ] = Key::SYSREQ;
-        s_key_lookup[SDLK_BREAK] = Key::BREAK;
-        s_key_lookup[SDLK_MENU] = Key::MENU;
-        s_key_lookup[SDLK_POWER] = Key::POWER;
-        s_key_lookup[SDLK_EURO] = Key::EURO;
-        s_key_lookup[SDLK_UNDO] = Key::UNDO;
+        s_key_lookup[SDLK_UNKNOWN] = Xrb::Key::UNKNOWN;
+        s_key_lookup[SDL_BUTTON_LEFT] = Xrb::Key::LEFTMOUSE;
+        s_key_lookup[SDL_BUTTON_MIDDLE] = Xrb::Key::MIDDLEMOUSE;
+        s_key_lookup[SDL_BUTTON_RIGHT] = Xrb::Key::RIGHTMOUSE;
+        s_key_lookup[SDL_BUTTON_WHEELUP] = Xrb::Key::MOUSEWHEELUP;
+        s_key_lookup[SDL_BUTTON_WHEELDOWN] = Xrb::Key::MOUSEWHEELDOWN;
+        s_key_lookup[SDLK_BACKSPACE] = Xrb::Key::BACKSPACE;
+        s_key_lookup[SDLK_TAB] = Xrb::Key::TAB;
+        s_key_lookup[SDLK_CLEAR] = Xrb::Key::CLEAR;
+        s_key_lookup[SDLK_RETURN] = Xrb::Key::RETURN;
+        s_key_lookup[SDLK_PAUSE] = Xrb::Key::PAUSE;
+        s_key_lookup[SDLK_ESCAPE] = Xrb::Key::ESCAPE;
+        s_key_lookup[SDLK_SPACE] = Xrb::Key::SPACE;
+        s_key_lookup[SDLK_QUOTE] = Xrb::Key::QUOTE;
+        s_key_lookup[SDLK_COMMA] = Xrb::Key::COMMA;
+        s_key_lookup[SDLK_MINUS] = Xrb::Key::MINUS;
+        s_key_lookup[SDLK_PERIOD] = Xrb::Key::PERIOD;
+        s_key_lookup[SDLK_SLASH] = Xrb::Key::SLASH;
+        s_key_lookup[SDLK_0] = Xrb::Key::ZERO;
+        s_key_lookup[SDLK_1] = Xrb::Key::ONE;
+        s_key_lookup[SDLK_2] = Xrb::Key::TWO;
+        s_key_lookup[SDLK_3] = Xrb::Key::THREE;
+        s_key_lookup[SDLK_4] = Xrb::Key::FOUR;
+        s_key_lookup[SDLK_5] = Xrb::Key::FIVE;
+        s_key_lookup[SDLK_6] = Xrb::Key::SIX;
+        s_key_lookup[SDLK_7] = Xrb::Key::SEVEN;
+        s_key_lookup[SDLK_8] = Xrb::Key::EIGHT;
+        s_key_lookup[SDLK_9] = Xrb::Key::NINE;
+        s_key_lookup[SDLK_SEMICOLON] = Xrb::Key::SEMICOLON;
+        s_key_lookup[SDLK_EQUALS] = Xrb::Key::EQUALS;
+        s_key_lookup[SDLK_LEFTBRACKET] = Xrb::Key::LEFTBRACKET;
+        s_key_lookup[SDLK_BACKSLASH] = Xrb::Key::BACKSLASH;
+        s_key_lookup[SDLK_RIGHTBRACKET] = Xrb::Key::RIGHTBRACKET;
+        s_key_lookup[SDLK_BACKQUOTE] = Xrb::Key::BACKQUOTE;
+        s_key_lookup[SDLK_a] = Xrb::Key::A;
+        s_key_lookup[SDLK_b] = Xrb::Key::B;
+        s_key_lookup[SDLK_c] = Xrb::Key::C;
+        s_key_lookup[SDLK_d] = Xrb::Key::D;
+        s_key_lookup[SDLK_e] = Xrb::Key::E;
+        s_key_lookup[SDLK_f] = Xrb::Key::F;
+        s_key_lookup[SDLK_g] = Xrb::Key::G;
+        s_key_lookup[SDLK_h] = Xrb::Key::H;
+        s_key_lookup[SDLK_i] = Xrb::Key::I;
+        s_key_lookup[SDLK_j] = Xrb::Key::J;
+        s_key_lookup[SDLK_k] = Xrb::Key::K;
+        s_key_lookup[SDLK_l] = Xrb::Key::L;
+        s_key_lookup[SDLK_m] = Xrb::Key::M;
+        s_key_lookup[SDLK_n] = Xrb::Key::N;
+        s_key_lookup[SDLK_o] = Xrb::Key::O;
+        s_key_lookup[SDLK_p] = Xrb::Key::P;
+        s_key_lookup[SDLK_q] = Xrb::Key::Q;
+        s_key_lookup[SDLK_r] = Xrb::Key::R;
+        s_key_lookup[SDLK_s] = Xrb::Key::S;
+        s_key_lookup[SDLK_t] = Xrb::Key::T;
+        s_key_lookup[SDLK_u] = Xrb::Key::U;
+        s_key_lookup[SDLK_v] = Xrb::Key::V;
+        s_key_lookup[SDLK_w] = Xrb::Key::W;
+        s_key_lookup[SDLK_x] = Xrb::Key::X;
+        s_key_lookup[SDLK_y] = Xrb::Key::Y;
+        s_key_lookup[SDLK_z] = Xrb::Key::Z;
+        s_key_lookup[SDLK_DELETE] = Xrb::Key::DELETE;
+        s_key_lookup[SDLK_WORLD_0] = Xrb::Key::WORLD_0;
+        s_key_lookup[SDLK_WORLD_1] = Xrb::Key::WORLD_1;
+        s_key_lookup[SDLK_WORLD_2] = Xrb::Key::WORLD_2;
+        s_key_lookup[SDLK_WORLD_3] = Xrb::Key::WORLD_3;
+        s_key_lookup[SDLK_WORLD_4] = Xrb::Key::WORLD_4;
+        s_key_lookup[SDLK_WORLD_5] = Xrb::Key::WORLD_5;
+        s_key_lookup[SDLK_WORLD_6] = Xrb::Key::WORLD_6;
+        s_key_lookup[SDLK_WORLD_7] = Xrb::Key::WORLD_7;
+        s_key_lookup[SDLK_WORLD_8] = Xrb::Key::WORLD_8;
+        s_key_lookup[SDLK_WORLD_9] = Xrb::Key::WORLD_9;
+        s_key_lookup[SDLK_WORLD_10] = Xrb::Key::WORLD_10;
+        s_key_lookup[SDLK_WORLD_11] = Xrb::Key::WORLD_11;
+        s_key_lookup[SDLK_WORLD_12] = Xrb::Key::WORLD_12;
+        s_key_lookup[SDLK_WORLD_13] = Xrb::Key::WORLD_13;
+        s_key_lookup[SDLK_WORLD_14] = Xrb::Key::WORLD_14;
+        s_key_lookup[SDLK_WORLD_15] = Xrb::Key::WORLD_15;
+        s_key_lookup[SDLK_WORLD_16] = Xrb::Key::WORLD_16;
+        s_key_lookup[SDLK_WORLD_17] = Xrb::Key::WORLD_17;
+        s_key_lookup[SDLK_WORLD_18] = Xrb::Key::WORLD_18;
+        s_key_lookup[SDLK_WORLD_19] = Xrb::Key::WORLD_19;
+        s_key_lookup[SDLK_WORLD_20] = Xrb::Key::WORLD_20;
+        s_key_lookup[SDLK_WORLD_21] = Xrb::Key::WORLD_21;
+        s_key_lookup[SDLK_WORLD_22] = Xrb::Key::WORLD_22;
+        s_key_lookup[SDLK_WORLD_23] = Xrb::Key::WORLD_23;
+        s_key_lookup[SDLK_WORLD_24] = Xrb::Key::WORLD_24;
+        s_key_lookup[SDLK_WORLD_25] = Xrb::Key::WORLD_25;
+        s_key_lookup[SDLK_WORLD_26] = Xrb::Key::WORLD_26;
+        s_key_lookup[SDLK_WORLD_27] = Xrb::Key::WORLD_27;
+        s_key_lookup[SDLK_WORLD_28] = Xrb::Key::WORLD_28;
+        s_key_lookup[SDLK_WORLD_29] = Xrb::Key::WORLD_29;
+        s_key_lookup[SDLK_WORLD_30] = Xrb::Key::WORLD_30;
+        s_key_lookup[SDLK_WORLD_31] = Xrb::Key::WORLD_31;
+        s_key_lookup[SDLK_WORLD_32] = Xrb::Key::WORLD_32;
+        s_key_lookup[SDLK_WORLD_33] = Xrb::Key::WORLD_33;
+        s_key_lookup[SDLK_WORLD_34] = Xrb::Key::WORLD_34;
+        s_key_lookup[SDLK_WORLD_35] = Xrb::Key::WORLD_35;
+        s_key_lookup[SDLK_WORLD_36] = Xrb::Key::WORLD_36;
+        s_key_lookup[SDLK_WORLD_37] = Xrb::Key::WORLD_37;
+        s_key_lookup[SDLK_WORLD_38] = Xrb::Key::WORLD_38;
+        s_key_lookup[SDLK_WORLD_39] = Xrb::Key::WORLD_39;
+        s_key_lookup[SDLK_WORLD_40] = Xrb::Key::WORLD_40;
+        s_key_lookup[SDLK_WORLD_41] = Xrb::Key::WORLD_41;
+        s_key_lookup[SDLK_WORLD_42] = Xrb::Key::WORLD_42;
+        s_key_lookup[SDLK_WORLD_43] = Xrb::Key::WORLD_43;
+        s_key_lookup[SDLK_WORLD_44] = Xrb::Key::WORLD_44;
+        s_key_lookup[SDLK_WORLD_45] = Xrb::Key::WORLD_45;
+        s_key_lookup[SDLK_WORLD_46] = Xrb::Key::WORLD_46;
+        s_key_lookup[SDLK_WORLD_47] = Xrb::Key::WORLD_47;
+        s_key_lookup[SDLK_WORLD_48] = Xrb::Key::WORLD_48;
+        s_key_lookup[SDLK_WORLD_49] = Xrb::Key::WORLD_49;
+        s_key_lookup[SDLK_WORLD_50] = Xrb::Key::WORLD_50;
+        s_key_lookup[SDLK_WORLD_51] = Xrb::Key::WORLD_51;
+        s_key_lookup[SDLK_WORLD_52] = Xrb::Key::WORLD_52;
+        s_key_lookup[SDLK_WORLD_53] = Xrb::Key::WORLD_53;
+        s_key_lookup[SDLK_WORLD_54] = Xrb::Key::WORLD_54;
+        s_key_lookup[SDLK_WORLD_55] = Xrb::Key::WORLD_55;
+        s_key_lookup[SDLK_WORLD_56] = Xrb::Key::WORLD_56;
+        s_key_lookup[SDLK_WORLD_57] = Xrb::Key::WORLD_57;
+        s_key_lookup[SDLK_WORLD_58] = Xrb::Key::WORLD_58;
+        s_key_lookup[SDLK_WORLD_59] = Xrb::Key::WORLD_59;
+        s_key_lookup[SDLK_WORLD_60] = Xrb::Key::WORLD_60;
+        s_key_lookup[SDLK_WORLD_61] = Xrb::Key::WORLD_61;
+        s_key_lookup[SDLK_WORLD_62] = Xrb::Key::WORLD_62;
+        s_key_lookup[SDLK_WORLD_63] = Xrb::Key::WORLD_63;
+        s_key_lookup[SDLK_WORLD_64] = Xrb::Key::WORLD_64;
+        s_key_lookup[SDLK_WORLD_65] = Xrb::Key::WORLD_65;
+        s_key_lookup[SDLK_WORLD_66] = Xrb::Key::WORLD_66;
+        s_key_lookup[SDLK_WORLD_67] = Xrb::Key::WORLD_67;
+        s_key_lookup[SDLK_WORLD_68] = Xrb::Key::WORLD_68;
+        s_key_lookup[SDLK_WORLD_69] = Xrb::Key::WORLD_69;
+        s_key_lookup[SDLK_WORLD_70] = Xrb::Key::WORLD_70;
+        s_key_lookup[SDLK_WORLD_71] = Xrb::Key::WORLD_71;
+        s_key_lookup[SDLK_WORLD_72] = Xrb::Key::WORLD_72;
+        s_key_lookup[SDLK_WORLD_73] = Xrb::Key::WORLD_73;
+        s_key_lookup[SDLK_WORLD_74] = Xrb::Key::WORLD_74;
+        s_key_lookup[SDLK_WORLD_75] = Xrb::Key::WORLD_75;
+        s_key_lookup[SDLK_WORLD_76] = Xrb::Key::WORLD_76;
+        s_key_lookup[SDLK_WORLD_77] = Xrb::Key::WORLD_77;
+        s_key_lookup[SDLK_WORLD_78] = Xrb::Key::WORLD_78;
+        s_key_lookup[SDLK_WORLD_79] = Xrb::Key::WORLD_79;
+        s_key_lookup[SDLK_WORLD_80] = Xrb::Key::WORLD_80;
+        s_key_lookup[SDLK_WORLD_81] = Xrb::Key::WORLD_81;
+        s_key_lookup[SDLK_WORLD_82] = Xrb::Key::WORLD_82;
+        s_key_lookup[SDLK_WORLD_83] = Xrb::Key::WORLD_83;
+        s_key_lookup[SDLK_WORLD_84] = Xrb::Key::WORLD_84;
+        s_key_lookup[SDLK_WORLD_85] = Xrb::Key::WORLD_85;
+        s_key_lookup[SDLK_WORLD_86] = Xrb::Key::WORLD_86;
+        s_key_lookup[SDLK_WORLD_87] = Xrb::Key::WORLD_87;
+        s_key_lookup[SDLK_WORLD_88] = Xrb::Key::WORLD_88;
+        s_key_lookup[SDLK_WORLD_89] = Xrb::Key::WORLD_89;
+        s_key_lookup[SDLK_WORLD_90] = Xrb::Key::WORLD_90;
+        s_key_lookup[SDLK_WORLD_91] = Xrb::Key::WORLD_91;
+        s_key_lookup[SDLK_WORLD_92] = Xrb::Key::WORLD_92;
+        s_key_lookup[SDLK_WORLD_93] = Xrb::Key::WORLD_93;
+        s_key_lookup[SDLK_WORLD_94] = Xrb::Key::WORLD_94;
+        s_key_lookup[SDLK_WORLD_95] = Xrb::Key::WORLD_95;
+        s_key_lookup[SDLK_KP0] = Xrb::Key::KP0;
+        s_key_lookup[SDLK_KP1] = Xrb::Key::KP1;
+        s_key_lookup[SDLK_KP2] = Xrb::Key::KP2;
+        s_key_lookup[SDLK_KP3] = Xrb::Key::KP3;
+        s_key_lookup[SDLK_KP4] = Xrb::Key::KP4;
+        s_key_lookup[SDLK_KP5] = Xrb::Key::KP5;
+        s_key_lookup[SDLK_KP6] = Xrb::Key::KP6;
+        s_key_lookup[SDLK_KP7] = Xrb::Key::KP7;
+        s_key_lookup[SDLK_KP8] = Xrb::Key::KP8;
+        s_key_lookup[SDLK_KP9] = Xrb::Key::KP9;
+        s_key_lookup[SDLK_KP_PERIOD] = Xrb::Key::KP_PERIOD;
+        s_key_lookup[SDLK_KP_DIVIDE] = Xrb::Key::KP_DIVIDE;
+        s_key_lookup[SDLK_KP_MULTIPLY] = Xrb::Key::KP_MULTIPLY;
+        s_key_lookup[SDLK_KP_MINUS] = Xrb::Key::KP_MINUS;
+        s_key_lookup[SDLK_KP_PLUS] = Xrb::Key::KP_PLUS;
+        s_key_lookup[SDLK_KP_ENTER] = Xrb::Key::KP_ENTER;
+        s_key_lookup[SDLK_KP_EQUALS] = Xrb::Key::KP_EQUALS;
+        s_key_lookup[SDLK_UP] = Xrb::Key::UP;
+        s_key_lookup[SDLK_DOWN] = Xrb::Key::DOWN;
+        s_key_lookup[SDLK_RIGHT] = Xrb::Key::RIGHT;
+        s_key_lookup[SDLK_LEFT] = Xrb::Key::LEFT;
+        s_key_lookup[SDLK_INSERT] = Xrb::Key::INSERT;
+        s_key_lookup[SDLK_HOME] = Xrb::Key::HOME;
+        s_key_lookup[SDLK_END] = Xrb::Key::END;
+        s_key_lookup[SDLK_PAGEUP] = Xrb::Key::PAGEUP;
+        s_key_lookup[SDLK_PAGEDOWN] = Xrb::Key::PAGEDOWN;
+        s_key_lookup[SDLK_F1] = Xrb::Key::F1;
+        s_key_lookup[SDLK_F2] = Xrb::Key::F2;
+        s_key_lookup[SDLK_F3] = Xrb::Key::F3;
+        s_key_lookup[SDLK_F4] = Xrb::Key::F4;
+        s_key_lookup[SDLK_F5] = Xrb::Key::F5;
+        s_key_lookup[SDLK_F6] = Xrb::Key::F6;
+        s_key_lookup[SDLK_F7] = Xrb::Key::F7;
+        s_key_lookup[SDLK_F8] = Xrb::Key::F8;
+        s_key_lookup[SDLK_F9] = Xrb::Key::F9;
+        s_key_lookup[SDLK_F10] = Xrb::Key::F10;
+        s_key_lookup[SDLK_F11] = Xrb::Key::F11;
+        s_key_lookup[SDLK_F12] = Xrb::Key::F12;
+        s_key_lookup[SDLK_F13] = Xrb::Key::F13;
+        s_key_lookup[SDLK_F14] = Xrb::Key::F14;
+        s_key_lookup[SDLK_F15] = Xrb::Key::F15;
+        s_key_lookup[SDLK_NUMLOCK] = Xrb::Key::NUMLOCK;
+        s_key_lookup[SDLK_CAPSLOCK] = Xrb::Key::CAPSLOCK;
+        s_key_lookup[SDLK_SCROLLOCK] = Xrb::Key::SCROLLLOCK;
+        s_key_lookup[SDLK_RSHIFT] = Xrb::Key::RSHIFT;
+        s_key_lookup[SDLK_LSHIFT] = Xrb::Key::LSHIFT;
+        s_key_lookup[SDLK_RCTRL] = Xrb::Key::RCTRL;
+        s_key_lookup[SDLK_LCTRL] = Xrb::Key::LCTRL;
+        s_key_lookup[SDLK_RALT] = Xrb::Key::RALT;
+        s_key_lookup[SDLK_LALT] = Xrb::Key::LALT;
+        s_key_lookup[SDLK_RMETA] = Xrb::Key::RMETA;
+        s_key_lookup[SDLK_LMETA] = Xrb::Key::LMETA;
+        s_key_lookup[SDLK_LSUPER] = Xrb::Key::LWINBLOWS;
+        s_key_lookup[SDLK_RSUPER] = Xrb::Key::RWINBLOWS;
+        s_key_lookup[SDLK_MODE] = Xrb::Key::MODE;
+        s_key_lookup[SDLK_COMPOSE] = Xrb::Key::COMPOSE;
+        s_key_lookup[SDLK_HELP] = Xrb::Key::HELP;
+        s_key_lookup[SDLK_PRINT] = Xrb::Key::PRINT;
+        s_key_lookup[SDLK_SYSREQ] = Xrb::Key::SYSREQ;
+        s_key_lookup[SDLK_BREAK] = Xrb::Key::BREAK;
+        s_key_lookup[SDLK_MENU] = Xrb::Key::MENU;
+        s_key_lookup[SDLK_POWER] = Xrb::Key::POWER;
+        s_key_lookup[SDLK_EURO] = Xrb::Key::EURO;
+        s_key_lookup[SDLK_UNDO] = Xrb::Key::UNDO;
     }
 
     ASSERT1(sdl_key >= 0 && sdl_key < SDLK_LAST && "SDLKey out of range");
-    ASSERT1(s_key_lookup[sdl_key] != Key::INVALID && "invalid SDLKey");
+    ASSERT1(s_key_lookup[sdl_key] != Xrb::Key::INVALID && "invalid SDLKey");
     return s_key_lookup[sdl_key];
 }
 
-Key::Modifier TranslateSDLMod (SDLMod sdl_mod)
+Xrb::Key::Modifier TranslateSDLMod (SDLMod sdl_mod)
 {
     static SDLMod const s_all = SDLMod(KMOD_LSHIFT|KMOD_RSHIFT|KMOD_LCTRL|KMOD_RCTRL|KMOD_LALT|KMOD_RALT|KMOD_LMETA|KMOD_RMETA|KMOD_NUM|KMOD_CAPS|KMOD_MODE);
     ASSERT1((sdl_mod & ~s_all) == 0 && "invalid SDLMod");
 
-    Uint32 retval = 0;
-    if ((sdl_mod & KMOD_LSHIFT) != 0) retval |= Key::MOD_LSHIFT;
-    if ((sdl_mod & KMOD_RSHIFT) != 0) retval |= Key::MOD_RSHIFT;
-    if ((sdl_mod & KMOD_LCTRL)  != 0) retval |= Key::MOD_LCTRL;
-    if ((sdl_mod & KMOD_RCTRL)  != 0) retval |= Key::MOD_RCTRL;
-    if ((sdl_mod & KMOD_LALT)   != 0) retval |= Key::MOD_LALT;
-    if ((sdl_mod & KMOD_RALT)   != 0) retval |= Key::MOD_RALT;
-    if ((sdl_mod & KMOD_LMETA)  != 0) retval |= Key::MOD_LMETA;
-    if ((sdl_mod & KMOD_RMETA)  != 0) retval |= Key::MOD_RMETA;
-    if ((sdl_mod & KMOD_NUM)    != 0) retval |= Key::MOD_NUM;
-    if ((sdl_mod & KMOD_CAPS)   != 0) retval |= Key::MOD_CAPS;
-    if ((sdl_mod & KMOD_MODE)   != 0) retval |= Key::MOD_MODE;
-    return Key::Modifier(retval);
+    Xrb::Uint32 retval = 0;
+    if ((sdl_mod & KMOD_LSHIFT) != 0) retval |= Xrb::Key::MOD_LSHIFT;
+    if ((sdl_mod & KMOD_RSHIFT) != 0) retval |= Xrb::Key::MOD_RSHIFT;
+    if ((sdl_mod & KMOD_LCTRL)  != 0) retval |= Xrb::Key::MOD_LCTRL;
+    if ((sdl_mod & KMOD_RCTRL)  != 0) retval |= Xrb::Key::MOD_RCTRL;
+    if ((sdl_mod & KMOD_LALT)   != 0) retval |= Xrb::Key::MOD_LALT;
+    if ((sdl_mod & KMOD_RALT)   != 0) retval |= Xrb::Key::MOD_RALT;
+    if ((sdl_mod & KMOD_LMETA)  != 0) retval |= Xrb::Key::MOD_LMETA;
+    if ((sdl_mod & KMOD_RMETA)  != 0) retval |= Xrb::Key::MOD_RMETA;
+    if ((sdl_mod & KMOD_NUM)    != 0) retval |= Xrb::Key::MOD_NUM;
+    if ((sdl_mod & KMOD_CAPS)   != 0) retval |= Xrb::Key::MOD_CAPS;
+    if ((sdl_mod & KMOD_MODE)   != 0) retval |= Xrb::Key::MOD_MODE;
+    return Xrb::Key::Modifier(retval);
 }
 
 } // end of unnamed namespace
 
-Pal *SDLPal::Create ()
+Xrb::Pal *SDLPal::Create ()
 {
     return new SDLPal();
 }
 
-Pal::Status SDLPal::Initialize ()
+Xrb::Pal::Status SDLPal::Initialize ()
 {
     // initialize video (no parachute so we get core dumps)
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
@@ -323,7 +320,7 @@ void SDLPal::Shutdown ()
     SDL_Quit();
 }
 
-Pal::Status SDLPal::InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen)
+Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen)
 {
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -331,7 +328,7 @@ Pal::Status SDLPal::InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_dept
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    Uint32 video_mode_flags = SDL_OPENGL;
+    Xrb::Uint32 video_mode_flags = SDL_OPENGL;
     if (fullscreen)
         video_mode_flags |= SDL_FULLSCREEN;
 
@@ -361,12 +358,12 @@ void SDLPal::SetWindowCaption (char const *window_caption)
     SDL_WM_SetCaption(window_caption, "");
 }
 
-Uint32 SDLPal::CurrentTime ()
+Xrb::Uint32 SDLPal::CurrentTime ()
 {
     return SDL_GetTicks();
 }
 
-void SDLPal::Sleep (Uint32 milliseconds_to_sleep)
+void SDLPal::Sleep (Xrb::Uint32 milliseconds_to_sleep)
 {
     SDL_Delay(milliseconds_to_sleep);
 }
@@ -376,7 +373,7 @@ void SDLPal::FinishFrame ()
     SDL_GL_SwapBuffers();
 }
 
-Event *SDLPal::PollEvent (Screen const *screen, Float time)
+Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
 {
     ASSERT1(screen != NULL);
     ASSERT1(time >= 0.0);
@@ -386,21 +383,21 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
     // because some SDL events will be ignored, and returning NULL
     // from this method indicates that the event queue is empty, so we'll
     // have to keep polling until we get a non-ignored event.
-    Event *retval = NULL;
+    Xrb::Event *retval = NULL;
     SDL_Event e;
     while (retval == NULL && SDL_PollEvent(&e) != 0)
     {
         switch (e.type)
         {
             case SDL_KEYDOWN:
-                retval = new EventKeyDown(
+                retval = new Xrb::EventKeyDown(
                     TranslateSDLKey(e.key.keysym.sym),
                     TranslateSDLMod(e.key.keysym.mod),
                     time);
                 break;
 
             case SDL_KEYUP:
-                retval = new EventKeyUp(
+                retval = new Xrb::EventKeyUp(
                     TranslateSDLKey(e.key.keysym.sym),
                     TranslateSDLMod(e.key.keysym.mod),
                     time);
@@ -409,24 +406,24 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEBUTTONDOWN:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
-                ScreenCoordVector2 event_position(
-                    static_cast<ScreenCoord>(mouse_button_event.x),
-                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_button_event.y));
+                Xrb::ScreenCoordVector2 event_position(
+                    static_cast<Xrb::ScreenCoord>(mouse_button_event.x),
+                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
-                    retval = new EventMouseWheel(
+                    retval = new Xrb::EventMouseWheel(
                         TranslateSDLKey(SDLKey(mouse_button_event.button)),
                         event_position,
-                        Singleton::InputState().Modifier(),
+                        Xrb::Singleton::InputState().Modifier(),
                         time);
                 }
                 else
                 {
-                    retval = new EventMouseButtonDown(
+                    retval = new Xrb::EventMouseButtonDown(
                         TranslateSDLKey(SDLKey(mouse_button_event.button)),
                         event_position,
-                        Singleton::InputState().Modifier(),
+                        Xrb::Singleton::InputState().Modifier(),
                         time);
                 }
                 break;
@@ -435,9 +432,9 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEBUTTONUP:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
-                ScreenCoordVector2 event_position(
-                    static_cast<ScreenCoord>(mouse_button_event.x),
-                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_button_event.y));
+                Xrb::ScreenCoordVector2 event_position(
+                    static_cast<Xrb::ScreenCoord>(mouse_button_event.x),
+                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
@@ -446,10 +443,10 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
                 }
                 else
                 {
-                    retval = new EventMouseButtonUp(
+                    retval = new Xrb::EventMouseButtonUp(
                         TranslateSDLKey(SDLKey(mouse_button_event.button)),
                         event_position,
-                        Singleton::InputState().Modifier(),
+                        Xrb::Singleton::InputState().Modifier(),
                         time);
                 }
                 break;
@@ -458,21 +455,21 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
             case SDL_MOUSEMOTION:
             {
                 SDL_MouseMotionEvent const &mouse_motion_event = e.motion;
-                ScreenCoordVector2 event_position(
-                    static_cast<ScreenCoord>(mouse_motion_event.x),
-                    screen->ScreenRect().Height() - static_cast<ScreenCoord>(mouse_motion_event.y));
+                Xrb::ScreenCoordVector2 event_position(
+                    static_cast<Xrb::ScreenCoord>(mouse_motion_event.x),
+                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_motion_event.y));
                 // SDL provides right-handed coords, so yrel coord is negated
                 // to get left-handed coords (used by Screen)
-                ScreenCoordVector2 event_delta(
+                Xrb::ScreenCoordVector2 event_delta(
                     mouse_motion_event.xrel,
                     -mouse_motion_event.yrel); 
-                retval = new EventMouseMotion(
-                    Singleton::InputState().IsKeyPressed(Key::LEFTMOUSE),
-                    Singleton::InputState().IsKeyPressed(Key::MIDDLEMOUSE),
-                    Singleton::InputState().IsKeyPressed(Key::RIGHTMOUSE),
+                retval = new Xrb::EventMouseMotion(
+                    Xrb::Singleton::InputState().IsKeyPressed(Xrb::Key::LEFTMOUSE),
+                    Xrb::Singleton::InputState().IsKeyPressed(Xrb::Key::MIDDLEMOUSE),
+                    Xrb::Singleton::InputState().IsKeyPressed(Xrb::Key::RIGHTMOUSE),
                     event_position,
                     event_delta,
-                    Singleton::InputState().Modifier(),
+                    Xrb::Singleton::InputState().Modifier(),
                     time);
                 break;
             }
@@ -486,7 +483,7 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
                 break;
 
             case SDL_QUIT:
-                retval = new EventQuit(time);
+                retval = new Xrb::EventQuit(time);
                 break;
 
             case SDL_ACTIVEEVENT:
@@ -618,7 +615,7 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
 }
 */
 
-Texture *SDLPal::LoadImage (char const *image_path)
+Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 {
     SDL_Surface *surface = IMG_Load(image_path);
     if (surface == NULL)
@@ -632,7 +629,7 @@ Texture *SDLPal::LoadImage (char const *image_path)
         return NULL;
     }
 
-    Texture *retval = Texture::Create(ScreenCoordVector2(surface->w, surface->h), false);
+    Xrb::Texture *retval = Xrb::Texture::Create(Xrb::ScreenCoordVector2(surface->w, surface->h), false);
     ASSERT1(retval != NULL);
 
     // copy the data from the surface to the Texture
@@ -641,9 +638,7 @@ Texture *SDLPal::LoadImage (char const *image_path)
     return retval;
 }
 
-Pal::Status SDLPal::SaveImage (char const *image_path, Texture const &texture)
+Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
     return FAILURE; // TODO
 }
-
-} // end of namespace Xrb
