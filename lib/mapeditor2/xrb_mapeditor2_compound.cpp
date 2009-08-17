@@ -10,6 +10,7 @@
 
 #include "xrb_mapeditor2_compound.hpp"
 
+#include "xrb_gl.hpp"
 #include "xrb_mapeditor2_compoundentity.hpp"
 #include "xrb_mapeditor2_objectlayer.hpp"
 #include "xrb_mapeditor2_polygon.hpp"

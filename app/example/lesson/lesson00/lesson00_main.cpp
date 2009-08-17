@@ -32,13 +32,13 @@ comment.
     <ul>
     <li>Main function</li>
         <ul>
-        <li>Initialize SDL (video, sound, and whatever else is needed).</li>
+        <li>Initialization (video, sound, and whatever else is needed).</li>
         <li>Initialize game engine singletons (necessary for correct operation of the game engine).</li>
         <li>Create the Screen object.  This is what sets the video mode. </li>
         <li>Execute game-specific code.</li>
         <li>Delete the Screen object.  This does NOT reset the video mode.</li>
         <li>Shutdown game engine singletons (necessary for correct operation of the game engine).</li>
-        <li>Shutdown SDL (this is what resets the video mode).</li>
+        <li>Shutdown (this is what resets the video mode).</li>
         </ul>
     </ul>
 
@@ -67,14 +67,11 @@ void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
 
+    // Shutdown the platform abstraction layer.
+    Singleton::Pal().Shutdown();
     // Shutdown the game engine singletons.  This is necessary for the
     // game engine to shutdown cleanly.
     Singleton::Shutdown();
-    // Make sure the application doesn't still have the mouse grabbed,
-    // or you'll have a hard time pointy-clickying at stuff.
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // Call SDL's shutdown function.
-    SDL_Quit();
 }
 
 int main (int argc, char **argv)
@@ -101,25 +98,12 @@ int main (int argc, char **argv)
     Singleton::Initialize(SDLPal::Create, "none");
 
     /* @endcode
-    Attempt to initialize SDL.  Currently this just initializes the
-    video, but will later initialize sound, once sound code is actually
-    written.  The <tt>SDL_INIT_NOPARACHUTE</tt> flag is used because we want
-    crashes that will be useful in debug mode; the debugger will be able to
-    catch it (or if you're in Unix, you get a nice, warm, smelly core dump).
+    Initialize the platform abstraction layer (Pal).  Then set the window caption.
     @code */
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        // return with an error value.
+    if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;
-    }
 
-    /* @endcode
-    Set the caption for the application's window.  Although documented as
-    "the icon name", the second parameter apparently doesn't do anything,
-    so don't bother with it.  I heard it was an asshole anyway.
-    @code */
-    SDL_WM_SetCaption("XuqRijBuh Lesson 00", "");
+    Singleton::Pal().SetWindowCaption("XuqRijBuh Lesson 00");
 
     /* @endcode
     This call creates the Screen object and initializes the given video mode
@@ -133,7 +117,7 @@ int main (int argc, char **argv)
         800,    // video mode/screen width
         600,    // video mode/screen height
         32,     // video mode pixel bitdepth
-        0);     // SDL_SetVideomode flags -- none for now.
+        false); // not fullscreen -- for now
     /* @endcode
     If the Screen failed to initialize for whatever reason (probably because
     the system was unable to set the video mode), screen will be NULL.  If
@@ -141,8 +125,7 @@ int main (int argc, char **argv)
     @code */
     if (screen == NULL)
     {
-        fprintf(stderr, "unable to initialize video mode\n");
-        // this shuts down the game engine singletons, and shuts down SDL.
+        // this shuts down the Pal and singletons.
         CleanUp();
         // return with an error value.
         return 2;
@@ -159,11 +142,9 @@ int main (int argc, char **argv)
 
     /* @endcode
     Delete the Screen object, and with it the entire GUI widget hierarchy.
-    This call doesn't reset the video mode however; that is done by calling
-    <tt>SDL_Quit</tt>, which we have stashed away in <tt>CleanUp</tt>.
     @code */
     Delete(screen);
-    // this shuts down the game engine singletons, and shuts down SDL.
+    // this shuts down the Pal and the singletons.
     CleanUp();
     // return with success value.
     return 0;
@@ -174,12 +155,13 @@ int main (int argc, char **argv)
 
     <ul>
     <li>Change the last parameter passed to Screen::Create -- currently
-        <tt>0</tt> -- to <tt>SDL_FULLSCREEN</tt>.  This will cause the
+        <tt>false</tt> -- to <tt>true</tt>.  This will cause the
         application to be run in fullscreen mode.  Make sure not to use
         fullscreen mode while developing/debugging, because hitting a
         breakpoint while in fullscreen video mode will make your computer
         a touch ornery.</li>
-    <li>With <tt>SDL_FULLSCREEN</tt> enabled, change the video mode width,
+    <li>With the last parameter to Screen::Create set to <tt>true</tt>
+        (indicating fullscreen is enabled), change the video mode width,
         height and bitdepth to various values, seeing what video modes are
         supported by your hardware.</li>
     <li>Write code that parses the commandline arguments so you can specify

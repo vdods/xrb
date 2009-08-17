@@ -36,6 +36,9 @@ public:
     virtual Status InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen) = 0;
     virtual void ShutdownVideo () = 0;
 
+    virtual void SetWindowCaption (char const *window_caption) = 0;
+    // TODO: grab/release method and show/hide cursor method
+
     // returns the number of milliseconds since the Pal instance was
     // initialized.  due to the size of a 32-bit int, this value will
     // wrap about every 49 days

@@ -15,6 +15,7 @@
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
 #include "xrb_engine2_worldviewwidget.hpp"
+#include "xrb_gl.hpp"
 #include "xrb_math.hpp"
 #include "xrb_render.hpp"
 #include "xrb_screen.hpp"

@@ -10,6 +10,7 @@
 
 #include "xrb_engine2_sprite.hpp"
 
+#include "xrb_gl.hpp"
 #include "xrb_render.hpp"
 #include "xrb_serializer.hpp"
 

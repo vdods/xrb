@@ -312,9 +312,6 @@ Pal::Status SDLPal::Initialize ()
         return FAILURE;
     }
 
-    // set a window title (i dunno what the icon string is)
-    SDL_WM_SetCaption("TODO: change me", "icon thingy");
-
     return SUCCESS;
 }
 
@@ -338,7 +335,8 @@ Pal::Status SDLPal::InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_dept
     if (fullscreen)
         video_mode_flags |= SDL_FULLSCREEN;
 
-    if (NULL == SDL_SetVideoMode(width, height, bit_depth, video_mode_flags))
+    SDL_Surface *surface = SDL_SetVideoMode(width, height, bit_depth, video_mode_flags);
+    if (surface == NULL)
     {
         fprintf(stderr, "SDLPal::InitializeVideo(); could not set the requested video mode\n");
         return FAILURE;
@@ -349,7 +347,18 @@ Pal::Status SDLPal::InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_dept
 
 void SDLPal::ShutdownVideo ()
 {
-    // nothing needs to be done here for SDL
+    // nothing needs to be done here -- the SDL_Surface created in
+    // InitializeVideo will be freed by SDL_Quit or any successive
+    // call to SDL_SetVideoMode.
+
+    // though, SDL_QuitSubSystem(SDL_VIDEO) might be appropriate
+}
+
+void SDLPal::SetWindowCaption (char const *window_caption)
+{
+    ASSERT1(window_caption != NULL);
+    // set a window title (the second parameter doesn't seem to do anything)
+    SDL_WM_SetCaption(window_caption, "");
 }
 
 Uint32 SDLPal::CurrentTime ()

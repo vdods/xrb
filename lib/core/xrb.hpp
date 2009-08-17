@@ -23,7 +23,6 @@
 #define GL_GLEXT_PROTOTYPES
 
 #include "SDL.h"
-#include "SDL_opengl.h"
 #include "xrb_assert.hpp"
 #include "xrb_debug.hpp"
 #include "xrb_delete.hpp"

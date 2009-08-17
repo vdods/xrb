@@ -36,22 +36,15 @@ public:
         ScreenCoord width,
         ScreenCoord height,
         Uint32 bit_depth,
-        Uint32 flags);
+        bool fullscreen);
 
     SignalSender0 const *SenderQuitRequested () { return &m_sender_quit_requested; }
 
     SignalReceiver0 const *ReceiverRequestQuit () { return &m_receiver_request_quit; }
 
-    // returns true if the quit condition has been hit
     bool IsQuitRequested () const { return m_is_quit_requested; }
-    inline ScreenCoord SizeRatioBasis () const
-    {
-        return Min(Width(), Height());
-    }
-    inline Float Framerate () const
-    {
-        return m_framerate_calculator.Framerate();
-    }
+    ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
+    Float Framerate () const { return m_framerate_calculator.Framerate(); }
 
     // if the is-quit-requested flag is false, sets it to true and signals.
     void RequestQuit ();

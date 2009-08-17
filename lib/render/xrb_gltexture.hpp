@@ -15,6 +15,7 @@
 
 #include <string>
 
+#include "xrb_gl.hpp"
 #include "xrb_screencoord.hpp"
 
 namespace Xrb

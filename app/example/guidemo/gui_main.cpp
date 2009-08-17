@@ -25,15 +25,12 @@ using namespace Xrb;
 
 #define FULLSCREEN 0
 
-// exit handler
-void Exit ()
-{
-    fprintf(stderr, "Exit();\n");
-    // make sure input isn't grabbed
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // call SDL's cleanup func
-    SDL_Quit();
-}
+// // exit handler
+// void Exit ()
+// {
+//     Singleton::Pal().Shutdown();
+//     Singleton::Shutdown();
+// }
 
 struct ExpressionValuePair
 {
@@ -106,28 +103,21 @@ int main (int argc, char **argv)
 /*
     Singleton::Initialize();
 
-    // initialize video (no parachute so we get core dumps)
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        exit(-1);
-    }
-
-    // register on-exit function. SDL_Quit takes care of deleting the screen
+    // register on-exit function, which will be called after main() has returned.
     atexit(Exit);
-    // set a window title (i dunno what the icon string is)
-    SDL_WM_SetCaption("XuqRijBuh GUI System Demo", "icon thingy");
+
+    Singleton::Pal().Initialize("XuqRijBuh GUI System Demo");
 
     // init the screen
     Screen *screen = Screen::Create(
         1024,
         768,
         32,
-        (FULLSCREEN ? SDL_FULLSCREEN : 0));
+        (FULLSCREEN ? true : false));
     if (screen == NULL)
     {
-        fprintf(stderr, "unable to initialize video mode\n");
-        exit(-2);
+        fprintf(stderr, "failed during Screen creation\n");
+        return -2;
     }
 
     // add the master widget as the screen's main widget
@@ -213,10 +203,8 @@ int main (int argc, char **argv)
 
     Delete(screen);
 
-    Singleton::Shutdown();
-
     // return with no error condition
-    exit(0);
+    return 0;
 */
 }
 

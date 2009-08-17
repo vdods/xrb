@@ -23,14 +23,11 @@ using namespace Xrb;
 
 Dis::Config g_config;
 
-// cleans up the singletons and shuts down SDL.
+// shuts down our Pal and the singletons.
 void CleanUp ()
 {
+    Singleton::Pal().Shutdown();
     Singleton::Shutdown();
-    // make sure input isn't grabbed
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // call SDL's cleanup func
-    SDL_Quit();
 }
 
 int main (int argc, char **argv)
@@ -56,31 +53,22 @@ int main (int argc, char **argv)
 
         Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
 
-        // initialize video (no parachute so we get core dumps)
-        if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-        {
-            fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-            return 2;
-        }
-
-        // register on-exit function. SDL_Quit takes care of deleting the
-        // screen.  the function registered with atexit will be called
-        // after main() has returned.
+        // register on-exit function, which will be called after main() has returned.
         atexit(CleanUp);
-        // set a window title (i dunno what the icon string is)
-        SDL_WM_SetCaption("Disasteroids", "icon thingy");
+
+        if (Singleton::Pal().Initialize() != Pal::SUCCESS)
+            return 1;
+
+        Singleton::Pal().SetWindowCaption("Disasteroids");
 
         // init the screen
         Screen *screen = Screen::Create(
             options.Resolution()[Dim::X],
             options.Resolution()[Dim::Y],
             32,
-            (options.Fullscreen() ? SDL_FULLSCREEN : 0));
+            options.Fullscreen());
         if (screen == NULL)
-        {
-            fprintf(stderr, "unable to initialize video mode\n");
-            return 3;
-        }
+            return 2;
 
         // create and run the game
         {

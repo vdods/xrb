@@ -10,7 +10,6 @@
 
 #include "xrb_render.hpp"
 
-#include "xrb_gl.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_math.hpp"
 

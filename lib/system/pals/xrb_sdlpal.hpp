@@ -31,6 +31,8 @@ public:
     virtual Status InitializeVideo (Uint16 width, Uint16 height, Uint8 bit_depth, bool fullscreen);
     virtual void ShutdownVideo ();
 
+    virtual void SetWindowCaption (char const *window_caption);
+
     virtual Uint32 CurrentTime ();
 
     virtual void Sleep (Uint32 milliseconds_to_sleep);

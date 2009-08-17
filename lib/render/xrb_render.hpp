@@ -14,6 +14,7 @@
 #include "xrb.hpp"
 
 #include "xrb_color.hpp"
+#include "xrb_gl.hpp"
 #include "xrb_matrix2.hpp"
 #include "xrb_rect.hpp"
 #include "xrb_rendercontext.hpp"

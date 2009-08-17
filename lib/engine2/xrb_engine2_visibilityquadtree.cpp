@@ -14,6 +14,7 @@
 
 #include "xrb_engine2_entity.hpp"
 #include "xrb_engine2_objectlayer.hpp"
+#include "xrb_gl.hpp"
 #include "xrb_render.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"

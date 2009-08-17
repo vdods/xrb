@@ -82,7 +82,7 @@ properties of each dynamic object in the World.
         </ul>
     <li>Main function</li>
         <ul>
-        <li>Initialize SDL, engine singletons and create the Screen object</li>
+        <li>Initialize the Pal and game engine singletons.  Create the Screen object.</li>
         <li>Execute game-specific code.</li>
             <ul>
             <li>Create application-specific objects and GUI elements, and make necessary signals.</li>
@@ -106,7 +106,7 @@ properties of each dynamic object in the World.
                 <li>Destroy World object, which will destroy all its ObjectLayers, Objects <strong>and Entities.</strong></li>
                 </ul>
             </ul>
-        <li>Delete the Screen object and shutdown engine singletons and SDL.</li>
+        <li>Delete the Screen object.  Shutdown the Pal and game engine singletons.</li>
         </ul>
     </ul>
 
@@ -510,10 +510,9 @@ public:
 void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
-    // shutdown engine singletons, ungrab the mouse, and shutdown SDL.
+    // Shutdown the Pal and singletons.
+    Singleton::Pal().Shutdown();
     Singleton::Shutdown();
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    SDL_Quit();
 }
 
 int main (int argc, char **argv)
@@ -522,21 +521,16 @@ int main (int argc, char **argv)
 
     // Initialize engine singletons.
     Singleton::Initialize(SDLPal::Create, "none");
-
-    // Attempt to initialize SDL.
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
+    // Initialize the Pal.
+    if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;
-    }
-
-    // Set window caption and create the Screen.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 05", "");
-    Screen *screen = Screen::Create(800, 600, 32, 0);
+    // Set the window caption.
+    Singleton::Pal().SetWindowCaption("XuqRijBuh Lesson 05");
+    // Create Screen object and initialize given video mode.
+    Screen *screen = Screen::Create(800, 600, 32, false);
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
-        fprintf(stderr, "unable to initialize video mode\n");
         CleanUp();
         return 2;
     }

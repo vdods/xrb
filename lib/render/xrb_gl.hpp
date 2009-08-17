@@ -13,6 +13,28 @@
 
 #include "xrb.hpp"
 
+#ifdef __WIN32__
+    // don't include a bunch of useless winblows crap.
+    #define WIN32_LEAN_AND_MEAN
+    // apparently defining NOMINMAX fixes some problems winblows has (reference: SDL)
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+    #include <windows.h>
+#endif
+
+// include different headers based on the platform (reference: SDL)
+#if defined(__MACOSX__)
+    #include <OpenGL/gl.h>
+    #include <OpenGL/glu.h>
+#elif defined(__MACOS__)
+    #include <gl.h>
+    #include <glu.h>
+#else
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+#endif
+
 #include "xrb_screencoord.hpp"
 
 namespace Xrb

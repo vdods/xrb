@@ -30,10 +30,8 @@ using namespace Xrb;
 void Exit ()
 {
     fprintf(stderr, "Exit();\n");
-    // make sure input isn't grabbed
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // call SDL's cleanup func
-    SDL_Quit();
+    Singleton::Pal().Shutdown();
+    Singleton::Shutdown();
 }
 
 void ProcessKeyRepeatEvents (
@@ -45,19 +43,15 @@ int main (int argc, char **argv)
 {
     fprintf(stderr, "\nmain();\n");
 
-    Singleton::Initialize();
+    Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
 
-    // initialize video (no parachute so we get core dumps)
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        exit(-1);
-    }
+    // register on-exit function, which will be called after main() has returned.
+    atexit(CleanUp);
 
-    // register on-exit function. SDL_Quit takes care of deleting the screen
-    atexit(Exit);
-    // set a window title (i dunno what the icon string is)
-    SDL_WM_SetCaption("XuqRijBuh 2D Map Editor", "icon thingy");
+    if (Singleton::Pal().Initialize() != Pal::SUCCESS)
+        return 1;
+
+    Singleton::Pal().SetWindowCaption("XuqRijBuh 2D Map Editor");
 
     // the game loop's event queue
     EventQueue event_queue;
@@ -70,12 +64,9 @@ int main (int argc, char **argv)
         1400,
         1100,
         32,
-        (FULLSCREEN ? SDL_FULLSCREEN : 0));
+        (FULLSCREEN ? true : false));
     if (screen == NULL)
-    {
-        fprintf(stderr, "unable to initialize video mode\n");
-        exit(-2);
-    }
+        return 2;
 
     MapEditor2::MainWidget *map_editor = new MapEditor2::MainWidget(screen);
     screen->SetMainWidget(map_editor);
@@ -152,10 +143,8 @@ int main (int argc, char **argv)
     // gracefully delete the screen (this will delete the map editor main widget)
     Delete(screen);
 
-    Singleton::Shutdown();
-
     // return with no error condition
-    exit(0);
+    return 0;
 }
 
 void ProcessKeyRepeatEvents (

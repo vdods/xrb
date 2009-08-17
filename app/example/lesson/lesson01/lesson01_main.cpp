@@ -29,8 +29,8 @@ and how to design and run a game loop -- the heartbeat of a game engine.
     <ul>
     <li>Main function</li>
         <ul>
-        <li>Initialize SDL and game engine singletons.  Create the Screen object.
-            This was covered in previous lesson(s).</li>
+        <li>Initialize the platform abstraction layer (Pal) and game engine singletons.
+            Create the Screen object.  This was covered in previous lesson(s).</li>
         <li>Execute game-specific code.</li>
             <ul>
             <li><strong>Create formatted layouts of GUI widgets.</strong></li>
@@ -41,7 +41,7 @@ and how to design and run a game loop -- the heartbeat of a game engine.
                 <li><strong>Draw the Screen object's entire widget hierarchy.</strong></li>
                 </ul>
             </ul>
-        <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
+        <li>Delete the Screen object.  Shutdown the Pal and game engine singletons.
             This was covered in previous lesson(s).</li>
         </ul>
     </ul>
@@ -75,14 +75,11 @@ void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
 
+    // Shutdown the platform abstraction layer.
+    Singleton::Pal().Shutdown();
     // Shutdown the game engine singletons.  This is necessary for the
     // game engine to shutdown cleanly.
     Singleton::Shutdown();
-    // Make sure the application doesn't still have the mouse grabbed,
-    // or you'll have a hard time pointy-clickying at stuff.
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // Call SDL's shutdown function.
-    SDL_Quit();
 }
 
 int main (int argc, char **argv)
@@ -91,17 +88,11 @@ int main (int argc, char **argv)
 
     // Initialize the game engine singleton facilities.
     Singleton::Initialize(SDLPal::Create, "none");
-
-    // Attempt to initialize SDL.
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
-        // return with an error value.
+    // Initialize the platform abstraction layer (Pal).
+    if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;
-    }
-
-    // Set the caption for the application's window.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 01", "");
+    // Set the window caption.
+    Singleton::Pal().SetWindowCaption("XuqRijBuh Lesson 01");
 
     // This call creates the Screen object and initializes the given video mode.
     // The Screen object is the root widget of the GUI widget hierarchy, and
@@ -110,21 +101,21 @@ int main (int argc, char **argv)
         800,    // video mode/screen width
         600,    // video mode/screen height
         32,     // video mode pixel bitdepth
-        0);     // SDL_SetVideomode flags -- none for now.
+        false); // not fullscreen -- none for now.
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
-        fprintf(stderr, "unable to initialize video mode\n");
-        // this shuts down the game engine singletons, and shuts down SDL.
+        fprintf(stderr, "failure during Screen creation\n");
+        // this shuts down the Pal and singletons.
         CleanUp();
         // return with an error value.
         return 2;
     }
 
     /* @endcode
-    At this point, SDL has been initialized, the video mode has been set and
-    the engine is ready to go.  Here is where the application-specific code
-    begins.
+    At this point, the singletons and the Pal have been initialized, the video
+    mode has been set, and the engine is ready to go.  Here is where the
+    application-specific code begins.
 
     Everything that is visible in this game engine happens inside an instance
     of a Widget subclass.  Therefore, we need to instantiate some widgets
@@ -292,7 +283,7 @@ int main (int argc, char **argv)
         loop, where all the computation, screen-rendering, event-processing,
         user-input-processing, etc takes place.
 
-        The screen keeps track of if SDL detected a quit request (i.e. Alt+F4
+        The screen keeps track of if a quit request was detected (i.e. Alt+F4
         or clicking the little X in the corner of the window pane).  We want
         to loop until the user requests to quit the app.
         @code */
@@ -381,10 +372,8 @@ int main (int argc, char **argv)
     }
 
     // Delete the Screen object, and with it the entire GUI widget hierarchy.
-    // This call doesn't reset the video mode however; that is done by
-    // calling SDL_Quit, which we have stashed away in CleanUp.
     Delete(screen);
-    // this shuts down the game engine singletons, and shuts down SDL.
+    // this shuts down the Pal and the singletons.
     CleanUp();
     // return with success value.
     return 0;
@@ -408,9 +397,9 @@ int main (int argc, char **argv)
     <li>Enable word wrapping for the Label with the name
         <tt>"left-aligned note label"</tt>.  Notice how each newline in the
         Label's text starts a new paragraph.</li>
-    <li>Comment out the event-polling loop -- the one starting with
-        <tt>while (SDL_PollEvent(&sdl_event))</tt> -- and see what effect it
-        has on the responsiveness of the application.</li>
+    <li>Change the event-polling from a while-loop to a single statement -- only
+        polling one event per frame -- and see what effect it has on the
+        responsiveness of the application.</li>
     </ul>
 
 Thus concludes lesson01.  Do you feel smarter?  Well, you aren't.

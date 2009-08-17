@@ -14,6 +14,7 @@
 #include "xrb_gl.hpp"
 #include "xrb_gui_events.hpp"
 #include "xrb_input_events.hpp"
+#include "xrb_pal.hpp"
 
 namespace Xrb
 {
@@ -29,40 +30,30 @@ Screen::~Screen ()
     ASSERT1(OwnerEventQueue() != NULL);
     delete OwnerEventQueue();
     SetOwnerEventQueue(NULL);
+    // tell the Pal to shutdown the video (SDLPal doesn't actually do anything here)
+    Singleton::Pal().ShutdownVideo();
 }
 
 Screen *Screen::Create (
-    ScreenCoord const width,
-    ScreenCoord const height,
-    Uint32 const bit_depth,
-    Uint32 const flags)
+    ScreenCoord width,
+    ScreenCoord height,
+    Uint32 bit_depth,
+    bool fullscreen)
 {
     // maybe change these to actual code-checks and error handling
     ASSERT1(width > 0);
     ASSERT1(height > 0);
     ASSERT1(bit_depth > 0);
 
-    Screen *retval = NULL;
-
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    SDL_Surface *surface = SDL_SetVideoMode(width, height, bit_depth, flags|SDL_OPENGL);
-    if (surface == NULL)
-    {
-        fprintf(stderr, "Screen::Create(); could not set the requested video mode\n");
-        return retval;
-    }
+    if (Singleton::Pal().InitializeVideo(width, height, bit_depth, fullscreen) == Pal::FAILURE)
+        return NULL;
 
     GL::Initialize();
 
-    // it is important that all the SDL video init and GL init
+    // it is important that all the video init and GL init
     // happens before this constructor, because the Widget constructor
     // is called, which loads textures and makes GL calls.
-    retval = new Screen();
+    Screen *retval = new Screen();
     // this resizing must happen before the widget skin is created.
     retval->m_current_video_resolution.SetComponents(width, height);
     retval->MoveTo(ScreenCoordVector2::ms_zero);
@@ -161,7 +152,7 @@ void Screen::Draw () const
     // all drawing is complete for this frame, so flush it down
     // and then swap the backbuffer.
     glFlush();
-    SDL_GL_SwapBuffers();
+    Singleton::Pal().FinishFrame();
 
     // record this frame in the framerate calculator
     m_framerate_calculator.AddFrameTime(MostRecentFrameTime());
@@ -197,35 +188,6 @@ bool Screen::HandleEvent (Event const *const e)
         case Event::QUIT:
             RequestQuit();
             return true;
-
-        case Event::KEYDOWN:
-            /*
-            switch (static_cast<EventKey const *const>(e)->KeyCode())
-            {
-//                 case Key::PRINT:
-//                     fprintf(stderr,
-//                             "Screen::HandleEvent(); Key::PRINT "
-//                             "- capturing screenshot to screenshot.png\n");
-//                     SDL::WritePNG(m_surface, "screenshot.png");
-//                     return true;
-                case Key::SCROLLLOCK:
-                    // TODO: don't capture input if fullscreen is set
-                    fprintf(stderr, "Screen::HandleEvent(); toggling input grab\n");
-                    if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON) {
-                        SDL_ShowCursor(SDL_ENABLE);
-                        SDL_WM_GrabInput(SDL_GRAB_OFF);
-                    } else {
-                        SDL_ShowCursor(SDL_DISABLE);
-                        SDL_WM_GrabInput(SDL_GRAB_ON);
-                    }
-
-                    return true;
-
-                default:
-                    break;
-            }
-            */
-            break;
 
         default:
             break;

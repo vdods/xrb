@@ -62,8 +62,8 @@ fuck this is all about, looking at the example code should make things clear.
     <ul>
     <li>Main function</li>
         <ul>
-        <li>Initialize SDL and game engine singletons.  Create the Screen object.
-            This was covered in previous lesson(s).</li>
+        <li>Initialize the platform abstraction layer (Pal) and game engine singletons.
+            Create the Screen object. This was covered in previous lesson(s).</li>
         <li>Execute game-specific code.</li>
             <ul>
             <li>Create formatted layouts of GUI widgets.</li>
@@ -75,7 +75,7 @@ fuck this is all about, looking at the example code should make things clear.
                 <li>Draw the Screen object's entire widget hierarchy.</li>
                 </ul>
             </ul>
-        <li>Delete the Screen object.  Shutdown game engine singletons and SDL.
+        <li>Delete the Screen object.  Shutdown the Pal and game engine singletons.
             This was covered in previous lesson(s).</li>
         </ul>
     </ul>
@@ -110,12 +110,10 @@ void CleanUp ()
 {
     fprintf(stderr, "CleanUp();\n");
 
+    // Shutdown the platform abstraction layer.
+    Singleton::Pal().Shutdown();
     // Shutdown the game engine singletons.  Do this OR PERISH.
     Singleton::Shutdown();
-    // No grab-off?  NO POINTY-CLICKY!
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    // Heartlessly shutdown SDL who is your best friend.
-    SDL_Quit();
 }
 
 int main (int argc, char **argv)
@@ -124,31 +122,25 @@ int main (int argc, char **argv)
 
     // Initialize the game engine singleton facilities.
     Singleton::Initialize(SDLPal::Create, "none");
-
-    // Attempt to initialize SDL.
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
-    {
-        fprintf(stderr, "unable to initialize video.  error: %s\n", SDL_GetError());
+    // Initialize the Pal.
+    if (Singleton::Pal().Initialize() != Pal::SUCCESS)
         return 1;
-    }
-
-    // Set the caption for the application's window.
-    SDL_WM_SetCaption("XuqRijBuh Lesson 02", "");
+    // Set the window caption.
+    Singleton::Pal().SetWindowCaption("XuqRijBuh Lesson 02");
     // Create Screen object and initialize given video mode.
-    Screen *screen = Screen::Create(800, 600, 32, 0);
+    Screen *screen = Screen::Create(800, 600, 32, false);
     // If the Screen failed to initialize, print an error message and quit.
     if (screen == NULL)
     {
-        fprintf(stderr, "unable to initialize video mode\n");
         CleanUp();
         return 2;
     }
 
     /* @endcode
-    At this point, SDL has been initialized, the video mode has been set and
-    the engine is ready to go.  Here is where the application-specific code
-    begins.  We will create widgets different from the ones created in
-    @ref lesson01 "lesson01".
+    At this point, the singletons and the Pal have been initialized, the video
+    mode has been set, and the engine is ready to go.  Here is where the
+    application-specific code begins.  We will create widgets different from
+    the ones created in @ref lesson01 "lesson01".
     @code */
     {
         // Create a Layout widget to contain everything within the Screen.
@@ -420,7 +412,7 @@ int main (int argc, char **argv)
 
     // Delete the Screen (and GUI hierarchy).
     Delete(screen);
-    // this shuts down the game engine singletons, and shuts down SDL.
+    // this shuts down the Pal and the singletons.
     CleanUp();
     // return with success value.
     return 0;
@@ -431,9 +423,8 @@ int main (int argc, char **argv)
 
     <ul>
     <li>Once again change the video mode flag parameter of the call to
-        Screen::Create to <tt>SDL_FULLSCREEN</tt>.  You will be able to
-        quit the app because of the AWESOME quit button we created and
-        hooked up.</li>
+        Screen::Create to <tt>true</tt>.  You will be able to quit the
+        app because of the AWESOME quit button we created and hooked up.</li>
     <li>Change the major direction (first parameter) and the major count
         (second parameter) of the Layout constructor for
         <tt>text_signal_demo_layout</tt> to different values (<tt>ROW</tt> or
