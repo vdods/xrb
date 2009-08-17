@@ -10,12 +10,29 @@
 
 #include "xrb_sdlpal.hpp"
 
+// #include "png.h"
 #include "SDL.h"
+#include "SDL_image.h"
 #include "xrb_event.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_texture.hpp"
+
+/*
+#if defined(WORDS_BIGENDIAN)
+    #define SDL_RMASK 0xFF000000
+    #define SDL_GMASK 0x00FF0000
+    #define SDL_BMASK 0x0000FF00
+    #define SDL_AMASK 0x000000FF
+#else // !defined(WORDS_BIGENDIAN)
+    #define SDL_RMASK 0x000000FF
+    #define SDL_GMASK 0x0000FF00
+    #define SDL_BMASK 0x00FF0000
+    #define SDL_AMASK 0xFF000000
+#endif // !defined(WORDS_BIGENDIAN)
+*/
 
 namespace Xrb
 {
@@ -488,9 +505,131 @@ Event *SDLPal::PollEvent (Screen const *screen, Float time)
     return retval;
 }
 
+/*
+// TODO: change to not use SDL_Surface (use Texture directly)
+SDL_Surface *Texture::LoadPNG (char const *image_path)
+{
+    // the code in this function is based on the code from example.c
+    // in the libpng documentation.
+
+    png_structp png_ptr;
+    png_infop info_ptr;
+    unsigned int sig_read = 0;
+    FILE *fp;
+
+    if ((fp = fopen(image_path, "rb")) == NULL)
+    {
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error opening file\n", image_path);
+        return NULL;
+    }
+
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (png_ptr == NULL)
+    {
+        fclose(fp);
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        return NULL;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        fclose(fp);
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        return NULL;
+    }
+
+    // Set error handling if you are using the setjmp/longjmp method (this is
+    // the normal method of doing things with libpng).  REQUIRED unless you
+    // set up your own error handlers in the png_create_read_struct() earlier.
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        return NULL;
+    }
+
+    png_init_io(png_ptr, fp);
+    png_set_sig_bytes(png_ptr, sig_read);
+    png_read_info(png_ptr, info_ptr);
+
+    png_uint_32 width, height;
+    int bit_depth, color_type, interlace_type;
+    png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
+
+    // create the SDL_Surface
+    SDL_Surface *surface = SDL_CreateRGBSurface(0, width, height, 32, SDL_RMASK, SDL_GMASK, SDL_BMASK, SDL_AMASK);
+    if (surface == NULL)
+    {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error creating SDL_Surface\n", image_path);
+        return NULL;
+    }
+
+    // Expand paletted colors into true RGB triplets
+    if (color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_palette_to_rgb(png_ptr);
+
+    // Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+        png_set_gray_1_2_4_to_8(png_ptr);
+
+    // Expand paletted or RGB images with transparency to full alpha channels
+    // so the data will be available as RGBA quartets.
+    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha(png_ptr);
+
+    png_read_update_info(png_ptr, info_ptr);
+    png_bytep *row_pointers = (png_bytepp)png_malloc(png_ptr, height*sizeof(png_bytep));
+    for (Uint32 row = 0; row < height; row++)
+        row_pointers[row] = png_bytep(surface->pixels) + row*surface->pitch;
+
+    png_read_image(png_ptr, row_pointers);
+    png_read_end(png_ptr, info_ptr);
+    // At this point you have read the entire image
+
+    if (color_type != PNG_COLOR_TYPE_RGB && color_type != PNG_COLOR_TYPE_RGB_ALPHA)
+    {
+        fclose(fp);
+        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+        SDL_FreeSurface(surface);
+        fprintf(stderr, "Texture::LoadPNG(\"%s\"); unsupported PNG color type\n", image_path);
+        return NULL;
+    }
+
+    // close the file and the png stuff
+    fclose(fp);
+
+    // now we're done with the png stuff
+    png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+
+    return surface;
+}
+*/
+
 Texture *SDLPal::LoadImage (char const *image_path)
 {
-    return NULL; // TODO
+    SDL_Surface *surface = IMG_Load(image_path);
+    if (surface == NULL)
+    {
+        fprintf(stderr, "SDLPal::LoadImage(); error while loading image \"%s\"\n", image_path);
+        return NULL;
+    }
+    if (surface->format->BitsPerPixel != 32)
+    {
+        fprintf(stderr, "SDLPal::LoadImage(); unsupported bit depth: %d (32 bpp is the only supported depth)\n", int(surface->format->BitsPerPixel));
+        return NULL;
+    }
+
+    Texture *retval = Texture::Create(ScreenCoordVector2(surface->w, surface->h), false);
+    ASSERT1(retval != NULL);
+
+    // copy the data from the surface to the Texture
+    memcpy(retval->Data(), surface->pixels, retval->DataLength());
+
+    return retval;
 }
 
 Pal::Status SDLPal::SaveImage (char const *image_path, Texture const &texture)

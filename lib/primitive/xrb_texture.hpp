@@ -47,6 +47,7 @@ public:
     // most of the PNG formats map onto a subset of these, but the
     // mapping is not necessarily invertible.  these formats
     // are geared more towards the OpenGL formats.
+    // NOTE: these aren't actually used (yet)
     enum Format
     {
         GRAYSCALE1 = 0,     // 1 bit grayscale (monochrome)
@@ -79,30 +80,35 @@ public:
     static Texture *Create (ScreenCoordVector2 const &size, bool zero_out_the_data);
     //TODO void Write (std::string const &filename);
 
-    inline ScreenCoordVector2 Size () const
+    ScreenCoordVector2 Size () const
     {
-        ASSERT1(m_surface != NULL);
-        return ScreenCoordVector2(m_surface->w, m_surface->h);
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_size;
     }
-    inline ScreenCoord Width () const
+    ScreenCoord Width () const
     {
-        ASSERT1(m_surface != NULL);
-        return static_cast<ScreenCoord>(m_surface->w);
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_size[Dim::X];
     }
-    inline ScreenCoord Height () const
+    ScreenCoord Height () const
     {
-        ASSERT1(m_surface != NULL);
-        return static_cast<ScreenCoord>(m_surface->h);
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_size[Dim::Y];
     }
-    inline Uint32 DataLength () const
+    Uint8 BitDepth () const
     {
-        ASSERT1(m_surface != NULL);
-        return static_cast<Uint32>(m_surface->pitch) * static_cast<Uint32>(m_surface->h);
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_bit_depth;
     }
-    inline Uint8 *Data () const
+    Uint32 DataLength () const
     {
-        ASSERT1(m_surface != NULL);
-        return static_cast<Uint8 *>(m_surface->pixels);
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_data_length;
+    }
+    Uint8 *Data () const
+    {
+        assert(m_data != NULL && "uninitialized Texture");
+        return m_data;
     }
 
 private:
@@ -110,9 +116,10 @@ private:
     // private constructor so you must use Create()
     Texture ();
 
-//     static SDL_Surface *LoadPNG (std::string const &filename);
-
-    SDL_Surface *m_surface;
+    ScreenCoordVector2 m_size;
+    Uint8 m_bit_depth;
+    Uint32 m_data_length;
+    Uint8 *m_data;
 }; // end of class Texture
 
 } // end of namespace Xrb
