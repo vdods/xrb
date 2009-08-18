@@ -31,7 +31,7 @@ AC_ARG_WITH(
     [platform],
     AC_HELP_STRING(
         [--with-platform=name],
-        [compile using a particular platform abstraction layer ("SDL" is the default)]),
+        [compile using a particular platform abstraction layer (SDL is the default)]),
     [PLATFORM=$withval],
     [PLATFORM="SDL"])
 
@@ -154,8 +154,8 @@ AC_ARG_ENABLE(
 if test "${PLATFORM}" = "SDL"; then
     AC_DEFINE(
         [XRB_PLATFORM],
-        [SDL],
-        [Defines the platform name.  Default is SDL.])
+        [XRB_PLATFORM_SDL],
+        [Defines the platform name.  Default is XRB_PLATFORM_SDL.])
 fi
 
 AM_CONDITIONAL(XRB_USE_PLATFORM_SDL, [test "${PLATFORM}" = "SDL"])

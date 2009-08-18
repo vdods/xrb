@@ -13,7 +13,7 @@
 
 // don't include xrb.h here, because xrb.h includes this file.
 
-#if XRB_PLATFORM == SDL
+#if XRB_PLATFORM == XRB_PLATFORM_SDL
     #include "SDL_stdinc.h" // for the integer types
 #else
     #include <stdint.h> // for the integer types
@@ -22,7 +22,7 @@
 namespace Xrb
 {
 
-#if XRB_PLATFORM == SDL
+#if XRB_PLATFORM == XRB_PLATFORM_SDL
 // use the SDL int types
 using ::Sint8;
 using ::Uint8;

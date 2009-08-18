@@ -10,7 +10,7 @@
 
 #include "xrb_sdlpal.hpp"
 
-#if XRB_PLATFORM == SDL
+#if XRB_PLATFORM == XRB_PLATFORM_SDL
 
 #include "png.h"
 #include "xrb_event.hpp"
@@ -683,4 +683,4 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     return SUCCESS;
 }
 
-#endif // XRB_PLATFORM == SDL
+#endif // XRB_PLATFORM == XRB_PLATFORM_SDL

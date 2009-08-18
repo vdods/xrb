@@ -13,7 +13,7 @@
 
 #include "xrb.hpp"
 
-#if XRB_PLATFORM == SDL
+#if XRB_PLATFORM == XRB_PLATFORM_SDL
 
 // it's critical that SDL.h is included here and that this file is included
 // in the cpp file which contains main(), because SDL.h actually redefines
@@ -48,7 +48,7 @@ public:
     virtual Status SaveImage (char const *image_path, Xrb::Texture const &texture);
 }; // end of class SDLPal
 
-#endif // XRB_PLATFORM == SDL
+#endif // XRB_PLATFORM == XRB_PLATFORM_SDL
 
 #endif // !defined(_XRB_SDLPAL_HPP_)
 
