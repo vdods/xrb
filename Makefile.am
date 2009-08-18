@@ -47,16 +47,28 @@ libxrb: lib/libxrb.la
 # general preprocessor and linker flags
 ##############################################################################
 
-if XRB_USE_PLATFORM_SDL
-PLATFORM_CPPFLAGS = `$(SDL_CONFIG) --cflags`
+if SDL_CONFIG_EXISTS
+SDL_CONFIG_CPPFLAGS = `$(SDL_CONFIG) --cflags`
 else
-PLATFORM_CPPFLAGS =
+SDL_CONFIG_CPPFLAGS =
+endif
+
+if FREETYPE_CONFIG_EXISTS
+FREETYPE_CONFIG_CPPFLAGS = `$(FREETYPE_CONFIG) --cflags`
+else
+FREETYPE_CONFIG_CPPFLAGS =
+endif
+
+if LIBPNG_CONFIG_EXISTS
+LIBPNG_CONFIG_CPPFLAGS = `$(LIBPNG_CONFIG) --cflags`
+else
+LIBPNG_CONFIG_CPPFLAGS =
 endif
 
 AM_CPPFLAGS = \
-	$(PLATFORM_CPPFLAGS) \
-    `$(FREETYPE_CONFIG) --cflags` \
-    `$(LIBPNG_CONFIG) --cflags` \
+	$(SDL_CONFIG_CPPFLAGS) \
+    $(FREETYPE_CONFIG_CPPFLAGS) \
+    $(LIBPNG_CONFIG_CPPFLAGS) \
     \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/engine2 \
@@ -77,16 +89,28 @@ AM_CPPFLAGS = \
 #    -I$(top_srcdir)/lib/mapeditor2 \
 #
 
-if XRB_USE_PLATFORM_SDL
-PLATFORM_LDFLAGS = `$(SDL_CONFIG) --libs`
+if SDL_CONFIG_EXISTS
+SDL_CONFIG_LDFLAGS = `$(SDL_CONFIG) --libs`
 else
-PLATFORM_LDFLAGS =
+SDL_CONFIG_LDFLAGS =
+endif
+
+if FREETYPE_CONFIG_EXISTS
+FREETYPE_CONFIG_LDFLAGS = `$(FREETYPE_CONFIG) --libtool`
+else
+FREETYPE_CONFIG_LDFLAGS =
+endif
+
+if LIBPNG_CONFIG_EXISTS
+LIBPNG_CONFIG_LDFLAGS = `$(LIBPNG_CONFIG) --libs`
+else
+LIBPNG_CONFIG_LDFLAGS =
 endif
 
 AM_LDFLAGS = \
-	$(PLATFORM_LDFLAGS) \
-    `$(FREETYPE_CONFIG) --libtool` \
-    `$(LIBPNG_CONFIG) --libs`
+	$(SDL_CONFIG_LDFLAGS) \
+    $(FREETYPE_CONFIG_LDFLAGS) \
+    $(LIBPNG_CONFIG_LDFLAGS)
 
 LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 

@@ -19,6 +19,46 @@
     #include "config.h"
 #endif // defined(HAVE_CONFIG_H)
 
+// ///////////////////////////////////////////////////////////////////////////
+// platform-specific ugliness (reference: SDL)
+// ///////////////////////////////////////////////////////////////////////////
+
+#ifdef __WIN32__
+    // don't include a bunch of useless winblows crap.
+    #define WIN32_LEAN_AND_MEAN
+    // apparently defining NOMINMAX fixes some problems winblows has
+    #ifndef NOMINMAX
+        #define NOMINMAX
+    #endif
+    #include <windows.h>
+#endif
+
+#if defined(__APPLE__)
+    // lets us know what version of Mac OS X we're compiling on
+    #include "AvailabilityMacros.h"
+    #ifdef MAC_OS_X_VERSION_10_3
+        #include "targetconditionals.h"
+        #if TARGET_OS_IPHONE
+            #undef __IPHONEOS__
+            #define __IPHONEOS__ 1
+            #undef __MACOSX__
+        #else
+            #undef __MACOSX__
+            #define __MACOSX__  1
+        #endif
+    #else
+        #undef __MACOSX__
+        #define __MACOSX__  1
+    #endif
+#endif
+
+// assume that SDL will be used unless it is an iPhone build.
+#if TARGET_OS_IPHONE
+    #define XRB_PLATFORM XRB_PLATFORM_IPHONE
+#else
+    #define XRB_PLATFORM XRB_PLATFORM_SDL
+#endif
+
 // this is the only acceptable way to define NULL in C++
 #if !defined(NULL)
 #define NULL 0
@@ -26,6 +66,10 @@
 
 // this is necessary so that glext.h actually does stuff
 #define GL_GLEXT_PROTOTYPES
+
+// ///////////////////////////////////////////////////////////////////////////
+// end of ugliness
+// ///////////////////////////////////////////////////////////////////////////
 
 #include "xrb_assert.hpp"
 #include "xrb_debug.hpp"
@@ -120,6 +164,10 @@ inline void StlContainerEraseRBegin (ContainerType &container)
   *        an ASCII immutable string constant.
   */
 #define STRINGIFY(identifier) #identifier
+/** You must <tt>#include &lt;sstream&gt;</tt> in order to use this.
+  * @brief Handy ostream-formatting macro which returns a std::string.
+  */
+#define FORMAT(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
 
 #endif // !defined(_XRB_HPP_)
 
