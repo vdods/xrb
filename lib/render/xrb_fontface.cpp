@@ -72,6 +72,7 @@ FontFace *FontFace::Create (std::string const &filename)
         fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", filename.c_str());
 
     retval = new FontFace;
+    retval->m_filename = filename;
     retval->m_face = face;
 
     return retval;

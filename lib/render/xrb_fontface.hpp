@@ -46,13 +46,13 @@ public:
       */
     static FontFace *Create (std::string const &filename);
 
+    /** @brief Return the filename used to load this FontFace.
+      */
+    std::string const &Filename () const { return m_filename; }
     /** The structure is necessary for FreeType font rendering calls.
       * @brief Returns the FreeType font face structure.
       */
-    inline FT_FaceRec_ *FTFace () const
-    {
-        return m_face;
-    }
+    FT_FaceRec_ *FTFace () const { return m_face; }
 
 protected:
 
@@ -63,6 +63,9 @@ protected:
 
 private:
 
+    /** @brief Stores the filename used to load this FontFace.
+      */
+    std::string m_filename;
     /** @brief Pointer to FreeType font face structure, loaded by
       *        @ref Xrb::FontFace::Create .
       */

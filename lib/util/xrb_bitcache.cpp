@@ -19,11 +19,13 @@ BitCache::BitCache (
     Uint32 const cache_size_in_bytes,
     Endian::Endianness const endianness)
     :
+    m_endianness(endianness),
     m_working_cache_size_in_bytes(cache_size_in_bytes),
     m_working_cache_size_in_bits(m_working_cache_size_in_bytes * 8),
     m_actual_cache_size_in_bytes(m_working_cache_size_in_bytes + 1),
     m_actual_cache_size_in_bits(m_actual_cache_size_in_bytes * 8)
 {
+    ASSERT1(m_endianness == Endian::LITTLE || m_endianness == Endian::BIG);
     ASSERT1(m_working_cache_size_in_bytes > 0);
     ASSERT1(m_working_cache_size_in_bits > m_working_cache_size_in_bytes && "Numerical overflow resulting from requested cache size");
     ASSERT1(m_actual_cache_size_in_bytes > m_working_cache_size_in_bytes && "Numerical overflow resulting from requested cache size");
@@ -60,11 +62,11 @@ bool BitCache::IsAtEnd () const
     {
         case IOD_READ:
             EnsureReadCacheHasEnoughBitsAvailable(1);
-            return GetError() == IOE_IS_AT_END;
+            return Error() == IOE_IS_AT_END;
 
         case IOD_WRITE:
             EnsureWriteCacheHasEnoughBitsAvailable(1);
-            return GetError() == IOE_IS_AT_END;
+            return Error() == IOE_IS_AT_END;
 
         default:
             ASSERT0(false && "Invalid IODirection");
@@ -78,13 +80,13 @@ bool BitCache::HasFewerThan8BitsLeft () const
     {
         case IOD_READ:
             EnsureReadCacheHasEnoughBitsAvailable(8);
-            return GetError() == IOE_IS_AT_END ||
-                   GetError() == IOE_INSUFFICIENT_AVAILABLE_DATA;
+            return Error() == IOE_IS_AT_END ||
+                   Error() == IOE_INSUFFICIENT_AVAILABLE_DATA;
 
         case IOD_WRITE:
             EnsureWriteCacheHasEnoughBitsAvailable(8);
-            return GetError() == IOE_IS_AT_END ||
-                   GetError() == IOE_INSUFFICIENT_STORAGE;
+            return Error() == IOE_IS_AT_END ||
+                   Error() == IOE_INSUFFICIENT_STORAGE;
 
         default:
             ASSERT0(false && "Invalid IODirection");
@@ -99,7 +101,7 @@ Uint32 BitCache::ReadUnsignedBits (Uint32 const bit_count)
     ASSERT1(bit_count <= 32);
 
     EnsureReadCacheHasEnoughBitsAvailable(bit_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return 0;
 
     Uint32 retval = 0;
@@ -141,7 +143,7 @@ void BitCache::WriteUnsignedBits (Uint32 const value, Uint32 const bit_count)
     ASSERT1(bit_count <= 32);
 
     EnsureWriteCacheHasEnoughBitsAvailable(bit_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
 
     // the bit packed writing algorithm is implicitly big-endian
@@ -175,20 +177,20 @@ void BitCache::WriteUnsignedBits (Uint32 const value, Uint32 const bit_count)
     }
 
     IncrementCacheBitIndex(bit_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 Sint32 BitCache::ReadSignedBits (Uint32 const bit_count)
 {
     Uint32 retval = ReadUnsignedBits(bit_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return 0;
 
     // extend the sign bit if necessary
     if (bit_count < 32 && (retval & (1 << (bit_count - 1))) != 0)
         retval |= ~((1 << bit_count) - 1);
 
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
     return static_cast<Sint32>(retval);
 }
 
@@ -203,7 +205,7 @@ bool BitCache::ReadBool ()
     ASSERT1(GetIODirection() == IOD_READ);
 
     EnsureReadCacheHasEnoughBitsAvailable(1);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return false;
 
     Uint32 bit_to_query = 7 - (m_cache_bit_index & 7);
@@ -211,7 +213,7 @@ bool BitCache::ReadBool ()
     bool retval = (m_cache[CacheByteIndex()] & bit_mask) ? true : false;
 
     IncrementCacheBitIndex(1);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
     return retval;
 }
 
@@ -221,7 +223,7 @@ void BitCache::WriteBool (bool const value)
     ASSERT1(GetIODirection() == IOD_WRITE);
 
     EnsureWriteCacheHasEnoughBitsAvailable(1);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
 
     Uint32 bit_to_set = 7 - (m_cache_bit_index & 7);
@@ -232,7 +234,7 @@ void BitCache::WriteBool (bool const value)
         m_cache[CacheByteIndex()] &= ~bit_mask;
 
     IncrementCacheBitIndex(1);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Read1ByteWordFromCache (void *const destination)
@@ -243,7 +245,7 @@ void BitCache::Read1ByteWordFromCache (void *const destination)
     Uint32 const byte_count = 1;
     EnsureCacheIsOnByteBoundary();
     EnsureReadCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     for (Uint8 *write_to = static_cast<Uint8 *>(destination),
                *read_from = m_cache + CacheByteIndex(),
@@ -255,7 +257,7 @@ void BitCache::Read1ByteWordFromCache (void *const destination)
     }
     Endian::ConvertGivenToMachine1ByteWord(GetEndianness(), destination);
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Write1ByteWordToCache (void *const source)
@@ -266,7 +268,7 @@ void BitCache::Write1ByteWordToCache (void *const source)
     Uint32 const byte_count = 1;
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     Endian::ConvertMachineToGiven1ByteWord(source, GetEndianness());
     for (Uint8 *write_to = m_cache + CacheByteIndex(),
@@ -278,7 +280,7 @@ void BitCache::Write1ByteWordToCache (void *const source)
         *write_to = *read_from;
     }
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Read2ByteWordFromCache (void *const destination)
@@ -289,7 +291,7 @@ void BitCache::Read2ByteWordFromCache (void *const destination)
     Uint32 const byte_count = 2;
     EnsureCacheIsOnByteBoundary();
     EnsureReadCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     for (Uint8 *write_to = static_cast<Uint8 *>(destination),
                *read_from = m_cache + CacheByteIndex(),
@@ -301,7 +303,7 @@ void BitCache::Read2ByteWordFromCache (void *const destination)
     }
     Endian::ConvertGivenToMachine2ByteWord(GetEndianness(), destination);
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Write2ByteWordToCache (void *const source)
@@ -312,7 +314,7 @@ void BitCache::Write2ByteWordToCache (void *const source)
     Uint32 const byte_count = 2;
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     Endian::ConvertMachineToGiven2ByteWord(source, GetEndianness());
     for (Uint8 *write_to = m_cache + CacheByteIndex(),
@@ -324,7 +326,7 @@ void BitCache::Write2ByteWordToCache (void *const source)
         *write_to = *read_from;
     }
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Read4ByteWordFromCache (void *const destination)
@@ -335,7 +337,7 @@ void BitCache::Read4ByteWordFromCache (void *const destination)
     Uint32 const byte_count = 4;
     EnsureCacheIsOnByteBoundary();
     EnsureReadCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     for (Uint8 *write_to = static_cast<Uint8 *>(destination),
                *read_from = m_cache + CacheByteIndex(),
@@ -347,7 +349,7 @@ void BitCache::Read4ByteWordFromCache (void *const destination)
     }
     Endian::ConvertGivenToMachine4ByteWord(GetEndianness(), destination);
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Write4ByteWordToCache (void *const source)
@@ -358,7 +360,7 @@ void BitCache::Write4ByteWordToCache (void *const source)
     Uint32 const byte_count = 4;
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     Endian::ConvertMachineToGiven4ByteWord(source, GetEndianness());
     for (Uint8 *write_to = m_cache + CacheByteIndex(),
@@ -370,7 +372,7 @@ void BitCache::Write4ByteWordToCache (void *const source)
         *write_to = *read_from;
     }
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Read8ByteWordFromCache (void *const destination)
@@ -381,7 +383,7 @@ void BitCache::Read8ByteWordFromCache (void *const destination)
     Uint32 const byte_count = 8;
     EnsureCacheIsOnByteBoundary();
     EnsureReadCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     for (Uint8 *write_to = static_cast<Uint8 *>(destination),
                *read_from = m_cache + CacheByteIndex(),
@@ -393,7 +395,7 @@ void BitCache::Read8ByteWordFromCache (void *const destination)
     }
     Endian::ConvertGivenToMachine8ByteWord(GetEndianness(), destination);
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::Write8ByteWordToCache (void *const source)
@@ -404,7 +406,7 @@ void BitCache::Write8ByteWordToCache (void *const source)
     Uint32 const byte_count = 8;
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(byte_count);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     Endian::ConvertMachineToGiven8ByteWord(source, GetEndianness());
     for (Uint8 *write_to = m_cache + CacheByteIndex(),
@@ -416,7 +418,7 @@ void BitCache::Write8ByteWordToCache (void *const source)
         *write_to = *read_from;
     }
     IncrementCacheByteIndex(byte_count);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::ReadBytes (
@@ -429,12 +431,12 @@ void BitCache::ReadBytes (
 
     EnsureCacheIsOnByteBoundary();
     EnsureReadCacheHasEnoughBytesAvailable(destination_size);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
 
     memcpy(destination, m_cache + CacheByteIndex(), destination_size);
     IncrementCacheByteIndex(destination_size);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 void BitCache::WriteBytes (
@@ -447,12 +449,12 @@ void BitCache::WriteBytes (
 
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(source_size);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
 
     memcpy(m_cache + CacheByteIndex(), source, source_size);
     IncrementCacheByteIndex(source_size);
-    ASSERT1(GetError() == IOE_NONE);
+    ASSERT1(Error() == IOE_NONE);
 }
 
 Uint32 BitCache::ReadBufferString (
@@ -472,8 +474,8 @@ Uint32 BitCache::ReadBufferString (
     // up the maximum possible amount first, possibly risking said error.
     // we just have to make sure that we check for the end of the cache
     // while iterating.
-    if (GetError() != IOE_NONE &&
-        GetError() != IOE_INSUFFICIENT_AVAILABLE_DATA)
+    if (Error() != IOE_NONE &&
+        Error() != IOE_INSUFFICIENT_AVAILABLE_DATA)
     {
         *destination = '\0';
         return 0;
@@ -524,7 +526,7 @@ Uint32 BitCache::WriteBufferString (
 
     EnsureCacheIsOnByteBoundary();
     EnsureWriteCacheHasEnoughBytesAvailable(source_length);
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return 0;
 
     char const *source_it = source;

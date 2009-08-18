@@ -73,7 +73,7 @@ public:
       * @return The most recent error state value.
       * @note Will not change the error value.
       */
-    inline IOError GetError () const
+    inline IOError Error () const
     {
         return m_error;
     }
@@ -144,7 +144,7 @@ protected:
 
     void EnsureWriteCacheHasEnoughBitsAvailable (Uint32 requested_bit_count) const;
     void EnsureWriteCacheHasEnoughBytesAvailable (Uint32 requested_byte_count) const;
-    
+
     void OpenForReading ();
     void OpenForWriting ();
 

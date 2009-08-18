@@ -27,6 +27,7 @@ namespace Xrb
 {
 
 class RenderContext;
+class Serializer;
 class Texture;
 
 /** All fonts must use UTF8 encoding (which conveniently includes standard
@@ -53,8 +54,9 @@ public:
 
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
-    inline ScreenCoord PixelHeight () const { return m_pixel_height; }
-    inline ScreenCoord GlyphWidth (char const *glyph) const
+    std::string const &FontFaceFilename () const { return m_font_face_filename; }
+    ScreenCoord PixelHeight () const { return m_pixel_height; }
+    ScreenCoord GlyphWidth (char const *glyph) const
     {
         ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
         MoveThroughGlyph(&pen_position_26_6, ScreenCoordVector2::ms_zero, glyph, NULL);
@@ -125,8 +127,9 @@ public:
 
 protected:
 
-    Font (ScreenCoord pixel_height)
+    Font (std::string const &font_face_filename, ScreenCoord pixel_height)
         :
+        m_font_face_filename(font_face_filename),
         m_pixel_height(pixel_height)
     { }
 
@@ -159,6 +162,7 @@ private:
         ScreenCoordVector2 *pen_position_span_26_6,
         ScreenCoordVector2 const &pen_position_26_6) const;
 
+    std::string const m_font_face_filename;
     ScreenCoord const m_pixel_height;
 }; // end of class Font
 
@@ -191,19 +195,6 @@ public:
     static Font *Create (
         std::string const &filename,
         ScreenCoord pixel_height);
-    /** This is the means to construct a AsciiFont object.  Using this class
-      * by pointed-to instances is preferred, so that it can be used in
-      * @ref Xrb::Resource .
-      * @brief Returns a pointer to a new instance of AsciiFont, generated using
-      *        the given font face, with glyphs rendered to the given maximum
-      *        height.
-      * @param font_face The FontFace to use when rendering glyphs.
-      * @param pixel_height The maximum height, in pixels, of the glyphs
-      *                     to render.
-      */
-    static Font *Create (
-        Resource<FontFace> const &font_face,
-        ScreenCoord pixel_height);
 
     // ///////////////////////////////////////////////////////////////////////
     // public Font interface methods
@@ -227,9 +218,9 @@ protected:
     /** Protected so that you must use @ref Xrb::AsciiFont::Create .
       * @brief Default constructor.
       */
-    AsciiFont (ScreenCoord pixel_height)
+    AsciiFont (std::string const &font_face_filename, ScreenCoord pixel_height)
         :
-        Font(pixel_height)
+        Font(font_face_filename, pixel_height)
     {
         m_gl_texture = NULL;
         m_error_glyph = '~';
@@ -270,6 +261,9 @@ private:
         ScreenCoord m_advance_26_6;
         ScreenCoordVector2 m_texture_coordinates;
 
+        void Read (Serializer &serializer);
+        void Write (Serializer &serializer) const;
+
         static int SortByWidthFirst (
             void const *left_operand,
             void const *right_operand);
@@ -278,28 +272,33 @@ private:
             void const *right_operand);
     }; // end of class GlyphSpecification
 
-    /** @brief Returns the horizontal kerning offset between the given glyphs.
-      * @param left The ascii value of the (visually) left glyph.
-      * @param right The ascii value of the (visually) right glyph.
-      */
-    ScreenCoord KerningPixelAdvance_26_6 (char left, char right) const;
-
-    inline Uint32 GlyphIndex (char const ascii) const
+    inline Uint32 GlyphIndex (char ascii) const
     {
         if (ascii >= RENDERED_GLYPH_LOWEST && ascii <= RENDERED_GLYPH_HIGHEST)
             return ascii - RENDERED_GLYPH_LOWEST;
         else
             return m_error_glyph - RENDERED_GLYPH_LOWEST;
     }
+    inline char AsciiValue (Uint32 glyph_index) const
+    {
+        if (glyph_index >= RENDERED_GLYPH_COUNT)
+            return char(m_error_glyph);
+        else
+            return glyph_index + RENDERED_GLYPH_LOWEST;
+    }
 
-    // helper functions for generating the font texture
+    ScreenCoord KernPair (char left, char right) const;
+
+    // helper functions for generating the font data and texture
     void PopulateGlyphSpecification (Resource<FontFace> const &font_face);
+    void CacheKernPairs (Resource<FontFace> const &font_face);
+    ScreenCoord KerningPixelAdvance_26_6 (char left, char right) const;
     ScreenCoordVector2 FindSmallestFittingTextureSize (
         GlyphSpecification *const *sorted_glyph_specification);
     Uint32 UsedTextureArea (
         ScreenCoordVector2 const &texture_size,
         GlyphSpecification *const *sorted_glyph_specification);
-    void GenerateTexture (ScreenCoordVector2 const &texture_size);
+    Texture *GenerateTexture (Resource<FontFace> const &font_face, ScreenCoordVector2 const &texture_size);
 
     // ///////////////////////////////////////////////////////////////////////
     // text justification stuff
@@ -321,15 +320,18 @@ private:
     // member vars
     // ///////////////////////////////////////////////////////////////////////
 
-    Resource<FontFace> m_font_face;
+    // true iff the font has kerning enabled
     bool m_has_kerning;
-    ScreenCoord m_pixel_height;
-    GLTexture *m_gl_texture;
-    GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];
     // height from bottom of font glyph coordinates
     ScreenCoord m_baseline_height;
     // the unicode value of the "error glyph"
     Uint32 m_error_glyph;
+    // metadata for each glyph (texture coordinates, etc)
+    GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];
+    // cached kerning data -- all possible pairs of glyphs
+    ScreenCoord m_kern_pair[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT];
+    // pointer to the GLTexture containing the font bitmap
+    GLTexture *m_gl_texture;
 }; // end of class AsciiFont
 
 // ///////////////////////////////////////////////////////////////////////////

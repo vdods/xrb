@@ -65,6 +65,9 @@ public:
     virtual Uint32 ReadUint32 ();
     virtual void WriteUint32 (Uint32 value);
 
+    virtual ScreenCoord ReadScreenCoord ();
+    virtual void WriteScreenCoord (ScreenCoord value);
+
     virtual void ReadFloat (float *destination);
     virtual void WriteFloat (float value);
 
@@ -76,6 +79,9 @@ public:
 
     virtual void ReadColor (Color *destination);
     virtual void WriteColor (Color const &value);
+
+    virtual void ReadScreenCoordVector2 (ScreenCoordVector2 *destination);
+    virtual void WriteScreenCoordVector2 (ScreenCoordVector2 const &value);
 
     virtual void ReadFloatVector2 (FloatVector2 *destination);
     virtual void WriteFloatVector2 (FloatVector2 const &value);

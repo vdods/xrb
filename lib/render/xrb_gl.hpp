@@ -15,6 +15,11 @@
 
 #if defined(__MACOSX__)
     #include <OpenGL/gl.h>
+#elif defined(__IPHONEOS__)
+    #include <OpenGLES/ES1/gl.h>
+    #include <OpenGLES/ES1/glext.h>
+    #define glOrtho glOrthof
+    #define glClearDepth glClearDepthf
 #else
     #include <GL/gl.h>
 #endif

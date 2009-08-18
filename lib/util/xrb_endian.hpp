@@ -24,7 +24,7 @@ namespace Xrb
   */
 namespace Endian
 {
-    /** 
+    /**
       * @brief Enumerates the indicator values for little and big endian, as
       *        well as identifying what the machine's and serializer's
       *        endianness is.
@@ -113,258 +113,19 @@ namespace Endian
         *(bytes + 4) = temp;
     }
 
-// if the serializer and machine have the same endianness, then
-// the conversion functions should do nothing
-#if MACHINE == SERIALIZER
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and serializer
-    // ///////////////////////////////////////////////////////////////////////
-    
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to serializer endianness.
-      * @param word A pointer to the 1-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer1ByteWord (void *word) { }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from serializer to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine1ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 2-byte word from machine to serializer endianness.
-      * @param word A pointer to the 2-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer2ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 2-byte word from serializer to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine2ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 4-byte word from machine to serializer endianness.
-      * @param word A pointer to the 4-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer4ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 4-byte word from serializer to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine4ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 8-byte word from machine to serializer endianness.
-      * @param word A pointer to the 8-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer8ByteWord (void *word) { }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 8-byte word from serializer to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine8ByteWord (void *word) { }
-
-// otherwise, the byte order should switch
-#else // MACHINE != SERIALIZER
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and serializer
-    // ///////////////////////////////////////////////////////////////////////
-    
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to serializer endianness.
-      * @param word A pointer to the 1-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer1ByteWord (void *word)
-    {
-        Switch1ByteWord(word);
-    }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from serializer to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine1ByteWord (void *word)
-    {
-        Switch1ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 2-byte word from machine to serializer endianness.
-      * @param word A pointer to the 2-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer2ByteWord (void *word)
-    {
-        Switch2ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 2-byte word from serializer to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine2ByteWord (void *word)
-    {
-        Switch2ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 4-byte word from machine to serializer endianness.
-      * @param word A pointer to the 4-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer4ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 4-byte word from serializer to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine4ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 8-byte word from machine to serializer endianness.
-      * @param word A pointer to the 8-byte word to be serializer-endian'ed.
-      */
-    inline void ConvertMachineToSerializer8ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-    /** If this machine and serializer endianness match, this is a no-op.
-      * @brief Converts a 8-byte word from serializer to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertSerializerToMachine8ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-
-#endif // MACHINE != SERIALIZER
-
-#if MACHINE == BIG
-
     // ///////////////////////////////////////////////////////////////////////
     // conversion between machine and big
     // ///////////////////////////////////////////////////////////////////////
-    
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to big endianness.
-      * @param word A pointer to the 1-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig1ByteWord (void *word) { }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from big to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine1ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from machine to big endianness.
-      * @param word A pointer to the 2-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig2ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from big to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine2ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from machine to big endianness.
-      * @param word A pointer to the 4-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig4ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from big to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine4ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from machine to big endianness.
-      * @param word A pointer to the 8-byte word to be big-endian'ed.
-      */
-    inline void ConvertMachineToBig8ByteWord (void *word) { }
-    /** If this machine is big-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from big to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertBigToMachine8ByteWord (void *word) { }
 
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and little
-    // ///////////////////////////////////////////////////////////////////////
-    
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from machine to little endianness.
-      * @param word A pointer to the 1-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle1ByteWord (void *word)
-    {
-        Switch1ByteWord(word);
-    }
-    /** Single-byte word endian conversion is a no-op.
-      * @brief Converts a 1-byte word from little to machine endianness.
-      * @param word A pointer to the 1-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine1ByteWord (void *word)
-    {
-        Switch1ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from machine to little endianness.
-      * @param word A pointer to the 2-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle2ByteWord (void *word)
-    {
-        Switch2ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 2-byte word from little to machine endianness.
-      * @param word A pointer to the 2-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine2ByteWord (void *word)
-    {
-        Switch2ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from machine to little endianness.
-      * @param word A pointer to the 4-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle4ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 4-byte word from little to machine endianness.
-      * @param word A pointer to the 4-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine4ByteWord (void *word)
-    {
-        Switch4ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from machine to little endianness.
-      * @param word A pointer to the 8-byte word to be little-endian'ed.
-      */
-    inline void ConvertMachineToLittle8ByteWord (void *word)
-    {
-        Switch8ByteWord(word);
-    }
-    /** If this machine is little-endian, then this function is a no-op.
-      * @brief Converts a 8-byte word from little to machine endianness.
-      * @param word A pointer to the 8-byte word to be machine-endian'ed.
-      */
-    inline void ConvertLittleToMachine8ByteWord (void *word)
-    {
-        Switch8ByteWord(word);
-    }
-
-#else // MACHINE != BIG (implying MACHINE == LITTLE)
-
-    // ///////////////////////////////////////////////////////////////////////
-    // conversion between machine and big
-    // ///////////////////////////////////////////////////////////////////////
-    
     /** Single-byte word endian conversion is a no-op.
       * @brief Converts a 1-byte word from machine to big endianness.
       * @param word A pointer to the 1-byte word to be big-endian'ed.
       */
     inline void ConvertMachineToBig1ByteWord (void *word)
     {
-        Switch1ByteWord(word);
+        #if MACHINE != BIG
+            Switch1ByteWord(word);
+        #endif
     }
     /** Single-byte word endian conversion is a no-op.
       * @brief Converts a 1-byte word from big to machine endianness.
@@ -372,7 +133,9 @@ namespace Endian
       */
     inline void ConvertBigToMachine1ByteWord (void *word)
     {
-        Switch1ByteWord(word);
+        #if MACHINE != BIG
+            Switch1ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 2-byte word from machine to big endianness.
@@ -380,7 +143,9 @@ namespace Endian
       */
     inline void ConvertMachineToBig2ByteWord (void *word)
     {
-        Switch2ByteWord(word);
+        #if MACHINE != BIG
+            Switch2ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 2-byte word from big to machine endianness.
@@ -388,7 +153,9 @@ namespace Endian
       */
     inline void ConvertBigToMachine2ByteWord (void *word)
     {
-        Switch2ByteWord(word);
+        #if MACHINE != BIG
+            Switch2ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 4-byte word from machine to big endianness.
@@ -396,7 +163,9 @@ namespace Endian
       */
     inline void ConvertMachineToBig4ByteWord (void *word)
     {
-        Switch4ByteWord(word);
+        #if MACHINE != BIG
+            Switch4ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 4-byte word from big to machine endianness.
@@ -404,7 +173,9 @@ namespace Endian
       */
     inline void ConvertBigToMachine4ByteWord (void *word)
     {
-        Switch4ByteWord(word);
+        #if MACHINE != BIG
+            Switch4ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 8-byte word from machine to big endianness.
@@ -412,7 +183,9 @@ namespace Endian
       */
     inline void ConvertMachineToBig8ByteWord (void *word)
     {
-        Switch8ByteWord(word);
+        #if MACHINE != BIG
+            Switch8ByteWord(word);
+        #endif
     }
     /** If this machine is big-endian, then this function is a no-op.
       * @brief Converts a 8-byte word from big to machine endianness.
@@ -420,55 +193,95 @@ namespace Endian
       */
     inline void ConvertBigToMachine8ByteWord (void *word)
     {
-        Switch8ByteWord(word);
+        #if MACHINE != BIG
+            Switch8ByteWord(word);
+        #endif
     }
 
     // ///////////////////////////////////////////////////////////////////////
     // conversion between machine and little
     // ///////////////////////////////////////////////////////////////////////
-    
+
     /** Single-byte word endian conversion is a no-op.
       * @brief Converts a 1-byte word from machine to little endianness.
       * @param word A pointer to the 1-byte word to be little-endian'ed.
       */
-    inline void ConvertMachineToLittle1ByteWord (void *word) { }
+    inline void ConvertMachineToLittle1ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch1ByteWord(word);
+        #endif
+    }
     /** Single-byte word endian conversion is a no-op.
       * @brief Converts a 1-byte word from little to machine endianness.
       * @param word A pointer to the 1-byte word to be machine-endian'ed.
       */
-    inline void ConvertLittleToMachine1ByteWord (void *word) { }
+    inline void ConvertLittleToMachine1ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch1ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 2-byte word from machine to little endianness.
       * @param word A pointer to the 2-byte word to be little-endian'ed.
       */
-    inline void ConvertMachineToLittle2ByteWord (void *word) { }
+    inline void ConvertMachineToLittle2ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch2ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 2-byte word from little to machine endianness.
       * @param word A pointer to the 2-byte word to be machine-endian'ed.
       */
-    inline void ConvertLittleToMachine2ByteWord (void *word) { }
+    inline void ConvertLittleToMachine2ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch2ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 4-byte word from machine to little endianness.
       * @param word A pointer to the 4-byte word to be little-endian'ed.
       */
-    inline void ConvertMachineToLittle4ByteWord (void *word) { }
+    inline void ConvertMachineToLittle4ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch4ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 4-byte word from little to machine endianness.
       * @param word A pointer to the 4-byte word to be machine-endian'ed.
       */
-    inline void ConvertLittleToMachine4ByteWord (void *word) { }
+    inline void ConvertLittleToMachine4ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch4ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 8-byte word from machine to little endianness.
       * @param word A pointer to the 8-byte word to be little-endian'ed.
       */
-    inline void ConvertMachineToLittle8ByteWord (void *word) { }
+    inline void ConvertMachineToLittle8ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch8ByteWord(word);
+        #endif
+    }
     /** If this machine is little-endian, then this function is a no-op.
       * @brief Converts a 8-byte word from little to machine endianness.
       * @param word A pointer to the 8-byte word to be machine-endian'ed.
       */
-    inline void ConvertLittleToMachine8ByteWord (void *word) { }
-
-#endif // MACHINE != BIG (impling MACHINE == LITTLE)
+    inline void ConvertLittleToMachine8ByteWord (void *word)
+    {
+        #if MACHINE != LITTLE
+            Switch8ByteWord(word);
+        #endif
+    }
 
     // ///////////////////////////////////////////////////////////////////////
     // conversion between machine and given endianness
@@ -481,6 +294,7 @@ namespace Endian
       */
     inline void ConvertMachineToGiven1ByteWord (void *word, Endianness const endianness)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch1ByteWord(word);
     }
@@ -491,6 +305,7 @@ namespace Endian
       */
     inline void ConvertGivenToMachine1ByteWord (Endianness const endianness, void *word)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch1ByteWord(word);
     }
@@ -501,6 +316,7 @@ namespace Endian
       */
     inline void ConvertMachineToGiven2ByteWord (void *word, Endianness const endianness)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch2ByteWord(word);
     }
@@ -511,6 +327,7 @@ namespace Endian
       */
     inline void ConvertGivenToMachine2ByteWord (Endianness const endianness, void *word)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch2ByteWord(word);
     }
@@ -521,6 +338,7 @@ namespace Endian
       */
     inline void ConvertMachineToGiven4ByteWord (void *word, Endianness const endianness)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch4ByteWord(word);
     }
@@ -531,6 +349,7 @@ namespace Endian
       */
     inline void ConvertGivenToMachine4ByteWord (Endianness const endianness, void *word)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch4ByteWord(word);
     }
@@ -541,6 +360,7 @@ namespace Endian
       */
     inline void ConvertMachineToGiven8ByteWord (void *word, Endianness const endianness)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch8ByteWord(word);
     }
@@ -551,6 +371,7 @@ namespace Endian
       */
     inline void ConvertGivenToMachine8ByteWord (Endianness const endianness, void *word)
     {
+        ASSERT2(endianness == LITTLE || endianness == BIG);
         if (MACHINE != endianness)
             Switch8ByteWord(word);
     }

@@ -21,6 +21,7 @@
 #include "xrb_color.hpp"
 #include "xrb_enums.hpp"
 #include "xrb_matrix2.hpp"
+#include "xrb_screencoord.hpp"
 #include "xrb_simpletransform2.hpp"
 #include "xrb_transform2.hpp"
 #include "xrb_vector.hpp"
@@ -94,7 +95,7 @@ public:
       * @return The most recent error state value.
       * @note Will not change the error value.
       */
-    inline IOError GetError () const
+    inline IOError Error () const
     {
         return m_error;
     }
@@ -104,7 +105,7 @@ public:
       */
     inline char const *ErrorString () const
     {
-        return Util::IOErrorString(GetError());
+        return Util::IOErrorString(Error());
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -315,6 +316,21 @@ public:
       */
     virtual void WriteUint32 (Uint32 value) = 0;
 
+    /** @brief Read a ScreenCoord value from the stream.
+      * @return A ScreenCoord value.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual ScreenCoord ReadScreenCoord () = 0;
+    /** @brief Write a ScreenCoord value to the stream.
+      * @param value The ScreenCoord value to write to the stream.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void WriteScreenCoord (ScreenCoord value) = 0;
+
     /** @brief Read an IEEE single-precision floating point value from
       *        the stream.
       * @param destination A pointer to the IEEE single-precision
@@ -508,6 +524,33 @@ public:
       */
     virtual void WriteColor (Color const &value) = 0;
 
+    /** @brief Reads a ScreenCoordVector2 from the stream.
+      * @return A ScreenCoordVector2 read in from the stream.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    inline ScreenCoordVector2 ReadScreenCoordVector2 ()
+    {
+        ScreenCoordVector2 retval;
+        ReadScreenCoordVector2(&retval);
+        return retval;
+    }
+    /** @brief Reads a ScreenCoordVector2 from the stream.
+      * @param destination A pointer to the ScreenCoordVector2 object to read into.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_READ, and @c IsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void ReadScreenCoordVector2 (ScreenCoordVector2 *destination) = 0;
+    /** @brief Writes the given ScreenCoordVector2 to the stream.
+      * @param source The ScreenCoordVector2 to write to the stream.
+      * @pre @c IsOpen() must return true, @c GetIODirection() must
+      *      return IOD_WRITE, and @c IsAtEnd() must return false.
+      * @post The error state is set to indicate the status of the operation.
+      */
+    virtual void WriteScreenCoordVector2 (ScreenCoordVector2 const &value) = 0;
+
     /** @brief Reads a FloatVector2 from the stream.
       * @return A FloatVector2 read in from the stream.
       * @pre @c IsOpen() must return true, @c GetIODirection() must
@@ -660,7 +703,7 @@ protected:
       * @post The error state is set to indicate the status of the operation.
       */
     virtual void FlushWriteCache () = 0;
-    
+
     /// The current open state.
     bool m_is_open;
     /// The current IO direction.
@@ -690,7 +733,7 @@ BitArray<bit_count> Serializer::ReadBitArray ()
         retval.SetWord(
             current_word,
             ReadUnsignedBits(bits_to_read_for_current_word));
-        if (GetError() != IOE_NONE)
+        if (Error() != IOE_NONE)
             return retval;
     }
 
@@ -716,7 +759,7 @@ void Serializer::WriteBitArray (BitArray<bit_count> const &value)
         WriteUnsignedBits(
             value.Word(current_word),
             bits_to_write_for_current_word);
-        if (GetError() != IOE_NONE)
+        if (Error() != IOE_NONE)
             return;
     }
 }
@@ -745,7 +788,7 @@ BitArray<bit_count> Serializer::ReadBitArray (Uint32 const bits_to_read)
         retval.SetWord(
             current_word,
             ReadUnsignedBits(bits_to_read_for_current_word));
-        if (GetError() != IOE_NONE)
+        if (Error() != IOE_NONE)
             return retval;
     }
 
@@ -785,7 +828,7 @@ void Serializer::WriteBitArray (
         WriteUnsignedBits(
             value.Word(current_word),
             bits_to_write_for_current_word);
-        if (GetError() != IOE_NONE)
+        if (Error() != IOE_NONE)
             return;
     }
 }

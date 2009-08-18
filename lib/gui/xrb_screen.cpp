@@ -45,7 +45,7 @@ Screen *Screen::Create (
     ASSERT1(height > 0);
     ASSERT1(bit_depth > 0);
 
-    if (Singleton::Pal().InitializeVideo(width, height, bit_depth, fullscreen) == Pal::FAILURE)
+    if (Singleton::Pal().InitializeVideo(width, height, bit_depth, fullscreen) != Pal::SUCCESS)
         return NULL;
 
     GL::Initialize();

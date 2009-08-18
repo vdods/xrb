@@ -36,7 +36,7 @@ Uint32 Serializer::ReadString (char **const destination)
     char buffer[MAX_SUPPORTED_STRING_BUFFER_SIZE];
     Uint32 const read_string_length =
         ReadBufferString(buffer, MAX_SUPPORTED_STRING_BUFFER_SIZE);
-    if (GetError() == IOE_NONE)
+    if (Error() == IOE_NONE)
     {
         *destination = new char[read_string_length + 1];
         memcpy(*destination, buffer, read_string_length + 1);
@@ -65,7 +65,7 @@ void Serializer::ReadStdString (std::string *const destination, Uint32 *const st
         ReadBufferString(buffer, MAX_SUPPORTED_STRING_BUFFER_SIZE);
     if (string_length != NULL)
         *string_length = read_string_length;
-    if (GetError() != IOE_NONE)
+    if (Error() != IOE_NONE)
         return;
     *destination = buffer;
 }
