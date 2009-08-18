@@ -10,9 +10,9 @@
 
 #include "xrb_sdlpal.hpp"
 
-// #include "png.h"
-#include "SDL.h"
-#include "SDL_image.h"
+#if XRB_PLATFORM == SDL
+
+#include "png.h"
 #include "xrb_event.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
@@ -20,7 +20,6 @@
 #include "xrb_screen.hpp"
 #include "xrb_texture.hpp"
 
-/*
 #if defined(WORDS_BIGENDIAN)
     #define SDL_RMASK 0xFF000000
     #define SDL_GMASK 0x00FF0000
@@ -32,7 +31,6 @@
     #define SDL_BMASK 0x00FF0000
     #define SDL_AMASK 0xFF000000
 #endif // !defined(WORDS_BIGENDIAN)
-*/
 
 namespace {
 
@@ -302,6 +300,8 @@ Xrb::Pal *SDLPal::Create ()
 
 Xrb::Pal::Status SDLPal::Initialize ()
 {
+    fprintf(stderr, "SDLPal::Initialize();\n");
+
     // initialize video (no parachute so we get core dumps)
     if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
     {
@@ -314,6 +314,8 @@ Xrb::Pal::Status SDLPal::Initialize ()
 
 void SDLPal::Shutdown ()
 {
+    fprintf(stderr, "SDLPal::Shutdown();\n");
+
     // make sure input isn't grabbed
     SDL_WM_GrabInput(SDL_GRAB_OFF);
     // call SDL's cleanup func
@@ -322,6 +324,8 @@ void SDLPal::Shutdown ()
 
 Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen)
 {
+    fprintf(stderr, "SDLPal::InitializeVideo();\n");
+
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -344,6 +348,8 @@ Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height,
 
 void SDLPal::ShutdownVideo ()
 {
+    fprintf(stderr, "SDLPal::ShutdownVideo();\n");
+
     // nothing needs to be done here -- the SDL_Surface created in
     // InitializeVideo will be freed by SDL_Quit or any successive
     // call to SDL_SetVideoMode.
@@ -353,6 +359,8 @@ void SDLPal::ShutdownVideo ()
 
 void SDLPal::SetWindowCaption (char const *window_caption)
 {
+    fprintf(stderr, "SDLPal::SetWindowCaption(\"%s\");\n", window_caption);
+
     ASSERT1(window_caption != NULL);
     // set a window title (the second parameter doesn't seem to do anything)
     SDL_WM_SetCaption(window_caption, "");
@@ -511,10 +519,12 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
     return retval;
 }
 
-/*
-// TODO: change to not use SDL_Surface (use Texture directly)
-SDL_Surface *Texture::LoadPNG (char const *image_path)
+Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 {
+//     fprintf(stderr, "SDLPal::LoadImage(\"%s\");\n", image_path);
+
+    ASSERT1(image_path != NULL);
+
     // the code in this function is based on the code from example.c
     // in the libpng documentation.
 
@@ -525,7 +535,7 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
 
     if ((fp = fopen(image_path, "rb")) == NULL)
     {
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error opening file\n", image_path);
+        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error opening file\n", image_path);
         return NULL;
     }
 
@@ -533,7 +543,7 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
     if (png_ptr == NULL)
     {
         fclose(fp);
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
         return NULL;
     }
 
@@ -541,18 +551,16 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
     if (info_ptr == NULL)
     {
         fclose(fp);
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
         return NULL;
     }
 
-    // Set error handling if you are using the setjmp/longjmp method (this is
-    // the normal method of doing things with libpng).  REQUIRED unless you
-    // set up your own error handlers in the png_create_read_struct() earlier.
+    // something about error handling
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         fclose(fp);
         png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error reading PNG file\n", image_path);
+        fprintf(stderr, "SDLPal::LoadImage(\"%s\"); error reading PNG file\n", image_path);
         return NULL;
     }
 
@@ -564,15 +572,9 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
     int bit_depth, color_type, interlace_type;
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
 
-    // create the SDL_Surface
-    SDL_Surface *surface = SDL_CreateRGBSurface(0, width, height, 32, SDL_RMASK, SDL_GMASK, SDL_BMASK, SDL_AMASK);
-    if (surface == NULL)
-    {
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); error creating SDL_Surface\n", image_path);
-        return NULL;
-    }
+    // create the Texture
+    Xrb::Texture *texture = Xrb::Texture::Create(Xrb::ScreenCoordVector2(width, height), false);
+    ASSERT1(texture != NULL);
 
     // Expand paletted colors into true RGB triplets
     if (color_type == PNG_COLOR_TYPE_PALETTE)
@@ -587,58 +589,98 @@ SDL_Surface *Texture::LoadPNG (char const *image_path)
     if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
         png_set_tRNS_to_alpha(png_ptr);
 
+    // the above two calls will cause the image to be read as full 32 bit RGBA
+
     png_read_update_info(png_ptr, info_ptr);
     png_bytep *row_pointers = (png_bytepp)png_malloc(png_ptr, height*sizeof(png_bytep));
-    for (Uint32 row = 0; row < height; row++)
-        row_pointers[row] = png_bytep(surface->pixels) + row*surface->pitch;
+    for (png_uint_32 row = 0; row < height; row++)
+        row_pointers[row] = png_bytep(texture->Data()) + row*texture->Width()*4; // 4 bytes per pixel
 
     png_read_image(png_ptr, row_pointers);
     png_read_end(png_ptr, info_ptr);
-    // At this point you have read the entire image
 
-    if (color_type != PNG_COLOR_TYPE_RGB && color_type != PNG_COLOR_TYPE_RGB_ALPHA)
-    {
-        fclose(fp);
-        png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-        SDL_FreeSurface(surface);
-        fprintf(stderr, "Texture::LoadPNG(\"%s\"); unsupported PNG color type\n", image_path);
-        return NULL;
-    }
+    // At this point we have read the entire image
 
-    // close the file and the png stuff
+    // close the file
     fclose(fp);
-
     // now we're done with the png stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-
-    return surface;
-}
-*/
-
-Xrb::Texture *SDLPal::LoadImage (char const *image_path)
-{
-    SDL_Surface *surface = IMG_Load(image_path);
-    if (surface == NULL)
-    {
-        fprintf(stderr, "SDLPal::LoadImage(); error while loading image \"%s\"\n", image_path);
-        return NULL;
-    }
-    if (surface->format->BitsPerPixel != 32)
-    {
-        fprintf(stderr, "SDLPal::LoadImage(); unsupported bit depth: %d (32 bpp is the only supported depth)\n", int(surface->format->BitsPerPixel));
-        return NULL;
-    }
-
-    Xrb::Texture *retval = Xrb::Texture::Create(Xrb::ScreenCoordVector2(surface->w, surface->h), false);
-    ASSERT1(retval != NULL);
-
-    // copy the data from the surface to the Texture
-    memcpy(retval->Data(), surface->pixels, retval->DataLength());
-
-    return retval;
+    // return the Texture we fought so hard to obtain.
+    return texture;
 }
 
 Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
-    return FAILURE; // TODO
+    fprintf(stderr, "SDLPal::SaveImage(\"%s\");\n", image_path);
+
+    ASSERT1(image_path != NULL);
+
+    // the code in this function is based on the code from example.c
+    // in the libpng documentation.
+
+    FILE *fp;
+    png_structp png_ptr;
+    png_infop info_ptr;
+
+    fp = fopen(image_path, "wb");
+    if (fp == NULL)
+    {
+        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error opening file\n", image_path);
+        return FAILURE;
+    }
+
+    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (png_ptr == NULL)
+    {
+        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        fclose(fp);
+        return FAILURE;
+    }
+
+    info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        fclose(fp);
+        png_destroy_write_struct(&png_ptr,  png_infopp_NULL);
+        return FAILURE;
+    }
+
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
+        fprintf(stderr, "SDLPal::SaveImage(\"%s\"); error in PNG creation\n", image_path);
+        fclose(fp);
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        return FAILURE;
+    }
+
+    png_init_io(png_ptr, fp);
+
+    png_bytep *row_pointers = (png_bytepp)png_malloc(png_ptr, texture.Height()*sizeof(png_bytep));
+    for (Xrb::ScreenCoord row = 0; row < texture.Height(); ++row)
+        row_pointers[row] = png_bytep(texture.Data()) + row*texture.Width()*4; // 4 bytes per pixel
+
+    // only 32bit RGBA is supported right now
+    png_set_IHDR(png_ptr, info_ptr, texture.Width(), texture.Height(), 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+//     // Optionally write comments into the image
+//     text_ptr[0].key = "Title";
+//     text_ptr[0].text = "Mona Lisa";
+//     text_ptr[0].compression = PNG_TEXT_COMPRESSION_NONE;
+//     text_ptr[1].key = "Author";
+//     text_ptr[1].text = "Leonardo DaVinci";
+//     text_ptr[1].compression = PNG_TEXT_COMPRESSION_NONE;
+//     text_ptr[2].key = "Description";
+//     text_ptr[2].text = "<long text>";
+//     text_ptr[2].compression = PNG_TEXT_COMPRESSION_zTXt;
+//     png_set_text(png_ptr, info_ptr, text_ptr, 3);
+
+    png_write_info(png_ptr, info_ptr);
+    png_write_image(png_ptr, row_pointers);
+    png_write_end(png_ptr, info_ptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    fclose(fp);
+    return SUCCESS;
 }
+
+#endif // XRB_PLATFORM == SDL

@@ -28,6 +28,14 @@ AM_CONDITIONAL(TRISON_EXISTS, [test "${TRISON}" != ""])
 ##############################################################################
 
 AC_ARG_WITH(
+    [platform],
+    AC_HELP_STRING(
+        [--with-platform=name],
+        [compile using a particular platform abstraction layer ("SDL" is the default)]),
+    [PLATFORM=$withval],
+    [PLATFORM="SDL"])
+
+AC_ARG_WITH(
     [arch],
     AC_HELP_STRING(
         [--with-arch=type],
@@ -143,7 +151,16 @@ AC_ARG_ENABLE(
 # processing for above commandline options
 ##############################################################################
 
-if test "x${ARCH_TYPE}" = "x"; then
+if test "${PLATFORM}" = "SDL"; then
+    AC_DEFINE(
+        [XRB_PLATFORM],
+        [SDL],
+        [Defines the platform name.  Default is SDL.])
+fi
+
+AM_CONDITIONAL(XRB_USE_PLATFORM_SDL, [test "${PLATFORM}" = "SDL"])
+
+if test "${ARCH_TYPE}" = ""; then
     ARCH_OPTION_STRING=
 else
     ARCH_OPTION_STRING="-mtune=${ARCH_TYPE}"
@@ -301,19 +318,25 @@ includedir=${includedir}/xrb
 # check for the math library
 AC_CHECK_LIB(m, sin)
 
-# check for OpenGL library (this seems not exactly necessary)
+# check for OpenGL library
 AC_CHECK_LIB(GL, glBegin)
 
-# check for SDL_image library
-AC_CHECK_LIB(SDL_image, IMG_Load)
+# check for SDL library
+AC_CHECK_LIB(SDL, SDL_Init)
 
-# check for SDL
-AC_PATH_PROG(SDL_CONFIG, sdl-config)
-AC_SUBST(SDL_CONFIG)
+# check for SDL (if SDL was the requested platform)
+if test "${PLATFORM}" = "SDL"; then
+    AC_PATH_PROG(SDL_CONFIG, sdl-config)
+    AC_SUBST(SDL_CONFIG)
+fi
 
 # check for freetype
 AC_PATH_PROG(FREETYPE_CONFIG, freetype-config)
 AC_SUBST(FREETYPE_CONFIG)
+
+# check for libpng
+AC_PATH_PROG(LIBPNG_CONFIG, libpng-config)
+AC_SUBST(LIBPNG_CONFIG)
 
 ##############################################################################
 # configure script generation

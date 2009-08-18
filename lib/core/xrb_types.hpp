@@ -13,6 +13,42 @@
 
 // don't include xrb.h here, because xrb.h includes this file.
 
+#if XRB_PLATFORM == SDL
+    #include "SDL_stdinc.h" // for the integer types
+#else
+    #include <stdint.h> // for the integer types
+#endif
+
+namespace Xrb
+{
+
+#if XRB_PLATFORM == SDL
+// use the SDL int types
+using ::Sint8;
+using ::Uint8;
+using ::Sint16;
+using ::Uint16;
+using ::Sint32;
+using ::Uint32;
+#else
+// these types are predicated on the SDL integer types.  the correctness
+// of their sizes is checked in xrb_compiletimeasserts.cpp
+typedef int8_t   Sint8;
+typedef uint8_t  Uint8;
+typedef int16_t  Sint16;
+typedef uint16_t Uint16;
+typedef int32_t  Sint32;
+typedef uint32_t Uint32;
+#endif
+
+// for using floats or doubles
+typedef float Float;
+
+// StateMachine input value typedef
+typedef Uint8 StateMachineInput;
+
+} // end of namespace Xrb
+
 // lower/upper bound on Sint8 values
 #define SINT8_LOWER_BOUND static_cast<Xrb::Sint8>(0x80)
 #define SINT8_UPPER_BOUND static_cast<Xrb::Sint8>(0x7F)
@@ -31,26 +67,6 @@
 // lower/upper bound on Uint32 values
 #define UINT32_LOWER_BOUND static_cast<Xrb::Uint32>(0x00000000)
 #define UINT32_UPPER_BOUND static_cast<Xrb::Uint32>(0xFFFFFFFF)
-
-namespace Xrb
-{
-
-// these types are predicated on the SDL integer types.  the correctness
-// of their sizes is checked in xrb_compiletimeasserts.cpp
-typedef char            Sint8;
-typedef unsigned char   Uint8;
-typedef short           Sint16;
-typedef unsigned short  Uint16;
-typedef int             Sint32;
-typedef unsigned int    Uint32;
-
-// for using floats or doubles
-typedef float Float;
-
-// StateMachine input value typedef
-typedef Uint8 StateMachineInput;
-
-} // end of namespace Xrb
 
 #endif // !defined(_XRB_TYPES_HPP_)
 

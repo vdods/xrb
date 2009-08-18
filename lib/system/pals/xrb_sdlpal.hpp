@@ -13,6 +13,12 @@
 
 #include "xrb.hpp"
 
+#if XRB_PLATFORM == SDL
+
+// it's critical that SDL.h is included here and that this file is included
+// in the cpp file which contains main(), because SDL.h actually redefines
+// main to SDL_main and does some other hidden stuff.
+#include "SDL.h" 
 #include "xrb_pal.hpp"
 
 class SDLPal : public Xrb::Pal
@@ -41,6 +47,8 @@ public:
     virtual Xrb::Texture *LoadImage (char const *image_path);
     virtual Status SaveImage (char const *image_path, Xrb::Texture const &texture);
 }; // end of class SDLPal
+
+#endif // XRB_PLATFORM == SDL
 
 #endif // !defined(_XRB_SDLPAL_HPP_)
 

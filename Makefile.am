@@ -47,9 +47,16 @@ libxrb: lib/libxrb.la
 # general preprocessor and linker flags
 ##############################################################################
 
+if XRB_USE_PLATFORM_SDL
+PLATFORM_CPPFLAGS = `$(SDL_CONFIG) --cflags`
+else
+PLATFORM_CPPFLAGS =
+endif
+
 AM_CPPFLAGS = \
+	$(PLATFORM_CPPFLAGS) \
     `$(FREETYPE_CONFIG) --cflags` \
-    `$(SDL_CONFIG) --cflags` \
+    `$(LIBPNG_CONFIG) --cflags` \
     \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/engine2 \
@@ -66,18 +73,20 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/system/serializers \
     -I$(top_srcdir)/lib/util
 
-#    `$(LIBPNG_CONFIG) --cflags` \
-#
-
 # the map editor is temporarily out of service
 #    -I$(top_srcdir)/lib/mapeditor2 \
 #
 
-AM_LDFLAGS = \
-    `$(FREETYPE_CONFIG) --libtool` \
-    `$(SDL_CONFIG) --libs`
+if XRB_USE_PLATFORM_SDL
+PLATFORM_LDFLAGS = `$(SDL_CONFIG) --libs`
+else
+PLATFORM_LDFLAGS =
+endif
 
-#    `$(LIBPNG_CONFIG) --libs`
+AM_LDFLAGS = \
+	$(PLATFORM_LDFLAGS) \
+    `$(FREETYPE_CONFIG) --libtool` \
+    `$(LIBPNG_CONFIG) --libs`
 
 LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 

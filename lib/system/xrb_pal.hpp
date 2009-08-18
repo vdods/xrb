@@ -28,6 +28,8 @@ public:
 
     enum Status { SUCCESS = 0, FAILURE = 1 };
 
+    virtual ~Pal () { }
+
     // for pre-video-mode setup (e.g. starting the millisecond timer).
     virtual Status Initialize () = 0;
     // for post-video-mode shutdown.
