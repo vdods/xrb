@@ -30,6 +30,11 @@ namespace Xrb
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
+Font *Font::Create (std::string const &font_face_filename, ScreenCoord pixel_height)
+{
+    return Singleton::Pal().LoadFont(font_face_filename.c_str(), pixel_height);
+}
+
 ScreenCoordRect Font::StringRect (char const *const string) const
 {
     ASSERT1(string != NULL);
@@ -387,155 +392,141 @@ int AsciiFont::GlyphSpecification::SortByHeightFirst (
 // AsciiFont
 // ///////////////////////////////////////////////////////////////////////////
 
-Font *AsciiFont::Create (
+AsciiFont *AsciiFont::CreateFromCache (
     std::string const &font_face_filename,
-    ScreenCoord const pixel_height)
+    ScreenCoord pixel_height)
 {
     AsciiFont *retval = NULL;
 
-    // check for cached font metadata and bitmap.
     std::string font_metadata_filename(FORMAT(font_face_filename << '.' << pixel_height << ".data"));
     std::string font_bitmap_filename(FORMAT(font_face_filename << '.' << pixel_height << ".png"));
 
-    bool font_was_cached = false;
-    do // this one-time-loop is only so we can use the break statement
+    // check for the appropriate font bitmap file
+    Texture *texture = Singleton::Pal().LoadImage(font_bitmap_filename.c_str());
+    // if the file doesn't exist or can't be opened or loaded, get out of here
+    if (texture == NULL)
+        return retval;
+
+    // check for the appropriate font metadata file
+    BinaryFileSerializer serializer;
+    serializer.Open(font_metadata_filename.c_str(), "rb");
+    // if the file doesn't exist or can't be opened, get out of here
+    if (!serializer.IsOpen())
     {
-        // check for the appropriate font bitmap file
-        Texture *texture = Singleton::Pal().LoadImage(font_bitmap_filename.c_str());
-        // if the file doesn't exist or can't be opened or loaded, get out of here
-        if (texture == NULL)
-            break;
+        Delete(texture);
+        return retval;
+    }
 
-        // check for the appropriate font metadata file
-        BinaryFileSerializer serializer;
-        serializer.Open(font_metadata_filename.c_str(), "rb");
-        // if the file doesn't exist or can't be opened, get out of here
-        if (!serializer.IsOpen())
-        {
-            DeleteAndNullify(texture);
-            break;
-        }
+    // now try to read the font metadata
+    retval = new AsciiFont(font_face_filename, pixel_height);
 
-        // now try to read the font metadata
-        retval = new AsciiFont(font_face_filename, pixel_height);
+    std::string metadata_font_face_filename(serializer.ReadStdString());
+    ScreenCoord metadata_pixel_height(serializer.ReadScreenCoord());
 
-        std::string metadata_font_face_filename(serializer.ReadStdString());
-        ScreenCoord metadata_pixel_height(serializer.ReadScreenCoord());
-
-        // check that the metadata actually matches the requested font face and pixel height
-        if (metadata_font_face_filename != font_face_filename || metadata_pixel_height != pixel_height)
-        {
-            fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font data mismatch -- delete the associated cache files\n", font_face_filename.c_str(), pixel_height);
-            serializer.Close();
-            DeleteAndNullify(texture);
-            DeleteAndNullify(retval);
-            break;
-        }
-
-        retval->m_has_kerning = serializer.ReadBool();
-        retval->m_baseline_height = serializer.ReadScreenCoord();
-        retval->m_error_glyph = serializer.ReadUint32();
-        Uint32 rendered_glyph_count(serializer.ReadUint32());
-        ASSERT0(rendered_glyph_count == RENDERED_GLYPH_COUNT && "stale font metadata");
-        for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-            retval->m_glyph_specification[i].Read(serializer);
-        for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-            for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-                retval->m_kern_pair[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadScreenCoord();
-
-        ASSERT1(serializer.IsAtEnd() && "font metadata file is too long");
+    // check that the metadata actually matches the requested font face and pixel height
+    if (metadata_font_face_filename != font_face_filename || metadata_pixel_height != pixel_height)
+    {
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font data mismatch -- delete the associated cache files\n", font_face_filename.c_str(), pixel_height);
         serializer.Close();
-
-        retval->m_gl_texture = GLTexture::Create(texture);
-        ASSERT1(retval->m_gl_texture != NULL);
-        DeleteAndNullify(texture);
-
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_filename.c_str(), pixel_height);
-
-        // we successfully read the cached font
-        font_was_cached = true;
+        Delete(texture);
+        DeleteAndNullify(retval);
+        return retval;
     }
-    while (false);
 
-    if (!font_was_cached)
-    {
-        Resource<FontFace> font_face = Singleton::ResourceLibrary().LoadFilename<FontFace>(FontFace::Create, font_face_filename);
+    retval->m_has_kerning = serializer.ReadBool();
+    retval->m_baseline_height = serializer.ReadScreenCoord();
+    Uint32 rendered_glyph_count(serializer.ReadUint32());
+    ASSERT0(rendered_glyph_count == RENDERED_GLYPH_COUNT && "stale font metadata");
+    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+        retval->m_glyph_specification[i].Read(serializer);
+    for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
+        for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
+            retval->m_kern_pair[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadScreenCoord();
 
-        if (!font_face.IsValid())
-            return retval;
+    ASSERT1(serializer.IsAtEnd() && "font metadata file is too long");
+    serializer.Close();
 
-        FT_FaceRec_ *ft_face = font_face->FTFace();
-        FT_Error error;
+    retval->m_gl_texture = GLTexture::Create(texture);
+    ASSERT1(retval->m_gl_texture != NULL);
 
-        ASSERT1(ft_face != NULL);
-        error = FT_Set_Pixel_Sizes(ft_face, 0, pixel_height);
-        if (error != 0)
-            return retval;
+    fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_filename.c_str(), pixel_height);
 
-        retval = new AsciiFont(font_face_filename, pixel_height);
-        retval->m_has_kerning = FT_HAS_KERNING(ft_face) != 0;
-        // retval->m_baseline_height is set in PopulateGlyphSpecification
-        retval->PopulateGlyphSpecification(font_face);
-        retval->CacheKernPairs(font_face);
-        // retval->m_error_glyph is set in the constructor
+    Delete(texture);
+    return retval;
+}
 
-        // make a list of pointers to each glyph specification
-        GlyphSpecification *sorted_glyph_specification[RENDERED_GLYPH_COUNT];
-        for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-            sorted_glyph_specification[i] = &retval->m_glyph_specification[i];
+AsciiFont *AsciiFont::Create (
+    std::string const &font_face_filename,
+    ScreenCoord pixel_height,
+    bool has_kerning,
+    ScreenCoord baseline_height,
+    GlyphSpecification sorted_glyph_specification[RENDERED_GLYPH_COUNT],
+    ScreenCoord kern_pair[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
+    Texture *font_texture)
+{
+    ASSERT1(font_texture != NULL);
 
-        // sort them by width then height
-        qsort(
-            sorted_glyph_specification,
-            RENDERED_GLYPH_COUNT,
-            sizeof(GlyphSpecification const *),
-            GlyphSpecification::SortByWidthFirst);
+    AsciiFont *retval = new AsciiFont(font_face_filename, pixel_height);
 
-        // find the smallest texture size that will fit all the glyphs
-        ScreenCoordVector2 smallest_fitting_texture_size =
-            retval->FindSmallestFittingTextureSize(sorted_glyph_specification);
-        ASSERT1(smallest_fitting_texture_size != ScreenCoordVector2::ms_zero);
-
-        // write the font metadata out to disk
-        {
-            BinaryFileSerializer serializer;
-            serializer.Open(font_metadata_filename.c_str(), "wb");
-            if (serializer.IsOpen())
-            {
-                serializer.WriteStdString(retval->FontFaceFilename());
-                serializer.WriteScreenCoord(retval->PixelHeight());
-                serializer.WriteBool(retval->m_has_kerning);
-                serializer.WriteScreenCoord(retval->m_baseline_height);
-                serializer.WriteUint32(retval->m_error_glyph);
-                serializer.WriteUint32(RENDERED_GLYPH_COUNT);
-                for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-                    retval->m_glyph_specification[i].Write(serializer);
-                for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-                    for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-                        serializer.WriteScreenCoord(retval->m_kern_pair[left*RENDERED_GLYPH_COUNT + right]);
-
-                serializer.Close();
-
-                fprintf(stderr, "AsciiFont::Create(\"%s\", %d); cached font data\n", font_face_filename.c_str(), pixel_height);
-            }
-            else
-                fprintf(stderr, "AsciiFont::Create(\"%s\", %d); error caching font data\n", font_face_filename.c_str(), pixel_height);
-        }
-
-        // generate the texture using the calculated size, and write the font bitmap out to disk
-        {
-            Texture *texture = retval->GenerateTexture(font_face, smallest_fitting_texture_size);
-
-            if (Singleton::Pal().SaveImage(font_bitmap_filename.c_str(), *texture) != Pal::SUCCESS)
-                fprintf(stderr, "AsciiFont::Create(\"%s\", %d); error caching font bitmap file\n", font_face_filename.c_str(), pixel_height);
-
-            retval->m_gl_texture = GLTexture::Create(texture);
-            ASSERT1(retval->m_gl_texture != NULL);
-            DeleteAndNullify(texture);
-        }
-    }
+    retval->m_has_kerning = has_kerning;
+    retval->m_baseline_height = baseline_height;
+    memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
+    memcpy(retval->m_kern_pair, kern_pair, sizeof(retval->m_kern_pair));
+    retval->m_gl_texture = GLTexture::Create(font_texture);
+    ASSERT1(retval->m_gl_texture != NULL);
 
     return retval;
+}
+
+bool AsciiFont::CacheToDisk (Texture *font_texture) const
+{
+    ASSERT1(font_texture != NULL);
+
+    std::string font_metadata_filename(FORMAT(FontFaceFilename() << '.' << PixelHeight() << ".data"));
+    std::string font_bitmap_filename(FORMAT(FontFaceFilename() << '.' << PixelHeight() << ".png"));
+
+    // write the font metadata out to disk
+    {
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFaceFilename().c_str(), PixelHeight());
+
+        BinaryFileSerializer serializer;
+        serializer.Open(font_metadata_filename.c_str(), "wb");
+        if (serializer.IsOpen())
+        {
+            serializer.WriteStdString(FontFaceFilename());
+            serializer.WriteScreenCoord(PixelHeight());
+            serializer.WriteBool(m_has_kerning);
+            serializer.WriteScreenCoord(m_baseline_height);
+            serializer.WriteUint32(RENDERED_GLYPH_COUNT);
+            for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+                m_glyph_specification[i].Write(serializer);
+            for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
+                for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
+                    serializer.WriteScreenCoord(m_kern_pair[left*RENDERED_GLYPH_COUNT + right]);
+
+            serializer.Close();
+
+            fprintf(stderr, "cached font data\n");
+
+            // continue on to write the font bitmap
+        }
+        else
+        {
+            fprintf(stderr, "error caching font data\n");
+            return false; // failure
+        }
+    }
+
+    // write the font bitmap out to disk
+    {
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFaceFilename().c_str(), PixelHeight());
+        bool success = Singleton::Pal().SaveImage(font_bitmap_filename.c_str(), *font_texture) == Pal::SUCCESS;
+        if (success)
+            fprintf(stderr, "cached font bitmap\n");
+        else
+            fprintf(stderr, "error caching font bitmap file\n");
+        return success;
+    }
 }
 
 void AsciiFont::MoveThroughGlyph (
@@ -800,233 +791,6 @@ ScreenCoord AsciiFont::KernPair (char left, char right) const
     ASSERT1(glyph_index_left < RENDERED_GLYPH_COUNT);
     ASSERT1(glyph_index_right < RENDERED_GLYPH_COUNT);
     return m_kern_pair[glyph_index_left*RENDERED_GLYPH_COUNT + glyph_index_right];
-}
-
-void AsciiFont::PopulateGlyphSpecification (Resource<FontFace> const &font_face)
-{
-    FT_Error error;
-    FT_FaceRec_ *ft_face = font_face->FTFace();
-    ScreenCoord tallest_glyph_height = -1;
-    ScreenCoord tallest_glyph_bearing_y = -1;
-
-    for (char ascii = RENDERED_GLYPH_LOWEST;
-         ascii != RENDERED_GLYPH_HIGHEST+1;
-         ++ascii)
-    {
-        error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, ascii), FT_LOAD_DEFAULT);
-        ASSERT1(error == 0);
-
-        GlyphSpecification &glyph = m_glyph_specification[GlyphIndex(ascii)];
-
-        glyph.m_ascii = ascii;
-        glyph.m_size.SetComponents(
-            ft_face->glyph->metrics.width >> 6,
-            ft_face->glyph->metrics.height >> 6);
-        glyph.m_bearing_26_6.SetComponents(
-            ft_face->glyph->metrics.horiBearingX,
-            ft_face->glyph->metrics.horiBearingY);
-        glyph.m_advance_26_6 = ft_face->glyph->metrics.horiAdvance;
-
-        if (tallest_glyph_height < glyph.m_size[Dim::Y])
-        {
-            tallest_glyph_height = glyph.m_size[Dim::Y];
-            tallest_glyph_bearing_y = glyph.m_bearing_26_6[Dim::Y]>>6;
-        }
-    }
-
-    m_baseline_height =
-        (PixelHeight() - tallest_glyph_height) / 2 +
-        (tallest_glyph_height - tallest_glyph_bearing_y);
-}
-
-void AsciiFont::CacheKernPairs (Resource<FontFace> const &font_face)
-{
-    ASSERT1(font_face.IsValid());
-
-    if (!m_has_kerning)
-    {
-        memset(m_kern_pair, 0, sizeof(m_kern_pair));
-        return;
-    }
-
-    FT_Error error = FT_Set_Pixel_Sizes(font_face->FTFace(), 0, PixelHeight());
-    if (error != 0)
-    {
-        memset(m_kern_pair, 0, sizeof(m_kern_pair));
-        return;
-    }
-
-    FT_Vector delta;
-    for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-    {
-        for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-        {
-            FT_Get_Kerning(
-                font_face->FTFace(),
-                FT_Get_Char_Index(font_face->FTFace(), AsciiValue(left)),
-                FT_Get_Char_Index(font_face->FTFace(), AsciiValue(right)),
-                FT_KERNING_UNFITTED,
-                &delta);
-            m_kern_pair[left*RENDERED_GLYPH_COUNT + right] = delta.x;
-        }
-    }
-}
-/*
-ScreenCoord AsciiFont::KerningPixelAdvance_26_6 (char const left, char const right) const
-{
-    if (!m_has_kerning)
-        return 0;
-
-    ASSERT1(m_font_face.IsValid());
-
-    // TODO: somehow cache the kern pairs, so we don't have to call
-    // FT_Set_Pixel_Sizes and FT_Get_Kerning here (thus making this
-    // method non-reentrant)
-
-    FT_Error error = FT_Set_Pixel_Sizes(m_font_face->FTFace(), 0, PixelHeight());
-    if (error != 0)
-        return 0;
-
-    FT_Vector delta;
-    FT_Get_Kerning(
-        m_font_face->FTFace(),
-        FT_Get_Char_Index(m_font_face->FTFace(), left),
-        FT_Get_Char_Index(m_font_face->FTFace(), right),
-        FT_KERNING_UNFITTED,
-        &delta);
-
-    // delta is in 26.6 fixed point format
-    return delta.x;
-}
-*/
-ScreenCoordVector2 AsciiFont::FindSmallestFittingTextureSize (
-    GlyphSpecification *const *const sorted_glyph_specification)
-{
-    GLint max_texture_size;
-    // TODO: replace with an accessor to the current video options
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
-
-    Dim::Component increase = Dim::Y;
-    ScreenCoordVector2 texture_size(32, 32);
-    while(texture_size[Dim::X] <= static_cast<ScreenCoord>(max_texture_size) &&
-          texture_size[Dim::Y] <= static_cast<ScreenCoord>(max_texture_size))
-    {
-        Uint32 used_area = UsedTextureArea(texture_size, sorted_glyph_specification);
-        DEBUG1_CODE(Uint32 total_area = texture_size[Dim::X] * texture_size[Dim::Y]);
-        ASSERT1(used_area <= total_area);
-        if (used_area > 0)
-            return texture_size;
-
-        texture_size[increase] <<= 1;
-        increase = (increase == Dim::X) ? Dim::Y : Dim::X;
-    }
-    // TODO: proper handling -- scale the face down and try again
-    ASSERT0(false && "No texture big enough to hold all glyphs");
-    return ScreenCoordVector2::ms_zero;
-}
-
-Uint32 AsciiFont::UsedTextureArea (
-    ScreenCoordVector2 const &texture_size,
-    GlyphSpecification *const *const sorted_glyph_specification)
-{
-    ASSERT1(texture_size[Dim::X] > 0);
-    ASSERT1(texture_size[Dim::Y] > 0);
-    // the left hand size of this cryptic expression evaluates to 0
-    // for zero or any non-negative integer power of 2 (e.g. 0, 1, 2,
-    // 4, 8, 16, 32, 64, etc).
-    ASSERT1((texture_size[Dim::X] & (texture_size[Dim::X] - 1)) == 0);
-    ASSERT1((texture_size[Dim::Y] & (texture_size[Dim::Y] - 1)) == 0);
-    ASSERT1(sorted_glyph_specification != NULL);
-
-    ScreenCoord packed_width = 0;
-    ScreenCoordVector2 current_packing_area = ScreenCoordVector2::ms_zero;
-    Uint32 index = 0;
-    Uint32 total_area = 0;
-
-    while (packed_width + current_packing_area[Dim::X] <= texture_size[Dim::X] &&
-           index < RENDERED_GLYPH_COUNT)
-    {
-        GlyphSpecification *glyph = sorted_glyph_specification[index];
-        ASSERT1(glyph != NULL);
-
-        // return failure if this single glyph doesn't even fit
-        // inside the entire texture.
-        if (glyph->m_size[Dim::X] > texture_size[Dim::X] ||
-            glyph->m_size[Dim::Y] > texture_size[Dim::Y])
-            return 0;
-
-        // if the glyph would stick off the bottom of this column,
-        // go to the top of the next column.
-        if (current_packing_area[Dim::Y] + glyph->m_size[Dim::Y] > texture_size[Dim::Y])
-        {
-            packed_width += current_packing_area[Dim::X];
-            current_packing_area[Dim::Y] = 0;
-        }
-        // otherwise stick the glyph at the bottom of the current column.
-        else
-        {
-            total_area += glyph->m_size[Dim::X] * glyph->m_size[Dim::Y];
-            glyph->m_texture_coordinates.SetComponents(
-                packed_width,
-                current_packing_area[Dim::Y]);
-            if (current_packing_area[Dim::X] < glyph->m_size[Dim::X])
-                current_packing_area[Dim::X] = glyph->m_size[Dim::X];
-            current_packing_area[Dim::Y] += glyph->m_size[Dim::Y];
-            ++index;
-        }
-        ASSERT1(current_packing_area[Dim::Y] <= texture_size[Dim::Y]);
-    }
-
-    // return with success iff all the glyphs were stored within
-    // the bounds of the texture.
-    if (packed_width <= texture_size[Dim::X] && index == RENDERED_GLYPH_COUNT)
-    {
-        ASSERT1(total_area > 0);
-        return total_area;
-    }
-    else
-        return 0;
-}
-
-Texture *AsciiFont::GenerateTexture (Resource<FontFace> const &font_face, ScreenCoordVector2 const &texture_size)
-{
-    ASSERT1(font_face.IsValid());
-
-    Texture *texture = Texture::Create(texture_size, true);
-
-    FT_Error error;
-    FT_FaceRec_ *ft_face = font_face->FTFace();
-    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-    {
-        GlyphSpecification &glyph = m_glyph_specification[i];
-
-        error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, glyph.m_ascii), FT_LOAD_RENDER);
-        ASSERT1(error == 0);
-        ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP);
-
-        // copy the bitmap data over
-        // TODO: real method which does proper pitch detection
-        ASSERT1(ft_face->glyph->bitmap.pitch == glyph.m_size[Dim::X]);
-        Uint8 const *source_pixel_data = ft_face->glyph->bitmap.buffer;
-        for (Sint32 y = 0; y < glyph.m_size[Dim::Y]; ++y)
-        {
-            Uint8 *dest_pixel_data =
-                texture->Data() +
-                (glyph.m_texture_coordinates[Dim::Y] + y) * texture_size[Dim::X] * 4 +
-                glyph.m_texture_coordinates[Dim::X] * 4;
-
-            for (Sint32 x = 0; x < glyph.m_size[Dim::X]; ++x)
-            {
-                // assumed to be 32 bit RGBA for now
-                *(dest_pixel_data++) = 0xFF;
-                *(dest_pixel_data++) = 0xFF;
-                *(dest_pixel_data++) = 0xFF;
-                *(dest_pixel_data++) = *(source_pixel_data++);
-            }
-        }
-    }
-
-    return texture;
 }
 
 AsciiFont::TokenClass AsciiFont::GetTokenClass (char const c)

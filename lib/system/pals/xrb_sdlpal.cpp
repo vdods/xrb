@@ -13,7 +13,10 @@
 #if XRB_PLATFORM == XRB_PLATFORM_SDL
 
 #include "png.h"
+#include "ft2build.h"  // the freetype stuff has to be included after png.h,
+#include FT_FREETYPE_H // otherwise a very strange compile error occurs.
 #include "xrb_event.hpp"
+#include "xrb_gl.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
@@ -611,7 +614,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
 
 Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &texture)
 {
-    fprintf(stderr, "SDLPal::SaveImage(\"%s\");\n", image_path);
+//     fprintf(stderr, "SDLPal::SaveImage(\"%s\");\n", image_path);
 
     ASSERT1(image_path != NULL);
 
@@ -681,6 +684,280 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
     png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
     return SUCCESS;
+}
+
+// font-loading helper functions
+namespace {
+
+Xrb::Uint32 UsedTextureArea (
+    Xrb::ScreenCoordVector2 const &texture_size,
+    Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
+{
+    ASSERT1(texture_size[Xrb::Dim::X] > 0);
+    ASSERT1(texture_size[Xrb::Dim::Y] > 0);
+    // the left hand size of this cryptic expression evaluates to 0
+    // for zero or any non-negative integer power of 2 (e.g. 0, 1, 2,
+    // 4, 8, 16, 32, 64, etc).
+    ASSERT1((texture_size[Xrb::Dim::X] & (texture_size[Xrb::Dim::X] - 1)) == 0);
+    ASSERT1((texture_size[Xrb::Dim::Y] & (texture_size[Xrb::Dim::Y] - 1)) == 0);
+    ASSERT1(sorted_glyph_specification != NULL);
+
+    Xrb::ScreenCoord packed_width = 0;
+    Xrb::ScreenCoordVector2 current_packing_area = Xrb::ScreenCoordVector2::ms_zero;
+    Xrb::Uint32 index = 0;
+    Xrb::Uint32 total_area = 0;
+
+    while (packed_width + current_packing_area[Xrb::Dim::X] <= texture_size[Xrb::Dim::X] &&
+           index < Xrb::AsciiFont::RENDERED_GLYPH_COUNT)
+    {
+        Xrb::AsciiFont::GlyphSpecification *glyph = sorted_glyph_specification[index];
+        ASSERT1(glyph != NULL);
+
+        // return failure if this single glyph doesn't even fit
+        // inside the entire texture.
+        if (glyph->m_size[Xrb::Dim::X] > texture_size[Xrb::Dim::X] ||
+            glyph->m_size[Xrb::Dim::Y] > texture_size[Xrb::Dim::Y])
+            return 0;
+
+        // if the glyph would stick off the bottom of this column,
+        // go to the top of the next column.
+        if (current_packing_area[Xrb::Dim::Y] + glyph->m_size[Xrb::Dim::Y] > texture_size[Xrb::Dim::Y])
+        {
+            packed_width += current_packing_area[Xrb::Dim::X];
+            current_packing_area[Xrb::Dim::Y] = 0;
+        }
+        // otherwise stick the glyph at the bottom of the current column.
+        else
+        {
+            total_area += glyph->m_size[Xrb::Dim::X] * glyph->m_size[Xrb::Dim::Y];
+            glyph->m_texture_coordinates.SetComponents(
+                packed_width,
+                current_packing_area[Xrb::Dim::Y]);
+            if (current_packing_area[Xrb::Dim::X] < glyph->m_size[Xrb::Dim::X])
+                current_packing_area[Xrb::Dim::X] = glyph->m_size[Xrb::Dim::X];
+            current_packing_area[Xrb::Dim::Y] += glyph->m_size[Xrb::Dim::Y];
+            ++index;
+        }
+        ASSERT1(current_packing_area[Xrb::Dim::Y] <= texture_size[Xrb::Dim::Y]);
+    }
+
+    // return with success iff all the glyphs were stored within
+    // the bounds of the texture.
+    if (packed_width <= texture_size[Xrb::Dim::X] && index == Xrb::AsciiFont::RENDERED_GLYPH_COUNT)
+    {
+        ASSERT1(total_area > 0);
+        return total_area;
+    }
+    else
+        return 0;
+}
+
+Xrb::ScreenCoordVector2 FindSmallestFittingTextureSize (
+    Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
+{
+    GLint max_texture_size;
+    // TODO: replace with an accessor to the current video options
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_texture_size);
+
+    Xrb::Dim::Component increase = Xrb::Dim::Y;
+    Xrb::ScreenCoordVector2 texture_size(32, 32);
+    while(texture_size[Xrb::Dim::X] <= static_cast<Xrb::ScreenCoord>(max_texture_size) &&
+          texture_size[Xrb::Dim::Y] <= static_cast<Xrb::ScreenCoord>(max_texture_size))
+    {
+        Xrb::Uint32 used_area = UsedTextureArea(texture_size, sorted_glyph_specification);
+        DEBUG1_CODE(Xrb::Uint32 total_area = texture_size[Xrb::Dim::X] * texture_size[Xrb::Dim::Y]);
+        ASSERT1(used_area <= total_area);
+        if (used_area > 0)
+            return texture_size;
+
+        texture_size[increase] <<= 1;
+        increase = (increase == Xrb::Dim::X) ? Xrb::Dim::Y : Xrb::Dim::X;
+    }
+    // TODO: proper handling -- scale the face down and try again
+    ASSERT0(false && "No texture big enough to hold all glyphs");
+    return Xrb::ScreenCoordVector2::ms_zero;
+}
+
+Xrb::Texture *GenerateTexture (
+    Xrb::FontFace const &font_face,
+    Xrb::ScreenCoordVector2 const &texture_size,
+    Xrb::AsciiFont::GlyphSpecification glyph_specification[Xrb::AsciiFont::RENDERED_GLYPH_COUNT])
+{
+    Xrb::Texture *texture = Xrb::Texture::Create(texture_size, true);
+
+    FT_Error error;
+    FT_FaceRec_ *ft_face = font_face.FTFace();
+    for (Xrb::Uint32 i = 0; i < Xrb::AsciiFont::RENDERED_GLYPH_COUNT; ++i)
+    {
+        Xrb::AsciiFont::GlyphSpecification &glyph = glyph_specification[i];
+
+        error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, glyph.m_ascii), FT_LOAD_RENDER);
+        ASSERT1(error == 0);
+        ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP);
+
+        // copy the bitmap data over
+        // TODO: real method which does proper pitch detection
+        ASSERT1(ft_face->glyph->bitmap.pitch == glyph.m_size[Xrb::Dim::X]);
+        Xrb::Uint8 const *source_pixel_data = ft_face->glyph->bitmap.buffer;
+        for (Xrb::Sint32 y = 0; y < glyph.m_size[Xrb::Dim::Y]; ++y)
+        {
+            Xrb::Uint8 *dest_pixel_data =
+                texture->Data() +
+                (glyph.m_texture_coordinates[Xrb::Dim::Y] + y) * texture_size[Xrb::Dim::X] * 4 +
+                 glyph.m_texture_coordinates[Xrb::Dim::X] * 4;
+
+            for (Xrb::Sint32 x = 0; x < glyph.m_size[Xrb::Dim::X]; ++x)
+            {
+                // assumed to be 32 bit RGBA for now
+                *(dest_pixel_data++) = 0xFF;
+                *(dest_pixel_data++) = 0xFF;
+                *(dest_pixel_data++) = 0xFF;
+                *(dest_pixel_data++) = *(source_pixel_data++);
+            }
+        }
+    }
+
+    return texture;
+}
+
+} // end of unnamed namespace
+
+Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_height)
+{
+    Xrb::AsciiFont *retval = NULL;
+
+    // first check if this font and size are cached on disk
+    retval = Xrb::AsciiFont::CreateFromCache(font_path, pixel_height);
+    if (retval != NULL)
+        return retval;
+
+    // if the font wasn't cached, then we have to create it using the freetype lib.
+
+    Xrb::FontFace *font_face = Xrb::FontFace::Create(font_path);
+    if (font_face == NULL)
+        return retval;
+
+    FT_FaceRec_ *ft_face = font_face->FTFace();
+    ASSERT1(ft_face != NULL);
+    {
+        FT_Error error = FT_Set_Pixel_Sizes(ft_face, 0, pixel_height);
+        if (error != 0)
+        {
+            Xrb::Delete(font_face);
+            return retval;
+        }
+    }
+
+    bool has_kerning;
+    Xrb::ScreenCoord baseline_height;
+    Xrb::AsciiFont::GlyphSpecification glyph_specification[Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
+    Xrb::ScreenCoord kern_pair[Xrb::AsciiFont::RENDERED_GLYPH_COUNT*Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
+
+    has_kerning = FT_HAS_KERNING(ft_face) != 0;
+
+    // populate the glyph specification
+    {
+        FT_Error error;
+        FT_FaceRec_ *ft_face = font_face->FTFace();
+        Xrb::ScreenCoord tallest_glyph_height = -1;
+        Xrb::ScreenCoord tallest_glyph_bearing_y = -1;
+
+        for (char ascii = Xrb::AsciiFont::RENDERED_GLYPH_LOWEST;
+             ascii != Xrb::AsciiFont::RENDERED_GLYPH_HIGHEST+1;
+             ++ascii)
+        {
+            error = FT_Load_Glyph(ft_face, FT_Get_Char_Index(ft_face, ascii), FT_LOAD_DEFAULT);
+            ASSERT1(error == 0);
+
+            Xrb::AsciiFont::GlyphSpecification &glyph = glyph_specification[Xrb::AsciiFont::GlyphIndex(ascii)];
+
+            glyph.m_ascii = ascii;
+            glyph.m_size.SetComponents(
+                ft_face->glyph->metrics.width >> 6,
+                ft_face->glyph->metrics.height >> 6);
+            glyph.m_bearing_26_6.SetComponents(
+                ft_face->glyph->metrics.horiBearingX,
+                ft_face->glyph->metrics.horiBearingY);
+            glyph.m_advance_26_6 = ft_face->glyph->metrics.horiAdvance;
+
+            if (tallest_glyph_height < glyph.m_size[Xrb::Dim::Y])
+            {
+                tallest_glyph_height = glyph.m_size[Xrb::Dim::Y];
+                tallest_glyph_bearing_y = glyph.m_bearing_26_6[Xrb::Dim::Y]>>6;
+            }
+        }
+
+        baseline_height =
+            (pixel_height - tallest_glyph_height) / 2 +
+            (tallest_glyph_height - tallest_glyph_bearing_y);
+    }
+
+    // store the kern pairs
+    {
+        FT_Error error;
+        // if there is no kerning, or there is an error reading the kern data
+        // just set all kern pairs to zero.
+        if (!has_kerning || (error = FT_Set_Pixel_Sizes(font_face->FTFace(), 0, pixel_height)) != 0)
+        {
+            memset(kern_pair, 0, sizeof(kern_pair));
+        }
+        else // there is kerning, so store the kern pairs
+        {
+            FT_Vector delta;
+            for (Xrb::Uint32 left = 0; left < Xrb::AsciiFont::RENDERED_GLYPH_COUNT; ++left)
+            {
+                for (Xrb::Uint32 right = 0; right < Xrb::AsciiFont::RENDERED_GLYPH_COUNT; ++right)
+                {
+                    FT_Get_Kerning(
+                        font_face->FTFace(),
+                        FT_Get_Char_Index(font_face->FTFace(), Xrb::AsciiFont::AsciiValue(left)),
+                        FT_Get_Char_Index(font_face->FTFace(), Xrb::AsciiFont::AsciiValue(right)),
+                        FT_KERNING_UNFITTED,
+                        &delta);
+                    kern_pair[left*Xrb::AsciiFont::RENDERED_GLYPH_COUNT + right] = delta.x;
+                }
+            }
+        }
+    }
+
+    // make a list of pointers to each glyph specification
+    Xrb::AsciiFont::GlyphSpecification *sorted_glyph_specification[Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
+    for (Xrb::Uint32 i = 0; i < Xrb::AsciiFont::RENDERED_GLYPH_COUNT; ++i)
+        sorted_glyph_specification[i] = &glyph_specification[i];
+
+    // sort them by width then height
+    qsort(
+        sorted_glyph_specification,
+        Xrb::AsciiFont::RENDERED_GLYPH_COUNT,
+        sizeof(Xrb::AsciiFont::GlyphSpecification const *),
+        Xrb::AsciiFont::GlyphSpecification::SortByWidthFirst);
+
+    // find the smallest texture size that will fit all the glyphs
+    Xrb::ScreenCoordVector2 smallest_fitting_texture_size =
+        FindSmallestFittingTextureSize(sorted_glyph_specification);
+    ASSERT1(smallest_fitting_texture_size != Xrb::ScreenCoordVector2::ms_zero);
+
+    // generate the font texture using the calculated size
+    Xrb::Texture *font_texture = GenerateTexture(*font_face, smallest_fitting_texture_size, glyph_specification);
+
+    Xrb::Delete(font_face);
+
+    // create the actual Font instance
+    retval = Xrb::AsciiFont::Create(
+        font_path,
+        pixel_height,
+        has_kerning,
+        baseline_height,
+        glyph_specification,
+        kern_pair,
+        font_texture);
+
+    // cache the font to disk and delete the intermediate Texture
+    retval->CacheToDisk(font_texture);
+    Xrb::Delete(font_texture);
+
+    // finally return the Font we fought so hard to create.
+    return retval;
 }
 
 #endif // XRB_PLATFORM == XRB_PLATFORM_SDL

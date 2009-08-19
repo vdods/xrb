@@ -46,6 +46,8 @@ public:
 
     virtual Xrb::Texture *LoadImage (char const *image_path);
     virtual Status SaveImage (char const *image_path, Xrb::Texture const &texture);
+
+    virtual Xrb::Font *LoadFont (char const *font_path, Xrb::ScreenCoord pixel_height);
 }; // end of class SDLPal
 
 #endif // XRB_PLATFORM == XRB_PLATFORM_SDL

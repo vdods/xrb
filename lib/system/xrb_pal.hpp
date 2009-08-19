@@ -13,10 +13,13 @@
 
 #include "xrb.hpp"
 
+#include "xrb_screencoord.hpp"
+
 namespace Xrb
 {
 
 class Event;
+class Font;
 class Screen;
 class Texture;
 
@@ -63,6 +66,9 @@ public:
     virtual Texture *LoadImage (char const *image_path) = 0;
     // return value should indicate status
     virtual Status SaveImage (char const *image_path, Texture const &texture) = 0;
+
+    // should return NULL if the load failed
+    virtual Font *LoadFont (char const *font_path, ScreenCoord pixel_height) = 0;
 }; // end of class Pal
 
 } // end of namespace Xrb
