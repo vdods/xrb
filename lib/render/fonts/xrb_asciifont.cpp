@@ -409,7 +409,7 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // pop the texture matrix
-    ASSERT1(GL::MatrixMode() == GL_TEXTURE);
+    ASSERT1(GL::Integer(GL_MATRIX_MODE) == GL_TEXTURE);
     glPopMatrix();
 
     // pop the modelview matrix

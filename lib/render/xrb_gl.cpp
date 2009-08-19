@@ -65,8 +65,8 @@ void GL::Initialize ()
 
     // stuff related to texture byte order and alignment.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_PACK_LSB_FIRST, 0);
-    glPixelStorei(GL_UNPACK_LSB_FIRST, 0);
+//     glPixelStorei(GL_PACK_LSB_FIRST, 0);     // the opengl docs say the initial value is 0 anyway
+//     glPixelStorei(GL_UNPACK_LSB_FIRST, 0);   // the opengl docs say the initial value is 0 anyway
 
     // initialize the singleton helper texture(s)
     {
@@ -170,46 +170,29 @@ void GL::Initialize ()
     glActiveTexture(GL_TEXTURE0);
 }
 
-GLint GL::MatrixMode ()
+bool GL::Boolean (GLenum name)
 {
-    GLint matrix_mode;
-    glGetIntegerv(GL_MATRIX_MODE, &matrix_mode);
-    return matrix_mode;
+    return Integer(name) != 0;
 }
 
-GLint GL::MatrixStackDepth (GLenum const matrix_mode)
+GLint GL::Integer (GLenum name)
 {
-    GLint stack_depth;
-    switch (matrix_mode)
-    {
-        case GL_COLOR:      glGetIntegerv(GL_COLOR_MATRIX_STACK_DEPTH, &stack_depth); break;
-        case GL_MODELVIEW:  glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &stack_depth); break;
-        case GL_PROJECTION: glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &stack_depth); break;
-        case GL_TEXTURE:    glGetIntegerv(GL_TEXTURE_STACK_DEPTH, &stack_depth); break;
-        default: ASSERT0(false && "Invalid matrix mode"); break;
-    }
-    return stack_depth;
-}
+    // this may not be a comprehensive check against all larger-than-4-return-value
+    // integers -- it was based on the openGL 2.1 man page for glGet.
+    ASSERT1(name != GL_COMPRESSED_TEXTURE_FORMATS   && "unsupported name");
+    ASSERT1(name != GL_COLOR_MATRIX                 && "unsupported name");
+    ASSERT1(name != GL_MODELVIEW_MATRIX             && "unsupported name");
+    ASSERT1(name != GL_PROJECTION_MATRIX            && "unsupported name");
+    ASSERT1(name != GL_TEXTURE_MATRIX               && "unsupported name");
+    ASSERT1(name != GL_TRANSPOSE_COLOR_MATRIX       && "unsupported name");
+    ASSERT1(name != GL_TRANSPOSE_MODELVIEW_MATRIX   && "unsupported name");
+    ASSERT1(name != GL_TRANSPOSE_PROJECTION_MATRIX  && "unsupported name");
+    ASSERT1(name != GL_TRANSPOSE_TEXTURE_MATRIX     && "unsupported name");
 
-GLint GL::MaxMatrixStackDepth (GLenum const matrix_mode)
-{
-    GLint max_stack_depth;
-    switch (matrix_mode)
-    {
-        case GL_COLOR:      glGetIntegerv(GL_MAX_COLOR_MATRIX_STACK_DEPTH, &max_stack_depth); break;
-        case GL_MODELVIEW:  glGetIntegerv(GL_MAX_MODELVIEW_STACK_DEPTH, &max_stack_depth); break;
-        case GL_PROJECTION: glGetIntegerv(GL_MAX_PROJECTION_STACK_DEPTH, &max_stack_depth); break;
-        case GL_TEXTURE:    glGetIntegerv(GL_MAX_TEXTURE_STACK_DEPTH, &max_stack_depth); break;
-        default: ASSERT0(false && "Invalid matrix mode"); break;
-    }
-    return max_stack_depth;
-}
-
-bool GL::IsTexture2dOn ()
-{
-    GLboolean is_texture_2d_on;
-    glGetBooleanv(GL_TEXTURE_2D, &is_texture_2d_on);
-    return is_texture_2d_on == GL_TRUE;
+    // the requested integer may fill up to 4 entries
+    GLint integer[4];
+    glGetIntegerv(name, integer);
+    return integer[0];
 }
 
 void GL::SetClipRect (ScreenCoordRect const &clip_rect)

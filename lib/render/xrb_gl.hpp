@@ -43,25 +43,17 @@ namespace GL
       */
     void Initialize ();
 
-    /** @brief Returns the current GL matrix mode.
+    /** Only the first boolean value of a multi-valued property will be returned.
+      * Also, I lied about it being a frontend to glGetBooleanv.  It's actually
+      * a frontend to GL::Integer.
+      * @brief Convenience frontend to glGetBooleanv for getting a single value.
       */
-    GLint MatrixMode ();
-    /** This function is not to be confused with @a MaxMatrixStackDepth
-      * @brief Returns the current matrix stack depth of the given matrix mode.
-      * @param matrix_mode The matrix mode of the desired stack depth.  Valid
-      *                    values are GL_COLOR_MATRIX, GL_MODELVIEW,
-      *                    GL_PROJECTION, and GL_TEXTURE.
+    bool Boolean (GLenum name);
+
+    /** Only the first integer value of a multi-valued property will be returned.
+      * @brief Convenience frontend to glGetIntegerv for getting a single value.
       */
-    GLint MatrixStackDepth (GLenum matrix_mode);
-    /** @brief Returns the maximum matrix stack depth of the given matrix mode.
-      * @param matrix_mode The matrix mode of the desired max stack depth.
-      *                    Valid values are GL_COLOR_MATRIX, GL_MODELVIEW,
-      *                    GL_PROJECTION, and GL_TEXTURE.
-      */
-    GLint MaxMatrixStackDepth (GLenum matrix_mode);
-    /** @brief Returns true if GL_TEXTURE_2D is enabled
-      */
-    bool IsTexture2dOn ();
+    GLint Integer (GLenum name);
 
     /** Widget calls during @ref Xrb::Widget::Draw -- you shouldn't need to
       * call it directly.

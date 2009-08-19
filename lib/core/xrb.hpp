@@ -53,8 +53,11 @@
 #endif
 
 // assume that SDL will be used unless it is an iPhone build.
-#define XRB_PLATFORM_SDL    1
-#define XRB_PLATFORM_IPHONE 2
+enum
+{
+    XRB_PLATFORM_SDL = 0,
+    XRB_PLATFORM_IPHONE
+};
 #if __IPHONEOS__ == 1
     #define XRB_PLATFORM XRB_PLATFORM_IPHONE
 #else

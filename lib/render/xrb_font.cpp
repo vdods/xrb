@@ -10,8 +10,6 @@
 
 #include "xrb_font.hpp"
 
-#include <sstream>
-
 #include "xrb_math.hpp"
 #include "xrb_pal.hpp"
 #include "xrb_rendercontext.hpp"
