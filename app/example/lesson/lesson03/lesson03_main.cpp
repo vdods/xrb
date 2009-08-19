@@ -414,7 +414,7 @@ public:
         // flexible, due to its value-to-text-printf-format and
         // text-to-value-function constructor parameters.
         new Label("Actual Framerate:", sub_layout);
-        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint32, sub_layout);
+        m_actual_framerate_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, sub_layout);
         m_actual_framerate_label->SetAlignment(Dim::X, LEFT);
 
         // ValueEdit<T> is a templatized subclass of LineEdit, analogous to
@@ -423,7 +423,7 @@ public:
         // A validator may also be specified to enforce valid input values.
         new Label("Desired Framerate:", sub_layout);
         ValueEdit<Uint32> *desired_framerate_edit =
-            new ValueEdit<Uint32>("%u", Util::TextToUint32, sub_layout);
+            new ValueEdit<Uint32>("%u", Util::TextToUint<Uint32>, sub_layout);
         desired_framerate_edit->SetValidator(&m_desired_framerate_validator);
         desired_framerate_edit->SetValue(static_cast<Uint32>(Math::Round(g_desired_framerate)));
         // We'll connect this one to this HeatSimulation's SetDesiredFramerate

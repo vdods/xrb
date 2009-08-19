@@ -104,7 +104,7 @@ GameWidget::GameWidget (
         m_world_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (world frame)",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "world frame time label");
         m_world_frame_time_label->SetIsHeightFixedToTextHeight(true);
@@ -113,7 +113,7 @@ GameWidget::GameWidget (
         m_gui_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (gui processing)",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "gui frame time label");
         m_gui_frame_time_label->SetIsHeightFixedToTextHeight(true);
@@ -122,7 +122,7 @@ GameWidget::GameWidget (
         m_render_frame_time_label =
             new ValueLabel<Uint32>(
                 "%u ms (render)",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "render frame time label");
         m_render_frame_time_label->SetIsHeightFixedToTextHeight(true);
@@ -131,7 +131,7 @@ GameWidget::GameWidget (
         m_entity_count_label =
             new ValueLabel<Uint32>(
                 "%u entities",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "entity count label");
         m_entity_count_label->SetIsHeightFixedToTextHeight(true);
@@ -166,7 +166,7 @@ GameWidget::GameWidget (
         m_wave_count_label =
             new ValueLabel<Uint32>(
                 "WAVE %u",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 m_stats_and_inventory_layout,
                 "wave count label");
         m_wave_count_label->SetIsHeightFixedToTextHeight(true);
@@ -183,7 +183,7 @@ GameWidget::GameWidget (
             m_lives_remaining_label =
                 new ValueLabel<Uint32>(
                     "%u",
-                    Util::TextToUint32,
+                    Util::TextToUint<Uint32>,
                     m_stats_and_inventory_layout);
             m_lives_remaining_label->SetIsHeightFixedToTextHeight(true);
             m_lives_remaining_label->SetAlignment(Dim::X, RIGHT);
@@ -205,7 +205,7 @@ GameWidget::GameWidget (
             m_mineral_inventory_label[mineral_index] =
                 new ValueLabel<Uint32>(
                     "%u",
-                    Util::TextToUint32,
+                    Util::TextToUint<Uint32>,
                     m_stats_and_inventory_layout);
             m_mineral_inventory_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
             m_mineral_inventory_label[mineral_index]->SetAlignment(Dim::X, RIGHT);
@@ -235,7 +235,7 @@ GameWidget::GameWidget (
         m_score_label =
             new ValueLabel<Uint32>(
                 "%u",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 widget_stack,
                 "score label");
         m_score_label->SetIsHeightFixedToTextHeight(true);

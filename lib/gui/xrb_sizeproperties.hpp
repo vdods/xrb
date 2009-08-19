@@ -88,7 +88,7 @@ public:
       */
     static inline ScreenCoord DefaultMaxSizeComponent ()
     {
-        return SINT32_UPPER_BOUND;
+        return SCREENCOORD_UPPER_BOUND;
     }
     /** @brief Returns the given size coordinate, adjusted by the constraints
       *        of this SizeProperties object.

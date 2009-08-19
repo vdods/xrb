@@ -46,14 +46,14 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
 
         l = new Label("Horizontal Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
+        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_options_layout);
         m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->PixelHeight());
 
         l = new Label("Vertical Resolution:", video_options_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint32, video_options_layout);
+        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_options_layout);
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->PixelHeight());

@@ -41,11 +41,11 @@ HighScoresWidget::HighScoresWidget (ContainerWidget *const parent)
         m_name_label[row] = new Label("x", scores_layout);
         m_name_label[row]->SetFontHeightRatio(0.025f);
 
-        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint32, scores_layout);
+        m_wave_count_label[row] = new ValueLabel<Uint32>("WAVE %u", Util::TextToUint<Uint32>, scores_layout);
         m_wave_count_label[row]->SetFontHeightRatio(0.025f);
         m_wave_count_label[row]->SetAlignment(Dim::X, RIGHT);
 
-        m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint32, scores_layout);
+        m_points_label[row] = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, scores_layout);
         m_points_label[row]->SetValue(0);
         m_points_label[row]->SetFontHeightRatio(0.025f);
         m_points_label[row]->SetAlignment(Dim::X, RIGHT);

@@ -27,5 +27,9 @@ typedef SimpleTransform2<ScreenCoord> ScreenCoordSimpleTransform2;
 
 } // end of namespace Xrb
 
+// lower/upper bound on ScreenCoord values
+#define SCREENCOORD_LOWER_BOUND SINT32_LOWER_BOUND
+#define SCREENCOORD_UPPER_BOUND SINT32_UPPER_BOUND
+
 #endif // !defined(_XRB_SCREENCOORD_HPP_)
 

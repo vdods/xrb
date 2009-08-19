@@ -118,7 +118,7 @@ InventoryPanel::InventoryPanel (
         m_mineral_cost_label[mineral_index] =
             new ValueLabel<Uint32>(
                 "%u",
-                Util::TextToUint32,
+                Util::TextToUint<Uint32>,
                 price_layout);
         m_mineral_cost_label[mineral_index]->SetIsHeightFixedToTextHeight(true);
         m_mineral_cost_label[mineral_index]->SetAlignment(Dim::X, RIGHT);

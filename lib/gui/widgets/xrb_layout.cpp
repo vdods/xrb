@@ -635,12 +635,7 @@ void Layout::DelegateWidthsToColumns ()
     // number of columns we're actually going to deal with
     Uint32 unhidden_column_count = 0;
     // make an array to point to the column size properties
-#if defined(WIN32)
-    SizeProperties const **column_order =
-        new SizeProperties const *[m_column_count];
-#else
-    SizeProperties const *column_order[m_column_count];
-#endif
+    SizeProperties const **column_order = new SizeProperties const *[m_column_count];
     // fill the array
     for (Uint32 i = 0; i < m_column_count; ++i)
         if (!m_column_is_hidden[i])
@@ -675,9 +670,7 @@ void Layout::DelegateWidthsToColumns ()
         ASSERT1(total_width_left >= 0);
     }
 
-#if defined(WIN32)
     Delete(column_order);
-#endif
 }
 
 void Layout::DelegateHeightsToRows ()
@@ -689,12 +682,7 @@ void Layout::DelegateHeightsToRows ()
     // number of rows we're actually going to deal with
     Uint32 unhidden_row_count = 0;
     // make an array to point to the row size properties
-#if defined(WIN32)
-    SizeProperties const **row_order =
-        new SizeProperties const *[m_row_count];
-#else
-    SizeProperties const *row_order[m_row_count];
-#endif
+    SizeProperties const **row_order = new SizeProperties const *[m_row_count];
     // fill the array
     for (Uint32 i = 0; i < m_row_count; ++i)
         if (!m_row_is_hidden[i])
@@ -730,9 +718,7 @@ void Layout::DelegateHeightsToRows ()
         ASSERT1(total_height_left >= 0);
     }
 
-#if defined(WIN32)
     Delete(row_order);
-#endif
 }
 
 void Layout::ResizeAndRepositionChildWidgets ()

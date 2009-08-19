@@ -285,11 +285,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
 
     // clone all selected objects and add them to an array
     Uint32 const set_size = m_object_selection_set.size();
-#if defined(WIN32)
     Object **objects_to_clone = new Object *[set_size];
-#else
-    Object *objects_to_clone[set_size];
-#endif
     Uint32 number_of_objects_to_clone = 0;
 
     for (ObjectSet::iterator it = m_object_selection_set.begin(),
@@ -320,9 +316,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
 
     m_sender_object_selection_set_changed.Signal();
 
-#if defined(WIN32)
     Delete(objects_to_clone);
-#endif
 }
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
@@ -334,14 +328,10 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
     // so we don't have any dangling pointers
     ClearPolygonSelectionSet();
     ClearVertexSelectionSet();
-        
+
     // store all the objects to be deleted into an array
     Uint32 const set_size = m_object_selection_set.size();
-#if defined(WIN32)
     Object **objects_to_delete = new Object *[set_size];
-#else
-    Object *objects_to_delete[set_size];
-#endif
     Uint32 number_of_objects_to_delete = 0;
 
     for (ObjectSet::iterator it = m_object_selection_set.begin(),
@@ -369,9 +359,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
     UpdateObjectsAndEntitiesProperties();
     m_sender_object_selection_set_changed.Signal();
 
-#if defined(WIN32)
     Delete(objects_to_delete);
-#endif
 }
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetTranslate (FloatVector2 const &translation_delta)

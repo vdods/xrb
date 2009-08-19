@@ -115,16 +115,18 @@ namespace Util
     /** @brief Returns the signed, base 10 integer value parsed from the
       *        given text.
       */
-    inline Sint32 TextToSint32 (char const *const text)
+    template <typename Sint>
+    Sint TextToSint (char const *const text)
     {
-        return static_cast<Sint32>(strtol(text, NULL, 10));
+        return static_cast<Sint>(strtol(text, NULL, 10));
     }
     /** @brief Returns the unsigned, base 10 integer value parsed from
       *        the given text.
       */
-    inline Uint32 TextToUint32 (char const *const text)
+    template <typename Uint>
+    Uint TextToUint (char const *const text)
     {
-        return static_cast<Uint32>(strtoul(text, NULL, 10));
+        return static_cast<Uint>(strtoul(text, NULL, 10));
     }
     /** @brief Returns the floating point value parsed from the given text.
       */
