@@ -306,7 +306,7 @@ ScreenCoord LineEdit::CursorOffset (Uint32 cursor_position) const
 {
     ASSERT1(RenderFont().IsValid());
 
-    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
+    FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
 
     if (cursor_position < 0)
         cursor_position = 0;
@@ -326,7 +326,7 @@ ScreenCoord LineEdit::CursorOffset (Uint32 cursor_position) const
         current_glyph = next_glyph;
     }
 
-    return pen_position_26_6[Dim::X] >> 6;
+    return FontToScreenCoord(pen_position_26_6[Dim::X]);
 }
 
 ScreenCoord LineEdit::CursorWidth (Uint32 cursor_position) const
@@ -368,7 +368,7 @@ void LineEdit::UpdateTextWidth ()
     ScreenCoordRect contents_rect(ContentsRect());
     m_text_width = RenderFont()->StringRect(m_text.c_str()).Width();
     if (m_text_width <= contents_rect.Width())
-        m_text_offset = 0;
+        m_text_offset = ScreenCoordVector2::ms_zero;
 }
 
 void LineEdit::MakeCursorVisible ()

@@ -87,7 +87,7 @@ public:
       * @brief Constructs a Vector, setting each component to @c fill_with.
       * @param fill_with The value to set each component to.
       */
-    inline Vector (T const fill_with)
+    inline explicit Vector (T const fill_with)
     {
         for (Uint32 i = 0; i < dimension; ++i)
             m[i] = fill_with;
@@ -261,10 +261,11 @@ public:
       * @brief In-place multiplication operator.
       * @param operand The scalar value to multiply this vector by.
       */
-    inline void operator *= (T const operand)
+    template <typename U>
+    inline void operator *= (U const operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
-            m[i] *= operand;
+            m[i] *= static_cast<T>(operand);
     }
     /** Performs scalar division of the components of this vector
       * by each respective component of @c operand, storing the
@@ -285,10 +286,11 @@ public:
       * @param operand The scalar value to divide this vector by.
       * @note There is no protection here against dividing by zero.
       */
-    inline void operator /= (T const operand)
+    template <typename U>
+    inline void operator /= (U const operand)
     {
         for (Uint32 i = 0; i < dimension; ++i)
-            m[i] /= operand;
+            m[i] /= static_cast<T>(operand);
     }
     /** @brief Unary negation operator.
       * @return The arithmatic negative of this vector.
@@ -555,14 +557,14 @@ inline Vector<T, dimension> operator * (
   * @param right_operand The vector on the right side of the operation.
   * @return The scalar multiple of the given scalar and vector.
   */
-template <typename T, Uint32 dimension>
+template <typename T, Uint32 dimension, typename U>
 inline Vector<T, dimension> operator * (
-    T const left_operand,
+    U const left_operand,
     Vector<T, dimension> const &right_operand)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand * right_operand.m[i];
+        retval.m[i] = static_cast<T>(left_operand) * right_operand.m[i];
     return retval;
 }
 
@@ -573,14 +575,14 @@ inline Vector<T, dimension> operator * (
   * @param right_operand The scalar on the right side of the operation.
   * @return The scalar multiple of the given scalar and vector.
   */
-template <typename T, Uint32 dimension>
+template <typename T, Uint32 dimension, typename U>
 inline Vector<T, dimension> operator * (
     Vector<T, dimension> const &left_operand,
-    T const right_operand)
+    U const right_operand)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] * right_operand;
+        retval.m[i] = left_operand.m[i] * static_cast<T>(right_operand);
     return retval;
 }
 
@@ -613,14 +615,14 @@ inline Vector<T, dimension> operator / (
   *         left operand over each of the right operand's components.
   * @note There is no protection here against dividing by zero.
   */
-template <typename T, Uint32 dimension>
+template <typename T, Uint32 dimension, typename U>
 inline Vector<T, dimension> operator / (
-    T const left_operand,
+    U const left_operand,
     Vector<T, dimension> const &right_operand)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand / right_operand.m[i];
+        retval.m[i] = static_cast<T>(left_operand) / right_operand.m[i];
     return retval;
 }
 
@@ -632,14 +634,14 @@ inline Vector<T, dimension> operator / (
   * @return The scalar quotient of the given scalar and vector.
   * @note There is no protection here against dividing by zero.
   */
-template <typename T, Uint32 dimension>
+template <typename T, Uint32 dimension, typename U>
 inline Vector<T, dimension> operator / (
     Vector<T, dimension> const &left_operand,
-    T const right_operand)
+    U const right_operand)
 {
     Vector<T, dimension> retval;
     for (Uint32 i = 0; i < dimension; ++i)
-        retval.m[i] = left_operand.m[i] / right_operand;
+        retval.m[i] = left_operand.m[i] / static_cast<T>(right_operand);
     return retval;
 }
 

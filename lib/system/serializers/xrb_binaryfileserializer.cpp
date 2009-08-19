@@ -197,20 +197,6 @@ void BinaryFileSerializer::WriteUint32 (Uint32 value)
     SetError(m_cache.Error());
 }
 
-ScreenCoord BinaryFileSerializer::ReadScreenCoord ()
-{
-    ScreenCoord retval;
-    m_cache.Read4ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteScreenCoord (ScreenCoord value)
-{
-    m_cache.Write4ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
 void BinaryFileSerializer::ReadFloat (float *const destination)
 {
     m_cache.Read4ByteWordFromCache(destination);

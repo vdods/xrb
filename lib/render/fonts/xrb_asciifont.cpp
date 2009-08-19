@@ -29,19 +29,21 @@ namespace Xrb
 
 void AsciiFont::GlyphSpecification::Read (Serializer &serializer)
 {
-    m_ascii               = serializer.ReadSint8();
-    m_size                = serializer.ReadScreenCoordVector2();
-    m_bearing_26_6        = serializer.ReadScreenCoordVector2();
-    m_advance_26_6        = serializer.ReadScreenCoord();
-    m_texture_coordinates = serializer.ReadScreenCoordVector2();
+    m_ascii                 = serializer.ReadSint8();
+    m_size                  = serializer.ReadScreenCoordVector2();
+    m_bearing_26_6[Dim::X]  = serializer.ReadSint32(); // FontCoord is Sint32
+    m_bearing_26_6[Dim::Y]  = serializer.ReadSint32(); // FontCoord is Sint32
+    m_advance_26_6          = serializer.ReadSint32(); // FontCoord is Sint32
+    m_texture_coordinates   = serializer.ReadScreenCoordVector2();
 }
 
 void AsciiFont::GlyphSpecification::Write (Serializer &serializer) const
 {
     serializer.WriteSint8(m_ascii);
     serializer.WriteScreenCoordVector2(m_size);
-    serializer.WriteScreenCoordVector2(m_bearing_26_6);
-    serializer.WriteScreenCoord(m_advance_26_6);
+    serializer.WriteSint32(m_bearing_26_6[Dim::X]); // FontCoord is Sint32
+    serializer.WriteSint32(m_bearing_26_6[Dim::Y]); // FontCoord is Sint32
+    serializer.WriteSint32(m_advance_26_6);         // FontCoord is Sint32
     serializer.WriteScreenCoordVector2(m_texture_coordinates);
 }
 
@@ -134,7 +136,7 @@ AsciiFont *AsciiFont::CreateFromCache (
         retval->m_glyph_specification[i].Read(serializer);
     for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
         for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-            retval->m_kern_pair[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadScreenCoord();
+            retval->m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadSint32(); // FontCoord is Sint32
 
     ASSERT1(serializer.IsAtEnd() && "font metadata file is too long");
     serializer.Close();
@@ -154,7 +156,7 @@ AsciiFont *AsciiFont::Create (
     bool has_kerning,
     ScreenCoord baseline_height,
     GlyphSpecification sorted_glyph_specification[RENDERED_GLYPH_COUNT],
-    ScreenCoord kern_pair[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
+    FontCoord kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
     Texture *font_texture)
 {
     ASSERT1(font_texture != NULL);
@@ -164,7 +166,7 @@ AsciiFont *AsciiFont::Create (
     retval->m_has_kerning = has_kerning;
     retval->m_baseline_height = baseline_height;
     memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
-    memcpy(retval->m_kern_pair, kern_pair, sizeof(retval->m_kern_pair));
+    memcpy(retval->m_kern_pair_26_6, kern_pair_26_6, sizeof(retval->m_kern_pair_26_6));
     retval->m_gl_texture = GLTexture::Create(font_texture);
     ASSERT1(retval->m_gl_texture != NULL);
 
@@ -195,7 +197,7 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
                 m_glyph_specification[i].Write(serializer);
             for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
                 for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-                    serializer.WriteScreenCoord(m_kern_pair[left*RENDERED_GLYPH_COUNT + right]);
+                    serializer.WriteSint32(m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right]); // FontCoord is Sint32
 
             serializer.Close();
 
@@ -223,20 +225,20 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
 }
 
 void AsciiFont::MoveThroughGlyph (
-    ScreenCoordVector2 *const pen_position_26_6,
+    FontCoordVector2 *const pen_position_26_6,
     ScreenCoordVector2 const &initial_pen_position,
     char const *const current_glyph,
     char const *const next_glyph,
     Uint32 *remaining_glyph_count,
-    ScreenCoord *major_space_26_6) const
+    FontCoord *major_space_26_6) const
 {
     ASSERT1(current_glyph != NULL);
     ASSERT1(*current_glyph != '\0');
 
     if (*current_glyph == '\n')
     {
-        (*pen_position_26_6)[Dim::X] = initial_pen_position[Dim::X] << 6;
-        (*pen_position_26_6)[Dim::Y] -= PixelHeight() << 6;
+        (*pen_position_26_6)[Dim::X] = ScreenToFontCoord(initial_pen_position[Dim::X]);
+        (*pen_position_26_6)[Dim::Y] -= ScreenToFontCoord(PixelHeight());
     }
     else
     {
@@ -248,7 +250,7 @@ void AsciiFont::MoveThroughGlyph (
         {
             (*pen_position_26_6)[Dim::X] += m_glyph_specification[GlyphIndex(*current_glyph)].m_advance_26_6;
             if (next_glyph != NULL)
-                (*pen_position_26_6)[Dim::X] += KernPair(*current_glyph, *next_glyph);
+                (*pen_position_26_6)[Dim::X] += KernPair_26_6(*current_glyph, *next_glyph);
         }
 
         if (remaining_glyph_count != NULL && *remaining_glyph_count > 1)
@@ -274,14 +276,14 @@ void AsciiFont::GenerateWordWrappedString (
     dest_string->clear();
 
     // the width of the string rect
-    ScreenCoord wrap_width_26_6 = text_area_size[Dim::X] << 6;
+    ScreenCoord wrap_width_26_6 = ScreenToFontCoord(text_area_size[Dim::X]);
 
     bool forced_newline = false;
     bool line_start = true;
     char const *current_token;
     char const *next_token;
-    ScreenCoord current_pos_26_6 = 0;
-    ScreenCoord token_width_26_6;
+    FontCoord current_pos_26_6 = 0;
+    FontCoord token_width_26_6;
     TokenClass next_token_class;
 
     current_token = source_string.c_str();
@@ -420,7 +422,7 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
 void AsciiFont::DrawGlyph (
     RenderContext const &render_context,
     char const *const glyph,
-    ScreenCoordVector2 const &pen_position_26_6) const
+    FontCoordVector2 const &pen_position_26_6) const
 {
     ASSERT1(glyph != NULL);
     ASSERT1(*glyph != '\0');
@@ -435,17 +437,16 @@ void AsciiFont::DrawGlyph (
 
     // add the horizontal bearing and round the 26.6 fixed
     // point pen position to the nearest int
-    ScreenCoordVector2 pen_position(pen_position_26_6);
-    pen_position[Dim::X] += m_glyph_specification[glyph_index].m_bearing_26_6[Dim::X];
-    pen_position[Dim::X] >>= 6;
-    pen_position[Dim::Y] >>= 6;
+    ScreenCoordVector2 pen_position(
+        FontToScreenCoordVector2(
+            pen_position_26_6 + FontCoordVector2(m_glyph_specification[glyph_index].m_bearing_26_6[Dim::X], 0)));
     ScreenCoordRect glyph_vertex_coordinates(m_glyph_specification[glyph_index].m_size);
     glyph_vertex_coordinates += pen_position;
     glyph_vertex_coordinates +=
         ScreenCoordVector2(
             0,
             m_baseline_height +
-            (m_glyph_specification[glyph_index].m_bearing_26_6[Dim::Y]>>6) -
+            FontToScreenCoord(m_glyph_specification[glyph_index].m_bearing_26_6[Dim::Y]) -
             m_glyph_specification[glyph_index].m_size[Dim::Y] -
             PixelHeight());
 
@@ -453,6 +454,7 @@ void AsciiFont::DrawGlyph (
     // is because the texture coordinates use a left-handed coordinate
     // system.
     {
+/*
         ScreenCoordVector2 glyph_texture_coordinate_array[4] =
         {
             ScreenCoordVector2(glyph_texture_coordinates.TopLeft().m),
@@ -467,23 +469,40 @@ void AsciiFont::DrawGlyph (
             ScreenCoordVector2(glyph_vertex_coordinates.TopLeft().m),
             ScreenCoordVector2(glyph_vertex_coordinates.TopRight().m)
         };
+*/
+        Sint16 glyph_texture_coordinate_array[8] =
+        {
+            glyph_texture_coordinates.TopLeft()[Dim::X], glyph_texture_coordinates.TopLeft()[Dim::Y],
+            glyph_texture_coordinates.TopRight()[Dim::X], glyph_texture_coordinates.TopRight()[Dim::Y],
+            glyph_texture_coordinates.BottomLeft()[Dim::X], glyph_texture_coordinates.BottomLeft()[Dim::Y],
+            glyph_texture_coordinates.BottomRight()[Dim::X], glyph_texture_coordinates.BottomRight()[Dim::Y]
+        };
+        Sint16 glyph_vertex_coordinate_array[8] =
+        {
+            glyph_vertex_coordinates.BottomLeft()[Dim::X], glyph_vertex_coordinates.BottomLeft()[Dim::Y],
+            glyph_vertex_coordinates.BottomRight()[Dim::X], glyph_vertex_coordinates.BottomRight()[Dim::Y],
+            glyph_vertex_coordinates.TopLeft()[Dim::X], glyph_vertex_coordinates.TopLeft()[Dim::Y],
+            glyph_vertex_coordinates.TopRight()[Dim::X], glyph_vertex_coordinates.TopRight()[Dim::Y]
+        };
 
-        glVertexPointer(2, GL_INT, 0, glyph_vertex_coordinate_array);
+        glVertexPointer(2, GL_SHORT, 0, glyph_vertex_coordinate_array);
+//         glVertexPointer(2, GL_INT, 0, glyph_vertex_coordinate_array);
 
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_INT, 0, glyph_texture_coordinate_array);
+        glTexCoordPointer(2, GL_SHORT, 0, glyph_texture_coordinate_array);
+//         glTexCoordPointer(2, GL_INT, 0, glyph_texture_coordinate_array);
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 }
 
-ScreenCoord AsciiFont::KernPair (char left, char right) const
+FontCoord AsciiFont::KernPair_26_6 (char left, char right) const
 {
     Uint32 glyph_index_left = GlyphIndex(left);
     Uint32 glyph_index_right = GlyphIndex(right);
     ASSERT1(glyph_index_left < RENDERED_GLYPH_COUNT);
     ASSERT1(glyph_index_right < RENDERED_GLYPH_COUNT);
-    return m_kern_pair[glyph_index_left*RENDERED_GLYPH_COUNT + glyph_index_right];
+    return m_kern_pair_26_6[glyph_index_left*RENDERED_GLYPH_COUNT + glyph_index_right];
 }
 
 AsciiFont::TokenClass AsciiFont::GetTokenClass (char const c)
@@ -515,14 +534,14 @@ char const *AsciiFont::StartOfNextToken (char const *string)
     return string;
 }
 
-ScreenCoord AsciiFont::TokenWidth_26_6 (char const *const string) const
+FontCoord AsciiFont::TokenWidth_26_6 (char const *const string) const
 {
     ASSERT1(string != NULL);
 
     char const *current_glyph = string;
     char const *next_glyph;
     char const *const end_glyph = StartOfNextToken(current_glyph);
-    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
+    FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
     while (current_glyph != end_glyph)
     {
         next_glyph = current_glyph + 1;

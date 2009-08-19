@@ -18,7 +18,21 @@
 namespace Xrb
 {
 
-Font *Font::Create (std::string const &font_face_filename, ScreenCoord pixel_height)
+FontCoordVector2 ScreenToFontCoordVector2 (ScreenCoordVector2 const &v)
+{
+    return FontCoordVector2(ScreenToFontCoord(v[Dim::X]), ScreenToFontCoord(v[Dim::Y]));
+}
+
+ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v)
+{
+    return ScreenCoordVector2(FontToScreenCoord(v[Dim::X]), FontToScreenCoord(v[Dim::Y]));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// Font
+// ///////////////////////////////////////////////////////////////////////////
+
+Font *Font::Create (std::string const &font_face_filename, Sint32 pixel_height)
 {
     return Singleton::Pal().LoadFont(font_face_filename.c_str(), pixel_height);
 }
@@ -27,8 +41,8 @@ ScreenCoordRect Font::StringRect (char const *const string) const
 {
     ASSERT1(string != NULL);
 
-    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
-    ScreenCoordVector2 pen_position_span_26_6(pen_position_26_6);
+    FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
+    FontCoordVector2 pen_position_span_26_6(pen_position_26_6);
 
     char const *current_glyph = string;
     char const *next_glyph;
@@ -67,10 +81,10 @@ ScreenCoordRect Font::StringRect (char const *const string) const
     pen_position_span_26_6[Dim::Y] = Math::FixedPointRound<6>(pen_position_span_26_6[Dim::Y]);
 
     return ScreenCoordRect(
-        Min(pen_position_span_26_6[Dim::X]>>6, 0),
-        Min(pen_position_span_26_6[Dim::Y]>>6, 0),
-        Max(pen_position_span_26_6[Dim::X]>>6, 0),
-        Max(pen_position_span_26_6[Dim::Y]>>6, 0));
+        Min(FontToScreenCoord(pen_position_span_26_6[Dim::X]), ScreenCoord(0)),
+        Min(FontToScreenCoord(pen_position_span_26_6[Dim::Y]), ScreenCoord(0)),
+        Max(FontToScreenCoord(pen_position_span_26_6[Dim::X]), ScreenCoord(0)),
+        Max(FontToScreenCoord(pen_position_span_26_6[Dim::Y]), ScreenCoord(0)));
 }
 
 ScreenCoordRect Font::StringRect (LineFormatVector const &line_format_vector) const
@@ -79,7 +93,7 @@ ScreenCoordRect Font::StringRect (LineFormatVector const &line_format_vector) co
 
     ScreenCoord width = 0;
     for (Font::LineFormatVector::const_iterator it = line_format_vector.begin(),
-                                             it_end = line_format_vector.end();
+                                                it_end = line_format_vector.end();
          it != it_end;
          ++it)
     {
@@ -110,7 +124,7 @@ void Font::GenerateLineFormatVector (
 
     dest_line_format_vector->clear();
 
-    ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
+    FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
     LineFormat line_format;
     line_format.m_ptr = source_string;
     line_format.m_glyph_count = 0;
@@ -126,7 +140,7 @@ void Font::GenerateLineFormatVector (
         // if this is a new line, re-init the format values and line_start
         if (line_start)
         {
-            pen_position_26_6 = ScreenCoordVector2::ms_zero;
+            pen_position_26_6 = FontCoordVector2::ms_zero;
             line_format.m_ptr = current_glyph;
             line_format.m_glyph_count = 0;
             line_start = false;
@@ -137,7 +151,7 @@ void Font::GenerateLineFormatVector (
         if (*current_glyph == '\n')
         {
             line_start = true;
-            line_format.m_width = pen_position_26_6[Dim::X] >> 6;
+            line_format.m_width = FontToScreenCoord(pen_position_26_6[Dim::X]);
             dest_line_format_vector->push_back(line_format);
         }
         // otherwise increment the glyph count
@@ -156,7 +170,7 @@ void Font::GenerateLineFormatVector (
         current_glyph = next_glyph;
     }
     // make sure to push the last one
-    line_format.m_width = Abs(pen_position_26_6[Dim::X]) >> 6;
+    line_format.m_width = FontToScreenCoord(Abs(pen_position_26_6[Dim::X]));
     dest_line_format_vector->push_back(line_format);
 }
 
@@ -280,10 +294,8 @@ void Font::DrawStringPrivate (
 {
     ASSERT1(string != NULL);
 
-    ScreenCoordVector2 pen_position_26_6(
-        initial_pen_position[Dim::X] << 6,
-        initial_pen_position[Dim::Y] << 6);
-    ScreenCoord major_space_26_6 = remaining_space << 6;
+    FontCoordVector2 pen_position_26_6(ScreenToFontCoordVector2(initial_pen_position));
+    FontCoord major_space_26_6 = ScreenToFontCoord(remaining_space);
 
     char const *current_glyph = string;
     char const *next_glyph;
@@ -309,8 +321,8 @@ void Font::DrawStringPrivate (
 }
 
 void Font::TrackBoundingBox (
-    ScreenCoordVector2 *const pen_position_span_26_6,
-    ScreenCoordVector2 const &pen_position_26_6) const
+    FontCoordVector2 *const pen_position_span_26_6,
+    FontCoordVector2 const &pen_position_26_6) const
 {
     ASSERT1(pen_position_span_26_6 != NULL);
 

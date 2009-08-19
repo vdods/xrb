@@ -286,6 +286,14 @@ void Render::DrawScreenRect (
         render_context.BiasColor());
 
     {
+        Sint16 vertex_coordinate_array[8] =
+        {
+            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y], 
+            screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
+            screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
+            screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
+        };
+/*
         ScreenCoordVector2 vertex_coordinate_array[4] =
         {
             ScreenCoordVector2(screen_rect.BottomLeft().m),
@@ -293,9 +301,11 @@ void Render::DrawScreenRect (
             ScreenCoordVector2(screen_rect.TopLeft().m),
             ScreenCoordVector2(screen_rect.TopRight().m)
         };
+*/
 
         glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
+        glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
+//         glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glDisableClientState(GL_VERTEX_ARRAY);
     }
@@ -326,6 +336,14 @@ void Render::DrawScreenRectTexture (
             FloatVector2((transformation * FloatVector2(0.0f, 0.0f)).m),
             FloatVector2((transformation * FloatVector2(1.0f, 0.0f)).m)
         };
+        Sint16 vertex_coordinate_array[8] =
+        {
+            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y], 
+            screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
+            screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
+            screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
+        };
+/*
         ScreenCoordVector2 vertex_coordinate_array[4] =
         {
             ScreenCoordVector2(screen_rect.BottomLeft().m),
@@ -333,11 +351,13 @@ void Render::DrawScreenRectTexture (
             ScreenCoordVector2(screen_rect.TopLeft().m),
             ScreenCoordVector2(screen_rect.TopRight().m)
         };
+*/
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
+        glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
+//         glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_array);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

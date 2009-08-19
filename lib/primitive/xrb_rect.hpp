@@ -434,12 +434,10 @@ inline Rect<T> operator * (
 // and format-specific Fprint functions for each typedef.
 // ///////////////////////////////////////////////////////////////////////////
 
-/** FloatRect
-  * @brief Convenience typedef for a Rect<Float>.
+/** @brief Convenience typedef for a Rect<Float>.
   */
 typedef Rect<Float> FloatRect;
-/** Sint32Rect
-  * @brief Convenience typedef for a Rect<Sint32>.
+/** @brief Convenience typedef for a Rect<Sint32>.
   */
 typedef Rect<Sint32> Sint32Rect;
 
@@ -456,5 +454,5 @@ void Fprint (
     bool add_newline = true);
 
 } // end of namespace Xrb
-    
+
 #endif // !defined(_XRB_RECT_HPP_)

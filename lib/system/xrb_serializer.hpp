@@ -322,14 +322,16 @@ public:
       *      return IOD_READ, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual ScreenCoord ReadScreenCoord () = 0;
+//     ScreenCoord ReadScreenCoord () { return ReadSint16(); }
+    ScreenCoord ReadScreenCoord () { return ReadSint32(); }
     /** @brief Write a ScreenCoord value to the stream.
       * @param value The ScreenCoord value to write to the stream.
       * @pre @c IsOpen() must return true, @c GetIODirection() must
       *      return IOD_WRITE, and @c IsAtEnd() must return false.
       * @post The error state is set to indicate the status of the operation.
       */
-    virtual void WriteScreenCoord (ScreenCoord value) = 0;
+//     void WriteScreenCoord (ScreenCoord value) { WriteSint16(value); }
+    void WriteScreenCoord (ScreenCoord value) { WriteSint32(value); }
 
     /** @brief Read an IEEE single-precision floating point value from
       *        the stream.

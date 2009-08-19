@@ -80,7 +80,7 @@ void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name
 
     ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
     ASSERT0(g_key_map != NULL && "failed to create KeyMap");
-    fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
+//     fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
 
     g_is_initialized = true;
 }

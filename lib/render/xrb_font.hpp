@@ -27,6 +27,29 @@ class RenderContext;
 class Serializer;
 class Texture;
 
+// coordinates used by Font and its subclasses, using a 26.6
+// fixed point representation (this comes from FreeType).
+// the convention is to suffix any variable of type FontCoord
+// or FontCoordVector2 with _26_6.
+typedef Sint32 FontCoord;
+typedef Vector<FontCoord, 2> FontCoordVector2;
+
+#define FONTCOORD_LOWER_BOUND SINT32_LOWER_BOUND
+#define FONTCOORD_UPPER_BOUND SINT32_UPPER_BOUND
+
+inline FontCoord ScreenToFontCoord (ScreenCoord v)
+{
+    return FontCoord(v) << 6;
+}
+inline ScreenCoord FontToScreenCoord (FontCoord v)
+{
+    ASSERT1((v >> 6) >= SCREENCOORD_LOWER_BOUND && (v >> 6) <= SCREENCOORD_UPPER_BOUND);
+    return ScreenCoord(v >> 6);
+}
+
+FontCoordVector2 ScreenToFontCoordVector2 (ScreenCoordVector2 const &v);
+ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v);
+
 /** All fonts must use UTF8 encoding (which conveniently includes standard
   * 7-bit ASCII encoding).  Left-to-right and right-to-left fonts are
   * supported, but vertically-rendered fonts are not.
@@ -47,7 +70,7 @@ public:
 
     typedef std::vector<LineFormat> LineFormatVector;
 
-    static Font *Create (std::string const &font_face_filename, ScreenCoord pixel_height);
+    static Font *Create (std::string const &font_face_filename, Sint32 pixel_height);
 
     virtual ~Font () { }
 
@@ -57,9 +80,9 @@ public:
     ScreenCoord PixelHeight () const { return m_pixel_height; }
     ScreenCoord GlyphWidth (char const *glyph) const
     {
-        ScreenCoordVector2 pen_position_26_6(ScreenCoordVector2::ms_zero);
+        FontCoordVector2 pen_position_26_6(FontCoordVector2::ms_zero);
         MoveThroughGlyph(&pen_position_26_6, ScreenCoordVector2::ms_zero, glyph, NULL);
-        return Abs(pen_position_26_6[Dim::X] >> 6);
+        return Abs(FontToScreenCoord(pen_position_26_6[Dim::X]));
     }
 
     // returns the rectangle containing the given string as rendered in
@@ -111,12 +134,12 @@ public:
     // the position must be updated here exactly as it would be by actually
     // drawing each glyph.  pen_position is given in 26.6 fixed point
     virtual void MoveThroughGlyph (
-        ScreenCoordVector2 *pen_position_26_6,
+        FontCoordVector2 *pen_position_26_6,
         ScreenCoordVector2 const &initial_pen_position,
         char const *current_glyph,
         char const *next_glyph,
         Uint32 *remaining_glyph_count = NULL,
-        ScreenCoord *major_space_26_6 = NULL) const = 0;
+        FontCoord *major_space_26_6 = NULL) const = 0;
 
     // creates a word-wrapped string
     virtual void GenerateWordWrappedString (
@@ -145,7 +168,7 @@ protected:
     virtual void DrawGlyph (
         RenderContext const &render_context,
         char const *glyph,
-        ScreenCoordVector2 const &pen_position_26_6) const = 0;
+        FontCoordVector2 const &pen_position_26_6) const = 0;
 
 private:
 
@@ -158,8 +181,8 @@ private:
         Uint32 remaining_glyph_count = 0,
         ScreenCoord remaining_space = 0) const;
     void TrackBoundingBox (
-        ScreenCoordVector2 *pen_position_span_26_6,
-        ScreenCoordVector2 const &pen_position_26_6) const;
+        FontCoordVector2 *pen_position_span_26_6,
+        FontCoordVector2 const &pen_position_26_6) const;
 
     std::string const m_font_face_filename;
     ScreenCoord const m_pixel_height;

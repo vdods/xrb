@@ -936,7 +936,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
     bool has_kerning;
     Xrb::ScreenCoord baseline_height;
     Xrb::AsciiFont::GlyphSpecification glyph_specification[Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
-    Xrb::ScreenCoord kern_pair[Xrb::AsciiFont::RENDERED_GLYPH_COUNT*Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
+    Xrb::FontCoord kern_pair_26_6[Xrb::AsciiFont::RENDERED_GLYPH_COUNT*Xrb::AsciiFont::RENDERED_GLYPH_COUNT];
 
     has_kerning = FT_HAS_KERNING(ft_face) != 0;
 
@@ -968,7 +968,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
             if (tallest_glyph_height < glyph.m_size[Xrb::Dim::Y])
             {
                 tallest_glyph_height = glyph.m_size[Xrb::Dim::Y];
-                tallest_glyph_bearing_y = glyph.m_bearing_26_6[Xrb::Dim::Y]>>6;
+                tallest_glyph_bearing_y = Xrb::FontToScreenCoord(glyph.m_bearing_26_6[Xrb::Dim::Y]);
             }
         }
 
@@ -984,7 +984,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
         // just set all kern pairs to zero.
         if (!has_kerning || (error = FT_Set_Pixel_Sizes(font_face->FTFace(), 0, pixel_height)) != 0)
         {
-            memset(kern_pair, 0, sizeof(kern_pair));
+            memset(kern_pair_26_6, 0, sizeof(kern_pair_26_6));
         }
         else // there is kerning, so store the kern pairs
         {
@@ -999,7 +999,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
                         FT_Get_Char_Index(font_face->FTFace(), Xrb::AsciiFont::AsciiValue(right)),
                         FT_KERNING_UNFITTED,
                         &delta);
-                    kern_pair[left*Xrb::AsciiFont::RENDERED_GLYPH_COUNT + right] = delta.x;
+                    kern_pair_26_6[left*Xrb::AsciiFont::RENDERED_GLYPH_COUNT + right] = delta.x;
                 }
             }
         }
@@ -1034,7 +1034,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
         has_kerning,
         baseline_height,
         glyph_specification,
-        kern_pair,
+        kern_pair_26_6,
         font_texture);
 
     // cache the font to disk and delete the intermediate Texture

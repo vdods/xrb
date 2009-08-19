@@ -60,8 +60,8 @@ public:
     {
         char m_ascii;
         ScreenCoordVector2 m_size;
-        ScreenCoordVector2 m_bearing_26_6;
-        ScreenCoord m_advance_26_6;
+        FontCoordVector2 m_bearing_26_6;
+        FontCoord m_advance_26_6;
         ScreenCoordVector2 m_texture_coordinates;
 
         void Read (Serializer &serializer);
@@ -114,7 +114,7 @@ public:
       * @param has_kerning True iff the font has kerning enabled.
       * @param baseline_height Pixel offset to the baseline of the font.
       * @param sorted_glyph_specification Data per-glyph
-      * @param kern_pair Kerning data.
+      * @param kern_pair_26_6 Kerning data in 26.6 fixed point format.
       * @param font_texture A Texture object holding the font bitmap.  This
       *                     method does not delete the font texture.
       */
@@ -124,7 +124,7 @@ public:
         bool has_kerning,
         ScreenCoord baseline_height,
         GlyphSpecification sorted_glyph_specification[RENDERED_GLYPH_COUNT],
-        ScreenCoord kern_pair[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
+        FontCoord kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
         Texture *font_texture);
 
     /** Analogous to CreateFromCache.
@@ -137,12 +137,12 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     virtual void MoveThroughGlyph (
-        ScreenCoordVector2 *pen_position_26_6,
+        FontCoordVector2 *pen_position_26_6,
         ScreenCoordVector2 const &initial_pen_position,
         char const *current_glyph,
         char const *next_glyph,
         Uint32 *remaining_glyph_count = NULL,
-        ScreenCoord *major_space_26_6 = NULL) const;
+        FontCoord *major_space_26_6 = NULL) const;
 
     virtual void GenerateWordWrappedString (
         std::string const &source_string,
@@ -170,11 +170,11 @@ protected:
     virtual void DrawGlyph (
         RenderContext const &render_context,
         char const *glyph,
-        ScreenCoordVector2 const &pen_position_26_6) const;
+        FontCoordVector2 const &pen_position_26_6) const;
 
 private:
 
-    ScreenCoord KernPair (char left, char right) const;
+    FontCoord KernPair_26_6 (char left, char right) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // text justification stuff
@@ -190,7 +190,7 @@ private:
 
     static TokenClass GetTokenClass (char const c);
     static char const *StartOfNextToken (char const *string);
-    ScreenCoord TokenWidth_26_6 (char const *string) const;
+    FontCoord TokenWidth_26_6 (char const *string) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // member vars
@@ -206,7 +206,7 @@ private:
     // metadata for each glyph (texture coordinates, etc)
     GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];
     // cached kerning data -- all possible pairs of glyphs
-    ScreenCoord m_kern_pair[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT];
+    FontCoord m_kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT];
     // pointer to the GLTexture containing the font bitmap
     GLTexture *m_gl_texture;
 }; // end of class AsciiFont

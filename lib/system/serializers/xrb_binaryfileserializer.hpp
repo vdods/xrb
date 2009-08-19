@@ -65,9 +65,6 @@ public:
     virtual Uint32 ReadUint32 ();
     virtual void WriteUint32 (Uint32 value);
 
-    virtual ScreenCoord ReadScreenCoord ();
-    virtual void WriteScreenCoord (ScreenCoord value);
-
     virtual void ReadFloat (float *destination);
     virtual void WriteFloat (float value);
 

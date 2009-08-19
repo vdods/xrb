@@ -368,8 +368,8 @@ void Widget::SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios)
 void Widget::SetContentMargins (ScreenCoordVector2 const &content_margins)
 {
     ScreenCoordVector2 adjusted_content_margins(
-        Max(content_margins[Dim::X], -m_frame_margins[Dim::X]),
-        Max(content_margins[Dim::Y], -m_frame_margins[Dim::Y]));
+        Max(content_margins[Dim::X], ScreenCoord(-m_frame_margins[Dim::X])),
+        Max(content_margins[Dim::Y], ScreenCoord(-m_frame_margins[Dim::Y])));
     if (m_content_margins != adjusted_content_margins)
     {
         m_content_margins = adjusted_content_margins;
