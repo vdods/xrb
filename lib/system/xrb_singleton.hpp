@@ -17,8 +17,6 @@
 // "devices".  e.g. the keyboard/mouse button input, the resource manager.
 // (possibly move the screen into this category).
 
-struct FT_LibraryRec_;
-
 namespace Xrb
 {
 
@@ -50,9 +48,6 @@ namespace Singleton
     /** @brief Returns a reference to the ResourceLibrary singleton object.
       */
     ResourceLibrary &ResourceLibrary ();
-    /** @brief Returns a pointer to the FreeType library singleton object.
-      */
-    FT_LibraryRec_ *const FTLibrary ();
 
     /** This should be the first thing done, because other systems require
       * the usage of the singleton objects.  If this function is not called

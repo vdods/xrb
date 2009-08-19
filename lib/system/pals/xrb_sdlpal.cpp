@@ -297,9 +297,25 @@ Xrb::Key::Modifier TranslateSDLMod (SDLMod sdl_mod)
 
 } // end of unnamed namespace
 
+SDLPal::~SDLPal ()
+{
+    if (m_ft_library != NULL)
+    {
+        FT_Done_FreeType(m_ft_library);
+        m_ft_library = NULL;
+    }
+}
+
 Xrb::Pal *SDLPal::Create ()
 {
-    return new SDLPal();
+    FT_LibraryRec_ *ft_library = NULL;
+    FT_Error error = FT_Init_FreeType(&ft_library);
+    if (error != 0)
+    {
+        fprintf(stderr, "SDLPal::Create(); the FreeType library failed to initialize\n");
+        ft_library = NULL;
+    }
+    return new SDLPal(ft_library);
 }
 
 Xrb::Pal::Status SDLPal::Initialize ()
@@ -707,17 +723,16 @@ public:
         FT_Done_Face(m_face);
     }
 
-    static FontFace *Create (std::string const &filename)
+    static FontFace *Create (std::string const &filename, FT_LibraryRec_ *ft_library)
     {
+        ASSERT1(ft_library != NULL);
+
         FontFace *retval = NULL;
+
         FT_Error error;
         FT_FaceRec_ *face;
 
-        error = FT_New_Face(
-            Xrb::Singleton::FTLibrary(),
-            filename.c_str(),
-            0,
-            &face);
+        error = FT_New_Face(ft_library, filename.c_str(), 0, &face);
         if (error != 0)
             return retval;
 
@@ -903,7 +918,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
 
     // if the font wasn't cached, then we have to create it using the freetype lib.
 
-    FontFace *font_face = FontFace::Create(font_path);
+    FontFace *font_face = FontFace::Create(font_path, m_ft_library);
     if (font_face == NULL)
         return retval;
 

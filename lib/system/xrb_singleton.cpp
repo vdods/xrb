@@ -12,8 +12,6 @@
 
 #include "xrb.hpp"
 
-#include "ft2build.h"
-#include FT_FREETYPE_H
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_keymap.hpp"
@@ -34,9 +32,6 @@ namespace
     Pal *g_pal = NULL;
     // ResourceLibrary singleton -- loads and manages reference counted assets
     ResourceLibrary *g_resource_library = NULL;
-    // FreeType library singleton -- handles rendering font glyphs.
-    // this pointer type should be equivalent to type FT_Library.
-    FT_LibraryRec_ *g_ft_library = NULL;
 
     // indicates if Singleton::Initialize has been called
     bool g_is_initialized = false;
@@ -70,13 +65,6 @@ ResourceLibrary &Singleton::ResourceLibrary ()
     return *g_resource_library;
 }
 
-FT_LibraryRec_ *const Singleton::FTLibrary ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::FTLibrary() before Singleton::Initialize()");
-    ASSERT1(g_ft_library != NULL);
-    return g_ft_library;
-}
-
 void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name)
 {
     ASSERT1(key_map_name != NULL);
@@ -86,19 +74,13 @@ void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name
     fprintf(stderr, "Singleton::Initialize();\n");
 
     g_pal = CreatePal();
-    ASSERT0(g_pal != NULL && "CreatePalInstance() returned NULL");
-
     g_inputstate = new Xrb::InputState();
-
-//     fprintf(stderr, "\tattempting to use KeyMap \"%s\" ... ", key_map_name);
     g_key_map = Xrb::KeyMap::Create(key_map_name);
-//     fprintf(stderr, "got \"%s\"\n", g_key_map->Name().c_str());
-
     g_resource_library = new Xrb::ResourceLibrary();
 
-    g_ft_library = NULL;
-    FT_Error error = FT_Init_FreeType(&g_ft_library);
-    ASSERT0(error == 0 && "The FreeType library failed to initialize");
+    ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
+    ASSERT0(g_key_map != NULL && "failed to create KeyMap");
+    fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
 
     g_is_initialized = true;
 }
@@ -109,21 +91,14 @@ void Singleton::Shutdown ()
     ASSERT1(g_inputstate != NULL);
     ASSERT1(g_key_map != NULL);
     ASSERT1(g_resource_library != NULL);
-    ASSERT1(g_ft_library != NULL);
 
     fprintf(stderr, "Singleton::Shutdown();\n");
 
     // shutdown in reverse order as init
 
     DeleteAndNullify(g_inputstate);
-
     DeleteAndNullify(g_resource_library);
-
     DeleteAndNullify(g_key_map);
-
-    FT_Done_FreeType(g_ft_library);
-    g_ft_library = NULL;
-
     DeleteAndNullify(g_pal);
 
     g_is_initialized = false;
