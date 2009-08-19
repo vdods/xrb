@@ -15,6 +15,7 @@
 #include "png.h"
 #include "ft2build.h"  // the freetype stuff has to be included after png.h,
 #include FT_FREETYPE_H // otherwise a very strange compile error occurs.
+#include "xrb_asciifont.hpp"
 #include "xrb_event.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_input_events.hpp"
@@ -689,6 +690,75 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
 // font-loading helper functions
 namespace {
 
+// container to make dealing with FT_FaceRec_ easier
+class FontFace
+{
+public:
+
+    FontFace (std::string const &filename, FT_FaceRec_ *face)
+        :
+        m_filename(filename),
+        m_face(face)
+    {
+        ASSERT1(m_face != NULL);
+    }
+    ~FontFace ()
+    {
+        FT_Done_Face(m_face);
+    }
+
+    static FontFace *Create (std::string const &filename)
+    {
+        FontFace *retval = NULL;
+        FT_Error error;
+        FT_FaceRec_ *face;
+
+        error = FT_New_Face(
+            Xrb::Singleton::FTLibrary(),
+            filename.c_str(),
+            0,
+            &face);
+        if (error != 0)
+            return retval;
+
+        ASSERT1(face != NULL);
+
+        // check if there is a metrics file associated with this font file.
+        // (this is sort of a hacky way to check for type1 fonts, but i don't
+        // know of any better way).
+        if (filename.find_last_of(".pfa") < filename.length() ||
+            filename.find_last_of(".pfb") < filename.length())
+        {
+            std::string metrics_filename(filename.substr(0, filename.length()-4));
+            metrics_filename += ".afm";
+            // attempt to attach the font metrics file, but ignore errors,
+            // since loading this file is not mandatory.
+            FT_Attach_File(face, metrics_filename.c_str());
+
+            metrics_filename = filename.substr(0, filename.length()-4);
+            metrics_filename += ".pfm";
+            // attempt to attach the font metrics file, but ignore errors,
+            // since loading this file is not mandatory.
+            FT_Attach_File(face, metrics_filename.c_str());
+        }
+
+        if (FT_HAS_KERNING(face))
+            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font with kerning\n", filename.c_str());
+        else
+            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", filename.c_str());
+
+        return new FontFace(filename, face);
+    }
+
+    std::string const &Filename () const { return m_filename; }
+    FT_FaceRec_ *FTFace () const { return m_face; }
+
+private:
+
+    std::string const m_filename;
+    FT_FaceRec_ *const m_face;
+}; // end of class FontFace
+
 Xrb::Uint32 UsedTextureArea (
     Xrb::ScreenCoordVector2 const &texture_size,
     Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
@@ -779,7 +849,7 @@ Xrb::ScreenCoordVector2 FindSmallestFittingTextureSize (
 }
 
 Xrb::Texture *GenerateTexture (
-    Xrb::FontFace const &font_face,
+    FontFace const &font_face,
     Xrb::ScreenCoordVector2 const &texture_size,
     Xrb::AsciiFont::GlyphSpecification glyph_specification[Xrb::AsciiFont::RENDERED_GLYPH_COUNT])
 {
@@ -833,7 +903,7 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
 
     // if the font wasn't cached, then we have to create it using the freetype lib.
 
-    Xrb::FontFace *font_face = Xrb::FontFace::Create(font_path);
+    FontFace *font_face = FontFace::Create(font_path);
     if (font_face == NULL)
         return retval;
 

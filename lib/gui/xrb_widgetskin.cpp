@@ -10,7 +10,6 @@
 
 #include "xrb_widgetskin.hpp"
 
-#include "xrb_fontface.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
 

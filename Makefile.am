@@ -79,6 +79,7 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/parsers \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
+    -I$(top_srcdir)/lib/render/fonts \
     -I$(top_srcdir)/lib/sound \
     -I$(top_srcdir)/lib/system \
     -I$(top_srcdir)/lib/system/pals \
@@ -188,11 +189,12 @@ lib_libxrb_la_SOURCES = \
     lib/render/xrb_engine2_worldview.cpp \
     lib/render/xrb_engine2_worldviewwidget.cpp \
     lib/render/xrb_font.cpp \
-    lib/render/xrb_fontface.cpp \
     lib/render/xrb_gl.cpp \
     lib/render/xrb_gltexture.cpp \
     lib/render/xrb_render.cpp \
     lib/render/xrb_rendercontext.cpp \
+    \
+    lib/render/fonts/xrb_asciifont.cpp \
     \
     lib/system/xrb_event.cpp \
     lib/system/xrb_eventhandler.cpp \
@@ -323,11 +325,12 @@ include_HEADERS = \
     lib/render/xrb_engine2_worldview.hpp \
     lib/render/xrb_engine2_worldviewwidget.hpp \
     lib/render/xrb_font.hpp \
-    lib/render/xrb_fontface.hpp \
     lib/render/xrb_gl.hpp \
     lib/render/xrb_gltexture.hpp \
     lib/render/xrb_render.hpp \
     lib/render/xrb_rendercontext.hpp \
+    \
+    lib/render/fonts/xrb_asciifont.hpp \
     \
     lib/system/xrb_enums.hpp \
     lib/system/xrb_event.hpp \

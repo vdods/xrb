@@ -91,8 +91,9 @@ int main (int argc, char **argv)
         <li>KeyMap performs keyboard layout mapping (e.g. Dvorak), which is
             necessary only on Windows builds because the Windows version of
             SDL lacks proper key mapping.</li>
-        <li>FTLibrary is used by the font system to use the FreeType font
-            rendering facilities.  you shouldn't need to worry about it.</li>
+        <li>FTLibrary is used transparently by the font system to use the
+            FreeType font rendering facilities (assuming SDLPal is in use).
+            There's nothing to worry about.  Trust me.</li>
         </ul>
     @code */
     Singleton::Initialize(SDLPal::Create, "none");
