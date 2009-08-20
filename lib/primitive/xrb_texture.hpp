@@ -78,7 +78,10 @@ public:
 
     static Texture *Create (std::string const &filename);
     static Texture *Create (ScreenCoordVector2 const &size, bool zero_out_the_data);
-    //TODO void Write (std::string const &filename);
+    // creates a texture using the given size and pixel buffer.  the returned
+    // Texture object will take ownership of the buffer, and delete it upon destruction.
+    // this method trusts you to hand in a pointer to a sufficiently large pixel buffer.
+    static Texture *Create (ScreenCoordVector2 const &size, Uint8 *data);
 
     ScreenCoordVector2 Size () const
     {
