@@ -277,7 +277,7 @@ Xrb::Key::Code TranslateSDLKey (SDLKey sdl_key)
 
 Xrb::Key::Modifier TranslateSDLMod (SDLMod sdl_mod)
 {
-    static SDLMod const s_all = SDLMod(KMOD_LSHIFT|KMOD_RSHIFT|KMOD_LCTRL|KMOD_RCTRL|KMOD_LALT|KMOD_RALT|KMOD_LMETA|KMOD_RMETA|KMOD_NUM|KMOD_CAPS|KMOD_MODE);
+    DEBUG1_CODE(static SDLMod const s_all = SDLMod(KMOD_LSHIFT|KMOD_RSHIFT|KMOD_LCTRL|KMOD_RCTRL|KMOD_LALT|KMOD_RALT|KMOD_LMETA|KMOD_RMETA|KMOD_NUM|KMOD_CAPS|KMOD_MODE);)
     ASSERT1((sdl_mod & ~s_all) == 0 && "invalid SDLMod");
 
     Xrb::Uint32 retval = 0;

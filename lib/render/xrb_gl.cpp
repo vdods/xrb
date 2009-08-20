@@ -182,7 +182,7 @@ GLint GL::Integer (GLenum name)
     // names are prohibited because they return more than 4 values (and we don't
     // want to bother with a buffer that large in this function that only returns 1).
     ASSERT1(name != GL_COMPRESSED_TEXTURE_FORMATS   && "unsupported name");
-#if !defined(__IPHONE_OS__)
+#if !defined(__IPHONEOS__)
     ASSERT1(name != GL_TRANSPOSE_COLOR_MATRIX       && "unsupported name");
     ASSERT1(name != GL_TRANSPOSE_MODELVIEW_MATRIX   && "unsupported name");
     ASSERT1(name != GL_TRANSPOSE_PROJECTION_MATRIX  && "unsupported name");
