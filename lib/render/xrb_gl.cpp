@@ -178,16 +178,20 @@ bool GL::Boolean (GLenum name)
 GLint GL::Integer (GLenum name)
 {
     // this may not be a comprehensive check against all larger-than-4-return-value
-    // integers -- it was based on the openGL 2.1 man page for glGet.
+    // integers -- it was based on the openGL 2.1 man page for glGet.  these
+    // names are prohibited because they return more than 4 values (and we don't
+    // want to bother with a buffer that large in this function that only returns 1).
     ASSERT1(name != GL_COMPRESSED_TEXTURE_FORMATS   && "unsupported name");
-    ASSERT1(name != GL_COLOR_MATRIX                 && "unsupported name");
-    ASSERT1(name != GL_MODELVIEW_MATRIX             && "unsupported name");
-    ASSERT1(name != GL_PROJECTION_MATRIX            && "unsupported name");
-    ASSERT1(name != GL_TEXTURE_MATRIX               && "unsupported name");
+#if !defined(__IPHONE_OS__)
     ASSERT1(name != GL_TRANSPOSE_COLOR_MATRIX       && "unsupported name");
     ASSERT1(name != GL_TRANSPOSE_MODELVIEW_MATRIX   && "unsupported name");
     ASSERT1(name != GL_TRANSPOSE_PROJECTION_MATRIX  && "unsupported name");
     ASSERT1(name != GL_TRANSPOSE_TEXTURE_MATRIX     && "unsupported name");
+    ASSERT1(name != GL_COLOR_MATRIX                 && "unsupported name");
+#endif
+    ASSERT1(name != GL_MODELVIEW_MATRIX             && "unsupported name");
+    ASSERT1(name != GL_PROJECTION_MATRIX            && "unsupported name");
+    ASSERT1(name != GL_TEXTURE_MATRIX               && "unsupported name");
 
     // the requested integer may fill up to 4 entries
     GLint integer[4];

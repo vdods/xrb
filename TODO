@@ -125,14 +125,12 @@ TODO:
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent
 - high framerates cause the impact damage to be too high in disasteroids (or maybe the impact damage is too low in low framerates)
-- change MatrixMode, MatrixStackDepth, MaxMatrixStackDepth into just a generic GetGLInt or something
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
 - change ScreenCoord to use Sint16 instead of Sint32?
 - get rid of widget min/max size enabled flags, and just use the 
   sizes (no min size = 0, no max size = (uint)-1)
-- make frontends for glGetInteger/glGetFloat/etc and cleanup the GL namespace API
 - create consistent way to set z depth for non-transparent stuff so they're
   actually unique z depth values for each object.  maybe encode some sort
   of unique index into the least significant bits of the depth Float.
