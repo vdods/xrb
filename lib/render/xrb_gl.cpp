@@ -51,12 +51,6 @@ void GL::Initialize ()
 
     // check for certain extensions and values
     {
-        fprintf(stderr, "    Checking for OpenGL extensions.\n");
-        // these ARB checks might be unnecessary now (maybe replace with some version check)
-        CheckForExtension("GL_ARB_multitexture");
-        CheckForExtension("GL_ARB_texture_env_combine");
-        CheckForExtension("GL_ARB_vertex_buffer_object");
-
         GLint max_texture_units;
         glGetIntegerv(GL_MAX_TEXTURE_UNITS, &max_texture_units);
         fprintf(stderr, "    Checking GL_MAX_TEXTURE_UNITS (must be at least 2): %d\n", max_texture_units);
@@ -86,88 +80,102 @@ void GL::Initialize ()
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_FLAT);
+    glDepthFunc(GL_LEQUAL);
 
     // set up the blending function for correct alpha blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDepthFunc(GL_LEQUAL);
+    // only bother drawing pixels with a nonzero alpha value.
+    // this was moved here from Engine2::VisibilityQuadTree::Draw*
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.0f);
+    // don't bother writing to the alpha channel
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
     // GL_COMBINE texture env default values
     //
     // GL_COMBINE_RGB = GL_MODULATE
-    // GL_COMBINE_ALPHA = GL_MODULATE
-    //
     // GL_SRC0_RGB = GL_TEXTURE
     // GL_OPERAND0_RGB = GL_SRC_COLOR
-    // GL_SRC0_ALPHA = GL_TEXTURE
-    // GL_OPERAND0_ALPHA = GL_SRC_ALPHA
-    //
     // GL_SRC1_RGB = GL_PREVIOUS
     // GL_OPERAND1_RGB = GL_SRC_COLOR
-    // GL_SRC1_ALPHA = GL_PREVIOUS
-    // GL_OPERAND1_ALPHA = GL_SRC_ALPHA
-    //
     // GL_SRC2_RGB = GL_CONSTANT
     // GL_OPERAND2_RGB = GL_SRC_ALPHA
+    //
+    // GL_COMBINE_ALPHA = GL_MODULATE
+    // GL_SRC0_ALPHA = GL_TEXTURE
+    // GL_OPERAND0_ALPHA = GL_SRC_ALPHA
+    // GL_SRC1_ALPHA = GL_PREVIOUS
+    // GL_OPERAND1_ALPHA = GL_SRC_ALPHA
     // GL_SRC2_ALPHA = GL_CONSTANT
     // GL_OPERAND2_ALPHA = GL_SRC_ALPHA
     //
-    // GL_TEXTURE_ENV_COLOR = (0.000000, 0.000000, 0.000000, 0.000000)
+    // GL_TEXTURE_ENV_COLOR = (0, 0, 0, 0)
 
-    // set up texture unit 0 -- texturing and color masking
+    // set up texture unit 0 -- texturing and color masking -- we use
+    // the glColor value instead of the GL_TEXTURE_ENV_COLOR value
+    // for the color mask.
     {
         glActiveTexture(GL_TEXTURE0);
 
+        // enable GL_COMBINE (this allows multitexturing operations)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 
+        // the RGB operation is GL_MODULATE (dest = op0*op1)
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PREVIOUS);
+//         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT); // old way
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
+        // SRC2_RGB and OPERAND2_RGB are not used for GL_MODULATE
+
+        // the ALPHA operation is GL_MODULATE (dest = op0*op1)
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PREVIOUS);
+//         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT); // old way
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
-
-        // SRC2_RGB and OPERAND2_RGB are not used for GL_MODULATE
         // SRC2_ALPHA and OPERAND2_ALPHA are not used for GL_MODULATE
     }
 
     // set up texture unit 1 -- color biasing
+//     // this specific use
+//     // of GL_COMBINE is not available on openGL ES implementations
+//     // for all iphones/ipod-touches, so it's disabled for iphone builds.
+// #if !defined(__IPHONEOS__)
     {
         glActiveTexture(GL_TEXTURE1);
 
+        // enable GL_COMBINE (this allows multitexturing operations)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 
+        // the RGB operation is GL_INTERPOLATE (dest = op0*op2 + op1*(1-op2))
         glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
-        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
-
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_PREVIOUS);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-        glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PREVIOUS);
-        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
-        // SRC1_ALPHA and OPERAND1_ALPHA are not used for GL_REPLACE
-
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC2_RGB, GL_CONSTANT);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_ONE_MINUS_SRC_ALPHA);
+
+        // the ALPHA operation is GL_REPLACE (dest = op0)
+        glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE);
+        glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PREVIOUS);
+        glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+        // SRC1_ALPHA and OPERAND1_ALPHA are not used for GL_REPLACE
         // SRC2_ALPHA and OPERAND2_ALPHA are not used for GL_REPLACE
 
-        // might as well bind the all-white texture to texture unit 1
-        // right now since that's all it will ever use.  this will
-        // have no effect on the above texture unit operation, but is
+        // bind the all-white texture to texture unit 1 right now
+        // since that's all it will ever use.  this will have no
+        // effect on the above texture unit operation, but is
         // required for the texture unit to activate.
         glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().Handle());
     }
 
     glActiveTexture(GL_TEXTURE0);
+// #endif // !defined(__IPHONEOS__)
 }
 
 bool GL::Boolean (GLenum name)

@@ -28,6 +28,9 @@ DISASTEROIDS:
 ** feature-related **
 - make the 7 button just activate the EMP core, there's no reason to have
   to equip it and then fire
+  OR
+  add a spiralling-in ambient tractor beam secondary fire to EMP, so
+  the player can suck in enemies and then blast them.
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak
@@ -116,7 +119,9 @@ DISASTEROIDS:
 - firing a laser or gauss gun while directly facing and touching e.g.
   an asteroid causes the line trace to fail so the weapon fires through
   the asteroid.  fix this by recording hits when the line starts inside
-  objects
+  objects, or start the line trace earlier and ignore the firer.
+- there is a bug in the alpha blending (e.g. tractor beam over asteroids).
+  the alpha pixels at the edge of the asteroids suck.
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
@@ -170,11 +175,7 @@ TODO:
 - add asserts to wrapped collision stuff to ensure things aren't above
   1/2 of the object side length
 - do tab/shift-tab control of child widget focus
-- make Xrb::Initialize and Xrb::Shutdown functions which take care of
-  SDL and singleton setup/shutdown.  and possibly creating/deleting the Screen?
 - should Screen make its own event queue?
-- create Resource loading functions for common Resource<blah> types
-  (e.g. LoadGLTexture, LoadFont, etc)
 - child widgets should be based off the position of their parents, so
   screen-relative moving is unnecessary.
 - the map editor view should not create/destroy its own world -- it
@@ -278,7 +279,6 @@ GAME IDEAS:
 - different types of ships should have different limitations on propulsion,
   e.g. a rocket should only be able turn and go forward, while a flying saucer
   should be able to move in any direction.
-- tractor beams
 - have a bunch of navigational and calculation tools, like things to calculate
   the speed to enter orbit, the distance to an entity, etc
 - have a bunch of displays such as coordinates relative to an entity,
@@ -290,12 +290,6 @@ GAME IDEAS:
   and is characatured with large planets in the spiral arms of the galaxy
 - deflector shield which applies force on offending particles using a vector
   field.  the forces which it applies will drain units' energy
-- energy recharging on units, upgrades make it go faster
-- make some charge-up weapons (like the gun in R-type)
-- stabilization technology (so that if a unit gets a force applied, it will
-  attempt either to hold its position or its initial trajectory
-- wrapping space (left-right, up-down)
-- automatic proximity lasers to shoot down missles (as a defense mechanism)
 - wormholes
 - planetary shields
 - planetary movement engines (so you can change the orbits/trajectories of

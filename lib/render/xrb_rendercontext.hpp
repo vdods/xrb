@@ -19,21 +19,22 @@
 namespace Xrb
 {
 
-/** Contains the clipping rectangle and the color mask for rendering.
+/** Contains the clipping rectangle, color mask and bias color for rendering.
   * The clipping rectangle indicates the area of the screen which is valid
   * to render to.  The color mask is a color which is component-wise
-  * multiplied into each pixel of the rendered pixels (by setting OpenGL's
-  * glColor property).
+  * multiplied into each pixel of the rendered pixels.  The bias color
+  * specifies the color that the drawn pixels will be tinted (the alpha
+  * channel is used to specify the strength of the tinting).
   *
-  * RenderContext is just a convenient container for the two properties,
+  * RenderContext is just a convenient container for the properties,
   * and provides a few extra convenience methods.
   *
   * This form of container lends itself mainly toward recursive widget
   * rendering, where each child widget has a progressively smaller rectangle
-  * inside its parent widget, and the color mask is cumulative down the
-  * widget hierarchy.  Widget creates a new RenderContext for each recursive
-  * level, applying the clipping rectangle and color mask of each child
-  * it renders.  See @ref Xrb::Widget::Draw.
+  * inside its parent widget, and the color mask and bias color are cumulative
+  * down the widget hierarchy.  Widget creates a new RenderContext for each
+  * recursive level, applying the clipping rectangle, color mask and bias
+  * color of each child it renders.  See @ref Xrb::Widget::Draw.
   *
   * @brief Provides lowest common denominator of information necessary to
   *        render to screen.

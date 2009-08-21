@@ -28,6 +28,8 @@ void Render::DrawLine (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
+
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(),
         render_context.MaskedColor(color),
@@ -372,15 +374,29 @@ void Render::SetupTextureUnits (
     Color const &mask_color,
     Color const &bias_color)
 {
+    // set up texture unit 0
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, gltexture_handle);
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mask_color.m);
+    // due to limitations in the PowerVR MBX platform, (see
+    // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
+    // the value of GL_TEXTURE_ENV_COLOR must be the same for both texture
+    // units.  but in texture unit 0, we don't actually use the value of
+    // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
+//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mask_color.m); // old way
+    glColor4fv(mask_color.m);
 
+//     // the specific use of GL_COMBINE (see GL::Initialize) is not
+//     // available on openGL ES implementations for all
+//     // iphones/ipod-touches, so it's disabled for iphone builds.
+// #if !defined(__IPHONEOS__)
+    // set up texture unit 1
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
     // TODO -- assert that the opaque white texture is bound
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
+// #endif // !defined(__IPHONEOS__)
 }
 
 } // end of namespace Xrb
