@@ -14,7 +14,6 @@
 #include "xrb.hpp"
 
 #include "xrb_containerwidget.hpp"
-#include "xrb_frameratecalculator.hpp"
 
 namespace Xrb
 {
@@ -44,7 +43,6 @@ public:
 
     bool IsQuitRequested () const { return m_is_quit_requested; }
     ScreenCoord SizeRatioBasis () const { return Min(Width(), Height()); }
-    Float Framerate () const { return m_framerate_calculator.Framerate(); }
 
     // if the is-quit-requested flag is false, sets it to true and signals.
     void RequestQuit ();
@@ -69,8 +67,6 @@ private:
     bool m_is_quit_requested;
     // the current video mode resolution
     ScreenCoordVector2 m_current_video_resolution;
-    // the master frame rate calculator for this screen
-    mutable FramerateCalculator m_framerate_calculator;
 
     SignalSender0 m_sender_quit_requested;
 

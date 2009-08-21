@@ -18,7 +18,7 @@
 namespace Xrb
 {
 
-/** The default queue size is 100, providing a more or less instantaneous
+/** The default queue size is 32, providing a more or less instantaneous
   * framerate (unless frames are being rendered very slowly).
   * @brief A circular queue storing frame durations in order to calculate
   *        framerates.

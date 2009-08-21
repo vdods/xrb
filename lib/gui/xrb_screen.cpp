@@ -90,9 +90,9 @@ void Screen::Draw () const
     // clear the color buffer to the Screen's bias color (because that's
     // what you'd get if you applied the bias to all-black).
     glClearColor(
-        BiasColor()[Dim::R]*BiasColor()[Dim::A], 
-        BiasColor()[Dim::G]*BiasColor()[Dim::A], 
-        BiasColor()[Dim::B]*BiasColor()[Dim::A], 
+        BiasColor()[Dim::R]*BiasColor()[Dim::A],
+        BiasColor()[Dim::G]*BiasColor()[Dim::A],
+        BiasColor()[Dim::B]*BiasColor()[Dim::A],
         0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     // reset all matrices
@@ -137,9 +137,6 @@ void Screen::Draw () const
     // and then swap the backbuffer.
     glFlush();
     Singleton::Pal().FinishFrame();
-
-    // record this frame in the framerate calculator
-    m_framerate_calculator.AddFrameTime(MostRecentFrameTime());
 }
 
 Screen::Screen ()
