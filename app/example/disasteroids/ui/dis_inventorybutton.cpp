@@ -52,7 +52,7 @@ Resource<GLTexture> InventoryButton::ButtonTexture (
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
 
-    static std::string const s_button_texture_filename[IT_COUNT][UPGRADE_LEVEL_COUNT] =
+    static std::string const s_button_texture_path[IT_COUNT][UPGRADE_LEVEL_COUNT] =
     {
         // IT_WEAPON_PEA_SHOOTER
         {
@@ -140,7 +140,7 @@ Resource<GLTexture> InventoryButton::ButtonTexture (
         }
     };
 
-    return Singleton::ResourceLibrary().LoadFilename<GLTexture>(GLTexture::Create, s_button_texture_filename[item_type][upgrade_level]);
+    return Singleton::ResourceLibrary().LoadPath<GLTexture>(GLTexture::Create, s_button_texture_path[item_type][upgrade_level]);
 }
 
 void InventoryButton::SetStatus (Status const status)

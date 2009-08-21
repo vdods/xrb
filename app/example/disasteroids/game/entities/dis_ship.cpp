@@ -47,11 +47,11 @@ Ship::~Ship ()
 {
 }
 
-std::string const &Ship::ShipSpriteFilename (
+std::string const &Ship::ShipSpritePath (
     EntityType const ship_type,
     Uint8 const enemy_level)
 {
-    static std::string const s_ship_sprite_filename[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
+    static std::string const s_ship_sprite_path[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
         {   // ET_SOLITARY
             "resources/solitary_small.png",
@@ -94,7 +94,7 @@ std::string const &Ship::ShipSpriteFilename (
     Uint32 ship_index = ship_type - ET_SHIP_LOWEST;
     ASSERT1(ship_index < ET_SHIP_COUNT);
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
-    return s_ship_sprite_filename[ship_index][enemy_level];
+    return s_ship_sprite_path[ship_index][enemy_level];
 }
 
 Float Ship::ShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)

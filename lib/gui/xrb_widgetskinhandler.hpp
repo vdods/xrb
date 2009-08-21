@@ -102,12 +102,12 @@ public:
     void SetWidgetSkinFont (
         WidgetSkin::FontType font_type,
         Resource<Font> const &font);
-    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFaceFilename .
+    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFacePath .
       */
-    void SetWidgetSkinFontFaceFilename (
+    void SetWidgetSkinFontFacePath (
         WidgetSkin::FontType font_type,
-        std::string const &font_face_filename);
-    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFaceFilename .
+        std::string const &font_face_path);
+    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFacePath .
       */
     void SetWidgetSkinFontHeightRatio (
         WidgetSkin::FontType font_type,
@@ -122,11 +122,11 @@ public:
     void SetWidgetSkinTexture (
         WidgetSkin::TextureType texture_type,
         Resource<GLTexture> const &texture);
-    /** @brief Frontend for @ref Xrb::WidgetSkin::SetTextureFilename .
+    /** @brief Frontend for @ref Xrb::WidgetSkin::SetTexturePath .
       */
-    void SetWidgetSkinTextureFilename (
+    void SetWidgetSkinTexturePath (
         WidgetSkin::TextureType texture_type,
-        std::string const &texture_filename);
+        std::string const &texture_path);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetMarginRatios .
       */
     void SetWidgetSkinMarginRatios (

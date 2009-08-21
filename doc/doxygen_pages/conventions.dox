@@ -125,7 +125,7 @@ descriptive names.  A function name should be a concise description
 of what the function does.  Examples:
 
 @code
-void ParseUserOptionsFile (char const *options_filename);
+void ParseUserOptionsFile (char const *options_path);
 int ManhattanDistanceBetween (int *point1, int *point2);
 bool IsEscapableCharacter (char c);
 @endcode
@@ -318,7 +318,7 @@ Example:
 
 @code
     LibrarySingleton()->
-        LoadFilenameUsingDefaultValues(
+        LoadPathUsingDefaultValues(
             "some_stupid_resource.data",
             33);
 @endcode

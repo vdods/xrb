@@ -60,8 +60,8 @@ namespace MapEditor2
             return &m_receiver_open_world_from_file;
         }
     
-        void SaveWorldToFile (std::string const &filename);
-        void OpenWorldFromFile (std::string const &filename);
+        void SaveWorldToFile (std::string const &path);
+        void OpenWorldFromFile (std::string const &path);
     
     protected:
     

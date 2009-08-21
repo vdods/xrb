@@ -107,8 +107,8 @@ public:
     // equal to or better than the wave count rank
     bool AddScore (Score const &score);
 
-    void Read (std::string const &filename);
-    void Write (std::string const &filename);
+    void Read (std::string const &path);
+    void Write (std::string const &path);
 
 private:
 

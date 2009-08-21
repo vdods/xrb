@@ -82,7 +82,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/global_origin.png"),
@@ -97,7 +97,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/object_selection_set_origin.png"),
@@ -112,7 +112,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/each_selected_object_origin.png"),
@@ -138,7 +138,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_TRANSFORMATION,
@@ -152,7 +152,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_LINEAR_VELOCITY,
@@ -166,7 +166,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_ANGULAR_VELOCITY,
@@ -180,7 +180,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_POLYGONS,
@@ -194,7 +194,7 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadFilename<GLTexture>(
+                LoadPath<GLTexture>(
                     GLTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_VERTICES,
@@ -289,26 +289,26 @@ MapEditor2::WorldView *MapEditor2::MainWidget::MapEditorWorldView () const
     return DStaticCast<WorldView *>(m_world_view_widget->GetWorldView());
 }
 
-void MapEditor2::MainWidget::SaveWorldToFile (std::string const &filename)
+void MapEditor2::MainWidget::SaveWorldToFile (std::string const &path)
 {
-    ASSERT1(!filename.empty());
+    ASSERT1(!path.empty());
 
     // early out if there is no view (and consequently no world)
     if (!MapEditorWorldView())
         return;
 
     BinaryFileSerializer serializer;
-    serializer.Open(filename.c_str(), "wb");
+    serializer.Open(path.c_str(), "wb");
     MapEditorWorldView()->GetWorld()->Write(serializer);
     serializer.Close();
 }
 
-void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &filename)
+void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &path)
 {
-    ASSERT1(!filename.empty());
+    ASSERT1(!path.empty());
 
     BinaryFileSerializer serializer;
-    serializer.Open(filename.c_str(), "rb");
+    serializer.Open(path.c_str(), "rb");
     World *map_editor_world = World::Create(serializer);
     serializer.Close();
 
@@ -591,7 +591,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             dialog->ResizeByRatios(FloatVector2(0.8f, 0.8f));
             dialog->CenterOnWidget(dialog->TopLevelParent());
             SignalHandler::Connect1(
-                dialog->SenderSubmitFilename(),
+                dialog->SenderSubmitPath(),
                 &m_receiver_open_world_from_file);
             return true;
         }
@@ -610,7 +610,7 @@ bool MapEditor2::MainWidget::ProcessKeyEvent (EventKey const *const e)
             dialog->ResizeByRatios(FloatVector2(0.8f, 0.8f));
             dialog->CenterOnWidget(dialog->TopLevelParent());
             SignalHandler::Connect1(
-                dialog->SenderSubmitFilename(),
+                dialog->SenderSubmitPath(),
                 &m_receiver_save_world_to_file);
             return true;
         }

@@ -16,14 +16,14 @@ namespace Xrb
 {
 
 void BitCachedFile::Open (
-    char const *const filename,
+    char const *const path,
     char const *const mode)
 {
-    ASSERT1(filename != NULL);
+    ASSERT1(path != NULL);
     ASSERT1(mode != NULL);
     ASSERT1(!IsOpen());
 
-    if (strlen(filename) == 0)
+    if (strlen(path) == 0)
     {
         SetError(IOE_INVALID_FILENAME);
         return;
@@ -49,14 +49,14 @@ void BitCachedFile::Open (
         return;
     }
 
-    m_file_handle = fopen(filename, mode);
+    m_file_handle = fopen(path, mode);
     if (m_file_handle == NULL)
     {
         SetError(IOE_UNABLE_TO_OPEN_FILE);
         return;
     }
 
-    m_filename = filename;
+    m_path = path;
     m_mode = mode;
 
     if (mode_r)
@@ -75,7 +75,7 @@ void BitCachedFile::Close ()
         ASSERT1(false && "fclose() failed.");
 
     m_file_handle = NULL;
-    m_filename.clear();
+    m_path.clear();
     m_mode.clear();
 }
 

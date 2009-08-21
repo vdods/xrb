@@ -39,10 +39,10 @@ public:
     virtual ~FilePanel () { }
 
     inline Operation FileOperation () const { return m_file_operation; }
-    std::string const &Filename () const;
+    std::string const &Path () const;
 
-    inline SignalSender1<std::string const &> const *SenderSubmitFilename () { return &m_sender_submit_filename; }
-    inline SignalSender1<std::string> const *SenderSubmitFilenameV () { return &m_sender_submit_filename_v; }
+    inline SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
+    inline SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
 
 protected:
 
@@ -50,7 +50,7 @@ protected:
 
 private:
 
-    void InternalFilenameSetByEnterKey (std::string const &filename);
+    void InternalPathSetByEnterKey (std::string const &path);
 
     enum
     {
@@ -64,13 +64,13 @@ private:
     Label *m_title_label;
     // indicates if this is an open or save dialog
     Operation m_file_operation;
-    // the LineEdit to type in the filename
-    LineEdit *m_filename_edit;
+    // the LineEdit to type in the path
+    LineEdit *m_path_edit;
 
-    SignalSender1<std::string const &> m_sender_submit_filename;
-    SignalSender1<std::string> m_sender_submit_filename_v;
+    SignalSender1<std::string const &> m_sender_submit_path;
+    SignalSender1<std::string> m_sender_submit_path_v;
 
-    SignalReceiver1<std::string const &> m_internal_receiver_filename_set_by_enter_key;
+    SignalReceiver1<std::string const &> m_internal_receiver_path_set_by_enter_key;
 }; // end of class FilePanel
 
 } // end of namespace Xrb

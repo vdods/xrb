@@ -78,7 +78,7 @@ MapEditor2::Compound *MapEditor2::Compound::CreateCompoundNonEntityClone (
 }
 
 /*
-MapEditor2::Compound *MapEditor2::Compound::Create (std::string const &prefab_filename)
+MapEditor2::Compound *MapEditor2::Compound::Create (std::string const &prefab_path)
 {
 }
 */

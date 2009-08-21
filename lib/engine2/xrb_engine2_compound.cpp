@@ -24,7 +24,7 @@ Engine2::Compound::~Compound ()
     DeleteArray(m_polygon_array);
 }
 /*
-Engine2::Compound *Engine2::Compound::Create (std::string const &compound_filename)
+Engine2::Compound *Engine2::Compound::Create (std::string const &compound_path)
 {
 }
 */

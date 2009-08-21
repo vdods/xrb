@@ -31,7 +31,7 @@ public:
     Ship (Float max_health, EntityType entity_type);
     virtual ~Ship ();
 
-    static std::string const &ShipSpriteFilename (EntityType ship_type, Uint8 enemy_level);
+    static std::string const &ShipSpritePath (EntityType ship_type, Uint8 enemy_level);
     static Float ShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
 
     virtual bool IsShip () const { return true; }

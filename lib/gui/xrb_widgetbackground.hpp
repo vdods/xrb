@@ -104,9 +104,9 @@ class WidgetBackgroundTextured : public WidgetBackground
 public:
 
     /** @brief Constructs the background using the specified texture.
-      * @param texture_name Filename of the desired texture.
+      * @param texture_path Path of the desired texture.
       */
-    WidgetBackgroundTextured (std::string const &texture_name);
+    WidgetBackgroundTextured (std::string const &texture_path);
     /** @brief Constructs the background using the specified texture.
       * @param texture Directly specifies the GLTexture object to use.
       */
@@ -181,10 +181,10 @@ class WidgetBackgroundStylized : public WidgetBackground
 public:
 
     /** @brief Constructs the background using the specified textures.
-      * @param corner_texture_name The filename of the corner texture to use.
-      * @param top_texture_name The filename of the top texture to use.
-      * @param left_texture_name The filename of the left texture to use.
-      * @param center_texture_name The filename of the center texture to use.
+      * @param corner_texture_name The path of the corner texture to use.
+      * @param top_texture_name The path of the top texture to use.
+      * @param left_texture_name The path of the left texture to use.
+      * @param center_texture_name The path of the center texture to use.
       */
     WidgetBackgroundStylized (
         std::string const &corner_texture_name,

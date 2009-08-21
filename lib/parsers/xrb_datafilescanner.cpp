@@ -18,7 +18,7 @@
 #include "xrb_util.hpp"
 
 #undef FL
-#define FL DataFileLocation(m_input_filename, m_line_number)
+#define FL DataFileLocation(m_input_path, m_line_number)
 
 namespace Xrb
 {
@@ -55,16 +55,16 @@ DataFileScanner::~DataFileScanner ()
     Close();
 }
 
-bool DataFileScanner::Open (std::string const &input_filename)
+bool DataFileScanner::Open (std::string const &input_path)
 {
     ASSERT1(!m_input.is_open() && "you must call Close() first");
 
-    m_input.open(input_filename.c_str());
+    m_input.open(input_path.c_str());
     m_input.unsetf(std::ios_base::skipws);
     if (m_input.is_open())
-        m_input_filename = input_filename;
+        m_input_path = input_path;
     else
-        m_input_filename.clear();
+        m_input_path.clear();
     m_text.clear();
     m_line_number = 1;
     m_were_warnings_encountered = false;
@@ -74,7 +74,7 @@ bool DataFileScanner::Open (std::string const &input_filename)
 
 void DataFileScanner::Close ()
 {
-    m_input_filename.clear();
+    m_input_path.clear();
     if (m_input.is_open())
         m_input.close();
     m_text.clear();
@@ -83,15 +83,15 @@ void DataFileScanner::Close ()
 
 void DataFileScanner::EmitWarning (std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty());
+    ASSERT1(!m_input_path.empty());
     ASSERT1(m_input.is_open());
-    std::cerr << m_input_filename << ": warning: " << message << std::endl;
+    std::cerr << m_input_path << ": warning: " << message << std::endl;
     m_were_warnings_encountered = true;
 }
 
 void DataFileScanner::EmitWarning (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty());
+    ASSERT1(!m_input_path.empty());
     ASSERT1(m_input.is_open());
     std::cerr << file_location << ": warning: " << message << std::endl;
     m_were_warnings_encountered = true;
@@ -99,15 +99,15 @@ void DataFileScanner::EmitWarning (DataFileLocation const &file_location, std::s
 
 void DataFileScanner::EmitError (std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty());
+    ASSERT1(!m_input_path.empty());
     ASSERT1(m_input.is_open());
-    std::cerr << m_input_filename << ": error: " << message << std::endl;
+    std::cerr << m_input_path << ": error: " << message << std::endl;
     m_were_errors_encountered = true;
 }
 
 void DataFileScanner::EmitError (DataFileLocation const &file_location, std::string const &message)
 {
-    ASSERT1(!m_input_filename.empty());
+    ASSERT1(!m_input_path.empty());
     ASSERT1(m_input.is_open());
     std::cerr << file_location << ": error: " << message << std::endl;
     m_were_errors_encountered = true;
@@ -115,7 +115,7 @@ void DataFileScanner::EmitError (DataFileLocation const &file_location, std::str
 
 DataFileParser::Token::Type DataFileScanner::Scan (DataFileValue **const scanned_token)
 {
-    ASSERT1(!m_input_filename.empty());
+    ASSERT1(!m_input_path.empty());
     ASSERT1(m_input.is_open());
     ASSERT1(m_line_number > 0);
 
@@ -675,7 +675,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
         {
             if (IsNextCharEOF(&c))
             {
-                EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
+                EmitError(DataFileLocation(m_input_path, starting_line), "unterminated string");
                 return DataFileParser::Token::BAD_TOKEN;
             }
             else if (c == '\n')
@@ -712,7 +712,7 @@ DataFileParser::Token::Type DataFileScanner::ScanStringLiteral (DataFileValue **
     }
     else
     {
-        EmitError(DataFileLocation(m_input_filename, starting_line), "unterminated string");
+        EmitError(DataFileLocation(m_input_path, starting_line), "unterminated string");
         return DataFileParser::Token::BAD_TOKEN;
     }
 }

@@ -314,7 +314,7 @@ Engine2::World *CreateAndPopulateWorld ()
     // Create a random mess of objects
     for (Uint32 i = 0; i < s_object_count; ++i)
     {
-        // Create the sprite using the texture with given filename
+        // Create the sprite using the texture with given path
         Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/interloper2_small.png");
         // Place the sprite randomly on the 1000x1000 ObjectLayer.  The
         // ObjectLayer is centered on the origin, so the valid range of

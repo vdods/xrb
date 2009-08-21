@@ -110,7 +110,7 @@ public:
         return accepted_structure;
     }
 
-    ReturnCode Parse (std::string const &input_filename);
+    ReturnCode Parse (std::string const &input_path);
 
 private:
 

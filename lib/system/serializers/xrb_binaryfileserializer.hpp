@@ -31,7 +31,7 @@ public:
     virtual bool IsAtEnd () const;
     virtual bool HasFewerThan8BitsLeft () const;
 
-    void Open (char const *filename, char const *mode);
+    void Open (char const *path, char const *mode);
     void Close ();
 
     // the following are bit-packed

@@ -422,7 +422,7 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
     }
     m_texture =
         Singleton::ResourceLibrary().
-            LoadFilename<GLTexture>(
+            LoadPath<GLTexture>(
                 GLTexture::Create,
                 serializer.ReadStdString());
 
@@ -451,7 +451,7 @@ void MapEditor2::Polygon::Write (Serializer &serializer) const
         serializer.WriteUint32(vertex.m_compound_vertex->m_index);
         serializer.WriteFloatVector2(vertex.m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.Filename());
+    serializer.WriteStdString(m_texture.Path());
 }
 
 } // end of namespace Xrb

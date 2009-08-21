@@ -87,7 +87,7 @@ public:
     }; // end of enum WidgetSkin::MarginsType
 
     /** This constructor needs to be replaced by a static Create() function
-      * which specifies some filename of a widgetskin property descriptor file
+      * which specifies some path of a widgetskin property descriptor file
       * and the constructor should be made protected.
       * @brief Constructs a WidgetSkin with a bunch of default values for now.
       */
@@ -184,11 +184,11 @@ public:
     /** Uses the font pixel height from the previous font.
       * @brief Sets the given type of font using the given font face.
       * @param font_type The font type to change.
-      * @param font_face_filename The filename of the font face to use.
+      * @param font_face_path The path to the font face to use.
       */
-    void SetFontFaceFilename (
+    void SetFontFacePath (
         FontType font_type,
-        std::string const &font_face_filename);
+        std::string const &font_face_path);
     /** Does not change the given type's existing font face.
       * @brief Sets the screen size-ratio-basis height ratio of the
       *        specified font type.
@@ -215,11 +215,11 @@ public:
         Resource<GLTexture> const &texture);
     /** @brief Sets the given type of texture.
       * @param texture_type The texture type to be set.
-      * @param texture The filename of the texture to use.
+      * @param texture The path of the texture to use.
       */
-    void SetTextureFilename (
+    void SetTexturePath (
         TextureType texture_type,
-        std::string const &texture_filename);
+        std::string const &texture_path);
     /** @brief Sets the screen size-ratio-basis margin ratios of the
       *        specified type.
       * @param margins_type The type of margins to change.

@@ -25,9 +25,9 @@ FileDialog::FileDialog (
     std::string const &name)
     :
     Dialog(DT_OK_CANCEL, parent, name),
-    m_sender_submit_filename(this),
-    m_sender_submit_filename_v(this),
-    m_internal_receiver_filename_submitted(&FileDialog::InternalFilenameSubmitted, this)
+    m_sender_submit_path(this),
+    m_sender_submit_path_v(this),
+    m_internal_receiver_path_submitted(&FileDialog::InternalPathSubmitted, this)
 {
     m_file_panel =
         new FilePanel(
@@ -36,20 +36,20 @@ FileDialog::FileDialog (
             DialogLayout());
 
     SignalHandler::Connect1(
-        m_file_panel->SenderSubmitFilename(),
-        &m_internal_receiver_filename_submitted);
+        m_file_panel->SenderSubmitPath(),
+        &m_internal_receiver_path_submitted);
 }
 
 void FileDialog::OKButtonActivated ()
 {
     Dialog::OKButtonActivated();
-    m_sender_submit_filename.Signal(Filename());
-    m_sender_submit_filename_v.Signal(Filename());
+    m_sender_submit_path.Signal(Path());
+    m_sender_submit_path_v.Signal(Path());
 }
 
-void FileDialog::InternalFilenameSubmitted (std::string const &filename)
+void FileDialog::InternalPathSubmitted (std::string const &path)
 {
-    ASSERT1(filename == Filename());
+    ASSERT1(path == Path());
     OKButtonActivated();
 }
 

@@ -78,14 +78,14 @@ list (semicolon after each key/value pair) of key/value pairs.  e.g.
     ];
 
 the data file is parsed and stored as a tree structure, with the root node
-being a key/value pair with the path/filename as the identifier, and the
+being a key/value pair with the path/path as the identifier, and the
 file's contents as a structure.  therefore, a complete path can be specified
 to any individual piece of data in the file (similar to xpath).  arrays can
 be indexed using unsigned decimal integers (instead of element names (e.g.
 "arrayname|3").  because the root node identifier is a filesystem path and may
 contain slashes, a different character will be used to delimit each element
 in the datapath.  the datapath delimiting character will be the pipe character
-'|'.  the pipe character will therefore not be allowed in filenames in this
+'|'.  the pipe character will therefore not be allowed in paths in this
 context.  example path:
 
     |/usr/data/map.dat|entities|enemies|0|name

@@ -70,13 +70,13 @@ public:
 
     typedef std::vector<LineFormat> LineFormatVector;
 
-    static Font *Create (std::string const &font_face_filename, Sint32 pixel_height);
+    static Font *Create (std::string const &font_face_path, Sint32 pixel_height);
 
     virtual ~Font () { }
 
     // you must implement at least one Create() method which will be used by ResourceLibrary
 
-    std::string const &FontFaceFilename () const { return m_font_face_filename; }
+    std::string const &FontFacePath () const { return m_font_face_path; }
     ScreenCoord PixelHeight () const { return m_pixel_height; }
     ScreenCoord GlyphWidth (char const *glyph) const
     {
@@ -149,9 +149,9 @@ public:
 
 protected:
 
-    Font (std::string const &font_face_filename, ScreenCoord pixel_height)
+    Font (std::string const &font_face_path, ScreenCoord pixel_height)
         :
-        m_font_face_filename(font_face_filename),
+        m_font_face_path(font_face_path),
         m_pixel_height(pixel_height)
     { }
 
@@ -184,7 +184,7 @@ private:
         FontCoordVector2 *pen_position_span_26_6,
         FontCoordVector2 const &pen_position_26_6) const;
 
-    std::string const m_font_face_filename;
+    std::string const m_font_face_path;
     ScreenCoord const m_pixel_height;
 }; // end of class Font
 

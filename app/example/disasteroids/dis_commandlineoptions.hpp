@@ -24,7 +24,7 @@ class CommandLineOptions : public CommandLineParser
 {
 public:
 
-    CommandLineOptions (std::string const &executable_filename);
+    CommandLineOptions (std::string const &executable_path);
 
     inline void InitializeFullscreen (bool fullscreen) { m_fullscreen = fullscreen; }
     inline void InitializeResolution (ScreenCoordVector2 const &resolution) { m_resolution = resolution; }

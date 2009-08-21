@@ -47,7 +47,7 @@ class DataFileValue;
         return accepted_structure;
     }
 
-    ReturnCode Parse (std::string const &input_filename);
+    ReturnCode Parse (std::string const &input_path);
 
 private:
 
@@ -74,7 +74,7 @@ private:
 #include "xrb_datafilevalue.hpp"
 
 #undef FL
-#define FL DataFileLocation(m_scanner->InputFilename(), m_scanner->LineNumber())
+#define FL DataFileLocation(m_scanner->InputPath(), m_scanner->LineNumber())
 
 namespace Xrb
 {
@@ -103,16 +103,16 @@ namespace Xrb
 }
 
 %parser_implementation_file_bottom%{
-DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_filename)
+DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
 {
     ASSERT1(m_scanner != NULL);
     ASSERT1(!m_scanner->IsOpen());
-    // if there are any pipe characters in the filename, return failure
-    if (input_filename.find_first_of("|") != static_cast<std::string::size_type>(-1))
+    // if there are any pipe characters in the path, return failure
+    if (input_path.find_first_of("|") != static_cast<std::string::size_type>(-1))
         return RC_INVALID_FILENAME;
 
-    // attempt to open the filename and return the result
-    if (!m_scanner->Open(input_filename))
+    // attempt to open the path and return the result
+    if (!m_scanner->Open(input_path))
         return RC_FILE_OPEN_FAILURE;
 
     // start parsing, and return parse error if we got an unhandled error

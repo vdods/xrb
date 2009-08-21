@@ -32,9 +32,9 @@ ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v)
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
-Font *Font::Create (std::string const &font_face_filename, Sint32 pixel_height)
+Font *Font::Create (std::string const &font_face_path, Sint32 pixel_height)
 {
-    return Singleton::Pal().LoadFont(font_face_filename.c_str(), pixel_height);
+    return Singleton::Pal().LoadFont(font_face_path.c_str(), pixel_height);
 }
 
 ScreenCoordRect Font::StringRect (char const *const string) const

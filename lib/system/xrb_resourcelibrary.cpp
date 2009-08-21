@@ -59,7 +59,7 @@ bool ResourceLibrary::ResourceInstanceKey::LessThan::operator () (
         left_operand.m_load_parameter < right_operand.m_load_parameter
         ||
         (left_operand.m_load_parameter == right_operand.m_load_parameter &&
-         left_operand.m_filename.compare(right_operand.m_filename) < 0);
+         left_operand.m_path.compare(right_operand.m_path) < 0);
 }
 
 } // end of namespace Xrb

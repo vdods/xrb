@@ -52,7 +52,7 @@ namespace Dis
 Engine2::Sprite *SpawnDynamicSprite (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,
-    std::string const &sprite_texture_filename,
+    std::string const &sprite_texture_path,
     Float const z_depth,
     bool const is_transparent,
     Entity *const entity,
@@ -66,7 +66,7 @@ Engine2::Sprite *SpawnDynamicSprite (
 {
     ASSERT1(world != NULL);
     ASSERT1(object_layer != NULL);
-    ASSERT1(!sprite_texture_filename.empty());
+    ASSERT1(!sprite_texture_path.empty());
     ASSERT1(entity != NULL);
     ASSERT1(scale_factor >= 0.0f);
     ASSERT1(mass > 0.0f);
@@ -77,7 +77,7 @@ Engine2::Sprite *SpawnDynamicSprite (
     entity->SetVelocity(velocity);
     entity->SetAngularVelocity(angular_velocity);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_filename);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_path);
     sprite->SetZDepth(z_depth);
     sprite->SetIsTransparent(is_transparent);
     sprite->SetTranslation(translation);
@@ -390,7 +390,7 @@ Powerup *SpawnPowerup (
     Float const scale_factor,
     Float const mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_filename,
+    std::string const &sprite_texture_path,
     ItemType const item_type)
 {
     ASSERT1(item_type < IT_POWERUP_LIMIT);
@@ -398,7 +398,7 @@ Powerup *SpawnPowerup (
     SpawnDynamicSprite(
         world,
         object_layer,
-        sprite_texture_filename,
+        sprite_texture_path,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
@@ -419,7 +419,7 @@ Powerup *SpawnPowerup (
     Float const scale_factor,
     Float const mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_filename,
+    std::string const &sprite_texture_path,
     Item *const item)
 {
     ASSERT1(item != NULL);
@@ -427,7 +427,7 @@ Powerup *SpawnPowerup (
     SpawnDynamicSprite(
         world,
         object_layer,
-        sprite_texture_filename,
+        sprite_texture_path,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
@@ -748,7 +748,7 @@ Solitary *SpawnSolitary (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_SOLITARY, 0),
+        Ship::ShipSpritePath(ET_SOLITARY, 0),
         Z_DEPTH_SOLID,
         false, // is transparent
         solitary,
@@ -773,7 +773,7 @@ Interloper *SpawnInterloper (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_INTERLOPER, enemy_level),
+        Ship::ShipSpritePath(ET_INTERLOPER, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         interloper,
@@ -799,7 +799,7 @@ Shade *SpawnShade (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_SHADE, enemy_level),
+        Ship::ShipSpritePath(ET_SHADE, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         shade,
@@ -825,7 +825,7 @@ Revulsion *SpawnRevulsion (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_REVULSION, enemy_level),
+        Ship::ShipSpritePath(ET_REVULSION, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         revulsion,
@@ -851,7 +851,7 @@ Devourment *SpawnDevourment (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_DEVOURMENT, enemy_level),
+        Ship::ShipSpritePath(ET_DEVOURMENT, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         devourment,
@@ -877,7 +877,7 @@ Demi *SpawnDemi (
     SpawnDynamicSprite(
         world,
         object_layer,
-        Ship::ShipSpriteFilename(ET_DEMI, enemy_level),
+        Ship::ShipSpritePath(ET_DEMI, enemy_level),
         Z_DEPTH_SOLID,
         false, // is transparent
         demi,
@@ -958,7 +958,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     EntityReference<Entity> const &owner,
     Uint8 const enemy_level)
 {
-    static std::string const s_grinder_sprite_filename[EnemyShip::ENEMY_LEVEL_COUNT] =
+    static std::string const s_grinder_sprite_path[EnemyShip::ENEMY_LEVEL_COUNT] =
     {
         "resources/grinder0_small.png",
         "resources/grinder1_small.png",
@@ -977,7 +977,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     SpawnDynamicSprite(
         world,
         object_layer,
-        s_grinder_sprite_filename[enemy_level],
+        s_grinder_sprite_path[enemy_level],
         Z_DEPTH_DEVOURMENT_GRINDER,
         false, // is transparent
         health_trigger,

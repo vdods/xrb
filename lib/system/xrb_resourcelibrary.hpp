@@ -21,10 +21,10 @@ namespace Xrb
 
 template <typename T> class Resource;
 
-/** Data associated with a filename which is too large to store many times
+/** Data associated with a path which is too large to store many times
   * should be managed by ResourceLibrary.  When a piece of data is loaded,
   * it is tracked by the ResourceLibrary, so that successive calls to load
-  * the same filename are transparent and return the existing data.  When
+  * the same path are transparent and return the existing data.  When
   * all references to a loaded piece of data are deleted, that piece of data
   * is deleted from memory.
   *
@@ -32,25 +32,25 @@ template <typename T> class Resource;
   * It provides the mechanisms required for reference-counting so the library
   * can unload unreferenced data.
   *
-  * This is done by loading it using the templatized method LoadFilename.
+  * This is done by loading it using the templatized method LoadPath.
   * The template requires a static function which loads the data from the
-  * given filename and returns a pointer to whatever the templatized type is.
+  * given path and returns a pointer to whatever the templatized type is.
   * See the various classes which have a Create function (e.g.
   * @ref Xrb::GLTexture::Create and @ref Xrb::Font::Create), as these are
   * appropriate functions for the task.
   *
-  * There is a second version of the templatized LoadFilename method
+  * There is a second version of the templatized LoadPath method
   * which indicates that the load function also takes a Sint32 as an
   * additional parameter.  This value can be used to specify additional data
-  * necessary to load the resource in addition to the filename (see
+  * necessary to load the resource in addition to the path (see
   * @ref Xrb::Font, where the additional parameter is used for the pixel
   * height for the rendered font data).
   *
-  * When the same filename is loaded multiple times, each using a different
+  * When the same path is loaded multiple times, each using a different
   * load parameter, each counts as a separate resource.  Think about loading
   * a Font with different pixel heights.  The font data is actually an OpenGL
   * texture, and so different pixel heights must be separate textures, even
-  * though the font face is the same.  However, loading the same filename
+  * though the font face is the same.  However, loading the same path
   * <strong>and</strong> load parameter will use the same resourced data.
   *
   * It should be noted that the value @c SINT32_LOWER_BOUND ( aka
@@ -84,28 +84,28 @@ public:
 
     /** The template argument T must be the type of data being loaded.  The
       * template argument LoadFunction must be a static (or global) function
-      * which takes a filename, and returns a pointer to the newly allocated
+      * which takes a path, and returns a pointer to the newly allocated
       * object of type T.  ResourceLibrary depends on the return value of
       * LoadFunction being a newly allocated object, so that it may handle
       * deletion of the object itself.
-      * @brief Loads a resource from the given filename, using the supplied
+      * @brief Loads a resource from the given path, using the supplied
       *        LoadFunction.
       * @param T Template argument giving the type of the resource to load.
       * @param LoadFunction Template argument giving the static or global
       *                     function to use to load the resource data.
-      * @param filename The filename of the data to load using LoadFunction.
+      * @param path The path of the data to load using LoadFunction.
       */
     template <typename T>
-    Resource<T> LoadFilename (
+    Resource<T> LoadPath (
         T *(*LoadFunction)(std::string const &),
-        std::string const &filename);
+        std::string const &path);
     /** The template argument T must be the type of data being loaded.  The
       * template argument LoadFunction must be a static (or global) function
-      * which takes a filename, and returns a pointer to the newly allocated
+      * which takes a path, and returns a pointer to the newly allocated
       * object of type T.  ResourceLibrary depends on the return value of
       * LoadFunction being a newly allocated object, so that it may handle
       * deletion of the object itself.
-      * @brief Loads a resource from the given filename, using the supplied
+      * @brief Loads a resource from the given path, using the supplied
       *        LoadFunction, with load_parameter as a single extra parameter
       *        to LoadFunction.
       * @param T Template argument giving the type of the resource to load.
@@ -113,13 +113,13 @@ public:
       *                     function to use to load the resource data, which
       *                     also takes a Sint32 as the additional load
       *                     parameter.
-      * @param filename The filename of the data to load using LoadFunction.
+      * @param path The path of the data to load using LoadFunction.
       * @param load_parameter The extra parameter to pass to LoadFunction.
       */
     template <typename T>
-    Resource<T> LoadFilename (
+    Resource<T> LoadPath (
         T *(*LoadFunction)(std::string const &, Sint32),
-        std::string const &filename,
+        std::string const &path,
         Sint32 load_parameter);
 
 private:
@@ -127,16 +127,16 @@ private:
     // used as the key in the resource instance map
     struct ResourceInstanceKey
     {
-        // the resource's filename
-        std::string m_filename;
+        // the resource's path
+        std::string m_path;
         // an associated signed integer value (e.g. font pixel height)
         Sint32 m_load_parameter;
 
         inline ResourceInstanceKey (
-            std::string const &filename,
+            std::string const &path,
             Sint32 const load_parameter)
         {
-            m_filename = filename;
+            m_path = path;
             m_load_parameter = load_parameter;
         }
 
@@ -160,9 +160,9 @@ private:
     {
     public:
 
-        inline std::string const &Filename () const
+        inline std::string const &Path () const
         {
-            return m_key.m_filename;
+            return m_key.m_path;
         }
         inline Sint32 LoadParameter () const
         {
@@ -192,7 +192,7 @@ private:
 
         void Print (FILE *fptr) const
         {
-            fprintf(fptr, "\"%s\", ", m_key.m_filename.c_str());
+            fprintf(fptr, "\"%s\", ", m_key.m_path.c_str());
             if (m_key.m_load_parameter == UNSPECIFIED_LOAD_PARAMETER)
                 fprintf(stderr, "no load parameter\n");
             else
@@ -207,7 +207,7 @@ private:
             :
             m_key(key)
         {
-            ASSERT1(!key.m_filename.empty());
+            ASSERT1(!key.m_path.empty());
             m_library = library;
             m_reference_count = 0;
         }
@@ -265,7 +265,7 @@ private:
 
     InstanceMap m_instance_map;
 
-    // so ResourceInstance<T> can call UnmapFilename()
+    // so ResourceInstance<T> can call UnmapPath()
     template <typename T> friend class ResourceInstance;
     // so Resource<T> can use ResourceInstance<T>
     template <typename T> friend class Resource;
@@ -286,13 +286,13 @@ private:
   * queries the validity of a Resource object.  Resources can be made "valid"
   * simply by assigning to them the value of another Resource object or by
   * assigning to them the return value of a call to 
-  * @ref Xrb::ResourceLibrary::LoadFilename.
+  * @ref Xrb::ResourceLibrary::LoadPath.
   *
   * The Release method is provided to explicitly unload data.  Once this
   * is done, the object is "invalid".
   *
   * Equality and inequality testing operators are provided, as well as
-  * accessors for the resource's filename and load parameter.
+  * accessors for the resource's path and load parameter.
   *
   * Dereferencing is done in two ways.  The unary * operator returns a pointer
   * to the const resource data.  The -> operator is used intuitively as if
@@ -398,7 +398,7 @@ public:
     }
 
     /** An invalid Resource can't be dereferenced or accessed for its
-      * filename or load parameter.
+      * path or load parameter.
       * @brief Returns true iff this Resource is referencing data.
       */
     inline bool IsValid () const
@@ -406,12 +406,12 @@ public:
         return m_instance != NULL;
     }
     /** Asserts if this Resource is invalid.
-      * @brief Returns the filename that the resourced data was loaded from.
+      * @brief Returns the path that the resourced data was loaded from.
       */
-    inline std::string const &Filename () const
+    inline std::string const &Path () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->Filename();
+        return m_instance->Path();
     }
     /** If this resource was loaded without a load parameter, then
       * @ref Xrb::ResourceLibrary::UNSPECIFIED_LOAD_PARAMETER will be
@@ -446,16 +446,16 @@ private:
 }; // end of class Resource<T>
 
 template <typename T>
-Resource<T> ResourceLibrary::LoadFilename (
+Resource<T> ResourceLibrary::LoadPath (
     T *(*LoadFunction)(std::string const &),
-    std::string const &filename)
+    std::string const &path)
 {
     Resource<T> invalid_resource;
 
-    if (filename.empty())
+    if (path.empty())
         return invalid_resource;
 
-    ResourceInstanceKey const key(filename, UNSPECIFIED_LOAD_PARAMETER);
+    ResourceInstanceKey const key(path, UNSPECIFIED_LOAD_PARAMETER);
 
     // check if the file is already loaded
     InstanceMap::iterator it = m_instance_map.find(key);
@@ -470,12 +470,12 @@ Resource<T> ResourceLibrary::LoadFilename (
             "resource using a different type or method");
         return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
     }
-    // otherwise load up the given filename, stick it in
+    // otherwise load up the given path, stick it in
     // the map and return a Resource for it.
     else
     {
-        // attempt to load the filename
-        T *data = LoadFunction(filename);
+        // attempt to load the path
+        T *data = LoadFunction(path);
 
         // if successful, stick the data into a ResourceInstance to
         // be kept by this ResourceLibrary, otherwise return null.
@@ -485,7 +485,7 @@ Resource<T> ResourceLibrary::LoadFilename (
 //                 stderr,
 //                 "ResourceLibrary * loading \"%s\", "
 //                 "no load parameter\n",
-//                 filename.c_str());
+//                 path.c_str());
 
             ResourceInstance<T> *instance =
                 new ResourceInstance<T>(this, key, data);
@@ -498,7 +498,7 @@ Resource<T> ResourceLibrary::LoadFilename (
                 stderr,
                 "ResourceLibrary * FAILURE while "
                 "loading \"%s\", no load parameter\n",
-                filename.c_str());
+                path.c_str());
             // do some error handling
             return invalid_resource;
         }
@@ -506,9 +506,9 @@ Resource<T> ResourceLibrary::LoadFilename (
 }
 
 template <typename T>
-Resource<T> ResourceLibrary::LoadFilename (
+Resource<T> ResourceLibrary::LoadPath (
     T *(*LoadFunction)(std::string const &, Sint32),
-    std::string const &filename,
+    std::string const &path,
     Sint32 const load_parameter)
 {
     ASSERT1(load_parameter != UNSPECIFIED_LOAD_PARAMETER &&
@@ -516,10 +516,10 @@ Resource<T> ResourceLibrary::LoadFilename (
 
     Resource<T> invalid_resource;
 
-    if (filename.empty())
+    if (path.empty())
         return invalid_resource;
 
-    ResourceInstanceKey const key(filename, load_parameter);
+    ResourceInstanceKey const key(path, load_parameter);
 
     // check if the file is already loaded
     InstanceMap::iterator it = m_instance_map.find(key);
@@ -534,12 +534,12 @@ Resource<T> ResourceLibrary::LoadFilename (
             "resource using a different type or method");
         return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
     }
-    // otherwise load up the given filename, stick it in
+    // otherwise load up the given path, stick it in
     // the map and return a Resource for it.
     else
     {
-        // attempt to load the filename
-        T *data = LoadFunction(filename, load_parameter);
+        // attempt to load the path
+        T *data = LoadFunction(path, load_parameter);
 
         // if successful, stick the data into a ResourceInstance to
         // be kept by this ResourceLibrary, otherwise return null.
@@ -549,7 +549,7 @@ Resource<T> ResourceLibrary::LoadFilename (
 //                 stderr,
 //                 "ResourceLibrary * loading \"%s\", "
 //                 "load parameter = %d\n",
-//                 filename.c_str(),
+//                 path.c_str(),
 //                 load_parameter);
 
             ResourceInstance<T> *instance =
@@ -563,7 +563,7 @@ Resource<T> ResourceLibrary::LoadFilename (
                 stderr,
                 "ResourceLibrary * FAILURE while "
                 "loading \"%s\", load parameter = %d\n",
-                filename.c_str(),
+                path.c_str(),
                 load_parameter);
             // do some error handling
             return invalid_resource;

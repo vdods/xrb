@@ -1382,7 +1382,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         object_layer->SetZDepth(30000.0f);
         AddObjectLayer(object_layer);
 
-        static std::string const s_galaxy_sprite_filenames[] =
+        static std::string const s_galaxy_sprite_path[] =
         {
             "resources/starfield/galaxy_small01.png",
             "resources/starfield/galaxy_small02.png",
@@ -1395,16 +1395,16 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/galaxy_small09.png",
             "resources/starfield/galaxy_small10.png",
         };
-        Uint32 const galaxy_sprite_filename_count =
-            sizeof(s_galaxy_sprite_filenames) / sizeof(std::string);
+        Uint32 const galaxy_sprite_path_count =
+            sizeof(s_galaxy_sprite_path) / sizeof(std::string);
 
         Uint32 const number_of_galaxies_to_create = 100;
         for (Uint32 i = 0; i < number_of_galaxies_to_create; ++i)
         {
             Engine2::Sprite *sprite =
                 Engine2::Sprite::Create(
-                    s_galaxy_sprite_filenames[
-                        Math::RandomUint16(0, galaxy_sprite_filename_count-1)]);
+                    s_galaxy_sprite_path[
+                        Math::RandomUint16(0, galaxy_sprite_path_count-1)]);
             sprite->SetTranslation(
                 FloatVector2(
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
@@ -1434,7 +1434,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         object_layer->SetZDepth(7500.0f);
         AddObjectLayer(object_layer);
 
-        static std::string const s_starfield_sprite_filenames[] =
+        static std::string const s_starfield_sprite_path[] =
         {
             "resources/starfield/star_dot01.png",
             "resources/starfield/star_dot02.png",
@@ -1455,16 +1455,16 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/star_flare08.png",
             "resources/starfield/star_flare09.png"
         };
-        Uint32 const starfield_sprite_filename_count =
-            sizeof(s_starfield_sprite_filenames) / sizeof(std::string);
+        Uint32 const starfield_sprite_path_count =
+            sizeof(s_starfield_sprite_path) / sizeof(std::string);
 
         Uint32 const number_of_stars_to_create = 1000;
         for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
         {
             Engine2::Sprite *sprite =
                 Engine2::Sprite::Create(
-                    s_starfield_sprite_filenames[
-                        Math::RandomUint16(0, starfield_sprite_filename_count-1)]);
+                    s_starfield_sprite_path[
+                        Math::RandomUint16(0, starfield_sprite_path_count-1)]);
             sprite->SetTranslation(
                 FloatVector2(
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
@@ -1495,17 +1495,17 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         object_layer->SetZDepth(10000.0f);
         AddObjectLayer(object_layer);
 
-        static std::string const s_nebula_sprite_filenames[] =
+        static std::string const s_nebula_sprite_path[] =
         {
             "resources/nebulas/eta_carinae.png",
             "resources/nebulas/planetary_nebula_NGC6751.png",
             "resources/nebulas/reflection_nebula.png",
             "resources/nebulas/small_magellanic_cloud.png"
         };
-        Uint32 const nebula_sprite_filename_count =
-            sizeof(s_nebula_sprite_filenames) / sizeof(std::string);
+        Uint32 const nebula_sprite_path_count =
+            sizeof(s_nebula_sprite_path) / sizeof(std::string);
 
-        for (Uint32 i = 0; i < nebula_sprite_filename_count; ++i)
+        for (Uint32 i = 0; i < nebula_sprite_path_count; ++i)
         {
             FloatVector2 translation;
             Float scale_factor;
@@ -1525,8 +1525,8 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 break;
 
             Engine2::Sprite *sprite =
-//                 Engine2::Sprite::Create(s_nebula_sprite_filenames[i]);
-                Engine2::Sprite::Create(s_nebula_sprite_filenames[Math::RandomUint16(0, nebula_sprite_filename_count-1)]);
+//                 Engine2::Sprite::Create(s_nebula_sprite_path[i]);
+                Engine2::Sprite::Create(s_nebula_sprite_path[Math::RandomUint16(0, nebula_sprite_path_count-1)]);
             sprite->SetTranslation(translation);
             sprite->SetScaleFactor(scale_factor);
             sprite->SetAngle(Math::RandomAngle());

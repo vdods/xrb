@@ -17,12 +17,12 @@
 namespace Xrb
 {
 
-Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_filename)
+Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_path)
 {
     Resource<GLTexture> texture =
-        Singleton::ResourceLibrary().LoadFilename<GLTexture>(
+        Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
-            texture_filename);
+            texture_path);
     if (!texture.IsValid())
         return NULL;
 
@@ -150,7 +150,7 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
     m_texture =
-        Singleton::ResourceLibrary().LoadFilename<GLTexture>(
+        Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
             serializer.ReadStdString());
     m_is_round = serializer.ReadBool();
@@ -165,7 +165,7 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(m_texture.IsValid());
 
     // write out the guts
-    serializer.WriteStdString(m_texture.Filename());
+    serializer.WriteStdString(m_texture.Path());
     serializer.WriteBool(m_is_round);
     serializer.WriteFloatVector2(m_physical_size_ratios);
 }

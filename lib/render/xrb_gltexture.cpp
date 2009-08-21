@@ -25,11 +25,11 @@ GLTexture::~GLTexture ()
     DeleteTexture();
 }
 
-GLTexture *GLTexture::Create (std::string const &filename)
+GLTexture *GLTexture::Create (std::string const &path)
 {
     GLTexture *retval = NULL;
 
-    Texture *texture = Texture::Create(filename);
+    Texture *texture = Texture::Create(path);
     if (texture == NULL)
         return retval;
 

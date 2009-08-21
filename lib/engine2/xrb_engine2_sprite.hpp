@@ -24,7 +24,7 @@ namespace Xrb
 
 namespace Engine2
 {
-    
+
 // implements drawing functions, paired with the physicality of Object
 class Sprite : public Object
 {
@@ -36,7 +36,7 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
-    static Sprite *Create (std::string const &texture_filename);
+    static Sprite *Create (std::string const &texture_path);
     // create an instance of this class by reading from the given Serializer
     static Sprite *Create (Serializer &serializer);
     // makes calls to WriteClassSpecific for this and all superclasses

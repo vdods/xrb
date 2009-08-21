@@ -25,9 +25,9 @@ public:
 
     static DataFileLocation const ms_invalid;
 
-    DataFileLocation (std::string const &filename, Uint32 line)
+    DataFileLocation (std::string const &path, Uint32 line)
         :
-        m_filename(filename),
+        m_path(path),
         m_line(line)
     {
         assert(IsValid());
@@ -35,12 +35,12 @@ public:
 
     inline bool IsValid () const
     {
-        return !m_filename.empty() && m_line > 0;
+        return !m_path.empty() && m_line > 0;
     }
-    inline std::string const &Filename () const
+    inline std::string const &Path () const
     {
         assert(IsValid() && "can't use DataFileLocation::ms_invalid in this manner");
-        return m_filename;
+        return m_path;
     }
     inline Uint32 Line () const
     {
@@ -54,11 +54,11 @@ private:
     // for use only by the constructor of ms_invalid
     DataFileLocation ()
         :
-        m_filename(),
+        m_path(),
         m_line(0)
     { }
 
-    std::string m_filename;
+    std::string m_path;
     Uint32 m_line;
 }; // end of class DataFileLocation
 

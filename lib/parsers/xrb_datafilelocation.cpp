@@ -20,7 +20,7 @@ DataFileLocation const DataFileLocation::ms_invalid;
 std::string DataFileLocation::Text () const
 {
     std::ostringstream buffer;
-    buffer << m_filename << ":" << m_line;
+    buffer << m_path << ":" << m_line;
     return buffer.str();
 }
 

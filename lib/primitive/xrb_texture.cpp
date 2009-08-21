@@ -22,9 +22,9 @@ Texture::~Texture ()
     DeleteArrayAndNullify(m_data);
 }
 
-Texture *Texture::Create (std::string const &filename)
+Texture *Texture::Create (std::string const &path)
 {
-    return Singleton::Pal().LoadImage(filename.c_str());
+    return Singleton::Pal().LoadImage(path.c_str());
 }
 
 Texture *Texture::Create (

@@ -164,8 +164,8 @@ namespace MapEditor2
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetElasticity () { return &m_receiver_set_object_selection_set_elasticity; }
         inline SignalReceiver1<Float> const *ReceiverSetObjectSelectionSetDensity () { return &m_receiver_set_object_selection_set_density; }
     
-        void CreateStaticSprite (std::string const &filename);
-        void CreateSpriteEntity (std::string const &filename);
+        void CreateStaticSprite (std::string const &path);
+        void CreateSpriteEntity (std::string const &path);
     
         void SetCurrentGridScale (Uint32 current_grid_scale);
         void SetPolygonTesselation (Uint32 polygon_tesselation);

@@ -41,7 +41,7 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
 
 //         // create an entity/sprite from a prefab file
-//         static CompoundEntity *Create (std::string const &prefab_filename);
+//         static CompoundEntity *Create (std::string const &prefab_path);
         // create an instance of this class by reading from the given Serializer
         static CompoundEntity *Create (Serializer &serializer);
         // necessary because of multiple virtual inheritance

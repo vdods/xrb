@@ -31,10 +31,10 @@ public:
     virtual ~FileDialog () { }
 
     inline FilePanel::Operation FileOperation () const { return m_file_panel->FileOperation(); }
-    inline std::string const &Filename () const { return m_file_panel->Filename(); }
+    inline std::string const &Path () const { return m_file_panel->Path(); }
 
-    inline SignalSender1<std::string const &> const *SenderSubmitFilename () { return &m_sender_submit_filename; }
-    inline SignalSender1<std::string> const *SenderSubmitFilenameV () { return &m_sender_submit_filename_v; }
+    inline SignalSender1<std::string const &> const *SenderSubmitPath () { return &m_sender_submit_path; }
+    inline SignalSender1<std::string> const *SenderSubmitPathV () { return &m_sender_submit_path_v; }
 
 protected:
 
@@ -42,14 +42,14 @@ protected:
 
 private:
 
-    void InternalFilenameSubmitted (std::string const &filename);
+    void InternalPathSubmitted (std::string const &path);
 
     FilePanel *m_file_panel;
 
-    SignalSender1<std::string const &> m_sender_submit_filename;
-    SignalSender1<std::string> m_sender_submit_filename_v;
+    SignalSender1<std::string const &> m_sender_submit_path;
+    SignalSender1<std::string> m_sender_submit_path_v;
 
-    SignalReceiver1<std::string const &> m_internal_receiver_filename_submitted;
+    SignalReceiver1<std::string const &> m_internal_receiver_path_submitted;
 }; // end of class FileDialog
 
 } // end of namespace Xrb

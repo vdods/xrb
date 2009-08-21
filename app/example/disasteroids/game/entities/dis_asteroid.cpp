@@ -245,7 +245,7 @@ void Asteroid::Die (
                 scale_factor,
                 mass,
                 velocity,
-                Item::MineralSpriteFilename(mineral_index),
+                Item::MineralSpritePath(mineral_index),
                 static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             mineral_mass_to_spawn -= mass;

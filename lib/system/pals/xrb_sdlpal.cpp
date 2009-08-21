@@ -711,9 +711,9 @@ class FontFace
 {
 public:
 
-    FontFace (std::string const &filename, FT_FaceRec_ *face)
+    FontFace (std::string const &path, FT_FaceRec_ *face)
         :
-        m_filename(filename),
+        m_path(path),
         m_face(face)
     {
         ASSERT1(m_face != NULL);
@@ -723,7 +723,7 @@ public:
         FT_Done_Face(m_face);
     }
 
-    static FontFace *Create (std::string const &filename, FT_LibraryRec_ *ft_library)
+    static FontFace *Create (std::string const &path, FT_LibraryRec_ *ft_library)
     {
         ASSERT1(ft_library != NULL);
 
@@ -732,7 +732,7 @@ public:
         FT_Error error;
         FT_FaceRec_ *face;
 
-        error = FT_New_Face(ft_library, filename.c_str(), 0, &face);
+        error = FT_New_Face(ft_library, path.c_str(), 0, &face);
         if (error != 0)
             return retval;
 
@@ -741,36 +741,36 @@ public:
         // check if there is a metrics file associated with this font file.
         // (this is sort of a hacky way to check for type1 fonts, but i don't
         // know of any better way).
-        if (filename.find_last_of(".pfa") < filename.length() ||
-            filename.find_last_of(".pfb") < filename.length())
+        if (path.find_last_of(".pfa") < path.length() ||
+            path.find_last_of(".pfb") < path.length())
         {
-            std::string metrics_filename(filename.substr(0, filename.length()-4));
-            metrics_filename += ".afm";
+            std::string metrics_path(path.substr(0, path.length()-4));
+            metrics_path += ".afm";
             // attempt to attach the font metrics file, but ignore errors,
             // since loading this file is not mandatory.
-            FT_Attach_File(face, metrics_filename.c_str());
+            FT_Attach_File(face, metrics_path.c_str());
 
-            metrics_filename = filename.substr(0, filename.length()-4);
-            metrics_filename += ".pfm";
+            metrics_path = path.substr(0, path.length()-4);
+            metrics_path += ".pfm";
             // attempt to attach the font metrics file, but ignore errors,
             // since loading this file is not mandatory.
-            FT_Attach_File(face, metrics_filename.c_str());
+            FT_Attach_File(face, metrics_path.c_str());
         }
 
         if (FT_HAS_KERNING(face))
-            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font with kerning\n", filename.c_str());
+            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font with kerning\n", path.c_str());
         else
-            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", filename.c_str());
+            fprintf(stderr, "FontFace::Create(\"%s\"); loaded font without kerning\n", path.c_str());
 
-        return new FontFace(filename, face);
+        return new FontFace(path, face);
     }
 
-    std::string const &Filename () const { return m_filename; }
+    std::string const &Path () const { return m_path; }
     FT_FaceRec_ *FTFace () const { return m_face; }
 
 private:
 
-    std::string const m_filename;
+    std::string const m_path;
     FT_FaceRec_ *const m_face;
 }; // end of class FontFace
 

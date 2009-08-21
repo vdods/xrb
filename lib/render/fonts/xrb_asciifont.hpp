@@ -95,12 +95,12 @@ public:
       * it can be used in @ref Xrb::Resource .
       * @brief Returns a pointer to a new instance of AsciiFont, loaded from the
       *        cached font metadata and bitmap files corresponding to the given
-      *        filename and pixel height, if said cache exists.
-      * @param font_face_filename The filename of the font to load.
+      *        path and pixel height, if said cache exists.
+      * @param font_face_path The path of the font to load.
       * @param pixel_height The maximum height, in pixels, of the glyphs to render.
       */
     static AsciiFont *CreateFromCache (
-        std::string const &font_face_filename,
+        std::string const &font_face_path,
         ScreenCoord pixel_height);
 
     /** This is the means to construct a AsciiFont object using the font data
@@ -109,7 +109,7 @@ public:
       * @ref SDLPal::LoadFont for example usage.
       * @brief Returns a pointer to a new instance of AsciiFont, loaded from the
       *        font metadata and bitmap provided.
-      * @param font_face_filename The filename of the font loaded.
+      * @param font_face_path The path of the font loaded.
       * @param pixel_height The maximum height, in pixels, of the glyphs to render.
       * @param has_kerning True iff the font has kerning enabled.
       * @param baseline_height Pixel offset to the baseline of the font.
@@ -119,7 +119,7 @@ public:
       *                     method does not delete the font texture.
       */
     static AsciiFont *Create (
-        std::string const &font_face_filename,
+        std::string const &font_face_path,
         ScreenCoord pixel_height,
         bool has_kerning,
         ScreenCoord baseline_height,
@@ -154,9 +154,9 @@ protected:
     /** Protected so that you must use @ref Xrb::AsciiFont::Create .
       * @brief Default constructor.
       */
-    AsciiFont (std::string const &font_face_filename, ScreenCoord pixel_height)
+    AsciiFont (std::string const &font_face_path, ScreenCoord pixel_height)
         :
-        Font(font_face_filename, pixel_height)
+        Font(font_face_path, pixel_height)
     {
         m_gl_texture = NULL;
     }

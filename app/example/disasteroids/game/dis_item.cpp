@@ -50,9 +50,9 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
     }
 }
 
-std::string const &Item::MineralSpriteFilename (Uint8 const mineral_index)
+std::string const &Item::MineralSpritePath (Uint8 const mineral_index)
 {
-    static std::string const s_mineral_sprite_filename[MINERAL_COUNT] =
+    static std::string const s_mineral_sprite_path[MINERAL_COUNT] =
     {
         "resources/mineral_0.png",
         "resources/mineral_1.png",
@@ -61,7 +61,7 @@ std::string const &Item::MineralSpriteFilename (Uint8 const mineral_index)
     };
 
     ASSERT1(mineral_index < MINERAL_COUNT);
-    return s_mineral_sprite_filename[mineral_index];
+    return s_mineral_sprite_path[mineral_index];
 }
 
 Uint32 Item::ItemPrice (

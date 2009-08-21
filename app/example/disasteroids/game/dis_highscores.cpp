@@ -180,10 +180,10 @@ bool HighScores::AddScore (Score const &score)
     return points_rank <= wave_count_rank;
 }
 
-void HighScores::Read (std::string const &filename)
+void HighScores::Read (std::string const &path)
 {
     DataFileParser parser;
-    if (parser.Parse(filename) == DataFileParser::RC_SUCCESS)
+    if (parser.Parse(path) == DataFileParser::RC_SUCCESS)
     {
         DataFileStructure const *root = parser.AcceptedStructure();
 
@@ -220,9 +220,9 @@ void HighScores::Read (std::string const &filename)
     }
 }
 
-void HighScores::Write (std::string const &filename)
+void HighScores::Write (std::string const &path)
 {
-    FILE *fptr = fopen(filename.c_str(), "wt");
+    FILE *fptr = fopen(path.c_str(), "wt");
     if (fptr == NULL)
         return;
 

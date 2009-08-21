@@ -63,7 +63,7 @@ namespace MapEditor2
         // public serialization functions
         // ///////////////////////////////////////////////////////////////////
             
-//         static Compound *Create (std::string const &prefab_filename);
+//         static Compound *Create (std::string const &prefab_path);
         // creates a new Compound from data read in from the serializer
         static Compound *Create (Serializer &serializer);
         // makes calls to WriteClassSpecific for this and all superclasses

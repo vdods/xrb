@@ -32,12 +32,12 @@ public:
     ~DataFileScanner ();
 
     inline bool IsOpen () /* const TODO: put back in for GCC 4.x */ { return m_input.is_open(); }
-    inline std::string const &InputFilename () const { return m_input_filename; }
+    inline std::string const &InputPath () const { return m_input_path; }
     inline Uint32 LineNumber () const { return m_line_number; }
     inline bool WereWarningsEncountered () const { return m_were_warnings_encountered; }
     inline bool WereErrorsEncountered () const { return m_were_errors_encountered; }
 
-    bool Open (std::string const &input_filename);
+    bool Open (std::string const &input_path);
     void Close ();
 
     void EmitWarning (std::string const &message);
@@ -70,7 +70,7 @@ private:
         return m_input.peek() == EOF;
     }
 
-    std::string m_input_filename;
+    std::string m_input_path;
     std::ifstream m_input;
     std::string m_text;
     Uint32 m_line_number;

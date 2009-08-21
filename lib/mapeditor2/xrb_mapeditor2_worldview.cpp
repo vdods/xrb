@@ -408,35 +408,35 @@ void MapEditor2::WorldView::SetEditingSubMode (
     }
 }
 
-void MapEditor2::WorldView::CreateStaticSprite (std::string const &filename)
+void MapEditor2::WorldView::CreateStaticSprite (std::string const &path)
 {
     // calculate the position to stick the new sprite
     FloatVector2 position(ParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
     // create the sprite
-    Sprite *sprite = Sprite::Create(filename);
+    Sprite *sprite = Sprite::Create(path);
     // position the sprite
     sprite->SetTranslation(position);
     // TODO: set the scale to be proportionate to the view area
 
     // add the sprite to the world in the current object layer
-    fprintf(stderr, "MapEditor2::WorldView::CreateStaticSprite(); creating a static sprite from filename \"%s\" at ", filename.c_str());
+    fprintf(stderr, "MapEditor2::WorldView::CreateStaticSprite(); creating a static sprite from path \"%s\" at ", path.c_str());
     Fprint(stderr, position);
     GetWorld()->AddObject(sprite, MainObjectLayer());
     sprite->SetIsSelected(true);
 }
 
-void MapEditor2::WorldView::CreateSpriteEntity (std::string const &filename)
+void MapEditor2::WorldView::CreateSpriteEntity (std::string const &path)
 {
     // calculate the position to stick the new sprite
     FloatVector2 position(ParallaxedWorldViewToWorld() * FloatVector2::ms_zero);
     // create the sprite
-    SpriteEntity *sprite = SpriteEntity::Create(filename);
+    SpriteEntity *sprite = SpriteEntity::Create(path);
     // position the sprite
     sprite->SetTranslation(position);
     // TODO: set the scale to be proportionate to the view area
 
     // add the sprite to the world in the current object layer
-    fprintf(stderr, "MapEditor2::WorldView::CreateSpriteEntity(); creating a sprite entity from filename \"%s\" at ", filename.c_str());
+    fprintf(stderr, "MapEditor2::WorldView::CreateSpriteEntity(); creating a sprite entity from path \"%s\" at ", path.c_str());
     Fprint(stderr, position);
     GetWorld()->AddEntity(sprite, MainObjectLayer());
     sprite->SetIsSelected(true);
@@ -936,7 +936,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         dialog->Resize(dialog->Parent()->Size() * 4 / 5);
                         dialog->CenterOnWidget(dialog->Parent());
                         SignalHandler::Connect1(
-                            dialog->SenderSubmitFilename(),
+                            dialog->SenderSubmitPath(),
                             ReceiverCreateStaticSprite());
                     }
                     else
@@ -949,7 +949,7 @@ bool MapEditor2::WorldView::ProcessKeyEvent (EventKey const *const e)
                         dialog->Resize(dialog->Parent()->Size() * 4 / 5);
                         dialog->CenterOnWidget(dialog->Parent());
                         SignalHandler::Connect1(
-                            dialog->SenderSubmitFilename(),
+                            dialog->SenderSubmitPath(),
                             ReceiverCreateSpriteEntity());
                     }
                 }
@@ -1430,7 +1430,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     polygon_angle,
                     m_polygon_tesselation,
                     Singleton::ResourceLibrary().
-                        LoadFilename<GLTexture>(
+                        LoadPath<GLTexture>(
                             GLTexture::Create,
                             "resources/texture1.png"));
             
@@ -1451,7 +1451,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 polygon_angle,
                 m_polygon_tesselation,
                 Singleton::ResourceLibrary().
-                    LoadFilename<GLTexture>(
+                    LoadPath<GLTexture>(
                         GLTexture::Create,
                         "resources/texture1.png"));
         }

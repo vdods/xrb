@@ -29,7 +29,7 @@ MapEditor2::CompoundEntity *MapEditor2::CompoundEntity::CreateCompoundEntityClon
 
 /*
 MapEditor2::CompoundEntity *MapEditor2::CompoundEntity::Create (
-    std::string const &prefab_filename)
+    std::string const &prefab_path)
 {
 }
 */

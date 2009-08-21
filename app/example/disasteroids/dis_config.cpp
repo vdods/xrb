@@ -130,14 +130,14 @@ void Config::ResetToDefaults ()
     }
 }
 
-void Config::Read (string const &config_filename, bool const reset_to_defaults_before_reading)
+void Config::Read (string const &config_file_path, bool const reset_to_defaults_before_reading)
 {
     if (reset_to_defaults_before_reading)
         ResetToDefaults();
 
     DataFileParser parser;
     // if the parse didn't work for whatever reason, don't change the values.
-    if (parser.Parse(config_filename) == DataFileParser::RC_SUCCESS)
+    if (parser.Parse(config_file_path) == DataFileParser::RC_SUCCESS)
     {
         DataFileStructure const *root = parser.AcceptedStructure();
 
@@ -161,9 +161,9 @@ void Config::Read (string const &config_filename, bool const reset_to_defaults_b
     }
 }
 
-void Config::Write (string const &config_filename) const
+void Config::Write (string const &config_file_path) const
 {
-    FILE *fptr = fopen(config_filename.c_str(), "wt");
+    FILE *fptr = fopen(config_file_path.c_str(), "wt");
     if (fptr == NULL)
         return;
 

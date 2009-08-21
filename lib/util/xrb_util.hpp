@@ -155,6 +155,17 @@ namespace Util
     /** @brief Returns textual representations of the IOError enums.
       */
     char const *IOErrorString (IOError error);
+
+    /** The "slash" (directory delimiter) is '/' and the final '/'
+      * will be included in the return value.
+      * @brief Returns only the directory portion of the given path.
+      */
+    std::string DirectoryPortion (std::string const &path);
+    /** The "slash" (directory delimiter) is '/'.  This function returns
+      * everything after the final '/'.
+      * @brief Returns only the filename portion of the given path.
+      */
+    std::string FilenamePortion (std::string const &path);
 } // end of namespace Util
 
 } // end of namespace Xrb

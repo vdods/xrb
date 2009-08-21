@@ -166,7 +166,7 @@ Powerup *SpawnPowerup (
     Float scale_factor,
     Float mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_filename,
+    std::string const &sprite_texture_path,
     ItemType item_type);
 
 Powerup *SpawnPowerup (
@@ -176,7 +176,7 @@ Powerup *SpawnPowerup (
     Float scale_factor,
     Float mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_filename,
+    std::string const &sprite_texture_path,
     Item *item);
 
 DamageExplosion *SpawnDamageExplosion (

@@ -160,9 +160,9 @@ TODO:
   vertical justification.  this will make arbitrary text drawing easier
 - make picture labels use alignment properly
 - make AsciiFont properly use UTF8
-- resource library should not map resources to filenames, but to sets of
+- resource library should not map resources to paths, but to sets of
   properties (the properties being one of many possible subclasses of some
-  "property" baseclass).  this will allow loading of the same filename for
+  "property" baseclass).  this will allow loading of the same path for
   different things (among other extra versatilities).
 - the framehandler time for WorldView must be synchronized with the
   framehandler time for World.  (depends on having the physics and

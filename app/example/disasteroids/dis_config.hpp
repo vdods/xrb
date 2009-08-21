@@ -78,8 +78,8 @@ public:
 
     void ResetToDefaults ();
 
-    void Read (std::string const &config_filename, bool reset_to_defaults_before_reading = true);
-    void Write (std::string const &config_filename) const;
+    void Read (std::string const &config_file_path, bool reset_to_defaults_before_reading = true);
+    void Write (std::string const &config_file_path) const;
 
 private:
 

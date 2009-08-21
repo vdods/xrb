@@ -27,19 +27,19 @@ namespace MapEditor2
     class Sprite : public virtual Object, public virtual Engine2::Sprite
     {
     public:
-    
+
         virtual ~Sprite () { }
-    
+
         // creates a non-entity version clone of the given sprite entity
         static Sprite *CreateSpriteNonEntityClone (
             SpriteEntity const *sprite_entity);
-        
+
         // ///////////////////////////////////////////////////////////////////
         // public serialization functions
         // ///////////////////////////////////////////////////////////////////
 
-        // create a new sprite from the given texture filename        
-        static Sprite *Create (std::string const &texture_filename);
+        // create a new sprite from the given texture path        
+        static Sprite *Create (std::string const &texture_path);
         // create a new sprite from a resourced texture
         static Sprite *Create (Resource<GLTexture> const &texture);
         // create an instance of this class by reading from the given Serializer
@@ -48,7 +48,7 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
         // public overridable methods
         // ///////////////////////////////////////////////////////////////////
-        
+
         virtual void Write (Serializer &serializer) const { Engine2::Sprite::Write(serializer); }
 
         // creates a clone of this sprite
@@ -89,7 +89,7 @@ namespace MapEditor2
             Object(),
             Engine2::Sprite(texture)
         { }
-    
+
         virtual void CalculateVisibleRadius () const { Engine2::Sprite::CalculateVisibleRadius(); }
     }; // end of class MapEditor2::Sprite
 

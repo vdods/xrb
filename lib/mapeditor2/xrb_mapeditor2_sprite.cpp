@@ -28,12 +28,12 @@ MapEditor2::Sprite *MapEditor2::Sprite::CreateSpriteNonEntityClone (
 }
 
 
-MapEditor2::Sprite *MapEditor2::Sprite::Create (std::string const &texture_filename)
+MapEditor2::Sprite *MapEditor2::Sprite::Create (std::string const &texture_path)
 {
     Resource<GLTexture> texture =
-        Singleton::ResourceLibrary().LoadFilename<GLTexture>(
+        Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
-            texture_filename);
+            texture_path);
     if (!texture.IsValid())
         return NULL;
 

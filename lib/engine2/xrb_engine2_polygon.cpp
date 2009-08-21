@@ -126,7 +126,7 @@ void Engine2::Polygon::CloneProperties (
 
     ASSERT1(destination_vertex_array != NULL);
     ASSERT1(source_vertex_array != NULL);
-    
+
     m_vertex_count = source_polygon->m_vertex_count;
     m_vertex_array = new Vertex[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
@@ -155,7 +155,7 @@ void Engine2::Polygon::Read (
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
     ASSERT1(!m_texture.IsValid());
-    
+
     m_vertex_count = serializer.ReadUint32();
     ASSERT1(m_vertex_count >= 3);
     m_vertex_array = new Vertex[m_vertex_count];
@@ -166,7 +166,7 @@ void Engine2::Polygon::Read (
     }
     m_texture =
         Singleton::ResourceLibrary().
-            LoadFilename<GLTexture>(GLTexture::Create, serializer.ReadStdString());
+            LoadPath<GLTexture>(GLTexture::Create, serializer.ReadStdString());
     m_area = Area();
 
     ASSERT1(IsCounterclockwise());
@@ -189,7 +189,7 @@ void Engine2::Polygon::Write (
         serializer.WriteUint32(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
         serializer.WriteFloatVector2(m_vertex_array[i].m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.Filename());
+    serializer.WriteStdString(m_texture.Path());
 }
 
 } // end of namespace Xrb

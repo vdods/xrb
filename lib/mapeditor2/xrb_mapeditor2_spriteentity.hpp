@@ -29,19 +29,19 @@ namespace MapEditor2
         public Engine2::SpriteEntity
     {
     public:
-    
+
         virtual ~SpriteEntity () { }
 
         // creates an entity version clone of the given sprite
         static SpriteEntity *CreateSpriteEntityClone (
             Sprite const *sprite);
-            
+
         // ///////////////////////////////////////////////////////////////////
         // public serialization functions
         // ///////////////////////////////////////////////////////////////////
-        
-        // create a new sprite from the given texture filename        
-        static SpriteEntity *Create (std::string const &texture_filename);
+
+        // create a new sprite from the given texture path
+        static SpriteEntity *Create (std::string const &texture_path);
         // create a sprite entity from a resourced texture
         static SpriteEntity *Create (Resource<GLTexture> const &texture);
         // create an instance of this class by reading from the given Serializer
@@ -51,11 +51,11 @@ namespace MapEditor2
         {
             Engine2::SpriteEntity::Write(serializer);
         }
-    
+
         // ///////////////////////////////////////////////////////////////////
         // public overridable methods
         // ///////////////////////////////////////////////////////////////////
-        
+
         // creates a clone of this entity
         virtual Engine2::Object *CreateClone () const;
         // creates an entity version clone of this object, or NULL if
@@ -83,7 +83,7 @@ namespace MapEditor2
             Sprite::DrawMetrics(draw_data, alpha_mask, metric_mode);
             Entity::DrawMetrics(draw_data, alpha_mask, metric_mode);
         }
-    
+
         virtual void SetScaleFactors (FloatVector2 const &scale_factors) { Engine2::Entity::SetScaleFactors(scale_factors); }
         virtual void SetScaleFactors (Float r, Float s) { Engine2::Entity::SetScaleFactors(r, s); }
         virtual void SetScaleFactor (Float scale_factor) { Engine2::Entity::SetScaleFactor(scale_factor); }
@@ -95,12 +95,12 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
         // public accessors and modifiers
         // ///////////////////////////////////////////////////////////////////
-    
+
         virtual Color const &UnselectedMetricsColor () const;
         virtual Color const &SelectedMetricsColor () const;
-    
+
     protected:
-    
+
         // protected constructor so that you must use Create
         SpriteEntity (Resource<GLTexture> const &texture)
             :
@@ -116,19 +116,19 @@ namespace MapEditor2
         // ///////////////////////////////////////////////////////////////////
         // protected overridable methods
         // ///////////////////////////////////////////////////////////////////
-        
+
         virtual void CalculateVisibleRadius () const
         {
             Engine2::Sprite::CalculateVisibleRadius();
         }
 
         // ///////////////////////////////////////////////////////////////////
-            
+
         // clones the class-specific properties of the given object onto this.
         void CloneProperties (Object const *object);
-    
+
     private:
-    
+
         // the color of the object metrics when not selected
         static Color ms_unselected_metrics_color;
         // the color of the object metrics when selected

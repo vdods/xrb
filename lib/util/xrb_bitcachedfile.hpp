@@ -33,7 +33,7 @@ public:
     { }
     virtual ~BitCachedFile () { }
 
-    void Open (char const *filename, char const *mode);
+    void Open (char const *path, char const *mode);
 
     // this makes virtual calls and may not be used in the destructor.
     // non-virtual override.
@@ -52,8 +52,8 @@ private:
 
     // stdio file handle of the currently opened file
     FILE *m_file_handle;
-    // the filename of the currently opened file.
-    std::string m_filename;
+    // the path of the currently opened file.
+    std::string m_path;
     // mode argument to fopen() of the currently opened file.
     // e.g. "rt". or "wb+", etc (see the man page for fopen)
     std::string m_mode;

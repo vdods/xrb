@@ -37,7 +37,7 @@ bool BinaryFileSerializer::HasFewerThan8BitsLeft () const
 }
 
 void BinaryFileSerializer::Open (
-    char const *const filename,
+    char const *const path,
     char const *const mode)
 {
     ASSERT1(strchr(mode, 't') == NULL &&
@@ -48,7 +48,7 @@ void BinaryFileSerializer::Open (
     if (strchr(modified_mode.c_str(), 'b') == NULL)
         modified_mode += 'b';
 
-    m_cache.Open(filename, modified_mode.c_str());
+    m_cache.Open(path, modified_mode.c_str());
     SetIsOpen(m_cache.IsOpen());
     SetIODirection(m_cache.GetIODirection());
     SetError(m_cache.Error());

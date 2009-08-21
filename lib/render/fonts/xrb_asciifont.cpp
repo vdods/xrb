@@ -88,23 +88,23 @@ int AsciiFont::GlyphSpecification::SortByHeightFirst (
 // ///////////////////////////////////////////////////////////////////////////
 
 AsciiFont *AsciiFont::CreateFromCache (
-    std::string const &font_face_filename,
+    std::string const &font_face_path,
     ScreenCoord pixel_height)
 {
     AsciiFont *retval = NULL;
 
-    std::string font_metadata_filename(FORMAT(font_face_filename << '.' << pixel_height << ".data"));
-    std::string font_bitmap_filename(FORMAT(font_face_filename << '.' << pixel_height << ".png"));
+    std::string font_metadata_path(FORMAT(font_face_path << '.' << pixel_height << ".data"));
+    std::string font_bitmap_path(FORMAT(font_face_path << '.' << pixel_height << ".png"));
 
     // check for the appropriate font bitmap file
-    Texture *texture = Singleton::Pal().LoadImage(font_bitmap_filename.c_str());
+    Texture *texture = Singleton::Pal().LoadImage(font_bitmap_path.c_str());
     // if the file doesn't exist or can't be opened or loaded, get out of here
     if (texture == NULL)
         return retval;
 
     // check for the appropriate font metadata file
     BinaryFileSerializer serializer;
-    serializer.Open(font_metadata_filename.c_str(), "rb");
+    serializer.Open(font_metadata_path.c_str(), "rb");
     // if the file doesn't exist or can't be opened, get out of here
     if (!serializer.IsOpen())
     {
@@ -113,15 +113,15 @@ AsciiFont *AsciiFont::CreateFromCache (
     }
 
     // now try to read the font metadata
-    retval = new AsciiFont(font_face_filename, pixel_height);
+    retval = new AsciiFont(font_face_path, pixel_height);
 
-    std::string metadata_font_face_filename(serializer.ReadStdString());
+    std::string metadata_font_face_path(serializer.ReadStdString());
     ScreenCoord metadata_pixel_height(serializer.ReadScreenCoord());
 
     // check that the metadata actually matches the requested font face and pixel height
-    if (metadata_font_face_filename != font_face_filename || metadata_pixel_height != pixel_height)
+    if (metadata_font_face_path != font_face_path || metadata_pixel_height != pixel_height)
     {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font data mismatch -- delete the associated cache files\n", font_face_filename.c_str(), pixel_height);
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font data mismatch (got \"%s\" and pixel height %d) -- delete the associated cache files\n", font_face_path.c_str(), pixel_height, metadata_font_face_path.c_str(), metadata_pixel_height);
         serializer.Close();
         Delete(texture);
         DeleteAndNullify(retval);
@@ -144,14 +144,14 @@ AsciiFont *AsciiFont::CreateFromCache (
     retval->m_gl_texture = GLTexture::Create(texture);
     ASSERT1(retval->m_gl_texture != NULL);
 
-    fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_filename.c_str(), pixel_height);
+    fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
 
     Delete(texture);
     return retval;
 }
 
 AsciiFont *AsciiFont::Create (
-    std::string const &font_face_filename,
+    std::string const &font_face_path,
     ScreenCoord pixel_height,
     bool has_kerning,
     ScreenCoord baseline_height,
@@ -161,7 +161,7 @@ AsciiFont *AsciiFont::Create (
 {
     ASSERT1(font_texture != NULL);
 
-    AsciiFont *retval = new AsciiFont(font_face_filename, pixel_height);
+    AsciiFont *retval = new AsciiFont(font_face_path, pixel_height);
 
     retval->m_has_kerning = has_kerning;
     retval->m_baseline_height = baseline_height;
@@ -177,18 +177,18 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
 {
     ASSERT1(font_texture != NULL);
 
-    std::string font_metadata_filename(FORMAT(FontFaceFilename() << '.' << PixelHeight() << ".data"));
-    std::string font_bitmap_filename(FORMAT(FontFaceFilename() << '.' << PixelHeight() << ".png"));
+    std::string font_metadata_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".data"));
+    std::string font_bitmap_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".png"));
 
     // write the font metadata out to disk
     {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFaceFilename().c_str(), PixelHeight());
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
 
         BinaryFileSerializer serializer;
-        serializer.Open(font_metadata_filename.c_str(), "wb");
+        serializer.Open(font_metadata_path.c_str(), "wb");
         if (serializer.IsOpen())
         {
-            serializer.WriteStdString(FontFaceFilename());
+            serializer.WriteStdString(FontFacePath());
             serializer.WriteScreenCoord(PixelHeight());
             serializer.WriteBool(m_has_kerning);
             serializer.WriteScreenCoord(m_baseline_height);
@@ -214,8 +214,8 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
 
     // write the font bitmap out to disk
     {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFaceFilename().c_str(), PixelHeight());
-        bool success = Singleton::Pal().SaveImage(font_bitmap_filename.c_str(), *font_texture) == Pal::SUCCESS;
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
+        bool success = Singleton::Pal().SaveImage(font_bitmap_path.c_str(), *font_texture) == Pal::SUCCESS;
         if (success)
             fprintf(stderr, "cached font bitmap\n");
         else

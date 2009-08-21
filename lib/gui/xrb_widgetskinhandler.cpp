@@ -57,16 +57,16 @@ void WidgetSkinHandler::SetWidgetSkinFont (
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
-void WidgetSkinHandler::SetWidgetSkinFontFaceFilename (
+void WidgetSkinHandler::SetWidgetSkinFontFacePath (
     WidgetSkin::FontType const font_type,
-    std::string const &font_face_filename)
+    std::string const &font_face_path)
 {
     SetProperty<
         WidgetSkin::FontType,
         std::string const &>(
             font_type,
-            font_face_filename,
-            &WidgetSkin::SetFontFaceFilename,
+            font_face_path,
+            &WidgetSkin::SetFontFacePath,
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
@@ -109,16 +109,16 @@ void WidgetSkinHandler::SetWidgetSkinTexture (
             &WidgetSkinHandler::PropagateChangedTexture);
 }
 
-void WidgetSkinHandler::SetWidgetSkinTextureFilename (
+void WidgetSkinHandler::SetWidgetSkinTexturePath (
     WidgetSkin::TextureType const texture_type,
-    std::string const &texture_filename)
+    std::string const &texture_path)
 {
     SetProperty<
         WidgetSkin::TextureType,
         std::string const &>(
             texture_type,
-            texture_filename,
-            &WidgetSkin::SetTextureFilename,
+            texture_path,
+            &WidgetSkin::SetTexturePath,
             &WidgetSkinHandler::PropagateChangedTexture);
 }
 

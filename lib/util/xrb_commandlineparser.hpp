@@ -33,14 +33,14 @@ public:
         void (CommandLineParserSubclass::*non_option_argument_handler_method)(std::string const &),
         CommandLineOption const *option,
         Uint32 option_count,
-        std::string const &executable_filename,
+        std::string const &executable_path,
         std::string const &program_description,
         std::string const &usage_message)
         :
         m_non_option_argument_handler_method(static_cast<HandlerMethodWithArgument>(non_option_argument_handler_method)),
         m_option(option),
         m_option_count(option_count),
-        m_executable_filename(executable_filename),
+        m_executable_path(executable_path),
         m_program_description(program_description),
         m_usage_message(usage_message),
         m_parse_succeeded(true)
@@ -48,7 +48,7 @@ public:
         ASSERT0(m_non_option_argument_handler_method != NULL);
         ASSERT0(m_option != NULL);
         ASSERT0(m_option_count > 0);
-        ASSERT1(!m_executable_filename.empty());
+        ASSERT1(!m_executable_path.empty());
 
         PerformOptionConsistencyCheck();
     }
@@ -78,7 +78,7 @@ private:
     HandlerMethodWithArgument const m_non_option_argument_handler_method;
     CommandLineOption const *const m_option;
     Uint32 const m_option_count;
-    std::string const m_executable_filename;
+    std::string const m_executable_path;
     std::string const m_program_description;
     std::string const m_usage_message;
     bool m_parse_succeeded;

@@ -65,7 +65,7 @@ void CommandLineParser::PrintHelpMessage (std::ostream &stream) const
     if (!m_program_description.empty())
         stream << m_program_description << "\n\n";
 
-    stream << "usage: " << m_executable_filename << " " << m_usage_message << "\n";
+    stream << "usage: " << m_executable_path << " " << m_usage_message << "\n";
 
     if (!IsAControlOption(m_option[0]))
         stream << "\n";

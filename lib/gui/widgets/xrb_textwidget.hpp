@@ -88,7 +88,7 @@ public:
     virtual void SetText (std::string const &text);
     void SetTextColor (Color const &color);
     void SetFont (Resource<Font> const &font);
-    void SetFontFaceFilename (std::string const &font_face_filename);
+    void SetFontFacePath (std::string const &font_face_path);
     void SetFontHeightRatio (Float font_height_ratio);
     void SetFontHeight (ScreenCoord font_height);
     void SetIsMinWidthFixedToTextWidth (bool is_min_width_fixed_to_text_width);

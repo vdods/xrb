@@ -317,7 +317,7 @@ development, meant to catch flaws in the state of a running program (e.g.
 ensuring the output of an algorithmically calculated value is within the
 expected range).  In other words, to catch programmer errors.  The latter is
 a method of facilitating robust error handling for "acceptable" program
-errors (e.g. the user provides an invalid filename, or an input file is
+errors (e.g. the user provides an invalid path, or an input file is
 corrupt).
 
 @subsection philosophy_subsection_asserts Asserts

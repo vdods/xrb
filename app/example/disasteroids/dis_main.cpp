@@ -19,7 +19,7 @@
 using namespace std;
 using namespace Xrb;
 
-#define CONFIG_FILENAME "disasteroids.config"
+#define CONFIG_FILE_PATH "disasteroids.config"
 
 Dis::Config g_config;
 
@@ -36,7 +36,7 @@ int main (int argc, char **argv)
 
     {
         // read in the user's config file (video resolution, key binds, etc).
-        g_config.Read(CONFIG_FILENAME);
+        g_config.Read(CONFIG_FILE_PATH);
 
         // initialize the commandline options with the config values and then
         // parse the commandline into the options object.
@@ -80,7 +80,7 @@ int main (int argc, char **argv)
 
         // write the config file back out (because it may have changed during
         // the execution of the game.
-        g_config.Write(CONFIG_FILENAME);
+        g_config.Write(CONFIG_FILE_PATH);
     }
 
     // return with no error condition

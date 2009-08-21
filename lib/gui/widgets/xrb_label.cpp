@@ -103,7 +103,7 @@ void Label::SetPicture (std::string const &picture_name)
 
     Resource<GLTexture> picture =
         Singleton::ResourceLibrary().
-            LoadFilename<GLTexture>(GLTexture::Create, picture_name);
+            LoadPath<GLTexture>(GLTexture::Create, picture_name);
     ASSERT1(picture.IsValid());
     if (m_picture != picture)
     {

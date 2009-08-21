@@ -56,7 +56,7 @@ WidgetSkin::WidgetSkin (Screen const *screen)
     // on a 640x480 screen.
     m_font_specification[DEFAULT_FONT].m_font_height_ratio = 0.023f;
     UpdateFontHeight(DEFAULT_FONT);
-    SetFontFaceFilename(
+    SetFontFacePath(
         DEFAULT_FONT,
         "resources/FreeSansBoldCustom.ttf");
 
@@ -64,8 +64,8 @@ WidgetSkin::WidgetSkin (Screen const *screen)
     // gl textures
     // ///////////////////////////////////////////////////////////////////////
 
-    SetTextureFilename(CHECK_BOX_CHECK_TEXTURE, "resources/ui/black_checkmark.png");
-    SetTextureFilename(RADIO_BUTTON_CHECK_TEXTURE, "resources/ui/radiobutton_dot.png");
+    SetTexturePath(CHECK_BOX_CHECK_TEXTURE, "resources/ui/black_checkmark.png");
+    SetTexturePath(RADIO_BUTTON_CHECK_TEXTURE, "resources/ui/radiobutton_dot.png");
 
     // ///////////////////////////////////////////////////////////////////////
     // margins
@@ -162,18 +162,18 @@ void WidgetSkin::SetFont (
         RatioFromScreenCoord(font->PixelHeight());
 }
 
-void WidgetSkin::SetFontFaceFilename (
+void WidgetSkin::SetFontFacePath (
     FontType const font_type,
-    std::string const &font_face_filename)
+    std::string const &font_face_path)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
     m_font_specification[font_type].m_font_height =
         ScreenCoordFromRatio(
             m_font_specification[font_type].m_font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadFilename<Font>(
+        Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
-            font_face_filename,
+            font_face_path,
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
@@ -189,9 +189,9 @@ void WidgetSkin::SetFontHeightRatio (
     m_font_specification[font_type].m_font_height =
         ScreenCoordFromRatio(font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadFilename<Font>(
+        Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
-            m_font_specification[font_type].m_font.Filename(),
+            m_font_specification[font_type].m_font.Path(),
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
@@ -206,9 +206,9 @@ void WidgetSkin::SetFontHeight (
     m_font_specification[font_type].m_font_height_ratio =
         RatioFromScreenCoord(font_height);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadFilename<Font>(
+        Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
-            m_font_specification[font_type].m_font.Filename(),
+            m_font_specification[font_type].m_font.Path(),
             m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
@@ -221,15 +221,15 @@ void WidgetSkin::SetTexture (
     m_texture[texture_type] = texture;
 }
 
-void WidgetSkin::SetTextureFilename (
+void WidgetSkin::SetTexturePath (
     TextureType const texture_type,
-    std::string const &texture_filename)
+    std::string const &texture_path)
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] =
-        Singleton::ResourceLibrary().LoadFilename<GLTexture>(
+        Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
-            texture_filename);
+            texture_path);
 }
 
 void WidgetSkin::SetMarginRatios (

@@ -53,13 +53,13 @@ CommandLineOption const CommandLineOptions::ms_option[] =
 };
 Uint32 const CommandLineOptions::ms_option_count = sizeof(CommandLineOptions::ms_option) / sizeof(CommandLineOption);
 
-CommandLineOptions::CommandLineOptions (std::string const &executable_filename)
+CommandLineOptions::CommandLineOptions (std::string const &executable_path)
     :
     CommandLineParser(
         &CommandLineOptions::NonOptionArgumentHandler,
         ms_option,
         ms_option_count,
-        executable_filename,
+        executable_path,
         "Disasteroids - written by Victor Dods, as part of the XuqRijBuh Game Engine.",
         "[options]"),
     m_fullscreen(true),

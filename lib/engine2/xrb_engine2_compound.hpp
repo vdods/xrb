@@ -35,7 +35,7 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
-//     static Compound *Create (std::string const &compound_filename);
+//     static Compound *Create (std::string const &compound_path);
     static Compound *Create (Serializer &serializer);
     // makes calls to WriteClassSpecific for this and all superclasses
     virtual void Write (Serializer &serializer) const;

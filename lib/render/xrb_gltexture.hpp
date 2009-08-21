@@ -45,13 +45,13 @@ public:
       */
     ~GLTexture ();
 
-    /** Loads the image given by the filename into a Texture object,
+    /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
       * @brief Create a new GLTexture object from a texture loaded from
-      *        the given filename.
+      *        the given path.
       */
-    static GLTexture *Create (std::string const &filename);
-    /** Loads the image given by the filename into a Texture object,
+    static GLTexture *Create (std::string const &path);
+    /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
       * @brief Create a new GLTexture object from an already-loaded Texture
       *        object.

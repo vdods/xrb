@@ -13,6 +13,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#include "xrb_emptystring.hpp"
+
 namespace Xrb
 {
 
@@ -240,6 +242,24 @@ char const *Util::IOErrorString (IOError error)
     ASSERT1(error >= IOE_LOWEST_ERROR && error <= IOE_HIGHEST_ERROR);
 
     return error_string[error];
+}
+
+std::string Util::DirectoryPortion (std::string const &path)
+{
+    std::string::size_type last_slash = path.find_last_of("/");
+    if (last_slash == std::string::npos)
+        return g_empty_string;
+    else
+        return path.substr(0, last_slash+1);
+}
+
+std::string Util::FilenamePortion (std::string const &path)
+{
+    std::string::size_type last_slash = path.find_last_of("/");
+    if (last_slash == std::string::npos)
+        return path;
+    else
+        return path.substr(last_slash+1);
 }
 
 } // end of namespace Xrb
