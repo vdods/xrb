@@ -179,6 +179,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
 
     // sort transparent objects back-to-front and draw them
     {
+        glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 //         glDisable(GL_ALPHA_TEST);        // unnecessary (see above)
 //         glAlphaFunc(GL_ALWAYS, 0.0f);
@@ -194,9 +195,6 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
             draw_loop_functor.GetTransparentObjectVector()->end(),
             draw_loop_functor);
     }
-
-    // restore the GL state
-    glDisable(GL_DEPTH_TEST);
 
     return draw_loop_functor.DrawnOpaqueObjectCount();
 }
@@ -242,6 +240,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
 
     // sort transparent objects back-to-front and draw them
     {
+        glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 //         glDisable(GL_ALPHA_TEST);        // unnecessary (see above)
 //         glAlphaFunc(GL_ALWAYS, 0.0f);
@@ -271,9 +270,6 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         draw_loop_functor.SetIsCollectTransparentObjectPass(false);
         DrawWrapped(draw_loop_functor);
     }
-
-    // restore the GL state
-    glDisable(GL_DEPTH_TEST);
 
     return draw_loop_functor.DrawnOpaqueObjectCount();
 }
