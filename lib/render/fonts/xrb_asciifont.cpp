@@ -19,6 +19,7 @@
 #include "xrb_render.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_texture.hpp"
+#include "xrb_util.hpp"
 
 namespace Xrb
 {
@@ -115,36 +116,46 @@ AsciiFont *AsciiFont::CreateFromCache (
     // now try to read the font metadata
     retval = new AsciiFont(font_face_path, pixel_height);
 
-    std::string metadata_font_face_path(serializer.ReadStdString());
-    ScreenCoord metadata_pixel_height(serializer.ReadScreenCoord());
-
-    // check that the metadata actually matches the requested font face and pixel height
-    if (metadata_font_face_path != font_face_path || metadata_pixel_height != pixel_height)
-    {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font data mismatch (got \"%s\" and pixel height %d) -- delete the associated cache files\n", font_face_path.c_str(), pixel_height, metadata_font_face_path.c_str(), metadata_pixel_height);
-        serializer.Close();
-        Delete(texture);
-        DeleteAndNullify(retval);
-        return retval;
-    }
-
+    Uint32 hash = serializer.ReadUint32();
     retval->m_has_kerning = serializer.ReadBool();
     retval->m_baseline_height = serializer.ReadScreenCoord();
     Uint32 rendered_glyph_count(serializer.ReadUint32());
-    ASSERT0(rendered_glyph_count == RENDERED_GLYPH_COUNT && "stale font metadata");
-    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-        retval->m_glyph_specification[i].Read(serializer);
-    for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-        for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-            retval->m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadSint32(); // FontCoord is Sint32
 
-    ASSERT1(serializer.IsAtEnd() && "font metadata file is too long");
+    if (rendered_glyph_count != RENDERED_GLYPH_COUNT)
+    {
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); glyph count mismatch (got %u, expected %u) -- delete the associated cache files\n", font_face_path.c_str(), pixel_height, rendered_glyph_count, RENDERED_GLYPH_COUNT);
+        DeleteAndNullify(retval);
+    }
+    else
+    {
+        for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+            retval->m_glyph_specification[i].Read(serializer);
+        for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
+            for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
+                retval->m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadSint32(); // FontCoord is Sint32
+
+        if (hash != retval->Hash())
+        {
+            fprintf(stderr, "AsciiFont::Create(\"%s\", %d); invalid font metadata -- delete the associated cache files\n", font_face_path.c_str(), pixel_height);
+            DeleteAndNullify(retval);
+        }
+
+        if (!serializer.IsAtEnd())
+        {
+            fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font metadata file is too long -- delete the associated cache files\n", font_face_path.c_str(), pixel_height);
+            DeleteAndNullify(retval);
+        }
+    }
+
     serializer.Close();
 
-    retval->m_gl_texture = GLTexture::Create(texture);
-    ASSERT1(retval->m_gl_texture != NULL);
+    if (retval != NULL)
+    {
+        retval->m_gl_texture = GLTexture::Create(texture);
+        ASSERT1(retval->m_gl_texture != NULL);
 
-    fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
+        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
+    }
 
     Delete(texture);
     return retval;
@@ -188,8 +199,7 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
         serializer.Open(font_metadata_path.c_str(), "wb");
         if (serializer.IsOpen())
         {
-            serializer.WriteStdString(FontFacePath());
-            serializer.WriteScreenCoord(PixelHeight());
+            serializer.WriteUint32(Hash());
             serializer.WriteBool(m_has_kerning);
             serializer.WriteScreenCoord(m_baseline_height);
             serializer.WriteUint32(RENDERED_GLYPH_COUNT);
@@ -494,6 +504,56 @@ void AsciiFont::DrawGlyph (
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
+}
+
+Uint32 AsciiFont::Hash () const
+{
+    // a 32-bit int is essentiall Z/(2^32)Z (integer arithmetic modulo 2^32),
+    // and since 2 and 11 are coprime, 2^32 and 11 are coprime, so 11 has
+    // an inverse mod 2^32, which is given by 11^(phi(2^32)-1) mod 2^32,
+    // which has a value of 3123612579.  thus multiplying 11 by this value
+    // (using 32-bit unsigned ints) will give 1.
+    //
+    // this means that in 32-bit unsigned integer math, multiplication by
+    // 11 (or actually any odd value) is an invertible operation.
+    //
+    // the reason for mentioning all this is that for a hashing function,
+    // it is useful to have an operation which does not lose information (i.e.
+    // an invertible operation).  multiplication by 11 and bitwise xor are
+    // such operations.
+
+    Uint32 retval = 0;
+    retval ^= Uint32(PixelHeight());
+    retval *= 11;
+    retval ^= Uint32(m_has_kerning ? 1 : 0);
+    retval *= 11;
+    retval ^= Uint32(m_baseline_height);
+    retval *= 11;
+    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+    {
+        retval ^= Uint32(m_glyph_specification[i].m_ascii);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_size[Dim::X]);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_size[Dim::Y]);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_bearing_26_6[Dim::X]);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_bearing_26_6[Dim::Y]);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_advance_26_6);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_texture_coordinates[Dim::X]);
+        retval *= 11;
+        retval ^= Uint32(m_glyph_specification[i].m_texture_coordinates[Dim::Y]);
+        retval *= 11;
+    }
+    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT; ++i)
+    {
+        retval ^= Uint32(m_kern_pair_26_6[i]);
+        retval *= 11;
+    }
+    return retval;
 }
 
 FontCoord AsciiFont::KernPair_26_6 (char left, char right) const

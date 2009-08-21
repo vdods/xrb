@@ -174,6 +174,8 @@ protected:
 
 private:
 
+    // for a simple check against cache corruption / stale cache data
+    Uint32 Hash () const;
     FontCoord KernPair_26_6 (char left, char right) const;
 
     // ///////////////////////////////////////////////////////////////////////
