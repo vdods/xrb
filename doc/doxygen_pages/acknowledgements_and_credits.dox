@@ -1,0 +1,12 @@
+/** @page acknowledgements_and_credits Acknowledgements And Credits
+
+Thanks to the following people for their help and input, in no particular order:
+
+Nate Lieby for being the first one to attempt @ref setup_msvc "Setup For Microsoft Visual Studio" and helping me correct/refine it.
+
+Dan Palm and Andy Wright for their homebrew game engine solidarity and C++ wisdom.
+
+Ben Nichols for having the sheer audacity to use this engine in the real world!  His efforts for an iPhone port of Xrb are what motivated the move toward OpenGL ES compatibility for maximum portability.
+
+*/
+

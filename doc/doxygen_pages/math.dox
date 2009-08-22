@@ -5,7 +5,6 @@ directory.
 
 Contents
     <ul>
-    <li>@ref section_math_namespace "Math Namespace"</li>
     <li>@ref section_vector "Vector"</li>
     <li>@ref section_matrix2 "Matrix2"</li>
     <li>@ref section_simpletransform2 "SimpleTransform2"</li>
@@ -17,51 +16,18 @@ Contents
 many systems which require the use of complex formulae.
 
 Note: XuqRijBuh uses degrees instead of radians througout.  Although
-mathematically, radians are more natural, degrees have been chosen
-so that users may better interact with them.  Because radians are based
-on the irrational value of pi, they are not user friendly when it comes to
+radians are more natural in a pure mathematical sense, degrees have been
+chosen for ease of human use.  Radians are based on the irrational
+value of pi, so they aren't particularly user friendly when it comes to
 printing and reading angles in decimal notation.  Thus, all trigonometric
 functions which accept angles use degrees unless otherwise noted.
-
-Mathematical functions residing in @ref Xrb::Math
-    <ul>
-    <li>@ref Xrb::Math::Radians </li>
-    <li>@ref Xrb::Math::Degrees </li>
-    <li>@ref Xrb::Math::CanonicalAngle </li>
-    <li>@ref Xrb::Math::Sin </li>
-    <li>@ref Xrb::Math::Asin </li>
-    <li>@ref Xrb::Math::Cos </li>
-    <li>@ref Xrb::Math::Acos </li>
-    <li>@ref Xrb::Math::Tan </li>
-    <li>@ref Xrb::Math::Atan </li>
-    <li>@ref Xrb::Math::Atan2 </li>
-    <li>@ref Xrb::Math::Sqrt </li>
-    <li>@ref Xrb::Math::Pow </li>
-    <li>@ref Xrb::Math::ExpBaseE </li>
-    <li>@ref Xrb::Math::ExpBase10 </li>
-    <li>@ref Xrb::Math::LogBaseE </li>
-    <li>@ref Xrb::Math::LogBase10 </li>
-    <li>@ref Xrb::Math::Nan </li>
-    <li>@ref Xrb::Math::FastSin </li>
-    <li>@ref Xrb::Math::FastAsin </li>
-    <li>@ref Xrb::Math::FastCos </li>
-    <li>@ref Xrb::Math::FastAcos </li>
-    <li>@ref Xrb::Math::FastTan </li>
-    <li>@ref Xrb::Math::FastAtan </li>
-    <li>@ref Xrb::Math::FastAtan2 </li>
-    <li>@ref Xrb::Math::FastSqrt </li>
-    <li>@ref Xrb::Math::FastPow </li>
-    <li>@ref Xrb::Math::Floor </li>
-    <li>@ref Xrb::Math::Ceiling </li>
-    <li>@ref Xrb::Math::Round </li>
-    </ul>
 
 @section section_vector Vector
 @ref Xrb::Vector is a templatized vector construct (with dimension and
 component type being the template arguments), geared towards function
 inlining and speed.  The intent is that all the syntactical suger-coating
 will melt away when compiled, leaving instructions that look like hand-written
-assembly operating on arrays.
+array code.
 
 @subsection subsection_vector_identity Static Zero Vector
 Because it is so commonly used, @c Vector contains a static member variable

@@ -57,16 +57,11 @@ class Vector
 {
 public:
 
-    /** The significance of making a static member variable in a template
-      * is so that each instantiation of the template must have its own
-      * instantiation of the static member.  This member serves as the
-      * type-specific zero vector for use in the IsZero and IsNonZero
-      * functions, as well as providing a fast, convenient and elegant way
-      * to refer to possibly the most commonly used vector value.
+    /** This member serves as the type-specific zero vector for use in
+      * the IsZero and IsNonZero functions, as well as providing a fast,
+      * convenient and elegant way to refer to possibly the most commonly
+      * used vector value.
       * @brief The zero vector.
-      * @note There must be an instance of this static variable for each
-      *       instantiation of Vector.
-      * @see vector.cpp
       */
     static Vector<T, dimension> const ms_zero;
 

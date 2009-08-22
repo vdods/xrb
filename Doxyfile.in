@@ -3,8 +3,8 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = XuqRijBuh
-PROJECT_NUMBER         = 0.1
+PROJECT_NAME           = @PACKAGE_NAME@
+PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = doc
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -74,15 +74,15 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = doc/doxygen_pages \
-                         app/example/lesson \
-                         lib
+INPUT                  = @top_srcdir@/doc/doxygen_pages \
+                         @top_srcdir@/app/example/lesson \
+                         @top_srcdir@/lib
 FILE_PATTERNS          = *.cpp \
                          *.h \
-                         *.tcpp \
+                         *.hpp \
                          *.dox
 RECURSIVE              = yes
-EXCLUDE                = lib/mapeditor2
+EXCLUDE                = @top_srcdir@/lib/mapeditor2
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXAMPLE_PATH           =
@@ -113,7 +113,7 @@ GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
-HTML_FOOTER            = doc/doxygen_pages/footer.html
+HTML_FOOTER            = @top_srcdir@/doc/doxygen_pages/footer.html # to add the required SourceForge link
 HTML_STYLESHEET        =
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = NO
@@ -195,7 +195,7 @@ TAGFILES               =
 GENERATE_TAGFILE       =
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
-PERL_PATH              = /usr/bin/perl
+PERL_PATH              = @PERL@
 #---------------------------------------------------------------------------
 # Configuration options related to the dot tool
 #---------------------------------------------------------------------------

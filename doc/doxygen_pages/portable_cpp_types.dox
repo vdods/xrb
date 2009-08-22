@@ -1,20 +1,8 @@
 /** @page portable_cpp_types Portable C++ Types
 
-In order to write portable code, it is necessary to work with well-defined
-variable types.  Integers are especially variant between platforms because of
-the different default word sizes for each architecture.
+<a href="http://www.libsdl.org">LibSDL</a> (version 1.2) was chosen as the primary platform abstraction layer for reasons of its widespread portability and open source nature.  What is meant by "primary" is that SDL is not the only option for platform abstraction.  The @ref Pal interface provides a means to port Xrb to various other platforms with relative ease.
 
-<a href="http://www.libsdl.org">LibSDL</a> was chosen as a platform
-abstraction layer for its portable capabilities in graphical rendering,
-screen-resolution handling, event system, user-input facilities, and
-sound facilities.  Because it already handles the issues facing the
-problems of writing portable applications, libxrb may use them without
-having to do extra work checking the system architecture and defining
-each.  What I'm getting at is that LibSDL provides a set of integer
-typedefs of different bit-widths, signed and unsigned.  XuqRijBuh makes
-use of these types without any re-typedef-ing.
-
-The types are
+Originally there was no @ref Pal interface, and Xrb used SDL directly, and therefore used its integer types.  The types are
     <ul>
     <li>@c Sint8 - 8 bit, signed integer</li>
     <li>@c Uint8 - 8 bit, unsigned integer</li>
@@ -24,13 +12,10 @@ The types are
     <li>@c Uint32 - 32 bit, unsigned integer</li>
     </ul>
 
-@c Sint8 and @c Uint8 are somewhat unnecessary, because ANSI C guarantees
-that the @c char and @c unsigned @c char types will be signed and unsigned
-versions of exactly an 8 bit integer.  However, @c Sint8 and @c Uint8 will
-be used for consistency.
+These typedefs reside within the Xrb namespace (@ref xrb_types.hpp) so as not collide with any innocient integer type bystanders.
 
-One exception is the use of @c char -- @c char will be used (instead of
-@c Sint8 ) when dealing with ASCII characters and strings, as opposed to
-an integer value in the range of -128 to 127.
-    
+After @ref Pal was introduced and SDL's offensive presence hidden away behind its unassuming facade, the use of SDL's integer types was considered too pervasive to change (and besides, I liked their names), so the names were kept.  If @ref SDLPal is used as the @ref Pal implementation, then SDL's integer types are used.  Otherwise the @c stdint.h types @c intXX_t and @c uintXX_t are used.
+
+See @ref xrb_types.hpp for more information (in other words, look at the code yourself).
+
 */

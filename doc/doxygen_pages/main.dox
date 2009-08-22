@@ -1,18 +1,19 @@
-/** @mainpage XuqRijBuh - A Sweet Game Engine
+/** @mainpage XuqRijBuh - A Sweet Game Engine - By Victor Dods
 
 What is XuqRijBuh?  Pronounced "zuck-ridge-buh", also referred to as "Xrb",
-it is a portable 2D game engine, intended to make development of game design
-conceptually (and hopefully practically) easy.  For general information, see
-the SourceForge homepage:
+it is a portable 2D game engine, intended for quick and easy game development.
 
-http://sourceforge.net/projects/xuqrijbuh/
+SourceForge homepage: http://sourceforge.net/projects/xuqrijbuh/
+
+Contact the author at victor dot dods atsign gmail dot com.
 
 <!-- For the impatient, please see "Super Duper Quick Overview" (TODO) -->
 
 @section section_table_of_contents Table Of Contents
 <ul>
+<li>@ref acknowledgements_and_credits "Acknowledgements And Credits"</li>
 <li>@ref goals "Goals Of XuqRijBuh"</li>
-<li>@ref setup "Setting Up The Development Environment"</li>
+<li>Setting Up The Development Environment</li>
     <ul>
     <li>@ref setup_msvc "Setup For Microsoft Visual Studio"</li>
     <li>@ref setup_linux "Setup For Linux"</li>
@@ -28,27 +29,7 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>@ref lesson05 "Lesson 05 - Dynamic Objects For Fun And Profit" - @ref lesson05_main.cpp "source code"</li>
     <li>@ref lesson06 "Lesson 06 - PhysicsHandler And Additional Object Layers" - @ref lesson06_main.cpp "source code"</li>
     </ul>
-<li>@ref philosophy "Programming Philosophy Pontification"</li>
-    <ul>
-    <li>@ref philosophy_code_maturity "Code Maturity"</li>
-    <li>@ref philosophy_conceptual_hierarchy "Conceptual Hierarchy"</li>
-    <li>@ref philosophy_contextual_hints "Contextual Hints"</li>
-    <li>@ref philosophy_self_documenting_code "Self-Documenting Code"</li>
-    <li>@ref philosophy_asserts_and_exceptions "Asserts And Exceptions"</li>
-    <li>@ref philosophy_making_the_compiler_force_correctness "Making The Compiler Force Correctness"</li>
-    <li>@ref philosophy_programming_language_as_syntactic_sugarcoating "Programming Language As Syntactic Sugarcoating"</li>
-    <li>@ref philosophy_code_reuse_and_abstraction "Code Reuse And Abstraction"</li>
-    <li>@ref philosophy_reentrancy_and_singletons "Reentrancy And Singleton"</li>
-    </ul>
 <li>@ref conventions "Programming Conventions"</li>
-    <ul>
-    <li>@ref conventions_general_verbosity "General Verbosity"</li>
-    <li>@ref conventions_nomenclature "Nomenclature"</li>
-    <li>@ref conventions_const_correctness "Const Correctness"</li>
-    <li>@ref conventions_indentation_and_formatting "Indentation And Formatting"</li>
-    <li>@ref conventions_contextual_hints "Contextual Hints"</li>
-    <li>@ref conventions_asserts "Asserts"</li>
-    </ul>
 <li>Systems Of XuqRijBuh</li>
     <ul>
     <li>Overview Of Main Systems</li>
@@ -59,7 +40,6 @@ http://sourceforge.net/projects/xuqrijbuh/
         <li>The Render Stack</li>
         <li>SignalHandler</li>
         </ul>
-    <li>@ref source_tree_layout "Source Tree Layout"</li>
     <li>@ref portable_cpp_types "Portable C++ Types"</li>
     <li>@ref math "Math"</li>
     <li>Primitive Class Types</li>
@@ -116,43 +96,12 @@ http://sourceforge.net/projects/xuqrijbuh/
             <li>WorldView</li>
             </ul>
         </ul>
-    <li>MapEditor2</li>
-        <ul>
-        <li>Map Editor Specification</li>
-        <li>Engine2 Derivatives</li>
-            <ul>
-            <li>World</li>
-            <li>ObjectLayer</li>
-            <li>QuadTree</li>
-            <li>Object</li>
-            <li>Sprite</li>
-            <li>Entity</li>
-            <li>SpriteEntity</li>
-            <li>Compound</li>
-            <li>CompoundEntity</li>
-            </ul>
-        <li>GUI</li>
-            <ul>
-            <li>WorldView</li>
-            <li>ObjectPropertiesPanel</li>
-            <li>EntityPropertiesPanel</li>
-            </ul>
-        </ul>
-    </ul>
 <li>Usage Of External Libraries</li>
     <ul>
     <li>LibPNG</li>
     <li>LibSDL</li>
     <li>OpenGL</li>
     <li>FreeType</li>
-    </ul>
-<li>UnitTest</li>
-    <ul>
-    <li>Base</li>
-    <li>Controller</li>
-    <li>Handling Asserts</li>
-    <li>Handling Segmentation Faults</li>
-    <li>Writing Unit Tests</li>
     </ul>
 <li>Various HOWTOs</li>
     <ul>
@@ -161,7 +110,6 @@ http://sourceforge.net/projects/xuqrijbuh/
     <li>Writing Custom PhysicsHandlers</li>
     <li>Writing Custom WorldViews</li>
     </ul>
-<li>Acknowledgements And Credits</li>
 </ul>
 
 */

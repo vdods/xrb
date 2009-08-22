@@ -11,29 +11,58 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 # build targets and extra files to add to the distribution
 ##############################################################################
 
+.PHONY: \
+	doc
+
+doc:
+	$(DOXYGEN) Doxyfile
+
 lib_LTLIBRARIES = \
 	lib/libxrb.la
 
 bin_PROGRAMS = \
-    disasteroids \
-    guidemo \
-    lesson00 \
-    lesson01 \
-    lesson02 \
-    lesson03 \
-    lesson04 \
-    lesson05 \
-    lesson06
-#    mapeditor2 \ # is temporarily out of commission
+	disasteroids \
+	guidemo \
+	lesson00 \
+	lesson01 \
+	lesson02 \
+	lesson03 \
+	lesson04 \
+	lesson05 \
+	lesson06
+#	mapeditor2 \ # is temporarily out of commission
 
 EXTRA_DIST = \
+	bootstrap.sh \
 	configure.ac \
-	Doxyfile \
+	Doxyfile.in \
 	INSTALL \
-    LICENSE \
-    README \
-    TODO \
-    bootstrap.sh
+	LICENSE \
+	README \
+	TODO \
+	xuqrijbuh.kdevelop \
+	xuqrijbuh.kdevelop.filelist \
+	xuqrijbuh.sln \
+	app/example/disasteroids/disasteroids.vcproj \
+	app/example/lesson/lesson00/lesson00.vcproj \
+	app/example/lesson/lesson01/lesson01.vcproj \
+	app/example/lesson/lesson02/lesson02.vcproj \
+	app/example/lesson/lesson03/lesson03.vcproj \
+	app/example/lesson/lesson04/lesson04.vcproj \
+	app/example/lesson/lesson05/lesson05.vcproj \
+	app/example/lesson/lesson06/lesson06.vcproj \
+	doc/doxygen_pages/acknowledgements_and_credits.dox \
+	doc/doxygen_pages/conventions.dox \
+	doc/doxygen_pages/goals.dox \
+	doc/doxygen_pages/lessons.dox \
+	doc/doxygen_pages/main.dox \
+	doc/doxygen_pages/math.dox \
+	doc/doxygen_pages/portable_cpp_types.dox \
+	doc/doxygen_pages/setup_linux.dox \
+	doc/doxygen_pages/setup_macosx.dox \
+	doc/doxygen_pages/setup_msvc.dox \
+	doc/doxygen_pages/widget_baseclass.dox \
+	lib/libxrb.vcproj
 
 ##############################################################################
 # phony target alias for lib/libxrb.la for your convenience
@@ -236,9 +265,7 @@ lib_libxrb_la_SOURCES = \
 #    lib/mapeditor2/xrb_mapeditor2_spriteentity.cpp \
 #    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.cpp \
 #    lib/mapeditor2/xrb_mapeditor2_world.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_worldview.cpp \
-#    \
-#
+#    lib/mapeditor2/xrb_mapeditor2_worldview.cpp
 
 ##############################################################################
 # these headers will be installed in $(prefix)/include/xrb/
@@ -379,22 +406,20 @@ include_HEADERS = \
 #    lib/mapeditor2/xrb_mapeditor2_spriteentity.hpp \
 #    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.hpp \
 #    lib/mapeditor2/xrb_mapeditor2_world.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_worldview.hpp \
-#    \
-#
+#    lib/mapeditor2/xrb_mapeditor2_worldview.hpp
 
 ##############################################################################
 # custom make rules
 ##############################################################################
 
 if TRISON_EXISTS
-$(srcdir)/lib/parsers/xrb_datafileparser.h: $(srcdir)/lib/parsers/xrb_datafileparser.cpp
-$(srcdir)/lib/parsers/xrb_datafileparser.cpp: $(srcdir)/lib/parsers/xrb_datafileparser.trison
-	$(TRISON) $(srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(srcdir)/lib/parsers/xrb_datafileparser.states
+$(top_srcdir)/lib/parsers/xrb_datafileparser.h: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
+$(top_srcdir)/lib/parsers/xrb_datafileparser.cpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.trison
+	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(top_srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(top_srcdir)/lib/parsers/xrb_datafileparser.states
 
-$(srcdir)/lib/parsers/xrb_arithmeticparser.h: $(srcdir)/lib/parsers/xrb_arithmeticparser.cpp
-$(srcdir)/lib/parsers/xrb_arithmeticparser.cpp: $(srcdir)/lib/parsers/xrb_arithmeticparser.trison
-	$(TRISON) $(srcdir)/lib/parsers/xrb_arithmeticparser.trison --warnings-as-errors --output-basename $(srcdir)/lib/parsers/xrb_arithmeticparser --generate-states-file $(srcdir)/lib/parsers/xrb_arithmeticparser.states
+$(top_srcdir)/lib/parsers/xrb_arithmeticparser.h: $(top_srcdir)/lib/parsers/xrb_arithmeticparser.cpp
+$(top_srcdir)/lib/parsers/xrb_arithmeticparser.cpp: $(top_srcdir)/lib/parsers/xrb_arithmeticparser.trison
+	$(TRISON) $(top_srcdir)/lib/parsers/xrb_arithmeticparser.trison --warnings-as-errors --output-basename $(top_srcdir)/lib/parsers/xrb_arithmeticparser --generate-states-file $(top_srcdir)/lib/parsers/xrb_arithmeticparser.states
 endif
 
 ##############################################################################

@@ -1,9 +1,7 @@
 /** @page setup_macosx Setup For Mac OS X
 
-As of August 2006, I have had no chance to attempt a build on a Mac OS X machine,
-so I can offer no expertise on how to setup a Mac-OS-X-specific build environment.
-Fortunately, Mac OS X is essentially a Unix (BSD), so in theory (an untested theory)
-the setup for a Linux machine should suffice.  Therefore, see @ref setup_linux "Setup For Linux".
+See @ref setup_linux "Setup For Linux".
+
 GO NOW!
 
 */

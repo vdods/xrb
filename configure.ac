@@ -1,4 +1,4 @@
-AC_INIT(XuqRijBuh, 0.1, victor.dods@gmail.com, xuqrijbuh)
+AC_INIT(XuqRijBuh, 0.5, victor.dods@gmail.com, xuqrijbuh)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 
@@ -13,6 +13,12 @@ AC_C_BIGENDIAN
 AC_CHECK_TOOL(STRIP, strip)
 # checks for trison, a parser for LALR(1) grammars
 AC_CHECK_TOOL(TRISON, trison)
+# checks for doxygen (for `make doc`)
+AC_CHECK_TOOL(DOXYGEN, doxygen)
+# checks for perl (which seems to be used by doxygen)
+AC_CHECK_TOOL(PERL, perl)
+# checks for dot (used to turn .dot graphs into images)
+AC_CHECK_TOOL(DOT, dot)
 
 ##############################################################################
 # processing for above tool checks
@@ -329,5 +335,6 @@ AM_CONDITIONAL(LIBPNG_CONFIG_EXISTS, [test "${LIBPNG_CONFIG}" != ""])
 # specify the Makefiles
 AC_OUTPUT(
     Makefile
+    Doxyfile
 )
 
