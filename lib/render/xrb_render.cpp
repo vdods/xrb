@@ -385,7 +385,7 @@ void Render::SetupTextureUnits (
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
 //     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m); // old way
-    glColor4fv(color_mask.m);
+    glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
 
 //     // the specific use of GL_COMBINE (see GL::Initialize) is not
 //     // available on openGL ES implementations for all

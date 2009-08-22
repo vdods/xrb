@@ -120,8 +120,6 @@ DISASTEROIDS:
   an asteroid causes the line trace to fail so the weapon fires through
   the asteroid.  fix this by recording hits when the line starts inside
   objects, or start the line trace earlier and ignore the firer.
-- there is a bug in the alpha blending (e.g. tractor beam over asteroids).
-  the alpha pixels at the edge of the asteroids suck.
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
@@ -134,7 +132,7 @@ TODO:
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
-- change ScreenCoord to use Sint16 instead of Sint32?
+- change ScreenCoord to use Sint16 instead of Sint32?  (this was tried, and there was a bug in drawing glyphs to parts of the screen, but is otherwise ready to be tried again).
 - get rid of widget min/max size enabled flags, and just use the 
   sizes (no min size = 0, no max size = (uint)-1)
 - create consistent way to set z depth for non-transparent stuff so they're
