@@ -249,12 +249,13 @@ void TractorBeam::SetParameters (
     ASSERT1(pulling_input >= -1.0f && pulling_input <= 1.0f);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
+    static Float const s_opacity = 0.25f;
     if (push_instead_of_pull)
-        OwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, s_opacity*intensity));
     else if (pull_everything)
-        OwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, s_opacity*intensity));
     else
-        OwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, intensity));
+        OwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, s_opacity*intensity));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -264,7 +265,8 @@ void TractorBeam::SetParameters (
 void ShieldEffect::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    static Float const s_opacity = 0.3f;
+    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, s_opacity*intensity));
 }
 
 void ShieldEffect::SnapToShip (
