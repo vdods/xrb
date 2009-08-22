@@ -126,7 +126,6 @@ void GL::Initialize ()
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PREVIOUS);
-//         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_CONSTANT); // old way
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
         // SRC2_RGB and OPERAND2_RGB are not used for GL_MODULATE
 
@@ -135,16 +134,11 @@ void GL::Initialize ()
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE);
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PREVIOUS);
-//         glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_CONSTANT); // old way
         glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
         // SRC2_ALPHA and OPERAND2_ALPHA are not used for GL_MODULATE
     }
 
     // set up texture unit 1 -- color biasing
-//     // this specific use
-//     // of GL_COMBINE is not available on openGL ES implementations
-//     // for all iphones/ipod-touches, so it's disabled for iphone builds.
-// #if !defined(__IPHONEOS__)
     {
         glActiveTexture(GL_TEXTURE1);
 
@@ -175,7 +169,6 @@ void GL::Initialize ()
     }
 
     glActiveTexture(GL_TEXTURE0);
-// #endif // !defined(__IPHONEOS__)
 }
 
 bool GL::Boolean (GLenum name)

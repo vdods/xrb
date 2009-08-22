@@ -171,8 +171,6 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
         // TODO: look into glPolygonOffset, as this might save having
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
-//         glEnable(GL_ALPHA_TEST);         // moved to GL::Initialize
-//         glAlphaFunc(GL_GREATER, 0.0f);
 
         Draw(draw_loop_functor);
     }
@@ -181,8 +179,6 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
-//         glDisable(GL_ALPHA_TEST);        // unnecessary (see above)
-//         glAlphaFunc(GL_ALWAYS, 0.0f);
         if (!transparent_object_vector->empty())
             std::sort(
                 &(*transparent_object_vector)[0],
@@ -232,8 +228,6 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         // TODO: look into glPolygonOffset, as this might save having
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
-//         glEnable(GL_ALPHA_TEST);         // moved to GL::Initialize
-//         glAlphaFunc(GL_GREATER, 0.0f);
 
         DrawWrapped(draw_loop_functor);
     }
@@ -242,8 +236,6 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
-//         glDisable(GL_ALPHA_TEST);        // unnecessary (see above)
-//         glAlphaFunc(GL_ALWAYS, 0.0f);
         if (!transparent_object_vector->empty())
         {
             std::sort(

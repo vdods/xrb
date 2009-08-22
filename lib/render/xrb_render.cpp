@@ -384,19 +384,13 @@ void Render::SetupTextureUnits (
     // units.  but in texture unit 0, we don't actually use the value of
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
-//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m); // old way
     glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
 
-//     // the specific use of GL_COMBINE (see GL::Initialize) is not
-//     // available on openGL ES implementations for all
-//     // iphones/ipod-touches, so it's disabled for iphone builds.
-// #if !defined(__IPHONEOS__)
     // set up texture unit 1
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
     // TODO -- assert that the opaque white texture is bound
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
-// #endif // !defined(__IPHONEOS__)
 }
 
 } // end of namespace Xrb
