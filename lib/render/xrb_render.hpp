@@ -52,7 +52,7 @@ class GLTexture;
   * mode assumes the projection matrix is set up so that the zooming, scaling,
   * and positioning of the view is taken into account, and so the modelview
   * coordinates represent actual world coordinates.
-  *  
+  *
   * @brief Houses all of the basic rendering primitives used by XuqRijBuh.
   */
 namespace Render
@@ -60,7 +60,7 @@ namespace Render
     // ///////////////////////////////////////////////////////////////////////
     // in-WorldView rendering functions
     // ///////////////////////////////////////////////////////////////////////
-    
+
     /** Obliterates the modelview matrix.
       * @brief Draws a line between @c from and @c to in the given color.
       * @param render_context The required RenderContext.
@@ -175,7 +175,7 @@ namespace Render
     // ///////////////////////////////////////////////////////////////////////
     // in-Widget rendering functions
     // ///////////////////////////////////////////////////////////////////////
-        
+
     /** Obliterates the modelview matrix.
       * @brief Fills the given rectangle with the given color.
       * @param render_context The required RenderContext.
@@ -201,26 +201,26 @@ namespace Render
         ScreenCoordRect const &screen_rect,
         FloatSimpleTransform2 const &transformation =
             FloatSimpleTransform2::ms_identity);
-            
+
     // ///////////////////////////////////////////////////////////////////////
     // Render helper functions
     // ///////////////////////////////////////////////////////////////////////
-    
+
     /** This setup is done in so many places that it was deemed 
       * function-worthy, eliminating possible copy/paste errors.
       * @brief Sets up texture units 0 and 1 for texturing, color masking
       *        and color biasing.
       * @param gltexture_handle The OpenGL texture handle to bind to texture
       *                         unit 0.
-      * @param mask_color The masking color modulate the bound texture with.
-      * @param bias_color The bias color to interpolate the results of
+      * @param color_mask The masking color modulate the bound texture with.
+      * @param color_bias The color bias to interpolate the results of
       *                   texture unit 0 with.
       * @note When this function returns, texture unit 1 will be active.
       */
     void SetupTextureUnits (
         GLuint gltexture_handle,
-        Color const &mask_color,
-        Color const &bias_color); 
+        Color const &color_mask,
+        Color const &color_bias); 
 } // end of namespace Render
 
 } // end of namespace Xrb

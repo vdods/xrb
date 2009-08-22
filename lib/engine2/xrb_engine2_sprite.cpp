@@ -78,13 +78,13 @@ void Engine2::Sprite::Draw (
         ScaleFactors()[Dim::Y],
         1.0f);
 
-    // calculate the bias color
-    Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
+    // calculate the color bias
+    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
     // calculate the color mask
     Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    Render::SetupTextureUnits(m_texture->Handle(), color_mask, bias_color);
+    Render::SetupTextureUnits(m_texture->Handle(), color_mask, color_bias);
 
     // draw the sprite with a triangle strip using glDrawArrays
     {

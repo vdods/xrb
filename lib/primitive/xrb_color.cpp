@@ -17,7 +17,7 @@ Color const Color::ms_opaque_white(1.0f, 1.0f, 1.0f, 1.0f);
 Color const Color::ms_opaque_black(0.0f, 0.0f, 0.0f, 1.0f);
 Color const Color::ms_transparent_black(0.0f, 0.0f, 0.0f, 0.0f);
 
-Color const &Color::ms_identity_mask_color(ms_opaque_white);
-Color const &Color::ms_identity_bias_color(ms_transparent_black);
+Color const &Color::ms_identity_color_mask(ms_opaque_white);
+Color const &Color::ms_identity_color_bias(ms_transparent_black);
 
 } // end of namespace Xrb

@@ -171,10 +171,10 @@ public:
     inline Float ZDepth () const { return m_z_depth; }
     inline bool IsDynamic () const { return m_entity != NULL; }
     inline Entity *GetEntity () const { return m_entity; }
-    inline Color const &BiasColor () const { return m_bias_color; }
+    inline Color const &ColorBias () const { return m_color_bias; }
     inline Color const &ColorMask () const { return m_color_mask; }
-    // use this to change the bias color
-    inline Color &BiasColor () { return m_bias_color; }
+    // use this to change the color bias
+    inline Color &ColorBias () { return m_color_bias; }
     // use this to change the color mask
     inline Color &ColorMask () { return m_color_mask; }
     inline bool IsTransparent () const { return m_is_transparent; }
@@ -290,7 +290,7 @@ private:
     // object with a soul".
     Entity *m_entity;
     // color bias -- its alpha channel indicates the bias towards its RGB
-    Color m_bias_color;
+    Color m_color_bias;
     // color mask
     Color m_color_mask;
     // indicates that the contents of the object have changed and the

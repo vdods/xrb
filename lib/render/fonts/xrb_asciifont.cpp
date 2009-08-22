@@ -393,7 +393,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     Render::SetupTextureUnits(
         m_gl_texture->Handle(),
         render_context.ColorMask(),
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv
     // in DrawGlyph (and the matrix operations below) operate on the correct texture unit.

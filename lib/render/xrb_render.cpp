@@ -33,7 +33,7 @@ void Render::DrawLine (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(),
         render_context.MaskedColor(color),
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     {
         FloatVector2 vertex_array[2] = { from, to };
@@ -67,7 +67,7 @@ void Render::DrawArrow (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.MaskedColor(color), 
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -108,7 +108,7 @@ void Render::DrawPolygon (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.MaskedColor(color), 
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     // convert the angle, which is in degrees, into radians for
     // computation in cos/sin's native units.
@@ -247,7 +247,7 @@ void Render::DrawCircularArc (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.MaskedColor(color), 
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     // TODO: is it possible to bound facet_count and use a static array?  (maybe not,
     // since the arc can be through a really high angle).  or we could use a small static
@@ -285,7 +285,7 @@ void Render::DrawScreenRect (
     SetupTextureUnits(
         GL::GLTexture_OpaqueWhite().Handle(), 
         render_context.MaskedColor(color), 
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     {
         Sint16 vertex_coordinate_array[8] =
@@ -328,7 +328,7 @@ void Render::DrawScreenRectTexture (
     SetupTextureUnits(
         gl_texture->Handle(), 
         render_context.ColorMask(), 
-        render_context.BiasColor());
+        render_context.ColorBias());
 
     {
         FloatVector2 texture_coordinate_array[4] =
@@ -371,8 +371,8 @@ void Render::DrawScreenRectTexture (
 
 void Render::SetupTextureUnits (
     GLuint gltexture_handle, 
-    Color const &mask_color,
-    Color const &bias_color)
+    Color const &color_mask,
+    Color const &color_bias)
 {
     // set up texture unit 0
     glActiveTexture(GL_TEXTURE0);
@@ -383,9 +383,9 @@ void Render::SetupTextureUnits (
     // the value of GL_TEXTURE_ENV_COLOR must be the same for both texture
     // units.  but in texture unit 0, we don't actually use the value of
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
-//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, mask_color.m); // old way
-    glColor4fv(mask_color.m);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+//     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_mask.m); // old way
+    glColor4fv(color_mask.m);
 
 //     // the specific use of GL_COMBINE (see GL::Initialize) is not
 //     // available on openGL ES implementations for all
@@ -395,7 +395,7 @@ void Render::SetupTextureUnits (
     glActiveTexture(GL_TEXTURE1);
     glEnable(GL_TEXTURE_2D);
     // TODO -- assert that the opaque white texture is bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, bias_color.m);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
 // #endif // !defined(__IPHONEOS__)
 }
 

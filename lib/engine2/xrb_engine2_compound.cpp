@@ -74,14 +74,14 @@ void Engine2::Compound::Draw (
         ScaleFactors()[Dim::Y],
         1.0f);
 
-    // calculate the bias color
-    Color bias_color(draw_data.GetRenderContext().BlendedBiasColor(BiasColor()));
+    // calculate the color bias
+    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
     // calculate the color mask
     Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
     // the opaque white texture is just a dummy.  the real texture will be bound later
-    Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().Handle(), color_mask, bias_color);
+    Render::SetupTextureUnits(GL::GLTexture_OpaqueWhite().Handle(), color_mask, color_bias);
 
     // switch back to texture unit 0 for Polygon's texture binding
     glActiveTexture(GL_TEXTURE0);

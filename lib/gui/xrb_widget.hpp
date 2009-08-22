@@ -298,20 +298,20 @@ public:
     {
         return ScreenRect().Grown(-(FrameMargins() + ContentMargins()));
     }
-    /** @brief Returns this widget's bias color (the bias color is applied to
+    /** @brief Returns this widget's color bias (the color bias is applied to
       * everything drawn by the widget, AFTER the color mask).
       */
-    inline Color const &BiasColor () const { return m_bias_color; }
+    inline Color const &ColorBias () const { return m_color_bias; }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
     inline Color const &ColorMask () const { return m_color_mask; }
-    /** Use this method to change the bias color
-      * @brief Returns this widget's bias color as a non-const reference (the
-      * bias color is applied to everything drawn by the widget, AFTER the
+    /** Use this method to change the color bias
+      * @brief Returns this widget's color bias as a non-const reference (the
+      * color bias is applied to everything drawn by the widget, AFTER the
       * color mask).
       */
-    inline Color &BiasColor () { return m_bias_color; }
+    inline Color &ColorBias () { return m_color_bias; }
     /** Use this method to change the color mask.
       * @brief Returns this widget's color mask as a non-const reference (the
       * color mask is applied to everything drawn by the widget).
@@ -833,11 +833,11 @@ protected:
       * @brief Indicates if this widget accepts the mouseover flag on its own.
       */
     bool m_accepts_mouseover;
-    /** The bias color represents a blending function which is applied to
+    /** The color bias represents a blending function which is applied to
       * each drawing operation at or below this widget in the widget hierarchy.
-      * @brief The bias color of the widget.
+      * @brief The color bias of the widget.
       */
-    Color m_bias_color;
+    Color m_color_bias;
     /** The color mask represents a modulation function (simple multiplication)
       * which is applied to each drawing operation at or below this widget in 
       * the widget hierarchy.

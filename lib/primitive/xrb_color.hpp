@@ -29,8 +29,8 @@ public:
     static Color const ms_opaque_black;
     static Color const ms_transparent_black;
     
-    static Color const &ms_identity_mask_color;
-    static Color const &ms_identity_bias_color;
+    static Color const &ms_identity_color_mask;
+    static Color const &ms_identity_color_bias;
 
     // efficient no-init constructor
     Color () { }
@@ -55,9 +55,9 @@ public:
     //
     // let blend(x,y) be the composition of blending functions x and y
     // for a single color channel (i.e. red/green/blue; not alpha), where
-    // Ax and Ay are the alpha channels of the bias color and Cx and Cy
+    // Ax and Ay are the alpha channels of the color bias and Cx and Cy
     // are the single color channels (i.e. red/green/blue; not alpha)
-    // of the bias color.
+    // of the color bias.
     //
     // blend(x,y) = blend( (Ax,Cx), (Ay,Cy) )
     //                if Ax+Ay-Ax*Ay == 0,

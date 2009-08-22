@@ -19,10 +19,10 @@
 namespace Xrb
 {
 
-/** Contains the clipping rectangle, color mask and bias color for rendering.
+/** Contains the clipping rectangle, color mask and color bias for rendering.
   * The clipping rectangle indicates the area of the screen which is valid
   * to render to.  The color mask is a color which is component-wise
-  * multiplied into each pixel of the rendered pixels.  The bias color
+  * multiplied into each pixel of the rendered pixels.  The color bias
   * specifies the color that the drawn pixels will be tinted (the alpha
   * channel is used to specify the strength of the tinting).
   *
@@ -31,7 +31,7 @@ namespace Xrb
   *
   * This form of container lends itself mainly toward recursive widget
   * rendering, where each child widget has a progressively smaller rectangle
-  * inside its parent widget, and the color mask and bias color are cumulative
+  * inside its parent widget, and the color mask and color bias are cumulative
   * down the widget hierarchy.  Widget creates a new RenderContext for each
   * recursive level, applying the clipping rectangle, color mask and bias
   * color of each child it renders.  See @ref Xrb::Widget::Draw.
@@ -48,11 +48,11 @@ public:
       */
     inline RenderContext (
         ScreenCoordRect const &clip_rect,
-        Color const &bias_color,
+        Color const &color_bias,
         Color const &color_mask)
         :
         m_clip_rect(clip_rect),
-        m_bias_color(bias_color),
+        m_color_bias(color_bias),
         m_color_mask(color_mask)
     { }
     /** Simply copies the values of the source RenderContext.
@@ -61,7 +61,7 @@ public:
     inline RenderContext (RenderContext const &source)
         :
         m_clip_rect(source.m_clip_rect),
-        m_bias_color(source.m_bias_color),
+        m_color_bias(source.m_color_bias),
         m_color_mask(source.m_color_mask)
     { }
     /** @brief Destructor.  Does nothing.
@@ -74,7 +74,7 @@ public:
     inline void operator = (RenderContext const &source)
     {
         m_clip_rect = source.m_clip_rect;
-        m_bias_color = source.m_bias_color;
+        m_color_bias = source.m_color_bias;
         m_color_mask = source.m_color_mask;
     }
 
@@ -84,11 +84,11 @@ public:
     {
         return m_clip_rect;
     }
-    /** @brief Returns the bias color.
+    /** @brief Returns the color bias.
       */
-    inline Color const &BiasColor () const
+    inline Color const &ColorBias () const
     {
-        return m_bias_color;
+        return m_color_bias;
     }
     /** @brief Returns the color mask.
       */
@@ -96,12 +96,12 @@ public:
     {
         return m_color_mask;
     }
-    /** Use this method to change the bias color.
-      * @brief Returns a non-const reference to the bias color.
+    /** Use this method to change the color bias.
+      * @brief Returns a non-const reference to the color bias.
       */
-    inline Color &BiasColor ()
+    inline Color &ColorBias ()
     {
-        return m_bias_color;
+        return m_color_bias;
     }
     /** Use this method to change the color mask.
       * @brief Returns a non-const reference to the color mask.
@@ -118,14 +118,14 @@ public:
     {
         return m_clip_rect & rect;
     }
-    /** @brief Returns the given bias color blended (on the right/inside) with this
-      *        render context's bias color (i.e. blending function composition).
+    /** @brief Returns the given color bias blended (on the right/inside) with this
+      *        render context's color bias (i.e. blending function composition).
       */
-    inline Color BlendedBiasColor (Color const &bias_color) const
+    inline Color BlendedColorBias (Color const &color_bias) const
     {
-        Color blended_bias_color(m_bias_color);
-        blended_bias_color.Blend(bias_color);
-        return blended_bias_color;
+        Color blended_color_bias(m_color_bias);
+        blended_color_bias.Blend(color_bias);
+        return blended_color_bias;
     }
     /** Performs component-wise multiplication of the color and color mask,
       * @brief Returns the masked version of the given color.
@@ -134,11 +134,11 @@ public:
     {
         return m_color_mask * color;
     }
-    /** @brief Returns true iff the color mask and bias color would force
+    /** @brief Returns true iff the color mask and color bias would force
       *        any rendering operation to be a no op (i.e. completely transparent).
       */
     bool MaskAndBiasWouldResultInNoOp () const;
-    /** @brief Returns true iff the color mask, bias color and drawing color
+    /** @brief Returns true iff the color mask, color bias and drawing color
       *        alpha channel value would force any rendering operation to be
       *        a no op (i.e. completely transparent).
       * @param color_alpha_channel_value The alpha channel value of the
@@ -159,11 +159,11 @@ public:
     {
         m_clip_rect &= clip_rect;
     }
-    /** @brief Blends the current bias color with the given color (right-multiplication).
+    /** @brief Blends the current color bias with the given color (right-multiplication).
       */
-    inline void ApplyBiasColor (Color const &bias_color)
+    inline void ApplyColorBias (Color const &color_bias)
     {
-        m_bias_color.Blend(bias_color);
+        m_color_bias.Blend(color_bias);
     }
     /** @brief Masks the color mask using the given color.
       */
@@ -184,7 +184,7 @@ public:
 private:
 
     ScreenCoordRect m_clip_rect;
-    Color m_bias_color;
+    Color m_color_bias;
     Color m_color_mask;
 }; // end of class RenderContext
 

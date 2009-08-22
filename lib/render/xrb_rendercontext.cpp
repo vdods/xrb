@@ -17,12 +17,12 @@ namespace Xrb
 
 bool RenderContext::MaskAndBiasWouldResultInNoOp () const
 {
-    return m_bias_color[Dim::A] == 0.0f && m_color_mask[Dim::A] == 0.0f;
+    return m_color_bias[Dim::A] == 0.0f && m_color_mask[Dim::A] == 0.0f;
 }
 
 bool RenderContext::MaskAndBiasWouldResultInNoOp (ColorCoord color_alpha_channel_value) const
 {
-    return m_bias_color[Dim::A] == 0.0f && (m_color_mask[Dim::A] == 0.0f || color_alpha_channel_value == 0.0f);
+    return m_color_bias[Dim::A] == 0.0f && (m_color_mask[Dim::A] == 0.0f || color_alpha_channel_value == 0.0f);
 }
 
 void RenderContext::SetupGLClipRect () const
