@@ -300,7 +300,7 @@ void Mortal::Think (Float time, Float frame_dt)
     // which indicates the Mortal was recently healed, so flash green.
     else
         flash_color = Color(1.0f, 0.0f, 0.0f, -flash_intensity*s_full_flash_intensity_alpha);
-    OwnerObject()->SetBiasColor(flash_color);
+    OwnerObject()->BiasColor() = flash_color;
 
     // decay the recent change in health
     static Float const s_recent_change_in_health_halflife = 0.05f;

@@ -299,13 +299,24 @@ public:
         return ScreenRect().Grown(-(FrameMargins() + ContentMargins()));
     }
     /** @brief Returns this widget's bias color (the bias color is applied to
-      * everything drawn by the widget, BEFORE the color mask).
+      * everything drawn by the widget, AFTER the color mask).
       */
     inline Color const &BiasColor () const { return m_bias_color; }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
     inline Color const &ColorMask () const { return m_color_mask; }
+    /** Use this method to change the bias color
+      * @brief Returns this widget's bias color as a non-const reference (the
+      * bias color is applied to everything drawn by the widget, AFTER the
+      * color mask).
+      */
+    inline Color &BiasColor () { return m_bias_color; }
+    /** Use this method to change the color mask.
+      * @brief Returns this widget's color mask as a non-const reference (the
+      * color mask is applied to everything drawn by the widget).
+      */
+    inline Color &ColorMask () { return m_color_mask; }
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers
@@ -440,13 +451,6 @@ public:
         SizeProperties::Property property,
         FloatVector2 const &ratios,
         bool defer_parent_update = false);
-
-    /** @brief Sets the bias color of this widget.
-      */
-    void SetBiasColor (Color const &bias_color) { m_bias_color = bias_color; }
-    /** @brief Sets the color mask of this widget.
-      */
-    void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
 
     /** Makes the call to @a AddModalWidget or @a RemoveModalWidget as
       * appropriate).  If this causes the widget to become not modal, then

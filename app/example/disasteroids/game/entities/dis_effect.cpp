@@ -23,7 +23,8 @@ namespace Dis
 
 void Effect::Think (Float const time, Float const frame_dt)
 {
-    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f - LifetimeRatio(time)));
+    OwnerObject()->ColorMask() = m_base_color_mask;
+    OwnerObject()->ColorMask()[Dim::A] *= 1.0f - LifetimeRatio(time);
 
     if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
         ScheduleForDeletion(0.0f);
@@ -144,6 +145,12 @@ void EMPExplosion::Collide (
             m_disable_time_factor * Min(frame_dt, 1.0f / 20.0f));
 }
 
+void EMPExplosion::HandleNewOwnerObject ()
+{
+    // set the color mask of the sprite to the correct color and opacity.
+    OwnerObject()->ColorMask() = Color(0.0f, 0.0f, 1.0f, 1.0f);
+}
+
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
@@ -158,7 +165,7 @@ void Fireball::Think (Float const time, Float const frame_dt)
     // update the sprite's alpha value to reflect the damage left
     Float alpha_value = Max(0.0f, m_current_damage / m_potential_damage);
     ASSERT1(alpha_value <= 1.0f);
-    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, alpha_value));
+    OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, alpha_value);
 }
 
 void Fireball::Collide (
@@ -221,7 +228,7 @@ void LaserBeam::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
-    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, intensity));
+    OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, intensity);
 }
 
 void LaserBeam::SnapToShip (
@@ -251,11 +258,11 @@ void TractorBeam::SetParameters (
     ASSERT1(IsInWorld());
     static Float const s_opacity = 0.25f;
     if (push_instead_of_pull)
-        OwnerSprite()->SetColorMask(Color(1.0f, 0.0f, 0.0f, s_opacity*intensity));
+        OwnerObject()->ColorMask() = Color(1.0f, 0.0f, 0.0f, s_opacity*intensity);
     else if (pull_everything)
-        OwnerSprite()->SetColorMask(Color(0.0f, 0.0f, 1.0f, s_opacity*intensity));
+        OwnerObject()->ColorMask() = Color(0.0f, 0.0f, 1.0f, s_opacity*intensity);
     else
-        OwnerSprite()->SetColorMask(Color(0.0f, 1.0f, 0.0f, s_opacity*intensity));
+        OwnerObject()->ColorMask() = Color(0.0f, 1.0f, 0.0f, s_opacity*intensity);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -266,7 +273,7 @@ void ShieldEffect::SetIntensity (Float const intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     static Float const s_opacity = 0.3f;
-    OwnerSprite()->SetColorMask(Color(1.0f, 1.0f, 1.0f, s_opacity*intensity));
+    OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, s_opacity*intensity);
 }
 
 void ShieldEffect::SnapToShip (

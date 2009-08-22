@@ -613,7 +613,7 @@ void WorldView::ProcessFade (Float const frame_dt)
     ASSERT1(m_fade_time_left <= m_fade_time_total);
     Float parameter = 1.0f - m_fade_time_left / m_fade_time_total;
     Float fade_coefficient = m_fade_coefficient_begin * (1.0f - parameter) + m_fade_coefficient_end * parameter;
-    ParentWorldViewWidget()->SetBiasColor(Color(0.0f, 0.0f, 0.0f, 1.0f-fade_coefficient));
+    ParentWorldViewWidget()->BiasColor() = Color(0.0f, 0.0f, 0.0f, 1.0f-fade_coefficient);
     m_fade_time_left -= frame_dt;
 }
 

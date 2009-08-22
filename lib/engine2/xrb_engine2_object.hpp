@@ -173,6 +173,10 @@ public:
     inline Entity *GetEntity () const { return m_entity; }
     inline Color const &BiasColor () const { return m_bias_color; }
     inline Color const &ColorMask () const { return m_color_mask; }
+    // use this to change the bias color
+    inline Color &BiasColor () { return m_bias_color; }
+    // use this to change the color mask
+    inline Color &ColorMask () { return m_color_mask; }
     inline bool IsTransparent () const { return m_is_transparent; }
     inline Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
     inline Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
@@ -207,10 +211,6 @@ public:
     }
     // imbues this object with a soul
     void SetEntity (Entity *entity);
-    // sets the color bias
-    inline void SetBiasColor (Color const &bias_color) { m_bias_color = bias_color; }
-    // sets the color mask
-    inline void SetColorMask (Color const &color_mask) { m_color_mask = color_mask; }
     // sets the is-transparent property
     inline void SetIsTransparent (bool is_transparent) { m_is_transparent = is_transparent; }
     // sets the object_layer for this object

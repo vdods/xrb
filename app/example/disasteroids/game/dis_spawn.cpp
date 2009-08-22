@@ -520,7 +520,7 @@ EMPExplosion *SpawnEMPExplosion (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/emp_explosion_small.png",
+        "resources/shield_effect_small.png",
         Z_DEPTH_EMP_EXPLOSION,
         true, // is transparent
         emp_explosion,
@@ -666,7 +666,7 @@ ShieldEffect *SpawnShieldEffect (
     // later for real.
     sprite->SetScaleFactor(0.5f * object_layer->SideLength());
     // default the shield effect to transparent
-    sprite->SetColorMask(Color::ms_transparent_black);
+    sprite->ColorMask() = Color::ms_transparent_black;
 
     ShieldEffect *shield_effect = new ShieldEffect();
 
@@ -691,7 +691,7 @@ ReticleEffect *SpawnReticleEffect (
     // the quad tree, as the first time is temporary.  it will be placed
     // later for real.
     sprite->SetScaleFactor(0.5f * object_layer->SideLength());
-    sprite->SetColorMask(color_mask);
+    sprite->ColorMask() = color_mask;
 
     ReticleEffect *reticle_effect = new ReticleEffect();
 
@@ -734,7 +734,7 @@ HealthTrigger *SpawnHealthTrigger (
             0.0f,
             0.3f);
     // make the sprite invisible
-    sprite->SetColorMask(Color::ms_transparent_black);
+    sprite->ColorMask() = Color::ms_transparent_black;
     return health_trigger;
 }
 

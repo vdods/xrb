@@ -28,7 +28,8 @@ public:
         EntityType const entity_type,
         CollisionType const collision_type)
         :
-        Entity(entity_type, collision_type)
+        Entity(entity_type, collision_type),
+        m_base_color_mask(Color::ms_opaque_white)
     {
         ASSERT1(time_to_live != 0.0f);
         ASSERT1(time_at_birth >= 0.0f);
@@ -41,15 +42,9 @@ public:
 
 protected:
 
-    inline Float TimeToLive () const
-    {
-        return m_time_to_live;
-    }
-    inline Float TimeAtBirth () const
-    {
-        return m_time_at_birth;
-    }
-    inline Float LifetimeRatio (Float const current_time) const
+    Float TimeToLive () const { return m_time_to_live; }
+    Float TimeAtBirth () const { return m_time_at_birth; }
+    Float LifetimeRatio (Float const current_time) const
     {
         ASSERT1(current_time >= m_time_at_birth);
         if (m_time_to_live < 0.0f)
@@ -57,6 +52,8 @@ protected:
         else
             return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
     }
+    Color const &BaseColorMask () const { return m_base_color_mask; }
+    Color &BaseColorMask () { return m_base_color_mask; }
     virtual bool IsEffect () const { return true; }
 
 private:
@@ -66,6 +63,9 @@ private:
     Float m_time_to_live;
     // gives a reference time which can be used in calculations in Think()
     Float m_time_at_birth;
+    // the baseline color mask (to whose alpha channel the value
+    // 1.0f - LifetimeRatio(time) will be applied).  The default is opaque white.
+    Color m_base_color_mask;
 }; // end of class DamageEffect
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -177,6 +177,8 @@ public:
         m_owner(owner)
     {
         ASSERT1(m_disable_time_factor > 1.0f);
+        // i just blue myself.
+        BaseColorMask() = Color(0.0f, 0.0f, 1.0f, 1.0f);
     }
 
     virtual void Collide (
@@ -186,6 +188,8 @@ public:
         Float collision_force,
         Float time,
         Float frame_dt);
+
+    virtual void HandleNewOwnerObject ();
 
 private:
 

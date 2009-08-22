@@ -244,9 +244,9 @@ void InventoryPanel::UpdatePanelState ()
                         m_inventory_owner_ship->MineralInventory(mineral_index));
                 Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->Value();
                 if (player_ship_minerals < item_cost_minerals)
-                    m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
+                    m_mineral_cost_label[mineral_index]->ColorMask() = ms_not_affordable_mineral_color_mask;
                 else
-                    m_mineral_cost_label[mineral_index]->SetColorMask(ms_affordable_mineral_color_mask);
+                    m_mineral_cost_label[mineral_index]->ColorMask() = ms_affordable_mineral_color_mask;
             }
         }
     }
@@ -263,7 +263,7 @@ void InventoryPanel::UpdatePanelState ()
         }
 
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
-            m_mineral_cost_label[i]->SetColorMask(ms_affordable_mineral_color_mask);
+            m_mineral_cost_label[i]->ColorMask() = ms_affordable_mineral_color_mask;
     }
 }
 
@@ -365,9 +365,9 @@ void InventoryPanel::ShowPrice (ItemType const item_type, Uint8 const upgrade_le
                     m_inventory_owner_ship->MineralInventory(mineral_index));
             Uint32 item_cost_minerals = m_mineral_cost_label[mineral_index]->Value();
             if (player_ship_minerals < item_cost_minerals)
-                m_mineral_cost_label[mineral_index]->SetColorMask(ms_not_affordable_mineral_color_mask);
+                m_mineral_cost_label[mineral_index]->ColorMask() = ms_not_affordable_mineral_color_mask;
             else
-                m_mineral_cost_label[mineral_index]->SetColorMask(ms_affordable_mineral_color_mask);
+                m_mineral_cost_label[mineral_index]->ColorMask() = ms_affordable_mineral_color_mask;
         }
     }
 
@@ -395,7 +395,7 @@ void InventoryPanel::HidePrice (ItemType const item_type, Uint8 const upgrade_le
             m_mineral_cost_label[i]->Disable();
             m_mineral_icon_label[i]->Disable();
 
-            m_mineral_cost_label[i]->SetColorMask(ms_affordable_mineral_color_mask);
+            m_mineral_cost_label[i]->ColorMask() = ms_affordable_mineral_color_mask;
         }
         else
         {

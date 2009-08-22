@@ -324,7 +324,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
                 distance_fade = 1.0f;
             }
             // apply the distance fade transparency to the color mask
-            view_render_context.SetColorMask(render_context.ColorMask());
+            view_render_context.ColorMask() = render_context.ColorMask();
             view_render_context.ApplyAlphaMaskToColorMask(
                 Min(Max(distance_fade, 0.0f), 1.0f));
 

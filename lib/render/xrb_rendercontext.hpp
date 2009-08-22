@@ -96,6 +96,20 @@ public:
     {
         return m_color_mask;
     }
+    /** Use this method to change the bias color.
+      * @brief Returns a non-const reference to the bias color.
+      */
+    inline Color &BiasColor ()
+    {
+        return m_bias_color;
+    }
+    /** Use this method to change the color mask.
+      * @brief Returns a non-const reference to the color mask.
+      */
+    inline Color &ColorMask ()
+    {
+        return m_color_mask;
+    }
     /** This method is used when rectangular regions need to be clipped
       * against the clipping rectangle.
       * @brief Returns the intersection of the clipping rect and the given.
@@ -137,18 +151,6 @@ public:
     inline void SetClipRect (ScreenCoordRect const &clip_rect)
     {
         m_clip_rect = clip_rect;
-    }
-    /** @brief Sets the value of the bias color using the given color.
-      */
-    inline void SetBiasColor (Color const &bias_color)
-    {
-        m_bias_color = bias_color;
-    }
-    /** @brief Sets the value of the color mask using the given color.
-      */
-    inline void SetColorMask (Color const &color_mask)
-    {
-        m_color_mask = color_mask;
     }
 
     /** @brief Clips the clipping rectangle using the given rectangle.

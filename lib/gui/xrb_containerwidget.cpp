@@ -329,9 +329,9 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             if (child_render_context.ClipRect().IsValid())
             {
                 // set the bias color and color mask
-                child_render_context.SetBiasColor(render_context.BiasColor());
+                child_render_context.BiasColor() = render_context.BiasColor();
                 child_render_context.ApplyBiasColor(child->BiasColor());
-                child_render_context.SetColorMask(render_context.ColorMask());
+                child_render_context.ColorMask() = render_context.ColorMask();
                 child_render_context.ApplyColorMask(child->ColorMask());
                 // if the child widget is disabled (but this widget is enabled),
                 // apply a transparent color mask as a visual indicator
@@ -372,9 +372,9 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
             if (child_render_context.ClipRect().IsValid())
             {
                 // set the bias color and color mask
-                child_render_context.SetBiasColor(render_context.BiasColor());
+                child_render_context.BiasColor() = render_context.BiasColor();
                 child_render_context.ApplyBiasColor(modal_widget->BiasColor());
-                child_render_context.SetColorMask(render_context.ColorMask());
+                child_render_context.ColorMask() = render_context.ColorMask();
                 child_render_context.ApplyColorMask(modal_widget->ColorMask());
 
                 ASSERT1(modal_widget->IsEnabled());

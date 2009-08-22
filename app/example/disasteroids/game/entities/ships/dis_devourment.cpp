@@ -126,7 +126,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
 
     // the grinder sprite's color bias (i.e. damage/healing flashing)
     // must be matched here, since it was updated above in Ship::Think().
-    m_mouth_health_trigger->OwnerObject()->SetBiasColor(OwnerObject()->BiasColor());
+    m_mouth_health_trigger->OwnerObject()->BiasColor() = OwnerObject()->BiasColor();
 
     // ensure the tractor beam is allocated (lazy allocation)
     if (!m_mouth_tractor_beam.IsValid())

@@ -150,17 +150,17 @@ void InventoryButton::SetStatus (Status const status)
     switch (m_status)
     {
         case S_NOT_AFFORDABLE:
-            SetColorMask(Color(0.5f, 0.5f, 0.5f, 1.0f));
+            ColorMask() = Color(0.5f, 0.5f, 0.5f, 1.0f);
             m_target_size_parameter = 0.0f;
             break;
 
         case S_AFFORDABLE:
-            SetColorMask(Color(0.75f, 0.75f, 0.75f, 1.0f));
+            ColorMask() = Color(0.75f, 0.75f, 0.75f, 1.0f);
             m_target_size_parameter = 0.0f;
             break;
 
         case S_OWNED:
-            SetColorMask(Color(1.0f, 1.0f, 1.0f, 1.0f));
+            ColorMask() = Color(1.0f, 1.0f, 1.0f, 1.0f);
             m_target_size_parameter = 1.0f;
             break;
 
@@ -185,7 +185,7 @@ void InventoryButton::HandleFrame ()
     if (m_status == S_EQUIPPED)
     {
         Float brightness = 0.875f + 0.125f * Math::Sin(360.0f * FrameTime());
-        SetColorMask(Color(brightness, brightness, brightness, 1.0f));
+        ColorMask() = Color(brightness, brightness, brightness, 1.0f);
     }
 
     if (m_current_size_parameter < m_target_size_parameter)
