@@ -225,25 +225,6 @@ std::string Util::StringLiteral (std::string const &text)
     return retval;
 }
 
-char const *Util::IOErrorString (IOError error)
-{
-    static char const *error_string[IOE_COUNT] =
-    {
-        STRINGIFY(IOE_NONE),
-        STRINGIFY(IOE_IS_AT_END),
-        STRINGIFY(IOE_INSUFFICIENT_STORAGE),
-        STRINGIFY(IOE_INSUFFICIENT_AVAILABLE_DATA),
-        STRINGIFY(IOE_OVERSIZED_STRING),
-        STRINGIFY(IOE_INVALID_FILENAME),
-        STRINGIFY(IOE_UNABLE_TO_OPEN_FILE),
-        STRINGIFY(IOE_INVALID_FILE_OPEN_MODE)
-    };
-
-    ASSERT1(error >= IOE_LOWEST_ERROR && error <= IOE_HIGHEST_ERROR);
-
-    return error_string[error];
-}
-
 std::string Util::DirectoryPortion (std::string const &path)
 {
     std::string::size_type last_slash = path.find_last_of("/");

@@ -182,48 +182,6 @@ void Entity::ApplyInterceptCourseAcceleration (
         target->AccumulateForce(-force_vector);
 }
 
-Engine2::Entity *Entity::Create (Serializer &serializer)
-{
-    return NULL; // TEMP
-    /*
-    ASSERT1(serializer.IODirection() == IOD_READ);
-
-    Engine2::Entity *retval;
-    EntityType entity_type = ReadEntityType(serializer);
-    switch (entity_type)
-    {
-        case PLAYER_SHIP:
-            retval = PlayerShip::Create(serializer);
-            break;
-
-        case BULLET:
-            retval = Bullet::Create(serializer);
-            break;
-
-        case ASTEROID:
-            retval = Asteroid::Create(serializer);
-            break;
-
-        case HEALTH_TRIGGER:
-            retval = HealthTrigger::Create(serializer);
-            break;
-
-        case EXPLOSION:
-            retval = Explosion::Create(serializer);
-            break;
-
-        default:
-            retval = NULL;
-            break;
-    }
-    return retval;
-    */
-}
-
-void Entity::Write (Serializer &serializer) const
-{
-}
-
 void Entity::HandleObjectLayerContainment (bool const component_x, bool const component_y)
 {
     if (component_x)
@@ -263,21 +221,6 @@ Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) c
         }
     }
     return T;
-}
-
-
-EntityType Entity::ReadEntityType (Serializer &serializer)
-{
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
-    ASSERT1(ET_COUNT < 0x100);
-    return static_cast<EntityType>(serializer.ReadUint8());
-}
-
-void Entity::WriteEntityType (Serializer &serializer) const
-{
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
-    ASSERT1(ET_COUNT < 0x100);
-    serializer.WriteUint8(static_cast<Uint8>(m_entity_type));
 }
 
 } // end of namespace Dis

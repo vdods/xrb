@@ -119,7 +119,7 @@ void Engine2::Entity::CloneProperties (Engine2::Entity const *const entity)
 
 void Engine2::Entity::ReadClassSpecific (Serializer &serializer)
 {
-    serializer.ReadFloatVector2(&m_wrapped_offset);
+    serializer.ReadAggregate<FloatVector2>(m_wrapped_offset);
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
 }
@@ -128,7 +128,7 @@ void Engine2::Entity::WriteClassSpecific (Serializer &serializer) const
 {
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
     ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
-    serializer.WriteFloatVector2(m_wrapped_offset);
+    serializer.WriteAggregate<FloatVector2>(m_wrapped_offset);
 }
 
 } // end of namespace Xrb

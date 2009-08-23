@@ -30,6 +30,10 @@ using ::Sint16;
 using ::Uint16;
 using ::Sint32;
 using ::Uint32;
+#if defined(XRB_ENABLE_64BIT_INTEGER_TYPES)
+using ::Sint64;
+using ::Uint64;
+#endif
 #else
 // these types are predicated on the SDL integer types.  the correctness
 // of their sizes is checked in xrb_compiletimeasserts.cpp
@@ -39,6 +43,10 @@ typedef int16_t  Sint16;
 typedef uint16_t Uint16;
 typedef int32_t  Sint32;
 typedef uint32_t Uint32;
+#if defined(XRB_ENABLE_64BIT_INTEGER_TYPES)
+typedef int64_t  Sint64;
+typedef uint64_t Uint64;
+#endif
 #endif
 
 // for using floats or doubles
@@ -67,6 +75,15 @@ typedef Uint8 StateMachineInput;
 // lower/upper bound on Uint32 values
 #define UINT32_LOWER_BOUND static_cast<Xrb::Uint32>(0x00000000)
 #define UINT32_UPPER_BOUND static_cast<Xrb::Uint32>(0xFFFFFFFF)
+
+#if defined(XRB_ENABLE_64BIT_INTEGER_TYPES)
+// lower/upper bound on Sint64 values
+#define SINT64_LOWER_BOUND static_cast<Xrb::Sint64>(0x8000000000000000LL)
+#define SINT64_UPPER_BOUND static_cast<Xrb::Sint64>(0x7FFFFFFFFFFFFFFFLL)
+// lower/upper bound on Uint64 values
+#define UINT64_LOWER_BOUND static_cast<Xrb::Uint64>(0x0000000000000000LL)
+#define UINT64_UPPER_BOUND static_cast<Xrb::Uint64>(0xFFFFFFFFFFFFFFFFLL)
+#endif
 
 #endif // !defined(_XRB_TYPES_HPP_)
 

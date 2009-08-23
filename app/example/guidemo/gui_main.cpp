@@ -81,7 +81,7 @@ int main (int argc, char **argv)
         { "(1/0)+(1/0)", Math::Nan() },
         { "(-2)^0.5", Math::Pow(-2.0f, 0.5f) },
     };
-    Uint32 const pair_count = sizeof(pair) / sizeof(ExpressionValuePair);
+    Uint32 const pair_count = LENGTHOF(pair);
 
     ArithmeticParser parser;
 

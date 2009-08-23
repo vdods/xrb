@@ -13,6 +13,7 @@
 #include <sstream>
 
 #include "xrb_binaryfileserializer.hpp"
+#include "xrb_exception.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_pal.hpp"
@@ -30,22 +31,20 @@ namespace Xrb
 
 void AsciiFont::GlyphSpecification::Read (Serializer &serializer)
 {
-    m_ascii                 = serializer.ReadSint8();
-    m_size                  = serializer.ReadScreenCoordVector2();
-    m_bearing_26_6[Dim::X]  = serializer.ReadSint32(); // FontCoord is Sint32
-    m_bearing_26_6[Dim::Y]  = serializer.ReadSint32(); // FontCoord is Sint32
-    m_advance_26_6          = serializer.ReadSint32(); // FontCoord is Sint32
-    m_texture_coordinates   = serializer.ReadScreenCoordVector2();
+    serializer.Read<char>(m_ascii);
+    serializer.ReadAggregate<ScreenCoordVector2>(m_size);
+    serializer.ReadAggregate<FontCoordVector2>(m_bearing_26_6);
+    serializer.Read<FontCoord>(m_advance_26_6);
+    serializer.ReadAggregate<ScreenCoordVector2>(m_texture_coordinates);
 }
 
 void AsciiFont::GlyphSpecification::Write (Serializer &serializer) const
 {
-    serializer.WriteSint8(m_ascii);
-    serializer.WriteScreenCoordVector2(m_size);
-    serializer.WriteSint32(m_bearing_26_6[Dim::X]); // FontCoord is Sint32
-    serializer.WriteSint32(m_bearing_26_6[Dim::Y]); // FontCoord is Sint32
-    serializer.WriteSint32(m_advance_26_6);         // FontCoord is Sint32
-    serializer.WriteScreenCoordVector2(m_texture_coordinates);
+    serializer.Write<char>(m_ascii);
+    serializer.WriteAggregate<ScreenCoordVector2>(m_size);
+    serializer.WriteAggregate<FontCoordVector2>(m_bearing_26_6);
+    serializer.Write<FontCoord>(m_advance_26_6);
+    serializer.WriteAggregate<ScreenCoordVector2>(m_texture_coordinates);
 }
 
 int AsciiFont::GlyphSpecification::SortByWidthFirst (
@@ -62,24 +61,6 @@ int AsciiFont::GlyphSpecification::SortByWidthFirst (
         return -1;
     else if (left_glyph->m_size[Dim::X] == right_glyph->m_size[Dim::X])
         return left_glyph->m_size[Dim::Y] - right_glyph->m_size[Dim::Y];
-    else
-        return 1;
-}
-
-int AsciiFont::GlyphSpecification::SortByHeightFirst (
-    void const *const left_operand,
-    void const *const right_operand)
-{
-    GlyphSpecification const *left_glyph =
-        *static_cast<GlyphSpecification const *const *>(left_operand);
-    GlyphSpecification const *right_glyph =
-        *static_cast<GlyphSpecification const *const *>(right_operand);
-
-    // sort by height first, then width.
-    if (left_glyph->m_size[Dim::Y] < right_glyph->m_size[Dim::Y])
-        return -1;
-    else if (left_glyph->m_size[Dim::Y] == right_glyph->m_size[Dim::Y])
-        return left_glyph->m_size[Dim::X] - right_glyph->m_size[Dim::X];
     else
         return 1;
 }
@@ -104,57 +85,43 @@ AsciiFont *AsciiFont::CreateFromCache (
         return retval;
 
     // check for the appropriate font metadata file
-    BinaryFileSerializer serializer;
-    serializer.Open(font_metadata_path.c_str(), "rb");
-    // if the file doesn't exist or can't be opened, get out of here
-    if (!serializer.IsOpen())
+    try
     {
-        Delete(texture);
-        return retval;
-    }
+        BinaryFileSerializer serializer(font_metadata_path, IOD_READ);
 
-    // now try to read the font metadata
-    retval = new AsciiFont(font_face_path, pixel_height);
+        // now try to read the font metadata
+        retval = new AsciiFont(font_face_path, pixel_height);
 
-    Uint32 hash = serializer.ReadUint32();
-    retval->m_has_kerning = serializer.ReadBool();
-    retval->m_baseline_height = serializer.ReadScreenCoord();
-    Uint32 rendered_glyph_count(serializer.ReadUint32());
+        Uint32 hash;
+        Uint32 rendered_glyph_count;
 
-    if (rendered_glyph_count != RENDERED_GLYPH_COUNT)
-    {
-        fprintf(stderr, "AsciiFont::Create(\"%s\", %d); glyph count mismatch (got %u, expected %u) -- delete the associated cache files\n", font_face_path.c_str(), pixel_height, rendered_glyph_count, RENDERED_GLYPH_COUNT);
-        DeleteAndNullify(retval);
-    }
-    else
-    {
-        for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+        serializer.Read<Uint32>(hash);
+        serializer.Read<bool>(retval->m_has_kerning);
+        serializer.Read<ScreenCoord>(retval->m_baseline_height);
+        serializer.Read<Uint32>(rendered_glyph_count);
+
+        if (rendered_glyph_count != ms_rendered_glyph_count)
+            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); glyph count mismatch (got " << rendered_glyph_count << ", expected " << ms_rendered_glyph_count << ") -- delete the associated cache files"));
+
+        for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
             retval->m_glyph_specification[i].Read(serializer);
-        for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-            for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-                retval->m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right] = serializer.ReadSint32(); // FontCoord is Sint32
+        serializer.ReadBuffer<FontCoord>(retval->m_kern_pair_26_6, LENGTHOF(retval->m_kern_pair_26_6));
 
         if (hash != retval->Hash())
-        {
-            fprintf(stderr, "AsciiFont::Create(\"%s\", %d); invalid font metadata -- delete the associated cache files\n", font_face_path.c_str(), pixel_height);
-            DeleteAndNullify(retval);
-        }
+            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); invalid font metadata -- delete the associated cache files"));
 
         if (!serializer.IsAtEnd())
-        {
-            fprintf(stderr, "AsciiFont::Create(\"%s\", %d); font metadata file is too long -- delete the associated cache files\n", font_face_path.c_str(), pixel_height);
-            DeleteAndNullify(retval);
-        }
-    }
+            throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
 
-    serializer.Close();
-
-    if (retval != NULL)
-    {
         retval->m_gl_texture = GLTexture::Create(texture);
         ASSERT1(retval->m_gl_texture != NULL);
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
+    }
+    catch (Exception &e)
+    {
+        fprintf(stderr, "%s\n", e.what());
+        DeleteAndNullify(retval);
     }
 
     Delete(texture);
@@ -166,8 +133,8 @@ AsciiFont *AsciiFont::Create (
     ScreenCoord pixel_height,
     bool has_kerning,
     ScreenCoord baseline_height,
-    GlyphSpecification sorted_glyph_specification[RENDERED_GLYPH_COUNT],
-    FontCoord kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
+    GlyphSpecification sorted_glyph_specification[ms_rendered_glyph_count],
+    FontCoord kern_pair_26_6[ms_rendered_glyph_count*ms_rendered_glyph_count],
     Texture *font_texture)
 {
     ASSERT1(font_texture != NULL);
@@ -192,38 +159,24 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
     std::string font_bitmap_path(FORMAT(FontFacePath() << '.' << PixelHeight() << ".png"));
 
     // write the font metadata out to disk
+    try
     {
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
 
-        BinaryFileSerializer serializer;
-        serializer.Open(font_metadata_path.c_str(), "wb");
-        if (serializer.IsOpen())
-        {
-            serializer.WriteUint32(Hash());
-            serializer.WriteBool(m_has_kerning);
-            serializer.WriteScreenCoord(m_baseline_height);
-            serializer.WriteUint32(RENDERED_GLYPH_COUNT);
-            for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
-                m_glyph_specification[i].Write(serializer);
-            for (Uint32 left = 0; left < RENDERED_GLYPH_COUNT; ++left)
-                for (Uint32 right = 0; right < RENDERED_GLYPH_COUNT; ++right)
-                    serializer.WriteSint32(m_kern_pair_26_6[left*RENDERED_GLYPH_COUNT + right]); // FontCoord is Sint32
+        BinaryFileSerializer serializer(font_metadata_path, IOD_WRITE);
 
-            serializer.Close();
+        serializer.Write<Uint32>(Hash());
+        serializer.Write<bool>(m_has_kerning);
+        serializer.Write<ScreenCoord>(m_baseline_height);
+        serializer.Write<Uint32>(ms_rendered_glyph_count);
+        for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
+            m_glyph_specification[i].Write(serializer);
+        serializer.WriteBuffer<FontCoord>(m_kern_pair_26_6, LENGTHOF(m_kern_pair_26_6));
 
-            fprintf(stderr, "cached font data\n");
+        fprintf(stderr, "cached font data\n");
 
-            // continue on to write the font bitmap
-        }
-        else
-        {
-            fprintf(stderr, "error caching font data\n");
-            return false; // failure
-        }
-    }
+        // continue on to write the font bitmap
 
-    // write the font bitmap out to disk
-    {
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
         bool success = Singleton::Pal().SaveImage(font_bitmap_path.c_str(), *font_texture) == Pal::SUCCESS;
         if (success)
@@ -231,6 +184,11 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
         else
             fprintf(stderr, "error caching font bitmap file\n");
         return success;
+    }
+    catch (Exception &e)
+    {
+        fprintf(stderr, "error caching font data (%s)\n", e.what());
+        return false;
     }
 }
 
@@ -254,7 +212,7 @@ void AsciiFont::MoveThroughGlyph (
     {
         if (*current_glyph == '\t')
         {
-            (*pen_position_26_6)[Dim::X] += TAB_SIZE * m_glyph_specification[GlyphIndex(' ')].m_advance_26_6;
+            (*pen_position_26_6)[Dim::X] += ms_tab_size * m_glyph_specification[GlyphIndex(' ')].m_advance_26_6;
         }
         else
         {
@@ -529,7 +487,7 @@ Uint32 AsciiFont::Hash () const
     retval *= 11;
     retval ^= Uint32(m_baseline_height);
     retval *= 11;
-    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT; ++i)
+    for (Uint32 i = 0; i < ms_rendered_glyph_count; ++i)
     {
         retval ^= Uint32(m_glyph_specification[i].m_ascii);
         retval *= 11;
@@ -548,7 +506,7 @@ Uint32 AsciiFont::Hash () const
         retval ^= Uint32(m_glyph_specification[i].m_texture_coordinates[Dim::Y]);
         retval *= 11;
     }
-    for (Uint32 i = 0; i < RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT; ++i)
+    for (Uint32 i = 0; i < ms_rendered_glyph_count*ms_rendered_glyph_count; ++i)
     {
         retval ^= Uint32(m_kern_pair_26_6[i]);
         retval *= 11;
@@ -560,9 +518,9 @@ FontCoord AsciiFont::KernPair_26_6 (char left, char right) const
 {
     Uint32 glyph_index_left = GlyphIndex(left);
     Uint32 glyph_index_right = GlyphIndex(right);
-    ASSERT1(glyph_index_left < RENDERED_GLYPH_COUNT);
-    ASSERT1(glyph_index_right < RENDERED_GLYPH_COUNT);
-    return m_kern_pair_26_6[glyph_index_left*RENDERED_GLYPH_COUNT + glyph_index_right];
+    ASSERT1(glyph_index_left < ms_rendered_glyph_count);
+    ASSERT1(glyph_index_right < ms_rendered_glyph_count);
+    return m_kern_pair_26_6[glyph_index_left*ms_rendered_glyph_count + glyph_index_right];
 }
 
 AsciiFont::TokenClass AsciiFont::GetTokenClass (char const c)

@@ -68,10 +68,10 @@ Engine2::World *Engine2::World::Create (
     CreateEntityFunction CreateEntity,
     PhysicsHandler *const physics_handler)
 {
-    ASSERT1(serializer.IsOpen());
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
 
-    Uint16 entity_capacity = serializer.ReadUint32();
+    Uint32 entity_capacity;
+    serializer.Read<Uint32>(entity_capacity);
     World *retval = new World(physics_handler, entity_capacity);
     // it's ok to pass NULL as CreateEntity because it won't be used
     retval->Read(serializer, NULL);
@@ -88,8 +88,8 @@ Engine2::World *Engine2::World::CreateEmpty (
 
 void Engine2::World::Write (Serializer &serializer) const
 {
-    serializer.WriteUint32(EntityCapacity());
-    serializer.WriteUint32(MainObjectLayerIndex());
+    serializer.Write<Uint32>(EntityCapacity());
+    serializer.Write<Uint32>(MainObjectLayerIndex());
     WriteObjectLayers(serializer);
 }
 
@@ -347,7 +347,8 @@ void Engine2::World::Read (Serializer &serializer, CreateEntityFunction CreateEn
 {
     ASSERT1(m_object_layer_list.empty());
 
-    Uint32 main_object_layer_index = serializer.ReadUint32();
+    Uint32 main_object_layer_index;
+    serializer.Read<Uint32>(main_object_layer_index);
     ReadObjectLayers(serializer, CreateEntity);
     SetMainObjectLayerIndex(main_object_layer_index);
 }
@@ -356,14 +357,14 @@ void Engine2::World::ReadObjectLayers (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)
 {
-    Uint32 object_layer_list_size = serializer.ReadUint32();
+    Uint32 object_layer_list_size;
+    serializer.Read<Uint32>(object_layer_list_size);
     for (Uint32 i = 0; i < object_layer_list_size; ++i)
     {
         ObjectLayer *object_layer = ObjectLayer::Create(serializer, this);
         AddObjectLayer(object_layer);
         ReadDynamicObjectsBelongingToLayer(serializer, object_layer, CreateEntity);
     }
-    ASSERT1(serializer.HasFewerThan8BitsLeft());
 }
 
 void Engine2::World::ReadDynamicObjectsBelongingToLayer (
@@ -373,7 +374,8 @@ void Engine2::World::ReadDynamicObjectsBelongingToLayer (
 {
     ASSERT1(object_layer != NULL);
 
-    Uint32 dynamic_object_count = serializer.ReadUint32();
+    Uint32 dynamic_object_count;
+    serializer.Read<Uint32>(dynamic_object_count);
     while (dynamic_object_count > 0)
     {
         Object *dynamic_object = Object::Create(serializer, CreateEntity);
@@ -386,9 +388,9 @@ void Engine2::World::ReadDynamicObjectsBelongingToLayer (
 
 void Engine2::World::WriteObjectLayers (Serializer &serializer) const
 {
-    serializer.WriteUint32(m_object_layer_list.size());
+    serializer.Write<Uint32>(m_object_layer_list.size());
     for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
-                                      it_end = m_object_layer_list.end();
+                                         it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
     {
@@ -425,13 +427,13 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
     }
 
     // write the number of dynamic objects
-    serializer.WriteUint32(dynamic_object_count);
+    serializer.Write<Uint32>(dynamic_object_count);
     // if there are no dynamic objects, return
     if (dynamic_object_count == 0)
         return;
 
     for (EntityVector::const_iterator it = m_entity_vector.begin(),
-                                   it_end = m_entity_vector.end();
+                                      it_end = m_entity_vector.end();
          it != it_end;
          ++it)
     {

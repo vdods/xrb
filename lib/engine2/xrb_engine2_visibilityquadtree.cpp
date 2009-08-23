@@ -52,10 +52,10 @@ Engine2::VisibilityQuadTree *Engine2::VisibilityQuadTree::Create (Serializer &se
 void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
 {
     // write the VisibilityQuadTree's structure info
-    m_center = serializer.ReadFloatVector2();
-    serializer.ReadFloat(&m_half_side_length);
-    serializer.ReadFloat(&m_radius);
-    bool has_children = serializer.ReadBool();
+    serializer.ReadAggregate<FloatVector2>(m_center);
+    serializer.Read<Float>(m_half_side_length);
+    serializer.Read<Float>(m_radius);
+    bool has_children = serializer.Read<bool>();
     // if there are children, recursively call this function on them
     if (has_children)
     {
@@ -71,10 +71,10 @@ void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
 void Engine2::VisibilityQuadTree::WriteStructure (Serializer &serializer) const
 {
     // write the VisibilityQuadTree's structure info
-    serializer.WriteFloatVector2(m_center);
-    serializer.WriteFloat(m_half_side_length);
-    serializer.WriteFloat(m_radius);
-    serializer.WriteBool(HasChildren());
+    serializer.WriteAggregate<FloatVector2>(m_center);
+    serializer.Write<Float>(m_half_side_length);
+    serializer.Write<Float>(m_radius);
+    serializer.Write<bool>(HasChildren());
     // if there are children, recursively call this function on them
     if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
@@ -88,7 +88,8 @@ void Engine2::VisibilityQuadTree::ReadObjects (
     ASSERT1(object_layer != NULL);
 
     fprintf(stderr, "Engine2::VisibilityQuadTree::ReadObjects();\n");
-    Uint32 static_object_count = serializer.ReadUint32();
+    Uint32 static_object_count;
+    serializer.Read<Uint32>(static_object_count);
     while (static_object_count > 0)
     {
         // it's ok to pass NULL as CreateEntity because it won't be used,
@@ -105,7 +106,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     // if this is the top level node, write out the number of
     // subordinate non-entities
     if (Parent() == NULL)
-        serializer.WriteUint32(SubordinateStaticObjectCount());
+        serializer.Write<Uint32>(SubordinateStaticObjectCount());
 
     // the number of non-entities written
     Uint32 retval = 0;

@@ -437,7 +437,7 @@ static Wave const gs_wave[] =
     },
 */
 };
-static Uint32 const gs_wave_count = sizeof(gs_wave) / sizeof(Wave);
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
 
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.37f, 0.37f, 0.37f, 0.37f };
 
@@ -1395,8 +1395,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/galaxy_small09.png",
             "resources/starfield/galaxy_small10.png",
         };
-        Uint32 const galaxy_sprite_path_count =
-            sizeof(s_galaxy_sprite_path) / sizeof(std::string);
+        Uint32 const galaxy_sprite_path_count = LENGTHOF(s_galaxy_sprite_path);
 
         Uint32 const number_of_galaxies_to_create = 100;
         for (Uint32 i = 0; i < number_of_galaxies_to_create; ++i)
@@ -1455,8 +1454,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/star_flare08.png",
             "resources/starfield/star_flare09.png"
         };
-        Uint32 const starfield_sprite_path_count =
-            sizeof(s_starfield_sprite_path) / sizeof(std::string);
+        Uint32 const starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
         Uint32 const number_of_stars_to_create = 1000;
         for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
@@ -1502,8 +1500,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/nebulas/reflection_nebula.png",
             "resources/nebulas/small_magellanic_cloud.png"
         };
-        Uint32 const nebula_sprite_path_count =
-            sizeof(s_nebula_sprite_path) / sizeof(std::string);
+        Uint32 const nebula_sprite_path_count = LENGTHOF(s_nebula_sprite_path);
 
         for (Uint32 i = 0; i < nebula_sprite_path_count; ++i)
         {

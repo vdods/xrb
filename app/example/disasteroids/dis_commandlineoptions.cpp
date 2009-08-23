@@ -51,7 +51,7 @@ CommandLineOption const CommandLineOptions::ms_option[] =
         &CommandLineOptions::RequestHelp,
         "    Prints this help message.")
 };
-Uint32 const CommandLineOptions::ms_option_count = sizeof(CommandLineOptions::ms_option) / sizeof(CommandLineOption);
+Uint32 const CommandLineOptions::ms_option_count = LENGTHOF(CommandLineOptions::ms_option);
 
 CommandLineOptions::CommandLineOptions (std::string const &executable_path)
     :

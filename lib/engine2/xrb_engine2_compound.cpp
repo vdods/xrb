@@ -23,11 +23,6 @@ Engine2::Compound::~Compound ()
     DeleteArray(m_vertex_array);
     DeleteArray(m_polygon_array);
 }
-/*
-Engine2::Compound *Engine2::Compound::Create (std::string const &compound_path)
-{
-}
-*/
 
 Engine2::Compound *Engine2::Compound::Create (Serializer &serializer)
 {
@@ -104,17 +99,16 @@ Engine2::Compound::Compound ()
 
 void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
 
-    m_vertex_count = serializer.ReadUint32();
+    serializer.Read<Uint32>(m_vertex_count);
     ASSERT1(m_vertex_count > 0);
     m_vertex_array = new FloatVector2[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
-        serializer.ReadFloatVector2(&m_vertex_array[i]);
+        serializer.ReadAggregate<FloatVector2>(m_vertex_array[i]);
 
-    m_polygon_count = serializer.ReadUint32();
+    m_polygon_count = serializer.Read<Uint32>();
     ASSERT1(m_polygon_count > 0);
     m_polygon_array = new Polygon[m_polygon_count];
     for (Uint32 i = 0; i < m_polygon_count; ++i)
@@ -123,17 +117,17 @@ void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
 
 void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(serializer.Direction() == IOD_WRITE);
     ASSERT1(m_vertex_count > 0);
     ASSERT1(m_vertex_array != NULL);
     ASSERT1(m_polygon_count > 0);
     ASSERT1(m_polygon_array != NULL);
 
-    serializer.WriteUint32(m_vertex_count);
+    serializer.Write<Uint32>(m_vertex_count);
     for (Uint32 i = 0; i < m_vertex_count; ++i)
-        serializer.WriteFloatVector2(m_vertex_array[i]);
+        serializer.WriteAggregate<FloatVector2>(m_vertex_array[i]);
 
-    serializer.WriteUint32(m_polygon_count);
+    serializer.Write<Uint32>(m_polygon_count);
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].Write(serializer, m_vertex_array);
 }

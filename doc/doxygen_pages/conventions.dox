@@ -2,7 +2,7 @@
 
 NO CAMEL CASE.
 
-Types, functions and methods are capitalized (e.g. @c DumbFunc ).  Variables are lowercase with underscores (e.g. @c awesome_integer ).  Enums and preprocessor macros are uppercase with underscores (e.g. @c SMELLY_HIPPO ).  The whole Xrb library (with exception of @ref Pal implementations, and possibly other stuff that I'm forgetting) is contained within the @ref Xrb namespace.  All preprocessor macros defined by the library are prefixed by @c XRB_ (or at least they should be).
+Types, functions and methods are capitalized (e.g. @c DumbFunc ).  Variables are lowercase with underscores (e.g. @c awesome_integer ).  Enums and preprocessor macros are uppercase with underscores (e.g. @c SMELLY_RHINOCEROS ).  The whole Xrb library (with exception of @ref Pal implementations, and possibly other stuff that I'm forgetting) is contained within the @ref Xrb namespace.  All preprocessor macros defined by the library are prefixed by @c XRB_ (or at least they should be).
 
 Global variables are prefixed by @c g_ , member variables are prefixed by @c m_ , static variables are prefixed by @c s_ , and static global and static member variables are prefixed by @c gs_ and @c ms_ respectively (the most common one is @ref FloatVector2::ms_zero ).
 

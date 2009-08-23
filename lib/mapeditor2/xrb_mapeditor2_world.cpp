@@ -23,10 +23,10 @@ namespace Xrb
 
 MapEditor2::World *MapEditor2::World::Create (Serializer &serializer)
 {
-    ASSERT1(serializer.IsOpen());
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
 
-    Uint32 entity_capacity = serializer.ReadUint32();
+    Uint32 entity_capacity;
+    serializer.Read<Uint32>(entity_capacity);
     ASSERT1(entity_capacity > 0);
     World *retval = new World(entity_capacity);
 
@@ -165,7 +165,8 @@ void MapEditor2::World::HandleFrame ()
 
 void MapEditor2::World::ReadObjectLayers (Serializer &serializer)
 {
-    Uint32 object_layer_list_size = serializer.ReadUint32();
+    Uint32 object_layer_list_size;
+    serializer.Read<Uint32>(object_layer_list_size);
     for (Uint32 i = 0; i < object_layer_list_size; ++i)
     {
         ObjectLayer *map_editor_object_layer =
@@ -173,7 +174,6 @@ void MapEditor2::World::ReadObjectLayers (Serializer &serializer)
         AddObjectLayer(map_editor_object_layer);
         ReadEntitiesBelongingToLayer(serializer, map_editor_object_layer);
     }
-    ASSERT1(serializer.HasFewerThan8BitsLeft());
 }
 
 void MapEditor2::World::ReadEntitiesBelongingToLayer (
@@ -182,7 +182,8 @@ void MapEditor2::World::ReadEntitiesBelongingToLayer (
 {
     ASSERT1(object_layer != NULL);
 
-    Uint32 entity_count = serializer.ReadUint32();
+    Uint32 entity_count;
+    serializer.Read<Uint32>(entity_count);
     while (entity_count > 0)
     {
         Object *object = Object::Create(serializer);

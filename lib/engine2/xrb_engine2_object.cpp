@@ -132,7 +132,7 @@ Engine2::Object *Engine2::Object::Create (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
 
     Object *retval = NULL;
     switch (ReadObjectType(serializer))
@@ -157,7 +157,7 @@ Engine2::Object *Engine2::Object::Create (
     }
 
     // if there is an Entity attached to this object, read it
-    if (serializer.ReadBool())
+    if (serializer.Read<bool>())
     {
         ASSERT1(CreateEntity != NULL);
         retval->m_entity = CreateEntity(serializer);
@@ -174,7 +174,7 @@ void Engine2::Object::Write (Serializer &serializer) const
     Object::WriteClassSpecific(serializer);
 
     // write true if there's an attached Entity, false if not.
-    serializer.WriteBool(m_entity != NULL);
+    serializer.Write<bool>(m_entity != NULL);
     // if there's an Entity attached to this object, write it
     if (m_entity != NULL)
         m_entity->Write(serializer);
@@ -226,26 +226,26 @@ Engine2::Object::Object (ObjectType object_type)
 
 Engine2::ObjectType Engine2::Object::ReadObjectType (Serializer &serializer)
 {
-    return static_cast<ObjectType>(serializer.ReadUint8());
+    return static_cast<ObjectType>(serializer.Read<Uint8>());
 }
 
 void Engine2::Object::WriteObjectType (Serializer &serializer) const
 {
-    serializer.WriteUint8(static_cast<Uint8>(m_object_type));
+    serializer.Write<Uint8>(static_cast<Uint8>(m_object_type));
 }
 
 void Engine2::Object::ReadClassSpecific (Serializer &serializer)
 {
-    serializer.ReadFloatTransform2(this);
-    serializer.ReadColor(&m_color_bias);
-    serializer.ReadColor(&m_color_mask);
+    serializer.ReadAggregate<FloatTransform2>(*this);
+    serializer.ReadAggregate<Color>(m_color_bias);
+    serializer.ReadAggregate<Color>(m_color_mask);
 }
 
 void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
 {
-    serializer.WriteFloatTransform2(*static_cast<FloatTransform2 const *>(this));
-    serializer.WriteColor(m_color_bias);
-    serializer.WriteColor(m_color_mask);
+    serializer.WriteAggregate<FloatTransform2>(*static_cast<FloatTransform2 const *>(this));
+    serializer.WriteAggregate<Color>(m_color_bias);
+    serializer.WriteAggregate<Color>(m_color_mask);
 }
 
 void Engine2::Object::CloneProperties (Object const *const object)

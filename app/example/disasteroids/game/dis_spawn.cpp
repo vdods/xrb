@@ -188,7 +188,7 @@ Ballistic *SpawnDumbBallistic (
     SpawnDynamicSprite(
         world,
         object_layer,
-        "resources/sadface_small.png",
+        "resources/tractor_beam.png",
         Z_DEPTH_BALLISTIC,
         false, // is transparent
         ballistic,
@@ -722,7 +722,7 @@ HealthTrigger *SpawnHealthTrigger (
         SpawnDynamicSprite(
             world,
             object_layer,
-            "resources/sadface_small.png",
+            "resources/tractor_beam.png",
             0.01f, // z depth (arbitrary, since its invisible)
             true, // is transparent
             health_trigger,

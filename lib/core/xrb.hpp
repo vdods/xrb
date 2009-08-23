@@ -171,6 +171,9 @@ inline void StlContainerEraseRBegin (ContainerType &container)
   * @brief Handy ostream-formatting macro which returns a std::string.
   */
 #define FORMAT(x) static_cast<std::ostringstream &>(std::ostringstream().flush() << x).str()
+/** @brief Handy macro for computing the lengths of fixed-length arrays.
+  */
+#define LENGTHOF(x) (sizeof(x) / sizeof(*x))
 
 #endif // !defined(_XRB_HPP_)
 

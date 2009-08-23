@@ -149,24 +149,24 @@ void Engine2::Polygon::Read (
     Serializer &serializer,
     FloatVector2 *compound_vertex_array)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
     ASSERT1(compound_vertex_array != NULL);
 
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
     ASSERT1(!m_texture.IsValid());
 
-    m_vertex_count = serializer.ReadUint32();
+    serializer.Read<Uint32>(m_vertex_count);
     ASSERT1(m_vertex_count >= 3);
     m_vertex_array = new Vertex[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
-        m_vertex_array[i].m_model_coordinate = compound_vertex_array + serializer.ReadUint32();
-        serializer.ReadFloatVector2(&m_vertex_array[i].m_texture_coordinate);
+        m_vertex_array[i].m_model_coordinate = compound_vertex_array + serializer.Read<Uint32>();
+        serializer.ReadAggregate<FloatVector2>(m_vertex_array[i].m_texture_coordinate);
     }
     m_texture =
         Singleton::ResourceLibrary().
-            LoadPath<GLTexture>(GLTexture::Create, serializer.ReadStdString());
+            LoadPath<GLTexture>(GLTexture::Create, serializer.ReadAggregate<std::string>());
     m_area = Area();
 
     ASSERT1(IsCounterclockwise());
@@ -179,17 +179,17 @@ void Engine2::Polygon::Write (
     Serializer &serializer,
     FloatVector2 const *const compound_vertex_array) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(serializer.Direction() == IOD_WRITE);
     ASSERT1(compound_vertex_array != NULL);
     ASSERT1(m_vertex_count >= 3);
 
-    serializer.WriteUint32(m_vertex_count);
+    serializer.Write<Uint32>(m_vertex_count);
     for (Uint32 i = 0; i < m_vertex_count; ++i)
     {
-        serializer.WriteUint32(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
-        serializer.WriteFloatVector2(m_vertex_array[i].m_texture_coordinate);
+        serializer.Write<Uint32>(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
+        serializer.WriteAggregate<FloatVector2>(m_vertex_array[i].m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.Path());
+    serializer.WriteAggregate<std::string>(m_texture.Path());
 }
 
 } // end of namespace Xrb

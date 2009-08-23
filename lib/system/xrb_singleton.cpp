@@ -72,6 +72,7 @@ void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name
     ASSERT1(!g_is_initialized);
 
     fprintf(stderr, "Singleton::Initialize();\n");
+    fprintf(stderr, "    sizeof(bool) = %d\n", Sint32(sizeof(bool)));
 
     g_pal = CreatePal();
     g_inputstate = new Xrb::InputState();
@@ -79,8 +80,8 @@ void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name
     g_resource_library = new Xrb::ResourceLibrary();
 
     ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
-    ASSERT0(g_key_map != NULL && "failed to create KeyMap");
 //     fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
+    ASSERT0(g_key_map != NULL && "failed to create KeyMap");
 
     g_is_initialized = true;
 }

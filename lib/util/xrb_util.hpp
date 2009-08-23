@@ -152,10 +152,6 @@ namespace Util
     #endif
     }
 
-    /** @brief Returns textual representations of the IOError enums.
-      */
-    char const *IOErrorString (IOError error);
-
     /** The "slash" (directory delimiter) is '/' and the final '/'
       * will be included in the return value.
       * @brief Returns only the directory portion of the given path.

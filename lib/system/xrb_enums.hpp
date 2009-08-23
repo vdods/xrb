@@ -78,33 +78,12 @@ enum Orientation
     VERTICAL
 }; // end of enum Orientation
 
-/** See Serializer and BitCache .
-  * @brief Enums used for error indication in I/O routines.
-  */
-enum IOError
-{
-    IOE_NONE = 0,
-    IOE_IS_AT_END,
-    IOE_INSUFFICIENT_STORAGE,
-    IOE_INSUFFICIENT_AVAILABLE_DATA,
-    IOE_OVERSIZED_STRING,
-    IOE_INVALID_FILENAME,
-    IOE_UNABLE_TO_OPEN_FILE,
-    IOE_INVALID_FILE_OPEN_MODE,
-
-    IOE_COUNT,
-
-    IOE_LOWEST_ERROR = IOE_NONE,
-    IOE_HIGHEST_ERROR = IOE_INVALID_FILE_OPEN_MODE
-}; // end of enum IOError
-
-/** See Serializer and BitCache .
+/** @see Serializer .
   * @brief Enums used for indicating I/O direction.
   */
 enum IODirection
 {
-    IOD_NONE = 0,
-    IOD_READ,
+    IOD_READ = 0,
     IOD_WRITE,
 
     IOD_COUNT

@@ -108,10 +108,10 @@ MapEditor2::Polygon *MapEditor2::VisibilityQuadTree::SmallestMapEditorPolygonTou
 void MapEditor2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
 {
     // write the VisibilityQuadTree's structure info
-    serializer.ReadFloatVector2(&m_center);
-    serializer.ReadFloat(&m_half_side_length);
-    serializer.ReadFloat(&m_radius);
-    bool has_children = serializer.ReadBool();
+    serializer.ReadAggregate<FloatVector2>(m_center);
+    serializer.Read<Float>(m_half_side_length);
+    serializer.Read<Float>(m_radius);
+    bool has_children = serializer.Read<bool>();
     // if there are children, recursively call this function on them
     if (has_children)
     {
@@ -133,7 +133,8 @@ void MapEditor2::VisibilityQuadTree::ReadObjects (
     ASSERT1(object_layer != NULL);
 
     fprintf(stderr, "MapEditor2::VisibilityQuadTree::ReadObjects();\n");
-    Uint32 non_entity_count = serializer.ReadUint32();
+    Uint32 non_entity_count;
+    serializer.Read<Uint32>(non_entity_count);
     while (non_entity_count > 0) {
         Object *object = Object::Create(serializer);
         ASSERT1(dynamic_cast<Entity *>(object) == NULL);

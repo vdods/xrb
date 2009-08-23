@@ -405,26 +405,27 @@ void MapEditor2::Polygon::RemoveFromPolygonSelectionSet (
 
 void MapEditor2::Polygon::Read (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
     ASSERT1(m_vertex_list.empty());
     ASSERT1(!m_texture.IsValid());
     ASSERT1(m_owner_compound != NULL);
 
-    Uint32 vertex_count = serializer.ReadUint32();
+    Uint32 vertex_count;
+    serializer.Read<Uint32>(vertex_count);
     ASSERT1(vertex_count >= 3);
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         Vertex vertex;
         vertex.m_compound_vertex =
-            m_owner_compound->VertexInstance(serializer.ReadUint32());
-        serializer.ReadFloatVector2(&vertex.m_texture_coordinate);
+            m_owner_compound->VertexInstance(serializer.Read<Uint32>());
+        serializer.ReadAggregate<FloatVector2>(vertex.m_texture_coordinate);
         m_vertex_list.push_back(vertex);
     }
     m_texture =
         Singleton::ResourceLibrary().
             LoadPath<GLTexture>(
                 GLTexture::Create,
-                serializer.ReadStdString());
+                serializer.ReadAggregate<std::string>());
 
     ASSERT1(IsCounterclockwise());
     ASSERT1(IsConvex());
@@ -433,25 +434,24 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
 
 void MapEditor2::Polygon::Write (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(serializer.Direction() == IOD_WRITE);
     ASSERT1(!m_vertex_list.empty());
     ASSERT1(m_texture.IsValid());
     ASSERT1(m_owner_compound != NULL);
 
-    Uint32 vertex_count = m_vertex_list.size();
-    ASSERT1(vertex_count >= 3);
-    serializer.WriteUint32(vertex_count);
+    ASSERT1(m_vertex_list.size() >= 3);
+    serializer.Write<Uint32>(m_vertex_list.size());
     for (VertexList::const_iterator it = m_vertex_list.begin(),
-                                 it_end = m_vertex_list.end();
+                                    it_end = m_vertex_list.end();
          it != it_end;
          ++it)
     {
         Vertex const &vertex = *it;
         ASSERT1(vertex.m_compound_vertex->m_index != UINT32_UPPER_BOUND);
-        serializer.WriteUint32(vertex.m_compound_vertex->m_index);
-        serializer.WriteFloatVector2(vertex.m_texture_coordinate);
+        serializer.Write<Uint32>(vertex.m_compound_vertex->m_index);
+        serializer.WriteAggregate<FloatVector2>(vertex.m_texture_coordinate);
     }
-    serializer.WriteStdString(m_texture.Path());
+    serializer.WriteAggregate<std::string>(m_texture.Path());
 }
 
 } // end of namespace Xrb

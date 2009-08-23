@@ -58,9 +58,9 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
 
     Float side_length;
     Float z_depth;
-    serializer.ReadFloat(&side_length);
-    serializer.ReadFloat(&z_depth);
-    bool is_wrapped = serializer.ReadBool();
+    serializer.Read<Float>(side_length);
+    serializer.Read<Float>(z_depth);
+    bool is_wrapped = serializer.Read<bool>();
     ObjectLayer *retval =
         new ObjectLayer(
             owner_world,
@@ -175,9 +175,9 @@ FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
 void Engine2::ObjectLayer::Write (Serializer &serializer) const
 {
     // write the ObjectLayer's overhead information
-    serializer.WriteFloat(m_side_length);
-    serializer.WriteFloat(m_z_depth);
-    serializer.WriteBool(m_is_wrapped);
+    serializer.Write<Float>(m_side_length);
+    serializer.Write<Float>(m_z_depth);
+    serializer.Write<bool>(m_is_wrapped);
 
     ASSERT1(m_quad_tree != NULL);
     // write the quad tree structure

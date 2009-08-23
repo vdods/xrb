@@ -230,7 +230,6 @@ lib_libxrb_la_SOURCES = \
     lib/system/xrb_eventqueue.cpp \
     lib/system/xrb_framehandler.cpp \
     lib/system/xrb_resourcelibrary.cpp \
-    lib/system/xrb_serializer.cpp \
     lib/system/xrb_signalhandler.cpp \
     lib/system/xrb_singleton.cpp \
     \
@@ -238,8 +237,6 @@ lib_libxrb_la_SOURCES = \
     \
     lib/system/serializers/xrb_binaryfileserializer.cpp \
     \
-    lib/util/xrb_bitcache.cpp \
-    lib/util/xrb_bitcachedfile.cpp \
     lib/util/xrb_characterfilter.cpp \
     lib/util/xrb_commandlineparser.cpp \
     lib/util/xrb_emptystring.cpp \
@@ -342,9 +339,9 @@ include_HEADERS = \
     lib/parsers/xrb_arithmeticparser.h \
     lib/parsers/xrb_arithmeticscanner.hpp \
     \
-    lib/primitive/xrb_bitarray.hpp \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_color.hpp \
+    lib/primitive/xrb_exception.hpp \
     lib/primitive/xrb_ntuple.hpp \
     lib/primitive/xrb_rect.hpp \
     lib/primitive/xrb_texture.hpp \
@@ -375,8 +372,6 @@ include_HEADERS = \
     \
     lib/system/serializers/xrb_binaryfileserializer.hpp \
     \
-    lib/util/xrb_bitcache.hpp \
-    lib/util/xrb_bitcachedfile.hpp \
     lib/util/xrb_characterfilter.hpp \
     lib/util/xrb_commandlineparser.hpp \
     lib/util/xrb_emptystring.hpp \

@@ -297,20 +297,20 @@ void MapEditor2::MainWidget::SaveWorldToFile (std::string const &path)
     if (!MapEditorWorldView())
         return;
 
-    BinaryFileSerializer serializer;
-    serializer.Open(path.c_str(), "wb");
-    MapEditorWorldView()->GetWorld()->Write(serializer);
-    serializer.Close();
+    {
+        BinaryFileSerializer serializer(path, IOD_WRITE);
+        MapEditorWorldView()->GetWorld()->Write(serializer);
+    }
 }
 
 void MapEditor2::MainWidget::OpenWorldFromFile (std::string const &path)
 {
     ASSERT1(!path.empty());
 
-    BinaryFileSerializer serializer;
-    serializer.Open(path.c_str(), "rb");
-    World *map_editor_world = World::Create(serializer);
-    serializer.Close();
+    {
+        BinaryFileSerializer serializer(path, IOD_READ);
+        World *map_editor_world = World::Create(serializer);
+    }
 
     WorldView *world_view = new WorldView(GetWorldViewWidget());
     map_editor_world->AttachWorldView(world_view);

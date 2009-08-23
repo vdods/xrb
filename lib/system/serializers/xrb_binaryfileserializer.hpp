@@ -13,9 +13,10 @@
 
 #include "xrb.hpp"
 
-#include "xrb_serializer.hpp"
-#include "xrb_bitcachedfile.hpp"
+#include <stdio.h>
+
 #include "xrb_endian.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {
@@ -25,83 +26,28 @@ class BinaryFileSerializer : public Serializer
 {
 public:
 
-    BinaryFileSerializer ();
-    virtual ~BinaryFileSerializer ();
+    static Uint32 const ms_longest_allowable_sized_buffer_initial_value = 0x10000;
 
-    virtual bool IsAtEnd () const;
-    virtual bool HasFewerThan8BitsLeft () const;
+    BinaryFileSerializer (std::string const &path, IODirection direction) throw(Exception);
+    virtual ~BinaryFileSerializer () throw();
 
-    void Open (char const *path, char const *mode);
-    void Close ();
+    // Serializer interface methods
+    virtual bool IsAtEnd () const throw(Exception);
+    virtual Uint32 MaxAllowableArraySize () const throw() { return m_max_allowable_array_size; }
+    virtual void ReadRawWords (void *dest, Uint32 word_size, Uint32 word_count) throw(Exception);
+    virtual void WriteRawWords (void const *source, Uint32 word_size, Uint32 word_count) throw(Exception);
 
-    // the following are bit-packed
+    std::string const &Path () const { return m_path; }
+    Endian::Endianness FileEndianness () const { return m_file_endianness; }
 
-    virtual Sint32 ReadSignedBits (Uint32 bit_count);
-    virtual void WriteSignedBits (Sint32 value, Uint32 bit_count);
-
-    virtual Uint32 ReadUnsignedBits (Uint32 bit_count);
-    virtual void WriteUnsignedBits (Uint32 value, Uint32 bit_count);
-
-    virtual bool ReadBool ();
-    virtual void WriteBool (bool value);
-
-    // the following are byte-aligned
-
-    virtual Sint8 ReadSint8 ();
-    virtual void WriteSint8 (Sint8 value);
-
-    virtual Uint8 ReadUint8 ();
-    virtual void WriteUint8 (Uint8 value);
-
-    virtual Sint16 ReadSint16 ();
-    virtual void WriteSint16 (Sint16 value);
-
-    virtual Uint16 ReadUint16 ();
-    virtual void WriteUint16 (Uint16 value);
-
-    virtual Sint32 ReadSint32 ();
-    virtual void WriteSint32 (Sint32 value);
-
-    virtual Uint32 ReadUint32 ();
-    virtual void WriteUint32 (Uint32 value);
-
-    virtual void ReadFloat (float *destination);
-    virtual void WriteFloat (float value);
-
-    virtual void ReadFloat (double *destination);
-    virtual void WriteFloat (double value);
-
-    virtual Uint32 ReadBufferString (char *destination, Uint32 destination_length);
-    virtual Uint32 WriteBufferString (char const *source, Uint32 source_length);
-
-    virtual void ReadColor (Color *destination);
-    virtual void WriteColor (Color const &value);
-
-    virtual void ReadScreenCoordVector2 (ScreenCoordVector2 *destination);
-    virtual void WriteScreenCoordVector2 (ScreenCoordVector2 const &value);
-
-    virtual void ReadFloatVector2 (FloatVector2 *destination);
-    virtual void WriteFloatVector2 (FloatVector2 const &value);
-
-    virtual void ReadFloatSimpleTransform2 (FloatSimpleTransform2 *destination);
-    virtual void WriteFloatSimpleTransform2 (FloatSimpleTransform2 const &value);
-
-    virtual void ReadFloatMatrix2 (FloatMatrix2 *destination);
-    virtual void WriteFloatMatrix2 (FloatMatrix2 const &value);
-
-    virtual void ReadFloatTransform2 (FloatTransform2 *destination);
-    virtual void WriteFloatTransform2 (FloatTransform2 const &value);
-
-protected:
-
-    // causes any unused bits in the current byte to be skipped
-    virtual void FlushWriteCache ();
+    void SetMaxAllowableArraySize (Uint32 max_allowable_array_size) { m_max_allowable_array_size = max_allowable_array_size; }
 
 private:
 
-    /// The BitCache object implemented for file i/o, which will be used
-    /// to do the dirty work of bit packing, caching and file i/o.
-    BitCachedFile m_cache;
+    std::string const m_path;
+    Endian::Endianness m_file_endianness;
+    Uint32 m_max_allowable_array_size;
+    FILE *m_fptr;
 }; // end of class BinaryFileSerializer
 
 } // end of namespace Xrb

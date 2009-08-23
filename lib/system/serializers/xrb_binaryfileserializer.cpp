@@ -10,453 +10,117 @@
 
 #include "xrb_binaryfileserializer.hpp"
 
-#include <string.h>
+#include <errno.h>
+#include <sstream>
+
+#include "xrb_endian.hpp"
 
 namespace Xrb
 {
 
-BinaryFileSerializer::BinaryFileSerializer ()
+BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection direction) throw(Exception)
     :
-    Serializer(),
-    m_cache(MAX_SUPPORTED_STRING_BUFFER_SIZE, Endian::SERIALIZER)
+    Serializer(direction),
+    m_path(path),
+    m_max_allowable_array_size(ms_longest_allowable_sized_buffer_initial_value),
+    m_fptr(NULL)
 {
-}
-
-BinaryFileSerializer::~BinaryFileSerializer ()
-{
-}
-
-bool BinaryFileSerializer::IsAtEnd () const
-{
-    return m_cache.IsAtEnd();
-}
-
-bool BinaryFileSerializer::HasFewerThan8BitsLeft () const
-{
-    return m_cache.HasFewerThan8BitsLeft();
-}
-
-void BinaryFileSerializer::Open (
-    char const *const path,
-    char const *const mode)
-{
-    ASSERT1(strchr(mode, 't') == NULL &&
-            "You cannot specify mode 't' for a binary file");
-
-    // make sure that mode contains a 'b'
-    std::string modified_mode(mode);
-    if (strchr(modified_mode.c_str(), 'b') == NULL)
-        modified_mode += 'b';
-
-    m_cache.Open(path, modified_mode.c_str());
-    SetIsOpen(m_cache.IsOpen());
-    SetIODirection(m_cache.GetIODirection());
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::Close ()
-{
-    m_cache.Close();
-    SetIsOpen(false);
-    SetIODirection(IOD_NONE);
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::FlushWriteCache ()
-{
-    ASSERT1(IsOpen());
-    ASSERT1(GetIODirection() == IOD_WRITE);
-    m_cache.FlushWriteCache();
-    SetError(m_cache.Error());
-}
-
-Sint32 BinaryFileSerializer::ReadSignedBits (Uint32 const bit_count)
-{
-    Sint32 retval = m_cache.ReadSignedBits(bit_count);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteSignedBits (
-    Sint32 const value,
-    Uint32 const bit_count)
-{
-    m_cache.WriteSignedBits(value, bit_count);
-    SetError(m_cache.Error());
-}
-
-Uint32 BinaryFileSerializer::ReadUnsignedBits (Uint32 const bit_count)
-{
-    Uint32 retval = m_cache.ReadUnsignedBits(bit_count);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteUnsignedBits (
-    Uint32 const value,
-    Uint32 const bit_count)
-{
-    m_cache.WriteUnsignedBits(value, bit_count);
-    SetError(m_cache.Error());
-}
-
-bool BinaryFileSerializer::ReadBool ()
-{
-    bool retval = m_cache.ReadBool();
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteBool (bool const value)
-{
-    m_cache.WriteBool(value);
-    SetError(m_cache.Error());
-}
-
-Sint8 BinaryFileSerializer::ReadSint8 ()
-{
-    Sint8 retval;
-    m_cache.Read1ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteSint8 (Sint8 value)
-{
-    m_cache.Write1ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-Uint8 BinaryFileSerializer::ReadUint8 ()
-{
-    Uint8 retval;
-    m_cache.Read1ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteUint8 (Uint8 value)
-{
-    m_cache.Write1ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-Sint16 BinaryFileSerializer::ReadSint16 ()
-{
-    Sint16 retval;
-    m_cache.Read2ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteSint16 (Sint16 value)
-{
-    m_cache.Write2ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-Uint16 BinaryFileSerializer::ReadUint16 ()
-{
-    Uint16 retval;
-    m_cache.Read2ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteUint16 (Uint16 value)
-{
-    m_cache.Write2ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-Sint32 BinaryFileSerializer::ReadSint32 ()
-{
-    Sint32 retval;
-    m_cache.Read4ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteSint32 (Sint32 value)
-{
-    m_cache.Write4ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-Uint32 BinaryFileSerializer::ReadUint32 ()
-{
-    Uint32 retval;
-    m_cache.Read4ByteWordFromCache(&retval);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::WriteUint32 (Uint32 value)
-{
-    m_cache.Write4ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::ReadFloat (float *const destination)
-{
-    m_cache.Read4ByteWordFromCache(destination);
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::WriteFloat (float value)
-{
-    m_cache.Write4ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::ReadFloat (double *const destination)
-{
-    m_cache.Read8ByteWordFromCache(destination);
-    SetError(m_cache.Error());
-}
-
-void BinaryFileSerializer::WriteFloat (double value)
-{
-    m_cache.Write8ByteWordToCache(&value);
-    SetError(m_cache.Error());
-}
-
-inline Uint32 BinaryFileSerializer::ReadBufferString (
-    char *const destination,
-    Uint32 const destination_length)
-{
-    Uint32 retval = m_cache.ReadBufferString(destination, destination_length);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-inline Uint32 BinaryFileSerializer::WriteBufferString (
-    char const *const source,
-    Uint32 const source_length)
-{
-    Uint32 retval = m_cache.WriteBufferString(source, source_length);
-    SetError(m_cache.Error());
-    return retval;
-}
-
-void BinaryFileSerializer::ReadColor (Color *const destination)
-{
-    ASSERT1(destination != NULL);
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::R]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::G]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::B]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::A]);
-}
-
-void BinaryFileSerializer::WriteColor (Color const &value)
-{
-    BinaryFileSerializer::WriteFloat(value[Dim::R]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[Dim::G]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[Dim::B]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[Dim::A]);
-}
-
-void BinaryFileSerializer::ReadScreenCoordVector2 (ScreenCoordVector2 *destination)
-{
-    ASSERT1(destination != NULL);
-
-    (*destination)[Dim::X] = BinaryFileSerializer::ReadScreenCoord();
-    if (Error() != IOE_NONE)
-        return;
-
-    (*destination)[Dim::Y] = BinaryFileSerializer::ReadScreenCoord();
-}
-
-void BinaryFileSerializer::WriteScreenCoordVector2 (ScreenCoordVector2 const &value)
-{
-    BinaryFileSerializer::WriteScreenCoord(value[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteScreenCoord(value[Dim::Y]);
-}
-
-void BinaryFileSerializer::ReadFloatVector2 (FloatVector2 *const destination)
-{
-    ASSERT1(destination != NULL);
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[Dim::Y]);
-}
-
-void BinaryFileSerializer::WriteFloatVector2 (FloatVector2 const &value)
-{
-    BinaryFileSerializer::WriteFloat(value[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[Dim::Y]);
-}
-
-void BinaryFileSerializer::ReadFloatSimpleTransform2 (
-    FloatSimpleTransform2 *const destination)
-{
-    ASSERT1(destination != NULL);
-
-    BinaryFileSerializer::ReadFloat(&(*destination).m_scale_factors[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination).m_scale_factors[Dim::Y]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination).m_translation[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination).m_translation[Dim::Y]);
-}
-
-void BinaryFileSerializer::WriteFloatSimpleTransform2 (
-    FloatSimpleTransform2 const &value)
-{
-    BinaryFileSerializer::WriteFloat(value.m_scale_factors[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value.m_scale_factors[Dim::Y]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value.m_translation[Dim::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value.m_translation[Dim::Y]);
-}
-
-void BinaryFileSerializer::ReadFloatMatrix2 (FloatMatrix2 *const destination)
-{
-    ASSERT1(destination != NULL);
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::A]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::B]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::C]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::D]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::ReadFloat(&(*destination)[FloatMatrix2::Y]);
-}
-
-void BinaryFileSerializer::WriteFloatMatrix2 (FloatMatrix2 const &value)
-{
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::A]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::B]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::X]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::C]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::D]);
-    if (Error() != IOE_NONE)
-        return;
-
-    BinaryFileSerializer::WriteFloat(value[FloatMatrix2::Y]);
-}
-
-void BinaryFileSerializer::ReadFloatTransform2 (
-    FloatTransform2 *const destination)
-{
-    ASSERT1(destination != NULL);
-
+    ASSERT1(Direction() == IOD_READ || Direction() == IOD_WRITE);
+    m_fptr = fopen(path.c_str(), (Direction() == IOD_READ ? "rb" : "wb"));
+    if (m_fptr == NULL)
+        throw Exception(FORMAT("error while opening path \"" << path << "\" (errno = " << errno << ')'));
+
+    // the first byte in a file read/written by BinaryFileSerializer specifies the
+    // endianness of the data contained within.  endian-switching occurs during
+    // ReadRawWords (if the endiannness of the file differs from that of the machine).
+    // in the file, 0xFF indicates little endian (the value written by Write<bool>(true)),
+    // while 0x00 indicates big endian (the value written by Read<bool>(false)).
+    if (Direction() == IOD_READ)
+        m_file_endianness = (Read<bool>() ? Endian::LITTLE : Endian::BIG);
+    else
     {
-        FloatVector2 translation;
-        BinaryFileSerializer::ReadFloatVector2(&translation);
-        if (Error() != IOE_NONE)
-            return;
-        destination->SetTranslation(translation);
-    }
-
-    {
-        FloatVector2 scale_factors;
-        BinaryFileSerializer::ReadFloatVector2(&scale_factors);
-        if (Error() != IOE_NONE)
-            return;
-        destination->SetScaleFactors(scale_factors);
-    }
-
-    {
-        Float angle;
-        BinaryFileSerializer::ReadFloat(&angle);
-        if (Error() != IOE_NONE)
-            return;
-        destination->SetAngle(angle);
-    }
-
-    {
-        bool post_translate = BinaryFileSerializer::ReadBool();
-        if (Error() != IOE_NONE)
-            return;
-        destination->SetPostTranslate(post_translate);
+        m_file_endianness = Endian::MACHINE;
+        Write<bool>(m_file_endianness == Endian::LITTLE);
     }
 }
 
-void BinaryFileSerializer::WriteFloatTransform2 (FloatTransform2 const &value)
+BinaryFileSerializer::~BinaryFileSerializer () throw()
 {
-    BinaryFileSerializer::WriteFloatVector2(value.Translation());
-    if (Error() != IOE_NONE)
-        return;
+    if (m_fptr != NULL)
+        fclose(m_fptr); // ignore errors
+}
 
-    BinaryFileSerializer::WriteFloatVector2(value.ScaleFactors());
-    if (Error() != IOE_NONE)
-        return;
+bool BinaryFileSerializer::IsAtEnd () const throw(Exception)
+{
+    // since the constructor throws if m_fptr is NULL, it is impossible for
+    // m_fptr to be NULL in anything except the constructor or destructor.
+    ASSERT1(m_fptr != NULL);
 
-    BinaryFileSerializer::WriteFloat(value.Angle());
-    if (Error() != IOE_NONE)
-        return;
+    // there were problems with feof() only returning the existing EOF state,
+    // instead of checking if we were actually at the end of file.  so we'll
+    // just try to read a char.  if we're at EOF, return true, otherwise put
+    // the char back and pretend like nothing happened.
+    int c = fgetc(m_fptr);
+    if (c == EOF)
+        return true;
+    else
+    {
+        ungetc(c, m_fptr);
+        return false;
+    }
+}
 
-    BinaryFileSerializer::WriteBool(value.PostTranslate());
+bool IsAPowerOfTwo (Uint32 value) { return value != 0 && (value & (value - 1)) == 0; }
+
+void BinaryFileSerializer::ReadRawWords (void *dest, Uint32 word_size, Uint32 word_count) throw(Exception)
+{
+    ASSERT1(word_size > 0 && "you silly human!");
+    ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
+
+    if (Direction() == IOD_WRITE)
+        throw Exception("can't read from a IOD_WRITE Serializer");
+
+    // since the constructor throws if m_fptr is NULL, it is impossible for
+    // m_fptr to be NULL in anything except the constructor or destructor.
+    ASSERT1(m_fptr != NULL);
+    size_t words_read = fread(dest, word_size, word_count, m_fptr);
+    if (words_read != word_count || ferror(m_fptr) != 0)
+        throw Exception(FORMAT("error while reading (path \"" << m_path << "\")"));
+
+    if (m_file_endianness != Endian::MACHINE && word_size > 1)
+    {
+        // switch the endianness of the words in the read-in buffer if necessary.
+        for (Uint32 word = 0; word < word_count; ++word)
+        {
+            // there's probably some slick bit op way to do this, but you can K.I.S.S. my ass!
+            Uint8 temp;
+            Uint8 *left = reinterpret_cast<Uint8 *>(dest);
+            Uint8 *right = reinterpret_cast<Uint8 *>(dest) + word_size - 1;
+            for (Uint32 i = 0; i < word_size/2; ++i, ++left, --right)
+            {
+                temp = *left;
+                *left = *right;
+                *right = temp;
+            }
+            ASSERT1(left == right+1);
+        }
+    }
+}
+
+void BinaryFileSerializer::WriteRawWords (void const *source, Uint32 word_size, Uint32 word_count) throw(Exception)
+{
+    ASSERT1(word_size > 0 && "you silly human!");
+    ASSERT1(IsAPowerOfTwo(word_size) && "you're probably trying to read/write a struct, aren't you?");
+
+    if (Direction() == IOD_READ)
+        throw Exception("can't write to a IOD_READ Serializer");
+
+    // since the constructor throws if m_fptr is NULL, it is impossible for
+    // m_fptr to be NULL in anything except the constructor or destructor.
+    ASSERT1(m_fptr != NULL);
+    size_t words_written = fwrite(source, word_size, word_count, m_fptr);
+    if (words_written != word_count)
+        throw Exception(FORMAT("error while writing (path \"" << m_path << "\")"));
 }
 
 } // end of namespace Xrb

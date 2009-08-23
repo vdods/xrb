@@ -46,15 +46,10 @@ public:
     // font metrics and font bitmap rendering stuff
     // ///////////////////////////////////////////////////////////////////////
 
-    enum
-    {
-        TAB_SIZE = 4,
-
-        RENDERED_GLYPH_LOWEST = ' ',
-        RENDERED_GLYPH_HIGHEST = '~',
-
-        RENDERED_GLYPH_COUNT = RENDERED_GLYPH_HIGHEST - RENDERED_GLYPH_LOWEST + 1
-    };
+    static Uint32 const ms_tab_size = 4;
+    static Uint32 const ms_rendered_glyph_lowest = ' ';
+    static Uint32 const ms_rendered_glyph_highest = '~';
+    static Uint32 const ms_rendered_glyph_count = ms_rendered_glyph_highest - ms_rendered_glyph_lowest + 1;
 
     struct GlyphSpecification
     {
@@ -70,24 +65,21 @@ public:
         static int SortByWidthFirst (
             void const *left_operand,
             void const *right_operand);
-        static int SortByHeightFirst (
-            void const *left_operand,
-            void const *right_operand);
     }; // end of class GlyphSpecification
 
     static Uint32 GlyphIndex (char ascii)
     {
-        if (ascii >= RENDERED_GLYPH_LOWEST && ascii <= RENDERED_GLYPH_HIGHEST)
-            return ascii - RENDERED_GLYPH_LOWEST;
+        if (Uint8(ascii) >= ms_rendered_glyph_lowest && Uint8(ascii) <= ms_rendered_glyph_highest)
+            return ascii - ms_rendered_glyph_lowest;
         else
-            return ms_error_glyph - RENDERED_GLYPH_LOWEST;
+            return ms_error_glyph - ms_rendered_glyph_lowest;
     }
     static char AsciiValue (Uint32 glyph_index)
     {
-        if (glyph_index >= RENDERED_GLYPH_COUNT)
+        if (glyph_index >= ms_rendered_glyph_count)
             return char(ms_error_glyph);
         else
-            return glyph_index + RENDERED_GLYPH_LOWEST;
+            return glyph_index + ms_rendered_glyph_lowest;
     }
 
     /** This is the means to construct a AsciiFont object from cached data on disk.
@@ -123,8 +115,8 @@ public:
         ScreenCoord pixel_height,
         bool has_kerning,
         ScreenCoord baseline_height,
-        GlyphSpecification sorted_glyph_specification[RENDERED_GLYPH_COUNT],
-        FontCoord kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT],
+        GlyphSpecification sorted_glyph_specification[ms_rendered_glyph_count],
+        FontCoord kern_pair_26_6[ms_rendered_glyph_count*ms_rendered_glyph_count],
         Texture *font_texture);
 
     /** Analogous to CreateFromCache.
@@ -206,9 +198,9 @@ private:
     // height from bottom of font glyph coordinates
     ScreenCoord m_baseline_height;
     // metadata for each glyph (texture coordinates, etc)
-    GlyphSpecification m_glyph_specification[RENDERED_GLYPH_COUNT];
+    GlyphSpecification m_glyph_specification[ms_rendered_glyph_count];
     // cached kerning data -- all possible pairs of glyphs
-    FontCoord m_kern_pair_26_6[RENDERED_GLYPH_COUNT*RENDERED_GLYPH_COUNT];
+    FontCoord m_kern_pair_26_6[ms_rendered_glyph_count*ms_rendered_glyph_count];
     // pointer to the GLTexture containing the font bitmap
     GLTexture *m_gl_texture;
 }; // end of class AsciiFont

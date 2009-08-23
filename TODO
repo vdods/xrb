@@ -133,7 +133,7 @@ TODO:
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
 - change ScreenCoord to use Sint16 instead of Sint32?  (this was tried, and there was a bug in drawing glyphs to parts of the screen, but is otherwise ready to be tried again).
-- get rid of widget min/max size enabled flags, and just use the 
+- get rid of widget min/max size enabled flags, and just use the
   sizes (no min size = 0, no max size = (uint)-1)
 - create consistent way to set z depth for non-transparent stuff so they're
   actually unique z depth values for each object.  maybe encode some sort

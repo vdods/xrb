@@ -13,827 +13,346 @@
 
 #include "xrb.hpp"
 
-#include <stdio.h>
 #include <string>
+#include <sstream>
 
-#include "xrb_bitarray.hpp"
-#include "xrb_bitcache.hpp"
 #include "xrb_color.hpp"
 #include "xrb_enums.hpp"
-#include "xrb_matrix2.hpp"
-#include "xrb_screencoord.hpp"
-#include "xrb_simpletransform2.hpp"
+#include "xrb_exception.hpp"
+#include "xrb_ntuple.hpp"
 #include "xrb_transform2.hpp"
 #include "xrb_vector.hpp"
+
+/*
+Serializer redesign
+
+idea for endian-handling: write little/big identifier at the beginning of the file, and write in the machine's endian (fast writes of raw bytes), and then on reading the file, do the endian switching (if need be), which can be done in-place since the read destinations are writable anyway.
+
+*/
 
 namespace Xrb
 {
 
-// metanote: i use the terms serializer and stream interchangeably
-
 /** The interface is general enough so that more or less any form of I/O
-  * can be accomplished (e.g. files, network streams, compression streams,
-  * memory buffers, etc).
-  * @brief Provides the abstract interface for serialized data streams.
+  * can be accomplished (e.g. files, network streams, memory buffers, etc).
+  *
+  * Read and Write can only be used to read/write values that can be stored
+  * by the CPU: bool, char, wchar_t, Sint##, Uint##, float and double (these
+  * will be referred to as "word types").
+  *
+  * It is recommended to explicitly specify the template type when using Read
+  * or Write so that changing the type of the variable passed to the function
+  * doesn't inadvertently change the size of the read/written data.  Example:
+  *
+  * Sint32 value = 123;
+  * Write(value); // bad, because if value is changed to a Sint16
+  *               // then the serialized data size is different.
+  * Write<Sint32>(value); // good, because if value is changed to a
+  *                       // Sint16, the serialized data is the same.
+  *
+  * Another important justification is when writing an enum value.  The
+  * size of an enum may vary between platforms, so this is a potentially
+  * dangerous situation if you care about writing portable code.
+  *
+  * Instances of the @ref Exception class will be thrown to indicate error.
+  * @brief Provides the abstract interface for serializing data streams.
   */
 class Serializer
 {
-protected:
-
-    enum
-    {
-        // with null-terminating character
-        MAX_SUPPORTED_STRING_BUFFER_SIZE = 65536,
-    };
-
 public:
 
-    enum
+    Serializer (IODirection direction) throw(Exception)
+        :
+        m_direction(direction)
     {
-        // no null-terminating character
-        MAX_SUPPORTED_STRING_LENGTH = MAX_SUPPORTED_STRING_BUFFER_SIZE - 1
-    };
-
-    Serializer ();
-    virtual ~Serializer ();
-
-    // ///////////////////////////////////////////////////////////////////////
-    // state accessors
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** @brief Get the open state of the serializer.
-      * @return True iff the stream is open for input/output.
-      * @note Will not change the error value.
-      */
-    inline bool IsOpen () const
-    {
-        return m_is_open;
+        ASSERT1(direction == IOD_READ || direction == IOD_WRITE);
     }
+    virtual ~Serializer () throw() { }
+
     /** @brief Get the I/O direction of the serializer.
-      * @return @c IOD_READ if reading, @c IOD_WRITE if writing,
-      *         or IOD_NONE if neither is applicable (e.g. if the stream is
-      *         not currently open).
-      * @note Will not change the error value.
+      * @return @c IOD_READ if reading, @c IOD_WRITE if writing.
       */
-    inline IODirection GetIODirection () const
-    {
-        return m_io_direction;
-    }
+    IODirection Direction () const throw() { return m_direction; }
     /** @brief Get the end-of-stream condition.
-      * @return True iff the stream is at the end (e.g. end of file)
-      * @note Will not change the error value.
+      * @return True iff the stream is at the end (e.g. end of file, end of buffer).
       */
-    virtual bool IsAtEnd () const = 0;
-    /** This is necessary because IsAtEnd() doesn't work when a set
-      * of data doesn't end exactly on a byte boundary.
-      * @brief Get the less-than-one-byte-left-in-in-the-stream condition.
-      * @return True iff the stream has fewer than 8 bits left.
-      * @note Will not change the error value.
-      */
-    virtual bool HasFewerThan8BitsLeft () const = 0;
-    /** @brief Get the error state of the most recently called procedure.
-      * @return The most recent error state value.
-      * @note Will not change the error value.
-      */
-    inline IOError Error () const
+    virtual bool IsAtEnd () const throw(Exception) = 0;
+    // used for preventing read/write operations from allocating/writing a
+    // ridiculously huge array, if the read length is an invalid garbage value.
+    virtual Uint32 MaxAllowableArraySize () const throw() = 0;
+
+    // dest must point to an array holding at least word_size*word_count bytes.
+    virtual void ReadRawWords (void *dest, Uint32 word_size, Uint32 word_count) throw(Exception) = 0;
+    // source must point to an array holding at least word_size*word_count bytes.
+    virtual void WriteRawWords (void const *source, Uint32 word_size, Uint32 word_count) throw(Exception) = 0;
+
+    // used for reading/writing word types (bool, char, wchar_t, Sint##,
+    // Uint##, float and double).
+    template <typename T> T Read () throw(Exception)
     {
-        return m_error;
-    }
-    /** @brief Get the string which describes the current error state.
-      * @return The null-terminated string describing the current error state.
-      * @note Will not change the error value.
-      */
-    inline char const *ErrorString () const
-    {
-        return Util::IOErrorString(Error());
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // reading/writing functions
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** The highest bit read in is used to fill the extra high bits in
-      * the return value so the sign is correct.
-      * @brief Read a specific number of signed bits from the stream.
-      * @param bit_count The number of bits (up to 32) to read.
-      * @return The bits read in from the stream, positioned in the least
-      *         significant @c bit_count bits of the return value.
-      * @note You must be careful to use enough bits when reading/writing
-      *       bits from/to a signed integer value; the extra "sign bit"
-      *       must be considered when deciding how many bits to use.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Sint32 ReadSignedBits (Uint32 bit_count) = 0;
-    /** @brief Write the least significant @c bit_count bits (up to 32)
-      *        of the signed integer, @c value, to the stream.
-      * @param value The value from which the lowest @c bit_count bits will
-      *              used to write to the stream.
-      * @note You must be careful to use enough bits when reading/writing
-      *       bits from/to a signed integer value; the extra "sign bit"
-      *       must be considered when deciding how many bits to use.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteSignedBits (Sint32 value, Uint32 bit_count) = 0;
-
-    /** @brief Read a specific number of unsigned bits from the stream.
-      * @param bit_count The number of bits (up to 32) to read.
-      * @return The bits read in from the stream, positioned in the least
-      *         significant @c bit_count bits of the return value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 ReadUnsignedBits (Uint32 bit_count) = 0;
-    /** @brief Write the least significant @c bit_count bits (up to 32)
-      *        of the unsigned integer, @c value, to the stream.
-      * @param value The value from which the lowest @c bit_count bits will
-      *              used to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteUnsignedBits (Uint32 value, Uint32 bit_count) = 0;
-
-    /** @brief Read a boolean value from the stream.
-      * @return The boolean value true or false.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual bool ReadBool () = 0;
-    /** @brief Write a boolean value to the stream.
-      * @param value The boolean value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteBool (bool value) = 0;
-
-    /** The @c bit_count of the BitArray template instance must not be
-      * above @code MAX_SUPPORTED_STRING_BUFFER_SIZE * 8 @endcode.
-      * @brief Reads a BitArray<bit_count> object from the stream.
-      * @returns A BitArray<bit_count> object with the read-in bits
-      *          in the least-significant position.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    template <Uint32 bit_count>
-    BitArray<bit_count> ReadBitArray ();
-    /** The @c bit_count of the BitArray template instance must not be
-      * above @code MAX_SUPPORTED_STRING_BUFFER_SIZE * 8 @endcode.
-      * @brief Writes a BitArray<bit_count> object to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    template <Uint32 bit_count>
-    void WriteBitArray (BitArray<bit_count> const &value);
-
-    /** The @c bit_count of the BitArray template instance must not be
-      * above @code MAX_SUPPORTED_STRING_BUFFER_SIZE * 8 @endcode.
-      * @brief Reads @c bits_to_read bits from the stream
-      *        into a BitArray<bit_count> object.
-      * @param bits_to_read The number of least-significant bits to read
-      *                     into the BitArray object.  This value must be
-      *                     greater than 0 and less than or equal to
-      *                     @c bit_count.
-      * @returns A BitArray<bit_count> object with the read-in bits
-      *          in the least-significant position.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    template <Uint32 bit_count>
-    BitArray<bit_count> ReadBitArray (Uint32 bits_to_read);
-    /** The @c bit_count of the BitArray template instance must not be
-      * above @code MAX_SUPPORTED_STRING_BUFFER_SIZE * 8 @endcode.
-      * @brief Writes @c bits_to_read bits to the stream
-      *        from the given BitArray<bit_count> object.
-      * @param value The BitArray to write bits from.
-      * @param bits_to_write The number of least-significant bits to write
-      *                      from the BitArray object.  This value must be
-      *                      greater than 0 and less than or equal to
-      *                      @c bit_count.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    template <Uint32 bit_count>
-    void WriteBitArray (BitArray<bit_count> const &value, Uint32 bits_to_write);
-
-    /** @brief Read a signed, 8-bit integer value from the stream.
-      * @return A signed, 8-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Sint8 ReadSint8 () = 0;
-    /** @brief Write a signed, 8-bit integer value to the stream.
-      * @param value The signed, 8-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteSint8 (Sint8 value) = 0;
-
-    /** @brief Read an unsigned, 8-bit integer value from the stream.
-      * @return An unsigned, 8-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint8 ReadUint8 () = 0;
-    /** @brief Write an unsigned, 8-bit integer value to the stream.
-      * @param value The unsigned, 8-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteUint8 (Uint8 value) = 0;
-
-    /** @brief Read a signed, 16-bit integer value from the stream.
-      * @return A signed, 16-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Sint16 ReadSint16 () = 0;
-    /** @brief Write a signed, 16-bit integer value to the stream.
-      * @param value The signed, 16-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteSint16 (Sint16 value) = 0;
-
-    /** @brief Read an unsigned, 16-bit integer value from the stream.
-      * @return An unsigned, 16-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint16 ReadUint16 () = 0;
-    /** @brief Write an unsigned, 16-bit integer value to the stream.
-      * @param value The unsigned, 16-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteUint16 (Uint16 value) = 0;
-
-    /** @brief Read a signed, 32-bit integer value from the stream.
-      * @return A signed, 32-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Sint32 ReadSint32 () = 0;
-    /** @brief Write a signed, 32-bit integer value to the stream.
-      * @param value The signed, 32-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteSint32 (Sint32 value) = 0;
-
-    /** @brief Read an unsigned, 32-bit integer value from the stream.
-      * @return An unsigned, 32-bit integer value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 ReadUint32 () = 0;
-    /** @brief Write an unsigned, 32-bit integer value to the stream.
-      * @param value The unsigned, 32-bit integer value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteUint32 (Uint32 value) = 0;
-
-    /** @brief Read a ScreenCoord value from the stream.
-      * @return A ScreenCoord value.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-//     ScreenCoord ReadScreenCoord () { return ReadSint16(); }
-    ScreenCoord ReadScreenCoord () { return ReadSint32(); }
-    /** @brief Write a ScreenCoord value to the stream.
-      * @param value The ScreenCoord value to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-//     void WriteScreenCoord (ScreenCoord value) { WriteSint16(value); }
-    void WriteScreenCoord (ScreenCoord value) { WriteSint32(value); }
-
-    /** @brief Read an IEEE single-precision floating point value from
-      *        the stream.
-      * @param destination A pointer to the IEEE single-precision
-      *                    floating point value to be set to the value
-      *                    read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloat (float *destination) = 0;
-    /** @brief Write an IEEE single-precision floating point value to
-      *        the stream.
-      * @param value The IEEE single-precision floating point value to
-      *              write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloat (float value) = 0;
-
-    /** @brief Read an IEEE double-precision floating point value from
-      *        the stream.
-      * @param destination A pointer to the IEEE double-precision
-      *                    floating point value to be set to the value
-      *                    read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloat (double *destination) = 0;
-    /** @brief Write an IEEE double-precision floating point value to
-      *        the stream.
-      * @param value The IEEE double-precision floating point value to
-      *              write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloat (double value) = 0;
-
-    /** The array @c destination must be already-allocated, and at least
-      * @c destination_size elements long.  The number of elements to read is
-      * at most @code destination_size - 1 @endcode, though the actual number
-      * of elements read may be lower, depending on the content of the
-      * stream.  If @c destination is longer than @c destination_size elements,
-      * then the extra elements will not be changed.  A null-terminating
-      * character will be placed at the end of the read-in string, but will
-      * be no later in the string than the element
-      * @code destination_size - 1 @endcode.
-      * @brief Read a string from the stream into the provided array.
-      * @param destination An already-allocated character array which
-      *                    will store the string which is to be read in.
-      *                    It must be at least @c destination_size elements
-      *                    long.
-      * @param destination_size The number of characters to read into
-      *                         @c destination, including the null-terminating
-      *                         character.  Indicates the minimum guaranteed
-      *                         array size of @c destination.
-      * @return The actual length of the read-in string, not including
-      *         the null-terminating character.
-      * @note Must guarantee that strings up to 65536 characters long,
-      *       including the null-terminating character, are supported.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 ReadBufferString (char *destination, Uint32 destination_size) = 0;
-    /** The character array @c source must be at least @c source_size elements
-      * long.  If it is longer, then the extra elements will be ignored.
-      * The string up to either the first null-terminating character or
-      * the maximum length will be written to the stream.  If the maximum
-      * length is written, without encountering a null-terminating character,
-      * a null-terminating character will be written to the stream in
-      * place of the last character.
-      * @brief Write the given string to the stream, but write no more
-      *        than @c source_size characters (including the null-terminating
-      *        character).
-      * @param source The character string to write to the stream.  Must
-      *               be at least @c source_size elements long.
-      * @param source_size The maximum possible number of characters to write
-      *                    to the stream, including the null-terminating
-      *                    character.  Indicates the minimum guaranteed array
-      *                    size of @c source.
-      * @return The actual length of the written string, not including
-      *         the null-terminating character.
-      * @note Must not write a string that is longer than 65536 characters,
-      *       including the null-terminating character.  If a line is
-      *       longer than 65536 characters, including the null-terminating
-      *       character, only 65536 characters will be written, including
-      *       the null-terminating character.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 WriteBufferString (char const *source, Uint32 source_size) = 0;
-
-    /** The null-terminated string assigned to @c *destination is allocated
-      * inside the function and must be manually deleted.
-      * @brief Reads a character string from the stream.
-      * @param destination A pointer to a char * which will be assigned
-      *                    with the address of a newly allocated,
-      *                    null-terminated string containing the read-in
-      *                    contents.  The allocated string must be manually
-      *                    deleted.  If an error occurred, null will be
-      *                    assigned to @c *destination, and no allocation
-      *                    will be made.  This parameter must not be null.
-      * @return The length of the read-in string.
-      * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 ReadString (char **destination);
-    /** @brief Writes the given null-terminated string to the stream.
-      * @param source The null-terminated string to write to the stream.
-      * @note This is more or less an alias for the pure-virtual WriteString().
-      * @return The length of the written string.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual Uint32 WriteString (char const *source);
-
-    /** @brief Reads a std::string character string from the stream.
-      * @param string_length An optional pointer to a Uint32 which, if not
-      *                      null, will be assigned the actual length of the
-      *                      read-in string, not including the
-      *                      null-terminating character.
-      * @return A std::string character string read in from the stream.
-      * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline std::string ReadStdString (Uint32 *string_length = NULL)
-    {
-        std::string retval;
-        ReadStdString(&retval, string_length);
+        T retval;
+        Read<T>(retval);
         return retval;
     }
-    /** @brief Reads a std::string character string from the stream.
-      * @param destination A pointer to a std::string object to read into.
-      * @param string_length An optional pointer to a Uint32 which, if not
-      *                      null, will be assigned the actual length of the
-      *                      read-in string, not including the
-      *                      null-terminating character.
-      * @return A std::string character string read in from the stream.
-      * @note This is more or less an alias for the pure-virtual ReadString().
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    void ReadStdString (std::string *destination, Uint32 *string_length = NULL);
-    /** @brief Writes the given std::string character string to the stream.
-      * @param source The std::string character string to write to the stream.
-      * @param string_length An optional pointer to a Uint32 which, if not
-      *                      null, will be assigned the actual length of the
-      *                      read-in string, not including the
-      *                      null-terminating character.
-      * @note This is more or less an alias for the pure-virtual WriteString().
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    void WriteStdString (std::string const &source, Uint32 *string_length = NULL);
+    template <typename T> void Read (T &dest) throw(Exception);
+    template <typename T> void Write (T source) throw(Exception);
 
-    /** @brief Reads a Color from the stream.
-      * @return A Color read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline Color ReadColor ()
+    // used for writing certain structs/classes (e.g. std::string, Xrb::Vector<>)
+    template <typename T> T ReadAggregate () throw(Exception)
     {
-        Color retval;
-        ReadColor(&retval);
+        T retval;
+        ReadAggregate<T>(retval);
         return retval;
     }
-    /** @brief Reads a Color from the stream.
-      * @param destination A pointer to the Color object to read into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadColor (Color *destination) = 0;
-    /** @brief Writes the given std::string character string to the stream.
-      * @param source The std::string character string to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteColor (Color const &value) = 0;
+    template <typename T> void ReadAggregate (T &dest) throw(Exception);
+    template <typename T> void WriteAggregate (T const &source) throw(Exception);
 
-    /** @brief Reads a ScreenCoordVector2 from the stream.
-      * @return A ScreenCoordVector2 read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline ScreenCoordVector2 ReadScreenCoordVector2 ()
-    {
-        ScreenCoordVector2 retval;
-        ReadScreenCoordVector2(&retval);
-        return retval;
-    }
-    /** @brief Reads a ScreenCoordVector2 from the stream.
-      * @param destination A pointer to the ScreenCoordVector2 object to read into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadScreenCoordVector2 (ScreenCoordVector2 *destination) = 0;
-    /** @brief Writes the given ScreenCoordVector2 to the stream.
-      * @param source The ScreenCoordVector2 to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteScreenCoordVector2 (ScreenCoordVector2 const &value) = 0;
+    // dest must be NULL, and upon return will point to the allocated buffer.
+    template <typename WordType> void ReadSizedBuffer (WordType *&dest, Uint32 &length) throw(Exception);
+    // source must point to a buffer holding at least sizeof(WordType)*length bytes.
+    template <typename WordType> void WriteSizedBuffer (WordType const *source, Uint32 length) throw(Exception);
 
-    /** @brief Reads a FloatVector2 from the stream.
-      * @return A FloatVector2 read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline FloatVector2 ReadFloatVector2 ()
-    {
-        FloatVector2 retval;
-        ReadFloatVector2(&retval);
-        return retval;
-    }
-    /** @brief Reads a FloatVector2 from the stream.
-      * @param destination A pointer to the FloatVector2 object to read into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloatVector2 (FloatVector2 *destination) = 0;
-    /** @brief Writes the given FloatVector2 to the stream.
-      * @param source The FloatVector2 to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloatVector2 (FloatVector2 const &value) = 0;
+    // dest must point to an array holding at least sizeof(WordType)*length bytes.
+    template <typename WordType> void ReadBuffer (WordType *dest, Uint32 length) throw(Exception);
+    // source must point to an array holding at least sizeof(WordType)*length bytes.
+    template <typename WordType> void WriteBuffer (WordType const *source, Uint32 length) throw(Exception);
 
-    /** @brief Reads a FloatSimpleTransform2 from the stream.
-      * @return A FloatSimpleTransform2 read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline FloatSimpleTransform2 ReadFloatSimpleTransform2 ()
-    {
-        FloatSimpleTransform2 retval;
-        ReadFloatSimpleTransform2(&retval);
-        return retval;
-    }
-    /** @brief Reads a FloatSimpleTransform2 from the stream.
-      * @param destination A pointer to the FloatSimpleTransform2 object to
-      *        read into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloatSimpleTransform2 (FloatSimpleTransform2 *destination) = 0;
-    /** @brief Writes the given FloatSimpleTransform2 to the stream.
-      * @param source The FloatSimpleTransform2 to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloatSimpleTransform2 (FloatSimpleTransform2 const &value) = 0;
+private:
 
-    /** @brief Reads a FloatMatrix2 from the stream.
-      * @return A FloatMatrix2 read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline FloatMatrix2 ReadFloatMatrix2 ()
-    {
-        FloatMatrix2 retval;
-        ReadFloatMatrix2(&retval);
-        return retval;
-    }
-    /** @brief Reads a FloatMatrix2 from the stream.
-      * @param destination A pointer to the FloatMatrix2 object to read into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloatMatrix2 (FloatMatrix2 *destination) = 0;
-    /** @brief Writes the given FloatMatrix2 to the stream.
-      * @param source The FloatMatrix2 to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloatMatrix2 (FloatMatrix2 const &value) = 0;
+    template <typename ScalarType> void ReadScalar (ScalarType &dest) throw(Exception);
+    template <typename ScalarType> void WriteScalar (ScalarType source) throw(Exception);
 
-    /** @brief Reads a FloatTransform2 from the stream.
-      * @return A FloatTransform2 read in from the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    inline FloatTransform2 ReadFloatTransform2 ()
+    void CheckArraySize (Uint32 size) throw(Exception)
     {
-        FloatTransform2 retval(true);
-        ReadFloatTransform2(&retval);
-        return retval;
-    }
-    /** @brief Reads a FloatTransform2 from the stream.
-      * @param destination A pointer to the FloatTransform2 object to read
-      *        into.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_READ, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void ReadFloatTransform2 (FloatTransform2 *destination) = 0;
-    /** @brief Writes the given FloatTransform2 to the stream.
-      * @param source The FloatTransform2 to write to the stream.
-      * @pre @c IsOpen() must return true, @c GetIODirection() must
-      *      return IOD_WRITE, and @c IsAtEnd() must return false.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void WriteFloatTransform2 (FloatTransform2 const &value) = 0;
-
-protected:
-
-    // ///////////////////////////////////////////////////////////////////////
-    // protected modifiers
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** @brief Used by subclasses of Serializer to set the is-open state.
-      * @param is_open The value to set the is-open state to.
-      * @post Will not change the error value.
-      */
-    inline void SetIsOpen (bool is_open)
-    {
-        m_is_open = is_open;
-    }
-    /** @brief Used by subclasses of Serializer to set the I/O direction.
-      * @param io_direction The value to set the I/O direction to.
-      * @post Will not change the error value.
-      */
-    inline void SetIODirection (IODirection io_direction)
-    {
-        m_io_direction = io_direction;
-    }
-    /** @brief Used by subclasses of Serializer to set the error value.
-      * @param error The value to set the error to.
-      */
-    inline void SetError (IOError error) const
-    {
-        m_error = error;
+        if (size > MaxAllowableArraySize())
+            throw Exception(FORMAT("array too long (got " << size << " bytes, but max allowable is " << MaxAllowableArraySize() << " bytes)"));
     }
 
-    // ///////////////////////////////////////////////////////////////////////
-    // procedures
-    // ///////////////////////////////////////////////////////////////////////
+    template <typename T> friend struct Aggregate;
 
-    /** @brief Causes any uncommitted writes to be committed (e.g. writing
-      *        a memory buffer to disk, or writing a bit-packing buffer
-      *        to a byte-aligned buffer).
-      * @pre @c IsOpen() must return true, and @c GetIODirection() must
-      *      return IOD_WRITE.
-      * @post The error state is set to indicate the status of the operation.
-      */
-    virtual void FlushWriteCache () = 0;
-
-    /// The current open state.
-    bool m_is_open;
-    /// The current IO direction.
-    IODirection m_io_direction;
-    /// The most recent error state, which must be set by each procedure call.
-    mutable IOError m_error;
+    IODirection const m_direction;
 }; // end of class Serializer
 
-template <Uint32 bit_count>
-BitArray<bit_count> Serializer::ReadBitArray ()
+// helper for the ReadAggregate<T>(T &) and WriteAggregate<T> methods
+template <typename T>
+struct Aggregate
 {
-    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
+    static void Read (Serializer &serializer, T &dest) throw(Exception);
+    static void Write (Serializer &serializer, T const &source) throw(Exception);
+};
 
-    BitArray<bit_count> retval;
+// ///////////////////////////////////////////////////////////////////////////
+// template function definitions
+// ///////////////////////////////////////////////////////////////////////////
 
-    for (Uint32 current_word = BitArray<bit_count>::HIGHEST_WORD_INDEX;
-         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
-         --current_word)
-    {
-        Uint32 bits_to_read_for_current_word =
-            current_word == BitArray<bit_count>::HIGHEST_WORD_INDEX ?
-            bit_count % BitArray<bit_count>::WORD_SIZE_IN_BITS :
-            BitArray<bit_count>::WORD_SIZE_IN_BITS;
-        if (bits_to_read_for_current_word == 0)
-            bits_to_read_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
+// the definitions of Serializer::Read<T>(T &) and Serializer::Write<T>(T) are
+// type-specific overloads (see below).
 
-        retval.SetWord(
-            current_word,
-            ReadUnsignedBits(bits_to_read_for_current_word));
-        if (Error() != IOE_NONE)
-            return retval;
-    }
-
-    return retval;
+template <typename T>
+void Serializer::ReadAggregate (T &dest) throw(Exception)
+{
+    Aggregate<T>::Read(*this, dest);
+}
+template <typename T>
+void Serializer::WriteAggregate (T const &source) throw(Exception)
+{
+    Aggregate<T>::Write(*this, source);
 }
 
-template <Uint32 bit_count>
-void Serializer::WriteBitArray (BitArray<bit_count> const &value)
+template <typename WordType>
+void Serializer::ReadSizedBuffer (WordType *&dest, Uint32 &length) throw(Exception)
 {
-    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
-
-    for (Uint32 current_word = BitArray<bit_count>::HIGHEST_WORD_INDEX;
-         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
-         --current_word)
-    {
-        Uint32 bits_to_write_for_current_word =
-            current_word == BitArray<bit_count>::HIGHEST_WORD_INDEX ?
-            bit_count % BitArray<bit_count>::WORD_SIZE_IN_BITS :
-            BitArray<bit_count>::WORD_SIZE_IN_BITS;
-        if (bits_to_write_for_current_word == 0)
-            bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
-
-        WriteUnsignedBits(
-            value.Word(current_word),
-            bits_to_write_for_current_word);
-        if (Error() != IOE_NONE)
-            return;
-    }
+    ASSERT1(dest == NULL);
+    Read<Uint32>(length);
+    CheckArraySize(sizeof(WordType)*length);
+    dest = new WordType[length];
+    ReadBuffer<WordType>(dest, length);
+}
+template <typename WordType>
+void Serializer::WriteSizedBuffer (WordType const *source, Uint32 length) throw(Exception)
+{
+    ASSERT1(source != NULL);
+    CheckArraySize(sizeof(WordType)*length);
+    Write<Uint32>(length);
+    WriteBuffer<WordType>(source, length);
 }
 
-template <Uint32 bit_count>
-BitArray<bit_count> Serializer::ReadBitArray (Uint32 const bits_to_read)
+template <typename WordType>
+void Serializer::ReadBuffer (WordType *dest, Uint32 length) throw(Exception)
 {
-    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
-    ASSERT1(bits_to_read > 0);
-    ASSERT1(bits_to_read <= bit_count);
-
-    BitArray<bit_count> retval;
-    Uint32 highest_word_to_read = bits_to_read / BitArray<bit_count>::WORD_SIZE_IN_BITS;
-
-    for (Uint32 current_word = highest_word_to_read;
-         current_word <= highest_word_to_read; // trick to do > 0 for unsigned
-         --current_word)
-    {
-        Uint32 bits_to_read_for_current_word =
-            current_word == highest_word_to_read ?
-            bits_to_read % BitArray<bit_count>::WORD_SIZE_IN_BITS :
-            BitArray<bit_count>::WORD_SIZE_IN_BITS;
-        if (bits_to_read_for_current_word == 0)
-            bits_to_read_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
-
-        retval.SetWord(
-            current_word,
-            ReadUnsignedBits(bits_to_read_for_current_word));
-        if (Error() != IOE_NONE)
-            return retval;
-    }
-
-    // there may be uninitialized words above highest_word_to_read
-    for (Uint32 current_word = highest_word_to_read + 1;
-         current_word <= BitArray<bit_count>::HIGHEST_WORD_INDEX;
-         ++current_word)
-    {
-        retval.SetWord(current_word, 0);
-    }
-
-    return retval;
+    ASSERT1(dest != NULL);
+    ReadRawWords(dest, sizeof(WordType), length);
+}
+template <typename WordType>
+void Serializer::WriteBuffer (WordType const *source, Uint32 length) throw(Exception)
+{
+    ASSERT1(source != NULL);
+    WriteRawWords(source, sizeof(WordType), length);
 }
 
-template <Uint32 bit_count>
-void Serializer::WriteBitArray (
-    BitArray<bit_count> const &value,
-    Uint32 const bits_to_write)
+template <typename ScalarType>
+void Serializer::ReadScalar (ScalarType &dest) throw(Exception)
 {
-    ASSERT1(bit_count <= MAX_SUPPORTED_STRING_BUFFER_SIZE * 8);
-    ASSERT1(bits_to_write > 0);
-    ASSERT1(bits_to_write <= bit_count);
-
-    Uint32 highest_word_to_write = bits_to_write / BitArray<bit_count>::WORD_SIZE_IN_BITS;
-
-    for (Uint32 current_word = highest_word_to_write;
-         current_word <= highest_word_to_write; // trick to do > 0 for unsigned
-         --current_word)
-    {
-        Uint32 bits_to_write_for_current_word =
-            current_word == highest_word_to_write ?
-            bits_to_write % BitArray<bit_count>::WORD_SIZE_IN_BITS :
-            BitArray<bit_count>::WORD_SIZE_IN_BITS;
-        if (bits_to_write_for_current_word == 0)
-            bits_to_write_for_current_word = BitArray<bit_count>::WORD_SIZE_IN_BITS;
-
-        WriteUnsignedBits(
-            value.Word(current_word),
-            bits_to_write_for_current_word);
-        if (Error() != IOE_NONE)
-            return;
-    }
+    ReadRawWords(&dest, sizeof(ScalarType), 1);
 }
+template <typename ScalarType>
+void Serializer::WriteScalar (ScalarType source) throw(Exception)
+{
+    WriteRawWords(&source, sizeof(ScalarType), 1);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// template function definitions
+// ///////////////////////////////////////////////////////////////////////////
+
+#define DEFINE_READ_AND_WRITE_FOR(Type) \
+    template <> \
+    inline void Serializer::Read<Type> (Type &dest) throw(Exception) \
+    { \
+        ReadScalar<Type>(dest); \
+    } \
+    template <> \
+    inline void Serializer::Write<Type> (Type source) throw(Exception) \
+    { \
+        WriteScalar<Type>(source); \
+    }
+
+// bool is handled uniquely
+DEFINE_READ_AND_WRITE_FOR(char)
+DEFINE_READ_AND_WRITE_FOR(wchar_t)
+DEFINE_READ_AND_WRITE_FOR(Sint8)
+DEFINE_READ_AND_WRITE_FOR(Uint8)
+DEFINE_READ_AND_WRITE_FOR(Sint16)
+DEFINE_READ_AND_WRITE_FOR(Uint16)
+DEFINE_READ_AND_WRITE_FOR(Sint32)
+DEFINE_READ_AND_WRITE_FOR(Uint32)
+#if defined(XRB_ENABLE_64BIT_INTEGER_TYPES)
+DEFINE_READ_AND_WRITE_FOR(Sint64)
+DEFINE_READ_AND_WRITE_FOR(Uint64)
+#endif
+DEFINE_READ_AND_WRITE_FOR(float)
+DEFINE_READ_AND_WRITE_FOR(double)
+
+// specializations for bool, since sizeof(bool) may vary by machine.
+// these make bool take up exactly one byte in the io stream.
+template <>
+inline void Serializer::Read<bool> (bool &dest) throw(Exception)
+{
+    dest = Read<Uint8>() != 0;
+}
+template <>
+inline void Serializer::Write<bool> (bool source) throw(Exception)
+{
+    Write<Uint8>(Uint8(source ? 0xFF : 0x00));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// only partial template specializations are provided for the Aggregate helper
+// so that only certain types may be used in Serializer::ReadAggregate and
+// Serializer::WriteAggregate.  make sure that the Read and Write methods
+// are declared static.
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename Char, typename Traits, typename Alloc>
+struct Aggregate<std::basic_string<Char,Traits,Alloc> >
+{
+    typedef std::basic_string<Char,Traits,Alloc> StringType; // for convenience
+
+    static void Read (Serializer &serializer, StringType &dest) throw(Exception)
+    {
+        // we essentially do the work of Serializer::ReadSizedBuffer here,
+        // but take care of the allocation ourselves.
+        Uint32 length;
+        serializer.Read<Uint32>(length);
+        serializer.CheckArraySize(sizeof(typename StringType::value_type)*length);
+        dest.resize(length, 'x');
+        ASSERT1(dest.length() == length);
+        // slight abuse of std::basic_string, but who gives a shit?  this is
+        // to avoid std::basic_string's constructor doing a memcpy of a temp
+        // buffer which we would just delete anyway.
+        serializer.ReadBuffer<typename StringType::value_type>(
+            const_cast<typename StringType::value_type *>(dest.data()),
+            length);
+    }
+    static void Write (Serializer &serializer, StringType const &source) throw(Exception)
+    {
+        serializer.WriteSizedBuffer<typename StringType::value_type>(source.data(), source.length());
+    }
+};
+
+template <typename T, Uint32 dimension>
+struct Aggregate<Vector<T,dimension> >
+{
+    static void Read (Serializer &serializer, Vector<T,dimension> &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, Vector<T,dimension> const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+    }
+};
+
+template <typename T>
+struct Aggregate<Transform2<T> >
+{
+    static void Read (Serializer &serializer, Transform2<T> &dest) throw(Exception)
+    {
+        {
+            FloatVector2 translation;
+            serializer.ReadAggregate<FloatVector2>(translation);
+            dest.SetTranslation(translation);
+        }
+        {
+            FloatVector2 scale_factors;
+            serializer.ReadAggregate<FloatVector2>(scale_factors);
+            dest.SetScaleFactors(scale_factors);
+        }
+        {
+            Float angle;
+            serializer.Read<Float>(angle);
+            dest.SetAngle(angle);
+        }
+        {
+            bool post_translate;
+            serializer.Read<bool>(post_translate);
+            dest.SetPostTranslate(post_translate);
+        }
+    }
+    static void Write (Serializer &serializer, Transform2<T> const &source) throw(Exception)
+    {
+        serializer.WriteAggregate<FloatVector2>(source.Translation());
+        serializer.WriteAggregate<FloatVector2>(source.ScaleFactors());
+        serializer.Write<Float>(source.Angle());
+        serializer.Write<bool>(source.PostTranslate());
+    }
+};
+
+template <>
+struct Aggregate<Color>
+{
+    static void Read (Serializer &serializer, Color &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<ColorCoord>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, Color const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<ColorCoord>(source.m, LENGTHOF(source.m));
+    }
+};
+
+template <typename T, Uint32 size>
+struct Aggregate<NTuple<T,size> >
+{
+    static void Read (Serializer &serializer, NTuple<T,size> &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, NTuple<T,size> const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+    }
+};
 
 } // end of namespace Xrb
 

@@ -912,21 +912,23 @@ MapEditor2::Compound::Compound ()
 
 void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
 {
-    ASSERT1(serializer.GetIODirection() == IOD_READ);
+    ASSERT1(serializer.Direction() == IOD_READ);
     ASSERT1(m_vertex_list.empty());
     ASSERT1(m_polygon_list.empty());
 
-    Uint32 vertex_count = serializer.ReadUint32();
+    Uint32 vertex_count;
+    serializer.Read<Uint32>(vertex_count);
     ASSERT1(vertex_count > 0);
     for (Uint32 i = 0; i < vertex_count; ++i)
     {
         Instance<CompoundVertex> *vertex_instance =
             new Instance<CompoundVertex>(CompoundVertex(this));
-        serializer.ReadFloatVector2(&(*vertex_instance)->m_coordinate);
+        serializer.ReadAggregate<FloatVector2>((*vertex_instance)->m_coordinate);
         m_vertex_list.push_back(vertex_instance);
     }
 
-    Uint32 polygon_count = serializer.ReadUint32();
+    Uint32 polygon_count;
+    serializer.Read<Uint32>(polygon_count);
     ASSERT1(polygon_count > 0);
     for (Uint32 i = 0; i < polygon_count; ++i)
     {
@@ -938,30 +940,29 @@ void MapEditor2::Compound::ReadClassSpecific (Serializer &serializer)
 
 void MapEditor2::Compound::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(serializer.GetIODirection() == IOD_WRITE);
+    ASSERT1(serializer.Direction() == IOD_WRITE);
     ASSERT1(!m_vertex_list.empty());
     ASSERT1(!m_polygon_list.empty());
 
     AssignIndicesToVertices();
 
-    Uint32 vertex_count = m_vertex_list.size();
-    ASSERT1(vertex_count > 0);
-    serializer.WriteUint32(vertex_count);
+    ASSERT1(m_vertex_list.size() > 0);
+    serializer.Write<Uint32>(m_vertex_list.size());
     for (VertexList::const_iterator it = m_vertex_list.begin(),
-                                 it_end = m_vertex_list.end();
+                                    it_end = m_vertex_list.end();
          it != it_end;
          ++it)
     {
         Instance<CompoundVertex> *vertex_instance = *it;
         ASSERT1(vertex_instance != NULL);
-        serializer.WriteFloatVector2((*vertex_instance)->m_coordinate);
+        serializer.WriteAggregate<FloatVector2>((*vertex_instance)->m_coordinate);
         ASSERT1(vertex_count-- > 0);
     }
     ASSERT1(vertex_count == 0);
 
     Uint32 polygon_count = m_polygon_list.size();
     ASSERT1(polygon_count > 0);
-    serializer.WriteUint32(polygon_count);
+    serializer.Write<Uint32>(polygon_count);
     for (PolygonList::const_iterator it = m_polygon_list.begin(),
                                   it_end = m_polygon_list.end();
          it != it_end;

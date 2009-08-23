@@ -82,6 +82,14 @@ AC_ARG_ENABLE(
     [BITARRAY_USES_MEMCMP="no"])
 
 AC_ARG_ENABLE(
+    [64bit-integer-types],
+    AC_HELP_STRING(
+        [--enable-64bit-integer-types],
+        [Enable the use of 64bit integers]),
+    [ENABLE_64BIT_INTEGER_TYPES=$enableval],
+    [ENABLE_64BIT_INTEGER_TYPES="no"])
+
+AC_ARG_ENABLE(
     [bitarray-uses-memcpy],
     AC_HELP_STRING(
         [--enable-bitarray-uses-memcpy],
@@ -204,6 +212,15 @@ fi
 # if warnings should be interpreted as errors, add -Wall to the compiler flags
 if test "${WARNINGS_AS_ERRORS}" = "yes"; then
     CXXFLAGS="${CXXFLAGS} -Werror"
+fi
+
+if test "${ENABLE_64BIT_INTEGER_TYPES}" = "yes"; then
+    # define XRB_ENABLE_64BIT_INTEGER_TYPES so that the 64bit int types
+    # and various associated functions are compiled in.
+    AC_DEFINE(
+        [XRB_ENABLE_64BIT_INTEGER_TYPES],
+        [],
+        [Define if 64bit integer types should be enabled.])
 fi
 
 if test "${BITARRAY_USES_MEMCMP}" = "yes"; then

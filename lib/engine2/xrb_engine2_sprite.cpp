@@ -152,9 +152,9 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
     m_texture =
         Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
-            serializer.ReadStdString());
-    m_is_round = serializer.ReadBool();
-    serializer.ReadFloatVector2(&m_physical_size_ratios);
+            serializer.ReadAggregate<std::string>());
+    serializer.Read<bool>(m_is_round);
+    serializer.ReadAggregate<FloatVector2>(m_physical_size_ratios);
     IndicateRadiiNeedToBeRecalculated();
 
     ASSERT1(m_texture.IsValid());
@@ -165,9 +165,9 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(m_texture.IsValid());
 
     // write out the guts
-    serializer.WriteStdString(m_texture.Path());
-    serializer.WriteBool(m_is_round);
-    serializer.WriteFloatVector2(m_physical_size_ratios);
+    serializer.WriteAggregate<std::string>(m_texture.Path());
+    serializer.Write<bool>(m_is_round);
+    serializer.WriteAggregate<FloatVector2>(m_physical_size_ratios);
 }
 
 void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const

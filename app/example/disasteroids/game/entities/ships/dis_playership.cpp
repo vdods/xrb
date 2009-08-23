@@ -1068,8 +1068,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
             IT_WEAPON_PEA_SHOOTER,
             IT_WEAPON_EMP_CORE
         };
-        static Uint32 const s_weapon_priority_count =
-            sizeof(s_weapon_priority) / sizeof(ItemType);
+        static Uint32 const s_weapon_priority_count = LENGTHOF(s_weapon_priority);
 
         for (Uint32 priority = 0; priority < s_weapon_priority_count; ++priority)
         {

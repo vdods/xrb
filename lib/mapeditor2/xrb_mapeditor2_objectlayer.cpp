@@ -55,9 +55,9 @@ MapEditor2::ObjectLayer *MapEditor2::ObjectLayer::Create (
 
     Float side_length;
     Float z_depth;
-    serializer.ReadFloat(&side_length);
-    serializer.ReadFloat(&z_depth);
-    bool wrapped = serializer.ReadBool();
+    serializer.Read<Float>(side_length);
+    serializer.Read<Float>(z_depth);
+    bool wrapped = serializer.Read<bool>();
     ObjectLayer *retval =
         new ObjectLayer(
             owner_world,

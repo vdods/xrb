@@ -228,10 +228,7 @@ public:
     // public Entity interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    // this is the Engine2::CreateEntityFunction to create
-    // Entity subclass objects from a serializer.
-    static Engine2::Entity *Create (Serializer &serializer);
-    virtual void Write (Serializer &serializer) const;
+    virtual void Write (Serializer &serializer) const { }
     virtual void HandleObjectLayerContainment (bool component_x, bool component_y);
 
 protected:
@@ -239,9 +236,6 @@ protected:
     // does the calculation to see if/when the given entity will collide
     // with this one.
     Float CollisionTime (Entity *entity, Float lookahead_time) const;
-
-    static EntityType ReadEntityType (Serializer &serializer);
-    void WriteEntityType (Serializer &serializer) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // protected Entity interface methods
