@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include "xrb_enums.hpp"
+#include "xrb_serializer.hpp"
 
 /** @file xrb_ntuple.h
   * Also contains convenience typedefs for specific types of n-tuples.
@@ -594,6 +595,24 @@ inline NTuple<T, size> operator / (
         retval.m[i] = left_operand.m[i] / right_operand;
     return retval;
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// partial template specialization to allow Serializer::ReadAggregate and
+// Serializer::WriteAggregate on NTuple<T,size>
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename T, Uint32 size>
+struct Aggregate<NTuple<T,size> >
+{
+    static void Read (Serializer &serializer, NTuple<T,size> &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, NTuple<T,size> const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+    }
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for n-tuples of different types and dimensions,

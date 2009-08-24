@@ -17,6 +17,7 @@
 #include <string.h>
 
 #include "xrb_enums.hpp"
+#include "xrb_serializer.hpp"
 
 /** @file xrb_vector.h
   * Also contains convenience typedefs for specific types of vectors.
@@ -717,6 +718,24 @@ inline Vector<T, 2> PerpendicularVector2 (Vector<T, 2> const &source)
 {
     return Vector<T, 2>(-source[1], source[0]);
 }
+
+// ///////////////////////////////////////////////////////////////////////////
+// partial template specialization to allow Serializer::ReadAggregate and
+// Serializer::WriteAggregate on Vector<T,dimension>
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename T, Uint32 dimension>
+struct Aggregate<Vector<T,dimension> >
+{
+    static void Read (Serializer &serializer, Vector<T,dimension> &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, Vector<T,dimension> const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
+    }
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for vectors of different types and dimensions,

@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include "xrb_ntuple.hpp"
+#include "xrb_serializer.hpp"
 
 namespace Xrb
 {
@@ -28,7 +29,7 @@ public:
     static Color const ms_opaque_white;
     static Color const ms_opaque_black;
     static Color const ms_transparent_black;
-    
+
     static Color const &ms_identity_color_mask;
     static Color const &ms_identity_color_bias;
 
@@ -49,7 +50,7 @@ public:
         :
         NTuple<ColorCoord, 4>(c)
     { }
-    
+
     // let this Color object be x.  this method is essentially
     // x = blend(x,y).
     //
@@ -66,7 +67,6 @@ public:
     //            = ( Ax+Ay-Ax*Ay , Cx*Ax+Cy*Ay-Cy*Ax*Ay / Ax+Ay-Ax*Ay )
     void Blend (Color const &y)
     {
-    
         Color &x = *this;
         ColorCoord old_a = x[Dim::A];
         x[Dim::A] += y[Dim::A] - x[Dim::A]*y[Dim::A];
@@ -86,6 +86,24 @@ public:
     }
 }; // end of class Color
 // typedef NTuple<ColorCoord, 4> Color;
+
+// ///////////////////////////////////////////////////////////////////////////
+// partial template specialization to allow Serializer::ReadAggregate and
+// Serializer::WriteAggregate on Color
+// ///////////////////////////////////////////////////////////////////////////
+
+template <>
+struct Aggregate<Color>
+{
+    static void Read (Serializer &serializer, Color &dest) throw(Exception)
+    {
+        serializer.ReadBuffer<ColorCoord>(dest.m, LENGTHOF(dest.m));
+    }
+    static void Write (Serializer &serializer, Color const &source) throw(Exception)
+    {
+        serializer.WriteBuffer<ColorCoord>(source.m, LENGTHOF(source.m));
+    }
+};
 
 } // end of namespace Xrb
 

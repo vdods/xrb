@@ -21,7 +21,24 @@
 namespace Xrb
 {
 
-// implements the Serializer interface for binary files.
+/** An instance of BinaryFileSerializer can either read or write, but not both
+  * simultaneously.  Construction of a BinaryFileSerializer instance is what
+  * opens a file, destruction is what * closes it.  Exceptions are thrown to
+  * indicate error (see @ref Serializer ).
+  *
+  * Endianness is handled in the following way.  When opening a file to write,
+  * the first byte is automatically written to indicate the endianness of the
+  * ensuing data.  0xFF and 0x00 indicate little and big endian (the values
+  * written by Write<bool>(true) and Write<bool>(false) respectively).
+  *
+  * All writes are done in the endianness of the machine doing the writing.
+  * The reads are what do endian-switching when necessary.  This is easier
+  * to implement, since the read buffer is a convenient place to do in-place
+  * endian-switching, as opposed to creating temporary buffers for write-time
+  * endian-switching.
+  * 
+  * @brief Serializer implementation for binary files.
+  */
 class BinaryFileSerializer : public Serializer
 {
 public:

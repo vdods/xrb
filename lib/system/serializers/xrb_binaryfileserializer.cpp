@@ -30,11 +30,6 @@ BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection
     if (m_fptr == NULL)
         throw Exception(FORMAT("error while opening path \"" << path << "\" (errno = " << errno << ')'));
 
-    // the first byte in a file read/written by BinaryFileSerializer specifies the
-    // endianness of the data contained within.  endian-switching occurs during
-    // ReadRawWords (if the endiannness of the file differs from that of the machine).
-    // in the file, 0xFF indicates little endian (the value written by Write<bool>(true)),
-    // while 0x00 indicates big endian (the value written by Read<bool>(false)).
     if (Direction() == IOD_READ)
         m_file_endianness = (Read<bool>() ? Endian::LITTLE : Endian::BIG);
     else

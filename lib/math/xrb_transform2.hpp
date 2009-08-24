@@ -14,6 +14,7 @@
 #include "xrb.hpp"
 
 #include "xrb_matrix2.hpp"
+#include "xrb_serializer.hpp"
 #include "xrb_simpletransform2.hpp"
 #include "xrb_vector.hpp"
 
@@ -233,7 +234,7 @@ public:
         m_cached_scaling_and_rotation_is_dirty = true;
         m_cached_transform_is_dirty = true;
     }
-        
+
     void Fprint (
         FILE *fptr,
         char const *component_printf_format,
@@ -320,7 +321,7 @@ public:
     {
         ASSERT1(m_cached_transform_is_dirty);
         ASSERT1(!m_cached_scaling_and_rotation_is_dirty);
-    
+
         if (m_post_translate)
         {
             m_cached_transform = m_cached_scaling_and_rotation;
@@ -335,7 +336,7 @@ public:
 
         m_cached_transform_is_dirty = false;
     }
-    
+
 private:
 
     void RecalculateScalingAndRotationIfNecessary () const
@@ -353,7 +354,7 @@ private:
     void RecalculateScalingAndRotation () const
     {
         ASSERT1(m_cached_scaling_and_rotation_is_dirty);
-        
+
         // scaling happens first
         m_cached_scaling_and_rotation = Matrix2<T>::ms_identity;
         m_cached_scaling_and_rotation.Scale(m_scale_factors);
@@ -386,6 +387,46 @@ Transform2<T> const Transform2<T>::ms_identity(
     Vector<T, 2>(static_cast<T>(1), static_cast<T>(1)),
     static_cast<T>(0),
     true); // the post-translate value for ms_identity is arbitrary
+
+// ///////////////////////////////////////////////////////////////////////////
+// partial template specialization to allow Serializer::ReadAggregate and
+// Serializer::WriteAggregate on Vector<T,dimension>
+// ///////////////////////////////////////////////////////////////////////////
+
+template <typename T>
+struct Aggregate<Transform2<T> >
+{
+    static void Read (Serializer &serializer, Transform2<T> &dest) throw(Exception)
+    {
+        {
+            FloatVector2 translation;
+            serializer.ReadAggregate<FloatVector2>(translation);
+            dest.SetTranslation(translation);
+        }
+        {
+            FloatVector2 scale_factors;
+            serializer.ReadAggregate<FloatVector2>(scale_factors);
+            dest.SetScaleFactors(scale_factors);
+        }
+        {
+            Float angle;
+            serializer.Read<Float>(angle);
+            dest.SetAngle(angle);
+        }
+        {
+            bool post_translate;
+            serializer.Read<bool>(post_translate);
+            dest.SetPostTranslate(post_translate);
+        }
+    }
+    static void Write (Serializer &serializer, Transform2<T> const &source) throw(Exception)
+    {
+        serializer.WriteAggregate<FloatVector2>(source.Translation());
+        serializer.WriteAggregate<FloatVector2>(source.ScaleFactors());
+        serializer.Write<Float>(source.Angle());
+        serializer.Write<bool>(source.PostTranslate());
+    }
+};
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for Transform2 of different types,

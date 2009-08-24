@@ -16,19 +16,8 @@
 #include <string>
 #include <sstream>
 
-#include "xrb_color.hpp"
 #include "xrb_enums.hpp"
 #include "xrb_exception.hpp"
-#include "xrb_ntuple.hpp"
-#include "xrb_transform2.hpp"
-#include "xrb_vector.hpp"
-
-/*
-Serializer redesign
-
-idea for endian-handling: write little/big identifier at the beginning of the file, and write in the machine's endian (fast writes of raw bytes), and then on reading the file, do the endian switching (if need be), which can be done in-place since the read destinations are writable anyway.
-
-*/
 
 namespace Xrb
 {
@@ -38,7 +27,7 @@ namespace Xrb
   *
   * Read and Write can only be used to read/write values that can be stored
   * by the CPU: bool, char, wchar_t, Sint##, Uint##, float and double (these
-  * will be referred to as "word types").
+  * will be referred to as "words").
   *
   * It is recommended to explicitly specify the template type when using Read
   * or Write so that changing the type of the variable passed to the function
@@ -54,7 +43,22 @@ namespace Xrb
   * size of an enum may vary between platforms, so this is a potentially
   * dangerous situation if you care about writing portable code.
   *
+  * Certain structs and classes (which will be referred to as "aggregates")
+  * can be written using ReadAggregate and WriteAggregate.  The aggregates
+  * read/write function definitions are made within the respective headers
+  * (e.g. @ref xrb_vector.hpp ).  Definitions for std::basic_string<> are included
+  * in this header (@ref xrb_serializer.hpp ) for convenience.
+  *
+  * You can add your own definitions for your own custom aggregate types
+  * by defining a partial template specialization of the Aggregate struct
+  * as seen toward the bottom of this header (@ref xrb_serializer.hpp ).
+  * Use the one for std::basic_string<> as an example.
+  *
+  * Again, it is recommended to specify the template type when using
+  * ReadAggregate and WriteAggregate, as above with Read and Write.
+  *
   * Instances of the @ref Exception class will be thrown to indicate error.
+  *
   * @brief Provides the abstract interface for serializing data streams.
   */
 class Serializer
@@ -277,80 +281,6 @@ struct Aggregate<std::basic_string<Char,Traits,Alloc> >
     static void Write (Serializer &serializer, StringType const &source) throw(Exception)
     {
         serializer.WriteSizedBuffer<typename StringType::value_type>(source.data(), source.length());
-    }
-};
-
-template <typename T, Uint32 dimension>
-struct Aggregate<Vector<T,dimension> >
-{
-    static void Read (Serializer &serializer, Vector<T,dimension> &dest) throw(Exception)
-    {
-        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
-    }
-    static void Write (Serializer &serializer, Vector<T,dimension> const &source) throw(Exception)
-    {
-        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
-    }
-};
-
-template <typename T>
-struct Aggregate<Transform2<T> >
-{
-    static void Read (Serializer &serializer, Transform2<T> &dest) throw(Exception)
-    {
-        {
-            FloatVector2 translation;
-            serializer.ReadAggregate<FloatVector2>(translation);
-            dest.SetTranslation(translation);
-        }
-        {
-            FloatVector2 scale_factors;
-            serializer.ReadAggregate<FloatVector2>(scale_factors);
-            dest.SetScaleFactors(scale_factors);
-        }
-        {
-            Float angle;
-            serializer.Read<Float>(angle);
-            dest.SetAngle(angle);
-        }
-        {
-            bool post_translate;
-            serializer.Read<bool>(post_translate);
-            dest.SetPostTranslate(post_translate);
-        }
-    }
-    static void Write (Serializer &serializer, Transform2<T> const &source) throw(Exception)
-    {
-        serializer.WriteAggregate<FloatVector2>(source.Translation());
-        serializer.WriteAggregate<FloatVector2>(source.ScaleFactors());
-        serializer.Write<Float>(source.Angle());
-        serializer.Write<bool>(source.PostTranslate());
-    }
-};
-
-template <>
-struct Aggregate<Color>
-{
-    static void Read (Serializer &serializer, Color &dest) throw(Exception)
-    {
-        serializer.ReadBuffer<ColorCoord>(dest.m, LENGTHOF(dest.m));
-    }
-    static void Write (Serializer &serializer, Color const &source) throw(Exception)
-    {
-        serializer.WriteBuffer<ColorCoord>(source.m, LENGTHOF(source.m));
-    }
-};
-
-template <typename T, Uint32 size>
-struct Aggregate<NTuple<T,size> >
-{
-    static void Read (Serializer &serializer, NTuple<T,size> &dest) throw(Exception)
-    {
-        serializer.ReadBuffer<T>(dest.m, LENGTHOF(dest.m));
-    }
-    static void Write (Serializer &serializer, NTuple<T,size> const &source) throw(Exception)
-    {
-        serializer.WriteBuffer<T>(source.m, LENGTHOF(source.m));
     }
 };
 
