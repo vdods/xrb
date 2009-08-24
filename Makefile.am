@@ -21,6 +21,7 @@ lib_LTLIBRARIES = \
 	lib/libxrb.la
 
 bin_PROGRAMS = \
+	benchmark \
 	disasteroids \
 	guidemo \
 	lesson00 \
@@ -418,6 +419,20 @@ $(top_srcdir)/lib/parsers/xrb_arithmeticparser.cpp: $(top_srcdir)/lib/parsers/xr
 endif
 
 ##############################################################################
+# benchmark
+##############################################################################
+
+benchmark_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	\
+    -I$(top_srcdir)/app/benchmark
+
+benchmark_SOURCES = \
+    app/benchmark/bm_commandlineoptions.cpp \
+    app/benchmark/bm_config.cpp \
+    app/benchmark/bm_main.cpp
+
+##############################################################################
 # disasteroids
 ##############################################################################
 
@@ -532,6 +547,9 @@ lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
 ##############################################################################
 
 noinst_HEADERS = \
+	app/benchmark/bm_commandlineoptions.hpp \
+	app/benchmark/bm_config.hpp \
+	\
     app/example/disasteroids/dis_commandlineoptions.hpp \
     app/example/disasteroids/dis_config.hpp \
     app/example/disasteroids/dis_enums.hpp \
