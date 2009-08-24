@@ -466,11 +466,11 @@ void AsciiFont::DrawGlyph (
 
 Uint32 AsciiFont::Hash () const
 {
-    // a 32-bit int is essentiall Z/(2^32)Z (integer arithmetic modulo 2^32),
+    // a 32-bit int is essentially Z/(2^32)Z (integer arithmetic modulo 2^32),
     // and since 2 and 11 are coprime, 2^32 and 11 are coprime, so 11 has
-    // an inverse mod 2^32, which is given by 11^(phi(2^32)-1) mod 2^32,
-    // which has a value of 3123612579.  thus multiplying 11 by this value
-    // (using 32-bit unsigned ints) will give 1.
+    // an inverse mod 2^32, which is given by 11^(phi(2^32)-1) mod 2^32 (phi
+    // is the Euler totient function), which has a value of 3123612579.  thus
+    // multiplying 11 by this value (using 32-bit unsigned ints) will give 1.
     //
     // this means that in 32-bit unsigned integer math, multiplication by
     // 11 (or actually any odd value) is an invertible operation.

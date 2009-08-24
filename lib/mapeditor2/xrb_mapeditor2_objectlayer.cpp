@@ -316,7 +316,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetClone (FloatVector2 const &posit
 
     m_sender_object_selection_set_changed.Signal();
 
-    Delete(objects_to_clone);
+    DeleteArray(objects_to_clone);
 }
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
@@ -359,7 +359,7 @@ void MapEditor2::ObjectLayer::ObjectSelectionSetDelete ()
     UpdateObjectsAndEntitiesProperties();
     m_sender_object_selection_set_changed.Signal();
 
-    Delete(objects_to_delete);
+    DeleteArray(objects_to_delete);
 }
 
 void MapEditor2::ObjectLayer::ObjectSelectionSetTranslate (FloatVector2 const &translation_delta)

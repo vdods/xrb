@@ -670,7 +670,7 @@ void Layout::DelegateWidthsToColumns ()
         ASSERT1(total_width_left >= 0);
     }
 
-    Delete(column_order);
+    DeleteArray(column_order);
 }
 
 void Layout::DelegateHeightsToRows ()
@@ -718,7 +718,7 @@ void Layout::DelegateHeightsToRows ()
         ASSERT1(total_height_left >= 0);
     }
 
-    Delete(row_order);
+    DeleteArray(row_order);
 }
 
 void Layout::ResizeAndRepositionChildWidgets ()

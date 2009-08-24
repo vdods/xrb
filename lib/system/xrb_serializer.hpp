@@ -123,6 +123,9 @@ public:
 
 private:
 
+    // can't touch me, ha ha!  m_direction is arbitrary and irrelevant.
+    Serializer () : m_direction(IOD_READ) { ASSERT1(false && "don't use me"); }
+
     template <typename ScalarType> void ReadScalar (ScalarType &dest) throw(Exception);
     template <typename ScalarType> void WriteScalar (ScalarType source) throw(Exception);
 

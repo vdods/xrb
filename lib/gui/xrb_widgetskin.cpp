@@ -10,6 +10,7 @@
 
 #include "xrb_widgetskin.hpp"
 
+#include "xrb_math.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp"
 
@@ -119,7 +120,7 @@ ScreenCoord WidgetSkin::ScreenCoordFromRatio (Float const ratio) const
 {
     ASSERT1(m_screen != NULL);
     ASSERT1(m_screen->SizeRatioBasis() > 0);
-    return static_cast<ScreenCoord>(ratio * m_screen->SizeRatioBasis());
+    return static_cast<ScreenCoord>(Math::Floor(ratio * m_screen->SizeRatioBasis()));
 }
 
 FloatVector2 WidgetSkin::RatiosFromScreenCoords (

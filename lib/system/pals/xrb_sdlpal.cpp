@@ -612,7 +612,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     // the above two calls will cause the image to be read as full 32 bit RGBA
 
     png_read_update_info(png_ptr, info_ptr);
-    png_bytep *row_pointers = (png_bytepp)png_malloc(png_ptr, height*sizeof(png_bytep));
+    png_bytep *row_pointers = new png_bytep[height*sizeof(png_bytep)];;
     for (png_uint_32 row = 0; row < height; row++)
         row_pointers[row] = png_bytep(texture->Data()) + row*texture->Width()*4; // 4 bytes per pixel
 
@@ -625,6 +625,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     fclose(fp);
     // now we're done with the png stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
+    delete[] row_pointers;
     // return the Texture we fought so hard to obtain.
     return texture;
 }

@@ -76,6 +76,8 @@
       <filetype>*.reflex</filetype>
       <filetype>*.trison</filetype>
       <filetype>configure.ac</filetype>
+      <filetype>*.vcproj</filetype>
+      <filetype>*.sln</filetype>
     </filetypes>
     <blacklist>
       <path>debug/config.h</path>
@@ -177,14 +179,7 @@
     </ignoredoxygen>
   </kdevdoctreeview>
   <kdevfilecreate>
-    <filetypes>
-      <type icon="" ext=".trison" create="template" name="trison" >
-        <descr>BARF parser-generator primary source file</descr>
-      </type>
-      <type icon="" ext=".reflex" create="template" name="reflex" >
-        <descr>BARF scanner-generator primary source file</descr>
-      </type>
-    </filetypes>
+    <filetypes/>
     <useglobaltypes>
       <type ext="ui" />
       <type ext="cpp" />

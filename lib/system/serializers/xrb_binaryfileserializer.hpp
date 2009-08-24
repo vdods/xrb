@@ -61,6 +61,10 @@ public:
 
 private:
 
+    // can't touch me, ha ha!  the call to Serializer's
+    // constructor is arbitrary and irrelevant.
+    BinaryFileSerializer () : Serializer(IOD_READ) { ASSERT1(false && "don't use me"); }
+
     std::string const m_path;
     Endian::Endianness m_file_endianness;
     Uint32 m_max_allowable_array_size;

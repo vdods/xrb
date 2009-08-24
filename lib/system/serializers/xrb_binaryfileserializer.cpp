@@ -22,6 +22,7 @@ BinaryFileSerializer::BinaryFileSerializer (std::string const &path, IODirection
     :
     Serializer(direction),
     m_path(path),
+    m_file_endianness(Endian::LITTLE), // irrelevant, but needs to be initialized
     m_max_allowable_array_size(ms_longest_allowable_sized_buffer_initial_value),
     m_fptr(NULL)
 {
