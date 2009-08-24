@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_DIS_GAMEOBJECT_HPP_)
-#define _DIS_GAMEOBJECT_HPP_
+#if !defined(_DIS_ENTITY_HPP_)
+#define _DIS_ENTITY_HPP_
 
 #include "xrb_engine2_entity.hpp"
 
@@ -265,5 +265,5 @@ private:
 
 } // end of namespace Dis
 
-#endif // !defined(_DIS_GAMEOBJECT_HPP_)
+#endif // !defined(_DIS_ENTITY_HPP_)
 

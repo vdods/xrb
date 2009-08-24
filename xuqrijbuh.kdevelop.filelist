@@ -12,6 +12,8 @@ app/benchmark/bm_config.cpp
 app/benchmark/bm_config.hpp
 app/benchmark/bm_enums.hpp
 app/benchmark/bm_main.cpp
+app/benchmark/bm_master.cpp
+app/benchmark/bm_master.hpp
 app/example
 app/example/disasteroids
 app/example/disasteroids/dis_commandlineoptions.cpp

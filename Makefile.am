@@ -430,7 +430,8 @@ benchmark_CPPFLAGS = \
 benchmark_SOURCES = \
     app/benchmark/bm_commandlineoptions.cpp \
     app/benchmark/bm_config.cpp \
-    app/benchmark/bm_main.cpp
+    app/benchmark/bm_main.cpp \
+    app/benchmark/bm_master.cpp
 
 ##############################################################################
 # disasteroids
@@ -549,6 +550,8 @@ lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
 noinst_HEADERS = \
 	app/benchmark/bm_commandlineoptions.hpp \
 	app/benchmark/bm_config.hpp \
+	app/benchmark/bm_enums.hpp \
+	app/benchmark/bm_master.hpp \
 	\
     app/example/disasteroids/dis_commandlineoptions.hpp \
     app/example/disasteroids/dis_config.hpp \

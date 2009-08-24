@@ -12,6 +12,7 @@
 
 #include "bm_commandlineoptions.hpp"
 #include "bm_config.hpp"
+#include "bm_master.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_sdlpal.hpp"
 
@@ -71,8 +72,8 @@ int main (int argc, char **argv)
 
         // create and run the game
         {
-            // TODO
-            fprintf(stderr, "nothing in here yet\n");
+            Bm::Master master(screen);
+            master.Run();
         }
 
         Delete(screen);
