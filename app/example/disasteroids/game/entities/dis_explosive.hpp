@@ -20,7 +20,6 @@ using namespace Xrb;
 namespace Dis
 {
 
-// class EMPBombLayer;
 class GrenadeLauncher;
 class MissileLauncher;
 class PhysicsHandler;
@@ -303,78 +302,6 @@ protected:
     virtual EntityReference<Ship> FindTarget (LineTraceBindingSet const &scan_set);
 }; // end of class GuidedMissile
 
-// ///////////////////////////////////////////////////////////////////////////
-//
-// ///////////////////////////////////////////////////////////////////////////
-/*
-
-class EMPBomb : public Explosive
-{
-public:
-
-    EMPBomb (
-        EMPBombLayer *const owner_emp_bomb_launcher,
-        Float const disable_time_factor,
-        Float const blast_radius,
-        Uint32 const weapon_level,
-        EntityReference<Entity> const &owner,
-        Float const max_health)
-        :
-        Explosive(owner, max_health, max_health, ET_EMP_BOMB, CT_SOLID_COLLISION),
-        m_disable_time_factor(disable_time_factor),
-        m_blast_radius(blast_radius),
-        m_weapon_level(weapon_level)
-    {
-        ASSERT1(m_disable_time_factor > 1.0f);
-        ASSERT1(m_blast_radius > 0.0f);
-        m_owner_emp_bomb_launcher = owner_emp_bomb_launcher;
-        SetImmunity(D_COLLISION);
-    }
-    virtual ~EMPBomb () { }
-
-    inline EMPBombLayer *OwnerEMPBombLayer ()
-    {
-        return m_owner_emp_bomb_launcher;
-    }
-
-    inline void SetOwnerEMPBombLayer (EMPBombLayer *const owner_emp_bomb_launcher)
-    {
-        m_owner_emp_bomb_launcher = owner_emp_bomb_launcher;
-    }
-
-    virtual void Collide (
-        Entity *collider,
-        FloatVector2 const &collision_location,
-        FloatVector2 const &collision_normal,
-        Float collision_force,
-        Float time,
-        Float frame_dt);
-    virtual void Die (
-        Entity *killer,
-        Entity *kill_medium,
-        FloatVector2 const &kill_location,
-        FloatVector2 const &kill_normal,
-        Float kill_force,
-        DamageType kill_type,
-        Float time,
-        Float frame_dt);
-
-    virtual bool CheckIfItShouldDetonate (
-        Entity *collider,
-        Float time,
-        Float frame_dt);
-    virtual void Detonate (
-        Float time,
-        Float frame_dt);
-
-private:
-
-    EMPBombLayer *m_owner_emp_bomb_launcher;
-    Float const m_disable_time_factor;
-    Float const m_blast_radius;
-    Uint32 m_weapon_level;
-}; // end of class EMPBomb
-*/
 } // end of namespace Dis
 
 #endif // !defined(_DIS_EXPLOSIVE_HPP_)

@@ -353,38 +353,6 @@ GuidedMissile *SpawnGuidedMissile (
     return guided_missile;
 }
 
-/*
-EMPBomb *SpawnEMPBomb (
-    Engine2::World *const world,
-    Engine2::ObjectLayer *const object_layer,
-    FloatVector2 const &translation,
-    Float const scale_factor,
-    FloatVector2 const &velocity,
-    EMPBombLayer *const owner_emp_bomb_launcher,
-    Float const disable_time_factor,
-    Float const blast_radius,
-    Uint32 const weapon_level,
-    EntityReference<Entity> const &owner,
-    Float const health)
-{
-    EMPBomb *emp_bomb = new EMPBomb(owner_emp_bomb_launcher, disable_time_factor, blast_radius, weapon_level, owner, health);
-    SpawnDynamicSprite(
-        world,
-        object_layer,
-        "resources/grenade_small.png",
-        Z_DEPTH_SOLID,
-        false, // is transparent
-        emp_bomb,
-        translation,
-        scale_factor,
-        Math::Atan(velocity),
-        1.0f,
-        velocity,
-        Math::RandomFloat(-30.0f, 30.0f),
-        0.1f);
-    return emp_bomb;
-}
-*/
 Powerup *SpawnPowerup (
     Engine2::World *const world,
     Engine2::ObjectLayer *const object_layer,

@@ -560,87 +560,12 @@ public:
 private:
 
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_core_disable_time_factor[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_core_blast_radius[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
     Float m_time_last_fired;
 }; // end of class EMPCore
-
-/*
-class EMPBomb;
-
-// - EMP bomb - disables enemies (maybe with certain exceptions) for a short
-//   time.  the player presses and holds the fire button to launch it, and
-//   releases the fire button to detonate it.  if any ship gets trapped
-//   in the blast radius, it is disabled for a short period of time (can't
-//   move or fire).  each EMP bomb must be produced one at a time --
-//   there is no infinite ammo with this one.
-class EMPBombLayer : public Weapon // - primary: shoots EMPBomb / secondary: detonates EMPBomb
-{
-public:
-
-    EMPBombLayer (Uint32 const upgrade_level)
-        :
-        Weapon(upgrade_level, IT_WEAPON_EMP_BOMB_LAYER)
-    {
-        ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
-        m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
-    }
-    virtual ~EMPBombLayer ();
-
-    inline Uint32 ActiveEMPBombCount () const
-    {
-        return m_active_emp_bomb_set.size();
-    }
-
-    void ActiveEMPBombDestroyed (EMPBomb *active_emp_bomb);
-
-    // ///////////////////////////////////////////////////////////////////////
-    // Weapon interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float ReadinessStatus (Float time) const
-    {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
-        ASSERT1(cycle_time > 0.0f);
-        ASSERT1(time_since_last_fire >= 0.0f);
-        if (time_since_last_fire > cycle_time)
-            return 1.0f;
-        else
-            return time_since_last_fire / cycle_time;
-    }
-
-    // ///////////////////////////////////////////////////////////////////////
-    // PoweredDevice interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
-
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
-
-private:
-
-    typedef std::set<EMPBomb *> ActiveEMPBombSet;
-
-    static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
-    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_bomb_disable_time_factor[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_bomb_blast_radius[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_bomb_health[UPGRADE_LEVEL_COUNT];
-    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
-    static Uint32 const ms_max_active_emp_bomb_count[UPGRADE_LEVEL_COUNT];
-
-    ActiveEMPBombSet m_active_emp_bomb_set;
-    Float m_time_last_fired;
-}; // end of class EMPBombLayer
-*/
 
 class TractorBeam;
 

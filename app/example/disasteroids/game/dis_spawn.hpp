@@ -37,8 +37,6 @@ class Ballistic;
 class DamageExplosion;
 class Demi;
 class Devourment;
-// class EMPBomb;
-// class EMPBombLayer;
 class EnemyShip;
 class Entity;
 class EMPExplosion;
@@ -147,20 +145,6 @@ GuidedMissile *SpawnGuidedMissile (
     Float health,
     bool is_enemy_missile);
 
-/*
-EMPBomb *SpawnEMPBomb (
-    Engine2::World *world,
-    Engine2::ObjectLayer *object_layer,
-    FloatVector2 const &translation,
-    Float scale_factor,
-    FloatVector2 const &velocity,
-    EMPBombLayer *owner_emp_bomb_layer,
-    Float disable_time_factor,
-    Float blast_radius,
-    Uint32 weapon_level,
-    EntityReference<Entity> const &owner,
-    Float health);
-*/
 Powerup *SpawnPowerup (
     Engine2::World *world,
     Engine2::ObjectLayer *object_layer,

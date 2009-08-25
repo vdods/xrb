@@ -137,13 +137,8 @@ Weapons (each have infinite ammo, unless otherwise specified)
 - missile launcher
   * upgrades will be to the projectile speed and explosion power,
     dumb-seeking, smart-seeking, to make the explosions not hurt you
-- EMP bomb - disables enemies (maybe with certain exceptions) for a short
-  time.  the player presses and holds the fire button to launch it, and
-  releases the fire button to detonate it.  if the player gets trapped
-  in the blast radius, the player's ship is disabled for a short period of
-  time (can't move or fire).  each EMP bomb must be produced one at a time --
-  there is no infinite ammo with this one.  EMPs also damage grenades,
-  missiles.
+- EMP core - disables enemies (maybe with certain exceptions) for a short
+  time.
 
 Engines (maybe combine with armor)
 - engine level X (each level outputs more thrust, and uses more power)
@@ -343,7 +338,6 @@ sizes.
   then strikes out decisively when it does.  has a decent array of weapons:
   - flame thrower for close range battle
   - gauss gun for long-range battle
-  - EMP bomb
   has lots of defensive mechanisms:
   - a "flare" type projectile it will shoot when a seeking missile
     approaches, which the missile will seek, instead of it (but this
@@ -400,81 +394,6 @@ to do the following:
 
 Moving the mouse over a darkened or blackened button will show how many
 of each type of minerals it costs to build.
-
-//////////////////////////////////////////////////////////////////////////////
-// Misc Programming Notes
-//////////////////////////////////////////////////////////////////////////////
-
-Engine2::Entity - XuqRijBuh baseclass for game-specific entity data
-+---Entity - baseclass for disasteroids game objects
-    +---Mortal - CT_SOLID_COLLISION, has health, can be killed
-    |   +---Asteroid - small, debris asteroids decay away over time
-    |   +---Ship - a controllable game object
-    |   |   +---Solitary - the player's ship
-    |   |   +---Interloper
-    |   |   +---Shade
-    |   |   +---Revulsion
-    |   |   +---Devourment
-    |   |   +---Demi
-    |   +---Explosive - CT_SOLID_COLLISION
-    |       +---Grenade
-    |       +---Missile
-    |       +---EMPBomb
-    +---Shield - CT_NONSOLID_COLLISION, existence controlled by the owner ship
-    +---Powerup - CT_SOLID_COLLISION, item that can be picked up by a player by touching it
-    |   +---Mineral - decays away over time
-    +---Ballistic - CT_NONSOLID_COLLISION - ballistic weapons fire
-    |   +---Pea - timed lifetime
-    +---Effect - limited lifetime nonsolid/no-collision objects - does alpha-fade-out
-        +---Explosion - does explosive expansion
-        |   +---NoDamageExplosion - CT_NO_COLLISION
-        |   +---Fireball - CT_NONSOLID_COLLISION, constant damage while in contact
-        |   +---DamageExplosion - CT_NONSOLID_COLLISION, impact damage at the beginning of its life, tapering off quickly
-        +---GaussGunTrail - CT_NO_COLLISION
-        +---AsteroidDebris - CT_NO_COLLISION
-        +---LaserBeam - CT_NO_COLLISION, the damage is done via a trace
-        +---TractorBeam - CT_NO_COLLISION, existence controlled by the owner ship
-        +---Napalm - CT_NONSOLID_COLLISION, decays away over time
-
-Entity methods:
-- Think
-- Collide
-- Damage
-- Heal
-- Die
-also:
-- Create (static)
-- Write
-
-Other stuff that will be needed:
-
-- collision quadtree trace: lines, cylinders, and trapezoidal cylinders
-- possibly "physics teams" - groups of entities which do not collide with each other
-
-Weapon design:
-
-Weapon
-+---PeaShooter      - primary: shoots Pea               secondary: none
-+---Laser           - primary: trace/LaserBeam    secondary: none
-+---FlameThrower    - primary: shoots Fireball          secondary: shoots Napalm
-+---GaussGun        - primary: trace/GaussGunTrail      secondary: none
-+---GrenadeLauncher - primary: shoots Grenade           secondary: detonates Grenade
-+---MissileLauncher - primary: shoots Missile           secondary: shoots seeking Missile
-+---EMPBombLayer    - primary: shoots EMPBomb           secondary: detonates EMPBomb
-+---Tractor         - primary: pulls stuff              secondary: pushes stuff
-
-required interfaces for Weapon:
-
-- PrimaryFire (the basic firing method.  shooting peas and flames and such)
-- SecondaryFire (optional additional firing method.  detonating grenades and such)
-- ReloadTime -- (0 for always ready)
-- TimeUntilReady (primary|secondary) -- (0 for ready now, negative for out of ammo)
-- RequiresAmmo
-- CurrentAmmo
-- MaxAmmo
-- AddAmmo
-- RemoveAmmo
-- SetAmmo
 
 */
 

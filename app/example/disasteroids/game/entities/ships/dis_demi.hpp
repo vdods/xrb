@@ -25,7 +25,6 @@ front port:
     gauss gun
     flame thrower
     missile launcher
-    EMP bomb layer
 
 side ports:
     tractor
@@ -62,8 +61,6 @@ x   enemy spawner: intermittent barrages of certain types of enemies
     asteroid destruction: if we collide head-on with a large enough asteroid,
                           somehow destroy it
     blah: if player gets too far away, charge at it
-    ---maybe---
-    EMP bomb layer: occasionally shoot out an EMB bomb and detonate it
 
 ------------------------------------------------------------------------------
 

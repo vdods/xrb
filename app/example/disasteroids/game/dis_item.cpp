@@ -36,7 +36,6 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
         case IT_WEAPON_GRENADE_LAUNCHER:      return new GrenadeLauncher(upgrade_level);
         case IT_WEAPON_MISSILE_LAUNCHER:      return new MissileLauncher(upgrade_level);
         case IT_WEAPON_EMP_CORE:              return new EMPCore(upgrade_level);
-//         case IT_WEAPON_EMP_BOMB_LAYER:        return new EMPBombLayer(upgrade_level);
         case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_ENEMY_WEAPON_SLOW_BULLET_GUN: return new SlowBulletGun(upgrade_level);
         case IT_ENGINE:                       return new Engine(upgrade_level);
