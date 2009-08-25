@@ -52,11 +52,13 @@ Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0
 
 // FlameThrower properties
 Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
-Float const FlameThrower::ms_min_required_primary_power[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
-Float const FlameThrower::ms_max_required_primary_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
+Float const FlameThrower::ms_min_required_power[UPGRADE_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Float const FlameThrower::ms_max_required_power[UPGRADE_LEVEL_COUNT] = { 10.0f, 20.0f, 40.0f, 80.0f };
 Float const FlameThrower::ms_max_damage_per_fireball[UPGRADE_LEVEL_COUNT] = { 20.0f, 35.0f, 65.0f, 130.0f };
 Float const FlameThrower::ms_final_fireball_size[UPGRADE_LEVEL_COUNT] = { 40.0f, 50.0f, 70.0f, 100.0f };
 Float const FlameThrower::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 11.0f, 12.0f, 15.0f };
+Float const FlameThrower::ms_blast_mode_power_factor = 6.0f;
+Float const FlameThrower::ms_blast_mode_damage_factor = 3.0f;
 
 // GaussGun properties
 Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 400.0f };
@@ -471,9 +473,19 @@ Float FlameThrower::PowerToBeUsedBasedOnInputs (
         return 0.0f;
 
     // return a power proportional to the primary input required power,
-    // or 0 if its less than the minimum required power
-    Float scaled_power = PrimaryInput() * ms_max_required_primary_power[UpgradeLevel()];
-    if (scaled_power < ms_min_required_primary_power[UpgradeLevel()])
+    // or 0 if its less than the minimum required power.
+
+    // secondary fire (super-blast) overrides primary fire
+    Float input = PrimaryInput();
+    Float factor = 1.0f;
+    if (SecondaryInput() > 0.0f)
+    {
+        input = SecondaryInput();
+        factor = ms_blast_mode_power_factor;
+    }
+
+    Float scaled_power = input * factor * ms_max_required_power[UpgradeLevel()];
+    if (scaled_power < factor * ms_min_required_power[UpgradeLevel()])
         return 0.0f;
     else
         return scaled_power;
@@ -484,7 +496,21 @@ bool FlameThrower::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(power <= ms_max_required_primary_power[UpgradeLevel()]);
+    // secondary fire (super-blast) overrides primary fire
+    Float input = PrimaryInput();
+    Float power_factor = 1.0f;
+    Float damage_factor = 1.0f;
+    if (SecondaryInput() > 0.0f)
+    {
+        input = SecondaryInput();
+        power_factor = ms_blast_mode_power_factor;
+        damage_factor = ms_blast_mode_damage_factor;
+    }
+
+    Float min_required_power = power_factor * ms_min_required_power[UpgradeLevel()];
+    Float max_required_power = power_factor * ms_max_required_power[UpgradeLevel()];
+
+    ASSERT1(power <= max_required_power);
 
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -492,22 +518,24 @@ bool FlameThrower::Activate (
         return false;
 
     // don't fire if not enough power was supplied
-    if (power < ms_min_required_primary_power[UpgradeLevel()])
+    if (power < min_required_power)
         return false;
 
     ASSERT1(power >= 0.0f);
-    ASSERT1(PrimaryInput() > 0.0f);
+    ASSERT1(input > 0.0f);
 
     Float max_damage_per_fireball =
-        IsMaxDamagePerFireballOverridden() ?
-        m_max_damage_per_fireball_override :
-        ms_max_damage_per_fireball[UpgradeLevel()];
+        damage_factor *
+            (IsMaxDamagePerFireballOverridden() ?
+             m_max_damage_per_fireball_override :
+             ms_max_damage_per_fireball[UpgradeLevel()]);
     ASSERT1(max_damage_per_fireball > 0.0f);
 
     Float final_fireball_size =
-        IsFinalFireballSizeOverridden() ?
-        m_final_fireball_size_override :
-        ms_final_fireball_size[UpgradeLevel()];
+        damage_factor *
+            (IsFinalFireballSizeOverridden() ?
+            m_final_fireball_size_override :
+            ms_final_fireball_size[UpgradeLevel()]);
     ASSERT1(final_fireball_size > 0.0f);
 
     // fire the weapon
@@ -516,7 +544,7 @@ bool FlameThrower::Activate (
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation() + 2.0f * MuzzleDirection(), // the extra is just so we don't fry ourselves
         ms_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
-        power / ms_max_required_primary_power[UpgradeLevel()] * max_damage_per_fireball,
+        power / max_required_power * max_damage_per_fireball,
         max_damage_per_fireball,
         final_fireball_size,
         1.0f,

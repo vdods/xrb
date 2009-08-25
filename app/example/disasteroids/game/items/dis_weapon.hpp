@@ -290,11 +290,13 @@ public:
 private:
 
     static Float const ms_muzzle_speed[UPGRADE_LEVEL_COUNT];
-    static Float const ms_min_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_max_required_primary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_min_required_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_max_required_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_max_damage_per_fireball[UPGRADE_LEVEL_COUNT];
     static Float const ms_final_fireball_size[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+    static Float const ms_blast_mode_power_factor;
+    static Float const ms_blast_mode_damage_factor;
     Float m_time_last_fired;
     Float m_max_damage_per_fireball_override;
     Float m_final_fireball_size_override;
