@@ -103,7 +103,7 @@ GameWidget::GameWidget (
 
         m_world_frame_time_label =
             new ValueLabel<Uint32>(
-                "%u ms (world frame)",
+                "%u ms (world)",
                 Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "world frame time label");
@@ -112,7 +112,7 @@ GameWidget::GameWidget (
 
         m_gui_frame_time_label =
             new ValueLabel<Uint32>(
-                "%u ms (gui processing)",
+                "%u ms (gui process)",
                 Util::TextToUint<Uint32>,
                 m_debug_info_layout,
                 "gui frame time label");
@@ -136,6 +136,24 @@ GameWidget::GameWidget (
                 "entity count label");
         m_entity_count_label->SetIsHeightFixedToTextHeight(true);
         m_entity_count_label->SetAlignment(Dim::X, RIGHT);
+
+        m_bind_texture_call_count_label =
+            new ValueLabel<Uint32>(
+                "%u bind texture calls",
+                Util::TextToUint<Uint32>,
+                m_debug_info_layout,
+                "bind texture call count label");
+        m_bind_texture_call_count_label->SetIsHeightFixedToTextHeight(true);
+        m_bind_texture_call_count_label->SetAlignment(Dim::X, RIGHT);
+
+        m_bind_texture_call_hit_percent_label =
+            new ValueLabel<Uint32>(
+                "%u%% bind texture hit",
+                Util::TextToUint<Uint32>,
+                m_debug_info_layout,
+                "bind texture call hit percent label");
+        m_bind_texture_call_hit_percent_label->SetIsHeightFixedToTextHeight(true);
+        m_bind_texture_call_hit_percent_label->SetAlignment(Dim::X, RIGHT);
 
         m_framerate_label =
             new ValueLabel<Float>(
@@ -435,6 +453,18 @@ void GameWidget::SetEntityCount (Uint32 const entity_count)
 {
     ASSERT1(m_entity_count_label != NULL);
     m_entity_count_label->SetValue(entity_count);
+}
+
+void GameWidget::SetBindTextureCallCount (Uint32 bind_texture_call_count)
+{
+    ASSERT1(m_bind_texture_call_count_label != NULL);
+    m_bind_texture_call_count_label->SetValue(bind_texture_call_count);
+}
+
+void GameWidget::SetBindTextureCallHitPercent (Uint32 bind_texture_call_hit_percent)
+{
+    ASSERT1(m_bind_texture_call_hit_percent_label != NULL);
+    m_bind_texture_call_hit_percent_label->SetValue(bind_texture_call_hit_percent);
 }
 
 void GameWidget::SetFramerate (Float const framerate)

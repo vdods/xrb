@@ -13,7 +13,6 @@
 #include <stdarg.h>
 
 #include "xrb_gl.hpp"
-#include "xrb_render.hpp"
 #include "xrb_screen.hpp"
 
 namespace Xrb

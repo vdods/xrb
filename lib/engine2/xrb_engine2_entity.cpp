@@ -17,7 +17,6 @@
 #include "xrb_engine2_quadtree.hpp"
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
-#include "xrb_render.hpp"
 #include "xrb_serializer.hpp"
 
 namespace Xrb

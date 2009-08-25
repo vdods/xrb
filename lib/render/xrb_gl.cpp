@@ -10,16 +10,15 @@
 
 #include "xrb_gl.hpp"
 
-#include "xrb_texture.hpp"
+#include "xrb_color.hpp"
 #include "xrb_gltexture.hpp"
+#include "xrb_texture.hpp"
 
 namespace Xrb
 {
 
 namespace
 {
-
-GLTexture *g_gltexture_opaque_white = NULL;
 
 void CheckForExtension (char const *extension_name)
 {
@@ -35,19 +34,19 @@ void CheckForExtension (char const *extension_name)
 
 } // end of anonymous namespace
 
-GLTexture const &GL::GLTexture_OpaqueWhite ()
+Gl::Gl ()
+    :
+    m_gltexture_opaque_white(NULL),
+    m_gltexture_bound_to_unit_0(NULL)
 {
-    ASSERT1(g_gltexture_opaque_white != NULL && "You must call GL::Initialize before this function");
-    return *g_gltexture_opaque_white;
-}
+    ResetBindTextureCallCounts();
 
-void GL::Initialize ()
-{
     // print some useful info
-    fprintf(stderr, "GL::Initialize();\n");
+    fprintf(stderr, "OpenGL initialization\n");
     fprintf(stderr, "    GL_VENDOR = \"%s\"\n", glGetString(GL_VENDOR));
     fprintf(stderr, "    GL_RENDERER = \"%s\"\n", glGetString(GL_RENDERER));
     fprintf(stderr, "    GL_VERSION = \"%s\"\n", glGetString(GL_VERSION));
+    fprintf(stderr, "    GL_MAX_TEXTURE_SIZE = %d\n", Integer(GL_MAX_TEXTURE_SIZE));
 
     // check for certain extensions and values
     {
@@ -59,8 +58,6 @@ void GL::Initialize ()
 
     // stuff related to texture byte order and alignment.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//     glPixelStorei(GL_PACK_LSB_FIRST, 0);     // the opengl docs say the initial value is 0 anyway
-//     glPixelStorei(GL_UNPACK_LSB_FIRST, 0);   // the opengl docs say the initial value is 0 anyway
 
     // initialize the singleton helper texture(s)
     {
@@ -69,14 +66,13 @@ void GL::Initialize ()
         opaque_white->Data()[1] = 255;
         opaque_white->Data()[2] = 255;
         opaque_white->Data()[3] = 255;
-        g_gltexture_opaque_white = GLTexture::Create(opaque_white);
+        m_gltexture_opaque_white = GLTexture::Create(opaque_white);
     }
 
     // general initialization and mode setup
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
@@ -84,6 +80,7 @@ void GL::Initialize ()
     glDepthFunc(GL_LEQUAL);
 
     // set up the blending function for correct alpha blending
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     // only bother drawing pixels with a nonzero alpha value.
     // this was moved here from Engine2::VisibilityQuadTree::Draw*
@@ -165,18 +162,25 @@ void GL::Initialize ()
         // since that's all it will ever use.  this will have no
         // effect on the above texture unit operation, but is
         // required for the texture unit to activate.
-        glBindTexture(GL_TEXTURE_2D, GLTexture_OpaqueWhite().Handle());
+        glBindTexture(GL_TEXTURE_2D, m_gltexture_opaque_white->Handle());
     }
 
     glActiveTexture(GL_TEXTURE0);
 }
 
-bool GL::Boolean (GLenum name)
+Gl::~Gl ()
+{
+    fprintf(stderr, "OpenGL shutdown\n");
+
+    DeleteAndNullify(m_gltexture_opaque_white);
+}
+
+bool Gl::Boolean (GLenum name)
 {
     return Integer(name) != 0;
 }
 
-GLint GL::Integer (GLenum name)
+GLint Gl::Integer (GLenum name)
 {
     // this may not be a comprehensive check against all larger-than-4-return-value
     // integers -- it was based on the openGL 2.1 man page for glGet.  these
@@ -200,7 +204,7 @@ GLint GL::Integer (GLenum name)
     return integer[0];
 }
 
-void GL::SetClipRect (ScreenCoordRect const &clip_rect)
+void Gl::SetClipRect (ScreenCoordRect const &clip_rect)
 {
     ASSERT1(clip_rect.IsValid());
 
@@ -220,6 +224,48 @@ void GL::SetClipRect (ScreenCoordRect const &clip_rect)
         clip_rect.Bottom(),
         clip_rect.Width(),
         clip_rect.Height());
+}
+
+void Gl::SetupTextureUnits (
+    GLTexture const *texture_to_bind_to_unit_0,
+    Color const &color_mask,
+    Color const &color_bias)
+{
+    ASSERT1(texture_to_bind_to_unit_0 != NULL);
+
+    // set up texture unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);
+    if (texture_to_bind_to_unit_0 != m_gltexture_bound_to_unit_0)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture_to_bind_to_unit_0->Handle());
+        m_gltexture_bound_to_unit_0 = texture_to_bind_to_unit_0;
+        ++m_bind_texture_call_miss_count;
+    }
+    else
+    {
+        ++m_bind_texture_call_hit_count;
+    }
+    // due to limitations in the PowerVR MBX platform, (see
+    // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/
+    //          OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
+    // the value of GL_TEXTURE_ENV_COLOR must be the same for both texture
+    // units.  but in texture unit 0, we don't actually use the value of
+    // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+    glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
+
+    // set up texture unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glEnable(GL_TEXTURE_2D);
+    // TODO -- assert that the opaque white texture is bound
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+}
+
+void Gl::ResetBindTextureCallCounts ()
+{
+    m_bind_texture_call_hit_count = 0;
+    m_bind_texture_call_miss_count = 0;
 }
 
 } // end of namespace Xrb

@@ -1,11 +1,9 @@
 # KDevelop Custom Project File List
-Doxyfile
 Makefile.am
 README
 TODO
 app
 app/benchmark
-app/benchmark/benchmark.vcproj
 app/benchmark/bm_commandlineoptions.cpp
 app/benchmark/bm_commandlineoptions.hpp
 app/benchmark/bm_config.cpp

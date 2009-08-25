@@ -12,6 +12,7 @@
 
 #include "xrb.hpp"
 
+#include "xrb_gl.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
 #include "xrb_keymap.hpp"
@@ -32,10 +33,19 @@ namespace
     Pal *g_pal = NULL;
     // ResourceLibrary singleton -- loads and manages reference counted assets
     ResourceLibrary *g_resource_library = NULL;
+    // Gl singleton -- mainly exists to implement texture atlases
+    Gl *g_gl = NULL;
 
     // indicates if Singleton::Initialize has been called
     bool g_is_initialized = false;
 } // end of namespace
+
+Gl &Singleton::Gl ()
+{
+    ASSERT1(g_is_initialized && "can't use Singleton::Gl() before Singleton::Initialize()");
+    ASSERT1(g_gl != NULL);
+    return *g_gl;
+}
 
 InputState &Singleton::InputState ()
 {
@@ -95,6 +105,8 @@ void Singleton::Shutdown ()
 
     fprintf(stderr, "Singleton::Shutdown();\n");
 
+    ASSERT1(g_gl == NULL && "you must Singleton::ShutdownGl() first (Screen takes care of this -- maybe you didn't delete your Screen object");
+
     // shutdown in reverse order as init
 
     DeleteAndNullify(g_inputstate);
@@ -103,6 +115,18 @@ void Singleton::Shutdown ()
     DeleteAndNullify(g_pal);
 
     g_is_initialized = false;
+}
+
+void Singleton::InitializeGl ()
+{
+    ASSERT1(g_gl == NULL && "can't InitializeGl() twice in a row");
+    g_gl = new Xrb::Gl();
+}
+
+void Singleton::ShutdownGl ()
+{
+    ASSERT1(g_gl != NULL && "can't ShutdownGl() twice in a row");
+    DeleteAndNullify(g_gl);
 }
 
 } // end of namespace Xrb

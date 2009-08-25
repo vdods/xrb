@@ -10,6 +10,7 @@
 
 #include "xrb_render.hpp"
 
+#include "xrb_gl.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_math.hpp"
 
@@ -30,8 +31,8 @@ void Render::DrawLine (
 
     // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
 
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(),
+    Singleton::Gl().SetupTextureUnits(
+        Singleton::Gl().GLTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -64,9 +65,9 @@ void Render::DrawArrow (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
+    Singleton::Gl().SetupTextureUnits(
+        Singleton::Gl().GLTexture_OpaqueWhite(),
+        render_context.MaskedColor(color),
         render_context.ColorBias());
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -105,9 +106,9 @@ void Render::DrawPolygon (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
+    Singleton::Gl().SetupTextureUnits(
+        Singleton::Gl().GLTexture_OpaqueWhite(),
+        render_context.MaskedColor(color),
         render_context.ColorBias());
 
     // convert the angle, which is in degrees, into radians for
@@ -244,9 +245,9 @@ void Render::DrawCircularArc (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
+    Singleton::Gl().SetupTextureUnits(
+        Singleton::Gl().GLTexture_OpaqueWhite(),
+        render_context.MaskedColor(color),
         render_context.ColorBias());
 
     // TODO: is it possible to bound facet_count and use a static array?  (maybe not,
@@ -282,9 +283,9 @@ void Render::DrawScreenRect (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    SetupTextureUnits(
-        GL::GLTexture_OpaqueWhite().Handle(), 
-        render_context.MaskedColor(color), 
+    Singleton::Gl().SetupTextureUnits(
+        Singleton::Gl().GLTexture_OpaqueWhite(),
+        render_context.MaskedColor(color),
         render_context.ColorBias());
 
     {
@@ -315,7 +316,7 @@ void Render::DrawScreenRect (
 
 void Render::DrawScreenRectTexture (
     RenderContext const &render_context,
-    GLTexture const *const gl_texture,
+    GLTexture const *const gltexture,
     ScreenCoordRect const &screen_rect,
     FloatSimpleTransform2 const &transformation)
 {
@@ -325,9 +326,9 @@ void Render::DrawScreenRectTexture (
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    SetupTextureUnits(
-        gl_texture->Handle(), 
-        render_context.ColorMask(), 
+    Singleton::Gl().SetupTextureUnits(
+        gltexture,
+        render_context.ColorMask(),
         render_context.ColorBias());
 
     {
@@ -367,30 +368,6 @@ void Render::DrawScreenRectTexture (
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
-}
-
-void Render::SetupTextureUnits (
-    GLuint gltexture_handle, 
-    Color const &color_mask,
-    Color const &color_bias)
-{
-    // set up texture unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, gltexture_handle);
-    // due to limitations in the PowerVR MBX platform, (see
-    // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
-    // the value of GL_TEXTURE_ENV_COLOR must be the same for both texture
-    // units.  but in texture unit 0, we don't actually use the value of
-    // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
-    glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
-
-    // set up texture unit 1
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    // TODO -- assert that the opaque white texture is bound
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
 }
 
 } // end of namespace Xrb

@@ -186,6 +186,15 @@ void Master::Run ()
             m_game_widget->SetWorldFrameTime(world_frame_time);
             m_game_widget->SetGUIFrameTime(gui_frame_time);
             m_game_widget->SetRenderFrameTime(render_frame_time);
+
+            Uint32 bind_texture_call_count = Singleton::Gl().BindTextureCallCount();
+            Uint32 bind_texture_call_hit_percent = 100;
+            if (bind_texture_call_count != 0)
+                bind_texture_call_hit_percent = 100 * Singleton::Gl().BindTextureCallHitCount() / bind_texture_call_count;
+            m_game_widget->SetBindTextureCallCount(bind_texture_call_count);
+            m_game_widget->SetBindTextureCallHitPercent(bind_texture_call_hit_percent);
+            Singleton::Gl().ResetBindTextureCallCounts();
+
             m_game_widget->SetEntityCount(m_game_world->EntityCount());
         }
     }

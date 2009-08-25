@@ -20,6 +20,7 @@
 namespace Xrb
 {
 
+class Gl;
 class InputState;
 class KeyMap;
 class Pal;
@@ -35,6 +36,9 @@ typedef Pal *(*PalFactory)();
   */
 namespace Singleton
 {
+    /** @brief Returns a reference to the Gl singleton object.
+      */
+    Gl &Gl ();
     /** @brief Returns a reference to the InputState singleton object.
       */
     InputState &InputState ();
@@ -73,6 +77,15 @@ namespace Singleton
       * @brief Shuts down the singleton objects.
       */
     void Shutdown ();
+
+    /** This is done automatically by Screen.
+      * @brief Initializes the openGL-controlling singleton.
+      */
+    void InitializeGl ();
+    /** This is done automatically by Screen.
+      * @brief Shuts down the openGL-controlling singleton.
+      */
+    void ShutdownGl ();
 } // end of namespace Singleton
 
 } // end of namespace Xrb

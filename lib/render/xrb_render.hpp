@@ -14,7 +14,6 @@
 #include "xrb.hpp"
 
 #include "xrb_color.hpp"
-#include "xrb_gl.hpp"
 #include "xrb_matrix2.hpp"
 #include "xrb_rect.hpp"
 #include "xrb_rendercontext.hpp"
@@ -189,7 +188,7 @@ namespace Render
     /** Obliterates the modelview matrix.
       * @brief Maps the given texture to the given rectangle.
       * @param render_context The required RenderContext.
-      * @param gl_texture A pointer to the GLTexture which should be used.
+      * @param gltexture A pointer to the GLTexture which should be used.
       * @param screen_rect The screen rectangle to be filled with the texture.
       * @param transformation An optional transformation to the texture
       *                       coordinates (e.g. for flipping horizontally,
@@ -197,30 +196,11 @@ namespace Render
       */
     void DrawScreenRectTexture (
         RenderContext const &render_context,
-        GLTexture const *gl_texture,
+        GLTexture const *gltexture,
         ScreenCoordRect const &screen_rect,
         FloatSimpleTransform2 const &transformation =
             FloatSimpleTransform2::ms_identity);
 
-    // ///////////////////////////////////////////////////////////////////////
-    // Render helper functions
-    // ///////////////////////////////////////////////////////////////////////
-
-    /** This setup is done in so many places that it was deemed 
-      * function-worthy, eliminating possible copy/paste errors.
-      * @brief Sets up texture units 0 and 1 for texturing, color masking
-      *        and color biasing.
-      * @param gltexture_handle The OpenGL texture handle to bind to texture
-      *                         unit 0.
-      * @param color_mask The masking color modulate the bound texture with.
-      * @param color_bias The color bias to interpolate the results of
-      *                   texture unit 0 with.
-      * @note When this function returns, texture unit 1 will be active.
-      */
-    void SetupTextureUnits (
-        GLuint gltexture_handle,
-        Color const &color_mask,
-        Color const &color_bias); 
 } // end of namespace Render
 
 } // end of namespace Xrb

@@ -235,8 +235,8 @@ void MapEditor2::Polygon::WeldSelectedVertices (
 
 void MapEditor2::Polygon::Draw () const
 {
-    ASSERT1(GL::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
-    ASSERT1(GL::Boolean(GL_TEXTURE_2D));
+    ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
+    ASSERT1(Gl::Boolean(GL_TEXTURE_2D));
 
     if (!m_texture.IsValid())
         return;
@@ -260,8 +260,8 @@ void MapEditor2::Polygon::Draw () const
 
 void MapEditor2::Polygon::DrawMetrics () const
 {
-    ASSERT1(GL::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
-    ASSERT1(!GL::Boolean(GL_TEXTURE_2D));
+    ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
+    ASSERT1(!Gl::Boolean(GL_TEXTURE_2D));
 
     glBegin(GL_LINE_LOOP);
 

@@ -39,7 +39,7 @@ public:
       */
     virtual ~AsciiFont ()
     {
-        Delete(m_gl_texture);
+        Delete(m_gltexture);
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ protected:
         :
         Font(font_face_path, pixel_height)
     {
-        m_gl_texture = NULL;
+        m_gltexture = NULL;
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ private:
     // cached kerning data -- all possible pairs of glyphs
     FontCoord m_kern_pair_26_6[ms_rendered_glyph_count*ms_rendered_glyph_count];
     // pointer to the GLTexture containing the font bitmap
-    GLTexture *m_gl_texture;
+    GLTexture *m_gltexture;
 }; // end of class AsciiFont
 
 } // end of namespace Xrb

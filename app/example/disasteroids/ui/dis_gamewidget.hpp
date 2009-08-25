@@ -58,6 +58,8 @@ public:
     void SetGUIFrameTime (Uint32 gui_frame_time);
     void SetRenderFrameTime (Uint32 render_frame_time);
     void SetEntityCount (Uint32 entity_count);
+    void SetBindTextureCallCount (Uint32 bind_texture_call_count);
+    void SetBindTextureCallHitPercent (Uint32 bind_texture_call_hit_percent);
     void SetFramerate (Float framerate);
 
     void SetMineralInventory (Uint8 mineral_index, Float mineral_inventory);
@@ -86,6 +88,8 @@ private:
     ValueLabel<Uint32> *m_gui_frame_time_label;
     ValueLabel<Uint32> *m_render_frame_time_label;
     ValueLabel<Uint32> *m_entity_count_label;
+    ValueLabel<Uint32> *m_bind_texture_call_count_label;
+    ValueLabel<Uint32> *m_bind_texture_call_hit_percent_label;
     ValueLabel<Float> *m_framerate_label;
 
     Layout *m_stats_and_inventory_layout;

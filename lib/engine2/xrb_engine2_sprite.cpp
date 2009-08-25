@@ -11,7 +11,7 @@
 #include "xrb_engine2_sprite.hpp"
 
 #include "xrb_gl.hpp"
-#include "xrb_render.hpp"
+#include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
 namespace Xrb
@@ -56,7 +56,7 @@ void Engine2::Sprite::Draw (
         return;
 
     // don't do anything if there's no texture
-    if (!m_texture.IsValid())
+    if (!m_gltexture.IsValid())
         return;
 
     // set up the gl modelview matrix
@@ -84,7 +84,7 @@ void Engine2::Sprite::Draw (
     Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    Render::SetupTextureUnits(m_texture->Handle(), color_mask, color_bias);
+    Singleton::Gl().SetupTextureUnits(*m_gltexture, color_mask, color_bias);
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
@@ -142,14 +142,14 @@ Engine2::Sprite::Sprite (Resource<GLTexture> const &texture)
     Object(OT_SPRITE),
     m_physical_size_ratios(1.0f, 1.0f)
 {
-    m_texture = texture;
+    m_gltexture = texture;
     m_is_round = true;
 }
 
 void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
-    m_texture =
+    m_gltexture =
         Singleton::ResourceLibrary().LoadPath<GLTexture>(
             GLTexture::Create,
             serializer.ReadAggregate<std::string>());
@@ -157,15 +157,15 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
     serializer.ReadAggregate<FloatVector2>(m_physical_size_ratios);
     IndicateRadiiNeedToBeRecalculated();
 
-    ASSERT1(m_texture.IsValid());
+    ASSERT1(m_gltexture.IsValid());
 }
 
 void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
 {
-    ASSERT1(m_texture.IsValid());
+    ASSERT1(m_gltexture.IsValid());
 
     // write out the guts
-    serializer.WriteAggregate<std::string>(m_texture.Path());
+    serializer.WriteAggregate<std::string>(m_gltexture.Path());
     serializer.Write<bool>(m_is_round);
     serializer.WriteAggregate<FloatVector2>(m_physical_size_ratios);
 }
@@ -202,7 +202,7 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
     Sprite const *sprite = DStaticCast<Sprite const *>(object);
     ASSERT1(sprite != NULL);
 
-    m_texture = sprite->m_texture;
+    m_gltexture = sprite->m_gltexture;
     m_is_round = sprite->m_is_round;
     m_physical_size_ratios = sprite->m_physical_size_ratios;
     IndicateRadiiNeedToBeRecalculated();

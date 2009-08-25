@@ -77,8 +77,8 @@ bool Engine2::Polygon::IsConvex () const
 
 void Engine2::Polygon::Draw () const
 {
-    ASSERT1(GL::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
-    ASSERT1(GL::Boolean(GL_TEXTURE_2D));
+    ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
+    ASSERT1(Gl::Boolean(GL_TEXTURE_2D));
 
     glBindTexture(GL_TEXTURE_2D, m_texture->Handle());
 

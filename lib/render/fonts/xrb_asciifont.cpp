@@ -17,7 +17,6 @@
 #include "xrb_gl.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_pal.hpp"
-#include "xrb_render.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_texture.hpp"
 #include "xrb_util.hpp"
@@ -113,8 +112,8 @@ AsciiFont *AsciiFont::CreateFromCache (
         if (!serializer.IsAtEnd())
             throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
 
-        retval->m_gl_texture = GLTexture::Create(texture);
-        ASSERT1(retval->m_gl_texture != NULL);
+        retval->m_gltexture = GLTexture::Create(texture);
+        ASSERT1(retval->m_gltexture != NULL);
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
     }
@@ -145,8 +144,8 @@ AsciiFont *AsciiFont::Create (
     retval->m_baseline_height = baseline_height;
     memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
     memcpy(retval->m_kern_pair_26_6, kern_pair_26_6, sizeof(retval->m_kern_pair_26_6));
-    retval->m_gl_texture = GLTexture::Create(font_texture);
-    ASSERT1(retval->m_gl_texture != NULL);
+    retval->m_gltexture = GLTexture::Create(font_texture);
+    ASSERT1(retval->m_gltexture != NULL);
 
     return retval;
 }
@@ -339,7 +338,7 @@ void AsciiFont::GenerateWordWrappedString (
 
 void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
 {
-    ASSERT1(m_gl_texture != NULL);
+    ASSERT1(m_gltexture != NULL);
 
     if (render_context.MaskAndBiasWouldResultInNoOp())
         return;
@@ -348,8 +347,8 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glPushMatrix();
     glLoadIdentity();
 
-    Render::SetupTextureUnits(
-        m_gl_texture->Handle(),
+    Singleton::Gl().SetupTextureUnits(
+        m_gltexture,
         render_context.ColorMask(),
         render_context.ColorBias());
 
@@ -361,8 +360,8 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glPushMatrix();
     glLoadIdentity();
     glScalef(
-        1.0f / m_gl_texture->Width(),
-        1.0f / m_gl_texture->Height(),
+        1.0f / m_gltexture->Width(),
+        1.0f / m_gltexture->Height(),
         1.0f);
 
     // enable vertex and texture coord arrays so we can draw with glDrawArrays
@@ -379,7 +378,7 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // pop the texture matrix
-    ASSERT1(GL::Integer(GL_MATRIX_MODE) == GL_TEXTURE);
+    ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_TEXTURE);
     glPopMatrix();
 
     // pop the modelview matrix

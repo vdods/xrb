@@ -30,7 +30,8 @@ Screen::~Screen ()
     ASSERT1(OwnerEventQueue() != NULL);
     delete OwnerEventQueue();
     SetOwnerEventQueue(NULL);
-    // tell the Pal to shutdown the video (SDLPal doesn't actually do anything here)
+
+    Singleton::ShutdownGl();
     Singleton::Pal().ShutdownVideo();
 }
 
@@ -48,7 +49,7 @@ Screen *Screen::Create (
     if (Singleton::Pal().InitializeVideo(width, height, bit_depth, fullscreen) != Pal::SUCCESS)
         return NULL;
 
-    GL::Initialize();
+    Singleton::InitializeGl();
 
     // it is important that all the video init and GL init
     // happens before this constructor, because the Widget constructor
@@ -82,9 +83,9 @@ void Screen::Draw () const
     // NOTE: this method encompasses all drawing.
 
 #if !defined(WIN32)
-    ASSERT1(GL::Integer(GL_MODELVIEW_STACK_DEPTH)  == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
-    ASSERT1(GL::Integer(GL_PROJECTION_STACK_DEPTH) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
-    ASSERT1(GL::Integer(GL_TEXTURE_STACK_DEPTH)    == 1 && "mismatched push/pop for GL_TEXTURE matrix stack");
+    ASSERT1(Gl::Integer(GL_MODELVIEW_STACK_DEPTH)  == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(Gl::Integer(GL_PROJECTION_STACK_DEPTH) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(Gl::Integer(GL_TEXTURE_STACK_DEPTH)    == 1 && "mismatched push/pop for GL_TEXTURE matrix stack");
 #endif // !defined(WIN32)
 
     // clear the color buffer to the Screen's color bias (because that's
@@ -128,9 +129,9 @@ void Screen::Draw () const
     ContainerWidget::Draw(render_context);
 
 #if !defined(WIN32)
-    ASSERT1(GL::Integer(GL_MODELVIEW_STACK_DEPTH)  == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
-    ASSERT1(GL::Integer(GL_PROJECTION_STACK_DEPTH) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
-    ASSERT1(GL::Integer(GL_TEXTURE_STACK_DEPTH)    == 1 && "mismatched push/pop for GL_TEXTURE matrix stack");
+    ASSERT1(Gl::Integer(GL_MODELVIEW_STACK_DEPTH)  == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
+    ASSERT1(Gl::Integer(GL_PROJECTION_STACK_DEPTH) == 1 && "mismatched push/pop for GL_PROJECTION matrix stack");
+    ASSERT1(Gl::Integer(GL_TEXTURE_STACK_DEPTH)    == 1 && "mismatched push/pop for GL_TEXTURE matrix stack");
 #endif // !defined(WIN32)
 
     // all drawing is complete for this frame, so flush it down

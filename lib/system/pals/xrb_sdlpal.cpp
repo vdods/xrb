@@ -323,7 +323,7 @@ Xrb::Pal::Status SDLPal::Initialize ()
     fprintf(stderr, "SDLPal::Initialize();\n");
 
     // initialize video (no parachute so we get core dumps)
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_NOPARACHUTE) < 0)
+    if (SDL_Init(SDL_INIT_NOPARACHUTE) < 0)
     {
         fprintf(stderr, "SDLPal::Initialize(); unable to initialize SDL.  error: %s\n", SDL_GetError());
         return FAILURE;
@@ -345,6 +345,8 @@ void SDLPal::Shutdown ()
 Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height, Xrb::Uint8 bit_depth, bool fullscreen)
 {
     fprintf(stderr, "SDLPal::InitializeVideo();\n");
+
+    SDL_InitSubSystem(SDL_INIT_VIDEO);
 
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -370,11 +372,9 @@ void SDLPal::ShutdownVideo ()
 {
     fprintf(stderr, "SDLPal::ShutdownVideo();\n");
 
-    // nothing needs to be done here -- the SDL_Surface created in
-    // InitializeVideo will be freed by SDL_Quit or any successive
-    // call to SDL_SetVideoMode.
-
-    // though, SDL_QuitSubSystem(SDL_VIDEO) might be appropriate
+    // this should delete the SDL_Surface which was created by
+    // SDL_VideoMode in InitializeVideo.
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 void SDLPal::SetWindowCaption (char const *window_caption)
