@@ -56,7 +56,7 @@ void DamageExplosion::Think (Float time, Float frame_dt)
             GetObjectLayer(),
             Translation(),
             FinalSize(),
-            m_damage_amount,
+            Math::Pow(m_damage_amount, 0.82f), // explosion area radius - linear was too much
             time,
             frame_dt);
 

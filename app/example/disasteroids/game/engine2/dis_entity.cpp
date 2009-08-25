@@ -97,6 +97,21 @@ FloatVector2 Entity::AmbientVelocity (
 }
 
 void Entity::ApplyInterceptCourseAcceleration (
+    Entity *target,
+    Float maximum_thrust_force,
+    bool apply_force_on_target_also,
+    bool reverse_thrust)
+{
+    Polynomial::SolutionSet solution_set;
+    ApplyInterceptCourseAcceleration(
+        target,
+        maximum_thrust_force,
+        apply_force_on_target_also,
+        reverse_thrust,
+        &solution_set);
+}
+
+void Entity::ApplyInterceptCourseAcceleration (
     Entity *const target,
     Float const maximum_thrust_force,
     bool const apply_force_on_target_also,
@@ -104,19 +119,56 @@ void Entity::ApplyInterceptCourseAcceleration (
     Polynomial::SolutionSet *const solution_set)
 {
     ASSERT1(target != NULL);
+    FloatVector2 target_force_vector(
+        ApplyInterceptCourseAcceleration(
+            target->Translation(),
+            target->Velocity(),
+            target->Force() / target->Mass(),
+            maximum_thrust_force,
+            apply_force_on_target_also,
+            reverse_thrust,
+            solution_set));
+    if (apply_force_on_target_also)
+        target->AccumulateForce(target_force_vector);
+}
+
+void Entity::ApplyInterceptCourseAcceleration (
+    FloatVector2 const &target_position,
+    FloatVector2 const &target_velocity,
+    FloatVector2 const &target_acceleration,
+    Float maximum_thrust_force,
+    bool apply_force_on_target_also,
+    bool reverse_thrust)
+{
+    Polynomial::SolutionSet solution_set;
+    ApplyInterceptCourseAcceleration(
+        target_position,
+        target_velocity,
+        target_acceleration,
+        maximum_thrust_force,
+        apply_force_on_target_also,
+        reverse_thrust,
+        &solution_set);
+}
+
+FloatVector2 Entity::ApplyInterceptCourseAcceleration (
+    FloatVector2 const &target_position,
+    FloatVector2 const &target_velocity,
+    FloatVector2 const &target_acceleration,
+    Float const maximum_thrust_force,
+    bool apply_force_on_target_also,
+    bool const reverse_thrust,
+    Polynomial::SolutionSet *const solution_set)
+{
     ASSERT1(maximum_thrust_force > 0.0f);
     ASSERT1(solution_set != NULL);
     ASSERT1(solution_set->empty());
 
-    FloatVector2 p1(
-        target->GetObjectLayer()->AdjustedCoordinates(
-            Translation(),
-            target->Translation()));
-    FloatVector2 p(target->Translation() - p1);
-    FloatVector2 v(target->Velocity() - Velocity());
-    FloatVector2 a(target->Force() / target->Mass());
-    Float interceptor_acceleration =
-        maximum_thrust_force / Mass();
+    FloatVector2 p1(GetObjectLayer()->AdjustedCoordinates(target_position, Translation()));
+    FloatVector2 p(p1 - Translation());
+    FloatVector2 v(target_velocity - Velocity());
+    FloatVector2 a(target_acceleration);
+    Float interceptor_acceleration = maximum_thrust_force / Mass();
 
     Polynomial poly;
     if (apply_force_on_target_also)
@@ -142,11 +194,11 @@ void Entity::ApplyInterceptCourseAcceleration (
 
     // if an intercept course is not possible, just return
     if (solution_set->empty())
-        return;
+        return FloatVector2::ms_zero;
 
     Float T = -1.0f;
     for (Polynomial::SolutionSet::iterator it = solution_set->begin(),
-                                         it_end = solution_set->end();
+                                           it_end = solution_set->end();
          it != it_end;
          ++it)
     {
@@ -160,7 +212,7 @@ void Entity::ApplyInterceptCourseAcceleration (
     solution_set->clear();
     // if an intercept course is not possible in the future, just return.
     if (T <= 0.0f)
-        return;
+        return FloatVector2::ms_zero;
 
     FloatVector2 force_vector;
     if (apply_force_on_target_also)
@@ -178,8 +230,8 @@ void Entity::ApplyInterceptCourseAcceleration (
     // apply_force_on_target_also.  if it is true, apply the force equally
     // in opposite directions.
     AccumulateForce(force_vector);
-    if (apply_force_on_target_also)
-        target->AccumulateForce(-force_vector);
+
+    return apply_force_on_target_also ? -force_vector : FloatVector2::ms_zero;
 }
 
 void Entity::HandleObjectLayerContainment (bool const component_x, bool const component_y)

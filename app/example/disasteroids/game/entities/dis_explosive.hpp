@@ -22,6 +22,7 @@ namespace Dis
 
 // class EMPBombLayer;
 class GrenadeLauncher;
+class MissileLauncher;
 class PhysicsHandler;
 class Ship;
 
@@ -106,14 +107,11 @@ public:
         Uint32 weapon_level,
         EntityReference<Entity> const &owner,
         Float max_health);
-    virtual ~Grenade () { }
+    virtual ~Grenade ();
 
-    inline GrenadeLauncher *OwnerGrenadeLauncher ()
-    {
-        return m_owner_grenade_launcher;
-    }
+    GrenadeLauncher *OwnerGrenadeLauncher () { return m_owner_grenade_launcher; }
 
-    inline void SetOwnerGrenadeLauncher (GrenadeLauncher *const owner_grenade_launcher)
+    void SetOwnerGrenadeLauncher (GrenadeLauncher *owner_grenade_launcher)
     {
         m_owner_grenade_launcher = owner_grenade_launcher;
     }
@@ -160,6 +158,7 @@ class Missile : public Explosive
 public:
 
     Missile (
+        MissileLauncher *owner_missile_launcher,
         Float const time_to_live,
         Float const time_at_birth,
         Float const damage_to_inflict,
@@ -168,28 +167,26 @@ public:
         Uint32 const weapon_level,
         EntityReference<Entity> const &owner,
         Float const max_health,
-        EntityType const entity_type = ET_MISSILE)
-        :
-        Explosive(weapon_level, owner, max_health, max_health, entity_type, CT_SOLID_COLLISION),
-        m_time_to_live(time_to_live),
-        m_time_at_birth(time_at_birth),
-        m_damage_to_inflict(damage_to_inflict),
-        m_damage_radius(damage_radius),
-        m_explosion_radius(explosion_radius)
+        EntityType const entity_type = ET_MISSILE);
+    virtual ~Missile ();
+
+    MissileLauncher *OwnerMissileLauncher () { return m_owner_missile_launcher; }
+
+    void SetOwnerMissileLauncher (MissileLauncher *owner_missile_launcher)
     {
-        ASSERT1(m_time_to_live > 0.0f);
-        ASSERT1(m_damage_to_inflict > 0.0f);
-        ASSERT1(m_explosion_radius > 0.0f);
-        ASSERT1(entity_type == ET_MISSILE ||
-                entity_type == ET_GUIDED_MISSILE ||
-                entity_type == ET_ENEMY_MISSILE ||
-                entity_type == ET_GUIDED_ENEMY_MISSILE);
-        m_first_think = true;
-        SetImmunity(D_COLLISION|D_EXPLOSION);
+        m_owner_missile_launcher = owner_missile_launcher;
     }
-    virtual ~Missile () { }
 
     virtual void Think (Float time, Float frame_dt);
+    virtual void Die (
+        Entity *killer,
+        Entity *kill_medium,
+        FloatVector2 const &kill_location,
+        FloatVector2 const &kill_normal,
+        Float kill_force,
+        DamageType kill_type,
+        Float time,
+        Float frame_dt);
 
     virtual bool CheckIfItShouldDetonate (
         Entity *collider,
@@ -207,6 +204,7 @@ protected:
 
 private:
 
+    MissileLauncher *m_owner_missile_launcher;
     Float const m_time_at_birth;
     Float const m_damage_to_inflict;
     Float const m_damage_radius;
@@ -235,6 +233,7 @@ public:
         EntityType const entity_type = ET_GUIDED_MISSILE)
         :
         Missile(
+            NULL,
             time_to_live,
             time_at_birth,
             damage_to_inflict,

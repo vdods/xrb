@@ -52,6 +52,7 @@ class Interloper;
 class Item;
 class LaserBeam;
 class Missile;
+class MissileLauncher;
 class NoDamageExplosion;
 class Powerup;
 class ReticleEffect;
@@ -118,6 +119,7 @@ Missile *SpawnMissile (
     Float scale_factor,
     Float angle,
     FloatVector2 const &velocity,
+    MissileLauncher *owner_missile_launcher,
     Float time_to_live,
     Float time_at_birth,
     Float damage_to_inflict,

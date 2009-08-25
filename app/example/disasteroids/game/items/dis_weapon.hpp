@@ -77,10 +77,8 @@ private:
     FloatVector2 m_reticle_coordinates;
 }; // end of class Weapon
 
-// - pea shooter (player starts off with this)
-//   * upgrades will be to the projectile speed and damage (the projectiles will
-//     not harm you by default)
-class PeaShooter : public Weapon      //- primary: shoots Ballistic / secondary: charge-up weapon
+// primary: shoots Ballistic -- secondary: charge-up weapon
+class PeaShooter : public Weapon
 {
 public:
 
@@ -156,10 +154,8 @@ private:
 
 class LaserBeam;
 
-// - lasers
-//   * upgrades will be to the power and range (the lasers will not (can't)
-//     harm the player by default)
-class Laser : public Weapon // - primary: trace/LaserBeam / secondary: proximity laser
+// primary: asteroid-cutting laser -- secondary: proximity defense laser
+class Laser : public Weapon
 {
 public:
 
@@ -222,9 +218,8 @@ private:
     LaserBeam *m_laser_beam;
 }; // end of class Laser
 
-// - flame thrower (will not harm the player by default)
-//   * upgrades will be to the power and range
-class FlameThrower : public Weapon // - primary: shoots Fireball / secondary: none (so far)
+// primary: shoots Fireball -- secondary: quick/powerful blast mode
+class FlameThrower : public Weapon
 {
 public:
 
@@ -302,9 +297,7 @@ private:
     Float m_final_fireball_size_override;
 }; // end of class FlameThrower
 
-// - gauss gun (high power instant-hit type weapon)
-//   * upgrades will be to the damage of the projectile and the recharge time
-//     (by default the projectile will not harm you)
+// primary: fires instant-hit weapon -- secondary: none
 class GaussGun : public Weapon
 {
 public:
@@ -382,10 +375,8 @@ private:
 
 class Grenade;
 
-// - grenade launcher
-//   * upgrades will be to the power of the grenade explosion and to make the
-//     explosions not harm you
-class GrenadeLauncher : public Weapon // primary: shoots Grenade / secondary: detonates Grenade
+// primary: shoots Grenade -- secondary: detonates Grenade
+class GrenadeLauncher : public Weapon
 {
 public:
 
@@ -398,10 +389,7 @@ public:
     }
     virtual ~GrenadeLauncher ();
 
-    inline Uint32 ActiveGrenadeCount () const
-    {
-        return m_active_grenade_set.size();
-    }
+    Uint32 ActiveGrenadeCount () const { return m_active_grenade_set.size(); }
 
     void ActiveGrenadeDestroyed (Grenade *active_grenade);
 
@@ -452,10 +440,8 @@ private:
 
 class Missile;
 
-// - missile launcher
-//   * upgrades will be to the projectile speed and explosion power,
-//     dumb-seeking, smart-seeking, to make the explosions not hurt you
-class MissileLauncher : public Weapon // - primary: shoots Missile / secondary: shoots seeking Missile
+// primary: shoots missile -- secondary: guides existing missiles
+class MissileLauncher : public Weapon
 {
 public:
 
@@ -467,14 +453,18 @@ public:
         m_time_last_fired = -1.0f / ms_fire_rate[UpgradeLevel()];
         m_spawn_enemy_missiles = false;
     }
-    virtual ~MissileLauncher () { }
+    virtual ~MissileLauncher ();
 
-    inline bool SpawnEnemyMissiles () const { return m_spawn_enemy_missiles; }
+    bool SpawnEnemyMissiles () const { return m_spawn_enemy_missiles; }
 
-    inline void SetSpawnEnemyMissiles (bool spawn_enemy_missiles)
+    void SetSpawnEnemyMissiles (bool spawn_enemy_missiles)
     {
         m_spawn_enemy_missiles = spawn_enemy_missiles;
     }
+
+    Uint32 ActiveMissileCount () const { return m_active_missile_set.size(); }
+
+    void ActiveMissileDestroyed (Missile *active_missile);
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
@@ -507,27 +497,25 @@ public:
 
 private:
 
+    typedef std::set<Missile *> ActiveMissileSet;
+
     static Float const ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT];
-    static Float const ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT];
+    static Float const ms_maximum_thrust_force[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_required_secondary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT];
-    static Float const ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_damage_amount[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_damage_radius[UPGRADE_LEVEL_COUNT];
     static Float const ms_missile_health[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+    static Uint32 const ms_max_active_missile_count[UPGRADE_LEVEL_COUNT];
 
+    ActiveMissileSet m_active_missile_set;
     Float m_time_last_fired;
     bool m_spawn_enemy_missiles;
 }; // end of class MissileLauncher
 
-// - EMP blast - disables enemies (maybe with certain exceptions) for a short
-//   time.  fire will cause an EMP explosion out from the player's ship,
-//   disabling enemies which touch it but not the player.  if any ship gets
-//   trapped in the blast radius, it is disabled for a short period of time
-//   (can't move or fire).
-class EMPCore : public Weapon // - primary: EMP explosion / secondary: ?
+// - primary: EMP explosion (disables enemies) -- secondary: none
+class EMPCore : public Weapon 
 {
 public:
 
@@ -656,9 +644,8 @@ private:
 
 class TractorBeam;
 
-// - Tractor - pushes or pulls stuff to/from the ship
-//   - upgrades are to the power, range and size
-class Tractor : public Weapon // - primary: trace/TractorBeam / secondary: proximity tractor
+// primary: pulls -- secondary: pushes
+class Tractor : public Weapon
 {
 public:
 

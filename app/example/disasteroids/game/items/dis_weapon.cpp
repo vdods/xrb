@@ -70,22 +70,21 @@ Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.35f, 1.15f, 
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 200.0f, 200.0f, 200.0f };
 Float const GrenadeLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
 Float const GrenadeLauncher::ms_grenade_damage_to_inflict[UPGRADE_LEVEL_COUNT] = { 30.0f, 50.0f, 70.0f, 100.0f };
-Float const GrenadeLauncher::ms_grenade_damage_radius[UPGRADE_LEVEL_COUNT] = { 40.0f, 45.0f, 50.0f, 60.0f };
+Float const GrenadeLauncher::ms_grenade_damage_radius[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
 Float const GrenadeLauncher::ms_grenade_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15.0f, 15.0f };
 Float const GrenadeLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Uint32 const GrenadeLauncher::ms_max_active_grenade_count[UPGRADE_LEVEL_COUNT] = { 6, 7, 8, 10 };
 
 // MissileLauncher properties
-Float const MissileLauncher::ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 350.0f };
-Float const MissileLauncher::ms_secondary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 100.0f, 125.0f, 150.0f, 175.0f };
-Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
-Float const MissileLauncher::ms_required_secondary_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
-Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
-Float const MissileLauncher::ms_secondary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 2.0f, 1.9f, 1.8f, 1.5f };
-Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 15.0f, 30.0f, 45.0f, 60.0f };
-Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
+Float const MissileLauncher::ms_primary_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 200.0f, 200.0f, 200.0f };
+Float const MissileLauncher::ms_maximum_thrust_force[UPGRADE_LEVEL_COUNT] = { 600.0f, 800.0f, 1000.0f, 1200.0f };
+Float const MissileLauncher::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 120.0f, 240.0f, 480.0f };
+Float const MissileLauncher::ms_primary_missile_time_to_live[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
+Float const MissileLauncher::ms_missile_damage_amount[UPGRADE_LEVEL_COUNT] = { 150.0f, 225.0f, 400.0f, 800.0f };
+Float const MissileLauncher::ms_missile_damage_radius[UPGRADE_LEVEL_COUNT] = { 20.0f, 30.0f, 40.0f, 50.0f };
 Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 17.0f, 20.0f, 25.0f };
-Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 4.0f, 5.0f, 6.5f, 8.0f };
+Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.5f, 3.0f, 4.0f };
+Uint32 const MissileLauncher::ms_max_active_missile_count[UPGRADE_LEVEL_COUNT] = { 3, 4, 6, 8 };
 
 // EMPCore properties
 Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
@@ -760,6 +759,7 @@ bool GrenadeLauncher::Activate (
         return false;
 
     ASSERT1(PrimaryInput() > 0.0f);
+    ASSERT1(ActiveGrenadeCount() < ms_max_active_grenade_count[UpgradeLevel()]);
 
     // fire the weapon -- spawn a Grenade
     ASSERT1(OwnerShip()->GetWorld() != NULL);
@@ -795,20 +795,50 @@ bool GrenadeLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
+MissileLauncher::~MissileLauncher ()
+{
+    for (ActiveMissileSet::iterator it = m_active_missile_set.begin(),
+                                    it_end = m_active_missile_set.end();
+         it != it_end;
+         ++it)
+    {
+        Missile *active_missile = *it;
+        active_missile->SetOwnerMissileLauncher(NULL);
+    }
+    m_active_missile_set.clear();
+}
+
+void MissileLauncher::ActiveMissileDestroyed (Missile *const active_missile)
+{
+    ASSERT1(active_missile != NULL);
+    ASSERT1(active_missile->OwnerMissileLauncher() == this);
+    ASSERT1(ActiveMissileCount() > 0);
+
+    // delete the active missile from the active missile set
+    ActiveMissileSet::iterator it = m_active_missile_set.find(active_missile);
+    ActiveMissileSet::iterator it_end = m_active_missile_set.end();
+    ASSERT1(it != it_end);
+    m_active_missile_set.erase(it);
+
+    active_missile->SetOwnerMissileLauncher(NULL);
+}
+
 Float MissileLauncher::PowerToBeUsedBasedOnInputs (
     Float const time,
     Float const frame_dt) const
 {
+    // can't fire if the maximum number of active missiles has been reached
+    if (ActiveMissileCount() >= ms_max_active_missile_count[UpgradeLevel()])
+        return false;
+
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
     if (time < m_time_last_fired + 1.0f / ms_fire_rate[UpgradeLevel()])
         return 0.0f;
 
-    // primary fire overrides secondary fire.
+    // secondary fire takes no power, so primary fire is all that matters
     if (PrimaryInput() > 0.0f)
         return ms_required_primary_power[UpgradeLevel()];
-    else if (SecondaryInput() > 0.0f)
-        return ms_required_secondary_power[UpgradeLevel()];
     else
         return 0.0f;
 }
@@ -818,28 +848,50 @@ bool MissileLauncher::Activate (
     Float const time,
     Float const frame_dt)
 {
-    ASSERT1(
-        power
-        <=
-        Max(ms_required_primary_power[UpgradeLevel()],
-            ms_required_secondary_power[UpgradeLevel()]));
+    ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
-    // primary takes precedence over secondary fire
+    // it's possible to fire primary and secondary simultaneously
+    if (SecondaryInput() > 0.0f)
+    {
+        // set each active missile on an intercept course with the player's
+        // mouse cursor (poor mouse cursor!)
+        for (ActiveMissileSet::iterator it = m_active_missile_set.begin(),
+                                        it_end = m_active_missile_set.end();
+             it != it_end;
+             ++it)
+        {
+            Missile *active_missile = *it;
+            ASSERT1(active_missile != NULL);
+            ASSERT1(active_missile->OwnerMissileLauncher() == this);
+            // maybe we could detect what enemy the ship is aiming at, and then
+            // use that entity as a target (see Entity::ApplyInterceptCourseAcceleration)
+            active_missile->ApplyInterceptCourseAcceleration(
+                ReticleCoordinates(),
+                FloatVector2::ms_zero, // velocity
+                FloatVector2::ms_zero, // accel
+                ms_maximum_thrust_force[UpgradeLevel()],
+                false,                 // apply_force_on_target_also
+                false);                // reverse_thrust
+        }
+    }
+
     if (PrimaryInput() > 0.0f &&
         power >= ms_required_primary_power[UpgradeLevel()])
     {
         // fire the weapon -- spawn a Missile
+        ASSERT1(ActiveMissileCount() < ms_max_active_missile_count[UpgradeLevel()]);
         ASSERT1(OwnerShip()->GetWorld() != NULL);
         ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
 
-        Float const missile_scale_factor = 10.0f;
-        SpawnMissile(
+        Float const missile_scale_factor = 7.0f;
+        Missile *missile = SpawnMissile(
             OwnerShip()->GetWorld(),
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
             missile_scale_factor,
             Math::Atan(MuzzleDirection()),
             ms_primary_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
+            this,
             ms_primary_missile_time_to_live[UpgradeLevel()],
             time,
             ms_missile_damage_amount[UpgradeLevel()],
@@ -850,35 +902,9 @@ bool MissileLauncher::Activate (
             ms_missile_health[UpgradeLevel()],
             m_spawn_enemy_missiles);
 
-        // update the last time fired
-        m_time_last_fired = time;
-        // the weapon fired successfully
-        return true;
-    }
-    else if (SecondaryInput() > 0.0f &&
-             power == ms_required_secondary_power[UpgradeLevel()])
-    {
-        // fire the weapon -- spawn a GuidedMissile
-        ASSERT1(OwnerShip()->GetWorld() != NULL);
-        ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
-
-        Float const missile_scale_factor = 10.0f;
-        SpawnGuidedMissile(
-            OwnerShip()->GetWorld(),
-            OwnerShip()->GetObjectLayer(),
-            MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
-            missile_scale_factor,
-            Math::Atan(MuzzleDirection()),
-            ms_secondary_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
-            ms_secondary_missile_time_to_live[UpgradeLevel()],
-            time,
-            ms_missile_damage_amount[UpgradeLevel()],
-            ms_missile_damage_radius[UpgradeLevel()],
-            2.0f * ms_missile_damage_radius[UpgradeLevel()],
-            UpgradeLevel(),
-            OwnerShip()->GetReference(),
-            ms_missile_health[UpgradeLevel()],
-            m_spawn_enemy_missiles);
+        // add the missile to the active missile set
+        ASSERT1(missile != NULL);
+        m_active_missile_set.insert(missile);
 
         // update the last time fired
         m_time_last_fired = time;

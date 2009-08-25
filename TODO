@@ -35,12 +35,10 @@ DISASTEROIDS:
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak
   or immune against, it should make a particular sound to indicate that.
-- secondary fire for EMP -- ambient tractor beam
 - forget the 4x item status screen.  upgrading should be one way,
   and the inventory should just show what level item it is.  this also
   means you can't skip buying a certain level of something.
   furthermore, make higher upgrade levels, so the madness can continue
-- limited number of active missiles at any given time
 - add key to dump shields into power cells
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
@@ -70,9 +68,9 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- make enemies flash red or yellow when their health is low
+- make enemies flash yellow when their health is low
 - if super-stoke thing is added, that can be indicated by the ship flashing
-  yellow or white or blue or something
+  white or blue or something
 - collapse the world and object layer params in spawning functions to just
   using the object layer (the world should be accessible through it).
 - to limit the length of waves, there can be a time limit after which all
@@ -84,14 +82,12 @@ DISASTEROIDS:
   and fire it, as a reticle homes in on the mouse cursor to indicate when
   it will fire.  charge should be persistent, so if you let go of the fire
   button before the weapon discharged, it should save the power it accumulated.
-  NOTE: this will require a redesign of the power generation system, because
+  NOTE: this might require a redesign of the power generation system, because
   the amount of power to supply to the gauss gun will depend on how much
   power is available.
 - split up high scores into difficulty levels
 - change missiles: they should not be able to flip around at any angle, but
-  only travel in circles (acceleration perpendicular to velocity).  primary
-  fire will fire enemy-seeking missiles, but if you use secondary fire,
-  all your active missiles will home in on your mouse cursor.
+  only travel in circles (acceleration perpendicular to velocity).
   missiles should be made much heavier, so they're not deflected away by
   tractors as easily.
 - add validation to Dis::Config modifiers
@@ -100,8 +96,6 @@ DISASTEROIDS:
 - add "sprint" powerup (or maybe have it be built-in) which would make your
   engines use twice the power, but accelerate 1.5x or 2x or some factor
   better.
-- make the EMP into a weapon that is activated by a key, instead of having
-  to equip it and fire it.
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.
@@ -109,10 +103,10 @@ DISASTEROIDS:
   should have a drone.  maybe they can both have a drone, at obviously
   distinct frequencies.
 ** bugs **
-- when setting fullscreen from the commandline, the options menu
-  fullscreen checkbox isn't checked.
+- when setting options from the commandline, the options menu isn't updated
 - the gauss gun damage location appears to be wrong (on exactly
-  the opposite side of the damagee -- e.g. blowing up asteroids).
+  the opposite side of the damagee -- e.g. blowing up asteroids), and possibly
+  the laser too.
 - there seems to be a bug in the aiming in the front weapon of Demi
 - get non-wrapped ObjectLayers back up and running (because they totally
   don't work in disasteroids)

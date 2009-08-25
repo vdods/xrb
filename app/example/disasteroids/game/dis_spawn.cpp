@@ -249,6 +249,7 @@ Missile *SpawnMissile (
     Float const scale_factor,
     Float const angle,
     FloatVector2 const &velocity,
+    MissileLauncher *owner_missile_launcher,
     Float const time_to_live,
     Float const time_at_birth,
     Float const damage_to_inflict,
@@ -261,6 +262,7 @@ Missile *SpawnMissile (
 {
     Missile *missile =
         new Missile(
+            owner_missile_launcher,
             time_to_live,
             time_at_birth,
             damage_to_inflict,
@@ -281,7 +283,7 @@ Missile *SpawnMissile (
             translation,
             scale_factor,
             angle,
-            5.0f,
+            5.0f, // mass
             velocity,
             0.0f,
             0.1f);

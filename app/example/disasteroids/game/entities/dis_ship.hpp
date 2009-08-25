@@ -38,26 +38,26 @@ public:
     bool IsDisabled () const { return m_disable_time > 0.0f; }
 
     void SetReticleCoordinates (FloatVector2 const &reticle_coordinates);
-    inline void SetEngineRightLeftInput (Sint8 const engine_right_left_input)
+    void SetEngineRightLeftInput (Sint8 const engine_right_left_input)
     {
         ASSERT1(engine_right_left_input >= -SINT8_UPPER_BOUND);
         m_engine_right_left_input = engine_right_left_input;
     }
-    inline void SetEngineUpDownInput (Sint8 const engine_up_down_input)
+    void SetEngineUpDownInput (Sint8 const engine_up_down_input)
     {
         ASSERT1(engine_up_down_input >= -SINT8_UPPER_BOUND);
         m_engine_up_down_input = engine_up_down_input;
     }
-    inline void SetWeaponPrimaryInput (Uint8 const weapon_primary_input)
+    void SetWeaponPrimaryInput (Uint8 const weapon_primary_input)
     {
         m_weapon_primary_input = weapon_primary_input;
     }
-    inline void SetWeaponSecondaryInput (Uint8 const weapon_secondary_input)
+    void SetWeaponSecondaryInput (Uint8 const weapon_secondary_input)
     {
         m_weapon_secondary_input = weapon_secondary_input;
     }
 
-    inline void AccumulateDisableTime (Float const disable_time)
+    void AccumulateDisableTime (Float const disable_time)
     {
         ASSERT1(disable_time > 0.0f);
         m_disable_time += disable_time;
@@ -98,34 +98,32 @@ public:
 
 protected:
 
-    inline FloatVector2 const &ReticleCoordinates () const
-    {
-        return m_reticle_coordinates;
-    }
-    inline Float NormalizedEngineRightLeftInput () const
+    FloatVector2 const &ReticleCoordinates () const { return m_reticle_coordinates; }
+
+    Float NormalizedEngineRightLeftInput () const
     {
         ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_right_left_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }
-    inline Float NormalizedEngineUpDownInput () const
+    Float NormalizedEngineUpDownInput () const
     {
         ASSERT1(m_engine_right_left_input >= -SINT8_UPPER_BOUND);
         return static_cast<Float>(m_engine_up_down_input) /
                static_cast<Float>(SINT8_UPPER_BOUND);
     }
-    inline Float NormalizedWeaponPrimaryInput () const
+    Float NormalizedWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedWeaponSecondaryInput () const
+    Float NormalizedWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
-    inline void AimShipAtReticleCoordinates (Float frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
+    void AimShipAtReticleCoordinates (Float frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
     void AimShipAtCoordinates (FloatVector2 const &coordinates, Float frame_dt);
     virtual void ResetInputs ();
 

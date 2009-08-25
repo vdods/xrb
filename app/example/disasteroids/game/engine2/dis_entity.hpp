@@ -41,9 +41,9 @@ public:
     // public accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline EntityType GetEntityType () const { return m_entity_type; }
-    inline Float NextTimeToThink () const { return m_next_time_to_think; }
-    inline EntityReference<Entity> const &GetReference ()
+    EntityType GetEntityType () const { return m_entity_type; }
+    Float NextTimeToThink () const { return m_next_time_to_think; }
+    EntityReference<Entity> const &GetReference ()
     {
         if (!m_reference.IsValid())
         {
@@ -53,14 +53,14 @@ public:
         }
         return m_reference;
     }
-    inline CollisionType GetCollisionType () const { return m_collision_type; }
-    inline Float Elasticity () const { return m_elasticity; }
-    inline Float Mass () const { return m_mass; }
-    inline FloatVector2 const &Velocity () const { return m_velocity; }
-    inline Float Speed () const { return m_velocity.Length(); }
-    inline FloatVector2 Momentum () const { return m_mass * m_velocity; }
-    inline FloatVector2 const &Force () const { return m_force; }
-    inline Float AngularVelocity () const { return m_angular_velocity; }
+    CollisionType GetCollisionType () const { return m_collision_type; }
+    Float Elasticity () const { return m_elasticity; }
+    Float Mass () const { return m_mass; }
+    FloatVector2 const &Velocity () const { return m_velocity; }
+    Float Speed () const { return m_velocity.Length(); }
+    FloatVector2 Momentum () const { return m_mass * m_velocity; }
+    FloatVector2 const &Force () const { return m_force; }
+    Float AngularVelocity () const { return m_angular_velocity; }
 
     Dis::World *GetWorld () const;
     Dis::PhysicsHandler const *GetPhysicsHandler () const;
@@ -69,7 +69,7 @@ public:
     FloatVector2 AmbientVelocity (
         Float scan_area_radius,
         Entity const *ignore_me) const;
-    static inline bool ShouldApplyCollisionForces (
+    static bool ShouldApplyCollisionForces (
         Entity const *entity1,
         Entity const *entity2)
     {
@@ -93,46 +93,46 @@ public:
     // public modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void SetNextTimeToThink (Float next_time_to_think)
+    void SetNextTimeToThink (Float next_time_to_think)
     {
         m_next_time_to_think = next_time_to_think;
     }
-    inline void SetElasticity (Float const elasticity)
+    void SetElasticity (Float const elasticity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(elasticity));
         m_elasticity = (elasticity >= 0.0f) ? elasticity : 0.0f;
     }
-    inline void SetMass (Float const mass)
+    void SetMass (Float const mass)
     {
         ASSERT1(mass > 0.0f);
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(mass));
         m_mass = mass;
     }
-    inline void SetVelocity (FloatVector2 const &velocity)
+    void SetVelocity (FloatVector2 const &velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity = velocity;
     }
-    inline void SetVelocityComponent (Uint32 const index, Float const value)
+    void SetVelocityComponent (Uint32 const index, Float const value)
     {
         ASSERT1(index <= 1);
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(value));
         m_velocity[index] = value;
     }
-    inline void SetMomentum (FloatVector2 const &momentum)
+    void SetMomentum (FloatVector2 const &momentum)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum[Dim::Y]));
         m_velocity = momentum / m_mass;
     }
-    inline void SetForce (FloatVector2 const &force)
+    void SetForce (FloatVector2 const &force)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]));
         m_force = force;
     }
-    inline void SetAngularVelocity (Float const angular_velocity)
+    void SetAngularVelocity (Float const angular_velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity));
         m_angular_velocity = angular_velocity;
@@ -143,54 +143,63 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     // adds the given vector to the velocity
-    inline void AccumulateVelocity (FloatVector2 const &velocity)
+    void AccumulateVelocity (FloatVector2 const &velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(velocity[Dim::Y]));
         m_velocity += velocity;
     }
     // accumulates velocity, given a momentum impulse
-    inline void AccumulateMomentum (FloatVector2 const &momentum_impulse)
+    void AccumulateMomentum (FloatVector2 const &momentum_impulse)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(momentum_impulse[Dim::Y]));
         m_velocity += momentum_impulse / m_mass;
     }
     // adds the given vector to the accumulating force vector for this frame
-    inline void AccumulateForce (FloatVector2 const &force)
+    void AccumulateForce (FloatVector2 const &force)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::X]));
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(force[Dim::Y]));
         m_force += force;
     }
     // resets the force vector to zero
-    inline void ResetForce ()
+    void ResetForce ()
     {
         m_force = FloatVector2::ms_zero;
     }
     // adds the given value to the angular velocity
-    inline void AccumulateAngularVelocity (Float const angular_velocity)
+    void AccumulateAngularVelocity (Float const angular_velocity)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(angular_velocity));
         m_angular_velocity += angular_velocity;
     }
 
-    inline void ApplyInterceptCourseAcceleration (
+    void ApplyInterceptCourseAcceleration (
         Entity *target,
         Float maximum_thrust_force,
         bool apply_force_on_target_also,
-        bool reverse_thrust)
-    {
-        Polynomial::SolutionSet solution_set;
-        ApplyInterceptCourseAcceleration(
-            target,
-            maximum_thrust_force,
-            apply_force_on_target_also,
-            reverse_thrust,
-            &solution_set);
-    }
+        bool reverse_thrust);
     void ApplyInterceptCourseAcceleration (
         Entity *target,
+        Float maximum_thrust_force,
+        bool apply_force_on_target_also,
+        bool reverse_thrust,
+        Polynomial::SolutionSet *solution_set);
+    void ApplyInterceptCourseAcceleration (
+        FloatVector2 const &target_position,
+        FloatVector2 const &target_velocity,
+        FloatVector2 const &target_acceleration,
+        Float maximum_thrust_force,
+        bool apply_force_on_target_also,
+        bool reverse_thrust);
+    // this one does all the heavy lifting, returning the force vector to
+    // be applied to the target (which will be zero if
+    // apply_force_on_target_also is false).
+    FloatVector2 ApplyInterceptCourseAcceleration (
+        FloatVector2 const &target_position,
+        FloatVector2 const &target_velocity,
+        FloatVector2 const &target_acceleration,
         Float maximum_thrust_force,
         bool apply_force_on_target_also,
         bool reverse_thrust,

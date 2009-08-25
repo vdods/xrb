@@ -109,13 +109,18 @@ Grenade::Grenade (
     Float const max_health)
     :
     Explosive(weapon_level, owner, max_health, max_health, ET_GRENADE, CT_SOLID_COLLISION),
+    m_owner_grenade_launcher(owner_grenade_launcher),
     m_damage_to_inflict(damage_to_inflict),
     m_damage_radius(damage_radius),
     m_explosion_radius(explosion_radius)
 {
     ASSERT1(m_damage_to_inflict > 0.0f);
-    m_owner_grenade_launcher = owner_grenade_launcher;
     SetImmunity(D_COLLISION|D_EXPLOSION);
+}
+
+Grenade::~Grenade ()
+{
+    ASSERT1(m_owner_grenade_launcher == NULL);
 }
 
 void Grenade::Collide (
@@ -145,9 +150,12 @@ void Grenade::Collide (
 
         // figure out the new damage radius, explosion radius and damage to inflict.
         Float scale_factor = Math::Sqrt(1.0f + other_grenade->Mass() / Mass());
+        ASSERT1(scale_factor >= 1.0f);
+        // attenuate the scale a bit, linear was too much.
+        scale_factor = Math::Pow(scale_factor, 0.75f);
         OwnerObject()->Scale(scale_factor);
-        m_damage_radius *= scale_factor;    // maybe this is too much.  maybe use sqrt(scale_factor).
-        m_explosion_radius *= scale_factor; // maybe this is too much.  maybe use sqrt(scale_factor).
+        m_damage_radius *= scale_factor;
+        m_explosion_radius *= scale_factor;
         m_damage_to_inflict += other_grenade->m_damage_to_inflict;
 
         // set the new max health for the new grenade is the sum of the source grenades'
@@ -201,7 +209,11 @@ void Grenade::Die (
     // if there is an owner grenade launcher, signal to it that this
     // grenade has been destroyed
     if (m_owner_grenade_launcher != NULL)
+    {
         m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
+        // ActiveGrenadeDestroyed should have nullified the owner
+        ASSERT1(m_owner_grenade_launcher == NULL);
+    }
 
     Explosive::Die(
         killer,
@@ -259,7 +271,11 @@ void Grenade::Detonate (
     // if there is an owner grenade launcher, signal to it that this
     // grenade has been destroyed
     if (m_owner_grenade_launcher != NULL)
+    {
         m_owner_grenade_launcher->ActiveGrenadeDestroyed(this);
+        // ActiveGrenadeDestroyed should have nullified the owner
+        ASSERT1(m_owner_grenade_launcher == NULL);
+    }
 
     Explosive::Detonate(time, frame_dt);
 }
@@ -267,6 +283,42 @@ void Grenade::Detonate (
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
+
+Missile::Missile (
+    MissileLauncher *owner_missile_launcher,
+    Float const time_to_live,
+    Float const time_at_birth,
+    Float const damage_to_inflict,
+    Float const damage_radius,
+    Float const explosion_radius,
+    Uint32 const weapon_level,
+    EntityReference<Entity> const &owner,
+    Float const max_health,
+    EntityType const entity_type)
+    :
+    Explosive(weapon_level, owner, max_health, max_health, entity_type, CT_SOLID_COLLISION),
+    m_time_to_live(time_to_live),
+    m_owner_missile_launcher(owner_missile_launcher),
+    m_time_at_birth(time_at_birth),
+    m_damage_to_inflict(damage_to_inflict),
+    m_damage_radius(damage_radius),
+    m_explosion_radius(explosion_radius)
+{
+    ASSERT1(m_time_to_live > 0.0f);
+    ASSERT1(m_damage_to_inflict > 0.0f);
+    ASSERT1(m_explosion_radius > 0.0f);
+    ASSERT1(entity_type == ET_MISSILE ||
+            entity_type == ET_GUIDED_MISSILE ||
+            entity_type == ET_ENEMY_MISSILE ||
+            entity_type == ET_GUIDED_ENEMY_MISSILE);
+    m_first_think = true;
+    SetImmunity(D_COLLISION|D_EXPLOSION);
+}
+
+Missile::~Missile ()
+{
+    ASSERT1(m_owner_missile_launcher == NULL);
+}
 
 void Missile::Think (
     Float const time,
@@ -278,8 +330,6 @@ void Missile::Think (
     // if we're dead or have detonated, don't bother thinking
     if (IsDead() || HasDetonated())
         return;
-
-    AccumulateForce(ms_acceleration[WeaponLevel()] * Mass() * Math::UnitVector(Angle()));
 
     // lazily initialize m_initial_velocity with the owner's velocity
     // (if the owner even still exists)
@@ -329,6 +379,39 @@ void Missile::Think (
     }
 }
 
+void Missile::Die (
+    Entity *const killer,
+    Entity *const kill_medium,
+    FloatVector2 const &kill_location,
+    FloatVector2 const &kill_normal,
+    Float const kill_force,
+    DamageType const kill_type,
+    Float const time,
+    Float const frame_dt)
+{
+    if (HasDetonated())
+        return;
+
+    // if there is an owner missile launcher, signal to it that this
+    // missile has been destroyed
+    if (m_owner_missile_launcher != NULL)
+    {
+        m_owner_missile_launcher->ActiveMissileDestroyed(this);
+        // ActiveMissileDestroyed should have nullified the owner
+        ASSERT1(m_owner_missile_launcher == NULL);
+    }
+
+    Explosive::Die(
+        killer,
+        kill_medium,
+        kill_location,
+        kill_normal,
+        kill_force,
+        kill_type,
+        time,
+        frame_dt);
+}
+
 bool Missile::CheckIfItShouldDetonate (
     Entity *const collider,
     Float const time,
@@ -350,6 +433,10 @@ bool Missile::CheckIfItShouldDetonate (
     // don't detonate on ballistics (because then it would make it
     // pointless to try to shoot missiles down with ballistic weapons)
     if (collider->IsBallistic())
+        return false;
+
+    // don't detonate on the missiles owned by the same owner
+    if (collider->GetEntityType() == ET_MISSILE && DStaticCast<Missile *>(collider)->m_owner == m_owner)
         return false;
 
     // don't detonate on the entity that fired this missile
@@ -382,6 +469,15 @@ void Missile::Detonate (
         0.2f,
         time,
         m_owner);
+
+    // if there is an owner missile launcher, signal to it that this
+    // missile has been destroyed
+    if (m_owner_missile_launcher != NULL)
+    {
+        m_owner_missile_launcher->ActiveMissileDestroyed(this);
+        // ActiveMissileDestroyed should have nullified the owner
+        ASSERT1(m_owner_missile_launcher == NULL);
+    }
 
     Explosive::Detonate(time, frame_dt);
 }
