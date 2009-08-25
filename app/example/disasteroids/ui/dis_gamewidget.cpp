@@ -168,7 +168,7 @@ GameWidget::GameWidget (
         m_debug_info_layout->Hide();
         // connect the debug info enabled signal
         SignalHandler::Connect1(
-            m_world_view->SenderIsDebugModeEnabledChanged(),
+            m_world_view->SenderIsGameLoopInfoEnabledChanged(),
             &Transformation::BooleanNegation,
             m_debug_info_layout->ReceiverSetIsHidden());
     }

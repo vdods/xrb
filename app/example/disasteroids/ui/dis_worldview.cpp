@@ -45,6 +45,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     SignalHandler(),
     m_state_machine(this),
     m_sender_player_ship_changed(this),
+    m_sender_is_game_loop_info_enabled_changed(this),
     m_sender_is_debug_mode_enabled_changed(this),
     m_sender_show_controls(this),
     m_sender_hide_controls(this),
@@ -96,6 +97,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_rotation_increment = 15.0f;
     m_rotation_speed = 120.0f;
 
+    m_is_game_loop_info_enabled = false;
     m_is_debug_mode_enabled = false;
     SetDrawBorderGridLines(m_is_debug_mode_enabled);
     SetIsTransformScalingBasedUponWidgetRadius(true);
@@ -113,6 +115,15 @@ void WorldView::SetPlayerShip (PlayerShip *const player_ship)
     {
         m_player_ship = player_ship;
         m_sender_player_ship_changed.Signal(m_player_ship);
+    }
+}
+
+void WorldView::SetIsGameLoopInfoEnabled (bool is_game_loop_info_enabled)
+{
+    if (m_is_game_loop_info_enabled != is_game_loop_info_enabled)
+    {
+        m_is_game_loop_info_enabled = is_game_loop_info_enabled;
+        m_sender_is_game_loop_info_enabled_changed.Signal(m_is_game_loop_info_enabled);
     }
 }
 
@@ -387,25 +398,29 @@ void WorldView::HandleInput (Key::Code const input)
             break;
 */
         case Key::F1:
-            SetIsDebugModeEnabled(!IsDebugInfoEnabled());
+            SetIsGameLoopInfoEnabled(!IsGameLoopInfoEnabled());
             break;
 
         case Key::F2:
-            if (m_player_ship != NULL)
-                m_player_ship->GiveLotsOfMinerals();
+            SetIsDebugModeEnabled(!IsDebugInfoEnabled());
             break;
 
         case Key::F3:
             if (m_player_ship != NULL)
-                m_player_ship->IncrementScore(50000);
+                m_player_ship->GiveLotsOfMinerals();
             break;
 
         case Key::F4:
             if (m_player_ship != NULL)
-                m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
+                m_player_ship->IncrementScore(50000);
             break;
 
         case Key::F5:
+            if (m_player_ship != NULL)
+                m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
+            break;
+
+        case Key::F6:
             if (m_player_ship != NULL && !m_player_ship->IsDead())
                 m_player_ship->Kill(
                     NULL,
