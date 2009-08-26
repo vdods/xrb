@@ -46,7 +46,7 @@ void RadiusDamage (
     EntityReference<Mortal> const &ignore_this_mortal,
     Float time,
     Float frame_dt);
-        
+
 void RadiusKnockback (
     PhysicsHandler *physics_handler,
     Engine2::ObjectLayer *object_layer,
@@ -57,7 +57,7 @@ void RadiusKnockback (
     Float frame_dt);
 
 std::string FormattedTimeString (Float time);
-        
+
 } // end of namespace Dis
 
 #endif // !defined(_DIS_UTIL_HPP_)

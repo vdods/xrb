@@ -44,18 +44,13 @@ bool PhysicsHandler::DoesAreaOverlapAnyEntityInObjectLayer (
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(m_quad_tree != NULL);
-    if (m_main_object_layer->IsWrapped())
-        return m_quad_tree->DoesAreaOverlapAnyEntityWrapped(
-            area_center,
-            area_radius,
-            check_nonsolid_collision_entities,
-            m_main_object_layer->SideLength(),
-            0.5f * m_main_object_layer->SideLength());
-    else
-        return m_quad_tree->DoesAreaOverlapAnyEntity(
-            area_center,
-            area_radius,
-            check_nonsolid_collision_entities);
+    return m_quad_tree->DoesAreaOverlapAnyEntity(
+        area_center,
+        area_radius,
+        check_nonsolid_collision_entities,
+        m_main_object_layer->IsWrapped(),
+        m_main_object_layer->SideLength(),
+        0.5f * m_main_object_layer->SideLength());
 }
 
 void PhysicsHandler::LineTrace (
@@ -70,26 +65,16 @@ void PhysicsHandler::LineTrace (
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(trace_radius >= 0.0f);
     ASSERT1(line_trace_binding_set != NULL);
-
-    if (m_main_object_layer->IsWrapped())
-    {
-        ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->SideLength());
-        m_quad_tree->LineTraceWrapped(
-            trace_start,
-            trace_vector,
-            trace_radius,
-            check_nonsolid_collision_entities,
-            line_trace_binding_set,
-            m_main_object_layer->SideLength(),
-            0.5f * m_main_object_layer->SideLength());
-    }
-    else
-        m_quad_tree->LineTrace(
-            trace_start,
-            trace_vector,
-            trace_radius,
-            check_nonsolid_collision_entities,
-            line_trace_binding_set);
+    ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->SideLength());
+    m_quad_tree->LineTrace(
+        trace_start,
+        trace_vector,
+        trace_radius,
+        check_nonsolid_collision_entities,
+        line_trace_binding_set,
+        m_main_object_layer->IsWrapped(),
+        m_main_object_layer->SideLength(),
+        0.5f * m_main_object_layer->SideLength());
 }
 
 void PhysicsHandler::AreaTrace (
@@ -104,6 +89,7 @@ void PhysicsHandler::AreaTrace (
     ASSERT1(trace_area_radius > 0.0f);
     ASSERT1(area_trace_list != NULL);
 
+    // this is unfortunately necessary
     if (m_main_object_layer->IsWrapped())
     {
         Float object_layer_side_length = m_main_object_layer->SideLength();
@@ -118,21 +104,16 @@ void PhysicsHandler::AreaTrace (
             trace_area_center[Dim::Y] += object_layer_side_length;
         else if (trace_area_center[Dim::Y] > half_object_layer_side_length)
             trace_area_center[Dim::Y] -= object_layer_side_length;
-
-        m_quad_tree->AreaTraceWrapped(
-            trace_area_center,
-            trace_area_radius,
-            check_nonsolid_collision_entities,
-            area_trace_list,
-            m_main_object_layer->SideLength(),
-            0.5f * m_main_object_layer->SideLength());
     }
-    else
-        m_quad_tree->AreaTrace(
-            trace_area_center,
-            trace_area_radius,
-            check_nonsolid_collision_entities,
-            area_trace_list);
+
+    m_quad_tree->AreaTrace(
+        trace_area_center,
+        trace_area_radius,
+        check_nonsolid_collision_entities,
+        area_trace_list,
+        m_main_object_layer->IsWrapped(),
+        m_main_object_layer->SideLength(),
+        0.5f * m_main_object_layer->SideLength());
 }
 
 void PhysicsHandler::AddObjectLayer (Engine2::ObjectLayer *const object_layer)

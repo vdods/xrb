@@ -38,41 +38,29 @@ public:
     bool DoesAreaOverlapAnyEntity (
         FloatVector2 const &area_center,
         Float area_radius,
-        bool check_nonsolid_collision_entities) const;
-    bool DoesAreaOverlapAnyEntityWrapped (
-        FloatVector2 const &area_center,
-        Float area_radius,
         bool check_nonsolid_collision_entities,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length) const;
+        bool is_wrapped = false,
+        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
+        Float half_object_layer_side_length = -1.0f) const;
 
     void LineTrace (
         FloatVector2 const &trace_start,
         FloatVector2 const &trace_vector,
         Float trace_radius,
         bool check_nonsolid_collision_entities,
-        LineTraceBindingSet *line_trace_binding_set);
-    void LineTraceWrapped (
-        FloatVector2 const &trace_start,
-        FloatVector2 const &trace_vector,
-        Float trace_radius,
-        bool check_nonsolid_collision_entities,
         LineTraceBindingSet *line_trace_binding_set,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length);
+        bool is_wrapped = false,
+        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
+        Float half_object_layer_side_length = -1.0f);
 
     void AreaTrace (
         FloatVector2 const &trace_area_center,
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
-        AreaTraceList *area_trace_list);
-    void AreaTraceWrapped (
-        FloatVector2 const &trace_area_center,
-        Float trace_area_radius,
-        bool check_nonsolid_collision_entities,
         AreaTraceList *area_trace_list,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length);
+        bool is_wrapped = false,
+        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
+        Float half_object_layer_side_length = -1.0f);
 
     void CollideEntity (
         Entity *entity,

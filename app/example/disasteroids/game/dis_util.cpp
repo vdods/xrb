@@ -19,17 +19,17 @@ namespace Dis
 {
 
 void RadiusDamage (
-    PhysicsHandler *const physics_handler,
-    Engine2::ObjectLayer *const object_layer,
-    Entity *const damager,
-    Entity *const damage_medium,
-    Float const damage_amount,
+    PhysicsHandler *physics_handler,
+    Engine2::ObjectLayer *object_layer,
+    Entity *damager,
+    Entity *damage_medium,
+    Float damage_amount,
     FloatVector2 const &damage_area_center,
-    Float const damage_area_radius,
-    Mortal::DamageType const damage_type,
+    Float damage_area_radius,
+    Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
-    Float const time,
-    Float const frame_dt)
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(physics_handler != NULL);
     ASSERT1(object_layer != NULL);
@@ -45,9 +45,9 @@ void RadiusDamage (
         damage_area_radius,
         false,
         &area_trace_list);
-        
+
     for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+                                 it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
@@ -89,13 +89,13 @@ void RadiusDamage (
 }
 
 void RadiusKnockback (
-    PhysicsHandler *const physics_handler,
-    Engine2::ObjectLayer *const object_layer,
+    PhysicsHandler *physics_handler,
+    Engine2::ObjectLayer *object_layer,
     FloatVector2 const &knockback_area_center,
-    Float const knockback_area_radius,
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+    Float knockback_area_radius,
+    Float power,
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(knockback_area_radius > 0.0f);
     ASSERT1(power > 0.0f);
@@ -110,7 +110,7 @@ void RadiusKnockback (
 
     // iterate through the trace set and apply forces
     for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+                                 it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
@@ -118,10 +118,10 @@ void RadiusKnockback (
 
         if (entity == NULL)
             continue;
-            
+
         if (entity->GetCollisionType() == CT_NONSOLID_COLLISION)
             continue;
-    
+
         // center_to_center points towards the collider
         FloatVector2 center_to_center = entity->Translation() - knockback_area_center;
         Float distance = center_to_center.Length() - entity->ScaleFactor();
@@ -132,7 +132,7 @@ void RadiusKnockback (
             distance_factor = 1.0f;
         else
             distance_factor = 1.0f / distance;
-    
+
         // knockback forces
         if (!center_to_center.IsZero())
         {
@@ -146,7 +146,7 @@ void RadiusKnockback (
     }
 }
 
-std::string FormattedTimeString (Float const time)
+std::string FormattedTimeString (Float time)
 {
     Uint32 game_time_seconds = static_cast<Uint32>(time);
     Uint32 minutes = game_time_seconds / 60;

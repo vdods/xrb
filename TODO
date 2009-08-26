@@ -117,6 +117,7 @@ DISASTEROIDS:
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
+- handle wrapped space better and make the coordinate adjustment and such less fragile
 
 TODO:
 - handle failures (especially file loading failures) more gracefully
