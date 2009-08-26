@@ -80,9 +80,6 @@ private:
     void UpdateVelocities ();
     void UpdatePositions ();
     void HandleInterpenetrations ();
-    void HandleInterpenetrationsWrapped ();
-    void HandleInterpenetrationsUsingCollisionQuadTree ();
-    void HandleInterpenetrationsUsingCollisionQuadTreeWrapped ();
 
     // set of all added entities
     EntitySet m_entity_set;

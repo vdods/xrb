@@ -178,16 +178,13 @@ void PhysicsHandler::HandleFrame ()
         return;
 
     // resolve interpenetrations / calculate collisions
-    if (m_main_object_layer->IsWrapped())
-        HandleInterpenetrationsUsingCollisionQuadTreeWrapped();
-    else
-        HandleInterpenetrationsUsingCollisionQuadTree();
+    HandleInterpenetrations();
 
     // call Think on all entity guts.  no entities must be left
     // removed during this loop.  removing and re-adding is ok --
     // see ShieldEffect::SnapToShip().
     for (EntitySet::iterator it = m_entity_set.begin(),
-                           it_end = m_entity_set.end();
+                             it_end = m_entity_set.end();
          it != it_end;
          ++it)
     {
@@ -216,7 +213,7 @@ void PhysicsHandler::HandleFrame ()
     // required for some computations (e.g. setting the velocity for an
     // explosion resulting from an asteroid impacting another).
     for (CollisionPairList::iterator it = m_collision_pair_list.begin(),
-                                   it_end = m_collision_pair_list.end();
+                                     it_end = m_collision_pair_list.end();
          it != it_end;
          ++it)
     {
@@ -245,7 +242,7 @@ void PhysicsHandler::UpdateVelocities ()
     // apply the accumulated forces to the entities,
     // and then reset their accelerations.
     for (EntitySet::iterator it = m_entity_set.begin(),
-                           it_end = m_entity_set.end();
+                             it_end = m_entity_set.end();
          it != it_end;
          ++it)
     {
@@ -300,7 +297,7 @@ void PhysicsHandler::UpdatePositions ()
     // apply the velocities to the entities,
     // and then reset them in the object layers.
     for (EntitySet::iterator it = m_entity_set.begin(),
-                           it_end = m_entity_set.end();
+                             it_end = m_entity_set.end();
          it != it_end;
          ++it)
     {
@@ -324,36 +321,13 @@ void PhysicsHandler::UpdatePositions ()
     }
 }
 
-void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTree ()
+void PhysicsHandler::HandleInterpenetrations ()
 {
     ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
 
     for (EntitySet::iterator it = m_entity_set.begin(),
-                           it_end = m_entity_set.end();
-         it != it_end;
-         ++it)
-    {
-        Entity *entity = *it;
-        ASSERT1(entity != NULL);
-
-        // don't attempt to collide no-collision entities
-        if (entity->GetCollisionType() == CT_NO_COLLISION)
-            continue;
-
-        // traverse the collision quad tree and calculate collision pairs
-        m_quad_tree->CollideEntity(entity, FrameDT(), &m_collision_pair_list);
-    }
-}
-
-void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
-{
-    ASSERT1(m_main_object_layer->IsWrapped());
-    ASSERT1(m_quad_tree != NULL);
-    ASSERT1(m_collision_pair_list.empty());
-
-    for (EntitySet::iterator it = m_entity_set.begin(),
-                           it_end = m_entity_set.end();
+                             it_end = m_entity_set.end();
          it != it_end;
          ++it)
     {
@@ -369,7 +343,7 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
             entity,
             FrameDT(),
             &m_collision_pair_list,
-            true, // is_wrapped
+            m_main_object_layer->IsWrapped(),
             m_main_object_layer->SideLength());
     }
 }

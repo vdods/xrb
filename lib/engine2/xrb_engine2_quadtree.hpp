@@ -56,12 +56,10 @@ public:
 
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
-        Float area_radius) const;
-    bool DoesAreaOverlapAnyObjectWrapped (
-        FloatVector2 const &area_center,
         Float area_radius,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length) const;
+        bool is_wrapped = false,
+        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
+        Float half_object_layer_side_length = -1.0f) const;
 
     // clears out all objects but leaves the QuadTree structure intact
     void Clear ();

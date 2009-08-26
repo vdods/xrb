@@ -101,59 +101,17 @@ Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
 
 bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
-    Float const area_radius) const
+    Float area_radius,
+    bool is_wrapped,
+    Float object_layer_side_length,
+    Float half_object_layer_side_length) const
 {
-    // if there are no objects here or below, just return false
-    if (SubordinateObjectCount() == 0)
-        return false;
-
-    // return false if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(area_center, area_radius))
-        return false;
-
-    // check if the area overlaps any object in this node's list.
-    for (ObjectSet::const_iterator it = m_object_set.begin(),
-                                it_end = m_object_set.end();
-         it != it_end;
-         ++it)
+    if (is_wrapped)
     {
-        Object const *object = *it;
-        ASSERT1(object != NULL);
-        ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == this);
-        if ((object->Translation() - area_center).Length()
-            <
-            (object->Radius(GetQuadTreeType()) + area_radius))
-            return true;
+        ASSERT1(object_layer_side_length > 0.0f);
+        ASSERT1(half_object_layer_side_length > 0.0f);
     }
 
-    // if there are child nodes, call this method on each until one returns true
-    if (HasChildren())
-        return
-            m_child[0]->DoesAreaOverlapAnyObject(
-                area_center,
-                area_radius)
-            ||
-            m_child[1]->DoesAreaOverlapAnyObject(
-                area_center,
-                area_radius)
-            ||
-            m_child[2]->DoesAreaOverlapAnyObject(
-                area_center,
-                area_radius)
-            ||
-            m_child[3]->DoesAreaOverlapAnyObject(
-                area_center,
-                area_radius);
-    else
-        return false;
-}
-
-bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
-    FloatVector2 const &area_center,
-    Float const area_radius,
-    Float const object_layer_side_length,
-    Float const half_object_layer_side_length) const
-{
     // if there are no objects here or below, just return false
     if (SubordinateObjectCount() == 0)
         return false;
@@ -162,14 +120,14 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
     if (!DoesAreaOverlapQuadBounds(
             area_center,
             area_radius,
-            true, // is_wrapped
+            is_wrapped,
             object_layer_side_length,
             half_object_layer_side_length))
         return false;
 
     // check if the area overlaps any object in this node's list.
     for (ObjectSet::const_iterator it = m_object_set.begin(),
-                                it_end = m_object_set.end();
+                                   it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -180,15 +138,19 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
         FloatVector2 object_translation(object->Translation());
         FloatVector2 adjusted_area_center(area_center);
 
-        while (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
-            adjusted_area_center[Dim::X] += object_layer_side_length;
-        while (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
-            adjusted_area_center[Dim::X] -= object_layer_side_length;
+        // only need to adjust coordinates in wrapped space
+        if (is_wrapped)
+        {
+            while (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
+                adjusted_area_center[Dim::X] += object_layer_side_length;
+            while (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
+                adjusted_area_center[Dim::X] -= object_layer_side_length;
 
-        while (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
-            adjusted_area_center[Dim::Y] += object_layer_side_length;
-        while (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
-            adjusted_area_center[Dim::Y] -= object_layer_side_length;
+            while (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
+                adjusted_area_center[Dim::Y] += object_layer_side_length;
+            while (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
+                adjusted_area_center[Dim::Y] -= object_layer_side_length;
+        }
 
         if ((object_translation - adjusted_area_center).Length()
             <
@@ -198,30 +160,18 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
 
     // if there are child nodes, call this method on each until one returns true
     if (HasChildren())
-        return
-            m_child[0]->DoesAreaOverlapAnyObjectWrapped(
-                area_center,
-                area_radius,
-                object_layer_side_length,
-                half_object_layer_side_length)
-            ||
-            m_child[1]->DoesAreaOverlapAnyObjectWrapped(
-                area_center,
-                area_radius,
-                object_layer_side_length,
-                half_object_layer_side_length)
-            ||
-            m_child[2]->DoesAreaOverlapAnyObjectWrapped(
-                area_center,
-                area_radius,
-                object_layer_side_length,
-                half_object_layer_side_length)
-            ||
-            m_child[3]->DoesAreaOverlapAnyObjectWrapped(
-                area_center,
-                area_radius,
-                object_layer_side_length,
-                half_object_layer_side_length);
+    {
+        bool retval = false;
+        for (Uint32 i = 0; i < 4; ++i)
+            retval = retval ||
+                m_child[i]->DoesAreaOverlapAnyObject(
+                    area_center,
+                    area_radius,
+                    is_wrapped,
+                    object_layer_side_length,
+                    half_object_layer_side_length);
+        return retval;
+    }
     else
         return false;
 }

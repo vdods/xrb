@@ -87,14 +87,12 @@ bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
     Float const area_radius) const
 {
     ASSERT1(m_quad_tree != NULL);
-    if (IsWrapped())
-        return m_quad_tree->DoesAreaOverlapAnyObjectWrapped(
-            area_center,
-            area_radius,
-            SideLength(),
-            0.5f * SideLength());
-    else
-        return m_quad_tree->DoesAreaOverlapAnyObject(area_center, area_radius);
+    return m_quad_tree->DoesAreaOverlapAnyObject(
+        area_center,
+        area_radius,
+        IsWrapped(),
+        SideLength(),
+        0.5f * SideLength());
 }
 
 FloatVector2 Engine2::ObjectLayer::NormalizedCoordinates (
