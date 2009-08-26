@@ -51,49 +51,28 @@ Dis::PhysicsHandler *Entity::GetPhysicsHandler ()
     return GetWorld()->GetPhysicsHandler();
 }
 
-FloatVector2 Entity::AmbientVelocity (
-    Float const scan_area_radius,
-    Entity const *const ignore_me) const
+FloatVector2 Entity::AmbientVelocity (Float scan_area_radius) const
 {
-    // do an area trace
-    AreaTraceList area_trace_list;
-    GetPhysicsHandler()->AreaTrace(
+    FloatVector2 ambient_momentum;
+    Float ambient_mass;
+
+    GetPhysicsHandler()->CalculateAmbientMomentum(
         GetObjectLayer(),
         Translation(),
         scan_area_radius,
-        false,
-        &area_trace_list);
+        this, // ignore_me
+        ambient_momentum,
+        ambient_mass);
 
-    // calculate the ambient velocity
-    FloatVector2 total_momentum(FloatVector2::ms_zero);
-    Float total_mass = 0.0f;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
-         it != it_end;
-         ++it)
-    {
-        Entity const *entity = *it;
-        // ignore NULL game objects
-        if (entity == NULL)
-            continue;
-        // the object shouldn't include itself in the ambient velocity scan
-        else if (entity == this)
-            continue;
-        // if it matches the ignore object, skip it.
-        else if (entity == ignore_me)
-            continue;
-
-        total_momentum += entity->Momentum();
-        total_mass += entity->Mass();
-    }
+    ASSERT1(ambient_mass >= 0.0f);
 
     // if no objects were encountered, then the ambient velocity
     // should just be the velocity of this game object.
-    if (total_mass == 0.0f)
+    if (ambient_mass == 0.0f)
         return Velocity();
-    // otherwise, divide the total momentum by the total mass to get velocity
+    // otherwise, divide the momentum by the mass to get velocity
     else
-        return total_momentum / total_mass;
+        return ambient_momentum / ambient_mass;
 }
 
 void Entity::ApplyInterceptCourseAcceleration (

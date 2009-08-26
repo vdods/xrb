@@ -17,6 +17,7 @@
 
 #include "dis_areatracelist.hpp"
 #include "dis_collisionpair.hpp"
+#include "dis_entity.hpp" // HIPPO
 #include "dis_linetracebinding.hpp"
 #include "xrb_vector.hpp"
 
@@ -34,10 +35,6 @@ public:
 
     PhysicsHandler ();
     virtual ~PhysicsHandler ();
-
-    // ///////////////////////////////////////////////////////////////////////
-    // Engine2::PhysicsHandler public method overrides
-    // ///////////////////////////////////////////////////////////////////////
 
     // this does wrapped object layer checking
     bool DoesAreaOverlapAnyEntityInObjectLayer (
@@ -63,6 +60,19 @@ public:
         bool check_nonsolid_collision_entities,
         AreaTraceList *area_trace_list) const;
 
+    // gives the local momentum (and mass) in a given radius
+    void CalculateAmbientMomentum (
+        Engine2::ObjectLayer const *object_layer,
+        FloatVector2 const &scan_area_center,
+        Float scan_area_radius,
+        Entity const *ignore_me,
+        FloatVector2 &ambient_momentum,
+        Float &ambient_mass) const;
+
+    // ///////////////////////////////////////////////////////////////////////
+    // Engine2::PhysicsHandler public method overrides
+    // ///////////////////////////////////////////////////////////////////////
+
     virtual void AddObjectLayer (Engine2::ObjectLayer *object_layer);
     virtual void SetMainObjectLayer (Engine2::ObjectLayer *object_layer);
 
@@ -79,7 +89,7 @@ private:
 
     void UpdateVelocities ();
     void UpdatePositions ();
-    void HandleInterpenetrations ();
+    void HandleInterpenetrations (CollisionExemptionFunction CollisionExemption);
 
     // set of all added entities
     EntitySet m_entity_set;

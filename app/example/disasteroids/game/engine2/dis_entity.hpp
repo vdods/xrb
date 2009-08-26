@@ -22,8 +22,15 @@ using namespace Xrb;
 namespace Dis
 {
 
+class Entity;
 class PhysicsHandler;
 class World;
+
+// a typedef for a function which allows the game to specify exemptions
+// to collisions (e.g. powerups and bullets, which just look stupid if
+// they are allowed to collide and react with each other).  arguments
+// passed to this function are guaranteed not to be NULL.
+typedef bool (*CollisionExemptionFunction)(Entity const *, Entity const *);
 
 // abstract baseclass for all disasteroids game object classes
 class Entity : public Engine2::Entity
@@ -66,27 +73,25 @@ public:
     Dis::PhysicsHandler const *GetPhysicsHandler () const;
     Dis::PhysicsHandler *GetPhysicsHandler ();
 
-    FloatVector2 AmbientVelocity (
-        Float scan_area_radius,
-        Entity const *ignore_me) const;
-    static bool ShouldApplyCollisionForces (
-        Entity const *entity1,
-        Entity const *entity2)
+    FloatVector2 AmbientVelocity (Float scan_area_radius) const;
+    static bool CollisionExemption (
+        Entity const *entity0,
+        Entity const *entity1)
     {
-        if (entity1 == NULL || entity2 == NULL)
-            return true;
-
-        if (entity2->IsPowerup() &&
-            (entity1->IsPlayerShip() ||
-             entity1->GetEntityType() == ET_BALLISTIC))
-            return false;
+        ASSERT1(entity0 != NULL);
+        ASSERT1(entity1 != NULL);
 
         if (entity1->IsPowerup() &&
-            (entity2->IsPlayerShip() ||
-             entity2->GetEntityType() == ET_BALLISTIC))
-            return false;
+            (entity0->IsPlayerShip() ||
+             entity0->GetEntityType() == ET_BALLISTIC))
+            return true;
 
-        return true;
+        if (entity0->IsPowerup() &&
+            (entity1->IsPlayerShip() ||
+             entity1->GetEntityType() == ET_BALLISTIC))
+            return true;
+
+        return false;
     }
 
     // ///////////////////////////////////////////////////////////////////////

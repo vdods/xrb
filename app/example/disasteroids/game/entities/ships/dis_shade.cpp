@@ -347,7 +347,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
 
     // TODO: spawn some teleport effect at the old location and at the new
     SetTranslation(teleport_destination);
-    SetVelocity(AmbientVelocity(100.0f, this));
+    SetVelocity(AmbientVelocity(100.0f));
 
     // pause for a 1/2 second
     m_think_state = THINK_STATE(PauseAfterTeleport);

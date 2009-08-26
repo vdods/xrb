@@ -342,6 +342,7 @@ void CollisionQuadTree::CollideEntity (
     Entity *const entity,
     Float const frame_dt,
     CollisionPairList *const collision_pair_list,
+    CollisionExemptionFunction CollisionExemption,
     bool is_wrapped,
     Float object_layer_side_length)
 {
@@ -354,6 +355,7 @@ void CollisionQuadTree::CollideEntity (
             entity,
             frame_dt,
             collision_pair_list,
+            CollisionExemption,
             GetQuadTreeType(),
             is_wrapped,
             object_layer_side_length);
@@ -449,7 +451,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *
     if ((V | P) < 0.0f && // and if the distance between the two is closing
         m_entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
         other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
-        Entity::ShouldApplyCollisionForces(m_entity, other_entity)) // and if this isn't an exception to the rule
+        !m_CollisionExempt(m_entity, other_entity)) // and if this isn't an exception to the rule
     {
         Float M = 1.0f / m_entity->Mass() + 1.0f / other_entity->Mass();
         FloatVector2 Q(P + m_frame_dt*V);

@@ -66,6 +66,7 @@ public:
         Entity *entity,
         Float frame_dt,
         CollisionPairList *collision_pair_list,
+        CollisionExemptionFunction CollisionExemption,
         bool is_wrapped = false,
         Float object_layer_side_length = -1.0f); // irrelevant for non-wrapped space
 
@@ -92,6 +93,7 @@ private:
             Entity *entity,
             Float frame_dt,
             CollisionPairList *collision_pair_list,
+            CollisionExemptionFunction CollisionExemption,
             Engine2::QuadTreeType quad_tree_type,
             bool is_wrapped,
             Float object_layer_side_length) // irrelevant for non-wrapped space
@@ -100,6 +102,7 @@ private:
             m_frame_dt(frame_dt),
             m_frame_dt_squared(frame_dt*frame_dt),
             m_collision_pair_list(collision_pair_list),
+            m_CollisionExempt(CollisionExemption),
             m_quad_tree_type(quad_tree_type),
             m_is_wrapped(is_wrapped),
             m_object_layer_side_length(object_layer_side_length),
@@ -127,6 +130,7 @@ private:
         Float m_frame_dt;
         Float m_frame_dt_squared;
         CollisionPairList *m_collision_pair_list;
+        CollisionExemptionFunction m_CollisionExempt;
         Engine2::QuadTreeType m_quad_tree_type;
         bool m_is_wrapped;
         Float m_object_layer_side_length;

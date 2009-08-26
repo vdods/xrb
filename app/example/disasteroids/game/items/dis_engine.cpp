@@ -46,11 +46,11 @@ Float Engine::PowerToBeUsedBasedOnInputs (
         return frame_dt * ms_max_auxiliary_power_output_rate[UpgradeLevel()] * m_auxiliary_input;
 
     // normalize from the square input domain of [-1, 1] [-1, 1] to a circle
-        
+
     FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
     Float input_vector_angle = Math::Atan(input_vector);
     ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
-    
+
     Float input_vector_max_length;
     if (input_vector_angle >= -180.0f && input_vector_angle <= -135.0f)
         input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
@@ -75,12 +75,12 @@ bool Engine::Activate (
     if (m_auxiliary_input > 0.0f)
     {
         ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[UpgradeLevel()] * m_auxiliary_input + 0.001f);
-    
+
         static Float const s_survey_area_radius = 100.0f;
         Float const max_thrust_force = ms_max_thrust_force[UpgradeLevel()] * m_auxiliary_input;
 
         // store the ambient velocity, ignoring the presence of the owner ship
-        FloatVector2 ambient_velocity = OwnerShip()->AmbientVelocity(s_survey_area_radius, NULL);
+        FloatVector2 ambient_velocity = OwnerShip()->AmbientVelocity(s_survey_area_radius);
         // calculate what thrust is required to match the ambient velocity
         FloatVector2 velocity_differential =
             ambient_velocity -
@@ -93,7 +93,7 @@ bool Engine::Activate (
             Float thrust_force = thrust_vector.Length();
             if (thrust_force > max_thrust_force)
                 thrust_vector = max_thrust_force * thrust_vector.Normalization();
-    
+
             OwnerShip()->AccumulateForce(thrust_vector);
         }
     }
@@ -104,7 +104,7 @@ bool Engine::Activate (
         FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
         Float input_vector_angle = Math::Atan(input_vector);
         ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
-        
+
         Float input_vector_max_length;
         if (input_vector_angle >= -180.0f && input_vector_angle <= -135.0f)
             input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
@@ -118,7 +118,7 @@ bool Engine::Activate (
             input_vector_max_length = -1.0f / Math::Cos(input_vector_angle);
 
         ASSERT1(power <= frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()] * input_vector_max_length + 0.001f);
-            
+
         Float output_ratio = power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
         Float thrust_force =
             output_ratio * ms_max_thrust_force[UpgradeLevel()] *

@@ -116,6 +116,44 @@ void PhysicsHandler::AreaTrace (
         0.5f * m_main_object_layer->SideLength());
 }
 
+void PhysicsHandler::CalculateAmbientMomentum (
+    Engine2::ObjectLayer const *object_layer,
+    FloatVector2 const &scan_area_center,
+    Float const scan_area_radius,
+    Entity const *ignore_me,
+    FloatVector2 &ambient_momentum,
+    Float &ambient_mass) const
+{
+    // do an area trace
+    AreaTraceList area_trace_list;
+    AreaTrace(
+        object_layer,
+        scan_area_center,
+        scan_area_radius,
+        false,
+        &area_trace_list);
+
+    // calculate the ambient momentum
+    ambient_momentum = FloatVector2::ms_zero;
+    ambient_mass = 0.0f;
+    for (AreaTraceList::iterator it = area_trace_list.begin(),
+                                 it_end = area_trace_list.end();
+         it != it_end;
+         ++it)
+    {
+        Entity const *entity = *it;
+        // ignore NULL game objects
+        if (entity == NULL)
+            continue;
+        // if it matches the ignore object, skip it.
+        else if (entity == ignore_me)
+            continue;
+
+        ambient_momentum += entity->Momentum();
+        ambient_mass += entity->Mass();
+    }
+}
+
 void PhysicsHandler::AddObjectLayer (Engine2::ObjectLayer *const object_layer)
 {
     ASSERT1(object_layer != NULL);
@@ -178,7 +216,7 @@ void PhysicsHandler::HandleFrame ()
         return;
 
     // resolve interpenetrations / calculate collisions
-    HandleInterpenetrations();
+    HandleInterpenetrations(Entity::CollisionExemption);
 
     // call Think on all entity guts.  no entities must be left
     // removed during this loop.  removing and re-adding is ok --
@@ -321,7 +359,7 @@ void PhysicsHandler::UpdatePositions ()
     }
 }
 
-void PhysicsHandler::HandleInterpenetrations ()
+void PhysicsHandler::HandleInterpenetrations (CollisionExemptionFunction CollisionExemption)
 {
     ASSERT1(m_quad_tree != NULL);
     ASSERT1(m_collision_pair_list.empty());
@@ -343,6 +381,7 @@ void PhysicsHandler::HandleInterpenetrations ()
             entity,
             FrameDT(),
             &m_collision_pair_list,
+            CollisionExemption,
             m_main_object_layer->IsWrapped(),
             m_main_object_layer->SideLength());
     }
