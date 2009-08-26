@@ -35,6 +35,7 @@ public:
     inline SignalSender1<PlayerShip *> const *SenderPlayerShipChanged () { return &m_sender_player_ship_changed; }
     inline SignalSender1<bool> const *SenderIsGameLoopInfoEnabledChanged () { return &m_sender_is_game_loop_info_enabled_changed; }
     inline SignalSender1<bool> const *SenderIsDebugModeEnabledChanged () { return &m_sender_is_debug_mode_enabled_changed; }
+    inline SignalSender0 const *SenderBeginNextWave () { return &m_sender_begin_next_wave; }
     inline SignalSender0 const *SenderShowControls () { return &m_sender_show_controls; }
     inline SignalSender0 const *SenderHideControls () { return &m_sender_hide_controls; }
     inline SignalSender0 const *SenderActivateInventoryPanel () { return &m_sender_activate_inventory_panel; }
@@ -220,6 +221,7 @@ private:
     SignalSender1<PlayerShip *> m_sender_player_ship_changed;
     SignalSender1<bool> m_sender_is_game_loop_info_enabled_changed;
     SignalSender1<bool> m_sender_is_debug_mode_enabled_changed;
+    SignalSender0 m_sender_begin_next_wave;
     SignalSender0 m_sender_show_controls;
     SignalSender0 m_sender_hide_controls;
     SignalSender0 m_sender_activate_inventory_panel;

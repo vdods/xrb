@@ -623,6 +623,10 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
     dis_world_view->SetPlayerShip(m_player_ship);
+    // connect the worldview's begin-next-wave signal (cheating for development)
+    SignalHandler::Connect0(
+        dis_world_view->SenderBeginNextWave(),
+        &m_internal_receiver_begin_wave);
     // connect the worldview's set-is-alert-wave signal
     SignalHandler::Connect1(
         &m_internal_sender_is_alert_wave,
@@ -662,12 +666,12 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
 // ///////////////////////////////////////////////////////////////////////////
 
 #define STATE_MACHINE_STATUS(state_name) \
-    /* if (input == SM_ENTER) \
+    if (input == SM_ENTER) \
         fprintf(stderr, "World: --> " state_name "\n"); \
     else if (input == SM_EXIT) \
         fprintf(stderr, "World: <-- " state_name "\n"); \
     else if (input != IN_PROCESS_FRAME) \
-        fprintf(stderr, "World: input: %u\n", input);*/
+        fprintf(stderr, "World: input: %u\n", input);
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x)
 
@@ -797,6 +801,13 @@ bool World::StateWaveGameplay (StateMachineInput const input)
             }
             return true;
 
+        // this is only possible by using the dev cheat command
+        case IN_BEGIN_WAVE:
+            if (m_current_wave_index < gs_wave_count-1)
+                ++m_current_wave_index;
+            TRANSITION_TO(StateWaveInitialize);
+            return true;
+
         case IN_END_WAVE:
             TRANSITION_TO(StateWaveIntermissionGameplay);
             return true;
@@ -826,6 +837,13 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput const input)
 
         case IN_PROCESS_FRAME:
             ProcessWaveIntermissionGameplayLogic();
+            return true;
+
+        // this is only possible by using the dev cheat command
+        case IN_BEGIN_WAVE:
+            if (m_current_wave_index < gs_wave_count-1)
+                ++m_current_wave_index;
+            TRANSITION_TO(StateWaveInitialize);
             return true;
 
         case IN_END_WAVE_INTERMISSION:
@@ -1109,8 +1127,11 @@ void World::ProcessCommonGameplayLogic ()
 
 void World::BeginWave ()
 {
-    if (m_state_machine.CurrentState() == &World::StateWaveInitialize)
+    ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
+/*  // this was changed to the above when the begin-next-wave dev-cheat command was added, and it might not be necessary
+    if (m_state_machine.CurrentState() == &World::StateWaveInitialize) 
         ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
+*/
 }
 
 void World::EndGame ()

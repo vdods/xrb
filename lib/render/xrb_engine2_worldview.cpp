@@ -34,7 +34,7 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_grid_number_base = 4;
     m_current_grid_scale = 1;
 
-    m_zoom_factor = 0.0625f;
+    m_zoom_factor = 0.0625f; // arbitrary
     m_min_zoom_factor = 0.0f; // (sort of) arbitrary
     m_max_zoom_factor = 1000000.0f; // arbitrary
     m_fade_distance_upper_limit = 100.0f; // arbitrary

@@ -47,6 +47,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_sender_player_ship_changed(this),
     m_sender_is_game_loop_info_enabled_changed(this),
     m_sender_is_debug_mode_enabled_changed(this),
+    m_sender_begin_next_wave(this),
     m_sender_show_controls(this),
     m_sender_hide_controls(this),
     m_sender_activate_inventory_panel(this),
@@ -416,11 +417,15 @@ void WorldView::HandleInput (Key::Code const input)
             break;
 
         case Key::F5:
+            m_sender_begin_next_wave.Signal();
+            break;
+
+        case Key::F6:
             if (m_player_ship != NULL)
                 m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
             break;
 
-        case Key::F6:
+        case Key::F7:
             if (m_player_ship != NULL && !m_player_ship->IsDead())
                 m_player_ship->Kill(
                     NULL,
