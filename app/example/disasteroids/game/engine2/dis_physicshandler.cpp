@@ -384,10 +384,11 @@ void PhysicsHandler::HandleInterpenetrationsUsingCollisionQuadTreeWrapped ()
             continue;
 
         // traverse the collision quad tree and calculate collision pairs
-        m_quad_tree->CollideEntityWrapped(
+        m_quad_tree->CollideEntity(
             entity,
             FrameDT(),
             &m_collision_pair_list,
+            true, // is_wrapped
             m_main_object_layer->SideLength());
     }
 }

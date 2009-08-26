@@ -52,7 +52,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
 
     // check if the area overlaps any object in this node's list.
     for (ObjectSet::const_iterator it = m_object_set.begin(),
-                                it_end = m_object_set.end();
+                                   it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -111,16 +111,17 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntityWrapped (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBounds(
             area_center,
             area_radius,
+            true, // is_wrapped
             object_layer_side_length,
             half_object_layer_side_length))
         return false;
 
     // check if the area overlaps any object in this node's list.
     for (ObjectSet::const_iterator it = m_object_set.begin(),
-                                it_end = m_object_set.end();
+                                   it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -218,7 +219,7 @@ void CollisionQuadTree::LineTrace (
 
     // check the line against the objects in this node
     for (ObjectSet::iterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
+                             it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -314,7 +315,7 @@ void CollisionQuadTree::LineTraceWrapped (
 
     // check the line against the objects in this node
     for (ObjectSet::iterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
+                             it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -408,7 +409,7 @@ void CollisionQuadTree::AreaTrace (
 
     // check the line against the objects in this node
     for (ObjectSet::iterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
+                             it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -451,9 +452,10 @@ void CollisionQuadTree::AreaTraceWrapped (
         return;
 
     // if this quad node doesn't intersect the line, return
-    if (!DoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBounds(
             trace_area_center,
             trace_area_radius,
+            true, // is_wrapped
             object_layer_side_length,
             half_object_layer_side_length))
         return;
@@ -471,7 +473,7 @@ void CollisionQuadTree::AreaTraceWrapped (
 
     // check the line against the objects in this node
     for (ObjectSet::iterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
+                             it_end = m_object_set.end();
          it != it_end;
          ++it)
     {
@@ -513,133 +515,58 @@ void CollisionQuadTree::AreaTraceWrapped (
 void CollisionQuadTree::CollideEntity (
     Entity *const entity,
     Float const frame_dt,
-    CollisionPairList *const collision_pair_list)
+    CollisionPairList *const collision_pair_list,
+    bool is_wrapped,
+    Float object_layer_side_length)
 {
     ASSERT1(entity != NULL);
     ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
     ASSERT1(collision_pair_list != NULL);
 
-    Float const adjusted_dt = frame_dt;//1.0f/40.0f;
-    Float const dt_squared = adjusted_dt * adjusted_dt;
+    CollideEntityLoopFunctor
+        functor(
+            entity,
+            frame_dt,
+            collision_pair_list,
+            GetQuadTreeType(),
+            is_wrapped,
+            object_layer_side_length);
+    CollideEntity(functor);
+}
 
+void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunctor &functor)
+{
     // if there are no objects here or below, just return
     if (SubordinateObjectCount() == 0)
         return;
 
     // return if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(entity->Translation(), entity->Radius(GetQuadTreeType())))
+    if (!DoesAreaOverlapQuadBounds(
+            functor.GetEntity()->Translation(),
+            functor.GetEntity()->Radius(GetQuadTreeType()),
+            functor.IsWrapped(),
+            functor.ObjectLayerSideLength(),
+            functor.HalfObjectLayerSideLength()))
         return;
 
     // if there are child nodes, call CollideEntity on each
     if (HasChildren())
     {
         for (Uint8 i = 0; i < 4; ++i)
-            Child<CollisionQuadTree>(i)->CollideEntity(
-                entity,
-                frame_dt,
-                collision_pair_list);
+            Child<CollisionQuadTree>(i)->CollideEntity(functor);
 
         // if the minimum object size for this node is larger than the
         // collision entity, return (because it will skip all objects
         // below in the loop anyway)
-        if (!IsAllowableObjectRadius(entity->OwnerObject()))
+        if (!IsAllowableObjectRadius(functor.GetEntity()->OwnerObject()))
             return;
     }
 
-    // check if the entity overlaps any object in this node's list.
-    for (ObjectSet::iterator it = m_object_set.begin(),
-                           it_end = m_object_set.end();
-         it != it_end;
-         ++it)
-    {
-        Engine2::Object *object = *it;
-        ASSERT1(object != NULL);
-        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
-
-        // don't collide the entity with itself
-        if (object == entity->OwnerObject())
-            continue;
-
-        // this is a quick and easy way to avoid calculating
-        // the same collision pair twice
-        if (object->Radius(GetQuadTreeType()) > entity->Radius(GetQuadTreeType()))
-            continue;
-        else if (object->Radius(GetQuadTreeType()) == entity->Radius(GetQuadTreeType()) &&
-                 object > entity->OwnerObject())
-            continue;
-
-        Float r = entity->Radius(GetQuadTreeType()) + object->Radius(GetQuadTreeType());
-        FloatVector2 P = entity->Translation() - object->Translation();
-
-        if (P.Length() >= r)
-            continue;
-
-        Entity *other_entity = DStaticCast<Entity *>(object->GetEntity());
-        ASSERT1(other_entity != NULL);
-
-        // calculate the collision
-
-        FloatVector2 V = entity->Velocity() - other_entity->Velocity();
-        FloatVector2 collision_location(
-            (other_entity->ScaleFactor() * entity->Translation() + entity->ScaleFactor() * other_entity->Translation())
-            /
-            (entity->ScaleFactor() + other_entity->ScaleFactor()));
-        FloatVector2 collision_normal;
-        if (P.IsZero())
-            collision_normal = FloatVector2(1.0f, 0.0f);
-        else
-            collision_normal = P.Normalization();
-        Float collision_force = 0.0f;
-
-        if ((V | P) < 0.0f && // and if the distance between the two is closing
-            entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
-            other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
-            Entity::ShouldApplyCollisionForces(entity, other_entity)) // and if this isn't an exception to the rule
-        {
-            Float M = 1.0f / entity->Mass() + 1.0f / other_entity->Mass();
-            FloatVector2 Q(P + adjusted_dt*V);
-            FloatVector2 A(dt_squared*M*collision_normal);
-
-            Float a = A | A;
-            Float b = 2.0f * (Q | A);
-            Float c = (Q | Q) - r*r;
-            Float discriminant = b*b - 4.0f*a*c;
-            if (discriminant >= 0.0f)
-            {
-                Float temp0 = sqrt(discriminant);
-                Float temp1 = 2.0f * a;
-
-                Float force0 = 0.8f * (-b - temp0) / temp1;
-                Float force1 = 0.8f * (-b + temp0) / temp1;
-
-                Float min_force = Min(force0, force1);
-                Float max_force = Max(force0, force1);
-                if (min_force > 0.0f)
-                    collision_force = min_force;
-                else if (max_force > 0.0f)
-                    collision_force = max_force;
-                else
-                    collision_force = 0.0f;
-
-                collision_force *= (1.0f + entity->Elasticity() * other_entity->Elasticity());
-
-                entity->AccumulateForce(collision_force*collision_normal);
-                other_entity->AccumulateForce(-collision_force*collision_normal);
-            }
-        }
-
-        // record the collision in the collision pair list.
-        collision_pair_list->push_back(
-            CollisionPair(
-                entity,
-                other_entity,
-                collision_location,
-                collision_normal,
-                collision_force));
-    }
+    // here is the actual entity loop
+    std::for_each(m_object_set.begin(), m_object_set.end(), functor);
 }
 
-void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::Object *const object)
+void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *const object)
 {
     // don't collide the entity with itself
     if (object == m_entity->OwnerObject())
@@ -656,15 +583,19 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
     FloatVector2 ce0_translation(m_entity->Translation());
     FloatVector2 ce1_translation(object->Translation());
 
-    if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > m_half_object_layer_side_length)
-        ce1_translation[Dim::X] -= m_object_layer_side_length;
-    else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -m_half_object_layer_side_length)
-        ce1_translation[Dim::X] += m_object_layer_side_length;
+    // only need to adjust coordinates if we're dealing with wrapped space
+    if (m_is_wrapped)
+    {
+        if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > m_half_object_layer_side_length)
+            ce1_translation[Dim::X] -= m_object_layer_side_length;
+        else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -m_half_object_layer_side_length)
+            ce1_translation[Dim::X] += m_object_layer_side_length;
 
-    if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > m_half_object_layer_side_length)
-        ce1_translation[Dim::Y] -= m_object_layer_side_length;
-    else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -m_half_object_layer_side_length)
-        ce1_translation[Dim::Y] += m_object_layer_side_length;
+        if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > m_half_object_layer_side_length)
+            ce1_translation[Dim::Y] -= m_object_layer_side_length;
+        else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -m_half_object_layer_side_length)
+            ce1_translation[Dim::Y] += m_object_layer_side_length;
+    }
 
     Float r = m_entity->Radius(m_quad_tree_type) + object->Radius(m_quad_tree_type);
     FloatVector2 P = ce0_translation - ce1_translation;
@@ -734,52 +665,6 @@ void CollisionQuadTree::CollideEntityWrappedLoopFunctor::operator () (Engine2::O
             collision_location,
             collision_normal,
             collision_force));
-}
-
-void CollisionQuadTree::CollideEntityWrapped (
-    Entity *const entity,
-    Float const frame_dt,
-    CollisionPairList *const collision_pair_list,
-    Float const object_layer_side_length)
-{
-    CollideEntityWrappedLoopFunctor
-        functor(
-            entity,
-            frame_dt,
-            collision_pair_list,
-            object_layer_side_length,
-            GetQuadTreeType());
-    CollideEntityWrapped(functor);
-}
-
-void CollisionQuadTree::CollideEntityWrapped (CollisionQuadTree::CollideEntityWrappedLoopFunctor &functor)
-{
-    // if there are no objects here or below, just return
-    if (SubordinateObjectCount() == 0)
-        return;
-
-    // return if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBoundsWrapped(
-            functor.GetEntity()->Translation(),
-            functor.GetEntity()->Radius(GetQuadTreeType()),
-            functor.ObjectLayerSideLength(),
-            functor.HalfObjectLayerSideLength()))
-        return;
-
-    // if there are child nodes, call CollideEntityWrapped on each
-    if (HasChildren())
-    {
-        for (Uint8 i = 0; i < 4; ++i)
-            Child<CollisionQuadTree>(i)->CollideEntityWrapped(functor);
-
-        // if the minimum object size for this node is larger than the
-        // collision entity, return (because it will skip all objects
-        // below in the loop anyway)
-        if (!IsAllowableObjectRadius(functor.GetEntity()->OwnerObject()))
-            return;
-    }
-
-    std::for_each(m_object_set.begin(), m_object_set.end(), functor);
 }
 
 } // end of namespace Dis

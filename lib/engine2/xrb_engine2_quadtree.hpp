@@ -82,14 +82,14 @@ protected:
     QuadTree (QuadTree *parent);
 
     template <typename QuadTreeClass>
-    inline QuadTreeClass const *Child (Uint32 const index) const
+    inline QuadTreeClass const *Child (Uint32 index) const
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);
         return DStaticCast<QuadTreeClass const *>(m_child[index]);
     }
     template <typename QuadTreeClass>
-    inline QuadTreeClass *Child (Uint32 const index)
+    inline QuadTreeClass *Child (Uint32 index)
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);
@@ -100,22 +100,12 @@ protected:
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the
     // specified circle)
-    inline bool DoesAreaOverlapQuadBounds (
-        FloatVector2 const &area_center,
-        Float const area_radius) const
-    {
-        ASSERT1(area_radius > 0.0f);
-        Float radius_sum = area_radius + 2.0f * Radius();
-        return (area_center - m_center).LengthSquared() < radius_sum*radius_sum;
-    }
-    // returns true if this quad's bounding circle is intersecting the given
-    // circle (e.g. used in determining the potential intersecting set of the
-    // specified circle), for wrapped spaces
-    bool DoesAreaOverlapQuadBoundsWrapped (
+    bool DoesAreaOverlapQuadBounds (
         FloatVector2 area_center,
         Float area_radius,
-        Float object_layer_side_length,
-        Float half_object_layer_side_length) const;
+        bool is_wrapped = false,
+        Float object_layer_side_length = -1.0f, // irrelevant in non-wrapped space
+        Float half_object_layer_side_length = -1.0f) const;
 
     void SetQuadTreeType (QuadTreeType quad_tree_type);
 
@@ -129,50 +119,7 @@ protected:
     void DecrementSubordinateStaticObjectCount ();
 
     template <typename QuadTreeClass>
-    void Initialize (
-        FloatVector2 const &center,
-        Float const half_side_length,
-        Uint8 const depth)
-    {
-        ASSERT1(half_side_length > 0.0f);
-        ASSERT1(depth != 0);
-
-        m_parent = NULL;
-        m_center = center;
-        m_half_side_length = half_side_length;
-        m_radius = Math::Sqrt(2.0f) * m_half_side_length;
-        m_subordinate_object_count = 0;
-        m_subordinate_static_object_count = 0;
-        if (depth <= 1)
-        {
-            for (Uint8 i = 0; i < 4; ++i)
-                m_child[i] = NULL;
-        }
-        else
-        {
-            Float child_half_side_length = 0.5f * m_half_side_length;
-
-            m_child[0] = new QuadTreeClass(
-                center + child_half_side_length * FloatVector2( 1.0f,  1.0f),
-                child_half_side_length,
-                depth - 1);
-            m_child[1] = new QuadTreeClass(
-                center + child_half_side_length * FloatVector2(-1.0f,  1.0f),
-                child_half_side_length,
-                depth - 1);
-            m_child[2] = new QuadTreeClass(
-                center + child_half_side_length * FloatVector2(-1.0f, -1.0f),
-                child_half_side_length,
-                depth - 1);
-            m_child[3] = new QuadTreeClass(
-                center + child_half_side_length * FloatVector2( 1.0f, -1.0f),
-                child_half_side_length,
-                depth - 1);
-
-            for (Uint8 i = 0; i < 4; ++i)
-                m_child[i]->m_parent = this;
-        }
-    }
+    void Initialize (FloatVector2 const &center, Float const half_side_length, Uint8 const depth);
 
     typedef std::set<Object *> ObjectSet;
 
@@ -208,8 +155,54 @@ private:
     QuadTreeType m_quad_tree_type;
 }; // end of class Engine2::QuadTree
 
+template <typename QuadTreeClass>
+void QuadTree::Initialize (
+    FloatVector2 const &center,
+    Float const half_side_length,
+    Uint8 const depth)
+{
+    ASSERT1(half_side_length > 0.0f);
+    ASSERT1(depth != 0);
+
+    m_parent = NULL;
+    m_center = center;
+    m_half_side_length = half_side_length;
+    m_radius = Math::Sqrt(2.0f) * m_half_side_length;
+    m_subordinate_object_count = 0;
+    m_subordinate_static_object_count = 0;
+    if (depth <= 1)
+    {
+        for (Uint8 i = 0; i < 4; ++i)
+            m_child[i] = NULL;
+    }
+    else
+    {
+        Float child_half_side_length = 0.5f * m_half_side_length;
+
+        m_child[0] = new QuadTreeClass(
+            center + child_half_side_length * FloatVector2( 1.0f,  1.0f),
+            child_half_side_length,
+            depth - 1);
+        m_child[1] = new QuadTreeClass(
+            center + child_half_side_length * FloatVector2(-1.0f,  1.0f),
+            child_half_side_length,
+            depth - 1);
+        m_child[2] = new QuadTreeClass(
+            center + child_half_side_length * FloatVector2(-1.0f, -1.0f),
+            child_half_side_length,
+            depth - 1);
+        m_child[3] = new QuadTreeClass(
+            center + child_half_side_length * FloatVector2( 1.0f, -1.0f),
+            child_half_side_length,
+            depth - 1);
+
+        for (Uint8 i = 0; i < 4; ++i)
+            m_child[i]->m_parent = this;
+    }
+}
+
 } // end of namespace Engine2
-    
+
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_QUADTREEBASE_HPP_)

@@ -159,9 +159,10 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObjectWrapped (
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBoundsWrapped(
+    if (!DoesAreaOverlapQuadBounds(
             area_center,
             area_radius,
+            true, // is_wrapped
             object_layer_side_length,
             half_object_layer_side_length))
         return false;
@@ -439,28 +440,41 @@ bool Engine2::QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
         return true;
 }
 
-bool Engine2::QuadTree::DoesAreaOverlapQuadBoundsWrapped (
+bool Engine2::QuadTree::DoesAreaOverlapQuadBounds (
     FloatVector2 area_center,
-    Float const area_radius,
-    Float const object_layer_side_length,
-    Float const half_object_layer_side_length) const
+    Float area_radius,
+    bool is_wrapped,
+    Float object_layer_side_length,
+    Float half_object_layer_side_length) const
 {
-    ASSERT1(area_center[Dim::X] >= -half_object_layer_side_length);
-    ASSERT1(area_center[Dim::X] <=  half_object_layer_side_length);
-    ASSERT1(area_center[Dim::Y] >= -half_object_layer_side_length);
-    ASSERT1(area_center[Dim::Y] <=  half_object_layer_side_length);
+    // only adjust coordinates if we're in wrapped space
+    if (is_wrapped)
+    {
+        ASSERT1(object_layer_side_length > 0.0f);
+        ASSERT1(half_object_layer_side_length > 0.0f);
 
-    if (area_center[Dim::X] < m_center[Dim::X] - half_object_layer_side_length)
-        area_center[Dim::X] += object_layer_side_length;
-    else if (area_center[Dim::X] > m_center[Dim::X] + half_object_layer_side_length)
-        area_center[Dim::X] -= object_layer_side_length;
+        ASSERT1(area_center[Dim::X] >= -half_object_layer_side_length);
+        ASSERT1(area_center[Dim::X] <=  half_object_layer_side_length);
+        ASSERT1(area_center[Dim::Y] >= -half_object_layer_side_length);
+        ASSERT1(area_center[Dim::Y] <=  half_object_layer_side_length);
 
-    if (area_center[Dim::Y] < m_center[Dim::Y] - half_object_layer_side_length)
-        area_center[Dim::Y] += object_layer_side_length;
-    else if (area_center[Dim::Y] > m_center[Dim::Y] + half_object_layer_side_length)
-        area_center[Dim::Y] -= object_layer_side_length;
+        if (area_center[Dim::X] < m_center[Dim::X] - half_object_layer_side_length)
+            area_center[Dim::X] += object_layer_side_length;
+        else if (area_center[Dim::X] > m_center[Dim::X] + half_object_layer_side_length)
+            area_center[Dim::X] -= object_layer_side_length;
 
-    return DoesAreaOverlapQuadBounds(area_center, area_radius);
+        if (area_center[Dim::Y] < m_center[Dim::Y] - half_object_layer_side_length)
+            area_center[Dim::Y] += object_layer_side_length;
+        else if (area_center[Dim::Y] > m_center[Dim::Y] + half_object_layer_side_length)
+            area_center[Dim::Y] -= object_layer_side_length;
+    }
+
+    // this part is the original DoesAreaOverlapQuadBounds without wrapping
+    {
+        ASSERT1(area_radius > 0.0f);
+        Float radius_sum = area_radius + 2.0f * Radius();
+        return (area_center - m_center).LengthSquared() < radius_sum*radius_sum;
+    }
 }
 
 void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
