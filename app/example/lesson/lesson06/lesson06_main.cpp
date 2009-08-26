@@ -70,7 +70,7 @@ the parallaxing effect of WorldView.
             <ul>
             <li>Create application-specific objects and GUI elements, and make necessary signals.</li>
                 <ul>
-                <li>Create the game world via CreateAndPopulateWorld.</li>
+                <li>Create the game world.</li>
                 <li>Create the WorldViewWidget and set it as screen's main widget.</li>
                 <li>Create the game-specific WorldView.</li>
                 <li>Attach the WorldView to the WorldViewWidget.</li>
@@ -587,7 +587,7 @@ int main (int argc, char **argv)
 
     // Here is where the application-specific code begins.
     {
-        // Create our sweet game world via a call to CreateAndPopulateWorld.
+        // Create our sweet game world.
         AwesomeWorld *world = new AwesomeWorld();
         // Create the WorldViewWidget as a child of screen.  This is what will
         // contain an instance of WorldView and will cause it to be rendered.

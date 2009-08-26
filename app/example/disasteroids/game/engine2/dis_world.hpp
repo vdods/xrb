@@ -216,7 +216,7 @@ private:
     SignalReceiver0 m_internal_receiver_end_game;
     SignalReceiver0 m_internal_receiver_end_intro;
     SignalReceiver0 m_internal_receiver_end_outro;
-}; // end of class GameController
+}; // end of class World
 
 } // end of namespace Dis
 

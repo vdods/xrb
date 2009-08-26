@@ -1312,7 +1312,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
             (MainObjectLayer()->AdjustedCoordinates(translation, world_view_center) -
              world_view_center).Length();
         // fail if the area is in sight
-        if (distance_from_world_view < world_view->ParallaxedViewRadius(NULL) + scale_factor)
+        if (distance_from_world_view < world_view->ParallaxedViewRadius(MainObjectLayer()) + scale_factor)
             return false;
     }
 
@@ -1378,8 +1378,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 true,                     // wrapped
                 object_layer_side_length, // side length
                 4,                        // visibility quad tree depth
-                0.0f);                    // z depth
-        object_layer->SetZDepth(30000.0f);
+                30000.0f);                // z depth
         AddObjectLayer(object_layer);
 
         static std::string const s_galaxy_sprite_path[] =
@@ -1429,8 +1428,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 true,                     // wrapped
                 object_layer_side_length, // side length
                 6,                        // visibility quad tree depth
-                0.0f);                    // z depth
-        object_layer->SetZDepth(7500.0f);
+                7500.0f);                 // z depth
         AddObjectLayer(object_layer);
 
         static std::string const s_starfield_sprite_path[] =
@@ -1489,8 +1487,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 true,                     // wrapped
                 object_layer_side_length, // side length
                 3,                        // visibility quad tree depth
-                0.0f);                    // z depth
-        object_layer->SetZDepth(10000.0f);
+                10000.0f);                // z depth
         AddObjectLayer(object_layer);
 
         static std::string const s_nebula_sprite_path[] =

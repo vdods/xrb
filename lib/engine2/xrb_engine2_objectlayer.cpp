@@ -370,7 +370,6 @@ Engine2::ObjectLayer::ObjectLayer (
 {
     ASSERT1(owner_world != NULL);
     ASSERT1(side_length > 0.0f);
-    ASSERT1(z_depth >= 0.0f);
 
     m_owner_world = owner_world;
     m_is_wrapped = is_wrapped;

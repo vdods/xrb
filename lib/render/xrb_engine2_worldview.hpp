@@ -61,17 +61,19 @@ namespace Engine2
         WorldView (WorldViewWidget *parent_world_view_widget);
         virtual ~WorldView ();
 
-        inline WorldViewWidget *ParentWorldViewWidget () const { return m_parent_world_view_widget; }
-        inline World *GetWorld () const { return m_world; }
-        inline DrawInfo const &GetDrawInfo () const { return m_draw_info; }
-        inline Float ZoomFactor () const { return m_zoom_factor; }
-        inline FloatVector2 Center () const { return -Translation(); }
-        inline Float Angle () const { return -FloatTransform2::Angle(); }
-        inline bool IsViewLocked () const { return m_is_view_locked; }
-        inline bool DrawBorderGridLines () const { return m_draw_border_grid_lines; }
+        WorldViewWidget *ParentWorldViewWidget () const { return m_parent_world_view_widget; }
+        World *GetWorld () const { return m_world; }
+        DrawInfo const &GetDrawInfo () const { return m_draw_info; }
+        Float ZoomFactor () const { return m_zoom_factor; }
+        FloatVector2 Center () const { return -Translation(); }
+        Float Angle () const { return -FloatTransform2::Angle(); }
+        Float FadeDistanceUpperLimit () const { return m_fade_distance_upper_limit; }
+        Float FadeDistanceLowerLimit () const { return m_fade_distance_lower_limit; }
+        bool IsViewLocked () const { return m_is_view_locked; }
+        bool DrawBorderGridLines () const { return m_draw_border_grid_lines; }
         FloatMatrix2 CompoundTransformation () const;
         Float ViewDepth (ObjectLayer const *object_layer) const;
-        inline Float ParallaxFactor (
+        Float ParallaxFactor (
             Float const view_depth,
             Float const layer_depth) const
         {
@@ -86,13 +88,23 @@ namespace Engine2
         Float MinorAxisRadius () const;
         Float MajorAxisRadius () const;
         Float CornerRadius () const;
-        inline bool IsTransformScalingBasedUponWidgetRadius () const
+        bool IsTransformScalingBasedUponWidgetRadius () const
         {
             return m_is_transform_scaling_based_upon_widget_radius;
         }
 
-        inline void SetIsViewLocked (bool const is_view_locked) { m_is_view_locked = is_view_locked; }
-        inline void SetDrawBorderGridLines (bool const draw_border_grid_lines) { m_draw_border_grid_lines = draw_border_grid_lines; }
+        void SetFadeDistanceUpperLimit (Float fade_distance_upper_limit)
+        {
+            m_fade_distance_upper_limit = fade_distance_upper_limit;
+            ASSERT1(m_fade_distance_upper_limit - m_fade_distance_lower_limit > 0.0f);
+        }
+        void SetFadeDistanceLowerLimit (Float fade_distance_lower_limit)
+        {
+            m_fade_distance_lower_limit = fade_distance_lower_limit;
+            ASSERT1(m_fade_distance_upper_limit - m_fade_distance_lower_limit > 0.0f);
+        }
+        void SetIsViewLocked (bool const is_view_locked) { m_is_view_locked = is_view_locked; }
+        void SetDrawBorderGridLines (bool const draw_border_grid_lines) { m_draw_border_grid_lines = draw_border_grid_lines; }
         // formalized ways to change the view's position/zoom/rotation
         void SetCenter (FloatVector2 const &position);
         void SetZoomFactor (Float zoom_factor);
@@ -101,21 +113,15 @@ namespace Engine2
         void SetMinZoomFactor (Float min_zoom_factor);
         void SetMaxZoomFactor (Float max_zoom_factor);
         // this method should only be called by World!
-        inline void SetWorld (World *world)
+        void SetWorld (World *world)
         {
             m_world = world;
             HandleAttachedWorld();
         }
         void SetIsTransformScalingBasedUponWidgetRadius (bool is_transform_scaling_based_upon_widget_radius);
 
-        inline void LockView ()
-        {
-            m_is_view_locked = true;
-        }
-        inline void UnlockView ()
-        {
-            m_is_view_locked = false;
-        }
+        void LockView () { m_is_view_locked = true; }
+        void UnlockView () { m_is_view_locked = false; }
         // formalized ways to change the view's position/zoom/rotation
         void MoveView (FloatVector2 const &delta_position);
         void ZoomView (Float delta_zoom_factor);
@@ -219,6 +225,10 @@ namespace Engine2
         // maximum allowable zoom factor value.  m_zoom_factor will be clamped
         // at this value if it is higher.
         Float m_max_zoom_factor;
+        // these are for controlling the fading-out of ObjectLayers in front of
+        // the main object layer, when they pass close to, and then behind, the view
+        Float m_fade_distance_upper_limit;
+        Float m_fade_distance_lower_limit;
         // indicates if the view cannot be moved/zoomed/rotated (used when
         // certain editing modes are engaged which require a static reference
         // frame)

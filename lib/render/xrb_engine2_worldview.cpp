@@ -37,6 +37,8 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_zoom_factor = 0.0625f;
     m_min_zoom_factor = 0.0f; // (sort of) arbitrary
     m_max_zoom_factor = 1000000.0f; // arbitrary
+    m_fade_distance_upper_limit = 100.0f; // arbitrary
+    m_fade_distance_lower_limit = 5.0f; // arbitrary
     m_is_view_locked = false;
     m_is_gl_projection_matrix_in_use = false;
     m_draw_border_grid_lines = false;
@@ -66,17 +68,13 @@ FloatMatrix2 Engine2::WorldView::CompoundTransformation () const
 
 Float Engine2::WorldView::ViewDepth (Engine2::ObjectLayer const *object_layer) const
 {
-    if (object_layer == NULL)
-        object_layer = GetWorld()->MainObjectLayer();
-
+    ASSERT1(object_layer != NULL);
     return object_layer->ZDepth() - 1.0f / ZoomFactor();
 }
 
 Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *object_layer) const
 {
-    if (object_layer == NULL)
-        object_layer = GetWorld()->MainObjectLayer();
-
+    ASSERT1(object_layer != NULL);
     ASSERT1(ViewDepth(object_layer) != object_layer->ZDepth());
 
     FloatMatrix2 world_to_screen(
@@ -107,7 +105,7 @@ FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
     // and then get the world-to-whatever transformation
     FloatMatrix2 world_to_whatever(world_to_view);
     world_to_whatever.Scale(
-        1.0f / ParallaxFactor(ViewDepth(NULL), object_layer->ZDepth()));
+        1.0f / ParallaxFactor(ViewDepth(MainObjectLayer()), object_layer->ZDepth()));
     world_to_whatever *= view_to_whatever;
 
     return world_to_whatever;
@@ -268,13 +266,6 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     ASSERT1(m_parent_world_view_widget != NULL);
     ASSERT1(m_world != NULL && "You must call Engine2::World::AttachWorldView before anything happens");
 
-    // constants which control the fading of close-up object layers
-    // which are in front of the main object layer
-    Float const fade_distance_upper_limit = 1.0;
-    Float const fade_distance_lower_limit = 0.25;
-    Float distance_fade;
-    ASSERT1(fade_distance_upper_limit > fade_distance_lower_limit);
-
     // create a RenderContext for the view to apply color masks to
     RenderContext view_render_context(render_context);
 
@@ -298,35 +289,41 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     {
         ObjectLayer *object_layer;
         Float layer_offset;
+        Float distance_fade;
         Float parallaxed_view_radius;
 
         object_layer = *it;
         ASSERT1(object_layer != NULL);
 
-        // set up the GL projection matrix for drawing this object layer
-        PushParallaxedGLProjectionMatrix(render_context, object_layer);
-
-        layer_offset = object_layer->ZDepth() - ViewDepth(NULL);
-        // only draw layers which are in front of the view
-        if (layer_offset > 0.0f)
+        layer_offset = object_layer->ZDepth() - ViewDepth(MainObjectLayer());
+        // only fade out layers in front of the main layer
+        if (main_object_layer_has_been_drawn)
         {
-            // only fade out layers in front of the main layer
-            if (main_object_layer_has_been_drawn)
-            {
-                // calculate the transparency of close-up object layers
-                // which are in front of the main object layer
-                distance_fade =
-                    (layer_offset - fade_distance_lower_limit) /
-                    (fade_distance_upper_limit - fade_distance_lower_limit);
-            }
-            else
-            {
+            // calculate the transparency of close-up object layers
+            // which are in front of the main object layer
+            distance_fade =
+                (layer_offset - m_fade_distance_lower_limit) /
+                (m_fade_distance_upper_limit - m_fade_distance_lower_limit);
+            // ensure distance_fade is within the range [0,1]
+            if (distance_fade < 0.0f)
+                distance_fade = 0.0f;
+            else if (distance_fade > 1.0f)
                 distance_fade = 1.0f;
-            }
+        }
+        else
+        {
+            distance_fade = 1.0f;
+        }
+
+        // only draw non-transparent layers which are in front of the view
+        if (layer_offset > 0.0f && distance_fade > 0.0f)
+        {
+            // set up the GL projection matrix for drawing this object layer
+            PushParallaxedGLProjectionMatrix(render_context, object_layer);
+
             // apply the distance fade transparency to the color mask
             view_render_context.ColorMask() = render_context.ColorMask();
-            view_render_context.ApplyAlphaMaskToColorMask(
-                Min(Max(distance_fade, 0.0f), 1.0f));
+            view_render_context.ApplyAlphaMaskToColorMask(distance_fade);
 
             // if this is the main layer
             if (object_layer == GetWorld()->MainObjectLayer())
@@ -370,10 +367,10 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             {
                 DrawGridLines(view_render_context);
             }
-        }
 
-        // we're done with the GL projection matrix for this object layer
-        PopGLProjectionMatrix();
+            // we're done with the GL projection matrix for this object layer
+            PopGLProjectionMatrix();
+        }
     }
 
     // draw the main object layer's border above everything
@@ -384,7 +381,7 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
             MainObjectLayer());
 
         // get the parallaxed view radius for the main object layer
-        Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
+        Float parallaxed_view_radius = ParallaxedViewRadius(MainObjectLayer());
 
         DrawGridLineSet(
             render_context,
@@ -490,7 +487,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         return;
 
     bool is_wrapped = MainObjectLayer()->IsWrapped();
-    Float view_radius = ParallaxedViewRadius(NULL);
+    Float view_radius = ParallaxedViewRadius(MainObjectLayer());
 
     // draw the minor grid
     DrawGridLineSet(
@@ -662,7 +659,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     // perform the view parallaxing transformation
     Float parallax_factor =
         ParallaxFactor(
-            ViewDepth(NULL),
+            ViewDepth(MainObjectLayer()),
             object_layer->ZDepth());
     ASSERT1(parallax_factor != 0.0f);
     glScalef(

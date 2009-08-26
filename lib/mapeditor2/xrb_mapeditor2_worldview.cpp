@@ -705,7 +705,7 @@ void MapEditor2::WorldView::Draw (RenderContext const &render_context)
     Float pixels_in_view_radius =
         0.5f * render_context.ClipRect().Size().StaticCast<Float>().Length();
     // get the parallaxed view radius for the main object layer
-    Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
+    Float parallaxed_view_radius = ParallaxedViewRadius(MainObjectLayer());
 
     // draw the bounding circles for the objects
     if (m_draw_object_metrics)
@@ -1389,7 +1389,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     if (selection_operation == Object::SO_EQUALS)
                         MainMapEditorObjectLayer()->ClearVertexSelectionSet();
                     
-                    Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
+                    Float parallaxed_view_radius = ParallaxedViewRadius(MainObjectLayer());
                     MainMapEditorObjectLayer()->SelectNearestVertex(
                         transformed_mouse_event_position,
                         0.02f * parallaxed_view_radius,
@@ -1539,7 +1539,7 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
         !e->IsEitherControlKeyPressed())
     {
         // select the closest vertex that's within 2% of the radius of the view
-        Float parallaxed_view_radius = ParallaxedViewRadius(NULL);
+        Float parallaxed_view_radius = ParallaxedViewRadius(MainObjectLayer());
         MainMapEditorObjectLayer()->SelectNearestVertex(
             transformed_mouse_event_position,
             0.02f * parallaxed_view_radius,
