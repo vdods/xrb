@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\fonts;..\..\..\lib\sound;..\..\..\lib\system;..\..\..\lib\system\pals;..\..\..\lib\system\serializers;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\engine2;..\..\..\lib\engine2\circle;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\fonts;..\..\..\lib\sound;..\..\..\lib\system;..\..\..\lib\system\pals;..\..\..\lib\system\serializers;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\fonts;..\..\..\lib\sound;..\..\..\lib\system;..\..\..\lib\system\pals;..\..\..\lib\system\serializers;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories=".;game;game\engine2;game\entities;game\entities\ships;game\items;ui;..\..\..\lib\core;..\..\..\lib\engine2;..\..\..\lib\engine2;..\..\..\lib\gui\widgets;..\..\..\lib\gui;..\..\..\lib\input;..\..\..\lib\mapeditor2;..\..\..\lib\math;..\..\..\lib\parsers;..\..\..\lib\primitive;..\..\..\lib\render;..\..\..\lib\render\fonts;..\..\..\lib\sound;..\..\..\lib\system;..\..\..\lib\system\pals;..\..\..\lib\system\serializers;..\..\..\lib\util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -405,22 +405,6 @@
 				Name="engine2"
 				>
 				<File
-					RelativePath=".\game\engine2\dis_areatracelist.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_collisionpair.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_collisionquadtree.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_collisionquadtree.hpp"
-					>
-				</File>
-				<File
 					RelativePath=".\game\engine2\dis_entity.cpp"
 					>
 				</File>
@@ -430,18 +414,6 @@
 				</File>
 				<File
 					RelativePath=".\game\engine2\dis_entityreference.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_linetracebinding.hpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_physicshandler.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\game\engine2\dis_physicshandler.hpp"
 					>
 				</File>
 				<File

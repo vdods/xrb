@@ -39,7 +39,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="core;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\fonts;sound;system;system\pals;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories="core;engine2;engine2\circle;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\fonts;sound;system;system\pals;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=3"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="core;engine2;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\fonts;sound;system;system\pals;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
+				AdditionalIncludeDirectories="core;engine2;engine2\circle;gui\widgets;gui;input;mapeditor2;math;parsers;primitive;render;render\fonts;sound;system;system\pals;system\serializers;util;&quot;$(XRB_SDL_PATH)\include&quot;;&quot;$(XRB_SDL_image_PATH)\include&quot;;&quot;$(XRB_FREETYPE_PATH)\include&quot;"
 				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_DEPRECATE;XRB_DEBUG_LEVEL=0"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -267,6 +267,31 @@
 				RelativePath=".\engine2\xrb_engine2_world.hpp"
 				>
 			</File>
+            <Filter
+                Name="circle"
+                >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_collisionquadtree.cpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_collisionquadtree.hpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_entity.cpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_entity.hpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_physicshandler.cpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_physicshandler.hpp"
+                    >
+                <File
+                    RelativePath=".\engine2\circle\xrb_engine2_circle_types.hpp"
+                    >
+            </Filter>
 		</Filter>
 		<Filter
 			Name="gui"
