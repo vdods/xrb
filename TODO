@@ -61,8 +61,8 @@ DISASTEROIDS:
   should be some sort of previous-frame accumulated force accessor,
   for functions that use it (e.g. intercept course stuff)
 - split the physics and visibility computation up so their frame
-  processing isn't dependent.  this requires addition of some "scale velocity"
-  property on entities.  there will also be a problem with code that
+  processing isn't dependent.  this requires addition of some "scale-factor
+  velocity" property on entities.  there will also be a problem with code that
   sets the position of entities (or sets any value) directly (this is a no-no
   in a linear-interpolation world).
 - have the debris spawning in Mortal.  it should be done in Damage,
@@ -127,7 +127,7 @@ TODO:
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
-- change ScreenCoord to use Sint16 instead of Sint32?  (this was tried, and there was a bug in drawing glyphs to parts of the screen, but is otherwise ready to be tried again).
+- change ScreenCoord to use Sint16 instead of Sint32?  (this was tried, and there was a bug in drawing glyphs to parts of the screen, but is otherwise ready to be tried again).  i think Sint32 screen coords might be good, because it allows big layouts that have offscreen components, such as a list
 - get rid of widget min/max size enabled flags, and just use the
   sizes (no min size = 0, no max size = (uint)-1)
 - create consistent way to set z depth for non-transparent stuff so they're
@@ -182,8 +182,6 @@ TODO:
 - for static Create type functions for subclassable classes, see if the
   function can be templatized so that each subclass doesn't have to make
   a function that is identical except for the "new Blah" part.
-- change BinarySerializer and BitCache to use IODirection enum instead of
-  retarded stdio file mode string in Open.
 - cursor position in map editor status bar
 - when the Action system is written, go into MapEditor2::WorldView and
   convert everything to that, and get rid of locally tracking
@@ -237,7 +235,6 @@ TODO:
   so when gl calls fail mysteriously, it's obvious what happened.
 - hide the defer-parent-update SetSizeProperty* versions and make public
   versions of each without that parameter.
-- change the IOE_IS_AT_END checking for how many bytes/bits are left
 - support for bit depths besides 32
 - WidgetSkin properties for checkbox/radiobutton/toolbar button sizes
 - maybe WidgetBackground should provide the FrameMargins and ContentMargins
@@ -259,7 +256,6 @@ TODO:
 - add a 'time type' which allows changing of what data type actually
   stores times (i.e. ints or floats, etc)
 - look into normal mapping to give lighting effects
-- make all drawing functions const (if possible)
 - add smart usage of newline indexed data in Label, so that it could
   be used for very large texts
 - change the 'distance culling' for sprite drawing in quadtrees

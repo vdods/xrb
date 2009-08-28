@@ -113,7 +113,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 
     // write out the non-entities that this quad node contains
     for (ObjectSet::const_iterator it = m_object_set.begin(),
-                                it_end = m_object_set.end();
+                                   it_end = m_object_set.end();
          it != it_end;
          ++it)
     {

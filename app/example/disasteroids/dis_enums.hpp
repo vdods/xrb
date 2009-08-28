@@ -26,30 +26,6 @@ enum
     UPGRADE_LEVEL_COUNT = 4
 };
 
-/** For example, an intangible debris particle entity would likely use
-  * CT_NO_COLLISION so that it does not effect other entities and
-  * waste processing time.  A normal object such as a spaceship would have
-  * CT_SOLID_COLLISION, and collide and bounce off of other entities
-  * with CT_SOLID_COLLISION.  A fireball entity may use the value
-  * CT_NONSOLID_COLLISION so that it still records collisions (which
-  * in this case could damage the player's entity), but does not physically
-  * bounce off of solid objects (the fireball would pass over the spaceship).
-  * @brief Used by Engine2::Entity for indicating the collision properties
-  *        of an entity subclass' geometry.
-  */
-enum CollisionType
-{
-    /// Indicates that the entity does not collide with others.
-    CT_NO_COLLISION = 0,
-    /// Indicates the entity records collisions and imparts collision forces.
-    CT_SOLID_COLLISION,
-    /// Indicates the entity records collisions without imparting collision forces.
-    CT_NONSOLID_COLLISION,
-
-    /// Number of collision types
-    CT_COUNT
-}; // end of enum CollisionType
-
 enum DifficultyLevel
 {
     DL_EASY = 0,
@@ -78,6 +54,7 @@ enum EntityType
     ET_DEVOURMENT,
     ET_DEMI,
 
+    // projectiles
     ET_GRENADE,
     ET_MISSILE,
     ET_GUIDED_MISSILE,
@@ -86,16 +63,19 @@ enum EntityType
     ET_BALLISTIC,
     ET_FIREBALL,
 
+    // explosions
     ET_DAMAGE_EXPLOSION,
     ET_NO_DAMAGE_EXPLOSION,
     ET_EMP_EXPLOSION,
 
+    // effects
     ET_LASER_BEAM,
     ET_GAUSS_GUN_TRAIL,
     ET_TRACTOR_BEAM,
     ET_SHIELD_EFFECT,
     ET_RETICLE_EFFECT,
 
+    // invisible
     ET_HEALTH_TRIGGER,
 
     ET_COUNT,
@@ -106,7 +86,11 @@ enum EntityType
 
     ET_ENEMY_SHIP_LOWEST = ET_INTERLOPER,
     ET_ENEMY_SHIP_HIGHEST = ET_DEMI,
-    ET_ENEMY_SHIP_COUNT = ET_ENEMY_SHIP_HIGHEST - ET_ENEMY_SHIP_LOWEST + 1
+    ET_ENEMY_SHIP_COUNT = ET_ENEMY_SHIP_HIGHEST - ET_ENEMY_SHIP_LOWEST + 1,
+
+    ET_PROJECTILE_LOWEST = ET_GRENADE,
+    ET_PROJECTILE_HIGHEST = ET_FIREBALL,
+    ET_PROJECTILE_COUNT = ET_PROJECTILE_HIGHEST - ET_PROJECTILE_LOWEST + 1
 }; // end of enum EntityType
 
 enum ItemType

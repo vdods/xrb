@@ -10,30 +10,25 @@
 
 #include "dis_entity.hpp"
 
-#include "dis_physicshandler.hpp"
 #include "dis_world.hpp"
-#include "xrb_engine2_objectlayer.hpp"
-#include "xrb_serializer.hpp"
 
 using namespace Xrb;
 
 namespace Dis
 {
 
-Entity::Entity (EntityType const entity_type, CollisionType const collision_type)
+Entity::Entity (EntityType entity_type, Engine2::Circle::CollisionType collision_type)
     :
-    Engine2::Entity(),
-    m_entity_type(entity_type),
-    m_collision_type(collision_type)
+    Engine2::Circle::Entity(collision_type),
+    m_entity_type(entity_type)
 {
     ASSERT1(m_entity_type < ET_COUNT);
-    ASSERT1(m_collision_type < CT_COUNT);
-    m_next_time_to_think = 0.0f;
-    m_elasticity = 1.0f;
-    m_mass = 1.0f;
-    m_velocity = FloatVector2::ms_zero;
-    m_force = FloatVector2::ms_zero;
-    m_angular_velocity = 0.0f;
+}
+
+Entity::~Entity ()
+{
+    if (m_reference.IsValid())
+        m_reference.NullifyEntity();
 }
 
 Dis::World *Entity::GetWorld () const
@@ -41,217 +36,44 @@ Dis::World *Entity::GetWorld () const
     return DStaticCast<Dis::World *>(OwnerObject()->GetWorld());
 }
 
-Dis::PhysicsHandler const *Entity::GetPhysicsHandler () const
+bool Entity::CollisionExemption (
+    Engine2::Circle::Entity const *entity0,
+    Engine2::Circle::Entity const *entity1)
 {
-    return GetWorld()->GetPhysicsHandler();
+    Dis::Entity const *dis_entity0 = DStaticCast<Entity const *>(entity0);
+    Dis::Entity const *dis_entity1 = DStaticCast<Entity const *>(entity1);
+
+    // we don't want the powerups to hurt the player by collision, and
+    // when ballistics (e.g. pea shooter) are allowed to interact with
+    // powerups, it just looks dumb.
+
+    if (dis_entity1->IsPowerup() &&
+        (dis_entity0->IsPlayerShip() ||
+         dis_entity0->GetEntityType() == ET_BALLISTIC))
+        return true;
+
+    if (dis_entity0->IsPowerup() &&
+        (dis_entity1->IsPlayerShip() ||
+         dis_entity1->GetEntityType() == ET_BALLISTIC))
+        return true;
+
+    return false;
 }
 
-Dis::PhysicsHandler *Entity::GetPhysicsHandler ()
+Float Entity::MaxEntitySpeed (Engine2::Circle::Entity const *entity)
 {
-    return GetWorld()->GetPhysicsHandler();
-}
+    Dis::Entity const *dis_entity = DStaticCast<Entity const *>(entity);
 
-FloatVector2 Entity::AmbientVelocity (Float scan_area_radius) const
-{
-    FloatVector2 ambient_momentum;
-    Float ambient_mass;
+    // nonsolid and no-collision
+    if (dis_entity->GetCollisionType() != Engine2::Circle::CT_SOLID_COLLISION)
+        return 800.0f;
 
-    GetPhysicsHandler()->CalculateAmbientMomentum(
-        GetObjectLayer(),
-        Translation(),
-        scan_area_radius,
-        this, // ignore_me
-        ambient_momentum,
-        ambient_mass);
+    // projectiles
+    if (dis_entity->GetEntityType() >= ET_PROJECTILE_LOWEST && dis_entity->GetEntityType() <= ET_PROJECTILE_HIGHEST)
+        return 800.0f;
 
-    ASSERT1(ambient_mass >= 0.0f);
-
-    // if no objects were encountered, then the ambient velocity
-    // should just be the velocity of this game object.
-    if (ambient_mass == 0.0f)
-        return Velocity();
-    // otherwise, divide the momentum by the mass to get velocity
-    else
-        return ambient_momentum / ambient_mass;
-}
-
-void Entity::ApplyInterceptCourseAcceleration (
-    Entity *target,
-    Float maximum_thrust_force,
-    bool apply_force_on_target_also,
-    bool reverse_thrust)
-{
-    Polynomial::SolutionSet solution_set;
-    ApplyInterceptCourseAcceleration(
-        target,
-        maximum_thrust_force,
-        apply_force_on_target_also,
-        reverse_thrust,
-        &solution_set);
-}
-
-void Entity::ApplyInterceptCourseAcceleration (
-    Entity *const target,
-    Float const maximum_thrust_force,
-    bool const apply_force_on_target_also,
-    bool const reverse_thrust,
-    Polynomial::SolutionSet *const solution_set)
-{
-    ASSERT1(target != NULL);
-    FloatVector2 target_force_vector(
-        ApplyInterceptCourseAcceleration(
-            target->Translation(),
-            target->Velocity(),
-            target->Force() / target->Mass(),
-            maximum_thrust_force,
-            apply_force_on_target_also,
-            reverse_thrust,
-            solution_set));
-    if (apply_force_on_target_also)
-        target->AccumulateForce(target_force_vector);
-}
-
-void Entity::ApplyInterceptCourseAcceleration (
-    FloatVector2 const &target_position,
-    FloatVector2 const &target_velocity,
-    FloatVector2 const &target_acceleration,
-    Float maximum_thrust_force,
-    bool apply_force_on_target_also,
-    bool reverse_thrust)
-{
-    Polynomial::SolutionSet solution_set;
-    ApplyInterceptCourseAcceleration(
-        target_position,
-        target_velocity,
-        target_acceleration,
-        maximum_thrust_force,
-        apply_force_on_target_also,
-        reverse_thrust,
-        &solution_set);
-}
-
-FloatVector2 Entity::ApplyInterceptCourseAcceleration (
-    FloatVector2 const &target_position,
-    FloatVector2 const &target_velocity,
-    FloatVector2 const &target_acceleration,
-    Float const maximum_thrust_force,
-    bool apply_force_on_target_also,
-    bool const reverse_thrust,
-    Polynomial::SolutionSet *const solution_set)
-{
-    ASSERT1(maximum_thrust_force > 0.0f);
-    ASSERT1(solution_set != NULL);
-    ASSERT1(solution_set->empty());
-
-    FloatVector2 p1(GetObjectLayer()->AdjustedCoordinates(target_position, Translation()));
-    FloatVector2 p(p1 - Translation());
-    FloatVector2 v(target_velocity - Velocity());
-    FloatVector2 a(target_acceleration);
-    Float interceptor_acceleration = maximum_thrust_force / Mass();
-
-    Polynomial poly;
-    if (apply_force_on_target_also)
-    {
-        // this one is for when the force is applied between the tractoree and tractoror
-        poly.Set(4, 0.25f * a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
-        poly.Set(3, (a | v));
-        poly.Set(2, ((a | p) + (v | v)));
-        poly.Set(1, 2.0f * (p | v));
-        poly.Set(0, (p | p));
-    }
-    else
-    {
-        // this one is for when the force is only on the tractoree and not the tractoror
-        poly.Set(4, a.LengthSquared() - interceptor_acceleration*interceptor_acceleration);
-        poly.Set(3, 4.0f * (a | v));
-        poly.Set(2, 4.0f * ((a | p) + (v | v)));
-        poly.Set(1, 8.0f * (p | v));
-        poly.Set(0, 4.0f * (p | p));
-    }
-
-    poly.Solve(solution_set, 0.0001f);
-
-    // if an intercept course is not possible, just return
-    if (solution_set->empty())
-        return FloatVector2::ms_zero;
-
-    Float T = -1.0f;
-    for (Polynomial::SolutionSet::iterator it = solution_set->begin(),
-                                           it_end = solution_set->end();
-         it != it_end;
-         ++it)
-    {
-        if (*it > 0.0f)
-        {
-            T = *it;
-            break;
-        }
-    }
-    // make sure to clear out the solution set, now that we have T
-    solution_set->clear();
-    // if an intercept course is not possible in the future, just return.
-    if (T <= 0.0f)
-        return FloatVector2::ms_zero;
-
-    FloatVector2 force_vector;
-    if (apply_force_on_target_also)
-        // this one is for when the force is applied between the tractoree and tractoror
-        force_vector = (p + v*T + 0.5f*a*T*T) / (T*T) * Mass();
-    else
-        // this one is for when the force is only on the tractoree and not the tractoror
-        force_vector = (2.0f*p + 2.0f*v*T + a*T*T) / (T*T) * Mass();
-
-    // if we want reverse thrust (push instead of pull), negate the force vector
-    if (reverse_thrust)
-        force_vector = -force_vector;
-
-    // exert the force on one body or both, depending on the value of
-    // apply_force_on_target_also.  if it is true, apply the force equally
-    // in opposite directions.
-    AccumulateForce(force_vector);
-
-    return apply_force_on_target_also ? -force_vector : FloatVector2::ms_zero;
-}
-
-void Entity::HandleObjectLayerContainment (bool const component_x, bool const component_y)
-{
-    if (component_x)
-        m_velocity[Dim::X] = 0.0f;
-    if (component_y)
-        m_velocity[Dim::Y] = 0.0f;
-}
-
-Float Entity::CollisionTime (Entity *const entity, Float const lookahead_time) const
-{
-    FloatVector2 adjusted_entity_translation(
-        GetObjectLayer()->AdjustedCoordinates(
-            entity->Translation(),
-            Translation()));
-
-    FloatVector2 p(Translation() - adjusted_entity_translation);
-    FloatVector2 v(Velocity() - entity->Velocity());
-    Float R = Radius(Engine2::QTT_PHYSICS_HANDLER) + entity->Radius(Engine2::QTT_PHYSICS_HANDLER);
-
-    Polynomial poly;
-    poly.Set(2, v | v);
-    poly.Set(1, 2.0f * (p | v));
-    poly.Set(0, (p | p) - R*R);
-    Polynomial::SolutionSet solution_set;
-    poly.Solve(&solution_set, 0.0001f);
-
-    Float T = -1.0f;
-    for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
-                                         it_end = solution_set.end();
-         it != it_end;
-         ++it)
-    {
-        if (*it > 0.0f && *it <= lookahead_time)
-        {
-            T = *it;
-            break;
-        }
-    }
-    return T;
+    // everything else (solid non-projectiles)
+    return 350.0f;
 }
 
 } // end of namespace Dis

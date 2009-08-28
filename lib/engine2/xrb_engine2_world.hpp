@@ -72,16 +72,18 @@ public:
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
-    inline Uint32 EntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()); return m_entity_vector.size(); }
-    inline Uint32 EntityCount () const { return m_entity_count; }
-    inline Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
-    inline Entity *GetEntity (Uint32 index) { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
-    inline ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
+    Uint32 EntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()); return m_entity_vector.size(); }
+    Uint32 EntityCount () const { return m_entity_count; }
+    Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
+    Entity *GetEntity (Uint32 index) { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }
+    PhysicsHandler const *GetPhysicsHandler () const { return m_physics_handler; }
+    PhysicsHandler *GetPhysicsHandler () { return m_physics_handler; }
+    ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
     virtual ObjectLayer const *MainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *MainObjectLayer () { return m_main_object_layer; }
-    inline Float Timescale () { return m_timescale; }
+    Float Timescale () { return m_timescale; }
 
-    inline void SetTimescale (Float timescale)
+    void SetTimescale (Float timescale)
     {
         ASSERT1(timescale >= 0.0f);
         m_timescale = timescale;

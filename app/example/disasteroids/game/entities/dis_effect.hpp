@@ -23,10 +23,10 @@ class Effect : public Entity
 public:
 
     Effect (
-        Float const time_to_live,
-        Float const time_at_birth,
-        EntityType const entity_type,
-        CollisionType const collision_type)
+        Float time_to_live,
+        Float time_at_birth,
+        EntityType entity_type,
+        Engine2::Circle::CollisionType collision_type)
         :
         Entity(entity_type, collision_type),
         m_base_color_mask(Color::ms_opaque_white)
@@ -44,7 +44,7 @@ protected:
 
     Float TimeToLive () const { return m_time_to_live; }
     Float TimeAtBirth () const { return m_time_at_birth; }
-    Float LifetimeRatio (Float const current_time) const
+    Float LifetimeRatio (Float current_time) const
     {
         ASSERT1(current_time >= m_time_at_birth);
         if (m_time_to_live < 0.0f)
@@ -77,11 +77,11 @@ class Explosion : public Effect
 public:
 
     Explosion (
-        Float const final_size,
-        Float const time_to_live,
-        Float const time_at_birth,
-        EntityType const entity_type,
-        CollisionType const collision_type)
+        Float final_size,
+        Float time_to_live,
+        Float time_at_birth,
+        EntityType entity_type,
+        Engine2::Circle::CollisionType collision_type)
         :
         Effect(time_to_live, time_at_birth, entity_type, collision_type)
     {
@@ -107,14 +107,14 @@ class DamageExplosion : public Explosion
 public:
 
     DamageExplosion (
-        Float const damage_amount,
-        Float const damage_radius,
-        Float const explosion_radius,
-        Float const time_to_live,
-        Float const time_at_birth,
+        Float damage_amount,
+        Float damage_radius,
+        Float explosion_radius,
+        Float time_to_live,
+        Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, CT_NONSOLID_COLLISION),
+        Explosion(explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_damage_amount(damage_amount),
         m_damage_radius(damage_radius),
         m_owner(owner)
@@ -149,11 +149,11 @@ class NoDamageExplosion : public Explosion
 public:
 
     NoDamageExplosion (
-        Float const final_size,
-        Float const time_to_live,
-        Float const time_at_birth)
+        Float final_size,
+        Float time_to_live,
+        Float time_at_birth)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, CT_NO_COLLISION)
+        Explosion(final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, Engine2::Circle::CT_NO_COLLISION)
     { }
 }; // end of class NoDamageExplosion
 
@@ -166,13 +166,13 @@ class EMPExplosion : public Explosion
 public:
 
     EMPExplosion (
-        Float const disable_time_factor,
-        Float const final_size,
-        Float const time_to_live,
-        Float const time_at_birth,
+        Float disable_time_factor,
+        Float final_size,
+        Float time_to_live,
+        Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, CT_NONSOLID_COLLISION),
+        Explosion(final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
         m_owner(owner)
     {
@@ -213,7 +213,7 @@ public:
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_FIREBALL, CT_NONSOLID_COLLISION),
+        Explosion(final_size, time_to_live, time_at_birth, ET_FIREBALL, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_potential_damage(potential_damage),
         m_owner(owner)
     {
@@ -254,7 +254,7 @@ public:
 
     LaserBeam ()
         :
-        Effect(-1.0f, 0.0f, ET_LASER_BEAM, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_LASER_BEAM, Engine2::Circle::CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha
@@ -276,9 +276,9 @@ class GaussGunTrail : public Effect
 {
 public:
 
-    GaussGunTrail (Float const time_to_live, Float const time_at_birth)
+    GaussGunTrail (Float time_to_live, Float time_at_birth)
         :
-        Effect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, CT_NO_COLLISION)
+        Effect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, Engine2::Circle::CT_NO_COLLISION)
     { }
 }; // end of class GaussGunTrail
 
@@ -292,7 +292,7 @@ public:
 
     TractorBeam ()
         :
-        Effect(-1.0f, 0.0f, ET_TRACTOR_BEAM, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_TRACTOR_BEAM, Engine2::Circle::CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha
@@ -315,7 +315,7 @@ public:
 
     ShieldEffect ()
         :
-        Effect(-1.0f, 0.0f, ET_SHIELD_EFFECT, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_SHIELD_EFFECT, Engine2::Circle::CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha
@@ -338,7 +338,7 @@ public:
 
     ReticleEffect ()
         :
-        Effect(-1.0f, 0.0f, ET_RETICLE_EFFECT, CT_NO_COLLISION)
+        Effect(-1.0f, 0.0f, ET_RETICLE_EFFECT, Engine2::Circle::CT_NO_COLLISION)
     { }
 
     // this is mainly just to override Effect::Think which changes the alpha

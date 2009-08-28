@@ -66,7 +66,7 @@ Asteroid::Asteroid (
         ms_health_factor * mass,
         ms_health_factor * mass,
         ET_ASTEROID,
-        CT_SOLID_COLLISION)
+        Engine2::Circle::CT_SOLID_COLLISION)
 {
     m_is_a_secondary_asteroid = is_a_secondary_asteroid;
     m_delete_upon_next_think = false;

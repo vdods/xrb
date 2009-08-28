@@ -30,7 +30,7 @@ public:
         EntityReference<Entity> const &owner,
         bool perform_line_trace_for_accuracy)
         :
-        Entity(ET_BALLISTIC, CT_SOLID_COLLISION),
+        Entity(ET_BALLISTIC, Engine2::Circle::CT_SOLID_COLLISION),
         m_weapon_level(weapon_level),
         m_owner(owner)
     {

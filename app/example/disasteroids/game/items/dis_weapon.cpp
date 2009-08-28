@@ -15,13 +15,12 @@
 #include "dis_explosive.hpp"
 #include "dis_entity.hpp"
 #include "dis_interloper.hpp"
-#include "dis_linetracebinding.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_revulsion.hpp"
 #include "dis_shade.hpp"
 #include "dis_ship.hpp"
 #include "dis_spawn.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_world.hpp"
 
@@ -269,7 +268,7 @@ bool Laser::Activate (
     if (SecondaryInput() > 0.0f &&
         time >= m_time_last_fired + 1.0f / ms_secondary_fire_rate[UpgradeLevel()])
     {
-        AreaTraceList area_trace_list;
+        Engine2::Circle::AreaTraceList area_trace_list;
         OwnerShip()->GetPhysicsHandler()->AreaTrace(
             OwnerShip()->GetObjectLayer(),
             OwnerShip()->Translation(),
@@ -279,12 +278,12 @@ bool Laser::Activate (
 
         Mortal *best_target = NULL;
         Sint32 best_target_priority = 0;
-        for (AreaTraceList::iterator it = area_trace_list.begin(),
-                                   it_end = area_trace_list.end();
+        for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                      it_end = area_trace_list.end();
              it != it_end;
              ++it)
         {
-            Entity *entity = *it;
+            Entity *entity = DStaticCast<Entity *>(*it);
             ASSERT1(entity != NULL);
 
             // we don't want to shoot ourselves
@@ -326,7 +325,7 @@ bool Laser::Activate (
             }
 
             // do a line trace
-            LineTraceBindingSet line_trace_binding_set;
+            Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
             OwnerShip()->GetPhysicsHandler()->LineTrace(
                 OwnerShip()->GetObjectLayer(),
                 fire_location,
@@ -335,19 +334,19 @@ bool Laser::Activate (
                 false,
                 &line_trace_binding_set);
 
-            LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
-            LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
+            Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+            Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
             // don't damage the owner of this weapon or powerups
             while (it != it_end &&
-                   (it->m_entity->IsPowerup() ||
-                    it->m_entity->IsBallistic() ||
-                    it->m_entity == OwnerShip()))
+                   (DStaticCast<Entity *>(it->m_entity)->IsPowerup() ||
+                    DStaticCast<Entity *>(it->m_entity)->IsBallistic() ||
+                    DStaticCast<Entity *>(it->m_entity) == OwnerShip()))
             {
                 ++it;
             }
 
             // only fire at ships and explosives
-            if (it != it_end && (it->m_entity->IsShip() || it->m_entity->IsExplosive()))
+            if (it != it_end && (DStaticCast<Entity *>(it->m_entity)->IsShip() || DStaticCast<Entity *>(it->m_entity)->IsExplosive()))
             {
                 // damage the mortal
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
@@ -382,7 +381,7 @@ bool Laser::Activate (
     {
         ASSERT1(power <= PrimaryInput() * frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
 
-        LineTraceBindingSet line_trace_binding_set;
+        Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
         OwnerShip()->GetPhysicsHandler()->LineTrace(
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation(),
@@ -391,8 +390,8 @@ bool Laser::Activate (
             false,
             &line_trace_binding_set);
 
-        LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
-        LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
+        Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+        Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
         // don't damage the owner of this weapon
         if (it != it_end && it->m_entity == OwnerShip())
             ++it;
@@ -401,7 +400,7 @@ bool Laser::Activate (
             MuzzleLocation() + ms_primary_range[UpgradeLevel()] * MuzzleDirection());
 
         // we don't want to hit powerups or ballistics, just skip them.
-        while (it != it_end && (it->m_entity->IsPowerup() || it->m_entity->IsBallistic()))
+        while (it != it_end && (DStaticCast<Entity *>(it->m_entity)->IsPowerup() || DStaticCast<Entity *>(it->m_entity)->IsBallistic()))
             ++it;
 
         // damage the next thing if it exists
@@ -411,7 +410,7 @@ bool Laser::Activate (
                 power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
             laser_beam_hit_location =
                 MuzzleLocation() + it->m_time * ms_primary_range[UpgradeLevel()] * MuzzleDirection();
-            if (it->m_entity->IsMortal())
+            if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
                 DStaticCast<Mortal *>(it->m_entity)->Damage(
                     OwnerShip(),
                     NULL, // laser does not have a Entity medium
@@ -587,7 +586,7 @@ bool GaussGun::Activate (
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
 
     // do a line trace
-    LineTraceBindingSet line_trace_binding_set;
+    Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
     OwnerShip()->GetPhysicsHandler()->LineTrace(
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation(),
@@ -596,8 +595,8 @@ bool GaussGun::Activate (
         false,
         &line_trace_binding_set);
 
-    LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
-    LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
+    Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
+    Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
 
     // decide how much damage to inflict total
     Float damage_left_to_inflict =
@@ -614,7 +613,7 @@ bool GaussGun::Activate (
     {
         // we don't want to hit the owner of this weapon or powerups
         // (continue without updating the furthest hit time)
-        if (it->m_entity == OwnerShip() || it->m_entity->IsPowerup())
+        if (it->m_entity == OwnerShip() || DStaticCast<Entity *>(it->m_entity)->IsPowerup())
         {
             ++it;
             continue;
@@ -623,7 +622,7 @@ bool GaussGun::Activate (
         first_hit_registered = true;
 
         furthest_hit_time = it->m_time;
-        if (it->m_entity->IsMortal())
+        if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
         {
             DStaticCast<Mortal *>(it->m_entity)->Damage(
                 OwnerShip(),
@@ -1036,7 +1035,7 @@ bool Tractor::Activate (
             reticle_coordinates,
             FloatVector2::ms_zero);
 
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     OwnerShip()->GetPhysicsHandler()->AreaTrace(
         OwnerShip()->GetObjectLayer(),
         reticle_coordinates,
@@ -1045,12 +1044,12 @@ bool Tractor::Activate (
         &area_trace_list);
 
     Polynomial::SolutionSet solution_set;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // we don't want to pull ourselves (it would cancel out anyway)

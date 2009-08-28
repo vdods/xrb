@@ -11,10 +11,10 @@
 #include "dis_revulsion.hpp"
 
 #include "dis_effect.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_polynomial.hpp"
 
@@ -165,7 +165,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     static Float const s_collision_lookahead_time = 3.0f;
 
     // scan area for targets
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         Translation(),
@@ -175,12 +175,12 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
     // check the area trace list for targets and collisions
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // ignore ourselves

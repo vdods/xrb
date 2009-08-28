@@ -13,12 +13,12 @@
 #include "dis_effect.hpp"
 #include "dis_engine.hpp"
 #include "dis_healthtrigger.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_powergenerator.hpp"
 #include "dis_powerup.hpp"
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_polynomial.hpp"
 
@@ -546,7 +546,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         ScaleFactor();
 
     // scan area for targets
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         Translation(),
@@ -555,12 +555,12 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         &area_trace_list);
 
     static Float const s_powerup_mass_threshold = 15.0f;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
         ASSERT2(*entity->GetReference() == entity);
 

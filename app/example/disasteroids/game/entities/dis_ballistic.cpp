@@ -11,7 +11,7 @@
 #include "dis_ballistic.hpp"
 
 #include "dis_mortal.hpp"
-#include "dis_physicshandler.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 
 using namespace Xrb;
 
@@ -45,7 +45,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
             {
                 FloatVector2 trace_vector(frame_dt * Velocity());
                 FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
-                LineTraceBindingSet line_trace_binding_set;
+                Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
                 GetPhysicsHandler()->LineTrace(
                     GetObjectLayer(),
                     trace_start,
@@ -55,8 +55,9 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     &line_trace_binding_set);
 
                 FloatVector2 collision_normal(trace_vector.Normalization());
-                for (LineTraceBindingSet::iterator it = line_trace_binding_set.begin(),
-                                                 it_end = line_trace_binding_set.end();
+                for (Engine2::Circle::LineTraceBindingSet::iterator
+                        it = line_trace_binding_set.begin(),
+                        it_end = line_trace_binding_set.end();
                      it != it_end;
                      ++it)
                 {
@@ -71,7 +72,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
                     FloatVector2 collision_location(trace_start + it->m_time * trace_vector);
                     bool there_was_a_collision =
                         CollidePrivate(
-                            it->m_entity,
+                            DStaticCast<Entity *>(it->m_entity),
                             collision_location,
                             collision_normal,
                             0.0f,
@@ -126,7 +127,7 @@ bool Ballistic::CollidePrivate (
     ASSERT1(collider != NULL);
 
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return false;
 
     // also, don't hit powerups

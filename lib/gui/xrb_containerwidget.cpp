@@ -309,7 +309,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     RenderContext child_render_context(render_context);
     // call Draw on all the child widgets with the appropriate clipping
     for (WidgetVector::const_iterator it = m_child_vector.begin(),
-                                   it_end = m_child_vector.end();
+                                      it_end = m_child_vector.end();
          it != it_end;
          ++it)
     {
@@ -352,7 +352,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
 
         // draw all the modal widgets, from the bottom of the stack, up.
         for (WidgetList::const_iterator it = m_modal_widget_stack.begin(),
-                                     it_end = m_modal_widget_stack.end();
+                                        it_end = m_modal_widget_stack.end();
              it != it_end;
              ++it)
         {

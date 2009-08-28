@@ -11,9 +11,9 @@
 #include "dis_effect.hpp"
 
 #include "dis_mortal.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_ship.hpp"
 #include "dis_util.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_sprite.hpp"
 
 using namespace Xrb;
@@ -89,7 +89,7 @@ void DamageExplosion::Collide (
     ASSERT1(collider != NULL);
 
     // can't damage nonsolid objects
-    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     // return if nothing would actually be done
@@ -136,7 +136,7 @@ void EMPExplosion::Collide (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL);
-    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     // only affect ships that aren't the owner
@@ -190,7 +190,7 @@ void Fireball::Collide (
     // TODO: when napalm is done, check if it hit napalm
 
     // we only care about hitting solid things
-    if (collider->GetCollisionType() == CT_NONSOLID_COLLISION)
+    if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
         return;
 
     static Float const s_damage_dissipation_rate = 2.0f;

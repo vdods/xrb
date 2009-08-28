@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_collisionquadtree.hpp by Victor Dods, created 2005/11/15
+// xrb_engine2_circle_collisionquadtree.hpp by Victor Dods, created 2005/11/15
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,22 +8,20 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_DIS_COLLISIONQUADTREE_HPP_)
-#define _DIS_COLLISIONQUADTREE_HPP_
+#if !defined(_XRB_ENGINE2_CIRCLE_COLLISIONQUADTREE_HPP_)
+#define _XRB_ENGINE2_CIRCLE_COLLISIONQUADTREE_HPP_
 
+#include "xrb.hpp"
+
+#include "xrb_engine2_circle_entity.hpp"
+#include "xrb_engine2_circle_types.hpp"
 #include "xrb_engine2_quadtree.hpp"
 
-#include "dis_areatracelist.hpp"
-#include "dis_collisionpair.hpp"
-#include "dis_entity.hpp"
-#include "dis_linetracebinding.hpp"
+namespace Xrb {
+namespace Engine2 {
+namespace Circle {
 
-using namespace Xrb;
-
-namespace Dis
-{
-
-class CollisionQuadTree : public Engine2::QuadTree
+class CollisionQuadTree : public QuadTree
 {
 public:
 
@@ -72,10 +70,7 @@ public:
 
 protected:
 
-    CollisionQuadTree (CollisionQuadTree *parent)
-        :
-        Engine2::QuadTree(parent)
-    { }
+    CollisionQuadTree (CollisionQuadTree *parent) : QuadTree(parent) { }
 
 private:
 
@@ -94,7 +89,7 @@ private:
             Float frame_dt,
             CollisionPairList *collision_pair_list,
             CollisionExemptionFunction CollisionExemption,
-            Engine2::QuadTreeType quad_tree_type,
+            QuadTreeType quad_tree_type,
             bool is_wrapped,
             Float object_layer_side_length) // irrelevant for non-wrapped space
             :
@@ -102,7 +97,7 @@ private:
             m_frame_dt(frame_dt),
             m_frame_dt_squared(frame_dt*frame_dt),
             m_collision_pair_list(collision_pair_list),
-            m_CollisionExempt(CollisionExemption),
+            m_CollisionExemption(CollisionExemption),
             m_quad_tree_type(quad_tree_type),
             m_is_wrapped(is_wrapped),
             m_object_layer_side_length(object_layer_side_length),
@@ -117,7 +112,7 @@ private:
 
         // this is the business end of the functor, and is what actually
         // does the collision detection.
-        void operator () (Engine2::Object *object);
+        void operator () (Object *object);
 
         Entity *GetEntity () const { return m_entity; }
         Float ObjectLayerSideLength () const { return m_object_layer_side_length; }
@@ -130,14 +125,16 @@ private:
         Float m_frame_dt;
         Float m_frame_dt_squared;
         CollisionPairList *m_collision_pair_list;
-        CollisionExemptionFunction m_CollisionExempt;
-        Engine2::QuadTreeType m_quad_tree_type;
+        CollisionExemptionFunction m_CollisionExemption;
+        QuadTreeType m_quad_tree_type;
         bool m_is_wrapped;
         Float m_object_layer_side_length;
         Float m_half_object_layer_side_length;
     }; // end of class CollisionQuadTree::CollideEntityLoopFunctor
 }; // end of class CollisionQuadTree
 
-} // end of namespace Dis
+} // end of namespace Circle
+} // end of namespace Engine2
+} // end of namespace Xrb
 
-#endif // !defined(_DIS_COLLISIONQUADTREE_HPP_)
+#endif // !defined(_XRB_ENGINE2_CIRCLE_COLLISIONQUADTREE_HPP_)

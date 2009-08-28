@@ -11,8 +11,8 @@
 #include "dis_interloper.hpp"
 
 #include "dis_engine.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_powergenerator.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_polynomial.hpp"
 
@@ -163,7 +163,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     static Float const s_collision_lookahead_time = 3.0f;
 
     // scan area for targets
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         Translation(),
@@ -174,12 +174,12 @@ void Interloper::Wander (Float const time, Float const frame_dt)
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;
     bool found_flock = false;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // ignore ourselves
@@ -268,7 +268,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     static Float const s_scan_radius = 200.0f;
 
     // scan the area in front of us
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         Translation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
@@ -281,12 +281,12 @@ void Interloper::Flock (Float time, Float frame_dt)
     Float closest_flock_member_distance = -1.0f;
     Float flock_mass = 0.0f;
     Uint32 flock_member_count = 0;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // ignore ourselves

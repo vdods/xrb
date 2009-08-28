@@ -41,10 +41,10 @@ public:
     }; // end of enum
 
     Mortal (
-        Float const current_health,
-        Float const max_health,
-        EntityType const entity_type,
-        CollisionType const collision_type)
+        Float current_health,
+        Float max_health,
+        EntityType entity_type,
+        Engine2::Circle::CollisionType collision_type)
         :
         Entity(entity_type, collision_type)
     {
@@ -75,19 +75,19 @@ public:
     inline DamageType Weakness () const { return m_weakness; }
     inline DamageType Strength () const { return m_strength; }
     inline DamageType Immunity () const { return m_immunity; }
-    inline bool IsWeakAgainst (DamageType const damage_type) const
+    inline bool IsWeakAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_weakness) != 0;
     }
-    inline bool IsStrongAgainst (DamageType const damage_type) const
+    inline bool IsStrongAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);
         return (damage_type & m_strength) != 0;
     }
-    inline bool IsImmuneAgainst (DamageType const damage_type) const
+    inline bool IsImmuneAgainst (DamageType damage_type) const
     {
         // make sure only one bit in the damage type is set
         ASSERT1((damage_type & (damage_type - 1)) == 0);

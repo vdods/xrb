@@ -13,11 +13,11 @@
 #include "dis_ballistic.hpp"
 #include "dis_effect.hpp"
 #include "dis_explosive.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_powerup.hpp"
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
@@ -566,7 +566,7 @@ void Demi::Wander (Float const time, Float const frame_dt)
     static Float const s_scan_radius = 400.0f;
 
     // scan area for targets
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         Translation(),
@@ -574,12 +574,12 @@ void Demi::Wander (Float const time, Float const frame_dt)
         false,
         &area_trace_list);
     // check the area trace list for targets
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // if this entity is a solitary, set m_target and transition
@@ -1452,7 +1452,7 @@ Entity *Demi::FindTractorDeflectTarget (
     Float const frame_dt)
 {
     Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + ScaleFactor());
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),
         muzzle_location + scan_radius * muzzle_direction.Normalization(),
@@ -1462,12 +1462,12 @@ Entity *Demi::FindTractorDeflectTarget (
 
     Entity *best_target = NULL;
     Sint32 best_target_priority = 0;
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                               it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // we don't want to deflect ourselves (it would cancel out anyway)

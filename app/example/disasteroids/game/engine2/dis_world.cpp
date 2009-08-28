@@ -18,7 +18,6 @@
 #include "dis_engine.hpp"
 #include "dis_entity.hpp"
 #include "dis_interloper.hpp"
-#include "dis_physicshandler.hpp"
 #include "dis_playership.hpp"
 #include "dis_powereddevice.hpp"
 #include "dis_powergenerator.hpp"
@@ -29,6 +28,7 @@
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_worldview.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_physicshandler.hpp"
 #include "xrb_engine2_sprite.hpp"
@@ -452,16 +452,21 @@ World::~World ()
     }
 }
 
-World *World::Create (DifficultyLevel const difficulty_level, Uint32 const entity_capacity)
+World *World::Create (DifficultyLevel difficulty_level, Uint32 entity_capacity)
 {
     ASSERT1(difficulty_level < DL_COUNT);
     ASSERT1(entity_capacity > 0);
-    return new World(difficulty_level, new PhysicsHandler(), entity_capacity);
+    return new World(
+        difficulty_level,
+        new Engine2::Circle::PhysicsHandler(
+            Entity::CollisionExemption,
+            Entity::MaxEntitySpeed),
+        entity_capacity);
 }
 
-PhysicsHandler *World::GetPhysicsHandler ()
+Engine2::Circle::PhysicsHandler *World::GetPhysicsHandler ()
 {
-    return DStaticCast<Dis::PhysicsHandler *>(m_physics_handler);
+    return DStaticCast<Engine2::Circle::PhysicsHandler *>(m_physics_handler);
 }
 
 void World::SubmitScoreDone ()
@@ -469,16 +474,14 @@ void World::SubmitScoreDone ()
     ScheduleStateMachineInput(IN_SUBMIT_SCORE_DONE, 0.0f);
 }
 
-void World::RecordDestroyedPlayerShip (PlayerShip const *const player_ship)
+void World::RecordDestroyedPlayerShip (PlayerShip const *player_ship)
 {
     ASSERT1(player_ship != NULL);
     ASSERT1(m_player_ship == player_ship);
     ScheduleStateMachineInput(IN_PLAYER_SHIP_DIED, 0.0f);
 }
 
-void World::RecordCreatedAsteroids (
-    Uint32 const created_asteroid_count,
-    Float const created_asteroids_mass)
+void World::RecordCreatedAsteroids (Uint32 created_asteroid_count, Float created_asteroids_mass)
 {
     ASSERT1(created_asteroid_count > 0);
     ASSERT1(created_asteroids_mass > 0.0f);
@@ -486,7 +489,7 @@ void World::RecordCreatedAsteroids (
     m_asteroid_mass += created_asteroids_mass;
 }
 
-void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
+void World::RecordDestroyedAsteroid (Asteroid const *asteroid)
 {
     ASSERT1(asteroid != NULL);
     ASSERT1(m_asteroid_count > 0);
@@ -495,7 +498,7 @@ void World::RecordDestroyedAsteroid (Asteroid const *const asteroid)
     m_asteroid_mass -= asteroid->Mass();
 }
 
-void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
+void World::RecordCreatedEnemyShip (EnemyShip const *enemy_ship)
 {
     ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
@@ -518,7 +521,7 @@ void World::RecordCreatedEnemyShip (EnemyShip const *const enemy_ship)
     }
 }
 
-void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
+void World::RecordDestroyedEnemyShip (EnemyShip const *enemy_ship)
 {
     ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
@@ -543,9 +546,9 @@ void World::RecordDestroyedEnemyShip (EnemyShip const *const enemy_ship)
 }
 
 World::World (
-    DifficultyLevel const difficulty_level,
-    Engine2::PhysicsHandler *const physics_handler,
-    Uint32 const entity_capacity)
+    DifficultyLevel difficulty_level,
+    Engine2::Circle::PhysicsHandler *physics_handler,
+    Uint32 entity_capacity)
     :
     Engine2::World(physics_handler, entity_capacity),
     SignalHandler(),
@@ -595,7 +598,7 @@ World::World (
     // HandleFrame, so that the WorldViews will be active
 }
 
-bool World::HandleEvent (Event const *const e)
+bool World::HandleEvent (Event const *e)
 {
     ASSERT1(e != NULL);
 
@@ -618,7 +621,7 @@ void World::HandleFrame ()
     m_state_machine.RunCurrentState(IN_PROCESS_FRAME);
 }
 
-void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
+void World::HandleAttachWorldView (Engine2::WorldView *engine2_world_view)
 {
     WorldView *dis_world_view = DStaticCast<WorldView *>(engine2_world_view);
 
@@ -675,7 +678,7 @@ void World::HandleAttachWorldView (Engine2::WorldView *const engine2_world_view)
 
 #define TRANSITION_TO(x) m_state_machine.SetNextState(&World::x)
 
-bool World::StateIntro (StateMachineInput const input)
+bool World::StateIntro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateIntro")
     switch (input)
@@ -704,7 +707,7 @@ bool World::StateIntro (StateMachineInput const input)
     return false;
 }
 
-bool World::StateSpawnPlayerShip (StateMachineInput const input)
+bool World::StateSpawnPlayerShip (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateSpawnPlayerShip")
     switch (input)
@@ -725,7 +728,7 @@ bool World::StateSpawnPlayerShip (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaveInitialize (StateMachineInput const input)
+bool World::StateWaveInitialize (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateWaveInitialize")
     switch (input)
@@ -782,7 +785,7 @@ bool World::StateWaveInitialize (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaveGameplay (StateMachineInput const input)
+bool World::StateWaveGameplay (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateWaveGameplay")
     switch (input)
@@ -823,7 +826,7 @@ bool World::StateWaveGameplay (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaveIntermissionGameplay (StateMachineInput const input)
+bool World::StateWaveIntermissionGameplay (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateWaveIntermissionGameplay")
     switch (input)
@@ -861,7 +864,7 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput const input)
     return false;
 }
 
-bool World::StateCheckLivesRemaining (StateMachineInput const input)
+bool World::StateCheckLivesRemaining (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateCheckLivesRemaining")
     switch (input)
@@ -877,7 +880,7 @@ bool World::StateCheckLivesRemaining (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
+bool World::StateWaitAfterPlayerDeath (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateWaitAfterPlayerDeath")
     switch (input)
@@ -897,7 +900,7 @@ bool World::StateWaitAfterPlayerDeath (StateMachineInput const input)
     return false;
 }
 
-bool World::StateDeathRattle (StateMachineInput const input)
+bool World::StateDeathRattle (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateDeathRattle")
     switch (input)
@@ -918,7 +921,7 @@ bool World::StateDeathRattle (StateMachineInput const input)
     return false;
 }
 
-bool World::StateGameOver (StateMachineInput const input)
+bool World::StateGameOver (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateGameOver")
     switch (input)
@@ -939,7 +942,7 @@ bool World::StateGameOver (StateMachineInput const input)
     return false;
 }
 
-bool World::StateSubmitScore (StateMachineInput const input)
+bool World::StateSubmitScore (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateSubmitScore")
     switch (input)
@@ -958,7 +961,7 @@ bool World::StateSubmitScore (StateMachineInput const input)
     return false;
 }
 
-bool World::StateWaitingForSubmitScoreResponse (StateMachineInput const input)
+bool World::StateWaitingForSubmitScoreResponse (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateWaitingForSubmitScoreResponse")
     switch (input)
@@ -973,7 +976,7 @@ bool World::StateWaitingForSubmitScoreResponse (StateMachineInput const input)
     return false;
 }
 
-bool World::StateOutro (StateMachineInput const input)
+bool World::StateOutro (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateOutro")
     switch (input)
@@ -1001,7 +1004,7 @@ bool World::StateOutro (StateMachineInput const input)
     return false;
 }
 
-bool World::StateEndGame (StateMachineInput const input)
+bool World::StateEndGame (StateMachineInput input)
 {
     STATE_MACHINE_STATUS("StateEndGame")
     switch (input)
@@ -1020,7 +1023,7 @@ bool World::StateEndGame (StateMachineInput const input)
     return false;
 }
 
-void World::ScheduleStateMachineInput (StateMachineInput const input, Float const time_delay)
+void World::ScheduleStateMachineInput (StateMachineInput input, Float time_delay)
 {
     CancelScheduledStateMachineInput();
     EnqueueEvent(new EventStateMachineInput(input, MostRecentFrameTime() + time_delay));
@@ -1155,7 +1158,7 @@ void World::EndOutro ()
         ScheduleStateMachineInput(IN_END_OUTRO, 0.0f);
 }
 
-void World::SetIsAlertWave (bool const is_alert_wave)
+void World::SetIsAlertWave (bool is_alert_wave)
 {
     m_internal_sender_is_alert_wave.Signal(is_alert_wave);
 }
@@ -1204,8 +1207,8 @@ Asteroid *World::SpawnAsteroidOutOfView ()
 }
 
 EnemyShip *World::SpawnEnemyShipOutOfView (
-    EntityType const enemy_ship_type,
-    Uint8 const enemy_level)
+    EntityType enemy_ship_type,
+    Uint8 enemy_level)
 {
     ASSERT1(enemy_ship_type >= ET_ENEMY_SHIP_LOWEST);
     ASSERT1(enemy_ship_type <= ET_ENEMY_SHIP_HIGHEST);
@@ -1294,7 +1297,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
 
 bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     FloatVector2 const &translation,
-    Float const scale_factor)
+    Float scale_factor)
 {
     Float object_layer_side_length = MainObjectLayer()->SideLength();
     Float half_object_layer_side_length = 0.5f * object_layer_side_length;
@@ -1306,7 +1309,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
 
     // check that the area is not in view of any attached WorldView
     for (WorldViewList::iterator it = m_world_view_list.begin(),
-                               it_end = m_world_view_list.end();
+                                 it_end = m_world_view_list.end();
          it != it_end;
          ++it)
     {
@@ -1415,7 +1418,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/galaxy_small09.png",
             "resources/starfield/galaxy_small10.png",
         };
-        Uint32 const galaxy_sprite_path_count = LENGTHOF(s_galaxy_sprite_path);
+        static Uint32 const s_galaxy_sprite_path_count = LENGTHOF(s_galaxy_sprite_path);
 
         Uint32 const number_of_galaxies_to_create = 100;
         for (Uint32 i = 0; i < number_of_galaxies_to_create; ++i)
@@ -1423,7 +1426,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             Engine2::Sprite *sprite =
                 Engine2::Sprite::Create(
                     s_galaxy_sprite_path[
-                        Math::RandomUint16(0, galaxy_sprite_path_count-1)]);
+                        Math::RandomUint16(0, s_galaxy_sprite_path_count-1)]);
             sprite->SetTranslation(
                 FloatVector2(
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
@@ -1473,7 +1476,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/starfield/star_flare08.png",
             "resources/starfield/star_flare09.png"
         };
-        Uint32 const starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
+        static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
         Uint32 const number_of_stars_to_create = 1000;
         for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
@@ -1481,7 +1484,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             Engine2::Sprite *sprite =
                 Engine2::Sprite::Create(
                     s_starfield_sprite_path[
-                        Math::RandomUint16(0, starfield_sprite_path_count-1)]);
+                        Math::RandomUint16(0, s_starfield_sprite_path_count-1)]);
             sprite->SetTranslation(
                 FloatVector2(
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
@@ -1518,9 +1521,9 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
             "resources/nebulas/reflection_nebula.png",
             "resources/nebulas/small_magellanic_cloud.png"
         };
-        Uint32 const nebula_sprite_path_count = LENGTHOF(s_nebula_sprite_path);
+        static Uint32 const s_nebula_sprite_path_count = LENGTHOF(s_nebula_sprite_path);
 
-        for (Uint32 i = 0; i < nebula_sprite_path_count; ++i)
+        for (Uint32 i = 0; i < s_nebula_sprite_path_count; ++i)
         {
             FloatVector2 translation;
             Float scale_factor;
@@ -1541,7 +1544,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
             Engine2::Sprite *sprite =
 //                 Engine2::Sprite::Create(s_nebula_sprite_path[i]);
-                Engine2::Sprite::Create(s_nebula_sprite_path[Math::RandomUint16(0, nebula_sprite_path_count-1)]);
+                Engine2::Sprite::Create(s_nebula_sprite_path[Math::RandomUint16(0, s_nebula_sprite_path_count-1)]);
             sprite->SetTranslation(translation);
             sprite->SetScaleFactor(scale_factor);
             sprite->SetAngle(Math::RandomAngle());

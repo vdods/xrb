@@ -10,12 +10,12 @@
 
 #include "dis_explosive.hpp"
 
-#include "dis_physicshandler.hpp"
 #include "dis_ship.hpp"
 #include "dis_spawn.hpp"
 #include "dis_util.hpp"
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
@@ -42,7 +42,7 @@ void Explosive::Collide (
         return;
 
     // if it's a solid collision object, potentially detonate
-    if (collider->GetCollisionType() == CT_SOLID_COLLISION && !IsDead())
+    if (collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && !IsDead())
         if (!HasDetonated() && CheckIfItShouldDetonate(collider, time, frame_dt))
             Detonate(time, frame_dt);
 
@@ -108,7 +108,7 @@ Grenade::Grenade (
     EntityReference<Entity> const &owner,
     Float const max_health)
     :
-    Explosive(weapon_level, owner, max_health, max_health, ET_GRENADE, CT_SOLID_COLLISION),
+    Explosive(weapon_level, owner, max_health, max_health, ET_GRENADE, Engine2::Circle::CT_SOLID_COLLISION),
     m_owner_grenade_launcher(owner_grenade_launcher),
     m_damage_to_inflict(damage_to_inflict),
     m_damage_radius(damage_radius),
@@ -232,7 +232,7 @@ bool Grenade::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL);
-    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+    ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
     ASSERT1(!IsDead());
 
     // this grenade is dumb, just detonate
@@ -296,7 +296,7 @@ Missile::Missile (
     Float const max_health,
     EntityType const entity_type)
     :
-    Explosive(weapon_level, owner, max_health, max_health, entity_type, CT_SOLID_COLLISION),
+    Explosive(weapon_level, owner, max_health, max_health, entity_type, Engine2::Circle::CT_SOLID_COLLISION),
     m_time_to_live(time_to_live),
     m_owner_missile_launcher(owner_missile_launcher),
     m_time_at_birth(time_at_birth),
@@ -355,7 +355,7 @@ void Missile::Think (
     {
         FloatVector2 trace_vector(frame_dt * Velocity());
         FloatVector2 trace_start(Translation() - 0.5f * trace_vector);
-        LineTraceBindingSet line_trace_binding_set;
+        Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
             trace_start,
@@ -365,12 +365,13 @@ void Missile::Think (
             &line_trace_binding_set);
 
         FloatVector2 collision_normal(trace_vector.Normalization());
-        for (LineTraceBindingSet::iterator it = line_trace_binding_set.begin(),
-                                         it_end = line_trace_binding_set.end();
+        for (Engine2::Circle::LineTraceBindingSet::iterator
+                it = line_trace_binding_set.begin(),
+                it_end = line_trace_binding_set.end();
              it != it_end;
              ++it)
         {
-            if (CheckIfItShouldDetonate(it->m_entity, time, frame_dt))
+            if (CheckIfItShouldDetonate(DStaticCast<Entity *>(it->m_entity), time, frame_dt))
             {
                 Detonate(time, frame_dt);
                 break;
@@ -418,7 +419,7 @@ bool Missile::CheckIfItShouldDetonate (
     Float const frame_dt)
 {
     ASSERT1(collider != NULL);
-    ASSERT1(collider->GetCollisionType() == CT_SOLID_COLLISION);
+    ASSERT1(collider->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION);
     ASSERT1(!HasDetonated());
     ASSERT1(!IsDead());
 
@@ -501,15 +502,17 @@ void GuidedMissile::Think (Float const time, Float const frame_dt)
     Missile::Think(time, frame_dt);
 }
 
-EntityReference<Ship> GuidedMissile::FindTarget (LineTraceBindingSet const &scan_set)
+EntityReference<Ship> GuidedMissile::FindTarget (Engine2::Circle::LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSet::const_iterator it = scan_set.begin(),
-                                          it_end = scan_set.end();
+    for (Engine2::Circle::LineTraceBindingSet::const_iterator
+            it = scan_set.begin(),
+            it_end = scan_set.end();
          it != it_end;
          ++it)
     {
-        if (it->m_entity->IsShip() && it->m_entity != *m_owner)
-            return it->m_entity->GetReference();
+        Entity *entity = DStaticCast<Entity *>(it->m_entity);
+        if (entity->IsShip() && entity != *m_owner)
+            return entity->GetReference();
     }
     // if no target found, return an invalid reference
     return EntityReference<Ship>();
@@ -532,7 +535,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
         static Float const s_search_distance = 400.0f;
         static Float const s_search_radius = 70.0f;
 
-        LineTraceBindingSet line_trace_binding_set;
+        Engine2::Circle::LineTraceBindingSet line_trace_binding_set;
         GetPhysicsHandler()->LineTrace(
             GetObjectLayer(),
             Translation(),
@@ -612,15 +615,17 @@ void GuidedMissile::AimAt (FloatVector2 const &position)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-EntityReference<Ship> GuidedEnemyMissile::FindTarget (LineTraceBindingSet const &scan_set)
+EntityReference<Ship> GuidedEnemyMissile::FindTarget (Engine2::Circle::LineTraceBindingSet const &scan_set)
 {
-    for (LineTraceBindingSet::const_iterator it = scan_set.begin(),
-                                          it_end = scan_set.end();
+    for (Engine2::Circle::LineTraceBindingSet::const_iterator
+            it = scan_set.begin(),
+            it_end = scan_set.end();
          it != it_end;
          ++it)
     {
-        if (it->m_entity->GetEntityType() == ET_SOLITARY)
-            return it->m_entity->GetReference();
+        Entity *entity = DStaticCast<Entity *>(it->m_entity);
+        if (entity->GetEntityType() == ET_SOLITARY)
+            return entity->GetReference();
     }
     // if no target found, return an invalid reference
     return EntityReference<Ship>();

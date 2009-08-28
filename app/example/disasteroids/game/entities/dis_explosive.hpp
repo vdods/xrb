@@ -13,8 +13,6 @@
 
 #include "dis_mortal.hpp"
 
-#include "dis_linetracebinding.hpp"
-
 using namespace Xrb;
 
 namespace Dis
@@ -30,12 +28,12 @@ class Explosive : public Mortal
 public:
 
     Explosive (
-        Uint8 const weapon_level,
+        Uint8 weapon_level,
         EntityReference<Entity> const &owner,
-        Float const current_health,
-        Float const max_health,
-        EntityType const entity_type,
-        CollisionType const collision_type)
+        Float current_health,
+        Float max_health,
+        EntityType entity_type,
+        Engine2::Circle::CollisionType collision_type)
         :
         Mortal(current_health, max_health, entity_type, collision_type),
         m_owner(owner),
@@ -158,15 +156,15 @@ public:
 
     Missile (
         MissileLauncher *owner_missile_launcher,
-        Float const time_to_live,
-        Float const time_at_birth,
-        Float const damage_to_inflict,
-        Float const damage_radius,
-        Float const explosion_radius,
-        Uint32 const weapon_level,
+        Float time_to_live,
+        Float time_at_birth,
+        Float damage_to_inflict,
+        Float damage_radius,
+        Float explosion_radius,
+        Uint32 weapon_level,
         EntityReference<Entity> const &owner,
-        Float const max_health,
-        EntityType const entity_type = ET_MISSILE);
+        Float max_health,
+        EntityType entity_type = ET_MISSILE);
     virtual ~Missile ();
 
     MissileLauncher *OwnerMissileLauncher () { return m_owner_missile_launcher; }
@@ -221,15 +219,15 @@ class GuidedMissile : public Missile
 public:
 
     GuidedMissile (
-        Float const time_to_live,
-        Float const time_at_birth,
-        Float const damage_to_inflict,
-        Float const damage_radius,
-        Float const explosion_radius,
-        Uint32 const weapon_level,
+        Float time_to_live,
+        Float time_at_birth,
+        Float damage_to_inflict,
+        Float damage_radius,
+        Float explosion_radius,
+        Uint32 weapon_level,
         EntityReference<Entity> const &owner,
-        Float const max_health,
-        EntityType const entity_type = ET_GUIDED_MISSILE)
+        Float max_health,
+        EntityType entity_type = ET_GUIDED_MISSILE)
         :
         Missile(
             NULL,
@@ -253,7 +251,7 @@ public:
 
 protected:
 
-    virtual EntityReference<Ship> FindTarget (LineTraceBindingSet const &scan_set);
+    virtual EntityReference<Ship> FindTarget (Engine2::Circle::LineTraceBindingSet const &scan_set);
 
 private:
 
@@ -275,14 +273,14 @@ class GuidedEnemyMissile : public GuidedMissile
 public:
 
     GuidedEnemyMissile (
-        Float const time_to_live,
-        Float const time_at_birth,
-        Float const damage_to_inflict,
-        Float const damage_radius,
-        Float const explosion_radius,
-        Uint32 const weapon_level,
+        Float time_to_live,
+        Float time_at_birth,
+        Float damage_to_inflict,
+        Float damage_radius,
+        Float explosion_radius,
+        Uint32 weapon_level,
         EntityReference<Entity> const &owner,
-        Float const max_health)
+        Float max_health)
         :
         GuidedMissile(
             time_to_live,
@@ -299,7 +297,7 @@ public:
 
 protected:
 
-    virtual EntityReference<Ship> FindTarget (LineTraceBindingSet const &scan_set);
+    virtual EntityReference<Ship> FindTarget (Engine2::Circle::LineTraceBindingSet const &scan_set);
 }; // end of class GuidedMissile
 
 } // end of namespace Dis

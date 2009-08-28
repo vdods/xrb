@@ -26,7 +26,7 @@ public:
 
     Powerup (ItemType const item_type)
         :
-        Entity(ET_POWERUP, CT_SOLID_COLLISION)
+        Entity(ET_POWERUP, Engine2::Circle::CT_SOLID_COLLISION)
     {
         m_item_type = item_type;
         m_item = NULL;
@@ -36,7 +36,7 @@ public:
     }
     Powerup (Item *const item)
         :
-        Entity(ET_POWERUP, CT_SOLID_COLLISION)
+        Entity(ET_POWERUP, Engine2::Circle::CT_SOLID_COLLISION)
     {
         ASSERT1(item != NULL);
         m_item_type = IT_COUNT;

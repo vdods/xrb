@@ -47,13 +47,22 @@ user <--> worldview <--> world ( <-network-> serverworld )
                                (_________________________)
 */
 
+namespace Xrb {
+namespace Engine2 {
+namespace Circle {
+
+class PhysicsHandler;
+
+} // end of namespace Circle
+} // end of namespace Engine2
+} // end of namespace Xrb
+
 namespace Dis
 {
 
 class Asteroid;
 class EnemyShip;
 class PlayerShip;
-class PhysicsHandler;
 
 class World : public Engine2::World, public SignalHandler
 {
@@ -65,17 +74,17 @@ public:
         DifficultyLevel difficulty_level,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
-    inline SignalSender1<Score const &> const *SenderSubmitScore () { return &m_sender_submit_score; }
-    inline SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
+    SignalSender1<Score const &> const *SenderSubmitScore () { return &m_sender_submit_score; }
+    SignalSender0 const *SenderEndGame () { return &m_sender_end_game; }
 
-    inline PlayerShip *GetPlayerShip () { return m_player_ship; }
-    inline DifficultyLevel GetDifficultyLevel () const
+    PlayerShip *GetPlayerShip () { return m_player_ship; }
+    DifficultyLevel GetDifficultyLevel () const
     {
         ASSERT1(m_difficulty_level < DL_COUNT);
         return m_difficulty_level;
     }
-    PhysicsHandler *GetPhysicsHandler ();
-    inline Uint8 AsteroidMineralLevel () const { return m_asteroid_mineral_level; }
+    Engine2::Circle::PhysicsHandler *GetPhysicsHandler ();
+    Uint8 AsteroidMineralLevel () const { return m_asteroid_mineral_level; }
 
     // for use by Master to indicate that the high score processing is done
     // and the world can now transition to StateOutro
@@ -95,7 +104,7 @@ protected:
 
     World (
         DifficultyLevel difficulty_level,
-        Engine2::PhysicsHandler *physics_handler,
+        Engine2::Circle::PhysicsHandler *physics_handler,
         Uint32 entity_capacity = DEFAULT_ENTITY_CAPACITY);
 
     virtual bool HandleEvent (Event const *e);

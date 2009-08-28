@@ -12,10 +12,13 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 ##############################################################################
 
 .PHONY: \
-	doc
+	doc \
+	lib
 
 doc:
 	$(DOXYGEN) Doxyfile
+
+lib: lib/libxrb.la
 
 lib_LTLIBRARIES = \
 	lib/libxrb.la
@@ -102,6 +105,7 @@ AM_CPPFLAGS = \
     \
     -I$(top_srcdir)/lib/core \
     -I$(top_srcdir)/lib/engine2 \
+    -I$(top_srcdir)/lib/engine2/circle \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
@@ -162,6 +166,10 @@ lib_libxrb_la_SOURCES = \
     lib/engine2/xrb_engine2_sprite.cpp \
     lib/engine2/xrb_engine2_visibilityquadtree.cpp \
     lib/engine2/xrb_engine2_world.cpp \
+    \
+    lib/engine2/circle/xrb_engine2_circle_collisionquadtree.cpp \
+    lib/engine2/circle/xrb_engine2_circle_entity.cpp \
+    lib/engine2/circle/xrb_engine2_circle_physicshandler.cpp \
     \
     lib/gui/xrb_containerwidget.cpp \
     lib/gui/xrb_gui_events.cpp \
@@ -289,6 +297,11 @@ include_HEADERS = \
     lib/engine2/xrb_engine2_types.hpp \
     lib/engine2/xrb_engine2_visibilityquadtree.hpp \
     lib/engine2/xrb_engine2_world.hpp \
+    \
+    lib/engine2/circle/xrb_engine2_circle_collisionquadtree.hpp \
+    lib/engine2/circle/xrb_engine2_circle_entity.hpp \
+    lib/engine2/circle/xrb_engine2_circle_physicshandler.hpp \
+    lib/engine2/circle/xrb_engine2_circle_types.hpp \
     \
     lib/gui/xrb_containerwidget.hpp \
     lib/gui/xrb_gui_events.hpp \
@@ -459,9 +472,7 @@ disasteroids_SOURCES = \
     app/example/disasteroids/game/dis_item.cpp \
     app/example/disasteroids/game/dis_spawn.cpp \
     app/example/disasteroids/game/dis_util.cpp \
-    app/example/disasteroids/game/engine2/dis_collisionquadtree.cpp \
     app/example/disasteroids/game/engine2/dis_entity.cpp \
-    app/example/disasteroids/game/engine2/dis_physicshandler.cpp \
     app/example/disasteroids/game/engine2/dis_world.cpp \
     app/example/disasteroids/game/entities/dis_asteroid.cpp \
     app/example/disasteroids/game/entities/dis_ballistic.cpp \
@@ -563,13 +574,8 @@ noinst_HEADERS = \
     app/example/disasteroids/game/dis_item.hpp \
     app/example/disasteroids/game/dis_spawn.hpp \
     app/example/disasteroids/game/dis_util.hpp \
-    app/example/disasteroids/game/engine2/dis_areatracelist.hpp \
-    app/example/disasteroids/game/engine2/dis_collisionpair.hpp \
-    app/example/disasteroids/game/engine2/dis_collisionquadtree.hpp \
     app/example/disasteroids/game/engine2/dis_entity.hpp \
     app/example/disasteroids/game/engine2/dis_entityreference.hpp \
-    app/example/disasteroids/game/engine2/dis_linetracebinding.hpp \
-    app/example/disasteroids/game/engine2/dis_physicshandler.hpp \
     app/example/disasteroids/game/engine2/dis_world.hpp \
     app/example/disasteroids/game/entities/dis_asteroid.hpp \
     app/example/disasteroids/game/entities/dis_ballistic.hpp \

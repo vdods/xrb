@@ -135,7 +135,7 @@ bool HighScores::AddScore (Score const &score)
     Uint32 wave_count_rank = 0;
 
     for (BestPointsScoreSet::const_iterator it = m_best_points_score_set.begin(),
-                                         it_end = m_best_points_score_set.end();
+                                            it_end = m_best_points_score_set.end();
          it != it_end && !score_order_by_points(score, *it);
          ++it)
     {
@@ -143,7 +143,7 @@ bool HighScores::AddScore (Score const &score)
     }
 
     for (BestWaveCountScoreSet::const_iterator it = m_best_wave_count_score_set.begin(),
-                                            it_end = m_best_wave_count_score_set.end();
+                                               it_end = m_best_wave_count_score_set.end();
          it != it_end && !score_order_by_wave_count(score, *it);
          ++it)
     {
@@ -228,7 +228,7 @@ void HighScores::Write (std::string const &path)
 
     DataFileStructure *root = new DataFileStructure();
     for (ScoreList::const_iterator it = m_score_list.begin(),
-                                it_end = m_score_list.end();
+                                   it_end = m_score_list.end();
          it != it_end;
          ++it)
     {

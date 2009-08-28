@@ -241,7 +241,7 @@ Uint32 Engine2::World::MainObjectLayerIndex () const
 {
     Uint32 index = 0;
     for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
-                                      it_end = m_object_layer_list.end();
+                                         it_end = m_object_layer_list.end();
          it != it_end;
          ++it)
     {
@@ -410,7 +410,7 @@ void Engine2::World::WriteDynamicObjectsBelongingToLayer (
     // first we have to count how many there actually are
     Uint32 dynamic_object_count = 0;
     for (EntityVector::const_iterator it = m_entity_vector.begin(),
-                                   it_end = m_entity_vector.end();
+                                      it_end = m_entity_vector.end();
          it != it_end;
          ++it)
     {

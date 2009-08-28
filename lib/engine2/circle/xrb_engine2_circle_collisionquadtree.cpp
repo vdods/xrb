@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_collisionquadtree.cpp by Victor Dods, created 2005/11/15
+// xrb_engine2_circle_collisionquadtree.cpp by Victor Dods, created 2005/11/15
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,31 +8,28 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_collisionquadtree.hpp"
+#include "xrb_engine2_circle_collisionquadtree.hpp"
 
 #include <algorithm>
 
-#include "dis_entity.hpp"
+#include "xrb_engine2_circle_entity.hpp"
 
-using namespace Xrb;
-
-namespace Dis
-{
+namespace Xrb {
+namespace Engine2 {
+namespace Circle {
 
 CollisionQuadTree::CollisionQuadTree (
     FloatVector2 const &center,
-    Float const half_side_length,
-    Uint8 const depth)
+    Float half_side_length,
+    Uint8 depth)
     :
-    Engine2::QuadTree(NULL)
+    QuadTree(NULL)
 {
     Initialize<CollisionQuadTree>(center, half_side_length, depth);
-    SetQuadTreeType(Engine2::QTT_PHYSICS_HANDLER);
+    SetQuadTreeType(QTT_PHYSICS_HANDLER);
 }
 
-CollisionQuadTree *CollisionQuadTree::Create (
-    Float const half_side_length,
-    Uint8 const depth)
+CollisionQuadTree *CollisionQuadTree::Create (Float half_side_length, Uint8 depth)
 {
     return new CollisionQuadTree(FloatVector2::ms_zero, half_side_length, depth);
 }
@@ -70,9 +67,9 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
          it != it_end;
          ++it)
     {
-        Engine2::Object const *object = *it;
+        Object const *object = *it;
         ASSERT1(object != NULL);
-        ASSERT1(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT1(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
         FloatVector2 object_translation(object->Translation());
         FloatVector2 adjusted_area_center(area_center);
@@ -97,10 +94,10 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
         {
             Entity const *entity = DStaticCast<Entity const *>(object->GetEntity());
             ASSERT1(entity != NULL);
-            if (entity->GetCollisionType() == CT_SOLID_COLLISION)
+            if (entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION)
                 return true;
             else if (check_nonsolid_collision_entities &&
-                     entity->GetCollisionType() == CT_NONSOLID_COLLISION)
+                     entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
                 return true;
         }
     }
@@ -183,17 +180,17 @@ void CollisionQuadTree::LineTrace (
          it != it_end;
          ++it)
     {
-        Engine2::Object *object = *it;
+        Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
-        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
+        if (entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -299,17 +296,17 @@ void CollisionQuadTree::AreaTrace (
          it != it_end;
          ++it)
     {
-        Engine2::Object *object = *it;
+        Object *object = *it;
         ASSERT1(object != NULL);
-        ASSERT2(object->OwnerQuadTree(Engine2::QTT_PHYSICS_HANDLER) == this);
+        ASSERT2(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
         Entity *entity = DStaticCast<Entity *>(object->GetEntity());
         ASSERT1(entity != NULL);
 
         // don't check nonsolid collision entities if
         // check_nonsolid_collision_entities isn't set.
-        ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
-        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION &&
+        ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
+        if (entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION &&
             !check_nonsolid_collision_entities)
             continue;
 
@@ -340,14 +337,14 @@ void CollisionQuadTree::AreaTrace (
 
 void CollisionQuadTree::CollideEntity (
     Entity *const entity,
-    Float const frame_dt,
-    CollisionPairList *const collision_pair_list,
+    Float frame_dt,
+    CollisionPairList *collision_pair_list,
     CollisionExemptionFunction CollisionExemption,
     bool is_wrapped,
     Float object_layer_side_length)
 {
     ASSERT1(entity != NULL);
-    ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
+    ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
     ASSERT1(collision_pair_list != NULL);
 
     CollideEntityLoopFunctor
@@ -394,7 +391,7 @@ void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunct
     std::for_each(m_object_set.begin(), m_object_set.end(), functor);
 }
 
-void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *const object)
+void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 {
     // don't collide the entity with itself
     if (object == m_entity->OwnerObject())
@@ -405,7 +402,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *
     if (object->Radius(m_quad_tree_type) > m_entity->Radius(m_quad_tree_type)
         ||
         (object->Radius(m_quad_tree_type) == m_entity->Radius(m_quad_tree_type) &&
-         object > m_entity->OwnerObject()))
+         object > m_entity->OwnerObject())) // yes, this is pointer comparison
         return;
 
     FloatVector2 ce0_translation(m_entity->Translation());
@@ -449,9 +446,9 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *
     Float collision_force = 0.0f;
 
     if ((V | P) < 0.0f && // and if the distance between the two is closing
-        m_entity->GetCollisionType() == CT_SOLID_COLLISION && // and if they're both solid
-        other_entity->GetCollisionType() == CT_SOLID_COLLISION &&
-        !m_CollisionExempt(m_entity, other_entity)) // and if this isn't an exception to the rule
+        m_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && // and if they're both solid
+        other_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION &&
+        !m_CollisionExemption(m_entity, other_entity)) // and if this isn't an exception
     {
         Float M = 1.0f / m_entity->Mass() + 1.0f / other_entity->Mass();
         FloatVector2 Q(P + m_frame_dt*V);
@@ -495,4 +492,6 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Engine2::Object *
             collision_force));
 }
 
-} // end of namespace Dis
+} // end of namespace Circle
+} // end of namespace Engine2
+} // end of namespace Xrb

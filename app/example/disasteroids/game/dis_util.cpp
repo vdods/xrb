@@ -11,7 +11,7 @@
 #include "dis_util.hpp"
 
 #include "dis_entity.hpp"
-#include "dis_physicshandler.hpp"
+#include "xrb_engine2_circle_physicshandler.hpp"
 
 using namespace Xrb;
 
@@ -19,7 +19,7 @@ namespace Dis
 {
 
 void RadiusDamage (
-    PhysicsHandler *physics_handler,
+    Engine2::Circle::PhysicsHandler *physics_handler,
     Engine2::ObjectLayer *object_layer,
     Entity *damager,
     Entity *damage_medium,
@@ -38,7 +38,7 @@ void RadiusDamage (
     if (damage_amount == 0.0f)
         return;
 
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     physics_handler->AreaTrace(
         object_layer,
         damage_area_center,
@@ -46,12 +46,12 @@ void RadiusDamage (
         false,
         &area_trace_list);
 
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                                 it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
         ASSERT1(entity != NULL);
 
         // damage mortals, unless it is the one to ignore.
@@ -89,7 +89,7 @@ void RadiusDamage (
 }
 
 void RadiusKnockback (
-    PhysicsHandler *physics_handler,
+    Engine2::Circle::PhysicsHandler *physics_handler,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &knockback_area_center,
     Float knockback_area_radius,
@@ -100,7 +100,7 @@ void RadiusKnockback (
     ASSERT1(knockback_area_radius > 0.0f);
     ASSERT1(power > 0.0f);
 
-    AreaTraceList area_trace_list;
+    Engine2::Circle::AreaTraceList area_trace_list;
     physics_handler->AreaTrace(
         object_layer,
         knockback_area_center,
@@ -109,17 +109,17 @@ void RadiusKnockback (
         &area_trace_list);
 
     // iterate through the trace set and apply forces
-    for (AreaTraceList::iterator it = area_trace_list.begin(),
-                                 it_end = area_trace_list.end();
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
          it != it_end;
          ++it)
     {
-        Entity *entity = *it;
+        Entity *entity = DStaticCast<Entity *>(*it);
 
         if (entity == NULL)
             continue;
 
-        if (entity->GetCollisionType() == CT_NONSOLID_COLLISION)
+        if (entity->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
             continue;
 
         // center_to_center points towards the collider
