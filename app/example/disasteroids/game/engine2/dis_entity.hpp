@@ -49,7 +49,7 @@ public:
         return m_reference;
     }
 
-    Dis::World *GetWorld () const;
+    World *GetWorld () const;
 
     static bool CollisionExemption (
         Engine2::Circle::Entity const *entity0,
@@ -93,7 +93,7 @@ private:
         Float frame_dt)
     {
         Collide(
-            DStaticCast<Dis::Entity *>(collider),
+            DStaticCast<Entity *>(collider),
             collision_location,
             collision_normal,
             collision_force,

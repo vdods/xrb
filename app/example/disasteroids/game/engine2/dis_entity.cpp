@@ -31,17 +31,17 @@ Entity::~Entity ()
         m_reference.NullifyEntity();
 }
 
-Dis::World *Entity::GetWorld () const
+World *Entity::GetWorld () const
 {
-    return DStaticCast<Dis::World *>(OwnerObject()->GetWorld());
+    return DStaticCast<World *>(OwnerObject()->GetWorld());
 }
 
 bool Entity::CollisionExemption (
     Engine2::Circle::Entity const *entity0,
     Engine2::Circle::Entity const *entity1)
 {
-    Dis::Entity const *dis_entity0 = DStaticCast<Entity const *>(entity0);
-    Dis::Entity const *dis_entity1 = DStaticCast<Entity const *>(entity1);
+    Entity const *dis_entity0 = DStaticCast<Entity const *>(entity0);
+    Entity const *dis_entity1 = DStaticCast<Entity const *>(entity1);
 
     // we don't want the powerups to hurt the player by collision, and
     // when ballistics (e.g. pea shooter) are allowed to interact with
@@ -62,7 +62,7 @@ bool Entity::CollisionExemption (
 
 Float Entity::MaxEntitySpeed (Engine2::Circle::Entity const *entity)
 {
-    Dis::Entity const *dis_entity = DStaticCast<Entity const *>(entity);
+    Entity const *dis_entity = DStaticCast<Entity const *>(entity);
 
     // nonsolid and no-collision
     if (dis_entity->GetCollisionType() != Engine2::Circle::CT_SOLID_COLLISION)
