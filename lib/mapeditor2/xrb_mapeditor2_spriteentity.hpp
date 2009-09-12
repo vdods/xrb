@@ -43,7 +43,7 @@ namespace MapEditor2
         // create a new sprite from the given texture path
         static SpriteEntity *Create (std::string const &texture_path);
         // create a sprite entity from a resourced texture
-        static SpriteEntity *Create (Resource<GLTexture> const &texture);
+        static SpriteEntity *Create (Resource<GlTexture> const &texture);
         // create an instance of this class by reading from the given Serializer
         static SpriteEntity *Create (Serializer &serializer);
         // writes this SpriteEntity to the serializer
@@ -102,7 +102,7 @@ namespace MapEditor2
     protected:
 
         // protected constructor so that you must use Create
-        SpriteEntity (Resource<GLTexture> const &texture)
+        SpriteEntity (Resource<GlTexture> const &texture)
             :
             Engine2::Object(),
             Object(),

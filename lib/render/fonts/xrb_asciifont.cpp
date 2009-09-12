@@ -112,7 +112,7 @@ AsciiFont *AsciiFont::CreateFromCache (
         if (!serializer.IsAtEnd())
             throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
 
-        retval->m_gltexture = GLTexture::Create(texture);
+        retval->m_gltexture = GlTexture::Create(texture);
         ASSERT1(retval->m_gltexture != NULL);
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
@@ -144,7 +144,7 @@ AsciiFont *AsciiFont::Create (
     retval->m_baseline_height = baseline_height;
     memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
     memcpy(retval->m_kern_pair_26_6, kern_pair_26_6, sizeof(retval->m_kern_pair_26_6));
-    retval->m_gltexture = GLTexture::Create(font_texture);
+    retval->m_gltexture = GlTexture::Create(font_texture);
     ASSERT1(retval->m_gltexture != NULL);
 
     return retval;
@@ -348,7 +348,7 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        m_gltexture,
+        m_gltexture->Handle(),
         render_context.ColorMask(),
         render_context.ColorBias());
 

@@ -31,9 +31,9 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::CreateSpriteEntityClone (
 MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
     std::string const &texture_path)
 {
-    Resource<GLTexture> texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+    Resource<GlTexture> texture =
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             texture_path);
     if (!texture.IsValid())
         return NULL;
@@ -42,7 +42,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
 }
 
 MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
 {
     if (!texture.IsValid())
         return NULL;
@@ -52,7 +52,7 @@ MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (
 
 MapEditor2::SpriteEntity *MapEditor2::SpriteEntity::Create (Serializer &serializer)
 {
-    SpriteEntity *retval = new SpriteEntity(Resource<GLTexture>());
+    SpriteEntity *retval = new SpriteEntity(Resource<GlTexture>());
 
     retval->Engine2::Object::ReadClassSpecific(serializer);
     retval->Engine2::Sprite::ReadClassSpecific(serializer);

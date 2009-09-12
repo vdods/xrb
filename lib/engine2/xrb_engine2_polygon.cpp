@@ -80,7 +80,7 @@ void Engine2::Polygon::Draw () const
     ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
     ASSERT1(Gl::Boolean(GL_TEXTURE_2D));
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->Handle());
+    Singleton::Gl().BindTexture(m_texture->Handle());
 
     // TODO: use small static array instead of new'ing
     {
@@ -166,7 +166,7 @@ void Engine2::Polygon::Read (
     }
     m_texture =
         Singleton::ResourceLibrary().
-            LoadPath<GLTexture>(GLTexture::Create, serializer.ReadAggregate<std::string>());
+            LoadPath<GlTexture>(GlTexture::Create, serializer.ReadAggregate<std::string>());
     m_area = Area();
 
     ASSERT1(IsCounterclockwise());

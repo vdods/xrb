@@ -39,7 +39,7 @@ struct Polygon
     Vertex *m_vertex_array;
     // the texture to draw the polygon with (an invalid Resource indicates
     // that no texture will be drawn and the polygon is invisible).
-    Resource<GLTexture> m_texture;
+    Resource<GlTexture> m_texture;
     // the area of this polygon
     Float m_area;
 

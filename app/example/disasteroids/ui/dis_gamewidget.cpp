@@ -209,8 +209,8 @@ GameWidget::GameWidget (
             Label *lives_remaining_icon_label =
                 new Label(
                     Singleton::ResourceLibrary().
-                        LoadPath<GLTexture>(
-                            GLTexture::Create,
+                        LoadPath<GlTexture>(
+                            GlTexture::Create,
                             "resources/solitary_small.png"),
                     m_stats_and_inventory_layout);
             lives_remaining_icon_label->FixWidth(m_lives_remaining_label->Height());
@@ -231,8 +231,8 @@ GameWidget::GameWidget (
             Label *mineral_icon_label =
                 new Label(
                     Singleton::ResourceLibrary().
-                        LoadPath<GLTexture>(
-                            GLTexture::Create,
+                        LoadPath<GlTexture>(
+                            GlTexture::Create,
                             Item::MineralSpritePath(mineral_index)),
                     m_stats_and_inventory_layout);
             mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());

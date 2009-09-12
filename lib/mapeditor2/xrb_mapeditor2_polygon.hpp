@@ -45,7 +45,7 @@ namespace MapEditor2
         VertexList m_vertex_list;
         // the texture to draw the polygon with (an invalid Resource indicates
         // that no texture will be drawn and the polygon is invisible).
-        Resource<GLTexture> m_texture;
+        Resource<GlTexture> m_texture;
         // indicates iff this polygon is currently selected
         bool m_is_selected;
         // the "owner" Compound

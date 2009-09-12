@@ -35,7 +35,7 @@ public:
         ContainerWidget *parent,
         std::string const &name = "RadioButton");
     RadioButton (
-        Resource<GLTexture> const &picture,
+        Resource<GlTexture> const &picture,
         T id,
         RadioButtonGroup<T, sentinel> *group,
         ContainerWidget *parent,
@@ -182,7 +182,7 @@ RadioButton<T, sentinel>::RadioButton (
     ContainerWidget *const parent,
     std::string const &name)
     :
-    Button(Resource<GLTexture>(), parent, name),
+    Button(Resource<GlTexture>(), parent, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -193,7 +193,7 @@ RadioButton<T, sentinel>::RadioButton (
 
 template <typename T, T sentinel>
 RadioButton<T, sentinel>::RadioButton (
-    Resource<GLTexture> const &picture,
+    Resource<GlTexture> const &picture,
     T const id,
     RadioButtonGroup<T, sentinel> *const group,
     ContainerWidget *const parent,
@@ -269,7 +269,7 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
                 WidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
     }
     else
-        SetRenderPicture(Resource<GLTexture>());
+        SetRenderPicture(Resource<GlTexture>());
 }
 
 template <typename T, T sentinel>

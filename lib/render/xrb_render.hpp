@@ -24,7 +24,7 @@ namespace Xrb
 {
 
 class Screen;
-class GLTexture;
+class GlTexture;
 
 /** The rendering primitives are
   *     <ul>
@@ -188,7 +188,7 @@ namespace Render
     /** Obliterates the modelview matrix.
       * @brief Maps the given texture to the given rectangle.
       * @param render_context The required RenderContext.
-      * @param gltexture A pointer to the GLTexture which should be used.
+      * @param gltexture A pointer to the GlTexture which should be used.
       * @param screen_rect The screen rectangle to be filled with the texture.
       * @param transformation An optional transformation to the texture
       *                       coordinates (e.g. for flipping horizontally,
@@ -196,7 +196,7 @@ namespace Render
       */
     void DrawScreenRectTexture (
         RenderContext const &render_context,
-        GLTexture const *gltexture,
+        GlTexture const *gltexture,
         ScreenCoordRect const &screen_rect,
         FloatSimpleTransform2 const &transformation =
             FloatSimpleTransform2::ms_identity);

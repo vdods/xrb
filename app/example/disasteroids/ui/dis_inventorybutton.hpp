@@ -41,7 +41,7 @@ public:
         std::string const &name = "InventoryButton");
     virtual ~InventoryButton () { }
 
-    static Resource<GLTexture> ButtonTexture (ItemType item_type, Uint8 upgrade_level);
+    static Resource<GlTexture> ButtonTexture (ItemType item_type, Uint8 upgrade_level);
     
     void SetStatus (Status status);
 

@@ -199,6 +199,12 @@ namespace Math
       *        (an unsigned, 32 bit value).
       */
     Uint32 HighestBitIndex (Uint32 x);
+    /** @brief Returns true iff the value is a power of 2.
+      */
+    inline bool IsAPowerOf2 (Uint32 x)
+    {
+        return x != 0 && (x & (x-1)) == 0;
+    }
     /** @brief Returns the closest integer (fixed-point) to the
       *        fixed-point value given by @c x .
       * @param x The fixed-point format value to round.

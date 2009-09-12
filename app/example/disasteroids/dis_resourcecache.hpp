@@ -22,7 +22,7 @@ namespace Dis
 {
 
 #define RESOURCE_GLTEXTURE_DECLARATION(basename) \
-    Resource<GLTexture> m_##basename##_png;
+    Resource<GlTexture> m_##basename##_png;
 
 // temp object to hold cached resources until a formal class is written
 class ResourceCache

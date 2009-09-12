@@ -18,8 +18,8 @@ namespace Dis
 #define RESOURCE_GLTEXTURE_INITIALIZATION(basename) \
     m_##basename##_png = \
         Singleton::ResourceLibrary(). \
-            LoadPath<GLTexture>( \
-                GLTexture::Create, \
+            LoadPath<GlTexture>( \
+                GlTexture::Create, \
                 "resources/" #basename ".png");
 
 ResourceCache::ResourceCache ()

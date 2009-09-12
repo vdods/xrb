@@ -108,9 +108,9 @@ public:
       */
     WidgetBackgroundTextured (std::string const &texture_path);
     /** @brief Constructs the background using the specified texture.
-      * @param texture Directly specifies the GLTexture object to use.
+      * @param texture Directly specifies the GlTexture object to use.
       */
-    WidgetBackgroundTextured (Resource<GLTexture> const &texture);
+    WidgetBackgroundTextured (Resource<GlTexture> const &texture);
     /** m_texture is automatically deleted because it goes out of scope here.
       * @brief Destructor.
       */
@@ -135,7 +135,7 @@ public:
 
 private:
 
-    Resource<GLTexture> m_texture;
+    Resource<GlTexture> m_texture;
 }; // end of class WidgetBackgroundTextured
 
 /** Four texture resources are necessary for this background.
@@ -192,20 +192,20 @@ public:
         std::string const &left_texture_name,
         std::string const &center_texture_name);
     /** @brief Constructs the background using the specified textures.
-      * @param corner_texture Directly specifies the GLTexture object to use
+      * @param corner_texture Directly specifies the GlTexture object to use
       *                       for the corner texture.
-      * @param top_texture Directly specifies the GLTexture object to use
+      * @param top_texture Directly specifies the GlTexture object to use
       *                    for the top texture.
-      * @param left_texture Directly specifies the GLTexture object to use
+      * @param left_texture Directly specifies the GlTexture object to use
       *                     for the left texture.
-      * @param center_texture Directly specifies the GLTexture object to use
+      * @param center_texture Directly specifies the GlTexture object to use
       *                       for the center texture.
       */
     WidgetBackgroundStylized (
-        Resource<GLTexture> const &corner_texture,
-        Resource<GLTexture> const &top_texture,
-        Resource<GLTexture> const &left_texture,
-        Resource<GLTexture> const &center_texture);
+        Resource<GlTexture> const &corner_texture,
+        Resource<GlTexture> const &top_texture,
+        Resource<GlTexture> const &left_texture,
+        Resource<GlTexture> const &center_texture);
     /** m_corner_texture, m_top_texture, m_left_texture, and m_center_texture
       * are automatically deleted because they go out of scope here.
       * @brief Destructor.
@@ -233,10 +233,10 @@ public:
 
 private:
 
-    Resource<GLTexture> m_corner_texture;
-    Resource<GLTexture> m_top_texture;
-    Resource<GLTexture> m_left_texture;
-    Resource<GLTexture> m_center_texture;
+    Resource<GlTexture> m_corner_texture;
+    Resource<GlTexture> m_top_texture;
+    Resource<GlTexture> m_left_texture;
+    Resource<GlTexture> m_center_texture;
 }; // end of class WidgetBackgroundStylized
 
 } // end of namespace Xrb

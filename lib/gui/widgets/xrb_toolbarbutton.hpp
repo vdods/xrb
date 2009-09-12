@@ -24,7 +24,7 @@ class ToolbarButton : public RadioButton<T, sentinel>
 public:
 
     ToolbarButton (
-        Resource<GLTexture> const &picture,
+        Resource<GlTexture> const &picture,
         T id,
         RadioButtonGroup<T, sentinel> *group,
         ContainerWidget *parent,
@@ -50,7 +50,7 @@ protected:
 
 template <typename T, T sentinel>
 ToolbarButton<T, sentinel>::ToolbarButton (
-    Resource<GLTexture> const &picture,
+    Resource<GlTexture> const &picture,
     T const id,
     RadioButtonGroup<T, sentinel> *const group,
     ContainerWidget *const parent,

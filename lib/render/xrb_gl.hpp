@@ -30,7 +30,7 @@ namespace Xrb
 {
 
 class Color;
-class GLTexture;
+class GlTexture;
 
 // openGL-controlling singleton -- the main reason this exists is to control
 // texture atlases.
@@ -70,7 +70,7 @@ public:
       * biasing in multitexture mode.
       * @brief Returns the 1x1 opaque white utility texture.
       */
-    GLTexture const *GLTexture_OpaqueWhite () const
+    GlTexture const *GlTexture_OpaqueWhite () const
     {
         ASSERT1(m_gltexture_opaque_white != NULL);
         return m_gltexture_opaque_white;
@@ -80,16 +80,20 @@ public:
       * function-worthy, eliminating possible copy/paste errors.
       * @brief Sets up texture units 0 and 1 for texturing, color masking
       *        and color biasing.
-      * @param texture_to_bind_to_unit_0 The GLTexture to bind to texture unit 0.
+      * @param texture_handle_to_bind_to_unit_0 The openGL texture handle to
+      *                                         bind to texture unit 0.
       * @param color_mask The masking color modulate the bound texture with.
       * @param color_bias The color bias to interpolate the results of
       *                   texture unit 0 with.
       * @note When this function returns, texture unit 1 will be active.
       */
     void SetupTextureUnits (
-        GLTexture const *texture_to_bind_to_unit_0,
+        GLuint texture_handle_to_bind_to_unit_0,
         Color const &color_mask,
-        Color const &color_bias); 
+        Color const &color_bias);
+
+    // use this instead of glBindTexture directly.
+    void BindTexture (GLuint texture_handle_to_bind_to_unit_0);
 
     // these are useful for profiling the number of calls to glBindTexture
     // (which is a relatively expensive call, so minimizing this is good).
@@ -100,8 +104,8 @@ public:
 
 private:
 
-    GLTexture *m_gltexture_opaque_white;
-    GLTexture const *m_gltexture_bound_to_unit_0;
+    GlTexture *m_gltexture_opaque_white;
+    GLuint m_texture_handle_bound_to_unit_0;
 
     Uint32 m_bind_texture_call_hit_count;
     Uint32 m_bind_texture_call_miss_count;

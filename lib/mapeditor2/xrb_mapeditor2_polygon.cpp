@@ -423,8 +423,8 @@ void MapEditor2::Polygon::Read (Serializer &serializer)
     }
     m_texture =
         Singleton::ResourceLibrary().
-            LoadPath<GLTexture>(
-                GLTexture::Create,
+            LoadPath<GlTexture>(
+                GlTexture::Create,
                 serializer.ReadAggregate<std::string>());
 
     ASSERT1(IsCounterclockwise());

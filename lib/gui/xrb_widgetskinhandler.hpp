@@ -74,7 +74,7 @@ public:
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetTexture .
       * @param texture_type The texture type to retrieve.
       */
-    inline Resource<GLTexture> const &WidgetSkinTexture (
+    inline Resource<GlTexture> const &WidgetSkinTexture (
         WidgetSkin::TextureType const texture_type) const
     {
         return m_widget_skin->GetTexture(texture_type);
@@ -121,7 +121,7 @@ public:
       */
     void SetWidgetSkinTexture (
         WidgetSkin::TextureType texture_type,
-        Resource<GLTexture> const &texture);
+        Resource<GlTexture> const &texture);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetTexturePath .
       */
     void SetWidgetSkinTexturePath (

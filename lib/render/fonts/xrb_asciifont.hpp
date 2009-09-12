@@ -21,7 +21,7 @@
 namespace Xrb
 {
 
-class GLTexture;
+class GlTexture;
 class RenderContext;
 class Serializer;
 class Texture;
@@ -201,8 +201,8 @@ private:
     GlyphSpecification m_glyph_specification[ms_rendered_glyph_count];
     // cached kerning data -- all possible pairs of glyphs
     FontCoord m_kern_pair_26_6[ms_rendered_glyph_count*ms_rendered_glyph_count];
-    // pointer to the GLTexture containing the font bitmap
-    GLTexture *m_gltexture;
+    // pointer to the GlTexture containing the font bitmap
+    GlTexture *m_gltexture;
 }; // end of class AsciiFont
 
 } // end of namespace Xrb

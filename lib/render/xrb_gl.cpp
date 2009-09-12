@@ -37,7 +37,7 @@ void CheckForExtension (char const *extension_name)
 Gl::Gl ()
     :
     m_gltexture_opaque_white(NULL),
-    m_gltexture_bound_to_unit_0(NULL)
+    m_texture_handle_bound_to_unit_0(0)
 {
     ResetBindTextureCallCounts();
 
@@ -66,7 +66,7 @@ Gl::Gl ()
         opaque_white->Data()[1] = 255;
         opaque_white->Data()[2] = 255;
         opaque_white->Data()[3] = 255;
-        m_gltexture_opaque_white = GLTexture::Create(opaque_white);
+        m_gltexture_opaque_white = GlTexture::Create(opaque_white);
     }
 
     // general initialization and mode setup
@@ -227,25 +227,12 @@ void Gl::SetClipRect (ScreenCoordRect const &clip_rect)
 }
 
 void Gl::SetupTextureUnits (
-    GLTexture const *texture_to_bind_to_unit_0,
+    GLuint texture_handle_to_bind_to_unit_0,
     Color const &color_mask,
     Color const &color_bias)
 {
-    ASSERT1(texture_to_bind_to_unit_0 != NULL);
-
     // set up texture unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    if (texture_to_bind_to_unit_0 != m_gltexture_bound_to_unit_0)
-    {
-        glBindTexture(GL_TEXTURE_2D, texture_to_bind_to_unit_0->Handle());
-        m_gltexture_bound_to_unit_0 = texture_to_bind_to_unit_0;
-        ++m_bind_texture_call_miss_count;
-    }
-    else
-    {
-        ++m_bind_texture_call_hit_count;
-    }
+    BindTexture(texture_handle_to_bind_to_unit_0);
     // due to limitations in the PowerVR MBX platform, (see
     // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/
     //          OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
@@ -260,6 +247,25 @@ void Gl::SetupTextureUnits (
     glEnable(GL_TEXTURE_2D);
     // TODO -- assert that the opaque white texture is bound
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+}
+
+void Gl::BindTexture (GLuint texture_handle_to_bind_to_unit_0)
+{
+    ASSERT1(texture_handle_to_bind_to_unit_0 > 0);
+
+    // set up texture unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glEnable(GL_TEXTURE_2D);
+    if (texture_handle_to_bind_to_unit_0 != m_texture_handle_bound_to_unit_0)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture_handle_to_bind_to_unit_0);
+        m_texture_handle_bound_to_unit_0 = texture_handle_to_bind_to_unit_0;
+        ++m_bind_texture_call_miss_count;
+    }
+    else
+    {
+        ++m_bind_texture_call_hit_count;
+    }
 }
 
 void Gl::ResetBindTextureCallCounts ()

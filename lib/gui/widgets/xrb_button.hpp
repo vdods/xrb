@@ -27,7 +27,7 @@ public:
         ContainerWidget *const parent,
         std::string const &name = "Button");
     Button (
-        Resource<GLTexture> const &picture,
+        Resource<GlTexture> const &picture,
         ContainerWidget *const parent,
         std::string const &name = "Button");
     virtual ~Button () { }

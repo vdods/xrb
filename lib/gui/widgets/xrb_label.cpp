@@ -37,7 +37,7 @@ Label::Label (
 }
 
 Label::Label (
-    Resource<GLTexture> const &picture,
+    Resource<GlTexture> const &picture,
     ContainerWidget *const parent,
     std::string const &name)
     :
@@ -101,9 +101,9 @@ void Label::SetPicture (std::string const &picture_name)
 
     ASSERT1(!picture_name.empty());
 
-    Resource<GLTexture> picture =
+    Resource<GlTexture> picture =
         Singleton::ResourceLibrary().
-            LoadPath<GLTexture>(GLTexture::Create, picture_name);
+            LoadPath<GlTexture>(GlTexture::Create, picture_name);
     ASSERT1(picture.IsValid());
     if (m_picture != picture)
     {
@@ -112,7 +112,7 @@ void Label::SetPicture (std::string const &picture_name)
     }
 }
 
-void Label::SetPicture (Resource<GLTexture> const &picture)
+void Label::SetPicture (Resource<GlTexture> const &picture)
 {
     if (!m_is_picture_label)
         return;
@@ -247,7 +247,7 @@ void Label::SetRenderFont (Resource<Font> const &render_font)
     UpdateMinAndMaxSizesFromText();
 }
 
-void Label::SetRenderPicture (Resource<GLTexture> const &render_picture)
+void Label::SetRenderPicture (Resource<GlTexture> const &render_picture)
 {
     if (!m_is_picture_label)
         return;

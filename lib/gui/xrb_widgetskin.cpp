@@ -216,7 +216,7 @@ void WidgetSkin::SetFontHeight (
 
 void WidgetSkin::SetTexture (
     TextureType const texture_type,
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] = texture;
@@ -228,8 +228,8 @@ void WidgetSkin::SetTexturePath (
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             texture_path);
 }
 

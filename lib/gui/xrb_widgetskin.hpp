@@ -146,11 +146,11 @@ public:
         ASSERT1(font_type < FONT_TYPE_COUNT);
         return m_font_specification[font_type].m_font;
     }
-    /** @brief Returns the const resourced GLTexture object of the requested
+    /** @brief Returns the const resourced GlTexture object of the requested
       *        type.
       * @param texture_type The specific type of texture to return.
       */
-    inline Resource<GLTexture> const &GetTexture (
+    inline Resource<GlTexture> const &GetTexture (
         TextureType const texture_type) const
     {
         ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
@@ -208,11 +208,11 @@ public:
         ScreenCoord font_height);
     /** @brief Sets the given type of texture.
       * @param texture_type The texture type to be set.
-      * @param texture The resourced GLTexture object to use.
+      * @param texture The resourced GlTexture object to use.
       */
     void SetTexture (
         TextureType texture_type,
-        Resource<GLTexture> const &texture);
+        Resource<GlTexture> const &texture);
     /** @brief Sets the given type of texture.
       * @param texture_type The texture type to be set.
       * @param texture The path of the texture to use.
@@ -280,7 +280,7 @@ private:
 
     WidgetBackground const *m_widget_background[WIDGET_BACKGROUND_TYPE_COUNT];
     FontSpecification m_font_specification[FONT_TYPE_COUNT];
-    Resource<GLTexture> m_texture[TEXTURE_TYPE_COUNT];
+    Resource<GlTexture> m_texture[TEXTURE_TYPE_COUNT];
     MarginsSpecification m_margins_specification[MARGINS_TYPE_COUNT];
 }; // end of class WidgetSkin
 

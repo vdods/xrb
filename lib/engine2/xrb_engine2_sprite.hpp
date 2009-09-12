@@ -56,7 +56,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // returns the sprite texture
-    inline Resource<GLTexture> const &GetTexture () const { return m_gltexture; }
+    inline Resource<GlTexture> const &GetTexture () const { return m_gltexture; }
     // returns true iff this is a "round" sprite (see comment
     // above m_is_round).
     inline bool IsRound () const { return m_is_round; }
@@ -93,7 +93,7 @@ public:
 protected:
 
     // protected constructor so you must use Create()
-    Sprite (Resource<GLTexture> const &texture);
+    Sprite (Resource<GlTexture> const &texture);
 
     // ///////////////////////////////////////////////////////////////////
     // protected serialization functions
@@ -118,7 +118,7 @@ protected:
     void CloneProperties (Object const *object);
 
     // the texture to apply to this
-    Resource<GLTexture> m_gltexture;
+    Resource<GlTexture> m_gltexture;
     // if true, indicates that the effective area of the sprite is the
     // circle/ellipse inscribed in the square/rectangle of the sprite
     // texture as it would appear in the world (this can be used for

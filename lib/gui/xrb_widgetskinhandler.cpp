@@ -98,11 +98,11 @@ void WidgetSkinHandler::SetWidgetSkinFontHeight (
 
 void WidgetSkinHandler::SetWidgetSkinTexture (
     WidgetSkin::TextureType const texture_type,
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
 {
     SetProperty<
         WidgetSkin::TextureType,
-        Resource<GLTexture> const &>(
+        Resource<GlTexture> const &>(
             texture_type,
             texture,
             &WidgetSkin::SetTexture,

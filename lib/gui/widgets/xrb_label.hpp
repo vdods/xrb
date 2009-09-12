@@ -44,7 +44,7 @@ public:
       * @brief Constructs a picture label.
       */
     Label (
-        Resource<GLTexture> const &picture,
+        Resource<GlTexture> const &picture,
         ContainerWidget *const parent,
         std::string const &name = "Label");
     /** @brief Destructor.
@@ -69,9 +69,9 @@ public:
       */
     inline bool IsPictureLabel () const { return m_is_picture_label; }
     /** If this is a text label, the returned resource will be invalid.
-      * @brief Returns the resourced GLTexture picture for this label.
+      * @brief Returns the resourced GlTexture picture for this label.
       */
-    inline Resource<GLTexture> const &Picture () const { return m_picture; }
+    inline Resource<GlTexture> const &Picture () const { return m_picture; }
     /** Applies only when this is a picture label.  When the picture doesn't
       * fill up the entire content area, it will be centered appropriately.
       * @brief Iff true, indicates that the picture will be resized just small
@@ -88,7 +88,7 @@ public:
     void SetAlignment (Uint32 component, Alignment alignment);
     virtual void SetWordWrap (bool word_wrap);
     virtual void SetPicture (std::string const &picture_name);
-    virtual void SetPicture (Resource<GLTexture> const &picture);
+    virtual void SetPicture (Resource<GlTexture> const &picture);
     inline void SetPictureKeepsAspectRatio (bool picture_keeps_aspect_ratio) { m_picture_keeps_aspect_ratio = picture_keeps_aspect_ratio; }
 
     virtual void Draw (RenderContext const &render_context) const;
@@ -99,10 +99,10 @@ protected:
     void DrawText (RenderContext const &render_context) const;
     void DrawPicture (RenderContext const &render_context) const;
 
-    inline Resource<GLTexture> const &RenderPicture () const { return m_render_picture; }
+    inline Resource<GlTexture> const &RenderPicture () const { return m_render_picture; }
 
     virtual void SetRenderFont (Resource<Font> const &render_font);
-    void SetRenderPicture (Resource<GLTexture> const &render_picture);
+    void SetRenderPicture (Resource<GlTexture> const &render_picture);
 
     virtual void HandleChangedFrameMargins ();
     virtual void HandleChangedContentMargins ();
@@ -135,9 +135,9 @@ private:
     // if true, this is exclusively a picture label.  false indicates a text label
     bool m_is_picture_label;
     // the picture texture (or 0 if no picture)
-    Resource<GLTexture> m_picture;
+    Resource<GlTexture> m_picture;
     // the texture which will be used to render the picture
-    Resource<GLTexture> m_render_picture;
+    Resource<GlTexture> m_render_picture;
     // indicates if the picture will maintain its aspect ratio, growing to
     // the largest size that will still fit inside this label.
     bool m_picture_keeps_aspect_ratio;

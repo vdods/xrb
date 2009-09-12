@@ -82,8 +82,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/global_origin.png"),
             Object::TM_GLOBAL_ORIGIN_CURSOR,
@@ -97,8 +97,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/object_selection_set_origin.png"),
             Object::TM_SELECTION_SET_ORIGIN,
@@ -112,8 +112,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::TransformationMode,
                           Object::TM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
 //                     "resources/each_selected_object_origin.png"),
             Object::TM_EACH_SELECTED_OBJECT_ORIGIN,
@@ -138,8 +138,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_TRANSFORMATION,
             &m_metric_editing_mode_group,
@@ -152,8 +152,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_LINEAR_VELOCITY,
             &m_metric_editing_mode_group,
@@ -166,8 +166,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_ANGULAR_VELOCITY,
             &m_metric_editing_mode_group,
@@ -180,8 +180,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_POLYGONS,
             &m_metric_editing_mode_group,
@@ -194,8 +194,8 @@ MapEditor2::MainWidget::MainWidget (
         new ToolbarButton<Object::MetricMode,
                           Object::MM_COUNT>(
             Singleton::ResourceLibrary().
-                LoadPath<GLTexture>(
-                    GLTexture::Create,
+                LoadPath<GlTexture>(
+                    GlTexture::Create,
                     "resources/ui/black_checkmark.png"),
             Object::MM_VERTICES,
             &m_metric_editing_mode_group,

@@ -19,9 +19,9 @@ namespace Xrb
 
 Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_path)
 {
-    Resource<GLTexture> texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+    Resource<GlTexture> texture =
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             texture_path);
     if (!texture.IsValid())
         return NULL;
@@ -31,7 +31,7 @@ Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_path)
 
 Engine2::Sprite *Engine2::Sprite::Create (Serializer &serializer)
 {
-    Sprite *retval = new Sprite(Resource<GLTexture>());
+    Sprite *retval = new Sprite(Resource<GlTexture>());
 
     // call ReadClassSpecific for this and all superclasses
     retval->Object::ReadClassSpecific(serializer);
@@ -84,7 +84,7 @@ void Engine2::Sprite::Draw (
     Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    Singleton::Gl().SetupTextureUnits(*m_gltexture, color_mask, color_bias);
+    Singleton::Gl().SetupTextureUnits(m_gltexture->Handle(), color_mask, color_bias);
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
@@ -137,7 +137,7 @@ void Engine2::Sprite::SetPhysicalSizeRatio (Float const physical_size_ratio)
     IndicateRadiiNeedToBeRecalculated();
 }
 
-Engine2::Sprite::Sprite (Resource<GLTexture> const &texture)
+Engine2::Sprite::Sprite (Resource<GlTexture> const &texture)
     :
     Object(OT_SPRITE),
     m_physical_size_ratios(1.0f, 1.0f)
@@ -150,8 +150,8 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
     m_gltexture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             serializer.ReadAggregate<std::string>());
     serializer.Read<bool>(m_is_round);
     serializer.ReadAggregate<FloatVector2>(m_physical_size_ratios);

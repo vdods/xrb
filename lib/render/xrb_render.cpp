@@ -32,7 +32,7 @@ void Render::DrawLine (
     // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GLTexture_OpaqueWhite(),
+        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -66,7 +66,7 @@ void Render::DrawArrow (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GLTexture_OpaqueWhite(),
+        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -107,7 +107,7 @@ void Render::DrawPolygon (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GLTexture_OpaqueWhite(),
+        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -246,7 +246,7 @@ void Render::DrawCircularArc (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GLTexture_OpaqueWhite(),
+        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -284,7 +284,7 @@ void Render::DrawScreenRect (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GLTexture_OpaqueWhite(),
+        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -316,7 +316,7 @@ void Render::DrawScreenRect (
 
 void Render::DrawScreenRectTexture (
     RenderContext const &render_context,
-    GLTexture const *const gltexture,
+    GlTexture const *const gltexture,
     ScreenCoordRect const &screen_rect,
     FloatSimpleTransform2 const &transformation)
 {
@@ -327,7 +327,7 @@ void Render::DrawScreenRectTexture (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        gltexture,
+        gltexture->Handle(),
         render_context.ColorMask(),
         render_context.ColorBias());
 

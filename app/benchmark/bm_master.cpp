@@ -166,7 +166,7 @@ void Master::Run ()
 
         Layout *frame_layout = new Layout(HORIZONTAL, main_layout, "frame layout");
 
-        Label *reference_frame_label = new Label(Singleton::ResourceLibrary().LoadPath<GLTexture>(GLTexture::Create, "resources/solitary_small.png"), frame_layout, "reference frame label");
+        Label *reference_frame_label = new Label(Singleton::ResourceLibrary().LoadPath<GlTexture>(GlTexture::Create, "resources/solitary_small.png"), frame_layout, "reference frame label");
         reference_frame_label->SetPictureKeepsAspectRatio(true);
         /*Engine2::WorldViewWidget *world_view_widget = */new Engine2::WorldViewWidget(frame_layout);
 

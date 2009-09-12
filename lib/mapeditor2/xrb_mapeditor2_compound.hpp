@@ -51,7 +51,7 @@ namespace MapEditor2
             Float polygon_radius,
             Float polygon_angle,
             Uint32 vertex_count,
-            Resource<GLTexture> const &texture);
+            Resource<GlTexture> const &texture);
 
         virtual ~Compound ();
 
@@ -122,7 +122,7 @@ namespace MapEditor2
             Float polygon_radius,
             Float polygon_angle,
             Uint32 vertex_count,
-            Resource<GLTexture> const &texture);
+            Resource<GlTexture> const &texture);
         void UnweldSelectedPolygons ();
         void DeleteSelectedPolygons ();
 

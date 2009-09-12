@@ -36,7 +36,7 @@ template <typename T> class Resource;
   * The template requires a static function which loads the data from the
   * given path and returns a pointer to whatever the templatized type is.
   * See the various classes which have a Create function (e.g.
-  * @ref Xrb::GLTexture::Create and @ref Xrb::Font::Create), as these are
+  * @ref Xrb::GlTexture::Create and @ref Xrb::Font::Create), as these are
   * appropriate functions for the task.
   *
   * There is a second version of the templatized LoadPath method

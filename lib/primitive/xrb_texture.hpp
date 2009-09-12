@@ -20,14 +20,6 @@
 namespace Xrb
 {
 
-// notes:
-//
-// the png reading function should detect what channels/bit depths are
-// used and set some enums appropriately.  these enums will be read later
-// by GLTextureHandle when glTexImage2D is called, so that the correct
-// flags are passed.
-//
-
 /** Texture objects should be instantiated by using one of the two Create
   * methods provided.
   *

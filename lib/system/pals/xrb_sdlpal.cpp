@@ -21,6 +21,7 @@
 #include "xrb_input_events.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_key.hpp"
+#include "xrb_math.hpp"
 #include "xrb_screen.hpp"
 #include "xrb_texture.hpp"
 
@@ -779,13 +780,8 @@ Xrb::Uint32 UsedTextureArea (
     Xrb::ScreenCoordVector2 const &texture_size,
     Xrb::AsciiFont::GlyphSpecification *const *const sorted_glyph_specification)
 {
-    ASSERT1(texture_size[Xrb::Dim::X] > 0);
-    ASSERT1(texture_size[Xrb::Dim::Y] > 0);
-    // the left hand size of this cryptic expression evaluates to 0
-    // for zero or any non-negative integer power of 2 (e.g. 0, 1, 2,
-    // 4, 8, 16, 32, 64, etc).
-    ASSERT1((texture_size[Xrb::Dim::X] & (texture_size[Xrb::Dim::X] - 1)) == 0);
-    ASSERT1((texture_size[Xrb::Dim::Y] & (texture_size[Xrb::Dim::Y] - 1)) == 0);
+    ASSERT1(Xrb::Math::IsAPowerOf2(texture_size[Xrb::Dim::X]));
+    ASSERT1(Xrb::Math::IsAPowerOf2(texture_size[Xrb::Dim::Y]));
     ASSERT1(sorted_glyph_specification != NULL);
 
     Xrb::ScreenCoord packed_width = 0;

@@ -1430,8 +1430,8 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                     polygon_angle,
                     m_polygon_tesselation,
                     Singleton::ResourceLibrary().
-                        LoadPath<GLTexture>(
-                            GLTexture::Create,
+                        LoadPath<GlTexture>(
+                            GlTexture::Create,
                             "resources/texture1.png"));
             
             GetWorld()->AddObject(compound, MainObjectLayer());
@@ -1451,8 +1451,8 @@ bool MapEditor2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *con
                 polygon_angle,
                 m_polygon_tesselation,
                 Singleton::ResourceLibrary().
-                    LoadPath<GLTexture>(
-                        GLTexture::Create,
+                    LoadPath<GlTexture>(
+                        GlTexture::Create,
                         "resources/texture1.png"));
         }
 

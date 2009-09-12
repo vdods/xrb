@@ -19,7 +19,7 @@ CheckBox::CheckBox (
     ContainerWidget *const parent,
     std::string const &name)
     :
-    Button(Resource<GLTexture>(), parent, name),
+    Button(Resource<GlTexture>(), parent, name),
     m_sender_checked_state_changed(this),
     m_sender_checked(this),
     m_sender_unchecked(this),
@@ -86,7 +86,7 @@ void CheckBox::UpdateRenderPicture ()
     if (IsChecked())
         SetRenderPicture(WidgetSkinTexture(WidgetSkin::CHECK_BOX_CHECK_TEXTURE));
     else
-        SetRenderPicture(Resource<GLTexture>());
+        SetRenderPicture(Resource<GlTexture>());
 }
 
 void CheckBox::HandleChangedWidgetSkinWidgetBackground (

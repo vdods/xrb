@@ -36,27 +36,27 @@ class Texture;
   * the texture will be referred to when rendering it.
   * @brief Texture object which can be used directly to render using OpenGL.
   */
-class GLTexture
+class GlTexture
 {
 public:
 
     /** Causes the texture to be unloaded from texture memory.
       * @brief Destructor.
       */
-    ~GLTexture ();
+    ~GlTexture ();
 
     /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
-      * @brief Create a new GLTexture object from a texture loaded from
+      * @brief Create a new GlTexture object from a texture loaded from
       *        the given path.
       */
-    static GLTexture *Create (std::string const &path);
+    static GlTexture *Create (std::string const &path);
     /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
-      * @brief Create a new GLTexture object from an already-loaded Texture
+      * @brief Create a new GlTexture object from an already-loaded Texture
       *        object.
       */
-    static GLTexture *Create (Texture *texture);
+    static GlTexture *Create (Texture *texture);
 
     /** This will be used to return the handle when specifying the texture
       * to bind to GL_TEXTURE_2D when rendering textures.
@@ -88,14 +88,14 @@ public:
 private:
 
     // private constructor so you must use Create()
-    GLTexture ();
+    GlTexture ();
 
     void GenerateTexture (Texture *texture);
     void DeleteTexture ();
 
     GLuint m_handle;
     ScreenCoordVector2 m_size;
-}; // end of class GLTexture
+}; // end of class GlTexture
 
 } // end of namespace Xrb
 

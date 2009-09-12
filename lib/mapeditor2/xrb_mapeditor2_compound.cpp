@@ -24,7 +24,7 @@ MapEditor2::Compound::Compound (
     Float const polygon_radius,
     Float polygon_angle,
     Uint32 const vertex_count,
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
     :
     Engine2::Object(),
     Object(),
@@ -552,7 +552,7 @@ void MapEditor2::Compound::AddDrawnPolygon (
     Float const polygon_radius,
     Float polygon_angle,
     Uint32 const vertex_count,
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
 {
     ASSERT1(vertex_count >= 3);
     ASSERT1(texture.IsValid());

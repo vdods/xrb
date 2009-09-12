@@ -128,8 +128,8 @@ InventoryPanel::InventoryPanel (
         m_mineral_icon_label[mineral_index] =
             new Label(
                 Singleton::ResourceLibrary().
-                    LoadPath<GLTexture>(
-                        GLTexture::Create,
+                    LoadPath<GlTexture>(
+                        GlTexture::Create,
                         Item::MineralSpritePath(mineral_index)),
                 price_layout);
         m_mineral_icon_label[mineral_index]->FixWidth(m_mineral_cost_label[mineral_index]->Height());

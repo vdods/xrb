@@ -15,42 +15,42 @@
 namespace Xrb
 {
 
-GLTexture::GLTexture ()
+GlTexture::GlTexture ()
 {
     m_handle = 0;
 }
 
-GLTexture::~GLTexture ()
+GlTexture::~GlTexture ()
 {
     DeleteTexture();
 }
 
-GLTexture *GLTexture::Create (std::string const &path)
+GlTexture *GlTexture::Create (std::string const &path)
 {
-    GLTexture *retval = NULL;
+    GlTexture *retval = NULL;
 
     Texture *texture = Texture::Create(path);
     if (texture == NULL)
         return retval;
 
-    retval = new GLTexture();
+    retval = new GlTexture();
     retval->GenerateTexture(texture);
     delete texture;
 
     return retval;
 }
 
-GLTexture *GLTexture::Create (Texture *texture)
+GlTexture *GlTexture::Create (Texture *texture)
 {
-    GLTexture *retval = NULL;
+    GlTexture *retval = NULL;
 
-    retval = new GLTexture();
+    retval = new GlTexture();
     retval->GenerateTexture(texture);
 
     return retval;
 }
 
-void GLTexture::GenerateTexture (Texture *texture)
+void GlTexture::GenerateTexture (Texture *texture)
 {
     ASSERT1(texture != NULL);
 
@@ -59,6 +59,7 @@ void GLTexture::GenerateTexture (Texture *texture)
     glActiveTexture(GL_TEXTURE0);
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &m_handle);
+    ASSERT1(m_handle > 0);
     glBindTexture(GL_TEXTURE_2D, m_handle);
 
     // TODO: add parameter to this method to use GL_REPEAT
@@ -77,7 +78,7 @@ void GLTexture::GenerateTexture (Texture *texture)
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 
     // this causes mipmaps to be generated whenever the base (level 0) texture is changed
-    glTexParameterf(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     // set the base (level 0) texture
     glTexImage2D(
         GL_TEXTURE_2D,      // target
@@ -94,7 +95,7 @@ void GLTexture::GenerateTexture (Texture *texture)
     // the original texture can now optionally be deleted.
 }
 
-void GLTexture::DeleteTexture ()
+void GlTexture::DeleteTexture ()
 {
     ASSERT1(m_handle > 0);
     glDeleteTextures(1, &m_handle);

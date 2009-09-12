@@ -49,14 +49,14 @@ WidgetBackgroundTextured::WidgetBackgroundTextured (
     ASSERT1(texture_path.length() > 0);
 
     m_texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             texture_path);
     ASSERT1(m_texture.IsValid());
 }
 
 WidgetBackgroundTextured::WidgetBackgroundTextured (
-    Resource<GLTexture> const &texture)
+    Resource<GlTexture> const &texture)
     :
     WidgetBackground()
 {
@@ -97,35 +97,35 @@ WidgetBackgroundStylized::WidgetBackgroundStylized (
     WidgetBackground()
 {
     m_corner_texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             corner_texture_name);
     ASSERT1(m_corner_texture.IsValid());
 
     m_top_texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             top_texture_name);
     ASSERT1(m_top_texture.IsValid());
 
     m_left_texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             left_texture_name);
     ASSERT1(m_left_texture.IsValid());
 
     m_center_texture =
-        Singleton::ResourceLibrary().LoadPath<GLTexture>(
-            GLTexture::Create,
+        Singleton::ResourceLibrary().LoadPath<GlTexture>(
+            GlTexture::Create,
             center_texture_name);
     ASSERT1(m_center_texture.IsValid());
 }
 
 WidgetBackgroundStylized::WidgetBackgroundStylized (
-    Resource<GLTexture> const &corner_texture,
-    Resource<GLTexture> const &top_texture,
-    Resource<GLTexture> const &left_texture,
-    Resource<GLTexture> const &center_texture)
+    Resource<GlTexture> const &corner_texture,
+    Resource<GlTexture> const &top_texture,
+    Resource<GlTexture> const &left_texture,
+    Resource<GlTexture> const &center_texture)
     :
     WidgetBackground()
 {
