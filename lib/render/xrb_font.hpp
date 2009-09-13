@@ -18,6 +18,7 @@
 
 #include "xrb_enums.hpp"
 #include "xrb_ntuple.hpp"
+#include "xrb_resourceloadparameters.hpp"
 #include "xrb_screencoord.hpp"
 
 namespace Xrb
@@ -59,6 +60,24 @@ class Font
 {
 public:
 
+    class LoadParameters : public ResourceLoadParameters
+    {
+    public:
+
+        ScreenCoord const m_pixel_height;
+
+        LoadParameters (ScreenCoord pixel_height)
+            :
+            m_pixel_height(pixel_height)
+        {
+            ASSERT1(m_pixel_height > 0);
+        }
+
+        virtual std::string Name () const;
+        virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
+        virtual void Print (FILE *fptr) const;
+    }; // end of class Font::LoadParameters
+
     /** @brief Structure used in text formatting (word wrapping and alignment).
       */
     struct LineFormat
@@ -70,7 +89,7 @@ public:
 
     typedef std::vector<LineFormat> LineFormatVector;
 
-    static Font *Create (std::string const &font_face_path, Sint32 pixel_height);
+    static Font *Create (std::string const &font_face_path, ResourceLoadParameters const *parameters);
 
     virtual ~Font () { }
 

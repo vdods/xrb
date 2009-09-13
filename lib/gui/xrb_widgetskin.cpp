@@ -175,7 +175,7 @@ void WidgetSkin::SetFontFacePath (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             font_face_path,
-            m_font_specification[font_type].m_font_height);
+            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -193,7 +193,7 @@ void WidgetSkin::SetFontHeightRatio (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             m_font_specification[font_type].m_font.Path(),
-            m_font_specification[font_type].m_font_height);
+            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -210,7 +210,7 @@ void WidgetSkin::SetFontHeight (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             m_font_specification[font_type].m_font.Path(),
-            m_font_specification[font_type].m_font_height);
+            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 

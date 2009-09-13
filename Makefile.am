@@ -377,6 +377,7 @@ include_HEADERS = \
     lib/system/xrb_framehandler.hpp \
     lib/system/xrb_pal.hpp \
     lib/system/xrb_resourcelibrary.hpp \
+    lib/system/xrb_resourceloadparameters.hpp \
     lib/system/xrb_serializer.hpp \
     lib/system/xrb_signalhandler.hpp \
     lib/system/xrb_singleton.hpp \

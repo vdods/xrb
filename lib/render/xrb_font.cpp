@@ -29,12 +29,34 @@ ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v)
 }
 
 // ///////////////////////////////////////////////////////////////////////////
+// Font::LoadParameters
+// ///////////////////////////////////////////////////////////////////////////
+
+std::string Font::LoadParameters::Name () const
+{
+    return "Xrb::Font::LoadParameters";
+}
+
+bool Font::LoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
+{
+    LoadParameters const &other = *DStaticCast<LoadParameters const *>(&other_parameters);
+    return m_pixel_height < other.m_pixel_height;
+}
+
+void Font::LoadParameters::Print (FILE *fptr) const
+{
+    fprintf(stderr, "pixel height = %d", m_pixel_height);
+}
+
+// ///////////////////////////////////////////////////////////////////////////
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
-Font *Font::Create (std::string const &font_face_path, Sint32 pixel_height)
+Font *Font::Create (std::string const &font_face_path, ResourceLoadParameters const *parameters)
 {
-    return Singleton::Pal().LoadFont(font_face_path.c_str(), pixel_height);
+    ASSERT1(parameters != NULL);
+    LoadParameters const *params = DStaticCast<LoadParameters const *>(parameters);
+    return Singleton::Pal().LoadFont(font_face_path.c_str(), params->m_pixel_height);
 }
 
 ScreenCoordRect Font::StringRect (char const *const string) const

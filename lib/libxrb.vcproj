@@ -960,10 +960,14 @@
 				RelativePath=".\system\xrb_resourcelibrary.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\system\xrb_resourcelibrary.hpp"
-				>
-			</File>
+            <File
+                RelativePath=".\system\xrb_resourcelibrary.hpp"
+                >
+            </File>
+            <File
+                RelativePath=".\system\xrb_resourceloadparameters.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\system\xrb_serializer.cpp"
 				>

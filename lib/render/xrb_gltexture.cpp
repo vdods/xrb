@@ -15,6 +15,32 @@
 namespace Xrb
 {
 
+// ///////////////////////////////////////////////////////////////////////////
+// GlTexture::LoadParameters
+// ///////////////////////////////////////////////////////////////////////////
+
+std::string GlTexture::LoadParameters::Name () const
+{
+    return "Xrb::GlTexture::LoadParameters";
+}
+
+bool GlTexture::LoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
+{
+//     LoadParameters const &other = *DStaticCast<LoadParameters const *>(&other_parameters);
+
+    // TODO
+    return false;
+}
+
+void GlTexture::LoadParameters::Print (FILE *fptr) const
+{
+    // TODO
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+// GlTexture
+// ///////////////////////////////////////////////////////////////////////////
+
 GlTexture::GlTexture ()
 {
     m_handle = 0;
@@ -25,7 +51,7 @@ GlTexture::~GlTexture ()
     DeleteTexture();
 }
 
-GlTexture *GlTexture::Create (std::string const &path)
+GlTexture *GlTexture::Create (std::string const &path, ResourceLoadParameters const *parameters)
 {
     GlTexture *retval = NULL;
 

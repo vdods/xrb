@@ -16,18 +16,11 @@
 #include <string>
 
 #include "xrb_gl.hpp"
+#include "xrb_resourceloadparameters.hpp"
 #include "xrb_screencoord.hpp"
 
 namespace Xrb
 {
-
-// notes:
-//
-// when glTexImage2D is called, the (currently nonexistent) singleton for
-// video options will be read in order to determine what the proper internal
-// format to specify (i.e. full quality 32 bit RGBA, or space-saving 16 bit
-// RGBA, etc).
-//
 
 class Texture;
 
@@ -40,6 +33,17 @@ class GlTexture
 {
 public:
 
+    class LoadParameters : public ResourceLoadParameters
+    {
+    public:
+
+        LoadParameters () { } // nothing so far.  TODO: mipmap enabled, atlas enabled
+
+        virtual std::string Name () const;
+        virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
+        virtual void Print (FILE *fptr) const;
+    }; // end of class GlTexture::LoadParameters
+
     /** Causes the texture to be unloaded from texture memory.
       * @brief Destructor.
       */
@@ -48,9 +52,9 @@ public:
     /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
       * @brief Create a new GlTexture object from a texture loaded from
-      *        the given path.
+      *        the given path, using the given load parameters.
       */
-    static GlTexture *Create (std::string const &path);
+    static GlTexture *Create (std::string const &path, ResourceLoadParameters const *parameters);
     /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
       * @brief Create a new GlTexture object from an already-loaded Texture
