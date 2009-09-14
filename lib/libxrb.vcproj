@@ -780,6 +780,14 @@
                 RelativePath=".\render\xrb_gltexture.hpp"
                 >
             </File>
+            <File
+                RelativePath=".\render\xrb_gltextureatlas.cpp"
+                >
+            </File>
+            <File
+                RelativePath=".\render\xrb_gltextureatlas.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\render\xrb_render.cpp"
 				>
