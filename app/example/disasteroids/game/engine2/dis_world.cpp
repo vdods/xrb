@@ -1392,6 +1392,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
 void World::CreateAndPopulateBackgroundObjectLayers ()
 {
     // galaxies in the distance
+    if (false)
     {
         Float object_layer_side_length = 200000.0f;
 
@@ -1457,24 +1458,10 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_starfield_sprite_path[] =
         {
-            "resources/starfield/star_dot01.png",
-            "resources/starfield/star_dot02.png",
-            "resources/starfield/star_dot03.png",
-            "resources/starfield/star_dot04.png",
-            "resources/starfield/star_dot05.png",
-            "resources/starfield/star_dot06.png",
-            "resources/starfield/star_dot07.png",
-            "resources/starfield/star_dot08.png",
-            "resources/starfield/star_dot09.png",
-            "resources/starfield/star_flare01.png",
-            "resources/starfield/star_flare02.png",
-            "resources/starfield/star_flare03.png",
-            "resources/starfield/star_flare04.png",
-            "resources/starfield/star_flare05.png",
-            "resources/starfield/star_flare06.png",
-            "resources/starfield/star_flare07.png",
-            "resources/starfield/star_flare08.png",
-            "resources/starfield/star_flare09.png"
+            "resources/star0.png",
+            "resources/star1.png",
+            "resources/star2.png",
+            "resources/star3.png",
         };
         static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
@@ -1491,8 +1478,8 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
-                    0.002f*object_layer_side_length,
-                    0.003f*object_layer_side_length));
+                    0.0006f*object_layer_side_length,
+                    0.002f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
 
             AddStaticObject(sprite, object_layer);

@@ -29,21 +29,21 @@ ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v)
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// Font::LoadParameters
+// FontLoadParameters
 // ///////////////////////////////////////////////////////////////////////////
 
-std::string Font::LoadParameters::Name () const
+std::string FontLoadParameters::Name () const
 {
-    return "Xrb::Font::LoadParameters";
+    return "Xrb::FontLoadParameters";
 }
 
-bool Font::LoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
+bool FontLoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
 {
-    LoadParameters const &other = *DStaticCast<LoadParameters const *>(&other_parameters);
+    FontLoadParameters const &other = *DStaticCast<FontLoadParameters const *>(&other_parameters);
     return m_pixel_height < other.m_pixel_height;
 }
 
-void Font::LoadParameters::Print (FILE *fptr) const
+void FontLoadParameters::Print (FILE *fptr) const
 {
     fprintf(stderr, "pixel height = %d", m_pixel_height);
 }
@@ -55,7 +55,7 @@ void Font::LoadParameters::Print (FILE *fptr) const
 Font *Font::Create (std::string const &font_face_path, ResourceLoadParameters const *parameters)
 {
     ASSERT1(parameters != NULL);
-    LoadParameters const *params = DStaticCast<LoadParameters const *>(parameters);
+    FontLoadParameters const *params = DStaticCast<FontLoadParameters const *>(parameters);
     return Singleton::Pal().LoadFont(font_face_path.c_str(), params->m_pixel_height);
 }
 

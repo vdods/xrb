@@ -112,7 +112,8 @@ AsciiFont *AsciiFont::CreateFromCache (
         if (!serializer.IsAtEnd())
             throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
 
-        retval->m_gltexture = GlTexture::Create(texture);
+        GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
+        retval->m_gltexture = GlTexture::Create(*texture, load_parameters);
         ASSERT1(retval->m_gltexture != NULL);
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
@@ -144,7 +145,8 @@ AsciiFont *AsciiFont::Create (
     retval->m_baseline_height = baseline_height;
     memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
     memcpy(retval->m_kern_pair_26_6, kern_pair_26_6, sizeof(retval->m_kern_pair_26_6));
-    retval->m_gltexture = GlTexture::Create(font_texture);
+    GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
+    retval->m_gltexture = GlTexture::Create(*font_texture, load_parameters);
     ASSERT1(retval->m_gltexture != NULL);
 
     return retval;
@@ -348,21 +350,9 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        m_gltexture->Handle(),
+        *m_gltexture,
         render_context.ColorMask(),
         render_context.ColorBias());
-
-    // make sure to reactivate texture unit 0 so that the calls to glTexCoord2iv
-    // in DrawGlyph (and the matrix operations below) operate on the correct texture unit.
-    glActiveTexture(GL_TEXTURE0);
-
-    glMatrixMode(GL_TEXTURE);
-    glPushMatrix();
-    glLoadIdentity();
-    glScalef(
-        1.0f / m_gltexture->Width(),
-        1.0f / m_gltexture->Height(),
-        1.0f);
 
     // enable vertex and texture coord arrays so we can draw with glDrawArrays
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -376,10 +366,6 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     // reason for it.)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    // pop the texture matrix
-    ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_TEXTURE);
-    glPopMatrix();
 
     // pop the modelview matrix
     glMatrixMode(GL_MODELVIEW);

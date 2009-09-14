@@ -10,45 +10,45 @@
 
 #include "xrb_gltexture.hpp"
 
+#include "xrb_gltextureatlas.hpp"
 #include "xrb_texture.hpp"
 
 namespace Xrb
 {
 
 // ///////////////////////////////////////////////////////////////////////////
-// GlTexture::LoadParameters
+// GlTextureLoadParameters
 // ///////////////////////////////////////////////////////////////////////////
 
-std::string GlTexture::LoadParameters::Name () const
+std::string GlTextureLoadParameters::Name () const
 {
-    return "Xrb::GlTexture::LoadParameters";
+    return "Xrb::GlTextureLoadParameters";
 }
 
-bool GlTexture::LoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
+bool GlTextureLoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
 {
-//     LoadParameters const &other = *DStaticCast<LoadParameters const *>(&other_parameters);
-
-    // TODO
-    return false;
+    GlTextureLoadParameters const &other = *DStaticCast<GlTextureLoadParameters const *>(&other_parameters);
+    return m_flags < other.m_flags;
 }
 
-void GlTexture::LoadParameters::Print (FILE *fptr) const
+void GlTextureLoadParameters::Print (FILE *fptr) const
 {
-    // TODO
+    fprintf(stderr, "flags =");
+    if (m_flags == NONE)
+        fprintf(stderr, " NONE");
+    if (UsesSeparateAtlas())
+        fprintf(stderr, " USES_SEPARATE_ATLAS");
+//     if (NoMipmap())
+//         fprintf(stderr, " NO_MIPMAP");
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // GlTexture
 // ///////////////////////////////////////////////////////////////////////////
 
-GlTexture::GlTexture ()
-{
-    m_handle = 0;
-}
-
 GlTexture::~GlTexture ()
 {
-    DeleteTexture();
+    Singleton::Gl().UnregisterGlTexture(*this);
 }
 
 GlTexture *GlTexture::Create (std::string const &path, ResourceLoadParameters const *parameters)
@@ -59,72 +59,24 @@ GlTexture *GlTexture::Create (std::string const &path, ResourceLoadParameters co
     if (texture == NULL)
         return retval;
 
-    retval = new GlTexture();
-    retval->GenerateTexture(texture);
+    GlTextureLoadParameters default_load_parameters;
+    GlTextureLoadParameters const *params = &default_load_parameters;
+    if (parameters != NULL)
+        params = DStaticCast<GlTextureLoadParameters const *>(parameters);
+    retval = Singleton::Gl().CreateGlTexture(*texture, *params);
     delete texture;
 
     return retval;
 }
 
-GlTexture *GlTexture::Create (Texture *texture)
+GlTexture *GlTexture::Create (Texture const &texture, GlTextureLoadParameters const &load_parameters)
 {
-    GlTexture *retval = NULL;
-
-    retval = new GlTexture();
-    retval->GenerateTexture(texture);
-
-    return retval;
+    return Singleton::Gl().CreateGlTexture(texture, load_parameters);
 }
 
-void GlTexture::GenerateTexture (Texture *texture)
+GLuint GlTexture::Handle () const
 {
-    ASSERT1(texture != NULL);
-
-    m_size = texture->Size();
-
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &m_handle);
-    ASSERT1(m_handle > 0);
-    glBindTexture(GL_TEXTURE_2D, m_handle);
-
-    // TODO: add parameter to this method to use GL_REPEAT
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // there are restrictions by openGL ES (specifically for the PowerVR MBX
-    // platform as used by the ipod touch and older versions of iphones).
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    // this is the other option within the restriction as described above.
-    // it has lower visual quality, but may be faster.
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-
-    // this causes mipmaps to be generated whenever the base (level 0) texture is changed
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    // set the base (level 0) texture
-    glTexImage2D(
-        GL_TEXTURE_2D,      // target
-        0,                  // level
-        GL_RGBA,            // internal format
-        texture->Width(),   // width
-        texture->Height(),  // height
-        0,                  // width of the border (must be 0 or 1)
-        GL_RGBA,            // format of the input pixel data
-        GL_UNSIGNED_BYTE,   // data type of the input pixel data
-        texture->Data());   // input pixel data
-
-    // the texture data has now been loaded into GL texture memory, so
-    // the original texture can now optionally be deleted.
-}
-
-void GlTexture::DeleteTexture ()
-{
-    ASSERT1(m_handle > 0);
-    glDeleteTextures(1, &m_handle);
+    return m_atlas.Handle();
 }
 
 } // end of namespace Xrb

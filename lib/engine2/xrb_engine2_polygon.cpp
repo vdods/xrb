@@ -80,7 +80,7 @@ void Engine2::Polygon::Draw () const
     ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
     ASSERT1(Gl::Boolean(GL_TEXTURE_2D));
 
-    Singleton::Gl().BindTexture(m_texture->Handle());
+    Singleton::Gl().BindAtlas(m_texture->Atlas());
 
     // TODO: use small static array instead of new'ing
     {
@@ -99,9 +99,9 @@ void Engine2::Polygon::Draw () const
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // HIPPO
         glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array);
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // HIPPO
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
 

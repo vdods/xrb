@@ -80,7 +80,7 @@ void WidgetBackgroundTextured::Draw (
     ASSERT1(m_texture.IsValid());
     Render::DrawScreenRectTexture(
         render_context,
-        *m_texture,
+        **m_texture,
         widget_screen_rect);
 }
 
@@ -213,49 +213,49 @@ void WidgetBackgroundStylized::Draw (
     // draw the rectangles - top row
     Render::DrawScreenRectTexture(
         render_context,
-        *m_corner_texture,
+        **m_corner_texture,
         top_left,
         FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_top_texture,
+        **m_top_texture,
         top_center,
         FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_corner_texture,
+        **m_corner_texture,
         top_right,
         FloatSimpleTransform2(-1.0f,  1.0f, 1.0f, 0.0f));
     // draw the rectangles - center row
     Render::DrawScreenRectTexture(
         render_context,
-        *m_left_texture,
+        **m_left_texture,
         center_left,
         FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_center_texture,
+        **m_center_texture,
         center_center,
         FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_left_texture,
+        **m_left_texture,
         center_right,
         FloatSimpleTransform2(-1.0f,  1.0f, 1.0f, 0.0f));
     // draw the rectangles - bottom row
     Render::DrawScreenRectTexture(
         render_context,
-        *m_corner_texture,
+        **m_corner_texture,
         bottom_left,
         FloatSimpleTransform2( 1.0f, -1.0f, 0.0f, 1.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_top_texture,
+        **m_top_texture,
         bottom_center,
         FloatSimpleTransform2( 1.0f, -1.0f, 0.0f, 1.0f));
     Render::DrawScreenRectTexture(
         render_context,
-        *m_corner_texture,
+        **m_corner_texture,
         bottom_right,
         FloatSimpleTransform2(-1.0f, -1.0f, 1.0f, 1.0f));
 }

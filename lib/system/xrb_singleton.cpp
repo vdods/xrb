@@ -121,6 +121,10 @@ void Singleton::InitializeGl ()
 {
     ASSERT1(g_gl == NULL && "can't InitializeGl() twice in a row");
     g_gl = new Xrb::Gl();
+    // the Gl singleton is now initialized, so calls to Singleton::Gl() can
+    // be made.  this is critical for certain operations to work (e.g.
+    // creation of the opaque white texture in the Gl singleton).
+    g_gl->FinishInitialization();
 }
 
 void Singleton::ShutdownGl ()

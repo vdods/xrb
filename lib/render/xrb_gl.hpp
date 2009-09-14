@@ -24,6 +24,8 @@
     #include <GL/gl.h>
 #endif
 
+#include <vector>
+
 #include "xrb_screencoord.hpp"
 
 namespace Xrb
@@ -31,6 +33,9 @@ namespace Xrb
 
 class Color;
 class GlTexture;
+class GlTextureAtlas;
+class GlTextureLoadParameters;
+class Texture;
 
 // openGL-controlling singleton -- the main reason this exists is to control
 // texture atlases.
@@ -40,6 +45,11 @@ public:
 
     Gl ();
     ~Gl ();
+
+    // this is necessary for the cooperation of Singleton::InitializeGl and
+    // the construction of the opaque white texture and various other texture
+    // unit setup.  this method should be used only by Singleton::InitializeGl.
+    void FinishInitialization ();
 
     // ///////////////////////////////////////////////////////////////////////
     // static methods
@@ -66,15 +76,23 @@ public:
     // non-static methods
     // ///////////////////////////////////////////////////////////////////////
 
-    /** This texture is permanently bound to texture unit 1, used for color
-      * biasing in multitexture mode.
+    /** This texture is used for color biasing in multitexture mode.
       * @brief Returns the 1x1 opaque white utility texture.
       */
-    GlTexture const *GlTexture_OpaqueWhite () const
+    GlTexture const &GlTexture_OpaqueWhite ()
     {
         ASSERT1(m_gltexture_opaque_white != NULL);
-        return m_gltexture_opaque_white;
+        return *m_gltexture_opaque_white;
     }
+
+    /** For use only by GlTexture.
+      * @brief Creates a texture-atlased GlTexture instance.
+      */
+    GlTexture *CreateGlTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters);
+    /** For use only by GlTexture.
+      * @brief Unregisters a texture-atlased GlTexture.
+      */
+    void UnregisterGlTexture (GlTexture &gltexture);
 
     /** This setup is done in so many places that it was deemed 
       * function-worthy, eliminating possible copy/paste errors.
@@ -88,12 +106,13 @@ public:
       * @note When this function returns, texture unit 1 will be active.
       */
     void SetupTextureUnits (
-        GLuint texture_handle_to_bind_to_unit_0,
+        GlTexture const &gltexture,
         Color const &color_mask,
         Color const &color_bias);
 
-    // use this instead of glBindTexture directly.
-    void BindTexture (GLuint texture_handle_to_bind_to_unit_0);
+    // use these instead of glBindTexture.
+    void BindAtlas (GlTextureAtlas const &atlas);
+    void EnsureAtlasIsNotBound (GlTextureAtlas const &atlas);
 
     // these are useful for profiling the number of calls to glBindTexture
     // (which is a relatively expensive call, so minimizing this is good).
@@ -104,9 +123,11 @@ public:
 
 private:
 
-    GlTexture *m_gltexture_opaque_white;
-    GLuint m_texture_handle_bound_to_unit_0;
+    typedef std::vector<GlTextureAtlas *> AtlasVector;
 
+    GlTexture *m_gltexture_opaque_white;
+    AtlasVector m_atlas;
+    GlTextureAtlas const *m_atlas_bound_to_unit_0;
     Uint32 m_bind_texture_call_hit_count;
     Uint32 m_bind_texture_call_miss_count;
 };

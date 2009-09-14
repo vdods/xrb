@@ -74,7 +74,7 @@ void TextWidget::SetFontFacePath (std::string const &font_face_path)
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             font_face_path,
-            new Font::LoadParameters(m_font->PixelHeight()));
+            new FontLoadParameters(m_font->PixelHeight()));
     ASSERT1(font.IsValid());
 
     if (m_font != font)
@@ -98,7 +98,7 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
             Singleton::ResourceLibrary().LoadPath<Font>(
                 Font::Create,
                 m_font.Path(),
-                new Font::LoadParameters(font_height));
+                new FontLoadParameters(font_height));
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }
@@ -115,7 +115,7 @@ void TextWidget::SetFontHeight (ScreenCoord const font_height)
             Singleton::ResourceLibrary().LoadPath<Font>(
                 Font::Create,
                 m_font.Path(),
-                new Font::LoadParameters(font_height));
+                new FontLoadParameters(font_height));
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }

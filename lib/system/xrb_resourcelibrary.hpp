@@ -87,17 +87,21 @@ public:
       *                     The load function should not store the parameters
       *                     pointer value. 
       * @param path The path of the data to load using LoadFunction.
-      * @param parameters The (optional) load parameters (a pointer to
-      *                   an instance of a subclass of ResourceLoadParameters).
-      *                   This should be a newly allocated instance (if
-      *                   not NULL), and ResourceLibrary will take care
-      *                   of deleting it.
+      * @param load_parameters The (optional) load parameters (a pointer to
+      *                        an instance of a subclass of ResourceLoadParameters).
+      *                        This should be a newly allocated instance (if
+      *                        not NULL), and ResourceLibrary will take care
+      *                        of deleting it.
       */
     template <typename T>
     Resource<T> LoadPath (
         T *(*LoadFunction)(std::string const &, ResourceLoadParameters const *),
         std::string const &path,
-        ResourceLoadParameters const *parameters = NULL);
+        ResourceLoadParameters const *load_parameters = NULL);
+
+    /** @brief Prints a list of all currently loaded resources.
+      */
+    void PrintInventory (FILE *fptr, Uint32 tab_count = 0) const;
 
 private:
 
@@ -107,25 +111,25 @@ private:
         // the resource's path
         std::string m_path;
         // the associated ResourceLoadParameters instance
-        ResourceLoadParameters const *m_parameters;
+        ResourceLoadParameters const *m_load_parameters;
 
         ResourceInstanceKey (
             std::string const &path,
-            ResourceLoadParameters const *parameters)
+            ResourceLoadParameters const *load_parameters)
         {
             m_path = path;
-            m_parameters = parameters;
+            m_load_parameters = load_parameters;
         }
 
         void Print (FILE *fptr) const
         {
             fprintf(fptr, "\"%s\", ", m_path.c_str());
-            if (m_parameters == NULL)
+            if (m_load_parameters == NULL)
                 fprintf(stderr, "no load parameters");
             else
             {
                 fprintf(stderr, "load parameters: ");
-                m_parameters->Print(fptr);
+                m_load_parameters->Print(fptr);
             }
         }
 
@@ -392,10 +396,10 @@ public:
       * @brief Returns the load parameters used when loading the
       *        resourced data.
       */
-    ResourceLoadParameters const *Parameters () const
+    ResourceLoadParameters const *LoadParameters () const
     {
         ASSERT1(m_instance != NULL);
-        return m_instance->Key().m_parameters;
+        return m_instance->Key().m_load_parameters;
     }
 
     /** @brief Explicitly causes the reference count to decrement, causing
@@ -419,14 +423,14 @@ template <typename T>
 Resource<T> ResourceLibrary::LoadPath (
     T *(*LoadFunction)(std::string const &, ResourceLoadParameters const *),
     std::string const &path,
-    ResourceLoadParameters const *parameters)
+    ResourceLoadParameters const *load_parameters)
 {
     Resource<T> invalid_resource;
 
     if (path.empty())
         return invalid_resource;
 
-    ResourceInstanceKey const key(path, parameters);
+    ResourceInstanceKey const key(path, load_parameters);
 
     // check if the file is already loaded
     InstanceMap::iterator it = m_instance_map.find(key);
@@ -439,9 +443,9 @@ Resource<T> ResourceLibrary::LoadPath (
             dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
             "You probably are trying to load a currently loaded resource "
             "using a different type or method, which is a big no-no");
-        // since a matching parameters is already stored in the
+        // since a matching load_parameters is already stored in the
         // instance key, delete the one passed in.
-        delete parameters;
+        delete load_parameters;
         // return the loaded resource.
         return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
     }
@@ -450,7 +454,7 @@ Resource<T> ResourceLibrary::LoadPath (
     else
     {
         // attempt to load the path
-        T *data = LoadFunction(path, parameters);
+        T *data = LoadFunction(path, load_parameters);
 
         // if successful, stick the data into a ResourceInstance to
         // be kept by this ResourceLibrary, otherwise return null.
@@ -463,7 +467,7 @@ Resource<T> ResourceLibrary::LoadPath (
             ResourceInstance<T> *instance =
                 new ResourceInstance<T>(this, key, data);
             m_instance_map[key] = instance;
-            // parameters is now stored in the instance map (via the key),
+            // load_parameters is now stored in the instance map (via the key),
             // so don't delete it (it will be deleted in UnmapKey).
             return Resource<T>(instance);
         }
@@ -472,8 +476,8 @@ Resource<T> ResourceLibrary::LoadPath (
             fprintf(stderr, "ResourceLibrary * FAILURE while loading ");
             key.Print(stderr);
             fprintf(stderr, "\n");
-            // parameters went unused, so delete it.
-            delete parameters;
+            // load_parameters went unused, so delete it.
+            delete load_parameters;
             // do some error handling
             return invalid_resource;
         }

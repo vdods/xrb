@@ -80,8 +80,20 @@ WidgetSkin::WidgetSkin (Screen const *screen)
 
 WidgetSkin::~WidgetSkin ()
 {
+    // just in case it didn't already happen.
+    ReleaseAllResources();
+}
+
+void WidgetSkin::ReleaseAllResources ()
+{
     for (Uint32 i = 0; i < WIDGET_BACKGROUND_TYPE_COUNT; ++i)
-        Delete(m_widget_background[i]);
+        DeleteAndNullify(m_widget_background[i]);
+
+    for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
+        m_font_specification[i].m_font.Release();
+
+    for (Uint32 i = 0; i < TEXTURE_TYPE_COUNT; ++i)
+        m_texture[i].Release();
 }
 
 WidgetSkin *WidgetSkin::CreateClone () const
@@ -175,7 +187,7 @@ void WidgetSkin::SetFontFacePath (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             font_face_path,
-            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
+            new FontLoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -193,7 +205,7 @@ void WidgetSkin::SetFontHeightRatio (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             m_font_specification[font_type].m_font.Path(),
-            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
+            new FontLoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -210,7 +222,7 @@ void WidgetSkin::SetFontHeight (
         Singleton::ResourceLibrary().LoadPath<Font>(
             Font::Create,
             m_font_specification[font_type].m_font.Path(),
-            new Font::LoadParameters(m_font_specification[font_type].m_font_height));
+            new FontLoadParameters(m_font_specification[font_type].m_font_height));
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 

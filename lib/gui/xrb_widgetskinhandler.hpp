@@ -192,6 +192,11 @@ protected:
     virtual void HandleChangedWidgetSkinMargins (
         WidgetSkin::MarginsType margins_type) { }
 
+    /** @brief Used (e.g. by Screen) to unload everything (e.g. before
+      *        the Gl singleton dies)
+      */
+    void ReleaseAllWidgetSkinResources ();
+
     /** This object will only be deleted iff m_delete_widget_skin is true.
       * @brief A pointer to the contained WidgetSkin object.
       */

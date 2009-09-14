@@ -84,16 +84,23 @@ void Engine2::Sprite::Draw (
     Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
     color_mask[Dim::A] *= alpha_mask;
 
-    Singleton::Gl().SetupTextureUnits(m_gltexture->Handle(), color_mask, color_bias);
+    Singleton::Gl().SetupTextureUnits(**m_gltexture, color_mask, color_bias);
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
-        static FloatVector2 const s_texture_coord_array[4] =
+        // the +1 and -1 is necessary because of the texture atlasing,
+        // and will otherwise result in adjacent atlas textures bleeding
+        // through on the edges.
+        Sint16 ox = m_gltexture->TextureCoordOffset()[Dim::X];
+        Sint16 oy = m_gltexture->TextureCoordOffset()[Dim::Y];
+        Sint16 sx = m_gltexture->Size()[Dim::X];
+        Sint16 sy = m_gltexture->Size()[Dim::Y];
+        Sint16 texture_coord_array[8] =
         {
-            FloatVector2(0.0f, 1.0f),
-            FloatVector2(1.0f, 1.0f),
-            FloatVector2(0.0f, 0.0f),
-            FloatVector2(1.0f, 0.0f)
+            ox,    oy+sy,
+            ox+sx, oy+sy,
+            ox,    oy,
+            ox+sx, oy
         };
         static FloatVector2 const s_vertex_array[4] =
         {
@@ -109,9 +116,11 @@ void Engine2::Sprite::Draw (
         glVertexPointer(2, GL_FLOAT, 0, s_vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_FLOAT, 0, s_texture_coord_array);
+        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array);
         glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_FLOAT, 0, s_texture_coord_array);
+        // the actual texture coords here are irrelevant because the opaque white
+        // texture has USES_SEPARATE_ATLAS
+        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array); 
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -120,6 +129,7 @@ void Engine2::Sprite::Draw (
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 }
 

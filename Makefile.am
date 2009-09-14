@@ -229,6 +229,7 @@ lib_libxrb_la_SOURCES = \
     lib/render/xrb_font.cpp \
     lib/render/xrb_gl.cpp \
     lib/render/xrb_gltexture.cpp \
+    lib/render/xrb_gltextureatlas.cpp \
     lib/render/xrb_render.cpp \
     lib/render/xrb_rendercontext.cpp \
     \
@@ -365,6 +366,7 @@ include_HEADERS = \
     lib/render/xrb_font.hpp \
     lib/render/xrb_gl.hpp \
     lib/render/xrb_gltexture.hpp \
+    lib/render/xrb_gltextureatlas.hpp \
     lib/render/xrb_render.hpp \
     lib/render/xrb_rendercontext.hpp \
     \

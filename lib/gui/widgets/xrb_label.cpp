@@ -233,7 +233,7 @@ void Label::DrawPicture (RenderContext const &render_context) const
         picture_rect = contents_rect;
     }
 
-    Render::DrawScreenRectTexture(render_context, *RenderPicture(), picture_rect);
+    Render::DrawScreenRectTexture(render_context, **RenderPicture(), picture_rect);
 }
 
 void Label::SetRenderFont (Resource<Font> const &render_font)

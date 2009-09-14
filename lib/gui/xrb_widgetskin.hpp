@@ -98,6 +98,11 @@ public:
       */
     ~WidgetSkin ();
 
+    /** @brief Used by whatever owns the WidgetSkin (e.g. Screen) to
+      *        unload everything (e.g. before the Gl singleton dies)
+      */
+    void ReleaseAllResources ();
+
     /** The contents of this object are cloned as well.
       * @brief Creates a newly instanced clone of this WidgetSkin object.
       */

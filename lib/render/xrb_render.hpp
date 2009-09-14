@@ -196,7 +196,7 @@ namespace Render
       */
     void DrawScreenRectTexture (
         RenderContext const &render_context,
-        GlTexture const *gltexture,
+        GlTexture const &gltexture,
         ScreenCoordRect const &screen_rect,
         FloatSimpleTransform2 const &transformation =
             FloatSimpleTransform2::ms_identity);

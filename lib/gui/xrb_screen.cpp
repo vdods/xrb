@@ -31,6 +31,8 @@ Screen::~Screen ()
     delete OwnerEventQueue();
     SetOwnerEventQueue(NULL);
 
+    ReleaseAllWidgetSkinResources();
+
     Singleton::ShutdownGl();
     Singleton::Pal().ShutdownVideo();
 }

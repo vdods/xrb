@@ -51,6 +51,24 @@ inline ScreenCoord FontToScreenCoord (FontCoord v)
 FontCoordVector2 ScreenToFontCoordVector2 (ScreenCoordVector2 const &v);
 ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v);
 
+class FontLoadParameters : public ResourceLoadParameters
+{
+public:
+
+    ScreenCoord const m_pixel_height;
+
+    FontLoadParameters (ScreenCoord pixel_height)
+        :
+        m_pixel_height(pixel_height)
+    {
+        ASSERT1(m_pixel_height > 0);
+    }
+
+    virtual std::string Name () const;
+    virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
+    virtual void Print (FILE *fptr) const;
+}; // end of class FontLoadParameters
+
 /** All fonts must use UTF8 encoding (which conveniently includes standard
   * 7-bit ASCII encoding).  Left-to-right and right-to-left fonts are
   * supported, but vertically-rendered fonts are not.
@@ -59,24 +77,6 @@ ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v);
 class Font
 {
 public:
-
-    class LoadParameters : public ResourceLoadParameters
-    {
-    public:
-
-        ScreenCoord const m_pixel_height;
-
-        LoadParameters (ScreenCoord pixel_height)
-            :
-            m_pixel_height(pixel_height)
-        {
-            ASSERT1(m_pixel_height > 0);
-        }
-
-        virtual std::string Name () const;
-        virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
-        virtual void Print (FILE *fptr) const;
-    }; // end of class Font::LoadParameters
 
     /** @brief Structure used in text formatting (word wrapping and alignment).
       */

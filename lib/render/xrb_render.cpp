@@ -32,7 +32,7 @@ void Render::DrawLine (
     // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
+        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -66,7 +66,7 @@ void Render::DrawArrow (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
+        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -107,7 +107,7 @@ void Render::DrawPolygon (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
+        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -246,7 +246,7 @@ void Render::DrawCircularArc (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
+        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -284,7 +284,7 @@ void Render::DrawScreenRect (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite()->Handle(),
+        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -316,7 +316,7 @@ void Render::DrawScreenRect (
 
 void Render::DrawScreenRectTexture (
     RenderContext const &render_context,
-    GlTexture const *const gltexture,
+    GlTexture const &gltexture,
     ScreenCoordRect const &screen_rect,
     FloatSimpleTransform2 const &transformation)
 {
@@ -327,18 +327,28 @@ void Render::DrawScreenRectTexture (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        gltexture->Handle(),
+        gltexture,
         render_context.ColorMask(),
         render_context.ColorBias());
 
     {
-        FloatVector2 texture_coordinate_array[4] =
+        FloatVector2 temp[4] =
         {
-            FloatVector2((transformation * FloatVector2(0.0f, 1.0f)).m),
-            FloatVector2((transformation * FloatVector2(1.0f, 1.0f)).m),
-            FloatVector2((transformation * FloatVector2(0.0f, 0.0f)).m),
-            FloatVector2((transformation * FloatVector2(1.0f, 0.0f)).m)
+            FloatVector2(transformation * FloatVector2(0.0f, 1.0f)),
+            FloatVector2(transformation * FloatVector2(1.0f, 1.0f)),
+            FloatVector2(transformation * FloatVector2(0.0f, 0.0f)),
+            FloatVector2(transformation * FloatVector2(1.0f, 0.0f))
         };
+        Sint16 texture_coordinate_array[8];
+
+        for (Uint32 i = 0; i < 4; ++i)
+        {
+            temp[i][Dim::X] *= gltexture.Width();
+            temp[i][Dim::Y] *= gltexture.Height();
+            texture_coordinate_array[i*2 + 0] = Sint16(temp[i][Dim::X]) + gltexture.TextureCoordOffset()[Dim::X];
+            texture_coordinate_array[i*2 + 1] = Sint16(temp[i][Dim::Y]) + gltexture.TextureCoordOffset()[Dim::Y];
+        }
+
         Sint16 vertex_coordinate_array[8] =
         {
             screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y], 
@@ -360,9 +370,8 @@ void Render::DrawScreenRectTexture (
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
-//         glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_array);
+        glTexCoordPointer(2, GL_SHORT, 0, texture_coordinate_array);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         glDisableClientState(GL_VERTEX_ARRAY);
