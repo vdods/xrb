@@ -94,7 +94,7 @@ void LineEdit::Draw (RenderContext const &render_context) const
             // calculate the color mask
             string_render_context.ApplyColorMask(RenderTextColor());
             // set up the GL clip rect
-            string_render_context.SetupGLClipRect();
+            TopLevelParent()->SetViewport(string_render_context.ClipRect());
             // draw the text
             RenderFont()->DrawString(
                 string_render_context,

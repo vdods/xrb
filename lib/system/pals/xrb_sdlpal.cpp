@@ -435,9 +435,14 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
             case SDL_MOUSEBUTTONDOWN:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
+                // change from SDL's left-handed coordinates (where the origin
+                // is at the top-left corner of the screen and the positive y
+                // axis is downward) to Screen's right-handed coordinates (the
+                // origin is the bottom-left corner of the screen and the
+                // positive y axis is upward).
                 Xrb::ScreenCoordVector2 event_position(
                     static_cast<Xrb::ScreenCoord>(mouse_button_event.x),
-                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
+                    screen->DeviceSize()[Xrb::Dim::Y] - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
@@ -461,9 +466,14 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
             case SDL_MOUSEBUTTONUP:
             {
                 SDL_MouseButtonEvent const &mouse_button_event = e.button;
+                // change from SDL's left-handed coordinates (where the origin
+                // is at the top-left corner of the screen and the positive y
+                // axis is downward) to Screen's right-handed coordinates (the
+                // origin is the bottom-left corner of the screen and the
+                // positive y axis is upward).
                 Xrb::ScreenCoordVector2 event_position(
                     static_cast<Xrb::ScreenCoord>(mouse_button_event.x),
-                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
+                    screen->DeviceSize()[Xrb::Dim::Y] - static_cast<Xrb::ScreenCoord>(mouse_button_event.y));
                 if (mouse_button_event.button == SDL_BUTTON_WHEELUP ||
                     mouse_button_event.button == SDL_BUTTON_WHEELDOWN)
                 {
@@ -484,11 +494,14 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
             case SDL_MOUSEMOTION:
             {
                 SDL_MouseMotionEvent const &mouse_motion_event = e.motion;
+                // change from SDL's left-handed coordinates (where the origin
+                // is at the top-left corner of the screen and the positive y
+                // axis is downward) to Screen's right-handed coordinates (the
+                // origin is the bottom-left corner of the screen and the
+                // positive y axis is upward).
                 Xrb::ScreenCoordVector2 event_position(
                     static_cast<Xrb::ScreenCoord>(mouse_motion_event.x),
-                    screen->ScreenRect().Height() - static_cast<Xrb::ScreenCoord>(mouse_motion_event.y));
-                // SDL provides right-handed coords, so yrel coord is negated
-                // to get left-handed coords (used by Screen)
+                    screen->DeviceSize()[Xrb::Dim::Y] - static_cast<Xrb::ScreenCoord>(mouse_motion_event.y));
                 Xrb::ScreenCoordVector2 event_delta(
                     mouse_motion_event.xrel,
                     -mouse_motion_event.yrel); 

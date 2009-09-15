@@ -230,28 +230,6 @@ GLint Gl::Integer (GLenum name)
     return integer[0];
 }
 
-void Gl::SetClipRect (ScreenCoordRect const &clip_rect)
-{
-    ASSERT1(clip_rect.IsValid());
-
-    // set up the GL projection matrix here.
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(
-        clip_rect.Left(), clip_rect.Right(),
-        clip_rect.Bottom(), clip_rect.Top(),
-        -1.0, 1.0); // these values (-1, 1) are arbitrary
-
-    // set up the viewport which is the rectangle on screen which
-    // will be rendered to.  this also properly sets up the clipping
-    // planes.
-    glViewport(
-        clip_rect.Left(),
-        clip_rect.Bottom(),
-        clip_rect.Width(),
-        clip_rect.Height());
-}
-
 GlTexture *Gl::CreateGlTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters)
 {
     // if the texture wants to use a separate atlas, make a new atlas just for it

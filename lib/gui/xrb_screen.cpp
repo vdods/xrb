@@ -41,12 +41,19 @@ Screen *Screen::Create (
     ScreenCoord width,
     ScreenCoord height,
     Uint32 bit_depth,
-    bool fullscreen)
+    bool fullscreen,
+    Sint32 angle)
 {
     // maybe change these to actual code-checks and error handling
     ASSERT1(width > 0);
     ASSERT1(height > 0);
     ASSERT1(bit_depth > 0);
+    ASSERT1(angle % 90 == 0 && "angle must be a multiple of 90");
+
+    // normalize the angle to the range [0, 360)
+    while (angle < 0)
+        angle += 360;
+    angle %= 360;
 
     if (Singleton::Pal().InitializeVideo(width, height, bit_depth, fullscreen) != Pal::SUCCESS)
         return NULL;
@@ -56,12 +63,13 @@ Screen *Screen::Create (
     // it is important that all the video init and GL init
     // happens before this constructor, because the Widget constructor
     // is called, which loads textures and makes GL calls.
-    Screen *retval = new Screen();
+    Screen *retval = new Screen(angle);
+    retval->m_device_size.SetComponents(width, height);
+    retval->m_original_screen_size = retval->RotatedScreenSize(retval->m_device_size);
     // this resizing must happen before the widget skin is created.
-    retval->m_current_video_resolution.SetComponents(width, height);
     retval->MoveTo(ScreenCoordVector2::ms_zero);
-    retval->ContainerWidget::Resize(retval->m_current_video_resolution);
-    retval->FixSize(retval->m_current_video_resolution);
+    retval->ContainerWidget::Resize(retval->m_original_screen_size);
+    retval->FixSize(retval->m_original_screen_size);
     retval->m_widget_skin = new WidgetSkin(retval);
     retval->m_delete_widget_skin = true;
     retval->InitializeFromWidgetSkinProperties();
@@ -78,6 +86,33 @@ void Screen::RequestQuit ()
         fprintf(stderr, "Screen::RequestQuit();\n");
         m_sender_quit_requested.Signal();
     }
+}
+
+void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
+{
+    ASSERT1(clip_rect.IsValid());
+
+    // set up the GL projection matrix here.
+    glMatrixMode(GL_PROJECTION);
+    // there is an extra copy of the matrix on the stack so don't
+    // have to worry about fucking it up.
+    glPopMatrix();
+    glPushMatrix();
+    glOrtho(
+        clip_rect.Left(), clip_rect.Right(),
+        clip_rect.Bottom(), clip_rect.Top(),
+        -1.0, 1.0); // these values (-1, 1) are arbitrary
+
+    // set up the viewport which is the rectangle on screen which
+    // will be rendered to.  this also properly sets up the clipping
+    // planes.
+
+    ScreenCoordRect rotated_clip_rect(RotatedScreenRect(clip_rect));
+    glViewport(
+        rotated_clip_rect.Left(),
+        rotated_clip_rect.Bottom(),
+        rotated_clip_rect.Width(),
+        rotated_clip_rect.Height());
 }
 
 void Screen::Draw () const
@@ -105,15 +140,21 @@ void Screen::Draw () const
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
+    // set up the screen rotation by using the projection matrix
+    glRotatef(m_angle, 0.0f, 0.0f, 1.0f);
+    // this is a way to save a copy of the matrix so that SetViewport can
+    // not have to worry about fucking it up.
+    glPushMatrix();
+
     // make sure the screen rect we're constructing the render context
     // with does not extend past the physical screen
     ScreenCoordRect screen_rect(ScreenRect());
     ASSERT1(screen_rect.Left() == 0);
     ASSERT1(screen_rect.Bottom() == 0);
-    if (screen_rect.Width() > m_current_video_resolution[Dim::X])
-        screen_rect.SetWidth(m_current_video_resolution[Dim::X]);
-    if (screen_rect.Height() > m_current_video_resolution[Dim::Y])
-        screen_rect.SetHeight(m_current_video_resolution[Dim::Y]);
+    if (screen_rect.Width() > m_original_screen_size[Dim::X])
+        screen_rect.SetWidth(m_original_screen_size[Dim::X]);
+    if (screen_rect.Height() > m_original_screen_size[Dim::Y])
+        screen_rect.SetHeight(m_original_screen_size[Dim::Y]);
 
     // create the render context.  we must do it manually because the
     // top-level widget (Screen) has no parent to do it automatically.
@@ -124,10 +165,14 @@ void Screen::Draw () const
     RenderContext render_context(screen_rect, ColorBias(), ColorMask());
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
-    render_context.SetupGLClipRect();
+    SetViewport(render_context.ClipRect());
 
     // call draw on the ContainerWidget base class.
     ContainerWidget::Draw(render_context);
+
+    // need to pop the matrix we saved above.
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
 
 #if !defined(WIN32)
     ASSERT1(Gl::Integer(GL_MODELVIEW_STACK_DEPTH)  == 1 && "mismatched push/pop for GL_MODELVIEW matrix stack");
@@ -141,14 +186,19 @@ void Screen::Draw () const
     Singleton::Pal().FinishFrame();
 }
 
-Screen::Screen ()
+Screen::Screen (Sint32 angle)
     :
     ContainerWidget(NULL, "Screen"),
+    m_angle(angle),
     m_sender_quit_requested(this),
     m_receiver_request_quit(&Screen::RequestQuit, this)
 {
+    ASSERT1(m_angle % 90 == 0);
+    ASSERT1(m_angle >= 0 && m_angle < 360);
+
     m_is_quit_requested = false;
-    m_current_video_resolution = ScreenCoordVector2::ms_zero;
+    m_device_size = ScreenCoordVector2::ms_zero;
+    m_original_screen_size = ScreenCoordVector2::ms_zero;
 
     // Screen creates its own EventQueue (which is the
     // master EventQueue for all the widgets it commands).
@@ -178,10 +228,21 @@ bool Screen::HandleEvent (Event const *const e)
 
     // special handling for the top-level parent widget (Screen)
     {
+        if (e->IsMouseEvent())
+        {
+            EventMouse const *mouse_event = DStaticCast<EventMouse const *>(e);
+
+            // transform the mouse event screen position
+            mouse_event->SetPosition(RotatedScreenPosition(mouse_event->Position()));
+        }
+
         if (e->IsMouseMotionEvent())
         {
             EventMouseMotion const *mouse_motion_event =
                 DStaticCast<EventMouseMotion const *>(e);
+
+            // transform the mouse motion event position delta
+            mouse_motion_event->SetDelta(RotatedScreenVector(mouse_motion_event->Delta()));
 
             // generate a mouseover event from the mouse motion event
             EventMouseover mouseover_event(
@@ -236,6 +297,81 @@ bool Screen::HandleEvent (Event const *const e)
 
     // pass the event to the ContainerWidget base class
     return ContainerWidget::HandleEvent(e);
+}
+
+ScreenCoordVector2 Screen::RotatedScreenSize (ScreenCoordVector2 const &v) const
+{
+    ASSERT1(m_angle % 90 == 0);
+    ASSERT1(m_angle >= 0 && m_angle < 360);
+    switch (m_angle)
+    {
+        default:
+        case 0:
+        case 180: return v;
+        case 90:
+        case 270: return ScreenCoordVector2(v[Dim::Y], v[Dim::X]);
+    }
+}
+
+ScreenCoordVector2 Screen::RotatedScreenPosition (ScreenCoordVector2 const &v) const
+{
+    ASSERT1(m_angle % 90 == 0);
+    ASSERT1(m_angle >= 0 && m_angle < 360);
+    switch (m_angle)
+    {
+        default:
+        case 0:   return v;
+        case 90:  return ScreenCoordVector2(v[Dim::Y], m_device_size[Dim::X]-v[Dim::X]);
+        case 180: return m_device_size - v;
+        case 270: return ScreenCoordVector2(m_device_size[Dim::Y]-v[Dim::Y], v[Dim::X]);
+    }
+}
+
+ScreenCoordVector2 Screen::RotatedScreenVector (ScreenCoordVector2 const &v) const
+{
+    ASSERT1(m_angle % 90 == 0);
+    ASSERT1(m_angle >= 0 && m_angle < 360);
+    switch (m_angle)
+    {
+        default:
+        case 0:   return v;
+        case 90:  return ScreenCoordVector2(-v[Dim::Y], v[Dim::X]);
+        case 180: return -v;
+        case 270: return ScreenCoordVector2(v[Dim::Y], -v[Dim::X]);
+    }
+}
+
+ScreenCoordRect Screen::RotatedScreenRect (ScreenCoordRect const &r) const
+{
+    ASSERT1(m_angle % 90 == 0);
+    ASSERT1(m_angle >= 0 && m_angle < 360);
+    switch (m_angle)
+    {
+        default:
+        case 0:
+            return r;
+
+        case 90:
+            return ScreenCoordRect(
+                m_device_size[Dim::X] - r.Top(),
+                r.Left(),
+                m_device_size[Dim::X] - r.Top() + r.Height(),
+                r.Left() + r.Width());
+
+        case 180:
+            return ScreenCoordRect(
+                m_device_size[Dim::X] - r.Right(),
+                m_device_size[Dim::Y] - r.Top(),
+                m_device_size[Dim::X] - r.Right() + r.Width(),
+                m_device_size[Dim::Y] - r.Top() + r.Height());
+
+        case 270:
+            return ScreenCoordRect(
+                r.Bottom(),
+                m_device_size[Dim::Y] - r.Right(),
+                r.Bottom() + r.Height(),
+                m_device_size[Dim::Y] - r.Right() + r.Width());
+    }
 }
 
 } // end of namespace Xrb

@@ -66,12 +66,6 @@ public:
       */
     static GLint Integer (GLenum name);
 
-    /** Widget calls during @ref Xrb::Widget::Draw -- you shouldn't need to
-      * call it directly.
-      * @brief Used by Widget when setting the clipping planes and viewport.
-      */
-    static void SetClipRect (ScreenCoordRect const &clip_rect);
-
     // ///////////////////////////////////////////////////////////////////////
     // non-static methods
     // ///////////////////////////////////////////////////////////////////////

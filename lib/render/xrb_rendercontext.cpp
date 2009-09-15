@@ -25,9 +25,4 @@ bool RenderContext::MaskAndBiasWouldResultInNoOp (ColorCoord color_alpha_channel
     return m_color_bias[Dim::A] == 0.0f && (m_color_mask[Dim::A] == 0.0f || color_alpha_channel_value == 0.0f);
 }
 
-void RenderContext::SetupGLClipRect () const
-{
-    Gl::SetClipRect(m_clip_rect);
-}
-
 } // end of namespace Xrb

@@ -68,24 +68,15 @@ public:
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this key event was generated.
       */
-    inline bool IsEitherAltKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_ALT) != 0;
-    }
+    bool IsEitherAltKeyPressed () const { return (m_modifier & Key::MOD_ALT) != 0; }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this key event was generated.
       */
-    inline bool IsEitherControlKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_CTRL) != 0;
-    }
+    bool IsEitherControlKeyPressed () const { return (m_modifier & Key::MOD_CTRL) != 0; }
     /** @brief Returns true iff either left or right shift keys were pressed
       *        when this key event was generated.
       */
-    inline bool IsEitherShiftKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_SHIFT) != 0;
-    }
+    bool IsEitherShiftKeyPressed () const { return (m_modifier & Key::MOD_SHIFT) != 0; }
     /** @brief Returns the ascii code of the key event, modified by capslock,
       *        numlock, and shift key modifiers.
       */
@@ -233,45 +224,38 @@ public:
     /** @brief Returns true iff either left or right alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool IsEitherAltKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_ALT) != 0;
-    }
+    bool IsEitherAltKeyPressed () const { return (m_modifier & Key::MOD_ALT) != 0; }
     /** @brief Returns true iff either left or right control keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool IsEitherControlKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_CTRL) != 0;
-    }
+    bool IsEitherControlKeyPressed () const { return (m_modifier & Key::MOD_CTRL) != 0; }
     /** @brief Returns true iff either left or shift alt keys were pressed
       *        when this mouse event was generated.
       */
-    inline bool IsEitherShiftKeyPressed () const
-    {
-        return (m_modifier & Key::MOD_SHIFT) != 0;
-    }
+    bool IsEitherShiftKeyPressed () const { return (m_modifier & Key::MOD_SHIFT) != 0; }
     /** @brief Returns true iff capslock was active when this event
       *        was generated.
       */
-    inline bool IsCapsLockOn () const
-    {
-        return (m_modifier & Key::MOD_CAPS) != 0;
-    }
+    bool IsCapsLockOn () const { return (m_modifier & Key::MOD_CAPS) != 0; }
     /** @brief Returns true iff numlock was active when this event
       *        was generated.
       */
-    inline bool IsNumLockOn () const
-    {
-        return (m_modifier & Key::MOD_NUM) != 0;
-    }
+    bool IsNumLockOn () const { return (m_modifier & Key::MOD_NUM) != 0; }
 
 private:
 
+    /** This is needed by Screen for view rotation.
+      * @brief Sets the screen coordinate position of this mouse event.
+      */
+    void SetPosition (ScreenCoordVector2 const &position) const { m_position = position; }
+
     // the mouse button position in screen coordinates
-    ScreenCoordVector2 m_position;
+    mutable ScreenCoordVector2 m_position;
     // the metakey modifier flags for this event
     Key::Modifier m_modifier;
+
+    // this is necessary for screen rotation
+    friend class Screen;
 }; // end of class EventMouse
 
 /** Ties together the common functionality of the button down and button
@@ -448,11 +432,19 @@ public:
 
 private:
 
+    /** This is needed by Screen for view rotation.
+      * @brief Sets the position delta of this mouse event.
+      */
+    void SetDelta (ScreenCoordVector2 const &delta) const { m_delta = delta; }
+
     bool m_is_left_mouse_button_pressed;
     bool m_is_middle_mouse_button_pressed;
     bool m_is_right_mouse_button_pressed;
     // the mouse motion delta in screen coordinates
-    ScreenCoordVector2 m_delta;
+    mutable ScreenCoordVector2 m_delta;
+
+    // this is needed for screen rotation
+    friend class Screen;
 }; // end of class EventMouseMotion
 
 /** TODO: articulate joystick events

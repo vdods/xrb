@@ -46,7 +46,7 @@ public:
     /** @brief Constructs a RenderContext using the given @c clip_rect
       *        and @c color_mask.
       */
-    inline RenderContext (
+    RenderContext (
         ScreenCoordRect const &clip_rect,
         Color const &color_bias,
         Color const &color_mask)
@@ -58,7 +58,7 @@ public:
     /** Simply copies the values of the source RenderContext.
       * @brief Copy constructor.
       */
-    inline RenderContext (RenderContext const &source)
+    RenderContext (RenderContext const &source)
         :
         m_clip_rect(source.m_clip_rect),
         m_color_bias(source.m_color_bias),
@@ -66,12 +66,12 @@ public:
     { }
     /** @brief Destructor.  Does nothing.
       */
-    inline ~RenderContext () { }
+    ~RenderContext () { }
 
     /** Simply copies the properties of the source.
       * @brief Assignment operator.
       */
-    inline void operator = (RenderContext const &source)
+    void operator = (RenderContext const &source)
     {
         m_clip_rect = source.m_clip_rect;
         m_color_bias = source.m_color_bias;
@@ -80,33 +80,33 @@ public:
 
     /** @brief Returns the clipping rectangle.
       */
-    inline ScreenCoordRect const &ClipRect () const
+    ScreenCoordRect const &ClipRect () const
     {
         return m_clip_rect;
     }
     /** @brief Returns the color bias.
       */
-    inline Color const &ColorBias () const
+    Color const &ColorBias () const
     {
         return m_color_bias;
     }
     /** @brief Returns the color mask.
       */
-    inline Color const &ColorMask () const
+    Color const &ColorMask () const
     {
         return m_color_mask;
     }
     /** Use this method to change the color bias.
       * @brief Returns a non-const reference to the color bias.
       */
-    inline Color &ColorBias ()
+    Color &ColorBias ()
     {
         return m_color_bias;
     }
     /** Use this method to change the color mask.
       * @brief Returns a non-const reference to the color mask.
       */
-    inline Color &ColorMask ()
+    Color &ColorMask ()
     {
         return m_color_mask;
     }
@@ -114,14 +114,14 @@ public:
       * against the clipping rectangle.
       * @brief Returns the intersection of the clipping rect and the given.
       */
-    inline ScreenCoordRect ClippedRect (ScreenCoordRect const &rect) const
+    ScreenCoordRect ClippedRect (ScreenCoordRect const &rect) const
     {
         return m_clip_rect & rect;
     }
     /** @brief Returns the given color bias blended (on the right/inside) with this
       *        render context's color bias (i.e. blending function composition).
       */
-    inline Color BlendedColorBias (Color const &color_bias) const
+    Color BlendedColorBias (Color const &color_bias) const
     {
         Color blended_color_bias(m_color_bias);
         blended_color_bias.Blend(color_bias);
@@ -130,7 +130,7 @@ public:
     /** Performs component-wise multiplication of the color and color mask,
       * @brief Returns the masked version of the given color.
       */
-    inline Color MaskedColor (Color const &color) const
+    Color MaskedColor (Color const &color) const
     {
         return m_color_mask * color;
     }
@@ -148,38 +148,35 @@ public:
 
     /** @brief Sets the value of the clipping rectangle using the given rect.
       */
-    inline void SetClipRect (ScreenCoordRect const &clip_rect)
+    void SetClipRect (ScreenCoordRect const &clip_rect)
     {
         m_clip_rect = clip_rect;
     }
 
     /** @brief Clips the clipping rectangle using the given rectangle.
       */
-    inline void ApplyClipRect (ScreenCoordRect const &clip_rect)
+    void ApplyClipRect (ScreenCoordRect const &clip_rect)
     {
         m_clip_rect &= clip_rect;
     }
     /** @brief Blends the current color bias with the given color (right-multiplication).
       */
-    inline void ApplyColorBias (Color const &color_bias)
+    void ApplyColorBias (Color const &color_bias)
     {
         m_color_bias.Blend(color_bias);
     }
     /** @brief Masks the color mask using the given color.
       */
-    inline void ApplyColorMask (Color const &color_mask)
+    void ApplyColorMask (Color const &color_mask)
     {
         m_color_mask *= color_mask;
     }
     /** @brief Masks only the alpha component of the color mask.
       */
-    inline void ApplyAlphaMaskToColorMask (Float const alpha_mask)
+    void ApplyAlphaMaskToColorMask (Float const alpha_mask)
     {
         m_color_mask[Dim::A] *= alpha_mask;
     }
-    /** @brief Causes OpenGL to use the current clipping rectangle.
-      */
-    void SetupGLClipRect () const;
 
 private:
 

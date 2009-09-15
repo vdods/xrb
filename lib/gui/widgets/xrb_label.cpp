@@ -177,7 +177,7 @@ void Label::DrawText (RenderContext const &render_context) const
         // calculate the color mask
         string_render_context.ApplyColorMask(RenderTextColor());
         // set up the GL clip rect
-        string_render_context.SetupGLClipRect();
+        TopLevelParent()->SetViewport(string_render_context.ClipRect());
         // draw the text
         ASSERT1(m_line_format_vector_source != NULL);
         RenderFont()->DrawLineFormattedText(

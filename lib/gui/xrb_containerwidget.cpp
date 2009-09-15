@@ -338,7 +338,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
                 if (!child->IsEnabled() && IsEnabled())
                     child_render_context.ApplyAlphaMaskToColorMask(disabled_widget_alpha_mask);
                 // set up the GL clip rect for the child
-                child_render_context.SetupGLClipRect();
+                TopLevelParent()->SetViewport(child_render_context.ClipRect());
                 // do the actual draw call
                 child->Draw(child_render_context);
             }
@@ -379,7 +379,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
 
                 ASSERT1(modal_widget->IsEnabled());
                 // set up the clip rect for the child
-                child_render_context.SetupGLClipRect();
+                TopLevelParent()->SetViewport(child_render_context.ClipRect());
                 // do the actual draw call
                 modal_widget->Draw(child_render_context);
             }
@@ -389,7 +389,7 @@ void ContainerWidget::Draw (RenderContext const &render_context) const
     // restore the GL clip rect for this widget (this may be unnecessary,
     // because any widget that has child widgets shouldn't really be drawing
     // anything explicitly -- all its drawing will be handled by Widget).
-    render_context.SetupGLClipRect();
+    TopLevelParent()->SetViewport(render_context.ClipRect());
 }
 
 void ContainerWidget::MoveBy (ScreenCoordVector2 const &delta)

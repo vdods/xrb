@@ -629,10 +629,9 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
     m_is_gl_projection_matrix_in_use = true;
 
     glMatrixMode(GL_PROJECTION);
-    // save off the Widget-created projection matrix
+    // the pop and then push is the same thing done in Screen::SetViewport
+    glPopMatrix();
     glPushMatrix();
-    // start our matrix from scratch
-    glLoadIdentity();
 
     // viewport perspective correction - this effectively takes
     // the place of the view-to-screen transform.
