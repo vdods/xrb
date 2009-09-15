@@ -84,9 +84,7 @@ Contact the author at victor dot dods atsign gmail dot com.
             <li>Object</li>
             <li>Sprite</li>
             <li>Entity</li>
-            <li>SpriteEntity</li>
             <li>Compound</li>
-            <li>CompoundEntity</li>
             <li>PhysicsHandler</li>
             </ul>
         <li>The Render Stack</li>

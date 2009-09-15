@@ -34,7 +34,6 @@ bin_PROGRAMS = \
 	lesson04 \
 	lesson05 \
 	lesson06
-#	mapeditor2 \ # is temporarily out of commission
 
 EXTRA_DIST = \
 	bootstrap.sh \
@@ -119,10 +118,6 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/system/pals \
     -I$(top_srcdir)/lib/system/serializers \
     -I$(top_srcdir)/lib/util
-
-# the map editor is temporarily out of service
-#    -I$(top_srcdir)/lib/mapeditor2 \
-#
 
 if SDL_CONFIG_EXISTS
 SDL_CONFIG_LDFLAGS = `$(SDL_CONFIG) --libs`
@@ -257,23 +252,6 @@ lib_libxrb_la_SOURCES = \
     lib/util/xrb_utf8.cpp \
     lib/util/xrb_util.cpp
 
-# the mapeditor is temporarily out of service
-#    lib/mapeditor2/xrb_mapeditor2_compound.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_compoundentity.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_entity.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_mainwidget.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_object.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_objectlayer.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_polygon.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_sprite.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_spriteentity.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_world.cpp \
-#    lib/mapeditor2/xrb_mapeditor2_worldview.cpp
-
 ##############################################################################
 # these headers will be installed in $(prefix)/include/xrb/
 ##############################################################################
@@ -402,24 +380,6 @@ include_HEADERS = \
     lib/util/xrb_util.hpp \
     lib/util/xrb_validator.hpp
 
-# the mapeditor is temporarily out of service
-#    lib/mapeditor2/xrb_mapeditor2_compound.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_compoundentity.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_compoundvertex.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_entity.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_entitypropertiespanel.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_mainwidget.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_object.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_objectlayer.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_objectpropertiespanel.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_polygon.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_sprite.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_spriteentity.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_visibilityquadtree.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_world.hpp \
-#    lib/mapeditor2/xrb_mapeditor2_worldview.hpp
-
 ##############################################################################
 # custom make rules
 ##############################################################################
@@ -544,18 +504,6 @@ lesson05_SOURCES = app/example/lesson/lesson05/lesson05_main.cpp
 
 lesson06_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/app/example/lesson/lesson06
 lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
-
-##############################################################################
-# mapeditor2
-##############################################################################
-
-#mapeditor2_CPPFLAGS = \
-#	$(AM_CPPFLAGS) \
-#	\
-#	-I$(top_srcdir)/app/mapeditor2
-#
-#mapeditor2_SOURCES = \
-#    app/mapeditor2/main.cpp
 
 ##############################################################################
 # all the no-install header files for the examples

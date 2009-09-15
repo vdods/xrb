@@ -10,7 +10,6 @@ MAJOR TASKS:
 ? embedded scripting
 - split world into client and server and add networking
 - music and sound effects
-/ map editor + sprite/entity prefab editor
 / comment/document the code with doxygen
 - exceptions for user errors
 / x/y independent scaling (the physics portion of that is tough)
@@ -171,8 +170,6 @@ TODO:
 - should Screen make its own event queue?
 - child widgets should be based off the position of their parents, so
   screen-relative moving is unnecessary.
-- the map editor view should not create/destroy its own world -- it
-  becomes confusing
 - check if RemoveFromWorld() and AddBackIntoWorld() should save the quadtree(s)
 - rename all enums to have prefixes (where appropriate)
 - drawing functions should all just push the modelview matrix, not load
@@ -182,7 +179,6 @@ TODO:
 - for static Create type functions for subclassable classes, see if the
   function can be templatized so that each subclass doesn't have to make
   a function that is identical except for the "new Blah" part.
-- cursor position in map editor status bar
 - when the Action system is written, go into MapEditor2::WorldView and
   convert everything to that, and get rid of locally tracking
   m_selected_entity_count and friends.
@@ -204,8 +200,6 @@ TODO:
   work when "using namespace Xrb" is not used.
 - think about MapEditor2::MainWidget and if the Widget's main widget
   functionality should be renamed.
-- make the map editor use only meta-keyed shortcuts so that handling
-  key events is much simpler.
 - add modal widget frame/content margins (maybe just make it so that
   setting a main widget puts stuff inside the content margins)
 - for widgets who take the default property a single time at the beginning,
@@ -225,8 +219,6 @@ TODO:
   the size of the object layers.
 - improve the text-editing control of LineEdit (e.g. ctrl+backspace,
   point-and-click cursor positioning, text selection, etc).
-- in map editor, make the scale/angle resetting code when changing
-  transformation modes be optional.
 - implement FastXXXX Math functions
 - the resource instance should store the function that was created
   to create the resource data so that full correctness can be
