@@ -34,13 +34,11 @@ public:
     {
         NONE                = 0,
         USES_SEPARATE_ATLAS = (1 << 0)
-//         NO_MIPMAP      = (1 << 1)
     };
 
     GlTextureLoadParameters (Uint32 flags = NONE) : m_flags(flags) { }
 
     bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
-//     bool NoMipmap () const { return (m_flags & NO_MIPMAP) != 0; }
 
     virtual std::string Name () const;
     virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;

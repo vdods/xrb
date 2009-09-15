@@ -112,6 +112,10 @@ AsciiFont *AsciiFont::CreateFromCache (
         if (!serializer.IsAtEnd())
             throw Exception(FORMAT("AsciiFont::Create(\"" << font_face_path << "\", " << pixel_height << "); font metadata file is too long -- delete the associated cache files"));
 
+        // use a separate atlas for the font bitmap, so the texture coordinates
+        // are easy to deal with (the fact that each font has its own atlas won't
+        // slow stuff down much, since there aren't many different fonts on any
+        // particular screen).
         GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
         retval->m_gltexture = GlTexture::Create(*texture, load_parameters);
         ASSERT1(retval->m_gltexture != NULL);
@@ -145,6 +149,10 @@ AsciiFont *AsciiFont::Create (
     retval->m_baseline_height = baseline_height;
     memcpy(retval->m_glyph_specification, sorted_glyph_specification, sizeof(retval->m_glyph_specification));
     memcpy(retval->m_kern_pair_26_6, kern_pair_26_6, sizeof(retval->m_kern_pair_26_6));
+    // use a separate atlas for the font bitmap, so the texture coordinates
+    // are easy to deal with (the fact that each font has its own atlas won't
+    // slow stuff down much, since there aren't many different fonts on any
+    // particular screen).
     GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
     retval->m_gltexture = GlTexture::Create(*font_texture, load_parameters);
     ASSERT1(retval->m_gltexture != NULL);

@@ -38,8 +38,6 @@ void GlTextureLoadParameters::Print (FILE *fptr) const
         fprintf(stderr, " NONE");
     if (UsesSeparateAtlas())
         fprintf(stderr, " USES_SEPARATE_ATLAS");
-//     if (NoMipmap())
-//         fprintf(stderr, " NO_MIPMAP");
 }
 
 // ///////////////////////////////////////////////////////////////////////////
