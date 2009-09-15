@@ -98,12 +98,11 @@ void Screen::Draw () const
         ColorBias()[Dim::B]*ColorBias()[Dim::A],
         0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    // reset all matrices
+    // reset some matrices (NOT the texture matrix, because the only thing
+    // that's allowed to modify the texture matrix is Gl::BindAtlas)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glMatrixMode(GL_TEXTURE);
     glLoadIdentity();
 
     // make sure the screen rect we're constructing the render context

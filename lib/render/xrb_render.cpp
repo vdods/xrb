@@ -356,15 +356,6 @@ void Render::DrawScreenRectTexture (
             screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
             screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
         };
-/*
-        ScreenCoordVector2 vertex_coordinate_array[4] =
-        {
-            ScreenCoordVector2(screen_rect.BottomLeft().m),
-            ScreenCoordVector2(screen_rect.BottomRight().m),
-            ScreenCoordVector2(screen_rect.TopLeft().m),
-            ScreenCoordVector2(screen_rect.TopRight().m)
-        };
-*/
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);

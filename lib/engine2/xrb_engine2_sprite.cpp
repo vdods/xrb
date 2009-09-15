@@ -88,9 +88,6 @@ void Engine2::Sprite::Draw (
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
-        // the +1 and -1 is necessary because of the texture atlasing,
-        // and will otherwise result in adjacent atlas textures bleeding
-        // through on the edges.
         Sint16 ox = m_gltexture->TextureCoordOffset()[Dim::X];
         Sint16 oy = m_gltexture->TextureCoordOffset()[Dim::Y];
         Sint16 sx = m_gltexture->Size()[Dim::X];
