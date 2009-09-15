@@ -99,18 +99,18 @@ void Engine2::Sprite::Draw (
             ox,    oy,
             ox+sx, oy
         };
-        static FloatVector2 const s_vertex_array[4] =
+        static Sint16 const s_vertex_array[8] =
         {
-            FloatVector2(-1.0f, -1.0f),
-            FloatVector2( 1.0f, -1.0f),
-            FloatVector2(-1.0f,  1.0f),
-            FloatVector2( 1.0f,  1.0f)
+            -1, -1,
+             1, -1,
+            -1,  1,
+             1,  1
         };
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glVertexPointer(2, GL_FLOAT, 0, s_vertex_array);
+        glVertexPointer(2, GL_SHORT, 0, s_vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array);

@@ -182,6 +182,10 @@ lib/engine2/xrb_engine2_visibilityquadtree.cpp
 lib/engine2/xrb_engine2_visibilityquadtree.hpp
 lib/engine2/xrb_engine2_world.cpp
 lib/engine2/xrb_engine2_world.hpp
+lib/engine2/xrb_engine2_worldview.cpp
+lib/engine2/xrb_engine2_worldview.hpp
+lib/engine2/xrb_engine2_worldviewwidget.cpp
+lib/engine2/xrb_engine2_worldviewwidget.hpp
 lib/gui/widgets/xrb_button.cpp
 lib/gui/widgets/xrb_button.hpp
 lib/gui/widgets/xrb_cellpaddingwidget.cpp
@@ -318,10 +322,6 @@ lib/render
 lib/render/fonts
 lib/render/fonts/xrb_asciifont.cpp
 lib/render/fonts/xrb_asciifont.hpp
-lib/render/xrb_engine2_worldview.cpp
-lib/render/xrb_engine2_worldview.hpp
-lib/render/xrb_engine2_worldviewwidget.cpp
-lib/render/xrb_engine2_worldviewwidget.hpp
 lib/render/xrb_font.cpp
 lib/render/xrb_font.hpp
 lib/render/xrb_gl.cpp

@@ -166,6 +166,8 @@ lib_libxrb_la_SOURCES = \
     lib/engine2/xrb_engine2_sprite.cpp \
     lib/engine2/xrb_engine2_visibilityquadtree.cpp \
     lib/engine2/xrb_engine2_world.cpp \
+    lib/engine2/xrb_engine2_worldview.cpp \
+    lib/engine2/xrb_engine2_worldviewwidget.cpp \
     \
     lib/engine2/circle/xrb_engine2_circle_collisionquadtree.cpp \
     lib/engine2/circle/xrb_engine2_circle_entity.cpp \
@@ -224,8 +226,6 @@ lib_libxrb_la_SOURCES = \
     lib/primitive/xrb_rect.cpp \
     lib/primitive/xrb_texture.cpp \
     \
-    lib/render/xrb_engine2_worldview.cpp \
-    lib/render/xrb_engine2_worldviewwidget.cpp \
     lib/render/xrb_font.cpp \
     lib/render/xrb_gl.cpp \
     lib/render/xrb_gltexture.cpp \
@@ -298,6 +298,8 @@ include_HEADERS = \
     lib/engine2/xrb_engine2_types.hpp \
     lib/engine2/xrb_engine2_visibilityquadtree.hpp \
     lib/engine2/xrb_engine2_world.hpp \
+    lib/engine2/xrb_engine2_worldview.hpp \
+    lib/engine2/xrb_engine2_worldviewwidget.hpp \
     \
     lib/engine2/circle/xrb_engine2_circle_collisionquadtree.hpp \
     lib/engine2/circle/xrb_engine2_circle_entity.hpp \
@@ -361,8 +363,6 @@ include_HEADERS = \
     lib/primitive/xrb_rect.hpp \
     lib/primitive/xrb_texture.hpp \
     \
-    lib/render/xrb_engine2_worldview.hpp \
-    lib/render/xrb_engine2_worldviewwidget.hpp \
     lib/render/xrb_font.hpp \
     lib/render/xrb_gl.hpp \
     lib/render/xrb_gltexture.hpp \
