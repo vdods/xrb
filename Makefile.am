@@ -26,7 +26,6 @@ lib_LTLIBRARIES = \
 bin_PROGRAMS = \
 	benchmark \
 	disasteroids \
-	guidemo \
 	lesson00 \
 	lesson01 \
 	lesson02 \
@@ -212,9 +211,6 @@ lib_libxrb_la_SOURCES = \
     lib/parsers/xrb_datafileparser.trison \
     lib/parsers/xrb_datafilescanner.cpp \
     lib/parsers/xrb_datafilevalue.cpp \
-    lib/parsers/xrb_arithmeticparser.cpp \
-    lib/parsers/xrb_arithmeticparser.trison \
-    lib/parsers/xrb_arithmeticscanner.cpp \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_ntuple.cpp \
@@ -331,8 +327,6 @@ include_HEADERS = \
     lib/parsers/xrb_datafileparser.h \
     lib/parsers/xrb_datafilescanner.hpp \
     lib/parsers/xrb_datafilevalue.hpp \
-    lib/parsers/xrb_arithmeticparser.h \
-    lib/parsers/xrb_arithmeticscanner.hpp \
     \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_color.hpp \
@@ -388,10 +382,6 @@ if TRISON_EXISTS
 $(top_srcdir)/lib/parsers/xrb_datafileparser.h: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
 $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.trison
 	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(top_srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(top_srcdir)/lib/parsers/xrb_datafileparser.states
-
-$(top_srcdir)/lib/parsers/xrb_arithmeticparser.h: $(top_srcdir)/lib/parsers/xrb_arithmeticparser.cpp
-$(top_srcdir)/lib/parsers/xrb_arithmeticparser.cpp: $(top_srcdir)/lib/parsers/xrb_arithmeticparser.trison
-	$(TRISON) $(top_srcdir)/lib/parsers/xrb_arithmeticparser.trison --warnings-as-errors --output-basename $(top_srcdir)/lib/parsers/xrb_arithmeticparser --generate-states-file $(top_srcdir)/lib/parsers/xrb_arithmeticparser.states
 endif
 
 ##############################################################################
@@ -466,19 +456,6 @@ disasteroids_SOURCES = \
     app/example/disasteroids/ui/dis_optionspanel.cpp \
     app/example/disasteroids/ui/dis_titlescreenwidget.cpp \
     app/example/disasteroids/ui/dis_worldview.cpp
-
-##############################################################################
-# guidemo
-##############################################################################
-
-guidemo_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	\
-    -I$(top_srcdir)/app/example/guidemo
-
-guidemo_SOURCES = \
-    app/example/guidemo/gui_main.cpp \
-    app/example/guidemo/gui_masterwidget.cpp
 
 ##############################################################################
 # lessons
@@ -557,6 +534,4 @@ noinst_HEADERS = \
     app/example/disasteroids/ui/dis_inventorypanel.hpp \
     app/example/disasteroids/ui/dis_optionspanel.hpp \
     app/example/disasteroids/ui/dis_titlescreenwidget.hpp \
-    app/example/disasteroids/ui/dis_worldview.hpp \
-	\
-	app/example/guidemo/gui_masterwidget.hpp
+    app/example/disasteroids/ui/dis_worldview.hpp
