@@ -101,9 +101,6 @@ app/example/disasteroids/ui/dis_titlescreenwidget.cpp
 app/example/disasteroids/ui/dis_titlescreenwidget.hpp
 app/example/disasteroids/ui/dis_worldview.cpp
 app/example/disasteroids/ui/dis_worldview.hpp
-app/example/guidemo/gui_main.cpp
-app/example/guidemo/gui_masterwidget.cpp
-app/example/guidemo/gui_masterwidget.hpp
 app/example/lesson
 app/example/lesson/lesson00
 app/example/lesson/lesson00/lesson00.vcproj
@@ -159,6 +156,8 @@ lib/engine2/circle/xrb_engine2_circle_entity.hpp
 lib/engine2/circle/xrb_engine2_circle_physicshandler.cpp
 lib/engine2/circle/xrb_engine2_circle_physicshandler.hpp
 lib/engine2/circle/xrb_engine2_circle_types.hpp
+lib/engine2/xrb_engine2_animatedsprite.cpp
+lib/engine2/xrb_engine2_animatedsprite.hpp
 lib/engine2/xrb_engine2_compound.cpp
 lib/engine2/xrb_engine2_compound.hpp
 lib/engine2/xrb_engine2_entity.cpp
@@ -263,11 +262,6 @@ lib/math/xrb_transform2.hpp
 lib/math/xrb_vector.cpp
 lib/math/xrb_vector.hpp
 lib/parsers
-lib/parsers/xrb_arithmeticparser.cpp
-lib/parsers/xrb_arithmeticparser.h
-lib/parsers/xrb_arithmeticparser.trison
-lib/parsers/xrb_arithmeticscanner.cpp
-lib/parsers/xrb_arithmeticscanner.hpp
 lib/parsers/xrb_datafilelocation.cpp
 lib/parsers/xrb_datafilelocation.hpp
 lib/parsers/xrb_datafileparser.cpp
@@ -292,6 +286,8 @@ lib/render
 lib/render/fonts
 lib/render/fonts/xrb_asciifont.cpp
 lib/render/fonts/xrb_asciifont.hpp
+lib/render/xrb_animation.cpp
+lib/render/xrb_animation.hpp
 lib/render/xrb_font.cpp
 lib/render/xrb_font.hpp
 lib/render/xrb_gl.cpp

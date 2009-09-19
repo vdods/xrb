@@ -587,7 +587,7 @@ int main (int argc, char **argv)
             screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->ProcessFrame(current_real_time);
             screen->OwnerEventQueue()->ProcessFrame(current_real_time);
-            screen->Draw();
+            screen->Draw(current_real_time);
         }
 
         // Delete world_view_widget and world, in that order.  This will

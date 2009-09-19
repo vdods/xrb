@@ -17,8 +17,14 @@
 namespace Xrb
 {
 
-Engine2::Sprite *Engine2::Sprite::Create (std::string const &texture_path)
+Engine2::Sprite *Engine2::Sprite::Create (std::string const &asset_path)
 {
+    // first attempt to load the asset as an AnimatedSprite.
+
+    // if that fails, try to load it as a texture.
+
+    // if that fails, return the "missing" texture
+
     Resource<GlTexture> texture =
         Singleton::ResourceLibrary().LoadPath<GlTexture>(
             GlTexture::Create,
@@ -48,9 +54,7 @@ void Engine2::Sprite::Write (Serializer &serializer) const
     Sprite::WriteClassSpecific(serializer);
 }
 
-void Engine2::Sprite::Draw (
-    Engine2::Object::DrawData const &draw_data,
-    Float const alpha_mask) const
+void Engine2::Sprite::Draw (Engine2::Object::DrawData const &draw_data, Float alpha_mask) const
 {
     if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
         return;
@@ -59,75 +63,7 @@ void Engine2::Sprite::Draw (
     if (!m_gltexture.IsValid())
         return;
 
-    // set up the gl modelview matrix
-    glMatrixMode(GL_MODELVIEW);
-    // we have to push the matrix here (instead of loading the
-    // identity) because for wrapped spaces, the wrapped offset
-    // is set in the GL matrix.
-    glPushMatrix();
-
-    // model-to-world transformation (this seems backwards,
-    // but for some reason it's correct).
-    glTranslatef(
-        Translation()[Dim::X],
-        Translation()[Dim::Y],
-        ZDepth());
-    glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
-    glScalef(
-        ScaleFactors()[Dim::X],
-        ScaleFactors()[Dim::Y],
-        1.0f);
-
-    // calculate the color bias
-    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
-    // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
-    color_mask[Dim::A] *= alpha_mask;
-
-    Singleton::Gl().SetupTextureUnits(**m_gltexture, color_mask, color_bias);
-
-    // draw the sprite with a triangle strip using glDrawArrays
-    {
-        Sint16 ox = m_gltexture->TextureCoordOffset()[Dim::X];
-        Sint16 oy = m_gltexture->TextureCoordOffset()[Dim::Y];
-        Sint16 sx = m_gltexture->Size()[Dim::X];
-        Sint16 sy = m_gltexture->Size()[Dim::Y];
-        Sint16 texture_coord_array[8] =
-        {
-            ox,    oy+sy,
-            ox+sx, oy+sy,
-            ox,    oy,
-            ox+sx, oy
-        };
-        static Sint16 const s_vertex_array[8] =
-        {
-            -1, -1,
-             1, -1,
-            -1,  1,
-             1,  1
-        };
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glVertexPointer(2, GL_SHORT, 0, s_vertex_array);
-
-        glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array);
-        glClientActiveTexture(GL_TEXTURE1);
-        // the actual texture coords here are irrelevant because the opaque white
-        // texture has USES_SEPARATE_ATLAS
-        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array); 
-
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        // this seems to be unnecessary, but there's probably a good reason for it.
-        glDisableClientState(GL_VERTEX_ARRAY); 
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    }
-
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
+    RenderGlTexture(draw_data, alpha_mask, **m_gltexture);
 }
 
 void Engine2::Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
@@ -203,9 +139,85 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
     }
 }
 
+void Engine2::Sprite::RenderGlTexture (
+    Engine2::Object::DrawData const &draw_data,
+    Float alpha_mask,
+    GlTexture const &gltexture) const
+{
+    // set up the gl modelview matrix
+    glMatrixMode(GL_MODELVIEW);
+    // we have to push the matrix here (instead of loading the
+    // identity) because for wrapped spaces, the wrapped offset
+    // is set in the GL matrix.
+    glPushMatrix();
+
+    // model-to-world transformation (this seems backwards,
+    // but for some reason it's correct).
+    glTranslatef(
+        Translation()[Dim::X],
+        Translation()[Dim::Y],
+        ZDepth());
+    glRotatef(Angle(), 0.0f, 0.0f, 1.0f);
+    glScalef(
+        ScaleFactors()[Dim::X],
+        ScaleFactors()[Dim::Y],
+        1.0f);
+
+    // calculate the color bias
+    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
+    // calculate the color mask
+    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
+    color_mask[Dim::A] *= alpha_mask;
+
+    Singleton::Gl().SetupTextureUnits(gltexture, color_mask, color_bias);
+
+    // draw the sprite with a triangle strip using glDrawArrays
+    {
+        Sint16 ox = gltexture.TextureCoordOffset()[Dim::X];
+        Sint16 oy = gltexture.TextureCoordOffset()[Dim::Y];
+        Sint16 sx = gltexture.Size()[Dim::X];
+        Sint16 sy = gltexture.Size()[Dim::Y];
+        Sint16 texture_coord_array[8] =
+        {
+            ox,    oy+sy,
+            ox+sx, oy+sy,
+            ox,    oy,
+            ox+sx, oy
+        };
+        static Sint16 const s_vertex_array[8] =
+        {
+            -1, -1,
+             1, -1,
+            -1,  1,
+             1,  1
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glVertexPointer(2, GL_SHORT, 0, s_vertex_array);
+
+        glClientActiveTexture(GL_TEXTURE0);
+        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array);
+        glClientActiveTexture(GL_TEXTURE1);
+        // the actual texture coords here are irrelevant because the opaque white
+        // texture has USES_SEPARATE_ATLAS
+        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array); 
+
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        // this seems to be unnecessary, but there's probably a good reason for it.
+        glDisableClientState(GL_VERTEX_ARRAY); 
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+}
+
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
 {
-    ASSERT1(object->GetObjectType() == OT_SPRITE);
+    ASSERT1(object->GetObjectType() == OT_SPRITE || object->GetObjectType() == OT_ANIMATED_SPRITE);
     Sprite const *sprite = DStaticCast<Sprite const *>(object);
     ASSERT1(sprite != NULL);
 
@@ -213,6 +225,8 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
     m_is_round = sprite->m_is_round;
     m_physical_size_ratios = sprite->m_physical_size_ratios;
     IndicateRadiiNeedToBeRecalculated();
+
+    Object::CloneProperties(object);
 }
 
 } // end of namespace Xrb

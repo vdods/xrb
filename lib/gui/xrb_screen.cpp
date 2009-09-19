@@ -115,7 +115,7 @@ void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
         rotated_clip_rect.Height());
 }
 
-void Screen::Draw () const
+void Screen::Draw (Float real_time) const
 {
     // NOTE: this method encompasses all drawing.
 
@@ -162,7 +162,7 @@ void Screen::Draw () const
     // for the blending function composition operation.  the default 
     // color mask is opaque white, which is the identity for the color 
     // masking operation.
-    RenderContext render_context(screen_rect, ColorBias(), ColorMask());
+    RenderContext render_context(screen_rect, ColorBias(), ColorMask(), real_time);
     // set the GL clip rect (must do it manually for the same reason
     // as the render context).
     SetViewport(render_context.ClipRect());

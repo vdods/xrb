@@ -337,7 +337,7 @@ void Master::Run ()
         // rendering
         {
             Uint32 render_frame_start_time = Singleton::Pal().CurrentTime();
-            m_screen->Draw();
+            m_screen->Draw(m_real_time);
             render_frame_time = Singleton::Pal().CurrentTime() - render_frame_start_time;
         }
 

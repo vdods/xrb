@@ -31,7 +31,7 @@ public:
     DataFileScanner ();
     ~DataFileScanner ();
 
-    inline bool IsOpen () /* const TODO: put back in for GCC 4.x */ { return m_input.is_open(); }
+    inline bool IsOpen () const { return m_input.is_open(); }
     inline std::string const &InputPath () const { return m_input_path; }
     inline Uint32 LineNumber () const { return m_line_number; }
     inline bool WereWarningsEncountered () const { return m_were_warnings_encountered; }

@@ -423,7 +423,7 @@ int main (int argc, char **argv)
             screen->OwnerEventQueue()->ProcessFrame(current_real_time);
             screen->ProcessFrame(current_real_time);
             screen->OwnerEventQueue()->ProcessFrame(current_real_time);
-            screen->Draw();
+            screen->Draw(current_real_time);
         }
 
         /* @endcode

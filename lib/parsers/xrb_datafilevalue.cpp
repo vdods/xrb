@@ -446,6 +446,70 @@ Uint32 DataFileArray::DimensionCount () const
         return 1;
 }
 
+bool DataFileArray::BooleanElement (Uint32 index) const throw (std::string)
+{
+    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Boolean")
+    return value->Value();
+}
+
+Sint32 DataFileArray::Sint32Element (Uint32 index) const throw (std::string)
+{
+    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Sint32")
+    return value->Value();
+}
+
+Uint32 DataFileArray::Uint32Element (Uint32 index) const throw (std::string)
+{
+    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Uint32")
+    return value->Value();
+}
+
+Float DataFileArray::FloatElement (Uint32 index) const throw (std::string)
+{
+    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Float")
+    return value->Value();
+}
+
+char DataFileArray::CharacterElement (Uint32 index) const throw (std::string)
+{
+    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Character")
+    return value->Value();
+}
+
+std::string const &DataFileArray::StringElement (Uint32 index) const throw (std::string)
+{
+    DataFileString const *value = dynamic_cast<DataFileString const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a String")
+    return value->Value();
+}
+
+DataFileArray const *DataFileArray::ArrayElement (Uint32 index) const throw (std::string)
+{
+    DataFileArray const *value = dynamic_cast<DataFileArray const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not an Array")
+    return value;
+}
+
+DataFileStructure const *DataFileArray::StructureElement (Uint32 index) const throw (std::string)
+{
+    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(Element(index));
+    if (value == NULL)
+        THROW_STRING("element " << index << " is not a Structure")
+    return value;
+}
+
 void DataFileArray::AppendValue (DataFileValue *const value)
 {
     ASSERT1(value != NULL);

@@ -49,11 +49,13 @@ public:
     RenderContext (
         ScreenCoordRect const &clip_rect,
         Color const &color_bias,
-        Color const &color_mask)
+        Color const &color_mask,
+        Float real_time)
         :
         m_clip_rect(clip_rect),
         m_color_bias(color_bias),
-        m_color_mask(color_mask)
+        m_color_mask(color_mask),
+        m_real_time(real_time)
     { }
     /** Simply copies the values of the source RenderContext.
       * @brief Copy constructor.
@@ -62,7 +64,8 @@ public:
         :
         m_clip_rect(source.m_clip_rect),
         m_color_bias(source.m_color_bias),
-        m_color_mask(source.m_color_mask)
+        m_color_mask(source.m_color_mask),
+        m_real_time(source.m_real_time)
     { }
     /** @brief Destructor.  Does nothing.
       */
@@ -76,40 +79,29 @@ public:
         m_clip_rect = source.m_clip_rect;
         m_color_bias = source.m_color_bias;
         m_color_mask = source.m_color_mask;
+        m_real_time = source.m_real_time;
     }
 
     /** @brief Returns the clipping rectangle.
       */
-    ScreenCoordRect const &ClipRect () const
-    {
-        return m_clip_rect;
-    }
+    ScreenCoordRect const &ClipRect () const { return m_clip_rect; }
     /** @brief Returns the color bias.
       */
-    Color const &ColorBias () const
-    {
-        return m_color_bias;
-    }
+    Color const &ColorBias () const { return m_color_bias; }
     /** @brief Returns the color mask.
       */
-    Color const &ColorMask () const
-    {
-        return m_color_mask;
-    }
+    Color const &ColorMask () const { return m_color_mask; }
     /** Use this method to change the color bias.
       * @brief Returns a non-const reference to the color bias.
       */
-    Color &ColorBias ()
-    {
-        return m_color_bias;
-    }
+    Color &ColorBias () { return m_color_bias; }
     /** Use this method to change the color mask.
       * @brief Returns a non-const reference to the color mask.
       */
-    Color &ColorMask ()
-    {
-        return m_color_mask;
-    }
+    Color &ColorMask () { return m_color_mask; }
+    /** @brief Returns the real time.
+      */
+    Float RealTime () const { return m_real_time; }
     /** This method is used when rectangular regions need to be clipped
       * against the clipping rectangle.
       * @brief Returns the intersection of the clipping rect and the given.
@@ -183,6 +175,7 @@ private:
     ScreenCoordRect m_clip_rect;
     Color m_color_bias;
     Color m_color_mask;
+    Float m_real_time;
 }; // end of class RenderContext
 
 } // end of namespace Xrb

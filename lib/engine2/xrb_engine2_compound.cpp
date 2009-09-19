@@ -169,6 +169,8 @@ void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
             &compound->m_polygon_array[i],
             compound->m_vertex_array,
             m_vertex_array);
+
+    Object::CloneProperties(object);
 }
 
 } // end of namespace Xrb

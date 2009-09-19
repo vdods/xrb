@@ -405,8 +405,9 @@ int main (int argc, char **argv)
             screen->ProcessFrame(time);
             // Turn the crank on the EventQueue again.
             screen->OwnerEventQueue()->ProcessFrame(time);
-            // Draw the whole mu'erfucking thing.
-            screen->Draw();
+            // Draw the whole mu'erfucking thing, passing real time in for
+            // real time and world time (since there's still no world yet).
+            screen->Draw(time);
         }
     }
 

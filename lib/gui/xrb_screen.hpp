@@ -57,7 +57,7 @@ public:
     // sets the viewport for drawing into a widget
     void SetViewport (ScreenCoordRect const &clip_rect) const;
     // draws the whole fucking thing.
-    void Draw () const;
+    void Draw (Float real_time) const;
 
 protected:
 

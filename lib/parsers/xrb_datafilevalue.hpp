@@ -272,7 +272,7 @@ public:
     virtual ~DataFileValue () { }
 
     virtual DataFileElementType ElementType () const = 0;
-    inline DataFileValue const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
+    DataFileValue const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
     bool PathElementBoolean (std::string const &path) const throw (std::string);
@@ -335,7 +335,7 @@ public:
         m_value(value)
     { }
 
-    inline bool Value () const { return m_value; }
+    bool Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_BOOLEAN; }
 
@@ -364,7 +364,7 @@ public:
         m_value(value)
     { }
 
-    inline Sint32 Value () const { return m_value; }
+    Sint32 Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_SINT32; }
 
@@ -390,7 +390,7 @@ public:
         m_value(value)
     { }
 
-    inline Uint32 Value () const { return m_value; }
+    Uint32 Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_UINT32; }
 
@@ -416,7 +416,7 @@ public:
         m_value(value)
     { }
 
-    inline Float Value () const { return m_value; }
+    Float Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_FLOAT; }
 
@@ -447,7 +447,7 @@ public:
         m_value(value)
     { }
 
-    inline char Value () const { return m_value; }
+    char Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_CHARACTER; }
 
@@ -480,10 +480,10 @@ public:
         m_value(value)
     { }
 
-    inline std::string const &Value () const { return m_value; }
+    std::string const &Value () const { return m_value; }
 
-    inline void AppendString (std::string const &string) { m_value += string; }
-    inline void AppendCharacter (char const character) { m_value += character; }
+    void AppendString (std::string const &string) { m_value += string; }
+    void AppendCharacter (char const character) { m_value += character; }
 
     virtual DataFileElementType ElementType () const { return DAT_STRING; }
 
@@ -557,8 +557,8 @@ public:
         delete m_value;
     }
 
-    inline std::string const &GetKey () const { return m_key; }
-    inline DataFileValue *Value () const { return m_value; }
+    std::string const &GetKey () const { return m_key; }
+    DataFileValue *Value () const { return m_value; }
 
     virtual DataFileElementType ElementType () const { return DAT_KEY_PAIR; }
 
@@ -600,11 +600,16 @@ public:
     DataFileElementType ArrayElementType () const;
     DataFileElementType UltimateArrayElementType () const;
     Uint32 DimensionCount () const;
-    inline Uint32 ElementCount () const { return m_element_vector.size(); }
-    inline DataFileValue *Element (Uint32 index) const
-    {
-        return index < m_element_vector.size() ? m_element_vector[index] : NULL;
-    }
+    Uint32 ElementCount () const { return m_element_vector.size(); }
+    DataFileValue *Element (Uint32 index) const { return index < m_element_vector.size() ? m_element_vector[index] : NULL; }
+    bool BooleanElement (Uint32 index) const throw (std::string);
+    Sint32 Sint32Element (Uint32 index) const throw (std::string);
+    Uint32 Uint32Element (Uint32 index) const throw (std::string);
+    Float FloatElement (Uint32 index) const throw (std::string);
+    char CharacterElement (Uint32 index) const throw (std::string);
+    std::string const &StringElement (Uint32 index) const throw (std::string);
+    DataFileArray const *ArrayElement (Uint32 index) const throw (std::string);
+    DataFileStructure const *StructureElement (Uint32 index) const throw (std::string);
 
     void AppendValue (DataFileValue *value);
 

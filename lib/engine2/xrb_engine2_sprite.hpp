@@ -36,7 +36,9 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
-    static Sprite *Create (std::string const &texture_path);
+    // asset_path gives the path to .anim (animation sequence descriptor)
+    // or .png (still-frame texture) file.
+    static Sprite *Create (std::string const &asset_path);
     // create an instance of this class by reading from the given Serializer
     static Sprite *Create (Serializer &serializer);
     // makes calls to WriteClassSpecific for this and all superclasses
@@ -47,9 +49,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws this sprite
-    virtual void Draw (
-        Object::DrawData const &draw_data,
-        Float alpha_mask) const;
+    virtual void Draw (Object::DrawData const &draw_data, Float alpha_mask) const;
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers
@@ -113,7 +113,10 @@ protected:
     virtual void CalculateRadius (QuadTreeType quad_tree_type) const;
 
     // ///////////////////////////////////////////////////////////////////
+    // utility methods and other crap
+    // ///////////////////////////////////////////////////////////////////
 
+    void RenderGlTexture (Object::DrawData const &draw_data, Float alpha_mask, GlTexture const &gltexture) const;
     // copies the properties of the given object to this object
     void CloneProperties (Object const *object);
 

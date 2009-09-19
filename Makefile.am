@@ -150,6 +150,7 @@ LDADD = $(LIBOBJS) $(top_builddir)/lib/libxrb.la
 lib_libxrb_la_SOURCES = \
     lib/core/xrb_compiletimeasserts.cpp \
     \
+    lib/engine2/xrb_engine2_animatedsprite.cpp \
     lib/engine2/xrb_engine2_compound.cpp \
     lib/engine2/xrb_engine2_entity.cpp \
     lib/engine2/xrb_engine2_events.cpp \
@@ -217,6 +218,7 @@ lib_libxrb_la_SOURCES = \
     lib/primitive/xrb_rect.cpp \
     lib/primitive/xrb_texture.cpp \
     \
+    lib/render/xrb_animation.cpp \
     lib/render/xrb_font.cpp \
     lib/render/xrb_gl.cpp \
     lib/render/xrb_gltexture.cpp \
@@ -259,6 +261,7 @@ include_HEADERS = \
     lib/core/xrb_delete.hpp \
     lib/core/xrb_types.hpp \
     \
+    lib/engine2/xrb_engine2_animatedsprite.hpp \
     lib/engine2/xrb_engine2_compound.hpp \
     lib/engine2/xrb_engine2_entity.hpp \
     lib/engine2/xrb_engine2_enums.hpp \
@@ -335,6 +338,7 @@ include_HEADERS = \
     lib/primitive/xrb_rect.hpp \
     lib/primitive/xrb_texture.hpp \
     \
+    lib/render/xrb_animation.hpp \
     lib/render/xrb_font.hpp \
     lib/render/xrb_gl.hpp \
     lib/render/xrb_gltexture.hpp \

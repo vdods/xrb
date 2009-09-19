@@ -365,9 +365,11 @@ int main (int argc, char **argv)
             Here is where the visual magic happens.  All the visible widgets
             in this hierarchy are drawn in this call.  If a widget is invisible
             -- if it is hidden, of zero area, or it is not on-screen -- its
-            Draw method is not called.
+            Draw method is not called.  The arguments are for real time and
+            world time, but since we have no game world (yet), we'll just pass
+            in real time for both.
             @code */
-            screen->Draw();
+            screen->Draw(time);
         }
     }
 

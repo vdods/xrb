@@ -179,6 +179,14 @@
 		<Filter
 			Name="engine2"
 			>
+            <File
+                RelativePath=".\engine2\xrb_engine2_animatedsprite.cpp"
+                >
+            </File>
+            <File
+                RelativePath=".\engine2\xrb_engine2_animatedsprite.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\engine2\xrb_engine2_compound.cpp"
 				>
@@ -661,22 +669,6 @@
 			Name="parsers"
 			>
 			<File
-				RelativePath=".\parsers\xrb_arithmeticparser.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\parsers\xrb_arithmeticparser.h"
-				>
-			</File>
-			<File
-				RelativePath=".\parsers\xrb_arithmeticscanner.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\parsers\xrb_arithmeticscanner.hpp"
-				>
-			</File>
-			<File
 				RelativePath=".\parsers\xrb_datafilelocation.cpp"
 				>
 			</File>
@@ -756,14 +748,22 @@
 		<Filter
 			Name="render"
 			>
-			<File
-				RelativePath=".\render\xrb_font.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\render\xrb_font.hpp"
-				>
-			</File>
+            <File
+                RelativePath=".\render\xrb_animation.cpp"
+                >
+            </File>
+            <File
+                RelativePath=".\render\xrb_animation.hpp"
+                >
+            </File>
+            <File
+                RelativePath=".\render\xrb_font.cpp"
+                >
+            </File>
+            <File
+                RelativePath=".\render\xrb_font.hpp"
+                >
+            </File>
 			<File
 				RelativePath=".\render\xrb_gl.cpp"
 				>

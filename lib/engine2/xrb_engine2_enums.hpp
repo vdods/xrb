@@ -25,6 +25,7 @@ enum ObjectType
 {
     OT_OBJECT = 0,
     OT_SPRITE,
+    OT_ANIMATED_SPRITE,
     OT_COMPOUND,
 
     OT_COUNT
