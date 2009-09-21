@@ -19,14 +19,6 @@ namespace Xrb
 
 Engine2::Sprite *Engine2::Sprite::Create (std::string const &asset_path)
 {
-    // TODO
-    // first attempt to load the asset as an AnimatedSprite.
-
-    // if that fails, try to load it as a texture.
-
-    // if that fails, return the "missing" texture
-
-    // NOTE: for now, just do the old thing
     return new Sprite(GlTexture::Load(asset_path));
 }
 
@@ -75,14 +67,13 @@ void Engine2::Sprite::SetPhysicalSizeRatio (Float const physical_size_ratio)
     IndicateRadiiNeedToBeRecalculated();
 }
 
-Engine2::Sprite::Sprite (Resource<GlTexture> const &texture)
+Engine2::Sprite::Sprite (Resource<GlTexture> const &gltexture)
     :
     Object(OT_SPRITE),
+    m_gltexture(gltexture),
+    m_is_round(true),
     m_physical_size_ratios(1.0f, 1.0f)
-{
-    m_gltexture = texture;
-    m_is_round = true;
-}
+{ }
 
 void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {

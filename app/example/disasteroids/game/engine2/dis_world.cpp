@@ -503,10 +503,10 @@ void World::RecordCreatedEnemyShip (EnemyShip const *enemy_ship)
     ASSERT1(enemy_ship != NULL);
     Uint32 enemy_ship_index = enemy_ship->GetEntityType() - ET_ENEMY_SHIP_LOWEST;
     ASSERT1(enemy_ship_index < ET_ENEMY_SHIP_COUNT);
-    ASSERT1(m_is_demi_wave
-            ||
-            m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()] <
-            gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->EnemyLevel()]);
+//     ASSERT1(m_is_demi_wave
+//             ||
+//             m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()] <
+//             gs_wave[m_current_wave_index].m_enemy_ship_spawn_count[enemy_ship_index][enemy_ship->EnemyLevel()]);
 
     ++m_enemy_ship_count[enemy_ship_index][enemy_ship->EnemyLevel()];
     if (enemy_ship->GetEntityType() != ET_DEVOURMENT)

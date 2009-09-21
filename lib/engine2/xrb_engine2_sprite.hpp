@@ -36,9 +36,7 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
-    // asset_path gives the path to .anim (animation sequence descriptor)
-    // or .png (still-frame texture) file.
-    static Sprite *Create (std::string const &asset_path);
+    static Sprite *Create (std::string const &texture_path);
     // create an instance of this class by reading from the given Serializer
     static Sprite *Create (Serializer &serializer);
     // makes calls to WriteClassSpecific for this and all superclasses
@@ -56,31 +54,31 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // returns the sprite texture
-    inline Resource<GlTexture> const &GetTexture () const { return m_gltexture; }
+    Resource<GlTexture> const &GetTexture () const { return m_gltexture; }
     // returns true iff this is a "round" sprite (see comment
     // above m_is_round).
-    inline bool IsRound () const { return m_is_round; }
+    bool IsRound () const { return m_is_round; }
     // returns the relative physical sizes (component-wise ratios of the
     // physical geometry scale factors over the visible geometry scale
     // factors).
-    inline FloatVector2 const &PhysicalSizeRatios () const
+    FloatVector2 const &PhysicalSizeRatios () const
     {
         return m_physical_size_ratios;
     }
     // returns the relative physical size -- only valid when both
     // components of the size ratios are equal.
     // see @c PhysicalSizeRatios
-    inline Float PhysicalSizeRatio () const
+    Float PhysicalSizeRatio () const
     {
         ASSERT1(m_physical_size_ratios[Dim::X] == m_physical_size_ratios[Dim::Y]);
         return m_physical_size_ratios[Dim::X];
     }
     // returns the calculated scale factors for the physical geometry,
     // based upon the object's scale factors, and the physical size ratios.
-    inline FloatVector2 PhysicalScaleFactors () const { return m_physical_size_ratios * ScaleFactors(); }
+    FloatVector2 PhysicalScaleFactors () const { return m_physical_size_ratios * ScaleFactors(); }
     // returns the calculated scale factor for the physical geometry,
     // based upon the object's scale factor, and the physical size ratio.
-    inline Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * ScaleFactor(); }
+    Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * ScaleFactor(); }
 
     // sets the physical size ratios
     void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);
@@ -88,12 +86,12 @@ public:
     void SetPhysicalSizeRatio (Float physical_size_ratio);
 
     // resets the physical size ratios to [1, 1]
-    inline void ResetPhysicalSizeRatios () { SetPhysicalSizeRatio(1.0f); }
+    void ResetPhysicalSizeRatios () { SetPhysicalSizeRatio(1.0f); }
 
 protected:
 
     // protected constructor so you must use Create()
-    Sprite (Resource<GlTexture> const &texture);
+    Sprite (Resource<GlTexture> const &gltexture);
 
     // ///////////////////////////////////////////////////////////////////
     // protected serialization functions
