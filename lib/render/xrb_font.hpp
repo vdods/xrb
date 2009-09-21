@@ -18,6 +18,7 @@
 
 #include "xrb_enums.hpp"
 #include "xrb_ntuple.hpp"
+#include "xrb_resourcelibrary.hpp"
 #include "xrb_resourceloadparameters.hpp"
 #include "xrb_screencoord.hpp"
 
@@ -51,24 +52,6 @@ inline ScreenCoord FontToScreenCoord (FontCoord v)
 FontCoordVector2 ScreenToFontCoordVector2 (ScreenCoordVector2 const &v);
 ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v);
 
-class FontLoadParameters : public ResourceLoadParameters
-{
-public:
-
-    ScreenCoord const m_pixel_height;
-
-    FontLoadParameters (ScreenCoord pixel_height)
-        :
-        m_pixel_height(pixel_height)
-    {
-        ASSERT1(m_pixel_height > 0);
-    }
-
-    virtual std::string Name () const;
-    virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
-    virtual void Print (FILE *fptr) const;
-}; // end of class FontLoadParameters
-
 /** All fonts must use UTF8 encoding (which conveniently includes standard
   * 7-bit ASCII encoding).  Left-to-right and right-to-left fonts are
   * supported, but vertically-rendered fonts are not.
@@ -89,7 +72,44 @@ public:
 
     typedef std::vector<LineFormat> LineFormatVector;
 
-    static Font *Create (std::string const &font_face_path, ResourceLoadParameters const *parameters);
+    class LoadParameters : public ResourceLoadParameters
+    {
+    public:
+
+        LoadParameters (std::string const &path, ScreenCoord pixel_height)
+            :
+            m_path(path),
+            m_pixel_height(pixel_height)
+        {
+            ASSERT1(m_pixel_height > 0);
+        }
+
+        std::string const &Path () const { return m_path; }
+        ScreenCoord PixelHeight () const { return m_pixel_height; }
+
+        virtual std::string ResourceName () const;
+        virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+        virtual void Fallback ();
+        virtual void Print (FILE *fptr) const;
+
+    private:
+
+        std::string m_path;
+        ScreenCoord m_pixel_height;
+    }; // end of class Font::LoadParameters
+
+    static Resource<Font> Load (std::string const &path, ScreenCoord pixel_height)
+    {
+        return Singleton::ResourceLibrary().Load<Font>(Font::Create, new LoadParameters(path, pixel_height));
+    }
+    static Resource<Font> LoadMissing ()
+    {
+        LoadParameters *load_parameters = new LoadParameters("", 10); // arbitrary
+        load_parameters->Fallback();
+        return Singleton::ResourceLibrary().Load<Font>(Font::Create, load_parameters);
+    }
+
+    static Font *Create (ResourceLoadParameters const &p);
 
     virtual ~Font () { }
 

@@ -116,8 +116,7 @@ AsciiFont *AsciiFont::CreateFromCache (
         // are easy to deal with (the fact that each font has its own atlas won't
         // slow stuff down much, since there aren't many different fonts on any
         // particular screen).
-        GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
-        retval->m_gltexture = GlTexture::Create(*texture, load_parameters);
+        retval->m_gltexture = GlTexture::Create(*texture, GlTexture::USES_SEPARATE_ATLAS);
         ASSERT1(retval->m_gltexture != NULL);
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); loaded cached font data\n", font_face_path.c_str(), pixel_height);
@@ -153,8 +152,7 @@ AsciiFont *AsciiFont::Create (
     // are easy to deal with (the fact that each font has its own atlas won't
     // slow stuff down much, since there aren't many different fonts on any
     // particular screen).
-    GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
-    retval->m_gltexture = GlTexture::Create(*font_texture, load_parameters);
+    retval->m_gltexture = GlTexture::Create(*font_texture, GlTexture::USES_SEPARATE_ATLAS);
     ASSERT1(retval->m_gltexture != NULL);
 
     return retval;

@@ -26,6 +26,7 @@
 
 #include <vector>
 
+#include "xrb_resourcelibrary.hpp"
 #include "xrb_screencoord.hpp"
 
 namespace Xrb
@@ -34,7 +35,6 @@ namespace Xrb
 class Color;
 class GlTexture;
 class GlTextureAtlas;
-class GlTextureLoadParameters;
 class Texture;
 
 // openGL-controlling singleton -- the main reason this exists is to control
@@ -73,16 +73,12 @@ public:
     /** This texture is used for color biasing in multitexture mode.
       * @brief Returns the 1x1 opaque white utility texture.
       */
-    GlTexture const &GlTexture_OpaqueWhite ()
+    GlTexture const &GlTexture_OpaqueWhite () const
     {
         ASSERT1(m_gltexture_opaque_white != NULL);
         return *m_gltexture_opaque_white;
     }
 
-    /** For use only by GlTexture.
-      * @brief Creates a texture-atlased GlTexture instance.
-      */
-    GlTexture *CreateGlTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters);
     /** For use only by GlTexture.
       * @brief Unregisters a texture-atlased GlTexture.
       */
@@ -117,6 +113,11 @@ public:
 
 private:
 
+    /** For use only by GlTexture.
+      * @brief Creates a texture-atlased GlTexture instance.
+      */
+    GlTexture *CreateGlTexture (Texture const &texture, Uint32 gltexture_flags);
+
     typedef std::vector<GlTextureAtlas *> AtlasVector;
 
     GlTexture *m_gltexture_opaque_white;
@@ -124,6 +125,8 @@ private:
     GlTextureAtlas const *m_atlas_bound_to_unit_0;
     Uint32 m_bind_texture_call_hit_count;
     Uint32 m_bind_texture_call_miss_count;
+
+    friend class GlTexture;
 };
 
 } // end of namespace Xrb

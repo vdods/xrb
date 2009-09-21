@@ -29,34 +29,54 @@ ScreenCoordVector2 FontToScreenCoordVector2 (FontCoordVector2 const &v)
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// FontLoadParameters
+// Font::LoadParameters
 // ///////////////////////////////////////////////////////////////////////////
 
-std::string FontLoadParameters::Name () const
+std::string Font::LoadParameters::ResourceName () const
 {
-    return "Xrb::FontLoadParameters";
+    return "Xrb::Font";
 }
 
-bool FontLoadParameters::IsLessThan (ResourceLoadParameters const &other_parameters) const
+bool Font::LoadParameters::IsLessThan (ResourceLoadParameters const &p) const
 {
-    FontLoadParameters const &other = *DStaticCast<FontLoadParameters const *>(&other_parameters);
-    return m_pixel_height < other.m_pixel_height;
+    LoadParameters const &rhs = *DStaticCast<LoadParameters const *>(&p);
+    int comparison = m_path.compare(rhs.m_path);
+    if (comparison < 0)
+        return true;
+    else if (comparison > 0)
+        return false;
+    else
+        return m_pixel_height < rhs.m_pixel_height;
 }
 
-void FontLoadParameters::Print (FILE *fptr) const
+void Font::LoadParameters::Fallback ()
 {
-    fprintf(stderr, "pixel height = %d", m_pixel_height);
+    // get rid of the path; a blank path will indicate the "missing" texture
+    m_path.clear();
+    m_pixel_height = 10; // arbitrary for now
+}
+
+void Font::LoadParameters::Print (FILE *fptr) const
+{
+    fprintf(fptr, "path = \"%s\", pixel height = %d", m_path.c_str(), m_pixel_height);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
 // Font
 // ///////////////////////////////////////////////////////////////////////////
 
-Font *Font::Create (std::string const &font_face_path, ResourceLoadParameters const *parameters)
+Font *Font::Create (ResourceLoadParameters const &p)
 {
-    ASSERT1(parameters != NULL);
-    FontLoadParameters const *params = DStaticCast<FontLoadParameters const *>(parameters);
-    return Singleton::Pal().LoadFont(font_face_path.c_str(), params->m_pixel_height);
+    LoadParameters const &load_parameters = *DStaticCast<LoadParameters const *>(&p);
+
+    // an empty path indicates to load the "missing" font.
+    if (load_parameters.Path().empty())
+    {
+        ASSERT0(false && "TODO");
+        return NULL;
+    }
+
+    return Singleton::Pal().LoadFont(load_parameters.Path().c_str(), load_parameters.PixelHeight());
 }
 
 ScreenCoordRect Font::StringRect (char const *const string) const

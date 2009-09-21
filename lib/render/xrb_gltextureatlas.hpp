@@ -22,7 +22,6 @@ namespace Xrb
 {
 
 class GlTexture;
-class GlTextureLoadParameters;
 class Texture;
 
 class GlTextureAtlas
@@ -38,7 +37,7 @@ public:
     // attempts to find space for the given texture.  if space is found, the
     // texture is placed, and an appropriate GlTexture is returned.  otherwise
     // NULL is returned.
-    GlTexture *PlaceTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters);
+    GlTexture *PlaceTexture (Texture const &texture, Uint32 gltexture_flags);
     // deallocates space in the allocation bitmap (freeing the space)
     void UnplaceTexture (GlTexture const &gltexture);
 

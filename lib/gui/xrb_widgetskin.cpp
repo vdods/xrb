@@ -184,13 +184,9 @@ void WidgetSkin::SetFontFacePath (
         ScreenCoordFromRatio(
             m_font_specification[font_type].m_font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadPath<Font>(
-            Font::Create,
-            font_face_path,
-            new FontLoadParameters(m_font_specification[font_type].m_font_height));
+        Font::Load(font_face_path, m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
-
 
 void WidgetSkin::SetFontHeightRatio (
     FontType const font_type,
@@ -202,10 +198,9 @@ void WidgetSkin::SetFontHeightRatio (
     m_font_specification[font_type].m_font_height =
         ScreenCoordFromRatio(font_height_ratio);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadPath<Font>(
-            Font::Create,
-            m_font_specification[font_type].m_font.Path(),
-            new FontLoadParameters(m_font_specification[font_type].m_font_height));
+        Font::Load(
+            m_font_specification[font_type].m_font.LoadParameters<Font::LoadParameters>().Path(),
+            m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -219,10 +214,9 @@ void WidgetSkin::SetFontHeight (
     m_font_specification[font_type].m_font_height_ratio =
         RatioFromScreenCoord(font_height);
     m_font_specification[font_type].m_font =
-        Singleton::ResourceLibrary().LoadPath<Font>(
-            Font::Create,
-            m_font_specification[font_type].m_font.Path(),
-            new FontLoadParameters(m_font_specification[font_type].m_font_height));
+        Font::Load(
+            m_font_specification[font_type].m_font.LoadParameters<Font::LoadParameters>().Path(),
+            m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
@@ -239,10 +233,7 @@ void WidgetSkin::SetTexturePath (
     std::string const &texture_path)
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
-    m_texture[texture_type] =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            texture_path);
+    m_texture[texture_type] = GlTexture::Load(texture_path);
 }
 
 void WidgetSkin::SetMarginRatios (

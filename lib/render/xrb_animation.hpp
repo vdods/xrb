@@ -46,10 +46,39 @@ public:
     {
     public:
 
+        class LoadParameters : public ResourceLoadParameters
+        {
+        public:
+
+            LoadParameters (std::string const &path) : m_path(path) { }
+
+            std::string const &Path () const { return m_path; }
+
+            virtual std::string ResourceName () const;
+            virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+            virtual void Fallback ();
+            virtual void Print (FILE *fptr) const;
+
+        private:
+
+            std::string m_path;
+        }; // end of class Animation::Sequence::LoadParameters
+
         Sequence (Uint32 length, AnimationType default_type, Float default_duration);
         ~Sequence ();
 
-        static Sequence *Create (std::string const &animation_path, ResourceLoadParameters const *load_parameters);
+        static Resource<Sequence> Load (std::string const &path)
+        {
+            return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, new LoadParameters(path));
+        }
+        static Resource<Sequence> LoadMissing ()
+        {
+            LoadParameters *load_parameters = new LoadParameters("");
+            load_parameters->Fallback();
+            return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, load_parameters);
+        }
+
+        static Sequence *Create (ResourceLoadParameters const &p);
 
         Uint32 Length () const { return m_length; }
         GlTexture const &Frame (Uint32 index) const { ASSERT1(index < m_length); return **m_frame[index]; }

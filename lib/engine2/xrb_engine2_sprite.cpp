@@ -19,20 +19,15 @@ namespace Xrb
 
 Engine2::Sprite *Engine2::Sprite::Create (std::string const &asset_path)
 {
+    // TODO
     // first attempt to load the asset as an AnimatedSprite.
 
     // if that fails, try to load it as a texture.
 
     // if that fails, return the "missing" texture
 
-    Resource<GlTexture> texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            texture_path);
-    if (!texture.IsValid())
-        return NULL;
-
-    return new Sprite(texture);
+    // NOTE: for now, just do the old thing
+    return new Sprite(GlTexture::Load(asset_path));
 }
 
 Engine2::Sprite *Engine2::Sprite::Create (Serializer &serializer)
@@ -92,10 +87,7 @@ Engine2::Sprite::Sprite (Resource<GlTexture> const &texture)
 void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
-    m_gltexture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            serializer.ReadAggregate<std::string>());
+    m_gltexture = GlTexture::Load(serializer.ReadAggregate<std::string>());
     serializer.Read<bool>(m_is_round);
     serializer.ReadAggregate<FloatVector2>(m_physical_size_ratios);
     IndicateRadiiNeedToBeRecalculated();
@@ -108,7 +100,7 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(m_gltexture.IsValid());
 
     // write out the guts
-    serializer.WriteAggregate<std::string>(m_gltexture.Path());
+    serializer.WriteAggregate<std::string>(m_gltexture.LoadParameters<GlTexture::LoadParameters>().Path());
     serializer.Write<bool>(m_is_round);
     serializer.WriteAggregate<FloatVector2>(m_physical_size_ratios);
 }

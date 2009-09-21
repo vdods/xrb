@@ -70,11 +70,7 @@ void TextWidget::SetFontFacePath (std::string const &font_face_path)
     ASSERT1(!font_face_path.empty());
     ASSERT1(m_font.IsValid());
 
-    Resource<Font> font =
-        Singleton::ResourceLibrary().LoadPath<Font>(
-            Font::Create,
-            font_face_path,
-            new FontLoadParameters(m_font->PixelHeight()));
+    Resource<Font> font = Font::Load(font_face_path, m_font->PixelHeight());
     ASSERT1(font.IsValid());
 
     if (m_font != font)
@@ -84,7 +80,7 @@ void TextWidget::SetFontFacePath (std::string const &font_face_path)
     }
 }
 
-void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
+void TextWidget::SetFontHeightRatio (Float font_height_ratio)
 {
     ASSERT1(font_height_ratio > 0.0f);
     ASSERT1(m_font.IsValid());
@@ -94,34 +90,26 @@ void TextWidget::SetFontHeightRatio (Float const font_height_ratio)
 
     if (m_font->PixelHeight() != font_height)
     {
-        m_font =
-            Singleton::ResourceLibrary().LoadPath<Font>(
-                Font::Create,
-                m_font.Path(),
-                new FontLoadParameters(font_height));
+        m_font = Font::Load(m_font.LoadParameters<Font::LoadParameters>().Path(), font_height);
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }
 }
 
-void TextWidget::SetFontHeight (ScreenCoord const font_height)
+void TextWidget::SetFontHeight (ScreenCoord font_height)
 {
     ASSERT1(font_height > 0);
     ASSERT1(m_font.IsValid());
 
     if (m_font->PixelHeight() != font_height)
     {
-        m_font =
-            Singleton::ResourceLibrary().LoadPath<Font>(
-                Font::Create,
-                m_font.Path(),
-                new FontLoadParameters(font_height));
+        m_font = Font::Load(m_font.LoadParameters<Font::LoadParameters>().Path(), font_height);
         ASSERT1(m_font.IsValid());
         HandleChangedFont();
     }
 }
 
-void TextWidget::SetIsMinWidthFixedToTextWidth (bool const is_min_width_fixed_to_text_width)
+void TextWidget::SetIsMinWidthFixedToTextWidth (bool is_min_width_fixed_to_text_width)
 {
     if (m_is_min_width_fixed_to_text_width != is_min_width_fixed_to_text_width)
     {
@@ -130,7 +118,7 @@ void TextWidget::SetIsMinWidthFixedToTextWidth (bool const is_min_width_fixed_to
     }
 }
 
-void TextWidget::SetIsMaxWidthFixedToTextWidth (bool const is_max_width_fixed_to_text_width)
+void TextWidget::SetIsMaxWidthFixedToTextWidth (bool is_max_width_fixed_to_text_width)
 {
     if (m_is_max_width_fixed_to_text_width != is_max_width_fixed_to_text_width)
     {
@@ -139,7 +127,7 @@ void TextWidget::SetIsMaxWidthFixedToTextWidth (bool const is_max_width_fixed_to
     }
 }
 
-void TextWidget::SetIsWidthFixedToTextWidth (bool const is_width_fixed_to_text_width)
+void TextWidget::SetIsWidthFixedToTextWidth (bool is_width_fixed_to_text_width)
 {
     if (m_is_min_width_fixed_to_text_width != is_width_fixed_to_text_width ||
         m_is_max_width_fixed_to_text_width != is_width_fixed_to_text_width)
@@ -150,7 +138,7 @@ void TextWidget::SetIsWidthFixedToTextWidth (bool const is_width_fixed_to_text_w
     }
 }
 
-void TextWidget::SetIsMinHeightFixedToTextHeight (bool const is_min_height_fixed_to_text_height)
+void TextWidget::SetIsMinHeightFixedToTextHeight (bool is_min_height_fixed_to_text_height)
 {
     if (m_is_min_height_fixed_to_text_height != is_min_height_fixed_to_text_height)
     {
@@ -159,7 +147,7 @@ void TextWidget::SetIsMinHeightFixedToTextHeight (bool const is_min_height_fixed
     }
 }
 
-void TextWidget::SetIsMaxHeightFixedToTextHeight (bool const is_max_height_fixed_to_text_height)
+void TextWidget::SetIsMaxHeightFixedToTextHeight (bool is_max_height_fixed_to_text_height)
 {
     if (m_is_max_height_fixed_to_text_height != is_max_height_fixed_to_text_height)
     {
@@ -168,7 +156,7 @@ void TextWidget::SetIsMaxHeightFixedToTextHeight (bool const is_max_height_fixed
     }
 }
 
-void TextWidget::SetIsHeightFixedToTextHeight (bool const is_height_fixed_to_text_height)
+void TextWidget::SetIsHeightFixedToTextHeight (bool is_height_fixed_to_text_height)
 {
     if (m_is_min_height_fixed_to_text_height != is_height_fixed_to_text_height ||
         m_is_max_height_fixed_to_text_height != is_height_fixed_to_text_height)
@@ -179,7 +167,7 @@ void TextWidget::SetIsHeightFixedToTextHeight (bool const is_height_fixed_to_tex
     }
 }
 
-void TextWidget::SetIsMinSizeFixedToTextSize (bool const is_min_size_fixed_to_text_size)
+void TextWidget::SetIsMinSizeFixedToTextSize (bool is_min_size_fixed_to_text_size)
 {
     if (m_is_min_width_fixed_to_text_width != is_min_size_fixed_to_text_size ||
         m_is_min_height_fixed_to_text_height != is_min_size_fixed_to_text_size)
@@ -190,7 +178,7 @@ void TextWidget::SetIsMinSizeFixedToTextSize (bool const is_min_size_fixed_to_te
     }
 }
 
-void TextWidget::SetIsMaxSizeFixedToTextSize (bool const is_max_size_fixed_to_text_size)
+void TextWidget::SetIsMaxSizeFixedToTextSize (bool is_max_size_fixed_to_text_size)
 {
     if (m_is_max_width_fixed_to_text_width != is_max_size_fixed_to_text_size ||
         m_is_max_height_fixed_to_text_height != is_max_size_fixed_to_text_size)
@@ -201,7 +189,7 @@ void TextWidget::SetIsMaxSizeFixedToTextSize (bool const is_max_size_fixed_to_te
     }
 }
 
-void TextWidget::SetIsSizeFixedToTextSize (bool const is_size_fixed_to_text_size)
+void TextWidget::SetIsSizeFixedToTextSize (bool is_size_fixed_to_text_size)
 {
     if (m_is_min_width_fixed_to_text_width != is_size_fixed_to_text_size ||
         m_is_max_width_fixed_to_text_width != is_size_fixed_to_text_size ||

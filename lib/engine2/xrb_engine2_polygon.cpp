@@ -99,9 +99,9 @@ void Engine2::Polygon::Draw () const
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // HIPPO
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // TODO: fix
         glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // HIPPO
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // TODO: fix
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
 
@@ -164,9 +164,7 @@ void Engine2::Polygon::Read (
         m_vertex_array[i].m_model_coordinate = compound_vertex_array + serializer.Read<Uint32>();
         serializer.ReadAggregate<FloatVector2>(m_vertex_array[i].m_texture_coordinate);
     }
-    m_texture =
-        Singleton::ResourceLibrary().
-            LoadPath<GlTexture>(GlTexture::Create, serializer.ReadAggregate<std::string>());
+    m_texture = GlTexture::Load(serializer.ReadAggregate<std::string>());
     m_area = Area();
 
     ASSERT1(IsCounterclockwise());
@@ -189,7 +187,7 @@ void Engine2::Polygon::Write (
         serializer.Write<Uint32>(m_vertex_array[i].m_model_coordinate - compound_vertex_array);
         serializer.WriteAggregate<FloatVector2>(m_vertex_array[i].m_texture_coordinate);
     }
-    serializer.WriteAggregate<std::string>(m_texture.Path());
+    serializer.WriteAggregate<std::string>(m_texture.LoadParameters<GlTexture::LoadParameters>().Path());
 }
 
 } // end of namespace Xrb

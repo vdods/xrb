@@ -85,7 +85,7 @@ Gl::~Gl ()
 {
     fprintf(stderr, "OpenGL shutdown\n");
 
-    // delete the opaque white texture (if it exists)
+    // delete the utility textures (if necessary)
     DeleteAndNullify(m_gltexture_opaque_white);
 
     // shutdown both texture units
@@ -113,12 +113,8 @@ void Gl::FinishInitialization ()
 
     // create the 1x1 opaque white texture (which is used for color biasing)
     Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), true);
-    opaque_white->Data()[0] = 255;
-    opaque_white->Data()[1] = 255;
-    opaque_white->Data()[2] = 255;
-    opaque_white->Data()[3] = 255;
-    GlTextureLoadParameters load_parameters(GlTextureLoadParameters::USES_SEPARATE_ATLAS);
-    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, load_parameters);
+    opaque_white->Data()[0] = opaque_white->Data()[1] = opaque_white->Data()[2] = opaque_white->Data()[3] = 255;
+    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::USES_SEPARATE_ATLAS);
     ASSERT1(m_gltexture_opaque_white != NULL);
 
     // GL_COMBINE texture env default values
@@ -230,14 +226,14 @@ GLint Gl::Integer (GLenum name)
     return integer[0];
 }
 
-GlTexture *Gl::CreateGlTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters)
+GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
 {
     // if the texture wants to use a separate atlas, make a new atlas just for it
-    if (load_parameters.UsesSeparateAtlas())
+    if ((gltexture_flags & GlTexture::USES_SEPARATE_ATLAS) != 0)
     {
         GlTextureAtlas *atlas = new GlTextureAtlas(texture.Size());
         m_atlas.push_back(atlas);
-        GlTexture *retval = atlas->PlaceTexture(texture, load_parameters);
+        GlTexture *retval = atlas->PlaceTexture(texture, gltexture_flags);
         ASSERT1(retval != NULL);
         return retval;
     }
@@ -248,15 +244,15 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, GlTextureLoadParameters 
         {
             ASSERT1(m_atlas[i] != NULL);
             GlTextureAtlas &atlas = *m_atlas[i];
-            GlTexture *retval = atlas.PlaceTexture(texture, load_parameters);
+            GlTexture *retval = atlas.PlaceTexture(texture, gltexture_flags);
             if (retval != NULL)
                 return retval;
         }
 
         // no fit so far, so add a new atlas to the end
-        GlTextureAtlas *atlas = new GlTextureAtlas(ScreenCoordVector2(1024, 1024)); // HIPPO: do real size
+        GlTextureAtlas *atlas = new GlTextureAtlas(ScreenCoordVector2(1024, 1024)); // TODO: do real size
         m_atlas.push_back(atlas);
-        return atlas->PlaceTexture(texture, load_parameters);
+        return atlas->PlaceTexture(texture, gltexture_flags);
     }
 }
 
@@ -266,7 +262,7 @@ void Gl::UnregisterGlTexture (GlTexture &gltexture)
     gltexture.Atlas().UnplaceTexture(gltexture);
     // if the texture had USES_SEPARATE_ATLAS, then delete the atlas, because
     // we don't want some dumb little dinky atlas clogging shit up.
-    if (gltexture.LoadParameters().UsesSeparateAtlas())
+    if (gltexture.UsesSeparateAtlas())
     {
         AtlasVector::iterator it = m_atlas.begin();
         AtlasVector::iterator it_end = m_atlas.end();

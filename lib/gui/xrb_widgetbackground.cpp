@@ -48,10 +48,7 @@ WidgetBackgroundTextured::WidgetBackgroundTextured (
 {
     ASSERT1(texture_path.length() > 0);
 
-    m_texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            texture_path);
+    m_texture = GlTexture::Load(texture_path);
     ASSERT1(m_texture.IsValid());
 }
 
@@ -96,28 +93,16 @@ WidgetBackgroundStylized::WidgetBackgroundStylized (
     :
     WidgetBackground()
 {
-    m_corner_texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            corner_texture_name);
+    m_corner_texture = GlTexture::Load(corner_texture_name);
     ASSERT1(m_corner_texture.IsValid());
 
-    m_top_texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            top_texture_name);
+    m_top_texture = GlTexture::Load(top_texture_name);
     ASSERT1(m_top_texture.IsValid());
 
-    m_left_texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            left_texture_name);
+    m_left_texture = GlTexture::Load(left_texture_name);
     ASSERT1(m_left_texture.IsValid());
 
-    m_center_texture =
-        Singleton::ResourceLibrary().LoadPath<GlTexture>(
-            GlTexture::Create,
-            center_texture_name);
+    m_center_texture = GlTexture::Load(center_texture_name);
     ASSERT1(m_center_texture.IsValid());
 }
 

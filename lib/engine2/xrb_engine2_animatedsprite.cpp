@@ -18,14 +18,7 @@ namespace Xrb
 
 Engine2::AnimatedSprite *Engine2::AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time)
 {
-    Resource<Animation::Sequence> animation_sequence =
-        Singleton::ResourceLibrary().LoadPath<Animation::Sequence>(
-            Animation::Sequence::Create,
-            animation_sequence_path);
-    ASSERT1(animation_sequence.IsValid()); // HIPPO
-    if (!animation_sequence.IsValid())
-        return NULL;
-
+    Resource<Animation::Sequence> animation_sequence = Animation::Sequence::Load(animation_sequence_path);
     return new AnimatedSprite(animation_sequence, current_time);
 }
 

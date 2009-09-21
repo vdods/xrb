@@ -16,6 +16,7 @@
 #include <string>
 
 #include "xrb_gl.hpp"
+#include "xrb_resourcelibrary.hpp"
 #include "xrb_resourceloadparameters.hpp"
 #include "xrb_screencoord.hpp"
 
@@ -23,27 +24,6 @@ namespace Xrb
 {
 
 class Texture;
-
-class GlTextureLoadParameters : public ResourceLoadParameters
-{
-public:
-
-    Uint32 const m_flags;
-
-    enum
-    {
-        NONE                = 0,
-        USES_SEPARATE_ATLAS = (1 << 0)
-    };
-
-    GlTextureLoadParameters (Uint32 flags = NONE) : m_flags(flags) { }
-
-    bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
-
-    virtual std::string Name () const;
-    virtual bool IsLessThan (ResourceLoadParameters const &other_parameters) const;
-    virtual void Print (FILE *fptr) const;
-}; // end of class GlTextureLoadParameters
 
 /** Creating a texture using this class will load the texture data into the
   * texture memory using OpenGL, and provide a texture handle, with which
@@ -54,45 +34,79 @@ class GlTexture
 {
 public:
 
+    enum
+    {
+        NONE                = 0,
+        USES_SEPARATE_ATLAS = (1 << 0)
+    };
+
+    class LoadParameters : public ResourceLoadParameters
+    {
+    public:
+
+        LoadParameters (std::string const &path, Uint32 flags = NONE)
+            :
+            m_path(path),
+            m_flags(flags)
+        { }
+
+        std::string const &Path () const { return m_path; }
+        Uint32 Flags () const { return m_flags; }
+        bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
+
+        virtual std::string ResourceName () const;
+        virtual bool IsLessThan (ResourceLoadParameters const &p) const;
+        virtual void Fallback ();
+        virtual void Print (FILE *fptr) const;
+
+    private:
+
+        std::string m_path;
+        Uint32 m_flags;
+    }; // end of class GlTexture::LoadParameters
+
     /** Causes the texture to be unloaded from texture memory.
       * @brief Destructor.
       */
     ~GlTexture ();
 
+    /** NOTE: Unless you know what you're doing, use this instead of Create.
+      * Generally in application code, you'll only use Resource<GlTexture>
+      * instead of GlTexture directly.  This is a frontend to
+      * Singleton::ResourceLibrary().Load<GlTexture>()
+      * @brief Loads a GlTexture via the ResourceLibrary (convenience function)
+      */
+    static Resource<GlTexture> Load (std::string const &path, Uint32 flags = NONE)
+    {
+        return Singleton::ResourceLibrary().Load<GlTexture>(GlTexture::Create, new LoadParameters(path, flags));
+    }
+    static Resource<GlTexture> LoadMissing ()
+    {
+        LoadParameters *load_parameters = new LoadParameters("");
+        load_parameters->Fallback();
+        return Singleton::ResourceLibrary().Load<GlTexture>(GlTexture::Create, load_parameters);
+    }
+
     /** Loads the image given by the path into a Texture object,
       * creates the OpenGL mipmaps and gets a handle to the OpenGL texture.
-      * @brief Creates a new GlTexture object from a texture loaded from
-      *        the given path, using the given load parameters.
-      */
-    static GlTexture *Create (std::string const &path, ResourceLoadParameters const *parameters);
-    /** This is actually a frontend to Singleton::Gl().CreateGlTexture.
-      * @brief Creates a new GlTexture object from the given texture, using
+      * @brief Creates a new GlTexture object from a texture loaded using
       *        the given load parameters.
       */
-    static GlTexture *Create (Texture const &texture, GlTextureLoadParameters const &load_parameters);
+    static GlTexture *Create (ResourceLoadParameters const &p);
+    /** This is actually a frontend to Singleton::Gl().CreateGlTexture.
+      * The parameters after texture have the same usage as
+      * GlTextureLoadParameters.
+      * @brief Creates a new GlTexture object from the given texture.
+      */
+    static GlTexture *Create (Texture const &texture, Uint32 flags = NONE);
 
     GlTextureAtlas const &Atlas () const { return m_atlas; }
     GlTextureAtlas &Atlas () { return m_atlas; }
-    /** This will be used to return the handle when specifying the texture
-      * to bind to GL_TEXTURE_2D when rendering textures.
-      * @brief Returns the OpenGL texture handle for this texture.
-      */
-    GLuint Handle () const;
-    /** @brief Returns the size vector of the texture.
-      */
     ScreenCoordVector2 const &Size () const { return m_size; }
-    /** @brief Returns the width of the texture.
-      */
     ScreenCoord Width () const { return m_size[Dim::X]; }
-    /** @brief Returns the height of the texture.
-      */
     ScreenCoord Height () const { return m_size[Dim::Y]; }
-    /** @brief Returns the texture's atlas texture coordinate offset.
-      */
     ScreenCoordVector2 const &TextureCoordOffset () const { return m_texture_coord_offset; }
-    /** @brief Returns the GlTextureLoadParameters used to create this GlTexture.
-      */
-    GlTextureLoadParameters const &LoadParameters () const { return m_load_parameters; }
+    bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
 
 private:
 
@@ -101,18 +115,18 @@ private:
         GlTextureAtlas &atlas,
         ScreenCoordVector2 const &size,
         ScreenCoordVector2 const &texture_coord_offset,
-        GlTextureLoadParameters const &load_parameters)
+        Uint32 flags)
         :
         m_atlas(atlas),
         m_size(size),
         m_texture_coord_offset(texture_coord_offset),
-        m_load_parameters(load_parameters)
+        m_flags(flags)
     { }
 
     GlTextureAtlas &m_atlas;
     ScreenCoordVector2 const m_size;
     ScreenCoordVector2 const m_texture_coord_offset;
-    GlTextureLoadParameters const m_load_parameters;
+    Uint32 const m_flags;
 
     friend class GlTextureAtlas;
 }; // end of class GlTexture

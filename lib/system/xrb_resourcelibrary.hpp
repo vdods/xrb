@@ -34,7 +34,7 @@ template <typename T> class Resource;
   * It provides the mechanisms required for reference-counting so the library
   * can unload unreferenced data.
   *
-  * This is done by loading it using the templatized method LoadPath.
+  * This is done by loading it using the templatized method Load.
   * The template requires a static function which loads the data from the
   * given path and returns a pointer to whatever the templatized type is.
   * See the various classes which have a Create function (e.g.
@@ -72,32 +72,31 @@ public:
     ~ResourceLibrary ();
 
     /** The template argument T must be the type of data being loaded.  The
-      * template argument LoadFunction must be a static (or global) function
-      * which takes a path and a pointer to a ResourceLoadParameters instance,
-      * returning a pointer to the newly allocated object of type T.
-      * ResourceLibrary depends on the return value of LoadFunction being a
-      * newly allocated object, so that it may handle deletion of the object
-      * itself.
+      * template argument CreationFunction must be a static (or global) function
+      * which takes a pointer to a ResourceLoadParameters instance, returning
+      * a pointer to the newly allocated object of type T.  ResourceLibrary
+      * depends on the return value of CreationFunction being a newly allocated
+      * object, so that it may handle deletion of the object itself.
+      *
+      * This method is reentrant; i.e. it is acceptable to call this method
+      * during a call to CreationFunction to load subordinate resources, as long
+      * as you don't Load something with the same load parameters as the
+      * commanding object.
       *
       * @brief Loads a resource from the given path, using the supplied
-      *        LoadFunction.
+      *        CreationFunction and ResourceLoadParameters.
       * @param T Template argument giving the type of the resource to load.
-      * @param LoadFunction Template argument giving the static or global
-      *                     function to use to load the resource data.
-      *                     The load function should not store the parameters
-      *                     pointer value. 
-      * @param path The path of the data to load using LoadFunction.
-      * @param load_parameters The (optional) load parameters (a pointer to
+      * @param CreationFunction Gives the static or global function to use to load
+      *                         the resource data.
+      * @param load_parameters The (required) load parameters (a pointer to
       *                        an instance of a subclass of ResourceLoadParameters).
-      *                        This should be a newly allocated instance (if
-      *                        not NULL), and ResourceLibrary will take care
-      *                        of deleting it.
+      *                        This should be a newly allocated instance and
+      *                        ResourceLibrary will take care of deleting it.
       */
     template <typename T>
-    Resource<T> LoadPath (
-        T *(*LoadFunction)(std::string const &, ResourceLoadParameters const *),
-        std::string const &path,
-        ResourceLoadParameters const *load_parameters = NULL);
+    Resource<T> Load (
+        T *(*CreationFunction)(ResourceLoadParameters const &),
+        ResourceLoadParameters *load_parameters);
 
     /** @brief Prints a list of all currently loaded resources.
       */
@@ -105,47 +104,7 @@ public:
 
 private:
 
-    // used as the key in the resource instance map
-    struct ResourceInstanceKey
-    {
-        // the resource's path
-        std::string m_path;
-        // the associated ResourceLoadParameters instance
-        ResourceLoadParameters const *m_load_parameters;
-
-        ResourceInstanceKey (
-            std::string const &path,
-            ResourceLoadParameters const *load_parameters)
-        {
-            m_path = path;
-            m_load_parameters = load_parameters;
-        }
-
-        void Print (FILE *fptr) const
-        {
-            fprintf(fptr, "\"%s\", ", m_path.c_str());
-            if (m_load_parameters == NULL)
-                fprintf(stderr, "no load parameters");
-            else
-            {
-                fprintf(stderr, "load parameters: ");
-                m_load_parameters->Print(fptr);
-            }
-        }
-
-        /// @cond DOXYGEN_EXCLUDE_CODE
-        // i don't want this to show up in the docs as a class, since
-        // i have doxygen exclude all private declarations.
-        struct LessThan
-        {
-            bool operator () (
-                ResourceInstanceKey const &left_operand,
-                ResourceInstanceKey const &right_operand) const;
-        }; // end of struct LessThan
-        /// @endcond
-    }; // end of struct ResourceInstanceKey
-
-    void UnmapKey (ResourceInstanceKey const &key);
+    void Unload (ResourceLoadParameters const &load_parameters);
 
     // only used for storing pointers to ResourceInstance<T> in
     // an array, for proper casting and type safety.
@@ -153,7 +112,7 @@ private:
     {
     public:
 
-        ResourceInstanceKey const &Key () const { return m_key; }
+        ResourceLoadParameters const &LoadParameters () const { return m_load_parameters; }
 
         void IncrementReferenceCount ()
         {
@@ -166,7 +125,7 @@ private:
             --m_reference_count;
             if (m_reference_count == 0)
             {
-                m_library->UnmapKey(m_key);
+                m_library.Unload(m_load_parameters);
                 DeleteData();
                 return true;
             }
@@ -177,21 +136,19 @@ private:
     protected:
 
         ResourceInstanceBase (
-            ResourceLibrary *const library,
-            ResourceLibrary::ResourceInstanceKey const &key)
+            ResourceLibrary &library,
+            ResourceLoadParameters const &load_parameters)
             :
-            m_key(key)
-        {
-            ASSERT1(!key.m_path.empty());
-            m_library = library;
-            m_reference_count = 0;
-        }
+            m_library(library),
+            m_load_parameters(load_parameters),
+            m_reference_count(0)
+        { }
         virtual ~ResourceInstanceBase () { }
 
         virtual void DeleteData () = 0;
 
-        ResourceInstanceKey m_key;
-        ResourceLibrary *m_library;
+        ResourceLibrary &m_library;
+        ResourceLoadParameters const &m_load_parameters;
         Uint32 m_reference_count;
     }; // end of class ResourceInstanceBase
 
@@ -202,14 +159,14 @@ private:
     public:
 
         ResourceInstance (
-            ResourceLibrary *const library,
-            ResourceLibrary::ResourceInstanceKey const &key,
-            T *const data)
+            ResourceLibrary &library,
+            ResourceLoadParameters const &load_parameters,
+            T *data)
             :
-            ResourceInstanceBase(library, key)
+            ResourceInstanceBase(library, load_parameters),
+            m_data(data)
         {
-            ASSERT1(data != NULL);
-            m_data = data;
+            ASSERT1(m_data != NULL);
         }
         ~ResourceInstance ()
         {
@@ -234,9 +191,9 @@ private:
     }; // end of class ResourceInstance<T>
 
     typedef std::map<
-        ResourceInstanceKey,
+        ResourceLoadParameters const *,
         ResourceInstanceBase *,
-        ResourceInstanceKey::LessThan> InstanceMap;
+        ResourceLoadParameters::LessThan> InstanceMap;
 
     InstanceMap m_instance_map;
 
@@ -261,7 +218,7 @@ private:
   * queries the validity of a Resource object.  Resources can be made "valid"
   * simply by assigning to them the value of another Resource object or by
   * assigning to them the return value of a call to 
-  * @ref Xrb::ResourceLibrary::LoadPath.
+  * @ref Xrb::ResourceLibrary::Load.
   *
   * The Release method is provided to explicitly unload data.  Once this
   * is done, the object is "invalid".
@@ -295,7 +252,7 @@ public:
       * @brief Constructs a Resource using the ResourceLibrary-tracked
       *        instance of the data.
       */
-    Resource (ResourceLibrary::ResourceInstance<T> *const instance)
+    Resource (ResourceLibrary::ResourceInstance<T> *instance)
     {
         ASSERT1(instance != NULL);
         m_instance = instance;
@@ -380,26 +337,14 @@ public:
     {
         return m_instance != NULL;
     }
-    /** Asserts if this Resource is invalid.
-      * @brief Returns the path that the resourced data was loaded from.
+    /** Asserts if this Resource is invalid or if the requested template type
+      * doesn't match reality.
+      * @brief Returns the ResourceLoadParameters used to create this Resource.
       */
-    std::string const &Path () const
+    template <typename ResourceLoadParametersSubclass>
+    ResourceLoadParametersSubclass const &LoadParameters () const
     {
-        ASSERT1(m_instance != NULL);
-        return m_instance->Key().m_path;
-    }
-    /** If this resource was loaded without a load parameter, then
-      * NULL will be returned.
-      *
-      * Asserts if this Resource is invalid.
-      *
-      * @brief Returns the load parameters used when loading the
-      *        resourced data.
-      */
-    ResourceLoadParameters const *LoadParameters () const
-    {
-        ASSERT1(m_instance != NULL);
-        return m_instance->Key().m_load_parameters;
+        return *DStaticCast<ResourceLoadParametersSubclass const *>(&m_instance->LoadParameters());
     }
 
     /** @brief Explicitly causes the reference count to decrement, causing
@@ -420,20 +365,15 @@ private:
 }; // end of class Resource<T>
 
 template <typename T>
-Resource<T> ResourceLibrary::LoadPath (
-    T *(*LoadFunction)(std::string const &, ResourceLoadParameters const *),
-    std::string const &path,
-    ResourceLoadParameters const *load_parameters)
+Resource<T> ResourceLibrary::Load (
+    T *(*CreationFunction)(ResourceLoadParameters const &),
+    ResourceLoadParameters *load_parameters)
 {
-    Resource<T> invalid_resource;
-
-    if (path.empty())
-        return invalid_resource;
-
-    ResourceInstanceKey const key(path, load_parameters);
+    ASSERT1(CreationFunction != NULL && "silly human!");
+    ASSERT1(load_parameters != NULL && "silly human!");
 
     // check if the file is already loaded
-    InstanceMap::iterator it = m_instance_map.find(key);
+    InstanceMap::iterator it = m_instance_map.find(load_parameters);
     // if it is loaded then return a Resource for it.
     if (it != m_instance_map.end())
     {
@@ -454,33 +394,60 @@ Resource<T> ResourceLibrary::LoadPath (
     else
     {
         // attempt to load the path
-        T *data = LoadFunction(path, load_parameters);
+        T *data = CreationFunction(*load_parameters);
 
-        // if successful, stick the data into a ResourceInstance to
-        // be kept by this ResourceLibrary, otherwise return null.
-        if (data != NULL)
+        if (data == NULL)
         {
-            fprintf(stderr, "ResourceLibrary * loading ");
-            key.Print(stderr);
-            fprintf(stderr, "\n");
+            fprintf(stderr, "ResourceLibrary * FAILURE while loading %s: ", load_parameters->ResourceName().c_str());
+            load_parameters->Print(stderr);
+            fprintf(stderr, " -- falling back\n");
 
-            ResourceInstance<T> *instance =
-                new ResourceInstance<T>(this, key, data);
-            m_instance_map[key] = instance;
-            // load_parameters is now stored in the instance map (via the key),
-            // so don't delete it (it will be deleted in UnmapKey).
-            return Resource<T>(instance);
+            load_parameters->Fallback();
+
+            // check if the fallback resource is loaded
+            it = m_instance_map.find(load_parameters);
+            // if it is, return a Resource for it.
+            if (it != m_instance_map.end())
+            {
+                ASSERT1(it->second != NULL);
+                // make sure the existing data is of the right type
+                ASSERT1(
+                    dynamic_cast<ResourceInstance<T> *>(it->second) != NULL &&
+                    "You probably are trying to load a currently loaded resource "
+                    "using a different type or method, which is a big no-no");
+                // since a matching load_parameters is already stored in the
+                // instance key, delete the one passed in.
+                delete load_parameters;
+                // return the loaded resource.
+                return Resource<T>(dynamic_cast<ResourceInstance<T> *>(it->second));
+            }
+
+            // otherwise, call CreationFunction with the fallen-back load parameters
+            data = CreationFunction(*load_parameters);
+
+            if (data == NULL)
+            {
+                fprintf(stderr, "ResourceLibrary * FAILURE while fallback-loading %s: ", load_parameters->ResourceName().c_str());
+                load_parameters->Print(stderr);
+                fprintf(stderr, "\n");
+
+                ASSERT0(false && "the fallback load should not fail");
+            }
         }
-        else
-        {
-            fprintf(stderr, "ResourceLibrary * FAILURE while loading ");
-            key.Print(stderr);
-            fprintf(stderr, "\n");
-            // load_parameters went unused, so delete it.
-            delete load_parameters;
-            // do some error handling
-            return invalid_resource;
-        }
+
+        fprintf(stderr, "ResourceLibrary * loaded %s: ", load_parameters->ResourceName().c_str());
+        load_parameters->Print(stderr);
+        fprintf(stderr, "\n");
+
+        ASSERT1(m_instance_map.find(load_parameters) == m_instance_map.end() &&
+                "you Load()'ed something into the very spot you were about to fill "
+                "this probably means that your CreationFunction is wrong");
+
+        ResourceInstance<T> *instance = new ResourceInstance<T>(*this, *load_parameters, data);
+        m_instance_map[load_parameters] = instance;
+        // load_parameters is now stored in the instance map,
+        // so don't delete it (it will be deleted in Unload).
+        return Resource<T>(instance);
     }
 }
 

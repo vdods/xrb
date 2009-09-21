@@ -81,7 +81,7 @@ GlTextureAtlas::~GlTextureAtlas ()
     glDeleteTextures(1, &m_handle);
 }
 
-GlTexture *GlTextureAtlas::PlaceTexture (Texture const &texture, GlTextureLoadParameters const &load_parameters)
+GlTexture *GlTextureAtlas::PlaceTexture (Texture const &texture, Uint32 gltexture_flags)
 {
     ASSERT1(Math::IsAPowerOf2(texture.Width()) && "can only use power-of-2-sized textures in GlTextureAtlas");
     ASSERT1(Math::IsAPowerOf2(texture.Height()) && "can only use power-of-2-sized textures in GlTextureAtlas");
@@ -117,7 +117,7 @@ GlTexture *GlTextureAtlas::PlaceTexture (Texture const &texture, GlTextureLoadPa
                     *this,
                     texture.Size(),
                     ScreenCoordVector2(slot[Dim::X]*slot_size[Dim::X], slot[Dim::Y]*slot_size[Dim::Y]),
-                    load_parameters);
+                    gltexture_flags);
             }
 
     // SORRY, no slot worked
