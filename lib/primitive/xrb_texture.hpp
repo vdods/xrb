@@ -36,10 +36,10 @@ class Texture
 {
 public:
 
+/*  NOTE: these aren't actually used (yet)
     // most of the PNG formats map onto a subset of these, but the
     // mapping is not necessarily invertible.  these formats
     // are geared more towards the OpenGL formats.
-    // NOTE: these aren't actually used (yet)
     enum Format
     {
         GRAYSCALE1 = 0,     // 1 bit grayscale (monochrome)
@@ -65,6 +65,7 @@ public:
 
         FORMAT_COUNT
     }; // end enum Format
+*/
 
     ~Texture ();
 
@@ -74,6 +75,10 @@ public:
     // Texture object will take ownership of the buffer, and delete[] it upon destruction.
     // this method trusts you to hand in a pointer to a sufficiently large pixel buffer.
     static Texture *Create (ScreenCoordVector2 const &size, Uint8 *data);
+    // creates a mipmap of this texture, having exactly half the dimensions.
+    // the texture width and height are required to each be a power of 2 that
+    // is greater than 1.
+    Texture *CreateMipmap () const;
 
     ScreenCoordVector2 Size () const
     {
