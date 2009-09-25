@@ -62,9 +62,11 @@ public:
     // appropriate Xrb::Event (it will be deleted by XRB).
     virtual Event *PollEvent (Screen const *screen, Float time) = 0;
 
-    // should return NULL if the load failed
+    // should return NULL if the load failed.  the pixel data should be loaded
+    // in right-handed coordinates (i.e. y=0 is at the bottom and goes up the screen)
     virtual Texture *LoadImage (char const *image_path) = 0;
-    // return value should indicate status
+    // return value should indicate status.  the pixel data should be loaded
+    // in right-handed coordinates (i.e. y=0 is at the bottom and goes up the screen)
     virtual Status SaveImage (char const *image_path, Texture const &texture) = 0;
 
     // should return NULL if the load failed

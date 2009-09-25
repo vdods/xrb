@@ -610,25 +610,18 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     Xrb::Texture *texture = Xrb::Texture::Create(Xrb::ScreenCoordVector2(width, height), false);
     ASSERT1(texture != NULL);
 
-    // Expand paletted colors into true RGB triplets
-    if (color_type == PNG_COLOR_TYPE_PALETTE)
-        png_set_palette_to_rgb(png_ptr);
-
-    // Expand grayscale images to the full 8 bits from 1, 2, or 4 bits/pixel
-    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-        png_set_gray_1_2_4_to_8(png_ptr);
-
     // Expand paletted or RGB images with transparency to full alpha channels
     // so the data will be available as RGBA quartets.
-    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
-        png_set_tRNS_to_alpha(png_ptr);
+    png_set_expand(png_ptr);
+    png_set_add_alpha(png_ptr, 255, PNG_FILLER_AFTER); // stick A as the end of RGBA
 
     // the above two calls will cause the image to be read as full 32 bit RGBA
 
     png_read_update_info(png_ptr, info_ptr);
     png_bytep *row_pointers = new png_bytep[height*sizeof(png_bytep)];;
     for (png_uint_32 row = 0; row < height; row++)
-        row_pointers[row] = png_bytep(texture->Data()) + row*texture->Width()*4; // 4 bytes per pixel
+        // height-1-row because we want right-handed coordinates (y=0 is at the bottom)
+        row_pointers[row] = png_bytep(texture->Data()) + (height-1-row)*texture->Width()*4; // 4 bytes per pixel
 
     png_read_image(png_ptr, row_pointers);
     png_read_end(png_ptr, info_ptr);
@@ -693,7 +686,8 @@ Xrb::Pal::Status SDLPal::SaveImage (char const *image_path, Xrb::Texture const &
 
     png_bytep *row_pointers = (png_bytepp)png_malloc(png_ptr, texture.Height()*sizeof(png_bytep));
     for (Xrb::ScreenCoord row = 0; row < texture.Height(); ++row)
-        row_pointers[row] = png_bytep(texture.Data()) + row*texture.Width()*4; // 4 bytes per pixel
+        // texture.Height()-1-row because we want right-handed coordinates (y=0 is at the bottom)
+        row_pointers[row] = png_bytep(texture.Data()) + (texture.Height()-1-row)*texture.Width()*4; // 4 bytes per pixel
 
     // only 32bit RGBA is supported right now
     png_set_IHDR(png_ptr, info_ptr, texture.Width(), texture.Height(), 8, PNG_COLOR_TYPE_RGB_ALPHA, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
