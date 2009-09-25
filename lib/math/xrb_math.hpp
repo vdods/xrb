@@ -54,7 +54,6 @@ namespace Math
       * @brief Returns an equivalent angle in the range [-180, 180].
       */
     Float CanonicalAngle (Float angle);
-
     /** @brief Returns the sine of the given angle.
       */
     inline Float Sin (Float const angle)
@@ -218,47 +217,6 @@ namespace Math
             x += (1<<(fractional_bits-1));
         return x;
     }
-
-    /** @brief Returns the sine of the given angle, with lower precision.
-      */
-    Float FastSin (Float angle);
-    /** @brief Returns the arcsine of the given value, with lower precision.
-      */
-    Float FastAsin (Float value);
-    /** @brief Returns the cosine of the given angle, with lower precision.
-      */
-    Float FastCos (Float angle);
-    /** @brief Returns the arccosine of the given value, with lower precision.
-      */
-    Float FastAcos (Float value);
-    /** @brief Returns the tangent of the given angle, with lower precision.
-      */
-    Float FastTan (Float angle);
-    /** @brief Returns the arctangent of the given value, with lower
-      *        precision.
-      */
-    Float FastAtan (Float value);
-    /** @brief Returns the angle that the given vector is making
-      *        with the positive X axis, with lower precision.
-      */
-    Float FastAtan (FloatVector2 const &vector);
-    /** This is used when @c x may be zero.
-      * @brief Returns the arctangent of the ratio given by @c y/x, with
-      *        lower precision.
-      */
-    Float FastAtan2 (Float y, Float x);
-    /** @brief Returns the unit vector which makes the given angle
-      *        with the positive X axis, with lower precision.
-      */
-    FloatVector2 FastUnitVector (Float angle);
-    /** @brief Returns the positive square root of @c x, with lower precision.
-      */
-    Float FastSqrt (Float x);
-    /** @brief Returns @c base raised to the @c exponent power, with lower
-      *        precision.
-      */
-    Float FastPow (Float base, Float exponent);
-
     /** @brief Returns the floating-point representation of the nearest
       *        integer less than or equal to @c x.
       */

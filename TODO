@@ -219,7 +219,6 @@ TODO:
   the size of the object layers.
 - improve the text-editing control of LineEdit (e.g. ctrl+backspace,
   point-and-click cursor positioning, text selection, etc).
-- implement FastXXXX Math functions
 - the resource instance should store the function that was created
   to create the resource data so that full correctness can be
   achieved.
@@ -253,8 +252,7 @@ TODO:
 - change the 'distance culling' for sprite drawing in quadtrees
   to use a configurable setting, so that the size at which to cull
   sprites can be changed for performance
-- do some sort of video refresh synchronizing so the display
-  looks smoother
+- make sure the framerate timing isn't making the vsync-waiting wait too long
 
 GAME IDEAS:
 - different types of ships should have different limitations on propulsion,
