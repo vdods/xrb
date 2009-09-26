@@ -352,7 +352,6 @@ Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height,
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     Xrb::Uint32 video_mode_flags = SDL_OPENGL;
@@ -365,6 +364,15 @@ Xrb::Pal::Status SDLPal::InitializeVideo (Xrb::Uint16 width, Xrb::Uint16 height,
         fprintf(stderr, "SDLPal::InitializeVideo(); could not set the requested video mode\n");
         return FAILURE;
     }
+
+    int v;
+    SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &v);     fprintf(stderr, "    SDL_GL_RED_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &v);   fprintf(stderr, "    SDL_GL_GREEN_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &v);    fprintf(stderr, "    SDL_GL_BLUE_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &v);   fprintf(stderr, "    SDL_GL_ALPHA_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_BUFFER_SIZE, &v);  fprintf(stderr, "    SDL_GL_BUFFER_SIZE = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &v); fprintf(stderr, "    SDL_GL_DOUBLEBUFFER = %d\n", v);
+    SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &v);   fprintf(stderr, "    SDL_GL_DEPTH_SIZE = %d\n", v);
 
     return SUCCESS;
 }
