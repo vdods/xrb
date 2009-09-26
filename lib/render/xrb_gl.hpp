@@ -111,12 +111,18 @@ public:
     Uint32 BindTextureCallCount () const { return m_bind_texture_call_hit_count + m_bind_texture_call_miss_count; }
     void ResetBindTextureCallCounts ();
 
+    // these are useful for checking how efficiently packed the texture atlases are.
+    Uint32 AllocatedTextureByteCount () const;
+    Uint32 UsedTextureByteCount () const;
+
 private:
 
     /** For use only by GlTexture.
       * @brief Creates a texture-atlased GlTexture instance.
       */
     GlTexture *CreateGlTexture (Texture const &texture, Uint32 gltexture_flags);
+
+    void AddAtlas (GlTextureAtlas *atlas);
 
     typedef std::vector<GlTextureAtlas *> AtlasVector;
 

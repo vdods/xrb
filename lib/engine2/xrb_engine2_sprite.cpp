@@ -156,17 +156,6 @@ void Engine2::Sprite::RenderGlTexture (
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
-        Sint16 ox = gltexture.TextureCoordOffset()[Dim::X];
-        Sint16 oy = gltexture.TextureCoordOffset()[Dim::Y];
-        Sint16 sx = gltexture.Size()[Dim::X];
-        Sint16 sy = gltexture.Size()[Dim::Y];
-        Sint16 texture_coord_array[8] =
-        {
-            ox,    oy+sy,
-            ox+sx, oy+sy,
-            ox,    oy,
-            ox+sx, oy
-        };
         static Sint16 const s_vertex_array[8] =
         {
             -1, -1,
@@ -181,11 +170,11 @@ void Engine2::Sprite::RenderGlTexture (
         glVertexPointer(2, GL_SHORT, 0, s_vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
-        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array);
+        glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
         glClientActiveTexture(GL_TEXTURE1);
         // the actual texture coords here are irrelevant because the opaque white
         // texture has USES_SEPARATE_ATLAS
-        glTexCoordPointer(2, GL_SHORT, 0, texture_coord_array); 
+        glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 

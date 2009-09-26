@@ -16,7 +16,10 @@
 namespace Xrb
 {
 
-Engine2::WorldViewWidget::WorldViewWidget (
+namespace Engine2
+{
+
+WorldViewWidget::WorldViewWidget (
     ContainerWidget *const parent,
     std::string const &name)
     :
@@ -38,7 +41,7 @@ Engine2::WorldViewWidget::WorldViewWidget (
     SetBackground(NULL);
 }
 
-Engine2::WorldViewWidget::~WorldViewWidget ()
+WorldViewWidget::~WorldViewWidget ()
 {
     if (m_world_view != NULL)
     {
@@ -48,7 +51,7 @@ Engine2::WorldViewWidget::~WorldViewWidget ()
     Delete(m_world_view);
 }
 
-void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_view)
+void WorldViewWidget::SetWorldView (WorldView *const world_view)
 {
     // if the given world view is already attached, do nothing.
     if (m_world_view == world_view)
@@ -64,7 +67,7 @@ void Engine2::WorldViewWidget::SetWorldView (Engine2::WorldView *const world_vie
     SetIsTransformScalingBasedUponWidgetRadius(m_world_view->IsTransformScalingBasedUponWidgetRadius());
 }
 
-void Engine2::WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
+void WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
 {
     if (m_is_transform_scaling_based_upon_widget_radius != is_transform_scaling_based_upon_widget_radius)
     {
@@ -75,7 +78,7 @@ void Engine2::WorldViewWidget::SetIsTransformScalingBasedUponWidgetRadius (bool 
     }
 }
 
-void Engine2::WorldViewWidget::Draw (RenderContext const &render_context) const
+void WorldViewWidget::Draw (RenderContext const &render_context) const
 {
     // draw the view first
     if (m_world_view != NULL)
@@ -89,27 +92,27 @@ void Engine2::WorldViewWidget::Draw (RenderContext const &render_context) const
     DrawFocusFrame(render_context);
 }
 
-void Engine2::WorldViewWidget::HandleFrame ()
+void WorldViewWidget::HandleFrame ()
 {
     // the WorldView's frame handler
     if (m_world_view != NULL)
         m_world_view->ProcessFrame(FrameTime());
 }
 
-void Engine2::WorldViewWidget::MoveBy (ScreenCoordVector2 const &delta)
+void WorldViewWidget::MoveBy (ScreenCoordVector2 const &delta)
 {
     Widget::MoveBy(delta);
     ComputeTransform();
 }
 
-ScreenCoordVector2 Engine2::WorldViewWidget::Resize (ScreenCoordVector2 const &size)
+ScreenCoordVector2 WorldViewWidget::Resize (ScreenCoordVector2 const &size)
 {
     Widget::Resize(size);
     ComputeTransform();
     return Size();
 }
 
-bool Engine2::WorldViewWidget::ProcessKeyEvent (EventKey const *const e)
+bool WorldViewWidget::ProcessKeyEvent (EventKey const *const e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessKeyEvent(e);
@@ -117,7 +120,7 @@ bool Engine2::WorldViewWidget::ProcessKeyEvent (EventKey const *const e)
         return false;
 }
 
-bool Engine2::WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseButtonEvent(e);
@@ -125,7 +128,7 @@ bool Engine2::WorldViewWidget::ProcessMouseButtonEvent (EventMouseButton const *
         return false;
 }
 
-bool Engine2::WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+bool WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseWheelEvent(e);
@@ -133,7 +136,7 @@ bool Engine2::WorldViewWidget::ProcessMouseWheelEvent (EventMouseWheel const *co
         return false;
 }
 
-bool Engine2::WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const *const e)
+bool WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const *const e)
 {
     if (m_world_view != NULL)
         return m_world_view->ProcessMouseMotionEvent(e);
@@ -141,19 +144,19 @@ bool Engine2::WorldViewWidget::ProcessMouseMotionEvent (EventMouseMotion const *
         return false;
 }
 
-void Engine2::WorldViewWidget::HandleFocus ()
+void WorldViewWidget::HandleFocus ()
 {
     if (m_world_view != NULL)
         m_world_view->HandleFocus();
 }
 
-void Engine2::WorldViewWidget::HandleUnfocus ()
+void WorldViewWidget::HandleUnfocus ()
 {
     if (m_world_view != NULL)
         m_world_view->HandleUnfocus();
 }
 
-void Engine2::WorldViewWidget::DrawFocusFrame (RenderContext const &render_context) const
+void WorldViewWidget::DrawFocusFrame (RenderContext const &render_context) const
 {
     // if we don't want to draw the focus frame, early out
     if (!m_draw_focus_frame)
@@ -162,7 +165,7 @@ void Engine2::WorldViewWidget::DrawFocusFrame (RenderContext const &render_conte
     // somehow draw a frame around the inside of the widget
 }
 
-void Engine2::WorldViewWidget::ComputeTransform ()
+void WorldViewWidget::ComputeTransform ()
 {
     // reset the transform
     m_transform = FloatSimpleTransform2::ms_identity;
@@ -177,5 +180,7 @@ void Engine2::WorldViewWidget::ComputeTransform ()
     // WorldViewWidget widget
     m_transform.Translate(ScreenRect().Center().StaticCast<Float>());
 }
+
+} // end of namespace Engine2
 
 } // end of namespace Xrb

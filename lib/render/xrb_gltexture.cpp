@@ -11,6 +11,7 @@
 #include "xrb_gltexture.hpp"
 
 #include "xrb_gltextureatlas.hpp"
+#include "xrb_math.hpp"
 #include "xrb_texture.hpp"
 
 namespace Xrb
@@ -51,7 +52,7 @@ void GlTexture::LoadParameters::Print (FILE *fptr) const
     fprintf(fptr, "path = \"%s\"", m_path.c_str());
     if (m_flags != NONE)
     {
-        fprintf(fptr, ", flags = ");
+        fprintf(fptr, ", flags =");
         if (UsesSeparateAtlas())
             fprintf(fptr, " USES_SEPARATE_ATLAS");
     }
@@ -74,11 +75,15 @@ GlTexture *GlTexture::Create (ResourceLoadParameters const &p)
     // which is an ugly green and pink 2x2 checkerboard.
     if (load_parameters.Path().empty())
     {
+        static Uint8 const s_ugly_texture_data[4*4] =
+        {
+              0, 255,   0, 255,
+            255,   0, 255, 255,
+            255,   0, 255, 255,
+              0, 255,   0, 255,
+        };
         Texture *missing = Texture::Create(ScreenCoordVector2(2, 2), true);
-        missing->Data()[ 0] =   0; missing->Data()[ 1] = 255; missing->Data()[ 2] =   0; missing->Data()[ 3] = 255;
-        missing->Data()[ 4] = 255; missing->Data()[ 5] =   0; missing->Data()[ 6] = 255; missing->Data()[ 7] = 255;
-        missing->Data()[ 8] = 255; missing->Data()[ 9] =   0; missing->Data()[10] = 255; missing->Data()[11] = 255;
-        missing->Data()[12] =   0; missing->Data()[13] = 255; missing->Data()[14] =   0; missing->Data()[15] = 255;
+        memcpy(missing->Data(), s_ugly_texture_data, sizeof(s_ugly_texture_data));
         GlTexture *gltexture_missing = Create(*missing, load_parameters.Flags());
         ASSERT1(gltexture_missing != NULL); // this creation shouldn't fail
         delete missing;
@@ -91,7 +96,8 @@ GlTexture *GlTexture::Create (ResourceLoadParameters const &p)
         return NULL;
 
     GlTexture *retval = Create(*texture, load_parameters.Flags());
-    ASSERT1(retval != NULL); // not allowed to fail at this point
+    // retval could be NULL at this point (e.g. if the texture was non-square,
+    // non-power-of-2-sized and did not use USES_SEPARATE_ATLAS).
     delete texture;
     return retval;
 }
@@ -99,6 +105,74 @@ GlTexture *GlTexture::Create (ResourceLoadParameters const &p)
 GlTexture *GlTexture::Create (Texture const &texture, Uint32 flags)
 {
     return Singleton::Gl().CreateGlTexture(texture, flags);
+}
+
+ScreenCoordVector2 GlTexture::TextureCoordinateBottomLeft () const // HIPPO TEMP
+{
+    return ScreenCoordVector2(m_texture_coordinate_array[0], m_texture_coordinate_array[1]);
+}
+
+#if 0 // HIPPO
+Texture *GlTexture::Dump () const
+{
+    return Dump(m_size);
+}
+
+Texture *GlTexture::Dump (ScreenCoordRect const &rect) const
+{
+    ASSERT1(rect.Left() >= 0);
+    ASSERT1(rect.Left() <= rect.Right());
+    ASSERT1(rect.Right() <= m_size[Dim::X]);
+    ASSERT1(rect.Bottom() >= 0);
+    ASSERT1(rect.Bottom() <= rect.Top());
+    ASSERT1(rect.Top() <= m_size[Dim::Y]);
+
+    // this works for 1xN textures as well, because this will get the correct border pixels
+    return m_atlas.Dump(ScreenCoordRect(TextureCoordinateBottomLeft(), TextureCoordinateBottomLeft()+m_size));
+}
+#endif
+
+ScreenCoordVector2 GlTexture::TextureCoordinateCenter () const
+{
+    ASSERT1(Math::IsEven(m_texture_coordinate_array[0] + m_texture_coordinate_array[2]));
+    ASSERT1(Math::IsEven(m_texture_coordinate_array[1] + m_texture_coordinate_array[5]));
+    return ScreenCoordVector2(
+        (m_texture_coordinate_array[0] + m_texture_coordinate_array[2]) / 2,  // avg of left and right
+        (m_texture_coordinate_array[1] + m_texture_coordinate_array[5]) / 2); // avg of bottom and top
+}
+
+GlTexture::GlTexture (
+    GlTextureAtlas &atlas,
+    ScreenCoordVector2 const &size,
+    ScreenCoordRect const &texture_coordinate_rect,
+    Uint32 flags)
+    :
+    m_atlas(atlas),
+    m_size(size),
+    m_flags(flags)
+{
+    ASSERT1(texture_coordinate_rect.Left() >= SINT16_LOWER_BOUND);
+    ASSERT1(texture_coordinate_rect.Left() <= SINT16_UPPER_BOUND);
+    ASSERT1(texture_coordinate_rect.Right() >= SINT16_LOWER_BOUND);
+    ASSERT1(texture_coordinate_rect.Right() <= SINT16_UPPER_BOUND);
+    ASSERT1(texture_coordinate_rect.Top() >= SINT16_LOWER_BOUND);
+    ASSERT1(texture_coordinate_rect.Top() <= SINT16_UPPER_BOUND);
+    ASSERT1(texture_coordinate_rect.Bottom() >= SINT16_LOWER_BOUND);
+    ASSERT1(texture_coordinate_rect.Bottom() <= SINT16_UPPER_BOUND);
+    ASSERT1(texture_coordinate_rect.Left() <= texture_coordinate_rect.Right());
+    ASSERT1(texture_coordinate_rect.Bottom() <= texture_coordinate_rect.Top());
+
+    m_texture_coordinate_array[0] = texture_coordinate_rect.Left();
+    m_texture_coordinate_array[1] = texture_coordinate_rect.Bottom();
+
+    m_texture_coordinate_array[2] = texture_coordinate_rect.Right();
+    m_texture_coordinate_array[3] = texture_coordinate_rect.Bottom();
+
+    m_texture_coordinate_array[4] = texture_coordinate_rect.Left();
+    m_texture_coordinate_array[5] = texture_coordinate_rect.Top();
+
+    m_texture_coordinate_array[6] = texture_coordinate_rect.Right();
+    m_texture_coordinate_array[7] = texture_coordinate_rect.Top();
 }
 
 } // end of namespace Xrb

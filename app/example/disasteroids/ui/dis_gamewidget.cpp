@@ -155,7 +155,7 @@ GameWidget::GameWidget (
                 "bind texture call hit percent label");
         m_bind_texture_call_hit_percent_label->SetIsHeightFixedToTextHeight(true);
         m_bind_texture_call_hit_percent_label->SetAlignment(Dim::X, RIGHT);
-        m_bind_texture_call_hit_percent_label->Hide(); // for now
+//         m_bind_texture_call_hit_percent_label->Hide(); // for now
 
         m_framerate_label =
             new ValueLabel<Float>(

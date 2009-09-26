@@ -15,57 +15,24 @@
 
 #include <string>
 
+#include "xrb_pal.hpp"
 #include "xrb_screencoord.hpp"
 
 namespace Xrb
 {
 
-/** Texture objects should be instantiated by using one of the two Create
-  * methods provided.
+/** Texture objects should be instantiated by using one of the many
+  * lovely Create methods provided.
   *
   * File I/O is done using the PNG file format.
   *
   * The raw texture data can be accessed directly through Data.
-  *
-  * (not yet implemented:) The texture data can be stored/read/written
-  * in several bit-depth formats, given by @ref Xrb::Texture::Format.
   *
   * @brief Directly stores, reads, and writes rasterized, pixel data.
   */
 class Texture
 {
 public:
-
-/*  NOTE: these aren't actually used (yet)
-    // most of the PNG formats map onto a subset of these, but the
-    // mapping is not necessarily invertible.  these formats
-    // are geared more towards the OpenGL formats.
-    enum Format
-    {
-        GRAYSCALE1 = 0,     // 1 bit grayscale (monochrome)
-        GRAYSCALE4,         // 4 bit grayscale
-        GRAYSCALE8,         // 8 bit grayscale
-        GRAYSCALE16,        // 16 bit grayscale
-
-        GRAYSCALE_ALPHA1,   // 1 bit grayscale (monochrome) + 1 bit alpha
-        GRAYSCALE_ALPHA4,   // 4 bit grayscale + 4 bit alpha
-        GRAYSCALE_ALPHA8,   // 8 bit grayscale + 8 bit alpha
-        GRAYSCALE_ALPHA16,  // 16 bit grayscale + 16 bit alpha
-
-        RGB332,             // 3 bit red, 3 bit green, 2 bit blue
-        RGB4,               // 4 bit red, 4 bit green, 4 bit blue
-        RGB565,             // 5 bit red, 6 bit green, 5 bit blue
-        RGB8,               // 8 bit red, 8 bit green, 8 bit blue
-        RGB16,              // 16 bit red, 16 bit green, 16 bit blue
-
-        RGB5_A1,            // 5 bit red, 5 bit green, 5 bit blue, 1 bit alpha
-        RGBA4,              // 4 bit red, 4 bit green, 4 bit blue, 4 bit alpha
-        RGBA8,              // 8 bit red, 8 bit green, 8 bit blue, 8 bit alpha
-        RGBA16,             // 16 bit red, 16 bit green, 16 bit blue, 16 bit alpha
-
-        FORMAT_COUNT
-    }; // end enum Format
-*/
 
     ~Texture ();
 
@@ -80,35 +47,45 @@ public:
     // is greater than 1.
     Texture *CreateMipmap () const;
 
+    // this is really just a convenience frontend to Singleton::Pal().SaveImage
+    Pal::Status Save (std::string const &path) const;
+
     ScreenCoordVector2 Size () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_size;
     }
     ScreenCoord Width () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_size[Dim::X];
     }
     ScreenCoord Height () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_size[Dim::Y];
     }
     Uint8 BitDepth () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_bit_depth;
     }
     Uint32 DataLength () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_data_length;
     }
     Uint8 *Data () const
     {
-        assert(m_data != NULL && "uninitialized Texture");
+        ASSERT1(m_data != NULL && "uninitialized Texture");
         return m_data;
+    }
+    Uint8 *Pixel (ScreenCoord x, ScreenCoord y) const
+    {
+        ASSERT1(m_data != NULL && "uninitialized Texture");
+        ASSERT1(x >= 0 && x < m_size[Dim::X]);
+        ASSERT1(y >= 0 && y < m_size[Dim::Y]);
+        return m_data + (y*m_size[Dim::X]+x)*4;
     }
 
 private:

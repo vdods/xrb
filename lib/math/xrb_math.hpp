@@ -204,6 +204,34 @@ namespace Math
     {
         return x != 0 && (x & (x-1)) == 0;
     }
+    /** @brief Returns true iff x is even.
+      */
+    template <typename T>
+    inline bool IsEven (T x)
+    {
+        return x % 2 == 0;
+    }
+    /** @brief Overload to disallow IsEven for Float.
+      */
+    inline bool IsEven (Float x)
+    {
+        ASSERT0(false && "not allowed");
+        return false;
+    }
+    /** @brief Returns true iff x is odd.
+      */
+    template <typename T>
+    inline bool IsOdd (T x)
+    {
+        return x % 2 == 1;
+    }
+    /** @brief Overload to disallow IsOdd for Float.
+      */
+    inline bool IsOdd (Float x)
+    {
+        ASSERT0(false && "not allowed");
+        return false;
+    }
     /** @brief Returns the closest integer (fixed-point) to the
       *        fixed-point value given by @c x .
       * @param x The fixed-point format value to round.

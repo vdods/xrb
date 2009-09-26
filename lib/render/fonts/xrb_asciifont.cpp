@@ -185,7 +185,7 @@ bool AsciiFont::CacheToDisk (Texture *font_texture) const
         // continue on to write the font bitmap
 
         fprintf(stderr, "AsciiFont::Create(\"%s\", %d); ", FontFacePath().c_str(), PixelHeight());
-        bool success = Singleton::Pal().SaveImage(font_bitmap_path.c_str(), *font_texture) == Pal::SUCCESS;
+        bool success = font_texture->Save(font_bitmap_path) == Pal::SUCCESS;
         if (success)
             fprintf(stderr, "cached font bitmap\n");
         else

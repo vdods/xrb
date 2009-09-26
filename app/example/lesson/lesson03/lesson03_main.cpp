@@ -446,8 +446,8 @@ public:
 
         // Ensure DISTRIBUTION_FUNCTION_WIDTH and DISTRIBUTION_FUNCTION_HEIGHT
         // are odd, so that there is an exact center in the array.
-        ASSERT0(DISTRIBUTION_FUNCTION_WIDTH % 2 == 1);
-        ASSERT0(DISTRIBUTION_FUNCTION_HEIGHT % 2 == 1);
+        ASSERT0(Math::IsOdd(DISTRIBUTION_FUNCTION_WIDTH));
+        ASSERT0(Math::IsOdd(DISTRIBUTION_FUNCTION_HEIGHT));
         // Make sure the center weight in the distribution function
         // (representing the target square) is zero.
         ASSERT0(ms_distribution_function[DISTRIBUTION_FUNCTION_HEIGHT/2][DISTRIBUTION_FUNCTION_WIDTH/2] == 0.0f);

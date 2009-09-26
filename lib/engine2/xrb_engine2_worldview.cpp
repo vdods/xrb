@@ -23,7 +23,10 @@
 namespace Xrb
 {
 
-Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
+namespace Engine2
+{
+
+WorldView::WorldView (WorldViewWidget *const parent_world_view_widget)
     :
     FloatTransform2(FloatTransform2::ms_identity, false),
     FrameHandler()
@@ -54,25 +57,25 @@ Engine2::WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view
     m_parent_world_view_widget->SetWorldView(this);
 }
 
-Engine2::WorldView::~WorldView ()
+WorldView::~WorldView ()
 {
-    // this is to ensure that Engine2::World::DetachWorldView was called
+    // this is to ensure that World::DetachWorldView was called
     ASSERT1(m_world == NULL);
 }
 
-FloatMatrix2 Engine2::WorldView::CompoundTransformation () const
+FloatMatrix2 WorldView::CompoundTransformation () const
 {
     ASSERT1(m_parent_world_view_widget != NULL);
     return m_parent_world_view_widget->Transformation() * Transformation();
 }
 
-Float Engine2::WorldView::ViewDepth (Engine2::ObjectLayer const *object_layer) const
+Float WorldView::ViewDepth (ObjectLayer const *object_layer) const
 {
     ASSERT1(object_layer != NULL);
     return object_layer->ZDepth() - 1.0f / ZoomFactor();
 }
 
-Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *object_layer) const
+Float WorldView::ParallaxedViewRadius (ObjectLayer const *object_layer) const
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(ViewDepth(object_layer) != object_layer->ZDepth());
@@ -91,10 +94,10 @@ Float Engine2::WorldView::ParallaxedViewRadius (Engine2::ObjectLayer const *obje
             object_layer->ZDepth());
 }
 
-FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
+FloatMatrix2 WorldView::ParallaxedTransformation (
     FloatMatrix2 const &world_to_view,
     FloatMatrix2 const &view_to_whatever,
-    Engine2::ObjectLayer const *object_layer) const
+    ObjectLayer const *object_layer) const
 {
     if (object_layer == NULL)
         object_layer = GetWorld()->MainObjectLayer();
@@ -111,7 +114,7 @@ FloatMatrix2 Engine2::WorldView::ParallaxedTransformation (
     return world_to_whatever;
 }
 
-Float Engine2::WorldView::MinorAxisRadius () const
+Float WorldView::MinorAxisRadius () const
 {
     FloatVector2 minor_axis;
     if (m_parent_world_view_widget->Width() < m_parent_world_view_widget->Height())
@@ -129,7 +132,7 @@ Float Engine2::WorldView::MinorAxisRadius () const
          ParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
-Float Engine2::WorldView::MajorAxisRadius () const
+Float WorldView::MajorAxisRadius () const
 {
     FloatVector2 major_axis;
     if (m_parent_world_view_widget->Width() > m_parent_world_view_widget->Height())
@@ -147,7 +150,7 @@ Float Engine2::WorldView::MajorAxisRadius () const
          ParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
-Float Engine2::WorldView::CornerRadius () const
+Float WorldView::CornerRadius () const
 {
     FloatVector2 corner_vector(
         0.5f * static_cast<Float>(m_parent_world_view_widget->Width()),
@@ -157,7 +160,7 @@ Float Engine2::WorldView::CornerRadius () const
          ParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
 }
 
-void Engine2::WorldView::SetCenter (FloatVector2 const &position)
+void WorldView::SetCenter (FloatVector2 const &position)
 {
     if (!IsViewLocked())
     {
@@ -167,7 +170,7 @@ void Engine2::WorldView::SetCenter (FloatVector2 const &position)
     }
 }
 
-void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
+void WorldView::SetZoomFactor (Float zoom_factor)
 {
     ASSERT1(zoom_factor > 0.0);
 
@@ -185,7 +188,7 @@ void Engine2::WorldView::SetZoomFactor (Float zoom_factor)
     }
 }
 
-void Engine2::WorldView::SetAngle (Float const angle)
+void WorldView::SetAngle (Float const angle)
 {
     if (!IsViewLocked())
     {
@@ -195,7 +198,7 @@ void Engine2::WorldView::SetAngle (Float const angle)
     }
 }
 
-void Engine2::WorldView::SetMinZoomFactor (Float const min_zoom_factor)
+void WorldView::SetMinZoomFactor (Float const min_zoom_factor)
 {
     ASSERT1(min_zoom_factor >= 0.0f);
     // adjust the max zoom factor from the new min zoom factor
@@ -207,7 +210,7 @@ void Engine2::WorldView::SetMinZoomFactor (Float const min_zoom_factor)
     SetZoomFactor(m_zoom_factor);
 }
 
-void Engine2::WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
+void WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
 {
     ASSERT1(max_zoom_factor > 0.0f);
     // adjust the min zoom factor from the new max zoom factor
@@ -219,7 +222,7 @@ void Engine2::WorldView::SetMaxZoomFactor (Float const max_zoom_factor)
     SetZoomFactor(m_zoom_factor);
 }
 
-void Engine2::WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
+void WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transform_scaling_based_upon_widget_radius)
 {
     if (m_is_transform_scaling_based_upon_widget_radius != is_transform_scaling_based_upon_widget_radius)
     {
@@ -228,7 +231,7 @@ void Engine2::WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const 
     }
 }
 
-void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
+void WorldView::MoveView (FloatVector2 const &delta_position)
 {
     if (!IsViewLocked())
     {
@@ -238,13 +241,13 @@ void Engine2::WorldView::MoveView (FloatVector2 const &delta_position)
     }
 }
 
-void Engine2::WorldView::ZoomView (Float const delta_zoom_factor)
+void WorldView::ZoomView (Float const delta_zoom_factor)
 {
     ASSERT1(delta_zoom_factor > 0.0);
     SetZoomFactor(m_zoom_factor * delta_zoom_factor);
 }
 
-void Engine2::WorldView::RotateView (Float const delta_angle)
+void WorldView::RotateView (Float const delta_angle)
 {
     if (!IsViewLocked())
     {
@@ -254,17 +257,17 @@ void Engine2::WorldView::RotateView (Float const delta_angle)
     }
 }
 
-void Engine2::WorldView::DetachFromWorld ()
+void WorldView::DetachFromWorld ()
 {
     ASSERT1(m_world != NULL);
     m_world->DetachWorldView(this);
     ASSERT1(m_world == NULL);
 }
 
-void Engine2::WorldView::Draw (RenderContext const &render_context)
+void WorldView::Draw (RenderContext const &render_context)
 {
     ASSERT1(m_parent_world_view_widget != NULL);
-    ASSERT1(m_world != NULL && "You must call Engine2::World::AttachWorldView before anything happens");
+    ASSERT1(m_world != NULL && "You must call World::AttachWorldView before anything happens");
 
     // create a RenderContext for the view to apply color masks to
     RenderContext view_render_context(render_context);
@@ -396,38 +399,38 @@ void Engine2::WorldView::Draw (RenderContext const &render_context)
     }
 }
 
-bool Engine2::WorldView::ProcessKeyEvent (EventKey const *const e)
+bool WorldView::ProcessKeyEvent (EventKey const *const e)
 {
     return false;
 }
 
-bool Engine2::WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
 {
     return false;
 }
 
-bool Engine2::WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
 {
     return false;
 }
 
-bool Engine2::WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
+bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
 {
     return false;
 }
 
-Engine2::ObjectLayer *Engine2::WorldView::MainObjectLayer () const
+ObjectLayer *WorldView::MainObjectLayer () const
 {
     return GetWorld()->MainObjectLayer();
 }
 
-Float Engine2::WorldView::GridScaleUnit (Uint32 const grid_scale) const
+Float WorldView::GridScaleUnit (Uint32 const grid_scale) const
 {
     return 0.5f * MainObjectLayer()->SideLength() /
            Math::Pow(static_cast<Float>(m_grid_number_base), static_cast<Float>(grid_scale));
 }
 
-FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldToWorldView () const
+FloatMatrix2 const &WorldView::ParallaxedWorldToWorldView () const
 {
     if (m_is_parallaxed_world_to_view_dirty)
     {
@@ -442,7 +445,7 @@ FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldToWorldView () const
     return m_parallaxed_world_to_view;
 }
 
-FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldViewToWorld () const
+FloatMatrix2 const &WorldView::ParallaxedWorldViewToWorld () const
 {
     if (m_is_parallaxed_view_to_world_dirty)
     {
@@ -453,7 +456,7 @@ FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldViewToWorld () const
     return m_parallaxed_view_to_world;
 }
 
-FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldToScreen () const
+FloatMatrix2 const &WorldView::ParallaxedWorldToScreen () const
 {
     if (m_is_parallaxed_world_to_screen_dirty)
     {
@@ -468,7 +471,7 @@ FloatMatrix2 const &Engine2::WorldView::ParallaxedWorldToScreen () const
     return m_parallaxed_world_to_screen;
 }
 
-FloatMatrix2 const &Engine2::WorldView::ParallaxedScreenToWorld () const
+FloatMatrix2 const &WorldView::ParallaxedScreenToWorld () const
 {
     if (m_is_parallaxed_screen_to_world_dirty)
     {
@@ -480,7 +483,7 @@ FloatMatrix2 const &Engine2::WorldView::ParallaxedScreenToWorld () const
     return m_parallaxed_screen_to_world;
 }
 
-void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
+void WorldView::DrawGridLines (RenderContext const &render_context)
 {
     // early out if we don't even want the lines
     if (m_grid_line_type == GR_NO_DRAW)
@@ -509,7 +512,7 @@ void Engine2::WorldView::DrawGridLines (RenderContext const &render_context)
         Color(0.7f, 0.7f, 0.7f, 1.0f));
 }
 
-void Engine2::WorldView::DrawGridLineSet (
+void WorldView::DrawGridLineSet (
     RenderContext const &render_context,
     Uint32 const grid_scale,
     bool const is_border_grid,
@@ -585,7 +588,7 @@ void Engine2::WorldView::DrawGridLineSet (
                 color);
 }
 
-Float Engine2::WorldView::CalculateViewRadius (
+Float WorldView::CalculateViewRadius (
     FloatMatrix2 const &screen_to_world,
     ScreenCoordRect const &view_rect,
     FloatVector2 const &view_center) const
@@ -621,9 +624,9 @@ Float Engine2::WorldView::CalculateViewRadius (
     return Math::Sqrt(retval);
 }
 
-void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
+void WorldView::PushParallaxedGLProjectionMatrix (
     RenderContext const &render_context,
-    Engine2::ObjectLayer const *const object_layer)
+    ObjectLayer const *const object_layer)
 {
     ASSERT1(!m_is_gl_projection_matrix_in_use);
     m_is_gl_projection_matrix_in_use = true;
@@ -676,7 +679,7 @@ void Engine2::WorldView::PushParallaxedGLProjectionMatrix (
         0.0f);
 }
 
-void Engine2::WorldView::PopGLProjectionMatrix ()
+void WorldView::PopGLProjectionMatrix ()
 {
     ASSERT1(m_is_gl_projection_matrix_in_use);
     // restore the projection matrix
@@ -685,12 +688,14 @@ void Engine2::WorldView::PopGLProjectionMatrix ()
     m_is_gl_projection_matrix_in_use = false;
 }
 
-void Engine2::WorldView::DirtyAllParallaxedTransformations ()
+void WorldView::DirtyAllParallaxedTransformations ()
 {
     m_is_parallaxed_world_to_view_dirty = true;
     m_is_parallaxed_view_to_world_dirty = true;
     m_is_parallaxed_world_to_screen_dirty = true;
     m_is_parallaxed_screen_to_world_dirty = true;
 }
+
+} // end of namespace Engine2
 
 } // end of namespace Xrb

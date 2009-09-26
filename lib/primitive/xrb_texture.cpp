@@ -32,7 +32,7 @@ Texture *Texture::Create (
     ScreenCoordVector2 const &size,
     bool const zero_out_the_data)
 {
-    ASSERT1(size[Dim::X] > 0 && size[Dim::Y] > 0);
+    ASSERT1(size[Dim::X] >= 0 && size[Dim::Y] >= 0);
 
     Texture *retval = Create(size, new Uint8[size[Dim::X]*size[Dim::Y]*4]);
     ASSERT1(retval->m_size == size);
@@ -47,8 +47,7 @@ Texture *Texture::Create (
 Texture *Texture::Create (ScreenCoordVector2 const &size, Uint8 *data)
 {
     ASSERT1(data != NULL && "hand in non-NULL data");
-
-    ASSERT1(size[Dim::X] > 0 && size[Dim::Y] > 0);
+    ASSERT1(size[Dim::X] >= 0 && size[Dim::Y] >= 0);
 
     Texture *retval = new Texture();
     retval->m_size = size;
@@ -61,8 +60,8 @@ Texture *Texture::Create (ScreenCoordVector2 const &size, Uint8 *data)
 
 Texture *Texture::CreateMipmap () const
 {
-    ASSERT1(Math::IsAPowerOf2(Width()) && Width() > 1 && "this method is supported only for power-of-2 sizes greater than 1");
-    ASSERT1(Math::IsAPowerOf2(Height()) && Height() > 1 && "this method is supported only for power-of-2 sizes greater than 1");
+    ASSERT1(Math::IsAPowerOf2(Width()) && "this method is supported only for power-of-2-sized textures");
+    ASSERT1(Math::IsAPowerOf2(Height()) && "this method is supported only for power-of-2-sized textures");
 
     ScreenCoordVector2 size(m_size/2);
 
@@ -84,21 +83,28 @@ Texture *Texture::CreateMipmap () const
             {
                 for (Uint32 xoff = 0; xoff < 2; ++xoff)
                 {
+                    Uint8 *pixel = Pixel(this_x+xoff, this_y+yoff);
                     for (Uint32 color = 0; color < 4; ++color)
                     {
-                        v[color] += m_data[((this_y+yoff)*m_size[Dim::X] + (this_x+xoff))*4 + color];
+                        v[color] += pixel[color];
                     }
                 }
             }
             for (Uint32 color = 0; color < 4; ++color)
             {
                 ASSERT1(v[color]/4 < 256);
-                retval->m_data[(y*size[Dim::X] + x)*4 + color] = Uint8(v[color]/4);
+                v[color] /= 4;
             }
+            memcpy(retval->Pixel(x, y), v, 4);
         }
     }
 
     return retval;
+}
+
+Pal::Status Texture::Save (std::string const &path) const
+{
+    return Singleton::Pal().SaveImage(path.c_str(), *this);
 }
 
 Texture::Texture ()

@@ -15,6 +15,7 @@
 #include "xrb_gui_events.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_pal.hpp"
+#include "xrb_texture.hpp"
 
 namespace Xrb
 {
@@ -88,6 +89,19 @@ void Screen::RequestQuit ()
     }
 }
 
+void Screen::RequestScreenshot (std::string const &screenshot_path)
+{
+    fprintf(stderr, "Screen::RequestScreenshot();");
+    if (!m_screenshot_path.empty())
+        fprintf(stderr, " canceling screenshot request \"%s\"", m_screenshot_path.c_str());
+    if (!screenshot_path.empty())
+    {
+        m_screenshot_path = screenshot_path;
+        fprintf(stderr, ", setting screenshot request \"%s\"", m_screenshot_path.c_str());
+    }
+    fprintf(stderr, "\n");
+}
+
 void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
 {
     ASSERT1(clip_rect.IsValid());
@@ -131,7 +145,7 @@ void Screen::Draw (Float real_time) const
         ColorBias()[Dim::R]*ColorBias()[Dim::A],
         ColorBias()[Dim::G]*ColorBias()[Dim::A],
         ColorBias()[Dim::B]*ColorBias()[Dim::A],
-        0.0f);
+        1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     // reset some matrices (NOT the texture matrix, because the only thing
     // that's allowed to modify the texture matrix is Gl::BindAtlas)
@@ -184,6 +198,18 @@ void Screen::Draw (Float real_time) const
     // and then swap the backbuffer.
     glFlush();
     Singleton::Pal().FinishFrame();
+
+    // we're done drawing, now check for a requested screenshot
+    if (!m_screenshot_path.empty())
+    {
+        Texture *screenshot = Texture::Create(m_device_size, false);
+        ASSERT1(screenshot != NULL);
+        fprintf(stderr, "Screen::Draw(); saving screenshot \"%s\"\n", m_screenshot_path.c_str());
+        glReadPixels(0, 0, m_device_size[Dim::X], m_device_size[Dim::Y], GL_RGBA, GL_UNSIGNED_BYTE, screenshot->Data());
+        screenshot->Save(m_screenshot_path);
+        delete screenshot;
+        m_screenshot_path.clear();
+    }
 }
 
 Screen::Screen (Sint32 angle)
@@ -224,6 +250,14 @@ bool Screen::HandleEvent (Event const *const e)
 
         default:
             break;
+    }
+
+    // check for screenshot key
+    if (e->GetEventType() == Event::KEYDOWN)
+    {
+        EventKeyDown const *key_down_event = DStaticCast<EventKeyDown const *>(e);
+        if (key_down_event->KeyCode() == Key::PRINT)
+            RequestScreenshot("screenshot.png"); // TODO: real screenshot filename
     }
 
     // special handling for the top-level parent widget (Screen)

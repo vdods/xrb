@@ -54,6 +54,11 @@ public:
 
     // if the is-quit-requested flag is false, sets it to true and signals.
     void RequestQuit ();
+    // will cause a screenshot of the state of the screen at the end of the
+    // next call to Draw to be written to the given path.  calling this twice
+    // does not cause two files to be written, the later call overrides the
+    // earlier call.  specify an empty path to cancel.
+    void RequestScreenshot (std::string const &screenshot_path);
     // sets the viewport for drawing into a widget
     void SetViewport (ScreenCoordRect const &clip_rect) const;
     // draws the whole fucking thing.
@@ -80,6 +85,8 @@ private:
 
     // quit condition (maybe temporary)
     bool m_is_quit_requested;
+    // screenshot path
+    mutable std::string m_screenshot_path;
     // the physical video dimensions
     ScreenCoordVector2 m_device_size;
     // the original dimensions of the Screen

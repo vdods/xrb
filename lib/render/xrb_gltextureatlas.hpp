@@ -13,7 +13,7 @@
 
 #include "xrb.hpp"
 
-#include <vector>
+#include <set>
 
 #include "xrb_gl.hpp"
 #include "xrb_screencoord.hpp"
@@ -24,51 +24,85 @@ namespace Xrb
 class GlTexture;
 class Texture;
 
+// you (the game developer) shouldn't need to use this class
+// directly, it's all handled by the Gl singleton.
 class GlTextureAtlas
 {
 public:
 
-    GlTextureAtlas (ScreenCoordVector2 const &size);
+    GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture_flags);
     ~GlTextureAtlas ();
 
     ScreenCoordVector2 const &Size () const { return m_size; }
+    Uint32 GlTextureFlags () const { return m_flags; }
     GLuint Handle () const { return m_handle; }
+    Uint32 GlTextureCount () const { return m_placed_gltexture_set.size(); }
+    Uint32 AllocatedTextureByteCount () const { return m_allocated_texture_byte_count; }
+    Uint32 UsedTextureByteCount () const { return m_used_texture_byte_count; }
 
     // attempts to find space for the given texture.  if space is found, the
     // texture is placed, and an appropriate GlTexture is returned.  otherwise
     // NULL is returned.
-    GlTexture *PlaceTexture (Texture const &texture, Uint32 gltexture_flags);
+    GlTexture *AttemptToPlaceTexture (Texture const &texture, Uint32 gltexture_flags);
     // deallocates space in the allocation bitmap (freeing the space)
     void UnplaceTexture (GlTexture const &gltexture);
 
+    /** This may NOT be used while a frame is being rendered -- it writes
+      * to the color buffer.  This method is probably really slow.
+      * @brief Dumps the pixel data contents of this GlTextureAtlas to a newly
+      *        allocated Texture.
+      * @param mipmap_level The desired mipmap level.  Default is 0.
+      */
+//     Texture *Dump (Uint32 mipmap_level = 0) const;
+    /** This may NOT be used while a frame is being rendered -- it writes
+      * to the color buffer.  This method is probably really slow.
+      * @brief Dumps a subregion of the pixel data contents of this
+      *        GlTextureAtlas to a newly allocated Texture.
+      * @param rect Gives the (mipmap level 0) texture coordinates of the
+      *             desired subregion.
+      * @param mipmap_level The desired mipmap level.  Default is 0
+      */
+//     Texture *Dump (ScreenCoordRect const &rect, Uint32 mipmap_level = 0) const;
+
 private:
 
-    // slot coords are right-handed, starting from bottom left
-    bool IsAllocated (ScreenCoordVector2 const &slot, ScreenCoordVector2 const &slot_size) const;
-    // x and y coords are right-handed, starting from bottom left
-    bool IsAllocated (ScreenCoord x, ScreenCoord y) const
-    {
-        ASSERT1(x >= 0 && x < m_size[Dim::X]);
-        ASSERT1(y >= 0 && y < m_size[Dim::Y]);
-        return m_allocation_bitmap[y * m_size[Dim::X] + x];
-    }
+    void AssertThatTextureJives (Texture const &texture) const;
+    ScreenCoordVector2 CenterBegin (ScreenCoordVector2 const &texture_size) const;
+    ScreenCoordVector2 CenterEnd (ScreenCoordVector2 const &texture_size) const;
+    ScreenCoordVector2 MinimumSpaceBetween (GlTexture const &gltexture, Texture const &texture) const;
+    bool ThereIsEnoughSpaceFor (Texture const &texture, ScreenCoordVector2 const &center) const;
+    GlTexture *ActuallyPlaceTexture (Texture const &texture, ScreenCoordVector2 center);
+    void PlaceMipmapAndBorder (Uint32 mipmap_level, Texture const &mipmap, ScreenCoordVector2 const &mipmap_center);
+    ScreenCoordVector2 CalculateBorderLocation (
+        Uint32 which_border,
+        Uint32 border_mask,
+        ScreenCoordVector2 const &atlas_mipmap_size,
+        ScreenCoordVector2 const &mipmap_size,
+        ScreenCoordVector2 const &mipmap_center) const;
 
-    // sets the appropriate bits in the allocation bitmap.
-    void Allocate (ScreenCoordVector2 const &slot, ScreenCoordVector2 const &slot_size);
-    // sets the appropriate bit in the allocation bitmap
-    void Allocate (ScreenCoord x, ScreenCoord y)
-    {
-        ASSERT1(x >= 0 && x < m_size[Dim::X]);
-        ASSERT1(y >= 0 && y < m_size[Dim::Y]);
-        ASSERT1(m_allocation_bitmap[y * m_size[Dim::X] + x] == false);
-        m_allocation_bitmap[y * m_size[Dim::X] + x] = true;
-    }
+    enum { LEFT = (1 << 0), RIGHT = (1 << 1), BOTTOM = (1 << 2), TOP = (1 << 3) };
 
-    typedef std::vector<bool> AllocationBitmap;
+    static Texture *CreateBorderTexture (Texture const &texture, Uint32 which_border, Uint32 border_mask);
+    static Uint32 CountTextureBytes (ScreenCoordVector2 level_0_mipmap_size);
+
+    struct GlTextureOrder
+    {
+        bool operator () (GlTexture const *left, GlTexture const *right) const;
+    }; // end of struct GlTextureAtlas::GlTextureOrder
+
+    typedef std::set<GlTexture const *, GlTextureOrder> PlacedGlTextureSet;
 
     ScreenCoordVector2 const m_size;
+    Uint32 const m_flags;
     GLuint m_handle;
-    AllocationBitmap m_allocation_bitmap;
+    PlacedGlTextureSet m_placed_gltexture_set;
+    // the number of bytes of texture memory used by this atlas, including
+    // all mipmap levels.  might be inaccurate for non-power-of-2-sized
+    // textures, size i don't really know how opengl implements those mipmaps.
+    Uint32 m_allocated_texture_byte_count;
+    // the number of actually used bytes on all mipmap levels (this
+    // doesn't include border or spacing pixels).
+    Uint32 m_used_texture_byte_count;
 }; // end of class GlTextureAtlas
 
 } // end of namespace Xrb

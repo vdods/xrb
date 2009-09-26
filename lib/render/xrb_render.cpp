@@ -334,10 +334,10 @@ void Render::DrawScreenRectTexture (
     {
         FloatVector2 temp[4] =
         {
-            FloatVector2(transformation * FloatVector2(0.0f, 1.0f)),
-            FloatVector2(transformation * FloatVector2(1.0f, 1.0f)),
             FloatVector2(transformation * FloatVector2(0.0f, 0.0f)),
-            FloatVector2(transformation * FloatVector2(1.0f, 0.0f))
+            FloatVector2(transformation * FloatVector2(1.0f, 0.0f)),
+            FloatVector2(transformation * FloatVector2(0.0f, 1.0f)),
+            FloatVector2(transformation * FloatVector2(1.0f, 1.0f))
         };
         Sint16 texture_coordinate_array[8];
 
@@ -345,8 +345,8 @@ void Render::DrawScreenRectTexture (
         {
             temp[i][Dim::X] *= gltexture.Width();
             temp[i][Dim::Y] *= gltexture.Height();
-            texture_coordinate_array[i*2 + 0] = Sint16(temp[i][Dim::X]) + gltexture.TextureCoordOffset()[Dim::X];
-            texture_coordinate_array[i*2 + 1] = Sint16(temp[i][Dim::Y]) + gltexture.TextureCoordOffset()[Dim::Y];
+            texture_coordinate_array[i*2 + 0] = Sint16(temp[i][Dim::X]) + gltexture.TextureCoordinateBottomLeft()[Dim::X];
+            texture_coordinate_array[i*2 + 1] = Sint16(temp[i][Dim::Y]) + gltexture.TextureCoordinateBottomLeft()[Dim::Y];
         }
 
         Sint16 vertex_coordinate_array[8] =

@@ -13,6 +13,7 @@
 #include "xrb_color.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_gltextureatlas.hpp"
+#include "xrb_math.hpp"
 #include "xrb_texture.hpp"
 
 namespace Xrb
@@ -68,7 +69,7 @@ Gl::Gl ()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
-    glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LESS);
 
     // set up the blending function for correct alpha blending
     glEnable(GL_BLEND);
@@ -226,51 +227,30 @@ GLint Gl::Integer (GLenum name)
     return integer[0];
 }
 
-GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
-{
-    // if the texture wants to use a separate atlas, make a new atlas just for it
-    if ((gltexture_flags & GlTexture::USES_SEPARATE_ATLAS) != 0)
-    {
-        GlTextureAtlas *atlas = new GlTextureAtlas(texture.Size());
-        m_atlas.push_back(atlas);
-        GlTexture *retval = atlas->PlaceTexture(texture, gltexture_flags);
-        ASSERT1(retval != NULL);
-        return retval;
-    }
-    // otherwise place it into an existing atlas, creating a new one if there's no room
-    else
-    {
-        for (Uint32 i = 0; i < m_atlas.size(); ++i)
-        {
-            ASSERT1(m_atlas[i] != NULL);
-            GlTextureAtlas &atlas = *m_atlas[i];
-            GlTexture *retval = atlas.PlaceTexture(texture, gltexture_flags);
-            if (retval != NULL)
-                return retval;
-        }
-
-        // no fit so far, so add a new atlas to the end
-        GlTextureAtlas *atlas = new GlTextureAtlas(ScreenCoordVector2(1024, 1024)); // TODO: do real size
-        m_atlas.push_back(atlas);
-        return atlas->PlaceTexture(texture, gltexture_flags);
-    }
-}
-
 void Gl::UnregisterGlTexture (GlTexture &gltexture)
 {
     // deallocate the space in the appropriate atlas
     gltexture.Atlas().UnplaceTexture(gltexture);
     // if the texture had USES_SEPARATE_ATLAS, then delete the atlas, because
     // we don't want some dumb little dinky atlas clogging shit up.
-    if (gltexture.UsesSeparateAtlas())
+    // or
+    // if the atlas is empty, delete it.
+    if (gltexture.UsesSeparateAtlas() || gltexture.Atlas().GlTextureCount() == 0)
     {
         AtlasVector::iterator it = m_atlas.begin();
         AtlasVector::iterator it_end = m_atlas.end();
         while (it != it_end && *it != &gltexture.Atlas())
             ++it;
         ASSERT1(it != it_end && "atlas not found");
-        delete *it;
+        GlTextureAtlas *atlas = *it;
         m_atlas.erase(it);
+        delete atlas;
+
+        Uint32 allocated_texture_byte_count = AllocatedTextureByteCount();
+        Uint32 efficiency = (allocated_texture_byte_count > 0) ?
+                            100 * UsedTextureByteCount() / allocated_texture_byte_count :
+                            100;
+        fprintf(stderr, "GlTextureAtlas count = %u, packing efficiency = %u%%\n", Uint32(m_atlas.size()), efficiency);
     }
 }
 
@@ -340,6 +320,94 @@ void Gl::ResetBindTextureCallCounts ()
 {
     m_bind_texture_call_hit_count = 0;
     m_bind_texture_call_miss_count = 0;
+}
+
+Uint32 Gl::AllocatedTextureByteCount () const
+{
+    Uint32 retval = 0;
+    for (Uint32 i = 0; i < m_atlas.size(); ++i)
+    {
+        ASSERT1(m_atlas[i] != NULL);
+        retval += m_atlas[i]->AllocatedTextureByteCount();
+    }
+    return retval;
+}
+
+Uint32 Gl::UsedTextureByteCount () const
+{
+    Uint32 retval = 0;
+    for (Uint32 i = 0; i < m_atlas.size(); ++i)
+    {
+        ASSERT1(m_atlas[i] != NULL);
+        retval += m_atlas[i]->UsedTextureByteCount();
+    }
+    return retval;
+}
+
+GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
+{
+    // check that the flags are acceptable
+    if (gltexture_flags & GlTexture::USES_SEPARATE_ATLAS)
+    {
+        // any texture is fine if it has its own atlas
+    }
+    else
+    {
+        if (!Math::IsAPowerOf2(texture.Width()) ||
+            !Math::IsAPowerOf2(texture.Height()) ||
+            !texture.Width() == texture.Height())
+        {
+            fprintf(stderr, "Gl::CreateGlTexture(); ERROR: non-square, non-power-of-2-sized textures must use GlTexture::USES_SEPARATE_ATLAS\n");
+            return NULL;
+        }
+    }
+
+    // if the texture wants to use a separate atlas, make a new atlas just for it
+    if (gltexture_flags & GlTexture::USES_SEPARATE_ATLAS)
+    {
+        GlTextureAtlas *atlas = new GlTextureAtlas(texture.Size(), gltexture_flags);
+        AddAtlas(atlas);
+        GlTexture *retval = atlas->AttemptToPlaceTexture(texture, gltexture_flags);
+        ASSERT1(retval != NULL);
+        return retval;
+    }
+    // otherwise place it into an existing atlas, creating a new one if there's no room
+    else
+    {
+        for (Uint32 i = 0; i < m_atlas.size(); ++i)
+        {
+            ASSERT1(m_atlas[i] != NULL);
+            GlTextureAtlas &atlas = *m_atlas[i];
+            // only check atlases that match the requested gltexture_flags
+            if (gltexture_flags == atlas.GlTextureFlags())
+            {
+                GlTexture *retval = atlas.AttemptToPlaceTexture(texture, gltexture_flags);
+                // the atlas may not have had room, so check it
+                if (retval != NULL)
+                {
+                    fprintf(stderr, "Gl atlas packing efficiency: %u%%\n", 100 * UsedTextureByteCount() / AllocatedTextureByteCount());
+                    return retval;
+                }
+            }
+        }
+
+        // no fit so far, so add a new atlas to the end
+        GlTextureAtlas *atlas = new GlTextureAtlas(ScreenCoordVector2(1024, 1024), gltexture_flags); // TODO: do real size
+        AddAtlas(atlas);
+        return atlas->AttemptToPlaceTexture(texture, gltexture_flags);
+    }
+}
+
+void Gl::AddAtlas (GlTextureAtlas *atlas)
+{
+    ASSERT1(atlas != NULL);
+    m_atlas.push_back(atlas);
+
+    Uint32 allocated_texture_byte_count = AllocatedTextureByteCount();
+    Uint32 efficiency = (allocated_texture_byte_count > 0) ?
+                        100 * UsedTextureByteCount() / allocated_texture_byte_count :
+                        100;
+    fprintf(stderr, "GlTextureAtlas count = %u, packing efficiency = %u%%\n", Uint32(m_atlas.size()), efficiency);
 }
 
 } // end of namespace Xrb

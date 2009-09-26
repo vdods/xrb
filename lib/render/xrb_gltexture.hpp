@@ -48,7 +48,9 @@ public:
             :
             m_path(path),
             m_flags(flags)
-        { }
+        {
+            //m_flags = USES_SEPARATE_ATLAS; // HIPPO
+        }
 
         std::string const &Path () const { return m_path; }
         Uint32 Flags () const { return m_flags; }
@@ -105,27 +107,41 @@ public:
     ScreenCoordVector2 const &Size () const { return m_size; }
     ScreenCoord Width () const { return m_size[Dim::X]; }
     ScreenCoord Height () const { return m_size[Dim::Y]; }
-    ScreenCoordVector2 const &TextureCoordOffset () const { return m_texture_coord_offset; }
+    ScreenCoordVector2 TextureCoordinateBottomLeft () const;
+    Sint16 const *TextureCoordinateArray () const { return m_texture_coordinate_array; }
     bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
 
+#if 0 // HIPPO
+    /** This may NOT be used while a frame is being rendered -- it writes
+      * to the color buffer.
+      * @brief Dumps this GlTexture to a newly allocated Texture.
+      */
+    Texture *Dump () const;
+    /** This may NOT be used while a frame is being rendered -- it writes
+      * to the color buffer.
+      * @brief Dumps a subregion of this GlTexture to a newly allocated Texture.
+      * @param rect Gives the texture coordinates of the desired subregion.
+      */
+    Texture *Dump (ScreenCoordRect const &rect) const;
+#endif
+
 private:
+
+    // this is really only useful for square, power-of-2-sized textures placed in
+    // a GlTextureAtlas (i.e. only GlTextureAtlas needs to use this).
+    ScreenCoordVector2 TextureCoordinateCenter () const;
 
     // for use only by GlTextureAtlas
     GlTexture (
         GlTextureAtlas &atlas,
         ScreenCoordVector2 const &size,
-        ScreenCoordVector2 const &texture_coord_offset,
-        Uint32 flags)
-        :
-        m_atlas(atlas),
-        m_size(size),
-        m_texture_coord_offset(texture_coord_offset),
-        m_flags(flags)
-    { }
+        ScreenCoordRect const &texture_coordinate_rect,
+        Uint32 flags);
 
     GlTextureAtlas &m_atlas;
     ScreenCoordVector2 const m_size;
-    ScreenCoordVector2 const m_texture_coord_offset;
+    // for use directly in opengl as texture coordinates
+    Sint16 m_texture_coordinate_array[8]; // TODO: all 8 different rotations and orientations?
     Uint32 const m_flags;
 
     friend class GlTextureAtlas;
