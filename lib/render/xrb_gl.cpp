@@ -69,7 +69,7 @@ Gl::Gl ()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
-    glDepthFunc(GL_LESS);
+//     glDepthFunc(GL_LEQUAL);
 
     // set up the blending function for correct alpha blending
     glEnable(GL_BLEND);
@@ -78,8 +78,6 @@ Gl::Gl ()
     // this was moved here from Engine2::VisibilityQuadTree::Draw*
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.0f);
-    // don't bother writing to the alpha channel
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 }
 
 Gl::~Gl ()
