@@ -27,6 +27,7 @@ void Render::DrawLine (
         return;
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
@@ -43,6 +44,9 @@ void Render::DrawLine (
         glDrawArrays(GL_LINES, 0, 2);
         glDisableClientState(GL_VERTEX_ARRAY);
     }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Render::DrawArrow (
@@ -62,6 +66,7 @@ void Render::DrawArrow (
     FloatVector2 basis_y(PerpendicularVector2(basis_x));
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
@@ -85,6 +90,9 @@ void Render::DrawArrow (
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Render::DrawPolygon (
@@ -102,6 +110,7 @@ void Render::DrawPolygon (
         return;
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
@@ -130,6 +139,9 @@ void Render::DrawPolygon (
 
         delete[] vertex_array;
     }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Render::DrawCircle (
@@ -240,6 +252,7 @@ void Render::DrawCircularArc (
         facet_count = 1;
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
@@ -266,6 +279,9 @@ void Render::DrawCircularArc (
 
         delete[] vertex_array;
     }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Render::DrawScreenRect (
@@ -277,6 +293,7 @@ void Render::DrawScreenRect (
         return;
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
@@ -307,6 +324,9 @@ void Render::DrawScreenRect (
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glDisableClientState(GL_VERTEX_ARRAY);
     }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 void Render::DrawScreenRectTexture (
@@ -319,6 +339,7 @@ void Render::DrawScreenRectTexture (
         return;
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
@@ -365,6 +386,9 @@ void Render::DrawScreenRectTexture (
         glDisableClientState(GL_VERTEX_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 } // end of namespace Xrb
