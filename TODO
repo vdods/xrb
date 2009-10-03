@@ -22,6 +22,7 @@ MAJOR TASKS:
 - ensure different areas of the engine are cleanly separated so that
   they could be compiled without others (i.e. core+engine could be
   used without gui or render, etc) -- make dependency chart
+- motion blur (via projected 3d textures, or maybe pixel shader)
 
 DISASTEROIDS:
 ** feature-related **

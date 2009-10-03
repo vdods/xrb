@@ -101,7 +101,7 @@ void Engine2::Polygon::Draw () const
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // TODO: fix
         glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // TODO: fix
+        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
 

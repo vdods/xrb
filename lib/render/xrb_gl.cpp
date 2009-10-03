@@ -71,7 +71,7 @@ Gl::Gl ()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
-//     glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
 
     // set up the blending function for correct alpha blending
     glEnable(GL_BLEND);
@@ -115,7 +115,7 @@ void Gl::FinishInitialization ()
     // create the 1x1 opaque white texture (which is used for color biasing)
     Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), Texture::CLEAR);
     opaque_white->Data()[0] = opaque_white->Data()[1] = opaque_white->Data()[2] = opaque_white->Data()[3] = 255;
-    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::NONE);//GlTexture::USES_SEPARATE_ATLAS);
+    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::NONE);
     ASSERT1(m_gltexture_opaque_white != NULL);
 
     // GL_COMBINE texture env default values
@@ -278,6 +278,29 @@ void Gl::SetupTextureUnits (
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
     glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
+}
+
+void Gl::SetupTextureUnits (
+    Color const &color_mask,
+    Color const &color_bias)
+{
+    // set things up for no texture mapping
+
+    // set up (disable) texture unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glDisable(GL_TEXTURE_2D);
+    // set up (disable) texture unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glDisable(GL_TEXTURE_2D);
+
+    // calculate masked and biased color manually -- linearly interpolate
+    // between color_mask and color_bias, using color_bias[Dim::A] as the
+    // interpolation parameter.
+    Color color(color_mask * (1.0f - color_bias[Dim::A]) + color_bias * color_bias[Dim::A]);
+    // reset the calculated alpha channel to color_mask's
+    color[Dim::A] = color_mask[Dim::A];
+    // set the opengl color
+    glColor4f(color[Dim::R], color[Dim::G], color[Dim::B], color[Dim::A]);
 }
 
 void Gl::BindAtlas (GlTextureAtlas const &atlas)

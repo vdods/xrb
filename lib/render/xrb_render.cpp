@@ -32,7 +32,6 @@ void Render::DrawLine (
     // TODO: use glEnable(GL_LINE_SMOOTH).  also look at glLineWidth
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -66,7 +65,6 @@ void Render::DrawArrow (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -107,7 +105,6 @@ void Render::DrawPolygon (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -246,7 +243,6 @@ void Render::DrawCircularArc (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -284,7 +280,6 @@ void Render::DrawScreenRect (
     glLoadIdentity();
 
     Singleton::Gl().SetupTextureUnits(
-        Singleton::Gl().GlTexture_OpaqueWhite(),
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
@@ -363,6 +358,8 @@ void Render::DrawScreenRectTexture (
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, texture_coordinate_array);
+        glClientActiveTexture(GL_TEXTURE1);
+        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         glDisableClientState(GL_VERTEX_ARRAY);

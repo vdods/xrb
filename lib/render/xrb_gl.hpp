@@ -90,13 +90,22 @@ public:
       *        and color biasing.
       * @param texture_handle_to_bind_to_unit_0 The openGL texture handle to
       *                                         bind to texture unit 0.
-      * @param color_mask The masking color modulate the bound texture with.
+      * @param color_mask The masking color to modulate the bound texture with.
       * @param color_bias The color bias to interpolate the results of
       *                   texture unit 0 with.
-      * @note When this function returns, texture unit 1 will be active.
       */
     void SetupTextureUnits (
         GlTexture const &gltexture,
+        Color const &color_mask,
+        Color const &color_bias);
+    /** This setup is done in so many places that it was deemed 
+      * function-worthy, eliminating possible copy/paste errors.
+      * @brief Sets up opengl for non-textured rendering, using the given
+      *        color mask and color bias.
+      * @param color_mask The masking color (base color).
+      * @param color_bias The color bias to interpolate the masking color with.
+      */
+    void SetupTextureUnits (
         Color const &color_mask,
         Color const &color_bias);
 

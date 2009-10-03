@@ -172,9 +172,7 @@ void Engine2::Sprite::RenderGlTexture (
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
         glClientActiveTexture(GL_TEXTURE1);
-        // the actual texture coords here are irrelevant because the opaque white
-        // texture has USES_SEPARATE_ATLAS
-        glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
+        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
