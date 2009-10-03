@@ -115,7 +115,7 @@ void Gl::FinishInitialization ()
     // create the 1x1 opaque white texture (which is used for color biasing)
     Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), Texture::CLEAR);
     opaque_white->Data()[0] = opaque_white->Data()[1] = opaque_white->Data()[2] = opaque_white->Data()[3] = 255;
-    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::USES_SEPARATE_ATLAS);
+    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::NONE);//GlTexture::USES_SEPARATE_ATLAS);
     ASSERT1(m_gltexture_opaque_white != NULL);
 
     // GL_COMBINE texture env default values

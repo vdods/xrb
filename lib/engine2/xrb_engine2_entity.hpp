@@ -17,14 +17,13 @@
 #include "xrb_engine2_object.hpp"
 #include "xrb_engine2_types.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Serializer;
 
-namespace Engine2
-{
+namespace Engine2 {
 
+class AnimatedSprite;
 class Compound;
 class Object;
 class ObjectLayer;
@@ -72,11 +71,14 @@ public:
     FloatVector2 UnwrappedTranslation () const { return Translation() + m_wrapped_offset; }
     // the Object which this Entity is attached to
     Object *OwnerObject () const { return m_owner_object; }
-    // returns the owner object cast to a Sprite (but it asserts that
-    // the owner object is actually a sprite).
+    // returns the owner object cast to a Sprite (doing appropriate
+    // assert verification on its type)
     Sprite *OwnerSprite () const;
-    // returns the owner object cast to a Compound (but it asserts that
-    // the owner object is actually a compound).
+    // returns the owner object cast to a AnimatedSprite (doing
+    // appropriate assert verification on its type)
+    AnimatedSprite *OwnerAnimatedSprite () const;
+    // returns the owner object cast to a Compound (doing appropriate
+    // assert verification on its type)
     Compound *OwnerCompound () const;
 
     // ///////////////////////////////////////////////////////////////////
@@ -173,7 +175,6 @@ private:
 };
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_ENTITY_HPP_)

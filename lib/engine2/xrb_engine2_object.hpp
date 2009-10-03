@@ -19,14 +19,12 @@
 #include "xrb_transform2.hpp"
 #include "xrb_vector.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class RenderContext;
 class Serializer;
 
-namespace Engine2
-{
+namespace Engine2 {
 
 class Entity;
 class ObjectLayer;
@@ -59,10 +57,10 @@ public:
         { }
         ~DrawData () { }
 
-        inline RenderContext const &GetRenderContext () const { return m_render_context; }
-        inline FloatMatrix2 const &Transformation () const { return m_transformation; }
+        RenderContext const &GetRenderContext () const { return m_render_context; }
+        FloatMatrix2 const &Transformation () const { return m_transformation; }
 
-        inline void SetTransformation (FloatMatrix2 const &transformation) { m_transformation = transformation; }
+        void SetTransformation (FloatMatrix2 const &transformation) { m_transformation = transformation; }
 
     private:
 
@@ -109,19 +107,19 @@ public:
             QuadTreeType quad_tree_type);
         ~DrawLoopFunctor () { }
 
-        inline Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
-        inline FloatMatrix2 const &WorldToScreen () const { return m_object_draw_data.Transformation(); }
-        inline Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
-        inline FloatVector2 const &ViewCenter () const { return m_view_center; }
-        inline Float ViewRadius () const { return m_view_radius; }
-        inline bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
-        inline TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
-        inline Uint32 DrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
-        inline Uint32 DrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
+        Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
+        FloatMatrix2 const &WorldToScreen () const { return m_object_draw_data.Transformation(); }
+        Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
+        FloatVector2 const &ViewCenter () const { return m_view_center; }
+        Float ViewRadius () const { return m_view_radius; }
+        bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
+        TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
+        Uint32 DrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
+        Uint32 DrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
 
-        inline void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
-        inline void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }
-        inline void SetIsCollectTransparentObjectPass (bool is_collect_transparent_object_pass) { m_is_collect_transparent_object_pass = is_collect_transparent_object_pass; }
+        void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
+        void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }
+        void SetIsCollectTransparentObjectPass (bool is_collect_transparent_object_pass) { m_is_collect_transparent_object_pass = is_collect_transparent_object_pass; }
 
         // this method is what std::for_each will use to draw each object.
         void operator () (Engine2::Object const *object);
@@ -167,35 +165,35 @@ public:
     // public accessors and modifiers
     // ///////////////////////////////////////////////////////////////////
 
-    inline ObjectType GetObjectType () const { return m_object_type; }
-    inline Float ZDepth () const { return m_z_depth; }
-    inline bool IsDynamic () const { return m_entity != NULL; }
-    inline Entity *GetEntity () const { return m_entity; }
-    inline Color const &ColorBias () const { return m_color_bias; }
-    inline Color const &ColorMask () const { return m_color_mask; }
+    ObjectType GetObjectType () const { return m_object_type; }
+    Float ZDepth () const { return m_z_depth; }
+    bool IsDynamic () const { return m_entity != NULL; }
+    Entity *GetEntity () const { return m_entity; }
+    Color const &ColorBias () const { return m_color_bias; }
+    Color const &ColorMask () const { return m_color_mask; }
     // use this to change the color bias
-    inline Color &ColorBias () { return m_color_bias; }
+    Color &ColorBias () { return m_color_bias; }
     // use this to change the color mask
-    inline Color &ColorMask () { return m_color_mask; }
-    inline bool IsTransparent () const { return m_is_transparent; }
-    inline Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
-    inline Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
-    inline Float VisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
-    inline Float VisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
-    inline Float PhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
-    inline Float PhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
+    Color &ColorMask () { return m_color_mask; }
+    bool IsTransparent () const { return m_is_transparent; }
+    Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
+    Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
+    Float VisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
+    Float VisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
+    Float PhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
+    Float PhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
     // returns the object_layer of this entity
-    inline ObjectLayer *GetObjectLayer () const { return m_object_layer; }
+    ObjectLayer *GetObjectLayer () const { return m_object_layer; }
     // returns the world this object resides in
     World *GetWorld () const;
     // returns true if this object has an owner quadtree
-    inline bool HasOwnerQuadTree (QuadTreeType const quad_tree_type) const
+    bool HasOwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
         ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type] != NULL;
     }
     // returns the owner of this entity
-    inline QuadTree *OwnerQuadTree (QuadTreeType const quad_tree_type) const
+    QuadTree *OwnerQuadTree (QuadTreeType const quad_tree_type) const
     {
         ASSERT3(quad_tree_type <= QTT_COUNT);
         return m_owner_quad_tree[quad_tree_type];
@@ -204,7 +202,7 @@ public:
     // set the z depth (as used by the OpenGL depth buffer during drawing).
     // a lower value indicates closer to the viewpoint (and will be drawn
     // on top of things with higher z-depth values).
-    inline void SetZDepth (Float z_depth)
+    void SetZDepth (Float z_depth)
     {
         ASSERT_NAN_SANITY_CHECK(Math::IsFinite(z_depth));
         m_z_depth = z_depth;
@@ -212,14 +210,14 @@ public:
     // imbues this object with a soul
     void SetEntity (Entity *entity);
     // sets the is-transparent property
-    inline void SetIsTransparent (bool is_transparent) { m_is_transparent = is_transparent; }
+    void SetIsTransparent (bool is_transparent) { m_is_transparent = is_transparent; }
     // sets the object_layer for this object
-    inline void SetObjectLayer (ObjectLayer *object_layer)
+    void SetObjectLayer (ObjectLayer *object_layer)
     {
         m_object_layer = object_layer;
     }
     // sets the owner for this object
-    inline void SetOwnerQuadTree (
+    void SetOwnerQuadTree (
         QuadTreeType const quad_tree_type,
         QuadTree *const owner_quad_tree)
     {
@@ -266,7 +264,7 @@ protected:
     // recalculating the radii if necessary.
     void CalculateTransform () const;
     // causes the m_radii_need_to_be_recalculated flag to be set
-    inline void IndicateRadiiNeedToBeRecalculated () { m_radii_need_to_be_recalculated = true; }
+    void IndicateRadiiNeedToBeRecalculated () { m_radii_need_to_be_recalculated = true; }
 
     // the radii of this object, one for each QuadTreeType (visible and physical)
     mutable Float m_radius[QTT_COUNT];
@@ -302,7 +300,6 @@ private:
 }; // end of class Engine2::Object
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_OBJECT_HPP_)
@@ -321,6 +318,8 @@ Sprite (a simple single circle/square) and Compound (one or more polygons).
                                  Object
                                 /      \
                           Sprite        Compound
+                         /
+           AnimatedSprite
 
 Object can now be "imbued with a soul" by means of giving it a pointer to
 an Entity (which is no longer part of the Object class hierarchy).  Entity
@@ -334,41 +333,5 @@ World will still accept adding Objects or Entities, but they will be kept
 strictly separate.  An Object must not be imbued with an Entity while it is
 owned by World (the Entity must be added before the Object is added to the
 World).
-
-// MapEditor2 classes
-
-Instead of an ultra multiple-virtual inherited class hierarchy, a single
-interface class will be used to provide the necessary functionality for
-the map editor.  The object hierarchy is:
-
-                                 Object
-                                /      \
-    MapEditor2::Object    Sprite        Compound    MapEditor2::Object
-                      \  /                      \  /
-               MapEditor2::Sprite       MapEditor2::Compound
-
-// Specifying MapEditor2 GUI controls for Entity subclasses.
-
-The goal here is to allow the map editor to edit Entity subclass data in a
-robust and intuitive way (like how the built-in Object editing works).
-
-The obvious type of controls will be Buttons, CheckBoxes, ValueEdits
-and such, but there will also be primitives for controlling values via the
-mapeditor's world itself (e.g. dragging tangible vector arrows around, etc).
-Control primitives:
-
-- Object-center-based vector (arrow)
-- World coordinate position vector (something like the global origin cursor)
-- Angle (like the Object editing mode's angle display)
-- Scale (like the Object editing mode's scale display)
-
-Only one of these tangible controls will be visible/controllable at a time,
-and the active one will be set by picking one of the enumerated IDs that will
-be attached to each specified control.
-
-*** Think about how object selection set value editing should work (and if
-the Entity controls should provide that)
-
-
 
 */

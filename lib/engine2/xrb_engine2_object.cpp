@@ -17,25 +17,25 @@
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
 // ///////////////////////////////////////////////////////////////////////////
-// Engine2::Object::DrawLoopFunctor
+// Object::DrawLoopFunctor
 // ///////////////////////////////////////////////////////////////////////////
 
 // constants which control the thresholds at which objects use
 // alpha fading to fade away, when they become small enough.
-Float const Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper = 1.0f;
-Float const Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower = 0.5f;
-Float const Engine2::Object::DrawLoopFunctor::ms_distance_fade_slope =
+Float const Object::DrawLoopFunctor::ms_radius_limit_upper = 1.0f;
+Float const Object::DrawLoopFunctor::ms_radius_limit_lower = 0.5f;
+Float const Object::DrawLoopFunctor::ms_distance_fade_slope =
     1.0f /
-    (Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper - Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower);
-Float const Engine2::Object::DrawLoopFunctor::ms_distance_fade_intercept =
-    Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower /
-    (Engine2::Object::DrawLoopFunctor::ms_radius_limit_lower - Engine2::Object::DrawLoopFunctor::ms_radius_limit_upper);
+    (Object::DrawLoopFunctor::ms_radius_limit_upper - Object::DrawLoopFunctor::ms_radius_limit_lower);
+Float const Object::DrawLoopFunctor::ms_distance_fade_intercept =
+    Object::DrawLoopFunctor::ms_radius_limit_lower /
+    (Object::DrawLoopFunctor::ms_radius_limit_lower - Object::DrawLoopFunctor::ms_radius_limit_upper);
 
-Engine2::Object::DrawLoopFunctor::DrawLoopFunctor (
+Object::DrawLoopFunctor::DrawLoopFunctor (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
@@ -57,7 +57,7 @@ Engine2::Object::DrawLoopFunctor::DrawLoopFunctor (
     m_drawn_transparent_object_count = 0;
 }
 
-void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *object)
+void Object::DrawLoopFunctor::operator () (Object const *object)
 {
     ASSERT3(m_transparent_object_vector != NULL);
 
@@ -97,7 +97,7 @@ void Engine2::Object::DrawLoopFunctor::operator () (Engine2::Object const *objec
     }
 }
 
-Float Engine2::Object::DrawLoopFunctor::CalculateDistanceFade (Float const object_radius)
+Float Object::DrawLoopFunctor::CalculateDistanceFade (Float const object_radius)
 {
     // calculate the alpha value of the object due to its distance.
     // sprites with radii between ms_radius_limit_lower and
@@ -114,10 +114,10 @@ Float Engine2::Object::DrawLoopFunctor::CalculateDistanceFade (Float const objec
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// Engine2::Object
+// Object
 // ///////////////////////////////////////////////////////////////////////////
 
-Engine2::Object::~Object ()
+Object::~Object ()
 {
     if (m_entity != NULL)
     {
@@ -128,7 +128,7 @@ Engine2::Object::~Object ()
     }
 }
 
-Engine2::Object *Engine2::Object::Create (
+Object *Object::Create (
     Serializer &serializer,
     CreateEntityFunction CreateEntity)
 {
@@ -167,7 +167,7 @@ Engine2::Object *Engine2::Object::Create (
     return retval;
 }
 
-void Engine2::Object::Write (Serializer &serializer) const
+void Object::Write (Serializer &serializer) const
 {
     WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
@@ -180,14 +180,14 @@ void Engine2::Object::Write (Serializer &serializer) const
         m_entity->Write(serializer);
 }
 
-Engine2::World *Engine2::Object::GetWorld () const
+World *Object::GetWorld () const
 {
     ASSERT1(m_object_layer != NULL);
     ASSERT1(m_object_layer->OwnerWorld() != NULL);
     return m_object_layer->OwnerWorld();
 }
 
-void Engine2::Object::SetEntity (Entity *const entity)
+void Object::SetEntity (Entity *const entity)
 {
     if (m_entity != NULL)
     {
@@ -204,7 +204,7 @@ void Engine2::Object::SetEntity (Entity *const entity)
     }
 }
 
-Engine2::Object::Object (ObjectType object_type)
+Object::Object (ObjectType object_type)
     :
     FloatTransform2(FloatTransform2::ms_identity, true),
     m_object_type(object_type),
@@ -224,31 +224,31 @@ Engine2::Object::Object (ObjectType object_type)
     m_radii_need_to_be_recalculated = true;
 }
 
-Engine2::ObjectType Engine2::Object::ReadObjectType (Serializer &serializer)
+ObjectType Object::ReadObjectType (Serializer &serializer)
 {
     return static_cast<ObjectType>(serializer.Read<Uint8>());
 }
 
-void Engine2::Object::WriteObjectType (Serializer &serializer) const
+void Object::WriteObjectType (Serializer &serializer) const
 {
     serializer.Write<Uint8>(static_cast<Uint8>(m_object_type));
 }
 
-void Engine2::Object::ReadClassSpecific (Serializer &serializer)
+void Object::ReadClassSpecific (Serializer &serializer)
 {
     serializer.ReadAggregate<FloatTransform2>(*this);
     serializer.ReadAggregate<Color>(m_color_bias);
     serializer.ReadAggregate<Color>(m_color_mask);
 }
 
-void Engine2::Object::WriteClassSpecific (Serializer &serializer) const
+void Object::WriteClassSpecific (Serializer &serializer) const
 {
     serializer.WriteAggregate<FloatTransform2>(*static_cast<FloatTransform2 const *>(this));
     serializer.WriteAggregate<Color>(m_color_bias);
     serializer.WriteAggregate<Color>(m_color_mask);
 }
 
-void Engine2::Object::CloneProperties (Object const *const object)
+void Object::CloneProperties (Object const *const object)
 {
     ASSERT1(object != NULL);
 
@@ -259,7 +259,7 @@ void Engine2::Object::CloneProperties (Object const *const object)
     m_color_mask = object->m_color_mask;
 }
 
-void Engine2::Object::CalculateTransform () const
+void Object::CalculateTransform () const
 {
     /*
     // original function code (kept around because this version does the
@@ -305,4 +305,5 @@ void Engine2::Object::CalculateTransform () const
     }
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb
