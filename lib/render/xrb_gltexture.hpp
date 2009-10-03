@@ -44,13 +44,7 @@ public:
     {
     public:
 
-        LoadParameters (std::string const &path, Uint32 flags = NONE)
-            :
-            m_path(path),
-            m_flags(flags)
-        {
-            //m_flags = USES_SEPARATE_ATLAS; // HIPPO
-        }
+        LoadParameters (std::string const &path, Uint32 flags = NONE);
 
         std::string const &Path () const { return m_path; }
         Uint32 Flags () const { return m_flags; }
@@ -110,20 +104,6 @@ public:
     ScreenCoordVector2 TextureCoordinateBottomLeft () const;
     Sint16 const *TextureCoordinateArray () const { return m_texture_coordinate_array; }
     bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
-
-#if 0 // HIPPO
-    /** This may NOT be used while a frame is being rendered -- it writes
-      * to the color buffer.
-      * @brief Dumps this GlTexture to a newly allocated Texture.
-      */
-    Texture *Dump () const;
-    /** This may NOT be used while a frame is being rendered -- it writes
-      * to the color buffer.
-      * @brief Dumps a subregion of this GlTexture to a newly allocated Texture.
-      * @param rect Gives the texture coordinates of the desired subregion.
-      */
-    Texture *Dump (ScreenCoordRect const &rect) const;
-#endif
 
 private:
 

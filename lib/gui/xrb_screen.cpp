@@ -205,7 +205,7 @@ void Screen::Draw (Float real_time) const
     // we're done drawing, now check for a requested screenshot
     if (!m_screenshot_path.empty())
     {
-        Texture *screenshot = Texture::Create(m_device_size, false);
+        Texture *screenshot = Texture::Create(m_device_size, Texture::UNINITIALIZED);
         ASSERT1(screenshot != NULL);
         fprintf(stderr, "Screen::Draw(); saving screenshot \"%s\"\n", m_screenshot_path.c_str());
         glReadPixels(0, 0, m_device_size[Dim::X], m_device_size[Dim::Y], GL_RGBA, GL_UNSIGNED_BYTE, screenshot->Data());
@@ -255,12 +255,14 @@ bool Screen::HandleEvent (Event const *const e)
             break;
     }
 
-    // check for screenshot key
+    // check for screenshot/dump-atlas keys
     if (e->GetEventType() == Event::KEYDOWN)
     {
         EventKeyDown const *key_down_event = DStaticCast<EventKeyDown const *>(e);
         if (key_down_event->KeyCode() == Key::PRINT)
             RequestScreenshot("screenshot.png"); // TODO: real screenshot filename
+        else if (key_down_event->KeyCode() == Key::SCROLLLOCK)
+            Singleton::Gl().DumpAtlases("atlas"); // TODO: real atlas filename
     }
 
     // special handling for the top-level parent widget (Screen)

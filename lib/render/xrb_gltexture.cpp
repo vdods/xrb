@@ -21,6 +21,12 @@ namespace Xrb
 // GlTexture::LoadParameters
 // ///////////////////////////////////////////////////////////////////////////
 
+GlTexture::LoadParameters::LoadParameters (std::string const &path, Uint32 flags)
+    :
+    m_path(path),
+    m_flags(flags)
+{ }
+
 std::string GlTexture::LoadParameters::ResourceName () const
 {
     return "Xrb::GlTexture";
@@ -82,7 +88,7 @@ GlTexture *GlTexture::Create (ResourceLoadParameters const &p)
             255,   0, 255, 255,
               0, 255,   0, 255,
         };
-        Texture *missing = Texture::Create(ScreenCoordVector2(2, 2), true);
+        Texture *missing = Texture::Create(ScreenCoordVector2(2, 2), Texture::CLEAR);
         memcpy(missing->Data(), s_ugly_texture_data, sizeof(s_ugly_texture_data));
         GlTexture *gltexture_missing = Create(*missing, load_parameters.Flags());
         ASSERT1(gltexture_missing != NULL); // this creation shouldn't fail
@@ -111,26 +117,6 @@ ScreenCoordVector2 GlTexture::TextureCoordinateBottomLeft () const // HIPPO TEMP
 {
     return ScreenCoordVector2(m_texture_coordinate_array[0], m_texture_coordinate_array[1]);
 }
-
-#if 0 // HIPPO
-Texture *GlTexture::Dump () const
-{
-    return Dump(m_size);
-}
-
-Texture *GlTexture::Dump (ScreenCoordRect const &rect) const
-{
-    ASSERT1(rect.Left() >= 0);
-    ASSERT1(rect.Left() <= rect.Right());
-    ASSERT1(rect.Right() <= m_size[Dim::X]);
-    ASSERT1(rect.Bottom() >= 0);
-    ASSERT1(rect.Bottom() <= rect.Top());
-    ASSERT1(rect.Top() <= m_size[Dim::Y]);
-
-    // this works for 1xN textures as well, because this will get the correct border pixels
-    return m_atlas.Dump(ScreenCoordRect(TextureCoordinateBottomLeft(), TextureCoordinateBottomLeft()+m_size));
-}
-#endif
 
 ScreenCoordVector2 GlTexture::TextureCoordinateCenter () const
 {

@@ -10,6 +10,8 @@
 
 #include "xrb_gl.hpp"
 
+#include <iomanip>
+
 #include "xrb_color.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_gltextureatlas.hpp"
@@ -111,7 +113,7 @@ void Gl::FinishInitialization ()
     ASSERT1(m_gltexture_opaque_white == NULL);
 
     // create the 1x1 opaque white texture (which is used for color biasing)
-    Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), true);
+    Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), Texture::CLEAR);
     opaque_white->Data()[0] = opaque_white->Data()[1] = opaque_white->Data()[2] = opaque_white->Data()[3] = 255;
     m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::USES_SEPARATE_ATLAS);
     ASSERT1(m_gltexture_opaque_white != NULL);
@@ -259,7 +261,14 @@ void Gl::SetupTextureUnits (
 {
     ASSERT1(m_gltexture_opaque_white != NULL);
 
+    // set up texture unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glEnable(GL_TEXTURE_2D);
+    // TODO: assert that the opaque white texture is still bound to unit 1
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+
     // set up texture unit 0
+    glActiveTexture(GL_TEXTURE0);
     BindAtlas(gltexture.Atlas());
     // due to limitations in the PowerVR MBX platform, (see
     // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/
@@ -269,12 +278,6 @@ void Gl::SetupTextureUnits (
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.
     glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
     glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
-
-    // set up texture unit 1
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    // TODO: assert that the opaque white texture is still bound to unit 1
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
 }
 
 void Gl::BindAtlas (GlTextureAtlas const &atlas)
@@ -340,6 +343,37 @@ Uint32 Gl::UsedTextureByteCount () const
         retval += m_atlas[i]->UsedTextureByteCount();
     }
     return retval;
+}
+
+void Gl::DumpAtlases (std::string const &path_prefix) const
+{
+#if XRB_PLATFORM == XRB_PLATFORM_IPHONE
+    fprintf(stderr, "Gl::DumpAtlases only supported on non-iphone builds\n");
+#else // XRB_PLATFORM != XRB_PLATFORM_IPHONE
+    fprintf(stderr, "Gl::DumpAtlases(); path_prefix = \"%s\"\n", path_prefix.c_str());
+    for (Uint32 i = 0; i < m_atlas.size(); ++i)
+    {
+        ASSERT1(m_atlas[i] != NULL);
+        Uint32 mipmap_level = 0;
+        Texture *dump = NULL;
+        while ((dump = m_atlas[i]->Dump(mipmap_level)) != NULL)
+        {
+            std::string dump_path(
+                path_prefix +
+                FORMAT('.' <<
+                       std::setw(2) << std::setfill('0') << i << '.' <<
+                       std::setw(2) << std::setfill('0') << mipmap_level << ".png"));
+            Pal::Status status = dump->Save(dump_path);
+            if (status == Pal::SUCCESS)
+                fprintf(stderr, "    successfully dumped ");
+            else
+                fprintf(stderr, "    FAILURE while dumping ");
+            fprintf(stderr, "\"%s\" (atlas %u, mipmap level %u)\n", dump_path.c_str(), i, mipmap_level);
+            delete dump;
+            ++mipmap_level;
+        }
+    }
+#endif // XRB_PLATFORM == XRB_PLATFORM_IPHONE
 }
 
 GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)

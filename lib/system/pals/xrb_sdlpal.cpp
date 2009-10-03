@@ -615,7 +615,7 @@ Xrb::Texture *SDLPal::LoadImage (char const *image_path)
     png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, int_p_NULL, int_p_NULL);
 
     // create the Texture
-    Xrb::Texture *texture = Xrb::Texture::Create(Xrb::ScreenCoordVector2(width, height), false);
+    Xrb::Texture *texture = Xrb::Texture::Create(Xrb::ScreenCoordVector2(width, height), Xrb::Texture::UNINITIALIZED);
     ASSERT1(texture != NULL);
 
     // Expand paletted or RGB images with transparency to full alpha channels
@@ -880,7 +880,7 @@ Xrb::Texture *GenerateTexture (
     Xrb::ScreenCoordVector2 const &texture_size,
     Xrb::AsciiFont::GlyphSpecification glyph_specification[Xrb::AsciiFont::ms_rendered_glyph_count])
 {
-    Xrb::Texture *texture = Xrb::Texture::Create(texture_size, true);
+    Xrb::Texture *texture = Xrb::Texture::Create(texture_size, Xrb::Texture::CLEAR);
 
     FT_Error error;
     FT_FaceRec_ *ft_face = font_face.FTFace();

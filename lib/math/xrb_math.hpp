@@ -126,7 +126,14 @@ namespace Math
     }
     /** @brief Returns @c base raised to the integer @c exponent power.
       */
-    Float PowInt (Float base, Uint32 exponent);
+    Float Pow (Float base, Uint32 exponent);
+    /** @brief Returns integer @c base raised to the integer @c exponent power.
+      */
+    Uint32 PowInt (Uint32 base, Uint32 exponent);
+    /** This is essentially the floor(log(argument)).
+      * @brief Returns the requested integer-valued logarithm.
+      */
+    Uint32 LogInt (Uint32 base, Uint32 argument);
     /** @brief Returns a random Float within the range [lower_bound, upper_bound].
       */
     Float RandomFloat (Float lower_bound, Float upper_bound);

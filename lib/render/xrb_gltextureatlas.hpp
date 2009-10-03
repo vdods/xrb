@@ -47,22 +47,17 @@ public:
     // deallocates space in the allocation bitmap (freeing the space)
     void UnplaceTexture (GlTexture const &gltexture);
 
-    /** This may NOT be used while a frame is being rendered -- it writes
-      * to the color buffer.  This method is probably really slow.
+#if XRB_PLATFORM != XRB_PLATFORM_IPHONE
+    /** This method is only supported on non-iphone platforms -- openGL ES does
+      * not support the operations necessary to easily retrieve texture data
+      * (it is possible, but annoying, and this method is really only useful
+      * for game devs during development, not to the end user).
       * @brief Dumps the pixel data contents of this GlTextureAtlas to a newly
       *        allocated Texture.
       * @param mipmap_level The desired mipmap level.  Default is 0.
       */
-//     Texture *Dump (Uint32 mipmap_level = 0) const;
-    /** This may NOT be used while a frame is being rendered -- it writes
-      * to the color buffer.  This method is probably really slow.
-      * @brief Dumps a subregion of the pixel data contents of this
-      *        GlTextureAtlas to a newly allocated Texture.
-      * @param rect Gives the (mipmap level 0) texture coordinates of the
-      *             desired subregion.
-      * @param mipmap_level The desired mipmap level.  Default is 0
-      */
-//     Texture *Dump (ScreenCoordRect const &rect, Uint32 mipmap_level = 0) const;
+    Texture *Dump (Uint32 mipmap_level = 0) const;
+#endif // XRB_PLATFORM != XRB_PLATFORM_IPHONE
 
 private:
 

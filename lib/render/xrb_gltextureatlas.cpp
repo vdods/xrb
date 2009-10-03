@@ -127,8 +127,14 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
-    // allocate all the mipmap levels.
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    // if a separate atlas is to be used, then let opengl take care of recalculating
+    // the mipmaps (this happens automatically when level 0 is changed).
+    if (m_flags & GlTexture::USES_SEPARATE_ATLAS)
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    // otherwise, we'll calculate the mipmaps manually
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+
     // allocate the base (level 0) texture
     glTexImage2D(
         GL_TEXTURE_2D,      // target
@@ -141,11 +147,30 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
         GL_UNSIGNED_BYTE,   // data type of the input pixel data
         NULL);              // NULL pixel data indicates openGL should allocate the data
 
-    // if GlTexture::USES_SEPARATE_ATLAS is not enabled, we'll handle
-    // all the mipmapping manually, so turn off GL_GENERATE_MIPMAP (it was
-    // only used to allocate the mipmap levels)
+    // allocate the mipmap textures manually if necessary.
     if ((m_flags & GlTexture::USES_SEPARATE_ATLAS) == 0)
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+    {
+        Uint32 mipmap_level = 1;
+        ScreenCoordVector2 s(m_size / 2);
+        // go all the way down to 1xN (or Nx1)
+        while (s[Dim::X] > 1 && s[Dim::Y] > 1)
+        {
+            glTexImage2D(GL_TEXTURE_2D, mipmap_level, GL_RGBA, s[Dim::X], s[Dim::Y], 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            ++mipmap_level;
+            s /= 2;
+        }
+        // go all the way down to 1x1
+        while (s[Dim::X] >= 1 && s[Dim::Y] >= 1)
+        {
+            ASSERT1(s[Dim::X] == 1 || s[Dim::Y] == 1);
+            glTexImage2D(GL_TEXTURE_2D, mipmap_level, GL_RGBA, s[Dim::X], s[Dim::Y], 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            ++mipmap_level;
+            if (s[Dim::X] > 1)
+                s[Dim::X] /= 2;
+            else
+                s[Dim::Y] /= 2;
+        }
+    }
 
     // calculate and keep track of the allocated and used texture bytes
     // NOTE: if the atlas is rectangular or power-of-2-sized, then this might
@@ -202,7 +227,6 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
         return retval;
     }
 
-    fprintf(stderr, "AttemptToPlaceTexture(); texture.Size() = (%d, %d), gltexture_flags = %u\n", texture.Width(), texture.Height(), gltexture_flags);
     ScreenCoordVector2 center_begin(CenterBegin(texture.Size()));
     ScreenCoordVector2 center_end(CenterEnd(texture.Size()));
     ScreenCoordVector2 center_stride(2*texture.Size());
@@ -215,7 +239,6 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
              center[Dim::X] <= center_end[Dim::X];
              center[Dim::X] += center_stride[Dim::X])
         {
-            fprintf(stderr, "  center = (%d, %d)\n", center[Dim::X], center[Dim::Y]);
             if (ThereIsEnoughSpaceFor(texture, center))
             {
                 GlTexture *retval = ActuallyPlaceTexture(texture, center);
@@ -229,60 +252,6 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
 
     // SORRY, there wasn't space
     return NULL;
-/*
-
-    // HIPPO
-    // HIPPO
-    // HIPPO
-    ASSERT1(texture.Size() == m_size);
-    {
-        Singleton::Gl().BindAtlas(*this);
-        glTexSubImage2D(
-            GL_TEXTURE_2D,
-            0,                              // mipmap level
-            0, // x offset
-            0, // y offset
-            texture.Width(),              // width
-            texture.Height(),              // height
-            GL_RGBA,                        // format of the input pixel data
-            GL_UNSIGNED_BYTE,               // data type of the input pixel data
-            texture.Data());                // pixel data
-        if (texture.Width() != 1 && texture.Height() != 1)
-        {
-            Uint32 level = 1;
-            Texture *mipmap = texture.CreateMipmap();
-            while (true)
-            {
-                glTexSubImage2D(
-                    GL_TEXTURE_2D,
-                    level++,                              // mipmap level
-                    0, // x offset
-                    0, // y offset
-                    mipmap->Width(),              // width
-                    mipmap->Height(),              // height
-                    GL_RGBA,                        // format of the input pixel data
-                    GL_UNSIGNED_BYTE,               // data type of the input pixel data
-                    mipmap->Data());                // pixel data
-
-                if (mipmap->Width() == 1 || mipmap->Height() == 1)
-                    break;
-
-                Texture *next_mipmap = mipmap->CreateMipmap();
-                delete mipmap;
-                mipmap = next_mipmap;
-            }
-            delete mipmap;
-        }
-        return new GlTexture(
-            *this,
-            texture.Size(),
-            ScreenCoordVector2::ms_zero,
-            gltexture_flags);
-    }
-    // HIPPO
-    // HIPPO
-    // HIPPO
-    */
 }
 
 void GlTextureAtlas::UnplaceTexture (GlTexture const &gltexture)
@@ -296,24 +265,26 @@ void GlTextureAtlas::UnplaceTexture (GlTexture const &gltexture)
     // the texture's pixel data is still in the atlas, but it doesn't really matter.
     // TODO: it would be nice to blank it all out
 }
-/*
+
+#if XRB_PLATFORM != XRB_PLATFORM_IPHONE
 Texture *GlTextureAtlas::Dump (Uint32 mipmap_level) const
 {
-    return Dump(ScreenCoordRect(m_size), mipmap_level);
-}
+    Singleton::Gl().BindAtlas(*this);
 
-Texture *GlTextureAtlas::Dump (ScreenCoordRect const &rect, Uint32 mipmap_level) const
-{
-    ASSERT1(rect.Left() >= 0);
-    ASSERT1(rect.Left() <= rect.Right());
-    ASSERT1(rect.Right() <= m_size[Dim::X]);
-    ASSERT1(rect.Bottom() >= 0);
-    ASSERT1(rect.Bottom() <= rect.Top());
-    ASSERT1(rect.Top() <= m_size[Dim::Y]);
+    GLint width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmap_level, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, mipmap_level, GL_TEXTURE_HEIGHT, &height);
+    // the error condition will probably happen if/when mipmap_level exceeds
+    // the actual max value
+    if (glGetError() != GL_NO_ERROR || width == 0 || height == 0)
+        return NULL;
 
-    
+    Texture *retval = Texture::Create(ScreenCoordVector2(width, height), Texture::UNINITIALIZED);
+    glGetTexImage(GL_TEXTURE_2D, mipmap_level, GL_RGBA, GL_UNSIGNED_BYTE, retval->Data());
+    return retval;
 }
-*/
+#endif // XRB_PLATFORM != XRB_PLATFORM_IPHONE
+
 void GlTextureAtlas::AssertThatTextureJives (Texture const &texture) const
 {
     if (m_flags & GlTexture::USES_SEPARATE_ATLAS)
@@ -481,6 +452,8 @@ void GlTextureAtlas::PlaceMipmapAndBorder (Uint32 mipmap_level, Texture const &m
     {
         ASSERT1(Math::IsEven(mipmap.Width()));
         ASSERT1(Math::IsEven(mipmap.Height()));
+        ASSERT1(mipmap_center[Dim::X] - mipmap.Width()/2 >= 0);
+        ASSERT1(mipmap_center[Dim::Y] - mipmap.Height()/2 >= 0);
         glTexSubImage2D(
             GL_TEXTURE_2D,                              // target (must be GL_TEXTURE_2D)
             mipmap_level,                               // mipmap level
@@ -600,7 +573,7 @@ Texture *GlTextureAtlas::CreateBorderTexture (Texture const &texture, Uint32 whi
             (border_mask & TOP ? 1 : 0);
         ScreenCoordVector2 size(1, adjusted_height);
         // create the border Texture
-        retval = Texture::Create(size, false);
+        retval = Texture::Create(size, Texture::UNINITIALIZED);
         // if the texture is 0xN or Nx0, there's no point in copying pixels
         if (size[Dim::X] == 0 || size[Dim::Y] == 0)
             return retval;
@@ -627,7 +600,7 @@ Texture *GlTextureAtlas::CreateBorderTexture (Texture const &texture, Uint32 whi
             (border_mask & RIGHT ? 1 : 0);
         ScreenCoordVector2 size(adjusted_width, 1);
         // create the border Texture
-        retval = Texture::Create(size, false);
+        retval = Texture::Create(size, Texture::UNINITIALIZED);
         // if the texture is 0xN or Nx0, there's no point in copying pixels
         if (size[Dim::X] == 0 || size[Dim::Y] == 0)
             return retval;

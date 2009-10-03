@@ -38,7 +38,7 @@ class GlTextureAtlas;
 class Texture;
 
 // openGL-controlling singleton -- the main reason this exists is to control
-// texture atlases.
+// texture atlases.  GL_TEXTURE0 will be the active texture unit in general.
 class Gl
 {
 public:
@@ -114,6 +114,10 @@ public:
     // these are useful for checking how efficiently packed the texture atlases are.
     Uint32 AllocatedTextureByteCount () const;
     Uint32 UsedTextureByteCount () const;
+
+    // really only useful for developers -- helpful for actually
+    // seeing how well your atlases are packed.
+    void DumpAtlases (std::string const &path_prefix) const;
 
 private:
 

@@ -28,9 +28,7 @@ Texture *Texture::Create (std::string const &path)
     return Singleton::Pal().LoadImage(path.c_str());
 }
 
-Texture *Texture::Create (
-    ScreenCoordVector2 const &size,
-    bool const zero_out_the_data)
+Texture *Texture::Create (ScreenCoordVector2 const &size, InitialState initial_state)
 {
     ASSERT1(size[Dim::X] >= 0 && size[Dim::Y] >= 0);
 
@@ -38,7 +36,7 @@ Texture *Texture::Create (
     ASSERT1(retval->m_size == size);
     ASSERT1(retval->m_bit_depth == 32);
     ASSERT1(retval->m_data_length == Uint32(size[Dim::X]*size[Dim::Y]*4));
-    if (zero_out_the_data)
+    if (initial_state == CLEAR)
         memset(retval->m_data, 0, retval->m_data_length);
 
     return retval;
@@ -72,16 +70,16 @@ Texture *Texture::CreateMipmap () const
     retval->m_data = new Uint8[retval->m_data_length];
 
     // now filter the data using a simple box filter (4 pixels average down to 1)
-    for (Uint32 y = 0; y < Uint32(size[Dim::Y]); ++y)
+    for (ScreenCoord y = 0; y < size[Dim::Y]; ++y)
     {
-        Uint32 this_y = 2*y;
-        for (Uint32 x = 0; x < Uint32(size[Dim::X]); ++x)
+        ScreenCoord this_y = 2*y;
+        for (ScreenCoord x = 0; x < size[Dim::X]; ++x)
         {
-            Uint32 this_x = 2*x;
+            ScreenCoord this_x = 2*x;
             Uint32 v[4] = { 0, 0, 0, 0 };
-            for (Uint32 yoff = 0; yoff < 2; ++yoff)
+            for (ScreenCoord yoff = 0; yoff < 2; ++yoff)
             {
-                for (Uint32 xoff = 0; xoff < 2; ++xoff)
+                for (ScreenCoord xoff = 0; xoff < 2; ++xoff)
                 {
                     Uint8 *pixel = Pixel(this_x+xoff, this_y+yoff);
                     for (Uint32 color = 0; color < 4; ++color)
@@ -90,12 +88,12 @@ Texture *Texture::CreateMipmap () const
                     }
                 }
             }
+            Uint8 *target_pixel = retval->Pixel(x, y);
             for (Uint32 color = 0; color < 4; ++color)
             {
-                ASSERT1(v[color]/4 < 256);
-                v[color] /= 4;
+                ASSERT1(v[color] <= 4*255);
+                target_pixel[color] = v[color] / 4;
             }
-            memcpy(retval->Pixel(x, y), v, 4);
         }
     }
 

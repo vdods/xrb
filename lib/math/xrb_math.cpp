@@ -15,7 +15,10 @@
 namespace Xrb
 {
 
-Float Math::CanonicalAngle (Float const angle)
+namespace Math
+{
+
+Float CanonicalAngle (Float angle)
 {
     Float retval = angle;
 
@@ -27,7 +30,7 @@ Float Math::CanonicalAngle (Float const angle)
     return retval;
 }
 
-Float Math::PowInt (Float const base, Uint32 const exponent)
+Float Pow (Float base, Uint32 exponent)
 {
     Float retval = 1.0f;
     Uint32 bit = 1;
@@ -42,7 +45,35 @@ Float Math::PowInt (Float const base, Uint32 const exponent)
     return retval;
 }
 
-Float Math::RandomFloat (Float const lower_bound, Float const upper_bound)
+Uint32 PowInt (Uint32 base, Uint32 exponent)
+{
+    ASSERT1((base > 0 || exponent > 0) && "0^0 is undefined");
+    Uint32 retval = 1;
+    Uint32 bit = 1;
+    Uint32 accumulator = base;
+    while (bit <= exponent)
+    {
+        if ((bit & exponent) != 0)
+            retval *= accumulator;
+        accumulator *= accumulator;
+        bit <<= 1;
+    }
+    return retval;
+}
+
+Uint32 LogInt (Uint32 base, Uint32 argument)
+{
+    ASSERT1(base > 0 && argument > 0 && "invalid base or argument");
+    Uint32 retval = 0;
+    while (argument >= base)
+    {
+        ++retval;
+        argument /= base;
+    }
+    return retval;
+}
+
+Float RandomFloat (Float lower_bound, Float upper_bound)
 {
     ASSERT1(lower_bound <= upper_bound);
     static Float const s_rand_max = static_cast<Float>(RAND_MAX);
@@ -54,7 +85,7 @@ Float Math::RandomFloat (Float const lower_bound, Float const upper_bound)
         lower_bound;
 }
 
-Uint16 Math::RandomUint16 (Uint16 const lower_bound, Uint16 const upper_bound)
+Uint16 RandomUint16 (Uint16 lower_bound, Uint16 upper_bound)
 {
     // WIN32's RAND_MAX is 65535.  TODO: implement a mersenne twister
 #if !defined(WIN32)
@@ -68,7 +99,7 @@ Uint16 Math::RandomUint16 (Uint16 const lower_bound, Uint16 const upper_bound)
         return static_cast<Uint16>(rand()) % range + lower_bound;
 }
 
-Uint32 Math::HighestBitIndex (Uint32 const x)
+Uint32 HighestBitIndex (Uint32 x)
 {
     static Uint32 const s_highest_bit_index_table[0x10] =
     {
@@ -100,6 +131,8 @@ Uint32 Math::HighestBitIndex (Uint32 const x)
             else
                 return s_highest_bit_index_table[x];
 }
+
+} // end of namespace Math
 
 } // end of namespace Xrb
 
