@@ -138,6 +138,9 @@ void Gl::FinishInitialization ()
     //
     // GL_TEXTURE_ENV_COLOR = (0, 0, 0, 0)
 
+    // NOTE: the blending done below must be mimicked exactly by the
+    // color-only version of SetupTextureUnits.
+
     // set up texture unit 0 -- texturing and color masking -- we use
     // the glColor value instead of the GL_TEXTURE_ENV_COLOR value
     // for the color mask.
@@ -292,6 +295,9 @@ void Gl::SetupTextureUnits (
     // set up (disable) texture unit 0
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_TEXTURE_2D);
+
+    // NOTE: the blending done below must mimic exactly what is done by
+    // the GL_TEXTURE_ENV_MODE GL_COMBINE stuff in FinishInitialization.
 
     // calculate masked and biased color manually -- linearly interpolate
     // between color_mask and color_bias, using color_bias[Dim::A] as the

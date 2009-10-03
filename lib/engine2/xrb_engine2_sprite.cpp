@@ -122,11 +122,15 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
     }
 }
 
+// it's (theoretically) faster to use software transform
+#define USE_SOFTWARE_TRANSFORM 1
+
 void Engine2::Sprite::RenderGlTexture (
     Engine2::Object::DrawData const &draw_data,
     Float alpha_mask,
     GlTexture const &gltexture) const
 {
+#if !USE_SOFTWARE_TRANSFORM
     // set up the gl modelview matrix
     glMatrixMode(GL_MODELVIEW);
     // we have to push the matrix here (instead of loading the
@@ -145,6 +149,7 @@ void Engine2::Sprite::RenderGlTexture (
         ScaleFactors()[Dim::X],
         ScaleFactors()[Dim::Y],
         1.0f);
+#endif
 
     // calculate the color bias
     Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
@@ -156,6 +161,10 @@ void Engine2::Sprite::RenderGlTexture (
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+#if !USE_SOFTWARE_TRANSFORM
         static Sint16 const s_vertex_array[8] =
         {
             -1, -1,
@@ -164,10 +173,21 @@ void Engine2::Sprite::RenderGlTexture (
              1,  1
         };
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
         glVertexPointer(2, GL_SHORT, 0, s_vertex_array);
+#else
+        FloatVector2 vertex_array[4] =
+        {
+            FloatVector2(-1, -1),
+            FloatVector2( 1, -1),
+            FloatVector2(-1,  1),
+            FloatVector2( 1,  1)
+        };
+
+        for (Uint32 i = 0; i < 4; ++i)
+            vertex_array[i] = Transformation() * vertex_array[i];
+
+        glVertexPointer(2, GL_FLOAT, 0, vertex_array);
+#endif
 
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
@@ -181,8 +201,10 @@ void Engine2::Sprite::RenderGlTexture (
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
+#if !USE_SOFTWARE_TRANSFORM
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+#endif
 }
 
 void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)

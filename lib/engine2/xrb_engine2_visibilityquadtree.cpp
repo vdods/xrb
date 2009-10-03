@@ -139,6 +139,9 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     return retval;
 }
 
+// it's faster to not use depth test
+#define USE_DEPTH_TEST 0
+
 Uint32 Engine2::VisibilityQuadTree::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
@@ -165,6 +168,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
 
     // draw opaque objects while collecting transparent objects
     {
+#if USE_DEPTH_TEST
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         glClearDepth(1.0f);
@@ -172,14 +176,17 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
         // TODO: look into glPolygonOffset, as this might save having
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
+#endif // USE_DEPTH_TEST
 
         Draw(draw_loop_functor);
     }
 
     // sort transparent objects back-to-front and draw them
     {
+#if USE_DEPTH_TEST
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
+#endif // USE_DEPTH_TEST
         if (!transparent_object_vector->empty())
             std::sort(
                 &(*transparent_object_vector)[0],
@@ -222,6 +229,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
 
     // draw opaque objects while collecting transparent objects
     {
+#if USE_DEPTH_TEST
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
         glClearDepth(1.0f);
@@ -229,21 +237,24 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
         // TODO: look into glPolygonOffset, as this might save having
         // to clear the depth buffer for each ObjectLayer
         // TODO: use glDepthRange to set the per-ObjectLayer depth range
+#endif // USE_DEPTH_TEST
 
         DrawWrapped(draw_loop_functor);
     }
 
     // sort transparent objects back-to-front and draw them
     {
+#if USE_DEPTH_TEST
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
+#endif // USE_DEPTH_TEST
         if (!transparent_object_vector->empty())
         {
             std::sort(
                 &(*transparent_object_vector)[0],
                 &(*transparent_object_vector)[0]+transparent_object_vector->size(),
                 Object::TransparentObjectOrder());
-            // remove duplicates from transparent_object_vector, which should
+            // remove duplicates from transparent_object_vector, which should be
             // all contiguous because of the above sorting.
             Uint32 write = 0;
             Uint32 read = 0;
@@ -290,7 +301,7 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
     RenderContext const &render_context,
     Color const &color)
 {
-    if (!m_parent)
+    if (m_parent == NULL)
         DrawBounds(render_context, color);
 
     Float r_o2 = m_radius * 0.5f * Math::Sqrt(2.0f);
@@ -321,6 +332,10 @@ void Engine2::VisibilityQuadTree::Draw (
     ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
     ASSERT2(draw_loop_functor.ViewRadius() > 0.0f);
 
+    // return if the view doesn't intersect this node
+    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.ViewCenter(), draw_loop_functor.ViewRadius()))
+        return;
+
     // don't draw quadtrees whose radii are lower than the
     // gs_radius_limit_lower threshold -- a form of distance culling,
     // which gives a huge speedup and allows zooming to any level
@@ -331,10 +346,6 @@ void Engine2::VisibilityQuadTree::Draw (
     {
         return;
     }
-
-    // return if the view doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.ViewCenter(), draw_loop_functor.ViewRadius()))
-        return;
 
 //     DrawBounds(draw_loop_functor.ObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
 
@@ -360,14 +371,12 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
 
     Float side_length = SideLength();
     Float radius_sum = 2.0f*Radius() + draw_loop_functor.ViewRadius();
-    Float top = floor((draw_loop_functor.ViewCenter().m[1]+radius_sum)/side_length);
-    Float bottom = ceil((draw_loop_functor.ViewCenter().m[1]-radius_sum)/side_length);
-    Float left = ceil((draw_loop_functor.ViewCenter().m[0]-radius_sum)/side_length);
-    Float right = floor((draw_loop_functor.ViewCenter().m[0]+radius_sum)/side_length);
+    Float top = floor((draw_loop_functor.ViewCenter()[Dim::Y]+radius_sum)/side_length);
+    Float bottom = ceil((draw_loop_functor.ViewCenter()[Dim::Y]-radius_sum)/side_length);
+    Float left = ceil((draw_loop_functor.ViewCenter()[Dim::X]-radius_sum)/side_length);
+    Float right = floor((draw_loop_functor.ViewCenter()[Dim::X]+radius_sum)/side_length);
     FloatVector2 old_view_center(draw_loop_functor.ViewCenter());
     FloatVector2 view_offset;
-
-    glMatrixMode(GL_MODELVIEW);
 
     for (Float x = left; x <= right; x += 1.0f)
     {
@@ -380,6 +389,7 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
             {
                 draw_loop_functor.SetViewCenter(old_view_center - view_offset);
 
+                glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
                 glTranslatef(
                     view_offset[Dim::X],
