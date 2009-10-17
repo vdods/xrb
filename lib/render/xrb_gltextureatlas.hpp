@@ -37,6 +37,7 @@ public:
     Uint32 GlTextureFlags () const { return m_flags; }
     bool UsesSeparateAtlas () const;
     bool MipmapsDisabled () const;
+    bool UsesFilterNearest () const;
     GLuint Handle () const { return m_handle; }
     Uint32 GlTextureCount () const { return m_placed_gltexture_set.size(); }
     Uint32 AllocatedTextureByteCount () const { return m_allocated_texture_byte_count; }

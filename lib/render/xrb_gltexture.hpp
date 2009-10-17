@@ -38,7 +38,8 @@ public:
     {
         NONE                = 0,
         USES_SEPARATE_ATLAS = (1 << 0),
-        MIPMAPS_DISABLED    = (1 << 1)
+        MIPMAPS_DISABLED    = (1 << 1),
+        USES_FILTER_NEAREST = (1 << 2)
     };
 
     class LoadParameters : public ResourceLoadParameters
@@ -51,6 +52,7 @@ public:
         Uint32 Flags () const { return m_flags; }
         bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
         bool MipmapsDisabled () const { return (m_flags & MIPMAPS_DISABLED) != 0; }
+        bool UsesFilterNearest () const { return (m_flags & USES_FILTER_NEAREST) != 0; }
 
         virtual std::string ResourceName () const;
         virtual bool IsLessThan (ResourceLoadParameters const &p) const;

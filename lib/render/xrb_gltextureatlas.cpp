@@ -116,19 +116,15 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
 
     // there are restrictions by openGL ES (specifically for the PowerVR MBX
     // platform as used by the ipod touch and older versions of iphones).
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    if (MipmapsDisabled())
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    else
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    // this is the other option within the restriction as described above.
-    // it has lower visual quality, but may be faster.
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-    // this gets rid of almost all the texture atlas border bleeding,
-    // and is probably the fastest, but has the lowest visual quality.
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    GLint mag_filter = UsesFilterNearest() ? GL_NEAREST : GL_LINEAR;
+    GLint min_filter =
+        UsesFilterNearest() ?
+            (MipmapsDisabled() ? GL_NEAREST : GL_LINEAR_MIPMAP_NEAREST) :
+            (MipmapsDisabled() ? GL_LINEAR : GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
+    // another option for GL_TEXTURE_MIN_FILTER is GL_NEAREST_MIPMAP_NEAREST,
+    // which is probably the fastest, but is the lowest quality.
 
     // if a separate atlas is to be used (and mipmaps aren't disabled), then
     // let opengl take care of recalculating the mipmaps (this happens
@@ -205,6 +201,11 @@ bool GlTextureAtlas::UsesSeparateAtlas () const
 bool GlTextureAtlas::MipmapsDisabled () const
 {
     return (m_flags & GlTexture::MIPMAPS_DISABLED) != 0;
+}
+
+bool GlTextureAtlas::UsesFilterNearest () const
+{
+    return (m_flags & GlTexture::USES_FILTER_NEAREST) != 0;
 }
 
 GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32 gltexture_flags)
