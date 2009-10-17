@@ -61,6 +61,8 @@ void GlTexture::LoadParameters::Print (FILE *fptr) const
         fprintf(fptr, ", flags =");
         if (UsesSeparateAtlas())
             fprintf(fptr, " USES_SEPARATE_ATLAS");
+        if (MipmapsDisabled())
+            fprintf(fptr, " MIPMAPS_DISABLED");
     }
 }
 

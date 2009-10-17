@@ -37,7 +37,8 @@ public:
     enum
     {
         NONE                = 0,
-        USES_SEPARATE_ATLAS = (1 << 0)
+        USES_SEPARATE_ATLAS = (1 << 0),
+        MIPMAPS_DISABLED    = (1 << 1)
     };
 
     class LoadParameters : public ResourceLoadParameters
@@ -49,6 +50,7 @@ public:
         std::string const &Path () const { return m_path; }
         Uint32 Flags () const { return m_flags; }
         bool UsesSeparateAtlas () const { return (m_flags & USES_SEPARATE_ATLAS) != 0; }
+        bool MipmapsDisabled () const { return (m_flags & MIPMAPS_DISABLED) != 0; }
 
         virtual std::string ResourceName () const;
         virtual bool IsLessThan (ResourceLoadParameters const &p) const;

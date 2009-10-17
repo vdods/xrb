@@ -94,7 +94,7 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
     m_allocated_texture_byte_count(0),
     m_used_texture_byte_count(0)
 {
-    if (gltexture_flags & GlTexture::USES_SEPARATE_ATLAS)
+    if (UsesSeparateAtlas())
     {
         // nothing to check (yet)
     }
@@ -117,7 +117,10 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
     // there are restrictions by openGL ES (specifically for the PowerVR MBX
     // platform as used by the ipod touch and older versions of iphones).
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    if (MipmapsDisabled())
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     // this is the other option within the restriction as described above.
     // it has lower visual quality, but may be faster.
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -127,11 +130,12 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 
-    // if a separate atlas is to be used, then let opengl take care of recalculating
-    // the mipmaps (this happens automatically when level 0 is changed).
-    if (m_flags & GlTexture::USES_SEPARATE_ATLAS)
+    // if a separate atlas is to be used (and mipmaps aren't disabled), then
+    // let opengl take care of recalculating the mipmaps (this happens
+    // automatically when level 0 is changed).
+    if (UsesSeparateAtlas() && !MipmapsDisabled())
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    // otherwise, we'll calculate the mipmaps manually
+    // otherwise, we'll calculate the mipmaps manually (or not at all)
     else
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 
@@ -148,7 +152,7 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
         NULL);              // NULL pixel data indicates openGL should allocate the data
 
     // allocate the mipmap textures manually if necessary.
-    if ((m_flags & GlTexture::USES_SEPARATE_ATLAS) == 0)
+    if (!UsesSeparateAtlas() && !MipmapsDisabled())
     {
         Uint32 mipmap_level = 1;
         ScreenCoordVector2 s(m_size / 2);
@@ -193,6 +197,16 @@ GlTextureAtlas::~GlTextureAtlas ()
     glDeleteTextures(1, &m_handle);
 }
 
+bool GlTextureAtlas::UsesSeparateAtlas () const
+{
+    return (m_flags & GlTexture::USES_SEPARATE_ATLAS) != 0;
+}
+
+bool GlTextureAtlas::MipmapsDisabled () const
+{
+    return (m_flags & GlTexture::MIPMAPS_DISABLED) != 0;
+}
+
 GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32 gltexture_flags)
 {
     ASSERT1(gltexture_flags == m_flags && "incompatible atlas");
@@ -201,9 +215,9 @@ GlTexture *GlTextureAtlas::AttemptToPlaceTexture (Texture const &texture, Uint32
     if (texture.Width() > m_size[Dim::X] || texture.Height() > m_size[Dim::Y])
         return NULL;
 
-    // separate (easier) handling for GlTexture::USES_SEPARATE_ATLAS, since
+    // separate (easier) handling for UsesSeparateAtlas() cases, since
     // the mipmaps are all done automatically.
-    if (m_flags & GlTexture::USES_SEPARATE_ATLAS)
+    if (UsesSeparateAtlas())
     {
         ASSERT1(m_placed_gltexture_set.empty());
         Singleton::Gl().BindAtlas(*this);
@@ -287,7 +301,7 @@ Texture *GlTextureAtlas::Dump (Uint32 mipmap_level) const
 
 void GlTextureAtlas::AssertThatTextureJives (Texture const &texture) const
 {
-    if (m_flags & GlTexture::USES_SEPARATE_ATLAS)
+    if (UsesSeparateAtlas())
     {
         // nothing to check so far
     }
