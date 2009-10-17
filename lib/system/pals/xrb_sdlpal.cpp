@@ -892,7 +892,8 @@ Xrb::Texture *GenerateTexture (
         ASSERT1(error == 0);
         ASSERT1(ft_face->glyph->format == FT_GLYPH_FORMAT_BITMAP);
 
-        // copy the bitmap data over
+        // copy the bitmap data over, flipping it upside-down because FT
+        // uses left-handed coordinates, but Texture uses right-handed.
         // TODO: real method which does proper pitch detection
         ASSERT1(ft_face->glyph->bitmap.pitch == glyph.m_size[Xrb::Dim::X]);
         Xrb::Uint8 const *source_pixel_data = ft_face->glyph->bitmap.buffer;
@@ -900,7 +901,7 @@ Xrb::Texture *GenerateTexture (
         {
             Xrb::Uint8 *dest_pixel_data =
                 texture->Data() +
-                (glyph.m_texture_coordinates[Xrb::Dim::Y] + y) * texture_size[Xrb::Dim::X] * 4 +
+                (glyph.m_texture_coordinates[Xrb::Dim::Y] + (glyph.m_size[Xrb::Dim::Y]-1-y)) * texture_size[Xrb::Dim::X] * 4 +
                  glyph.m_texture_coordinates[Xrb::Dim::X] * 4;
 
             for (Xrb::Sint32 x = 0; x < glyph.m_size[Xrb::Dim::X]; ++x)

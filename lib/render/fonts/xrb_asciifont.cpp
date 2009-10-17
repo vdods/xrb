@@ -409,32 +409,13 @@ void AsciiFont::DrawGlyph (
             m_glyph_specification[glyph_index].m_size[Dim::Y] -
             PixelHeight());
 
-    // the reason the texture coordinates look backwards (bottom on top)
-    // is because the texture coordinates use a left-handed coordinate
-    // system.
     {
-/*
-        ScreenCoordVector2 glyph_texture_coordinate_array[4] =
-        {
-            ScreenCoordVector2(glyph_texture_coordinates.TopLeft().m),
-            ScreenCoordVector2(glyph_texture_coordinates.TopRight().m),
-            ScreenCoordVector2(glyph_texture_coordinates.BottomLeft().m),
-            ScreenCoordVector2(glyph_texture_coordinates.BottomRight().m)
-        };
-        ScreenCoordVector2 glyph_vertex_coordinate_array[4] =
-        {
-            ScreenCoordVector2(glyph_vertex_coordinates.BottomLeft().m),
-            ScreenCoordVector2(glyph_vertex_coordinates.BottomRight().m),
-            ScreenCoordVector2(glyph_vertex_coordinates.TopLeft().m),
-            ScreenCoordVector2(glyph_vertex_coordinates.TopRight().m)
-        };
-*/
         Sint16 glyph_texture_coordinate_array[8] =
         {
-            glyph_texture_coordinates.TopLeft()[Dim::X], glyph_texture_coordinates.TopLeft()[Dim::Y],
-            glyph_texture_coordinates.TopRight()[Dim::X], glyph_texture_coordinates.TopRight()[Dim::Y],
             glyph_texture_coordinates.BottomLeft()[Dim::X], glyph_texture_coordinates.BottomLeft()[Dim::Y],
-            glyph_texture_coordinates.BottomRight()[Dim::X], glyph_texture_coordinates.BottomRight()[Dim::Y]
+            glyph_texture_coordinates.BottomRight()[Dim::X], glyph_texture_coordinates.BottomRight()[Dim::Y],
+            glyph_texture_coordinates.TopLeft()[Dim::X], glyph_texture_coordinates.TopLeft()[Dim::Y],
+            glyph_texture_coordinates.TopRight()[Dim::X], glyph_texture_coordinates.TopRight()[Dim::Y]
         };
         Sint16 glyph_vertex_coordinate_array[8] =
         {
@@ -445,11 +426,9 @@ void AsciiFont::DrawGlyph (
         };
 
         glVertexPointer(2, GL_SHORT, 0, glyph_vertex_coordinate_array);
-//         glVertexPointer(2, GL_INT, 0, glyph_vertex_coordinate_array);
 
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, glyph_texture_coordinate_array);
-//         glTexCoordPointer(2, GL_INT, 0, glyph_texture_coordinate_array);
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
