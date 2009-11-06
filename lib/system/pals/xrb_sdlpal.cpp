@@ -512,7 +512,7 @@ Xrb::Event *SDLPal::PollEvent (Xrb::Screen const *screen, Xrb::Float time)
                     screen->DeviceSize()[Xrb::Dim::Y] - static_cast<Xrb::ScreenCoord>(mouse_motion_event.y));
                 Xrb::ScreenCoordVector2 event_delta(
                     mouse_motion_event.xrel,
-                    -mouse_motion_event.yrel); 
+                    -mouse_motion_event.yrel);
                 retval = new Xrb::EventMouseMotion(
                     Xrb::Singleton::InputState().IsKeyPressed(Xrb::Key::LEFTMOUSE),
                     Xrb::Singleton::InputState().IsKeyPressed(Xrb::Key::MIDDLEMOUSE),

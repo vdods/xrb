@@ -105,6 +105,25 @@ Pal::Status Texture::Save (std::string const &path) const
     return Singleton::Pal().SaveImage(path.c_str(), *this);
 }
 
+void Texture::VerticallyFlip ()
+{
+    ASSERT1(m_data != NULL && "this should never happen");
+    ASSERT1(m_size[Dim::X] > 0 && m_size[Dim::Y] > 0);
+    Uint32 row_size = m_size[Dim::X] * 4;
+    Uint8 *temp_row = new Uint8[row_size];
+    Uint8 *row0 = m_data;
+    Uint8 *row1 = m_data + (m_size[Dim::Y]-1)*row_size;
+    while (row0 < row1)
+    {
+        memcpy(temp_row, row0, row_size);
+        memcpy(row0, row1, row_size);
+        memcpy(row1, temp_row, row_size);
+        row0 += row_size;
+        row1 -= row_size;
+    }
+    delete[] temp_row;
+}
+
 Texture::Texture ()
     :
     m_bit_depth(0),

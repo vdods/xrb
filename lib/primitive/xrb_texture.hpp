@@ -90,6 +90,12 @@ public:
         return m_data + (y*m_size[Dim::X]+x)*4;
     }
 
+    /** This is useful for implementing Pal::LoadImage when you have a
+      * shitty API for loading images that won't flip it by request.
+      * @brief Flips the pixel data upside-down.
+      */
+    void VerticallyFlip ();
+
 private:
 
     // private constructor so you must use Create()

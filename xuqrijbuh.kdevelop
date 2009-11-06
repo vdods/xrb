@@ -276,7 +276,7 @@
       <root>/usr/lib/qt</root>
       <includestyle>3</includestyle>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
-      <qmake></qmake>
+      <qmake>/usr/bin/qmake</qmake>
       <designer></designer>
       <designerpluginpaths/>
     </qt>

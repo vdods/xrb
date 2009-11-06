@@ -142,7 +142,7 @@ GlTextureAtlas::GlTextureAtlas (ScreenCoordVector2 const &size, Uint32 gltexture
         GL_RGBA,            // internal format
         m_size[Dim::X],     // width
         m_size[Dim::Y],     // height
-        0,                  // width of the border (must be 0 or 1)
+        0,                  // width of the border (must be 0 in openGL ES)
         GL_RGBA,            // format of the input pixel data
         GL_UNSIGNED_BYTE,   // data type of the input pixel data
         NULL);              // NULL pixel data indicates openGL should allocate the data
