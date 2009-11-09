@@ -16,7 +16,7 @@
 #include <fstream>
 #include <string>
 
-#include "xrb_datafileparser.h"
+#include "xrb_datafileparser.hpp"
 
 namespace Xrb
 {
@@ -46,20 +46,20 @@ public:
     void EmitError (std::string const &message);
     void EmitError (DataFileLocation const &file_location, std::string const &message);
 
-    DataFileParser::Token::Type Scan (DataFileValue **scanned_token);
+    DataFileParser::Token Scan ();
 
 private:
 
-    DataFileParser::Token::Type ScanIdentifier (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanOperator (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanNumeric (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanBinaryNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive);
-    DataFileParser::Token::Type ScanOctalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive, char first_char);
-    DataFileParser::Token::Type ScanDecimalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive, char first_char);
-    DataFileParser::Token::Type ScanHexadecimalNumeric (DataFileValue **scanned_token, bool is_signed, bool is_positive);
-    DataFileParser::Token::Type ScanFloatingPointNumeric (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanCharacterLiteral (DataFileValue **scanned_token);
-    DataFileParser::Token::Type ScanStringLiteral (DataFileValue **scanned_token);
+    DataFileParser::Token ScanIdentifier ();
+    DataFileParser::Token ScanOperator ();
+    DataFileParser::Token ScanNumeric ();
+    DataFileParser::Token ScanBinaryNumeric (bool is_signed, bool is_positive);
+    DataFileParser::Token ScanOctalNumeric (bool is_signed, bool is_positive, char first_char);
+    DataFileParser::Token ScanDecimalNumeric (bool is_signed, bool is_positive, char first_char);
+    DataFileParser::Token ScanHexadecimalNumeric (bool is_signed, bool is_positive);
+    DataFileParser::Token ScanFloatingPointNumeric ();
+    DataFileParser::Token ScanCharacterLiteral ();
+    DataFileParser::Token ScanStringLiteral ();
 
     void ScanComment ();
 

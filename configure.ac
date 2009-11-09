@@ -11,7 +11,9 @@ AM_PROG_LIBTOOL
 AC_C_BIGENDIAN
 # checks for the strip program for `make install-strip`
 AC_CHECK_TOOL(STRIP, strip)
-# checks for trison, a parser for LALR(1) grammars
+# checks for reflex, a lexical scanner generator
+AC_CHECK_TOOL(REFLEX, reflex)
+# checks for trison, a parser for LALR(k) grammars
 AC_CHECK_TOOL(TRISON, trison)
 # checks for doxygen (for `make doc`)
 AC_CHECK_TOOL(DOXYGEN, doxygen)
@@ -24,9 +26,10 @@ AC_CHECK_TOOL(DOT, dot)
 # processing for above tool checks
 ##############################################################################
 
-# this conditional will be used by Makefile.am in lib for determining
-# wether or not to generate the trison parsers from source, or use the
-# pregenerated parsers.
+# these conditional will be used by Makefile.am in lib for determining
+# wether or not to generate the reflex scanners and trison parsers from
+# source, or use the pregenerated parsers.
+AM_CONDITIONAL(REFLEX_EXISTS, [test "${REFLEX}" != ""])
 AM_CONDITIONAL(TRISON_EXISTS, [test "${TRISON}" != ""])
 
 ##############################################################################

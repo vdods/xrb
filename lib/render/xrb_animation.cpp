@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-#include "xrb_datafileparser.h"
+#include "xrb_datafileparser.hpp"
 #include "xrb_datafilevalue.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_math.hpp"

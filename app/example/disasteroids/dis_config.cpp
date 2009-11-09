@@ -10,7 +10,7 @@
 
 #include "dis_config.hpp"
 
-#include "xrb_datafileparser.h"
+#include "xrb_datafileparser.hpp"
 #include "xrb_datafilevalue.hpp"
 #include "xrb_inputstate.hpp"
 #include "xrb_util.hpp"

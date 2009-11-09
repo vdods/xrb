@@ -12,6 +12,7 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 ##############################################################################
 
 .PHONY: \
+	datafileparser \
 	doc \
 	lib
 
@@ -327,7 +328,7 @@ include_HEADERS = \
     lib/math/xrb_vector.hpp \
     \
     lib/parsers/xrb_datafilelocation.hpp \
-    lib/parsers/xrb_datafileparser.h \
+    lib/parsers/xrb_datafileparser.hpp \
     lib/parsers/xrb_datafilescanner.hpp \
     lib/parsers/xrb_datafilevalue.hpp \
     \
@@ -383,9 +384,10 @@ include_HEADERS = \
 ##############################################################################
 
 if TRISON_EXISTS
-$(top_srcdir)/lib/parsers/xrb_datafileparser.h: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
+datafileparser: $(top_srcdir)/lib/parsers/xrb_datafileparser.hpp
+$(top_srcdir)/lib/parsers/xrb_datafileparser.hpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
 $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.trison
-	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-basename $(top_srcdir)/lib/parsers/xrb_datafileparser --generate-states-file $(top_srcdir)/lib/parsers/xrb_datafileparser.states
+	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parsers --generate-npda-dot-graph xrb_datafileparser.npda.dot --generate-dpda-dot-graph xrb_datafileparser.dpda.dot --generate-dpda-states-file xrb_datafileparser.dpda.states
 endif
 
 ##############################################################################

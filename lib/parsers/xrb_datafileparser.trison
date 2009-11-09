@@ -8,7 +8,17 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-%parser_header_file_top%{
+%targets cpp
+
+
+%target.cpp.header_filename "xrb_datafileparser.hpp"
+%target.cpp.implementation_filename "xrb_datafileparser.cpp"
+
+
+%target.cpp.top_of_header_file %{
+#if !defined(_XRB_DATAFILEPARSER_HPP_)
+#define _XRB_DATAFILEPARSER_HPP_
+
 #include "xrb.hpp"
 
 #include <string>
@@ -20,13 +30,10 @@ class DataFileLocation;
 class DataFileScanner;
 class DataFileStructure;
 class DataFileValue;
-%} // end of %parser_header_file_top
-
-%parser_class_name "DataFileParser"
-
-%parser_parse_method_access "private:"
-
-%parser_class_methods_and_members{
+%}
+%target.cpp.class_name DataFileParser
+%target.cpp.parse_method_access "private:"
+%target.cpp.bottom_of_class {
     enum ReturnCode
     {
         RC_SUCCESS = 0,
@@ -36,22 +43,20 @@ class DataFileValue;
         RC_ERRORS_ENCOUNTERED
     }; // end of enum ReturnCode
 
-    inline DataFileStructure *AcceptedStructure () const
+    DataFileStructure *AcceptedStructure () const
     {
-        return DStaticCast<DataFileStructure *>(AcceptedToken());
+        return DStaticCast<DataFileStructure *>(m_accepted_value);
     }
-    inline DataFileStructure *StealAcceptedStructure ()
+    DataFileStructure *StealAcceptedStructure ()
     {
         DataFileStructure *accepted_structure = AcceptedStructure();
-        ClearAcceptedToken();
+        m_accepted_value = NULL;
         return accepted_structure;
     }
 
     ReturnCode Parse (std::string const &input_path);
 
 private:
-
-    Token::Type Scan ();
 
     void EmitWarning (std::string const &message);
     void EmitWarning (DataFileLocation const &file_location, std::string const &message);
@@ -60,13 +65,16 @@ private:
     void EmitError (DataFileLocation const &file_location, std::string const &message);
 
     DataFileScanner *m_scanner;
-} // end of %parser_class_methods_and_members
-
-%parser_header_file_bottom%{
+    DataFileValue *m_accepted_value;
+}
+%target.cpp.bottom_of_header_file %{
 } // end of namespace Xrb
-%} // end of %parser_header_file_bottom
 
-%parser_implementation_file_top%{
+#endif // !defined(_XRB_DATAFILEPARSER_HPP_)
+%}
+
+
+%target.cpp.top_of_implementation_file %{
 #include <sstream>
 
 #include "xrb_datafilelocation.hpp"
@@ -78,35 +86,12 @@ private:
 
 namespace Xrb
 {
-%} // end of %parser_implementation_file_top
 
-%parser_constructor_actions{
-    m_scanner = new DataFileScanner();
-}
-
-%parser_destructor_actions{
-    ASSERT1(m_scanner != NULL);
-    Delete(m_scanner);
-    delete StealAcceptedStructure();
-}
-
-%parser_start_of_parse_method_actions%{
-    delete StealAcceptedStructure();
-%}
-
-%parser_end_of_parse_method_actions%{
-    m_scanner->Close();
-%}
-
-%parser_throw_away_token_actions{
-    Delete(token);
-}
-
-%parser_implementation_file_bottom%{
 DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
 {
     ASSERT1(m_scanner != NULL);
     ASSERT1(!m_scanner->IsOpen());
+
     // if there are any pipe characters in the path, return failure
     if (input_path.find_first_of("|") != static_cast<std::string::size_type>(-1))
         return RC_INVALID_FILENAME;
@@ -116,7 +101,7 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
         return RC_FILE_OPEN_FAILURE;
 
     // start parsing, and return parse error if we got an unhandled error
-    if (Parse() == PRC_UNHANDLED_PARSE_ERROR)
+    if (Parse(&m_accepted_value) != PRC_SUCCESS)
         return RC_PARSE_ERROR;
 
     // if any errors were encountered, return parse error
@@ -125,12 +110,6 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
 
     // otherwise return success
     return RC_SUCCESS;
-}
-
-DataFileParser::Token::Type DataFileParser::Scan ()
-{
-    ASSERT1(m_scanner != NULL);
-    return m_scanner->Scan(&m_lookahead_token);
 }
 
 void DataFileParser::EmitWarning (std::string const &message)
@@ -156,48 +135,76 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
     ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(file_location, message);
 }
-
+%}
+%target.cpp.constructor_actions {
+//     DebugSpew(true);
+    m_scanner = new DataFileScanner();
+    m_accepted_value = NULL;
+}
+%target.cpp.destructor_actions {
+    ASSERT1(m_scanner != NULL);
+    Delete(m_scanner);
+    delete StealAcceptedStructure();
+}
+%target.cpp.top_of_parse_method_actions %{
+    delete StealAcceptedStructure();
+%}
+%target.cpp.bottom_of_parse_method_actions %{
+    m_scanner->Close();
+%}
+%target.cpp.bottom_of_implementation_file %{
 } // end of namespace Xrb
-%} // end of %parser_implementation_file_bottom
+%}
 
-%parser_base_assigned_type "DataFileValue *"
-%parser_base_assigned_type_sentinel "NULL"
 
-%parser_custom_cast "DStaticCast"
+%target.cpp.token_data_type "DataFileValue *"
+%target.cpp.token_data_default "NULL"
+%target.cpp.custom_token_data_type_cast DStaticCast
+%target.cpp.throw_away_token_actions {
+    Delete(token_data);
+}
+%target.cpp.scan_actions {
+    ASSERT1(m_scanner != NULL);
+    return m_scanner->Scan();
+}
 
-%token BAD_TOKEN
-%token BOOLEAN %type "DataFileBoolean *"
-%token SINT32 %type "DataFileSint32 *"
-%token UINT32 %type "DataFileUint32 *"
-%token FLOAT %type "DataFileFloat *"
-%token CHARACTER %type "DataFileCharacter *"
-%token STRING_FRAGMENT %type "DataFileString *"
-%token IDENTIFIER %type "DataFileString *"
-%token ';' ',' '+' '{' '}' '[' ']'
 
-%start data_file
+%target.cpp.generate_debug_spew_code
+
+
+%terminal BAD_TOKEN
+%terminal BOOLEAN %type.cpp "DataFileBoolean *"
+%terminal SINT32 %type.cpp "DataFileSint32 *"
+%terminal UINT32 %type.cpp "DataFileUint32 *"
+%terminal FLOAT %type.cpp "DataFileFloat *"
+%terminal CHARACTER %type.cpp "DataFileCharacter *"
+%terminal STRING_FRAGMENT %type.cpp "DataFileString *"
+%terminal IDENTIFIER %type.cpp "DataFileString *"
+%terminal ';' ',' '+' '{' '}' '[' ']'
+
+%default_parse_nonterminal data_file
 
 %%
 
-data_file %type "DataFileStructure *"
+%nonterminal data_file %type.cpp "DataFileStructure *"
 :
     element_list:element_list
-    {
+    %target.cpp {
         ASSERT1(element_list != NULL);
         return element_list;
     }
 |
     %error
-    {
+    %target.cpp {
         EmitError(FL, "general syntax error");
         return new DataFileStructure();
     }
 ;
 
-element_list %type "DataFileStructure *"
+%nonterminal element_list %type.cpp "DataFileStructure *"
 :
     element_list:element_list element:element
-    {
+    %target.cpp {
         ASSERT1(element_list != NULL);
 
         if (element != NULL)
@@ -215,15 +222,16 @@ element_list %type "DataFileStructure *"
         return element_list;
     }
 |
-    {
+    // empty reduction rule
+    %target.cpp {
         return new DataFileStructure();
     }
 ;
 
-element %type "DataFileKeyPair *"
+%nonterminal element %type.cpp "DataFileKeyPair *"
 :
     IDENTIFIER:key value:value ';'
-    {
+    %target.cpp {
         ASSERT1(key != NULL);
         if (value == NULL)
         {
@@ -237,7 +245,7 @@ element %type "DataFileKeyPair *"
     }
 |
     IDENTIFIER:key %error ';'
-    {
+    %target.cpp {
         ASSERT1(key != NULL);
         std::ostringstream out;
         out << "syntax error in element with key \"" << key->Value() << "\"";
@@ -247,57 +255,57 @@ element %type "DataFileKeyPair *"
     }
 |
     %error ';'
-    {
+    %target.cpp {
         EmitError(FL, "syntax error in element");
         return NULL;
     }
 ;
 
-structure %type "DataFileStructure *"
+%nonterminal structure %type.cpp "DataFileStructure *"
 :
     '{' element_list:element_list '}'
-    {
+    %target.cpp {
         ASSERT1(element_list != NULL);
         return element_list;
     }
 |
     '{' %error '}'
-    {
+    %target.cpp {
         EmitError(FL, "syntax error in structure");
         return new DataFileStructure();
     }
 ;
 
-array %type "DataFileArray *"
+%nonterminal array %type.cpp "DataFileArray *"
 :
     '[' value_list:value_list ']'
-    {
+    %target.cpp {
         ASSERT1(value_list != NULL);
         return value_list;
     }
 |
     '[' value_list:value_list ',' ']'
-    {
+    %target.cpp {
         ASSERT1(value_list != NULL);
         return value_list;
     }
 |
     '[' ']'
-    {
+    %target.cpp {
         return new DataFileArray();
     }
 |
     '[' %error ']'
-    {
+    %target.cpp {
         EmitError(FL, "syntax error in array");
         return NULL;
     }
 ;
 
-value_list %type "DataFileArray *"
+%nonterminal value_list %type.cpp "DataFileArray *"
 :
     value_list:value_list ',' value:value
-    {
+    %target.cpp {
         ASSERT1(value_list != NULL);
         if (value != NULL)
         {
@@ -315,7 +323,7 @@ value_list %type "DataFileArray *"
     }
 |
     value:value
-    {
+    %target.cpp {
         DataFileArray *value_list = new DataFileArray();
         if (value != NULL)
         {
@@ -333,61 +341,25 @@ value_list %type "DataFileArray *"
     }
 ;
 
-value %type "DataFileValue *"
+%nonterminal value %type.cpp "DataFileValue *"
 :
-    BOOLEAN:value
-    {
-        return value;
-    }
-|
-    SINT32:value
-    {
-        return value;
-    }
-|
-    UINT32:value
-    {
-        return value;
-    }
-|
-    FLOAT:value
-    {
-        return value;
-    }
-|
-    CHARACTER:value
-    {
-        return value;
-    }
-|
-    string:value
-    {
-        return value;
-    }
-|
-    structure:value
-    {
-        return value;
-    }
-|
-    array:value
-    {
-        return value;
-    }
+    BOOLEAN:value %target.cpp { return value; }
+|   SINT32:value %target.cpp { return value; }
+|   UINT32:value %target.cpp { return value; }
+|   FLOAT:value %target.cpp { return value; }
+|   CHARACTER:value %target.cpp { return value; }
+|   string:value %target.cpp { return value; }
+|   structure:value %target.cpp { return value; }
+|   array:value %target.cpp { return value; }
 /*
-|
-    %error
-    {
-        EmitError(FL, "syntax error in value");
-        return NULL;
-    }
+|   %error %target.cpp { EmitError(FL, "syntax error in value"); return NULL; }
 */
 ;
 
-string %type "DataFileString *"
+%nonterminal string %type.cpp "DataFileString *"
 :
     string:string '+' STRING_FRAGMENT:string_fragment
-    {
+    %target.cpp {
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->Value());
@@ -396,13 +368,13 @@ string %type "DataFileString *"
     }
 |
     STRING_FRAGMENT:string_fragment
-    {
+    %target.cpp {
         ASSERT1(string_fragment != NULL);
         return string_fragment;
     }
 |
     string:string STRING_FRAGMENT:string_fragment
-    {
+    %target.cpp {
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->Value());

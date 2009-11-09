@@ -11,7 +11,7 @@
 #include "dis_highscores.hpp"
 
 #include "dis_util.hpp"
-#include "xrb_datafileparser.h"
+#include "xrb_datafileparser.hpp"
 #include "xrb_datafilevalue.hpp"
 
 using namespace Xrb;
