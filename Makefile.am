@@ -208,11 +208,11 @@ lib_libxrb_la_SOURCES = \
     lib/math/xrb_transform2.cpp \
     lib/math/xrb_vector.cpp \
     \
-    lib/parsers/xrb_datafilelocation.cpp \
     lib/parsers/xrb_datafileparser.cpp \
     lib/parsers/xrb_datafileparser.trison \
     lib/parsers/xrb_datafilescanner.cpp \
     lib/parsers/xrb_datafilevalue.cpp \
+    lib/parsers/xrb_filoc.cpp \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_ntuple.cpp \
@@ -327,10 +327,10 @@ include_HEADERS = \
     lib/math/xrb_transform2.hpp \
     lib/math/xrb_vector.hpp \
     \
-    lib/parsers/xrb_datafilelocation.hpp \
     lib/parsers/xrb_datafileparser.hpp \
     lib/parsers/xrb_datafilescanner.hpp \
     lib/parsers/xrb_datafilevalue.hpp \
+    lib/parsers/xrb_filoc.hpp \
     \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_color.hpp \

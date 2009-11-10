@@ -8,26 +8,36 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_datafilelocation.hpp"
+#include "xrb_filoc.hpp"
 
 #include <sstream>
 
 namespace Xrb
 {
 
-DataFileLocation const DataFileLocation::ms_invalid;
+FiLoc const FiLoc::ms_invalid;
 
-std::string DataFileLocation::Text () const
+std::string FiLoc::AsString () const
 {
-    std::ostringstream buffer;
-    buffer << m_path << ":" << m_line;
-    return buffer.str();
+    ASSERT1(this != &ms_invalid && "can't use FiLoc::ms_invalid in this manner");
+    ASSERT1(IsValid());
+
+    std::ostringstream out;
+    out << m_filename;
+    if (m_line_number > 0)
+        out << ":" << m_line_number;
+    return out.str();
 }
 
-std::ostream &operator << (std::ostream &stream, DataFileLocation const &file_location)
+void FiLoc::IncrementLineNumber (Uint32 by_value)
 {
-    ASSERT1(file_location.IsValid());
-    return stream << file_location.Text();
+    ASSERT1(m_line_number > 0 && "don't use this on non-line-number-using FiLocs");
+    m_line_number += by_value;
+}
+
+std::ostream &operator << (std::ostream &stream, FiLoc const &filoc)
+{
+    return stream << filoc.AsString();
 }
 
 } // end of namespace Xrb

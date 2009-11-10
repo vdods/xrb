@@ -23,10 +23,11 @@
 
 #include <string>
 
+#include "xrb_filoc.hpp"
+
 namespace Xrb
 {
 
-class DataFileLocation;
 class DataFileScanner;
 class DataFileStructure;
 class DataFileValue;
@@ -58,11 +59,8 @@ class DataFileValue;
 
 private:
 
-    void EmitWarning (std::string const &message);
-    void EmitWarning (DataFileLocation const &file_location, std::string const &message);
-
-    void EmitError (std::string const &message);
-    void EmitError (DataFileLocation const &file_location, std::string const &message);
+    void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+    void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
 
     DataFileScanner *m_scanner;
     DataFileValue *m_accepted_value;
@@ -77,12 +75,11 @@ private:
 %target.cpp.top_of_implementation_file %{
 #include <sstream>
 
-#include "xrb_datafilelocation.hpp"
 #include "xrb_datafilescanner.hpp"
 #include "xrb_datafilevalue.hpp"
 
 #undef FL
-#define FL DataFileLocation(m_scanner->InputPath(), m_scanner->LineNumber())
+#define FL (m_scanner->GetFiLoc())
 
 namespace Xrb
 {
@@ -105,35 +102,23 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
         return RC_PARSE_ERROR;
 
     // if any errors were encountered, return parse error
-    if (m_scanner->WereErrorsEncountered())
+    if (m_scanner->ErrorsWereEncountered())
         return RC_ERRORS_ENCOUNTERED;
 
     // otherwise return success
     return RC_SUCCESS;
 }
 
-void DataFileParser::EmitWarning (std::string const &message)
+void DataFileParser::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
-    m_scanner->EmitWarning(message);
+    m_scanner->EmitWarning(message, filoc);
 }
 
-void DataFileParser::EmitWarning (DataFileLocation const &file_location, std::string const &message)
+void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
-    m_scanner->EmitWarning(file_location, message);
-}
-
-void DataFileParser::EmitError (std::string const &message)
-{
-    ASSERT1(m_scanner != NULL);
-    m_scanner->EmitError(message);
-}
-
-void DataFileParser::EmitError (DataFileLocation const &file_location, std::string const &message)
-{
-    ASSERT1(m_scanner != NULL);
-    m_scanner->EmitError(file_location, message);
+    m_scanner->EmitError(message, filoc);
 }
 %}
 %target.cpp.constructor_actions {
@@ -170,6 +155,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 
 
 %target.cpp.generate_debug_spew_code
+%target.cpp.dont_generate_timestamps
 
 
 %terminal BAD_TOKEN
@@ -196,7 +182,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 |
     %error
     %target.cpp {
-        EmitError(FL, "general syntax error");
+        EmitError("general syntax error", FL);
         return new DataFileStructure();
     }
 ;
@@ -215,7 +201,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
             }
             catch (std::string const &exception)
             {
-                EmitError(FL, exception);
+                EmitError(exception, FL);
                 Delete(element);
             }
         }
@@ -249,14 +235,14 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
         ASSERT1(key != NULL);
         std::ostringstream out;
         out << "syntax error in element with key \"" << key->Value() << "\"";
-        EmitError(FL, out.str());
+        EmitError(out.str(), FL);
         Delete(key);
         return NULL;
     }
 |
     %error ';'
     %target.cpp {
-        EmitError(FL, "syntax error in element");
+        EmitError("syntax error in element", FL);
         return NULL;
     }
 ;
@@ -271,7 +257,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 |
     '{' %error '}'
     %target.cpp {
-        EmitError(FL, "syntax error in structure");
+        EmitError("syntax error in structure", FL);
         return new DataFileStructure();
     }
 ;
@@ -297,7 +283,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 |
     '[' %error ']'
     %target.cpp {
-        EmitError(FL, "syntax error in array");
+        EmitError("syntax error in array", FL);
         return NULL;
     }
 ;
@@ -315,7 +301,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
             }
             catch (std::string const &exception)
             {
-                EmitError(FL, exception);
+                EmitError(exception, FL);
                 Delete(value);
             }
         }
@@ -352,7 +338,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
 |   structure:value %target.cpp { return value; }
 |   array:value %target.cpp { return value; }
 /*
-|   %error %target.cpp { EmitError(FL, "syntax error in value"); return NULL; }
+|   %error %target.cpp { EmitError("syntax error in value", FL); return NULL; }
 */
 ;
 
@@ -379,7 +365,7 @@ void DataFileParser::EmitError (DataFileLocation const &file_location, std::stri
         ASSERT1(string_fragment != NULL);
         string->AppendString(string_fragment->Value());
         Delete(string_fragment);
-        EmitError(FL, "use + to concatenate strings (or did you forget a comma?)");
+        EmitError("use + to concatenate strings (or did you forget a comma?)", FL);
         return string;
     }
 ;

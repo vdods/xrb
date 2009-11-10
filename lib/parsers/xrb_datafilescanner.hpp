@@ -16,12 +16,12 @@
 #include <fstream>
 #include <string>
 
+#include "xrb_filoc.hpp"
 #include "xrb_datafileparser.hpp"
 
 namespace Xrb
 {
 
-class DataFileLocation;
 class DataFileValue;
 
 class DataFileScanner
@@ -31,20 +31,16 @@ public:
     DataFileScanner ();
     ~DataFileScanner ();
 
-    inline bool IsOpen () const { return m_input.is_open(); }
-    inline std::string const &InputPath () const { return m_input_path; }
-    inline Uint32 LineNumber () const { return m_line_number; }
-    inline bool WereWarningsEncountered () const { return m_were_warnings_encountered; }
-    inline bool WereErrorsEncountered () const { return m_were_errors_encountered; }
+    bool IsOpen () const { return m_input.is_open(); }
+    FiLoc const &GetFiLoc () const { return m_filoc; }
+    bool WarningsWereEncountered () const { return m_warnings_were_encountered; }
+    bool ErrorsWereEncountered () const { return m_errors_were_encountered; }
 
     bool Open (std::string const &input_path);
     void Close ();
 
-    void EmitWarning (std::string const &message);
-    void EmitWarning (DataFileLocation const &file_location, std::string const &message);
-
-    void EmitError (std::string const &message);
-    void EmitError (DataFileLocation const &file_location, std::string const &message);
+    void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+    void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
 
     DataFileParser::Token Scan ();
 
@@ -70,12 +66,11 @@ private:
         return m_input.peek() == EOF;
     }
 
-    std::string m_input_path;
+    FiLoc m_filoc;
     std::ifstream m_input;
     std::string m_text;
-    Uint32 m_line_number;
-    bool m_were_warnings_encountered;
-    bool m_were_errors_encountered;
+    bool m_warnings_were_encountered;
+    bool m_errors_were_encountered;
 }; // end of class DataFileScanner
 
 } // end of namespace Xrb

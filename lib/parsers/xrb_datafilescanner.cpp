@@ -12,13 +12,9 @@
 
 #include <iostream>
 
-#include "xrb_datafilelocation.hpp"
 #include "xrb_datafilevalue.hpp"
 #include "xrb_math.hpp"
 #include "xrb_util.hpp"
-
-#undef FL
-#define FL DataFileLocation(m_input_path, m_line_number)
 
 namespace Xrb
 {
@@ -44,10 +40,11 @@ Uint32 HexadecimalDigitValue (char c)
 }
 
 DataFileScanner::DataFileScanner ()
+    :
+    m_filoc(FiLoc::ms_invalid)
 {
-    m_line_number = 0;
-    m_were_warnings_encountered = false;
-    m_were_errors_encountered = false;
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
 }
 
 DataFileScanner::~DataFileScanner ()
@@ -62,62 +59,48 @@ bool DataFileScanner::Open (std::string const &input_path)
     m_input.open(input_path.c_str());
     m_input.unsetf(std::ios_base::skipws);
     if (m_input.is_open())
-        m_input_path = input_path;
+    {
+        m_filoc.SetFilename(input_path);
+        m_filoc.SetLineNumber(1);
+    }
     else
-        m_input_path.clear();
+    {
+        m_filoc = FiLoc::ms_invalid;
+    }
     m_text.clear();
-    m_line_number = 1;
-    m_were_warnings_encountered = false;
-    m_were_errors_encountered = false;
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
     return m_input.is_open();
 }
 
 void DataFileScanner::Close ()
 {
-    m_input_path.clear();
+    m_filoc = FiLoc::ms_invalid;
     if (m_input.is_open())
         m_input.close();
     m_text.clear();
-    m_line_number = 0;
 }
 
-void DataFileScanner::EmitWarning (std::string const &message)
+void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
-    ASSERT1(!m_input_path.empty());
+    ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
-    std::cerr << m_input_path << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
+    std::cerr << filoc << ": warning: " << message << std::endl;
+    m_warnings_were_encountered = true;
 }
 
-void DataFileScanner::EmitWarning (DataFileLocation const &file_location, std::string const &message)
+void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
 {
-    ASSERT1(!m_input_path.empty());
+    ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
-    std::cerr << file_location << ": warning: " << message << std::endl;
-    m_were_warnings_encountered = true;
-}
-
-void DataFileScanner::EmitError (std::string const &message)
-{
-    ASSERT1(!m_input_path.empty());
-    ASSERT1(m_input.is_open());
-    std::cerr << m_input_path << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
-}
-
-void DataFileScanner::EmitError (DataFileLocation const &file_location, std::string const &message)
-{
-    ASSERT1(!m_input_path.empty());
-    ASSERT1(m_input.is_open());
-    std::cerr << file_location << ": error: " << message << std::endl;
-    m_were_errors_encountered = true;
+    std::cerr << filoc << ": error: " << message << std::endl;
+    m_errors_were_encountered = true;
 }
 
 DataFileParser::Token DataFileScanner::Scan ()
 {
-    ASSERT1(!m_input_path.empty());
+    ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
-    ASSERT1(m_line_number > 0);
 
     while (true)
     {
@@ -143,7 +126,7 @@ DataFileParser::Token DataFileScanner::Scan ()
         {
             case '\'': return ScanCharacterLiteral();
             case '"': return ScanStringLiteral();
-            case '\n': ++m_line_number; break;
+            case '\n': m_filoc.IncrementLineNumber(); break;
             case '/':
                 try
                 {
@@ -152,7 +135,7 @@ DataFileParser::Token DataFileScanner::Scan ()
                 catch (DataFileParser::Token token)
                 {
                     if (token.m_id == DataFileParser::Terminal::END_)
-                        EmitWarning(FL, "unterminated comment");
+                        EmitWarning("unterminated comment", m_filoc);
                     return token;
                 }
                 break;
@@ -212,7 +195,7 @@ DataFileParser::Token DataFileScanner::ScanNumeric ()
             if (m_text[0] == '+')
                 return DataFileParser::Token('+');
 
-            EmitError(FL, "malformed numeric value");
+            EmitError("malformed numeric value", m_filoc);
             return DataFileParser::Terminal::BAD_TOKEN;
         }
 
@@ -271,7 +254,7 @@ DataFileParser::Token DataFileScanner::ScanBinaryNumeric (bool is_signed, bool i
 
     if (!actually_read_digits)
     {
-        EmitError(FL, std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
+        EmitError(std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text, m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 
@@ -289,7 +272,7 @@ DataFileParser::Token DataFileScanner::ScanBinaryNumeric (bool is_signed, bool i
         return DataFileParser::Terminal::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
+        EmitError(std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text, m_filoc);
 
     if (is_signed)
         return DataFileParser::Token(
@@ -332,7 +315,7 @@ DataFileParser::Token DataFileScanner::ScanOctalNumeric (bool is_signed, bool is
         return DataFileParser::Terminal::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " octal value " + m_text);
+        EmitError(std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " octal value " + m_text, m_filoc);
 
     if (is_signed)
         return DataFileParser::Token(
@@ -384,7 +367,7 @@ DataFileParser::Token DataFileScanner::ScanDecimalNumeric (bool is_signed, bool 
         return DataFileParser::Terminal::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " decimal value " + m_text);
+        EmitError(std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " decimal value " + m_text, m_filoc);
 
     if (is_signed)
         return DataFileParser::Token(
@@ -414,7 +397,7 @@ DataFileParser::Token DataFileScanner::ScanHexadecimalNumeric (bool is_signed, b
 
     if (!actually_read_digits)
     {
-        EmitError(FL, std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text);
+        EmitError(std::string("malformed ") + (is_signed ? "signed" : "unsigned") + " binary value " + m_text, m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 
@@ -432,7 +415,7 @@ DataFileParser::Token DataFileScanner::ScanHexadecimalNumeric (bool is_signed, b
         return DataFileParser::Terminal::BAD_TOKEN;
 
     if (overflow)
-        EmitError(FL, std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " hexadecimal value " + m_text);
+        EmitError(std::string("overflow in ") + (is_signed ? "signed" : "unsigned") + " hexadecimal value " + m_text, m_filoc);
 
     if (is_signed)
         return DataFileParser::Token(
@@ -508,7 +491,7 @@ DataFileParser::Token DataFileScanner::ScanFloatingPointNumeric ()
 
     Float value = Util::TextToFloat(m_text.c_str());
     if (!Math::IsFinite(value))
-        EmitError(FL, std::string("overflow/underflow in floating point value ") + m_text);
+        EmitError(std::string("overflow/underflow in floating point value ") + m_text, m_filoc);
 
     return DataFileParser::Token(DataFileParser::Terminal::FLOAT, new DataFileFloat(value));
 }
@@ -525,7 +508,7 @@ DataFileParser::Token DataFileScanner::ScanCharacterLiteral ()
 
     if (IsNextCharEOF(&c))
     {
-        EmitError(FL, "unexpected end of file");
+        EmitError("unexpected end of file", m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 
@@ -537,7 +520,7 @@ DataFileParser::Token DataFileScanner::ScanCharacterLiteral ()
 
         if (IsNextCharEOF(&c))
         {
-            EmitError(FL, "unexpected end of file");
+            EmitError("unexpected end of file", m_filoc);
             return DataFileParser::Terminal::BAD_TOKEN;
         }
     }
@@ -548,7 +531,7 @@ DataFileParser::Token DataFileScanner::ScanCharacterLiteral ()
     if (c == '\n' || (!escaped_char && c == '\''))
     {
         if (c == '\n')
-            ++m_line_number;
+            m_filoc.IncrementLineNumber();
         if (!escaped_char && c == '\'')
         {
             if (!IsNextCharEOF(&c) && c == '\'')
@@ -558,13 +541,13 @@ DataFileParser::Token DataFileScanner::ScanCharacterLiteral ()
             }
         }
 
-        EmitError(FL, "malformed character literal");
+        EmitError("malformed character literal", m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 
     if (IsNextCharEOF(&c))
     {
-        EmitError(FL, "unexpected end of file");
+        EmitError("unexpected end of file", m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 
@@ -585,7 +568,7 @@ DataFileParser::Token DataFileScanner::ScanCharacterLiteral ()
     }
     else
     {
-        EmitError(FL, "malformed character literal");
+        EmitError("malformed character literal", m_filoc);
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 }
@@ -595,7 +578,7 @@ DataFileParser::Token DataFileScanner::ScanStringLiteral ()
     ASSERT1(!m_input.eof());
 
     char c;
-    Uint32 starting_line = m_line_number;
+    Uint32 starting_line = m_filoc.LineNumber();
 
     m_text.clear();
 
@@ -607,12 +590,12 @@ DataFileParser::Token DataFileScanner::ScanStringLiteral ()
         {
             if (IsNextCharEOF(&c))
             {
-                EmitError(DataFileLocation(m_input_path, starting_line), "unterminated string");
+                EmitError("unterminated string", FiLoc(m_filoc.Filename(), starting_line));
                 return DataFileParser::Terminal::BAD_TOKEN;
             }
             else if (c == '\n')
             {
-                ++m_line_number;
+                m_filoc.IncrementLineNumber();
                 // ignore this escaped newline
                 m_input >> c;
             }
@@ -625,7 +608,7 @@ DataFileParser::Token DataFileScanner::ScanStringLiteral ()
         else
         {
             if (c == '\n')
-                ++m_line_number;
+                m_filoc.IncrementLineNumber();
 
             m_text += c;
         }
@@ -643,7 +626,7 @@ DataFileParser::Token DataFileScanner::ScanStringLiteral ()
     }
     else
     {
-        EmitError(DataFileLocation(m_input_path, starting_line), "unterminated string");
+        EmitError("unterminated string", FiLoc(m_filoc.Filename(), starting_line));
         return DataFileParser::Terminal::BAD_TOKEN;
     }
 }
@@ -676,7 +659,7 @@ void DataFileScanner::ScanComment ()
                 }
             }
             else if (c == '\n')
-                ++m_line_number;
+                m_filoc.IncrementLineNumber();
         }
 
         if (IsNextCharEOF())
@@ -697,7 +680,7 @@ void DataFileScanner::ScanComment ()
 
         m_input >> c;
         m_text += c;
-        ++m_line_number;
+        m_filoc.IncrementLineNumber();
     }
     else
         throw DataFileParser::Terminal::BAD_TOKEN;
