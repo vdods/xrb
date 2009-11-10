@@ -13,6 +13,7 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 
 .PHONY: \
 	datafileparser \
+	datafilescanner \
 	doc \
 	lib
 
@@ -98,7 +99,7 @@ LIBPNG_CONFIG_CPPFLAGS =
 endif
 
 AM_CPPFLAGS = \
-	$(SDL_CONFIG_CPPFLAGS) \
+    $(SDL_CONFIG_CPPFLAGS) \
     $(FREETYPE_CONFIG_CPPFLAGS) \
     $(LIBPNG_CONFIG_CPPFLAGS) \
     \
@@ -138,7 +139,7 @@ LIBPNG_CONFIG_LDFLAGS =
 endif
 
 AM_LDFLAGS = \
-	$(SDL_CONFIG_LDFLAGS) \
+    $(SDL_CONFIG_LDFLAGS) \
     $(FREETYPE_CONFIG_LDFLAGS) \
     $(LIBPNG_CONFIG_LDFLAGS)
 
@@ -211,8 +212,11 @@ lib_libxrb_la_SOURCES = \
     lib/parsers/xrb_datafileparser.cpp \
     lib/parsers/xrb_datafileparser.trison \
     lib/parsers/xrb_datafilescanner.cpp \
+    lib/parsers/xrb_datafilescanner_new.cpp \
+    lib/parsers/xrb_datafilescanner_new.reflex \
     lib/parsers/xrb_datafilevalue.cpp \
     lib/parsers/xrb_filoc.cpp \
+    lib/parsers/xrb_parsers_util.cpp \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_ntuple.cpp \
@@ -329,8 +333,10 @@ include_HEADERS = \
     \
     lib/parsers/xrb_datafileparser.hpp \
     lib/parsers/xrb_datafilescanner.hpp \
+    lib/parsers/xrb_datafilescanner_new.hpp \
     lib/parsers/xrb_datafilevalue.hpp \
     lib/parsers/xrb_filoc.hpp \
+    lib/parsers/xrb_parsers_util.hpp \
     \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_color.hpp \
@@ -388,6 +394,13 @@ datafileparser: $(top_srcdir)/lib/parsers/xrb_datafileparser.hpp
 $(top_srcdir)/lib/parsers/xrb_datafileparser.hpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
 $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.trison
 	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parsers --generate-npda-dot-graph xrb_datafileparser.npda.dot --generate-dpda-dot-graph xrb_datafileparser.dpda.dot --generate-dpda-states-file xrb_datafileparser.dpda.states
+endif
+
+if REFLEX_EXISTS
+datafilescanner: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.hpp
+$(top_srcdir)/lib/parsers/xrb_datafilescanner_new.hpp: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.cpp
+$(top_srcdir)/lib/parsers/xrb_datafilescanner_new.cpp: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.reflex
+	$(REFLEX) $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/parsers --generate-nfa-dot-graph xrb_datafilescanner_new.nfa.dot --generate-dfa-dot-graph xrb_datafilescanner_new.dfa.dot
 endif
 
 ##############################################################################

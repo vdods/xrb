@@ -28,7 +28,8 @@
 namespace Xrb
 {
 
-class DataFileScanner;
+// class DataFileScanner;
+class DataFileScannerNew;
 class DataFileStructure;
 class DataFileValue;
 %}
@@ -62,7 +63,8 @@ private:
     void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
     void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
 
-    DataFileScanner *m_scanner;
+//     DataFileScanner *m_scanner;
+    DataFileScannerNew *m_scanner;
     DataFileValue *m_accepted_value;
 }
 %target.cpp.bottom_of_header_file %{
@@ -75,8 +77,10 @@ private:
 %target.cpp.top_of_implementation_file %{
 #include <sstream>
 
-#include "xrb_datafilescanner.hpp"
+// #include "xrb_datafilescanner.hpp"
+#include "xrb_datafilescanner_new.hpp"
 #include "xrb_datafilevalue.hpp"
+#include "xrb_emptystring.hpp"
 
 #undef FL
 #define FL (m_scanner->GetFiLoc())
@@ -123,7 +127,8 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 %}
 %target.cpp.constructor_actions {
 //     DebugSpew(true);
-    m_scanner = new DataFileScanner();
+//     m_scanner = new DataFileScanner();
+    m_scanner = new DataFileScannerNew();
     m_accepted_value = NULL;
 }
 %target.cpp.destructor_actions {
@@ -155,6 +160,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 
 
 %target.cpp.generate_debug_spew_code
+%target.cpp.debug_spew_prefix {"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"}
 %target.cpp.dont_generate_timestamps
 
 

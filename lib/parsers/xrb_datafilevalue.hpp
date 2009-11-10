@@ -358,7 +358,7 @@ class DataFileSint32 : public DataFileLeafValue
 {
 public:
 
-    DataFileSint32 (Uint32 value)
+    DataFileSint32 (Sint32 value)
         :
         DataFileLeafValue(),
         m_value(value)
@@ -451,6 +451,8 @@ public:
 
     virtual DataFileElementType ElementType () const { return DAT_CHARACTER; }
 
+    void Escape ();
+
     virtual void Print (IndentFormatter &formatter) const
     {
         formatter.BeginLine("%s", Util::CharacterLiteral(m_value).c_str());
@@ -459,7 +461,7 @@ public:
 
 private:
 
-    char const m_value;
+    char m_value;
 }; // end of class DataFileCharacter
 
 // ///////////////////////////////////////////////////////////////////////////

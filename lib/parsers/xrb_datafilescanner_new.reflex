@@ -1,0 +1,525 @@
+// ///////////////////////////////////////////////////////////////////////////
+// xrb_datafilescanner_new.reflex by Victor Dods, created 2009/11/08
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+%targets cpp
+
+
+%target.cpp.header_filename "xrb_datafilescanner_new.hpp"
+%target.cpp.implementation_filename "xrb_datafilescanner_new.cpp"
+
+
+%target.cpp.top_of_header_file %{
+#if !defined(_XRB_DATAFILESCANNER_NEW_HPP_)
+#define _XRB_DATAFILESCANNER_NEW_HPP_
+
+#include <fstream>
+
+#include "xrb_datafileparser.hpp"
+#include "xrb_filoc.hpp"
+
+namespace Xrb {
+
+class DataFileCharacter;
+class DataFileString;
+%}
+%target.cpp.class_name DataFileScannerNew
+%target.cpp.bottom_of_class {
+    bool IsOpen () const { return m_input.is_open(); }
+    FiLoc const &GetFiLoc () const { return m_filoc; }
+    bool WarningsWereEncountered () const { return m_warnings_were_encountered; }
+    bool ErrorsWereEncountered () const { return m_errors_were_encountered; }
+
+    bool Open (std::string const &input_path);
+    void Close ();
+
+    void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+    void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+
+private:
+
+    DataFileParser::Token ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix);
+    void IncrementLineNumber (Uint32 by_value = 1);
+
+    FiLoc m_filoc;
+    std::ifstream m_input;
+    DataFileCharacter *m_char_literal;
+    DataFileString *m_string_literal;
+    Uint32 m_string_literal_starting_line_number;
+    bool m_warnings_were_encountered;
+    bool m_errors_were_encountered;
+}
+%target.cpp.bottom_of_header_file %{
+} // end of namespace Xrb
+
+#endif // !defined(_XRB_DATAFILESCANNER_NEW_HPP_)
+%}
+
+
+%target.cpp.top_of_implementation_file %{
+#include <errno.h>
+#include <stdlib.h>
+
+#include "xrb_datafilevalue.hpp"
+#include "xrb_emptystring.hpp"
+#include "xrb_parsers_util.hpp"
+
+namespace Xrb {
+
+bool DataFileScannerNew::Open (std::string const &input_path)
+{
+    ASSERT1(!m_input.is_open() && "you must call Close() first");
+    ASSERT1(!m_filoc.IsValid());
+    ASSERT1(m_string_literal == NULL);
+
+    m_input.open(input_path.c_str());
+    m_input.unsetf(std::ios_base::skipws);
+    if (m_input.is_open())
+    {
+        IstreamIterator(std::istream_iterator<char>(m_input));
+        m_filoc.SetFilename(input_path);
+        m_filoc.SetLineNumber(1);
+    }
+    else
+    {
+        m_filoc = FiLoc::ms_invalid;
+    }
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
+    return m_input.is_open();
+}
+
+void DataFileScannerNew::Close ()
+{
+    m_filoc = FiLoc::ms_invalid;
+    if (m_input.is_open())
+    {
+        m_input.close();
+        IstreamIterator(std::istream_iterator<char>());
+    }
+    ResetForNewInput();
+}
+
+void DataFileScannerNew::EmitWarning (std::string const &message, FiLoc const &filoc)
+{
+    ASSERT1(m_filoc.IsValid());
+    ASSERT1(m_input.is_open());
+    std::cerr << filoc << ": warning: " << message << std::endl;
+    m_warnings_were_encountered = true;
+}
+
+void DataFileScannerNew::EmitError (std::string const &message, FiLoc const &filoc)
+{
+    ASSERT1(m_filoc.IsValid());
+    ASSERT1(m_input.is_open());
+    std::cerr << filoc << ": error: " << message << std::endl;
+    m_errors_were_encountered = true;
+}
+
+DataFileParser::Token DataFileScannerNew::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
+{
+    ASSERT1(s != NULL);
+    ASSERT1(radix == 2 || radix == 8 || radix == 10 || radix == 16);
+    if (is_signed)
+    {
+        Sint32 value = strtol(s, NULL, radix);
+        if (errno == ERANGE)
+            EmitError("signed integer literal out of range", m_filoc);
+        return DataFileParser::Token(DataFileParser::Terminal::SINT32, new DataFileSint32(value));
+    }
+    else
+    {
+        Uint32 value = strtoul(s, NULL, radix);
+        if (errno == ERANGE)
+            EmitError("unsigned integer literal out of range", m_filoc);
+        return DataFileParser::Token(DataFileParser::Terminal::UINT32, new DataFileUint32(value));
+    }
+}
+
+void DataFileScannerNew::IncrementLineNumber (Uint32 by_value)
+{
+    m_filoc.IncrementLineNumber(by_value);
+}
+%}
+%target.cpp.superclass_and_member_constructors {
+    m_filoc(FiLoc::ms_invalid)
+}
+%target.cpp.constructor_actions {
+//     DebugSpew(true);
+    m_string_literal = NULL;
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
+}
+%target.cpp.destructor_actions {
+    Close();
+}
+%target.cpp.bottom_of_scan_method_actions %{
+    ASSERT1(false && "you didn't handle EOF properly");
+    return DataFileParser::Terminal::END_;
+%}
+%target.cpp.bottom_of_implementation_file %{
+} // end of namespace Xrb
+%}
+
+
+%target.cpp.return_type "DataFileParser::Token"
+%target.cpp.rejection_actions {
+    ASSERT1(false && "this should never happen");
+    EmitError("unrecognized character " + CharLiteral(rejected_atom), m_filoc);
+}
+%target.cpp.reset_for_new_input_actions {
+    m_filoc = FiLoc::ms_invalid;
+    delete m_string_literal;
+    m_string_literal = NULL;
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
+}
+
+
+%target.cpp.generate_debug_spew_code
+%target.cpp.debug_spew_prefix {"DataFileScannerNew" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"}
+%target.cpp.dont_generate_timestamps
+
+
+// c-style identifier
+%macro IDENTIFIER   ([_a-zA-Z][_a-zA-Z0-9]*)
+// single-char operators
+%macro OPERATOR     ([{}\[\],;])
+// a binary integer literal (with optional sign)
+%macro BIN          ([+\-]?0[bB][01]+)
+// an octal integer literal (with optional sign)
+%macro OCT          ([+\-]?0[0-7]+)
+// a decimal integer literal (with optional sign)
+%macro DEC          ([+\-]?(0|([1-9][0-9]*)))
+// a hexadecimal integer literal (with optional sign)
+%macro HEX          ([+\-]?0[xX][0-9A-Fa-f]+)
+// a decimal floating point literal (with optional sign)
+%macro DEC_FLOAT    ({DEC}(\.[0-9]+([eE]{DEC})?|[eE]{DEC}))
+// a hexadecimal floating point literal (with optional sign)
+%macro HEX_FLOAT    ({HEX}(\.[0-9A-Fa-f]+([pP]{DEC})?|[pP]{DEC})) // e.g. 0x3.Ap-13 = (3 + 10/16) * 2^(-13)
+// non-newline whitespace
+%macro WHITESPACE   ([\t ])
+// newline
+%macro NEWLINE      (\n)
+// any character at all
+%macro ANY          (\n|.)
+// end of file
+%macro EOF          (\z)
+
+// a single octal (base 8) digit
+%macro OCT_DIGIT            ([0-7])
+// an octal escape char (e.g. \42)
+%macro OCT_CHAR             (\\{OCT_DIGIT}+)
+
+// a single hexadecimal (base 16) digit
+%macro HEX_DIGIT            ([0-9A-Fa-f])
+// a hexadecimal escape char (e.g. \xF9)
+%macro HEX_CHAR             (\\x{HEX_DIGIT}+)
+
+// an escaped char literal (e.g. '\t', '\0' or even '\j')
+%macro CHAR_ESC_CHAR        (\\[[:print:]])
+// everything that doesn't need to be escaped in a char literal (e.g. 'p')
+%macro CHAR_NORMAL_CHAR     ([^[:cntrl:]"'\\])
+
+// single-char escape codes for a string literal (e.g. \n is newline)
+%macro STRING_ESC_CHAR      (\\[[:print:]])
+// malformed single-char escape codes for a string literal (e.g. a backslash followed by a tab)
+%macro STRING_BAD_ESC_CHAR  (\\[^[:print:]])
+// everything that doesn't need to be escaped in a string literal
+%macro STRING_NORMAL_CHAR   ([^[:cntrl:]"\\]|\t|\n)
+
+%start_with_state_machine MAIN
+
+%%
+
+%state_machine MAIN
+:
+    (/[*]) // opening delimiter for a block comment
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::BLOCK_COMMENT);
+    }
+|
+    (//.*) // line comment (not including the newline)
+    %target.cpp { }
+|
+    (') // opening quote for a char literal
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_GUTS);
+    }
+|
+    (") // opening quote for a string literal
+    %target.cpp {
+        ASSERT1(m_string_literal == NULL);
+        m_string_literal = new DataFileString();
+        m_string_literal_starting_line_number = m_filoc.LineNumber();
+        SwitchToStateMachine(StateMachine::STRING_LITERAL_GUTS);
+    }
+|
+    ({OPERATOR}) // operator -- single char returned to the parser
+    %target.cpp {
+        ASSERT1(accepted_string.length() == 1);
+        return DataFileParser::Token(accepted_string[0]);
+    }
+|
+    ({IDENTIFIER}) // identifier -- c-style
+    %target.cpp {
+        // check if it matches any keywords
+        std::string lowercase_text(accepted_string);
+        Util::MakeLowercase(&lowercase_text);
+        if (lowercase_text == "true")
+            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(true));
+        else if (lowercase_text == "false")
+            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(false));
+        else
+            return DataFileParser::Token(DataFileParser::Terminal::IDENTIFIER, new DataFileString(accepted_string));
+    }
+|
+    ({BIN}) // binary integer literal
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 3); // must be at least "0b" followed by a binary digit
+        bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
+        ASSERT1((is_signed && accepted_string[1] == '0' && (accepted_string[2] == 'b' || accepted_string[2] == 'B'))
+                ||
+                (!is_signed && accepted_string[0] == '0' && (accepted_string[1] == 'b' || accepted_string[1] == 'B')));
+        // if it's signed, stick the sign in front of the digits
+        if (is_signed)
+            accepted_string[2] = accepted_string[0];
+        // start at the sign or the unsigned digits
+        char const *s = accepted_string.c_str() + 2;
+        return ParseIntegerLiteral(s, is_signed, 2);
+    }
+|
+    ({OCT}) // octal integer literal
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 2); // must be at least "0" followed by an octal digit
+        bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
+        ASSERT1((is_signed && accepted_string[1] == '0')
+                ||
+                (!is_signed && accepted_string[0] == '0'));
+        // if it's signed, stick the sign in front of the digits
+        if (is_signed)
+            accepted_string[1] = accepted_string[0];
+        // start at the sign or the unsigned digits
+        char const *s = accepted_string.c_str() + 1;
+        return ParseIntegerLiteral(s, is_signed, 8);
+    }
+|
+    ({DEC}) // decimal integer literal
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 1); // must be at least a single decimal digit
+        bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
+        return ParseIntegerLiteral(accepted_string.c_str(), is_signed, 10);
+    }
+|
+    ({HEX}) // hexadecimal integer literal
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 3); // must be at least "0x" followed by a hexadecimal digit
+        bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
+        ASSERT1((is_signed && accepted_string[1] == '0' && (accepted_string[2] == 'x' || accepted_string[2] == 'X'))
+                ||
+                (!is_signed && accepted_string[0] == '0' && (accepted_string[1] == 'x' || accepted_string[1] == 'X')));
+        // if it's signed, stick the sign in front of the digits
+        if (is_signed)
+            accepted_string[2] = accepted_string[0];
+        // start at the sign or the unsigned digits
+        char const *s = accepted_string.c_str() + 2;
+        return ParseIntegerLiteral(s, is_signed, 16);
+    }
+|
+    ({DEC_FLOAT}|{HEX_FLOAT}) // floating point literal
+    %target.cpp {
+        Float value = strtof(accepted_string.c_str(), NULL);
+        if (errno == ERANGE)
+            EmitError("floating point literal out of range", m_filoc);
+        return DataFileParser::Token(DataFileParser::Terminal::FLOAT, new DataFileFloat(value));
+    }
+|
+    ({WHITESPACE}) // ignore whitespace
+    %target.cpp { }
+|
+    ({NEWLINE}) // ignore the newline, but increment the line number
+    %target.cpp { IncrementLineNumber(); }
+|
+    ({EOF}) // end of file condition
+    %target.cpp { return DataFileParser::Terminal::END_; }
+|
+    (.) // any other character is unexpected
+    %target.cpp {
+        EmitError("unexpected character " + CharLiteral(accepted_string[0]), GetFiLoc());
+        return DataFileParser::Terminal::BAD_TOKEN;
+    }
+;
+
+%state_machine BLOCK_COMMENT %ungreedy
+:
+    ({ANY}*[*]/) // everything up through the closing delimiter of a block comment
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+        SwitchToStateMachine(StateMachine::MAIN);
+    }
+|
+    ({ANY}*{EOF}) // everything up through EOF
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+        EmitWarning("unterminated block comment", GetFiLoc());
+        return DataFileParser::Terminal::END_;
+    }
+;
+
+%state_machine CHAR_LITERAL_GUTS
+:
+    ({OCT_CHAR})
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 2);
+        ASSERT1(accepted_string[0] == '\\');
+        Uint32 value = strtol(accepted_string.c_str()+1, NULL, 8);
+        if (value >= 0x100)
+            EmitError("octal character literal value out of range (" + accepted_string + ")", GetFiLoc());
+        ASSERT1(m_char_literal == NULL);
+        m_char_literal = new DataFileCharacter(value);
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
+    }
+|
+    ({HEX_CHAR})
+    %target.cpp {
+        ASSERT1(accepted_string.length() >= 3);
+        ASSERT1(accepted_string[0] == '\\');
+        ASSERT1(accepted_string[1] == 'x');
+        Uint32 value = strtol(accepted_string.c_str()+2, NULL, 16);
+        if (value >= 0x100)
+            EmitError("hexadecimal character literal value out of range (" + accepted_string + ")", GetFiLoc());
+        ASSERT1(m_char_literal == NULL);
+        m_char_literal = new DataFileCharacter(value);
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
+    }
+|
+    ({CHAR_ESC_CHAR})
+    %target.cpp {
+        ASSERT1(accepted_string.length() == 2);
+        ASSERT1(accepted_string[0] == '\\');
+        ASSERT1(m_char_literal == NULL);
+        m_char_literal = new DataFileCharacter(accepted_string[1]);
+        m_char_literal->Escape();
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
+    }
+|
+    ({CHAR_NORMAL_CHAR})
+    %target.cpp {
+        ASSERT1(accepted_string.length() == 1);
+        ASSERT1(m_char_literal == NULL);
+        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
+    }
+|
+    (\\?{EOF}) // end of file (which may be preceded by a backslash)
+    %target.cpp {
+        EmitError("unterminated character literal", GetFiLoc());
+        ASSERT1(m_char_literal == NULL);
+        return DataFileParser::Terminal::END_;
+    }
+|
+    ({ANY}) // anything else just means it's malformed
+    %target.cpp {
+        EmitError("unexpected character " + CharLiteral(accepted_string[0]) + " in character literal", GetFiLoc());
+        if (accepted_string[0] == '\n')
+            IncrementLineNumber();
+        ASSERT1(m_char_literal == NULL);
+        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
+    }
+;
+
+%state_machine CHAR_LITERAL_END
+:
+    (') // closing single-quote
+    %target.cpp {
+        ASSERT1(m_char_literal != NULL);
+        SwitchToStateMachine(StateMachine::MAIN);
+        DataFileCharacter *char_literal = m_char_literal;
+        m_char_literal = NULL;
+        return DataFileParser::Token(DataFileParser::Terminal::CHARACTER, char_literal);
+    }
+|
+    (\\?{EOF}) // end of file (which may be preceded by a backslash)
+    %target.cpp {
+        EmitError("unterminated character literal", GetFiLoc());
+        ASSERT1(m_char_literal != NULL);
+        delete m_char_literal;
+        m_char_literal = NULL;
+        SwitchToStateMachine(StateMachine::MAIN);
+        return DataFileParser::Terminal::END_;
+    }
+|
+    ({ANY}) // anything else just means it's malformed
+    %target.cpp {
+        EmitError("malformed character literal", GetFiLoc());
+        if (accepted_string[0] == '\n')
+            IncrementLineNumber();
+        ASSERT1(m_char_literal != NULL);
+        delete m_char_literal;
+        m_char_literal = NULL;
+        SwitchToStateMachine(StateMachine::MAIN);
+        return DataFileParser::Terminal::BAD_TOKEN;
+    }
+;
+
+%state_machine STRING_LITERAL_GUTS %ungreedy
+:
+    (([^\\]|\\{ANY})*") // everything up through the first unescaped double quote
+    %target.cpp {
+        ASSERT1(m_string_literal != NULL);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        // get rid of the trailing endquote
+        ASSERT1(accepted_string.length() >= 1);
+        accepted_string.resize(accepted_string.length()-1);
+        // escape the string in-place and handle the return code
+        EscapeStringStatus status = EscapeString(accepted_string);
+        switch (status.m_return_code)
+        {
+            case ESRC_SUCCESS:
+                // awesome
+                break;
+
+            case ESRC_UNEXPECTED_EOI:
+                ASSERT1(false && "the formulation of the regex should prevent this");
+                break;
+
+            case ESRC_MALFORMED_HEX_CHAR:
+                EmitError(
+                    "\\x with no trailing hex digits",
+                    FiLoc(m_filoc.Filename(),
+                          m_string_literal_starting_line_number + status.m_line_number_offset));
+                break;
+
+            case ESRC_HEX_ESCAPE_SEQUENCE_OUT_OF_RANGE:
+            case ESRC_OCTAL_ESCAPE_SEQUENCE_OUT_OF_RANGE:
+                EmitError(
+                    "hex/octal escape sequence out of range",
+                    FiLoc(m_filoc.Filename(),
+                          m_string_literal_starting_line_number + status.m_line_number_offset));
+                break;
+        }
+        m_string_literal->AppendString(accepted_string);
+        SwitchToStateMachine(StateMachine::MAIN);
+        DataFileString *string_literal = m_string_literal;
+        m_string_literal = NULL;
+        return DataFileParser::Token(DataFileParser::Terminal::STRING_FRAGMENT, string_literal);
+    }
+|
+    (([^\\]|\\{ANY})*\\?{EOF}) // everything up through EOF (which may be preceded by a hanging backslash)
+    %target.cpp {
+        EmitError("unterminated string literal", GetFiLoc());
+        IncrementLineNumber(NewlineCount(accepted_string));
+        ASSERT1(m_string_literal != NULL);
+        delete m_string_literal;
+        m_string_literal = NULL;
+        return DataFileParser::Terminal::END_;
+    }
+;
+

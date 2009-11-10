@@ -12,6 +12,8 @@
 
 #include <sstream>
 
+#include "xrb_parsers_util.hpp"
+
 #define THROW_STRING(x) \
 { \
     std::ostringstream out; \
@@ -175,6 +177,11 @@ void DataFileFloat::PrintAST (IndentFormatter &formatter) const
 // ///////////////////////////////////////////////////////////////////////////
 // DataFileCharacter
 // ///////////////////////////////////////////////////////////////////////////
+
+void DataFileCharacter::Escape ()
+{
+    m_value = EscapedChar(m_value);
+}
 
 void DataFileCharacter::PrintAST (IndentFormatter &formatter) const
 {

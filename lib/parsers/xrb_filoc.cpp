@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_datafilelocation.cpp by Victor Dods, created 2006/07/15
+// xrb_filoc.cpp by Victor Dods, created 2006/07/15
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
