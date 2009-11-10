@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_datafileparser.trison by Victor Dods, created 2006/07/15
+// xrb_parse_datafile_parser.trison by Victor Dods, created 2006/07/15
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -11,25 +11,24 @@
 %targets cpp
 
 
-%target.cpp.header_filename "xrb_datafileparser.hpp"
-%target.cpp.implementation_filename "xrb_datafileparser.cpp"
+%target.cpp.header_filename "xrb_parse_datafile_parser.hpp"
+%target.cpp.implementation_filename "xrb_parse_datafile_parser.cpp"
 
 
 %target.cpp.top_of_header_file %{
-#if !defined(_XRB_DATAFILEPARSER_HPP_)
-#define _XRB_DATAFILEPARSER_HPP_
+#if !defined(_XRB_PARSE_DATAFILE_PARSER_HPP_)
+#define _XRB_PARSE_DATAFILE_PARSER_HPP_
 
 #include "xrb.hpp"
 
 #include <string>
 
-#include "xrb_filoc.hpp"
+#include "xrb_parse_filoc.hpp"
 
 namespace Xrb
 {
 
-// class DataFileScanner;
-class DataFileScannerNew;
+class DataFileScanner;
 class DataFileStructure;
 class DataFileValue;
 %}
@@ -63,24 +62,22 @@ private:
     void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
     void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
 
-//     DataFileScanner *m_scanner;
-    DataFileScannerNew *m_scanner;
+    DataFileScanner *m_scanner;
     DataFileValue *m_accepted_value;
 }
 %target.cpp.bottom_of_header_file %{
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_DATAFILEPARSER_HPP_)
+#endif // !defined(_XRB_PARSE_DATAFILE_PARSER_HPP_)
 %}
 
 
 %target.cpp.top_of_implementation_file %{
 #include <sstream>
 
-// #include "xrb_datafilescanner.hpp"
-#include "xrb_datafilescanner_new.hpp"
-#include "xrb_datafilevalue.hpp"
 #include "xrb_emptystring.hpp"
+#include "xrb_parse_datafile_scanner.hpp"
+#include "xrb_parse_datafile_value.hpp"
 
 #undef FL
 #define FL (m_scanner->GetFiLoc())
@@ -127,8 +124,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 %}
 %target.cpp.constructor_actions {
 //     DebugSpew(true);
-//     m_scanner = new DataFileScanner();
-    m_scanner = new DataFileScannerNew();
+    m_scanner = new DataFileScanner();
     m_accepted_value = NULL;
 }
 %target.cpp.destructor_actions {

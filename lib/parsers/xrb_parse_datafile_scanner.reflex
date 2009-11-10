@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_datafilescanner_new.reflex by Victor Dods, created 2009/11/08
+// xrb_parse_datafile_scanner.reflex by Victor Dods, created 2009/11/08
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -11,25 +11,27 @@
 %targets cpp
 
 
-%target.cpp.header_filename "xrb_datafilescanner_new.hpp"
-%target.cpp.implementation_filename "xrb_datafilescanner_new.cpp"
+%target.cpp.header_filename "xrb_parse_datafile_scanner.hpp"
+%target.cpp.implementation_filename "xrb_parse_datafile_scanner.cpp"
 
 
 %target.cpp.top_of_header_file %{
-#if !defined(_XRB_DATAFILESCANNER_NEW_HPP_)
-#define _XRB_DATAFILESCANNER_NEW_HPP_
+#if !defined(_XRB_PARSE_DATAFILE_SCANNER_HPP_)
+#define _XRB_PARSE_DATAFILE_SCANNER_HPP_
+
+#include "xrb.hpp"
 
 #include <fstream>
 
-#include "xrb_datafileparser.hpp"
-#include "xrb_filoc.hpp"
+#include "xrb_parse_datafile_parser.hpp"
+#include "xrb_parse_filoc.hpp"
 
 namespace Xrb {
 
 class DataFileCharacter;
 class DataFileString;
 %}
-%target.cpp.class_name DataFileScannerNew
+%target.cpp.class_name DataFileScanner
 %target.cpp.bottom_of_class {
     bool IsOpen () const { return m_input.is_open(); }
     FiLoc const &GetFiLoc () const { return m_filoc; }
@@ -58,7 +60,7 @@ private:
 %target.cpp.bottom_of_header_file %{
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_DATAFILESCANNER_NEW_HPP_)
+#endif // !defined(_XRB_PARSE_DATAFILE_SCANNER_HPP_)
 %}
 
 
@@ -66,13 +68,13 @@ private:
 #include <errno.h>
 #include <stdlib.h>
 
-#include "xrb_datafilevalue.hpp"
 #include "xrb_emptystring.hpp"
-#include "xrb_parsers_util.hpp"
+#include "xrb_parse_datafile_value.hpp"
+#include "xrb_parse_util.hpp"
 
 namespace Xrb {
 
-bool DataFileScannerNew::Open (std::string const &input_path)
+bool DataFileScanner::Open (std::string const &input_path)
 {
     ASSERT1(!m_input.is_open() && "you must call Close() first");
     ASSERT1(!m_filoc.IsValid());
@@ -95,7 +97,7 @@ bool DataFileScannerNew::Open (std::string const &input_path)
     return m_input.is_open();
 }
 
-void DataFileScannerNew::Close ()
+void DataFileScanner::Close ()
 {
     m_filoc = FiLoc::ms_invalid;
     if (m_input.is_open())
@@ -106,7 +108,7 @@ void DataFileScannerNew::Close ()
     ResetForNewInput();
 }
 
-void DataFileScannerNew::EmitWarning (std::string const &message, FiLoc const &filoc)
+void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -114,7 +116,7 @@ void DataFileScannerNew::EmitWarning (std::string const &message, FiLoc const &f
     m_warnings_were_encountered = true;
 }
 
-void DataFileScannerNew::EmitError (std::string const &message, FiLoc const &filoc)
+void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -122,7 +124,7 @@ void DataFileScannerNew::EmitError (std::string const &message, FiLoc const &fil
     m_errors_were_encountered = true;
 }
 
-DataFileParser::Token DataFileScannerNew::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
+DataFileParser::Token DataFileScanner::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
 {
     ASSERT1(s != NULL);
     ASSERT1(radix == 2 || radix == 8 || radix == 10 || radix == 16);
@@ -142,7 +144,7 @@ DataFileParser::Token DataFileScannerNew::ParseIntegerLiteral (char const *s, bo
     }
 }
 
-void DataFileScannerNew::IncrementLineNumber (Uint32 by_value)
+void DataFileScanner::IncrementLineNumber (Uint32 by_value)
 {
     m_filoc.IncrementLineNumber(by_value);
 }
@@ -183,7 +185,7 @@ void DataFileScannerNew::IncrementLineNumber (Uint32 by_value)
 
 
 %target.cpp.generate_debug_spew_code
-%target.cpp.debug_spew_prefix {"DataFileScannerNew" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"}
+%target.cpp.debug_spew_prefix {"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"}
 %target.cpp.dont_generate_timestamps
 
 

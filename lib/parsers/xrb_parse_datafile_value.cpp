@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_datafilevalue.cpp by Victor Dods, created 2005/07/13
+// xrb_parse_datafile_value.cpp by Victor Dods, created 2005/07/13
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,11 +8,11 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_datafilevalue.hpp"
+#include "xrb_parse_datafile_value.hpp"
 
 #include <sstream>
 
-#include "xrb_parsers_util.hpp"
+#include "xrb_parse_util.hpp"
 
 #define THROW_STRING(x) \
 { \
@@ -21,8 +21,7 @@
     throw out.str(); \
 }
 
-namespace Xrb
-{
+namespace Xrb {
 
 std::string const &DataFileElementTypeString (DataFileElementType data_file_element_type)
 {

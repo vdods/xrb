@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_parsers_util.hpp by Victor Dods, created 2009/11/10
+// xrb_parse_util.hpp by Victor Dods, created 2009/11/10
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,15 +8,15 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_PARSERS_UTIL_HPP_)
-#define _XRB_PARSERS_UTIL_HPP_
+#if !defined(_XRB_PARSE_UTIL_HPP_)
+#define _XRB_PARSE_UTIL_HPP_
 
 #include "xrb.hpp"
 
 #include <string>
 
 namespace Xrb {
-// namespace Parsers {
+// namespace Parse {
 
 enum EscapeStringReturnCode
 {
@@ -55,7 +55,7 @@ std::string StringLiteral (std::string const &text, bool with_quotes = true);
 
 Uint32 NewlineCount (std::string const &text);
 
-// } // end of namespace Parsers
+// } // end of namespace Parse
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_PARSERS_UTIL_HPP_)
+#endif // !defined(_XRB_PARSE_UTIL_HPP_)

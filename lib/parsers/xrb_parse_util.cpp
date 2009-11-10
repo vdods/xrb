@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_parsers_util.cpp by Victor Dods, created 2009/11/10
+// xrb_parse_util.cpp by Victor Dods, created 2009/11/10
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,12 +8,12 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_parsers_util.hpp"
+#include "xrb_parse_util.hpp"
 
 #include <stdlib.h>
 
 namespace Xrb {
-// namespace Parsers {
+// namespace Parse {
 
 // this anonymous namespace is for local-file-scoping of certain functions
 namespace {
@@ -293,5 +293,5 @@ Uint32 NewlineCount (std::string const &text)
     return newline_count;
 }
 
-// } // end of namespace Parsers
+// } // end of namespace Parse
 } // end of namespace Xrb

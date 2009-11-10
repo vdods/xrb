@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_filoc.hpp by Victor Dods, created 2006/07/15
+// xrb_parse_filoc.hpp by Victor Dods, created 2006/07/15
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_FILOC_HPP_)
-#define _XRB_FILOC_HPP_
+#if !defined(_XRB_PARSE_FILOC_HPP_)
+#define _XRB_PARSE_FILOC_HPP_
 
 #include "xrb.hpp"
 
@@ -73,4 +73,4 @@ std::ostream &operator << (std::ostream &stream, FiLoc const &filoc);
 
 } // end of namespace Xrb
 
-#endif // !defined(_XRB_FILOC_HPP_)
+#endif // !defined(_XRB_PARSE_FILOC_HPP_)

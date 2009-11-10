@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// xrb_datafilevalue.hpp by Victor Dods, created 2005/07/13
+// xrb_parse_datafile_value.hpp by Victor Dods, created 2005/07/13
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_XRB_DATAFILEVALUE_HPP_)
-#define _XRB_DATAFILEVALUE_HPP_
+#if !defined(_XRB_PARSE_DATAFILE_VALUE_HPP_)
+#define _XRB_PARSE_DATAFILE_VALUE_HPP_
 
 #include "xrb.hpp"
 
@@ -259,9 +259,6 @@ std::string const &DataFileElementTypeString (DataFileElementType data_file_elem
   * @code
   * blah - do later
   * @endcode
-  *
-  * See xrb_datafilescanner.lpp and xrb_datafileparser.ypp for technical
-  * details.
   *
   * @brief Baseclass of all the DataFile container classes.
   */

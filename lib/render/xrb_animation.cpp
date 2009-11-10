@@ -12,10 +12,10 @@
 
 #include <sstream>
 
-#include "xrb_datafileparser.hpp"
-#include "xrb_datafilevalue.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_math.hpp"
+#include "xrb_parse_datafile_parser.hpp"
+#include "xrb_parse_datafile_value.hpp"
 #include "xrb_util.hpp"
 
 #define THROW_STRING(x) \

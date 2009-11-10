@@ -10,9 +10,9 @@
 
 #include "bm_config.hpp"
 
-#include "xrb_datafileparser.hpp"
-#include "xrb_datafilevalue.hpp"
 #include "xrb_inputstate.hpp"
+#include "xrb_parse_datafile_parser.hpp"
+#include "xrb_parse_datafile_value.hpp"
 #include "xrb_util.hpp"
 
 using namespace std;

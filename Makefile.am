@@ -110,7 +110,7 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
     -I$(top_srcdir)/lib/math \
-    -I$(top_srcdir)/lib/parsers \
+    -I$(top_srcdir)/lib/parse \
     -I$(top_srcdir)/lib/primitive \
     -I$(top_srcdir)/lib/render \
     -I$(top_srcdir)/lib/render/fonts \
@@ -209,14 +209,13 @@ lib_libxrb_la_SOURCES = \
     lib/math/xrb_transform2.cpp \
     lib/math/xrb_vector.cpp \
     \
-    lib/parsers/xrb_datafileparser.cpp \
-    lib/parsers/xrb_datafileparser.trison \
-    lib/parsers/xrb_datafilescanner.cpp \
-    lib/parsers/xrb_datafilescanner_new.cpp \
-    lib/parsers/xrb_datafilescanner_new.reflex \
-    lib/parsers/xrb_datafilevalue.cpp \
-    lib/parsers/xrb_filoc.cpp \
-    lib/parsers/xrb_parsers_util.cpp \
+    lib/parse/xrb_parse_datafile_parser.cpp \
+    lib/parse/xrb_parse_datafile_parser.trison \
+    lib/parse/xrb_parse_datafile_scanner.cpp \
+    lib/parse/xrb_parse_datafile_scanner.reflex \
+    lib/parse/xrb_parse_datafile_value.cpp \
+    lib/parse/xrb_parse_filoc.cpp \
+    lib/parse/xrb_parse_util.cpp \
     \
     lib/primitive/xrb_color.cpp \
     lib/primitive/xrb_ntuple.cpp \
@@ -331,12 +330,11 @@ include_HEADERS = \
     lib/math/xrb_transform2.hpp \
     lib/math/xrb_vector.hpp \
     \
-    lib/parsers/xrb_datafileparser.hpp \
-    lib/parsers/xrb_datafilescanner.hpp \
-    lib/parsers/xrb_datafilescanner_new.hpp \
-    lib/parsers/xrb_datafilevalue.hpp \
-    lib/parsers/xrb_filoc.hpp \
-    lib/parsers/xrb_parsers_util.hpp \
+    lib/parse/xrb_parse_datafile_parser.hpp \
+    lib/parse/xrb_parse_datafile_scanner.hpp \
+    lib/parse/xrb_parse_datafile_value.hpp \
+    lib/parse/xrb_parse_filoc.hpp \
+    lib/parse/xrb_parse_util.hpp \
     \
     lib/primitive/xrb_circularqueue.hpp \
     lib/primitive/xrb_color.hpp \
@@ -390,17 +388,17 @@ include_HEADERS = \
 ##############################################################################
 
 if TRISON_EXISTS
-datafileparser: $(top_srcdir)/lib/parsers/xrb_datafileparser.hpp
-$(top_srcdir)/lib/parsers/xrb_datafileparser.hpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.cpp
-$(top_srcdir)/lib/parsers/xrb_datafileparser.cpp: $(top_srcdir)/lib/parsers/xrb_datafileparser.trison
-	$(TRISON) $(top_srcdir)/lib/parsers/xrb_datafileparser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parsers --generate-npda-dot-graph xrb_datafileparser.npda.dot --generate-dpda-dot-graph xrb_datafileparser.dpda.dot --generate-dpda-states-file xrb_datafileparser.dpda.states
+datafileparser: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp
+$(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp
+$(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison
+	$(TRISON) $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-npda-dot-graph xrb_parse_datafile_parser.npda.dot --generate-dpda-dot-graph xrb_parse_datafile_parser.dpda.dot --generate-dpda-states-file xrb_parse_datafile_parser.dpda.states
 endif
 
 if REFLEX_EXISTS
-datafilescanner: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.hpp
-$(top_srcdir)/lib/parsers/xrb_datafilescanner_new.hpp: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.cpp
-$(top_srcdir)/lib/parsers/xrb_datafilescanner_new.cpp: $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.reflex
-	$(REFLEX) $(top_srcdir)/lib/parsers/xrb_datafilescanner_new.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/parsers --generate-nfa-dot-graph xrb_datafilescanner_new.nfa.dot --generate-dfa-dot-graph xrb_datafilescanner_new.dfa.dot
+datafilescanner: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp
+$(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp
+$(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex
+	$(REFLEX) $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-nfa-dot-graph xrb_parse_datafile_scanner.nfa.dot --generate-dfa-dot-graph xrb_parse_datafile_scanner.dfa.dot
 endif
 
 ##############################################################################
