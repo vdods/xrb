@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 namespace Xrb {
-// namespace Parse {
+namespace Parse {
 
 // this anonymous namespace is for local-file-scoping of certain functions
 namespace {
@@ -293,5 +293,5 @@ Uint32 NewlineCount (std::string const &text)
     return newline_count;
 }
 
-// } // end of namespace Parse
+} // end of namespace Parse
 } // end of namespace Xrb

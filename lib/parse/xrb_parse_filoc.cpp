@@ -12,8 +12,8 @@
 
 #include <sstream>
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
 
 FiLoc const FiLoc::ms_invalid;
 
@@ -40,4 +40,5 @@ std::ostream &operator << (std::ostream &stream, FiLoc const &filoc)
     return stream << filoc.AsString();
 }
 
+} // end of namespace Parse
 } // end of namespace Xrb

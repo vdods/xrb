@@ -25,14 +25,15 @@
 
 #include "xrb_parse_filoc.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-class DataFileScanner;
-class DataFileStructure;
-class DataFileValue;
+class Scanner;
+class Structure;
+class Value;
 %}
-%target.cpp.class_name DataFileParser
+%target.cpp.class_name Parser
 %target.cpp.parse_method_access "private:"
 %target.cpp.bottom_of_class {
     enum ReturnCode
@@ -44,13 +45,13 @@ class DataFileValue;
         RC_ERRORS_ENCOUNTERED
     }; // end of enum ReturnCode
 
-    DataFileStructure *AcceptedStructure () const
+    Structure *AcceptedStructure () const
     {
-        return DStaticCast<DataFileStructure *>(m_accepted_value);
+        return DStaticCast<Structure *>(m_accepted_value);
     }
-    DataFileStructure *StealAcceptedStructure ()
+    Structure *StealAcceptedStructure ()
     {
-        DataFileStructure *accepted_structure = AcceptedStructure();
+        Structure *accepted_structure = AcceptedStructure();
         m_accepted_value = NULL;
         return accepted_structure;
     }
@@ -62,10 +63,12 @@ private:
     void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
     void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
 
-    DataFileScanner *m_scanner;
-    DataFileValue *m_accepted_value;
+    Scanner *m_scanner;
+    Value *m_accepted_value;
 }
 %target.cpp.bottom_of_header_file %{
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_PARSE_DATAFILE_PARSER_HPP_)
@@ -82,10 +85,11 @@ private:
 #undef FL
 #define FL (m_scanner->GetFiLoc())
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
+Parser::ReturnCode Parser::Parse (std::string const &input_path)
 {
     ASSERT1(m_scanner != NULL);
     ASSERT1(!m_scanner->IsOpen());
@@ -110,13 +114,13 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
     return RC_SUCCESS;
 }
 
-void DataFileParser::EmitWarning (std::string const &message, FiLoc const &filoc)
+void Parser::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(message, filoc);
 }
 
-void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
+void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(message, filoc);
@@ -124,7 +128,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 %}
 %target.cpp.constructor_actions {
 //     DebugSpew(true);
-    m_scanner = new DataFileScanner();
+    m_scanner = new Scanner();
     m_accepted_value = NULL;
 }
 %target.cpp.destructor_actions {
@@ -139,11 +143,13 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     m_scanner->Close();
 %}
 %target.cpp.bottom_of_implementation_file %{
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 %}
 
 
-%target.cpp.token_data_type "DataFileValue *"
+%target.cpp.token_data_type "Value *"
 %target.cpp.token_data_default "NULL"
 %target.cpp.custom_token_data_type_cast DStaticCast
 %target.cpp.throw_away_token_actions {
@@ -156,25 +162,25 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 
 
 %target.cpp.generate_debug_spew_code
-%target.cpp.debug_spew_prefix {"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"}
+%target.cpp.debug_spew_prefix {"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"}
 %target.cpp.dont_generate_timestamps
 
 
 %terminal BAD_TOKEN
-%terminal BOOLEAN %type.cpp "DataFileBoolean *"
-%terminal SINT32 %type.cpp "DataFileSint32 *"
-%terminal UINT32 %type.cpp "DataFileUint32 *"
-%terminal FLOAT %type.cpp "DataFileFloat *"
-%terminal CHARACTER %type.cpp "DataFileCharacter *"
-%terminal STRING_FRAGMENT %type.cpp "DataFileString *"
-%terminal IDENTIFIER %type.cpp "DataFileString *"
+%terminal BOOLEAN %type.cpp "Boolean *"
+%terminal SINT32 %type.cpp "SignedInteger *"
+%terminal UINT32 %type.cpp "UnsignedInteger *"
+%terminal FLOATY %type.cpp "Floaty *"
+%terminal CHARACTER %type.cpp "Character *"
+%terminal STRING_FRAGMENT %type.cpp "String *"
+%terminal IDENTIFIER %type.cpp "String *"
 %terminal ';' ',' '+' '{' '}' '[' ']'
 
 %default_parse_nonterminal data_file
 
 %%
 
-%nonterminal data_file %type.cpp "DataFileStructure *"
+%nonterminal data_file %type.cpp "Structure *"
 :
     element_list:element_list
     %target.cpp {
@@ -185,11 +191,11 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     %error
     %target.cpp {
         EmitError("general syntax error", FL);
-        return new DataFileStructure();
+        return new Structure();
     }
 ;
 
-%nonterminal element_list %type.cpp "DataFileStructure *"
+%nonterminal element_list %type.cpp "Structure *"
 :
     element_list:element_list element:element
     %target.cpp {
@@ -212,11 +218,11 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 |
     // empty reduction rule
     %target.cpp {
-        return new DataFileStructure();
+        return new Structure();
     }
 ;
 
-%nonterminal element %type.cpp "DataFileKeyPair *"
+%nonterminal element %type.cpp "KeyPair *"
 :
     IDENTIFIER:key value:value ';'
     %target.cpp {
@@ -227,7 +233,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
             return NULL;
         }
 
-        DataFileKeyPair *key_pair = new DataFileKeyPair(key->Value(), value);
+        KeyPair *key_pair = new KeyPair(key->Get(), value);
         Delete(key);
         return key_pair;
     }
@@ -236,7 +242,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     %target.cpp {
         ASSERT1(key != NULL);
         std::ostringstream out;
-        out << "syntax error in element with key \"" << key->Value() << "\"";
+        out << "syntax error in element with key \"" << key->Get() << "\"";
         EmitError(out.str(), FL);
         Delete(key);
         return NULL;
@@ -249,7 +255,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal structure %type.cpp "DataFileStructure *"
+%nonterminal structure %type.cpp "Structure *"
 :
     '{' element_list:element_list '}'
     %target.cpp {
@@ -260,11 +266,11 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     '{' %error '}'
     %target.cpp {
         EmitError("syntax error in structure", FL);
-        return new DataFileStructure();
+        return new Structure();
     }
 ;
 
-%nonterminal array %type.cpp "DataFileArray *"
+%nonterminal array %type.cpp "Array *"
 :
     '[' value_list:value_list ']'
     %target.cpp {
@@ -280,7 +286,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 |
     '[' ']'
     %target.cpp {
-        return new DataFileArray();
+        return new Array();
     }
 |
     '[' %error ']'
@@ -290,7 +296,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal value_list %type.cpp "DataFileArray *"
+%nonterminal value_list %type.cpp "Array *"
 :
     value_list:value_list ',' value:value
     %target.cpp {
@@ -312,7 +318,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 |
     value:value
     %target.cpp {
-        DataFileArray *value_list = new DataFileArray();
+        Array *value_list = new Array();
         if (value != NULL)
         {
             try
@@ -329,12 +335,12 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal value %type.cpp "DataFileValue *"
+%nonterminal value %type.cpp "Value *"
 :
     BOOLEAN:value %target.cpp { return value; }
 |   SINT32:value %target.cpp { return value; }
 |   UINT32:value %target.cpp { return value; }
-|   FLOAT:value %target.cpp { return value; }
+|   FLOATY:value %target.cpp { return value; }
 |   CHARACTER:value %target.cpp { return value; }
 |   string:value %target.cpp { return value; }
 |   structure:value %target.cpp { return value; }
@@ -344,13 +350,13 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
 */
 ;
 
-%nonterminal string %type.cpp "DataFileString *"
+%nonterminal string %type.cpp "String *"
 :
     string:string '+' STRING_FRAGMENT:string_fragment
     %target.cpp {
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->Value());
+        string->AppendString(string_fragment->Get());
         Delete(string_fragment);
         return string;
     }
@@ -365,7 +371,7 @@ void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
     %target.cpp {
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->Value());
+        string->AppendString(string_fragment->Get());
         Delete(string_fragment);
         EmitError("use + to concatenate strings (or did you forget a comma?)", FL);
         return string;

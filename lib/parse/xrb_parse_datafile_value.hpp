@@ -21,11 +21,12 @@
 #include "xrb_util.hpp"
 #include "xrb_indentformatter.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
 /*
-temp DataFileValue notes - turn into real doxygen docs later
+temp DataFile::Value notes - turn into real doxygen docs later
 
 data types:
     boolean        - true, false
@@ -96,13 +97,13 @@ data paths should never end in a '|' character.
 
 //////////////////////////////////////////////////////////////////////////////
 
-creating DataFileValue ASTs from in-program data:
+creating Value ASTs from in-program data:
 
 in a valid data path, all elements before the last in the sequence are
 guaranteed to be "container" elements (meaning they can contain other
-elements).  these containers are DataFileArray and DataFileStructure.  a
-DataFileKeyPair can technically contain another value, but in this context,
-it merely represents an element name in the data path.
+elements).  these containers are Array and Structure.  a KeyPair can
+technically contain another value, but in this context, it merely represents
+an element name in the data path.
 
 therefore, writing to any arbitrary data path can be done without needing to
 create the necessary container classes leading up to its leaf value.  more
@@ -159,26 +160,27 @@ random notes:
 
 class hierarchy:
 
-DataFileValue
-    DataFileBoolean
-    DataFileInteger
-    DataFileFloat
-    DataFileCharacter
-    DataFileString
-    DataFileKeyPair
-    DataFileArray
-    DataFileStructure
+Value
+    Boolean
+    SignedInteger
+    UnsignedInteger
+    Floaty
+    Character
+    String
+    KeyPair
+    Array
+    Structure
 
 class containment:
 
-DataFileKeyPair (contains a string for the key)
-    DataFileValue *
+KeyPair (contains a string for the key)
+    Value *
 
-DataFileArray
-    vector<DataFileValue *>
+Array
+    vector<Value *>
 
-DataFileStructure
-    map<DataFileKeyPair>
+Structure
+    map<KeyPair>
 
 more random notes:
 
@@ -198,29 +200,30 @@ SetPathElement on structure
 
 */
 
-class DataFileBoolean;
-class DataFileInteger;
-class DataFileFloat;
-class DataFileCharacter;
-class DataFileString;
-class DataFileArray;
-class DataFileStructure;
+class Boolean;
+class SignedInteger;
+class UnsignedInteger;
+class Floaty;
+class Character;
+class String;
+class Array;
+class Structure;
 
-enum DataFileElementType
+enum ElementType
 {
-    DAT_BOOLEAN = 0,
-    DAT_SINT32,
-    DAT_UINT32,
-    DAT_FLOAT,
-    DAT_CHARACTER,
-    DAT_STRING,
-    DAT_KEY_PAIR,
-    DAT_ARRAY,
-    DAT_STRUCTURE,
-    DAT_NO_TYPE,
+    ET_BOOLEAN = 0,
+    ET_SIGNED_INTEGER,
+    ET_UNSIGNED_INTEGER,
+    ET_FLOATY,
+    ET_CHARACTER,
+    ET_STRING,
+    ET_KEY_PAIR,
+    ET_ARRAY,
+    ET_STRUCTURE,
+    ET_NO_TYPE,
 
-    DAT_COUNT
-}; // end of enum DataFileElementType
+    ET_COUNT
+}; // end of enum ElementType
 
 enum NumericSign
 {
@@ -228,7 +231,7 @@ enum NumericSign
     POSITIVE = 1
 }; // end of enum NumericSign
 
-std::string const &DataFileElementTypeString (DataFileElementType data_file_element_type);
+std::string const &ElementTypeString (ElementType element_type);
 
 /** A data file is a human-readable text file which functions as a generalized
   * storage medium.  The file is organized up into sets of potentially nested
@@ -237,8 +240,9 @@ std::string const &DataFileElementTypeString (DataFileElementType data_file_elem
   * The primitive types are
   *     <ul>
   *     <li>Boolean</li>
-  *     <li>Integer (signed and unsigned)</li>
-  *     <li>Floating-point value</li>
+  *     <li>SignedInteger</li>
+  *     <li>UnsignedInteger</li>
+  *     <li>Floaty</li>
   *     <li>Character</li>
   *     <li>String</li>
   *     <li>Keypair</li>
@@ -262,79 +266,79 @@ std::string const &DataFileElementTypeString (DataFileElementType data_file_elem
   *
   * @brief Baseclass of all the DataFile container classes.
   */
-class DataFileValue
+class Value
 {
 public:
 
-    virtual ~DataFileValue () { }
+    virtual ~Value () { }
 
-    virtual DataFileElementType ElementType () const = 0;
-    DataFileValue const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
+    virtual ElementType GetElementType () const = 0;
+    Value const *PathElement (std::string const &path) const { return SubpathElement(path, 0); }
 
     // these methods will throw a string describing the path or type mismatch error
     bool PathElementBoolean (std::string const &path) const throw (std::string);
-    Sint32 PathElementSint32 (std::string const &path) const throw (std::string);
-    Uint32 PathElementUint32 (std::string const &path) const throw (std::string);
-    Float PathElementFloat (std::string const &path) const throw (std::string);
+    Sint32 PathElementSignedInteger (std::string const &path) const throw (std::string);
+    Uint32 PathElementUnsignedInteger (std::string const &path) const throw (std::string);
+    Float PathElementFloaty (std::string const &path) const throw (std::string);
     char PathElementCharacter (std::string const &path) const throw (std::string);
     std::string const &PathElementString (std::string const &path) const throw (std::string);
-    DataFileArray const *PathElementArray (std::string const &path) const throw (std::string);
-    DataFileStructure const *PathElementStructure (std::string const &path) const throw (std::string);
+    Array const *PathElementArray (std::string const &path) const throw (std::string);
+    Structure const *PathElementStructure (std::string const &path) const throw (std::string);
 
     virtual void Print (IndentFormatter &formatter) const = 0;
     virtual void PrintAST (IndentFormatter &formatter) const = 0;
 
 protected:
 
-    virtual DataFileValue const *SubpathElement (
+    virtual Value const *SubpathElement (
         std::string const &path,
         Uint32 start) const = 0;
 
     // sort of a kludgey way for these to call SubpathElement
     // on other objects, but then again, fuck it.
-    friend class DataFileKeyPair;
-    friend class DataFileArray;
-    friend class DataFileStructure;
-}; // end of class DataFileValue
+    friend class KeyPair;
+    friend class Array;
+    friend class Structure;
+}; // end of class Value
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileLeafValue
+// LeafValue
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileLeafValue : public DataFileValue
+class LeafValue : public Value
 {
 public:
 
-    DataFileLeafValue ()
+    LeafValue ()
         :
-        DataFileValue()
+        Value()
     { }
-    virtual ~DataFileLeafValue () = 0;
+    virtual ~LeafValue () = 0;
 
 protected:
 
-    virtual DataFileValue const *SubpathElement (
+    virtual Value const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
-}; // end of class DataFileLeafValue
+}; // end of class LeafValue
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileBoolean
+// Boolean
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileBoolean : public DataFileLeafValue
+class Boolean : public LeafValue
 {
 public:
 
-    DataFileBoolean (bool value)
+    Boolean (bool value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    bool Value () const { return m_value; }
+    bool Get () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_BOOLEAN; }
+    virtual ElementType GetElementType () const { return ET_BOOLEAN; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -345,25 +349,25 @@ public:
 private:
 
     bool const m_value;
-}; // end of class DataFileBoolean
+}; // end of class Boolean
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileSint32
+// SignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileSint32 : public DataFileLeafValue
+class SignedInteger : public LeafValue
 {
 public:
 
-    DataFileSint32 (Sint32 value)
+    SignedInteger (Sint32 value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    Sint32 Value () const { return m_value; }
+    Sint32 Get () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_SINT32; }
+    virtual ElementType GetElementType () const { return ET_SIGNED_INTEGER; }
 
     virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%+d", m_value); }
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -371,25 +375,25 @@ public:
 private:
 
     Sint32 m_value;
-}; // end of class DataFileSint32
+}; // end of class SignedInteger
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileUint32
+// UnsignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileUint32 : public DataFileLeafValue
+class UnsignedInteger : public LeafValue
 {
 public:
 
-    DataFileUint32 (Uint32 value)
+    UnsignedInteger (Uint32 value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    Uint32 Value () const { return m_value; }
+    Uint32 Get () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_UINT32; }
+    virtual ElementType GetElementType () const { return ET_UNSIGNED_INTEGER; }
 
     virtual void Print (IndentFormatter &formatter) const { formatter.BeginLine("%u", m_value); }
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -397,27 +401,25 @@ public:
 private:
 
     Uint32 m_value;
-}; // end of class DataFileUint32
+}; // end of class UnsignedInteger
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileFloat
+// Floaty
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileFloat : public DataFileLeafValue
+class Floaty : public LeafValue
 {
 public:
 
-    DataFileFloat (Float value)
+    Floaty (Float value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    Float Value () const { return m_value; }
+    Float Get () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_FLOAT; }
-
-    void Sign (NumericSign sign);
+    virtual ElementType GetElementType () const { return ET_FLOATY; }
 
     virtual void Print (IndentFormatter &formatter) const
     {
@@ -428,25 +430,25 @@ public:
 private:
 
     Float m_value;
-}; // end of class DataFileFloat
+}; // end of class Floaty
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileCharacter
+// Character
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileCharacter : public DataFileLeafValue
+class Character : public LeafValue
 {
 public:
 
-    DataFileCharacter (char value)
+    Character (char value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    char Value () const { return m_value; }
+    char Get () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_CHARACTER; }
+    virtual ElementType GetElementType () const { return ET_CHARACTER; }
 
     void Escape ();
 
@@ -459,32 +461,32 @@ public:
 private:
 
     char m_value;
-}; // end of class DataFileCharacter
+}; // end of class Character
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileString
+// String
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileString : public DataFileLeafValue
+class String : public LeafValue
 {
 public:
 
-    DataFileString ()
+    String ()
         :
-        DataFileLeafValue()
+        LeafValue()
     { }
-    DataFileString (std::string const &value)
+    String (std::string const &value)
         :
-        DataFileLeafValue(),
+        LeafValue(),
         m_value(value)
     { }
 
-    std::string const &Value () const { return m_value; }
+    std::string const &Get () const { return m_value; }
 
     void AppendString (std::string const &string) { m_value += string; }
     void AppendCharacter (char const character) { m_value += character; }
 
-    virtual DataFileElementType ElementType () const { return DAT_STRING; }
+    virtual ElementType GetElementType () const { return ET_STRING; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
@@ -492,25 +494,25 @@ public:
 private:
 
     std::string m_value;
-}; // end of class DataFileString
+}; // end of class String
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileContainer
+// Container
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileContainer : public DataFileValue
+class Container : public Value
 {
 public:
 
-    DataFileContainer ()
+    Container ()
         :
-        DataFileValue()
+        Value()
     { }
 
     void SetPathElementBoolean (std::string const &path, bool value) throw(std::string);
-    void SetPathElementSint32 (std::string const &path, Sint32 value) throw(std::string);
-    void SetPathElementUint32 (std::string const &path, Uint32 value) throw(std::string);
-    void SetPathElementFloat (std::string const &path, Float value) throw(std::string);
+    void SetPathElementSignedInteger (std::string const &path, Sint32 value) throw(std::string);
+    void SetPathElementUnsignedInteger (std::string const &path, Uint32 value) throw(std::string);
+    void SetPathElementFloaty (std::string const &path, Float value) throw(std::string);
     void SetPathElementCharacter (std::string const &path, char value) throw(std::string);
     void SetPathElementString (std::string const &path, std::string const &value) throw(std::string);
 
@@ -521,167 +523,169 @@ protected:
         NT_LEAF = 0,
         NT_ARRAY,
         NT_STRUCTURE
-    }; // end of enum DataFileContainer::NodeType
+    }; // end of enum Container::NodeType
 
     static NodeType ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string);
 
     virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value) throw(std::string) = 0;
+        LeafValue *value) throw(std::string) = 0;
 
-    friend class DataFileKeyPair;
-    friend class DataFileArray;
-    friend class DataFileStructure;
-}; // end of class DataFileContainer
+    friend class KeyPair;
+    friend class Array;
+    friend class Structure;
+}; // end of class Container
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileKeyPair
+// KeyPair
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileKeyPair : public DataFileContainer
+class KeyPair : public Container
 {
 public:
 
-    DataFileKeyPair (std::string const &key, DataFileValue *value)
+    KeyPair (std::string const &key, Value *value)
         :
-        DataFileContainer(),
+        Container(),
         m_key(key),
         m_value(value)
     {
         ASSERT1(m_key.length() > 0);
     }
-    virtual ~DataFileKeyPair ()
+    virtual ~KeyPair ()
     {
         delete m_value;
     }
 
     std::string const &GetKey () const { return m_key; }
-    DataFileValue *Value () const { return m_value; }
+    Value *GetValue () const { return m_value; }
 
-    virtual DataFileElementType ElementType () const { return DAT_KEY_PAIR; }
+    virtual ElementType GetElementType () const { return ET_KEY_PAIR; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 protected:
 
-    virtual DataFileValue const *SubpathElement (
+    virtual Value const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 
     virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value) throw(std::string);
+        LeafValue *value) throw(std::string);
 
 private:
 
     std::string const m_key;
-    DataFileValue *m_value;
-}; // end of class DataFileKeyPair
+    Value *m_value;
+}; // end of class KeyPair
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileArray
+// Array
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileArray : public DataFileContainer
+class Array : public Container
 {
 public:
 
-    DataFileArray ()
+    Array ()
         :
-        DataFileContainer()
+        Container()
     { }
-    virtual ~DataFileArray ();
+    virtual ~Array ();
 
     bool ShouldBeFormattedInline () const;
-    DataFileElementType ArrayElementType () const;
-    DataFileElementType UltimateArrayElementType () const;
+    ElementType ArrayElementType () const;
+    ElementType UltimateArrayElementType () const;
     Uint32 DimensionCount () const;
     Uint32 ElementCount () const { return m_element_vector.size(); }
-    DataFileValue *Element (Uint32 index) const { return index < m_element_vector.size() ? m_element_vector[index] : NULL; }
+    Value *Element (Uint32 index) const { return index < m_element_vector.size() ? m_element_vector[index] : NULL; }
     bool BooleanElement (Uint32 index) const throw (std::string);
-    Sint32 Sint32Element (Uint32 index) const throw (std::string);
-    Uint32 Uint32Element (Uint32 index) const throw (std::string);
-    Float FloatElement (Uint32 index) const throw (std::string);
+    Sint32 SignedIntegerElement (Uint32 index) const throw (std::string);
+    Uint32 UnsignedIntegerElement (Uint32 index) const throw (std::string);
+    Float FloatyElement (Uint32 index) const throw (std::string);
     char CharacterElement (Uint32 index) const throw (std::string);
     std::string const &StringElement (Uint32 index) const throw (std::string);
-    DataFileArray const *ArrayElement (Uint32 index) const throw (std::string);
-    DataFileStructure const *StructureElement (Uint32 index) const throw (std::string);
+    Array const *ArrayElement (Uint32 index) const throw (std::string);
+    Structure const *StructureElement (Uint32 index) const throw (std::string);
 
-    void AppendValue (DataFileValue *value);
+    void AppendValue (Value *value);
 
-    virtual DataFileElementType ElementType () const { return DAT_ARRAY; }
+    virtual ElementType GetElementType () const { return ET_ARRAY; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 protected:
 
-    virtual DataFileValue const *SubpathElement (
+    virtual Value const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 
     virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value) throw(std::string);
+        LeafValue *value) throw(std::string);
 
 private:
 
     std::string DimensionAndTypeString () const;
-    static bool DoesMatchDimensionAndType (DataFileArray const *array0, DataFileArray const *array1);
+    static bool DoesMatchDimensionAndType (Array const *array0, Array const *array1);
 
-    typedef std::vector<DataFileValue *> ElementVector;
+    typedef std::vector<Value *> ElementVector;
 
     ElementVector m_element_vector;
-}; // end of class DataFileArray
+}; // end of class Array
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileStructure
+// Structure
 // ///////////////////////////////////////////////////////////////////////////
 
-class DataFileStructure : public DataFileContainer
+class Structure : public Container
 {
 public:
 
-    DataFileStructure ()
+    Structure ()
         :
-        DataFileContainer()
+        Container()
     { }
-    virtual ~DataFileStructure ();
+    virtual ~Structure ();
 
-    DataFileValue const *Value (std::string const &key) const;
+    Value const *GetValue (std::string const &key) const;
 
-    void AddKeyPair (std::string const &key, DataFileValue *value);
-    void AddKeyPair (DataFileKeyPair *key_value_pair);
+    void AddKeyPair (std::string const &key, Value *value);
+    void AddKeyPair (KeyPair *key_value_pair);
 
-    virtual DataFileElementType ElementType () const { return DAT_STRUCTURE; }
+    virtual ElementType GetElementType () const { return ET_STRUCTURE; }
 
     virtual void Print (IndentFormatter &formatter) const;
     virtual void PrintAST (IndentFormatter &formatter) const;
 
 protected:
 
-    virtual DataFileValue const *SubpathElement (
+    virtual Value const *SubpathElement (
         std::string const &path,
         Uint32 start) const;
 
     virtual void SetSubpathElement (
         std::string const &path,
         Uint32 start,
-        DataFileLeafValue *value) throw(std::string);
+        LeafValue *value) throw(std::string);
 
 private:
 
     static bool IsValidKey (std::string const &key);
 
-    typedef std::map<std::string, DataFileKeyPair *> MemberMap;
+    typedef std::map<std::string, KeyPair *> MemberMap;
 
     MemberMap m_member_map;
-}; // end of class DataFileStructure
+}; // end of class Structure
 
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_DATAFILEVALUE_HPP_)

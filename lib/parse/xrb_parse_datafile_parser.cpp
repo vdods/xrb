@@ -9,7 +9,7 @@
 #define TRISON_CPP_DEBUG_CODE_(spew_code) if (DebugSpew()) { spew_code; }
 
 
-#line 75 "xrb_parse_datafile_parser.trison"
+#line 78 "xrb_parse_datafile_parser.trison"
 
 #include <sstream>
 
@@ -20,10 +20,11 @@
 #undef FL
 #define FL (m_scanner->GetFiLoc())
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
+Parser::ReturnCode Parser::Parse (std::string const &input_path)
 {
     ASSERT1(m_scanner != NULL);
     ASSERT1(!m_scanner->IsOpen());
@@ -48,35 +49,35 @@ DataFileParser::ReturnCode DataFileParser::Parse (std::string const &input_path)
     return RC_SUCCESS;
 }
 
-void DataFileParser::EmitWarning (std::string const &message, FiLoc const &filoc)
+void Parser::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
     m_scanner->EmitWarning(message, filoc);
 }
 
-void DataFileParser::EmitError (std::string const &message, FiLoc const &filoc)
+void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_scanner != NULL);
     m_scanner->EmitError(message, filoc);
 }
 
-#line 64 "xrb_parse_datafile_parser.cpp"
+#line 65 "xrb_parse_datafile_parser.cpp"
 
-DataFileParser::DataFileParser ()
+Parser::Parser ()
 {
     DebugSpew(false);
 
 
-#line 125 "xrb_parse_datafile_parser.trison"
+#line 129 "xrb_parse_datafile_parser.trison"
 
 //     DebugSpew(true);
-    m_scanner = new DataFileScanner();
+    m_scanner = new Scanner();
     m_accepted_value = NULL;
 
-#line 77 "xrb_parse_datafile_parser.cpp"
+#line 78 "xrb_parse_datafile_parser.cpp"
 }
 
-DataFileParser::~DataFileParser ()
+Parser::~Parser ()
 {
     // clean up dynamically allocated memory.
     ClearStack_();
@@ -84,26 +85,26 @@ DataFileParser::~DataFileParser ()
 
 
 
-#line 130 "xrb_parse_datafile_parser.trison"
+#line 134 "xrb_parse_datafile_parser.trison"
 
     ASSERT1(m_scanner != NULL);
     Delete(m_scanner);
     delete StealAcceptedStructure();
 
-#line 94 "xrb_parse_datafile_parser.cpp"
+#line 95 "xrb_parse_datafile_parser.cpp"
 }
 
-bool DataFileParser::IsAtEndOfInput ()
+bool Parser::IsAtEndOfInput ()
 {
     return Lookahead_(0).m_id == Terminal::END_;
 }
 
-void DataFileParser::ResetForNewInput ()
+void Parser::ResetForNewInput ()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 107 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 108 "xrb_parse_datafile_parser.cpp"
  << " executing reset-for-new-input actions" << std::endl)
 
     // clean up stuff that might be hanging around from the last parse's input.
@@ -111,23 +112,23 @@ void DataFileParser::ResetForNewInput ()
     ClearLookaheadQueue_();
 }
 
-DataFileParser::ParserReturnCode DataFileParser::Parse (DataFileValue * *return_token, ParseNonterminal::Name nonterminal_to_parse)
+Parser::ParserReturnCode Parser::Parse (Value * *return_token, ParseNonterminal::Name nonterminal_to_parse)
 {
 
-#line 135 "xrb_parse_datafile_parser.trison"
+#line 139 "xrb_parse_datafile_parser.trison"
 
     delete StealAcceptedStructure();
 
-#line 122 "xrb_parse_datafile_parser.cpp"
+#line 123 "xrb_parse_datafile_parser.cpp"
 
     ParserReturnCode const parse_return_code = Parse_(return_token, nonterminal_to_parse);
 
 
-#line 138 "xrb_parse_datafile_parser.trison"
+#line 142 "xrb_parse_datafile_parser.trison"
 
     m_scanner->Close();
 
-#line 131 "xrb_parse_datafile_parser.cpp"
+#line 132 "xrb_parse_datafile_parser.cpp"
 
     return parse_return_code;
 }
@@ -136,14 +137,14 @@ DataFileParser::ParserReturnCode DataFileParser::Parse (DataFileValue * *return_
 // begin internal trison-generated parser guts -- don't use
 // ///////////////////////////////////////////////////////////////////////
 
-DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return_token, ParseNonterminal::Name nonterminal_to_parse)
+Parser::ParserReturnCode Parser::Parse_ (Value * *return_token, ParseNonterminal::Name nonterminal_to_parse)
 {
     assert(return_token != NULL && "the return-token pointer must be non-NULL");
 
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 147 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 148 "xrb_parse_datafile_parser.cpp"
  << " starting parse" << std::endl)
 
     ParserReturnCode parser_return_code_ = PRC_UNHANDLED_PARSE_ERROR;
@@ -174,9 +175,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
         if (m_is_in_error_panic_)
         {
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 180 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 181 "xrb_parse_datafile_parser.cpp"
  << " begin error panic" << std::endl)
 
             while (true)
@@ -206,9 +207,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
                 if (accepts_error)
                 {
                     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 212 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 213 "xrb_parse_datafile_parser.cpp"
  << " end error panic; success (current state accepts ERROR_ token)" << std::endl)
                     // if the current state accepts error, then we check if the lookahead token
                     // is Terminal::END_.  if it is, then we add a dummy Terminal::ERROR_ token
@@ -219,9 +220,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
                     if (m_lookahead_queue_[0].m_id == Terminal::END_)
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 225 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 226 "xrb_parse_datafile_parser.cpp"
  << " deferring Terminal::END_ (padding with Terminal::ERROR_ token)" << std::endl)
                         m_lookahead_queue_.push_front(Token(Terminal::END_)); // dummy value
                     }
@@ -237,17 +238,17 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
                     if (m_stack_.size() > 1)
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 243 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 244 "xrb_parse_datafile_parser.cpp"
  << " continue error panic; pop stack (current state doesn't accept ERROR_ token)" << std::endl)
                     }
                     else
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 251 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 252 "xrb_parse_datafile_parser.cpp"
  << " end error panic; abort (stack is empty)" << std::endl)
                     }
                     // otherwise throw away the data at the top of the stack, and pop the stack.
@@ -312,9 +313,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
                 if (lookahead_sequence_matched)
                 {
                     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 318 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 319 "xrb_parse_datafile_parser.cpp"
  << " current (relevant) lookahead(s):")
                     for (BarfCpp_::Uint32 i = 0; i < tested_lookahead_count; ++i)
                     {
@@ -332,9 +333,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
             if (!transition_exercised)
             {
                 TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 338 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 339 "xrb_parse_datafile_parser.cpp"
  << " current (relevant) lookahead(s):")
                 for (BarfCpp_::Uint32 i = 0; i < tested_lookahead_count; ++i)
                 {
@@ -343,9 +344,9 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
                 TRISON_CPP_DEBUG_CODE_(std::cerr << std::endl)
 
                 TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 349 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 350 "xrb_parse_datafile_parser.cpp"
  << " exercising default transition" << std::endl)
                 // exercise the default transition.  a return value of true indicates
                 // that the parser should return.
@@ -374,55 +375,55 @@ DataFileParser::ParserReturnCode DataFileParser::Parse_ (DataFileValue * *return
     ClearStack_();
 
     TRISON_CPP_DEBUG_CODE_(if (parser_return_code_ == PRC_SUCCESS) std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 380 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 381 "xrb_parse_datafile_parser.cpp"
  << " Parse() is returning PRC_SUCCESS" << std::endl)
     TRISON_CPP_DEBUG_CODE_(if (parser_return_code_ == PRC_UNHANDLED_PARSE_ERROR) std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 385 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 386 "xrb_parse_datafile_parser.cpp"
  << " Parse() is returning PRC_UNHANDLED_PARSE_ERROR" << std::endl)
 
     return parser_return_code_;
 }
 
-void DataFileParser::ThrowAwayToken_ (Token::Data &token_data) throw()
+void Parser::ThrowAwayToken_ (Token::Data &token_data) throw()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 396 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 397 "xrb_parse_datafile_parser.cpp"
  << " executing throw-away-token actions" << std::endl)
 
 
-#line 149 "xrb_parse_datafile_parser.trison"
+#line 155 "xrb_parse_datafile_parser.trison"
 
     Delete(token_data);
 
-#line 404 "xrb_parse_datafile_parser.cpp"
+#line 405 "xrb_parse_datafile_parser.cpp"
 }
 
-DataFileParser::Token DataFileParser::Scan_ () throw()
+Parser::Token Parser::Scan_ () throw()
 {
 
-#line 152 "xrb_parse_datafile_parser.trison"
+#line 158 "xrb_parse_datafile_parser.trison"
 
     ASSERT1(m_scanner != NULL);
     return m_scanner->Scan();
 
-#line 415 "xrb_parse_datafile_parser.cpp"
+#line 416 "xrb_parse_datafile_parser.cpp"
 }
 
-void DataFileParser::ClearStack_ () throw()
+void Parser::ClearStack_ () throw()
 {
     if (m_stack_.empty())
         return; // nothing to do
 
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 426 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 427 "xrb_parse_datafile_parser.cpp"
  << " clearing the stack" << std::endl)
 
     Stack_::iterator it = m_stack_.begin();
@@ -435,12 +436,12 @@ void DataFileParser::ClearStack_ () throw()
     m_stack_.clear();
 }
 
-void DataFileParser::ClearLookaheadQueue_ () throw()
+void Parser::ClearLookaheadQueue_ () throw()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 444 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 445 "xrb_parse_datafile_parser.cpp"
  << " clearing the lookahead queue" << std::endl)
 
     for (LookaheadQueue_::iterator it = m_lookahead_queue_.begin(), it_end = m_lookahead_queue_.end(); it != it_end; ++it)
@@ -448,22 +449,22 @@ void DataFileParser::ClearLookaheadQueue_ () throw()
     m_lookahead_queue_.clear();
 }
 
-DataFileParser::Token const &DataFileParser::Lookahead_ (LookaheadQueue_::size_type index) throw()
+Parser::Token const &Parser::Lookahead_ (LookaheadQueue_::size_type index) throw()
 {
     while (index >= m_lookahead_queue_.size())
     {
         m_lookahead_queue_.push_back(Scan_());
 
         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 461 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 462 "xrb_parse_datafile_parser.cpp"
  << " pushed " << *m_lookahead_queue_.rbegin() << " onto back of lookahead queue" << std::endl)
     }
     return m_lookahead_queue_[index];
 }
 
-bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
+bool Parser::ExerciseTransition_ (Transition_ const &transition)
 {
     switch (transition.m_type)
     {
@@ -475,9 +476,9 @@ bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
             assert(transition.m_data < ms_rule_count_);
             Rule_ const &rule = ms_rule_table_[transition.m_data];
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 481 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 482 "xrb_parse_datafile_parser.cpp"
  << " REDUCE " << rule.m_description << std::endl)
             assert(m_stack_.size() > rule.m_token_count);
             m_lookahead_queue_.push_front(
@@ -487,18 +488,18 @@ bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
             m_stack_.resize(m_stack_.size() - rule.m_token_count);
             assert(rule.m_reduction_nonterminal_token_id < ms_token_name_count_);
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 493 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 494 "xrb_parse_datafile_parser.cpp"
  << " pushed " << Token(rule.m_reduction_nonterminal_token_id) << " onto front of lookahead queue" << std::endl)
             return false; // indicating the parser isn't returning
         }
 
         case Transition_::RETURN:
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 502 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 503 "xrb_parse_datafile_parser.cpp"
  << " RETURN" << std::endl)
             return true; // indicating the parser is returning
 
@@ -509,9 +510,9 @@ bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
             assert(Lookahead_(0).m_id < ms_token_name_count_); // at this point, we're past a possible
                                                                // client error, so asserting here is ok.
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 515 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 516 "xrb_parse_datafile_parser.cpp"
  << " SHIFT " << Lookahead_(0) << std::endl)
             m_stack_.push_back(StackElement_(transition.m_data, Lookahead_(0).m_data));
             m_lookahead_queue_.pop_front();
@@ -519,9 +520,9 @@ bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
 
         case Transition_::ERROR_PANIC:
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 525 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 526 "xrb_parse_datafile_parser.cpp"
  << " ERROR_PANIC" << std::endl)
             m_is_in_error_panic_ = true;
             return false; // indicating the parser isn't returning
@@ -532,13 +533,13 @@ bool DataFileParser::ExerciseTransition_ (Transition_ const &transition)
     }
 }
 
-DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_index_) throw()
+Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_index_) throw()
 {
     assert(rule_index_ < ms_rule_count_);
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 542 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 543 "xrb_parse_datafile_parser.cpp"
  << " executing reduction rule " << rule_index_ << std::endl)
     switch (rule_index_)
     {
@@ -549,14 +550,14 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         case 0:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileStructure * element_list(DStaticCast<DataFileStructure *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Structure * element_list(DStaticCast<Structure *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 180 "xrb_parse_datafile_parser.trison"
+#line 186 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(element_list != NULL);
         return element_list;
     
-#line 560 "xrb_parse_datafile_parser.cpp"
+#line 561 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -564,22 +565,22 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 186 "xrb_parse_datafile_parser.trison"
+#line 192 "xrb_parse_datafile_parser.trison"
 
         EmitError("general syntax error", FL);
-        return new DataFileStructure();
+        return new Structure();
     
-#line 573 "xrb_parse_datafile_parser.cpp"
+#line 574 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 2:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileStructure * element_list(DStaticCast<DataFileStructure *>(m_stack_[m_stack_.size()-2].m_token_data));
-            DataFileKeyPair * element(DStaticCast<DataFileKeyPair *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Structure * element_list(DStaticCast<Structure *>(m_stack_[m_stack_.size()-2].m_token_data));
+            KeyPair * element(DStaticCast<KeyPair *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 195 "xrb_parse_datafile_parser.trison"
+#line 201 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(element_list != NULL);
 
@@ -597,7 +598,7 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         }
         return element_list;
     
-#line 601 "xrb_parse_datafile_parser.cpp"
+#line 602 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -605,21 +606,21 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 214 "xrb_parse_datafile_parser.trison"
+#line 220 "xrb_parse_datafile_parser.trison"
 
-        return new DataFileStructure();
+        return new Structure();
     
-#line 613 "xrb_parse_datafile_parser.cpp"
+#line 614 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 4:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * key(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-3].m_token_data));
-            DataFileValue * value(DStaticCast<DataFileValue *>(m_stack_[m_stack_.size()-2].m_token_data));
+            String * key(DStaticCast<String *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Value * value(DStaticCast<Value *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 222 "xrb_parse_datafile_parser.trison"
+#line 228 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(key != NULL);
         if (value == NULL)
@@ -628,29 +629,29 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
             return NULL;
         }
 
-        DataFileKeyPair *key_pair = new DataFileKeyPair(key->Value(), value);
+        KeyPair *key_pair = new KeyPair(key->Get(), value);
         Delete(key);
         return key_pair;
     
-#line 636 "xrb_parse_datafile_parser.cpp"
+#line 637 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 5:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * key(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-3].m_token_data));
+            String * key(DStaticCast<String *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 236 "xrb_parse_datafile_parser.trison"
+#line 242 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(key != NULL);
         std::ostringstream out;
-        out << "syntax error in element with key \"" << key->Value() << "\"";
+        out << "syntax error in element with key \"" << key->Get() << "\"";
         EmitError(out.str(), FL);
         Delete(key);
         return NULL;
     
-#line 654 "xrb_parse_datafile_parser.cpp"
+#line 655 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -658,26 +659,26 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 246 "xrb_parse_datafile_parser.trison"
+#line 252 "xrb_parse_datafile_parser.trison"
 
         EmitError("syntax error in element", FL);
         return NULL;
     
-#line 667 "xrb_parse_datafile_parser.cpp"
+#line 668 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 7:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileStructure * element_list(DStaticCast<DataFileStructure *>(m_stack_[m_stack_.size()-2].m_token_data));
+            Structure * element_list(DStaticCast<Structure *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 255 "xrb_parse_datafile_parser.trison"
+#line 261 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(element_list != NULL);
         return element_list;
     
-#line 681 "xrb_parse_datafile_parser.cpp"
+#line 682 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -685,40 +686,40 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 261 "xrb_parse_datafile_parser.trison"
+#line 267 "xrb_parse_datafile_parser.trison"
 
         EmitError("syntax error in structure", FL);
-        return new DataFileStructure();
+        return new Structure();
     
-#line 694 "xrb_parse_datafile_parser.cpp"
+#line 695 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 9:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileArray * value_list(DStaticCast<DataFileArray *>(m_stack_[m_stack_.size()-2].m_token_data));
-
-#line 270 "xrb_parse_datafile_parser.trison"
-
-        ASSERT1(value_list != NULL);
-        return value_list;
-    
-#line 708 "xrb_parse_datafile_parser.cpp"
-            break;
-        }
-
-        case 10:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileArray * value_list(DStaticCast<DataFileArray *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Array * value_list(DStaticCast<Array *>(m_stack_[m_stack_.size()-2].m_token_data));
 
 #line 276 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(value_list != NULL);
         return value_list;
     
-#line 722 "xrb_parse_datafile_parser.cpp"
+#line 709 "xrb_parse_datafile_parser.cpp"
+            break;
+        }
+
+        case 10:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Array * value_list(DStaticCast<Array *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 282 "xrb_parse_datafile_parser.trison"
+
+        ASSERT1(value_list != NULL);
+        return value_list;
+    
+#line 723 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -726,11 +727,11 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 282 "xrb_parse_datafile_parser.trison"
+#line 288 "xrb_parse_datafile_parser.trison"
 
-        return new DataFileArray();
+        return new Array();
     
-#line 734 "xrb_parse_datafile_parser.cpp"
+#line 735 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -738,22 +739,22 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 287 "xrb_parse_datafile_parser.trison"
+#line 293 "xrb_parse_datafile_parser.trison"
 
         EmitError("syntax error in array", FL);
         return NULL;
     
-#line 747 "xrb_parse_datafile_parser.cpp"
+#line 748 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 13:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileArray * value_list(DStaticCast<DataFileArray *>(m_stack_[m_stack_.size()-3].m_token_data));
-            DataFileValue * value(DStaticCast<DataFileValue *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Array * value_list(DStaticCast<Array *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Value * value(DStaticCast<Value *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 296 "xrb_parse_datafile_parser.trison"
+#line 302 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(value_list != NULL);
         if (value != NULL)
@@ -770,18 +771,18 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         }
         return value_list;
     
-#line 774 "xrb_parse_datafile_parser.cpp"
+#line 775 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 14:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileValue * value(DStaticCast<DataFileValue *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Value * value(DStaticCast<Value *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 314 "xrb_parse_datafile_parser.trison"
+#line 320 "xrb_parse_datafile_parser.trison"
 
-        DataFileArray *value_list = new DataFileArray();
+        Array *value_list = new Array();
         if (value != NULL)
         {
             try
@@ -796,146 +797,146 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
         }
         return value_list;
     
-#line 800 "xrb_parse_datafile_parser.cpp"
+#line 801 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 15:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileBoolean * value(DStaticCast<DataFileBoolean *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Boolean * value(DStaticCast<Boolean *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 334 "xrb_parse_datafile_parser.trison"
+#line 340 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 811 "xrb_parse_datafile_parser.cpp"
+#line 812 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 16:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileSint32 * value(DStaticCast<DataFileSint32 *>(m_stack_[m_stack_.size()-1].m_token_data));
+            SignedInteger * value(DStaticCast<SignedInteger *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 335 "xrb_parse_datafile_parser.trison"
+#line 341 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 822 "xrb_parse_datafile_parser.cpp"
+#line 823 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 17:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileUint32 * value(DStaticCast<DataFileUint32 *>(m_stack_[m_stack_.size()-1].m_token_data));
+            UnsignedInteger * value(DStaticCast<UnsignedInteger *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 336 "xrb_parse_datafile_parser.trison"
+#line 342 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 833 "xrb_parse_datafile_parser.cpp"
+#line 834 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 18:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileFloat * value(DStaticCast<DataFileFloat *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Floaty * value(DStaticCast<Floaty *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 337 "xrb_parse_datafile_parser.trison"
+#line 343 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 844 "xrb_parse_datafile_parser.cpp"
+#line 845 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 19:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileCharacter * value(DStaticCast<DataFileCharacter *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Character * value(DStaticCast<Character *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 338 "xrb_parse_datafile_parser.trison"
+#line 344 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 855 "xrb_parse_datafile_parser.cpp"
+#line 856 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 20:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * value(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-1].m_token_data));
+            String * value(DStaticCast<String *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 339 "xrb_parse_datafile_parser.trison"
+#line 345 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 866 "xrb_parse_datafile_parser.cpp"
+#line 867 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 21:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileStructure * value(DStaticCast<DataFileStructure *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Structure * value(DStaticCast<Structure *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 340 "xrb_parse_datafile_parser.trison"
+#line 346 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 877 "xrb_parse_datafile_parser.cpp"
+#line 878 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 22:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileArray * value(DStaticCast<DataFileArray *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Array * value(DStaticCast<Array *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 341 "xrb_parse_datafile_parser.trison"
+#line 347 "xrb_parse_datafile_parser.trison"
  return value; 
-#line 888 "xrb_parse_datafile_parser.cpp"
+#line 889 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 23:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * string(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-3].m_token_data));
-            DataFileString * string_fragment(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-1].m_token_data));
+            String * string(DStaticCast<String *>(m_stack_[m_stack_.size()-3].m_token_data));
+            String * string_fragment(DStaticCast<String *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 350 "xrb_parse_datafile_parser.trison"
+#line 356 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->Value());
+        string->AppendString(string_fragment->Get());
         Delete(string_fragment);
         return string;
     
-#line 906 "xrb_parse_datafile_parser.cpp"
+#line 907 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 24:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * string_fragment(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-1].m_token_data));
+            String * string_fragment(DStaticCast<String *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 359 "xrb_parse_datafile_parser.trison"
+#line 365 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(string_fragment != NULL);
         return string_fragment;
     
-#line 920 "xrb_parse_datafile_parser.cpp"
+#line 921 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
         case 25:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            DataFileString * string(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-2].m_token_data));
-            DataFileString * string_fragment(DStaticCast<DataFileString *>(m_stack_[m_stack_.size()-1].m_token_data));
+            String * string(DStaticCast<String *>(m_stack_[m_stack_.size()-2].m_token_data));
+            String * string_fragment(DStaticCast<String *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 365 "xrb_parse_datafile_parser.trison"
+#line 371 "xrb_parse_datafile_parser.trison"
 
         ASSERT1(string != NULL);
         ASSERT1(string_fragment != NULL);
-        string->AppendString(string_fragment->Value());
+        string->AppendString(string_fragment->Get());
         Delete(string_fragment);
         EmitError("use + to concatenate strings (or did you forget a comma?)", FL);
         return string;
     
-#line 939 "xrb_parse_datafile_parser.cpp"
+#line 940 "xrb_parse_datafile_parser.cpp"
             break;
         }
 
@@ -945,14 +946,14 @@ DataFileParser::Token::Data DataFileParser::ExecuteReductionRule_ (BarfCpp_::Uin
     return NULL;
 }
 
-void DataFileParser::PrintParserStatus_ (std::ostream &stream) const
+void Parser::PrintParserStatus_ (std::ostream &stream) const
 {
     assert(!m_stack_.empty());
 
     stream << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 956 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 957 "xrb_parse_datafile_parser.cpp"
  << " parser stack: ";
     for (Stack_::const_iterator it = m_stack_.begin(), it_end = m_stack_.end(); it != it_end; ++it)
     {
@@ -967,21 +968,21 @@ void DataFileParser::PrintParserStatus_ (std::ostream &stream) const
     stream << std::endl;
 }
 
-void DataFileParser::PrintIndented_ (std::ostream &stream, char const *string) const
+void Parser::PrintIndented_ (std::ostream &stream, char const *string) const
 {
     assert(string != NULL);
     stream << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 977 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 978 "xrb_parse_datafile_parser.cpp"
  << "    ";
     while (*string != '\0')
     {
         if (*string == '\n')
             stream << '\n' << 
-#line 159 "xrb_parse_datafile_parser.trison"
-"DataFileParser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
-#line 985 "xrb_parse_datafile_parser.cpp"
+#line 165 "xrb_parse_datafile_parser.trison"
+"DataFile::Parser" << (m_scanner->GetFiLoc().IsValid() ? " ("+m_scanner->GetFiLoc().AsString()+")" : g_empty_string) << ":"
+#line 986 "xrb_parse_datafile_parser.cpp"
  << "    ";
         else
             stream << *string;
@@ -989,55 +990,55 @@ void DataFileParser::PrintIndented_ (std::ostream &stream, char const *string) c
     }
 }
 
-std::ostream &operator << (std::ostream &stream, DataFileParser::Token const &token)
+std::ostream &operator << (std::ostream &stream, Parser::Token const &token)
 {
-    if (token.m_id < DataFileParser::ms_token_name_count_)
-        stream << '(' << DataFileParser::ms_token_name_table_[token.m_id] << ')';
+    if (token.m_id < Parser::ms_token_name_count_)
+        stream << '(' << Parser::ms_token_name_table_[token.m_id] << ')';
     else
         stream << "!INVALID TOKEN!";
     return stream;
 }
 
-DataFileParser::Rule_ const DataFileParser::ms_rule_table_[] =
+Parser::Rule_ const Parser::ms_rule_table_[] =
 {
-    { DataFileParser::Nonterminal_::data_file, 1, "data_file <- element_list" },
-    { DataFileParser::Nonterminal_::data_file, 1, "data_file <- ERROR_" },
-    { DataFileParser::Nonterminal_::element_list, 2, "element_list <- element_list element" },
-    { DataFileParser::Nonterminal_::element_list, 0, "element_list <-" },
-    { DataFileParser::Nonterminal_::element, 3, "element <- IDENTIFIER value ';'" },
-    { DataFileParser::Nonterminal_::element, 3, "element <- IDENTIFIER ERROR_ ';'" },
-    { DataFileParser::Nonterminal_::element, 2, "element <- ERROR_ ';'" },
-    { DataFileParser::Nonterminal_::structure, 3, "structure <- '{' element_list '}'" },
-    { DataFileParser::Nonterminal_::structure, 3, "structure <- '{' ERROR_ '}'" },
-    { DataFileParser::Nonterminal_::array, 3, "array <- '[' value_list ']'" },
-    { DataFileParser::Nonterminal_::array, 4, "array <- '[' value_list ',' ']'" },
-    { DataFileParser::Nonterminal_::array, 2, "array <- '[' ']'" },
-    { DataFileParser::Nonterminal_::array, 3, "array <- '[' ERROR_ ']'" },
-    { DataFileParser::Nonterminal_::value_list, 3, "value_list <- value_list ',' value" },
-    { DataFileParser::Nonterminal_::value_list, 1, "value_list <- value" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- BOOLEAN" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- SINT32" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- UINT32" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- FLOAT" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- CHARACTER" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- string" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- structure" },
-    { DataFileParser::Nonterminal_::value, 1, "value <- array" },
-    { DataFileParser::Nonterminal_::string, 3, "string <- string '+' STRING_FRAGMENT" },
-    { DataFileParser::Nonterminal_::string, 1, "string <- STRING_FRAGMENT" },
-    { DataFileParser::Nonterminal_::string, 2, "string <- string STRING_FRAGMENT" }
+    { Parser::Nonterminal_::data_file, 1, "data_file <- element_list" },
+    { Parser::Nonterminal_::data_file, 1, "data_file <- ERROR_" },
+    { Parser::Nonterminal_::element_list, 2, "element_list <- element_list element" },
+    { Parser::Nonterminal_::element_list, 0, "element_list <-" },
+    { Parser::Nonterminal_::element, 3, "element <- IDENTIFIER value ';'" },
+    { Parser::Nonterminal_::element, 3, "element <- IDENTIFIER ERROR_ ';'" },
+    { Parser::Nonterminal_::element, 2, "element <- ERROR_ ';'" },
+    { Parser::Nonterminal_::structure, 3, "structure <- '{' element_list '}'" },
+    { Parser::Nonterminal_::structure, 3, "structure <- '{' ERROR_ '}'" },
+    { Parser::Nonterminal_::array, 3, "array <- '[' value_list ']'" },
+    { Parser::Nonterminal_::array, 4, "array <- '[' value_list ',' ']'" },
+    { Parser::Nonterminal_::array, 2, "array <- '[' ']'" },
+    { Parser::Nonterminal_::array, 3, "array <- '[' ERROR_ ']'" },
+    { Parser::Nonterminal_::value_list, 3, "value_list <- value_list ',' value" },
+    { Parser::Nonterminal_::value_list, 1, "value_list <- value" },
+    { Parser::Nonterminal_::value, 1, "value <- BOOLEAN" },
+    { Parser::Nonterminal_::value, 1, "value <- SINT32" },
+    { Parser::Nonterminal_::value, 1, "value <- UINT32" },
+    { Parser::Nonterminal_::value, 1, "value <- FLOATY" },
+    { Parser::Nonterminal_::value, 1, "value <- CHARACTER" },
+    { Parser::Nonterminal_::value, 1, "value <- string" },
+    { Parser::Nonterminal_::value, 1, "value <- structure" },
+    { Parser::Nonterminal_::value, 1, "value <- array" },
+    { Parser::Nonterminal_::string, 3, "string <- string '+' STRING_FRAGMENT" },
+    { Parser::Nonterminal_::string, 1, "string <- STRING_FRAGMENT" },
+    { Parser::Nonterminal_::string, 2, "string <- string STRING_FRAGMENT" }
 };
-BarfCpp_::Size const DataFileParser::ms_rule_count_ = sizeof(DataFileParser::ms_rule_table_) / sizeof(*DataFileParser::ms_rule_table_);
+BarfCpp_::Size const Parser::ms_rule_count_ = sizeof(Parser::ms_rule_table_) / sizeof(*Parser::ms_rule_table_);
 
-DataFileParser::State_ const DataFileParser::ms_state_table_[] =
+Parser::State_ const Parser::ms_state_table_[] =
 {
     { 3, ms_transition_table_+0, "START data_file                               \nrule 0: data_file <- . element_list           \nrule 2: element_list <- . element_list element\nrule 3: element_list <- .                     \nrule 1: data_file <- . ERROR_                 " },
     { 2, ms_transition_table_+3, "rule 0: data_file <- . element_list           \nrule 2: element_list <- . element_list element\nrule 3: element_list <- .                     " },
     { 4, ms_transition_table_+5, "rule 0: data_file <- element_list .           \nrule 2: element_list <- element_list . element\nrule 4: element <- . IDENTIFIER value ';'     \nrule 5: element <- . IDENTIFIER ERROR_ ';'    \nrule 6: element <- . ERROR_ ';'               " },
     { 2, ms_transition_table_+9, "rule 6: element <- ERROR_ . ';'" },
     { 1, ms_transition_table_+11, "rule 6: element <- ERROR_ ';' ." },
-    { 14, ms_transition_table_+12, "rule 4: element <- IDENTIFIER . value ';'      \nrule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             \nrule 5: element <- IDENTIFIER . ERROR_ ';'     " },
-    { 16, ms_transition_table_+26, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 9: array <- '[' . value_list ']'          \nrule 13: value_list <- . value_list ',' value  \nrule 14: value_list <- . value                 \nrule 10: array <- . '[' value_list ',' ']'     \nrule 10: array <- '[' . value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 11: array <- '[' . ']'                    \nrule 12: array <- . '[' ERROR_ ']'             \nrule 12: array <- '[' . ERROR_ ']'             " },
+    { 14, ms_transition_table_+12, "rule 4: element <- IDENTIFIER . value ';'      \nrule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             \nrule 5: element <- IDENTIFIER . ERROR_ ';'     " },
+    { 16, ms_transition_table_+26, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 9: array <- '[' . value_list ']'          \nrule 13: value_list <- . value_list ',' value  \nrule 14: value_list <- . value                 \nrule 10: array <- . '[' value_list ',' ']'     \nrule 10: array <- '[' . value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 11: array <- '[' . ']'                    \nrule 12: array <- . '[' ERROR_ ']'             \nrule 12: array <- '[' . ERROR_ ']'             " },
     { 1, ms_transition_table_+42, "rule 11: array <- '[' ']' ." },
     { 2, ms_transition_table_+43, "rule 2: element_list <- . element_list element\nrule 7: structure <- '{' . element_list '}'   \nrule 8: structure <- '{' . ERROR_ '}'         \nrule 3: element_list <- .                     " },
     { 2, ms_transition_table_+45, "rule 2: element_list <- . element_list element\nrule 7: structure <- '{' . element_list '}'   \nrule 3: element_list <- .                     " },
@@ -1049,13 +1050,13 @@ DataFileParser::State_ const DataFileParser::ms_state_table_[] =
     { 1, ms_transition_table_+57, "rule 15: value <- BOOLEAN ." },
     { 1, ms_transition_table_+58, "rule 16: value <- SINT32 ." },
     { 1, ms_transition_table_+59, "rule 17: value <- UINT32 ." },
-    { 1, ms_transition_table_+60, "rule 18: value <- FLOAT ." },
+    { 1, ms_transition_table_+60, "rule 18: value <- FLOATY ." },
     { 1, ms_transition_table_+61, "rule 19: value <- CHARACTER ." },
     { 1, ms_transition_table_+62, "rule 24: string <- STRING_FRAGMENT ." },
     { 1, ms_transition_table_+63, "rule 21: value <- structure ." },
     { 1, ms_transition_table_+64, "rule 22: value <- array ." },
     { 3, ms_transition_table_+65, "rule 9: array <- '[' value_list . ']'        \nrule 13: value_list <- value_list . ',' value\nrule 10: array <- '[' value_list . ',' ']'   " },
-    { 14, ms_transition_table_+68, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 13: value_list <- value_list ',' . value  \nrule 10: array <- . '[' value_list ',' ']'     \nrule 10: array <- '[' value_list ',' . ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
+    { 14, ms_transition_table_+68, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 13: value_list <- value_list ',' . value  \nrule 10: array <- . '[' value_list ',' ']'     \nrule 10: array <- '[' value_list ',' . ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
     { 1, ms_transition_table_+82, "rule 10: array <- '[' value_list ',' ']' ." },
     { 1, ms_transition_table_+83, "rule 13: value_list <- value_list ',' value ." },
     { 3, ms_transition_table_+84, "rule 20: value <- string .                     \nrule 23: string <- string . '+' STRING_FRAGMENT\nrule 25: string <- string . STRING_FRAGMENT    " },
@@ -1077,310 +1078,310 @@ DataFileParser::State_ const DataFileParser::ms_state_table_[] =
     { 1, ms_transition_table_+114, "RETURN structure" },
     { 3, ms_transition_table_+115, "START array                               \nrule 9: array <- . '[' value_list ']'     \nrule 10: array <- . '[' value_list ',' ']'\nrule 11: array <- . '[' ']'               \nrule 12: array <- . '[' ERROR_ ']'        " },
     { 1, ms_transition_table_+118, "RETURN array" },
-    { 14, ms_transition_table_+119, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nSTART value_list                               \nrule 13: value_list <- . value_list ',' value  \nrule 14: value_list <- . value                 \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
+    { 14, ms_transition_table_+119, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nSTART value_list                               \nrule 13: value_list <- . value_list ',' value  \nrule 14: value_list <- . value                 \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
     { 2, ms_transition_table_+133, "RETURN value_list                            \nrule 13: value_list <- value_list . ',' value" },
-    { 13, ms_transition_table_+135, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 13: value_list <- value_list ',' . value  \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
-    { 13, ms_transition_table_+148, "START value                                    \nrule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOAT                      \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
+    { 13, ms_transition_table_+135, "rule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 13: value_list <- value_list ',' . value  \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
+    { 13, ms_transition_table_+148, "START value                                    \nrule 15: value <- . BOOLEAN                    \nrule 16: value <- . SINT32                     \nrule 17: value <- . UINT32                     \nrule 18: value <- . FLOATY                     \nrule 19: value <- . CHARACTER                  \nrule 20: value <- . string                     \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    \nrule 21: value <- . structure                  \nrule 7: structure <- . '{' element_list '}'    \nrule 8: structure <- . '{' ERROR_ '}'          \nrule 22: value <- . array                      \nrule 9: array <- . '[' value_list ']'          \nrule 10: array <- . '[' value_list ',' ']'     \nrule 11: array <- . '[' ']'                    \nrule 12: array <- . '[' ERROR_ ']'             " },
     { 1, ms_transition_table_+161, "RETURN value" },
     { 3, ms_transition_table_+162, "START string                                   \nrule 23: string <- . string '+' STRING_FRAGMENT\nrule 24: string <- . STRING_FRAGMENT           \nrule 25: string <- . string STRING_FRAGMENT    " },
     { 3, ms_transition_table_+165, "RETURN string                                  \nrule 23: string <- string . '+' STRING_FRAGMENT\nrule 25: string <- string . STRING_FRAGMENT    " }
 };
-BarfCpp_::Size const DataFileParser::ms_state_count_ = sizeof(DataFileParser::ms_state_table_) / sizeof(*DataFileParser::ms_state_table_);
+BarfCpp_::Size const Parser::ms_state_count_ = sizeof(Parser::ms_state_table_) / sizeof(*Parser::ms_state_table_);
 
-DataFileParser::Transition_ const DataFileParser::ms_transition_table_[] =
+Parser::Transition_ const Parser::ms_transition_table_[] =
 {
-    { DataFileParser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+0 },
-    { DataFileParser::Transition_::SHIFT, 37, 1, ms_lookahead_table_+0 },
-    { DataFileParser::Transition_::SHIFT, 2, 1, ms_lookahead_table_+1 },
-    { DataFileParser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+2 },
-    { DataFileParser::Transition_::SHIFT, 2, 1, ms_lookahead_table_+2 },
-    { DataFileParser::Transition_::REDUCE, 0, 0, ms_lookahead_table_+3 },
-    { DataFileParser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+3 },
-    { DataFileParser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+4 },
-    { DataFileParser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+5 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+6 },
-    { DataFileParser::Transition_::SHIFT, 4, 1, ms_lookahead_table_+6 },
-    { DataFileParser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+7 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+7 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+7 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+8 },
-    { DataFileParser::Transition_::SHIFT, 33, 1, ms_lookahead_table_+9 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+10 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+11 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+12 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+13 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+14 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+15 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+16 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+17 },
-    { DataFileParser::Transition_::SHIFT, 35, 1, ms_lookahead_table_+18 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+19 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+20 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+20 },
-    { DataFileParser::Transition_::SHIFT, 7, 1, ms_lookahead_table_+21 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+22 },
-    { DataFileParser::Transition_::SHIFT, 13, 1, ms_lookahead_table_+23 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+24 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+25 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+26 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+27 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+28 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+29 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+30 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+31 },
-    { DataFileParser::Transition_::SHIFT, 23, 1, ms_lookahead_table_+32 },
-    { DataFileParser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+33 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+34 },
-    { DataFileParser::Transition_::REDUCE, 11, 0, ms_lookahead_table_+35 },
-    { DataFileParser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+35 },
-    { DataFileParser::Transition_::SHIFT, 10, 1, ms_lookahead_table_+35 },
-    { DataFileParser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+36 },
-    { DataFileParser::Transition_::SHIFT, 10, 1, ms_lookahead_table_+36 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+37 },
-    { DataFileParser::Transition_::SHIFT, 11, 1, ms_lookahead_table_+37 },
-    { DataFileParser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+38 },
-    { DataFileParser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+39 },
-    { DataFileParser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+40 },
-    { DataFileParser::Transition_::REDUCE, 7, 0, ms_lookahead_table_+41 },
-    { DataFileParser::Transition_::REDUCE, 2, 0, ms_lookahead_table_+41 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+41 },
-    { DataFileParser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+41 },
-    { DataFileParser::Transition_::REDUCE, 12, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 15, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 16, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 17, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 18, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 19, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 24, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 21, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::REDUCE, 22, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::SHIFT, 24, 1, ms_lookahead_table_+42 },
-    { DataFileParser::Transition_::SHIFT, 31, 1, ms_lookahead_table_+43 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+44 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+44 },
-    { DataFileParser::Transition_::SHIFT, 25, 1, ms_lookahead_table_+45 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+46 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+47 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+48 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+49 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+50 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+51 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+52 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+53 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+54 },
-    { DataFileParser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+55 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+56 },
-    { DataFileParser::Transition_::REDUCE, 10, 0, ms_lookahead_table_+57 },
-    { DataFileParser::Transition_::REDUCE, 13, 0, ms_lookahead_table_+57 },
-    { DataFileParser::Transition_::REDUCE, 20, 0, ms_lookahead_table_+57 },
-    { DataFileParser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+57 },
-    { DataFileParser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+58 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+59 },
-    { DataFileParser::Transition_::SHIFT, 29, 1, ms_lookahead_table_+59 },
-    { DataFileParser::Transition_::REDUCE, 23, 0, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::REDUCE, 25, 0, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::REDUCE, 9, 0, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::REDUCE, 14, 0, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::SHIFT, 34, 1, ms_lookahead_table_+60 },
-    { DataFileParser::Transition_::REDUCE, 5, 0, ms_lookahead_table_+61 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+61 },
-    { DataFileParser::Transition_::SHIFT, 36, 1, ms_lookahead_table_+61 },
-    { DataFileParser::Transition_::REDUCE, 4, 0, ms_lookahead_table_+62 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+62 },
-    { DataFileParser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+62 },
-    { DataFileParser::Transition_::SHIFT, 39, 1, ms_lookahead_table_+62 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+63 },
-    { DataFileParser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+63 },
-    { DataFileParser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+64 },
-    { DataFileParser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+65 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+66 },
-    { DataFileParser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+66 },
-    { DataFileParser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+67 },
-    { DataFileParser::Transition_::SHIFT, 41, 1, ms_lookahead_table_+68 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+69 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+69 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+69 },
-    { DataFileParser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+70 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+71 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+71 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+71 },
-    { DataFileParser::Transition_::SHIFT, 45, 1, ms_lookahead_table_+72 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+73 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+73 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+73 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+74 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+75 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+76 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+77 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+78 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+79 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+80 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+81 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+82 },
-    { DataFileParser::Transition_::SHIFT, 47, 1, ms_lookahead_table_+83 },
-    { DataFileParser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+84 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+85 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+86 },
-    { DataFileParser::Transition_::SHIFT, 48, 1, ms_lookahead_table_+86 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+87 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+87 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+88 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+89 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+90 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+91 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+92 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+93 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+94 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+95 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+96 },
-    { DataFileParser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+97 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+98 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+99 },
-    { DataFileParser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+99 },
-    { DataFileParser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+100 },
-    { DataFileParser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+101 },
-    { DataFileParser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+102 },
-    { DataFileParser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+103 },
-    { DataFileParser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+104 },
-    { DataFileParser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+105 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+106 },
-    { DataFileParser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+107 },
-    { DataFileParser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+108 },
-    { DataFileParser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+109 },
-    { DataFileParser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+110 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+111 },
-    { DataFileParser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+111 },
-    { DataFileParser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+111 },
-    { DataFileParser::Transition_::SHIFT, 52, 1, ms_lookahead_table_+112 },
-    { DataFileParser::Transition_::RETURN, 0, 0, ms_lookahead_table_+113 },
-    { DataFileParser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+113 },
-    { DataFileParser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+114 }
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+0 },
+    { Parser::Transition_::SHIFT, 37, 1, ms_lookahead_table_+0 },
+    { Parser::Transition_::SHIFT, 2, 1, ms_lookahead_table_+1 },
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+2 },
+    { Parser::Transition_::SHIFT, 2, 1, ms_lookahead_table_+2 },
+    { Parser::Transition_::REDUCE, 0, 0, ms_lookahead_table_+3 },
+    { Parser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+3 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+4 },
+    { Parser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+5 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+6 },
+    { Parser::Transition_::SHIFT, 4, 1, ms_lookahead_table_+6 },
+    { Parser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+7 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+7 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+7 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+8 },
+    { Parser::Transition_::SHIFT, 33, 1, ms_lookahead_table_+9 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+10 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+11 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+12 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+13 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+14 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+15 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+16 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+17 },
+    { Parser::Transition_::SHIFT, 35, 1, ms_lookahead_table_+18 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+19 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+20 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+20 },
+    { Parser::Transition_::SHIFT, 7, 1, ms_lookahead_table_+21 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+22 },
+    { Parser::Transition_::SHIFT, 13, 1, ms_lookahead_table_+23 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+24 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+25 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+26 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+27 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+28 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+29 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+30 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+31 },
+    { Parser::Transition_::SHIFT, 23, 1, ms_lookahead_table_+32 },
+    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+33 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+34 },
+    { Parser::Transition_::REDUCE, 11, 0, ms_lookahead_table_+35 },
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+35 },
+    { Parser::Transition_::SHIFT, 10, 1, ms_lookahead_table_+35 },
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+36 },
+    { Parser::Transition_::SHIFT, 10, 1, ms_lookahead_table_+36 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+37 },
+    { Parser::Transition_::SHIFT, 11, 1, ms_lookahead_table_+37 },
+    { Parser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+38 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+39 },
+    { Parser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+40 },
+    { Parser::Transition_::REDUCE, 7, 0, ms_lookahead_table_+41 },
+    { Parser::Transition_::REDUCE, 2, 0, ms_lookahead_table_+41 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+41 },
+    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+41 },
+    { Parser::Transition_::REDUCE, 12, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 15, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 16, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 17, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 18, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 19, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 24, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 21, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::REDUCE, 22, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+42 },
+    { Parser::Transition_::SHIFT, 24, 1, ms_lookahead_table_+42 },
+    { Parser::Transition_::SHIFT, 31, 1, ms_lookahead_table_+43 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+44 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+44 },
+    { Parser::Transition_::SHIFT, 25, 1, ms_lookahead_table_+45 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+46 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+47 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+48 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+49 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+50 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+51 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+52 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+53 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+54 },
+    { Parser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+55 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+56 },
+    { Parser::Transition_::REDUCE, 10, 0, ms_lookahead_table_+57 },
+    { Parser::Transition_::REDUCE, 13, 0, ms_lookahead_table_+57 },
+    { Parser::Transition_::REDUCE, 20, 0, ms_lookahead_table_+57 },
+    { Parser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+57 },
+    { Parser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+58 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+59 },
+    { Parser::Transition_::SHIFT, 29, 1, ms_lookahead_table_+59 },
+    { Parser::Transition_::REDUCE, 23, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 25, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 9, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 14, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::SHIFT, 34, 1, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 5, 0, ms_lookahead_table_+61 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+61 },
+    { Parser::Transition_::SHIFT, 36, 1, ms_lookahead_table_+61 },
+    { Parser::Transition_::REDUCE, 4, 0, ms_lookahead_table_+62 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+62 },
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+62 },
+    { Parser::Transition_::SHIFT, 39, 1, ms_lookahead_table_+62 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+63 },
+    { Parser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+63 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+64 },
+    { Parser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+65 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+66 },
+    { Parser::Transition_::SHIFT, 3, 1, ms_lookahead_table_+66 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+67 },
+    { Parser::Transition_::SHIFT, 41, 1, ms_lookahead_table_+68 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+69 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+69 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+69 },
+    { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+70 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+71 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+71 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+71 },
+    { Parser::Transition_::SHIFT, 45, 1, ms_lookahead_table_+72 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+73 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+73 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+73 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+74 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+75 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+76 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+77 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+78 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+79 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+80 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+81 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+82 },
+    { Parser::Transition_::SHIFT, 47, 1, ms_lookahead_table_+83 },
+    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+84 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+85 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+86 },
+    { Parser::Transition_::SHIFT, 48, 1, ms_lookahead_table_+86 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+87 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+87 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+88 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+89 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+90 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+91 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+92 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+93 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+94 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+95 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+96 },
+    { Parser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+97 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+98 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+99 },
+    { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+99 },
+    { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+100 },
+    { Parser::Transition_::SHIFT, 15, 1, ms_lookahead_table_+101 },
+    { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+102 },
+    { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+103 },
+    { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+104 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+105 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+106 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+107 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+108 },
+    { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+109 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+110 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+111 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+111 },
+    { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+111 },
+    { Parser::Transition_::SHIFT, 52, 1, ms_lookahead_table_+112 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+113 },
+    { Parser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+113 },
+    { Parser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+114 }
 };
-BarfCpp_::Size const DataFileParser::ms_transition_count_ = sizeof(DataFileParser::ms_transition_table_) / sizeof(*DataFileParser::ms_transition_table_);
+BarfCpp_::Size const Parser::ms_transition_count_ = sizeof(Parser::ms_transition_table_) / sizeof(*Parser::ms_transition_table_);
 
-DataFileParser::Token::Id const DataFileParser::ms_lookahead_table_[] =
+Parser::Token::Id const Parser::ms_lookahead_table_[] =
 {
-    DataFileParser::Nonterminal_::data_file,
-    DataFileParser::Nonterminal_::element_list,
-    DataFileParser::Nonterminal_::element_list,
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::IDENTIFIER,
-    DataFileParser::Nonterminal_::element,
+    Parser::Nonterminal_::data_file,
+    Parser::Nonterminal_::element_list,
+    Parser::Nonterminal_::element_list,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::IDENTIFIER,
+    Parser::Nonterminal_::element,
     ';',
     '[',
     '{',
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
     '[',
     ']',
     '{',
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value_list,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
-    DataFileParser::Nonterminal_::element_list,
-    DataFileParser::Nonterminal_::element_list,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value_list,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
+    Parser::Nonterminal_::element_list,
+    Parser::Nonterminal_::element_list,
     '}',
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::IDENTIFIER,
-    DataFileParser::Nonterminal_::element,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::IDENTIFIER,
+    Parser::Nonterminal_::element,
     ']',
     ',',
     ']',
     '[',
     ']',
     '{',
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
     '+',
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Terminal::STRING_FRAGMENT,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Terminal::STRING_FRAGMENT,
     ';',
     ';',
-    DataFileParser::Nonterminal_::element_list,
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::IDENTIFIER,
-    DataFileParser::Nonterminal_::element,
-    DataFileParser::Terminal::ERROR_,
-    DataFileParser::Terminal::IDENTIFIER,
-    DataFileParser::Nonterminal_::element,
+    Parser::Nonterminal_::element_list,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::IDENTIFIER,
+    Parser::Nonterminal_::element,
+    Parser::Terminal::ERROR_,
+    Parser::Terminal::IDENTIFIER,
+    Parser::Nonterminal_::element,
     '{',
-    DataFileParser::Nonterminal_::structure,
+    Parser::Nonterminal_::structure,
     '[',
-    DataFileParser::Nonterminal_::array,
+    Parser::Nonterminal_::array,
     '[',
     '{',
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value_list,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value_list,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
     ',',
     '[',
     '{',
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
     '[',
     '{',
-    DataFileParser::Terminal::BOOLEAN,
-    DataFileParser::Terminal::SINT32,
-    DataFileParser::Terminal::UINT32,
-    DataFileParser::Terminal::FLOAT,
-    DataFileParser::Terminal::CHARACTER,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::structure,
-    DataFileParser::Nonterminal_::array,
-    DataFileParser::Nonterminal_::value,
-    DataFileParser::Nonterminal_::string,
-    DataFileParser::Terminal::STRING_FRAGMENT,
-    DataFileParser::Nonterminal_::string,
+    Parser::Terminal::BOOLEAN,
+    Parser::Terminal::SINT32,
+    Parser::Terminal::UINT32,
+    Parser::Terminal::FLOATY,
+    Parser::Terminal::CHARACTER,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::structure,
+    Parser::Nonterminal_::array,
+    Parser::Nonterminal_::value,
+    Parser::Nonterminal_::string,
+    Parser::Terminal::STRING_FRAGMENT,
+    Parser::Nonterminal_::string,
     '+',
-    DataFileParser::Terminal::STRING_FRAGMENT
+    Parser::Terminal::STRING_FRAGMENT
 };
-BarfCpp_::Size const DataFileParser::ms_lookahead_count_ = sizeof(DataFileParser::ms_lookahead_table_) / sizeof(*DataFileParser::ms_lookahead_table_);
+BarfCpp_::Size const Parser::ms_lookahead_count_ = sizeof(Parser::ms_lookahead_table_) / sizeof(*Parser::ms_lookahead_table_);
 
-char const *const DataFileParser::ms_token_name_table_[] =
+char const *const Parser::ms_token_name_table_[] =
 {
     "'\\0'",
     "'\\x01'",
@@ -1644,7 +1645,7 @@ char const *const DataFileParser::ms_token_name_table_[] =
     "BOOLEAN",
     "SINT32",
     "UINT32",
-    "FLOAT",
+    "FLOATY",
     "CHARACTER",
     "STRING_FRAGMENT",
     "IDENTIFIER",
@@ -1657,15 +1658,17 @@ char const *const DataFileParser::ms_token_name_table_[] =
     "value",
     "string"
 };
-BarfCpp_::Size const DataFileParser::ms_token_name_count_ = sizeof(DataFileParser::ms_token_name_table_) / sizeof(*DataFileParser::ms_token_name_table_);
+BarfCpp_::Size const Parser::ms_token_name_count_ = sizeof(Parser::ms_token_name_table_) / sizeof(*Parser::ms_token_name_table_);
 
 // ///////////////////////////////////////////////////////////////////////
 // end of internal trison-generated parser guts
 // ///////////////////////////////////////////////////////////////////////
 
 
-#line 141 "xrb_parse_datafile_parser.trison"
+#line 145 "xrb_parse_datafile_parser.trison"
 
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
-#line 1672 "xrb_parse_datafile_parser.cpp"
+#line 1675 "xrb_parse_datafile_parser.cpp"

@@ -27,11 +27,13 @@
 #include "xrb_parse_filoc.hpp"
 
 namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-class DataFileCharacter;
-class DataFileString;
+class Character;
+class String;
 %}
-%target.cpp.class_name DataFileScanner
+%target.cpp.class_name Scanner
 %target.cpp.bottom_of_class {
     bool IsOpen () const { return m_input.is_open(); }
     FiLoc const &GetFiLoc () const { return m_filoc; }
@@ -46,18 +48,20 @@ class DataFileString;
 
 private:
 
-    DataFileParser::Token ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix);
+    Parser::Token ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix);
     void IncrementLineNumber (Uint32 by_value = 1);
 
     FiLoc m_filoc;
     std::ifstream m_input;
-    DataFileCharacter *m_char_literal;
-    DataFileString *m_string_literal;
+    Character *m_char_literal;
+    String *m_string_literal;
     Uint32 m_string_literal_starting_line_number;
     bool m_warnings_were_encountered;
     bool m_errors_were_encountered;
 }
 %target.cpp.bottom_of_header_file %{
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_PARSE_DATAFILE_SCANNER_HPP_)
@@ -73,8 +77,10 @@ private:
 #include "xrb_parse_util.hpp"
 
 namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-bool DataFileScanner::Open (std::string const &input_path)
+bool Scanner::Open (std::string const &input_path)
 {
     ASSERT1(!m_input.is_open() && "you must call Close() first");
     ASSERT1(!m_filoc.IsValid());
@@ -97,7 +103,7 @@ bool DataFileScanner::Open (std::string const &input_path)
     return m_input.is_open();
 }
 
-void DataFileScanner::Close ()
+void Scanner::Close ()
 {
     m_filoc = FiLoc::ms_invalid;
     if (m_input.is_open())
@@ -108,7 +114,7 @@ void DataFileScanner::Close ()
     ResetForNewInput();
 }
 
-void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filoc)
+void Scanner::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -116,7 +122,7 @@ void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filo
     m_warnings_were_encountered = true;
 }
 
-void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
+void Scanner::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -124,7 +130,7 @@ void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
     m_errors_were_encountered = true;
 }
 
-DataFileParser::Token DataFileScanner::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
+Parser::Token Scanner::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
 {
     ASSERT1(s != NULL);
     ASSERT1(radix == 2 || radix == 8 || radix == 10 || radix == 16);
@@ -133,18 +139,18 @@ DataFileParser::Token DataFileScanner::ParseIntegerLiteral (char const *s, bool 
         Sint32 value = strtol(s, NULL, radix);
         if (errno == ERANGE)
             EmitError("signed integer literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::SINT32, new DataFileSint32(value));
+        return Parser::Token(Parser::Terminal::SINT32, new SignedInteger(value));
     }
     else
     {
         Uint32 value = strtoul(s, NULL, radix);
         if (errno == ERANGE)
             EmitError("unsigned integer literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::UINT32, new DataFileUint32(value));
+        return Parser::Token(Parser::Terminal::UINT32, new UnsignedInteger(value));
     }
 }
 
-void DataFileScanner::IncrementLineNumber (Uint32 by_value)
+void Scanner::IncrementLineNumber (Uint32 by_value)
 {
     m_filoc.IncrementLineNumber(by_value);
 }
@@ -163,14 +169,16 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
 }
 %target.cpp.bottom_of_scan_method_actions %{
     ASSERT1(false && "you didn't handle EOF properly");
-    return DataFileParser::Terminal::END_;
+    return Parser::Terminal::END_;
 %}
 %target.cpp.bottom_of_implementation_file %{
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 %}
 
 
-%target.cpp.return_type "DataFileParser::Token"
+%target.cpp.return_type "Parser::Token"
 %target.cpp.rejection_actions {
     ASSERT1(false && "this should never happen");
     EmitError("unrecognized character " + CharLiteral(rejected_atom), m_filoc);
@@ -185,7 +193,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
 
 
 %target.cpp.generate_debug_spew_code
-%target.cpp.debug_spew_prefix {"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"}
+%target.cpp.debug_spew_prefix {"DataFile::Scanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"}
 %target.cpp.dont_generate_timestamps
 
 
@@ -258,7 +266,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     (") // opening quote for a string literal
     %target.cpp {
         ASSERT1(m_string_literal == NULL);
-        m_string_literal = new DataFileString();
+        m_string_literal = new String();
         m_string_literal_starting_line_number = m_filoc.LineNumber();
         SwitchToStateMachine(StateMachine::STRING_LITERAL_GUTS);
     }
@@ -266,7 +274,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     ({OPERATOR}) // operator -- single char returned to the parser
     %target.cpp {
         ASSERT1(accepted_string.length() == 1);
-        return DataFileParser::Token(accepted_string[0]);
+        return Parser::Token(accepted_string[0]);
     }
 |
     ({IDENTIFIER}) // identifier -- c-style
@@ -275,11 +283,11 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         std::string lowercase_text(accepted_string);
         Util::MakeLowercase(&lowercase_text);
         if (lowercase_text == "true")
-            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(true));
+            return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(true));
         else if (lowercase_text == "false")
-            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(false));
+            return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(false));
         else
-            return DataFileParser::Token(DataFileParser::Terminal::IDENTIFIER, new DataFileString(accepted_string));
+            return Parser::Token(Parser::Terminal::IDENTIFIER, new String(accepted_string));
     }
 |
     ({BIN}) // binary integer literal
@@ -339,7 +347,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         Float value = strtof(accepted_string.c_str(), NULL);
         if (errno == ERANGE)
             EmitError("floating point literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::FLOAT, new DataFileFloat(value));
+        return Parser::Token(Parser::Terminal::FLOATY, new Floaty(value));
     }
 |
     ({WHITESPACE}) // ignore whitespace
@@ -349,12 +357,12 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp { IncrementLineNumber(); }
 |
     ({EOF}) // end of file condition
-    %target.cpp { return DataFileParser::Terminal::END_; }
+    %target.cpp { return Parser::Terminal::END_; }
 |
     (.) // any other character is unexpected
     %target.cpp {
         EmitError("unexpected character " + CharLiteral(accepted_string[0]), GetFiLoc());
-        return DataFileParser::Terminal::BAD_TOKEN;
+        return Parser::Terminal::BAD_TOKEN;
     }
 ;
 
@@ -370,7 +378,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp {
         IncrementLineNumber(NewlineCount(accepted_string));
         EmitWarning("unterminated block comment", GetFiLoc());
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     }
 ;
 
@@ -384,7 +392,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         if (value >= 0x100)
             EmitError("octal character literal value out of range (" + accepted_string + ")", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(value);
+        m_char_literal = new Character(value);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     }
 |
@@ -397,7 +405,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         if (value >= 0x100)
             EmitError("hexadecimal character literal value out of range (" + accepted_string + ")", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(value);
+        m_char_literal = new Character(value);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     }
 |
@@ -406,7 +414,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         ASSERT1(accepted_string.length() == 2);
         ASSERT1(accepted_string[0] == '\\');
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[1]);
+        m_char_literal = new Character(accepted_string[1]);
         m_char_literal->Escape();
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     }
@@ -415,7 +423,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp {
         ASSERT1(accepted_string.length() == 1);
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        m_char_literal = new Character(accepted_string[0]);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     }
 |
@@ -423,7 +431,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp {
         EmitError("unterminated character literal", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     }
 |
     ({ANY}) // anything else just means it's malformed
@@ -432,7 +440,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         if (accepted_string[0] == '\n')
             IncrementLineNumber();
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        m_char_literal = new Character(accepted_string[0]);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     }
 ;
@@ -443,9 +451,9 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
     %target.cpp {
         ASSERT1(m_char_literal != NULL);
         SwitchToStateMachine(StateMachine::MAIN);
-        DataFileCharacter *char_literal = m_char_literal;
+        Character *char_literal = m_char_literal;
         m_char_literal = NULL;
-        return DataFileParser::Token(DataFileParser::Terminal::CHARACTER, char_literal);
+        return Parser::Token(Parser::Terminal::CHARACTER, char_literal);
     }
 |
     (\\?{EOF}) // end of file (which may be preceded by a backslash)
@@ -455,7 +463,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         delete m_char_literal;
         m_char_literal = NULL;
         SwitchToStateMachine(StateMachine::MAIN);
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     }
 |
     ({ANY}) // anything else just means it's malformed
@@ -467,7 +475,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         delete m_char_literal;
         m_char_literal = NULL;
         SwitchToStateMachine(StateMachine::MAIN);
-        return DataFileParser::Terminal::BAD_TOKEN;
+        return Parser::Terminal::BAD_TOKEN;
     }
 ;
 
@@ -509,9 +517,9 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         }
         m_string_literal->AppendString(accepted_string);
         SwitchToStateMachine(StateMachine::MAIN);
-        DataFileString *string_literal = m_string_literal;
+        String *string_literal = m_string_literal;
         m_string_literal = NULL;
-        return DataFileParser::Token(DataFileParser::Terminal::STRING_FRAGMENT, string_literal);
+        return Parser::Token(Parser::Terminal::STRING_FRAGMENT, string_literal);
     }
 |
     (([^\\]|\\{ANY})*\\?{EOF}) // everything up through EOF (which may be preceded by a hanging backslash)
@@ -521,7 +529,7 @@ void DataFileScanner::IncrementLineNumber (Uint32 by_value)
         ASSERT1(m_string_literal != NULL);
         delete m_string_literal;
         m_string_literal = NULL;
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     }
 ;
 

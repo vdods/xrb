@@ -22,102 +22,104 @@
 }
 
 namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-std::string const &DataFileElementTypeString (DataFileElementType data_file_element_type)
+std::string const &ElementTypeString (ElementType element_type)
 {
-    static std::string const s_data_file_element_type_string[DAT_COUNT] =
+    static std::string const s_element_type_string[ET_COUNT] =
     {
-        "DAT_BOOLEAN",
-        "DAT_SINT32",
-        "DAT_UINT32",
-        "DAT_FLOAT",
-        "DAT_CHARACTER",
-        "DAT_STRING",
-        "DAT_KEY_PAIR",
-        "DAT_ARRAY",
-        "DAT_STRUCTURE",
-        "DAT_NO_TYPE"
+        "ET_BOOLEAN",
+        "ET_SIGNED_INTEGER",
+        "ET_UNSIGNED_INTEGER",
+        "ET_FLOATY",
+        "ET_CHARACTER",
+        "ET_STRING",
+        "ET_KEY_PAIR",
+        "ET_ARRAY",
+        "ET_STRUCTURE",
+        "ET_NO_TYPE"
     };
 
-    ASSERT1(data_file_element_type < DAT_COUNT);
-    return s_data_file_element_type_string[data_file_element_type];
+    ASSERT1(element_type < ET_COUNT);
+    return s_element_type_string[element_type];
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileValue
+// Value
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DataFileValue::PathElementBoolean (std::string const &path) const throw (std::string)
+bool Value::PathElementBoolean (std::string const &path) const throw (std::string)
 {
-    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(PathElement(path));
+    Boolean const *value = dynamic_cast<Boolean const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Boolean")
-    return value->Value();
+    return value->Get();
 }
 
-Sint32 DataFileValue::PathElementSint32 (std::string const &path) const throw (std::string)
+Sint32 Value::PathElementSignedInteger (std::string const &path) const throw (std::string)
 {
-    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(PathElement(path));
+    SignedInteger const *value = dynamic_cast<SignedInteger const *>(PathElement(path));
     if (value == NULL)
-        THROW_STRING("element is not a Sint32")
-    return value->Value();
+        THROW_STRING("element is not a SignedInteger")
+    return value->Get();
 }
 
-Uint32 DataFileValue::PathElementUint32 (std::string const &path) const throw (std::string)
+Uint32 Value::PathElementUnsignedInteger (std::string const &path) const throw (std::string)
 {
-    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(PathElement(path));
+    UnsignedInteger const *value = dynamic_cast<UnsignedInteger const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Uint32")
-    return value->Value();
+    return value->Get();
 }
 
-Float DataFileValue::PathElementFloat (std::string const &path) const throw (std::string)
+Float Value::PathElementFloaty (std::string const &path) const throw (std::string)
 {
-    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(PathElement(path));
+    Floaty const *value = dynamic_cast<Floaty const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Float")
-    return value->Value();
+    return value->Get();
 }
 
-char DataFileValue::PathElementCharacter (std::string const &path) const throw (std::string)
+char Value::PathElementCharacter (std::string const &path) const throw (std::string)
 {
-    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(PathElement(path));
+    Character const *value = dynamic_cast<Character const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Character")
-    return value->Value();
+    return value->Get();
 }
 
-std::string const &DataFileValue::PathElementString (std::string const &path) const throw (std::string)
+std::string const &Value::PathElementString (std::string const &path) const throw (std::string)
 {
-    DataFileString const *value = dynamic_cast<DataFileString const *>(PathElement(path));
+    String const *value = dynamic_cast<String const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a String")
-    return value->Value();
+    return value->Get();
 }
 
-DataFileArray const *DataFileValue::PathElementArray (std::string const &path) const throw (std::string)
+Array const *Value::PathElementArray (std::string const &path) const throw (std::string)
 {
-    DataFileArray const *value = dynamic_cast<DataFileArray const *>(PathElement(path));
+    Array const *value = dynamic_cast<Array const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not an Array")
     return value;
 }
 
-DataFileStructure const *DataFileValue::PathElementStructure (std::string const &path) const throw (std::string)
+Structure const *Value::PathElementStructure (std::string const &path) const throw (std::string)
 {
-    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(PathElement(path));
+    Structure const *value = dynamic_cast<Structure const *>(PathElement(path));
     if (value == NULL)
         THROW_STRING("element is not a Structure")
     return value;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileLeafValue
+// LeafValue
 // ///////////////////////////////////////////////////////////////////////////
 
-DataFileLeafValue::~DataFileLeafValue () { }
+LeafValue::~LeafValue () { }
 
-DataFileValue const *DataFileLeafValue::SubpathElement (
+Value const *LeafValue::SubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
@@ -125,117 +127,110 @@ DataFileValue const *DataFileLeafValue::SubpathElement (
 
     if (start < path.length())
         THROW_STRING("error: in path \"" << path << "\" - element type " <<
-                     DataFileElementTypeString(ElementType()) <<
+                     ElementTypeString(GetElementType()) <<
                      " can not have subelements (subpath \"" << &path[start] << "\")")
     return this;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileBoolean
+// Boolean
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileBoolean::PrintAST (IndentFormatter &formatter) const
+void Boolean::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_BOOLEAN - %s", BOOL_TO_STRING(m_value));
+    formatter.EndLine("ET_BOOLEAN: %s", BOOL_TO_STRING(m_value));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileSint32
+// SignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileSint32::PrintAST (IndentFormatter &formatter) const
+void SignedInteger::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_SINT32 - %+d", m_value);
+    formatter.EndLine("ET_SIGNED_INTEGER: %+d", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileUint32
+// UnsignedInteger
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileUint32::PrintAST (IndentFormatter &formatter) const
+void UnsignedInteger::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_UINT32 - %u", m_value);
+    formatter.EndLine("ET_UNSIGNED_INTEGER: %u", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileFloat
+// Floaty
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileFloat::Sign (NumericSign const sign)
+void Floaty::PrintAST (IndentFormatter &formatter) const
 {
-    ASSERT1(sign == NEGATIVE || sign == POSITIVE);
-    if (sign == NEGATIVE)
-        m_value = -m_value;
-}
-
-void DataFileFloat::PrintAST (IndentFormatter &formatter) const
-{
-    formatter.EndLine("DAT_FLOAT - %g", m_value);
+    formatter.EndLine("ET_FLOATY: %g", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileCharacter
+// Character
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileCharacter::Escape ()
+void Character::Escape ()
 {
     m_value = EscapedChar(m_value);
 }
 
-void DataFileCharacter::PrintAST (IndentFormatter &formatter) const
+void Character::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_CHARACTER - '%c'", m_value);
+    formatter.EndLine("ET_CHARACTER: '%c'", m_value);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileString
+// String
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileString::Print (IndentFormatter &formatter) const
+void String::Print (IndentFormatter &formatter) const
 {
     formatter.ContinueLine("%s", Util::StringLiteral(m_value).c_str());
 }
 
-void DataFileString::PrintAST (IndentFormatter &formatter) const
+void String::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_STRING - %s", Util::StringLiteral(m_value).c_str());
+    formatter.EndLine("ET_STRING: %s", Util::StringLiteral(m_value).c_str());
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileContainer
+// Container
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileContainer::SetPathElementBoolean (std::string const &path, bool const value) throw(std::string)
+void Container::SetPathElementBoolean (std::string const &path, bool const value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileBoolean(value));
+    SetSubpathElement(path, 0, new Boolean(value));
 }
 
-void DataFileContainer::SetPathElementSint32 (std::string const &path, Sint32 const value) throw(std::string)
+void Container::SetPathElementSignedInteger (std::string const &path, Sint32 const value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileSint32(value));
+    SetSubpathElement(path, 0, new SignedInteger(value));
 }
 
-void DataFileContainer::SetPathElementUint32 (std::string const &path, Uint32 const value) throw(std::string)
+void Container::SetPathElementUnsignedInteger (std::string const &path, Uint32 const value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileUint32(value));
+    SetSubpathElement(path, 0, new UnsignedInteger(value));
 }
 
-void DataFileContainer::SetPathElementFloat (std::string const &path, Float const value) throw(std::string)
+void Container::SetPathElementFloaty (std::string const &path, Float const value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileFloat(value));
+    SetSubpathElement(path, 0, new Floaty(value));
 }
 
-void DataFileContainer::SetPathElementCharacter (std::string const &path, char const value) throw(std::string)
+void Container::SetPathElementCharacter (std::string const &path, char const value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileCharacter(value));
+    SetSubpathElement(path, 0, new Character(value));
 }
 
-void DataFileContainer::SetPathElementString (std::string const &path, std::string const &value) throw(std::string)
+void Container::SetPathElementString (std::string const &path, std::string const &value) throw(std::string)
 {
-    SetSubpathElement(path, 0, new DataFileString(value));
+    SetSubpathElement(path, 0, new String(value));
 }
 
-DataFileContainer::NodeType DataFileContainer::ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
+Container::NodeType Container::ParentElementNodeType (std::string const &path, Uint32 start) throw(std::string)
 {
     ASSERT1(start <= path.length());
 
@@ -271,13 +266,13 @@ DataFileContainer::NodeType DataFileContainer::ParentElementNodeType (std::strin
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileKeyPair
+// KeyPair
 // ///////////////////////////////////////////////////////////////////////////
 
-void DataFileKeyPair::Print (IndentFormatter &formatter) const
+void KeyPair::Print (IndentFormatter &formatter) const
 {
     ASSERT1(m_value != NULL);
-    if (m_value->ElementType() == DAT_STRUCTURE)
+    if (m_value->GetElementType() == ET_STRUCTURE)
     {
         formatter.PrintLine("%s\n{", m_key.c_str());
         formatter.Indent();
@@ -285,9 +280,9 @@ void DataFileKeyPair::Print (IndentFormatter &formatter) const
         formatter.Unindent();
         formatter.BeginLine("}");
     }
-    else if (m_value->ElementType() == DAT_ARRAY)
+    else if (m_value->GetElementType() == ET_ARRAY)
     {
-        DataFileArray const *array = DStaticCast<DataFileArray const *>(m_value);
+        Array const *array = DStaticCast<Array const *>(m_value);
         ASSERT1(array != NULL);
         if (array->ShouldBeFormattedInline())
             formatter.BeginLine("%s ", m_key.c_str());
@@ -302,9 +297,9 @@ void DataFileKeyPair::Print (IndentFormatter &formatter) const
     }
 }
 
-void DataFileKeyPair::PrintAST (IndentFormatter &formatter) const
+void KeyPair::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_KEY_PAIR");
+    formatter.EndLine("ET_KEY_PAIR");
     formatter.Indent();
     formatter.EndLine("key  : %s", m_key.c_str());
     formatter.BeginLine("value: ");
@@ -313,27 +308,27 @@ void DataFileKeyPair::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileKeyPair::SubpathElement (
+Value const *KeyPair::SubpathElement (
     std::string const &path,
     Uint32 const start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileKeyPair::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "KeyPair::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
-        return Value();
+        return GetValue();
 
     if (path[start] != '|')
         THROW_STRING("invalid subpath \"" << &path[start] << "\" - expected '|' prefix")
 
-    return Value()->SubpathElement(path, start);
+    return GetValue()->SubpathElement(path, start);
 }
 
-void DataFileKeyPair::SetSubpathElement (
+void KeyPair::SetSubpathElement (
     std::string const &path,
     Uint32 const start,
-    DataFileLeafValue *const value) throw(std::string)
+    LeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -348,15 +343,15 @@ void DataFileKeyPair::SetSubpathElement (
 
         case NT_ARRAY:
             // if the key pair's value is an array, call SetSubpathElement on it.
-            if (m_value != NULL && m_value->ElementType() == DAT_ARRAY)
-                return DStaticCast<DataFileContainer *>(m_value)->SetSubpathElement(path, start, value);
+            if (m_value != NULL && m_value->GetElementType() == ET_ARRAY)
+                return DStaticCast<Container *>(m_value)->SetSubpathElement(path, start, value);
             // otherwise, attempt to replace it, but only replace if SetSubpathElement succeeds.
             else
             {
                 // create an array to replace m_value
-                DataFileValue *array = new DataFileArray();
+                Value *array = new Array();
                 try {
-                    static_cast<DataFileContainer *>(array)->SetSubpathElement(path, start, value);
+                    static_cast<Container *>(array)->SetSubpathElement(path, start, value);
                 } catch (std::string const &exception) {
                     // if the call failed, delete the just-created array.
                     Delete(array);
@@ -371,15 +366,15 @@ void DataFileKeyPair::SetSubpathElement (
 
         case NT_STRUCTURE:
             // if the key pair's value is an structure, call SetSubpathElement on it.
-            if (m_value != NULL && m_value->ElementType() == DAT_STRUCTURE)
-                return DStaticCast<DataFileContainer *>(m_value)->SetSubpathElement(path, start, value);
+            if (m_value != NULL && m_value->GetElementType() == ET_STRUCTURE)
+                return DStaticCast<Container *>(m_value)->SetSubpathElement(path, start, value);
             // otherwise, attempt to replace it, but only replace if SetSubpathElement succeeds.
             else
             {
                 // create an structure to replace m_value
-                DataFileValue *structure = new DataFileStructure();
+                Value *structure = new Structure();
                 try {
-                    static_cast<DataFileContainer *>(structure)->SetSubpathElement(path, start, value);
+                    static_cast<Container *>(structure)->SetSubpathElement(path, start, value);
                 } catch (std::string const &exception) {
                     // if the call failed, delete the just-created structure
                     Delete(structure);
@@ -395,128 +390,128 @@ void DataFileKeyPair::SetSubpathElement (
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileArray
+// Array
 // ///////////////////////////////////////////////////////////////////////////
 
-DataFileArray::~DataFileArray ()
+Array::~Array ()
 {
     for (ElementVector::iterator it = m_element_vector.begin(),
-                               it_end = m_element_vector.end();
+                                 it_end = m_element_vector.end();
          it != it_end;
          ++it)
     {
-        DataFileValue const *value = *it;
+        Value const *value = *it;
         ASSERT1(value != NULL);
         Delete(value);
     }
 }
 
-bool DataFileArray::ShouldBeFormattedInline () const
+bool Array::ShouldBeFormattedInline () const
 {
     ElementVector::const_iterator it = m_element_vector.begin();
     // arrays with elements that aren't arrays or structures
     // should not be inlined
     if (it != m_element_vector.end())
     {
-        DataFileValue const *value = *it;
+        Value const *value = *it;
         ASSERT1(value != NULL);
-        ASSERT1(value->ElementType() != DAT_KEY_PAIR);
-        return value->ElementType() != DAT_ARRAY && value->ElementType() != DAT_STRUCTURE;
+        ASSERT1(value->GetElementType() != ET_KEY_PAIR);
+        return value->GetElementType() != ET_ARRAY && value->GetElementType() != ET_STRUCTURE;
     }
     else
         // empty arrays should be inlined.
         return true;
 }
 
-DataFileElementType DataFileArray::ArrayElementType () const
+ElementType Array::ArrayElementType () const
 {
-    return m_element_vector.empty() ? DAT_NO_TYPE : m_element_vector[0]->ElementType();
+    return m_element_vector.empty() ? ET_NO_TYPE : m_element_vector[0]->GetElementType();
 }
 
-DataFileElementType DataFileArray::UltimateArrayElementType () const
+ElementType Array::UltimateArrayElementType () const
 {
     if (m_element_vector.empty())
-        return DAT_NO_TYPE;
+        return ET_NO_TYPE;
 
-    if (m_element_vector[0]->ElementType() == DAT_ARRAY)
-        return DStaticCast<DataFileArray const *>(m_element_vector[0])->UltimateArrayElementType();
+    if (m_element_vector[0]->GetElementType() == ET_ARRAY)
+        return DStaticCast<Array const *>(m_element_vector[0])->UltimateArrayElementType();
 
-    return m_element_vector[0]->ElementType();
+    return m_element_vector[0]->GetElementType();
 }
 
-Uint32 DataFileArray::DimensionCount () const
+Uint32 Array::DimensionCount () const
 {
-    if (ArrayElementType() == DAT_ARRAY)
-        return 1 + DStaticCast<DataFileArray const *>(m_element_vector[0])->DimensionCount();
+    if (ArrayElementType() == ET_ARRAY)
+        return 1 + DStaticCast<Array const *>(m_element_vector[0])->DimensionCount();
     else
         return 1;
 }
 
-bool DataFileArray::BooleanElement (Uint32 index) const throw (std::string)
+bool Array::BooleanElement (Uint32 index) const throw (std::string)
 {
-    DataFileBoolean const *value = dynamic_cast<DataFileBoolean const *>(Element(index));
+    Boolean const *value = dynamic_cast<Boolean const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a Boolean")
-    return value->Value();
+    return value->Get();
 }
 
-Sint32 DataFileArray::Sint32Element (Uint32 index) const throw (std::string)
+Sint32 Array::SignedIntegerElement (Uint32 index) const throw (std::string)
 {
-    DataFileSint32 const *value = dynamic_cast<DataFileSint32 const *>(Element(index));
+    SignedInteger const *value = dynamic_cast<SignedInteger const *>(Element(index));
     if (value == NULL)
-        THROW_STRING("element " << index << " is not a Sint32")
-    return value->Value();
+        THROW_STRING("element " << index << " is not a SignedInteger")
+    return value->Get();
 }
 
-Uint32 DataFileArray::Uint32Element (Uint32 index) const throw (std::string)
+Uint32 Array::UnsignedIntegerElement (Uint32 index) const throw (std::string)
 {
-    DataFileUint32 const *value = dynamic_cast<DataFileUint32 const *>(Element(index));
+    UnsignedInteger const *value = dynamic_cast<UnsignedInteger const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a Uint32")
-    return value->Value();
+    return value->Get();
 }
 
-Float DataFileArray::FloatElement (Uint32 index) const throw (std::string)
+Float Array::FloatyElement (Uint32 index) const throw (std::string)
 {
-    DataFileFloat const *value = dynamic_cast<DataFileFloat const *>(Element(index));
+    Floaty const *value = dynamic_cast<Floaty const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a Float")
-    return value->Value();
+    return value->Get();
 }
 
-char DataFileArray::CharacterElement (Uint32 index) const throw (std::string)
+char Array::CharacterElement (Uint32 index) const throw (std::string)
 {
-    DataFileCharacter const *value = dynamic_cast<DataFileCharacter const *>(Element(index));
+    Character const *value = dynamic_cast<Character const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a Character")
-    return value->Value();
+    return value->Get();
 }
 
-std::string const &DataFileArray::StringElement (Uint32 index) const throw (std::string)
+std::string const &Array::StringElement (Uint32 index) const throw (std::string)
 {
-    DataFileString const *value = dynamic_cast<DataFileString const *>(Element(index));
+    String const *value = dynamic_cast<String const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a String")
-    return value->Value();
+    return value->Get();
 }
 
-DataFileArray const *DataFileArray::ArrayElement (Uint32 index) const throw (std::string)
+Array const *Array::ArrayElement (Uint32 index) const throw (std::string)
 {
-    DataFileArray const *value = dynamic_cast<DataFileArray const *>(Element(index));
+    Array const *value = dynamic_cast<Array const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not an Array")
     return value;
 }
 
-DataFileStructure const *DataFileArray::StructureElement (Uint32 index) const throw (std::string)
+Structure const *Array::StructureElement (Uint32 index) const throw (std::string)
 {
-    DataFileStructure const *value = dynamic_cast<DataFileStructure const *>(Element(index));
+    Structure const *value = dynamic_cast<Structure const *>(Element(index));
     if (value == NULL)
         THROW_STRING("element " << index << " is not a Structure")
     return value;
 }
 
-void DataFileArray::AppendValue (DataFileValue *const value)
+void Array::AppendValue (Value *const value)
 {
     ASSERT1(value != NULL);
 
@@ -525,17 +520,17 @@ void DataFileArray::AppendValue (DataFileValue *const value)
     ElementVector::iterator it = m_element_vector.begin();
     if (it != m_element_vector.end())
     {
-        DataFileValue const *first_element_value = *it;
+        Value const *first_element_value = *it;
         ASSERT1(first_element_value != NULL);
-        if (value->ElementType() != first_element_value->ElementType())
+        if (value->GetElementType() != first_element_value->GetElementType())
             THROW_STRING("cannot add a " <<
-                         DataFileElementTypeString(value->ElementType()) <<
+                         ElementTypeString(value->GetElementType()) <<
                          " to an array with element type " <<
-                         DataFileElementTypeString(first_element_value->ElementType()))
-        else if (value->ElementType() == DAT_ARRAY &&
+                         ElementTypeString(first_element_value->GetElementType()))
+        else if (value->GetElementType() == ET_ARRAY &&
                     !DoesMatchDimensionAndType(
-                        DStaticCast<DataFileArray const *>(value),
-                        DStaticCast<DataFileArray const *>(first_element_value)))
+                        DStaticCast<Array const *>(value),
+                        DStaticCast<Array const *>(first_element_value)))
             THROW_STRING("sibling elements in nested arrays must be of identical dimension and type")
     }
 
@@ -543,7 +538,7 @@ void DataFileArray::AppendValue (DataFileValue *const value)
     m_element_vector.push_back(value);
 }
 
-void DataFileArray::Print (IndentFormatter &formatter) const
+void Array::Print (IndentFormatter &formatter) const
 {
     bool inlined_array = ShouldBeFormattedInline();
 
@@ -557,15 +552,15 @@ void DataFileArray::Print (IndentFormatter &formatter) const
 
     ElementVector::const_iterator it_test;
     for (ElementVector::const_iterator it = m_element_vector.begin(),
-                                  it_end = m_element_vector.end();
+                                       it_end = m_element_vector.end();
          it != it_end;
          ++it)
     {
-        DataFileValue const *value = *it;
+        Value const *value = *it;
         ASSERT1(value != NULL);
-        ASSERT1(value->ElementType() != DAT_KEY_PAIR);
+        ASSERT1(value->GetElementType() != ET_KEY_PAIR);
 
-        if (value->ElementType() == DAT_STRUCTURE)
+        if (value->GetElementType() == ET_STRUCTURE)
         {
             ASSERT1(!inlined_array);
             formatter.PrintLine("{");
@@ -574,7 +569,7 @@ void DataFileArray::Print (IndentFormatter &formatter) const
 
         value->Print(formatter);
 
-        if (value->ElementType() == DAT_STRUCTURE)
+        if (value->GetElementType() == ET_STRUCTURE)
         {
             ASSERT1(!inlined_array);
             formatter.Unindent();
@@ -608,13 +603,13 @@ void DataFileArray::Print (IndentFormatter &formatter) const
     }
 }
 
-void DataFileArray::PrintAST (IndentFormatter &formatter) const
+void Array::PrintAST (IndentFormatter &formatter) const
 {
     formatter.EndLine(
-        "DAT_ARRAY - %u dimensions - %u element(s) of type %s",
+        "ET_ARRAY: %u dimensions - %u element(s) of type %s",
         DimensionCount(),
         m_element_vector.size(),
-        DataFileElementTypeString(ArrayElementType()).c_str());
+        ElementTypeString(ArrayElementType()).c_str());
     formatter.Indent();
     for (Uint32 i = 0; i < m_element_vector.size(); ++i)
     {
@@ -625,13 +620,13 @@ void DataFileArray::PrintAST (IndentFormatter &formatter) const
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileArray::SubpathElement (
+Value const *Array::SubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileArray::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "Array::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
@@ -661,10 +656,10 @@ DataFileValue const *DataFileArray::SubpathElement (
     return m_element_vector[array_index]->SubpathElement(path, key_delim);
 }
 
-void DataFileArray::SetSubpathElement (
+void Array::SetSubpathElement (
     std::string const &path,
     Uint32 start,
-    DataFileLeafValue *const value) throw(std::string)
+    LeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -724,7 +719,7 @@ void DataFileArray::SetSubpathElement (
 
     if (create_new_element)
     {
-        DataFileValue *element;
+        Value *element;
         switch (element_type)
         {
             case NT_LEAF:
@@ -732,9 +727,9 @@ void DataFileArray::SetSubpathElement (
                 break;
 
             case NT_ARRAY:
-                element = new DataFileArray();
+                element = new Array();
                 try {
-                    static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+                    static_cast<Container *>(element)->SetSubpathElement(path, key_delim, value);
                 } catch (std::string const &exception) {
                     Delete(element);
                     throw exception;
@@ -742,9 +737,9 @@ void DataFileArray::SetSubpathElement (
                 break;
 
             case NT_STRUCTURE:
-                element = new DataFileStructure();
+                element = new Structure();
                 try {
-                    static_cast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+                    static_cast<Container *>(element)->SetSubpathElement(path, key_delim, value);
                 } catch (std::string const &exception) {
                     Delete(element);
                     throw exception;
@@ -755,28 +750,28 @@ void DataFileArray::SetSubpathElement (
         // if there are existing elements, check type and dimension
         if (!m_element_vector.empty())
         {
-            DataFileValue const *first_element = m_element_vector[0];
+            Value const *first_element = m_element_vector[0];
             ASSERT1(first_element != NULL);
-            if (element->ElementType() != first_element->ElementType())
+            if (element->GetElementType() != first_element->GetElementType())
             {
                 std::ostringstream out;
-                out << "mismatch: array element type " << DataFileElementTypeString(first_element->ElementType())
-                    << ", assignment type " << DataFileElementTypeString(element->ElementType());
+                out << "mismatch: array element type " << ElementTypeString(first_element->GetElementType())
+                    << ", assignment type " << ElementTypeString(element->GetElementType());
                 Delete(element);
                 throw out.str();
             }
-            else if (element->ElementType() == DAT_ARRAY &&
-                    (DStaticCast<DataFileArray const *>(first_element)->DimensionCount() !=
-                     DStaticCast<DataFileArray const *>(element)->DimensionCount()
+            else if (element->GetElementType() == ET_ARRAY &&
+                    (DStaticCast<Array const *>(first_element)->DimensionCount() !=
+                     DStaticCast<Array const *>(element)->DimensionCount()
                      ||
-                     static_cast<DataFileArray const *>(first_element)->UltimateArrayElementType() !=
-                     static_cast<DataFileArray const *>(element)->UltimateArrayElementType()))
+                     static_cast<Array const *>(first_element)->UltimateArrayElementType() !=
+                     static_cast<Array const *>(element)->UltimateArrayElementType()))
             {
                 std::ostringstream out;
-                out << "mismatch: array depth " << static_cast<DataFileArray const *>(first_element)->DimensionCount()
-                    << "/type " << DataFileElementTypeString(static_cast<DataFileArray const *>(first_element)->UltimateArrayElementType())
-                    << ", assignment depth " << static_cast<DataFileArray const *>(element)->DimensionCount()
-                    << "/type " << DataFileElementTypeString(static_cast<DataFileArray const *>(element)->UltimateArrayElementType());
+                out << "mismatch: array depth " << static_cast<Array const *>(first_element)->DimensionCount()
+                    << "/type " << ElementTypeString(static_cast<Array const *>(first_element)->UltimateArrayElementType())
+                    << ", assignment depth " << static_cast<Array const *>(element)->DimensionCount()
+                    << "/type " << ElementTypeString(static_cast<Array const *>(element)->UltimateArrayElementType());
                 Delete(element);
                 throw out.str();
             }
@@ -792,24 +787,24 @@ void DataFileArray::SetSubpathElement (
         ASSERT1(element_type == NT_LEAF || element_type == NT_ARRAY || element_type == NT_STRUCTURE);
         ASSERT1(!m_element_vector.empty());
         ASSERT1(m_element_vector[array_index] != NULL);
-        DataFileValue *&element = m_element_vector[array_index];
+        Value *&element = m_element_vector[array_index];
 
-        if ((element_type == NT_LEAF && value->ElementType() != element->ElementType())
+        if ((element_type == NT_LEAF && value->GetElementType() != element->GetElementType())
             ||
-            (element_type == NT_ARRAY && element->ElementType() != DAT_ARRAY)
+            (element_type == NT_ARRAY && element->GetElementType() != ET_ARRAY)
             ||
-            (element_type == NT_STRUCTURE && element->ElementType() != DAT_STRUCTURE))
+            (element_type == NT_STRUCTURE && element->GetElementType() != ET_STRUCTURE))
         {
-            DataFileElementType assignment_type = DAT_NO_TYPE;
+            ElementType assignment_type = ET_NO_TYPE;
             if (element_type == NT_LEAF)
-                assignment_type = value->ElementType();
+                assignment_type = value->GetElementType();
             else if (element_type == NT_ARRAY)
-                assignment_type = DAT_ARRAY;
+                assignment_type = ET_ARRAY;
             else if (element_type == NT_STRUCTURE)
-                assignment_type = DAT_STRUCTURE;
+                assignment_type = ET_STRUCTURE;
 
-            ASSERT1(assignment_type != DAT_NO_TYPE);
-            THROW_STRING("mismatch: array element type " << DataFileElementTypeString(element->ElementType()) << ", assignment type " << DataFileElementTypeString(assignment_type))
+            ASSERT1(assignment_type != ET_NO_TYPE);
+            THROW_STRING("mismatch: array element type " << ElementTypeString(element->GetElementType()) << ", assignment type " << ElementTypeString(assignment_type))
         }
 
         if (element_type == NT_LEAF)
@@ -820,7 +815,7 @@ void DataFileArray::SetSubpathElement (
         }
         else if (element_type == NT_ARRAY || element_type == NT_STRUCTURE)
         {
-            return DStaticCast<DataFileContainer *>(element)->SetSubpathElement(path, key_delim, value);
+            return DStaticCast<Container *>(element)->SetSubpathElement(path, key_delim, value);
         }
         else
         {
@@ -830,28 +825,28 @@ void DataFileArray::SetSubpathElement (
     }
 }
 
-std::string DataFileArray::DimensionAndTypeString () const
+std::string Array::DimensionAndTypeString () const
 {
     std::ostringstream out;
 
-    out << DataFileElementTypeString(UltimateArrayElementType());
+    out << ElementTypeString(UltimateArrayElementType());
 
-    DataFileValue const *value = this;
-    while (value != NULL && value->ElementType() == DAT_ARRAY)
+    Value const *value = this;
+    while (value != NULL && value->GetElementType() == ET_ARRAY)
     {
-        out << '[' << DStaticCast<DataFileArray const *>(value)->m_element_vector.size() << ']';
-        if (DStaticCast<DataFileArray const *>(value)->m_element_vector.empty())
+        out << '[' << DStaticCast<Array const *>(value)->m_element_vector.size() << ']';
+        if (DStaticCast<Array const *>(value)->m_element_vector.empty())
             value = NULL;
         else
-            value = DStaticCast<DataFileArray const *>(value)->m_element_vector[0];
+            value = DStaticCast<Array const *>(value)->m_element_vector[0];
     }
 
     return out.str();
 }
 
-bool DataFileArray::DoesMatchDimensionAndType (
-    DataFileArray const *const array0,
-    DataFileArray const *const array1)
+bool Array::DoesMatchDimensionAndType (
+    Array const *const array0,
+    Array const *const array1)
 {
     ASSERT1(array0 != NULL);
     ASSERT1(array1 != NULL);
@@ -862,46 +857,46 @@ bool DataFileArray::DoesMatchDimensionAndType (
     if (array0->m_element_vector.empty())
         return true;
 
-    if (array0->m_element_vector[0]->ElementType() != array1->m_element_vector[0]->ElementType())
+    if (array0->m_element_vector[0]->GetElementType() != array1->m_element_vector[0]->GetElementType())
         return false;
 
-    if (array0->m_element_vector[0]->ElementType() == DAT_ARRAY)
+    if (array0->m_element_vector[0]->GetElementType() == ET_ARRAY)
         return
             DoesMatchDimensionAndType(
-                DStaticCast<DataFileArray const *>(array0->m_element_vector[0]),
-                DStaticCast<DataFileArray const *>(array1->m_element_vector[0]));
+                DStaticCast<Array const *>(array0->m_element_vector[0]),
+                DStaticCast<Array const *>(array1->m_element_vector[0]));
 
     return true;
 }
 
 // ///////////////////////////////////////////////////////////////////////////
-// DataFileStructure
+// Structure
 // ///////////////////////////////////////////////////////////////////////////
 
-DataFileStructure::~DataFileStructure ()
+Structure::~Structure ()
 {
     for (MemberMap::iterator it = m_member_map.begin(),
                            it_end = m_member_map.end();
          it != it_end;
          ++it)
     {
-        DataFileKeyPair const *key_pair = it->second;
+        KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
         Delete(key_pair);
     }
 }
 
-DataFileValue const *DataFileStructure::Value (std::string const &key) const
+Value const *Structure::GetValue (std::string const &key) const
 {
     ASSERT1(key.length() > 0);
     MemberMap::const_iterator it = m_member_map.find(key);
     if (it == m_member_map.end())
         return NULL;
     else
-        return it->second->Value();
+        return it->second->GetValue();
 }
 
-void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value)
+void Structure::AddKeyPair (std::string const &key, Value *value)
 {
     ASSERT1(!key.empty());
     ASSERT1(value != NULL);
@@ -910,16 +905,16 @@ void DataFileStructure::AddKeyPair (std::string const &key, DataFileValue *value
         THROW_STRING("key \"" << key << "\" contains invalid characters")
 
     if (m_member_map.find(key) == m_member_map.end())
-        m_member_map[key] = new DataFileKeyPair(key, value);
+        m_member_map[key] = new KeyPair(key, value);
     else
         THROW_STRING("collision with key \"" << key << "\"")
 }
 
-void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
+void Structure::AddKeyPair (KeyPair *const key_pair)
 {
     ASSERT1(key_pair != NULL);
     ASSERT1(!key_pair->GetKey().empty());
-    ASSERT1(key_pair->Value() != NULL);
+    ASSERT1(key_pair->GetValue() != NULL);
 
     if (!IsValidKey(key_pair->GetKey()))
         THROW_STRING("key \"" << key_pair->GetKey() << "\" contains invalid characters")
@@ -930,43 +925,43 @@ void DataFileStructure::AddKeyPair (DataFileKeyPair *const key_pair)
         THROW_STRING("collision with key \"" << key_pair->GetKey() << "\"")
 }
 
-void DataFileStructure::Print (IndentFormatter &formatter) const
+void Structure::Print (IndentFormatter &formatter) const
 {
     for (MemberMap::const_iterator it = m_member_map.begin(),
                                 it_end = m_member_map.end();
          it != it_end;
          ++it)
     {
-        DataFileKeyPair const *key_pair = it->second;
+        KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
         key_pair->Print(formatter);
         formatter.EndLine(";");
     }
 }
 
-void DataFileStructure::PrintAST (IndentFormatter &formatter) const
+void Structure::PrintAST (IndentFormatter &formatter) const
 {
-    formatter.EndLine("DAT_STRUCTURE - %u element(s)", m_member_map.size());
+    formatter.EndLine("ET_STRUCTURE: %u element(s)", m_member_map.size());
     formatter.Indent();
     for (MemberMap::const_iterator it = m_member_map.begin(),
                                 it_end = m_member_map.end();
          it != it_end;
          ++it)
     {
-        DataFileKeyPair const *key_pair = it->second;
+        KeyPair const *key_pair = it->second;
         ASSERT1(key_pair != NULL);
         key_pair->PrintAST(formatter);
     }
     formatter.Unindent();
 }
 
-DataFileValue const *DataFileStructure::SubpathElement (
+Value const *Structure::SubpathElement (
     std::string const &path,
     Uint32 start) const
 {
     ASSERT1(start <= path.length());
 
-//     fprintf(stderr, "DataFileStructure::SubpathElement(\"%s\");\n", path.c_str()+start);
+//     fprintf(stderr, "Structure::SubpathElement(\"%s\");\n", path.c_str()+start);
 
     if (start >= path.length())
         return this;
@@ -983,14 +978,14 @@ DataFileValue const *DataFileStructure::SubpathElement (
     else
     {
         ASSERT1(key_delim < UINT32_UPPER_BOUND);
-        return it->second->Value()->SubpathElement(path, key_delim);
+        return it->second->GetValue()->SubpathElement(path, key_delim);
     }
 }
 
-void DataFileStructure::SetSubpathElement (
+void Structure::SetSubpathElement (
     std::string const &path,
     Uint32 start,
-    DataFileLeafValue *const value) throw(std::string)
+    LeafValue *const value) throw(std::string)
 {
     ASSERT1(start <= path.length());
     ASSERT1(value != NULL);
@@ -1014,9 +1009,9 @@ void DataFileStructure::SetSubpathElement (
     MemberMap::const_iterator it = m_member_map.find(key);
     if (it == m_member_map.end())
     {
-        DataFileKeyPair *key_pair = new DataFileKeyPair(key, NULL);
+        KeyPair *key_pair = new KeyPair(key, NULL);
         try {
-            static_cast<DataFileContainer *>(key_pair)->SetSubpathElement(path, key_delim, value);
+            static_cast<Container *>(key_pair)->SetSubpathElement(path, key_delim, value);
         } catch (std::string const &exception) {
             Delete(key_pair);
             throw exception;
@@ -1025,10 +1020,10 @@ void DataFileStructure::SetSubpathElement (
         return;
     }
     else
-        return static_cast<DataFileContainer *>(it->second)->SetSubpathElement(path, key_delim, value);
+        return static_cast<Container *>(it->second)->SetSubpathElement(path, key_delim, value);
 }
 
-bool DataFileStructure::IsValidKey (std::string const &key)
+bool Structure::IsValidKey (std::string const &key)
 {
     char c = key[0];
     if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z') && c != '_')
@@ -1044,5 +1039,7 @@ bool DataFileStructure::IsValidKey (std::string const &key)
     return true;
 }
 
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 

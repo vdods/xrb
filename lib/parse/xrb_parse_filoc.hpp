@@ -16,8 +16,8 @@
 #include <ostream>
 #include <string>
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Parse {
 
 class FiLoc
 {
@@ -71,6 +71,7 @@ private:
 
 std::ostream &operator << (std::ostream &stream, FiLoc const &filoc);
 
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_PARSE_FILOC_HPP_)

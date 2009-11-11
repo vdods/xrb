@@ -17,6 +17,7 @@
 
 using namespace std;
 using namespace Xrb;
+using namespace Parse;
 
 namespace Dis
 {
@@ -135,17 +136,17 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
     if (reset_to_defaults_before_reading)
         ResetToDefaults();
 
-    DataFileParser parser;
+    DataFile::Parser parser;
     // if the parse didn't work for whatever reason, don't change the values.
-    if (parser.Parse(config_file_path) == DataFileParser::RC_SUCCESS)
+    if (parser.Parse(config_file_path) == DataFile::Parser::RC_SUCCESS)
     {
-        DataFileStructure const *root = parser.AcceptedStructure();
+        DataFile::Structure const *root = parser.AcceptedStructure();
 
         // read in and set the enumerated values
         for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
             try { SetBoolean(static_cast<KeyBoolean>(i), root->PathElementBoolean(ms_boolean_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_UINT32_COUNT; ++i)
-            try { SetUint32(static_cast<KeyUint32>(i), root->PathElementUint32(ms_uint32_key[i].m_data_file_path)); } catch (...) { }
+            try { SetUint32(static_cast<KeyUint32>(i), root->PathElementUnsignedInteger(ms_uint32_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
             try { SetString(static_cast<KeyString>(i), root->PathElementString(ms_string_key[i].m_data_file_path)); } catch (...) { }
         for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
@@ -167,13 +168,13 @@ void Config::Write (string const &config_file_path) const
     if (fptr == NULL)
         return;
 
-    DataFileStructure *root = new DataFileStructure();
+    DataFile::Structure *root = new DataFile::Structure();
 
     // write out the enumerated values
     for (Uint32 i = 0; i < KEY_BOOLEAN_COUNT; ++i)
         try { root->SetPathElementBoolean(ms_boolean_key[i].m_data_file_path, Boolean(static_cast<KeyBoolean>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_UINT32_COUNT; ++i)
-        try { root->SetPathElementUint32(ms_uint32_key[i].m_data_file_path, GetUint32(static_cast<KeyUint32>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
+        try { root->SetPathElementUnsignedInteger(ms_uint32_key[i].m_data_file_path, GetUint32(static_cast<KeyUint32>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_STRING_COUNT; ++i)
         try { root->SetPathElementString(ms_string_key[i].m_data_file_path, GetString(static_cast<KeyString>(i))); } catch (...) { ASSERT1(false && "this should never happen"); }
     for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)

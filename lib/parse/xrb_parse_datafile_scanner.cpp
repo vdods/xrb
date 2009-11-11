@@ -10,7 +10,7 @@
 #define REFLEX_CPP_DEBUG_CODE_(spew_code) if (DebugSpew()) { spew_code; }
 
 
-#line 67 "xrb_parse_datafile_scanner.reflex"
+#line 71 "xrb_parse_datafile_scanner.reflex"
 
 #include <errno.h>
 #include <stdlib.h>
@@ -20,8 +20,10 @@
 #include "xrb_parse_util.hpp"
 
 namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-bool DataFileScanner::Open (std::string const &input_path)
+bool Scanner::Open (std::string const &input_path)
 {
     ASSERT1(!m_input.is_open() && "you must call Close() first");
     ASSERT1(!m_filoc.IsValid());
@@ -44,7 +46,7 @@ bool DataFileScanner::Open (std::string const &input_path)
     return m_input.is_open();
 }
 
-void DataFileScanner::Close ()
+void Scanner::Close ()
 {
     m_filoc = FiLoc::ms_invalid;
     if (m_input.is_open())
@@ -55,7 +57,7 @@ void DataFileScanner::Close ()
     ResetForNewInput();
 }
 
-void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filoc)
+void Scanner::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -63,7 +65,7 @@ void DataFileScanner::EmitWarning (std::string const &message, FiLoc const &filo
     m_warnings_were_encountered = true;
 }
 
-void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
+void Scanner::EmitError (std::string const &message, FiLoc const &filoc)
 {
     ASSERT1(m_filoc.IsValid());
     ASSERT1(m_input.is_open());
@@ -71,7 +73,7 @@ void DataFileScanner::EmitError (std::string const &message, FiLoc const &filoc)
     m_errors_were_encountered = true;
 }
 
-DataFileParser::Token DataFileScanner::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
+Parser::Token Scanner::ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix)
 {
     ASSERT1(s != NULL);
     ASSERT1(radix == 2 || radix == 8 || radix == 10 || radix == 16);
@@ -80,25 +82,25 @@ DataFileParser::Token DataFileScanner::ParseIntegerLiteral (char const *s, bool 
         Sint32 value = strtol(s, NULL, radix);
         if (errno == ERANGE)
             EmitError("signed integer literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::SINT32, new DataFileSint32(value));
+        return Parser::Token(Parser::Terminal::SINT32, new SignedInteger(value));
     }
     else
     {
         Uint32 value = strtoul(s, NULL, radix);
         if (errno == ERANGE)
             EmitError("unsigned integer literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::UINT32, new DataFileUint32(value));
+        return Parser::Token(Parser::Terminal::UINT32, new UnsignedInteger(value));
     }
 }
 
-void DataFileScanner::IncrementLineNumber (Uint32 by_value)
+void Scanner::IncrementLineNumber (Uint32 by_value)
 {
     m_filoc.IncrementLineNumber(by_value);
 }
 
-#line 100 "xrb_parse_datafile_scanner.cpp"
+#line 102 "xrb_parse_datafile_scanner.cpp"
 
-DataFileScanner::DataFileScanner ()
+Scanner::Scanner ()
     :
     ReflexCpp_::AutomatonApparatus_(
         ms_state_table_,
@@ -107,39 +109,39 @@ DataFileScanner::DataFileScanner ()
         ms_transition_count_,
         ms_accept_handler_count_),
 
-#line 152 "xrb_parse_datafile_scanner.reflex"
+#line 158 "xrb_parse_datafile_scanner.reflex"
 
     m_filoc(FiLoc::ms_invalid)
 
-#line 115 "xrb_parse_datafile_scanner.cpp"
+#line 117 "xrb_parse_datafile_scanner.cpp"
 
 {
     DebugSpew(false);
 
 
-#line 155 "xrb_parse_datafile_scanner.reflex"
+#line 161 "xrb_parse_datafile_scanner.reflex"
 
 //     DebugSpew(true);
     m_string_literal = NULL;
     m_warnings_were_encountered = false;
     m_errors_were_encountered = false;
 
-#line 128 "xrb_parse_datafile_scanner.cpp"
+#line 130 "xrb_parse_datafile_scanner.cpp"
 
     ResetForNewInput();
 }
 
-DataFileScanner::~DataFileScanner ()
+Scanner::~Scanner ()
 {
 
-#line 161 "xrb_parse_datafile_scanner.reflex"
+#line 167 "xrb_parse_datafile_scanner.reflex"
 
     Close();
 
-#line 140 "xrb_parse_datafile_scanner.cpp"
+#line 142 "xrb_parse_datafile_scanner.cpp"
 }
 
-DataFileScanner::StateMachine::Name DataFileScanner::CurrentStateMachine () const
+Scanner::StateMachine::Name Scanner::CurrentStateMachine () const
 {
     assert(InitialState_() != NULL);
     BarfCpp_::Size initial_node_index = InitialState_() - ms_state_table_;
@@ -155,7 +157,7 @@ DataFileScanner::StateMachine::Name DataFileScanner::CurrentStateMachine () cons
     }
 }
 
-void DataFileScanner::SwitchToStateMachine (StateMachine::Name state_machine)
+void Scanner::SwitchToStateMachine (StateMachine::Name state_machine)
 {
     assert(
         state_machine == StateMachine::BLOCK_COMMENT ||
@@ -166,9 +168,9 @@ void DataFileScanner::SwitchToStateMachine (StateMachine::Name state_machine)
         (false && "invalid StateMachine::Name"));
     REFLEX_CPP_DEBUG_CODE_(
         std::cerr << 
-#line 188 "xrb_parse_datafile_scanner.reflex"
-"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
-#line 172 "xrb_parse_datafile_scanner.cpp"
+#line 196 "xrb_parse_datafile_scanner.reflex"
+"DataFile::Scanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
+#line 174 "xrb_parse_datafile_scanner.cpp"
  << " switching to state machine "
                   << ms_state_machine_name_[state_machine];
         if (ms_state_machine_mode_flags_[state_machine] != 0)
@@ -184,13 +186,13 @@ void DataFileScanner::SwitchToStateMachine (StateMachine::Name state_machine)
     assert(CurrentStateMachine() == state_machine);
 }
 
-void DataFileScanner::ResetForNewInput ()
+void Scanner::ResetForNewInput ()
 {
     REFLEX_CPP_DEBUG_CODE_(
         std::cerr << 
-#line 188 "xrb_parse_datafile_scanner.reflex"
-"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
-#line 194 "xrb_parse_datafile_scanner.cpp"
+#line 196 "xrb_parse_datafile_scanner.reflex"
+"DataFile::Scanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
+#line 196 "xrb_parse_datafile_scanner.cpp"
  << " executing reset-for-new-input actions and switching to state machine "
                   << ms_state_machine_name_[StateMachine::START_];
         if (ms_state_machine_mode_flags_[StateMachine::START_] != 0)
@@ -205,7 +207,7 @@ void DataFileScanner::ResetForNewInput ()
     assert(CurrentStateMachine() == StateMachine::START_);
 
 
-#line 178 "xrb_parse_datafile_scanner.reflex"
+#line 186 "xrb_parse_datafile_scanner.reflex"
 
     m_filoc = FiLoc::ms_invalid;
     delete m_string_literal;
@@ -213,10 +215,10 @@ void DataFileScanner::ResetForNewInput ()
     m_warnings_were_encountered = false;
     m_errors_were_encountered = false;
 
-#line 217 "xrb_parse_datafile_scanner.cpp"
+#line 219 "xrb_parse_datafile_scanner.cpp"
 }
 
-DataFileParser::Token DataFileScanner::Scan () throw()
+Parser::Token Scanner::Scan () throw()
 {
 
     std::string work_string;
@@ -248,9 +250,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
 
             REFLEX_CPP_DEBUG_CODE_(
                 std::cerr << 
-#line 188 "xrb_parse_datafile_scanner.reflex"
-"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
-#line 254 "xrb_parse_datafile_scanner.cpp"
+#line 196 "xrb_parse_datafile_scanner.reflex"
+"DataFile::Scanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
+#line 256 "xrb_parse_datafile_scanner.cpp"
  << " rejecting string ";
                 PrintString_(rejected_string);
                 std::cerr << " (rejected_atom is \'";
@@ -263,12 +265,12 @@ DataFileParser::Token DataFileScanner::Scan () throw()
             do
             {
 
-#line 174 "xrb_parse_datafile_scanner.reflex"
+#line 182 "xrb_parse_datafile_scanner.reflex"
 
     ASSERT1(false && "this should never happen");
     EmitError("unrecognized character " + CharLiteral(rejected_atom), m_filoc);
 
-#line 272 "xrb_parse_datafile_scanner.cpp"
+#line 274 "xrb_parse_datafile_scanner.cpp"
 
             }
             while (false);
@@ -280,9 +282,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
 
             REFLEX_CPP_DEBUG_CODE_(
                 std::cerr << 
-#line 188 "xrb_parse_datafile_scanner.reflex"
-"DataFileScanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
-#line 286 "xrb_parse_datafile_scanner.cpp"
+#line 196 "xrb_parse_datafile_scanner.reflex"
+"DataFile::Scanner" << (m_filoc.IsValid() ? " ("+m_filoc.AsString()+")" : g_empty_string) << ":"
+#line 288 "xrb_parse_datafile_scanner.cpp"
  << " accepting string ";
                 PrintString_(accepted_string);
                 std::cerr << " in state machine " << ms_state_machine_name_[CurrentStateMachine()]
@@ -295,12 +297,12 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 0:
                 {
 
-#line 364 "xrb_parse_datafile_scanner.reflex"
+#line 372 "xrb_parse_datafile_scanner.reflex"
 
         IncrementLineNumber(NewlineCount(accepted_string));
         SwitchToStateMachine(StateMachine::MAIN);
     
-#line 304 "xrb_parse_datafile_scanner.cpp"
+#line 306 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -308,13 +310,13 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 1:
                 {
 
-#line 370 "xrb_parse_datafile_scanner.reflex"
+#line 378 "xrb_parse_datafile_scanner.reflex"
 
         IncrementLineNumber(NewlineCount(accepted_string));
         EmitWarning("unterminated block comment", GetFiLoc());
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     
-#line 318 "xrb_parse_datafile_scanner.cpp"
+#line 320 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -322,15 +324,15 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 2:
                 {
 
-#line 443 "xrb_parse_datafile_scanner.reflex"
+#line 451 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(m_char_literal != NULL);
         SwitchToStateMachine(StateMachine::MAIN);
-        DataFileCharacter *char_literal = m_char_literal;
+        Character *char_literal = m_char_literal;
         m_char_literal = NULL;
-        return DataFileParser::Token(DataFileParser::Terminal::CHARACTER, char_literal);
+        return Parser::Token(Parser::Terminal::CHARACTER, char_literal);
     
-#line 334 "xrb_parse_datafile_scanner.cpp"
+#line 336 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -338,16 +340,16 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 3:
                 {
 
-#line 452 "xrb_parse_datafile_scanner.reflex"
+#line 460 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("unterminated character literal", GetFiLoc());
         ASSERT1(m_char_literal != NULL);
         delete m_char_literal;
         m_char_literal = NULL;
         SwitchToStateMachine(StateMachine::MAIN);
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     
-#line 351 "xrb_parse_datafile_scanner.cpp"
+#line 353 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -355,7 +357,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 4:
                 {
 
-#line 462 "xrb_parse_datafile_scanner.reflex"
+#line 470 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("malformed character literal", GetFiLoc());
         if (accepted_string[0] == '\n')
@@ -364,9 +366,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         delete m_char_literal;
         m_char_literal = NULL;
         SwitchToStateMachine(StateMachine::MAIN);
-        return DataFileParser::Terminal::BAD_TOKEN;
+        return Parser::Terminal::BAD_TOKEN;
     
-#line 370 "xrb_parse_datafile_scanner.cpp"
+#line 372 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -374,7 +376,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 5:
                 {
 
-#line 380 "xrb_parse_datafile_scanner.reflex"
+#line 388 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 2);
         ASSERT1(accepted_string[0] == '\\');
@@ -382,10 +384,10 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         if (value >= 0x100)
             EmitError("octal character literal value out of range (" + accepted_string + ")", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(value);
+        m_char_literal = new Character(value);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     
-#line 389 "xrb_parse_datafile_scanner.cpp"
+#line 391 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -393,7 +395,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 6:
                 {
 
-#line 392 "xrb_parse_datafile_scanner.reflex"
+#line 400 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 3);
         ASSERT1(accepted_string[0] == '\\');
@@ -402,10 +404,10 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         if (value >= 0x100)
             EmitError("hexadecimal character literal value out of range (" + accepted_string + ")", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(value);
+        m_char_literal = new Character(value);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     
-#line 409 "xrb_parse_datafile_scanner.cpp"
+#line 411 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -413,16 +415,16 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 7:
                 {
 
-#line 405 "xrb_parse_datafile_scanner.reflex"
+#line 413 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() == 2);
         ASSERT1(accepted_string[0] == '\\');
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[1]);
+        m_char_literal = new Character(accepted_string[1]);
         m_char_literal->Escape();
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     
-#line 426 "xrb_parse_datafile_scanner.cpp"
+#line 428 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -430,14 +432,14 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 8:
                 {
 
-#line 415 "xrb_parse_datafile_scanner.reflex"
+#line 423 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() == 1);
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        m_char_literal = new Character(accepted_string[0]);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     
-#line 441 "xrb_parse_datafile_scanner.cpp"
+#line 443 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -445,13 +447,13 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 9:
                 {
 
-#line 423 "xrb_parse_datafile_scanner.reflex"
+#line 431 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("unterminated character literal", GetFiLoc());
         ASSERT1(m_char_literal == NULL);
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     
-#line 455 "xrb_parse_datafile_scanner.cpp"
+#line 457 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -459,16 +461,16 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 10:
                 {
 
-#line 430 "xrb_parse_datafile_scanner.reflex"
+#line 438 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("unexpected character " + CharLiteral(accepted_string[0]) + " in character literal", GetFiLoc());
         if (accepted_string[0] == '\n')
             IncrementLineNumber();
         ASSERT1(m_char_literal == NULL);
-        m_char_literal = new DataFileCharacter(accepted_string[0]);
+        m_char_literal = new Character(accepted_string[0]);
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_END);
     
-#line 472 "xrb_parse_datafile_scanner.cpp"
+#line 474 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -476,11 +478,11 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 11:
                 {
 
-#line 246 "xrb_parse_datafile_scanner.reflex"
+#line 254 "xrb_parse_datafile_scanner.reflex"
 
         SwitchToStateMachine(StateMachine::BLOCK_COMMENT);
     
-#line 484 "xrb_parse_datafile_scanner.cpp"
+#line 486 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -488,9 +490,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 12:
                 {
 
-#line 251 "xrb_parse_datafile_scanner.reflex"
+#line 259 "xrb_parse_datafile_scanner.reflex"
  
-#line 494 "xrb_parse_datafile_scanner.cpp"
+#line 496 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -498,11 +500,11 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 13:
                 {
 
-#line 254 "xrb_parse_datafile_scanner.reflex"
+#line 262 "xrb_parse_datafile_scanner.reflex"
 
         SwitchToStateMachine(StateMachine::CHAR_LITERAL_GUTS);
     
-#line 506 "xrb_parse_datafile_scanner.cpp"
+#line 508 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -510,14 +512,14 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 14:
                 {
 
-#line 259 "xrb_parse_datafile_scanner.reflex"
+#line 267 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(m_string_literal == NULL);
-        m_string_literal = new DataFileString();
+        m_string_literal = new String();
         m_string_literal_starting_line_number = m_filoc.LineNumber();
         SwitchToStateMachine(StateMachine::STRING_LITERAL_GUTS);
     
-#line 521 "xrb_parse_datafile_scanner.cpp"
+#line 523 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -525,12 +527,12 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 15:
                 {
 
-#line 267 "xrb_parse_datafile_scanner.reflex"
+#line 275 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() == 1);
-        return DataFileParser::Token(accepted_string[0]);
+        return Parser::Token(accepted_string[0]);
     
-#line 534 "xrb_parse_datafile_scanner.cpp"
+#line 536 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -538,19 +540,19 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 16:
                 {
 
-#line 273 "xrb_parse_datafile_scanner.reflex"
+#line 281 "xrb_parse_datafile_scanner.reflex"
 
         // check if it matches any keywords
         std::string lowercase_text(accepted_string);
         Util::MakeLowercase(&lowercase_text);
         if (lowercase_text == "true")
-            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(true));
+            return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(true));
         else if (lowercase_text == "false")
-            return DataFileParser::Token(DataFileParser::Terminal::BOOLEAN, new DataFileBoolean(false));
+            return Parser::Token(Parser::Terminal::BOOLEAN, new Boolean(false));
         else
-            return DataFileParser::Token(DataFileParser::Terminal::IDENTIFIER, new DataFileString(accepted_string));
+            return Parser::Token(Parser::Terminal::IDENTIFIER, new String(accepted_string));
     
-#line 554 "xrb_parse_datafile_scanner.cpp"
+#line 556 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -558,7 +560,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 17:
                 {
 
-#line 286 "xrb_parse_datafile_scanner.reflex"
+#line 294 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 3); // must be at least "0b" followed by a binary digit
         bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
@@ -572,7 +574,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         char const *s = accepted_string.c_str() + 2;
         return ParseIntegerLiteral(s, is_signed, 2);
     
-#line 576 "xrb_parse_datafile_scanner.cpp"
+#line 578 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -580,7 +582,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 18:
                 {
 
-#line 301 "xrb_parse_datafile_scanner.reflex"
+#line 309 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 2); // must be at least "0" followed by an octal digit
         bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
@@ -594,7 +596,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         char const *s = accepted_string.c_str() + 1;
         return ParseIntegerLiteral(s, is_signed, 8);
     
-#line 598 "xrb_parse_datafile_scanner.cpp"
+#line 600 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -602,13 +604,13 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 19:
                 {
 
-#line 316 "xrb_parse_datafile_scanner.reflex"
+#line 324 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 1); // must be at least a single decimal digit
         bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
         return ParseIntegerLiteral(accepted_string.c_str(), is_signed, 10);
     
-#line 612 "xrb_parse_datafile_scanner.cpp"
+#line 614 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -616,7 +618,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 20:
                 {
 
-#line 323 "xrb_parse_datafile_scanner.reflex"
+#line 331 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(accepted_string.length() >= 3); // must be at least "0x" followed by a hexadecimal digit
         bool is_signed = accepted_string[0] == '+' || accepted_string[0] == '-';
@@ -630,7 +632,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         char const *s = accepted_string.c_str() + 2;
         return ParseIntegerLiteral(s, is_signed, 16);
     
-#line 634 "xrb_parse_datafile_scanner.cpp"
+#line 636 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -638,14 +640,14 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 21:
                 {
 
-#line 338 "xrb_parse_datafile_scanner.reflex"
+#line 346 "xrb_parse_datafile_scanner.reflex"
 
         Float value = strtof(accepted_string.c_str(), NULL);
         if (errno == ERANGE)
             EmitError("floating point literal out of range", m_filoc);
-        return DataFileParser::Token(DataFileParser::Terminal::FLOAT, new DataFileFloat(value));
+        return Parser::Token(Parser::Terminal::FLOATY, new Floaty(value));
     
-#line 649 "xrb_parse_datafile_scanner.cpp"
+#line 651 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -653,9 +655,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 22:
                 {
 
-#line 346 "xrb_parse_datafile_scanner.reflex"
+#line 354 "xrb_parse_datafile_scanner.reflex"
  
-#line 659 "xrb_parse_datafile_scanner.cpp"
+#line 661 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -663,9 +665,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 23:
                 {
 
-#line 349 "xrb_parse_datafile_scanner.reflex"
+#line 357 "xrb_parse_datafile_scanner.reflex"
  IncrementLineNumber(); 
-#line 669 "xrb_parse_datafile_scanner.cpp"
+#line 671 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -673,9 +675,9 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 24:
                 {
 
-#line 352 "xrb_parse_datafile_scanner.reflex"
- return DataFileParser::Terminal::END_; 
-#line 679 "xrb_parse_datafile_scanner.cpp"
+#line 360 "xrb_parse_datafile_scanner.reflex"
+ return Parser::Terminal::END_; 
+#line 681 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -683,12 +685,12 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 25:
                 {
 
-#line 355 "xrb_parse_datafile_scanner.reflex"
+#line 363 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("unexpected character " + CharLiteral(accepted_string[0]), GetFiLoc());
-        return DataFileParser::Terminal::BAD_TOKEN;
+        return Parser::Terminal::BAD_TOKEN;
     
-#line 692 "xrb_parse_datafile_scanner.cpp"
+#line 694 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -696,7 +698,7 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 26:
                 {
 
-#line 477 "xrb_parse_datafile_scanner.reflex"
+#line 485 "xrb_parse_datafile_scanner.reflex"
 
         ASSERT1(m_string_literal != NULL);
         IncrementLineNumber(NewlineCount(accepted_string));
@@ -732,11 +734,11 @@ DataFileParser::Token DataFileScanner::Scan () throw()
         }
         m_string_literal->AppendString(accepted_string);
         SwitchToStateMachine(StateMachine::MAIN);
-        DataFileString *string_literal = m_string_literal;
+        String *string_literal = m_string_literal;
         m_string_literal = NULL;
-        return DataFileParser::Token(DataFileParser::Terminal::STRING_FRAGMENT, string_literal);
+        return Parser::Token(Parser::Terminal::STRING_FRAGMENT, string_literal);
     
-#line 740 "xrb_parse_datafile_scanner.cpp"
+#line 742 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -744,16 +746,16 @@ DataFileParser::Token DataFileScanner::Scan () throw()
                 case 27:
                 {
 
-#line 518 "xrb_parse_datafile_scanner.reflex"
+#line 526 "xrb_parse_datafile_scanner.reflex"
 
         EmitError("unterminated string literal", GetFiLoc());
         IncrementLineNumber(NewlineCount(accepted_string));
         ASSERT1(m_string_literal != NULL);
         delete m_string_literal;
         m_string_literal = NULL;
-        return DataFileParser::Terminal::END_;
+        return Parser::Terminal::END_;
     
-#line 757 "xrb_parse_datafile_scanner.cpp"
+#line 759 "xrb_parse_datafile_scanner.cpp"
 
                 }
                 break;
@@ -764,19 +766,19 @@ DataFileParser::Token DataFileScanner::Scan () throw()
     }
 
 
-#line 164 "xrb_parse_datafile_scanner.reflex"
+#line 170 "xrb_parse_datafile_scanner.reflex"
 
     ASSERT1(false && "you didn't handle EOF properly");
-    return DataFileParser::Terminal::END_;
+    return Parser::Terminal::END_;
 
-#line 773 "xrb_parse_datafile_scanner.cpp"
+#line 775 "xrb_parse_datafile_scanner.cpp"
 }
 
 // ///////////////////////////////////////////////////////////////////////
 // begin internal reflex-generated parser guts -- don't use
 // ///////////////////////////////////////////////////////////////////////
 
-void DataFileScanner::PrintAtom_ (BarfCpp_::Uint8 atom)
+void Scanner::PrintAtom_ (BarfCpp_::Uint8 atom)
 {
     if (atom == '\\')                    std::cerr << "\\\\";
     else if (atom == '"')                std::cerr << "\\\"";
@@ -792,7 +794,7 @@ void DataFileScanner::PrintAtom_ (BarfCpp_::Uint8 atom)
     }
 }
 
-void DataFileScanner::PrintString_ (std::string const &s)
+void Scanner::PrintString_ (std::string const &s)
 {
     // save the existing std::cerr properties for later restoration
     std::ios_base::fmtflags saved_stream_flags = std::cerr.flags();
@@ -823,7 +825,7 @@ void DataFileScanner::PrintString_ (std::string const &s)
     std::cerr.precision(saved_stream_precision);
 }
 
-BarfCpp_::Uint32 const DataFileScanner::ms_state_machine_start_state_index_[] =
+BarfCpp_::Uint32 const Scanner::ms_state_machine_start_state_index_[] =
 {
     0,
     10,
@@ -831,7 +833,7 @@ BarfCpp_::Uint32 const DataFileScanner::ms_state_machine_start_state_index_[] =
     30,
     71,
 };
-BarfCpp_::Uint8 const DataFileScanner::ms_state_machine_mode_flags_[] =
+BarfCpp_::Uint8 const Scanner::ms_state_machine_mode_flags_[] =
 {
     2,
     0,
@@ -839,7 +841,7 @@ BarfCpp_::Uint8 const DataFileScanner::ms_state_machine_mode_flags_[] =
     0,
     2,
 };
-char const *const DataFileScanner::ms_state_machine_name_[] =
+char const *const Scanner::ms_state_machine_name_[] =
 {
     "BLOCK_COMMENT",
     "CHAR_LITERAL_END",
@@ -847,11 +849,11 @@ char const *const DataFileScanner::ms_state_machine_name_[] =
     "MAIN",
     "STRING_LITERAL_GUTS",
 };
-BarfCpp_::Uint32 const DataFileScanner::ms_state_machine_count_ = sizeof(DataFileScanner::ms_state_machine_name_) / sizeof(*DataFileScanner::ms_state_machine_name_);
+BarfCpp_::Uint32 const Scanner::ms_state_machine_count_ = sizeof(Scanner::ms_state_machine_name_) / sizeof(*Scanner::ms_state_machine_name_);
 
 // the order of the states indicates priority (only for accept states).
 // the lower the state's index in this array, the higher its priority.
-ReflexCpp_::AutomatonApparatus_::DfaState_ const DataFileScanner::ms_state_table_[] =
+ReflexCpp_::AutomatonApparatus_::DfaState_ const Scanner::ms_state_table_[] =
 {
     { 28, 2, ms_transition_table_+0 },
     { 28, 3, ms_transition_table_+2 },
@@ -935,9 +937,9 @@ ReflexCpp_::AutomatonApparatus_::DfaState_ const DataFileScanner::ms_state_table
     { 27, 1, ms_transition_table_+264 },
     { 26, 5, ms_transition_table_+265 }
 };
-BarfCpp_::Size const DataFileScanner::ms_state_count_ = sizeof(DataFileScanner::ms_state_table_) / sizeof(*DataFileScanner::ms_state_table_);
+BarfCpp_::Size const Scanner::ms_state_count_ = sizeof(Scanner::ms_state_table_) / sizeof(*Scanner::ms_state_table_);
 
-ReflexCpp_::AutomatonApparatus_::DfaTransition_ const DataFileScanner::ms_transition_table_[] =
+ReflexCpp_::AutomatonApparatus_::DfaTransition_ const Scanner::ms_transition_table_[] =
 {
     { ReflexCpp_::AutomatonApparatus_::DfaTransition_::CONDITIONAL, 2, 0, ms_state_table_+1 },
     { ReflexCpp_::AutomatonApparatus_::DfaTransition_::CONDITIONAL, 2, 2, ms_state_table_+3 },
@@ -1210,9 +1212,9 @@ ReflexCpp_::AutomatonApparatus_::DfaTransition_ const DataFileScanner::ms_transi
     { ReflexCpp_::AutomatonApparatus_::DfaTransition_::INPUT_ATOM_RANGE, 35, 91, ms_state_table_+73 },
     { ReflexCpp_::AutomatonApparatus_::DfaTransition_::INPUT_ATOM_RANGE, 93, 255, ms_state_table_+73 }
 };
-BarfCpp_::Size const DataFileScanner::ms_transition_count_ = sizeof(DataFileScanner::ms_transition_table_) / sizeof(*DataFileScanner::ms_transition_table_);
+BarfCpp_::Size const Scanner::ms_transition_count_ = sizeof(Scanner::ms_transition_table_) / sizeof(*Scanner::ms_transition_table_);
 
-char const *const DataFileScanner::ms_accept_handler_regex_[] =
+char const *const Scanner::ms_accept_handler_regex_[] =
 {
     "{ANY}*[*]/",
     "{ANY}*{EOF}",
@@ -1243,15 +1245,17 @@ char const *const DataFileScanner::ms_accept_handler_regex_[] =
     "([^\\\\]|\\\\{ANY})*\"",
     "([^\\\\]|\\\\{ANY})*\\\\?{EOF}"
 };
-BarfCpp_::Uint32 const DataFileScanner::ms_accept_handler_count_ = sizeof(DataFileScanner::ms_accept_handler_regex_) / sizeof(*DataFileScanner::ms_accept_handler_regex_);
+BarfCpp_::Uint32 const Scanner::ms_accept_handler_count_ = sizeof(Scanner::ms_accept_handler_regex_) / sizeof(*Scanner::ms_accept_handler_regex_);
 
 // ///////////////////////////////////////////////////////////////////////
 // end of internal reflex-generated parser guts
 // ///////////////////////////////////////////////////////////////////////
 
 
-#line 168 "xrb_parse_datafile_scanner.reflex"
+#line 174 "xrb_parse_datafile_scanner.reflex"
 
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
-#line 1258 "xrb_parse_datafile_scanner.cpp"
+#line 1262 "xrb_parse_datafile_scanner.cpp"

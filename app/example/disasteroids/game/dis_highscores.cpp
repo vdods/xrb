@@ -15,6 +15,7 @@
 #include "xrb_parse_datafile_value.hpp"
 
 using namespace Xrb;
+using namespace Parse;
 
 namespace Dis
 {
@@ -182,10 +183,10 @@ bool HighScores::AddScore (Score const &score)
 
 void HighScores::Read (std::string const &path)
 {
-    DataFileParser parser;
-    if (parser.Parse(path) == DataFileParser::RC_SUCCESS)
+    DataFile::Parser parser;
+    if (parser.Parse(path) == DataFile::Parser::RC_SUCCESS)
     {
-        DataFileStructure const *root = parser.AcceptedStructure();
+        DataFile::Structure const *root = parser.AcceptedStructure();
 
         // we're looking for a structure called high_scores, which is an
         // array of structures each with elements
@@ -195,21 +196,21 @@ void HighScores::Read (std::string const &path)
         // date (unsigned integer)
         // hash (unsigned integer)
 
-        DataFileArray const *high_scores;
+        DataFile::Array const *high_scores;
         try { high_scores = root->PathElementArray("|high_scores"); }
         catch (...) { /* if no high scores, quit. */ return; }
 
         for (Uint32 i = 0; i < high_scores->ElementCount(); ++i)
         {
-            DataFileValue const *high_score = high_scores->Element(i);
+            DataFile::Value const *high_score = high_scores->Element(i);
             try
             {
                 Score score(
                     high_score->PathElementString("|name"),
-                    high_score->PathElementUint32("|points"),
-                    high_score->PathElementUint32("|wave_count"),
-                    high_score->PathElementUint32("|date"));
-                Uint32 hash = high_score->PathElementUint32("|hash");
+                    high_score->PathElementUnsignedInteger("|points"),
+                    high_score->PathElementUnsignedInteger("|wave_count"),
+                    high_score->PathElementUnsignedInteger("|date"));
+                Uint32 hash = high_score->PathElementUnsignedInteger("|hash");
                 // this check is to prevent people from editing the high scores
                 // file to add fake high scores
                 if (hash == score.Hash())
@@ -226,7 +227,7 @@ void HighScores::Write (std::string const &path)
     if (fptr == NULL)
         return;
 
-    DataFileStructure *root = new DataFileStructure();
+    DataFile::Structure *root = new DataFile::Structure();
     for (ScoreList::const_iterator it = m_score_list.begin(),
                                    it_end = m_score_list.end();
          it != it_end;
@@ -234,10 +235,10 @@ void HighScores::Write (std::string const &path)
     {
         try {
             root->SetPathElementString("|high_scores|+|name", it->Name());
-            root->SetPathElementUint32("|high_scores|$|points", it->Points());
-            root->SetPathElementUint32("|high_scores|$|wave_count", it->WaveCount());
-            root->SetPathElementUint32("|high_scores|$|date", static_cast<Uint32>(it->Date()));
-            root->SetPathElementUint32("|high_scores|$|hash", it->Hash());
+            root->SetPathElementUnsignedInteger("|high_scores|$|points", it->Points());
+            root->SetPathElementUnsignedInteger("|high_scores|$|wave_count", it->WaveCount());
+            root->SetPathElementUnsignedInteger("|high_scores|$|date", static_cast<Uint32>(it->Date()));
+            root->SetPathElementUnsignedInteger("|high_scores|$|hash", it->Hash());
         } catch (...) {
             ASSERT1(false && "this should never happen");
         }

@@ -16,7 +16,7 @@
 #include <string>
 
 namespace Xrb {
-// namespace Parse {
+namespace Parse {
 
 enum EscapeStringReturnCode
 {
@@ -55,7 +55,7 @@ std::string StringLiteral (std::string const &text, bool with_quotes = true);
 
 Uint32 NewlineCount (std::string const &text);
 
-// } // end of namespace Parse
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_PARSE_UTIL_HPP_)

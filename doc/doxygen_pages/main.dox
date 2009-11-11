@@ -47,7 +47,6 @@ Contact the author at victor dot dods atsign gmail dot com.
     <li>Parsers</li>
         <ul>
         <li>DataFile</li>
-        <li>LineCalculator</li>
         </ul>
     <li>Input</li>
     <li>Endian Awareness And Code</li>

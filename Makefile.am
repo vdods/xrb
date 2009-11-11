@@ -12,8 +12,8 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 ##############################################################################
 
 .PHONY: \
-	datafileparser \
-	datafilescanner \
+	datafile_parser \
+	datafile_scanner \
 	doc \
 	lib
 
@@ -388,14 +388,14 @@ include_HEADERS = \
 ##############################################################################
 
 if TRISON_EXISTS
-datafileparser: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp
+datafile_parser: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison
 	$(TRISON) $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-npda-dot-graph xrb_parse_datafile_parser.npda.dot --generate-dpda-dot-graph xrb_parse_datafile_parser.dpda.dot --generate-dpda-states-file xrb_parse_datafile_parser.dpda.states
 endif
 
 if REFLEX_EXISTS
-datafilescanner: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp
+datafile_scanner: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex
 	$(REFLEX) $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-nfa-dot-graph xrb_parse_datafile_scanner.nfa.dot --generate-dfa-dot-graph xrb_parse_datafile_scanner.dfa.dot

@@ -28,6 +28,8 @@
 namespace Xrb
 {
 
+using namespace Parse;
+
 // ///////////////////////////////////////////////////////////////////////////
 // Animation::Sequence::LoadParameters
 // ///////////////////////////////////////////////////////////////////////////
@@ -89,11 +91,11 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
     }
 
     // otherwise try to load and parse the animation descriptor file
-    DataFileParser parser;
-    DataFileParser::ReturnCode return_code = parser.Parse(load_parameters.Path());
-    if (return_code == DataFileParser::RC_SUCCESS)
+    DataFile::Parser parser;
+    DataFile::Parser::ReturnCode return_code = parser.Parse(load_parameters.Path());
+    if (return_code == DataFile::Parser::RC_SUCCESS)
     {
-        DataFileStructure const *root = parser.AcceptedStructure();
+        DataFile::Structure const *root = parser.AcceptedStructure();
         try
         {
             std::string default_type_string;
@@ -120,13 +122,13 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             }
 
             Float default_duration = 1.0f; // the value is 1 if left unspecified
-            try { default_duration = root->PathElementFloat("|default_duration"); } catch (...) { }
+            try { default_duration = root->PathElementFloaty("|default_duration"); } catch (...) { }
             if (default_duration <= 0.0f)
                 THROW_STRING("invalid default_duration value " << default_duration << " (must be positive)");
 
             fprintf(stderr, "Animation::Sequence::Create(\"%s\"); default_type = %s, default_duration = %g\n", load_parameters.Path().c_str(), ms_animation_type_string[default_type].c_str(), default_duration);
 
-            DataFileArray const *frames = root->PathElementArray("|frames");
+            DataFile::Array const *frames = root->PathElementArray("|frames");
             Sequence *retval = new Sequence(frames->ElementCount(), default_type, default_duration);
             for (Uint32 i = 0; i < retval->Length(); ++i)
                 retval->m_frame[i] = GlTexture::Load(frames->StringElement(i));
@@ -142,11 +144,11 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
         fprintf(stderr, "Animation::Sequence::Create(\"%s\"); error ", load_parameters.Path().c_str());
         switch (return_code)
         {
-            case DataFileParser::RC_INVALID_FILENAME: fprintf(stderr, "RC_INVALID_FILENAME\n"); break;
-            case DataFileParser::RC_FILE_OPEN_FAILURE: fprintf(stderr, "RC_FILE_OPEN_FAILURE\n"); break;
-            case DataFileParser::RC_PARSE_ERROR: fprintf(stderr, "RC_PARSE_ERROR\n"); break;
-            case DataFileParser::RC_ERRORS_ENCOUNTERED: fprintf(stderr, "RC_ERRORS_ENCOUNTERED\n"); break;
-            default: ASSERT1(false && "unhandled DataFileParser::ReturnCode"); break;
+            case DataFile::Parser::RC_INVALID_FILENAME: fprintf(stderr, "RC_INVALID_FILENAME\n"); break;
+            case DataFile::Parser::RC_FILE_OPEN_FAILURE: fprintf(stderr, "RC_FILE_OPEN_FAILURE\n"); break;
+            case DataFile::Parser::RC_PARSE_ERROR: fprintf(stderr, "RC_PARSE_ERROR\n"); break;
+            case DataFile::Parser::RC_ERRORS_ENCOUNTERED: fprintf(stderr, "RC_ERRORS_ENCOUNTERED\n"); break;
+            default: ASSERT1(false && "unhandled DataFile::Parser::ReturnCode"); break;
         }
     }
     return NULL;

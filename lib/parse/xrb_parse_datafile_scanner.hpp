@@ -481,7 +481,7 @@ protected:
 
 private:
 
-    // these InputApparatus_ methods should not be accessable to DataFileScanner
+    // these InputApparatus_ methods should not be accessable to Scanner
     using InputApparatus_::CurrentConditionalFlags_;
     using InputApparatus_::InputAtom_;
     using InputApparatus_::AdvanceReadCursor_;
@@ -608,13 +608,15 @@ private:
 #include "xrb_parse_filoc.hpp"
 
 namespace Xrb {
+namespace Parse {
+namespace DataFile {
 
-class DataFileCharacter;
-class DataFileString;
+class Character;
+class String;
 
-#line 616 "xrb_parse_datafile_scanner.hpp"
+#line 618 "xrb_parse_datafile_scanner.hpp"
 
-class DataFileScanner : private ReflexCpp_::AutomatonApparatus_
+class Scanner : private ReflexCpp_::AutomatonApparatus_
 {
 public:
 
@@ -629,11 +631,11 @@ public:
             STRING_LITERAL_GUTS,
             // default starting state machine
             START_ = MAIN
-        }; // end of enum DataFileScanner::StateMachine::Name
-    }; // end of struct DataFileScanner::StateMachine
+        }; // end of enum Scanner::StateMachine::Name
+    }; // end of struct Scanner::StateMachine
 
-    DataFileScanner ();
-    ~DataFileScanner ();
+    Scanner ();
+    ~Scanner ();
 
     bool DebugSpew () const { return m_debug_spew_; }
     void DebugSpew (bool debug_spew) { m_debug_spew_ = debug_spew; }
@@ -647,12 +649,12 @@ public:
 
     void ResetForNewInput ();
 
-    DataFileParser::Token Scan () throw();
+    Parser::Token Scan () throw();
 
 public:
 
 
-#line 35 "xrb_parse_datafile_scanner.reflex"
+#line 37 "xrb_parse_datafile_scanner.reflex"
 
     bool IsOpen () const { return m_input.is_open(); }
     FiLoc const &GetFiLoc () const { return m_filoc; }
@@ -667,18 +669,18 @@ public:
 
 private:
 
-    DataFileParser::Token ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix);
+    Parser::Token ParseIntegerLiteral (char const *s, bool is_signed, Uint32 radix);
     void IncrementLineNumber (Uint32 by_value = 1);
 
     FiLoc m_filoc;
     std::ifstream m_input;
-    DataFileCharacter *m_char_literal;
-    DataFileString *m_string_literal;
+    Character *m_char_literal;
+    String *m_string_literal;
     Uint32 m_string_literal_starting_line_number;
     bool m_warnings_were_encountered;
     bool m_errors_were_encountered;
 
-#line 682 "xrb_parse_datafile_scanner.hpp"
+#line 684 "xrb_parse_datafile_scanner.hpp"
 
 
 private:
@@ -715,13 +717,15 @@ private:
     // ///////////////////////////////////////////////////////////////////////
     // end of internal reflex-generated parser guts
     // ///////////////////////////////////////////////////////////////////////
-}; // end of class DataFileScanner
+}; // end of class Scanner
 
 
-#line 60 "xrb_parse_datafile_scanner.reflex"
+#line 62 "xrb_parse_datafile_scanner.reflex"
 
+} // end of namespace DataFile
+} // end of namespace Parse
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_PARSE_DATAFILE_SCANNER_HPP_)
 
-#line 728 "xrb_parse_datafile_scanner.hpp"
+#line 732 "xrb_parse_datafile_scanner.hpp"
