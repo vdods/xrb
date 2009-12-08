@@ -36,5 +36,5 @@
  "@@KLL"           "@@KR"       "@KT"         ";putKR"       "(O"    "';',1KP"     ");KT"         "@@KO"    "@P"     "@L" "@LN"             "@@BL"
  "@@@KLK"          "@@KQ"      "pLL"           "ut(1KQ"      "+P"     "2+3+KP"     "4,KT"         "1KLL"           ")KO"    "@LL"           "@@BM"
   "@@@@@KQ"      "@@@@KP"     ";KLM"            "retuKP"     "rP"     "n(4KP"     ",3@@KR"       "@@@@KR"       "@@@KP"     "@@,KT"         "2,BO"
-    "1,0);}char\n@@@@@KM"  "@@@@@@@@KP"     "@@**dave,*my,*mind,@KN"   "@KN"   "@@@@@@@@@@KL" "@@@@@@@@@@@@@@**is,*KR"       "going;@@@@@@@@BS"
-        "@char*O"    "iM"  ",*can,feeP"     "l@@@@@@@@@@@@@,it;chaN"   "r*N"   "*im,a='.'+'.'+'.',*fraid=\n@@@@@@@@S"        "@L" "@@@@@@@";
+    "1,0);}char\n@@@@@KM"  "@@@@@@@@KP"     "@@**dave,*my,*mind,@KN"   "@KN"   "@@@@@@@@@@@@@@@@@@@@@@@@**is,*goingKR"       ";@@@@@@@@@charBS"
+        "*i,*cKO"    "aM"  "n,feel@@KP"     "@@@@@@@@@@@,it;char*KN"   "*KN"   "im,a='.'+'.'+'.',*fraid=\n@@@@@@@@KS"        "@L" "@@@@@@@";
