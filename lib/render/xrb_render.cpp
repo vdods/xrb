@@ -39,10 +39,8 @@ void Render::DrawLine (
     {
         FloatVector2 vertex_array[2] = { from, to };
 
-        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
         glDrawArrays(GL_LINES, 0, 2);
-        glDisableClientState(GL_VERTEX_ARRAY);
     }
 
     glMatrixMode(GL_MODELVIEW);
@@ -73,8 +71,6 @@ void Render::DrawArrow (
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-
     {
         FloatVector2 vertex_array[3] = { from, to, to+0.25f*(basis_y-basis_x) };
 
@@ -88,8 +84,6 @@ void Render::DrawArrow (
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
         glDrawArrays(GL_LINE_STRIP, 0, 2);
     }
-
-    glDisableClientState(GL_VERTEX_ARRAY);
 
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
@@ -132,10 +126,8 @@ void Render::DrawPolygon (
         for (Uint32 i = 0; i < vertex_count; ++i, angle += angle_delta)
             vertex_array[i] = center + radius * FloatVector2(cos(angle), sin(angle));
 
-        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
         glDrawArrays(GL_LINE_LOOP, 0, vertex_count);
-        glDisableClientState(GL_VERTEX_ARRAY);
 
         delete[] vertex_array;
     }
@@ -272,10 +264,8 @@ void Render::DrawCircularArc (
         // one more (there is 1 more vertex than facet)
         vertex_array[facet_count] = center + radius * FloatVector2(cos(angle), sin(angle));
 
-        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
         glDrawArrays(GL_LINE_STRIP, 0, facet_count+1);
-        glDisableClientState(GL_VERTEX_ARRAY);
 
         delete[] vertex_array;
     }
@@ -318,11 +308,9 @@ void Render::DrawScreenRect (
         };
 */
 
-        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
 //         glVertexPointer(2, GL_INT, 0, vertex_coordinate_array);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glDisableClientState(GL_VERTEX_ARRAY);
     }
 
     glMatrixMode(GL_MODELVIEW);
@@ -373,18 +361,12 @@ void Render::DrawScreenRectTexture (
             screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
         };
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
         glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, texture_coordinate_array);
         glClientActiveTexture(GL_TEXTURE1);
         glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     glMatrixMode(GL_MODELVIEW);

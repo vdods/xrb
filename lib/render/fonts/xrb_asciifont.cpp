@@ -360,9 +360,6 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
         render_context.ColorMask(),
         render_context.ColorBias());
 
-    // enable vertex and texture coord arrays so we can draw with glDrawArrays
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
@@ -370,8 +367,6 @@ void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
     // disable vertex and texture coord arrays since we're done drawing with
     // glDrawArrays (this seems to be unnecessary, but there's probably a good
     // reason for it.)
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // pop the modelview matrix
     glMatrixMode(GL_MODELVIEW);

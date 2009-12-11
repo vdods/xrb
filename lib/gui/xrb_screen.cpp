@@ -184,8 +184,16 @@ void Screen::Draw (Float real_time) const
     // as the render context).
     SetViewport(render_context.ClipRect());
 
+    // here's what allows us to use the vertex and texture coordinate arrays.
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     // call draw on the ContainerWidget base class.
     ContainerWidget::Draw(render_context);
+
+    // disable the vertex and texture coord arrays (see above)
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     // need to pop the matrix we saved above.
     glMatrixMode(GL_PROJECTION);

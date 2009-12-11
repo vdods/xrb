@@ -195,10 +195,6 @@ void Engine2::Sprite::RenderGlTexture (
         glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        // this seems to be unnecessary, but there's probably a good reason for it.
-        glDisableClientState(GL_VERTEX_ARRAY); 
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
 #if !USE_SOFTWARE_TRANSFORM

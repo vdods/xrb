@@ -93,9 +93,6 @@ void Engine2::Polygon::Draw () const
             vertex_array[i] = GetVertex(i);
         }
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
 
         glClientActiveTexture(GL_TEXTURE0);
@@ -104,9 +101,6 @@ void Engine2::Polygon::Draw () const
         glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
-
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         delete[] vertex_array;
     }
