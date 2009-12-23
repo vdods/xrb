@@ -17,11 +17,8 @@
 #include "xrb_gltexture.hpp"
 #include "xrb_resourcelibrary.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 struct Polygon;
 

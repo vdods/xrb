@@ -16,11 +16,8 @@
 #include "xrb_animation.hpp"
 #include "xrb_engine2_sprite.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 // same as Sprite, but instead of a fixed texture, an Animation is used.
 class AnimatedSprite : public Sprite

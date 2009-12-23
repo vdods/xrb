@@ -13,11 +13,8 @@
 
 #include "xrb.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 /** @brief Denotes all possible types of Object (subclasses).
   */

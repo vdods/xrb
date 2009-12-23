@@ -12,10 +12,12 @@ AUTOMAKE_OPTIONS = subdir-objects foreign 1.4
 ##############################################################################
 
 .PHONY: \
-	datafile_parser \
-	datafile_scanner \
-	doc \
-	lib
+    datafile_parser \
+    datafile_scanner \
+    doc \
+    lib \
+    xml_parser \
+    xml_scanner
 
 doc:
 	$(DOXYGEN) Doxyfile
@@ -23,50 +25,50 @@ doc:
 lib: lib/libxrb.la
 
 lib_LTLIBRARIES = \
-	lib/libxrb.la
+    lib/libxrb.la
 
 bin_PROGRAMS = \
-	benchmark \
-	disasteroids \
-	lesson00 \
-	lesson01 \
-	lesson02 \
-	lesson03 \
-	lesson04 \
-	lesson05 \
-	lesson06
+    benchmark \
+    disasteroids \
+    lesson00 \
+    lesson01 \
+    lesson02 \
+    lesson03 \
+    lesson04 \
+    lesson05 \
+    lesson06
 
 EXTRA_DIST = \
-	bootstrap.sh \
-	configure.ac \
-	Doxyfile.in \
-	INSTALL \
-	LICENSE \
-	README \
-	TODO \
-	xuqrijbuh.kdevelop \
-	xuqrijbuh.kdevelop.filelist \
-	xuqrijbuh.sln \
-	app/example/disasteroids/disasteroids.vcproj \
-	app/example/lesson/lesson00/lesson00.vcproj \
-	app/example/lesson/lesson01/lesson01.vcproj \
-	app/example/lesson/lesson02/lesson02.vcproj \
-	app/example/lesson/lesson03/lesson03.vcproj \
-	app/example/lesson/lesson04/lesson04.vcproj \
-	app/example/lesson/lesson05/lesson05.vcproj \
-	app/example/lesson/lesson06/lesson06.vcproj \
-	doc/doxygen_pages/acknowledgements_and_credits.dox \
-	doc/doxygen_pages/conventions.dox \
-	doc/doxygen_pages/goals.dox \
-	doc/doxygen_pages/lessons.dox \
-	doc/doxygen_pages/main.dox \
-	doc/doxygen_pages/math.dox \
-	doc/doxygen_pages/portable_cpp_types.dox \
-	doc/doxygen_pages/setup_linux.dox \
-	doc/doxygen_pages/setup_macosx.dox \
-	doc/doxygen_pages/setup_msvc.dox \
-	doc/doxygen_pages/widget_baseclass.dox \
-	lib/libxrb.vcproj
+    bootstrap.sh \
+    configure.ac \
+    Doxyfile.in \
+    INSTALL \
+    LICENSE \
+    README \
+    TODO \
+    xuqrijbuh.kdevelop \
+    xuqrijbuh.kdevelop.filelist \
+    xuqrijbuh.sln \
+    app/example/disasteroids/disasteroids.vcproj \
+    app/example/lesson/lesson00/lesson00.vcproj \
+    app/example/lesson/lesson01/lesson01.vcproj \
+    app/example/lesson/lesson02/lesson02.vcproj \
+    app/example/lesson/lesson03/lesson03.vcproj \
+    app/example/lesson/lesson04/lesson04.vcproj \
+    app/example/lesson/lesson05/lesson05.vcproj \
+    app/example/lesson/lesson06/lesson06.vcproj \
+    doc/doxygen_pages/acknowledgements_and_credits.dox \
+    doc/doxygen_pages/conventions.dox \
+    doc/doxygen_pages/goals.dox \
+    doc/doxygen_pages/lessons.dox \
+    doc/doxygen_pages/main.dox \
+    doc/doxygen_pages/math.dox \
+    doc/doxygen_pages/portable_cpp_types.dox \
+    doc/doxygen_pages/setup_linux.dox \
+    doc/doxygen_pages/setup_macosx.dox \
+    doc/doxygen_pages/setup_msvc.dox \
+    doc/doxygen_pages/widget_baseclass.dox \
+    lib/libxrb.vcproj
 
 ##############################################################################
 # phony target alias for lib/libxrb.la for your convenience
@@ -109,6 +111,7 @@ AM_CPPFLAGS = \
     -I$(top_srcdir)/lib/gui \
     -I$(top_srcdir)/lib/gui/widgets \
     -I$(top_srcdir)/lib/input \
+    -I$(top_srcdir)/lib/lvd \
     -I$(top_srcdir)/lib/math \
     -I$(top_srcdir)/lib/parse \
     -I$(top_srcdir)/lib/primitive \
@@ -201,6 +204,12 @@ lib_libxrb_la_SOURCES = \
     lib/input/xrb_key.cpp \
     lib/input/xrb_keymap.cpp \
     lib/input/xrb_keyrepeater.cpp \
+    \
+    lib/lvd/lvd_filoc.cpp \
+    lib/lvd/lvd_xml_parser.cpp \
+    lib/lvd/lvd_xml_parser.trison \
+    lib/lvd/lvd_xml_scanner.cpp \
+    lib/lvd/lvd_xml_scanner.reflex \
     \
     lib/math/xrb_math.cpp \
     lib/math/xrb_matrix2.cpp \
@@ -323,6 +332,11 @@ include_HEADERS = \
     lib/input/xrb_keymap.hpp \
     lib/input/xrb_keyrepeater.hpp \
     \
+    lib/lvd/lvd_filoc.hpp \
+    lib/lvd/lvd_xml.hpp \
+    lib/lvd/lvd_xml_parser.hpp \
+    lib/lvd/lvd_xml_scanner.hpp \
+    \
     lib/math/xrb_math.hpp \
     lib/math/xrb_matrix2.hpp \
     lib/math/xrb_polynomial.hpp \
@@ -392,6 +406,11 @@ datafile_parser: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison
 	$(TRISON) $(top_srcdir)/lib/parse/xrb_parse_datafile_parser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-npda-dot-graph xrb_parse_datafile_parser.npda.dot --generate-dpda-dot-graph xrb_parse_datafile_parser.dpda.dot --generate-dpda-states-file xrb_parse_datafile_parser.dpda.states
+
+xml_parser: $(top_srcdir)/lib/lvd/lvd_xml_parser.hpp
+$(top_srcdir)/lib/lvd/lvd_xml_parser.hpp: $(top_srcdir)/lib/lvd/lvd_xml_parser.cpp
+$(top_srcdir)/lib/lvd/lvd_xml_parser.cpp: $(top_srcdir)/lib/lvd/lvd_xml_parser.trison
+	$(TRISON) $(top_srcdir)/lib/lvd/lvd_xml_parser.trison --warnings-as-errors --output-directory $(top_srcdir)/lib/lvd --generate-npda-dot-graph lvd_xml_parser.npda.dot --generate-dpda-dot-graph lvd_xml_parser.dpda.dot --generate-dpda-states-file lvd_xml_parser.dpda.states
 endif
 
 if REFLEX_EXISTS
@@ -399,6 +418,11 @@ datafile_scanner: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.hpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp
 $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.cpp: $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex
 	$(REFLEX) $(top_srcdir)/lib/parse/xrb_parse_datafile_scanner.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/parse --generate-nfa-dot-graph xrb_parse_datafile_scanner.nfa.dot --generate-dfa-dot-graph xrb_parse_datafile_scanner.dfa.dot
+
+xml_scanner: $(top_srcdir)/lib/lvd/lvd_xml_scanner.hpp
+$(top_srcdir)/lib/lvd/lvd_xml_scanner.hpp: $(top_srcdir)/lib/lvd/lvd_xml_scanner.cpp
+$(top_srcdir)/lib/lvd/lvd_xml_scanner.cpp: $(top_srcdir)/lib/lvd/lvd_xml_scanner.reflex
+	$(REFLEX) $(top_srcdir)/lib/lvd/lvd_xml_scanner.reflex --warnings-as-errors --output-directory $(top_srcdir)/lib/lvd --generate-nfa-dot-graph lvd_xml_scanner.nfa.dot --generate-dfa-dot-graph lvd_xml_scanner.dfa.dot
 endif
 
 ##############################################################################
@@ -406,8 +430,8 @@ endif
 ##############################################################################
 
 benchmark_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
-	\
+    $(AM_CPPFLAGS) \
+    \
     -I$(top_srcdir)/app/benchmark
 
 benchmark_SOURCES = \
@@ -421,7 +445,7 @@ benchmark_SOURCES = \
 ##############################################################################
 
 disasteroids_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
+    $(AM_CPPFLAGS) \
     \
     -I$(top_srcdir)/app/example/disasteroids \
     -I$(top_srcdir)/app/example/disasteroids/game \
@@ -504,11 +528,11 @@ lesson06_SOURCES = app/example/lesson/lesson06/lesson06_main.cpp
 ##############################################################################
 
 noinst_HEADERS = \
-	app/benchmark/bm_commandlineoptions.hpp \
-	app/benchmark/bm_config.hpp \
-	app/benchmark/bm_enums.hpp \
-	app/benchmark/bm_master.hpp \
-	\
+    app/benchmark/bm_commandlineoptions.hpp \
+    app/benchmark/bm_config.hpp \
+    app/benchmark/bm_enums.hpp \
+    app/benchmark/bm_master.hpp \
+    \
     app/example/disasteroids/dis_commandlineoptions.hpp \
     app/example/disasteroids/dis_config.hpp \
     app/example/disasteroids/dis_enums.hpp \

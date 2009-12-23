@@ -1,0 +1,749 @@
+// ///////////////////////////////////////////////////////////////////////////
+// lvd_xml_scanner.reflex by Victor Dods, created 2009/12/12
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+%targets cpp
+
+/* ***************************************************************************
+/* cpp scanner header-file-related directives
+/* **************************************************************************/
+
+%target.cpp.header_filename "lvd_xml_scanner.hpp"
+%target.cpp.implementation_filename "lvd_xml_scanner.cpp"
+%target.cpp.top_of_header_file %{
+#if !defined(LVD_XML_SCANNER_HPP_)
+#define LVD_XML_SCANNER_HPP_
+
+#if defined(HAVE_CONFIG_H)
+    #include "config.h"
+#endif // defined(HAVE_CONFIG_H)
+
+#include <fstream>
+#include <lvd_filoc.hpp>
+#include <lvd_xml_parser.hpp>
+#include <ostream>
+#include <sstream>
+#include <string>
+
+namespace Lvd {
+namespace Xml {
+
+struct DomNode;
+struct Text;
+%}
+%target.cpp.class_name Scanner
+%target.cpp.bottom_of_class {
+    bool IsOpen () const;
+    FiLoc const &GetFiLoc () const { return m_filoc; }
+    bool WarningsWereEncountered () const { return m_warnings_were_encountered; }
+    bool ErrorsWereEncountered () const { return m_errors_were_encountered; }
+
+    // chopping whitespace will cause a problem if you want to
+    // preserve the whitespace separating parsed text and a CDATA section.
+    bool ChopLeadingAndTrailingTextWhitespace () const { return m_chop_whitespace; }
+    void ChopLeadingAndTrailingTextWhitespace (bool chop) { m_chop_whitespace = chop; }
+
+    // this is the ostream to which warning and error messages will
+    // be logged, or NULL if none.  default is NULL.
+    std::ostream *WarningAndErrorLogStream () const { return m_log_stream; }
+    void WarningAndErrorLogStream (std::ostream *log_stream) { m_log_stream = log_stream; }
+
+    bool OpenFile (std::string const &input_filename);
+    void OpenString (std::string const &input_string, std::string const &input_name, bool use_line_numbers = false);
+    void OpenUsingStream (std::istream *input_stream, std::string const &input_name, bool use_line_numbers);
+
+    // if you supplied your own istream to OpenUsingStream(), a call to Close()
+    // will NOT close your istream.
+    bool Close ();
+
+    void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+    void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+
+private:
+
+    void EmitUnexpectedCharacterError (char c);
+
+    // chops whitespace (if m_chop_whitespace is enabled) and returns
+    // the pointer value of m_text_in_progress, and then sets
+    // m_text_in_progress to NULL.
+    Text *ChopAndStealTextInProgress ();
+    void IncrementLineNumber (unsigned int by_value = 1);
+
+    static unsigned int NewlineCount (std::string const &s);
+    static void Chop (std::string &s);
+
+    std::istream &In ()
+    {
+        assert(m_input_stream != NULL && "no input stream attached");
+        return *m_input_stream;
+    }
+
+    std::istringstream m_istringstream;
+    std::ifstream m_ifstream;
+    std::istream *m_input_stream;
+    std::ostream *m_log_stream;
+    FiLoc m_filoc;
+    Text *m_text_in_progress;
+    bool m_apos_delimited_string;
+    bool m_warnings_were_encountered;
+    bool m_errors_were_encountered;
+    bool m_chop_whitespace;
+}
+%target.cpp.bottom_of_header_file %{
+} // end of namespace Xml
+} // end of namespace Lvd
+
+#endif // !defined(LVD_XML_SCANNER_HPP_)
+%}
+
+/* ***************************************************************************
+/* cpp scanner implementation-file-related directives
+/* **************************************************************************/
+
+%target.cpp.top_of_implementation_file %{
+using namespace std;
+
+#include <iomanip>
+#include <lvd_xml.hpp>
+#include <sstream>
+
+#define FORMAT(x) static_cast<ostringstream &>(ostringstream().flush() << x).str()
+
+namespace Lvd {
+namespace Xml {
+
+bool Scanner::IsOpen () const
+{
+    // if no input stream, it can't be open.
+    if (m_input_stream == NULL)
+        return false;
+
+    // if the input stream is an ifstream, use the is_open method.
+    if (dynamic_cast<ifstream *>(m_input_stream) != NULL)
+        return static_cast<ifstream *>(m_input_stream)->is_open();
+
+    // otherwise, it's always open.
+    return true;
+}
+
+bool Scanner::OpenFile (string const &input_filename)
+{
+    Close();
+
+    assert(!m_ifstream.is_open());
+    m_ifstream.open(input_filename.c_str());
+    if (!m_ifstream.is_open())
+        return false;
+
+    m_input_stream = &m_ifstream;
+    m_input_stream->unsetf(ios_base::skipws);
+    m_filoc.SetFilename(input_filename);
+    m_filoc.SetLineNumber(1);
+
+    // set the istream iterator
+    IstreamIterator(istream_iterator<char>(*m_input_stream));
+    // unlimited readahead (read the whole input immediately)
+    InputReadahead(0);
+
+    return true;
+}
+
+void Scanner::OpenString (string const &input_string, string const &input_name, bool use_line_numbers)
+{
+    Close();
+
+    assert(m_istringstream.str().empty());
+    m_istringstream.str(input_string);
+    m_istringstream.clear(); // clear the eof and other flags
+
+    m_input_stream = &m_istringstream;
+    m_input_stream->unsetf(ios_base::skipws);
+    m_filoc.SetFilename(input_name);
+    m_filoc.SetLineNumber(use_line_numbers ? 1 : 0);
+
+    // set the istream iterator
+    IstreamIterator(istream_iterator<char>(*m_input_stream));
+    // unlimited readahead (read the whole input immediately)
+    InputReadahead(0);
+}
+
+void Scanner::OpenUsingStream (istream *input_stream, string const &input_name, bool use_line_numbers)
+{
+    assert(input_stream != NULL);
+
+    Close();
+
+    m_input_stream = input_stream;
+    m_input_stream->unsetf(ios_base::skipws);
+    m_filoc.SetFilename(input_name);
+    m_filoc.SetLineNumber(use_line_numbers ? 1 : 0);
+
+    // set the istream iterator
+    IstreamIterator(istream_iterator<char>(*m_input_stream));
+    // unlimited readahead (read the whole input immediately)
+    InputReadahead(0);
+}
+
+bool Scanner::Close ()
+{
+    // reset the istream iterator to EOF
+    IstreamIterator(istream_iterator<char>());
+
+    if (m_input_stream != NULL)
+    {
+        assert(IsOpen());
+        if (m_input_stream == &m_istringstream)
+            m_istringstream.str("");
+        else if (m_input_stream == &m_ifstream)
+            m_ifstream.close();
+        m_input_stream = NULL;
+        m_filoc.SetFilename("");
+        m_filoc.SetLineNumber(0);
+        return true;
+    }
+    else
+    {
+        assert(!IsOpen());
+        assert(!m_filoc.IsValid());
+        return false;
+    }
+}
+
+void Scanner::EmitWarning (string const &message, FiLoc const &filoc)
+{
+    assert(IsOpen());
+    assert(m_filoc.IsValid());
+    if (m_log_stream != NULL)
+        *m_log_stream << filoc << ": warning: " << message << endl;
+    m_warnings_were_encountered = true;
+}
+
+void Scanner::EmitError (string const &message, FiLoc const &filoc)
+{
+    assert(IsOpen());
+    assert(m_filoc.IsValid());
+    if (m_log_stream != NULL)
+        *m_log_stream << filoc << ": error: " << message << endl;
+    m_errors_were_encountered = true;
+}
+
+void Scanner::IncrementLineNumber (unsigned int by_value)
+{
+    if (m_filoc.LineNumber() > 0)
+        m_filoc.IncrementLineNumber(by_value);
+}
+
+void Scanner::EmitUnexpectedCharacterError (char c)
+{
+    if (c == '\'')
+        EmitError(FORMAT("unexpected character \"'\""), GetFiLoc());
+    else if (c >= ' ' && c <= '~') // printable chars
+        EmitError(FORMAT("unexpected character '" << c << "'"), GetFiLoc());
+    else
+        EmitError(FORMAT("unexpected character \\x" << setbase(16) << setw(2) << setfill('0') << setiosflags(ios_base::uppercase) << int(c)), GetFiLoc());
+}
+
+Text *Scanner::ChopAndStealTextInProgress ()
+{
+    if (m_text_in_progress != NULL)
+    {
+        if (m_chop_whitespace)
+            Chop(m_text_in_progress->m_text);
+        if (m_text_in_progress->m_text.empty())
+        {
+            delete m_text_in_progress;
+            m_text_in_progress = NULL;
+        }
+    }
+    Text *text = m_text_in_progress;
+    m_text_in_progress = NULL;
+    return text;
+}
+
+unsigned int Scanner::NewlineCount (string const &s)
+{
+    unsigned int count = 0;
+    for (string::const_iterator it = s.begin(), it_end = s.end(); it != it_end; ++it)
+        if (*it == '\n')
+            ++count;
+    return count;
+}
+
+void Scanner::Chop (string &s)
+{
+    assert(string(".").find_last_not_of(".") == string::npos && "your std::string doesn't behave nicely");
+    assert(string::npos+1 == 0 && "your std::string doesn't behave nicely");
+    s.resize(s.find_last_not_of("\t\n\r ")+1);
+    s.erase(0, s.find_first_not_of("\t\n\r "));
+}
+%}
+%target.cpp.superclass_and_member_constructors {
+    m_input_stream(NULL),
+    m_log_stream(NULL),
+    m_filoc(FiLoc::ms_invalid),
+    m_text_in_progress(NULL),
+    m_chop_whitespace(false)
+}
+%target.cpp.destructor_actions {
+    delete m_text_in_progress;
+    m_text_in_progress = NULL;
+    Close();
+}
+%target.cpp.bottom_of_scan_method_actions %{
+    assert(false && "you didn't handle EOF properly");
+    return Parser::Terminal::END_;
+%}
+%target.cpp.bottom_of_implementation_file %{
+} // end of namespace Xml
+} // end of namespace Lvd
+%}
+
+/* ***************************************************************************
+/* cpp scanner I/O parameters
+/* **************************************************************************/
+
+%target.cpp.return_type "Parser::Token"
+%target.cpp.rejection_actions {
+    assert(false && "a char fell through the cracks");
+    EmitError("unrecognized character '" + rejected_string + "'", GetFiLoc());
+    return Parser::Terminal::BAD_TOKEN;
+}
+%target.cpp.reset_for_new_input_actions {
+    delete m_text_in_progress;
+    m_text_in_progress = NULL;
+    m_warnings_were_encountered = false;
+    m_errors_were_encountered = false;
+    SwitchToStateMachine(StateMachine::MAIN);
+}
+
+/* ***************************************************************************
+/* cpp scanner misc directives
+/* **************************************************************************/
+
+%target.cpp.generate_debug_spew_code
+%target.cpp.debug_spew_prefix {"Lvd::Xml::Scanner" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"}
+%target.cpp.dont_generate_timestamps
+
+/* ***************************************************************************
+/* target-independent scanner directives
+/* **************************************************************************/
+
+// loosely based on http://www.w3.org/TR/REC-xml/ -- though the scanner
+// will not attempt to validate UTF8, and will accept stuff that probably
+// isn't valid xml (this is in favor of code simplicity).
+
+%macro END_OF_FILE          (\z)
+%macro ANY                  (\n|.)
+%macro WHITESPACE           ([\t\n\r ])
+%macro ASCII_CHAR           ([\x01-\x7F])
+%macro EXTENDED_ASCII_CHAR  ([\x80-\xFF])
+%macro NON_CONTROL_CHAR     ([^<>&'"])
+%macro STRING_CHAR          ([^&'"])
+%macro NAME                 (([:A-Za-z_]|{EXTENDED_ASCII_CHAR})([:A-Za-z_0-9.\-]|{EXTENDED_ASCII_CHAR})*)
+
+%start_with_state_machine MAIN
+
+%%
+
+%state_machine MAIN
+:
+    (<\?)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::OPEN_PI);
+        Text *text = ChopAndStealTextInProgress();
+        if (text != NULL)
+            return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    (<)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::OPEN_TAG);
+        Text *text = ChopAndStealTextInProgress();
+        if (text != NULL)
+            return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    (</)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::OPEN_END_TAG);
+        Text *text = ChopAndStealTextInProgress();
+        if (text != NULL)
+            return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    (<!--)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::COMMENT);
+    }
+|
+    (<\[!CDATA\[)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::CDATA);
+        Text *text = ChopAndStealTextInProgress();
+        if (text != NULL)
+            return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    (&amp;)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += '&';
+    }
+|
+    (&apos;)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += '\'';
+    }
+|
+    (&gt;)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += '>';
+    }
+|
+    (&lt;)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += '<';
+    }
+|
+    (&quot;)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += '"';
+    }
+/*
+|
+    (&#[0-9]+) // decimal numeric character reference
+    %target.cpp {
+        // TODO: need unicode-to-utf8 converter (probably use function pointer, passed to Scanner's constructor)
+    }
+|
+    (&#x[0-9a-f]+) // hexadecimal numeric character reference
+    %target.cpp {
+        // TODO: need unicode-to-utf8 converter (probably use function pointer, passed to Scanner's constructor)
+    }
+*/
+|
+    (&(a(m(p)?)?)?|&(a(p(o(s)?)?)?)?|&(g(t)?)?|&(l(t)?)?|&(q(u(o(t)?)?)?)?)
+    %target.cpp {
+        EmitError("malformed entity '" + accepted_string + "'", GetFiLoc());
+        return Parser::Terminal::BAD_TOKEN;
+    }
+|
+    ({NON_CONTROL_CHAR}+)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc());
+        m_text_in_progress->m_text += accepted_string;
+        IncrementLineNumber(NewlineCount(accepted_string));
+    }
+|
+    ({END_OF_FILE})
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::END_OF_FILE);
+        Text *text = ChopAndStealTextInProgress();
+        if (text != NULL)
+            return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    ({ANY}) // catch-all for unexpected chars
+    %target.cpp {
+        // the only chars that could get through are > ' or "
+        assert(accepted_string == ">" || accepted_string == "'" || accepted_string == "\"");
+        EmitUnexpectedCharacterError(accepted_string[0]);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        return Parser::Terminal::BAD_TOKEN;
+    }
+;
+
+%state_machine OPEN_PI // PI = processing instruction
+:
+    ()
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::TAG);
+        return Parser::Token(Parser::Terminal::OPEN_PI, new Tag("", DomNode::PROCESSING_INSTRUCTION, GetFiLoc()));
+    }
+;
+
+%state_machine OPEN_TAG
+:
+    ()
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::TAG);
+        return Parser::Token(Parser::Terminal::OPEN_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+    }
+;
+
+%state_machine TAG
+:
+    (\?>)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::MAIN);
+        return Parser::Terminal::CLOSE_PI;
+    }
+|
+    (>)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::MAIN);
+        return Parser::Terminal::CLOSE_TAG;
+    }
+|
+    (/>)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::MAIN);
+        return Parser::Terminal::CLOSE_SELFENDED_TAG;
+    }
+|
+    ({NAME})
+    %target.cpp {
+        assert(NewlineCount(accepted_string) == 0);
+        return Parser::Token(Parser::Terminal::NAME, new Text(accepted_string, GetFiLoc()));
+    }
+|
+    (=)
+    %target.cpp {
+        return Parser::Token(accepted_string[0]); // the terminal is the ASCII value '='
+    }
+|
+    (')
+    %target.cpp {
+        assert(m_text_in_progress == NULL);
+        m_text_in_progress = new Text(GetFiLoc());
+        m_apos_delimited_string = true;
+        SwitchToStateMachine(StateMachine::STRING);
+    }
+|
+    (")
+    %target.cpp {
+        assert(m_text_in_progress == NULL);
+        m_text_in_progress = new Text(GetFiLoc());
+        m_apos_delimited_string = false;
+        SwitchToStateMachine(StateMachine::STRING);
+    }
+|
+    ({WHITESPACE}+) // ignore, but track newlines
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+    }
+|
+    ({END_OF_FILE})
+    %target.cpp {
+        EmitError("EOF in tag", GetFiLoc());
+        SwitchToStateMachine(StateMachine::END_OF_FILE);
+    }
+|
+    ({ANY}) // catch-all for unexpected chars
+    %target.cpp {
+        assert(accepted_string.length() == 1);
+        EmitUnexpectedCharacterError(accepted_string[0]);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        return Parser::Terminal::BAD_TOKEN;
+    }
+;
+
+%state_machine OPEN_END_TAG
+:
+    ()
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::END_TAG);
+        return Parser::Token(Parser::Terminal::OPEN_END_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+    }
+;
+
+%state_machine END_TAG
+:
+    (>)
+    %target.cpp {
+        SwitchToStateMachine(StateMachine::MAIN);
+        return Parser::Terminal::CLOSE_END_TAG;
+    }
+|
+    ({NAME})
+    %target.cpp {
+        assert(NewlineCount(accepted_string) == 0);
+        return Parser::Token(Parser::Terminal::NAME, new Text(accepted_string, GetFiLoc()));
+    }
+|
+    ({WHITESPACE}+) // ignore
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+    }
+|
+    ({END_OF_FILE})
+    %target.cpp {
+        EmitError("EOF in end-tag", GetFiLoc());
+        SwitchToStateMachine(StateMachine::END_OF_FILE);
+    }
+|
+    ({ANY}) // catch-all for unexpected chars
+    %target.cpp {
+        EmitUnexpectedCharacterError(accepted_string[0]);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        return Parser::Terminal::BAD_TOKEN;
+    }
+;
+
+%state_machine COMMENT %ungreedy
+:
+    ({ANY}*-->)
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+        SwitchToStateMachine(StateMachine::MAIN);
+    }
+|
+    ({ANY}*{END_OF_FILE})
+    %target.cpp {
+        EmitError("unterminated comment", GetFiLoc());
+        IncrementLineNumber(NewlineCount(accepted_string));
+        SwitchToStateMachine(StateMachine::MAIN);
+    }
+;
+
+%state_machine CDATA %ungreedy
+:
+    ({ANY}*\]\]>)
+    %target.cpp {
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc(), DomNode::CDATA);
+        // get rid of the ]]> at the end
+        accepted_string.resize(accepted_string.size()-3);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        SwitchToStateMachine(StateMachine::MAIN);
+        m_text_in_progress->m_text += accepted_string;
+        Text *text = m_text_in_progress;
+        m_text_in_progress = NULL;
+        return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+|
+    ({ANY}*{END_OF_FILE})
+    %target.cpp {
+        EmitError("unterminated CDATA", GetFiLoc());
+        if (m_text_in_progress == NULL)
+            m_text_in_progress = new Text(GetFiLoc(), DomNode::CDATA);
+        IncrementLineNumber(NewlineCount(accepted_string));
+        SwitchToStateMachine(StateMachine::END_OF_FILE);
+        m_text_in_progress->m_text += accepted_string;
+        Text *text = m_text_in_progress;
+        m_text_in_progress = NULL;
+        return Parser::Token(Parser::Terminal::TEXT, text);
+    }
+;
+
+%state_machine STRING
+:
+    ({STRING_CHAR}+)
+    %target.cpp {
+        IncrementLineNumber(NewlineCount(accepted_string));
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += accepted_string;
+    }
+|
+    (&amp;)
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += '&';
+    }
+|
+    (&apos;)
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += '\'';
+    }
+|
+    (&gt;)
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += '>';
+    }
+|
+    (&lt;)
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += '<';
+    }
+|
+    (&quot;)
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        m_text_in_progress->m_text += '"';
+    }
+/*
+|
+    (&#[0-9]+) // decimal numeric character reference
+    %target.cpp {
+        // TODO: need unicode-to-utf8 converter (probably use function pointer, passed to Scanner's constructor)
+    }
+|
+    (&#x[0-9a-f]+) // hexadecimal numeric character reference
+    %target.cpp {
+        // TODO: need unicode-to-utf8 converter (probably use function pointer, passed to Scanner's constructor)
+    }
+*/
+|
+    (&(a(m(p)?)?)?|&(a(p(o(s)?)?)?)?|&(g(t)?)?|&(l(t)?)?|&(q(u(o(t)?)?)?)?)
+    %target.cpp {
+        EmitError("malformed entity '" + accepted_string + "' in string literal; ignoring", GetFiLoc());
+    }
+|
+    (')
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        if (m_apos_delimited_string)
+        {
+            SwitchToStateMachine(StateMachine::TAG);
+            Text *text = m_text_in_progress;
+            m_text_in_progress = NULL;
+            return Parser::Token(Parser::Terminal::STRING, text);
+        }
+        else
+            m_text_in_progress->m_text += '\'';
+    }
+|
+    (")
+    %target.cpp {
+        assert(m_text_in_progress != NULL);
+        if (!m_apos_delimited_string)
+        {
+            SwitchToStateMachine(StateMachine::TAG);
+            Text *text = m_text_in_progress;
+            m_text_in_progress = NULL;
+            return Parser::Token(Parser::Terminal::STRING, text);
+        }
+        else
+            m_text_in_progress->m_text += '"';
+    }
+|
+    ({END_OF_FILE})
+    %target.cpp {
+        EmitError("unterminated string literal", GetFiLoc());
+        SwitchToStateMachine(StateMachine::END_OF_FILE);
+        Text *text = m_text_in_progress;
+        m_text_in_progress = NULL;
+        return Parser::Token(Parser::Terminal::STRING, text);
+    }
+
+    // catch-all is unnecessary here, since the rules handle all possible chars
+;
+
+%state_machine END_OF_FILE
+:
+    ({END_OF_FILE})
+    %target.cpp {
+        delete m_text_in_progress;
+        m_text_in_progress = NULL;
+        return Parser::Terminal::END_;
+    }
+;

@@ -13,11 +13,8 @@
 
 #include "xrb_event.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 class Entity;
 class ObjectLayer;

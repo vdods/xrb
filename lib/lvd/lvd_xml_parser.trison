@@ -1,0 +1,521 @@
+// ///////////////////////////////////////////////////////////////////////////
+// lvd_xml_parser.trison by Victor Dods, created 2009/12/12
+// ///////////////////////////////////////////////////////////////////////////
+// Unless a different license was explicitly granted in writing by the
+// copyright holder (Victor Dods), this software is freely distributable under
+// the terms of the GNU General Public License, version 2.  Any works deriving
+// from this work must also be released under the GNU GPL.  See the included
+// file LICENSE for details.
+// ///////////////////////////////////////////////////////////////////////////
+
+%targets cpp
+
+/* ***************************************************************************
+/* cpp parser header-file-related directives
+/* **************************************************************************/
+
+%target.cpp.header_filename "lvd_xml_parser.hpp"
+%target.cpp.implementation_filename "lvd_xml_parser.cpp"
+%target.cpp.top_of_header_file %{
+#if !defined(LVD_XML_PARSER_HPP_)
+#define LVD_XML_PARSER_HPP_
+
+#if defined(HAVE_CONFIG_H)
+    #include "config.h"
+#endif // defined(HAVE_CONFIG_H)
+
+#include <lvd_filoc.hpp>
+#include <string>
+
+namespace Lvd {
+namespace Xml {
+
+struct DomNode;
+class Scanner;
+%}
+%target.cpp.class_name Parser
+%target.cpp.bottom_of_class {
+    bool IsOpen () const;
+    FiLoc const &GetFiLoc () const;
+    bool WarningsWereEncountered () const;
+    bool ErrorsWereEncountered () const;
+
+    // chopping whitespace will cause a problem if you want to
+    // preserve the whitespace separating parsed text and a CDATA section.
+    bool ChopLeadingAndTrailingTextWhitespace () const;
+    void ChopLeadingAndTrailingTextWhitespace (bool chop);
+
+    // this is the ostream to which warning and error messages will
+    // be logged, or NULL if none.  default is NULL.
+    std::ostream *WarningAndErrorLogStream () const;
+    void WarningAndErrorLogStream (std::ostream *log_stream);
+
+    bool ScannerDebugSpew () const;
+    void ScannerDebugSpew (bool debug_spew);
+
+    bool OpenFile (std::string const &input_filename);
+    void OpenString (std::string const &input_string, std::string const &input_name, bool use_line_numbers = false);
+    void OpenUsingStream (std::istream *input_stream, std::string const &input_name, bool use_line_numbers);
+
+    // if you supplied your own istream to OpenUsingStream(), a call to Close()
+    // will NOT close your istream.
+    bool Close ();
+
+private:
+
+    void EmitWarning (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+    void EmitError (std::string const &message, FiLoc const &filoc = FiLoc::ms_invalid);
+
+    Scanner &m_scanner;
+}
+%target.cpp.bottom_of_header_file%{
+} // end of namespace Xml
+} // end of namespace Lvd
+
+#endif // !defined(LVD_XML_PARSER_HPP_)
+%}
+
+/* ***************************************************************************
+/* cpp parser implementation-file-related directives
+/* **************************************************************************/
+
+%target.cpp.top_of_implementation_file %{
+#include <lvd_xml.hpp>
+#include <lvd_xml_scanner.hpp>
+#include <sstream>
+
+using namespace std;
+
+namespace Lvd {
+namespace Xml {
+%}
+%target.cpp.superclass_and_member_constructors {
+    m_scanner(*new Scanner())
+}
+%target.cpp.destructor_actions {
+    delete &m_scanner;
+}
+%target.cpp.bottom_of_implementation_file %{
+bool Parser::IsOpen () const
+{
+    return m_scanner.IsOpen();
+}
+
+FiLoc const &Parser::GetFiLoc () const
+{
+    return m_scanner.GetFiLoc();
+}
+
+bool Parser::WarningsWereEncountered () const
+{
+    return m_scanner.WarningsWereEncountered();
+}
+
+bool Parser::ErrorsWereEncountered () const
+{
+    return m_scanner.ErrorsWereEncountered();
+}
+
+bool Parser::ChopLeadingAndTrailingTextWhitespace () const
+{
+    return m_scanner.ChopLeadingAndTrailingTextWhitespace();
+}
+
+void Parser::ChopLeadingAndTrailingTextWhitespace (bool chop)
+{
+    m_scanner.ChopLeadingAndTrailingTextWhitespace(chop);
+}
+
+ostream *Parser::WarningAndErrorLogStream () const
+{
+    return m_scanner.WarningAndErrorLogStream();
+}
+
+void Parser::WarningAndErrorLogStream (ostream *log_stream)
+{
+    m_scanner.WarningAndErrorLogStream(log_stream);
+}
+
+bool Parser::ScannerDebugSpew () const
+{
+    return m_scanner.DebugSpew();
+}
+
+void Parser::ScannerDebugSpew (bool debug_spew)
+{
+    m_scanner.DebugSpew(debug_spew);
+}
+
+bool Parser::OpenFile (string const &input_filename)
+{
+    Close();
+    return m_scanner.OpenFile(input_filename);
+}
+
+void Parser::OpenString (string const &input_string, string const &input_name, bool use_line_numbers)
+{
+    Close();
+    m_scanner.OpenString(input_string, input_name, use_line_numbers);
+}
+
+void Parser::OpenUsingStream (istream *input_stream, string const &input_name, bool use_line_numbers)
+{
+    Close();
+    m_scanner.OpenUsingStream(input_stream, input_name, use_line_numbers);
+}
+
+bool Parser::Close ()
+{
+    ResetForNewInput();
+    return m_scanner.Close();
+}
+
+void Parser::EmitWarning (std::string const &message, FiLoc const &filoc)
+{
+    m_scanner.EmitWarning(message, filoc);
+}
+
+void Parser::EmitError (std::string const &message, FiLoc const &filoc)
+{
+    m_scanner.EmitError(message, filoc);
+}
+
+} // end of namespace Xml
+} // end of namespace Lvd
+%}
+
+/* ***************************************************************************
+/* cpp parser i/o parameters
+/* **************************************************************************/
+
+%target.cpp.token_data_type "DomNode *"
+%target.cpp.token_data_default "NULL"
+%target.cpp.throw_away_token_actions {
+    delete token_data;
+}
+%target.cpp.scan_actions {
+    return m_scanner.Scan();
+}
+%target.cpp.reset_for_new_input_actions {
+    m_scanner.ResetForNewInput();
+}
+
+/* ***************************************************************************
+/* cpp parser misc directives
+/* **************************************************************************/
+
+%target.cpp.generate_debug_spew_code
+%target.cpp.debug_spew_prefix {"Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"}
+%target.cpp.dont_generate_timestamps
+
+/* ***************************************************************************
+/* target-independent parser directives
+/* **************************************************************************/
+
+%terminal BAD_TOKEN
+%terminal NAME STRING TEXT %type.cpp "Text *"
+%terminal OPEN_PI OPEN_TAG OPEN_END_TAG %type.cpp "Tag *"
+%terminal CLOSE_PI CLOSE_TAG CLOSE_END_TAG CLOSE_SELFENDED_TAG
+%terminal '='
+
+%default_parse_nonterminal document
+
+%%
+
+/* ***************************************************************************
+/* grammar
+/* **************************************************************************/
+
+%nonterminal document %type.cpp "Document *"
+:
+    element_list:list %end
+    %target.cpp {
+        return list;
+    }
+;
+
+%nonterminal element_list %type.cpp "Document *"
+:
+    element_list:list tag:tag
+    %target.cpp {
+        list->m_element.push_back(tag);
+        return list;
+    }
+|
+    element_list:list TEXT:text
+    %target.cpp {
+        list->m_element.push_back(text);
+        return list;
+    }
+|
+    // empty reduction rule
+    %target.cpp {
+        return new Document();
+    }
+;
+
+%nonterminal tag %type.cpp "Tag *"
+:
+    processing_instruction:pi
+    %target.cpp {
+        return pi;
+    }
+|
+    start_tag:start_tag element_list:element_list end_tag:end_tag
+    %target.cpp {
+        if (start_tag->m_name != "%error" && end_tag->m_name != "%error" && start_tag->m_name != end_tag->m_name)
+            EmitError("end-tag '" + end_tag->m_name + "' doesn't match start-tag '" + start_tag->m_name + "'", end_tag->m_filoc);
+        // steal the contents of the element list
+        assert(start_tag->m_element.empty());
+        start_tag->m_element.swap(element_list->m_element);
+        delete element_list;
+        delete end_tag;
+        return start_tag;
+    }
+|
+    start_tag:start_tag %error end_tag:end_tag
+    %target.cpp {
+        EmitError("parse error in element list in tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
+        if (start_tag->m_name != "%error" && end_tag->m_name != "%error" && start_tag->m_name != end_tag->m_name)
+            EmitError("end-tag '" + end_tag->m_name + "' doesn't match start-tag '" + start_tag->m_name + "'", end_tag->m_filoc);
+        delete end_tag;
+        return start_tag;
+    }
+|
+    start_tag:start_tag %error %end
+    %target.cpp {
+        EmitError("no matching end-tag for start-tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
+        return start_tag;
+    }
+|
+    selfended_tag:tag
+    %target.cpp {
+        return tag;
+    }
+|
+    end_tag:end_tag
+    %target.cpp {
+        EmitError("end-tag" + (end_tag->m_name != "%error" ? " '" + end_tag->m_name + "'" : "") + " with no matching start-tag", end_tag->m_filoc);
+        return end_tag;
+    }
+;
+
+%nonterminal processing_instruction %type.cpp "Tag *"
+:
+    OPEN_PI:throwaway NAME:name attribute_list:attribute_list CLOSE_PI
+    %target.cpp {
+        Tag *pi = new Tag(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
+        // steal the attribute list
+        pi->m_attribute.swap(attribute_list->m_attribute);
+        delete throwaway;
+        delete name;
+        delete attribute_list;
+        return pi;
+    }
+|
+    OPEN_PI:tag NAME:name %error CLOSE_PI
+    %target.cpp {
+        EmitError("parse error in processing instruction '" + name->m_text + "'", name->m_filoc);
+        // rename the OPEN_PI tag and use it
+        tag->m_name = name->m_text;
+        tag->m_filoc = name->m_filoc;
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        delete name;
+        return tag;
+    }
+|
+    OPEN_PI:tag NAME:name %error %end
+    %target.cpp {
+        EmitError("unterminated processing instruction '" + name->m_text + "'", name->m_filoc);
+        // rename the OPEN_PI tag and use it
+        tag->m_name = name->m_text;
+        tag->m_filoc = name->m_filoc;
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        delete name;
+        return tag;
+    }
+|
+    OPEN_PI:tag %error CLOSE_PI
+    %target.cpp {
+        EmitError("parse error in processing instruction", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        return tag;
+    }
+|
+    OPEN_PI:tag %error %end
+    %target.cpp {
+        EmitError("unterminated processing instruction", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        return tag;
+    }
+;
+
+%nonterminal start_tag %type.cpp "Tag *"
+:
+    OPEN_TAG:throwaway NAME:opening_name attribute_list:attribute_list CLOSE_TAG
+    %target.cpp {
+        Tag *tag = new Tag(opening_name->m_text, DomNode::TAG, opening_name->m_filoc);
+        // steal the attribute list
+        tag->m_attribute.swap(attribute_list->m_attribute);
+        delete throwaway;
+        delete opening_name;
+        delete attribute_list;
+        return tag;
+    }
+|
+    OPEN_TAG:tag NAME:opening_name %error CLOSE_TAG
+    %target.cpp {
+        EmitError("parse error in start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        // rename the OPEN_TAG tag and use it
+        tag->m_name = opening_name->m_text;
+        tag->m_filoc = opening_name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete opening_name;
+        return tag;
+    }
+|
+    OPEN_TAG:tag NAME:opening_name %error %end
+    %target.cpp {
+        EmitError("unterminated start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        // rename the OPEN_TAG tag and use it
+        tag->m_name = opening_name->m_text;
+        tag->m_filoc = opening_name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete opening_name;
+        return tag;
+    }
+|
+    OPEN_TAG:tag %error CLOSE_TAG
+    %target.cpp {
+        EmitError("parse error in start tag", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::TAG);
+        return tag;
+    }
+|
+    OPEN_TAG:tag %error %end
+    %target.cpp {
+        EmitError("unterminated start tag", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::TAG);
+        return tag;
+    }
+;
+
+%nonterminal end_tag %type.cpp "Tag *"
+:
+    OPEN_END_TAG:tag NAME:closing_name CLOSE_END_TAG
+    %target.cpp {
+        // rename the OPEN_END_TAG tag and use it
+        tag->m_name = closing_name->m_text;
+        tag->m_filoc = closing_name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete closing_name;
+        return tag;
+    }
+|
+    OPEN_END_TAG:tag NAME:closing_name %error CLOSE_END_TAG
+    %target.cpp {
+        EmitError("parse error in end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        // rename the OPEN_END_TAG tag and use it
+        tag->m_name = closing_name->m_text;
+        tag->m_filoc = closing_name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete closing_name;
+        return tag;
+    }
+|
+    OPEN_END_TAG:tag NAME:closing_name %error %end
+    %target.cpp {
+        EmitError("unterminated end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        // rename the OPEN_END_TAG tag and use it
+        tag->m_name = closing_name->m_text;
+        tag->m_filoc = closing_name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete closing_name;
+        return tag;
+    }
+|
+    OPEN_END_TAG:tag %error CLOSE_END_TAG
+    %target.cpp {
+        EmitError("parse error in end tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::TAG);
+        return tag;
+    }
+|
+    OPEN_END_TAG:tag %error %end
+    %target.cpp {
+        EmitError("unterminated end tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::TAG);
+        return tag;
+    }
+;
+
+%nonterminal selfended_tag %type.cpp "Tag *"
+:
+    OPEN_TAG:throwaway NAME:name attribute_list:attribute_list CLOSE_SELFENDED_TAG
+    %target.cpp {
+        Tag *tag = new Tag(name->m_text, DomNode::TAG, name->m_filoc);
+        // steal the attribute list
+        tag->m_attribute.swap(attribute_list->m_attribute);
+        delete throwaway;
+        delete name;
+        delete attribute_list;
+        return tag;
+    }
+|
+    OPEN_TAG:tag NAME:name %error CLOSE_SELFENDED_TAG
+    %target.cpp {
+        EmitError("parse error in self-ended tag '" + name->m_text + "'", name->m_filoc);
+        // rename the OPEN_TAG tag and use it
+        tag->m_name = name->m_text;
+        tag->m_filoc = name->m_filoc;
+        assert(tag->m_type == DomNode::TAG);
+        delete name;
+        return tag;
+    }
+
+    // no rule "OPEN_TAG:tag NAME:name %error %end" is necessary because
+    // the analogous rule in %nonterminal start_tag will handle it.
+|
+    OPEN_TAG:tag %error CLOSE_SELFENDED_TAG
+    %target.cpp {
+        EmitError("parse error in self-ended tag", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::TAG);
+        return tag;
+    }
+
+    // no rule "OPEN_TAG:tag %error %end" is necessary because the
+    // analogous rule in %nonterminal start_tag will handle it.
+;
+
+%nonterminal attribute_list %type.cpp "Tag *"
+:
+    attribute_list:list NAME:name '=' STRING:value
+    %target.cpp {
+        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
+            EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
+        else
+            list->m_attribute.insert(Attribute(name->m_text, value->m_text));
+        delete name;
+        delete value;
+        return list;
+    }
+|
+    attribute_list:list NAME:name '=' %error
+    %target.cpp {
+        EmitError("parse error in value of attribute " + name->m_text, name->m_filoc);
+        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
+            EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
+        delete name;
+        return list;
+    }
+|
+    // empty reduction rule
+    %target.cpp {
+        return new Tag("");
+    }
+;

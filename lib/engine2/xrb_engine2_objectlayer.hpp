@@ -21,14 +21,12 @@
 #include "xrb_transform2.hpp"
 #include "xrb_vector.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class RenderContext;
 class Serializer;
 
-namespace Engine2
-{
+namespace Engine2 {
 
 class VisibilityQuadTree;
 class Entity;
