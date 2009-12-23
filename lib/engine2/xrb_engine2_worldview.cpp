@@ -20,11 +20,8 @@
 #include "xrb_render.hpp"
 #include "xrb_screen.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 WorldView::WorldView (WorldViewWidget *const parent_world_view_widget)
     :
@@ -697,5 +694,4 @@ void WorldView::DirtyAllParallaxedTransformations ()
 }
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb

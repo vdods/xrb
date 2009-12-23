@@ -14,16 +14,16 @@
 #include "xrb_gl.hpp"
 #include "xrb_rendercontext.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Engine2::Compound::~Compound ()
+Compound::~Compound ()
 {
     DeleteArray(m_vertex_array);
     DeleteArray(m_polygon_array);
 }
 
-Engine2::Compound *Engine2::Compound::Create (Serializer &serializer)
+Compound *Compound::Create (Serializer &serializer)
 {
     Compound *retval = new Compound();
 
@@ -34,7 +34,7 @@ Engine2::Compound *Engine2::Compound::Create (Serializer &serializer)
     return retval;
 }
 
-void Engine2::Compound::Write (Serializer &serializer) const
+void Compound::Write (Serializer &serializer) const
 {
     WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
@@ -42,7 +42,7 @@ void Engine2::Compound::Write (Serializer &serializer) const
     Compound::WriteClassSpecific(serializer);
 }
 
-void Engine2::Compound::Draw (
+void Compound::Draw (
     DrawData const &draw_data,
     Float const alpha_mask) const
 {
@@ -86,9 +86,9 @@ void Engine2::Compound::Draw (
     glPopMatrix();
 }
 
-Engine2::Compound::Compound ()
+Compound::Compound ()
     :
-    Engine2::Object(OT_COMPOUND)
+    Object(OT_COMPOUND)
 {
     m_vertex_count = 0;
     m_vertex_array = NULL;
@@ -96,7 +96,7 @@ Engine2::Compound::Compound ()
     m_polygon_array = NULL;
 }
 
-void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
+void Compound::ReadClassSpecific (Serializer &serializer)
 {
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
@@ -114,7 +114,7 @@ void Engine2::Compound::ReadClassSpecific (Serializer &serializer)
         m_polygon_array[i].Read(serializer, m_vertex_array);
 }
 
-void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
+void Compound::WriteClassSpecific (Serializer &serializer) const
 {
     ASSERT1(serializer.Direction() == IOD_WRITE);
     ASSERT1(m_vertex_count > 0);
@@ -131,7 +131,7 @@ void Engine2::Compound::WriteClassSpecific (Serializer &serializer) const
         m_polygon_array[i].Write(serializer, m_vertex_array);
 }
 
-void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
+void Compound::CalculateRadius (QuadTreeType quad_tree_type) const
 {
     ASSERT1(quad_tree_type == QTT_VISIBILITY || quad_tree_type == QTT_PHYSICS_HANDLER);
     // TODO: real code that checks for collision-only polygons - for now
@@ -148,7 +148,7 @@ void Engine2::Compound::CalculateRadius (QuadTreeType quad_tree_type) const
     }
 }
 
-void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
+void Compound::CloneProperties (Object const *const object)
 {
     ASSERT1(object->GetObjectType() == OT_COMPOUND);
     Compound const *compound = DStaticCast<Compound const *>(object);
@@ -173,5 +173,6 @@ void Engine2::Compound::CloneProperties (Engine2::Object const *const object)
     Object::CloneProperties(object);
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb
 

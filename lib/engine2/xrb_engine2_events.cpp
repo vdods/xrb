@@ -10,10 +10,10 @@
 
 #include "xrb_engine2_events.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-bool Engine2::MatchEntity (
+bool MatchEntity (
     Event const *const event,
     Entity *const entity_to_match)
 {
@@ -24,4 +24,5 @@ bool Engine2::MatchEntity (
            static_cast<EventEntity const *>(event)->GetEntity() == entity_to_match;
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

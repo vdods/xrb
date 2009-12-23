@@ -249,6 +249,15 @@ lib/input/xrb_keymap.hpp
 lib/input/xrb_keyrepeater.cpp
 lib/input/xrb_keyrepeater.hpp
 lib/libxrb.vcproj
+lib/lvd/lvd_filoc.cpp
+lib/lvd/lvd_filoc.cpp
+lib/lvd/lvd_xml.hpp
+lib/lvd/lvd_xml_parser.cpp
+lib/lvd/lvd_xml_parser.hpp
+lib/lvd/lvd_xml_parser.trison
+lib/lvd/lvd_xml_scanner.cpp
+lib/lvd/lvd_xml_scanner.hpp
+lib/lvd/lvd_xml_scanner.trison
 lib/math/xrb_math.cpp
 lib/math/xrb_math.hpp
 lib/math/xrb_matrix2.cpp

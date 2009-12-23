@@ -12,10 +12,10 @@
 
 #include "xrb_gl.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Float Engine2::Polygon::Area () const
+Float Polygon::Area () const
 {
     Float area = 0.0f;
 
@@ -28,7 +28,7 @@ Float Engine2::Polygon::Area () const
     return 0.5f * area;
 }
 
-bool Engine2::Polygon::IsCounterclockwise () const
+bool Polygon::IsCounterclockwise () const
 {
     // trivially true
     if (m_vertex_count < 3)
@@ -48,7 +48,7 @@ bool Engine2::Polygon::IsCounterclockwise () const
     return true;
 }
 
-bool Engine2::Polygon::IsConvex () const
+bool Polygon::IsConvex () const
 {
     // trivially true
     if (m_vertex_count <= 3)
@@ -75,7 +75,7 @@ bool Engine2::Polygon::IsConvex () const
     return true;
 }
 
-void Engine2::Polygon::Draw () const
+void Polygon::Draw () const
 {
     ASSERT1(Gl::Integer(GL_MATRIX_MODE) == GL_MODELVIEW);
     ASSERT1(Gl::Boolean(GL_TEXTURE_2D));
@@ -106,7 +106,7 @@ void Engine2::Polygon::Draw () const
     }
 }
 
-void Engine2::Polygon::CloneProperties (
+void Polygon::CloneProperties (
     Polygon const *const source_polygon,
     FloatVector2 *const source_vertex_array,
     FloatVector2 *const destination_vertex_array)
@@ -139,7 +139,7 @@ void Engine2::Polygon::CloneProperties (
     ASSERT1(m_texture.IsValid());
 }
 
-void Engine2::Polygon::Read (
+void Polygon::Read (
     Serializer &serializer,
     FloatVector2 *compound_vertex_array)
 {
@@ -167,7 +167,7 @@ void Engine2::Polygon::Read (
     ASSERT1(m_texture.IsValid());
 }
 
-void Engine2::Polygon::Write (
+void Polygon::Write (
     Serializer &serializer,
     FloatVector2 const *const compound_vertex_array) const
 {
@@ -184,4 +184,5 @@ void Engine2::Polygon::Write (
     serializer.WriteAggregate<std::string>(m_texture.LoadParameters<GlTexture::LoadParameters>().Path());
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

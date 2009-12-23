@@ -19,14 +19,14 @@
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
 // ///////////////////////////////////////////////////////////////////////////
-// Engine2::VisibilityQuadTree
+// VisibilityQuadTree
 // ///////////////////////////////////////////////////////////////////////////
 
-Engine2::VisibilityQuadTree::VisibilityQuadTree (
+VisibilityQuadTree::VisibilityQuadTree (
     FloatVector2 const &center,
     Float const half_side_length,
     Uint8 const depth)
@@ -37,7 +37,7 @@ Engine2::VisibilityQuadTree::VisibilityQuadTree (
     SetQuadTreeType(QTT_VISIBILITY);
 }
 
-Engine2::VisibilityQuadTree *Engine2::VisibilityQuadTree::Create (Serializer &serializer)
+VisibilityQuadTree *VisibilityQuadTree::Create (Serializer &serializer)
 {
     VisibilityQuadTree *retval = new VisibilityQuadTree(NULL);
 
@@ -49,7 +49,7 @@ Engine2::VisibilityQuadTree *Engine2::VisibilityQuadTree::Create (Serializer &se
     return retval;
 }
 
-void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
+void VisibilityQuadTree::ReadStructure (Serializer &serializer)
 {
     // write the VisibilityQuadTree's structure info
     serializer.ReadAggregate<FloatVector2>(m_center);
@@ -68,7 +68,7 @@ void Engine2::VisibilityQuadTree::ReadStructure (Serializer &serializer)
     }
 }
 
-void Engine2::VisibilityQuadTree::WriteStructure (Serializer &serializer) const
+void VisibilityQuadTree::WriteStructure (Serializer &serializer) const
 {
     // write the VisibilityQuadTree's structure info
     serializer.WriteAggregate<FloatVector2>(m_center);
@@ -81,13 +81,13 @@ void Engine2::VisibilityQuadTree::WriteStructure (Serializer &serializer) const
             Child<VisibilityQuadTree>(i)->WriteStructure(serializer);
 }
 
-void Engine2::VisibilityQuadTree::ReadObjects (
+void VisibilityQuadTree::ReadObjects (
     Serializer &serializer,
-    Engine2::ObjectLayer *const object_layer)
+    ObjectLayer *const object_layer)
 {
     ASSERT1(object_layer != NULL);
 
-    fprintf(stderr, "Engine2::VisibilityQuadTree::ReadObjects();\n");
+    fprintf(stderr, "VisibilityQuadTree::ReadObjects();\n");
     Uint32 static_object_count;
     serializer.Read<Uint32>(static_object_count);
     while (static_object_count > 0)
@@ -101,7 +101,7 @@ void Engine2::VisibilityQuadTree::ReadObjects (
     }
 }
 
-Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
+Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 {
     // if this is the top level node, write out the number of
     // subordinate non-entities
@@ -142,7 +142,7 @@ Uint32 Engine2::VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 // it's faster to not use depth test
 #define USE_DEPTH_TEST 0
 
-Uint32 Engine2::VisibilityQuadTree::Draw (
+Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
@@ -203,7 +203,7 @@ Uint32 Engine2::VisibilityQuadTree::Draw (
     return draw_loop_functor.DrawnOpaqueObjectCount();
 }
 
-Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
+Uint32 VisibilityQuadTree::DrawWrapped (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
@@ -278,7 +278,7 @@ Uint32 Engine2::VisibilityQuadTree::DrawWrapped (
     return draw_loop_functor.DrawnOpaqueObjectCount();
 }
 
-void Engine2::VisibilityQuadTree::DrawBounds (
+void VisibilityQuadTree::DrawBounds (
     RenderContext const &render_context,
     Color const &color)
 {
@@ -297,7 +297,7 @@ void Engine2::VisibilityQuadTree::DrawBounds (
     Render::DrawLine(render_context, lower_right, upper_right, color);
 }
 
-void Engine2::VisibilityQuadTree::DrawTreeBounds (
+void VisibilityQuadTree::DrawTreeBounds (
     RenderContext const &render_context,
     Color const &color)
 {
@@ -322,8 +322,7 @@ void Engine2::VisibilityQuadTree::DrawTreeBounds (
             Child<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
 }
 
-void Engine2::VisibilityQuadTree::Draw (
-    Engine2::Object::DrawLoopFunctor const &draw_loop_functor)
+void VisibilityQuadTree::Draw (Object::DrawLoopFunctor const &draw_loop_functor)
 {
     // if there are no objects here or below, just return
     if (SubordinateObjectCount() == 0)
@@ -357,8 +356,7 @@ void Engine2::VisibilityQuadTree::Draw (
             Child<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
 }
 
-void Engine2::VisibilityQuadTree::DrawWrapped (
-    Engine2::Object::DrawLoopFunctor draw_loop_functor)
+void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
 {
     // if there are no objects here or below, just return
     if (SubordinateObjectCount() == 0)
@@ -408,4 +406,5 @@ void Engine2::VisibilityQuadTree::DrawWrapped (
     }
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

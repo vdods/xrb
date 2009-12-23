@@ -15,16 +15,16 @@
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Engine2::ObjectLayer::~ObjectLayer ()
+ObjectLayer::~ObjectLayer ()
 {
     Delete(m_quad_tree);
 }
 
-Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
-    Engine2::World *const owner_world,
+ObjectLayer *ObjectLayer::Create (
+    World *const owner_world,
     bool const is_wrapped,
     Float const side_length,
     Uint32 const tree_depth,
@@ -50,9 +50,9 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
     return retval;
 }
 
-Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
+ObjectLayer *ObjectLayer::Create (
     Serializer &serializer,
-    Engine2::World *const owner_world)
+    World *const owner_world)
 {
     ASSERT1(owner_world != NULL);
 
@@ -76,13 +76,13 @@ Engine2::ObjectLayer *Engine2::ObjectLayer::Create (
     return retval;
 }
 
-Engine2::Object *Engine2::ObjectLayer::SmallestObjectTouchingPoint (
+Object *ObjectLayer::SmallestObjectTouchingPoint (
     FloatVector2 const &point) const
 {
     return m_quad_tree->SmallestObjectTouchingPoint(point);
 }
 
-bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
+bool ObjectLayer::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
     Float const area_radius) const
 {
@@ -95,7 +95,7 @@ bool Engine2::ObjectLayer::DoesAreaOverlapAnyObject (
         0.5f * SideLength());
 }
 
-FloatVector2 Engine2::ObjectLayer::NormalizedCoordinates (
+FloatVector2 ObjectLayer::NormalizedCoordinates (
     FloatVector2 const &coordinates) const
 {
     FloatVector2 normalized_coordinates(coordinates);
@@ -129,7 +129,7 @@ FloatVector2 Engine2::ObjectLayer::NormalizedCoordinates (
     return normalized_coordinates;
 }
 
-FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
+FloatVector2 ObjectLayer::AdjustedCoordinates (
     FloatVector2 const &coordinates,
     FloatVector2 const &reference_coordinates) const
 {
@@ -170,7 +170,7 @@ FloatVector2 Engine2::ObjectLayer::AdjustedCoordinates (
         return coordinates;
 }
 
-void Engine2::ObjectLayer::Write (Serializer &serializer) const
+void ObjectLayer::Write (Serializer &serializer) const
 {
     // write the ObjectLayer's overhead information
     serializer.Write<Float>(m_side_length);
@@ -186,7 +186,7 @@ void Engine2::ObjectLayer::Write (Serializer &serializer) const
     ASSERT1(written_static_object_count == m_quad_tree->SubordinateStaticObjectCount());
 }
 
-Uint32 Engine2::ObjectLayer::Draw (
+Uint32 ObjectLayer::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
     Float const pixels_in_view_radius,
@@ -214,7 +214,7 @@ Uint32 Engine2::ObjectLayer::Draw (
             transparent_object_vector);
 }
 
-void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
+void ObjectLayer::AddObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(m_quad_tree != NULL);
@@ -232,7 +232,7 @@ void Engine2::ObjectLayer::AddObject (Engine2::Object *const object)
     ASSERT1(object->OwnerQuadTree(QTT_VISIBILITY) != NULL);
 }
 
-void Engine2::ObjectLayer::RemoveObject (Engine2::Object *const object)
+void ObjectLayer::RemoveObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->GetObjectLayer() == this);
@@ -240,7 +240,7 @@ void Engine2::ObjectLayer::RemoveObject (Engine2::Object *const object)
     object->OwnerQuadTree(QTT_VISIBILITY)->RemoveObject(object);
 }
 
-void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
+void ObjectLayer::HandleContainmentOrWrapping (Object *object)
 {
     ASSERT1(object != NULL);
     ASSERT1(m_quad_tree != NULL);
@@ -263,7 +263,7 @@ void Engine2::ObjectLayer::HandleContainmentOrWrapping (Object *object)
     }
 }
 
-void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
+void ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
 {
     ASSERT1(vector != NULL);
 
@@ -276,7 +276,7 @@ void Engine2::ObjectLayer::ContainVector2 (FloatVector2 *const vector) const
     }
 }
 
-void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) const
+void ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL);
     ASSERT1(!IsWrapped());
@@ -286,7 +286,7 @@ void Engine2::ObjectLayer::ContainTransform2 (FloatTransform2 *const transform) 
     transform->SetTranslation(translation);
 }
 
-void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
+void ObjectLayer::ContainEntity (Entity *const entity) const
 {
     ASSERT1(entity != NULL);
     ASSERT1(!IsWrapped());
@@ -322,7 +322,7 @@ void Engine2::ObjectLayer::ContainEntity (Engine2::Entity *const entity) const
     entity->HandleObjectLayerContainment(component_x, component_y);
 }
 
-void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
+void ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
 {
     ASSERT1(vector != NULL);
 
@@ -340,7 +340,7 @@ void Engine2::ObjectLayer::WrapVector2 (FloatVector2 *const vector) const
     }
 }
 
-void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) const
+void ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) const
 {
     ASSERT1(transform != NULL);
     ASSERT1(IsWrapped());
@@ -350,7 +350,7 @@ void Engine2::ObjectLayer::WrapTransform2 (FloatTransform2 *const transform) con
     transform->SetTranslation(translation);
 }
 
-void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
+void ObjectLayer::WrapEntity (Entity *const entity) const
 {
     ASSERT1(entity != NULL);
     ASSERT1(IsWrapped());
@@ -360,8 +360,8 @@ void Engine2::ObjectLayer::WrapEntity (Entity *const entity) const
     entity->AccumulateWrappedOffset(previous_translation - entity->Translation());
 }
 
-Engine2::ObjectLayer::ObjectLayer (
-    Engine2::World *const owner_world,
+ObjectLayer::ObjectLayer (
+    World *const owner_world,
     bool const is_wrapped,
     Float const side_length,
     Float const z_depth)
@@ -377,4 +377,5 @@ Engine2::ObjectLayer::ObjectLayer (
     m_quad_tree = NULL;
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

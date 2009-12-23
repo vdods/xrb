@@ -17,11 +17,8 @@
 #include "xrb_vector.hpp"
 #include "xrb_widget.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 class WorldView;
 

@@ -13,16 +13,16 @@
 #include "xrb_engine2_world.hpp"
 #include "xrb_rendercontext.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Engine2::AnimatedSprite *Engine2::AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time)
+AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time)
 {
     Resource<Animation::Sequence> animation_sequence = Animation::Sequence::Load(animation_sequence_path);
     return new AnimatedSprite(animation_sequence, current_time);
 }
 
-Engine2::AnimatedSprite *Engine2::AnimatedSprite::Create (Serializer &serializer)
+AnimatedSprite *AnimatedSprite::Create (Serializer &serializer)
 {
     AnimatedSprite *retval = new AnimatedSprite(Resource<Animation::Sequence>(), 0.0f);
 
@@ -34,7 +34,7 @@ Engine2::AnimatedSprite *Engine2::AnimatedSprite::Create (Serializer &serializer
     return retval;
 }
 
-void Engine2::AnimatedSprite::Write (Serializer &serializer) const
+void AnimatedSprite::Write (Serializer &serializer) const
 {
     WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
@@ -43,8 +43,8 @@ void Engine2::AnimatedSprite::Write (Serializer &serializer) const
     AnimatedSprite::WriteClassSpecific(serializer);
 }
 
-void Engine2::AnimatedSprite::Draw (
-    Engine2::Object::DrawData const &draw_data,
+void AnimatedSprite::Draw (
+    Object::DrawData const &draw_data,
     Float const alpha_mask) const
 {
     if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
@@ -57,25 +57,25 @@ void Engine2::AnimatedSprite::Draw (
     RenderGlTexture(draw_data, alpha_mask, m_animation.Frame(GetWorld()->MostRecentFrameTime()));
 }
 
-Engine2::AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)
+AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)
     :
     Sprite(Resource<GlTexture>()), // invalid texture, since we don't use it
     m_animation(animation_sequence, animation_sequence->DefaultType(), animation_sequence->DefaultDuration(), current_time)
 { }
 
-void Engine2::AnimatedSprite::ReadClassSpecific (Serializer &serializer)
+void AnimatedSprite::ReadClassSpecific (Serializer &serializer)
 {
     // TODO
     ASSERT1(false);
 }
 
-void Engine2::AnimatedSprite::WriteClassSpecific (Serializer &serializer) const
+void AnimatedSprite::WriteClassSpecific (Serializer &serializer) const
 {
     // TODO
     ASSERT1(false);
 }
 
-void Engine2::AnimatedSprite::CloneProperties (Engine2::Object const *const object)
+void AnimatedSprite::CloneProperties (Object const *const object)
 {
     ASSERT1(object->GetObjectType() == OT_ANIMATED_SPRITE);
     AnimatedSprite const *animated_sprite = DStaticCast<AnimatedSprite const *>(object);
@@ -86,4 +86,5 @@ void Engine2::AnimatedSprite::CloneProperties (Engine2::Object const *const obje
     Sprite::CloneProperties(object);
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

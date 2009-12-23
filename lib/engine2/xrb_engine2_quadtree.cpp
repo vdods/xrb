@@ -12,10 +12,10 @@
 
 #include "xrb_engine2_entity.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Engine2::QuadTree::~QuadTree ()
+QuadTree::~QuadTree ()
 {
     // delete all the objects in this node's list
     for (ObjectSet::iterator it = m_object_set.begin(),
@@ -34,7 +34,7 @@ Engine2::QuadTree::~QuadTree ()
             Delete(m_child[i]);
 }
 
-Engine2::QuadTree const *Engine2::QuadTree::RootNode () const
+QuadTree const *QuadTree::RootNode () const
 {
     QuadTree const *quad_node = this;
     while (quad_node->m_parent != NULL)
@@ -42,7 +42,7 @@ Engine2::QuadTree const *Engine2::QuadTree::RootNode () const
     return quad_node;
 }
 
-Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
+Object *QuadTree::SmallestObjectTouchingPoint (
     FloatVector2 const &point)
 {
     Object *retval = NULL;
@@ -99,7 +99,7 @@ Engine2::Object *Engine2::QuadTree::SmallestObjectTouchingPoint (
     return retval;
 }
 
-bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
+bool QuadTree::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
     Float area_radius,
     bool is_wrapped,
@@ -176,7 +176,7 @@ bool Engine2::QuadTree::DoesAreaOverlapAnyObject (
         return false;
 }
 
-void Engine2::QuadTree::Clear ()
+void QuadTree::Clear ()
 {
     // clear the object list
     m_object_set.clear();
@@ -191,7 +191,7 @@ void Engine2::QuadTree::Clear ()
     }
 }
 
-bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
+bool QuadTree::AddObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == NULL);
@@ -238,7 +238,7 @@ bool Engine2::QuadTree::AddObject (Engine2::Object *const object)
     return true;
 }
 
-bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
+bool QuadTree::RemoveObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == this);
@@ -265,7 +265,7 @@ bool Engine2::QuadTree::RemoveObject (Engine2::Object *const object)
     }
 }
 
-bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
+bool QuadTree::ReAddObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) != NULL);
@@ -362,7 +362,7 @@ bool Engine2::QuadTree::ReAddObject (Engine2::Object *const object)
     return object_was_added;
 }
 
-Engine2::QuadTree::QuadTree (QuadTree *const parent)
+QuadTree::QuadTree (QuadTree *const parent)
 {
     m_parent = parent;
     m_half_side_length = 0.0f;
@@ -374,7 +374,7 @@ Engine2::QuadTree::QuadTree (QuadTree *const parent)
     m_quad_tree_type = QTT_COUNT;
 }
 
-bool Engine2::QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
+bool QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
 {
     ASSERT1(m_half_side_length > 0.0);
 
@@ -390,7 +390,7 @@ bool Engine2::QuadTree::IsPointInsideQuad (FloatVector2 const &point) const
         return true;
 }
 
-bool Engine2::QuadTree::DoesAreaOverlapQuadBounds (
+bool QuadTree::DoesAreaOverlapQuadBounds (
     FloatVector2 area_center,
     Float area_radius,
     bool is_wrapped,
@@ -427,7 +427,7 @@ bool Engine2::QuadTree::DoesAreaOverlapQuadBounds (
     }
 }
 
-void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
+void QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
 {
     ASSERT1(quad_tree_type < QTT_COUNT);
     m_quad_tree_type = quad_tree_type;
@@ -436,7 +436,7 @@ void Engine2::QuadTree::SetQuadTreeType (QuadTreeType const quad_tree_type)
             m_child[i]->SetQuadTreeType(m_quad_tree_type);
 }
 
-void Engine2::QuadTree::IncrementSubordinateObjectCount ()
+void QuadTree::IncrementSubordinateObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
@@ -447,7 +447,7 @@ void Engine2::QuadTree::IncrementSubordinateObjectCount ()
     }
 }
 
-void Engine2::QuadTree::IncrementSubordinateStaticObjectCount ()
+void QuadTree::IncrementSubordinateStaticObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
@@ -458,7 +458,7 @@ void Engine2::QuadTree::IncrementSubordinateStaticObjectCount ()
     }
 }
 
-void Engine2::QuadTree::DecrementSubordinateObjectCount ()
+void QuadTree::DecrementSubordinateObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
@@ -469,7 +469,7 @@ void Engine2::QuadTree::DecrementSubordinateObjectCount ()
     }
 }
 
-void Engine2::QuadTree::DecrementSubordinateStaticObjectCount ()
+void QuadTree::DecrementSubordinateStaticObjectCount ()
 {
     QuadTree *quad_node = this;
     while (quad_node != NULL)
@@ -480,7 +480,7 @@ void Engine2::QuadTree::DecrementSubordinateStaticObjectCount ()
     }
 }
 
-void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
+void QuadTree::NonRecursiveAddObject (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == NULL);
@@ -504,8 +504,7 @@ void Engine2::QuadTree::NonRecursiveAddObject (Object *const object)
         IncrementSubordinateStaticObjectCount();
 }
 
-void Engine2::QuadTree::AddObjectIfNotAlreadyAdded (
-    Engine2::Object *const object)
+void QuadTree::AddObjectIfNotAlreadyAdded (Object *const object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) != NULL);
@@ -518,4 +517,5 @@ void Engine2::QuadTree::AddObjectIfNotAlreadyAdded (
     }
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb

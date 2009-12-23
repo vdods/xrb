@@ -20,16 +20,14 @@
 #include "xrb_transform2.hpp"
 #include "xrb_vector.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class EventKey;
 class EventMouseButton;
 class EventMouseWheel;
 class EventMouseMotion;
 
-namespace Engine2
-{
+namespace Engine2 {
 
 class WorldViewWidget;
 class World;

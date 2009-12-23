@@ -19,11 +19,8 @@
 #include "xrb_gltexture.hpp"
 #include "xrb_resourcelibrary.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 // implements drawing functions, paired with the physicality of Object
 class Sprite : public Object

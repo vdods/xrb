@@ -21,8 +21,7 @@
 #include "xrb_eventqueue.hpp"
 #include "xrb_framehandler.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Serializer;
 
@@ -38,8 +37,7 @@ class Serializer;
   *
   * @brief Contains all of the 2D-engine-specific code.
   */
-namespace Engine2
-{
+namespace Engine2 {
 
 class ObjectLayer;
 class Object;

@@ -21,15 +21,13 @@
 #include "xrb_math.hpp"
 #include "xrb_matrix2.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class RenderContext;
 class Screen;
 class Serializer;
 
-namespace Engine2
-{
+namespace Engine2 {
 
 // The VisibilityQuadTree class implements a 2D space-organizing structure
 // known as a quad tree.  The idea is to improve visibility/collision by

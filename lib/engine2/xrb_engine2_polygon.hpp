@@ -20,11 +20,8 @@
 #include "xrb_serializer.hpp"
 #include "xrb_vector.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 struct Polygon
 {

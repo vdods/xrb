@@ -15,13 +15,11 @@
 
 #include <vector>
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Serializer;
 
-namespace Engine2
-{
+namespace Engine2 {
 
 class Entity;
 class Object;

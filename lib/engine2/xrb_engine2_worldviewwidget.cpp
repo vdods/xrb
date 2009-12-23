@@ -13,11 +13,8 @@
 #include "xrb_engine2_world.hpp"
 #include "xrb_engine2_worldview.hpp"
 
-namespace Xrb
-{
-
-namespace Engine2
-{
+namespace Xrb {
+namespace Engine2 {
 
 WorldViewWidget::WorldViewWidget (
     ContainerWidget *const parent,
@@ -182,5 +179,4 @@ void WorldViewWidget::ComputeTransform ()
 }
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb

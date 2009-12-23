@@ -14,15 +14,15 @@
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Engine2 {
 
-Engine2::Sprite *Engine2::Sprite::Create (std::string const &asset_path)
+Sprite *Sprite::Create (std::string const &asset_path)
 {
     return new Sprite(GlTexture::Load(asset_path));
 }
 
-Engine2::Sprite *Engine2::Sprite::Create (Serializer &serializer)
+Sprite *Sprite::Create (Serializer &serializer)
 {
     Sprite *retval = new Sprite(Resource<GlTexture>());
 
@@ -33,7 +33,7 @@ Engine2::Sprite *Engine2::Sprite::Create (Serializer &serializer)
     return retval;
 }
 
-void Engine2::Sprite::Write (Serializer &serializer) const
+void Sprite::Write (Serializer &serializer) const
 {
     WriteObjectType(serializer);
     // call WriteClassSpecific for this and all superclasses
@@ -41,7 +41,7 @@ void Engine2::Sprite::Write (Serializer &serializer) const
     Sprite::WriteClassSpecific(serializer);
 }
 
-void Engine2::Sprite::Draw (Engine2::Object::DrawData const &draw_data, Float alpha_mask) const
+void Sprite::Draw (Object::DrawData const &draw_data, Float alpha_mask) const
 {
     if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
         return;
@@ -53,7 +53,7 @@ void Engine2::Sprite::Draw (Engine2::Object::DrawData const &draw_data, Float al
     RenderGlTexture(draw_data, alpha_mask, **m_gltexture);
 }
 
-void Engine2::Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
+void Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
 {
     ASSERT1(physical_size_ratios[Dim::X] > 0.0f);
     ASSERT1(physical_size_ratios[Dim::Y] > 0.0f);
@@ -61,13 +61,13 @@ void Engine2::Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_r
     IndicateRadiiNeedToBeRecalculated();
 }
 
-void Engine2::Sprite::SetPhysicalSizeRatio (Float const physical_size_ratio)
+void Sprite::SetPhysicalSizeRatio (Float const physical_size_ratio)
 {
     m_physical_size_ratios.SetComponents(physical_size_ratio, physical_size_ratio);
     IndicateRadiiNeedToBeRecalculated();
 }
 
-Engine2::Sprite::Sprite (Resource<GlTexture> const &gltexture)
+Sprite::Sprite (Resource<GlTexture> const &gltexture)
     :
     Object(OT_SPRITE),
     m_gltexture(gltexture),
@@ -75,7 +75,7 @@ Engine2::Sprite::Sprite (Resource<GlTexture> const &gltexture)
     m_physical_size_ratios(1.0f, 1.0f)
 { }
 
-void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
+void Sprite::ReadClassSpecific (Serializer &serializer)
 {
     // read in the guts
     m_gltexture = GlTexture::Load(serializer.ReadAggregate<std::string>());
@@ -86,7 +86,7 @@ void Engine2::Sprite::ReadClassSpecific (Serializer &serializer)
     ASSERT1(m_gltexture.IsValid());
 }
 
-void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
+void Sprite::WriteClassSpecific (Serializer &serializer) const
 {
     ASSERT1(m_gltexture.IsValid());
 
@@ -96,7 +96,7 @@ void Engine2::Sprite::WriteClassSpecific (Serializer &serializer) const
     serializer.WriteAggregate<FloatVector2>(m_physical_size_ratios);
 }
 
-void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
+void Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
 {
     switch (quad_tree_type)
     {
@@ -125,8 +125,8 @@ void Engine2::Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
 // it's (theoretically) faster to use software transform
 #define USE_SOFTWARE_TRANSFORM 1
 
-void Engine2::Sprite::RenderGlTexture (
-    Engine2::Object::DrawData const &draw_data,
+void Sprite::RenderGlTexture (
+    Object::DrawData const &draw_data,
     Float alpha_mask,
     GlTexture const &gltexture) const
 {
@@ -203,7 +203,7 @@ void Engine2::Sprite::RenderGlTexture (
 #endif
 }
 
-void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
+void Sprite::CloneProperties (Object const *const object)
 {
     ASSERT1(object->GetObjectType() == OT_SPRITE || object->GetObjectType() == OT_ANIMATED_SPRITE);
     Sprite const *sprite = DStaticCast<Sprite const *>(object);
@@ -217,4 +217,5 @@ void Engine2::Sprite::CloneProperties (Engine2::Object const *const object)
     Object::CloneProperties(object);
 }
 
+} // end of namespace Engine2
 } // end of namespace Xrb
