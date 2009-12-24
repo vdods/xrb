@@ -197,7 +197,6 @@ void QuadTree::Initialize (
 }
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_QUADTREEBASE_HPP_)

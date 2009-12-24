@@ -70,7 +70,6 @@ protected:
 }; // end of class Engine2::Sprite
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_ANIMATEDSPRITE_HPP_)

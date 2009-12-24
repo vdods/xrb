@@ -91,7 +91,6 @@ struct Polygon
 }; // end of struct Engine2::Polygon
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_POLYGON_HPP_)

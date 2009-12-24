@@ -35,7 +35,6 @@ enum
 typedef std::vector<Object const *> TransparentObjectVector;
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_TYPES_HPP_)

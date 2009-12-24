@@ -43,7 +43,6 @@ enum QuadTreeType
 }; // end of enum Engine2::QuadTreeType
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_ENUMS_HPP_)

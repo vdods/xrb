@@ -104,7 +104,6 @@ private:
 }; // end of class Engine2::WorldViewWidget
 
 } // end of namespace Engine2
-
 } // end of namespace Xrb
 
 #endif // !defined(_XRB_ENGINE2_WORLDVIEWWIDGET_HPP_)
