@@ -18,7 +18,6 @@
 #include <cassert>
 #include <ostream>
 #include <set>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -27,28 +26,8 @@
 namespace Lvd {
 namespace Xml {
 
-inline void PrintStringLiteral (std::ostream &stream, std::string const &s)
-{
-    stream << '"';
-    for (std::string::const_iterator it = s.begin(), it_end = s.end(); it != it_end; ++it)
-        switch (*it)
-        {
-            case '"' : stream << "&quot;"; break;
-            case '\'': stream << "&apos;"; break;
-            case '&' : stream << "&amp;";  break;
-            case '<' : stream << "&lt;";   break;
-            case '>' : stream << "&gt;";   break;
-            default  : stream << *it;      break;
-        }
-    stream << '"';
-}
-
-inline std::string StringLiteral (std::string const &s)
-{
-    std::ostringstream out;
-    PrintStringLiteral(out, s);
-    return out.str();
-}
+void PrintStringLiteral (std::ostream &stream, std::string const &s);
+std::string StringLiteral (std::string const &s);
 
 struct Attribute
 {
@@ -69,7 +48,7 @@ struct Attribute
 
     struct Order
     {
-        bool operator () (Attribute const &left, Attribute const &right)
+        bool operator () (Attribute const &left, Attribute const &right) const
         {
             return left.m_name < right.m_name;
         }
@@ -84,11 +63,11 @@ typedef std::vector<DomNode *> DomNodeVector;
 struct DomNode
 {
     enum Type {
-        TEXT = 0,
-        CDATA,
-        PROCESSING_INSTRUCTION,
-        TAG,
+        CDATA = 0,
         DOCUMENT,
+        ELEMENT,
+        PROCESSING_INSTRUCTION,
+        TEXT,
 
         TYPE_COUNT
     }; // end of enum Xml::DomNode::Type
@@ -119,103 +98,75 @@ struct Text : public DomNode
     {
         assert((type == TEXT || type == CDATA) && "acceptable types are TEXT and CDATA");
     }
-    Text (std::string const &text, FiLoc const &filoc = FiLoc::ms_invalid, Type type = TEXT) : DomNode(filoc, type), m_text(text) { }
+    Text (std::string const &text, FiLoc const &filoc = FiLoc::ms_invalid, Type type = TEXT)
+        :
+        DomNode(filoc, type), m_text(text)
+    { }
     virtual ~Text () { }
 
-    virtual void Print (std::ostream &stream) const
-    {
-        if (m_type == CDATA)
-            stream << "<[!CDATA[";
-        stream << m_text;
-        if (m_type == CDATA)
-            stream << "]]>";
-    }
+    virtual void Print (std::ostream &stream) const;
 }; // end of struct Xml::Text
 
-// acceptable types are TAG and PROCESSING_INSTRUCTION
-struct Tag : public DomNode
-{
-    std::string m_name;
-    AttributeSet m_attribute;
-    DomNodeVector m_element;
-
-    Tag (std::string const &name, Type type = TAG, FiLoc const &filoc = FiLoc::ms_invalid)
-        :
-        DomNode(filoc, type),
-        m_name(name)
-    {
-        assert((type == TAG || type == PROCESSING_INSTRUCTION) && "acceptable types are TAG and PROCESSING_INSTRUCTION");
-    }
-    virtual ~Tag ()
-    {
-        for (DomNodeVector::iterator it = m_element.begin(), it_end = m_element.end(); it != it_end; ++it)
-            delete *it;
-    }
-
-    virtual void Print (std::ostream &stream) const
-    {
-        // a processing instruction can't have elements
-        if (!m_element.empty())
-            assert(m_type != PROCESSING_INSTRUCTION);
-
-        // print attributes
-        stream << '<';
-        if (m_type == PROCESSING_INSTRUCTION)
-            stream << '?';
-        stream << m_name;
-        for (AttributeSet::const_iterator it = m_attribute.begin(),
-                                            it_end = m_attribute.end();
-            it != it_end;
-            ++it)
-        {
-            stream << ' ' << it->m_name << '=';
-            PrintStringLiteral(stream, it->m_value);
-        }
-        if (m_type == PROCESSING_INSTRUCTION)
-            stream << '?';
-        else if (m_element.empty()) // if no elements, make the tag self-ended
-            stream << " /";
-        stream << '>';
-
-        // print elements
-        for (DomNodeVector::size_type i = 0; i < m_element.size(); ++i)
-        {
-            assert(m_element[i] != NULL);
-            m_element[i]->Print(stream);
-        }
-
-        // if there were elements printed, print an end-tag
-        if (!m_element.empty())
-            stream << "</" << m_name << '>';
-    }
-}; // end of struct Xml::Tag
+struct Element;
 
 struct Document : public DomNode
 {
     DomNodeVector m_element;
 
     Document () : DomNode(FiLoc::ms_invalid, DOCUMENT) { }
-    virtual ~Document ()
+    virtual ~Document ();
+
+    void FirstElement (
+        DomNodeVector::const_iterator &it,
+        Element const *&element,
+        std::string const &element_name) const;
+    void NextElement (
+        DomNodeVector::const_iterator &it,
+        Element const *&element,
+        std::string const &element_name) const;
+
+    virtual void Print (std::ostream &stream) const;
+
+protected:
+
+    // may only be used by Element
+    Document (FiLoc const &filoc, Type type)
+        :
+        DomNode(filoc, type)
     {
-        for (DomNodeVector::iterator it = m_element.begin(), it_end = m_element.end(); it != it_end; ++it)
-            delete *it;
+        assert((type == ELEMENT || type == PROCESSING_INSTRUCTION) && "acceptable types are ELEMENT and PROCESSING_INSTRUCTION");
     }
 
-    virtual void Print (std::ostream &stream) const
-    {
-        for (DomNodeVector::size_type i = 0; i < m_element.size(); ++i)
-        {
-            assert(m_element[i] != NULL);
-            m_element[i]->Print(stream);
-        }
-    }
+private:
+
+    void RetrieveElement (
+        DomNodeVector::const_iterator &it,
+        Element const *&element,
+        std::string const &element_name) const;
 }; // end of struct Xml::Document
 
-inline std::ostream &operator << (std::ostream &stream, DomNode const &node)
+// acceptable types are ELEMENT and PROCESSING_INSTRUCTION
+struct Element : public Document
 {
-    node.Print(stream);
-    return stream;
-}
+    std::string m_name;
+    AttributeSet m_attribute;
+
+    Element (std::string const &name, Type type = ELEMENT, FiLoc const &filoc = FiLoc::ms_invalid)
+        :
+        Document(filoc, type),
+        m_name(name)
+    {
+        assert((type == ELEMENT || type == PROCESSING_INSTRUCTION) && "acceptable types are ELEMENT and PROCESSING_INSTRUCTION");
+    }
+    virtual ~Element () { }
+
+    bool HasAttribute (std::string const &attribute_name) const;
+    std::string const &AttributeValue (std::string const &attribute_name) const;
+
+    virtual void Print (std::ostream &stream) const;
+}; // end of struct Xml::Element
+
+std::ostream &operator << (std::ostream &stream, DomNode const &node);
 
 } // end of namespace Xml
 } // end of namespace Lvd

@@ -214,7 +214,7 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 
 %terminal BAD_TOKEN
 %terminal NAME STRING TEXT %type.cpp "Text *"
-%terminal OPEN_PI OPEN_TAG OPEN_END_TAG %type.cpp "Tag *"
+%terminal OPEN_PI OPEN_TAG OPEN_END_TAG %type.cpp "Element *"
 %terminal CLOSE_PI CLOSE_TAG CLOSE_END_TAG CLOSE_SELFENDED_TAG
 %terminal '='
 
@@ -236,9 +236,9 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 
 %nonterminal element_list %type.cpp "Document *"
 :
-    element_list:list tag:tag
+    element_list:list element:element
     %target.cpp {
-        list->m_element.push_back(tag);
+        list->m_element.push_back(element);
         return list;
     }
 |
@@ -254,7 +254,7 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal tag %type.cpp "Tag *"
+%nonterminal element %type.cpp "Element *"
 :
     processing_instruction:pi
     %target.cpp {
@@ -300,11 +300,11 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal processing_instruction %type.cpp "Tag *"
+%nonterminal processing_instruction %type.cpp "Element *"
 :
     OPEN_PI:throwaway NAME:name attribute_list:attribute_list CLOSE_PI
     %target.cpp {
-        Tag *pi = new Tag(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
+        Element *pi = new Element(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
         // steal the attribute list
         pi->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
@@ -352,118 +352,118 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal start_tag %type.cpp "Tag *"
+%nonterminal start_tag %type.cpp "Element *"
 :
     OPEN_TAG:throwaway NAME:opening_name attribute_list:attribute_list CLOSE_TAG
     %target.cpp {
-        Tag *tag = new Tag(opening_name->m_text, DomNode::TAG, opening_name->m_filoc);
+        Element *element = new Element(opening_name->m_text, DomNode::ELEMENT, opening_name->m_filoc);
         // steal the attribute list
-        tag->m_attribute.swap(attribute_list->m_attribute);
+        element->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
         delete opening_name;
         delete attribute_list;
-        return tag;
+        return element;
     }
 |
     OPEN_TAG:tag NAME:opening_name %error CLOSE_TAG
     %target.cpp {
-        EmitError("parse error in start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        EmitError("parse error in start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
         // rename the OPEN_TAG tag and use it
         tag->m_name = opening_name->m_text;
         tag->m_filoc = opening_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete opening_name;
         return tag;
     }
 |
     OPEN_TAG:tag NAME:opening_name %error %end
     %target.cpp {
-        EmitError("unterminated start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        EmitError("unterminated start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
         // rename the OPEN_TAG tag and use it
         tag->m_name = opening_name->m_text;
         tag->m_filoc = opening_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete opening_name;
         return tag;
     }
 |
     OPEN_TAG:tag %error CLOSE_TAG
     %target.cpp {
-        EmitError("parse error in start tag", tag->m_filoc);
+        EmitError("parse error in start-tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     }
 |
     OPEN_TAG:tag %error %end
     %target.cpp {
-        EmitError("unterminated start tag", tag->m_filoc);
+        EmitError("unterminated start-tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     }
 ;
 
-%nonterminal end_tag %type.cpp "Tag *"
+%nonterminal end_tag %type.cpp "Element *"
 :
     OPEN_END_TAG:tag NAME:closing_name CLOSE_END_TAG
     %target.cpp {
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     }
 |
     OPEN_END_TAG:tag NAME:closing_name %error CLOSE_END_TAG
     %target.cpp {
-        EmitError("parse error in end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        EmitError("parse error in end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     }
 |
     OPEN_END_TAG:tag NAME:closing_name %error %end
     %target.cpp {
-        EmitError("unterminated end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        EmitError("unterminated end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     }
 |
     OPEN_END_TAG:tag %error CLOSE_END_TAG
     %target.cpp {
-        EmitError("parse error in end tag", tag->m_filoc);
-        assert(tag->m_type == DomNode::TAG);
+        EmitError("parse error in end-tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     }
 |
     OPEN_END_TAG:tag %error %end
     %target.cpp {
-        EmitError("unterminated end tag", tag->m_filoc);
-        assert(tag->m_type == DomNode::TAG);
+        EmitError("unterminated end-tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     }
 ;
 
-%nonterminal selfended_tag %type.cpp "Tag *"
+%nonterminal selfended_tag %type.cpp "Element *"
 :
     OPEN_TAG:throwaway NAME:name attribute_list:attribute_list CLOSE_SELFENDED_TAG
     %target.cpp {
-        Tag *tag = new Tag(name->m_text, DomNode::TAG, name->m_filoc);
+        Element *element = new Element(name->m_text, DomNode::ELEMENT, name->m_filoc);
         // steal the attribute list
-        tag->m_attribute.swap(attribute_list->m_attribute);
+        element->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
         delete name;
         delete attribute_list;
-        return tag;
+        return element;
     }
 |
     OPEN_TAG:tag NAME:name %error CLOSE_SELFENDED_TAG
@@ -472,7 +472,7 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
         // rename the OPEN_TAG tag and use it
         tag->m_name = name->m_text;
         tag->m_filoc = name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete name;
         return tag;
     }
@@ -484,7 +484,7 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     %target.cpp {
         EmitError("parse error in self-ended tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     }
 
@@ -492,7 +492,7 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     // analogous rule in %nonterminal start_tag will handle it.
 ;
 
-%nonterminal attribute_list %type.cpp "Tag *"
+%nonterminal attribute_list %type.cpp "Element *"
 :
     attribute_list:list NAME:name '=' STRING:value
     %target.cpp {
@@ -516,6 +516,6 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 |
     // empty reduction rule
     %target.cpp {
-        return new Tag("");
+        return new Element("");
     }
 ;

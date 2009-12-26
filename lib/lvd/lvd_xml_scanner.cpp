@@ -746,7 +746,7 @@ Parser::Token Scanner::Scan () throw()
 #line 560 "lvd_xml_scanner.reflex"
 
         SwitchToStateMachine(StateMachine::END_TAG);
-        return Parser::Token(Parser::Terminal::OPEN_END_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_END_TAG, new Element("", DomNode::ELEMENT, GetFiLoc()));
     
 #line 752 "lvd_xml_scanner.cpp"
 
@@ -759,7 +759,7 @@ Parser::Token Scanner::Scan () throw()
 #line 475 "lvd_xml_scanner.reflex"
 
         SwitchToStateMachine(StateMachine::TAG);
-        return Parser::Token(Parser::Terminal::OPEN_PI, new Tag("", DomNode::PROCESSING_INSTRUCTION, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_PI, new Element("", DomNode::PROCESSING_INSTRUCTION, GetFiLoc()));
     
 #line 765 "lvd_xml_scanner.cpp"
 
@@ -772,7 +772,7 @@ Parser::Token Scanner::Scan () throw()
 #line 484 "lvd_xml_scanner.reflex"
 
         SwitchToStateMachine(StateMachine::TAG);
-        return Parser::Token(Parser::Terminal::OPEN_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_TAG, new Element("", DomNode::ELEMENT, GetFiLoc()));
     
 #line 778 "lvd_xml_scanner.cpp"
 

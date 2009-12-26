@@ -474,7 +474,7 @@ void Scanner::Chop (string &s)
     ()
     %target.cpp {
         SwitchToStateMachine(StateMachine::TAG);
-        return Parser::Token(Parser::Terminal::OPEN_PI, new Tag("", DomNode::PROCESSING_INSTRUCTION, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_PI, new Element("", DomNode::PROCESSING_INSTRUCTION, GetFiLoc()));
     }
 ;
 
@@ -483,7 +483,7 @@ void Scanner::Chop (string &s)
     ()
     %target.cpp {
         SwitchToStateMachine(StateMachine::TAG);
-        return Parser::Token(Parser::Terminal::OPEN_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_TAG, new Element("", DomNode::ELEMENT, GetFiLoc()));
     }
 ;
 
@@ -559,7 +559,7 @@ void Scanner::Chop (string &s)
     ()
     %target.cpp {
         SwitchToStateMachine(StateMachine::END_TAG);
-        return Parser::Token(Parser::Terminal::OPEN_END_TAG, new Tag("", DomNode::TAG, GetFiLoc()));
+        return Parser::Token(Parser::Terminal::OPEN_END_TAG, new Element("", DomNode::ELEMENT, GetFiLoc()));
     }
 ;
 

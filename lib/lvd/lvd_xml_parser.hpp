@@ -183,12 +183,12 @@ public:
         {
             attribute_list = 73,
             document = 0,
+            element = 53,
             element_list = 51,
             end_tag = 64,
             processing_instruction = 55,
             selfended_tag = 66,
             start_tag = 57,
-            tag = 53,
             /// Nonterminal which will be attempted to be parsed by the Parse()
             /// method by default (specified by the %default_parse_nonterminal
             /// directive).
@@ -360,7 +360,7 @@ private:
             none_ = 0,
             document = 269,
             element_list = 270,
-            tag = 271,
+            element = 271,
             processing_instruction = 272,
             start_tag = 273,
             end_tag = 274,

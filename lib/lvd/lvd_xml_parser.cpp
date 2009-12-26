@@ -107,12 +107,12 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
     assert((false
            || nonterminal_to_parse == ParseNonterminal::attribute_list
            || nonterminal_to_parse == ParseNonterminal::document
+           || nonterminal_to_parse == ParseNonterminal::element
            || nonterminal_to_parse == ParseNonterminal::element_list
            || nonterminal_to_parse == ParseNonterminal::end_tag
            || nonterminal_to_parse == ParseNonterminal::processing_instruction
            || nonterminal_to_parse == ParseNonterminal::selfended_tag
            || nonterminal_to_parse == ParseNonterminal::start_tag
-           || nonterminal_to_parse == ParseNonterminal::tag
            ) && "invalid nonterminal_to_parse");
     m_stack_.push_back(StackElement_(nonterminal_to_parse, NULL));
     // main parser loop
@@ -515,11 +515,11 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Document * list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * element(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 240 "lvd_xml_parser.trison"
 
-        list->m_element.push_back(tag);
+        list->m_element.push_back(element);
         return list;
     
 #line 526 "lvd_xml_parser.cpp"
@@ -556,7 +556,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 4:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * pi(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * pi(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 260 "lvd_xml_parser.trison"
 
@@ -569,9 +569,9 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 5:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * start_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
             Document * element_list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
-            Tag * end_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 265 "lvd_xml_parser.trison"
 
@@ -591,8 +591,8 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 6:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * start_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Tag * end_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 277 "lvd_xml_parser.trison"
 
@@ -609,7 +609,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 7:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * start_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 286 "lvd_xml_parser.trison"
 
@@ -623,7 +623,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 8:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 292 "lvd_xml_parser.trison"
 
@@ -636,7 +636,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 9:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * end_tag(static_cast<Tag *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
 #line 297 "lvd_xml_parser.trison"
 
@@ -650,13 +650,13 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 10:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * throwaway(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Tag * attribute_list(static_cast<Tag *>(m_stack_[m_stack_.size()-2].m_token_data));
+            Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
 #line 306 "lvd_xml_parser.trison"
 
-        Tag *pi = new Tag(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
+        Element *pi = new Element(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
         // steal the attribute list
         pi->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
@@ -671,7 +671,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 11:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 317 "lvd_xml_parser.trison"
@@ -691,7 +691,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 12:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 328 "lvd_xml_parser.trison"
@@ -711,7 +711,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 13:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 339 "lvd_xml_parser.trison"
 
@@ -727,7 +727,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 14:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 347 "lvd_xml_parser.trison"
 
@@ -743,19 +743,19 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 15:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * throwaway(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Tag * attribute_list(static_cast<Tag *>(m_stack_[m_stack_.size()-2].m_token_data));
+            Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
 #line 358 "lvd_xml_parser.trison"
 
-        Tag *tag = new Tag(opening_name->m_text, DomNode::TAG, opening_name->m_filoc);
+        Element *element = new Element(opening_name->m_text, DomNode::ELEMENT, opening_name->m_filoc);
         // steal the attribute list
-        tag->m_attribute.swap(attribute_list->m_attribute);
+        element->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
         delete opening_name;
         delete attribute_list;
-        return tag;
+        return element;
     
 #line 761 "lvd_xml_parser.cpp"
             break;
@@ -764,16 +764,16 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 16:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 369 "lvd_xml_parser.trison"
 
-        EmitError("parse error in start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        EmitError("parse error in start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
         // rename the OPEN_TAG tag and use it
         tag->m_name = opening_name->m_text;
         tag->m_filoc = opening_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete opening_name;
         return tag;
     
@@ -784,16 +784,16 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 17:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 380 "lvd_xml_parser.trison"
 
-        EmitError("unterminated start tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        EmitError("unterminated start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
         // rename the OPEN_TAG tag and use it
         tag->m_name = opening_name->m_text;
         tag->m_filoc = opening_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete opening_name;
         return tag;
     
@@ -804,13 +804,13 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 18:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 391 "lvd_xml_parser.trison"
 
-        EmitError("parse error in start tag", tag->m_filoc);
+        EmitError("parse error in start-tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
 #line 817 "lvd_xml_parser.cpp"
@@ -820,13 +820,13 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 19:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 399 "lvd_xml_parser.trison"
 
-        EmitError("unterminated start tag", tag->m_filoc);
+        EmitError("unterminated start-tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
 #line 833 "lvd_xml_parser.cpp"
@@ -836,7 +836,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 20:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
             Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-2].m_token_data));
 
 #line 410 "lvd_xml_parser.trison"
@@ -844,7 +844,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     
@@ -855,16 +855,16 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 21:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 420 "lvd_xml_parser.trison"
 
-        EmitError("parse error in end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        EmitError("parse error in end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     
@@ -875,16 +875,16 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 22:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 431 "lvd_xml_parser.trison"
 
-        EmitError("unterminated end tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        EmitError("unterminated end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete closing_name;
         return tag;
     
@@ -895,12 +895,12 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 23:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 442 "lvd_xml_parser.trison"
 
-        EmitError("parse error in end tag", tag->m_filoc);
-        assert(tag->m_type == DomNode::TAG);
+        EmitError("parse error in end-tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
 #line 907 "lvd_xml_parser.cpp"
@@ -910,12 +910,12 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 24:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 449 "lvd_xml_parser.trison"
 
-        EmitError("unterminated end tag", tag->m_filoc);
-        assert(tag->m_type == DomNode::TAG);
+        EmitError("unterminated end-tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
 #line 922 "lvd_xml_parser.cpp"
@@ -925,19 +925,19 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 25:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * throwaway(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Tag * attribute_list(static_cast<Tag *>(m_stack_[m_stack_.size()-2].m_token_data));
+            Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
 #line 459 "lvd_xml_parser.trison"
 
-        Tag *tag = new Tag(name->m_text, DomNode::TAG, name->m_filoc);
+        Element *element = new Element(name->m_text, DomNode::ELEMENT, name->m_filoc);
         // steal the attribute list
-        tag->m_attribute.swap(attribute_list->m_attribute);
+        element->m_attribute.swap(attribute_list->m_attribute);
         delete throwaway;
         delete name;
         delete attribute_list;
-        return tag;
+        return element;
     
 #line 943 "lvd_xml_parser.cpp"
             break;
@@ -946,7 +946,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 26:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 470 "lvd_xml_parser.trison"
@@ -955,7 +955,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         // rename the OPEN_TAG tag and use it
         tag->m_name = name->m_text;
         tag->m_filoc = name->m_filoc;
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         delete name;
         return tag;
     
@@ -966,13 +966,13 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 27:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * tag(static_cast<Tag *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 484 "lvd_xml_parser.trison"
 
         EmitError("parse error in self-ended tag", tag->m_filoc);
         tag->m_name = "%error";
-        assert(tag->m_type == DomNode::TAG);
+        assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
 #line 979 "lvd_xml_parser.cpp"
@@ -982,7 +982,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 28:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * list(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * list(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
             Text * value(static_cast<Text *>(m_stack_[m_stack_.size()-1].m_token_data));
 
@@ -1003,7 +1003,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 29:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Tag * list(static_cast<Tag *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Element * list(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
 #line 509 "lvd_xml_parser.trison"
@@ -1024,7 +1024,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
 
 #line 518 "lvd_xml_parser.trison"
 
-        return new Tag("");
+        return new Element("");
     
 #line 1030 "lvd_xml_parser.cpp"
             break;
@@ -1092,15 +1092,15 @@ std::ostream &operator << (std::ostream &stream, Parser::Token const &token)
 Parser::Rule_ const Parser::ms_rule_table_[] =
 {
     { Parser::Nonterminal_::document, 2, "document <- element_list END_" },
-    { Parser::Nonterminal_::element_list, 2, "element_list <- element_list tag" },
+    { Parser::Nonterminal_::element_list, 2, "element_list <- element_list element" },
     { Parser::Nonterminal_::element_list, 2, "element_list <- element_list TEXT" },
     { Parser::Nonterminal_::element_list, 0, "element_list <-" },
-    { Parser::Nonterminal_::tag, 1, "tag <- processing_instruction" },
-    { Parser::Nonterminal_::tag, 3, "tag <- start_tag element_list end_tag" },
-    { Parser::Nonterminal_::tag, 3, "tag <- start_tag ERROR_ end_tag" },
-    { Parser::Nonterminal_::tag, 3, "tag <- start_tag ERROR_ END_" },
-    { Parser::Nonterminal_::tag, 1, "tag <- selfended_tag" },
-    { Parser::Nonterminal_::tag, 1, "tag <- end_tag" },
+    { Parser::Nonterminal_::element, 1, "element <- processing_instruction" },
+    { Parser::Nonterminal_::element, 3, "element <- start_tag element_list end_tag" },
+    { Parser::Nonterminal_::element, 3, "element <- start_tag ERROR_ end_tag" },
+    { Parser::Nonterminal_::element, 3, "element <- start_tag ERROR_ END_" },
+    { Parser::Nonterminal_::element, 1, "element <- selfended_tag" },
+    { Parser::Nonterminal_::element, 1, "element <- end_tag" },
     { Parser::Nonterminal_::processing_instruction, 4, "processing_instruction <- OPEN_PI NAME attribute_list CLOSE_PI" },
     { Parser::Nonterminal_::processing_instruction, 4, "processing_instruction <- OPEN_PI NAME ERROR_ CLOSE_PI" },
     { Parser::Nonterminal_::processing_instruction, 4, "processing_instruction <- OPEN_PI NAME ERROR_ END_" },
@@ -1127,9 +1127,9 @@ BarfCpp_::Size const Parser::ms_rule_count_ = sizeof(Parser::ms_rule_table_) / s
 
 Parser::State_ const Parser::ms_state_table_[] =
 {
-    { 3, ms_transition_table_+0, "START document                             \nrule 0: document <- . element_list END_    \nrule 1: element_list <- . element_list tag \nrule 2: element_list <- . element_list TEXT\nrule 3: element_list <- .                  " },
+    { 3, ms_transition_table_+0, "START document                                \nrule 0: document <- . element_list END_       \nrule 1: element_list <- . element_list element\nrule 2: element_list <- . element_list TEXT   \nrule 3: element_list <- .                     " },
     { 1, ms_transition_table_+3, "RETURN document" },
-    { 11, ms_transition_table_+4, "rule 0: document <- element_list . END_                                     \nrule 1: element_list <- element_list . tag                                  \nrule 4: tag <- . processing_instruction                                     \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: tag <- . start_tag element_list end_tag                             \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: tag <- . start_tag ERROR_ end_tag                                   \nrule 7: tag <- . start_tag ERROR_ END_                                      \nrule 8: tag <- . selfended_tag                                              \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: tag <- . end_tag                                                    \nrule 2: element_list <- element_list . TEXT                                 " },
+    { 11, ms_transition_table_+4, "rule 0: document <- element_list . END_                                     \nrule 1: element_list <- element_list . element                              \nrule 4: element <- . processing_instruction                                 \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: element <- . start_tag element_list end_tag                         \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: element <- . start_tag ERROR_ end_tag                               \nrule 7: element <- . start_tag ERROR_ END_                                  \nrule 8: element <- . selfended_tag                                          \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: element <- . end_tag                                                \nrule 2: element_list <- element_list . TEXT                                 " },
     { 1, ms_transition_table_+15, "rule 0: document <- element_list END_ ." },
     { 1, ms_transition_table_+16, "rule 2: element_list <- element_list TEXT ." },
     { 3, ms_transition_table_+17, "rule 10: processing_instruction <- OPEN_PI . NAME attribute_list CLOSE_PI\nrule 11: processing_instruction <- OPEN_PI . NAME ERROR_ CLOSE_PI        \nrule 12: processing_instruction <- OPEN_PI . NAME ERROR_ END_            \nrule 13: processing_instruction <- OPEN_PI . ERROR_ CLOSE_PI             \nrule 14: processing_instruction <- OPEN_PI . ERROR_ END_                 " },
@@ -1168,20 +1168,20 @@ Parser::State_ const Parser::ms_state_table_[] =
     { 1, ms_transition_table_+84, "rule 22: end_tag <- OPEN_END_TAG NAME ERROR_ END_ ." },
     { 1, ms_transition_table_+85, "rule 21: end_tag <- OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG ." },
     { 1, ms_transition_table_+86, "rule 20: end_tag <- OPEN_END_TAG NAME CLOSE_END_TAG ." },
-    { 1, ms_transition_table_+87, "rule 1: element_list <- element_list tag ." },
-    { 1, ms_transition_table_+88, "rule 4: tag <- processing_instruction ." },
-    { 3, ms_transition_table_+89, "rule 1: element_list <- . element_list tag     \nrule 5: tag <- start_tag . element_list end_tag\nrule 6: tag <- start_tag . ERROR_ end_tag      \nrule 7: tag <- start_tag . ERROR_ END_         \nrule 2: element_list <- . element_list TEXT    \nrule 3: element_list <- .                      " },
-    { 4, ms_transition_table_+92, "rule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_              \nrule 6: tag <- start_tag ERROR_ . end_tag                   \nrule 7: tag <- start_tag ERROR_ . END_                      " },
-    { 1, ms_transition_table_+96, "rule 7: tag <- start_tag ERROR_ END_ ." },
-    { 1, ms_transition_table_+97, "rule 6: tag <- start_tag ERROR_ end_tag ." },
-    { 10, ms_transition_table_+98, "rule 1: element_list <- element_list . tag                                  \nrule 4: tag <- . processing_instruction                                     \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: tag <- . start_tag element_list end_tag                             \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 5: tag <- start_tag element_list . end_tag                             \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: tag <- . start_tag ERROR_ end_tag                                   \nrule 7: tag <- . start_tag ERROR_ END_                                      \nrule 8: tag <- . selfended_tag                                              \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: tag <- . end_tag                                                    \nrule 2: element_list <- element_list . TEXT                                 " },
-    { 1, ms_transition_table_+108, "rule 5: tag <- start_tag element_list end_tag .\nrule 9: tag <- end_tag .                       " },
-    { 1, ms_transition_table_+109, "rule 8: tag <- selfended_tag ." },
-    { 1, ms_transition_table_+110, "rule 9: tag <- end_tag ." },
-    { 2, ms_transition_table_+111, "START element_list                         \nrule 1: element_list <- . element_list tag \nrule 2: element_list <- . element_list TEXT\nrule 3: element_list <- .                  " },
-    { 10, ms_transition_table_+113, "RETURN element_list                                                         \nrule 1: element_list <- element_list . tag                                  \nrule 4: tag <- . processing_instruction                                     \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: tag <- . start_tag element_list end_tag                             \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: tag <- . start_tag ERROR_ end_tag                                   \nrule 7: tag <- . start_tag ERROR_ END_                                      \nrule 8: tag <- . selfended_tag                                              \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: tag <- . end_tag                                                    \nrule 2: element_list <- element_list . TEXT                                 " },
-    { 9, ms_transition_table_+123, "START tag                                                                   \nrule 4: tag <- . processing_instruction                                     \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: tag <- . start_tag element_list end_tag                             \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: tag <- . start_tag ERROR_ end_tag                                   \nrule 7: tag <- . start_tag ERROR_ END_                                      \nrule 8: tag <- . selfended_tag                                              \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: tag <- . end_tag                                                    " },
-    { 1, ms_transition_table_+132, "RETURN tag" },
+    { 1, ms_transition_table_+87, "rule 1: element_list <- element_list element ." },
+    { 1, ms_transition_table_+88, "rule 4: element <- processing_instruction ." },
+    { 3, ms_transition_table_+89, "rule 1: element_list <- . element_list element     \nrule 5: element <- start_tag . element_list end_tag\nrule 6: element <- start_tag . ERROR_ end_tag      \nrule 7: element <- start_tag . ERROR_ END_         \nrule 2: element_list <- . element_list TEXT        \nrule 3: element_list <- .                          " },
+    { 4, ms_transition_table_+92, "rule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_              \nrule 6: element <- start_tag ERROR_ . end_tag               \nrule 7: element <- start_tag ERROR_ . END_                  " },
+    { 1, ms_transition_table_+96, "rule 7: element <- start_tag ERROR_ END_ ." },
+    { 1, ms_transition_table_+97, "rule 6: element <- start_tag ERROR_ end_tag ." },
+    { 10, ms_transition_table_+98, "rule 1: element_list <- element_list . element                              \nrule 4: element <- . processing_instruction                                 \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: element <- . start_tag element_list end_tag                         \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 5: element <- start_tag element_list . end_tag                         \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: element <- . start_tag ERROR_ end_tag                               \nrule 7: element <- . start_tag ERROR_ END_                                  \nrule 8: element <- . selfended_tag                                          \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: element <- . end_tag                                                \nrule 2: element_list <- element_list . TEXT                                 " },
+    { 1, ms_transition_table_+108, "rule 5: element <- start_tag element_list end_tag .\nrule 9: element <- end_tag .                       " },
+    { 1, ms_transition_table_+109, "rule 8: element <- selfended_tag ." },
+    { 1, ms_transition_table_+110, "rule 9: element <- end_tag ." },
+    { 2, ms_transition_table_+111, "START element_list                            \nrule 1: element_list <- . element_list element\nrule 2: element_list <- . element_list TEXT   \nrule 3: element_list <- .                     " },
+    { 10, ms_transition_table_+113, "RETURN element_list                                                         \nrule 1: element_list <- element_list . element                              \nrule 4: element <- . processing_instruction                                 \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: element <- . start_tag element_list end_tag                         \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: element <- . start_tag ERROR_ end_tag                               \nrule 7: element <- . start_tag ERROR_ END_                                  \nrule 8: element <- . selfended_tag                                          \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: element <- . end_tag                                                \nrule 2: element_list <- element_list . TEXT                                 " },
+    { 9, ms_transition_table_+123, "START element                                                               \nrule 4: element <- . processing_instruction                                 \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 5: element <- . start_tag element_list end_tag                         \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 20: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 21: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 22: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 23: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 24: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 6: element <- . start_tag ERROR_ end_tag                               \nrule 7: element <- . start_tag ERROR_ END_                                  \nrule 8: element <- . selfended_tag                                          \nrule 25: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 26: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 27: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 9: element <- . end_tag                                                " },
+    { 1, ms_transition_table_+132, "RETURN element" },
     { 3, ms_transition_table_+133, "START processing_instruction                                             \nrule 10: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI\nrule 11: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI        \nrule 12: processing_instruction <- . OPEN_PI NAME ERROR_ END_            \nrule 13: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI             \nrule 14: processing_instruction <- . OPEN_PI ERROR_ END_                 " },
     { 1, ms_transition_table_+136, "RETURN processing_instruction" },
     { 3, ms_transition_table_+137, "START start_tag                                               \nrule 15: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG\nrule 16: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG        \nrule 17: start_tag <- . OPEN_TAG NAME ERROR_ END_             \nrule 18: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG             \nrule 19: start_tag <- . OPEN_TAG ERROR_ END_                  " },
@@ -1400,7 +1400,7 @@ Parser::Token::Id const Parser::ms_lookahead_table_[] =
     Parser::Terminal::OPEN_PI,
     Parser::Terminal::OPEN_TAG,
     Parser::Terminal::OPEN_END_TAG,
-    Parser::Nonterminal_::tag,
+    Parser::Nonterminal_::element,
     Parser::Nonterminal_::processing_instruction,
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::end_tag,
@@ -1448,7 +1448,7 @@ Parser::Token::Id const Parser::ms_lookahead_table_[] =
     Parser::Terminal::OPEN_PI,
     Parser::Terminal::OPEN_TAG,
     Parser::Terminal::OPEN_END_TAG,
-    Parser::Nonterminal_::tag,
+    Parser::Nonterminal_::element,
     Parser::Nonterminal_::processing_instruction,
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::end_tag,
@@ -1458,7 +1458,7 @@ Parser::Token::Id const Parser::ms_lookahead_table_[] =
     Parser::Terminal::OPEN_PI,
     Parser::Terminal::OPEN_TAG,
     Parser::Terminal::OPEN_END_TAG,
-    Parser::Nonterminal_::tag,
+    Parser::Nonterminal_::element,
     Parser::Nonterminal_::processing_instruction,
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::end_tag,
@@ -1466,7 +1466,7 @@ Parser::Token::Id const Parser::ms_lookahead_table_[] =
     Parser::Terminal::OPEN_PI,
     Parser::Terminal::OPEN_TAG,
     Parser::Terminal::OPEN_END_TAG,
-    Parser::Nonterminal_::tag,
+    Parser::Nonterminal_::element,
     Parser::Nonterminal_::processing_instruction,
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::end_tag,
@@ -1775,7 +1775,7 @@ char const *const Parser::ms_token_name_table_[] =
     "CLOSE_SELFENDED_TAG",
     "document",
     "element_list",
-    "tag",
+    "element",
     "processing_instruction",
     "start_tag",
     "end_tag",
