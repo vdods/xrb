@@ -206,6 +206,7 @@ lib_libxrb_la_SOURCES = \
     lib/input/xrb_keyrepeater.cpp \
     \
     lib/lvd/lvd_filoc.cpp \
+    lib/lvd/lvd_xml.cpp \
     lib/lvd/lvd_xml_parser.cpp \
     lib/lvd/lvd_xml_parser.trison \
     lib/lvd/lvd_xml_scanner.cpp \
