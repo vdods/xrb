@@ -12,13 +12,15 @@
 
 #include <sstream>
 
+using namespace std;
+
 namespace Lvd {
 namespace Xml {
 
-void PrintStringLiteral (std::ostream &stream, std::string const &s)
+void PrintStringLiteral (ostream &stream, string const &s)
 {
     stream << '"';
-    for (std::string::const_iterator it = s.begin(), it_end = s.end(); it != it_end; ++it)
+    for (string::const_iterator it = s.begin(), it_end = s.end(); it != it_end; ++it)
         switch (*it)
         {
             case '"' : stream << "&quot;"; break;
@@ -31,14 +33,14 @@ void PrintStringLiteral (std::ostream &stream, std::string const &s)
     stream << '"';
 }
 
-std::string StringLiteral (std::string const &s)
+string StringLiteral (string const &s)
 {
-    std::ostringstream out;
+    ostringstream out;
     PrintStringLiteral(out, s);
     return out.str();
 }
 
-void Text::Print (std::ostream &stream) const
+void Text::Print (ostream &stream) const
 {
     if (m_type == CDATA)
         stream << "<[!CDATA[";
@@ -53,26 +55,32 @@ Document::~Document ()
         delete *it;
 }
 
-void Document::FirstElement (
-    DomNodeVector::const_iterator &it,
+DomNodeVector::const_iterator Document::FirstElement (
     Element const *&element,
-    std::string const &element_name) const
+    string const &element_name,
+    string const &attribute_name,
+    bool specify_attribute_value,
+    string const &attribute_value) const
 {
-    it = m_element.begin();
-    RetrieveElement(it, element, element_name);
+    DomNodeVector::const_iterator it = m_element.begin();
+    RetrieveElement(it, element, element_name, attribute_name, specify_attribute_value, attribute_value);
+    return it;
 }
 
 void Document::NextElement (
     DomNodeVector::const_iterator &it,
     Element const *&element,
-    std::string const &element_name) const
+    string const &element_name,
+    string const &attribute_name,
+    bool specify_attribute_value,
+    string const &attribute_value) const
 {
     if (it != m_element.end());
         ++it;
-    RetrieveElement(it, element, element_name);
+    RetrieveElement(it, element, element_name, attribute_name, specify_attribute_value, attribute_value);
 }
 
-void Document::Print (std::ostream &stream) const
+void Document::Print (ostream &stream) const
 {
     for (DomNodeVector::size_type i = 0; i < m_element.size(); ++i)
     {
@@ -84,35 +92,53 @@ void Document::Print (std::ostream &stream) const
 void Document::RetrieveElement (
     DomNodeVector::const_iterator &it,
     Element const *&element,
-    std::string const &element_name) const
+    string const &element_name,
+    string const &attribute_name,
+    bool specify_attribute_value,
+    string const &attribute_value) const
 {
-    while (it != m_element.end())
+    bool specify_element_name = !element_name.empty();
+    bool specify_attribute_name = !attribute_name.empty();
+    if (specify_attribute_value)
+        assert(specify_attribute_name && "can't specify_attribute_value without non-empty attribute_name");
+
+    for ( ; it != m_element.end(); ++it)
     {
         DomNode const *dom_node = *it;
         assert(dom_node != NULL);
         if (dom_node->m_type == ELEMENT || dom_node->m_type == PROCESSING_INSTRUCTION)
         {
             assert(dynamic_cast<Element const *>(dom_node) != NULL);
-            Element const *el = static_cast<Element const *>(dom_node);
-            if (element_name.empty() || el->m_name == element_name)
-            {
-                element = el;
-                return;
-            }
+            Element const *e = static_cast<Element const *>(dom_node);
+
+            // if we're looking for an element name and it doesn't match, skip this element.
+            if (specify_element_name && e->m_name != element_name)
+                continue;
+
+            // if we're looking for an attribute name and it doesn't have it, skip.
+            if (specify_attribute_name && !e->HasAttribute(attribute_name))
+                continue;
+
+            // if we're looking for an attribute value and it doesn't match, skip.
+            if (specify_attribute_value && e->AttributeValue(attribute_name) != attribute_value)
+                continue;
+
+            // otherwise everything matched, so use it.
+            element = e;
+            return;
         }
-        ++it;
     }
     element = NULL;
 }
 
-bool Element::HasAttribute (std::string const &attribute_name) const
+bool Element::HasAttribute (string const &attribute_name) const
 {
     return m_attribute.find(Attribute(attribute_name, "")) != m_attribute.end();
 }
 
-std::string const &Element::AttributeValue (std::string const &attribute_name) const
+string const &Element::AttributeValue (string const &attribute_name) const
 {
-    static std::string const s_empty_string;
+    static string const s_empty_string;
     AttributeSet::const_iterator it = m_attribute.find(Attribute(attribute_name, ""));
     if (it != m_attribute.end())
         return it->m_value;
@@ -120,7 +146,7 @@ std::string const &Element::AttributeValue (std::string const &attribute_name) c
         return s_empty_string;
 }
 
-void Element::Print (std::ostream &stream) const
+void Element::Print (ostream &stream) const
 {
     // a processing instruction can't have elements
     if (!m_element.empty())
@@ -153,7 +179,7 @@ void Element::Print (std::ostream &stream) const
         stream << "</" << m_name << '>';
 }
 
-std::ostream &operator << (std::ostream &stream, DomNode const &node)
+ostream &operator << (ostream &stream, DomNode const &node)
 {
     node.Print(stream);
     return stream;

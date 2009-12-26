@@ -36,7 +36,8 @@ struct Attribute
 
     Attribute (std::string const &name, std::string const &value)
         :
-        m_name(name), m_value(value)
+        m_name(name),
+        m_value(value)
     {
         assert(!m_name.empty());
     }
@@ -116,14 +117,19 @@ struct Document : public DomNode
     Document () : DomNode(FiLoc::ms_invalid, DOCUMENT) { }
     virtual ~Document ();
 
-    void FirstElement (
-        DomNodeVector::const_iterator &it,
+    DomNodeVector::const_iterator FirstElement (
         Element const *&element,
-        std::string const &element_name) const;
+        std::string const &element_name = "",
+        std::string const &attribute_name = "",
+        bool specify_attribute_value = false,
+        std::string const &attribute_value = "") const;
     void NextElement (
         DomNodeVector::const_iterator &it,
         Element const *&element,
-        std::string const &element_name) const;
+        std::string const &element_name = "",
+        std::string const &attribute_name = "",
+        bool specify_attribute_value = false,
+        std::string const &attribute_value = "") const;
 
     virtual void Print (std::ostream &stream) const;
 
@@ -142,7 +148,10 @@ private:
     void RetrieveElement (
         DomNodeVector::const_iterator &it,
         Element const *&element,
-        std::string const &element_name) const;
+        std::string const &element_name,
+        std::string const &attribute_name,
+        bool specify_attribute_value,
+        std::string const &attribute_value) const;
 }; // end of struct Xml::Document
 
 // acceptable types are ELEMENT and PROCESSING_INSTRUCTION
