@@ -14,13 +14,6 @@
 
 #include "xrb_parse_util.hpp"
 
-#define THROW_STRING(x) \
-{ \
-    std::ostringstream out; \
-    out << x; \
-    throw out.str(); \
-}
-
 namespace Xrb {
 namespace Parse {
 namespace DataFile {

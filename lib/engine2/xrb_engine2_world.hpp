@@ -70,6 +70,12 @@ public:
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
+    // used when loading worlds (e.g. in LoadSvgIntoWorld)
+    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name)
+    {
+        return NULL;
+    }
+
     Uint32 EntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()); return m_entity_vector.size(); }
     Uint32 EntityCount () const { return m_entity_count; }
     Entity const *GetEntity (Uint32 index) const { ASSERT1(index < m_entity_vector.size()); return m_entity_vector[index]; }

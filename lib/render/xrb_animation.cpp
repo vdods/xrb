@@ -18,13 +18,6 @@
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_util.hpp"
 
-#define THROW_STRING(x) \
-{ \
-    std::ostringstream out; \
-    out << x; \
-    throw out.str(); \
-}
-
 namespace Xrb
 {
 

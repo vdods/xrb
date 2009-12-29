@@ -13,6 +13,7 @@
 
 #include "xrb.hpp"
 
+#include "xrb_math.hpp"
 #include "xrb_matrix2.hpp"
 #include "xrb_serializer.hpp"
 #include "xrb_simpletransform2.hpp"
@@ -225,6 +226,34 @@ public:
         Dirtify();
     }
 
+    // attempts to fit a general Matrix2 (which has 6 degrees of freedom)
+    // to a Transform2 (which has 5 degrees of freedom);
+    // [a  b  x]   [r cos U  -s sin V  x]
+    // [c  d  y] = [r sin U   s cos V  y]
+    // [0  0  1]   [   0         0     1]
+    // in order to exactly match a Transform2, U must equal V.  the angle of
+    // the Transform2 is given by the average of U and V, and the return value
+    // is the absolute value of the difference U-V.  the Transform2 is set
+    // to post-translate.
+    Float FitMatrix2 (Matrix2<T> const &matrix)
+    {
+        Float r = Math::Sqrt(matrix[Matrix2<T>::A]*matrix[Matrix2<T>::A] + matrix[Matrix2<T>::C]*matrix[Matrix2<T>::C]);
+        Float s = Math::Sqrt(matrix[Matrix2<T>::B]*matrix[Matrix2<T>::B] + matrix[Matrix2<T>::D]*matrix[Matrix2<T>::D]);
+        Float U = static_cast<T>(0);
+        Float V = static_cast<T>(0);
+        if (r != static_cast<T>(0))
+            U = Math::Atan2(matrix[Matrix2<T>::C], matrix[Matrix2<T>::A]);
+        if (s != static_cast<T>(0))
+            V = Math::Atan2(-matrix[Matrix2<T>::B], matrix[Matrix2<T>::D]);
+
+        SetPostTranslate(true);
+        SetTranslation(Vector<T,2>(matrix[Matrix2<T>::X], matrix[Matrix2<T>::Y]));
+        SetAngle((U + V) / static_cast<T>(2));
+        SetScaleFactors(Vector<T,2>(r, s));
+
+        return Abs(U - V);
+    }
+
     // ///////////////////////////////////////////////////////////////////////
     // procedures
     // ///////////////////////////////////////////////////////////////////////
@@ -409,6 +438,6 @@ typedef Transform2<Float> FloatTransform2;
 void Fprint (FILE *fptr, FloatTransform2 const &transform, bool add_newline = true);
 
 } // end of namespace Xrb
-                       
+
 #endif // !defined(_XRB_TRANSFORM2_HPP_)
 

@@ -164,6 +164,7 @@ lib_libxrb_la_SOURCES = \
     lib/engine2/xrb_engine2_polygon.cpp \
     lib/engine2/xrb_engine2_quadtree.cpp \
     lib/engine2/xrb_engine2_sprite.cpp \
+    lib/engine2/xrb_engine2_svgworldloader.cpp \
     lib/engine2/xrb_engine2_visibilityquadtree.cpp \
     lib/engine2/xrb_engine2_world.cpp \
     lib/engine2/xrb_engine2_worldview.cpp \
@@ -286,6 +287,7 @@ include_HEADERS = \
     lib/engine2/xrb_engine2_polygon.hpp \
     lib/engine2/xrb_engine2_quadtree.hpp \
     lib/engine2/xrb_engine2_sprite.hpp \
+    lib/engine2/xrb_engine2_svgworldloader.hpp \
     lib/engine2/xrb_engine2_types.hpp \
     lib/engine2/xrb_engine2_visibilityquadtree.hpp \
     lib/engine2/xrb_engine2_world.hpp \

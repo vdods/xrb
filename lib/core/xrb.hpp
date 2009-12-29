@@ -174,6 +174,14 @@ inline void StlContainerEraseRBegin (ContainerType &container)
 /** @brief Handy macro for computing the lengths of fixed-length arrays.
   */
 #define LENGTHOF(x) (sizeof(x) / sizeof(*x))
+/** @brief 'Nother handy macro for throwing a cout-style-formatted string.
+  */
+#define THROW_STRING(x) \
+{ \
+    std::ostringstream out; \
+    out << x; \
+    throw out.str(); \
+}
 
 #endif // !defined(_XRB_HPP_)
 
