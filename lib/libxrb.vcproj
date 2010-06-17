@@ -297,24 +297,31 @@
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_collisionquadtree.cpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_collisionquadtree.hpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_entity.cpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_entity.hpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_physicshandler.cpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_physicshandler.hpp"
                     >
+                </File>
                 <File
                     RelativePath=".\engine2\circle\xrb_engine2_circle_types.hpp"
                     >
+                </File>
             </Filter>
 		</Filter>
 		<Filter
