@@ -120,6 +120,7 @@ DISASTEROIDS:
 - handle wrapped space better and make the coordinate adjustment and such less fragile
 
 TODO:
+- motion-blurred screenshots (take several screenshots in a row and blend them)
 - handle failures (especially file loading failures) more gracefully
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent

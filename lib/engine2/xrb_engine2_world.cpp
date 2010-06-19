@@ -93,7 +93,37 @@ void World::Write (Serializer &serializer) const
     WriteObjectLayers(serializer);
 }
 
-void World::AttachWorldView (WorldView *const world_view)
+ObjectLayer const *World::GetObjectLayerByName (std::string const &name) const
+{
+    for (ObjectLayerList::const_iterator it = m_object_layer_list.begin(),
+                                         it_end = m_object_layer_list.end();
+         it != it_end;
+         ++it)
+    {
+        ObjectLayer const *ol = *it;
+        ASSERT1(ol != NULL);
+        if (ol->Name() == name)
+            return ol;
+    }
+    return NULL; // no match
+}
+
+ObjectLayer *World::GetObjectLayerByName (std::string const &name)
+{
+    for (ObjectLayerList::iterator it = m_object_layer_list.begin(),
+                                   it_end = m_object_layer_list.end();
+         it != it_end;
+         ++it)
+    {
+        ObjectLayer *ol = *it;
+        ASSERT1(ol != NULL);
+        if (ol->Name() == name)
+            return ol;
+    }
+    return NULL; // no match
+}
+
+void World::AttachWorldView (WorldView *world_view)
 {
     ASSERT1(world_view != NULL);
     ASSERT1(world_view->GetWorld() == NULL);
@@ -105,7 +135,7 @@ void World::AttachWorldView (WorldView *const world_view)
     HandleAttachWorldView(world_view);
 }
 
-void World::DetachWorldView (WorldView *const world_view)
+void World::DetachWorldView (WorldView *world_view)
 {
     ASSERT1(world_view != NULL);
     ASSERT1(world_view->GetWorld() == this);
@@ -117,9 +147,28 @@ void World::DetachWorldView (WorldView *const world_view)
     world_view->SetWorld(NULL);
 }
 
-void World::AddObjectLayer (ObjectLayer *const object_layer)
+void World::AddObjectLayer (ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
+
+    // warn about any name collisions (if the object_layer's name isn't empty)
+    if (object_layer->Name() != "")
+    {
+        for (ObjectLayerList::iterator it = m_object_layer_list.begin(),
+                                       it_end = m_object_layer_list.end();
+             it != it_end;
+             ++it)
+        {
+            ObjectLayer *ol = *it;
+            ASSERT1(ol != NULL);
+            if (ol->Name() == object_layer->Name())
+            {
+                fprintf(stderr, "World::AddObjectLayer(); WARNING: repeated ObjectLayer name \"%s\" - only first such named ObjectLayer will be accessible via GetObjectLayerByName\n", object_layer->Name().c_str());
+                break;
+            }
+        }
+    }
+
     m_object_layer_list.push_back(object_layer);
     if (m_physics_handler != NULL)
         m_physics_handler->AddObjectLayer(object_layer);

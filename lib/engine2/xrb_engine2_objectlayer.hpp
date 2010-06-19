@@ -43,7 +43,8 @@ public:
         bool is_wrapped,
         Float side_length,
         Uint32 tree_depth,
-        Float z_depth);
+        Float z_depth,
+        std::string const &name = "");
     static ObjectLayer *Create (
         Serializer &serializer,
         World *owner_world);
@@ -62,7 +63,6 @@ public:
         FloatVector2 const &coordinates,
         FloatVector2 const &reference_coordinates) const;
 
-    inline void SetName (std::string const &name) { m_name = name; }
     inline void SetIsWrapped (bool is_wrapped) { m_is_wrapped = is_wrapped; }
     inline void SetZDepth (Float z_depth) { m_z_depth = z_depth; }
 
@@ -98,7 +98,8 @@ protected:
         World *owner_world,
         bool is_wrapped,
         Float side_length,
-        Float z_depth);
+        Float z_depth,
+        std::string const &name);
 
     inline VisibilityQuadTree *GetQuadTree () const
     {

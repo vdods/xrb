@@ -28,7 +28,8 @@ ObjectLayer *ObjectLayer::Create (
     bool const is_wrapped,
     Float const side_length,
     Uint32 const tree_depth,
-    Float const z_depth)
+    Float const z_depth,
+    std::string const &name)
 {
     ASSERT1(owner_world != NULL);
     ASSERT1(side_length > 0.0);
@@ -39,7 +40,8 @@ ObjectLayer *ObjectLayer::Create (
             owner_world,
             is_wrapped,
             side_length,
-            z_depth);
+            z_depth,
+            name);
 
     retval->m_quad_tree =
         new VisibilityQuadTree(
@@ -52,7 +54,7 @@ ObjectLayer *ObjectLayer::Create (
 
 ObjectLayer *ObjectLayer::Create (
     Serializer &serializer,
-    World *const owner_world)
+    World *owner_world)
 {
     ASSERT1(owner_world != NULL);
 
@@ -66,7 +68,8 @@ ObjectLayer *ObjectLayer::Create (
             owner_world,
             is_wrapped,
             side_length,
-            z_depth);
+            z_depth,
+            ""); // empty name
 
     // this call just constructs the quadtree nodes,
     retval->m_quad_tree = VisibilityQuadTree::Create(serializer);
@@ -84,7 +87,7 @@ Object *ObjectLayer::SmallestObjectTouchingPoint (
 
 bool ObjectLayer::DoesAreaOverlapAnyObject (
     FloatVector2 const &area_center,
-    Float const area_radius) const
+    Float area_radius) const
 {
     ASSERT1(m_quad_tree != NULL);
     return m_quad_tree->DoesAreaOverlapAnyObject(
@@ -100,7 +103,7 @@ FloatVector2 ObjectLayer::NormalizedCoordinates (
 {
     FloatVector2 normalized_coordinates(coordinates);
 
-    Float const half_object_layer_side_length = 0.5f * SideLength();
+    Float half_object_layer_side_length = 0.5f * SideLength();
     if (IsWrapped())
     {
         while (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
@@ -361,10 +364,11 @@ void ObjectLayer::WrapEntity (Entity *const entity) const
 }
 
 ObjectLayer::ObjectLayer (
-    World *const owner_world,
-    bool const is_wrapped,
-    Float const side_length,
-    Float const z_depth)
+    World *owner_world,
+    bool is_wrapped,
+    Float side_length,
+    Float z_depth,
+    std::string const &name)
 {
     ASSERT1(owner_world != NULL);
     ASSERT1(side_length > 0.0f);
@@ -375,6 +379,7 @@ ObjectLayer::ObjectLayer (
     m_half_side_length = 0.5f * side_length;
     m_z_depth = z_depth;
     m_quad_tree = NULL;
+    m_name = name;
 }
 
 } // end of namespace Engine2

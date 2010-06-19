@@ -83,6 +83,8 @@ public:
     PhysicsHandler const *GetPhysicsHandler () const { return m_physics_handler; }
     PhysicsHandler *GetPhysicsHandler () { return m_physics_handler; }
     ObjectLayerList &GetObjectLayerList () { return m_object_layer_list; }
+    ObjectLayer const *GetObjectLayerByName (std::string const &name) const;
+    ObjectLayer *GetObjectLayerByName (std::string const &name);
     virtual ObjectLayer const *MainObjectLayer () const { return m_main_object_layer; }
     virtual ObjectLayer *MainObjectLayer () { return m_main_object_layer; }
     Float Timescale () { return m_timescale; }

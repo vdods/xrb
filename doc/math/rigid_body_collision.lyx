@@ -1,17 +1,28 @@
-#LyX 1.4.3 created this file. For more info see http://www.lyx.org/
-\lyxformat 245
+#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass article
+\use_default_options false
 \language english
 \inputencoding auto
-\fontscheme default
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
 \graphics default
 \paperfontsize default
 \spacing single
+\use_hyperref false
 \papersize default
 \use_geometry true
 \use_amsmath 1
+\use_esint 0
 \cite_engine basic
 \use_bibtopic false
 \paperorientation portrait
@@ -28,7 +39,8 @@
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
-\output_changes true
+\output_changes false
+\author "" 
 \end_header
 
 \begin_body
@@ -37,7 +49,7 @@
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -48,21 +60,28 @@ implies {
 Longrightarrow}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
 title{Rigid Body Collision Physics}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
 author{Victor Dods}
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
+
+
+\backslash
+date{13th January 2005}
+\end_layout
+
+\begin_layout Plain Layout
 
 
 \backslash
@@ -100,7 +119,7 @@ The subject explored hence is collision resolution, and not collision detection
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -217,7 +236,7 @@ All coordinate systems are right-handed, unless otherwise specified.
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -233,15 +252,11 @@ subsection{Rigid Bodies}
 \align left
 
 \series bold
-Definition: Rigid Body 
+Definition: Rigid Body
 \series default
-- A theoretical abstraction of non-deformable physical objects.
- Tangible
-\series bold
- 
-\series default
-objects, in the scope of everyday life, are made up of countless tiny particles
- (atoms).
+ - A theoretical abstraction of non-deformable physical objects.
+ Tangible objects, in the scope of everyday life, are made up of countless
+ tiny particles (atoms).
  Simulating objects in a correct manner by use of particle systems is infeasible
  for providing real-time physics simulation on modern computers.
  Abstracting the atomic particle structure into a single continuous, solid,
@@ -290,7 +305,7 @@ bodies
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -385,7 +400,7 @@ Commonly, the density function will be simplified to be constant, as would
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -432,16 +447,16 @@ The center of gravity for a body is a convenient local origin when doing
  of rotation will pass directly through the center of gravity).
  The center of gravity may also be referred to as the vector-valued 
 \series bold
-position 
+position
 \series default
-of the body.
+ of the body.
 \end_layout
 
 \begin_layout Standard
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -509,7 +524,7 @@ Definition: Acceleration
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -603,7 +618,7 @@ We are left with the simplified equations given earlier as Newton's second
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -619,7 +634,7 @@ subsection{Angle, Angular Velocity, Angular Acceleration And Torque}
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: use quaternions instead.
 \end_layout
@@ -672,11 +687,7 @@ Euler angles
 \begin_inset Formula $x$
 \end_inset
 
-
-\series bold
- 
-\series default
-axis as being forward, the 
+ axis as being forward, the 
 \begin_inset Formula $y$
 \end_inset
 
@@ -872,13 +883,13 @@ Definition: Angular Velocity
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: Euler angles are hard to work with.
  see about defining this section in terms of quaternions.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: more on this
 \end_layout
@@ -913,7 +924,7 @@ Definition: Torque
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1008,7 +1019,7 @@ The first term describes the rotational angular momentum, the angular momentum
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1091,13 +1102,13 @@ principle axes
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: calculating inertia tensor via integrals -- also show that det(M)>=0
  (or maybe >0 if we limit the object to having positive volume, as in R^3).
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: calculating inertia tensor via integrals
 \end_layout
@@ -1111,7 +1122,7 @@ status open
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1166,13 +1177,13 @@ E_{r}=\frac{1}{2}\hat{\omega}\cdot\left(\mathbf{M}\hat{\omega}\right).\]
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: show that E_r will never be negative because M is not a rotation
  matrix.
 \end_layout
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: prove that E_r is always non-negative
 \end_layout
@@ -1201,7 +1212,7 @@ E=E_{t}+E_{r}=\frac{1}{2}m\hat{v}\cdot\hat{v}+\frac{1}{2}\hat{\omega}\cdot\left(
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1256,7 +1267,7 @@ ned value.
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1280,7 +1291,7 @@ The laws of physics are what govern the motion of matter, and certain laws
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1358,7 +1369,7 @@ Let
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1431,7 +1442,7 @@ e_{1}+d_{1}+e_{2}+d_{2}=E_{1}+D_{1}+E_{2}+D_{2}.\]
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1460,43 +1471,43 @@ The goal of this section is to provide solutions to linear velocity and
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
 <features>
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 per-body property
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 known, pre-collision value
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 unknown, post-collision variable
 \end_layout
 
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 linear velocity vector
 \end_layout
 
@@ -1505,7 +1516,7 @@ linear velocity vector
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{v_{k}}$
 \end_inset
 
@@ -1517,7 +1528,7 @@ linear velocity vector
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{V_{k}}$
 \end_inset
 
@@ -1527,20 +1538,20 @@ linear velocity vector
 \end_inset
 </cell>
 </row>
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 angular velocity vector
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{\omega_{k}}$
 \end_inset
 
@@ -1549,10 +1560,10 @@ angular velocity vector
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{\Omega_{k}}$
 \end_inset
 
@@ -1574,33 +1585,33 @@ angular velocity vector
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="2">
 <features>
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 per-body constant property
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 symbol
 \end_layout
 
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 center of gravity vector
 \end_layout
 
@@ -1609,7 +1620,7 @@ center of gravity vector
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{g_{k}}$
 \end_inset
 
@@ -1619,11 +1630,11 @@ center of gravity vector
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 mass scalar (first moment)
 \end_layout
 
@@ -1632,7 +1643,7 @@ mass scalar (first moment)
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $m_{k}$
 \end_inset
 
@@ -1642,20 +1653,20 @@ mass scalar (first moment)
 \end_inset
 </cell>
 </row>
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 inertial tensor (second moment)
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\mathbf{M}_{k}$
 \end_inset
 
@@ -1673,33 +1684,33 @@ inertial tensor (second moment)
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
 <features>
-<column alignment="center" valignment="top" leftline="true" width="0">
-<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 properties common to both bodies
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 symbol
 \end_layout
 
 \end_inset
 </cell>
 </row>
-<row topline="true">
+<row>
 <cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 point of collision vector
 \end_layout
 
@@ -1708,7 +1719,7 @@ point of collision vector
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{R}$
 \end_inset
 
@@ -1718,20 +1729,20 @@ point of collision vector
 \end_inset
 </cell>
 </row>
-<row topline="true" bottomline="true">
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 collision's normal vector
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
-\begin_layout Standard
+\begin_layout Plain Layout
 \begin_inset Formula $\hat{N}$
 \end_inset
 
@@ -1821,7 +1832,7 @@ Then the post-collision linear velocity and angular velocity vectors are
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -1878,7 +1889,7 @@ This is valid, because the change in linear momentum is always along the
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: prove
 \end_layout
@@ -1945,7 +1956,9 @@ Plug this value of
 \end_inset
 
  back into (
-\begin_inset LatexCommand \ref{eq:Vk}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Vk"
 
 \end_inset
 
@@ -2171,7 +2184,9 @@ Case (i):
  No linear dependence.
  Particularly, no vector can be zero.
  Then the only solution to (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2227,7 +2242,9 @@ Case (ii):
 
 .
  Then (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2333,7 +2350,9 @@ Case (iii):
 
 .
  Then (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2471,7 +2490,9 @@ Case (v):
 
 .
  Then (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2601,7 +2622,9 @@ Case (vi):
 
 .
  Then (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2717,7 +2740,9 @@ Case (vii):
 
 .
  Then (
-\begin_inset LatexCommand \ref{eq:along_normal_vec}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:along_normal_vec"
 
 \end_inset
 
@@ -2866,7 +2891,7 @@ Since
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -2891,7 +2916,7 @@ netration of the involved bodies (TODO: prove or cite reference).
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO: prove or cite reference
 \end_layout
@@ -3184,7 +3209,7 @@ TODO -- show that since
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3237,7 +3262,9 @@ m_{1}\hat{v_{1}}\cdot\hat{v_{1}}+\hat{\omega_{1}}\cdot\left(\mathbf{M}_{1}\hat{\
 \end_inset
 
 Using equations (
-\begin_inset LatexCommand \ref{eq:V1V2}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:V1V2"
 
 \end_inset
 
@@ -3302,7 +3329,9 @@ The
 \end_inset
 
 Using the equations in (
-\begin_inset LatexCommand \ref{eq:Omega1Omega2}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:Omega1Omega2"
 
 \end_inset
 
@@ -3347,7 +3376,9 @@ Distribute the
 \end_inset
 
 Use equation (
-\begin_inset LatexCommand \ref{eq:bk}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:bk"
 
 \end_inset
 
@@ -3474,7 +3505,9 @@ Replace
 \end_inset
 
  for its value from (
-\begin_inset LatexCommand \ref{eq:bk}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:bk"
 
 \end_inset
 
@@ -3521,7 +3554,9 @@ c_{1}=\frac{2\hat{N}\cdot\left(\left[\hat{v_{2}}+\hat{\omega_{2}}\times\left(\ha
 \end_inset
 
 The terms in the numerator exactly match equation (
-\begin_inset LatexCommand \ref{eq:sk}
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:sk"
 
 \end_inset
 
@@ -3552,7 +3587,7 @@ Hey, this looks familiar.
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3735,7 +3770,7 @@ TODO -- prove correctness of elasticity model
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3860,7 +3895,7 @@ TODO - more on this
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3881,7 +3916,7 @@ TODO -- this is where things get much more interesting and model real collisions
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3953,7 +3988,7 @@ TODO
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO -- write real stuff
 \end_layout
@@ -3967,7 +4002,7 @@ status open
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -3983,7 +4018,7 @@ section{Interesting Topics Outside The Scope Of This Paper}
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 %TODO - write about these
 \end_layout
@@ -4011,7 +4046,7 @@ Destroyable bodies -- collisions which cause the involved bodies to split
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4034,7 +4069,7 @@ This section contains auxiliary topics and lemmas which are used in the
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4201,7 +4236,7 @@ This result is useful when trying to get to a value which is part of a cross
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4256,100 +4291,23 @@ Hypothesis:
 \series bold
 Proof:
 \series default
- Start with the identity
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\hat{a}\cdot\hat{b}.\]
-
-\end_inset
-
-Because 
-\begin_inset Formula $\mathbf{M}$
-\end_inset
-
- is symmetric, then it is diagonalizable by an orthogonal matrix.
- Let 
-\begin_inset Formula $\mathbf{N}$
-\end_inset
-
- be such an orthogonal matrix, and 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- be the diagonalized matrix, i.e.
  
-\begin_inset Formula $\mathbf{D}=\mathbf{N}\mathbf{M}\mathbf{N}^{-1}$
+\begin_inset Formula $\hat{a}\cdot\hat{b}$
 \end_inset
 
-.
- Since 
-\begin_inset Formula $\mathbf{N}$
-\end_inset
-
- is orthogonal, by 
-\series bold
-Lemma 3
-\series default
-,
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right).\]
+ can be written as a product of matrices, where a vector is considered as
+ a column matrix.
+\begin_inset Formula \begin{eqnarray*}
+\left(\mathbf{M}\hat{a}\right)\cdot\left(\mathbf{M}^{-1}\hat{b}\right) & = & \left(\mathbf{M}\hat{a}\right)^{T}\left(\mathbf{M}^{-1}\hat{b}\right)\\
+ & = & \hat{a}^{T}\mathbf{M}^{T}\mathbf{M}^{-1}\hat{b}\\
+ & = & \hat{a}^{T}\mathbf{M}\mathbf{M}^{-1}\hat{b}\\
+ & = & \hat{a}^{T}\hat{b}\\
+ & = & \hat{a}\cdot\hat{b},\end{eqnarray*}
 
 \end_inset
 
-Since 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- is a diagonal matrix, using 
-\series bold
-Lemma 4
-\series default
- produces
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{D}\left(\mathbf{N}\hat{a}\right)\right)\cdot\left(\mathbf{D}^{-1}\left(\mathbf{N}\hat{b}\right)\right).\]
-
-\end_inset
-
-Since 
-\begin_inset Formula $\mathbf{N}$
-\end_inset
-
- is orthogonal, 
-\begin_inset Formula $\mathbf{N}^{-1}$
-\end_inset
-
- exists and is orthogonal, so by 
-\series bold
-Lemma 3
-\series default
-,
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{N}^{-1}\left(\mathbf{D}\left(\mathbf{N}\hat{a}\right)\right)\right)\cdot\left(\mathbf{N}^{-1}\left(\mathbf{D}^{-1}\left(\mathbf{N}\hat{b}\right)\right)\right).\]
-
-\end_inset
-
-Matrix multiplication is associative.
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{N}^{-1}\mathbf{D}\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}^{-1}\mathbf{D}^{-1}\mathbf{N}\hat{b}\right).\]
-
-\end_inset
-
-
-\begin_inset Formula $\mathbf{D}=\mathbf{N}\mathbf{M}\mathbf{N}^{-1}\iff\mathbf{M}=\mathbf{N}^{-1}\mathbf{D}\mathbf{N}$
-\end_inset
-
-.
- Additionally, 
-\begin_inset Formula $\mathbf{M}^{-1}=\left(\mathbf{N}^{-1}\mathbf{D}\mathbf{N}\right)^{-1}=\mathbf{N}^{-1}\mathbf{D}^{-1}\mathbf{N}$
-\end_inset
-
-.
- Thus
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{M}\hat{a}\right)\cdot\left(\mathbf{M}^{-1}\hat{b}\right).\]
-
-\end_inset
-
-
+as desired.
+ 
 \begin_inset Formula $\hfill\square$
 \end_inset
 
@@ -4360,7 +4318,7 @@ Matrix multiplication is associative.
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4415,58 +4373,26 @@ Hypothesis:
 \series bold
 Proof:
 \series default
- Start with the identity 
-\begin_inset Formula $\hat{a}\cdot\hat{b}=\hat{a}\cdot\hat{b}$
+ 
+\begin_inset Formula \begin{eqnarray*}
+\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right) & = & \left(\mathbf{N}\hat{a}\right)^{T}\left(\mathbf{N}\hat{b}\right)\\
+ & = & \hat{a}^{T}\mathbf{N}^{T}\mathbf{N}\hat{b}\\
+ & = & \hat{a}^{T}I\hat{b}\\
+ & = & \hat{a}^{T}\hat{b}\\
+ & = & \hat{a}\cdot\hat{b},\end{eqnarray*}
+
 \end_inset
 
-, which can be written in matrix-multiplication form as
-\begin_inset Formula \[
-\hat{a}^{T}\hat{b}=\hat{a}^{T}\hat{b}.\]
-
+where the third-to-last equality used 
+\begin_inset Formula $\mathbf{N}^{T}\mathbf{N}=I$
 \end_inset
 
-Because 
+, which is the property of 
 \begin_inset Formula $\mathbf{N}$
 \end_inset
 
- is orthogonal, 
-\begin_inset Formula $\mathbf{I}=\mathbf{N}^{T}\mathbf{N}$
-\end_inset
-
-, and we can insert the identity matrix anywhere we want.
-\begin_inset Formula \[
-\hat{a}^{T}\left(\mathbf{I}\hat{b}\right)=\hat{a}^{T}\left(\mathbf{N}^{T}\mathbf{N}\hat{b}\right).\]
-
-\end_inset
-
-Matrix multiplication is associative.
-\begin_inset Formula \[
-\hat{a}^{T}\left(\mathbf{I}\hat{b}\right)=\left(\hat{a}^{T}\mathbf{N}^{T}\right)\left(\mathbf{N}\hat{b}\right).\]
-
-\end_inset
-
-Remove the identity matrix on the left side.
- Also, because the transpose of a matrix product is the commuted transposes
- of the operands, we have
-\begin_inset Formula \[
-\hat{a}^{T}\hat{b}=\left(\mathbf{N}\hat{a}\right)^{T}\mathbf{N}\hat{b}.\]
-
-\end_inset
-
-This matrix-multiplication form is identical to the inner product of vectors,
- i.e.
+ being orthogonal.
  
-\begin_inset Formula $\hat{a}\cdot\hat{b}=\hat{a}^{T}\hat{b}$
-\end_inset
-
-.
- Thus the above becomes
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{N}\hat{a}\right)\cdot\left(\mathbf{N}\hat{b}\right).\]
-
-\end_inset
-
-
 \begin_inset Formula $\hfill\square$
 \end_inset
 
@@ -4477,7 +4403,7 @@ This matrix-multiplication form is identical to the inner product of vectors,
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4532,99 +4458,8 @@ Hypothesis:
 \series bold
 Proof:
 \series default
- Let 
-\begin_inset Formula $\lambda_{1},\lambda_{2},\lambda_{3}$
-\end_inset
-
- be the values on the diagonal of the invertible diagonal matrix 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
-.
- Thus 
-\begin_inset Formula $\mathbf{D}^{-1}$
-\end_inset
-
- exists and 
-\begin_inset Formula $\lambda_{1}^{-1},\lambda_{2}^{-1},\lambda_{3}^{-1}$
-\end_inset
-
- are the values on its diagonal.
- Let 
-\begin_inset Formula $a_{1},a_{2},a_{3}$
-\end_inset
-
- be the components of 
-\begin_inset Formula $\hat{a}$
-\end_inset
-
-.
- Let 
-\begin_inset Formula $b_{1},b_{2},b_{3}$
-\end_inset
-
- be the components of 
-\begin_inset Formula $\hat{b}$
-\end_inset
-
-.
+ This is a corollary of Lemma 2.
  
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\hat{a}\cdot\hat{b}\]
-
-\end_inset
-
-
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=a_{1}b_{1}+a_{2}b_{2}+a_{3}b_{3}\]
-
-\end_inset
-
-
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=1\cdot a_{1}b_{1}+1\cdot a_{2}b_{2}+1\cdot a_{3}b_{3}\]
-
-\end_inset
-
-
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\lambda_{1}\lambda_{1}^{-1}a_{1}b_{1}+\lambda_{2}\lambda_{2}^{-1}a_{2}b_{2}+\lambda_{3}\lambda_{3}^{-1}a_{3}b_{3}\]
-
-\end_inset
-
-
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\lambda_{1}a_{1}\lambda_{1}^{-1}b_{1}+\lambda_{2}a_{2}\lambda_{2}^{-1}b_{2}+\lambda_{3}a_{3}\lambda_{3}^{-1}b_{3}\]
-
-\end_inset
-
-
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left[\begin{array}{c}
-\lambda_{1}a_{1}\\
-\lambda_{2}a_{2}\\
-\lambda_{3}a_{3}\end{array}\right]\cdot\left[\begin{array}{c}
-\lambda_{1}^{-1}b_{1}\\
-\lambda_{2}^{-1}b_{2}\\
-\lambda_{3}^{-1}b_{3}\end{array}\right].\]
-
-\end_inset
-
-Because 
-\begin_inset Formula $\mathbf{D}$
-\end_inset
-
- is diagonal, it operates on any given vector by multiplying each component
- by the corresponding diagonal value.
-\begin_inset Formula \[
-\hat{a}\cdot\hat{b}=\left(\mathbf{D}\hat{a}\right)\cdot\left(\mathbf{D}^{-1}\hat{b}\right).\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 \begin_inset Formula $\hfill\square$
 \end_inset
 
@@ -4635,7 +4470,7 @@ Because
 \begin_inset ERT
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 
 
 \backslash
@@ -4676,11 +4511,7 @@ Electroman
 \begin_inset Quotes erd
 \end_inset
 
- Greenhouse,
-\series bold
- 
-\series default
-For various bits of advice and physics knowledge.
+ Greenhouse, For various bits of advice and physics knowledge.
 \end_layout
 
 \end_body

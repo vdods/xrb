@@ -10,6 +10,9 @@
 
 #include "xrb_screen.hpp"
 
+#include <iomanip>
+#include <sstream>
+
 #include "xrb_eventqueue.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_gui_events.hpp"
@@ -176,8 +179,8 @@ void Screen::Draw (Float real_time) const
     // create the render context.  we must do it manually because the
     // top-level widget (Screen) has no parent to do it automatically.
     // the default color bias is transparent black, which is the identity
-    // for the blending function composition operation.  the default 
-    // color mask is opaque white, which is the identity for the color 
+    // for the blending function composition operation.  the default
+    // color mask is opaque white, which is the identity for the color
     // masking operation.
     RenderContext render_context(screen_rect, ColorBias(), ColorMask(), real_time);
     // set the GL clip rect (must do it manually for the same reason
@@ -268,7 +271,10 @@ bool Screen::HandleEvent (Event const *const e)
     {
         EventKeyDown const *key_down_event = DStaticCast<EventKeyDown const *>(e);
         if (key_down_event->KeyCode() == Key::PRINT)
-            RequestScreenshot("screenshot.png"); // TODO: real screenshot filename
+        {
+            static Uint32 screenshot_count = 0; // temp hack for screenshot numbering TODO real numbering
+            RequestScreenshot(FORMAT("screenshot" << std::setw(3) << std::setfill('0') << screenshot_count++ << ".png"));
+        }
         else if (key_down_event->KeyCode() == Key::SCROLLLOCK)
             Singleton::Gl().DumpAtlases("atlas"); // TODO: real atlas filename
     }

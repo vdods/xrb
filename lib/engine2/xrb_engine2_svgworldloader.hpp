@@ -34,12 +34,14 @@ xrb:quadtree_depth gives the depth of the quadtree to create in the object
 layer.
 
 game objects can only be <image> elements.  xlink:href="melty.00.png" gives
-the relative path to the sprite image.  xrb:entity_name gives a string
-identifying the entity for retrieving it out of the svg, e.g. for getting
-pointers to entities.  xrb:entity_type gives a (game-dependent) string
-identifying the type of entity to create and attach to this sprite.
-xrb:invisible='true' (or 'false') indicates if the entity is invisible (i.e.
-has no attached Sprite).
+the relative path to the sprite image.  if xrb:entity_type is given, then
+the <image> element will be used to create an Entity of the specified type
+(see World::CreateEntity).  xrb:entity_name is an optional attribute which
+gives a string identifying the entity for retrieving it out of the svg, e.g.
+for getting pointers to entities. xrb:entity_type gives a (game-dependent)
+string identifying the type of entity to create and attach to this sprite.
+xrb:invisible='true' (or 'false') indicates if the entity is invisible
+(i.e. has no attached Sprite).
 
 in general, a transform="matrix(a,b,c,d,x,y)" specifies a Transform2 in the
 following way:
@@ -56,7 +58,7 @@ XRB can only deal with transforms of the following form:
 
 These represent a scaling, a rotation, and a translation (post-translate).
 the matrices of this form are a 5-dimensional submanifold of the (6-dimensional
-manifold) matrices of the form
+manifold) matrices of the general "a b c d x y" form given above.
 
 So in order to get a TRS form one must attempt to match A and B.  if A and B
 are too far apart, then this constitutes an error (there was a skew transform
@@ -67,7 +69,6 @@ The other type of transform is transform="translate(x,y)"
 The x and y attributes give pre-translate coordinates.  width and height give
 the width and height of the Sprite.  width and height must be matched, because
 only square sprites are allowed.
-
 
 */
 
