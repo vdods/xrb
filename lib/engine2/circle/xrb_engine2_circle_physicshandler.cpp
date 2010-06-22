@@ -184,7 +184,7 @@ void PhysicsHandler::AddEntity (Engine2::Entity *entity)
 
     // if it's not CT_NO_COLLISION, add its
     // owner object into the collision quadtree
-    ASSERT1(m_main_object_layer != NULL);
+    ASSERT1(m_quad_tree != NULL);
     if (circle_entity->GetCollisionType() != CT_NO_COLLISION)
     {
         DEBUG1_CODE(bool add_was_successful =)

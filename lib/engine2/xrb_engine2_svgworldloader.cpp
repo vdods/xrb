@@ -48,8 +48,8 @@ void ProcessImage (std::string const &svg_path,
                    Float bounding_box_half_side_length,
                    Element const &image)
 {
-    // if we find attribute xrb:ignore='true' then ignore this element
-    if (image.AttributeValue("xrb:ignore") == "true")
+    // if we find attribute xrb_ignore='true' then ignore this element
+    if (image.AttributeValue("xrb_ignore") == "true")
         return;
 
     std::string image_id(FORMAT("unnamed image at line " << image.m_filoc.LineNumber()));
@@ -58,9 +58,9 @@ void ProcessImage (std::string const &svg_path,
 
         // id of <image> element, and invisible, image_path and animation_path attributes
         image_id = GetRequiredAttributeOrThrow(image, "id");
-    //             bool is_invisible = image.AttributeValue("xrb:invisible") == "true";
+    //             bool is_invisible = image.AttributeValue("xrb_invisible") == "true";
         std::string image_path(GetRequiredAttributeOrThrow(image, "xlink:href", "attribute 'xlink:href' must specify the relative path of the sprite image file"));
-        std::string animation_path(image.AttributeValue("xrb:animation_path"));
+        std::string animation_path(image.AttributeValue("xrb_animation_path"));
 
         // retrieve and parse the width, height, x and y values
         Float width = Util::TextToFloat(GetRequiredAttributeOrThrow(image, "width").c_str());
@@ -171,12 +171,12 @@ void ProcessImage (std::string const &svg_path,
         // set the transform
         static_cast<FloatTransform2 &>(*object) = transform;
 
-        // if xrb:entity_type is present, attempt to create and attach an Entity
-        if (image.HasAttribute("xrb:entity_type"))
+        // if xrb_entity_type is present, attempt to create and attach an Entity
+        if (image.HasAttribute("xrb_entity_type"))
         {
-            std::string entity_type(image.AttributeValue("xrb:entity_type"));
+            std::string entity_type(image.AttributeValue("xrb_entity_type"));
             // optional attribute which specifies a handle with which to retrieve the Entity pointer
-            std::string entity_name(image.AttributeValue("xrb:entity_name"));
+            std::string entity_name(image.AttributeValue("xrb_entity_name"));
 
             Entity *entity = NULL;
             entity = world.CreateEntity(entity_type, entity_name);
@@ -202,7 +202,7 @@ void ProcessImage (std::string const &svg_path,
 void ProcessLayer (std::string const &svg_path, World &world, Float current_time, Uint32 layer_number, Element const &g)
 {
     // if we find attribute ignore='true' then ignore this element
-    if (g.AttributeValue("xrb:ignore") == "true")
+    if (g.AttributeValue("xrb_ignore") == "true")
         return;
 
     std::string layer_id(FORMAT("unnamed layer (#" << layer_number << ")"));
@@ -212,14 +212,14 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
         // layer id
         layer_id = GetRequiredAttributeOrThrow(g, "id", FORMAT("layer " << layer_number << " has no 'id' attribute"));
 
-        // xrb:bounding_box
-        std::string bounding_box_id(GetRequiredAttributeOrThrow(g, "xrb:bounding_box", "missing attribute 'xrb:bounding_box'; must specify the id of a <rect> element in this layer"));
+        // xrb_bounding_box
+        std::string bounding_box_id(GetRequiredAttributeOrThrow(g, "xrb_bounding_box", "missing attribute 'xrb_bounding_box'; must specify the id of a <rect> element in this layer"));
         Element const *bounding_box = NULL;
         g.FirstElement(bounding_box, "rect", "id", true, bounding_box_id);
         if (bounding_box == NULL)
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb:bounding_box '" << bounding_box_id << "' (must specify the id of a <rect> element in this layer)");
+            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box '" << bounding_box_id << "' (must specify the id of a <rect> element in this layer)");
         if (bounding_box->HasAttribute("transform"))
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb:bounding_box '" << bounding_box_id << "' (cannot have a 'transform' attribute)");
+            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box '" << bounding_box_id << "' (cannot have a 'transform' attribute)");
         Float bounding_box_width = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "width").c_str());
         Float bounding_box_height = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "height").c_str());
 
@@ -249,19 +249,19 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
             1.0f,  0.0f, -bounding_box_center[Dim::X],
             0.0f,  1.0f, -bounding_box_center[Dim::Y]);
 
-        // xrb:z_depth
+        // xrb_z_depth
         Float z_depth = 0.0f;
-        if (g.HasAttribute("xrb:z_depth"))
+        if (g.HasAttribute("xrb_z_depth"))
         {
-            std::string z_depth_string(g.AttributeValue("xrb:z_depth"));
+            std::string z_depth_string(g.AttributeValue("xrb_z_depth"));
             z_depth = Util::TextToFloat(z_depth_string.c_str());
         }
 
-        // xrb:quadtree_depth
+        // xrb_quadtree_depth
         Uint32 quadtree_depth = 5; // arbitrary default
-        if (g.HasAttribute("xrb:quadtree_depth"))
+        if (g.HasAttribute("xrb_quadtree_depth"))
         {
-            std::string quadtree_depth_string(g.AttributeValue("xrb:quadtree_depth"));
+            std::string quadtree_depth_string(g.AttributeValue("xrb_quadtree_depth"));
             quadtree_depth = Util::TextToUint<Uint32>(quadtree_depth_string.c_str());
         }
 

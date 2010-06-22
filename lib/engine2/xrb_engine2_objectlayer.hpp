@@ -49,11 +49,11 @@ public:
         Serializer &serializer,
         World *owner_world);
 
-    inline std::string const &Name () const { return m_name; }
-    inline World *OwnerWorld () const { return m_owner_world; }
-    inline bool IsWrapped () const { return m_is_wrapped; }
-    inline Float SideLength () const { return m_side_length; }
-    inline Float ZDepth () const { return m_z_depth; }
+    std::string const &Name () const { return m_name; }
+    World *OwnerWorld () const { return m_owner_world; }
+    bool IsWrapped () const { return m_is_wrapped; }
+    Float SideLength () const { return m_side_length; }
+    Float ZDepth () const { return m_z_depth; }
     Object *SmallestObjectTouchingPoint (FloatVector2 const &point) const;
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
@@ -63,8 +63,8 @@ public:
         FloatVector2 const &coordinates,
         FloatVector2 const &reference_coordinates) const;
 
-    inline void SetIsWrapped (bool is_wrapped) { m_is_wrapped = is_wrapped; }
-    inline void SetZDepth (Float z_depth) { m_z_depth = z_depth; }
+    void SetIsWrapped (bool is_wrapped) { m_is_wrapped = is_wrapped; }
+    void SetZDepth (Float z_depth) { m_z_depth = z_depth; }
 
     void Write (Serializer &serializer) const;
     Uint32 Draw (
@@ -101,7 +101,7 @@ protected:
         Float z_depth,
         std::string const &name);
 
-    inline VisibilityQuadTree *GetQuadTree () const
+    VisibilityQuadTree *GetQuadTree () const
     {
         return m_quad_tree;
     }

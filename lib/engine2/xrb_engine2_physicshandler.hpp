@@ -38,9 +38,15 @@ public:
         m_owner_world = NULL;
     }
 
-    inline World *OwnerWorld () const
+    World *OwnerWorld () const
     {
         return m_owner_world;
+    }
+    // this should only be called by Engine2::World
+    void SetOwnerWorld (World *owner_world)
+    {
+        ASSERT1(owner_world != NULL);
+        m_owner_world = owner_world;
     }
 
     virtual void AddObjectLayer (ObjectLayer *object_layer) = 0;
@@ -53,19 +59,9 @@ protected:
 
     virtual void HandleFrame () = 0;
 
-    inline void SetOwnerWorld (World *const owner_world)
-    {
-        ASSERT1(owner_world != NULL);
-        m_owner_world = owner_world;
-    }
-
 private:
 
     World *m_owner_world;
-
-    // this is so World can set m_owner_world
-    // the physics handler is passed to it.
-    friend class World;
 }; // end of class Engine2::PhysicsHandler
 
 } // end of namespace Engine2
