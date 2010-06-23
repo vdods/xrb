@@ -179,7 +179,8 @@ void ProcessImage (std::string const &svg_path,
             std::string entity_name(image.AttributeValue("xrb_entity_name"));
 
             Entity *entity = NULL;
-            entity = world.CreateEntity(entity_type, entity_name);
+            ASSERT1(object != NULL);
+            entity = world.CreateEntity(entity_type, entity_name, *object, *object_layer);
             if (entity == NULL)
                 THROW_STRING("failed to load entity type \"" << entity_type << "\" (entity name \"" << entity_name << "\")");
 

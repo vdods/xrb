@@ -19,7 +19,6 @@ FrameHandler::FrameHandler ()
     m_frame_dt = 0.0f;
     m_lock = 0;
     m_frame_count = 0;
-    m_skip_time = false;
 }
 
 FrameHandler::~FrameHandler ()
@@ -48,14 +47,6 @@ void FrameHandler::StartFrame (Float const time)
         // if this is the first frame, init the previous frame time
         if (m_most_recent_time == -1.0f)
             m_most_recent_time = time;
-
-        // if skip time was set, cause the previous time to be
-        // the current time, and the time delta will be 0.
-        if (m_skip_time)
-        {
-            m_skip_time = false;
-            m_most_recent_time = time;
-        }
 
         // calculate dt
         ASSERT1(time >= m_most_recent_time);

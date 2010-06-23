@@ -42,7 +42,9 @@ public:
     virtual void ShutdownVideo () = 0;
 
     virtual void SetWindowCaption (char const *window_caption) = 0;
-    // TODO: grab/release method and show/hide cursor method
+
+    virtual void GrabInput () = 0;
+    virtual void ReleaseInput () = 0;
 
     // returns the number of milliseconds since the Pal instance was
     // initialized.  due to the size of a 32-bit int, this value will

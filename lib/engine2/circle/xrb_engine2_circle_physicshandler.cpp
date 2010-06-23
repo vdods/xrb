@@ -219,7 +219,7 @@ Float PhysicsHandler::CollisionResponse (
     {
         Float M = 1.0f / entity0.Mass() + 1.0f / entity1.Mass();
         FloatVector2 Q(offset_1_to_0 + frame_dt*V);
-        FloatVector2 A(frame_dt*frame_dt*M*collision_normal);
+        FloatVector2 A(Sqr(frame_dt)*M*collision_normal);
 
         Float a = A | A;
         Float b = 2.0f * (Q | A);

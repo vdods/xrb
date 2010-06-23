@@ -71,7 +71,7 @@ public:
     void Write (Serializer &serializer) const;
 
     // used when loading worlds (e.g. in LoadSvgIntoWorld)
-    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name)
+    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name, Object const &future_owner_object, ObjectLayer &object_layer)
     {
         return NULL;
     }

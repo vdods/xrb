@@ -107,6 +107,15 @@ inline T Abs (T const &x)
     return (x < static_cast<T>(0)) ? -x : x;
 }
 
+/** The template type @c T must have a multiplication operation defined.
+  * @brief Returns the square of @c x.
+  */
+template <typename T>
+inline T Sqr (T const &x)
+{
+    return x * x;
+}
+
 /** The template type @c T must have a less-than operator defined.
   * @brief Returns the minimum of two values.
   */

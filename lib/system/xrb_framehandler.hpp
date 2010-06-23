@@ -45,13 +45,6 @@ public:
       */
     inline Uint32 FrameCount () const { return m_frame_count; }
 
-    // this function will skip time so that the next call to ProcessFrame
-    // incurs a time delta of 0.
-    /** @todo Deprecate this fucktion.
-      * @brief This function will be deprecated soon.
-      */
-    inline void SetSkipTime (bool const skip_time) { m_skip_time = skip_time; }
-
     /** Sets up the frame variables and then calls the overridden
       * HandleFrame which is what actuall does the processing.
       * @brief Initiates once-per-game-loop-frame computation.
@@ -103,9 +96,6 @@ private:
     Float m_frame_dt;
     // the frame counter
     Uint32 m_frame_count;
-    // indicates if the next frame should skip time and make
-    // the frame's time delta 0.
-    bool m_skip_time;
 }; // end of class FrameHandler
 
 } // end of namespace Xrb

@@ -395,6 +395,16 @@ void SDLPal::SetWindowCaption (char const *window_caption)
     SDL_WM_SetCaption(window_caption, "");
 }
 
+void SDLPal::GrabInput ()
+{
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+}
+
+void SDLPal::ReleaseInput ()
+{
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+}
+
 Xrb::Uint32 SDLPal::CurrentTime ()
 {
     return SDL_GetTicks();

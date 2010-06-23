@@ -18,7 +18,7 @@
 // it's critical that SDL.h is included here and that this file is included
 // in the cpp file which contains main(), because SDL.h actually redefines
 // main to SDL_main and does some other hidden stuff.
-#include "SDL.h" 
+#include "SDL.h"
 #include "xrb_pal.hpp"
 
 struct FT_LibraryRec_;
@@ -39,6 +39,9 @@ public:
     virtual void ShutdownVideo ();
 
     virtual void SetWindowCaption (char const *window_caption);
+
+    virtual void GrabInput ();
+    virtual void ReleaseInput ();
 
     virtual Xrb::Uint32 CurrentTime ();
 
