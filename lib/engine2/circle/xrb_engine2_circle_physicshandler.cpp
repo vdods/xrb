@@ -203,6 +203,55 @@ void PhysicsHandler::RemoveEntity (Engine2::Entity *entity)
         circle_entity->OwnerQuadTree(QTT_PHYSICS_HANDLER)->RemoveObject(circle_entity->OwnerObject());
 }
 
+Float PhysicsHandler::CollisionResponse (
+    Entity &entity0,
+    Entity &entity1,
+    FloatVector2 const &offset_1_to_0,
+    Float frame_dt,
+    FloatVector2 const &collision_location,
+    FloatVector2 const &collision_normal)
+{
+    Float collision_force = 0.0f;
+
+    Float r = entity0.Radius(QTT_PHYSICS_HANDLER) + entity1.Radius(QTT_PHYSICS_HANDLER);
+    FloatVector2 V = entity0.Velocity() - entity1.Velocity();
+    if ((V | offset_1_to_0) < 0.0f) // and if the distance between the two is closing
+    {
+        Float M = 1.0f / entity0.Mass() + 1.0f / entity1.Mass();
+        FloatVector2 Q(offset_1_to_0 + frame_dt*V);
+        FloatVector2 A(frame_dt*frame_dt*M*collision_normal);
+
+        Float a = A | A;
+        Float b = 2.0f * (Q | A);
+        Float c = (Q | Q) - r*r;
+        Float discriminant = b*b - 4.0f*a*c;
+        if (discriminant >= 0.0f)
+        {
+            Float temp0 = Math::Sqrt(discriminant);
+            Float temp1 = 2.0f * a;
+
+            Float force0 = 0.8f * (-b - temp0) / temp1;
+            Float force1 = 0.8f * (-b + temp0) / temp1;
+
+            Float min_force = Min(force0, force1);
+            Float max_force = Max(force0, force1);
+            if (min_force > 0.0f)
+                collision_force = min_force;
+            else if (max_force > 0.0f)
+                collision_force = max_force;
+            else
+                collision_force = 0.0f;
+
+            collision_force *= (1.0f + entity0.Elasticity() * entity1.Elasticity());
+
+            entity0.AccumulateForce(collision_force*collision_normal);
+            entity1.AccumulateForce(-collision_force*collision_normal);
+        }
+    }
+
+    return collision_force;
+}
+
 void PhysicsHandler::HandleFrame ()
 {
     ASSERT1(m_main_object_layer != NULL);

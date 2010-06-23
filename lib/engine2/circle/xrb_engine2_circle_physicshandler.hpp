@@ -85,7 +85,24 @@ public:
     }
     // return the upper speed limit for entities (Entity velocity will be
     // capped at this value).
-    virtual Float MaxSpeed (Entity const &entity) const { return 1.0e10f; } // arbitrarily huge
+    virtual Float MaxSpeed (Entity const &entity) const
+    {
+        // should be effectively infinity (i.e. no max speed)
+        return 1.0e10f;
+    }
+    // perform physical collision response between two entities with given
+    // collision conditions.  the return value should be the [absolute value
+    // of the] collision force (imparted on both collision entities).
+    // offset_1_to_0 is the precalculated difference vector
+    // entity0.Translation() - entity1.Translation(), adjusted to account for
+    // ObjectLayer wrapping.
+    virtual Float CollisionResponse (
+        Entity &entity0,
+        Entity &entity1,
+        FloatVector2 const &offset_1_to_0,
+        Float frame_dt,
+        FloatVector2 const &collision_location,
+        FloatVector2 const &collision_normal);
 
 protected:
 

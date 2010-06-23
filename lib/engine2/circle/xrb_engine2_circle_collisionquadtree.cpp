@@ -352,7 +352,6 @@ void CollisionQuadTree::CollideEntity (
             entity,
             frame_dt,
             collision_pair_list,
-            GetQuadTreeType(),
             is_wrapped,
             object_layer_side_length);
     CollideEntity(functor);
@@ -398,9 +397,9 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 
     // this is a quick and easy way to avoid calculating
     // the same collision pair twice
-    if (object->Radius(m_quad_tree_type) > m_entity->Radius(m_quad_tree_type)
+    if (object->Radius(QTT_PHYSICS_HANDLER) > m_entity->Radius(QTT_PHYSICS_HANDLER)
         ||
-        (object->Radius(m_quad_tree_type) == m_entity->Radius(m_quad_tree_type) &&
+        (object->Radius(QTT_PHYSICS_HANDLER) == m_entity->Radius(QTT_PHYSICS_HANDLER) &&
          object > m_entity->OwnerObject())) // yes, this is pointer comparison
         return;
 
@@ -421,7 +420,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
             ce1_translation[Dim::Y] += m_object_layer_side_length;
     }
 
-    Float r = m_entity->Radius(m_quad_tree_type) + object->Radius(m_quad_tree_type);
+    Float r = m_entity->Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
     FloatVector2 P = ce0_translation - ce1_translation;
 
     if (P.Length() >= r)
@@ -431,7 +430,9 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 
     Entity *other_entity = DStaticCast<Entity *>(object->GetEntity());
     ASSERT1(other_entity != NULL);
+    ASSERT1(m_entity->GetPhysicsHandler() != NULL);
     ASSERT1(m_entity->GetPhysicsHandler() == other_entity->GetPhysicsHandler());
+    PhysicsHandler &physics_handler = *m_entity->GetPhysicsHandler();
 
     FloatVector2 collision_location(
         (other_entity->ScaleFactor() * ce0_translation + m_entity->ScaleFactor() * ce1_translation)
@@ -442,47 +443,14 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
         collision_normal = FloatVector2(1.0f, 0.0f);
     else
         collision_normal = P.Normalization();
-    Float collision_force = 0.0f;
+    Float collision_force = 0.0f; // to be determined by PhysicsHandler::CollisionResponse
 
     // check if we should proceed with physical collision response
     if (m_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && // if they're both solid
         other_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION &&
-        !m_entity->GetPhysicsHandler()->CollisionExemption(*m_entity, *other_entity)) // and if this isn't an exception
+        !physics_handler.CollisionExemption(*m_entity, *other_entity)) // and if this isn't an exception
     {
-        FloatVector2 V = m_entity->Velocity() - other_entity->Velocity();
-        if ((V | P) < 0.0f) // and if the distance between the two is closing
-        {
-            Float M = 1.0f / m_entity->Mass() + 1.0f / other_entity->Mass();
-            FloatVector2 Q(P + m_frame_dt*V);
-            FloatVector2 A(m_frame_dt_squared*M*collision_normal);
-
-            Float a = A | A;
-            Float b = 2.0f * (Q | A);
-            Float c = (Q | Q) - r*r;
-            Float discriminant = b*b - 4.0f*a*c;
-            if (discriminant >= 0.0f)
-            {
-                Float temp0 = sqrt(discriminant);
-                Float temp1 = 2.0f * a;
-
-                Float force0 = 0.8f * (-b - temp0) / temp1;
-                Float force1 = 0.8f * (-b + temp0) / temp1;
-
-                Float min_force = Min(force0, force1);
-                Float max_force = Max(force0, force1);
-                if (min_force > 0.0f)
-                    collision_force = min_force;
-                else if (max_force > 0.0f)
-                    collision_force = max_force;
-                else
-                    collision_force = 0.0f;
-
-                collision_force *= (1.0f + m_entity->Elasticity() * other_entity->Elasticity());
-
-                m_entity->AccumulateForce(collision_force*collision_normal);
-                other_entity->AccumulateForce(-collision_force*collision_normal);
-            }
-        }
+        collision_force = physics_handler.CollisionResponse(*m_entity, *other_entity, P, m_frame_dt, collision_location, collision_normal);
     }
 
     // record the collision in the collision pair list.

@@ -36,20 +36,20 @@ public:
 
     virtual ~QuadTree () = 0;
 
-    inline QuadTreeType GetQuadTreeType () const { return m_quad_tree_type; }
-    inline QuadTree *Parent () const { return m_parent; }
-    inline bool HasChildren () const { return m_child[0] != NULL; }
+    QuadTreeType GetQuadTreeType () const { return m_quad_tree_type; }
+    QuadTree *Parent () const { return m_parent; }
+    bool HasChildren () const { return m_child[0] != NULL; }
     // returns the root node (top level parent) of this quadtree node
     QuadTree const *RootNode () const;
-    inline FloatVector2 const &Center () const { return m_center; }
-    inline Float SideLength () const { return 2.0f * m_half_side_length; }
-    inline Float HalfSideLength () const { return m_half_side_length; }
-    inline Float Radius () const { return m_radius; }
-    inline Uint32 SubordinateObjectCount () const { return m_subordinate_object_count; }
-    inline Uint32 SubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
+    FloatVector2 const &Center () const { return m_center; }
+    Float SideLength () const { return 2.0f * m_half_side_length; }
+    Float HalfSideLength () const { return m_half_side_length; }
+    Float Radius () const { return m_radius; }
+    Uint32 SubordinateObjectCount () const { return m_subordinate_object_count; }
+    Uint32 SubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *SmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of SmallestObjectTouchingPoint
-    inline bool IsAllowableObjectRadius (Object const *object) const { return object->Radius(GetQuadTreeType()) / m_radius > 0.5f; }
+    bool IsAllowableObjectRadius (Object const *object) const { return object->Radius(GetQuadTreeType()) / m_radius > 0.5f; }
 
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
@@ -77,14 +77,14 @@ protected:
     QuadTree (QuadTree *parent);
 
     template <typename QuadTreeClass>
-    inline QuadTreeClass const *Child (Uint32 index) const
+    QuadTreeClass const *Child (Uint32 index) const
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);
         return DStaticCast<QuadTreeClass const *>(m_child[index]);
     }
     template <typename QuadTreeClass>
-    inline QuadTreeClass *Child (Uint32 index)
+    QuadTreeClass *Child (Uint32 index)
     {
         ASSERT2(index < 4);
         ASSERT2(m_child[index] != NULL);
