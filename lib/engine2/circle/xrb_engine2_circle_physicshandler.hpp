@@ -30,9 +30,7 @@ class PhysicsHandler : public Engine2::PhysicsHandler
 {
 public:
 
-    PhysicsHandler (
-        CollisionExemptionFunction CollisionExemption,
-        MaxEntitySpeedFunction MaxEntitySpeed);
+    PhysicsHandler ();
     virtual ~PhysicsHandler ();
 
     // this does wrapped object layer checking
@@ -78,6 +76,17 @@ public:
     virtual void AddEntity (Engine2::Entity *entity);
     virtual void RemoveEntity (Engine2::Entity *entity);
 
+    // return true iff there should be no physical collision response between the given entities.
+    // Collide is still called on the entities even if they're exempt.
+    virtual bool CollisionExemption (Entity const &entity0, Entity const &entity1) const
+    {
+        // no exemptions by default
+        return false;
+    }
+    // return the upper speed limit for entities (Entity velocity will be
+    // capped at this value).
+    virtual Float MaxSpeed (Entity const &entity) const { return 1.0e10f; } // arbitrarily huge
+
 protected:
 
     virtual void HandleFrame ();
@@ -99,10 +108,6 @@ private:
     ObjectLayer *m_main_object_layer;
     // the quadtree used in collision detection and other spatial shit
     CollisionQuadTree *m_quad_tree;
-    // stores the collision exemption function
-    CollisionExemptionFunction m_CollisionExemption;
-    // stores the max entity speed function
-    MaxEntitySpeedFunction m_MaxEntitySpeed;
 }; // end of class PhysicsHandler
 
 } // end of namespace Circle

@@ -51,11 +51,6 @@ public:
 
     World *GetWorld () const;
 
-    static bool CollisionExemption (
-        Engine2::Circle::Entity const *entity0,
-        Engine2::Circle::Entity const *entity1);
-    static Float MaxEntitySpeed (Engine2::Circle::Entity const *entity);
-
     // ///////////////////////////////////////////////////////////////////////
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////

@@ -19,13 +19,9 @@ namespace Xrb {
 namespace Engine2 {
 namespace Circle {
 
-PhysicsHandler::PhysicsHandler (
-    CollisionExemptionFunction CollisionExemption,
-    MaxEntitySpeedFunction MaxEntitySpeed)
+PhysicsHandler::PhysicsHandler ()
     :
-    Engine2::PhysicsHandler(),
-    m_CollisionExemption(CollisionExemption),
-    m_MaxEntitySpeed(MaxEntitySpeed)
+    Engine2::PhysicsHandler()
 {
     m_main_object_layer = NULL;
     m_quad_tree = NULL;
@@ -300,7 +296,7 @@ void PhysicsHandler::UpdateVelocities ()
         }
 
         // WHOA THERE BUDDY!  SLOW DOWN!
-        Float max_entity_speed = m_MaxEntitySpeed(entity);
+        Float max_entity_speed = MaxSpeed(*entity);
         Float max_entity_speed_squared = max_entity_speed * max_entity_speed;
         Float entity_speed_squared = entity->Velocity().LengthSquared();
         if (entity_speed_squared > max_entity_speed_squared)
@@ -359,7 +355,6 @@ void PhysicsHandler::HandleInterpenetrations ()
             entity,
             FrameDT(),
             &m_collision_pair_list,
-            m_CollisionExemption,
             m_main_object_layer->IsWrapped(),
             m_main_object_layer->SideLength());
     }

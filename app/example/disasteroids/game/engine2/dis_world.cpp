@@ -18,6 +18,7 @@
 #include "dis_engine.hpp"
 #include "dis_entity.hpp"
 #include "dis_interloper.hpp"
+#include "dis_physicshandler.hpp"
 #include "dis_playership.hpp"
 #include "dis_powereddevice.hpp"
 #include "dis_powergenerator.hpp"
@@ -28,7 +29,6 @@
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_worldview.hpp"
-#include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_physicshandler.hpp"
 #include "xrb_engine2_sprite.hpp"
@@ -458,9 +458,7 @@ World *World::Create (DifficultyLevel difficulty_level, Uint32 entity_capacity)
     ASSERT1(entity_capacity > 0);
     return new World(
         difficulty_level,
-        new Engine2::Circle::PhysicsHandler(
-            Entity::CollisionExemption,
-            Entity::MaxEntitySpeed),
+        new PhysicsHandler(),
         entity_capacity);
 }
 
@@ -1132,7 +1130,7 @@ void World::BeginWave ()
 {
     ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
 /*  // this was changed to the above when the begin-next-wave dev-cheat command was added, and it might not be necessary
-    if (m_state_machine.CurrentState() == &World::StateWaveInitialize) 
+    if (m_state_machine.CurrentState() == &World::StateWaveInitialize)
         ScheduleStateMachineInput(IN_BEGIN_WAVE, 0.0f);
 */
 }

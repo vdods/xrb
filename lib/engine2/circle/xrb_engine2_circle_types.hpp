@@ -27,17 +27,6 @@ class Entity;
 
 typedef std::list<Entity *> AreaTraceList;
 
-// a typedef for a function which allows the game to specify exemptions
-// to collisions (e.g. powerups and bullets, which just look stupid if
-// they are allowed to collide and react with each other).
-typedef bool (*CollisionExemptionFunction)(Entity const *, Entity const *);
-
-// a typedef for specifying the maximum speed a particular entity may
-// travel, a speed limit which is enforced by the PhysicsHandler.  in
-// disasteroids, for example, CT_SOLID_COLLISION objects' max speed is
-// 350, while other collision types' max speed is 800.
-typedef Float (*MaxEntitySpeedFunction)(Entity const *);
-
 struct CollisionPair
 {
     Entity *m_entity0;

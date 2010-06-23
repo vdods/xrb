@@ -470,6 +470,7 @@ disasteroids_SOURCES = \
     app/example/disasteroids/game/dis_spawn.cpp \
     app/example/disasteroids/game/dis_util.cpp \
     app/example/disasteroids/game/engine2/dis_entity.cpp \
+    app/example/disasteroids/game/engine2/dis_physicshandler.cpp \
     app/example/disasteroids/game/engine2/dis_world.cpp \
     app/example/disasteroids/game/entities/dis_asteroid.cpp \
     app/example/disasteroids/game/entities/dis_ballistic.cpp \
@@ -548,6 +549,7 @@ noinst_HEADERS = \
     app/example/disasteroids/game/dis_util.hpp \
     app/example/disasteroids/game/engine2/dis_entity.hpp \
     app/example/disasteroids/game/engine2/dis_entityreference.hpp \
+    app/example/disasteroids/game/engine2/dis_physicshandler.hpp \
     app/example/disasteroids/game/engine2/dis_world.hpp \
     app/example/disasteroids/game/entities/dis_asteroid.hpp \
     app/example/disasteroids/game/entities/dis_ballistic.hpp \
