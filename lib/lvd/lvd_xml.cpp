@@ -133,15 +133,15 @@ void Document::RetrieveElement (
 
 bool Element::HasAttribute (string const &attribute_name) const
 {
-    return m_attribute.find(Attribute(attribute_name, "")) != m_attribute.end();
+    return m_attribute.find(attribute_name) != m_attribute.end();
 }
 
 string const &Element::AttributeValue (string const &attribute_name) const
 {
     static string const s_empty_string;
-    AttributeSet::const_iterator it = m_attribute.find(Attribute(attribute_name, ""));
+    AttributeMap::const_iterator it = m_attribute.find(attribute_name);
     if (it != m_attribute.end())
-        return it->m_value;
+        return it->second;
     else
         return s_empty_string;
 }
@@ -157,13 +157,13 @@ void Element::Print (ostream &stream) const
     if (m_type == PROCESSING_INSTRUCTION)
         stream << '?';
     stream << m_name;
-    for (AttributeSet::const_iterator it = m_attribute.begin(),
-                                        it_end = m_attribute.end();
+    for (AttributeMap::const_iterator it = m_attribute.begin(),
+                                      it_end = m_attribute.end();
             it != it_end;
             ++it)
     {
-        stream << ' ' << it->m_name << '=';
-        PrintStringLiteral(stream, it->m_value);
+        stream << ' ' << it->first << '=';
+        PrintStringLiteral(stream, it->second);
     }
     if (m_type == PROCESSING_INSTRUCTION)
         stream << '?';

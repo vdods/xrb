@@ -16,8 +16,8 @@
 #endif // defined(HAVE_CONFIG_H)
 
 #include <cassert>
+#include <map>
 #include <ostream>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -29,36 +29,9 @@ namespace Xml {
 void PrintStringLiteral (std::ostream &stream, std::string const &s);
 std::string StringLiteral (std::string const &s);
 
-struct Attribute
-{
-    std::string m_name;
-    std::string m_value;
-
-    Attribute (std::string const &name, std::string const &value)
-        :
-        m_name(name),
-        m_value(value)
-    {
-        assert(!m_name.empty());
-    }
-
-    bool operator == (Attribute const &a) const
-    {
-        return m_name == a.m_name && m_value == a.m_value;
-    }
-
-    struct Order
-    {
-        bool operator () (Attribute const &left, Attribute const &right) const
-        {
-            return left.m_name < right.m_name;
-        }
-    }; // end of struct Xml::Attribute::Order
-}; // end of struct Xml::Attribute
-
 class DomNode;
 
-typedef std::set<Attribute, Attribute::Order> AttributeSet;
+typedef std::map<std::string, std::string> AttributeMap;
 typedef std::vector<DomNode *> DomNodeVector;
 
 struct DomNode
@@ -158,7 +131,7 @@ private:
 struct Element : public Document
 {
     std::string m_name;
-    AttributeSet m_attribute;
+    AttributeMap m_attribute;
 
     Element (std::string const &name, Type type = ELEMENT, FiLoc const &filoc = FiLoc::ms_invalid)
         :

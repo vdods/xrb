@@ -988,10 +988,10 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
 
 #line 498 "lvd_xml_parser.trison"
 
-        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
+        if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
             EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
         else
-            list->m_attribute.insert(Attribute(name->m_text, value->m_text));
+            list->m_attribute[name->m_text] = value->m_text;
         delete name;
         delete value;
         return list;
@@ -1009,8 +1009,8 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
 #line 509 "lvd_xml_parser.trison"
 
         EmitError("parse error in value of attribute " + name->m_text, name->m_filoc);
-        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
-            EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
+        if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
+            EmitError("duplicate attribute " + name->m_text, name->m_filoc);
         delete name;
         return list;
     

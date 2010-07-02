@@ -496,10 +496,10 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 :
     attribute_list:list NAME:name '=' STRING:value
     %target.cpp {
-        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
+        if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
             EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
         else
-            list->m_attribute.insert(Attribute(name->m_text, value->m_text));
+            list->m_attribute[name->m_text] = value->m_text;
         delete name;
         delete value;
         return list;
@@ -508,8 +508,8 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     attribute_list:list NAME:name '=' %error
     %target.cpp {
         EmitError("parse error in value of attribute " + name->m_text, name->m_filoc);
-        if (list->m_attribute.find(Attribute(name->m_text, "")) != list->m_attribute.end())
-            EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
+        if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
+            EmitError("duplicate attribute " + name->m_text, name->m_filoc);
         delete name;
         return list;
     }
