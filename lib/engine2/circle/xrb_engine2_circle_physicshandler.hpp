@@ -93,16 +93,17 @@ public:
     // perform physical collision response between two entities with given
     // collision conditions.  the return value should be the [absolute value
     // of the] collision force (imparted on both collision entities).
-    // offset_1_to_0 is the precalculated difference vector
-    // entity0.Translation() - entity1.Translation(), adjusted to account for
-    // ObjectLayer wrapping.
+    // offset_0_to_1 is the precalculated difference vector
+    // entity1.Translation() - entity0.Translation(), adjusted to account for
+    // ObjectLayer wrapping.  collision_normal_0_to_1 is the normalized
+    // value of offset_0_to_1, or an arbitrary value if offset_0_to_1 is zero.
     virtual Float CollisionResponse (
         Entity &entity0,
         Entity &entity1,
-        FloatVector2 const &offset_1_to_0,
+        FloatVector2 const &offset_0_to_1,
         Float frame_dt,
         FloatVector2 const &collision_location,
-        FloatVector2 const &collision_normal);
+        FloatVector2 const &collision_normal_0_to_1);
 
 protected:
 

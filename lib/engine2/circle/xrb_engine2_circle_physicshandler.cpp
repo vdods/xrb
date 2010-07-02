@@ -206,20 +206,20 @@ void PhysicsHandler::RemoveEntity (Engine2::Entity *entity)
 Float PhysicsHandler::CollisionResponse (
     Entity &entity0,
     Entity &entity1,
-    FloatVector2 const &offset_1_to_0,
+    FloatVector2 const &offset_0_to_1,
     Float frame_dt,
     FloatVector2 const &collision_location,
-    FloatVector2 const &collision_normal)
+    FloatVector2 const &collision_normal_0_to_1)
 {
     Float collision_force = 0.0f;
 
     Float r = entity0.Radius(QTT_PHYSICS_HANDLER) + entity1.Radius(QTT_PHYSICS_HANDLER);
     FloatVector2 V = entity0.Velocity() - entity1.Velocity();
-    if ((V | offset_1_to_0) < 0.0f) // and if the distance between the two is closing
+    if ((V | offset_0_to_1) > 0.0f) // and if the distance between the two is closing
     {
         Float M = 1.0f / entity0.Mass() + 1.0f / entity1.Mass();
-        FloatVector2 Q(offset_1_to_0 + frame_dt*V);
-        FloatVector2 A(Sqr(frame_dt)*M*collision_normal);
+        FloatVector2 Q(frame_dt*V - offset_0_to_1);
+        FloatVector2 A(-Sqr(frame_dt)*M*collision_normal_0_to_1);
 
         Float a = A | A;
         Float b = 2.0f * (Q | A);
@@ -244,8 +244,8 @@ Float PhysicsHandler::CollisionResponse (
 
             collision_force *= (1.0f + entity0.Elasticity() * entity1.Elasticity());
 
-            entity0.AccumulateForce(collision_force*collision_normal);
-            entity1.AccumulateForce(-collision_force*collision_normal);
+            entity0.AccumulateForce(-collision_force*collision_normal_0_to_1);
+            entity1.AccumulateForce(collision_force*collision_normal_0_to_1);
         }
     }
 

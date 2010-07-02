@@ -421,9 +421,9 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     }
 
     Float r = m_entity->Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
-    FloatVector2 P = ce0_translation - ce1_translation;
+    FloatVector2 offset_0_to_1 = ce1_translation - ce0_translation;
 
-    if (P.Length() >= r)
+    if (offset_0_to_1.Length() >= r)
         return;
 
     // at this point, a collision has happened (the entities are overlapping).
@@ -438,11 +438,11 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
         (other_entity->ScaleFactor() * ce0_translation + m_entity->ScaleFactor() * ce1_translation)
         /
         (m_entity->ScaleFactor() + other_entity->ScaleFactor()));
-    FloatVector2 collision_normal;
-    if (P.IsZero())
-        collision_normal = FloatVector2(1.0f, 0.0f);
+    FloatVector2 collision_normal_0_to_1;
+    if (offset_0_to_1.IsZero())
+        collision_normal_0_to_1 = FloatVector2(1.0f, 0.0f);
     else
-        collision_normal = P.Normalization();
+        collision_normal_0_to_1 = offset_0_to_1.Normalization();
     Float collision_force = 0.0f; // to be determined by PhysicsHandler::CollisionResponse
 
     // check if we should proceed with physical collision response
@@ -450,7 +450,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
         other_entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION &&
         !physics_handler.CollisionExemption(*m_entity, *other_entity)) // and if this isn't an exception
     {
-        collision_force = physics_handler.CollisionResponse(*m_entity, *other_entity, P, m_frame_dt, collision_location, collision_normal);
+        collision_force = physics_handler.CollisionResponse(*m_entity, *other_entity, offset_0_to_1, m_frame_dt, collision_location, collision_normal_0_to_1);
     }
 
     // record the collision in the collision pair list.
@@ -459,7 +459,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
             m_entity,
             other_entity,
             collision_location,
-            collision_normal,
+            collision_normal_0_to_1,
             collision_force));
 }
 
