@@ -388,9 +388,9 @@ ScreenCoordVector2 Screen::RotatedScreenVector (ScreenCoordVector2 const &v) con
     {
         default:
         case 0:   return v;
-        case 90:  return ScreenCoordVector2(-v[Dim::Y], v[Dim::X]);
+        case 90:  return ScreenCoordVector2(v[Dim::Y], -v[Dim::X]);
         case 180: return -v;
-        case 270: return ScreenCoordVector2(v[Dim::Y], -v[Dim::X]);
+        case 270: return ScreenCoordVector2(-v[Dim::Y], v[Dim::X]);
     }
 }
 
