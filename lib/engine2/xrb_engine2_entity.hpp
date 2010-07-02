@@ -70,16 +70,20 @@ public:
     FloatVector2 const &WrappedOffset () const { return m_wrapped_offset; }
     FloatVector2 UnwrappedTranslation () const { return Translation() + m_wrapped_offset; }
     // the Object which this Entity is attached to
-    Object *OwnerObject () const { return m_owner_object; }
+    Object const *OwnerObject () const { return m_owner_object; }
+    Object *OwnerObject () { return m_owner_object; }
     // returns the owner object cast to a Sprite (doing appropriate
     // assert verification on its type)
-    Sprite *OwnerSprite () const;
+    Sprite const *OwnerSprite () const;
+    Sprite *OwnerSprite ();
     // returns the owner object cast to a AnimatedSprite (doing
     // appropriate assert verification on its type)
-    AnimatedSprite *OwnerAnimatedSprite () const;
+    AnimatedSprite const *OwnerAnimatedSprite () const;
+    AnimatedSprite *OwnerAnimatedSprite () ;
     // returns the owner object cast to a Compound (doing appropriate
     // assert verification on its type)
-    Compound *OwnerCompound () const;
+    Compound const *OwnerCompound () const;
+    Compound *OwnerCompound ();
 
     // ///////////////////////////////////////////////////////////////////
     // modifiers

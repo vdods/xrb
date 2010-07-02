@@ -23,7 +23,16 @@
 namespace Xrb {
 namespace Engine2 {
 
-Sprite *Entity::OwnerSprite () const
+Sprite const *Entity::OwnerSprite () const
+{
+    if (m_owner_object == NULL)
+        return NULL;
+
+    ASSERT1(m_owner_object->GetObjectType() == OT_SPRITE);
+    return DStaticCast<Sprite const *>(m_owner_object);
+}
+
+Sprite *Entity::OwnerSprite ()
 {
     if (m_owner_object == NULL)
         return NULL;
@@ -32,7 +41,16 @@ Sprite *Entity::OwnerSprite () const
     return DStaticCast<Sprite *>(m_owner_object);
 }
 
-AnimatedSprite *Entity::OwnerAnimatedSprite () const
+AnimatedSprite const *Entity::OwnerAnimatedSprite () const
+{
+    if (m_owner_object == NULL)
+        return NULL;
+
+    ASSERT1(m_owner_object->GetObjectType() == OT_ANIMATED_SPRITE);
+    return DStaticCast<AnimatedSprite const *>(m_owner_object);
+}
+
+AnimatedSprite *Entity::OwnerAnimatedSprite ()
 {
     if (m_owner_object == NULL)
         return NULL;
@@ -41,7 +59,16 @@ AnimatedSprite *Entity::OwnerAnimatedSprite () const
     return DStaticCast<AnimatedSprite *>(m_owner_object);
 }
 
-Compound *Entity::OwnerCompound () const
+Compound const *Entity::OwnerCompound () const
+{
+    if (m_owner_object == NULL)
+        return NULL;
+
+    ASSERT1(m_owner_object->GetObjectType() == OT_COMPOUND);
+    return DStaticCast<Compound const *>(m_owner_object);
+}
+
+Compound *Entity::OwnerCompound ()
 {
     if (m_owner_object == NULL)
         return NULL;
