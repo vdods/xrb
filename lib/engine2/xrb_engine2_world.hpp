@@ -13,6 +13,7 @@
 
 #include "xrb.hpp"
 
+#include <map>
 #include <list>
 #include <vector>
 
@@ -21,8 +22,17 @@
 #include "xrb_eventqueue.hpp"
 #include "xrb_framehandler.hpp"
 
+namespace Lvd {
+namespace Xml {
+
+struct Element;
+
+} // end of namespace Xml
+} // end of namespace Lvd
+
 namespace Xrb {
 
+class AttributeSet;
 class Serializer;
 
 /** Contains all of the "server side" code, i.e. the game world, collision
@@ -70,8 +80,10 @@ public:
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
-    // used when loading worlds (e.g. in LoadSvgIntoWorld)
-    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name, Object const &future_owner_object, ObjectLayer &object_layer)
+    // used in LoadSvgIntoWorld.
+    // the map type is really Lvd::Xml::AttributeMap
+    virtual void ProcessSvgRootElement (Lvd::Xml::Element const &element) { }
+    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name, Object &future_owner_object, ObjectLayer &object_layer)
     {
         return NULL;
     }
