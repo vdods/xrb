@@ -18,6 +18,7 @@
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
+#include "xrb_pal.hpp"
 #include "xrb_util.hpp"
 
 using namespace Lvd;
@@ -298,16 +299,20 @@ void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_
 
     try {
 
-        Xml::Parser parser;
+        Parser parser;
         bool open_file_success = parser.OpenFile(svg_path);
         if (!open_file_success)
             THROW_STRING("failure opening file");
 
         parser.WarningAndErrorLogStream(&std::cerr);
+        Uint32 start_time = Singleton::Pal().CurrentTime();
         Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
+        Uint32 end_time = Singleton::Pal().CurrentTime();
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", svg_path.c_str(), end_time - start_time);
         if (parser_return_code != Parser::PRC_SUCCESS)
             THROW_STRING("general parse error in file");
 
+        start_time = Singleton::Pal().CurrentTime();
         ASSERT1(root != NULL);
         ASSERT1(root->m_type == DomNode::DOCUMENT);
         Document const &document = *DStaticCast<Document const *>(root);
@@ -317,6 +322,8 @@ void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_
         document.FirstElement(svg, "svg");
         if (svg == NULL) // if no <svg> element, error.
             THROW_STRING("no <svg> tag -- probably not an svg document");
+        // give the world a chance to process it
+        world.ProcessSvgRootElement(*svg);
 
         // iterate through each <g> element for the object layers
         Element const *g = NULL;
@@ -328,6 +335,8 @@ void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_
             ASSERT1(g != NULL);
             ProcessLayer(svg_path, world, current_time, layer_number, *g);
         }
+        end_time = Singleton::Pal().CurrentTime();
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", svg_path.c_str(), end_time - start_time);
 
     } catch (std::string const &exception) {
         fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); %s\n", svg_path.c_str(), exception.c_str());
