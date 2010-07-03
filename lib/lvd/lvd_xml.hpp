@@ -96,6 +96,12 @@ struct Document : public DomNode
         std::string const &attribute_name = "",
         bool specify_attribute_value = false,
         std::string const &attribute_value = "") const;
+    DomNodeVector::iterator FirstElement (
+        Element *&element,
+        std::string const &element_name = "",
+        std::string const &attribute_name = "",
+        bool specify_attribute_value = false,
+        std::string const &attribute_value = "");
     void NextElement (
         DomNodeVector::const_iterator &it,
         Element const *&element,
@@ -103,6 +109,13 @@ struct Document : public DomNode
         std::string const &attribute_name = "",
         bool specify_attribute_value = false,
         std::string const &attribute_value = "") const;
+    void NextElement (
+        DomNodeVector::iterator &it,
+        Element *&element,
+        std::string const &element_name = "",
+        std::string const &attribute_name = "",
+        bool specify_attribute_value = false,
+        std::string const &attribute_value = "");
 
     virtual void Print (std::ostream &stream) const;
 
@@ -125,6 +138,13 @@ private:
         std::string const &attribute_name,
         bool specify_attribute_value,
         std::string const &attribute_value) const;
+    void RetrieveElement (
+        DomNodeVector::iterator &it,
+        Element *&element,
+        std::string const &element_name,
+        std::string const &attribute_name,
+        bool specify_attribute_value,
+        std::string const &attribute_value);
 }; // end of struct Xml::Document
 
 // acceptable types are ELEMENT and PROCESSING_INSTRUCTION
