@@ -440,6 +440,14 @@ private:
       *        events before the mouse event handler gets them.
       */
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
+    /** @brief Performs some necessary event processing on pinch
+      *        events before the pinch event handler gets them.
+      */
+    virtual bool InternalProcessPinchEvent (EventPinch const *e);
+    /** @brief Performs some necessary event processing on rotate
+      *        events before the rotate event handler gets them.
+      */
+    virtual bool InternalProcessRotateEvent (EventRotate const *e);
     /** @brief Performs some necessary event processing on joy
       *        events before the joy event handler gets them.
       */

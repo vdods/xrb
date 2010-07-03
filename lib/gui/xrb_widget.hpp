@@ -47,6 +47,14 @@ class EventMouseButton;
 class EventMouseMotion;
 class EventMouseWheel;
 class EventMouseover;
+class EventPinch;
+class EventPinchBegin;
+class EventPinchEnd;
+class EventPinchMotion;
+class EventRotate;
+class EventRotateBegin;
+class EventRotateEnd;
+class EventRotateMotion;
 class EventStateMachineInput;
 class Screen;
 class WidgetBackground;
@@ -709,6 +717,30 @@ protected:
       * @brief Process a mouse motion event.
       */
     virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e) { return false; }
+    /** Subclasses may override this to process pinch begin events.
+      * @brief Process a pinch begin event.
+      */
+    virtual bool ProcessPinchBeginEvent (EventPinchBegin const *e) { return false; }
+    /** Subclasses may override this to process pinch end events.
+      * @brief Process a pinch end event.
+      */
+    virtual bool ProcessPinchEndEvent (EventPinchEnd const *e) { return false; }
+    /** Subclasses may override this to process pinch motion events.
+      * @brief Process a pinch motion event.
+      */
+    virtual bool ProcessPinchMotionEvent (EventPinchMotion const *e) { return false; }
+    /** Subclasses may override this to process rotate motion events.
+      * @brief Process a rotate motion event.
+      */
+    virtual bool ProcessRotateMotionEvent (EventRotateMotion const *e) { return false; }
+    /** Subclasses may override this to process rotate begin events.
+      * @brief Process a rotate begin event.
+      */
+    virtual bool ProcessRotateBeginEvent (EventRotateBegin const *e) { return false; }
+    /** Subclasses may override this to process rotate end events.
+      * @brief Process a rotate end event.
+      */
+    virtual bool ProcessRotateEndEvent (EventRotateEnd const *e) { return false; }
     /** Subclasses may override this to process joystick events.
       * @brief Process a joystick event.
       */
@@ -839,7 +871,7 @@ protected:
       */
     Color m_color_bias;
     /** The color mask represents a modulation function (simple multiplication)
-      * which is applied to each drawing operation at or below this widget in 
+      * which is applied to each drawing operation at or below this widget in
       * the widget hierarchy.
       * @brief The color mask of the widget.
       */
@@ -879,6 +911,14 @@ private:
       *        events before the mouse event handler gets them.
       */
     virtual bool InternalProcessMouseEvent (EventMouse const *e);
+    /** @brief Performs some necessary event processing on pinch
+      *        events before the pinch event handler gets them.
+      */
+    virtual bool InternalProcessPinchEvent (EventPinch const *e);
+    /** @brief Performs some necessary event processing on rotate
+      *        events before the rotate event handler gets them.
+      */
+    virtual bool InternalProcessRotateEvent (EventRotate const *e);
     /** @brief Performs some necessary event processing on joy
       *        events before the joy event handler gets them.
       */

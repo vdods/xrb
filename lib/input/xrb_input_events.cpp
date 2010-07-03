@@ -122,4 +122,31 @@ EventMouseMotion::EventMouseMotion (
     m_delta(delta)
 { }
 
+EventPinch::~EventPinch () { }
+
+EventPinchBegin::EventPinchBegin (Float scale, Float time)
+    :
+    EventPinch(time, PINCHBEGIN), m_scale(scale)
+{
+    ASSERT1(m_scale >= 0.0f && "must be nonnegative");
+}
+
+EventPinchMotion::EventPinchMotion (Float scale, Float velocity, Float time)
+    :
+    EventPinch(time, PINCHMOTION),
+    m_scale(scale),
+    m_velocity(velocity)
+{
+    ASSERT1(m_scale >= 0.0f && "must be nonnegative");
+}
+
+EventRotate::~EventRotate () { }
+
+EventRotateMotion::EventRotateMotion (Float rotation, Float velocity, Float time)
+    :
+    EventRotate(time, ROTATEMOTION),
+    m_rotation(rotation),
+    m_velocity(velocity)
+{ }
+
 } // end of namespace Xrb

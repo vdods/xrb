@@ -928,6 +928,56 @@ bool ContainerWidget::InternalProcessMouseEvent (EventMouse const *const e)
     }
 }
 
+bool ContainerWidget::InternalProcessPinchEvent (EventPinch const *const e)
+{
+    ASSERT1(e != NULL);
+
+    // because a pinch event is not associated with a screen position, the only way it
+    // makes to handle is like a keyboard event.  therefore send it down the focus line.
+
+    if (m_children_get_input_events_first)
+    {
+        if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return Widget::InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e));
+    }
+    else
+    {
+        if (Widget::InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e)))
+            return true;
+        else if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return false;
+    }
+}
+
+bool ContainerWidget::InternalProcessRotateEvent (EventRotate const *const e)
+{
+    ASSERT1(e != NULL);
+
+    // because a rotate event is not associated with a screen position, the only way it
+    // makes to handle is like a keyboard event.  therefore send it down the focus line.
+
+    if (m_children_get_input_events_first)
+    {
+        if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return Widget::InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e));
+    }
+    else
+    {
+        if (Widget::InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e)))
+            return true;
+        else if (m_focus != NULL)
+            return m_focus->ProcessEvent(e);
+        else
+            return false;
+    }
+}
+
 bool ContainerWidget::InternalProcessJoyEvent (EventJoy const *const e)
 {
     ASSERT1(e != NULL);

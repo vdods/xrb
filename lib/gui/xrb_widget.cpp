@@ -714,6 +714,16 @@ bool Widget::HandleEvent (Event const *const e)
         case Event::MOUSEMOTION:
             return InternalProcessMouseEvent(DStaticCast<EventMouse const *>(e));
 
+        case Event::PINCHBEGIN:
+        case Event::PINCHEND:
+        case Event::PINCHMOTION:
+            return InternalProcessPinchEvent(DStaticCast<EventPinch const *>(e));
+
+        case Event::ROTATEBEGIN:
+        case Event::ROTATEEND:
+        case Event::ROTATEMOTION:
+            return InternalProcessRotateEvent(DStaticCast<EventRotate const *>(e));
+
         case Event::JOYAXIS:
         case Event::JOYBALL:
         case Event::JOYBUTTONDOWN:
@@ -996,13 +1006,13 @@ void Widget::MouseoverOffWidgetLine ()
     HandleMouseoverOff();
 }
 
-bool Widget::InternalProcessKeyEvent (EventKey const *const e)
+bool Widget::InternalProcessKeyEvent (EventKey const *e)
 {
     ASSERT1(e != NULL);
     return ProcessKeyEvent(DStaticCast<EventKey const *>(e));
 }
 
-bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
+bool Widget::InternalProcessMouseEvent (EventMouse const *e)
 {
     ASSERT1(e != NULL);
 
@@ -1037,13 +1047,73 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *const e)
     return false;
 }
 
-bool Widget::InternalProcessJoyEvent (EventJoy const *const e)
+bool Widget::InternalProcessPinchEvent (EventPinch const *e)
+{
+    ASSERT1(e != NULL);
+
+    // give this widget the chance to process the event
+    switch (e->GetEventType())
+    {
+        case Event::PINCHBEGIN:
+            if (ProcessPinchBeginEvent(DStaticCast<EventPinchBegin const *>(e)))
+                return true;
+            break;
+
+        case Event::PINCHEND:
+            if (ProcessPinchEndEvent(DStaticCast<EventPinchEnd const *>(e)))
+                return true;
+            break;
+
+        case Event::PINCHMOTION:
+            if (ProcessPinchMotionEvent(DStaticCast<EventPinchMotion const *>(e)))
+                return true;
+            break;
+
+        default:
+            ASSERT1(false && "Invalid Event::EventType");
+            break;
+    }
+
+    return false;
+}
+
+bool Widget::InternalProcessRotateEvent (EventRotate const *e)
+{
+    ASSERT1(e != NULL);
+
+    // give this widget the chance to process the event
+    switch (e->GetEventType())
+    {
+        case Event::ROTATEBEGIN:
+            if (ProcessRotateBeginEvent(DStaticCast<EventRotateBegin const *>(e)))
+                return true;
+            break;
+
+        case Event::ROTATEEND:
+            if (ProcessRotateEndEvent(DStaticCast<EventRotateEnd const *>(e)))
+                return true;
+            break;
+
+        case Event::ROTATEMOTION:
+            if (ProcessRotateMotionEvent(DStaticCast<EventRotateMotion const *>(e)))
+                return true;
+            break;
+
+        default:
+            ASSERT1(false && "Invalid Event::EventType");
+            break;
+    }
+
+    return false;
+}
+
+bool Widget::InternalProcessJoyEvent (EventJoy const *e)
 {
     ASSERT1(e != NULL);
     return ProcessJoyEvent(DStaticCast<EventJoy const *>(e));
 }
 
-bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
+bool Widget::InternalProcessFocusEvent (EventFocus const *e)
 {
     // hidden widgets can't be focused
     if (IsHidden())
@@ -1059,7 +1129,7 @@ bool Widget::InternalProcessFocusEvent (EventFocus const *const e)
     return retval;
 }
 
-bool Widget::InternalProcessMouseoverEvent (EventMouseover const *const e)
+bool Widget::InternalProcessMouseoverEvent (EventMouseover const *e)
 {
     // hidden widgets can't be moused over
     if (IsHidden())

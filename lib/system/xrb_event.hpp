@@ -69,6 +69,12 @@ public:
         MOUSEBUTTONUP,
         MOUSEWHEEL,
         MOUSEMOTION,
+        PINCHBEGIN,
+        PINCHEND,
+        PINCHMOTION,
+        ROTATEBEGIN,
+        ROTATEEND,
+        ROTATEMOTION,
         JOYAXIS,
         JOYBALL,
         JOYBUTTONDOWN,
@@ -147,6 +153,24 @@ public:
       * @brief Returns true iff this is a mouse motion event.
       */
     virtual bool IsMouseMotionEvent () const { return false; }
+    /** Pinch event subclasses will override this function to return true.
+      * @brief Returns true iff this is a pinch event.
+      */
+    virtual bool IsPinchEvent () const { return false; }
+    /** Pinch motion event subclasses will override this function to return
+      * true.
+      * @brief Returns true iff this is a pinch motion event.
+      */
+    virtual bool IsPinchMotionEvent () const { return false; }
+    /** Rotate event subclasses will override this function to return true.
+      * @brief Returns true iff this is a rotate event.
+      */
+    virtual bool IsRotateEvent () const { return false; }
+    /** Rotate motion event subclasses will override this function to return
+      * true.
+      * @brief Returns true iff this is a rotate motion event.
+      */
+    virtual bool IsRotateMotionEvent () const { return false; }
     /** Joy event subclasses will override this function to return true.
       * @brief Returns true iff this is a joy event.
       */

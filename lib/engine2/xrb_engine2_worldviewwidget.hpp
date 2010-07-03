@@ -70,14 +70,17 @@ protected:
 
     // this calculates one frame, called by the game loop
     virtual void HandleFrame ();
-    // process a key event
+
     virtual bool ProcessKeyEvent (EventKey const *e);
-    // process a mouse button event
     virtual bool ProcessMouseButtonEvent (EventMouseButton const *e);
-    // process a mouse wheel event
     virtual bool ProcessMouseWheelEvent (EventMouseWheel const *e);
-    // process a mouse motion event
     virtual bool ProcessMouseMotionEvent (EventMouseMotion const *e);
+    virtual bool ProcessPinchBeginEvent (EventPinchBegin const *e);
+    virtual bool ProcessPinchEndEvent (EventPinchEnd const *e);
+    virtual bool ProcessPinchMotionEvent (EventPinchMotion const *e);
+    virtual bool ProcessRotateBeginEvent (EventRotateBegin const *e);
+    virtual bool ProcessRotateEndEvent (EventRotateEnd const *e);
+    virtual bool ProcessRotateMotionEvent (EventRotateMotion const *e);
 
     virtual void HandleFocus ();
     virtual void HandleUnfocus ();

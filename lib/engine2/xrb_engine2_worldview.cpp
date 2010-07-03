@@ -396,22 +396,52 @@ void WorldView::Draw (RenderContext const &render_context)
     }
 }
 
-bool WorldView::ProcessKeyEvent (EventKey const *const e)
+bool WorldView::ProcessKeyEvent (EventKey const *e)
 {
     return false;
 }
 
-bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *const e)
+bool WorldView::ProcessMouseButtonEvent (EventMouseButton const *e)
 {
     return false;
 }
 
-bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
+bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *e)
 {
     return false;
 }
 
-bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *const e)
+bool WorldView::ProcessMouseMotionEvent (EventMouseMotion const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessPinchBeginEvent (EventPinchBegin const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessPinchEndEvent (EventPinchEnd const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessPinchMotionEvent (EventPinchMotion const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessRotateBeginEvent (EventRotateBegin const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessRotateEndEvent (EventRotateEnd const *e)
+{
+    return false;
+}
+
+bool WorldView::ProcessRotateMotionEvent (EventRotateMotion const *e)
 {
     return false;
 }
