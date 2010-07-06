@@ -165,6 +165,12 @@ struct Element : public Document
     bool HasAttribute (std::string const &attribute_name) const;
     std::string const &AttributeValue (std::string const &attribute_name) const;
 
+    void PrintAttribute (
+        std::ostream &stream,
+        std::string const &attribute_name,
+        std::string const &attribute_value,
+        bool space_in_front = false) const;
+
     virtual void Print (std::ostream &stream) const;
 }; // end of struct Xml::Element
 

@@ -213,6 +213,18 @@ string const &Element::AttributeValue (string const &attribute_name) const
         return s_empty_string;
 }
 
+void Element::PrintAttribute (
+    std::ostream &stream,
+    std::string const &attribute_name,
+    std::string const &attribute_value,
+    bool space_in_front) const
+{
+    if (space_in_front)
+        stream << ' ';
+    stream << attribute_name << '=';
+    PrintStringLiteral(stream, attribute_value);
+}
+
 void Element::Print (ostream &stream) const
 {
     // a processing instruction can't have elements
@@ -224,13 +236,40 @@ void Element::Print (ostream &stream) const
     if (m_type == PROCESSING_INSTRUCTION)
         stream << '?';
     stream << m_name;
-    for (AttributeMap::const_iterator it = m_attribute.begin(),
-                                      it_end = m_attribute.end();
-            it != it_end;
-            ++it)
+
+    // special handling for the "xml" PI (its attributes must be printed in a specific order).
+    if (m_type == PROCESSING_INSTRUCTION && m_name == "xml")
     {
-        stream << ' ' << it->first << '=';
-        PrintStringLiteral(stream, it->second);
+        // the xml 1.0 spec says the attributes must come:
+        // version
+        // encoding (optional)
+        // standalone (optional)
+        if (HasAttribute("version"))
+            PrintAttribute(stream, "version", AttributeValue("version"), true);
+        if (HasAttribute("encoding"))
+            PrintAttribute(stream, "encoding", AttributeValue("encoding"), true);
+        if (HasAttribute("standalone"))
+            PrintAttribute(stream, "standalone", AttributeValue("standalone"), true);
+        // the xml 1.0 spec does not allow any other attributes, but print the rest anyway
+        for (AttributeMap::const_iterator it = m_attribute.begin(),
+                                          it_end = m_attribute.end();
+             it != it_end;
+             ++it)
+        {
+            if (it->first != "version" && it->first != "encoding" && it->first != "standalone")
+                PrintAttribute(stream, it->first, it->second, true);
+        }
+    }
+    // normal printing (print the attributes in sorted order)
+    else
+    {
+        for (AttributeMap::const_iterator it = m_attribute.begin(),
+                                          it_end = m_attribute.end();
+             it != it_end;
+             ++it)
+        {
+            PrintAttribute(stream, it->first, it->second, true);
+        }
     }
     if (m_type == PROCESSING_INSTRUCTION)
         stream << '?';
