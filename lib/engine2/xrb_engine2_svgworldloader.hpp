@@ -40,8 +40,10 @@ the <image> element will be used to create an Entity of the specified type
 gives a string identifying the entity for retrieving it out of the svg, e.g.
 for getting pointers to entities. xrb_entity_type gives a (game-dependent)
 string identifying the type of entity to create and attach to this sprite.
-xrb_invisible='true' (or 'false') indicates if the entity is invisible
-(i.e. has no attached Sprite).
+xrb_is_transparent='true' indicates that the entity is partially transparent
+(such as a nebula) and must be dealt with specially.  xrb_invisible='true' (or
+'false') indicates if the entity is invisible (i.e. has no attached Sprite)
+-- TODO: implement xrb_invisible
 
 in general, a transform="matrix(a,b,c,d,x,y)" specifies a Transform2 in the
 following way:

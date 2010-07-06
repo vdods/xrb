@@ -203,6 +203,9 @@ void ProcessImage (std::string const &svg_path,
         object->SetZDepth(-Float(image_index)); // this needs to be used if USE_SOFTWARE_TRANSFORM is 1 (in xrb_engine2_sprite.cpp)
 //         object->SetZDepth(1.0f - (1.0f / 65536.0f) * image_index); // this needs to be used if USE_SOFTWARE_TRANSFORM is 0 (in xrb_engine2_sprite.cpp)
 
+        // set the is-transparent flag
+        object->SetIsTransparent(image.AttributeValue("xrb_is_transparent") == "true");
+
         // if xrb_entity_type is present, attempt to create and attach an Entity
         if (image.HasAttribute("xrb_entity_type"))
         {
