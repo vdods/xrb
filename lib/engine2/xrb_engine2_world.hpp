@@ -80,13 +80,37 @@ public:
         EntityWorldIndex entity_capacity = DEFAULT_ENTITY_CAPACITY);
     void Write (Serializer &serializer) const;
 
-    // used in LoadSvgIntoWorld.
-    // the map type is really Lvd::Xml::AttributeMap
-    virtual void ProcessSvgRootElement (Lvd::Xml::Element const &element) { }
-    virtual Entity *CreateEntity (std::string const &entity_type, std::string const &entity_name, Object &future_owner_object, ObjectLayer &object_layer)
-    {
-        return NULL;
-    }
+    // ///////////////////////////////////////////////////////////////////////
+    // these are only used in LoadSvgIntoWorld.
+
+    // give the world a chance to look at the <svg> (root) element
+    virtual void ProcessSvgRootElement (Lvd::Xml::Element const &svg) throw(std::string);
+    // must create and return a pointer to an ObjectLayer with the specified
+    // properties, but gives the world a chance to process the corresponding
+    // <g> element.  do not add the created ObjectLayer to the world, this will
+    // be done by LoadSvgIntoWorld.
+    virtual ObjectLayer *CreateObjectLayer (
+        Float side_length,
+        Uint32 quadtree_depth,
+        Float z_depth,
+        std::string const &name,
+        Lvd::Xml::Element const &g) throw(std::string);
+    // must create and return a pointer to (a subclass of) Entity.  entity_type
+    // and entity_name are the attribute values of xrb_entity_type and
+    // xrb_entity_name respectively.  future_owner_object is the already-created
+    // Object instance (e.g. Sprite) which the returned Entity will be attached
+    // to.  object_layer is the ObjectLayer this Entity will be added to.
+    // finally, image is the <image> element corresponding to this entity, giving
+    // the world a chance to process it.
+    virtual Entity *CreateEntity (
+        std::string const &entity_type,
+        std::string const &entity_name,
+        Object &future_owner_object,
+        ObjectLayer &object_layer,
+        Lvd::Xml::Element const &image) throw(std::string);
+
+    // end of LoadSvgIntoWorld helper methods
+    // ///////////////////////////////////////////////////////////////////////
 
     Uint32 EntityCapacity () const { ASSERT1(m_entity_vector.capacity() == m_entity_vector.size()); return m_entity_vector.size(); }
     Uint32 EntityCount () const { return m_entity_count; }

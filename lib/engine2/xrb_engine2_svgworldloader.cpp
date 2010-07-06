@@ -181,14 +181,21 @@ void ProcessImage (std::string const &svg_path,
 
             Entity *entity = NULL;
             ASSERT1(object != NULL);
-            entity = world.CreateEntity(entity_type, entity_name, *object, *object_layer);
-            if (entity == NULL)
-                THROW_STRING("failed to load entity type \"" << entity_type << "\" (entity name \"" << entity_name << "\")");
 
-            // set the Entity
-            object->SetEntity(entity);
-            // add it to the World
-            world.AddDynamicObject(object, object_layer);
+            try {
+                entity = world.CreateEntity(entity_type, entity_name, *object, *object_layer, image);
+                if (entity == NULL)
+                    THROW_STRING("failed to load entity type \"" << entity_type << "\" (entity name \"" << entity_name << "\")");
+
+                // set the Entity and add it to the world
+                object->SetEntity(entity);
+                world.AddDynamicObject(object, object_layer);
+            } catch (std::string const &exception) {
+                // if an exception was thrown, add it as a static object (no Entity attached)
+                world.AddStaticObject(object, object_layer);
+                // then rethrow the exception because we still want the exception printed.
+                throw exception;
+            }
         }
         // if it wasn't an Entity, then add it to the World as a static object.
         else
@@ -197,7 +204,7 @@ void ProcessImage (std::string const &svg_path,
         }
 
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <image id='%s'>, layer '%s': %s\n", svg_path.c_str(), image_id.c_str(), object_layer->Name().c_str(), exception.c_str());
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <image id='%s'>, layer '%s' (line %u in svg file): %s\n", svg_path.c_str(), image_id.c_str(), object_layer->Name().c_str(), image.m_filoc.LineNumber(), exception.c_str());
     }
 }
 
@@ -215,13 +222,13 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
         layer_id = GetRequiredAttributeOrThrow(g, "id", FORMAT("layer " << layer_number << " has no 'id' attribute"));
 
         // xrb_bounding_box
-        std::string bounding_box_id(GetRequiredAttributeOrThrow(g, "xrb_bounding_box", "missing attribute 'xrb_bounding_box'; must specify the id of a <rect> element in this layer"));
+        std::string bounding_box_id(GetRequiredAttributeOrThrow(g, "xrb_bounding_box", "missing attribute xrb_bounding_box; must specify the id of a <rect> element in this layer"));
         Element const *bounding_box = NULL;
         g.FirstElement(bounding_box, "rect", "id", true, bounding_box_id);
         if (bounding_box == NULL)
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box '" << bounding_box_id << "' (must specify the id of a <rect> element in this layer)");
+            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; must specify the id of a <rect> element in this layer");
         if (bounding_box->HasAttribute("transform"))
-            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box '" << bounding_box_id << "' (cannot have a 'transform' attribute)");
+            THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; cannot have a 'transform' attribute");
         Float bounding_box_width = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "width").c_str());
         Float bounding_box_height = Util::TextToFloat(GetRequiredAttributeOrThrow(*bounding_box, "height").c_str());
 
@@ -268,14 +275,7 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
         }
 
         // create ObjectLayer with info from above, and add it to the World
-        ObjectLayer *object_layer =
-            ObjectLayer::Create(
-                &world,                     // owner world
-                false,                      // is wrapped
-                bounding_box_side_length,   // side length
-                quadtree_depth,             // (object) quadtree depth
-                z_depth,                    // z depth of the layer
-                g.AttributeValue("id"));
+        ObjectLayer *object_layer = world.CreateObjectLayer(bounding_box_side_length, quadtree_depth, z_depth, g.AttributeValue("id"), g);
         world.AddObjectLayer(object_layer);
 
         // read the contents
