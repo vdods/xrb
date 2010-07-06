@@ -274,8 +274,7 @@ void Gl::SetupTextureUnits (
     glActiveTexture(GL_TEXTURE0);
     BindAtlas(gltexture.Atlas());
     // due to limitations in the PowerVR MBX platform, (see
-    // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/
-    //          OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
+    // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
     // the value of GL_TEXTURE_ENV_COLOR must be the same for both texture
     // units.  but in texture unit 0, we don't actually use the value of
     // GL_TEXTURE_ENV_COLOR, we use the glColor value instead.

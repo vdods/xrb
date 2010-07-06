@@ -380,6 +380,7 @@ ObjectLayer::ObjectLayer (
     m_z_depth = z_depth;
     m_quad_tree = NULL;
     m_name = name;
+    m_background_color = Color::ms_transparent_black;
 }
 
 } // end of namespace Engine2

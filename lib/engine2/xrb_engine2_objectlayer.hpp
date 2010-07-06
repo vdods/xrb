@@ -50,6 +50,7 @@ public:
         World *owner_world);
 
     std::string const &Name () const { return m_name; }
+    Color const &BackgroundColor () const { return m_background_color; }
     World *OwnerWorld () const { return m_owner_world; }
     bool IsWrapped () const { return m_is_wrapped; }
     Float SideLength () const { return m_side_length; }
@@ -63,6 +64,7 @@ public:
         FloatVector2 const &coordinates,
         FloatVector2 const &reference_coordinates) const;
 
+    void SetBackgroundColor (Color const &background_color) { m_background_color = background_color; }
     void SetIsWrapped (bool is_wrapped) { m_is_wrapped = is_wrapped; }
     void SetZDepth (Float z_depth) { m_z_depth = z_depth; }
 
@@ -126,6 +128,8 @@ private:
     Float m_z_depth;
     // indicates if this layer will do wrapped drawing
     bool m_is_wrapped;
+    // color which will be painted before drawing this layer (default is transparent black)
+    Color m_background_color;
 }; // end of class Engine2::ObjectLayer
 
 } // end of namespace Engine2

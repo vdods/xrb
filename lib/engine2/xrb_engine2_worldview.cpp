@@ -318,6 +318,27 @@ void WorldView::Draw (RenderContext const &render_context)
         // only draw non-transparent layers which are in front of the view
         if (layer_offset > 0.0f && distance_fade > 0.0f)
         {
+            // paint the widget area with the ObjectLayer background color
+            {
+                // this projection matrix stuff is from Screen::SetViewport,
+                // and is necessary because PushParallaxedProjectionMatrix
+                // seems to screw things up
+
+                // set up the GL projection matrix here
+                glMatrixMode(GL_PROJECTION);
+                // there is an extra copy of the matrix on the stack so don't
+                // have to worry about fucking it up.
+                glPopMatrix();
+                glPushMatrix();
+                glOrtho(
+                    render_context.ClipRect().Left(), render_context.ClipRect().Right(),
+                    render_context.ClipRect().Bottom(), render_context.ClipRect().Top(),
+                    -1.0, 1.0); // these values (-1, 1) are arbitrary
+
+                // actually draw the color
+                Render::DrawScreenRect(render_context, object_layer->BackgroundColor(), render_context.ClipRect());//ParentWorldViewWidget()->ScreenRect());
+            }
+
             // set up the GL projection matrix for drawing this object layer
             PushParallaxedGLProjectionMatrix(render_context, object_layer);
 
@@ -660,8 +681,8 @@ void WorldView::PushParallaxedGLProjectionMatrix (
 
     glMatrixMode(GL_PROJECTION);
     // the pop and then push is the same thing done in Screen::SetViewport
-    glPopMatrix();
-    glPushMatrix();
+    glPopMatrix(); // to get back the original projection matrix
+    glPushMatrix(); // then save it by pushing a copy
 
     // viewport perspective correction - this effectively takes
     // the place of the view-to-screen transform.
@@ -711,7 +732,8 @@ void WorldView::PopGLProjectionMatrix ()
     ASSERT1(m_is_gl_projection_matrix_in_use);
     // restore the projection matrix
     glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
+    glPopMatrix(); // this pop/push is done the same in Screen::SetViewport
+    glPushMatrix();
     m_is_gl_projection_matrix_in_use = false;
 }
 
