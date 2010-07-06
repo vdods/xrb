@@ -21,9 +21,13 @@ Button::Button (
     std::string const &name)
     :
     Label(text, parent, name),
+    m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this)
+    m_sender_released(this),
+    m_sender_pressed_state_changed_with_id(this),
+    m_sender_pressed_with_id(this),
+    m_sender_released_with_id(this)
 {
     SetAlignment(Alignment2(CENTER, CENTER));
     Initialize();
@@ -35,9 +39,13 @@ Button::Button (
     std::string const &name)
     :
     Label(picture, parent, name),
+    m_id(0xDEADBEEF), // sentinel uninitialized value
     m_sender_pressed_state_changed(this),
     m_sender_pressed(this),
-    m_sender_released(this)
+    m_sender_released(this),
+    m_sender_pressed_state_changed_with_id(this),
+    m_sender_pressed_with_id(this),
+    m_sender_released_with_id(this)
 {
     Initialize();
 }
@@ -98,12 +106,18 @@ void Button::HandlePressed ()
 {
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_pressed.Signal();
+
+    m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
+    m_sender_pressed_with_id.Signal(m_id);
 }
 
 void Button::HandleReleased ()
 {
     m_sender_pressed_state_changed.Signal(m_is_pressed);
     m_sender_released.Signal();
+
+    m_sender_pressed_state_changed_with_id.Signal(m_is_pressed, m_id);
+    m_sender_released_with_id.Signal(m_id);
 }
 
 void Button::UpdateRenderBackground ()

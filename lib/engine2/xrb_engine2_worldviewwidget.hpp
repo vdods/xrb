@@ -36,22 +36,10 @@ public:
         std::string const &name = "Engine2::WorldViewWidget");
     virtual ~WorldViewWidget ();
 
-    WorldView *GetWorldView ()
-    {
-        return m_world_view;
-    }
-    WorldView const *GetWorldView () const
-    {
-        return m_world_view;
-    }
-    FloatSimpleTransform2 const &Transformation () const
-    {
-        return m_transform;
-    }
-    bool IsTransformScalingBasedUponWidgetRadius () const
-    {
-        return m_is_transform_scaling_based_upon_widget_radius;
-    }
+    WorldView *GetWorldView () { return m_world_view; }
+    WorldView const *GetWorldView () const { return m_world_view; }
+    FloatSimpleTransform2 const &Transformation () const { return m_transform; }
+    bool IsTransformScalingBasedUponWidgetRadius () const { return m_is_transform_scaling_based_upon_widget_radius; }
 
     // sets the world_view to the given one, deleting the current one if not null
     void SetWorldView (WorldView *world_view);
