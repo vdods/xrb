@@ -72,6 +72,7 @@ Gl::Gl ()
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     glDepthFunc(GL_LEQUAL);
+    glEnable(GL_POLYGON_OFFSET_FILL); // this needs to be used if USE_SOFTWARE_TRANSFORM is 1 in xrb_engine2_sprite.cpp
 
     // set up the blending function for correct alpha blending
     glEnable(GL_BLEND);

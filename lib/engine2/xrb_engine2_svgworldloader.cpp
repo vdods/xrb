@@ -10,6 +10,7 @@
 
 #include "xrb_engine2_svgworldloader.hpp"
 
+#include <iomanip>
 #include <sstream>
 
 #include "lvd_xml.hpp"
@@ -26,6 +27,32 @@ using namespace Xml;
 
 namespace Xrb {
 namespace Engine2 {
+
+// AttributeMap is a conveniently pre-defined typedef for this
+void ParseStyle (std::string const &style, AttributeMap &style_map)
+{
+    // style consists of a semicolon-delimited list of "name:value" entries
+    std::string::size_type p = 0;
+    while (p < style.size())
+    {
+        // don't worry too much about malformed input
+        std::string::size_type next_p = style.find_first_of(":", p);
+        if (next_p == std::string::npos)
+            break;
+
+        std::string name(style.substr(p, next_p-p));
+        p = next_p + 1;
+        next_p = style.find_first_of(";", p);
+        std::string value(style.substr(p, next_p-p));
+
+        style_map[name] = value;
+
+        if (next_p == std::string::npos)
+            break;
+
+        p = next_p + 1;
+    }
+}
 
 std::string const &GetRequiredAttributeOrThrow (
     Element const &element,
@@ -47,6 +74,7 @@ void ProcessImage (std::string const &svg_path,
                    FloatMatrix2 const &change_of_basis,
                    FloatMatrix2 const &bounding_box_transform,
                    Float bounding_box_half_side_length,
+                   Uint32 image_index,
                    Element const &image)
 {
     // if we find attribute xrb_ignore='true' then ignore this element
@@ -171,6 +199,9 @@ void ProcessImage (std::string const &svg_path,
 
         // set the transform
         static_cast<FloatTransform2 &>(*object) = transform;
+        // set the z-depth
+        object->SetZDepth(-Float(image_index)); // this needs to be used if USE_SOFTWARE_TRANSFORM is 1 (in xrb_engine2_sprite.cpp)
+//         object->SetZDepth(1.0f - (1.0f / 65536.0f) * image_index); // this needs to be used if USE_SOFTWARE_TRANSFORM is 0 (in xrb_engine2_sprite.cpp)
 
         // if xrb_entity_type is present, attempt to create and attach an Entity
         if (image.HasAttribute("xrb_entity_type"))
@@ -278,14 +309,43 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
         ObjectLayer *object_layer = world.CreateObjectLayer(bounding_box_side_length, quadtree_depth, z_depth, g.AttributeValue("id"), g);
         world.AddObjectLayer(object_layer);
 
+        // parse the style so we can get the background color for this ObjectLayer
+        if (bounding_box->HasAttribute("style"))
+        {
+            AttributeMap style_map;
+            ParseStyle(bounding_box->AttributeValue("style"), style_map);
+
+            // parse the values
+            char c;
+            Uint32 fill_value = 0;
+            {
+                std::istringstream in(style_map["fill"]);
+                in >> c; // there is a leading '#'
+                in >> std::hex >> fill_value;
+            }
+
+            Float fill_opacity = 0.0f;
+            {
+                std::istringstream in(style_map["fill-opacity"]);
+                in >> fill_opacity; // floating point value
+            }
+
+            Float red   = (fill_value >> 16) & 0xFF;
+            Float green = (fill_value >>  8) & 0xFF;
+            Float blue  = (fill_value >>  0) & 0xFF;
+
+            object_layer->SetBackgroundColor(Color(red/255.0f, green/255.0f, blue/255.0f, fill_opacity));
+        }
+
         // read the contents
         Element const *image = NULL;
+        Uint32 image_index = 0;
         for (DomNodeVector::const_iterator image_it = g.FirstElement(image, "image");
             image_it != g.m_element.end();
-            g.NextElement(image_it, image, "image"))
+            g.NextElement(image_it, image, "image"), ++image_index)
         {
             ASSERT1(image != NULL);
-            ProcessImage(svg_path, world, current_time, object_layer, change_of_basis, bounding_box_transform, bounding_box_half_side_length, *image);
+            ProcessImage(svg_path, world, current_time, object_layer, change_of_basis, bounding_box_transform, bounding_box_half_side_length, image_index, *image);
         }
 
     } catch (std::string const &exception) {

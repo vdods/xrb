@@ -149,6 +149,9 @@ void Sprite::RenderGlTexture (
         ScaleFactors()[Dim::X],
         ScaleFactors()[Dim::Y],
         1.0f);
+#else // USE_SOFTWARE_TRANSFORM
+    // this effectively sets the z depth of the sprite
+    glPolygonOffset(0.0f, ZDepth());
 #endif
 
     // calculate the color bias
@@ -200,6 +203,8 @@ void Sprite::RenderGlTexture (
 #if !USE_SOFTWARE_TRANSFORM
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
+#else // USE_SOFTWARE_TRANSFORM
+    glPolygonOffset(0.0f, 0.0f); // default values
 #endif
 }
 

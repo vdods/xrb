@@ -336,7 +336,7 @@ void WorldView::Draw (RenderContext const &render_context)
                     -1.0, 1.0); // these values (-1, 1) are arbitrary
 
                 // actually draw the color
-                Render::DrawScreenRect(render_context, object_layer->BackgroundColor(), render_context.ClipRect());//ParentWorldViewWidget()->ScreenRect());
+                Render::DrawScreenRect(render_context, object_layer->BackgroundColor(), render_context.ClipRect());
             }
 
             // set up the GL projection matrix for drawing this object layer

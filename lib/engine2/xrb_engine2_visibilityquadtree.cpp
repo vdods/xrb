@@ -140,7 +140,7 @@ Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 }
 
 // it's faster to not use depth test
-#define USE_DEPTH_TEST 0
+#define USE_DEPTH_TEST 1
 
 Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
