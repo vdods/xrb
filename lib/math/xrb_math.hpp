@@ -46,6 +46,19 @@ namespace Math
         ASSERT1(param1 != param0);
         return (param - param0) / (param1 - param0) * (out1 - out0) + out0;
     }
+    /** The template type must have a less-than operator defined.
+      * @brief Clamp the given value to within the range [min, max].
+      */
+    template <typename T>
+    inline T Clamp (T value, T min, T max)
+    {
+        ASSERT1(!(max < min) && "min is not <= max");
+        if (value < min)
+            value = min;
+        if (max < value)
+            value = max;
+        return value;
+    }
     /** @brief Converts degrees to radians.
       */
     inline Float Radians (Float angle)
