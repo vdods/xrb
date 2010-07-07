@@ -110,9 +110,9 @@ public:
     void SetIsViewLocked (bool const is_view_locked) { m_is_view_locked = is_view_locked; }
     void SetDrawBorderGridLines (bool const draw_border_grid_lines) { m_draw_border_grid_lines = draw_border_grid_lines; }
     // formalized ways to change the view's position/zoom/rotation
-    void SetCenter (FloatVector2 const &position);
-    void SetZoomFactor (Float zoom_factor);
-    void SetAngle (Float angle);
+    virtual void SetCenter (FloatVector2 const &position);
+    virtual void SetZoomFactor (Float zoom_factor);
+    virtual void SetAngle (Float angle);
     // modifiers for the zoom factor caps
     void SetMinZoomFactor (Float min_zoom_factor);
     void SetMaxZoomFactor (Float max_zoom_factor);

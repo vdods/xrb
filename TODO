@@ -120,6 +120,10 @@ DISASTEROIDS:
 - handle wrapped space better and make the coordinate adjustment and such less fragile
 
 TODO:
+- update LastMousePosition to account for all mouse events (see LG)
+- there is a problem in lesson03 with IsOdd<T> assuming Float type when it shouldn't be.
+- use exponential for zoom factors (i.e. so that all real numbers are valid and there's
+  no need to worry about divide by zero)
 - use numeric_limits<float>::infinity() in next think time and such (see <limits>)
 - motion-blurred screenshots (take several screenshots in a row and blend them)
 - handle failures (especially file loading failures) more gracefully

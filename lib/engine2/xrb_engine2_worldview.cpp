@@ -230,28 +230,18 @@ void WorldView::SetIsTransformScalingBasedUponWidgetRadius (bool const is_transf
 
 void WorldView::MoveView (FloatVector2 const &delta_position)
 {
-    if (!IsViewLocked())
-    {
-        Translate(-delta_position);
-        // set the appropriate dirty bits
-        DirtyAllParallaxedTransformations();
-    }
+    SetCenter(Center() + delta_position);
 }
 
 void WorldView::ZoomView (Float const delta_zoom_factor)
 {
     ASSERT1(delta_zoom_factor > 0.0);
-    SetZoomFactor(m_zoom_factor * delta_zoom_factor);
+    SetZoomFactor(ZoomFactor() * delta_zoom_factor);
 }
 
 void WorldView::RotateView (Float const delta_angle)
 {
-    if (!IsViewLocked())
-    {
-        Rotate(-delta_angle);
-        // set the appropriate dirty bits
-        DirtyAllParallaxedTransformations();
-    }
+    SetAngle(Angle() + delta_angle);
 }
 
 void WorldView::DetachFromWorld ()

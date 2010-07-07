@@ -55,8 +55,25 @@ public:
     // constructors and destructor
     // ///////////////////////////////////////////////////////////////////////
 
-    inline Matrix2 () { }
-    inline Matrix2 (
+    Matrix2 () { }
+    Matrix2 (T angle)
+    {
+        m[A] = m[D] = Math::Cos(angle);
+        m[C] = Math::Sin(angle);
+        m[B] = -m[C];
+        m[X] = m[Y] = static_cast<T>(0);
+    }
+    Matrix2 (
+        T a, T b,
+        T c, T d)
+    {
+        m[A] = a;
+        m[B] = b;
+        m[C] = c;
+        m[D] = d;
+        m[X] = m[Y] = static_cast<T>(0);
+    }
+    Matrix2 (
         T a, T b, T x,
         T c, T d, T y)
     {
@@ -67,7 +84,7 @@ public:
         m[D] = d;
         m[Y] = y;
     }
-    inline Matrix2 (T const *const components)
+    Matrix2 (T const *const components)
     {
         ASSERT1(components != NULL);
     #if defined(XRB_MATRIX2_USES_MEMCPY)
@@ -77,7 +94,7 @@ public:
             m[i] = components[i];
     #endif
     }
-    inline Matrix2 (Matrix2<T> const &source)
+    Matrix2 (Matrix2<T> const &source)
     {
     #if defined(XRB_MATRIX2_USES_MEMCPY)
         memcpy(m, source.m, sizeof(T) * COMPONENT_COUNT);
@@ -86,7 +103,7 @@ public:
             m[i] = source.m[i];
     #endif
     }
-    inline Matrix2 (SimpleTransform2<T> const &source)
+    Matrix2 (SimpleTransform2<T> const &source)
     {
         m[A] = source[SimpleTransform2<T>::R];
         m[B] = static_cast<T>(0);
@@ -96,7 +113,7 @@ public:
         m[D] = source[SimpleTransform2<T>::S];
         m[Y] = source[SimpleTransform2<T>::Y];
     }
-    inline ~Matrix2 () { }
+    ~Matrix2 () { }
 
     // ///////////////////////////////////////////////////////////////////////
     // overloaded operators
@@ -428,6 +445,6 @@ typedef Matrix2<Float> FloatMatrix2;
 void Fprint (FILE *fptr, FloatMatrix2 const &matrix);
 
 } // end of namespace Xrb
-    
+
 #endif // !defined(_XRB_MATRIX2_HPP_)
 
