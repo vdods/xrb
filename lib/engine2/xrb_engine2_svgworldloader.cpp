@@ -54,6 +54,46 @@ void ParseStyle (std::string const &style, AttributeMap &style_map)
     }
 }
 
+Color ParseColorFromStyle (std::string const &style)
+{
+    AttributeMap style_map;
+    ParseStyle(style, style_map);
+
+    // parse the values -- default is opaque white (which is the default ColorMask)
+
+    // fill is the RGB color
+    char c;
+    Uint32 fill_value = 0xFFFFFF;
+    if (style_map.find("fill") != style_map.end())
+    {
+        std::istringstream in(style_map["fill"]);
+        in >> c; // there is a leading '#'
+        in >> std::hex >> fill_value;
+    }
+
+    // fill opacity is the color opacity (the A portion of the RGBA fill color)
+    Float fill_opacity = 1.0f;
+    if (style_map.find("fill-opacity") != style_map.end())
+    {
+        std::istringstream in(style_map["fill-opacity"]);
+        in >> fill_opacity; // floating point value
+    }
+
+    // opacity is the object opacity
+    Float opacity = 1.0f;
+    if (style_map.find("opacity") != style_map.end())
+    {
+        std::istringstream in(style_map["opacity"]);
+        in >> opacity; // floating point value
+    }
+
+    Float red   = (fill_value >> 16) & 0xFF;
+    Float green = (fill_value >>  8) & 0xFF;
+    Float blue  = (fill_value >>  0) & 0xFF;
+
+    return Color(red/255.0f, green/255.0f, blue/255.0f, fill_opacity*opacity);
+}
+
 std::string const &GetRequiredAttributeOrThrow (
     Element const &element,
     std::string const &attribute_name,
@@ -202,7 +242,9 @@ void ProcessImage (std::string const &svg_path,
         // set the z-depth
         object->SetZDepth(-Float(image_index)); // this needs to be used if USE_SOFTWARE_TRANSFORM is 1 (in xrb_engine2_sprite.cpp)
 //         object->SetZDepth(1.0f - (1.0f / 65536.0f) * image_index); // this needs to be used if USE_SOFTWARE_TRANSFORM is 0 (in xrb_engine2_sprite.cpp)
-
+        // set the color mask from the style attribute
+        if (image.HasAttribute("style"))
+            object->ColorMask() = ParseColorFromStyle(image.AttributeValue("style"));
         // set the is-transparent flag
         object->SetIsTransparent(image.AttributeValue("xrb_is_transparent") == "true");
 
@@ -314,31 +356,7 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
 
         // parse the style so we can get the background color for this ObjectLayer
         if (bounding_box->HasAttribute("style"))
-        {
-            AttributeMap style_map;
-            ParseStyle(bounding_box->AttributeValue("style"), style_map);
-
-            // parse the values
-            char c;
-            Uint32 fill_value = 0;
-            {
-                std::istringstream in(style_map["fill"]);
-                in >> c; // there is a leading '#'
-                in >> std::hex >> fill_value;
-            }
-
-            Float fill_opacity = 0.0f;
-            {
-                std::istringstream in(style_map["fill-opacity"]);
-                in >> fill_opacity; // floating point value
-            }
-
-            Float red   = (fill_value >> 16) & 0xFF;
-            Float green = (fill_value >>  8) & 0xFF;
-            Float blue  = (fill_value >>  0) & 0xFF;
-
-            object_layer->SetBackgroundColor(Color(red/255.0f, green/255.0f, blue/255.0f, fill_opacity));
-        }
+            object_layer->SetBackgroundColor(ParseColorFromStyle(bounding_box->AttributeValue("style")));
 
         // read the contents
         Element const *image = NULL;
