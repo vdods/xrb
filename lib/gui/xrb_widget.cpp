@@ -1016,6 +1016,10 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *e)
 {
     ASSERT1(e != NULL);
 
+    // if it was a mouse event, record the mouse position over this widget
+    if (e->IsMouseEvent())
+        m_last_mouse_position = DStaticCast<EventMouse const *>(e)->Position();
+
     // give this widget the chance to process the event
     switch (e->GetEventType())
     {
@@ -1032,8 +1036,6 @@ bool Widget::InternalProcessMouseEvent (EventMouse const *e)
             break;
 
         case Event::MOUSEMOTION:
-            // record the mouse position over this widget
-            m_last_mouse_position = DStaticCast<EventMouseMotion const *>(e)->Position();
             // let this widget have an opportunity at the event
             if (ProcessMouseMotionEvent(DStaticCast<EventMouseMotion const *>(e)))
                 return true;
