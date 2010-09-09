@@ -16,9 +16,9 @@
 namespace Xrb {
 namespace Engine2 {
 
-AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time)
+AnimatedSprite *AnimatedSprite::Create (std::string const &animation_sequence_path, Float current_time, Uint32 gltexture_flags)
 {
-    Resource<Animation::Sequence> animation_sequence = Animation::Sequence::Load(animation_sequence_path);
+    Resource<Animation::Sequence> animation_sequence = Animation::Sequence::Load(animation_sequence_path, gltexture_flags);
     return new AnimatedSprite(animation_sequence, current_time);
 }
 

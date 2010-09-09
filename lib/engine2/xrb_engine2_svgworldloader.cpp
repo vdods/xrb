@@ -28,6 +28,36 @@ using namespace Xml;
 namespace Xrb {
 namespace Engine2 {
 
+struct LoadSvgIntoWorldContext
+{
+public:
+
+    // set during construction
+    std::string const &m_svg_path;
+    World &m_world;
+    Float const m_current_time;
+    Uint32 const m_gltexture_flags;
+    // set later on
+    Document const *m_document;
+    Element const *m_svg;
+    Element const *m_g;
+    Uint32 m_layer_number;
+    ObjectLayer *m_object_layer;
+
+    LoadSvgIntoWorldContext (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags)
+        :
+        m_svg_path(svg_path),
+        m_world(world),
+        m_current_time(current_time),
+        m_gltexture_flags(gltexture_flags),
+        m_document(NULL),
+        m_svg(NULL),
+        m_g(NULL),
+        m_layer_number(0),
+        m_object_layer(NULL)
+    { }
+}; // end of struct LoadSvgIntoWorldContext
+
 // AttributeMap is a conveniently pre-defined typedef for this
 void ParseStyle (std::string const &style, AttributeMap &style_map)
 {
@@ -54,44 +84,50 @@ void ParseStyle (std::string const &style, AttributeMap &style_map)
     }
 }
 
-Color ParseColorFromStyle (std::string const &style)
+void ParseColorFromStyle (std::string const &style, Color &fill_color, Color &opacity_mask)
 {
     AttributeMap style_map;
     ParseStyle(style, style_map);
 
-    // parse the values -- default is opaque white (which is the default ColorMask)
-
-    // fill is the RGB color
-    char c;
-    Uint32 fill_value = 0xFFFFFF;
-    if (style_map.find("fill") != style_map.end())
+    // default fill is 'none', meaning transparent [black]
+    fill_color = Color::ms_transparent_black;
+    AttributeMap::const_iterator it = style_map.find("fill");
+    if (it != style_map.end() && it->second != "none")
     {
-        std::istringstream in(style_map["fill"]);
-        in >> c; // there is a leading '#'
-        in >> std::hex >> fill_value;
+        Uint32 fill_value = 0x000000;
+        {
+            char c;
+            std::istringstream in(it->second);
+            in >> c; // there is a leading '#'
+            in >> std::hex >> fill_value;
+        }
+
+        Float fill_opacity = 0.0f;
+        it = style_map.find("fill-opacity");
+        if (it != style_map.end())
+        {
+            std::istringstream in(it->second);
+            in >> fill_opacity; // floating point value
+        }
+
+        Float red   = (fill_value >> 16) & 0xFF;
+        Float green = (fill_value >>  8) & 0xFF;
+        Float blue  = (fill_value >>  0) & 0xFF;
+
+        fill_color = Color(red/255.0f, green/255.0f, blue/255.0f, fill_opacity);
     }
 
-    // fill opacity is the color opacity (the A portion of the RGBA fill color)
-    Float fill_opacity = 1.0f;
-    if (style_map.find("fill-opacity") != style_map.end())
-    {
-        std::istringstream in(style_map["fill-opacity"]);
-        in >> fill_opacity; // floating point value
-    }
-
-    // opacity is the object opacity
+    // opacity is the object opacity (which applies to sprites also).  default is totally opaque.
+    opacity_mask = Color::ms_opaque_white;
     Float opacity = 1.0f;
-    if (style_map.find("opacity") != style_map.end())
+    it = style_map.find("opacity");
+    if (it != style_map.end())
     {
-        std::istringstream in(style_map["opacity"]);
+        std::istringstream in(it->second);
         in >> opacity; // floating point value
     }
 
-    Float red   = (fill_value >> 16) & 0xFF;
-    Float green = (fill_value >>  8) & 0xFF;
-    Float blue  = (fill_value >>  0) & 0xFF;
-
-    return Color(red/255.0f, green/255.0f, blue/255.0f, fill_opacity*opacity);
+    opacity_mask[Dim::A] = opacity;
 }
 
 std::string const &GetRequiredAttributeOrThrow (
@@ -107,16 +143,18 @@ std::string const &GetRequiredAttributeOrThrow (
     return element.AttributeValue(attribute_name);
 }
 
-void ProcessImage (std::string const &svg_path,
-                   World &world,
-                   Float current_time,
-                   ObjectLayer *object_layer,
+void ProcessImage (LoadSvgIntoWorldContext &context,
                    FloatMatrix2 const &change_of_basis,
                    FloatMatrix2 const &bounding_box_transform,
                    Float bounding_box_half_side_length,
                    Uint32 image_index,
                    Element const &image)
 {
+    ASSERT1(context.m_document != NULL);
+    ASSERT1(context.m_svg != NULL);
+    ASSERT1(context.m_g != NULL);
+    ASSERT1(context.m_object_layer != NULL);
+
     // if we find attribute xrb_ignore='true' then ignore this element
     if (image.AttributeValue("xrb_ignore") == "true")
         return;
@@ -187,9 +225,7 @@ void ProcessImage (std::string const &svg_path,
             FloatTransform2 dummy(true); // post-translate, although FitMatrix2 sets this anyway
             Float angle_variance = dummy.FitMatrix2(object_transform);
             if (angle_variance > 0.01f)
-            {
                 THROW_STRING("skew transformation detected (angle variance = " << angle_variance << "); no skew transformation allowed, because then the sprite angle is undefined");
-            }
         }
         else
             THROW_STRING("malformed 'transform' attribute in <image id='" << image_id << "'>; must be of form 'translate(x,y)' or 'matrix(a,b,c,d,x,y)'");
@@ -226,13 +262,13 @@ void ProcessImage (std::string const &svg_path,
         Object *object = NULL;
         if (!animation_path.empty())
         {
-            object = AnimatedSprite::Create(animation_path, current_time);
+            object = AnimatedSprite::Create(animation_path, context.m_current_time, context.m_gltexture_flags);
             if (object == NULL)
-                fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); failed to load animation \"%s\"\n", svg_path.c_str(), animation_path.c_str());
+                fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); failed to load animation \"%s\"\n", context.m_svg_path.c_str(), animation_path.c_str());
         }
         // if nothing was loaded so far, attempt to load the image as a sprite
         if (object == NULL)
-            object = Sprite::Create(image_path);
+            object = Sprite::Create(image_path, context.m_gltexture_flags);
         if (object == NULL)
             THROW_STRING("failed to load image \"" << image_path << "\"");
         ASSERT1(object->GetEntity() == NULL && "no Entity allowed at this point");
@@ -244,7 +280,13 @@ void ProcessImage (std::string const &svg_path,
 //         object->SetZDepth(1.0f - (1.0f / 65536.0f) * image_index); // this needs to be used if USE_SOFTWARE_TRANSFORM is 0 (in xrb_engine2_sprite.cpp)
         // set the color mask from the style attribute
         if (image.HasAttribute("style"))
-            object->ColorMask() = ParseColorFromStyle(image.AttributeValue("style"));
+        {
+            Color fill_color;
+            Color opacity_mask;
+            ParseColorFromStyle(image.AttributeValue("style"), fill_color, opacity_mask);
+            object->ColorBias() = fill_color;
+            object->ColorMask() = opacity_mask;
+        }
         // set the is-transparent flag
         object->SetIsTransparent(image.AttributeValue("xrb_is_transparent") == "true");
 
@@ -259,16 +301,16 @@ void ProcessImage (std::string const &svg_path,
             ASSERT1(object != NULL);
 
             try {
-                entity = world.CreateEntity(entity_type, entity_name, *object, *object_layer, image);
+                entity = context.m_world.CreateEntity(entity_type, entity_name, *object, *context.m_object_layer, image);
                 if (entity == NULL)
                     THROW_STRING("failed to load entity type \"" << entity_type << "\" (entity name \"" << entity_name << "\")");
 
                 // set the Entity and add it to the world
                 object->SetEntity(entity);
-                world.AddDynamicObject(object, object_layer);
+                context.m_world.AddDynamicObject(object, context.m_object_layer);
             } catch (std::string const &exception) {
                 // if an exception was thrown, add it as a static object (no Entity attached)
-                world.AddStaticObject(object, object_layer);
+                context.m_world.AddStaticObject(object, context.m_object_layer);
                 // then rethrow the exception because we still want the exception printed.
                 throw exception;
             }
@@ -276,31 +318,35 @@ void ProcessImage (std::string const &svg_path,
         // if it wasn't an Entity, then add it to the World as a static object.
         else
         {
-            world.AddStaticObject(object, object_layer);
+            context.m_world.AddStaticObject(object, context.m_object_layer);
         }
 
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <image id='%s'>, layer '%s' (line %u in svg file): %s\n", svg_path.c_str(), image_id.c_str(), object_layer->Name().c_str(), image.m_filoc.LineNumber(), exception.c_str());
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <image id='%s'>, layer '%s' (line %u in svg file): %s\n", context.m_svg_path.c_str(), image_id.c_str(), context.m_object_layer->Name().c_str(), image.m_filoc.LineNumber(), exception.c_str());
     }
 }
 
-void ProcessLayer (std::string const &svg_path, World &world, Float current_time, Uint32 layer_number, Element const &g)
+void ProcessLayer (LoadSvgIntoWorldContext &context)
 {
+    ASSERT1(context.m_document != NULL);
+    ASSERT1(context.m_svg != NULL);
+    ASSERT1(context.m_g != NULL);
+
     // if we find attribute ignore='true' then ignore this element
-    if (g.AttributeValue("xrb_ignore") == "true")
+    if (context.m_g->AttributeValue("xrb_ignore") == "true")
         return;
 
-    std::string layer_id(FORMAT("unnamed layer (#" << layer_number << ")"));
+    std::string layer_id(FORMAT("unnamed layer (#" << context.m_layer_number << ")"));
 
     try {
 
         // layer id
-        layer_id = GetRequiredAttributeOrThrow(g, "id", FORMAT("layer " << layer_number << " has no 'id' attribute"));
+        layer_id = GetRequiredAttributeOrThrow(*context.m_g, "id", FORMAT("layer " << context.m_layer_number << " has no 'id' attribute"));
 
         // xrb_bounding_box
-        std::string bounding_box_id(GetRequiredAttributeOrThrow(g, "xrb_bounding_box", "missing attribute xrb_bounding_box; must specify the id of a <rect> element in this layer"));
+        std::string bounding_box_id(GetRequiredAttributeOrThrow(*context.m_g, "xrb_bounding_box", "missing attribute xrb_bounding_box; must specify the id of a <rect> element in this layer"));
         Element const *bounding_box = NULL;
-        g.FirstElement(bounding_box, "rect", "id", true, bounding_box_id);
+        context.m_g->FirstElement(bounding_box, "rect", "id", true, bounding_box_id);
         if (bounding_box == NULL)
             THROW_STRING("layer '" << layer_id << "' has invalid xrb_bounding_box='" << bounding_box_id << "'; must specify the id of a <rect> element in this layer");
         if (bounding_box->HasAttribute("transform"))
@@ -336,52 +382,60 @@ void ProcessLayer (std::string const &svg_path, World &world, Float current_time
 
         // xrb_z_depth
         Float z_depth = 0.0f;
-        if (g.HasAttribute("xrb_z_depth"))
+        if (context.m_g->HasAttribute("xrb_z_depth"))
         {
-            std::string z_depth_string(g.AttributeValue("xrb_z_depth"));
+            std::string z_depth_string(context.m_g->AttributeValue("xrb_z_depth"));
             z_depth = Util::TextToFloat(z_depth_string.c_str());
         }
 
         // xrb_quadtree_depth
         Uint32 quadtree_depth = 5; // arbitrary default
-        if (g.HasAttribute("xrb_quadtree_depth"))
+        if (context.m_g->HasAttribute("xrb_quadtree_depth"))
         {
-            std::string quadtree_depth_string(g.AttributeValue("xrb_quadtree_depth"));
+            std::string quadtree_depth_string(context.m_g->AttributeValue("xrb_quadtree_depth"));
             quadtree_depth = Util::TextToUint<Uint32>(quadtree_depth_string.c_str());
         }
 
         // create ObjectLayer with info from above, and add it to the World
-        ObjectLayer *object_layer = world.CreateObjectLayer(bounding_box_side_length, quadtree_depth, z_depth, g.AttributeValue("id"), g);
-        world.AddObjectLayer(object_layer);
+        ObjectLayer *object_layer = context.m_world.CreateObjectLayer(bounding_box_side_length, quadtree_depth, z_depth, context.m_g->AttributeValue("id"), *context.m_g);
+        context.m_world.AddObjectLayer(object_layer);
+        context.m_object_layer = object_layer;
 
         // parse the style so we can get the background color for this ObjectLayer
         if (bounding_box->HasAttribute("style"))
-            object_layer->SetBackgroundColor(ParseColorFromStyle(bounding_box->AttributeValue("style")));
+        {
+            Color fill_color;
+            Color opacity_mask;
+            ParseColorFromStyle(bounding_box->AttributeValue("style"), fill_color, opacity_mask);
+            object_layer->SetBackgroundColor(fill_color * opacity_mask);
+        }
 
         // read the contents
         Element const *image = NULL;
         Uint32 image_index = 0;
-        for (DomNodeVector::const_iterator image_it = g.FirstElement(image, "image");
-            image_it != g.m_element.end();
-            g.NextElement(image_it, image, "image"), ++image_index)
+        for (DomNodeVector::const_iterator image_it = context.m_g->FirstElement(image, "image");
+            image_it != context.m_g->m_element.end();
+            context.m_g->NextElement(image_it, image, "image"), ++image_index)
         {
             ASSERT1(image != NULL);
-            ProcessImage(svg_path, world, current_time, object_layer, change_of_basis, bounding_box_transform, bounding_box_half_side_length, image_index, *image);
+            ProcessImage(context, change_of_basis, bounding_box_transform, bounding_box_half_side_length, image_index, *image);
         }
 
+        context.m_object_layer = NULL; // done with this layer
+
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in layer '%s': %s\n", svg_path.c_str(), layer_id.c_str(), exception.c_str());
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in layer '%s': %s\n", context.m_svg_path.c_str(), layer_id.c_str(), exception.c_str());
     }
 }
 
-void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time)
+void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context)
 {
     DomNode *root = NULL;
 
     try {
 
         Parser parser;
-        bool open_file_success = parser.OpenFile(svg_path);
+        bool open_file_success = parser.OpenFile(context.m_svg_path);
         if (!open_file_success)
             THROW_STRING("failure opening file");
 
@@ -389,41 +443,51 @@ void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_
         Uint32 start_time = Singleton::Pal().CurrentTime();
         Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
         Uint32 end_time = Singleton::Pal().CurrentTime();
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", svg_path.c_str(), end_time - start_time);
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
         if (parser_return_code != Parser::PRC_SUCCESS)
             THROW_STRING("general parse error in file");
 
         start_time = Singleton::Pal().CurrentTime();
         ASSERT1(root != NULL);
         ASSERT1(root->m_type == DomNode::DOCUMENT);
-        Document const &document = *DStaticCast<Document const *>(root);
+//         Document const &document = *DStaticCast<Document const *>(root);
+        context.m_document = DStaticCast<Document const *>(root);
 
         // extract the single <svg> element which contains everything
         Element const *svg = NULL;
-        document.FirstElement(svg, "svg");
+        context.m_document->FirstElement(svg, "svg");
         if (svg == NULL) // if no <svg> element, error.
             THROW_STRING("no <svg> tag -- probably not an svg document");
         // give the world a chance to process it
-        world.ProcessSvgRootElement(*svg);
+        context.m_world.ProcessSvgRootElement(*svg);
+        context.m_svg = svg;
 
         // iterate through each <g> element for the object layers
         Element const *g = NULL;
-        Uint32 layer_number = 0;
+        context.m_layer_number = 0;
         for (DomNodeVector::const_iterator g_it = svg->FirstElement(g, "g");
              g_it != svg->m_element.end();
-             svg->NextElement(g_it, g, "g"), ++layer_number)
+             svg->NextElement(g_it, g, "g"), ++context.m_layer_number)
         {
             ASSERT1(g != NULL);
-            ProcessLayer(svg_path, world, current_time, layer_number, *g);
+            context.m_g = g;
+            ProcessLayer(context);
+            context.m_g = NULL; // done with this g
         }
         end_time = Singleton::Pal().CurrentTime();
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", svg_path.c_str(), end_time - start_time);
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
 
     } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); %s\n", svg_path.c_str(), exception.c_str());
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); %s\n", context.m_svg_path.c_str(), exception.c_str());
     }
 
     delete root;
+}
+
+void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags)
+{
+    LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags);
+    LoadSvgIntoWorld(context);
 }
 
 } // end of namespace Engine2

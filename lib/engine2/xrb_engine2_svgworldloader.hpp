@@ -79,7 +79,7 @@ namespace Engine2 {
 
 class World;
 
-void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time);
+void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags);
 
 } // end of namespace Engine2
 } // end of namespace Xrb

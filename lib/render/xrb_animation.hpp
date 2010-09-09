@@ -50,9 +50,14 @@ public:
         {
         public:
 
-            LoadParameters (std::string const &path) : m_path(path) { }
+            LoadParameters (std::string const &path, Uint32 gltexture_flags)
+                :
+                m_path(path),
+                m_gltexture_flags(gltexture_flags)
+            { }
 
             std::string const &Path () const { return m_path; }
+            Uint32 GlTextureFlags () const { return m_gltexture_flags; }
 
             virtual std::string ResourceName () const;
             virtual bool IsLessThan (ResourceLoadParameters const &p) const;
@@ -62,18 +67,19 @@ public:
         private:
 
             std::string m_path;
+            Uint32 m_gltexture_flags;
         }; // end of class Animation::Sequence::LoadParameters
 
         Sequence (Uint32 length, AnimationType default_type, Float default_duration);
         ~Sequence ();
 
-        static Resource<Sequence> Load (std::string const &path)
+        static Resource<Sequence> Load (std::string const &path, Uint32 gltexture_flags)
         {
-            return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, new LoadParameters(path));
+            return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, new LoadParameters(path, gltexture_flags));
         }
         static Resource<Sequence> LoadMissing ()
         {
-            LoadParameters *load_parameters = new LoadParameters("");
+            LoadParameters *load_parameters = new LoadParameters("", 0); // 0 = GlTexture::NONE
             load_parameters->Fallback();
             return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, load_parameters);
         }

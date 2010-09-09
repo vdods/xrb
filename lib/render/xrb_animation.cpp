@@ -124,7 +124,7 @@ Animation::Sequence *Animation::Sequence::Create (ResourceLoadParameters const &
             DataFile::Array const *frames = root->PathElementArray("|frames");
             Sequence *retval = new Sequence(frames->ElementCount(), default_type, default_duration);
             for (Uint32 i = 0; i < retval->Length(); ++i)
-                retval->m_frame[i] = GlTexture::Load(frames->StringElement(i));
+                retval->m_frame[i] = GlTexture::Load(frames->StringElement(i), load_parameters.GlTextureFlags());
             return retval;
         }
         catch (std::string const &e)
