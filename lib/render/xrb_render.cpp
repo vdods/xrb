@@ -95,6 +95,7 @@ void Render::DrawPolygon (
     Float const radius,
     Float angle,
     Color const &color,
+    bool fill,
     Uint32 const vertex_count)
 {
     // a polygon with less than 3 vertices is degenerate
@@ -127,7 +128,7 @@ void Render::DrawPolygon (
             vertex_array[i] = center + radius * FloatVector2(cos(angle), sin(angle));
 
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
-        glDrawArrays(GL_LINE_LOOP, 0, vertex_count);
+        glDrawArrays(fill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, vertex_count);
 
         delete[] vertex_array;
     }
@@ -141,7 +142,8 @@ void Render::DrawCircle (
     FloatMatrix2 const &transformation,
     FloatVector2 const &center,
     Float const radius,
-    Color const &color)
+    Color const &color,
+    bool fill)
 {
     if (render_context.MaskAndBiasWouldResultInNoOp(color[Dim::A]))
         return;
@@ -177,7 +179,7 @@ void Render::DrawCircle (
     ASSERT1(facet_count >= 6);
     ASSERT2(facet_count <= 30);
 
-    DrawPolygon(render_context, center, radius, 0.0f, color, facet_count);
+    DrawPolygon(render_context, center, radius, 0.0f, color, fill, facet_count);
 }
 
 void Render::DrawCircularArc (
@@ -293,7 +295,7 @@ void Render::DrawScreenRect (
     {
         Sint16 vertex_coordinate_array[8] =
         {
-            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y], 
+            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y],
             screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
             screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
             screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
@@ -355,11 +357,14 @@ void Render::DrawScreenRectTexture (
 
         Sint16 vertex_coordinate_array[8] =
         {
-            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y], 
+            screen_rect.BottomLeft()[Dim::X], screen_rect.BottomLeft()[Dim::Y],
             screen_rect.BottomRight()[Dim::X], screen_rect.BottomRight()[Dim::Y],
             screen_rect.TopLeft()[Dim::X], screen_rect.TopLeft()[Dim::Y],
             screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
         };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
         glClientActiveTexture(GL_TEXTURE0);

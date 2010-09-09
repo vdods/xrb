@@ -102,6 +102,7 @@ namespace Render
       * @param angle The angle at which the first vertex will be placed upon
       *              the bounding circle.
       * @param color The color to use to render the polygon.
+      * @param fill Specify true iff the polygon should be filled with the color.
       * @param vertex_count The number of vertices the polygon should have.
       */
     void DrawPolygon (
@@ -110,6 +111,7 @@ namespace Render
         Float radius,
         Float angle,
         Color const &color,
+        bool fill,
         Uint32 vertex_count);
     /** The number of lines used to draw the circle is dependent on
       * @c transformation.  The larger the circle appears, the more
@@ -127,13 +129,15 @@ namespace Render
       * @param center The center of the circle, in modelspace.
       * @param radius The radius of the circle, in modelspace.
       * @param color The color to use to render the circle.
+      * @param fill Specify true iff the circle should be filled with the color.
       */
     void DrawCircle (
         RenderContext const &render_context,
         FloatMatrix2 const &transformation,
         FloatVector2 const &center,
         Float radius,
-        Color const &color);
+        Color const &color,
+        bool fill);
     /** The number of lines used to draw the arc is dependent on
       * @c transformation.  The larger the arc appears, the more
       * lines will be used to draw it.  No more than 30 lines per full
