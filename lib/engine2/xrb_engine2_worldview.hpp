@@ -89,9 +89,16 @@ public:
         FloatMatrix2 const &world_to_view,
         FloatMatrix2 const &view_to_whatever,
         ObjectLayer const *object_layer) const;
+    // parallaxed transformation/view-and-object-layer-property accessors
+    FloatMatrix2 const &ParallaxedWorldToWorldView () const;
+    FloatMatrix2 const &ParallaxedWorldViewToWorld () const;
+    FloatMatrix2 const &ParallaxedWorldToScreen () const;
+    FloatMatrix2 const &ParallaxedScreenToWorld () const;
     Float MinorAxisRadius () const;
     Float MajorAxisRadius () const;
     Float CornerRadius () const;
+    ScreenCoord MinorScreenDimension () const;
+    ScreenCoord MajorScreenDimension () const;
     bool IsTransformScalingBasedUponWidgetRadius () const
     {
         return m_is_transform_scaling_based_upon_widget_radius;
@@ -155,11 +162,6 @@ protected:
 
     ObjectLayer *MainObjectLayer () const;
     Float GridScaleUnit (Uint32 grid_scale) const;
-    // parallaxed transformation/view-and-object-layer-property accessors
-    FloatMatrix2 const &ParallaxedWorldToWorldView () const;
-    FloatMatrix2 const &ParallaxedWorldViewToWorld () const;
-    FloatMatrix2 const &ParallaxedWorldToScreen () const;
-    FloatMatrix2 const &ParallaxedScreenToWorld () const;
 
     // this is called in SetWorld, after m_world is assigned.
     virtual void HandleAttachedWorld () { }

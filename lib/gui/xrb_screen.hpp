@@ -59,6 +59,9 @@ public:
     // does not cause two files to be written, the later call overrides the
     // earlier call.  specify an empty path to cancel.
     void RequestScreenshot (std::string const &screenshot_path);
+    // sets up the GL projection matrix based on the given clip_rect.  this should
+    // only really be used internally by XRB.
+    static void SetProjectionMatrix (ScreenCoordRect const &clip_rect);
     // sets the viewport for drawing into a widget
     void SetViewport (ScreenCoordRect const &clip_rect) const;
     // draws the whole fucking thing.

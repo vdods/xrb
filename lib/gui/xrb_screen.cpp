@@ -105,7 +105,7 @@ void Screen::RequestScreenshot (std::string const &screenshot_path)
     fprintf(stderr, "\n");
 }
 
-void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
+void Screen::SetProjectionMatrix (ScreenCoordRect const &clip_rect)
 {
     ASSERT1(clip_rect.IsValid());
 
@@ -119,11 +119,17 @@ void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
         clip_rect.Left(), clip_rect.Right(),
         clip_rect.Bottom(), clip_rect.Top(),
         -1.0, 1.0); // these values (-1, 1) are arbitrary
+}
+
+void Screen::SetViewport (ScreenCoordRect const &clip_rect) const
+{
+    SetProjectionMatrix(clip_rect);
 
     // set up the viewport which is the rectangle on screen which
     // will be rendered to.  this also properly sets up the clipping
     // planes.
 
+    ASSERT1(clip_rect.IsValid());
     ScreenCoordRect rotated_clip_rect(RotatedScreenRect(clip_rect));
     glViewport(
         rotated_clip_rect.Left(),

@@ -111,6 +111,59 @@ FloatMatrix2 WorldView::ParallaxedTransformation (
     return world_to_whatever;
 }
 
+FloatMatrix2 const &WorldView::ParallaxedWorldToWorldView () const
+{
+    if (m_is_parallaxed_world_to_view_dirty)
+    {
+        m_parallaxed_world_to_view =
+            ParallaxedTransformation(
+                Transformation(),
+                FloatMatrix2::ms_identity,
+                NULL);
+        m_is_parallaxed_world_to_view_dirty = false;
+    }
+
+    return m_parallaxed_world_to_view;
+}
+
+FloatMatrix2 const &WorldView::ParallaxedWorldViewToWorld () const
+{
+    if (m_is_parallaxed_view_to_world_dirty)
+    {
+        m_parallaxed_view_to_world = ParallaxedWorldToWorldView().Inverse();
+        m_is_parallaxed_view_to_world_dirty = false;
+    }
+
+    return m_parallaxed_view_to_world;
+}
+
+FloatMatrix2 const &WorldView::ParallaxedWorldToScreen () const
+{
+    if (m_is_parallaxed_world_to_screen_dirty)
+    {
+        m_parallaxed_world_to_screen =
+            ParallaxedTransformation(
+                Transformation(),
+                ParentWorldViewWidget()->Transformation(),
+                NULL);
+        m_is_parallaxed_world_to_screen_dirty = false;
+    }
+
+    return m_parallaxed_world_to_screen;
+}
+
+FloatMatrix2 const &WorldView::ParallaxedScreenToWorld () const
+{
+    if (m_is_parallaxed_screen_to_world_dirty)
+    {
+        m_parallaxed_screen_to_world =
+            ParallaxedWorldToScreen().Inverse();
+        m_is_parallaxed_screen_to_world_dirty = false;
+    }
+
+    return m_parallaxed_screen_to_world;
+}
+
 Float WorldView::MinorAxisRadius () const
 {
     FloatVector2 minor_axis;
@@ -155,6 +208,16 @@ Float WorldView::CornerRadius () const
     return
         (ParallaxedScreenToWorld() * corner_vector -
          ParallaxedScreenToWorld() * FloatVector2::ms_zero).Length();
+}
+
+ScreenCoord WorldView::MinorScreenDimension () const
+{
+    return Min(m_parent_world_view_widget->Width(), m_parent_world_view_widget->Height());
+}
+
+ScreenCoord WorldView::MajorScreenDimension () const
+{
+    return Max(m_parent_world_view_widget->Width(), m_parent_world_view_widget->Height());
 }
 
 void WorldView::SetCenter (FloatVector2 const &position)
@@ -310,21 +373,9 @@ void WorldView::Draw (RenderContext const &render_context)
         {
             // paint the widget area with the ObjectLayer background color
             {
-                // this projection matrix stuff is from Screen::SetViewport,
-                // and is necessary because PushParallaxedProjectionMatrix
-                // seems to screw things up
-
-                // set up the GL projection matrix here
-                glMatrixMode(GL_PROJECTION);
-                // there is an extra copy of the matrix on the stack so don't
-                // have to worry about fucking it up.
-                glPopMatrix();
-                glPushMatrix();
-                glOrtho(
-                    render_context.ClipRect().Left(), render_context.ClipRect().Right(),
-                    render_context.ClipRect().Bottom(), render_context.ClipRect().Top(),
-                    -1.0, 1.0); // these values (-1, 1) are arbitrary
-
+                // this projection matrix stuff is called by Screen::SetViewport,
+                // and is necessary in order to draw the layer's background color rect.
+                Screen::SetProjectionMatrix(render_context.ClipRect());
                 // actually draw the color
                 Render::DrawScreenRect(render_context, object_layer->BackgroundColor(), render_context.ClipRect());
             }
@@ -405,6 +456,11 @@ void WorldView::Draw (RenderContext const &render_context)
 
         PopGLProjectionMatrix();
     }
+
+    // reset the projection matrix back to the state set by Screen::SetViewport
+    // (do this instead of using the projection matrix stack because that stack
+    // depth is only guaranteed to be 2 -- though maybe it's still possible).
+    Screen::SetProjectionMatrix(render_context.ClipRect());
 }
 
 bool WorldView::ProcessKeyEvent (EventKey const *e)
@@ -466,59 +522,6 @@ Float WorldView::GridScaleUnit (Uint32 const grid_scale) const
 {
     return 0.5f * MainObjectLayer()->SideLength() /
            Math::Pow(static_cast<Float>(m_grid_number_base), static_cast<Float>(grid_scale));
-}
-
-FloatMatrix2 const &WorldView::ParallaxedWorldToWorldView () const
-{
-    if (m_is_parallaxed_world_to_view_dirty)
-    {
-        m_parallaxed_world_to_view =
-            ParallaxedTransformation(
-                Transformation(),
-                FloatMatrix2::ms_identity,
-                NULL);
-        m_is_parallaxed_world_to_view_dirty = false;
-    }
-
-    return m_parallaxed_world_to_view;
-}
-
-FloatMatrix2 const &WorldView::ParallaxedWorldViewToWorld () const
-{
-    if (m_is_parallaxed_view_to_world_dirty)
-    {
-        m_parallaxed_view_to_world = ParallaxedWorldToWorldView().Inverse();
-        m_is_parallaxed_view_to_world_dirty = false;
-    }
-
-    return m_parallaxed_view_to_world;
-}
-
-FloatMatrix2 const &WorldView::ParallaxedWorldToScreen () const
-{
-    if (m_is_parallaxed_world_to_screen_dirty)
-    {
-        m_parallaxed_world_to_screen =
-            ParallaxedTransformation(
-                Transformation(),
-                ParentWorldViewWidget()->Transformation(),
-                NULL);
-        m_is_parallaxed_world_to_screen_dirty = false;
-    }
-
-    return m_parallaxed_world_to_screen;
-}
-
-FloatMatrix2 const &WorldView::ParallaxedScreenToWorld () const
-{
-    if (m_is_parallaxed_screen_to_world_dirty)
-    {
-        m_parallaxed_screen_to_world =
-            ParallaxedWorldToScreen().Inverse();
-        m_is_parallaxed_screen_to_world_dirty = false;
-    }
-
-    return m_parallaxed_screen_to_world;
 }
 
 void WorldView::DrawGridLines (RenderContext const &render_context)
@@ -686,10 +689,7 @@ void WorldView::PushParallaxedGLProjectionMatrix (
     }
     else
     {
-        Float min_viewport_size =
-            static_cast<Float>(
-                Min(render_context.ClipRect().Size()[Dim::X],
-                    render_context.ClipRect().Size()[Dim::Y]));
+        Float min_viewport_size = MinorScreenDimension();
         glScalef(
             min_viewport_size / render_context.ClipRect().Size()[Dim::X],
             min_viewport_size / render_context.ClipRect().Size()[Dim::Y],
