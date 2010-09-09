@@ -107,12 +107,12 @@ public:
     void SetWidgetSkinFontFacePath (
         WidgetSkin::FontType font_type,
         std::string const &font_face_path);
-    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontFacePath .
+    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontHeightRatio .
       */
     void SetWidgetSkinFontHeightRatio (
         WidgetSkin::FontType font_type,
         Float font_height_ratio);
-    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontHeightRatio .
+    /** @brief Frontend for @ref Xrb::WidgetSkin::SetFontHeight .
       */
     void SetWidgetSkinFontHeight (
         WidgetSkin::FontType font_type,
