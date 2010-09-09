@@ -17,9 +17,9 @@
 namespace Xrb {
 namespace Engine2 {
 
-Sprite *Sprite::Create (std::string const &asset_path)
+Sprite *Sprite::Create (std::string const &asset_path, Uint32 gltexture_flags)
 {
-    return new Sprite(GlTexture::Load(asset_path));
+    return new Sprite(GlTexture::Load(asset_path, gltexture_flags));
 }
 
 Sprite *Sprite::Create (Serializer &serializer)
