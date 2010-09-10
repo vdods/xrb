@@ -57,6 +57,13 @@ void AnimatedSprite::Draw (
     RenderGlTexture(draw_data, alpha_mask, m_animation.Frame(GetWorld()->MostRecentFrameTime()));
 }
 
+Object *AnimatedSprite::Clone () const
+{
+    AnimatedSprite *retval = new AnimatedSprite(m_animation);
+    retval->CloneProperties(*this);
+    return retval;
+}
+
 AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)
     :
     Sprite(Resource<GlTexture>()), // invalid texture, since we don't use it
@@ -75,16 +82,18 @@ void AnimatedSprite::WriteClassSpecific (Serializer &serializer) const
     ASSERT1(false);
 }
 
-void AnimatedSprite::CloneProperties (Object const *const object)
+void AnimatedSprite::CloneProperties (AnimatedSprite const &animated_sprite)
 {
-    ASSERT1(object->GetObjectType() == OT_ANIMATED_SPRITE);
-    AnimatedSprite const *animated_sprite = DStaticCast<AnimatedSprite const *>(object);
-    ASSERT1(animated_sprite != NULL);
+    Sprite::CloneProperties(animated_sprite);
 
-    m_animation = animated_sprite->m_animation;
-
-    Sprite::CloneProperties(object);
+    m_animation = animated_sprite.m_animation;
 }
+
+AnimatedSprite::AnimatedSprite (Animation const &animation)
+    :
+    Sprite(Resource<GlTexture>()), // invalid texture, since we don't use it
+    m_animation(animation)
+{ }
 
 } // end of namespace Engine2
 } // end of namespace Xrb

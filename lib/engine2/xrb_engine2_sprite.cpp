@@ -53,6 +53,13 @@ void Sprite::Draw (Object::DrawData const &draw_data, Float alpha_mask) const
     RenderGlTexture(draw_data, alpha_mask, **m_gltexture);
 }
 
+Object *Sprite::Clone () const
+{
+    Sprite *retval = new Sprite(m_gltexture);
+    retval->CloneProperties(*this);
+    return retval;
+}
+
 void Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
 {
     ASSERT1(physical_size_ratios[Dim::X] > 0.0f);
@@ -208,18 +215,14 @@ void Sprite::RenderGlTexture (
 #endif
 }
 
-void Sprite::CloneProperties (Object const *const object)
+void Sprite::CloneProperties (Sprite const &sprite)
 {
-    ASSERT1(object->GetObjectType() == OT_SPRITE || object->GetObjectType() == OT_ANIMATED_SPRITE);
-    Sprite const *sprite = DStaticCast<Sprite const *>(object);
-    ASSERT1(sprite != NULL);
+    Object::CloneProperties(sprite);
 
-    m_gltexture = sprite->m_gltexture;
-    m_is_round = sprite->m_is_round;
-    m_physical_size_ratios = sprite->m_physical_size_ratios;
+    m_gltexture = sprite.m_gltexture;
+    m_is_round = sprite.m_is_round;
+    m_physical_size_ratios = sprite.m_physical_size_ratios;
     IndicateRadiiNeedToBeRecalculated();
-
-    Object::CloneProperties(object);
 }
 
 } // end of namespace Engine2

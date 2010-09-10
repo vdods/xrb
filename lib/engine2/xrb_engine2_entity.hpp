@@ -110,6 +110,10 @@ public:
     // efficiently re-adds this Entity's object back into the quadtree
     void ReAddToQuadTree (QuadTreeType quad_tree_type);
 
+    // copies the properties of the given entity into this one
+    // note: this entity must not be in the world during this call.
+    void CloneProperties (Entity const &entity);
+
     // ///////////////////////////////////////////////////////////////////
     // event-scheduling procedures
     // ///////////////////////////////////////////////////////////////////
@@ -160,8 +164,6 @@ protected:
 
     // will be called when this Entity is assigned to an Object
     virtual void HandleNewOwnerObject () = 0;
-    // duplicates the given Entity's properties onto this one
-    virtual void CloneProperties (Entity const *entity) = 0;
 
 private:
 

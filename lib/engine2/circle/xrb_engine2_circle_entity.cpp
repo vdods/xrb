@@ -66,6 +66,19 @@ FloatVector2 Entity::AmbientVelocity (Float scan_area_radius) const
         return ambient_momentum / ambient_mass;
 }
 
+void Entity::CloneProperties (Entity const &entity)
+{
+    Engine2::Entity::CloneProperties(entity);
+
+    m_next_time_to_think = entity.m_next_time_to_think;
+//     m_collision_type = entity.m_collision_type; // don't copy this -- unless it becomes a problem
+    m_elasticity = entity.m_elasticity;
+    m_mass = entity.m_mass;
+    m_velocity = entity.m_velocity;
+    m_force = entity.m_force;
+    m_angular_velocity = entity.m_angular_velocity;
+}
+
 void Entity::ApplyInterceptCourseAcceleration (
     Entity *target,
     Float maximum_thrust_force,

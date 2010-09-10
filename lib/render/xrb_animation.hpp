@@ -100,6 +100,7 @@ public:
     }; // end of class Animation::Sequence
 
     Animation (Resource<Sequence> const &sequence, AnimationType type, Float duration, Float sequence_start_time);
+    Animation (Animation const &animation);
 
     Resource<Sequence> const &GetSequence () const { return m_sequence; }
     AnimationType Type () const { return m_type; }

@@ -117,6 +117,14 @@ void Entity::ReAddToQuadTree (QuadTreeType const quad_tree_type)
     }
 }
 
+void Entity::CloneProperties (Entity const &entity)
+{
+    ASSERT1(!IsInWorld() && "can't CloneProperties() on an Entity that is in the world");
+    m_wrapped_offset = entity.m_wrapped_offset;
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
+}
+
 void Entity::ScheduleForDeletion (Float time_delay)
 {
     ASSERT1(IsInWorld());
@@ -143,14 +151,6 @@ void Entity::ScheduleForRemovalFromWorld (Float time_delay)
             this,
             OwnerObject()->GetWorld()->MostRecentFrameTime() + time_delay,
             Event::ENGINE2_REMOVE_ENTITY_FROM_WORLD));
-}
-
-void Entity::CloneProperties (Entity const *const entity)
-{
-    ASSERT1(entity != NULL);
-    m_wrapped_offset = entity->m_wrapped_offset;
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::X]));
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(m_wrapped_offset[Dim::Y]));
 }
 
 void Entity::ReadClassSpecific (Serializer &serializer)

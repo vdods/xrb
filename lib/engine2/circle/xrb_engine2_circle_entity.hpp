@@ -104,6 +104,10 @@ public:
     // public procedures
     // ///////////////////////////////////////////////////////////////////////
 
+    // copies the properties of the given entity into this one
+    // note: this entity must not be in the world during this call.
+    void CloneProperties (Entity const &entity);
+
     // adds the given vector to the velocity
     void AccumulateVelocity (FloatVector2 const &velocity)
     {
@@ -205,7 +209,6 @@ protected:
     // ///////////////////////////////////////////////////////////////////////
 
     virtual void HandleNewOwnerObject () { }
-    virtual void CloneProperties (Engine2::Entity const *entity) { }
 
 private:
 

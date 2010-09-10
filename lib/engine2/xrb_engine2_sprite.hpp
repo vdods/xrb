@@ -45,6 +45,8 @@ public:
 
     // draws this sprite
     virtual void Draw (Object::DrawData const &draw_data, Float alpha_mask) const;
+    // create a clone of this object (sprite)
+    virtual Object *Clone () const;
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers
@@ -112,8 +114,8 @@ protected:
     // ///////////////////////////////////////////////////////////////////
 
     void RenderGlTexture (Object::DrawData const &draw_data, Float alpha_mask, GlTexture const &gltexture) const;
-    // copies the properties of the given object to this object
-    void CloneProperties (Object const *object);
+    // copies the properties of the given sprite to this sprite
+    void CloneProperties (Sprite const &sprite);
 
     // the texture to apply to this
     Resource<GlTexture> m_gltexture;

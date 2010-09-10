@@ -41,9 +41,9 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws this sprite
-    virtual void Draw (
-        Object::DrawData const &draw_data,
-        Float alpha_mask) const;
+    virtual void Draw (Object::DrawData const &draw_data, Float alpha_mask) const;
+    // create a clone of this object (animated sprite)
+    virtual Object *Clone () const;
 
 protected:
 
@@ -63,10 +63,15 @@ protected:
 
     // ///////////////////////////////////////////////////////////////////
 
-    // copies the properties of the given object to this object
-    void CloneProperties (Object const *object);
+    // copies the properties of the given animated sprite to this one
+    void CloneProperties (AnimatedSprite const &animated_sprite);
 
     Animation m_animation;
+
+private:
+
+    // for use only in Clone()
+    AnimatedSprite (Animation const &animation);
 }; // end of class Engine2::Sprite
 
 } // end of namespace Engine2

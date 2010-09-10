@@ -192,7 +192,6 @@ protected:
     // These are pure virtual methods which have to be implemented in Entity
     // subclasses.  For our purposes, they can be left empty.
     virtual void HandleNewOwnerObject () { }
-    virtual void CloneProperties (Entity const *entity) { }
 
 private:
 

@@ -41,9 +41,9 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws the compound
-    virtual void Draw (
-        DrawData const &draw_data,
-        Float alpha_mask) const;
+    virtual void Draw (DrawData const &draw_data, Float alpha_mask) const;
+    // create a clone of this object (compound)
+    virtual Object *Clone () const;
 
 protected:
 
@@ -69,8 +69,8 @@ protected:
 
     // ///////////////////////////////////////////////////////////////////
 
-    // copies the properties of the given object (compound) to this compound
-    void CloneProperties (Object const *object);
+    // copies the properties of the given compound to this compound
+    void CloneProperties (Compound const &compound);
 
     // move this geometry into CompoundGeometry (or some such)
     // so that it can be ResourceLibrary'd

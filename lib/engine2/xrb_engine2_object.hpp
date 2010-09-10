@@ -160,6 +160,8 @@ public:
 
     // draw this object using the given alpha mask
     virtual void Draw (DrawData const &draw_data, Float alpha_mask) const { }
+    // create a clone of this object
+    virtual Object *Clone () const;
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers
@@ -259,7 +261,7 @@ protected:
     // ///////////////////////////////////////////////////////////////////
 
     // copies the properties of the given object to this object
-    void CloneProperties (Object const *object);
+    void CloneProperties (Object const &object);
     // takes care of recalculating the transform if necessary, and
     // recalculating the radii if necessary.
     void CalculateTransform () const;

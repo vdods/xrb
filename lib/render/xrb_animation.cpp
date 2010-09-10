@@ -176,6 +176,15 @@ Animation::Animation (
     SetDuration(duration);
 }
 
+Animation::Animation (Animation const &animation)
+    :
+    m_sequence(animation.m_sequence),
+    m_type(animation.m_type),
+    m_duration(animation.m_duration),
+    m_sequence_start_time(animation.m_sequence_start_time),
+    m_data(animation.m_data)
+{ }
+
 GlTexture const &Animation::Frame (Float current_time) const
 {
     ASSERT1(m_sequence.IsValid());

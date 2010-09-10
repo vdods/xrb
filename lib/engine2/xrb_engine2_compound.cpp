@@ -86,6 +86,13 @@ void Compound::Draw (
     glPopMatrix();
 }
 
+Object *Compound::Clone () const
+{
+    Compound *retval = new Compound();
+    retval->CloneProperties(*this);
+    return retval;
+}
+
 Compound::Compound ()
     :
     Object(OT_COMPOUND)
@@ -148,29 +155,27 @@ void Compound::CalculateRadius (QuadTreeType quad_tree_type) const
     }
 }
 
-void Compound::CloneProperties (Object const *const object)
+void Compound::CloneProperties (Compound const &compound)
 {
-    ASSERT1(object->GetObjectType() == OT_COMPOUND);
-    Compound const *compound = DStaticCast<Compound const *>(object);
-    ASSERT1(compound != NULL);
+    Object::CloneProperties(compound);
 
     ASSERT1(m_vertex_count == 0);
     ASSERT1(m_vertex_array == NULL);
 
-    m_vertex_count = compound->m_vertex_count;
+    delete[] m_vertex_array;
+    m_vertex_count = compound.m_vertex_count;
     m_vertex_array = new FloatVector2[m_vertex_count];
     for (Uint32 i = 0; i < m_vertex_count; ++i)
-        m_vertex_array[i] = compound->m_vertex_array[i];
+        m_vertex_array[i] = compound.m_vertex_array[i];
 
-    m_polygon_count = compound->m_polygon_count;
+    delete[] m_polygon_array;
+    m_polygon_count = compound.m_polygon_count;
     m_polygon_array = new Polygon[m_polygon_count];
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].CloneProperties(
-            &compound->m_polygon_array[i],
-            compound->m_vertex_array,
+            &compound.m_polygon_array[i],
+            compound.m_vertex_array,
             m_vertex_array);
-
-    Object::CloneProperties(object);
 }
 
 } // end of namespace Engine2

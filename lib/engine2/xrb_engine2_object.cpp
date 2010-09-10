@@ -180,6 +180,13 @@ void Object::Write (Serializer &serializer) const
         m_entity->Write(serializer);
 }
 
+Object *Object::Clone () const
+{
+    Object *retval = new Object(m_object_type);
+    retval->CloneProperties(*this);
+    return retval;
+}
+
 World *Object::GetWorld () const
 {
     ASSERT1(m_object_layer != NULL);
@@ -248,15 +255,18 @@ void Object::WriteClassSpecific (Serializer &serializer) const
     serializer.WriteAggregate<Color>(m_color_mask);
 }
 
-void Object::CloneProperties (Object const *const object)
+void Object::CloneProperties (Object const &object)
 {
-    ASSERT1(object != NULL);
+    ASSERT1(GetObjectLayer() == NULL && "can't CloneProperties into an Object that is added to the world already");
 
-    SetTranslation(object->Translation());
-    SetScaleFactors(object->ScaleFactors());
-    SetAngle(object->Angle());
-    m_color_bias = object->m_color_bias;
-    m_color_mask = object->m_color_mask;
+    SetTranslation(object.Translation());
+    SetScaleFactors(object.ScaleFactors());
+    SetAngle(object.Angle());
+    m_z_depth = object.m_z_depth;
+    m_color_bias = object.m_color_bias;
+    m_color_mask = object.m_color_mask;
+    m_radii_need_to_be_recalculated = true;
+    m_is_transparent = object.m_is_transparent;
 }
 
 void Object::CalculateTransform () const
