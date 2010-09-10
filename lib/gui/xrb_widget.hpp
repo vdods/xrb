@@ -259,6 +259,10 @@ public:
       *        this widget.
       */
     inline ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
+    /** Integer division is involved, so rounding may occur.
+      * @brief Returns the current position of the center of this widget.
+      */
+    inline ScreenCoordVector2 Center () const { return m_screen_rect.Center(); }
     /** @brief Returns the current size of this widget.
       */
     inline ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }

@@ -41,7 +41,6 @@ Widget::Widget (ContainerWidget *const parent, std::string const &name)
 
     m_accepts_focus = false;
     m_accepts_mouseover = true;
-    m_render_background = NULL;
     m_name = name;
     m_is_enabled = true;
     m_is_hidden = false;
