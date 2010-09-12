@@ -31,6 +31,7 @@ namespace Lvd {
 namespace Xml {
 
 struct DomNode;
+struct Element;
 class Scanner;
 %}
 %target.cpp.class_name Parser
@@ -60,6 +61,10 @@ class Scanner;
     // if you supplied your own istream to OpenUsingStream(), a call to Close()
     // will NOT close your istream.
     bool Close ();
+
+    // used to parse only up to the first non-PI element (i.e. the root element),
+    // for use in lightweight retrieval of metadata (attributes) in the root element.
+    Element *ParseOnlyRootElement ();
 
 private:
 
@@ -170,6 +175,31 @@ bool Parser::Close ()
     return m_scanner.Close();
 }
 
+Element *Parser::ParseOnlyRootElement ()
+{
+    DomNode *return_token = NULL;
+    while (true)
+    {
+        if (IsAtEndOfInput())
+        {
+            EmitError("unexpected end of input", GetFiLoc());
+            return NULL;
+        }
+
+        ParserReturnCode prc = Parse(&return_token, ParseNonterminal::pi_or_start_tag);
+        if (prc != PRC_SUCCESS)
+            EmitError("general parse error", GetFiLoc());
+
+        if (ErrorsWereEncountered())
+            return NULL;
+
+        if (return_token != NULL && return_token->m_type == DomNode::ELEMENT)
+            break;
+    }
+
+    return static_cast<Element *>(return_token);
+}
+
 void Parser::EmitWarning (std::string const &message, FiLoc const &filoc)
 {
     m_scanner.EmitWarning(message, filoc);
@@ -232,6 +262,15 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     %target.cpp {
         return list;
     }
+;
+
+%nonterminal pi_or_start_tag %type.cpp "Element *"
+:
+    processing_instruction:pi %target.cpp { return pi; }
+|
+    start_tag:start_tag %target.cpp { return start_tag; }
+|
+    selfended_tag:tag %target.cpp { return tag; }
 ;
 
 %nonterminal element_list %type.cpp "Document *"
