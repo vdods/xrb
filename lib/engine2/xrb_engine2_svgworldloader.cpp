@@ -302,12 +302,18 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
 
             try {
                 entity = context.m_world.CreateEntity(entity_type, entity_name, *object, *context.m_object_layer, image);
-                if (entity == NULL)
-                    THROW_STRING("failed to load entity type \"" << entity_type << "\" (entity name \"" << entity_name << "\")");
-
-                // set the Entity and add it to the world
-                object->SetEntity(entity);
-                context.m_world.AddDynamicObject(object, context.m_object_layer);
+                if (entity != NULL)
+                {
+                    // set the Entity and add it to the world
+                    object->SetEntity(entity);
+                    context.m_world.AddDynamicObject(object, context.m_object_layer);
+                }
+                else
+                {
+                    // if the returned entity was NULL, it signifies that there should be no entity
+                    // associated with this image, and a static sprite should be used instead.
+                    context.m_world.AddStaticObject(object, context.m_object_layer);
+                }
             } catch (std::string const &exception) {
                 // if an exception was thrown, add it as a static object (no Entity attached)
                 context.m_world.AddStaticObject(object, context.m_object_layer);

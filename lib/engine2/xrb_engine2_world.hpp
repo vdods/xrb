@@ -101,7 +101,10 @@ public:
     // Object instance (e.g. Sprite) which the returned Entity will be attached
     // to.  object_layer is the ObjectLayer this Entity will be added to.
     // finally, image is the <image> element corresponding to this entity, giving
-    // the world a chance to process it.
+    // the world a chance to process it.  errors should be indicated by throwing
+    // a std::string.  NULL may be returned; this indicates that the corresponding
+    // image designates a static sprite with no entity attached (i.e. downgrade
+    // to non-entity).
     virtual Entity *CreateEntity (
         std::string const &entity_type,
         std::string const &entity_name,
@@ -150,6 +153,11 @@ public:
     // for removing a dynamic object (causes them to be removed from
     // the dynamic object vector and the physics handler).
     void RemoveDynamicObject (Object *dynamic_object);
+    // for turning a dynamic object into a static one -- calls RemoveDynamicObject,
+    // then AddStaticObject.  the previously attached entity will be returned.  use
+    // this if you want an entity to turn into a static object.  useful for special
+    // processing of sprites in LoadSvgIntoWorld'ed worlds.
+    Entity *DemoteDynamicObjectToStaticObject (Object &object);
 
 protected:
 

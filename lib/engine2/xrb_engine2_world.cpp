@@ -295,6 +295,23 @@ void World::RemoveDynamicObject (Object *const dynamic_object)
         m_physics_handler->RemoveEntity(entity);
 }
 
+Entity *World::DemoteDynamicObjectToStaticObject (Object &object)
+{
+    ASSERT1(object.IsDynamic());
+    ObjectLayer *object_layer = object.GetObjectLayer();
+    ASSERT1(object_layer != NULL);
+    Entity *entity = object.GetEntity();
+    ASSERT1(entity != NULL);
+    ASSERT1(entity->IsInWorld());
+
+    RemoveDynamicObject(&object);
+    object.SetEntity(NULL);
+    ASSERT1(!entity->IsInWorld());
+    AddStaticObject(&object, object_layer);
+
+    return entity;
+}
+
 World::World (
     PhysicsHandler *const physics_handler,
     EntityWorldIndex const entity_capacity)
