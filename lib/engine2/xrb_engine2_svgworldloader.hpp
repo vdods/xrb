@@ -15,6 +15,8 @@
 
 #include <string>
 
+#include "xrb_emptystring.hpp"
+
 /*
 
 design:
@@ -72,14 +74,63 @@ The x and y attributes give pre-translate coordinates.  width and height give
 the width and height of the Sprite.  width and height must be matched, because
 only square sprites are allowed.
 
+STAGING
+
+multiple "stages" for each svg map can be worked by stage number.  if present in the root <svg>
+element, the xrb_stage_count attribute will specify the number of stages used in the map.  stages
+are indexed starting with 1 (not 0 as in arrays).
+
+if stage-processing is active, any xrb_* (and possibly other) attribute which starts with \
+(backslash) will be parsed as a backslash-delimited list of values.  for example:
+
+    xrb_ignore='\true\false\false'
+
+means that in stage 1 the relevant object is ignored, while in stages 2 and 3 the object is present.
+this allows different configurations of a map to be used as 'different maps'.
+
+if a xrb_* (or possible other) attribute does NOT begin with a backslash, then it is considered to
+be a fixed value across all stage values.  this means that the map designer must only create
+backslash-delimited attribute values for the attributes that should be different across different
+stages.
+
+xrb_stage_count is present so that validation of the backslash-delimited attribute values can be
+performed.  if there is a mismatch between number of backslash-delimited values for a particular
+attribute and the value of xrb_stage_count, an error message will be issued.
+
+
 */
+
+namespace Lvd {
+namespace Xml {
+
+struct Element;
+
+} // end of namespace Xml
+} // end of namespace Lvd
 
 namespace Xrb {
 namespace Engine2 {
 
 class World;
 
-void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags);
+// for stage-processing the attributes of an XML element.
+void StageProcessAttributes (Lvd::Xml::Element &element,
+                             Uint32 stage,
+                             Uint32 stage_count,
+                             std::string const &additional_stageable_attribute_name_prefix = g_empty_string);
+// returns the xrb_stage_count attribute value of the root <svg> element (a positive number), or
+// 0 if this value is invalid or if the attribute is not present.
+Uint32 ParseSvgStageCount (std::string const &svg_path) throw(std::string);
+// loads the given svg file into the specified world.  if stage is 0, then no stage processing is
+// done (i.e. backslash-delimited values will not be parsed and will be taken as literal strings).
+// if stage is a positive value, that stage number will be loaded, and backslash-delimited values
+// will be parsed as described above.
+void LoadSvgIntoWorld (std::string const &svg_path,
+                       World &world,
+                       Float current_time,
+                       Uint32 gltexture_flags,
+                       Uint32 stage = 0,
+                       std::string const &additional_stageable_attribute_name_prefix = g_empty_string) throw(std::string);
 
 } // end of namespace Engine2
 } // end of namespace Xrb

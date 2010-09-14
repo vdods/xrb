@@ -11,6 +11,7 @@
 #include "xrb_engine2_svgworldloader.hpp"
 
 #include <iomanip>
+#include <set>
 #include <sstream>
 
 #include "lvd_xml.hpp"
@@ -37,26 +38,106 @@ public:
     World &m_world;
     Float const m_current_time;
     Uint32 const m_gltexture_flags;
+    Uint32 const m_stage;
+    std::string const m_additional_stageable_attribute_name_prefix;
     // set later on
-    Document const *m_document;
-    Element const *m_svg;
-    Element const *m_g;
+    Document *m_document;
+    Element *m_svg;
+    Element *m_g;
     Uint32 m_layer_number;
     ObjectLayer *m_object_layer;
+    Uint32 m_stage_count;
 
-    LoadSvgIntoWorldContext (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags)
+    LoadSvgIntoWorldContext (std::string const &svg_path,
+                             World &world,
+                             Float current_time,
+                             Uint32 gltexture_flags,
+                             Uint32 stage,
+                             std::string const &additional_stageable_attribute_name_prefix)
         :
         m_svg_path(svg_path),
         m_world(world),
         m_current_time(current_time),
         m_gltexture_flags(gltexture_flags),
+        m_stage(stage),
+        m_additional_stageable_attribute_name_prefix(additional_stageable_attribute_name_prefix),
         m_document(NULL),
         m_svg(NULL),
         m_g(NULL),
         m_layer_number(0),
-        m_object_layer(NULL)
+        m_object_layer(NULL),
+        m_stage_count(0)
     { }
 }; // end of struct LoadSvgIntoWorldContext
+
+void StageProcessAttributes (Element &element,
+                             Uint32 stage,
+                             Uint32 stage_count,
+                             std::string const &additional_stageable_attribute_name_prefix)
+{
+    // if stage processing is enabled, check that stage is a valid number
+    if (stage > 0 && stage > stage_count)
+        THROW_STRING("stage value exceeds stage_count value");
+
+    std::set<std::string> stageable_attribute_name_prefixes;
+    stageable_attribute_name_prefixes.insert("xrb_");
+    if (!additional_stageable_attribute_name_prefix.empty())
+        stageable_attribute_name_prefixes.insert(additional_stageable_attribute_name_prefix);
+
+    for (AttributeMap::iterator it = element.m_attribute.begin(),
+                                it_end = element.m_attribute.end();
+         it != it_end;
+         ++it)
+    {
+        std::string const &attribute_name = it->first;
+        std::string &attribute_value = it->second;
+
+        bool accepted = false;
+        // if the attribute name has one of the allowable attribute name prefixes, accept
+        for (std::set<std::string>::const_iterator prefix_it = stageable_attribute_name_prefixes.begin(),
+                                                   prefix_it_end = stageable_attribute_name_prefixes.end();
+             prefix_it != prefix_it_end;
+             ++prefix_it)
+        {
+            if (attribute_name.find_first_of(*prefix_it) == 0)
+            {
+                accepted = true;
+                break;
+            }
+        }
+
+        // if the attribute value is a backslash-delimited list of values (i.e. if the first
+        // char is backslash), replace it with the one corresponding to stage
+        if (!attribute_value.empty() && attribute_value[0] == '\\')
+        {
+            std::string::size_type pos = 0;
+            std::string::size_type next = 0;
+
+            // first count the number of backslash-delimited values so we can validate stage_count
+            Uint32 actual_stage_count = 0;
+            for (Uint32 i = 0; i < attribute_value.size(); ++i)
+                if (attribute_value[i] == '\\')
+                    ++actual_stage_count;
+
+            if (actual_stage_count != stage_count)
+                THROW_STRING("element at " << element.m_filoc << ", attribute name '" << attribute_name << "': number of backslash-delimited values differs from value of xrb_stage_count");
+
+            while (stage-- > 0)
+                pos = attribute_value.find_first_of('\\', pos) + 1;
+            next = attribute_value.find_first_of('\\', pos);
+
+            // cut out everything but the desired stage's attribute value
+            fprintf(stderr, "before: %s='%s', ", attribute_name.c_str(), attribute_value.c_str());
+            attribute_value = attribute_value.substr(pos, next-1);
+            fprintf(stderr, "after: %s='%s'\n", attribute_name.c_str(), attribute_value.c_str());
+        }
+    }
+}
+
+void StageProcessAttributes (LoadSvgIntoWorldContext &context, Element &element) throw(std::string)
+{
+    StageProcessAttributes(element, context.m_stage, context.m_stage_count, context.m_additional_stageable_attribute_name_prefix);
+}
 
 // AttributeMap is a conveniently pre-defined typedef for this
 void ParseStyle (std::string const &style, AttributeMap &style_map)
@@ -148,12 +229,15 @@ void ProcessImage (LoadSvgIntoWorldContext &context,
                    FloatMatrix2 const &bounding_box_transform,
                    Float bounding_box_half_side_length,
                    Uint32 image_index,
-                   Element const &image)
+                   Element &image)
 {
     ASSERT1(context.m_document != NULL);
     ASSERT1(context.m_svg != NULL);
     ASSERT1(context.m_g != NULL);
     ASSERT1(context.m_object_layer != NULL);
+
+    // stage-processing could affect the xrb_ignore attribute, so do it first
+    StageProcessAttributes(context, image);
 
     // if we find attribute xrb_ignore='true' then ignore this element
     if (image.AttributeValue("xrb_ignore") == "true")
@@ -338,6 +422,9 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
     ASSERT1(context.m_svg != NULL);
     ASSERT1(context.m_g != NULL);
 
+    // stage-processing could affect the xrb_ignore attribute, so do it first
+    StageProcessAttributes(context, *context.m_g);
+
     // if we find attribute ignore='true' then ignore this element
     if (context.m_g->AttributeValue("xrb_ignore") == "true")
         return;
@@ -417,11 +504,11 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
         }
 
         // read the contents
-        Element const *image = NULL;
+        Element *image = NULL;
         Uint32 image_index = 0;
-        for (DomNodeVector::const_iterator image_it = context.m_g->FirstElement(image, "image");
-            image_it != context.m_g->m_element.end();
-            context.m_g->NextElement(image_it, image, "image"), ++image_index)
+        for (DomNodeVector::iterator image_it = context.m_g->FirstElement(image, "image");
+             image_it != context.m_g->m_element.end();
+             context.m_g->NextElement(image_it, image, "image"), ++image_index)
         {
             ASSERT1(image != NULL);
             ProcessImage(context, change_of_basis, bounding_box_transform, bounding_box_half_side_length, image_index, *image);
@@ -434,65 +521,110 @@ void ProcessLayer (LoadSvgIntoWorldContext &context)
     }
 }
 
-void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context)
+void LoadSvgIntoWorld (LoadSvgIntoWorldContext &context) throw(std::string)
 {
     DomNode *root = NULL;
 
-    try {
+    Parser parser;
+    bool open_file_success = parser.OpenFile(context.m_svg_path);
+    if (!open_file_success)
+        THROW_STRING("failure opening file");
 
-        Parser parser;
-        bool open_file_success = parser.OpenFile(context.m_svg_path);
-        if (!open_file_success)
-            THROW_STRING("failure opening file");
+    parser.WarningAndErrorLogStream(&std::cerr);
+    Uint32 start_time = Singleton::Pal().CurrentTime();
+    Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
+    Uint32 end_time = Singleton::Pal().CurrentTime();
+    fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
+    if (parser_return_code != Parser::PRC_SUCCESS)
+        THROW_STRING("general parse error in file");
 
-        parser.WarningAndErrorLogStream(&std::cerr);
-        Uint32 start_time = Singleton::Pal().CurrentTime();
-        Parser::ParserReturnCode parser_return_code = parser.Parse(&root);
-        Uint32 end_time = Singleton::Pal().CurrentTime();
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); parse time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
-        if (parser_return_code != Parser::PRC_SUCCESS)
-            THROW_STRING("general parse error in file");
+    start_time = Singleton::Pal().CurrentTime();
+    ASSERT1(root != NULL);
+    ASSERT1(root->m_type == DomNode::DOCUMENT);
+    context.m_document = DStaticCast<Document *>(root);
 
-        start_time = Singleton::Pal().CurrentTime();
-        ASSERT1(root != NULL);
-        ASSERT1(root->m_type == DomNode::DOCUMENT);
-//         Document const &document = *DStaticCast<Document const *>(root);
-        context.m_document = DStaticCast<Document const *>(root);
+    // extract the single <svg> element which contains everything
+    Element *svg = NULL;
+    context.m_document->FirstElement(svg, "svg");
+    if (svg == NULL) // if no <svg> element, error.
+        THROW_STRING("no <svg> tag -- probably not an svg document");
+    context.m_svg = svg;
 
-        // extract the single <svg> element which contains everything
-        Element const *svg = NULL;
-        context.m_document->FirstElement(svg, "svg");
-        if (svg == NULL) // if no <svg> element, error.
-            THROW_STRING("no <svg> tag -- probably not an svg document");
-        // give the world a chance to process it
-        context.m_world.ProcessSvgRootElement(*svg);
-        context.m_svg = svg;
+    // validation of stage processing, if enabled
+    if (context.m_stage > 0)
+    {
+        if (!context.m_svg->HasAttribute("xrb_stage_count"))
+            THROW_STRING("stage processing is enabled, but the 'xrb_stage_count' attribute is missing from the <svg> element");
 
-        // iterate through each <g> element for the object layers
-        Element const *g = NULL;
-        context.m_layer_number = 0;
-        for (DomNodeVector::const_iterator g_it = svg->FirstElement(g, "g");
-             g_it != svg->m_element.end();
-             svg->NextElement(g_it, g, "g"), ++context.m_layer_number)
-        {
-            ASSERT1(g != NULL);
-            context.m_g = g;
-            ProcessLayer(context);
-            context.m_g = NULL; // done with this g
-        }
-        end_time = Singleton::Pal().CurrentTime();
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
+        std::string const &stage_count_string = context.m_svg->AttributeValue("xrb_stage_count");
+        if (!stage_count_string.empty() && stage_count_string[0] == '\\')
+            THROW_STRING("the 'xrb_stage_count' attribute must be numeric; in particular, it may not begin with a backslash");
 
-    } catch (std::string const &exception) {
-        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); %s\n", context.m_svg_path.c_str(), exception.c_str());
+        context.m_stage_count = Util::TextToUint<Uint32>(context.m_svg->AttributeValue("xrb_stage_count").c_str());
+
+        if (context.m_stage > context.m_stage_count)
+            THROW_STRING("requested stage exceeds value of 'xrb_stage_count' attribute");
     }
 
-    delete root;
+    // exceptions thrown in this block produce non-critical errors, hence the try/catch
+    try {
+        StageProcessAttributes(context, *context.m_svg);
+    } catch (std::string const &exception) {
+        fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); in <svg> element: %s\n", context.m_svg_path.c_str(), exception.c_str());
+    }
+
+    // give the world a chance to process the svg element
+    context.m_world.ProcessSvgRootElement(*svg);
+
+    // iterate through each <g> element for the object layers
+    Element *g = NULL;
+    context.m_layer_number = 0;
+    for (DomNodeVector::iterator g_it = svg->FirstElement(g, "g");
+         g_it != svg->m_element.end();
+         svg->NextElement(g_it, g, "g"), ++context.m_layer_number)
+    {
+        ASSERT1(g != NULL);
+        context.m_g = g;
+        ProcessLayer(context);
+        context.m_g = NULL; // done with this g
+    }
+    end_time = Singleton::Pal().CurrentTime();
+    fprintf(stderr, "LoadSvgIntoWorld(\"%s\"); process time = %u ms\n", context.m_svg_path.c_str(), end_time - start_time);
+
+    Delete(root);
 }
 
-void LoadSvgIntoWorld (std::string const &svg_path, World &world, Float current_time, Uint32 gltexture_flags)
+Uint32 ParseSvgStageCount (std::string const &svg_path) throw(std::string)
 {
-    LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags);
+    Parser parser;
+//     parser.DebugSpew(true);
+    bool open_file_success = parser.OpenFile(svg_path);
+    if (!open_file_success)
+        THROW_STRING("failure opening file");
+
+    parser.WarningAndErrorLogStream(&std::cerr);
+    Element *root = parser.ParseOnlyRootElement();
+    if (root == NULL)
+        THROW_STRING("general parse error in file");
+
+    if (root->m_name != "svg")
+        THROW_STRING("no <svg tag -- probably not an svg document");
+
+    Uint32 stage_count = 0;
+    if (root->HasAttribute("xrb_stage_count"))
+        stage_count = Util::TextToUint<Uint32>(root->AttributeValue("xrb_stage_count").c_str());
+    Delete(root);
+    return stage_count;
+}
+
+void LoadSvgIntoWorld (std::string const &svg_path,
+                       World &world,
+                       Float current_time,
+                       Uint32 gltexture_flags,
+                       Uint32 stage,
+                       std::string const &additional_stageable_attribute_name_prefix) throw(std::string)
+{
+    LoadSvgIntoWorldContext context(svg_path, world, current_time, gltexture_flags, stage, additional_stageable_attribute_name_prefix);
     LoadSvgIntoWorld(context);
 }
 
