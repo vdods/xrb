@@ -57,7 +57,7 @@ bool Parser::IsAtEndOfInput ()
 void Parser::ResetForNewInput ()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 63 "lvd_xml_parser.cpp"
  << " executing reset-for-new-input actions" << std::endl)
@@ -67,7 +67,7 @@ void Parser::ResetForNewInput ()
     ClearLookaheadQueue_();
 
 
-#line 229 "lvd_xml_parser.trison"
+#line 231 "lvd_xml_parser.trison"
 
     m_scanner.ResetForNewInput();
 
@@ -88,7 +88,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
     assert(return_token != NULL && "the return-token pointer must be non-NULL");
 
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 94 "lvd_xml_parser.cpp"
  << " starting parse" << std::endl)
@@ -110,9 +110,9 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
            || nonterminal_to_parse == ParseNonterminal::element
            || nonterminal_to_parse == ParseNonterminal::element_list
            || nonterminal_to_parse == ParseNonterminal::end_tag
-           || nonterminal_to_parse == ParseNonterminal::pi_or_start_tag
            || nonterminal_to_parse == ParseNonterminal::processing_instruction
            || nonterminal_to_parse == ParseNonterminal::selfended_tag
+           || nonterminal_to_parse == ParseNonterminal::single
            || nonterminal_to_parse == ParseNonterminal::start_tag
            ) && "invalid nonterminal_to_parse");
     m_stack_.push_back(StackElement_(nonterminal_to_parse, NULL));
@@ -122,7 +122,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
         if (m_is_in_error_panic_)
         {
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 128 "lvd_xml_parser.cpp"
  << " begin error panic" << std::endl)
@@ -154,7 +154,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                 if (accepts_error)
                 {
                     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 160 "lvd_xml_parser.cpp"
  << " end error panic; success (current state accepts ERROR_ token)" << std::endl)
@@ -167,7 +167,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                     if (m_lookahead_queue_[0].m_id == Terminal::END_)
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 173 "lvd_xml_parser.cpp"
  << " deferring Terminal::END_ (padding with Terminal::ERROR_ token)" << std::endl)
@@ -185,7 +185,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                     if (m_stack_.size() > 1)
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 191 "lvd_xml_parser.cpp"
  << " continue error panic; pop stack (current state doesn't accept ERROR_ token)" << std::endl)
@@ -193,7 +193,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                     else
                     {
                         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 199 "lvd_xml_parser.cpp"
  << " end error panic; abort (stack is empty)" << std::endl)
@@ -260,7 +260,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                 if (lookahead_sequence_matched)
                 {
                     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 266 "lvd_xml_parser.cpp"
  << " currently usable lookahead(s):")
@@ -280,7 +280,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
             if (!transition_exercised)
             {
                 TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 286 "lvd_xml_parser.cpp"
  << " currently usable lookahead(s):")
@@ -291,7 +291,7 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
                 TRISON_CPP_DEBUG_CODE_(std::cerr << std::endl)
 
                 TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 297 "lvd_xml_parser.cpp"
  << " exercising default transition" << std::endl)
@@ -322,12 +322,12 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
     ClearStack_();
 
     TRISON_CPP_DEBUG_CODE_(if (parser_return_code_ == PRC_SUCCESS) std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 328 "lvd_xml_parser.cpp"
  << " Parse() is returning PRC_SUCCESS" << std::endl)
     TRISON_CPP_DEBUG_CODE_(if (parser_return_code_ == PRC_UNHANDLED_PARSE_ERROR) std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 333 "lvd_xml_parser.cpp"
  << " Parse() is returning PRC_UNHANDLED_PARSE_ERROR" << std::endl)
@@ -338,13 +338,13 @@ Parser::ParserReturnCode Parser::Parse_ (DomNode * *return_token, ParseNontermin
 void Parser::ThrowAwayToken_ (Token::Data &token_data) throw()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 344 "lvd_xml_parser.cpp"
  << " executing throw-away-token actions" << std::endl)
 
 
-#line 223 "lvd_xml_parser.trison"
+#line 225 "lvd_xml_parser.trison"
 
     delete token_data;
 
@@ -354,13 +354,13 @@ void Parser::ThrowAwayToken_ (Token::Data &token_data) throw()
 Parser::Token Parser::Scan_ () throw()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 360 "lvd_xml_parser.cpp"
  << " executing scan actions" << std::endl)
 
 
-#line 226 "lvd_xml_parser.trison"
+#line 228 "lvd_xml_parser.trison"
 
     return m_scanner.Scan();
 
@@ -373,7 +373,7 @@ void Parser::ClearStack_ () throw()
         return; // nothing to do
 
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 379 "lvd_xml_parser.cpp"
  << " clearing the stack" << std::endl)
@@ -391,7 +391,7 @@ void Parser::ClearStack_ () throw()
 void Parser::ClearLookaheadQueue_ () throw()
 {
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 397 "lvd_xml_parser.cpp"
  << " clearing the lookahead queue" << std::endl)
@@ -408,7 +408,7 @@ Parser::Token const &Parser::Lookahead_ (LookaheadQueue_::size_type index) throw
         m_lookahead_queue_.push_back(Scan_());
 
         TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 414 "lvd_xml_parser.cpp"
  << " pushed " << *m_lookahead_queue_.rbegin() << " onto back of lookahead queue" << std::endl)
@@ -428,7 +428,7 @@ bool Parser::ExerciseTransition_ (Transition_ const &transition)
             assert(transition.m_data < ms_rule_count_);
             Rule_ const &rule = ms_rule_table_[transition.m_data];
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 434 "lvd_xml_parser.cpp"
  << " REDUCE " << rule.m_description << std::endl)
@@ -440,7 +440,7 @@ bool Parser::ExerciseTransition_ (Transition_ const &transition)
             m_stack_.resize(m_stack_.size() - rule.m_token_count);
             assert(rule.m_reduction_nonterminal_token_id < ms_token_name_count_);
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 446 "lvd_xml_parser.cpp"
  << " pushed " << Token(rule.m_reduction_nonterminal_token_id) << " onto front of lookahead queue" << std::endl)
@@ -449,7 +449,7 @@ bool Parser::ExerciseTransition_ (Transition_ const &transition)
 
         case Transition_::RETURN:
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 455 "lvd_xml_parser.cpp"
  << " RETURN" << std::endl)
@@ -462,7 +462,7 @@ bool Parser::ExerciseTransition_ (Transition_ const &transition)
             assert(Lookahead_(0).m_id < ms_token_name_count_); // at this point, we're past a possible
                                                                // client error, so asserting here is ok.
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 468 "lvd_xml_parser.cpp"
  << " SHIFT " << Lookahead_(0) << std::endl)
@@ -472,7 +472,7 @@ bool Parser::ExerciseTransition_ (Transition_ const &transition)
 
         case Transition_::ERROR_PANIC:
             TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 478 "lvd_xml_parser.cpp"
  << " ERROR_PANIC" << std::endl)
@@ -489,7 +489,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
 {
     assert(rule_index_ < ms_rule_count_);
     TRISON_CPP_DEBUG_CODE_(std::cerr << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
 #line 495 "lvd_xml_parser.cpp"
  << " executing reduction rule " << rule_index_ << std::endl)
@@ -504,7 +504,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Document * list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 262 "lvd_xml_parser.trison"
+#line 264 "lvd_xml_parser.trison"
 
         return list;
     
@@ -517,7 +517,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * pi(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 269 "lvd_xml_parser.trison"
+#line 271 "lvd_xml_parser.trison"
  return pi; 
 #line 523 "lvd_xml_parser.cpp"
             break;
@@ -528,7 +528,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 271 "lvd_xml_parser.trison"
+#line 273 "lvd_xml_parser.trison"
  return start_tag; 
 #line 534 "lvd_xml_parser.cpp"
             break;
@@ -539,7 +539,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 273 "lvd_xml_parser.trison"
+#line 275 "lvd_xml_parser.trison"
  return tag; 
 #line 545 "lvd_xml_parser.cpp"
             break;
@@ -548,15 +548,11 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         case 4:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Document * list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
-            Element * element(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Text * text(static_cast<Text *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 279 "lvd_xml_parser.trison"
-
-        list->m_element.push_back(element);
-        return list;
-    
-#line 560 "lvd_xml_parser.cpp"
+#line 277 "lvd_xml_parser.trison"
+ return text; 
+#line 556 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -564,50 +560,65 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Document * list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
-            Text * text(static_cast<Text *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * element(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 285 "lvd_xml_parser.trison"
+#line 283 "lvd_xml_parser.trison"
 
-        list->m_element.push_back(text);
+        list->m_element.push_back(element);
         return list;
     
-#line 575 "lvd_xml_parser.cpp"
+#line 571 "lvd_xml_parser.cpp"
             break;
         }
 
         case 6:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Document * list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
+            Text * text(static_cast<Text *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 291 "lvd_xml_parser.trison"
+#line 289 "lvd_xml_parser.trison"
 
-        return new Document();
+        list->m_element.push_back(text);
+        return list;
     
-#line 587 "lvd_xml_parser.cpp"
+#line 586 "lvd_xml_parser.cpp"
             break;
         }
 
         case 7:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * pi(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 299 "lvd_xml_parser.trison"
+#line 295 "lvd_xml_parser.trison"
 
-        return pi;
+        return new Document();
     
-#line 600 "lvd_xml_parser.cpp"
+#line 598 "lvd_xml_parser.cpp"
             break;
         }
 
         case 8:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * pi(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
+
+#line 303 "lvd_xml_parser.trison"
+
+        return pi;
+    
+#line 611 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 9:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
             Document * element_list(static_cast<Document *>(m_stack_[m_stack_.size()-2].m_token_data));
             Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 304 "lvd_xml_parser.trison"
+#line 308 "lvd_xml_parser.trison"
 
         if (start_tag->m_name != "%error" && end_tag->m_name != "%error" && start_tag->m_name != end_tag->m_name)
             EmitError("end-tag '" + end_tag->m_name + "' doesn't match start-tag '" + start_tag->m_name + "'", end_tag->m_filoc);
@@ -618,25 +629,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete end_tag;
         return start_tag;
     
-#line 622 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 9:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
-
-#line 316 "lvd_xml_parser.trison"
-
-        EmitError("parse error in element list in tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
-        if (start_tag->m_name != "%error" && end_tag->m_name != "%error" && start_tag->m_name != end_tag->m_name)
-            EmitError("end-tag '" + end_tag->m_name + "' doesn't match start-tag '" + start_tag->m_name + "'", end_tag->m_filoc);
-        delete end_tag;
-        return start_tag;
-    
-#line 640 "lvd_xml_parser.cpp"
+#line 633 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -644,51 +637,69 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 325 "lvd_xml_parser.trison"
+#line 320 "lvd_xml_parser.trison"
 
-        EmitError("no matching end-tag for start-tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
+        EmitError("parse error in element list in tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
+        if (start_tag->m_name != "%error" && end_tag->m_name != "%error" && start_tag->m_name != end_tag->m_name)
+            EmitError("end-tag '" + end_tag->m_name + "' doesn't match start-tag '" + start_tag->m_name + "'", end_tag->m_filoc);
+        delete end_tag;
         return start_tag;
     
-#line 654 "lvd_xml_parser.cpp"
+#line 651 "lvd_xml_parser.cpp"
             break;
         }
 
         case 11:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * start_tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 331 "lvd_xml_parser.trison"
+#line 329 "lvd_xml_parser.trison"
 
-        return tag;
+        EmitError("no matching end-tag for start-tag" + (start_tag->m_name != "%error" ? " '" + start_tag->m_name + "'" : ""), start_tag->m_filoc);
+        return start_tag;
     
-#line 667 "lvd_xml_parser.cpp"
+#line 665 "lvd_xml_parser.cpp"
             break;
         }
 
         case 12:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 336 "lvd_xml_parser.trison"
+#line 335 "lvd_xml_parser.trison"
 
-        EmitError("end-tag" + (end_tag->m_name != "%error" ? " '" + end_tag->m_name + "'" : "") + " with no matching start-tag", end_tag->m_filoc);
-        return end_tag;
+        return tag;
     
-#line 681 "lvd_xml_parser.cpp"
+#line 678 "lvd_xml_parser.cpp"
             break;
         }
 
         case 13:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * end_tag(static_cast<Element *>(m_stack_[m_stack_.size()-1].m_token_data));
+
+#line 340 "lvd_xml_parser.trison"
+
+        EmitError("end-tag" + (end_tag->m_name != "%error" ? " '" + end_tag->m_name + "'" : "") + " with no matching start-tag", end_tag->m_filoc);
+        return end_tag;
+    
+#line 692 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 14:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
             Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 345 "lvd_xml_parser.trison"
+#line 349 "lvd_xml_parser.trison"
 
         Element *pi = new Element(name->m_text, DomNode::PROCESSING_INSTRUCTION, name->m_filoc);
         // steal the attribute list
@@ -698,27 +709,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete attribute_list;
         return pi;
     
-#line 702 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 14:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
-            Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 356 "lvd_xml_parser.trison"
-
-        EmitError("parse error in processing instruction '" + name->m_text + "'", name->m_filoc);
-        // rename the OPEN_PI tag and use it
-        tag->m_name = name->m_text;
-        tag->m_filoc = name->m_filoc;
-        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
-        delete name;
-        return tag;
-    
-#line 722 "lvd_xml_parser.cpp"
+#line 713 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -728,7 +719,27 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 367 "lvd_xml_parser.trison"
+#line 360 "lvd_xml_parser.trison"
+
+        EmitError("parse error in processing instruction '" + name->m_text + "'", name->m_filoc);
+        // rename the OPEN_PI tag and use it
+        tag->m_name = name->m_text;
+        tag->m_filoc = name->m_filoc;
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        delete name;
+        return tag;
+    
+#line 733 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 16:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 371 "lvd_xml_parser.trison"
 
         EmitError("unterminated processing instruction '" + name->m_text + "'", name->m_filoc);
         // rename the OPEN_PI tag and use it
@@ -738,23 +749,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete name;
         return tag;
     
-#line 742 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 16:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 378 "lvd_xml_parser.trison"
-
-        EmitError("parse error in processing instruction", tag->m_filoc);
-        tag->m_name = "%error";
-        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
-        return tag;
-    
-#line 758 "lvd_xml_parser.cpp"
+#line 753 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -763,25 +758,41 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 386 "lvd_xml_parser.trison"
+#line 382 "lvd_xml_parser.trison"
 
-        EmitError("unterminated processing instruction", tag->m_filoc);
+        EmitError("parse error in processing instruction", tag->m_filoc);
         tag->m_name = "%error";
         assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
         return tag;
     
-#line 774 "lvd_xml_parser.cpp"
+#line 769 "lvd_xml_parser.cpp"
             break;
         }
 
         case 18:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 390 "lvd_xml_parser.trison"
+
+        EmitError("unterminated processing instruction", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::PROCESSING_INSTRUCTION);
+        return tag;
+    
+#line 785 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 19:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
             Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 397 "lvd_xml_parser.trison"
+#line 401 "lvd_xml_parser.trison"
 
         Element *element = new Element(opening_name->m_text, DomNode::ELEMENT, opening_name->m_filoc);
         // steal the attribute list
@@ -791,27 +802,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete attribute_list;
         return element;
     
-#line 795 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 19:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
-            Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 408 "lvd_xml_parser.trison"
-
-        EmitError("parse error in start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
-        // rename the OPEN_TAG tag and use it
-        tag->m_name = opening_name->m_text;
-        tag->m_filoc = opening_name->m_filoc;
-        assert(tag->m_type == DomNode::ELEMENT);
-        delete opening_name;
-        return tag;
-    
-#line 815 "lvd_xml_parser.cpp"
+#line 806 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -821,7 +812,27 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 419 "lvd_xml_parser.trison"
+#line 412 "lvd_xml_parser.trison"
+
+        EmitError("parse error in start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
+        // rename the OPEN_TAG tag and use it
+        tag->m_name = opening_name->m_text;
+        tag->m_filoc = opening_name->m_filoc;
+        assert(tag->m_type == DomNode::ELEMENT);
+        delete opening_name;
+        return tag;
+    
+#line 826 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 21:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Text * opening_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 423 "lvd_xml_parser.trison"
 
         EmitError("unterminated start-tag '" + opening_name->m_text + "'", opening_name->m_filoc);
         // rename the OPEN_TAG tag and use it
@@ -831,23 +842,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete opening_name;
         return tag;
     
-#line 835 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 21:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 430 "lvd_xml_parser.trison"
-
-        EmitError("parse error in start-tag", tag->m_filoc);
-        tag->m_name = "%error";
-        assert(tag->m_type == DomNode::ELEMENT);
-        return tag;
-    
-#line 851 "lvd_xml_parser.cpp"
+#line 846 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -856,14 +851,14 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 438 "lvd_xml_parser.trison"
+#line 434 "lvd_xml_parser.trison"
 
-        EmitError("unterminated start-tag", tag->m_filoc);
+        EmitError("parse error in start-tag", tag->m_filoc);
         tag->m_name = "%error";
         assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
-#line 867 "lvd_xml_parser.cpp"
+#line 862 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -871,30 +866,26 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-            Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 449 "lvd_xml_parser.trison"
+#line 442 "lvd_xml_parser.trison"
 
-        // rename the OPEN_END_TAG tag and use it
-        tag->m_name = closing_name->m_text;
-        tag->m_filoc = closing_name->m_filoc;
+        EmitError("unterminated start-tag", tag->m_filoc);
+        tag->m_name = "%error";
         assert(tag->m_type == DomNode::ELEMENT);
-        delete closing_name;
         return tag;
     
-#line 886 "lvd_xml_parser.cpp"
+#line 878 "lvd_xml_parser.cpp"
             break;
         }
 
         case 24:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
-            Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+            Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 459 "lvd_xml_parser.trison"
+#line 453 "lvd_xml_parser.trison"
 
-        EmitError("parse error in end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
         tag->m_name = closing_name->m_text;
         tag->m_filoc = closing_name->m_filoc;
@@ -902,7 +893,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete closing_name;
         return tag;
     
-#line 906 "lvd_xml_parser.cpp"
+#line 897 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -912,7 +903,27 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 470 "lvd_xml_parser.trison"
+#line 463 "lvd_xml_parser.trison"
+
+        EmitError("parse error in end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
+        // rename the OPEN_END_TAG tag and use it
+        tag->m_name = closing_name->m_text;
+        tag->m_filoc = closing_name->m_filoc;
+        assert(tag->m_type == DomNode::ELEMENT);
+        delete closing_name;
+        return tag;
+    
+#line 917 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 26:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
+            Text * closing_name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 474 "lvd_xml_parser.trison"
 
         EmitError("unterminated end-tag '" + closing_name->m_text + "'", closing_name->m_filoc);
         // rename the OPEN_END_TAG tag and use it
@@ -922,22 +933,7 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete closing_name;
         return tag;
     
-#line 926 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 26:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 481 "lvd_xml_parser.trison"
-
-        EmitError("parse error in end-tag", tag->m_filoc);
-        assert(tag->m_type == DomNode::ELEMENT);
-        return tag;
-    
-#line 941 "lvd_xml_parser.cpp"
+#line 937 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -946,24 +942,39 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 488 "lvd_xml_parser.trison"
+#line 485 "lvd_xml_parser.trison"
 
-        EmitError("unterminated end-tag", tag->m_filoc);
+        EmitError("parse error in end-tag", tag->m_filoc);
         assert(tag->m_type == DomNode::ELEMENT);
         return tag;
     
-#line 956 "lvd_xml_parser.cpp"
+#line 952 "lvd_xml_parser.cpp"
             break;
         }
 
         case 28:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 492 "lvd_xml_parser.trison"
+
+        EmitError("unterminated end-tag", tag->m_filoc);
+        assert(tag->m_type == DomNode::ELEMENT);
+        return tag;
+    
+#line 967 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 29:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * throwaway(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
             Element * attribute_list(static_cast<Element *>(m_stack_[m_stack_.size()-2].m_token_data));
 
-#line 498 "lvd_xml_parser.trison"
+#line 502 "lvd_xml_parser.trison"
 
         Element *element = new Element(name->m_text, DomNode::ELEMENT, name->m_filoc);
         // steal the attribute list
@@ -973,17 +984,17 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete attribute_list;
         return element;
     
-#line 977 "lvd_xml_parser.cpp"
+#line 988 "lvd_xml_parser.cpp"
             break;
         }
 
-        case 29:
+        case 30:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 509 "lvd_xml_parser.trison"
+#line 513 "lvd_xml_parser.trison"
 
         EmitError("parse error in self-ended tag '" + name->m_text + "'", name->m_filoc);
         // rename the OPEN_TAG tag and use it
@@ -993,34 +1004,34 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete name;
         return tag;
     
-#line 997 "lvd_xml_parser.cpp"
-            break;
-        }
-
-        case 30:
-        {
-            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
-            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
-
-#line 523 "lvd_xml_parser.trison"
-
-        EmitError("parse error in self-ended tag", tag->m_filoc);
-        tag->m_name = "%error";
-        assert(tag->m_type == DomNode::ELEMENT);
-        return tag;
-    
-#line 1013 "lvd_xml_parser.cpp"
+#line 1008 "lvd_xml_parser.cpp"
             break;
         }
 
         case 31:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
+            Element * tag(static_cast<Element *>(m_stack_[m_stack_.size()-3].m_token_data));
+
+#line 527 "lvd_xml_parser.trison"
+
+        EmitError("parse error in self-ended tag", tag->m_filoc);
+        tag->m_name = "%error";
+        assert(tag->m_type == DomNode::ELEMENT);
+        return tag;
+    
+#line 1024 "lvd_xml_parser.cpp"
+            break;
+        }
+
+        case 32:
+        {
+            assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * list(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
             Text * value(static_cast<Text *>(m_stack_[m_stack_.size()-1].m_token_data));
 
-#line 537 "lvd_xml_parser.trison"
+#line 541 "lvd_xml_parser.trison"
 
         if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
             EmitError("duplicate attribute name " + name->m_text, name->m_filoc);
@@ -1030,17 +1041,17 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete value;
         return list;
     
-#line 1034 "lvd_xml_parser.cpp"
+#line 1045 "lvd_xml_parser.cpp"
             break;
         }
 
-        case 32:
+        case 33:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
             Element * list(static_cast<Element *>(m_stack_[m_stack_.size()-4].m_token_data));
             Text * name(static_cast<Text *>(m_stack_[m_stack_.size()-3].m_token_data));
 
-#line 548 "lvd_xml_parser.trison"
+#line 552 "lvd_xml_parser.trison"
 
         EmitError("parse error in value of attribute " + name->m_text, name->m_filoc);
         if (list->m_attribute.find(name->m_text) != list->m_attribute.end())
@@ -1048,19 +1059,19 @@ Parser::Token::Data Parser::ExecuteReductionRule_ (BarfCpp_::Uint32 const rule_i
         delete name;
         return list;
     
-#line 1052 "lvd_xml_parser.cpp"
+#line 1063 "lvd_xml_parser.cpp"
             break;
         }
 
-        case 33:
+        case 34:
         {
             assert(ms_rule_table_[rule_index_].m_token_count < m_stack_.size());
 
-#line 557 "lvd_xml_parser.trison"
+#line 561 "lvd_xml_parser.trison"
 
         return new Element("");
     
-#line 1064 "lvd_xml_parser.cpp"
+#line 1075 "lvd_xml_parser.cpp"
             break;
         }
 
@@ -1075,9 +1086,9 @@ void Parser::PrintParserStatus_ (std::ostream &stream) const
     assert(!m_stack_.empty());
 
     stream << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
-#line 1081 "lvd_xml_parser.cpp"
+#line 1092 "lvd_xml_parser.cpp"
  << " parser stack: ";
     for (Stack_::const_iterator it = m_stack_.begin(), it_end = m_stack_.end(); it != it_end; ++it)
     {
@@ -1096,17 +1107,17 @@ void Parser::PrintIndented_ (std::ostream &stream, char const *string) const
 {
     assert(string != NULL);
     stream << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
-#line 1102 "lvd_xml_parser.cpp"
+#line 1113 "lvd_xml_parser.cpp"
  << "    ";
     while (*string != '\0')
     {
         if (*string == '\n')
             stream << '\n' << 
-#line 238 "lvd_xml_parser.trison"
+#line 240 "lvd_xml_parser.trison"
 "Lvd::Xml::Parser" << (GetFiLoc().IsValid() ? " ("+GetFiLoc().AsString()+")" : "") << ":"
-#line 1110 "lvd_xml_parser.cpp"
+#line 1121 "lvd_xml_parser.cpp"
  << "    ";
         else
             stream << *string;
@@ -1126,9 +1137,10 @@ std::ostream &operator << (std::ostream &stream, Parser::Token const &token)
 Parser::Rule_ const Parser::ms_rule_table_[] =
 {
     { Parser::Nonterminal_::document, 2, "document <- element_list END_" },
-    { Parser::Nonterminal_::pi_or_start_tag, 1, "pi_or_start_tag <- processing_instruction" },
-    { Parser::Nonterminal_::pi_or_start_tag, 1, "pi_or_start_tag <- start_tag" },
-    { Parser::Nonterminal_::pi_or_start_tag, 1, "pi_or_start_tag <- selfended_tag" },
+    { Parser::Nonterminal_::single, 1, "single <- processing_instruction" },
+    { Parser::Nonterminal_::single, 1, "single <- start_tag" },
+    { Parser::Nonterminal_::single, 1, "single <- selfended_tag" },
+    { Parser::Nonterminal_::single, 1, "single <- TEXT" },
     { Parser::Nonterminal_::element_list, 2, "element_list <- element_list element" },
     { Parser::Nonterminal_::element_list, 2, "element_list <- element_list TEXT" },
     { Parser::Nonterminal_::element_list, 0, "element_list <-" },
@@ -1164,92 +1176,93 @@ BarfCpp_::Size const Parser::ms_rule_count_ = sizeof(Parser::ms_rule_table_) / s
 
 Parser::State_ const Parser::ms_state_table_[] =
 {
-    { 3, ms_transition_table_+0, "START document                                \nrule 0: document <- . element_list END_       \nrule 4: element_list <- . element_list element\nrule 5: element_list <- . element_list TEXT   \nrule 6: element_list <- .                     " },
+    { 3, ms_transition_table_+0, "START document                                \nrule 0: document <- . element_list END_       \nrule 5: element_list <- . element_list element\nrule 6: element_list <- . element_list TEXT   \nrule 7: element_list <- .                     " },
     { 1, ms_transition_table_+3, "RETURN document" },
-    { 11, ms_transition_table_+4, "rule 0: document <- element_list . END_                                     \nrule 4: element_list <- element_list . element                              \nrule 7: element <- . processing_instruction                                 \nrule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 8: element <- . start_tag element_list end_tag                         \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 9: element <- . start_tag ERROR_ end_tag                               \nrule 10: element <- . start_tag ERROR_ END_                                 \nrule 11: element <- . selfended_tag                                         \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 12: element <- . end_tag                                               \nrule 5: element_list <- element_list . TEXT                                 " },
+    { 11, ms_transition_table_+4, "rule 0: document <- element_list . END_                                     \nrule 5: element_list <- element_list . element                              \nrule 8: element <- . processing_instruction                                 \nrule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 9: element <- . start_tag element_list end_tag                         \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 10: element <- . start_tag ERROR_ end_tag                              \nrule 11: element <- . start_tag ERROR_ END_                                 \nrule 12: element <- . selfended_tag                                         \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 13: element <- . end_tag                                               \nrule 6: element_list <- element_list . TEXT                                 " },
     { 1, ms_transition_table_+15, "rule 0: document <- element_list END_ ." },
-    { 1, ms_transition_table_+16, "rule 5: element_list <- element_list TEXT ." },
-    { 3, ms_transition_table_+17, "rule 13: processing_instruction <- OPEN_PI . NAME attribute_list CLOSE_PI\nrule 14: processing_instruction <- OPEN_PI . NAME ERROR_ CLOSE_PI        \nrule 15: processing_instruction <- OPEN_PI . NAME ERROR_ END_            \nrule 16: processing_instruction <- OPEN_PI . ERROR_ CLOSE_PI             \nrule 17: processing_instruction <- OPEN_PI . ERROR_ END_                 " },
-    { 3, ms_transition_table_+20, "rule 16: processing_instruction <- OPEN_PI ERROR_ . CLOSE_PI\nrule 17: processing_instruction <- OPEN_PI ERROR_ . END_    " },
-    { 1, ms_transition_table_+23, "rule 17: processing_instruction <- OPEN_PI ERROR_ END_ ." },
-    { 1, ms_transition_table_+24, "rule 16: processing_instruction <- OPEN_PI ERROR_ CLOSE_PI ." },
-    { 3, ms_transition_table_+25, "rule 13: processing_instruction <- OPEN_PI NAME . attribute_list CLOSE_PI\nrule 31: attribute_list <- . attribute_list NAME '=' STRING              \nrule 32: attribute_list <- . attribute_list NAME '=' ERROR_              \nrule 33: attribute_list <- .                                             \nrule 14: processing_instruction <- OPEN_PI NAME . ERROR_ CLOSE_PI        \nrule 15: processing_instruction <- OPEN_PI NAME . ERROR_ END_            " },
-    { 3, ms_transition_table_+28, "rule 14: processing_instruction <- OPEN_PI NAME ERROR_ . CLOSE_PI\nrule 15: processing_instruction <- OPEN_PI NAME ERROR_ . END_    " },
-    { 1, ms_transition_table_+31, "rule 15: processing_instruction <- OPEN_PI NAME ERROR_ END_ ." },
-    { 1, ms_transition_table_+32, "rule 14: processing_instruction <- OPEN_PI NAME ERROR_ CLOSE_PI ." },
-    { 3, ms_transition_table_+33, "rule 13: processing_instruction <- OPEN_PI NAME attribute_list . CLOSE_PI\nrule 31: attribute_list <- attribute_list . NAME '=' STRING              \nrule 32: attribute_list <- attribute_list . NAME '=' ERROR_              " },
-    { 2, ms_transition_table_+36, "rule 31: attribute_list <- attribute_list NAME . '=' STRING\nrule 32: attribute_list <- attribute_list NAME . '=' ERROR_" },
-    { 3, ms_transition_table_+38, "rule 31: attribute_list <- attribute_list NAME '=' . STRING\nrule 32: attribute_list <- attribute_list NAME '=' . ERROR_" },
-    { 1, ms_transition_table_+41, "rule 32: attribute_list <- attribute_list NAME '=' ERROR_ ." },
-    { 1, ms_transition_table_+42, "rule 31: attribute_list <- attribute_list NAME '=' STRING ." },
-    { 1, ms_transition_table_+43, "rule 13: processing_instruction <- OPEN_PI NAME attribute_list CLOSE_PI ." },
-    { 3, ms_transition_table_+44, "rule 18: start_tag <- OPEN_TAG . NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- OPEN_TAG . NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- OPEN_TAG . NAME ERROR_ END_                           \nrule 21: start_tag <- OPEN_TAG . ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- OPEN_TAG . ERROR_ END_                                \nrule 28: selfended_tag <- OPEN_TAG . NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- OPEN_TAG . NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- OPEN_TAG . ERROR_ CLOSE_SELFENDED_TAG             " },
-    { 4, ms_transition_table_+47, "rule 21: start_tag <- OPEN_TAG ERROR_ . CLOSE_TAG              \nrule 22: start_tag <- OPEN_TAG ERROR_ . END_                   \nrule 30: selfended_tag <- OPEN_TAG ERROR_ . CLOSE_SELFENDED_TAG" },
-    { 1, ms_transition_table_+51, "rule 22: start_tag <- OPEN_TAG ERROR_ END_ ." },
-    { 1, ms_transition_table_+52, "rule 21: start_tag <- OPEN_TAG ERROR_ CLOSE_TAG ." },
-    { 1, ms_transition_table_+53, "rule 30: selfended_tag <- OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG ." },
-    { 3, ms_transition_table_+54, "rule 31: attribute_list <- . attribute_list NAME '=' STRING                 \nrule 32: attribute_list <- . attribute_list NAME '=' ERROR_                 \nrule 33: attribute_list <- .                                                \nrule 18: start_tag <- OPEN_TAG NAME . attribute_list CLOSE_TAG              \nrule 19: start_tag <- OPEN_TAG NAME . ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- OPEN_TAG NAME . ERROR_ END_                           \nrule 28: selfended_tag <- OPEN_TAG NAME . attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- OPEN_TAG NAME . ERROR_ CLOSE_SELFENDED_TAG        " },
-    { 4, ms_transition_table_+57, "rule 19: start_tag <- OPEN_TAG NAME ERROR_ . CLOSE_TAG              \nrule 20: start_tag <- OPEN_TAG NAME ERROR_ . END_                   \nrule 29: selfended_tag <- OPEN_TAG NAME ERROR_ . CLOSE_SELFENDED_TAG" },
-    { 1, ms_transition_table_+61, "rule 20: start_tag <- OPEN_TAG NAME ERROR_ END_ ." },
-    { 1, ms_transition_table_+62, "rule 19: start_tag <- OPEN_TAG NAME ERROR_ CLOSE_TAG ." },
-    { 1, ms_transition_table_+63, "rule 29: selfended_tag <- OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG ." },
-    { 4, ms_transition_table_+64, "rule 31: attribute_list <- attribute_list . NAME '=' STRING                 \nrule 32: attribute_list <- attribute_list . NAME '=' ERROR_                 \nrule 18: start_tag <- OPEN_TAG NAME attribute_list . CLOSE_TAG              \nrule 28: selfended_tag <- OPEN_TAG NAME attribute_list . CLOSE_SELFENDED_TAG" },
-    { 1, ms_transition_table_+68, "rule 18: start_tag <- OPEN_TAG NAME attribute_list CLOSE_TAG ." },
-    { 1, ms_transition_table_+69, "rule 28: selfended_tag <- OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG ." },
-    { 3, ms_transition_table_+70, "rule 23: end_tag <- OPEN_END_TAG . NAME CLOSE_END_TAG       \nrule 24: end_tag <- OPEN_END_TAG . NAME ERROR_ CLOSE_END_TAG\nrule 25: end_tag <- OPEN_END_TAG . NAME ERROR_ END_         \nrule 26: end_tag <- OPEN_END_TAG . ERROR_ CLOSE_END_TAG     \nrule 27: end_tag <- OPEN_END_TAG . ERROR_ END_              " },
-    { 3, ms_transition_table_+73, "rule 26: end_tag <- OPEN_END_TAG ERROR_ . CLOSE_END_TAG\nrule 27: end_tag <- OPEN_END_TAG ERROR_ . END_         " },
-    { 1, ms_transition_table_+76, "rule 27: end_tag <- OPEN_END_TAG ERROR_ END_ ." },
-    { 1, ms_transition_table_+77, "rule 26: end_tag <- OPEN_END_TAG ERROR_ CLOSE_END_TAG ." },
-    { 3, ms_transition_table_+78, "rule 23: end_tag <- OPEN_END_TAG NAME . CLOSE_END_TAG       \nrule 24: end_tag <- OPEN_END_TAG NAME . ERROR_ CLOSE_END_TAG\nrule 25: end_tag <- OPEN_END_TAG NAME . ERROR_ END_         " },
-    { 3, ms_transition_table_+81, "rule 24: end_tag <- OPEN_END_TAG NAME ERROR_ . CLOSE_END_TAG\nrule 25: end_tag <- OPEN_END_TAG NAME ERROR_ . END_         " },
-    { 1, ms_transition_table_+84, "rule 25: end_tag <- OPEN_END_TAG NAME ERROR_ END_ ." },
-    { 1, ms_transition_table_+85, "rule 24: end_tag <- OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG ." },
-    { 1, ms_transition_table_+86, "rule 23: end_tag <- OPEN_END_TAG NAME CLOSE_END_TAG ." },
-    { 1, ms_transition_table_+87, "rule 4: element_list <- element_list element ." },
-    { 1, ms_transition_table_+88, "rule 7: element <- processing_instruction ." },
-    { 3, ms_transition_table_+89, "rule 4: element_list <- . element_list element     \nrule 8: element <- start_tag . element_list end_tag\nrule 9: element <- start_tag . ERROR_ end_tag      \nrule 10: element <- start_tag . ERROR_ END_        \nrule 5: element_list <- . element_list TEXT        \nrule 6: element_list <- .                          " },
-    { 4, ms_transition_table_+92, "rule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_              \nrule 9: element <- start_tag ERROR_ . end_tag               \nrule 10: element <- start_tag ERROR_ . END_                 " },
-    { 1, ms_transition_table_+96, "rule 10: element <- start_tag ERROR_ END_ ." },
-    { 1, ms_transition_table_+97, "rule 9: element <- start_tag ERROR_ end_tag ." },
-    { 10, ms_transition_table_+98, "rule 4: element_list <- element_list . element                              \nrule 7: element <- . processing_instruction                                 \nrule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 8: element <- . start_tag element_list end_tag                         \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 8: element <- start_tag element_list . end_tag                         \nrule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 9: element <- . start_tag ERROR_ end_tag                               \nrule 10: element <- . start_tag ERROR_ END_                                 \nrule 11: element <- . selfended_tag                                         \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 12: element <- . end_tag                                               \nrule 5: element_list <- element_list . TEXT                                 " },
-    { 1, ms_transition_table_+108, "rule 8: element <- start_tag element_list end_tag .\nrule 12: element <- end_tag .                      " },
-    { 1, ms_transition_table_+109, "rule 11: element <- selfended_tag ." },
-    { 1, ms_transition_table_+110, "rule 12: element <- end_tag ." },
-    { 7, ms_transition_table_+111, "rule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nSTART pi_or_start_tag                                                       \nrule 1: pi_or_start_tag <- . processing_instruction                         \nrule 2: pi_or_start_tag <- . start_tag                                      \nrule 3: pi_or_start_tag <- . selfended_tag                                  " },
-    { 1, ms_transition_table_+118, "RETURN pi_or_start_tag" },
-    { 1, ms_transition_table_+119, "rule 1: pi_or_start_tag <- processing_instruction ." },
-    { 1, ms_transition_table_+120, "rule 2: pi_or_start_tag <- start_tag ." },
-    { 1, ms_transition_table_+121, "rule 3: pi_or_start_tag <- selfended_tag ." },
-    { 2, ms_transition_table_+122, "START element_list                            \nrule 4: element_list <- . element_list element\nrule 5: element_list <- . element_list TEXT   \nrule 6: element_list <- .                     " },
-    { 10, ms_transition_table_+124, "RETURN element_list                                                         \nrule 4: element_list <- element_list . element                              \nrule 7: element <- . processing_instruction                                 \nrule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 8: element <- . start_tag element_list end_tag                         \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 9: element <- . start_tag ERROR_ end_tag                               \nrule 10: element <- . start_tag ERROR_ END_                                 \nrule 11: element <- . selfended_tag                                         \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 12: element <- . end_tag                                               \nrule 5: element_list <- element_list . TEXT                                 " },
-    { 9, ms_transition_table_+134, "START element                                                               \nrule 7: element <- . processing_instruction                                 \nrule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 8: element <- . start_tag element_list end_tag                         \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 9: element <- . start_tag ERROR_ end_tag                               \nrule 10: element <- . start_tag ERROR_ END_                                 \nrule 11: element <- . selfended_tag                                         \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 12: element <- . end_tag                                               " },
-    { 1, ms_transition_table_+143, "RETURN element" },
-    { 3, ms_transition_table_+144, "START processing_instruction                                             \nrule 13: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI\nrule 14: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI        \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ END_            \nrule 16: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI             \nrule 17: processing_instruction <- . OPEN_PI ERROR_ END_                 " },
-    { 1, ms_transition_table_+147, "RETURN processing_instruction" },
-    { 3, ms_transition_table_+148, "START start_tag                                               \nrule 18: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG\nrule 19: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG        \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ END_             \nrule 21: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG             \nrule 22: start_tag <- . OPEN_TAG ERROR_ END_                  " },
-    { 3, ms_transition_table_+151, "rule 18: start_tag <- OPEN_TAG . NAME attribute_list CLOSE_TAG\nrule 19: start_tag <- OPEN_TAG . NAME ERROR_ CLOSE_TAG        \nrule 20: start_tag <- OPEN_TAG . NAME ERROR_ END_             \nrule 21: start_tag <- OPEN_TAG . ERROR_ CLOSE_TAG             \nrule 22: start_tag <- OPEN_TAG . ERROR_ END_                  " },
-    { 3, ms_transition_table_+154, "rule 21: start_tag <- OPEN_TAG ERROR_ . CLOSE_TAG\nrule 22: start_tag <- OPEN_TAG ERROR_ . END_     " },
-    { 3, ms_transition_table_+157, "rule 31: attribute_list <- . attribute_list NAME '=' STRING   \nrule 32: attribute_list <- . attribute_list NAME '=' ERROR_   \nrule 33: attribute_list <- .                                  \nrule 18: start_tag <- OPEN_TAG NAME . attribute_list CLOSE_TAG\nrule 19: start_tag <- OPEN_TAG NAME . ERROR_ CLOSE_TAG        \nrule 20: start_tag <- OPEN_TAG NAME . ERROR_ END_             " },
-    { 3, ms_transition_table_+160, "rule 19: start_tag <- OPEN_TAG NAME ERROR_ . CLOSE_TAG\nrule 20: start_tag <- OPEN_TAG NAME ERROR_ . END_     " },
-    { 3, ms_transition_table_+163, "rule 31: attribute_list <- attribute_list . NAME '=' STRING   \nrule 32: attribute_list <- attribute_list . NAME '=' ERROR_   \nrule 18: start_tag <- OPEN_TAG NAME attribute_list . CLOSE_TAG" },
-    { 1, ms_transition_table_+166, "RETURN start_tag" },
-    { 3, ms_transition_table_+167, "START end_tag                                               \nrule 23: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 24: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 26: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ END_              " },
-    { 1, ms_transition_table_+170, "RETURN end_tag" },
-    { 3, ms_transition_table_+171, "START selfended_tag                                                         \nrule 28: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             " },
-    { 3, ms_transition_table_+174, "rule 28: selfended_tag <- OPEN_TAG . NAME attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- OPEN_TAG . NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 30: selfended_tag <- OPEN_TAG . ERROR_ CLOSE_SELFENDED_TAG             " },
-    { 2, ms_transition_table_+177, "rule 30: selfended_tag <- OPEN_TAG ERROR_ . CLOSE_SELFENDED_TAG" },
-    { 3, ms_transition_table_+179, "rule 31: attribute_list <- . attribute_list NAME '=' STRING                 \nrule 32: attribute_list <- . attribute_list NAME '=' ERROR_                 \nrule 33: attribute_list <- .                                                \nrule 28: selfended_tag <- OPEN_TAG NAME . attribute_list CLOSE_SELFENDED_TAG\nrule 29: selfended_tag <- OPEN_TAG NAME . ERROR_ CLOSE_SELFENDED_TAG        " },
-    { 2, ms_transition_table_+182, "rule 29: selfended_tag <- OPEN_TAG NAME ERROR_ . CLOSE_SELFENDED_TAG" },
-    { 3, ms_transition_table_+184, "rule 31: attribute_list <- attribute_list . NAME '=' STRING                 \nrule 32: attribute_list <- attribute_list . NAME '=' ERROR_                 \nrule 28: selfended_tag <- OPEN_TAG NAME attribute_list . CLOSE_SELFENDED_TAG" },
-    { 1, ms_transition_table_+187, "RETURN selfended_tag" },
-    { 2, ms_transition_table_+188, "START attribute_list                                       \nrule 31: attribute_list <- . attribute_list NAME '=' STRING\nrule 32: attribute_list <- . attribute_list NAME '=' ERROR_\nrule 33: attribute_list <- .                               " },
-    { 2, ms_transition_table_+190, "RETURN attribute_list                                      \nrule 31: attribute_list <- attribute_list . NAME '=' STRING\nrule 32: attribute_list <- attribute_list . NAME '=' ERROR_" }
+    { 1, ms_transition_table_+16, "rule 6: element_list <- element_list TEXT ." },
+    { 3, ms_transition_table_+17, "rule 14: processing_instruction <- OPEN_PI . NAME attribute_list CLOSE_PI\nrule 15: processing_instruction <- OPEN_PI . NAME ERROR_ CLOSE_PI        \nrule 16: processing_instruction <- OPEN_PI . NAME ERROR_ END_            \nrule 17: processing_instruction <- OPEN_PI . ERROR_ CLOSE_PI             \nrule 18: processing_instruction <- OPEN_PI . ERROR_ END_                 " },
+    { 3, ms_transition_table_+20, "rule 17: processing_instruction <- OPEN_PI ERROR_ . CLOSE_PI\nrule 18: processing_instruction <- OPEN_PI ERROR_ . END_    " },
+    { 1, ms_transition_table_+23, "rule 18: processing_instruction <- OPEN_PI ERROR_ END_ ." },
+    { 1, ms_transition_table_+24, "rule 17: processing_instruction <- OPEN_PI ERROR_ CLOSE_PI ." },
+    { 3, ms_transition_table_+25, "rule 14: processing_instruction <- OPEN_PI NAME . attribute_list CLOSE_PI\nrule 32: attribute_list <- . attribute_list NAME '=' STRING              \nrule 33: attribute_list <- . attribute_list NAME '=' ERROR_              \nrule 34: attribute_list <- .                                             \nrule 15: processing_instruction <- OPEN_PI NAME . ERROR_ CLOSE_PI        \nrule 16: processing_instruction <- OPEN_PI NAME . ERROR_ END_            " },
+    { 3, ms_transition_table_+28, "rule 15: processing_instruction <- OPEN_PI NAME ERROR_ . CLOSE_PI\nrule 16: processing_instruction <- OPEN_PI NAME ERROR_ . END_    " },
+    { 1, ms_transition_table_+31, "rule 16: processing_instruction <- OPEN_PI NAME ERROR_ END_ ." },
+    { 1, ms_transition_table_+32, "rule 15: processing_instruction <- OPEN_PI NAME ERROR_ CLOSE_PI ." },
+    { 3, ms_transition_table_+33, "rule 14: processing_instruction <- OPEN_PI NAME attribute_list . CLOSE_PI\nrule 32: attribute_list <- attribute_list . NAME '=' STRING              \nrule 33: attribute_list <- attribute_list . NAME '=' ERROR_              " },
+    { 2, ms_transition_table_+36, "rule 32: attribute_list <- attribute_list NAME . '=' STRING\nrule 33: attribute_list <- attribute_list NAME . '=' ERROR_" },
+    { 3, ms_transition_table_+38, "rule 32: attribute_list <- attribute_list NAME '=' . STRING\nrule 33: attribute_list <- attribute_list NAME '=' . ERROR_" },
+    { 1, ms_transition_table_+41, "rule 33: attribute_list <- attribute_list NAME '=' ERROR_ ." },
+    { 1, ms_transition_table_+42, "rule 32: attribute_list <- attribute_list NAME '=' STRING ." },
+    { 1, ms_transition_table_+43, "rule 14: processing_instruction <- OPEN_PI NAME attribute_list CLOSE_PI ." },
+    { 3, ms_transition_table_+44, "rule 19: start_tag <- OPEN_TAG . NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- OPEN_TAG . NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- OPEN_TAG . NAME ERROR_ END_                           \nrule 22: start_tag <- OPEN_TAG . ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- OPEN_TAG . ERROR_ END_                                \nrule 29: selfended_tag <- OPEN_TAG . NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- OPEN_TAG . NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- OPEN_TAG . ERROR_ CLOSE_SELFENDED_TAG             " },
+    { 4, ms_transition_table_+47, "rule 22: start_tag <- OPEN_TAG ERROR_ . CLOSE_TAG              \nrule 23: start_tag <- OPEN_TAG ERROR_ . END_                   \nrule 31: selfended_tag <- OPEN_TAG ERROR_ . CLOSE_SELFENDED_TAG" },
+    { 1, ms_transition_table_+51, "rule 23: start_tag <- OPEN_TAG ERROR_ END_ ." },
+    { 1, ms_transition_table_+52, "rule 22: start_tag <- OPEN_TAG ERROR_ CLOSE_TAG ." },
+    { 1, ms_transition_table_+53, "rule 31: selfended_tag <- OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG ." },
+    { 3, ms_transition_table_+54, "rule 32: attribute_list <- . attribute_list NAME '=' STRING                 \nrule 33: attribute_list <- . attribute_list NAME '=' ERROR_                 \nrule 34: attribute_list <- .                                                \nrule 19: start_tag <- OPEN_TAG NAME . attribute_list CLOSE_TAG              \nrule 20: start_tag <- OPEN_TAG NAME . ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- OPEN_TAG NAME . ERROR_ END_                           \nrule 29: selfended_tag <- OPEN_TAG NAME . attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- OPEN_TAG NAME . ERROR_ CLOSE_SELFENDED_TAG        " },
+    { 4, ms_transition_table_+57, "rule 20: start_tag <- OPEN_TAG NAME ERROR_ . CLOSE_TAG              \nrule 21: start_tag <- OPEN_TAG NAME ERROR_ . END_                   \nrule 30: selfended_tag <- OPEN_TAG NAME ERROR_ . CLOSE_SELFENDED_TAG" },
+    { 1, ms_transition_table_+61, "rule 21: start_tag <- OPEN_TAG NAME ERROR_ END_ ." },
+    { 1, ms_transition_table_+62, "rule 20: start_tag <- OPEN_TAG NAME ERROR_ CLOSE_TAG ." },
+    { 1, ms_transition_table_+63, "rule 30: selfended_tag <- OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG ." },
+    { 4, ms_transition_table_+64, "rule 32: attribute_list <- attribute_list . NAME '=' STRING                 \nrule 33: attribute_list <- attribute_list . NAME '=' ERROR_                 \nrule 19: start_tag <- OPEN_TAG NAME attribute_list . CLOSE_TAG              \nrule 29: selfended_tag <- OPEN_TAG NAME attribute_list . CLOSE_SELFENDED_TAG" },
+    { 1, ms_transition_table_+68, "rule 19: start_tag <- OPEN_TAG NAME attribute_list CLOSE_TAG ." },
+    { 1, ms_transition_table_+69, "rule 29: selfended_tag <- OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG ." },
+    { 3, ms_transition_table_+70, "rule 24: end_tag <- OPEN_END_TAG . NAME CLOSE_END_TAG       \nrule 25: end_tag <- OPEN_END_TAG . NAME ERROR_ CLOSE_END_TAG\nrule 26: end_tag <- OPEN_END_TAG . NAME ERROR_ END_         \nrule 27: end_tag <- OPEN_END_TAG . ERROR_ CLOSE_END_TAG     \nrule 28: end_tag <- OPEN_END_TAG . ERROR_ END_              " },
+    { 3, ms_transition_table_+73, "rule 27: end_tag <- OPEN_END_TAG ERROR_ . CLOSE_END_TAG\nrule 28: end_tag <- OPEN_END_TAG ERROR_ . END_         " },
+    { 1, ms_transition_table_+76, "rule 28: end_tag <- OPEN_END_TAG ERROR_ END_ ." },
+    { 1, ms_transition_table_+77, "rule 27: end_tag <- OPEN_END_TAG ERROR_ CLOSE_END_TAG ." },
+    { 3, ms_transition_table_+78, "rule 24: end_tag <- OPEN_END_TAG NAME . CLOSE_END_TAG       \nrule 25: end_tag <- OPEN_END_TAG NAME . ERROR_ CLOSE_END_TAG\nrule 26: end_tag <- OPEN_END_TAG NAME . ERROR_ END_         " },
+    { 3, ms_transition_table_+81, "rule 25: end_tag <- OPEN_END_TAG NAME ERROR_ . CLOSE_END_TAG\nrule 26: end_tag <- OPEN_END_TAG NAME ERROR_ . END_         " },
+    { 1, ms_transition_table_+84, "rule 26: end_tag <- OPEN_END_TAG NAME ERROR_ END_ ." },
+    { 1, ms_transition_table_+85, "rule 25: end_tag <- OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG ." },
+    { 1, ms_transition_table_+86, "rule 24: end_tag <- OPEN_END_TAG NAME CLOSE_END_TAG ." },
+    { 1, ms_transition_table_+87, "rule 5: element_list <- element_list element ." },
+    { 1, ms_transition_table_+88, "rule 8: element <- processing_instruction ." },
+    { 3, ms_transition_table_+89, "rule 5: element_list <- . element_list element     \nrule 9: element <- start_tag . element_list end_tag\nrule 10: element <- start_tag . ERROR_ end_tag     \nrule 11: element <- start_tag . ERROR_ END_        \nrule 6: element_list <- . element_list TEXT        \nrule 7: element_list <- .                          " },
+    { 4, ms_transition_table_+92, "rule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_              \nrule 10: element <- start_tag ERROR_ . end_tag              \nrule 11: element <- start_tag ERROR_ . END_                 " },
+    { 1, ms_transition_table_+96, "rule 11: element <- start_tag ERROR_ END_ ." },
+    { 1, ms_transition_table_+97, "rule 10: element <- start_tag ERROR_ end_tag ." },
+    { 10, ms_transition_table_+98, "rule 5: element_list <- element_list . element                              \nrule 8: element <- . processing_instruction                                 \nrule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 9: element <- . start_tag element_list end_tag                         \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 9: element <- start_tag element_list . end_tag                         \nrule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 10: element <- . start_tag ERROR_ end_tag                              \nrule 11: element <- . start_tag ERROR_ END_                                 \nrule 12: element <- . selfended_tag                                         \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 13: element <- . end_tag                                               \nrule 6: element_list <- element_list . TEXT                                 " },
+    { 1, ms_transition_table_+108, "rule 9: element <- start_tag element_list end_tag .\nrule 13: element <- end_tag .                      " },
+    { 1, ms_transition_table_+109, "rule 12: element <- selfended_tag ." },
+    { 1, ms_transition_table_+110, "rule 13: element <- end_tag ." },
+    { 8, ms_transition_table_+111, "rule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nSTART single                                                                \nrule 1: single <- . processing_instruction                                  \nrule 2: single <- . start_tag                                               \nrule 3: single <- . selfended_tag                                           \nrule 4: single <- . TEXT                                                    " },
+    { 1, ms_transition_table_+119, "rule 4: single <- TEXT ." },
+    { 1, ms_transition_table_+120, "RETURN single" },
+    { 1, ms_transition_table_+121, "rule 1: single <- processing_instruction ." },
+    { 1, ms_transition_table_+122, "rule 2: single <- start_tag ." },
+    { 1, ms_transition_table_+123, "rule 3: single <- selfended_tag ." },
+    { 2, ms_transition_table_+124, "START element_list                            \nrule 5: element_list <- . element_list element\nrule 6: element_list <- . element_list TEXT   \nrule 7: element_list <- .                     " },
+    { 10, ms_transition_table_+126, "RETURN element_list                                                         \nrule 5: element_list <- element_list . element                              \nrule 8: element <- . processing_instruction                                 \nrule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 9: element <- . start_tag element_list end_tag                         \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 10: element <- . start_tag ERROR_ end_tag                              \nrule 11: element <- . start_tag ERROR_ END_                                 \nrule 12: element <- . selfended_tag                                         \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 13: element <- . end_tag                                               \nrule 6: element_list <- element_list . TEXT                                 " },
+    { 9, ms_transition_table_+136, "START element                                                               \nrule 8: element <- . processing_instruction                                 \nrule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI   \nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI           \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_               \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI                \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                    \nrule 9: element <- . start_tag element_list end_tag                         \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG              \nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG                      \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_                           \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG                           \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                                \nrule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG                       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG                \nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_                         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG                     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_                              \nrule 10: element <- . start_tag ERROR_ end_tag                              \nrule 11: element <- . start_tag ERROR_ END_                                 \nrule 12: element <- . selfended_tag                                         \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             \nrule 13: element <- . end_tag                                               " },
+    { 1, ms_transition_table_+145, "RETURN element" },
+    { 3, ms_transition_table_+146, "START processing_instruction                                             \nrule 14: processing_instruction <- . OPEN_PI NAME attribute_list CLOSE_PI\nrule 15: processing_instruction <- . OPEN_PI NAME ERROR_ CLOSE_PI        \nrule 16: processing_instruction <- . OPEN_PI NAME ERROR_ END_            \nrule 17: processing_instruction <- . OPEN_PI ERROR_ CLOSE_PI             \nrule 18: processing_instruction <- . OPEN_PI ERROR_ END_                 " },
+    { 1, ms_transition_table_+149, "RETURN processing_instruction" },
+    { 3, ms_transition_table_+150, "START start_tag                                               \nrule 19: start_tag <- . OPEN_TAG NAME attribute_list CLOSE_TAG\nrule 20: start_tag <- . OPEN_TAG NAME ERROR_ CLOSE_TAG        \nrule 21: start_tag <- . OPEN_TAG NAME ERROR_ END_             \nrule 22: start_tag <- . OPEN_TAG ERROR_ CLOSE_TAG             \nrule 23: start_tag <- . OPEN_TAG ERROR_ END_                  " },
+    { 3, ms_transition_table_+153, "rule 19: start_tag <- OPEN_TAG . NAME attribute_list CLOSE_TAG\nrule 20: start_tag <- OPEN_TAG . NAME ERROR_ CLOSE_TAG        \nrule 21: start_tag <- OPEN_TAG . NAME ERROR_ END_             \nrule 22: start_tag <- OPEN_TAG . ERROR_ CLOSE_TAG             \nrule 23: start_tag <- OPEN_TAG . ERROR_ END_                  " },
+    { 3, ms_transition_table_+156, "rule 22: start_tag <- OPEN_TAG ERROR_ . CLOSE_TAG\nrule 23: start_tag <- OPEN_TAG ERROR_ . END_     " },
+    { 3, ms_transition_table_+159, "rule 32: attribute_list <- . attribute_list NAME '=' STRING   \nrule 33: attribute_list <- . attribute_list NAME '=' ERROR_   \nrule 34: attribute_list <- .                                  \nrule 19: start_tag <- OPEN_TAG NAME . attribute_list CLOSE_TAG\nrule 20: start_tag <- OPEN_TAG NAME . ERROR_ CLOSE_TAG        \nrule 21: start_tag <- OPEN_TAG NAME . ERROR_ END_             " },
+    { 3, ms_transition_table_+162, "rule 20: start_tag <- OPEN_TAG NAME ERROR_ . CLOSE_TAG\nrule 21: start_tag <- OPEN_TAG NAME ERROR_ . END_     " },
+    { 3, ms_transition_table_+165, "rule 32: attribute_list <- attribute_list . NAME '=' STRING   \nrule 33: attribute_list <- attribute_list . NAME '=' ERROR_   \nrule 19: start_tag <- OPEN_TAG NAME attribute_list . CLOSE_TAG" },
+    { 1, ms_transition_table_+168, "RETURN start_tag" },
+    { 3, ms_transition_table_+169, "START end_tag                                               \nrule 24: end_tag <- . OPEN_END_TAG NAME CLOSE_END_TAG       \nrule 25: end_tag <- . OPEN_END_TAG NAME ERROR_ CLOSE_END_TAG\nrule 26: end_tag <- . OPEN_END_TAG NAME ERROR_ END_         \nrule 27: end_tag <- . OPEN_END_TAG ERROR_ CLOSE_END_TAG     \nrule 28: end_tag <- . OPEN_END_TAG ERROR_ END_              " },
+    { 1, ms_transition_table_+172, "RETURN end_tag" },
+    { 3, ms_transition_table_+173, "START selfended_tag                                                         \nrule 29: selfended_tag <- . OPEN_TAG NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- . OPEN_TAG NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- . OPEN_TAG ERROR_ CLOSE_SELFENDED_TAG             " },
+    { 3, ms_transition_table_+176, "rule 29: selfended_tag <- OPEN_TAG . NAME attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- OPEN_TAG . NAME ERROR_ CLOSE_SELFENDED_TAG        \nrule 31: selfended_tag <- OPEN_TAG . ERROR_ CLOSE_SELFENDED_TAG             " },
+    { 2, ms_transition_table_+179, "rule 31: selfended_tag <- OPEN_TAG ERROR_ . CLOSE_SELFENDED_TAG" },
+    { 3, ms_transition_table_+181, "rule 32: attribute_list <- . attribute_list NAME '=' STRING                 \nrule 33: attribute_list <- . attribute_list NAME '=' ERROR_                 \nrule 34: attribute_list <- .                                                \nrule 29: selfended_tag <- OPEN_TAG NAME . attribute_list CLOSE_SELFENDED_TAG\nrule 30: selfended_tag <- OPEN_TAG NAME . ERROR_ CLOSE_SELFENDED_TAG        " },
+    { 2, ms_transition_table_+184, "rule 30: selfended_tag <- OPEN_TAG NAME ERROR_ . CLOSE_SELFENDED_TAG" },
+    { 3, ms_transition_table_+186, "rule 32: attribute_list <- attribute_list . NAME '=' STRING                 \nrule 33: attribute_list <- attribute_list . NAME '=' ERROR_                 \nrule 29: selfended_tag <- OPEN_TAG NAME attribute_list . CLOSE_SELFENDED_TAG" },
+    { 1, ms_transition_table_+189, "RETURN selfended_tag" },
+    { 2, ms_transition_table_+190, "START attribute_list                                       \nrule 32: attribute_list <- . attribute_list NAME '=' STRING\nrule 33: attribute_list <- . attribute_list NAME '=' ERROR_\nrule 34: attribute_list <- .                               " },
+    { 2, ms_transition_table_+192, "RETURN attribute_list                                      \nrule 32: attribute_list <- attribute_list . NAME '=' STRING\nrule 33: attribute_list <- attribute_list . NAME '=' ERROR_" }
 };
 BarfCpp_::Size const Parser::ms_state_count_ = sizeof(Parser::ms_state_table_) / sizeof(*Parser::ms_state_table_);
 
 Parser::Transition_ const Parser::ms_transition_table_[] =
 {
-    { Parser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+0 },
+    { Parser::Transition_::REDUCE, 7, 0, ms_lookahead_table_+0 },
     { Parser::Transition_::SHIFT, 1, 1, ms_lookahead_table_+0 },
     { Parser::Transition_::SHIFT, 2, 1, ms_lookahead_table_+1 },
     { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+2 },
@@ -1265,23 +1278,23 @@ Parser::Transition_ const Parser::ms_transition_table_[] =
     { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+10 },
     { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+11 },
     { Parser::Transition_::REDUCE, 0, 0, ms_lookahead_table_+12 },
-    { Parser::Transition_::REDUCE, 5, 0, ms_lookahead_table_+12 },
+    { Parser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+12 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+12 },
     { Parser::Transition_::SHIFT, 6, 1, ms_lookahead_table_+12 },
     { Parser::Transition_::SHIFT, 9, 1, ms_lookahead_table_+13 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+14 },
     { Parser::Transition_::SHIFT, 7, 1, ms_lookahead_table_+14 },
     { Parser::Transition_::SHIFT, 8, 1, ms_lookahead_table_+15 },
+    { Parser::Transition_::REDUCE, 18, 0, ms_lookahead_table_+16 },
     { Parser::Transition_::REDUCE, 17, 0, ms_lookahead_table_+16 },
-    { Parser::Transition_::REDUCE, 16, 0, ms_lookahead_table_+16 },
-    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+16 },
+    { Parser::Transition_::REDUCE, 34, 0, ms_lookahead_table_+16 },
     { Parser::Transition_::SHIFT, 10, 1, ms_lookahead_table_+16 },
     { Parser::Transition_::SHIFT, 13, 1, ms_lookahead_table_+17 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+18 },
     { Parser::Transition_::SHIFT, 11, 1, ms_lookahead_table_+18 },
     { Parser::Transition_::SHIFT, 12, 1, ms_lookahead_table_+19 },
+    { Parser::Transition_::REDUCE, 16, 0, ms_lookahead_table_+20 },
     { Parser::Transition_::REDUCE, 15, 0, ms_lookahead_table_+20 },
-    { Parser::Transition_::REDUCE, 14, 0, ms_lookahead_table_+20 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+20 },
     { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+20 },
     { Parser::Transition_::SHIFT, 18, 1, ms_lookahead_table_+21 },
@@ -1290,9 +1303,9 @@ Parser::Transition_ const Parser::ms_transition_table_[] =
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+23 },
     { Parser::Transition_::SHIFT, 16, 1, ms_lookahead_table_+23 },
     { Parser::Transition_::SHIFT, 17, 1, ms_lookahead_table_+24 },
+    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+25 },
     { Parser::Transition_::REDUCE, 32, 0, ms_lookahead_table_+25 },
-    { Parser::Transition_::REDUCE, 31, 0, ms_lookahead_table_+25 },
-    { Parser::Transition_::REDUCE, 13, 0, ms_lookahead_table_+25 },
+    { Parser::Transition_::REDUCE, 14, 0, ms_lookahead_table_+25 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+25 },
     { Parser::Transition_::SHIFT, 20, 1, ms_lookahead_table_+25 },
     { Parser::Transition_::SHIFT, 24, 1, ms_lookahead_table_+26 },
@@ -1300,53 +1313,53 @@ Parser::Transition_ const Parser::ms_transition_table_[] =
     { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+27 },
     { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+28 },
     { Parser::Transition_::SHIFT, 23, 1, ms_lookahead_table_+29 },
+    { Parser::Transition_::REDUCE, 23, 0, ms_lookahead_table_+30 },
     { Parser::Transition_::REDUCE, 22, 0, ms_lookahead_table_+30 },
-    { Parser::Transition_::REDUCE, 21, 0, ms_lookahead_table_+30 },
-    { Parser::Transition_::REDUCE, 30, 0, ms_lookahead_table_+30 },
-    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+30 },
+    { Parser::Transition_::REDUCE, 31, 0, ms_lookahead_table_+30 },
+    { Parser::Transition_::REDUCE, 34, 0, ms_lookahead_table_+30 },
     { Parser::Transition_::SHIFT, 25, 1, ms_lookahead_table_+30 },
     { Parser::Transition_::SHIFT, 29, 1, ms_lookahead_table_+31 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+32 },
     { Parser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+32 },
     { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+33 },
     { Parser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+34 },
+    { Parser::Transition_::REDUCE, 21, 0, ms_lookahead_table_+35 },
     { Parser::Transition_::REDUCE, 20, 0, ms_lookahead_table_+35 },
-    { Parser::Transition_::REDUCE, 19, 0, ms_lookahead_table_+35 },
-    { Parser::Transition_::REDUCE, 29, 0, ms_lookahead_table_+35 },
+    { Parser::Transition_::REDUCE, 30, 0, ms_lookahead_table_+35 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+35 },
     { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+35 },
     { Parser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+36 },
     { Parser::Transition_::SHIFT, 31, 1, ms_lookahead_table_+37 },
-    { Parser::Transition_::REDUCE, 18, 0, ms_lookahead_table_+38 },
-    { Parser::Transition_::REDUCE, 28, 0, ms_lookahead_table_+38 },
+    { Parser::Transition_::REDUCE, 19, 0, ms_lookahead_table_+38 },
+    { Parser::Transition_::REDUCE, 29, 0, ms_lookahead_table_+38 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+38 },
     { Parser::Transition_::SHIFT, 33, 1, ms_lookahead_table_+38 },
     { Parser::Transition_::SHIFT, 36, 1, ms_lookahead_table_+39 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+40 },
     { Parser::Transition_::SHIFT, 34, 1, ms_lookahead_table_+40 },
     { Parser::Transition_::SHIFT, 35, 1, ms_lookahead_table_+41 },
+    { Parser::Transition_::REDUCE, 28, 0, ms_lookahead_table_+42 },
     { Parser::Transition_::REDUCE, 27, 0, ms_lookahead_table_+42 },
-    { Parser::Transition_::REDUCE, 26, 0, ms_lookahead_table_+42 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+42 },
     { Parser::Transition_::SHIFT, 37, 1, ms_lookahead_table_+42 },
     { Parser::Transition_::SHIFT, 40, 1, ms_lookahead_table_+43 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+44 },
     { Parser::Transition_::SHIFT, 38, 1, ms_lookahead_table_+44 },
     { Parser::Transition_::SHIFT, 39, 1, ms_lookahead_table_+45 },
+    { Parser::Transition_::REDUCE, 26, 0, ms_lookahead_table_+46 },
     { Parser::Transition_::REDUCE, 25, 0, ms_lookahead_table_+46 },
     { Parser::Transition_::REDUCE, 24, 0, ms_lookahead_table_+46 },
-    { Parser::Transition_::REDUCE, 23, 0, ms_lookahead_table_+46 },
-    { Parser::Transition_::REDUCE, 4, 0, ms_lookahead_table_+46 },
+    { Parser::Transition_::REDUCE, 5, 0, ms_lookahead_table_+46 },
+    { Parser::Transition_::REDUCE, 8, 0, ms_lookahead_table_+46 },
     { Parser::Transition_::REDUCE, 7, 0, ms_lookahead_table_+46 },
-    { Parser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+46 },
     { Parser::Transition_::SHIFT, 44, 1, ms_lookahead_table_+46 },
     { Parser::Transition_::SHIFT, 47, 1, ms_lookahead_table_+47 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+48 },
     { Parser::Transition_::SHIFT, 45, 1, ms_lookahead_table_+48 },
     { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+49 },
     { Parser::Transition_::SHIFT, 46, 1, ms_lookahead_table_+50 },
+    { Parser::Transition_::REDUCE, 11, 0, ms_lookahead_table_+51 },
     { Parser::Transition_::REDUCE, 10, 0, ms_lookahead_table_+51 },
-    { Parser::Transition_::REDUCE, 9, 0, ms_lookahead_table_+51 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+51 },
     { Parser::Transition_::SHIFT, 4, 1, ms_lookahead_table_+51 },
     { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+52 },
@@ -1357,90 +1370,92 @@ Parser::Transition_ const Parser::ms_transition_table_[] =
     { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+57 },
     { Parser::Transition_::SHIFT, 48, 1, ms_lookahead_table_+58 },
     { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+59 },
-    { Parser::Transition_::REDUCE, 8, 0, ms_lookahead_table_+60 },
-    { Parser::Transition_::REDUCE, 11, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 9, 0, ms_lookahead_table_+60 },
     { Parser::Transition_::REDUCE, 12, 0, ms_lookahead_table_+60 },
+    { Parser::Transition_::REDUCE, 13, 0, ms_lookahead_table_+60 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+60 },
-    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+60 },
-    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+61 },
-    { Parser::Transition_::SHIFT, 52, 1, ms_lookahead_table_+62 },
+    { Parser::Transition_::SHIFT, 52, 1, ms_lookahead_table_+60 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+61 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+62 },
     { Parser::Transition_::SHIFT, 53, 1, ms_lookahead_table_+63 },
     { Parser::Transition_::SHIFT, 54, 1, ms_lookahead_table_+64 },
     { Parser::Transition_::SHIFT, 55, 1, ms_lookahead_table_+65 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+66 },
-    { Parser::Transition_::REDUCE, 1, 0, ms_lookahead_table_+66 },
-    { Parser::Transition_::REDUCE, 2, 0, ms_lookahead_table_+66 },
-    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+66 },
-    { Parser::Transition_::REDUCE, 6, 0, ms_lookahead_table_+66 },
-    { Parser::Transition_::SHIFT, 57, 1, ms_lookahead_table_+66 },
+    { Parser::Transition_::SHIFT, 56, 1, ms_lookahead_table_+66 },
+    { Parser::Transition_::REDUCE, 4, 0, ms_lookahead_table_+67 },
     { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+67 },
-    { Parser::Transition_::SHIFT, 4, 1, ms_lookahead_table_+67 },
-    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+68 },
-    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+69 },
-    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+70 },
-    { Parser::Transition_::SHIFT, 41, 1, ms_lookahead_table_+71 },
-    { Parser::Transition_::SHIFT, 42, 1, ms_lookahead_table_+72 },
-    { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+73 },
-    { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+74 },
-    { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+75 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+76 },
-    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+76 },
-    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+77 },
-    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+78 },
-    { Parser::Transition_::SHIFT, 59, 1, ms_lookahead_table_+79 },
-    { Parser::Transition_::SHIFT, 42, 1, ms_lookahead_table_+80 },
-    { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+81 },
-    { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+82 },
-    { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+83 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+84 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+84 },
-    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+84 },
-    { Parser::Transition_::SHIFT, 61, 1, ms_lookahead_table_+85 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+86 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+86 },
-    { Parser::Transition_::SHIFT, 63, 1, ms_lookahead_table_+86 },
-    { Parser::Transition_::SHIFT, 68, 1, ms_lookahead_table_+87 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+88 },
-    { Parser::Transition_::SHIFT, 64, 1, ms_lookahead_table_+88 },
+    { Parser::Transition_::REDUCE, 1, 0, ms_lookahead_table_+67 },
+    { Parser::Transition_::REDUCE, 2, 0, ms_lookahead_table_+67 },
+    { Parser::Transition_::REDUCE, 3, 0, ms_lookahead_table_+67 },
+    { Parser::Transition_::REDUCE, 7, 0, ms_lookahead_table_+67 },
+    { Parser::Transition_::SHIFT, 58, 1, ms_lookahead_table_+67 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+68 },
+    { Parser::Transition_::SHIFT, 4, 1, ms_lookahead_table_+68 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+69 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+70 },
+    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+71 },
+    { Parser::Transition_::SHIFT, 41, 1, ms_lookahead_table_+72 },
+    { Parser::Transition_::SHIFT, 42, 1, ms_lookahead_table_+73 },
+    { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+74 },
+    { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+75 },
+    { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+76 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+77 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+77 },
+    { Parser::Transition_::SHIFT, 19, 1, ms_lookahead_table_+78 },
+    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+79 },
+    { Parser::Transition_::SHIFT, 60, 1, ms_lookahead_table_+80 },
+    { Parser::Transition_::SHIFT, 42, 1, ms_lookahead_table_+81 },
+    { Parser::Transition_::SHIFT, 43, 1, ms_lookahead_table_+82 },
+    { Parser::Transition_::SHIFT, 50, 1, ms_lookahead_table_+83 },
+    { Parser::Transition_::SHIFT, 49, 1, ms_lookahead_table_+84 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+85 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+85 },
+    { Parser::Transition_::SHIFT, 5, 1, ms_lookahead_table_+85 },
+    { Parser::Transition_::SHIFT, 62, 1, ms_lookahead_table_+86 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+87 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+87 },
+    { Parser::Transition_::SHIFT, 64, 1, ms_lookahead_table_+87 },
+    { Parser::Transition_::SHIFT, 69, 1, ms_lookahead_table_+88 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+89 },
     { Parser::Transition_::SHIFT, 65, 1, ms_lookahead_table_+89 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+90 },
-    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+90 },
-    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+91 },
-    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+92 },
-    { Parser::Transition_::SHIFT, 66, 1, ms_lookahead_table_+92 },
+    { Parser::Transition_::SHIFT, 66, 1, ms_lookahead_table_+90 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+91 },
+    { Parser::Transition_::SHIFT, 21, 1, ms_lookahead_table_+91 },
+    { Parser::Transition_::SHIFT, 22, 1, ms_lookahead_table_+92 },
+    { Parser::Transition_::REDUCE, 34, 0, ms_lookahead_table_+93 },
     { Parser::Transition_::SHIFT, 67, 1, ms_lookahead_table_+93 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+94 },
-    { Parser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+94 },
-    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+95 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+96 },
-    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+96 },
-    { Parser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+97 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+98 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+98 },
-    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+98 },
-    { Parser::Transition_::SHIFT, 70, 1, ms_lookahead_table_+99 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+100 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+100 },
-    { Parser::Transition_::SHIFT, 72, 1, ms_lookahead_table_+100 },
-    { Parser::Transition_::SHIFT, 77, 1, ms_lookahead_table_+101 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+102 },
-    { Parser::Transition_::SHIFT, 73, 1, ms_lookahead_table_+102 },
+    { Parser::Transition_::SHIFT, 68, 1, ms_lookahead_table_+94 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+95 },
+    { Parser::Transition_::SHIFT, 26, 1, ms_lookahead_table_+95 },
+    { Parser::Transition_::SHIFT, 27, 1, ms_lookahead_table_+96 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+97 },
+    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+97 },
+    { Parser::Transition_::SHIFT, 30, 1, ms_lookahead_table_+98 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+99 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+99 },
+    { Parser::Transition_::SHIFT, 32, 1, ms_lookahead_table_+99 },
+    { Parser::Transition_::SHIFT, 71, 1, ms_lookahead_table_+100 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+101 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+101 },
+    { Parser::Transition_::SHIFT, 73, 1, ms_lookahead_table_+101 },
+    { Parser::Transition_::SHIFT, 78, 1, ms_lookahead_table_+102 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+103 },
     { Parser::Transition_::SHIFT, 74, 1, ms_lookahead_table_+103 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+104 },
-    { Parser::Transition_::SHIFT, 23, 1, ms_lookahead_table_+104 },
-    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+105 },
-    { Parser::Transition_::SHIFT, 75, 1, ms_lookahead_table_+105 },
+    { Parser::Transition_::SHIFT, 75, 1, ms_lookahead_table_+104 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+105 },
+    { Parser::Transition_::SHIFT, 23, 1, ms_lookahead_table_+105 },
+    { Parser::Transition_::REDUCE, 34, 0, ms_lookahead_table_+106 },
     { Parser::Transition_::SHIFT, 76, 1, ms_lookahead_table_+106 },
-    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+107 },
-    { Parser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+107 },
+    { Parser::Transition_::SHIFT, 77, 1, ms_lookahead_table_+107 },
     { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+108 },
-    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+108 },
-    { Parser::Transition_::SHIFT, 31, 1, ms_lookahead_table_+109 },
-    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+110 },
-    { Parser::Transition_::REDUCE, 33, 0, ms_lookahead_table_+110 },
-    { Parser::Transition_::SHIFT, 79, 1, ms_lookahead_table_+110 },
+    { Parser::Transition_::SHIFT, 28, 1, ms_lookahead_table_+108 },
+    { Parser::Transition_::ERROR_PANIC, 0, 0, ms_lookahead_table_+109 },
+    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+109 },
+    { Parser::Transition_::SHIFT, 31, 1, ms_lookahead_table_+110 },
     { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+111 },
-    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+111 }
+    { Parser::Transition_::REDUCE, 34, 0, ms_lookahead_table_+111 },
+    { Parser::Transition_::SHIFT, 80, 1, ms_lookahead_table_+111 },
+    { Parser::Transition_::RETURN, 0, 0, ms_lookahead_table_+112 },
+    { Parser::Transition_::SHIFT, 14, 1, ms_lookahead_table_+112 }
 };
 BarfCpp_::Size const Parser::ms_transition_count_ = sizeof(Parser::ms_transition_table_) / sizeof(*Parser::ms_transition_table_);
 
@@ -1506,9 +1521,10 @@ Parser::Token::Id const Parser::ms_lookahead_table_[] =
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::end_tag,
     Parser::Nonterminal_::selfended_tag,
+    Parser::Terminal::TEXT,
     Parser::Terminal::OPEN_PI,
     Parser::Terminal::OPEN_TAG,
-    Parser::Nonterminal_::pi_or_start_tag,
+    Parser::Nonterminal_::single,
     Parser::Nonterminal_::processing_instruction,
     Parser::Nonterminal_::start_tag,
     Parser::Nonterminal_::selfended_tag,
@@ -1833,7 +1849,7 @@ char const *const Parser::ms_token_name_table_[] =
     "CLOSE_END_TAG",
     "CLOSE_SELFENDED_TAG",
     "document",
-    "pi_or_start_tag",
+    "single",
     "element_list",
     "element",
     "processing_instruction",
@@ -1936,7 +1952,7 @@ Element *Parser::ParseOnlyRootElement ()
             return NULL;
         }
 
-        ParserReturnCode prc = Parse(&return_token, ParseNonterminal::pi_or_start_tag);
+        ParserReturnCode prc = Parse(&return_token, ParseNonterminal::single);
         if (prc != PRC_SUCCESS)
             EmitError("general parse error", GetFiLoc());
 
@@ -1945,6 +1961,8 @@ Element *Parser::ParseOnlyRootElement ()
 
         if (return_token != NULL && return_token->m_type == DomNode::ELEMENT)
             break;
+
+        delete return_token;
     }
 
     return static_cast<Element *>(return_token);
@@ -1963,4 +1981,4 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
 } // end of namespace Xml
 } // end of namespace Lvd
 
-#line 1967 "lvd_xml_parser.cpp"
+#line 1985 "lvd_xml_parser.cpp"

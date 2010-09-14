@@ -182,15 +182,15 @@ public:
           */
         enum Name
         {
-            attribute_list = 78,
+            attribute_list = 79,
             document = 0,
-            element = 58,
-            element_list = 56,
-            end_tag = 69,
-            pi_or_start_tag = 51,
-            processing_instruction = 60,
-            selfended_tag = 71,
-            start_tag = 62,
+            element = 59,
+            element_list = 57,
+            end_tag = 70,
+            processing_instruction = 61,
+            selfended_tag = 72,
+            single = 51,
+            start_tag = 63,
             /// Nonterminal which will be attempted to be parsed by the Parse()
             /// method by default (specified by the %default_parse_nonterminal
             /// directive).
@@ -365,7 +365,7 @@ private:
         {
             none_ = 0,
             document = 269,
-            pi_or_start_tag = 270,
+            single = 270,
             element_list = 271,
             element = 272,
             processing_instruction = 273,

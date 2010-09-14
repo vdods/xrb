@@ -186,7 +186,7 @@ Element *Parser::ParseOnlyRootElement ()
             return NULL;
         }
 
-        ParserReturnCode prc = Parse(&return_token, ParseNonterminal::pi_or_start_tag);
+        ParserReturnCode prc = Parse(&return_token, ParseNonterminal::single);
         if (prc != PRC_SUCCESS)
             EmitError("general parse error", GetFiLoc());
 
@@ -195,6 +195,8 @@ Element *Parser::ParseOnlyRootElement ()
 
         if (return_token != NULL && return_token->m_type == DomNode::ELEMENT)
             break;
+
+        delete return_token;
     }
 
     return static_cast<Element *>(return_token);
@@ -264,13 +266,15 @@ void Parser::EmitError (std::string const &message, FiLoc const &filoc)
     }
 ;
 
-%nonterminal pi_or_start_tag %type.cpp "Element *"
+%nonterminal single %type.cpp "Element *"
 :
     processing_instruction:pi %target.cpp { return pi; }
 |
     start_tag:start_tag %target.cpp { return start_tag; }
 |
     selfended_tag:tag %target.cpp { return tag; }
+|
+    TEXT:text %target.cpp { return text; }
 ;
 
 %nonterminal element_list %type.cpp "Document *"
