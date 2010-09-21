@@ -75,8 +75,12 @@ void StageProcessAttributes (Element &element,
                              Uint32 stage_count,
                              std::string const &additional_stageable_attribute_name_prefix)
 {
+    // if stage processing is disabled (stage == 0), do nothing
+    if (stage == 0)
+        return;
+
     // if stage processing is enabled, check that stage is a valid number
-    if (stage > 0 && stage > stage_count)
+    if (stage > stage_count)
         THROW_STRING("stage value exceeds stage_count value");
 
     std::set<std::string> stageable_attribute_name_prefixes;
@@ -106,8 +110,8 @@ void StageProcessAttributes (Element &element,
             }
         }
 
-        // if the attribute value is a backslash-delimited list of values (i.e. if the first
-        // char is backslash), replace it with the one corresponding to stage
+        // if the attribute value is a backslash-delimited list of values (i.e. if the
+        // first char is backslash), replace it with the one corresponding to stage.
         if (!attribute_value.empty() && attribute_value[0] == '\\')
         {
             std::string::size_type pos = 0;
@@ -122,14 +126,13 @@ void StageProcessAttributes (Element &element,
             if (actual_stage_count != stage_count)
                 THROW_STRING("element at " << element.m_filoc << ", attribute name '" << attribute_name << "': number of backslash-delimited values differs from value of xrb_stage_count");
 
-            while (stage-- > 0)
+            Uint32 s = stage;
+            while (s-- > 0)
                 pos = attribute_value.find_first_of('\\', pos) + 1;
             next = attribute_value.find_first_of('\\', pos);
 
             // cut out everything but the desired stage's attribute value
-            fprintf(stderr, "before: %s='%s', ", attribute_name.c_str(), attribute_value.c_str());
             attribute_value = attribute_value.substr(pos, next-1);
-            fprintf(stderr, "after: %s='%s'\n", attribute_name.c_str(), attribute_value.c_str());
         }
     }
 }
