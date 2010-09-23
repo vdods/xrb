@@ -109,16 +109,17 @@ protected:
 
     virtual void HandleFrame ();
 
+    typedef std::set<Entity *> EntitySet;
+
+    // set of all added entities
+    EntitySet m_entity_set;
+
 private:
 
     void UpdateVelocities ();
     void UpdatePositions ();
     void HandleInterpenetrations ();
 
-    typedef std::set<Entity *> EntitySet;
-
-    // set of all added entities
-    EntitySet m_entity_set;
     // the list of collision pairs for this frame
     CollisionPairList m_collision_pair_list;
     // keeps track of the main object layer (really only used to make
