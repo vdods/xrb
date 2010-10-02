@@ -84,7 +84,7 @@ TitleScreenWidget::TitleScreenWidget (
     Layout *footnotes_layout = new Layout(HORIZONTAL, stuff_layout, "footnotes_layout layout");
     footnotes_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
 
-    Label *credits_label = new Label("(C)opyright 2004-2009 by Victor Dods", footnotes_layout, "credits label");
+    Label *credits_label = new Label("(C)opyright 2004-2010 by Victor Dods", footnotes_layout, "credits label");
     credits_label->SetIsHeightFixedToTextHeight(true);
     credits_label->SetAlignment(Dim::X, LEFT);
 
