@@ -32,7 +32,7 @@ enum
     ENTITY_IS_NOT_IN_WORLD = static_cast<EntityWorldIndex>(-1)
 };
 
-typedef std::vector<Object const *> TransparentObjectVector;
+typedef std::vector<Object const *> ObjectVector;
 
 } // end of namespace Engine2
 } // end of namespace Xrb

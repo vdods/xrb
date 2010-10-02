@@ -60,14 +60,14 @@ public:
         Float pixels_in_view_radius,
         FloatVector2 const &view_center,
         Float view_radius,
-        TransparentObjectVector *transparent_object_vector);
+        ObjectVector *object_collection_vector);
     Uint32 DrawWrapped (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
         Float pixels_in_view_radius,
         FloatVector2 const &view_center,
         Float view_radius,
-        TransparentObjectVector *transparent_object_vector);
+        ObjectVector *object_collection_vector);
 
     // draw lines where the bounds of this quadtree node are
     void DrawBounds (

@@ -41,25 +41,24 @@ Object::DrawLoopFunctor::DrawLoopFunctor (
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
     Float const view_radius,
-    bool const is_collect_transparent_object_pass,
-    TransparentObjectVector *const transparent_object_vector,
+    bool const is_object_collection_pass,
+    ObjectVector *const object_collection_vector,
     QuadTreeType const quad_tree_type)
     :
     m_object_draw_data(render_context, world_to_screen),
-    m_transparent_object_vector(transparent_object_vector)
+    m_object_collection_vector(object_collection_vector)
 {
     m_pixels_in_view_radius = pixels_in_view_radius;
     m_view_center = view_center;
     m_view_radius = view_radius;
-    m_is_collect_transparent_object_pass = is_collect_transparent_object_pass;
+    m_is_object_collection_pass = is_object_collection_pass;
     m_quad_tree_type = quad_tree_type;
-    m_drawn_opaque_object_count = 0;
-    m_drawn_transparent_object_count = 0;
+    m_drawn_object_count = 0;
 }
 
 void Object::DrawLoopFunctor::operator () (Object const *object)
 {
-    ASSERT3(m_transparent_object_vector != NULL);
+    ASSERT3(m_object_collection_vector != NULL);
 
     // calculate the object's pixel radius on screen
     Float object_radius = m_pixels_in_view_radius * object->Radius(m_quad_tree_type) / m_view_radius;
@@ -67,33 +66,13 @@ void Object::DrawLoopFunctor::operator () (Object const *object)
     // gs_radius_limit_lower threshold
     if (object_radius >= ms_radius_limit_lower)
     {
-        Float distance_fade;
-        if (m_is_collect_transparent_object_pass)
+        if (m_is_object_collection_pass)
+            m_object_collection_vector->push_back(object);
+        else
         {
-            ASSERT3(m_object_draw_data.GetRenderContext().ColorMask()[Dim::A] <= 1.0f);
-            ASSERT3(object->ColorMask()[Dim::A] <= 1.0f);
-            // if it's a transparent object and the transparent object vector
-            // exists, add it to the transparent object vector.
-            if (object->IsTransparent() ||
-                object->ColorMask()[Dim::A] < 1.0f ||
-                (distance_fade = CalculateDistanceFade(object_radius)) < 1.0f ||
-                m_object_draw_data.GetRenderContext().ColorMask()[Dim::A] < 1.0f)
-            {
-                m_transparent_object_vector->push_back(object);
-                // no need to do anything else, so return
-                return;
-            }
+            object->Draw(m_object_draw_data, CalculateDistanceFade(object_radius));
+            ++m_drawn_object_count;
         }
-        else
-            distance_fade = CalculateDistanceFade(object_radius);
-
-        // if we got this far, draw it now
-        object->Draw(m_object_draw_data, distance_fade);
-        // increment the appropriate drawn object count
-        if (m_is_collect_transparent_object_pass)
-            ++m_drawn_opaque_object_count;
-        else
-            ++m_drawn_transparent_object_count;
     }
 }
 

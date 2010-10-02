@@ -50,15 +50,12 @@ public:
 
     struct DrawInfo
     {
-        // number of opaque Objects drawn this Draw()
-        Uint32 m_drawn_opaque_object_count;
-        // number of non-opaque Objects drawn this Draw()
-        Uint32 m_drawn_transparent_object_count;
+        // number of Objects drawn this Draw()
+        Uint32 m_drawn_object_count;
 
         void Reset ()
         {
-            m_drawn_opaque_object_count = 0;
-            m_drawn_transparent_object_count = 0;
+            m_drawn_object_count = 0;
         }
     }; // end of struct DrawInfo
 
@@ -253,7 +250,7 @@ private:
     bool m_is_transform_scaling_based_upon_widget_radius;
     // used by Object::DrawLoopFunctor in ObjectLayer::Draw and
     // VisibilityQuadTree::Draw.
-    TransparentObjectVector m_transparent_object_vector;
+    ObjectVector m_object_collection_vector;
 
     //////////////////////////////////////////////////////////////////////////
     // cached parallaxed transformations/view-and-object-layer properties

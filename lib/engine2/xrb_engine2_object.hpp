@@ -68,7 +68,7 @@ public:
         FloatMatrix2 m_transformation;
     }; // end of class Engine2::Object::DrawData
 
-    struct TransparentObjectOrder
+    struct ObjectDepthOrder
     {
         bool operator () (Object const *t0, Object const *t1)
         {
@@ -76,7 +76,7 @@ public:
                    ||
                    (t0->ZDepth() == t1->ZDepth() && t0 < t1);
         }
-    }; // end of struct Engine2::Object::TransparentObjectOrder
+    }; // end of struct Engine2::Object::ObjectDepthOrder
 
     // the Engine2::Object::DrawLoopFunctor class nicely packages up a
     // bunch of variables which are used in the recursive Draw function.
@@ -102,8 +102,8 @@ public:
             Float pixels_in_view_radius,
             FloatVector2 const &view_center,
             Float view_radius,
-            bool is_collect_transparent_object_pass,
-            TransparentObjectVector *transparent_object_vector,
+            bool is_object_collection_pass,
+            ObjectVector *object_collection_vector,
             QuadTreeType quad_tree_type);
         ~DrawLoopFunctor () { }
 
@@ -112,14 +112,13 @@ public:
         Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
         FloatVector2 const &ViewCenter () const { return m_view_center; }
         Float ViewRadius () const { return m_view_radius; }
-        bool IsCollectTransparentObjectPass () const { return m_is_collect_transparent_object_pass; }
-        TransparentObjectVector *GetTransparentObjectVector () const { return m_transparent_object_vector; }
-        Uint32 DrawnOpaqueObjectCount () const { return m_drawn_opaque_object_count; }
-        Uint32 DrawnTransparentObjectCount () const { return m_drawn_transparent_object_count; }
+        bool IsObjectCollectionPass () const { return m_is_object_collection_pass; }
+        ObjectVector *GetObjectCollectionVector () const { return m_object_collection_vector; }
+        Uint32 DrawnObjectCount () const { return m_drawn_object_count; }
 
         void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
         void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }
-        void SetIsCollectTransparentObjectPass (bool is_collect_transparent_object_pass) { m_is_collect_transparent_object_pass = is_collect_transparent_object_pass; }
+        void SetIsObjectCollectionPass (bool is_object_collection_pass) { m_is_object_collection_pass = is_object_collection_pass; }
 
         // this method is what std::for_each will use to draw each object.
         void operator () (Engine2::Object const *object);
@@ -132,11 +131,10 @@ public:
         Float m_pixels_in_view_radius;
         FloatVector2 m_view_center;
         Float m_view_radius;
-        bool m_is_collect_transparent_object_pass;
-        TransparentObjectVector *const m_transparent_object_vector;
+        bool m_is_object_collection_pass;
+        ObjectVector *const m_object_collection_vector;
         QuadTreeType m_quad_tree_type;
-        mutable Uint32 m_drawn_opaque_object_count;
-        mutable Uint32 m_drawn_transparent_object_count;
+        mutable Uint32 m_drawn_object_count;
     }; // end of class Engine2::Object::DrawLoopFunctor
 
     virtual ~Object ();
@@ -297,8 +295,8 @@ private:
     // visible and physical radii need to be recalculated
     mutable bool m_radii_need_to_be_recalculated;
     // indicates that this object is (partially) transparent and should always go
-    // into the TransparentObjectVector for sorted back-to-front drawing.
-    bool m_is_transparent;
+    // into the ObjectVector for sorted back-to-front drawing.
+    bool m_is_transparent; // NOTE: deprecated
 }; // end of class Engine2::Object
 
 } // end of namespace Engine2

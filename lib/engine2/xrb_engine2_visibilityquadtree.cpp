@@ -140,7 +140,7 @@ Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 }
 
 // it's faster to not use depth test
-#define USE_DEPTH_TEST 1
+#define USE_DEPTH_TEST 0
 
 Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
@@ -148,13 +148,13 @@ Uint32 VisibilityQuadTree::Draw (
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
     Float const view_radius,
-    TransparentObjectVector *const transparent_object_vector)
+    ObjectVector *const object_collection_vector)
 {
-    ASSERT1(transparent_object_vector != NULL);
+    ASSERT1(object_collection_vector != NULL);
     ASSERT1(m_parent == NULL);
 
-    // clear the transparent object vector and create the draw loop functor
-    transparent_object_vector->clear();
+    // clear the object collection vector and create the draw loop functor
+    object_collection_vector->clear();
     Object::DrawLoopFunctor
         draw_loop_functor(
             render_context,
@@ -163,10 +163,10 @@ Uint32 VisibilityQuadTree::Draw (
             view_center,
             view_radius,
             true,
-            transparent_object_vector,
+            object_collection_vector,
             GetQuadTreeType());
 
-    // draw opaque objects while collecting transparent objects
+    // collect objects to draw
     {
 #if USE_DEPTH_TEST
         glEnable(GL_DEPTH_TEST);
@@ -181,26 +181,29 @@ Uint32 VisibilityQuadTree::Draw (
         Draw(draw_loop_functor);
     }
 
-    // sort transparent objects back-to-front and draw them
+    // sort objects back-to-front and draw them
     {
 #if USE_DEPTH_TEST
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 #endif // USE_DEPTH_TEST
-        if (!transparent_object_vector->empty())
-            std::sort(
-                &(*transparent_object_vector)[0],
-                &(*transparent_object_vector)[0]+transparent_object_vector->size(),
-                Object::TransparentObjectOrder());
 
-        draw_loop_functor.SetIsCollectTransparentObjectPass(false);
+        if (!object_collection_vector->empty())
+            std::sort(
+                &(*object_collection_vector)[0],
+                &(*object_collection_vector)[0]+object_collection_vector->size(),
+                Object::ObjectDepthOrder());
+
+        draw_loop_functor.SetIsObjectCollectionPass(false);
         std::for_each(
-            draw_loop_functor.GetTransparentObjectVector()->begin(),
-            draw_loop_functor.GetTransparentObjectVector()->end(),
+            draw_loop_functor.GetObjectCollectionVector()->begin(),
+            draw_loop_functor.GetObjectCollectionVector()->end(),
             draw_loop_functor);
     }
 
-    return draw_loop_functor.DrawnOpaqueObjectCount();
+    object_collection_vector->clear();
+
+    return draw_loop_functor.DrawnObjectCount();
 }
 
 Uint32 VisibilityQuadTree::DrawWrapped (
@@ -209,13 +212,13 @@ Uint32 VisibilityQuadTree::DrawWrapped (
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
     Float const view_radius,
-    TransparentObjectVector *const transparent_object_vector)
+    ObjectVector *const object_collection_vector)
 {
-    ASSERT1(transparent_object_vector != NULL);
+    ASSERT1(object_collection_vector != NULL);
     ASSERT1(m_parent == NULL);
 
-    // clear the transparent object vector and create the draw loop functor
-    transparent_object_vector->clear();
+    // clear the object collection vector and create the draw loop functor
+    object_collection_vector->clear();
     Object::DrawLoopFunctor
         draw_loop_functor(
             render_context,
@@ -224,58 +227,11 @@ Uint32 VisibilityQuadTree::DrawWrapped (
             view_center,
             view_radius,
             true,
-            transparent_object_vector,
+            object_collection_vector,
             GetQuadTreeType());
 
-    // draw opaque objects while collecting transparent objects
-    {
-#if USE_DEPTH_TEST
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-        glClearDepth(1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        // TODO: look into glPolygonOffset, as this might save having
-        // to clear the depth buffer for each ObjectLayer
-        // TODO: use glDepthRange to set the per-ObjectLayer depth range
-#endif // USE_DEPTH_TEST
-
-        DrawWrapped(draw_loop_functor);
-    }
-
-    // sort transparent objects back-to-front and draw them
-    {
-#if USE_DEPTH_TEST
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-#endif // USE_DEPTH_TEST
-        if (!transparent_object_vector->empty())
-        {
-            std::sort(
-                &(*transparent_object_vector)[0],
-                &(*transparent_object_vector)[0]+transparent_object_vector->size(),
-                Object::TransparentObjectOrder());
-            // remove duplicates from transparent_object_vector, which should be
-            // all contiguous because of the above sorting.
-            Uint32 write = 0;
-            Uint32 read = 0;
-            Uint32 size = transparent_object_vector->size();
-            while (read < size)
-            {
-                Object const *skip_object = (*transparent_object_vector)[read];
-                (*transparent_object_vector)[write] = skip_object;
-                ++write;
-                ++read;
-                while (read < size && (*transparent_object_vector)[read] == skip_object)
-                    ++read;
-            }
-            transparent_object_vector->resize(write);
-        }
-
-        draw_loop_functor.SetIsCollectTransparentObjectPass(false);
-        DrawWrapped(draw_loop_functor);
-    }
-
-    return draw_loop_functor.DrawnOpaqueObjectCount();
+    DrawWrapped(draw_loop_functor);
+    return draw_loop_functor.DrawnObjectCount();
 }
 
 void VisibilityQuadTree::DrawBounds (
@@ -375,6 +331,7 @@ void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
     Float right = floor((draw_loop_functor.ViewCenter()[Dim::X]+radius_sum)/side_length);
     FloatVector2 old_view_center(draw_loop_functor.ViewCenter());
     FloatVector2 view_offset;
+    ObjectVector &object_collection_vector = *draw_loop_functor.GetObjectCollectionVector();
 
     for (Float x = left; x <= right; x += 1.0f)
     {
@@ -394,16 +351,66 @@ void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
                     view_offset[Dim::Y],
                     0.0f);
 
-                if (draw_loop_functor.IsCollectTransparentObjectPass())
+                // clear the object collection vector and collect objects to draw
+                {
+#if USE_DEPTH_TEST
+                    glEnable(GL_DEPTH_TEST);
+                    glDepthMask(GL_TRUE);
+                    glClearDepth(1.0f);
+                    glClear(GL_DEPTH_BUFFER_BIT);
+                    // TODO: look into glPolygonOffset, as this might save having
+                    // to clear the depth buffer for each ObjectLayer
+                    // TODO: use glDepthRange to set the per-ObjectLayer depth range
+#endif // USE_DEPTH_TEST
+
+                    object_collection_vector.clear();
+                    draw_loop_functor.SetIsObjectCollectionPass(true);
                     Draw(draw_loop_functor);
-                else
+                }
+
+                // sort objects back-to-front and draw them
+                {
+#if USE_DEPTH_TEST
+                    glDisable(GL_DEPTH_TEST);
+                    glDepthMask(GL_FALSE);
+#endif // USE_DEPTH_TEST
+
+                    if (!object_collection_vector.empty())
+                    {
+                        std::sort(
+                            &object_collection_vector[0],
+                            &object_collection_vector[0]+object_collection_vector.size(),
+                            Object::ObjectDepthOrder());
+                        /*
+                        // remove duplicates from the object collection vector, which should be
+                        // all contiguous because of the above sorting.
+                        Uint32 write = 0;
+                        Uint32 read = 0;
+                        Uint32 size = object_collection_vector.size();
+                        while (read < size)
+                        {
+                            Object const *skip_object = object_collection_vector[read];
+                            object_collection_vector[write] = skip_object;
+                            ++write;
+                            ++read;
+                            while (read < size && object_collection_vector[read] == skip_object)
+                                ++read;
+                        }
+                        object_collection_vector.resize(write);
+                        */
+                    }
+
+                    draw_loop_functor.SetIsObjectCollectionPass(false);
                     std::for_each(
-                        draw_loop_functor.GetTransparentObjectVector()->begin(),
-                        draw_loop_functor.GetTransparentObjectVector()->end(),
+                        object_collection_vector.begin(),
+                        object_collection_vector.end(),
                         draw_loop_functor);
+                }
             }
         }
     }
+
+    object_collection_vector.clear();
 }
 
 } // end of namespace Engine2

@@ -195,7 +195,7 @@ Uint32 ObjectLayer::Draw (
     Float const pixels_in_view_radius,
     FloatVector2 const &view_center,
     Float const &view_radius,
-    TransparentObjectVector *const transparent_object_vector)
+    ObjectVector *const object_collection_vector)
 {
     ASSERT2(view_radius > 0.0);
 
@@ -206,7 +206,7 @@ Uint32 ObjectLayer::Draw (
             pixels_in_view_radius,
             view_center,
             view_radius,
-            transparent_object_vector);
+            object_collection_vector);
     else
         return m_quad_tree->Draw(
             render_context,
@@ -214,7 +214,7 @@ Uint32 ObjectLayer::Draw (
             pixels_in_view_radius,
             view_center,
             view_radius,
-            transparent_object_vector);
+            object_collection_vector);
 }
 
 void ObjectLayer::AddObject (Object *const object)

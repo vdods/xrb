@@ -414,14 +414,14 @@ void WorldView::Draw (RenderContext const &render_context)
 
             // draw the contents of the object layer (this does opaque and then
             // back-to-front transparent rendering for correct z-depth order).
-            m_draw_info.m_drawn_opaque_object_count =
+            m_draw_info.m_drawn_object_count =
                 object_layer->Draw(
                     view_render_context,
                     parallaxed_world_to_screen,
                     pixels_in_view_radius,
                     Center(),
                     parallaxed_view_radius,
-                    &m_transparent_object_vector);
+                    &m_object_collection_vector);
 
             // if indicated, draw the grid lines after the main layer
             if (object_layer == GetWorld()->MainObjectLayer() &&
