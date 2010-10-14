@@ -248,9 +248,8 @@ private:
     // indicates said scaling is based upon the smaller of the widget's height
     // and width.
     bool m_is_transform_scaling_based_upon_widget_radius;
-    // used by Object::DrawLoopFunctor in ObjectLayer::Draw and
-    // VisibilityQuadTree::Draw.
-    ObjectVector m_object_collection_vector;
+    // used by VisibilityQuadTree::Draw.
+    DrawObjectCollector m_draw_object_collector;
 
     //////////////////////////////////////////////////////////////////////////
     // cached parallaxed transformations/view-and-object-layer properties

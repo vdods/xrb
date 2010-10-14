@@ -20,63 +20,25 @@
 namespace Xrb {
 namespace Engine2 {
 
-// ///////////////////////////////////////////////////////////////////////////
-// Object::DrawLoopFunctor
-// ///////////////////////////////////////////////////////////////////////////
+Object::~Object ()
+{
+    if (m_entity != NULL)
+    {
+        ASSERT1(m_entity->m_owner_object == this);
+        ASSERT1(!m_entity->IsInWorld());
+        m_entity->m_owner_object = NULL;
+        Delete(m_entity);
+    }
+}
 
 // constants which control the thresholds at which objects use
 // alpha fading to fade away, when they become small enough.
-Float const Object::DrawLoopFunctor::ms_radius_limit_upper = 1.0f;
-Float const Object::DrawLoopFunctor::ms_radius_limit_lower = 0.5f;
-Float const Object::DrawLoopFunctor::ms_distance_fade_slope =
-    1.0f /
-    (Object::DrawLoopFunctor::ms_radius_limit_upper - Object::DrawLoopFunctor::ms_radius_limit_lower);
-Float const Object::DrawLoopFunctor::ms_distance_fade_intercept =
-    Object::DrawLoopFunctor::ms_radius_limit_lower /
-    (Object::DrawLoopFunctor::ms_radius_limit_lower - Object::DrawLoopFunctor::ms_radius_limit_upper);
+Float const Object::ms_radius_limit_upper = 1.0f;
+Float const Object::ms_radius_limit_lower = 0.5f;
+Float const Object::ms_distance_fade_slope = 1.0f / (Object::ms_radius_limit_upper - Object::ms_radius_limit_lower);
+Float const Object::ms_distance_fade_intercept = Object::ms_radius_limit_lower / (Object::ms_radius_limit_lower - Object::ms_radius_limit_upper);
 
-Object::DrawLoopFunctor::DrawLoopFunctor (
-    RenderContext const &render_context,
-    FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const view_radius,
-    bool const is_object_collection_pass,
-    ObjectVector *const object_collection_vector,
-    QuadTreeType const quad_tree_type)
-    :
-    m_object_draw_data(render_context, world_to_screen),
-    m_object_collection_vector(object_collection_vector)
-{
-    m_pixels_in_view_radius = pixels_in_view_radius;
-    m_view_center = view_center;
-    m_view_radius = view_radius;
-    m_is_object_collection_pass = is_object_collection_pass;
-    m_quad_tree_type = quad_tree_type;
-    m_drawn_object_count = 0;
-}
-
-void Object::DrawLoopFunctor::operator () (Object const *object)
-{
-    ASSERT3(m_object_collection_vector != NULL);
-
-    // calculate the object's pixel radius on screen
-    Float object_radius = m_pixels_in_view_radius * object->Radius(m_quad_tree_type) / m_view_radius;
-    if (m_is_object_collection_pass)
-    {
-        // distance culling - don't draw objects that are below the
-        // gs_radius_limit_lower threshold
-        if (object_radius >= ms_radius_limit_lower)
-            m_object_collection_vector->push_back(object);
-    }
-    else
-    {
-        object->Draw(m_object_draw_data, CalculateDistanceFade(object_radius));
-        ++m_drawn_object_count;
-    }
-}
-
-Float Object::DrawLoopFunctor::CalculateDistanceFade (Float const object_radius)
+Float Object::CalculateDistanceFade (Float object_radius)
 {
     // calculate the alpha value of the object due to its distance.
     // sprites with radii between ms_radius_limit_lower and
@@ -90,21 +52,6 @@ Float Object::DrawLoopFunctor::CalculateDistanceFade (Float const object_radius)
         (ms_distance_fade_slope * object_radius + ms_distance_fade_intercept);
     ASSERT1(distance_fade <= 1.0f);
     return distance_fade;
-}
-
-// ///////////////////////////////////////////////////////////////////////////
-// Object
-// ///////////////////////////////////////////////////////////////////////////
-
-Object::~Object ()
-{
-    if (m_entity != NULL)
-    {
-        ASSERT1(m_entity->m_owner_object == this);
-        ASSERT1(!m_entity->IsInWorld());
-        m_entity->m_owner_object = NULL;
-        Delete(m_entity);
-    }
 }
 
 Object *Object::Create (

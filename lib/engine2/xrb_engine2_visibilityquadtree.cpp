@@ -142,81 +142,91 @@ Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const view_radius,
-    ObjectVector *const object_collection_vector)
+    DrawObjectCollector &draw_object_collector) const
 {
-    ASSERT1(object_collection_vector != NULL);
-    ASSERT1(m_parent == NULL);
+    ASSERT1(m_parent == NULL && "this can only be called on the root node");
 
-    // clear the object collection vector and create the draw loop functor
-    object_collection_vector->clear();
-    Object::DrawLoopFunctor
-        draw_loop_functor(
-            render_context,
-            world_to_screen,
-            pixels_in_view_radius,
-            view_center,
-            view_radius,
-            true, // is object collection pass
-            object_collection_vector,
-            GetQuadTreeType());
+    if (SubordinateObjectCount() == 0)
+        return 0;
 
-    // collect objects to draw (this is an object collection pass)
-    Draw(draw_loop_functor);
-
-    // sort objects back-to-front and draw them
+    // clear the collection vector and collect objects to draw
+    draw_object_collector.m_draw_object.clear();
+    CollectDrawObjects(draw_object_collector);
+    // sort objects (back-to-front, and then by other criteria)
+    std::sort(
+        &draw_object_collector.m_draw_object[0],
+        &draw_object_collector.m_draw_object[0] + draw_object_collector.m_draw_object.size(),
+        DrawObjectOrder());
+    // now draw them
+    Object::DrawData draw_data(render_context, world_to_screen);
+    for (DrawObjectVector::const_iterator it = draw_object_collector.m_draw_object.begin(),
+                                          it_end = draw_object_collector.m_draw_object.end();
+         it != it_end;
+         ++it)
     {
-        if (!object_collection_vector->empty())
-            std::sort(
-                &(*object_collection_vector)[0],
-                &(*object_collection_vector)[0]+object_collection_vector->size(),
-                Object::ObjectDepthOrder());
-
-        draw_loop_functor.SetIsObjectCollectionPass(false);
-        std::for_each(
-            draw_loop_functor.GetObjectCollectionVector()->begin(),
-            draw_loop_functor.GetObjectCollectionVector()->end(),
-            draw_loop_functor);
+        DrawObject const &draw_object = *it;
+        ASSERT3(draw_object.m_object != NULL);
+        draw_data.m_alpha_mask = draw_object.m_distance_fade;
+        draw_object.m_object->Draw(draw_data);
     }
-
-    object_collection_vector->clear();
-
-    return draw_loop_functor.DrawnObjectCount();
+    Uint32 drawn_object_count = draw_object_collector.m_draw_object.size();
+    draw_object_collector.m_draw_object.clear(); // might as well clear the vector again
+    return drawn_object_count;
 }
 
 Uint32 VisibilityQuadTree::DrawWrapped (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const view_radius,
-    ObjectVector *const object_collection_vector)
+    DrawObjectCollector &draw_object_collector) const
 {
-    ASSERT1(object_collection_vector != NULL);
-    ASSERT1(m_parent == NULL);
+    ASSERT1(m_parent == NULL && "this can only be called on the root node");
 
-    // clear the object collection vector and create the draw loop functor
-    object_collection_vector->clear();
-    Object::DrawLoopFunctor
-        draw_loop_functor(
-            render_context,
-            world_to_screen,
-            pixels_in_view_radius,
-            view_center,
-            view_radius,
-            true,
-            object_collection_vector,
-            GetQuadTreeType());
+    Uint32 drawn_object_count = 0;
 
-    DrawWrapped(draw_loop_functor);
-    return draw_loop_functor.DrawnObjectCount();
+    // if there are no objects, just return
+    if (SubordinateObjectCount() == 0)
+        return drawn_object_count;
+
+    ASSERT2(m_half_side_length > 0.0f);
+
+    Float side_length = SideLength();
+    Float radius_sum = 2.0f*Radius() + draw_object_collector.m_view_radius;
+    Float top = floor((draw_object_collector.m_view_center[Dim::Y]+radius_sum)/side_length);
+    Float bottom = ceil((draw_object_collector.m_view_center[Dim::Y]-radius_sum)/side_length);
+    Float left = ceil((draw_object_collector.m_view_center[Dim::X]-radius_sum)/side_length);
+    Float right = floor((draw_object_collector.m_view_center[Dim::X]+radius_sum)/side_length);
+    FloatVector2 old_view_center(draw_object_collector.m_view_center);
+    FloatVector2 view_offset;
+
+    for (Float x = left; x <= right; x += 1.0f)
+    {
+        for (Float y = bottom; y <= top; y += 1.0f)
+        {
+            view_offset.SetComponents(side_length*x, side_length*y);
+            // this IF statement culls quadtree nodes that are outside of the
+            // circular view radius from the square grid of nodes to be drawn
+            if ((old_view_center - view_offset).LengthSquared() < Sqr(radius_sum))
+            {
+                draw_object_collector.m_view_center = old_view_center - view_offset;
+
+                glMatrixMode(GL_MODELVIEW);
+                glLoadIdentity();
+                glTranslatef(
+                    view_offset[Dim::X],
+                    view_offset[Dim::Y],
+                    0.0f);
+
+                // call the non-wrapped Draw.  NOTE: the world_to_screen transformation here is wrong
+                // by a translation of view_offset.
+                drawn_object_count += Draw(render_context, world_to_screen, draw_object_collector);
+            }
+        }
+    }
+
+    return drawn_object_count;
 }
 
-void VisibilityQuadTree::DrawBounds (
-    RenderContext const &render_context,
-    Color const &color)
+void VisibilityQuadTree::DrawBounds (RenderContext const &render_context, Color const &color) const
 {
     Float r_o2 = m_radius * 0.5f * Math::Sqrt(2.0f);
     FloatVector2 upper_right( r_o2,  r_o2);
@@ -233,9 +243,7 @@ void VisibilityQuadTree::DrawBounds (
     Render::DrawLine(render_context, lower_right, upper_right, color);
 }
 
-void VisibilityQuadTree::DrawTreeBounds (
-    RenderContext const &render_context,
-    Color const &color)
+void VisibilityQuadTree::DrawTreeBounds (RenderContext const &render_context, Color const &color) const
 {
     if (m_parent == NULL)
         DrawBounds(render_context, color);
@@ -258,124 +266,41 @@ void VisibilityQuadTree::DrawTreeBounds (
             Child<VisibilityQuadTree>(i)->DrawTreeBounds(render_context, color);
 }
 
-void VisibilityQuadTree::Draw (Object::DrawLoopFunctor const &draw_loop_functor)
+void VisibilityQuadTree::CollectDrawObjects (DrawObjectCollector &draw_object_collector) const
 {
     // if there are no objects here or below, just return
     if (SubordinateObjectCount() == 0)
         return;
 
-    ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
-    ASSERT2(draw_loop_functor.ViewRadius() > 0.0f);
-
     // return if the view doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(draw_loop_functor.ViewCenter(), draw_loop_functor.ViewRadius()))
+    if (!DoesAreaOverlapQuadBounds(draw_object_collector.m_view_center, draw_object_collector.m_view_radius))
         return;
 
     // don't draw quadtrees whose radii are lower than the
     // gs_radius_limit_lower threshold -- a form of distance culling,
     // which gives a huge speedup and allows zooming to any level
     // maintain a consistent framerate.
-    if (draw_loop_functor.PixelsInViewRadius() * Radius()
+    if (draw_object_collector.m_pixels_in_view_radius * Radius()
         <
-        draw_loop_functor.ViewRadius() * Object::DrawLoopFunctor::ms_radius_limit_lower)
+        draw_object_collector.m_view_radius * Object::ms_radius_limit_lower)
     {
         return;
     }
 
-//     DrawBounds(draw_loop_functor.ObjectDrawData().GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
+//     DrawBounds(draw_loop_functor.GetRenderContext(), Color(1.0, 1.0, 0.0, 1.0));
 
-    std::for_each(m_object_set.begin(), m_object_set.end(), draw_loop_functor);
+    // it is necessary to specify the type 'DrawObjectCollector &' here specifically
+    // as a reference, because by default std::for_each will accept draw_object_collector
+    // by value, and consequently the additions to its m_draw_object vector will
+    // be lost when that locally scoped object is destroyed at the end of std::for_each.
+    // we want 'the' instance of draw_object_collector (not a copy) to be used on each
+    // element of the set.
+    std::for_each<ObjectSet::const_iterator, DrawObjectCollector &>(m_object_set.begin(), m_object_set.end(), draw_object_collector);
 
     // if there are child nodes, call Draw on each
     if (HasChildren())
         for (Uint8 i = 0; i < 4; ++i)
-            Child<VisibilityQuadTree>(i)->Draw(draw_loop_functor);
-}
-
-void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
-{
-    // if there are no objects here or below, just return
-    if (SubordinateObjectCount() == 0)
-        return;
-
-    ASSERT1(Parent() == NULL);
-    ASSERT2(draw_loop_functor.PixelsInViewRadius() > 0.0f);
-    ASSERT2(draw_loop_functor.ViewRadius() > 0.0f);
-    ASSERT2(m_half_side_length > 0.0f);
-
-    Float side_length = SideLength();
-    Float radius_sum = 2.0f*Radius() + draw_loop_functor.ViewRadius();
-    Float top = floor((draw_loop_functor.ViewCenter()[Dim::Y]+radius_sum)/side_length);
-    Float bottom = ceil((draw_loop_functor.ViewCenter()[Dim::Y]-radius_sum)/side_length);
-    Float left = ceil((draw_loop_functor.ViewCenter()[Dim::X]-radius_sum)/side_length);
-    Float right = floor((draw_loop_functor.ViewCenter()[Dim::X]+radius_sum)/side_length);
-    FloatVector2 old_view_center(draw_loop_functor.ViewCenter());
-    FloatVector2 view_offset;
-    ObjectVector &object_collection_vector = *draw_loop_functor.GetObjectCollectionVector();
-
-    for (Float x = left; x <= right; x += 1.0f)
-    {
-        for (Float y = bottom; y <= top; y += 1.0f)
-        {
-            view_offset.SetComponents(side_length*x, side_length*y);
-            // this IF statement culls quadtree nodes that are outside of the
-            // circular view radius from the square grid of nodes to be drawn
-            if ((old_view_center - view_offset).LengthSquared() < radius_sum*radius_sum)
-            {
-                draw_loop_functor.SetViewCenter(old_view_center - view_offset);
-
-                glMatrixMode(GL_MODELVIEW);
-                glLoadIdentity();
-                glTranslatef(
-                    view_offset[Dim::X],
-                    view_offset[Dim::Y],
-                    0.0f);
-
-                // clear the object collection vector and collect objects to draw
-                {
-                    object_collection_vector.clear();
-                    draw_loop_functor.SetIsObjectCollectionPass(true);
-                    Draw(draw_loop_functor);
-                }
-
-                // sort objects back-to-front and draw them
-                {
-                    if (!object_collection_vector.empty())
-                    {
-                        std::sort(
-                            &object_collection_vector[0],
-                            &object_collection_vector[0]+object_collection_vector.size(),
-                            Object::ObjectDepthOrder());
-                        /*
-                        // remove duplicates from the object collection vector, which should be
-                        // all contiguous because of the above sorting.
-                        Uint32 write = 0;
-                        Uint32 read = 0;
-                        Uint32 size = object_collection_vector.size();
-                        while (read < size)
-                        {
-                            Object const *skip_object = object_collection_vector[read];
-                            object_collection_vector[write] = skip_object;
-                            ++write;
-                            ++read;
-                            while (read < size && object_collection_vector[read] == skip_object)
-                                ++read;
-                        }
-                        object_collection_vector.resize(write);
-                        */
-                    }
-
-                    draw_loop_functor.SetIsObjectCollectionPass(false);
-                    std::for_each(
-                        object_collection_vector.begin(),
-                        object_collection_vector.end(),
-                        draw_loop_functor);
-                }
-            }
-        }
-    }
-
-    object_collection_vector.clear();
+            Child<VisibilityQuadTree>(i)->CollectDrawObjects(draw_object_collector);
 }
 
 } // end of namespace Engine2

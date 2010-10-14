@@ -143,6 +143,19 @@ inline bool Epsilon (T const x, T const y, T const epsilon)
     return x - y >= -epsilon && x - y <= epsilon;
 }
 
+/** @brief Returns a negative value if l < r, zero if l == r, otherwise a positive value.
+  */
+template <typename T>
+inline Sint32 Compare (T const &l, T const &r)
+{
+    if (l < r)
+        return -1;
+    else if (l == r)
+        return 0;
+    else
+        return 1;
+}
+
 /** @brief Does a static_cast, but ASSERT1s that the analogous
   * dynamic_cast is not NULL.
   */

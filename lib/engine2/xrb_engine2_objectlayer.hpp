@@ -72,10 +72,7 @@ public:
     Uint32 Draw (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
-        Float pixels_in_view_radius,
-        FloatVector2 const &view_center,
-        Float const &view_radius,
-        ObjectVector *object_collection_vector);
+        DrawObjectCollector &draw_object_collector);
     void AddObject (Object *object);
     void RemoveObject (Object *object);
     // makes sure that the given object is within the object layer's

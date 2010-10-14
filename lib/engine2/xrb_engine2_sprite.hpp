@@ -44,13 +44,15 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws this sprite
-    virtual void Draw (Object::DrawData const &draw_data, Float alpha_mask) const;
+    virtual void Draw (DrawData const &draw_data) const;
     // create a clone of this object (sprite)
     virtual Object *Clone () const;
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers
     // ///////////////////////////////////////////////////////////////////
+
+    virtual Uint32 GlTextureAtlasHandle () const;
 
     // returns the sprite texture
     Resource<GlTexture> const &GetTexture () const { return m_gltexture; }
@@ -113,7 +115,7 @@ protected:
     // utility methods and other crap
     // ///////////////////////////////////////////////////////////////////
 
-    void RenderGlTexture (Object::DrawData const &draw_data, Float alpha_mask, GlTexture const &gltexture) const;
+    void RenderGlTexture (DrawData const &draw_data, GlTexture const &gltexture) const;
     // copies the properties of the given sprite to this sprite
     void CloneProperties (Sprite const &sprite);
 

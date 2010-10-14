@@ -39,105 +39,18 @@ class Object : public FloatTransform2
 {
 public:
 
-    // the Object::DrawData class nicely packages up a bunch of
-    // variables which are used in the frequently used Draw function.
-    // passing a reference to an instance of this class speeds up access,
-    // because then using the variables contained within can all be done
-    // using known offsets from a single pointer.
-    class DrawData
-    {
-    public:
-
-        DrawData (
-            RenderContext const &render_context,
-            FloatMatrix2 const &transformation)
-            :
-            m_render_context(render_context),
-            m_transformation(transformation)
-        { }
-        ~DrawData () { }
-
-        RenderContext const &GetRenderContext () const { return m_render_context; }
-        FloatMatrix2 const &Transformation () const { return m_transformation; }
-
-        void SetTransformation (FloatMatrix2 const &transformation) { m_transformation = transformation; }
-
-    private:
-
-        RenderContext const &m_render_context;
-        FloatMatrix2 m_transformation;
-    }; // end of class Engine2::Object::DrawData
-
-    struct ObjectDepthOrder
-    {
-        bool operator () (Object const *t0, Object const *t1)
-        {
-            return t0->ZDepth() > t1->ZDepth()
-                   ||
-                   (t0->ZDepth() == t1->ZDepth() && t0 < t1);
-        }
-    }; // end of struct Engine2::Object::ObjectDepthOrder
-
-    // the Engine2::Object::DrawLoopFunctor class nicely packages up a
-    // bunch of variables which are used in the recursive Draw function.
-    // passing a reference to an instance of this class speeds up access,
-    // because then using the variables contained within can all be done
-    // using known offsets from a single pointer.  It also behaves as a
-    // functor for use in a std::for_each call on each quadtree node's
-    // object set.
-    class DrawLoopFunctor
-    {
-    public:
-
-        // constants which control the thresholds at which objects use
-        // alpha fading to fade away, when they become small enough.
-        static Float const ms_radius_limit_upper;
-        static Float const ms_radius_limit_lower;
-        static Float const ms_distance_fade_slope;
-        static Float const ms_distance_fade_intercept;
-
-        DrawLoopFunctor (
-            RenderContext const &render_context,
-            FloatMatrix2 const &world_to_screen,
-            Float pixels_in_view_radius,
-            FloatVector2 const &view_center,
-            Float view_radius,
-            bool is_object_collection_pass,
-            ObjectVector *object_collection_vector,
-            QuadTreeType quad_tree_type);
-        ~DrawLoopFunctor () { }
-
-        Object::DrawData const &ObjectDrawData () const { return m_object_draw_data; }
-        FloatMatrix2 const &WorldToScreen () const { return m_object_draw_data.Transformation(); }
-        Float PixelsInViewRadius () const { return m_pixels_in_view_radius; }
-        FloatVector2 const &ViewCenter () const { return m_view_center; }
-        Float ViewRadius () const { return m_view_radius; }
-        bool IsObjectCollectionPass () const { return m_is_object_collection_pass; }
-        ObjectVector *GetObjectCollectionVector () const { return m_object_collection_vector; }
-        Uint32 DrawnObjectCount () const { return m_drawn_object_count; }
-
-        void SetWorldToScreen (FloatMatrix2 const &world_to_screen) { m_object_draw_data.SetTransformation(world_to_screen); }
-        void SetViewCenter (FloatVector2 view_center) { m_view_center = view_center; }
-        void SetIsObjectCollectionPass (bool is_object_collection_pass) { m_is_object_collection_pass = is_object_collection_pass; }
-
-        // this method is what std::for_each will use to draw each object.
-        void operator () (Engine2::Object const *object);
-
-    private:
-
-        Float CalculateDistanceFade (Float object_radius);
-
-        Object::DrawData m_object_draw_data;
-        Float m_pixels_in_view_radius;
-        FloatVector2 m_view_center;
-        Float m_view_radius;
-        bool m_is_object_collection_pass;
-        ObjectVector *const m_object_collection_vector;
-        QuadTreeType m_quad_tree_type;
-        mutable Uint32 m_drawn_object_count;
-    }; // end of class Engine2::Object::DrawLoopFunctor
-
     virtual ~Object ();
+
+    // ///////////////////////////////////////////////////////////////////
+    // public values and methods used for distance fade calculation
+    // ///////////////////////////////////////////////////////////////////
+
+    static Float const ms_radius_limit_upper;
+    static Float const ms_radius_limit_lower;
+    static Float const ms_distance_fade_slope;
+    static Float const ms_distance_fade_intercept;
+
+    static Float CalculateDistanceFade (Float object_radius);
 
     // ///////////////////////////////////////////////////////////////////
     // public serialization functions
@@ -156,14 +69,32 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////
 
+    struct DrawData
+    {
+        RenderContext const &m_render_context;
+        FloatMatrix2 const &m_world_to_screen;
+        Float m_alpha_mask;
+
+        DrawData (RenderContext const &render_context, FloatMatrix2 const &world_to_screen)
+            :
+            m_render_context(render_context),
+            m_world_to_screen(world_to_screen),
+            m_alpha_mask(1.0f)
+        { }
+    }; // end of struct Engine2::Object::DrawData
+
     // draw this object using the given alpha mask
-    virtual void Draw (DrawData const &draw_data, Float alpha_mask) const { }
+    virtual void Draw (DrawData const &draw_data) const { }
     // create a clone of this object
     virtual Object *Clone () const;
 
     // ///////////////////////////////////////////////////////////////////
     // public accessors and modifiers
     // ///////////////////////////////////////////////////////////////////
+
+    /// Should return the handle of the relevant texture (e.g. sprite
+    /// texture, animated sprite frame texture, etc).
+    virtual Uint32 GlTextureAtlasHandle () const { return 0; }
 
     ObjectType GetObjectType () const { return m_object_type; }
     Float ZDepth () const { return m_z_depth; }

@@ -11,6 +11,7 @@
 #include "xrb_engine2_sprite.hpp"
 
 #include "xrb_gl.hpp"
+#include "xrb_gltextureatlas.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_serializer.hpp"
 
@@ -41,16 +42,16 @@ void Sprite::Write (Serializer &serializer) const
     Sprite::WriteClassSpecific(serializer);
 }
 
-void Sprite::Draw (Object::DrawData const &draw_data, Float alpha_mask) const
+void Sprite::Draw (DrawData const &draw_data) const
 {
-    if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
+    if (draw_data.m_render_context.MaskAndBiasWouldResultInNoOp())
         return;
 
     // don't do anything if there's no texture
     if (!m_gltexture.IsValid())
         return;
 
-    RenderGlTexture(draw_data, alpha_mask, **m_gltexture);
+    RenderGlTexture(draw_data, **m_gltexture);
 }
 
 Object *Sprite::Clone () const
@@ -58,6 +59,14 @@ Object *Sprite::Clone () const
     Sprite *retval = new Sprite(m_gltexture);
     retval->CloneProperties(*this);
     return retval;
+}
+
+Uint32 Sprite::GlTextureAtlasHandle () const
+{
+    if (!m_gltexture.IsValid())
+        return 0; // sentinel value used by GL for 'no texture'
+    else
+        return m_gltexture->Atlas().Handle();
 }
 
 void Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
@@ -132,10 +141,7 @@ void Sprite::CalculateRadius (QuadTreeType const quad_tree_type) const
 // it's (theoretically) faster to use software transform
 #define USE_SOFTWARE_TRANSFORM 1
 
-void Sprite::RenderGlTexture (
-    Object::DrawData const &draw_data,
-    Float alpha_mask,
-    GlTexture const &gltexture) const
+void Sprite::RenderGlTexture (DrawData const &draw_data, GlTexture const &gltexture) const
 {
 #if !USE_SOFTWARE_TRANSFORM
     // set up the gl modelview matrix
@@ -159,10 +165,10 @@ void Sprite::RenderGlTexture (
 #endif
 
     // calculate the color bias
-    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
+    Color color_bias(draw_data.m_render_context.BlendedColorBias(ColorBias()));
     // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
-    color_mask[Dim::A] *= alpha_mask;
+    Color color_mask(draw_data.m_render_context.MaskedColor(ColorMask()));
+    color_mask[Dim::A] *= draw_data.m_alpha_mask;
 
     Singleton::Gl().SetupTextureUnits(gltexture, color_mask, color_bias);
 

@@ -11,6 +11,7 @@
 #include "xrb_engine2_animatedsprite.hpp"
 
 #include "xrb_engine2_world.hpp"
+#include "xrb_gltextureatlas.hpp"
 #include "xrb_rendercontext.hpp"
 
 namespace Xrb {
@@ -43,18 +44,16 @@ void AnimatedSprite::Write (Serializer &serializer) const
     AnimatedSprite::WriteClassSpecific(serializer);
 }
 
-void AnimatedSprite::Draw (
-    Object::DrawData const &draw_data,
-    Float const alpha_mask) const
+void AnimatedSprite::Draw (DrawData const &draw_data) const
 {
-    if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
+    if (draw_data.m_render_context.MaskAndBiasWouldResultInNoOp())
         return;
 
     // don't do anything if there's no texture
     if (!m_animation.GetSequence().IsValid())
         return;
 
-    RenderGlTexture(draw_data, alpha_mask, m_animation.Frame(GetWorld()->MostRecentFrameTime()));
+    RenderGlTexture(draw_data, m_animation.Frame(GetWorld()->MostRecentFrameTime()));
 }
 
 Object *AnimatedSprite::Clone () const
@@ -62,6 +61,11 @@ Object *AnimatedSprite::Clone () const
     AnimatedSprite *retval = new AnimatedSprite(m_animation);
     retval->CloneProperties(*this);
     return retval;
+}
+
+Uint32 AnimatedSprite::GlTextureAtlasHandle () const
+{
+    return m_animation.Frame(GetWorld()->MostRecentFrameTime()).Atlas().Handle();
 }
 
 AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)

@@ -29,6 +29,8 @@ class Serializer;
 
 namespace Engine2 {
 
+struct DrawObjectCollector;
+
 // The VisibilityQuadTree class implements a 2D space-organizing structure
 // known as a quad tree.  The idea is to improve visibility/collision by
 // eliminating a large number of drawing candidates quickly.  It should be
@@ -57,26 +59,16 @@ public:
     Uint32 Draw (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
-        Float pixels_in_view_radius,
-        FloatVector2 const &view_center,
-        Float view_radius,
-        ObjectVector *object_collection_vector);
+        DrawObjectCollector &draw_object_collector) const;
     Uint32 DrawWrapped (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
-        Float pixels_in_view_radius,
-        FloatVector2 const &view_center,
-        Float view_radius,
-        ObjectVector *object_collection_vector);
+        DrawObjectCollector &draw_object_collector) const;
 
     // draw lines where the bounds of this quadtree node are
-    void DrawBounds (
-        RenderContext const &render_context,
-        Color const &color);
+    void DrawBounds (RenderContext const &render_context, Color const &color) const;
     // draw the entire quadtree's bounding lines
-    void DrawTreeBounds (
-        RenderContext const &render_context,
-        Color const &color);
+    void DrawTreeBounds (RenderContext const &render_context, Color const &color) const;
 
 protected:
 
@@ -85,8 +77,7 @@ protected:
 
 private:
 
-    void Draw (Object::DrawLoopFunctor const &draw_data);
-    void DrawWrapped (Object::DrawLoopFunctor draw_data);
+    void CollectDrawObjects (DrawObjectCollector &draw_object_collector) const;
 }; // end of class Engine2::VisibilityQuadTree
 
 } // end of namespace Engine2

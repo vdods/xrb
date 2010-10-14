@@ -192,29 +192,15 @@ void ObjectLayer::Write (Serializer &serializer) const
 Uint32 ObjectLayer::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
-    Float const pixels_in_view_radius,
-    FloatVector2 const &view_center,
-    Float const &view_radius,
-    ObjectVector *const object_collection_vector)
+    DrawObjectCollector &draw_object_collector)
 {
-    ASSERT2(view_radius > 0.0);
+    ASSERT1(draw_object_collector.m_pixels_in_view_radius > 0.0f);
+    ASSERT1(draw_object_collector.m_view_radius > 0.0f);
 
     if (m_is_wrapped)
-        return m_quad_tree->DrawWrapped(
-            render_context,
-            world_to_screen,
-            pixels_in_view_radius,
-            view_center,
-            view_radius,
-            object_collection_vector);
+        return m_quad_tree->DrawWrapped(render_context, world_to_screen, draw_object_collector);
     else
-        return m_quad_tree->Draw(
-            render_context,
-            world_to_screen,
-            pixels_in_view_radius,
-            view_center,
-            view_radius,
-            object_collection_vector);
+        return m_quad_tree->Draw(render_context, world_to_screen, draw_object_collector);
 }
 
 void ObjectLayer::AddObject (Object *const object)

@@ -195,6 +195,21 @@ public:
         return false;
     #endif
     }
+    /** @brief Less-than operator.
+      * @param operand The n-tuple to test against.
+      * @return Provides dictionary ordering in component order (i.e.
+      *         prefers < for the first component, then < for the
+      *         second component, etc.
+      */
+    inline bool operator < (NTuple<T, size> const &operand) const
+    {
+        for (Uint32 i = 0; i < size; ++i)
+            if (m[i] < operand.m[i])
+                return true;
+            else if (m[i] > operand.m[i])
+                return false;
+        return false; // equality
+    }
     /** Array index referencing.  Emulates the syntax of a normal array,
       * giving a more appealing usage (n-tuple[1] instead of n-tuple.m[1]).
       * @brief Bracket operator with const qualification.
@@ -447,6 +462,21 @@ public:
     }
 
 }; // end of class NTuple
+
+/// Less-than/equal/greater-than style comparison function, in dictionary order.
+/// Returns a negative value if less than, zero if equal, and a positive value
+/// if greater than.
+template <typename T, Uint32 size>
+Sint32 Compare (NTuple<T, size> const &l, NTuple<T, size> const &r)
+{
+    for (Uint32 i = 0; i < size; ++i)
+    {
+        Sint32 c = Compare(l[i], r[i]);
+        if (c != 0)
+            return c;
+    }
+    return 0;
+}
 
 /** Performs n-tuple addition (a commutative operation) on the given n-tuples.
   * @brief Global addition operator.

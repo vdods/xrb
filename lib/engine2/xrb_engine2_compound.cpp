@@ -42,11 +42,9 @@ void Compound::Write (Serializer &serializer) const
     Compound::WriteClassSpecific(serializer);
 }
 
-void Compound::Draw (
-    DrawData const &draw_data,
-    Float const alpha_mask) const
+void Compound::Draw (DrawData const &draw_data) const
 {
-    if (draw_data.GetRenderContext().MaskAndBiasWouldResultInNoOp())
+    if (draw_data.m_render_context.MaskAndBiasWouldResultInNoOp())
         return;
 
     // set up the gl modelview matrix
@@ -69,16 +67,16 @@ void Compound::Draw (
         1.0f);
 
     // calculate the color bias
-    Color color_bias(draw_data.GetRenderContext().BlendedColorBias(ColorBias()));
+    Color color_bias(draw_data.m_render_context.BlendedColorBias(ColorBias()));
     // calculate the color mask
-    Color color_mask(draw_data.GetRenderContext().MaskedColor(ColorMask()));
-    color_mask[Dim::A] *= alpha_mask;
+    Color color_mask(draw_data.m_render_context.MaskedColor(ColorMask()));
+    color_mask[Dim::A] *= draw_data.m_alpha_mask;
 
     // the opaque white texture is just a dummy.  the real texture will be bound later
     Singleton::Gl().SetupTextureUnits(Singleton::Gl().GlTexture_OpaqueWhite(), color_mask, color_bias);
 
     // switch back to texture unit 0 for Polygon's texture binding
-    glActiveTexture(GL_TEXTURE0);
+    Singleton::Gl().ActiveTexture(GL_TEXTURE0);
 
     for (Uint32 i = 0; i < m_polygon_count; ++i)
         m_polygon_array[i].Draw();

@@ -13,9 +13,10 @@
 
 // don't include xrb.h here, because xrb.h includes this file.
 
-// debugging level (determines which asserts are compiled in/out)
+// debugging level (determines which asserts are compiled in/out).
+// 0 = abort only on fatal errors ... 3 = most pedantic assertions
 #if !defined(XRB_DEBUG_LEVEL)
-    #define XRB_DEBUG_LEVEL 3
+    #error("you must define XRB_DEBUG_LEVEL to be 0, 1, 2 or 3")
 #endif // !defined(XRB_DEBUG_LEVEL)
 
 // make sure NDEBUG is not defined (used to compile out assert())

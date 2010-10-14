@@ -41,9 +41,11 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws this sprite
-    virtual void Draw (Object::DrawData const &draw_data, Float alpha_mask) const;
+    virtual void Draw (DrawData const &draw_data) const;
     // create a clone of this object (animated sprite)
     virtual Object *Clone () const;
+
+    virtual Uint32 GlTextureAtlasHandle () const;
 
 protected:
 

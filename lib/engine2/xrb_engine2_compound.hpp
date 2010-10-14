@@ -41,7 +41,7 @@ public:
     // ///////////////////////////////////////////////////////////////////
 
     // draws the compound
-    virtual void Draw (DrawData const &draw_data, Float alpha_mask) const;
+    virtual void Draw (DrawData const &draw_data) const;
     // create a clone of this object (compound)
     virtual Object *Clone () const;
 
