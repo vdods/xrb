@@ -45,6 +45,14 @@ AC_ARG_WITH(
     [ARCH_TYPE=])
 
 AC_ARG_ENABLE(
+    [debug-symbols],
+    AC_HELP_STRING(
+        [--enable-debug-symbols],
+        [enable debugging symbols]),
+    [DEBUG_SYMBOLS_ENABLED=$enableval],
+    [DEBUG_SYMBOLS_ENABLED="no"])
+
+AC_ARG_ENABLE(
     [debug],
     AC_HELP_STRING(
         [--enable-debug],
@@ -161,15 +169,20 @@ AC_ARG_ENABLE(
 ##############################################################################
 
 if test "${ARCH_TYPE}" = ""; then
-    ARCH_OPTION_STRING=
+    DUMMY=0 # do nothing
 else
-    ARCH_OPTION_STRING="-mtune=${ARCH_TYPE}"
+    CXXFLAGS="${CXXFLAGS} -mtune=${ARCH_TYPE}"
 fi
 
 if test "${DEBUG_ENABLED}" = "yes"; then
-    CXXFLAGS="${CXXFLAGS} -g3 -O0 ${ARCH_OPTION_STRING}"
+    CXXFLAGS="${CXXFLAGS} -g3 -O0"
 else
-    CXXFLAGS="${CXXFLAGS} -g0 -O2"
+    if test "${DEBUG_SYMBOLS_ENABLED}" = "yes"; then
+        CXXFLAGS="${CXXFLAGS} -g3"
+    else
+        CXXFLAGS="${CXXFLAGS} -g0 -O2"
+    fi
+
     # the gprof option -pg is incompatible with -fomit-frame-pointer
     # so only add it if gprof is not enabled.
     if test "${GPROF_ENABLED}" != "yes"; then
