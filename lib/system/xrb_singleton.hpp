@@ -36,22 +36,53 @@ typedef Pal *(*PalFactory)();
   */
 namespace Singleton
 {
-    /** @brief Returns a reference to the Gl singleton object.
-      */
-    Gl &Gl ();
-    /** @brief Returns a reference to the InputState singleton object.
-      */
-    InputState &InputState ();
-    /** @brief Returns a const reference to the KeyMap singleton object.
-      */
-    KeyMap const &KeyMap ();
-    /** @brief Returns a reference to the Platform-specific singleton instance
-      *        of the Pal interface.
-      */
-    Pal &Pal ();
-    /** @brief Returns a reference to the ResourceLibrary singleton object.
-      */
-    ResourceLibrary &ResourceLibrary ();
+    /// KeyBind singleton -- this handles keyboard input (and mouse buttons too).
+    /// @note Not for use anywhere outside of the Singleton namespace.
+    extern Xrb::InputState *g_inputstate;
+    /// KeyMap singleton -- for alternate keyboard layouts in WIN32 (necessary
+    /// due to WIN32 SDL's lack of support for alternate keyboard layouts).
+    /// @note Not for use anywhere outside of the Singleton namespace.
+    extern Xrb::KeyMap const *g_key_map;
+    /// Platform-specific instantiation of the Pal interface.
+    /// @note Not for use anywhere outside of the Singleton namespace.
+    extern Xrb::Pal *g_pal;
+    /// ResourceLibrary singleton -- loads and manages reference counted assets
+    /// @note Not for use anywhere outside of the Singleton namespace.
+    extern Xrb::ResourceLibrary *g_resource_library;
+    /// Gl singleton -- mainly exists to implement texture atlases
+    /// @note Not for use anywhere outside of the Singleton namespace.
+    extern Xrb::Gl *g_gl;
+
+    /// Returns the Gl singleton.
+    inline Xrb::Gl &Gl ()
+    {
+        ASSERT1(g_gl != NULL && "Gl singleton not initialized");
+        return *g_gl;
+    }
+    /// Returns the InputState singleton.
+    inline Xrb::InputState &InputState ()
+    {
+        ASSERT1(g_inputstate != NULL && "InputState singleton not initialized");
+        return *g_inputstate;
+    }
+    /// Returns the KeyMap singleton.
+    inline Xrb::KeyMap const &KeyMap ()
+    {
+        ASSERT1(g_key_map != NULL && "KeyMap singleton not initialized");
+        return *g_key_map;
+    }
+    /// Returns the Pal singleton.
+    inline Xrb::Pal &Pal ()
+    {
+        ASSERT1(g_pal != NULL && "Pal singleton not initialized");
+        return *g_pal;
+    }
+    /// Returns the ResourceLibrary singleton.
+    inline Xrb::ResourceLibrary &ResourceLibrary ()
+    {
+        ASSERT1(g_resource_library != NULL && "ResourceLibrary singleton not initialized");
+        return *g_resource_library;
+    }
 
     /** This should be the first thing done, because other systems require
       * the usage of the singleton objects.  If this function is not called

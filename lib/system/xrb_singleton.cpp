@@ -8,9 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "xrb_singleton.hpp"
-
-#include "xrb.hpp"
+#include "xrb.hpp" // xrb_singleton.hpp is included here
 
 #include "xrb_gl.hpp"
 #include "xrb_inputstate.hpp"
@@ -19,70 +17,26 @@
 #include "xrb_pal.hpp"
 #include "xrb_resourcelibrary.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
+namespace Singleton {
 
-namespace
-{
-    // KeyBind singleton -- this handles keyboard input (and mouse buttons too)
-    InputState *g_inputstate = NULL;
-    // KeyMap singleton -- for alternate keyboard layouts in WIN32 (necessary
-    // due to WIN32 SDL's lack of support for alternate keyboard layouts).
-    KeyMap const *g_key_map = NULL;
-    // Platform-specific instantiation of the Pal interface.
-    Pal *g_pal = NULL;
-    // ResourceLibrary singleton -- loads and manages reference counted assets
-    ResourceLibrary *g_resource_library = NULL;
-    // Gl singleton -- mainly exists to implement texture atlases
-    Gl *g_gl = NULL;
+Xrb::InputState *g_inputstate = NULL;
+Xrb::KeyMap const *g_key_map = NULL;
+Xrb::Pal *g_pal = NULL;
+Xrb::ResourceLibrary *g_resource_library = NULL;
+Xrb::Gl *g_gl = NULL;
 
-    // indicates if Singleton::Initialize has been called
-    bool g_is_initialized = false;
-} // end of namespace
-
-Gl &Singleton::Gl ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::Gl() before Singleton::Initialize()");
-    ASSERT1(g_gl != NULL);
-    return *g_gl;
-}
-
-InputState &Singleton::InputState ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::InputState() before Singleton::Initialize()");
-    ASSERT1(g_inputstate != NULL);
-    return *g_inputstate;
-}
-
-KeyMap const &Singleton::KeyMap ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::KeyMap() before Singleton::Initialize()");
-    ASSERT1(g_key_map != NULL);
-    return *g_key_map;
-}
-
-Pal &Singleton::Pal ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::Pal() before Singleton::Initialize()");
-    ASSERT1(g_pal != NULL);
-    return *g_pal;
-}
-
-ResourceLibrary &Singleton::ResourceLibrary ()
-{
-    ASSERT1(g_is_initialized && "can't use Singleton::ResourceLibrary() before Singleton::Initialize()");
-    ASSERT1(g_resource_library != NULL);
-    return *g_resource_library;
-}
-
-void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name)
+void Initialize (PalFactory CreatePal, char const *const key_map_name)
 {
     ASSERT1(key_map_name != NULL);
 
-    ASSERT1(!g_is_initialized);
-
     fprintf(stderr, "Singleton::Initialize();\n");
     fprintf(stderr, "    sizeof(bool) = %d\n", Sint32(sizeof(bool)));
+
+    ASSERT1(g_pal == NULL);
+    ASSERT1(g_inputstate == NULL);
+    ASSERT1(g_key_map == NULL);
+    ASSERT1(g_resource_library == NULL);
 
     g_pal = CreatePal();
     g_inputstate = new Xrb::InputState();
@@ -91,14 +45,14 @@ void Singleton::Initialize (PalFactory CreatePal, char const *const key_map_name
 
     ASSERT0(g_pal != NULL && "CreatePal() returned NULL");
 //     fprintf(stderr, "\tattempting to use KeyMap \"%s\", got \"%s\"\n", key_map_name, g_key_map->Name().c_str());
+    ASSERT0(g_inputstate != NULL && "failed to create InputState");
     ASSERT0(g_key_map != NULL && "failed to create KeyMap");
-
-    g_is_initialized = true;
+    ASSERT0(g_resource_library != NULL && "failed to created ResourceLibrary");
 }
 
-void Singleton::Shutdown ()
+void Shutdown ()
 {
-    ASSERT1(g_is_initialized);
+    ASSERT1(g_pal != NULL);
     ASSERT1(g_inputstate != NULL);
     ASSERT1(g_key_map != NULL);
     ASSERT1(g_resource_library != NULL);
@@ -113,11 +67,9 @@ void Singleton::Shutdown ()
     DeleteAndNullify(g_resource_library);
     DeleteAndNullify(g_key_map);
     DeleteAndNullify(g_pal);
-
-    g_is_initialized = false;
 }
 
-void Singleton::InitializeGl ()
+void InitializeGl ()
 {
     ASSERT1(g_gl == NULL && "can't InitializeGl() twice in a row");
     g_gl = new Xrb::Gl();
@@ -127,10 +79,11 @@ void Singleton::InitializeGl ()
     g_gl->FinishInitialization();
 }
 
-void Singleton::ShutdownGl ()
+void ShutdownGl ()
 {
     ASSERT1(g_gl != NULL && "can't ShutdownGl() twice in a row");
     DeleteAndNullify(g_gl);
 }
 
+} // end of namespace Singleton
 } // end of namespace Xrb

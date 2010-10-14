@@ -62,17 +62,17 @@ void Object::DrawLoopFunctor::operator () (Object const *object)
 
     // calculate the object's pixel radius on screen
     Float object_radius = m_pixels_in_view_radius * object->Radius(m_quad_tree_type) / m_view_radius;
-    // distance culling - don't draw objects that are below the
-    // gs_radius_limit_lower threshold
-    if (object_radius >= ms_radius_limit_lower)
+    if (m_is_object_collection_pass)
     {
-        if (m_is_object_collection_pass)
+        // distance culling - don't draw objects that are below the
+        // gs_radius_limit_lower threshold
+        if (object_radius >= ms_radius_limit_lower)
             m_object_collection_vector->push_back(object);
-        else
-        {
-            object->Draw(m_object_draw_data, CalculateDistanceFade(object_radius));
-            ++m_drawn_object_count;
-        }
+    }
+    else
+    {
+        object->Draw(m_object_draw_data, CalculateDistanceFade(object_radius));
+        ++m_drawn_object_count;
     }
 }
 
@@ -250,7 +250,6 @@ void Object::CloneProperties (Object const &object)
 
 void Object::CalculateTransform () const
 {
-    /*
     // original function code (kept around because this version does the
     // same thing but is much easier to read)
     if (IsDirty() || m_radii_need_to_be_recalculated)
@@ -261,9 +260,8 @@ void Object::CalculateTransform () const
             CalculateRadius(static_cast<QuadTreeType>(i));
         m_radii_need_to_be_recalculated = false;
     }
-    */
-
-    // optimized function code:
+/*
+    // optimized function code: // NOTE: valgrind's callgrind seems to think this is slower than above
     if (IsDirty())
     {
         if (ScalingAndRotationIsDirty())
@@ -292,6 +290,7 @@ void Object::CalculateTransform () const
             CalculateRadius(static_cast<QuadTreeType>(i));
         m_radii_need_to_be_recalculated = false;
     }
+*/
 }
 
 } // end of namespace Engine2

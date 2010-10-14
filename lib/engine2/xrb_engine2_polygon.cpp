@@ -82,6 +82,10 @@ void Polygon::Draw () const
 
     Singleton::Gl().BindAtlas(m_texture->Atlas());
 
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::EnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     // TODO: use small static array instead of new'ing
     {
         FloatVector2 *vertex_array = new FloatVector2[m_vertex_count];
@@ -94,11 +98,7 @@ void Polygon::Draw () const
         }
 
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
-
-        glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_FLOAT, 0, texture_coord_array); // TODO: fix
-        glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, m_vertex_count);
 

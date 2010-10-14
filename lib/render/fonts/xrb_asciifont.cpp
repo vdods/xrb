@@ -360,6 +360,9 @@ void AsciiFont::DrawGlyphSetup (RenderContext const &render_context) const
         render_context.ColorMask(),
         render_context.ColorBias());
 
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::EnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void AsciiFont::DrawGlyphShutdown (RenderContext const &render_context) const
@@ -421,8 +424,6 @@ void AsciiFont::DrawGlyph (
         };
 
         glVertexPointer(2, GL_SHORT, 0, glyph_vertex_coordinate_array);
-
-        glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, glyph_texture_coordinate_array);
 
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

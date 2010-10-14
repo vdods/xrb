@@ -64,24 +64,33 @@ Gl::Gl ()
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     // general initialization and mode setup
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_FOG);
-    glShadeModel(GL_FLAT);
-    glDepthFunc(GL_LEQUAL);
-    glEnable(GL_POLYGON_OFFSET_FILL); // this needs to be used if USE_SOFTWARE_TRANSFORM is 1 in xrb_engine2_sprite.cpp
+    // NOTE: we can't call Gl singleton state methods here because the singleton
+    // is being constructed right now, so it is unavailable.
+    {
+        // init all the necessary state vars
+        {
+            m_active_texture = Integer(GL_ACTIVE_TEXTURE);
+            m_client_active_texture = Integer(GL_CLIENT_ACTIVE_TEXTURE);
+            // this (0, 0, 0, 0) is the default value as specified in the openGL docs
+            m_texture_unit_1_env_color = Color::ms_transparent_black; // no tinting
+        }
 
-    // set up the blending function for correct alpha blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // only bother drawing pixels with a nonzero alpha value.
-    // this was moved here from Engine2::VisibilityQuadTree::Draw*
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.0f);
+        glDisable(GL_DEPTH_TEST); // we sort the objects back-to-front and then render
+        glDepthFunc(GL_LEQUAL);   // them, making the depth buffer unnecessary.
+        glDepthMask(GL_FALSE);
+
+        glDisable(GL_LIGHTING);
+        glDisable(GL_FOG);
+        glShadeModel(GL_FLAT);
+
+        // set up the blending function for correct alpha blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // only bother drawing pixels with a nonzero alpha value.
+        // this was moved here from Engine2::VisibilityQuadTree::Draw*
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.0f);
+    }
 }
 
 Gl::~Gl ()
@@ -92,10 +101,10 @@ Gl::~Gl ()
     DeleteAndNullify(m_gltexture_opaque_white);
 
     // shutdown both texture units
-    glActiveTexture(GL_TEXTURE0);
+    Gl::ActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
     m_atlas_bound_to_unit_0 = NULL;
-    glActiveTexture(GL_TEXTURE1);
+    Gl::ActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     // delete all texture atlases
@@ -114,10 +123,14 @@ void Gl::FinishInitialization ()
 {
     ASSERT1(m_gltexture_opaque_white == NULL);
 
+    // NOTE: it's ok to call Gl singleton state methods here, because the
+    // Gl singleton has been constructed.  this method is just for 'finishing
+    // initialization'.
+
     // create the 1x1 opaque white texture (which is used for color biasing)
     Texture *opaque_white = Texture::Create(ScreenCoordVector2(1, 1), Texture::CLEAR);
     opaque_white->Data()[0] = opaque_white->Data()[1] = opaque_white->Data()[2] = opaque_white->Data()[3] = 255;
-    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::NONE);
+    m_gltexture_opaque_white = CreateGlTexture(*opaque_white, GlTexture::NONE|GlTexture::USES_SEPARATE_ATLAS);
     ASSERT1(m_gltexture_opaque_white != NULL);
 
     // GL_COMBINE texture env default values
@@ -143,11 +156,14 @@ void Gl::FinishInitialization ()
     // NOTE: the blending done below must be mimicked exactly by the
     // color-only version of SetupTextureUnits.
 
+    // enable vertex arrays
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+
     // set up texture unit 0 -- texturing and color masking -- we use
     // the glColor value instead of the GL_TEXTURE_ENV_COLOR value
     // for the color mask.
     {
-        glActiveTexture(GL_TEXTURE0);
+        Gl::ActiveTexture(GL_TEXTURE0);
 
         // enable GL_COMBINE (this allows multitexturing operations)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -173,7 +189,7 @@ void Gl::FinishInitialization ()
 
     // set up texture unit 1 -- color biasing
     {
-        glActiveTexture(GL_TEXTURE1);
+        Gl::ActiveTexture(GL_TEXTURE1);
 
         // enable GL_COMBINE (this allows multitexturing operations)
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
@@ -198,9 +214,17 @@ void Gl::FinishInitialization ()
         // since that's all it will ever use.  this is required
         // for the texture unit to activate and hold its settings.
         glBindTexture(GL_TEXTURE_2D, m_gltexture_opaque_white->Atlas().Handle());
-    }
 
-    glActiveTexture(GL_TEXTURE0);
+        // enable the tex coord arrays for client texture unit 1
+        Gl::ClientActiveTexture(GL_TEXTURE1);
+        Gl::EnableClientState(GL_TEXTURE_COORD_ARRAY);
+        // set up the texture array for the opaque white texture.
+        // this should be set once and stay for the entire execution.
+        glTexCoordPointer(2, GL_SHORT, 0, m_gltexture_opaque_white->TextureCoordinateArray());
+        // leave the client active texture as GL_TEXTURE0.  it should
+        // stay as this value for the entire execution.
+        Gl::ClientActiveTexture(GL_TEXTURE0);
+    }
 }
 
 bool Gl::Boolean (GLenum name)
@@ -232,6 +256,18 @@ GLint Gl::Integer (GLenum name)
     return integer[0];
 }
 
+#if !USE_GL_STATE_WRAPPERS && !INLINE_GL_CALLS
+bool Gl::IsEnabled (GLenum cap) { return glIsEnabled(cap) == GL_TRUE; }
+void Gl::Enable (GLenum cap) { glEnable(cap); }
+void Gl::Disable (GLenum cap) { glDisable(cap); }
+void Gl::EnableClientState (GLenum cap) { glEnableClientState(cap); }
+void Gl::DisableClientState (GLenum cap) { glDisableClientState(cap); }
+GLenum Gl::ActiveTexture () { return Integer(GL_ACTIVE_TEXTURE); }
+void Gl::ActiveTexture (GLenum texture) { glActiveTexture(texture); }
+GLenum Gl::ClientActiveTexture () { return Integer(GL_CLIENT_ACTIVE_TEXTURE); }
+void Gl::ClientActiveTexture (GLenum texture) { glClientActiveTexture(texture); }
+#endif
+
 void Gl::UnregisterGlTexture (GlTexture &gltexture)
 {
     // deallocate the space in the appropriate atlas
@@ -259,21 +295,9 @@ void Gl::UnregisterGlTexture (GlTexture &gltexture)
     }
 }
 
-void Gl::SetupTextureUnits (
-    GlTexture const &gltexture,
-    Color const &color_mask,
-    Color const &color_bias)
+void Gl::SetupTextureUnit0 (GlTexture const &gltexture, Color const &color_mask, Color const &color_bias)
 {
-    ASSERT1(m_gltexture_opaque_white != NULL);
-
-    // set up texture unit 1
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    // TODO: assert that the opaque white texture is still bound to unit 1
-    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
-
-    // set up texture unit 0
-    glActiveTexture(GL_TEXTURE0);
+    ASSERT1(Gl::ActiveTexture() == GL_TEXTURE0);
     BindAtlas(gltexture.Atlas());
     // due to limitations in the PowerVR MBX platform, (see
     // http://developer.apple.com/iphone/library/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/OpenGLESPlatforms/OpenGLESPlatforms.html ),
@@ -284,18 +308,63 @@ void Gl::SetupTextureUnits (
     glColor4f(color_mask[Dim::R], color_mask[Dim::G], color_mask[Dim::B], color_mask[Dim::A]);
 }
 
+void Gl::SetupTextureUnit1 (Color const &color_bias)
+{
+    ASSERT1(Gl::ActiveTexture() == GL_TEXTURE1);
+    Gl::Enable(GL_TEXTURE_2D);
+    glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, color_bias.m);
+    m_texture_unit_1_env_color = color_bias;
+}
+
+void Gl::SetupTextureUnits (
+    GlTexture const &gltexture,
+    Color const &color_mask,
+    Color const &color_bias)
+{
+    // this fanciness is to first setup whatever texture unit is currently active,
+    // so that only one call to glActiveTexture is necessary per call to this method.
+    bool active_texture_0_first = (Gl::ActiveTexture() == GL_TEXTURE0);
+
+    if (active_texture_0_first)
+    {
+        // texture unit 0 is active, so set it up first.
+        SetupTextureUnit0(gltexture, color_mask, color_bias);
+        // only setup texture unit 1 if texturing is disabled or it would actually change the color
+        if (!IsTexture2dEnabled(GL_TEXTURE1) || m_texture_unit_1_env_color != color_bias)
+        {
+            Gl::ActiveTexture(GL_TEXTURE1);
+            SetupTextureUnit1(color_bias);
+        }
+    }
+    else
+    {
+        // only setup texture unit 1 if texturing is disabled or it would actually change the color
+        if (!IsTexture2dEnabled(GL_TEXTURE1) || m_texture_unit_1_env_color != color_bias)
+            SetupTextureUnit1(color_bias);
+        // texture unit 0 is active, so set it up first.
+        Gl::ActiveTexture(GL_TEXTURE0);
+        SetupTextureUnit0(gltexture, color_mask, color_bias);
+    }
+}
+
 void Gl::SetupTextureUnits (
     Color const &color_mask,
     Color const &color_bias)
 {
     // set things up for no texture mapping
 
-    // set up (disable) texture unit 1
-    glActiveTexture(GL_TEXTURE1);
-    glDisable(GL_TEXTURE_2D);
+    bool active_texture_1_first = (Gl::ActiveTexture() == GL_TEXTURE1);
+
+    if (active_texture_1_first) // should be identical to below
+    {
+        // set up (disable) texture unit 1
+        Gl::Disable(GL_TEXTURE_2D);
+    }
+
     // set up (disable) texture unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glDisable(GL_TEXTURE_2D);
+    if (active_texture_1_first)
+        Gl::ActiveTexture(GL_TEXTURE0);
+    Gl::Disable(GL_TEXTURE_2D);
 
     // NOTE: the blending done below must mimic exactly what is done by
     // the GL_TEXTURE_ENV_MODE GL_COMBINE stuff in FinishInitialization.
@@ -308,12 +377,19 @@ void Gl::SetupTextureUnits (
     color[Dim::A] = color_mask[Dim::A];
     // set the opengl color
     glColor4f(color[Dim::R], color[Dim::G], color[Dim::B], color[Dim::A]);
+
+    if (!active_texture_1_first) // should be identical to above
+    {
+        // set up (disable) texture unit 1
+        Gl::ActiveTexture(GL_TEXTURE1);
+        Gl::Disable(GL_TEXTURE_2D);
+    }
 }
 
 void Gl::BindAtlas (GlTextureAtlas const &atlas)
 {
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
+    Gl::ActiveTexture(GL_TEXTURE0);
+    Gl::Enable(GL_TEXTURE_2D);
     if (&atlas != m_atlas_bound_to_unit_0)
     {
         // bind the (atlas) texture
@@ -338,8 +414,8 @@ void Gl::BindAtlas (GlTextureAtlas const &atlas)
 
 void Gl::EnsureAtlasIsNotBound (GlTextureAtlas const &atlas)
 {
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
+    Gl::ActiveTexture(GL_TEXTURE0);
+    Gl::Enable(GL_TEXTURE_2D);
     if (m_atlas_bound_to_unit_0 == &atlas)
     {
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -404,6 +480,115 @@ void Gl::DumpAtlases (std::string const &path_prefix) const
         }
     }
 #endif // XRB_PLATFORM == XRB_PLATFORM_IPHONE
+}
+
+bool Gl::IsEnabled_ (GLenum cap)
+{
+    return EnableMapValue(cap);
+}
+
+void Gl::Enable_ (GLenum cap)
+{
+    ASSERT1(!IsClientTextureUnitCapability(cap));
+    bool &value = EnableMapValue(cap);
+    if (!value)
+    {
+        glEnable(cap);
+        value = true;
+    }
+}
+
+void Gl::Disable_ (GLenum cap)
+{
+    ASSERT1(!IsClientTextureUnitCapability(cap));
+    bool &value = EnableMapValue(cap);
+    if (value)
+    {
+        glDisable(cap);
+        value = false;
+    }
+}
+
+void Gl::EnableClientState_ (GLenum cap)
+{
+    ASSERT1(IsClientTextureUnitCapability(cap));
+    bool &value = EnableMapValue(cap);
+    if (!value)
+    {
+        glEnableClientState(cap);
+        value = true;
+    }
+}
+
+void Gl::DisableClientState_ (GLenum cap)
+{
+    ASSERT1(IsClientTextureUnitCapability(cap));
+    bool &value = EnableMapValue(cap);
+    if (value)
+    {
+        glDisableClientState(cap);
+        value = false;
+    }
+}
+
+void Gl::ActiveTexture_ (GLenum texture)
+{
+    if (texture != m_active_texture)
+    {
+        glActiveTexture(texture);
+        m_active_texture = texture;
+    }
+}
+
+void Gl::ClientActiveTexture_ (GLenum texture)
+{
+    if (texture != m_client_active_texture)
+    {
+        glClientActiveTexture(texture);
+        m_client_active_texture = texture;
+    }
+}
+
+bool &Gl::EnableMapValue (GLenum cap)
+{
+    // hacky way to multiplex the enabled-value of GL_TEXTURE_2D and other
+    // things based on which texture unit or client texture unit is currently
+    // active (see ActiveTexture and ClientActiveTexture).
+    // NOTE: this depends on all possible cap values being within the range [0,65536).
+    // looking through GL.h, it looks like this is the case.
+    GLenum cap_key = cap;
+    if (IsClientTextureUnitCapability(cap_key))
+        cap_key |= (m_client_active_texture-GL_TEXTURE0) << 16; // stick the client texture unit in the high bits
+    else if (cap_key == GL_TEXTURE_2D)
+        cap_key |= (m_active_texture-GL_TEXTURE0) << 16; // stick the texture unit index in the high bits
+
+    EnableMap::iterator it = m_enable_map.find(cap_key);
+    if (it != m_enable_map.end()) // already in the enable map
+        return it->second;
+    else // not in the enable map.  initialize the value from the gl state
+        return m_enable_map[cap_key] = (glIsEnabled(cap) == GL_TRUE);
+}
+
+bool Gl::IsTexture2dEnabled (GLenum texture)
+{
+    GLenum cap_key = GL_TEXTURE_2D;
+    cap_key |= (texture-GL_TEXTURE0) << 16;
+    EnableMap::iterator it = m_enable_map.find(cap_key);
+    if (it != m_enable_map.end()) // in the enable map
+        return it->second;
+    else
+        return false; // if we haven't changed it, it's the default value (i.e. false)
+}
+
+bool Gl::IsClientTextureUnitCapability (GLenum cap)
+{
+    return cap == GL_COLOR_ARRAY ||
+           cap == GL_NORMAL_ARRAY ||
+#if defined(GL_POINT_SIZE_ARRAY_OES)
+           cap == GL_POINT_SIZE_ARRAY_OES ||
+#endif // defined(GL_POINT_SIZE_ARRAY_OES)
+           cap == GL_TEXTURE_COORD_ARRAY ||
+           cap == GL_VERTEX_ARRAY;
 }
 
 GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)

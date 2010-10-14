@@ -139,9 +139,6 @@ Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
     return retval;
 }
 
-// it's faster to not use depth test
-#define USE_DEPTH_TEST 0
-
 Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
@@ -162,32 +159,15 @@ Uint32 VisibilityQuadTree::Draw (
             pixels_in_view_radius,
             view_center,
             view_radius,
-            true,
+            true, // is object collection pass
             object_collection_vector,
             GetQuadTreeType());
 
-    // collect objects to draw
-    {
-#if USE_DEPTH_TEST
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-        glClearDepth(1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT);
-        // TODO: look into glPolygonOffset, as this might save having
-        // to clear the depth buffer for each ObjectLayer
-        // TODO: use glDepthRange to set the per-ObjectLayer depth range
-#endif // USE_DEPTH_TEST
-
-        Draw(draw_loop_functor);
-    }
+    // collect objects to draw (this is an object collection pass)
+    Draw(draw_loop_functor);
 
     // sort objects back-to-front and draw them
     {
-#if USE_DEPTH_TEST
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-#endif // USE_DEPTH_TEST
-
         if (!object_collection_vector->empty())
             std::sort(
                 &(*object_collection_vector)[0],
@@ -353,16 +333,6 @@ void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
 
                 // clear the object collection vector and collect objects to draw
                 {
-#if USE_DEPTH_TEST
-                    glEnable(GL_DEPTH_TEST);
-                    glDepthMask(GL_TRUE);
-                    glClearDepth(1.0f);
-                    glClear(GL_DEPTH_BUFFER_BIT);
-                    // TODO: look into glPolygonOffset, as this might save having
-                    // to clear the depth buffer for each ObjectLayer
-                    // TODO: use glDepthRange to set the per-ObjectLayer depth range
-#endif // USE_DEPTH_TEST
-
                     object_collection_vector.clear();
                     draw_loop_functor.SetIsObjectCollectionPass(true);
                     Draw(draw_loop_functor);
@@ -370,11 +340,6 @@ void VisibilityQuadTree::DrawWrapped (Object::DrawLoopFunctor draw_loop_functor)
 
                 // sort objects back-to-front and draw them
                 {
-#if USE_DEPTH_TEST
-                    glDisable(GL_DEPTH_TEST);
-                    glDepthMask(GL_FALSE);
-#endif // USE_DEPTH_TEST
-
                     if (!object_collection_vector.empty())
                     {
                         std::sort(

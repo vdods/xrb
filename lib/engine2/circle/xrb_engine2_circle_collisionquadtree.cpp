@@ -395,12 +395,8 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     if (object == m_entity->OwnerObject())
         return;
 
-    // this is a quick and easy way to avoid calculating
-    // the same collision pair twice
-    if (object->Radius(QTT_PHYSICS_HANDLER) > m_entity->Radius(QTT_PHYSICS_HANDLER)
-        ||
-        (object->Radius(QTT_PHYSICS_HANDLER) == m_entity->Radius(QTT_PHYSICS_HANDLER) &&
-         object > m_entity->OwnerObject())) // yes, this is pointer comparison
+    // this is a quick and easy way to avoid calculating the same collision pair twice
+    if (object > m_entity->OwnerObject()) // yes, this is pointer comparison
         return;
 
     FloatVector2 ce0_translation(m_entity->Translation());
@@ -423,7 +419,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     Float r = m_entity->Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
     FloatVector2 offset_0_to_1 = ce1_translation - ce0_translation;
 
-    if (offset_0_to_1.Length() >= r)
+    if (offset_0_to_1.LengthSquared() >= Sqr(r))
         return;
 
     // at this point, a collision has happened (the entities are overlapping).

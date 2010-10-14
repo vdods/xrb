@@ -239,28 +239,14 @@ namespace Math
     template <typename T>
     inline bool IsEven (T x)
     {
-        return x % 2 == 0;
-    }
-    /** @brief Overload to disallow IsEven for Float.
-      */
-    inline bool IsEven (Float x)
-    {
-        ASSERT0(false && "not allowed");
-        return false;
+        return (x & 1) == 0;
     }
     /** @brief Returns true iff x is odd.
       */
     template <typename T>
     inline bool IsOdd (T x)
     {
-        return x % 2 == 1;
-    }
-    /** @brief Overload to disallow IsOdd for Float.
-      */
-    inline bool IsOdd (Float x)
-    {
-        ASSERT0(false && "not allowed");
-        return false;
+        return (x & 1) == 1;
     }
     /** @brief Returns the closest integer (fixed-point) to the
       *        fixed-point value given by @c x .

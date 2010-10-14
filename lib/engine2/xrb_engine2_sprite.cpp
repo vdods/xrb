@@ -156,9 +156,6 @@ void Sprite::RenderGlTexture (
         ScaleFactors()[Dim::X],
         ScaleFactors()[Dim::Y],
         1.0f);
-#else // USE_SOFTWARE_TRANSFORM
-    // this effectively sets the z depth of the sprite
-    glPolygonOffset(0.0f, ZDepth());
 #endif
 
     // calculate the color bias
@@ -171,8 +168,9 @@ void Sprite::RenderGlTexture (
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        Gl::EnableClientState(GL_VERTEX_ARRAY);
+        ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+        Gl::EnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 #if !USE_SOFTWARE_TRANSFORM
         static Sint16 const s_vertex_array[8] =
@@ -198,20 +196,13 @@ void Sprite::RenderGlTexture (
 
         glVertexPointer(2, GL_FLOAT, 0, vertex_array);
 #endif
-
-        glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, gltexture.TextureCoordinateArray());
-        glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
-
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
 #if !USE_SOFTWARE_TRANSFORM
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
-#else // USE_SOFTWARE_TRANSFORM
-    glPolygonOffset(0.0f, 0.0f); // default values
 #endif
 }
 

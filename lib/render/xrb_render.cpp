@@ -36,6 +36,10 @@ void Render::DrawLine (
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
+
     {
         FloatVector2 vertex_array[2] = { from, to };
 
@@ -70,6 +74,10 @@ void Render::DrawArrow (
     Singleton::Gl().SetupTextureUnits(
         render_context.MaskedColor(color),
         render_context.ColorBias());
+
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     {
         FloatVector2 vertex_array[3] = { from, to, to+0.25f*(basis_y-basis_x) };
@@ -111,6 +119,10 @@ void Render::DrawPolygon (
     Singleton::Gl().SetupTextureUnits(
         render_context.MaskedColor(color),
         render_context.ColorBias());
+
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // convert the angle, which is in degrees, into radians for
     // computation in cos/sin's native units.
@@ -253,6 +265,10 @@ void Render::DrawCircularArc (
         render_context.MaskedColor(color),
         render_context.ColorBias());
 
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
+
     // TODO: is it possible to bound facet_count and use a static array?  (maybe not,
     // since the arc can be through a really high angle).  or we could use a small static
     // array and just call glDrawArrays multiple times.
@@ -291,6 +307,10 @@ void Render::DrawScreenRect (
     Singleton::Gl().SetupTextureUnits(
         render_context.MaskedColor(color),
         render_context.ColorBias());
+
+    Gl::EnableClientState(GL_VERTEX_ARRAY);
+    ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+    Gl::DisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     {
         Sint16 vertex_coordinate_array[8] =
@@ -363,14 +383,12 @@ void Render::DrawScreenRectTexture (
             screen_rect.TopRight()[Dim::X], screen_rect.TopRight()[Dim::Y]
         };
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        Gl::EnableClientState(GL_VERTEX_ARRAY);
+        ASSERT1(Gl::ClientActiveTexture() == GL_TEXTURE0);
+        Gl::EnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glVertexPointer(2, GL_SHORT, 0, vertex_coordinate_array);
-        glClientActiveTexture(GL_TEXTURE0);
         glTexCoordPointer(2, GL_SHORT, 0, texture_coordinate_array);
-        glClientActiveTexture(GL_TEXTURE1);
-        glTexCoordPointer(2, GL_SHORT, 0, Singleton::Gl().GlTexture_OpaqueWhite().TextureCoordinateArray());
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
 
