@@ -49,7 +49,7 @@ public:
     Uint32 SubordinateStaticObjectCount () const { return m_subordinate_static_object_count; }
     Object *SmallestObjectTouchingPoint (FloatVector2 const &point);
     // TODO: write a wrapped version of SmallestObjectTouchingPoint
-    bool IsAllowableObjectRadius (Object const *object) const { return object->Radius(GetQuadTreeType()) / m_radius > 0.5f; }
+    bool IsAllowableSizedObject (Object const &object) const { return object.Radius(GetQuadTreeType()) > 0.5f*m_radius; }
 
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,

@@ -98,6 +98,7 @@ private:
             m_half_object_layer_side_length(0.5f*object_layer_side_length)
         {
             ASSERT1(m_entity != NULL);
+            ASSERT1(m_entity->OwnerObject() != NULL);
             ASSERT1(m_collision_pair_list != NULL);
             ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
             if (m_is_wrapped)

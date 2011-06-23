@@ -74,7 +74,7 @@ Object *QuadTree::SmallestObjectTouchingPoint (
     // check if the current object is smaller than the minimum allowable size.
     // if it is, return it, because no objects owned by this node will be
     // smaller than it
-    if (retval != NULL && !IsAllowableObjectRadius(retval))
+    if (retval != NULL && !IsAllowableSizedObject(*retval))
         return retval;
 
     // check against all the objects owned by this node
@@ -191,7 +191,7 @@ void QuadTree::Clear ()
     }
 }
 
-bool QuadTree::AddObject (Object *const object)
+bool QuadTree::AddObject (Object *object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == NULL);
@@ -207,7 +207,7 @@ bool QuadTree::AddObject (Object *const object)
     // check if the object should be added to this node:
     // add to the object list if the object's radius is within the nominal size
     // for this quadtree's radius or if there are no child quadtree nodes.
-    if (IsAllowableObjectRadius(object) || !HasChildren())
+    if (IsAllowableSizedObject(*object) || !HasChildren())
     {
         // add to this node
         object->SetOwnerQuadTree(m_quad_tree_type, this);
@@ -480,7 +480,7 @@ void QuadTree::DecrementSubordinateStaticObjectCount ()
     }
 }
 
-void QuadTree::NonRecursiveAddObject (Object *const object)
+void QuadTree::NonRecursiveAddObject (Object *object)
 {
     ASSERT1(object != NULL);
     ASSERT1(object->OwnerQuadTree(m_quad_tree_type) == NULL);
@@ -495,7 +495,7 @@ void QuadTree::NonRecursiveAddObject (Object *const object)
     // check that the object should be added to this node:
     // assert that the object's radius is within the nominal size
     // for this quadtree's radius or that there are no child quadtree nodes.
-    ASSERT1(IsAllowableObjectRadius(object) || !HasChildren());
+    ASSERT1(IsAllowableSizedObject(*object) || !HasChildren());
     // add to this node
     object->SetOwnerQuadTree(m_quad_tree_type, this);
     m_object_set.insert(object);

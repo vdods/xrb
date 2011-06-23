@@ -372,32 +372,41 @@ void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunct
             functor.HalfObjectLayerSideLength()))
         return;
 
+    // here is the actual entity loop
+    std::for_each(m_object_set.begin(), m_object_set.end(), functor);
+
     // if there are child nodes, call CollideEntity on each
     if (HasChildren())
     {
+        // NOTE: CollideEntity only takes an entity as far down the quad
+        // tree as its size allows (i.e. if the entity would be placed at
+        // this level in the quad tree, CollideEntity does not traverse
+        // any further).  this is so a lot of redundant collision checks are
+        // avoided.
+        if (IsAllowableSizedObject(*functor.GetEntity()->OwnerObject()))
+            return;
+
         for (Uint8 i = 0; i < 4; ++i)
             Child<CollisionQuadTree>(i)->CollideEntity(functor);
-
-        // if the minimum object size for this node is larger than the
-        // collision entity, return (because it will skip all objects
-        // below in the loop anyway)
-        if (!IsAllowableObjectRadius(functor.GetEntity()->OwnerObject()))
-            return;
     }
-
-    // here is the actual entity loop
-    std::for_each(m_object_set.begin(), m_object_set.end(), functor);
 }
 
 void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 {
-    // don't collide the entity with itself
-    if (object == m_entity->OwnerObject())
+    // because it is possible to have CollideEntity call this functor twice on the
+    // same UN-ordered pair (i.e. call it on (x,y) and also (y,x)), we must avoid
+    // calculating the collision twice.  the heuristic will be size and then pointer
+    // value -- size is used because that's the discriminant in CollideEntity.
+    // the pointer value comparison will prevent colliding an entity with itself.
+    // the size comparison must necessarily be the following, due to the nature of
+    // CollideEntity.
+    if (m_entity->Radius(QTT_PHYSICS_HANDLER) > object->Radius(QTT_PHYSICS_HANDLER)
+        ||
+        (m_entity->Radius(QTT_PHYSICS_HANDLER) == object->Radius(QTT_PHYSICS_HANDLER)
+         && m_entity->OwnerObject() >= object)) // yes, this is a pointer comparison.
+    {
         return;
-
-    // this is a quick and easy way to avoid calculating the same collision pair twice
-    if (object > m_entity->OwnerObject()) // yes, this is pointer comparison
-        return;
+    }
 
     FloatVector2 ce0_translation(m_entity->Translation());
     FloatVector2 ce1_translation(object->Translation());
