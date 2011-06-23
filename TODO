@@ -141,9 +141,6 @@ DISASTEROIDS:
   powers, so there's a sound cue (as well as the visual cue) as to what the
   status of the shield is.
 ** bugs **
-- the gauss gun damage location appears to be wrong (on exactly
-  the opposite side of the damagee -- e.g. blowing up asteroids), and possibly
-  the laser too.
 - there seems to be a bug in the aiming in the front weapon of Demi
 - firing a laser or gauss gun while directly facing and touching e.g.
   an asteroid causes the line trace to fail so the weapon fires through
