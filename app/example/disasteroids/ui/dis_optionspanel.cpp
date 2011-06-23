@@ -97,6 +97,10 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
                 &m_difficulty_level,
                 cpw);
         }
+
+        l = new Label("Changes to the game difficulty will take effect at the beginning of each game.", left_side_layout);
+        l->SetIsHeightFixedToTextHeight(true);
+        l->SetWordWrap(true);
     }
 
     // possibly temporary -- to space out the left side nicely

@@ -25,10 +25,14 @@ MAJOR TASKS:
 - motion blur (via projected 3d textures, or maybe pixel shader)
 
 DISASTEROIDS:
-** feature-related **
+** polish-related **
 - art: fix Interloper proportions
 - art: add super-foreground with nebula gas, add mid-background with planets
 - art: add bigger stuff in the background.
+- anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
+- make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
+  and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
+** feature-related **
 - make green tractor beam suck everything in.  get rid of blue tractor beam.
 - add a yellow (or use blue here?) tractor beam to Demi, which grabs stuff to
   push/pull in whatever direction.  this will be used to hurl nearby asteroids
@@ -42,14 +46,17 @@ DISASTEROIDS:
   where their flocking behavior is higher priority.  another mode should be
   where they flock in the form of a snake.
 - additional mode for Shade - circling player in coordinated fashion, maybe
-  changing the rate of circling to be harder to hit.  or maybe hide behind asteroids.
+  changing the rate of circling to be harder to hit.  or maybe hide behind asteroids
+  and make bullets curve around stuff toward the player.
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
 - additional mode for Demi - spawn a bunch of Interlopers which then all
   fly back and surround the Demi continuously to make a shield, making it
   extremely hard to damage the Demi.  Make the Demi use the railgun during
   this phase.  At some point, have the Demi reject the shield by flinging
-  it all away with its tractor beams.
+  it all away with its tractor beams.  Or/also make a mode where Demi collects
+  all asteroids into a shield surrounding it and then harasses the player until
+  it takes a certain amount of damage, then flings the asteroids at the player.
 - make the railgun use a charge-up so it doesn't fire immediately --
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
@@ -134,7 +141,6 @@ DISASTEROIDS:
   powers, so there's a sound cue (as well as the visual cue) as to what the
   status of the shield is.
 ** bugs **
-- when setting options from the commandline, the options menu isn't updated
 - the gauss gun damage location appears to be wrong (on exactly
   the opposite side of the damagee -- e.g. blowing up asteroids), and possibly
   the laser too.
@@ -143,11 +149,11 @@ DISASTEROIDS:
   an asteroid causes the line trace to fail so the weapon fires through
   the asteroid.  fix this by recording hits when the line starts inside
   objects, or start the line trace earlier and ignore the firer.
-- there's a bug in the collision physics for large objects
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - handle wrapped space better and make the coordinate adjustment and such less fragile
+  (use remainderf, which is a correct modulo operation -- see einstein's eye)
 
 TODO:
 - need to be able to specify quadtree depths for all quadtrees in all cases.

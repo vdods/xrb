@@ -50,6 +50,10 @@ int main (int argc, char **argv)
             options.PrintHelpMessage(cerr);
             return options.ParseSucceeded() ? 0 : 1;
         }
+        // update the config values with the parsed commandline options.
+        g_config.SetBoolean(Dis::VIDEO__FULLSCREEN, options.Fullscreen());
+        g_config.SetResolution(options.Resolution());
+        g_config.SetString(Dis::SYSTEM__KEY_MAP_NAME, options.KeyMapName());
 
         Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
 
