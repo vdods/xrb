@@ -90,6 +90,9 @@ Gl::Gl ()
         // this was moved here from Engine2::VisibilityQuadTree::Draw*
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.0f);
+
+        // don't bother writing to the alpha channel
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
     }
 }
 

@@ -150,15 +150,12 @@ void Screen::Draw (Float real_time) const
 
     // clear the color buffer to the Screen's color bias (because that's
     // what you'd get if you applied the bias to all-black).
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClearColor(
         ColorBias()[Dim::R]*ColorBias()[Dim::A],
         ColorBias()[Dim::G]*ColorBias()[Dim::A],
         ColorBias()[Dim::B]*ColorBias()[Dim::A],
-        1.0f);
+        1.0f); // alpha value is irrelevant, glColorMask has disabled writing to alpha channel
     glClear(GL_COLOR_BUFFER_BIT);
-    // don't bother writing to the alpha channel
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
     // reset some matrices (NOT the texture matrix, because the only thing
     // that's allowed to modify the texture matrix is Gl::BindAtlas)
     glMatrixMode(GL_MODELVIEW);
