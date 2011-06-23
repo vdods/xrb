@@ -26,6 +26,21 @@ MAJOR TASKS:
 
 DISASTEROIDS:
 ** feature-related **
+- additional mode for Interloper (maybe spawn them in different, fixed modes) -
+  where their flocking behavior is higher priority.  another mode should be
+  where they flock in the form of a snake.
+- additional mode for Shade - circling player in coordinated fashion, maybe
+  changing the rate of circling to be harder to hit
+- additional mode for Revulsion - synchronize firing (?) once the player has
+  been surrounded.  this will cause the player to need to avoid being surrounded.
+- additional mode for Demi - spawn a bunch of Interlopers which then all
+  fly back and surround the Demi continuously to make a shield, making it
+  extremely hard to damage the Demi.  Make the Demi use the railgun during
+  this phase.  At some point, have the Demi reject the shield by flinging
+  it all away with its tractor beams.
+- make the railgun use a charge-up so it doesn't fire immediately --
+  have it project a small red laser which grows a little to indicate
+  the charge, then fire with a blast.
 - make the 7 button just activate the EMP core, there's no reason to have
   to equip it and then fire
   OR
@@ -39,16 +54,21 @@ DISASTEROIDS:
   and the inventory should just show what level item it is.  this also
   means you can't skip buying a certain level of something.
   furthermore, make higher upgrade levels, so the madness can continue
-- add key to dump shields into power cells
+- infinite weapon/powerup/enemy levels?  this would require some thought on
+  the prices for everything.
+- add key to dump shields into power cells (?)
+- add key to dumb power cells into shields (?)
 - make Devourment track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
   after the timer expires, have it pulse green to indicate it's healed
-- make Demi push away if its taking too much damage and the player is close
+  or just make it get healed by eating minerals.
+- make Demi push away if it's taking too much damage and the player is close
 - make smart ballistics not be canceled out by other ballistics (i'm thinking
   mainly of the pea-shooter shooting a full charge and getting canceled
-  out by some puny other ballistic).
+  out by some puny other ballistic).  it should get weakened slightly, and
+  get correspondingly smaller.
 - make Shade circle around the player once it has locked on
 - make Shade respond as a charged particle in a magnetic field if it's
   touching a tractor beam
@@ -69,6 +89,8 @@ DISASTEROIDS:
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
 - make enemies flash yellow when their health is low
+- red flashing for damage should also depend on max health, so that it gives a
+  relative measure of a damage, not absolute hit point damage.
 - if super-stoke thing is added, that can be indicated by the ship flashing
   white or blue or something
 - collapse the world and object layer params in spawning functions to just
@@ -76,6 +98,9 @@ DISASTEROIDS:
 - to limit the length of waves, there can be a time limit after which all
   the enemies are SetTarget'ed against the player (which can happen every
   few seconds, so the player can't just EMP them to escape).
+  in general, need some mechanism for the player to not be able to delay
+  ending a wave.  maybe some sort of "berserk" mode for enemies, with visual
+  (and audio) cues, where the enemies become extra dangerous.
 - change gauss gun's fire rate to be based on how fast it can be charged back
   up by the power generator -- also, the fire sequence should start with the
   gun completely discharged.. holding the fire button down will then charge
@@ -91,29 +116,26 @@ DISASTEROIDS:
   missiles should be made much heavier, so they're not deflected away by
   tractors as easily.
 - add validation to Dis::Config modifiers
-- add extra-power-to-the-shields powerup which would drain your power, but
-  strengthen your shields significantly
 - add "sprint" powerup (or maybe have it be built-in) which would make your
   engines use twice the power, but accelerate 1.5x or 2x or some factor
   better.
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.
-- add drone for shields also?  or decide which of shields/power generator
-  should have a drone.  maybe they can both have a drone, at obviously
-  distinct frequencies.
+- make shield damage have different sounds when the shield is at different
+  powers, so there's a sound cue (as well as the visual cue) as to what the
+  status of the shield is.
 ** bugs **
 - when setting options from the commandline, the options menu isn't updated
 - the gauss gun damage location appears to be wrong (on exactly
   the opposite side of the damagee -- e.g. blowing up asteroids), and possibly
   the laser too.
 - there seems to be a bug in the aiming in the front weapon of Demi
-- get non-wrapped ObjectLayers back up and running (because they totally
-  don't work in disasteroids)
 - firing a laser or gauss gun while directly facing and touching e.g.
   an asteroid causes the line trace to fail so the weapon fires through
   the asteroid.  fix this by recording hits when the line starts inside
   objects, or start the line trace earlier and ignore the firer.
+- there's a bug in the collision physics for large objects
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
@@ -123,9 +145,10 @@ TODO:
 - need to be able to specify quadtree depths for all quadtrees in all cases.
 - there is a problem in lesson03 with IsOdd<T> assuming Float type when it shouldn't be.
 - use exponential for zoom factors (i.e. so that all real numbers are valid and there's
-  no need to worry about divide by zero)
+  no need to worry about divide by zero).  maybe use base 2?
 - use numeric_limits<float>::infinity() in next think time and such (see <limits>)
-- motion-blurred screenshots (take several screenshots in a row and blend them)
+- motion-blurred screenshots (take several screenshots in a row and blend them).  this would
+  be particularly easy if/when game physics interpolation is implemented.
 - handle failures (especially file loading failures) more gracefully
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent

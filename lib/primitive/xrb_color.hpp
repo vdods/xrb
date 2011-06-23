@@ -18,10 +18,10 @@
 #include "xrb_ntuple.hpp"
 #include "xrb_serializer.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 typedef Float ColorCoord;
+
 class Color : public NTuple<ColorCoord, 4>
 {
 public:
@@ -35,6 +35,15 @@ public:
 
     // efficient no-init constructor
     Color () { }
+    // constructs a color from a 32-bit RGBA value.
+    Color (Uint32 rgba)
+    {
+        Uint8 *p = reinterpret_cast<Uint8 *>(&rgba);
+        m[Dim::R] = p[0] / 255.0f;
+        m[Dim::G] = p[1] / 255.0f;
+        m[Dim::B] = p[2] / 255.0f;
+        m[Dim::A] = p[3] / 255.0f;
+    }
     // constructs an opaque RGB color (fully opaque alpha channel)
     Color (ColorCoord r, ColorCoord g, ColorCoord b)
         :
@@ -50,6 +59,21 @@ public:
         :
         NTuple<ColorCoord, 4>(c)
     { }
+
+    /// Returns the byte-ordered, 32-bit RGBA value of this color.  There is
+    /// no range checking -- the color components are assumed to be in [0,1].
+    /// @note The value returned will depend on the endianness of the machine.
+    Uint32 Rgba () const
+    {
+        Uint32 rgba;
+        Uint8 *p = reinterpret_cast<Uint8 *>(&rgba);
+        // byte-order should be RGBA
+        p[0] = Uint8(m[Dim::R]*255.0f);
+        p[1] = Uint8(m[Dim::G]*255.0f);
+        p[2] = Uint8(m[Dim::B]*255.0f);
+        p[3] = Uint8(m[Dim::A]*255.0f);
+        return rgba;
+    }
 
     // let this Color object be x.  this method is essentially
     // x = blend(x,y).
@@ -85,7 +109,6 @@ public:
         return x;
     }
 }; // end of class Color
-// typedef NTuple<ColorCoord, 4> Color;
 
 // ///////////////////////////////////////////////////////////////////////////
 // partial template specialization to allow Serializer::ReadAggregate and

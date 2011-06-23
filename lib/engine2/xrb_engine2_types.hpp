@@ -15,10 +15,12 @@
 
 #include <vector>
 
+#include "xrb_color.hpp"
 #include "xrb_vector.hpp"
 
 namespace Xrb {
 
+class RenderContext;
 class Serializer;
 
 namespace Engine2 {
@@ -34,18 +36,18 @@ enum
     ENTITY_IS_NOT_IN_WORLD = static_cast<EntityWorldIndex>(-1)
 };
 
-// used for storing objects (and distance fade alpha values) for DrawObjectCollector
-// TODO: precompute render context related stuff like blended color bias and mask
+// used for storing objects (with data relevant to sorting) for DrawObjectCollector
 struct DrawObject
 {
     Object const *m_object;
-    Float m_distance_fade;
-    // add color bias and mask so totally accurate ordering can be done
+    Uint32 m_color_bias_rgba; // color bias munged through the render context, in 32 bit RGBA format
+    Uint32 m_color_mask_rgba; // color mask munged through the render context, with distance fade applied, in 32 bit RGBA format
 
-    DrawObject (Object const *object, Float distance_fade)
+    DrawObject (Object const *object, Uint32 color_bias_rgba, Uint32 color_mask_rgba)
         :
         m_object(object),
-        m_distance_fade(distance_fade)
+        m_color_bias_rgba(color_bias_rgba),
+        m_color_mask_rgba(color_mask_rgba)
     {
         ASSERT1(m_object != NULL);
     }
@@ -64,6 +66,7 @@ typedef std::vector<DrawObject> DrawObjectVector;
 struct DrawObjectCollector
 {
     DrawObjectVector m_draw_object;
+    RenderContext const *m_render_context;
     Float m_pixels_in_view_radius;
     FloatVector2 m_view_center;
     Float m_view_radius;

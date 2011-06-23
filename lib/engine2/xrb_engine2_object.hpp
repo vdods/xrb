@@ -73,13 +73,13 @@ public:
     {
         RenderContext const &m_render_context;
         FloatMatrix2 const &m_world_to_screen;
-        Float m_alpha_mask;
+        Color m_color_bias;
+        Color m_color_mask;
 
         DrawData (RenderContext const &render_context, FloatMatrix2 const &world_to_screen)
             :
             m_render_context(render_context),
-            m_world_to_screen(world_to_screen),
-            m_alpha_mask(1.0f)
+            m_world_to_screen(world_to_screen)
         { }
     }; // end of struct Engine2::Object::DrawData
 

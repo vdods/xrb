@@ -408,6 +408,7 @@ void WorldView::Draw (RenderContext const &render_context)
             // initialize the members of m_draw_object_collector, since it is passed
             // to ObjectLayer::Draw by reference and its members can (and will) be
             // modified during drawing.
+            m_draw_object_collector.m_render_context = &view_render_context;
             m_draw_object_collector.m_pixels_in_view_radius =
                 0.5f * render_context.ClipRect().Size().StaticCast<Float>().Length();
             m_draw_object_collector.m_view_center = Center();
@@ -420,6 +421,9 @@ void WorldView::Draw (RenderContext const &render_context)
                     view_render_context,
                     parallaxed_world_to_screen,
                     m_draw_object_collector);
+
+            // just so we don't have a dangling pointer
+            m_draw_object_collector.m_render_context = NULL;
 
             // if indicated, draw the grid lines after the main layer
             if (object_layer == GetWorld()->MainObjectLayer() &&

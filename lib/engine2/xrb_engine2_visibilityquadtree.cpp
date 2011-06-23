@@ -166,7 +166,8 @@ Uint32 VisibilityQuadTree::Draw (
     {
         DrawObject const &draw_object = *it;
         ASSERT3(draw_object.m_object != NULL);
-        draw_data.m_alpha_mask = draw_object.m_distance_fade;
+        draw_data.m_color_bias = Color(draw_object.m_color_bias_rgba);
+        draw_data.m_color_mask = Color(draw_object.m_color_mask_rgba);
         draw_object.m_object->Draw(draw_data);
     }
     Uint32 drawn_object_count = draw_object_collector.m_draw_object.size();

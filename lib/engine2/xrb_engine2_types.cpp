@@ -11,6 +11,7 @@
 #include "xrb_engine2_types.hpp"
 
 #include "xrb_engine2_object.hpp"
+#include "xrb_rendercontext.hpp"
 
 namespace Xrb {
 namespace Engine2 {
@@ -27,14 +28,11 @@ bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
     // sort using these criteria, most important first:
     // - z depth (correctness of draw order)
     // - rendering params (to minimize the number of openGL calls)
-    //     * color mask
-    //     * color bias
     //     * texture atlas
-    // - pointer values
-
-    // NOTE: the color mask and color bias values are NOT the same
-    // as the ones used while actually drawing, but it is sufficient
-    // to distinguish the values at the Object level.
+    //     * color bias
+    //     * color mask
+    // - pointer values (wouldn't want this if we combined all wrapped rendering
+    //                   into one std::sort.  see VisibilityQuadTree::DrawWrapped)
 
     Sint32 c;
 
@@ -48,13 +46,12 @@ bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
         return c < 0;
     // otherwise they're equal, so continue.
 
-    c = Compare(l.m_object->ColorBias(), r.m_object->ColorBias());
+    c = Compare(l.m_color_bias_rgba, r.m_color_bias_rgba);
     if (c != 0)
         return c < 0;
     // otherwise they're equal, so continue.
 
-    // TODO: account for distance fade here (need to first do above TODO re: render context)
-    c = Compare(l.m_object->ColorMask(), r.m_object->ColorMask());
+    c = Compare(l.m_color_mask_rgba, r.m_color_mask_rgba);
     if (c != 0)
         return c < 0;
     // otherwise they're equal, so continue.
@@ -69,6 +66,7 @@ bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
 
 DrawObjectCollector::DrawObjectCollector ()
     :
+    m_render_context(NULL),
     m_pixels_in_view_radius(0.0f),
     m_view_center(FloatVector2::ms_zero),
     m_view_radius(0.0f)
@@ -77,14 +75,22 @@ DrawObjectCollector::DrawObjectCollector ()
 void DrawObjectCollector::operator () (Object const *object)
 {
     ASSERT3(object != NULL);
-    ASSERT3(m_pixels_in_view_radius > 0.0f);
-    ASSERT3(m_view_radius > 0.0f);
+    ASSERT1(m_render_context != NULL);
+    ASSERT1(m_pixels_in_view_radius > 0.0f);
+    ASSERT1(m_view_radius > 0.0f);
     // calculate the object's pixel radius on screen
     Float object_radius = m_pixels_in_view_radius * object->Radius(QTT_VISIBILITY) / m_view_radius;
-    // distance culling - don't draw objects that are below the
-    // gs_radius_limit_lower threshold
+    // distance culling - don't draw objects that are below the ms_radius_limit_lower threshold
     if (object_radius >= Object::ms_radius_limit_lower)
-        m_draw_object.push_back(DrawObject(object, Object::CalculateDistanceFade(object_radius)));
+    {
+        // calculate the color bias
+        Color color_bias(m_render_context->BlendedColorBias(object->ColorBias()));
+        // calculate the color mask
+        Color color_mask(m_render_context->MaskedColor(object->ColorMask()));
+        color_mask[Dim::A] *= Object::CalculateDistanceFade(object_radius);
+        // add the DrawObject
+        m_draw_object.push_back(DrawObject(object, color_bias.Rgba(), color_mask.Rgba()));
+    }
 }
 
 } // end of namespace Engine2

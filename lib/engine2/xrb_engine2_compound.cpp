@@ -66,14 +66,8 @@ void Compound::Draw (DrawData const &draw_data) const
         ScaleFactors()[Dim::Y],
         1.0f);
 
-    // calculate the color bias
-    Color color_bias(draw_data.m_render_context.BlendedColorBias(ColorBias()));
-    // calculate the color mask
-    Color color_mask(draw_data.m_render_context.MaskedColor(ColorMask()));
-    color_mask[Dim::A] *= draw_data.m_alpha_mask;
-
     // the opaque white texture is just a dummy.  the real texture will be bound later
-    Singleton::Gl().SetupTextureUnits(Singleton::Gl().GlTexture_OpaqueWhite(), color_mask, color_bias);
+    Singleton::Gl().SetupTextureUnits(Singleton::Gl().GlTexture_OpaqueWhite(), draw_data.m_color_mask, draw_data.m_color_bias);
 
     // switch back to texture unit 0 for Polygon's texture binding
     Singleton::Gl().ActiveTexture(GL_TEXTURE0);

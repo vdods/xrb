@@ -164,13 +164,7 @@ void Sprite::RenderGlTexture (DrawData const &draw_data, GlTexture const &gltext
         1.0f);
 #endif
 
-    // calculate the color bias
-    Color color_bias(draw_data.m_render_context.BlendedColorBias(ColorBias()));
-    // calculate the color mask
-    Color color_mask(draw_data.m_render_context.MaskedColor(ColorMask()));
-    color_mask[Dim::A] *= draw_data.m_alpha_mask;
-
-    Singleton::Gl().SetupTextureUnits(gltexture, color_mask, color_bias);
+    Singleton::Gl().SetupTextureUnits(gltexture, draw_data.m_color_mask, draw_data.m_color_bias);
 
     // draw the sprite with a triangle strip using glDrawArrays
     {
