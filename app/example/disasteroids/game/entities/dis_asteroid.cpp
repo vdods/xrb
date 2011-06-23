@@ -143,7 +143,6 @@ void Asteroid::Die (
     Float const frame_dt)
 {
     SpawnNoDamageExplosion(
-        GetWorld(),
         GetObjectLayer(),
         Translation(),
         Velocity(),
@@ -197,7 +196,6 @@ void Asteroid::Die (
 
             Asteroid *new_asteroid =
                 SpawnAsteroid(
-                    GetWorld(),
                     GetObjectLayer(),
                     translation,
                     scale_factor,
@@ -239,7 +237,6 @@ void Asteroid::Die (
             Float scale_factor = Math::Sqrt(mass);
             Uint8 mineral_index = RandomMineral();
             SpawnPowerup(
-                GetWorld(),
                 GetObjectLayer(),
                 Translation() + scale_factor * Math::UnitVector(velocity_angle),
                 scale_factor,

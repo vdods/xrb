@@ -145,7 +145,6 @@ void Ship::Die (
     Float const frame_dt)
 {
     SpawnNoDamageExplosion(
-        GetWorld(),
         GetObjectLayer(),
         Translation(),
         Velocity(),

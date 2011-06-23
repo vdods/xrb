@@ -26,11 +26,23 @@ MAJOR TASKS:
 
 DISASTEROIDS:
 ** feature-related **
+- art: fix Interloper proportions
+- art: add super-foreground with nebula gas, add mid-background with planets
+- art: add bigger stuff in the background.
+- make green tractor beam suck everything in.  get rid of blue tractor beam.
+- add a yellow (or use blue here?) tractor beam to Demi, which grabs stuff to
+  push/pull in whatever direction.  this will be used to hurl nearby asteroids
+  and Devourments at the player.
+- make asteroid break-up more natural -- use circle-packing, with big circles
+  away from the point of damage, lots of little circles in the damaged vicinity,
+  so the exploded asteroid looks more solid (instead of being a regular pentagon
+  of circles).  the damage amount above the "cracking point" should go into
+  moving the pieces in a blasting motion.
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
   where they flock in the form of a snake.
 - additional mode for Shade - circling player in coordinated fashion, maybe
-  changing the rate of circling to be harder to hit
+  changing the rate of circling to be harder to hit.  or maybe hide behind asteroids.
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
 - additional mode for Demi - spawn a bunch of Interlopers which then all
@@ -41,11 +53,8 @@ DISASTEROIDS:
 - make the railgun use a charge-up so it doesn't fire immediately --
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
-- make the 7 button just activate the EMP core, there's no reason to have
-  to equip it and then fire
-  OR
-  add a spiralling-in ambient tractor beam secondary fire to EMP, so
-  the player can suck in enemies and then blast them.
+- configure a single button that, when held down sucks everything nearby in using
+  a cool spiraling effect, and then when released, fires the EMP core.
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak
@@ -58,8 +67,9 @@ DISASTEROIDS:
   the prices for everything.
 - add key to dump shields into power cells (?)
 - add key to dumb power cells into shields (?)
-- make Devourment track who damaged it and how much, so it can retaliate
-  against the ship that damaged it above a certain threshold.
+- make Devourment (and Demi?) track who damaged it and how much, so it can retaliate
+  against the ship that damaged it above a certain threshold.  it would be interesting
+  to see some fights between Demi and Devourment.
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
   after the timer expires, have it pulse green to indicate it's healed
@@ -93,8 +103,6 @@ DISASTEROIDS:
   relative measure of a damage, not absolute hit point damage.
 - if super-stoke thing is added, that can be indicated by the ship flashing
   white or blue or something
-- collapse the world and object layer params in spawning functions to just
-  using the object layer (the world should be accessible through it).
 - to limit the length of waves, there can be a time limit after which all
   the enemies are SetTarget'ed against the player (which can happen every
   few seconds, so the player can't just EMP them to escape).
@@ -118,7 +126,7 @@ DISASTEROIDS:
 - add validation to Dis::Config modifiers
 - add "sprint" powerup (or maybe have it be built-in) which would make your
   engines use twice the power, but accelerate 1.5x or 2x or some factor
-  better.
+  better.  use double-forward keypress to start a sprint.
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.

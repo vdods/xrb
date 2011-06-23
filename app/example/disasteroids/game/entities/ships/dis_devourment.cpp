@@ -109,7 +109,6 @@ void Devourment::Think (Float const time, Float const frame_dt)
     {
         HealthTrigger *health_trigger =
             SpawnDevourmentMouthHealthTrigger(
-                GetWorld(),
                 GetObjectLayer(),
                 Translation(),
                 0.72f * ScaleFactor(),
@@ -130,7 +129,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
 
     // ensure the tractor beam is allocated (lazy allocation)
     if (!m_mouth_tractor_beam.IsValid())
-        m_mouth_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
+        m_mouth_tractor_beam = SpawnTractorBeam(GetObjectLayer())->GetReference();
     // if the tractor beam is already allocated but not in the world, re-add it.
     else if (!m_mouth_tractor_beam->IsInWorld())
         m_mouth_tractor_beam->AddBackIntoWorld();
@@ -265,7 +264,6 @@ void Devourment::Die (
             FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
             SpawnPowerup(
-                GetWorld(),
                 GetObjectLayer(),
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
@@ -299,7 +297,6 @@ void Devourment::Die (
 
         Powerup *health_powerup =
             SpawnPowerup(
-                GetWorld(),
                 GetObjectLayer(),
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,

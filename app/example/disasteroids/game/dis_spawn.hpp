@@ -61,7 +61,6 @@ class Solitary;
 class TractorBeam;
 
 Asteroid *SpawnAsteroid (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -71,7 +70,6 @@ Asteroid *SpawnAsteroid (
     bool is_a_secondary_asteroid);
 
 Ballistic *SpawnSmartBallistic (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -84,7 +82,6 @@ Ballistic *SpawnSmartBallistic (
     EntityReference<Entity> const &owner);
 
 Ballistic *SpawnDumbBallistic (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -97,7 +94,6 @@ Ballistic *SpawnDumbBallistic (
     EntityReference<Entity> const &owner);
 
 Grenade *SpawnGrenade (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -111,7 +107,6 @@ Grenade *SpawnGrenade (
     Float health);
 
 Missile *SpawnMissile (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -129,7 +124,6 @@ Missile *SpawnMissile (
     bool is_enemy_missile);
 
 GuidedMissile *SpawnGuidedMissile (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -146,7 +140,6 @@ GuidedMissile *SpawnGuidedMissile (
     bool is_enemy_missile);
 
 Powerup *SpawnPowerup (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -156,7 +149,6 @@ Powerup *SpawnPowerup (
     ItemType item_type);
 
 Powerup *SpawnPowerup (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -166,7 +158,6 @@ Powerup *SpawnPowerup (
     Item *item);
 
 DamageExplosion *SpawnDamageExplosion (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
@@ -178,7 +169,6 @@ DamageExplosion *SpawnDamageExplosion (
     EntityReference<Entity> const &owner);
 
 NoDamageExplosion *SpawnNoDamageExplosion (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
@@ -187,7 +177,6 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     Float time_at_birth);
 
 EMPExplosion *SpawnEMPExplosion (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
@@ -198,7 +187,6 @@ EMPExplosion *SpawnEMPExplosion (
     EntityReference<Entity> const &owner);
 
 Fireball *SpawnFireball (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
@@ -210,11 +198,9 @@ Fireball *SpawnFireball (
     EntityReference<Entity> const &owner);
 
 LaserBeam *SpawnLaserBeam (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer);
 
 GaussGunTrail *SpawnGaussGunTrail (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &trail_start,
     FloatVector2 const &trail_vector,
@@ -224,20 +210,16 @@ GaussGunTrail *SpawnGaussGunTrail (
     Float time_at_birth);
 
 TractorBeam *SpawnTractorBeam (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer);
 
 ShieldEffect *SpawnShieldEffect (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer);
 
 ReticleEffect *SpawnReticleEffect (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     Color const &color_mask);
 
 HealthTrigger *SpawnHealthTrigger (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,
@@ -248,48 +230,41 @@ HealthTrigger *SpawnHealthTrigger (
     EntityReference<Entity> const &owner);
 
 Solitary *SpawnSolitary (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity);
 
 Interloper *SpawnInterloper (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Shade *SpawnShade (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Revulsion *SpawnRevulsion (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Devourment *SpawnDevourment (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 Demi *SpawnDemi (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Uint8 enemy_level);
 
 EnemyShip *SpawnEnemyShip (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
@@ -297,7 +272,6 @@ EnemyShip *SpawnEnemyShip (
     Uint8 enemy_level);
 
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (
-    Engine2::World *world,
     Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     Float scale_factor,

@@ -70,7 +70,6 @@ void Explosive::Die (
     {
         // do not detonate. spawn a small explosion
         SpawnNoDamageExplosion(
-            GetWorld(),
             GetObjectLayer(),
             Translation(),
             Velocity(),
@@ -257,7 +256,6 @@ void Grenade::Detonate (
 
     // spawn a damage explosion
     SpawnDamageExplosion(
-        GetWorld(),
         GetObjectLayer(),
         Translation(),
         Velocity(),
@@ -460,7 +458,6 @@ void Missile::Detonate (
 
     // spawn a damage explosion
     SpawnDamageExplosion(
-        GetWorld(),
         GetObjectLayer(),
         Translation(),
         Velocity(),

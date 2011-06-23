@@ -166,7 +166,6 @@ bool PeaShooter::Activate (
             ms_max_secondary_impact_damage[UpgradeLevel()] * parameter;
         // spawn it
         SpawnSmartBallistic(
-            OwnerShip()->GetWorld(),
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation() + ballistic_size * MuzzleDirection(),
             ballistic_size,
@@ -219,7 +218,6 @@ bool PeaShooter::Activate (
         // fire the weapon -- create a Pea and set its position and velocity
         ASSERT1(ms_muzzle_speed[UpgradeLevel()] > 0.0f);
         SpawnSmartBallistic(
-            OwnerShip()->GetWorld(),
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation() + ms_ballistic_size[UpgradeLevel()] * MuzzleDirection(),
             ms_ballistic_size[UpgradeLevel()],
@@ -362,7 +360,6 @@ bool Laser::Activate (
                     frame_dt);
                 // spawn the "gauss gun trail"
                 SpawnGaussGunTrail(
-                    OwnerShip()->GetWorld(),
                     OwnerShip()->GetObjectLayer(),
                     fire_location,
                     it->m_time * fire_vector,
@@ -527,7 +524,6 @@ bool FlameThrower::Activate (
 
     // fire the weapon
     SpawnFireball(
-        OwnerShip()->GetWorld(),
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation() + 2.0f * MuzzleDirection(), // the extra is just so we don't fry ourselves
         ms_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
@@ -650,7 +646,6 @@ bool GaussGun::Activate (
 
     // spawn the gauss gun trail
     SpawnGaussGunTrail(
-        OwnerShip()->GetWorld(),
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation(),
         furthest_hit_time * ms_range[UpgradeLevel()] * MuzzleDirection(),
@@ -755,7 +750,6 @@ bool GrenadeLauncher::Activate (
 
     Float const grenade_scale_factor = 4.0f;
     Grenade *grenade = SpawnGrenade(
-        OwnerShip()->GetWorld(),
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation() + grenade_scale_factor * MuzzleDirection(),
         grenade_scale_factor,
@@ -873,7 +867,6 @@ bool MissileLauncher::Activate (
 
         Float const missile_scale_factor = 7.0f;
         Missile *missile = SpawnMissile(
-            OwnerShip()->GetWorld(),
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
             missile_scale_factor,
@@ -944,7 +937,6 @@ bool EMPCore::Activate (
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
 
     SpawnEMPExplosion(
-        OwnerShip()->GetWorld(),
         OwnerShip()->GetObjectLayer(),
         OwnerShip()->Translation(),
         OwnerShip()->Velocity(),
@@ -1117,7 +1109,6 @@ bool SlowBulletGun::Activate (
     ASSERT1(ms_muzzle_speed[UpgradeLevel()] > 0.0f);
     static Float const s_bullet_size = 3.0f;
     SpawnDumbBallistic(
-        OwnerShip()->GetWorld(),
         OwnerShip()->GetObjectLayer(),
         MuzzleLocation() + s_bullet_size * MuzzleDirection(),
         s_bullet_size,
@@ -1177,16 +1168,15 @@ bool EnemySpawner::Activate (
         OwnerShip()->Velocity());
 
     Uint8 spawn_enemy_level = Math::RandomUint16(0, UpgradeLevel());
-    EnemyShip *enemy_ship = 
+    EnemyShip *enemy_ship =
         SpawnEnemyShip(
-            OwnerShip()->GetWorld(),
             OwnerShip()->GetObjectLayer(),
             FloatVector2::ms_zero,
             muzzle_velocity,
             EnemySpawnType(),
             spawn_enemy_level);
     enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->ScaleFactor() * MuzzleDirection());
-    
+
     // update the last time fired
     m_time_last_fired = time;
 

@@ -543,7 +543,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             {
                 // ensure the laser beam is allocated (lazy allocation)
                 if (!m_laser_beam.IsValid())
-                    m_laser_beam = SpawnLaserBeam(GetWorld(), GetObjectLayer())->GetReference();
+                    m_laser_beam = SpawnLaserBeam(GetObjectLayer())->GetReference();
                 // if the laser beam is already allocated but not in the world, re-add it.
                 else if (!m_laser_beam->IsInWorld())
                     m_laser_beam->AddBackIntoWorld();
@@ -561,7 +561,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
             {
                 // ensure the tractor beam is allocated (lazy allocation)
                 if (!m_tractor_beam.IsValid())
-                    m_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
+                    m_tractor_beam = SpawnTractorBeam(GetObjectLayer())->GetReference();
                 // if the tractor beam is already allocated but not in the world, re-add it.
                 else if (!m_tractor_beam->IsInWorld())
                     m_tractor_beam->AddBackIntoWorld();
@@ -619,7 +619,7 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         {
             // ensure the shield effect is allocated (lazy allocation)
             if (!m_shield_effect.IsValid())
-                m_shield_effect = SpawnShieldEffect(GetWorld(), GetObjectLayer())->GetReference();
+                m_shield_effect = SpawnShieldEffect(GetObjectLayer())->GetReference();
             // if the shield effect is already allocated but not in the world, re-add it.
             else if (!m_shield_effect->IsInWorld())
                 m_shield_effect->AddBackIntoWorld();
@@ -729,7 +729,6 @@ void PlayerShip::Die (
 
     // spawn a really big explosion
     SpawnNoDamageExplosion(
-        GetWorld(),
         GetObjectLayer(),
         Translation(),
         Velocity(),
@@ -1022,7 +1021,6 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
 
     FloatVector2 ejection_normal(Math::UnitVector(Angle() + ejection_angle));
     SpawnPowerup(
-        GetWorld(),
         GetObjectLayer(),
         s_powerup_scale_factor * ejection_normal + Translation(),
         s_powerup_scale_factor,

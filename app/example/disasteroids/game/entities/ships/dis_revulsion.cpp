@@ -340,7 +340,7 @@ void Revulsion::StartAimAtTarget (Float time, Float frame_dt)
     ASSERT1(!m_reticle_effect.IsValid() || !m_reticle_effect->IsInWorld());
     // ensure the reticle effect is allocated (lazy allocation)
     if (!m_reticle_effect.IsValid())
-        m_reticle_effect = SpawnReticleEffect(GetWorld(), GetObjectLayer(), Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
+        m_reticle_effect = SpawnReticleEffect(GetObjectLayer(), Color(1.0f, 0.0f, 0.0f, 0.5f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
     else if (!m_reticle_effect->IsInWorld())
         m_reticle_effect->AddBackIntoWorld();

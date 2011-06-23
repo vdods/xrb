@@ -227,7 +227,7 @@ void Demi::Think (Float const time, Float const frame_dt)
 
     // ensure the port tractor beam is allocated (lazy allocation)
     if (!m_port_tractor_beam.IsValid())
-        m_port_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
+        m_port_tractor_beam = SpawnTractorBeam(GetObjectLayer())->GetReference();
     // if the port tractor beam is already allocated but not in the world, re-add it.
     else if (!m_port_tractor_beam->IsInWorld())
         m_port_tractor_beam->AddBackIntoWorld();
@@ -236,7 +236,7 @@ void Demi::Think (Float const time, Float const frame_dt)
 
     // ensure the starboard tractor beam is allocated (lazy allocation)
     if (!m_starboard_tractor_beam.IsValid())
-        m_starboard_tractor_beam = SpawnTractorBeam(GetWorld(), GetObjectLayer())->GetReference();
+        m_starboard_tractor_beam = SpawnTractorBeam(GetObjectLayer())->GetReference();
     // if the starboard tractor beam is already allocated but not in the world, re-add it.
     else if (!m_starboard_tractor_beam->IsInWorld())
         m_starboard_tractor_beam->AddBackIntoWorld();
@@ -381,7 +381,6 @@ void Demi::Die (
 
         Powerup *health_powerup =
             SpawnPowerup(
-                GetWorld(),
                 GetObjectLayer(),
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
@@ -393,7 +392,7 @@ void Demi::Die (
 
         health_powerup_amount_left_to_spawn -= health_powerup_amount;
     }
-    
+
     static Uint32 const s_death_enemies_to_spawn_count = 10;
     for (Uint32 i = 0; i < s_death_enemies_to_spawn_count; ++i)
     {
@@ -402,7 +401,6 @@ void Demi::Die (
         FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         SpawnEnemyShip(
-            GetWorld(),
             GetObjectLayer(),
             Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
@@ -808,7 +806,6 @@ void Demi::GaussGunStartAim (Float const time, Float const frame_dt)
     if (!m_reticle_effect.IsValid())
         m_reticle_effect =
             SpawnReticleEffect(
-                GetWorld(),
                 GetObjectLayer(),
                 Color(1.0f, 0.0f, 0.0f, 0.65f))->GetReference();
     // if the reticle effect is already allocated but not in the world, re-add it.
