@@ -33,10 +33,11 @@ DISASTEROIDS:
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 ** feature-related **
-- make green tractor beam suck everything in.  get rid of blue tractor beam.
-- add a yellow (or use blue here?) tractor beam to Demi, which grabs stuff to
-  push/pull in whatever direction.  this will be used to hurl nearby asteroids
-  and Devourments at the player.
+- really need a powerup system -- stoke mode, but also random powerups that pop out of
+  enemies and asteroids -- invincibility, infinite power, super speed, double damage,
+  double firing speed
+- add a yellow tractor beam to Demi, which grabs stuff to push/pull in whatever direction.
+  this will be used to hurl nearby asteroids and enemy ships at the player.
 - make asteroid break-up more natural -- use circle-packing, with big circles
   away from the point of damage, lots of little circles in the damaged vicinity,
   so the exploded asteroid looks more solid (instead of being a regular pentagon
@@ -57,6 +58,8 @@ DISASTEROIDS:
   it all away with its tractor beams.  Or/also make a mode where Demi collects
   all asteroids into a shield surrounding it and then harasses the player until
   it takes a certain amount of damage, then flings the asteroids at the player.
+- additional mode for Demi - spin around shooting missiles which stop and wait,
+  and then all converge on the player
 - make the railgun use a charge-up so it doesn't fire immediately --
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
@@ -141,7 +144,6 @@ DISASTEROIDS:
   powers, so there's a sound cue (as well as the visual cue) as to what the
   status of the shield is.
 ** bugs **
-- there seems to be a bug in the aiming in the front weapon of Demi
 ** general TODO **
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();

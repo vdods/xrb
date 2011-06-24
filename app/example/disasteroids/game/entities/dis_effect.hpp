@@ -298,11 +298,7 @@ public:
     // this is mainly just to override Effect::Think which changes the alpha
     virtual void Think (Float time, Float frame_dt) { }
 
-    void SetParameters (
-        bool pull_everything,
-        bool push_instead_of_pull,
-        Float pulling_input,
-        Float intensity);
+    void SetParameters (bool push_instead_of_pull, Float intensity);
 }; // end of class TractorBeam
 
 // ///////////////////////////////////////////////////////////////////////////

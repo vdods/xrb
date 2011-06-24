@@ -973,15 +973,14 @@ bool Tractor::Activate (
     // don't do anything if no power was supplied
     if (power == 0.0f)
     {
-        m_tractor_beam->SetParameters(true, false, 0.0f, 0.0f);
+        m_tractor_beam->SetParameters(false, 0.0f);
         return false;
     }
 
     ASSERT1(PrimaryInput() > 0.0f || SecondaryInput() > 0.0f);
-    // the secondary tractor mode pulls everything, not just powerups
-    bool pull_everything = SecondaryInput() > 0.0f;
-    bool push_instead_of_pull = PrimaryInput() == 0.0f;
-    Float input = pull_everything ? SecondaryInput() : PrimaryInput();
+    // the primary tractor beam pulls everything
+    Float push_instead_of_pull = SecondaryInput() > 0.0f;
+    Float input = push_instead_of_pull ? SecondaryInput() : PrimaryInput();
 
     Float range =
         IsRangeOverridden() ?
@@ -1035,11 +1034,6 @@ bool Tractor::Activate (
         if (entity == OwnerShip())
             continue;
 
-        // if we're not pulling everything (secondary tractor mode),
-        // then break if this game object isn't a powerup.
-        if (!pull_everything && entity->GetEntityType() != ET_POWERUP)
-            continue;
-
         Float force = Min(input * strength * entity->ScaleFactor(), max_force);
         entity->ApplyInterceptCourseAcceleration(
             OwnerShip(),
@@ -1055,7 +1049,7 @@ bool Tractor::Activate (
     // set its pulling input and intensity
     Float intensity = power / (frame_dt * ms_max_power_output_rate[UpgradeLevel()]);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    m_tractor_beam->SetParameters(pull_everything, push_instead_of_pull, PrimaryInput(), intensity);
+    m_tractor_beam->SetParameters(push_instead_of_pull, intensity);
 
     return true;
 }

@@ -1302,6 +1302,7 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
     {
         // aim the tractor and set it to push
         SetPortReticleCoordinates(best_target->Translation());
+        SetPortWeaponPrimaryInput(0);
         SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
     }
 }
@@ -1321,6 +1322,7 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
     {
         // aim the tractor and set it to push
         SetStarboardReticleCoordinates(best_target->Translation());
+        SetStarboardWeaponPrimaryInput(0);
         SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
     }
 }
@@ -1335,7 +1337,7 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
     // aim the tractor and set it to pull
     SetPortReticleCoordinates(m_target->Translation());
     SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
-    SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
+    SetPortWeaponSecondaryInput(0);
 }
 
 void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame_dt)
@@ -1348,7 +1350,7 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
     // aim the tractor and set it to pull
     SetStarboardReticleCoordinates(m_target->Translation());
     SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
-    SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
+    SetStarboardWeaponSecondaryInput(0);
 }
 
 void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Float max_thrust)
