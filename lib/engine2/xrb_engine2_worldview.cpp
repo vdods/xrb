@@ -413,6 +413,7 @@ void WorldView::Draw (RenderContext const &render_context)
                 0.5f * render_context.ClipRect().Size().StaticCast<Float>().Length();
             m_draw_object_collector.m_view_center = Center();
             m_draw_object_collector.m_view_radius = ParallaxedViewRadius(object_layer);
+            m_draw_object_collector.m_object_layer = object_layer;
 
             // draw the contents of the object layer (this does opaque and then
             // back-to-front transparent rendering for correct z-depth order).
@@ -422,8 +423,9 @@ void WorldView::Draw (RenderContext const &render_context)
                     parallaxed_world_to_screen,
                     m_draw_object_collector);
 
-            // just so we don't have a dangling pointer
+            // just so we don't have dangling pointers
             m_draw_object_collector.m_render_context = NULL;
+            m_draw_object_collector.m_object_layer = NULL;
 
             // if indicated, draw the grid lines after the main layer
             if (object_layer == GetWorld()->MainObjectLayer() &&

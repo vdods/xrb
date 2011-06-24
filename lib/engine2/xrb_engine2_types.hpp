@@ -27,6 +27,7 @@ namespace Engine2 {
 
 class Entity;
 class Object;
+class ObjectLayer;
 
 typedef Uint32 EntityWorldIndex;
 typedef Entity *(*CreateEntityFunction)(Serializer &);
@@ -70,6 +71,7 @@ struct DrawObjectCollector
     Float m_pixels_in_view_radius;
     FloatVector2 m_view_center;
     Float m_view_radius;
+    ObjectLayer const *m_object_layer;
 
     DrawObjectCollector ();
 

@@ -47,9 +47,7 @@ bool PhysicsHandler::DoesAreaOverlapAnyEntityInObjectLayer (
         area_center,
         area_radius,
         check_nonsolid_collision_entities,
-        m_main_object_layer->IsWrapped(),
-        m_main_object_layer->SideLength(),
-        0.5f * m_main_object_layer->SideLength());
+        *m_main_object_layer);
 }
 
 void PhysicsHandler::LineTrace (
@@ -71,9 +69,7 @@ void PhysicsHandler::LineTrace (
         trace_radius,
         check_nonsolid_collision_entities,
         line_trace_binding_set,
-        m_main_object_layer->IsWrapped(),
-        m_main_object_layer->SideLength(),
-        0.5f * m_main_object_layer->SideLength());
+        *m_main_object_layer);
 }
 
 void PhysicsHandler::AreaTrace (
@@ -87,32 +83,12 @@ void PhysicsHandler::AreaTrace (
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(trace_area_radius > 0.0f);
     ASSERT1(area_trace_list != NULL);
-
-    // this is unfortunately necessary
-    if (m_main_object_layer->IsWrapped())
-    {
-        Float object_layer_side_length = m_main_object_layer->SideLength();
-        Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-
-        if (trace_area_center[Dim::X] < -half_object_layer_side_length)
-            trace_area_center[Dim::X] += object_layer_side_length;
-        else if (trace_area_center[Dim::X] > half_object_layer_side_length)
-            trace_area_center[Dim::X] -= object_layer_side_length;
-
-        if (trace_area_center[Dim::Y] < -half_object_layer_side_length)
-            trace_area_center[Dim::Y] += object_layer_side_length;
-        else if (trace_area_center[Dim::Y] > half_object_layer_side_length)
-            trace_area_center[Dim::Y] -= object_layer_side_length;
-    }
-
     m_quad_tree->AreaTrace(
         trace_area_center,
         trace_area_radius,
         check_nonsolid_collision_entities,
         area_trace_list,
-        m_main_object_layer->IsWrapped(),
-        m_main_object_layer->SideLength(),
-        0.5f * m_main_object_layer->SideLength());
+        *m_main_object_layer);
 }
 
 void PhysicsHandler::CalculateAmbientMomentum (
@@ -400,12 +376,7 @@ void PhysicsHandler::HandleInterpenetrations ()
             continue;
 
         // traverse the collision quad tree and calculate collision pairs
-        m_quad_tree->CollideEntity(
-            entity,
-            FrameDT(),
-            &m_collision_pair_list,
-            m_main_object_layer->IsWrapped(),
-            m_main_object_layer->SideLength());
+        m_quad_tree->CollideEntity(entity, FrameDT(), &m_collision_pair_list);
     }
 }
 

@@ -164,23 +164,7 @@ void Asteroid::Die (
             Mass() / static_cast<Float>(ms_number_of_fragments_to_spawn);
         FloatVector2 source_velocity = Velocity();
 
-        FloatVector2 kill_offset(kill_location - Translation());
-        if (GetObjectLayer()->IsWrapped())
-        {
-            // only need to adjust if the object layer is wrapped.
-            Float object_layer_side_length = GetObjectLayer()->SideLength();
-            Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-
-            if (kill_offset[Dim::X] < -half_object_layer_side_length)
-                kill_offset[Dim::X] += object_layer_side_length;
-            else if (kill_offset[Dim::X] > half_object_layer_side_length)
-                kill_offset[Dim::X] -= object_layer_side_length;
-
-            if (kill_offset[Dim::Y] < -half_object_layer_side_length)
-                kill_offset[Dim::Y] += object_layer_side_length;
-            else if (kill_offset[Dim::Y] > half_object_layer_side_length)
-                kill_offset[Dim::Y] -= object_layer_side_length;
-        }
+        FloatVector2 kill_offset(GetObjectLayer()->AdjustedDifference(kill_location, Translation()));
         if (kill_offset.IsZero())
             kill_offset = FloatVector2(1.0f, 0.0f);
         Float seed_angle = Math::Atan(kill_offset);

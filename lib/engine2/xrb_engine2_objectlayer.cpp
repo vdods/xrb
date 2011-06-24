@@ -90,12 +90,7 @@ bool ObjectLayer::DoesAreaOverlapAnyObject (
     Float area_radius) const
 {
     ASSERT1(m_quad_tree != NULL);
-    return m_quad_tree->DoesAreaOverlapAnyObject(
-        area_center,
-        area_radius,
-        IsWrapped(),
-        SideLength(),
-        0.5f * SideLength());
+    return m_quad_tree->DoesAreaOverlapAnyObject(area_center, area_radius, *this);
 }
 
 FloatVector2 ObjectLayer::AdjustedDifference (FloatVector2 p, FloatVector2 const &q) const
@@ -139,9 +134,9 @@ Uint32 ObjectLayer::Draw (
     ASSERT1(draw_object_collector.m_view_radius > 0.0f);
 
     if (m_is_wrapped)
-        return m_quad_tree->DrawWrapped(render_context, world_to_screen, draw_object_collector);
+        return m_quad_tree->DrawWrapped(render_context, world_to_screen, draw_object_collector, *this);
     else
-        return m_quad_tree->Draw(render_context, world_to_screen, draw_object_collector);
+        return m_quad_tree->Draw(render_context, world_to_screen, draw_object_collector, *this);
 }
 
 void ObjectLayer::AddObject (Object *const object)

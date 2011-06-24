@@ -69,7 +69,8 @@ DrawObjectCollector::DrawObjectCollector ()
     m_render_context(NULL),
     m_pixels_in_view_radius(0.0f),
     m_view_center(FloatVector2::ms_zero),
-    m_view_radius(0.0f)
+    m_view_radius(0.0f),
+    m_object_layer(NULL)
 { }
 
 void DrawObjectCollector::operator () (Object const *object)

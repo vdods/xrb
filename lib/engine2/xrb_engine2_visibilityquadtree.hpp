@@ -59,11 +59,13 @@ public:
     Uint32 Draw (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
-        DrawObjectCollector &draw_object_collector) const;
+        DrawObjectCollector &draw_object_collector,
+        ObjectLayer const &object_layer) const;
     Uint32 DrawWrapped (
         RenderContext const &render_context,
         FloatMatrix2 const &world_to_screen,
-        DrawObjectCollector &draw_object_collector) const;
+        DrawObjectCollector &draw_object_collector,
+        ObjectLayer const &object_layer) const;
 
     // draw lines where the bounds of this quadtree node are
     void DrawBounds (RenderContext const &render_context, Color const &color) const;

@@ -14,6 +14,7 @@
 
 #include "xrb_engine2_circle_entity.hpp"
 #include "xrb_engine2_circle_physicshandler.hpp"
+#include "xrb_engine2_objectlayer.hpp"
 
 namespace Xrb {
 namespace Engine2 {
@@ -39,27 +40,14 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
     FloatVector2 const &area_center,
     Float area_radius,
     bool check_nonsolid_collision_entities,
-    bool is_wrapped,
-    Float object_layer_side_length,
-    Float half_object_layer_side_length) const
+    ObjectLayer const &object_layer) const
 {
-    if (is_wrapped)
-    {
-        ASSERT1(object_layer_side_length > 0.0f);
-        ASSERT1(half_object_layer_side_length > 0.0f);
-    }
-
     // if there are no objects here or below, just return false
     if (SubordinateObjectCount() == 0)
         return false;
 
     // return false if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(
-            area_center,
-            area_radius,
-            is_wrapped,
-            object_layer_side_length,
-            half_object_layer_side_length))
+    if (!DoesAreaOverlapQuadBounds(area_center, area_radius, object_layer, false))
         return false;
 
     // check if the area overlaps any object in this node's list.
@@ -72,24 +60,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
         ASSERT1(object != NULL);
         ASSERT1(object->OwnerQuadTree(QTT_PHYSICS_HANDLER) == this);
 
-        FloatVector2 object_translation(object->Translation());
-        FloatVector2 adjusted_area_center(area_center);
-
-        // only need to adjust coordinates in wrapped space
-        if (is_wrapped)
-        {
-            if (adjusted_area_center[Dim::X] < object_translation[Dim::X] - half_object_layer_side_length)
-                adjusted_area_center[Dim::X] += object_layer_side_length;
-            else if (adjusted_area_center[Dim::X] > object_translation[Dim::X] + half_object_layer_side_length)
-                adjusted_area_center[Dim::X] -= object_layer_side_length;
-
-            if (adjusted_area_center[Dim::Y] < object_translation[Dim::Y] - half_object_layer_side_length)
-                adjusted_area_center[Dim::Y] += object_layer_side_length;
-            else if (adjusted_area_center[Dim::Y] > object_translation[Dim::Y] + half_object_layer_side_length)
-                adjusted_area_center[Dim::Y] -= object_layer_side_length;
-        }
-
-        if ((object_translation - adjusted_area_center).Length()
+        if (object_layer.AdjustedDistance(object->Translation(), area_center)
             <
             (object->Radius(GetQuadTreeType()) + area_radius))
         {
@@ -113,9 +84,7 @@ bool CollisionQuadTree::DoesAreaOverlapAnyEntity (
                     area_center,
                     area_radius,
                     check_nonsolid_collision_entities,
-                    is_wrapped,
-                    object_layer_side_length,
-                    half_object_layer_side_length);
+                    object_layer);
         return retval;
     }
     else
@@ -128,19 +97,11 @@ void CollisionQuadTree::LineTrace (
     Float trace_radius,
     bool check_nonsolid_collision_entities,
     LineTraceBindingSet *line_trace_binding_set,
-    bool is_wrapped,
-    Float object_layer_side_length,
-    Float half_object_layer_side_length)
+    ObjectLayer const &object_layer) const
 {
     ASSERT1(!trace_vector.IsZero());
     ASSERT1(trace_radius >= 0.0f);
     ASSERT1(line_trace_binding_set != NULL);
-
-    if (is_wrapped)
-    {
-        ASSERT1(object_layer_side_length > 0.0f);
-        ASSERT1(half_object_layer_side_length > 0.0f);
-    }
 
     // if this quad node has no subordinates, return
     if (SubordinateObjectCount() == 0)
@@ -150,23 +111,7 @@ void CollisionQuadTree::LineTrace (
     Float a = trace_vector | trace_vector;
     FloatVector2 trace_center(trace_start + 0.5f * trace_vector);
     {
-        FloatVector2 adjusted_center(Center());
-
-        // only need to adjust coordinates in wrapped space
-        if (is_wrapped)
-        {
-            if (adjusted_center[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
-                adjusted_center[Dim::X] -= object_layer_side_length;
-            else if (adjusted_center[Dim::X] - trace_center[Dim::X] < -half_object_layer_side_length)
-                adjusted_center[Dim::X] += object_layer_side_length;
-
-            if (adjusted_center[Dim::Y] - trace_center[Dim::Y] > half_object_layer_side_length)
-                adjusted_center[Dim::Y] -= object_layer_side_length;
-            else if (adjusted_center[Dim::Y] - trace_center[Dim::Y] < -half_object_layer_side_length)
-                adjusted_center[Dim::Y] += object_layer_side_length;
-        }
-
-        FloatVector2 p_minus_c = trace_start - adjusted_center;
+        FloatVector2 p_minus_c = object_layer.AdjustedDifference(trace_start, Center());
         Float R = 2.0f * Radius() + trace_radius;
         Float b = p_minus_c | trace_vector;
         Float c = (p_minus_c | p_minus_c) - R * R;
@@ -195,24 +140,7 @@ void CollisionQuadTree::LineTrace (
             !check_nonsolid_collision_entities)
             continue;
 
-        FloatVector2 adjusted_entity_translation(entity->Translation());
-
-        // only need to adjust coordinates in wrapped space
-        if (is_wrapped)
-        {
-            if (adjusted_entity_translation[Dim::X] - trace_center[Dim::X] > half_object_layer_side_length)
-                adjusted_entity_translation[Dim::X] -= object_layer_side_length;
-            else if (adjusted_entity_translation[Dim::X] - trace_center[Dim::X] < -half_object_layer_side_length)
-                adjusted_entity_translation[Dim::X] += object_layer_side_length;
-
-            if (adjusted_entity_translation[Dim::Y] - trace_center[Dim::Y] > half_object_layer_side_length)
-                adjusted_entity_translation[Dim::Y] -= object_layer_side_length;
-            else if (adjusted_entity_translation[Dim::Y] - trace_center[Dim::Y] < -half_object_layer_side_length)
-                adjusted_entity_translation[Dim::Y] += object_layer_side_length;
-        }
-
-        // check the trace line against the object
-        FloatVector2 p_minus_c = trace_start - adjusted_entity_translation;
+        FloatVector2 p_minus_c = object_layer.AdjustedDifference(trace_start, entity->Translation());
         Float R = entity->Radius(GetQuadTreeType()) + trace_radius;
         // a is calculated above
         Float b = p_minus_c | trace_vector;
@@ -243,9 +171,7 @@ void CollisionQuadTree::LineTrace (
                 trace_radius,
                 check_nonsolid_collision_entities,
                 line_trace_binding_set,
-                is_wrapped,
-                object_layer_side_length,
-                half_object_layer_side_length);
+                object_layer);
 }
 
 void CollisionQuadTree::AreaTrace (
@@ -253,30 +179,17 @@ void CollisionQuadTree::AreaTrace (
     Float trace_area_radius,
     bool check_nonsolid_collision_entities,
     AreaTraceList *area_trace_list,
-    bool is_wrapped,
-    Float object_layer_side_length,
-    Float half_object_layer_side_length)
+    ObjectLayer const &object_layer) const
 {
     ASSERT1(trace_area_radius > 0.0f);
     ASSERT1(area_trace_list != NULL);
-
-    if (is_wrapped)
-    {
-        ASSERT1(object_layer_side_length > 0.0f);
-        ASSERT1(half_object_layer_side_length > 0.0f);
-    }
 
     // if this quad node has no subordinates, return
     if (SubordinateObjectCount() == 0)
         return;
 
     // if this quad node doesn't intersect the area, return
-    if (!DoesAreaOverlapQuadBounds(
-            trace_area_center,
-            trace_area_radius,
-            is_wrapped,
-            object_layer_side_length,
-            half_object_layer_side_length))
+    if (!DoesAreaOverlapQuadBounds(trace_area_center, trace_area_radius, object_layer, false))
         return;
 
     // call this function on the child nodes, if they exist
@@ -287,9 +200,7 @@ void CollisionQuadTree::AreaTrace (
                 trace_area_radius,
                 check_nonsolid_collision_entities,
                 area_trace_list,
-                is_wrapped,
-                object_layer_side_length,
-                half_object_layer_side_length);
+                object_layer);
 
     // check the line against the objects in this node
     for (ObjectSet::iterator it = m_object_set.begin(),
@@ -311,24 +222,7 @@ void CollisionQuadTree::AreaTrace (
             !check_nonsolid_collision_entities)
             continue;
 
-        FloatVector2 adjusted_entity_translation(entity->Translation());
-
-        // only need to adjust coordinates in wrapped space
-        if (is_wrapped)
-        {
-            if (adjusted_entity_translation[Dim::X] - trace_area_center[Dim::X] > half_object_layer_side_length)
-                adjusted_entity_translation[Dim::X] -= object_layer_side_length;
-            else if (adjusted_entity_translation[Dim::X] - trace_area_center[Dim::X] < -half_object_layer_side_length)
-                adjusted_entity_translation[Dim::X] += object_layer_side_length;
-
-            if (adjusted_entity_translation[Dim::Y] - trace_area_center[Dim::Y] > half_object_layer_side_length)
-                adjusted_entity_translation[Dim::Y] -= object_layer_side_length;
-            else if (adjusted_entity_translation[Dim::Y] - trace_area_center[Dim::Y] < -half_object_layer_side_length)
-                adjusted_entity_translation[Dim::Y] += object_layer_side_length;
-        }
-
-        // don't add it if the entity isn't touching the trace area
-        FloatVector2 center_to_center(adjusted_entity_translation - trace_area_center);
+        FloatVector2 center_to_center(object_layer.AdjustedDifference(entity->Translation(), trace_area_center));
         if (center_to_center.Length() >= entity->Radius(GetQuadTreeType()) + trace_area_radius)
             continue;
 
@@ -339,37 +233,24 @@ void CollisionQuadTree::AreaTrace (
 void CollisionQuadTree::CollideEntity (
     Entity *const entity,
     Float frame_dt,
-    CollisionPairList *collision_pair_list,
-    bool is_wrapped,
-    Float object_layer_side_length)
+    CollisionPairList *collision_pair_list) const
 {
     ASSERT1(entity != NULL);
     ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
     ASSERT1(collision_pair_list != NULL);
 
-    CollideEntityLoopFunctor
-        functor(
-            entity,
-            frame_dt,
-            collision_pair_list,
-            is_wrapped,
-            object_layer_side_length);
+    CollideEntityLoopFunctor functor(entity, frame_dt, collision_pair_list);
     CollideEntity(functor);
 }
 
-void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunctor &functor)
+void CollisionQuadTree::CollideEntity (CollisionQuadTree::CollideEntityLoopFunctor &functor) const
 {
     // if there are no objects here or below, just return
     if (SubordinateObjectCount() == 0)
         return;
 
     // return if the area doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(
-            functor.GetEntity()->Translation(),
-            functor.GetEntity()->Radius(GetQuadTreeType()),
-            functor.IsWrapped(),
-            functor.ObjectLayerSideLength(),
-            functor.HalfObjectLayerSideLength()))
+    if (!DoesAreaOverlapQuadBounds(functor.GetEntity()->Translation(), functor.GetEntity()->Radius(GetQuadTreeType()), functor.GetObjectLayer(), false))
         return;
 
     // here is the actual entity loop
@@ -410,23 +291,8 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
 
     FloatVector2 ce0_translation(m_entity->Translation());
     FloatVector2 ce1_translation(object->Translation());
-
-    // only need to adjust coordinates if we're dealing with wrapped space
-    if (m_is_wrapped)
-    {
-        if (ce1_translation[Dim::X] - ce0_translation[Dim::X] > m_half_object_layer_side_length)
-            ce1_translation[Dim::X] -= m_object_layer_side_length;
-        else if (ce1_translation[Dim::X] - ce0_translation[Dim::X] < -m_half_object_layer_side_length)
-            ce1_translation[Dim::X] += m_object_layer_side_length;
-
-        if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] > m_half_object_layer_side_length)
-            ce1_translation[Dim::Y] -= m_object_layer_side_length;
-        else if (ce1_translation[Dim::Y] - ce0_translation[Dim::Y] < -m_half_object_layer_side_length)
-            ce1_translation[Dim::Y] += m_object_layer_side_length;
-    }
-
     Float r = m_entity->Radius(QTT_PHYSICS_HANDLER) + object->Radius(QTT_PHYSICS_HANDLER);
-    FloatVector2 offset_0_to_1 = ce1_translation - ce0_translation;
+    FloatVector2 offset_0_to_1(m_object_layer.AdjustedDifference(ce1_translation, ce0_translation));
 
     if (offset_0_to_1.LengthSquared() >= Sqr(r))
         return;

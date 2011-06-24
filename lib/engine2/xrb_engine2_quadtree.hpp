@@ -54,9 +54,7 @@ public:
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
-        Float half_object_layer_side_length = -1.0f) const;
+        ObjectLayer const &object_layer) const;
 
     // clears out all objects but leaves the QuadTree structure intact
     void Clear ();
@@ -94,13 +92,13 @@ protected:
     bool IsPointInsideQuad (FloatVector2 const &point) const;
     // returns true if this quad's bounding circle is intersecting the given
     // circle (e.g. used in determining the potential intersecting set of the
-    // specified circle)
+    // specified circle).  disable_wrapping_adjustment is used when AdjustedDifference
+    // and friends should not be used, e.g. when drawing.
     bool DoesAreaOverlapQuadBounds (
         FloatVector2 area_center,
         Float area_radius,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f, // irrelevant in non-wrapped space
-        Float half_object_layer_side_length = -1.0f) const;
+        ObjectLayer const &object_layer,
+        bool disable_wrapping_adjustment) const;
 
     void SetQuadTreeType (QuadTreeType quad_tree_type);
 

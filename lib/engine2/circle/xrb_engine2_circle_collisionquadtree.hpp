@@ -37,9 +37,7 @@ public:
         FloatVector2 const &area_center,
         Float area_radius,
         bool check_nonsolid_collision_entities,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
-        Float half_object_layer_side_length = -1.0f) const;
+        ObjectLayer const &object_layer) const;
 
     void LineTrace (
         FloatVector2 const &trace_start,
@@ -47,25 +45,19 @@ public:
         Float trace_radius,
         bool check_nonsolid_collision_entities,
         LineTraceBindingSet *line_trace_binding_set,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
-        Float half_object_layer_side_length = -1.0f);
+        ObjectLayer const &object_layer) const;
 
     void AreaTrace (
         FloatVector2 const &trace_area_center,
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
         AreaTraceList *area_trace_list,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f, // irrelevant for non-wrapped space
-        Float half_object_layer_side_length = -1.0f);
+        ObjectLayer const &object_layer) const;
 
     void CollideEntity (
         Entity *entity,
         Float frame_dt,
-        CollisionPairList *collision_pair_list,
-        bool is_wrapped = false,
-        Float object_layer_side_length = -1.0f); // irrelevant for non-wrapped space
+        CollisionPairList *collision_pair_list) const;
 
 protected:
 
@@ -75,7 +67,7 @@ private:
 
     class CollideEntityLoopFunctor;
 
-    void CollideEntity (CollideEntityLoopFunctor &functor);
+    void CollideEntity (CollideEntityLoopFunctor &functor) const;
 
     // instead of passing all these parameters into each call of a quad
     // tree recursion, package them up into a nice functor object.
@@ -86,23 +78,18 @@ private:
         CollideEntityLoopFunctor (
             Entity *entity,
             Float frame_dt,
-            CollisionPairList *collision_pair_list,
-            bool is_wrapped,
-            Float object_layer_side_length) // irrelevant for non-wrapped space
+            CollisionPairList *collision_pair_list)
             :
             m_entity(entity),
             m_frame_dt(frame_dt),
             m_collision_pair_list(collision_pair_list),
-            m_is_wrapped(is_wrapped),
-            m_object_layer_side_length(object_layer_side_length),
-            m_half_object_layer_side_length(0.5f*object_layer_side_length)
+            m_object_layer(*entity->GetObjectLayer())
         {
             ASSERT1(m_entity != NULL);
             ASSERT1(m_entity->OwnerObject() != NULL);
+            ASSERT1(m_entity->GetObjectLayer() != NULL);
             ASSERT1(m_collision_pair_list != NULL);
             ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
-            if (m_is_wrapped)
-                ASSERT1(m_object_layer_side_length > 0.0f);
         }
 
         // this is the business end of the functor, and is what actually
@@ -110,18 +97,14 @@ private:
         void operator () (Object *object);
 
         Entity *GetEntity () const { return m_entity; }
-        Float ObjectLayerSideLength () const { return m_object_layer_side_length; }
-        Float HalfObjectLayerSideLength () const { return m_half_object_layer_side_length; }
-        bool IsWrapped () const { return m_is_wrapped; }
+        ObjectLayer const &GetObjectLayer () const { return m_object_layer; }
 
     private:
 
         Entity *m_entity;
         Float m_frame_dt;
         CollisionPairList *m_collision_pair_list;
-        bool m_is_wrapped;
-        Float m_object_layer_side_length;
-        Float m_half_object_layer_side_length;
+        ObjectLayer const &m_object_layer;
     }; // end of class CollisionQuadTree::CollideEntityLoopFunctor
 }; // end of class CollisionQuadTree
 

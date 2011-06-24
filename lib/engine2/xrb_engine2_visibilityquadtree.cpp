@@ -142,9 +142,11 @@ Uint32 VisibilityQuadTree::WriteObjects (Serializer &serializer) const
 Uint32 VisibilityQuadTree::Draw (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
-    DrawObjectCollector &draw_object_collector) const
+    DrawObjectCollector &draw_object_collector,
+    ObjectLayer const &object_layer) const
 {
     ASSERT1(m_parent == NULL && "this can only be called on the root node");
+    ASSERT1(draw_object_collector.m_object_layer != NULL);
 
     if (SubordinateObjectCount() == 0)
         return 0;
@@ -178,7 +180,8 @@ Uint32 VisibilityQuadTree::Draw (
 Uint32 VisibilityQuadTree::DrawWrapped (
     RenderContext const &render_context,
     FloatMatrix2 const &world_to_screen,
-    DrawObjectCollector &draw_object_collector) const
+    DrawObjectCollector &draw_object_collector,
+    ObjectLayer const &object_layer) const
 {
     ASSERT1(m_parent == NULL && "this can only be called on the root node");
 
@@ -219,7 +222,7 @@ Uint32 VisibilityQuadTree::DrawWrapped (
 
                 // call the non-wrapped Draw.  NOTE: the world_to_screen transformation here is wrong
                 // by a translation of view_offset.
-                drawn_object_count += Draw(render_context, world_to_screen, draw_object_collector);
+                drawn_object_count += Draw(render_context, world_to_screen, draw_object_collector, object_layer);
             }
         }
     }
@@ -274,7 +277,10 @@ void VisibilityQuadTree::CollectDrawObjects (DrawObjectCollector &draw_object_co
         return;
 
     // return if the view doesn't intersect this node
-    if (!DoesAreaOverlapQuadBounds(draw_object_collector.m_view_center, draw_object_collector.m_view_radius))
+    ASSERT3(draw_object_collector.m_object_layer != NULL);
+    // disable the wrapping adjustment (i.e. calls to ObjectLayer::AdjustedDifference and friends),
+    // so that drawing will work properly.
+    if (!DoesAreaOverlapQuadBounds(draw_object_collector.m_view_center, draw_object_collector.m_view_radius, *draw_object_collector.m_object_layer, true))
         return;
 
     // don't draw quadtrees whose radii are lower than the
