@@ -169,7 +169,7 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         Translation(),
         s_scan_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
     // check the area trace list for targets and collisions
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;
@@ -274,7 +274,7 @@ void Interloper::Flock (Float time, Float frame_dt)
         Translation() + s_lookahead_scan_distance * Math::UnitVector(Angle()),
         s_scan_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
     // iterate through -- check for targets and do flock calculations
     FloatVector2 flock_center_of_gravity(FloatVector2::ms_zero);
     Interloper *closest_flock_member = NULL;

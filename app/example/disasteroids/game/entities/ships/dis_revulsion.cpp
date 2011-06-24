@@ -171,7 +171,7 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
         Translation(),
         s_scan_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
     // check the area trace list for targets and collisions
     Float collision_time = -1.0f;
     Entity *collision_entity = NULL;

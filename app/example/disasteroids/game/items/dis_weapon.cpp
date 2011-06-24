@@ -272,7 +272,7 @@ bool Laser::Activate (
             OwnerShip()->Translation(),
             ms_secondary_range[UpgradeLevel()] + OwnerShip()->ScaleFactor(),
             false,
-            &area_trace_list);
+            area_trace_list);
 
         Mortal *best_target = NULL;
         Sint32 best_target_priority = 0;
@@ -325,7 +325,7 @@ bool Laser::Activate (
                 fire_vector,
                 0.0f,
                 false,
-                &line_trace_binding_set);
+                line_trace_binding_set);
 
             Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
             Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
@@ -380,7 +380,7 @@ bool Laser::Activate (
             ms_primary_range[UpgradeLevel()] * MuzzleDirection(),
             ms_beam_radius[UpgradeLevel()],
             false,
-            &line_trace_binding_set);
+            line_trace_binding_set);
 
         Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
         Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
@@ -584,7 +584,7 @@ bool GaussGun::Activate (
         ms_range[UpgradeLevel()] * MuzzleDirection(),
         0.0f,
         false,
-        &line_trace_binding_set);
+        line_trace_binding_set);
 
     Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
     Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
@@ -1023,7 +1023,7 @@ bool Tractor::Activate (
         reticle_coordinates,
         beam_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
 
     Polynomial::SolutionSet solution_set;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),

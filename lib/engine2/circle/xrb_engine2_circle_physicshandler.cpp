@@ -56,12 +56,11 @@ void PhysicsHandler::LineTrace (
     FloatVector2 const &trace_vector,
     Float trace_radius,
     bool check_nonsolid_collision_entities,
-    LineTraceBindingSet *line_trace_binding_set) const
+    LineTraceBindingSet &line_trace_binding_set) const
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(trace_radius >= 0.0f);
-    ASSERT1(line_trace_binding_set != NULL);
     ASSERT1(trace_vector.Length() <= 0.5f * m_main_object_layer->SideLength());
     m_quad_tree->LineTrace(
         trace_start,
@@ -77,12 +76,11 @@ void PhysicsHandler::AreaTrace (
     FloatVector2 trace_area_center,
     Float trace_area_radius,
     bool check_nonsolid_collision_entities,
-    AreaTraceList *area_trace_list) const
+    AreaTraceList &area_trace_list) const
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer == m_main_object_layer);
     ASSERT1(trace_area_radius > 0.0f);
-    ASSERT1(area_trace_list != NULL);
     m_quad_tree->AreaTrace(
         trace_area_center,
         trace_area_radius,
@@ -106,7 +104,7 @@ void PhysicsHandler::CalculateAmbientMomentum (
         scan_area_center,
         scan_area_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
 
     // calculate the ambient momentum
     ambient_momentum = FloatVector2::ms_zero;
@@ -376,7 +374,7 @@ void PhysicsHandler::HandleInterpenetrations ()
             continue;
 
         // traverse the collision quad tree and calculate collision pairs
-        m_quad_tree->CollideEntity(entity, FrameDT(), &m_collision_pair_list);
+        m_quad_tree->CollideEntity(entity, FrameDT(), m_collision_pair_list);
     }
 }
 

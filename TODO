@@ -151,6 +151,9 @@ DISASTEROIDS:
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - handle wrapped space better and make the coordinate adjustment and such less fragile
   (use remainderf, which is a correct modulo operation -- see einstein's eye)
+- see if more culling can happen in DrawObjectCollector::operator ().  specifically
+  per-object view-radius checking.  this will require the object coordinates to be
+  wrapped/contained before collecting.  this wrapping/containment may already be happening.
 
 TODO:
 - need to be able to specify quadtree depths for all quadtrees in all cases.

@@ -360,7 +360,7 @@ void Missile::Think (
             trace_vector,
             PhysicalRadius(),
             false,
-            &line_trace_binding_set);
+            line_trace_binding_set);
 
         FloatVector2 collision_normal(trace_vector.Normalization());
         for (Engine2::Circle::LineTraceBindingSet::iterator
@@ -539,7 +539,7 @@ void GuidedMissile::Search (Float const time, Float const frame_dt)
             s_search_distance * Math::UnitVector(Angle()),
             s_search_radius,
             false,
-            &line_trace_binding_set);
+            line_trace_binding_set);
 
         m_target = FindTarget(line_trace_binding_set);
     }

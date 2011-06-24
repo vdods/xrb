@@ -44,7 +44,7 @@ void RadiusDamage (
         damage_area_center,
         damage_area_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
 
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
                                                   it_end = area_trace_list.end();
@@ -106,7 +106,7 @@ void RadiusKnockback (
         knockback_area_center,
         knockback_area_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
 
     // iterate through the trace set and apply forces
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),

@@ -96,12 +96,11 @@ void CollisionQuadTree::LineTrace (
     FloatVector2 const &trace_vector,
     Float trace_radius,
     bool check_nonsolid_collision_entities,
-    LineTraceBindingSet *line_trace_binding_set,
+    LineTraceBindingSet &line_trace_binding_set,
     ObjectLayer const &object_layer) const
 {
     ASSERT1(!trace_vector.IsZero());
     ASSERT1(trace_radius >= 0.0f);
-    ASSERT1(line_trace_binding_set != NULL);
 
     // if this quad node has no subordinates, return
     if (SubordinateObjectCount() == 0)
@@ -159,7 +158,7 @@ void CollisionQuadTree::LineTrace (
         if (t1 < 0.0f)
             continue;
 
-        line_trace_binding_set->insert(LineTraceBinding(Max(0.0f, t0), entity));
+        line_trace_binding_set.insert(LineTraceBinding(Max(0.0f, t0), entity));
     }
 
     // call this function on the child nodes, if they exist
@@ -178,11 +177,10 @@ void CollisionQuadTree::AreaTrace (
     FloatVector2 const &trace_area_center,
     Float trace_area_radius,
     bool check_nonsolid_collision_entities,
-    AreaTraceList *area_trace_list,
+    AreaTraceList &area_trace_list,
     ObjectLayer const &object_layer) const
 {
     ASSERT1(trace_area_radius > 0.0f);
-    ASSERT1(area_trace_list != NULL);
 
     // if this quad node has no subordinates, return
     if (SubordinateObjectCount() == 0)
@@ -226,18 +224,17 @@ void CollisionQuadTree::AreaTrace (
         if (center_to_center.Length() >= entity->Radius(GetQuadTreeType()) + trace_area_radius)
             continue;
 
-        area_trace_list->push_back(entity);
+        area_trace_list.push_back(entity);
     }
 }
 
 void CollisionQuadTree::CollideEntity (
     Entity *const entity,
     Float frame_dt,
-    CollisionPairList *collision_pair_list) const
+    CollisionPairList &collision_pair_list) const
 {
     ASSERT1(entity != NULL);
     ASSERT1(entity->GetCollisionType() != Engine2::Circle::CT_NO_COLLISION);
-    ASSERT1(collision_pair_list != NULL);
 
     CollideEntityLoopFunctor functor(entity, frame_dt, collision_pair_list);
     CollideEntity(functor);
@@ -325,7 +322,7 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     }
 
     // record the collision in the collision pair list.
-    m_collision_pair_list->push_back(
+    m_collision_pair_list.push_back(
         CollisionPair(
             m_entity,
             other_entity,

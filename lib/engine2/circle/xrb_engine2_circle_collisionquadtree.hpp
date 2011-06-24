@@ -44,20 +44,20 @@ public:
         FloatVector2 const &trace_vector,
         Float trace_radius,
         bool check_nonsolid_collision_entities,
-        LineTraceBindingSet *line_trace_binding_set,
+        LineTraceBindingSet &line_trace_binding_set,
         ObjectLayer const &object_layer) const;
 
     void AreaTrace (
         FloatVector2 const &trace_area_center,
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
-        AreaTraceList *area_trace_list,
+        AreaTraceList &area_trace_list,
         ObjectLayer const &object_layer) const;
 
     void CollideEntity (
         Entity *entity,
         Float frame_dt,
-        CollisionPairList *collision_pair_list) const;
+        CollisionPairList &collision_pair_list) const;
 
 protected:
 
@@ -78,7 +78,7 @@ private:
         CollideEntityLoopFunctor (
             Entity *entity,
             Float frame_dt,
-            CollisionPairList *collision_pair_list)
+            CollisionPairList &collision_pair_list)
             :
             m_entity(entity),
             m_frame_dt(frame_dt),
@@ -88,7 +88,6 @@ private:
             ASSERT1(m_entity != NULL);
             ASSERT1(m_entity->OwnerObject() != NULL);
             ASSERT1(m_entity->GetObjectLayer() != NULL);
-            ASSERT1(m_collision_pair_list != NULL);
             ASSERT1(entity->GetCollisionType() != CT_NO_COLLISION);
         }
 
@@ -103,7 +102,7 @@ private:
 
         Entity *m_entity;
         Float m_frame_dt;
-        CollisionPairList *m_collision_pair_list;
+        CollisionPairList &m_collision_pair_list;
         ObjectLayer const &m_object_layer;
     }; // end of class CollisionQuadTree::CollideEntityLoopFunctor
 }; // end of class CollisionQuadTree

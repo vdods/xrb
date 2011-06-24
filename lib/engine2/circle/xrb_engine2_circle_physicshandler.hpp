@@ -47,7 +47,7 @@ public:
         FloatVector2 const &trace_vector,
         Float trace_radius,
         bool check_nonsolid_collision_entities,
-        LineTraceBindingSet *line_trace_binding_set) const;
+        LineTraceBindingSet &line_trace_binding_set) const;
 
     // does an area trace in the quadtree
     void AreaTrace (
@@ -55,7 +55,7 @@ public:
         FloatVector2 trace_area_center,
         Float trace_area_radius,
         bool check_nonsolid_collision_entities,
-        AreaTraceList *area_trace_list) const;
+        AreaTraceList &area_trace_list) const;
 
     // gives the local momentum (and mass) in a given radius
     void CalculateAmbientMomentum (

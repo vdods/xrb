@@ -545,7 +545,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
         Translation(),
         scan_radius,
         false,
-        &area_trace_list);
+        area_trace_list);
 
     static Float const s_powerup_mass_threshold = 15.0f;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
