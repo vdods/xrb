@@ -98,79 +98,20 @@ bool ObjectLayer::DoesAreaOverlapAnyObject (
         0.5f * SideLength());
 }
 
-FloatVector2 ObjectLayer::NormalizedCoordinates (
-    FloatVector2 const &coordinates) const
+FloatVector2 ObjectLayer::AdjustedDifference (FloatVector2 p, FloatVector2 const &q) const
 {
-    FloatVector2 normalized_coordinates(coordinates);
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(p[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(p[Dim::Y]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(q[Dim::X]));
+    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(q[Dim::Y]));
 
-    Float half_object_layer_side_length = 0.5f * SideLength();
+    p -= q;
     if (IsWrapped())
     {
-        while (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::X] += SideLength();
-        while (normalized_coordinates[Dim::X] > half_object_layer_side_length)
-            normalized_coordinates[Dim::X] -= SideLength();
-
-        while (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] += SideLength();
-        while (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] -= SideLength();
+        p[Dim::X] = Math::Mod(p[Dim::X], m_side_length);
+        p[Dim::Y] = Math::Mod(p[Dim::Y], m_side_length);
     }
-    else
-    {
-        if (normalized_coordinates[Dim::X] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::X] = -half_object_layer_side_length;
-        else if (normalized_coordinates[Dim::X] > half_object_layer_side_length)
-            normalized_coordinates[Dim::X] = half_object_layer_side_length;
-
-        if (normalized_coordinates[Dim::Y] < -half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] = -half_object_layer_side_length;
-        else if (normalized_coordinates[Dim::Y] > half_object_layer_side_length)
-            normalized_coordinates[Dim::Y] = half_object_layer_side_length;
-    }
-
-    return normalized_coordinates;
-}
-
-FloatVector2 ObjectLayer::AdjustedCoordinates (
-    FloatVector2 const &coordinates,
-    FloatVector2 const &reference_coordinates) const
-{
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::X]));
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(coordinates[Dim::Y]));
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::X]));
-    ASSERT_NAN_SANITY_CHECK(Math::IsFinite(reference_coordinates[Dim::Y]));
-
-    if (IsWrapped())
-    {
-        Float const half_object_layer_side_length = 0.5f * SideLength();
-        FloatVector2 adjusted_coordinates(coordinates);
-
-        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length);
-        ASSERT1(reference_coordinates[Dim::X] <=  half_object_layer_side_length);
-        ASSERT1(reference_coordinates[Dim::X] >= -half_object_layer_side_length);
-        ASSERT1(reference_coordinates[Dim::Y] <=  half_object_layer_side_length);
-
-        while (adjusted_coordinates[Dim::X] < reference_coordinates[Dim::X] - half_object_layer_side_length)
-            adjusted_coordinates[Dim::X] += SideLength();
-        ASSERT1(adjusted_coordinates[Dim::X] >= reference_coordinates[Dim::X] - half_object_layer_side_length);
-
-        while (adjusted_coordinates[Dim::X] > reference_coordinates[Dim::X] + half_object_layer_side_length)
-            adjusted_coordinates[Dim::X] -= SideLength();
-        ASSERT1(adjusted_coordinates[Dim::X] <= reference_coordinates[Dim::X] + half_object_layer_side_length);
-
-        while (adjusted_coordinates[Dim::Y] < reference_coordinates[Dim::Y] - half_object_layer_side_length)
-            adjusted_coordinates[Dim::Y] += SideLength();
-        ASSERT1(adjusted_coordinates[Dim::Y] >= reference_coordinates[Dim::Y] - half_object_layer_side_length);
-
-        while (adjusted_coordinates[Dim::Y] > reference_coordinates[Dim::Y] + half_object_layer_side_length)
-            adjusted_coordinates[Dim::Y] -= SideLength();
-        ASSERT1(adjusted_coordinates[Dim::Y] <= reference_coordinates[Dim::Y] + half_object_layer_side_length);
-
-        return adjusted_coordinates;
-    }
-    else
-        return coordinates;
+    return p;
 }
 
 void ObjectLayer::Write (Serializer &serializer) const

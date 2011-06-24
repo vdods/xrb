@@ -262,7 +262,7 @@ void Interloper::Flock (Float time, Float frame_dt)
     // the reach of this scan shouldn't allow entities of more
     // than 1/2 of the ObjectLayer size to be scanned, otherwise
     // the center of gravity calculations will fail (because
-    // ObjectLayer::AdjustedCoordinates() must be called on
+    // ObjectLayer::AdjustedDifference() must be called on
     // each entity's translation).
     static Float const s_lookahead_scan_distance = 220.0f;
     static Float const s_scan_radius = 200.0f;
@@ -310,11 +310,8 @@ void Interloper::Flock (Float time, Float frame_dt)
             // and remove flock leader weight from ourselves.
             Interloper *interloper = DStaticCast<Interloper *>(entity);
 
-            FloatVector2 interloper_position(
-                GetObjectLayer()->AdjustedCoordinates(
-                    interloper->Translation(),
-                    Translation()));
-            Float interloper_distance = (interloper_position - Translation()).Length();
+            FloatVector2 interloper_position_delta(GetObjectLayer()->AdjustedDifference(interloper->Translation(), Translation()));
+            Float interloper_distance = interloper_position_delta.Length();
 
             if (closest_flock_member == NULL ||
                 interloper_distance < closest_flock_member_distance)
@@ -323,7 +320,10 @@ void Interloper::Flock (Float time, Float frame_dt)
                 closest_flock_member_distance = interloper_distance;
             }
 
-            flock_center_of_gravity += interloper->Mass() * interloper_position;
+            // using the sum interloper_position_delta+Translation() might not give a well-defined result
+            // because it depends on the observer.  then again this is probably good enough.
+            // the notion of the center of gravity may not be well-defined in wrapped space.
+            flock_center_of_gravity += interloper->Mass() * (interloper_position_delta + Translation());
             flock_mass += interloper->Mass();
             ++flock_member_count;
         }
@@ -374,15 +374,13 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
-
     // adjust our course to hit the target (use a different course-
     // setting method for each enemy level).
 
     // level 0 aims directly at the target
     if (EnemyLevel() == 0)
     {
-        SetReticleCoordinates(target_position);
+        SetReticleCoordinates(m_target->Translation());
     }
     // level 1 plots a near-intercept course with the target, not accounting for acceleration.
     // level 2 plots an intercept course with the the target, not accounting for acceleration.
@@ -391,7 +389,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
     {
         Float interceptor_acceleration =
             ms_engine_thrust[EnemyLevel()] / Mass();
-        FloatVector2 p(target_position - Translation());
+        FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
         FloatVector2 v;
         FloatVector2 a;
         if (EnemyLevel() == 1)
@@ -436,7 +434,7 @@ void Interloper::Charge (Float const time, Float const frame_dt)
         if (T <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
-            SetReticleCoordinates(target_position);
+            SetReticleCoordinates(m_target->Translation());
         }
         else
         {
@@ -468,8 +466,8 @@ void Interloper::Retreat (Float const time, Float const frame_dt)
     }
 
     // set a course parallel to and slightly away from the target
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
-    SetReticleCoordinates(Translation() + (Translation() - target_position).Normalization());
+    FloatVector2 target_position_delta(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
+    SetReticleCoordinates(Translation() - target_position_delta.Normalization());
     SetEngineUpDownInput(SINT8_UPPER_BOUND);
 }
 

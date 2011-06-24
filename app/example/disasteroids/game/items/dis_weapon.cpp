@@ -305,12 +305,7 @@ bool Laser::Activate (
         // only attempt to fire if we found a target
         if (best_target != NULL)
         {
-            FloatVector2 fire_vector(
-                OwnerShip()->GetObjectLayer()->AdjustedCoordinates(
-                    best_target->Translation(),
-                    OwnerShip()->Translation())
-                -
-                OwnerShip()->Translation());
+            FloatVector2 fire_vector(OwnerShip()->GetObjectLayer()->AdjustedDifference(best_target->Translation(), OwnerShip()->Translation()));
             FloatVector2 fire_location(
                 OwnerShip()->Translation() +
                     OwnerShip()->ScaleFactor() *
@@ -1021,11 +1016,6 @@ bool Tractor::Activate (
             (reticle_coordinates - MuzzleLocation()) +
             MuzzleLocation();
     }
-    // ensure the reticle coordinates are inside the object layer
-    reticle_coordinates =
-        OwnerShip()->GetObjectLayer()->AdjustedCoordinates(
-            reticle_coordinates,
-            FloatVector2::ms_zero);
 
     Engine2::Circle::AreaTraceList area_trace_list;
     OwnerShip()->GetPhysicsHandler()->AreaTrace(

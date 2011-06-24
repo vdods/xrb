@@ -59,10 +59,11 @@ public:
     bool DoesAreaOverlapAnyObject (
         FloatVector2 const &area_center,
         Float area_radius) const;
-    FloatVector2 NormalizedCoordinates (FloatVector2 const &coordinates) const;
-    FloatVector2 AdjustedCoordinates (
-        FloatVector2 const &coordinates,
-        FloatVector2 const &reference_coordinates) const;
+    // for non-wrapped, this returns p-q.  otherwise it calculates the equivalent value
+    // of p-q which lies in the ObjectLayer-sized square centered at the origin.
+    FloatVector2 AdjustedDifference (FloatVector2 p, FloatVector2 const &q) const;
+    Float AdjustedDistance (FloatVector2 const &p, FloatVector2 const &q) const { return AdjustedDifference(p, q).Length(); }
+    Float AdjustedDistanceSquared (FloatVector2 const &p, FloatVector2 const &q) const { return AdjustedDifference(p, q).LengthSquared(); }
 
     void SetBackgroundColor (Color const &background_color) { m_background_color = background_color; }
     void SetIsWrapped (bool is_wrapped) { m_is_wrapped = is_wrapped; }

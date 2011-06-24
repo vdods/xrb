@@ -99,12 +99,7 @@ FloatVector2 Shade::MuzzleLocation (Weapon const *weapon) const
     if (!m_target.IsValid())
         return Ship::MuzzleLocation(weapon);
 
-    FloatVector2 target_offset(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation())
-        -
-        Translation());
+    FloatVector2 target_offset(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
     return Translation() + ScaleFactor() * target_offset.Normalization();
 }
 
@@ -115,12 +110,7 @@ FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
     if (!m_target.IsValid())
         return Ship::MuzzleDirection(weapon);
 
-    FloatVector2 target_offset(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation())
-        -
-        Translation());
+    FloatVector2 target_offset(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
     return target_offset.Normalization();
 }
 
@@ -224,11 +214,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
-    Float distance_to_target = (target_position - Translation()).Length();
+    Float distance_to_target = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
     ASSERT1(ms_alarm_distance[EnemyLevel()] < ms_stalk_minimum_distance[EnemyLevel()]);
     ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
     // if we're inside the alarm distance, teleport away
@@ -247,7 +233,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
 
     MatchVelocity(m_target->Velocity(), frame_dt);
 
-    AimWeapon(target_position);
+    AimWeapon(m_target->Translation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
@@ -260,11 +246,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
-    FloatVector2 position_delta(target_position - Translation());
+    FloatVector2 position_delta(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
     Float distance_to_target = position_delta.Length();
     ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
     // if we're inside the alarm distance, teleport away
@@ -286,7 +268,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         }
         AccumulateForce(thrust_vector);
 
-        AimWeapon(target_position);
+        AimWeapon(m_target->Translation());
         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {
@@ -306,7 +288,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         }
         AccumulateForce(thrust_vector);
 
-        AimWeapon(target_position);
+        AimWeapon(m_target->Translation());
         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {

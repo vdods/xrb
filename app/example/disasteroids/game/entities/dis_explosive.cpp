@@ -555,14 +555,10 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
 
     // adjust our course to hit the target -- plot intercept course
     Float interceptor_acceleration = ms_acceleration[WeaponLevel()];
-    FloatVector2 p(target_position - Translation());
+    FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
     FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());
 
@@ -592,7 +588,7 @@ void GuidedMissile::Seek (Float const time, Float const frame_dt)
     if (T <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
-        AimAt(target_position);
+        AimAt(m_target->Translation());
     }
     else
     {

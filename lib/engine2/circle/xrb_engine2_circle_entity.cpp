@@ -147,8 +147,7 @@ FloatVector2 Entity::ApplyInterceptCourseAcceleration (
     ASSERT1(solution_set != NULL);
     ASSERT1(solution_set->empty());
 
-    FloatVector2 p1(GetObjectLayer()->AdjustedCoordinates(target_position, Translation()));
-    FloatVector2 p(p1 - Translation());
+    FloatVector2 p(GetObjectLayer()->AdjustedDifference(target_position, Translation()));
     FloatVector2 v(target_velocity - Velocity());
     FloatVector2 a(target_acceleration);
     Float interceptor_acceleration = maximum_thrust_force / Mass();
@@ -229,12 +228,7 @@ Float Entity::CollisionTime (Entity const *entity, Float lookahead_time) const
 {
     ASSERT1(entity != NULL);
 
-    FloatVector2 adjusted_entity_translation(
-        GetObjectLayer()->AdjustedCoordinates(
-            entity->Translation(),
-            Translation()));
-
-    FloatVector2 p(Translation() - adjusted_entity_translation);
+    FloatVector2 p(GetObjectLayer()->AdjustedDifference(Translation(), entity->Translation()));
     FloatVector2 v(Velocity() - entity->Velocity());
     Float R = Radius(QTT_PHYSICS_HANDLER) + entity->Radius(QTT_PHYSICS_HANDLER);
 

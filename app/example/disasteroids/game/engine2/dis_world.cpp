@@ -1291,12 +1291,6 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     FloatVector2 const &translation,
     Float scale_factor)
 {
-    Float object_layer_side_length = MainObjectLayer()->SideLength();
-    Float half_object_layer_side_length = 0.5f * object_layer_side_length;
-    ASSERT1(translation[Dim::X] >= -0.5f * object_layer_side_length);
-    ASSERT1(translation[Dim::X] <=  0.5f * object_layer_side_length);
-    ASSERT1(translation[Dim::Y] >= -0.5f * object_layer_side_length);
-    ASSERT1(translation[Dim::Y] <=  0.5f * object_layer_side_length);
     ASSERT1(scale_factor > 0.0f);
 
     // check that the area is not in view of any attached WorldView
@@ -1307,26 +1301,7 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     {
         WorldView *world_view = DStaticCast<WorldView *>(*it);
         ASSERT1(world_view != NULL);
-        FloatVector2 world_view_center(world_view->Center());
-
-        // temp hack until real wrapped view coordinates are done
-        {
-            while (world_view_center[Dim::X] < -half_object_layer_side_length)
-                world_view_center[Dim::X] += object_layer_side_length;
-
-            while (world_view_center[Dim::X] > half_object_layer_side_length)
-                world_view_center[Dim::X] -= object_layer_side_length;
-
-            while (world_view_center[Dim::Y] < -half_object_layer_side_length)
-                world_view_center[Dim::Y] += object_layer_side_length;
-
-            while (world_view_center[Dim::Y] > half_object_layer_side_length)
-                world_view_center[Dim::Y] -= object_layer_side_length;
-        }
-
-        Float distance_from_world_view =
-            (MainObjectLayer()->AdjustedCoordinates(translation, world_view_center) -
-             world_view_center).Length();
+        Float distance_from_world_view = MainObjectLayer()->AdjustedDistance(translation, world_view->Center());
         // fail if the area is in sight
         if (distance_from_world_view < world_view->ParallaxedViewRadius(MainObjectLayer()) + scale_factor)
             return false;

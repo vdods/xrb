@@ -176,10 +176,7 @@ void Devourment::Think (Float const time, Float const frame_dt)
 
     // set the translation and velocity of the mouth health trigger
     ASSERT1(m_mouth_health_trigger.IsValid());
-    FloatVector2 mouth_health_trigger_translation(
-        GetObjectLayer()->NormalizedCoordinates(
-            Translation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle())));
-    m_mouth_health_trigger->SetTranslation(mouth_health_trigger_translation);
+    m_mouth_health_trigger->SetTranslation(Translation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle()));
     m_mouth_health_trigger->SetAngle(Angle());
     m_mouth_health_trigger->SetVelocity(Velocity());
 }
@@ -404,7 +401,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
 
     SetReticleCoordinates(m_target->Translation());
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
+    FloatVector2 position_delta = GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation());
 
     // if we're close enough to the target, transition to Consume
     static Float const s_consume_distance = 30.0f;
@@ -413,7 +410,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
         0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
         ScaleFactor();
 
-    Float target_distance = (target_position - Translation()).Length();
+    Float target_distance = position_delta.Length();
     if (target_distance <= s_consume_distance + ScaleFactor() + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Consume);
@@ -434,7 +431,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
 
     Float interceptor_acceleration =
         ms_engine_thrust[EnemyLevel()] / Mass();
-    FloatVector2 p(target_position - Translation());
+    FloatVector2 const &p = position_delta;
     FloatVector2 v(m_target->Velocity() - Velocity());
     FloatVector2 a(m_target->Force() / m_target->Mass());
 
@@ -467,7 +464,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     if (T <= 0.0f)
     {
         // if no acceptable solution, just do dumb approach
-        AccumulateForce(ms_engine_thrust[EnemyLevel()] * (target_position - Translation()).Normalization());
+        AccumulateForce(ms_engine_thrust[EnemyLevel()] * position_delta.Normalization());
     }
     else
     {
@@ -490,16 +487,15 @@ void Devourment::Consume (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(GetObjectLayer()->AdjustedCoordinates(m_target->Translation(), Translation()));
-
     // set the reticle coordinates and aim the mouth tractor
     SetReticleCoordinates(m_target->Translation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
 
     // if we're no longer close enough to the target, transition to Pursue
+    Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
     Float const pursue_distance = 40.0f + ScaleFactor();
-    if ((target_position - Translation()).Length() > pursue_distance + m_target->ScaleFactor())
+    if (target_distance > pursue_distance + m_target->ScaleFactor())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;

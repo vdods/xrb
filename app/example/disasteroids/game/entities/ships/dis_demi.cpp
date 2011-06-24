@@ -447,16 +447,7 @@ FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
 {
     if (weapon == m_gauss_gun || weapon == m_flame_thrower || weapon == m_missile_launcher)
     {
-        FloatVector2 muzzle_location(
-            GetObjectLayer()->AdjustedCoordinates(
-                MuzzleLocation(weapon),
-                FloatVector2::ms_zero));
-        FloatVector2 reticle_offset(
-            GetObjectLayer()->AdjustedCoordinates(
-                ReticleCoordinates(),
-                muzzle_location)
-            -
-            muzzle_location);
+        FloatVector2 reticle_offset(GetObjectLayer()->AdjustedDifference(ReticleCoordinates(), MuzzleLocation(weapon)));
         if (reticle_offset.Length() < 0.01f)
             return Math::UnitVector(Angle());
 
@@ -607,11 +598,7 @@ void Demi::Stalk (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
-    Float target_distance = (target_position - Translation()).Length();
+    Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
 
 //     m_think_state = THINK_STATE(FlameThrowSweepStart);
 //     return;
@@ -725,11 +712,7 @@ void Demi::ChargeStart (Float const time, Float const frame_dt)
     // record the time we picked where to aim
     m_start_time = time;
     // record the direction to charge in
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
-    m_charge_velocity = target_position - Translation();
+    m_charge_velocity = GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation());
     ASSERT1(!m_charge_velocity.IsZero());
     m_charge_velocity.Normalize();
     m_charge_velocity *= 300.0f;
@@ -760,11 +743,7 @@ void Demi::ChargeCoast (Float const time, Float const frame_dt)
     }
     else if (m_target.IsValid() && !m_target->IsDead())
     {
-        FloatVector2 target_position(
-            GetObjectLayer()->AdjustedCoordinates(
-                m_target->Translation(),
-                Translation()));
-        Float target_distance = (target_position - Translation()).Length();
+        Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
 
         static Float const s_threshold_distance = 200.0f;
         if (target_distance <= s_threshold_distance)
@@ -838,20 +817,8 @@ void Demi::GaussGunContinueAim (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 muzzle_location(
-        GetObjectLayer()->AdjustedCoordinates(
-            MuzzleLocation(m_gauss_gun),
-            FloatVector2::ms_zero));
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            muzzle_location));
-    FloatVector2 reticle_target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            m_reticle_effect->Translation()));
-    FloatVector2 aim_direction(reticle_target_position - m_reticle_effect->Translation());
-    Float target_distance = (target_position - muzzle_location).Length();
+    FloatVector2 aim_direction(GetObjectLayer()->AdjustedDifference(m_target->Translation(), m_reticle_effect->Translation()));
+    Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), MuzzleLocation(m_gauss_gun));
     Float reticle_target_distance = aim_direction.Length();
     Float distance_parameter =
         reticle_target_distance /
@@ -1010,14 +977,9 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
         return;
     }
 
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            Translation()));
-
     // TODO: more accurate aiming for higher enemy levels
 
-    SetReticleCoordinates(target_position);
+    SetReticleCoordinates(m_target->Translation());
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
@@ -1329,26 +1291,17 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
 {
     m_port_weapon = m_port_tractor;
 
-    FloatVector2 muzzle_location(MuzzleLocation(m_port_tractor));
     Entity *best_target =
         FindTractorDeflectTarget(
-            muzzle_location,
+            MuzzleLocation(m_port_tractor),
             MuzzleDirection(m_port_tractor),
             time,
             frame_dt);
 
     if (best_target != NULL)
     {
-        muzzle_location =
-            GetObjectLayer()->AdjustedCoordinates(
-                muzzle_location,
-                FloatVector2::ms_zero);
-        FloatVector2 target_position(
-            GetObjectLayer()->AdjustedCoordinates(
-                best_target->Translation(),
-                muzzle_location));
         // aim the tractor and set it to push
-        SetPortReticleCoordinates(target_position);
+        SetPortReticleCoordinates(best_target->Translation());
         SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
     }
 }
@@ -1357,26 +1310,17 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
 {
     m_starboard_weapon = m_starboard_tractor;
 
-    FloatVector2 muzzle_location(MuzzleLocation(m_starboard_tractor));
     Entity *best_target =
         FindTractorDeflectTarget(
-            muzzle_location,
+            MuzzleLocation(m_starboard_tractor),
             MuzzleDirection(m_starboard_tractor),
             time,
             frame_dt);
 
     if (best_target != NULL)
     {
-        muzzle_location =
-            GetObjectLayer()->AdjustedCoordinates(
-                muzzle_location,
-                FloatVector2::ms_zero);
-        FloatVector2 target_position(
-            GetObjectLayer()->AdjustedCoordinates(
-                best_target->Translation(),
-                muzzle_location));
         // aim the tractor and set it to push
-        SetStarboardReticleCoordinates(target_position);
+        SetStarboardReticleCoordinates(best_target->Translation());
         SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
     }
 }
@@ -1388,16 +1332,8 @@ void Demi::PortTractorPullTargetCloser (Float const time, Float const frame_dt)
 
     m_port_weapon = m_port_tractor;
 
-    FloatVector2 muzzle_location(
-        GetObjectLayer()->AdjustedCoordinates(
-            MuzzleLocation(m_port_tractor),
-            FloatVector2::ms_zero));
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            muzzle_location));
     // aim the tractor and set it to pull
-    SetPortReticleCoordinates(target_position);
+    SetPortReticleCoordinates(m_target->Translation());
     SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
 }
@@ -1409,16 +1345,8 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
 
     m_starboard_weapon = m_starboard_tractor;
 
-    FloatVector2 muzzle_location(
-        GetObjectLayer()->AdjustedCoordinates(
-            MuzzleLocation(m_starboard_tractor),
-            FloatVector2::ms_zero));
-    FloatVector2 target_position(
-        GetObjectLayer()->AdjustedCoordinates(
-            m_target->Translation(),
-            muzzle_location));
     // aim the tractor and set it to pull
-    SetStarboardReticleCoordinates(target_position);
+    SetStarboardReticleCoordinates(m_target->Translation());
     SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
     SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
 }

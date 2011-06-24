@@ -116,7 +116,7 @@ void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
 {
     ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
     ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
-    m_reticle_coordinates = GetObjectLayer()->AdjustedCoordinates(reticle_coordinates, Translation());
+    m_reticle_coordinates = reticle_coordinates;
 }
 
 void Ship::HandleNewOwnerObject ()
@@ -157,12 +157,7 @@ void Ship::Die (
 
 void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Float const frame_dt)
 {
-    FloatVector2 aim_direction(
-        GetObjectLayer()->AdjustedCoordinates(
-            coordinates,
-            Translation())
-        -
-        Translation());
+    FloatVector2 aim_direction(GetObjectLayer()->AdjustedDifference(coordinates, Translation()));
     if (!aim_direction.IsZero())
     {
         Float angle_delta = Math::CanonicalAngle(Math::Atan(aim_direction) - Angle());

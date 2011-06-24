@@ -282,6 +282,13 @@ namespace Math
     {
         return floorf(x + 0.5f);
     }
+    /** @brief Sign-preserving floating-point modulo operation "x % y"
+      * @note See the man page for remainderf.
+      */
+    inline Float Mod (Float x, Float y)
+    {
+        return remainderf(x, y);
+    }
 } // end of namespace Math
 
 } // end of namespace Xrb

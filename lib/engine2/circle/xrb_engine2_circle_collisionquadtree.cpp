@@ -270,7 +270,7 @@ void CollisionQuadTree::AreaTrace (
     if (SubordinateObjectCount() == 0)
         return;
 
-    // if this quad node doesn't intersect the line, return
+    // if this quad node doesn't intersect the area, return
     if (!DoesAreaOverlapQuadBounds(
             trace_area_center,
             trace_area_radius,
