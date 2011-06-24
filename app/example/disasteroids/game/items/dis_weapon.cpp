@@ -384,20 +384,17 @@ bool Laser::Activate (
 
         Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
         Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
-        // don't damage the owner of this weapon
-        if (it != it_end && it->m_entity == OwnerShip())
+
+        // we don't want to hit the owner of the weapon or non-mortals, so just skip them.
+        while (it != it_end && (it->m_entity == OwnerShip() || !DStaticCast<Entity *>(it->m_entity)->IsMortal()))
             ++it;
 
         FloatVector2 laser_beam_hit_location(
             MuzzleLocation() + ms_primary_range[UpgradeLevel()] * MuzzleDirection());
-
-        // we don't want to hit powerups or ballistics, just skip them.
-        while (it != it_end && (DStaticCast<Entity *>(it->m_entity)->IsPowerup() || DStaticCast<Entity *>(it->m_entity)->IsBallistic()))
-            ++it;
-
         // damage the next thing if it exists
-        if (it != it_end && it->m_entity != NULL)
+        if (it != it_end)
         {
+            ASSERT1(it->m_entity != NULL);
             Float ratio_of_max_power_output =
                 power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
             laser_beam_hit_location =
@@ -636,7 +633,7 @@ bool GaussGun::Activate (
         ++it;
     }
 
-    if (damage_left_to_inflict > 0.0f)
+    if (damage_left_to_inflict > 0.0001f) // to within some tolerance
         furthest_hit_time = 1.0f;
 
     // spawn the gauss gun trail

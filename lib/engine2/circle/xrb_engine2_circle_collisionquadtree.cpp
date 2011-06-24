@@ -108,6 +108,7 @@ void CollisionQuadTree::LineTrace (
 
     // if this quad node doesn't intersect the line, return
     Float a = trace_vector | trace_vector;
+    ASSERT1(a >= 0.0f);
     FloatVector2 trace_center(trace_start + 0.5f * trace_vector);
     {
         FloatVector2 p_minus_c = object_layer.AdjustedDifference(trace_start, Center());
@@ -158,7 +159,7 @@ void CollisionQuadTree::LineTrace (
         if (t1 < 0.0f)
             continue;
 
-        line_trace_binding_set.insert(LineTraceBinding(Max(0.0f, t0), entity));
+        line_trace_binding_set.insert(LineTraceBinding(Max(0.0f, t0), t0, entity));
     }
 
     // call this function on the child nodes, if they exist

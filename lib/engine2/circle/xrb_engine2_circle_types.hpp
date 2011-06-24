@@ -83,12 +83,14 @@ enum CollisionType
 
 struct LineTraceBinding
 {
-    Float m_time;
+    Float m_time; // clipped to be no less than 0
+    Float m_actual_time; // actual trace time (can be less than 0)
     Entity *m_entity;
 
-    LineTraceBinding (Float time, Entity *entity)
+    LineTraceBinding (Float time, Float actual_time, Entity *entity)
     {
         m_time = time;
+        m_actual_time = actual_time;
         m_entity = entity;
     }
 }; // end of struct LineTraceBinding
@@ -100,7 +102,9 @@ struct OrderLineTraceBindingsByTime
         LineTraceBinding const &binding1)
     {
         ASSERT1(binding0.m_entity != binding1.m_entity);
-        return binding0.m_time < binding1.m_time;
+        return binding0.m_time < binding1.m_time
+               ||
+               (binding0.m_time == binding1.m_time && binding0.m_actual_time < binding1.m_actual_time);
     }
 }; // end of struct OrderEntitiesByTraceTime
 
