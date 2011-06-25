@@ -45,7 +45,8 @@ std::string const Config::ms_input_action_label[KEY_INPUT_ACTION_COUNT] =
 
 Config::KeySpecification<bool> const Config::ms_boolean_key[KEY_BOOLEAN_COUNT] =
 {
-    {"|video|fullscreen",                       true},              // VIDEO__FULLSCREEN = 0,
+    {"|system|debug_mode",                      false},             // SYSTEM__DEBUG_MODE = 0,
+    {"|video|fullscreen",                       true},              // VIDEO__FULLSCREEN,
 };
 Config::KeySpecification<Uint32> const Config::ms_uint32_key[KEY_UINT32_COUNT] =
 {

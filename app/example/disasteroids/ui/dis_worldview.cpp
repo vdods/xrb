@@ -46,7 +46,7 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_state_machine(this),
     m_sender_player_ship_changed(this),
     m_sender_is_game_loop_info_enabled_changed(this),
-    m_sender_is_debug_mode_enabled_changed(this),
+    m_sender_is_debug_zoom_mode_enabled_changed(this),
     m_sender_begin_next_wave(this),
     m_sender_show_controls(this),
     m_sender_hide_controls(this),
@@ -99,8 +99,8 @@ WorldView::WorldView (Engine2::WorldViewWidget *const parent_world_view_widget)
     m_rotation_speed = 120.0f;
 
     m_is_game_loop_info_enabled = false;
-    m_is_debug_mode_enabled = false;
-    SetDrawBorderGridLines(m_is_debug_mode_enabled);
+    m_is_debug_zoom_mode_enabled = false;
+    SetDrawBorderGridLines(m_is_debug_zoom_mode_enabled);
     SetIsTransformScalingBasedUponWidgetRadius(true);
 
     m_state_machine.Initialize(&WorldView::StatePreIntro);
@@ -128,13 +128,13 @@ void WorldView::SetIsGameLoopInfoEnabled (bool is_game_loop_info_enabled)
     }
 }
 
-void WorldView::SetIsDebugModeEnabled (bool is_debug_mode_enabled)
+void WorldView::SetIsDebugZoomModeEnabled (bool is_debug_zoom_mode_enabled)
 {
-    if (m_is_debug_mode_enabled != is_debug_mode_enabled)
+    if (m_is_debug_zoom_mode_enabled != is_debug_zoom_mode_enabled)
     {
-        m_is_debug_mode_enabled = is_debug_mode_enabled;
-        SetDrawBorderGridLines(m_is_debug_mode_enabled);
-        m_sender_is_debug_mode_enabled_changed.Signal(m_is_debug_mode_enabled);
+        m_is_debug_zoom_mode_enabled = is_debug_zoom_mode_enabled;
+        SetDrawBorderGridLines(m_is_debug_zoom_mode_enabled);
+        m_sender_is_debug_zoom_mode_enabled_changed.Signal(m_is_debug_zoom_mode_enabled);
     }
 }
 
@@ -186,7 +186,7 @@ bool WorldView::ProcessMouseWheelEvent (EventMouseWheel const *const e)
     }
     else
     */
-    if (m_is_debug_mode_enabled)
+    if (m_is_debug_zoom_mode_enabled)
     {
         // otherwise, change the view's zoom
 
@@ -398,45 +398,61 @@ void WorldView::HandleInput (Key::Code const input)
             m_zoom_accumulator -= 1.0f;
             break;
 */
+
+        // ///////////////////////////////////////////////////////////////////
+        // begin debug mode keys
+        // ///////////////////////////////////////////////////////////////////
+
         case Key::F1:
-            SetIsGameLoopInfoEnabled(!IsGameLoopInfoEnabled());
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                SetIsGameLoopInfoEnabled(!IsGameLoopInfoEnabled());
             break;
 
         case Key::F2:
-            SetIsDebugModeEnabled(!IsDebugInfoEnabled());
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                SetIsDebugZoomModeEnabled(!IsDebugZoomModeEnabled());
             break;
 
         case Key::F3:
-            if (m_player_ship != NULL)
-                m_player_ship->GiveLotsOfMinerals();
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                if (m_player_ship != NULL)
+                    m_player_ship->GiveLotsOfMinerals();
             break;
 
         case Key::F4:
-            if (m_player_ship != NULL)
-                m_player_ship->IncrementScore(50000);
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                if (m_player_ship != NULL)
+                    m_player_ship->IncrementScore(50000);
             break;
 
         case Key::F5:
-            m_sender_begin_next_wave.Signal();
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                m_sender_begin_next_wave.Signal();
             break;
 
         case Key::F6:
-            if (m_player_ship != NULL)
-                m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                if (m_player_ship != NULL)
+                    m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
             break;
 
         case Key::F7:
-            if (m_player_ship != NULL && !m_player_ship->IsDead())
-                m_player_ship->Kill(
-                    NULL,
-                    NULL,
-                    FloatVector2::ms_zero,
-                    FloatVector2::ms_zero,
-                    0.0f,
-                    Mortal::D_NONE,
-                    m_player_ship->GetWorld()->MostRecentFrameTime(),
-                    0.0f);
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                if (m_player_ship != NULL && !m_player_ship->IsDead())
+                    m_player_ship->Kill(
+                        NULL,
+                        NULL,
+                        FloatVector2::ms_zero,
+                        FloatVector2::ms_zero,
+                        0.0f,
+                        Mortal::D_NONE,
+                        m_player_ship->GetWorld()->MostRecentFrameTime(),
+                        0.0f);
             break;
+
+        // ///////////////////////////////////////////////////////////////////
+        // end debug mode keys
+        // ///////////////////////////////////////////////////////////////////
 
         default:
             break;
@@ -565,7 +581,7 @@ void WorldView::ProcessZoom (Float const frame_dt)
     ASSERT1(m_zoom_factor_end > 0.0f);
 
     // don't adjust the zoom while in debug mode
-    if (m_is_debug_mode_enabled)
+    if (m_is_debug_zoom_mode_enabled)
         return;
 
     if (m_zoom_time_left < 0.0f)

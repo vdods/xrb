@@ -138,7 +138,8 @@ enum ItemType
 
 enum KeyBoolean
 {
-    VIDEO__FULLSCREEN = 0,
+    SYSTEM__DEBUG_MODE = 0,
+    VIDEO__FULLSCREEN,
 
     KEY_BOOLEAN_COUNT
 }; // end of enum KeyBoolean
