@@ -589,6 +589,7 @@ World::World (
 
     CreateAndPopulateBackgroundObjectLayers();
     CreateAndPopulateForegroundObjectLayer();
+    CreateAndPopulateSuperforegroundObjectLayer();
 
     ASSERT1(m_player_ship != NULL);
 
@@ -1319,6 +1320,39 @@ bool World::IsAreaNotVisibleAndNotOverlappingAnyEntities (
     return true;
 }
 
+void World::CreateAndPopulateSuperforegroundObjectLayer ()
+{
+    Float object_layer_side_length = 2000.0f; // TODO: increase
+
+    // create an object layer
+    Engine2::ObjectLayer *object_layer =
+        Engine2::ObjectLayer::Create(
+            this,                     // owner world
+            true,                     // wrapped
+            object_layer_side_length, // side length
+            3,                        // visibility quad tree depth
+            -150.0f);                 // z depth
+    AddObjectLayer(object_layer);
+
+    Uint32 const number_of_nebulae_to_create = 3;
+    for (Uint32 i = 0; i < number_of_nebulae_to_create; ++i)
+    {
+        Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/nebula00.png");
+        sprite->SetTranslation(
+            FloatVector2(
+                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
+                Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
+        sprite->SetScaleFactor(
+            Math::RandomFloat(
+                0.35f*object_layer_side_length,
+                0.5f*object_layer_side_length));
+        sprite->SetAngle(Math::RandomAngle());
+        sprite->ColorMask() = Color(1.0f, 1.0f, 1.0f, 0.05f);
+
+        AddStaticObject(sprite, object_layer);
+    }
+}
+
 void World::CreateAndPopulateForegroundObjectLayer ()
 {
     Float object_layer_side_length = 1000.0f;
@@ -1408,9 +1442,9 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
         }
     }
 
-    // starfield
+    // starfield (distant)
     {
-        Float object_layer_side_length = 50000.0f;
+        Float object_layer_side_length = 10000.0f;
 
         // create an object layer
         Engine2::ObjectLayer *object_layer =
@@ -1418,20 +1452,17 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 this,                     // owner world
                 true,                     // wrapped
                 object_layer_side_length, // side length
-                6,                        // visibility quad tree depth
-                7500.0f);                 // z depth
+                4,                        // visibility quad tree depth
+                5000.0f);                 // z depth
         AddObjectLayer(object_layer);
 
         static std::string const s_starfield_sprite_path[] =
         {
-            "resources/star0.png",
-            "resources/star1.png",
-            "resources/star2.png",
-            "resources/star3.png",
+            "resources/starfield00.png",
         };
         static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
 
-        Uint32 const number_of_stars_to_create = 1000;
+        Uint32 const number_of_stars_to_create = 5;
         for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
         {
             Engine2::Sprite *sprite =
@@ -1444,9 +1475,96 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                     Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
-                    0.0006f*object_layer_side_length,
-                    0.002f*object_layer_side_length));
+                    0.25f*object_layer_side_length,
+                    0.35f*object_layer_side_length));
             sprite->SetAngle(Math::RandomAngle());
+
+            AddStaticObject(sprite, object_layer);
+        }
+    }
+
+    // starfield (closer)
+    {
+        Float object_layer_side_length = 10000.0f;
+
+        // create an object layer
+        Engine2::ObjectLayer *object_layer =
+            Engine2::ObjectLayer::Create(
+                this,                     // owner world
+                true,                     // wrapped
+                object_layer_side_length, // side length
+                6,                        // visibility quad tree depth
+                2000.0f);                 // z depth
+        AddObjectLayer(object_layer);
+
+        static std::string const s_starfield_sprite_path[] =
+        {
+            "resources/star0.png",
+            "resources/star1.png",
+            "resources/star2.png",
+            "resources/star3.png",
+        };
+        static Uint32 const s_starfield_sprite_path_count = LENGTHOF(s_starfield_sprite_path);
+
+        Uint32 const number_of_stars_to_create = 250;
+        for (Uint32 i = 0; i < number_of_stars_to_create; ++i)
+        {
+            Engine2::Sprite *sprite =
+                Engine2::Sprite::Create(
+                    s_starfield_sprite_path[
+                        Math::RandomUint16(0, s_starfield_sprite_path_count-1)]);
+            sprite->SetTranslation(
+                FloatVector2(
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
+            sprite->SetScaleFactor(
+                Math::RandomFloat(
+                    0.001f*object_layer_side_length,
+                    0.003f*object_layer_side_length));
+            sprite->SetAngle(Math::RandomAngle());
+
+            AddStaticObject(sprite, object_layer);
+        }
+    }
+
+    // planets and other nearer stuff
+    {
+        Float object_layer_side_length = 5000.0f;
+
+        // create an object layer
+        Engine2::ObjectLayer *object_layer =
+            Engine2::ObjectLayer::Create(
+                this,                     // owner world
+                true,                     // wrapped
+                object_layer_side_length, // side length
+                3,                        // visibility quad tree depth
+                1000.0f);                 // z depth
+        AddObjectLayer(object_layer);
+
+        static std::string const s_planetfield_sprite_path[] =
+        {
+            "resources/planet00.png",
+        };
+        static Uint32 const s_planetfield_sprite_path_count = LENGTHOF(s_planetfield_sprite_path);
+
+        // use a single randomized angle for all the planets (so that the lighting is consistent)
+        Float planet_angle = Math::RandomAngle();
+        Uint32 const number_of_planets_to_create = 1;
+        for (Uint32 i = 0; i < number_of_planets_to_create; ++i)
+        {
+            Engine2::Sprite *sprite =
+                Engine2::Sprite::Create(
+                    s_planetfield_sprite_path[
+                        Math::RandomUint16(0, s_planetfield_sprite_path_count-1)]);
+            sprite->SetTranslation(
+                FloatVector2(
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
+                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
+            sprite->SetScaleFactor(
+                Math::RandomFloat(
+                    0.15f*object_layer_side_length,
+                    0.2f*object_layer_side_length));
+            sprite->SetAngle(planet_angle);
 
             AddStaticObject(sprite, object_layer);
         }

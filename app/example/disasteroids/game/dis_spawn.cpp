@@ -25,6 +25,7 @@
 #include "dis_solitary.hpp"
 #include "dis_util.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_animatedsprite.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
@@ -50,18 +51,18 @@ namespace Dis
 {
 
 Engine2::Sprite *SpawnDynamicSprite (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,
-    Float const z_depth,
-    bool const is_transparent,
-    Entity *const entity,
+    Float z_depth,
+    bool is_transparent,
+    Entity *entity,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const angle,
-    Float const mass,
+    Float scale_factor,
+    Float angle,
+    Float mass,
     FloatVector2 const &velocity,
-    Float const angular_velocity,
-    Float const elasticity)
+    Float angular_velocity,
+    Float elasticity)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
@@ -77,6 +78,47 @@ Engine2::Sprite *SpawnDynamicSprite (
     entity->SetAngularVelocity(angular_velocity);
 
     Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_path);
+    sprite->SetZDepth(z_depth);
+    sprite->SetIsTransparent(is_transparent);
+    sprite->SetTranslation(translation);
+    sprite->SetScaleFactor(scale_factor);
+    sprite->SetAngle(angle);
+    sprite->SetEntity(entity);
+
+    object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
+
+    return sprite;
+}
+
+Engine2::AnimatedSprite *SpawnDynamicAnimatedSprite (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
+    Float current_time,
+    Float z_depth,
+    bool is_transparent,
+    Entity *entity,
+    FloatVector2 const &translation,
+    Float scale_factor,
+    Float angle,
+    Float mass,
+    FloatVector2 const &velocity,
+    Float angular_velocity,
+    Float elasticity)
+{
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer->OwnerWorld() != NULL);
+    ASSERT1(!sprite_texture_path.empty());
+    ASSERT1(entity != NULL);
+    ASSERT1(scale_factor >= 0.0f);
+    ASSERT1(mass > 0.0f);
+    ASSERT1(elasticity >= 0.0f);
+
+    entity->SetElasticity(elasticity);
+    entity->SetMass(mass);
+    entity->SetVelocity(velocity);
+    entity->SetAngularVelocity(angular_velocity);
+
+    Engine2::AnimatedSprite *sprite = Engine2::AnimatedSprite::Create(sprite_texture_path, current_time);
     sprite->SetZDepth(z_depth);
     sprite->SetIsTransparent(is_transparent);
     sprite->SetTranslation(translation);
@@ -415,7 +457,7 @@ DamageExplosion *SpawnDamageExplosion (
             owner);
     SpawnDynamicSprite(
         object_layer,
-        "resources/explosion1a_small.png",
+        "resources/explosion_dense_00.png",//"resources/explosion1a_small.png",
         Z_DEPTH_DAMAGE_EXPLOSION,
         true, // is transparent
         damage_explosion,
@@ -440,7 +482,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(final_size, time_to_live, time_at_birth);
     SpawnDynamicSprite(
         object_layer,
-        "resources/explosion1a_small.png",
+        "resources/explosion_dense_00.png",//"resources/explosion1a_small.png",
         Z_DEPTH_NO_DAMAGE_EXPLOSION,
         true, // is transparent
         no_damage_explosion,

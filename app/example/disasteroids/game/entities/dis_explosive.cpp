@@ -74,7 +74,7 @@ void Explosive::Die (
             Translation(),
             Velocity(),
             ScaleFactor(),
-            1.0f,
+            0.2f,
             time);
 
         // delete this object

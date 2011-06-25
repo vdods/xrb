@@ -149,7 +149,7 @@ void Ship::Die (
         Translation(),
         Velocity(),
         5.0f * ScaleFactor(),
-        2.0f,
+        0.2f,
         time);
 
     ScheduleForDeletion(0.0f);

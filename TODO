@@ -144,14 +144,20 @@ DISASTEROIDS:
   powers, so there's a sound cue (as well as the visual cue) as to what the
   status of the shield is.
 ** bugs **
-** general TODO **
+
+BUGS:
+- texture atlas packing efficiency printout seems wrong (test case: use separate
+  texture atlases, efficiency should be 100%)
+
+TODO:
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - see if more culling can happen in DrawObjectCollector::operator ().  specifically
   per-object view-radius checking.  this will require the object coordinates to be
   wrapped/contained before collecting.  this wrapping/containment may already be happening.
-
-TODO:
+- replace GLTextureAtlas sizes with Uint32Vector2 values
+- way to address built-in resources such as the opaque white texture, the missing texture, etc.
+  maybe via some escape sequence that can't be in a real path, such as //
 - need to be able to specify quadtree depths for all quadtrees in all cases.
 - there is a problem in lesson03 with IsOdd<T> assuming Float type when it shouldn't be.
 - use exponential for zoom factors (i.e. so that all real numbers are valid and there's
@@ -162,11 +168,11 @@ TODO:
 - handle failures (especially file loading failures) more gracefully
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent
-- high framerates cause the impact damage to be too high in disasteroids (or maybe the impact damage is too low in low framerates)
+- high framerates cause the impact damage to be too high in disasteroids (or maybe the impact
+  damage is too low in low framerates)
 - make GL::Shutdown function (and delete the opaque white texture which is currently leaked)
 - use smallest acceptable data types in opengl calls (e.g. 4 bytes for RGBA,
   1 or 2 bytes for texture coords, etc)
-- change ScreenCoord to use Sint16 instead of Sint32?  (this was tried, and there was a bug in drawing glyphs to parts of the screen, but is otherwise ready to be tried again).  i think Sint32 screen coords might be good, because it allows big layouts that have offscreen components, such as a list
 - get rid of widget min/max size enabled flags, and just use the
   sizes (no min size = 0, no max size = (uint)-1)
 - create consistent way to set z depth for non-transparent stuff so they're

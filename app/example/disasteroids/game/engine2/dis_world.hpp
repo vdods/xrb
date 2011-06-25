@@ -177,8 +177,9 @@ private:
         FloatVector2 const &translation,
         Float scale_factor);
 
-    void CreateAndPopulateBackgroundObjectLayers ();
+    void CreateAndPopulateSuperforegroundObjectLayer ();
     void CreateAndPopulateForegroundObjectLayer ();
+    void CreateAndPopulateBackgroundObjectLayers ();
 
     enum
     {

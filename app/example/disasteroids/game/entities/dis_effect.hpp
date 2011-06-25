@@ -59,7 +59,7 @@ protected:
 private:
 
     // indicates how long this effect will last (negative values indicate that
-    // "IT... WILL LAST... FOREVAH!! ...IT... WILL LAST... FOREVAH!!!")
+    // "IT... WILL LIVE... FOREVAH!! ...IT... WILL LIVE... FOREVAH!!!")
     Float m_time_to_live;
     // gives a reference time which can be used in calculations in Think()
     Float m_time_at_birth;

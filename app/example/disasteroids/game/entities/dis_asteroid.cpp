@@ -148,7 +148,7 @@ void Asteroid::Die (
         Translation(),
         Velocity(),
         7.0f * ScaleFactor(),
-        1.0f,
+        0.2f,
         time);
 
     // this will store the amount of mass (multiplied by the mineral
