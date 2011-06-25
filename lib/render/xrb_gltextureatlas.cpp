@@ -496,7 +496,7 @@ void GlTextureAtlas::PlaceMipmapAndBorder (Uint32 mipmap_level, Texture const &m
             border_mask |= RIGHT;
         if (2*mipmap_center[Dim::Y] - mipmap.Height() > 2*0)
             border_mask |= BOTTOM;
-        if (2*mipmap_center[Dim::Y] - mipmap.Height() < 2*atlas_mipmap_size[Dim::Y])
+        if (2*mipmap_center[Dim::Y] + mipmap.Height() < 2*atlas_mipmap_size[Dim::Y])
             border_mask |= TOP;
         // create the border textures (these can end up being NULL) and copy their pixel
         // data into the atlas mipmap, and delete each as we go.
