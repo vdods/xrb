@@ -56,6 +56,8 @@ int main (int argc, char **argv)
         g_config.SetString(Dis::SYSTEM__KEY_MAP_NAME, options.KeyMapName());
 
         Singleton::Initialize(SDLPal::Create, options.KeyMapName().c_str());
+        // set the GlTextureAtlas size based on the config values
+        Singleton::Pal().GlTextureAtlasSize(g_config.GlTextureAtlasSize());
 
         // register on-exit function, which will be called after main() has returned.
         atexit(CleanUp);

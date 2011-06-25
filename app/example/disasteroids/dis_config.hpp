@@ -39,18 +39,18 @@ public:
     // general accessors
     // ///////////////////////////////////////////////////////////////////////
 
-    inline bool Boolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); return m_boolean_value[key]; }
-    inline Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); return m_uint32_value[key]; }
-    inline std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); return m_string_value[key]; }
+    bool Boolean (KeyBoolean key) const { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); return m_boolean_value[key]; }
+    Uint32 GetUint32 (KeyUint32 key) const { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); return m_uint32_value[key]; }
+    std::string const &GetString (KeyString key) const { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); return m_string_value[key]; }
     Key::Code InputAction (KeyInputAction key) const;
 
     // ///////////////////////////////////////////////////////////////////////
     // general modifiers
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void SetBoolean (KeyBoolean key, bool value) { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); m_boolean_value[key] = value; }
-    inline void SetUint32 (KeyUint32 key, Uint32 value) { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); m_uint32_value[key] = value; }
-    inline void SetString (KeyString key, std::string const &value) { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); m_string_value[key] = value; }
+    void SetBoolean (KeyBoolean key, bool value) { ASSERT1(key >= 0 && key < KEY_BOOLEAN_COUNT); m_boolean_value[key] = value; }
+    void SetUint32 (KeyUint32 key, Uint32 value) { ASSERT1(key >= 0 && key < KEY_UINT32_COUNT); m_uint32_value[key] = value; }
+    void SetString (KeyString key, std::string const &value) { ASSERT1(key >= 0 && key < KEY_STRING_COUNT); m_string_value[key] = value; }
     void SetInputAction (KeyInputAction key, Key::Code value);
     void SetInputAction (KeyInputAction key, std::string const &value);
 
@@ -58,19 +58,29 @@ public:
     // specific accessors (used to avoid lots of casting in the app code)
     // ///////////////////////////////////////////////////////////////////////
 
-    inline ScreenCoordVector2 Resolution () const { return ScreenCoordVector2(ResolutionX(), ResolutionY()); }
-    inline ScreenCoord ResolutionX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_X)); }
-    inline ScreenCoord ResolutionY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_Y)); }
-    inline DifficultyLevel GetDifficultyLevel () const { return static_cast<DifficultyLevel>(GetUint32(GAME__DIFFICULTY_LEVEL)); }
+    ScreenCoordVector2 Resolution () const { return ScreenCoordVector2(ResolutionX(), ResolutionY()); }
+    ScreenCoord ResolutionX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_X)); }
+    ScreenCoord ResolutionY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__RESOLUTION_Y)); }
+    DifficultyLevel GetDifficultyLevel () const { return static_cast<DifficultyLevel>(GetUint32(GAME__DIFFICULTY_LEVEL)); }
+    ScreenCoordVector2 GlTextureAtlasSize () const { return ScreenCoordVector2(GlTextureAtlasSizeX(), GlTextureAtlasSizeY()); }
+    ScreenCoord GlTextureAtlasSizeX () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_X)); }
+    ScreenCoord GlTextureAtlasSizeY () const { return static_cast<ScreenCoord>(GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_Y)); }
 
     // ///////////////////////////////////////////////////////////////////////
     // specific modifiers (used to avoid lots of casting in the app code)
     // ///////////////////////////////////////////////////////////////////////
 
-    inline void SetResolution (ScreenCoordVector2 const &resolution) { SetResolutionX(resolution[Dim::X]); SetResolutionY(resolution[Dim::Y]); }
-    inline void SetResolutionX (ScreenCoord resolution_x) { SetUint32(VIDEO__RESOLUTION_X, static_cast<Uint32>(resolution_x)); }
-    inline void SetResolutionY (ScreenCoord resolution_y) { SetUint32(VIDEO__RESOLUTION_Y, static_cast<Uint32>(resolution_y)); }
-    inline void SetDifficultyLevel (DifficultyLevel difficulty_level) { SetUint32(GAME__DIFFICULTY_LEVEL, static_cast<Uint32>(difficulty_level)); }
+    void SetResolution (ScreenCoordVector2 const &resolution) { SetResolutionX(resolution[Dim::X]); SetResolutionY(resolution[Dim::Y]); }
+    void SetResolutionX (ScreenCoord resolution_x) { SetUint32(VIDEO__RESOLUTION_X, static_cast<Uint32>(resolution_x)); }
+    void SetResolutionY (ScreenCoord resolution_y) { SetUint32(VIDEO__RESOLUTION_Y, static_cast<Uint32>(resolution_y)); }
+    void SetDifficultyLevel (DifficultyLevel difficulty_level) { SetUint32(GAME__DIFFICULTY_LEVEL, static_cast<Uint32>(difficulty_level)); }
+    void SetGlTextureAtlasSize (ScreenCoordVector2 const &gltexture_atlas_size)
+    {
+        SetGlTextureAtlasSizeX(gltexture_atlas_size[Dim::X]);
+        SetGlTextureAtlasSizeY(gltexture_atlas_size[Dim::Y]);
+    }
+    void SetGlTextureAtlasSizeX (ScreenCoord gltexture_atlas_size_x) { SetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_X, static_cast<Uint32>(gltexture_atlas_size_x)); }
+    void SetGlTextureAtlasSizeY (ScreenCoord gltexture_atlas_size_y) { SetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_Y, static_cast<Uint32>(gltexture_atlas_size_y)); }
 
     // ///////////////////////////////////////////////////////////////////////
     // procedures

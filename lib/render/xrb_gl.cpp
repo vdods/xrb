@@ -612,9 +612,19 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
         }
     }
 
-    // if the texture wants to use a separate atlas, make a new atlas just for it
-    if (gltexture_flags & GlTexture::USES_SEPARATE_ATLAS)
+    ScreenCoordVector2 gltexture_atlas_size(Singleton::Pal().GlTextureAtlasSize());
+    if (gltexture_atlas_size[Dim::X] > 0 &&
+        gltexture_atlas_size[Dim::Y] > 0 &&
+        (!Math::IsAPowerOf2(Uint32(gltexture_atlas_size[Dim::X])) || !Math::IsAPowerOf2(Uint32(gltexture_atlas_size[Dim::Y]))))
     {
+        fprintf(stderr, "Gl::CreateGlTexture(); ERROR: Pal::GlTextureAtlasSize() coordinates must be power-of-2 or nonpositive values\n");
+        return NULL;
+    }
+
+    // if the texture wants to use a separate atlas, make a new atlas just for it
+    if ((gltexture_flags & GlTexture::USES_SEPARATE_ATLAS) || gltexture_atlas_size[Dim::X] <= 0 || gltexture_atlas_size[Dim::Y] <= 0)
+    {
+        fprintf(stderr, "Gl::CreateGlTexture(); creating (separate) GlTextureAtlas of size (%d, %d)\n", texture.Size()[Dim::X], texture.Size()[Dim::Y]);
         GlTextureAtlas *atlas = new GlTextureAtlas(texture.Size(), gltexture_flags);
         AddAtlas(atlas);
         GlTexture *retval = atlas->AttemptToPlaceTexture(texture, gltexture_flags);
@@ -642,7 +652,8 @@ GlTexture *Gl::CreateGlTexture (Texture const &texture, Uint32 gltexture_flags)
         }
 
         // no fit so far, so add a new atlas to the end
-        GlTextureAtlas *atlas = new GlTextureAtlas(ScreenCoordVector2(1024, 1024), gltexture_flags); // TODO: do real size
+        fprintf(stderr, "Gl::CreateGlTexture(); creating (shared) GlTextureAtlas of size (%d, %d)\n", gltexture_atlas_size[Dim::X], gltexture_atlas_size[Dim::Y]);
+        GlTextureAtlas *atlas = new GlTextureAtlas(gltexture_atlas_size, gltexture_flags);
         AddAtlas(atlas);
         return atlas->AttemptToPlaceTexture(texture, gltexture_flags);
     }

@@ -56,15 +56,23 @@ public:
 
     virtual Xrb::Font *LoadFont (char const *font_path, Xrb::ScreenCoord pixel_height);
 
+    virtual Xrb::ScreenCoordVector2 GlTextureAtlasSize () const;
+    virtual void GlTextureAtlasSize (Xrb::ScreenCoordVector2 const &size);
+
 private:
 
     // the constructor is private so you must use SDLPal::Create.
     // it is acceptable for ft_library to be NULL, as it indicates
     // the freetype library will not be used, and font loading must
     // rely on cached data.
-    SDLPal (FT_LibraryRec_ *ft_library) : m_ft_library(ft_library) { }
+    SDLPal (FT_LibraryRec_ *ft_library, Xrb::ScreenCoordVector2 const &gltexture_atlas_size)
+        :
+        m_ft_library(ft_library),
+        m_gltexture_atlas_size(gltexture_atlas_size)
+    { }
 
     FT_LibraryRec_ *m_ft_library;
+    Xrb::ScreenCoordVector2 m_gltexture_atlas_size;
 }; // end of class SDLPal
 
 #endif // XRB_PLATFORM == XRB_PLATFORM_SDL

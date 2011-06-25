@@ -10,6 +10,7 @@
 
 #include "dis_config.hpp"
 
+#include "xrb_math.hpp"
 #include "xrb_parse_datafile_parser.hpp"
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_inputstate.hpp"
@@ -51,6 +52,8 @@ Config::KeySpecification<Uint32> const Config::ms_uint32_key[KEY_UINT32_COUNT] =
     {"|game|difficulty_level",                  DL_LOWEST},         // GAME__DIFFICULTY_LEVEL = 0,
     {"|video|resolution_x",                     1024},              // VIDEO__RESOLUTION_X,
     {"|video|resolution_y",                     768},               // VIDEO__RESOLUTION_Y,
+    {"|video|gltexture_atlas_size_x",           1024},              // VIDEO__GLTEXTURE_ATLAS_SIZE_X,
+    {"|video|gltexture_atlas_size_y",           1024},              // VIDEO__GLTEXTURE_ATLAS_SIZE_Y,
 };
 Config::KeySpecification<char const *> const Config::ms_string_key[KEY_STRING_COUNT] =
 {
@@ -159,6 +162,10 @@ void Config::Read (string const &config_file_path, bool const reset_to_defaults_
             SetUint32(VIDEO__RESOLUTION_X, ms_uint32_key[VIDEO__RESOLUTION_X].m_default_value);
         if (GetUint32(VIDEO__RESOLUTION_Y) == 0)
             SetUint32(VIDEO__RESOLUTION_Y, ms_uint32_key[VIDEO__RESOLUTION_Y].m_default_value);
+        if (GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_X) != 0 && !Math::IsAPowerOf2(GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_X)))
+            SetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_X, ms_uint32_key[VIDEO__GLTEXTURE_ATLAS_SIZE_X].m_default_value);
+        if (GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_Y) != 0 && !Math::IsAPowerOf2(GetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_Y)))
+            SetUint32(VIDEO__GLTEXTURE_ATLAS_SIZE_Y, ms_uint32_key[VIDEO__GLTEXTURE_ATLAS_SIZE_Y].m_default_value);
     }
 }
 

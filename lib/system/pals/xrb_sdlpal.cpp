@@ -316,7 +316,11 @@ Xrb::Pal *SDLPal::Create ()
         fprintf(stderr, "SDLPal::Create(); the FreeType library failed to initialize\n");
         ft_library = NULL;
     }
-    return new SDLPal(ft_library);
+
+    // default gltexture atlas size which pretty much everything can support.
+    Xrb::ScreenCoordVector2 default_gltexture_atlas_size(1024, 1024);
+
+    return new SDLPal(ft_library, default_gltexture_atlas_size);
 }
 
 Xrb::Pal::Status SDLPal::Initialize ()
@@ -1066,6 +1070,24 @@ Xrb::Font *SDLPal::LoadFont (char const *font_path, Xrb::ScreenCoord pixel_heigh
 
     // finally return the Font we fought so hard to create.
     return retval;
+}
+
+Xrb::ScreenCoordVector2 SDLPal::GlTextureAtlasSize () const
+{
+    return m_gltexture_atlas_size;
+}
+
+void SDLPal::GlTextureAtlasSize (Xrb::ScreenCoordVector2 const &size)
+{
+    m_gltexture_atlas_size = size;
+
+    // TODO: upper-bound range checking (based on GL_MAX_TEXTURE_SIZE)
+
+    // lower-bound checking (not necessary, but it makes it look nicer)
+    if (m_gltexture_atlas_size[Xrb::Dim::X] < 0)
+        m_gltexture_atlas_size[Xrb::Dim::X] = 0;
+    if (m_gltexture_atlas_size[Xrb::Dim::Y] < 0)
+        m_gltexture_atlas_size[Xrb::Dim::Y] = 0;
 }
 
 #endif // XRB_PLATFORM == XRB_PLATFORM_SDL

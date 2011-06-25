@@ -73,6 +73,14 @@ public:
 
     // should return NULL if the load failed
     virtual Font *LoadFont (char const *font_path, ScreenCoord pixel_height) = 0;
+
+    // returns the size for each new GlTextureAtlas.  if either of the dimensions
+    // is nonpositive, no texture atlasing will be used -- each texture will have its
+    // own atlas (and using different textures will require GL texture bind calls).
+    // if both coordinates are positive, each must be a power of 2.
+    virtual ScreenCoordVector2 GlTextureAtlasSize () const = 0;
+    // sets the size for each new GlTextureAtlas
+    virtual void GlTextureAtlasSize (ScreenCoordVector2 const &size) = 0;
 }; // end of class Pal
 
 } // end of namespace Xrb
