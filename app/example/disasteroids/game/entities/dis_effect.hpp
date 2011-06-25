@@ -319,10 +319,24 @@ public:
 
     void SetIntensity (Float intensity);
 
-    void SnapToShip (
-        FloatVector2 const &ship_translation,
-        Float ship_scale_factor);
+    void SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor);
 }; // end of class ShieldEffect
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+class LightningEffect : public Effect
+{
+public:
+
+    LightningEffect ()
+        :
+        Effect(-1.0f, 0.0f, ET_LIGHTNING_EFFECT, Engine2::Circle::CT_NO_COLLISION)
+    { }
+
+    void SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor);
+}; // end of class LightningEffect
 
 // ///////////////////////////////////////////////////////////////////////////
 //

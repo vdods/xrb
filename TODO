@@ -150,6 +150,10 @@ BUGS:
   texture atlases, efficiency should be 100%)
 
 TODO:
+- change gltextureatlas sizes to Uint32
+- change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative
+- make automatic validation in Dis::Config -- function for validating stuff,
+  message for when it fails.  reset to default value if failed
 - look into changing ScheduleForDeletion(0.0f) into RemoveFromWorld(), delete owner object
 - look into changing ScheduleForRemovalFromWorld(0.0f) and RemoveFromWorld();
 - see if more culling can happen in DrawObjectCollector::operator ().  specifically

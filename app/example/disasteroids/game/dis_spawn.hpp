@@ -49,6 +49,7 @@ class HealthTrigger;
 class Interloper;
 class Item;
 class LaserBeam;
+class LightningEffect;
 class Missile;
 class MissileLauncher;
 class NoDamageExplosion;
@@ -214,6 +215,10 @@ TractorBeam *SpawnTractorBeam (
 
 ShieldEffect *SpawnShieldEffect (
     Engine2::ObjectLayer *object_layer);
+
+LightningEffect *SpawnLightningEffect (
+    Engine2::ObjectLayer *object_layer,
+    Float current_time);
 
 ReticleEffect *SpawnReticleEffect (
     Engine2::ObjectLayer *object_layer,

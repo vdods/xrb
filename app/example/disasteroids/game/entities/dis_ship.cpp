@@ -45,6 +45,8 @@ Ship::Ship (
 
 Ship::~Ship ()
 {
+    if (m_lightning_effect.IsValid() && !m_lightning_effect->IsInWorld())
+        delete m_lightning_effect->OwnerObject();
 }
 
 std::string const &Ship::ShipSpritePath (
@@ -125,24 +127,43 @@ void Ship::HandleNewOwnerObject ()
     SetMass(ShipBaselineMass());
 }
 
-void Ship::Think (Float const time, Float const frame_dt)
+void Ship::Think (Float time, Float frame_dt)
 {
     // call the superclass' Think
     Mortal::Think(time, frame_dt);
 
     // nothing can happen when the ship is disabled.
     m_disable_time = Max(0.0f, m_disable_time - frame_dt);
+
+    // if the ship is not dead and is disabled, apply the lightning bolt effect
+    // to indicate that it is disabled.
+    if (IsDisabled())
+    {
+        // ensure the lightning effect is allocated (lazy allocation)
+        if (!m_lightning_effect.IsValid())
+            m_lightning_effect = SpawnLightningEffect(GetObjectLayer(), time)->GetReference();
+        // if the lightning effect is already allocated but not in the world, re-add it.
+        else if (!m_lightning_effect->IsInWorld())
+            m_lightning_effect->AddBackIntoWorld();
+        // TODO: real entity attachment -- temp hack
+        m_lightning_effect->SnapToShip(Translation() + frame_dt * Velocity(), ScaleFactor());
+    }
+    else
+    {
+        if (m_lightning_effect.IsValid() && m_lightning_effect->IsInWorld())
+            m_lightning_effect->ScheduleForRemovalFromWorld(0.0f);
+    }
 }
 
 void Ship::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Float time,
+    Float frame_dt)
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),
@@ -151,6 +172,10 @@ void Ship::Die (
         5.0f * ScaleFactor(),
         0.2f,
         time);
+
+    // get rid of the lightning effect if the ship was disabled
+    if (m_lightning_effect.IsValid() && m_lightning_effect->IsInWorld())
+        m_lightning_effect->ScheduleForRemovalFromWorld(0.0f);
 
     ScheduleForDeletion(0.0f);
 }

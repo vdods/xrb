@@ -21,6 +21,7 @@ namespace Dis
 {
 
 class Item;
+class LightningEffect;
 class Powerup;
 class Weapon;
 
@@ -125,6 +126,7 @@ protected:
 
     void AimShipAtReticleCoordinates (Float frame_dt) { AimShipAtCoordinates(m_reticle_coordinates, frame_dt); }
     void AimShipAtCoordinates (FloatVector2 const &coordinates, Float frame_dt);
+    void CancelDisableTime () { m_disable_time = 0.0f; }
     virtual void ResetInputs ();
 
 private:
@@ -136,6 +138,8 @@ private:
     Sint8 m_engine_up_down_input;
     Uint8 m_weapon_primary_input;
     Uint8 m_weapon_secondary_input;
+
+    EntityReference<LightningEffect> m_lightning_effect;
 }; // end of class Ship
 
 } // end of namespace Dis

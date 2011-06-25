@@ -220,10 +220,10 @@ void Demi::Think (Float const time, Float const frame_dt)
     if (IsDead())
         return;
 
-    EnemyShip::Think(time, frame_dt);
+    // Demi can't be disabled.  this call must happen before EnemyShip::Think
+    CancelDisableTime();
 
-    // NOTE: Demi can't be disabled -- the
-    // disabled code would go here otherwise
+    EnemyShip::Think(time, frame_dt);
 
     // ensure the port tractor beam is allocated (lazy allocation)
     if (!m_port_tractor_beam.IsValid())

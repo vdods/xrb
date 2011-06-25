@@ -73,6 +73,7 @@ enum EntityType
     ET_GAUSS_GUN_TRAIL,
     ET_TRACTOR_BEAM,
     ET_SHIELD_EFFECT,
+    ET_LIGHTNING_EFFECT,
     ET_RETICLE_EFFECT,
 
     // invisible

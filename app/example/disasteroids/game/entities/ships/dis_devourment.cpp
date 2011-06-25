@@ -99,10 +99,10 @@ void Devourment::Think (Float const time, Float const frame_dt)
     if (IsDead())
         return;
 
-    Ship::Think(time, frame_dt);
+    // Devourment can't be disabled.  this call must happen before EnemyShip::Think
+    CancelDisableTime();
 
-    // NOTE: Devourment can't be disabled -- the
-    // disabled code would go here otherwise
+    EnemyShip::Think(time, frame_dt);
 
     // if the mouth health trigger has not yet been created, create it.
     if (!m_mouth_health_trigger.IsValid())

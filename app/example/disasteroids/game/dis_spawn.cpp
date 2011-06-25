@@ -36,6 +36,7 @@ using namespace Xrb;
 
 #define Z_DEPTH_EMP_EXPLOSION      -0.8f
 #define Z_DEPTH_RETICLE_EFFECT     -0.2f
+#define Z_DEPTH_LIGHTNING_EFFECT   -0.15f
 #define Z_DEPTH_BALLISTIC          -0.05f
 #define Z_DEPTH_SOLID               0.0f
 #define Z_DEPTH_DEVOURMENT_GRINDER  0.05f
@@ -613,7 +614,7 @@ GaussGunTrail *SpawnGaussGunTrail (
 }
 
 TractorBeam *SpawnTractorBeam (
-    Engine2::ObjectLayer *const object_layer)
+    Engine2::ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
@@ -635,7 +636,7 @@ TractorBeam *SpawnTractorBeam (
 }
 
 ShieldEffect *SpawnShieldEffect (
-    Engine2::ObjectLayer *const object_layer)
+    Engine2::ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
@@ -659,8 +660,34 @@ ShieldEffect *SpawnShieldEffect (
     return shield_effect;
 }
 
+LightningEffect *SpawnLightningEffect (
+    Engine2::ObjectLayer *object_layer,
+    Float current_time)
+{
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer->OwnerWorld() != NULL);
+
+    Engine2::AnimatedSprite *sprite =
+        Engine2::AnimatedSprite::Create("resources/lightning.anim", current_time);
+    sprite->SetZDepth(Z_DEPTH_LIGHTNING_EFFECT);
+    sprite->SetIsTransparent(true);
+    // setting the scale factor this large helps with speed in adding it to
+    // the quad tree, as the first time is temporary.  it will be placed
+    // later for real.
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
+//     // default the lightning effect to transparent
+//     sprite->ColorMask() = Color::ms_transparent_black;
+
+    LightningEffect *lightning_effect = new LightningEffect();
+
+    sprite->SetEntity(lightning_effect);
+    object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
+
+    return lightning_effect;
+}
+
 ReticleEffect *SpawnReticleEffect (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     Color const &color_mask)
 {
     ASSERT1(object_layer != NULL);

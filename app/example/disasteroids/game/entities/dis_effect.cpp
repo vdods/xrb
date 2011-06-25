@@ -269,15 +269,27 @@ void ShieldEffect::SetIntensity (Float const intensity)
     OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, s_opacity*intensity);
 }
 
-void ShieldEffect::SnapToShip (
-    FloatVector2 const &ship_translation,
-    Float const ship_scale_factor)
+void ShieldEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor)
 {
     static Float const s_shield_size_ratio = 1.666f;
 
     RemoveFromWorld();
     SetTranslation(ship_translation);
     SetScaleFactor(s_shield_size_ratio * ship_scale_factor);
+    AddBackIntoWorld();
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void LightningEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor)
+{
+    static Float const s_lightning_size_ratio = 1.2f;
+
+    RemoveFromWorld();
+    SetTranslation(ship_translation);
+    SetScaleFactor(s_lightning_size_ratio * ship_scale_factor);
     AddBackIntoWorld();
 }
 
