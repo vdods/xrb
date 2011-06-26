@@ -438,21 +438,23 @@ Powerup *SpawnPowerup (
 }
 
 DamageExplosion *SpawnDamageExplosion (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const damage_amount,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Float const time_to_live,
-    Float const time_at_birth,
+    Float damage_amount,
+    Float damage_radius,
+    Float initial_size,
+    Float explosion_radius,
+    Float time_to_live,
+    Float time_at_birth,
     EntityReference<Entity> const &owner)
 {
     DamageExplosion *damage_explosion =
         new DamageExplosion(
             damage_amount,
             damage_radius,
+            initial_size,
             explosion_radius,
             time_to_live,
             time_at_birth,
@@ -474,15 +476,16 @@ DamageExplosion *SpawnDamageExplosion (
 }
 
 NoDamageExplosion *SpawnNoDamageExplosion (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const final_size,
-    Float const time_to_live,
-    Float const time_at_birth)
+    Float initial_size,
+    Float final_size,
+    Float time_to_live,
+    Float time_at_birth)
 {
-    NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(final_size, time_to_live, time_at_birth);
+    NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(initial_size, final_size, time_to_live, time_at_birth);
     SpawnDynamicSprite(
         object_layer,
         sprite_texture_path,
@@ -500,16 +503,17 @@ NoDamageExplosion *SpawnNoDamageExplosion (
 }
 
 EMPExplosion *SpawnEMPExplosion (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const disable_time_factor,
-    Float const final_size,
-    Float const time_to_live,
-    Float const time_at_birth,
+    Float disable_time_factor,
+    Float initial_size,
+    Float final_size,
+    Float time_to_live,
+    Float time_at_birth,
     EntityReference<Entity> const &owner)
 {
-    EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, final_size, time_to_live, time_at_birth, owner);
+    EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, initial_size, final_size, time_to_live, time_at_birth, owner);
     SpawnDynamicSprite(
         object_layer,
         "resources/shield_effect_small.png",
@@ -527,20 +531,22 @@ EMPExplosion *SpawnEMPExplosion (
 }
 
 Fireball *SpawnFireball (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Float const starting_damage,
-    Float const potential_damage,
-    Float const final_size,
-    Float const time_to_live,
-    Float const time_at_birth,
+    Float starting_damage,
+    Float potential_damage,
+    Float initial_size,
+    Float final_size,
+    Float time_to_live,
+    Float time_at_birth,
     EntityReference<Entity> const &owner)
 {
     Fireball *fireball =
         new Fireball(
             starting_damage,
             potential_damage,
+            initial_size,
             final_size,
             time_to_live,
             time_at_birth,

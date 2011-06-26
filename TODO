@@ -27,11 +27,11 @@ MAJOR TASKS:
 DISASTEROIDS:
 ** polish-related **
 - art: fix Interloper proportions
-- art: add super-foreground with nebula gas, add mid-background with planets
-- art: add bigger stuff in the background.
+- art: add bigger stuff in the background (galaxies, nebulae, etc)
 - anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
+- death sequences for player and Demi
 ** feature-related **
 - really need a powerup system -- stoke mode, but also random powerups that pop out of
   enemies and asteroids -- invincibility, infinite power, super speed, double damage,
@@ -150,6 +150,7 @@ BUGS:
   texture atlases, efficiency should be 100%)
 
 TODO:
+- change sprite_path and path-based loading into LoadParameter-based loading (e.g. in dis_spawn.cpp)
 - change gltextureatlas sizes to Uint32
 - change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative
 - make automatic validation in Dis::Config -- function for validating stuff,

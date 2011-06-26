@@ -140,6 +140,7 @@ enum ExplosionType
     EXPLO_ROCK,
     EXPLO_EMP,
     EXPLO_FIREBALL,
+    EXPLO_SHOCKWAVE,
 
     EXPLO_COUNT
 }; // end of enum ExplosionType

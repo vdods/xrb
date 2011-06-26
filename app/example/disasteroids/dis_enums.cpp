@@ -35,7 +35,8 @@ std::string const &ExplosionSpritePath (ExplosionType explosion_type)
         "resources/explosion1a_small.png",
         "resources/explosion_rock_00.png",
         "resources/shield_effect_small.png",
-        "resources/fireball.png"
+        "resources/fireball.png",
+        "resources/shield_effect_small.png"
     };
 
     ASSERT1(explosion_type < EXPLO_COUNT);

@@ -36,7 +36,24 @@ void Effect::Think (Float const time, Float const frame_dt)
 
 void Explosion::Think (Float const time, Float const frame_dt)
 {
-    SetScaleFactor(m_final_size * Math::Sqrt(LifetimeRatio(time)) + 0.1f);
+    switch (m_scale_model)
+    {
+        case SM_SQRT:
+            SetScaleFactor((m_final_size - m_initial_size) * Math::Sqrt(LifetimeRatio(time)) + m_initial_size + 0.1f);
+            break;
+
+        case SM_LINEAR:
+            SetScaleFactor((m_final_size - m_initial_size) * LifetimeRatio(time) + m_initial_size + 0.1f);
+            break;
+
+        case SM_SQR:
+            SetScaleFactor((m_final_size - m_initial_size) * Sqr(LifetimeRatio(time)) + m_initial_size + 0.1f);
+            break;
+
+        default:
+            ASSERT1(false && "invalid ScaleModel");
+            break;
+    }
 
     Effect::Think(time, frame_dt);
 }

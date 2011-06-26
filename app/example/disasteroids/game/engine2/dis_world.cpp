@@ -910,6 +910,11 @@ bool World::StateDeathRattle (StateMachineInput input)
             ScheduleStateMachineInput(IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE, 3.0f);
             return true;
 
+        case IN_BEGIN_WAVE:
+        case IN_END_WAVE:
+        case IN_END_WAVE_INTERMISSION:
+            return true;
+
         case IN_WAIT_AFTER_FINAL_PLAYER_DEATH_DONE:
             TRANSITION_TO(StateGameOver);
             return true;

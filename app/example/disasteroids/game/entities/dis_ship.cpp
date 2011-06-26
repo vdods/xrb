@@ -26,6 +26,7 @@
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
 #include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_sprite.hpp"
 
 using namespace Xrb;
 
@@ -165,14 +166,41 @@ void Ship::Die (
     Float time,
     Float frame_dt)
 {
-    SpawnNoDamageExplosion(
-        GetObjectLayer(),
-        ExplosionSpritePath(EXPLO_DENSE),
-        Translation(),
-        Velocity(),
-        5.0f * ScaleFactor(),
-        0.2f,
-        time);
+    ASSERT1(OwnerObject() != NULL);
+    ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
+    std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
+
+    // the "explosion" sprite will be the same as the ship, as if the ship's soul is being liberated
+    {
+        NoDamageExplosion *soul =
+            SpawnNoDamageExplosion(
+                GetObjectLayer(),
+                sprite_path,
+                Translation(),
+                Velocity(),
+                1.0f * ScaleFactor(), // initial_size
+                2.0f * ScaleFactor(), // final_size
+                0.5f,
+                time);
+        ASSERT1(soul != NULL);
+        soul->SetAngle(Angle());
+    }
+
+    // spawn a fast shock wave
+    {
+        NoDamageExplosion *shockwave =
+            SpawnNoDamageExplosion(
+                GetObjectLayer(),
+                ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                Translation(),
+                Velocity(),
+                0.0f, // initial_size
+                8.0f * ScaleFactor(),
+                0.25f,
+                time);
+        shockwave->BaseColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);
+        shockwave->SetScaleModel(Explosion::SM_LINEAR);
+    }
 
     // get rid of the lightning effect if the ship was disabled
     if (m_lightning_effect.IsValid() && m_lightning_effect->IsInWorld())

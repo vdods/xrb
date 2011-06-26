@@ -255,9 +255,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="-2413.3103"
-     inkscape:cy="-1170.5613"
+     inkscape:zoom="0.5"
+     inkscape:cx="-198.03724"
+     inkscape:cy="-2575.4171"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -625,7 +625,7 @@
          sodipodi:type="arc" />
     </g>
     <g
-       id="rock_explosion"
+       id="explosion_rock_00"
        transform="translate(2.8217247,5.0029294)"
        inkscape:label="#g6275"
        inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/rock_explosion_0.png"

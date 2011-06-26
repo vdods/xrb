@@ -521,6 +521,7 @@ bool FlameThrower::Activate (
         ms_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
         power / max_required_power * max_damage_per_fireball,
         max_damage_per_fireball,
+        0.0f, // initial_size
         final_fireball_size,
         1.0f,
         time,
@@ -933,6 +934,7 @@ bool EMPCore::Activate (
         OwnerShip()->Translation(),
         OwnerShip()->Velocity(),
         ms_emp_core_disable_time_factor[UpgradeLevel()],
+        0.0f, // initial_size
         ms_emp_core_blast_radius[UpgradeLevel()],
         1.0f,
         time,

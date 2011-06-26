@@ -38,10 +38,6 @@ public:
     }
     virtual ~Effect () { }
 
-    virtual void Think (Float time, Float frame_dt);
-
-protected:
-
     Float TimeToLive () const { return m_time_to_live; }
     Float TimeAtBirth () const { return m_time_at_birth; }
     Float LifetimeRatio (Float current_time) const
@@ -55,6 +51,8 @@ protected:
     Color const &BaseColorMask () const { return m_base_color_mask; }
     Color &BaseColorMask () { return m_base_color_mask; }
     virtual bool IsEffect () const { return true; }
+
+    virtual void Think (Float time, Float frame_dt);
 
 private:
 
@@ -76,7 +74,17 @@ class Explosion : public Effect
 {
 public:
 
+    enum ScaleModel
+    {
+        SM_SQRT = 0,
+        SM_LINEAR,
+        SM_SQR,
+
+        SM_COUNT
+    }; // end of enum Explosion::ScaleModel
+
     Explosion (
+        Float initial_size,
         Float final_size,
         Float time_to_live,
         Float time_at_birth,
@@ -85,17 +93,26 @@ public:
         :
         Effect(time_to_live, time_at_birth, entity_type, collision_type)
     {
-        ASSERT1(final_size > 0.0f);
+        ASSERT1(initial_size >= 0.0f);
+        ASSERT1(final_size >= 0.0f);
+        m_initial_size = initial_size;
         m_final_size = final_size;
+        m_scale_model = SM_SQRT; // default is sqrt which models explosions well
     }
 
+    Float InitialSize () const { return m_initial_size; }
     Float FinalSize () const { return m_final_size; }
+
+    ScaleModel GetScaleModel () const { return m_scale_model; }
+    void SetScaleModel (ScaleModel scale_model) { ASSERT1(scale_model < SM_COUNT && "invalid ScaleModel"); m_scale_model = scale_model; }
 
     virtual void Think (Float time, Float frame_dt);
 
 private:
 
+    Float m_initial_size;
     Float m_final_size;
+    ScaleModel m_scale_model;
 }; // end of class Explosion
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -109,12 +126,13 @@ public:
     DamageExplosion (
         Float damage_amount,
         Float damage_radius,
+        Float initial_size,
         Float explosion_radius,
         Float time_to_live,
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
+        Explosion(initial_size, explosion_radius, time_to_live, time_at_birth, ET_DAMAGE_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_damage_amount(damage_amount),
         m_damage_radius(damage_radius),
         m_owner(owner)
@@ -149,11 +167,12 @@ class NoDamageExplosion : public Explosion
 public:
 
     NoDamageExplosion (
+        Float initial_size,
         Float final_size,
         Float time_to_live,
         Float time_at_birth)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, Engine2::Circle::CT_NO_COLLISION)
+        Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_NO_DAMAGE_EXPLOSION, Engine2::Circle::CT_NO_COLLISION)
     { }
 }; // end of class NoDamageExplosion
 
@@ -167,12 +186,13 @@ public:
 
     EMPExplosion (
         Float disable_time_factor,
+        Float initial_size,
         Float final_size,
         Float time_to_live,
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
+        Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_EMP_EXPLOSION, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_disable_time_factor(disable_time_factor),
         m_owner(owner)
     {
@@ -208,12 +228,13 @@ public:
     Fireball (
         Float starting_damage,
         Float potential_damage,
+        Float initial_size,
         Float final_size,
         Float time_to_live,
         Float time_at_birth,
         EntityReference<Entity> const &owner)
         :
-        Explosion(final_size, time_to_live, time_at_birth, ET_FIREBALL, Engine2::Circle::CT_NONSOLID_COLLISION),
+        Explosion(initial_size, final_size, time_to_live, time_at_birth, ET_FIREBALL, Engine2::Circle::CT_NONSOLID_COLLISION),
         m_potential_damage(potential_damage),
         m_owner(owner)
     {

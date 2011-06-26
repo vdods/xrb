@@ -74,6 +74,7 @@ void Explosive::Die (
             ExplosionSpritePath(EXPLO_ROCK),
             Translation(),
             Velocity(),
+            0.0f, // initial_size
             ScaleFactor(),
             0.2f,
             time);
@@ -263,6 +264,7 @@ void Grenade::Detonate (
         Velocity(),
         m_damage_to_inflict*damage_factor,
         m_damage_radius,
+        0.0f, // initial_size
         m_explosion_radius,
         0.2f,
         time,
@@ -466,6 +468,7 @@ void Missile::Detonate (
         Velocity(),
         m_damage_to_inflict,
         m_damage_radius,
+        0.0f, // initial_size
         m_explosion_radius,
         0.2f,
         time,

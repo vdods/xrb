@@ -20,6 +20,7 @@
 #include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "dis_world.hpp"
+#include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
 
 using namespace Xrb;
@@ -727,15 +728,44 @@ void PlayerShip::Die (
     SetPowerStatus(0.0f);
     SetWeaponStatus(0.0f);
 
-    // spawn a really big explosion. TODO: death sequence
-    SpawnNoDamageExplosion(
-        GetObjectLayer(),
-        ExplosionSpritePath(EXPLO_DENSE),
-        Translation(),
-        Velocity(),
-        20.0f * ScaleFactor(),
-        2.0f,
-        time);
+    // TODO: death sequence
+    {
+        ASSERT1(OwnerObject() != NULL);
+        ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
+        std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
+
+        // the "explosion" sprite will be the same as the ship, as if the ship's soul is being liberated
+        {
+            NoDamageExplosion *soul =
+                SpawnNoDamageExplosion(
+                    GetObjectLayer(),
+                    sprite_path,
+                    Translation(),
+                    Velocity(),
+                    1.0f * ScaleFactor(), // initial_size
+                    4.0f * ScaleFactor(), // final_size
+                    5.0f,
+                    time);
+            ASSERT1(soul != NULL);
+            soul->SetAngle(Angle());
+        }
+
+        // spawn a fast shock wave
+        {
+            NoDamageExplosion *shockwave =
+                SpawnNoDamageExplosion(
+                    GetObjectLayer(),
+                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    Translation(),
+                    Velocity(),
+                    0.0f, // initial_size
+                    10.0f * ScaleFactor(),
+                    0.5f,
+                    time);
+            shockwave->BaseColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);
+            shockwave->SetScaleModel(Explosion::SM_LINEAR);
+        }
+    }
 
     // the player's ship is not deleted
     ScheduleForRemovalFromWorld(0.0f);

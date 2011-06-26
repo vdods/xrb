@@ -148,6 +148,7 @@ void Asteroid::Die (
         ExplosionSpritePath(EXPLO_ROCK),
         Translation(),
         Velocity(),
+        0.0f, // initial_size
         3.0f * ScaleFactor(),
         0.4f,
         time);
