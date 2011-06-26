@@ -167,6 +167,7 @@ void Ship::Die (
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),
+        ExplosionSpritePath(EXPLO_DENSE),
         Translation(),
         Velocity(),
         5.0f * ScaleFactor(),

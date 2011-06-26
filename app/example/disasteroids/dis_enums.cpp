@@ -27,4 +27,19 @@ std::string const &DifficultyLevelString (DifficultyLevel difficulty_level)
     return s_difficulty_level_string[difficulty_level];
 }
 
+std::string const &ExplosionSpritePath (ExplosionType explosion_type)
+{
+    static std::string const s_explosion_sprite_path[EXPLO_COUNT] =
+    {
+        "resources/explosion_dense_00.png",
+        "resources/explosion1a_small.png",
+        "resources/explosion_rock_00.png",
+        "resources/shield_effect_small.png",
+        "resources/fireball.png"
+    };
+
+    ASSERT1(explosion_type < EXPLO_COUNT);
+    return s_explosion_sprite_path[explosion_type];
+}
+
 } // end of namespace Dis

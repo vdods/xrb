@@ -133,6 +133,19 @@ enum ItemType
     IT_ENEMY_WEAPON_COUNT = IT_ENEMY_WEAPON_HIGHEST - IT_ENEMY_WEAPON_LOWEST + 1,
 }; // end of enum ItemType
 
+enum ExplosionType
+{
+    EXPLO_DENSE = 0,
+    EXPLO_SPARSE,
+    EXPLO_ROCK,
+    EXPLO_EMP,
+    EXPLO_FIREBALL,
+
+    EXPLO_COUNT
+}; // end of enum ExplosionType
+
+std::string const &ExplosionSpritePath (ExplosionType explosion_type);
+
 // ///////////////////////////////////////////////////////////////////////////
 // Config key enums
 // ///////////////////////////////////////////////////////////////////////////

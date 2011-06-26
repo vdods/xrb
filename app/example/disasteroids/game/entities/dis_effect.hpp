@@ -89,7 +89,7 @@ public:
         m_final_size = final_size;
     }
 
-    inline Float FinalSize () const { return m_final_size; }
+    Float FinalSize () const { return m_final_size; }
 
     virtual void Think (Float time, Float frame_dt);
 

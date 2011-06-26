@@ -18,8 +18,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 #define RESOURCE_GLTEXTURE_DECLARATION(basename) \
     Resource<GlTexture> m_##basename##_png;
@@ -45,6 +44,7 @@ private:
     RESOURCE_GLTEXTURE_DECLARATION(devourment3_small)
     RESOURCE_GLTEXTURE_DECLARATION(explosion1a_small)
     RESOURCE_GLTEXTURE_DECLARATION(explosion_dense_00)
+    RESOURCE_GLTEXTURE_DECLARATION(explosion_rock_00)
     RESOURCE_GLTEXTURE_DECLARATION(fireball)
     RESOURCE_GLTEXTURE_DECLARATION(grenade_small)
     RESOURCE_GLTEXTURE_DECLARATION(grinder0_small)
@@ -84,7 +84,6 @@ private:
     RESOURCE_GLTEXTURE_DECLARATION(starfield00)
     RESOURCE_GLTEXTURE_DECLARATION(tractor_beam)
 }; // end of class ResourceCache
-
 
 } // end of namespace Dis
 

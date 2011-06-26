@@ -145,10 +145,11 @@ void Asteroid::Die (
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),
+        ExplosionSpritePath(EXPLO_ROCK),
         Translation(),
         Velocity(),
-        7.0f * ScaleFactor(),
-        0.2f,
+        3.0f * ScaleFactor(),
+        0.4f,
         time);
 
     // this will store the amount of mass (multiplied by the mineral

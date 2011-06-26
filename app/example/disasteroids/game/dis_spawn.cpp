@@ -439,6 +439,7 @@ Powerup *SpawnPowerup (
 
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *const object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float const damage_amount,
@@ -458,7 +459,7 @@ DamageExplosion *SpawnDamageExplosion (
             owner);
     SpawnDynamicSprite(
         object_layer,
-        "resources/explosion_dense_00.png",//"resources/explosion1a_small.png",
+        sprite_texture_path,
         Z_DEPTH_DAMAGE_EXPLOSION,
         true, // is transparent
         damage_explosion,
@@ -474,6 +475,7 @@ DamageExplosion *SpawnDamageExplosion (
 
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::ObjectLayer *const object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float const final_size,
@@ -483,7 +485,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(final_size, time_to_live, time_at_birth);
     SpawnDynamicSprite(
         object_layer,
-        "resources/explosion_dense_00.png",//"resources/explosion1a_small.png",
+        sprite_texture_path,
         Z_DEPTH_NO_DAMAGE_EXPLOSION,
         true, // is transparent
         no_damage_explosion,

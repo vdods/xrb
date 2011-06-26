@@ -160,6 +160,7 @@ Powerup *SpawnPowerup (
 
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float damage_amount,
@@ -171,6 +172,7 @@ DamageExplosion *SpawnDamageExplosion (
 
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float final_size,

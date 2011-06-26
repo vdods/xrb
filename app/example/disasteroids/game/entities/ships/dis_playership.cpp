@@ -727,9 +727,10 @@ void PlayerShip::Die (
     SetPowerStatus(0.0f);
     SetWeaponStatus(0.0f);
 
-    // spawn a really big explosion
+    // spawn a really big explosion. TODO: death sequence
     SpawnNoDamageExplosion(
         GetObjectLayer(),
+        ExplosionSpritePath(EXPLO_DENSE),
         Translation(),
         Velocity(),
         20.0f * ScaleFactor(),
