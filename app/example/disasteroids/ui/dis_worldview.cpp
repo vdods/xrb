@@ -416,27 +416,33 @@ void WorldView::HandleInput (Key::Code const input)
         case Key::F3:
             if (g_config.Boolean(SYSTEM__DEBUG_MODE))
                 if (m_player_ship != NULL)
-                    m_player_ship->GiveLotsOfMinerals();
+                    m_player_ship->GiveAllItems();
             break;
 
         case Key::F4:
             if (g_config.Boolean(SYSTEM__DEBUG_MODE))
                 if (m_player_ship != NULL)
-                    m_player_ship->IncrementScore(50000);
+                    m_player_ship->GiveLotsOfMinerals();
             break;
 
         case Key::F5:
             if (g_config.Boolean(SYSTEM__DEBUG_MODE))
-                m_sender_begin_next_wave.Signal();
+                if (m_player_ship != NULL)
+                    m_player_ship->IncrementScore(50000);
             break;
 
         case Key::F6:
+            if (g_config.Boolean(SYSTEM__DEBUG_MODE))
+                m_sender_begin_next_wave.Signal();
+            break;
+
+        case Key::F7:
             if (g_config.Boolean(SYSTEM__DEBUG_MODE))
                 if (m_player_ship != NULL)
                     m_player_ship->SetIsInvincible(!m_player_ship->IsInvincible());
             break;
 
-        case Key::F7:
+        case Key::F8:
             if (g_config.Boolean(SYSTEM__DEBUG_MODE))
                 if (m_player_ship != NULL && !m_player_ship->IsDead())
                     m_player_ship->Kill(

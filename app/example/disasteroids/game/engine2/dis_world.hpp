@@ -203,6 +203,7 @@ private:
     Float m_next_asteroid_mineral_content_level_time;
 
     Uint32 m_current_wave_index;
+    Uint32 m_current_wave_index_unwrapped;
     bool m_is_demi_wave;
     // TODO: change into std::vector?
     Uint32 m_enemy_ship_count[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT];

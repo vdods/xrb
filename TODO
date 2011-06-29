@@ -28,11 +28,18 @@ DISASTEROIDS:
 ** polish-related **
 - art: fix Interloper proportions
 - art: add bigger stuff in the background (galaxies, nebulae, etc)
+- art: Shade teleportation sequence - shrink Shade to 0 while at the same
+  time spawning a small shock wave.  then in new location, grow Shade from 0 to normal
+  size, spawninng a small shock wave (that shrinks, so that the appearance is exactly
+  the disappearance, but backwards?)
 - anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 - death sequences for player and Demi
 ** feature-related **
+- make the wave sequences programmable via config file, and specifiable via commandline,
+  so specifying a debug wave sequence is easy.  maybe make a hardcoded wave sequence that
+  will be used for the game.
 - really need a powerup system -- stoke mode, but also random powerups that pop out of
   enemies and asteroids -- invincibility, infinite power, super speed, double damage,
   double firing speed
@@ -46,9 +53,9 @@ DISASTEROIDS:
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
   where they flock in the form of a snake.
-- additional mode for Shade - circling player in coordinated fashion, maybe
-  changing the rate of circling to be harder to hit.  or maybe hide behind asteroids
+- additional mode for Shade - maybe hide behind asteroids
   and make bullets curve around stuff toward the player.
+- have Shade teleport in when it is spawned
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
 - additional mode for Demi - spawn a bunch of Interlopers which then all
@@ -92,7 +99,6 @@ DISASTEROIDS:
 - make Shade circle around the player once it has locked on
 - make Shade respond as a charged particle in a magnetic field if it's
   touching a tractor beam
-- make Shade teleport or fly away if it takes too much damage
 - add advanced behaviors for higher level enemies (like escaping Devourments)
 - when a new high score is posted and you're taken back to the title screen,
   the just-added score should be highlighted or blinking somehow
@@ -150,6 +156,8 @@ BUGS:
   texture atlases, efficiency should be 100%)
 
 TODO:
+- rename Atan(FloatVector2) to Arg
+- rename Asin, Acos, Atan to Arcsin, Arccos, Arctan.
 - change sprite_path and path-based loading into LoadParameter-based loading (e.g. in dis_spawn.cpp)
 - change gltextureatlas sizes to Uint32
 - change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative

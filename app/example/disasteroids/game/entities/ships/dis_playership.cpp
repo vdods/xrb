@@ -354,7 +354,26 @@ void PlayerShip::CreditEnemyKill (EntityType const enemy_ship_type, Uint8 const 
 void PlayerShip::GiveLotsOfMinerals ()
 {
     for (Uint8 mineral_type = 0; mineral_type < MINERAL_COUNT; ++mineral_type)
-        ChangeMineralInventory(mineral_type, 6666.0f);
+        ChangeMineralInventory(mineral_type, 666.0f);
+}
+
+void PlayerShip::GiveAllItems ()
+{
+    for (Uint8 upgrade_level = 0; upgrade_level < UPGRADE_LEVEL_COUNT; ++upgrade_level)
+    {
+        AddItem(new PeaShooter(upgrade_level));
+        AddItem(new Laser(upgrade_level));
+        AddItem(new FlameThrower(upgrade_level));
+        AddItem(new GaussGun(upgrade_level));
+        AddItem(new GrenadeLauncher(upgrade_level));
+        AddItem(new MissileLauncher(upgrade_level));
+        AddItem(new EMPCore(upgrade_level));
+        AddItem(new Tractor(upgrade_level));
+        AddItem(new Engine(upgrade_level));
+        AddItem(new Armor(upgrade_level));
+        AddItem(new Shield(upgrade_level));
+        AddItem(new PowerGenerator(upgrade_level));
+    }
 }
 
 bool PlayerShip::AddItem (Item *item)

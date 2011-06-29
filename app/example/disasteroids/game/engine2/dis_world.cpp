@@ -61,6 +61,20 @@ struct Wave
     bool const m_notify_new_spawns_of_target;
 }; // end of struct World::Wave
 
+// different wave configurations for testing purposes
+#define DIS_WAVE_SEQUENCE_GAME_0          0x000 // normal game configuration
+#define DIS_WAVE_SEQUENCE_TEST_INTERLOPER 0x100
+#define DIS_WAVE_SEQUENCE_TEST_SHADE      0x101
+#define DIS_WAVE_SEQUENCE_TEST_REVULSION  0x102
+#define DIS_WAVE_SEQUENCE_TEST_DEVOURMENT 0x103
+#define DIS_WAVE_SEQUENCE_TEST_DEMI       0x104
+
+// ///////////////////////////////////////////////////////////////////////////
+// define which wave sequence to use
+#define DIS_WAVE_SEQUENCE DIS_WAVE_SEQUENCE_GAME_0
+// ///////////////////////////////////////////////////////////////////////////
+
+#if DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_GAME_0
 static Wave const gs_wave[] =
 {
     { // wave 0
@@ -438,6 +452,272 @@ static Wave const gs_wave[] =
 */
 };
 static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#elif DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_TEST_INTERLOPER
+static Wave const gs_wave[] =
+{
+    {
+        {
+            {  10,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,  10,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,  10,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,  10 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+};
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#elif DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_TEST_SHADE
+static Wave const gs_wave[] =
+{
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {  10,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,  10,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,  10,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,  10 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+};
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#elif DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_TEST_REVULSION
+static Wave const gs_wave[] =
+{
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {  10,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,  10,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,  10,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,  10 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+};
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#elif DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_TEST_DEVOURMENT
+static Wave const gs_wave[] =
+{
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   2,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   2,   0,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   2,   0 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   2 }, // Devourment
+            {   0,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+};
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#elif DIS_WAVE_SEQUENCE == DIS_WAVE_SEQUENCE_TEST_DEMI
+static Wave const gs_wave[] =
+{
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   1,   0,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   1,   0,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   1,   0 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+    {
+        {
+            {   0,   0,   0,   0 }, // Interloper
+            {   0,   0,   0,   0 }, // Shade
+            {   0,   0,   0,   0 }, // Revulsion
+            {   0,   0,   0,   0 }, // Devourment
+            {   0,   0,   0,   1 }  // Demi
+        },
+        0.0f,   // enemy ship threshold
+        0.0f,   // wave intermission duration
+        true    // notify new spawns of target
+    },
+};
+static Uint32 const gs_wave_count = LENGTHOF(gs_wave);
+#endif
 
 Float const World::ms_asteroid_mineral_content_factor[World::MINERAL_CONTENT_LEVEL_COUNT] = { 0.37f, 0.37f, 0.37f, 0.37f };
 
@@ -578,6 +858,7 @@ World::World (
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
 
     m_current_wave_index = 0;
+    m_current_wave_index_unwrapped = 0;
     m_is_demi_wave = false;
     for (Uint8 enemy_ship_index = 0; enemy_ship_index < ET_ENEMY_SHIP_COUNT; ++enemy_ship_index)
         for (Uint8 enemy_level = 0; enemy_level < EnemyShip::ENEMY_LEVEL_COUNT; ++enemy_level)
@@ -790,7 +1071,7 @@ bool World::StateWaveGameplay (StateMachineInput input)
     switch (input)
     {
         case SM_ENTER:
-            if (m_current_wave_index > 0)
+            if (m_current_wave_index_unwrapped > 0)
                 m_player_ship->IncrementWaveCount();
             return true;
 
@@ -805,8 +1086,8 @@ bool World::StateWaveGameplay (StateMachineInput input)
 
         // this is only possible by using the dev cheat command
         case IN_BEGIN_WAVE:
-            if (m_current_wave_index < gs_wave_count-1)
-                ++m_current_wave_index;
+            m_current_wave_index = (m_current_wave_index + 1) % gs_wave_count;
+            ++m_current_wave_index_unwrapped;
             TRANSITION_TO(StateWaveInitialize);
             return true;
 
@@ -833,8 +1114,8 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput input)
         case SM_ENTER:
             ASSERT1(gs_wave[m_current_wave_index].m_wave_intermission_duration >= 0.0f);
             ScheduleStateMachineInput(IN_END_WAVE_INTERMISSION, gs_wave[m_current_wave_index].m_wave_intermission_duration);
-            if (m_current_wave_index < gs_wave_count-1)
-                ++m_current_wave_index;
+            m_current_wave_index = (m_current_wave_index + 1) % gs_wave_count;
+            ++m_current_wave_index_unwrapped;
             return true;
 
         case IN_PROCESS_FRAME:
@@ -843,8 +1124,8 @@ bool World::StateWaveIntermissionGameplay (StateMachineInput input)
 
         // this is only possible by using the dev cheat command
         case IN_BEGIN_WAVE:
-            if (m_current_wave_index < gs_wave_count-1)
-                ++m_current_wave_index;
+            m_current_wave_index = (m_current_wave_index + 1) % gs_wave_count;
+            ++m_current_wave_index_unwrapped;
             TRANSITION_TO(StateWaveInitialize);
             return true;
 

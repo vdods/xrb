@@ -31,16 +31,20 @@ Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15
 Float const Shade::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Shade::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Shade::ms_alarm_distance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 125.0f };
-Float const Shade::ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT] = { 100.0f, 150.0f, 175.0f, 200.0f };
-Float const Shade::ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT] = { 150.0f, 200.0f, 225.0f, 250.0f };
+Float const Shade::ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 125.0f, 150.0f };
+Float const Shade::ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT] = { 130.0f, 150.0f, 175.0f, 200.0f };
 Float const Shade::ms_move_relative_velocity[ENEMY_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
 Float const Shade::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
+Float const Shade::ms_circling_speed[ENEMY_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };//{ 0.0f, 40.0f, 80.0f, 120.0f };
+Float const Shade::ms_in_crosshairs_teleport_time[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 Shade::Shade (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
     m_think_state = THINK_STATE(PickWanderDirection);
+
+    m_in_crosshairs = false;
 
     m_weapon = new SlowBulletGun(EnemyLevel());
     m_weapon->Equip(this);
@@ -211,16 +215,25 @@ void Shade::Stalk (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
+        m_in_crosshairs = false; // reset when leaving this state
         return;
     }
 
-    Float distance_to_target = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
+    FloatVector2 target_position_delta(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
+    Float distance_to_target = target_position_delta.Length();
+
+    ProcessInCrosshairsState(target_position_delta, distance_to_target, time);
+
     ASSERT1(ms_alarm_distance[EnemyLevel()] < ms_stalk_minimum_distance[EnemyLevel()]);
     ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
-    // if we're inside the alarm distance, teleport away
-    if (distance_to_target < ms_alarm_distance[EnemyLevel()])
+    // if we're inside the alarm distance, or if the target has been aiming at us for
+    // long enough, then teleport away
+    if (distance_to_target < ms_alarm_distance[EnemyLevel()]
+        ||
+        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
     {
         m_think_state = THINK_STATE(Teleport);
+        m_in_crosshairs = false; // reset when leaving this state
         return;
     }
     // if we're not within the stalk donut, move to attack range
@@ -228,12 +241,16 @@ void Shade::Stalk (Float const time, Float const frame_dt)
              distance_to_target > ms_stalk_maximum_distance[EnemyLevel()])
     {
         m_think_state = THINK_STATE(MoveToAttackRange);
+        m_in_crosshairs = false; // reset when leaving this state
         return;
     }
 
-    MatchVelocity(m_target->Velocity(), frame_dt);
+    // figure out the direction to circle
+    FloatVector2 circling_direction(PerpendicularVector2(target_position_delta).Normalization());
+    // try to attain the velocity necessary for circling the target
+    MatchVelocity(m_target->Velocity() + ms_circling_speed[EnemyLevel()]*circling_direction, frame_dt);
 
-    AimWeapon(m_target->Translation());
+    AimWeaponAtTarget();
     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
@@ -243,23 +260,31 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
+        m_in_crosshairs = false; // reset when leaving this state
         return;
     }
 
-    FloatVector2 position_delta(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
-    Float distance_to_target = position_delta.Length();
+    FloatVector2 target_position_delta(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
+    Float distance_to_target = target_position_delta.Length();
+
+    ProcessInCrosshairsState(target_position_delta, distance_to_target, time);
+
     ASSERT1(ms_stalk_minimum_distance[EnemyLevel()] < ms_stalk_maximum_distance[EnemyLevel()]);
-    // if we're inside the alarm distance, teleport away
-    if (distance_to_target < ms_alarm_distance[EnemyLevel()])
+    // if we're inside the alarm distance, or if the target has been aiming at us for
+    // long enough, then teleport away
+    if (distance_to_target < ms_alarm_distance[EnemyLevel()]
+        ||
+        (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
     {
         m_think_state = THINK_STATE(Teleport);
+        m_in_crosshairs = false; // reset when leaving this state
         return;
     }
     // check if we want to move away from the target
     else if (distance_to_target <= 0.75f * ms_stalk_minimum_distance[EnemyLevel()] + 0.25f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(Velocity() - m_target->Velocity());
-        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * position_delta.Normalization());
+        FloatVector2 desired_velocity_delta(-ms_move_relative_velocity[EnemyLevel()] * target_position_delta.Normalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * Mass());
         if (thrust_vector.Length() > ms_engine_thrust[EnemyLevel()])
         {
@@ -268,7 +293,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         }
         AccumulateForce(thrust_vector);
 
-        AimWeapon(m_target->Translation());
+        AimWeaponAtTarget();
         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {
@@ -279,7 +304,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     else if (distance_to_target >= 0.25f * ms_stalk_minimum_distance[EnemyLevel()] + 0.75f * ms_stalk_maximum_distance[EnemyLevel()])
     {
         FloatVector2 velocity_delta(Velocity() - m_target->Velocity());
-        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * position_delta.Normalization());
+        FloatVector2 desired_velocity_delta(ms_move_relative_velocity[EnemyLevel()] * target_position_delta.Normalization());
         FloatVector2 thrust_vector((desired_velocity_delta - velocity_delta) * Mass());
         if (thrust_vector.Length() > ms_engine_thrust[EnemyLevel()])
         {
@@ -288,7 +313,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         }
         AccumulateForce(thrust_vector);
 
-        AimWeapon(m_target->Translation());
+        AimWeaponAtTarget();
         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
         {
@@ -299,6 +324,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     else
     {
         m_think_state = THINK_STATE(Stalk);
+        // don't reset in-crosshairs state
     }
 }
 
@@ -342,6 +368,27 @@ void Shade::PauseAfterTeleport (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(MoveToAttackRange);
 }
 
+void Shade::ProcessInCrosshairsState (FloatVector2 const &target_position_delta, Float distance_to_target, Float current_time)
+{
+    // check if we're being aimed at by the target
+    Float target_aim_angle_delta = Math::Atan(-target_position_delta) - m_target->Angle();
+    // basically do some trig with target_position_delta being the hypotenuse of a
+    // right triangle having angle target_aim_angle_delta.  then check if the opposite
+    // side is shorter than the radius of this Shade (to within some tolerance).
+    // we must be in front of the target for this to be valid (i.e. cos > 0)
+    Float aim_distance = Abs(distance_to_target * Math::Sin(target_aim_angle_delta));
+    if (Math::Cos(target_aim_angle_delta) > 0.0f && aim_distance < 2.0f * PhysicalRadius()) // tolerance is plus or minus 100%
+    {
+        // the target is considered to be aiming at us.  if this is a change in condition,
+        // record the current time as the start of the in-crosshairs time
+        if (!m_in_crosshairs)
+            m_in_crosshairs_start_time = current_time;
+        m_in_crosshairs = true;
+    }
+    else
+        m_in_crosshairs = false;
+}
+
 void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
@@ -358,7 +405,7 @@ void Shade::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
     }
 }
 
-void Shade::AimWeapon (FloatVector2 const &target_position)
+void Shade::AimWeaponAtTarget ()
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -367,14 +414,17 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         return;
     }
 
-    if (EnemyLevel() == 0)
+//     if (EnemyLevel() == 0)
+//     {
+//         SetReticleCoordinates(m_target->Translation());
+//         SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     }
+//     else
     {
-        SetReticleCoordinates(target_position);
-    }
-    else
-    {
+        // old style did not work
+        /*
         ASSERT1(m_weapon != NULL);
-        FloatVector2 p(target_position - Translation());
+        FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
         FloatVector2 v(m_target->Velocity() - Velocity());
         FloatVector2 a;
         Float projectile_speed = SlowBulletGun::ms_muzzle_speed[m_weapon->UpgradeLevel()];
@@ -410,15 +460,48 @@ void Shade::AimWeapon (FloatVector2 const &target_position)
         if (T <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
+            fprintf(stderr, "Shade::AimWeaponAtTarget() -- dumb aiming\n");
             SetReticleCoordinates(target_position);
         }
         else
         {
+            fprintf(stderr, "Shade::AimWeaponAtTarget() -- smart aiming: T = %f\n", T);
             FloatVector2 direction_to_aim((p + v*T + 0.5f*a*T*T) / (projectile_speed*T));
-            SetReticleCoordinates(Translation() + direction_to_aim);
+            SetReticleCoordinates(Translation() + direction_to_aim.Normalization());
         }
+        SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+        */
+
+        FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation())); // positional offset
+        FloatVector2 v(m_target->Velocity() - Velocity()); // target's net velocity
+        // TODO: figure out model that accounts for target's acceleration (this is much harder)
+        Float s = SlowBulletGun::ms_muzzle_speed[m_weapon->UpgradeLevel()]; // speed of projectile being fired
+
+        // this formula comes from trying to find the firing angle which minimizes the time
+        // at closest approach to the center of the target.  NOTE: it doesn't seem to work either
+        FloatVector2 u(s*((v|v) + Sqr(s))*p - 2*s*(p|v)*v);
+        Float r = 2*Sqr(s)*(v&p);
+        // we will be calculating Arccos or Arcsin of (r / u.Length()), so if (r / u.Length())
+        // is not in the range [-1, 1], don't bother firing.
+        if (Abs(r) > u.Length())
+        {
+            fprintf(stderr, "Shade::AimWeaponAtTarget(); can't reach target\n");
+            SetWeaponPrimaryInput(0);
+            return;
+        }
+
+        Float firing_angle = Math::Acos(r / u.Length()) - Math::Atan(u);
+
+        if (!Math::IsFinite(firing_angle))
+        {
+            fprintf(stderr, "Shade::AimWeaponAtTarget(); singular calculation\n");
+            SetWeaponPrimaryInput(0);
+            return;
+        }
+
+        SetReticleCoordinates(Translation() + Math::UnitVector(firing_angle));
+        SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     }
-    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
 } // end of namespace Dis

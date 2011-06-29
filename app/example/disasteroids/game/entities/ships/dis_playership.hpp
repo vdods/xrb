@@ -98,6 +98,7 @@ public:
     void IncrementLivesRemaining (Sint32 lives_remaining_delta);
     void CreditEnemyKill (EntityType enemy_ship_type, Uint8 enemy_level);
     void GiveLotsOfMinerals ();
+    void GiveAllItems ();
 
     // attempts to add the item to the ship's inventory.  returns true if
     // the ship took the item (and responsibility for deleting the item),
