@@ -217,7 +217,7 @@ private:
   * "invalid" and references to its data will cause an assert.  IsValid
   * queries the validity of a Resource object.  Resources can be made "valid"
   * simply by assigning to them the value of another Resource object or by
-  * assigning to them the return value of a call to 
+  * assigning to them the return value of a call to
   * @ref Xrb::ResourceLibrary::Load.
   *
   * The Release method is provided to explicitly unload data.  Once this
@@ -355,7 +355,8 @@ public:
         if (m_instance != NULL)
         {
             if (m_instance->DecrementReferenceCount())
-                DeleteAndNullify(m_instance);
+                Delete(m_instance);
+            m_instance = NULL;
         }
     }
 
