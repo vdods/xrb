@@ -15,6 +15,7 @@
 #include "dis_util.hpp"
 #include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_sprite.hpp"
+#include "xrb_math.hpp"
 
 using namespace Xrb;
 
@@ -23,8 +24,8 @@ namespace Dis
 
 void Effect::Think (Float const time, Float const frame_dt)
 {
-    OwnerObject()->ColorMask() = m_base_color_mask;
-    OwnerObject()->ColorMask()[Dim::A] *= 1.0f - LifetimeRatio(time);
+    Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
+    OwnerObject()->ColorMask() = Math::LinearlyInterpolate(m_initial_color_mask, m_final_color_mask, 0.0f, 1.0f, interpolation_parameter);
 
     if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
         ScheduleForDeletion(0.0f);
@@ -36,25 +37,9 @@ void Effect::Think (Float const time, Float const frame_dt)
 
 void Explosion::Think (Float const time, Float const frame_dt)
 {
-    switch (m_scale_model)
-    {
-        case SM_SQRT:
-            SetScaleFactor((m_final_size - m_initial_size) * Math::Sqrt(LifetimeRatio(time)) + m_initial_size + 0.1f);
-            break;
-
-        case SM_LINEAR:
-            SetScaleFactor((m_final_size - m_initial_size) * LifetimeRatio(time) + m_initial_size + 0.1f);
-            break;
-
-        case SM_SQR:
-            SetScaleFactor((m_final_size - m_initial_size) * Sqr(LifetimeRatio(time)) + m_initial_size + 0.1f);
-            break;
-
-        default:
-            ASSERT1(false && "invalid ScaleModel");
-            break;
-    }
-
+    ASSERT1(m_scale_power > 0.0f);
+    Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
+    SetScaleFactor((m_final_size - m_initial_size) * Math::Pow(interpolation_parameter, m_scale_power) + m_initial_size + 0.1f);
     Effect::Think(time, frame_dt);
 }
 

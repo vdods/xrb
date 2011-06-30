@@ -35,6 +35,7 @@ public:
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_circling_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_in_crosshairs_teleport_time[ENEMY_LEVEL_COUNT];
+    static Float const ms_teleportation_duration[ENEMY_LEVEL_COUNT];
 
     Shade (Uint8 enemy_level);
     virtual ~Shade ();
@@ -74,7 +75,7 @@ private:
     void Stalk (Float time, Float frame_dt);
     void MoveToAttackRange (Float time, Float frame_dt);
     void Teleport (Float time, Float frame_dt);
-    void PauseAfterTeleport (Float time, Float frame_dt);
+    void RecoverAfterTeleporting (Float time, Float frame_dt);
 
     void ProcessInCrosshairsState (FloatVector2 const &target_position_delta, Float distance_to_target, Float current_time);
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt);
@@ -83,6 +84,8 @@ private:
     typedef void (Shade::*ThinkState)(Float time, Float frame_dt);
 
     ThinkState m_think_state;
+    ThinkState m_saved_state;
+    Float m_saved_scale_factor;
     bool m_in_crosshairs;
     Float m_in_crosshairs_start_time;
     Float m_next_whatever_time;

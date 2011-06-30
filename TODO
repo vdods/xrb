@@ -28,10 +28,6 @@ DISASTEROIDS:
 ** polish-related **
 - art: fix Interloper proportions
 - art: add bigger stuff in the background (galaxies, nebulae, etc)
-- art: Shade teleportation sequence - shrink Shade to 0 while at the same
-  time spawning a small shock wave.  then in new location, grow Shade from 0 to normal
-  size, spawninng a small shock wave (that shrinks, so that the appearance is exactly
-  the disappearance, but backwards?)
 - anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
@@ -99,7 +95,6 @@ DISASTEROIDS:
   mainly of the pea-shooter shooting a full charge and getting canceled
   out by some puny other ballistic).  it should get weakened slightly, and
   get correspondingly smaller.
-- make Shade circle around the player once it has locked on
 - make Shade respond as a charged particle in a magnetic field if it's
   touching a tractor beam
 - add advanced behaviors for higher level enemies (like escaping Devourments)
@@ -157,8 +152,11 @@ DISASTEROIDS:
 BUGS:
 - texture atlas packing efficiency printout seems wrong (test case: use separate
   texture atlases, efficiency should be 100%)
+- screenshots add an alpha channel -- remove alpha channel and make PNG files without alpha.
+  this may require adding support for RGB textures.
 
 TODO:
+- change Vector's | operator into *, because this will allow Sqr(vector).  Change & to % (?)
 - change WidgetBackground use to use Resource<> instead of raw pointers, so that deletion
   doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
   use config files for WidgetSkins.

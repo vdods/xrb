@@ -28,6 +28,7 @@ public:
 
     static Color const ms_opaque_white;
     static Color const ms_opaque_black;
+    static Color const ms_transparent_white;
     static Color const ms_transparent_black;
 
     static Color const &ms_identity_color_mask;

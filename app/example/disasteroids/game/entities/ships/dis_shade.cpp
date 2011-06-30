@@ -10,11 +10,14 @@
 
 #include "dis_shade.hpp"
 
+#include "dis_effect.hpp"
 #include "dis_engine.hpp"
 #include "dis_powergenerator.hpp"
+#include "dis_spawn.hpp"
 #include "dis_weapon.hpp"
 #include "xrb_engine2_circle_physicshandler.hpp"
 #include "xrb_engine2_objectlayer.hpp"
+#include "xrb_engine2_sprite.hpp"
 #include "xrb_polynomial.hpp"
 
 using namespace Xrb;
@@ -35,14 +38,16 @@ Float const Shade::ms_stalk_minimum_distance[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0
 Float const Shade::ms_stalk_maximum_distance[ENEMY_LEVEL_COUNT] = { 130.0f, 150.0f, 175.0f, 200.0f };
 Float const Shade::ms_move_relative_velocity[ENEMY_LEVEL_COUNT] = { 50.0f, 60.0f, 70.0f, 80.0f };
 Float const Shade::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 80.0f, 90.0f, 100.0f };
-Float const Shade::ms_circling_speed[ENEMY_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };//{ 0.0f, 40.0f, 80.0f, 120.0f };
+Float const Shade::ms_circling_speed[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f, 120.0f };
 Float const Shade::ms_in_crosshairs_teleport_time[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
+Float const Shade::ms_teleportation_duration[ENEMY_LEVEL_COUNT] = { 0.25f, 0.25f, 0.25f, 0.25f };
 
 Shade::Shade (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
     m_think_state = THINK_STATE(PickWanderDirection);
+    m_saved_state = NULL;
 
     m_in_crosshairs = false;
 
@@ -99,23 +104,17 @@ void Shade::Think (Float const time, Float const frame_dt)
 FloatVector2 Shade::MuzzleLocation (Weapon const *weapon) const
 {
     ASSERT1(weapon != NULL);
-
-    if (!m_target.IsValid())
-        return Ship::MuzzleLocation(weapon);
-
-    FloatVector2 target_offset(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
-    return Translation() + ScaleFactor() * target_offset.Normalization();
+    FloatVector2 reticle_direction(GetObjectLayer()->AdjustedDifference(ReticleCoordinates(), Translation()));
+    reticle_direction.Normalize();
+    return Translation() + ScaleFactor() * reticle_direction;
 }
 
 FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
 {
     ASSERT1(weapon != NULL);
-
-    if (!m_target.IsValid())
-        return Ship::MuzzleDirection(weapon);
-
-    FloatVector2 target_offset(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
-    return target_offset.Normalization();
+    FloatVector2 reticle_direction(GetObjectLayer()->AdjustedDifference(ReticleCoordinates(), Translation()));
+    reticle_direction.Normalize();
+    return reticle_direction;
 }
 
 void Shade::SetTarget (Mortal *const target)
@@ -195,9 +194,9 @@ void Shade::Wander (Float const time, Float const frame_dt)
         FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | Velocity()) > -(perpendicular_velocity | Velocity()))
-            m_wander_angle = Math::Atan(perpendicular_velocity);
+            m_wander_angle = Math::Arg(perpendicular_velocity);
         else
-            m_wander_angle = Math::Atan(-perpendicular_velocity);
+            m_wander_angle = Math::Arg(-perpendicular_velocity);
         m_next_whatever_time = time + 6.0f;
     }
 
@@ -232,6 +231,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
         ||
         (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
     {
+        m_saved_state = THINK_STATE(Stalk); // save the current state
         m_think_state = THINK_STATE(Teleport);
         m_in_crosshairs = false; // reset when leaving this state
         return;
@@ -251,7 +251,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
     MatchVelocity(m_target->Velocity() + ms_circling_speed[EnemyLevel()]*circling_direction, frame_dt);
 
     AimWeaponAtTarget();
-    SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
 void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
@@ -276,6 +276,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         ||
         (m_in_crosshairs && time - m_in_crosshairs_start_time > ms_in_crosshairs_teleport_time[EnemyLevel()]))
     {
+        m_saved_state = THINK_STATE(MoveToAttackRange); // save the current state
         m_think_state = THINK_STATE(Teleport);
         m_in_crosshairs = false; // reset when leaving this state
         return;
@@ -294,11 +295,11 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         AccumulateForce(thrust_vector);
 
         AimWeaponAtTarget();
-        if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
-            distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
-        {
-            SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
-        }
+//         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
+//             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
+//         {
+//             SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//         }
     }
     // check if we want to move away from the target
     else if (distance_to_target >= 0.25f * ms_stalk_minimum_distance[EnemyLevel()] + 0.75f * ms_stalk_maximum_distance[EnemyLevel()])
@@ -314,11 +315,11 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
         AccumulateForce(thrust_vector);
 
         AimWeaponAtTarget();
-        if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
-            distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
-        {
-            SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
-        }
+//         if (distance_to_target >= ms_stalk_minimum_distance[EnemyLevel()] &&
+//             distance_to_target <= ms_stalk_maximum_distance[EnemyLevel()])
+//         {
+//             SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
+//         }
     }
     // otherwise we're along the ring of the attack donut, so transition to Stalk.
     else
@@ -331,47 +332,139 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
 void Shade::Teleport (Float const time, Float const frame_dt)
 {
     // make a few attempts to find a nearby place to teleport to.
-    Uint32 placement_attempt_count = 0;
-    static Uint32 placement_attempt_max = 10;
     FloatVector2 teleport_destination;
-    do
     {
-        // if we've tried to many times without success, just return, and
-        // we can try again in the next call of this function, next frame.
-        if (placement_attempt_count == placement_attempt_max)
-            return;
-        ++placement_attempt_count;
+        Uint32 placement_attempt_count = 0;
+        static Uint32 placement_attempt_max = 10;
+        bool overlap;
+        do
+        {
+            // if we've tried to many times without success, just return, and
+            // we can try again in the next call of this function, next frame.
+            if (placement_attempt_count == placement_attempt_max)
+                return;
+            ++placement_attempt_count;
 
-        teleport_destination =
-            ms_stalk_maximum_distance[EnemyLevel()] *
-            Math::UnitVector(Math::RandomAngle());
+            FloatVector2 teleport_range_center(Translation());
+            if (m_target.IsValid())
+                teleport_range_center = m_target->Translation();
+            teleport_destination = ms_stalk_maximum_distance[EnemyLevel()] * Math::UnitVector(Math::RandomAngle()) + teleport_range_center;
+            overlap =
+                GetPhysicsHandler()->
+                    DoesAreaOverlapAnyEntityInObjectLayer(
+                        GetObjectLayer(),
+                        teleport_destination,
+                        1.5f * VisibleRadius(),
+                        false);
+        }
+        while (overlap);
     }
-    while (GetPhysicsHandler()->
-            DoesAreaOverlapAnyEntityInObjectLayer(
-                GetObjectLayer(),
-                teleport_destination,
-                1.5f * VisibleRadius(),
-                false));
 
-    // TODO: spawn some teleport effect at the old location and at the new
+    ASSERT1(ms_teleportation_duration[EnemyLevel()] > 0.0f);
+
+    // effects at the current location
+    {
+        // spawn a teleportation effect (the shade will appear to shrink to a point and disappear)
+        {
+            ASSERT1(OwnerObject() != NULL);
+            ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
+            std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
+            Explosion *shrinking_effect =
+                SpawnExplosion(
+                    GetObjectLayer(),
+                    sprite_path,
+                    Translation(),
+                    Velocity(),
+                    Angle(),
+                    ScaleFactor(),
+                    0.1f, // 0 isn't allowed
+                    0.25f,
+                    time,
+                    ET_EXPLOSION,
+                    Engine2::Circle::CT_SOLID_COLLISION);
+            shrinking_effect->SetMass(Mass());
+            shrinking_effect->SetScalePower(4.0f);
+            shrinking_effect->FinalColorMask() = Color::ms_opaque_white;
+        }
+
+        // spawn a fast shock wave, something like entering hyperspace
+        {
+            NoDamageExplosion *shockwave =
+                SpawnNoDamageExplosion(
+                    GetObjectLayer(),
+                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    Translation(),
+                    Velocity(),
+                    ScaleFactor(),        // initial_size
+                    4.0f * ScaleFactor(), // final_size
+                    ms_teleportation_duration[EnemyLevel()],
+                    time);
+            shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
+            shockwave->FinalColorMask() = Color(0.3f, 0.0f, 0.45f, 0.0f);
+            shockwave->SetScalePower(2.0f); // squared scale interpolation
+        }
+    }
+
+    FloatVector2 target_velocity(AmbientVelocity(100.0f));
+
+    // effects at the target location
+    {
+        // spawn a fast shock wave, something like leaving hyperspace
+        // this should be exactly the reverse of the above one.
+        {
+            NoDamageExplosion *shockwave =
+                SpawnNoDamageExplosion(
+                    GetObjectLayer(),
+                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    teleport_destination,
+                    target_velocity,
+                    ScaleFactor(),        // initial_size
+                    4.0f * ScaleFactor(), // final_size
+                    ms_teleportation_duration[EnemyLevel()],
+                    time);
+            shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
+            shockwave->FinalColorMask() = Color(0.3f, 0.0f, 0.45f, 0.0f);
+            shockwave->SetScalePower(2.0f); // squared scale interpolation
+            shockwave->RunInReverse(true); // run this in reverse
+        }
+    }
+
+    m_saved_scale_factor = ScaleFactor(); // save the scale factor to recover later
     SetTranslation(teleport_destination);
-    SetVelocity(AmbientVelocity(100.0f));
+    SetVelocity(target_velocity);
+    SetScaleFactor(0.1f); // shrink to a point to grow to normal size at teleport destination.
 
     // pause for a 1/2 second
-    m_think_state = THINK_STATE(PauseAfterTeleport);
-    m_next_whatever_time = time + 0.5f;
+    m_think_state = THINK_STATE(RecoverAfterTeleporting);
+    m_next_whatever_time = time + ms_teleportation_duration[EnemyLevel()];
 }
 
-void Shade::PauseAfterTeleport (Float const time, Float const frame_dt)
+void Shade::RecoverAfterTeleporting (Float const time, Float const frame_dt)
 {
     if (time >= m_next_whatever_time)
-        m_think_state = THINK_STATE(MoveToAttackRange);
+    {
+        m_think_state = m_saved_state;
+        m_saved_state = NULL;
+        SetScaleFactor(m_saved_scale_factor);
+    }
+    else
+    {
+        // this should duplicate the interpolation of Explosion -- note that it is reversed
+        Float scale_power = 4.0f; // same as shrinking effect in Shade::Teleport
+        Float initial_size = 0.1f;
+        Float lifetime_ratio = 1.0f - (m_next_whatever_time - time) / ms_teleportation_duration[EnemyLevel()];
+        ASSERT1(lifetime_ratio >= 0.0f);
+        ASSERT1(lifetime_ratio <= 1.0f);
+        bool run_in_reverse = true;
+        Float interpolation_parameter = run_in_reverse ? (1.0f - lifetime_ratio) : lifetime_ratio;
+        SetScaleFactor((initial_size - m_saved_scale_factor) * Math::Pow(interpolation_parameter, scale_power) + m_saved_scale_factor + 0.1f);
+    }
 }
 
 void Shade::ProcessInCrosshairsState (FloatVector2 const &target_position_delta, Float distance_to_target, Float current_time)
 {
     // check if we're being aimed at by the target
-    Float target_aim_angle_delta = Math::Atan(-target_position_delta) - m_target->Angle();
+    Float target_aim_angle_delta = Math::Arg(-target_position_delta) - m_target->Angle();
     // basically do some trig with target_position_delta being the hypotenuse of a
     // right triangle having angle target_aim_angle_delta.  then check if the opposite
     // side is shorter than the radius of this Shade (to within some tolerance).
@@ -414,15 +507,7 @@ void Shade::AimWeaponAtTarget ()
         return;
     }
 
-//     if (EnemyLevel() == 0)
-//     {
-//         SetReticleCoordinates(m_target->Translation());
-//         SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
-//     }
-//     else
     {
-        // old style did not work
-        /*
         ASSERT1(m_weapon != NULL);
         FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation()));
         FloatVector2 v(m_target->Velocity() - Velocity());
@@ -435,18 +520,18 @@ void Shade::AimWeaponAtTarget ()
             a = m_target->Force() / m_target->Mass();
 
         Polynomial poly;
-        poly.Set(4, 0.25f * (a | a));
-        poly.Set(3, (a | v));
-        poly.Set(2, (a | p) + (v | v) - projectile_speed*projectile_speed);
-        poly.Set(1, 2.0f * (p | v));
-        poly.Set(0, (p | p));
+        poly.Set(4, 0.25f * (a|a));
+        poly.Set(3, (a|v));
+        poly.Set(2, (a|p) + (v|v) - projectile_speed*projectile_speed);
+        poly.Set(1, 2.0f * (p|v));
+        poly.Set(0, (p|p));
 
         Polynomial::SolutionSet solution_set;
         poly.Solve(&solution_set, 0.001f);
 
         Float T = -1.0f;
         for (Polynomial::SolutionSet::iterator it = solution_set.begin(),
-                                             it_end = solution_set.end();
+                                               it_end = solution_set.end();
              it != it_end;
              ++it)
         {
@@ -460,46 +545,13 @@ void Shade::AimWeaponAtTarget ()
         if (T <= 0.0f)
         {
             // if no acceptable solution, just do dumb approach
-            fprintf(stderr, "Shade::AimWeaponAtTarget() -- dumb aiming\n");
-            SetReticleCoordinates(target_position);
+            SetReticleCoordinates(m_target->Translation());
         }
         else
         {
-            fprintf(stderr, "Shade::AimWeaponAtTarget() -- smart aiming: T = %f\n", T);
-            FloatVector2 direction_to_aim((p + v*T + 0.5f*a*T*T) / (projectile_speed*T));
+            FloatVector2 direction_to_aim((p + v*T + 0.5f*a*Sqr(T)) / (projectile_speed*T));
             SetReticleCoordinates(Translation() + direction_to_aim.Normalization());
         }
-        SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
-        */
-
-        FloatVector2 p(GetObjectLayer()->AdjustedDifference(m_target->Translation(), Translation())); // positional offset
-        FloatVector2 v(m_target->Velocity() - Velocity()); // target's net velocity
-        // TODO: figure out model that accounts for target's acceleration (this is much harder)
-        Float s = SlowBulletGun::ms_muzzle_speed[m_weapon->UpgradeLevel()]; // speed of projectile being fired
-
-        // this formula comes from trying to find the firing angle which minimizes the time
-        // at closest approach to the center of the target.  NOTE: it doesn't seem to work either
-        FloatVector2 u(s*((v|v) + Sqr(s))*p - 2*s*(p|v)*v);
-        Float r = 2*Sqr(s)*(v&p);
-        // we will be calculating Arccos or Arcsin of (r / u.Length()), so if (r / u.Length())
-        // is not in the range [-1, 1], don't bother firing.
-        if (Abs(r) > u.Length())
-        {
-            fprintf(stderr, "Shade::AimWeaponAtTarget(); can't reach target\n");
-            SetWeaponPrimaryInput(0);
-            return;
-        }
-
-        Float firing_angle = Math::Acos(r / u.Length()) - Math::Atan(u);
-
-        if (!Math::IsFinite(firing_angle))
-        {
-            fprintf(stderr, "Shade::AimWeaponAtTarget(); singular calculation\n");
-            SetWeaponPrimaryInput(0);
-            return;
-        }
-
-        SetReticleCoordinates(Translation() + Math::UnitVector(firing_angle));
         SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
     }
 }

@@ -64,6 +64,7 @@ enum EntityType
     ET_FIREBALL,
 
     // explosions
+    ET_EXPLOSION,
     ET_DAMAGE_EXPLOSION,
     ET_NO_DAMAGE_EXPLOSION,
     ET_EMP_EXPLOSION,

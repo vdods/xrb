@@ -40,6 +40,7 @@ class Devourment;
 class EnemyShip;
 class Entity;
 class EMPExplosion;
+class Explosion;
 class Fireball;
 class GaussGunTrail;
 class Grenade;
@@ -158,6 +159,21 @@ Powerup *SpawnPowerup (
     std::string const &sprite_texture_path,
     Item *item);
 
+// Explosion is pretty generic and is used for non-explosion type things
+// such as the Shade teleportation sequence
+Explosion *SpawnExplosion (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    Float angle,
+    Float initial_size,
+    Float final_size,
+    Float time_to_live,
+    Float time_at_birth,
+    EntityType entity_type,
+    Engine2::Circle::CollisionType collision_type);
+
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,
@@ -171,6 +187,8 @@ DamageExplosion *SpawnDamageExplosion (
     Float time_at_birth,
     EntityReference<Entity> const &owner);
 
+// NoDamageExplosion is used for exactly that, but also the ship death sequence
+// and part of the Shade teleportation sequence.
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,

@@ -437,6 +437,43 @@ Powerup *SpawnPowerup (
     return powerup;
 }
 
+Explosion *SpawnExplosion (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
+    FloatVector2 const &translation,
+    FloatVector2 const &velocity,
+    Float angle,
+    Float initial_size,
+    Float final_size,
+    Float time_to_live,
+    Float time_at_birth,
+    EntityType entity_type,
+    Engine2::Circle::CollisionType collision_type)
+{
+    Explosion *explosion =
+        new Explosion(
+            initial_size,
+            final_size,
+            time_to_live,
+            time_at_birth,
+            entity_type,
+            collision_type);
+    SpawnDynamicSprite(
+        object_layer,
+        sprite_texture_path,
+        Z_DEPTH_SOLID,
+        false, // is transparent
+        explosion,
+        translation,
+        initial_size,
+        angle,
+        1.0f,
+        velocity,
+        0.0f,
+        0.0f);
+    return explosion;
+}
+
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
     std::string const &sprite_texture_path,

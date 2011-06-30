@@ -29,12 +29,14 @@ public:
         Engine2::Circle::CollisionType collision_type)
         :
         Entity(entity_type, collision_type),
-        m_base_color_mask(Color::ms_opaque_white)
+        m_time_to_live(time_to_live),
+        m_time_at_birth(time_at_birth),
+        m_initial_color_mask(Color::ms_opaque_white),
+        m_final_color_mask(Color::ms_transparent_white),
+        m_run_in_reverse(false)
     {
-        ASSERT1(time_to_live != 0.0f);
-        ASSERT1(time_at_birth >= 0.0f);
-        m_time_to_live = time_to_live;
-        m_time_at_birth = time_at_birth;
+        ASSERT1(m_time_to_live != 0.0f);
+        ASSERT1(m_time_at_birth >= 0.0f);
     }
     virtual ~Effect () { }
 
@@ -48,8 +50,14 @@ public:
         else
             return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
     }
-    Color const &BaseColorMask () const { return m_base_color_mask; }
-    Color &BaseColorMask () { return m_base_color_mask; }
+    Color const &InitialColorMask () const { return m_initial_color_mask; }
+    Color &InitialColorMask () { return m_initial_color_mask; }
+    Color const &FinalColorMask () const { return m_final_color_mask; }
+    Color &FinalColorMask () { return m_final_color_mask; }
+
+    bool RunInReverse () const { return m_run_in_reverse; }
+    void RunInReverse (bool run_in_reverse) { m_run_in_reverse = run_in_reverse; }
+
     virtual bool IsEffect () const { return true; }
 
     virtual void Think (Float time, Float frame_dt);
@@ -61,9 +69,12 @@ private:
     Float m_time_to_live;
     // gives a reference time which can be used in calculations in Think()
     Float m_time_at_birth;
-    // the baseline color mask (to whose alpha channel the value
-    // 1.0f - LifetimeRatio(time) will be applied).  The default is opaque white.
-    Color m_base_color_mask;
+    // the initial color mask.  The default is opaque white.
+    Color m_initial_color_mask;
+    // the final color mask.  The default is transparent white
+    Color m_final_color_mask;
+    // if true, run the interpolation in reverse (this applies to subclasses as well)
+    bool m_run_in_reverse;
 }; // end of class DamageEffect
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -73,15 +84,6 @@ private:
 class Explosion : public Effect
 {
 public:
-
-    enum ScaleModel
-    {
-        SM_SQRT = 0,
-        SM_LINEAR,
-        SM_SQR,
-
-        SM_COUNT
-    }; // end of enum Explosion::ScaleModel
 
     Explosion (
         Float initial_size,
@@ -97,14 +99,16 @@ public:
         ASSERT1(final_size >= 0.0f);
         m_initial_size = initial_size;
         m_final_size = final_size;
-        m_scale_model = SM_SQRT; // default is sqrt which models explosions well
+        m_scale_power = 0.5f; // default is 1/2 (i.e. sqrt) which models explosions well
     }
 
     Float InitialSize () const { return m_initial_size; }
     Float FinalSize () const { return m_final_size; }
 
-    ScaleModel GetScaleModel () const { return m_scale_model; }
-    void SetScaleModel (ScaleModel scale_model) { ASSERT1(scale_model < SM_COUNT && "invalid ScaleModel"); m_scale_model = scale_model; }
+    // the scale power is the power that the interpolation parameter is taken to
+    // to control the interpolation between initial_size and final_size.
+    Float GetScalePower () const { return m_scale_power; }
+    void SetScalePower (Float scale_power) { ASSERT1(scale_power > 0.0f && "scale_power must be positive"); m_scale_power = scale_power; }
 
     virtual void Think (Float time, Float frame_dt);
 
@@ -112,7 +116,7 @@ private:
 
     Float m_initial_size;
     Float m_final_size;
-    ScaleModel m_scale_model;
+    Float m_scale_power;
 }; // end of class Explosion
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -198,7 +202,7 @@ public:
     {
         ASSERT1(m_disable_time_factor > 1.0f);
         // i just blue myself.
-        BaseColorMask() = Color(0.0f, 0.0f, 1.0f, 1.0f);
+        InitialColorMask() = Color(0.0f, 0.0f, 1.0f, 1.0f);
     }
 
     virtual void Collide (
