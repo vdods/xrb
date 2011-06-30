@@ -169,7 +169,7 @@ void Asteroid::Die (
         FloatVector2 kill_offset(GetObjectLayer()->AdjustedDifference(kill_location, Translation()));
         if (kill_offset.IsZero())
             kill_offset = FloatVector2(1.0f, 0.0f);
-        Float seed_angle = Math::Atan(kill_offset);
+        Float seed_angle = Math::Arg(kill_offset);
 
         // let the world more asteroids are being created.  the added asteroid
         // mass is exactly equal to the destroyed asteroid's mass.

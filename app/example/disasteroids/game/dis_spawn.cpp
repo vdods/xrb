@@ -191,7 +191,7 @@ Ballistic *SpawnSmartBallistic (
             ballistic,
             translation,
             scale_factor,
-            Math::Atan(velocity),
+            Math::Arg(velocity),
             mass,
             velocity,
             0.0f,
@@ -230,7 +230,7 @@ Ballistic *SpawnDumbBallistic (
         ballistic,
         translation,
         scale_factor,
-        Math::Atan(velocity),
+        Math::Arg(velocity),
         mass,
         velocity,
         0.0f,
@@ -268,7 +268,7 @@ Grenade *SpawnGrenade (
         grenade,
         translation,
         scale_factor,
-        Math::Atan(velocity),
+        Math::Arg(velocity),
         Grenade::ms_default_mass,
         velocity,
         Math::RandomFloat(-30.0f, 30.0f),
@@ -610,7 +610,7 @@ GaussGunTrail *SpawnGaussGunTrail (
     sprite->SetIsTransparent(true);
     sprite->SetTranslation(trail_center);
     sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.Length(), 0.5f * trail_width));
-    sprite->SetAngle(Math::Atan(trail_vector));
+    sprite->SetAngle(Math::Arg(trail_vector));
 
     GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);
     gauss_gun_trail->SetVelocity(trail_velocity);
@@ -939,7 +939,7 @@ EnemyShip *SpawnEnemyShip (
     if (velocity.IsZero())
         angle = Math::RandomAngle();
     else
-        angle = Math::Atan(velocity);
+        angle = Math::Arg(velocity);
     enemy_ship->SetAngle(angle);
 
     return enemy_ship;

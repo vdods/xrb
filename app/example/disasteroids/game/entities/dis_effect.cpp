@@ -257,7 +257,7 @@ void LaserBeam::SnapToShip (
     FloatVector2 beam_vector(hit_location - muzzle_location);
     SetTranslation(0.5f * (muzzle_location + hit_location));
     SetScaleFactors(FloatVector2(0.5f * beam_vector.Length(), 0.5f * beam_width));
-    SetAngle(Math::Atan(beam_vector));
+    SetAngle(Math::Arg(beam_vector));
 }
 
 // ///////////////////////////////////////////////////////////////////////////

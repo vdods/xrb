@@ -345,7 +345,7 @@ void Missile::Think (
     {
         FloatVector2 velocity_delta(Velocity() - m_initial_velocity);
         if (!velocity_delta.IsZero())
-            SetAngle(Math::Atan(velocity_delta));
+            SetAngle(Math::Arg(velocity_delta));
     }
 
     // if the time to live has expired, detonate.
@@ -607,7 +607,7 @@ void GuidedMissile::AimAt (FloatVector2 const &position)
 {
     FloatVector2 delta(position - Translation());
     if (delta.LengthSquared() >= 0.001f)
-        SetAngle(Math::Atan(delta));
+        SetAngle(Math::Arg(delta));
 }
 
 // ///////////////////////////////////////////////////////////////////////////

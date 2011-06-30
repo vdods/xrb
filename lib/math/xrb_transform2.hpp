@@ -242,9 +242,9 @@ public:
         Float U = static_cast<T>(0);
         Float V = static_cast<T>(0);
         if (r != static_cast<T>(0))
-            U = Math::Atan2(matrix[Matrix2<T>::C], matrix[Matrix2<T>::A]);
+            U = Math::Arctan2(matrix[Matrix2<T>::C], matrix[Matrix2<T>::A]);
         if (s != static_cast<T>(0))
-            V = Math::Atan2(-matrix[Matrix2<T>::B], matrix[Matrix2<T>::D]);
+            V = Math::Arctan2(-matrix[Matrix2<T>::B], matrix[Matrix2<T>::D]);
 
         SetPostTranslate(true);
         SetTranslation(Vector<T,2>(matrix[Matrix2<T>::X], matrix[Matrix2<T>::Y]));

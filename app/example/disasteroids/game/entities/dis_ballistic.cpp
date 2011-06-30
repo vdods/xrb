@@ -37,7 +37,7 @@ void Ballistic::Think (Float const time, Float const frame_dt)
             {
                 FloatVector2 velocity_delta(Velocity() - m_initial_velocity);
                 if (!velocity_delta.IsZero())
-                    SetAngle(Math::Atan(velocity_delta));
+                    SetAngle(Math::Arg(velocity_delta));
             }
 
             // peform a line trace for frame_dt/2 time's worth

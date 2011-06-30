@@ -85,7 +85,7 @@ namespace Math
     }
     /** @brief Returns the arcsine of the given value.
       */
-    inline Float Asin (Float value)
+    inline Float Arcsin (Float value)
     {
         return Degrees(asinf(value));
     }
@@ -97,7 +97,7 @@ namespace Math
     }
     /** @brief Returns the arccosine of the given value.
       */
-    inline Float Acos (Float value)
+    inline Float Arccos (Float value)
     {
         return Degrees(acosf(value));
     }
@@ -109,23 +109,23 @@ namespace Math
     }
     /** @brief Returns the arctangent of the given angle.
       */
-    inline Float Atan (Float value)
+    inline Float Arctan (Float value)
     {
         return Degrees(atanf(value));
-    }
-    /** @brief Returns the angle that the given vector is making
-      *        with the positive X axis.
-      */
-    inline Float Atan (FloatVector2 const &vector)
-    {
-        return Degrees(atan2f(vector[Dim::Y], vector[Dim::X]));
     }
     /** This is used when @c x may be zero.
       * @brief Returns the arctangent of the ratio given by @c y/x.
       */
-    inline Float Atan2 (Float y, Float x)
+    inline Float Arctan2 (Float y, Float x)
     {
         return Degrees(atan2f(y, x));
+    }
+    /** @brief Returns the angle that the given vector is making
+      *        with the positive X axis.
+      */
+    inline Float Arg (FloatVector2 const &vector)
+    {
+        return Arctan2(vector[Dim::Y], vector[Dim::X]);
     }
     /** @brief Returns the unit vector which makes the given angle
       *        with the positive X axis.

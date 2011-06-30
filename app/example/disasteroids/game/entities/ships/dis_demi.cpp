@@ -451,7 +451,7 @@ FloatVector2 Demi::MuzzleDirection (Weapon const *weapon) const
         if (reticle_offset.Length() < 0.01f)
             return Math::UnitVector(Angle());
 
-        Float reticle_angle = Math::CanonicalAngle(Math::Atan(reticle_offset) - Angle());
+        Float reticle_angle = Math::CanonicalAngle(Math::Arg(reticle_offset) - Angle());
         if (reticle_angle < -ms_weapon_fov[EnemyLevel()])
             reticle_angle = -ms_weapon_fov[EnemyLevel()];
         else if (reticle_angle > ms_weapon_fov[EnemyLevel()])

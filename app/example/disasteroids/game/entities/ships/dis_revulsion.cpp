@@ -216,9 +216,9 @@ void Revulsion::Wander (Float const time, Float const frame_dt)
         FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | Velocity()) > -(perpendicular_velocity | Velocity()))
-            m_wander_angle = Math::Atan(perpendicular_velocity);
+            m_wander_angle = Math::Arg(perpendicular_velocity);
         else
-            m_wander_angle = Math::Atan(-perpendicular_velocity);
+            m_wander_angle = Math::Arg(-perpendicular_velocity);
         m_next_wander_time = time + 6.0f;
     }
 
@@ -430,7 +430,7 @@ Float Revulsion::TargetAimAngle () const
 {
     ASSERT1(m_target.IsValid());
     FloatVector2 target_delta(GetObjectLayer()->AdjustedDifference(Translation(), m_target->Translation()));
-    return Math::Atan(target_delta) - Math::CanonicalAngle(m_target->Angle());
+    return Math::Arg(target_delta) - Math::CanonicalAngle(m_target->Angle());
 }
 
 void Revulsion::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)

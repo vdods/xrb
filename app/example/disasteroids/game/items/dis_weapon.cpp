@@ -863,7 +863,7 @@ bool MissileLauncher::Activate (
             OwnerShip()->GetObjectLayer(),
             MuzzleLocation() + missile_scale_factor * MuzzleDirection(),
             missile_scale_factor,
-            Math::Atan(MuzzleDirection()),
+            Math::Arg(MuzzleDirection()),
             ms_primary_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
             this,
             ms_primary_missile_time_to_live[UpgradeLevel()],

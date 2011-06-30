@@ -48,7 +48,7 @@ Float Engine::PowerToBeUsedBasedOnInputs (
     // normalize from the square input domain of [-1, 1] [-1, 1] to a circle
 
     FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
-    Float input_vector_angle = Math::Atan(input_vector);
+    Float input_vector_angle = Math::Arg(input_vector);
     ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
 
     Float input_vector_max_length;
@@ -102,7 +102,7 @@ bool Engine::Activate (
         // normalize from the square input domain of [-1, 1] [-1, 1] to a circle
 
         FloatVector2 input_vector(m_up_down_input, -m_right_left_input);
-        Float input_vector_angle = Math::Atan(input_vector);
+        Float input_vector_angle = Math::Arg(input_vector);
         ASSERT1(input_vector_angle >= -180.0f && input_vector_angle <= 180.0f);
 
         Float input_vector_max_length;

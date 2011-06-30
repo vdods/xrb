@@ -161,8 +161,7 @@ BUGS:
 TODO:
 - change WidgetBackground use to use Resource<> instead of raw pointers, so that deletion
   doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
-- rename Atan(FloatVector2) to Arg
-- rename Asin, Acos, Atan to Arcsin, Arccos, Arctan.
+  use config files for WidgetSkins.
 - change sprite_path and path-based loading into LoadParameter-based loading (e.g. in dis_spawn.cpp)
 - change gltextureatlas sizes to Uint32
 - change all texture sizes to Uint32 (?) and in general, all sizes that can't be negative
@@ -182,7 +181,8 @@ TODO:
   no need to worry about divide by zero).  maybe use base 2?
 - use numeric_limits<float>::infinity() in next think time and such (see <limits>)
 - motion-blurred screenshots (take several screenshots in a row and blend them).  this would
-  be particularly easy if/when game physics interpolation is implemented.
+  be particularly easy if/when game physics interpolation is implemented.  this might be harder
+  than it seems, since the UI elements could change between frames, which would not be good.
 - handle failures (especially file loading failures) more gracefully
 - use the same array for texture and vertex coords in Sprite (and maybe Polygon)
 - it might be useful to re-implement SDL_ActiveEvent

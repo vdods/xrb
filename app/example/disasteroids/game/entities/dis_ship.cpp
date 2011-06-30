@@ -214,7 +214,7 @@ void Ship::AimShipAtCoordinates (FloatVector2 const &coordinates, Float const fr
     FloatVector2 aim_direction(GetObjectLayer()->AdjustedDifference(coordinates, Translation()));
     if (!aim_direction.IsZero())
     {
-        Float angle_delta = Math::CanonicalAngle(Math::Atan(aim_direction) - Angle());
+        Float angle_delta = Math::CanonicalAngle(Math::Arg(aim_direction) - Angle());
         Float max_angle_delta = MaxAngularVelocity() * frame_dt;
         if (angle_delta > max_angle_delta)
             angle_delta = max_angle_delta;

@@ -229,9 +229,9 @@ void Interloper::Wander (Float const time, Float const frame_dt)
         FloatVector2 perpendicular_velocity(PerpendicularVector2(delta_velocity));
         ASSERT1(!perpendicular_velocity.IsZero());
         if ((perpendicular_velocity | Velocity()) > -(perpendicular_velocity | Velocity()))
-            m_wander_angle = Math::Atan(perpendicular_velocity);
+            m_wander_angle = Math::Arg(perpendicular_velocity);
         else
-            m_wander_angle = Math::Atan(-perpendicular_velocity);
+            m_wander_angle = Math::Arg(-perpendicular_velocity);
         m_next_wander_time = time + 6.0f;
     }
 
