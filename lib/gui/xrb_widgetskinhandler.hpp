@@ -51,39 +51,35 @@ public:
 
     /** @brief Returns a pointer to the const WidgetSkin managed by this.
       */
-    inline WidgetSkin const *GetWidgetSkin () const
+    WidgetSkin const *GetWidgetSkin () const
     {
         return m_widget_skin;
     }
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetWidgetBackground .
       * @param widget_background_type The background type to retrieve.
       */
-    inline WidgetBackground const *WidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType const widget_background_type) const
+    WidgetBackground const *WidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType const widget_background_type) const
     {
         return m_widget_skin->GetWidgetBackground(widget_background_type);
     }
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetFont .
       * @param font_type The font type to retrieve.
       */
-    inline Resource<Font> const &WidgetSkinFont (
-        WidgetSkin::FontType const font_type) const
+    Resource<Font> const &WidgetSkinFont (WidgetSkin::FontType const font_type) const
     {
         return m_widget_skin->GetFont(font_type);
     }
     /** @brief Frontend for @ref Xrb::WidgetSkin::GetTexture .
       * @param texture_type The texture type to retrieve.
       */
-    inline Resource<GlTexture> const &WidgetSkinTexture (
-        WidgetSkin::TextureType const texture_type) const
+    Resource<GlTexture> const &WidgetSkinTexture (WidgetSkin::TextureType const texture_type) const
     {
         return m_widget_skin->GetTexture(texture_type);
     }
     /** @brief Frontend for @ref Xrb::WidgetSkin::Margins .
       * @param margins_type The margins type to retrieve.
       */
-    inline ScreenCoordVector2 const &WidgetSkinMargins (
-        WidgetSkin::MarginsType const margins_type) const
+    ScreenCoordMargins const &WidgetSkinMargins (WidgetSkin::MarginsType const margins_type) const
     {
         return m_widget_skin->Margins(margins_type);
     }
@@ -131,12 +127,12 @@ public:
       */
     void SetWidgetSkinMarginRatios (
         WidgetSkin::MarginsType margin_type,
-        FloatVector2 const &margin_ratios);
+        FloatMargins const &margin_ratios);
     /** @brief Frontend for @ref Xrb::WidgetSkin::SetMargins .
       */
     void SetWidgetSkinMargins (
         WidgetSkin::MarginsType margin_type,
-        ScreenCoordVector2 const &margins);
+        ScreenCoordMargins const &margins);
 
 protected:
 
@@ -264,14 +260,10 @@ private:
         }
     }
 
-    void PropagateChangedWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
-    void PropagateChangedFont (
-        WidgetSkin::FontType font_type);
-    void PropagateChangedTexture (
-        WidgetSkin::TextureType texture_type);
-    void PropagateChangedMargins (
-        WidgetSkin::MarginsType margins_type);
+    void PropagateChangedWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type);
+    void PropagateChangedFont (WidgetSkin::FontType font_type);
+    void PropagateChangedTexture (WidgetSkin::TextureType texture_type);
+    void PropagateChangedMargins (WidgetSkin::MarginsType margins_type);
 }; // end of class WidgetSkinHandler
 
 } // end of namespace Xrb

@@ -69,10 +69,8 @@ protected:
     virtual void UpdateRenderPicture ();
 
     // WidgetSkinHandler overrides
-    virtual void HandleChangedWidgetSkinWidgetBackground (
-        WidgetSkin::WidgetBackgroundType widget_background_type);
-    virtual void HandleChangedWidgetSkinTexture (
-        WidgetSkin::TextureType texture_type);
+    virtual void HandleChangedWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type);
+    virtual void HandleChangedWidgetSkinTexture (WidgetSkin::TextureType texture_type);
 
 private:
 
@@ -177,9 +175,9 @@ private:
 
 template <typename T, T sentinel>
 RadioButton<T, sentinel>::RadioButton (
-    T const id,
-    RadioButtonGroup<T, sentinel> *const group,
-    ContainerWidget *const parent,
+    T id,
+    RadioButtonGroup<T, sentinel> *group,
+    ContainerWidget *parent,
     std::string const &name)
     :
     Button(Resource<GlTexture>(), parent, name),
@@ -194,9 +192,9 @@ RadioButton<T, sentinel>::RadioButton (
 template <typename T, T sentinel>
 RadioButton<T, sentinel>::RadioButton (
     Resource<GlTexture> const &picture,
-    T const id,
-    RadioButtonGroup<T, sentinel> *const group,
-    ContainerWidget *const parent,
+    T id,
+    RadioButtonGroup<T, sentinel> *group,
+    ContainerWidget *parent,
     std::string const &name)
     :
     Button(picture, parent, name),
@@ -237,8 +235,7 @@ void RadioButton<T, sentinel>::Check ()
 }
 
 template <typename T, T sentinel>
-bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (
-    EventMouseButton const *const e)
+bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (EventMouseButton const *e)
 {
     // first call Button's handler
     Button::ProcessMouseButtonEvent(e);
@@ -253,8 +250,7 @@ bool RadioButton<T, sentinel>::ProcessMouseButtonEvent (
 template <typename T, T sentinel>
 void RadioButton<T, sentinel>::UpdateRenderBackground ()
 {
-    SetRenderBackground(
-        WidgetSkinWidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
+    SetRenderBackground(WidgetSkinWidgetBackground(WidgetSkin::RADIO_BUTTON_BACKGROUND));
 }
 
 template <typename T, T sentinel>
@@ -265,24 +261,21 @@ void RadioButton<T, sentinel>::UpdateRenderPicture ()
         if (Picture().IsValid())
             SetRenderPicture(Picture());
         else
-            SetRenderPicture(
-                WidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
+            SetRenderPicture(WidgetSkinTexture(WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE));
     }
     else
         SetRenderPicture(Resource<GlTexture>());
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::HandleChangedWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void RadioButton<T, sentinel>::HandleChangedWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type)
 {
     if (widget_background_type == WidgetSkin::RADIO_BUTTON_BACKGROUND)
         UpdateRenderBackground();
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::HandleChangedWidgetSkinTexture (
-    WidgetSkin::TextureType const texture_type)
+void RadioButton<T, sentinel>::HandleChangedWidgetSkinTexture (WidgetSkin::TextureType texture_type)
 {
     if (texture_type == WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE)
         UpdateRenderPicture();
@@ -303,8 +296,7 @@ void RadioButton<T, sentinel>::Uncheck ()
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::AttachToGroup (
-    RadioButtonGroup<T, sentinel> *const group)
+void RadioButton<T, sentinel>::AttachToGroup (RadioButtonGroup<T, sentinel> *group)
 {
     if (m_group != NULL)
         m_group->RemoveButton(this);
@@ -314,17 +306,14 @@ void RadioButton<T, sentinel>::AttachToGroup (
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::DetachFromGroup (
-    RadioButtonGroup<T, sentinel> *const group)
+void RadioButton<T, sentinel>::DetachFromGroup (RadioButtonGroup<T, sentinel> *group)
 {
     ASSERT1(m_group == group);
     m_group = NULL;
 }
 
 template <typename T, T sentinel>
-void RadioButton<T, sentinel>::Initialize (
-    T id,
-    RadioButtonGroup<T, sentinel> *const group)
+void RadioButton<T, sentinel>::Initialize (T id, RadioButtonGroup<T, sentinel> *group)
 {
     ASSERT1(group != NULL);
 
@@ -341,6 +330,7 @@ void RadioButton<T, sentinel>::Initialize (
         ScreenCoordVector2(
             WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
             WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+    SetFrameMargins(WidgetSkinMargins(WidgetSkin::RADIO_BUTTON_FRAME_MARGINS));
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -364,9 +354,7 @@ RadioButtonGroup<T, sentinel>::~RadioButtonGroup ()
     m_checked_button = NULL;
 
     // detach this group from all its children
-    for (typename RadioButtonMap::iterator
-            it = m_button_map.begin(),
-            it_end = m_button_map.end();
+    for (typename RadioButtonMap::iterator it = m_button_map.begin(), it_end = m_button_map.end();
          it != it_end;
          ++it)
     {
@@ -418,8 +406,7 @@ void RadioButtonGroup<T, sentinel>::SetID (T id)
 }
 
 template <typename T, T sentinel>
-void RadioButtonGroup<T, sentinel>::AddButton (
-    RadioButton<T, sentinel> *const button)
+void RadioButtonGroup<T, sentinel>::AddButton (RadioButton<T, sentinel> *button)
 {
     ASSERT1(button != NULL);
     // make sure the incoming button is not checked
@@ -438,8 +425,7 @@ void RadioButtonGroup<T, sentinel>::AddButton (
 }
 
 template <typename T, T sentinel>
-void RadioButtonGroup<T, sentinel>::RemoveButton (
-    RadioButton<T, sentinel> *const button)
+void RadioButtonGroup<T, sentinel>::RemoveButton (RadioButton<T, sentinel> *button)
 {
     ASSERT1(button != NULL);
 

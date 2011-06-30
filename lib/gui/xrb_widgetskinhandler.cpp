@@ -31,9 +31,7 @@ WidgetSkinHandler::~WidgetSkinHandler ()
 // WidgetSkin frontend modifiers
 // ///////////////////////////////////////////////////////////////////////////
 
-void WidgetSkinHandler::SetWidgetSkinWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type,
-    WidgetBackground const *const widget_background)
+void WidgetSkinHandler::SetWidgetSkinWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type, WidgetBackground const *widget_background)
 {
     SetProperty<
         WidgetSkin::WidgetBackgroundType,
@@ -44,9 +42,7 @@ void WidgetSkinHandler::SetWidgetSkinWidgetBackground (
             &WidgetSkinHandler::PropagateChangedWidgetBackground);
 }
 
-void WidgetSkinHandler::SetWidgetSkinFont (
-    WidgetSkin::FontType const font_type,
-    Resource<Font> const &font)
+void WidgetSkinHandler::SetWidgetSkinFont (WidgetSkin::FontType font_type, Resource<Font> const &font)
 {
     SetProperty<
         WidgetSkin::FontType,
@@ -57,9 +53,7 @@ void WidgetSkinHandler::SetWidgetSkinFont (
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
-void WidgetSkinHandler::SetWidgetSkinFontFacePath (
-    WidgetSkin::FontType const font_type,
-    std::string const &font_face_path)
+void WidgetSkinHandler::SetWidgetSkinFontFacePath (WidgetSkin::FontType font_type, std::string const &font_face_path)
 {
     SetProperty<
         WidgetSkin::FontType,
@@ -70,9 +64,7 @@ void WidgetSkinHandler::SetWidgetSkinFontFacePath (
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
-void WidgetSkinHandler::SetWidgetSkinFontHeightRatio (
-    WidgetSkin::FontType const font_type,
-    Float const font_height_ratio)
+void WidgetSkinHandler::SetWidgetSkinFontHeightRatio (WidgetSkin::FontType font_type, Float font_height_ratio)
 {
     SetProperty<
         WidgetSkin::FontType,
@@ -83,9 +75,7 @@ void WidgetSkinHandler::SetWidgetSkinFontHeightRatio (
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
-void WidgetSkinHandler::SetWidgetSkinFontHeight (
-    WidgetSkin::FontType const font_type,
-    ScreenCoord const font_height)
+void WidgetSkinHandler::SetWidgetSkinFontHeight (WidgetSkin::FontType font_type, ScreenCoord font_height)
 {
     SetProperty<
         WidgetSkin::FontType,
@@ -96,9 +86,7 @@ void WidgetSkinHandler::SetWidgetSkinFontHeight (
             &WidgetSkinHandler::PropagateChangedFont);
 }
 
-void WidgetSkinHandler::SetWidgetSkinTexture (
-    WidgetSkin::TextureType const texture_type,
-    Resource<GlTexture> const &texture)
+void WidgetSkinHandler::SetWidgetSkinTexture (WidgetSkin::TextureType texture_type, Resource<GlTexture> const &texture)
 {
     SetProperty<
         WidgetSkin::TextureType,
@@ -109,9 +97,7 @@ void WidgetSkinHandler::SetWidgetSkinTexture (
             &WidgetSkinHandler::PropagateChangedTexture);
 }
 
-void WidgetSkinHandler::SetWidgetSkinTexturePath (
-    WidgetSkin::TextureType const texture_type,
-    std::string const &texture_path)
+void WidgetSkinHandler::SetWidgetSkinTexturePath (WidgetSkin::TextureType texture_type, std::string const &texture_path)
 {
     SetProperty<
         WidgetSkin::TextureType,
@@ -122,26 +108,22 @@ void WidgetSkinHandler::SetWidgetSkinTexturePath (
             &WidgetSkinHandler::PropagateChangedTexture);
 }
 
-void WidgetSkinHandler::SetWidgetSkinMarginRatios (
-    WidgetSkin::MarginsType const margin_type,
-    FloatVector2 const &margin_ratios)
+void WidgetSkinHandler::SetWidgetSkinMarginRatios (WidgetSkin::MarginsType margin_type, FloatMargins const &margin_ratios)
 {
     SetProperty<
         WidgetSkin::MarginsType,
-        FloatVector2 const &>(
+        FloatMargins const &>(
             margin_type,
             margin_ratios,
             &WidgetSkin::SetMarginRatios,
             &WidgetSkinHandler::PropagateChangedMargins);
 }
 
-void WidgetSkinHandler::SetWidgetSkinMargins (
-    WidgetSkin::MarginsType const margin_type,
-    ScreenCoordVector2 const &margins)
+void WidgetSkinHandler::SetWidgetSkinMargins (WidgetSkin::MarginsType margin_type, ScreenCoordMargins const &margins)
 {
     SetProperty<
         WidgetSkin::MarginsType,
-        ScreenCoordVector2 const &>(
+        ScreenCoordMargins const &>(
             margin_type,
             margins,
             &WidgetSkin::SetMargins,
@@ -160,32 +142,28 @@ void WidgetSkinHandler::ReleaseAllWidgetSkinResources ()
 // these functions propagate property changes to child widgets
 // ///////////////////////////////////////////////////////////////////////////
 
-void WidgetSkinHandler::PropagateChangedWidgetBackground (
-    WidgetSkin::WidgetBackgroundType const widget_background_type)
+void WidgetSkinHandler::PropagateChangedWidgetBackground (WidgetSkin::WidgetBackgroundType widget_background_type)
 {
     PropagateChangedProperty<WidgetSkin::WidgetBackgroundType>(
         widget_background_type,
         &WidgetSkinHandler::HandleChangedWidgetSkinWidgetBackground);
 }
 
-void WidgetSkinHandler::PropagateChangedFont (
-    WidgetSkin::FontType const font_type)
+void WidgetSkinHandler::PropagateChangedFont (WidgetSkin::FontType font_type)
 {
     PropagateChangedProperty<WidgetSkin::FontType>(
         font_type,
         &WidgetSkinHandler::HandleChangedWidgetSkinFont);
 }
 
-void WidgetSkinHandler::PropagateChangedTexture (
-    WidgetSkin::TextureType const texture_type)
+void WidgetSkinHandler::PropagateChangedTexture (WidgetSkin::TextureType texture_type)
 {
     PropagateChangedProperty<WidgetSkin::TextureType>(
         texture_type,
         &WidgetSkinHandler::HandleChangedWidgetSkinTexture);
 }
 
-void WidgetSkinHandler::PropagateChangedMargins (
-    WidgetSkin::MarginsType const margins_type)
+void WidgetSkinHandler::PropagateChangedMargins (WidgetSkin::MarginsType margins_type)
 {
     PropagateChangedProperty<WidgetSkin::MarginsType>(
         margins_type,

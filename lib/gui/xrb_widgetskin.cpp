@@ -57,9 +57,7 @@ WidgetSkin::WidgetSkin (Screen const *screen)
     // on a 640x480 screen.
     m_font_specification[DEFAULT_FONT].m_font_height_ratio = 0.023f;
     UpdateFontHeight(DEFAULT_FONT);
-    SetFontFacePath(
-        DEFAULT_FONT,
-        "resources/FreeSansBoldCustom.ttf");
+    SetFontFacePath(DEFAULT_FONT, "resources/FreeSansBoldCustom.ttf");
 
     // ///////////////////////////////////////////////////////////////////////
     // gl textures
@@ -76,6 +74,8 @@ WidgetSkin::WidgetSkin (Screen const *screen)
     SetMarginRatios(DEFAULT_CONTENT_MARGINS, FloatVector2::ms_zero);
     SetMarginRatios(LAYOUT_FRAME_MARGINS, FloatVector2(0.006667f, 0.006667f));
     SetMarginRatios(LAYOUT_SPACING_MARGINS, FloatVector2(0.006667f, 0.006667f));
+    SetMarginRatios(CHECK_BOX_FRAME_MARGINS, FloatVector2::ms_zero);
+    SetMarginRatios(RADIO_BUTTON_FRAME_MARGINS, FloatVector2::ms_zero);
 }
 
 WidgetSkin::~WidgetSkin ()
@@ -90,10 +90,16 @@ void WidgetSkin::ReleaseAllResources ()
         DeleteAndNullify(m_widget_background[i]);
 
     for (Uint32 i = 0; i < FONT_TYPE_COUNT; ++i)
+    {
         m_font_specification[i].m_font.Release();
+        ASSERT1(!m_font_specification[i].m_font.IsValid());
+    }
 
     for (Uint32 i = 0; i < TEXTURE_TYPE_COUNT; ++i)
+    {
         m_texture[i].Release();
+        ASSERT1(!m_texture[i].IsValid());
+    }
 }
 
 WidgetSkin *WidgetSkin::CreateClone () const
@@ -135,68 +141,52 @@ ScreenCoord WidgetSkin::ScreenCoordFromRatio (Float const ratio) const
     return static_cast<ScreenCoord>(Math::Floor(ratio * m_screen->SizeRatioBasis()));
 }
 
-FloatVector2 WidgetSkin::RatiosFromScreenCoords (
-    ScreenCoordVector2 const &screen_coords) const
+FloatMargins WidgetSkin::RatiosFromScreenCoords (ScreenCoordMargins const &screen_coords) const
 {
     ASSERT1(m_screen != NULL);
     ASSERT1(m_screen->SizeRatioBasis() > 0);
-    return screen_coords.StaticCast<Float>() /
-           static_cast<Float>(m_screen->SizeRatioBasis());
+    return screen_coords.StaticCast<Float>() / static_cast<Float>(m_screen->SizeRatioBasis());
 }
 
-ScreenCoordVector2 WidgetSkin::ScreenCoordsFromRatios (
-    FloatVector2 const &ratios) const
+ScreenCoordMargins WidgetSkin::ScreenCoordsFromRatios (FloatMargins const &ratios) const
 {
     ASSERT1(m_screen != NULL);
     ASSERT1(m_screen->SizeRatioBasis() > 0);
-    return (ratios *
-            static_cast<Float>(m_screen->SizeRatioBasis())
-           ).StaticCast<ScreenCoord>();
+    return (ratios * static_cast<Float>(m_screen->SizeRatioBasis())).StaticCast<ScreenCoord>();
 }
 
 void WidgetSkin::SetWidgetBackground (
-    WidgetBackgroundType const widget_background_type,
-    WidgetBackground const *const widget_background)
+    WidgetBackgroundType widget_background_type,
+    WidgetBackground const *widget_background)
 {
     ASSERT1(widget_background_type < WIDGET_BACKGROUND_TYPE_COUNT);
     delete m_widget_background[widget_background_type];
     m_widget_background[widget_background_type] = widget_background;
 }
 
-void WidgetSkin::SetFont (
-    FontType const font_type,
-    Resource<Font> const &font)
+void WidgetSkin::SetFont (FontType font_type, Resource<Font> const &font)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
     ASSERT1(font.IsValid());
     m_font_specification[font_type].m_font = font;
     m_font_specification[font_type].m_font_height = font->PixelHeight();
-    m_font_specification[font_type].m_font_height_ratio =
-        RatioFromScreenCoord(font->PixelHeight());
+    m_font_specification[font_type].m_font_height_ratio = RatioFromScreenCoord(font->PixelHeight());
 }
 
-void WidgetSkin::SetFontFacePath (
-    FontType const font_type,
-    std::string const &font_face_path)
+void WidgetSkin::SetFontFacePath (FontType font_type, std::string const &font_face_path)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
-    m_font_specification[font_type].m_font_height =
-        ScreenCoordFromRatio(
-            m_font_specification[font_type].m_font_height_ratio);
-    m_font_specification[font_type].m_font =
-        Font::Load(font_face_path, m_font_specification[font_type].m_font_height);
+    m_font_specification[font_type].m_font_height = ScreenCoordFromRatio(m_font_specification[font_type].m_font_height_ratio);
+    m_font_specification[font_type].m_font = Font::Load(font_face_path, m_font_specification[font_type].m_font_height);
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
-void WidgetSkin::SetFontHeightRatio (
-    FontType const font_type,
-    Float const font_height_ratio)
+void WidgetSkin::SetFontHeightRatio (FontType font_type, Float font_height_ratio)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
     ASSERT1(font_height_ratio > 0.0f);
     m_font_specification[font_type].m_font_height_ratio = font_height_ratio;
-    m_font_specification[font_type].m_font_height =
-        ScreenCoordFromRatio(font_height_ratio);
+    m_font_specification[font_type].m_font_height = ScreenCoordFromRatio(font_height_ratio);
     m_font_specification[font_type].m_font =
         Font::Load(
             m_font_specification[font_type].m_font.LoadParameters<Font::LoadParameters>().Path(),
@@ -204,15 +194,12 @@ void WidgetSkin::SetFontHeightRatio (
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
-void WidgetSkin::SetFontHeight (
-    FontType const font_type,
-    ScreenCoord const font_height)
+void WidgetSkin::SetFontHeight (FontType font_type, ScreenCoord font_height)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
     ASSERT1(font_height > 0);
     m_font_specification[font_type].m_font_height = font_height;
-    m_font_specification[font_type].m_font_height_ratio =
-        RatioFromScreenCoord(font_height);
+    m_font_specification[font_type].m_font_height_ratio = RatioFromScreenCoord(font_height);
     m_font_specification[font_type].m_font =
         Font::Load(
             m_font_specification[font_type].m_font.LoadParameters<Font::LoadParameters>().Path(),
@@ -220,60 +207,50 @@ void WidgetSkin::SetFontHeight (
     ASSERT1(m_font_specification[font_type].m_font.IsValid());
 }
 
-void WidgetSkin::SetTexture (
-    TextureType const texture_type,
-    Resource<GlTexture> const &texture)
+void WidgetSkin::SetTexture (TextureType texture_type, Resource<GlTexture> const &texture)
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] = texture;
 }
 
-void WidgetSkin::SetTexturePath (
-    TextureType const texture_type,
-    std::string const &texture_path)
+void WidgetSkin::SetTexturePath (TextureType texture_type, std::string const &texture_path)
 {
     ASSERT1(texture_type < TEXTURE_TYPE_COUNT);
     m_texture[texture_type] = GlTexture::Load(texture_path);
 }
 
-void WidgetSkin::SetMarginRatios (
-    MarginsType const margins_type,
-    FloatVector2 const &margin_ratios)
+void WidgetSkin::SetMarginRatios (MarginsType margins_type, FloatMargins const &margin_ratios)
 {
     ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-    ASSERT1(margin_ratios[Dim::X] >= static_cast<Float>(0));
-    ASSERT1(margin_ratios[Dim::Y] >= static_cast<Float>(0));
+    ASSERT1(margin_ratios.m_bottom_left[Dim::X] >= static_cast<Float>(0));
+    ASSERT1(margin_ratios.m_bottom_left[Dim::Y] >= static_cast<Float>(0));
+    ASSERT1(margin_ratios.m_top_right[Dim::X] >= static_cast<Float>(0));
+    ASSERT1(margin_ratios.m_top_right[Dim::Y] >= static_cast<Float>(0));
     m_margins_specification[margins_type].m_margin_ratios = margin_ratios;
-    m_margins_specification[margins_type].m_margins =
-        ScreenCoordsFromRatios(margin_ratios);
+    m_margins_specification[margins_type].m_margins = ScreenCoordsFromRatios(margin_ratios);
 }
 
-void WidgetSkin::SetMargins (
-    MarginsType const margins_type,
-    ScreenCoordVector2 const &margins)
+void WidgetSkin::SetMargins (MarginsType margins_type, ScreenCoordMargins const &margins)
 {
     ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-    ASSERT1(margins[Dim::X] >= 0);
-    ASSERT1(margins[Dim::Y] >= 0);
+    ASSERT1(margins.m_bottom_left[Dim::X] >= 0);
+    ASSERT1(margins.m_bottom_left[Dim::Y] >= 0);
+    ASSERT1(margins.m_top_right[Dim::X] >= 0);
+    ASSERT1(margins.m_top_right[Dim::Y] >= 0);
     m_margins_specification[margins_type].m_margins = margins;
-    m_margins_specification[margins_type].m_margin_ratios =
-        RatiosFromScreenCoords(margins);
+    m_margins_specification[margins_type].m_margin_ratios = RatiosFromScreenCoords(margins);
 }
 
-void WidgetSkin::UpdateFontHeight (FontType const font_type)
+void WidgetSkin::UpdateFontHeight (FontType font_type)
 {
     ASSERT1(font_type < FONT_TYPE_COUNT);
-    m_font_specification[font_type].m_font_height =
-        ScreenCoordFromRatio(
-            m_font_specification[font_type].m_font_height_ratio);
+    m_font_specification[font_type].m_font_height = ScreenCoordFromRatio(m_font_specification[font_type].m_font_height_ratio);
 }
 
-void WidgetSkin::UpdateMargins (MarginsType const margins_type)
+void WidgetSkin::UpdateMargins (MarginsType margins_type)
 {
     ASSERT1(margins_type < MARGINS_TYPE_COUNT);
-    m_margins_specification[margins_type].m_margins =
-        ScreenCoordsFromRatios(
-            m_margins_specification[margins_type].m_margin_ratios);
+    m_margins_specification[margins_type].m_margins = ScreenCoordsFromRatios(m_margins_specification[margins_type].m_margin_ratios);
 }
 
 } // end of namespace Xrb

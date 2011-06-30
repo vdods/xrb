@@ -34,6 +34,7 @@ CheckBox::CheckBox (
         ScreenCoordVector2(
             WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight(),
             WidgetSkinFont(WidgetSkin::DEFAULT_FONT)->PixelHeight()));
+    SetFrameMargins(WidgetSkinMargins(WidgetSkin::CHECK_BOX_FRAME_MARGINS));
 
     CheckBox::UpdateRenderBackground();
     CheckBox::UpdateRenderPicture();

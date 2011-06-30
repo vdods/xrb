@@ -23,6 +23,9 @@ namespace Xrb {
 template <typename T>
 struct Margins
 {
+    // zeroed margins
+    static Margins<T> const ms_zero;
+
     typedef Vector<T, 2> VectorType;
 
     VectorType m_bottom_left;
@@ -55,7 +58,10 @@ struct Margins
         retval.m_top_right = m_top_right.StaticCast<U>();
         return retval;
     }
-}; // end of class Margins
+}; // end of template <typename T> class Margins<T>
+
+template <typename T>
+Margins<T> const Margins<T>::ms_zero;
 
 template <typename T>
 inline Margins<T> operator + (Margins<T> const &x, Margins<T> const &y)
@@ -70,9 +76,15 @@ inline Margins<T> operator - (Margins<T> const &x, Margins<T> const &y)
 }
 
 template <typename T>
-inline Margins<T> operator * (T x, Margins<T> const &y)
+inline Margins<T> operator * (Margins<T> const &x, T y)
 {
-    return Margins<T>(x * y.m_bottom_left, x * y.m_top_right);
+    return Margins<T>(x.m_bottom_left * y, x.m_top_right * y);
+}
+
+template <typename T>
+inline Margins<T> operator / (Margins<T> const &x, T y)
+{
+    return Margins<T>(x.m_bottom_left / y, x.m_top_right / y);
 }
 
 // ///////////////////////////////////////////////////////////////////////////

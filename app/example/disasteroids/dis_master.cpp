@@ -71,21 +71,37 @@ Master::Master (Screen *const screen)
     m_screen->SetWidgetSkinWidgetBackground(
         WidgetSkin::BUTTON_BACKGROUND,
         new WidgetBackgroundTextured3Way(
-            GlTexture::Load("resources/button_left_black.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_left_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
     m_screen->SetWidgetSkinWidgetBackground(
         WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND,
         new WidgetBackgroundTextured3Way(
-            GlTexture::Load("resources/button_left_blue.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_left_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
     m_screen->SetWidgetSkinWidgetBackground(
         WidgetSkin::BUTTON_PRESSED_BACKGROUND,
         new WidgetBackgroundTextured3Way(
-            GlTexture::Load("resources/button_left_yellow.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_left_yellow.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
+
+    m_screen->SetWidgetSkinWidgetBackground(
+        WidgetSkin::CHECK_BOX_BACKGROUND,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    m_screen->SetWidgetSkinTexture(
+        WidgetSkin::CHECK_BOX_CHECK_TEXTURE,
+        GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/)); // this one is square
+
+    m_screen->SetWidgetSkinWidgetBackground(
+        WidgetSkin::RADIO_BUTTON_BACKGROUND,
+        new WidgetBackgroundTextured(
+            GlTexture::Load("resources/radiobutton_black.png"/*, GlTexture::USES_SEPARATE_ATLAS*/))); // this one is square
+    m_screen->SetWidgetSkinTexture(
+        WidgetSkin::RADIO_BUTTON_CHECK_TEXTURE,
+        GlTexture::Load("resources/radiobutton_blue.png"/*, GlTexture::USES_SEPARATE_ATLAS*/)); // this one is square
 }
 
 Master::~Master ()

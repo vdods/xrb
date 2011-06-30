@@ -131,16 +131,16 @@ public:
 
 protected:
 
-    inline ScreenCoordVector2 const &CalculateLayoutFrameMargins () const
+    ScreenCoordMargins const &CalculateLayoutFrameMargins () const
     {
         return IsUsingZeroedFrameMargins() ?
-               ScreenCoordVector2::ms_zero :
+               ScreenCoordMargins::ms_zero :
                WidgetSkinMargins(WidgetSkin::LAYOUT_FRAME_MARGINS);
     }
-    inline ScreenCoordVector2 const &CalculateLayoutSpacingMargins () const
+    ScreenCoordMargins const &CalculateLayoutSpacingMargins () const
     {
         return IsUsingZeroedLayoutSpacingMargins() ?
-               ScreenCoordVector2::ms_zero :
+               ScreenCoordMargins::ms_zero :
                WidgetSkinMargins(WidgetSkin::LAYOUT_SPACING_MARGINS);
     }
 

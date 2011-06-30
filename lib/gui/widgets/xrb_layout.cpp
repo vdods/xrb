@@ -724,16 +724,16 @@ void Layout::DelegateHeightsToRows ()
 void Layout::ResizeAndRepositionChildWidgets ()
 {
     ScreenCoordVector2 positional_offset;
-    ScreenCoordVector2 layout_frame_margins(CalculateLayoutFrameMargins());
-    ScreenCoordVector2 layout_spacing_margins(CalculateLayoutSpacingMargins());
+    ScreenCoordMargins layout_frame_margins(CalculateLayoutFrameMargins());
+    ScreenCoordMargins layout_spacing_margins(CalculateLayoutSpacingMargins());
 
-    positional_offset[Dim::Y] = Position()[Dim::Y] + layout_frame_margins[Dim::Y];
+    positional_offset[Dim::Y] = Position()[Dim::Y] + layout_frame_margins.m_bottom_left[Dim::Y];
     for (Uint32 row = m_row_count - 1; row < m_row_count; --row)
     {
         if (m_row_is_hidden[row])
             continue;
 
-        positional_offset[Dim::X] = Position()[Dim::X] + layout_frame_margins[Dim::X];
+        positional_offset[Dim::X] = Position()[Dim::X] + layout_frame_margins.m_bottom_left[Dim::X];
         for (Uint32 column = 0; column < m_column_count; ++column)
         {
             if (m_column_is_hidden[column])
@@ -765,10 +765,10 @@ void Layout::ResizeAndRepositionChildWidgets ()
                 child->MoveTo(positional_offset + extra_space / 2);
             }
 
-            positional_offset[Dim::X] += m_column_width[column] + layout_spacing_margins[Dim::X];
+            positional_offset[Dim::X] += m_column_width[column] + layout_spacing_margins.m_bottom_left[Dim::X];
         }
 
-        positional_offset[Dim::Y] += m_row_height[row] + layout_spacing_margins[Dim::Y];
+        positional_offset[Dim::Y] += m_row_height[row] + layout_spacing_margins.m_bottom_left[Dim::Y];
     }
 }
 
@@ -966,10 +966,10 @@ void Layout::UpdateTotalSpacing () const
     }
 
     m_total_spacing =
-        CalculateLayoutFrameMargins() * 2 +
+        CalculateLayoutFrameMargins().TotalMarginSize() +
         ScreenCoordVector2(
-            CalculateLayoutSpacingMargins()[Dim::X] * column_spaces,
-            CalculateLayoutSpacingMargins()[Dim::Y] * row_spaces);
+            CalculateLayoutSpacingMargins().m_bottom_left[Dim::X] * column_spaces,
+            CalculateLayoutSpacingMargins().m_bottom_left[Dim::Y] * row_spaces);
 }
 
 void Layout::UpdateColumnSizePropertyAllocation () const

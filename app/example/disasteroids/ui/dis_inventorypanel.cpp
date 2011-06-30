@@ -47,6 +47,7 @@ InventoryPanel::InventoryPanel (
     m_accepts_focus = true;
 
     m_inventory_owner_ship = NULL;
+    m_options_panel = NULL;
 
     Label *l;
     Float const grid_label_font_height_ratio = 0.018f;

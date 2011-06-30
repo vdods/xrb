@@ -364,7 +364,7 @@ void Widget::SetFrameMargins (ScreenCoordMargins const &frame_margins)
 void Widget::SetFrameMarginRatios (FloatMargins const &frame_margin_ratios)
 {
     ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoordMargins calculated_frame_margins((static_cast<Float>(size_ratio_basis) * frame_margin_ratios).StaticCast<ScreenCoord>());
+    ScreenCoordMargins calculated_frame_margins((frame_margin_ratios * static_cast<Float>(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetFrameMargins(calculated_frame_margins);
 }
 
@@ -387,7 +387,7 @@ void Widget::SetContentMargins (ScreenCoordMargins const &content_margins)
 void Widget::SetContentMarginRatios (FloatMargins const &content_margin_ratios)
 {
     ScreenCoord size_ratio_basis = TopLevelParent()->SizeRatioBasis();
-    ScreenCoordMargins calculated_content_margins((static_cast<Float>(size_ratio_basis) * content_margin_ratios).StaticCast<ScreenCoord>());
+    ScreenCoordMargins calculated_content_margins((content_margin_ratios * static_cast<Float>(size_ratio_basis)).StaticCast<ScreenCoord>());
     SetContentMargins(calculated_content_margins);
 }
 
