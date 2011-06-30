@@ -220,7 +220,7 @@ public:
         // have a value that can parameterize linear interpolations with to
         // calculate the color.  A temperature of 0 will translate into
         // a normalized_temperature of 0.5.
-        Float normalized_temperature = 0.5f * (1.0f + Math::Arg(m_temperature) / 90.0f);
+        Float normalized_temperature = 0.5f * (1.0f + Math::Arctan(m_temperature) / 90.0f);
         // Calculate the red, green and blue components for the color.  Each
         // component in the RGBA color value must be within the range [0, 1],
         // with an alpha value of 0 being completely transparent and an alpha
