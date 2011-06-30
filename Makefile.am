@@ -302,6 +302,7 @@ include_HEADERS = \
     \
     lib/gui/xrb_containerwidget.hpp \
     lib/gui/xrb_gui_events.hpp \
+    lib/gui/xrb_margins.hpp \
     lib/gui/xrb_screen.hpp \
     lib/gui/xrb_screencoord.hpp \
     lib/gui/xrb_sizeproperties.hpp \

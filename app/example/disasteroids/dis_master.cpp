@@ -22,6 +22,7 @@
 #include "xrb_inputstate.hpp"
 #include "xrb_pal.hpp"
 #include "xrb_screen.hpp"
+#include "xrb_widgetbackground.hpp"
 
 #define HIGH_SCORES_FILENAME "disasteroids.scores"
 
@@ -66,6 +67,25 @@ Master::Master (Screen *const screen)
     m_game_world = NULL;
 
     m_high_scores.Read(HIGH_SCORES_FILENAME);
+
+    m_screen->SetWidgetSkinWidgetBackground(
+        WidgetSkin::BUTTON_BACKGROUND,
+        new WidgetBackgroundTextured3Way(
+            GlTexture::Load("resources/button_left_black.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
+    m_screen->SetWidgetSkinWidgetBackground(
+        WidgetSkin::BUTTON_MOUSEOVER_BACKGROUND,
+        new WidgetBackgroundTextured3Way(
+            GlTexture::Load("resources/button_left_blue.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
+    m_screen->SetWidgetSkinWidgetBackground(
+        WidgetSkin::BUTTON_PRESSED_BACKGROUND,
+        new WidgetBackgroundTextured3Way(
+            GlTexture::Load("resources/button_left_yellow.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
+            GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
 }
 
 Master::~Master ()

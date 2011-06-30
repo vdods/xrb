@@ -14,7 +14,9 @@
 #include "xrb.hpp"
 
 #include "xrb_color.hpp"
+#include "xrb_emptystring.hpp"
 #include "xrb_gltexture.hpp"
+#include "xrb_margins.hpp"
 #include "xrb_rect.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_resourcelibrary.hpp"
@@ -52,7 +54,7 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const = 0;
+        ScreenCoordMargins const &frame_margins) const = 0;
 }; // end of class WidgetBackground
 
 /** No external resources are necessary to use this background.
@@ -89,7 +91,7 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const;
+        ScreenCoordMargins const &frame_margins) const;
 
 private:
 
@@ -131,7 +133,7 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const;
+        ScreenCoordMargins const &frame_margins) const;
 
 private:
 
@@ -165,7 +167,8 @@ private:
   *     <ul>
   *     <li>Region 1 is rendered using the left texture, unflipped.</li>
   *     <li>Region 2 is rendered using the center texture, unflipped.</li>
-  *     <li>Region 3 is rendered using the left texture, flipped horizontally.</li>
+  *     <li>Region 3 is rendered using the right texture, or the left texture, flipped
+  *         horizontally, if the right texture is not specified.</li>
   *     </ul>
   *
   * @brief Implements a multiple-texture widget background.
@@ -177,19 +180,26 @@ public:
     /** @brief Constructs the background using the specified textures.
       * @param left_texture_name The path of the left texture to use.
       * @param center_texture_name The path of the center texture to use.
+      * @param right_texture_name The path of the center texture to use, or the
+                                  empty string if the left texture is to be used
+                                  (see above).
       */
     WidgetBackgroundTextured3Way (
         std::string const &left_texture_name,
-        std::string const &center_texture_name);
+        std::string const &center_texture_name,
+        std::string const &right_texture_name = g_empty_string);
     /** @brief Constructs the background using the specified textures.
       * @param left_texture Directly specifies the GlTexture object to use
       *                     for the left texture.
       * @param center_texture Directly specifies the GlTexture object to use
       *                       for the center texture.
+      * @param right_texture Directly specifies the GlTexture object to use
+      *                      for the right texture.
       */
     WidgetBackgroundTextured3Way (
         Resource<GlTexture> const &left_texture,
-        Resource<GlTexture> const &center_texture);
+        Resource<GlTexture> const &center_texture,
+        Resource<GlTexture> const &right_texture = Resource<GlTexture>());
     /** m_corner_texture, m_top_texture, m_left_texture, and m_center_texture
       * are automatically deleted because they go out of scope here.
       * @brief Destructor.
@@ -206,12 +216,13 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const;
+        ScreenCoordMargins const &frame_margins) const;
 
 private:
 
     Resource<GlTexture> m_left_texture;
     Resource<GlTexture> m_center_texture;
+    Resource<GlTexture> m_right_texture;
 }; // end of class WidgetBackgroundTextured3Way
 
 /** Four texture resources are necessary for this background.
@@ -305,7 +316,7 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const;
+        ScreenCoordMargins const &frame_margins) const;
 
 private:
 
@@ -374,7 +385,7 @@ public:
     virtual void Draw (
         RenderContext const &render_context,
         ScreenCoordRect const &widget_screen_rect,
-        ScreenCoordVector2 const &frame_margins) const;
+        ScreenCoordMargins const &frame_margins) const;
 
 private:
 

@@ -49,7 +49,7 @@ public:
     Vector<T, 2> m_bottom_left;
     /// The top-right coordinate of the rectangle.
     Vector<T, 2> m_top_right;
-    
+
     /** Does no initialization.
       * @brief Default constructor
       */
@@ -200,11 +200,18 @@ public:
         return Top() - Bottom();
     }
 
-    Rect<T> Grown (Vector<T, 2> const &vector_to_grow_by) const
+    Rect<T> Grown (Vector<T, 2> const &grow_by) const
     {
         Rect<T> retval;
-        retval.m_bottom_left = m_bottom_left - vector_to_grow_by;
-        retval.m_top_right = m_top_right + vector_to_grow_by;
+        retval.m_bottom_left = m_bottom_left - grow_by;
+        retval.m_top_right = m_top_right + grow_by;
+        return retval;
+    }
+    Rect<T> Grown (Vector<T, 2> const &grow_bottom_left_by, Vector<T, 2> const &grow_top_right_by) const
+    {
+        Rect<T> retval;
+        retval.m_bottom_left = m_bottom_left - grow_bottom_left_by;
+        retval.m_top_right = m_top_right + grow_top_right_by;
         return retval;
     }
 
@@ -430,7 +437,6 @@ inline Rect<T> operator * (
 
 // ///////////////////////////////////////////////////////////////////////////
 // convenience typedefs for Rect of different types,
-// pre-made representations of the identity for each typedef,
 // and format-specific Fprint functions for each typedef.
 // ///////////////////////////////////////////////////////////////////////////
 

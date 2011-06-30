@@ -67,6 +67,9 @@ DISASTEROIDS:
   it takes a certain amount of damage, then flings the asteroids at the player.
 - additional mode for Demi - spin around shooting missiles which stop and wait,
   and then all converge on the player
+- Demi: add a drone which changes based on what state it's in, so the player has
+  an audio cue as to what might happen (only have a few different drones, not
+  unique ones for each state).
 - make the railgun use a charge-up so it doesn't fire immediately --
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
@@ -156,6 +159,8 @@ BUGS:
   texture atlases, efficiency should be 100%)
 
 TODO:
+- change WidgetBackground use to use Resource<> instead of raw pointers, so that deletion
+  doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
 - rename Atan(FloatVector2) to Arg
 - rename Asin, Acos, Atan to Arcsin, Arccos, Arctan.
 - change sprite_path and path-based loading into LoadParameter-based loading (e.g. in dis_spawn.cpp)

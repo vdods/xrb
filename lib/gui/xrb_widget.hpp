@@ -18,6 +18,7 @@
 #include "xrb_color.hpp"
 #include "xrb_eventhandler.hpp"
 #include "xrb_framehandler.hpp"
+#include "xrb_margins.hpp"
 #include "xrb_rect.hpp"
 #include "xrb_rendercontext.hpp"
 #include "xrb_resourcelibrary.hpp"
@@ -133,28 +134,28 @@ public:
     /** @brief Accessor for the SignalReceiver which calls @a SetIsEnabled
       *        with the received value.
       */
-    inline SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; }
+    SignalReceiver1<bool> const *ReceiverSetIsEnabled () { return &m_receiver_set_is_enabled; }
     /** @brief Accessor for the SignalReceiver which enables the widget.
       *        Calls @a Enable.
       */
-    inline SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }
+    SignalReceiver0 const *ReceiverEnable () { return &m_receiver_enable; }
     /** @brief Accessor for the SignalReceiver which disables the widget.
       *        Calls @a Disable.
       */
-    inline SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }
+    SignalReceiver0 const *ReceiverDisable () { return &m_receiver_disable; }
 
     /** @brief Accessor for the SignalReceiver which calls @a SetIsHidden
       *        with the received value.
       */
-    inline SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }
+    SignalReceiver1<bool> const *ReceiverSetIsHidden () { return &m_receiver_set_is_hidden; }
     /** @brief Accessor for the SignalReceiver which hides the widget.
       *        Calls @a Hide.
       */
-    inline SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }
+    SignalReceiver0 const *ReceiverHide () { return &m_receiver_hide; }
     /** @brief Accessor for the SignalReceiver which shows the widget.
       *        Calls @a Show.
       */
-    inline SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }
+    SignalReceiver0 const *ReceiverShow () { return &m_receiver_show; }
 
     // ///////////////////////////////////////////////////////////////////////
     // accessors
@@ -162,13 +163,13 @@ public:
 
     /** @brief Returns the name of this widget
       */
-    inline std::string const &Name () const { return m_name; }
+    std::string const &Name () const { return m_name; }
     /** @brief Returns a pointer to the parent (const) of this widget.
       */
-    inline ContainerWidget const *Parent () const { return m_parent; }
+    ContainerWidget const *Parent () const { return m_parent; }
     /** @brief Returns a pointer to the parent (non-const) of this widget.
       */
-    inline ContainerWidget *Parent () { return m_parent; }
+    ContainerWidget *Parent () { return m_parent; }
     /** Modal widgets behave slightly differently than normal widgets.  Since
       * they must appear above all other widgets, effectively their parent
       * is the top-level parent (see @c Screen), which does some special
@@ -198,7 +199,7 @@ public:
     /** @brief Returns true iff this is a top-level widget (i.e. it has
       *        no parent).
       */
-    inline bool IsTopLevelParent () const { return m_parent == NULL; }
+    bool IsTopLevelParent () const { return m_parent == NULL; }
     /** @brief Returns true iff this widget is focused.  If this is a
       *        top-level widget, then it has focus by default.
       */
@@ -208,7 +209,7 @@ public:
       * default value set by the constructor of Widget is false.
       * @brief Returns true iff this widget even accepts focus.
       */
-    inline bool AcceptsFocus () const { return m_accepts_focus; }
+    bool AcceptsFocus () const { return m_accepts_focus; }
     /** @brief Returns true iff this widget currently has mouseover focus
       *        (i.e. its parent has this widget as its m_mouseover_focus
       *        value).
@@ -219,7 +220,7 @@ public:
       * The default value set by the constructor of Widget is true.
       * @brief Returns true iff this widget accepts mouseover focus.
       */
-    inline bool AcceptsMouseover () const { return m_accepts_mouseover; }
+    bool AcceptsMouseover () const { return m_accepts_mouseover; }
     /** @brief Returns true iff this widget has mouse grab focus (meaning that
       *        all mouse events will go to/through it even if the mouse is not
       *        directly over it).
@@ -227,51 +228,51 @@ public:
     bool IsMouseGrabbed () const;
     /** @brief Returns true iff this widget is enabled.
       */
-    inline bool IsEnabled () const { return m_is_enabled; }
+    bool IsEnabled () const { return m_is_enabled; }
     /** @brief Returns true iff this widget is hidden.
       */
-    inline bool IsHidden () const { return m_is_hidden; }
+    bool IsHidden () const { return m_is_hidden; }
     /** @brief Returns true iff this widget is currently modal.
       */
-    inline bool IsModal () const { return m_is_modal; }
+    bool IsModal () const { return m_is_modal; }
     /** @brief Returns the widget stack priority of this widget.
       * @see StackPriority
       */
-    inline StackPriority GetStackPriority () const { return m_stack_priority; }
+    StackPriority GetStackPriority () const { return m_stack_priority; }
     /** @brief Returns the basic background for this widget.
       * @see WidgetBackground
       */
-    inline WidgetBackground *Background () const { return m_background; }
+    WidgetBackground *Background () const { return m_background; }
     /** @brief Returns the frame margins for this widget.
       */
-    inline ScreenCoordVector2 const &FrameMargins () const { return m_frame_margins; }
+    ScreenCoordMargins const &FrameMargins () const { return m_frame_margins; }
     /** The content margins are added to the frame margins to indicate the
       * content area of the label.  The content margins can be negative (up to
       * the point that they totally cancel the frame margins).
       * @brief Returns the content margins for this widget.
       */
-    inline ScreenCoordVector2 const &ContentMargins () const { return m_content_margins; }
+    ScreenCoordMargins const &ContentMargins () const { return m_content_margins; }
     /** @brief Returns the last known mouse position (derived from the most
       *        recent mouse motion event received by this widget).
       */
-    inline ScreenCoordVector2 const &LastMousePosition () const { return m_last_mouse_position; }
+    ScreenCoordVector2 const &LastMousePosition () const { return m_last_mouse_position; }
     /** @brief Returns the current position of the lower-left corner of
       *        this widget.
       */
-    inline ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
+    ScreenCoordVector2 Position () const { return m_screen_rect.BottomLeft(); }
     /** Integer division is involved, so rounding may occur.
       * @brief Returns the current position of the center of this widget.
       */
-    inline ScreenCoordVector2 Center () const { return m_screen_rect.Center(); }
+    ScreenCoordVector2 Center () const { return m_screen_rect.Center(); }
     /** @brief Returns the current size of this widget.
       */
-    inline ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }
+    ScreenCoordVector2 Size () const { return m_screen_rect.Size(); }
     /** @brief Returns the widget of this widget.
       */
-    inline ScreenCoord Width () const { return m_screen_rect.Width(); }
+    ScreenCoord Width () const { return m_screen_rect.Width(); }
     /** @brief Returns the height of this widget.
       */
-    inline ScreenCoord Height () const { return m_screen_rect.Height(); }
+    ScreenCoord Height () const { return m_screen_rect.Height(); }
     /** @brief Returns the boolean vector containing the
       *        is-minimum-size-enabled values for width and height in the
       *        x and y components respectively.
@@ -300,35 +301,32 @@ public:
     virtual ScreenCoordVector2 AdjustedSize (ScreenCoordVector2 const &size) const;
     /** @brief Returns this widget's screen coordinate rectangle.
       */
-    inline ScreenCoordRect const &ScreenRect () const { return m_screen_rect; }
+    ScreenCoordRect const &ScreenRect () const { return m_screen_rect; }
     /** The content area is the area within the sum of the frame margins
       * and the content margins.  Note that the content margins can be
       * negative, up to the negative of the frame margins.
       * @brief Returns the rectangle representing the content area.
       */
-    inline ScreenCoordRect ContentsRect () const
-    {
-        return ScreenRect().Grown(-(FrameMargins() + ContentMargins()));
-    }
+    ScreenCoordRect ContentsRect () const;
     /** @brief Returns this widget's color bias (the color bias is applied to
       * everything drawn by the widget, AFTER the color mask).
       */
-    inline Color const &ColorBias () const { return m_color_bias; }
+    Color const &ColorBias () const { return m_color_bias; }
     /** @brief Returns this widget's color mask (the color mask is applied to
       * everything drawn by the widget).
       */
-    inline Color const &ColorMask () const { return m_color_mask; }
+    Color const &ColorMask () const { return m_color_mask; }
     /** Use this method to change the color bias
       * @brief Returns this widget's color bias as a non-const reference (the
       * color bias is applied to everything drawn by the widget, AFTER the
       * color mask).
       */
-    inline Color &ColorBias () { return m_color_bias; }
+    Color &ColorBias () { return m_color_bias; }
     /** Use this method to change the color mask.
       * @brief Returns this widget's color mask as a non-const reference (the
       * color mask is applied to everything drawn by the widget).
       */
-    inline Color &ColorMask () { return m_color_mask; }
+    Color &ColorMask () { return m_color_mask; }
 
     // ///////////////////////////////////////////////////////////////////////
     // modifiers
@@ -483,22 +481,22 @@ public:
     /** @brief Sets the frame margins for this widget (in direct screen
       *        coordinates).
       */
-    void SetFrameMargins (ScreenCoordVector2 const &frame_margins);
+    void SetFrameMargins (ScreenCoordMargins const &frame_margins);
     /** Actually just calls @a SetFrameMargins with the product of the given
       * ratios and the screen basis.
       * @brief Sets the frame margins for this widget via screen-basis ratios.
       * @see Screen::SizeRatioBasis
       */
-    void SetFrameMarginRatios (FloatVector2 const &frame_margin_ratios);
+    void SetFrameMarginRatios (FloatMargins const &frame_margin_ratios);
     /** @brief Sets the content margins for this widget (in direct screen coordinates).
       */
-    void SetContentMargins (ScreenCoordVector2 const &content_margins);
+    void SetContentMargins (ScreenCoordMargins const &content_margins);
     /** Actually just calls @a SetContentMargins with the product of the given
       * ratios and the screen basis.
       * @brief Sets the content margins for this widget via screen-basis ratios.
       * @see Screen::SizeRatioBasis
       */
-    void SetContentMarginRatios (FloatVector2 const &content_margin_ratios);
+    void SetContentMarginRatios (FloatMargins const &content_margin_ratios);
 
     // ///////////////////////////////////////////////////////////////////////
     // procedures
@@ -631,11 +629,11 @@ public:
     virtual void SetIsEnabled (bool is_enabled);
     /** @brief Enables this widget.
       */
-    inline void Enable () { SetIsEnabled(true); }
+    void Enable () { SetIsEnabled(true); }
     /** Disabled widgets will not accept events.
       * @brief Disables this widget.
       */
-    inline void Disable () { SetIsEnabled(false); }
+    void Disable () { SetIsEnabled(false); }
 
     /** Must not currently be a modal widget.
       * @brief Toggles the hidden state.
@@ -654,11 +652,11 @@ public:
     /** Must not currently be a modal widget.
       * @brief Hides this widget.
       */
-    inline void Hide () { SetIsHidden(true); }
+    void Hide () { SetIsHidden(true); }
     /** Must not currently be a modal widget.
       * @brief Shows this widget.
       */
-    inline void Show () { SetIsHidden(false); }
+    void Show () { SetIsHidden(false); }
 
 protected:
 
@@ -678,11 +676,11 @@ protected:
     /** @brief Returns the a pointer to the background object which is
       *        rendered in @a Widget::Draw.
       */
-    inline WidgetBackground const *RenderBackground () const { return m_render_background; }
+    WidgetBackground const *RenderBackground () const { return m_render_background; }
 
     /** @brief Sets the background to use in @a Widget::Draw.
       */
-    inline void SetRenderBackground (WidgetBackground const *render_background) { m_render_background = render_background; }
+    void SetRenderBackground (WidgetBackground const *render_background) { m_render_background = render_background; }
 
     /** @brief Called only by Widget and Screen after they get a WidgetSkin.
       */
@@ -980,10 +978,10 @@ private:
     /** @brief Contains the frame margins which are used by the background
       *        and various other Widget subclasses for drawing and layout.
       */
-    ScreenCoordVector2 m_frame_margins;
+    ScreenCoordMargins m_frame_margins;
     /** @brief Contains the content margins which are used by various widgets.
       */
-    ScreenCoordVector2 m_content_margins;
+    ScreenCoordMargins m_content_margins;
 
     // ///////////////////////////////////////////////////////////////////////
     // SignalReceivers

@@ -29,7 +29,7 @@ WidgetBackground *WidgetBackgroundColored::CreateClone () const
 void WidgetBackgroundColored::Draw (
     RenderContext const &render_context,
     ScreenCoordRect const &widget_screen_rect,
-    ScreenCoordVector2 const &frame_margins) const
+    ScreenCoordMargins const &frame_margins) const
 {
     Render::DrawScreenRect(
         render_context,
@@ -72,7 +72,7 @@ WidgetBackground *WidgetBackgroundTextured::CreateClone () const
 void WidgetBackgroundTextured::Draw (
     RenderContext const &render_context,
     ScreenCoordRect const &widget_screen_rect,
-    ScreenCoordVector2 const &frame_margins) const
+    ScreenCoordMargins const &frame_margins) const
 {
     ASSERT1(m_texture.IsValid());
     Render::DrawScreenRectTexture(
@@ -87,7 +87,8 @@ void WidgetBackgroundTextured::Draw (
 
 WidgetBackgroundTextured3Way::WidgetBackgroundTextured3Way (
     std::string const &left_texture_name,
-    std::string const &center_texture_name)
+    std::string const &center_texture_name,
+    std::string const &right_texture_name)
     :
     WidgetBackground()
 {
@@ -96,19 +97,28 @@ WidgetBackgroundTextured3Way::WidgetBackgroundTextured3Way (
 
     m_center_texture = GlTexture::Load(center_texture_name);
     ASSERT1(m_center_texture.IsValid());
+
+    if (!right_texture_name.empty())
+    {
+        m_right_texture = GlTexture::Load(right_texture_name);
+        ASSERT1(m_right_texture.IsValid());
+    }
 }
 
 WidgetBackgroundTextured3Way::WidgetBackgroundTextured3Way (
     Resource<GlTexture> const &left_texture,
-    Resource<GlTexture> const &center_texture)
+    Resource<GlTexture> const &center_texture,
+    Resource<GlTexture> const &right_texture)
     :
     WidgetBackground()
 {
     ASSERT1(left_texture.IsValid());
     ASSERT1(center_texture.IsValid());
+    // don't require right_texture to be be valid
 
     m_left_texture = left_texture;
     m_center_texture = center_texture;
+    m_right_texture = right_texture;
 }
 
 WidgetBackgroundTextured3Way::~WidgetBackgroundTextured3Way ()
@@ -117,25 +127,27 @@ WidgetBackgroundTextured3Way::~WidgetBackgroundTextured3Way ()
 
 WidgetBackground *WidgetBackgroundTextured3Way::CreateClone () const
 {
-    return new WidgetBackgroundTextured3Way(m_left_texture, m_center_texture);
+    return new WidgetBackgroundTextured3Way(m_left_texture, m_center_texture, m_right_texture);
 }
 
 void WidgetBackgroundTextured3Way::Draw (
     RenderContext const &render_context,
     ScreenCoordRect const &widget_screen_rect,
-    ScreenCoordVector2 const &frame_margins) const
+    ScreenCoordMargins const &frame_margins) const
 {
     ASSERT1(m_left_texture.IsValid());
     ASSERT1(m_center_texture.IsValid());
-    ASSERT1(frame_margins[Dim::X] >= 0);
-    ASSERT1(frame_margins[Dim::Y] >= 0);
-
+    // don't require m_right_texture to be valid
     // set up the measurements for the rectangles
+    ScreenCoord left_width = (widget_screen_rect.Height() * m_left_texture->Width()) / m_left_texture->Height();
+    ScreenCoord right_width = left_width;
+    if (m_right_texture.IsValid())
+        right_width = (widget_screen_rect.Height() * m_right_texture->Width()) / m_right_texture->Height();
     ScreenCoord horizontal[4] =
     {
         widget_screen_rect.Left(),
-        widget_screen_rect.Left() + frame_margins[Dim::X],
-        widget_screen_rect.Right() - frame_margins[Dim::X],
+        widget_screen_rect.Left() + left_width,
+        widget_screen_rect.Right() - right_width,
         widget_screen_rect.Right()
     };
     ScreenCoord vertical[2] =
@@ -166,11 +178,22 @@ void WidgetBackgroundTextured3Way::Draw (
         **m_center_texture,
         center,
         FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
-    Render::DrawScreenRectTexture(
-        render_context,
-        **m_left_texture,
-        right,
-        FloatSimpleTransform2(-1.0f,  1.0f, 1.0f, 0.0f));
+    if (m_right_texture.IsValid())
+    {
+        Render::DrawScreenRectTexture(
+            render_context,
+            **m_right_texture,
+            right,
+            FloatSimpleTransform2( 1.0f,  1.0f, 0.0f, 0.0f));
+    }
+    else
+    {
+        Render::DrawScreenRectTexture(
+            render_context,
+            **m_left_texture,
+            right,
+            FloatSimpleTransform2(-1.0f,  1.0f, 1.0f, 0.0f));
+    }
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -233,28 +256,30 @@ WidgetBackground *WidgetBackgroundStylized::CreateClone () const
 void WidgetBackgroundStylized::Draw (
     RenderContext const &render_context,
     ScreenCoordRect const &widget_screen_rect,
-    ScreenCoordVector2 const &frame_margins) const
+    ScreenCoordMargins const &frame_margins) const
 {
     ASSERT1(m_corner_texture.IsValid());
     ASSERT1(m_top_texture.IsValid());
     ASSERT1(m_left_texture.IsValid());
     ASSERT1(m_center_texture.IsValid());
-    ASSERT1(frame_margins[Dim::X] >= 0);
-    ASSERT1(frame_margins[Dim::Y] >= 0);
+    ASSERT1(frame_margins.m_bottom_left[Dim::X] >= 0);
+    ASSERT1(frame_margins.m_bottom_left[Dim::Y] >= 0);
+    ASSERT1(frame_margins.m_top_right[Dim::X] >= 0);
+    ASSERT1(frame_margins.m_top_right[Dim::Y] >= 0);
 
     // set up the measurements for the rectangles
     ScreenCoord horizontal[4] =
     {
         widget_screen_rect.Left(),
-        widget_screen_rect.Left() + frame_margins[Dim::X],
-        widget_screen_rect.Right() - frame_margins[Dim::X],
+        widget_screen_rect.Left() + frame_margins.m_bottom_left[Dim::X],
+        widget_screen_rect.Right() - frame_margins.m_top_right[Dim::X],
         widget_screen_rect.Right()
     };
     ScreenCoord vertical[4] =
     {
         widget_screen_rect.Bottom(),
-        widget_screen_rect.Bottom() + frame_margins[Dim::Y],
-        widget_screen_rect.Top() - frame_margins[Dim::Y],
+        widget_screen_rect.Bottom() + frame_margins.m_bottom_left[Dim::Y],
+        widget_screen_rect.Top() - frame_margins.m_top_right[Dim::Y],
         widget_screen_rect.Top()
     };
 
@@ -396,24 +421,26 @@ WidgetBackground *WidgetBackgroundTextured9Way::CreateClone () const
 void WidgetBackgroundTextured9Way::Draw (
     RenderContext const &render_context,
     ScreenCoordRect const &widget_screen_rect,
-    ScreenCoordVector2 const &frame_margins) const
+    ScreenCoordMargins const &frame_margins) const
 {
-    ASSERT1(frame_margins[Dim::X] >= 0);
-    ASSERT1(frame_margins[Dim::Y] >= 0);
+    ASSERT1(frame_margins.m_bottom_left[Dim::X] >= 0);
+    ASSERT1(frame_margins.m_bottom_left[Dim::Y] >= 0);
+    ASSERT1(frame_margins.m_top_right[Dim::X] >= 0);
+    ASSERT1(frame_margins.m_top_right[Dim::Y] >= 0);
 
     // set up the measurements for the rectangles
     ScreenCoord horizontal[4] =
     {
         widget_screen_rect.Left(),
-        widget_screen_rect.Left() + frame_margins[Dim::X],
-        widget_screen_rect.Right() - frame_margins[Dim::X],
+        widget_screen_rect.Left() + frame_margins.m_bottom_left[Dim::X],
+        widget_screen_rect.Right() - frame_margins.m_top_right[Dim::X],
         widget_screen_rect.Right()
     };
     ScreenCoord vertical[4] =
     {
         widget_screen_rect.Bottom(),
-        widget_screen_rect.Bottom() + frame_margins[Dim::Y],
-        widget_screen_rect.Top() - frame_margins[Dim::Y],
+        widget_screen_rect.Bottom() + frame_margins.m_bottom_left[Dim::Y],
+        widget_screen_rect.Top() - frame_margins.m_top_right[Dim::Y],
         widget_screen_rect.Top()
     };
 

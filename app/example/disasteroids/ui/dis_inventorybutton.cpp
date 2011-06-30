@@ -244,7 +244,7 @@ void InventoryButton::SetCurrentSizeParameter (Float const current_size_paramete
             m_current_size_parameter * equipped_size +
             (1.0f - m_current_size_parameter) * unequipped_size);
 
-        SetContentMargins((Size() - current_size.StaticCast<ScreenCoord>()) / 2 - FrameMargins());
+        SetContentMargins(ScreenCoordMargins((Size() - current_size.StaticCast<ScreenCoord>()) / 2) - FrameMargins());
     }
 }
 
