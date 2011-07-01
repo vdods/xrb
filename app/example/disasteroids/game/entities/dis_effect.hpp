@@ -203,6 +203,7 @@ public:
         ASSERT1(m_disable_time_factor > 1.0f);
         // i just blue myself.
         InitialColorMask() = Color(0.0f, 0.0f, 1.0f, 1.0f);
+        FinalColorMask() = Color(0.0f, 0.0f, 1.0f, 0.0f);
     }
 
     virtual void Collide (
@@ -323,7 +324,7 @@ public:
     // this is mainly just to override Effect::Think which changes the alpha
     virtual void Think (Float time, Float frame_dt) { }
 
-    void SetParameters (bool push_instead_of_pull, Float intensity);
+    void SetParameters (Color const &color, Float intensity);
 }; // end of class TractorBeam
 
 // ///////////////////////////////////////////////////////////////////////////

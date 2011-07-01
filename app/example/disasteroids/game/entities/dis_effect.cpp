@@ -249,15 +249,13 @@ void LaserBeam::SnapToShip (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void TractorBeam::SetParameters (bool const push_instead_of_pull, Float const intensity)
+void TractorBeam::SetParameters (Color const &color, Float intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
     static Float const s_opacity = 0.25f;
-    if (push_instead_of_pull)
-        OwnerObject()->ColorMask() = Color(1.0f, 0.0f, 0.0f, s_opacity*intensity);
-    else
-        OwnerObject()->ColorMask() = Color(0.0f, 1.0f, 0.0f, s_opacity*intensity);
+    OwnerObject()->ColorMask() = color;
+    OwnerObject()->ColorMask()[Dim::A] = s_opacity*intensity;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,7 @@ class Weapon : public PoweredDevice
 {
 public:
 
-    Weapon (Uint8 const upgrade_level, ItemType const item_type)
+    Weapon (Uint8 upgrade_level, ItemType item_type)
         :
         PoweredDevice(upgrade_level, item_type),
         m_reticle_coordinates(FloatVector2::ms_zero)
@@ -37,9 +37,9 @@ public:
     }
     virtual ~Weapon () { }
 
-    inline void SetInputs (
-        Float const primary_input,
-        Float const secondary_input,
+    void SetInputs (
+        Float primary_input,
+        Float secondary_input,
         FloatVector2 const &muzzle_location,
         FloatVector2 const &muzzle_direction,
         FloatVector2 const &reticle_coordinates)
@@ -61,11 +61,11 @@ public:
 
 protected:
 
-    inline Float PrimaryInput () const { return m_primary_input; }
-    inline Float SecondaryInput () const { return m_secondary_input; }
-    inline FloatVector2 const &MuzzleLocation () const { return m_muzzle_location; }
-    inline FloatVector2 const &MuzzleDirection () const { return m_muzzle_direction; }
-    inline FloatVector2 const &ReticleCoordinates () const { return m_reticle_coordinates; }
+    Float PrimaryInput () const { return m_primary_input; }
+    Float SecondaryInput () const { return m_secondary_input; }
+    FloatVector2 const &MuzzleLocation () const { return m_muzzle_location; }
+    FloatVector2 const &MuzzleDirection () const { return m_muzzle_direction; }
+    FloatVector2 const &ReticleCoordinates () const { return m_reticle_coordinates; }
 
 private:
 
@@ -82,7 +82,7 @@ class PeaShooter : public Weapon
 {
 public:
 
-    PeaShooter (Uint32 const upgrade_level)
+    PeaShooter (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_PEA_SHOOTER)
     {
@@ -118,14 +118,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Item interface methods
@@ -159,7 +154,7 @@ class Laser : public Weapon
 {
 public:
 
-    Laser (Uint32 const upgrade_level)
+    Laser (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_LASER)
     {
@@ -169,7 +164,7 @@ public:
     }
     virtual ~Laser () { }
 
-    inline void SetLaserBeam (LaserBeam *const laser_beam)
+    void SetLaserBeam (LaserBeam *const laser_beam)
     {
         ASSERT1(laser_beam != NULL);
         m_laser_beam = laser_beam;
@@ -195,14 +190,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -223,7 +213,7 @@ class FlameThrower : public Weapon
 {
 public:
 
-    FlameThrower (Uint32 const upgrade_level)
+    FlameThrower (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_FLAME_THROWER)
     {
@@ -234,24 +224,24 @@ public:
     }
     virtual ~FlameThrower () { }
 
-    inline bool IsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
-    inline bool IsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
-    inline Float MaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
-    inline Float FinalFireballSizeOverride () const { return m_final_fireball_size_override; }
+    bool IsMaxDamagePerFireballOverridden () const { return m_max_damage_per_fireball_override >= 0.0f; }
+    bool IsFinalFireballSizeOverridden () const { return m_final_fireball_size_override >= 0.0f; }
+    Float MaxDamagePerFireballOverride () const { return m_max_damage_per_fireball_override; }
+    Float FinalFireballSizeOverride () const { return m_final_fireball_size_override; }
 
-    inline void SetMaxDamagePerFireballOverride (Float max_damage_per_fireball_override)
+    void SetMaxDamagePerFireballOverride (Float max_damage_per_fireball_override)
     {
         ASSERT1(max_damage_per_fireball_override > 0.0f);
         m_max_damage_per_fireball_override = max_damage_per_fireball_override;
     }
-    inline void SetFinalFireballSizeOverride (Float final_fireball_size_override)
+    void SetFinalFireballSizeOverride (Float final_fireball_size_override)
     {
         ASSERT1(final_fireball_size_override > 0.0f);
         m_final_fireball_size_override = final_fireball_size_override;
     }
 
-    inline void ClearMaxDamagePerFireballOverride () { m_max_damage_per_fireball_override = -1.0f; }
-    inline void ClearFinalFireballSizeOverride () { m_final_fireball_size_override = -1.0f; }
+    void ClearMaxDamagePerFireballOverride () { m_max_damage_per_fireball_override = -1.0f; }
+    void ClearFinalFireballSizeOverride () { m_final_fireball_size_override = -1.0f; }
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
@@ -273,14 +263,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -307,7 +292,7 @@ public:
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
-    GaussGun (Uint32 const upgrade_level)
+    GaussGun (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_GAUSS_GUN)
     {
@@ -325,16 +310,16 @@ public:
 //         }
     }
 
-    inline bool IsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
-    inline Float ImpactDamageOverride () const { return m_impact_damage_override; }
+    bool IsImpactDamageOverridden () const { return m_impact_damage_override >= 0.0f; }
+    Float ImpactDamageOverride () const { return m_impact_damage_override; }
 
-    inline void SetImpactDamageOverride (Float impact_damage_override)
+    void SetImpactDamageOverride (Float impact_damage_override)
     {
         ASSERT1(impact_damage_override >= 0.0f);
         m_impact_damage_override = impact_damage_override;
     }
 
-    inline void ClearImpactDamageOverride () { m_impact_damage_override = -1.0f; }
+    void ClearImpactDamageOverride () { m_impact_damage_override = -1.0f; }
 //     void EnsureReticleEffectIsCleared ();
 
     // ///////////////////////////////////////////////////////////////////////
@@ -357,14 +342,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -380,7 +360,7 @@ class GrenadeLauncher : public Weapon
 {
 public:
 
-    GrenadeLauncher (Uint32 const upgrade_level)
+    GrenadeLauncher (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_GRENADE_LAUNCHER)
     {
@@ -413,14 +393,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -445,7 +420,7 @@ class MissileLauncher : public Weapon
 {
 public:
 
-    MissileLauncher (Uint32 const upgrade_level)
+    MissileLauncher (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_MISSILE_LAUNCHER)
     {
@@ -515,11 +490,11 @@ private:
 }; // end of class MissileLauncher
 
 // - primary: EMP explosion (disables enemies) -- secondary: none
-class EMPCore : public Weapon 
+class EMPCore : public Weapon
 {
 public:
 
-    EMPCore (Uint32 const upgrade_level)
+    EMPCore (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_EMP_CORE)
     {
@@ -548,14 +523,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -574,7 +544,7 @@ class Tractor : public Weapon
 {
 public:
 
-    Tractor (Uint32 const upgrade_level)
+    Tractor (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_TRACTOR)
     {
@@ -586,45 +556,45 @@ public:
     }
     virtual ~Tractor () { }
 
-    inline bool IsRangeOverridden () const { return m_range_override >= 0.0f; }
-    inline Float RangeOverride () const { return m_range_override; }
+    bool IsRangeOverridden () const { return m_range_override >= 0.0f; }
+    Float RangeOverride () const { return m_range_override; }
 
-    inline bool IsStrengthOverridden () const { return m_strength_override >= 0.0f; }
-    inline Float StrengthOverride () const { return m_strength_override; }
+    bool IsStrengthOverridden () const { return m_strength_override >= 0.0f; }
+    Float StrengthOverride () const { return m_strength_override; }
 
-    inline bool IsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
-    inline Float MaxForceOverride () const { return m_max_force_override; }
+    bool IsMaxForceOverridden () const { return m_max_force_override >= 0.0f; }
+    Float MaxForceOverride () const { return m_max_force_override; }
 
-    inline bool IsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
-    inline Float BeamRadiusOverride () const { return m_beam_radius_override; }
+    bool IsBeamRadiusOverridden () const { return m_beam_radius_override >= 0.0f; }
+    Float BeamRadiusOverride () const { return m_beam_radius_override; }
 
-    inline void SetRangeOverride (Float range_override)
+    void SetRangeOverride (Float range_override)
     {
         ASSERT1(range_override >= 0.0f);
         m_range_override = range_override;
     }
-    inline void SetStrengthOverride (Float strength_override)
+    void SetStrengthOverride (Float strength_override)
     {
         ASSERT1(strength_override >= 0.0f);
         m_strength_override = strength_override;
     }
-    inline void SetMaxForceOverride (Float max_force_override)
+    void SetMaxForceOverride (Float max_force_override)
     {
         ASSERT1(max_force_override >= 0.0f);
         m_max_force_override = max_force_override;
     }
-    inline void SetBeamRadiusOverride (Float beam_radius_override)
+    void SetBeamRadiusOverride (Float beam_radius_override)
     {
         ASSERT1(beam_radius_override >= 0.0f);
         m_beam_radius_override = beam_radius_override;
     }
 
-    inline void ClearRangeOverride () { m_range_override = -1.0f; }
-    inline void ClearStrengthOverride () { m_strength_override = -1.0f; }
-    inline void ClearMaxForceOverride () { m_max_force_override = -1.0f; }
-    inline void ClearBeamRadiusOverride () { m_beam_radius_override = -1.0f; }
+    void ClearRangeOverride () { m_range_override = -1.0f; }
+    void ClearStrengthOverride () { m_strength_override = -1.0f; }
+    void ClearMaxForceOverride () { m_max_force_override = -1.0f; }
+    void ClearBeamRadiusOverride () { m_beam_radius_override = -1.0f; }
 
-    inline void SetTractorBeam (TractorBeam *const tractor_beam)
+    void SetTractorBeam (TractorBeam *tractor_beam)
     {
         ASSERT1(tractor_beam != NULL);
         m_tractor_beam = tractor_beam;
@@ -643,16 +613,26 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
-private:
+protected:
+
+    Tractor (Uint32 upgrade_level, ItemType item_type)
+        :
+        Weapon(upgrade_level, item_type)
+    {
+        m_tractor_beam = NULL;
+        m_range_override = -1.0f;
+        m_strength_override = -1.0f;
+        m_max_force_override = -1.0f;
+        m_beam_radius_override = -1.0f;
+    }
+
+protected:
+
+    TractorBeam *m_tractor_beam;
 
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_max_power_output_rate[UPGRADE_LEVEL_COUNT];
@@ -660,7 +640,8 @@ private:
     static Float const ms_max_force[UPGRADE_LEVEL_COUNT];
     static Float const ms_beam_radius[UPGRADE_LEVEL_COUNT];
 
-    TractorBeam *m_tractor_beam;
+private:
+
     Float m_range_override;
     Float m_strength_override;
     Float m_max_force_override;
@@ -670,6 +651,28 @@ private:
 // ///////////////////////////////////////////////////////////////////////////
 // enemy weapons
 // ///////////////////////////////////////////////////////////////////////////
+
+// acts as a normal Tractor, but if primary and secondary input are both
+// enabled, the tractor beam is yellow and acts in a grab-mode.
+class AdvancedTractor : public Tractor
+{
+public:
+
+    AdvancedTractor (Uint32 upgrade_level)
+        :
+        Tractor(upgrade_level, IT_ENEMY_WEAPON_ADVANCED_TRACTOR),
+        m_target(NULL)
+    { }
+    virtual ~AdvancedTractor () { }
+
+    void Target (Engine2::Circle::Entity *target) { m_target = target; }
+
+    virtual bool Activate (Float power, Float time, Float frame_dt);
+
+private:
+
+    Engine2::Circle::Entity *m_target;
+}; // end of class AdvancedTractor
 
 class SlowBulletGun : public Weapon
 {
@@ -681,7 +684,7 @@ public:
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
-    SlowBulletGun (Uint32 const upgrade_level)
+    SlowBulletGun (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_ENEMY_WEAPON_SLOW_BULLET_GUN)
     {
@@ -710,14 +713,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 
@@ -732,7 +730,7 @@ public:
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
-    EnemySpawner (Uint32 const upgrade_level)
+    EnemySpawner (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_ENEMY_WEAPON_ENEMY_SPAWNER)
     {
@@ -743,23 +741,23 @@ public:
     }
     virtual ~EnemySpawner () { }
 
-    inline EntityType EnemySpawnType () const { return m_enemy_spawn_type; }
-    inline bool IsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
-    inline Float FireRateOverride () const { return m_fire_rate_override; }
+    EntityType EnemySpawnType () const { return m_enemy_spawn_type; }
+    bool IsFireRateOverridden () const { return m_fire_rate_override > 0.0f; }
+    Float FireRateOverride () const { return m_fire_rate_override; }
 
-    inline void SetEnemySpawnType (EntityType enemy_spawn_type)
+    void SetEnemySpawnType (EntityType enemy_spawn_type)
     {
         ASSERT1(enemy_spawn_type >= ET_ENEMY_SHIP_LOWEST);
         ASSERT1(enemy_spawn_type <= ET_ENEMY_SHIP_HIGHEST);
         m_enemy_spawn_type = enemy_spawn_type;
     }
-    inline void SetFireRateOverride (Float fire_rate_override)
+    void SetFireRateOverride (Float fire_rate_override)
     {
         ASSERT1(fire_rate_override > 0.0f);
         m_fire_rate_override = fire_rate_override;
     }
 
-    inline void ClearFireRateOverride () { m_fire_rate_override = -1.0f; }
+    void ClearFireRateOverride () { m_fire_rate_override = -1.0f; }
 
     // ///////////////////////////////////////////////////////////////////////
     // Weapon interface methods
@@ -785,14 +783,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, Float time, Float frame_dt);
 
 private:
 

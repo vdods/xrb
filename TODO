@@ -33,22 +33,17 @@ DISASTEROIDS:
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 - death sequences for player and Demi
 ** feature-related **
+- make tractor beams grow from a point when activated, and shrink to a point when deactivated.
 - make the wave sequences programmable via config file, and specifiable via commandline,
   so specifying a debug wave sequence is easy.  maybe make a hardcoded wave sequence that
   will be used for the game.
 - really need a powerup system -- stoke mode, but also random powerups that pop out of
   enemies and asteroids -- invincibility, infinite power, super speed, double damage,
   double firing speed
-- add a yellow tractor beam to Demi, which grabs stuff to push/pull in whatever direction.
-  this will be used to hurl nearby asteroids and enemy ships at the player.
-- make asteroid break-up more natural -- use circle-packing, with big circles
-  away from the point of damage, lots of little circles in the damaged vicinity,
-  so the exploded asteroid looks more solid (instead of being a regular pentagon
-  of circles).  the damage amount above the "cracking point" should go into
-  moving the pieces in a blasting motion.
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
-  where they flock in the form of a snake.
+  where they flock in the form of a snake.  the head will decide where to go, and
+  the body will provide extra mass to the collisions
 - additional mode for Shade - maybe hide behind asteroids
   and make bullets curve around stuff toward the player.
 - additional mode for Revulsion - synchronize firing (?) once the player has
@@ -95,7 +90,7 @@ DISASTEROIDS:
   out by some puny other ballistic).  it should get weakened slightly, and
   get correspondingly smaller.
 - make Shade respond as a charged particle in a magnetic field if it's
-  touching a tractor beam
+  touching a tractor beam, or maybe become disabled if it's hit by a red tractor beam
 - add advanced behaviors for higher level enemies (like escaping Devourments)
 - when a new high score is posted and you're taken back to the title screen,
   the just-added score should be highlighted or blinking somehow

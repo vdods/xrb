@@ -103,7 +103,7 @@ Demi::Demi (Uint8 const enemy_level)
 
     // port-side weapon setup
     {
-        m_port_tractor = new Tractor(3);
+        m_port_tractor = new AdvancedTractor(3);
         m_port_tractor->SetRangeOverride(ms_tractor_range[EnemyLevel()]);
         m_port_tractor->SetStrengthOverride(ms_tractor_strength[EnemyLevel()]);
         m_port_tractor->SetMaxForceOverride(ms_tractor_max_force[EnemyLevel()]);
@@ -122,7 +122,7 @@ Demi::Demi (Uint8 const enemy_level)
 
     // starboard-side weapon setup
     {
-        m_starboard_tractor = new Tractor(3);
+        m_starboard_tractor = new AdvancedTractor(3);
         m_starboard_tractor->SetRangeOverride(ms_tractor_range[EnemyLevel()]);
         m_starboard_tractor->SetStrengthOverride(ms_tractor_strength[EnemyLevel()]);
         m_starboard_tractor->SetMaxForceOverride(ms_tractor_max_force[EnemyLevel()]);
@@ -537,9 +537,7 @@ void Demi::PickWanderDirection (Float const time, Float const frame_dt)
     m_starboard_weapon = NULL;
     m_aft_weapon = NULL;
 
-    // restore the tractor think functions
-    m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-    m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
+    PickTractorThinkStates();
 
     // update the next time to pick a wander direction
     m_next_wander_time = time + 6.0f;
@@ -689,6 +687,8 @@ void Demi::PauseStart (Float const time, Float const frame_dt)
 {
     m_start_time = time;
     m_think_state = THINK_STATE(PauseContinue);
+
+    PickTractorThinkStates();
 }
 
 void Demi::PauseContinue (Float const time, Float const frame_dt)
@@ -894,9 +894,6 @@ void Demi::FlameThrowSweepContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_flame_throw_sweep_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
-        // restore the tractor think functions
-        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -931,9 +928,6 @@ void Demi::FlameThrowBlastContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_flame_throw_blast_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
-        // restore the tractor think functions
-        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -971,9 +965,6 @@ void Demi::MissileLaunchContinue (Float const time, Float const frame_dt)
     if (time >= m_start_time + ms_missile_launch_duration[EnemyLevel()])
     {
         m_think_state = THINK_STATE(PauseStart);
-        // restore the tractor think functions
-        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -1237,9 +1228,6 @@ void Demi::SpinningAttackDecelerate (Float const time, Float const frame_dt)
     {
         SetAngularVelocity(0.0f);
         m_think_state = THINK_STATE(PauseStart);
-        // restore the tractor think functions
-        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -1272,9 +1260,6 @@ void Demi::TractorTargetCloserContinue (Float const time, Float const frame_dt)
     {
         m_target.Release();
         m_think_state = THINK_STATE(PickWanderDirection);
-        // restore the tractor think functions
-        m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
-        m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
         return;
     }
 
@@ -1292,7 +1277,8 @@ void Demi::PortTractorDeflectStuff (Float const time, Float const frame_dt)
     m_port_weapon = m_port_tractor;
 
     Entity *best_target =
-        FindTractorDeflectTarget(
+        FindTractorTarget(
+            TA_DEFLECT,
             MuzzleLocation(m_port_tractor),
             MuzzleDirection(m_port_tractor),
             time,
@@ -1312,7 +1298,8 @@ void Demi::StarboardTractorDeflectStuff (Float const time, Float const frame_dt)
     m_starboard_weapon = m_starboard_tractor;
 
     Entity *best_target =
-        FindTractorDeflectTarget(
+        FindTractorTarget(
+            TA_DEFLECT,
             MuzzleLocation(m_starboard_tractor),
             MuzzleDirection(m_starboard_tractor),
             time,
@@ -1353,7 +1340,139 @@ void Demi::StarboardTractorPullTargetCloser (Float const time, Float const frame
     SetStarboardWeaponSecondaryInput(0);
 }
 
-void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Float max_thrust)
+void Demi::PortTractorSuckUpPowerups (Float time, Float frame_dt)
+{
+    m_port_weapon = m_port_tractor;
+
+    Entity *best_target =
+        FindTractorTarget(
+            TA_SUCK_UP_POWERUPS,
+            MuzzleLocation(m_port_tractor),
+            MuzzleDirection(m_port_tractor),
+            time,
+            frame_dt);
+
+    if (best_target != NULL)
+    {
+        // aim the tractor and set it to grab
+        SetPortReticleCoordinates(best_target->Translation());
+        SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
+        SetPortWeaponSecondaryInput(0);
+    }
+}
+
+void Demi::StarboardTractorSuckUpPowerups (Float time, Float frame_dt)
+{
+    m_starboard_weapon = m_starboard_tractor;
+
+    Entity *best_target =
+        FindTractorTarget(
+            TA_SUCK_UP_POWERUPS,
+            MuzzleLocation(m_starboard_tractor),
+            MuzzleDirection(m_starboard_tractor),
+            time,
+            frame_dt);
+
+    if (best_target != NULL)
+    {
+        // aim the tractor and set it to grab
+        SetStarboardReticleCoordinates(best_target->Translation());
+        SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
+        SetStarboardWeaponSecondaryInput(0);
+    }
+}
+
+void Demi::PortTractorFlingStuffAtTarget (Float time, Float frame_dt)
+{
+    if (!m_target.IsValid() || m_target->IsDead())
+        return;
+
+    m_port_weapon = m_port_tractor;
+
+    Entity *best_target =
+        FindTractorTarget(
+            TA_FLING,
+            MuzzleLocation(m_port_tractor),
+            MuzzleDirection(m_port_tractor),
+            time,
+            frame_dt);
+
+    if (best_target != NULL)
+    {
+        // aim the tractor and set it to grab
+        SetPortReticleCoordinates(best_target->Translation());
+        SetPortWeaponPrimaryInput(UINT8_UPPER_BOUND);
+        SetPortWeaponSecondaryInput(UINT8_UPPER_BOUND);
+        // set the target to fling at
+        m_port_tractor->Target(*m_target);
+    }
+}
+
+void Demi::StarboardTractorFlingStuffAtTarget (Float time, Float frame_dt)
+{
+    if (!m_target.IsValid() || m_target->IsDead())
+        return;
+
+    m_starboard_weapon = m_starboard_tractor;
+
+    Entity *best_target =
+        FindTractorTarget(
+            TA_FLING,
+            MuzzleLocation(m_starboard_tractor),
+            MuzzleDirection(m_starboard_tractor),
+            time,
+            frame_dt);
+
+    if (best_target != NULL)
+    {
+        // aim the tractor and set it to grab
+        SetStarboardReticleCoordinates(best_target->Translation());
+        SetStarboardWeaponPrimaryInput(UINT8_UPPER_BOUND);
+        SetStarboardWeaponSecondaryInput(UINT8_UPPER_BOUND);
+        // set the target to fling at
+        m_starboard_tractor->Target(*m_target);
+    }
+}
+
+void Demi::PickTractorThinkStates ()
+{
+    // reset these -- technically unnecessary, but why not.
+    m_port_tractor->Target(NULL);
+    m_starboard_tractor->Target(NULL);
+    // choose which tractor action to do.  if there is a target,
+    // then TA_DEFLECT, TA_SUCK_UP_POWERUPS and TA_FLING are all possibilities.
+    Uint16 behavior = 0;
+    if (m_target.IsValid())
+        behavior = Math::RandomUint16(0, 2);
+    // otherwise only TA_DEFLECT and TA_SUCK_UP_POWERUPS work.
+    else
+        behavior = Math::RandomUint16(0, 1);
+
+    TractorAction tractor_action = static_cast<TractorAction>(behavior);
+    switch (tractor_action)
+    {
+        case TA_DEFLECT:
+            m_port_tractor_think_state = THINK_STATE(PortTractorDeflectStuff);
+            m_starboard_tractor_think_state = THINK_STATE(StarboardTractorDeflectStuff);
+            break;
+
+        case TA_SUCK_UP_POWERUPS:
+            m_port_tractor_think_state = THINK_STATE(PortTractorSuckUpPowerups);
+            m_starboard_tractor_think_state = THINK_STATE(StarboardTractorSuckUpPowerups);
+            break;
+
+        case TA_FLING:
+            m_port_tractor_think_state = THINK_STATE(PortTractorFlingStuffAtTarget);
+            m_starboard_tractor_think_state = THINK_STATE(StarboardTractorFlingStuffAtTarget);
+            break;
+
+        default:
+            ASSERT1(false && "invalid TractorAction");
+            break;
+    }
+}
+
+void Demi::MatchVelocity (FloatVector2 const &velocity, Float frame_dt, Float max_thrust)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
@@ -1372,12 +1491,15 @@ void Demi::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt, Fl
     }
 }
 
-Entity *Demi::FindTractorDeflectTarget (
+Entity *Demi::FindTractorTarget (
+    TractorAction tractor_action,
     FloatVector2 const &muzzle_location,
     FloatVector2 const &muzzle_direction,
-    Float const time,
-    Float const frame_dt)
+    Float time,
+    Float frame_dt)
 {
+    ASSERT1(tractor_action < TA_COUNT);
+
     Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + ScaleFactor());
     Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
@@ -1388,7 +1510,7 @@ Entity *Demi::FindTractorDeflectTarget (
         area_trace_list);
 
     Entity *best_target = NULL;
-    Sint32 best_target_priority = 0;
+    Float best_target_priority = 0.0f;
     for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
                                                   it_end = area_trace_list.end();
          it != it_end;
@@ -1401,36 +1523,70 @@ Entity *Demi::FindTractorDeflectTarget (
         if (entity == this)
             continue;
 
-        Sint32 potential_target_priority = -1;
+        Float potential_target_priority = -1.0f;
 
-        // only target stuff that's about to collide with us (TODO: verify this works)
-        Float collision_time = CollisionTime(entity, 2.0f);
-        if (collision_time >= 0.0f)
+        switch (tractor_action)
         {
-            if (entity->IsExplosive() &&
-                entity->GetEntityType() != ET_ENEMY_MISSILE &&
-                entity->GetEntityType() != ET_GUIDED_ENEMY_MISSILE)
-            {
-                potential_target_priority = 30 + DStaticCast<Explosive *>(entity)->WeaponLevel();
-            }
-            else if (entity->IsBallistic())
-            {
-                potential_target_priority = 20 + DStaticCast<Ballistic *>(entity)->WeaponLevel();
-            }
-            else if (entity->GetEntityType() == ET_ASTEROID)
-            {
-                Float target_weight = Min(entity->Mass(), 2000.0f) - 1000.0f;
-                target_weight *= target_weight;
-                target_weight /= -1000000.0f;
-                target_weight += 1.0;
-                // target weight should now be in [0.0f, 1.0f], and entities with
-                // masses closer to 1000 will be weighted closer to 1.0f.
-                potential_target_priority = 10 + static_cast<Sint32>(9.0f * target_weight);
-            }
+            case TA_DEFLECT:
+                {
+                    // only target stuff that's about to collide with us (TODO: verify this works)
+                    Float collision_time = CollisionTime(entity, 2.0f);
+                    if (collision_time >= 0.0f)
+                    {
+                        if (entity->IsExplosive() &&
+                            entity->GetEntityType() != ET_ENEMY_MISSILE &&
+                            entity->GetEntityType() != ET_GUIDED_ENEMY_MISSILE)
+                        {
+                            potential_target_priority = 30.0f + DStaticCast<Explosive *>(entity)->WeaponLevel();
+                        }
+                        else if (entity->IsBallistic())
+                        {
+                            potential_target_priority = 20.0f + DStaticCast<Ballistic *>(entity)->WeaponLevel();
+                        }
+                        else if (entity->GetEntityType() == ET_ASTEROID)
+                        {
+                            Float target_weight = Min(entity->Mass(), 2000.0f) - 1000.0f;
+                            target_weight *= target_weight;
+                            target_weight /= -1000000.0f;
+                            target_weight += 1.0;
+                            // target weight should now be in [0.0f, 1.0f], and entities with
+                            // masses closer to 1000 will be weighted closer to 1.0f.
+                            potential_target_priority = 10.0f + 9.0f * target_weight;
+                        }
+                    }
+                }
+                break;
+
+
+            case TA_SUCK_UP_POWERUPS:
+                // don't want to suck up the target (that's a different mode)
+                if (entity == *m_target)
+                    continue;
+
+                // only want to suck up powerups
+                if (entity->IsPowerup())
+                    potential_target_priority = DStaticCast<Powerup *>(entity)->EffectiveValue();
+                break;
+
+            case TA_FLING:
+                // don't want to fling the target (it would cancel out anyway)
+                if (entity == *m_target)
+                    continue;
+
+                // don't want to fling non-solids or powerups at the player.
+                if (entity->GetCollisionType() == Engine2::Circle::CT_SOLID_COLLISION && !entity->IsPowerup())
+                {
+                    // just go by mass
+                    potential_target_priority = entity->Mass();
+                }
+                break;
+
+            default:
+                ASSERT1(false && "this shouldn't happen");
+                break;
         }
 
-        if (best_target == NULL ||
-            potential_target_priority > best_target_priority)
+        if (potential_target_priority > best_target_priority)
         {
             best_target = entity;
             best_target_priority = potential_target_priority;

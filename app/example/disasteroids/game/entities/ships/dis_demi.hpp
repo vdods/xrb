@@ -102,12 +102,12 @@ GuidedMissileLaunchContinue -> Stalk
 
 */
 
+class AdvancedTractor;
 class EnemySpawner;
 class FlameThrower;
 class GaussGun;
 class MissileLauncher;
 class ReticleEffect;
-class Tractor;
 class TractorBeam;
 
 class Demi : public EnemyShip
@@ -193,70 +193,70 @@ protected:
 private:
 
 
-    inline Float NormalizedPortWeaponPrimaryInput () const
+    Float NormalizedPortWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_port_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedPortWeaponSecondaryInput () const
+    Float NormalizedPortWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_port_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedStarboardWeaponPrimaryInput () const
+    Float NormalizedStarboardWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_starboard_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedStarboardWeaponSecondaryInput () const
+    Float NormalizedStarboardWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_starboard_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedAftWeaponPrimaryInput () const
+    Float NormalizedAftWeaponPrimaryInput () const
     {
         return static_cast<Float>(m_aft_weapon_primary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline Float NormalizedAftWeaponSecondaryInput () const
+    Float NormalizedAftWeaponSecondaryInput () const
     {
         return static_cast<Float>(m_aft_weapon_secondary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
 
-    inline void SetPortReticleCoordinates (FloatVector2 const &reticle_coordinates)
+    void SetPortReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
         ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
         ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
         m_port_reticle_coordinates = reticle_coordinates;
     }
-    inline void SetPortWeaponPrimaryInput (Uint8 const port_weapon_primary_input)
+    void SetPortWeaponPrimaryInput (Uint8 port_weapon_primary_input)
     {
         m_port_weapon_primary_input = port_weapon_primary_input;
     }
-    inline void SetPortWeaponSecondaryInput (Uint8 const port_weapon_secondary_input)
+    void SetPortWeaponSecondaryInput (Uint8 port_weapon_secondary_input)
     {
         m_port_weapon_secondary_input = port_weapon_secondary_input;
     }
-    inline void SetStarboardReticleCoordinates (FloatVector2 const &reticle_coordinates)
+    void SetStarboardReticleCoordinates (FloatVector2 const &reticle_coordinates)
     {
         ASSERT1(Math::IsFinite(reticle_coordinates[Dim::X]));
         ASSERT1(Math::IsFinite(reticle_coordinates[Dim::Y]));
         m_starboard_reticle_coordinates = reticle_coordinates;
     }
-    inline void SetStarboardWeaponPrimaryInput (Uint8 const starboard_weapon_primary_input)
+    void SetStarboardWeaponPrimaryInput (Uint8 starboard_weapon_primary_input)
     {
         m_starboard_weapon_primary_input = starboard_weapon_primary_input;
     }
-    inline void SetStarboardWeaponSecondaryInput (Uint8 const starboard_weapon_secondary_input)
+    void SetStarboardWeaponSecondaryInput (Uint8 starboard_weapon_secondary_input)
     {
         m_starboard_weapon_secondary_input = starboard_weapon_secondary_input;
     }
-    inline void SetAftWeaponPrimaryInput (Uint8 const aft_weapon_primary_input)
+    void SetAftWeaponPrimaryInput (Uint8 aft_weapon_primary_input)
     {
         m_aft_weapon_primary_input = aft_weapon_primary_input;
     }
-    inline void SetAftWeaponSecondaryInput (Uint8 const aft_weapon_secondary_input)
+    void SetAftWeaponSecondaryInput (Uint8 aft_weapon_secondary_input)
     {
         m_aft_weapon_secondary_input = aft_weapon_secondary_input;
     }
@@ -304,9 +304,28 @@ private:
     void StarboardTractorDeflectStuff (Float time, Float frame_dt);
     void PortTractorPullTargetCloser (Float time, Float frame_dt);
     void StarboardTractorPullTargetCloser (Float time, Float frame_dt);
+    void PortTractorSuckUpPowerups (Float time, Float frame_dt);
+    void StarboardTractorSuckUpPowerups (Float time, Float frame_dt);
+    void PortTractorFlingStuffAtTarget (Float time, Float frame_dt);
+    void StarboardTractorFlingStuffAtTarget (Float time, Float frame_dt);
+
+    void PickTractorThinkStates ();
 
     void MatchVelocity (FloatVector2 const &velocity, Float frame_dt, Float max_thrust = -1.0f);
-    Entity *FindTractorDeflectTarget (
+
+    enum TractorAction
+    {
+        TA_DEFLECT = 0,
+        TA_SUCK_UP_POWERUPS,
+        TA_FLING,
+
+        TA_COUNT
+    }; // end of enum Demi::TractorAction
+
+    // if deflect is true, search for things that will hurt us.  if false,
+    // search for things to fling at the target.
+    Entity *FindTractorTarget (
+        TractorAction tractor_action,
         FloatVector2 const &muzzle_location,
         FloatVector2 const &muzzle_direction,
         Float time,
@@ -356,7 +375,7 @@ private:
     // currently equipped port-side weapon
     Weapon *m_port_weapon;
     // port-side weapons
-    Tractor *m_port_tractor;
+    AdvancedTractor *m_port_tractor;
     EntityReference<TractorBeam> m_port_tractor_beam;
     FlameThrower *m_port_flame_thrower;
     MissileLauncher *m_port_missile_launcher;
@@ -364,7 +383,7 @@ private:
     // currently equipped starboard-side weapon
     Weapon *m_starboard_weapon;
     // starboard-side weapons
-    Tractor *m_starboard_tractor;
+    AdvancedTractor *m_starboard_tractor;
     EntityReference<TractorBeam> m_starboard_tractor_beam;
     FlameThrower *m_starboard_flame_thrower;
     MissileLauncher *m_starboard_missile_launcher;

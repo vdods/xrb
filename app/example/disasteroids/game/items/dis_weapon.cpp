@@ -118,9 +118,7 @@ Float const EnemySpawner::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 15.0f, 15.0f, 15
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float PeaShooter::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float PeaShooter::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -142,10 +140,7 @@ Float PeaShooter::PowerToBeUsedBasedOnInputs (
         return 0.0f;
 }
 
-bool PeaShooter::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool PeaShooter::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(OwnerShip()->GetWorld() != NULL);
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
@@ -240,9 +235,7 @@ bool PeaShooter::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Laser::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float Laser::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     ASSERT1(PrimaryInput() <= 1.0f);
     ASSERT1(SecondaryInput() <= 1.0f);
@@ -253,10 +246,7 @@ Float Laser::PowerToBeUsedBasedOnInputs (
         return 0.0f;
 }
 
-bool Laser::Activate (
-    Float power,
-    Float const time,
-    Float const frame_dt)
+bool Laser::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(m_laser_beam != NULL);
     ASSERT1(m_laser_beam->IsInWorld());
@@ -439,9 +429,7 @@ bool Laser::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float FlameThrower::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float FlameThrower::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -467,10 +455,7 @@ Float FlameThrower::PowerToBeUsedBasedOnInputs (
         return scaled_power;
 }
 
-bool FlameThrower::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool FlameThrower::Activate (Float power, Float time, Float frame_dt)
 {
     // secondary fire (super-blast) overrides primary fire
     Float input = PrimaryInput();
@@ -544,9 +529,7 @@ bool FlameThrower::Activate (
 //         m_reticle_effect->RemoveFromWorld();
 // }
 
-Float GaussGun::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float GaussGun::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -557,10 +540,7 @@ Float GaussGun::PowerToBeUsedBasedOnInputs (
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] : 0.0f;
 }
 
-bool GaussGun::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool GaussGun::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
@@ -671,7 +651,7 @@ GrenadeLauncher::~GrenadeLauncher ()
     m_active_grenade_set.clear();
 }
 
-void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
+void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *active_grenade)
 {
     ASSERT1(active_grenade != NULL);
     ASSERT1(active_grenade->OwnerGrenadeLauncher() == this);
@@ -686,9 +666,7 @@ void GrenadeLauncher::ActiveGrenadeDestroyed (Grenade *const active_grenade)
     active_grenade->SetOwnerGrenadeLauncher(NULL);
 }
 
-Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire if the maximum number of active grenades has been reached
     if (ActiveGrenadeCount() >= ms_max_active_grenade_count[UpgradeLevel()])
@@ -703,10 +681,7 @@ Float GrenadeLauncher::PowerToBeUsedBasedOnInputs (
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] : 0.0f;
 }
 
-bool GrenadeLauncher::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool GrenadeLauncher::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
@@ -783,7 +758,7 @@ MissileLauncher::~MissileLauncher ()
     m_active_missile_set.clear();
 }
 
-void MissileLauncher::ActiveMissileDestroyed (Missile *const active_missile)
+void MissileLauncher::ActiveMissileDestroyed (Missile *active_missile)
 {
     ASSERT1(active_missile != NULL);
     ASSERT1(active_missile->OwnerMissileLauncher() == this);
@@ -798,9 +773,7 @@ void MissileLauncher::ActiveMissileDestroyed (Missile *const active_missile)
     active_missile->SetOwnerMissileLauncher(NULL);
 }
 
-Float MissileLauncher::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float MissileLauncher::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire if the maximum number of active missiles has been reached
     if (ActiveMissileCount() >= ms_max_active_missile_count[UpgradeLevel()])
@@ -818,10 +791,7 @@ Float MissileLauncher::PowerToBeUsedBasedOnInputs (
         return 0.0f;
 }
 
-bool MissileLauncher::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool MissileLauncher::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
@@ -894,9 +864,7 @@ bool MissileLauncher::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float EMPCore::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float EMPCore::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -907,10 +875,7 @@ Float EMPCore::PowerToBeUsedBasedOnInputs (
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] : 0.0f;
 }
 
-bool EMPCore::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool EMPCore::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
@@ -951,9 +916,7 @@ bool EMPCore::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float Tractor::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float Tractor::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     if (SecondaryInput() > 0.0f)
         return SecondaryInput() * frame_dt * ms_max_power_output_rate[UpgradeLevel()];
@@ -961,10 +924,7 @@ Float Tractor::PowerToBeUsedBasedOnInputs (
         return PrimaryInput() * frame_dt * ms_max_power_output_rate[UpgradeLevel()];
 }
 
-bool Tractor::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool Tractor::Activate (Float power, Float time, Float frame_dt)
 {
     // the epsilon is because floating point arithmetic isn't exact
     // and the first condition was sometimes failing.
@@ -1004,8 +964,7 @@ bool Tractor::Activate (
     // use the reticle coordinates for the area the tractor pulls/pushes,
     // but make sure it's inside the maximum range.
     FloatVector2 reticle_coordinates(ReticleCoordinates());
-    Float reticle_distance =
-        (reticle_coordinates - OwnerShip()->Translation()).Length();
+    Float reticle_distance = (reticle_coordinates - OwnerShip()->Translation()).Length();
     if (reticle_distance > range)
     {
         ASSERT1(reticle_distance > 0.0f);
@@ -1051,7 +1010,7 @@ bool Tractor::Activate (
     // set its pulling input and intensity
     Float intensity = power / (frame_dt * ms_max_power_output_rate[UpgradeLevel()]);
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    m_tractor_beam->SetParameters(push_instead_of_pull, intensity);
+    m_tractor_beam->SetParameters(push_instead_of_pull ? Color(1.0f, 0.0f, 0.0f) : Color(0.0f, 1.0f, 0.0f), intensity);
 
     return true;
 }
@@ -1060,9 +1019,110 @@ bool Tractor::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float SlowBulletGun::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+bool AdvancedTractor::Activate (Float power, Float time, Float frame_dt)
+{
+    if (PrimaryInput() <= 0.0f || SecondaryInput() <= 0.0f)
+        return Tractor::Activate(power, time, frame_dt);
+
+    // if both primary and secondary inputs are on, engage advanced mode.
+    // the epsilon is because floating point arithmetic isn't exact
+    // and the first condition was sometimes failing.
+    ASSERT1(power <= PowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
+
+    // don't do anything if no power was supplied
+    if (power == 0.0f)
+    {
+        m_tractor_beam->SetParameters(false, 0.0f);
+        return false;
+    }
+
+    // the primary tractor beam pulls everything
+    Float input = Max(SecondaryInput(), PrimaryInput());
+
+    Float range =
+        IsRangeOverridden() ?
+        RangeOverride() :
+        ms_range[UpgradeLevel()];
+    Float strength =
+        IsStrengthOverridden() ?
+        StrengthOverride() :
+        ms_strength[UpgradeLevel()];
+    Float max_force =
+        IsMaxForceOverridden() ?
+        MaxForceOverride() :
+        ms_max_force[UpgradeLevel()];
+    Float beam_radius =
+        IsBeamRadiusOverridden() ?
+        BeamRadiusOverride() :
+        ms_beam_radius[UpgradeLevel()];
+
+    // use the reticle coordinates for the area the tractor pulls/pushes,
+    // but make sure it's inside the maximum range.
+    FloatVector2 reticle_coordinates(ReticleCoordinates());
+    Float reticle_distance = (reticle_coordinates - OwnerShip()->Translation()).Length();
+    if (reticle_distance > range)
+    {
+        ASSERT1(reticle_distance > 0.0f);
+        reticle_coordinates =
+            range / reticle_distance *
+            (reticle_coordinates - MuzzleLocation()) +
+            MuzzleLocation();
+    }
+
+    Engine2::Circle::AreaTraceList area_trace_list;
+    OwnerShip()->GetPhysicsHandler()->AreaTrace(
+        OwnerShip()->GetObjectLayer(),
+        reticle_coordinates,
+        beam_radius,
+        false,
+        area_trace_list);
+
+    Polynomial::SolutionSet solution_set;
+    for (Engine2::Circle::AreaTraceList::iterator it = area_trace_list.begin(),
+                                                  it_end = area_trace_list.end();
+         it != it_end;
+         ++it)
+    {
+        Entity *entity = DStaticCast<Entity *>(*it);
+        ASSERT1(entity != NULL);
+
+        // we don't want to push ourselves (it would cancel out anyway)
+        // we don't want to push the target entity
+        if (entity == OwnerShip() || entity == m_target)
+            continue;
+
+        // apply the force on the entity and the owner ship
+        Float force = Min(input * strength * entity->ScaleFactor(), max_force);
+        entity->ApplyInterceptCourseAcceleration(
+            m_target,
+            force,
+            false, // apply_force_on_target_also
+            false, // reverse_thrust
+            &solution_set);
+        OwnerShip()->ApplyInterceptCourseAcceleration(
+            m_target,
+            force,
+            false, // apply_force_on_target_also
+            true, // reverse_thrust
+            &solution_set);
+    }
+
+    // place the tractor beam effect
+    m_tractor_beam->SetScaleFactor(beam_radius);
+    m_tractor_beam->SetTranslation(reticle_coordinates + frame_dt * OwnerShip()->Velocity());
+    // set its pulling input and intensity
+    Float intensity = power / (frame_dt * ms_max_power_output_rate[UpgradeLevel()]);
+    ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
+    m_tractor_beam->SetParameters(Color(1.0f, 1.0f, 0.0f), intensity);
+
+    return true;
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+Float SlowBulletGun::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     // can't fire faster that the weapon's cycle time
     ASSERT1(ms_fire_rate[UpgradeLevel()] > 0.0f);
@@ -1073,10 +1133,7 @@ Float SlowBulletGun::PowerToBeUsedBasedOnInputs (
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] : 0.0f;
 }
 
-bool SlowBulletGun::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool SlowBulletGun::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
@@ -1113,9 +1170,7 @@ bool SlowBulletGun::Activate (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-Float EnemySpawner::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float EnemySpawner::PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const
 {
     Float const fire_rate =
         IsFireRateOverridden() ?
@@ -1131,10 +1186,7 @@ Float EnemySpawner::PowerToBeUsedBasedOnInputs (
     return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] : 0.0f;
 }
 
-bool EnemySpawner::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool EnemySpawner::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(power <= ms_required_primary_power[UpgradeLevel()]);
 
