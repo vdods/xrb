@@ -1914,6 +1914,70 @@
        fx="1050.6338"
        fy="102.49445"
        r="60.774117" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7761"
+       id="linearGradient4530"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3240.0502,-4.4045582)"
+       spreadMethod="pad"
+       x1="4768.7046"
+       y1="610.70312"
+       x2="4768.7046"
+       y2="-200.4142" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8021"
+       id="radialGradient4532"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.0089413,0,0,1,-587.10346,-5.9628548e-5)"
+       cx="3800.343"
+       cy="198.55746"
+       fx="3800.343"
+       fy="198.55746"
+       r="367.65591" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8179"
+       id="radialGradient4534"
+       gradientUnits="userSpaceOnUse"
+       cx="1050.6338"
+       cy="102.49445"
+       fx="1050.6338"
+       fy="102.49445"
+       r="60.774117" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7761"
+       id="linearGradient4536"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3240.0502,-4.4045582)"
+       spreadMethod="pad"
+       x1="4768.7046"
+       y1="610.70312"
+       x2="4768.7046"
+       y2="-200.4142" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient8021"
+       id="radialGradient4538"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.0089413,0,0,1,-587.10346,-5.9628548e-5)"
+       cx="3800.343"
+       cy="198.55746"
+       fx="3800.343"
+       fy="198.55746"
+       r="367.65591" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient14325-1"
+       id="radialGradient4540"
+       gradientUnits="userSpaceOnUse"
+       cx="1050.6338"
+       cy="102.49445"
+       fx="1050.6338"
+       fy="102.49445"
+       r="60.774117" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2576,7 +2640,8 @@
        id="radiobutton_blue"
        inkscape:export-xdpi="14.04"
        inkscape:export-ydpi="14.04"
-       inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/radiobutton_blue.png">
+       inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/radiobutton_blue.png"
+       transform="translate(0,1.2207031e-4)">
       <rect
          ry="409.98801"
          rx="409.98801"
@@ -2585,30 +2650,30 @@
          height="822.39819"
          width="820.74463"
          id="rect3650"
-         style="fill:url(#linearGradient3693);fill-opacity:1;stroke:none" />
+         style="fill:url(#linearGradient4536);fill-opacity:1;stroke:none" />
       <path
          id="path3652"
          d="m 7415.2186,198.55738 c 0,203.05074 -164.6052,367.65589 -367.6559,367.65589 -203.0508,0 -367.6559,-164.60515 -367.6559,-367.65589 0,-203.0507321 164.6051,-367.65588 367.6559,-367.65588 203.0507,0 367.6559,164.6051479 367.6559,367.65588 z"
-         style="fill:url(#radialGradient3690);fill-opacity:1;stroke:none" />
+         style="fill:url(#radialGradient4538);fill-opacity:1;stroke:none" />
       <path
          transform="matrix(5.5521052,0,0,5.5521052,1214.3334,-370.5026)"
-         d="m 1109.9079,102.49445 a 59.274117,59.274117 0 1 1 -118.54823,0 59.274117,59.274117 0 1 1 118.54823,0 z"
+         d="m 1109.9079,102.49445 c 0,32.73619 -26.5379,59.27412 -59.2741,59.27412 -32.7362,0 -59.27413,-26.53793 -59.27413,-59.27412 0,-32.736187 26.53793,-59.274113 59.27413,-59.274113 32.7362,0 59.2741,26.537926 59.2741,59.274113 z"
          sodipodi:ry="59.274117"
          sodipodi:rx="59.274117"
          sodipodi:cy="102.49445"
          sodipodi:cx="1050.6338"
          id="path3656"
-         style="fill:url(#radialGradient3695);fill-opacity:1;stroke:#000000;stroke-width:0.54033554;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+         style="fill:url(#radialGradient4540);fill-opacity:1;stroke:#000000;stroke-width:0.54033554;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
          sodipodi:type="arc" />
     </g>
     <g
        id="radiobutton_green"
-       transform="translate(0,909.48778)"
+       transform="translate(0,929.78892)"
        inkscape:export-xdpi="14.04"
        inkscape:export-ydpi="14.04"
        inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/radiobutton_green.png">
       <rect
-         style="fill:url(#linearGradient3710);fill-opacity:1;stroke:none"
+         style="fill:url(#linearGradient4530);fill-opacity:1;stroke:none"
          id="rect3704"
          width="820.74463"
          height="822.39819"
@@ -2617,22 +2682,22 @@
          rx="409.98801"
          ry="409.98801" />
       <path
-         style="fill:url(#radialGradient3712);fill-opacity:1;stroke:none"
+         style="fill:url(#radialGradient4532);fill-opacity:1;stroke:none"
          d="m 7415.2186,198.55738 c 0,203.05074 -164.6052,367.65589 -367.6559,367.65589 -203.0508,0 -367.6559,-164.60515 -367.6559,-367.65589 0,-203.0507321 164.6051,-367.65588 367.6559,-367.65588 203.0507,0 367.6559,164.6051479 367.6559,367.65588 z"
          id="path3706" />
       <path
          sodipodi:type="arc"
-         style="fill:url(#radialGradient3714);fill-opacity:1;stroke:#000000;stroke-width:0.54033554;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+         style="fill:url(#radialGradient4534);fill-opacity:1;stroke:#000000;stroke-width:0.54033554;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
          id="path3708"
          sodipodi:cx="1050.6338"
          sodipodi:cy="102.49445"
          sodipodi:rx="59.274117"
          sodipodi:ry="59.274117"
-         d="m 1109.9079,102.49445 a 59.274117,59.274117 0 1 1 -118.54823,0 59.274117,59.274117 0 1 1 118.54823,0 z"
+         d="m 1109.9079,102.49445 c 0,32.73619 -26.5379,59.27412 -59.2741,59.27412 -32.7362,0 -59.27413,-26.53793 -59.27413,-59.27412 0,-32.736187 26.53793,-59.274113 59.27413,-59.274113 32.7362,0 59.2741,26.537926 59.2741,59.274113 z"
          transform="matrix(5.5521052,0,0,5.5521052,1214.3334,-370.5026)" />
     </g>
     <g
-       transform="translate(0,1851.4573)"
+       transform="translate(0,1859.5777)"
        id="radiobutton_yellow"
        inkscape:export-xdpi="14.04"
        inkscape:export-ydpi="14.04"
@@ -2652,7 +2717,7 @@
          style="fill:url(#radialGradient3726);fill-opacity:1;stroke:none" />
       <path
          transform="matrix(5.5521052,0,0,5.5521052,1214.3334,-370.5026)"
-         d="m 1109.9079,102.49445 a 59.274117,59.274117 0 1 1 -118.54823,0 59.274117,59.274117 0 1 1 118.54823,0 z"
+         d="m 1109.9079,102.49445 c 0,32.73619 -26.5379,59.27412 -59.2741,59.27412 -32.7362,0 -59.27413,-26.53793 -59.27413,-59.27412 0,-32.736187 26.53793,-59.274113 59.27413,-59.274113 32.7362,0 59.2741,26.537926 59.2741,59.274113 z"
          sodipodi:ry="59.274117"
          sodipodi:rx="59.274117"
          sodipodi:cy="102.49445"
@@ -2663,7 +2728,7 @@
     </g>
     <g
        id="radiobutton_red"
-       transform="translate(0,2793.4268)"
+       transform="translate(0,2789.3666)"
        inkscape:export-xdpi="14.04"
        inkscape:export-ydpi="14.04"
        inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/radiobutton_red.png">
@@ -2688,7 +2753,7 @@
          sodipodi:cy="102.49445"
          sodipodi:rx="59.274117"
          sodipodi:ry="59.274117"
-         d="m 1109.9079,102.49445 a 59.274117,59.274117 0 1 1 -118.54823,0 59.274117,59.274117 0 1 1 118.54823,0 z"
+         d="m 1109.9079,102.49445 c 0,32.73619 -26.5379,59.27412 -59.2741,59.27412 -32.7362,0 -59.27413,-26.53793 -59.27413,-59.27412 0,-32.736187 26.53793,-59.274113 59.27413,-59.274113 32.7362,0 59.2741,26.537926 59.2741,59.274113 z"
          transform="matrix(5.5521052,0,0,5.5521052,1214.3334,-370.5026)" />
     </g>
     <g

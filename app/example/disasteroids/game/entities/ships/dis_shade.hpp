@@ -68,8 +68,13 @@ public:
 
     virtual void SetTarget (Mortal *target);
 
+protected:
+
+    virtual void HandleNewOwnerObject ();
+
 private:
 
+    void BecomeInvisible (Float time, Float frame_dt);
     void PickWanderDirection (Float time, Float frame_dt);
     void Wander (Float time, Float frame_dt);
     void Stalk (Float time, Float frame_dt);

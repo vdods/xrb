@@ -46,8 +46,8 @@ Shade::Shade (Uint8 const enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
-    m_think_state = THINK_STATE(PickWanderDirection);
-    m_saved_state = NULL;
+    m_think_state = THINK_STATE(Teleport); // start invisible (see HandleNewOwnerObject), teleport in
+    m_saved_state = THINK_STATE(PickWanderDirection);
 
     m_in_crosshairs = false;
 
@@ -124,8 +124,17 @@ void Shade::SetTarget (Mortal *const target)
     else
     {
         m_target = target->GetReference();
-        m_think_state = THINK_STATE(MoveToAttackRange);
+        m_think_state = THINK_STATE(Teleport);
+        m_saved_state = THINK_STATE(MoveToAttackRange);
     }
+}
+
+void Shade::HandleNewOwnerObject ()
+{
+    EnemyShip::HandleNewOwnerObject();
+
+    ASSERT1(OwnerObject() != NULL);
+    OwnerObject()->ColorMask() = Color::ms_transparent_white;
 }
 
 void Shade::PickWanderDirection (Float const time, Float const frame_dt)
@@ -331,6 +340,11 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
 
 void Shade::Teleport (Float const time, Float const frame_dt)
 {
+    ASSERT1(OwnerObject() != NULL);
+
+    // check if we're invisible (should be created invisible)
+    bool starting_invisible = (OwnerObject()->ColorMask() == Color::ms_transparent_white);
+
     // make a few attempts to find a nearby place to teleport to.
     FloatVector2 teleport_destination;
     {
@@ -358,15 +372,19 @@ void Shade::Teleport (Float const time, Float const frame_dt)
                         false);
         }
         while (overlap);
+
+        // set it back to visible (could still be invisible from having been
+        // created invisible).
+        OwnerObject()->ColorMask() = Color::ms_opaque_white;
     }
 
     ASSERT1(ms_teleportation_duration[EnemyLevel()] > 0.0f);
 
     // effects at the current location
+    if (!starting_invisible)
     {
         // spawn a teleportation effect (the shade will appear to shrink to a point and disappear)
         {
-            ASSERT1(OwnerObject() != NULL);
             ASSERT1(OwnerObject()->GetObjectType() == Engine2::OT_SPRITE);
             std::string sprite_path = static_cast<Engine2::Sprite *>(OwnerObject())->GetTexture().LoadParameters<GlTexture::LoadParameters>().Path();
             Explosion *shrinking_effect =

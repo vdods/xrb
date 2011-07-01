@@ -51,7 +51,6 @@ DISASTEROIDS:
   where they flock in the form of a snake.
 - additional mode for Shade - maybe hide behind asteroids
   and make bullets curve around stuff toward the player.
-- have Shade teleport in when it is spawned
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
 - additional mode for Demi - spawn a bunch of Interlopers which then all
