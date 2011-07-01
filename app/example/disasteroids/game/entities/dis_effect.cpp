@@ -19,15 +19,16 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-void Effect::Think (Float const time, Float const frame_dt)
+void FiniteLifetimeEffect::Think (Float const time, Float const frame_dt)
 {
+    ASSERT1(m_time_to_live > 0.0f);
+
     Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
     OwnerObject()->ColorMask() = Math::LinearlyInterpolate(m_initial_color_mask, m_final_color_mask, 0.0f, 1.0f, interpolation_parameter);
 
-    if (m_time_at_birth + m_time_to_live <= time && m_time_to_live > 0.0f)
+    if (m_time_at_birth + m_time_to_live <= time)
         ScheduleForDeletion(0.0f);
 }
 
@@ -40,7 +41,7 @@ void Explosion::Think (Float const time, Float const frame_dt)
     ASSERT1(m_scale_power > 0.0f);
     Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
     SetScaleFactor((m_final_size - m_initial_size) * Math::Pow(interpolation_parameter, m_scale_power) + m_initial_size + 0.1f);
-    Effect::Think(time, frame_dt);
+    FiniteLifetimeEffect::Think(time, frame_dt);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -226,23 +227,32 @@ void Fireball::Collide (
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void LaserBeam::SetIntensity (Float const intensity)
+void LaserBeam::SetIntensity (Float intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     ASSERT1(IsInWorld());
     OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, intensity);
 }
 
-void LaserBeam::SnapToShip (
-    FloatVector2 const &muzzle_location,
-    FloatVector2 const &hit_location,
-    Float const beam_width)
+void LaserBeam::SnapToShip (FloatVector2 const &muzzle_location, FloatVector2 const &hit_location, Float beam_width)
 {
     ASSERT1(IsInWorld());
     FloatVector2 beam_vector(hit_location - muzzle_location);
     SetTranslation(0.5f * (muzzle_location + hit_location));
     SetScaleFactors(FloatVector2(0.5f * beam_vector.Length(), 0.5f * beam_width));
     SetAngle(Math::Arg(beam_vector));
+}
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
+
+void LaserImpactEffect::SnapToLocationAndSetScaleFactor (FloatVector2 const &location, Float scale_factor)
+{
+    RemoveFromWorld();
+    SetTranslation(location);
+    SetScaleFactor(scale_factor);
+    AddBackIntoWorld();
 }
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -262,7 +272,7 @@ void TractorBeam::SetParameters (Color const &color, Float intensity)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void ShieldEffect::SetIntensity (Float const intensity)
+void ShieldEffect::SetIntensity (Float intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
     static Float const s_opacity = 0.3f;
@@ -297,9 +307,7 @@ void LightningEffect::SnapToShip (FloatVector2 const &ship_translation, Float sh
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void ReticleEffect::SnapToLocationAndSetScaleFactor (
-    FloatVector2 const &location,
-    Float const scale_factor)
+void ReticleEffect::SnapToLocationAndSetScaleFactor (FloatVector2 const &location, Float scale_factor)
 {
     RemoveFromWorld();
     SetTranslation(location);

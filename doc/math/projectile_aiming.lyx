@@ -1,0 +1,200 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{verbatim}
+\usepackage{makeidx}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage[all,cmtip]{xy}
+\usepackage{diagxy}
+\makeindex
+
+\def \ad {\mathrm{ad}}
+\def \Ad {\mathrm{Ad}}
+\def \Al {\mathrm{Al}}
+\def \Alt {\mathrm{Alt}}
+\def \Ann {\mathrm{Ann}}
+\def \arccosh {\mathrm{arccosh}}
+\def \arcsinh {\mathrm{arcsinh}}
+\def \arctanh {\mathrm{arctanh}}
+\def \Aut {\mathrm{Aut}}
+\def \card {\mathrm{card}}
+\def \Char {\mathrm{Char}}
+\def \Cl {\mathrm{Cl}}
+\def \curl {\mathrm{curl}}
+\def \Diff {\mathrm{Diff}}
+\def \Div {\mathrm{div}}
+\def \diag {\mathrm{diag}}
+\def \diam {\mathrm{diam}}
+\def \domain {\mathrm{domain}}
+\def \Emb {\mathrm{Emb}}
+\def \End {\mathrm{End}}
+\def \Gal {\mathrm{Gal}}
+\def \Gr {\mathrm{Gr}}
+\def \grad {\mathrm{grad}}
+\def \graph {\mathrm{graph}}
+\def \Hom {\mathrm{Hom}}
+\def \horiz {\mathrm{horiz}}
+\def \Id {\mathrm{Id}}
+\def \Imag {\mathrm{Imag}}
+\def \image {\mathrm{image}}
+\def \impliedby {\Longleftarrow}
+\def \Inn {\mathrm{Inn}}
+\def \Int {\mathrm{Int}}
+\def \lcm {\mathrm{lcm}}
+\def \Lie {\mathrm{Lie}}
+\def \mod {\;\mathrm{mod}\;}
+\def \Out {\mathrm{Out}}
+\def \pr {\mathrm{pr}}
+\def \proj {\mathrm{proj}}
+\def \rank {\mathrm{rank}}
+\def \Real {\mathrm{Real}}
+\def \Res {\mathrm{Res}}
+\def \sech {\mathrm{sech}}
+\def \sgn {\mathrm{sgn}}
+\def \Skew {\mathrm{Skew}}
+\def \sledom {= \! \mid}
+\def \span {\mathrm{span}}
+\def \Stab {\mathrm{Stab}}
+\def \supp {\mathrm{supp}}
+\def \Syl {\mathrm{Syl}}
+\def \Sym {\mathrm{Sym}}
+\def \Tor {\mathrm{Tor}}
+\def \tr {\mathrm{tr}}
+\def \trace {\mathrm{trace}}
+\def \trainwreck {\Rrightarrow \! \! \Lleftarrow}
+\def \two {I \! \! I}
+\def \vertical {\mathrm{vert}}
+\def \Vol {\mathrm{Vol}}
+
+\theoremstyle{definition}
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{theorem}[lemma]{Theorem}
+\newtheorem{corollary}[lemma]{Corollary}
+\newtheorem{proposition}[lemma]{Proposition}
+\newtheorem{definition}[lemma]{Definition}
+\newtheorem{criterion}[lemma]{Criterion}
+\newtheorem{example}[lemma]{Example}
+\newtheorem{remark}[lemma]{Remark}
+\newtheorem{exercise}[lemma]{Exercise}
+\end_preamble
+\use_default_options false
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 0
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip bigskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+How to aim a fixed-speed projectile.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $T\left(t\right)=p+vt+\frac{1}{2}at^{2}$
+\end_inset
+
+ be the target's projected position (
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $v$
+\end_inset
+
+ are the position and velocity of the target with respect to the firer,
+ 
+\begin_inset Formula $a$
+\end_inset
+
+ is the acceleration of the target).
+ Let 
+\begin_inset Formula $s>0$
+\end_inset
+
+ be the speed of the projectile.
+ The possible positions of the projectile at time 
+\begin_inset Formula $t$
+\end_inset
+
+ is given by the circle of radius 
+\begin_inset Formula $st$
+\end_inset
+
+ centered at the origin (the origin is where the firer is).
+ Ignoring the radii of the target and projectile, the collision condition
+ is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\left|T\left(t\right)\right|=st\]
+
+\end_inset
+
+which is equivalent to
+\begin_inset Formula \[
+\left|T\left(t\right)\right|^{2}=s^{2}t^{2}\]
+
+\end_inset
+
+since everything is nonnegative.
+ 
+\begin_inset Formula \begin{eqnarray*}
+s^{2}t^{2} & = & \left|T\left(t\right)\right|^{2}=T\left(t\right)\cdot T\left(t\right)=\left|p\right|^{2}+2p\cdot vt+p\cdot at^{2}+\left|v\right|^{2}t^{2}+v\cdot at^{3}+\frac{1}{4}\left|a\right|^{2}t^{4}\\
+\implies0 & = & \left|p\right|^{2}+2p\cdot vt+\left(p\cdot a+\left|v\right|^{2}-s^{2}\right)t^{2}+v\cdot at^{3}+\frac{1}{4}\left|a\right|^{2}t^{4}.\end{eqnarray*}
+
+\end_inset
+
+Solve this quartic for a nonnegative value 
+\begin_inset Formula $t_{0}$
+\end_inset
+
+.
+ Then aim at 
+\begin_inset Formula $T\left(t_{0}\right)$
+\end_inset
+
+.
+\end_layout
+
+\end_body
+\end_document

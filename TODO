@@ -60,9 +60,10 @@ DISASTEROIDS:
 - Demi: add a drone which changes based on what state it's in, so the player has
   an audio cue as to what might happen (only have a few different drones, not
   unique ones for each state).
-- make the railgun use a charge-up so it doesn't fire immediately --
+- make the gauss gun use a charge-up so it doesn't fire immediately --
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
+- make the gauss gun fire through stuff so you can damage multiple things if they line up?
 - configure a single button that, when held down sucks everything nearby in using
   a cool spiraling effect, and then when released, fires the EMP core.
 - merged grenades should have a higher threshold of detonation.  i.e.
@@ -106,7 +107,7 @@ DISASTEROIDS:
 - have the debris spawning in Mortal.  it should be done in Damage,
   and the subclasses of Mortal should specify the debris type (rocks,
   metal, minerals, blood, guts, etc).
-- make enemies flash yellow when their health is low
+- make enemies flash yellow when their health is low (maybe only Demi, Devourment and the player)
 - red flashing for damage should also depend on max health, so that it gives a
   relative measure of a damage, not absolute hit point damage.
 - if super-stoke thing is added, that can be indicated by the ship flashing
@@ -135,6 +136,7 @@ DISASTEROIDS:
 - add "sprint" powerup (or maybe have it be built-in) which would make your
   engines use twice the power, but accelerate 1.5x or 2x or some factor
   better.  use double-forward keypress to start a sprint.
+- some of the effect subclasses can be collapsed together.  make a generic effect.
 ** sound-system-related **
 - there should be a drone for the power generator -- max volume at 0%, zero
   volume at 100%, low frequency at 0%, high frequency at 100%.

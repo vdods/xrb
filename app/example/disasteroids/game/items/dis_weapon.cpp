@@ -250,6 +250,8 @@ bool Laser::Activate (Float power, Float time, Float frame_dt)
 {
     ASSERT1(m_laser_beam != NULL);
     ASSERT1(m_laser_beam->IsInWorld());
+    ASSERT1(m_laser_impact_effect != NULL);
+    ASSERT1(m_laser_impact_effect->IsInWorld());
 
     // secondary fire can happen in parallel with primary
     ASSERT1(ms_secondary_fire_rate[UpgradeLevel()] > 0.0f);
@@ -413,6 +415,11 @@ bool Laser::Activate (Float power, Float time, Float frame_dt)
             laser_beam_hit_location + frame_dt * OwnerShip()->Velocity(),
             s_laser_beam_width);
 
+        // place the laser impact effect
+        m_laser_impact_effect->SnapToLocationAndSetScaleFactor(laser_beam_hit_location, s_laser_beam_width*6.0f);
+        // if there was an impact, set the laser impact effect to opaque.  otherwise transparent.
+        m_laser_impact_effect->OwnerObject()->ColorMask() = (it != it_end) ? Color::ms_opaque_white : Color::ms_transparent_white;
+
         // the weapon fired successfully
         return true;
     }
@@ -420,6 +427,8 @@ bool Laser::Activate (Float power, Float time, Float frame_dt)
     {
         // turn off the constant fire laser
         m_laser_beam->SetIntensity(0.0f);
+        // turn off the laser impact effect
+        m_laser_impact_effect->OwnerObject()->ColorMask() = Color::ms_transparent_white;
         // the weapon was not fired
         return false;
     }
@@ -935,7 +944,7 @@ bool Tractor::Activate (Float power, Float time, Float frame_dt)
     // don't do anything if no power was supplied
     if (power == 0.0f)
     {
-        m_tractor_beam->SetParameters(false, 0.0f);
+        m_tractor_beam->SetParameters(Color::ms_transparent_black, 0.0f);
         return false;
     }
 
@@ -1032,7 +1041,7 @@ bool AdvancedTractor::Activate (Float power, Float time, Float frame_dt)
     // don't do anything if no power was supplied
     if (power == 0.0f)
     {
-        m_tractor_beam->SetParameters(false, 0.0f);
+        m_tractor_beam->SetParameters(Color::ms_transparent_black, 0.0f);
         return false;
     }
 

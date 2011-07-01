@@ -93,6 +93,9 @@ PlayerShip::~PlayerShip ()
     if (m_laser_beam.IsValid() && !m_laser_beam->IsInWorld())
         delete m_laser_beam->OwnerObject();
 
+    if (m_laser_impact_effect.IsValid() && !m_laser_impact_effect->IsInWorld())
+        delete m_laser_impact_effect->OwnerObject();
+
     if (m_tractor_beam.IsValid() && !m_tractor_beam->IsInWorld())
         delete m_tractor_beam->OwnerObject();
 
@@ -515,7 +518,7 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
     }
 }
 
-void PlayerShip::Think (Float const time, Float const frame_dt)
+void PlayerShip::Think (Float time, Float frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -538,6 +541,8 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         // remove all the effects
         if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
             m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+        if (m_laser_impact_effect.IsValid() && m_laser_impact_effect->IsInWorld())
+            m_laser_impact_effect->ScheduleForRemovalFromWorld(0.0f);
         if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
             m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         if (m_shield_effect.IsValid() && m_shield_effect->IsInWorld())
@@ -567,13 +572,27 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
                 // if the laser beam is already allocated but not in the world, re-add it.
                 else if (!m_laser_beam->IsInWorld())
                     m_laser_beam->AddBackIntoWorld();
+
+                // ensure the laser impact effect is allocated (lazy allocation)
+                if (!m_laser_impact_effect.IsValid())
+                    m_laser_impact_effect = SpawnLaserImpactEffect(GetObjectLayer(), time)->GetReference();
+                // if the laser beam is already allocated but not in the world, re-add it.
+                else if (!m_laser_impact_effect->IsInWorld())
+                    m_laser_impact_effect->AddBackIntoWorld();
+
                 // set the laser beam effect in the Laser weapon
                 DStaticCast<Laser *>(current_weapon)->SetLaserBeam(*m_laser_beam);
+                DStaticCast<Laser *>(current_weapon)->SetLaserImpactEffect(*m_laser_impact_effect);
             }
             // if there is no Laser equipped and the laser beam is allocated
             // AND in the world, remove it from the world.
-            else if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
-                m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+            else
+            {
+                if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
+                    m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+                if (m_laser_impact_effect.IsValid() && m_laser_impact_effect->IsInWorld())
+                    m_laser_impact_effect->ScheduleForRemovalFromWorld(0.0f);
+            }
 
             // special treatment for Tractors (because the TractorBeam is effectively
             // attached to the ship's main weapon muzzle.
@@ -597,6 +616,9 @@ void PlayerShip::Think (Float const time, Float const frame_dt)
         {
             if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
                 m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+
+            if (m_laser_impact_effect.IsValid() && m_laser_impact_effect->IsInWorld())
+                m_laser_impact_effect->ScheduleForRemovalFromWorld(0.0f);
 
             if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
                 m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
@@ -791,6 +813,9 @@ void PlayerShip::Die (
     // remove the laser beam, if it exists
     if (m_laser_beam.IsValid() && m_laser_beam->IsInWorld())
         m_laser_beam->ScheduleForRemovalFromWorld(0.0f);
+    // remove the laser impact effect, if it exists
+    if (m_laser_impact_effect.IsValid() && m_laser_impact_effect->IsInWorld())
+        m_laser_impact_effect->ScheduleForRemovalFromWorld(0.0f);
     // remove the tractor beam, if it exists
     if (m_tractor_beam.IsValid() && m_tractor_beam->IsInWorld())
         m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);

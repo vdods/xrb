@@ -148,6 +148,7 @@ private:
 }; // end of class PeaShooter
 
 class LaserBeam;
+class LaserImpactEffect;
 
 // primary: asteroid-cutting laser -- secondary: proximity defense laser
 class Laser : public Weapon
@@ -161,13 +162,19 @@ public:
         ASSERT1(ms_secondary_fire_rate[UpgradeLevel()] > 0.0f);
         m_time_last_fired = -1.0f / ms_secondary_fire_rate[UpgradeLevel()];
         m_laser_beam = NULL;
+        m_laser_impact_effect = NULL;
     }
     virtual ~Laser () { }
 
-    void SetLaserBeam (LaserBeam *const laser_beam)
+    void SetLaserBeam (LaserBeam *laser_beam)
     {
         ASSERT1(laser_beam != NULL);
         m_laser_beam = laser_beam;
+    }
+    void SetLaserImpactEffect (LaserImpactEffect *laser_impact_effect)
+    {
+        ASSERT1(laser_impact_effect != NULL);
+        m_laser_impact_effect = laser_impact_effect;
     }
 
     // ///////////////////////////////////////////////////////////////////////
@@ -206,6 +213,7 @@ private:
 
     Float m_time_last_fired;
     LaserBeam *m_laser_beam;
+    LaserImpactEffect *m_laser_impact_effect;
 }; // end of class Laser
 
 // primary: shoots Fireball -- secondary: quick/powerful blast mode

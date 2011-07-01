@@ -23,6 +23,7 @@ namespace Dis
 class Armor;
 class Engine;
 class LaserBeam;
+class LaserImpactEffect;
 class PoweredDevice;
 class PowerGenerator;
 class Shield;
@@ -235,6 +236,7 @@ private:
     Float m_mineral_inventory[MINERAL_COUNT];
 
     EntityReference<LaserBeam> m_laser_beam;
+    EntityReference<LaserImpactEffect> m_laser_impact_effect;
     EntityReference<TractorBeam> m_tractor_beam;
     EntityReference<ShieldEffect> m_shield_effect;
 

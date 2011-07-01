@@ -42,6 +42,7 @@ using namespace Xrb;
 #define Z_DEPTH_DEVOURMENT_GRINDER  0.05f
 #define Z_DEPTH_SHIELD_EFFECT       0.1f
 #define Z_DEPTH_FIREBALL            0.3f
+#define Z_DEPTH_LASER_IMPACT_EFFECT 0.35f
 #define Z_DEPTH_LASER_BEAM          0.4f
 #define Z_DEPTH_GAUSS_GUN_TRAIL     0.45f
 #define Z_DEPTH_DAMAGE_EXPLOSION    0.5f
@@ -604,8 +605,7 @@ Fireball *SpawnFireball (
     return fireball;
 }
 
-LaserBeam *SpawnLaserBeam (
-    Engine2::ObjectLayer *const object_layer)
+LaserBeam *SpawnLaserBeam (Engine2::ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
@@ -624,6 +624,27 @@ LaserBeam *SpawnLaserBeam (
     object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
 
     return laser_beam;
+}
+
+LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, Float current_time)
+{
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer->OwnerWorld() != NULL);
+
+    Engine2::AnimatedSprite *sprite = Engine2::AnimatedSprite::Create("resources/laser_impact.anim", current_time);
+    // setting the scale factor this large helps with speed in adding it to
+    // the quad tree, as the first time is temporary.  Laser will place
+    // it for real later.
+    sprite->SetZDepth(Z_DEPTH_LASER_IMPACT_EFFECT);
+    sprite->SetIsTransparent(true);
+    sprite->SetScaleFactor(0.5f * object_layer->SideLength());
+
+    LaserImpactEffect *laser_impact_effect = new LaserImpactEffect();
+
+    sprite->SetEntity(laser_impact_effect);
+    object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
+
+    return laser_impact_effect;
 }
 
 GaussGunTrail *SpawnGaussGunTrail (

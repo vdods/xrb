@@ -71,6 +71,7 @@ enum EntityType
 
     // effects
     ET_LASER_BEAM,
+    ET_LASER_IMPACT_EFFECT,
     ET_GAUSS_GUN_TRAIL,
     ET_TRACTOR_BEAM,
     ET_SHIELD_EFFECT,

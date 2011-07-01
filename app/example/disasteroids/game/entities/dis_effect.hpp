@@ -15,40 +15,52 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
+// base class for all effect entities
 class Effect : public Entity
 {
 public:
 
-    Effect (
+    Effect (EntityType entity_type, Engine2::Circle::CollisionType collision_type)
+        :
+        Entity(entity_type, collision_type)
+    { }
+    virtual ~Effect () { }
+
+    virtual bool IsEffect () const { return true; }
+}; // end of class Effect
+
+// base class for finite-lifetime entities, e.g. explosions, fireballs, etc.
+class FiniteLifetimeEffect : public Effect
+{
+public:
+
+    FiniteLifetimeEffect (
         Float time_to_live,
         Float time_at_birth,
         EntityType entity_type,
         Engine2::Circle::CollisionType collision_type)
         :
-        Entity(entity_type, collision_type),
+        Effect(entity_type, collision_type),
         m_time_to_live(time_to_live),
         m_time_at_birth(time_at_birth),
         m_initial_color_mask(Color::ms_opaque_white),
         m_final_color_mask(Color::ms_transparent_white),
         m_run_in_reverse(false)
     {
-        ASSERT1(m_time_to_live != 0.0f);
+        ASSERT1(m_time_to_live > 0.0f);
         ASSERT1(m_time_at_birth >= 0.0f);
     }
-    virtual ~Effect () { }
+    virtual ~FiniteLifetimeEffect () { }
 
     Float TimeToLive () const { return m_time_to_live; }
     Float TimeAtBirth () const { return m_time_at_birth; }
     Float LifetimeRatio (Float current_time) const
     {
         ASSERT1(current_time >= m_time_at_birth);
-        if (m_time_to_live < 0.0f)
-            return 0.0f;
-        else
-            return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
+        ASSERT1(m_time_to_live > 0.0f);
+        return Min(1.0f, (current_time - m_time_at_birth) / m_time_to_live);
     }
     Color const &InitialColorMask () const { return m_initial_color_mask; }
     Color &InitialColorMask () { return m_initial_color_mask; }
@@ -58,14 +70,11 @@ public:
     bool RunInReverse () const { return m_run_in_reverse; }
     void RunInReverse (bool run_in_reverse) { m_run_in_reverse = run_in_reverse; }
 
-    virtual bool IsEffect () const { return true; }
-
     virtual void Think (Float time, Float frame_dt);
 
 private:
 
-    // indicates how long this effect will last (negative values indicate that
-    // "IT... WILL LIVE... FOREVAH!! ...IT... WILL LIVE... FOREVAH!!!")
+    // indicates how long this effect will last (must be positive)
     Float m_time_to_live;
     // gives a reference time which can be used in calculations in Think()
     Float m_time_at_birth;
@@ -75,13 +84,13 @@ private:
     Color m_final_color_mask;
     // if true, run the interpolation in reverse (this applies to subclasses as well)
     bool m_run_in_reverse;
-}; // end of class DamageEffect
+}; // end of class FiniteLifetimeEffect
 
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-class Explosion : public Effect
+class Explosion : public FiniteLifetimeEffect
 {
 public:
 
@@ -93,7 +102,7 @@ public:
         EntityType entity_type,
         Engine2::Circle::CollisionType collision_type)
         :
-        Effect(time_to_live, time_at_birth, entity_type, collision_type)
+        FiniteLifetimeEffect(time_to_live, time_at_birth, entity_type, collision_type)
     {
         ASSERT1(initial_size >= 0.0f);
         ASSERT1(final_size >= 0.0f);
@@ -272,41 +281,43 @@ private:
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-// class AsteroidDebris;
+class GaussGunTrail : public FiniteLifetimeEffect
+{
+public:
+
+    GaussGunTrail (Float time_to_live, Float time_at_birth)
+        :
+        FiniteLifetimeEffect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, Engine2::Circle::CT_NO_COLLISION)
+    { }
+}; // end of class GaussGunTrail
+
+// ///////////////////////////////////////////////////////////////////////////
+//
+// ///////////////////////////////////////////////////////////////////////////
 
 class LaserBeam : public Effect
 {
 public:
 
-    LaserBeam ()
-        :
-        Effect(-1.0f, 0.0f, ET_LASER_BEAM, Engine2::Circle::CT_NO_COLLISION)
-    { }
-
-    // this is mainly just to override Effect::Think which changes the alpha
-    virtual void Think (Float time, Float frame_dt) { }
+    LaserBeam () : Effect(ET_LASER_BEAM, Engine2::Circle::CT_NO_COLLISION) { }
 
     void SetIntensity (Float intensity);
 
-    void SnapToShip (
-        FloatVector2 const &muzzle_location,
-        FloatVector2 const &hit_location,
-        Float beam_width);
+    void SnapToShip (FloatVector2 const &muzzle_location, FloatVector2 const &hit_location, Float beam_width);
 }; // end of class LaserBeam
 
 // ///////////////////////////////////////////////////////////////////////////
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-class GaussGunTrail : public Effect
+class LaserImpactEffect : public Effect
 {
 public:
 
-    GaussGunTrail (Float time_to_live, Float time_at_birth)
-        :
-        Effect(time_to_live, time_at_birth, ET_GAUSS_GUN_TRAIL, Engine2::Circle::CT_NO_COLLISION)
-    { }
-}; // end of class GaussGunTrail
+    LaserImpactEffect () : Effect(ET_LASER_IMPACT_EFFECT, Engine2::Circle::CT_NO_COLLISION) { }
+
+    void SnapToLocationAndSetScaleFactor (FloatVector2 const &location, Float scale_factor);
+}; // end of class LaserBeam
 
 // ///////////////////////////////////////////////////////////////////////////
 //
@@ -316,13 +327,7 @@ class TractorBeam : public Effect
 {
 public:
 
-    TractorBeam ()
-        :
-        Effect(-1.0f, 0.0f, ET_TRACTOR_BEAM, Engine2::Circle::CT_NO_COLLISION)
-    { }
-
-    // this is mainly just to override Effect::Think which changes the alpha
-    virtual void Think (Float time, Float frame_dt) { }
+    TractorBeam () : Effect(ET_TRACTOR_BEAM, Engine2::Circle::CT_NO_COLLISION) { }
 
     void SetParameters (Color const &color, Float intensity);
 }; // end of class TractorBeam
@@ -335,13 +340,7 @@ class ShieldEffect : public Effect
 {
 public:
 
-    ShieldEffect ()
-        :
-        Effect(-1.0f, 0.0f, ET_SHIELD_EFFECT, Engine2::Circle::CT_NO_COLLISION)
-    { }
-
-    // this is mainly just to override Effect::Think which changes the alpha
-    virtual void Think (Float time, Float frame_dt) { }
+    ShieldEffect () : Effect(ET_SHIELD_EFFECT, Engine2::Circle::CT_NO_COLLISION) { }
 
     void SetIntensity (Float intensity);
 
@@ -356,10 +355,7 @@ class LightningEffect : public Effect
 {
 public:
 
-    LightningEffect ()
-        :
-        Effect(-1.0f, 0.0f, ET_LIGHTNING_EFFECT, Engine2::Circle::CT_NO_COLLISION)
-    { }
+    LightningEffect () : Effect(ET_LIGHTNING_EFFECT, Engine2::Circle::CT_NO_COLLISION) { }
 
     void SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor);
 }; // end of class LightningEffect
@@ -372,17 +368,9 @@ class ReticleEffect : public Effect
 {
 public:
 
-    ReticleEffect ()
-        :
-        Effect(-1.0f, 0.0f, ET_RETICLE_EFFECT, Engine2::Circle::CT_NO_COLLISION)
-    { }
+    ReticleEffect () : Effect(ET_RETICLE_EFFECT, Engine2::Circle::CT_NO_COLLISION) { }
 
-    // this is mainly just to override Effect::Think which changes the alpha
-    virtual void Think (Float time, Float frame_dt) { }
-
-    void SnapToLocationAndSetScaleFactor (
-        FloatVector2 const &location,
-        Float scale_factor);
+    void SnapToLocationAndSetScaleFactor (FloatVector2 const &location, Float scale_factor);
 }; // end of class ReticleEffect
 
 } // end of namespace Dis

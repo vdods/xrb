@@ -50,6 +50,7 @@ class HealthTrigger;
 class Interloper;
 class Item;
 class LaserBeam;
+class LaserImpactEffect;
 class LightningEffect;
 class Missile;
 class MissileLauncher;
@@ -224,6 +225,10 @@ Fireball *SpawnFireball (
 
 LaserBeam *SpawnLaserBeam (
     Engine2::ObjectLayer *object_layer);
+
+LaserImpactEffect *SpawnLaserImpactEffect (
+    Engine2::ObjectLayer *object_layer,
+    Float current_time);
 
 GaussGunTrail *SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
