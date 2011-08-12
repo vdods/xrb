@@ -230,12 +230,15 @@ LaserImpactEffect *SpawnLaserImpactEffect (
     Engine2::ObjectLayer *object_layer,
     Float current_time);
 
-GaussGunTrail *SpawnGaussGunTrail (
+void SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &trail_start,
-    FloatVector2 const &trail_vector,
+    FloatVector2 trail_direction,
     FloatVector2 const &trail_velocity,
-    Float trail_width,
+    Float segment_width,
+    Float segment_length,
+    Uint32 segment_count,
     Float time_to_live,
     Float time_at_birth);
 

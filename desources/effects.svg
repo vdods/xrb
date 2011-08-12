@@ -264,18 +264,6 @@
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter4120"
-       x="-0.10216216"
-       width="1.2043243"
-       y="-0.10216216"
-       height="1.2043243">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="10.588235"
-         id="feGaussianBlur4122" />
-    </filter>
-    <filter
-       inkscape:collect="always"
        id="filter4246"
        x="-0.144"
        width="1.288"
@@ -297,14 +285,6 @@
          inkscape:collect="always"
          stdDeviation="20.521009"
          id="feGaussianBlur4296" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter4338">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="6.0504199"
-         id="feGaussianBlur4340" />
     </filter>
     <radialGradient
        inkscape:collect="always"
@@ -328,6 +308,93 @@
        r="403.21356"
        gradientTransform="matrix(1,0,0,0.9939693,0,16.874352)"
        gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       id="filter4851"
+       x="-0.10284255"
+       width="1.2056851"
+       y="-0.37850257"
+       height="1.7570051">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="37.337193"
+         id="feGaussianBlur4853" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       id="filter4855"
+       x="-0.13148115"
+       width="1.2629623"
+       y="-0.15130879"
+       height="1.3026176">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="28.568277"
+         id="feGaussianBlur4857" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4869">
+      <rect
+         style="fill:none;stroke:none"
+         id="rect4871"
+         width="597.92499"
+         height="597.92487"
+         x="-389.12579"
+         y="3474.4331" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4873">
+      <rect
+         style="fill:none;stroke:none"
+         id="rect4875"
+         width="308.74756"
+         height="597.92487"
+         x="-259.43155"
+         y="3474.4331" />
+    </clipPath>
+    <filter
+       inkscape:collect="always"
+       id="filter4912">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="31.671711"
+         id="feGaussianBlur4914" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5091">
+      <rect
+         y="4429.8955"
+         x="846.72156"
+         height="2706.821"
+         width="2706.821"
+         id="rect5093"
+         style="fill:#000000;fill-opacity:1;stroke:none" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5162">
+      <rect
+         style="fill:#6a6a6a;fill-opacity:1;stroke:none"
+         id="rect5164"
+         width="2706.821"
+         height="2706.821"
+         x="-1195.9696"
+         y="4394.0439" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath5166">
+      <rect
+         style="fill:#6a6a6a;fill-opacity:1;stroke:none"
+         id="rect5168"
+         width="2706.821"
+         height="2706.821"
+         x="1510.6588"
+         y="4394.0439" />
+    </clipPath>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -336,9 +403,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="226.75133"
-     inkscape:cy="-1891.0801"
+     inkscape:zoom="0.2207644"
+     inkscape:cx="3233.7567"
+     inkscape:cy="-4961.7127"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -348,7 +415,22 @@
      inkscape:window-height="1118"
      inkscape:window-x="0"
      inkscape:window-y="25"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       orientation="1,0"
+       position="2198.7881,-2193.4121"
+       id="guide4888" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="1510.6588,-2940.6775"
+       id="guide4896" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="2870.7894,-2384.2605"
+       id="guide4898" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -1035,6 +1117,229 @@
          sodipodi:ry="124.36975"
          d="m -15.126053,2810.3455 c 0,68.6875 -55.682234,124.3697 -124.369747,124.3697 -68.68752,0 -124.36975,-55.6822 -124.36975,-124.3697 0,-68.6876 55.68223,-124.3698 124.36975,-124.3698 68.687513,0 124.369747,55.6822 124.369747,124.3698 z"
          transform="matrix(0.79802514,0,0,0.79802514,824.23976,570.47376)" />
+    </g>
+    <g
+       id="laser_beam"
+       inkscape:label="#g4879"
+       inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
+       inkscape:export-xdpi="4.8200002"
+       inkscape:export-ydpi="4.8200002">
+      <rect
+         clip-path="url(#clipPath4873)"
+         transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
+         y="3546.054"
+         x="-381.69672"
+         height="453.13867"
+         width="521.47296"
+         id="rect4799"
+         style="fill:#205d85;fill-opacity:1;stroke:none;filter:url(#filter4855)" />
+      <rect
+         transform="translate(-0.94907403,-12.917507)"
+         clip-path="url(#clipPath4869)"
+         style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851)"
+         id="rect4801"
+         width="871.32477"
+         height="236.74678"
+         x="-556.62262"
+         y="3654.2498" />
+      <rect
+         y="3460.7432"
+         x="-390.07486"
+         height="597.92499"
+         width="597.92499"
+         id="rect4877"
+         style="fill:none;stroke:none" />
+    </g>
+    <g
+       id="gauss_gun_trail"
+       inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/gauss_gun_trail.png"
+       inkscape:export-xdpi="4.2600002"
+       inkscape:export-ydpi="4.2600002">
+      <g
+         clip-path="url(#clipPath5166)"
+         inkscape:export-ydpi="4.2600002"
+         inkscape:export-xdpi="4.2600002"
+         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/gauss_gun_trail.png"
+         inkscape:label="#g5097"
+         id="g9432">
+        <rect
+           style="fill:none;stroke:none"
+           id="rect5095"
+           width="2706.821"
+           height="2706.821"
+           x="841.23297"
+           y="4394.0439" />
+        <g
+           id="g4948"
+           clip-path="url(#clipPath5091)"
+           transform="translate(-5.4885864,-30.475556)">
+          <g
+             transform="matrix(2.6968539,0,0,1,1638.2467,2023.6003)"
+             id="g4916"
+             inkscape:label="#g4879"
+             inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
+             inkscape:export-xdpi="4.8200002"
+             inkscape:export-ydpi="4.8200002">
+            <rect
+               clip-path="url(#clipPath4873)"
+               transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
+               y="3546.054"
+               x="-381.69672"
+               height="453.13867"
+               width="521.47296"
+               id="rect4918"
+               style="fill:#318520;fill-opacity:1;stroke:none;filter:url(#filter4855)" />
+            <rect
+               transform="translate(-0.94907403,-12.917507)"
+               clip-path="url(#clipPath4869)"
+               style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851)"
+               id="rect4920"
+               width="871.32477"
+               height="236.74678"
+               x="-556.62262"
+               y="3654.2498" />
+            <rect
+               y="3460.7432"
+               x="-390.07486"
+               height="597.92499"
+               width="597.92499"
+               id="rect4922"
+               style="fill:none;stroke:none" />
+          </g>
+          <path
+             transform="matrix(1,0,0,1.2404695,0,-1389.4161)"
+             sodipodi:nodetypes="ccccc"
+             id="path4894"
+             d="m -475.77689,6730.8279 c 672.00126,0 664.63979,-1905.7955 1322.49847,-1905.7955 664.07322,0 663.89002,1905.7955 1352.06652,1905.7955 669.3186,0 674.6892,-1900.4195 1352.0665,-1903.1075 680.1461,0 712.1802,1903.1075 1352.0666,1903.1075"
+             style="fill:none;stroke:#e9a000;stroke-width:89.78565216;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4912)" />
+          <g
+             inkscape:export-ydpi="4.8200002"
+             inkscape:export-xdpi="4.8200002"
+             inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
+             inkscape:label="#g4879"
+             id="g4924"
+             transform="matrix(2.6968539,0,0,1,3250.763,2023.6003)">
+            <rect
+               style="fill:#318520;fill-opacity:1;stroke:none;filter:url(#filter4855)"
+               id="rect4926"
+               width="521.47296"
+               height="453.13867"
+               x="-381.69672"
+               y="3546.054"
+               transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
+               clip-path="url(#clipPath4873)" />
+            <rect
+               y="3654.2498"
+               x="-556.62262"
+               height="236.74678"
+               width="871.32477"
+               id="rect4928"
+               style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851)"
+               clip-path="url(#clipPath4869)"
+               transform="translate(-0.94907403,-12.917507)" />
+            <rect
+               style="fill:none;stroke:none"
+               id="rect4930"
+               width="597.92499"
+               height="597.92499"
+               x="-390.07486"
+               y="3460.7432" />
+          </g>
+        </g>
+      </g>
+      <g
+         clip-path="url(#clipPath5162)"
+         transform="translate(2706.6284,0)"
+         id="g5110"
+         inkscape:label="#g5097"
+         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/gauss_gun_trail.png"
+         inkscape:export-xdpi="4.2600002"
+         inkscape:export-ydpi="4.2600002">
+        <rect
+           y="4394.0439"
+           x="841.23297"
+           height="2706.821"
+           width="2706.821"
+           id="rect5112"
+           style="fill:none;stroke:none" />
+        <g
+           transform="translate(-5.4885864,-30.475556)"
+           clip-path="url(#clipPath5091)"
+           id="g5114">
+          <g
+             inkscape:export-ydpi="4.8200002"
+             inkscape:export-xdpi="4.8200002"
+             inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
+             inkscape:label="#g4879"
+             id="g5116"
+             transform="matrix(2.6968539,0,0,1,1638.2467,2023.6003)">
+            <rect
+               style="fill:#318520;fill-opacity:1;stroke:none;filter:url(#filter4855)"
+               id="rect5118"
+               width="521.47296"
+               height="453.13867"
+               x="-381.69672"
+               y="3546.054"
+               transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
+               clip-path="url(#clipPath4873)" />
+            <rect
+               y="3654.2498"
+               x="-556.62262"
+               height="236.74678"
+               width="871.32477"
+               id="rect5120"
+               style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851)"
+               clip-path="url(#clipPath4869)"
+               transform="translate(-0.94907403,-12.917507)" />
+            <rect
+               style="fill:none;stroke:none"
+               id="rect5122"
+               width="597.92499"
+               height="597.92499"
+               x="-390.07486"
+               y="3460.7432" />
+          </g>
+          <path
+             style="fill:none;stroke:#e9a000;stroke-width:89.78565216;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter4912)"
+             d="m -475.77689,6730.8279 c 672.00126,0 664.63979,-1905.7955 1322.49847,-1905.7955 664.07322,0 663.89002,1905.7955 1352.06652,1905.7955 669.3186,0 674.6892,-1900.4195 1352.0665,-1903.1075 680.1461,0 712.1802,1903.1075 1352.0666,1903.1075"
+             id="path5124"
+             sodipodi:nodetypes="ccccc"
+             transform="matrix(1,0,0,1.2404695,0,-1389.4161)" />
+          <g
+             transform="matrix(2.6968539,0,0,1,3250.763,2023.6003)"
+             id="g5126"
+             inkscape:label="#g4879"
+             inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
+             inkscape:export-xdpi="4.8200002"
+             inkscape:export-ydpi="4.8200002">
+            <rect
+               clip-path="url(#clipPath4873)"
+               transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
+               y="3546.054"
+               x="-381.69672"
+               height="453.13867"
+               width="521.47296"
+               id="rect5128"
+               style="fill:#318520;fill-opacity:1;stroke:none;filter:url(#filter4855)" />
+            <rect
+               transform="translate(-0.94907403,-12.917507)"
+               clip-path="url(#clipPath4869)"
+               style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851)"
+               id="rect5130"
+               width="871.32477"
+               height="236.74678"
+               x="-556.62262"
+               y="3654.2498" />
+            <rect
+               y="3460.7432"
+               x="-390.07486"
+               height="597.92499"
+               width="597.92499"
+               id="rect5132"
+               style="fill:none;stroke:none" />
+          </g>
+        </g>
+      </g>
     </g>
   </g>
 </svg>

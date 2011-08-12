@@ -610,7 +610,7 @@ LaserBeam *SpawnLaserBeam (Engine2::ObjectLayer *object_layer)
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/laser_beam.png");
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
@@ -647,36 +647,44 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
     return laser_impact_effect;
 }
 
-GaussGunTrail *SpawnGaussGunTrail (
-    Engine2::ObjectLayer *const object_layer,
+void SpawnGaussGunTrail (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &sprite_texture_path,
     FloatVector2 const &trail_start,
-    FloatVector2 const &trail_vector,
+    FloatVector2 trail_direction,
     FloatVector2 const &trail_velocity,
-    Float const trail_width,
-    Float const time_to_live,
-    Float const time_at_birth)
+    Float segment_width,
+    Float segment_length,
+    Uint32 segment_count,
+    Float time_to_live,
+    Float time_at_birth)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
-    ASSERT1(trail_width > 0.0f);
+    ASSERT1(segment_width > 0.0f);
+    ASSERT1(segment_length > 0.0f);
+    ASSERT1(segment_count > 0);
     ASSERT1(time_to_live > 0.0f);
 
-    FloatVector2 trail_center = trail_start + 0.5f * trail_vector;
+    trail_direction.Normalize();
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/beam_gradient_small.png");
-    sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
-    sprite->SetIsTransparent(true);
-    sprite->SetTranslation(trail_center);
-    sprite->SetScaleFactors(FloatVector2(0.5f * trail_vector.Length(), 0.5f * trail_width));
-    sprite->SetAngle(Math::Arg(trail_vector));
+    for (Uint32 i = 0; i < segment_count; ++i)
+    {
+        FloatVector2 trail_center = trail_start + (0.5f + i) * segment_length * trail_direction;
 
-    GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);
-    gauss_gun_trail->SetVelocity(trail_velocity);
+        Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_path);
+        sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
+        sprite->SetIsTransparent(true);
+        sprite->SetTranslation(trail_center);
+        sprite->SetScaleFactors(FloatVector2(0.5f * segment_length, 0.5f * segment_width));
+        sprite->SetAngle(Math::Arg(trail_direction));
 
-    sprite->SetEntity(gauss_gun_trail);
-    object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
+        GaussGunTrail *gauss_gun_trail = new GaussGunTrail(time_to_live, time_at_birth);
+        gauss_gun_trail->SetVelocity(trail_velocity);
 
-    return gauss_gun_trail;
+        sprite->SetEntity(gauss_gun_trail);
+        object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
+    }
 }
 
 TractorBeam *SpawnTractorBeam (

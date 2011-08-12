@@ -210,6 +210,7 @@ private:
     static Float const ms_damage_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT];
     static Float const ms_beam_radius[UPGRADE_LEVEL_COUNT];
+    static Float const ms_beam_visible_width[UPGRADE_LEVEL_COUNT];
 
     Float m_time_last_fired;
     LaserBeam *m_laser_beam;
@@ -299,6 +300,7 @@ public:
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+    static Float const ms_trail_visible_width[UPGRADE_LEVEL_COUNT];
 
     GaussGun (Uint32 upgrade_level)
         :

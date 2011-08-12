@@ -33,7 +33,7 @@ namespace Dis
 Float const PeaShooter::ms_primary_impact_damage[UPGRADE_LEVEL_COUNT] = { 1.5f, 4.0f, 20.0f, 50.0f };
 Float const PeaShooter::ms_max_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 80.0f, 160.0f, 320.0f, 640.0f };
 Float const PeaShooter::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 400.0f, 500.0f, 650.0f, 800.0f };
-Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 12.0f, 14.0f, 16.0f };
+Float const PeaShooter::ms_ballistic_size[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 20.0f, 25.0f };
 Float const PeaShooter::ms_range[UPGRADE_LEVEL_COUNT] = { 150.0f, 200.0f, 300.0f, 450.0f };
 Float const PeaShooter::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const PeaShooter::ms_max_secondary_power_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 225.0f, 300.0f };
@@ -48,6 +48,7 @@ Float const Laser::ms_max_primary_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.
 Float const Laser::ms_damage_rate[UPGRADE_LEVEL_COUNT] = { 70.0f, 130.0f, 190.0f, 250.0f };
 Float const Laser::ms_secondary_impact_damage[UPGRADE_LEVEL_COUNT] = { 7.0f, 14.0f, 21.0f, 28.0f };
 Float const Laser::ms_beam_radius[UPGRADE_LEVEL_COUNT] = { 0.0f, 0.0f, 0.0f, 0.0f };
+Float const Laser::ms_beam_visible_width[UPGRADE_LEVEL_COUNT] = { 4.0f, 6.0f, 9.0f, 13.0f };
 
 // FlameThrower properties
 Float const FlameThrower::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 325.0f, 400.0f };
@@ -64,6 +65,7 @@ Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 2
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
 Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.35f, 1.15f, 1.0f };
+Float const GaussGun::ms_trail_visible_width[UPGRADE_LEVEL_COUNT] = { 20.0f, 30.0f, 45.0f, 60.0f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 200.0f, 200.0f, 200.0f };
@@ -348,10 +350,13 @@ bool Laser::Activate (Float power, Float time, Float frame_dt)
                 // spawn the "gauss gun trail"
                 SpawnGaussGunTrail(
                     OwnerShip()->GetObjectLayer(),
+                    "resources/laser_beam.png",
                     fire_location,
-                    it->m_time * fire_vector,
+                    fire_vector,
                     OwnerShip()->Velocity(),
-                    2.0f,
+                    ms_beam_visible_width[UpgradeLevel()],
+                    it->m_time * fire_vector.Length(),
+                    1,
                     0.5f,
                     time);
                 // update the last time fired
@@ -406,17 +411,16 @@ bool Laser::Activate (Float power, Float time, Float frame_dt)
         }
 
         // place the laser beam effect
-        static Float const s_laser_beam_width = 2.0f;
         Float intensity = power / (frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()]);
         ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
         m_laser_beam->SetIntensity(intensity);
         m_laser_beam->SnapToShip(
             MuzzleLocation() + frame_dt * OwnerShip()->Velocity(),
             laser_beam_hit_location + frame_dt * OwnerShip()->Velocity(),
-            s_laser_beam_width);
+            ms_beam_visible_width[UpgradeLevel()]);
 
         // place the laser impact effect
-        m_laser_impact_effect->SnapToLocationAndSetScaleFactor(laser_beam_hit_location, s_laser_beam_width*6.0f);
+        m_laser_impact_effect->SnapToLocationAndSetScaleFactor(laser_beam_hit_location, 3.0f*ms_beam_visible_width[UpgradeLevel()]);
         // if there was an impact, set the laser impact effect to opaque.  otherwise transparent.
         m_laser_impact_effect->OwnerObject()->ColorMask() = (it != it_end) ? Color::ms_opaque_white : Color::ms_transparent_white;
 
@@ -626,13 +630,22 @@ bool GaussGun::Activate (Float power, Float time, Float frame_dt)
     if (damage_left_to_inflict > 0.0001f) // to within some tolerance
         furthest_hit_time = 1.0f;
 
+    // figure out how long each gauss gun trail segment should be
+    Float segment_width = ms_trail_visible_width[UpgradeLevel()];
+    Uint32 segment_count = Math::Ceiling((furthest_hit_time * ms_range[UpgradeLevel()]) / segment_width);
+    ASSERT1(segment_count > 0);
+    Float segment_length = (furthest_hit_time * ms_range[UpgradeLevel()]) / segment_count;
+
     // spawn the gauss gun trail
     SpawnGaussGunTrail(
         OwnerShip()->GetObjectLayer(),
+        "resources/gauss_gun_trail.png",
         MuzzleLocation(),
-        furthest_hit_time * ms_range[UpgradeLevel()] * MuzzleDirection(),
+        MuzzleDirection(),
         OwnerShip()->Velocity(),
-        2.0f,
+        segment_width,
+        segment_length,
+        segment_count,
         1.0f,
         time);
 

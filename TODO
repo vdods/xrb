@@ -32,7 +32,12 @@ DISASTEROIDS:
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 - death sequences for player and Demi
+- credits and references screen
 ** feature-related **
+- starting tip -- write up a bunch of tips that will be shown when the game is started so the
+  player can learn all the features of the game -- maybe make the tip be shown in the inventory
+  screen so as not to disrupt the UI flow.
+- make the player ship size depend on mass (so that it gets larger when heaver armor is equipped).
 - make tractor beams grow from a point when activated, and shrink to a point when deactivated.
 - make the wave sequences programmable via config file, and specifiable via commandline,
   so specifying a debug wave sequence is easy.  maybe make a hardcoded wave sequence that
@@ -48,6 +53,16 @@ DISASTEROIDS:
   and make bullets curve around stuff toward the player.
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
+- additional mode for Demi - spawn a bunch of Interlopers from each weapon port (all 4?)
+  which become snake-like arms which then flail around smashy-smashying things.
+  as you destroy each Interloper, it telescopes down.  If you destroy the base Interloper,
+  the arm detaches and becomes a snake-flock.
+- additional mode for Demi - spawn a Revulsion at each weapon port (all 4?), which
+  stick to the ports, and fire gauss guns at you.  these should look like creepy eyes.  maybe
+  make the revulsions not turn away when you look at them (?).  the player can destroy them
+  normally.
+- additional mode for Demi - flurry of pea-shooter fire, similar to many shmups, where
+  the idea is just to dodge it all (or use tractor beam to push away).
 - additional mode for Demi - spawn a bunch of Interlopers which then all
   fly back and surround the Demi continuously to make a shield, making it
   extremely hard to damage the Demi.  Make the Demi use the railgun during
@@ -144,6 +159,11 @@ DISASTEROIDS:
   powers, so there's a sound cue (as well as the visual cue) as to what the
   status of the shield is.
 ** bugs **
+** references **
+- asteroids -- obvious
+- star control 2 -- hardwired into my DNA as an influence for all games i make
+- gradius -- for the precedent of options
+- starscape (by moonpod) -- minerals, tractor beam and visual style influence
 
 BUGS:
 - texture atlas packing efficiency printout seems wrong (test case: use separate
