@@ -10,6 +10,7 @@
 
 #include "xrb_engine2_sprite.hpp"
 
+#include "xrb_engine2_animatedsprite.hpp"
 #include "xrb_gl.hpp"
 #include "xrb_gltextureatlas.hpp"
 #include "xrb_rendercontext.hpp"
@@ -18,9 +19,17 @@
 namespace Xrb {
 namespace Engine2 {
 
-Sprite *Sprite::Create (std::string const &asset_path, Uint32 gltexture_flags)
+Sprite *Sprite::Create (std::string const &texture_path, Uint32 gltexture_flags)
 {
-    return new Sprite(GlTexture::Load(asset_path, gltexture_flags));
+    return new Sprite(GlTexture::Load(texture_path, gltexture_flags));
+}
+
+Sprite *Sprite::Create (std::string const &asset_path, Float current_time, Uint32 gltexture_flags)
+{
+    if (asset_path.rfind(".anim") != std::string::npos)
+        return AnimatedSprite::Create(asset_path, current_time, gltexture_flags);
+    else
+        return Sprite::Create(asset_path, gltexture_flags);
 }
 
 Sprite *Sprite::Create (Serializer &serializer)

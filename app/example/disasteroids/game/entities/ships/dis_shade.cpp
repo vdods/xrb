@@ -338,7 +338,7 @@ void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
     }
 }
 
-void Shade::Teleport (Float const time, Float const frame_dt)
+void Shade::Teleport (Float time, Float frame_dt)
 {
     ASSERT1(OwnerObject() != NULL);
 
@@ -391,6 +391,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
                 SpawnExplosion(
                     GetObjectLayer(),
                     sprite_path,
+                    time,
                     Translation(),
                     Velocity(),
                     Angle(),
@@ -411,6 +412,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
                     ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    time,
                     Translation(),
                     Velocity(),
                     ScaleFactor(),        // initial_size
@@ -434,6 +436,7 @@ void Shade::Teleport (Float const time, Float const frame_dt)
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
                     ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    time,
                     teleport_destination,
                     target_velocity,
                     ScaleFactor(),        // initial_size

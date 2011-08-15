@@ -1482,6 +1482,7 @@ Asteroid *World::SpawnAsteroidOutOfView ()
     m_asteroid_mass += mass;
     return SpawnAsteroid(
         MainObjectLayer(),
+        FrameTime(),
         translation,
         scale_factor,
         mass,
@@ -1523,6 +1524,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_INTERLOPER:
             spawned_ship = SpawnInterloper(
                 MainObjectLayer(),
+                FrameTime(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1531,6 +1533,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_SHADE:
             spawned_ship = SpawnShade(
                 MainObjectLayer(),
+                FrameTime(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1539,6 +1542,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_REVULSION:
             spawned_ship = SpawnRevulsion(
                 MainObjectLayer(),
+                FrameTime(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1547,6 +1551,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_DEVOURMENT:
             spawned_ship = SpawnDevourment(
                 MainObjectLayer(),
+                FrameTime(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1555,6 +1560,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
         case ET_DEMI:
             spawned_ship = SpawnDemi(
                 MainObjectLayer(),
+                FrameTime(),
                 translation,
                 FloatVector2::ms_zero,
                 enemy_level);
@@ -1658,6 +1664,7 @@ void World::CreateAndPopulateForegroundObjectLayer ()
     m_player_ship =
         SpawnSolitary(
             object_layer,
+            MostRecentFrameTime(),
             FloatVector2::ms_zero,
             FloatVector2::ms_zero);
 

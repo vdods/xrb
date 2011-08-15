@@ -25,7 +25,6 @@
 #include "dis_solitary.hpp"
 #include "dis_util.hpp"
 #include "dis_world.hpp"
-#include "xrb_engine2_animatedsprite.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 #include "xrb_engine2_sprite.hpp"
 #include "xrb_engine2_world.hpp"
@@ -49,52 +48,11 @@ using namespace Xrb;
 #define Z_DEPTH_NO_DAMAGE_EXPLOSION 0.55f
 #define Z_DEPTH_TRACTOR_BEAM        0.8f
 
-namespace Dis
-{
+namespace Dis {
 
 Engine2::Sprite *SpawnDynamicSprite (
     Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
-    Float z_depth,
-    bool is_transparent,
-    Entity *entity,
-    FloatVector2 const &translation,
-    Float scale_factor,
-    Float angle,
-    Float mass,
-    FloatVector2 const &velocity,
-    Float angular_velocity,
-    Float elasticity)
-{
-    ASSERT1(object_layer != NULL);
-    ASSERT1(object_layer->OwnerWorld() != NULL);
-    ASSERT1(!sprite_texture_path.empty());
-    ASSERT1(entity != NULL);
-    ASSERT1(scale_factor >= 0.0f);
-    ASSERT1(mass > 0.0f);
-    ASSERT1(elasticity >= 0.0f);
-
-    entity->SetElasticity(elasticity);
-    entity->SetMass(mass);
-    entity->SetVelocity(velocity);
-    entity->SetAngularVelocity(angular_velocity);
-
-    Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_path);
-    sprite->SetZDepth(z_depth);
-    sprite->SetIsTransparent(is_transparent);
-    sprite->SetTranslation(translation);
-    sprite->SetScaleFactor(scale_factor);
-    sprite->SetAngle(angle);
-    sprite->SetEntity(entity);
-
-    object_layer->OwnerWorld()->AddDynamicObject(sprite, object_layer);
-
-    return sprite;
-}
-
-Engine2::AnimatedSprite *SpawnDynamicAnimatedSprite (
-    Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
+    std::string const &asset_path,
     Float current_time,
     Float z_depth,
     bool is_transparent,
@@ -109,7 +67,7 @@ Engine2::AnimatedSprite *SpawnDynamicAnimatedSprite (
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
-    ASSERT1(!sprite_texture_path.empty());
+    ASSERT1(!asset_path.empty());
     ASSERT1(entity != NULL);
     ASSERT1(scale_factor >= 0.0f);
     ASSERT1(mass > 0.0f);
@@ -120,7 +78,7 @@ Engine2::AnimatedSprite *SpawnDynamicAnimatedSprite (
     entity->SetVelocity(velocity);
     entity->SetAngularVelocity(angular_velocity);
 
-    Engine2::AnimatedSprite *sprite = Engine2::AnimatedSprite::Create(sprite_texture_path, current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create(asset_path, current_time);
     sprite->SetZDepth(z_depth);
     sprite->SetIsTransparent(is_transparent);
     sprite->SetTranslation(translation);
@@ -134,22 +92,20 @@ Engine2::AnimatedSprite *SpawnDynamicAnimatedSprite (
 }
 
 Asteroid *SpawnAsteroid (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const mass,
+    Float scale_factor,
+    Float mass,
     FloatVector2 const &velocity,
-    Float const mineral_content,
-    bool const is_a_secondary_asteroid)
+    Float mineral_content,
+    bool is_a_secondary_asteroid)
 {
-    Asteroid *asteroid =
-        new Asteroid(
-            mass,
-            mineral_content,
-            is_a_secondary_asteroid);
+    Asteroid *asteroid = new Asteroid(mass, mineral_content, is_a_secondary_asteroid);
     SpawnDynamicSprite(
         object_layer,
         "resources/asteroid_small.png",
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         asteroid,
@@ -164,15 +120,16 @@ Asteroid *SpawnAsteroid (
 }
 
 Ballistic *SpawnSmartBallistic (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const mass,
+    Float scale_factor,
+    Float mass,
     FloatVector2 const &velocity,
-    Float const impact_damage,
-    Float const time_to_live,
-    Float const time_at_birth,
-    Uint8 const weapon_level,
+    Float impact_damage,
+    Float time_to_live,
+    Float time_at_birth,
+    Uint8 weapon_level,
     EntityReference<Entity> const &owner)
 {
     Ballistic *ballistic =
@@ -187,6 +144,7 @@ Ballistic *SpawnSmartBallistic (
         SpawnDynamicSprite(
             object_layer,
             "resources/plasma_bullet.png",
+            current_time,
             Z_DEPTH_BALLISTIC,
             true, // is transparent
             ballistic,
@@ -204,15 +162,16 @@ Ballistic *SpawnSmartBallistic (
 }
 
 Ballistic *SpawnDumbBallistic (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const mass,
+    Float scale_factor,
+    Float mass,
     FloatVector2 const &velocity,
-    Float const impact_damage,
-    Float const time_to_live,
-    Float const time_at_birth,
-    Uint8 const weapon_level,
+    Float impact_damage,
+    Float time_to_live,
+    Float time_at_birth,
+    Uint8 weapon_level,
     EntityReference<Entity> const &owner)
 {
     Ballistic *ballistic =
@@ -226,6 +185,7 @@ Ballistic *SpawnDumbBallistic (
     SpawnDynamicSprite(
         object_layer,
         "resources/tractor_beam.png",
+        current_time,
         Z_DEPTH_BALLISTIC,
         false, // is transparent
         ballistic,
@@ -240,17 +200,18 @@ Ballistic *SpawnDumbBallistic (
 }
 
 Grenade *SpawnGrenade (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
+    Float scale_factor,
     FloatVector2 const &velocity,
-    GrenadeLauncher *const owner_grenade_launcher,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
+    GrenadeLauncher *owner_grenade_launcher,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float const health)
+    Float health)
 {
     Grenade *grenade =
         new Grenade(
@@ -264,6 +225,7 @@ Grenade *SpawnGrenade (
     SpawnDynamicSprite(
         object_layer,
         "resources/grenade_small.png",
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         grenade,
@@ -278,21 +240,22 @@ Grenade *SpawnGrenade (
 }
 
 Missile *SpawnMissile (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const angle,
+    Float scale_factor,
+    Float angle,
     FloatVector2 const &velocity,
     MissileLauncher *owner_missile_launcher,
-    Float const time_to_live,
-    Float const time_at_birth,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
+    Float time_to_live,
+    Float time_at_birth,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float const health,
-    bool const is_enemy_missile)
+    Float health,
+    bool is_enemy_missile)
 {
     Missile *missile =
         new Missile(
@@ -310,6 +273,7 @@ Missile *SpawnMissile (
         SpawnDynamicSprite(
             object_layer,
             "resources/missile_small.png",
+            current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
             missile,
@@ -327,20 +291,21 @@ Missile *SpawnMissile (
 }
 
 GuidedMissile *SpawnGuidedMissile (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const angle,
+    Float scale_factor,
+    Float angle,
     FloatVector2 const &velocity,
-    Float const time_to_live,
-    Float const time_at_birth,
-    Float const damage_to_inflict,
-    Float const damage_radius,
-    Float const explosion_radius,
-    Uint32 const weapon_level,
+    Float time_to_live,
+    Float time_at_birth,
+    Float damage_to_inflict,
+    Float damage_radius,
+    Float explosion_radius,
+    Uint32 weapon_level,
     EntityReference<Entity> const &owner,
-    Float const health,
-    bool const is_enemy_missile)
+    Float health,
+    bool is_enemy_missile)
 {
     GuidedMissile *guided_missile =
         is_enemy_missile
@@ -368,6 +333,7 @@ GuidedMissile *SpawnGuidedMissile (
         SpawnDynamicSprite(
             object_layer,
             "resources/missile_small.png",
+            current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
             guided_missile,
@@ -385,19 +351,21 @@ GuidedMissile *SpawnGuidedMissile (
 }
 
 Powerup *SpawnPowerup (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    std::string const &asset_path,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const mass,
+    Float scale_factor,
+    Float mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_path,
-    ItemType const item_type)
+    ItemType item_type)
 {
     ASSERT1(item_type < IT_POWERUP_LIMIT);
     Powerup *powerup = new Powerup(item_type);
     SpawnDynamicSprite(
         object_layer,
-        sprite_texture_path,
+        asset_path,
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
@@ -412,19 +380,21 @@ Powerup *SpawnPowerup (
 }
 
 Powerup *SpawnPowerup (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
-    Float const mass,
+    Float scale_factor,
+    Float mass,
     FloatVector2 const &velocity,
-    std::string const &sprite_texture_path,
-    Item *const item)
+    std::string const &asset_path,
+    Item *item)
 {
     ASSERT1(item != NULL);
     Powerup *powerup = new Powerup(item);
     SpawnDynamicSprite(
         object_layer,
-        sprite_texture_path,
+        asset_path,
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         powerup,
@@ -440,7 +410,8 @@ Powerup *SpawnPowerup (
 
 Explosion *SpawnExplosion (
     Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
+    std::string const &asset_path,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float angle,
@@ -461,7 +432,8 @@ Explosion *SpawnExplosion (
             collision_type);
     SpawnDynamicSprite(
         object_layer,
-        sprite_texture_path,
+        asset_path,
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         explosion,
@@ -477,7 +449,8 @@ Explosion *SpawnExplosion (
 
 DamageExplosion *SpawnDamageExplosion (
     Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
+    std::string const &asset_path,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float damage_amount,
@@ -499,7 +472,8 @@ DamageExplosion *SpawnDamageExplosion (
             owner);
     SpawnDynamicSprite(
         object_layer,
-        sprite_texture_path,
+        asset_path,
+        current_time,
         Z_DEPTH_DAMAGE_EXPLOSION,
         true, // is transparent
         damage_explosion,
@@ -515,7 +489,8 @@ DamageExplosion *SpawnDamageExplosion (
 
 NoDamageExplosion *SpawnNoDamageExplosion (
     Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
+    std::string const &asset_path,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float initial_size,
@@ -526,7 +501,8 @@ NoDamageExplosion *SpawnNoDamageExplosion (
     NoDamageExplosion *no_damage_explosion = new NoDamageExplosion(initial_size, final_size, time_to_live, time_at_birth);
     SpawnDynamicSprite(
         object_layer,
-        sprite_texture_path,
+        asset_path,
+        current_time,
         Z_DEPTH_NO_DAMAGE_EXPLOSION,
         true, // is transparent
         no_damage_explosion,
@@ -542,6 +518,7 @@ NoDamageExplosion *SpawnNoDamageExplosion (
 
 EMPExplosion *SpawnEMPExplosion (
     Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float disable_time_factor,
@@ -555,6 +532,7 @@ EMPExplosion *SpawnEMPExplosion (
     SpawnDynamicSprite(
         object_layer,
         "resources/shield_effect_small.png",
+        current_time,
         Z_DEPTH_EMP_EXPLOSION,
         true, // is transparent
         emp_explosion,
@@ -570,6 +548,7 @@ EMPExplosion *SpawnEMPExplosion (
 
 Fireball *SpawnFireball (
     Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     Float starting_damage,
@@ -592,6 +571,7 @@ Fireball *SpawnFireball (
     SpawnDynamicSprite(
         object_layer,
         "resources/fireball.png",
+        current_time,
         Z_DEPTH_FIREBALL,
         true, // is transparent
         fireball,
@@ -631,7 +611,7 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::AnimatedSprite *sprite = Engine2::AnimatedSprite::Create("resources/laser_impact.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/laser_impact.anim", current_time);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
@@ -649,7 +629,8 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
 
 void SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
-    std::string const &sprite_texture_path,
+    std::string const &asset_path,
+    Float current_time,
     FloatVector2 const &trail_start,
     FloatVector2 trail_direction,
     FloatVector2 const &trail_velocity,
@@ -674,7 +655,7 @@ void SpawnGaussGunTrail (
     {
         FloatVector2 trail_center = trail_start + (0.5f + i) * segment_length * trail_direction;
 
-        Engine2::Sprite *sprite = Engine2::Sprite::Create(sprite_texture_path);
+        Engine2::Sprite *sprite = Engine2::Sprite::Create(asset_path, current_time);
         sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
         sprite->SetIsTransparent(true);
         sprite->SetTranslation(trail_center);
@@ -689,8 +670,7 @@ void SpawnGaussGunTrail (
     }
 }
 
-TractorBeam *SpawnTractorBeam (
-    Engine2::ObjectLayer *object_layer)
+TractorBeam *SpawnTractorBeam (Engine2::ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
@@ -711,14 +691,12 @@ TractorBeam *SpawnTractorBeam (
     return tractor_beam;
 }
 
-ShieldEffect *SpawnShieldEffect (
-    Engine2::ObjectLayer *object_layer)
+ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite =
-        Engine2::Sprite::Create("resources/shield_effect_small.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/shield_effect_small.png");
     sprite->SetZDepth(Z_DEPTH_SHIELD_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -736,15 +714,12 @@ ShieldEffect *SpawnShieldEffect (
     return shield_effect;
 }
 
-LightningEffect *SpawnLightningEffect (
-    Engine2::ObjectLayer *object_layer,
-    Float current_time)
+LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Float current_time)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::AnimatedSprite *sprite =
-        Engine2::AnimatedSprite::Create("resources/lightning.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/lightning.anim", current_time);
     sprite->SetZDepth(Z_DEPTH_LIGHTNING_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -762,15 +737,12 @@ LightningEffect *SpawnLightningEffect (
     return lightning_effect;
 }
 
-ReticleEffect *SpawnReticleEffect (
-    Engine2::ObjectLayer *object_layer,
-    Color const &color_mask)
+ReticleEffect *SpawnReticleEffect (Engine2::ObjectLayer *object_layer, Color const &color_mask)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite =
-        Engine2::Sprite::Create("resources/reticle1.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/reticle1.png");
     sprite->SetZDepth(Z_DEPTH_RETICLE_EFFECT);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  it will be placed
@@ -787,12 +759,13 @@ ReticleEffect *SpawnReticleEffect (
 }
 
 HealthTrigger *SpawnHealthTrigger (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
+    Float scale_factor,
     FloatVector2 const &velocity,
-    Float const health_delta_rate,
-    Mortal::DamageType const damage_type,
+    Float health_delta_rate,
+    Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner)
 {
@@ -806,6 +779,7 @@ HealthTrigger *SpawnHealthTrigger (
         SpawnDynamicSprite(
             object_layer,
             "resources/tractor_beam.png",
+            current_time,
             0.01f, // z depth (arbitrary, since its invisible)
             true, // is transparent
             health_trigger,
@@ -822,7 +796,8 @@ HealthTrigger *SpawnHealthTrigger (
 }
 
 Solitary *SpawnSolitary (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity)
 {
@@ -830,6 +805,7 @@ Solitary *SpawnSolitary (
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_SOLITARY, 0),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         solitary,
@@ -844,15 +820,17 @@ Solitary *SpawnSolitary (
 }
 
 Interloper *SpawnInterloper (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     Interloper *interloper = new Interloper(enemy_level);
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_INTERLOPER, enemy_level),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         interloper,
@@ -868,15 +846,17 @@ Interloper *SpawnInterloper (
 }
 
 Shade *SpawnShade (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     Shade *shade = new Shade(enemy_level);
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_SHADE, enemy_level),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         shade,
@@ -892,15 +872,17 @@ Shade *SpawnShade (
 }
 
 Revulsion *SpawnRevulsion (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     Revulsion *revulsion = new Revulsion(enemy_level);
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_REVULSION, enemy_level),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         revulsion,
@@ -916,15 +898,17 @@ Revulsion *SpawnRevulsion (
 }
 
 Devourment *SpawnDevourment (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     Devourment *devourment = new Devourment(enemy_level);
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_DEVOURMENT, enemy_level),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         devourment,
@@ -940,15 +924,17 @@ Devourment *SpawnDevourment (
 }
 
 Demi *SpawnDemi (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     Demi *demi = new Demi(enemy_level);
     SpawnDynamicSprite(
         object_layer,
         Ship::ShipSpritePath(ET_DEMI, enemy_level),
+        current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
         demi,
@@ -965,6 +951,7 @@ Demi *SpawnDemi (
 
 EnemyShip *SpawnEnemyShip (
     Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
     FloatVector2 const &velocity,
     EntityType enemy_type,
@@ -976,6 +963,7 @@ EnemyShip *SpawnEnemyShip (
         case ET_INTERLOPER:
             enemy_ship = SpawnInterloper(
                 object_layer,
+                current_time,
                 translation,
                 velocity,
                 enemy_level);
@@ -984,6 +972,7 @@ EnemyShip *SpawnEnemyShip (
         case ET_SHADE:
             enemy_ship = SpawnShade(
                 object_layer,
+                current_time,
                 translation,
                 velocity,
                 enemy_level);
@@ -992,6 +981,7 @@ EnemyShip *SpawnEnemyShip (
         case ET_REVULSION:
             enemy_ship = SpawnRevulsion(
                 object_layer,
+                current_time,
                 translation,
                 velocity,
                 enemy_level);
@@ -1014,15 +1004,16 @@ EnemyShip *SpawnEnemyShip (
 }
 
 HealthTrigger *SpawnDevourmentMouthHealthTrigger (
-    Engine2::ObjectLayer *const object_layer,
+    Engine2::ObjectLayer *object_layer,
+    Float current_time,
     FloatVector2 const &translation,
-    Float const scale_factor,
+    Float scale_factor,
     FloatVector2 const &velocity,
-    Float const health_delta_rate,
-    Mortal::DamageType const damage_type,
+    Float health_delta_rate,
+    Mortal::DamageType damage_type,
     EntityReference<Mortal> const &ignore_this_mortal,
     EntityReference<Entity> const &owner,
-    Uint8 const enemy_level)
+    Uint8 enemy_level)
 {
     static std::string const s_grinder_sprite_path[EnemyShip::ENEMY_LEVEL_COUNT] =
     {
@@ -1043,6 +1034,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     SpawnDynamicSprite(
         object_layer,
         s_grinder_sprite_path[enemy_level],
+        current_time,
         Z_DEPTH_DEVOURMENT_GRINDER,
         false, // is transparent
         health_trigger,

@@ -57,14 +57,14 @@ void Explosive::Collide (
 }
 
 void Explosive::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Float time,
+    Float frame_dt)
 {
     if (!m_has_detonated)
     {
@@ -72,6 +72,7 @@ void Explosive::Die (
         SpawnNoDamageExplosion(
             GetObjectLayer(),
             ExplosionSpritePath(EXPLO_ROCK),
+            time,
             Translation(),
             Velocity(),
             0.0f, // initial_size
@@ -240,9 +241,7 @@ bool Grenade::CheckIfItShouldDetonate (
     return true;
 }
 
-void Grenade::Detonate (
-    Float const time,
-    Float const frame_dt)
+void Grenade::Detonate (Float time, Float frame_dt)
 {
     ASSERT1(!HasDetonated());
 
@@ -260,6 +259,7 @@ void Grenade::Detonate (
     SpawnDamageExplosion(
         GetObjectLayer(),
         ExplosionSpritePath(EXPLO_DENSE),
+        time,
         Translation(),
         Velocity(),
         m_damage_to_inflict*damage_factor,
@@ -450,9 +450,7 @@ bool Missile::CheckIfItShouldDetonate (
     return true;
 }
 
-void Missile::Detonate (
-    Float const time,
-    Float const frame_dt)
+void Missile::Detonate (Float time, Float frame_dt)
 {
     ASSERT1(!HasDetonated());
 
@@ -464,6 +462,7 @@ void Missile::Detonate (
     SpawnDamageExplosion(
         GetObjectLayer(),
         ExplosionSpritePath(EXPLO_DENSE),
+        time,
         Translation(),
         Velocity(),
         m_damage_to_inflict,

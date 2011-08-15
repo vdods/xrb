@@ -750,14 +750,14 @@ bool PlayerShip::Damage (
 }
 
 void PlayerShip::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Float time,
+    Float frame_dt)
 {
     DStaticCast<World *>(GetWorld())->RecordDestroyedPlayerShip(this);
 
@@ -781,6 +781,7 @@ void PlayerShip::Die (
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
                     sprite_path,
+                    time,
                     Translation(),
                     Velocity(),
                     1.0f * ScaleFactor(), // initial_size
@@ -797,6 +798,7 @@ void PlayerShip::Die (
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
                     ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    time,
                     Translation(),
                     Velocity(),
                     0.0f, // initial_size

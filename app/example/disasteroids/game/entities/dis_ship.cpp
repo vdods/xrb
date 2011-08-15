@@ -176,6 +176,7 @@ void Ship::Die (
             SpawnNoDamageExplosion(
                 GetObjectLayer(),
                 sprite_path,
+                time,
                 Translation(),
                 Velocity(),
                 1.0f * ScaleFactor(), // initial_size
@@ -192,6 +193,7 @@ void Ship::Die (
             SpawnNoDamageExplosion(
                 GetObjectLayer(),
                 ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                time,
                 Translation(),
                 Velocity(),
                 0.0f, // initial_size

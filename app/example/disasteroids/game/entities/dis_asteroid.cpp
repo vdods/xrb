@@ -134,18 +134,19 @@ void Asteroid::Collide (
 }
 
 void Asteroid::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Float time,
+    Float frame_dt)
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),
         ExplosionSpritePath(EXPLO_ROCK),
+        time,
         Translation(),
         Velocity(),
         0.0f, // initial_size
@@ -204,6 +205,7 @@ void Asteroid::Die (
             Asteroid *new_asteroid =
                 SpawnAsteroid(
                     GetObjectLayer(),
+                    time,
                     translation,
                     scale_factor,
                     mass,
@@ -245,11 +247,12 @@ void Asteroid::Die (
             Uint8 mineral_index = RandomMineral();
             SpawnPowerup(
                 GetObjectLayer(),
+                Item::MineralSpritePath(mineral_index),
+                time,
                 Translation() + scale_factor * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
-                Item::MineralSpritePath(mineral_index),
                 static_cast<ItemType>(IT_MINERAL_LOWEST+mineral_index));
 
             mineral_mass_to_spawn -= mass;

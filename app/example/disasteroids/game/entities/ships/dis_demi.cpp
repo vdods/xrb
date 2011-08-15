@@ -340,14 +340,14 @@ void Demi::Think (Float const time, Float const frame_dt)
 }
 
 void Demi::Die (
-    Entity *const killer,
-    Entity *const kill_medium,
+    Entity *killer,
+    Entity *kill_medium,
     FloatVector2 const &kill_location,
     FloatVector2 const &kill_normal,
-    Float const kill_force,
-    DamageType const kill_type,
-    Float const time,
-    Float const frame_dt)
+    Float kill_force,
+    DamageType kill_type,
+    Float time,
+    Float frame_dt)
 {
     EnemyShip::Die(
         killer,
@@ -382,11 +382,12 @@ void Demi::Die (
         Powerup *health_powerup =
             SpawnPowerup(
                 GetObjectLayer(),
+                "resources/powerup.png",
+                time,
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
-                "resources/powerup.png",
                 IT_POWERUP_HEALTH);
         health_powerup->SetEffectiveValue(health_powerup_amount);
 
@@ -402,6 +403,7 @@ void Demi::Die (
 
         SpawnEnemyShip(
             GetObjectLayer(),
+            time,
             Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
