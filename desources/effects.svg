@@ -488,19 +488,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.10200623"
-     inkscape:cx="-9354.3453"
-     inkscape:cy="-8141.3035"
+     inkscape:zoom="0.062372794"
+     inkscape:cx="1920.6919"
+     inkscape:cy="-4241.1025"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      showborder="false"
      inkscape:showpageshadow="false"
-     inkscape:window-width="1259"
-     inkscape:window-height="1111"
+     inkscape:window-width="1920"
+     inkscape:window-height="1118"
      inkscape:window-x="0"
      inkscape:window-y="25"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:snap-global="true">
@@ -564,7 +564,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1282,196 +1282,6 @@
          id="rect4877"
          style="fill:none;stroke:none" />
     </g>
-    <g
-       id="g4266">
-      <rect
-         inkscape:export-ydpi="46.880001"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         y="5532.3623"
-         x="-3760"
-         height="1920"
-         width="480"
-         id="rect4138"
-         style="fill:#6b6b6b;fill-opacity:1;stroke:none" />
-      <rect
-         inkscape:export-ydpi="46.880001"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         y="5532.3623"
-         x="-3280"
-         height="1920"
-         width="480"
-         id="rect4140"
-         style="fill:#5a5a5a;fill-opacity:1;stroke:none" />
-      <rect
-         style="fill:#5a5a5a;fill-opacity:1;stroke:none"
-         id="rect4260"
-         width="480"
-         height="1920"
-         x="-2320"
-         y="5532.3623"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-ydpi="46.880001" />
-      <rect
-         style="fill:#6b6b6b;fill-opacity:1;stroke:none"
-         id="rect4142"
-         width="480"
-         height="1920"
-         x="-2800"
-         y="5532.3623"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-ydpi="46.880001" />
-      <rect
-         inkscape:export-ydpi="46.880001"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         y="5532.3623"
-         x="-1840"
-         height="1920"
-         width="480"
-         id="rect4262"
-         style="fill:#6b6b6b;fill-opacity:1;stroke:none" />
-      <rect
-         inkscape:export-ydpi="46.880001"
-         inkscape:export-xdpi="46.880001"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/test.png"
-         y="5532.3623"
-         x="-1360"
-         height="1920"
-         width="480"
-         id="rect4264"
-         style="fill:#5a5a5a;fill-opacity:1;stroke:none" />
-    </g>
-    <g
-       id="g4301"
-       clip-path="url(#clipPath4319)">
-      <g
-         inkscape:export-ydpi="4.8200002"
-         inkscape:export-xdpi="4.8200002"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
-         inkscape:label="#g4879"
-         id="laser_beam-0"
-         transform="matrix(1.6055525,0,0,1,-2173.7143,2732.6566)">
-        <rect
-           style="fill:#569f26;fill-opacity:1;stroke:none;filter:url(#filter4855-3)"
-           id="rect4799-4"
-           width="521.47296"
-           height="453.13867"
-           x="-381.69672"
-           y="3546.054"
-           transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
-           clip-path="url(#clipPath4873-3)" />
-        <rect
-           y="3654.2498"
-           x="-556.62262"
-           height="236.74678"
-           width="871.32477"
-           id="rect4801-8"
-           style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851-6)"
-           clip-path="url(#clipPath4869-9)"
-           transform="translate(-0.94907403,-12.917507)" />
-        <rect
-           style="fill:none;stroke:none"
-           id="rect4877-4"
-           width="597.92499"
-           height="597.92499"
-           x="-390.07486"
-           y="3460.7432" />
-      </g>
-      <g
-         transform="matrix(1,0,0,0.88768852,0,731.5426)"
-         style="fill:#f2ff66;fill-opacity:1;filter:url(#filter4295)"
-         id="g4247">
-        <path
-           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#f2ff66;fill-opacity:1;stroke:none;stroke-width:100;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-           d="m -2800,5588.4688 0,57.6874 c 26.4255,-0.2335 52.7821,5.8885 75.9688,19.125 55.2588,29.2827 93.0368,81.6431 125,133.7813 50.0302,83.5432 83.309,175.6716 113.8124,267.75 47.4211,148.244 81.9456,300.1179 120.5626,450.7813 51.3451,212.1477 104.0954,425.5896 192.9374,625.75 36.537,80.9403 81.3695,160.3989 147.5,220.9374 50.1994,44.93 116.3431,74.2666 184.2188,74.2813 l 0,-141.0937 c -2.3105,-0.044 -4.6132,-0.1549 -6.9375,-0.375 -33.3206,-1.8974 -64.8417,-18.133 -87.6875,-42.0626 -49.3213,-45.4849 -82.3467,-105.101 -113.5,-163.9374 -58.8986,-116.5404 -97.6434,-241.639 -141.125,-364.375 -66.8912,-196.7239 -125.7045,-396.0577 -191.25,-593.2188 -45.8362,-131.4549 -97.3615,-262.1805 -171.6875,-380.4688 -39.9898,-60.0841 -91.0633,-116.2115 -157.9375,-146.2812 -28.3029,-12.1258 -59.0866,-18.2411 -89.875,-18.2812 z"
-           id="path4146" />
-        <path
-           id="path4169"
-           d="m -880,5588.4688 0,57.6874 c -26.4255,-0.2335 -52.7821,5.8885 -75.9688,19.125 -55.2588,29.2827 -93.0368,81.6431 -125,133.7813 -50.0302,83.5432 -83.309,175.6716 -113.8124,267.75 -47.4211,148.244 -81.9456,300.1179 -120.5626,450.7813 -51.3451,212.1477 -104.0954,425.5896 -192.9374,625.75 -36.537,80.9403 -81.3695,160.3989 -147.5,220.9374 -50.1994,44.93 -116.3431,74.2666 -184.2188,74.2813 l 0,-141.0937 c 2.3105,-0.044 4.6132,-0.1549 6.9375,-0.375 33.3206,-1.8974 64.8417,-18.133 87.6875,-42.0626 49.3213,-45.4849 82.3467,-105.101 113.5,-163.9374 58.8986,-116.5404 97.6434,-241.639 141.125,-364.375 66.8912,-196.7239 125.7045,-396.0577 191.25,-593.2188 45.8362,-131.4549 97.3615,-262.1805 171.6875,-380.4688 39.9898,-60.0841 91.0633,-116.2115 157.9375,-146.2812 28.3029,-12.1258 59.0866,-18.2411 89.875,-18.2812 z"
-           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#f2ff66;fill-opacity:1;stroke:none;stroke-width:100;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
-        <path
-           id="path4171"
-           d="m -2800,5588.4688 0,57.6874 c -26.4255,-0.2335 -52.7821,5.8885 -75.9688,19.125 -55.2588,29.2827 -93.0368,81.6431 -125,133.7813 -50.0302,83.5432 -83.309,175.6716 -113.8124,267.75 -47.4211,148.244 -81.9456,300.1179 -120.5626,450.7813 -51.3451,212.1477 -104.0954,425.5896 -192.9374,625.75 -36.537,80.9403 -81.3695,160.3989 -147.5,220.9374 -50.1994,44.93 -116.3431,74.2666 -184.2188,74.2813 l 0,-141.0937 c 2.3105,-0.044 4.6132,-0.1549 6.9375,-0.375 33.3206,-1.8974 64.8417,-18.133 87.6875,-42.0626 49.3213,-45.4849 82.3467,-105.101 113.5,-163.9374 58.8986,-116.5404 97.6434,-241.639 141.125,-364.375 66.8912,-196.7239 125.7045,-396.0577 191.25,-593.2188 45.8362,-131.4549 97.3615,-262.1805 171.6875,-380.4688 39.9898,-60.0841 91.0633,-116.2115 157.9375,-146.2812 28.3029,-12.1258 59.0866,-18.2411 89.875,-18.2812 z"
-           style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#f2ff66;fill-opacity:1;stroke:none;stroke-width:100;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans" />
-      </g>
-      <g
-         transform="matrix(1.6055525,0,0,1,-1213.7143,2732.6566)"
-         id="g4228"
-         inkscape:label="#g4879"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
-         inkscape:export-xdpi="4.8200002"
-         inkscape:export-ydpi="4.8200002">
-        <rect
-           clip-path="url(#clipPath4873-3)"
-           transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
-           y="3546.054"
-           x="-381.69672"
-           height="453.13867"
-           width="521.47296"
-           id="rect4230"
-           style="fill:#569f26;fill-opacity:1;stroke:none;filter:url(#filter4855-3)" />
-        <rect
-           transform="translate(-0.94907403,-12.917507)"
-           clip-path="url(#clipPath4869-9)"
-           style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851-6)"
-           id="rect4232"
-           width="871.32477"
-           height="236.74678"
-           x="-556.62262"
-           y="3654.2498" />
-        <rect
-           y="3460.7432"
-           x="-390.07486"
-           height="597.92499"
-           width="597.92499"
-           id="rect4234"
-           style="fill:none;stroke:none" />
-      </g>
-      <g
-         inkscape:export-ydpi="4.8200002"
-         inkscape:export-xdpi="4.8200002"
-         inkscape:export-filename="/home/vdods/files/sf/xuqrijbuh/trunk/resources/laser_beam.png"
-         inkscape:label="#g4879"
-         id="g4236"
-         transform="matrix(1.6055525,0,0,1,-3133.7143,2732.6566)">
-        <rect
-           style="fill:#569f26;fill-opacity:1;stroke:none;filter:url(#filter4855-3)"
-           id="rect4238"
-           width="521.47296"
-           height="453.13867"
-           x="-381.69672"
-           y="3546.054"
-           transform="matrix(1.9366145,0,0,1,112.34403,-12.917652)"
-           clip-path="url(#clipPath4873-3)" />
-        <rect
-           y="3654.2498"
-           x="-556.62262"
-           height="236.74678"
-           width="871.32477"
-           id="rect4240"
-           style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter4851-6)"
-           clip-path="url(#clipPath4869-9)"
-           transform="translate(-0.94907403,-12.917507)" />
-        <rect
-           style="fill:none;stroke:none"
-           id="rect4242"
-           width="597.92499"
-           height="597.92499"
-           x="-390.07486"
-           y="3460.7432" />
-      </g>
-    </g>
-    <rect
-       style="fill:none;stroke:none"
-       id="rect4323"
-       width="1920"
-       height="1920"
-       x="-3280"
-       y="5532.3623" />
     <rect
        style="fill:#f2ff66;fill-opacity:0.25238097;stroke:none"
        id="rect4441"

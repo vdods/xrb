@@ -662,9 +662,11 @@ void SpawnGaussGunTrail (
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
     ASSERT1(segment_width > 0.0f);
-    ASSERT1(segment_length > 0.0f);
-    ASSERT1(segment_count > 0);
+    ASSERT1(segment_length >= 0.0f);
     ASSERT1(time_to_live > 0.0f);
+
+    if (segment_length == 0.0f)
+        return; // nothing to do
 
     trail_direction.Normalize();
 

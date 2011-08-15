@@ -631,9 +631,9 @@ bool GaussGun::Activate (Float power, Float time, Float frame_dt)
         furthest_hit_time = 1.0f;
 
     // figure out how long each gauss gun trail segment should be
+    ASSERT1(furthest_hit_time >= 0.0f);
     Float segment_width = ms_trail_visible_width[UpgradeLevel()];
     Uint32 segment_count = Math::Ceiling((furthest_hit_time * ms_range[UpgradeLevel()]) / segment_width);
-    ASSERT1(segment_count > 0);
     Float segment_length = (furthest_hit_time * ms_range[UpgradeLevel()]) / segment_count;
 
     // spawn the gauss gun trail
@@ -663,7 +663,7 @@ bool GaussGun::Activate (Float power, Float time, Float frame_dt)
 GrenadeLauncher::~GrenadeLauncher ()
 {
     for (ActiveGrenadeSet::iterator it = m_active_grenade_set.begin(),
-                                  it_end = m_active_grenade_set.end();
+                                    it_end = m_active_grenade_set.end();
          it != it_end;
          ++it)
     {

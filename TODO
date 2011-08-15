@@ -25,6 +25,7 @@ MAJOR TASKS:
 - motion blur (via projected 3d textures, or maybe pixel shader)
 
 DISASTEROIDS:
+- rewrite design docs in dis_main.cpp to reflect actual state of the game
 ** polish-related **
 - art: fix Interloper proportions
 - art: add bigger stuff in the background (galaxies, nebulae, etc)
