@@ -11,14 +11,17 @@
 #include "dis_asteroid.hpp"
 
 #include "dis_item.hpp"
+#include "dis_powerup.hpp"
 #include "dis_spawn.hpp"
 #include "dis_world.hpp"
 #include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
+
+Float const Asteroid::ms_scale_factor_minimum = 5.0f;
+Float const Asteroid::ms_scale_factor_maximum = 60.0f;
 
 Uint8 const Asteroid::ms_mineral_distribution_lookup_table
     [Asteroid::DISTRIBUTION_LOOKUP_TABLE_COUNT]
@@ -93,7 +96,7 @@ void Asteroid::Think (Float const time, Float const frame_dt)
         if (m_delete_upon_next_think)
         {
             // let the world know this asteroid went bye-bye
-            DStaticCast<World *>(GetWorld())->RecordDestroyedAsteroid(this);
+            GetWorld()->RecordDestroyedAsteroid(this);
             // go bye-bye
             ScheduleForDeletion(0.0f);
         }
@@ -174,8 +177,7 @@ void Asteroid::Die (
 
         // let the world more asteroids are being created.  the added asteroid
         // mass is exactly equal to the destroyed asteroid's mass.
-        DStaticCast<World *>(GetWorld())->
-            RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, Mass());
+        GetWorld()->RecordCreatedAsteroids(ms_number_of_fragments_to_spawn, Mass());
 
         for (Uint8 i = 0; i < ms_number_of_fragments_to_spawn; ++i)
         {
@@ -260,14 +262,32 @@ void Asteroid::Die (
     }
 
     // let the world know this asteroid went bye-bye
-    DStaticCast<World *>(GetWorld())->RecordDestroyedAsteroid(this);
+    GetWorld()->RecordDestroyedAsteroid(this);
+
+    // spawn an option powerup probabilistically based on the asteroid's area --
+    // World keeps track of this stochastic process.  this must be done after
+    // World::RecordDestroyedAsteroid.
+    if (GetWorld()->SpawnOptionPowerupFromAsteroid())
+    {
+        SpawnPowerup(
+            GetObjectLayer(),
+            "resources/option_powerup.anim",
+            time,
+            Translation(), // spawn at the center of the asteroid
+            Powerup::ms_scale_factor,
+            Sqr(Powerup::ms_scale_factor),
+            Velocity(),
+            IT_POWERUP_OPTION);
+        GetWorld()->ResetSpawnOptionPowerupFromAsteroid();
+    }
+
     // go bye-bye
     ScheduleForDeletion(0.0f);
 }
 
 Uint8 Asteroid::RandomMineral () const
 {
-    Uint8 mineral_level = DStaticCast<World *>(GetWorld())->AsteroidMineralLevel();
+    Uint8 mineral_level = GetWorld()->AsteroidMineralLevel();
     ASSERT1(mineral_level < DISTRIBUTION_LOOKUP_TABLE_COUNT);
     Uint16 random_element =
         Math::RandomUint16(0, DISTRIBUTION_LOOKUP_TABLE_SIZE-1);

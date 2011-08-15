@@ -277,7 +277,7 @@ void Devourment::Die (
 
     static Float const s_min_powerup_amount = 1.0f;
     static Float const s_max_powerup_amount = 3.0f;
-    static Float const s_powerup_coefficient = 0.1f;
+    static Float const s_health_powerup_coefficient = 15.0f;
 
     Float health_powerup_amount_left_to_spawn =
         Min(mineral_mass_total, ms_max_spawn_mineral_mass[EnemyLevel()]) / ms_max_spawn_mineral_mass[EnemyLevel()] *
@@ -288,7 +288,7 @@ void Devourment::Die (
             Math::RandomFloat(
                 s_min_powerup_amount,
                 Min(s_max_powerup_amount, health_powerup_amount_left_to_spawn));
-        Float mass = health_powerup_amount / s_powerup_coefficient;
+        Float mass = health_powerup_amount * s_health_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
         Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
@@ -297,7 +297,7 @@ void Devourment::Die (
         Powerup *health_powerup =
             SpawnPowerup(
                 GetObjectLayer(),
-                "resources/powerup.png",
+                "resources/health_powerup.anim",
                 time,
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,

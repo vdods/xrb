@@ -25,7 +25,7 @@ MAJOR TASKS:
 - motion blur (via projected 3d textures, or maybe pixel shader)
 
 DISASTEROIDS:
-- rewrite design docs in dis_main.cpp to reflect actual state of the game
+- rewrite design docs in dis_main.cpp to reflect actual state of the game (see notes/dis_game_design.txt)
 ** polish-related **
 - art: fix Interloper proportions
 - art: add bigger stuff in the background (galaxies, nebulae, etc)
@@ -35,6 +35,19 @@ DISASTEROIDS:
 - death sequences for player and Demi
 - credits and references screen
 ** feature-related **
+- make yellow tractor beam send powerups away from player instead of toward (otherwise the
+  yellow tractor beam helps the player inadvertently).
+- make Demi ignore shade with respect to yellow tractor beam targets.
+- make Demi prioritize option powerups highest in terms of green tractor beam targets.
+- Demi defense mode: predict attacks (from projectile weapons) and defend by throwing asteroids
+  in the way to block.
+- change pea shooter secondary fire to spread shot, and change gauss gun into charge-up weapon
+  which works as the current pea shooter secondary does.
+- change gauss gun reticle effect (and add for player) -- have 4 reticle effects home in on the
+  target, and when they meet, it fires.  this is to give a better sense of when the enemy will
+  fire the gauss gun.  also this gives the player a more-present visual cue as to when the gauss
+  gun is charged.
+- get rid of weapon status bar in order to make space for option powerup display in HUD.
 - starting tip -- write up a bunch of tips that will be shown when the game is started so the
   player can learn all the features of the game -- maybe make the tip be shown in the inventory
   screen so as not to disrupt the UI flow.
@@ -173,6 +186,8 @@ BUGS:
   this may require adding support for RGB textures.
 
 TODO:
+- enable load-time level-of-detail mode where the sprite image files that come with the game
+  are all large, and will be downsized at load-time if not such a high resolution is necessary.
 - change Vector's | operator into *, because this will allow Sqr(vector).  Change & to % (?)
 - change WidgetBackground use to use Resource<> instead of raw pointers, so that deletion
   doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
@@ -360,3 +375,9 @@ GAME IDEAS:
 - point-and-teleport gun
 - grappling hook gun
 - tractor beam gun
+- air density function, boat which can ride on high-density air as a means to travel
+  between planets in a way that would otherwise be impossible without flying
+- run-away part where there's someone/thing chasing you and you have to run away
+  and keep out of sight of the thing (i had a weird dream in which i was playing
+  a game where this happened -- it was fun).
+

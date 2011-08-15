@@ -360,7 +360,10 @@ Powerup *SpawnPowerup (
     FloatVector2 const &velocity,
     ItemType item_type)
 {
-    ASSERT1(item_type < IT_POWERUP_LIMIT);
+    // mineral is considered a powerup
+    ASSERT1((item_type >= IT_POWERUP_LOWEST && item_type <= IT_POWERUP_HIGHEST)
+            ||
+            (item_type >= IT_MINERAL_LOWEST && item_type <= IT_MINERAL_HIGHEST));
     Powerup *powerup = new Powerup(item_type);
     SpawnDynamicSprite(
         object_layer,

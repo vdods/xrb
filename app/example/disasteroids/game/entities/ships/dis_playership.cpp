@@ -77,6 +77,8 @@ PlayerShip::PlayerShip (
 
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory[i] = 0.0f;
+
+    m_option_powerup_inventory = 0;
 }
 
 PlayerShip::~PlayerShip ()
@@ -759,7 +761,7 @@ void PlayerShip::Die (
     Float time,
     Float frame_dt)
 {
-    DStaticCast<World *>(GetWorld())->RecordDestroyedPlayerShip(this);
+    GetWorld()->RecordDestroyedPlayerShip(this);
 
     // reset the stoke O meter (dying bums me out, man)
     SetStoke(1.0f);
@@ -895,6 +897,12 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
             0.0f,
             time,
             frame_dt);
+        return true;
+    }
+    // check if this is an option powerup
+    else if (powerup->GetItemType() == IT_POWERUP_OPTION)
+    {
+        ++m_option_powerup_inventory;
         return true;
     }
     // otherwise try to add the powerup's Item

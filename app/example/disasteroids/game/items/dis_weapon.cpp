@@ -637,8 +637,12 @@ bool GaussGun::Activate (Float power, Float time, Float frame_dt)
     // figure out how long each gauss gun trail segment should be
     ASSERT1(furthest_hit_time >= 0.0f);
     Float segment_width = ms_trail_visible_width[UpgradeLevel()];
-    Uint32 segment_count = Math::Ceiling((furthest_hit_time * ms_range[UpgradeLevel()]) / segment_width);
-    Float segment_length = (furthest_hit_time * ms_range[UpgradeLevel()]) / segment_count;
+    Float continuum_segment_count = Math::Ceiling((furthest_hit_time * ms_range[UpgradeLevel()]) / segment_width);
+    ASSERT1(continuum_segment_count >= 0.0f);
+    Uint32 segment_count = Uint32(continuum_segment_count);
+    Float segment_length = segment_count > 0 ?
+                           furthest_hit_time * ms_range[UpgradeLevel()] / segment_count :
+                           0.0f;
 
     // spawn the gauss gun trail
     SpawnGaussGunTrail(

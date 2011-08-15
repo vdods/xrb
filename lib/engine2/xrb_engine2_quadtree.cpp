@@ -88,8 +88,7 @@ Object *QuadTree::SmallestObjectTouchingPoint (
         ASSERT1(smallest_candidate != NULL);
 
         // if the point is touching the object
-        if ((point - smallest_candidate->Translation()).LengthSquared() <=
-            smallest_candidate->RadiusSquared(GetQuadTreeType()))
+        if ((point - smallest_candidate->Translation()).LengthSquared() <= Sqr(smallest_candidate->Radius(GetQuadTreeType())))
             // and either retval is null, or smallest_candidate is smaller
             if (retval == NULL ||
                 smallest_candidate->Radius(GetQuadTreeType()) < retval->Radius(GetQuadTreeType()))

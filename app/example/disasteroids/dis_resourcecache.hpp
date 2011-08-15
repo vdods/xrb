@@ -13,6 +13,7 @@
 
 #include "xrb.hpp"
 
+#include "xrb_animation.hpp"
 #include "xrb_gltexture.hpp"
 #include "xrb_resourcelibrary.hpp"
 
@@ -20,8 +21,8 @@ using namespace Xrb;
 
 namespace Dis {
 
-#define RESOURCE_GLTEXTURE_DECLARATION(basename) \
-    Resource<GlTexture> m_##basename##_png;
+#define RESOURCE_GLTEXTURE_DECLARATION(basename) Resource<GlTexture> m_##basename##_png;
+#define RESOURCE_ANIMATION_DECLARATION(basename) Resource<Animation::Sequence> m_##basename##_anim;
 
 // temp object to hold cached resources until a formal class is written
 class ResourceCache
@@ -84,6 +85,11 @@ private:
     RESOURCE_GLTEXTURE_DECLARATION(star3)
     RESOURCE_GLTEXTURE_DECLARATION(starfield00)
     RESOURCE_GLTEXTURE_DECLARATION(tractor_beam)
+
+    RESOURCE_ANIMATION_DECLARATION(health_powerup)
+    RESOURCE_ANIMATION_DECLARATION(laser_impact)
+    RESOURCE_ANIMATION_DECLARATION(lightning)
+    RESOURCE_ANIMATION_DECLARATION(option_powerup)
 }; // end of class ResourceCache
 
 } // end of namespace Dis

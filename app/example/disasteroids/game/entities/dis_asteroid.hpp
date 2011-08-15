@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Asteroid : public Mortal
 {
@@ -28,6 +27,9 @@ public:
     {
         MAX_MINERAL_LEVEL = 3
     };
+
+    static Float const ms_scale_factor_minimum;
+    static Float const ms_scale_factor_maximum;
 
     Asteroid (Float mass, Float mineral_content, bool is_a_secondary_asteroid);
     virtual ~Asteroid () { }

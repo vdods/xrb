@@ -234,6 +234,7 @@ private:
 
     Item *m_item_inventory[IT_COUNT][UPGRADE_LEVEL_COUNT];
     Float m_mineral_inventory[MINERAL_COUNT];
+    Uint32 m_option_powerup_inventory;
 
     EntityReference<LaserBeam> m_laser_beam;
     EntityReference<LaserImpactEffect> m_laser_impact_effect;

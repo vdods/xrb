@@ -15,8 +15,9 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
+
+Float const Powerup::ms_scale_factor = 7.0f;
 
 void Powerup::SetEffectiveCoefficient (Float const effective_coefficient)
 {

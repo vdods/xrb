@@ -127,11 +127,11 @@ public:
 
     ObjectType GetObjectType () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectType(); }
     Float Radius (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->Radius(quad_tree_type); }
-    Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->RadiusSquared(quad_tree_type); }
     Float VisibleRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->VisibleRadius(); }
-    Float VisibleRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->VisibleRadiusSquared(); }
     Float PhysicalRadius () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalRadius(); }
-    Float PhysicalRadiusSquared () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalRadiusSquared(); }
+    Float Area (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->Area(quad_tree_type); }
+    Float VisibleArea () const { ASSERT3(m_owner_object != NULL); return m_owner_object->VisibleArea(); }
+    Float PhysicalArea () const { ASSERT3(m_owner_object != NULL); return m_owner_object->PhysicalArea(); }
     ObjectLayer *GetObjectLayer () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetObjectLayer(); }
     World *GetWorld () const { ASSERT3(m_owner_object != NULL); return m_owner_object->GetWorld(); }
     bool HasOwnerQuadTree (QuadTreeType quad_tree_type) const { ASSERT3(m_owner_object != NULL); return m_owner_object->HasOwnerQuadTree(quad_tree_type); }

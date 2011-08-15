@@ -15,8 +15,8 @@ using namespace Xrb;
 namespace Dis
 {
 
-#define RESOURCE_GLTEXTURE_INITIALIZATION(basename) \
-    m_##basename##_png = GlTexture::Load("resources/" #basename ".png");
+#define RESOURCE_GLTEXTURE_INITIALIZATION(basename) m_##basename##_png = GlTexture::Load("resources/" #basename ".png");
+#define RESOURCE_ANIMATION_INITIALIZATION(basename) m_##basename##_anim = Animation::Sequence::Load("resources/" #basename ".anim");
 
 ResourceCache::ResourceCache ()
 {
@@ -72,6 +72,11 @@ ResourceCache::ResourceCache ()
     RESOURCE_GLTEXTURE_INITIALIZATION(star3)
     RESOURCE_GLTEXTURE_INITIALIZATION(starfield00)
     RESOURCE_GLTEXTURE_INITIALIZATION(tractor_beam)
+
+    RESOURCE_ANIMATION_INITIALIZATION(health_powerup)
+    RESOURCE_ANIMATION_INITIALIZATION(laser_impact)
+    RESOURCE_ANIMATION_INITIALIZATION(lightning)
+    RESOURCE_ANIMATION_INITIALIZATION(option_powerup)
 }
 
 } // end of namespace Dis

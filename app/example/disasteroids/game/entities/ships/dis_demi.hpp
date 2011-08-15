@@ -144,6 +144,8 @@ public:
     static Float const ms_target_mid_range_distance[ENEMY_LEVEL_COUNT];
     static Float const ms_pause_duration[ENEMY_LEVEL_COUNT];
     static Float const ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT];
+    static Float const ms_option_powerup_spawn_density_min[ENEMY_LEVEL_COUNT];
+    static Float const ms_option_powerup_spawn_density_max[ENEMY_LEVEL_COUNT];
 
     Demi (Uint8 enemy_level);
     virtual ~Demi ();

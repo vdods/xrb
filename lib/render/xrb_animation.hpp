@@ -73,7 +73,7 @@ public:
         Sequence (Uint32 length, AnimationType default_type, Float default_duration);
         ~Sequence ();
 
-        static Resource<Sequence> Load (std::string const &path, Uint32 gltexture_flags)
+        static Resource<Sequence> Load (std::string const &path, Uint32 gltexture_flags = 0) // 0 is GlTexture::NONE
         {
             return Singleton::ResourceLibrary().Load<Sequence>(Sequence::Create, new LoadParameters(path, gltexture_flags));
         }

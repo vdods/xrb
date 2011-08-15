@@ -108,11 +108,11 @@ public:
     Color &ColorMask () { return m_color_mask; }
     bool IsTransparent () const { return m_is_transparent; }
     Float Radius (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]; }
-    Float RadiusSquared (QuadTreeType quad_tree_type) const { ASSERT1(quad_tree_type < QTT_COUNT); CalculateTransform(); return m_radius[quad_tree_type]*m_radius[quad_tree_type]; }
     Float VisibleRadius () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]; }
-    Float VisibleRadiusSquared () const { CalculateTransform(); return m_radius[QTT_VISIBILITY]*m_radius[QTT_VISIBILITY]; }
     Float PhysicalRadius () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]; }
-    Float PhysicalRadiusSquared () const { CalculateTransform(); return m_radius[QTT_PHYSICS_HANDLER]*m_radius[QTT_PHYSICS_HANDLER]; }
+    Float Area (QuadTreeType quad_tree_type) const { return M_PI * Sqr(Radius(quad_tree_type)); }
+    Float VisibleArea () const { return M_PI * Sqr(VisibleRadius()); }
+    Float PhysicalArea () const { return M_PI * Sqr(PhysicalRadius()); }
     // returns the object_layer of this entity
     ObjectLayer *GetObjectLayer () const { return m_object_layer; }
     // returns the world this object resides in

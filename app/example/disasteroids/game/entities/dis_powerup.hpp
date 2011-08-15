@@ -17,14 +17,15 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Powerup : public Entity
 {
 public:
 
-    Powerup (ItemType const item_type)
+    static Float const ms_scale_factor;
+
+    Powerup (ItemType item_type)
         :
         Entity(ET_POWERUP, Engine2::Circle::CT_SOLID_COLLISION)
     {
@@ -34,7 +35,7 @@ public:
         m_delete_upon_next_think = false;
         m_has_been_picked_up = false;
     }
-    Powerup (Item *const item)
+    Powerup (Item *item)
         :
         Entity(ET_POWERUP, Engine2::Circle::CT_SOLID_COLLISION)
     {
@@ -52,23 +53,23 @@ public:
     // Entity interface method
     virtual bool IsPowerup () const { return true; }
 
-    inline ItemType GetItemType () const
+    ItemType GetItemType () const
     {
         if (m_item != NULL)
             return m_item->GetItemType();
         else
             return m_item_type;
     }
-    inline Item *GetItem () const { return m_item; }
-    inline Float EffectiveCoefficient () const { return m_effective_coefficient; }
-    inline Float EffectiveValue () const { return m_effective_coefficient * Mass(); }
+    Item *GetItem () const { return m_item; }
+    Float EffectiveCoefficient () const { return m_effective_coefficient; }
+    Float EffectiveValue () const { return m_effective_coefficient * Mass(); }
 
     // this sets the effective coefficient directly (and indirectly sets the effective value)
     void SetEffectiveCoefficient (Float effective_coefficient);
     // this sets the effective value directly (and indirectly sets the effective coefficient)
     void SetEffectiveValue (Float effective_value);
 
-    inline void ClearItem ()
+    void ClearItem ()
     {
         m_item_type = IT_COUNT;
         m_item = NULL;

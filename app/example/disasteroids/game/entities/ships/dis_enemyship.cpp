@@ -43,7 +43,7 @@ void EnemyShip::Die (
         static_cast<PlayerShip *>(killer)->CreditEnemyKill(GetEntityType(), EnemyLevel());
 
     // notify the world that this enemyship is going bye-bye
-    DStaticCast<World *>(GetWorld())->RecordDestroyedEnemyShip(this);
+    GetWorld()->RecordDestroyedEnemyShip(this);
 }
 
 } // end of namespace Dis

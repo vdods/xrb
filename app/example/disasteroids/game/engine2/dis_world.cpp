@@ -774,6 +774,16 @@ void World::RecordDestroyedAsteroid (Asteroid const *asteroid)
     ASSERT1(m_asteroid_mass >= asteroid->Mass());
     --m_asteroid_count;
     m_asteroid_mass -= asteroid->Mass();
+    m_destroyed_asteroid_area_left_before_spawning_option_powerup -= asteroid->PhysicalArea();
+}
+
+void World::ResetSpawnOptionPowerupFromAsteroid ()
+{
+    static Float const s_expected_powerups_from_maximum_asteroid_area = 1.0f; // 0.2f;
+    m_destroyed_asteroid_area_left_before_spawning_option_powerup =
+        Math::RandomFloat(0.0f, 2.0f) * // between 0 and 2 so it
+        M_PI * Sqr(Asteroid::ms_scale_factor_maximum) /
+        s_expected_powerups_from_maximum_asteroid_area;
 }
 
 void World::RecordCreatedEnemyShip (EnemyShip const *enemy_ship)
@@ -856,6 +866,7 @@ World::World (
     m_next_asteroid_mineral_level_time = 1.0f * 60.0f;
     m_asteroid_mineral_content_level = 0;
     m_next_asteroid_mineral_content_level_time = 1.0f * 60.0f;
+    ResetSpawnOptionPowerupFromAsteroid();
 
     m_current_wave_index = 0;
     m_current_wave_index_unwrapped = 0;
@@ -1468,11 +1479,11 @@ Asteroid *World::SpawnAsteroidOutOfView ()
         // this causes the randomness to favor smaller asteroids
         Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
         scale_seed = Math::Pow(scale_seed, 3.0f);
-        scale_factor = 55.0f * scale_seed + 5.0f;
+        scale_factor = Math::LinearlyInterpolate(Asteroid::ms_scale_factor_minimum, Asteroid::ms_scale_factor_maximum, 0.0f, 1.0f, scale_seed);
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, scale_factor));
 
-    Float mass = scale_factor * scale_factor;
+    Float mass = Sqr(scale_factor);
     FloatVector2 velocity(
         Math::RandomFloat(75.0f, 1500.0f) /
         Math::Sqrt(mass) *

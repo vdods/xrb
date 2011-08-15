@@ -57,6 +57,8 @@ Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 2
 Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
 Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
 Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 20.0f, 15.0f, 10.0f, 5.0f };
+Float const Demi::ms_option_powerup_spawn_density_min[ENEMY_LEVEL_COUNT] = { 1.0f, 1.2f, 1.4f, 1.8f };
+Float const Demi::ms_option_powerup_spawn_density_max[ENEMY_LEVEL_COUNT] = { 1.6f, 1.8f, 2.2f, 2.7f };
 
 Float const Demi::ms_side_port_angle = 64.7f;
 
@@ -364,7 +366,7 @@ void Demi::Die (
     static Float const s_max_powerup_amount = 3.0f;
     static Float const s_powerup_ejection_speed = 100.0f;
 
-    static Float const s_powerup_coefficient = 0.1f;
+    static Float const s_health_powerup_coefficient = 15.0f;
 
     Float health_powerup_amount_left_to_spawn = ms_health_powerup_amount_to_spawn[EnemyLevel()];
     while (health_powerup_amount_left_to_spawn > s_min_powerup_amount)
@@ -373,7 +375,7 @@ void Demi::Die (
             Math::RandomFloat(
                 s_min_powerup_amount,
                 Min(s_max_powerup_amount, health_powerup_amount_left_to_spawn));
-        Float mass = health_powerup_amount / s_powerup_coefficient;
+        Float mass = health_powerup_amount * s_health_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
         Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
@@ -382,7 +384,7 @@ void Demi::Die (
         Powerup *health_powerup =
             SpawnPowerup(
                 GetObjectLayer(),
-                "resources/powerup.png",
+                "resources/health_powerup.anim",
                 time,
                 Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
@@ -392,6 +394,26 @@ void Demi::Die (
         health_powerup->SetEffectiveValue(health_powerup_amount);
 
         health_powerup_amount_left_to_spawn -= health_powerup_amount;
+    }
+
+    Uint32 option_powerup_spawn_count = Uint32(Math::Round(Math::RandomFloat(ms_option_powerup_spawn_density_min[EnemyLevel()], ms_option_powerup_spawn_density_max[EnemyLevel()])));
+    while (option_powerup_spawn_count > 0)
+    {
+        Float velocity_angle = Math::RandomAngle();
+        Float velocity_ratio = Math::RandomFloat(Powerup::ms_scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+        FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
+
+        SpawnPowerup(
+            GetObjectLayer(),
+            "resources/option_powerup.anim",
+            time,
+            Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+            Powerup::ms_scale_factor,
+            Sqr(Powerup::ms_scale_factor),
+            velocity,
+            IT_POWERUP_OPTION);
+
+        --option_powerup_spawn_count;
     }
 
     static Uint32 const s_death_enemies_to_spawn_count = 10;
@@ -407,7 +429,7 @@ void Demi::Die (
             Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
-            Math::RandomUint16(0, EnemyLevel()));                     // ET_REVULSION being sequential enums
+            Math::RandomUint16(0, EnemyLevel()));                        // ET_REVULSION being sequential enums
     }
 
     // remove the port tractor beam, if it exists

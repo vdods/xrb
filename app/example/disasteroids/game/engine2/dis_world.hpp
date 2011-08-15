@@ -57,8 +57,7 @@ class PhysicsHandler;
 } // end of namespace Engine2
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
 class Asteroid;
 class EnemyShip;
@@ -92,10 +91,11 @@ public:
 
     void RecordDestroyedPlayerShip (PlayerShip const *player_ship);
 
-    void RecordCreatedAsteroids (
-        Uint32 created_asteroid_count,
-        Float created_asteroids_mass);
+    void RecordCreatedAsteroids (Uint32 created_asteroid_count, Float created_asteroids_mass);
     void RecordDestroyedAsteroid (Asteroid const *asteroid);
+    // when this amount drops below zero, an option powerup should be spawned.
+    bool SpawnOptionPowerupFromAsteroid () const { return m_destroyed_asteroid_area_left_before_spawning_option_powerup <= 0.0f; }
+    void ResetSpawnOptionPowerupFromAsteroid ();
 
     void RecordCreatedEnemyShip (EnemyShip const *enemy_ship);
     void RecordDestroyedEnemyShip (EnemyShip const *enemy_ship);
@@ -201,6 +201,7 @@ private:
     Float m_next_asteroid_mineral_level_time;
     Uint8 m_asteroid_mineral_content_level;
     Float m_next_asteroid_mineral_content_level_time;
+    Float m_destroyed_asteroid_area_left_before_spawning_option_powerup;
 
     Uint32 m_current_wave_index;
     Uint32 m_current_wave_index_unwrapped;
