@@ -495,12 +495,12 @@ disasteroids_SOURCES = \
     app/example/disasteroids/game/items/dis_powergenerator.cpp \
     app/example/disasteroids/game/items/dis_shield.cpp \
     app/example/disasteroids/game/items/dis_weapon.cpp \
+    app/example/disasteroids/ui/dis_controlspanel.cpp \
     app/example/disasteroids/ui/dis_gamewidget.cpp \
     app/example/disasteroids/ui/dis_highscorenameentrydialog.cpp \
     app/example/disasteroids/ui/dis_highscoreswidget.cpp \
     app/example/disasteroids/ui/dis_inventorybutton.cpp \
     app/example/disasteroids/ui/dis_inventorypanel.cpp \
-    app/example/disasteroids/ui/dis_optionspanel.cpp \
     app/example/disasteroids/ui/dis_titlescreenwidget.cpp \
     app/example/disasteroids/ui/dis_worldview.cpp
 
@@ -575,11 +575,11 @@ noinst_HEADERS = \
     app/example/disasteroids/game/items/dis_powergenerator.hpp \
     app/example/disasteroids/game/items/dis_shield.hpp \
     app/example/disasteroids/game/items/dis_weapon.hpp \
+    app/example/disasteroids/ui/dis_controlspanel.hpp \
     app/example/disasteroids/ui/dis_gamewidget.hpp \
     app/example/disasteroids/ui/dis_highscorenameentrydialog.hpp \
     app/example/disasteroids/ui/dis_highscoreswidget.hpp \
     app/example/disasteroids/ui/dis_inventorybutton.hpp \
     app/example/disasteroids/ui/dis_inventorypanel.hpp \
-    app/example/disasteroids/ui/dis_optionspanel.hpp \
     app/example/disasteroids/ui/dis_titlescreenwidget.hpp \
     app/example/disasteroids/ui/dis_worldview.hpp

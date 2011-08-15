@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_optionspanel.cpp by Victor Dods, created 2006/02/28
+// dis_controlspanel.cpp by Victor Dods, created 2006/02/28
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,7 +8,7 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#include "dis_optionspanel.hpp"
+#include "dis_controlspanel.hpp"
 
 #include "dis_config.hpp"
 #include "xrb_cellpaddingwidget.hpp"
@@ -21,12 +21,11 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-OptionsPanel::OptionsPanel (ContainerWidget *const parent)
+ControlsPanel::ControlsPanel (ContainerWidget *parent)
     :
-    ContainerWidget(parent, "OptionsPanel"),
+    ContainerWidget(parent, "ControlsPanel"),
     m_greater_than_zero_validator(0, 1)
 {
     Label *l = NULL;
@@ -40,38 +39,38 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     new SpacerWidget(left_side_layout);
 
     {
-        l = new Label("Video Options", left_side_layout);
+        l = new Label("Video Controls", left_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
-        Layout *video_options_layout = new Layout(ROW, 2, left_side_layout);
+        Layout *video_controls_layout = new Layout(ROW, 2, left_side_layout);
 
-        l = new Label("Horizontal Resolution:", video_options_layout);
+        l = new Label("Horizontal Resolution:", video_controls_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_options_layout);
+        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout);
         m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->PixelHeight());
 
-        l = new Label("Vertical Resolution:", video_options_layout);
+        l = new Label("Vertical Resolution:", video_controls_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_options_layout);
+        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout);
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
         m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
         m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->PixelHeight());
 
-        l = new Label("Fullscreen:", video_options_layout);
+        l = new Label("Fullscreen:", video_controls_layout);
         l->SetIsHeightFixedToTextHeight(true);
         l->SetAlignment(Dim::X, RIGHT);
-        CellPaddingWidget *cpw = new CellPaddingWidget(video_options_layout);
+        CellPaddingWidget *cpw = new CellPaddingWidget(video_controls_layout);
         cpw->SetAlignment(Dim::X, LEFT);
         m_fullscreen_checkbox = new CheckBox(cpw);
 
-        l = new Label("Changes to the video options will take effect after restarting.", left_side_layout);
+        l = new Label("Changes to the video controls will take effect after restarting.", left_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
         l->SetWordWrap(true);
     }
 /*
     {
-        l = new Label("Audio Options", left_side_layout);
+        l = new Label("Audio Controls", left_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
     }
 */
@@ -98,7 +97,7 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
                 cpw);
         }
 
-        l = new Label("Changes to the game difficulty will take effect at the beginning of each game.", left_side_layout);
+        l = new Label("Changes to the game difficulty will take effect at the beginning of each new game.", left_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
         l->SetWordWrap(true);
     }
@@ -109,73 +108,73 @@ OptionsPanel::OptionsPanel (ContainerWidget *const parent)
     Layout *right_side_layout = new Layout(VERTICAL, main_layout);
 
     {
-        l = new Label("Input Options", right_side_layout);
+        l = new Label("Input Controls", right_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
-        Layout *input_options_layout = new Layout(ROW, 2, right_side_layout);
+        Layout *input_controls_layout = new Layout(ROW, 2, right_side_layout);
 
         for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         {
-            l = new Label(Config::ms_input_action_label[i], input_options_layout);
+            l = new Label(Config::ms_input_action_label[i], input_controls_layout);
             l->SetAlignment(Dim::X, RIGHT);
-            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_options_layout);
+            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_controls_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
         }
     }
 }
 
-ScreenCoordVector2 OptionsPanel::Resolution () const
+ScreenCoordVector2 ControlsPanel::Resolution () const
 {
     ASSERT1(m_resolution_x_edit != NULL);
     ASSERT1(m_resolution_y_edit != NULL);
     return ScreenCoordVector2(m_resolution_x_edit->Value(), m_resolution_y_edit->Value());
 }
 
-bool OptionsPanel::Fullscreen () const
+bool ControlsPanel::Fullscreen () const
 {
     ASSERT1(m_fullscreen_checkbox != NULL);
     return m_fullscreen_checkbox->IsChecked();
 }
 
-DifficultyLevel OptionsPanel::GetDifficultyLevel () const
+DifficultyLevel ControlsPanel::GetDifficultyLevel () const
 {
     ASSERT1(m_difficulty_level.ID() >= DL_LOWEST);
     ASSERT1(m_difficulty_level.ID() <= DL_HIGHEST);
     return m_difficulty_level.ID();
 }
 
-Key::Code OptionsPanel::InputActionKeyCode (KeyInputAction const input_action) const
+Key::Code ControlsPanel::InputActionKeyCode (KeyInputAction const input_action) const
 {
     ASSERT1(input_action < KEY_INPUT_ACTION_COUNT);
     ASSERT1(m_input_action_button[input_action] != NULL);
     return m_input_action_button[input_action]->KeyCode();
 }
 
-void OptionsPanel::SetResolutionX (ScreenCoord const resolution_x)
+void ControlsPanel::SetResolutionX (ScreenCoord const resolution_x)
 {
     ASSERT1(m_resolution_x_edit != NULL);
     m_resolution_x_edit->SetValue(resolution_x);
 }
 
-void OptionsPanel::SetResolutionY (ScreenCoord const resolution_y)
+void ControlsPanel::SetResolutionY (ScreenCoord const resolution_y)
 {
     ASSERT1(m_resolution_y_edit != NULL);
     m_resolution_y_edit->SetValue(resolution_y);
 }
 
-void OptionsPanel::SetFullscreen (bool const fullscreen)
+void ControlsPanel::SetFullscreen (bool const fullscreen)
 {
     ASSERT1(m_fullscreen_checkbox != NULL);
     m_fullscreen_checkbox->SetIsChecked(fullscreen);
 }
 
-void OptionsPanel::SetDifficultyLevel (DifficultyLevel const difficulty_level)
+void ControlsPanel::SetDifficultyLevel (DifficultyLevel const difficulty_level)
 {
     ASSERT1(difficulty_level >= DL_LOWEST);
     ASSERT1(difficulty_level <= DL_HIGHEST);
     m_difficulty_level.SetID(difficulty_level);
 }
 
-void OptionsPanel::SetInputActionKeyCode (
+void ControlsPanel::SetInputActionKeyCode (
     KeyInputAction const input_action,
     Key::Code const key_code)
 {
@@ -184,7 +183,7 @@ void OptionsPanel::SetInputActionKeyCode (
     m_input_action_button[input_action]->SetKeyCode(key_code);
 }
 
-void OptionsPanel::ReadValuesFromConfig (Config const &config)
+void ControlsPanel::ReadValuesFromConfig (Config const &config)
 {
     SetResolutionX(config.ResolutionX());
     SetResolutionY(config.ResolutionY());
@@ -197,7 +196,7 @@ void OptionsPanel::ReadValuesFromConfig (Config const &config)
             config.InputAction(static_cast<KeyInputAction>(i)));
 }
 
-void OptionsPanel::WriteValuesToConfig (Config *const config)
+void ControlsPanel::WriteValuesToConfig (Config *const config)
 {
     ASSERT1(config != NULL);
 

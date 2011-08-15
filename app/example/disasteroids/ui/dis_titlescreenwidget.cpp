@@ -12,7 +12,7 @@
 
 #include "dis_config.hpp"
 #include "dis_highscoreswidget.hpp"
-#include "dis_optionspanel.hpp"
+#include "dis_controlspanel.hpp"
 #include "xrb_button.hpp"
 #include "xrb_cellpaddingwidget.hpp"
 #include "xrb_dialog.hpp"
@@ -38,8 +38,8 @@ TitleScreenWidget::TitleScreenWidget (
     m_state_machine(this),
     m_immediately_show_high_scores(immediately_show_high_scores),
     m_show_best_points_high_scores_first(show_best_points_high_scores_first),
-    m_internal_receiver_activate_options_dialog(&TitleScreenWidget::ActivateOptionsDialog, this),
-    m_internal_receiver_options_dialog_returned(&TitleScreenWidget::OptionsDialogReturned, this)
+    m_internal_receiver_activate_controls_dialog(&TitleScreenWidget::ActivateControlsDialog, this),
+    m_internal_receiver_controls_dialog_returned(&TitleScreenWidget::ControlsDialogReturned, this)
 {
     Layout *main_layout = new Layout(VERTICAL, this, "main title screen layout");
     main_layout->SetIsUsingZeroedLayoutSpacingMargins(true);
@@ -75,8 +75,8 @@ TitleScreenWidget::TitleScreenWidget (
     m_start_button = new Button("START", controls_layout, "start button");
     m_start_button->SetIsHeightFixedToTextHeight(true);
 
-    m_options_button = new Button("OPTIONS", controls_layout, "options button");
-    m_options_button->SetIsHeightFixedToTextHeight(true);
+    m_controls_button = new Button("CONTROLS", controls_layout, "controls button");
+    m_controls_button->SetIsHeightFixedToTextHeight(true);
 
     m_quit_button = new Button("QUIT", controls_layout, "quit button");
     m_quit_button->SetIsHeightFixedToTextHeight(true);
@@ -95,10 +95,10 @@ TitleScreenWidget::TitleScreenWidget (
     SetMainWidget(main_layout);
 
     SignalHandler::Connect0(
-        m_options_button->SenderReleased(),
-        &m_internal_receiver_activate_options_dialog);
+        m_controls_button->SenderReleased(),
+        &m_internal_receiver_activate_controls_dialog);
 
-    m_options_panel = NULL;
+    m_controls_panel = NULL;
 }
 
 TitleScreenWidget::~TitleScreenWidget ()
@@ -136,31 +136,31 @@ bool TitleScreenWidget::ProcessStateMachineInputEvent (EventStateMachineInput co
     return true;
 }
 
-void TitleScreenWidget::ActivateOptionsDialog ()
+void TitleScreenWidget::ActivateControlsDialog ()
 {
-    ASSERT1(m_options_panel == NULL);
+    ASSERT1(m_controls_panel == NULL);
 
-    // create the dialog and add a new OptionsPanel to it
-    Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
-    m_options_panel = new OptionsPanel(options_dialog->DialogLayout());
-    options_dialog->CenterOnWidget(options_dialog->Parent());
-    // initialize the OptionsPanel with the Config values
-    m_options_panel->ReadValuesFromConfig(g_config);
-    // connect up the dialog OK button to OptionsDialogReturnedOK
+    // create the dialog and add a new ControlsPanel to it
+    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "controls dialog");
+    m_controls_panel = new ControlsPanel(controls_dialog->DialogLayout());
+    controls_dialog->CenterOnWidget(controls_dialog->Parent());
+    // initialize the ControlsPanel with the Config values
+    m_controls_panel->ReadValuesFromConfig(g_config);
+    // connect up the dialog OK button to ControlsDialogReturnedOK
     SignalHandler::Connect1(
-        options_dialog->SenderDialogReturned(),
-        &m_internal_receiver_options_dialog_returned);
+        controls_dialog->SenderDialogReturned(),
+        &m_internal_receiver_controls_dialog_returned);
 }
 
-void TitleScreenWidget::OptionsDialogReturned (Dialog::ButtonID const button_id)
+void TitleScreenWidget::ControlsDialogReturned (Dialog::ButtonID const button_id)
 {
-    ASSERT1(m_options_panel != NULL);
+    ASSERT1(m_controls_panel != NULL);
 
-    // only save the OptionsPanel values back into the Config if OK button was hit
+    // only save the ControlsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)
-        m_options_panel->WriteValuesToConfig(&g_config);
+        m_controls_panel->WriteValuesToConfig(&g_config);
 
-    m_options_panel = NULL;
+    m_controls_panel = NULL;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

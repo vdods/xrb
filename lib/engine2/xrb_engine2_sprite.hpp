@@ -33,10 +33,11 @@ public:
     // public serialization functions
     // ///////////////////////////////////////////////////////////////////
 
-    static Sprite *Create (std::string const &texture_path, Uint32 gltexture_flags = GlTexture::NONE);
     // if the filename extension is ".anim" then this calls
     // AnimatedSprite::Create, otherwise calls Sprite::Create.
-    static Sprite *Create (std::string const &asset_path, Float current_time, Uint32 gltexture_flags = GlTexture::NONE);
+    static Sprite *CreateAsset (std::string const &asset_path, Float current_time, Uint32 gltexture_flags = GlTexture::NONE);
+    // create an instance of this class with given sprite texture and gltexture flags
+    static Sprite *Create (std::string const &texture_path, Uint32 gltexture_flags = GlTexture::NONE);
     // create an instance of this class by reading from the given Serializer
     static Sprite *Create (Serializer &serializer);
     // makes calls to WriteClassSpecific for this and all superclasses

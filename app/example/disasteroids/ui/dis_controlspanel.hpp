@@ -1,5 +1,5 @@
 // ///////////////////////////////////////////////////////////////////////////
-// dis_optionspanel.hpp by Victor Dods, created 2006/02/28
+// dis_controlspanel.hpp by Victor Dods, created 2006/02/28
 // ///////////////////////////////////////////////////////////////////////////
 // Unless a different license was explicitly granted in writing by the
 // copyright holder (Victor Dods), this software is freely distributable under
@@ -8,8 +8,8 @@
 // file LICENSE for details.
 // ///////////////////////////////////////////////////////////////////////////
 
-#if !defined(_DIS_OPTIONSPANEL_HPP_)
-#define _DIS_OPTIONSPANEL_HPP_
+#if !defined(_DIS_CONTROLSPANEL_HPP_)
+#define _DIS_CONTROLSPANEL_HPP_
 
 #include "xrb_containerwidget.hpp"
 
@@ -19,23 +19,23 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
+namespace Xrb {
+
 class CheckBox;
 class Config;
 class KeySelectorButton;
 template <typename T> class ValueEdit;
+
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
-class OptionsPanel : public ContainerWidget
+class ControlsPanel : public ContainerWidget
 {
 public:
 
-    OptionsPanel (ContainerWidget *parent);
-    virtual ~OptionsPanel () { }
+    ControlsPanel (ContainerWidget *parent);
+    virtual ~ControlsPanel () { }
 
     ScreenCoordVector2 Resolution () const;
     bool Fullscreen () const;
@@ -60,9 +60,9 @@ private:
     CheckBox *m_fullscreen_checkbox;
     RadioButtonGroup<DifficultyLevel, DL_COUNT> m_difficulty_level;
     KeySelectorButton *m_input_action_button[KEY_INPUT_ACTION_COUNT];
-}; // end of class OptionsPanel
+}; // end of class ControlsPanel
 
 } // end of namespace Dis
 
-#endif // !defined(_DIS_OPTIONSPANEL_HPP_)
+#endif // !defined(_DIS_CONTROLSPANEL_HPP_)
 

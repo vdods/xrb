@@ -26,7 +26,7 @@ ui flow design:
 
 title screen
     start: goto game screen
-    options: goto option screen
+    controls: goto control screen
     quit: issue quit request
 
 game screen
@@ -112,7 +112,7 @@ private:
     // current real time
     Float m_real_time;
 
-    // contains start-game, options and quit buttons
+    // contains start-game, controls and quit buttons
     TitleScreenWidget *m_title_screen_widget;
     // indicates if the high scores should be shown immediately
     // upon the title screen being shown.

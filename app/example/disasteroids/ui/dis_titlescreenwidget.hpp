@@ -19,17 +19,17 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
+namespace Xrb {
+
 class Label;
 class Button;
+
 }
 
-namespace Dis
-{
+namespace Dis {
 
 class HighScoresWidget;
-class OptionsPanel;
+class ControlsPanel;
 
 class TitleScreenWidget : public ContainerWidget
 {
@@ -57,8 +57,8 @@ protected:
 
 private:
 
-    void ActivateOptionsDialog ();
-    void OptionsDialogReturned (Dialog::ButtonID button_id);
+    void ActivateControlsDialog ();
+    void ControlsDialogReturned (Dialog::ButtonID button_id);
 
     // ///////////////////////////////////////////////////////////////////////
     // begin state machine stuff
@@ -86,16 +86,16 @@ private:
     Label *m_game_widget_dummy;
     HighScoresWidget *m_high_scores_widget;
     Button *m_start_button;
-    Button *m_options_button;
+    Button *m_controls_button;
     Button *m_quit_button;
-    OptionsPanel *m_options_panel;
+    ControlsPanel *m_controls_panel;
 
     bool const m_immediately_show_high_scores;
     bool const m_show_best_points_high_scores_first;
     HighScores m_high_scores;
 
-    SignalReceiver0 m_internal_receiver_activate_options_dialog;
-    SignalReceiver1<Dialog::ButtonID> m_internal_receiver_options_dialog_returned;
+    SignalReceiver0 m_internal_receiver_activate_controls_dialog;
+    SignalReceiver1<Dialog::ButtonID> m_internal_receiver_controls_dialog_returned;
 }; // end of class TitleScreenWidget
 
 } // end of namespace Dis

@@ -10,7 +10,7 @@
 
 #include "dis_inventorypanel.hpp"
 
-#include "dis_optionspanel.hpp"
+#include "dis_controlspanel.hpp"
 #include "dis_playership.hpp"
 #include "xrb_input_events.hpp"
 #include "xrb_layout.hpp"
@@ -41,13 +41,13 @@ InventoryPanel::InventoryPanel (
     m_receiver_show_price(&InventoryPanel::ShowPrice, this),
     m_receiver_hide_price(&InventoryPanel::HidePrice, this),
     m_internal_receiver_deactivate(&InventoryPanel::Deactivate, this),
-    m_internal_receiver_activate_options_dialog(&InventoryPanel::ActivateOptionsDialog, this),
-    m_internal_receiver_options_dialog_returned(&InventoryPanel::OptionsDialogReturned, this)
+    m_internal_receiver_activate_controls_dialog(&InventoryPanel::ActivateControlsDialog, this),
+    m_internal_receiver_controls_dialog_returned(&InventoryPanel::ControlsDialogReturned, this)
 {
     m_accepts_focus = true;
 
     m_inventory_owner_ship = NULL;
-    m_options_panel = NULL;
+    m_controls_panel = NULL;
 
     Label *l;
     Float const grid_label_font_height_ratio = 0.018f;
@@ -147,12 +147,12 @@ InventoryPanel::InventoryPanel (
         m_return_button->SenderReleased(),
         &m_internal_receiver_deactivate);
 
-    m_options_button = new Button("OPTIONS", menu_button_layout, "options button");
-    m_options_button->SetIsHeightFixedToTextHeight(true);
+    m_controls_button = new Button("CONTROLS", menu_button_layout, "controls button");
+    m_controls_button->SetIsHeightFixedToTextHeight(true);
 
     SignalHandler::Connect0(
-        m_options_button->SenderReleased(),
-        &m_internal_receiver_activate_options_dialog);
+        m_controls_button->SenderReleased(),
+        &m_internal_receiver_activate_controls_dialog);
 
     m_end_button = new Button("END", menu_button_layout, "end button");
     m_end_button->SetIsHeightFixedToTextHeight(true);
@@ -410,30 +410,30 @@ void InventoryPanel::Deactivate ()
     m_sender_deactivate.Signal();
 }
 
-void InventoryPanel::ActivateOptionsDialog ()
+void InventoryPanel::ActivateControlsDialog ()
 {
-    ASSERT1(m_options_panel == NULL);
-    // create the dialog and add a new OptionsPanel to it
-    Dialog *options_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "options dialog");
-    m_options_panel = new OptionsPanel(options_dialog->DialogLayout());
-    options_dialog->CenterOnWidget(options_dialog->Parent());
-    // initialize the OptionsPanel with the Config values
-    m_options_panel->ReadValuesFromConfig(g_config);
-    // connect up the dialog OK button to OptionsDialogReturnedOK
+    ASSERT1(m_controls_panel == NULL);
+    // create the dialog and add a new ControlsPanel to it
+    Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "controls dialog");
+    m_controls_panel = new ControlsPanel(controls_dialog->DialogLayout());
+    controls_dialog->CenterOnWidget(controls_dialog->Parent());
+    // initialize the ControlsPanel with the Config values
+    m_controls_panel->ReadValuesFromConfig(g_config);
+    // connect up the dialog OK button to ControlsDialogReturned
     SignalHandler::Connect1(
-        options_dialog->SenderDialogReturned(),
-        &m_internal_receiver_options_dialog_returned);
+        controls_dialog->SenderDialogReturned(),
+        &m_internal_receiver_controls_dialog_returned);
 }
 
-void InventoryPanel::OptionsDialogReturned (Dialog::ButtonID const button_id)
+void InventoryPanel::ControlsDialogReturned (Dialog::ButtonID button_id)
 {
-    ASSERT1(m_options_panel != NULL);
+    ASSERT1(m_controls_panel != NULL);
 
-    // only save the OptionsPanel values back into the Config if OK button was hit
+    // only save the ControlsPanel values back into the Config if OK button was hit
     if (button_id == Dialog::ID_OK)
-        m_options_panel->WriteValuesToConfig(&g_config);
+        m_controls_panel->WriteValuesToConfig(&g_config);
 
-    m_options_panel = NULL;
+    m_controls_panel = NULL;
 }
 
 } // end of namespace Dis

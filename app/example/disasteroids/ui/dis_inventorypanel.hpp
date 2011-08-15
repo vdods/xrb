@@ -20,18 +20,18 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
+namespace Xrb {
+
 class Label;
 class Layout;
 template <typename T> class ValueLabel;
+
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
 class InventoryButton;
-class OptionsPanel;
+class ControlsPanel;
 class PlayerShip;
 
 class InventoryPanel : public ModalWidget
@@ -74,8 +74,8 @@ private:
     void HidePrice (ItemType item_type, Uint8 upgrade_level);
 
     void Deactivate ();
-    void ActivateOptionsDialog ();
-    void OptionsDialogReturned (Dialog::ButtonID button_id);
+    void ActivateControlsDialog ();
+    void ControlsDialogReturned (Dialog::ButtonID button_id);
 
     PlayerShip *m_inventory_owner_ship;
 
@@ -86,7 +86,7 @@ private:
     Label *m_mineral_icon_label[MINERAL_COUNT];
 
     Button *m_return_button;
-    Button *m_options_button;
+    Button *m_controls_button;
     Button *m_end_button;
     Button *m_quit_button;
 
@@ -94,7 +94,7 @@ private:
     ItemType m_currently_shown_price_item_type;
     Uint8 m_currently_shown_price_upgrade_level;
 
-    OptionsPanel *m_options_panel;
+    ControlsPanel *m_controls_panel;
 
     static Color const ms_affordable_mineral_color_mask;
     static Color const ms_not_affordable_mineral_color_mask;
@@ -107,8 +107,8 @@ private:
     SignalReceiver2<ItemType, Uint8> m_receiver_hide_price;
 
     SignalReceiver0 m_internal_receiver_deactivate;
-    SignalReceiver0 m_internal_receiver_activate_options_dialog;
-    SignalReceiver1<Dialog::ButtonID> m_internal_receiver_options_dialog_returned;
+    SignalReceiver0 m_internal_receiver_activate_controls_dialog;
+    SignalReceiver1<Dialog::ButtonID> m_internal_receiver_controls_dialog_returned;
 }; // end of class InventoryPanel
 
 } // end of namespace Dis

@@ -78,7 +78,7 @@ Engine2::Sprite *SpawnDynamicSprite (
     entity->SetVelocity(velocity);
     entity->SetAngularVelocity(angular_velocity);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create(asset_path, current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset(asset_path, current_time);
     sprite->SetZDepth(z_depth);
     sprite->SetIsTransparent(is_transparent);
     sprite->SetTranslation(translation);
@@ -614,7 +614,7 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/laser_impact.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/laser_impact.anim", current_time);
     // setting the scale factor this large helps with speed in adding it to
     // the quad tree, as the first time is temporary.  Laser will place
     // it for real later.
@@ -658,7 +658,7 @@ void SpawnGaussGunTrail (
     {
         FloatVector2 trail_center = trail_start + (0.5f + i) * segment_length * trail_direction;
 
-        Engine2::Sprite *sprite = Engine2::Sprite::Create(asset_path, current_time);
+        Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset(asset_path, current_time);
         sprite->SetZDepth(Z_DEPTH_GAUSS_GUN_TRAIL);
         sprite->SetIsTransparent(true);
         sprite->SetTranslation(trail_center);
@@ -722,7 +722,7 @@ LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Float
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/lightning.anim", current_time);
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/lightning.anim", current_time);
     sprite->SetZDepth(Z_DEPTH_LIGHTNING_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
