@@ -71,7 +71,7 @@ Uint32 AnimatedSprite::GlTextureAtlasHandle () const
 AnimatedSprite::AnimatedSprite (Resource<Animation::Sequence> const &animation_sequence, Float current_time)
     :
     Sprite(Resource<GlTexture>()), // invalid texture, since we don't use it
-    m_animation(animation_sequence, animation_sequence->DefaultType(), animation_sequence->DefaultDuration(), current_time)
+    m_animation(animation_sequence, current_time)
 { }
 
 void AnimatedSprite::ReadClassSpecific (Serializer &serializer)

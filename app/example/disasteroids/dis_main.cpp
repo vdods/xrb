@@ -401,5 +401,32 @@ to do the following:
 Moving the mouse over a darkened or blackened button will show how many
 of each type of minerals it costs to build.
 
+//////////////////////////////////////////////////////////////////////////////
+// disasteroids power-up redesign (rename to Option, as in gradius)
+//////////////////////////////////////////////////////////////////////////////
+
+- powerups are similar to minerals in that they are a physical object that occur in the game world and that the player collects.
+- powerups should be emitted by asteroids, Devourments and Demis in a way similar to minerals, but with less frequency.
+- EMP core should be a powerup instead of a weapon that is bought in the inventory screen
+- inventory screen should show powerup inventory (a count of stored powerups)
+- stoke-mode: as the player kills enemies, the stoke-o-meter goes up, and once it reaches a critical level, the player starts flashing
+  for a limited time, during which a powerup can be used for free (but the player has to manually activate it).
+- instead of collecting particular powerups, count powerups as generic things which can be spent to activate particular powerups.
+  so a particular type of powerup can be 'equipped' (like normal weaponry) and fired at the user's discretion, which will spend one
+  powerup unit.
+- equipped powerup which can be activated similar to firing the main weapon using some button
+- activate particular powerup type using particular keys (e.g. 7 8 9 0)
+
+//////////////////////////////////////////////////////////////////////////////
+// types of powerups (there shouldn't be too many)
+//////////////////////////////////////////////////////////////////////////////
+
+- EMP blast
+- increased damage/firing rate/ship speed.
+- increased shields/power/mass
+- bullet-time (slows game down so that the player can react with inhuman accuracy)
+  this should probably also increase the player's speed, otherwise it will feel
+  like only slow-motion.
+
 */
 

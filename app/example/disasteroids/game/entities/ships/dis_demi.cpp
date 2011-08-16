@@ -50,13 +50,13 @@ Float const Demi::ms_missile_launch_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 
 Float const Demi::ms_enemy_spawn_blast_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 2.0f, 2.0f, 2.0f };
 Float const Demi::ms_tractor_target_closer_duration[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const Demi::ms_tractor_range[ENEMY_LEVEL_COUNT] = { 20000.0f, 20000.0f, 20000.0f, 20000.0f };
-Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
+Float const Demi::ms_tractor_strength[ENEMY_LEVEL_COUNT] = { 2000.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_tractor_max_force[ENEMY_LEVEL_COUNT] = { 2000000.0f, 2000000.0f, 2000000.0f, 2000000.0f };
 Float const Demi::ms_tractor_beam_radius[ENEMY_LEVEL_COUNT] = { 80.0f, 100.0f, 120.0f, 140.0f };
 Float const Demi::ms_target_near_range_distance[ENEMY_LEVEL_COUNT] = { 200.0f, 210.0f, 220.0f, 230.0f };
 Float const Demi::ms_target_mid_range_distance[ENEMY_LEVEL_COUNT] = { 350.0f, 360.0f, 370.0f, 380.0f };
 Float const Demi::ms_pause_duration[ENEMY_LEVEL_COUNT] = { 2.0f, 1.5f, 1.25f, 1.0f };
-Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 20.0f, 15.0f, 10.0f, 5.0f };
+Float const Demi::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 20.0f, 20.0f, 20.0f, 20.0f };
 Float const Demi::ms_option_powerup_spawn_density_min[ENEMY_LEVEL_COUNT] = { 1.0f, 1.2f, 1.4f, 1.8f };
 Float const Demi::ms_option_powerup_spawn_density_max[ENEMY_LEVEL_COUNT] = { 1.6f, 1.8f, 2.2f, 2.7f };
 

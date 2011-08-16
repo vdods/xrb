@@ -65,6 +65,16 @@ Animation::Sequence::Sequence (Uint32 length, AnimationType default_type, Float 
     ASSERT1(m_default_duration > 0.0f);
 }
 
+Animation::Sequence::Sequence (Resource<GlTexture> const &single_frame)
+    :
+    m_length(1),
+    m_frame(new Resource<GlTexture>[1]),
+    m_default_type(CYCLE_FORWARD), // arbitrary, since it's only 1 frame anyway
+    m_default_duration(1.0f)       // arbitrary, since it's only 1 frame anyway
+{
+    m_frame[0] = single_frame;
+}
+
 Animation::Sequence::~Sequence ()
 {
     delete[] m_frame;
@@ -161,19 +171,22 @@ std::string const Animation::ms_animation_type_string[AT_COUNT] =
     "RANDOM"
 };
 
-Animation::Animation (
-    Resource<Animation::Sequence> const &sequence,
-    AnimationType type,
-    Float duration,
-    Float sequence_start_time)
+Animation::Animation (Resource<Animation::Sequence> const &sequence, Float sequence_start_time)
     :
     m_sequence(sequence),
     m_sequence_start_time(sequence_start_time),
     m_data(0)
 {
-    ASSERT1(m_sequence.IsValid() && "can't specify an invalid animation sequence");
-    SetType(type);
-    SetDuration(duration);
+    if (m_sequence.IsValid())
+    {
+        SetType(m_sequence->DefaultType());
+        SetDuration(m_sequence->DefaultDuration());
+    }
+    else
+    {
+        SetType(CYCLE_FORWARD);
+        SetDuration(1.0f);
+    }
 }
 
 Animation::Animation (Animation const &animation)
@@ -199,7 +212,11 @@ GlTexture const &Animation::Frame (Float current_time) const
     ASSERT1(cycle_parameter < 1.0f);
     // don't let m_sequence_start_time lag too much behind, because eventually
     // it could have floating point errors if cycle_time is too big.
-    m_sequence_start_time += m_duration * passed_cycle_count;
+    if (passed_cycle_count > 0x1000) // semi-arbitrary constant which is about half of a 23 bit mantissa
+    {
+        m_sequence_start_time += m_duration * (passed_cycle_count-1);
+        passed_cycle_count = 1;
+    }
 
     // this is the value which will be passed to Sequence::Frame and must
     // be determined based on the animation type (see the descriptions in

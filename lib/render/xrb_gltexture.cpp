@@ -49,7 +49,8 @@ void GlTexture::LoadParameters::Fallback ()
     // get rid of the path; a blank path will indicate the "missing" texture
     m_path.clear();
     // also clear the flags, since we probably don't want to load the "missing"
-    // texture into a separate atlas.
+    // texture into a separate atlas.  TODO: change this to the default flags
+    // once default flags exist
     m_flags = NONE;
 }
 

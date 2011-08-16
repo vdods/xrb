@@ -71,6 +71,7 @@ public:
         }; // end of class Animation::Sequence::LoadParameters
 
         Sequence (Uint32 length, AnimationType default_type, Float default_duration);
+        Sequence (Resource<GlTexture> const &single_frame);
         ~Sequence ();
 
         static Resource<Sequence> Load (std::string const &path, Uint32 gltexture_flags = 0) // 0 is GlTexture::NONE
@@ -99,7 +100,7 @@ public:
         Float const m_default_duration;
     }; // end of class Animation::Sequence
 
-    Animation (Resource<Sequence> const &sequence, AnimationType type, Float duration, Float sequence_start_time);
+    Animation (Resource<Sequence> const &sequence, Float sequence_start_time = 0.0f);
     Animation (Animation const &animation);
 
     Resource<Sequence> const &GetSequence () const { return m_sequence; }

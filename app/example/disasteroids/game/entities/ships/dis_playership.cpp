@@ -31,15 +31,15 @@ Float const PlayerShip::ms_difficulty_protection_factor[DL_COUNT] = { 3.0f, 2.33
 Float const PlayerShip::ms_max_stoke = 4.0f;
 Float const PlayerShip::ms_emp_disable_time_factor = 30.0f;
 Float const PlayerShip::ms_emp_blast_radius = 400.0f;
-Float const PlayerShip::ms_attack_boost_duration = 8.0f;
-Float const PlayerShip::ms_defense_boost_duration = 8.0f;
+Float const PlayerShip::ms_attack_boost_duration = 10.0f;
+Float const PlayerShip::ms_defense_boost_duration = 10.0f;
 Float const PlayerShip::ms_time_stretch_duration = 5.0f;
 Float const PlayerShip::ms_max_angular_velocity = 720.0f;
 Float const PlayerShip::ms_scale_factor = 11.0f;
 Float const PlayerShip::ms_baseline_mass = 100.0f;
 Float const PlayerShip::ms_attack_boost_damage_factor = 2.0f;
-Float const PlayerShip::ms_attack_boost_fire_rate_factor = 2.0f;
-Float const PlayerShip::ms_attack_boost_speedup_factor = 2.0f;
+Float const PlayerShip::ms_attack_boost_fire_rate_factor = 2.5f;
+Float const PlayerShip::ms_attack_boost_speedup_factor = 2.5f;
 Float const PlayerShip::ms_defense_boost_damage_dissipation_rate_factor = 2.0f;
 Float const PlayerShip::ms_defense_boost_mass_factor = 10.0f;
 Float const PlayerShip::ms_defense_boost_power_factor = 3.0f;
@@ -57,7 +57,8 @@ PlayerShip::PlayerShip (Float max_health, EntityType entity_type)
     m_sender_shield_status_changed(this),
     m_sender_power_status_changed(this),
     m_sender_weapon_status_changed(this),
-    m_sender_mineral_inventory_changed(this)
+    m_sender_mineral_inventory_changed(this),
+    m_sender_option_inventory_changed(this)
 {
     // PlayerShip needs to be more sensitive to damage with respect
     // to damage/healing flashes.  the default is 0.2, but we need
@@ -403,6 +404,7 @@ void PlayerShip::GiveAllItems ()
         AddItem(new PowerGenerator(upgrade_level));
     }
     m_option_inventory += 10;
+    m_sender_option_inventory_changed.Signal(m_option_inventory);
 }
 
 bool PlayerShip::AddItem (Item *item)
@@ -546,8 +548,8 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 upgrade_level)
 
 void PlayerShip::IncrementOptionInventory ()
 {
-    fprintf(stderr, "PlayerShip::IncrementOptionInventory(); m_option_inventory = %u\n", m_option_inventory);
     ++m_option_inventory;
+    m_sender_option_inventory_changed.Signal(m_option_inventory);
 }
 
 void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
@@ -597,6 +599,7 @@ void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
         }
 
         --m_option_inventory;
+        m_sender_option_inventory_changed.Signal(m_option_inventory);
     }
     else
     {
@@ -1015,6 +1018,7 @@ bool PlayerShip::TakePowerup (Powerup *powerup, Float time, Float frame_dt)
     else if (powerup->GetItemType() == IT_POWERUP_OPTION)
     {
         ++m_option_inventory;
+        m_sender_option_inventory_changed.Signal(m_option_inventory);
         return true;
     }
     // otherwise try to add the powerup's Item

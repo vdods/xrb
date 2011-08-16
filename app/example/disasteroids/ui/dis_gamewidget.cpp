@@ -31,21 +31,18 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 // for use in transforming the stoke signal from the player ship
 // into the stoke-o-meter progress value
-Float NormalizeStoke (Float const stoke)
+Float NormalizeStoke (Float stoke)
 {
     ASSERT1(stoke >= 1.0f);
     ASSERT1(stoke <= PlayerShip::ms_max_stoke);
     return (stoke - 1.0f) / (PlayerShip::ms_max_stoke - 1.0f);
 }
 
-GameWidget::GameWidget (
-    World *const world,
-    ContainerWidget *const parent)
+GameWidget::GameWidget (World *world, ContainerWidget *parent)
     :
     WidgetStack(parent, "disasteroids game widget"),
     m_receiver_set_player_ship(&GameWidget::SetPlayerShip, this),
@@ -234,6 +231,23 @@ GameWidget::GameWidget (
             mineral_icon_label->FixWidth(m_mineral_inventory_label[mineral_index]->Height());
             mineral_icon_label->FixHeight(m_mineral_inventory_label[mineral_index]->Height());
         }
+
+        // a spacer to make things look even
+        new SpacerWidget(m_stats_and_inventory_layout);
+
+        {
+            m_option_inventory_label = new ValueLabel<Uint32>("%u", Util::TextToUint<Uint32>, m_stats_and_inventory_layout);
+            m_option_inventory_label->SetIsHeightFixedToTextHeight(true);
+            m_option_inventory_label->SetAlignment(Dim::X, RIGHT);
+
+            Label *option_icon_label =
+                new Label(
+                    GlTexture::Load("resources/radiobutton_blue.png"),
+                    m_stats_and_inventory_layout);
+            option_icon_label->FixWidth(m_option_inventory_label->Height() * 7 / 5);
+            option_icon_label->FixHeight(m_option_inventory_label->Height() * 7 / 5);
+        }
+
         // a spacer to make things look even
         new SpacerWidget(m_stats_and_inventory_layout);
 
@@ -337,12 +351,13 @@ SignalSender0 const *GameWidget::SenderQuitGame ()
     return m_inventory_panel->SenderQuitGame();
 }
 
-void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
+void GameWidget::SetPlayerShip (PlayerShip *player_ship)
 {
     // disconnect old player ship connections
 //     m_lives_remaining_label->DetachAll();
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory_label[i]->DetachAll();
+    m_option_inventory_label->DetachAll();
     m_score_label->DetachAll();
     m_internal_receiver_set_wave_count.DetachAll();
     m_armor_status->DetachAll();
@@ -383,12 +398,16 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         SignalHandler::Connect2(
             player_ship->SenderMineralInventoryChanged(),
             &m_receiver_set_mineral_inventory);
+        SignalHandler::Connect1(
+            player_ship->SenderOptionInventoryChanged(),
+            m_option_inventory_label->ReceiverSetValue());
 
         // make sure the UI elements are enabled
         m_wave_count_label->Enable();
 //         m_lives_remaining_label->Enable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Enable();
+        m_option_inventory_label->Enable();
         m_score_label->Enable();
         m_armor_status->Enable();
         m_shield_status->Enable();
@@ -407,6 +426,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
         m_weapon_status->SetProgress(player_ship->WeaponStatus());
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->SetValue(static_cast<Uint32>(player_ship->MineralInventory(i)));
+        m_option_inventory_label->SetValue(player_ship->OptionInventory());
 
         m_inventory_panel->SetInventoryOwnerShip(player_ship);
     }
@@ -419,6 +439,7 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
 //         m_lives_remaining_label->Disable();
         for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
             m_mineral_inventory_label[i]->Disable();
+        m_option_inventory_label->Disable();
         m_score_label->Disable();
         m_armor_status->Disable();
         m_shield_status->Disable();
@@ -427,25 +448,25 @@ void GameWidget::SetPlayerShip (PlayerShip *const player_ship)
     }
 }
 
-void GameWidget::SetWorldFrameTime (Uint32 const world_frame_time)
+void GameWidget::SetWorldFrameTime (Uint32 world_frame_time)
 {
     ASSERT1(m_world_frame_time_label != NULL);
     m_world_frame_time_label->SetValue(world_frame_time);
 }
 
-void GameWidget::SetGUIFrameTime (Uint32 const gui_frame_time)
+void GameWidget::SetGUIFrameTime (Uint32 gui_frame_time)
 {
     ASSERT1(m_gui_frame_time_label != NULL);
     m_gui_frame_time_label->SetValue(gui_frame_time);
 }
 
-void GameWidget::SetRenderFrameTime (Uint32 const render_frame_time)
+void GameWidget::SetRenderFrameTime (Uint32 render_frame_time)
 {
     ASSERT1(m_render_frame_time_label != NULL);
     m_render_frame_time_label->SetValue(render_frame_time);
 }
 
-void GameWidget::SetEntityCount (Uint32 const entity_count)
+void GameWidget::SetEntityCount (Uint32 entity_count)
 {
     ASSERT1(m_entity_count_label != NULL);
     m_entity_count_label->SetValue(entity_count);
@@ -469,9 +490,7 @@ void GameWidget::SetFramerate (Float const framerate)
     m_framerate_label->SetValue(framerate);
 }
 
-void GameWidget::SetMineralInventory (
-    Uint8 const mineral_index,
-    Float const mineral_inventory)
+void GameWidget::SetMineralInventory (Uint8 mineral_index, Float mineral_inventory)
 {
     ASSERT1(mineral_index < MINERAL_COUNT);
     ASSERT1(mineral_inventory >= 0.0f);

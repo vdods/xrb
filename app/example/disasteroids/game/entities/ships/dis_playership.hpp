@@ -83,6 +83,7 @@ public:
         ASSERT1(mineral_type < MINERAL_COUNT);
         return m_mineral_inventory[mineral_type];
     }
+    Uint32 OptionInventory () const { return m_option_inventory; }
     bool IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const;
     bool IsItemInInventory (ItemType item_type, Uint8 upgrade_level) const;
     bool IsItemAffordable (ItemType item_type, Uint8 upgrade_level) const;
@@ -112,6 +113,7 @@ public:
     SignalSender1<Float> const *SenderPowerStatusChanged () { return &m_sender_power_status_changed; }
     SignalSender1<Float> const *SenderWeaponStatusChanged () { return &m_sender_weapon_status_changed; }
     SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
+    SignalSender1<Uint32> const *SenderOptionInventoryChanged () { return &m_sender_option_inventory_changed; }
 
     void IncrementWaveCount ();
     void IncrementScore (Uint32 score_delta);
@@ -269,6 +271,7 @@ private:
     SignalSender1<Float> m_sender_power_status_changed;
     SignalSender1<Float> m_sender_weapon_status_changed;
     SignalSender2<Uint8, Float> m_sender_mineral_inventory_changed;
+    SignalSender1<Uint32> m_sender_option_inventory_changed;
 }; // end of class PlayerShip
 
 } // end of namespace Dis

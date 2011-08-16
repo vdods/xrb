@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Xrb
-{
+namespace Xrb {
 
 class Label;
 class Layout;
@@ -26,15 +25,13 @@ class ProgressBar;
 class SpacerWidget;
 template <typename T> class ValueLabel;
 
-namespace Engine2
-{
+namespace Engine2 {
     class WorldViewWidget;
 } // end of namespace Engine2
 
 } // end of namespace Xrb
 
-namespace Dis
-{
+namespace Dis {
 
 class InventoryPanel;
 class PlayerShip;
@@ -99,6 +96,8 @@ private:
 
     ValueLabel<Uint32> *m_lives_remaining_label;
     ValueLabel<Uint32> *m_mineral_inventory_label[MINERAL_COUNT];
+
+    ValueLabel<Uint32> *m_option_inventory_label;
 
     ValueLabel<Uint32> *m_score_label;
     ProgressBar *m_stoke_o_meter;

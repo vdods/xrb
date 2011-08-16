@@ -184,6 +184,8 @@ BUGS:
   this may require adding support for RGB textures.
 
 TODO:
+- default GlTexture flags specified in the PAL or something.  make sure to take care of
+  GlTexture::LoadParameters::Fallback and other procedurally-texture-generating methods
 - enable load-time level-of-detail mode where the sprite image files that come with the game
   are all large, and will be downsized at load-time if not such a high resolution is necessary.
 - change Vector's | operator into *, because this will allow Sqr(vector).  Change & to % (?)
