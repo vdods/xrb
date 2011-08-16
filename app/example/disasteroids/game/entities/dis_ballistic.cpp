@@ -10,15 +10,16 @@
 
 #include "dis_ballistic.hpp"
 
+#include "dis_effect.hpp"
 #include "dis_mortal.hpp"
+#include "dis_spawn.hpp"
 #include "xrb_engine2_circle_physicshandler.hpp"
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
-void Ballistic::Think (Float const time, Float const frame_dt)
+void Ballistic::Think (Float time, Float frame_dt)
 {
     if (m_perform_line_trace_for_accuracy)
     {
@@ -98,12 +99,12 @@ void Ballistic::Think (Float const time, Float const frame_dt)
 }
 
 void Ballistic::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Float time,
+    Float frame_dt)
 {
     CollidePrivate(
         collider,
@@ -116,13 +117,13 @@ void Ballistic::Collide (
 }
 
 bool Ballistic::CollidePrivate (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt,
-    bool const was_collision_from_line_trace)
+    Float collision_force,
+    Float time,
+    Float frame_dt,
+    bool was_collision_from_line_trace)
 {
     ASSERT1(collider != NULL);
 
@@ -168,6 +169,59 @@ bool Ballistic::CollidePrivate (
     }
 
     // spawn some sort of effect here
+    switch (m_impact_effect)
+    {
+        case IE_NONE:
+            // no effect
+            break;
+
+        case IE_PLASMA_BALL:
+        {
+            // spawn particles emanating from collision site in this angle range (on either side)
+            static Float const s_particle_spread_angle = 70.0f;
+            static Uint32 const s_particle_count = 4;
+            // proportion of the physical radius of the ballistic itself that the particles will be sized to.
+            static Float const s_particle_radius_min_factor = 0.5f;
+            static Float const s_particle_radius_max_factor = 0.75f;
+            // lifetime of particle
+            static Float const s_particle_time_to_live = 0.1f;
+            // particle diameter per lifetime
+            static Float const s_particle_speed_ratio = 1.25f;
+
+            Float angle_seed = Math::RandomFloat(-20.0f, 20.0f);
+            for (Uint32 i = 0; i < s_particle_count; ++i)
+            {
+                Float angle = angle_seed +
+                              Math::Arg(-collision_normal) +
+                              Math::LinearlyInterpolate(-s_particle_spread_angle, s_particle_spread_angle, 0, s_particle_count-1, i);
+                Float radius = Math::RandomFloat(s_particle_radius_min_factor, s_particle_radius_max_factor) * PhysicalRadius();
+                Float speed = 2.0f * radius * s_particle_speed_ratio / s_particle_time_to_live;
+                NoDamageExplosion *explosion =
+                    SpawnNoDamageExplosion(
+                        GetObjectLayer(),
+                        "resources/plasma_ball.png",
+                        time,
+                        collision_location,
+                        collider->Velocity() + speed * Math::UnitVector(angle),
+                        radius,
+                        radius,
+                        s_particle_time_to_live,
+                        time);
+                explosion->SetScaleInterpolationPower(0.5f); // so it grows quickly at first and then slowly
+                explosion->SetColorMaskInterpolationPower(2.0f);
+                explosion->InitialColorMask() = Color(0.5f, 0.5f, 0.5f, 1.0f);
+                explosion->OwnerObject()->SetZDepth(Z_DEPTH_PLASMA_BALL_IMPACT);
+            }
+            break;
+        }
+
+        default:
+            ASSERT1(false && "invalid ImpactEffect");
+            break;
+    }
+
+    // so there aren't two impact effects if both collision handlers fired
+    m_impact_effect = IE_NONE;
 
     // it hit something, so get rid of it.
     ScheduleForDeletion(0.0f);

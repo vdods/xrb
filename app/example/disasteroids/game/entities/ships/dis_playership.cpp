@@ -923,7 +923,7 @@ void PlayerShip::Die (
                     0.5f,
                     time);
             shockwave->InitialColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);
-            shockwave->SetScalePower(1.0f); // linear scale interpolation
+            shockwave->SetScaleInterpolationPower(1.0f); // linear scale interpolation
         }
     }
 

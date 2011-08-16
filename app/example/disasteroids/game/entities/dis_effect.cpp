@@ -24,8 +24,10 @@ namespace Dis {
 void FiniteLifetimeEffect::Think (Float time, Float frame_dt)
 {
     ASSERT1(m_time_to_live > 0.0f);
+    ASSERT1(m_color_mask_interpolation_power > 0.0f);
 
     Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
+    interpolation_parameter = Math::Pow(interpolation_parameter, m_color_mask_interpolation_power);
     OwnerObject()->ColorMask() = Math::LinearlyInterpolate(m_initial_color_mask, m_final_color_mask, 0.0f, 1.0f, interpolation_parameter);
 
     if (m_time_at_birth + m_time_to_live <= time)
@@ -38,9 +40,12 @@ void FiniteLifetimeEffect::Think (Float time, Float frame_dt)
 
 void Explosion::Think (Float time, Float frame_dt)
 {
-    ASSERT1(m_scale_power > 0.0f);
+    ASSERT1(m_scale_interpolation_power > 0.0f);
+
     Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
-    SetScaleFactor((m_final_size - m_initial_size) * Math::Pow(interpolation_parameter, m_scale_power) + m_initial_size + 0.1f);
+    interpolation_parameter = Math::Pow(interpolation_parameter, m_scale_interpolation_power);
+    SetScaleFactor(Math::LinearlyInterpolate(m_initial_size, m_final_size, 0.0f, 1.0f, interpolation_parameter));
+
     FiniteLifetimeEffect::Think(time, frame_dt);
 }
 

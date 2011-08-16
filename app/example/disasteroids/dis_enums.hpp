@@ -17,8 +17,26 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
+
+// z-depth values for classes of sprites.
+// lower z-depth values indicate closer to the screen
+
+#define Z_DEPTH_EMP_EXPLOSION      -0.8f
+#define Z_DEPTH_RETICLE_EFFECT     -0.2f
+#define Z_DEPTH_LIGHTNING_EFFECT   -0.15f
+#define Z_DEPTH_PLASMA_BALL_IMPACT -0.1f
+#define Z_DEPTH_SOLID               0.0f
+#define Z_DEPTH_DEVOURMENT_GRINDER  0.05f
+#define Z_DEPTH_BALLISTIC           0.075f
+#define Z_DEPTH_SHIELD_EFFECT       0.1f
+#define Z_DEPTH_FIREBALL            0.3f
+#define Z_DEPTH_LASER_IMPACT_EFFECT 0.35f
+#define Z_DEPTH_LASER_BEAM          0.4f
+#define Z_DEPTH_GAUSS_GUN_TRAIL     0.45f
+#define Z_DEPTH_DAMAGE_EXPLOSION    0.5f
+#define Z_DEPTH_NO_DAMAGE_EXPLOSION 0.55f
+#define Z_DEPTH_TRACTOR_BEAM        0.8f
 
 enum
 {

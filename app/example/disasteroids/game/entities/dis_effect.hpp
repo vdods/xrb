@@ -47,6 +47,7 @@ public:
         m_time_at_birth(time_at_birth),
         m_initial_color_mask(Color::ms_opaque_white),
         m_final_color_mask(Color::ms_transparent_white),
+        m_color_mask_interpolation_power(1.0f),
         m_run_in_reverse(false)
     {
         ASSERT1(m_time_to_live > 0.0f);
@@ -67,6 +68,11 @@ public:
     Color const &FinalColorMask () const { return m_final_color_mask; }
     Color &FinalColorMask () { return m_final_color_mask; }
 
+    // the color mask interpolation power is the power that the interpolation parameter
+    // is taken to to control the interpolation between the initial and final color masks
+    Float GetColorMaskInterpolationPower () const { return m_color_mask_interpolation_power; }
+    void SetColorMaskInterpolationPower (Float color_mask_interpolation_power) { ASSERT1(color_mask_interpolation_power > 0.0f && "color_mask_interpolation_power must be positive"); m_color_mask_interpolation_power = color_mask_interpolation_power; }
+
     bool RunInReverse () const { return m_run_in_reverse; }
     void RunInReverse (bool run_in_reverse) { m_run_in_reverse = run_in_reverse; }
 
@@ -82,6 +88,8 @@ private:
     Color m_initial_color_mask;
     // the final color mask.  The default is transparent white
     Color m_final_color_mask;
+    // the power that the color mask interpolation parameter is taken to
+    Float m_color_mask_interpolation_power;
     // if true, run the interpolation in reverse (this applies to subclasses as well)
     bool m_run_in_reverse;
 }; // end of class FiniteLifetimeEffect
@@ -106,18 +114,18 @@ public:
     {
         ASSERT1(initial_size >= 0.0f);
         ASSERT1(final_size >= 0.0f);
-        m_initial_size = initial_size;
-        m_final_size = final_size;
-        m_scale_power = 0.5f; // default is 1/2 (i.e. sqrt) which models explosions well
+        m_initial_size = Max(initial_size, 0.1f); // a 0-radius object has problems
+        m_final_size = Max(final_size, 0.1f);     // a 0-radius object has problems
+        m_scale_interpolation_power = 0.5f; // default is 1/2 (i.e. sqrt) which models explosions well
     }
 
     Float InitialSize () const { return m_initial_size; }
     Float FinalSize () const { return m_final_size; }
 
-    // the scale power is the power that the interpolation parameter is taken to
-    // to control the interpolation between initial_size and final_size.
-    Float GetScalePower () const { return m_scale_power; }
-    void SetScalePower (Float scale_power) { ASSERT1(scale_power > 0.0f && "scale_power must be positive"); m_scale_power = scale_power; }
+    // the scale interpolation power is the power that the interpolation parameter
+    // is taken to to control the interpolation between initial_size and final_size.
+    Float GetScaleInterpolationPower () const { return m_scale_interpolation_power; }
+    void SetScaleInterpolationPower (Float scale_interpolation_power) { ASSERT1(scale_interpolation_power > 0.0f && "scale_interpolation_power must be positive"); m_scale_interpolation_power = scale_interpolation_power; }
 
     virtual void Think (Float time, Float frame_dt);
 
@@ -125,7 +133,7 @@ private:
 
     Float m_initial_size;
     Float m_final_size;
-    Float m_scale_power;
+    Float m_scale_interpolation_power;
 }; // end of class Explosion
 
 // ///////////////////////////////////////////////////////////////////////////

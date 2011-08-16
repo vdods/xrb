@@ -15,12 +15,19 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Ballistic : public Entity
 {
 public:
+
+    enum ImpactEffect
+    {
+        IE_NONE = 0,
+        IE_PLASMA_BALL,
+
+        IE_COUNT
+    }; // end of enum Ballistic::ImpactEffect
 
     Ballistic (
         Float impact_damage,
@@ -32,6 +39,7 @@ public:
         :
         Entity(ET_BALLISTIC, Engine2::Circle::CT_SOLID_COLLISION),
         m_weapon_level(weapon_level),
+        m_impact_effect(IE_NONE),
         m_owner(owner)
     {
         ASSERT1(time_to_live > 0.0f);
@@ -46,7 +54,10 @@ public:
 
     virtual bool IsBallistic () const { return true; }
 
-    inline Uint8 WeaponLevel () const { return m_weapon_level; }
+    Uint8 WeaponLevel () const { return m_weapon_level; }
+    ImpactEffect GetImpactEffect () const { return m_impact_effect; }
+
+    void SetImpactEffect (ImpactEffect impact_effect) { ASSERT1(impact_effect < IE_COUNT); m_impact_effect = impact_effect; }
 
     virtual void Think (Float time, Float frame_dt);
     virtual void Collide (
@@ -73,6 +84,7 @@ protected:
     Float m_time_to_live;
     Float m_time_at_birth;
     Uint8 const m_weapon_level;
+    ImpactEffect m_impact_effect;
     EntityReference<Entity> m_owner;
     bool m_perform_line_trace_for_accuracy;
     FloatVector2 m_initial_velocity;

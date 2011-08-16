@@ -201,7 +201,7 @@ void Ship::Die (
                 0.25f,
                 time);
         shockwave->InitialColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);
-        shockwave->SetScalePower(1.0f); // linear scale interpolation
+        shockwave->SetScaleInterpolationPower(1.0f); // linear scale interpolation
     }
 
     // get rid of the lightning effect if the ship was disabled

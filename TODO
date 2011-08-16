@@ -35,8 +35,10 @@ DISASTEROIDS:
 - death sequences for player and Demi
 - credits and references screen
 ** feature-related **
+- ballistic impact effect is slightly wrong in terms of collision location and normal
+- make the plasma bullet change length based on its speed
 - move attack and defense boost to Ship, so enemies can have it (for boss enemies or something)
-- take out Solitary, since it really doesn't extend PlayerShip.
+- maybe take out Solitary, since it really doesn't extend PlayerShip.
 - make yellow tractor beam send powerups away from player instead of toward (otherwise the
   yellow tractor beam helps the player inadvertently).
 - make Demi ignore shade with respect to yellow tractor beam targets.

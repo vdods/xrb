@@ -404,7 +404,7 @@ void Shade::Teleport (Float time, Float frame_dt)
                     ET_EXPLOSION,
                     Engine2::Circle::CT_SOLID_COLLISION);
             shrinking_effect->SetMass(Mass());
-            shrinking_effect->SetScalePower(4.0f);
+            shrinking_effect->SetScaleInterpolationPower(4.0f);
             shrinking_effect->FinalColorMask() = Color::ms_opaque_white;
         }
 
@@ -423,7 +423,7 @@ void Shade::Teleport (Float time, Float frame_dt)
                     time);
             shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
             shockwave->FinalColorMask() = Color(0.3f, 0.0f, 0.45f, 0.0f);
-            shockwave->SetScalePower(2.0f); // squared scale interpolation
+            shockwave->SetScaleInterpolationPower(2.0f); // squared scale interpolation
         }
     }
 
@@ -447,7 +447,7 @@ void Shade::Teleport (Float time, Float frame_dt)
                     time);
             shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
             shockwave->FinalColorMask() = Color(0.3f, 0.0f, 0.45f, 0.0f);
-            shockwave->SetScalePower(2.0f); // squared scale interpolation
+            shockwave->SetScaleInterpolationPower(2.0f); // squared scale interpolation
             shockwave->RunInReverse(true); // run this in reverse
         }
     }
