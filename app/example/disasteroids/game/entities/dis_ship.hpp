@@ -94,6 +94,13 @@ public:
     virtual Float MaxAngularVelocity () const = 0;
     virtual Float ShipScaleFactor () const = 0;
     virtual Float ShipBaselineMass () const = 0;
+    virtual Float AttackBoostDamageFactor () const { return 1.0f; }
+    virtual Float AttackBoostFireRateFactor () const { return 1.0f; }
+    virtual Float AttackBoostSpeedupFactor () const { return 1.0f; }
+    virtual Float DefenseBoostDamageDissipationRateFactor () const { return 1.0f; }
+    virtual Float DefenseBoostMassFactor () const { return 1.0f; }
+    virtual Float DefenseBoostPowerFactor () const { return 1.0f; }
+    virtual Float DefenseBoostShieldFactor () const { return 1.0f; }
 
     virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt) = 0;
 

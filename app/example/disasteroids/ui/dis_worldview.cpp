@@ -324,7 +324,7 @@ void WorldView::HandleFrame ()
     }
 }
 
-void WorldView::HandleInput (Key::Code const input)
+void WorldView::HandleInput (Key::Code input)
 {
     if (input == g_config.InputAction(INPUT__IN_GAME_INVENTORY_PANEL))
     {
@@ -366,6 +366,41 @@ void WorldView::HandleInput (Key::Code const input)
     {
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_EMP_CORE);
+    }
+    else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__EMP))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->ActivateOption(INPUT__ACTIVATE_OPTION__EMP, m_player_ship->GetWorld()->MostRecentFrameTime());
+    }
+    else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__ATTACK_BOOST))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->ActivateOption(INPUT__ACTIVATE_OPTION__ATTACK_BOOST, m_player_ship->GetWorld()->MostRecentFrameTime());
+    }
+    else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__DEFENSE_BOOST))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->ActivateOption(INPUT__ACTIVATE_OPTION__DEFENSE_BOOST, m_player_ship->GetWorld()->MostRecentFrameTime());
+    }
+    else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__TIME_STRETCH))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->ActivateOption(INPUT__ACTIVATE_OPTION__TIME_STRETCH, m_player_ship->GetWorld()->MostRecentFrameTime());
+    }
+    else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__SELECTED))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->ActivateOption(INPUT__ACTIVATE_OPTION__SELECTED, m_player_ship->GetWorld()->MostRecentFrameTime());
+    }
+    else if (input == g_config.InputAction(INPUT__SELECT_OPTION__NEXT))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SelectNextOption();
+    }
+    else if (input == g_config.InputAction(INPUT__SELECT_OPTION__PREVIOUS))
+    {
+        if (m_player_ship != NULL)
+            m_player_ship->SelectPreviousOption();
     }
     else switch (input)
     {

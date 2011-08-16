@@ -106,7 +106,9 @@ void Revulsion::Think (Float const time, Float const frame_dt)
         MuzzleDirection(m_weapon),
         ReticleCoordinates());
     m_weapon->Activate(
-        m_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_weapon->PowerToBeUsedBasedOnInputs(false, false, time, frame_dt),
+        false, // no attack boost
+        false, // no defense boost
         time,
         frame_dt);
 
@@ -262,7 +264,7 @@ void Revulsion::TrailTarget (Float const time, Float const frame_dt)
     // ready to fire), transition to fire
     Float distance_to_preferred_location = GetObjectLayer()->AdjustedDistance(preferred_location, Translation());
     if (distance_to_preferred_location <= ms_preferred_location_distance_tolerance[EnemyLevel()] &&
-        m_weapon->ReadinessStatus(time) == 1.0f)
+        m_weapon->ReadinessStatus(false, time) == 1.0f)
     {
         m_think_state = THINK_STATE(StartAimAtTarget);
         return;

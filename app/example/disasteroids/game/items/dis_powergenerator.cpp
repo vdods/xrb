@@ -11,31 +11,35 @@
 #include "dis_powergenerator.hpp"
 
 #include "dis_powereddevice.hpp"
+#include "dis_ship.hpp"
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Float const PowerGenerator::ms_max_power_output_rate[UPGRADE_LEVEL_COUNT] = { 100.0f, 150.0f, 250.0f, 600.0f };
 Float const PowerGenerator::ms_max_power_storage_capacity[UPGRADE_LEVEL_COUNT] = { 150.0f, 300.0f, 500.0f, 1000.0f };
 
 void PowerGenerator::PowerDevices (
-    PoweredDevice *const *const powered_device,
-    Float *const power_allocator,
-    Uint32 const powered_device_count,
-    Float const time,
-    Float const frame_dt)
+    Ship &owner_ship,
+    PoweredDevice *const *powered_device,
+    Float *power_allocator,
+    Uint32 powered_device_count,
+    bool attack_boost_is_enabled,
+    bool defense_boost_is_enabled,
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(powered_device != NULL);
     ASSERT1(power_allocator != NULL);
 
+    Float power_boost_factor = defense_boost_is_enabled ? owner_ship.DefenseBoostPowerFactor() : 1.0f;
     Float total_required_power = 0.0f;
     for (Uint32 i = 0; i < powered_device_count; ++i)
     {
         if (powered_device[i] != NULL)
         {
-            power_allocator[i] = powered_device[i]->PowerToBeUsedBasedOnInputs(time, frame_dt);
+            power_allocator[i] = powered_device[i]->PowerToBeUsedBasedOnInputs(attack_boost_is_enabled, defense_boost_is_enabled, time, frame_dt);
             total_required_power += power_allocator[i];
         }
         else
@@ -43,6 +47,9 @@ void PowerGenerator::PowerDevices (
             power_allocator[i] = 0.0f;
         }
     }
+
+    // account for defense boost power
+    total_required_power /= power_boost_factor;
 
     if (total_required_power > 0.0f)
     {
@@ -57,9 +64,9 @@ void PowerGenerator::PowerDevices (
     for (Uint32 i = 0; i < powered_device_count; ++i)
     {
         if (powered_device[i] != NULL &&
-            powered_device[i]->Activate(power_allocator[i], time, frame_dt))
+            powered_device[i]->Activate(power_allocator[i], attack_boost_is_enabled, defense_boost_is_enabled, time, frame_dt))
         {
-            m_stored_power -= power_allocator[i];
+            m_stored_power -= power_allocator[i] / power_boost_factor;
         }
     }
 
@@ -72,7 +79,7 @@ void PowerGenerator::PowerDevices (
         m_stored_power = 0.0f;
 }
 
-void PowerGenerator::Think (Float const time, Float const frame_dt)
+void PowerGenerator::Think (Float time, Float frame_dt)
 {
     m_stored_power += frame_dt * ms_max_power_output_rate[UpgradeLevel()];
     if (m_stored_power > ms_max_power_storage_capacity[UpgradeLevel()])

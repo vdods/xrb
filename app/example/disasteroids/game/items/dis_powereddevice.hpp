@@ -40,8 +40,8 @@ public:
     // Item interface method
     virtual bool IsPoweredDevice () const { return true; }
 
-    inline Ship *OwnerShip () { return m_owner_ship; }
-    inline Ship const *OwnerShip () const { return m_owner_ship; }
+    Ship *OwnerShip () { return m_owner_ship; }
+    Ship const *OwnerShip () const { return m_owner_ship; }
 
     // ///////////////////////////////////////////////////////////////////////
     // public Item interface methods
@@ -68,16 +68,11 @@ public:
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply
     // to each device it has equipped, based on how much each would draw.
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const = 0;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const = 0;
 
     // activates this device using the power supplied, and returns true iff
     // the device was activated and the power used.
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt) = 0;
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) = 0;
 
 private:
 

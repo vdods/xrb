@@ -25,15 +25,25 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Float const PlayerShip::ms_difficulty_protection_factor[DL_COUNT] = { 3.0f, 2.333f, 1.666f, 1.0f };
 Float const PlayerShip::ms_max_stoke = 4.0f;
+Float const PlayerShip::ms_attack_boost_duration = 8.0f;
+Float const PlayerShip::ms_defense_boost_duration = 8.0f;
+Float const PlayerShip::ms_time_stretch_duration = 5.0f;
+Float const PlayerShip::ms_max_angular_velocity = 720.0f;
+Float const PlayerShip::ms_scale_factor = 11.0f;
+Float const PlayerShip::ms_baseline_mass = 100.0f;
+Float const PlayerShip::ms_attack_boost_damage_factor = 2.0f;
+Float const PlayerShip::ms_attack_boost_fire_rate_factor = 2.0f;
+Float const PlayerShip::ms_attack_boost_speedup_factor = 2.0f;
+Float const PlayerShip::ms_defense_boost_damage_dissipation_rate_factor = 2.0f;
+Float const PlayerShip::ms_defense_boost_mass_factor = 10.0f;
+Float const PlayerShip::ms_defense_boost_power_factor = 3.0f;
+Float const PlayerShip::ms_defense_boost_shield_factor = 3.0f;
 
-PlayerShip::PlayerShip (
-    Float const max_health,
-    EntityType const entity_type)
+PlayerShip::PlayerShip (Float max_health, EntityType entity_type)
     :
     Ship(max_health, entity_type),
     SignalHandler(),
@@ -57,10 +67,15 @@ PlayerShip::PlayerShip (
     m_wave_count = 0;
     m_lives_remaining = 0;
 
+    m_attack_boost_time_remaining = 0.0f;
+    m_defense_boost_time_remaining = 0.0f;
+    m_time_stretch_time_remaining = 0.0f;
+
     m_engine_auxiliary_input = 0;
     m_is_using_auxiliary_weapon = false;
     m_main_weapon = NULL;
     m_auxiliary_weapon = NULL;
+    m_selected_option = INPUT__ACTIVATE_OPTION__EMP;
     m_engine = NULL;
     m_armor = NULL;
     m_shield = NULL;
@@ -78,7 +93,7 @@ PlayerShip::PlayerShip (
     for (Uint32 i = 0; i < MINERAL_COUNT; ++i)
         m_mineral_inventory[i] = 0.0f;
 
-    m_option_powerup_inventory = 0;
+    m_option_inventory = 0;
 }
 
 PlayerShip::~PlayerShip ()
@@ -112,10 +127,10 @@ Float PlayerShip::ArmorStatus () const
 
 Float PlayerShip::ShieldStatus () const
 {
-    if (IsDead())
+    if (IsDead() || GetShield() == NULL)
         return 0.0f;
 
-    return (GetShield() != NULL) ? GetShield()->Intensity() : 0.0f;
+    return GetShield()->Intensity();
 }
 
 Float PlayerShip::PowerStatus () const
@@ -137,13 +152,11 @@ Float PlayerShip::WeaponStatus () const
     // getting the time from the world in this manner
     // is slightly ugly, but its the easiest way to do it.
     return (current_weapon != NULL) ?
-           CurrentWeapon()->ReadinessStatus(GetWorld()->MostRecentFrameTime()) :
+           CurrentWeapon()->ReadinessStatus(AttackBoostIsEnabled(), GetWorld()->MostRecentFrameTime()) :
            0.0f;
 }
 
-bool PlayerShip::IsItemEquipped (
-    ItemType const item_type,
-    Uint8 const upgrade_level) const
+bool PlayerShip::IsItemEquipped (ItemType item_type, Uint8 upgrade_level) const
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -181,9 +194,7 @@ bool PlayerShip::IsItemEquipped (
     }
 }
 
-bool PlayerShip::IsItemInInventory (
-    ItemType const item_type,
-    Uint8 const upgrade_level) const
+bool PlayerShip::IsItemInInventory (ItemType item_type, Uint8 upgrade_level) const
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -191,9 +202,7 @@ bool PlayerShip::IsItemInInventory (
     return m_item_inventory[item_type][upgrade_level] != NULL;
 }
 
-bool PlayerShip::IsItemAffordable (
-    ItemType const item_type,
-    Uint8 const upgrade_level) const
+bool PlayerShip::IsItemAffordable (ItemType item_type, Uint8 upgrade_level) const
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -210,13 +219,13 @@ bool PlayerShip::IsItemAffordable (
     return true;
 }
 
-void PlayerShip::SetIsUsingAuxiliaryWeapon (bool const is_using_auxiliary_weapon)
+void PlayerShip::SetIsUsingAuxiliaryWeapon (bool is_using_auxiliary_weapon)
 {
     m_is_using_auxiliary_weapon = is_using_auxiliary_weapon;
     SetWeaponStatus(WeaponStatus());
 }
 
-void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
+void PlayerShip::SetMainWeapon (Weapon *main_weapon)
 {
     // unequip the old one
     if (m_main_weapon != NULL)
@@ -230,7 +239,7 @@ void PlayerShip::SetMainWeapon (Weapon *const main_weapon)
     SetWeaponStatus(WeaponStatus());
 }
 
-void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
+void PlayerShip::SetAuxiliaryWeapon (Weapon *auxiliary_weapon)
 {
     // unequip the old one
     if (m_auxiliary_weapon != NULL)
@@ -244,7 +253,7 @@ void PlayerShip::SetAuxiliaryWeapon (Weapon *const auxiliary_weapon)
     SetWeaponStatus(WeaponStatus());
 }
 
-void PlayerShip::SetEngine (Engine *const engine)
+void PlayerShip::SetEngine (Engine *engine)
 {
     // unequip the old one
     if (m_engine != NULL)
@@ -257,7 +266,7 @@ void PlayerShip::SetEngine (Engine *const engine)
     m_engine = engine;
 }
 
-void PlayerShip::SetArmor (Armor *const armor)
+void PlayerShip::SetArmor (Armor *armor)
 {
     // unequip the old one
     if (m_armor != NULL)
@@ -268,14 +277,7 @@ void PlayerShip::SetArmor (Armor *const armor)
         armor->Equip(this);
 
     m_armor = armor;
-    // checking the owner entity pointer is necessary because it will be
-    // NULL when deleting (and this function is called in ~PlayerShip)
-    if (OwnerObject() != NULL)
-        SetMass(
-            ShipBaselineMass() +
-            ((armor != NULL) ? armor->Mass() : 0.0f));
-    SetDamageDissipationRate(
-        ((armor != NULL) ? armor->DamageDissipationRate() : 0.0f));
+    UpdateMassAndDamageDissipationRate();
 
     // TODO: add the strength/immunity/weakness that the armor provides
 }
@@ -297,7 +299,7 @@ void PlayerShip::SetShield (Shield *shield)
     SetShieldStatus(ShieldStatus());
 }
 
-void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
+void PlayerShip::SetPowerGenerator (PowerGenerator *power_generator)
 {
     // unequip the old one
     if (m_power_generator != NULL)
@@ -311,13 +313,33 @@ void PlayerShip::SetPowerGenerator (PowerGenerator *const power_generator)
     SetPowerStatus(PowerStatus());
 }
 
+void PlayerShip::UpdateMassAndDamageDissipationRate ()
+{
+    // normally ShipBaselineMass() (which is a virtual method) would be called here,
+    // but this method is called from the destructor.
+    Float mass = ms_baseline_mass + ((m_armor != NULL) ? m_armor->Mass() : 0.0f);
+    Float damage_dissipation_rate = (m_armor != NULL) ? m_armor->DamageDissipationRate() : 0.0f;
+
+    if (DefenseBoostIsEnabled())
+    {
+        mass *= DefenseBoostMassFactor(); // heavier means that less damage will happen from collisions
+        damage_dissipation_rate *= DefenseBoostDamageDissipationRateFactor();
+    }
+
+    // checking the owner entity pointer is necessary because it will be
+    // NULL when deleting (and this function is called in ~PlayerShip)
+    if (OwnerObject() != NULL)
+        SetMass(mass);
+    SetDamageDissipationRate(damage_dissipation_rate);
+}
+
 void PlayerShip::IncrementWaveCount ()
 {
     ++m_wave_count;
     m_sender_wave_count_changed.Signal(m_wave_count);
 }
 
-void PlayerShip::IncrementScore (Uint32 const score_delta)
+void PlayerShip::IncrementScore (Uint32 score_delta)
 {
     if (score_delta != 0)
     {
@@ -326,7 +348,7 @@ void PlayerShip::IncrementScore (Uint32 const score_delta)
     }
 }
 
-void PlayerShip::IncrementLivesRemaining (Sint32 const lives_remaining_delta)
+void PlayerShip::IncrementLivesRemaining (Sint32 lives_remaining_delta)
 {
     if (lives_remaining_delta != 0)
     {
@@ -335,7 +357,7 @@ void PlayerShip::IncrementLivesRemaining (Sint32 const lives_remaining_delta)
     }
 }
 
-void PlayerShip::CreditEnemyKill (EntityType const enemy_ship_type, Uint8 const enemy_level)
+void PlayerShip::CreditEnemyKill (EntityType enemy_ship_type, Uint8 enemy_level)
 {
     static Uint32 const s_baseline_score[ET_ENEMY_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
@@ -379,6 +401,7 @@ void PlayerShip::GiveAllItems ()
         AddItem(new Shield(upgrade_level));
         AddItem(new PowerGenerator(upgrade_level));
     }
+    m_option_inventory += 10;
 }
 
 bool PlayerShip::AddItem (Item *item)
@@ -479,7 +502,7 @@ bool PlayerShip::AddItem (Item *item)
     return false;
 }
 
-void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
+void PlayerShip::EquipItem (ItemType item_type, Uint8 upgrade_level)
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -520,6 +543,83 @@ void PlayerShip::EquipItem (ItemType item_type, Uint8 const upgrade_level)
     }
 }
 
+void PlayerShip::IncrementOptionInventory ()
+{
+    fprintf(stderr, "PlayerShip::IncrementOptionInventory(); m_option_inventory = %u\n", m_option_inventory);
+    ++m_option_inventory;
+}
+
+void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
+{
+    ASSERT1(option >= INPUT__ACTIVATE_OPTION__LOWEST && option <= INPUT__ACTIVATE_OPTION__HIGHEST);
+
+    if (m_option_inventory > 0)
+    {
+        if (option == INPUT__ACTIVATE_OPTION__SELECTED)
+            option = m_selected_option;
+
+        switch (option)
+        {
+            case INPUT__ACTIVATE_OPTION__EMP:
+                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__EMP\n");
+                SpawnEMPExplosion(
+                    GetObjectLayer(),
+                    current_time,
+                    Translation(),
+                    Velocity(),
+                    EMPCore::ms_emp_core_disable_time_factor[3], // TODO: change to fixed value once EMPCore is gone.
+                    0.0f, // initial_size
+                    EMPCore::ms_emp_core_blast_radius[3], // TODO: change to fixed value once EMPCore is gone.
+                    1.0f,
+                    current_time,
+                    GetReference());
+                break;
+
+            case INPUT__ACTIVATE_OPTION__ATTACK_BOOST:
+                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__ATTACK_BOOST\n");
+                m_attack_boost_time_remaining += ms_attack_boost_duration;
+                break;
+
+            case INPUT__ACTIVATE_OPTION__DEFENSE_BOOST:
+                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__DEFENSE_BOOST\n");
+                m_defense_boost_time_remaining += ms_defense_boost_duration;
+                break;
+
+            case INPUT__ACTIVATE_OPTION__TIME_STRETCH:
+                fprintf(stderr, "PlayerShip::ActivateOption(); INPUT__ACTIVATE_OPTION__TIME_STRETCH\n");
+                m_time_stretch_time_remaining += ms_time_stretch_duration;
+                break;
+
+            default:
+                ASSERT1(false && "this should never happen");
+                break;
+        }
+
+        --m_option_inventory;
+    }
+    else
+    {
+        // TODO make some negative sound to indicate that it didn't work
+        fprintf(stderr, "PlayerShip::ActivateOption(); no options in inventory\n");
+    }
+}
+
+void PlayerShip::SelectNextOption ()
+{
+    if (m_selected_option == INPUT__ACTIVATE_OPTION__HIGHEST)
+        m_selected_option = INPUT__ACTIVATE_OPTION__LOWEST;
+    else
+        m_selected_option = KeyInputAction(Sint32(m_selected_option)+1);
+}
+
+void PlayerShip::SelectPreviousOption ()
+{
+    if (m_selected_option == INPUT__ACTIVATE_OPTION__LOWEST)
+        m_selected_option = INPUT__ACTIVATE_OPTION__HIGHEST;
+    else
+        m_selected_option = KeyInputAction(Sint32(m_selected_option)-1);
+}
+
 void PlayerShip::Think (Float time, Float frame_dt)
 {
     // can't think if we're dead.
@@ -549,6 +649,11 @@ void PlayerShip::Think (Float time, Float frame_dt)
             m_tractor_beam->ScheduleForRemovalFromWorld(0.0f);
         if (m_shield_effect.IsValid() && m_shield_effect->IsInWorld())
             m_shield_effect->ScheduleForRemovalFromWorld(0.0f);
+
+        // cancel the option effects
+        m_attack_boost_time_remaining = 0.0f;
+        m_defense_boost_time_remaining = 0.0f;
+        m_time_stretch_time_remaining = 0.0f;
     }
     else
     {
@@ -649,9 +754,12 @@ void PlayerShip::Think (Float time, Float frame_dt)
         m_devices_to_power[DTP_SHIELD] = m_shield;
         ASSERT1(m_power_generator != NULL);
         m_power_generator->PowerDevices(
+            *this,
             m_devices_to_power,
             m_power_allocator,
             DTP_COUNT,
+            AttackBoostIsEnabled(),
+            DefenseBoostIsEnabled(),
             time,
             frame_dt);
 
@@ -680,23 +788,26 @@ void PlayerShip::Think (Float time, Float frame_dt)
 
     ResetInputs();
 
-    // update the shield status
+    UpdateMassAndDamageDissipationRate();
     SetShieldStatus(ShieldStatus());
-    // update the power status
     SetPowerStatus(PowerStatus());
+
+    m_attack_boost_time_remaining = Max(0.0f, m_attack_boost_time_remaining - frame_dt);
+    m_defense_boost_time_remaining = Max(0.0f, m_defense_boost_time_remaining - frame_dt);
+    m_time_stretch_time_remaining = Max(0.0f, m_time_stretch_time_remaining - frame_dt);
 }
 
 bool PlayerShip::Damage (
-    Entity *const damager,
-    Entity *const damage_medium,
+    Entity *damager,
+    Entity *damage_medium,
     Float damage_amount,
-    Float *const damage_amount_used,
+    Float *damage_amount_used,
     FloatVector2 const &damage_location,
     FloatVector2 const &damage_normal,
-    Float const damage_force,
-    DamageType const damage_type,
-    Float const time,
-    Float const frame_dt)
+    Float damage_force,
+    DamageType damage_type,
+    Float time,
+    Float frame_dt)
 {
     Float temp_damage_taken = 0.0f;
 
@@ -843,7 +954,7 @@ void PlayerShip::Die (
     ASSERT1(m_power_generator != NULL);
 }
 
-void PlayerShip::SetMainWeaponType (ItemType const main_weapon_type)
+void PlayerShip::SetMainWeaponType (ItemType main_weapon_type)
 {
     ASSERT1(main_weapon_type >= IT_WEAPON_LOWEST && main_weapon_type <= IT_WEAPON_HIGHEST);
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
@@ -857,7 +968,7 @@ void PlayerShip::SetMainWeaponType (ItemType const main_weapon_type)
     }
 }
 
-void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
+void PlayerShip::SetAuxiliaryWeaponType (ItemType auxiliary_weapon_type)
 {
     ASSERT1(auxiliary_weapon_type >= IT_WEAPON_LOWEST && auxiliary_weapon_type <= IT_WEAPON_HIGHEST);
     for (Uint32 i = UPGRADE_LEVEL_COUNT-1; i <= UPGRADE_LEVEL_COUNT; --i)
@@ -871,7 +982,7 @@ void PlayerShip::SetAuxiliaryWeaponType (ItemType const auxiliary_weapon_type)
     }
 }
 
-bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
+bool PlayerShip::TakePowerup (Powerup *powerup, Float time, Float frame_dt)
 {
     ASSERT1(powerup != NULL);
 
@@ -902,7 +1013,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
     // check if this is an option powerup
     else if (powerup->GetItemType() == IT_POWERUP_OPTION)
     {
-        ++m_option_powerup_inventory;
+        ++m_option_inventory;
         return true;
     }
     // otherwise try to add the powerup's Item
@@ -923,7 +1034,7 @@ bool PlayerShip::TakePowerup (Powerup *const powerup, Float const time, Float co
     }
 }
 
-bool PlayerShip::BuyItem (ItemType const item_type, Uint8 const upgrade_level)
+bool PlayerShip::BuyItem (ItemType item_type, Uint8 upgrade_level)
 {
     ASSERT1(item_type < IT_COUNT);
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
@@ -976,7 +1087,7 @@ void PlayerShip::ResetInputs ()
     m_engine_auxiliary_input = 0;
 }
 
-void PlayerShip::SetCurrentHealth (Float const current_health)
+void PlayerShip::SetCurrentHealth (Float current_health)
 {
     Mortal::SetCurrentHealth(current_health);
 
@@ -1000,9 +1111,7 @@ Weapon *PlayerShip::CurrentWeapon ()
         return m_main_weapon;
 }
 
-Weapon *PlayerShip::InventoryWeapon (
-    ItemType const weapon_type,
-    Uint8 const upgrade_level)
+Weapon *PlayerShip::InventoryWeapon (ItemType weapon_type, Uint8 upgrade_level)
 {
     ASSERT1(weapon_type < IT_COUNT);
     ASSERT1(weapon_type >= IT_WEAPON_LOWEST);
@@ -1013,7 +1122,7 @@ Weapon *PlayerShip::InventoryWeapon (
     return static_cast<Weapon *>(m_item_inventory[weapon_type][upgrade_level]);
 }
 
-Engine *PlayerShip::InventoryEngine (Uint8 const upgrade_level)
+Engine *PlayerShip::InventoryEngine (Uint8 upgrade_level)
 {
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_ENGINE][upgrade_level] == NULL ||
@@ -1021,7 +1130,7 @@ Engine *PlayerShip::InventoryEngine (Uint8 const upgrade_level)
     return static_cast<Engine *>(m_item_inventory[IT_ENGINE][upgrade_level]);
 }
 
-Armor *PlayerShip::InventoryArmor (Uint8 const upgrade_level)
+Armor *PlayerShip::InventoryArmor (Uint8 upgrade_level)
 {
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_ARMOR][upgrade_level] == NULL ||
@@ -1029,7 +1138,7 @@ Armor *PlayerShip::InventoryArmor (Uint8 const upgrade_level)
     return static_cast<Armor *>(m_item_inventory[IT_ARMOR][upgrade_level]);
 }
 
-Shield *PlayerShip::InventoryShield (Uint8 const upgrade_level)
+Shield *PlayerShip::InventoryShield (Uint8 upgrade_level)
 {
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_SHIELD][upgrade_level] == NULL ||
@@ -1037,7 +1146,7 @@ Shield *PlayerShip::InventoryShield (Uint8 const upgrade_level)
     return static_cast<Shield *>(m_item_inventory[IT_SHIELD][upgrade_level]);
 }
 
-PowerGenerator *PlayerShip::InventoryPowerGenerator (Uint8 const upgrade_level)
+PowerGenerator *PlayerShip::InventoryPowerGenerator (Uint8 upgrade_level)
 {
     ASSERT1(upgrade_level < UPGRADE_LEVEL_COUNT);
     ASSERT1(m_item_inventory[IT_POWER_GENERATOR][upgrade_level] == NULL ||
@@ -1045,7 +1154,7 @@ PowerGenerator *PlayerShip::InventoryPowerGenerator (Uint8 const upgrade_level)
     return static_cast<PowerGenerator *>(m_item_inventory[IT_POWER_GENERATOR][upgrade_level]);
 }
 
-bool PlayerShip::IsInStartingInventory (Item *const item)
+bool PlayerShip::IsInStartingInventory (Item *item)
 {
     ASSERT1(item != NULL);
 
@@ -1056,7 +1165,7 @@ bool PlayerShip::IsInStartingInventory (Item *const item)
             item->GetItemType() == IT_POWER_GENERATOR);
 }
 
-void PlayerShip::SetArmorStatus (Float const armor_status)
+void PlayerShip::SetArmorStatus (Float armor_status)
 {
     ASSERT1(armor_status >= 0.0f && armor_status <= 1.0f);
     if (m_armor_status != armor_status)
@@ -1066,7 +1175,7 @@ void PlayerShip::SetArmorStatus (Float const armor_status)
     }
 }
 
-void PlayerShip::SetShieldStatus (Float const shield_status)
+void PlayerShip::SetShieldStatus (Float shield_status)
 {
     ASSERT1(shield_status >= 0.0f && shield_status <= 1.0f);
     if (m_shield_status != shield_status)
@@ -1076,7 +1185,7 @@ void PlayerShip::SetShieldStatus (Float const shield_status)
     }
 }
 
-void PlayerShip::SetPowerStatus (Float const power_status)
+void PlayerShip::SetPowerStatus (Float power_status)
 {
     ASSERT1(power_status >= 0.0f && power_status <= 1.0f);
     if (m_power_status != power_status)
@@ -1086,7 +1195,7 @@ void PlayerShip::SetPowerStatus (Float const power_status)
     }
 }
 
-void PlayerShip::SetWeaponStatus (Float const weapon_status)
+void PlayerShip::SetWeaponStatus (Float weapon_status)
 {
     ASSERT1(weapon_status >= 0.0f && weapon_status <= 1.0f);
     if (m_weapon_status != weapon_status)
@@ -1096,7 +1205,7 @@ void PlayerShip::SetWeaponStatus (Float const weapon_status)
     }
 }
 
-void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
+void PlayerShip::EjectPowerup (Item *ejectee, Float ejection_angle)
 {
     if (ejectee == NULL || IsInStartingInventory(ejectee))
         return;
@@ -1201,9 +1310,7 @@ void PlayerShip::EjectPowerup (Item *const ejectee, Float const ejection_angle)
     }
 }
 
-void PlayerShip::ChangeMineralInventory (
-    Uint8 const mineral_type,
-    Float const mineral_delta)
+void PlayerShip::ChangeMineralInventory (Uint8 mineral_type, Float mineral_delta)
 {
     ASSERT1(mineral_type < MINERAL_COUNT);
 

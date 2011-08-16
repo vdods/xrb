@@ -30,28 +30,17 @@ public:
     { }
     virtual ~Engine () { }
 
-    inline Float MaxThrustForce () const
-    {
-        return ms_max_thrust_force[UpgradeLevel()];
-    }
-    
-    void SetInputs (
-        Float const right_left_input,
-        Float const up_down_input,
-        Float const auxiliary_input);
+    Float MaxThrustForce () const { return ms_max_thrust_force[UpgradeLevel()]; }
+
+    void SetInputs (Float right_left_input, Float up_down_input, Float auxiliary_input);
 
     // ///////////////////////////////////////////////////////////////////////
     // PoweredDevice virtual method overrides
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 

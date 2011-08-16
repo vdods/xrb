@@ -17,8 +17,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class Armor;
 class Engine;
@@ -37,6 +36,19 @@ public:
 
     static Float const ms_difficulty_protection_factor[DL_COUNT];
     static Float const ms_max_stoke;
+    static Float const ms_attack_boost_duration;
+    static Float const ms_defense_boost_duration;
+    static Float const ms_time_stretch_duration;
+    static Float const ms_max_angular_velocity;
+    static Float const ms_scale_factor;
+    static Float const ms_baseline_mass;
+    static Float const ms_attack_boost_damage_factor;
+    static Float const ms_attack_boost_fire_rate_factor;
+    static Float const ms_attack_boost_speedup_factor;
+    static Float const ms_defense_boost_damage_dissipation_rate_factor;
+    static Float const ms_defense_boost_mass_factor;
+    static Float const ms_defense_boost_power_factor;
+    static Float const ms_defense_boost_shield_factor;
 
     PlayerShip (Float max_health, EntityType entity_type);
     virtual ~PlayerShip ();
@@ -44,23 +56,27 @@ public:
     // Entity interface method
     virtual bool IsPlayerShip () const { return true; }
 
-    inline Uint32 GetScore () const { return m_score; }
-    inline Float Stoke () const { return m_stoke; }
-    inline Uint32 WaveCount () const { return m_wave_count; }
-    inline Uint32 LivesRemaining () const { return m_lives_remaining; }
+    Uint32 GetScore () const { return m_score; }
+    Float Stoke () const { return m_stoke; }
+    Uint32 WaveCount () const { return m_wave_count; }
+    Uint32 LivesRemaining () const { return m_lives_remaining; }
 
-    inline Weapon const *MainWeapon () const { return m_main_weapon; }
-    inline Weapon const *AuxiliaryWeapon () const { return m_auxiliary_weapon; }
-    inline Engine const *GetEngine () const { return m_engine; }
-    inline Armor const *GetArmor () const { return m_armor; }
-    inline Shield const *GetShield () const { return m_shield; }
-    inline PowerGenerator const *GetPowerGenerator () const { return m_power_generator; }
+    bool AttackBoostIsEnabled () const { return m_attack_boost_time_remaining > 0.0f; }
+    bool DefenseBoostIsEnabled () const { return m_defense_boost_time_remaining > 0.0f; }
+    bool TimeStretchIsEnabled () const { return m_time_stretch_time_remaining > 0.0f; }
+
+    Weapon const *MainWeapon () const { return m_main_weapon; }
+    Weapon const *AuxiliaryWeapon () const { return m_auxiliary_weapon; }
+    Engine const *GetEngine () const { return m_engine; }
+    Armor const *GetArmor () const { return m_armor; }
+    Shield const *GetShield () const { return m_shield; }
+    PowerGenerator const *GetPowerGenerator () const { return m_power_generator; }
 
     Float ArmorStatus () const;
     Float ShieldStatus () const;
     Float PowerStatus () const;
     Float WeaponStatus () const;
-    inline Float MineralInventory (Uint8 mineral_type) const
+    Float MineralInventory (Uint8 mineral_type) const
     {
         ASSERT1(mineral_type < MINERAL_COUNT);
         return m_mineral_inventory[mineral_type];
@@ -71,7 +87,7 @@ public:
 
     void SetMainWeaponType (ItemType main_weapon_type);
     void SetAuxiliaryWeaponType (ItemType auxiliary_weapon_type);
-    inline void SetEngineAuxiliaryInput (Uint8 const engine_auxiliary_input)
+    void SetEngineAuxiliaryInput (Uint8 const engine_auxiliary_input)
     {
         m_engine_auxiliary_input = engine_auxiliary_input;
     }
@@ -82,17 +98,18 @@ public:
     void SetArmor (Armor *armor);
     void SetShield (Shield *shield);
     void SetPowerGenerator (PowerGenerator *power_generator);
+    void UpdateMassAndDamageDissipationRate ();
 
     // SignalSender accessors
-    inline SignalSender1<Uint32> const *SenderScoreChanged () { return &m_sender_score_changed; }
-    inline SignalSender1<Float> const *SenderStokeChanged () { return &m_sender_stoke_changed; }
-    inline SignalSender1<Uint32> const *SenderLivesRemainingChanged () { return &m_sender_lives_remaining_changed; }
-    inline SignalSender1<Uint32> const *SenderWaveCountChanged () { return &m_sender_wave_count_changed; }
-    inline SignalSender1<Float> const *SenderArmorStatusChanged () { return &m_sender_armor_status_changed; }
-    inline SignalSender1<Float> const *SenderShieldStatusChanged () { return &m_sender_shield_status_changed; }
-    inline SignalSender1<Float> const *SenderPowerStatusChanged () { return &m_sender_power_status_changed; }
-    inline SignalSender1<Float> const *SenderWeaponStatusChanged () { return &m_sender_weapon_status_changed; }
-    inline SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
+    SignalSender1<Uint32> const *SenderScoreChanged () { return &m_sender_score_changed; }
+    SignalSender1<Float> const *SenderStokeChanged () { return &m_sender_stoke_changed; }
+    SignalSender1<Uint32> const *SenderLivesRemainingChanged () { return &m_sender_lives_remaining_changed; }
+    SignalSender1<Uint32> const *SenderWaveCountChanged () { return &m_sender_wave_count_changed; }
+    SignalSender1<Float> const *SenderArmorStatusChanged () { return &m_sender_armor_status_changed; }
+    SignalSender1<Float> const *SenderShieldStatusChanged () { return &m_sender_shield_status_changed; }
+    SignalSender1<Float> const *SenderPowerStatusChanged () { return &m_sender_power_status_changed; }
+    SignalSender1<Float> const *SenderWeaponStatusChanged () { return &m_sender_weapon_status_changed; }
+    SignalSender2<Uint8, Float> const *SenderMineralInventoryChanged () { return &m_sender_mineral_inventory_changed; }
 
     void IncrementWaveCount ();
     void IncrementScore (Uint32 score_delta);
@@ -107,6 +124,11 @@ public:
     // responsibility for deleting the item).
     bool AddItem (Item *item);
     void EquipItem (ItemType item_type, Uint8 const upgrade_level);
+
+    void IncrementOptionInventory ();
+    void ActivateOption (KeyInputAction option, Float current_time);
+    void SelectNextOption ();
+    void SelectPreviousOption ();
 
     virtual void Think (Float time, Float frame_dt);
     virtual bool Damage (
@@ -136,43 +158,33 @@ public:
     // Ship public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
+    virtual Float MaxAngularVelocity () const { return ms_max_angular_velocity; }
+    virtual Float ShipScaleFactor () const { return ms_scale_factor; }
+    virtual Float ShipBaselineMass () const { return ms_baseline_mass; }
+    virtual Float AttackBoostDamageFactor () const { return ms_attack_boost_damage_factor; }
+    virtual Float AttackBoostFireRateFactor () const { return ms_attack_boost_fire_rate_factor; }
+    virtual Float AttackBoostSpeedupFactor () const { return ms_attack_boost_speedup_factor; }
+    virtual Float DefenseBoostDamageDissipationRateFactor () const { return ms_defense_boost_damage_dissipation_rate_factor; }
+    virtual Float DefenseBoostMassFactor () const { return ms_defense_boost_mass_factor; }
+    virtual Float DefenseBoostPowerFactor () const { return ms_defense_boost_power_factor; }
+    virtual Float DefenseBoostShieldFactor () const { return ms_defense_boost_shield_factor; }
+
     virtual bool TakePowerup (Powerup *powerup, Float time, Float frame_dt);
 
 protected:
 
-    inline Float NormalizedEngineAuxiliaryInput () const
+    Float NormalizedEngineAuxiliaryInput () const
     {
         return static_cast<Float>(m_engine_auxiliary_input) /
                static_cast<Float>(UINT8_UPPER_BOUND);
     }
-    inline bool IsUsingAuxiliaryWeapon () const
-    {
-        return m_is_using_auxiliary_weapon;
-    }
-    inline Weapon *MainWeapon ()
-    {
-        return m_main_weapon;
-    }
-    inline Weapon *AuxiliaryWeapon ()
-    {
-        return m_auxiliary_weapon;
-    }
-    inline Engine *GetEngine ()
-    {
-        return m_engine;
-    }
-    inline Armor *GetArmor ()
-    {
-        return m_armor;
-    }
-    inline Shield *GetShield ()
-    {
-        return m_shield;
-    }
-    inline PowerGenerator *GetPowerGenerator ()
-    {
-        return m_power_generator;
-    }
+    bool IsUsingAuxiliaryWeapon () const { return m_is_using_auxiliary_weapon; }
+    Weapon *MainWeapon () { return m_main_weapon; }
+    Weapon *AuxiliaryWeapon () { return m_auxiliary_weapon; }
+    Engine *GetEngine () { return m_engine; }
+    Armor *GetArmor () { return m_armor; }
+    Shield *GetShield () { return m_shield; }
+    PowerGenerator *GetPowerGenerator () { return m_power_generator; }
 
     void SetStoke (Float stoke);
 
@@ -220,8 +232,13 @@ private:
     PoweredDevice *m_devices_to_power[DTP_COUNT];
     Float m_power_allocator[DTP_COUNT];
 
+    Float m_attack_boost_time_remaining;
+    Float m_defense_boost_time_remaining;
+    Float m_time_stretch_time_remaining;
+
     Weapon *m_main_weapon;
     Weapon *m_auxiliary_weapon;
+    KeyInputAction m_selected_option;
     Engine *m_engine;
     Armor *m_armor;
     Shield *m_shield;
@@ -234,7 +251,7 @@ private:
 
     Item *m_item_inventory[IT_COUNT][UPGRADE_LEVEL_COUNT];
     Float m_mineral_inventory[MINERAL_COUNT];
-    Uint32 m_option_powerup_inventory;
+    Uint32 m_option_inventory;
 
     EntityReference<LaserBeam> m_laser_beam;
     EntityReference<LaserImpactEffect> m_laser_impact_effect;

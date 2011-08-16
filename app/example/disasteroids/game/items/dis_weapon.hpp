@@ -57,7 +57,7 @@ public:
     // public interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const = 0;
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const = 0;
 
 protected:
 
@@ -96,10 +96,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -118,9 +119,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
     // ///////////////////////////////////////////////////////////////////////
     // Item interface methods
@@ -181,10 +182,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_secondary_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_secondary_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -197,9 +199,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -256,10 +258,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -272,9 +275,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -336,10 +339,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -352,9 +356,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -387,10 +391,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -403,9 +408,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -455,10 +460,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -471,14 +477,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -504,6 +505,11 @@ class EMPCore : public Weapon
 {
 public:
 
+    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_core_disable_time_factor[UPGRADE_LEVEL_COUNT];
+    static Float const ms_emp_core_blast_radius[UPGRADE_LEVEL_COUNT];
+    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+
     EMPCore (Uint32 upgrade_level)
         :
         Weapon(upgrade_level, IT_WEAPON_EMP_CORE)
@@ -517,10 +523,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -533,16 +540,11 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
-
-    static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_core_disable_time_factor[UPGRADE_LEVEL_COUNT];
-    static Float const ms_emp_core_blast_radius[UPGRADE_LEVEL_COUNT];
-    static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
 
     Float m_time_last_fired;
 }; // end of class EMPCore
@@ -614,7 +616,7 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
         return 1.0f;
     }
@@ -623,9 +625,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 protected:
 
@@ -677,7 +679,7 @@ public:
 
     void Target (Engine2::Circle::Entity *target) { m_target = target; }
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -707,10 +709,11 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
-        Float const cycle_time = 1.0f / ms_fire_rate[UpgradeLevel()];
-        Float const time_since_last_fire = time - m_time_last_fired;
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
+        Float cycle_time = 1.0f / (ms_fire_rate[UpgradeLevel()] * fire_rate_factor);
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -723,9 +726,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
@@ -773,14 +776,15 @@ public:
     // Weapon interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float ReadinessStatus (Float time) const
+    virtual Float ReadinessStatus (bool attack_boost_is_enabled, Float time) const
     {
+        Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
         Float const fire_rate =
             IsFireRateOverridden() ?
             FireRateOverride() :
-            ms_fire_rate[UpgradeLevel()];
-        Float const cycle_time = 1.0f / fire_rate;
-        Float const time_since_last_fire = time - m_time_last_fired;
+            ms_fire_rate[UpgradeLevel()] * fire_rate_factor;
+        Float cycle_time = 1.0f / fire_rate;
+        Float time_since_last_fire = time - m_time_last_fired;
         ASSERT1(cycle_time > 0.0f);
         ASSERT1(time_since_last_fire >= 0.0f);
         if (time_since_last_fire > cycle_time)
@@ -793,9 +797,9 @@ public:
     // PoweredDevice interface methods
     // ///////////////////////////////////////////////////////////////////////
 
-    virtual Float PowerToBeUsedBasedOnInputs (Float time, Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
-    virtual bool Activate (Float power, Float time, Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 

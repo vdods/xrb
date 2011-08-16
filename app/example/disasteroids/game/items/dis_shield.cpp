@@ -10,10 +10,11 @@
 
 #include "dis_shield.hpp"
 
+#include "dis_ship.hpp"
+
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 Float const Shield::ms_power_consumption_rate[UPGRADE_LEVEL_COUNT] = { 10.0f, 15.0f, 22.0f, 30.0f };
 Float const Shield::ms_max_charged_power[UPGRADE_LEVEL_COUNT] = { 30.0f, 60.0f, 90.0f, 120.0f };
@@ -58,7 +59,7 @@ Float Shield::Damage (
         Min(damage_amount, available_damage_dissipation) * power_to_use / power_required;
     ASSERT1(damage_actually_blocked >= 0.0f);
     // +0.001f due to floating point inaccuracies (this assert was being triggered because of it)
-    ASSERT1(damage_actually_blocked <= damage_amount + 0.001f); 
+    ASSERT1(damage_actually_blocked <= damage_amount + 0.001f);
     // calculate the amount of damage the ship should take
     Float adjusted_damage_amount = damage_amount - damage_actually_blocked;
     // subtract the power to use from the charged power
@@ -66,14 +67,12 @@ Float Shield::Damage (
     ASSERT1(m_charged_power >= 0.0f);
 
     if (damage_amount_used != NULL)
-        *damage_amount_used = damage_actually_blocked;   
+        *damage_amount_used = damage_actually_blocked;
     // return the adjusted damage amount (this is the amount the ship should take)
     return adjusted_damage_amount;
 }
 
-Float Shield::PowerToBeUsedBasedOnInputs (
-    Float time,
-    Float frame_dt) const
+Float Shield::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
 {
     Float max_power_that_can_be_recharged =
         frame_dt * ms_max_charged_power[UpgradeLevel()] /
@@ -85,25 +84,24 @@ Float Shield::PowerToBeUsedBasedOnInputs (
         frame_dt * ms_power_consumption_rate[UpgradeLevel()];
 }
 
-bool Shield::Activate (
-    Float power,
-    Float time,
-    Float frame_dt)
+bool Shield::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
 {
     ASSERT1(power >= 0.0f);
-    ASSERT1(power <= PowerToBeUsedBasedOnInputs(time, frame_dt) + 0.001f);
+    ASSERT1(power <= PowerToBeUsedBasedOnInputs(attack_boost_is_enabled, defense_boost_is_enabled, time, frame_dt) + 0.001f);
     ASSERT1(power <= ms_max_charged_power[UpgradeLevel()] /
                      ms_recharge_interval[UpgradeLevel()] +
                      frame_dt * ms_power_consumption_rate[UpgradeLevel()]);
 
     power -= frame_dt * ms_power_consumption_rate[UpgradeLevel()];
-    m_charged_power += power;
+    Float multiplier = defense_boost_is_enabled ? OwnerShip()->DefenseBoostShieldFactor() : 1.0f;
+    m_charged_power += multiplier * power;
     // because the shield takes power to keep it on, m_charged_power can
     // decrease by not receiving enough power.  make sure that m_charged_power
-    // doesn't drop below 0.
+    // doesn't drop below 0.  TODO: i think this is false, check this.
     if (m_charged_power < 0.0f)
         m_charged_power = 0.0;
-    ASSERT1(m_charged_power <= ms_max_charged_power[UpgradeLevel()]);
+    if (m_charged_power > ms_max_charged_power[UpgradeLevel()])
+        m_charged_power = ms_max_charged_power[UpgradeLevel()];
 
     return true;
 }

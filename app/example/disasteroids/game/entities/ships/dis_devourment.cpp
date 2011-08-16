@@ -169,7 +169,9 @@ void Devourment::Think (Float time, Float frame_dt)
         MuzzleDirection(m_mouth_tractor),
         ReticleCoordinates());
     m_mouth_tractor->Activate(
-        m_mouth_tractor->PowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_mouth_tractor->PowerToBeUsedBasedOnInputs(false, false, time, frame_dt),
+        false, // no attack boost
+        false, // no defense boost
         time,
         frame_dt);
 

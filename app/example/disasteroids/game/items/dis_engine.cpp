@@ -37,9 +37,7 @@ void Engine::SetInputs (
     m_auxiliary_input = auxiliary_input;
 }
 
-Float Engine::PowerToBeUsedBasedOnInputs (
-    Float const time,
-    Float const frame_dt) const
+Float Engine::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
 {
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
@@ -66,10 +64,7 @@ Float Engine::PowerToBeUsedBasedOnInputs (
     return frame_dt * ms_max_primary_power_output_rate[UpgradeLevel()] * input_vector.Length() / input_vector_max_length;
 }
 
-bool Engine::Activate (
-    Float const power,
-    Float const time,
-    Float const frame_dt)
+bool Engine::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
 {
     // the auxiliary function overrides the right/left/up/down function
     if (m_auxiliary_input > 0.0f)
@@ -77,7 +72,11 @@ bool Engine::Activate (
         ASSERT1(power <= frame_dt * ms_max_auxiliary_power_output_rate[UpgradeLevel()] * m_auxiliary_input + 0.001f);
 
         static Float const s_survey_area_radius = 100.0f;
-        Float const max_thrust_force = ms_max_thrust_force[UpgradeLevel()] * m_auxiliary_input;
+        Float max_thrust_force = ms_max_thrust_force[UpgradeLevel()] * m_auxiliary_input;
+        if (attack_boost_is_enabled)
+            max_thrust_force *= OwnerShip()->AttackBoostSpeedupFactor();
+        if (defense_boost_is_enabled)
+            max_thrust_force *= OwnerShip()->DefenseBoostMassFactor(); // to account for the extra mass
 
         // store the ambient velocity, ignoring the presence of the owner ship
         FloatVector2 ambient_velocity = OwnerShip()->AmbientVelocity(s_survey_area_radius);
@@ -123,6 +122,12 @@ bool Engine::Activate (
         Float thrust_force =
             output_ratio * ms_max_thrust_force[UpgradeLevel()] *
             input_vector.Length() / input_vector_max_length;
+
+        if (attack_boost_is_enabled)
+            thrust_force *= OwnerShip()->AttackBoostSpeedupFactor();
+        if (defense_boost_is_enabled)
+            thrust_force *= OwnerShip()->DefenseBoostMassFactor(); // to account for the extra mass
+
         FloatVector2 thrust_vector(thrust_force * Math::UnitVector(input_vector_angle + OwnerShip()->Angle()));
 
         OwnerShip()->AccumulateForce(thrust_vector);

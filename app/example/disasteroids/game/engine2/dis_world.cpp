@@ -779,7 +779,7 @@ void World::RecordDestroyedAsteroid (Asteroid const *asteroid)
 
 void World::ResetSpawnOptionPowerupFromAsteroid ()
 {
-    static Float const s_expected_powerups_from_maximum_asteroid_area = 1.0f; // 0.2f;
+    static Float const s_expected_powerups_from_maximum_asteroid_area = 0.16f;
     m_destroyed_asteroid_area_left_before_spawning_option_powerup =
         Math::RandomFloat(0.0f, 2.0f) * // between 0 and 2 so it
         M_PI * Sqr(Asteroid::ms_scale_factor_maximum) /

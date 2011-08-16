@@ -17,10 +17,10 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 class PoweredDevice;
+class Ship;
 
 class PowerGenerator : public Item
 {
@@ -34,28 +34,22 @@ public:
     }
     virtual ~PowerGenerator () { }
 
-    inline Float StoredPower () const
-    {
-        return m_stored_power;
-    }
-    inline Float MaxPower () const
-    {
-        return ms_max_power_storage_capacity[UpgradeLevel()];
-    }
+    Float StoredPower () const { return m_stored_power; }
+    Float MaxPower () const { return ms_max_power_storage_capacity[UpgradeLevel()]; }
 
-    inline void Drain ()
-    {
-        m_stored_power = 0.0f;
-    }
+    void Drain () { m_stored_power = 0.0f; }
     void PowerDevices (
+        Ship &owner_ship,
         PoweredDevice *const *powered_device,
         Float *power_allocator,
         Uint32 powered_device_count,
+        bool attack_boost_is_enabled,
+        bool defense_boost_is_enabled,
         Float time,
         Float frame_dt);
     // NOTE: this method is not associated with Entity!
     void Think (Float time, Float frame_dt);
-    
+
 private:
 
     static Float const ms_max_power_output_rate[UPGRADE_LEVEL_COUNT];

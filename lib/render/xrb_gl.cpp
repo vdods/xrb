@@ -98,7 +98,7 @@ Gl::Gl ()
 
 Gl::~Gl ()
 {
-    fprintf(stderr, "OpenGL shutdown\n");
+    fprintf(stderr, "Gl::~Gl(); OpenGL shutdown\n");
 
     // delete the utility textures (if necessary)
     DeleteAndNullify(m_gltexture_opaque_white);

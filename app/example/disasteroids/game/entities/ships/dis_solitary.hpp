@@ -22,10 +22,6 @@ class Solitary : public PlayerShip
 {
 public:
 
-    static Float const ms_max_angular_velocity;
-    static Float const ms_scale_factor;
-    static Float const ms_baseline_mass;
-
     Solitary () : PlayerShip(100.0f, ET_SOLITARY) { }
     virtual ~Solitary () { }
 
@@ -38,23 +34,6 @@ public:
         DamageType kill_type,
         Float time,
         Float frame_dt);
-
-    // ///////////////////////////////////////////////////////////////////////
-    // Ship interface methods
-    // ///////////////////////////////////////////////////////////////////////
-
-    virtual Float MaxAngularVelocity () const
-    {
-        return ms_max_angular_velocity;
-    }
-    virtual Float ShipScaleFactor () const
-    {
-        return ms_scale_factor;
-    }
-    virtual Float ShipBaselineMass () const
-    {
-        return ms_baseline_mass;
-    }
 }; // end of class Solitary
 
 } // end of namespace Dis

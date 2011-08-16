@@ -42,7 +42,7 @@ Float const Shade::ms_circling_speed[ENEMY_LEVEL_COUNT] = { 20.0f, 40.0f, 80.0f,
 Float const Shade::ms_in_crosshairs_teleport_time[ENEMY_LEVEL_COUNT] = { 1.0f, 1.0f, 1.0f, 1.0f };
 Float const Shade::ms_teleportation_duration[ENEMY_LEVEL_COUNT] = { 0.25f, 0.25f, 0.25f, 0.25f };
 
-Shade::Shade (Uint8 const enemy_level)
+Shade::Shade (Uint8 enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_SHADE)
 {
@@ -64,7 +64,7 @@ Shade::~Shade ()
     Delete(m_weapon);
 }
 
-void Shade::Think (Float const time, Float const frame_dt)
+void Shade::Think (Float time, Float frame_dt)
 {
     // can't think if we're dead.
     if (IsDead())
@@ -94,7 +94,9 @@ void Shade::Think (Float const time, Float const frame_dt)
         MuzzleDirection(m_weapon),
         ReticleCoordinates());
     m_weapon->Activate(
-        m_weapon->PowerToBeUsedBasedOnInputs(time, frame_dt),
+        m_weapon->PowerToBeUsedBasedOnInputs(false, false, time, frame_dt),
+        false, // no attack boost
+        false, // no defense boost
         time,
         frame_dt);
 
@@ -117,7 +119,7 @@ FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
     return reticle_direction;
 }
 
-void Shade::SetTarget (Mortal *const target)
+void Shade::SetTarget (Mortal *target)
 {
     if (target == NULL)
         m_target.Release();
@@ -137,7 +139,7 @@ void Shade::HandleNewOwnerObject ()
     OwnerObject()->ColorMask() = Color::ms_transparent_white;
 }
 
-void Shade::PickWanderDirection (Float const time, Float const frame_dt)
+void Shade::PickWanderDirection (Float time, Float frame_dt)
 {
     // update the next time to pick a wander direction
     m_next_whatever_time = time + 6.0f;
@@ -146,7 +148,7 @@ void Shade::PickWanderDirection (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Shade::Wander (Float const time, Float const frame_dt)
+void Shade::Wander (Float time, Float frame_dt)
 {
     static Float const s_scan_radius = 200.0f;
     static Float const s_collision_lookahead_time = 3.0f;
@@ -217,7 +219,7 @@ void Shade::Wander (Float const time, Float const frame_dt)
         m_think_state = THINK_STATE(PickWanderDirection);
 }
 
-void Shade::Stalk (Float const time, Float const frame_dt)
+void Shade::Stalk (Float time, Float frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -263,7 +265,7 @@ void Shade::Stalk (Float const time, Float const frame_dt)
 //     SetWeaponPrimaryInput(UINT8_UPPER_BOUND);
 }
 
-void Shade::MoveToAttackRange (Float const time, Float const frame_dt)
+void Shade::MoveToAttackRange (Float time, Float frame_dt)
 {
     if (!m_target.IsValid() || m_target->IsDead())
     {
@@ -460,7 +462,7 @@ void Shade::Teleport (Float time, Float frame_dt)
     m_next_whatever_time = time + ms_teleportation_duration[EnemyLevel()];
 }
 
-void Shade::RecoverAfterTeleporting (Float const time, Float const frame_dt)
+void Shade::RecoverAfterTeleporting (Float time, Float frame_dt)
 {
     if (time >= m_next_whatever_time)
     {

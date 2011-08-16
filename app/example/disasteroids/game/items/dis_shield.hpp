@@ -20,8 +20,7 @@
 
 using namespace Xrb;
 
-namespace Dis
-{
+namespace Dis {
 
 // level 0: plain old shields
 // level 1: strong against collision damage
@@ -72,16 +71,11 @@ public:
     // (inputs set separately), and the current time and frame_dt.  this
     // method is to be used for a ship to decide how much power to apply
     // to each device it has equipped, based on how much each would draw.
-    virtual Float PowerToBeUsedBasedOnInputs (
-        Float time,
-        Float frame_dt) const;
+    virtual Float PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const;
 
     // activates this device using the power supplied, and returns true iff
     // the device was activated and the power used.
-    virtual bool Activate (
-        Float power,
-        Float time,
-        Float frame_dt);
+    virtual bool Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt);
 
 private:
 
