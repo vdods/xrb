@@ -143,7 +143,7 @@ Ballistic *SpawnSmartBallistic (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/plasma_bullet.png",
+            "resources/plasma_ball.png",
             current_time,
             Z_DEPTH_BALLISTIC,
             true, // is transparent
@@ -155,9 +155,10 @@ Ballistic *SpawnSmartBallistic (
             velocity,
             0.0f,
             0.0f);
+    sprite->SetScaleFactors(FloatVector2(scale_factor, 22.0f / 128.0f * scale_factor));
     // set the physical size ratio to reflect the largest circle that
     // can be inscribed inside the shape of the sprite's bitmap.
-    sprite->SetPhysicalSizeRatio(22.0f / 128.0f);
+    sprite->SetPhysicalSizeRatios(FloatVector2(22.0f / 128.0f, 1.0f));
     return ballistic;
 }
 

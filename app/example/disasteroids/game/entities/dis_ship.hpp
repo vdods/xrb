@@ -33,7 +33,7 @@ public:
     virtual ~Ship ();
 
     static std::string const &ShipSpritePath (EntityType ship_type, Uint8 enemy_level);
-    static Float ShipScaleFactor (EntityType ship_type, Uint8 enemy_level);
+    static Float ShipRadius (EntityType ship_type, Uint8 enemy_level);
 
     virtual bool IsShip () const { return true; }
     bool IsDisabled () const { return m_disable_time > 0.0f; }
@@ -82,7 +82,7 @@ public:
         ASSERT1(weapon != NULL);
         // by default, just return the front of the ship (so not all
         // ships have to override this method)
-        return Translation() + ScaleFactor() * Math::UnitVector(Angle());
+        return Translation() + VisibleRadius() * Math::UnitVector(Angle());
     }
     virtual FloatVector2 MuzzleDirection (Weapon const *weapon) const
     {
@@ -92,7 +92,7 @@ public:
         return Math::UnitVector(Angle());
     }
     virtual Float MaxAngularVelocity () const = 0;
-    virtual Float ShipScaleFactor () const = 0;
+    virtual Float ShipRadius () const = 0;
     virtual Float ShipBaselineMass () const = 0;
     virtual Float AttackBoostDamageFactor () const { return 1.0f; }
     virtual Float AttackBoostFireRateFactor () const { return 1.0f; }

@@ -85,6 +85,8 @@ public:
     // based upon the object's scale factor, and the physical size ratio.
     Float PhysicalScaleFactor () const { return PhysicalSizeRatio() * ScaleFactor(); }
 
+    // sets the IsRound property (see comment above m_is_round)
+    void SetIsRound (bool is_round);
     // sets the physical size ratios
     void SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratio);
     // sets the physical size ratios (both components to the given value)

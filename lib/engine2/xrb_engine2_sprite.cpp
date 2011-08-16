@@ -78,6 +78,15 @@ Uint32 Sprite::GlTextureAtlasHandle () const
         return m_gltexture->Atlas().Handle();
 }
 
+void Sprite::SetIsRound (bool is_round)
+{
+    if (m_is_round != is_round)
+    {
+        m_is_round = is_round;
+        IndicateRadiiNeedToBeRecalculated();
+    }
+}
+
 void Sprite::SetPhysicalSizeRatios (FloatVector2 const &physical_size_ratios)
 {
     ASSERT1(physical_size_ratios[Dim::X] > 0.0f);

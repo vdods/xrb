@@ -274,7 +274,7 @@ public:
         sprite->SetEntity(planet);
         planet->SetTranslation(FloatVector2::ms_zero);
         planet->SetScaleFactor(250.0f);
-        planet->SetMass(100.0f * planet->ScaleFactor() * planet->ScaleFactor());
+        planet->SetMass(100.0f * Sqr(planet->PhysicalRadius()));
         AddDynamicObject(sprite, object_layer);
 
         // Create a bunch of small, light moons.
@@ -286,9 +286,9 @@ public:
             sprite->SetEntity(moon);
             sprite->SetZDepth(-0.1f);
             moon->SetScaleFactor(Math::RandomFloat(10.0f, 20.0f));
-            moon->SetMass(0.01f * moon->ScaleFactor() * moon->ScaleFactor());
+            moon->SetMass(0.01f * Sqr(moon->PhysicalRadius()));
             // Pick a distance to orbit the moon at.
-            Float minimum_orbital_radius = planet->ScaleFactor() + moon->ScaleFactor() + 100.0f;
+            Float minimum_orbital_radius = planet->PhysicalRadius() + moon->PhysicalRadius() + 100.0f;
             Float orbital_radius = Math::RandomFloat(minimum_orbital_radius, minimum_orbital_radius + 400.0f);
             ASSERT1(orbital_radius > 0.0f);
             // The moon will be placed randomly using polar coordinates.
@@ -447,7 +447,7 @@ private:
         Float distance = entity_offset.Length();
         // If they're touching, don't apply gravitational force (this
         // is to avoid a divide by zero if their positions coincide).
-        if (distance < entity0->ScaleFactor() + entity1->ScaleFactor())
+        if (distance < entity0->PhysicalRadius() + entity1->PhysicalRadius())
             return 0.0f;
         else
             return

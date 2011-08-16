@@ -23,7 +23,7 @@ class Powerup : public Entity
 {
 public:
 
-    static Float const ms_scale_factor;
+    static Float const ms_radius;
 
     Powerup (ItemType item_type)
         :

@@ -303,10 +303,13 @@ void CollisionQuadTree::CollideEntityLoopFunctor::operator () (Object *object)
     ASSERT1(m_entity->GetPhysicsHandler() == other_entity->GetPhysicsHandler());
     PhysicsHandler &physics_handler = *m_entity->GetPhysicsHandler();
 
+    // NOTE: we're not worrying about elliptical shapes here, just pretend each Entity's
+    // physical shape is a circle.
+
     FloatVector2 collision_location(
-        (other_entity->ScaleFactor() * ce0_translation + m_entity->ScaleFactor() * ce1_translation)
+        (other_entity->PhysicalRadius() * ce0_translation + m_entity->PhysicalRadius() * ce1_translation)
         /
-        (m_entity->ScaleFactor() + other_entity->ScaleFactor()));
+        (m_entity->PhysicalRadius() + other_entity->PhysicalRadius()));
     FloatVector2 collision_normal_0_to_1;
     if (offset_0_to_1.IsZero())
         collision_normal_0_to_1 = FloatVector2(1.0f, 0.0f);

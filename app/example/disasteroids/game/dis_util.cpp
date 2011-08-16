@@ -62,7 +62,7 @@ void RadiusDamage (
             Float distance =
                 Max(0.0f,
                     (entity->Translation() - damage_area_center).Length() -
-                     entity->ScaleFactor());
+                     entity->PhysicalRadius());
             Float distance_ratio = distance / damage_area_radius;
             ASSERT1(distance_ratio >= 0.0f);
             Float damage_to_apply;
@@ -124,7 +124,7 @@ void RadiusKnockback (
 
         // center_to_center points towards the collider
         FloatVector2 center_to_center = entity->Translation() - knockback_area_center;
-        Float distance = center_to_center.Length() - entity->ScaleFactor();
+        Float distance = center_to_center.Length() - entity->PhysicalRadius();
         if (distance < 0.0f)
             distance = 0.0f;
         Float distance_factor;
@@ -141,7 +141,7 @@ void RadiusKnockback (
             entity->AccumulateMomentum(
                 knockback_momentum *
                 center_to_center.Normalization() *
-                Math::Sqrt(entity->ScaleFactor()));
+                Math::Sqrt(entity->PhysicalRadius()));
         }
     }
 }

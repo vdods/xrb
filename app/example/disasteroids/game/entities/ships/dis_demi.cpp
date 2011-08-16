@@ -30,7 +30,7 @@ namespace Dis
 Float const Demi::ms_max_health[ENEMY_LEVEL_COUNT] = { 1500.0f, 3000.0f, 6000.0f, 12000.0f };
 Float const Demi::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 500000.0f, 700000.0f, 925000.0f, 1200000.0f };
 Float const Demi::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
-Float const Demi::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };
+Float const Demi::ms_ship_radius[ENEMY_LEVEL_COUNT] = { 55.0f, 65.0f, 75.0f, 85.0f };
 Float const Demi::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 10000.0f, 14000.0f, 18500.0f, 24000.0f };
 Float const Demi::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 4.0f, 8.0f, 12.0f, 16.0f };
 Float const Demi::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
@@ -386,7 +386,7 @@ void Demi::Die (
         Float mass = health_powerup_amount * s_health_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * VisibleRadius()) / (0.5f * VisibleRadius());
         FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
@@ -394,7 +394,7 @@ void Demi::Die (
                 GetObjectLayer(),
                 "resources/health_powerup.anim",
                 time,
-                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -408,16 +408,16 @@ void Demi::Die (
     while (option_powerup_spawn_count > 0)
     {
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(Powerup::ms_scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(Powerup::ms_radius, 0.5f * PhysicalRadius()) / (0.5f * PhysicalRadius());
         FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         SpawnPowerup(
             GetObjectLayer(),
             "resources/option_powerup.anim",
             time,
-            Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
-            Powerup::ms_scale_factor,
-            Sqr(Powerup::ms_scale_factor),
+            Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
+            Powerup::ms_radius,
+            Sqr(Powerup::ms_radius),
             velocity,
             IT_POWERUP_OPTION);
 
@@ -428,13 +428,13 @@ void Demi::Die (
     for (Uint32 i = 0; i < s_death_enemies_to_spawn_count; ++i)
     {
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(0.0, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(0.0f, 1.0f);
         FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         SpawnEnemyShip(
             GetObjectLayer(),
             time,
-            Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+            Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
             velocity,
             EntityType(Math::RandomUint16(ET_INTERLOPER, ET_REVULSION)), // relies on ET_INTERLOPER, ET_SHADE and
             Math::RandomUint16(0, EnemyLevel()));                        // ET_REVULSION being sequential enums
@@ -458,15 +458,15 @@ FloatVector2 Demi::MuzzleLocation (Weapon const *weapon) const
     }
     else if (weapon == m_port_tractor || weapon == m_port_flame_thrower || weapon == m_port_missile_launcher)
     {
-        return Translation() + ScaleFactor() * Math::UnitVector(Angle() + ms_side_port_angle);
+        return Translation() + VisibleRadius() * Math::UnitVector(Angle() + ms_side_port_angle);
     }
     else if (weapon == m_starboard_tractor || weapon == m_starboard_flame_thrower || weapon == m_starboard_missile_launcher)
     {
-        return Translation() + ScaleFactor() * Math::UnitVector(Angle() - ms_side_port_angle);
+        return Translation() + VisibleRadius() * Math::UnitVector(Angle() - ms_side_port_angle);
     }
     else if (weapon == m_aft_enemy_spawner || weapon == m_aft_flame_thrower || weapon == m_aft_missile_launcher)
     {
-        return Translation() - ScaleFactor() * Math::UnitVector(Angle());
+        return Translation() - VisibleRadius() * Math::UnitVector(Angle());
     }
     else
     {
@@ -1235,7 +1235,7 @@ void Demi::SpinningAttackFire (Float const time, Float const frame_dt)
         return;
     }
 
-    SetReticleCoordinates((1.0f + ScaleFactor()) * Math::UnitVector(Angle()));
+    SetReticleCoordinates((1.0f + VisibleRadius()) * Math::UnitVector(Angle()));
     if (m_spinning_attack_uses_secondary_fire)
     {
         SetWeaponSecondaryInput(UINT8_UPPER_BOUND);
@@ -1532,7 +1532,7 @@ Entity *Demi::FindTractorTarget (
 {
     ASSERT1(tractor_action < TA_COUNT);
 
-    Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + ScaleFactor());
+    Float scan_radius = 0.5f * (ms_tractor_beam_radius[EnemyLevel()] + PhysicalRadius());
     Engine2::Circle::AreaTraceList area_trace_list;
     GetPhysicsHandler()->AreaTrace(
         GetObjectLayer(),

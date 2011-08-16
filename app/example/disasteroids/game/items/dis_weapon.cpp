@@ -266,7 +266,7 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
         OwnerShip()->GetPhysicsHandler()->AreaTrace(
             OwnerShip()->GetObjectLayer(),
             OwnerShip()->Translation(),
-            ms_secondary_range[UpgradeLevel()] + OwnerShip()->ScaleFactor(),
+            ms_secondary_range[UpgradeLevel()] + OwnerShip()->PhysicalRadius(),
             false,
             area_trace_list);
 
@@ -304,13 +304,13 @@ bool Laser::Activate (Float power, bool attack_boost_is_enabled, bool defense_bo
             FloatVector2 fire_vector(OwnerShip()->GetObjectLayer()->AdjustedDifference(best_target->Translation(), OwnerShip()->Translation()));
             FloatVector2 fire_location(
                 OwnerShip()->Translation() +
-                    OwnerShip()->ScaleFactor() *
+                    OwnerShip()->PhysicalRadius() *
                     fire_vector.Normalization());
 
-            if (fire_vector.Length() > ms_secondary_range[UpgradeLevel()] + OwnerShip()->ScaleFactor())
+            if (fire_vector.Length() > ms_secondary_range[UpgradeLevel()] + OwnerShip()->PhysicalRadius())
             {
                 fire_vector.Normalize();
-                fire_vector *= ms_secondary_range[UpgradeLevel()] + OwnerShip()->ScaleFactor();
+                fire_vector *= ms_secondary_range[UpgradeLevel()] + OwnerShip()->PhysicalRadius();
             }
 
             // do a line trace
@@ -998,7 +998,7 @@ bool Tractor::Activate (Float power, bool attack_boost_is_enabled, bool defense_
         if (entity == OwnerShip())
             continue;
 
-        Float force = Min(input * strength * entity->ScaleFactor(), max_force);
+        Float force = Min(input * strength * entity->PhysicalRadius(), max_force);
         entity->ApplyInterceptCourseAcceleration(
             OwnerShip(),
             force,
@@ -1095,7 +1095,7 @@ bool AdvancedTractor::Activate (Float power, bool attack_boost_is_enabled, bool 
             continue;
 
         // apply the force on the entity and the owner ship
-        Float force = Min(input * strength * entity->ScaleFactor(), max_force);
+        Float force = Min(input * strength * entity->PhysicalRadius(), max_force);
         entity->ApplyInterceptCourseAcceleration(
             m_target,
             force,
@@ -1222,7 +1222,7 @@ bool EnemySpawner::Activate (Float power, bool attack_boost_is_enabled, bool def
             muzzle_velocity,
             EnemySpawnType(),
             spawn_enemy_level);
-    enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->ScaleFactor() * MuzzleDirection());
+    enemy_ship->SetTranslation(MuzzleLocation() + enemy_ship->PhysicalRadius() * MuzzleDirection());
 
     // update the last time fired
     m_time_last_fired = time;

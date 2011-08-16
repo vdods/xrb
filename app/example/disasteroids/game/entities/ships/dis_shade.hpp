@@ -25,7 +25,7 @@ public:
     static Float const ms_max_health[ENEMY_LEVEL_COUNT];
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
     static Float const ms_max_angular_velocity[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_ship_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_baseline_mass[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_alarm_distance[ENEMY_LEVEL_COUNT];
@@ -53,9 +53,9 @@ public:
     {
         return ms_max_angular_velocity[EnemyLevel()];
     }
-    virtual Float ShipScaleFactor () const
+    virtual Float ShipRadius () const
     {
-        return ms_scale_factor[EnemyLevel()];
+        return ms_ship_radius[EnemyLevel()];
     }
     virtual Float ShipBaselineMass () const
     {
@@ -90,7 +90,7 @@ private:
 
     ThinkState m_think_state;
     ThinkState m_saved_state;
-    Float m_saved_scale_factor;
+    Float m_saved_radius;
     bool m_in_crosshairs;
     Float m_in_crosshairs_start_time;
     Float m_next_whatever_time;

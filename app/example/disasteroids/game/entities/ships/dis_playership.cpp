@@ -35,7 +35,7 @@ Float const PlayerShip::ms_attack_boost_duration = 10.0f;
 Float const PlayerShip::ms_defense_boost_duration = 10.0f;
 Float const PlayerShip::ms_time_stretch_duration = 5.0f;
 Float const PlayerShip::ms_max_angular_velocity = 720.0f;
-Float const PlayerShip::ms_scale_factor = 11.0f;
+Float const PlayerShip::ms_ship_radius = 11.0f;
 Float const PlayerShip::ms_baseline_mass = 100.0f;
 Float const PlayerShip::ms_attack_boost_damage_factor = 2.0f;
 Float const PlayerShip::ms_attack_boost_fire_rate_factor = 2.5f;
@@ -782,7 +782,7 @@ void PlayerShip::Think (Float time, Float frame_dt)
             // update the shield's intensity and position
             m_shield_effect->SetIntensity(m_shield->Intensity());
             // TODO: real entity attachment -- temp hack
-            m_shield_effect->SnapToShip(Translation() + frame_dt * Velocity(), ScaleFactor());
+            m_shield_effect->SnapToShip(Translation() + frame_dt * Velocity(), VisibleRadius());
         }
         // if there is no shield equipped and the shield effect is
         // allocated AND in the world, remove it from the world.
@@ -901,8 +901,8 @@ void PlayerShip::Die (
                     time,
                     Translation(),
                     Velocity(),
-                    1.0f * ScaleFactor(), // initial_size
-                    4.0f * ScaleFactor(), // final_size
+                    1.0f * VisibleRadius(), // initial_size
+                    4.0f * VisibleRadius(), // final_size
                     5.0f,
                     time);
             ASSERT1(soul != NULL);
@@ -919,7 +919,7 @@ void PlayerShip::Die (
                     Translation(),
                     Velocity(),
                     0.0f, // initial_size
-                    10.0f * ScaleFactor(),
+                    10.0f * VisibleRadius(),
                     0.5f,
                     time);
             shockwave->InitialColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);

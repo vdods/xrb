@@ -189,6 +189,7 @@ TODO:
 - enable load-time level-of-detail mode where the sprite image files that come with the game
   are all large, and will be downsized at load-time if not such a high resolution is necessary.
 - change Vector's | operator into *, because this will allow Sqr(vector).  Change & to % (?)
+  NOTE: * is already being used for component-wise multiplication.
 - change WidgetBackground use to use Resource<> instead of raw pointers, so that deletion
   doesn't have to be taken care of.  do this in general for stuff (especially in GUI skin stuff).
   use config files for WidgetSkins.

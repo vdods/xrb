@@ -83,7 +83,7 @@ Master::Master (Screen *const screen)
     m_screen->SetWidgetSkinWidgetBackground(
         WidgetSkin::BUTTON_PRESSED_BACKGROUND,
         new WidgetBackgroundTextured3Way(
-            GlTexture::Load("resources/button_left_yellow.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
+            GlTexture::Load("resources/button_left_green.png"/*, GlTexture::USES_SEPARATE_ATLAS*/), // this one is square
             GlTexture::Load("resources/button_center.png", GlTexture::USES_SEPARATE_ATLAS),
             GlTexture::Load("resources/button_right.png", GlTexture::USES_SEPARATE_ATLAS)));
 

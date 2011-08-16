@@ -20,8 +20,8 @@ using namespace Xrb;
 
 namespace Dis {
 
-Float const Asteroid::ms_scale_factor_minimum = 5.0f;
-Float const Asteroid::ms_scale_factor_maximum = 60.0f;
+Float const Asteroid::ms_radius_minimum = 5.0f;
+Float const Asteroid::ms_radius_maximum = 60.0f;
 
 Uint8 const Asteroid::ms_mineral_distribution_lookup_table
     [Asteroid::DISTRIBUTION_LOOKUP_TABLE_COUNT]
@@ -56,7 +56,7 @@ Uint8 const Asteroid::ms_mineral_distribution_lookup_table
 
 Uint8 const Asteroid::ms_number_of_fragments_to_spawn = 5;
 Float const Asteroid::ms_minimum_breakup_mass = 40.0f;
-Float const Asteroid::ms_decay_scale_factor = 5.0f;
+Float const Asteroid::ms_decay_radius = 5.0f;
 Float const Asteroid::ms_decay_delay = 10.0f;
 Float const Asteroid::ms_decay_time = 2.0f;
 Float const Asteroid::ms_health_factor = 0.2f;
@@ -86,7 +86,7 @@ void Asteroid::Think (Float const time, Float const frame_dt)
     // high, and we don't want to change it so all asteroids Think every frame.
 
     // if this asteroid shouldn't decay, then defer the think for a long time
-    if (!m_is_a_secondary_asteroid || ScaleFactor() > ms_decay_scale_factor)
+    if (!m_is_a_secondary_asteroid || VisibleRadius() > ms_decay_radius)
     {
         SetNextTimeToThink(time + 10000.0f);
         return;
@@ -153,7 +153,7 @@ void Asteroid::Die (
         Translation(),
         Velocity(),
         0.0f, // initial_size
-        3.0f * ScaleFactor(),
+        3.0f * VisibleRadius(),
         0.4f,
         time);
 
@@ -186,7 +186,7 @@ void Asteroid::Die (
             ASSERT1(CurrentHealth() <= 0.0f);
             ASSERT1(MaxHealth() > 0.0f);
             Float health_ratio = CurrentHealth() / MaxHealth();
-            Float explosion_speed = ScaleFactor() * health_ratio * health_ratio / Mass();
+            Float explosion_speed = VisibleRadius() * health_ratio * health_ratio / Mass();
             if (explosion_speed > 5.0f)
                 explosion_speed = 5.0f;
             FloatVector2 velocity =
@@ -274,8 +274,8 @@ void Asteroid::Die (
             "resources/option_powerup.anim",
             time,
             Translation(), // spawn at the center of the asteroid
-            Powerup::ms_scale_factor,
-            Sqr(Powerup::ms_scale_factor),
+            Powerup::ms_radius,
+            Sqr(Powerup::ms_radius),
             Velocity(),
             IT_POWERUP_OPTION);
         GetWorld()->ResetSpawnOptionPowerupFromAsteroid();

@@ -21,7 +21,7 @@ using namespace Xrb;
 
 namespace Dis {
 
-void FiniteLifetimeEffect::Think (Float const time, Float const frame_dt)
+void FiniteLifetimeEffect::Think (Float time, Float frame_dt)
 {
     ASSERT1(m_time_to_live > 0.0f);
 
@@ -36,7 +36,7 @@ void FiniteLifetimeEffect::Think (Float const time, Float const frame_dt)
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void Explosion::Think (Float const time, Float const frame_dt)
+void Explosion::Think (Float time, Float frame_dt)
 {
     ASSERT1(m_scale_power > 0.0f);
     Float interpolation_parameter = RunInReverse() ? (1.0f - LifetimeRatio(time)) : LifetimeRatio(time);
@@ -82,12 +82,12 @@ void DamageExplosion::Think (Float time, Float frame_dt)
 }
 
 void DamageExplosion::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(collider != NULL);
 
@@ -102,7 +102,7 @@ void DamageExplosion::Collide (
 
     // center_to_center points towards the collider
     FloatVector2 center_to_center = collider->Translation() - Translation();
-    Float distance = center_to_center.Length() - collider->ScaleFactor();
+    Float distance = center_to_center.Length() - collider->PhysicalRadius();
     if (distance < 0.0f)
         distance = 0.0f;
     Float distance_factor;
@@ -131,12 +131,12 @@ void DamageExplosion::Collide (
 // ///////////////////////////////////////////////////////////////////////////
 
 void EMPExplosion::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(collider != NULL);
     if (collider->GetCollisionType() == Engine2::Circle::CT_NONSOLID_COLLISION)
@@ -158,7 +158,7 @@ void EMPExplosion::HandleNewOwnerObject ()
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void Fireball::Think (Float const time, Float const frame_dt)
+void Fireball::Think (Float time, Float frame_dt)
 {
     // the power decays as time goes on
     m_current_damage -= m_potential_damage * frame_dt / TimeToLive();
@@ -172,12 +172,12 @@ void Fireball::Think (Float const time, Float const frame_dt)
 }
 
 void Fireball::Collide (
-    Entity *const collider,
+    Entity *collider,
     FloatVector2 const &collision_location,
     FloatVector2 const &collision_normal,
-    Float const collision_force,
-    Float const time,
-    Float const frame_dt)
+    Float collision_force,
+    Float time,
+    Float frame_dt)
 {
     ASSERT1(collider != NULL);
 
@@ -279,13 +279,13 @@ void ShieldEffect::SetIntensity (Float intensity)
     OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, s_opacity*intensity);
 }
 
-void ShieldEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor)
+void ShieldEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_radius)
 {
     static Float const s_shield_size_ratio = 1.666f;
 
     RemoveFromWorld();
     SetTranslation(ship_translation);
-    SetScaleFactor(s_shield_size_ratio * ship_scale_factor);
+    SetScaleFactor(s_shield_size_ratio * ship_radius);
     AddBackIntoWorld();
 }
 
@@ -293,13 +293,13 @@ void ShieldEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_
 //
 // ///////////////////////////////////////////////////////////////////////////
 
-void LightningEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_scale_factor)
+void LightningEffect::SnapToShip (FloatVector2 const &ship_translation, Float ship_radius)
 {
     static Float const s_lightning_size_ratio = 1.2f;
 
     RemoveFromWorld();
     SetTranslation(ship_translation);
-    SetScaleFactor(s_lightning_size_ratio * ship_scale_factor);
+    SetScaleFactor(s_lightning_size_ratio * ship_radius);
     AddBackIntoWorld();
 }
 

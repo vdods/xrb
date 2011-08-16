@@ -100,17 +100,17 @@ std::string const &Ship::ShipSpritePath (
     return s_ship_sprite_path[ship_index][enemy_level];
 }
 
-Float Ship::ShipScaleFactor (EntityType const ship_type, Uint8 const enemy_level)
+Float Ship::ShipRadius (EntityType const ship_type, Uint8 const enemy_level)
 {
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
     switch (ship_type)
     {
-        case ET_SOLITARY:   return Solitary::ms_scale_factor;
-        case ET_INTERLOPER: return Interloper::ms_scale_factor[enemy_level];
-        case ET_SHADE:      return Shade::ms_scale_factor[enemy_level];
-        case ET_REVULSION:  return Revulsion::ms_scale_factor[enemy_level];
-        case ET_DEVOURMENT: return Devourment::ms_scale_factor[enemy_level];
-        case ET_DEMI:       return Demi::ms_scale_factor[enemy_level];
+        case ET_SOLITARY:   return Solitary::ms_ship_radius;
+        case ET_INTERLOPER: return Interloper::ms_ship_radius[enemy_level];
+        case ET_SHADE:      return Shade::ms_ship_radius[enemy_level];
+        case ET_REVULSION:  return Revulsion::ms_ship_radius[enemy_level];
+        case ET_DEVOURMENT: return Devourment::ms_ship_radius[enemy_level];
+        case ET_DEMI:       return Demi::ms_ship_radius[enemy_level];
         default: ASSERT1(false && "Invalid enemy ship type"); return 1.0f;
     }
 }
@@ -124,7 +124,7 @@ void Ship::SetReticleCoordinates (FloatVector2 const &reticle_coordinates)
 
 void Ship::HandleNewOwnerObject ()
 {
-    SetScaleFactor(ShipScaleFactor());
+    SetScaleFactor(ShipRadius());
     SetMass(ShipBaselineMass());
 }
 
@@ -147,7 +147,7 @@ void Ship::Think (Float time, Float frame_dt)
         else if (!m_lightning_effect->IsInWorld())
             m_lightning_effect->AddBackIntoWorld();
         // TODO: real entity attachment -- temp hack
-        m_lightning_effect->SnapToShip(Translation() + frame_dt * Velocity(), ScaleFactor());
+        m_lightning_effect->SnapToShip(Translation() + frame_dt * Velocity(), VisibleRadius());
     }
     else
     {
@@ -179,8 +179,8 @@ void Ship::Die (
                 time,
                 Translation(),
                 Velocity(),
-                1.0f * ScaleFactor(), // initial_size
-                2.0f * ScaleFactor(), // final_size
+                1.0f * VisibleRadius(), // initial_size
+                2.0f * VisibleRadius(), // final_size
                 0.5f,
                 time);
         ASSERT1(soul != NULL);
@@ -197,7 +197,7 @@ void Ship::Die (
                 Translation(),
                 Velocity(),
                 0.0f, // initial_size
-                8.0f * ScaleFactor(),
+                8.0f * VisibleRadius(),
                 0.25f,
                 time);
         shockwave->InitialColorMask() = Color(1.0f, 1.0f, 1.0f, 0.3f);

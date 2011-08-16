@@ -782,7 +782,7 @@ void World::ResetSpawnOptionPowerupFromAsteroid ()
     static Float const s_expected_powerups_from_maximum_asteroid_area = 0.16f;
     m_destroyed_asteroid_area_left_before_spawning_option_powerup =
         Math::RandomFloat(0.0f, 2.0f) * // between 0 and 2 so it
-        M_PI * Sqr(Asteroid::ms_scale_factor_maximum) /
+        M_PI * Sqr(Asteroid::ms_radius_maximum) /
         s_expected_powerups_from_maximum_asteroid_area;
 }
 
@@ -1479,7 +1479,7 @@ Asteroid *World::SpawnAsteroidOutOfView ()
         // this causes the randomness to favor smaller asteroids
         Float scale_seed = Math::RandomFloat(0.0f, 1.0f);
         scale_seed = Math::Pow(scale_seed, 3.0f);
-        scale_factor = Math::LinearlyInterpolate(Asteroid::ms_scale_factor_minimum, Asteroid::ms_scale_factor_maximum, 0.0f, 1.0f, scale_seed);
+        scale_factor = Math::LinearlyInterpolate(Asteroid::ms_radius_minimum, Asteroid::ms_radius_maximum, 0.0f, 1.0f, scale_seed);
     }
     while (!IsAreaNotVisibleAndNotOverlappingAnyEntities(translation, scale_factor));
 
@@ -1512,7 +1512,7 @@ EnemyShip *World::SpawnEnemyShipOutOfView (
 
     Float object_layer_side_length = MainObjectLayer()->SideLength();
     FloatVector2 translation;
-    Float personal_space_radius = Ship::ShipScaleFactor(enemy_ship_type, enemy_level);
+    Float personal_space_radius = Ship::ShipRadius(enemy_ship_type, enemy_level);
 
     Uint32 placement_attempts = 0;
     do

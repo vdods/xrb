@@ -30,7 +30,7 @@ namespace Dis
 Float const Shade::ms_max_health[ENEMY_LEVEL_COUNT] = { 20.0f, 80.0f, 320.0f, 1280.0f };
 Float const Shade::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 8000.0f, 9000.0f, 11000.0f, 14000.0f };
 Float const Shade::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 720.0f, 720.0f, 720.0f, 720.0f };
-Float const Shade::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15.0f };
+Float const Shade::ms_ship_radius[ENEMY_LEVEL_COUNT] = { 9.0f, 11.0f, 13.0f, 15.0f };
 Float const Shade::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 140.0f, 140.0f, 140.0f, 140.0f };
 Float const Shade::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 1.0f, 2.0f, 4.0f };
 Float const Shade::ms_alarm_distance[ENEMY_LEVEL_COUNT] = { 50.0f, 75.0f, 100.0f, 125.0f };
@@ -108,7 +108,7 @@ FloatVector2 Shade::MuzzleLocation (Weapon const *weapon) const
     ASSERT1(weapon != NULL);
     FloatVector2 reticle_direction(GetObjectLayer()->AdjustedDifference(ReticleCoordinates(), Translation()));
     reticle_direction.Normalize();
-    return Translation() + ScaleFactor() * reticle_direction;
+    return Translation() + VisibleRadius() * reticle_direction;
 }
 
 FloatVector2 Shade::MuzzleDirection (Weapon const *weapon) const
@@ -397,7 +397,7 @@ void Shade::Teleport (Float time, Float frame_dt)
                     Translation(),
                     Velocity(),
                     Angle(),
-                    ScaleFactor(),
+                    VisibleRadius(),
                     0.1f, // 0 isn't allowed
                     0.25f,
                     time,
@@ -417,8 +417,8 @@ void Shade::Teleport (Float time, Float frame_dt)
                     time,
                     Translation(),
                     Velocity(),
-                    ScaleFactor(),        // initial_size
-                    4.0f * ScaleFactor(), // final_size
+                    VisibleRadius(),        // initial_size
+                    4.0f * VisibleRadius(), // final_size
                     ms_teleportation_duration[EnemyLevel()],
                     time);
             shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
@@ -441,8 +441,8 @@ void Shade::Teleport (Float time, Float frame_dt)
                     time,
                     teleport_destination,
                     target_velocity,
-                    ScaleFactor(),        // initial_size
-                    4.0f * ScaleFactor(), // final_size
+                    VisibleRadius(),        // initial_size
+                    4.0f * VisibleRadius(), // final_size
                     ms_teleportation_duration[EnemyLevel()],
                     time);
             shockwave->InitialColorMask() = Color(0.3f, 0.0f, 0.45f, 1.0f);
@@ -452,7 +452,7 @@ void Shade::Teleport (Float time, Float frame_dt)
         }
     }
 
-    m_saved_scale_factor = ScaleFactor(); // save the scale factor to recover later
+    m_saved_radius = VisibleRadius(); // save the scale factor to recover later
     SetTranslation(teleport_destination);
     SetVelocity(target_velocity);
     SetScaleFactor(0.1f); // shrink to a point to grow to normal size at teleport destination.
@@ -468,7 +468,7 @@ void Shade::RecoverAfterTeleporting (Float time, Float frame_dt)
     {
         m_think_state = m_saved_state;
         m_saved_state = NULL;
-        SetScaleFactor(m_saved_scale_factor);
+        SetScaleFactor(m_saved_radius);
     }
     else
     {
@@ -480,7 +480,7 @@ void Shade::RecoverAfterTeleporting (Float time, Float frame_dt)
         ASSERT1(lifetime_ratio <= 1.0f);
         bool run_in_reverse = true;
         Float interpolation_parameter = run_in_reverse ? (1.0f - lifetime_ratio) : lifetime_ratio;
-        SetScaleFactor((initial_size - m_saved_scale_factor) * Math::Pow(interpolation_parameter, scale_power) + m_saved_scale_factor + 0.1f);
+        SetScaleFactor((initial_size - m_saved_radius) * Math::Pow(interpolation_parameter, scale_power) + m_saved_radius + 0.1f);
     }
 }
 

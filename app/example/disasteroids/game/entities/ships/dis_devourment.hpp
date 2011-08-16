@@ -30,7 +30,7 @@ public:
     static Float const ms_engine_thrust[ENEMY_LEVEL_COUNT];
     static Float const ms_wander_speed[ENEMY_LEVEL_COUNT];
     static Float const ms_max_angular_velocity[ENEMY_LEVEL_COUNT];
-    static Float const ms_scale_factor[ENEMY_LEVEL_COUNT];
+    static Float const ms_ship_radius[ENEMY_LEVEL_COUNT];
     static Float const ms_baseline_mass[ENEMY_LEVEL_COUNT];
     static Float const ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT];
     static Float const ms_mouth_damage_rate[ENEMY_LEVEL_COUNT];
@@ -71,9 +71,9 @@ public:
     {
         return ms_max_angular_velocity[EnemyLevel()];
     }
-    virtual Float ShipScaleFactor () const
+    virtual Float ShipRadius () const
     {
-        return ms_scale_factor[EnemyLevel()];
+        return ms_ship_radius[EnemyLevel()];
     }
     virtual Float ShipBaselineMass () const
     {

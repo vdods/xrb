@@ -28,8 +28,8 @@ public:
         MAX_MINERAL_LEVEL = 3
     };
 
-    static Float const ms_scale_factor_minimum;
-    static Float const ms_scale_factor_maximum;
+    static Float const ms_radius_minimum;
+    static Float const ms_radius_maximum;
 
     Asteroid (Float mass, Float mineral_content, bool is_a_secondary_asteroid);
     virtual ~Asteroid () { }
@@ -75,7 +75,7 @@ private:
     static Uint8 const ms_mineral_distribution_lookup_table[DISTRIBUTION_LOOKUP_TABLE_COUNT][DISTRIBUTION_LOOKUP_TABLE_SIZE];
     static Uint8 const ms_number_of_fragments_to_spawn;
     static Float const ms_minimum_breakup_mass;
-    static Float const ms_decay_scale_factor;
+    static Float const ms_decay_radius;
     static Float const ms_decay_delay;
     static Float const ms_decay_time;
     static Float const ms_health_factor;

@@ -42,7 +42,7 @@ public:
     static Float const ms_defense_boost_duration;
     static Float const ms_time_stretch_duration;
     static Float const ms_max_angular_velocity;
-    static Float const ms_scale_factor;
+    static Float const ms_ship_radius;
     static Float const ms_baseline_mass;
     static Float const ms_attack_boost_damage_factor;
     static Float const ms_attack_boost_fire_rate_factor;
@@ -163,7 +163,7 @@ public:
     // ///////////////////////////////////////////////////////////////////////
 
     virtual Float MaxAngularVelocity () const { return ms_max_angular_velocity; }
-    virtual Float ShipScaleFactor () const { return ms_scale_factor; }
+    virtual Float ShipRadius () const { return ms_ship_radius; }
     virtual Float ShipBaselineMass () const { return ms_baseline_mass; }
     virtual Float AttackBoostDamageFactor () const { return ms_attack_boost_damage_factor; }
     virtual Float AttackBoostFireRateFactor () const { return ms_attack_boost_fire_rate_factor; }

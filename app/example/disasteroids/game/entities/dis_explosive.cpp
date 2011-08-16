@@ -76,7 +76,7 @@ void Explosive::Die (
             Translation(),
             Velocity(),
             0.0f, // initial_size
-            ScaleFactor(),
+            VisibleRadius(),
             0.2f,
             time);
 

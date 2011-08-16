@@ -181,6 +181,11 @@ void Object::WriteClassSpecific (Serializer &serializer) const
     serializer.WriteAggregate<Color>(m_color_mask);
 }
 
+void Object::CalculateRadius (QuadTreeType quad_tree_type) const
+{
+    m_radius[quad_tree_type] = ScaleFactor();
+}
+
 void Object::CloneProperties (Object const &object)
 {
     ASSERT1(GetObjectLayer() == NULL && "can't CloneProperties into an Object that is added to the world already");

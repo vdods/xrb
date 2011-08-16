@@ -33,7 +33,7 @@ Float const Devourment::ms_max_health[ENEMY_LEVEL_COUNT] = { 1000.0f, 2500.0f, 6
 Float const Devourment::ms_engine_thrust[ENEMY_LEVEL_COUNT] = { 20000.0f, 25000.0f, 30000.0f, 35000.0f };
 Float const Devourment::ms_wander_speed[ENEMY_LEVEL_COUNT] = { 70.0f, 85.0f, 110.0f, 125.0f };
 Float const Devourment::ms_max_angular_velocity[ENEMY_LEVEL_COUNT] = { 90.0f, 90.0f, 90.0f, 90.0f };
-Float const Devourment::ms_scale_factor[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
+Float const Devourment::ms_ship_radius[ENEMY_LEVEL_COUNT] = { 40.0f, 50.0f, 60.0f, 70.0f };
 Float const Devourment::ms_baseline_mass[ENEMY_LEVEL_COUNT] = { 1600.0f, 2000.0f, 2400.0f, 2800.0f };
 Float const Devourment::ms_damage_dissipation_rate[ENEMY_LEVEL_COUNT] = { 0.5f, 0.7f, 1.2f, 2.5f };
 Float const Devourment::ms_mouth_damage_rate[ENEMY_LEVEL_COUNT] = { 10.0f, 25.0f, 50.0f, 80.0f };
@@ -45,7 +45,7 @@ Float const Devourment::ms_max_spawn_mineral_mass[ENEMY_LEVEL_COUNT] = { 100.0f,
 Float const Devourment::ms_max_single_mineral_mass[ENEMY_LEVEL_COUNT] = { 30.0f, 40.0f, 50.0f, 60.0f };
 Float const Devourment::ms_health_powerup_amount_to_spawn[ENEMY_LEVEL_COUNT] = { 8.0f, 10.0f, 12.0f, 15.0f };
 
-Devourment::Devourment (Uint8 const enemy_level)
+Devourment::Devourment (Uint8 enemy_level)
     :
     EnemyShip(enemy_level, ms_max_health[enemy_level], ET_DEVOURMENT)
 {
@@ -112,7 +112,7 @@ void Devourment::Think (Float time, Float frame_dt)
                 GetObjectLayer(),
                 time,
                 Translation(),
-                0.72f * ScaleFactor(),
+                0.72f * VisibleRadius(),
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
                 -ms_mouth_damage_rate[EnemyLevel()],
                 Mortal::D_GRINDING,
@@ -179,7 +179,7 @@ void Devourment::Think (Float time, Float frame_dt)
 
     // set the translation and velocity of the mouth health trigger
     ASSERT1(m_mouth_health_trigger.IsValid());
-    m_mouth_health_trigger->SetTranslation(Translation() + 0.48f * ScaleFactor() * Math::UnitVector(Angle()));
+    m_mouth_health_trigger->SetTranslation(Translation() + 0.48f * VisibleRadius() * Math::UnitVector(Angle()));
     m_mouth_health_trigger->SetAngle(Angle());
     m_mouth_health_trigger->SetVelocity(Velocity());
 }
@@ -260,14 +260,14 @@ void Devourment::Die (
                     Min(ms_max_single_mineral_mass[EnemyLevel()], m_mineral_inventory[mineral_index]));
             Float scale_factor = Math::Sqrt(mass);
             Float velocity_angle = Math::RandomAngle();
-            Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+            Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * VisibleRadius()) / (0.5f * VisibleRadius());
             FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
             SpawnPowerup(
                 GetObjectLayer(),
                 Item::MineralSpritePath(mineral_index),
                 time,
-                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -293,7 +293,7 @@ void Devourment::Die (
         Float mass = health_powerup_amount * s_health_powerup_coefficient;
         Float scale_factor = Math::Sqrt(mass);
         Float velocity_angle = Math::RandomAngle();
-        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * ScaleFactor()) / (0.5f * ScaleFactor());
+        Float velocity_ratio = Math::RandomFloat(scale_factor, 0.5f * VisibleRadius()) / (0.5f * VisibleRadius());
         FloatVector2 velocity = Velocity() + s_powerup_ejection_speed * velocity_ratio * Math::UnitVector(velocity_angle);
 
         Powerup *health_powerup =
@@ -301,7 +301,7 @@ void Devourment::Die (
                 GetObjectLayer(),
                 "resources/health_powerup.anim",
                 time,
-                Translation() + 0.5f * ScaleFactor() * velocity_ratio * Math::UnitVector(velocity_angle),
+                Translation() + 0.5f * VisibleRadius() * velocity_ratio * Math::UnitVector(velocity_angle),
                 scale_factor,
                 mass,
                 velocity,
@@ -312,7 +312,7 @@ void Devourment::Die (
     }
 }
 
-bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float const frame_dt)
+bool Devourment::TakePowerup (Powerup *powerup, Float time, Float frame_dt)
 {
     ASSERT1(powerup != NULL);
 
@@ -348,7 +348,7 @@ bool Devourment::TakePowerup (Powerup *const powerup, Float const time, Float co
     return true;
 }
 
-void Devourment::SetTarget (Mortal *const target)
+void Devourment::SetTarget (Mortal *target)
 {
     if (target == NULL)
         m_target.Release();
@@ -359,7 +359,7 @@ void Devourment::SetTarget (Mortal *const target)
     }
 }
 
-void Devourment::PickWanderDirection (Float const time, Float const frame_dt)
+void Devourment::PickWanderDirection (Float time, Float frame_dt)
 {
     // update the next time to pick a wander direction
     m_next_whatever_time = time + 20.0f;
@@ -369,7 +369,7 @@ void Devourment::PickWanderDirection (Float const time, Float const frame_dt)
     m_think_state = THINK_STATE(Wander);
 }
 
-void Devourment::Wander (Float const time, Float const frame_dt)
+void Devourment::Wander (Float time, Float frame_dt)
 {
     m_target = ScanAreaForTargets();
 
@@ -391,7 +391,7 @@ void Devourment::Wander (Float const time, Float const frame_dt)
     }
 }
 
-void Devourment::Pursue (Float const time, Float const frame_dt)
+void Devourment::Pursue (Float time, Float frame_dt)
 {
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
@@ -413,10 +413,10 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     Float const give_up_distance =
         ms_mouth_tractor_range[EnemyLevel()] +
         0.5f * ms_mouth_tractor_beam_radius[EnemyLevel()] +
-        ScaleFactor();
+        PhysicalRadius();
 
     Float target_distance = position_delta.Length();
-    if (target_distance <= s_consume_distance + ScaleFactor() + m_target->ScaleFactor())
+    if (target_distance <= s_consume_distance + PhysicalRadius() + m_target->PhysicalRadius())
     {
         m_think_state = THINK_STATE(Consume);
         m_next_whatever_time = time + 3.0f;
@@ -479,7 +479,7 @@ void Devourment::Pursue (Float const time, Float const frame_dt)
     }
 }
 
-void Devourment::Consume (Float const time, Float const frame_dt)
+void Devourment::Consume (Float time, Float frame_dt)
 {
     if (time >= m_next_whatever_time)
         m_target = ScanAreaForTargets();
@@ -499,8 +499,8 @@ void Devourment::Consume (Float const time, Float const frame_dt)
 
     // if we're no longer close enough to the target, transition to Pursue
     Float target_distance = GetObjectLayer()->AdjustedDistance(m_target->Translation(), Translation());
-    Float const pursue_distance = 40.0f + ScaleFactor();
-    if (target_distance > pursue_distance + m_target->ScaleFactor())
+    Float const pursue_distance = 40.0f + PhysicalRadius();
+    if (target_distance > pursue_distance + m_target->PhysicalRadius())
     {
         m_think_state = THINK_STATE(Pursue);
         m_next_whatever_time = time + 3.0f;
@@ -516,7 +516,7 @@ void Devourment::Consume (Float const time, Float const frame_dt)
     }
 }
 
-void Devourment::MatchVelocity (FloatVector2 const &velocity, Float const frame_dt)
+void Devourment::MatchVelocity (FloatVector2 const &velocity, Float frame_dt)
 {
     // calculate what thrust is required to match the desired velocity
     FloatVector2 velocity_differential =
@@ -539,9 +539,7 @@ EntityReference<Entity> Devourment::ScanAreaForTargets ()
 
     static Float const s_optimal_target_mass = 400.0f;
 
-    Float scan_radius =
-        ms_mouth_tractor_range[EnemyLevel()] +
-        ScaleFactor();
+    Float scan_radius = ms_mouth_tractor_range[EnemyLevel()] + PhysicalRadius();
 
     // scan area for targets
     Engine2::Circle::AreaTraceList area_trace_list;
