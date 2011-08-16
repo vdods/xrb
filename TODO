@@ -95,8 +95,6 @@ DISASTEROIDS:
   have it project a small red laser which grows a little to indicate
   the charge, then fire with a blast.
 - make the gauss gun fire through stuff so you can damage multiple things if they line up?
-- configure a single button that, when held down sucks everything nearby in using
-  a cool spiraling effect, and then when released, fires the EMP core.
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak

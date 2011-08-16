@@ -36,6 +36,8 @@ public:
 
     static Float const ms_difficulty_protection_factor[DL_COUNT];
     static Float const ms_max_stoke;
+    static Float const ms_emp_disable_time_factor;
+    static Float const ms_emp_blast_radius;
     static Float const ms_attack_boost_duration;
     static Float const ms_defense_boost_duration;
     static Float const ms_time_stretch_duration;

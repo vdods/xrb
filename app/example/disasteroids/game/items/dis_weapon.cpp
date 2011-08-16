@@ -87,12 +87,6 @@ Float const MissileLauncher::ms_missile_health[UPGRADE_LEVEL_COUNT] = { 15.0f, 1
 Float const MissileLauncher::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 2.0f, 2.5f, 3.0f, 4.0f };
 Uint32 const MissileLauncher::ms_max_active_missile_count[UPGRADE_LEVEL_COUNT] = { 3, 4, 6, 8 };
 
-// EMPCore properties
-Float const EMPCore::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 60.0f, 80.0f, 130.0f, 200.0f };
-Float const EMPCore::ms_emp_core_disable_time_factor[UPGRADE_LEVEL_COUNT] = { 30.0f, 30.0f, 30.0f, 30.0f };
-Float const EMPCore::ms_emp_core_blast_radius[UPGRADE_LEVEL_COUNT] = { 225.0f, 250.0f, 300.0f, 375.0f };
-Float const EMPCore::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.0333f, 0.0333f, 0.0333f, 0.0333f };
-
 // Tractor properties
 Float const Tractor::ms_range[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
 Float const Tractor::ms_max_power_output_rate[UPGRADE_LEVEL_COUNT] = { 30.0f, 45.0f, 65.0f, 100.0f };
@@ -919,62 +913,6 @@ bool MissileLauncher::Activate (Float power, bool attack_boost_is_enabled, bool 
 
     // the weapon did not fire
     return false;
-}
-
-// ///////////////////////////////////////////////////////////////////////////
-//
-// ///////////////////////////////////////////////////////////////////////////
-
-Float EMPCore::PowerToBeUsedBasedOnInputs (bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt) const
-{
-    // can't fire faster that the weapon's cycle time
-    Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
-    Float fire_rate = ms_fire_rate[UpgradeLevel()] * fire_rate_factor;
-    ASSERT1(fire_rate > 0.0f);
-    if (time < m_time_last_fired + 1.0f / fire_rate)
-        return 0.0f;
-
-    // if the primary input is on at all, return the full primary power
-    return (PrimaryInput() > 0.0f) ? ms_required_primary_power[UpgradeLevel()] / fire_rate_factor : 0.0f;
-}
-
-bool EMPCore::Activate (Float power, bool attack_boost_is_enabled, bool defense_boost_is_enabled, Float time, Float frame_dt)
-{
-    Float fire_rate_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostFireRateFactor() : 1.0f;
-    ASSERT1(power <= ms_required_primary_power[UpgradeLevel()] / fire_rate_factor);
-
-    // if not firing, return false
-    if (PrimaryInput() == 0.0f)
-    {
-        ASSERT1(power == 0.0f);
-        return false;
-    }
-
-    // can't fire primary if not enough power was supplied
-    if (power < ms_required_primary_power[UpgradeLevel()])
-        return false;
-
-    // fire the weapon -- spawn an EMPExplosion
-    ASSERT1(OwnerShip()->GetWorld() != NULL);
-    ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
-
-    SpawnEMPExplosion(
-        OwnerShip()->GetObjectLayer(),
-        time,
-        OwnerShip()->Translation(),
-        OwnerShip()->Velocity(),
-        ms_emp_core_disable_time_factor[UpgradeLevel()],
-        0.0f, // initial_size
-        ms_emp_core_blast_radius[UpgradeLevel()],
-        1.0f,
-        time,
-        OwnerShip()->GetReference());
-
-    // update the last time fired
-    m_time_last_fired = time;
-
-    // the weapon fired successfully
-    return true;
 }
 
 // ///////////////////////////////////////////////////////////////////////////

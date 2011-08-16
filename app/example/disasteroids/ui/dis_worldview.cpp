@@ -362,11 +362,6 @@ void WorldView::HandleInput (Key::Code input)
         if (m_player_ship != NULL)
             m_player_ship->SetMainWeaponType(IT_WEAPON_MISSILE_LAUNCHER);
     }
-    else if (input == g_config.InputAction(INPUT__EQUIP_EMP_CORE))
-    {
-        if (m_player_ship != NULL)
-            m_player_ship->SetMainWeaponType(IT_WEAPON_EMP_CORE);
-    }
     else if (input == g_config.InputAction(INPUT__ACTIVATE_OPTION__EMP))
     {
         if (m_player_ship != NULL)

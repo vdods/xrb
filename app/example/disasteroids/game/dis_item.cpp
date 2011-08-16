@@ -35,7 +35,6 @@ Item *Item::Create (ItemType const item_type, Uint8 const upgrade_level)
         case IT_WEAPON_GAUSS_GUN:             return new GaussGun(upgrade_level);
         case IT_WEAPON_GRENADE_LAUNCHER:      return new GrenadeLauncher(upgrade_level);
         case IT_WEAPON_MISSILE_LAUNCHER:      return new MissileLauncher(upgrade_level);
-        case IT_WEAPON_EMP_CORE:              return new EMPCore(upgrade_level);
         case IT_WEAPON_TRACTOR:               return new Tractor(upgrade_level);
         case IT_ENEMY_WEAPON_SLOW_BULLET_GUN: return new SlowBulletGun(upgrade_level);
         case IT_ENGINE:                       return new Engine(upgrade_level);
@@ -105,12 +104,6 @@ Uint32 Item::ItemPrice (
             { 114,  49,   0,   0},
             { 153,  91,  68,   0},
             { 163, 136, 120,  81},
-        },
-        { // IT_WEAPON_EMP_CORE
-            {  31,   0,   0,   0},
-            {  67,  59,   0,   0},
-            {  83,  85,  71,   0},
-            { 129,  97,  88, 101},
         },
         { // IT_WEAPON_TRACTOR
             {  10,   0,   0,   0},

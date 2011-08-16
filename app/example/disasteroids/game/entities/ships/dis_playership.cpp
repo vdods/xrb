@@ -29,6 +29,8 @@ namespace Dis {
 
 Float const PlayerShip::ms_difficulty_protection_factor[DL_COUNT] = { 3.0f, 2.333f, 1.666f, 1.0f };
 Float const PlayerShip::ms_max_stoke = 4.0f;
+Float const PlayerShip::ms_emp_disable_time_factor = 30.0f;
+Float const PlayerShip::ms_emp_blast_radius = 400.0f;
 Float const PlayerShip::ms_attack_boost_duration = 8.0f;
 Float const PlayerShip::ms_defense_boost_duration = 8.0f;
 Float const PlayerShip::ms_time_stretch_duration = 5.0f;
@@ -394,7 +396,6 @@ void PlayerShip::GiveAllItems ()
         AddItem(new GaussGun(upgrade_level));
         AddItem(new GrenadeLauncher(upgrade_level));
         AddItem(new MissileLauncher(upgrade_level));
-        AddItem(new EMPCore(upgrade_level));
         AddItem(new Tractor(upgrade_level));
         AddItem(new Engine(upgrade_level));
         AddItem(new Armor(upgrade_level));
@@ -567,9 +568,9 @@ void PlayerShip::ActivateOption (KeyInputAction option, Float current_time)
                     current_time,
                     Translation(),
                     Velocity(),
-                    EMPCore::ms_emp_core_disable_time_factor[3], // TODO: change to fixed value once EMPCore is gone.
+                    ms_emp_disable_time_factor,
                     0.0f, // initial_size
-                    EMPCore::ms_emp_core_blast_radius[3], // TODO: change to fixed value once EMPCore is gone.
+                    ms_emp_blast_radius,
                     1.0f,
                     current_time,
                     GetReference());
@@ -1249,7 +1250,7 @@ void PlayerShip::EjectPowerup (Item *ejectee, Float ejection_angle)
         item_type != IT_WEAPON_TRACTOR)
     {
         // the priority goes GaussGun, FlameThrower, MissileLauncher,
-        // Laser, GrenadeLauncher, PeaShooter, EMPCore
+        // Laser, GrenadeLauncher, PeaShooter
         static ItemType const s_weapon_priority[] =
         {
             IT_WEAPON_GAUSS_GUN,
@@ -1257,8 +1258,7 @@ void PlayerShip::EjectPowerup (Item *ejectee, Float ejection_angle)
             IT_WEAPON_MISSILE_LAUNCHER,
             IT_WEAPON_LASER,
             IT_WEAPON_GRENADE_LAUNCHER,
-            IT_WEAPON_PEA_SHOOTER,
-            IT_WEAPON_EMP_CORE
+            IT_WEAPON_PEA_SHOOTER
         };
         static Uint32 const s_weapon_priority_count = LENGTHOF(s_weapon_priority);
 
