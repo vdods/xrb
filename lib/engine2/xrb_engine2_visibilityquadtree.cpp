@@ -11,6 +11,7 @@
 #include "xrb_engine2_visibilityquadtree.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 
 #include "xrb_engine2_entity.hpp"
 #include "xrb_engine2_objectlayer.hpp"
@@ -155,10 +156,10 @@ Uint32 VisibilityQuadTree::Draw (
     draw_object_collector.m_draw_object.clear();
     CollectDrawObjects(draw_object_collector);
     // sort objects (back-to-front, and then by other criteria)
-    std::sort(
-        &draw_object_collector.m_draw_object[0],
-        &draw_object_collector.m_draw_object[0] + draw_object_collector.m_draw_object.size(),
-        DrawObjectOrder());
+//     std::sort(draw_object_collector.m_draw_object.begin(), draw_object_collector.m_draw_object.end(), DrawObjectOrder());
+    // NOTE: qsort is being used because std::sort was handing me bad pointers.
+    std::qsort(&draw_object_collector.m_draw_object[0], draw_object_collector.m_draw_object.size(), sizeof(DrawObject), DrawObject::Compare);
+
     // now draw them
     Object::DrawData draw_data(render_context, world_to_screen);
     for (DrawObjectVector::const_iterator it = draw_object_collector.m_draw_object.begin(),

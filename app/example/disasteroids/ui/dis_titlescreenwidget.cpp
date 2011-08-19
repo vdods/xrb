@@ -19,6 +19,7 @@
 #include "xrb_eventqueue.hpp"
 #include "xrb_label.hpp"
 #include "xrb_layout.hpp"
+#include "xrb_screen.hpp"
 #include "xrb_widgetbackground.hpp" // TEMP
 #include "xrb_widgetstack.hpp"
 
@@ -143,9 +144,11 @@ void TitleScreenWidget::ActivateControlsDialog ()
     // create the dialog and add a new ControlsPanel to it
     Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "controls dialog");
     m_controls_panel = new ControlsPanel(controls_dialog->DialogLayout());
-    controls_dialog->CenterOnWidget(controls_dialog->Parent());
     // initialize the ControlsPanel with the Config values
     m_controls_panel->ReadValuesFromConfig(g_config);
+    // make the dialog full-screen
+    ASSERT1(TopLevelParent() != NULL);
+    controls_dialog->MoveToAndResize(TopLevelParent()->ScreenRect());
     // connect up the dialog OK button to ControlsDialogReturnedOK
     SignalHandler::Connect1(
         controls_dialog->SenderDialogReturned(),

@@ -17,8 +17,7 @@
 
 #include "xrb_resourcelibrary.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 class GlTexture;
 class ResourceLoadParameters;
@@ -109,20 +108,25 @@ public:
     // this value will update as the sequence cycles
     Float SequenceStartTime () const { return m_sequence_start_time; }
 
-    void SetSequence (Resource<Sequence> const &sequence) { ASSERT1(sequence.IsValid()); m_sequence = sequence; m_data = 0; }
-    void SetType (AnimationType type) { ASSERT1(type >= 0 && type < AT_COUNT); m_type = type; m_data = 0; }
-    void SetDuration (Float duration) { ASSERT1(duration > 0.0f); m_duration = duration; m_data = 0; }
-    void SetSequenceStartTime (Float sequence_start_time) { m_sequence_start_time = sequence_start_time; m_data = 0; }
+    void SetSequence (Resource<Sequence> const &sequence) { ASSERT1(sequence.IsValid()); m_sequence = sequence; m_last_random_frame = 0; }
+    void SetType (AnimationType type) { ASSERT1(type >= 0 && type < AT_COUNT); m_type = type; m_last_random_frame = 0; }
+    void SetDuration (Float duration) { ASSERT1(duration > 0.0f); m_duration = duration; m_last_random_frame = 0; m_last_random_frame_time = 0.0f; }
+    void SetSequenceStartTime (Float sequence_start_time) { m_sequence_start_time = sequence_start_time; m_last_random_frame = 0; m_last_random_frame_time = 0.0f; }
 
     GlTexture const &Frame (Float current_time) const;
 
 private:
 
+    static Float CalculateCycleParameter (Float cycle_time, Float cycle_duration);
+
     Resource<Sequence> m_sequence;
     AnimationType m_type;
     Float m_duration;
+    // indicates the time the animation cycle starts (this is updated as the sequence cycles)
     mutable Float m_sequence_start_time;
-    mutable Uint32 m_data; // for use in the ONESHOT_* types and RANDOM
+    // for use in the RANDOM type
+    mutable Uint32 m_last_random_frame;
+    mutable Float m_last_random_frame_time;
 };
 
 } // end of namespace Xrb

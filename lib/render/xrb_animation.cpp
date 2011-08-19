@@ -18,8 +18,7 @@
 #include "xrb_parse_datafile_value.hpp"
 #include "xrb_util.hpp"
 
-namespace Xrb
-{
+namespace Xrb {
 
 using namespace Parse;
 
@@ -175,7 +174,8 @@ Animation::Animation (Resource<Animation::Sequence> const &sequence, Float seque
     :
     m_sequence(sequence),
     m_sequence_start_time(sequence_start_time),
-    m_data(0)
+    m_last_random_frame(0),
+    m_last_random_frame_time(0.0f)
 {
     if (m_sequence.IsValid())
     {
@@ -195,7 +195,8 @@ Animation::Animation (Animation const &animation)
     m_type(animation.m_type),
     m_duration(animation.m_duration),
     m_sequence_start_time(animation.m_sequence_start_time),
-    m_data(animation.m_data)
+    m_last_random_frame(animation.m_last_random_frame),
+    m_last_random_frame_time(animation.m_last_random_frame_time)
 { }
 
 GlTexture const &Animation::Frame (Float current_time) const
@@ -206,16 +207,21 @@ GlTexture const &Animation::Frame (Float current_time) const
     ASSERT1(current_time >= m_sequence_start_time && "you probably don't want to go backward in time");
 
     Float cycle_time = current_time - m_sequence_start_time;
-    Uint32 passed_cycle_count = Uint32(Math::Floor(cycle_time / m_duration));
-    Float cycle_parameter = (cycle_time - m_duration * passed_cycle_count) / m_duration;
-    ASSERT1(cycle_parameter >= 0.0f);
-    ASSERT1(cycle_parameter < 1.0f);
+    Float cycle_parameter = CalculateCycleParameter(cycle_time, m_duration);
+    bool passed_at_least_one_cycle = cycle_time >= m_duration;
     // don't let m_sequence_start_time lag too much behind, because eventually
-    // it could have floating point errors if cycle_time is too big.
-    if (passed_cycle_count > 0x1000) // semi-arbitrary constant which is about half of a 23 bit mantissa
+    // it will have floating point roundoff errors when cycle_time is too big.
+    if (cycle_time >= 4098.0f * m_duration)
     {
-        m_sequence_start_time += m_duration * (passed_cycle_count-1);
-        passed_cycle_count = 1;
+        // want passed_at_least_one_cycle to be preserved by this action
+        m_sequence_start_time += 4096.0f * m_duration;
+        Float new_cycle_time = current_time - m_sequence_start_time;
+        Float new_cycle_parameter = CalculateCycleParameter(new_cycle_time, m_duration);
+        bool new_passed_at_least_one_cycle = new_cycle_time >= m_duration;
+        // ensure the new values agree with the old (to within an acceptable error)
+        ASSERT1(new_cycle_parameter - cycle_parameter <  0.001f);
+        ASSERT1(new_cycle_parameter - cycle_parameter > -0.001f);
+        ASSERT1(passed_at_least_one_cycle == new_passed_at_least_one_cycle);
     }
 
     // this is the value which will be passed to Sequence::Frame and must
@@ -233,19 +239,19 @@ GlTexture const &Animation::Frame (Float current_time) const
             break;
 
         case ONESHOT_FORWARD:
-            if (passed_cycle_count > 0)
-                m_data = 1;
-            if (m_data != 0)
+            // if one cycle has completed, stay at the last frame
+            if (passed_at_least_one_cycle)
                 current_frame_index = m_sequence->Length()-1;
+            // otherwise progress forward through the sequence
             else
                 current_frame_index = Uint32(Math::Floor(cycle_parameter * m_sequence->Length()));
             break;
 
         case ONESHOT_BACKWARD:
-            if (passed_cycle_count > 0)
-                m_data = 1;
-            if (m_data != 0)
+            // if one cycle has completed, stay at the first frame
+            if (passed_at_least_one_cycle)
                 current_frame_index = 0;
+            // otherwise progress backward through the sequence
             else
                 current_frame_index = m_sequence->Length()-1 - Uint32(Math::Floor(cycle_parameter * m_sequence->Length()));
             break;
@@ -255,17 +261,24 @@ GlTexture const &Animation::Frame (Float current_time) const
                 current_frame_index = 0; // there is only ZUUL
             else
             {
+                // for the first half of the cycle, progress forward
                 if (cycle_parameter < 0.5f)
                     current_frame_index = Uint32(Math::Floor(2.0f * cycle_parameter * (m_sequence->Length()-2)));
+                // for the second half, progress backward
                 else
                     current_frame_index = m_sequence->Length()-1 - Uint32(Math::Floor(2.0f * (cycle_parameter-0.5f) * (m_sequence->Length()-2)));
             }
             break;
 
         case RANDOM:
-            if (passed_cycle_count > 0)
-                m_data = Math::RandomUint16(0, m_sequence->Length()-1);
-            current_frame_index = m_data;
+            // if the duration has expired, use a new random frame
+            if (current_time - m_last_random_frame_time >= m_duration)
+            {
+                m_last_random_frame = Math::RandomUint16(0, m_sequence->Length()-1);
+                m_last_random_frame_time = current_time - cycle_parameter*m_duration;
+                ASSERT1(current_time - m_last_random_frame_time <= m_duration + 0.001f); // plus a small tolerance
+            }
+            current_frame_index = m_last_random_frame;
             break;
 
         default:
@@ -275,6 +288,21 @@ GlTexture const &Animation::Frame (Float current_time) const
     }
 
     return m_sequence->Frame(current_frame_index);
+}
+
+Float Animation::CalculateCycleParameter (Float cycle_time, Float cycle_duration)
+{
+    ASSERT1(cycle_time >= 0.0f);
+    ASSERT1(cycle_duration > 0.0f);
+
+    Float cycle_parameter = Math::Mod(cycle_time, cycle_duration);
+    if (cycle_parameter < 0.0f)
+        cycle_parameter += cycle_duration;
+    cycle_parameter /= cycle_duration;
+    ASSERT1(cycle_parameter >= 0.0f);
+    ASSERT1(cycle_parameter <  1.0f);
+
+    return cycle_parameter;
 }
 
 } // end of namespace Xrb

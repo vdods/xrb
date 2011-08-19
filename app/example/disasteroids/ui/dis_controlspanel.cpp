@@ -35,7 +35,6 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
 
     Layout *left_side_layout = new Layout(VERTICAL, main_layout);
 
-    // possibly temporary -- to space out the left side nicely
     new SpacerWidget(left_side_layout);
 
     {
@@ -45,17 +44,19 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
 
         l = new Label("Horizontal Resolution:", video_controls_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout);
+        m_resolution_x_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout, "resolution x ValueEdit");
         m_resolution_x_edit->SetValidator(&m_greater_than_zero_validator);
+//         m_resolution_x_edit->SetIsMinWidthFixedToTextWidth(true);
+        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 6*m_resolution_x_edit->GetFont()->PixelHeight());
         m_resolution_x_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_x_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_x_edit->GetFont()->PixelHeight());
 
         l = new Label("Vertical Resolution:", video_controls_layout);
         l->SetAlignment(Dim::X, RIGHT);
-        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout);
+        m_resolution_y_edit = new ValueEdit<ScreenCoord>("%d", Util::TextToSint<ScreenCoord>, video_controls_layout, "resolution y ValueEdit");
         m_resolution_y_edit->SetValidator(&m_greater_than_zero_validator);
+//         m_resolution_y_edit->SetIsMinWidthFixedToTextWidth(true);
+        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 6*m_resolution_y_edit->GetFont()->PixelHeight());
         m_resolution_y_edit->SetSizePropertyEnabled(SizeProperties::MIN, Dim::X, true);
-        m_resolution_y_edit->SetSizeProperty(SizeProperties::MIN, Dim::X, 8*m_resolution_y_edit->GetFont()->PixelHeight());
 
         l = new Label("Fullscreen:", video_controls_layout);
         l->SetIsHeightFixedToTextHeight(true);
@@ -75,7 +76,6 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
     }
 */
 
-    // possibly temporary -- to space out the left side nicely
     new SpacerWidget(left_side_layout);
 
     {
@@ -102,23 +102,42 @@ ControlsPanel::ControlsPanel (ContainerWidget *parent)
         l->SetWordWrap(true);
     }
 
-    // possibly temporary -- to space out the left side nicely
     new SpacerWidget(left_side_layout);
 
-    Layout *right_side_layout = new Layout(VERTICAL, main_layout);
-
+    // input controls
     {
+        Layout *right_side_layout = new Layout(VERTICAL, main_layout);
+
+        new SpacerWidget(right_side_layout);
+
         l = new Label("Input Controls", right_side_layout);
         l->SetIsHeightFixedToTextHeight(true);
-        Layout *input_controls_layout = new Layout(ROW, 2, right_side_layout);
 
-        for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
+        Layout *two_columns_layout = new Layout(HORIZONTAL, right_side_layout);
+
+        // left column
+        Layout *input_controls_layout = new Layout(ROW, 2, two_columns_layout);
+        for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT / 2; ++i)
+//         for (Uint32 i = 0; i < KEY_INPUT_ACTION_COUNT; ++i)
         {
             l = new Label(Config::ms_input_action_label[i], input_controls_layout);
             l->SetAlignment(Dim::X, RIGHT);
             m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_controls_layout);
             m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
+            m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
         }
+        // right column
+        input_controls_layout = new Layout(ROW, 2, two_columns_layout);
+        for (Uint32 i = KEY_INPUT_ACTION_COUNT / 2; i < KEY_INPUT_ACTION_COUNT; ++i)
+        {
+            l = new Label(Config::ms_input_action_label[i], input_controls_layout);
+            l->SetAlignment(Dim::X, RIGHT);
+            m_input_action_button[i] = new KeySelectorButton(Config::ms_input_action_label[i], Key::INVALID, input_controls_layout);
+            m_input_action_button[i]->SetIsHeightFixedToTextHeight(true);
+            m_input_action_button[i]->SetIsMinWidthFixedToTextWidth(true);
+        }
+
+        new SpacerWidget(right_side_layout);
     }
 }
 

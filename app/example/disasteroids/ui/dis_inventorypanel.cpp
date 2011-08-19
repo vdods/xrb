@@ -416,9 +416,11 @@ void InventoryPanel::ActivateControlsDialog ()
     // create the dialog and add a new ControlsPanel to it
     Dialog *controls_dialog = new Dialog(Dialog::DT_OK_CANCEL, this, "controls dialog");
     m_controls_panel = new ControlsPanel(controls_dialog->DialogLayout());
-    controls_dialog->CenterOnWidget(controls_dialog->Parent());
     // initialize the ControlsPanel with the Config values
     m_controls_panel->ReadValuesFromConfig(g_config);
+    // make the dialog full-screen
+    ASSERT1(TopLevelParent() != NULL);
+    controls_dialog->MoveToAndResize(TopLevelParent()->ScreenRect());
     // connect up the dialog OK button to ControlsDialogReturned
     SignalHandler::Connect1(
         controls_dialog->SenderDialogReturned(),

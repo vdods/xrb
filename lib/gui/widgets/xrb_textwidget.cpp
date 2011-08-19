@@ -46,8 +46,11 @@ TextWidget::TextWidget (
 
 void TextWidget::SetText (std::string const &text)
 {
-    m_text = text;
-    UpdateMinAndMaxSizesFromText();
+    if (m_text != text)
+    {
+        m_text = text;
+        UpdateMinAndMaxSizesFromText();
+    }
 }
 
 void TextWidget::SetTextColor (Color const &color)

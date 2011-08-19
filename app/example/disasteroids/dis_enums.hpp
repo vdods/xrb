@@ -202,7 +202,7 @@ enum KeyString
 
 enum KeyInputAction
 {
-    INPUT__IN_GAME_INVENTORY_PANEL = 0,
+    INPUT__OPEN_INVENTORY = 0,
     INPUT__MOVE_FORWARD,
     INPUT__MOVE_LEFT,
     INPUT__MOVE_BACK,

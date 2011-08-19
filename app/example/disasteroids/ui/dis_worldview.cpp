@@ -326,7 +326,7 @@ void WorldView::HandleFrame ()
 
 void WorldView::HandleInput (Key::Code input)
 {
-    if (input == g_config.InputAction(INPUT__IN_GAME_INVENTORY_PANEL))
+    if (input == g_config.InputAction(INPUT__OPEN_INVENTORY))
     {
         // only allowed to use the inventory panel during normal gameplay
         if (m_state_machine.CurrentState() == &WorldView::StateNormalGameplay)

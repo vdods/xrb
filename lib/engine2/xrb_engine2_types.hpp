@@ -52,13 +52,16 @@ struct DrawObject
     {
         ASSERT1(m_object != NULL);
     }
+
+    // had to use C-style qsort because std::sort was handing me bad pointers.
+    static int Compare (void const *l, void const *r);
 }; // end of struct Engine2::DrawObject
 
-// used to put a partial order on objects of type DrawObject.
-struct DrawObjectOrder
-{
-    bool operator () (DrawObject const &l, DrawObject const &r);
-}; // end of struct Engine2::DrawObjectOrder
+// // used to put a partial order on objects of type DrawObject.
+// struct DrawObjectOrder
+// {
+//     bool operator () (DrawObject const &l, DrawObject const &r);
+// }; // end of struct Engine2::DrawObjectOrder
 
 typedef std::vector<DrawObject> DrawObjectVector;
 

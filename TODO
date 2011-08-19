@@ -34,6 +34,7 @@ DISASTEROIDS:
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 - death sequences for player and Demi
 - credits and references screen
+- change Devourment grinder sprite to be an exact complement of Devourment, so there's no overlap
 ** feature-related **
 - ballistic impact effect is slightly wrong in terms of collision location and normal
 - make the plasma bullet change length based on its speed
@@ -173,6 +174,8 @@ DISASTEROIDS:
   status of the shield is.
 ** bugs **
 - the mining laser does too much damage to enemies, and makes them turn WAY too red
+- destroying all asteroids triggers an assert (dis_world.cpp in RecordDestroyedAsteroid)
+  that indicates the asteroid count is wrong
 ** references **
 - asteroids -- obvious
 - star control 2 -- hardwired into my DNA as an influence for all games i make

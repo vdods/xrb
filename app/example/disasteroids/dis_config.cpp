@@ -25,7 +25,7 @@ namespace Dis
 
 std::string const Config::ms_input_action_label[KEY_INPUT_ACTION_COUNT] =
 {
-    "In-Game Inventory Panel",          // INPUT__IN_GAME_INVENTORY_PANEL = 0,
+    "Open Inventory",                   // INPUT__OPEN_INVENTORY = 0,
     "Move Forward",                     // INPUT__MOVE_FORWARD,
     "Move Left",                        // INPUT__MOVE_LEFT,
     "Move Back",                        // INPUT__MOVE_BACK,
@@ -68,7 +68,7 @@ Config::KeySpecification<char const *> const Config::ms_string_key[KEY_STRING_CO
 };
 Config::KeySpecification<Key::Code> const Config::ms_input_action_key[KEY_INPUT_ACTION_COUNT] =
 {
-    {"|input|in_game_inventory_panel",          Key::ESCAPE},       // INPUT__IN_GAME_INVENTORY_PANEL = 0,
+    {"|input|open_inventory",                   Key::ESCAPE},       // INPUT__OPEN_INVENTORY = 0,
     {"|input|move_forward",                     Key::W},            // INPUT__MOVE_FORWARD,
     {"|input|move_left",                        Key::A},            // INPUT__MOVE_LEFT,
     {"|input|move_back",                        Key::S},            // INPUT__MOVE_BACK,

@@ -20,8 +20,15 @@ namespace Engine2 {
 // DrawObjectOrder
 // ///////////////////////////////////////////////////////////////////////////
 
-bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
+// bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
+int DrawObject::Compare (void const *l_, void const *r_)
 {
+    ASSERT3(l_ != NULL);
+    ASSERT3(r_ != NULL);
+
+    DrawObject const &l = *reinterpret_cast<DrawObject const *>(l_);
+    DrawObject const &r = *reinterpret_cast<DrawObject const *>(r_);
+
     ASSERT3(l.m_object != NULL);
     ASSERT3(r.m_object != NULL);
 
@@ -36,28 +43,33 @@ bool DrawObjectOrder::operator () (DrawObject const &l, DrawObject const &r)
 
     Sint32 c;
 
-    c = Compare(l.m_object->ZDepth(), r.m_object->ZDepth());
+    c = Xrb::Compare(l.m_object->ZDepth(), r.m_object->ZDepth());
     if (c != 0)
-        return c > 0; // prefer greater z depths.
+//         return c > 0; // prefer greater z depths.
+        return -c; // for qsort -- NOTE: change back to no negative sign if back to std::sort
     // otherwise they're equal, so continue.
 
-    c = Compare(l.m_object->GlTextureAtlasHandle(), r.m_object->GlTextureAtlasHandle());
+    c = Xrb::Compare(l.m_object->GlTextureAtlasHandle(), r.m_object->GlTextureAtlasHandle());
     if (c != 0)
-        return c < 0;
+//         return c < 0;
+        return c;
     // otherwise they're equal, so continue.
 
-    c = Compare(l.m_color_bias_rgba, r.m_color_bias_rgba);
+    c = Xrb::Compare(l.m_color_bias_rgba, r.m_color_bias_rgba);
     if (c != 0)
-        return c < 0;
+//         return c < 0;
+        return c;
     // otherwise they're equal, so continue.
 
-    c = Compare(l.m_color_mask_rgba, r.m_color_mask_rgba);
+    c = Xrb::Compare(l.m_color_mask_rgba, r.m_color_mask_rgba);
     if (c != 0)
-        return c < 0;
+//         return c < 0;
+        return c;
     // otherwise they're equal, so continue.
 
     // the final test is pointer values.
-    return l.m_object < r.m_object;
+//     return l.m_object < r.m_object;
+    return Xrb::Compare(l.m_object, r.m_object);
 }
 
 // ///////////////////////////////////////////////////////////////////////////
