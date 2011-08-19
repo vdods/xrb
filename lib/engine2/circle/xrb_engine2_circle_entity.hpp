@@ -181,7 +181,9 @@ public:
         SetNextTimeToThink(time + 10000.0f);
     }
     // the collision normal value points towards the entity.  you should
-    // make your own Collide method which casts to your own Entity type
+    // make your own Collide method which casts to your own Entity type.
+    // collision_force * collision_normal gives the collision force on this
+    // Entity.
     virtual void Collide_ (
         Engine2::Circle::Entity *collider,
         FloatVector2 const &collision_location,

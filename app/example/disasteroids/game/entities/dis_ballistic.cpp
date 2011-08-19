@@ -55,7 +55,6 @@ void Ballistic::Think (Float time, Float frame_dt)
                     false,
                     line_trace_binding_set);
 
-                FloatVector2 collision_normal(trace_vector.Normalization());
                 for (Engine2::Circle::LineTraceBindingSet::iterator
                         it = line_trace_binding_set.begin(),
                         it_end = line_trace_binding_set.end();
@@ -71,6 +70,11 @@ void Ballistic::Think (Float time, Float frame_dt)
                         continue;
 
                     FloatVector2 collision_location(trace_start + it->m_time * trace_vector);
+                    FloatVector2 collision_normal(collision_location - it->m_entity->Translation());
+                    if (collision_normal.LengthSquared() < 0.001f)
+                        collision_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
+                    else
+                        collision_normal.Normalize();
                     bool there_was_a_collision =
                         CollidePrivate(
                             DStaticCast<Entity *>(it->m_entity),
@@ -181,8 +185,8 @@ bool Ballistic::CollidePrivate (
             static Float const s_particle_spread_angle = 70.0f;
             static Uint32 const s_particle_count = 4;
             // proportion of the physical radius of the ballistic itself that the particles will be sized to.
-            static Float const s_particle_radius_min_factor = 0.5f;
-            static Float const s_particle_radius_max_factor = 0.75f;
+            static Float const s_particle_radius_min_factor = 0.75f;
+            static Float const s_particle_radius_max_factor = 1.5f;
             // lifetime of particle
             static Float const s_particle_time_to_live = 0.1f;
             // particle diameter per lifetime
@@ -192,7 +196,7 @@ bool Ballistic::CollidePrivate (
             for (Uint32 i = 0; i < s_particle_count; ++i)
             {
                 Float angle = angle_seed +
-                              Math::Arg(-collision_normal) +
+                              Math::Arg(collision_normal) +
                               Math::LinearlyInterpolate(-s_particle_spread_angle, s_particle_spread_angle, 0, s_particle_count-1, i);
                 Float radius = Math::RandomFloat(s_particle_radius_min_factor, s_particle_radius_max_factor) * PhysicalRadius();
                 Float speed = 2.0f * radius * s_particle_speed_ratio / s_particle_time_to_live;

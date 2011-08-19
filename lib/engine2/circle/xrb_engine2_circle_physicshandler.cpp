@@ -276,6 +276,9 @@ void PhysicsHandler::HandleFrame ()
          ++it)
     {
         CollisionPair &collision_pair = *it;
+        // CollisionPair's m_collision_normal points towards entity 0, and the
+        // collision_normal parameter to Collide_ should point towards the "this"
+        // entity being collided.
         collision_pair.m_entity0->Collide_(
             collision_pair.m_entity1,
             collision_pair.m_collision_location,
@@ -283,6 +286,9 @@ void PhysicsHandler::HandleFrame ()
             collision_pair.m_collision_force,
             FrameTime(),
             FrameDT());
+        // CollisionPair's m_collision_normal points towards entity 0, and the
+        // collision_normal parameter to Collide_ should point towards the "this"
+        // entity being collided.  use negated m_collision_normal.
         collision_pair.m_entity1->Collide_(
             collision_pair.m_entity0,
             collision_pair.m_collision_location,
