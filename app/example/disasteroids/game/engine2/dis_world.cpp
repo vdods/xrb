@@ -1647,8 +1647,8 @@ void World::CreateAndPopulateSuperforegroundObjectLayer ()
                 Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
         sprite->SetScaleFactor(
             Math::RandomFloat(
-                0.35f*object_layer_side_length,
-                0.5f*object_layer_side_length));
+                0.30f*object_layer_side_length,
+                0.35f*object_layer_side_length));
         sprite->SetAngle(Math::RandomAngle());
         sprite->ColorMask() = Color(1.0f, 1.0f, 1.0f, 0.05f);
 
@@ -1847,7 +1847,7 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
 
         static std::string const s_planetfield_sprite_path[] =
         {
-            "resources/planet00.png",
+            "resources/planet_0.png",
         };
         static Uint32 const s_planetfield_sprite_path_count = LENGTHOF(s_planetfield_sprite_path);
 
@@ -1860,10 +1860,11 @@ void World::CreateAndPopulateBackgroundObjectLayers ()
                 Engine2::Sprite::Create(
                     s_planetfield_sprite_path[
                         Math::RandomUint16(0, s_planetfield_sprite_path_count-1)]);
+            // bias it toward the center of the world, so it's visible upon player spawn
             sprite->SetTranslation(
                 FloatVector2(
-                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length),
-                    Math::RandomFloat(-0.5f*object_layer_side_length, 0.5f*object_layer_side_length)));
+                    Math::RandomFloat(-0.15f*object_layer_side_length, 0.15f*object_layer_side_length),
+                    Math::RandomFloat(-0.15f*object_layer_side_length, 0.15f*object_layer_side_length)));
             sprite->SetScaleFactor(
                 Math::RandomFloat(
                     0.15f*object_layer_side_length,

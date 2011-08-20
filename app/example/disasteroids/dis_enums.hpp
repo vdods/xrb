@@ -25,7 +25,7 @@ namespace Dis {
 #define Z_DEPTH_EMP_EXPLOSION      -0.8f
 #define Z_DEPTH_RETICLE_EFFECT     -0.2f
 #define Z_DEPTH_LIGHTNING_EFFECT   -0.15f
-#define Z_DEPTH_PLASMA_BALL_IMPACT -0.1f
+#define Z_DEPTH_SPLASH_IMPACT      -0.1f
 #define Z_DEPTH_SOLID               0.0f
 #define Z_DEPTH_DEVOURMENT_GRINDER  0.05f
 #define Z_DEPTH_BALLISTIC           0.075f
@@ -168,7 +168,7 @@ enum ExplosionType
     EXPLO_COUNT
 }; // end of enum ExplosionType
 
-std::string const &ExplosionSpritePath (ExplosionType explosion_type);
+std::string const &ExplosionAssetPath (ExplosionType explosion_type);
 
 // ///////////////////////////////////////////////////////////////////////////
 // Config key enums

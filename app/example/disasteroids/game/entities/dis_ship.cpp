@@ -57,40 +57,40 @@ std::string const &Ship::ShipSpritePath (
     static std::string const s_ship_sprite_path[ET_SHIP_COUNT][EnemyShip::ENEMY_LEVEL_COUNT] =
     {
         {   // ET_SOLITARY
-            "resources/solitary_small.png",
-            "resources/solitary_small.png",
-            "resources/solitary_small.png",
-            "resources/solitary_small.png"
+            "resources/solitary.png",
+            "resources/solitary.png",
+            "resources/solitary.png",
+            "resources/solitary.png"
         },
         {   // ET_INTERLOPER
-            "resources/interloper0_small.png",
-            "resources/interloper1_small.png",
-            "resources/interloper2_small.png",
-            "resources/interloper3_small.png"
+            "resources/interloper_0.png",
+            "resources/interloper_1.png",
+            "resources/interloper_2.png",
+            "resources/interloper_3.png"
         },
         {   // ET_SHADE
-            "resources/shade0_small.png",
-            "resources/shade1_small.png",
-            "resources/shade2_small.png",
-            "resources/shade3_small.png"
+            "resources/shade_0.png",
+            "resources/shade_1.png",
+            "resources/shade_2.png",
+            "resources/shade_3.png"
         },
         {   // ET_REVULSION
-            "resources/revulsion0_small.png",
-            "resources/revulsion1_small.png",
-            "resources/revulsion2_small.png",
-            "resources/revulsion3_small.png"
+            "resources/revulsion_0.png",
+            "resources/revulsion_1.png",
+            "resources/revulsion_2.png",
+            "resources/revulsion_3.png"
         },
         {   // ET_DEVOURMENT
-            "resources/devourment0_small.png",
-            "resources/devourment1_small.png",
-            "resources/devourment2_small.png",
-            "resources/devourment3_small.png"
+            "resources/devourment_0.png",
+            "resources/devourment_1.png",
+            "resources/devourment_2.png",
+            "resources/devourment_3.png"
         },
         {   // ET_DEMI
-            "resources/demi0_small.png",
-            "resources/demi1_small.png",
-            "resources/demi2_small.png",
-            "resources/demi3_small.png"
+            "resources/demi_0.png",
+            "resources/demi_1.png",
+            "resources/demi_2.png",
+            "resources/demi_3.png"
         }
     };
 
@@ -192,7 +192,7 @@ void Ship::Die (
         NoDamageExplosion *shockwave =
             SpawnNoDamageExplosion(
                 GetObjectLayer(),
-                ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                ExplosionAssetPath(EXPLO_SHOCKWAVE),
                 time,
                 Translation(),
                 Velocity(),

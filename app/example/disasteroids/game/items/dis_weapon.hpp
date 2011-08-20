@@ -300,10 +300,13 @@ class GaussGun : public Weapon
 public:
 
     static Float const ms_impact_damage[UPGRADE_LEVEL_COUNT];
+    static Float const ms_knockback_momentum[UPGRADE_LEVEL_COUNT];
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
     static Float const ms_trail_visible_width[UPGRADE_LEVEL_COUNT];
+    static Float const ms_effect_time_to_live[UPGRADE_LEVEL_COUNT];
+    static Float const ms_impact_particle_speed_proportion[UPGRADE_LEVEL_COUNT];
 
     GaussGun (Uint32 upgrade_level)
         :
@@ -646,6 +649,7 @@ public:
     static Float const ms_range[UPGRADE_LEVEL_COUNT];
     static Float const ms_required_primary_power[UPGRADE_LEVEL_COUNT];
     static Float const ms_fire_rate[UPGRADE_LEVEL_COUNT];
+    static Float const ms_bullet_size[UPGRADE_LEVEL_COUNT];
 
     SlowBulletGun (Uint32 upgrade_level)
         :

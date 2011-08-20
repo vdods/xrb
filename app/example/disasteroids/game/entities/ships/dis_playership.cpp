@@ -775,7 +775,7 @@ void PlayerShip::Think (Float time, Float frame_dt)
         {
             // ensure the shield effect is allocated (lazy allocation)
             if (!m_shield_effect.IsValid())
-                m_shield_effect = SpawnShieldEffect(GetObjectLayer())->GetReference();
+                m_shield_effect = SpawnShieldEffect(GetObjectLayer(), time)->GetReference();
             // if the shield effect is already allocated but not in the world, re-add it.
             else if (!m_shield_effect->IsInWorld())
                 m_shield_effect->AddBackIntoWorld();
@@ -914,7 +914,7 @@ void PlayerShip::Die (
             NoDamageExplosion *shockwave =
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
-                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    ExplosionAssetPath(EXPLO_SHOCKWAVE),
                     time,
                     Translation(),
                     Velocity(),

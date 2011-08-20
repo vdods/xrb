@@ -112,7 +112,7 @@ void Devourment::Think (Float time, Float frame_dt)
                 GetObjectLayer(),
                 time,
                 Translation(),
-                0.72f * VisibleRadius(),
+                0.8989f * VisibleRadius(), // this coefficient is based on the devourment and grinder sprites
                 FloatVector2::ms_zero, // moot, since we must move it ourselves,
                 -ms_mouth_damage_rate[EnemyLevel()],
                 Mortal::D_GRINDING,
@@ -179,7 +179,8 @@ void Devourment::Think (Float time, Float frame_dt)
 
     // set the translation and velocity of the mouth health trigger
     ASSERT1(m_mouth_health_trigger.IsValid());
-    m_mouth_health_trigger->SetTranslation(Translation() + 0.48f * VisibleRadius() * Math::UnitVector(Angle()));
+    // this coefficient is based on the devourment and grinder sprites
+    m_mouth_health_trigger->SetTranslation(Translation() + 0.2806f * VisibleRadius() * Math::UnitVector(Angle()));
     m_mouth_health_trigger->SetAngle(Angle());
     m_mouth_health_trigger->SetVelocity(Velocity());
 }

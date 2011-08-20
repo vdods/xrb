@@ -239,6 +239,20 @@ LaserBeam *SpawnLaserBeam (Engine2::ObjectLayer *object_layer);
 
 LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, Float current_time);
 
+void SpawnSplashImpactEffect (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &asset_path,
+    Float current_time,
+    FloatVector2 const &location,
+    FloatVector2 const &direction,
+    FloatVector2 const &base_velocity,
+    Float seed_angle,
+    Float seed_radius,
+    Uint32 particle_count,
+    Float particle_spread_angle,
+    Float particle_time_to_live,
+    Float particle_speed_proportion);
+
 void SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
@@ -254,7 +268,7 @@ void SpawnGaussGunTrail (
 
 TractorBeam *SpawnTractorBeam (Engine2::ObjectLayer *object_layer);
 
-ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer);
+ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer, Float current_time);
 
 LightningEffect *SpawnLightningEffect (Engine2::ObjectLayer *object_layer, Float current_time);
 

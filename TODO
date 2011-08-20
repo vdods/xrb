@@ -28,13 +28,41 @@ DISASTEROIDS:
 - rewrite design docs in dis_main.cpp to reflect actual state of the game (see notes/dis_game_design.txt)
 ** polish-related **
 - art: fix Interloper proportions
-- art: add bigger stuff in the background (galaxies, nebulae, etc)
+- art: add bigger stuff in the background (galaxies, nebulae, etc) -- make inkscape renditions of hubble pictures
 - anthropomorphize the ships for the intro, credits, etc, similar to opa-opa in zillion.
 - make menus use minerals/powerups for checkmarks, use Solitary as a radio button mark,
   and show the different colors of Interloper (or maybe Devourment?) as the difficulty is changed.
 - death sequences for player and Demi
 - credits and references screen
-- change Devourment grinder sprite to be an exact complement of Devourment, so there's no overlap
+art to make:
+
+    asteroid(s) (ideally multiple)
+    icon for pea shooter
+    icon for laser
+    icon for flame thrower
+    icon for gauss gun
+    icon for grenade launcher
+    icon for missile launcher
+    icon for EMP
+    icon for attack boost
+    icon for defense boost
+    icon for time stretch
+    icon for tractor beam
+    icon for engine
+    icon for armor
+    icon for shield
+    icon for power generator
+x   fireball
+x   grenade
+x   missile
+    better nebula, more nebulae
+    more planets (higher resolution)
+x   shield
+    reticle
+    better stars
+    better starfield
+    textured (?) tractor beam effect
+
 ** feature-related **
 - ballistic impact effect is slightly wrong in terms of collision location and normal
 - make the plasma bullet change length based on its speed
@@ -49,27 +77,30 @@ DISASTEROIDS:
 - change pea shooter secondary fire to spread shot, and change gauss gun into charge-up weapon
   which works as the current pea shooter secondary does.
 - change gauss gun reticle effect (and add for player) -- have 4 reticle effects home in on the
-  target, and when they meet, it fires.  this is to give a better sense of when the enemy will
-  fire the gauss gun.  also this gives the player a more-present visual cue as to when the gauss
-  gun is charged.
+  target, and when they meet, and the player releases the fire button, it fires.  this is to give
+  a better sense of when the enemy will fire the gauss gun.  also this gives the player a
+  more-present visual cue as to when the gauss gun is charged.  allow partial-charge firing?
 - get rid of weapon status bar in order to make space for option powerup display in HUD.
 - starting tip -- write up a bunch of tips that will be shown when the game is started so the
   player can learn all the features of the game -- maybe make the tip be shown in the inventory
   screen so as not to disrupt the UI flow.
 - make the player ship size depend on mass (so that it gets larger when heaver armor is equipped).
 - make tractor beams grow from a point when activated, and shrink to a point when deactivated.
-- make the wave sequences programmable via config file, and specifiable via commandline,
-  so specifying a debug wave sequence is easy.  maybe make a hardcoded wave sequence that
-  will be used for the game.
+- make the wave sequences programmable via config file, and specifiable via commandline.
+  maybe make a hardcoded wave sequence that will be used for the game, and when no config file
+  is provided.
 - when stoke-o-meter fills up, an option powerup can be used (but this opportunity lasts only
   a few seconds)
 - additional mode for Interloper (maybe spawn them in different, fixed modes) -
   where their flocking behavior is higher priority.  another mode should be
   where they flock in the form of a snake.  the head will decide where to go, and
   the body will provide extra mass to the collisions
+- additional mode for Interloper -- speed charge when charging at target -- Interloper isn't
+  nearly mean/tough enough
 - additional mode for Shade - maybe hide behind asteroids
   and make bullets curve around stuff toward the player.
-- mode for Shade: detect incoming projectiles and teleport away to dodge
+- mode for Shade: detect incoming projectiles and teleport away to dodge (this would be a good
+  way to avoid the gauss gun becoming a do-all weapon).
 - additional mode for Revulsion - synchronize firing (?) once the player has
   been surrounded.  this will cause the player to need to avoid being surrounded.
 - additional mode for Demi - spawn a bunch of Interlopers from each weapon port (all 4?)
@@ -84,7 +115,7 @@ DISASTEROIDS:
   the idea is just to dodge it all (or use tractor beam to push away).
 - additional mode for Demi - spawn a bunch of Interlopers which then all
   fly back and surround the Demi continuously to make a shield, making it
-  extremely hard to damage the Demi.  Make the Demi use the railgun during
+  extremely hard to damage the Demi.  Make the Demi use the gauss gun during
   this phase.  At some point, have the Demi reject the shield by flinging
   it all away with its tractor beams.  Or/also make a mode where Demi collects
   all asteroids into a shield surrounding it and then harasses the player until
@@ -93,11 +124,8 @@ DISASTEROIDS:
   and then all converge on the player
 - Demi: add a drone which changes based on what state it's in, so the player has
   an audio cue as to what might happen (only have a few different drones, not
-  unique ones for each state).
-- make the gauss gun use a charge-up so it doesn't fire immediately --
-  have it project a small red laser which grows a little to indicate
-  the charge, then fire with a blast.
-- make the gauss gun fire through stuff so you can damage multiple things if they line up?
+  unique ones for each state).  probably don't make the drone constant, but just
+  an intro thing at the beginning of each behavior
 - merged grenades should have a higher threshold of detonation.  i.e.
   hitting something with more force or something heaver, or a bullet, etc.
 - When a Mortal is being damaged by something it's strong, weak
@@ -105,18 +133,18 @@ DISASTEROIDS:
 - forget the 4x item status screen.  upgrading should be one way,
   and the inventory should just show what level item it is.  this also
   means you can't skip buying a certain level of something.
-  furthermore, make higher upgrade levels, so the madness can continue
 - infinite weapon/powerup/enemy levels?  this would require some thought on
   the prices for everything.
 - add key to dump shields into power cells (?)
-- add key to dumb power cells into shields (?)
+- add key to dump power cells into shields (?)
 - make Devourment (and Demi?) track who damaged it and how much, so it can retaliate
   against the ship that damaged it above a certain threshold.  it would be interesting
   to see some fights between Demi and Devourment.
 - possibly make Devourment have a time-based health-recharge behavior, so you
   have to do heavy damage to it quickly to kill it.
-  after the timer expires, have it pulse green to indicate it's healed
-  or just make it get healed by eating minerals.
+  after the timer expires, have it slow to a stop, pause, and then pulse green to
+  indicate it's healed.  furthermore, when it heals itself, have it reset its inventory
+  to zero.
 - make Demi push away if it's taking too much damage and the player is close
 - make smart ballistics not be canceled out by other ballistics (i'm thinking
   mainly of the pea-shooter shooting a full charge and getting canceled
@@ -126,11 +154,12 @@ DISASTEROIDS:
   touching a tractor beam, or maybe become disabled if it's hit by a red tractor beam
 - add advanced behaviors for higher level enemies (like escaping Devourments)
 - when a new high score is posted and you're taken back to the title screen,
-  the just-added score should be highlighted or blinking somehow
+  the just-added score should be highlighted, big or blinking somehow
 - add collision_location and collision_normal to LineTrace
 - referring to the accumulated force on an entity is uncertain.  there
   should be some sort of previous-frame accumulated force accessor,
-  for functions that use it (e.g. intercept course stuff)
+  for functions that use it (e.g. intercept course stuff).
+  this would make the predictive firing much much better
 - split the physics and visibility computation up so their frame
   processing isn't dependent.  this requires addition of some "scale-factor
   velocity" property on entities.  there will also be a problem with code that
@@ -150,15 +179,6 @@ DISASTEROIDS:
   in general, need some mechanism for the player to not be able to delay
   ending a wave.  maybe some sort of "berserk" mode for enemies, with visual
   (and audio) cues, where the enemies become extra dangerous.
-- change gauss gun's fire rate to be based on how fast it can be charged back
-  up by the power generator -- also, the fire sequence should start with the
-  gun completely discharged.. holding the fire button down will then charge
-  and fire it, as a reticle homes in on the mouse cursor to indicate when
-  it will fire.  charge should be persistent, so if you let go of the fire
-  button before the weapon discharged, it should save the power it accumulated.
-  NOTE: this might require a redesign of the power generation system, because
-  the amount of power to supply to the gauss gun will depend on how much
-  power is available.
 - split up high scores into difficulty levels
 - change missiles: they should not be able to flip around at any angle, but
   only travel in circles (acceleration perpendicular to velocity).

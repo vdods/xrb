@@ -62,10 +62,13 @@ Float const FlameThrower::ms_blast_mode_damage_factor = 3.0f;
 
 // GaussGun properties
 Float const GaussGun::ms_impact_damage[UPGRADE_LEVEL_COUNT] = { 50.0f, 100.0f, 200.0f, 400.0f };
+Float const GaussGun::ms_knockback_momentum[UPGRADE_LEVEL_COUNT] = { 5000.0f, 10000.0f, 20000.0f, 40000.0f };
 Float const GaussGun::ms_range[UPGRADE_LEVEL_COUNT] = { 300.0f, 350.0f, 410.0f, 490.0f };
 Float const GaussGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 50.0f, 65.0f, 80.0f, 100.0f };
 Float const GaussGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 1.5f, 1.35f, 1.15f, 1.0f };
 Float const GaussGun::ms_trail_visible_width[UPGRADE_LEVEL_COUNT] = { 20.0f, 30.0f, 45.0f, 60.0f };
+Float const GaussGun::ms_effect_time_to_live[UPGRADE_LEVEL_COUNT] = { 0.2f, 0.3f, 0.4f, 0.5f };
+Float const GaussGun::ms_impact_particle_speed_proportion[UPGRADE_LEVEL_COUNT] = { 4.0f, 3.0f, 2.75f, 2.5f };
 
 // GrenadeLauncher properties
 Float const GrenadeLauncher::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 200.0f, 200.0f, 200.0f, 200.0f };
@@ -104,6 +107,7 @@ Float const SlowBulletGun::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 120.0f, 140.
 Float const SlowBulletGun::ms_range[UPGRADE_LEVEL_COUNT] = { 200.0f, 250.0f, 300.0f, 300.0f };
 Float const SlowBulletGun::ms_required_primary_power[UPGRADE_LEVEL_COUNT] = { 7.0f, 8.0f, 9.0f, 10.0f };
 Float const SlowBulletGun::ms_fire_rate[UPGRADE_LEVEL_COUNT] = { 0.333f, 0.35f, 0.4f, 0.5f };
+Float const SlowBulletGun::ms_bullet_size[UPGRADE_LEVEL_COUNT] = { 3.0f, 4.0f, 5.0f, 6.0f };
 
 // EnemySpawner properties
 Float const EnemySpawner::ms_muzzle_speed[UPGRADE_LEVEL_COUNT] = { 250.0f, 250.0f, 250.0f, 250.0f };
@@ -595,13 +599,19 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
     Engine2::Circle::LineTraceBindingSet::iterator it = line_trace_binding_set.begin();
     Engine2::Circle::LineTraceBindingSet::iterator it_end = line_trace_binding_set.end();
 
+    static Float const s_impact_particle_spread_angle = 70.0f;
+    static Uint32 const s_impact_particle_count = 8;
+    // calculate the seed radius for splash impact effects
+    Float seed_radius = 0.1f * ms_trail_visible_width[UpgradeLevel()];
+
     Float damage_factor = attack_boost_is_enabled ? OwnerShip()->AttackBoostDamageFactor() : 1.0f;
 
     // decide how much damage to inflict total
-    Float damage_left_to_inflict =
+    Float total_damage_to_inflict =
         IsImpactDamageOverridden() ?
         ImpactDamageOverride() :
         damage_factor * ms_impact_damage[UpgradeLevel()];
+    Float damage_left_to_inflict = total_damage_to_inflict;
 
     // damage the next thing if it exists
     Float furthest_hit_time = 1.0f;
@@ -623,17 +633,42 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
         furthest_hit_time = it->m_time;
         if (DStaticCast<Entity *>(it->m_entity)->IsMortal())
         {
+            FloatVector2 impact_location(MuzzleLocation() + it->m_time * ms_range[UpgradeLevel()] * MuzzleDirection());
+            FloatVector2 impact_normal(OwnerShip()->GetObjectLayer()->AdjustedDifference(impact_location, it->m_entity->Translation()));
+            if (impact_normal.LengthSquared() > 0.0001f)
+                impact_normal.Normalize();
+            else
+                impact_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
+
+            // add knockback momentum to the target (BEFORE damaging it)
+            it->m_entity->AccumulateMomentum(-damage_amount_used / total_damage_to_inflict * damage_factor * ms_knockback_momentum[UpgradeLevel()] * impact_normal);
+
             DStaticCast<Mortal *>(it->m_entity)->Damage(
                 OwnerShip(),
                 NULL, // gauss gun does not have a Entity medium
                 damage_left_to_inflict,
                 &damage_amount_used,
-                MuzzleLocation() + it->m_time * ms_range[UpgradeLevel()] * MuzzleDirection(),
+                impact_location,
                 MuzzleDirection(),
                 0.0f,
                 Mortal::D_BALLISTIC,
                 time,
                 frame_dt);
+
+            // spawn an impact effect at the impact site
+            SpawnSplashImpactEffect(
+                OwnerShip()->GetObjectLayer(),
+                "resources/plasma_ball_green.png",
+                time,
+                impact_location,
+                impact_normal,
+                it->m_entity->Velocity(),
+                Math::RandomFloat(-10.0f, 10.0f),           // seed angle
+                damage_amount_used / total_damage_to_inflict * seed_radius,
+                s_impact_particle_count,
+                s_impact_particle_spread_angle,
+                ms_effect_time_to_live[UpgradeLevel()],
+                ms_impact_particle_speed_proportion[UpgradeLevel()]);
 
             ASSERT1(damage_amount_used <= damage_left_to_inflict + 0.0001f);
             damage_left_to_inflict -= damage_amount_used;
@@ -657,6 +692,21 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
                            furthest_hit_time * ms_range[UpgradeLevel()] / segment_count :
                            0.0f;
 
+    // spawn an impact effect at the weapon muzzle
+    SpawnSplashImpactEffect(
+        OwnerShip()->GetObjectLayer(),
+        "resources/plasma_ball_green.png",
+        time,
+        MuzzleLocation(),
+        MuzzleDirection(),
+        OwnerShip()->Velocity(),
+        Math::RandomFloat(-10.0f, 10.0f),           // seed angle
+        seed_radius,
+        s_impact_particle_count,
+        s_impact_particle_spread_angle,
+        ms_effect_time_to_live[UpgradeLevel()],
+        ms_impact_particle_speed_proportion[UpgradeLevel()]);
+
     // spawn the gauss gun trail
     SpawnGaussGunTrail(
         OwnerShip()->GetObjectLayer(),
@@ -668,8 +718,12 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
         segment_width,
         segment_length,
         segment_count,
-        1.0f,
+        ms_effect_time_to_live[UpgradeLevel()],
         time);
+
+    // add knockback to the firer (AFTER spawning the gauss gun trail, so the
+    // trail is not affected by this impulse)
+    OwnerShip()->AccumulateMomentum(-ms_knockback_momentum[UpgradeLevel()] * damage_factor * MuzzleDirection());
 
     // update the last time fired
     m_time_last_fired = time;
@@ -1155,12 +1209,11 @@ bool SlowBulletGun::Activate (Float power, bool attack_boost_is_enabled, bool de
     ASSERT1(OwnerShip()->GetWorld() != NULL);
     ASSERT1(OwnerShip()->GetObjectLayer() != NULL);
     ASSERT1(ms_muzzle_speed[UpgradeLevel()] > 0.0f);
-    static Float const s_bullet_size = 3.0f;
     SpawnDumbBallistic(
         OwnerShip()->GetObjectLayer(),
         time,
-        MuzzleLocation() + s_bullet_size * MuzzleDirection(),
-        s_bullet_size,
+        MuzzleLocation() + ms_bullet_size[UpgradeLevel()] * MuzzleDirection(),
+        ms_bullet_size[UpgradeLevel()],
         3.0f,
         ms_muzzle_speed[UpgradeLevel()] * MuzzleDirection() + OwnerShip()->Velocity(),
         ms_impact_damage[UpgradeLevel()] * damage_factor,

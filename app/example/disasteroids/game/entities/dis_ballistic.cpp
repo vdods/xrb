@@ -14,6 +14,7 @@
 #include "dis_mortal.hpp"
 #include "dis_spawn.hpp"
 #include "xrb_engine2_circle_physicshandler.hpp"
+#include "xrb_engine2_objectlayer.hpp"
 
 using namespace Xrb;
 
@@ -70,7 +71,7 @@ void Ballistic::Think (Float time, Float frame_dt)
                         continue;
 
                     FloatVector2 collision_location(trace_start + it->m_time * trace_vector);
-                    FloatVector2 collision_normal(collision_location - it->m_entity->Translation());
+                    FloatVector2 collision_normal(GetObjectLayer()->AdjustedDifference(collision_location, it->m_entity->Translation()));
                     if (collision_normal.LengthSquared() < 0.001f)
                         collision_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
                     else
@@ -180,44 +181,20 @@ bool Ballistic::CollidePrivate (
             break;
 
         case IE_PLASMA_BALL:
-        {
-            // spawn particles emanating from collision site in this angle range (on either side)
-            static Float const s_particle_spread_angle = 70.0f;
-            static Uint32 const s_particle_count = 4;
-            // proportion of the physical radius of the ballistic itself that the particles will be sized to.
-            static Float const s_particle_radius_min_factor = 0.75f;
-            static Float const s_particle_radius_max_factor = 1.5f;
-            // lifetime of particle
-            static Float const s_particle_time_to_live = 0.1f;
-            // particle diameter per lifetime
-            static Float const s_particle_speed_ratio = 1.25f;
-
-            Float angle_seed = Math::RandomFloat(-20.0f, 20.0f);
-            for (Uint32 i = 0; i < s_particle_count; ++i)
-            {
-                Float angle = angle_seed +
-                              Math::Arg(collision_normal) +
-                              Math::LinearlyInterpolate(-s_particle_spread_angle, s_particle_spread_angle, 0, s_particle_count-1, i);
-                Float radius = Math::RandomFloat(s_particle_radius_min_factor, s_particle_radius_max_factor) * PhysicalRadius();
-                Float speed = 2.0f * radius * s_particle_speed_ratio / s_particle_time_to_live;
-                NoDamageExplosion *explosion =
-                    SpawnNoDamageExplosion(
-                        GetObjectLayer(),
-                        "resources/plasma_ball.png",
-                        time,
-                        collision_location,
-                        collider->Velocity() + speed * Math::UnitVector(angle),
-                        radius,
-                        radius,
-                        s_particle_time_to_live,
-                        time);
-                explosion->SetScaleInterpolationPower(0.5f); // so it grows quickly at first and then slowly
-                explosion->SetColorMaskInterpolationPower(2.0f);
-                explosion->InitialColorMask() = Color(0.5f, 0.5f, 0.5f, 1.0f);
-                explosion->OwnerObject()->SetZDepth(Z_DEPTH_PLASMA_BALL_IMPACT);
-            }
+            SpawnSplashImpactEffect(
+                GetObjectLayer(),
+                "resources/plasma_ball_yellow.png",
+                time,
+                collision_location,
+                collision_normal,
+                collider->Velocity(),
+                Math::RandomFloat(-20.0f, 20.0f),   // seed angle
+                PhysicalRadius(),
+                4,                                  // particle count
+                70.0f,                              // particle spread angle
+                0.2f,                               // particle time to live
+                2.0f);                              // particle speed proportion
             break;
-        }
 
         default:
             ASSERT1(false && "invalid ImpactEffect");

@@ -413,7 +413,7 @@ void Shade::Teleport (Float time, Float frame_dt)
             NoDamageExplosion *shockwave =
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
-                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    ExplosionAssetPath(EXPLO_SHOCKWAVE),
                     time,
                     Translation(),
                     Velocity(),
@@ -437,7 +437,7 @@ void Shade::Teleport (Float time, Float frame_dt)
             NoDamageExplosion *shockwave =
                 SpawnNoDamageExplosion(
                     GetObjectLayer(),
-                    ExplosionSpritePath(EXPLO_SHOCKWAVE),
+                    ExplosionAssetPath(EXPLO_SHOCKWAVE),
                     time,
                     teleport_destination,
                     target_velocity,

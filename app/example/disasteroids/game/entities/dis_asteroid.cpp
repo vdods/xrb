@@ -148,7 +148,7 @@ void Asteroid::Die (
 {
     SpawnNoDamageExplosion(
         GetObjectLayer(),
-        ExplosionSpritePath(EXPLO_ROCK),
+        ExplosionAssetPath(EXPLO_ROCK),
         time,
         Translation(),
         Velocity(),

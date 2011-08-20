@@ -127,7 +127,7 @@ Ballistic *SpawnSmartBallistic (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/plasma_ball.png",
+            "resources/plasma_ball_yellow.png",
             current_time,
             Z_DEPTH_BALLISTIC,
             true, // is transparent
@@ -167,20 +167,24 @@ Ballistic *SpawnDumbBallistic (
             weapon_level,
             owner,
             false);
-    SpawnDynamicSprite(
-        object_layer,
-        "resources/tractor_beam.png",
-        current_time,
-        Z_DEPTH_BALLISTIC,
-        false, // is transparent
-        ballistic,
-        translation,
-        scale_factor,
-        Math::Arg(velocity),
-        mass,
-        velocity,
-        0.0f,
-        0.0f);
+    Engine2::Sprite *sprite =
+        SpawnDynamicSprite(
+            object_layer,
+            "resources/energy_ball.anim",
+            current_time,
+            Z_DEPTH_BALLISTIC,
+            false, // is transparent
+            ballistic,
+            translation,
+            scale_factor,
+            Math::Arg(velocity),
+            mass,
+            velocity,
+            0.0f,
+            0.0f);
+    // so that the physical size of the ballistic isn't larger than the dark
+    // red part of the energy ball sprite (see energy_ball_1.png)
+    sprite->SetPhysicalSizeRatio(66.0f / 80.0f);
     return ballistic;
 }
 
@@ -209,7 +213,7 @@ Grenade *SpawnGrenade (
             health);
     SpawnDynamicSprite(
         object_layer,
-        "resources/grenade_small.png",
+        "resources/grenade.png",
         current_time,
         Z_DEPTH_SOLID,
         false, // is transparent
@@ -257,7 +261,7 @@ Missile *SpawnMissile (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/missile_small.png",
+            "resources/missile.png",
             current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
@@ -317,7 +321,7 @@ GuidedMissile *SpawnGuidedMissile (
     Engine2::Sprite *sprite =
         SpawnDynamicSprite(
             object_layer,
-            "resources/missile_small.png",
+            "resources/missile.png",
             current_time,
             Z_DEPTH_SOLID,
             false, // is transparent
@@ -519,7 +523,7 @@ EMPExplosion *SpawnEMPExplosion (
     EMPExplosion *emp_explosion = new EMPExplosion(disable_time_factor, initial_size, final_size, time_to_live, time_at_birth, owner);
     SpawnDynamicSprite(
         object_layer,
-        "resources/shield_effect_small.png",
+        "resources/shockwave.png",
         current_time,
         Z_DEPTH_EMP_EXPLOSION,
         true, // is transparent
@@ -615,6 +619,57 @@ LaserImpactEffect *SpawnLaserImpactEffect (Engine2::ObjectLayer *object_layer, F
     return laser_impact_effect;
 }
 
+void SpawnSplashImpactEffect (
+    Engine2::ObjectLayer *object_layer,
+    std::string const &asset_path,
+    Float current_time,
+    FloatVector2 const &location,
+    FloatVector2 const &direction,
+    FloatVector2 const &base_velocity,
+    Float seed_angle,
+    Float seed_radius,
+    Uint32 particle_count,
+    Float particle_spread_angle,
+    Float particle_time_to_live,
+    Float particle_speed_proportion)
+{
+    ASSERT1(object_layer != NULL);
+    ASSERT1(object_layer->OwnerWorld() != NULL);
+    ASSERT1(direction.LengthSquared() > 0.0f);
+    ASSERT1(particle_spread_angle >= 0.0f);
+    ASSERT1(particle_time_to_live > 0.0f);
+    ASSERT1(particle_speed_proportion >= 0.0f);
+
+    // spawn particles emanating from location the angle range [-particle_spread_angle, particle_spread_angle]
+    // proportion of the physical radius of the ballistic itself that the particles will be sized to.
+    static Float const s_particle_radius_min_factor = 0.2f;//0.75f;
+    static Float const s_particle_radius_max_factor = 1.5f;//1.5f;
+    // particle_speed_proportion is particle speed in diameters per lifetime
+
+    for (Uint32 i = 0; i < particle_count; ++i)
+    {
+        Float angle = seed_angle +
+                      Math::Arg(direction) +
+                      Math::LinearlyInterpolate(-particle_spread_angle, particle_spread_angle, 0, particle_count-1, i);
+        Float radius = Math::RandomFloat(s_particle_radius_min_factor, s_particle_radius_max_factor) * seed_radius;
+        Float speed = 2.0f * radius * particle_speed_proportion / particle_time_to_live;
+        NoDamageExplosion *explosion =
+            SpawnNoDamageExplosion(
+                object_layer,
+                asset_path,
+                current_time,
+                location,
+                base_velocity + speed * Math::UnitVector(angle),
+                radius,
+                radius,
+                particle_time_to_live,
+                current_time);
+        explosion->SetScaleInterpolationPower(0.5f); // so it grows quickly at first and then slowly
+        explosion->SetColorMaskInterpolationPower(2.0f);
+        explosion->OwnerObject()->SetZDepth(Z_DEPTH_SPLASH_IMPACT);
+    }
+}
+
 void SpawnGaussGunTrail (
     Engine2::ObjectLayer *object_layer,
     std::string const &asset_path,
@@ -679,12 +734,12 @@ TractorBeam *SpawnTractorBeam (Engine2::ObjectLayer *object_layer)
     return tractor_beam;
 }
 
-ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer)
+ShieldEffect *SpawnShieldEffect (Engine2::ObjectLayer *object_layer, Float current_time)
 {
     ASSERT1(object_layer != NULL);
     ASSERT1(object_layer->OwnerWorld() != NULL);
 
-    Engine2::Sprite *sprite = Engine2::Sprite::Create("resources/shield_effect_small.png");
+    Engine2::Sprite *sprite = Engine2::Sprite::CreateAsset("resources/shield.anim", current_time);
     sprite->SetZDepth(Z_DEPTH_SHIELD_EFFECT);
     sprite->SetIsTransparent(true);
     // setting the scale factor this large helps with speed in adding it to
@@ -1003,12 +1058,12 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
     EntityReference<Entity> const &owner,
     Uint8 enemy_level)
 {
-    static std::string const s_grinder_sprite_path[EnemyShip::ENEMY_LEVEL_COUNT] =
+    static std::string const s_grinder_asset_path[EnemyShip::ENEMY_LEVEL_COUNT] =
     {
-        "resources/grinder0_small.png",
-        "resources/grinder1_small.png",
-        "resources/grinder2_small.png",
-        "resources/grinder3_small.png"
+        "resources/grinder_0.anim",
+        "resources/grinder_1.anim",
+        "resources/grinder_2.anim",
+        "resources/grinder_3.anim"
     };
 
     ASSERT1(enemy_level < EnemyShip::ENEMY_LEVEL_COUNT);
@@ -1021,7 +1076,7 @@ HealthTrigger *SpawnDevourmentMouthHealthTrigger (
             owner);
     SpawnDynamicSprite(
         object_layer,
-        s_grinder_sprite_path[enemy_level],
+        s_grinder_asset_path[enemy_level],
         current_time,
         Z_DEPTH_DEVOURMENT_GRINDER,
         false, // is transparent

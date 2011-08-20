@@ -71,7 +71,7 @@ void Explosive::Die (
         // do not detonate. spawn a small explosion
         SpawnNoDamageExplosion(
             GetObjectLayer(),
-            ExplosionSpritePath(EXPLO_ROCK),
+            ExplosionAssetPath(EXPLO_ROCK),
             time,
             Translation(),
             Velocity(),
@@ -258,7 +258,7 @@ void Grenade::Detonate (Float time, Float frame_dt)
     // spawn a damage explosion
     SpawnDamageExplosion(
         GetObjectLayer(),
-        ExplosionSpritePath(EXPLO_DENSE),
+        ExplosionAssetPath(EXPLO_DENSE),
         time,
         Translation(),
         Velocity(),
@@ -461,7 +461,7 @@ void Missile::Detonate (Float time, Float frame_dt)
     // spawn a damage explosion
     SpawnDamageExplosion(
         GetObjectLayer(),
-        ExplosionSpritePath(EXPLO_DENSE),
+        ExplosionAssetPath(EXPLO_DENSE),
         time,
         Translation(),
         Velocity(),
