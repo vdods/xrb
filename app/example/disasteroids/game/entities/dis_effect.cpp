@@ -280,7 +280,7 @@ void TractorBeam::SetParameters (Color const &color, Float intensity)
 void ShieldEffect::SetIntensity (Float intensity)
 {
     ASSERT1(intensity >= 0.0f && intensity <= 1.0f);
-    static Float const s_opacity = 0.3f;
+    static Float const s_opacity = 0.5f;
     OwnerObject()->ColorMask() = Color(1.0f, 1.0f, 1.0f, s_opacity*intensity);
 }
 

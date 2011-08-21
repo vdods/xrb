@@ -56,80 +56,80 @@ Resource<GlTexture> InventoryButton::ButtonTexture (
     {
         // IT_WEAPON_PEA_SHOOTER
         {
-            "resources/button_pea_shooter_1.png",
-            "resources/button_pea_shooter_2.png",
-            "resources/button_pea_shooter_3.png",
-            "resources/button_pea_shooter_4.png"
+            "resources/icon_pea_shooter.png",
+            "resources/icon_pea_shooter.png",
+            "resources/icon_pea_shooter.png",
+            "resources/icon_pea_shooter.png",
         },
         // IT_WEAPON_LASER
         {
-            "resources/button_laser_1.png",
-            "resources/button_laser_2.png",
-            "resources/button_laser_3.png",
-            "resources/button_laser_4.png"
+            "resources/icon_laser.png",
+            "resources/icon_laser.png",
+            "resources/icon_laser.png",
+            "resources/icon_laser.png",
         },
         // IT_WEAPON_FLAME_THROWER
         {
-            "resources/button_flame_thrower_1.png",
-            "resources/button_flame_thrower_2.png",
-            "resources/button_flame_thrower_3.png",
-            "resources/button_flame_thrower_4.png"
+            "resources/icon_flame_thrower.png",
+            "resources/icon_flame_thrower.png",
+            "resources/icon_flame_thrower.png",
+            "resources/icon_flame_thrower.png",
         },
         // IT_WEAPON_GAUSS_GUN
         {
-            "resources/button_gauss_gun_1.png",
-            "resources/button_gauss_gun_2.png",
-            "resources/button_gauss_gun_3.png",
-            "resources/button_gauss_gun_4.png"
+            "resources/icon_gauss_gun.png",
+            "resources/icon_gauss_gun.png",
+            "resources/icon_gauss_gun.png",
+            "resources/icon_gauss_gun.png",
         },
         // IT_WEAPON_GRENADE_LAUNCHER
         {
-            "resources/button_grenade_launcher_1.png",
-            "resources/button_grenade_launcher_2.png",
-            "resources/button_grenade_launcher_3.png",
-            "resources/button_grenade_launcher_4.png"
+            "resources/icon_grenade_launcher.png",
+            "resources/icon_grenade_launcher.png",
+            "resources/icon_grenade_launcher.png",
+            "resources/icon_grenade_launcher.png",
         },
         // IT_WEAPON_MISSILE_LAUNCHER
         {
-            "resources/button_missile_launcher_1.png",
-            "resources/button_missile_launcher_2.png",
-            "resources/button_missile_launcher_3.png",
-            "resources/button_missile_launcher_4.png"
+            "resources/icon_missile_launcher.png",
+            "resources/icon_missile_launcher.png",
+            "resources/icon_missile_launcher.png",
+            "resources/icon_missile_launcher.png",
         },
         // IT_WEAPON_TRACTOR
         {
-            "resources/button_tractor_1.png",
-            "resources/button_tractor_2.png",
-            "resources/button_tractor_3.png",
-            "resources/button_tractor_4.png"
+            "resources/icon_tractor.png",
+            "resources/icon_tractor.png",
+            "resources/icon_tractor.png",
+            "resources/icon_tractor.png",
         },
         // IT_ENGINE
         {
-            "resources/button_engine_1.png",
-            "resources/button_engine_2.png",
-            "resources/button_engine_3.png",
-            "resources/button_engine_4.png"
+            "resources/icon_engine.png",
+            "resources/icon_engine.png",
+            "resources/icon_engine.png",
+            "resources/icon_engine.png",
         },
         // IT_ARMOR
         {
-            "resources/button_armor_1.png",
-            "resources/button_armor_2.png",
-            "resources/button_armor_3.png",
-            "resources/button_armor_4.png"
+            "resources/icon_armor.png",
+            "resources/icon_armor.png",
+            "resources/icon_armor.png",
+            "resources/icon_armor.png",
         },
         // IT_SHIELD
         {
-            "resources/button_shield_1.png",
-            "resources/button_shield_2.png",
-            "resources/button_shield_3.png",
-            "resources/button_shield_4.png"
+            "resources/icon_shield.png",
+            "resources/icon_shield.png",
+            "resources/icon_shield.png",
+            "resources/icon_shield.png",
         },
         // IT_POWER_GENERATOR
         {
-            "resources/button_power_generator_1.png",
-            "resources/button_power_generator_2.png",
-            "resources/button_power_generator_3.png",
-            "resources/button_power_generator_4.png"
+            "resources/icon_power_generator.png",
+            "resources/icon_power_generator.png",
+            "resources/icon_power_generator.png",
+            "resources/icon_power_generator.png",
         }
     };
 

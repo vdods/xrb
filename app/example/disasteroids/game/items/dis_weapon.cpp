@@ -641,7 +641,9 @@ bool GaussGun::Activate (Float power, bool attack_boost_is_enabled, bool defense
                 impact_normal = FloatVector2(1.0f, 0.0f); // arbitrary unit vector
 
             // add knockback momentum to the target (BEFORE damaging it)
-            it->m_entity->AccumulateMomentum(-damage_amount_used / total_damage_to_inflict * damage_factor * ms_knockback_momentum[UpgradeLevel()] * impact_normal);
+            // TODO: possibly add a cap on the added speed (hitting a small asteroid
+            // with the best gauss gun is hilarious otherwise)
+            it->m_entity->AccumulateMomentum(-damage_factor * ms_knockback_momentum[UpgradeLevel()] * impact_normal);
 
             DStaticCast<Mortal *>(it->m_entity)->Damage(
                 OwnerShip(),
